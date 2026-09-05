@@ -1,0 +1,26 @@
+{
+  "source_sha256_matches": true,
+  "source_bytes_match": true,
+  "request_rows": 7403,
+  "api_rows": 52,
+  "unique_hosts": 23,
+  "successful_screen_routes": 24,
+  "status_total_matches": true,
+  "base64_bodies_validated": 641,
+  "base64_decode_errors": 0,
+  "known_credential_values_checked": 494,
+  "credential_matches_by_artifact": {
+    "analyze_har.py": 0,
+    "api_operations.csv": 0,
+    "asset_coverage.csv": 0,
+    "evidence.json": 0,
+    "REPORT.md": 0,
+    "request_inventory.csv": 0,
+    "verification.json": 0
+  },
+  "report_exists": true,
+  "artifact_local_links_resolve": true,
+  "capture_503_all_prefetch": true,
+  "capture_503_all_refused": true,
+  "PASS": true
+}

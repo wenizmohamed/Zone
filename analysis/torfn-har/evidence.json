@@ -1,0 +1,8178 @@
+{
+  "source": {
+    "path": "C:\\Users\\user\\.claude\\RadixMedia\\radix-media\\RADIXSUB\\mostaql_case\\ZONE\\www.torfn.com.har",
+    "bytes": 223484149,
+    "sha256": "0d6b7d23adf340baf7145248e01406420886d2e76984b43ed7a80fd09c9c2ca0",
+    "creator": {
+      "name": "WebInspector",
+      "version": "537.36"
+    },
+    "har_version": "1.2"
+  },
+  "totals": {
+    "requests": 7403,
+    "pages": 46,
+    "exact_request_urls": 1155,
+    "entries_with_body": 2225,
+    "all_urls_with_body": 1086,
+    "first_party_api_operations": 52,
+    "first_party_api_calls": 666
+  },
+  "time": {
+    "first_valid_request": "2026-09-05T16:28:11.524000+00:00",
+    "last_valid_request": "2026-09-05T20:02:11.552000+00:00",
+    "valid_start_span_seconds": 12840.028,
+    "invalid_request_timestamp_entries": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "invalid_page_ids": [
+      "page_46"
+    ]
+  },
+  "hosts": {
+    "ws-centrifugo.torn.com": 62,
+    "www.torn.com": 6685,
+    "accounts.google.com": 46,
+    "air.torn.com": 168,
+    "firebase.googleapis.com": 47,
+    "www.googletagmanager.com": 47,
+    "profileimages.torn.com": 8,
+    "www.google-analytics.com": 30,
+    "fonts.googleapis.com": 9,
+    "factiontags.torn.com": 62,
+    "static-eu.payments-amazon.com": 2,
+    "www.paypal.com": 53,
+    "payments-eu.amazon.com": 73,
+    "m.media-amazon.com": 3,
+    "www.paypalobjects.com": 10,
+    "i.imgur.com": 16,
+    "media.discordapp.net": 4,
+    "www.tornstocks.com": 2,
+    "fonts.gstatic.com": 1,
+    "factionimages.torn.com": 21,
+    "avatars.torn.com": 36,
+    "www.google.com": 7,
+    "www.gstatic.com": 11
+  },
+  "status_counts": {
+    "0": 111,
+    "200": 7159,
+    "101": 51,
+    "204": 32,
+    "503": 34,
+    "302": 9,
+    "301": 1,
+    "304": 2,
+    "404": 4
+  },
+  "resource_types": {
+    "websocket": 62,
+    "document": 66,
+    "other": 97,
+    "script": 3106,
+    "stylesheet": 1874,
+    "image": 1001,
+    "fetch": 590,
+    "font": 90,
+    "xhr": 381,
+    "manifest": 46,
+    "prefetch": 34,
+    "ping": 52,
+    "preflight": 2,
+    "wasm": 2
+  },
+  "coverage": {
+    "websocket:other": {
+      "requests": 62,
+      "unique_exact_urls": 1,
+      "urls_with_body": 0,
+      "entries_with_body": 0
+    },
+    "documents:first_party": {
+      "requests": 52,
+      "unique_exact_urls": 34,
+      "urls_with_body": 29,
+      "entries_with_body": 46
+    },
+    "other:first_party": {
+      "requests": 47,
+      "unique_exact_urls": 2,
+      "urls_with_body": 1,
+      "entries_with_body": 46
+    },
+    "script:first_party": {
+      "requests": 2997,
+      "unique_exact_urls": 174,
+      "urls_with_body": 169,
+      "entries_with_body": 280
+    },
+    "stylesheet:first_party": {
+      "requests": 1861,
+      "unique_exact_urls": 136,
+      "urls_with_body": 135,
+      "entries_with_body": 192
+    },
+    "script:other": {
+      "requests": 114,
+      "unique_exact_urls": 7,
+      "urls_with_body": 6,
+      "entries_with_body": 13
+    },
+    "image:first_party": {
+      "requests": 884,
+      "unique_exact_urls": 408,
+      "urls_with_body": 408,
+      "entries_with_body": 701
+    },
+    "api_or_fetch:other": {
+      "requests": 296,
+      "unique_exact_urls": 38,
+      "urls_with_body": 8,
+      "entries_with_body": 254
+    },
+    "font:first_party": {
+      "requests": 89,
+      "unique_exact_urls": 5,
+      "urls_with_body": 5,
+      "entries_with_body": 5
+    },
+    "api_or_fetch:first_party": {
+      "requests": 669,
+      "unique_exact_urls": 207,
+      "urls_with_body": 198,
+      "entries_with_body": 479
+    },
+    "manifest:first_party": {
+      "requests": 46,
+      "unique_exact_urls": 1,
+      "urls_with_body": 1,
+      "entries_with_body": 46
+    },
+    "image:other": {
+      "requests": 164,
+      "unique_exact_urls": 120,
+      "urls_with_body": 119,
+      "entries_with_body": 153
+    },
+    "stylesheet:other": {
+      "requests": 13,
+      "unique_exact_urls": 3,
+      "urls_with_body": 2,
+      "entries_with_body": 3
+    },
+    "prefetch:first_party": {
+      "requests": 34,
+      "unique_exact_urls": 27,
+      "urls_with_body": 0,
+      "entries_with_body": 0
+    },
+    "ping:other": {
+      "requests": 52,
+      "unique_exact_urls": 2,
+      "urls_with_body": 0,
+      "entries_with_body": 0
+    },
+    "documents:other": {
+      "requests": 14,
+      "unique_exact_urls": 14,
+      "urls_with_body": 0,
+      "entries_with_body": 0
+    },
+    "preflight:other": {
+      "requests": 2,
+      "unique_exact_urls": 2,
+      "urls_with_body": 0,
+      "entries_with_body": 0
+    },
+    "font:other": {
+      "requests": 1,
+      "unique_exact_urls": 1,
+      "urls_with_body": 1,
+      "entries_with_body": 1
+    },
+    "3d_assets:first_party": {
+      "requests": 4,
+      "unique_exact_urls": 3,
+      "urls_with_body": 3,
+      "entries_with_body": 4
+    },
+    "wasm:first_party": {
+      "requests": 2,
+      "unique_exact_urls": 1,
+      "urls_with_body": 1,
+      "entries_with_body": 2
+    }
+  },
+  "build_modules": {
+    "attack": 5,
+    "attacking-effects": 4,
+    "chat": 5,
+    "city-quick-links": 4,
+    "core": 3,
+    "crimes": 4,
+    "elimination": 5,
+    "faction-potential-list": 4,
+    "faction-wars": 4,
+    "gallery": 4,
+    "go-to-top": 4,
+    "gym": 4,
+    "header": 4,
+    "item-info": 4,
+    "item-market": 4,
+    "leave-site-alert": 2,
+    "loadouts": 4,
+    "points-building": 4,
+    "preferences": 4,
+    "profile": 4,
+    "profile-mini": 4,
+    "react-umd": 1,
+    "sidebar": 4,
+    "text-editor": 5
+  },
+  "traffic": {
+    "reported_transfer_bytes_nonnegative_sum": 38957437,
+    "transfer_field_negative_or_missing": 0,
+    "zero_transfer_entries": 5592,
+    "reported_content_size_sum": 548422162
+  },
+  "timing": {
+    "main_document_200": {
+      "n": 46,
+      "min_ms": 167.47,
+      "median_ms": 195.07,
+      "p95_ms": 615.04,
+      "max_ms": 657.3
+    },
+    "main_document_200_wait": {
+      "n": 46,
+      "min_ms": 159.02,
+      "median_ms": 169.67,
+      "p95_ms": 374.44,
+      "max_ms": 483.12
+    },
+    "page_onload": {
+      "n": 43,
+      "min_ms": 460.1,
+      "median_ms": 759.26,
+      "p95_ms": 3840.29,
+      "max_ms": 4971.34
+    },
+    "slowest_http_200": [
+      {
+        "entry": 3523,
+        "page": "page_22",
+        "method": "GET",
+        "route": "www.torn.com/backdrops.php?mode=dark",
+        "query_field_names": "mode,resolution,size,src,title",
+        "resource_type": "image",
+        "status": 200,
+        "mime": "image/webp",
+        "time_ms": 4552.3,
+        "wait_ms": 150.27,
+        "transfer_bytes": 488351,
+        "content_bytes": 487688,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3230,
+        "page": "page_20",
+        "method": "GET",
+        "route": "factionimages.torn.com/7cfb70a8-02c8-4902-b78a-483b4cbced27-54010.gif",
+        "query_field_names": "",
+        "resource_type": "image",
+        "status": 200,
+        "mime": "image/webp",
+        "time_ms": 4484.77,
+        "wait_ms": 267.96,
+        "transfer_bytes": 412457,
+        "content_bytes": 411786,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 2234,
+        "page": "page_14",
+        "method": "GET",
+        "route": "www.torn.com/builds/text-editor/vendors.1a2ae67f7c06a5c6.js",
+        "query_field_names": "",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3731.05,
+        "wait_ms": 401.14,
+        "transfer_bytes": 533479,
+        "content_bytes": 1763212,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3226,
+        "page": "page_20",
+        "method": "GET",
+        "route": "factionimages.torn.com/701d81aa-b245-479c-b19a-7afaa7c0050b-53066.jpg",
+        "query_field_names": "",
+        "resource_type": "image",
+        "status": 200,
+        "mime": "image/webp",
+        "time_ms": 3380.38,
+        "wait_ms": 267.93,
+        "transfer_bytes": 8768,
+        "content_bytes": 8508,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3228,
+        "page": "page_20",
+        "method": "GET",
+        "route": "factionimages.torn.com/42444399-2b25-4247-905e-7ce71da63666-54622.png",
+        "query_field_names": "",
+        "resource_type": "image",
+        "status": 200,
+        "mime": "image/webp",
+        "time_ms": 3378.98,
+        "wait_ms": 131.37,
+        "transfer_bytes": 2823,
+        "content_bytes": 2564,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3524,
+        "page": "page_22",
+        "method": "GET",
+        "route": "www.torn.com/page.php?sid=UserApiData",
+        "query_field_names": "rfcv,sid",
+        "resource_type": "fetch",
+        "status": 200,
+        "mime": "application/json",
+        "time_ms": 3350.52,
+        "wait_ms": 1440.42,
+        "transfer_bytes": 1982,
+        "content_bytes": 206,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3525,
+        "page": "page_22",
+        "method": "GET",
+        "route": "www.torn.com/chat/sendbird-metadata",
+        "query_field_names": "rfcv",
+        "resource_type": "fetch",
+        "status": 200,
+        "mime": "application/json",
+        "time_ms": 3349.4,
+        "wait_ms": 1437.67,
+        "transfer_bytes": 165,
+        "content_bytes": 36,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3526,
+        "page": "page_22",
+        "method": "GET",
+        "route": "www.torn.com/chat/metadata-v2",
+        "query_field_names": "rfcv",
+        "resource_type": "fetch",
+        "status": 200,
+        "mime": "application/json",
+        "time_ms": 3348.49,
+        "wait_ms": 1440.49,
+        "transfer_bytes": 85,
+        "content_bytes": 4,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 1390,
+        "page": "page_9",
+        "method": "POST",
+        "route": "payments-eu.amazon.com/cs/uedata",
+        "query_field_names": "",
+        "resource_type": "ping",
+        "status": 200,
+        "mime": "application/octet-stream",
+        "time_ms": 3314.85,
+        "wait_ms": 142.68,
+        "transfer_bytes": 501,
+        "content_bytes": 0,
+        "body_present": false,
+        "network_error": ""
+      },
+      {
+        "entry": 3003,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/js/script/src/city_global/static_data/latlngPath.js",
+        "query_field_names": "v",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3312.74,
+        "wait_ms": 742.92,
+        "transfer_bytes": 309162,
+        "content_bytes": 1048585,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3033,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/builds/city-quick-links/vendors.60c20dd0efd1d235.js",
+        "query_field_names": "",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3310.14,
+        "wait_ms": 742.74,
+        "transfer_bytes": 22179,
+        "content_bytes": 69852,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3012,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/js/script/src/city_global/tc.class/tc.Controller.js",
+        "query_field_names": "v",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3310.08,
+        "wait_ms": 742.88,
+        "transfer_bytes": 9435,
+        "content_bytes": 48681,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3016,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/js/script/src/city_global/tc.init.js",
+        "query_field_names": "v",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3309.9,
+        "wait_ms": 742.89,
+        "transfer_bytes": 358,
+        "content_bytes": 387,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3011,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/js/script/src/city_global/tc.class/tc.View.js",
+        "query_field_names": "v",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3309.73,
+        "wait_ms": 742.87,
+        "transfer_bytes": 2461,
+        "content_bytes": 7450,
+        "body_present": true,
+        "network_error": ""
+      },
+      {
+        "entry": 3034,
+        "page": "page_19",
+        "method": "GET",
+        "route": "www.torn.com/builds/city-quick-links/app.4b44df311579ece3.js",
+        "query_field_names": "",
+        "resource_type": "script",
+        "status": 200,
+        "mime": "text/javascript",
+        "time_ms": 3309.68,
+        "wait_ms": 742.69,
+        "transfer_bytes": 3773,
+        "content_bytes": 8729,
+        "body_present": true,
+        "network_error": ""
+      }
+    ]
+  },
+  "errors": [
+    {
+      "status": 0,
+      "route": "air.torn.com/api/8/envelope/",
+      "type": "fetch",
+      "network_error": "net::ERR_NAME_NOT_RESOLVED",
+      "count": 2,
+      "entries": [
+        7366,
+        7367
+      ]
+    },
+    {
+      "status": 0,
+      "route": "ws-centrifugo.torn.com/connection/websocket",
+      "type": "websocket",
+      "network_error": "unrecorded",
+      "count": 11,
+      "entries": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.google.com/recaptcha/enterprise/webworker.js",
+      "type": "script",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        3911
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.torn.com/js/script/lib/custom/timers_web_worker.js",
+      "type": "script",
+      "network_error": "unrecorded",
+      "count": 91,
+      "entries": [
+        110,
+        112,
+        246,
+        247,
+        379,
+        381,
+        639,
+        640,
+        791,
+        792,
+        913,
+        915,
+        1061,
+        1062,
+        1204,
+        1205,
+        1353,
+        1354,
+        1663,
+        1664,
+        1832,
+        1833,
+        1943,
+        1945,
+        2096,
+        2098,
+        2253,
+        2254,
+        2394,
+        2396,
+        2542,
+        2543,
+        2703,
+        2869,
+        2870,
+        3053,
+        3054,
+        3178,
+        3179,
+        3354,
+        3355,
+        3518,
+        3520,
+        3696,
+        3697,
+        3877,
+        3878,
+        4100,
+        4101,
+        4252,
+        4253,
+        4386,
+        4387,
+        4513,
+        4514,
+        4711,
+        4712,
+        4835,
+        4837,
+        4971,
+        4972,
+        5117,
+        5118,
+        5264,
+        5265,
+        5409,
+        5410,
+        5554,
+        5555,
+        5692,
+        5693,
+        5833,
+        5834,
+        5973,
+        5974,
+        6115,
+        6116,
+        6231,
+        6233,
+        6490,
+        6491,
+        6656,
+        6658,
+        6818,
+        6819,
+        6988,
+        6989,
+        7114,
+        7115,
+        7264,
+        7265
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.torn.com/onlinestatus.php",
+      "type": "xhr",
+      "network_error": "net::ERR_CONNECTION_TIMED_OUT",
+      "count": 1,
+      "entries": [
+        7365
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.torn.com/page.php?sid=newsTickers",
+      "type": "fetch",
+      "network_error": "net::ERR_NAME_NOT_RESOLVED",
+      "count": 3,
+      "entries": [
+        7369,
+        7370,
+        7371
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.torn.com/sidebarAjaxAction.php?action=servertime",
+      "type": "xhr",
+      "network_error": "net::ERR_CONNECTION_TIMED_OUT",
+      "count": 1,
+      "entries": [
+        7364
+      ]
+    },
+    {
+      "status": 0,
+      "route": "www.torn.com/sidebarAjaxAction.php?action=servertime",
+      "type": "xhr",
+      "network_error": "net::ERR_NAME_NOT_RESOLVED",
+      "count": 1,
+      "entries": [
+        7368
+      ]
+    },
+    {
+      "status": 404,
+      "route": "media.discordapp.net/attachments/{id}/{id}/Screen_Shot_2021-03-10_at_1.17.49_PM.png",
+      "type": "image",
+      "network_error": "unrecorded",
+      "count": 2,
+      "entries": [
+        2435,
+        2745
+      ]
+    },
+    {
+      "status": 404,
+      "route": "media.discordapp.net/attachments/{id}/{id}/Untitled_Artwork.png",
+      "type": "image",
+      "network_error": "unrecorded",
+      "count": 2,
+      "entries": [
+        2434,
+        2744
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        3980
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/city.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 4,
+      "entries": [
+        512,
+        2925,
+        4584,
+        6861
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/crimes.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        1560
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/donator.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        1222
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/factions.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        3077
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/factions.php?step=profile",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        3236
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/forums.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        2130
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/gym.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        6389
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/item.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        6692
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/joblist.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        4405
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/jobs.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        4286
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/messages.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        1714
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/page.php?sid=ItemMarket",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 2,
+      "entries": [
+        4737,
+        6133
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/page.php?sid=attack",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        2445
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/page.php?sid=elimination",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        1995
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/page.php?sid=missions",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        2754
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/pmarket.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        661
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/points.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 2,
+      "entries": [
+        813,
+        7012
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/preferences.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        3772
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/profiles.php",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 6,
+      "entries": [
+        2286,
+        2592,
+        3409,
+        3587,
+        4143,
+        6548
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/shops.php?step=candy",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        5571
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/shops.php?step=clothes",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 1,
+      "entries": [
+        5854
+      ]
+    },
+    {
+      "status": 503,
+      "route": "www.torn.com/shops.php?step=pharmacy",
+      "type": "prefetch",
+      "network_error": "unrecorded",
+      "count": 2,
+      "entries": [
+        4991,
+        5283
+      ]
+    }
+  ],
+  "prefetch_refusals": {
+    "prefetch refused: not eligible": 34
+  },
+  "sensitive_metadata": {
+    "request_header_counts": {
+      ":authority": 1739,
+      ":method": 1739,
+      ":path": 1739,
+      ":scheme": 1739,
+      "accept": 1918,
+      "accept-encoding": 1865,
+      "accept-language": 1865,
+      "cache-control": 83,
+      "cookie": 1435,
+      "priority": 1729,
+      "referer": 7235,
+      "sec-ch-ua": 2374,
+      "sec-ch-ua-arch": 1832,
+      "sec-ch-ua-bitness": 1832,
+      "sec-ch-ua-full-version": 1832,
+      "sec-ch-ua-full-version-list": 1832,
+      "sec-ch-ua-mobile": 2374,
+      "sec-ch-ua-model": 1832,
+      "sec-ch-ua-platform": 2374,
+      "sec-ch-ua-platform-version": 1832,
+      "sec-fetch-dest": 1814,
+      "sec-fetch-mode": 1814,
+      "sec-fetch-site": 1814,
+      "sec-fetch-user": 44,
+      "upgrade-insecure-requests": 100,
+      "user-agent": 2434,
+      "origin": 679,
+      "content-length": 496,
+      "content-type": 470,
+      "baggage": 674,
+      "sentry-trace": 674,
+      "x-requested-with": 598,
+      "x-browser-channel": 50,
+      "x-browser-copyright": 50,
+      "x-browser-validation": 50,
+      "x-browser-year": 50,
+      "x-client-data": 50,
+      "x-goog-api-key": 46,
+      "upgrade": 51,
+      "pragma": 81,
+      "connection": 126,
+      "sec-websocket-key": 51,
+      "sec-websocket-version": 51,
+      "host": 126,
+      "sec-websocket-extensions": 51,
+      "sec-fetch-storage-access": 160,
+      "sec-purpose": 34,
+      "sec-speculation-tags": 34,
+      "access-control-request-headers": 2,
+      "access-control-request-method": 2,
+      "if-modified-since": 2,
+      "if-none-match": 2
+    },
+    "response_header_counts": {
+      "cache-control": 6730,
+      "cf-cache-status": 6839,
+      "cf-ray": 6936,
+      "content-encoding": 6129,
+      "content-security-policy": 3614,
+      "content-type": 7200,
+      "date": 7292,
+      "expires": 6473,
+      "pragma": 415,
+      "server": 7226,
+      "set-cookie": 451,
+      "speculation-rules": 6487,
+      "vary": 7229,
+      "access-control-allow-origin": 604,
+      "content-length": 1220,
+      "etag": 5986,
+      "age": 5903,
+      "last-modified": 5958,
+      "cross-origin-resource-policy": 331,
+      "report-to": 104,
+      "x-content-type-options": 218,
+      "alt-svc": 204,
+      "cross-origin-opener-policy-report-only": 83,
+      "x-xss-protection": 187,
+      "x-frame-options": 195,
+      "cf-bgj": 547,
+      "cf-polished": 547,
+      "priority": 551,
+      "accept-ranges": 806,
+      "access-control-expose-headers": 233,
+      "x-torn-session": 192,
+      "strict-transport-security": 170,
+      "access-control-allow-credentials": 161,
+      "access-control-allow-headers": 48,
+      "upgrade": 51,
+      "connection": 126,
+      "sec-websocket-accept": 51,
+      "sec-websocket-extensions": 51,
+      "content-security-policy-report-only": 43,
+      "link": 9,
+      "timing-allow-origin": 38,
+      "cross-origin-opener-policy": 21,
+      "cf-speculation-refused": 34,
+      "referrer-policy": 34,
+      "content-language": 7,
+      "location": 10,
+      "via": 65,
+      "x-amz-cf-id": 18,
+      "x-amz-cf-pop": 18,
+      "x-amz-server-side-encryption": 3,
+      "x-amz-version-id": 2,
+      "x-cache": 84,
+      "accept-ch": 53,
+      "cache-tag": 11,
+      "dc": 63,
+      "disable-set-cookie": 11,
+      "origin-trial": 53,
+      "p3p": 21,
+      "paypal-debug-id": 63,
+      "permissions-policy": 53,
+      "server-timing": 60,
+      "x-cache-hits": 79,
+      "x-served-by": 82,
+      "x-timer": 79,
+      "x-amz-rid": 73,
+      "x-amzn-requestid": 73,
+      "x-amz-ir-id": 3,
+      "x-nginx-cache-status": 3,
+      "content-disposition": 10,
+      "x-csrf-jwt": 10,
+      "access-control-allow-methods": 18,
+      "access-control-max-age": 1,
+      "cf-chl-out-s": 3,
+      "x-amz-storage-class": 10,
+      "nel": 4,
+      "x-robots-tag": 4,
+      "transfer-encoding": 2,
+      "cross-origin-embedder-policy": 5
+    },
+    "sensitive_post_field_occurrences": {
+      "apiKey": 27
+    },
+    "credential_values_exported": false
+  },
+  "json_parse_failures": [],
+  "application_flags": [
+    {
+      "route": "www.torn.com/page.php",
+      "key": "success",
+      "value": "False",
+      "count": 1
+    },
+    {
+      "route": "www.torn.com/page.php?sid=factionsPotentialList&step=init",
+      "key": "success",
+      "value": "True",
+      "count": 1
+    },
+    {
+      "route": "www.torn.com/page.php?sid=factionsProfile",
+      "key": "success",
+      "value": "True",
+      "count": 1
+    },
+    {
+      "route": "www.torn.com/page.php?sid=factionsRankedTier",
+      "key": "success",
+      "value": "True",
+      "count": 1
+    },
+    {
+      "route": "www.torn.com/page.php?sid=galleryUserImages",
+      "key": "success",
+      "value": "True",
+      "count": 2
+    },
+    {
+      "route": "www.torn.com/page.php?sid=paymentsProducts&step=AmazonPayButtons",
+      "key": "success",
+      "value": "True",
+      "count": 1
+    },
+    {
+      "route": "www.torn.com/page.php?sid=pointsBuildingData",
+      "key": "success",
+      "value": "True",
+      "count": 3
+    },
+    {
+      "route": "www.torn.com/page.php?sid=preferencesSidebarSettingsInit",
+      "key": "success",
+      "value": "True",
+      "count": 1
+    }
+  ],
+  "websocket": {
+    "records": 62,
+    "handshakes_101": 51,
+    "frames": 1315,
+    "directions": {
+      "error": 11,
+      "send": 576,
+      "receive": 728
+    },
+    "json_top_keys": {
+      "connect": 102,
+      "id": 214,
+      "subscribe": 108,
+      "unsubscribe": 4,
+      "push": 102
+    },
+    "channel_classes": {
+      "{opaque-private-channel}": 1,
+      "elimination_channel": 5,
+      "item-market_Most Popular": 89,
+      "item-market_{id}": 7
+    },
+    "message_field_types": {
+      "message": "dict",
+      "message.namespaces": "dict",
+      "message.namespaces.sidebar": "dict",
+      "message.namespace": "str",
+      "message.action": "str",
+      "message.data": "list"
+    },
+    "token_field_occurrences": 51
+  },
+  "document_routes": [
+    {
+      "route": "www.torn.com/",
+      "requests": 1,
+      "status_counts": {
+        "302": 1
+      },
+      "bodies": 0,
+      "entries": [
+        3981
+      ]
+    },
+    {
+      "route": "www.torn.com/city.php",
+      "requests": 10,
+      "status_counts": {
+        "200": 10
+      },
+      "bodies": 10,
+      "entries": [
+        513,
+        1078,
+        2926,
+        4585,
+        4845,
+        5138,
+        5427,
+        5708,
+        5991,
+        6862
+      ]
+    },
+    {
+      "route": "www.torn.com/crimes.php",
+      "requests": 1,
+      "status_counts": {
+        "301": 1
+      },
+      "bodies": 0,
+      "entries": [
+        1561
+      ]
+    },
+    {
+      "route": "www.torn.com/donator.php",
+      "requests": 2,
+      "status_counts": {
+        "302": 1,
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        1224,
+        1225
+      ]
+    },
+    {
+      "route": "www.torn.com/factions.php",
+      "requests": 1,
+      "status_counts": {
+        "302": 1
+      },
+      "bodies": 0,
+      "entries": [
+        3078
+      ]
+    },
+    {
+      "route": "www.torn.com/factions.php?step=create",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        3079
+      ]
+    },
+    {
+      "route": "www.torn.com/factions.php?step=profile",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        3237
+      ]
+    },
+    {
+      "route": "www.torn.com/forums.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        2131
+      ]
+    },
+    {
+      "route": "www.torn.com/gym.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        6391
+      ]
+    },
+    {
+      "route": "www.torn.com/index.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        3982
+      ]
+    },
+    {
+      "route": "www.torn.com/item.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        6693
+      ]
+    },
+    {
+      "route": "www.torn.com/joblist.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        4406
+      ]
+    },
+    {
+      "route": "www.torn.com/jobs.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        4287
+      ]
+    },
+    {
+      "route": "www.torn.com/messages.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        1715
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=ItemMarket",
+      "requests": 3,
+      "status_counts": {
+        "200": 3
+      },
+      "bodies": 3,
+      "entries": [
+        281,
+        4739,
+        6135
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=attack",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        2446
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=crimes",
+      "requests": 2,
+      "status_counts": {
+        "200": 2
+      },
+      "bodies": 2,
+      "entries": [
+        1562,
+        1844
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=elimination",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        1996
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=gallery",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        12
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=missions",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        2755
+      ]
+    },
+    {
+      "route": "www.torn.com/page.php?sid=points",
+      "requests": 3,
+      "status_counts": {
+        "200": 3
+      },
+      "bodies": 3,
+      "entries": [
+        815,
+        7015,
+        7165
+      ]
+    },
+    {
+      "route": "www.torn.com/pmarket.php",
+      "requests": 2,
+      "status_counts": {
+        "200": 2
+      },
+      "bodies": 2,
+      "entries": [
+        663,
+        935
+      ]
+    },
+    {
+      "route": "www.torn.com/points.php",
+      "requests": 2,
+      "status_counts": {
+        "302": 2
+      },
+      "bodies": 0,
+      "entries": [
+        814,
+        7014
+      ]
+    },
+    {
+      "route": "www.torn.com/preferences.php",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        3773
+      ]
+    },
+    {
+      "route": "www.torn.com/profiles.php",
+      "requests": 7,
+      "status_counts": {
+        "200": 7
+      },
+      "bodies": 7,
+      "entries": [
+        138,
+        2287,
+        2593,
+        3410,
+        3588,
+        4144,
+        6549
+      ]
+    },
+    {
+      "route": "www.torn.com/shops.php?step=candy",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        5573
+      ]
+    },
+    {
+      "route": "www.torn.com/shops.php?step=clothes",
+      "requests": 1,
+      "status_counts": {
+        "200": 1
+      },
+      "bodies": 1,
+      "entries": [
+        5856
+      ]
+    },
+    {
+      "route": "www.torn.com/shops.php?step=pharmacy",
+      "requests": 2,
+      "status_counts": {
+        "200": 2
+      },
+      "bodies": 2,
+      "entries": [
+        4993,
+        5285
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page": "page_46",
+      "started": "1970-01-02T11:48:19.824Z",
+      "routes": [
+        "www.torn.com/page.php?sid=points"
+      ],
+      "document_entries": [
+        7165
+      ],
+      "dom_content_ms": 401.1539999919478,
+      "load_ms": 464.1180000035092
+    },
+    {
+      "page": "page_1",
+      "started": "2026-09-05T16:28:11.525Z",
+      "routes": [
+        "www.torn.com/page.php?sid=gallery"
+      ],
+      "document_entries": [
+        12
+      ],
+      "dom_content_ms": 521.3809999986552,
+      "load_ms": 561.1409999983152
+    },
+    {
+      "page": "page_2",
+      "started": "2026-09-05T16:28:45.867Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        138
+      ],
+      "dom_content_ms": 529.4629999989411,
+      "load_ms": 759.2599999916274
+    },
+    {
+      "page": "page_3",
+      "started": "2026-09-05T16:28:46.908Z",
+      "routes": [
+        "www.torn.com/page.php?sid=ItemMarket"
+      ],
+      "document_entries": [
+        281
+      ],
+      "dom_content_ms": 485.4849999974249,
+      "load_ms": 636.5769999974873
+    },
+    {
+      "page": "page_4",
+      "started": "2026-09-05T16:29:15.253Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        513
+      ],
+      "dom_content_ms": 406.96700000262354,
+      "load_ms": 461.82799999951385
+    },
+    {
+      "page": "page_5",
+      "started": "2026-09-05T16:29:20.069Z",
+      "routes": [
+        "www.torn.com/pmarket.php"
+      ],
+      "document_entries": [
+        663
+      ],
+      "dom_content_ms": 769.8879999952624,
+      "load_ms": 851.5170000027865
+    },
+    {
+      "page": "page_6",
+      "started": "2026-09-05T16:29:33.048Z",
+      "routes": [
+        "www.torn.com/points.php",
+        "www.torn.com/page.php?sid=points"
+      ],
+      "document_entries": [
+        814,
+        815
+      ],
+      "dom_content_ms": 1003.3950000070035,
+      "load_ms": 1021.0640000004787
+    },
+    {
+      "page": "page_7",
+      "started": "2026-09-05T16:29:48.820Z",
+      "routes": [
+        "www.torn.com/pmarket.php"
+      ],
+      "document_entries": [
+        935
+      ],
+      "dom_content_ms": 428.95499999576714,
+      "load_ms": 542.6959999895189
+    },
+    {
+      "page": "page_8",
+      "started": "2026-09-05T16:29:49.855Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        1078
+      ],
+      "dom_content_ms": 394.1650000051595,
+      "load_ms": 479.7120000002906
+    },
+    {
+      "page": "page_9",
+      "started": "2026-09-05T16:29:53.209Z",
+      "routes": [
+        "www.torn.com/donator.php"
+      ],
+      "document_entries": [
+        1224,
+        1225
+      ],
+      "dom_content_ms": 1289.4170000072336,
+      "load_ms": 3237.944000007701
+    },
+    {
+      "page": "page_10",
+      "started": "2026-09-05T16:38:19.954Z",
+      "routes": [
+        "www.torn.com/crimes.php",
+        "www.torn.com/page.php?sid=crimes"
+      ],
+      "document_entries": [
+        1561,
+        1562
+      ],
+      "dom_content_ms": 3789.9969999998575,
+      "load_ms": 3800.8629999967525
+    },
+    {
+      "page": "page_11",
+      "started": "2026-09-05T16:38:24.431Z",
+      "routes": [
+        "www.torn.com/messages.php"
+      ],
+      "document_entries": [
+        1715
+      ],
+      "dom_content_ms": null,
+      "load_ms": null
+    },
+    {
+      "page": "page_12",
+      "started": "2026-09-05T16:38:26.188Z",
+      "routes": [
+        "www.torn.com/page.php?sid=crimes"
+      ],
+      "document_entries": [
+        1844
+      ],
+      "dom_content_ms": 823.4470000024885,
+      "load_ms": 907.8630000003614
+    },
+    {
+      "page": "page_13",
+      "started": "2026-09-05T16:38:33.274Z",
+      "routes": [
+        "www.torn.com/page.php?sid=elimination"
+      ],
+      "document_entries": [
+        1996
+      ],
+      "dom_content_ms": 2554.405000002589,
+      "load_ms": 2564.6449999912875
+    },
+    {
+      "page": "page_14",
+      "started": "2026-09-05T16:38:51.199Z",
+      "routes": [
+        "www.torn.com/forums.php"
+      ],
+      "document_entries": [
+        2131
+      ],
+      "dom_content_ms": 4019.559999986086,
+      "load_ms": 4031.005999990157
+    },
+    {
+      "page": "page_15",
+      "started": "2026-09-05T16:38:57.557Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        2287
+      ],
+      "dom_content_ms": 1012.6170000003185,
+      "load_ms": 1175.1840000069933
+    },
+    {
+      "page": "page_16",
+      "started": "2026-09-05T16:39:13.145Z",
+      "routes": [
+        "www.torn.com/page.php?sid=attack"
+      ],
+      "document_entries": [
+        2446
+      ],
+      "dom_content_ms": 843.9689999941038,
+      "load_ms": 1102.9120000021067
+    },
+    {
+      "page": "page_17",
+      "started": "2026-09-05T16:40:23.537Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        2593
+      ],
+      "dom_content_ms": 847.6260000024922,
+      "load_ms": 913.2979999994859
+    },
+    {
+      "page": "page_18",
+      "started": "2026-09-05T16:41:14.174Z",
+      "routes": [
+        "www.torn.com/page.php?sid=missions"
+      ],
+      "document_entries": [
+        2755
+      ],
+      "dom_content_ms": 1391.6389999940293,
+      "load_ms": 2242.9579999879934
+    },
+    {
+      "page": "page_19",
+      "started": "2026-09-05T16:42:16.910Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        2926
+      ],
+      "dom_content_ms": 3768.595000001369,
+      "load_ms": 3820.983999990858
+    },
+    {
+      "page": "page_20",
+      "started": "2026-09-05T16:42:26.219Z",
+      "routes": [
+        "www.torn.com/factions.php",
+        "www.torn.com/factions.php?step=create"
+      ],
+      "document_entries": [
+        3078,
+        3079
+      ],
+      "dom_content_ms": 834.5059999992372,
+      "load_ms": 848.121999995783
+    },
+    {
+      "page": "page_21",
+      "started": "2026-09-05T16:42:37.914Z",
+      "routes": [
+        "www.torn.com/factions.php?step=profile"
+      ],
+      "document_entries": [
+        3237
+      ],
+      "dom_content_ms": 1180.3559999971185,
+      "load_ms": 1226.5190000034636
+    },
+    {
+      "page": "page_22",
+      "started": "2026-09-05T16:43:26.953Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        3410
+      ],
+      "dom_content_ms": 542.699999990873,
+      "load_ms": 4971.336999995401
+    },
+    {
+      "page": "page_23",
+      "started": "2026-09-05T16:44:10.864Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        3588
+      ],
+      "dom_content_ms": 460.6729999941308,
+      "load_ms": 511.94399999803863
+    },
+    {
+      "page": "page_24",
+      "started": "2026-09-05T16:45:25.925Z",
+      "routes": [
+        "www.torn.com/preferences.php"
+      ],
+      "document_entries": [
+        3773
+      ],
+      "dom_content_ms": 3054.9949999985984,
+      "load_ms": 3840.2920000080485
+    },
+    {
+      "page": "page_25",
+      "started": "2026-09-05T16:48:06.300Z",
+      "routes": [
+        "www.torn.com/",
+        "www.torn.com/index.php"
+      ],
+      "document_entries": [
+        3981,
+        3982
+      ],
+      "dom_content_ms": 804.7379999916302,
+      "load_ms": 1086.074999999255
+    },
+    {
+      "page": "page_26",
+      "started": "2026-09-05T16:49:09.242Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        4144
+      ],
+      "dom_content_ms": 422.02299999189563,
+      "load_ms": 472.60199999436736
+    },
+    {
+      "page": "page_27",
+      "started": "2026-09-05T16:50:13.278Z",
+      "routes": [
+        "www.torn.com/jobs.php"
+      ],
+      "document_entries": [
+        4287
+      ],
+      "dom_content_ms": 612.4500000005355,
+      "load_ms": 645.5730000016047
+    },
+    {
+      "page": "page_28",
+      "started": "2026-09-05T16:50:15.780Z",
+      "routes": [
+        "www.torn.com/joblist.php"
+      ],
+      "document_entries": [
+        4406
+      ],
+      "dom_content_ms": 589.6659999998519,
+      "load_ms": 621.7120000073919
+    },
+    {
+      "page": "page_29",
+      "started": "2026-09-05T16:52:06.812Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        4585
+      ],
+      "dom_content_ms": 772.1400000009453,
+      "load_ms": 886.6719999932684
+    },
+    {
+      "page": "page_30",
+      "started": "2026-09-05T16:52:09.996Z",
+      "routes": [
+        "www.torn.com/page.php?sid=ItemMarket"
+      ],
+      "document_entries": [
+        4739
+      ],
+      "dom_content_ms": null,
+      "load_ms": null
+    },
+    {
+      "page": "page_31",
+      "started": "2026-09-05T16:52:12.357Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        4845
+      ],
+      "dom_content_ms": 617.1520000061719,
+      "load_ms": 689.11800000933
+    },
+    {
+      "page": "page_32",
+      "started": "2026-09-05T16:52:28.134Z",
+      "routes": [
+        "www.torn.com/shops.php?step=pharmacy"
+      ],
+      "document_entries": [
+        4993
+      ],
+      "dom_content_ms": 670.9779999946477,
+      "load_ms": 810.8329999959096
+    },
+    {
+      "page": "page_33",
+      "started": "2026-09-05T16:52:51.974Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        5138
+      ],
+      "dom_content_ms": 385.51799999549985,
+      "load_ms": 460.1039999979548
+    },
+    {
+      "page": "page_34",
+      "started": "2026-09-05T16:52:55.130Z",
+      "routes": [
+        "www.torn.com/shops.php?step=pharmacy"
+      ],
+      "document_entries": [
+        5285
+      ],
+      "dom_content_ms": 459.2829999892274,
+      "load_ms": 502.5739999982761
+    },
+    {
+      "page": "page_35",
+      "started": "2026-09-05T16:53:00.817Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        5427
+      ],
+      "dom_content_ms": 415.1529999944614,
+      "load_ms": 501.00999999267515
+    },
+    {
+      "page": "page_36",
+      "started": "2026-09-05T16:53:03.205Z",
+      "routes": [
+        "www.torn.com/shops.php?step=candy"
+      ],
+      "document_entries": [
+        5573
+      ],
+      "dom_content_ms": 407.26800000993535,
+      "load_ms": 465.77500000421423
+    },
+    {
+      "page": "page_37",
+      "started": "2026-09-05T16:53:11.845Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        5708
+      ],
+      "dom_content_ms": 956.674999993993,
+      "load_ms": 1014.0489999903366
+    },
+    {
+      "page": "page_38",
+      "started": "2026-09-05T16:53:14.889Z",
+      "routes": [
+        "www.torn.com/shops.php?step=clothes"
+      ],
+      "document_entries": [
+        5856
+      ],
+      "dom_content_ms": 511.75200000579935,
+      "load_ms": 937.3270000069169
+    },
+    {
+      "page": "page_39",
+      "started": "2026-09-05T16:53:18.420Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        5991
+      ],
+      "dom_content_ms": 506.45699999586213,
+      "load_ms": 575.6269999983488
+    },
+    {
+      "page": "page_40",
+      "started": "2026-09-05T16:53:20.509Z",
+      "routes": [
+        "www.torn.com/page.php?sid=ItemMarket"
+      ],
+      "document_entries": [
+        6135
+      ],
+      "dom_content_ms": 417.12399999960326,
+      "load_ms": 492.4429999955464
+    },
+    {
+      "page": "page_41",
+      "started": "2026-09-05T16:58:12.096Z",
+      "routes": [
+        "www.torn.com/gym.php"
+      ],
+      "document_entries": [
+        6391
+      ],
+      "dom_content_ms": 474.8180000024149,
+      "load_ms": 520.5900000000838
+    },
+    {
+      "page": "page_42",
+      "started": "2026-09-05T17:07:51.165Z",
+      "routes": [
+        "www.torn.com/profiles.php"
+      ],
+      "document_entries": [
+        6549
+      ],
+      "dom_content_ms": 438.3759999909671,
+      "load_ms": 594.491999989259
+    },
+    {
+      "page": "page_43",
+      "started": "2026-09-05T17:07:56.256Z",
+      "routes": [
+        "www.torn.com/item.php"
+      ],
+      "document_entries": [
+        6693
+      ],
+      "dom_content_ms": 507.2959999961313,
+      "load_ms": 551.6769999958342
+    },
+    {
+      "page": "page_44",
+      "started": "2026-09-05T17:09:13.534Z",
+      "routes": [
+        "www.torn.com/city.php"
+      ],
+      "document_entries": [
+        6862
+      ],
+      "dom_content_ms": 389.8580000095535,
+      "load_ms": 741.2970000004862
+    },
+    {
+      "page": "page_45",
+      "started": "2026-09-05T17:09:18.210Z",
+      "routes": [
+        "www.torn.com/points.php",
+        "www.torn.com/page.php?sid=points"
+      ],
+      "document_entries": [
+        7014,
+        7015
+      ],
+      "dom_content_ms": 544.9490000028163,
+      "load_ms": 618.7670000072103
+    }
+  ],
+  "api_operations": [
+    {
+      "method": "GET",
+      "route": "www.torn.com/autocompleteHeaderAjaxAction.php",
+      "body_operation": "",
+      "entries": [
+        6315,
+        6316,
+        6317
+      ],
+      "status_counts": {
+        "200": 3
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "list": [
+          "list"
+        ],
+        "list[].id": [
+          "int"
+        ],
+        "list[].itemID": [
+          "int"
+        ],
+        "list[].name": [
+          "str"
+        ],
+        "list[].total": [
+          "int"
+        ],
+        "list[].type": [
+          "str"
+        ],
+        "list[].url": [
+          "str"
+        ],
+        "search": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 3
+      },
+      "bodies_present": 3,
+      "timing": {
+        "n": 3,
+        "min_ms": 171.16,
+        "median_ms": 175.57,
+        "p95_ms": 180.58,
+        "max_ms": 180.58
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/autocompleteHeaderAjaxAction.php",
+      "body_operation": "",
+      "entries": [
+        662,
+        1223,
+        4738,
+        4992,
+        5284,
+        5572,
+        5855,
+        6134,
+        6546,
+        6547,
+        7013
+      ],
+      "status_counts": {
+        "200": 11
+      },
+      "request_fields": [
+        "is_qlink",
+        "option",
+        "places",
+        "q"
+      ],
+      "response_field_types": {
+        "list": [
+          "list"
+        ],
+        "list[].id": [
+          "int"
+        ],
+        "list[].name": [
+          "str"
+        ],
+        "list[].online": [
+          "str"
+        ],
+        "list[].onlineIndex": [
+          "int"
+        ],
+        "list[].url": [
+          "str"
+        ],
+        "request": [
+          "str"
+        ],
+        "search": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 11,
+        "min_ms": 152.05,
+        "median_ms": 157.59,
+        "p95_ms": 451.63,
+        "max_ms": 451.63
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/chat/block",
+      "body_operation": "",
+      "entries": [
+        3757
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "next": [
+          "str"
+        ],
+        "users": [
+          "list"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 713.4,
+        "median_ms": 713.4,
+        "p95_ms": 713.4,
+        "max_ms": 713.4
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/chat/metadata-v2",
+      "body_operation": "",
+      "entries": [
+        117,
+        644,
+        1668,
+        1839,
+        2709,
+        3059,
+        3526,
+        4117,
+        4258,
+        4391,
+        4716,
+        5837,
+        6494,
+        6663,
+        6993,
+        7269,
+        7374,
+        7392,
+        7397,
+        7402
+      ],
+      "status_counts": {
+        "200": 20
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "_id": [
+          "str"
+        ],
+        "group": [
+          "list"
+        ],
+        "left": [
+          "list"
+        ],
+        "maximized": [
+          "list"
+        ],
+        "private": [
+          "list"
+        ],
+        "updatedAt": [
+          "float"
+        ],
+        "userId": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "NoneType": 7,
+        "dict": 13
+      },
+      "bodies_present": 20,
+      "timing": {
+        "n": 20,
+        "min_ms": 29.82,
+        "median_ms": 181.07,
+        "p95_ms": 3031.97,
+        "max_ms": 3348.49
+      }
+    },
+    {
+      "method": "PUT",
+      "route": "www.torn.com/chat/metadata-v2",
+      "body_operation": "",
+      "entries": [
+        3556,
+        3583,
+        3737,
+        3739,
+        3742,
+        3743,
+        3749,
+        3750
+      ],
+      "status_counts": {
+        "200": 8
+      },
+      "request_fields": [
+        "metadata"
+      ],
+      "response_field_types": {
+        "acknowledged": [
+          "bool"
+        ],
+        "matchedCount": [
+          "int"
+        ],
+        "modifiedCount": [
+          "int"
+        ],
+        "upsertedCount": [
+          "int"
+        ],
+        "upsertedId": [
+          "NoneType",
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 8
+      },
+      "bodies_present": 8,
+      "timing": {
+        "n": 8,
+        "min_ms": 156.33,
+        "median_ms": 164.89,
+        "p95_ms": 313.45,
+        "max_ms": 313.45
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/chat/sendbird-metadata",
+      "body_operation": "",
+      "entries": [
+        116,
+        643,
+        1667,
+        1838,
+        2708,
+        3058,
+        3525,
+        3741,
+        4118,
+        4259,
+        4392,
+        4717,
+        5838,
+        6495,
+        6664,
+        6994,
+        7270,
+        7372,
+        7393,
+        7398,
+        7403
+      ],
+      "status_counts": {
+        "200": 21
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "status": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 21
+      },
+      "bodies_present": 21,
+      "timing": {
+        "n": 21,
+        "min_ms": 153.17,
+        "median_ms": 239.14,
+        "p95_ms": 3033.34,
+        "max_ms": 3349.4
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/city.php?step=quicklinksdata",
+      "body_operation": "",
+      "entries": [
+        654,
+        1216,
+        3069,
+        4728,
+        4984,
+        5276,
+        5564,
+        5847,
+        6127,
+        7006
+      ],
+      "status_counts": {
+        "200": 10
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "smo_length": [
+          "int"
+        ],
+        "standardMapObjects": [
+          "list"
+        ],
+        "standardMapObjectsQLinksSorts": [
+          "dict"
+        ],
+        "standardMapObjectsQLinksSorts.area": [
+          "dict"
+        ],
+        "standardMapObjectsQLinksSorts.area.sortData": [
+          "list"
+        ],
+        "standardMapObjectsQLinksSorts.area.titleRequired": [
+          "bool"
+        ],
+        "standardMapObjectsQLinksSorts.name": [
+          "dict"
+        ],
+        "standardMapObjectsQLinksSorts.name.sortData": [
+          "list"
+        ],
+        "standardMapObjectsQLinksSorts.name.titleRequired": [
+          "bool"
+        ],
+        "standardMapObjectsQLinksSorts.popularity": [
+          "dict"
+        ],
+        "standardMapObjectsQLinksSorts.popularity.sortData": [
+          "list"
+        ],
+        "standardMapObjectsQLinksSorts.popularity.titleRequired": [
+          "bool"
+        ],
+        "standardMapObjectsQLinksSorts.type": [
+          "dict"
+        ],
+        "standardMapObjectsQLinksSorts.type.sortData": [
+          "list"
+        ],
+        "standardMapObjectsQLinksSorts.type.titleRequired": [
+          "bool"
+        ],
+        "standardMapObjects[].center_x": [
+          "float"
+        ],
+        "standardMapObjects[].center_y": [
+          "float"
+        ],
+        "standardMapObjects[].font_color": [
+          "int"
+        ],
+        "standardMapObjects[].gymID": [
+          "int"
+        ],
+        "standardMapObjects[].highlightClass": [
+          "str"
+        ],
+        "standardMapObjects[].html": [
+          "str"
+        ],
+        "standardMapObjects[].id": [
+          "int"
+        ],
+        "standardMapObjects[].link": [
+          "str"
+        ],
+        "standardMapObjects[].map_object_id": [
+          "int"
+        ],
+        "standardMapObjects[].map_territory_id": [
+          "int"
+        ],
+        "standardMapObjects[].marker_type": [
+          "str"
+        ],
+        "standardMapObjects[].place_id": [
+          "int"
+        ],
+        "standardMapObjects[].popularity": [
+          "int"
+        ],
+        "standardMapObjects[].propertyID": [
+          "int"
+        ],
+        "standardMapObjects[].sortProps": [
+          "dict"
+        ],
+        "standardMapObjects[].title": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 10
+      },
+      "bodies_present": 10,
+      "timing": {
+        "n": 10,
+        "min_ms": 161.95,
+        "median_ms": 182.04,
+        "p95_ms": 348.99,
+        "max_ms": 348.99
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/crimesHubApi.php",
+      "body_operation": "",
+      "entries": [
+        1685,
+        1686,
+        1687,
+        1688,
+        1689,
+        1690,
+        1691,
+        1692,
+        1693,
+        1694,
+        1695,
+        1696,
+        1697,
+        1959,
+        1960,
+        1961,
+        1962,
+        1963,
+        1964,
+        1965,
+        1966,
+        1967,
+        1968,
+        1969,
+        1970,
+        1971,
+        1994
+      ],
+      "status_counts": {
+        "200": 27
+      },
+      "request_fields": [
+        "apiKey",
+        "typeID",
+        "userID"
+      ],
+      "response_field_types": {
+        "DB": [
+          "dict"
+        ],
+        "DB.crimes": [
+          "dict"
+        ],
+        "DB.crimes.{numeric-key}": [
+          "dict",
+          "list"
+        ],
+        "DB.dirtyBomb": [
+          "bool"
+        ],
+        "DB.time": [
+          "int"
+        ],
+        "DB.user": [
+          "dict"
+        ],
+        "DB.user.isAdmin": [
+          "bool"
+        ],
+        "DB.user.isUnderAttack": [
+          "bool"
+        ],
+        "DB.user.money": [
+          "int"
+        ],
+        "DB.user.nerve": [
+          "int"
+        ],
+        "DB.user.playername": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 27
+      },
+      "bodies_present": 27,
+      "timing": {
+        "n": 27,
+        "min_ms": 161.16,
+        "median_ms": 306.87,
+        "p95_ms": 374.7,
+        "max_ms": 375.83
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/faction_wars.php?step=getwardata",
+      "body_operation": "",
+      "entries": [
+        3366,
+        3399,
+        3400,
+        3401,
+        3403,
+        3406,
+        3407,
+        3408
+      ],
+      "status_counts": {
+        "200": 8
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "announcement": [
+          "NoneType"
+        ],
+        "factionID": [
+          "int"
+        ],
+        "isEmpty": [
+          "bool"
+        ],
+        "isExceptAttackRedirect": [
+          "bool"
+        ],
+        "timestamp": [
+          "int"
+        ],
+        "userFactionID": [
+          "int"
+        ],
+        "userID": [
+          "int"
+        ],
+        "warMsg": [
+          "dict"
+        ],
+        "warMsg.color": [
+          "str"
+        ],
+        "warMsg.rank": [
+          "str"
+        ],
+        "warMsg.respect": [
+          "str"
+        ],
+        "warMsg.title": [
+          "str"
+        ],
+        "wars": [
+          "list"
+        ],
+        "wars[].data": [
+          "dict"
+        ],
+        "wars[].key": [
+          "str"
+        ],
+        "wars[].type": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 8
+      },
+      "bodies_present": 8,
+      "timing": {
+        "n": 8,
+        "min_ms": 186.93,
+        "median_ms": 195.7,
+        "p95_ms": 636.56,
+        "max_ms": 636.56
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/forums.php",
+      "body_operation": "step=forums",
+      "entries": [
+        2266
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "a",
+        "b",
+        "f",
+        "p",
+        "step",
+        "title"
+      ],
+      "response_field_types": {},
+      "response_json_types": {},
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 345.53,
+        "median_ms": 345.53,
+        "p95_ms": 345.53,
+        "max_ms": 345.53
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/gym.php?step=getInitialGymInfo",
+      "body_operation": "step=getInitialGymInfo",
+      "entries": [
+        6504
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "step"
+      ],
+      "response_field_types": {
+        "energy": [
+          "dict"
+        ],
+        "energy.available": [
+          "int"
+        ],
+        "energy.max": [
+          "int"
+        ],
+        "energy.step": [
+          "int"
+        ],
+        "gyms": [
+          "dict"
+        ],
+        "gyms.heavyweight": [
+          "list"
+        ],
+        "gyms.jail": [
+          "list"
+        ],
+        "gyms.lightweight": [
+          "list"
+        ],
+        "gyms.middleweight": [
+          "list"
+        ],
+        "gyms.specialist": [
+          "list"
+        ],
+        "reload": [
+          "bool"
+        ],
+        "stats": [
+          "dict"
+        ],
+        "stats.defense": [
+          "dict"
+        ],
+        "stats.defense.percentage": [
+          "str"
+        ],
+        "stats.defense.value": [
+          "str"
+        ],
+        "stats.dexterity": [
+          "dict"
+        ],
+        "stats.dexterity.percentage": [
+          "str"
+        ],
+        "stats.dexterity.value": [
+          "str"
+        ],
+        "stats.speed": [
+          "dict"
+        ],
+        "stats.speed.percentage": [
+          "str"
+        ],
+        "stats.speed.value": [
+          "str"
+        ],
+        "stats.strength": [
+          "dict"
+        ],
+        "stats.strength.percentage": [
+          "str"
+        ],
+        "stats.strength.value": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 163.54,
+        "median_ms": 163.54,
+        "p95_ms": 163.54,
+        "max_ms": 163.54
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/index.php?action=setUserDM",
+      "body_operation": "",
+      "entries": [
+        3769,
+        3771
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [
+        "darkModeEnabled"
+      ],
+      "response_field_types": {
+        "msg": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 551.87,
+        "median_ms": 918.6,
+        "p95_ms": 1285.33,
+        "max_ms": 1285.33
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/item.php",
+      "body_operation": "step=getNotAllItemsListWithoutGroups",
+      "entries": [
+        6843,
+        6851
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [
+        "queue",
+        "start",
+        "step"
+      ],
+      "response_field_types": {
+        "count": [
+          "int"
+        ],
+        "html": [
+          "str"
+        ],
+        "queue": [
+          "str"
+        ],
+        "start": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 157.14,
+        "median_ms": 157.79,
+        "p95_ms": 158.45,
+        "max_ms": 158.45
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/joblist.php",
+      "body_operation": "step=interviewJoblist",
+      "entries": [
+        4546,
+        4557,
+        4562,
+        4567,
+        4572,
+        4577,
+        4583
+      ],
+      "status_counts": {
+        "200": 7
+      },
+      "request_fields": [
+        "job",
+        "p",
+        "q",
+        "rv",
+        "step"
+      ],
+      "response_field_types": {},
+      "response_json_types": {},
+      "bodies_present": 7,
+      "timing": {
+        "n": 7,
+        "min_ms": 167.74,
+        "median_ms": 173.32,
+        "p95_ms": 299.48,
+        "max_ms": 299.48
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/joblist.php",
+      "body_operation": "step=mainJoblist",
+      "entries": [
+        4525
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "step"
+      ],
+      "response_field_types": {},
+      "response_json_types": {},
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 525.23,
+        "median_ms": 525.23,
+        "p95_ms": 525.23,
+        "max_ms": 525.23
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/missionChecker.php",
+      "body_operation": "",
+      "entries": [
+        122,
+        256,
+        388,
+        649,
+        659,
+        805,
+        924,
+        1072,
+        1211,
+        1220,
+        1393,
+        1677,
+        1950,
+        2108,
+        2264,
+        2406,
+        2553,
+        2714,
+        2908,
+        3064,
+        3073,
+        3187,
+        3362,
+        3531,
+        3718,
+        3901,
+        4130,
+        4264,
+        4398,
+        4523,
+        4722,
+        4734,
+        4978,
+        4988,
+        5128,
+        5272,
+        5280,
+        5417,
+        5560,
+        5569,
+        5700,
+        5844,
+        5852,
+        5982,
+        6122,
+        6131,
+        6239,
+        6501,
+        6670,
+        6841,
+        7000,
+        7010,
+        7122,
+        7276
+      ],
+      "status_counts": {
+        "200": 54
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "elID": [
+          "str"
+        ],
+        "task": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 54
+      },
+      "bodies_present": 54,
+      "timing": {
+        "n": 54,
+        "min_ms": 156.92,
+        "median_ms": 199.16,
+        "p95_ms": 567.4,
+        "max_ms": 3284.39
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/onlinestatus.php",
+      "body_operation": "",
+      "entries": [
+        135,
+        1519,
+        1520,
+        1532,
+        1534,
+        1536,
+        1537,
+        1538,
+        1540,
+        1542,
+        1543,
+        1544,
+        1547,
+        1549,
+        1551,
+        1552,
+        1553,
+        1555,
+        1558,
+        2578,
+        2586,
+        2752,
+        2923,
+        2924,
+        3405,
+        3576,
+        3744,
+        3758,
+        3933,
+        3934,
+        3947,
+        3977,
+        3979,
+        4140,
+        4141,
+        4282,
+        4283,
+        4545,
+        4552,
+        4578,
+        6314,
+        6368,
+        6375,
+        6377,
+        6379,
+        6380,
+        6381,
+        6383,
+        6385,
+        6386,
+        6390,
+        6514,
+        6517,
+        6518,
+        6519,
+        6521,
+        6522,
+        6524,
+        6525,
+        6527,
+        6528,
+        6529,
+        6530,
+        6533,
+        6534,
+        6535,
+        6536,
+        6538,
+        6539,
+        6541,
+        6545,
+        6859,
+        6860,
+        7137,
+        7138,
+        7139,
+        7140,
+        7142,
+        7143,
+        7145,
+        7146,
+        7148,
+        7149,
+        7150,
+        7151,
+        7154,
+        7155,
+        7156,
+        7157,
+        7159,
+        7160,
+        7163,
+        7164,
+        7290,
+        7291,
+        7292,
+        7293,
+        7295,
+        7296,
+        7298,
+        7299,
+        7301,
+        7302,
+        7303,
+        7304,
+        7307,
+        7308,
+        7309,
+        7310,
+        7312,
+        7313,
+        7315,
+        7316,
+        7318,
+        7319,
+        7320,
+        7321,
+        7324,
+        7325,
+        7326,
+        7327,
+        7329,
+        7332,
+        7333,
+        7335,
+        7338,
+        7340,
+        7341,
+        7342,
+        7346,
+        7348,
+        7349,
+        7350,
+        7351,
+        7353,
+        7355,
+        7356,
+        7357,
+        7359,
+        7360,
+        7361,
+        7363,
+        7365
+      ],
+      "status_counts": {
+        "200": 142,
+        "0": 1
+      },
+      "request_fields": [],
+      "response_field_types": {},
+      "response_json_types": {},
+      "bodies_present": 0,
+      "timing": {
+        "n": 142,
+        "min_ms": 140.56,
+        "median_ms": 150.3,
+        "p95_ms": 271.12,
+        "max_ms": 601.98
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php",
+      "body_operation": "sid=chatFactionMembers",
+      "entries": [
+        3756
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "sid"
+      ],
+      "response_field_types": {
+        "message": [
+          "str"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 229.24,
+        "median_ms": 229.24,
+        "p95_ms": 229.24,
+        "max_ms": 229.24
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?mode=json&sid=attackData",
+      "body_operation": "",
+      "entries": [
+        2552
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "user2ID"
+      ],
+      "response_field_types": {
+        "DB": [
+          "dict"
+        ],
+        "DB.additionalInfo": [
+          "dict"
+        ],
+        "DB.additionalInfo.defender": [
+          "dict"
+        ],
+        "DB.attackStatus": [
+          "str"
+        ],
+        "DB.attackerAmmo": [
+          "list"
+        ],
+        "DB.attackerAmmoStatus": [
+          "dict"
+        ],
+        "DB.attackerAmmoStatus.{numeric-key}": [
+          "NoneType"
+        ],
+        "DB.attackerItems": [
+          "dict"
+        ],
+        "DB.attackerItems.{numeric-key}": [
+          "dict"
+        ],
+        "DB.attackerUser": [
+          "dict"
+        ],
+        "DB.attackerUser.chain": [
+          "int"
+        ],
+        "DB.attackerUser.chainEnd": [
+          "int"
+        ],
+        "DB.attackerUser.corp": [
+          "int"
+        ],
+        "DB.attackerUser.factionID": [
+          "int"
+        ],
+        "DB.attackerUser.featurebits": [
+          "int"
+        ],
+        "DB.attackerUser.gender": [
+          "str"
+        ],
+        "DB.attackerUser.lastAction": [
+          "int"
+        ],
+        "DB.attackerUser.level": [
+          "int"
+        ],
+        "DB.attackerUser.life": [
+          "int"
+        ],
+        "DB.attackerUser.maxlife": [
+          "int"
+        ],
+        "DB.attackerUser.playername": [
+          "str"
+        ],
+        "DB.attackerUser.statsModifiers": [
+          "dict"
+        ],
+        "DB.attackerUser.status": [
+          "str"
+        ],
+        "DB.attackerUser.userID": [
+          "int"
+        ],
+        "DB.currentClips": [
+          "list"
+        ],
+        "DB.currentTemporaryEffects": [
+          "list"
+        ],
+        "DB.defenderItems": [
+          "dict"
+        ],
+        "DB.defenderItems.{numeric-key}": [
+          "list"
+        ],
+        "DB.defenderUser": [
+          "dict"
+        ],
+        "DB.defenderUser.corp": [
+          "int"
+        ],
+        "DB.defenderUser.factionID": [
+          "int"
+        ],
+        "DB.defenderUser.gender": [
+          "str"
+        ],
+        "DB.defenderUser.level": [
+          "int"
+        ],
+        "DB.defenderUser.life": [
+          "int"
+        ],
+        "DB.defenderUser.maxlife": [
+          "int"
+        ],
+        "DB.defenderUser.playername": [
+          "str"
+        ],
+        "DB.defenderUser.status": [
+          "str"
+        ],
+        "DB.defenderUser.userID": [
+          "int"
+        ],
+        "DB.enablePoll": [
+          "bool"
+        ],
+        "DB.isHQ": [
+          "bool"
+        ],
+        "DB.joinBoxColor": [
+          "NoneType"
+        ],
+        "DB.loadtime": [
+          "list"
+        ],
+        "DB.pollDelay": [
+          "int"
+        ],
+        "DB.queueCapacity": [
+          "int"
+        ],
+        "DB.queueTicket": [
+          "NoneType"
+        ],
+        "DB.startButtonTitle": [
+          "str"
+        ],
+        "DB.usersLife": [
+          "dict"
+        ],
+        "DB.usersLife.attacker": [
+          "dict"
+        ],
+        "DB.usersLife.defender": [
+          "dict"
+        ],
+        "DB.viewStyle": [
+          "str"
+        ],
+        "viewStyle": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 256.96,
+        "median_ms": 256.96,
+        "p95_ms": 256.96,
+        "max_ms": 256.96
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?mode=json&sid=attackData",
+      "body_operation": "step=poll",
+      "entries": [
+        2569,
+        2571,
+        2572,
+        2573,
+        2575,
+        2576,
+        2577,
+        2579,
+        2580,
+        2581,
+        2582,
+        2583,
+        2584,
+        2585,
+        2587,
+        2588,
+        2589,
+        2591
+      ],
+      "status_counts": {
+        "200": 18
+      },
+      "request_fields": [
+        "step",
+        "user2ID"
+      ],
+      "response_field_types": {
+        "DB": [
+          "dict"
+        ],
+        "DB.additionalInfo": [
+          "dict"
+        ],
+        "DB.additionalInfo.defender": [
+          "dict"
+        ],
+        "DB.attackStatus": [
+          "str"
+        ],
+        "DB.attackerAmmo": [
+          "list"
+        ],
+        "DB.attackerAmmoStatus": [
+          "dict"
+        ],
+        "DB.attackerAmmoStatus.{numeric-key}": [
+          "NoneType"
+        ],
+        "DB.attackerItems": [
+          "dict"
+        ],
+        "DB.attackerItems.{numeric-key}": [
+          "dict"
+        ],
+        "DB.attackerUser": [
+          "dict"
+        ],
+        "DB.attackerUser.chain": [
+          "int"
+        ],
+        "DB.attackerUser.chainEnd": [
+          "int"
+        ],
+        "DB.attackerUser.corp": [
+          "int"
+        ],
+        "DB.attackerUser.factionID": [
+          "int"
+        ],
+        "DB.attackerUser.featurebits": [
+          "int"
+        ],
+        "DB.attackerUser.gender": [
+          "str"
+        ],
+        "DB.attackerUser.lastAction": [
+          "int"
+        ],
+        "DB.attackerUser.level": [
+          "int"
+        ],
+        "DB.attackerUser.life": [
+          "int"
+        ],
+        "DB.attackerUser.maxlife": [
+          "int"
+        ],
+        "DB.attackerUser.playername": [
+          "str"
+        ],
+        "DB.attackerUser.statsModifiers": [
+          "dict"
+        ],
+        "DB.attackerUser.status": [
+          "str"
+        ],
+        "DB.attackerUser.userID": [
+          "int"
+        ],
+        "DB.currentClips": [
+          "list"
+        ],
+        "DB.currentTemporaryEffects": [
+          "list"
+        ],
+        "DB.defenderItems": [
+          "dict"
+        ],
+        "DB.defenderItems.{numeric-key}": [
+          "list"
+        ],
+        "DB.defenderUser": [
+          "dict"
+        ],
+        "DB.defenderUser.corp": [
+          "int"
+        ],
+        "DB.defenderUser.factionID": [
+          "int"
+        ],
+        "DB.defenderUser.gender": [
+          "str"
+        ],
+        "DB.defenderUser.level": [
+          "int"
+        ],
+        "DB.defenderUser.life": [
+          "int"
+        ],
+        "DB.defenderUser.maxlife": [
+          "int"
+        ],
+        "DB.defenderUser.playername": [
+          "str"
+        ],
+        "DB.defenderUser.status": [
+          "str"
+        ],
+        "DB.defenderUser.userID": [
+          "int"
+        ],
+        "DB.enablePoll": [
+          "bool"
+        ],
+        "DB.isHQ": [
+          "bool"
+        ],
+        "DB.joinBoxColor": [
+          "NoneType"
+        ],
+        "DB.loadtime": [
+          "list"
+        ],
+        "DB.pollDelay": [
+          "int"
+        ],
+        "DB.queueCapacity": [
+          "int"
+        ],
+        "DB.queueTicket": [
+          "NoneType"
+        ],
+        "DB.startButtonTitle": [
+          "str"
+        ],
+        "DB.usersLife": [
+          "dict"
+        ],
+        "DB.usersLife.attacker": [
+          "dict"
+        ],
+        "DB.usersLife.defender": [
+          "dict"
+        ],
+        "DB.viewStyle": [
+          "str"
+        ],
+        "viewStyle": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 18
+      },
+      "bodies_present": 18,
+      "timing": {
+        "n": 18,
+        "min_ms": 188.17,
+        "median_ms": 200.38,
+        "p95_ms": 343.47,
+        "max_ms": 343.47
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=UserApiData",
+      "body_operation": "",
+      "entries": [
+        115,
+        252,
+        384,
+        796,
+        1357,
+        1666,
+        1837,
+        2402,
+        2707,
+        2893,
+        3057,
+        3524,
+        3701,
+        3747,
+        3893,
+        4116,
+        4257,
+        4390,
+        4715,
+        5268,
+        6493,
+        6662,
+        6992,
+        7268,
+        7373,
+        7391,
+        7396,
+        7401
+      ],
+      "status_counts": {
+        "200": 28
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "companyID": [
+          "NoneType"
+        ],
+        "currentarea": [
+          "int"
+        ],
+        "donator": [
+          "bool"
+        ],
+        "eliminationChannelID": [
+          "NoneType"
+        ],
+        "factionID": [
+          "NoneType"
+        ],
+        "hospitalstamp": [
+          "int"
+        ],
+        "jailstamp": [
+          "int"
+        ],
+        "level": [
+          "int"
+        ],
+        "pokerID": [
+          "NoneType"
+        ],
+        "status": [
+          "str"
+        ],
+        "traveltime": [
+          "int"
+        ],
+        "useractivity": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 28
+      },
+      "bodies_present": 28,
+      "timing": {
+        "n": 28,
+        "min_ms": 154.32,
+        "median_ms": 226.46,
+        "p95_ms": 3035.31,
+        "max_ms": 3350.52
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=bhc&step=send",
+      "body_operation": "",
+      "entries": [
+        650,
+        806,
+        925,
+        1394,
+        1531,
+        1678,
+        1951,
+        2109,
+        2265,
+        2715,
+        2909,
+        3065,
+        3188,
+        3363,
+        3532,
+        3972,
+        4131,
+        4399,
+        4524,
+        4723,
+        4979,
+        5129,
+        5418,
+        5701,
+        5983,
+        6240,
+        6502,
+        6842,
+        7001,
+        7123
+      ],
+      "status_counts": {
+        "200": 30
+      },
+      "request_fields": [
+        "pool",
+        "tdata"
+      ],
+      "response_field_types": {},
+      "response_json_types": {},
+      "bodies_present": 0,
+      "timing": {
+        "n": 30,
+        "min_ms": 150.66,
+        "median_ms": 196.76,
+        "p95_ms": 758.63,
+        "max_ms": 3282.98
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=competitionData&step=headerTimers",
+      "body_operation": "",
+      "entries": [
+        2113
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "currentDate": [
+          "int"
+        ],
+        "expiresAt": [
+          "int"
+        ],
+        "fetchElimination": [
+          "bool"
+        ],
+        "text": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 501.61,
+        "median_ms": 501.61,
+        "p95_ms": 501.61,
+        "max_ms": 501.61
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=competitionData&step=main",
+      "body_operation": "",
+      "entries": [
+        2107
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "activeTeams": [
+          "list"
+        ],
+        "activeTeams[].captainsInfo": [
+          "list"
+        ],
+        "activeTeams[].color": [
+          "str"
+        ],
+        "activeTeams[].eliminated": [
+          "bool"
+        ],
+        "activeTeams[].icon": [
+          "str"
+        ],
+        "activeTeams[].lives": [
+          "int"
+        ],
+        "activeTeams[].losses": [
+          "int"
+        ],
+        "activeTeams[].name": [
+          "str"
+        ],
+        "activeTeams[].participants": [
+          "int"
+        ],
+        "activeTeams[].position": [
+          "int"
+        ],
+        "activeTeams[].score": [
+          "int"
+        ],
+        "activeTeams[].teamID": [
+          "int"
+        ],
+        "activeTeams[].teamKey": [
+          "str"
+        ],
+        "activeTeams[].wins": [
+          "int"
+        ],
+        "availableBlocks": [
+          "list"
+        ],
+        "availableLinks": [
+          "list"
+        ],
+        "competitionData": [
+          "dict"
+        ],
+        "competitionData.banner": [
+          "str"
+        ],
+        "competitionData.calendarPhases": [
+          "list"
+        ],
+        "competitionData.className": [
+          "str"
+        ],
+        "competitionData.description": [
+          "str"
+        ],
+        "competitionData.icon": [
+          "str"
+        ],
+        "competitionData.phases": [
+          "list"
+        ],
+        "competitionData.slug": [
+          "str"
+        ],
+        "competitionData.title": [
+          "str"
+        ],
+        "currentDate": [
+          "int"
+        ],
+        "currentPhase": [
+          "str"
+        ],
+        "isNewUser": [
+          "bool"
+        ],
+        "userAttacksChecks": [
+          "dict"
+        ],
+        "userAttacksChecks.attacksRemaining": [
+          "int"
+        ],
+        "userAttacksChecks.isSelectingTeamAllowed": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 205.91,
+        "median_ms": 205.91,
+        "p95_ms": 205.91,
+        "max_ms": 205.91
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=crimesData&step=hub",
+      "body_operation": "",
+      "entries": [
+        1675,
+        1954
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "DB": [
+          "dict"
+        ],
+        "DB.allowedCrimesTypes": [
+          "list"
+        ],
+        "DB.apiKey": [
+          "str"
+        ],
+        "DB.crimesTypes": [
+          "list"
+        ],
+        "DB.hideTestPanel": [
+          "bool"
+        ],
+        "DB.time": [
+          "int"
+        ],
+        "DB.user": [
+          "dict"
+        ],
+        "DB.user.gender": [
+          "str"
+        ],
+        "DB.user.isAdmin": [
+          "bool"
+        ],
+        "DB.user.isUnderAttack": [
+          "bool"
+        ],
+        "DB.user.money": [
+          "int"
+        ],
+        "DB.user.nerve": [
+          "int"
+        ],
+        "DB.user.playername": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 219.67,
+        "median_ms": 250.58,
+        "p95_ms": 281.5,
+        "max_ms": 281.5
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=factionsPotentialList&step=init",
+      "body_operation": "",
+      "entries": [
+        3186
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "factions": [
+          "list"
+        ],
+        "factions[].amountOfMembers": [
+          "int"
+        ],
+        "factions[].application": [
+          "dict"
+        ],
+        "factions[].id": [
+          "int"
+        ],
+        "factions[].maxAmountOfMembers": [
+          "int"
+        ],
+        "factions[].profileImageUrl": [
+          "str"
+        ],
+        "factions[].respect": [
+          "int"
+        ],
+        "factions[].tag": [
+          "dict"
+        ],
+        "factions[].title": [
+          "str"
+        ],
+        "message": [
+          "dict"
+        ],
+        "message.text": [
+          "str"
+        ],
+        "message.type": [
+          "str"
+        ],
+        "newFaction": [
+          "dict"
+        ],
+        "newFaction.cost": [
+          "int"
+        ],
+        "settings": [
+          "dict"
+        ],
+        "settings.showImages": [
+          "bool"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 266.54,
+        "median_ms": 266.54,
+        "p95_ms": 266.54,
+        "max_ms": 266.54
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=factionsProfile",
+      "body_operation": "",
+      "entries": [
+        3367
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "currentUser": [
+          "dict"
+        ],
+        "currentUser.settings": [
+          "dict"
+        ],
+        "currentUser.settings.showImages": [
+          "bool"
+        ],
+        "faction": [
+          "dict"
+        ],
+        "faction.capacity": [
+          "int"
+        ],
+        "faction.description": [
+          "str"
+        ],
+        "faction.id": [
+          "int"
+        ],
+        "faction.rank": [
+          "str"
+        ],
+        "faction.size": [
+          "int"
+        ],
+        "faction.tag": [
+          "str"
+        ],
+        "faction.tagImageUrl": [
+          "str"
+        ],
+        "infoPanel": [
+          "dict"
+        ],
+        "infoPanel.application": [
+          "dict"
+        ],
+        "infoPanel.application.applicationAllowed": [
+          "bool"
+        ],
+        "infoPanel.application.applicationLimitReached": [
+          "bool"
+        ],
+        "infoPanel.application.data": [
+          "list"
+        ],
+        "infoPanel.bestChain": [
+          "str"
+        ],
+        "infoPanel.coLeader": [
+          "NoneType"
+        ],
+        "infoPanel.factionName": [
+          "str"
+        ],
+        "infoPanel.inFaction": [
+          "bool"
+        ],
+        "infoPanel.isAnother": [
+          "bool"
+        ],
+        "infoPanel.isLeader": [
+          "bool"
+        ],
+        "infoPanel.isTraveling": [
+          "bool"
+        ],
+        "infoPanel.leader": [
+          "dict"
+        ],
+        "infoPanel.leader.playerName": [
+          "str"
+        ],
+        "infoPanel.leader.userID": [
+          "int"
+        ],
+        "infoPanel.pacts": [
+          "list"
+        ],
+        "infoPanel.profileImageLink": [
+          "str"
+        ],
+        "infoPanel.respect": [
+          "str"
+        ],
+        "infoPanel.territoriesCount": [
+          "int"
+        ],
+        "members": [
+          "list"
+        ],
+        "members[].days": [
+          "int"
+        ],
+        "members[].honorID": [
+          "int"
+        ],
+        "members[].honorStyle": [
+          "str"
+        ],
+        "members[].icons": [
+          "str"
+        ],
+        "members[].level": [
+          "int"
+        ],
+        "members[].onlineStatus": [
+          "dict"
+        ],
+        "members[].permissionLevelImportance": [
+          "int"
+        ],
+        "members[].playername": [
+          "str"
+        ],
+        "members[].position": [
+          "str"
+        ],
+        "members[].status": [
+          "dict"
+        ],
+        "members[].userID": [
+          "int"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 587.34,
+        "median_ms": 587.34,
+        "p95_ms": 587.34,
+        "max_ms": 587.34
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=factionsRankedTier",
+      "body_operation": "",
+      "entries": [
+        3375
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "factionId"
+      ],
+      "response_field_types": {
+        "rankedTier": [
+          "dict"
+        ],
+        "rankedTier.diamondRating": [
+          "NoneType"
+        ],
+        "rankedTier.divisions": [
+          "list"
+        ],
+        "rankedTier.rank": [
+          "str"
+        ],
+        "rankedTier.title": [
+          "str"
+        ],
+        "rankedTier.wins": [
+          "int"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 179.41,
+        "median_ms": 179.41,
+        "p95_ms": 179.41,
+        "max_ms": 179.41
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=galleryUserImages",
+      "body_operation": "",
+      "entries": [
+        132
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "startFrom",
+        "userID"
+      ],
+      "response_field_types": {
+        "images": [
+          "list"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 157.74,
+        "median_ms": 157.74,
+        "p95_ms": 157.74,
+        "max_ms": 157.74
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=galleryUserImages",
+      "body_operation": "method=init",
+      "entries": [
+        125
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "method",
+        "userID"
+      ],
+      "response_field_types": {
+        "images": [
+          "list"
+        ],
+        "images[].assignable": [
+          "bool"
+        ],
+        "images[].cropRequired": [
+          "bool"
+        ],
+        "images[].deletable": [
+          "bool"
+        ],
+        "images[].description": [
+          "str"
+        ],
+        "images[].desktop": [
+          "str"
+        ],
+        "images[].id": [
+          "int"
+        ],
+        "images[].imageType": [
+          "str"
+        ],
+        "images[].mobile": [
+          "str"
+        ],
+        "images[].original": [
+          "str"
+        ],
+        "images[].tablet": [
+          "str"
+        ],
+        "images[].updatable": [
+          "bool"
+        ],
+        "pageHeader": [
+          "dict"
+        ],
+        "pageHeader.links": [
+          "dict"
+        ],
+        "pageHeader.links.default": [
+          "dict"
+        ],
+        "pageHeader.titles": [
+          "dict"
+        ],
+        "pageHeader.titles.default": [
+          "dict"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 328.82,
+        "median_ms": 328.82,
+        "p95_ms": 328.82,
+        "max_ms": 328.82
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=iMarket&step=getListing",
+      "body_operation": "",
+      "entries": [
+        6324
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "armouryID",
+        "itemID",
+        "limit",
+        "offset"
+      ],
+      "response_field_types": {
+        "list": [
+          "list"
+        ],
+        "list[].anonymous": [
+          "bool"
+        ],
+        "list[].available": [
+          "int"
+        ],
+        "list[].faction": [
+          "dict"
+        ],
+        "list[].listingID": [
+          "int"
+        ],
+        "list[].price": [
+          "int"
+        ],
+        "list[].relatedItemID": [
+          "int"
+        ],
+        "list[].status": [
+          "str"
+        ],
+        "list[].user": [
+          "dict"
+        ],
+        "loaded": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 163.23,
+        "median_ms": 163.23,
+        "p95_ms": 163.23,
+        "max_ms": 163.23
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=iMarket&step=getMarketInitialData",
+      "body_operation": "",
+      "entries": [
+        390,
+        6244
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "categoryGroups": [
+          "list"
+        ],
+        "categoryGroups[].categories": [
+          "list"
+        ],
+        "categoryGroups[].name": [
+          "str"
+        ],
+        "categoryGroups[].shortName": [
+          "str"
+        ],
+        "itemsPerListing": [
+          "int"
+        ],
+        "showHonors": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 155.69,
+        "median_ms": 216.96,
+        "p95_ms": 278.23,
+        "max_ms": 278.23
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=iMarket&step=getShopList",
+      "body_operation": "",
+      "entries": [
+        391,
+        493,
+        6249
+      ],
+      "status_counts": {
+        "200": 3
+      },
+      "request_fields": [
+        "bonuses",
+        "limit",
+        "offset",
+        "rarity",
+        "sortField",
+        "sortOrder",
+        "type"
+      ],
+      "response_field_types": {
+        "availableBonuses": [
+          "list"
+        ],
+        "availableBonuses[].ID": [
+          "int"
+        ],
+        "availableBonuses[].description": [
+          "str"
+        ],
+        "availableBonuses[].icon": [
+          "str"
+        ],
+        "availableBonuses[].name": [
+          "str"
+        ],
+        "bonusesStatus": [
+          "dict"
+        ],
+        "bonusesStatus.any": [
+          "bool"
+        ],
+        "bonusesStatus.double": [
+          "bool"
+        ],
+        "bonusesStatus.orange": [
+          "bool"
+        ],
+        "bonusesStatus.red": [
+          "bool"
+        ],
+        "bonusesStatus.yellow": [
+          "bool"
+        ],
+        "filtersStatistic": [
+          "dict"
+        ],
+        "filtersStatistic.accuracy": [
+          "list"
+        ],
+        "filtersStatistic.damage": [
+          "list"
+        ],
+        "filtersStatistic.price": [
+          "list"
+        ],
+        "items": [
+          "list"
+        ],
+        "itemsFilter": [
+          "list"
+        ],
+        "itemsFilter[].itemID": [
+          "int"
+        ],
+        "itemsFilter[].name": [
+          "str"
+        ],
+        "itemsFilter[].type": [
+          "str"
+        ],
+        "items[].accuracy": [
+          "float",
+          "int"
+        ],
+        "items[].armor": [
+          "int"
+        ],
+        "items[].armouryID": [
+          "int"
+        ],
+        "items[].averageprice": [
+          "int"
+        ],
+        "items[].bonuses": [
+          "list"
+        ],
+        "items[].damage": [
+          "float",
+          "int"
+        ],
+        "items[].glow": [
+          "str"
+        ],
+        "items[].glowClass": [
+          "str"
+        ],
+        "items[].itemID": [
+          "int"
+        ],
+        "items[].itemName": [
+          "str"
+        ],
+        "items[].listingID": [
+          "int"
+        ],
+        "items[].minPrice": [
+          "int"
+        ],
+        "items[].set": [
+          "NoneType"
+        ],
+        "items[].total": [
+          "int"
+        ],
+        "items[].type": [
+          "str"
+        ],
+        "items[].upgrades": [
+          "list"
+        ],
+        "listingsTotal": [
+          "int"
+        ],
+        "loaded": [
+          "bool"
+        ],
+        "piecesTotal": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 3
+      },
+      "bodies_present": 3,
+      "timing": {
+        "n": 3,
+        "min_ms": 272.4,
+        "median_ms": 543.42,
+        "p95_ms": 1592.92,
+        "max_ms": 1592.92
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=iMarket&step=searchItem",
+      "body_operation": "",
+      "entries": [
+        6322
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "itemID",
+        "limit",
+        "offset"
+      ],
+      "response_field_types": {
+        "items": [
+          "list"
+        ],
+        "items[].accuracy": [
+          "int"
+        ],
+        "items[].armor": [
+          "int"
+        ],
+        "items[].armouryID": [
+          "int"
+        ],
+        "items[].averageprice": [
+          "int"
+        ],
+        "items[].bonuses": [
+          "list"
+        ],
+        "items[].damage": [
+          "int"
+        ],
+        "items[].glow": [
+          "str"
+        ],
+        "items[].glowClass": [
+          "str"
+        ],
+        "items[].itemID": [
+          "int"
+        ],
+        "items[].itemName": [
+          "str"
+        ],
+        "items[].minPrice": [
+          "int"
+        ],
+        "items[].total": [
+          "int"
+        ],
+        "items[].type": [
+          "str"
+        ],
+        "items[].upgrades": [
+          "list"
+        ],
+        "listingsTotal": [
+          "int"
+        ],
+        "loaded": [
+          "bool"
+        ],
+        "searchOption": [
+          "dict"
+        ],
+        "searchOption.itemName": [
+          "str"
+        ],
+        "searchOption.itemType": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 167.11,
+        "median_ms": 167.11,
+        "p95_ms": 167.11,
+        "max_ms": 167.11
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=inventory",
+      "body_operation": "",
+      "entries": [
+        6305,
+        6369
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [
+        "armouryID",
+        "itemID"
+      ],
+      "response_field_types": {
+        "armoryID": [
+          "bool"
+        ],
+        "extras": [
+          "list"
+        ],
+        "initRotatingAngle": [
+          "float",
+          "int"
+        ],
+        "itemCirculation": [
+          "str"
+        ],
+        "itemCost": [
+          "str"
+        ],
+        "itemID": [
+          "int"
+        ],
+        "itemInfo": [
+          "str"
+        ],
+        "itemInfoContent": [
+          "str"
+        ],
+        "itemName": [
+          "str"
+        ],
+        "itemRareIcon": [
+          "str"
+        ],
+        "itemRareTitle": [
+          "str"
+        ],
+        "itemSell": [
+          "str"
+        ],
+        "itemType": [
+          "str"
+        ],
+        "itemValue": [
+          "str"
+        ],
+        "modelHdri": [
+          "str"
+        ],
+        "modelPosition": [
+          "dict"
+        ],
+        "modelPosition.x": [
+          "float"
+        ],
+        "modelPosition.y": [
+          "float",
+          "int"
+        ],
+        "modelPosition.z": [
+          "int"
+        ],
+        "modelled": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 159.11,
+        "median_ms": 165.82,
+        "p95_ms": 172.54,
+        "max_ms": 172.54
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=itemsLoadouts&step=getEquippedItems",
+      "body_operation": "",
+      "entries": [
+        6829
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "currentHairs": [
+          "list"
+        ],
+        "currentItems": [
+          "list"
+        ],
+        "currentLoadouts": [
+          "list"
+        ],
+        "currentSettings": [
+          "dict"
+        ],
+        "currentSettings.currentSetID": [
+          "int"
+        ],
+        "currentSettings.setsMax": [
+          "int"
+        ],
+        "gender": [
+          "str"
+        ],
+        "isHQ": [
+          "bool"
+        ],
+        "userID": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 255.94,
+        "median_ms": 255.94,
+        "p95_ms": 255.94,
+        "max_ms": 255.94
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=itemsModsData&step=getAllUpgrades",
+      "body_operation": "",
+      "entries": [
+        6828
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "[].ID": [
+          "int"
+        ],
+        "[].TimeCreated": [
+          "str"
+        ],
+        "[].category": [
+          "int"
+        ],
+        "[].compatibility": [
+          "str"
+        ],
+        "[].compatibilityTitles": [
+          "list"
+        ],
+        "[].cost": [
+          "int"
+        ],
+        "[].cssClass": [
+          "str"
+        ],
+        "[].description": [
+          "str"
+        ],
+        "[].dualFit": [
+          "int"
+        ],
+        "[].effectDesc": [
+          "str"
+        ],
+        "[].effectDescMig": [
+          "str"
+        ],
+        "[].icon": [
+          "str"
+        ],
+        "[].image": [
+          "str"
+        ],
+        "[].linkedItemID": [
+          "int"
+        ],
+        "[].stage": [
+          "int"
+        ],
+        "[].subType": [
+          "int"
+        ],
+        "[].subTypeMig": [
+          "int"
+        ],
+        "[].title": [
+          "str"
+        ],
+        "[].type": [
+          "int"
+        ],
+        "[].userID": [
+          "int"
+        ],
+        "[].value": [
+          "int"
+        ],
+        "[].value2": [
+          "int"
+        ],
+        "[].valueMig": [
+          "int"
+        ],
+        "[].valueType": [
+          "int"
+        ],
+        "[].valueTypeMig": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "list": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 156.92,
+        "median_ms": 156.92,
+        "p95_ms": 156.92,
+        "max_ms": 156.92
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades",
+      "body_operation": "",
+      "entries": [
+        6849,
+        6854
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [],
+      "response_field_types": {},
+      "response_json_types": {
+        "list": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 162.45,
+        "median_ms": 192.26,
+        "p95_ms": 222.08,
+        "max_ms": 222.08
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/page.php?sid=newsTickers",
+      "body_operation": "",
+      "entries": [
+        121,
+        648,
+        1539,
+        1550,
+        1672,
+        2713,
+        3063,
+        3530,
+        3896,
+        4122,
+        4263,
+        4397,
+        4721,
+        5842,
+        6382,
+        6500,
+        6523,
+        6532,
+        6540,
+        6999,
+        7144,
+        7153,
+        7275,
+        7297,
+        7306,
+        7314,
+        7323,
+        7334,
+        7345,
+        7354,
+        7362,
+        7369,
+        7370,
+        7371,
+        7375,
+        7378,
+        7381,
+        7383
+      ],
+      "status_counts": {
+        "200": 35,
+        "0": 3
+      },
+      "request_fields": [
+        "newsTickerActiveHeadline",
+        "newsTickerActiveHeadlineType"
+      ],
+      "response_field_types": {
+        "headlines": [
+          "list"
+        ],
+        "headlines[].ID": [
+          "int"
+        ],
+        "headlines[].countdown": [
+          "NoneType",
+          "int"
+        ],
+        "headlines[].endTime": [
+          "int"
+        ],
+        "headlines[].headline": [
+          "str"
+        ],
+        "headlines[].isGlobal": [
+          "bool"
+        ],
+        "headlines[].link": [
+          "str"
+        ],
+        "headlines[].type": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 35
+      },
+      "bodies_present": 35,
+      "timing": {
+        "n": 35,
+        "min_ms": 158.58,
+        "median_ms": 196.08,
+        "p95_ms": 3002.47,
+        "max_ms": 3308.24
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=paymentsProducts&step=AmazonPayButtons",
+      "body_operation": "",
+      "entries": [
+        1408
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "buttons": [
+          "dict"
+        ],
+        "buttons.custom": [
+          "dict"
+        ],
+        "buttons.custom.buttonColor": [
+          "str"
+        ],
+        "buttons.custom.cache": [
+          "str"
+        ],
+        "buttons.custom.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.custom.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.custom.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.custom.merchantId": [
+          "str"
+        ],
+        "buttons.custom.placement": [
+          "str"
+        ],
+        "buttons.custom.price": [
+          "dict"
+        ],
+        "buttons.custom.productType": [
+          "str"
+        ],
+        "buttons.custom.publicKeyId": [
+          "str"
+        ],
+        "buttons.custom.test": [
+          "str"
+        ],
+        "buttons.pack-1": [
+          "dict"
+        ],
+        "buttons.pack-1.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-1.cache": [
+          "str"
+        ],
+        "buttons.pack-1.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-1.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-1.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-1.merchantId": [
+          "str"
+        ],
+        "buttons.pack-1.placement": [
+          "str"
+        ],
+        "buttons.pack-1.price": [
+          "dict"
+        ],
+        "buttons.pack-1.productType": [
+          "str"
+        ],
+        "buttons.pack-1.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-1.test": [
+          "str"
+        ],
+        "buttons.pack-10": [
+          "dict"
+        ],
+        "buttons.pack-10.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-10.cache": [
+          "str"
+        ],
+        "buttons.pack-10.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-10.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-10.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-10.merchantId": [
+          "str"
+        ],
+        "buttons.pack-10.placement": [
+          "str"
+        ],
+        "buttons.pack-10.price": [
+          "dict"
+        ],
+        "buttons.pack-10.productType": [
+          "str"
+        ],
+        "buttons.pack-10.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-10.test": [
+          "str"
+        ],
+        "buttons.pack-15": [
+          "dict"
+        ],
+        "buttons.pack-15.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-15.cache": [
+          "str"
+        ],
+        "buttons.pack-15.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-15.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-15.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-15.merchantId": [
+          "str"
+        ],
+        "buttons.pack-15.placement": [
+          "str"
+        ],
+        "buttons.pack-15.price": [
+          "dict"
+        ],
+        "buttons.pack-15.productType": [
+          "str"
+        ],
+        "buttons.pack-15.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-15.test": [
+          "str"
+        ],
+        "buttons.pack-2": [
+          "dict"
+        ],
+        "buttons.pack-2.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-2.cache": [
+          "str"
+        ],
+        "buttons.pack-2.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-2.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-2.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-2.merchantId": [
+          "str"
+        ],
+        "buttons.pack-2.placement": [
+          "str"
+        ],
+        "buttons.pack-2.price": [
+          "dict"
+        ],
+        "buttons.pack-2.productType": [
+          "str"
+        ],
+        "buttons.pack-2.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-2.test": [
+          "str"
+        ],
+        "buttons.pack-20": [
+          "dict"
+        ],
+        "buttons.pack-20.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-20.cache": [
+          "str"
+        ],
+        "buttons.pack-20.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-20.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-20.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-20.merchantId": [
+          "str"
+        ],
+        "buttons.pack-20.placement": [
+          "str"
+        ],
+        "buttons.pack-20.price": [
+          "dict"
+        ],
+        "buttons.pack-20.productType": [
+          "str"
+        ],
+        "buttons.pack-20.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-20.test": [
+          "str"
+        ],
+        "buttons.pack-25": [
+          "dict"
+        ],
+        "buttons.pack-25.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-25.cache": [
+          "str"
+        ],
+        "buttons.pack-25.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-25.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-25.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-25.merchantId": [
+          "str"
+        ],
+        "buttons.pack-25.placement": [
+          "str"
+        ],
+        "buttons.pack-25.price": [
+          "dict"
+        ],
+        "buttons.pack-25.productType": [
+          "str"
+        ],
+        "buttons.pack-25.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-25.test": [
+          "str"
+        ],
+        "buttons.pack-3": [
+          "dict"
+        ],
+        "buttons.pack-3.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-3.cache": [
+          "str"
+        ],
+        "buttons.pack-3.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-3.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-3.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-3.merchantId": [
+          "str"
+        ],
+        "buttons.pack-3.placement": [
+          "str"
+        ],
+        "buttons.pack-3.price": [
+          "dict"
+        ],
+        "buttons.pack-3.productType": [
+          "str"
+        ],
+        "buttons.pack-3.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-3.test": [
+          "str"
+        ],
+        "buttons.pack-5": [
+          "dict"
+        ],
+        "buttons.pack-5.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-5.cache": [
+          "str"
+        ],
+        "buttons.pack-5.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-5.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-5.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-5.merchantId": [
+          "str"
+        ],
+        "buttons.pack-5.placement": [
+          "str"
+        ],
+        "buttons.pack-5.price": [
+          "dict"
+        ],
+        "buttons.pack-5.productType": [
+          "str"
+        ],
+        "buttons.pack-5.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-5.test": [
+          "str"
+        ],
+        "buttons.pack-51": [
+          "dict"
+        ],
+        "buttons.pack-51.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-51.cache": [
+          "str"
+        ],
+        "buttons.pack-51.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-51.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-51.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-51.merchantId": [
+          "str"
+        ],
+        "buttons.pack-51.placement": [
+          "str"
+        ],
+        "buttons.pack-51.price": [
+          "dict"
+        ],
+        "buttons.pack-51.productType": [
+          "str"
+        ],
+        "buttons.pack-51.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-51.test": [
+          "str"
+        ],
+        "buttons.pack-annual": [
+          "dict"
+        ],
+        "buttons.pack-annual.buttonColor": [
+          "str"
+        ],
+        "buttons.pack-annual.cache": [
+          "str"
+        ],
+        "buttons.pack-annual.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.pack-annual.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.pack-annual.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.pack-annual.merchantId": [
+          "str"
+        ],
+        "buttons.pack-annual.placement": [
+          "str"
+        ],
+        "buttons.pack-annual.price": [
+          "dict"
+        ],
+        "buttons.pack-annual.productType": [
+          "str"
+        ],
+        "buttons.pack-annual.publicKeyId": [
+          "str"
+        ],
+        "buttons.pack-annual.test": [
+          "str"
+        ],
+        "buttons.{redacted-key}": [
+          "dict"
+        ],
+        "buttons.{redacted-key}.buttonColor": [
+          "str"
+        ],
+        "buttons.{redacted-key}.cache": [
+          "str"
+        ],
+        "buttons.{redacted-key}.checkoutLanguage": [
+          "str"
+        ],
+        "buttons.{redacted-key}.createCheckoutSessionConfig": [
+          "dict"
+        ],
+        "buttons.{redacted-key}.ledgerCurrency": [
+          "str"
+        ],
+        "buttons.{redacted-key}.merchantId": [
+          "str"
+        ],
+        "buttons.{redacted-key}.placement": [
+          "str"
+        ],
+        "buttons.{redacted-key}.price": [
+          "dict"
+        ],
+        "buttons.{redacted-key}.productType": [
+          "str"
+        ],
+        "buttons.{redacted-key}.publicKeyId": [
+          "str"
+        ],
+        "buttons.{redacted-key}.test": [
+          "str"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 534.77,
+        "median_ms": 534.77,
+        "p95_ms": 534.77,
+        "max_ms": 534.77
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=paymentsProducts&step=all",
+      "body_operation": "",
+      "entries": [
+        1410
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "[].ID": [
+          "int"
+        ],
+        "[].active": [
+          "bool"
+        ],
+        "[].created": [
+          "int"
+        ],
+        "[].currency": [
+          "str"
+        ],
+        "[].google_reference_id": [
+          "str"
+        ],
+        "[].interval": [
+          "str"
+        ],
+        "[].interval_count": [
+          "int"
+        ],
+        "[].is_recurring": [
+          "bool"
+        ],
+        "[].localCurrency": [
+          "str"
+        ],
+        "[].localPrice": [
+          "float"
+        ],
+        "[].name": [
+          "str"
+        ],
+        "[].packs": [
+          "int"
+        ],
+        "[].paypal_reference_id": [
+          "str"
+        ],
+        "[].points": [
+          "int"
+        ],
+        "[].price": [
+          "float"
+        ],
+        "[].sku": [
+          "str"
+        ],
+        "[].stripe_reference_id": [
+          "NoneType"
+        ],
+        "[].updated": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "list": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 533.7,
+        "median_ms": 533.7,
+        "p95_ms": 533.7,
+        "max_ms": 533.7
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=pointsBuildingData",
+      "body_operation": "",
+      "entries": [
+        923,
+        7126,
+        7279
+      ],
+      "status_counts": {
+        "200": 3
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "backdropPrice": [
+          "int"
+        ],
+        "backdrops": [
+          "list"
+        ],
+        "backdropsMaxAmount": [
+          "int"
+        ],
+        "hairstylePrice": [
+          "int"
+        ],
+        "hairstyles": [
+          "list"
+        ],
+        "hairstylesMaxAmount": [
+          "int"
+        ],
+        "hasFaction": [
+          "bool"
+        ],
+        "honors": [
+          "list"
+        ],
+        "honors[].honorID": [
+          "int"
+        ],
+        "honors[].levelRequirement": [
+          "int"
+        ],
+        "honors[].name": [
+          "str"
+        ],
+        "honors[].owned": [
+          "bool"
+        ],
+        "honors[].price": [
+          "int"
+        ],
+        "honors[].unlockedAt": [
+          "NoneType"
+        ],
+        "list": [
+          "list"
+        ],
+        "list[].availableAfter": [
+          "NoneType"
+        ],
+        "list[].energyMax": [
+          "int"
+        ],
+        "list[].key": [
+          "str"
+        ],
+        "list[].name": [
+          "str"
+        ],
+        "list[].owned": [
+          "bool"
+        ],
+        "list[].price": [
+          "int"
+        ],
+        "pageHeader": [
+          "dict"
+        ],
+        "pageHeader.titles": [
+          "dict"
+        ],
+        "pageHeader.titles.default": [
+          "dict"
+        ],
+        "pageHeader.tutorials": [
+          "dict"
+        ],
+        "pageHeader.tutorials.default": [
+          "dict"
+        ],
+        "pageHeader.tutorials.showTutorial": [
+          "bool"
+        ],
+        "points": [
+          "int"
+        ],
+        "specialRefills": [
+          "int"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 3
+      },
+      "bodies_present": 3,
+      "timing": {
+        "n": 3,
+        "min_ms": 162.77,
+        "median_ms": 196.64,
+        "p95_ms": 284.52,
+        "max_ms": 284.52
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/page.php?sid=preferencesSidebarSettingsInit",
+      "body_operation": "",
+      "entries": [
+        3930
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "availableLinks": [
+          "list"
+        ],
+        "availableLinks[].category": [
+          "str"
+        ],
+        "availableLinks[].icon": [
+          "str"
+        ],
+        "availableLinks[].id": [
+          "int"
+        ],
+        "availableLinks[].isMobileOnly": [
+          "bool"
+        ],
+        "availableLinks[].title": [
+          "str"
+        ],
+        "availableLinks[].tooltip": [
+          "NoneType"
+        ],
+        "currentLinks": [
+          "list"
+        ],
+        "currentLinks[].category": [
+          "str"
+        ],
+        "currentLinks[].icon": [
+          "str"
+        ],
+        "currentLinks[].id": [
+          "int"
+        ],
+        "currentLinks[].isMobileOnly": [
+          "bool"
+        ],
+        "currentLinks[].title": [
+          "str"
+        ],
+        "currentLinks[].tooltip": [
+          "str"
+        ],
+        "success": [
+          "bool"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 184.37,
+        "median_ms": 184.37,
+        "p95_ms": 184.37,
+        "max_ms": 184.37
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/pmarket.php?step=chartData",
+      "body_operation": "",
+      "entries": [
+        807,
+        1073
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [],
+      "response_field_types": {},
+      "response_json_types": {
+        "list": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 262.08,
+        "median_ms": 283.31,
+        "p95_ms": 304.55,
+        "max_ms": 304.55
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/preferences.php",
+      "body_operation": "",
+      "entries": [
+        3899,
+        3940,
+        3941,
+        3945
+      ],
+      "status_counts": {
+        "200": 4
+      },
+      "request_fields": [
+        "ajax",
+        "disableicons",
+        "iconorder",
+        "refreshicons",
+        "rfc"
+      ],
+      "response_field_types": {
+        "color": [
+          "str"
+        ],
+        "cost": [
+          "int"
+        ],
+        "defaultCost": [
+          "int"
+        ],
+        "goodResponse": [
+          "bool"
+        ],
+        "msg": [
+          "str"
+        ],
+        "nameStatus": [
+          "dict"
+        ],
+        "nameStatus.message": [
+          "str"
+        ],
+        "nameStatus.type": [
+          "str"
+        ],
+        "nextChangeAvailable": [
+          "int"
+        ],
+        "user": [
+          "dict"
+        ],
+        "user.canChangeName": [
+          "bool"
+        ],
+        "user.playername": [
+          "str"
+        ],
+        "user.points": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 4
+      },
+      "bodies_present": 4,
+      "timing": {
+        "n": 4,
+        "min_ms": 163.31,
+        "median_ms": 238.79,
+        "p95_ms": 556.13,
+        "max_ms": 556.13
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/profiles.php?step=getProfileData",
+      "body_operation": "",
+      "entries": [
+        260,
+        2407,
+        2718,
+        3535,
+        3586,
+        3717,
+        3745,
+        3752,
+        4265,
+        4285,
+        6669
+      ],
+      "status_counts": {
+        "200": 11
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "basicInformation": [
+          "dict"
+        ],
+        "basicInformation.awards": [
+          "dict"
+        ],
+        "basicInformation.awards.amount": [
+          "int"
+        ],
+        "basicInformation.enemies": [
+          "dict"
+        ],
+        "basicInformation.enemies.amount": [
+          "int"
+        ],
+        "basicInformation.faction": [
+          "dict"
+        ],
+        "basicInformation.faction.link": [
+          "str"
+        ],
+        "basicInformation.faction.name": [
+          "str"
+        ],
+        "basicInformation.faction.position": [
+          "str"
+        ],
+        "basicInformation.forumPosts": [
+          "dict"
+        ],
+        "basicInformation.forumPosts.amount": [
+          "str"
+        ],
+        "basicInformation.forumPosts.karma": [
+          "str"
+        ],
+        "basicInformation.forumPosts.link": [
+          "str"
+        ],
+        "basicInformation.friends": [
+          "dict"
+        ],
+        "basicInformation.friends.amount": [
+          "int"
+        ],
+        "basicInformation.icons": [
+          "list"
+        ],
+        "basicInformation.job": [
+          "dict"
+        ],
+        "basicInformation.job.companyName": [
+          "str"
+        ],
+        "basicInformation.job.link": [
+          "str"
+        ],
+        "basicInformation.job.name": [
+          "str"
+        ],
+        "basicInformation.lastAction": [
+          "dict"
+        ],
+        "basicInformation.lastAction.seconds": [
+          "int"
+        ],
+        "basicInformation.life": [
+          "dict"
+        ],
+        "basicInformation.life.state": [
+          "int"
+        ],
+        "basicInformation.life.total": [
+          "int"
+        ],
+        "basicInformation.maritalStatus": [
+          "dict"
+        ],
+        "basicInformation.maritalStatus.days": [
+          "NoneType",
+          "int"
+        ],
+        "basicInformation.maritalStatus.link": [
+          "NoneType",
+          "str"
+        ],
+        "basicInformation.maritalStatus.spouseName": [
+          "NoneType",
+          "str"
+        ],
+        "basicInformation.maritalStatus.status": [
+          "str"
+        ],
+        "basicInformation.name": [
+          "dict"
+        ],
+        "basicInformation.name.playerName": [
+          "str"
+        ],
+        "basicInformation.name.userID": [
+          "int"
+        ],
+        "basicInformation.permission": [
+          "int"
+        ],
+        "basicInformation.property": [
+          "dict"
+        ],
+        "basicInformation.property.link": [
+          "str"
+        ],
+        "basicInformation.property.name": [
+          "str"
+        ],
+        "basicInformation.property.spouseProperty": [
+          "bool"
+        ],
+        "basicInformation.status": [
+          "str"
+        ],
+        "competitionStatus": [
+          "dict"
+        ],
+        "competitionStatus.class": [
+          "str"
+        ],
+        "competitionStatus.message": [
+          "str"
+        ],
+        "currentUser": [
+          "dict"
+        ],
+        "currentUser.canSendAnonymously": [
+          "bool"
+        ],
+        "currentUser.loggedIn": [
+          "bool"
+        ],
+        "currentUser.money": [
+          "int"
+        ],
+        "currentUser.playerName": [
+          "str"
+        ],
+        "currentUser.userID": [
+          "int"
+        ],
+        "interactions": [
+          "list"
+        ],
+        "medalInformation": [
+          "dict"
+        ],
+        "medalInformation.medals": [
+          "list"
+        ],
+        "personalInformation": [
+          "dict"
+        ],
+        "personalInformation.visible": [
+          "bool"
+        ],
+        "profileButtons": [
+          "dict"
+        ],
+        "profileButtons.buttons": [
+          "dict"
+        ],
+        "profileButtons.buttons.addToEnemyList": [
+          "dict"
+        ],
+        "profileButtons.buttons.addToFriendList": [
+          "dict"
+        ],
+        "profileButtons.buttons.addToTargetList": [
+          "dict"
+        ],
+        "profileButtons.buttons.attack": [
+          "dict"
+        ],
+        "profileButtons.buttons.bail": [
+          "dict"
+        ],
+        "profileButtons.buttons.bust": [
+          "dict"
+        ],
+        "profileButtons.buttons.initiateChat": [
+          "dict"
+        ],
+        "profileButtons.buttons.initiateTrade": [
+          "dict"
+        ],
+        "profileButtons.buttons.personalStats": [
+          "dict"
+        ],
+        "profileButtons.buttons.placeBounty": [
+          "dict"
+        ],
+        "profileButtons.buttons.report": [
+          "dict"
+        ],
+        "profileButtons.buttons.revive": [
+          "dict"
+        ],
+        "profileButtons.buttons.sendMessage": [
+          "dict"
+        ],
+        "profileButtons.buttons.sendMoney": [
+          "dict"
+        ],
+        "profileButtons.buttons.viewBazaar": [
+          "dict"
+        ],
+        "profileButtons.buttons.viewDisplayCabinet": [
+          "dict"
+        ],
+        "profileSignature": [
+          "NoneType",
+          "dict"
+        ],
+        "profileSignature.text": [
+          "str"
+        ],
+        "staffTools": [
+          "NoneType"
+        ],
+        "user": [
+          "dict"
+        ],
+        "user.displayPersonalDetails": [
+          "bool"
+        ],
+        "user.isEnemy": [
+          "bool"
+        ],
+        "user.isFriend": [
+          "bool"
+        ],
+        "user.isTarget": [
+          "bool"
+        ],
+        "user.playerName": [
+          "str"
+        ],
+        "user.role": [
+          "str"
+        ],
+        "user.sendMoneyWarning": [
+          "NoneType",
+          "str"
+        ],
+        "user.signUp": [
+          "int"
+        ],
+        "user.userID": [
+          "int"
+        ],
+        "userBadges": [
+          "list"
+        ],
+        "userBadges[].appearance": [
+          "dict"
+        ],
+        "userBadges[].folderType": [
+          "str"
+        ],
+        "userBadges[].folderVariation": [
+          "str"
+        ],
+        "userBadges[].hidden": [
+          "int"
+        ],
+        "userBadges[].id": [
+          "int"
+        ],
+        "userBadges[].position": [
+          "int"
+        ],
+        "userBadges[].text": [
+          "str"
+        ],
+        "userBadges[].type": [
+          "str"
+        ],
+        "userInformation": [
+          "dict"
+        ],
+        "userInformation.age": [
+          "str"
+        ],
+        "userInformation.honorID": [
+          "int"
+        ],
+        "userInformation.honorStyle": [
+          "str"
+        ],
+        "userInformation.honorTitle": [
+          "str"
+        ],
+        "userInformation.image": [
+          "dict"
+        ],
+        "userInformation.image.amountOfUploadedImages": [
+          "int"
+        ],
+        "userInformation.image.profileImage": [
+          "str"
+        ],
+        "userInformation.image.uploadedImagesLink": [
+          "str"
+        ],
+        "userInformation.level": [
+          "int"
+        ],
+        "userInformation.name": [
+          "str"
+        ],
+        "userInformation.previousAliases": [
+          "list"
+        ],
+        "userInformation.rank": [
+          "dict"
+        ],
+        "userInformation.rank.userRank": [
+          "str"
+        ],
+        "userInformation.rank.userTitle": [
+          "str"
+        ],
+        "userStatus": [
+          "dict"
+        ],
+        "userStatus.status": [
+          "dict"
+        ],
+        "userStatus.status.description": [
+          "str"
+        ],
+        "userStatus.status.timestamp": [
+          "int"
+        ],
+        "userStatus.status.type": [
+          "str"
+        ],
+        "userStatus.trait": [
+          "dict"
+        ],
+        "userStatus.trait.loot": [
+          "NoneType"
+        ]
+      },
+      "response_json_types": {
+        "dict": 11
+      },
+      "bodies_present": 11,
+      "timing": {
+        "n": 11,
+        "min_ms": 211.35,
+        "median_ms": 313.72,
+        "p95_ms": 3242.77,
+        "max_ms": 3242.77
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/sidebarAjaxAction.php",
+      "body_operation": "",
+      "entries": [
+        1515,
+        3944,
+        3946
+      ],
+      "status_counts": {
+        "200": 3
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "bars": [
+          "dict"
+        ],
+        "bars.energy": [
+          "dict"
+        ],
+        "bars.energy.amount": [
+          "int"
+        ],
+        "bars.energy.max": [
+          "int"
+        ],
+        "bars.energy.name": [
+          "str"
+        ],
+        "bars.energy.oneBarTime": [
+          "int"
+        ],
+        "bars.energy.statstamp": [
+          "int"
+        ],
+        "bars.energy.step": [
+          "int"
+        ],
+        "bars.energy.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.energy.timestampToUpdate": [
+          "int"
+        ],
+        "bars.happy": [
+          "dict"
+        ],
+        "bars.happy.amount": [
+          "int"
+        ],
+        "bars.happy.max": [
+          "int"
+        ],
+        "bars.happy.name": [
+          "str"
+        ],
+        "bars.happy.oneBarTime": [
+          "int"
+        ],
+        "bars.happy.statstamp": [
+          "int"
+        ],
+        "bars.happy.step": [
+          "int"
+        ],
+        "bars.happy.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.happy.timestampToUpdate": [
+          "int"
+        ],
+        "bars.life": [
+          "dict"
+        ],
+        "bars.life.amount": [
+          "int"
+        ],
+        "bars.life.max": [
+          "int"
+        ],
+        "bars.life.name": [
+          "str"
+        ],
+        "bars.life.oneBarTime": [
+          "int"
+        ],
+        "bars.life.statstamp": [
+          "int"
+        ],
+        "bars.life.step": [
+          "int"
+        ],
+        "bars.life.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.life.timestampToUpdate": [
+          "int"
+        ],
+        "bars.nerve": [
+          "dict"
+        ],
+        "bars.nerve.amount": [
+          "int"
+        ],
+        "bars.nerve.max": [
+          "int"
+        ],
+        "bars.nerve.name": [
+          "str"
+        ],
+        "bars.nerve.oneBarTime": [
+          "int"
+        ],
+        "bars.nerve.statstamp": [
+          "int"
+        ],
+        "bars.nerve.step": [
+          "int"
+        ],
+        "bars.nerve.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.nerve.timestampToUpdate": [
+          "int"
+        ],
+        "energy": [
+          "dict"
+        ],
+        "energy.amount": [
+          "int"
+        ],
+        "energy.max": [
+          "int"
+        ],
+        "energy.name": [
+          "str"
+        ],
+        "energy.oneBarTime": [
+          "int"
+        ],
+        "energy.statstamp": [
+          "int"
+        ],
+        "energy.step": [
+          "int"
+        ],
+        "energy.timeToUpdate": [
+          "NoneType"
+        ],
+        "energy.timestampToUpdate": [
+          "int"
+        ],
+        "happy": [
+          "dict"
+        ],
+        "happy.amount": [
+          "int"
+        ],
+        "happy.max": [
+          "int"
+        ],
+        "happy.name": [
+          "str"
+        ],
+        "happy.oneBarTime": [
+          "int"
+        ],
+        "happy.statstamp": [
+          "int"
+        ],
+        "happy.step": [
+          "int"
+        ],
+        "happy.timeToUpdate": [
+          "NoneType"
+        ],
+        "happy.timestampToUpdate": [
+          "int"
+        ],
+        "life": [
+          "dict"
+        ],
+        "life.amount": [
+          "int"
+        ],
+        "life.max": [
+          "int"
+        ],
+        "life.name": [
+          "str"
+        ],
+        "life.oneBarTime": [
+          "int"
+        ],
+        "life.statstamp": [
+          "int"
+        ],
+        "life.step": [
+          "int"
+        ],
+        "life.timeToUpdate": [
+          "NoneType"
+        ],
+        "life.timestampToUpdate": [
+          "int"
+        ],
+        "nerve": [
+          "dict"
+        ],
+        "nerve.amount": [
+          "int"
+        ],
+        "nerve.max": [
+          "int"
+        ],
+        "nerve.name": [
+          "str"
+        ],
+        "nerve.oneBarTime": [
+          "int"
+        ],
+        "nerve.statstamp": [
+          "int"
+        ],
+        "nerve.step": [
+          "int"
+        ],
+        "nerve.timeToUpdate": [
+          "NoneType"
+        ],
+        "nerve.timestampToUpdate": [
+          "int"
+        ],
+        "statusIcons": [
+          "dict"
+        ],
+        "statusIcons.icons": [
+          "dict"
+        ],
+        "statusIcons.icons.maleGender": [
+          "dict"
+        ],
+        "statusIcons.icons.newbie": [
+          "dict"
+        ],
+        "statusIcons.onTop": [
+          "bool"
+        ],
+        "statusIcons.size": [
+          "str"
+        ],
+        "statusIcons.visible": [
+          "bool"
+        ],
+        "user": [
+          "dict"
+        ],
+        "user.donator": [
+          "bool"
+        ],
+        "user.level": [
+          "dict"
+        ],
+        "user.level.link": [
+          "str"
+        ],
+        "user.level.upgradePossibility": [
+          "bool"
+        ],
+        "user.level.value": [
+          "int"
+        ],
+        "user.lifeModifier": [
+          "float"
+        ],
+        "user.link": [
+          "str"
+        ],
+        "user.merits": [
+          "list"
+        ],
+        "user.money": [
+          "dict"
+        ],
+        "user.money.value": [
+          "str"
+        ],
+        "user.name": [
+          "str"
+        ],
+        "user.points": [
+          "dict"
+        ],
+        "user.points.link": [
+          "str"
+        ],
+        "user.points.value": [
+          "int"
+        ],
+        "user.refills": [
+          "dict"
+        ],
+        "user.refills.link": [
+          "str"
+        ],
+        "user.refills.value": [
+          "int"
+        ],
+        "user.status": [
+          "NoneType"
+        ],
+        "user.userID": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 3
+      },
+      "bodies_present": 3,
+      "timing": {
+        "n": 3,
+        "min_ms": 165.49,
+        "median_ms": 166.67,
+        "p95_ms": 178.34,
+        "max_ms": 178.34
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/sidebarAjaxAction.php",
+      "body_operation": "",
+      "entries": [
+        123,
+        137,
+        258,
+        389,
+        492,
+        651,
+        808,
+        926,
+        1074,
+        1212,
+        1409,
+        1517,
+        1546,
+        1557,
+        1679,
+        1952,
+        2110,
+        2267,
+        2408,
+        2716,
+        2914,
+        3066,
+        3189,
+        3364,
+        3533,
+        3585,
+        3719,
+        3753,
+        3902,
+        4132,
+        4266,
+        4400,
+        4526,
+        4725,
+        4980,
+        5130,
+        5273,
+        5419,
+        5561,
+        5702,
+        5845,
+        5984,
+        6124,
+        6241,
+        6388,
+        6503,
+        6516,
+        6544,
+        6673,
+        6845,
+        7002,
+        7124,
+        7162,
+        7277,
+        7331,
+        7337,
+        7344,
+        7385,
+        7390,
+        7395,
+        7400
+      ],
+      "status_counts": {
+        "200": 61
+      },
+      "request_fields": [
+        "fullUrl"
+      ],
+      "response_field_types": {
+        "account": [
+          "dict"
+        ],
+        "account.awards": [
+          "dict"
+        ],
+        "account.awards.amount": [
+          "int"
+        ],
+        "account.awards.icon": [
+          "str"
+        ],
+        "account.awards.isMobileOnly": [
+          "bool"
+        ],
+        "account.awards.link": [
+          "str"
+        ],
+        "account.awards.linkOrder": [
+          "int"
+        ],
+        "account.awards.name": [
+          "str"
+        ],
+        "account.awards.status": [
+          "NoneType"
+        ],
+        "account.events": [
+          "dict"
+        ],
+        "account.events.amount": [
+          "int"
+        ],
+        "account.events.icon": [
+          "str"
+        ],
+        "account.events.isMobileOnly": [
+          "bool"
+        ],
+        "account.events.link": [
+          "str"
+        ],
+        "account.events.linkOrder": [
+          "int"
+        ],
+        "account.events.name": [
+          "str"
+        ],
+        "account.events.status": [
+          "NoneType"
+        ],
+        "account.messages": [
+          "dict"
+        ],
+        "account.messages.amount": [
+          "int"
+        ],
+        "account.messages.icon": [
+          "str"
+        ],
+        "account.messages.isMobileOnly": [
+          "bool"
+        ],
+        "account.messages.link": [
+          "str"
+        ],
+        "account.messages.linkOrder": [
+          "int"
+        ],
+        "account.messages.name": [
+          "str"
+        ],
+        "account.messages.status": [
+          "NoneType",
+          "str"
+        ],
+        "areas": [
+          "dict"
+        ],
+        "areas.awards": [
+          "dict"
+        ],
+        "areas.awards.amount": [
+          "int"
+        ],
+        "areas.awards.icon": [
+          "str"
+        ],
+        "areas.awards.isMobileOnly": [
+          "bool"
+        ],
+        "areas.awards.link": [
+          "str"
+        ],
+        "areas.awards.linkOrder": [
+          "int"
+        ],
+        "areas.awards.name": [
+          "str"
+        ],
+        "areas.awards.status": [
+          "NoneType"
+        ],
+        "areas.calendar": [
+          "dict"
+        ],
+        "areas.calendar.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.calendar.amount": [
+          "NoneType"
+        ],
+        "areas.calendar.icon": [
+          "str"
+        ],
+        "areas.calendar.isMobileOnly": [
+          "bool"
+        ],
+        "areas.calendar.link": [
+          "str"
+        ],
+        "areas.calendar.linkOrder": [
+          "int"
+        ],
+        "areas.calendar.name": [
+          "str"
+        ],
+        "areas.calendar.shortName": [
+          "str"
+        ],
+        "areas.calendar.status": [
+          "NoneType"
+        ],
+        "areas.calendar.styleStatus": [
+          "NoneType"
+        ],
+        "areas.casino": [
+          "dict"
+        ],
+        "areas.casino.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.casino.amount": [
+          "NoneType"
+        ],
+        "areas.casino.icon": [
+          "str"
+        ],
+        "areas.casino.isMobileOnly": [
+          "bool"
+        ],
+        "areas.casino.link": [
+          "str"
+        ],
+        "areas.casino.linkOrder": [
+          "int"
+        ],
+        "areas.casino.name": [
+          "str"
+        ],
+        "areas.casino.shortName": [
+          "NoneType"
+        ],
+        "areas.casino.status": [
+          "NoneType"
+        ],
+        "areas.casino.styleStatus": [
+          "NoneType"
+        ],
+        "areas.city": [
+          "dict"
+        ],
+        "areas.city.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.city.amount": [
+          "NoneType"
+        ],
+        "areas.city.icon": [
+          "str"
+        ],
+        "areas.city.isMobileOnly": [
+          "bool"
+        ],
+        "areas.city.link": [
+          "str"
+        ],
+        "areas.city.linkOrder": [
+          "int"
+        ],
+        "areas.city.name": [
+          "str"
+        ],
+        "areas.city.shortName": [
+          "NoneType"
+        ],
+        "areas.city.status": [
+          "NoneType"
+        ],
+        "areas.city.styleStatus": [
+          "NoneType"
+        ],
+        "areas.community_events": [
+          "dict"
+        ],
+        "areas.community_events.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.community_events.amount": [
+          "NoneType"
+        ],
+        "areas.community_events.icon": [
+          "str"
+        ],
+        "areas.community_events.isMobileOnly": [
+          "bool"
+        ],
+        "areas.community_events.link": [
+          "str"
+        ],
+        "areas.community_events.linkOrder": [
+          "int"
+        ],
+        "areas.community_events.name": [
+          "str"
+        ],
+        "areas.community_events.shortName": [
+          "str"
+        ],
+        "areas.community_events.status": [
+          "NoneType"
+        ],
+        "areas.community_events.styleStatus": [
+          "str"
+        ],
+        "areas.crimes": [
+          "dict"
+        ],
+        "areas.crimes.activeStatusUrlRegex": [
+          "str"
+        ],
+        "areas.crimes.amount": [
+          "NoneType"
+        ],
+        "areas.crimes.icon": [
+          "str"
+        ],
+        "areas.crimes.isMobileOnly": [
+          "bool"
+        ],
+        "areas.crimes.link": [
+          "str"
+        ],
+        "areas.crimes.linkOrder": [
+          "int"
+        ],
+        "areas.crimes.name": [
+          "str"
+        ],
+        "areas.crimes.shortName": [
+          "NoneType"
+        ],
+        "areas.crimes.status": [
+          "NoneType"
+        ],
+        "areas.crimes.styleStatus": [
+          "str"
+        ],
+        "areas.education": [
+          "dict"
+        ],
+        "areas.education.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.education.amount": [
+          "NoneType"
+        ],
+        "areas.education.icon": [
+          "str"
+        ],
+        "areas.education.isMobileOnly": [
+          "bool"
+        ],
+        "areas.education.link": [
+          "str"
+        ],
+        "areas.education.linkOrder": [
+          "int"
+        ],
+        "areas.education.name": [
+          "str"
+        ],
+        "areas.education.shortName": [
+          "str"
+        ],
+        "areas.education.status": [
+          "NoneType"
+        ],
+        "areas.education.styleStatus": [
+          "NoneType"
+        ],
+        "areas.elimination": [
+          "dict"
+        ],
+        "areas.elimination.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.elimination.amount": [
+          "NoneType"
+        ],
+        "areas.elimination.icon": [
+          "str"
+        ],
+        "areas.elimination.isMobileOnly": [
+          "bool"
+        ],
+        "areas.elimination.link": [
+          "str"
+        ],
+        "areas.elimination.linkOrder": [
+          "int"
+        ],
+        "areas.elimination.name": [
+          "str"
+        ],
+        "areas.elimination.shortName": [
+          "str"
+        ],
+        "areas.elimination.status": [
+          "NoneType"
+        ],
+        "areas.elimination.styleStatus": [
+          "str"
+        ],
+        "areas.enemies_list": [
+          "dict"
+        ],
+        "areas.enemies_list.elements": [
+          "NoneType"
+        ],
+        "areas.enemies_list.icon": [
+          "str"
+        ],
+        "areas.enemies_list.isMobileOnly": [
+          "bool"
+        ],
+        "areas.enemies_list.link": [
+          "str"
+        ],
+        "areas.enemies_list.linkOrder": [
+          "int"
+        ],
+        "areas.enemies_list.name": [
+          "str"
+        ],
+        "areas.enemies_list.status": [
+          "NoneType"
+        ],
+        "areas.events": [
+          "dict"
+        ],
+        "areas.events.amount": [
+          "int"
+        ],
+        "areas.events.icon": [
+          "str"
+        ],
+        "areas.events.isMobileOnly": [
+          "bool"
+        ],
+        "areas.events.link": [
+          "str"
+        ],
+        "areas.events.linkOrder": [
+          "int"
+        ],
+        "areas.events.name": [
+          "str"
+        ],
+        "areas.events.status": [
+          "NoneType"
+        ],
+        "areas.faction": [
+          "dict"
+        ],
+        "areas.faction.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.faction.amount": [
+          "NoneType"
+        ],
+        "areas.faction.icon": [
+          "str"
+        ],
+        "areas.faction.isMobileOnly": [
+          "bool"
+        ],
+        "areas.faction.link": [
+          "str"
+        ],
+        "areas.faction.linkOrder": [
+          "int"
+        ],
+        "areas.faction.name": [
+          "str"
+        ],
+        "areas.faction.shortName": [
+          "str"
+        ],
+        "areas.faction.status": [
+          "NoneType"
+        ],
+        "areas.faction.styleStatus": [
+          "NoneType"
+        ],
+        "areas.forums": [
+          "dict"
+        ],
+        "areas.forums.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.forums.amount": [
+          "NoneType"
+        ],
+        "areas.forums.icon": [
+          "str"
+        ],
+        "areas.forums.isMobileOnly": [
+          "bool"
+        ],
+        "areas.forums.link": [
+          "str"
+        ],
+        "areas.forums.linkOrder": [
+          "int"
+        ],
+        "areas.forums.name": [
+          "str"
+        ],
+        "areas.forums.shortName": [
+          "NoneType"
+        ],
+        "areas.forums.status": [
+          "NoneType"
+        ],
+        "areas.forums.styleStatus": [
+          "NoneType"
+        ],
+        "areas.friends_list": [
+          "dict"
+        ],
+        "areas.friends_list.elements": [
+          "NoneType"
+        ],
+        "areas.friends_list.icon": [
+          "str"
+        ],
+        "areas.friends_list.isMobileOnly": [
+          "bool"
+        ],
+        "areas.friends_list.link": [
+          "str"
+        ],
+        "areas.friends_list.linkOrder": [
+          "int"
+        ],
+        "areas.friends_list.name": [
+          "str"
+        ],
+        "areas.friends_list.status": [
+          "NoneType"
+        ],
+        "areas.gym": [
+          "dict"
+        ],
+        "areas.gym.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.gym.amount": [
+          "NoneType"
+        ],
+        "areas.gym.icon": [
+          "str"
+        ],
+        "areas.gym.isMobileOnly": [
+          "bool"
+        ],
+        "areas.gym.link": [
+          "str"
+        ],
+        "areas.gym.linkOrder": [
+          "int"
+        ],
+        "areas.gym.name": [
+          "str"
+        ],
+        "areas.gym.shortName": [
+          "NoneType"
+        ],
+        "areas.gym.status": [
+          "NoneType"
+        ],
+        "areas.gym.styleStatus": [
+          "NoneType",
+          "str"
+        ],
+        "areas.hall_of_fame": [
+          "dict"
+        ],
+        "areas.hall_of_fame.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.hall_of_fame.amount": [
+          "NoneType"
+        ],
+        "areas.hall_of_fame.icon": [
+          "str"
+        ],
+        "areas.hall_of_fame.isMobileOnly": [
+          "bool"
+        ],
+        "areas.hall_of_fame.link": [
+          "str"
+        ],
+        "areas.hall_of_fame.linkOrder": [
+          "int"
+        ],
+        "areas.hall_of_fame.name": [
+          "str"
+        ],
+        "areas.hall_of_fame.shortName": [
+          "str"
+        ],
+        "areas.hall_of_fame.status": [
+          "NoneType"
+        ],
+        "areas.hall_of_fame.styleStatus": [
+          "NoneType"
+        ],
+        "areas.home": [
+          "dict"
+        ],
+        "areas.home.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.home.amount": [
+          "NoneType"
+        ],
+        "areas.home.icon": [
+          "str"
+        ],
+        "areas.home.isMobileOnly": [
+          "bool"
+        ],
+        "areas.home.link": [
+          "str"
+        ],
+        "areas.home.linkOrder": [
+          "int"
+        ],
+        "areas.home.name": [
+          "str"
+        ],
+        "areas.home.shortName": [
+          "str"
+        ],
+        "areas.home.status": [
+          "NoneType"
+        ],
+        "areas.home.styleStatus": [
+          "NoneType"
+        ],
+        "areas.hospital": [
+          "dict"
+        ],
+        "areas.hospital.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.hospital.amount": [
+          "NoneType"
+        ],
+        "areas.hospital.icon": [
+          "str"
+        ],
+        "areas.hospital.isMobileOnly": [
+          "bool"
+        ],
+        "areas.hospital.link": [
+          "str"
+        ],
+        "areas.hospital.linkOrder": [
+          "int"
+        ],
+        "areas.hospital.name": [
+          "str"
+        ],
+        "areas.hospital.shortName": [
+          "NoneType"
+        ],
+        "areas.hospital.status": [
+          "NoneType"
+        ],
+        "areas.hospital.styleStatus": [
+          "NoneType"
+        ],
+        "areas.items": [
+          "dict"
+        ],
+        "areas.items.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.items.amount": [
+          "NoneType"
+        ],
+        "areas.items.icon": [
+          "str"
+        ],
+        "areas.items.isMobileOnly": [
+          "bool"
+        ],
+        "areas.items.link": [
+          "str"
+        ],
+        "areas.items.linkOrder": [
+          "int"
+        ],
+        "areas.items.name": [
+          "str"
+        ],
+        "areas.items.shortName": [
+          "NoneType"
+        ],
+        "areas.items.status": [
+          "NoneType"
+        ],
+        "areas.items.styleStatus": [
+          "NoneType"
+        ],
+        "areas.jail": [
+          "dict"
+        ],
+        "areas.jail.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.jail.amount": [
+          "NoneType"
+        ],
+        "areas.jail.icon": [
+          "str"
+        ],
+        "areas.jail.isMobileOnly": [
+          "bool"
+        ],
+        "areas.jail.link": [
+          "str"
+        ],
+        "areas.jail.linkOrder": [
+          "int"
+        ],
+        "areas.jail.name": [
+          "str"
+        ],
+        "areas.jail.shortName": [
+          "NoneType"
+        ],
+        "areas.jail.status": [
+          "NoneType"
+        ],
+        "areas.jail.styleStatus": [
+          "NoneType"
+        ],
+        "areas.job": [
+          "dict"
+        ],
+        "areas.job.activeStatusUrlRegex": [
+          "str"
+        ],
+        "areas.job.amount": [
+          "NoneType"
+        ],
+        "areas.job.icon": [
+          "str"
+        ],
+        "areas.job.isMobileOnly": [
+          "bool"
+        ],
+        "areas.job.link": [
+          "str"
+        ],
+        "areas.job.linkOrder": [
+          "int"
+        ],
+        "areas.job.name": [
+          "str"
+        ],
+        "areas.job.shortName": [
+          "str"
+        ],
+        "areas.job.status": [
+          "NoneType"
+        ],
+        "areas.job.styleStatus": [
+          "NoneType"
+        ],
+        "areas.messages": [
+          "dict"
+        ],
+        "areas.messages.amount": [
+          "int"
+        ],
+        "areas.messages.icon": [
+          "str"
+        ],
+        "areas.messages.isMobileOnly": [
+          "bool"
+        ],
+        "areas.messages.link": [
+          "str"
+        ],
+        "areas.messages.linkOrder": [
+          "int"
+        ],
+        "areas.messages.name": [
+          "str"
+        ],
+        "areas.messages.status": [
+          "NoneType",
+          "str"
+        ],
+        "areas.missions": [
+          "dict"
+        ],
+        "areas.missions.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.missions.amount": [
+          "NoneType"
+        ],
+        "areas.missions.icon": [
+          "str"
+        ],
+        "areas.missions.isMobileOnly": [
+          "bool"
+        ],
+        "areas.missions.link": [
+          "str"
+        ],
+        "areas.missions.linkOrder": [
+          "int"
+        ],
+        "areas.missions.name": [
+          "str"
+        ],
+        "areas.missions.shortName": [
+          "NoneType"
+        ],
+        "areas.missions.status": [
+          "NoneType"
+        ],
+        "areas.missions.styleStatus": [
+          "str"
+        ],
+        "areas.newspaper": [
+          "dict"
+        ],
+        "areas.newspaper.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.newspaper.amount": [
+          "NoneType"
+        ],
+        "areas.newspaper.icon": [
+          "str"
+        ],
+        "areas.newspaper.isMobileOnly": [
+          "bool"
+        ],
+        "areas.newspaper.link": [
+          "str"
+        ],
+        "areas.newspaper.linkOrder": [
+          "int"
+        ],
+        "areas.newspaper.name": [
+          "str"
+        ],
+        "areas.newspaper.shortName": [
+          "str"
+        ],
+        "areas.newspaper.status": [
+          "NoneType"
+        ],
+        "areas.newspaper.styleStatus": [
+          "str"
+        ],
+        "areas.properties": [
+          "dict"
+        ],
+        "areas.properties.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.properties.amount": [
+          "NoneType"
+        ],
+        "areas.properties.icon": [
+          "str"
+        ],
+        "areas.properties.isMobileOnly": [
+          "bool"
+        ],
+        "areas.properties.link": [
+          "str"
+        ],
+        "areas.properties.linkOrder": [
+          "int"
+        ],
+        "areas.properties.name": [
+          "str"
+        ],
+        "areas.properties.shortName": [
+          "str"
+        ],
+        "areas.properties.status": [
+          "NoneType"
+        ],
+        "areas.properties.styleStatus": [
+          "NoneType"
+        ],
+        "areas.recruit_citizens": [
+          "dict"
+        ],
+        "areas.recruit_citizens.activeStatusUrlRegex": [
+          "NoneType"
+        ],
+        "areas.recruit_citizens.amount": [
+          "NoneType"
+        ],
+        "areas.recruit_citizens.icon": [
+          "str"
+        ],
+        "areas.recruit_citizens.isMobileOnly": [
+          "bool"
+        ],
+        "areas.recruit_citizens.link": [
+          "str"
+        ],
+        "areas.recruit_citizens.linkOrder": [
+          "int"
+        ],
+        "areas.recruit_citizens.name": [
+          "str"
+        ],
+        "areas.recruit_citizens.shortName": [
+          "str"
+        ],
+        "areas.recruit_citizens.status": [
+          "NoneType"
+        ],
+        "areas.recruit_citizens.styleStatus": [
+          "NoneType"
+        ],
+        "areas.targets_list": [
+          "dict"
+        ],
+        "areas.targets_list.elements": [
+          "NoneType"
+        ],
+        "areas.targets_list.icon": [
+          "str"
+        ],
+        "areas.targets_list.isMobileOnly": [
+          "bool"
+        ],
+        "areas.targets_list.link": [
+          "str"
+        ],
+        "areas.targets_list.linkOrder": [
+          "int"
+        ],
+        "areas.targets_list.name": [
+          "str"
+        ],
+        "areas.targets_list.status": [
+          "NoneType"
+        ],
+        "bars": [
+          "dict"
+        ],
+        "bars.energy": [
+          "dict"
+        ],
+        "bars.energy.amount": [
+          "int"
+        ],
+        "bars.energy.max": [
+          "int"
+        ],
+        "bars.energy.name": [
+          "str"
+        ],
+        "bars.energy.oneBarTime": [
+          "int"
+        ],
+        "bars.energy.statstamp": [
+          "int"
+        ],
+        "bars.energy.step": [
+          "int"
+        ],
+        "bars.energy.timeToUpdate": [
+          "NoneType",
+          "int"
+        ],
+        "bars.energy.timestampToUpdate": [
+          "int"
+        ],
+        "bars.happy": [
+          "dict"
+        ],
+        "bars.happy.amount": [
+          "int"
+        ],
+        "bars.happy.max": [
+          "int"
+        ],
+        "bars.happy.name": [
+          "str"
+        ],
+        "bars.happy.oneBarTime": [
+          "int"
+        ],
+        "bars.happy.statstamp": [
+          "int"
+        ],
+        "bars.happy.step": [
+          "int"
+        ],
+        "bars.happy.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.happy.timestampToUpdate": [
+          "int"
+        ],
+        "bars.life": [
+          "dict"
+        ],
+        "bars.life.amount": [
+          "int"
+        ],
+        "bars.life.max": [
+          "int"
+        ],
+        "bars.life.name": [
+          "str"
+        ],
+        "bars.life.oneBarTime": [
+          "int"
+        ],
+        "bars.life.statstamp": [
+          "int"
+        ],
+        "bars.life.step": [
+          "int"
+        ],
+        "bars.life.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.life.timestampToUpdate": [
+          "int"
+        ],
+        "bars.nerve": [
+          "dict"
+        ],
+        "bars.nerve.amount": [
+          "int"
+        ],
+        "bars.nerve.max": [
+          "int"
+        ],
+        "bars.nerve.name": [
+          "str"
+        ],
+        "bars.nerve.oneBarTime": [
+          "int"
+        ],
+        "bars.nerve.statstamp": [
+          "int"
+        ],
+        "bars.nerve.step": [
+          "int"
+        ],
+        "bars.nerve.timeToUpdate": [
+          "NoneType"
+        ],
+        "bars.nerve.timestampToUpdate": [
+          "int"
+        ],
+        "footer": [
+          "dict"
+        ],
+        "footer.dateFormat": [
+          "str"
+        ],
+        "footer.dayTextualFormat": [
+          "str"
+        ],
+        "footer.dayTimeFormat": [
+          "str"
+        ],
+        "footer.serverName": [
+          "str"
+        ],
+        "lists": [
+          "dict"
+        ],
+        "lists.enemies_list": [
+          "dict"
+        ],
+        "lists.enemies_list.elements": [
+          "NoneType"
+        ],
+        "lists.enemies_list.icon": [
+          "str"
+        ],
+        "lists.enemies_list.isMobileOnly": [
+          "bool"
+        ],
+        "lists.enemies_list.link": [
+          "str"
+        ],
+        "lists.enemies_list.linkOrder": [
+          "int"
+        ],
+        "lists.enemies_list.name": [
+          "str"
+        ],
+        "lists.enemies_list.status": [
+          "NoneType"
+        ],
+        "lists.friends_list": [
+          "dict"
+        ],
+        "lists.friends_list.elements": [
+          "NoneType"
+        ],
+        "lists.friends_list.icon": [
+          "str"
+        ],
+        "lists.friends_list.isMobileOnly": [
+          "bool"
+        ],
+        "lists.friends_list.link": [
+          "str"
+        ],
+        "lists.friends_list.linkOrder": [
+          "int"
+        ],
+        "lists.friends_list.name": [
+          "str"
+        ],
+        "lists.friends_list.status": [
+          "NoneType"
+        ],
+        "lists.targets_list": [
+          "dict"
+        ],
+        "lists.targets_list.elements": [
+          "NoneType"
+        ],
+        "lists.targets_list.icon": [
+          "str"
+        ],
+        "lists.targets_list.isMobileOnly": [
+          "bool"
+        ],
+        "lists.targets_list.link": [
+          "str"
+        ],
+        "lists.targets_list.linkOrder": [
+          "int"
+        ],
+        "lists.targets_list.name": [
+          "str"
+        ],
+        "lists.targets_list.status": [
+          "NoneType"
+        ],
+        "listsLinksStatuses": [
+          "dict"
+        ],
+        "listsLinksStatuses.company": [
+          "bool"
+        ],
+        "listsLinksStatuses.enemies": [
+          "bool"
+        ],
+        "listsLinksStatuses.faction": [
+          "bool"
+        ],
+        "listsLinksStatuses.friends": [
+          "bool"
+        ],
+        "listsLinksStatuses.staff": [
+          "bool"
+        ],
+        "listsLinksStatuses.targets": [
+          "bool"
+        ],
+        "listsStatuses": [
+          "dict"
+        ],
+        "listsStatuses.areas": [
+          "bool"
+        ],
+        "listsStatuses.lists": [
+          "bool"
+        ],
+        "statusIcons": [
+          "dict"
+        ],
+        "statusIcons.icons": [
+          "dict"
+        ],
+        "statusIcons.icons.maleGender": [
+          "dict"
+        ],
+        "statusIcons.icons.newbie": [
+          "dict"
+        ],
+        "statusIcons.onTop": [
+          "bool"
+        ],
+        "statusIcons.size": [
+          "str"
+        ],
+        "statusIcons.visible": [
+          "bool"
+        ],
+        "user": [
+          "dict"
+        ],
+        "user.donator": [
+          "bool"
+        ],
+        "user.level": [
+          "dict"
+        ],
+        "user.level.link": [
+          "str"
+        ],
+        "user.level.upgradePossibility": [
+          "bool"
+        ],
+        "user.level.value": [
+          "int"
+        ],
+        "user.lifeModifier": [
+          "float"
+        ],
+        "user.link": [
+          "str"
+        ],
+        "user.merits": [
+          "list"
+        ],
+        "user.money": [
+          "dict"
+        ],
+        "user.money.value": [
+          "str"
+        ],
+        "user.name": [
+          "str"
+        ],
+        "user.points": [
+          "dict"
+        ],
+        "user.points.link": [
+          "str"
+        ],
+        "user.points.value": [
+          "int"
+        ],
+        "user.refills": [
+          "dict"
+        ],
+        "user.refills.link": [
+          "str"
+        ],
+        "user.refills.value": [
+          "int"
+        ],
+        "user.status": [
+          "NoneType"
+        ],
+        "user.userID": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 61
+      },
+      "bodies_present": 61,
+      "timing": {
+        "n": 61,
+        "min_ms": 166.45,
+        "median_ms": 247.29,
+        "p95_ms": 793.42,
+        "max_ms": 3262.0
+      }
+    },
+    {
+      "method": "GET",
+      "route": "www.torn.com/sidebarAjaxAction.php?action=servertime",
+      "body_operation": "",
+      "entries": [
+        109,
+        134,
+        136,
+        245,
+        378,
+        490,
+        491,
+        638,
+        789,
+        912,
+        1060,
+        1202,
+        1351,
+        1516,
+        1518,
+        1535,
+        1541,
+        1545,
+        1548,
+        1554,
+        1556,
+        1662,
+        1831,
+        1941,
+        2095,
+        2252,
+        2393,
+        2541,
+        2574,
+        2590,
+        2699,
+        2751,
+        2868,
+        2922,
+        3052,
+        3177,
+        3352,
+        3402,
+        3516,
+        3557,
+        3584,
+        3695,
+        3740,
+        3751,
+        3876,
+        3932,
+        3978,
+        4099,
+        4139,
+        4251,
+        4281,
+        4284,
+        4385,
+        4512,
+        4544,
+        4710,
+        4970,
+        5116,
+        5137,
+        5263,
+        5408,
+        5553,
+        5691,
+        5832,
+        5972,
+        6114,
+        6230,
+        6313,
+        6378,
+        6384,
+        6387,
+        6489,
+        6513,
+        6515,
+        6520,
+        6526,
+        6531,
+        6537,
+        6543,
+        6655,
+        6817,
+        6858,
+        6987,
+        7113,
+        7136,
+        7141,
+        7147,
+        7152,
+        7158,
+        7161,
+        7263,
+        7289,
+        7294,
+        7300,
+        7305,
+        7311,
+        7317,
+        7322,
+        7328,
+        7330,
+        7336,
+        7339,
+        7343,
+        7347,
+        7352,
+        7358,
+        7364,
+        7368,
+        7377,
+        7379,
+        7380,
+        7382,
+        7384,
+        7386,
+        7389,
+        7394,
+        7399
+      ],
+      "status_counts": {
+        "200": 115,
+        "0": 2
+      },
+      "request_fields": [],
+      "response_field_types": {
+        "time": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 115
+      },
+      "bodies_present": 115,
+      "timing": {
+        "n": 115,
+        "min_ms": 140.77,
+        "median_ms": 153.81,
+        "p95_ms": 978.43,
+        "max_ms": 3252.85
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/userlist.php",
+      "body_operation": "mode=json step=friendList",
+      "entries": [
+        3755
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "mode",
+        "start",
+        "step"
+      ],
+      "response_field_types": {
+        "list": [
+          "list"
+        ],
+        "mail3": [
+          "int"
+        ],
+        "maxfriends": [
+          "int"
+        ],
+        "nowtime": [
+          "int"
+        ],
+        "quantity": [
+          "int"
+        ],
+        "start": [
+          "int"
+        ],
+        "textnames": [
+          "int"
+        ],
+        "total": [
+          "int"
+        ]
+      },
+      "response_json_types": {
+        "dict": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 664.89,
+        "median_ms": 664.89,
+        "p95_ms": 664.89,
+        "max_ms": 664.89
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/userlist.php",
+      "body_operation": "step=recentlyMet",
+      "entries": [
+        3754
+      ],
+      "status_counts": {
+        "200": 1
+      },
+      "request_fields": [
+        "start",
+        "step"
+      ],
+      "response_field_types": {},
+      "response_json_types": {
+        "list": 1
+      },
+      "bodies_present": 1,
+      "timing": {
+        "n": 1,
+        "min_ms": 156.1,
+        "median_ms": 156.1,
+        "p95_ms": 156.1,
+        "max_ms": 156.1
+      }
+    },
+    {
+      "method": "POST",
+      "route": "www.torn.com/websocket.php",
+      "body_operation": "q=initWebsocketConnection",
+      "entries": [
+        2554,
+        2555
+      ],
+      "status_counts": {
+        "200": 2
+      },
+      "request_fields": [
+        "q"
+      ],
+      "response_field_types": {
+        "channel": [
+          "str"
+        ],
+        "playername": [
+          "str"
+        ],
+        "timestamp": [
+          "int"
+        ],
+        "token": [
+          "str"
+        ],
+        "url": [
+          "str"
+        ],
+        "userID": [
+          "str"
+        ]
+      },
+      "response_json_types": {
+        "dict": 2
+      },
+      "bodies_present": 2,
+      "timing": {
+        "n": 2,
+        "min_ms": 348.05,
+        "median_ms": 652.28,
+        "p95_ms": 956.51,
+        "max_ms": 956.51
+      }
+    }
+  ],
+  "limitations": [
+    "Offline captured evidence only; endpoints and credentials were not replayed.",
+    "Body coverage is grouped by exact URL; query versions can refer to the same resource.",
+    "Timing comes from one cached browsing session and is not a cold-load benchmark.",
+    "Captured request/response schemas do not reveal private server code, database, or complete business rules.",
+    "Field types describe observed samples, not a normative or complete API specification."
+  ]
+}

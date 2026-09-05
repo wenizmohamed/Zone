@@ -1,0 +1,2497 @@
+[
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610169023&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=UserApiData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dmissions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610171483&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610169515&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=19&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dmissions&dr=https%3A%2F%2Fwww.torn.com%2Fhudtutorial.php%3Fname%3Dwenimo%26gender%3DMale&dt=Missions%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5843",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610183465&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=newsTickers&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryvTM8UGSDW7y68TL7",
+      "text": "------WebKitFormBoundaryvTM8UGSDW7y68TL7\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadline\"\r\n\r\n3\r\n------WebKitFormBoundaryvTM8UGSDW7y68TL7\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadlineType\"\r\n\r\nelimination\r\n------WebKitFormBoundaryvTM8UGSDW7y68TL7--\r\n",
+      "params": [
+        {
+          "name": "newsTickerActiveHeadline",
+          "value": "3"
+        },
+        {
+          "name": "newsTickerActiveHeadlineType",
+          "value": "elimination"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dmissions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610188287&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dmissions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610191667&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610188556&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=11&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153~120474862&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dmissions&dr=https%3A%2F%2Fwww.torn.com%2Fhudtutorial.php%3Fname%3Dwenimo%26gender%3DMale&dt=Missions%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5706",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610196181&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610198817&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/item.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/item.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610199397&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=UserApiData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fitem.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610198422,\"md\":1788610198820,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,62,14],\"tm\":1788610198928},\"isTouch\":0,\"tr\":1,\"text\":\"Items\",\"label\":null,\"href\":\"/item.php\",\"path\":\"/page.php?sid=missions\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/item.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getAllUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsLoadouts&step=getEquippedItems&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/item.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610204485&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fitem.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/item.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getAllUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsLoadouts&step=getEquippedItems&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610206886&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/item.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/item.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/item.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610207594&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fitem.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610206626,\"md\":1788610206889,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,68,4],\"tm\":1788610207004},\"isTouch\":0,\"tr\":1,\"text\":\"Items\",\"label\":null,\"href\":\"/item.php\",\"path\":\"/item.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/item.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getAllUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsLoadouts&step=getEquippedItems&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=itemsModsData&step=getUserUpgrades&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/index.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/index.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610209259&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Findex.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610208483,\"md\":1788610208659,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,68,14],\"tm\":1788610208788},\"isTouch\":0,\"tr\":1,\"text\":\"Home\",\"label\":null,\"href\":\"/index.php\",\"path\":\"/item.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/index.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610209486&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=2&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Findex.php&dr=https%3A%2F%2Fwww.torn.com%2Fitem.php&dt=Home%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5668",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/index.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610215272&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Findex.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/index.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610219208&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/index.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/gym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/gym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610219619&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fgym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610218917,\"md\":1788610219211,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,102,6],\"tm\":1788610219310},\"isTouch\":0,\"tr\":1,\"text\":\"Gym\",\"label\":null,\"href\":\"/gym.php\",\"path\":\"/index.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/gym.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/gym.php?step=getInitialGymInfo&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"step\":\"getInitialGymInfo\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/gym.php?step=train&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"step\":\"train\",\"stat\":\"strength\",\"repeats\":1}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fgym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610219860&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=8&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fgym.php&dr=https%3A%2F%2Fwww.torn.com%2Findex.php&dt=Gym%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5593",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/gym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610226115&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fgym.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610222133,\"md\":1788610222334,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[63,24,41,10],\"tm\":1788610222460},\"isTouch\":0,\"tr\":1,\"text\":\"TRAIN\",\"label\":\"Train strength\",\"href\":null,\"path\":\"/gym.php\",\"node\":\"button\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/gym.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/gym.php?step=getInitialGymInfo&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"step\":\"getInitialGymInfo\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610230499&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/gym.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=education",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=education",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610230954&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=UserApiData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Deducation",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610230248,\"md\":1788610230502,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,89,0],\"tm\":1788610230618},\"isTouch\":0,\"tr\":1,\"text\":\"Education\",\"label\":null,\"href\":\"/page.php?sid=education\",\"path\":\"/gym.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=educationInitData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=education\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610231151&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Deducation&dr=https%3A%2F%2Fwww.torn.com%2Fgym.php&dt=Education%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5541",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=education",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610237422&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Deducation",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=education\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=educationInitData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610239343&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=education\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/city.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/city.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610239793&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fcity.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610238884,\"md\":1788610239347,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,69,14],\"tm\":1788610239454},\"isTouch\":0,\"tr\":1,\"text\":\"City\",\"label\":null,\"href\":\"/city.php\",\"path\":\"/page.php?sid=education\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/city.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/city.php?step=quicklinksdata&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fcity.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/citystats.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/autocompleteHeaderAjaxAction.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"places\":34,\"option\":\"popularity\",\"is_qlink\":true}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/citystats.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610242592&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fcitystats.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610241668,\"md\":1788610241941,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[145,35,39,11],\"tm\":1788610242063},\"isTouch\":0,\"tr\":1,\"text\":\"City Hall\",\"label\":null,\"href\":\"/citystats.php\",\"path\":\"/city.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/citystats.php?action=cschart&type=0&period=12&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/citystats.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/citystats.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610246849&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=newsTickers&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryuA4Q9hrBcSQ9QPF7",
+      "text": "------WebKitFormBoundaryuA4Q9hrBcSQ9QPF7\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadline\"\r\n\r\n10\r\n------WebKitFormBoundaryuA4Q9hrBcSQ9QPF7\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadlineType\"\r\n\r\nforumCommunityEvents\r\n------WebKitFormBoundaryuA4Q9hrBcSQ9QPF7--\r\n",
+      "params": [
+        {
+          "name": "newsTickerActiveHeadline",
+          "value": "10"
+        },
+        {
+          "name": "newsTickerActiveHeadlineType",
+          "value": "forumCommunityEvents"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fcitystats.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/citystats.php?action=cschart&type=0&period=12&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/citystats.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610247036&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=7&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938468~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fcitystats.php&dr=https%3A%2F%2Fwww.torn.com%2Fcity.php&dt=City%20Hall%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5561",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610255801&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/citystats.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimes.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/crimes.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 301
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610256828&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dcrimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610255559,\"md\":1788610255804,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,77,18],\"tm\":1788610255904},\"isTouch\":0,\"tr\":1,\"text\":\"Crimes\",\"label\":null,\"href\":\"/crimes.php\",\"path\":\"/citystats.php\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=hub&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=crimes#/\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryyseOoXnmtOHcPjSe",
+      "text": "------WebKitFormBoundaryyseOoXnmtOHcPjSe\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryyseOoXnmtOHcPjSe\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n1\r\n------WebKitFormBoundaryyseOoXnmtOHcPjSe\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryyseOoXnmtOHcPjSe--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "1"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarytupy9WOwK7bbRqOr",
+      "text": "------WebKitFormBoundarytupy9WOwK7bbRqOr\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarytupy9WOwK7bbRqOr\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n2\r\n------WebKitFormBoundarytupy9WOwK7bbRqOr\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarytupy9WOwK7bbRqOr--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "2"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryC75zhs9QISTnBAis",
+      "text": "------WebKitFormBoundaryC75zhs9QISTnBAis\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryC75zhs9QISTnBAis\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n3\r\n------WebKitFormBoundaryC75zhs9QISTnBAis\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryC75zhs9QISTnBAis--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "3"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryxzC6Bm9AgBd6PpY7",
+      "text": "------WebKitFormBoundaryxzC6Bm9AgBd6PpY7\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryxzC6Bm9AgBd6PpY7\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n4\r\n------WebKitFormBoundaryxzC6Bm9AgBd6PpY7\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryxzC6Bm9AgBd6PpY7--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "4"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryfIEgdj99cps0XWLX",
+      "text": "------WebKitFormBoundaryfIEgdj99cps0XWLX\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryfIEgdj99cps0XWLX\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n5\r\n------WebKitFormBoundaryfIEgdj99cps0XWLX\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryfIEgdj99cps0XWLX--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "5"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryRp3QaxAKSboF7nnj",
+      "text": "------WebKitFormBoundaryRp3QaxAKSboF7nnj\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryRp3QaxAKSboF7nnj\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n6\r\n------WebKitFormBoundaryRp3QaxAKSboF7nnj\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryRp3QaxAKSboF7nnj--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "6"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary992rUO9ARdRyODd2",
+      "text": "------WebKitFormBoundary992rUO9ARdRyODd2\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary992rUO9ARdRyODd2\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n7\r\n------WebKitFormBoundary992rUO9ARdRyODd2\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary992rUO9ARdRyODd2--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "7"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryRXaF08I0jJczjH4K",
+      "text": "------WebKitFormBoundaryRXaF08I0jJczjH4K\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryRXaF08I0jJczjH4K\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n8\r\n------WebKitFormBoundaryRXaF08I0jJczjH4K\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryRXaF08I0jJczjH4K--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "8"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary7z6tqEDOJy6D8dvY",
+      "text": "------WebKitFormBoundary7z6tqEDOJy6D8dvY\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary7z6tqEDOJy6D8dvY\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n9\r\n------WebKitFormBoundary7z6tqEDOJy6D8dvY\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary7z6tqEDOJy6D8dvY--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "9"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary2Z6hN3mcTm0ZY0G0",
+      "text": "------WebKitFormBoundary2Z6hN3mcTm0ZY0G0\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary2Z6hN3mcTm0ZY0G0\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n10\r\n------WebKitFormBoundary2Z6hN3mcTm0ZY0G0\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary2Z6hN3mcTm0ZY0G0--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "10"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryoV7LkR5tJffBKK2O",
+      "text": "------WebKitFormBoundaryoV7LkR5tJffBKK2O\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryoV7LkR5tJffBKK2O\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n11\r\n------WebKitFormBoundaryoV7LkR5tJffBKK2O\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryoV7LkR5tJffBKK2O--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "11"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryfubfICeVMVvBzAkM",
+      "text": "------WebKitFormBoundaryfubfICeVMVvBzAkM\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryfubfICeVMVvBzAkM\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n12\r\n------WebKitFormBoundaryfubfICeVMVvBzAkM\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryfubfICeVMVvBzAkM--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "12"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryrT4cyCpng91wEfvP",
+      "text": "------WebKitFormBoundaryrT4cyCpng91wEfvP\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryrT4cyCpng91wEfvP\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n13\r\n------WebKitFormBoundaryrT4cyCpng91wEfvP\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryrT4cyCpng91wEfvP--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "13"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610261033&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dcrimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=crimes#/\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=hub&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryqOFkABZb2GiIOeUN",
+      "text": "------WebKitFormBoundaryqOFkABZb2GiIOeUN\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryqOFkABZb2GiIOeUN\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n1\r\n------WebKitFormBoundaryqOFkABZb2GiIOeUN\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryqOFkABZb2GiIOeUN--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "1"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryhUjA6JomjsSNym9B",
+      "text": "------WebKitFormBoundaryhUjA6JomjsSNym9B\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryhUjA6JomjsSNym9B\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n2\r\n------WebKitFormBoundaryhUjA6JomjsSNym9B\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryhUjA6JomjsSNym9B--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "2"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary4PQDfOIR746AY6Tw",
+      "text": "------WebKitFormBoundary4PQDfOIR746AY6Tw\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary4PQDfOIR746AY6Tw\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n3\r\n------WebKitFormBoundary4PQDfOIR746AY6Tw\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary4PQDfOIR746AY6Tw--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "3"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarygPk3JJnbO0kAg6HM",
+      "text": "------WebKitFormBoundarygPk3JJnbO0kAg6HM\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarygPk3JJnbO0kAg6HM\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n4\r\n------WebKitFormBoundarygPk3JJnbO0kAg6HM\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarygPk3JJnbO0kAg6HM--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "4"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryfnXwBWXEnJDSf9ZR",
+      "text": "------WebKitFormBoundaryfnXwBWXEnJDSf9ZR\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryfnXwBWXEnJDSf9ZR\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n5\r\n------WebKitFormBoundaryfnXwBWXEnJDSf9ZR\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryfnXwBWXEnJDSf9ZR--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "5"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryAzQwv3rPB1fejFID",
+      "text": "------WebKitFormBoundaryAzQwv3rPB1fejFID\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryAzQwv3rPB1fejFID\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n6\r\n------WebKitFormBoundaryAzQwv3rPB1fejFID\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryAzQwv3rPB1fejFID--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "6"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryBoAUcSwuy0xDyABA",
+      "text": "------WebKitFormBoundaryBoAUcSwuy0xDyABA\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryBoAUcSwuy0xDyABA\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n7\r\n------WebKitFormBoundaryBoAUcSwuy0xDyABA\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryBoAUcSwuy0xDyABA--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "7"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryGzUBvw4twX7E3XwA",
+      "text": "------WebKitFormBoundaryGzUBvw4twX7E3XwA\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryGzUBvw4twX7E3XwA\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n8\r\n------WebKitFormBoundaryGzUBvw4twX7E3XwA\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryGzUBvw4twX7E3XwA--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "8"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarySk64o60zvXEUIOfd",
+      "text": "------WebKitFormBoundarySk64o60zvXEUIOfd\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarySk64o60zvXEUIOfd\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n9\r\n------WebKitFormBoundarySk64o60zvXEUIOfd\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarySk64o60zvXEUIOfd--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "9"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarygoXAFJW1z4mFqATc",
+      "text": "------WebKitFormBoundarygoXAFJW1z4mFqATc\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarygoXAFJW1z4mFqATc\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n10\r\n------WebKitFormBoundarygoXAFJW1z4mFqATc\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarygoXAFJW1z4mFqATc--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "10"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryCaJmLlDci1WK9ADU",
+      "text": "------WebKitFormBoundaryCaJmLlDci1WK9ADU\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryCaJmLlDci1WK9ADU\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n11\r\n------WebKitFormBoundaryCaJmLlDci1WK9ADU\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryCaJmLlDci1WK9ADU--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "11"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryoLFFB68bAiYJEVCO",
+      "text": "------WebKitFormBoundaryoLFFB68bAiYJEVCO\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryoLFFB68bAiYJEVCO\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n12\r\n------WebKitFormBoundaryoLFFB68bAiYJEVCO\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryoLFFB68bAiYJEVCO--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "12"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryKJjfsyiZ1XDig11L",
+      "text": "------WebKitFormBoundaryKJjfsyiZ1XDig11L\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryKJjfsyiZ1XDig11L\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n13\r\n------WebKitFormBoundaryKJjfsyiZ1XDig11L\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryKJjfsyiZ1XDig11L--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "13"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610263133&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryb12Fqs2tcBRjKSAs",
+      "text": "------WebKitFormBoundaryb12Fqs2tcBRjKSAs\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryb12Fqs2tcBRjKSAs\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n1\r\n------WebKitFormBoundaryb12Fqs2tcBRjKSAs\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryb12Fqs2tcBRjKSAs--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "1"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryUHS5tAIeSMoCy5bm",
+      "text": "------WebKitFormBoundaryUHS5tAIeSMoCy5bm\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryUHS5tAIeSMoCy5bm\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n2\r\n------WebKitFormBoundaryUHS5tAIeSMoCy5bm\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryUHS5tAIeSMoCy5bm--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "2"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryo8qmw6gNNrvaFkwr",
+      "text": "------WebKitFormBoundaryo8qmw6gNNrvaFkwr\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryo8qmw6gNNrvaFkwr\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n3\r\n------WebKitFormBoundaryo8qmw6gNNrvaFkwr\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryo8qmw6gNNrvaFkwr--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "3"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarydVQIMarmJ1bULhzh",
+      "text": "------WebKitFormBoundarydVQIMarmJ1bULhzh\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarydVQIMarmJ1bULhzh\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n4\r\n------WebKitFormBoundarydVQIMarmJ1bULhzh\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarydVQIMarmJ1bULhzh--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "4"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryC29m81jrAj1llk5Y",
+      "text": "------WebKitFormBoundaryC29m81jrAj1llk5Y\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryC29m81jrAj1llk5Y\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n5\r\n------WebKitFormBoundaryC29m81jrAj1llk5Y\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryC29m81jrAj1llk5Y--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "5"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryDzLHc7xbAY46H5Zk",
+      "text": "------WebKitFormBoundaryDzLHc7xbAY46H5Zk\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryDzLHc7xbAY46H5Zk\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n6\r\n------WebKitFormBoundaryDzLHc7xbAY46H5Zk\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryDzLHc7xbAY46H5Zk--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "6"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary4QMGJkHRZgPtQAh5",
+      "text": "------WebKitFormBoundary4QMGJkHRZgPtQAh5\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary4QMGJkHRZgPtQAh5\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n7\r\n------WebKitFormBoundary4QMGJkHRZgPtQAh5\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary4QMGJkHRZgPtQAh5--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "7"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarybNeQzsCP1wyOtfcO",
+      "text": "------WebKitFormBoundarybNeQzsCP1wyOtfcO\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarybNeQzsCP1wyOtfcO\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n8\r\n------WebKitFormBoundarybNeQzsCP1wyOtfcO\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarybNeQzsCP1wyOtfcO--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "8"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundarytWTjY4OORzvPCvGm",
+      "text": "------WebKitFormBoundarytWTjY4OORzvPCvGm\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundarytWTjY4OORzvPCvGm\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n9\r\n------WebKitFormBoundarytWTjY4OORzvPCvGm\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundarytWTjY4OORzvPCvGm--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "9"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryiBEXBN1IB9oxWHvA",
+      "text": "------WebKitFormBoundaryiBEXBN1IB9oxWHvA\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryiBEXBN1IB9oxWHvA\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n10\r\n------WebKitFormBoundaryiBEXBN1IB9oxWHvA\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryiBEXBN1IB9oxWHvA--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "10"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryhcdlqQDtg62579Dm",
+      "text": "------WebKitFormBoundaryhcdlqQDtg62579Dm\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryhcdlqQDtg62579Dm\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n11\r\n------WebKitFormBoundaryhcdlqQDtg62579Dm\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryhcdlqQDtg62579Dm--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "11"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary2WFm1ihIZdQFLUix",
+      "text": "------WebKitFormBoundary2WFm1ihIZdQFLUix\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundary2WFm1ihIZdQFLUix\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n12\r\n------WebKitFormBoundary2WFm1ihIZdQFLUix\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundary2WFm1ihIZdQFLUix--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "12"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/crimesHubApi.php",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryXBCOjAeOi9wQ3SXZ",
+      "text": "------WebKitFormBoundaryXBCOjAeOi9wQ3SXZ\r\nContent-Disposition: form-data; name=\"userID\"\r\n\r\n4506953\r\n------WebKitFormBoundaryXBCOjAeOi9wQ3SXZ\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n13\r\n------WebKitFormBoundaryXBCOjAeOi9wQ3SXZ\r\nContent-Disposition: form-data; name=\"apiKey\"\r\n\r\ne5d9e70af251e41fa70c9cc8cfebefda\r\n------WebKitFormBoundaryXBCOjAeOi9wQ3SXZ--\r\n",
+      "params": [
+        {
+          "name": "userID",
+          "value": "4506953"
+        },
+        {
+          "name": "typeID",
+          "value": "13"
+        },
+        {
+          "name": "apiKey",
+          "value": "e5d9e70af251e41fa70c9cc8cfebefda"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=crimes#/\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=crimesList&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundary04qcQJJqcq9zirAU",
+      "text": "------WebKitFormBoundary04qcQJJqcq9zirAU\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n1\r\n------WebKitFormBoundary04qcQJJqcq9zirAU--\r\n",
+      "params": [
+        {
+          "name": "typeID",
+          "value": "1"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=attempt&typeID=1&crimeID=1&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610261268&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=9&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914214&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dcrimes&dr=https%3A%2F%2Fwww.torn.com%2Fcitystats.php&dt=Crimes%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5709",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=attempt&typeID=1&crimeID=2&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610273141&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=UserApiData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dcrimes",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=crimes#/searchforcash\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=crimesData&step=crimesList&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryfWA6tj4S1nXBJqyY",
+      "text": "------WebKitFormBoundaryfWA6tj4S1nXBJqyY\r\nContent-Disposition: form-data; name=\"typeID\"\r\n\r\n1\r\n------WebKitFormBoundaryfWA6tj4S1nXBJqyY--\r\n",
+      "params": [
+        {
+          "name": "typeID",
+          "value": "1"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610276121&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=crimes#/searchforcash\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=elimination",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=elimination",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610276564&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.googletagmanager.com/td?id=G-W49WDGVZV2&v=3&t=t&pid=1292062948&gtm=45je6921v9195555313za200zd9195555313&seq=1&exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153&dl=www.torn.com%2Fpage.php&tdp=G-W49WDGVZV2;195555313;0;0;0&frm=0&rtg=195555313&slo=52&hlo=4&lst=3&bt=0&ct=3&z=0",
+    "method": "GET",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=competitionData&step=main&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Delimination",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610275687,\"md\":1788610276124,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,88,15],\"tm\":1788610276240},\"isTouch\":0,\"tr\":1,\"text\":\"Elimination\",\"label\":null,\"href\":\"/page.php?sid=elimination\",\"path\":\"/page.php?sid=crimes\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=elimination\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=competitionData&step=headerTimers&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=elimination",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610281749&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Delimination",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=elimination\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=competitionData&step=main&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=competitionData&step=headerTimers&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610285148&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=elimination\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/factions.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/factions.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 302
+  },
+  {
+    "url": "https://www.torn.com/factions.php?step=create",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610285822&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=factionsPotentialList&step=init&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Ffactions.php%3Fstep%3Dcreate",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610284962,\"md\":1788610285154,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,94,13],\"tm\":1788610285260},\"isTouch\":0,\"tr\":1,\"text\":\"Faction\",\"label\":null,\"href\":\"/factions.php\",\"path\":\"/page.php?sid=elimination\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/factions.php?step=create\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/factions.php?step=create",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610288446&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Ffactions.php%3Fstep%3Dcreate",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=factionsPotentialList&step=init&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/factions.php?step=create\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/factions.php?step=create",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610292961&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Ffactions.php%3Fstep%3Dcreate",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=factionsPotentialList&step=init&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/factions.php?step=create\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610296746&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/factions.php?step=create\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610297351&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dmissions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610296518,\"md\":1788610296749,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,84,9],\"tm\":1788610296847},\"isTouch\":0,\"tr\":1,\"text\":\"Missions\",\"label\":null,\"href\":\"/page.php?sid=missions\",\"path\":\"/factions.php?step=create\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610297562&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=5&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~120914213&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dmissions&dr=https%3A%2F%2Fwww.torn.com%2Ffactions.php%3Fstep%3Dcreate&dt=Missions%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5701",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=missions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610303850&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=UserApiData&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fpage.php%3Fsid%3Dmissions",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=sync&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/page.php?sid=missions\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/jailview.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 503
+  },
+  {
+    "url": "https://www.torn.com/jailview.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610308037&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=newsTickers&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "multipart/form-data; boundary=----WebKitFormBoundaryrNgx2GyDMbwEAyBe",
+      "text": "------WebKitFormBoundaryrNgx2GyDMbwEAyBe\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadline\"\r\n\r\n5\r\n------WebKitFormBoundaryrNgx2GyDMbwEAyBe\r\nContent-Disposition: form-data; name=\"newsTickerActiveHeadlineType\"\r\n\r\nforumThreadLikes\r\n------WebKitFormBoundaryrNgx2GyDMbwEAyBe--\r\n",
+      "params": [
+        {
+          "name": "newsTickerActiveHeadline",
+          "value": "5"
+        },
+        {
+          "name": "newsTickerActiveHeadlineType",
+          "value": "forumThreadLikes"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fjailview.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/page.php?sid=bhc&step=send",
+    "method": "POST",
+    "postData": {
+      "mimeType": "text/plain;charset=UTF-8",
+      "text": "{\"pool\":[{\"me\":1788610306920,\"md\":1788610307598,\"kp\":0,\"pr_c\":0,\"c\":{\"i\":[172,23,83,19],\"tm\":1788610307714},\"isTouch\":0,\"tr\":1,\"text\":\"Jail\",\"label\":null,\"href\":\"/jailview.php\",\"path\":\"/page.php?sid=missions\",\"node\":\"a\"}],\"tdata\":{\"actt\":0,\"imt\":0,\"allt\":0}}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/jailview.php?1788610308174=0.5191272188519037&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/x-www-form-urlencoded; charset=UTF-8",
+      "text": "action=jail&start=0",
+      "params": [
+        {
+          "name": "action",
+          "value": "jail"
+        },
+        {
+          "name": "start",
+          "value": "0"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/jailview.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getInformation&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610308227&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=0&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115616985~115938466~115938468~118897920~118897930~120213116~120385423~120469145~120469153&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fjailview.php&dr=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dmissions&dt=Jail%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5502",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getInformation&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/jailview.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?action=servertime&t=1788610314546&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/missionChecker.php?currenturl=%2Fjailview.php",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/jailview.php?1788610314684=0.17792967381248193&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/x-www-form-urlencoded; charset=UTF-8",
+      "text": "action=jail&start=0",
+      "params": [
+        {
+          "name": "action",
+          "value": "jail"
+        },
+        {
+          "name": "start",
+          "value": "0"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getSidebarData&rfcv=6a9c051515fe8",
+    "method": "POST",
+    "postData": {
+      "mimeType": "application/json",
+      "text": "{\"fullUrl\":\"https://www.torn.com/jailview.php\"}"
+    },
+    "response_status": 200
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getInformation&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  },
+  {
+    "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-W49WDGVZV2&gtm=45je6921v9195555313za200zd9195555313&_p=1788610314766&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAAQ&_fid=fOmiKRHY0z002CAhl7WgnY&cid=209458552.1788609817&frm=0&ngs=1&pscdl=noapi&rcb=4&sr=1423x800&uaa=x86&uab=64&uafvl=Google%2520Chrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Windows&uapv=19.0.0&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938468~118897920~118897930~120213116~120385423~120469145~120469153~120914214&sid=1788609816&sct=1&seg=1&dl=https%3A%2F%2Fwww.torn.com%2Fjailview.php&dr=https%3A%2F%2Fwww.torn.com%2Fpage.php%3Fsid%3Dmissions&dt=Jail%20%7C%20TORN&_tu=QA&en=page_view&_ee=1&ep.origin=firebase&up.chat_version=3.0.0-beta26&tfd=5536",
+    "method": "POST",
+    "postData": {},
+    "response_status": 204
+  },
+  {
+    "url": "https://www.torn.com/sidebarAjaxAction.php?q=getInformation&rfcv=6a9c051515fe8",
+    "method": "GET",
+    "postData": {},
+    "response_status": 200
+  }
+]
