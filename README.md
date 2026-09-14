@@ -96,6 +96,16 @@ Open [http://127.0.0.1:49123](http://127.0.0.1:49123) in a browser.
 
 Running through a local HTTP server is recommended because the game includes embedded pages and 3D assets that browsers may restrict when opened directly from `file://`.
 
+## Using the Prototype
+
+Use the left navigation to move between game areas. Actions such as training, committing crimes, working shifts, buying items, enrolling in courses, and attacking opponents update the simulated player state immediately.
+
+- Use the language control in the header to switch between English and Arabic.
+- Use the theme control to switch between dark and light presentation.
+- Open Items to inspect supported weapons in the embedded 3D viewer.
+- Open City to switch between the interactive map views.
+- Return to Home to inspect the character viewer and current progression summary.
+
 ## Save Data
 
 The prototype stores progress in the browser's `localStorage` for the current origin.
@@ -104,6 +114,33 @@ The prototype stores progress in the browser's `localStorage` for the current or
 - Different browsers and domains have separate saves.
 - Clearing site data resets the prototype.
 - The current build does not synchronize progress between devices.
+
+## Troubleshooting
+
+### The page shows a directory listing
+
+Start the local server from the repository root, where `index.html` is located:
+
+```bash
+cd Zone
+python -m http.server 49123
+```
+
+### Artwork or embedded pages do not load
+
+- Confirm that `art/`, `assets/`, and `dist/` remain beside `index.html`.
+- Run the project through `http://127.0.0.1:49123` instead of opening `index.html` through `file://`.
+- Check that the browser has internet access, because the 3D viewers load Three.js modules from a public CDN.
+
+### The 3D viewers remain blank
+
+- Confirm that WebGL and hardware acceleration are enabled in the browser.
+- Try a current Chromium, Firefox, or Safari release.
+- Check that browser privacy controls are not blocking the Three.js CDN.
+
+### The saved state is unexpected
+
+Clear the site's browser storage and reload the page. This resets the local prototype and does not affect repository or server data.
 
 ## Deployment
 
