@@ -53,13 +53,43 @@
     button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
     html[data-theme="dark"] [data-zmap]{filter:brightness(.62) saturate(.7) contrast(1.08) hue-rotate(-8deg)}
     html[data-theme="dark"] [data-zmapv]{background:radial-gradient(ellipse at 50% 40%,transparent 45%,rgba(5,8,14,.55) 100%),linear-gradient(rgba(10,14,24,.25),rgba(10,14,24,.25))}
+    @media (max-width:760px){
+      body{font-size:13px;overflow-x:hidden}
+      [data-zheaderbar]{height:auto!important;min-height:50px;padding:8px 12px!important;gap:8px!important;flex-wrap:wrap}
+      [data-zheaderbar] > div:nth-child(2){order:3;width:100%;overflow-x:auto;padding-bottom:2px;white-space:nowrap}
+      [data-zheaderbar] > div:last-child{gap:7px!important;margin-inline-start:auto!important}
+      [data-zheaderbar] > div:last-child > span:first-child,[data-zheaderbar] > div:last-child > span:nth-child(2) bdi{display:none}
+      [data-zshell]{display:block!important;padding:10px 10px 32px!important}
+      [data-zshell] aside{width:auto!important;margin-bottom:10px}
+      [data-zshell] aside > div:last-child{max-height:245px;overflow:auto}
+      #zone-main h4{font-size:22px!important}
+      #zone-result > div:last-child{gap:9px!important;padding:9px 10px!important}
+      #zone-result bdi{font-size:19px!important}
+      [data-zscroll]{overflow-x:auto;-webkit-overflow-scrolling:touch}
+      [data-zscroll] > div{min-width:590px}
+      [data-zscroll] [data-zrow]{min-width:590px}
+      [style*="grid-template-columns:minmax(0,3fr) minmax(0,2fr)"]{grid-template-columns:1fr!important}
+      [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+      [style*="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))"]{grid-template-columns:1fr!important}
+      [style*="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"]{grid-template-columns:1fr!important}
+      [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      [style*="height:260px"]{height:210px!important}
+    }
+    @media (max-width:420px){
+      [data-zheaderbar] > div:first-child{padding:4px 9px!important}
+      [data-zheaderbar] > div:first-child span{font-size:19px!important}
+      [data-zheaderbar] button{padding:5px 7px!important}
+      [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:1fr!important}
+      #zone-result > div:last-child{flex-wrap:wrap}
+      #zone-result > div:last-child > bdi{margin-inline-start:47px}
+    }
   </style>
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
 <div style="min-height:100vh;background:var(--bg)">
   <!-- header -->
   <div style="background:linear-gradient(var(--hd1),var(--hd2));border-bottom:1px solid var(--edge);box-shadow:0 1px 0 var(--border2) inset">
-    <div style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:0 14px;height:50px">
+    <div data-zheaderbar="1" style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:0 14px;height:50px">
       <div style="display:flex;align-items:center;gap:10px;padding:5px 14px;background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--track);border-radius:4px;box-shadow:0 1px 0 var(--mu2) inset">
         <span data-zfig="1" style="font-weight:600;font-size:23px;letter-spacing:.2em;color:var(--t1);text-shadow:0 1px 0 rgba(0,0,0,.7)">{{ t.brand }}</span>
       </div>
@@ -83,7 +113,7 @@
     </div>
   </div>
 
-  <div style="max-width:1240px;margin:0 auto;display:flex;gap:14px;padding:12px 14px 40px;align-items:flex-start">
+  <div data-zshell="1" style="max-width:1240px;margin:0 auto;display:flex;gap:14px;padding:12px 14px 40px;align-items:flex-start">
     <!-- sidebar -->
     <aside style="width:200px;flex:none;display:flex;flex-direction:column;gap:10px">
       <div>
@@ -262,7 +292,7 @@
             </button>
           </sc-for>
         </div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--t4);font-size:11px"><span><strong style="color:var(--t1);font-family:Oswald,Rubik,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-inline-end:8px">{{ catName }}</strong>{{ catDesc }}</span><span style="white-space:nowrap">{{ t.crimeXp }} <bdi style="color:var(--accText);font-weight:600">{{ crimeXp }}</bdi> · {{ t.nerve }} <bdi style="color:var(--bad2);font-weight:600">{{ nerveNow }}</bdi></span></div>
           <div style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2)"><span>{{ t.crime }}</span><span>{{ t.skill }}</span><span>{{ t.nerve }}</span><span>{{ t.success }}</span><span></span></div>
           <sc-for list="{{ crimes }}" as="c" hint-placeholder-count="5">
@@ -304,7 +334,7 @@
             </div>
           </sc-for>
         </div>
-        <div>
+        <div data-zscroll="1">
           <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.gymLadder }}</div>
           <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
             <sc-for list="{{ gyms }}" as="g" hint-placeholder-count="8"><div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 90px 110px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);opacity:{{ g.opacity }}"><span style="color:var(--t2);font-weight:500">{{ g.name }}</span><bdi style="color:var(--money)">{{ g.cost }}</bdi><span style="color:var(--mu)"><bdi>{{ g.energy }}</bdi> {{ t.energy }}</span><span style="color:var(--mu)">{{ t.gymXp }} <bdi>{{ g.xp }}</bdi></span><button onClick="{{ g.join }}" disabled="{{ g.disabled }}" style="background:{{ g.btnBg }};color:{{ g.btnFg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ g.btn }}</button></div></sc-for>
@@ -353,7 +383,7 @@
 
       <!-- ATTACK -->
       <sc-if value="{{ is.attack }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.player }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
           <sc-for list="{{ opps }}" as="o" hint-placeholder-count="4">
             <div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">
