@@ -1,0 +1,10 @@
+{
+  "id": "zone",
+  "name": "ZONE Tactical",
+  "version": "1.0.0",
+  "stylesheet": "theme.css",
+  "activeByDefault": true,
+  "description": "The primary ZONE gold and tactical charcoal presentation theme.",
+  "description_ar": "ثيم ZONE الأساسي بالذهبي والفحمي التكتيكي.",
+  "preview": "#d7ff3f"
+}

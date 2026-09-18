@@ -1,20 +1,52 @@
-# Zone V2
+# ZONE Engine + Zone V2
 
-A browser-based crime RPG prototype with persistent progression, interactive city systems, visual activity cards, and embedded 3D character and weapon viewers.
+A modular PHP 8.5 browser-game engine foundation with a bilingual crime RPG frontend, server-authoritative gameplay proof, installable modules, interchangeable themes, event hooks, and economy auditing.
 
 [Play Zone V2](https://zone-torn-style-game-mockup-6cf978c.vercel.app)
 
-- **Version:** Zone V2
-- **Status:** Live prototype
-- **Last updated:** 2026-09-14
+- **Engine version:** 0.1.0 foundation
+- **Frontend version:** Zone V2
+- **Status:** Executable engine foundation plus live frontend prototype
+- **Last updated:** 2026-09-19
 
 > Zone is an independent prototype inspired by classic browser-based crime games. It is not affiliated with Torn or its creators.
 
 ## Overview
 
-Zone V2 presents a dense, old-school browser MMO interface built around one connected city. The player can commit crimes, train battle statistics, work jobs, study courses, buy properties, manage inventory, fight opponents, join faction activity, gamble, and interact with a live city map.
+ZONE now has two deliberately separated layers:
 
-The current build is a static front-end prototype. Player progression is simulated in the browser and saved locally, so no account or back-end service is required.
+1. `engine/` is the PHP 8.5, API-first game-engine foundation. It owns server-side results, module discovery and lifecycle, domain events, themes, resource regeneration, economy ledgers, and production database contracts.
+2. The root frontend is the existing dense browser MMO interface. It demonstrates crimes, training, jobs, education, properties, inventory, combat, factions, casino, maps, and 3D assets.
+
+The public Vercel build remains a static frontend prototype. The executable engine presentation runs through PHP and is documented below. The 18 frontend screens are the migration target for the versioned engine API.
+
+## Engine foundation
+
+Open [engine/README.md](engine/README.md) for the executable proof and [docs/OMAR_ENGINE_PRESENTATION.md](docs/OMAR_ENGINE_PRESENTATION.md) for the presentation sequence.
+
+The foundation currently proves:
+
+- PHP 8.5 server-authoritative crime outcomes
+- Manifest-driven module discovery and version tracking
+- Module install, uninstall, enable, and disable lifecycle
+- Independent `Crime` and `Achievements` packages
+- `CrimeSucceeded` hook consumption without modifying the Crime module
+- Installable `ZONE Tactical` and `Terminal Ops` themes
+- Shared Energy, Nerve, Life, and Happiness resource state
+- Immutable currency ledger entries with correlation identifiers
+- Persistent domain-event audit trail
+- PostgreSQL production schema and SQLite presentation adapter
+- Jobs, notifications, and extensible image, thumbnail, animation, video, GLB, and GLTF asset records
+- Arabic and English presentation with RTL and LTR switching
+
+Run it with:
+
+```powershell
+npm run engine:test
+npm run engine:serve
+```
+
+Then open `http://127.0.0.1:4285/engine`.
 
 ## Highlights
 
@@ -42,6 +74,12 @@ The current build is a static front-end prototype. Player progression is simulat
 
 ## Technology
 
+- PHP 8.5 modular backend foundation
+- Versioned REST API
+- PostgreSQL production schema
+- SQLite local presentation adapter
+- Domain event and hook bus
+- Manifest-driven modules and themes
 - Static HTML, CSS, and JavaScript
 - Generated design runtime in `support.js`
 - Browser image-loading utilities in `image-slot.js`
@@ -75,7 +113,7 @@ Zone/
 `-- lib/                    Historical local library references
 ```
 
-Only `index.html`, `support.js`, `image-slot.js`, `art/`, `assets/`, and `dist/` are required by the current deployed game.
+The static Vercel frontend uses `index.html`, `support.js`, `image-slot.js`, `art/`, `assets/`, and `dist/`. The executable backend and engine presentation live independently under `engine/`.
 
 ## Quick Start
 
@@ -167,7 +205,7 @@ The production package was last verified on 2026-09-14:
 
 ## Project Scope
 
-Zone V2 is currently a front-end gameplay prototype. Its economy, player records, combat results, timers, rankings, and other stateful systems are simulated locally. A production multiplayer release would require authenticated accounts, a trusted server-side game engine, persistent storage, anti-cheat controls, moderation, and operational monitoring.
+Zone V2 remains a frontend gameplay prototype while its screens are migrated to the new engine API. The engine foundation now demonstrates trusted server-side calculations, persistence contracts, modularity, hooks, resource handling, and auditing. A production multiplayer release still requires authenticated accounts, deployed PostgreSQL and Redis services, workers, realtime delivery, moderation, monitoring, and migration of every frontend mutation to the API.
 
 ## Disclaimer
 

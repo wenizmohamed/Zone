@@ -1,0 +1,11 @@
+{
+  "id": "crime",
+  "name": "Crime System",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Crime\\CrimeModule",
+  "enabledByDefault": true,
+  "description": "Server-authoritative crime attempts, nerve costs, rewards, failure outcomes, and domain events.",
+  "description_ar": "تنفيذ الجرائم وحساب تكلفة الأعصاب والجوائز والنتائج والأحداث بالكامل من السيرفر.",
+  "provides": ["crime.catalog", "crime.attempt"],
+  "subscribes": []
+}

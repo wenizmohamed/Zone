@@ -1,0 +1,10 @@
+:root {
+  --theme-accent: #42e8e0;
+  --theme-accent-2: #a889ff;
+  --theme-bg: #070a11;
+  --theme-panel: #101723;
+  --theme-panel-2: #152131;
+  --theme-text: #ebfbff;
+  --theme-muted: #8ba3ad;
+  --theme-grid: rgba(66, 232, 224, 0.06);
+}

@@ -1,0 +1,27 @@
+{
+  "name": "zone/game-engine",
+  "description": "Modular, API-first browser game engine foundation for ZONE.",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": "^8.5",
+    "ext-json": "*",
+    "ext-pdo": "*"
+  },
+  "suggest": {
+    "ext-pdo_pgsql": "Production PostgreSQL adapter",
+    "ext-redis": "Production cache, queues, and realtime fan-out"
+  },
+  "autoload": {
+    "psr-4": {
+      "Zone\\Engine\\": "src/",
+      "Zone\\Modules\\": "modules/"
+    }
+  },
+  "scripts": {
+    "test": "php tests/run.php"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

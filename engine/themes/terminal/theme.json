@@ -1,0 +1,10 @@
+{
+  "id": "terminal",
+  "name": "Terminal Ops",
+  "version": "1.0.0",
+  "stylesheet": "theme.css",
+  "activeByDefault": false,
+  "description": "A removable high-contrast cyan operations theme proving view independence.",
+  "description_ar": "ثيم عمليات سماوي عالي التباين وقابل للإزالة لإثبات استقلال الواجهة.",
+  "preview": "#42e8e0"
+}

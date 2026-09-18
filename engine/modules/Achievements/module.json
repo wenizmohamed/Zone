@@ -1,0 +1,11 @@
+{
+  "id": "achievements",
+  "name": "Achievement Hooks",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Achievements\\AchievementsModule",
+  "enabledByDefault": true,
+  "description": "Independent proof module that reacts to CrimeSucceeded without changing the Crime module or engine core.",
+  "description_ar": "موديول مستقل يتفاعل مع CrimeSucceeded من دون تعديل موديول الجرائم أو الـCore.",
+  "provides": ["achievement.unlock"],
+  "subscribes": ["CrimeSucceeded"]
+}

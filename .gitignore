@@ -1,2 +1,6 @@
 .vercel
 public/
+.tools/
+engine/var/*.sqlite
+engine/var/*.sqlite-*
+engine/var/*.log
