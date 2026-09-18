@@ -3,6 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZONE | Playable Browser Game Prototype</title>
+<meta name="description" content="ZONE is a bilingual, responsive, playable browser game prototype with locally simulated crime, combat, economy, progression, maps, and 3D systems.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script>
+  (() => {
+    const syncPath = path => {
+      const value = path.getAttribute('data-zone-path');
+      if (value && !value.includes('{{')) path.setAttribute('d', value);
+    };
+    const syncTree = root => {
+      if (!(root instanceof Element)) return;
+      if (root.matches('path[data-zone-path]')) syncPath(root);
+      root.querySelectorAll('path[data-zone-path]').forEach(syncPath);
+    };
+    new MutationObserver(records => {
+      for (const record of records) {
+        if (record.type === 'attributes') syncPath(record.target);
+        else record.addedNodes.forEach(syncTree);
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-path'] });
+  })();
+</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -53,32 +75,46 @@
     button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
     html[data-theme="dark"] [data-zmap]{filter:brightness(.62) saturate(.7) contrast(1.08) hue-rotate(-8deg)}
     html[data-theme="dark"] [data-zmapv]{background:radial-gradient(ellipse at 50% 40%,transparent 45%,rgba(5,8,14,.55) 100%),linear-gradient(rgba(10,14,24,.25),rgba(10,14,24,.25))}
+    [data-ztabs],[data-znav],[data-zscroll]{scrollbar-width:thin;scrollbar-color:var(--border3) transparent}
     @media (max-width:760px){
-      body{font-size:13px;overflow-x:hidden}
-      [data-zheaderbar]{height:auto!important;min-height:50px;padding:8px 12px!important;gap:8px!important;flex-wrap:wrap}
-      [data-zheaderbar] > div:nth-child(2){order:3;width:100%;overflow-x:auto;padding-bottom:2px;white-space:nowrap}
-      [data-zheaderbar] > div:last-child{gap:7px!important;margin-inline-start:auto!important}
+      body{font-size:13px;overflow-x:hidden;-webkit-text-size-adjust:100%}
+      [data-zheaderbar]{height:auto!important;min-height:50px;padding:8px 10px!important;gap:8px!important;flex-wrap:wrap}
+      [data-zheaderbar] > div:nth-child(2){order:3;width:100%;overflow-x:auto;padding:2px 0 3px;white-space:nowrap;-webkit-overflow-scrolling:touch}
+      [data-zheaderbar] > div:last-child{gap:7px!important;margin-inline-start:auto!important;flex-wrap:wrap;justify-content:flex-end}
       [data-zheaderbar] > div:last-child > span:first-child,[data-zheaderbar] > div:last-child > span:nth-child(2) bdi{display:none}
       [data-zshell]{display:block!important;padding:10px 10px 32px!important}
-      [data-zshell] aside{width:auto!important;margin-bottom:10px}
-      [data-zshell] aside > div:last-child{max-height:245px;overflow:auto}
+      [data-zshell] aside{width:100%!important;margin-bottom:10px;gap:8px!important}
+      [data-zshell] aside > div:last-child{max-height:none!important;overflow:visible!important}
+      [data-zshell] aside > div:last-child > [data-zhead]{display:none}
+      [data-znav]{flex-direction:row!important;overflow-x:auto;padding:0!important;border-top:1px solid var(--border)!important;border-radius:5px!important;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+      [data-znav] button{flex:0 0 auto;width:auto!important;min-height:42px;padding:8px 12px!important;border-inline-start-width:2px!important;scroll-snap-align:start}
+      [data-znav] button span:nth-of-type(1){white-space:nowrap}
       #zone-main h4{font-size:22px!important}
+      #zone-main > div:first-child > span{flex-basis:100%}
       #zone-result > div:last-child{gap:9px!important;padding:9px 10px!important}
       #zone-result bdi{font-size:19px!important}
-      [data-zscroll]{overflow-x:auto;-webkit-overflow-scrolling:touch}
-      [data-zscroll] > div{min-width:590px}
-      [data-zscroll] [data-zrow]{min-width:590px}
-      [style*="grid-template-columns:minmax(0,3fr) minmax(0,2fr)"]{grid-template-columns:1fr!important}
+      [data-ztabs]{overflow-x:auto;white-space:nowrap;padding-bottom:3px;-webkit-overflow-scrolling:touch}
+      [data-ztabs] button{flex:0 0 auto;min-height:40px}
+      [data-zscroll]{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+      [data-zscroll] > div{min-width:640px}
+      [data-zscroll] [data-zrow]{min-width:640px}
+      [style*="grid-template-columns:minmax(0,3fr) minmax(0,2fr)"],
+      [style*="grid-template-columns:minmax(0,1fr) minmax(0,1fr)"],
       [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
-      [style*="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))"]{grid-template-columns:1fr!important}
-      [style*="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"]{grid-template-columns:1fr!important}
+      [style*="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))"],
+      [style*="grid-template-columns:repeat(auto-fill,minmax(212px,1fr))"],
+      [style*="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"],
+      [style*="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"]{grid-template-columns:1fr!important}
       [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      iframe{max-width:100%}
       [style*="height:260px"]{height:210px!important}
     }
     @media (max-width:420px){
       [data-zheaderbar] > div:first-child{padding:4px 9px!important}
       [data-zheaderbar] > div:first-child span{font-size:19px!important}
-      [data-zheaderbar] button{padding:5px 7px!important}
+      [data-zheaderbar] button{padding:7px 8px!important;min-height:36px}
+      [data-zheaderbar] > div:last-child > span:nth-child(2){display:none!important}
+      [data-zshell]{padding-inline:8px!important}
       [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:1fr!important}
       #zone-result > div:last-child{flex-wrap:wrap}
       #zone-result > div:last-child > bdi{margin-inline-start:47px}
@@ -93,8 +129,8 @@
       <div style="display:flex;align-items:center;gap:10px;padding:5px 14px;background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--track);border-radius:4px;box-shadow:0 1px 0 var(--mu2) inset">
         <span data-zfig="1" style="font-weight:600;font-size:23px;letter-spacing:.2em;color:var(--t1);text-shadow:0 1px 0 rgba(0,0,0,.7)">{{ t.brand }}</span>
       </div>
-      <div style="display:flex;gap:16px;font-size:12px;color:var(--t4)">
-        <sc-for list="{{ topLinks }}" as="l" hint-placeholder-count="5"><span style="cursor:pointer" style-hover="color:#fff">{{ l }}</span></sc-for>
+      <div style="display:flex;gap:4px;font-size:12px;color:var(--t4)">
+        <sc-for list="{{ topLinks }}" as="l" hint-placeholder-count="5"><button onClick="{{ l.go }}" style="background:none;border:0;color:var(--t4);padding:5px 6px;font:inherit;cursor:pointer;white-space:nowrap" style-hover="color:#fff;background:var(--btn)">{{ l.label }}</button></sc-for>
       </div>
       <div style="margin-inline-start:auto;display:flex;align-items:center;gap:14px;font-size:12px">
         <span style="color:var(--mu)">{{ t.tct }} <bdi style="color:var(--accText);font-weight:600">{{ clock }}</bdi></span>
@@ -116,8 +152,7 @@
   <div data-zshell="1" style="max-width:1240px;margin:0 auto;display:flex;gap:14px;padding:12px 14px 40px;align-items:flex-start">
     <!-- sidebar -->
     <aside style="width:200px;flex:none;display:flex;flex-direction:column;gap:10px">
-      <div>
-        <div>
+      <div data-zplayercard="1">
         <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.information }}</div>
         <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:6px 10px;display:flex;flex-direction:column;gap:4px">
           <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link)">{{ t.player }}</span></div>
@@ -143,10 +178,10 @@
       </div>
       <div>
         <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.areas }}</div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;display:flex;flex-direction:column;padding:3px 0">
+        <div data-znav="1" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;display:flex;flex-direction:column;padding:3px 0">
           <sc-for list="{{ nav }}" as="n" hint-placeholder-count="17">
             <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;padding:5px 10px;border:0;border-inline-start:3px solid {{ n.edge }};background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:12px;cursor:pointer;text-align:start;width:100%" style-hover="background:var(--btn);color:#fff">
-              <svg width="16" height="16" viewBox="0 0 512 512" style="flex:none;fill:{{ n.ic }}"><path d="{{ n.d }}"></path></svg>
+              <svg width="16" height="16" viewBox="0 0 512 512" style="flex:none;fill:{{ n.ic }}"><path d="M0 0" data-zone-path="{{ n.d }}"></path></svg>
               <span style="flex:1">{{ n.label }}</span>
               <bdi style="font-size:10px;color:var(--acc)">{{ n.badge }}</bdi>
             </button>
@@ -187,7 +222,7 @@
           <div style="width:5px;background:{{ result.accent }}"></div>
           <div style="display:flex;align-items:center;gap:14px;padding:11px 14px;flex:1;min-width:0">
             <span style="width:38px;height:38px;flex:none;border-radius:50%;background:{{ result.wash }};display:grid;place-items:center">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ result.accent }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ result.d }}"></path></svg>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="{{ result.accent }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ result.d }}"></path></svg>
             </span>
             <span style="min-width:0;flex:1">
               <span style="display:block;font-weight:600;color:var(--t1);font-size:13px">{{ result.title }}</span>
@@ -209,7 +244,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
           <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
             <button onClick="{{ q.go }}" style="background:linear-gradient(var(--z2),var(--z1));border:1px solid var(--border2);border-radius:5px;padding:10px 12px;text-align:start;cursor:pointer;font:inherit;color:var(--t2);display:flex;align-items:center;gap:10px" style-hover="border-color:var(--acc)">
-              <svg width="30" height="30" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="{{ q.d }}"></path></svg>
+              <svg width="30" height="30" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ q.d }}"></path></svg>
               <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:13px">{{ q.label }}</span><bdi style="font-size:11px;color:var(--money)">{{ q.sub }}</bdi></span>
             </button>
           </sc-for>
@@ -284,7 +319,7 @@
               <span style="position:absolute;top:8px;inset-inline-start:8px;display:flex;gap:4px"><sc-for list="{{ c.pips }}" as="p" hint-placeholder-count="0"><span style="width:22px;height:22px;border-radius:50%;background:rgba(10,12,15,.72);border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;font-size:9px;font-weight:700;color:{{ p.c }}">{{ p.t }}</span></sc-for></span>
               <sc-if value="{{ c.locked }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span></sc-if>
               <span style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:linear-gradient(var(--tb1),var(--tb2));border-top:1px solid var(--border3)">
-                <span style="width:26px;height:26px;border-radius:50%;background:var(--panel);border:1px solid var(--border3);display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ c.fg }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.d }}"></path></svg></span>
+                <span style="width:26px;height:26px;border-radius:50%;background:var(--panel);border:1px solid var(--border3);display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ c.fg }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ c.d }}"></path></svg></span>
                 <span style="flex:1;min-width:0"><span style="display:block;font-family:Oswald,Rubik,sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:{{ c.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="display:block;font-size:10px;color:var(--t4)">{{ c.sub }}</span></span>
                 <bdi style="font-size:11px;font-weight:700;color:{{ c.fg }}">{{ c.right }}</bdi>
               </span>
@@ -325,7 +360,7 @@
           <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
             <div data-zcard="1" style="position:relative;background:var(--panel);border:1px solid var(--border3);border-radius:6px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <div style="aspect-ratio:16/9;background:url('{{ s.img }}') center/cover"></div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border-top:1px solid var(--border3);padding:7px 10px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t1)"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="{{ s.d }}"></path></svg>{{ s.label }}</span><span style="font-size:10px;color:var(--t4)">{{ s.exercise }}</span></div>
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));border-top:1px solid var(--border3);padding:7px 10px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t1)"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ s.d }}"></path></svg>{{ s.label }}</span><span style="font-size:10px;color:var(--t4)">{{ s.exercise }}</span></div>
               <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
                 <div style="display:flex;align-items:baseline;gap:8px"><bdi data-zfig="1" style="font-size:27px;font-weight:600;color:var(--t1);line-height:1">{{ s.value }}</bdi>{{ s.popEl }}<bdi style="color:var(--mu);font-size:11px;margin-inline-start:auto">{{ s.share }}%</bdi></div>
                 <div style="height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ s.share }}%;background:var(--link)"></div></div>
@@ -344,7 +379,7 @@
 
       <!-- CITY -->
       <sc-if value="{{ is.city }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:2px">
+        <div data-ztabs="1" style="display:flex;gap:2px">
           <sc-for list="{{ mapTabs }}" as="mt" hint-placeholder-count="2"><button onClick="{{ mt.go }}" style="white-space:nowrap;background:{{ mt.bg }};border:1px solid var(--border2);border-bottom:0;color:{{ mt.fg }};border-radius:4px 4px 0 0;padding:6px 14px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ mt.name }}</button></sc-for>
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
@@ -365,7 +400,7 @@
             <button onClick="{{ pn.go }}" title="{{ pn.label }}" style="position:absolute;left:{{ pn.x }}%;top:{{ pn.y }}%;transform:translate(-50%,-100%);background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px" style-hover="z-index:5">
               <span style="position:relative;width:30px;height:38px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.6))">
                 <svg width="30" height="38" viewBox="0 0 30 38" style="position:absolute;inset:0"><path d="M15 1C7.3 1 1 7.2 1 14.8c0 9.6 11.6 20.4 13.3 21.9a1 1 0 0 0 1.4 0C17.4 35.2 29 24.4 29 14.8 29 7.2 22.7 1 15 1z" fill="{{ pn.color }}" stroke="rgba(0,0,0,.45)" stroke-width="1"></path><path d="M15 3.5c-4 0-7.5 2.2-9.3 5.5 2.4-1.8 5.7-2.9 9.3-2.9s6.9 1.1 9.3 2.9C22.5 5.7 19 3.5 15 3.5z" fill="rgba(255,255,255,.35)"></path></svg>
-                <svg width="14" height="14" viewBox="0 0 512 512" style="position:absolute;left:8px;top:7px;fill:#fff;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))"><path d="{{ pn.d }}"></path></svg>
+                <svg width="14" height="14" viewBox="0 0 512 512" style="position:absolute;left:8px;top:7px;fill:#fff;filter:drop-shadow(0 1px 0 rgba(0,0,0,.5))"><path d="M0 0" data-zone-path="{{ pn.d }}"></path></svg>
               </span>
               <span style="font-size:10px;font-weight:600;color:#fff;background:rgba(0,0,0,.65);padding:1px 6px;border-radius:3px;white-space:nowrap;text-shadow:0 1px 0 #000">{{ pn.label }}</span>
             </button>
@@ -376,7 +411,7 @@
         <div>
           <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.keyOfSymbols }}</div>
           <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px">
-            <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)"><span style="position:relative;width:22px;height:28px;flex:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))"><svg width="22" height="28" viewBox="0 0 30 38" style="position:absolute;inset:0"><path d="M15 1C7.3 1 1 7.2 1 14.8c0 9.6 11.6 20.4 13.3 21.9a1 1 0 0 0 1.4 0C17.4 35.2 29 24.4 29 14.8 29 7.2 22.7 1 15 1z" fill="{{ lg.color }}" stroke="rgba(0,0,0,.45)"></path><path d="M15 3.5c-4 0-7.5 2.2-9.3 5.5 2.4-1.8 5.7-2.9 9.3-2.9s6.9 1.1 9.3 2.9C22.5 5.7 19 3.5 15 3.5z" fill="rgba(255,255,255,.35)"></path></svg><svg width="10" height="10" viewBox="0 0 512 512" style="position:absolute;left:6px;top:5px;fill:#fff"><path d="{{ lg.d }}"></path></svg></span><span>{{ lg.label }}</span></div></sc-for>
+            <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)"><span style="position:relative;width:22px;height:28px;flex:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))"><svg width="22" height="28" viewBox="0 0 30 38" style="position:absolute;inset:0"><path d="M15 1C7.3 1 1 7.2 1 14.8c0 9.6 11.6 20.4 13.3 21.9a1 1 0 0 0 1.4 0C17.4 35.2 29 24.4 29 14.8 29 7.2 22.7 1 15 1z" fill="{{ lg.color }}" stroke="rgba(0,0,0,.45)"></path><path d="M15 3.5c-4 0-7.5 2.2-9.3 5.5 2.4-1.8 5.7-2.9 9.3-2.9s6.9 1.1 9.3 2.9C22.5 5.7 19 3.5 15 3.5z" fill="rgba(255,255,255,.35)"></path></svg><svg width="10" height="10" viewBox="0 0 512 512" style="position:absolute;left:6px;top:5px;fill:#fff"><path d="M0 0" data-zone-path="{{ lg.d }}"></path></svg></span><span>{{ lg.label }}</span></div></sc-for>
           </div>
         </div>
       </sc-if>
@@ -384,7 +419,7 @@
       <!-- ATTACK -->
       <sc-if value="{{ is.attack }}" hint-placeholder-val="{{ false }}">
         <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.player }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
+          <div style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
           <sc-for list="{{ opps }}" as="o" hint-placeholder-count="4">
             <div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">
               <div><div style="color:var(--link);font-weight:500">{{ o.name }}</div><div style="color:var(--mu);font-size:11px">{{ o.factionName }} · <bdi>{{ o.status }}</bdi></div></div>
@@ -453,14 +488,14 @@
 
       <!-- ITEMS -->
       <sc-if value="{{ is.items }}" hint-placeholder-val="{{ false }}">
-        <div style="display:flex;gap:2px">
+        <div data-ztabs="1" style="display:flex;gap:2px">
           <sc-for list="{{ itemTabs }}" as="tb" hint-placeholder-count="5"><button onClick="{{ tb.go }}" style="white-space:nowrap;background:{{ tb.bg }};border:1px solid var(--border2);border-bottom:0;color:{{ tb.fg }};border-radius:4px 4px 0 0;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">{{ tb.name }} <bdi style="color:var(--mu)">{{ tb.n }}</bdi></button></sc-for>
         </div>
         <div style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px;margin-top:-10px">
           <div style="background:var(--panel);border:1px solid var(--border);border-radius:0 5px 5px 5px">
             <sc-for list="{{ inv }}" as="i" hint-placeholder-count="5">
               <div data-zrow="1" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line);background:{{ i.bg }}">
-                <button onClick="{{ i.select }}" style="flex:1;display:flex;align-items:center;gap:10px;background:none;border:0;font:inherit;cursor:pointer;text-align:start;padding:0"><span style="width:34px;height:30px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="{{ i.d }}"></path></svg></span><span style="min-width:0"><span style="display:block;color:var(--t1);font-weight:500">{{ i.name }}</span><span style="display:block;color:var(--mu);font-size:11px;white-space:nowrap">{{ i.type }} · {{ i.meta }}</span></span></button>
+                <button onClick="{{ i.select }}" style="flex:1;display:flex;align-items:center;gap:10px;background:none;border:0;font:inherit;cursor:pointer;text-align:start;padding:0"><span style="width:34px;height:30px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ i.d }}"></path></svg></span><span style="min-width:0"><span style="display:block;color:var(--t1);font-weight:500">{{ i.name }}</span><span style="display:block;color:var(--mu);font-size:11px;white-space:nowrap">{{ i.type }} · {{ i.meta }}</span></span></button>
                 <bdi style="color:var(--t4)">×{{ i.qty }}</bdi>
                 <button onClick="{{ i.act }}" disabled="{{ i.disabled }}" style="background:{{ i.btnBg }};color:{{ i.btnFg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;white-space:nowrap;cursor:pointer">{{ i.btn }}</button>
               </div>
@@ -509,11 +544,11 @@
 
       <!-- MARKET -->
       <sc-if value="{{ is.market }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.item }}</span><span>{{ t.seller }}</span><span>{{ t.price }}</span><span>{{ t.change }}</span><span></span></div>
           <sc-for list="{{ market }}" as="m" hint-placeholder-count="8">
             <div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)">
-              <div style="display:flex;align-items:center;gap:8px"><span style="width:30px;height:26px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="{{ m.d }}"></path></svg></span><div><div style="color:var(--t1)">{{ m.name }}</div><div style="color:var(--mu);font-size:10px">{{ m.type }} · <bdi>{{ m.qty }}</bdi> {{ t.left }}</div></div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:30px;height:26px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ m.d }}"></path></svg></span><div><div style="color:var(--t1)">{{ m.name }}</div><div style="color:var(--mu);font-size:10px">{{ m.type }} · <bdi>{{ m.qty }}</bdi> {{ t.left }}</div></div></div>
               <span style="color:var(--link)">{{ m.seller }}</span><bdi style="color:var(--money);font-weight:600">{{ m.price }}</bdi><bdi style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi>
               <button onClick="{{ m.buy }}" disabled="{{ m.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.buy }}</button>
             </div>
@@ -590,7 +625,7 @@
 
       <!-- JAIL -->
       <sc-if value="{{ is.jail }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.inmate }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.bustOdds }}</span><span></span></div>
           <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi style="color:var(--t4)">{{ i.lvl }}</bdi><bdi style="color:var(--gold)">{{ i.left }}</bdi><bdi style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px">{{ t.jailTip }}</div>
@@ -599,7 +634,7 @@
 
       <!-- HOSPITAL -->
       <sc-if value="{{ is.hospital }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.patient }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.reason }}</span><span></span></div>
           <sc-for list="{{ patients }}" as="i" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }}</span><bdi style="color:var(--t4)">{{ i.lvl }}</bdi><bdi style="color:var(--gold)">{{ i.left }}</bdi><span style="color:var(--mu);font-size:11px">{{ i.reason }}</span><button onClick="{{ i.revive }}" disabled="{{ i.disabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.revive }} · 75</button></div></sc-for>
         </div>
@@ -630,13 +665,14 @@
                 </div>
               </sc-for>
             </div>
+          </div>
         </div>
       </sc-if>
 
       <!-- HALL OF FAME -->
       <sc-if value="{{ is.hof }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.player }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ t.networth }}</span><span>{{ t.faction }}</span></div>
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ t.networth }}</span><span>{{ t.faction }}</span></div>
           <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi style="color:var(--t4)">{{ h.lvl }}</bdi><bdi style="color:var(--t4)">{{ h.stats }}</bdi><bdi style="color:var(--money)">{{ h.nw }}</bdi><span style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
         </div>
       </sc-if>
@@ -644,7 +680,7 @@
       <!-- ELIMINATION -->
       <sc-if value="{{ is.elimination }}" hint-placeholder-val="{{ false }}">
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div style="flex:1"><div style="color:var(--mu);font-size:11px">{{ t.yourTeam }}</div><div style="color:var(--t1);font-weight:700;font-size:15px">{{ elim.team }}</div></div><div style="text-align:end"><div style="color:var(--mu);font-size:11px">{{ t.roundEnds }}</div><bdi data-zfig="1" style="color:var(--gold);font-weight:600;font-size:21px">{{ elim.left }}</bdi></div></div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.team }}</span><span>{{ t.score }}</span><span>{{ t.membersShort }}</span><span>{{ t.lives }}</span></div>
           <sc-for list="{{ elim.teams }}" as="e" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ e.bg }}"><bdi style="color:var(--t4)">{{ e.rank }}</bdi><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:{{ e.color }}"></span><span style="color:var(--t1)">{{ e.name }}</span></span><bdi style="color:var(--acc);font-weight:600">{{ e.score }}</bdi><bdi style="color:var(--t4)">{{ e.members }}</bdi><bdi style="color:var(--t4)">{{ e.lives }}</bdi></div></sc-for>
         </div>
@@ -663,7 +699,7 @@ const LUCIDE = { home: 'house', items: 'backpack', city: 'map', jobs: 'briefcase
 const ICON = { home: 'M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', items: 'M4 7h16v13H4zM4 7l2-4h12l2 4M10 12h4', city: 'M4 21V9l8-6 8 6v12M10 21v-6h4v6', jobs: 'M3 8h18v12H3zM8 8V5h8v3', gym: 'M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12', properties: 'M3 21h18M5 21V8l7-5 7 5v13M9 21v-7h6v7', education: 'M2 9l10-5 10 5-10 5zM6 11v5c0 1 3 3 6 3s6-2 6-3v-5', crimes: 'M6 7h12l-1 14H7L6 7zM9 7V5a3 3 0 0 1 6 0v2', missions: 'M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z', newspaper: 'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5', jail: 'M4 3v18M9 3v18M15 3v18M20 3v18M2 3h20M2 21h20', hospital: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v8M8 12h8', casino: 'M3 6h18v12H3zM7 10h.01M17 14h.01M12 12h.01', hof: 'M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3', faction: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', elimination: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2', attack: 'M14.5 3.5l6 6L9 21H3v-6zM13 6l5 5', market: 'M3 10l2-6h14l2 6M3 10h18v10H3zM9 14h6' };
 const SCREENS = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
 const T = {
-  en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
+  en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
     topLinks: ['Wiki', 'Rules', 'Forums', 'Discord', 'Staff'],
     nav: { home: 'Home', items: 'Items', city: 'City', jobs: 'Job', gym: 'Gym', properties: 'Properties', education: 'Education', crimes: 'Crimes', missions: 'Missions', newspaper: 'Newspaper', jail: 'Jail', hospital: 'Hospital', casino: 'Casino', hof: 'Hall of Fame', faction: 'My Faction', elimination: 'Elimination', attack: 'Attack', market: 'Item Market' },
     sub: { home: 'Level {lvl} {title} · {fac}', items: 'Your inventory. Equip, use, sell, inspect in 3D.', city: 'Every area of Zone City. Click a place to travel.', jobs: 'Work shifts for wages and job points.', gym: 'Spend energy to train battle stats. Happy boosts gains.', properties: 'Where you live sets your maximum happiness.', education: 'Courses take time and give permanent perks.', crimes: 'Spend nerve. Categories unlock with crime experience.', missions: 'Daily objectives with cash and point rewards.', newspaper: 'City news and market movers.', jail: 'Inmates awaiting release. Bust them out for nerve or pay bail.', hospital: 'Patients recovering from combat and crime.', casino: 'Gamble your cash.', hof: 'City rankings by total battle stats.', faction: 'Respect buys upgrades; chains multiply it.', elimination: 'Team competition — hospitalize rivals to score.', attack: '25 energy per attack. 25 rounds max.', market: 'Player listings. Prices move live.' },
@@ -709,9 +745,9 @@ const T = {
     footer: 'ZONE · playable mockup · systems modelled on the text-MMO genre · all data simulated locally',
     jail: 'You are in jail', jailBody: 'You were caught. Wait it out or pay bail.', bailSelf: 'Bail {c}', hospital: 'You are in hospital', hospBody: 'Rest up or use a medical item.', useKit: 'Use small first aid kit',
     log: { travel: 'Travelled {m} m across the city. −{e} energy.', crimeOk: '{crime}: +{cash}, +{xp} crime XP.', crimeItem: 'Found a {item} while searching.', crimeJail: '{crime} failed. Jailed {m} min.', crimeHosp: '{crime} went wrong. {m} min in hospital.', train: 'Trained {stat}: +{n}.', win: 'Defeated {who} in {r} rounds.', mug: 'Mugged {who} for {cash}.', hosp: 'Hospitalized {who}. Chain {n}.', lose: '{who} hospitalized you for {m} min.', work: 'Worked a shift as {job}: +{cash}.', buy: 'Bought {item} for {cash}.', use: 'Used {item}.', equip: 'Equipped {item}.', levelUp: 'Level up! Now level {n}.', upgrade: 'Faction bought {name}.', bail: 'Paid {cash} bail.', milestone: 'Chain milestone {n}! +{r} respect.', job: 'Took a job as {job}.', gymJoin: 'Joined {gym} for {cash}.', mission: 'Mission complete: {name}. +{cash}, +{pts} points.', enroll: 'Enrolled in {name}.', edudone: 'Completed {name}.', prop: 'Moved into {prop}.', bustOk: 'Busted {who} out of jail. +{xp} XP.', bustFail: 'Bust failed. Jailed {m} min.', bailOther: 'Bailed {who} for {cash}.', casinoWin: 'Won {cash} at High-Low.', casinoLose: 'Lost {cash} at High-Low.', sell: 'Sold {item} for {cash}.', revive: 'Revived {who}.' },
-    toast: { noNerve: 'Not enough nerve.', noEnergy: 'Not enough energy.', noCash: 'Not enough cash.', blocked: 'You cannot do that right now.', busy: 'Already studying a course.' },
+    toast: { noNerve: 'Not enough nerve.', noEnergy: 'Not enough energy.', noCash: 'Not enough cash.', blocked: 'You cannot do that right now.', busy: 'Already studying a course.', community: 'The community link has not been configured yet.' },
     titles: ['Rookie', 'Petty Thief', 'Hustler', 'Enforcer', 'Capo', 'Underboss', 'Boss'] },
-  ar: { brand: 'زون', tct: 'توقيت زون', player: 'فينشنزو', otherLang: 'English', information: 'المعلومات', areas: 'الأماكن', name: 'الاسم', money: 'النقود', level: 'المستوى', points: 'النقاط', merits: 'الأوسمة', energy: 'الطاقة', nerve: 'الجرأة', happy: 'المعنويات', life: 'الصحة', full: 'ممتلئ', inFmt: '+{n} خلال {t}', chain: 'السلسلة', hits: '{n} ضربة', tutorial: 'شرح',
+  ar: { brand: 'زون', tct: 'توقيت زون', player: 'فينشنزو', playerLabel: 'اللاعب', otherLang: 'English', information: 'المعلومات', areas: 'الأماكن', name: 'الاسم', money: 'النقود', level: 'المستوى', points: 'النقاط', merits: 'الأوسمة', energy: 'الطاقة', nerve: 'الجرأة', happy: 'المعنويات', life: 'الصحة', full: 'ممتلئ', inFmt: '+{n} خلال {t}', chain: 'السلسلة', hits: '{n} ضربة', tutorial: 'شرح',
     topLinks: ['الويكي', 'القوانين', 'المنتدى', 'ديسكورد', 'الإدارة'],
     nav: { home: 'الرئيسية', items: 'العتاد', city: 'المدينة', jobs: 'الوظيفة', gym: 'النادي', properties: 'العقارات', education: 'التعليم', crimes: 'الجرائم', missions: 'المهام', newspaper: 'الصحيفة', jail: 'السجن', hospital: 'المستشفى', casino: 'الكازينو', hof: 'قاعة المشاهير', faction: 'عائلتي', elimination: 'التصفيات', attack: 'الهجوم', market: 'سوق العتاد' },
     sub: { home: 'المستوى {lvl} {title} · {fac}', items: 'مخزونك. جهّز، استخدم، بِع، وشاهد بثلاثية الأبعاد.', city: 'كل مناطق مدينة زون. اضغط مكاناً للانتقال.', jobs: 'اشتغل ورديات مقابل راتب ونقاط وظيفة.', gym: 'اصرف طاقة لتدريب صفاتك القتالية. المعنويات تزيد المكسب.', properties: 'مكان سكنك يحدد أقصى معنوياتك.', education: 'الدورات تأخذ وقتاً وتعطي مزايا دائمة.', crimes: 'اصرف جرأة. الفئات تنفتح بخبرة الجريمة.', missions: 'أهداف يومية بمكافآت نقود ونقاط.', newspaper: 'أخبار المدينة وتحركات السوق.', jail: 'سجناء ينتظرون الإفراج. هرّبهم بالجرأة أو ادفع الكفالة.', hospital: 'مرضى يتعافون من القتال والجرائم.', casino: 'قامر بنقودك.', hof: 'ترتيب المدينة حسب مجموع الصفات.', faction: 'الاحترام يشتري ترقيات، والسلاسل تضاعفه.', elimination: 'منافسة فرق — أدخل الخصوم المستشفى لتسجّل.', attack: '25 طاقة لكل هجوم. 25 جولة كحد أقصى.', market: 'عروض اللاعبين. الأسعار تتحرك مباشرة.' },
@@ -757,7 +793,7 @@ const T = {
     footer: 'زون · نموذج قابل للّعب · أنظمته مبنية على نوع الألعاب النصية الجماعية · كل البيانات محاكاة محلياً',
     jail: 'أنت في السجن', jailBody: 'انقبض عليك. انتظر أو ادفع كفالة.', bailSelf: 'كفالة {c}', hospital: 'أنت في المستشفى', hospBody: 'ارتاح أو استخدم إسعافاً.', useKit: 'استخدم إسعاف صغيرة',
     log: { travel: 'قطعت {m} متراً في المدينة. −{e} طاقة.', crimeOk: '{crime}: +{cash}، +{xp} خبرة جريمة.', crimeItem: 'لقيت {item} أثناء البحث.', crimeJail: 'فشلت {crime}. سُجنت {m} دقيقة.', crimeHosp: '{crime} خربت. {m} دقيقة في المستشفى.', train: 'تدرّبت {stat}: +{n}.', win: 'هزمت {who} في {r} جولات.', mug: 'نشلت {who} بـ{cash}.', hosp: 'أدخلت {who} المستشفى. السلسلة {n}.', lose: '{who} أدخلك المستشفى {m} دقيقة.', work: 'اشتغلت وردية كـ{job}: +{cash}.', buy: 'اشتريت {item} بـ{cash}.', use: 'استخدمت {item}.', equip: 'جهّزت {item}.', levelUp: 'ارتفع مستواك! صرت {n}.', upgrade: 'العائلة اشترت {name}.', bail: 'دفعت كفالة {cash}.', milestone: 'إنجاز سلسلة {n}! +{r} احترام.', job: 'أخذت وظيفة {job}.', gymJoin: 'اشتركت في {gym} بـ{cash}.', mission: 'مهمة مكتملة: {name}. +{cash}، +{pts} نقاط.', enroll: 'سجّلت في {name}.', edudone: 'أكملت {name}.', prop: 'انتقلت إلى {prop}.', bustOk: 'هرّبت {who} من السجن. +{xp} خبرة.', bustFail: 'فشل التهريب. سُجنت {m} دقيقة.', bailOther: 'كفلت {who} بـ{cash}.', casinoWin: 'كسبت {cash} في أعلى-أدنى.', casinoLose: 'خسرت {cash} في أعلى-أدنى.', sell: 'بعت {item} بـ{cash}.', revive: 'أنعشت {who}.' },
-    toast: { noNerve: 'الجرأة ما تكفي.', noEnergy: 'الطاقة ما تكفي.', noCash: 'النقود ما تكفي.', blocked: 'ما تقدر تسوي هذا الآن.', busy: 'أنت تدرس دورة حالياً.' },
+    toast: { noNerve: 'الجرأة ما تكفي.', noEnergy: 'الطاقة ما تكفي.', noCash: 'النقود ما تكفي.', blocked: 'ما تقدر تسوي هذا الآن.', busy: 'أنت تدرس دورة حالياً.', community: 'رابط المجتمع غير مضبوط حالياً.' },
     titles: ['مبتدئ', 'حرامي صغير', 'محتال', 'منفّذ', 'كابو', 'نائب الزعيم', 'الزعيم'] }
 };
 const BARS = { energy: { max: 150, rate: 5, ivl: 600, c1: 'var(--acc)', c2: '#5d8f0e' }, nerve: { max: 50, rate: 1, ivl: 300, c1: '#e05a4a', c2: '#8a2a1e' }, happy: { max: 5000, rate: 5, ivl: 240, c1: 'var(--gold)', c2: '#a07a10' }, life: { max: 3000, rate: 150, ivl: 300, c1: '#5aa0e0', c2: '#2a5a90' } };
@@ -1024,7 +1060,9 @@ class Component extends DCLogic {
     const tutKey = t.tut[screen] ? screen : 'default';
     const casino = this.state.casino;
     return {
-      t, clock, is, nav, bars, topLinks: t.topLinks, ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
+      t, clock, is, nav, bars,
+      topLinks: t.topLinks.map((label, i) => ({ label, go: () => i === 3 ? this.toast(t.toast.community) : this.go(['education', 'newspaper', 'faction', null, 'hof'][i]) })),
+      ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
       toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => this.save()); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
       toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; this.setState({ lang: l }, () => this.save()); },
       cash: money(p.cash), cashIcon: LU('cash'), chainIcon: LU('cuffs'), level: p.level, levelTitle, points: num(p.points), merits: p.merits, chainText: fmt(t.hits, { n: p.fac.chain }),
@@ -1095,11 +1133,11 @@ class Component extends DCLogic {
       members: t.memberNames.map((n, i) => { const st = ['ok', 'ok', 'hosp', 'ok', 'abroad', 'jail'][i]; return { name: n, role: t.roles[i], lvl: [12, 28, 19, 15, 9, 6][i], state: t.mstate[st], stateColor: st === 'ok' ? 'var(--acc)' : st === 'hosp' ? '#e05a4a' : 'var(--gold)', dot: st === 'ok' ? 'var(--acc)' : 'var(--mu2)' }; }),
       itemTabs: ['all', 'weapon', 'armor', 'medical', 'booster', 'material', 'armory'].map(k => ({ name: t.itemTabs[k], n: k === 'armory' ? ARMORY.length : Object.keys(p.inv).filter(i => p.inv[i] > 0 && (k === 'all' || CAT[i].type === k)).length, go: () => this.setState({ itemTab: k }), bg: this.state.itemTab === k ? 'var(--activebg)' : 'var(--deep)', fg: this.state.itemTab === k ? 'var(--activefg)' : 'var(--t4)' })),
       inv: (this.state.itemTab === 'armory' ? ARMORY : Object.keys(p.inv).filter(k => p.inv[k] > 0 && (this.state.itemTab === 'all' || CAT[k].type === this.state.itemTab))).map((k, i) => { const c = CAT[k], eq = p.equip === k;
-        if (this.state.itemTab === 'armory' && !(p.inv[k] > 0)) return { name: t.items[k], type: t.itemType.weapon, meta: '×' + c.mult, qty: 0, abbr: (t.items[k] || k).slice(0, 2).toUpperCase(),
+        if (this.state.itemTab === 'armory' && !(p.inv[k] > 0)) return { name: t.items[k], type: t.itemType.weapon, meta: '×' + c.mult, qty: 0, d: LU(k) || LU('knife'), abbr: (t.items[k] || k).slice(0, 2).toUpperCase(),
           bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.setState({ sel: k }),
           btn: t.buyFor + ' ' + money(c.price), btnBg: p.cash >= c.price ? GREEN : GREY, btnFg: p.cash >= c.price ? 'var(--onAcc)' : 'var(--mu)', disabled: p.cash < c.price,
           act: () => this.act(tt => { if (p.cash < c.price) return this.toast(tt.toast.noCash, true); p.cash -= c.price; p.inv[k] = 1; p.ctr.buys++;
-            this.log('buy', { item: k, cash: money(c.price) }, 'good'); this.result('good', tt.items[k], tt.itemType.weapon, '−' + money(c.price)); }) }; const usable = c.type === 'medical' || c.type === 'booster'; const meta = c.mult ? '×' + c.mult : c.red ? '-' + c.red * 100 + '%' : c.life ? '+' + c.life + ' ' + t.life : c.nerve ? '+' + c.nerve + ' ' + t.nerve : money(c.price); return { name: t.items[k], type: t.itemType[c.type], meta, qty: p.inv[k], d: LU(k === 'sand' ? 'time' : k), abbr: t.items[k].slice(0, 2).toUpperCase(), bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.setState({ sel: k }), btn: c.type === 'weapon' ? (eq ? t.equipped : t.equip) : usable ? t.use : t.sell, btnBg: c.type === 'weapon' && eq ? 'var(--activebg)' : c.type === 'material' ? GREY : GREEN, btnFg: c.type === 'weapon' && eq ? 'var(--activefg)' : c.type === 'material' ? 'var(--t3)' : 'var(--onAcc)', disabled: (c.type === 'weapon' && eq) || c.type === 'armor', act: () => this.act(tt => { if (c.type === 'weapon') { p.equip = k; this.log('equip', { item: k }, 'good'); } else if (usable) { p.inv[k]--; if (c.life) this.gain('life', c.life); if (c.nerve) this.gain('nerve', c.nerve); this.log('use', { item: k }, 'good'); } else { p.inv[k]--; const c2 = Math.round(c.price * 0.9); p.cash += c2; this.log('sell', { item: k, cash: money(c2) }, 'good'); } }) }; }),
+            this.log('buy', { item: k, cash: money(c.price) }, 'good'); this.result('good', tt.items[k], tt.itemType.weapon, '−' + money(c.price)); }) }; const usable = c.type === 'medical' || c.type === 'booster'; const meta = c.mult ? '×' + c.mult : c.red ? '-' + c.red * 100 + '%' : c.life ? '+' + c.life + ' ' + t.life : c.nerve ? '+' + c.nerve + ' ' + t.nerve : money(c.price); return { name: t.items[k], type: t.itemType[c.type], meta, qty: p.inv[k], d: LU(k === 'sand' ? 'time' : k) || LU(c.type === 'weapon' ? 'knife' : 'items'), abbr: t.items[k].slice(0, 2).toUpperCase(), bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.setState({ sel: k }), btn: c.type === 'weapon' ? (eq ? t.equipped : t.equip) : usable ? t.use : t.sell, btnBg: c.type === 'weapon' && eq ? 'var(--activebg)' : c.type === 'material' ? GREY : GREEN, btnFg: c.type === 'weapon' && eq ? 'var(--activefg)' : c.type === 'material' ? 'var(--t3)' : 'var(--onAcc)', disabled: (c.type === 'weapon' && eq) || c.type === 'armor', act: () => this.act(tt => { if (c.type === 'weapon') { p.equip = k; this.log('equip', { item: k }, 'good'); } else if (usable) { p.inv[k]--; if (c.life) this.gain('life', c.life); if (c.nerve) this.gain('nerve', c.nerve); this.log('use', { item: k }, 'good'); } else { p.inv[k]--; const c2 = Math.round(c.price * 0.9); p.cash += c2; this.log('sell', { item: k, cash: money(c2) }, 'good'); } }) }; }),
       invEmpty: this.state.itemTab !== 'armory' && !Object.keys(p.inv).some(k => p.inv[k] > 0 && (this.state.itemTab === 'all' || CAT[k].type === this.state.itemTab)),
       sel: { name: t.items[sel], type: t.itemType[sc.type], desc: t.itemDesc[sel], rows: selRows,
         grade: sc.mult ? 'T' + Math.min(5, Math.max(1, Math.round(sc.mult * 2.4))) : sc.red ? 'T' + Math.round(sc.red * 12) : 'T1' },
@@ -1109,7 +1147,7 @@ class Component extends DCLogic {
         img: 'art/j_' + j.id + '.jpg', imgOpacity: locked ? .38 : cur ? 1 : .85, filter: locked ? 'grayscale(1)' : 'none', locked,
         lockedAttr: locked ? '1' : null, nameColor: locked ? 'var(--t4)' : 'var(--t1)',
         edge: cur ? 'var(--acc)' : 'var(--border3)', shadow: cur ? '0 0 0 1px var(--acc), 0 6px 18px rgba(0,0,0,.4)' : '0 2px 8px rgba(0,0,0,.25)', btn: cur ? t.current : locked ? t.locked : t.take, bg: cur ? 'var(--activebg)' : locked ? GREY : GREEN, fg: cur ? 'var(--activefg)' : locked ? 'var(--mu)' : 'var(--onAcc)', take: () => this.act(tt => { p.job = j.id; this.log('job', { job: j.id }, 'good'); }) }; }),
-      market: this.market.map(m => { const chg = (m.price / m.base - 1) * 100; return { name: t.items[m.item], type: t.itemType[CAT[m.item].type], d: LU(m.item), abbr: t.items[m.item].slice(0, 2).toUpperCase(), qty: m.qty, seller: m.seller, price: money(m.price), chg: (chg >= 0 ? '+' : '') + chg.toFixed(1) + '%', chgColor: chg >= 0 ? 'var(--acc)' : '#e05a4a', disabled: m.qty <= 0 || p.cash < m.price, buy: () => this.act(tt => { if (p.cash < m.price) return this.toast(tt.toast.noCash, true); p.cash -= m.price; m.qty--; p.inv[m.item] = (p.inv[m.item] || 0) + 1; p.ctr.buys++; this.log('buy', { item: m.item, cash: money(m.price) }, 'good');
+      market: this.market.map(m => { const chg = (m.price / m.base - 1) * 100; return { name: t.items[m.item], type: t.itemType[CAT[m.item].type], d: LU(m.item) || LU(CAT[m.item].type === 'weapon' ? 'knife' : 'items'), abbr: t.items[m.item].slice(0, 2).toUpperCase(), qty: m.qty, seller: m.seller, price: money(m.price), chg: (chg >= 0 ? '+' : '') + chg.toFixed(1) + '%', chgColor: chg >= 0 ? 'var(--acc)' : '#e05a4a', disabled: m.qty <= 0 || p.cash < m.price, buy: () => this.act(tt => { if (p.cash < m.price) return this.toast(tt.toast.noCash, true); p.cash -= m.price; m.qty--; p.inv[m.item] = (p.inv[m.item] || 0) + 1; p.ctr.buys++; this.log('buy', { item: m.item, cash: money(m.price) }, 'good');
         this.result('good', tt.items[m.item], tt.itemType[CAT[m.item].type], '−' + money(m.price)); }) }; }),
       missions: MISSIONS.map(m => { const done = !!p.claimed[m.id], prog = Math.min(m.n, p.ctr[m.ctr]), ready = !done && prog >= m.n; return { name: t.ms[m.id][0], desc: t.ms[m.id][1], reward: money(m.cash) + ' + ' + m.pts + ' ' + t.points, pct: Math.round(prog / m.n * 100), barColor: done ? 'var(--mu2)' : ready ? 'var(--acc)' : 'var(--link)', prog: prog + '/' + m.n, btn: done ? t.claimed : ready ? t.claim : t.inProgress, bg: ready ? GREEN : GREY, fg: ready ? 'var(--onAcc)' : 'var(--mu)', disabled: !ready, claim: () => this.act(tt => { p.claimed[m.id] = 1; p.cash += m.cash; p.points += m.pts; this.log('mission', { name: tt.ms[m.id][0], cash: money(m.cash), pts: m.pts }, 'good');
         this.result('cash', tt.ms[m.id][0], fmt(tt.resPts, { n: m.pts }), '+' + money(m.cash)); }) }; }),

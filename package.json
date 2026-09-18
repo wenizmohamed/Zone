@@ -1,0 +1,14 @@
+{
+  "name": "zone-game-prototype",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Bilingual responsive browser game prototype for ZONE.",
+  "scripts": {
+    "verify": "node scripts/verify.mjs",
+    "build": "node scripts/build.mjs",
+    "vercel-build": "npm run verify && npm run build && node scripts/verify.mjs public"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}
