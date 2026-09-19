@@ -1,19 +1,22 @@
-const ADMIN_ACTOR = 'zone-presentation-admin';
 const ACTIVE_CACHE = 'zone.platform.activeRelease';
 const PREVIEW_CACHE = 'zone.platform.previewRelease';
 
 const state = {
+  auth: null,
+  csrfToken: '',
   language: localStorage.getItem('zone.admin.language') === 'ar' ? 'ar' : 'en',
   view: 'overview',
   engine: null,
   modules: [],
   themes: [],
   crimes: [],
+  audit: [],
   ledger: [],
   events: [],
   draft: null,
   releases: [],
   selectedPage: null,
+  selectedCrime: null,
   dirty: false,
 };
 
@@ -22,7 +25,7 @@ const translations = {
     controlPlane: 'ADMIN CONTROL PLANE', engine: 'Engine', game: 'Open game', publish: 'Publish release', sourceOwned: 'FULL SOURCE OWNERSHIP',
     overview: 'Platform overview', overviewSub: 'One control plane for the engine, modules, content, releases, and the live game.', releaseHistory: 'Release history', publishPipeline: 'Publishing pipeline', systemHealth: 'System health', recentEvents: 'Recent events',
     builder: 'Page builder', builderSub: 'Build bilingual responsive game pages from engine-registered blocks.', saveDraft: 'Save draft', preview: 'Refresh preview', pages: 'Pages', choosePage: 'Choose a page or create a new one.', titleEnglish: 'Title in English', titleArabic: 'Title in Arabic', slug: 'Slug', enabledInGame: 'Enabled in game', blocks: 'Registered blocks', addBlock: 'Add block', livePreview: 'Draft preview',
-    modules: 'Module manager', modulesSub: 'Install, update, enable, disable, and inspect independent game systems.', content: 'Game content', contentSub: 'Manage crimes and the release-bound content that the player game consumes.', crimeCatalog: 'Crime catalog', contentDomains: 'Content domains',
+    modules: 'Module manager', modulesSub: 'Install, update, enable, disable, and inspect independent game systems.', content: 'Game content', contentSub: 'Create and balance server-authoritative crimes and release-bound player content.', crimeCatalog: 'Crime catalog', contentDomains: 'Content domains', newCrime: 'New crime', crimeEditor: 'Crime editor', crimeId: 'Crime ID', crimeNameEn: 'English name', crimeNameAr: 'Arabic name', nerveCost: 'Nerve cost', successRate: 'Success percent', cashMinimum: 'Cash minimum', cashMaximum: 'Cash maximum', xpReward: 'XP reward', saveCrime: 'Save crime', domainEvents: 'Domain events', adminAudit: 'Admin audit',
     themes: 'Theme studio', themesSub: 'Change the presentation layer without changing game rules or player state.', releaseBranding: 'Release branding', brandEnglish: 'Brand in English', brandArabic: 'Brand in Arabic', accent: 'Accent color', announcementEnabled: 'Announcement enabled', announcementEnglish: 'Announcement in English', announcementArabic: 'Announcement in Arabic',
     assets: 'Asset library', assetsSub: 'One typed registry for images, thumbnails, animation, video, GLB, and GLTF.', economy: 'Economy and balance', economySub: 'Every reward and transfer is traceable through an immutable correlation trail.', economyLedger: 'Economy ledger', sharedSystems: 'Shared systems', events: 'Events and hooks', eventsSub: 'Modules react through contracts without editing the originating system.', releases: 'Releases and rollback', releasesSub: 'Draft changes, validate them, publish an immutable snapshot, and restore any prior release.', apiTrace: 'API trace',
   },
@@ -30,7 +33,7 @@ const translations = {
     controlPlane: 'لوحة تحكم الإدارة', engine: 'المحرك', game: 'افتح اللعبة', publish: 'انشر الإصدار', sourceOwned: 'ملكية كاملة للسورس',
     overview: 'نظرة عامة على المنصة', overviewSub: 'لوحة واحدة للمحرك والموديولات والمحتوى والإصدارات واللعبة المباشرة.', releaseHistory: 'سجل الإصدارات', publishPipeline: 'مسار النشر', systemHealth: 'حالة النظام', recentEvents: 'آخر الأحداث',
     builder: 'مصمم الصفحات', builderSub: 'أنشئ صفحات عربية وإنجليزية متجاوبة من بلوكات مسجلة في المحرك.', saveDraft: 'حفظ المسودة', preview: 'تحديث المعاينة', pages: 'الصفحات', choosePage: 'اختر صفحة أو أنشئ صفحة جديدة.', titleEnglish: 'العنوان بالإنجليزية', titleArabic: 'العنوان بالعربية', slug: 'المسار', enabledInGame: 'مفعلة داخل اللعبة', blocks: 'البلوكات المسجلة', addBlock: 'إضافة بلوك', livePreview: 'معاينة المسودة',
-    modules: 'إدارة الموديولات', modulesSub: 'ركب وحدث وفعل وعطل أنظمة اللعبة المستقلة.', content: 'محتوى اللعبة', contentSub: 'أدر الجرائم والمحتوى المرتبط بالإصدار الذي تقرأه اللعبة.', crimeCatalog: 'كتالوج الجرائم', contentDomains: 'مجالات المحتوى',
+    modules: 'إدارة الموديولات', modulesSub: 'ركب وحدث وفعل وعطل أنظمة اللعبة المستقلة.', content: 'محتوى اللعبة', contentSub: 'أنشئ ووازن الجرائم المحسوبة في السيرفر والمحتوى المرتبط بالإصدار.', crimeCatalog: 'كتالوج الجرائم', contentDomains: 'مجالات المحتوى', newCrime: 'جريمة جديدة', crimeEditor: 'محرر الجرائم', crimeId: 'معرف الجريمة', crimeNameEn: 'الاسم بالإنجليزية', crimeNameAr: 'الاسم بالعربية', nerveCost: 'تكلفة الأعصاب', successRate: 'نسبة النجاح', cashMinimum: 'أقل مكافأة', cashMaximum: 'أعلى مكافأة', xpReward: 'مكافأة الخبرة', saveCrime: 'حفظ الجريمة', domainEvents: 'أحداث النطاق', adminAudit: 'سجل الإدارة',
     themes: 'استوديو الثيمات', themesSub: 'غير طبقة العرض من دون تغيير قوانين اللعب أو بيانات اللاعب.', releaseBranding: 'هوية الإصدار', brandEnglish: 'الاسم بالإنجليزية', brandArabic: 'الاسم بالعربية', accent: 'لون الهوية', announcementEnabled: 'تفعيل الإعلان', announcementEnglish: 'الإعلان بالإنجليزية', announcementArabic: 'الإعلان بالعربية',
     assets: 'مكتبة الملفات', assetsSub: 'سجل موحد للصور والمصغرات والأنيميشن والفيديو و GLB و GLTF.', economy: 'الاقتصاد والتوازن', economySub: 'كل مكافأة وتحويل قابل للتتبع عبر سجل ومعرف ترابط.', economyLedger: 'سجل الاقتصاد', sharedSystems: 'الأنظمة المشتركة', events: 'الأحداث والـ Hooks', eventsSub: 'الموديولات تتفاعل عبر عقود من دون تعديل النظام الأصلي.', releases: 'الإصدارات والرجوع', releasesSub: 'عدّل المسودة وافحصها وانشر نسخة ثابتة وارجع لأي إصدار سابق.', apiTrace: 'تتبع الـ API',
   },
@@ -85,14 +88,79 @@ function trace(method, path, payload, response, status = 200) {
 async function api(path, options = {}) {
   const method = options.method ?? 'GET';
   const payload = options.body ? JSON.parse(options.body) : null;
+  const headers = { Accept: 'application/json', ...(options.headers ?? {}) };
+  if (options.body) headers['Content-Type'] = 'application/json';
+  if (state.csrfToken && !['GET', 'HEAD', 'OPTIONS'].includes(method)) headers['X-Zone-CSRF-Token'] = state.csrfToken;
   const response = await fetch(path, {
     ...options,
-    headers: { 'Content-Type': 'application/json', 'X-Zone-Admin-Actor': ADMIN_ACTOR, ...(options.headers ?? {}) },
+    credentials: 'same-origin',
+    headers,
   });
   const data = await response.json().catch(() => ({ error: `Non-JSON response from ${path}` }));
   trace(method, path, payload, data, response.status);
+  if (response.status === 401) showLogin('Your admin session has expired. Sign in again.');
   if (!response.ok) throw new Error(data.error ?? `${response.status} ${response.statusText}`);
   return data;
+}
+
+function showLogin(message = '') {
+  state.auth = null;
+  state.csrfToken = '';
+  document.body.classList.remove('auth-pending', 'authenticated');
+  document.body.classList.add('auth-required');
+  $('#loginError').textContent = message;
+  $('#loginPassword').value = '';
+  $('#loginUsername').focus();
+}
+
+function showAdmin(session) {
+  state.auth = session;
+  state.csrfToken = session.csrfToken;
+  document.body.classList.remove('auth-pending', 'auth-required');
+  document.body.classList.add('authenticated');
+  $('#loginError').textContent = '';
+}
+
+async function authenticate() {
+  const response = await fetch('/api/v1/admin/auth', { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+  const session = await response.json().catch(() => ({ authenticated: false }));
+  if (!response.ok || !session.authenticated) {
+    showLogin();
+    return false;
+  }
+  showAdmin(session);
+  return true;
+}
+
+async function signIn(event) {
+  event.preventDefault();
+  const button = $('#loginButton');
+  button.disabled = true;
+  $('#loginError').textContent = '';
+  try {
+    const response = await fetch('/api/v1/admin/auth/login', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ username: $('#loginUsername').value, password: $('#loginPassword').value }),
+    });
+    const session = await response.json().catch(() => ({ error: 'The authentication service returned an invalid response.' }));
+    if (!response.ok || !session.authenticated) throw new Error(session.error ?? 'Sign in failed.');
+    showAdmin(session);
+    await load();
+  } catch (error) {
+    showLogin(error.message);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function signOut() {
+  try {
+    await api('/api/v1/admin/auth/logout', { method: 'POST', body: '{}' });
+  } finally {
+    showLogin('Signed out securely.');
+  }
 }
 
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
@@ -241,9 +309,23 @@ function renderThemes() {
 }
 
 function renderContent() {
-  const header = `<div class="table-row header"><span>Crime</span><span>Nerve</span><span>Success</span><span>Cash</span><span>XP</span></div>`;
-  $('#crimeTable').innerHTML = header + state.crimes.map((crime) => `<div class="table-row"><strong>${esc(state.language === 'ar' ? crime.name_ar : crime.name_en)}</strong><code>${crime.nerve_cost}</code><code>${crime.successRate}%</code><code>${Number(crime.cash_min).toLocaleString()} - ${Number(crime.cash_max).toLocaleString()}</code><code>${crime.xp_reward}</code></div>`).join('');
+  const header = `<div class="table-row header"><span>Crime</span><span>Nerve</span><span>Success</span><span>Cash</span><span>XP</span><span>Action</span></div>`;
+  $('#crimeTable').innerHTML = header + state.crimes.map((crime) => `<div class="table-row ${crime.enabled ? '' : 'disabled'}"><strong>${esc(state.language === 'ar' ? crime.name_ar : crime.name_en)}<small>${crime.enabled ? '' : ' · DISABLED'}</small></strong><code>${crime.nerve_cost}</code><code>${crime.successRate}%</code><code>${Number(crime.cash_min).toLocaleString()} - ${Number(crime.cash_max).toLocaleString()}</code><code>${crime.xp_reward}</code><button class="button ghost" type="button" data-edit-crime="${esc(crime.id)}">EDIT</button></div>`).join('');
+  $$('[data-edit-crime]').forEach((button) => button.addEventListener('click', () => { state.selectedCrime = button.dataset.editCrime; renderContent(); }));
   $('#contentDomains').innerHTML = contentDomains.map(([name, detail]) => `<div class="domain"><strong>${esc(name)}</strong><span>${esc(detail)}</span></div>`).join('');
+  const crime = state.crimes.find((item) => item.id === state.selectedCrime) ?? null;
+  $('#crimeEditorStatus').textContent = crime ? 'EDIT' : 'NEW';
+  $('#crimeEditorStatus').className = `status ${crime?.enabled ? 'active' : ''}`;
+  $('#crimeId').value = crime?.id ?? '';
+  $('#crimeId').disabled = Boolean(crime);
+  $('#crimeNameEn').value = crime?.name_en ?? '';
+  $('#crimeNameAr').value = crime?.name_ar ?? '';
+  $('#crimeNerve').value = crime?.nerve_cost ?? 2;
+  $('#crimeSuccess').value = crime?.successRate ?? 75;
+  $('#crimeCashMin').value = crime?.cash_min ?? 100;
+  $('#crimeCashMax').value = crime?.cash_max ?? 250;
+  $('#crimeXp').value = crime?.xp_reward ?? 10;
+  $('#crimeEnabled').checked = crime?.enabled ?? true;
 }
 
 function renderAssets() {
@@ -259,6 +341,7 @@ function renderEconomy() {
 function renderEvents() {
   const header = `<div class="table-row header"><span>Event</span><span>Time</span><span>Module</span><span>Correlation</span><span>Payload</span></div>`;
   $('#eventTable').innerHTML = header + (state.events.map((event) => `<div class="table-row"><strong>${esc(event.event_name)}</strong><code>${esc(event.occurred_at)}</code><code>EVENT BUS</code><code>${esc(event.payload?.correlationId ?? event.id)}</code><code>${esc(JSON.stringify(event.payload))}</code></div>`).join('') || `<div class="empty-state">No engine events have been emitted yet.</div>`);
+  $('#auditList').innerHTML = state.audit.map((entry) => `<article class="audit-entry"><strong>${esc(entry.action)} · ${esc(entry.target_type)}</strong><code>${esc(entry.target_id)}</code><small>${esc(entry.actor)} · ${esc(entry.created_at)}</small><small>${esc(entry.correlation_id)}</small></article>`).join('') || `<div class="empty-state">No administrator mutations have been recorded yet.</div>`;
 }
 
 function renderReleases() {
@@ -281,7 +364,7 @@ function renderAll() {
 
 function updatePreviewCache() {
   if (!state.draft) return;
-  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: state.draft.manifest, active: false, publishedBy: ADMIN_ACTOR, publishedAt: new Date().toISOString() }));
+  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: state.draft.manifest, active: false, publishedBy: state.auth?.user?.username ?? 'admin', publishedAt: new Date().toISOString() }));
 }
 
 function refreshPreview() {
@@ -316,6 +399,7 @@ async function publishRelease() {
     state.releases = [release, ...state.releases.filter((item) => item.id !== release.id).map((item) => ({ ...item, active: false }))];
     state.engine.activeReleaseId = release.id;
     state.engine.activeReleaseVersion = release.version;
+    $('#runtimeRelease').textContent = `RELEASE ${release.version}`;
     notify(`${state.language === 'ar' ? 'تم نشر الإصدار' : 'Published release'} v${release.version}`);
     renderAll();
     refreshPreview();
@@ -329,6 +413,7 @@ async function activateRelease(id) {
     state.releases = state.releases.map((item) => ({ ...item, active: item.id === release.id }));
     state.engine.activeReleaseId = release.id;
     state.engine.activeReleaseVersion = release.version;
+    $('#runtimeRelease').textContent = `RELEASE ${release.version}`;
     notify(`${state.language === 'ar' ? 'تم الرجوع إلى الإصدار' : 'Rolled back to release'} v${release.version}`);
     renderAll();
     refreshPreview();
@@ -345,6 +430,44 @@ async function mutateModule(id, action) {
   } catch (error) { notify(error.message, true); }
 }
 
+function newCrime() {
+  state.selectedCrime = null;
+  renderContent();
+  $('#crimeId').focus();
+}
+
+async function saveCrime(event) {
+  event.preventDefault();
+  const id = slugify($('#crimeId').value);
+  const definition = {
+    name_en: $('#crimeNameEn').value.trim(),
+    name_ar: $('#crimeNameAr').value.trim(),
+    nerve_cost: Number($('#crimeNerve').value),
+    success_basis_points: Math.round(Number($('#crimeSuccess').value) * 100),
+    cash_min: Number($('#crimeCashMin').value),
+    cash_max: Number($('#crimeCashMax').value),
+    xp_reward: Number($('#crimeXp').value),
+    enabled: $('#crimeEnabled').checked,
+  };
+  const button = $('#saveCrimeButton');
+  button.disabled = true;
+  try {
+    const response = await api(`/api/v1/admin/crimes/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(definition) });
+    state.crimes = [...state.crimes.filter((crime) => crime.id !== response.crime.id), response.crime]
+      .sort((left, right) => left.nerve_cost - right.nerve_cost || left.id.localeCompare(right.id));
+    state.selectedCrime = response.crime.id;
+    const [events, audit] = await Promise.all([api('/api/v1/events'), api('/api/v1/admin/audit')]);
+    state.events = events.events;
+    state.audit = audit.entries;
+    notify(state.language === 'ar' ? 'تم حفظ الجريمة في المحرك' : 'Crime saved to the engine');
+    renderAll();
+  } catch (error) {
+    notify(error.message, true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
 async function activateTheme(id) {
   try {
     await api(`/api/v1/admin/themes/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
@@ -356,8 +479,8 @@ async function activateTheme(id) {
 }
 
 async function load() {
-  const [engine, modules, themes, crimes, ledger, events, draft, releases] = await Promise.all([
-    api('/api/v1/engine'), api('/api/v1/modules'), api('/api/v1/themes'), api('/api/v1/crimes'), api('/api/v1/ledger'), api('/api/v1/events'), api('/api/v1/admin/draft'), api('/api/v1/admin/releases'),
+  const [engine, modules, themes, crimes, ledger, events, audit, draft, releases] = await Promise.all([
+    api('/api/v1/engine'), api('/api/v1/modules'), api('/api/v1/themes'), api('/api/v1/admin/crimes'), api('/api/v1/ledger'), api('/api/v1/events'), api('/api/v1/admin/audit'), api('/api/v1/admin/draft'), api('/api/v1/admin/releases'),
   ]);
   Object.assign(state, {
     engine,
@@ -366,29 +489,38 @@ async function load() {
     crimes: crimes.crimes,
     ledger: ledger.entries,
     events: events.events,
+    audit: audit.entries,
     draft,
     releases: releases.releases,
   });
+  state.selectedCrime = state.crimes[0]?.id ?? null;
   $('#runtimePhp').textContent = `PHP ${engine.php}`;
   $('#runtimeDatabase').textContent = engine.database.toUpperCase();
   $('#runtimeRelease').textContent = `RELEASE ${engine.activeReleaseVersion}`;
-  $('#runtimeMode').textContent = engine.database === 'sqlite' ? 'PRESENTATION' : 'PERSISTENT';
+  $('#runtimeMode').textContent = engine.database === 'pgsql' ? 'PRODUCTION' : 'LOCAL';
   applyLanguage();
   updatePreviewCache();
 }
 
 $('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
+$('#loginForm').addEventListener('submit', signIn);
+$('#logoutButton').addEventListener('click', signOut);
 $('#publishButton').addEventListener('click', publishRelease);
 $('#releasePublishButton').addEventListener('click', publishRelease);
 $('#saveDraftButton').addEventListener('click', saveDraft);
 $('#previewButton').addEventListener('click', refreshPreview);
 $('#addPageButton').addEventListener('click', addPage);
 $('#addBlockButton').addEventListener('click', addBlock);
+$('#newCrimeButton').addEventListener('click', newCrime);
+$('#crimeForm').addEventListener('submit', saveCrime);
 $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textContent = 'ZONE ADMIN READY'; });
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
 $$('.viewport-button').forEach((button) => button.addEventListener('click', () => { $$('.viewport-button').forEach((item) => item.classList.remove('active')); button.classList.add('active'); $('#previewFrame').style.width = button.dataset.width; }));
 
-load().catch((error) => {
+authenticate().then((authenticated) => {
+  if (!authenticated) return;
+  return load();
+}).catch((error) => {
   trace('BOOT', '/admin', null, { error: error.message }, 500);
   notify(error.message, true);
   $('#pipelineStatus').textContent = 'API ERROR';

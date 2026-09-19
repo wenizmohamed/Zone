@@ -11,9 +11,22 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin.css">
 </head>
-<body>
-  <div class="ambient" aria-hidden="true"></div>
-  <header class="topbar">
+<body class="auth-pending">
+  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+    <form class="login-card" id="loginForm">
+      <span class="brand-mark" aria-hidden="true">Z</span>
+      <span class="eyebrow">SECURE ADMIN ACCESS</span>
+      <h1 id="loginTitle">ZONE Control Plane</h1>
+      <p>Sign in with an authorized administrator account.</p>
+      <label><span>Username</span><input id="loginUsername" name="username" autocomplete="username" required maxlength="80"></label>
+      <label><span>Password</span><input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
+      <button class="button primary" id="loginButton" type="submit">Sign in</button>
+      <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <div class="ambient" data-admin-shell aria-hidden="true"></div>
+  <header class="topbar" data-admin-shell>
     <a class="brand" href="/admin" aria-label="ZONE admin home">
       <span class="brand-mark">Z</span>
       <span><strong>ZONE</strong><small data-copy="controlPlane">ADMIN CONTROL PLANE</small></span>
@@ -22,17 +35,18 @@
       <span><i class="signal"></i><b id="runtimePhp">PHP 8.5</b></span>
       <span id="runtimeDatabase">DATABASE</span>
       <span id="runtimeRelease">RELEASE 0</span>
-      <span id="runtimeMode">PRESENTATION</span>
+      <span id="runtimeMode">PERSISTENT</span>
     </div>
     <div class="top-actions">
       <button class="button ghost" id="languageButton" type="button">العربية</button>
       <a class="button ghost" href="/engine" data-copy="engine">Engine</a>
       <a class="button ghost" href="/" data-copy="game">Open game</a>
+      <button class="button ghost" id="logoutButton" type="button">Sign out</button>
       <button class="button primary" id="publishButton" type="button" data-copy="publish">Publish release</button>
     </div>
   </header>
 
-  <div class="app-shell">
+  <div class="app-shell" data-admin-shell>
     <aside class="sidebar">
       <div class="workspace-label"><span>ZONE PLATFORM</span><strong>ENGINE 1.0</strong></div>
       <nav id="adminNav" aria-label="Admin sections"></nav>
@@ -102,11 +116,34 @@
 
       <section class="view" data-view="content">
         <div class="page-head"><div><span class="eyebrow">CONTENT STUDIO</span><h1 data-copy="content">Game content</h1><p data-copy="contentSub">Manage crimes and the release-bound content that the player game consumes.</p></div></div>
-        <div class="dashboard-grid"><article class="panel span-2"><div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="crimeCatalog">Crime catalog</h2></div></div><div class="data-table" id="crimeTable"></div></article><article class="panel"><div class="panel-head"><div><span class="section-number">02</span><h2 data-copy="contentDomains">Content domains</h2></div></div><div class="domain-grid" id="contentDomains"></div></article></div>
+        <div class="dashboard-grid">
+          <article class="panel span-2">
+            <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="crimeCatalog">Crime catalog</h2></div><button class="button secondary" id="newCrimeButton" type="button" data-copy="newCrime">New crime</button></div>
+            <div class="data-table crime-table" id="crimeTable"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><span class="section-number">02</span><h2 data-copy="crimeEditor">Crime editor</h2></div><span class="status" id="crimeEditorStatus">NEW</span></div>
+            <form class="crime-editor" id="crimeForm">
+              <label><span data-copy="crimeId">Crime ID</span><input id="crimeId" maxlength="80" pattern="[a-z][a-z0-9-]{1,79}" required></label>
+              <label><span data-copy="crimeNameEn">English name</span><input id="crimeNameEn" maxlength="160" required></label>
+              <label><span data-copy="crimeNameAr">Arabic name</span><input id="crimeNameAr" maxlength="160" dir="rtl" required></label>
+              <div class="form-grid">
+                <label><span data-copy="nerveCost">Nerve cost</span><input id="crimeNerve" type="number" min="1" max="1000" required></label>
+                <label><span data-copy="successRate">Success percent</span><input id="crimeSuccess" type="number" min="0" max="100" step="0.01" required></label>
+                <label><span data-copy="cashMinimum">Cash minimum</span><input id="crimeCashMin" type="number" min="0" max="2000000000" required></label>
+                <label><span data-copy="cashMaximum">Cash maximum</span><input id="crimeCashMax" type="number" min="0" max="2000000000" required></label>
+                <label><span data-copy="xpReward">XP reward</span><input id="crimeXp" type="number" min="0" max="1000000000" required></label>
+                <label class="toggle-row"><input id="crimeEnabled" type="checkbox" checked><span data-copy="enabledInGame">Enabled in game</span></label>
+              </div>
+              <button class="button primary" type="submit" id="saveCrimeButton" data-copy="saveCrime">Save crime</button>
+            </form>
+          </article>
+          <article class="panel span-2"><div class="panel-head"><div><span class="section-number">03</span><h2 data-copy="contentDomains">Content domains</h2></div></div><div class="domain-grid" id="contentDomains"></div></article>
+        </div>
       </section>
 
       <section class="view" data-view="themes">
-        <div class="page-head"><div><span class="eyebrow">PRESENTATION PACKAGES</span><h1 data-copy="themes">Theme studio</h1><p data-copy="themesSub">Change the presentation layer without changing game rules or player state.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow">THEME PACKAGES</span><h1 data-copy="themes">Theme studio</h1><p data-copy="themesSub">Change the presentation layer without changing game rules or player state.</p></div></div>
         <div class="catalog-grid" id="themeGrid"></div>
         <article class="panel token-panel"><div class="panel-head"><div><span class="section-number">TOKENS</span><h2 data-copy="releaseBranding">Release branding</h2></div></div><div class="form-grid"><label><span data-copy="brandEnglish">Brand in English</span><input id="brandEn" maxlength="120"></label><label><span data-copy="brandArabic">Brand in Arabic</span><input id="brandAr" maxlength="120" dir="rtl"></label><label><span data-copy="accent">Accent color</span><input id="accentColor" type="color"></label><label class="toggle-row"><input id="announcementEnabled" type="checkbox"><span data-copy="announcementEnabled">Announcement enabled</span></label><label><span data-copy="announcementEnglish">Announcement in English</span><textarea id="announcementEn" rows="3" maxlength="1000"></textarea></label><label><span data-copy="announcementArabic">Announcement in Arabic</span><textarea id="announcementAr" rows="3" maxlength="1000" dir="rtl"></textarea></label></div></article>
       </section>
@@ -123,7 +160,10 @@
 
       <section class="view" data-view="events">
         <div class="page-head"><div><span class="eyebrow">EVENT BUS</span><h1 data-copy="events">Events and hooks</h1><p data-copy="eventsSub">Modules react through contracts without editing the originating system.</p></div></div>
-        <article class="panel"><div class="data-table" id="eventTable"></div></article>
+        <div class="dashboard-grid">
+          <article class="panel span-2"><div class="panel-head"><div><span class="section-number">EVENTS</span><h2 data-copy="domainEvents">Domain events</h2></div></div><div class="data-table" id="eventTable"></div></article>
+          <article class="panel"><div class="panel-head"><div><span class="section-number">AUDIT</span><h2 data-copy="adminAudit">Admin audit</h2></div></div><div class="audit-list" id="auditList"></div></article>
+        </div>
       </section>
 
       <section class="view" data-view="releases">

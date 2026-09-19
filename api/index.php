@@ -8,14 +8,10 @@ if (is_string($rewrittenPath) && str_starts_with($rewrittenPath, '/')) {
     unset($_GET['__zone_path']);
 }
 
-if (getenv('VERCEL') === '1') {
-    if (!getenv('ZONE_DATABASE_URL')) {
-        $deployment = preg_replace('/[^a-zA-Z0-9_-]/', '', getenv('VERCEL_GIT_COMMIT_SHA') ?: 'presentation');
-        putenv('ZONE_DATABASE_URL=sqlite:/tmp/zone-engine-' . $deployment . '.sqlite');
-        putenv('ZONE_PRESENTATION_MODE=1');
-    }
-    if (!getenv('ZONE_ADMIN_TOKEN')) {
-        putenv('ZONE_DEMO_MODE=1');
+if (getenv('VERCEL') === '1' && !getenv('ZONE_DATABASE_URL')) {
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: '';
+    if ($databaseUrl !== '') {
+        putenv('ZONE_DATABASE_URL=' . $databaseUrl);
     }
 }
 

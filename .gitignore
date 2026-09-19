@@ -4,3 +4,5 @@
 engine/var/*.sqlite
 engine/var/*.sqlite-*
 engine/var/*.log
+
+.env*.local

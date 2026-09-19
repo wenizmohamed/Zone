@@ -6,6 +6,7 @@ namespace Zone\Engine\Application;
 
 use RuntimeException;
 use Zone\Engine\Core\Contracts\CacheStore;
+use Zone\Engine\Core\Content\ContentManager;
 use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
@@ -19,6 +20,7 @@ final class GameEngine
 {
     private readonly Ledger $ledger;
     private readonly ResourceService $resources;
+    private readonly ContentManager $content;
 
     public function __construct(
         private readonly Database $database,
@@ -30,6 +32,7 @@ final class GameEngine
     ) {
         $this->ledger = new Ledger($database);
         $this->resources = new ResourceService($database);
+        $this->content = new ContentManager($database, $events);
     }
 
     public function status(): array
@@ -37,7 +40,7 @@ final class GameEngine
         $release = $this->releases->active();
         return [
             'engine' => 'ZONE Engine',
-            'version' => '0.1.0-foundation',
+            'version' => '1.0.0',
             'php' => PHP_VERSION,
             'database' => $this->database->driver(),
             'cacheAdapter' => $this->cache->adapterName(),
@@ -59,6 +62,8 @@ final class GameEngine
                 'postgresql-schema',
                 'redis-cache-port',
                 'draft-preview-publish-rollback',
+                'admin-content-crud',
+                'admin-audit-log',
             ],
         ];
     }
@@ -122,7 +127,7 @@ final class GameEngine
         return $this->themes->activeStylesheet();
     }
 
-    public function player(string $playerId = 'demo-player'): array
+    public function player(string $playerId = 'founder-player'): array
     {
         return $this->resources->regenerate($playerId);
     }
@@ -133,16 +138,27 @@ final class GameEngine
             return [];
         }
         return array_map(static function (array $crime): array {
-            foreach (['nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward'] as $field) {
-                $crime[$field] = (int) $crime[$field];
-            }
-            $crime['successRate'] = $crime['success_basis_points'] / 100;
             unset($crime['success_basis_points'], $crime['enabled']);
             return $crime;
-        }, $this->database->fetchAll('SELECT * FROM crimes WHERE enabled = 1 ORDER BY nerve_cost'));
+        }, $this->content->crimes());
     }
 
-    public function attemptCrime(string $crimeId, string $playerId = 'demo-player'): array
+    public function adminCrimes(): array
+    {
+        return $this->content->crimes(true);
+    }
+
+    public function saveCrime(string $id, array $definition, string $actor): array
+    {
+        return $this->content->saveCrime($id, $definition, $actor);
+    }
+
+    public function adminAuditLog(int $limit = 100): array
+    {
+        return $this->content->auditLog($limit);
+    }
+
+    public function attemptCrime(string $crimeId, string $playerId = 'founder-player'): array
     {
         if (!$this->modules->isEnabled('crime')) {
             throw new RuntimeException('Crime module is disabled. Re-enable it from the module manager.');
@@ -226,7 +242,7 @@ final class GameEngine
         }, $rows);
     }
 
-    public function achievements(string $playerId = 'demo-player'): array
+    public function achievements(string $playerId = 'founder-player'): array
     {
         return $this->database->fetchAll(
             'SELECT code, unlocked_at, source_event_id FROM achievements WHERE player_id = :player ORDER BY unlocked_at DESC',

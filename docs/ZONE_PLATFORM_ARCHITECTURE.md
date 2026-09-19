@@ -1,6 +1,6 @@
 # ZONE Platform Architecture
 
-Status: implementation contract for the Omar presentation and the production engine
+Status: implementation contract and verified production-foundation record
 
 ## Goal
 
@@ -187,17 +187,20 @@ The existing ZONE frontend remains the visual reference and migration source. It
 
 ## Deployment model
 
-### Presentation deployment
+### Current Vercel release candidate
 
-The existing team-auraa Vercel project serves one public origin with:
+The existing team-auraa Vercel project serves one secured public origin with:
 
 - Player game assets
 - Admin control plane
 - Engine proof
 - PHP 8.5 Vercel function through `vercel-php@0.9.0`
 - Versioned API routes
+- Signed administrator sessions and CSRF-protected mutations
+- Neon PostgreSQL persistence over TLS
+- Immutable content releases, event history, and administrator audit records
 
-Persistent shared publishing requires PostgreSQL and Redis integrations. Until those credentials exist, presentation mode must be visibly identified and must not be described as production persistence.
+The current deployment is PostgreSQL-backed and fails closed if its production database or administrator secrets are missing. Redis, dedicated workers, realtime delivery, object storage uploads, and multi-account RBAC remain adapter and module work. The in-memory cache adapter is reported honestly by the health endpoint until Redis is connected.
 
 ### Production deployment
 
@@ -207,9 +210,9 @@ Persistent shared publishing requires PostgreSQL and Redis integrations. Until t
 - Redis 8.10: cache, queues, locks, rate limiting, and realtime fan-out
 - Object storage and CDN: images, video, animation, GLB, and GLTF
 
-Both deployments keep the same API contract. Moving the PHP application from the presentation function to a dedicated production runtime does not require rewriting the web clients.
+Both deployments keep the same API contract. Moving the PHP application from the Vercel function to a dedicated long-running runtime does not require rewriting the web clients.
 
-## Omar presentation acceptance tests
+## Omar production acceptance tests
 
 1. Add a crime in the admin content studio, save it as a draft, and prove the live game has not changed.
 2. Preview the draft and prove the new crime appears only in preview.
@@ -222,6 +225,8 @@ Both deployments keep the same API contract. Moving the PHP application from the
 9. Run a server-authoritative action and trace command, event, reward, ledger, notification, and correlation identifiers.
 10. Roll back the release and prove the prior game configuration returns while audit history remains intact.
 
-## Current repository gap
+## Current delivery state
 
-The current branch now contains the first integrated Omar-platform slice: the player, admin control plane, release manager, publishing API, runtime manifest loader, and rollback path operate on one origin. The public Vercel preview proves that an admin-created page can be validated, published as an immutable release, and consumed by the game. It remains a presentation slice until external PostgreSQL and Redis, authentication and RBAC, workers, object storage, observability, and the remaining server-authoritative gameplay migrations are connected.
+The repository contains the integrated player client, secured administrator control plane, PHP 8.5 engine, module and theme registries, release manager, publishing API, runtime manifest loader, PostgreSQL schemas, economy and event audit trails, and rollback path on one origin. The live release candidate proves that Omar can sign in, save a bilingual production draft, publish an immutable release to Neon PostgreSQL, load the published page in the player game, and lose access after logout.
+
+The original 18-screen game remains the visual migration source. Browser-local state in screens not yet migrated to engine modules is not treated as authoritative multiplayer state. Inventory, Travel, Gym, Jobs, Education, Combat, Factions, Market, Missions, and Casino are the next independent module migrations. Redis, dedicated workers, realtime delivery, object storage uploads, multi-account RBAC, backups, and observability remain production infrastructure work behind the contracts already established here.

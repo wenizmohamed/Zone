@@ -1,21 +1,23 @@
-# ZONE Engine Foundation
+# ZONE Engine 1.0
 
-This directory is the executable engine proof requested before expanding the game itself.
+This directory contains the PHP 8.5 application that powers the ZONE API, secured control plane, modules, themes, publishing pipeline, server-authoritative gameplay proof, and durable audit data.
 
-It demonstrates five architectural promises with running code:
+## Proven contracts
 
-1. PHP 8.5 owns game outcomes and resource mutations.
+1. PHP owns outcomes, resource mutations, and economy changes.
 2. Modules are discovered from manifests and can be installed, uninstalled, enabled, or disabled without editing the core.
 3. Modules react to one another through domain events and hooks.
-4. Themes are independent packages that can be changed without touching gameplay.
-5. Currency movements and domain events are recorded in append-only audit tables.
+4. Themes are independent packages and contain no gameplay rules.
+5. Currency movements and domain events are append-only and correlation-traceable.
+6. Admin changes remain drafts until a validated immutable release is published.
+7. Administrator sessions are signed, HttpOnly, same-origin, and CSRF-protected.
 
-## Included proof packages
+## Packages
 
-- `modules/Crime`: server-authoritative crime catalog and attempts.
-- `modules/Achievements`: listens for `CrimeSucceeded` and unlocks an achievement without importing or modifying the Crime module.
-- `themes/zone`: primary tactical ZONE interface.
-- `themes/terminal`: alternate theme proving view independence.
+- `modules/Crime`: server-authoritative crime catalog and crime attempts.
+- `modules/Achievements`: consumes `CrimeSucceeded` and unlocks an achievement without importing or modifying the Crime module.
+- `themes/zone`: primary ZONE interface package.
+- `themes/terminal`: alternate package proving view independence.
 
 ## Runtime architecture
 
@@ -33,25 +35,31 @@ Web or Mobile Client
 PostgreSQL / Redis / Workers / Storage
 ```
 
-The local presentation uses SQLite as an adapter so it runs without external services. The production schema is PostgreSQL and lives at `database/schema.postgresql.sql`. No game rule imports SQLite or PostgreSQL code.
+PostgreSQL is the production adapter and its idempotent schema is in `database/schema.postgresql.sql`. SQLite is a local-development adapter. Domain and module code do not import PDO drivers directly.
 
-## Run the proof
+## Run locally
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1
 powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1
 ```
 
-Then open `http://127.0.0.1:4285/engine`.
+Routes:
 
-The existing ZONE game remains at `http://127.0.0.1:4285/` and is treated as a frontend consumer to migrate screen by screen.
+- `http://127.0.0.1:4285/`
+- `http://127.0.0.1:4285/admin`
+- `http://127.0.0.1:4285/engine`
+- `http://127.0.0.1:4285/api/v1/health`
+
+The local server script sets development-only credentials and a signed-session secret. Production requires encrypted `ZONE_ADMIN_USERNAME`, `ZONE_ADMIN_PASSWORD_HASH`, and `ZONE_ADMIN_SESSION_SECRET` values.
 
 ## Production adapters
 
-- Database: PostgreSQL through `ZONE_DATABASE_URL=postgresql://...`
-- Cache: an in-memory presentation adapter and a production Redis adapter selected through `ZONE_REDIS_URL`
-- Media: `assets` table supports ordinary images, thumbnails, animation, video, GLB, GLTF, and arbitrary metadata
-- Timers and work: `jobs` table models durable scheduled work
-- Notifications: `notifications` table models player delivery state
+- Database: PostgreSQL through `ZONE_DATABASE_URL`, `DATABASE_URL`, or `POSTGRES_URL`
+- Cache: in-memory fallback behind a cache port, with Redis selected through `ZONE_REDIS_URL`
+- Media: typed `assets` records for images, thumbnails, animation, video, GLB, GLTF, and metadata
+- Timers and work: durable `jobs` records with run time, status, and attempts
+- Notifications: persistent player delivery state
+- Publishing: production draft, immutable release snapshots, active pointer, history, rollback, and administrator audit rows
 
-The presentation console runs with `ZONE_DEMO_MODE=1`. Production admin mutations require `ZONE_ADMIN_TOKEN` and the `X-Zone-Admin-Token` header.
+Vercel fails closed if PostgreSQL or administrator secrets are missing. It never uses temporary function-disk SQLite as production persistence.

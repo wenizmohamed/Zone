@@ -1,6 +1,6 @@
 {
   "name": "zone/game-engine",
-  "description": "Modular, API-first browser game engine foundation for ZONE.",
+  "description": "Production modular, API-first browser game engine for ZONE.",
   "type": "project",
   "license": "proprietary",
   "require": {

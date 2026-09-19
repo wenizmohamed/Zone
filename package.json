@@ -1,8 +1,8 @@
 {
-  "name": "zone-game-prototype",
-  "version": "2.1.0",
+  "name": "zone-game-platform",
+  "version": "3.0.0",
   "private": true,
-  "description": "Bilingual responsive browser game prototype for ZONE.",
+  "description": "Bilingual, modular, API-first browser game platform for ZONE.",
   "scripts": {
     "verify": "node scripts/verify.mjs",
     "build": "node scripts/build.mjs",

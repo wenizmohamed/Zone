@@ -43,7 +43,24 @@ final class Database
             throw new RuntimeException('Invalid PostgreSQL database URL.');
         }
         $database = ltrim($parts['path'], '/');
-        $dsn = sprintf('pgsql:host=%s;port=%d;dbname=%s', $parts['host'], $parts['port'] ?? 5432, $database);
+        $query = [];
+        parse_str($parts['query'] ?? '', $query);
+        $sslMode = preg_match('/^[a-z-]+$/', (string) ($query['sslmode'] ?? 'require'))
+            ? (string) ($query['sslmode'] ?? 'require')
+            : 'require';
+        $dsn = sprintf(
+            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
+            $parts['host'],
+            $parts['port'] ?? 5432,
+            $database,
+            $sslMode,
+        );
+        if (str_ends_with(strtolower($parts['host']), '.neon.tech')) {
+            $endpointId = preg_replace('/-pooler$/', '', explode('.', $parts['host'])[0]);
+            if (is_string($endpointId) && preg_match('/^ep-[a-z0-9-]+$/', $endpointId)) {
+                $dsn .= ";options='endpoint={$endpointId}'";
+            }
+        }
         $pdo = new PDO($dsn, urldecode($parts['user'] ?? ''), urldecode($parts['pass'] ?? ''));
         return new self($pdo, 'pgsql');
     }
@@ -61,16 +78,16 @@ final class Database
             throw new RuntimeException("Unable to read schema: {$schema}");
         }
         $this->pdo->exec($sql);
-        $this->seedDemoContent();
+        $this->seedFoundationContent();
     }
 
-    private function seedDemoContent(): void
+    private function seedFoundationContent(): void
     {
         $now = gmdate('c');
         $this->insertIgnore(
             'players',
             ['id', 'username', 'level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'resources_updated_at'],
-            ['demo-player', 'Omar Demo', 7, 1250, 25000, 100, 45, 250, 1000, 100, 45, 250, 1000, $now],
+            ['founder-player', 'Vincenzo', 12, 4982, 48500, 150, 50, 3000, 500, 150, 50, 3000, 500, $now],
         );
 
         $crimes = [

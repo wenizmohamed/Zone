@@ -9,6 +9,7 @@ use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
+use Zone\Engine\Core\Security\AdminSession;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 use Zone\Engine\Infrastructure\Cache\ArrayCacheStore;
 
@@ -42,15 +43,51 @@ function build_engine(string $databasePath): array
 }
 
 try {
+    putenv('ZONE_ADMIN_USERNAME=omar');
+    putenv('ZONE_ADMIN_PASSWORD_HASH=' . password_hash('production-test-password', PASSWORD_ARGON2ID));
+    putenv('ZONE_ADMIN_SESSION_SECRET=zone-test-session-secret-at-least-thirty-two-characters');
+    check(AdminSession::credentialsConfigured(), 'admin authentication requires an explicit username, password hash, and session secret');
+    $adminToken = AdminSession::issueTokenForTest('omar', time() + 600, 'csrf-test-token');
+    $decodedAdmin = AdminSession::decodeTokenForTest($adminToken);
+    check($decodedAdmin !== null && $decodedAdmin['username'] === 'omar' && $decodedAdmin['csrf'] === 'csrf-test-token', 'signed admin session tokens preserve authenticated identity and CSRF state');
+    check(AdminSession::decodeTokenForTest($adminToken . 'tampered') === null, 'tampered admin session tokens are rejected');
+
     [$engine, $database] = build_engine($databasePath);
     $status = $engine->status();
     check(version_compare(PHP_VERSION, '8.5.0', '>='), 'runtime is PHP 8.5 or newer');
     check($status['serverAuthoritative'] === true, 'engine reports server-authoritative execution');
-    check($status['database'] === 'sqlite', 'presentation adapter is SQLite');
+    check($status['database'] === 'sqlite', 'local test adapter is SQLite');
     check($status['cacheAdapter'] === 'memory' && $status['redisPortReady'] === true, 'cache port runs in memory and exposes a Redis production adapter');
     check(count($engine->modules()) === 2, 'two independent modules discovered from manifests');
     check(count($engine->themes()) === 2, 'two independent themes discovered from manifests');
     check(count($engine->crimes()) === 3, 'Crime module exposes its catalog');
+    check(count($engine->adminCrimes()) === 3, 'admin content service exposes enabled and disabled crime definitions');
+
+    $createdCrime = $engine->saveCrime('dockyard-run', [
+        'name_en' => 'Dockyard run',
+        'name_ar' => 'عملية الميناء',
+        'nerve_cost' => 8,
+        'success_basis_points' => 6400,
+        'cash_min' => 900,
+        'cash_max' => 1900,
+        'xp_reward' => 35,
+        'enabled' => true,
+    ], 'content-test');
+    check($createdCrime['id'] === 'dockyard-run' && (float) $createdCrime['successRate'] === 64.0, 'admin creates a typed crime definition');
+    check(count($engine->crimes()) === 4, 'enabled admin-created crime appears in the public engine catalog');
+    $disabledCrime = $engine->saveCrime('dockyard-run', [...$createdCrime, 'enabled' => false], 'content-test');
+    check($disabledCrime['enabled'] === false && count($engine->crimes()) === 3, 'admin can disable a crime without deleting its definition');
+    check(count($engine->adminCrimes()) === 4, 'disabled crime remains available to the administrator');
+    $crimeAudit = array_values(array_filter($engine->adminAuditLog(), static fn (array $entry): bool => $entry['target_type'] === 'crime'));
+    $crimeAuditActions = array_column($crimeAudit, 'action');
+    check(count($crimeAudit) === 2 && in_array('CrimeCreated', $crimeAuditActions, true) && in_array('CrimeUpdated', $crimeAuditActions, true), 'crime creation and update are preserved in the admin audit trail');
+    $invalidCrimeRejected = false;
+    try {
+        $engine->saveCrime('bad crime', ['enabled' => true], 'content-test');
+    } catch (InvalidArgumentException) {
+        $invalidCrimeRejected = true;
+    }
+    check($invalidCrimeRejected, 'crime editor rejects invalid identifiers and incomplete definitions');
 
     $engine->changeModule('achievements', 'disable');
     [$engine, $database] = build_engine($databasePath);
@@ -91,7 +128,7 @@ try {
     $draft = $releases->draft();
     check($draft['manifest']['schemaVersion'] === 1, 'release manager creates a schema version 1 draft');
     $activeBeforePublish = $releases->active();
-    check($activeBeforePublish['version'] === 0, 'unpublished engine exposes the immutable foundation release');
+    check($activeBeforePublish['version'] === 0, 'unpublished engine exposes the immutable initial release');
 
     $invalidDraft = $draft['manifest'];
     $invalidDraft['pages'][] = [
@@ -128,7 +165,7 @@ try {
 
     $restored = $releases->activate($releaseOne['id'], 'test-admin');
     check($restored['version'] === 1 && $releases->active()['version'] === 1, 'activating a prior release rolls the game back without deleting history');
-    check(count($database->fetchAll('SELECT * FROM admin_audit_log')) === 5, 'draft and release mutations are recorded in the admin audit log');
+    check(count($database->fetchAll("SELECT * FROM admin_audit_log WHERE target_type IN ('content-draft', 'content-release')")) === 5, 'draft and release mutations are recorded in the admin audit log');
 
     $applicationDraft = $engine->releaseDraft();
     $applicationActive = $engine->activeRelease();

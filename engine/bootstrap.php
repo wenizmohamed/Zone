@@ -34,7 +34,17 @@ spl_autoload_register(static function (string $class): void {
 
 function zone_engine(?string $databaseUrl = null): GameEngine
 {
-    $database = Database::connect($databaseUrl ?? getenv('ZONE_DATABASE_URL') ?: null);
+    $resolvedDatabaseUrl = $databaseUrl
+        ?? getenv('ZONE_DATABASE_URL')
+        ?: getenv('DATABASE_URL')
+        ?: getenv('POSTGRES_URL')
+        ?: null;
+
+    if (getenv('VERCEL') === '1' && $resolvedDatabaseUrl === null) {
+        throw new RuntimeException('Production database is not configured. Connect PostgreSQL and provide DATABASE_URL.');
+    }
+
+    $database = Database::connect($resolvedDatabaseUrl);
     $database->migrateAndSeed();
 
     $events = new EventBus($database);

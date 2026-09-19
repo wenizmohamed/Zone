@@ -12,7 +12,7 @@ use Zone\Engine\Core\Persistence\Database;
 
 final class ReleaseManager
 {
-    private const CHANNEL = 'presentation';
+    private const CHANNEL = 'production';
 
     private const SCREEN_IDS = [
         'home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions',
@@ -35,7 +35,7 @@ final class ReleaseManager
             ['channel' => self::CHANNEL],
         );
         if ($row === null) {
-            throw new RuntimeException('Presentation draft is unavailable.');
+            throw new RuntimeException('Production draft is unavailable.');
         }
 
         return [

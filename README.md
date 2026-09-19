@@ -1,247 +1,198 @@
-# ZONE Engine + Zone V2
+# ZONE Game Platform
 
-A modular PHP 8.5 browser-game engine foundation with a bilingual crime RPG frontend, server-authoritative gameplay proof, installable modules, interchangeable themes, event hooks, and economy auditing.
+ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platform. PHP 8.5 owns authoritative rules and publishing. The player game and secured administrator control plane are separate clients of the same versioned engine.
 
-[Open the integrated platform preview](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app)
+## Live release candidate
 
-- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/)
-- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/admin)
-- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/engine)
-- [Engine health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/api/v1/health)
+- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/)
+- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/admin)
+- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/engine)
+- [Health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/api/v1/health)
 
-- **Engine version:** 0.1.0 foundation
-- **Frontend version:** Zone V2
-- **Status:** Integrated engine, admin publishing slice, and live frontend presentation
-- **Last updated:** 2026-09-19
+| Component | Current version or adapter |
+| --- | --- |
+| ZONE Engine | 1.0.0 |
+| PHP runtime | 8.5 |
+| Production database | Neon PostgreSQL over TLS |
+| API | `/api/v1` |
+| Admin security | Signed HttpOnly session, CSRF protection, same-origin mutations |
+| Release model | Validated draft, preview, immutable publish, history, rollback |
+| Languages | English and Arabic, LTR and RTL |
 
-> Zone is an independent prototype inspired by classic browser-based crime games. It is not affiliated with Torn or its creators.
+The live release candidate has persisted release `v1`, published by the secured Omar administrator account. A fresh process and a rendered browser both confirmed that the game reads the same release from PostgreSQL.
 
-## Overview
+## Product surfaces
 
-ZONE now has three deliberately separated clients and layers on one versioned platform:
+### Player game
 
-1. `engine/` is the PHP 8.5, API-first game-engine foundation. It owns server-side results, module discovery and lifecycle, domain events, themes, resource regeneration, economy ledgers, and production database contracts.
-2. `/admin` is the control plane. It manages bilingual page drafts, registered visual blocks, modules, content, themes, assets, economy records, events, immutable releases, and rollback.
-3. `/` is the player client. It consumes the active release manifest and renders the original dense browser MMO interface plus pages published from the admin builder.
+The `/` client contains 18 responsive game areas, English and Arabic layouts, dark and light themes, 3D character and weapon viewers, the city map, progression systems, and release-driven custom pages. It reads the active release manifest from the engine at startup.
 
-The current public preview proves the complete control loop: edit a draft, validate it, preview it, publish an immutable release, load it in the game, and reactivate a previous release without deleting history. The browser never supplies crime outcomes or rewards.
+### Admin control plane
 
-## Engine foundation
+The `/admin` client provides:
 
-Open [engine/README.md](engine/README.md) for the executable proof and [docs/OMAR_ENGINE_PRESENTATION.md](docs/OMAR_ENGINE_PRESENTATION.md) for the presentation sequence.
+- Secured administrator login and logout
+- Platform and adapter health
+- Bilingual responsive page builder
+- Registered visual block types
+- Draft isolation and desktop/mobile preview
+- Immutable release publishing and rollback
+- Module lifecycle controls
+- Theme activation and release branding
+- Crime catalog, asset-format registry, economy ledger, and event explorer
+- Direct links to the game and protected engine console
 
-The foundation currently proves:
+Admin edits do not leak into the live game. Only a validated publish creates a new immutable release and changes the active release pointer.
 
-- PHP 8.5 server-authoritative crime outcomes
-- Manifest-driven module discovery and version tracking
-- Module install, uninstall, enable, and disable lifecycle
-- Independent `Crime` and `Achievements` packages
-- `CrimeSucceeded` hook consumption without modifying the Crime module
-- Installable `ZONE Tactical` and `Terminal Ops` themes
-- Shared Energy, Nerve, Life, and Happiness resource state
-- Immutable currency ledger entries with correlation identifiers
-- Persistent domain-event audit trail
-- Bilingual visual page builder with engine-registered block types
-- Draft isolation, live preview, immutable publishing, release history, and rollback
-- Active release manifests consumed by the player game
-- PostgreSQL production schema and SQLite presentation adapter
-- Jobs, notifications, and extensible image, thumbnail, animation, video, GLB, and GLTF asset records
-- Arabic and English presentation with RTL and LTR switching
+### Engine and API
 
-Run it with:
+The `engine/` application owns:
 
-```powershell
-npm run engine:test
-npm run engine:serve
+- PHP-calculated crime results, costs, rewards, and resource mutations
+- Shared Energy, Nerve, Life, and Happiness regeneration
+- Manifest-driven module discovery and lifecycle
+- Domain events and hooks
+- Independent `Crime` and `Achievements` modules
+- Interchangeable theme packages
+- PostgreSQL migrations and local SQLite adapter
+- Immutable economy ledger entries with correlation identifiers
+- Durable event, job, notification, asset, content-release, and admin-audit tables
+- Versioned release validation, publish, history, and rollback
+
+The browser is never allowed to submit a crime outcome, roll, reward, or resulting balance.
+
+## Architecture
+
+```text
+Player Web Client             Admin Control Plane
+         |                            |
+         +--------- REST API v1 ------+
+                         |
+                  Application Layer
+                         |
+             Core Contracts + Event Bus
+                         |
+        PostgreSQL / Cache Port / Jobs / Assets
 ```
 
-Then open `http://127.0.0.1:4285/engine`.
+The core does not contain crime, gym, travel, faction, market, or casino rules. Those systems belong in installable modules that publish and subscribe to declared events. Themes consume stable view contracts and contain no game rules.
 
-## Highlights
+Read the full engineering contract in [docs/ZONE_PLATFORM_ARCHITECTURE.md](docs/ZONE_PLATFORM_ARCHITECTURE.md) and the operator handoff in [docs/OMAR_PRODUCT_HANDOFF.md](docs/OMAR_PRODUCT_HANDOFF.md).
 
-- 18 navigable game areas in one responsive interface
-- Persistent energy, nerve, happiness, life, cash, experience, inventory, and progression state
-- Crime categories with unlock requirements, success odds, rewards, jail outcomes, and hospital outcomes
-- Gym training across strength, defense, speed, and dexterity
-- Jobs, education, properties, missions, faction upgrades, rankings, combat, and casino systems
-- Interactive character and weapon viewers rendered in 3D
-- Illustrated city map and live city view
-- Visual scene cards for Gym, Jobs, Properties, Education, Crimes, and Casino
-- English and Arabic interfaces with right-to-left layout support
-- Dark and light themes
-- Browser-local save state using `localStorage`
-
-## Game Areas
-
-| Category | Areas |
-| --- | --- |
-| Player | Home, Items, Properties, Education |
-| City | City, Newspaper, Jail, Hospital, Item Market |
-| Progression | Job, Gym, Crimes, Missions |
-| Competition | Attack, Hall of Fame, My Faction, Elimination |
-| Entertainment | Casino |
-
-## Technology
-
-- PHP 8.5 modular backend foundation
-- Versioned REST API
-- PostgreSQL production schema
-- SQLite local presentation adapter
-- Domain event and hook bus
-- Manifest-driven modules and themes
-- Static HTML, CSS, and JavaScript
-- Generated design runtime in `support.js`
-- Browser image-loading utilities in `image-slot.js`
-- Three.js-powered character and weapon experiences
-- GLB, OBJ, and MTL assets for characters and weapons
-- Google Fonts for Rubik and Oswald typography
-- Vercel static hosting plus a PHP 8.5 community runtime for the presentation API
-
-The frontend has no third-party package install step. The integrated platform requires PHP 8.5 for the API and Node.js 22 for build and verification scripts.
-
-## Repository Structure
+## Repository structure
 
 ```text
 Zone/
-|-- index.html              Main game interface, state, and screen logic
-|-- platform-runtime.js     Active-release loader and cross-tab refresh
-|-- admin.html              Admin control plane shell
-|-- admin.css               Responsive admin design system
-|-- admin.js                Builder, publishing, modules, and operations UI
-|-- api/index.php           Vercel PHP 8.5 entry point
-|-- engine/                 Server-authoritative modular engine
-|   |-- src/Core/Publishing Draft and immutable release manager
-|   |-- modules/            Installable gameplay modules
-|   |-- themes/             Installable interface themes
-|   `-- database/           SQLite and PostgreSQL schemas
-|-- support.js              Generated component runtime
-|-- image-slot.js           Image-loading support
-|-- art/                    Scene artwork used by activity cards
-|-- assets/
-|   |-- character/          Character model and animation data
-|   |-- weapons/            Weapon catalogue and 3D model files
-|   `-- city-map.png        Illustrated city map
-|-- dist/
-|   |-- character3d.html    Interactive character viewer
-|   |-- weapon3d.html       Interactive weapon viewer
-|   |-- city-map.html       City map experience
-|   `-- zone-maps-live.html Live city view
-|-- screenshots/            Historical design and verification captures
-|-- analysis/               Earlier research and reverse-engineering notes
-|-- brief/                  Supporting project briefs
-|-- scripts/                Build and verification gates
-|-- docs/                   Architecture contract and implementation plan
-`-- lib/                    Historical local library references
+|-- index.html                 Player game client and current 18-screen migration source
+|-- platform-runtime.js        Active-release loader and validated local cache
+|-- admin.html                 Secured control-plane shell
+|-- admin.css                  Responsive admin design system
+|-- admin.js                   Builder, publishing, modules, themes, and operations UI
+|-- api/index.php              Vercel PHP 8.5 entry point
+|-- api/php.ini                Hardened production PHP settings
+|-- engine/
+|   |-- src/Application/       API-facing engine use cases
+|   |-- src/Core/              Events, persistence, publishing, security, modules, themes
+|   |-- modules/               Installable gameplay modules
+|   |-- themes/                Installable interface themes
+|   `-- database/              PostgreSQL and local SQLite schemas
+|-- assets/                    Images and 3D game assets
+|-- dist/                      Character, weapon, and map experiences
+|-- scripts/                   Build, local, and production verification gates
+|-- docs/                      Architecture, operations, and delivery records
+|-- vercel.json                Static and PHP serverless routing
+`-- .env.example               Required adapter and admin variables without secrets
 ```
 
-The game and admin are separate browser clients of the same release and engine APIs. Admin changes do not become live merely because a form was edited. Only a validated publish operation changes the active game release.
+## Local development
 
-## Quick Start
+Requirements:
 
-Clone the repository:
+- PHP 8.5 with PDO SQLite for local development
+- Node.js 22 or newer
+- PowerShell 7 on Windows for the supplied verification scripts
 
-```bash
-git clone https://github.com/wenizmohamed/Zone.git
-cd Zone
-```
-
-Install PHP 8.5 and Node.js 22, then run the verification gates:
+Run the full local verification gates:
 
 ```powershell
 npm run verify
 npm run engine:test
 npm run verify:platform
+npm run vercel-build
 ```
 
-Start the integrated local platform:
+Start the integrated application:
 
 ```powershell
 npm run engine:serve
 ```
 
-Open these routes:
+Open:
 
-- `http://127.0.0.1:4285/` for the game
-- `http://127.0.0.1:4285/admin` for the admin control plane
-- `http://127.0.0.1:4285/engine` for the technical engine proof
-- `http://127.0.0.1:4285/api/v1/health` for machine-readable health
+- `http://127.0.0.1:4285/`
+- `http://127.0.0.1:4285/admin`
+- `http://127.0.0.1:4285/engine`
+- `http://127.0.0.1:4285/api/v1/health`
 
-## Using the Prototype
+The local server script creates a local administrator session configuration. It does not contain or reuse production credentials.
 
-Use the left navigation to move between game areas. Actions such as training, committing crimes, working shifts, buying items, enrolling in courses, and attacking opponents update the simulated player state immediately.
+## Configuration
 
-- Use the language control in the header to switch between English and Arabic.
-- Use the theme control to switch between dark and light presentation.
-- Open Items to inspect supported weapons in the embedded 3D viewer.
-- Open City to switch between the interactive map views.
-- Return to Home to inspect the character viewer and current progression summary.
+Copy `.env.example` to the secret manager used by the target environment. Never commit the resulting values.
 
-## Save Data
+Required for a production deployment:
 
-The prototype stores progress in the browser's `localStorage` for the current origin.
+- `ZONE_DATABASE_URL`, `DATABASE_URL`, or `POSTGRES_URL`
+- `ZONE_ADMIN_USERNAME`
+- `ZONE_ADMIN_PASSWORD_HASH`
+- `ZONE_ADMIN_SESSION_SECRET`
 
-- Refreshing the page preserves the current game state.
-- Different browsers and domains have separate saves.
-- Clearing site data resets the prototype.
-- The current build does not synchronize progress between devices.
+Optional adapters:
 
-## Troubleshooting
+- `ZONE_REDIS_URL`
+- `ZONE_ASSET_STORAGE_URL`
 
-### The page shows a directory listing
+On Vercel, PostgreSQL and the administrator variables are encrypted environment variables. The application fails closed instead of falling back to temporary SQLite when a production database is unavailable.
 
-Start the local server from the repository root, where `index.html` is located:
+## Production verification
 
-```bash
-cd Zone
-python -m http.server 49123
+The production verifier does not publish or modify content. It checks runtime health, PostgreSQL, server authority, anonymous isolation, signed login, CSRF, the production draft, persisted release consistency, game and admin rendering, logout, and post-logout access control.
+
+```powershell
+$env:ZONE_ADMIN_USERNAME = 'omar'
+$env:ZONE_ADMIN_PASSWORD = '<secret>'
+./scripts/verify-production.ps1 -BaseUrl 'https://your-zone-deployment.vercel.app'
 ```
 
-### Artwork or embedded pages do not load
+Current verified gates on 2026-09-19:
 
-- Confirm that `art/`, `assets/`, and `dist/` remain beside `index.html`.
-- Run the project through `http://127.0.0.1:49123` instead of opening `index.html` through `file://`.
-- Check that the browser has internet access, because the 3D viewers load Three.js modules from a public CDN.
+- PHP engine suite: 52 passed, 0 failed
+- Integrated local platform: 20 checks passed
+- Live PostgreSQL release candidate: 17 production checks passed
+- Vercel production bundle: 18 screens, 43 art targets, 144 output files
+- Browser verification: secured login, PHP 8.5.2, PGSQL, PRODUCTION, release v1, published page visible in the player navigation
+- Content workflow: authenticated crime create/update, public catalogue exposure, admin audit attribution
 
-### The 3D viewers remain blank
+## Data authority and migration status
 
-- Confirm that WebGL and hardware acceleration are enabled in the browser.
-- Try a current Chromium, Firefox, or Safari release.
-- Check that browser privacy controls are not blocking the Three.js CDN.
+The engine, administrator authentication, release publishing, module state, themes, crime proof, ledgers, events, and release history are server-backed. The original 18-screen client still contains browser-local player progression for the systems that have not yet been migrated into individual engine modules. That boundary is explicit so client-side state is never mistaken for authoritative multiplayer state.
 
-### The saved state is unexpected
-
-Clear the site's browser storage and reload the page. This resets the local prototype and does not affect repository or server data.
+The next production modules are Inventory and Items, Travel and Cities, Gym, Jobs, Education, Combat, Factions, Market, Missions, and Casino. Each module must move its mutations behind the API and reuse the same event, audit, release, and adapter contracts already proven here.
 
 ## Deployment
 
-The repository is connected to the `team-aura` Vercel project.
+The repository is connected to the exact `team-auraa` Vercel project:
 
+- Project: `zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-e9158260af42`
 - Production branch: `main`
-- Hosting: Vercel static output plus PHP 8.5 serverless presentation API
+- Runtime: Vercel static delivery plus `vercel-php@0.9.0`
+- Database: Neon PostgreSQL integration
 - Root directory: repository root
-- Production URL: [zone-torn-style-game-mockup-6cf978c.vercel.app](https://zone-torn-style-game-mockup-6cf978c.vercel.app)
-- Verified platform preview: [zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app)
 
-Pushing a verified commit to `main` triggers the connected production deployment. The platform preview is intentionally marked `PRESENTATION`: it uses SQLite under Vercel's temporary function storage so the complete workflow can be demonstrated without pretending it is durable multiplayer infrastructure. Production must use external PostgreSQL and Redis before promotion.
+Every promotion must pass the local engine tests, local platform checks, bundle verification, and `scripts/verify-production.ps1` against the candidate deployment.
 
-## Verification Status
+## Ownership and originality
 
-The integrated platform preview was verified on 2026-09-19:
+The source is fully readable, unencrypted, and owned in this repository. Third-party packages and hosted services remain subject to their own licenses and terms.
 
-- Source verification passed for all 18 game screens and 43 generated art targets
-- Production bundle verification passed for all 144 output files
-- PHP engine suite passed 42 of 42 tests
-- Full local platform smoke suite passed 14 of 14 checks
-- Public Vercel routes for game, admin, engine, health, active release, and admin assets returned HTTP 200
-- A public draft was saved without changing the active release
-- Publishing created release `v1`, and the player game loaded its new `Platform Proof` page
-- Desktop and 390px mobile admin layouts were inspected in the rendered browser
-- Vercel deployment `dpl_G3gHaQDuAQQu1pf8Fc5hG4rjVBUs` reached `READY`
-
-## Project Scope
-
-This branch is the vertical platform slice Omar asked to see, not a claim that the entire multiplayer game is finished. It proves the architecture with real code and a working public loop. A production release still requires authenticated accounts and RBAC, managed PostgreSQL 18, Redis 8, object storage, workers, realtime delivery, moderation, observability, backups, and migration of every remaining browser-local gameplay mutation to server-authoritative endpoints.
-
-## Disclaimer
-
-This project is an original technical and visual prototype created for experimentation and game-development exploration. References to the visual language of Torn-style browser games describe inspiration only. No affiliation or endorsement is implied.
+ZONE is an original game and engine. It is inspired by the browser crime MMO genre and is not affiliated with Torn or its creators.

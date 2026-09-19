@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ZONE modular PHP 8.5 game engine presentation console">
+  <meta name="description" content="ZONE modular PHP 8.5 game engine operations console">
   <title>ZONE Engine Control Room</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
 
   <main>
     <section class="hero">
-      <div class="eyebrow"><span>FOUNDATION 0.1</span><span data-i18n="proof">EXECUTABLE PROOF</span></div>
+      <div class="eyebrow"><span>ENGINE 1.0</span><span data-i18n="proof">OPERATIONS CONSOLE</span></div>
       <h1 data-i18n="headline">A modular engine beneath the game.</h1>
       <p data-i18n="subhead">PHP owns every result. Modules react through events. Themes change without touching gameplay. Every currency movement leaves a trail.</p>
       <div class="hero-actions">
@@ -102,7 +102,7 @@
   </main>
 
   <footer>
-    <span>ZONE ENGINE FOUNDATION</span>
+    <span>ZONE ENGINE PLATFORM</span>
     <span data-i18n="footer">CORE + MODULES + THEMES + API + LEDGER + EVENTS</span>
   </footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
