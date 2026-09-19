@@ -4,10 +4,10 @@ Date: 2026-09-19
 
 ## Direct access
 
-- Player game: `https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/`
-- Admin control plane: `https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/admin`
-- Protected engine console: `https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/engine`
-- Machine health: `https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/api/v1/health`
+- Player game: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/`
+- Admin control plane: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/admin`
+- Protected engine console: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/engine`
+- Machine health: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/api/v1/health`
 
 Credentials are delivered separately and are never stored in Git.
 

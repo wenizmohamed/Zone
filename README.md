@@ -2,12 +2,12 @@
 
 ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platform. PHP 8.5 owns authoritative rules and publishing. The player game and secured administrator control plane are separate clients of the same versioned engine.
 
-## Live release candidate
+## Live production
 
-- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/)
-- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/admin)
-- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/engine)
-- [Health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-5yig2be7z.vercel.app/api/v1/health)
+- [Player game](https://zone-torn-style-game-mockup-6cf978c.vercel.app/)
+- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c.vercel.app/admin)
+- [Engine control room](https://zone-torn-style-game-mockup-6cf978c.vercel.app/engine)
+- [Health API](https://zone-torn-style-game-mockup-6cf978c.vercel.app/api/v1/health)
 
 | Component | Current version or adapter |
 | --- | --- |
@@ -19,7 +19,7 @@ ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platf
 | Release model | Validated draft, preview, immutable publish, history, rollback |
 | Languages | English and Arabic, LTR and RTL |
 
-The live release candidate has persisted release `v1`, published by the secured Omar administrator account. A fresh process and a rendered browser both confirmed that the game reads the same release from PostgreSQL.
+The live production deployment has persisted release `v1`, published by the secured Omar administrator account. A fresh process and a rendered browser both confirmed that the game reads the same release from PostgreSQL.
 
 ## Product surfaces
 
@@ -168,7 +168,7 @@ Current verified gates on 2026-09-19:
 
 - PHP engine suite: 52 passed, 0 failed
 - Integrated local platform: 20 checks passed
-- Live PostgreSQL release candidate: 17 production checks passed
+- Live PostgreSQL production deployment: 17 production checks passed
 - Vercel production bundle: 18 screens, 43 art targets, 144 output files
 - Browser verification: secured login, PHP 8.5.2, PGSQL, PRODUCTION, release v1, published page visible in the player navigation
 - Content workflow: authenticated crime create/update, public catalogue exposure, admin audit attribution
