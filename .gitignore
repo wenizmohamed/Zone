@@ -1,5 +1,5 @@
 .vercel
-public/
+/public/
 .tools/
 engine/var/*.sqlite
 engine/var/*.sqlite-*
