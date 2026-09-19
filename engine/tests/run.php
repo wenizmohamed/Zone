@@ -9,7 +9,6 @@ use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
-use Zone\Engine\Core\Security\AdminSession;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 use Zone\Engine\Infrastructure\Cache\ArrayCacheStore;
 
@@ -43,15 +42,6 @@ function build_engine(string $databasePath): array
 }
 
 try {
-    putenv('ZONE_ADMIN_USERNAME=omar');
-    putenv('ZONE_ADMIN_PASSWORD_HASH=' . password_hash('production-test-password', PASSWORD_ARGON2ID));
-    putenv('ZONE_ADMIN_SESSION_SECRET=zone-test-session-secret-at-least-thirty-two-characters');
-    check(AdminSession::credentialsConfigured(), 'admin authentication requires an explicit username, password hash, and session secret');
-    $adminToken = AdminSession::issueTokenForTest('omar', time() + 600, 'csrf-test-token');
-    $decodedAdmin = AdminSession::decodeTokenForTest($adminToken);
-    check($decodedAdmin !== null && $decodedAdmin['username'] === 'omar' && $decodedAdmin['csrf'] === 'csrf-test-token', 'signed admin session tokens preserve authenticated identity and CSRF state');
-    check(AdminSession::decodeTokenForTest($adminToken . 'tampered') === null, 'tampered admin session tokens are rejected');
-
     [$engine, $database] = build_engine($databasePath);
     $status = $engine->status();
     check(version_compare(PHP_VERSION, '8.5.0', '>='), 'runtime is PHP 8.5 or newer');

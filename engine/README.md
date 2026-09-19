@@ -1,6 +1,6 @@
 # ZONE Engine 1.0
 
-This directory contains the PHP 8.5 application that powers the ZONE API, secured control plane, modules, themes, publishing pipeline, server-authoritative gameplay proof, and durable audit data.
+This directory contains the PHP 8.5 application that powers the ZONE API, direct-access control plane, modules, themes, publishing pipeline, server-authoritative gameplay proof, and durable audit data.
 
 ## Proven contracts
 
@@ -10,7 +10,7 @@ This directory contains the PHP 8.5 application that powers the ZONE API, secure
 4. Themes are independent packages and contain no gameplay rules.
 5. Currency movements and domain events are append-only and correlation-traceable.
 6. Admin changes remain drafts until a validated immutable release is published.
-7. Administrator sessions are signed, HttpOnly, same-origin, and CSRF-protected.
+7. The administrator surface opens directly; browser mutations are same-origin checked and permanently attributed to `admin-panel` in audit records.
 
 ## Packages
 
@@ -51,7 +51,7 @@ Routes:
 - `http://127.0.0.1:4285/engine`
 - `http://127.0.0.1:4285/api/v1/health`
 
-The local server script sets development-only credentials and a signed-session secret. Production requires encrypted `ZONE_ADMIN_USERNAME`, `ZONE_ADMIN_PASSWORD_HASH`, and `ZONE_ADMIN_SESSION_SECRET` values.
+The local server exposes `/admin` and `/engine` directly with no credentials or signed session.
 
 ## Production adapters
 
@@ -62,4 +62,4 @@ The local server script sets development-only credentials and a signed-session s
 - Notifications: persistent player delivery state
 - Publishing: production draft, immutable release snapshots, active pointer, history, rollback, and administrator audit rows
 
-Vercel fails closed if PostgreSQL or administrator secrets are missing. It never uses temporary function-disk SQLite as production persistence.
+Vercel fails closed if PostgreSQL is missing. It never uses temporary function-disk SQLite as production persistence.

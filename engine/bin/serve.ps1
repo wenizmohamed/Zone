@@ -6,9 +6,6 @@ if (-not (Test-Path -LiteralPath $php)) {
     throw "Repository-local PHP 8.5 runtime is missing: $php"
 }
 
-$env:ZONE_ADMIN_USERNAME = 'admin'
-$env:ZONE_ADMIN_PASSWORD_HASH = & $php -r "echo password_hash('zone-local-admin', PASSWORD_ARGON2ID);"
-$env:ZONE_ADMIN_SESSION_SECRET = 'zone-local-session-secret-change-in-production'
 Push-Location $repositoryRoot
 try {
     & $php -S 127.0.0.1:4285 engine/router.php

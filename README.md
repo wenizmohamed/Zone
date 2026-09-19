@@ -1,6 +1,6 @@
 # ZONE Game Platform
 
-ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platform. PHP 8.5 owns authoritative rules and publishing. The player game and secured administrator control plane are separate clients of the same versioned engine.
+ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platform. PHP 8.5 owns authoritative rules and publishing. The player game and directly accessible administrator control plane are separate clients of the same versioned engine.
 
 ## Live production
 
@@ -15,11 +15,11 @@ ZONE is a bilingual browser crime MMO and a modular, API-first game-engine platf
 | PHP runtime | 8.5 |
 | Production database | Neon PostgreSQL over TLS |
 | API | `/api/v1` |
-| Admin security | Signed HttpOnly session, CSRF protection, same-origin mutations |
+| Admin access | Direct access, same-origin mutations, fixed server audit attribution |
 | Release model | Validated draft, preview, immutable publish, history, rollback |
 | Languages | English and Arabic, LTR and RTL |
 
-The live production deployment has persisted release `v1`, published by the secured Omar administrator account. A fresh process and a rendered browser both confirmed that the game reads the same release from PostgreSQL.
+The live production deployment has persisted release `v1`, published through the administrator control plane. A fresh process and a rendered browser both confirmed that the game reads the same release from PostgreSQL.
 
 ## Product surfaces
 
@@ -31,7 +31,7 @@ The `/` client contains 18 responsive game areas, English and Arabic layouts, da
 
 The `/admin` client provides:
 
-- Secured administrator login and logout
+- Direct access with no login screen
 - Platform and adapter health
 - Bilingual responsive page builder
 - Registered visual block types
@@ -40,7 +40,7 @@ The `/admin` client provides:
 - Module lifecycle controls
 - Theme activation and release branding
 - Crime catalog, asset-format registry, economy ledger, and event explorer
-- Direct links to the game and protected engine console
+- Direct links to the game and engine console
 
 Admin edits do not leak into the live game. Only a validated publish creates a new immutable release and changes the active release pointer.
 
@@ -85,14 +85,14 @@ Read the full engineering contract in [docs/ZONE_PLATFORM_ARCHITECTURE.md](docs/
 Zone/
 |-- index.html                 Player game client and current 18-screen migration source
 |-- platform-runtime.js        Active-release loader and validated local cache
-|-- admin.html                 Secured control-plane shell
+|-- admin.html                 Direct-access control-plane shell
 |-- admin.css                  Responsive admin design system
 |-- admin.js                   Builder, publishing, modules, themes, and operations UI
 |-- api/index.php              Vercel PHP 8.5 entry point
 |-- api/php.ini                Hardened production PHP settings
 |-- engine/
 |   |-- src/Application/       API-facing engine use cases
-|   |-- src/Core/              Events, persistence, publishing, security, modules, themes
+|   |-- src/Core/              Events, persistence, publishing, modules, themes
 |   |-- modules/               Installable gameplay modules
 |   |-- themes/                Installable interface themes
 |   `-- database/              PostgreSQL and local SQLite schemas
@@ -101,7 +101,7 @@ Zone/
 |-- scripts/                   Build, local, and production verification gates
 |-- docs/                      Architecture, operations, and delivery records
 |-- vercel.json                Static and PHP serverless routing
-`-- .env.example               Required adapter and admin variables without secrets
+`-- .env.example               Required and optional adapter variables
 ```
 
 ## Local development
@@ -134,7 +134,7 @@ Open:
 - `http://127.0.0.1:4285/engine`
 - `http://127.0.0.1:4285/api/v1/health`
 
-The local server script creates a local administrator session configuration. It does not contain or reuse production credentials.
+The local server opens the player game, administrator control plane, and engine console on one origin without a login gate.
 
 ## Configuration
 
@@ -143,39 +143,34 @@ Copy `.env.example` to the secret manager used by the target environment. Never 
 Required for a production deployment:
 
 - `ZONE_DATABASE_URL`, `DATABASE_URL`, or `POSTGRES_URL`
-- `ZONE_ADMIN_USERNAME`
-- `ZONE_ADMIN_PASSWORD_HASH`
-- `ZONE_ADMIN_SESSION_SECRET`
 
 Optional adapters:
 
 - `ZONE_REDIS_URL`
 - `ZONE_ASSET_STORAGE_URL`
 
-On Vercel, PostgreSQL and the administrator variables are encrypted environment variables. The application fails closed instead of falling back to temporary SQLite when a production database is unavailable.
+On Vercel, PostgreSQL is provided through encrypted environment variables. The application fails closed instead of falling back to temporary SQLite when a production database is unavailable.
 
 ## Production verification
 
-The production verifier does not publish or modify content. It checks runtime health, PostgreSQL, server authority, anonymous isolation, signed login, CSRF, the production draft, persisted release consistency, game and admin rendering, logout, and post-logout access control.
+The production verifier does not publish or modify content. It checks runtime health, PostgreSQL, server authority, direct admin and engine access, absence of the former authentication endpoint, the production draft, persisted release consistency, and rendered game surfaces.
 
 ```powershell
-$env:ZONE_ADMIN_USERNAME = 'omar'
-$env:ZONE_ADMIN_PASSWORD = '<secret>'
 ./scripts/verify-production.ps1 -BaseUrl 'https://your-zone-deployment.vercel.app'
 ```
 
 Current verified gates on 2026-09-19:
 
-- PHP engine suite: 52 passed, 0 failed
-- Integrated local platform: 20 checks passed
-- Live PostgreSQL production deployment: 17 production checks passed
+- PHP engine suite: 49 passed, 0 failed
+- Integrated local platform: 19 checks passed
+- Live PostgreSQL production deployment: 14 production checks passed
 - Vercel production bundle: 18 screens, 43 art targets, 144 output files
-- Browser verification: secured login, PHP 8.5.2, PGSQL, PRODUCTION, release v1, published page visible in the player navigation
-- Content workflow: authenticated crime create/update, public catalogue exposure, admin audit attribution
+- Browser verification: direct admin access, PHP 8.5.2, PGSQL, PRODUCTION, release v1, published page visible in the player navigation
+- Content workflow: crime create/update, public catalogue exposure, and fixed `admin-panel` audit attribution
 
 ## Data authority and migration status
 
-The engine, administrator authentication, release publishing, module state, themes, crime proof, ledgers, events, and release history are server-backed. The original 18-screen client still contains browser-local player progression for the systems that have not yet been migrated into individual engine modules. That boundary is explicit so client-side state is never mistaken for authoritative multiplayer state.
+The engine, release publishing, module state, themes, crime proof, ledgers, events, and release history are server-backed. The administrator surface is intentionally open by owner decision, while writes retain same-origin validation and server audit attribution. The original 18-screen client still contains browser-local player progression for the systems that have not yet been migrated into individual engine modules. That boundary is explicit so client-side state is never mistaken for authoritative multiplayer state.
 
 The next production modules are Inventory and Items, Travel and Cities, Gym, Jobs, Education, Combat, Factions, Market, Missions, and Casino. Each module must move its mutations behind the API and reuse the same event, audit, release, and adapter contracts already proven here.
 

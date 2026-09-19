@@ -2,8 +2,6 @@ const ACTIVE_CACHE = 'zone.platform.activeRelease';
 const PREVIEW_CACHE = 'zone.platform.previewRelease';
 
 const state = {
-  auth: null,
-  csrfToken: '',
   language: localStorage.getItem('zone.admin.language') === 'ar' ? 'ar' : 'en',
   view: 'overview',
   engine: null,
@@ -90,77 +88,14 @@ async function api(path, options = {}) {
   const payload = options.body ? JSON.parse(options.body) : null;
   const headers = { Accept: 'application/json', ...(options.headers ?? {}) };
   if (options.body) headers['Content-Type'] = 'application/json';
-  if (state.csrfToken && !['GET', 'HEAD', 'OPTIONS'].includes(method)) headers['X-Zone-CSRF-Token'] = state.csrfToken;
   const response = await fetch(path, {
     ...options,
-    credentials: 'same-origin',
     headers,
   });
   const data = await response.json().catch(() => ({ error: `Non-JSON response from ${path}` }));
   trace(method, path, payload, data, response.status);
-  if (response.status === 401) showLogin('Your admin session has expired. Sign in again.');
   if (!response.ok) throw new Error(data.error ?? `${response.status} ${response.statusText}`);
   return data;
-}
-
-function showLogin(message = '') {
-  state.auth = null;
-  state.csrfToken = '';
-  document.body.classList.remove('auth-pending', 'authenticated');
-  document.body.classList.add('auth-required');
-  $('#loginError').textContent = message;
-  $('#loginPassword').value = '';
-  $('#loginUsername').focus();
-}
-
-function showAdmin(session) {
-  state.auth = session;
-  state.csrfToken = session.csrfToken;
-  document.body.classList.remove('auth-pending', 'auth-required');
-  document.body.classList.add('authenticated');
-  $('#loginError').textContent = '';
-}
-
-async function authenticate() {
-  const response = await fetch('/api/v1/admin/auth', { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
-  const session = await response.json().catch(() => ({ authenticated: false }));
-  if (!response.ok || !session.authenticated) {
-    showLogin();
-    return false;
-  }
-  showAdmin(session);
-  return true;
-}
-
-async function signIn(event) {
-  event.preventDefault();
-  const button = $('#loginButton');
-  button.disabled = true;
-  $('#loginError').textContent = '';
-  try {
-    const response = await fetch('/api/v1/admin/auth/login', {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ username: $('#loginUsername').value, password: $('#loginPassword').value }),
-    });
-    const session = await response.json().catch(() => ({ error: 'The authentication service returned an invalid response.' }));
-    if (!response.ok || !session.authenticated) throw new Error(session.error ?? 'Sign in failed.');
-    showAdmin(session);
-    await load();
-  } catch (error) {
-    showLogin(error.message);
-  } finally {
-    button.disabled = false;
-  }
-}
-
-async function signOut() {
-  try {
-    await api('/api/v1/admin/auth/logout', { method: 'POST', body: '{}' });
-  } finally {
-    showLogin('Signed out securely.');
-  }
 }
 
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
@@ -364,7 +299,7 @@ function renderAll() {
 
 function updatePreviewCache() {
   if (!state.draft) return;
-  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: state.draft.manifest, active: false, publishedBy: state.auth?.user?.username ?? 'admin', publishedAt: new Date().toISOString() }));
+  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: state.draft.manifest, active: false, publishedBy: 'admin-panel', publishedAt: new Date().toISOString() }));
 }
 
 function refreshPreview() {
@@ -503,8 +438,6 @@ async function load() {
 }
 
 $('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
-$('#loginForm').addEventListener('submit', signIn);
-$('#logoutButton').addEventListener('click', signOut);
 $('#publishButton').addEventListener('click', publishRelease);
 $('#releasePublishButton').addEventListener('click', publishRelease);
 $('#saveDraftButton').addEventListener('click', saveDraft);
@@ -517,10 +450,7 @@ $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textCont
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
 $$('.viewport-button').forEach((button) => button.addEventListener('click', () => { $$('.viewport-button').forEach((item) => item.classList.remove('active')); button.classList.add('active'); $('#previewFrame').style.width = button.dataset.width; }));
 
-authenticate().then((authenticated) => {
-  if (!authenticated) return;
-  return load();
-}).catch((error) => {
+load().catch((error) => {
   trace('BOOT', '/admin', null, { error: error.message }, 500);
   notify(error.message, true);
   $('#pipelineStatus').textContent = 'API ERROR';

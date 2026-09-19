@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 require __DIR__ . '/bootstrap.php';
 
-use Zone\Engine\Core\Security\AdminSession;
-
 $path = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $repositoryRoot = realpath(__DIR__ . '/..');
@@ -59,10 +57,6 @@ if ($path === '/engine/theme.css') {
 }
 
 if (($path === '/engine' || $path === '/engine/') && $method === 'GET') {
-    if (AdminSession::current() === null) {
-        header('Location: /admin', true, 302);
-        return true;
-    }
     require __DIR__ . '/public/console.php';
     return true;
 }
@@ -90,14 +84,9 @@ function request_json(): array
     return $decoded;
 }
 
-function require_admin(bool $mutation = false): array
+function require_admin_mutation(): void
 {
-    $session = AdminSession::requireAuthenticated();
-    if ($mutation) {
-        require_same_origin();
-        AdminSession::requireCsrf($session, (string) ($_SERVER['HTTP_X_ZONE_CSRF_TOKEN'] ?? ''));
-    }
-    return $session;
+    require_same_origin();
 }
 
 function require_same_origin(): void
@@ -113,9 +102,9 @@ function require_same_origin(): void
     }
 }
 
-function request_actor(array $session): string
+function request_actor(): string
 {
-    return (string) $session['username'];
+    return 'admin-panel';
 }
 
 if ($method === 'OPTIONS') {
@@ -124,23 +113,6 @@ if ($method === 'OPTIONS') {
 }
 
 try {
-    if ($method === 'GET' && $path === '/api/v1/admin/auth') {
-        json_response(AdminSession::publicCurrent());
-    }
-    if ($method === 'POST' && $path === '/api/v1/admin/auth/login') {
-        require_same_origin();
-        $payload = request_json();
-        $session = AdminSession::login((string) ($payload['username'] ?? ''), (string) ($payload['password'] ?? ''));
-        if ($session === null) {
-            json_response(['error' => 'Invalid username or password.'], 401);
-        }
-        json_response($session);
-    }
-    if ($method === 'POST' && $path === '/api/v1/admin/auth/logout') {
-        $session = require_admin(true);
-        AdminSession::logout();
-        json_response(['authenticated' => false, 'signedOut' => $session['username']]);
-    }
     if ($method === 'GET' && $path === '/api/v1/health') {
         json_response(['ok' => true, 'time' => gmdate('c'), 'engine' => $engine->status()]);
     }
@@ -160,15 +132,12 @@ try {
         json_response(['crimes' => $engine->crimes()]);
     }
     if ($method === 'GET' && $path === '/api/v1/ledger') {
-        require_admin();
         json_response(['entries' => $engine->ledger()]);
     }
     if ($method === 'GET' && $path === '/api/v1/events') {
-        require_admin();
         json_response(['events' => $engine->eventLog()]);
     }
     if ($method === 'GET' && $path === '/api/v1/achievements') {
-        require_admin();
         json_response(['achievements' => $engine->achievements($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player')]);
     }
     if ($method === 'GET' && $path === '/api/v1/architecture') {
@@ -182,50 +151,46 @@ try {
         json_response($engine->activeRelease());
     }
     if ($method === 'GET' && $path === '/api/v1/admin/draft') {
-        require_admin();
         json_response($engine->releaseDraft());
     }
     if ($method === 'GET' && $path === '/api/v1/admin/releases') {
-        require_admin();
         json_response(['releases' => $engine->releaseHistory()]);
     }
     if ($method === 'GET' && $path === '/api/v1/admin/crimes') {
-        require_admin();
         json_response(['crimes' => $engine->adminCrimes()]);
     }
     if ($method === 'GET' && $path === '/api/v1/admin/audit') {
-        require_admin();
         json_response(['entries' => $engine->adminAuditLog()]);
     }
     if ($method === 'PUT' && $path === '/api/v1/admin/draft') {
-        $session = require_admin(true);
+        require_admin_mutation();
         $payload = request_json();
-        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, request_actor($session)));
+        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, request_actor()));
     }
     if ($method === 'POST' && $path === '/api/v1/admin/releases/publish') {
-        $session = require_admin(true);
+        require_admin_mutation();
         request_json();
-        json_response($engine->publishRelease(request_actor($session)), 201);
+        json_response($engine->publishRelease(request_actor()), 201);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/releases/([a-f0-9]{32})/activate$#', $path, $matches)) {
-        $session = require_admin(true);
+        require_admin_mutation();
         request_json();
-        json_response($engine->activateRelease($matches[1], request_actor($session)));
+        json_response($engine->activateRelease($matches[1], request_actor()));
     }
     if ($method === 'PUT' && preg_match('#^/api/v1/admin/crimes/([a-z0-9-]+)$#', $path, $matches)) {
-        $session = require_admin(true);
-        json_response(['crime' => $engine->saveCrime($matches[1], request_json(), request_actor($session))]);
+        require_admin_mutation();
+        json_response(['crime' => $engine->saveCrime($matches[1], request_json(), request_actor())]);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/crimes/([a-z0-9-]+)/attempt$#', $path, $matches)) {
         request_json();
         json_response($engine->attemptCrime($matches[1], $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/modules/([a-z0-9-]+)/(install|uninstall|enable|disable)$#', $path, $matches)) {
-        require_admin(true);
+        require_admin_mutation();
         json_response(['module' => $engine->changeModule($matches[1], $matches[2])]);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/themes/([a-z0-9-]+)/activate$#', $path, $matches)) {
-        require_admin(true);
+        require_admin_mutation();
         json_response(['theme' => $engine->activateTheme($matches[1])]);
     }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
@@ -237,9 +202,8 @@ try {
     $message = $exception->getMessage();
     $status = match (true) {
         str_starts_with($message, 'Unknown release:') => 404,
-        $message === 'Admin authentication required.' => 401,
-        $message === 'Invalid admin CSRF token.', $message === 'Cross-origin admin request rejected.' => 403,
-        $message === 'Admin authentication is not configured.', str_starts_with($message, 'Production database is not configured.') => 503,
+        $message === 'Cross-origin admin request rejected.' => 403,
+        str_starts_with($message, 'Production database is not configured.') => 503,
         default => 400,
     };
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class], $status);

@@ -11,20 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin.css">
 </head>
-<body class="auth-pending">
-  <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
-    <form class="login-card" id="loginForm">
-      <span class="brand-mark" aria-hidden="true">Z</span>
-      <span class="eyebrow">SECURE ADMIN ACCESS</span>
-      <h1 id="loginTitle">ZONE Control Plane</h1>
-      <p>Sign in with an authorized administrator account.</p>
-      <label><span>Username</span><input id="loginUsername" name="username" autocomplete="username" required maxlength="80"></label>
-      <label><span>Password</span><input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="256"></label>
-      <button class="button primary" id="loginButton" type="submit">Sign in</button>
-      <p class="login-error" id="loginError" role="alert" aria-live="polite"></p>
-    </form>
-  </section>
-
+<body>
   <div class="ambient" data-admin-shell aria-hidden="true"></div>
   <header class="topbar" data-admin-shell>
     <a class="brand" href="/admin" aria-label="ZONE admin home">
@@ -41,7 +28,6 @@
       <button class="button ghost" id="languageButton" type="button">العربية</button>
       <a class="button ghost" href="/engine" data-copy="engine">Engine</a>
       <a class="button ghost" href="/" data-copy="game">Open game</a>
-      <button class="button ghost" id="logoutButton" type="button">Sign out</button>
       <button class="button primary" id="publishButton" type="button" data-copy="publish">Publish release</button>
     </div>
   </header>

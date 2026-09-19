@@ -189,14 +189,14 @@ The existing ZONE frontend remains the visual reference and migration source. It
 
 ### Current Vercel production deployment
 
-The existing team-auraa Vercel project serves one secured public origin with:
+The existing team-auraa Vercel project serves one public origin with:
 
 - Player game assets
 - Admin control plane
 - Engine proof
 - PHP 8.5 Vercel function through `vercel-php@0.9.0`
 - Versioned API routes
-- Signed administrator sessions and CSRF-protected mutations
+- Direct admin and engine access, with same-origin mutation checks and fixed server audit attribution
 - Neon PostgreSQL persistence over TLS
 - Immutable content releases, event history, and administrator audit records
 
@@ -227,6 +227,6 @@ Both deployments keep the same API contract. Moving the PHP application from the
 
 ## Current delivery state
 
-The repository contains the integrated player client, secured administrator control plane, PHP 8.5 engine, module and theme registries, release manager, publishing API, runtime manifest loader, PostgreSQL schemas, economy and event audit trails, and rollback path on one origin. The live production deployment proves that Omar can sign in, save a bilingual production draft, publish an immutable release to Neon PostgreSQL, load the published page in the player game, and lose access after logout.
+The repository contains the integrated player client, direct-access administrator control plane, PHP 8.5 engine, module and theme registries, release manager, publishing API, runtime manifest loader, PostgreSQL schemas, economy and event audit trails, and rollback path on one origin. The live production deployment proves that Omar can open the control plane without login, save a bilingual production draft, publish an immutable release to Neon PostgreSQL, and load the published page in the player game.
 
 The original 18-screen game remains the visual migration source. Browser-local state in screens not yet migrated to engine modules is not treated as authoritative multiplayer state. Inventory, Travel, Gym, Jobs, Education, Combat, Factions, Market, Missions, and Casino are the next independent module migrations. Redis, dedicated workers, realtime delivery, object storage uploads, multi-account RBAC, backups, and observability remain production infrastructure work behind the contracts already established here.

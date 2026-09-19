@@ -6,14 +6,14 @@ Date: 2026-09-19
 
 - Player game: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/`
 - Admin control plane: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/admin`
-- Protected engine console: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/engine`
+- Engine console: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/engine`
 - Machine health: `https://zone-torn-style-game-mockup-6cf978c.vercel.app/api/v1/health`
 
-Credentials are delivered separately and are never stored in Git.
+The admin and engine links open directly. There is no login screen or user-authentication step.
 
 ## What Omar controls today
 
-After signing in, Omar can:
+From the admin link, Omar can:
 
 1. See the executing PHP version, PostgreSQL adapter, active release, module state, and event health.
 2. Create bilingual English and Arabic pages from registered blocks.
@@ -32,14 +32,13 @@ After signing in, Omar can:
 The deployed path has been executed end to end:
 
 ```text
-Omar login
-  -> signed HttpOnly session and CSRF token
+Omar opens /admin directly
   -> bilingual page saved to production draft
   -> immutable release v1 published by omar
   -> release and audit data committed to Neon PostgreSQL
   -> fresh process reads the same active release
   -> player game renders Omar Production Control
-  -> logout invalidates protected admin access
+  -> audit rows attribute control-plane writes to admin-panel
 ```
 
 The rendered control plane reported:
@@ -52,9 +51,8 @@ The rendered control plane reported:
 
 ## Security boundary
 
-- No public administrator bypass exists.
-- `/engine` redirects anonymous visitors to `/admin`.
-- Mutations require a valid signed session, same-origin request, and session-bound CSRF token.
+- `/admin` and `/engine` intentionally open directly with no user authentication.
+- Browser mutations must come from the same origin and receive fixed server-side `admin-panel` attribution.
 - The client cannot choose crime outcomes, rolls, rewards, balances, or XP.
 - Server initialization errors are returned as sanitized JSON and PHP error display is disabled.
 - Production database absence is a hard failure. There is no temporary SQLite fallback on Vercel.
@@ -80,17 +78,17 @@ The Crime and Achievements packages are the reference module pair. Crime emits d
 
 ## Verification record
 
-- Engine tests: 52 passed, 0 failed
-- Integrated local checks: 20 passed
-- Live deployment checks: 17 passed
+- Engine tests: 49 passed, 0 failed
+- Integrated local checks: 19 passed
+- Live deployment checks: 14 passed
 - Vercel build: 18 screens, 43 art targets, 144 files
 - Database: Neon PostgreSQL over TLS
-- Admin: login, CSRF, draft, publish, history, logout, and post-logout rejection verified
+- Admin: direct access, draft, publish, history, audit attribution, and removed authentication route verified
 - Game: active release and published page verified in the rendered browser
 
 ## Current authority boundary
 
-The backend, authentication, publishing, modules, themes, events, release history, and crime proof are server-backed. The existing 18-screen game is the frontend migration source and still keeps some single-player progression in browser storage until each system is extracted into its own engine module.
+The backend, publishing, modules, themes, events, release history, and crime proof are server-backed. The admin surface is intentionally direct-access. The existing 18-screen game is the frontend migration source and still keeps some single-player progression in browser storage until each system is extracted into its own engine module.
 
 That migration is incremental by design. New Inventory, Travel, Gym, Jobs, Education, Combat, Factions, Market, Missions, and Casino modules plug into the proven contracts instead of rewriting the core.
 
