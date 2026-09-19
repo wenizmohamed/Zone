@@ -2,12 +2,12 @@
 
 A modular PHP 8.5 browser-game engine foundation with a bilingual crime RPG frontend, server-authoritative gameplay proof, installable modules, interchangeable themes, event hooks, and economy auditing.
 
-[Open the integrated platform preview](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app)
+[Open the integrated platform preview](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app)
 
-- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/)
-- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/admin)
-- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/engine)
-- [Engine health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/api/v1/health)
+- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/)
+- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/admin)
+- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/engine)
+- [Engine health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app/api/v1/health)
 
 - **Engine version:** 0.1.0 foundation
 - **Frontend version:** Zone V2
@@ -220,7 +220,7 @@ The repository is connected to the `team-aura` Vercel project.
 - Hosting: Vercel static output plus PHP 8.5 serverless presentation API
 - Root directory: repository root
 - Production URL: [zone-torn-style-game-mockup-6cf978c.vercel.app](https://zone-torn-style-game-mockup-6cf978c.vercel.app)
-- Verified platform preview: [zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app)
+- Verified platform preview: [zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app](https://zone-torn-style-game-mockup-6cf978c1-8c87-git-a7f43f-team-auraa.vercel.app)
 
 Pushing a verified commit to `main` triggers the connected production deployment. The platform preview is intentionally marked `PRESENTATION`: it uses SQLite under Vercel's temporary function storage so the complete workflow can be demonstrated without pretending it is durable multiplayer infrastructure. Production must use external PostgreSQL and Redis before promotion.
 
