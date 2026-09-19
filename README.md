@@ -2,23 +2,29 @@
 
 A modular PHP 8.5 browser-game engine foundation with a bilingual crime RPG frontend, server-authoritative gameplay proof, installable modules, interchangeable themes, event hooks, and economy auditing.
 
-[Play Zone V2](https://zone-torn-style-game-mockup-6cf978c.vercel.app)
+[Open the integrated platform preview](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app)
+
+- [Player game](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/)
+- [Admin control plane](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/admin)
+- [Engine control room](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/engine)
+- [Engine health API](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app/api/v1/health)
 
 - **Engine version:** 0.1.0 foundation
 - **Frontend version:** Zone V2
-- **Status:** Executable engine foundation plus live frontend prototype
+- **Status:** Integrated engine, admin publishing slice, and live frontend presentation
 - **Last updated:** 2026-09-19
 
 > Zone is an independent prototype inspired by classic browser-based crime games. It is not affiliated with Torn or its creators.
 
 ## Overview
 
-ZONE now has two deliberately separated layers:
+ZONE now has three deliberately separated clients and layers on one versioned platform:
 
 1. `engine/` is the PHP 8.5, API-first game-engine foundation. It owns server-side results, module discovery and lifecycle, domain events, themes, resource regeneration, economy ledgers, and production database contracts.
-2. The root frontend is the existing dense browser MMO interface. It demonstrates crimes, training, jobs, education, properties, inventory, combat, factions, casino, maps, and 3D assets.
+2. `/admin` is the control plane. It manages bilingual page drafts, registered visual blocks, modules, content, themes, assets, economy records, events, immutable releases, and rollback.
+3. `/` is the player client. It consumes the active release manifest and renders the original dense browser MMO interface plus pages published from the admin builder.
 
-The public Vercel build remains a static frontend prototype. The executable engine presentation runs through PHP and is documented below. The 18 frontend screens are the migration target for the versioned engine API.
+The current public preview proves the complete control loop: edit a draft, validate it, preview it, publish an immutable release, load it in the game, and reactivate a previous release without deleting history. The browser never supplies crime outcomes or rewards.
 
 ## Engine foundation
 
@@ -35,6 +41,9 @@ The foundation currently proves:
 - Shared Energy, Nerve, Life, and Happiness resource state
 - Immutable currency ledger entries with correlation identifiers
 - Persistent domain-event audit trail
+- Bilingual visual page builder with engine-registered block types
+- Draft isolation, live preview, immutable publishing, release history, and rollback
+- Active release manifests consumed by the player game
 - PostgreSQL production schema and SQLite presentation adapter
 - Jobs, notifications, and extensible image, thumbnail, animation, video, GLB, and GLTF asset records
 - Arabic and English presentation with RTL and LTR switching
@@ -86,15 +95,25 @@ Then open `http://127.0.0.1:4285/engine`.
 - Three.js-powered character and weapon experiences
 - GLB, OBJ, and MTL assets for characters and weapons
 - Google Fonts for Rubik and Oswald typography
-- Vercel static hosting
+- Vercel static hosting plus a PHP 8.5 community runtime for the presentation API
 
-No package installation or build step is required for local use.
+The frontend has no third-party package install step. The integrated platform requires PHP 8.5 for the API and Node.js 22 for build and verification scripts.
 
 ## Repository Structure
 
 ```text
 Zone/
 |-- index.html              Main game interface, state, and screen logic
+|-- platform-runtime.js     Active-release loader and cross-tab refresh
+|-- admin.html              Admin control plane shell
+|-- admin.css               Responsive admin design system
+|-- admin.js                Builder, publishing, modules, and operations UI
+|-- api/index.php           Vercel PHP 8.5 entry point
+|-- engine/                 Server-authoritative modular engine
+|   |-- src/Core/Publishing Draft and immutable release manager
+|   |-- modules/            Installable gameplay modules
+|   |-- themes/             Installable interface themes
+|   `-- database/           SQLite and PostgreSQL schemas
 |-- support.js              Generated component runtime
 |-- image-slot.js           Image-loading support
 |-- art/                    Scene artwork used by activity cards
@@ -110,10 +129,12 @@ Zone/
 |-- screenshots/            Historical design and verification captures
 |-- analysis/               Earlier research and reverse-engineering notes
 |-- brief/                  Supporting project briefs
+|-- scripts/                Build and verification gates
+|-- docs/                   Architecture contract and implementation plan
 `-- lib/                    Historical local library references
 ```
 
-The static Vercel frontend uses `index.html`, `support.js`, `image-slot.js`, `art/`, `assets/`, and `dist/`. The executable backend and engine presentation live independently under `engine/`.
+The game and admin are separate browser clients of the same release and engine APIs. Admin changes do not become live merely because a form was edited. Only a validated publish operation changes the active game release.
 
 ## Quick Start
 
@@ -124,15 +145,26 @@ git clone https://github.com/wenizmohamed/Zone.git
 cd Zone
 ```
 
-Serve the project with Python:
+Install PHP 8.5 and Node.js 22, then run the verification gates:
 
-```bash
-python -m http.server 49123
+```powershell
+npm run verify
+npm run engine:test
+npm run verify:platform
 ```
 
-Open [http://127.0.0.1:49123](http://127.0.0.1:49123) in a browser.
+Start the integrated local platform:
 
-Running through a local HTTP server is recommended because the game includes embedded pages and 3D assets that browsers may restrict when opened directly from `file://`.
+```powershell
+npm run engine:serve
+```
+
+Open these routes:
+
+- `http://127.0.0.1:4285/` for the game
+- `http://127.0.0.1:4285/admin` for the admin control plane
+- `http://127.0.0.1:4285/engine` for the technical engine proof
+- `http://127.0.0.1:4285/api/v1/health` for machine-readable health
 
 ## Using the Prototype
 
@@ -185,27 +217,30 @@ Clear the site's browser storage and reload the page. This resets the local prot
 The repository is connected to the `team-aura` Vercel project.
 
 - Production branch: `main`
-- Hosting: Vercel
-- Build type: static site
+- Hosting: Vercel static output plus PHP 8.5 serverless presentation API
 - Root directory: repository root
 - Production URL: [zone-torn-style-game-mockup-6cf978c.vercel.app](https://zone-torn-style-game-mockup-6cf978c.vercel.app)
+- Verified platform preview: [zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app](https://zone-torn-style-game-mockup-6cf978c1-8c87-4a81-bf94-8qlsvs4af.vercel.app)
 
-Pushing a verified commit to `main` triggers the connected production deployment. The local `.vercel` directory is intentionally excluded from Git.
+Pushing a verified commit to `main` triggers the connected production deployment. The platform preview is intentionally marked `PRESENTATION`: it uses SQLite under Vercel's temporary function storage so the complete workflow can be demonstrated without pretending it is durable multiplayer infrastructure. Production must use external PostgreSQL and Redis before promotion.
 
 ## Verification Status
 
-The production package was last verified on 2026-09-14:
+The integrated platform preview was verified on 2026-09-19:
 
-- 136 of 136 required files returned HTTP 200
-- All 18 navigation sections rendered content
-- Character, weapon, and map embeds loaded successfully
-- No broken images were detected
-- No browser runtime errors were detected
-- GitHub-triggered Vercel deployment reached `READY`
+- Source verification passed for all 18 game screens and 43 generated art targets
+- Production bundle verification passed for all 144 output files
+- PHP engine suite passed 42 of 42 tests
+- Full local platform smoke suite passed 14 of 14 checks
+- Public Vercel routes for game, admin, engine, health, active release, and admin assets returned HTTP 200
+- A public draft was saved without changing the active release
+- Publishing created release `v1`, and the player game loaded its new `Platform Proof` page
+- Desktop and 390px mobile admin layouts were inspected in the rendered browser
+- Vercel deployment `dpl_G3gHaQDuAQQu1pf8Fc5hG4rjVBUs` reached `READY`
 
 ## Project Scope
 
-Zone V2 remains a frontend gameplay prototype while its screens are migrated to the new engine API. The engine foundation now demonstrates trusted server-side calculations, persistence contracts, modularity, hooks, resource handling, and auditing. A production multiplayer release still requires authenticated accounts, deployed PostgreSQL and Redis services, workers, realtime delivery, moderation, monitoring, and migration of every frontend mutation to the API.
+This branch is the vertical platform slice Omar asked to see, not a claim that the entire multiplayer game is finished. It proves the architecture with real code and a working public loop. A production release still requires authenticated accounts and RBAC, managed PostgreSQL 18, Redis 8, object storage, workers, realtime delivery, moderation, observability, backups, and migration of every remaining browser-local gameplay mutation to server-authoritative endpoints.
 
 ## Disclaimer
 

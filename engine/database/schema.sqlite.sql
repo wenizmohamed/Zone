@@ -114,3 +114,34 @@ CREATE TABLE IF NOT EXISTS assets (
     metadata_json TEXT NOT NULL DEFAULT '{}',
     created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS content_drafts (
+    channel TEXT PRIMARY KEY,
+    manifest_json TEXT NOT NULL,
+    updated_by TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS content_releases (
+    id TEXT PRIMARY KEY,
+    version INTEGER NOT NULL UNIQUE,
+    manifest_json TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 0 CHECK (active IN (0, 1)),
+    published_by TEXT NOT NULL,
+    published_at TEXT NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS content_releases_one_active_idx ON content_releases(active) WHERE active = 1;
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+    id TEXT PRIMARY KEY,
+    actor TEXT NOT NULL,
+    action TEXT NOT NULL,
+    target_type TEXT NOT NULL,
+    target_id TEXT NOT NULL,
+    previous_json TEXT,
+    next_json TEXT,
+    correlation_id TEXT NOT NULL,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS admin_audit_target_idx ON admin_audit_log(target_type, target_id, created_at);
+CREATE INDEX IF NOT EXISTS admin_audit_correlation_idx ON admin_audit_log(correlation_id);

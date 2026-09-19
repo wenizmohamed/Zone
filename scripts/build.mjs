@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(root, 'public');
-const runtimeFiles = ['index.html', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js'];
+const runtimeFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'platform-runtime.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js'];
 const runtimeDirectories = ['art', 'assets', 'dist', 'lib'];
 
 if (output !== join(root, 'public') || relative(root, output) !== 'public') {

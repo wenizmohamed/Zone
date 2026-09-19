@@ -112,3 +112,34 @@ CREATE TABLE IF NOT EXISTS assets (
     metadata_json JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS content_drafts (
+    channel VARCHAR(80) PRIMARY KEY,
+    manifest_json JSONB NOT NULL,
+    updated_by VARCHAR(160) NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS content_releases (
+    id CHAR(32) PRIMARY KEY,
+    version INTEGER NOT NULL UNIQUE,
+    manifest_json JSONB NOT NULL,
+    active SMALLINT NOT NULL DEFAULT 0 CHECK (active IN (0, 1)),
+    published_by VARCHAR(160) NOT NULL,
+    published_at TIMESTAMPTZ NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS content_releases_one_active_idx ON content_releases(active) WHERE active = 1;
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+    id CHAR(32) PRIMARY KEY,
+    actor VARCHAR(160) NOT NULL,
+    action VARCHAR(100) NOT NULL,
+    target_type VARCHAR(100) NOT NULL,
+    target_id VARCHAR(160) NOT NULL,
+    previous_json JSONB,
+    next_json JSONB,
+    correlation_id CHAR(32) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS admin_audit_target_idx ON admin_audit_log(target_type, target_id, created_at);
+CREATE INDEX IF NOT EXISTS admin_audit_correlation_idx ON admin_audit_log(correlation_id);

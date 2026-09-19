@@ -23,6 +23,18 @@ if ($path === '/engine/assets/engine.css' || $path === '/engine/assets/engine.js
     return true;
 }
 
+if ($method === 'GET' && $path === '/') {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(ZONE_REPOSITORY_ROOT . '/index.html');
+    return true;
+}
+
+if ($method === 'GET' && ($path === '/admin' || $path === '/admin/')) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(ZONE_REPOSITORY_ROOT . '/admin.html');
+    return true;
+}
+
 $engine = zone_engine();
 
 if ($path === '/engine/theme.css') {
@@ -72,6 +84,11 @@ function require_admin(): void
     }
 }
 
+function request_actor(): string
+{
+    return trim((string) ($_SERVER['HTTP_X_ZONE_ADMIN_ACTOR'] ?? 'presentation-admin')) ?: 'presentation-admin';
+}
+
 if ($method === 'OPTIONS') {
     http_response_code(204);
     exit;
@@ -112,6 +129,32 @@ try {
             'rule' => 'The domain and modules never depend on a frontend, database vendor, or theme.',
         ]);
     }
+    if ($method === 'GET' && $path === '/api/v1/releases/active') {
+        json_response($engine->activeRelease());
+    }
+    if ($method === 'GET' && $path === '/api/v1/admin/draft') {
+        require_admin();
+        json_response($engine->releaseDraft());
+    }
+    if ($method === 'GET' && $path === '/api/v1/admin/releases') {
+        require_admin();
+        json_response(['releases' => $engine->releaseHistory()]);
+    }
+    if ($method === 'PUT' && $path === '/api/v1/admin/draft') {
+        require_admin();
+        $payload = request_json();
+        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, request_actor()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/admin/releases/publish') {
+        require_admin();
+        request_json();
+        json_response($engine->publishRelease(request_actor()), 201);
+    }
+    if ($method === 'POST' && preg_match('#^/api/v1/admin/releases/([a-f0-9]{32})/activate$#', $path, $matches)) {
+        require_admin();
+        request_json();
+        json_response($engine->activateRelease($matches[1], request_actor()));
+    }
     if ($method === 'POST' && preg_match('#^/api/v1/crimes/([a-z0-9-]+)/attempt$#', $path, $matches)) {
         request_json();
         json_response($engine->attemptCrime($matches[1], $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'demo-player'));
@@ -127,6 +170,11 @@ try {
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);
+} catch (InvalidArgumentException $exception) {
+    json_response(['error' => $exception->getMessage(), 'type' => $exception::class], 422);
+} catch (RuntimeException $exception) {
+    $status = str_starts_with($exception->getMessage(), 'Unknown release:') ? 404 : 400;
+    json_response(['error' => $exception->getMessage(), 'type' => $exception::class], $status);
 } catch (Throwable $exception) {
     $status = str_contains(strtolower($exception->getMessage()), 'not enough') ? 409 : 400;
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class], $status);

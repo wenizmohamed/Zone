@@ -6,6 +6,7 @@ use Zone\Engine\Application\GameEngine;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
+use Zone\Engine\Core\Publishing\ReleaseManager;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 use Zone\Engine\Infrastructure\Cache\CacheFactory;
 
@@ -39,8 +40,9 @@ function zone_engine(?string $databaseUrl = null): GameEngine
     $events = new EventBus($database);
     $modules = new ModuleRegistry($database, $events, ZONE_ENGINE_ROOT . '/modules');
     $themes = new ThemeRegistry($database, ZONE_ENGINE_ROOT . '/themes');
+    $releases = new ReleaseManager($database, $events);
     $modules->discoverAndBoot();
     $themes->discover();
 
-    return new GameEngine($database, $events, $modules, $themes, CacheFactory::fromEnvironment());
+    return new GameEngine($database, $events, $modules, $themes, $releases, CacheFactory::fromEnvironment());
 }

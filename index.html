@@ -26,6 +26,7 @@
   })();
 </script>
 <script src="./support.js"></script>
+<script src="./platform-runtime.js"></script>
 </head>
 <body>
 <x-dc>
@@ -127,7 +128,7 @@
   <div style="background:linear-gradient(var(--hd1),var(--hd2));border-bottom:1px solid var(--edge);box-shadow:0 1px 0 var(--border2) inset">
     <div data-zheaderbar="1" style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:0 14px;height:50px">
       <div style="display:flex;align-items:center;gap:10px;padding:5px 14px;background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--track);border-radius:4px;box-shadow:0 1px 0 var(--mu2) inset">
-        <span data-zfig="1" style="font-weight:600;font-size:23px;letter-spacing:.2em;color:var(--t1);text-shadow:0 1px 0 rgba(0,0,0,.7)">{{ t.brand }}</span>
+        <span data-zfig="1" style="font-weight:600;font-size:23px;letter-spacing:.2em;color:var(--t1);text-shadow:0 1px 0 rgba(0,0,0,.7)">{{ platformBrand }}</span>
       </div>
       <div style="display:flex;gap:4px;font-size:12px;color:var(--t4)">
         <sc-for list="{{ topLinks }}" as="l" hint-placeholder-count="5"><button onClick="{{ l.go }}" style="background:none;border:0;color:var(--t4);padding:5px 6px;font:inherit;cursor:pointer;white-space:nowrap" style-hover="color:#fff;background:var(--btn)">{{ l.label }}</button></sc-for>
@@ -140,6 +141,7 @@
         </span>
         <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
+        <a href="/admin" style="background:var(--activebg);border:1px solid var(--acc);color:var(--activefg);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600">ADMIN</a>
       </div>
     </div>
     <div style="background:var(--ticker);border-top:1px solid var(--btn);overflow:hidden;white-space:nowrap;font-size:11px;color:var(--mu);padding:4px 0">
@@ -147,6 +149,9 @@
         <sc-for list="{{ ticker }}" as="h" hint-placeholder-count="6"><span>{{ h }}</span></sc-for>
       </div>
     </div>
+    <sc-if value="{{ announcement.enabled }}" hint-placeholder-val="{{ false }}">
+      <div data-zone-announcement="1" style="background:var(--activebg);border-top:1px solid var(--acc);border-bottom:1px solid var(--border);padding:7px 14px;text-align:center;color:var(--activefg);font-weight:600">{{ announcement.text }} <bdi style="margin-inline-start:8px;color:var(--mu);font-size:10px">RELEASE {{ releaseVersion }}</bdi></div>
+    </sc-if>
   </div>
 
   <div data-zshell="1" style="max-width:1240px;margin:0 auto;display:flex;gap:14px;padding:12px 14px 40px;align-items:flex-start">
@@ -180,7 +185,7 @@
         <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.areas }}</div>
         <div data-znav="1" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;display:flex;flex-direction:column;padding:3px 0">
           <sc-for list="{{ nav }}" as="n" hint-placeholder-count="17">
-            <button onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;padding:5px 10px;border:0;border-inline-start:3px solid {{ n.edge }};background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:12px;cursor:pointer;text-align:start;width:100%" style-hover="background:var(--btn);color:#fff">
+            <button data-zone-screen="{{ n.id }}" onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;padding:5px 10px;border:0;border-inline-start:3px solid {{ n.edge }};background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:12px;cursor:pointer;text-align:start;width:100%" style-hover="background:var(--btn);color:#fff">
               <svg width="16" height="16" viewBox="0 0 512 512" style="flex:none;fill:{{ n.ic }}"><path d="M0 0" data-zone-path="{{ n.d }}"></path></svg>
               <span style="flex:1">{{ n.label }}</span>
               <bdi style="font-size:10px;color:var(--acc)">{{ n.badge }}</bdi>
@@ -686,6 +691,18 @@
         </div>
       </sc-if>
 
+      <!-- RELEASE-DRIVEN CUSTOM PAGE -->
+      <sc-if value="{{ is.custom }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;gap:10px" data-zone-custom-page="1">
+          <sc-for list="{{ customBlocks }}" as="b" hint-placeholder-count="2">
+            <article data-zone-block="{{ b.type }}" style="background:{{ b.bg }};border:1px solid {{ b.edge }};border-radius:6px;padding:{{ b.pad }};box-shadow:0 8px 24px rgba(0,0,0,.2)">
+              <div data-zhead="1" style="color:var(--acc);font-size:10px;margin-bottom:8px">{{ b.label }}</div>
+              <div style="color:var(--t1);font-size:{{ b.size }};font-weight:{{ b.weight }};line-height:1.55;white-space:pre-wrap">{{ b.text }}</div>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
       <div style="color:var(--mu2);font-size:11px;text-align:center;padding-top:10px">{{ t.footer }}</div>
     </main>
   </div>
@@ -697,7 +714,13 @@ const BADGE = {
   home: ['#5a8a2a', 'M12 3 2 12h3v8h5v-5h4v5h5v-8h3z'], items: ['#8a6a2a', 'M3 8h18v12H3zM3 8l3-5h12l3 5M9 13h6v3H9z'], city: ['#3a6a9a', 'M2 21h20V9l-4 2V5l-6-3-6 3v6L2 9zM8 11h2v2H8zM12 11h2v2h-2zM8 15h2v2H8zM12 15h2v2h-2z'], jobs: ['#7a5a3a', 'M4 7h16v13H4zM9 7V4h6v3M4 12h16v2H4z'], gym: ['#a04a2a', 'M2 10h3V8h3v8H5v-2H2zM22 10h-3V8h-3v8h3v-2h3zM8 11h8v2H8z'], properties: ['#4a7a5a', 'M3 21h18v-2H3zM4 19V9l8-6 8 6v10zM9 19v-6h6v6z'], education: ['#5a4a9a', 'M12 3 1 8l11 5 9-4v6h2V8zM5 13v4c0 2 3 4 7 4s7-2 7-4v-4l-7 3z'], crimes: ['#8a2a2a', 'M6 8h12l-1 13H7zM9 8V6a3 3 0 0 1 6 0v2h-2V6a1 1 0 0 0-2 0v2zM10 12h4v6h-4z'], missions: ['#c08a20', 'M12 2l3 7 7 .5-5.5 4.5L18.5 21 12 17l-6.5 4L7.5 14 2 9.5 9 9z'], newspaper: ['#5a5a5a', 'M3 4h18v16H3zM5 6v5h6V6zM13 6h6v2h-6zM13 10h6v2h-6zM5 14h14v2H5zM5 17h10v1H5z'], jail: ['#4a4a5a', 'M2 3h20v18H2zM6 5v14h2V5zM11 5v14h2V5zM16 5v14h2V5z'], hospital: ['#c03030', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM10 7h4v3h3v4h-3v3h-4v-3H7v-4h3z'], casino: ['#2a7a6a', 'M3 5h18v14H3zM6 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM18 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'], hof: ['#b0902a', 'M7 2h10v6a5 5 0 0 1-10 0zM5 4H2v3a4 4 0 0 0 4 4V9a2 2 0 0 1-2-2V6h1zM19 4h3v3a4 4 0 0 1-4 4V9a2 2 0 0 0 2-2V6h-1zM11 13h2v4h4v3H7v-3h4z'], faction: ['#3a7a4a', 'M12 2 3 5v7c0 5.5 4 9.5 9 10 5-.5 9-4.5 9-10V5zM12 6l5 2v4c0 3-2 5.5-5 6.5-3-1-5-3.5-5-6.5V8z'], elimination: ['#6a3a8a', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM11 6h2v6l4 2-1 2-5-3z'], attack: ['#a02a3a', 'M20 2l2 2-9 11-2-2zM8 12l4 4-2 2-2-2-3 3-2-2 3-3-2-2z'], market: ['#2a6a8a', 'M2 9l3-6h14l3 6zM3 10h18v10H3zM7 13h4v4H7zM13 13h4v4h-4z'] };
 const LUCIDE = { home: 'house', items: 'backpack', city: 'map', jobs: 'briefcase-business', gym: 'dumbbell', properties: 'building-2', education: 'graduation-cap', crimes: 'skull', missions: 'scroll-text', newspaper: 'newspaper', jail: 'lock-keyhole', hospital: 'cross', casino: 'dices', hof: 'trophy', faction: 'shield-half', elimination: 'swords', attack: 'crosshair', market: 'store' };
 const ICON = { home: 'M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', items: 'M4 7h16v13H4zM4 7l2-4h12l2 4M10 12h4', city: 'M4 21V9l8-6 8 6v12M10 21v-6h4v6', jobs: 'M3 8h18v12H3zM8 8V5h8v3', gym: 'M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12', properties: 'M3 21h18M5 21V8l7-5 7 5v13M9 21v-7h6v7', education: 'M2 9l10-5 10 5-10 5zM6 11v5c0 1 3 3 6 3s6-2 6-3v-5', crimes: 'M6 7h12l-1 14H7L6 7zM9 7V5a3 3 0 0 1 6 0v2', missions: 'M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z', newspaper: 'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5', jail: 'M4 3v18M9 3v18M15 3v18M20 3v18M2 3h20M2 21h20', hospital: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v8M8 12h8', casino: 'M3 6h18v12H3zM7 10h.01M17 14h.01M12 12h.01', hof: 'M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3', faction: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', elimination: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2', attack: 'M14.5 3.5l6 6L9 21H3v-6zM13 6l5 5', market: 'M3 10l2-6h14l2 6M3 10h18v10H3zM9 14h6' };
-const SCREENS = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
+const BASE_SCREENS = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
+const PLATFORM_RELEASE = window.ZonePlatform ? window.ZonePlatform.active() : { version: 0, manifest: {} };
+const PLATFORM_MANIFEST = PLATFORM_RELEASE.manifest || {};
+const CUSTOM_PAGES = Array.isArray(PLATFORM_MANIFEST.pages) ? PLATFORM_MANIFEST.pages.filter(p => p && p.enabled) : [];
+const CUSTOM_PAGE_MAP = Object.fromEntries(CUSTOM_PAGES.map(p => [p.id, p]));
+const RELEASE_NAV = Array.isArray(PLATFORM_MANIFEST.navigation) && PLATFORM_MANIFEST.navigation.length ? PLATFORM_MANIFEST.navigation : [...BASE_SCREENS, ...CUSTOM_PAGES.map(p => p.id)];
+const SCREENS = RELEASE_NAV.filter((id, index, all) => all.indexOf(id) === index && ((BASE_SCREENS.includes(id) && PLATFORM_MANIFEST.modules?.[id] !== false) || CUSTOM_PAGE_MAP[id]));
 const T = {
   en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
     topLinks: ['Wiki', 'Rules', 'Forums', 'Discord', 'Staff'],
@@ -1030,12 +1053,13 @@ class Component extends DCLogic {
   }
   renderVals() {
     const { lang, screen } = this.state, t = T[lang], p = this.p, now = Date.now();
+    const customPage = CUSTOM_PAGE_MAP[screen] || null;
     const jailed = now < p.jailUntil, hosp = now < p.hospUntil;
     const bars = ['energy', 'nerve', 'happy', 'life'].map(k => { const c = this.cur(k), m = this.maxOf(k); const pct = Math.round(c / m * 100), on = Math.round(pct / 10); return { label: t[k], d: LU({ energy: 'str', nerve: 'skull', happy: 'casino', life: 'hospital' }[k]), pips: Array.from({ length: 10 }, (_, i) => ({ bg: i < on ? 'linear-gradient(' + BARS[k].c1 + ',' + BARS[k].c2 + ')' : 'var(--onAcc)', glow: i < on ? '0 0 4px ' + BARS[k].c1 + '66' : 'none' })), c1: BARS[k].c1, c2: BARS[k].c2, text: num(c) + ' / ' + num(m), pct, timer: c >= m ? t.full : fmt(t.inFmt, { n: BARS[k].rate, t: mmss(this.nextIn(k)) }) }; });
     const invCount = Object.keys(p.inv).filter(k => p.inv[k] > 0 && CAT[k]).length;
     const readyMissions = MISSIONS.filter(m => !p.claimed[m.id] && p.ctr[m.ctr] >= m.n).length;
-    const nav = SCREENS.map(s => ({ label: t.nav[s], d: LU(s), ic: s === screen ? 'var(--acc)' : 'var(--ico)', go: () => this.go(s), bg: s === screen ? 'var(--activebg)' : 'transparent', fg: s === screen ? 'var(--activefg)' : 'var(--t3)', edge: s === screen ? 'var(--acc)' : 'transparent', badge: s === 'items' ? invCount : s === 'missions' && readyMissions ? readyMissions : s === 'jail' ? this.inmates.filter(i => !i.out && i.until > now).length : '' }));
-    const is = {}; SCREENS.forEach(s => { is[s] = s === screen; });
+    const nav = SCREENS.map(s => ({ id: s, label: t.nav[s] || CUSTOM_PAGE_MAP[s]?.title?.[lang] || CUSTOM_PAGE_MAP[s]?.title?.en || s, d: LU(s) || LU('missions'), ic: s === screen ? 'var(--acc)' : 'var(--ico)', go: () => this.go(s), bg: s === screen ? 'var(--activebg)' : 'transparent', fg: s === screen ? 'var(--activefg)' : 'var(--t3)', edge: s === screen ? 'var(--acc)' : 'transparent', badge: s === 'items' ? invCount : s === 'missions' && readyMissions ? readyMissions : s === 'jail' ? this.inmates.filter(i => !i.out && i.until > now).length : '' }));
+    const is = {}; BASE_SCREENS.forEach(s => { is[s] = s === screen; }); is.custom = !!customPage;
     const facName = t.teams[1], enemy = t.teams[2];
     const d = new Date(), clock = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(x => String(x).padStart(2, '0')).join(':');
     const bailSelf = p.level * 500;
@@ -1061,12 +1085,16 @@ class Component extends DCLogic {
     const casino = this.state.casino;
     return {
       t, clock, is, nav, bars,
+      platformBrand: PLATFORM_MANIFEST.branding?.name?.[lang] || PLATFORM_MANIFEST.branding?.name?.en || t.brand,
+      announcement: { enabled: !!PLATFORM_MANIFEST.announcement?.enabled, text: PLATFORM_MANIFEST.announcement?.text?.[lang] || PLATFORM_MANIFEST.announcement?.text?.en || '' },
+      releaseVersion: PLATFORM_RELEASE.version,
+      customBlocks: (customPage?.blocks || []).map((block, index) => ({ type: block.type, label: String(block.type || 'block').toUpperCase(), text: block.content?.[lang] || block.content?.en || '', bg: block.type === 'hero' ? 'linear-gradient(135deg,var(--activebg),var(--panel))' : block.type === 'callout' ? 'var(--selbg)' : 'var(--panel)', edge: block.type === 'hero' || block.type === 'callout' ? 'var(--acc)' : 'var(--border)', pad: block.type === 'hero' ? '28px' : '16px', size: block.type === 'hero' ? 'clamp(22px,4vw,42px)' : block.type === 'text' ? '14px' : '16px', weight: block.type === 'hero' ? '700' : block.type === 'callout' ? '600' : '400', order: index })),
       topLinks: t.topLinks.map((label, i) => ({ label, go: () => i === 3 ? this.toast(t.toast.community) : this.go(['education', 'newspaper', 'faction', null, 'hof'][i]) })),
       ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
       toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => this.save()); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
       toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; this.setState({ lang: l }, () => this.save()); },
       cash: money(p.cash), cashIcon: LU('cash'), chainIcon: LU('cuffs'), level: p.level, levelTitle, points: num(p.points), merits: p.merits, chainText: fmt(t.hits, { n: p.fac.chain }),
-      title: t.nav[screen], subtitle: fmt(t.sub[screen], { fac: facName, lvl: p.level, title: levelTitle }), goCity: () => this.go('city'), tut: this.state.tut, toggleTut: () => this.setState(s => ({ tut: !s.tut })), tutText: t.tut[tutKey],
+      title: t.nav[screen] || customPage?.title?.[lang] || customPage?.title?.en || screen, subtitle: customPage ? (PLATFORM_MANIFEST.branding?.tagline?.[lang] || PLATFORM_MANIFEST.branding?.tagline?.en || '') : fmt(t.sub[screen], { fac: facName, lvl: p.level, title: levelTitle }), goCity: () => this.go('city'), tut: this.state.tut, toggleTut: () => this.setState(s => ({ tut: !s.tut })), tutText: t.tut[tutKey],
       outfits: ['street', 'suit', 'tactical'].map(k => ({ name: t.outfits[k],
         go: () => this.setState({ outfit: k }, () => this.pushChar()),
         bg: (this.state.outfit || 'street') === k ? 'var(--activebg)' : 'var(--btn)',

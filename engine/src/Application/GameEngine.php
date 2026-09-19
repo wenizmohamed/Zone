@@ -12,6 +12,7 @@ use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
+use Zone\Engine\Core\Publishing\ReleaseManager;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 
 final class GameEngine
@@ -24,6 +25,7 @@ final class GameEngine
         private readonly EventBus $events,
         private readonly ModuleRegistry $modules,
         private readonly ThemeRegistry $themes,
+        private readonly ReleaseManager $releases,
         private readonly CacheStore $cache,
     ) {
         $this->ledger = new Ledger($database);
@@ -32,6 +34,7 @@ final class GameEngine
 
     public function status(): array
     {
+        $release = $this->releases->active();
         return [
             'engine' => 'ZONE Engine',
             'version' => '0.1.0-foundation',
@@ -43,6 +46,8 @@ final class GameEngine
             'serverAuthoritative' => true,
             'moduleCount' => count(array_filter($this->modules->all(), static fn (array $module): bool => $module['installed'])),
             'activeTheme' => array_values(array_filter($this->themes->all(), static fn (array $theme): bool => $theme['active']))[0]['id'] ?? null,
+            'activeReleaseId' => $release['id'],
+            'activeReleaseVersion' => $release['version'],
             'capabilities' => [
                 'module-discovery',
                 'module-install-enable-disable-uninstall',
@@ -53,8 +58,39 @@ final class GameEngine
                 'api-first-gameplay',
                 'postgresql-schema',
                 'redis-cache-port',
+                'draft-preview-publish-rollback',
             ],
         ];
+    }
+
+    public function releaseDraft(): array
+    {
+        return $this->releases->draft();
+    }
+
+    public function saveReleaseDraft(array $manifest, string $actor): array
+    {
+        return $this->releases->saveDraft($manifest, $actor);
+    }
+
+    public function publishRelease(string $actor): array
+    {
+        return $this->releases->publish($actor);
+    }
+
+    public function activeRelease(): array
+    {
+        return $this->releases->active();
+    }
+
+    public function releaseHistory(): array
+    {
+        return $this->releases->releases();
+    }
+
+    public function activateRelease(string $releaseId, string $actor): array
+    {
+        return $this->releases->activate($releaseId, $actor);
     }
 
     public function modules(): array

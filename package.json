@@ -8,9 +8,10 @@
     "build": "node scripts/build.mjs",
     "vercel-build": "npm run verify && npm run build && node scripts/verify.mjs public",
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
-    "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1"
+    "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
+    "verify:platform": "powershell -ExecutionPolicy Bypass -File scripts/verify-platform.ps1"
   },
   "engines": {
-    "node": "24.x"
+    "node": "22.x"
   }
 }
