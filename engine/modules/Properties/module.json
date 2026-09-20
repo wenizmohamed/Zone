@@ -1,0 +1,14 @@
+{
+  "id": "properties",
+  "name": "Properties",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Properties\\PropertiesModule",
+  "enabledByDefault": true,
+  "description": "Properties system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "العقارات",
+  "provides": [
+    "property.buy"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: propertyManagement"
+}

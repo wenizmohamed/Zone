@@ -1,0 +1,14 @@
+{
+  "id": "stats",
+  "name": "Gym & Stats",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Stats\\StatsModule",
+  "enabledByDefault": true,
+  "description": "Gym & Stats system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الجيم والإحصائيات",
+  "provides": [
+    "stats.train"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: stats"
+}

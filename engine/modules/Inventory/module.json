@@ -1,0 +1,15 @@
+{
+  "id": "inventory",
+  "name": "Inventory & Items",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Inventory\\InventoryModule",
+  "enabledByDefault": true,
+  "description": "Inventory & Items system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الحقيبة والأغراض",
+  "provides": [
+    "inventory.list",
+    "item.use"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: inventory"
+}

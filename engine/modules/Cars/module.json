@@ -1,0 +1,14 @@
+{
+  "id": "cars",
+  "name": "Car Theft & Garage",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Cars\\CarsModule",
+  "enabledByDefault": true,
+  "description": "Car Theft & Garage system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "سرقة السيارات",
+  "provides": [
+    "cars.steal"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: cars"
+}

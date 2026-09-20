@@ -1,0 +1,14 @@
+{
+  "id": "blackmarket",
+  "name": "Black Market",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\BlackMarket\\BlackMarketModule",
+  "enabledByDefault": true,
+  "description": "Black Market system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "السوق السوداء",
+  "provides": [
+    "market.black"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: blackmarket"
+}

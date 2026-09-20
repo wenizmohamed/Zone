@@ -1,0 +1,14 @@
+{
+  "id": "detectives",
+  "name": "Detectives",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Detectives\\DetectivesModule",
+  "enabledByDefault": true,
+  "description": "Detectives system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "المحققون",
+  "provides": [
+    "detective.hire"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: detectives"
+}

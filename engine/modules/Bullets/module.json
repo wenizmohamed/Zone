@@ -1,0 +1,14 @@
+{
+  "id": "bullets",
+  "name": "Bullet Factory",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Bullets\\BulletsModule",
+  "enabledByDefault": true,
+  "description": "Bullet Factory system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "مصنع الرصاص",
+  "provides": [
+    "bullets.craft"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: bullets"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "leaderboards",
+  "name": "Leaderboards",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Leaderboards\\LeaderboardsModule",
+  "enabledByDefault": true,
+  "description": "Leaderboards system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "لوحات الصدارة",
+  "provides": [
+    "leaderboard.view"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: leaderboards"
+}

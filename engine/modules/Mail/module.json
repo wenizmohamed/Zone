@@ -1,0 +1,14 @@
+{
+  "id": "mail",
+  "name": "Mail",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Mail\\MailModule",
+  "enabledByDefault": true,
+  "description": "Mail system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "البريد",
+  "provides": [
+    "mail.send"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: mail"
+}

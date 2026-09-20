@@ -1,0 +1,14 @@
+{
+  "id": "gangbank",
+  "name": "Gang Bank",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\GangBank\\GangBankModule",
+  "enabledByDefault": true,
+  "description": "Gang Bank system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "خزينة العصابة",
+  "provides": [
+    "gang.bank"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: gangBank"
+}

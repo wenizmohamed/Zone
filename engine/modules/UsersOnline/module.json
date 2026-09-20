@@ -1,0 +1,14 @@
+{
+  "id": "usersonline",
+  "name": "Users Online",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\UsersOnline\\UsersOnlineModule",
+  "enabledByDefault": true,
+  "description": "Users Online system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "المتصلون الآن",
+  "provides": [
+    "users.online"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: usersOnline"
+}

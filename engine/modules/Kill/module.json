@@ -1,0 +1,14 @@
+{
+  "id": "kill",
+  "name": "Attack / Kill",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Kill\\KillModule",
+  "enabledByDefault": true,
+  "description": "Attack / Kill system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الهجوم والقتل",
+  "provides": [
+    "combat.attack"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: kill"
+}

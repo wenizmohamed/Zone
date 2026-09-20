@@ -1,0 +1,14 @@
+{
+  "id": "garage",
+  "name": "Garage",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Garage\\GarageModule",
+  "enabledByDefault": true,
+  "description": "Garage system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الكراج",
+  "provides": [
+    "garage.store"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: garage"
+}

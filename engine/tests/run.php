@@ -48,7 +48,7 @@ try {
     check($status['serverAuthoritative'] === true, 'engine reports server-authoritative execution');
     check($status['database'] === 'sqlite', 'local test adapter is SQLite');
     check($status['cacheAdapter'] === 'memory' && $status['redisPortReady'] === true, 'cache port runs in memory and exposes a Redis production adapter');
-    check(count($engine->modules()) === 2, 'two independent modules discovered from manifests');
+    check(count($engine->modules()) >= 27, 'all ported OpenPBBG modules discovered from manifests (>=27)');
     check(count($engine->themes()) === 2, 'two independent themes discovered from manifests');
     check(count($engine->crimes()) === 3, 'Crime module exposes its catalog');
     check(count($engine->adminCrimes()) === 3, 'admin content service exposes enabled and disabled crime definitions');
@@ -166,7 +166,7 @@ try {
     check($applicationRelease['version'] === 3, 'application layer publishes the next immutable release');
     check($engine->activeRelease()['manifest']['branding']['name']['en'] === 'ZONE Application', 'application layer exposes the newly active manifest');
     check(count($applicationRelease['manifest']['content']['crimes']) === 4, 'published release snapshots the complete admin crime catalogue');
-    check(count($applicationRelease['manifest']['content']['engineModules']) === 2, 'published release snapshots module state');
+    check(count($applicationRelease['manifest']['content']['engineModules']) >= 27, 'published release snapshots the full ported module state (>=27)');
     $bootstrap = $engine->gameBootstrap();
     check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 4, 'game bootstrap exposes the active published content snapshot');
     $engine->activateRelease($releaseOne['id'], 'application-test');

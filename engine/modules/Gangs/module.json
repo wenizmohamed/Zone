@@ -1,0 +1,15 @@
+{
+  "id": "gangs",
+  "name": "Gangs / Factions",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Gangs\\GangsModule",
+  "enabledByDefault": true,
+  "description": "Gangs / Factions system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "العصابات",
+  "provides": [
+    "gang.create",
+    "gang.join"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: gangs"
+}

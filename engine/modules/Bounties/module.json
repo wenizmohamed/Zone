@@ -1,0 +1,15 @@
+{
+  "id": "bounties",
+  "name": "Bounty Board",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Bounties\\BountiesModule",
+  "enabledByDefault": true,
+  "description": "Bounty Board system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "المكافآت",
+  "provides": [
+    "bounty.place",
+    "bounty.claim"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: bounties"
+}

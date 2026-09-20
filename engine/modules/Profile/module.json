@@ -1,0 +1,14 @@
+{
+  "id": "profile",
+  "name": "Player Profile",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Profile\\ProfileModule",
+  "enabledByDefault": true,
+  "description": "Player Profile system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الملف الشخصي",
+  "provides": [
+    "profile.view"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: profile"
+}

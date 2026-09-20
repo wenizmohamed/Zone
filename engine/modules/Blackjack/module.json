@@ -1,0 +1,14 @@
+{
+  "id": "blackjack",
+  "name": "Blackjack Casino",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Blackjack\\BlackjackModule",
+  "enabledByDefault": true,
+  "description": "Blackjack Casino system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "بلاك جاك",
+  "provides": [
+    "casino.blackjack"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: blackjack"
+}

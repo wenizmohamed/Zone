@@ -1,0 +1,14 @@
+{
+  "id": "theft",
+  "name": "Theft",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Theft\\TheftModule",
+  "enabledByDefault": true,
+  "description": "Theft system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "السرقة",
+  "provides": [
+    "theft.commit"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: theft"
+}

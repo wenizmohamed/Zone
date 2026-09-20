@@ -1,0 +1,14 @@
+{
+  "id": "news",
+  "name": "Game News",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\News\\NewsModule",
+  "enabledByDefault": true,
+  "description": "Game News system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "أخبار اللعبة",
+  "provides": [
+    "news.list"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: news"
+}

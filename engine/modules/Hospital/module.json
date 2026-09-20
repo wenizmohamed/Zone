@@ -1,0 +1,14 @@
+{
+  "id": "hospital",
+  "name": "Hospital",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Hospital\\HospitalModule",
+  "enabledByDefault": true,
+  "description": "Hospital system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "المستشفى",
+  "provides": [
+    "hospital.heal"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: hospital"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "policechase",
+  "name": "Police Chase",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\PoliceChase\\PoliceChaseModule",
+  "enabledByDefault": true,
+  "description": "Police Chase system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "مطاردة الشرطة",
+  "provides": [
+    "crime.policechase"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: policeChase"
+}

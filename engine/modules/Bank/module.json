@@ -1,0 +1,15 @@
+{
+  "id": "bank",
+  "name": "Banking",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Bank\\BankModule",
+  "enabledByDefault": true,
+  "description": "Banking system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "الخزينة والبنك",
+  "provides": [
+    "bank.balance",
+    "bank.transfer"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: bank"
+}

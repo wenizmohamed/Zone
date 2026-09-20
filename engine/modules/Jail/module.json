@@ -1,0 +1,14 @@
+{
+  "id": "jail",
+  "name": "Jail & Busting",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Jail\\JailModule",
+  "enabledByDefault": true,
+  "description": "Jail & Busting system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "السجن والتهريب",
+  "provides": [
+    "jail.bust"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: jail"
+}

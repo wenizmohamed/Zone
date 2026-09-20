@@ -1,0 +1,14 @@
+{
+  "id": "search",
+  "name": "Player Search",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Search\\SearchModule",
+  "enabledByDefault": true,
+  "description": "Player Search system, ported from the Gangster Legends V2 / OpenPBBG source into a ZONE module.",
+  "description_ar": "البحث عن لاعب",
+  "provides": [
+    "players.search"
+  ],
+  "subscribes": [],
+  "source": "Gangster Legends V2 (openPBBG) module: search"
+}
