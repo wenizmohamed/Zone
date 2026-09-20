@@ -639,6 +639,22 @@
         </div>
       </sc-if>
 
+      <!-- BANK -->
+      <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.onHandLabel }}</div><bdi style="color:var(--money);font-size:22px;font-weight:700">{{ bank.cash }}</bdi></div>
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.inBankLabel }}</div><bdi style="color:var(--acc);font-size:22px;font-weight:700">{{ bank.balance }}</bdi></div>
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.totalLabel }}</div><bdi style="color:var(--t1);font-size:22px;font-weight:700">{{ bank.total }}</bdi></div>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
+          <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.depositLabel }}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
+          <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.withdrawLabel }}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ bank.withdrawals }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:var(--btn);color:var(--t2);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
+          <div style="color:var(--t4);font-size:11px;margin-top:12px">{{ bank.msg }}</div>
+        </div>
+      </sc-if>
+
       <!-- HOSPITAL -->
       <sc-if value="{{ is.hospital }}" hint-placeholder-val="{{ false }}">
         <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
@@ -716,7 +732,7 @@ const BADGE = {
   home: ['#5a8a2a', 'M12 3 2 12h3v8h5v-5h4v5h5v-8h3z'], items: ['#8a6a2a', 'M3 8h18v12H3zM3 8l3-5h12l3 5M9 13h6v3H9z'], city: ['#3a6a9a', 'M2 21h20V9l-4 2V5l-6-3-6 3v6L2 9zM8 11h2v2H8zM12 11h2v2h-2zM8 15h2v2H8zM12 15h2v2h-2z'], jobs: ['#7a5a3a', 'M4 7h16v13H4zM9 7V4h6v3M4 12h16v2H4z'], gym: ['#a04a2a', 'M2 10h3V8h3v8H5v-2H2zM22 10h-3V8h-3v8h3v-2h3zM8 11h8v2H8z'], properties: ['#4a7a5a', 'M3 21h18v-2H3zM4 19V9l8-6 8 6v10zM9 19v-6h6v6z'], education: ['#5a4a9a', 'M12 3 1 8l11 5 9-4v6h2V8zM5 13v4c0 2 3 4 7 4s7-2 7-4v-4l-7 3z'], crimes: ['#8a2a2a', 'M6 8h12l-1 13H7zM9 8V6a3 3 0 0 1 6 0v2h-2V6a1 1 0 0 0-2 0v2zM10 12h4v6h-4z'], missions: ['#c08a20', 'M12 2l3 7 7 .5-5.5 4.5L18.5 21 12 17l-6.5 4L7.5 14 2 9.5 9 9z'], newspaper: ['#5a5a5a', 'M3 4h18v16H3zM5 6v5h6V6zM13 6h6v2h-6zM13 10h6v2h-6zM5 14h14v2H5zM5 17h10v1H5z'], jail: ['#4a4a5a', 'M2 3h20v18H2zM6 5v14h2V5zM11 5v14h2V5zM16 5v14h2V5z'], hospital: ['#c03030', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM10 7h4v3h3v4h-3v3h-4v-3H7v-4h3z'], casino: ['#2a7a6a', 'M3 5h18v14H3zM6 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM18 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'], hof: ['#b0902a', 'M7 2h10v6a5 5 0 0 1-10 0zM5 4H2v3a4 4 0 0 0 4 4V9a2 2 0 0 1-2-2V6h1zM19 4h3v3a4 4 0 0 1-4 4V9a2 2 0 0 0 2-2V6h-1zM11 13h2v4h4v3H7v-3h4z'], faction: ['#3a7a4a', 'M12 2 3 5v7c0 5.5 4 9.5 9 10 5-.5 9-4.5 9-10V5zM12 6l5 2v4c0 3-2 5.5-5 6.5-3-1-5-3.5-5-6.5V8z'], elimination: ['#6a3a8a', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM11 6h2v6l4 2-1 2-5-3z'], attack: ['#a02a3a', 'M20 2l2 2-9 11-2-2zM8 12l4 4-2 2-2-2-3 3-2-2 3-3-2-2z'], market: ['#2a6a8a', 'M2 9l3-6h14l3 6zM3 10h18v10H3zM7 13h4v4H7zM13 13h4v4h-4z'] };
 const LUCIDE = { home: 'house', items: 'backpack', city: 'map', jobs: 'briefcase-business', gym: 'dumbbell', properties: 'building-2', education: 'graduation-cap', crimes: 'skull', missions: 'scroll-text', newspaper: 'newspaper', jail: 'lock-keyhole', hospital: 'cross', casino: 'dices', hof: 'trophy', faction: 'shield-half', elimination: 'swords', attack: 'crosshair', market: 'store' };
 const ICON = { home: 'M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', items: 'M4 7h16v13H4zM4 7l2-4h12l2 4M10 12h4', city: 'M4 21V9l8-6 8 6v12M10 21v-6h4v6', jobs: 'M3 8h18v12H3zM8 8V5h8v3', gym: 'M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12', properties: 'M3 21h18M5 21V8l7-5 7 5v13M9 21v-7h6v7', education: 'M2 9l10-5 10 5-10 5zM6 11v5c0 1 3 3 6 3s6-2 6-3v-5', crimes: 'M6 7h12l-1 14H7L6 7zM9 7V5a3 3 0 0 1 6 0v2', missions: 'M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z', newspaper: 'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5', jail: 'M4 3v18M9 3v18M15 3v18M20 3v18M2 3h20M2 21h20', hospital: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8v8M8 12h8', casino: 'M3 6h18v12H3zM7 10h.01M17 14h.01M12 12h.01', hof: 'M8 21h8M12 17v4M6 3h12v6a6 6 0 0 1-12 0zM6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3', faction: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', elimination: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2', attack: 'M14.5 3.5l6 6L9 21H3v-6zM13 6l5 5', market: 'M3 10l2-6h14l2 6M3 10h18v10H3zM9 14h6' };
-const BASE_SCREENS = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
+const BASE_SCREENS = ['home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
 const PLATFORM_RELEASE = window.ZonePlatform ? window.ZonePlatform.active() : { version: 0, manifest: {} };
 const PLATFORM_MANIFEST = PLATFORM_RELEASE.manifest || {};
 const PLATFORM_DATA = window.ZonePlatform ? window.ZonePlatform.data() : (PLATFORM_MANIFEST.content || {});
@@ -725,13 +741,13 @@ const PLATFORM_CRIME_MODULE = PLATFORM_ENGINE_MODULES.find(module => module && m
 const PLATFORM_CRIME_ENABLED = !PLATFORM_CRIME_MODULE || (PLATFORM_CRIME_MODULE.installed && PLATFORM_CRIME_MODULE.enabled);
 const CUSTOM_PAGES = Array.isArray(PLATFORM_MANIFEST.pages) ? PLATFORM_MANIFEST.pages.filter(p => p && p.enabled) : [];
 const CUSTOM_PAGE_MAP = Object.fromEntries(CUSTOM_PAGES.map(p => [p.id, p]));
-const RELEASE_NAV = Array.isArray(PLATFORM_MANIFEST.navigation) && PLATFORM_MANIFEST.navigation.length ? PLATFORM_MANIFEST.navigation : [...BASE_SCREENS, ...CUSTOM_PAGES.map(p => p.id)];
+const RELEASE_NAV = (() => { const base = Array.isArray(PLATFORM_MANIFEST.navigation) && PLATFORM_MANIFEST.navigation.length ? [...PLATFORM_MANIFEST.navigation] : [...BASE_SCREENS, ...CUSTOM_PAGES.map(p => p.id)]; if (!base.includes('bank')) { const i = base.indexOf('jobs'); base.splice(i >= 0 ? i + 1 : base.length, 0, 'bank'); } return base; })();
 const SCREENS = RELEASE_NAV.filter((id, index, all) => all.indexOf(id) === index && ((BASE_SCREENS.includes(id) && PLATFORM_MANIFEST.modules?.[id] !== false && (id !== 'crimes' || PLATFORM_CRIME_ENABLED)) || CUSTOM_PAGE_MAP[id]));
 const T = {
   en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
     topLinks: ['Wiki', 'Rules', 'Forums', 'Discord', 'Staff'],
-    nav: { home: 'Home', items: 'Items', city: 'City', jobs: 'Job', gym: 'Gym', properties: 'Properties', education: 'Education', crimes: 'Crimes', missions: 'Missions', newspaper: 'Newspaper', jail: 'Jail', hospital: 'Hospital', casino: 'Casino', hof: 'Hall of Fame', faction: 'My Faction', elimination: 'Elimination', attack: 'Attack', market: 'Item Market' },
-    sub: { home: 'Level {lvl} {title} · {fac}', items: 'Your inventory. Equip, use, sell, inspect in 3D.', city: 'Every area of Zone City. Click a place to travel.', jobs: 'Work shifts for wages and job points.', gym: 'Spend energy to train battle stats. Happy boosts gains.', properties: 'Where you live sets your maximum happiness.', education: 'Courses take time and give permanent perks.', crimes: 'Spend nerve. Categories unlock with crime experience.', missions: 'Daily objectives with cash and point rewards.', newspaper: 'City news and market movers.', jail: 'Inmates awaiting release. Bust them out for nerve or pay bail.', hospital: 'Patients recovering from combat and crime.', casino: 'Gamble your cash.', hof: 'City rankings by total battle stats.', faction: 'Respect buys upgrades; chains multiply it.', elimination: 'Team competition — hospitalize rivals to score.', attack: '25 energy per attack. 25 rounds max.', market: 'Player listings. Prices move live.' },
+    nav: { home: 'Home', items: 'Items', city: 'City', jobs: 'Job', bank: 'Bank', gym: 'Gym', properties: 'Properties', education: 'Education', crimes: 'Crimes', missions: 'Missions', newspaper: 'Newspaper', jail: 'Jail', hospital: 'Hospital', casino: 'Casino', hof: 'Hall of Fame', faction: 'My Faction', elimination: 'Elimination', attack: 'Attack', market: 'Item Market' },
+    sub: { home: 'Level {lvl} {title} · {fac}', items: 'Your inventory. Equip, use, sell, inspect in 3D.', city: 'Every area of Zone City. Click a place to travel.', jobs: 'Work shifts for wages and job points.', bank: 'Deposit cash to keep it safe, withdraw when you need it.', gym: 'Spend energy to train battle stats. Happy boosts gains.', properties: 'Where you live sets your maximum happiness.', education: 'Courses take time and give permanent perks.', crimes: 'Spend nerve. Categories unlock with crime experience.', missions: 'Daily objectives with cash and point rewards.', newspaper: 'City news and market movers.', jail: 'Inmates awaiting release. Bust them out for nerve or pay bail.', hospital: 'Patients recovering from combat and crime.', casino: 'Gamble your cash.', hof: 'City rankings by total battle stats.', faction: 'Respect buys upgrades; chains multiply it.', elimination: 'Team competition — hospitalize rivals to score.', attack: '25 energy per attack. 25 rounds max.', market: 'Player listings. Prices move live.' },
     tut: { home: 'Your four bars regenerate over time even while you are away. Energy trains and attacks; nerve commits crimes; happy multiplies gym gains; life is your combat health. Everything you do is logged here.', crimes: 'Each crime has its own skill that grows with attempts. Nerve is the cost; failure sends you to jail (or hospital for violent crimes). Crime experience unlocks harder categories.', gym: 'Gains follow energy spent × gym multiplier × a happy term × diminishing returns at high stats. Better gyms cost cash and need gym XP.', attack: 'Hit chance is your Speed vs their Dexterity. Damage is Strength vs Defense × weapon multiplier. Beat them to mug, hospitalize or leave.', default: 'This screen is part of the ZONE game platform.' },
     events: 'Events', clear: 'clear', noEvents: 'Nothing yet — commit a crime or hit the gym.', missionsActive: 'Active missions', yourStatus: 'Your status', war: 'Ranked war', live: 'live', endsIn: 'ends in', joinWar: 'Join the war', status: 'Status', okay: 'Okay', battleScore: 'Total stats', respectK: 'Respect', xp: 'XP to next level', property: 'Property', job: 'Job', crimeXpLbl: 'Crime XP',
     quick: { crimes: '{n} nerve · Crimes', gym: '{n} energy · Gym', attack: 'Attack a rival', missions: '{n} missions ready' },
@@ -768,6 +784,7 @@ const T = {
     headlines: 'Headlines', movers: 'Market movers', news: [['Harbor Kings lose 3 blocks to Sand Vipers overnight', 'Faction desk · 2h ago'], ['Painkiller prices spike 12% after pharmacy raids', 'Market · 4h ago'], ['Elimination round 3: Night Market leads', 'Competition · 6h ago'], ['City Hall approves new Gym in North Side', 'City · yesterday'], ['Player "BigSal" hospitalized 40 rivals in one chain', 'Crime · yesterday'], ['Bank interest rises to 1.2% weekly', 'Finance · 2 days ago']],
     inmate: 'Inmate', timeLeft: 'Time left', bustOdds: 'Bust odds', bust: 'Bust', bail: 'Bail', jailTip: 'Bust costs 5 nerve; failing lands you in the cell next door. Bail is paid from your cash.', reasons: { crime: 'Failed burglary', bust: 'Failed bust', shop: 'Caught shoplifting', graf: 'Caught tagging' },
     patient: 'Patient', reason: 'Reason', revive: 'Revive', hreasons: { attack: 'Hospitalized by {who}', crime: 'Shot during robbery', od: 'Overdose' },
+    bankUi: { onHand: 'Cash on hand', inBank: 'In the bank', deposit: 'Deposit', withdraw: 'Withdraw', all: 'All', total: 'Total wealth', busy: '…' },
     highLow: 'High-Low', higher: 'Higher', lower: 'Lower', casinoGames: 'Games', cgames: [['Slots', 'Open'], ['Roulette', 'Open'], ['Blackjack', 'Open'], ['Poker', 'Table full'], ['Lottery', 'Draw in 3h'], ['Russian Roulette', 'Level 25']], casinoMsg: { start: 'Pick a bet and guess.', win: 'Correct! You won {c}.', lose: 'Wrong. You lost {c}.', push: 'Same card — push.' },
     networth: 'Networth', faction: 'Faction', hofNames: ['Duke_X', 'Marrow', 'BigSal', 'Lady_Vega', 'K1ng', 'NadiaQuick', 'Silas', 'Rayan_Black', 'Kaya_V', 'Tariq'],
     yourTeam: 'Your team', roundEnds: 'Round ends in', team: 'Team', score: 'Score', membersShort: 'Members', lives: 'Lives', teams: ['Night Market', 'Sand Vipers', 'Harbor Kings', 'Steel Rats', 'Red Lanterns', 'North Wolves', 'Dockers', 'Old Guard'],
@@ -778,8 +795,8 @@ const T = {
     titles: ['Rookie', 'Petty Thief', 'Hustler', 'Enforcer', 'Capo', 'Underboss', 'Boss'] },
   ar: { brand: 'زون', tct: 'توقيت زون', player: 'فينشنزو', playerLabel: 'اللاعب', otherLang: 'English', information: 'المعلومات', areas: 'الأماكن', name: 'الاسم', money: 'النقود', level: 'المستوى', points: 'النقاط', merits: 'الأوسمة', energy: 'الطاقة', nerve: 'الجرأة', happy: 'المعنويات', life: 'الصحة', full: 'ممتلئ', inFmt: '+{n} خلال {t}', chain: 'السلسلة', hits: '{n} ضربة', tutorial: 'شرح',
     topLinks: ['الويكي', 'القوانين', 'المنتدى', 'ديسكورد', 'الإدارة'],
-    nav: { home: 'الرئيسية', items: 'العتاد', city: 'المدينة', jobs: 'الوظيفة', gym: 'النادي', properties: 'العقارات', education: 'التعليم', crimes: 'الجرائم', missions: 'المهام', newspaper: 'الصحيفة', jail: 'السجن', hospital: 'المستشفى', casino: 'الكازينو', hof: 'قاعة المشاهير', faction: 'عائلتي', elimination: 'التصفيات', attack: 'الهجوم', market: 'سوق العتاد' },
-    sub: { home: 'المستوى {lvl} {title} · {fac}', items: 'مخزونك. جهّز، استخدم، بِع، وشاهد بثلاثية الأبعاد.', city: 'كل مناطق مدينة زون. اضغط مكاناً للانتقال.', jobs: 'اشتغل ورديات مقابل راتب ونقاط وظيفة.', gym: 'اصرف طاقة لتدريب صفاتك القتالية. المعنويات تزيد المكسب.', properties: 'مكان سكنك يحدد أقصى معنوياتك.', education: 'الدورات تأخذ وقتاً وتعطي مزايا دائمة.', crimes: 'اصرف جرأة. الفئات تنفتح بخبرة الجريمة.', missions: 'أهداف يومية بمكافآت نقود ونقاط.', newspaper: 'أخبار المدينة وتحركات السوق.', jail: 'سجناء ينتظرون الإفراج. هرّبهم بالجرأة أو ادفع الكفالة.', hospital: 'مرضى يتعافون من القتال والجرائم.', casino: 'قامر بنقودك.', hof: 'ترتيب المدينة حسب مجموع الصفات.', faction: 'الاحترام يشتري ترقيات، والسلاسل تضاعفه.', elimination: 'منافسة فرق — أدخل الخصوم المستشفى لتسجّل.', attack: '25 طاقة لكل هجوم. 25 جولة كحد أقصى.', market: 'عروض اللاعبين. الأسعار تتحرك مباشرة.' },
+    nav: { home: 'الرئيسية', items: 'العتاد', city: 'المدينة', jobs: 'الوظيفة', bank: 'البنك', gym: 'النادي', properties: 'العقارات', education: 'التعليم', crimes: 'الجرائم', missions: 'المهام', newspaper: 'الصحيفة', jail: 'السجن', hospital: 'المستشفى', casino: 'الكازينو', hof: 'قاعة المشاهير', faction: 'عائلتي', elimination: 'التصفيات', attack: 'الهجوم', market: 'سوق العتاد' },
+    sub: { home: 'المستوى {lvl} {title} · {fac}', items: 'مخزونك. جهّز، استخدم، بِع، وشاهد بثلاثية الأبعاد.', city: 'كل مناطق مدينة زون. اضغط مكاناً للانتقال.', jobs: 'اشتغل ورديات مقابل راتب ونقاط وظيفة.', bank: 'أودع نقودك لتحفظها، واسحبها وقت ما تحتاج.', gym: 'اصرف طاقة لتدريب صفاتك القتالية. المعنويات تزيد المكسب.', properties: 'مكان سكنك يحدد أقصى معنوياتك.', education: 'الدورات تأخذ وقتاً وتعطي مزايا دائمة.', crimes: 'اصرف جرأة. الفئات تنفتح بخبرة الجريمة.', missions: 'أهداف يومية بمكافآت نقود ونقاط.', newspaper: 'أخبار المدينة وتحركات السوق.', jail: 'سجناء ينتظرون الإفراج. هرّبهم بالجرأة أو ادفع الكفالة.', hospital: 'مرضى يتعافون من القتال والجرائم.', casino: 'قامر بنقودك.', hof: 'ترتيب المدينة حسب مجموع الصفات.', faction: 'الاحترام يشتري ترقيات، والسلاسل تضاعفه.', elimination: 'منافسة فرق — أدخل الخصوم المستشفى لتسجّل.', attack: '25 طاقة لكل هجوم. 25 جولة كحد أقصى.', market: 'عروض اللاعبين. الأسعار تتحرك مباشرة.' },
     tut: { home: 'أشرطتك الأربعة تتجدد مع الوقت حتى وأنت غايب. الطاقة للتدريب والهجوم؛ الجرأة للجرائم؛ المعنويات تضاعف مكاسب النادي؛ الصحة هي دمك في القتال.', crimes: 'كل جريمة لها مهارة تنمو بالمحاولات. الجرأة هي التكلفة؛ الفشل يوديك السجن (أو المستشفى للجرائم العنيفة). خبرة الجريمة تفتح فئات أصعب.', gym: 'المكسب = الطاقة المصروفة × مضاعف النادي × عامل المعنويات × تناقص عند الصفات العالية. الأندية الأفضل تكلّف نقوداً وتحتاج خبرة نادي.', attack: 'فرصة الإصابة سرعتك مقابل رشاقته. الضرر قوتك مقابل دفاعه × مضاعف السلاح. اكسب وانشل أو أدخله المستشفى أو امشِ.', default: 'هذي الشاشة جزء من نموذج زون القابل للّعب. كل الأرقام محاكاة محلياً.' },
     events: 'الأحداث', clear: 'مسح', noEvents: 'ما فيه شيء بعد — نفّذ جريمة أو تدرّب.', missionsActive: 'المهام النشطة', yourStatus: 'حالتك', war: 'حرب مصنّفة', live: 'مباشر', endsIn: 'تنتهي خلال', joinWar: 'ادخل الحرب', status: 'الحالة', okay: 'بخير', battleScore: 'مجموع الصفات', respectK: 'الاحترام', xp: 'خبرة للمستوى التالي', property: 'العقار', job: 'الوظيفة', crimeXpLbl: 'خبرة الجريمة',
     quick: { crimes: '{n} جرأة · الجرائم', gym: '{n} طاقة · النادي', attack: 'هاجم خصماً', missions: '{n} مهام جاهزة' },
@@ -816,6 +833,7 @@ const T = {
     headlines: 'العناوين', movers: 'تحركات السوق', news: [['ملوك المرفأ يخسرون 3 مناطق لأفاعي الرمال', 'العائلات · قبل ساعتين'], ['أسعار المسكّنات تقفز 12% بعد مداهمات الصيدليات', 'السوق · قبل 4 ساعات'], ['التصفيات جولة 3: سوق الليل في المقدمة', 'المنافسة · قبل 6 ساعات'], ['البلدية توافق على نادٍ جديد في الحي الشمالي', 'المدينة · أمس'], ['اللاعب "سال الكبير" أدخل 40 خصماً المستشفى في سلسلة واحدة', 'الجريمة · أمس'], ['فائدة البنك ترتفع إلى 1.2% أسبوعياً', 'المال · قبل يومين']],
     inmate: 'السجين', timeLeft: 'الوقت المتبقي', bustOdds: 'فرصة التهريب', bust: 'هرّب', bail: 'كفالة', jailTip: 'التهريب يكلّف 5 جرأة؛ الفشل يوديك الزنزانة المجاورة. الكفالة من نقودك.', reasons: { crime: 'سطو فاشل', bust: 'تهريب فاشل', shop: 'انقبض يسرق', graf: 'انقبض يرسم' },
     patient: 'المريض', reason: 'السبب', revive: 'أنعش', hreasons: { attack: 'أدخله {who}', crime: 'أُطلق عليه أثناء السطو', od: 'جرعة زائدة' },
+    bankUi: { onHand: 'النقد في يدك', inBank: 'في البنك', deposit: 'إيداع', withdraw: 'سحب', all: 'الكل', total: 'إجمالي الثروة', busy: '…' },
     highLow: 'أعلى-أدنى', higher: 'أعلى', lower: 'أدنى', casinoGames: 'الألعاب', cgames: [['سلوتس', 'مفتوح'], ['روليت', 'مفتوح'], ['بلاك جاك', 'مفتوح'], ['بوكر', 'الطاولة ممتلئة'], ['اليانصيب', 'السحب خلال 3 س'], ['الروليت الروسي', 'المستوى 25']], casinoMsg: { start: 'اختر رهاناً وخمّن.', win: 'صح! كسبت {c}.', lose: 'خطأ. خسرت {c}.', push: 'نفس الورقة — تعادل.' },
     networth: 'الثروة', faction: 'العائلة', hofNames: ['ديوك', 'مارو', 'سال الكبير', 'ليدي فيغا', 'كينغ', 'نادية السريعة', 'سايلس', 'ريّان الأسود', 'كايا', 'طارق'],
     yourTeam: 'فريقك', roundEnds: 'الجولة تنتهي خلال', team: 'الفريق', score: 'النقاط', membersShort: 'الأعضاء', lives: 'الأرواح', teams: ['سوق الليل', 'أفاعي الرمال', 'ملوك المرفأ', 'جرذان الفولاذ', 'الفوانيس الحمراء', 'ذئاب الشمال', 'عمّال الميناء', 'الحرس القديم'],
@@ -978,7 +996,8 @@ class Component extends DCLogic {
   go(s) { this.setState({ screen: s, fight: null, result: null, busy: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
     () => this.bump('zone-main', 'zin .34s ease-out'));
-    if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); } }
+    if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); }
+    if (s === 'bank') this.syncPlayer(); }
   pct(c) { return Math.min(97, c.base + (this.p.level - 1) * 0.4 + (this.p.skill[c.id] || 0) * 0.15); }
   crimeName(c, t) { return c.name?.[this.state.lang] || t.cr[c.id]?.[0] || c.id; }
   crimeSub(c, t) { return c.description?.[this.state.lang] || t.cr[c.id]?.[1] || ''; }
@@ -1121,6 +1140,38 @@ class Component extends DCLogic {
     const next = Number(outcome.dealerHand ?? (2 + Math.floor(Math.random() * 13)));
     this.save(); this.setState({ casino: { ...c, card: next, msg } });
   }
+  applyServerPlayer(pl) {
+    if (!pl) return;
+    if (pl.cash != null) this.p.cash = Number(pl.cash);
+    if (pl.bank_balance != null) this.p.bankBalance = Number(pl.bank_balance);
+    if (pl.xp != null) this.p.xp = Number(pl.xp);
+    if (pl.energy != null) this.p.bars.energy = { v: Number(pl.energy), at: Date.now() };
+    if (pl.life != null) this.p.bars.life = { v: Number(pl.life), at: Date.now() };
+    if (pl.city != null) this.p.city = String(pl.city);
+  }
+  async syncPlayer() {
+    try {
+      const r = await fetch('/api/v1/player', { headers: { Accept: 'application/json' } });
+      if (!r.ok) return;
+      const d = await r.json();
+      this.applyServerPlayer(d.player || d);
+      this.forceUpdate();
+    } catch (e) { /* offline-safe */ }
+  }
+  async bankMove(direction, amount, t) {
+    const response = await fetch('/api/v1/bank/' + direction, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ amount }) });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Bank API ' + response.status));
+    this.applyServerPlayer(outcome.player);
+    this.toast((direction === 'deposit' ? (t.bankUi.deposit) : (t.bankUi.withdraw)) + ' ' + money(amount));
+  }
+  async healSelf(t) {
+    const response = await fetch('/api/v1/hospital/heal', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: '{}' });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Hospital API ' + response.status));
+    this.applyServerPlayer(outcome.player);
+    this.p.hospUntil = 0;
+  }
   renderVals() {
     const { lang, screen } = this.state, t = T[lang], p = this.p, now = Date.now();
     const customPage = CUSTOM_PAGE_MAP[screen] || null;
@@ -1257,6 +1308,7 @@ class Component extends DCLogic {
       news: t.news.map(n => ({ h: n[0], meta: n[1] })),
       inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = Math.ceil(left / 60000) * 100 * i.lvl; return { name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(tt => { this.spend('nerve', 5); if (Math.random() * 100 < odds) { i.out = true; this.addXp(10); p.skill.bust = (p.skill.bust || 0) + 1; this.log('bustOk', { who: i.name, xp: 10 }, 'good'); this.toast(fmt(tt.log.bustOk, { who: i.name, xp: 10 })); } else { p.jailUntil = Date.now() + this.jailMs(3); this.log('bustFail', { m: 3 }, 'bad'); this.toast(fmt(tt.log.bustFail, { m: 3 }), true); } }), bail: () => this.act(tt => { p.cash -= bailCost; i.out = true; this.log('bailOther', { who: i.name, cash: money(bailCost) }, 'good'); }) }; }),
       patients: this.patients.filter(i => i.until > now).map(i => ({ name: i.name, lvl: i.lvl, left: mmss(i.until - now), reason: fmt(t.hreasons[i.reason], { who: i.who }), disabled: energyNow < 75, revive: () => this.act(tt => { this.spend('energy', 75); i.until = 0; this.addXp(15); this.log('revive', { who: i.name }, 'good'); }) })),
+      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0; const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); return { cash: money(cash), balance: money(bal), total: money(cash + bal), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [10000, 50000, 'all'].map(a => mk('deposit', a)), withdrawals: [10000, 50000, 'all'].map(a => mk('withdraw', a)), msg: '' }; })(),
       casino: { card: casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card, cardColor: casino.card % 2 ? '#c0281a' : 'var(--onAcc)', bets: [1000, 5000, 25000].map(b => ({ label: money(b), bg: casino.bet === b ? 'var(--activebg)' : 'var(--btn)', fg: casino.bet === b ? 'var(--activefg)' : 'var(--t3)', pick: () => this.setState({ casino: { ...casino, bet: b } }) })), higher: () => this.act(tt => this.casinoGuess(true, tt)), lower: () => this.act(tt => this.casinoGuess(false, tt)), disabled: p.cash < casino.bet, msg: fmt(t.casinoMsg[casino.msg], { c: money(casino.bet) }) + (p.casinoNet ? ' · ' + (lang === 'ar' ? 'الصافي' : 'Net') + ' ' + (p.casinoNet > 0 ? '+' : '-') + money(Math.abs(p.casinoNet)) : '') },
       casinoGames: t.cgames.map((g, i) => { const key = ['slots', 'roulette', 'blackjack', 'poker', 'lottery', 'russian'][i];
         const open = !/full|ممتلئة|25|3h|3 س/.test(g[1]);
