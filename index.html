@@ -1059,7 +1059,20 @@ class Component extends DCLogic {
     clearTimeout(this['ft_' + key]);
     this['ft_' + key] = setTimeout(() => this.setState({ [key]: null }), 1100);
   }
-  train(k, t) { const e = GYMS[this.p.gym].e; if (this.cur('energy') < e) return this.toast(t.toast.noEnergy, true); this.spend('energy', e); const g = this.expGain(k) * rnd(0.85, 1.15); this.p.stats[k] += g; this.p.gymXp += 1; this.spend('happy', 5); this.p.ctr.trains++; this.log('train', { stat: k, n: g.toFixed(2) }, 'good'); this.flash('lastTrain', { k, g: g.toFixed(2), at: Date.now() });
+  async train(k, t) {
+    const map = { str: 'strength', def: 'defense', spd: 'speed', dex: 'dexterity' };
+    const response = await fetch('/api/v1/gym/train', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ stat: map[k], sessions: 1 }) });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Gym API ' + response.status));
+    const g = Number(outcome.gain || 0);
+    this.p.stats[k] = (this.p.stats[k] || 0) + g;
+    if (outcome.player) {
+      this.p.cash = Number(outcome.player.cash ?? this.p.cash);
+      this.p.xp = Number(outcome.player.xp ?? this.p.xp);
+      this.p.bars.energy = { v: Number(outcome.player.energy ?? this.cur('energy')), at: Date.now() };
+    }
+    this.p.gymXp += 1; this.p.ctr.trains++;
+    this.log('train', { stat: k, n: g.toFixed(2) }, 'good'); this.flash('lastTrain', { k, g: g.toFixed(2), at: Date.now() });
     this.result('up', t[k], t.ex[k] + ' · ' + t.gyms[this.p.gym], '+' + g.toFixed(2)); }
   fight(o, t) {
     if (this.cur('energy') < 25) return this.toast(t.toast.noEnergy, true);
@@ -1094,10 +1107,18 @@ class Component extends DCLogic {
       this.result('up', t.hospitalize, who, fmt(t.hits, { n: fac.chain })); }
     this.setState({ fight: null });
   }
-  casinoGuess(higher, t) {
+  async casinoGuess(higher, t) {
     const c = this.state.casino, bet = c.bet; if (this.p.cash < bet) return this.toast(t.toast.noCash, true);
-    const next = 2 + Math.floor(Math.random() * 13); let msg;
-    if (next === c.card) msg = 'push'; else if ((next > c.card) === higher) { this.p.cash += bet; this.p.casinoNet += bet; this.log('casinoWin', { cash: money(bet) }, 'good'); msg = 'win'; } else { this.p.cash -= bet; this.p.casinoNet -= bet; this.log('casinoLose', { cash: money(bet) }, 'bad'); msg = 'lose'; }
+    const response = await fetch('/api/v1/casino/blackjack', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ bet }) });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Casino API ' + response.status));
+    const delta = Number(outcome.delta || 0);
+    if (outcome.player) this.p.cash = Number(outcome.player.cash ?? this.p.cash);
+    this.p.casinoNet = (this.p.casinoNet || 0) + delta;
+    const msg = outcome.result === 'push' ? 'push' : (outcome.result === 'win' ? 'win' : 'lose');
+    if (msg === 'win') this.log('casinoWin', { cash: money(Math.abs(delta)) }, 'good');
+    else if (msg === 'lose') this.log('casinoLose', { cash: money(Math.abs(delta)) }, 'bad');
+    const next = Number(outcome.dealerHand ?? (2 + Math.floor(Math.random() * 13)));
     this.save(); this.setState({ casino: { ...c, card: next, msg } });
   }
   renderVals() {
