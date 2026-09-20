@@ -173,6 +173,58 @@ try {
     check($engine->activeRelease()['version'] === 1, 'application layer can activate a prior release');
     check(count($engine->releaseHistory()) === 3, 'application layer exposes complete release history');
 
+    // --- Ported gameplay systems: server-authoritative, ledger + events ---
+    [$engine, $database] = build_engine($databasePath);
+    $before = $engine->player();
+    $gym = $engine->trainGym('strength', 1);
+    check($gym['player']['strength'] > $before['strength'], 'gym training increases strength server-side');
+    check($gym['player']['energy'] === $before['energy'] - 10, 'gym training spends exactly 10 energy per session');
+    check(in_array('GymTrained', array_column($engine->eventLog(), 'event_name'), true), 'GymTrained event is persisted');
+
+    [$engine, $database] = build_engine($databasePath);
+    $p0 = $engine->player();
+    $totalBefore = (int) $p0['cash'] + (int) $p0['bank_balance'];
+    $dep = $engine->bankDeposit(10000);
+    check($dep['player']['bank_balance'] === (int) $p0['bank_balance'] + 10000, 'bank deposit credits the bank balance');
+    check($dep['player']['cash'] === (int) $p0['cash'] - 10000, 'bank deposit debits cash on hand');
+    $wd = $engine->bankWithdraw(4000);
+    $totalAfter = (int) $wd['player']['cash'] + (int) $wd['player']['bank_balance'];
+    check($totalBefore === $totalAfter, 'bank transfers conserve total wealth');
+    $overdrawn = false;
+    try { $engine->bankWithdraw(999999999); } catch (RuntimeException) { $overdrawn = true; }
+    check($overdrawn, 'bank rejects withdrawing more than the balance');
+
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute('UPDATE players SET life = 100 WHERE id = :id', ['id' => 'founder-player']);
+    $heal = $engine->hospitalHeal();
+    check($heal['player']['life'] === $heal['player']['max_life'], 'hospital restores life to maximum');
+    check($heal['cost']['cash'] > 0, 'hospital charges for treatment');
+    check(in_array('HospitalHealed', array_column($engine->eventLog(), 'event_name'), true), 'HospitalHealed event is persisted');
+
+    [$engine, $database] = build_engine($databasePath);
+    $t0 = $engine->player();
+    $trip = $engine->travel('Dubai');
+    check($trip['player']['city'] === 'Dubai', 'travel moves the player to the chosen city');
+    check($trip['player']['cash'] === (int) $t0['cash'] - 2500, 'travel charges the fare');
+    $badCity = false;
+    try { $engine->travel('Atlantis'); } catch (RuntimeException) { $badCity = true; }
+    check($badCity, 'travel rejects an unknown destination');
+
+    [$engine, $database] = build_engine($databasePath);
+    $c0 = (int) $engine->player()['cash'];
+    $bj = $engine->playBlackjack(1000);
+    check(in_array($bj['result'], ['win', 'lose', 'push'], true), 'blackjack returns a server-decided result');
+    $expected = $c0 + $bj['delta'];
+    check((int) $bj['player']['cash'] === $expected, 'blackjack settles cash by the server-decided delta');
+    check(in_array('BlackjackPlayed', array_column($engine->eventLog(), 'event_name'), true), 'BlackjackPlayed event is persisted');
+
+    [$engine, $database] = build_engine($databasePath);
+    $engine->changeModule('stats', 'disable');
+    [$engine] = build_engine($databasePath);
+    $gymBlocked = false;
+    try { $engine->trainGym('strength', 1); } catch (RuntimeException) { $gymBlocked = true; }
+    check($gymBlocked, 'disabling the Stats module blocks gym training');
+
     $schema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.postgresql.sql');
     foreach (['economy_ledger', 'event_log', 'jobs', 'notifications', 'assets', 'content_drafts', 'content_releases', 'admin_audit_log'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");

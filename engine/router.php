@@ -196,6 +196,33 @@ try {
         require_admin_mutation();
         json_response(['theme' => $engine->activateTheme($matches[1])]);
     }
+    if ($method === 'GET' && $path === '/api/v1/cities') {
+        json_response(['cities' => $engine->cities()]);
+    }
+    if ($method === 'POST' && $path === '/api/v1/gym/train') {
+        $body = request_json();
+        json_response($engine->trainGym((string) ($body['stat'] ?? ''), (int) ($body['sessions'] ?? 1), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/bank/deposit') {
+        $body = request_json();
+        json_response($engine->bankDeposit((int) ($body['amount'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/bank/withdraw') {
+        $body = request_json();
+        json_response($engine->bankWithdraw((int) ($body['amount'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/hospital/heal') {
+        request_json();
+        json_response($engine->hospitalHeal($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/travel') {
+        $body = request_json();
+        json_response($engine->travel((string) ($body['city'] ?? ''), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/casino/blackjack') {
+        $body = request_json();
+        json_response($engine->playBlackjack((int) ($body['bet'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

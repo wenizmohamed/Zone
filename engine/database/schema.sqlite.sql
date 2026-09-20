@@ -40,7 +40,13 @@ CREATE TABLE IF NOT EXISTS players (
     max_nerve INTEGER NOT NULL DEFAULT 45,
     max_life INTEGER NOT NULL DEFAULT 250,
     max_happy INTEGER NOT NULL DEFAULT 1000,
-    resources_updated_at TEXT NOT NULL
+    resources_updated_at TEXT NOT NULL,
+    strength INTEGER NOT NULL DEFAULT 10,
+    defense INTEGER NOT NULL DEFAULT 10,
+    speed INTEGER NOT NULL DEFAULT 10,
+    dexterity INTEGER NOT NULL DEFAULT 10,
+    bank_balance INTEGER NOT NULL DEFAULT 0,
+    city TEXT NOT NULL DEFAULT 'Zone City'
 );
 
 CREATE TABLE IF NOT EXISTS crimes (

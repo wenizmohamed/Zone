@@ -38,7 +38,7 @@ final readonly class ResourceService
 
     public function normalize(array $player): array
     {
-        foreach (['level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy'] as $field) {
+        foreach (['level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance'] as $field) {
             $player[$field] = (int) $player[$field];
         }
         return $player;

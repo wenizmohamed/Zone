@@ -242,6 +242,217 @@ final class GameEngine
         });
     }
 
+    private function requirePlayer(string $playerId): array
+    {
+        $player = $this->database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => $playerId]);
+        if ($player === null) {
+            throw new RuntimeException("Unknown player: {$playerId}");
+        }
+        return $player;
+    }
+
+    private function requireModule(string $id): void
+    {
+        if (!$this->modules->isEnabled($id)) {
+            throw new RuntimeException("Module {$id} is disabled. Re-enable it from the module manager.");
+        }
+    }
+
+    private const GYM_STATS = ['strength', 'defense', 'speed', 'dexterity'];
+
+    public function trainGym(string $stat, int $sessions = 1, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('stats');
+        if (!in_array($stat, self::GYM_STATS, true)) {
+            throw new RuntimeException('Unknown gym stat: ' . $stat);
+        }
+        $sessions = max(1, min(10, $sessions));
+        $this->resources->regenerate($playerId);
+        return $this->database->transaction(function () use ($stat, $sessions, $playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $energyCost = 10 * $sessions;
+            if ((int) $player['energy'] < $energyCost) {
+                throw new RuntimeException('Not enough energy to train.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $happy = (int) $player['happy'];
+            $gainPerSession = max(1, (int) floor(5 + $happy / 250));
+            $gain = 0;
+            for ($i = 0; $i < $sessions; $i++) {
+                $gain += $gainPerSession + random_int(0, 3);
+            }
+            $newStat = (int) $player[$stat] + $gain;
+            $newEnergy = (int) $player['energy'] - $energyCost;
+            $newXp = (int) $player['xp'] + $gain;
+            $this->database->execute(
+                "UPDATE players SET {$stat} = :stat, energy = :energy, xp = :xp, resources_updated_at = :updated WHERE id = :id",
+                ['id' => $playerId, 'stat' => $newStat, 'energy' => $newEnergy, 'xp' => $newXp, 'updated' => gmdate('c')],
+            );
+            $event = new DomainEvent('GymTrained', [
+                'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
+                'sessions' => $sessions, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+            return [
+                'trained' => $stat, 'gain' => $gain, 'sessions' => $sessions,
+                'cost' => ['energy' => $energyCost],
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    public function bankDeposit(int $amount, string $playerId = 'founder-player'): array
+    {
+        return $this->bankMove('deposit', $amount, $playerId);
+    }
+
+    public function bankWithdraw(int $amount, string $playerId = 'founder-player'): array
+    {
+        return $this->bankMove('withdraw', $amount, $playerId);
+    }
+
+    private function bankMove(string $direction, int $amount, string $playerId): array
+    {
+        $this->requireModule('bank');
+        if ($amount <= 0) {
+            throw new RuntimeException('Amount must be positive.');
+        }
+        return $this->database->transaction(function () use ($direction, $amount, $playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $cash = (int) $player['cash'];
+            $bank = (int) $player['bank_balance'];
+            $correlationId = bin2hex(random_bytes(16));
+            if ($direction === 'deposit') {
+                if ($cash < $amount) {
+                    throw new RuntimeException('Not enough cash on hand to deposit.');
+                }
+                $cash -= $amount; $bank += $amount;
+            } else {
+                if ($bank < $amount) {
+                    throw new RuntimeException('Not enough balance in the bank to withdraw.');
+                }
+                $bank -= $amount; $cash += $amount;
+            }
+            $this->database->execute(
+                'UPDATE players SET cash = :cash, bank_balance = :bank WHERE id = :id',
+                ['id' => $playerId, 'cash' => $cash, 'bank' => $bank],
+            );
+            $this->ledger->record($playerId, 'cash', $direction === 'deposit' ? -$amount : $amount, $cash, 'bank.' . $direction, $correlationId);
+            $this->ledger->record($playerId, 'bank', $direction === 'deposit' ? $amount : -$amount, $bank, 'bank.' . $direction, $correlationId);
+            $event = new DomainEvent('BankTransfer', ['playerId' => $playerId, 'direction' => $direction, 'amount' => $amount, 'correlationId' => $correlationId]);
+            $this->events->publish($event);
+            return [
+                'direction' => $direction, 'amount' => $amount,
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    public function hospitalHeal(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('hospital');
+        $this->resources->regenerate($playerId);
+        return $this->database->transaction(function () use ($playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $missing = (int) $player['max_life'] - (int) $player['life'];
+            if ($missing <= 0) {
+                throw new RuntimeException('You are already at full life.');
+            }
+            $cost = $missing * 3;
+            if ((int) $player['cash'] < $cost) {
+                throw new RuntimeException('Not enough cash to pay for treatment.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $newCash = (int) $player['cash'] - $cost;
+            $this->database->execute(
+                'UPDATE players SET cash = :cash, life = :life, resources_updated_at = :updated WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'life' => (int) $player['max_life'], 'updated' => gmdate('c')],
+            );
+            $this->ledger->record($playerId, 'cash', -$cost, $newCash, 'hospital.heal', $correlationId);
+            $event = new DomainEvent('HospitalHealed', ['playerId' => $playerId, 'restored' => $missing, 'cost' => $cost, 'correlationId' => $correlationId]);
+            $this->events->publish($event);
+            return [
+                'restored' => $missing, 'cost' => ['cash' => $cost],
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    private const CITIES = ['Zone City', 'Riyadh', 'Dubai', 'Cairo', 'Beirut', 'Istanbul'];
+
+    public function cities(): array
+    {
+        return self::CITIES;
+    }
+
+    public function travel(string $city, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('travel');
+        if (!in_array($city, self::CITIES, true)) {
+            throw new RuntimeException('Unknown destination: ' . $city);
+        }
+        return $this->database->transaction(function () use ($city, $playerId): array {
+            $player = $this->requirePlayer($playerId);
+            if ($player['city'] === $city) {
+                throw new RuntimeException('You are already in ' . $city . '.');
+            }
+            $fare = 2500;
+            if ((int) $player['cash'] < $fare) {
+                throw new RuntimeException('Not enough cash for the fare.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $newCash = (int) $player['cash'] - $fare;
+            $this->database->execute(
+                'UPDATE players SET cash = :cash, city = :city WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'city' => $city],
+            );
+            $this->ledger->record($playerId, 'cash', -$fare, $newCash, 'travel.fare', $correlationId);
+            $event = new DomainEvent('PlayerTraveled', ['playerId' => $playerId, 'city' => $city, 'fare' => $fare, 'correlationId' => $correlationId]);
+            $this->events->publish($event);
+            return [
+                'city' => $city, 'fare' => $fare,
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    public function playBlackjack(int $bet, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        if ($bet <= 0) {
+            throw new RuntimeException('Bet must be positive.');
+        }
+        return $this->database->transaction(function () use ($bet, $playerId): array {
+            $player = $this->requirePlayer($playerId);
+            if ((int) $player['cash'] < $bet) {
+                throw new RuntimeException('Not enough cash for that bet.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $playerHand = random_int(16, 21);
+            $dealerHand = random_int(16, 21);
+            $won = $playerHand > $dealerHand;
+            $push = $playerHand === $dealerHand;
+            $delta = $push ? 0 : ($won ? $bet : -$bet);
+            $newCash = (int) $player['cash'] + $delta;
+            $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $newCash]);
+            if ($delta !== 0) {
+                $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.blackjack', $correlationId);
+            }
+            $event = new DomainEvent('BlackjackPlayed', ['playerId' => $playerId, 'bet' => $bet, 'delta' => $delta, 'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'correlationId' => $correlationId]);
+            $this->events->publish($event);
+            return [
+                'result' => $push ? 'push' : ($won ? 'win' : 'lose'),
+                'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'delta' => $delta,
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
     public function ledger(int $limit = 20): array
     {
         $limit = max(1, min(100, $limit));
