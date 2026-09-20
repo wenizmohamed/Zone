@@ -165,6 +165,10 @@ try {
     $applicationRelease = $engine->publishRelease('application-test');
     check($applicationRelease['version'] === 3, 'application layer publishes the next immutable release');
     check($engine->activeRelease()['manifest']['branding']['name']['en'] === 'ZONE Application', 'application layer exposes the newly active manifest');
+    check(count($applicationRelease['manifest']['content']['crimes']) === 4, 'published release snapshots the complete admin crime catalogue');
+    check(count($applicationRelease['manifest']['content']['engineModules']) === 2, 'published release snapshots module state');
+    $bootstrap = $engine->gameBootstrap();
+    check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 4, 'game bootstrap exposes the active published content snapshot');
     $engine->activateRelease($releaseOne['id'], 'application-test');
     check($engine->activeRelease()['version'] === 1, 'application layer can activate a prior release');
     check(count($engine->releaseHistory()) === 3, 'application layer exposes complete release history');

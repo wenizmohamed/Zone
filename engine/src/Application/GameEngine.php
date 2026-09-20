@@ -80,12 +80,29 @@ final class GameEngine
 
     public function publishRelease(string $actor): array
     {
+        $draft = $this->releases->draft();
+        $draft['manifest']['content'] = $this->runtimeContent();
+        $this->releases->saveDraft($draft['manifest'], $actor);
         return $this->releases->publish($actor);
     }
 
     public function activeRelease(): array
     {
         return $this->releases->active();
+    }
+
+    public function gameBootstrap(): array
+    {
+        $release = $this->releases->active();
+        $content = $release['manifest']['content'] ?? null;
+        if (!is_array($content)) {
+            $content = $this->runtimeContent();
+        }
+
+        return [
+            'release' => $release,
+            'content' => $content,
+        ];
     }
 
     public function releaseHistory(): array
@@ -248,5 +265,17 @@ final class GameEngine
             'SELECT code, unlocked_at, source_event_id FROM achievements WHERE player_id = :player ORDER BY unlocked_at DESC',
             ['player' => $playerId],
         );
+    }
+
+    private function runtimeContent(): array
+    {
+        $themes = $this->themes->all();
+        return [
+            'crimes' => $this->content->crimes(true),
+            'engineModules' => $this->modules->all(),
+            'themes' => $themes,
+            'activeTheme' => array_values(array_filter($themes, static fn (array $theme): bool => $theme['active']))[0]['id'] ?? null,
+            'capturedAt' => gmdate('c'),
+        ];
     }
 }

@@ -31,6 +31,7 @@ $adminCrimes = Get-ZoneJson '/api/v1/admin/crimes'
 $adminAudit = Get-ZoneJson '/api/v1/admin/audit'
 $activeFirst = Get-ZoneJson '/api/v1/releases/active'
 $activeSecond = Get-ZoneJson '/api/v1/releases/active'
+$bootstrap = Get-ZoneJson '/api/v1/game/bootstrap'
 $activeHistory = @($history.releases | Where-Object { $_.active })
 
 Assert-Zone ($draft.channel -eq 'production') 'open admin reads the production draft without login'
@@ -39,6 +40,7 @@ Assert-Zone ($activeFirst.id -eq $activeSecond.id -and $activeFirst.version -eq 
 Assert-Zone ($activeHistory.Count -eq 1 -and $activeHistory[0].id -eq $activeFirst.id) 'release history and active pointer agree'
 Assert-Zone ($adminCrimes.crimes.Count -ge 3 -and $null -ne $adminCrimes.crimes[0].success_basis_points) 'open admin reads typed crime definitions including balance fields'
 Assert-Zone ($adminAudit.entries.Count -ge 1 -and -not [string]::IsNullOrWhiteSpace($adminAudit.entries[0].actor)) 'administrator mutations retain an attributed audit trail'
+Assert-Zone ($bootstrap.release.id -eq $activeFirst.id -and $bootstrap.content.crimes.Count -ge 3) 'player bootstrap exposes active release content to the game'
 
 $game = Invoke-WebRequest -Uri ($BaseUrl + '/') -UseBasicParsing -TimeoutSec 30
 $admin = Invoke-WebRequest -Uri ($BaseUrl + '/admin') -UseBasicParsing -TimeoutSec 30
@@ -50,6 +52,8 @@ Assert-Zone ($admin.StatusCode -eq 200 -and $admin.Content.Contains('ZONE Admin 
 Assert-Zone ($engine.StatusCode -eq 200 -and $engine.Content.Contains('ZONE Engine Control Room')) 'engine control room renders directly with no redirect'
 Assert-Zone ($admin.Content.Contains('Noto+Kufi+Arabic') -and $adminScriptText.Contains('المصمم المرئي') -and $adminScriptText.Contains('اقتصاد قابل للتدقيق')) 'production admin contains the complete Arabic interface bundle'
 Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $game.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'production admin and game synchronize the selected language'
+Assert-Zone ($game.Content.Contains('MANAGED_CRIMES') -and $game.Content.Contains('commitManaged')) 'production player consumes and executes administrator-managed crimes'
+Assert-Zone ($adminScriptText.Contains('installSectionPreviews') -and $adminScriptText.Contains('section-preview-frame')) 'production admin embeds the game preview in every section'
 
 $authStatus = 0
 try {

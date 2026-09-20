@@ -150,6 +150,9 @@ try {
     if ($method === 'GET' && $path === '/api/v1/releases/active') {
         json_response($engine->activeRelease());
     }
+    if ($method === 'GET' && $path === '/api/v1/game/bootstrap') {
+        json_response($engine->gameBootstrap());
+    }
     if ($method === 'GET' && $path === '/api/v1/admin/draft') {
         json_response($engine->releaseDraft());
     }

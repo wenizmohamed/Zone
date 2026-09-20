@@ -136,6 +136,12 @@ input[type="color"] { padding: 4px; min-height: 38px; }
 .viewport-button.active { color: var(--accent); border-color: var(--accent); }
 .preview-stage { flex: 1; min-height: 520px; padding: 16px; display: flex; justify-content: center; overflow: auto; background: repeating-linear-gradient(135deg,#0b0e0d,#0b0e0d 8px,#0e1110 8px,#0e1110 16px); }
 #previewFrame { width: 100%; height: 100%; min-height: 490px; border: 1px solid var(--line-strong); border-radius: 7px; background: #191919; transition: width .2s ease; }
+.section-preview { margin-top: 16px; overflow: hidden; }
+.section-preview .preview-toolbar { flex-wrap: wrap; }
+.section-preview .preview-toolbar > div { flex-wrap: wrap; justify-content: flex-end; }
+.section-preview-stage { min-height: 690px; }
+.section-preview-frame { width: 100%; height: 650px; border: 1px solid var(--line-strong); border-radius: 7px; background: #191919; transition: width .2s ease; }
+.preview-refresh { min-height: 27px; padding: 5px 9px; font-size: 10px; }
 .empty-state { min-height: 180px; display: grid; place-items: center; padding: 24px; color: var(--muted); text-align: center; }
 
 .catalog-grid, .asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 12px; }
@@ -251,6 +257,8 @@ html[dir="rtl"] .toast { inset: auto auto 20px 20px; }
   .blocks-head h2 { flex-basis: 100%; }
   .blocks-head select { flex: 1; }
   .preview-stage { min-height: 500px; padding: 8px; }
+  .section-preview-stage { min-height: 570px; }
+  .section-preview-frame { height: 550px; }
   .domain-grid { grid-template-columns: 1fr; }
   .release-card { grid-template-columns: 60px 1fr; }
   .release-card .button { grid-column: 1 / -1; }

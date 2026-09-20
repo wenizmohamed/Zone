@@ -23,7 +23,7 @@ const translations = {
     controlPlane: 'ADMIN CONTROL PLANE', engine: 'Engine', game: 'Open game', publish: 'Publish release', sourceOwned: 'FULL SOURCE OWNERSHIP',
     zonePlatform: 'ZONE PLATFORM', engineVersion: 'ENGINE 1.0', apiFirst: 'PHP 8.5 + API FIRST', controlCenter: 'CONTROL CENTER', visualBuilder: 'VISUAL BUILDER', extensionSystem: 'EXTENSION SYSTEM', contentStudio: 'CONTENT STUDIO', themePackages: 'THEME PACKAGES', tokens: 'TOKENS', mediaPipeline: 'MEDIA PIPELINE', auditableEconomy: 'AUDITABLE ECONOMY', ledger: 'LEDGER', resources: 'RESOURCES', eventBus: 'EVENT BUS', eventsLabel: 'EVENTS', audit: 'AUDIT', versionControl: 'VERSION CONTROL', history: 'HISTORY',
     overview: 'Platform overview', overviewSub: 'One control plane for the engine, modules, content, releases, and the live game.', releaseHistory: 'Release history', publishPipeline: 'Publishing pipeline', systemHealth: 'System health', recentEvents: 'Recent events',
-    builder: 'Page builder', builderSub: 'Build bilingual responsive game pages from engine-registered blocks.', saveDraft: 'Save draft', preview: 'Refresh preview', pages: 'Pages', choosePage: 'Choose a page or create a new one.', titleEnglish: 'Title in English', titleArabic: 'Title in Arabic', slug: 'Slug', enabledInGame: 'Enabled in game', blocks: 'Registered blocks', addBlock: 'Add block', livePreview: 'Draft preview', desktop: 'Desktop', mobile: 'Mobile', blockHero: 'Hero', blockText: 'Text', blockCallout: 'Callout', blockStatGrid: 'Stat grid', blockActionGrid: 'Action grid',
+    builder: 'Page builder', builderSub: 'Build bilingual responsive game pages from engine-registered blocks.', saveDraft: 'Save draft', preview: 'Refresh preview', pages: 'Pages', choosePage: 'Choose a page or create a new one.', titleEnglish: 'Title in English', titleArabic: 'Title in Arabic', slug: 'Slug', enabledInGame: 'Enabled in game', blocks: 'Registered blocks', addBlock: 'Add block', livePreview: 'Draft game preview', gamePreview: 'Game preview', desktop: 'Desktop', mobile: 'Mobile', blockHero: 'Hero', blockText: 'Text', blockCallout: 'Callout', blockStatGrid: 'Stat grid', blockActionGrid: 'Action grid',
     modules: 'Module manager', modulesSub: 'Install, update, enable, disable, and inspect independent game systems.', content: 'Game content', contentSub: 'Create and balance server-authoritative crimes and release-bound player content.', crimeCatalog: 'Crime catalog', contentDomains: 'Content domains', newCrime: 'New crime', crimeEditor: 'Crime editor', crimeId: 'Crime ID', crimeNameEn: 'English name', crimeNameAr: 'Arabic name', nerveCost: 'Nerve cost', successRate: 'Success percent', cashMinimum: 'Cash minimum', cashMaximum: 'Cash maximum', xpReward: 'XP reward', saveCrime: 'Save crime', domainEvents: 'Domain events', adminAudit: 'Admin audit',
     themes: 'Theme studio', themesSub: 'Change the presentation layer without changing game rules or player state.', releaseBranding: 'Release branding', brandEnglish: 'Brand in English', brandArabic: 'Brand in Arabic', accent: 'Accent color', announcementEnabled: 'Announcement enabled', announcementEnglish: 'Announcement in English', announcementArabic: 'Announcement in Arabic',
     assets: 'Asset library', assetsSub: 'One typed registry for images, thumbnails, animation, video, GLB, and GLTF.', economy: 'Economy and balance', economySub: 'Every reward and transfer is traceable through an immutable correlation trail.', economyLedger: 'Economy ledger', sharedSystems: 'Shared systems', events: 'Events and hooks', eventsSub: 'Modules react through contracts without editing the originating system.', releases: 'Releases and rollback', releasesSub: 'Draft changes, validate them, publish an immutable snapshot, and restore any prior release.', apiTrace: 'API trace',
@@ -33,7 +33,7 @@ const translations = {
     controlPlane: 'لوحة تحكم الإدارة', engine: 'المحرك', game: 'افتح اللعبة', publish: 'انشر الإصدار', sourceOwned: 'ملكية كاملة للسورس',
     zonePlatform: 'منصة ZONE', engineVersion: 'المحرك 1.0', apiFirst: 'PHP 8.5 + واجهة API أولا', controlCenter: 'مركز التحكم', visualBuilder: 'المصمم المرئي', extensionSystem: 'نظام الإضافات', contentStudio: 'استوديو المحتوى', themePackages: 'حزم الثيمات', tokens: 'المتغيرات', mediaPipeline: 'مسار الوسائط', auditableEconomy: 'اقتصاد قابل للتدقيق', ledger: 'السجل', resources: 'الموارد', eventBus: 'ناقل الأحداث', eventsLabel: 'الأحداث', audit: 'التدقيق', versionControl: 'إدارة الإصدارات', history: 'السجل',
     overview: 'نظرة عامة على المنصة', overviewSub: 'لوحة واحدة للمحرك والموديولات والمحتوى والإصدارات واللعبة المباشرة.', releaseHistory: 'سجل الإصدارات', publishPipeline: 'مسار النشر', systemHealth: 'حالة النظام', recentEvents: 'آخر الأحداث',
-    builder: 'مصمم الصفحات', builderSub: 'أنشئ صفحات عربية وإنجليزية متجاوبة من بلوكات مسجلة في المحرك.', saveDraft: 'حفظ المسودة', preview: 'تحديث المعاينة', pages: 'الصفحات', choosePage: 'اختر صفحة أو أنشئ صفحة جديدة.', titleEnglish: 'العنوان بالإنجليزية', titleArabic: 'العنوان بالعربية', slug: 'المسار', enabledInGame: 'مفعلة داخل اللعبة', blocks: 'البلوكات المسجلة', addBlock: 'إضافة بلوك', livePreview: 'معاينة المسودة', desktop: 'سطح المكتب', mobile: 'الهاتف', blockHero: 'واجهة رئيسية', blockText: 'نص', blockCallout: 'تنبيه', blockStatGrid: 'شبكة الإحصاءات', blockActionGrid: 'شبكة الإجراءات',
+    builder: 'مصمم الصفحات', builderSub: 'أنشئ صفحات عربية وإنجليزية متجاوبة من بلوكات مسجلة في المحرك.', saveDraft: 'حفظ المسودة', preview: 'تحديث المعاينة', pages: 'الصفحات', choosePage: 'اختر صفحة أو أنشئ صفحة جديدة.', titleEnglish: 'العنوان بالإنجليزية', titleArabic: 'العنوان بالعربية', slug: 'المسار', enabledInGame: 'مفعلة داخل اللعبة', blocks: 'البلوكات المسجلة', addBlock: 'إضافة بلوك', livePreview: 'معاينة مسودة اللعبة', gamePreview: 'معاينة اللعبة', desktop: 'سطح المكتب', mobile: 'الهاتف', blockHero: 'واجهة رئيسية', blockText: 'نص', blockCallout: 'تنبيه', blockStatGrid: 'شبكة الإحصاءات', blockActionGrid: 'شبكة الإجراءات',
     modules: 'إدارة الموديولات', modulesSub: 'ركب وحدث وفعل وعطل أنظمة اللعبة المستقلة.', content: 'محتوى اللعبة', contentSub: 'أنشئ ووازن الجرائم المحسوبة في السيرفر والمحتوى المرتبط بالإصدار.', crimeCatalog: 'كتالوج الجرائم', contentDomains: 'مجالات المحتوى', newCrime: 'جريمة جديدة', crimeEditor: 'محرر الجرائم', crimeId: 'معرف الجريمة', crimeNameEn: 'الاسم بالإنجليزية', crimeNameAr: 'الاسم بالعربية', nerveCost: 'تكلفة الأعصاب', successRate: 'نسبة النجاح', cashMinimum: 'أقل مكافأة', cashMaximum: 'أعلى مكافأة', xpReward: 'مكافأة الخبرة', saveCrime: 'حفظ الجريمة', domainEvents: 'أحداث النطاق', adminAudit: 'سجل الإدارة',
     themes: 'استوديو الثيمات', themesSub: 'غير طبقة العرض من دون تغيير قوانين اللعب أو بيانات اللاعب.', releaseBranding: 'هوية الإصدار', brandEnglish: 'الاسم بالإنجليزية', brandArabic: 'الاسم بالعربية', accent: 'لون الهوية', announcementEnabled: 'تفعيل الإعلان', announcementEnglish: 'الإعلان بالإنجليزية', announcementArabic: 'الإعلان بالعربية',
     assets: 'مكتبة الملفات', assetsSub: 'سجل موحد للصور والمصغرات والأنيميشن والفيديو و GLB و GLTF.', economy: 'الاقتصاد والتوازن', economySub: 'كل مكافأة وتحويل قابل للتتبع عبر سجل ومعرف ترابط.', economyLedger: 'سجل الاقتصاد', sharedSystems: 'الأنظمة المشتركة', events: 'الأحداث والـ Hooks', eventsSub: 'الموديولات تتفاعل عبر عقود من دون تعديل النظام الأصلي.', releases: 'الإصدارات والرجوع', releasesSub: 'عدّل المسودة وافحصها وانشر نسخة ثابتة وارجع لأي إصدار سابق.', apiTrace: 'تتبع الـ API',
@@ -105,7 +105,29 @@ async function api(path, options = {}) {
 
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
 function currentManifest() { return state.draft?.manifest; }
-function markDirty() { state.dirty = true; $('#pipelineStatus').textContent = state.language === 'ar' ? 'مسودة معدلة' : 'DRAFT CHANGED'; $('#pipelineStatus').className = 'status warn'; updatePreviewCache(); }
+function runtimeContentSnapshot() {
+  return {
+    crimes: deepCopy(state.crimes.map(({ correlationId, ...crime }) => crime)),
+    engineModules: deepCopy(state.modules),
+    themes: deepCopy(state.themes),
+    activeTheme: state.themes.find((theme) => theme.active)?.id ?? null,
+    assets: assets.map(([type, name, detail]) => ({ type, name: deepCopy(name), detail: deepCopy(detail) })),
+    capturedAt: new Date().toISOString(),
+  };
+}
+function manifestWithRuntimeContent() {
+  const manifest = deepCopy(currentManifest());
+  manifest.content = runtimeContentSnapshot();
+  return manifest;
+}
+function markDirty() {
+  state.dirty = true;
+  $('#pipelineStatus').textContent = state.language === 'ar' ? 'مسودة معدلة' : 'DRAFT CHANGED';
+  $('#pipelineStatus').className = 'status warn';
+  updatePreviewCache();
+  clearTimeout(markDirty.previewTimer);
+  markDirty.previewTimer = setTimeout(() => refreshViewPreview(state.view), 180);
+}
 
 function applyLanguage() {
   const arabic = state.language === 'ar';
@@ -115,12 +137,21 @@ function applyLanguage() {
   $('#languageButton').textContent = arabic ? 'English' : 'العربية';
   $('#languageButton').setAttribute('aria-label', arabic ? 'Switch the admin interface to English' : 'تغيير واجهة الإدارة إلى العربية');
   $('#addPageButton').setAttribute('aria-label', t('addPage'));
-  $('#previewFrame').setAttribute('title', arabic ? 'معاينة مباشرة للعبة ZONE' : 'Live preview of the ZONE game');
+  $$('#previewFrame, .section-preview-frame').forEach((frame) => frame.setAttribute('title', arabic ? 'معاينة مباشرة للعبة ZONE' : 'Live preview of the ZONE game'));
   $('#clearTraceButton').setAttribute('aria-label', arabic ? 'مسح تتبع واجهة API' : 'Clear API trace');
   if (!state.dirty) $('#pipelineStatus').textContent = t('ready');
   $$('[data-copy]').forEach((element) => { element.textContent = t(element.dataset.copy); });
   renderAll();
-  if (state.draft) refreshPreview();
+  if (state.draft) refreshViewPreview(state.view);
+}
+
+const previewScreens = { overview: 'home', modules: 'crimes', content: 'crimes', themes: 'home', assets: 'items', economy: 'home', events: 'home', releases: 'home' };
+function installSectionPreviews() {
+  Object.entries(previewScreens).forEach(([view, screen]) => {
+    const section = $(`.view[data-view="${view}"]`);
+    if (!section || section.querySelector('[data-section-preview]')) return;
+    section.insertAdjacentHTML('beforeend', `<article class="panel section-preview" data-section-preview data-preview-screen="${screen}"><div class="preview-toolbar"><strong data-copy="gamePreview">Game preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="button ghost preview-refresh" data-preview-refresh type="button" data-copy="preview">Refresh preview</button></div></div><div class="preview-stage section-preview-stage"><iframe class="section-preview-frame" title="Live preview of the ZONE game"></iframe></div></article>`);
+  });
 }
 
 function renderNavigation() {
@@ -132,7 +163,7 @@ function setView(view) {
   state.view = view;
   $$('.view').forEach((element) => element.classList.toggle('active', element.dataset.view === view));
   renderNavigation();
-  if (view === 'builder') refreshPreview();
+  refreshViewPreview(view);
 }
 
 function renderOverview() {
@@ -311,18 +342,33 @@ function renderAll() {
 
 function updatePreviewCache() {
   if (!state.draft) return;
-  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: state.draft.manifest, active: false, publishedBy: 'admin-panel', publishedAt: new Date().toISOString() }));
+  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: manifestWithRuntimeContent(), active: false, publishedBy: 'admin-panel', publishedAt: new Date().toISOString() }));
 }
 
 function refreshPreview() {
   updatePreviewCache();
   const frame = $('#previewFrame');
-  frame.src = `/?zone-preview=1&lang=${state.language}&v=${Date.now()}`;
+  if (!frame) return;
+  const screen = state.selectedPage && currentManifest()?.pages.some((page) => page.id === state.selectedPage && page.enabled) ? state.selectedPage : 'home';
+  frame.src = `/?zone-preview=1&lang=${state.language}&screen=${encodeURIComponent(screen)}&v=${Date.now()}`;
+}
+
+function refreshSectionPreview(view) {
+  updatePreviewCache();
+  const panel = $(`.view[data-view="${view}"] [data-section-preview]`);
+  const frame = panel?.querySelector('.section-preview-frame');
+  if (!frame) return;
+  frame.src = `/?zone-preview=1&lang=${state.language}&screen=${encodeURIComponent(panel.dataset.previewScreen || 'home')}&v=${Date.now()}`;
+}
+
+function refreshViewPreview(view) {
+  if (view === 'builder') refreshPreview();
+  else refreshSectionPreview(view);
 }
 
 async function saveDraft() {
   try {
-    const response = await api('/api/v1/admin/draft', { method: 'PUT', body: JSON.stringify({ manifest: currentManifest() }) });
+    const response = await api('/api/v1/admin/draft', { method: 'PUT', body: JSON.stringify({ manifest: manifestWithRuntimeContent() }) });
     state.draft = response;
     state.dirty = false;
     $('#pipelineStatus').textContent = state.language === 'ar' ? 'تم حفظ المسودة' : 'DRAFT SAVED';
@@ -339,9 +385,10 @@ async function saveDraft() {
 
 async function publishRelease() {
   try {
-    if (state.dirty && !(await saveDraft())) return;
+    if (!(await saveDraft())) return;
     const release = await api('/api/v1/admin/releases/publish', { method: 'POST', body: '{}' });
     localStorage.setItem(ACTIVE_CACHE, JSON.stringify(release));
+    localStorage.setItem('zone.platform.gameData', JSON.stringify(release.manifest.content ?? {}));
     localStorage.removeItem(PREVIEW_CACHE);
     state.releases = [release, ...state.releases.filter((item) => item.id !== release.id).map((item) => ({ ...item, active: false }))];
     state.engine.activeReleaseId = release.id;
@@ -349,7 +396,7 @@ async function publishRelease() {
     $('#runtimeRelease').textContent = `RELEASE ${release.version}`;
     notify(`${state.language === 'ar' ? 'تم نشر الإصدار' : 'Published release'} v${release.version}`);
     renderAll();
-    refreshPreview();
+    refreshViewPreview(state.view);
   } catch (error) { notify(error.message, true); }
 }
 
@@ -357,13 +404,14 @@ async function activateRelease(id) {
   try {
     const release = await api(`/api/v1/admin/releases/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
     localStorage.setItem(ACTIVE_CACHE, JSON.stringify(release));
+    localStorage.setItem('zone.platform.gameData', JSON.stringify(release.manifest.content ?? {}));
     state.releases = state.releases.map((item) => ({ ...item, active: item.id === release.id }));
     state.engine.activeReleaseId = release.id;
     state.engine.activeReleaseVersion = release.version;
     $('#runtimeRelease').textContent = `RELEASE ${release.version}`;
     notify(`${state.language === 'ar' ? 'تم الرجوع إلى الإصدار' : 'Rolled back to release'} v${release.version}`);
     renderAll();
-    refreshPreview();
+    refreshViewPreview(state.view);
   } catch (error) { notify(error.message, true); }
 }
 
@@ -372,8 +420,10 @@ async function mutateModule(id, action) {
     await api(`/api/v1/admin/modules/${encodeURIComponent(id)}/${action}`, { method: 'POST', body: '{}' });
     const response = await api('/api/v1/modules');
     state.modules = response.modules;
+    markDirty();
     notify(`${id}: ${t(action)}`);
     renderAll();
+    refreshViewPreview('modules');
   } catch (error) { notify(error.message, true); }
 }
 
@@ -406,8 +456,10 @@ async function saveCrime(event) {
     const [events, audit] = await Promise.all([api('/api/v1/events'), api('/api/v1/admin/audit')]);
     state.events = events.events;
     state.audit = audit.entries;
+    markDirty();
     notify(state.language === 'ar' ? 'تم حفظ الجريمة في المحرك' : 'Crime saved to the engine');
     renderAll();
+    refreshViewPreview('content');
   } catch (error) {
     notify(error.message, true);
   } finally {
@@ -420,8 +472,10 @@ async function activateTheme(id) {
     await api(`/api/v1/admin/themes/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
     const response = await api('/api/v1/themes');
     state.themes = response.themes;
+    markDirty();
     notify(`${id}: ${t('active')}`);
     renderAll();
+    refreshViewPreview('themes');
   } catch (error) { notify(error.message, true); }
 }
 
@@ -449,6 +503,7 @@ async function load() {
   updatePreviewCache();
 }
 
+installSectionPreviews();
 $('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
 $('#publishButton').addEventListener('click', publishRelease);
 $('#releasePublishButton').addEventListener('click', publishRelease);
@@ -460,7 +515,14 @@ $('#newCrimeButton').addEventListener('click', newCrime);
 $('#crimeForm').addEventListener('submit', saveCrime);
 $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textContent = t('adminReady'); });
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
-$$('.viewport-button').forEach((button) => button.addEventListener('click', () => { $$('.viewport-button').forEach((item) => item.classList.remove('active')); button.classList.add('active'); $('#previewFrame').style.width = button.dataset.width; }));
+$$('.viewport-button').forEach((button) => button.addEventListener('click', () => {
+  const preview = button.closest('.builder-preview, .section-preview');
+  preview?.querySelectorAll('.viewport-button').forEach((item) => item.classList.remove('active'));
+  button.classList.add('active');
+  const frame = preview?.querySelector('iframe');
+  if (frame) frame.style.width = button.dataset.width;
+}));
+$$('[data-preview-refresh]').forEach((button) => button.addEventListener('click', () => refreshSectionPreview(button.closest('.view').dataset.view)));
 
 load().catch((error) => {
   trace('BOOT', '/admin', null, { error: error.message }, 500);

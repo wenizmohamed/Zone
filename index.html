@@ -27,6 +27,7 @@
 </script>
 <script src="./support.js"></script>
 <script src="./platform-runtime.js"></script>
+<link rel="stylesheet" href="/engine/theme.css">
 </head>
 <body>
 <x-dc>
@@ -120,6 +121,7 @@
       #zone-result > div:last-child{flex-wrap:wrap}
       #zone-result > div:last-child > bdi{margin-inline-start:47px}
     }
+    :root{--acc:var(--theme-accent,#a3d900);--gold:var(--theme-accent-2,#e0b030);--bg:var(--theme-bg,#191919);--panel:var(--theme-panel,#232323);--panel2:var(--theme-panel-2,#1e1e1e);--t1:var(--theme-text,#eee);--t4:var(--theme-muted,#aaa)}
   </style>
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
@@ -717,10 +719,14 @@ const ICON = { home: 'M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z', items: 'M
 const BASE_SCREENS = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
 const PLATFORM_RELEASE = window.ZonePlatform ? window.ZonePlatform.active() : { version: 0, manifest: {} };
 const PLATFORM_MANIFEST = PLATFORM_RELEASE.manifest || {};
+const PLATFORM_DATA = window.ZonePlatform ? window.ZonePlatform.data() : (PLATFORM_MANIFEST.content || {});
+const PLATFORM_ENGINE_MODULES = Array.isArray(PLATFORM_DATA.engineModules) ? PLATFORM_DATA.engineModules : [];
+const PLATFORM_CRIME_MODULE = PLATFORM_ENGINE_MODULES.find(module => module && module.id === 'crime');
+const PLATFORM_CRIME_ENABLED = !PLATFORM_CRIME_MODULE || (PLATFORM_CRIME_MODULE.installed && PLATFORM_CRIME_MODULE.enabled);
 const CUSTOM_PAGES = Array.isArray(PLATFORM_MANIFEST.pages) ? PLATFORM_MANIFEST.pages.filter(p => p && p.enabled) : [];
 const CUSTOM_PAGE_MAP = Object.fromEntries(CUSTOM_PAGES.map(p => [p.id, p]));
 const RELEASE_NAV = Array.isArray(PLATFORM_MANIFEST.navigation) && PLATFORM_MANIFEST.navigation.length ? PLATFORM_MANIFEST.navigation : [...BASE_SCREENS, ...CUSTOM_PAGES.map(p => p.id)];
-const SCREENS = RELEASE_NAV.filter((id, index, all) => all.indexOf(id) === index && ((BASE_SCREENS.includes(id) && PLATFORM_MANIFEST.modules?.[id] !== false) || CUSTOM_PAGE_MAP[id]));
+const SCREENS = RELEASE_NAV.filter((id, index, all) => all.indexOf(id) === index && ((BASE_SCREENS.includes(id) && PLATFORM_MANIFEST.modules?.[id] !== false && (id !== 'crimes' || PLATFORM_CRIME_ENABLED)) || CUSTOM_PAGE_MAP[id]));
 const T = {
   en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
     topLinks: ['Wiki', 'Rules', 'Forums', 'Discord', 'Staff'],
@@ -827,6 +833,18 @@ const CRIMES = {
   shop: [{ id: 'candy', nerve: 4, base: 78, pay: [200, 600], xp: 5, fail: 'jail', mins: 4 }, { id: 'corner', nerve: 5, base: 70, pay: [300, 900], xp: 6, fail: 'jail', mins: 5 }, { id: 'cloth', nerve: 6, base: 64, pay: [500, 1400], xp: 8, fail: 'jail', mins: 6 }, { id: 'superst', nerve: 7, base: 58, pay: [800, 2000], xp: 10, fail: 'jail', mins: 7 }, { id: 'pharm', nerve: 8, base: 50, pay: [1200, 3000], xp: 13, fail: 'jail', mins: 8 }, { id: 'cyber', nerve: 10, base: 44, pay: [2000, 5000], xp: 16, fail: 'hosp', mins: 9 }, { id: 'jewel', nerve: 12, base: 38, pay: [4000, 9000], xp: 20, fail: 'hosp', mins: 10 }, { id: 'gun', nerve: 15, base: 30, pay: [6000, 14000], xp: 26, fail: 'hosp', mins: 12 }],
   pick: [{ id: 'eldm', nerve: 4, base: 80, pay: [100, 400], xp: 5, fail: 'jail', mins: 4 }, { id: 'eldw', nerve: 4, base: 80, pay: [100, 400], xp: 5, fail: 'jail', mins: 4 }, { id: 'bizw', nerve: 7, base: 55, pay: [800, 2500], xp: 10, fail: 'jail', mins: 6 }, { id: 'lab', nerve: 6, base: 60, pay: [300, 900], xp: 8, fail: 'hosp', mins: 5 }]
 };
+const MANAGED_CRIMES = (Array.isArray(PLATFORM_DATA.crimes) ? PLATFORM_DATA.crimes : [])
+  .filter(crime => crime && crime.enabled !== false)
+  .map(crime => ({
+    id: String(crime.id), nerve: Number(crime.nerve_cost) || 1,
+    base: Number.isFinite(Number(crime.success_basis_points)) ? Number(crime.success_basis_points) / 100 : Number(crime.successRate) || 0,
+    pay: [Number(crime.cash_min) || 0, Number(crime.cash_max) || 0], xp: Number(crime.xp_reward) || 0,
+    fail: 'jail', mins: Math.max(2, Math.ceil((Number(crime.nerve_cost) || 1) / 2)), serverManaged: true,
+    name: { en: String(crime.name_en || crime.id), ar: String(crime.name_ar || crime.name_en || crime.id) },
+    description: { en: 'Server-authoritative engine crime', ar: 'جريمة محسوبة بالكامل في محرك الخادم' },
+  }));
+const MANAGED_CRIME_IDS = new Set(MANAGED_CRIMES.map(crime => crime.id));
+CRIMES.search = [...MANAGED_CRIMES, ...CRIMES.search.filter(crime => !MANAGED_CRIME_IDS.has(crime.id))];
 const CAT = { revolver: { type: 'weapon', mult: 1.9, price: 24000 },
   magnum: { type: 'weapon', mult: 2.3, price: 61000 }, pistol: { type: 'weapon', mult: 1.8, price: 19000 },
   pistol_t: { type: 'weapon', mult: 2.0, price: 34000 }, sawedoff: { type: 'weapon', mult: 3.1, price: 92000 },
@@ -883,6 +901,8 @@ class Component extends DCLogic {
     const requestedLanguage = new URLSearchParams(window.location.search).get('lang');
     if (requestedLanguage === 'ar' || requestedLanguage === 'en') this.state.lang = requestedLanguage;
     else if (raw && raw.lang) this.state.lang = raw.lang;
+    const requestedScreen = new URLSearchParams(window.location.search).get('screen');
+    if (requestedScreen && SCREENS.includes(requestedScreen)) this.state.screen = requestedScreen;
     if (raw && raw.theme) this.state.theme = raw.theme;
     this.market = [{ item: 'pills', price: 87000, qty: 3, seller: 'Kaya_V' }, { item: 'ak', price: 260000, qty: 1, seller: 'BigSal' }, { item: 'shotgun', price: 140000, qty: 2, seller: 'Marrow' }, { item: 'pistol', price: 19000, qty: 6, seller: 'Sami' }, { item: 'magnum', price: 61000, qty: 1, seller: 'Duke_X' }, { item: 'vest', price: 62000, qty: 1, seller: 'Marrow' }, { item: 'revolver', price: 24000, qty: 1, seller: 'Dmitri' }, { item: 'armor', price: 18000, qty: 2, seller: 'Kaya_V' }, { item: 'medkit', price: 12000, qty: 5, seller: 'Noor' }, { item: 'smallkit', price: 5800, qty: 12, seller: 'Noor' }, { item: 'knife', price: 2600, qty: 4, seller: 'Dmitri' }, { item: 'drink', price: 990, qty: 40, seller: 'Sami' }].map(m => ({ ...m, base: m.price }));
     const mk = (n, i) => now + (i * 7 + 3) * 60000 * rnd(0.6, 1.4);
@@ -954,17 +974,20 @@ class Component extends DCLogic {
   blocked() { return Date.now() < this.p.jailUntil || Date.now() < this.p.hospUntil; }
   addXp(n) { this.p.xp += n; while (this.p.xp >= this.p.level * 100) { this.p.xp -= this.p.level * 100; this.p.level++; this.p.points += 5; this.log('levelUp', { n: this.p.level }, 'good');
       this.result('up', T[this.state.lang].levelUp, T[this.state.lang].titles[Math.min(6, Math.floor(this.p.level / 8))], T[this.state.lang].level + ' ' + this.p.level); } }
-  act(fn) { const t = T[this.state.lang]; if (this.blocked()) return this.toast(t.toast.blocked, true); fn(t); this.save(); this.forceUpdate(); }
+  act(fn) { const t = T[this.state.lang]; if (this.blocked()) return this.toast(t.toast.blocked, true); try { const outcome = fn(t); if (outcome && typeof outcome.then === 'function') return outcome.then(() => { this.save(); this.forceUpdate(); }).catch(error => this.toast(error.message || String(error), true)); this.save(); this.forceUpdate(); } catch (error) { this.toast(error.message || String(error), true); } }
   go(s) { this.setState({ screen: s, fight: null, result: null, busy: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
     () => this.bump('zone-main', 'zin .34s ease-out'));
     if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); } }
   pct(c) { return Math.min(97, c.base + (this.p.level - 1) * 0.4 + (this.p.skill[c.id] || 0) * 0.15); }
+  crimeName(c, t) { return c.name?.[this.state.lang] || t.cr[c.id]?.[0] || c.id; }
+  crimeSub(c, t) { return c.description?.[this.state.lang] || t.cr[c.id]?.[1] || ''; }
   jailMs(mins) { return mins * 60000 / this.scale * (this.p.eduDone.law ? 0.85 : 1); }
   hospMs(mins) { return mins * 60000 / this.scale * (this.p.fac.ups.hospTime ? 0.8 : 1); }
   commit(c, t) {
     if (this.cur('nerve') < c.nerve) return this.toast(t.toast.noNerve, true);
-    this.spend('nerve', c.nerve); const pct = this.pct(c), name = t.cr[c.id][0]; this.p.ctr.crimes++;
+    if (c.serverManaged) return this.commitManaged(c, t);
+    this.spend('nerve', c.nerve); const pct = this.pct(c), name = this.crimeName(c, t); this.p.ctr.crimes++;
     this.p.skill[c.id] = Math.min(100, (this.p.skill[c.id] || 0) + 2);
     const success = Math.random() * 100 < pct;
     this.flash('lastCrime', { id: c.id, ok: success });
@@ -973,6 +996,29 @@ class Component extends DCLogic {
     else { if (c.fail === 'hosp') { this.p.hospUntil = Date.now() + this.hospMs(c.mins); this.log('crimeHosp', { crime: c.id, m: c.mins }, 'bad');
         this.result('bad', t.hospital, name, fmt(t.resMin, { n: c.mins })); } else { this.p.jailUntil = Date.now() + this.jailMs(c.mins); this.log('crimeJail', { crime: c.id, m: c.mins }, 'bad');
         this.result('bad', t.jail, name, fmt(t.resMin, { n: c.mins })); } this.toast(fmt(t.log[c.fail === 'hosp' ? 'crimeHosp' : 'crimeJail'], { crime: name, m: c.mins }), true); }
+  }
+  async commitManaged(c, t) {
+    const response = await fetch('/api/v1/crimes/' + encodeURIComponent(c.id) + '/attempt', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: '{}' });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Crime API ' + response.status));
+    const name = this.crimeName(c, t);
+    this.p.cash = Number(outcome.player?.cash ?? this.p.cash);
+    this.p.xp = Number(outcome.player?.xp ?? this.p.xp);
+    this.p.bars.nerve = { v: Number(outcome.player?.nerve ?? Math.max(0, this.cur('nerve') - c.nerve)), at: Date.now() };
+    this.p.ctr.crimes++;
+    this.p.skill[c.id] = Math.min(100, (this.p.skill[c.id] || 0) + 2);
+    this.flash('lastCrime', { id: c.id, ok: Boolean(outcome.success) });
+    if (outcome.success) {
+      const cash = Number(outcome.reward?.cash || 0), xp = Number(outcome.reward?.xp || 0);
+      this.p.crimeXp += xp;
+      this.log('crimeOk', { crime: c.id, cash: money(cash), xp }, 'good');
+      this.result('cash', name, fmt(t.resXp, { n: xp }), '+' + money(cash));
+      this.toast(fmt(t.log.crimeOk, { crime: name, cash: money(cash), xp }));
+    } else {
+      this.log('crimeJail', { crime: c.id, m: 0 }, 'bad');
+      this.result('bad', name, t.success, '0%');
+      this.toast(name + ': 0%', true);
+    }
   }
   expGain(k) { const happy = this.cur('happy') / 5000; const dots = 1 + this.p.gym * 0.3; const stat = this.p.stats[k]; const e = GYMS[this.p.gym].e; return e * 1.2 * dots * (1 + Math.log1p(happy * 10) * 0.35) * (this.p.fac.ups.gymBoost ? 1.1 : 1) * (this.p.eduDone.fit ? 1.05 : 1) * Math.max(0.35, 1 - stat / 60000); }
   // every action resolves over a beat so the consequence is felt, not just tallied
@@ -1125,7 +1171,7 @@ class Component extends DCLogic {
           go: () => { if (!locked) this.setState({ cat: c.id }); } }; }),
       catName: t.cats[this.state.cat],
       catDesc: catLocked ? t.catDesc.locked : t.catDesc[this.state.cat], crimeXp: num(p.crimeXp), nerveNow,
-      crimes: (CRIMES[this.state.cat] || []).map((c, i) => { const pct = this.pct(c); return { name: t.cr[c.id][0], sub: t.cr[c.id][1], skill: p.skill[c.id] || 0, nerve: c.nerve, pct: Math.round(pct), pctText: Math.round(pct) + '%', barColor: pct > 75 ? 'var(--acc)' : pct > 50 ? 'var(--gold)' : '#e05a4a', bg: this.state.lastCrime && this.state.lastCrime.id === c.id ? (this.state.lastCrime.ok ? 'rgba(163,217,0,.18)' : 'rgba(224,90,74,.2)') : (i % 2 ? 'var(--z1)' : 'var(--z2)'), disabled: catLocked || nerveNow < c.nerve || !!this.state.busy, busy: this.state.busy === 'cr' + c.id ? 1 : null, label: this.state.busy === 'cr' + c.id ? '…' : t.commit, commit: () => this.resolve('cr' + c.id, 520, tt => this.commit(c, tt)) }; }),
+      crimes: (CRIMES[this.state.cat] || []).map((c, i) => { const pct = this.pct(c); return { name: this.crimeName(c, t), sub: this.crimeSub(c, t), skill: p.skill[c.id] || 0, nerve: c.nerve, pct: Math.round(pct), pctText: Math.round(pct) + '%', barColor: pct > 75 ? 'var(--acc)' : pct > 50 ? 'var(--gold)' : '#e05a4a', bg: this.state.lastCrime && this.state.lastCrime.id === c.id ? (this.state.lastCrime.ok ? 'rgba(163,217,0,.18)' : 'rgba(224,90,74,.2)') : (i % 2 ? 'var(--z1)' : 'var(--z2)'), disabled: catLocked || nerveNow < c.nerve || !!this.state.busy, busy: this.state.busy === 'cr' + c.id ? 1 : null, label: this.state.busy === 'cr' + c.id ? '…' : t.commit, commit: () => this.resolve('cr' + c.id, 520, tt => this.commit(c, tt)) }; }),
       crimeLog: p.log.filter(l => l.k.startsWith('crime')).slice(0, 6).map(logMap),
       energyText: num(energyNow) + ' / ' + this.maxOf('energy'), energyPct: Math.round(energyNow / this.maxOf('energy') * 100), noEnergy: energyNow < GYMS[p.gym].e, trainOff: energyNow < GYMS[p.gym].e || !!this.state.busy, totalStats: num(totalStats), gymName: t.gyms[p.gym], gymEnergy: GYMS[p.gym].e, gymXp: num(p.gymXp),
       stats: ['str', 'def', 'spd', 'dex'].map(k => ({ label: t[k], d: LU(k), img: 'art/g_' + k + '.jpg', popEl: this.popEl(k), value: dec(p.stats[k]), share: Math.round(p.stats[k] / totalStats * 100), exercise: t.ex[k], gain: this.expGain(k).toFixed(2), busy: this.state.busy === 'tr' + k ? 1 : null, btnLabel: this.state.busy === 'tr' + k ? '…' : t.train, train: () => this.resolve('tr' + k, 480, tt => this.train(k, tt)) })),

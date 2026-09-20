@@ -101,7 +101,7 @@ for (const match of html.matchAll(/url\(["']?([^"')]+)["']?\)/g)) literalResourc
 for (const resource of literalResources) {
   if (/^(?:https?:|data:|blob:|#|\{\{)/.test(resource) || resource.includes('{{')) continue;
   const clean = resource.replace(/^\.\//, '').split(/[?#]/)[0];
-  if (['/admin', '/engine'].includes(clean)) continue;
+  if (['/admin', '/engine', '/engine/theme.css'].includes(clean)) continue;
   check(existsSync(join(target, clean)), `Missing literal resource: ${clean}`);
 }
 

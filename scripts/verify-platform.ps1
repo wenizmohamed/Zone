@@ -109,6 +109,11 @@ try {
     Assert-Zone ($activeAfterDraft.version -eq 0) 'saving a draft does not alter the active game release'
     $releaseOne = Invoke-ZoneJson '/api/v1/admin/releases/publish' 'Post' @{}
     Assert-Zone ($releaseOne.version -eq 1 -and $releaseOne.manifest.pages[0].id -eq 'operations') 'publishing creates release 1 with the admin page'
+    Assert-Zone (@($releaseOne.manifest.content.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'published release contains the administrator-created crime'
+    $bootstrap = Get-ZoneJson '/api/v1/game/bootstrap'
+    Assert-Zone ($bootstrap.release.id -eq $releaseOne.id -and @($bootstrap.content.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'player bootstrap consumes the published crime snapshot'
+    Assert-Zone ($root.Content.Contains('MANAGED_CRIMES') -and $root.Content.Contains('commitManaged')) 'player bundle renders and executes server-managed crimes'
+    Assert-Zone ($adminScriptText.Contains('installSectionPreviews') -and $adminScriptText.Contains('section-preview-frame')) 'every administrator section receives an embedded game preview'
 
     $draftTwo = Get-ZoneJson '/api/v1/admin/draft'
     $draftTwo.manifest.branding.name.en = 'ZONE Second Release'

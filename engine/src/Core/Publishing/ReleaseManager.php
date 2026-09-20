@@ -290,6 +290,35 @@ final class ReleaseManager
             $seenNavigation[$id] = true;
         }
 
+        if (isset($manifest['content'])) {
+            if (!is_array($manifest['content'])) {
+                throw new InvalidArgumentException('Manifest content must be an object.');
+            }
+            foreach (['crimes', 'engineModules', 'themes'] as $collection) {
+                if (isset($manifest['content'][$collection]) && !is_array($manifest['content'][$collection])) {
+                    throw new InvalidArgumentException("Manifest content.{$collection} must be an array.");
+                }
+            }
+            foreach (($manifest['content']['crimes'] ?? []) as $crimeIndex => $crime) {
+                if (!is_array($crime) || !preg_match('/^[a-z][a-z0-9-]{1,79}$/', (string) ($crime['id'] ?? ''))) {
+                    throw new InvalidArgumentException("Manifest content crime {$crimeIndex} has an invalid id.");
+                }
+                foreach (['name_en', 'name_ar'] as $field) {
+                    if (!is_string($crime[$field] ?? null) || trim($crime[$field]) === '' || strlen($crime[$field]) > 160) {
+                        throw new InvalidArgumentException("Manifest content crime {$crimeIndex} has an invalid {$field}.");
+                    }
+                }
+                foreach (['nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward'] as $field) {
+                    if (!is_int($crime[$field] ?? null) && !is_float($crime[$field] ?? null)) {
+                        throw new InvalidArgumentException("Manifest content crime {$crimeIndex} has an invalid {$field}.");
+                    }
+                }
+                if (!is_bool($crime['enabled'] ?? null)) {
+                    throw new InvalidArgumentException("Manifest content crime {$crimeIndex} must declare enabled as a boolean.");
+                }
+            }
+        }
+
         $this->rejectExecutableKeys($manifest);
         return $manifest;
     }
