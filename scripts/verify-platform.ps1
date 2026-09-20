@@ -68,6 +68,11 @@ try {
         Assert-Zone ($response.StatusCode -eq 200 -and $response.RawContentLength -gt 100) "$asset is available and non-empty"
     }
 
+    $adminScriptText = [System.IO.File]::ReadAllText((Join-Path $repoRoot 'admin.js'), [System.Text.Encoding]::UTF8)
+    $adminHtmlText = [System.IO.File]::ReadAllText((Join-Path $repoRoot 'admin.html'), [System.Text.Encoding]::UTF8)
+    Assert-Zone ($adminScriptText.Contains('المصمم المرئي') -and $adminScriptText.Contains('اقتصاد قابل للتدقيق') -and $adminHtmlText.Contains('Noto+Kufi+Arabic')) 'admin bundle includes complete Arabic section copy and Arabic typography'
+    Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $root.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'admin language is synchronized into the embedded player preview'
+
     $adminCrimes = Get-ZoneJson '/api/v1/admin/crimes'
     Assert-Zone ($adminCrimes.crimes.Count -eq 3) 'open admin loads the full crime catalogue'
     $crime = Invoke-ZoneJson '/api/v1/admin/crimes/platform-smoke-crime' 'Put' @{

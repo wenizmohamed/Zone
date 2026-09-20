@@ -193,7 +193,15 @@ input[type="color"] { padding: 4px; min-height: 38px; }
 .toast.bad { border-color: var(--danger); background: #271714; }
 
 html[dir="rtl"] .brand strong { letter-spacing: .08em; }
+html[lang="ar"] body { font-family: "Noto Kufi Arabic", "Rubik", system-ui, sans-serif; }
+html[lang="ar"] button, html[lang="ar"] input, html[lang="ar"] select, html[lang="ar"] textarea { font-family: inherit; }
+html[lang="ar"] .eyebrow, html[lang="ar"] .workspace-label, html[lang="ar"] .metric span, html[lang="ar"] .table-row.header { letter-spacing: 0; }
 html[dir="rtl"] input[dir="rtl"], html[dir="rtl"] textarea[dir="rtl"] { text-align: right; }
+html[dir="rtl"] input[dir="ltr"], html[dir="rtl"] textarea[dir="ltr"], html[dir="rtl"] [dir="ltr"] { direction: ltr; unicode-bidi: isolate; text-align: left; }
+html[dir="rtl"] code, html[dir="rtl"] pre { font-family: var(--mono); }
+html[dir="rtl"] .pipeline-step:not(:last-child)::after { content: "<"; }
+html[dir="rtl"] .release-card.active { box-shadow: inset -3px 0 var(--accent); }
+html[dir="rtl"] .toast { inset: auto auto 20px 20px; }
 
 @media (max-width: 1180px) {
   .runtime-strip span:nth-child(2), .runtime-strip span:nth-child(4) { display: none; }

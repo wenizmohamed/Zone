@@ -42,10 +42,14 @@ Assert-Zone ($adminAudit.entries.Count -ge 1 -and -not [string]::IsNullOrWhiteSp
 
 $game = Invoke-WebRequest -Uri ($BaseUrl + '/') -UseBasicParsing -TimeoutSec 30
 $admin = Invoke-WebRequest -Uri ($BaseUrl + '/admin') -UseBasicParsing -TimeoutSec 30
+$adminScript = Invoke-WebRequest -Uri ($BaseUrl + '/admin.js') -UseBasicParsing -TimeoutSec 30
+$adminScriptText = [System.Text.Encoding]::UTF8.GetString($adminScript.RawContentStream.ToArray())
 $engine = Invoke-WebRequest -Uri ($BaseUrl + '/engine') -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 30
 Assert-Zone ($game.StatusCode -eq 200 -and $game.Content.Contains('ZONE | Browser Crime MMO')) 'player game renders from the deployment'
 Assert-Zone ($admin.StatusCode -eq 200 -and $admin.Content.Contains('ZONE Admin Control Plane') -and -not $admin.Content.Contains('loginForm')) 'admin control plane renders directly with no login form'
 Assert-Zone ($engine.StatusCode -eq 200 -and $engine.Content.Contains('ZONE Engine Control Room')) 'engine control room renders directly with no redirect'
+Assert-Zone ($admin.Content.Contains('Noto+Kufi+Arabic') -and $adminScriptText.Contains('المصمم المرئي') -and $adminScriptText.Contains('اقتصاد قابل للتدقيق')) 'production admin contains the complete Arabic interface bundle'
+Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $game.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'production admin and game synchronize the selected language'
 
 $authStatus = 0
 try {

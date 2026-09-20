@@ -159,11 +159,11 @@ The production verifier does not publish or modify content. It checks runtime he
 ./scripts/verify-production.ps1 -BaseUrl 'https://your-zone-deployment.vercel.app'
 ```
 
-Current verified gates on 2026-09-19:
+Current verified gates on 2026-09-20:
 
 - PHP engine suite: 49 passed, 0 failed
-- Integrated local platform: 19 checks passed
-- Live PostgreSQL production deployment: 14 production checks passed
+- Integrated local platform: 21 checks passed, including Arabic bundle and preview-language synchronization
+- Live PostgreSQL production deployment: 16 production checks passed
 - Vercel production bundle: 18 screens, 43 art targets, 144 output files
 - Browser verification: direct admin access, PHP 8.5.2, PGSQL, PRODUCTION, release v1, published page visible in the player navigation
 - Content workflow: crime create/update, public catalogue exposure, and fixed `admin-panel` audit attribution

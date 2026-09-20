@@ -8,7 +8,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin.css">
 </head>
 <body>
@@ -34,18 +34,18 @@
 
   <div class="app-shell" data-admin-shell>
     <aside class="sidebar">
-      <div class="workspace-label"><span>ZONE PLATFORM</span><strong>ENGINE 1.0</strong></div>
+      <div class="workspace-label"><span data-copy="zonePlatform">ZONE PLATFORM</span><strong data-copy="engineVersion">ENGINE 1.0</strong></div>
       <nav id="adminNav" aria-label="Admin sections"></nav>
       <div class="sidebar-foot">
         <span data-copy="sourceOwned">FULL SOURCE OWNERSHIP</span>
-        <b>PHP 8.5 + API FIRST</b>
+        <b data-copy="apiFirst">PHP 8.5 + API FIRST</b>
       </div>
     </aside>
 
     <main class="workspace">
       <section class="view active" data-view="overview">
         <div class="page-head">
-          <div><span class="eyebrow">CONTROL CENTER</span><h1 data-copy="overview">Platform overview</h1><p data-copy="overviewSub">One control plane for the engine, modules, content, releases, and the live game.</p></div>
+          <div><span class="eyebrow" data-copy="controlCenter">CONTROL CENTER</span><h1 data-copy="overview">Platform overview</h1><p data-copy="overviewSub">One control plane for the engine, modules, content, releases, and the live game.</p></div>
           <button class="button secondary" type="button" data-go="releases" data-copy="releaseHistory">Release history</button>
         </div>
         <div class="metric-grid" id="metrics"></div>
@@ -67,7 +67,7 @@
 
       <section class="view" data-view="builder">
         <div class="page-head">
-          <div><span class="eyebrow">VISUAL BUILDER</span><h1 data-copy="builder">Page builder</h1><p data-copy="builderSub">Build bilingual responsive game pages from engine-registered blocks.</p></div>
+          <div><span class="eyebrow" data-copy="visualBuilder">VISUAL BUILDER</span><h1 data-copy="builder">Page builder</h1><p data-copy="builderSub">Build bilingual responsive game pages from engine-registered blocks.</p></div>
           <div class="head-actions"><button class="button secondary" id="saveDraftButton" type="button" data-copy="saveDraft">Save draft</button><button class="button primary" id="previewButton" type="button" data-copy="preview">Refresh preview</button></div>
         </div>
         <div class="builder-shell">
@@ -79,29 +79,29 @@
             <div id="pageEditorEmpty" class="empty-state" data-copy="choosePage">Choose a page or create a new one.</div>
             <div id="pageEditor" hidden>
               <div class="form-grid">
-                <label><span data-copy="titleEnglish">Title in English</span><input id="pageTitleEn" maxlength="120"></label>
+                <label><span data-copy="titleEnglish">Title in English</span><input id="pageTitleEn" maxlength="120" dir="ltr"></label>
                 <label><span data-copy="titleArabic">Title in Arabic</span><input id="pageTitleAr" maxlength="120" dir="rtl"></label>
-                <label><span data-copy="slug">Slug</span><input id="pageSlug" maxlength="80"></label>
+                <label><span data-copy="slug">Slug</span><input id="pageSlug" maxlength="80" dir="ltr"></label>
                 <label class="toggle-row"><input id="pageEnabled" type="checkbox"><span data-copy="enabledInGame">Enabled in game</span></label>
               </div>
-              <div class="subhead blocks-head"><h2 data-copy="blocks">Registered blocks</h2><select id="blockTypeSelect"><option value="hero">Hero</option><option value="text">Text</option><option value="callout">Callout</option><option value="stat-grid">Stat grid</option><option value="action-grid">Action grid</option></select><button class="button secondary" id="addBlockButton" type="button" data-copy="addBlock">Add block</button></div>
+              <div class="subhead blocks-head"><h2 data-copy="blocks">Registered blocks</h2><select id="blockTypeSelect"><option value="hero" data-copy="blockHero">Hero</option><option value="text" data-copy="blockText">Text</option><option value="callout" data-copy="blockCallout">Callout</option><option value="stat-grid" data-copy="blockStatGrid">Stat grid</option><option value="action-grid" data-copy="blockActionGrid">Action grid</option></select><button class="button secondary" id="addBlockButton" type="button" data-copy="addBlock">Add block</button></div>
               <div id="blockList" class="block-list"></div>
             </div>
           </section>
           <aside class="builder-preview">
-            <div class="preview-toolbar"><strong data-copy="livePreview">Draft preview</strong><div><button class="viewport-button active" data-width="100%" type="button">Desktop</button><button class="viewport-button" data-width="390px" type="button">Mobile</button></div></div>
+            <div class="preview-toolbar"><strong data-copy="livePreview">Draft preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button></div></div>
             <div class="preview-stage"><iframe id="previewFrame" title="ZONE draft preview"></iframe></div>
           </aside>
         </div>
       </section>
 
       <section class="view" data-view="modules">
-        <div class="page-head"><div><span class="eyebrow">EXTENSION SYSTEM</span><h1 data-copy="modules">Module manager</h1><p data-copy="modulesSub">Install, update, enable, disable, and inspect independent game systems.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="extensionSystem">EXTENSION SYSTEM</span><h1 data-copy="modules">Module manager</h1><p data-copy="modulesSub">Install, update, enable, disable, and inspect independent game systems.</p></div></div>
         <div class="catalog-grid" id="moduleGrid"></div>
       </section>
 
       <section class="view" data-view="content">
-        <div class="page-head"><div><span class="eyebrow">CONTENT STUDIO</span><h1 data-copy="content">Game content</h1><p data-copy="contentSub">Manage crimes and the release-bound content that the player game consumes.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="contentStudio">CONTENT STUDIO</span><h1 data-copy="content">Game content</h1><p data-copy="contentSub">Manage crimes and the release-bound content that the player game consumes.</p></div></div>
         <div class="dashboard-grid">
           <article class="panel span-2">
             <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="crimeCatalog">Crime catalog</h2></div><button class="button secondary" id="newCrimeButton" type="button" data-copy="newCrime">New crime</button></div>
@@ -110,8 +110,8 @@
           <article class="panel">
             <div class="panel-head"><div><span class="section-number">02</span><h2 data-copy="crimeEditor">Crime editor</h2></div><span class="status" id="crimeEditorStatus">NEW</span></div>
             <form class="crime-editor" id="crimeForm">
-              <label><span data-copy="crimeId">Crime ID</span><input id="crimeId" maxlength="80" pattern="[a-z][a-z0-9-]{1,79}" required></label>
-              <label><span data-copy="crimeNameEn">English name</span><input id="crimeNameEn" maxlength="160" required></label>
+              <label><span data-copy="crimeId">Crime ID</span><input id="crimeId" maxlength="80" pattern="[a-z][a-z0-9-]{1,79}" dir="ltr" required></label>
+              <label><span data-copy="crimeNameEn">English name</span><input id="crimeNameEn" maxlength="160" dir="ltr" required></label>
               <label><span data-copy="crimeNameAr">Arabic name</span><input id="crimeNameAr" maxlength="160" dir="rtl" required></label>
               <div class="form-grid">
                 <label><span data-copy="nerveCost">Nerve cost</span><input id="crimeNerve" type="number" min="1" max="1000" required></label>
@@ -129,32 +129,32 @@
       </section>
 
       <section class="view" data-view="themes">
-        <div class="page-head"><div><span class="eyebrow">THEME PACKAGES</span><h1 data-copy="themes">Theme studio</h1><p data-copy="themesSub">Change the presentation layer without changing game rules or player state.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="themePackages">THEME PACKAGES</span><h1 data-copy="themes">Theme studio</h1><p data-copy="themesSub">Change the presentation layer without changing game rules or player state.</p></div></div>
         <div class="catalog-grid" id="themeGrid"></div>
-        <article class="panel token-panel"><div class="panel-head"><div><span class="section-number">TOKENS</span><h2 data-copy="releaseBranding">Release branding</h2></div></div><div class="form-grid"><label><span data-copy="brandEnglish">Brand in English</span><input id="brandEn" maxlength="120"></label><label><span data-copy="brandArabic">Brand in Arabic</span><input id="brandAr" maxlength="120" dir="rtl"></label><label><span data-copy="accent">Accent color</span><input id="accentColor" type="color"></label><label class="toggle-row"><input id="announcementEnabled" type="checkbox"><span data-copy="announcementEnabled">Announcement enabled</span></label><label><span data-copy="announcementEnglish">Announcement in English</span><textarea id="announcementEn" rows="3" maxlength="1000"></textarea></label><label><span data-copy="announcementArabic">Announcement in Arabic</span><textarea id="announcementAr" rows="3" maxlength="1000" dir="rtl"></textarea></label></div></article>
+        <article class="panel token-panel"><div class="panel-head"><div><span class="section-number" data-copy="tokens">TOKENS</span><h2 data-copy="releaseBranding">Release branding</h2></div></div><div class="form-grid"><label><span data-copy="brandEnglish">Brand in English</span><input id="brandEn" maxlength="120" dir="ltr"></label><label><span data-copy="brandArabic">Brand in Arabic</span><input id="brandAr" maxlength="120" dir="rtl"></label><label><span data-copy="accent">Accent color</span><input id="accentColor" type="color"></label><label class="toggle-row"><input id="announcementEnabled" type="checkbox"><span data-copy="announcementEnabled">Announcement enabled</span></label><label><span data-copy="announcementEnglish">Announcement in English</span><textarea id="announcementEn" rows="3" maxlength="1000" dir="ltr"></textarea></label><label><span data-copy="announcementArabic">Announcement in Arabic</span><textarea id="announcementAr" rows="3" maxlength="1000" dir="rtl"></textarea></label></div></article>
       </section>
 
       <section class="view" data-view="assets">
-        <div class="page-head"><div><span class="eyebrow">MEDIA PIPELINE</span><h1 data-copy="assets">Asset library</h1><p data-copy="assetsSub">One typed registry for images, thumbnails, animation, video, GLB, and GLTF.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="mediaPipeline">MEDIA PIPELINE</span><h1 data-copy="assets">Asset library</h1><p data-copy="assetsSub">One typed registry for images, thumbnails, animation, video, GLB, and GLTF.</p></div></div>
         <div class="asset-grid" id="assetGrid"></div>
       </section>
 
       <section class="view" data-view="economy">
-        <div class="page-head"><div><span class="eyebrow">AUDITABLE ECONOMY</span><h1 data-copy="economy">Economy and balance</h1><p data-copy="economySub">Every reward and transfer is traceable through an immutable correlation trail.</p></div></div>
-        <div class="dashboard-grid"><article class="panel span-2"><div class="panel-head"><div><span class="section-number">LEDGER</span><h2 data-copy="economyLedger">Economy ledger</h2></div></div><div class="data-table" id="ledgerTable"></div></article><article class="panel"><div class="panel-head"><div><span class="section-number">RESOURCES</span><h2 data-copy="sharedSystems">Shared systems</h2></div></div><div class="domain-grid" id="resourceGrid"></div></article></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="auditableEconomy">AUDITABLE ECONOMY</span><h1 data-copy="economy">Economy and balance</h1><p data-copy="economySub">Every reward and transfer is traceable through an immutable correlation trail.</p></div></div>
+        <div class="dashboard-grid"><article class="panel span-2"><div class="panel-head"><div><span class="section-number" data-copy="ledger">LEDGER</span><h2 data-copy="economyLedger">Economy ledger</h2></div></div><div class="data-table" id="ledgerTable"></div></article><article class="panel"><div class="panel-head"><div><span class="section-number" data-copy="resources">RESOURCES</span><h2 data-copy="sharedSystems">Shared systems</h2></div></div><div class="domain-grid" id="resourceGrid"></div></article></div>
       </section>
 
       <section class="view" data-view="events">
-        <div class="page-head"><div><span class="eyebrow">EVENT BUS</span><h1 data-copy="events">Events and hooks</h1><p data-copy="eventsSub">Modules react through contracts without editing the originating system.</p></div></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="eventBus">EVENT BUS</span><h1 data-copy="events">Events and hooks</h1><p data-copy="eventsSub">Modules react through contracts without editing the originating system.</p></div></div>
         <div class="dashboard-grid">
-          <article class="panel span-2"><div class="panel-head"><div><span class="section-number">EVENTS</span><h2 data-copy="domainEvents">Domain events</h2></div></div><div class="data-table" id="eventTable"></div></article>
-          <article class="panel"><div class="panel-head"><div><span class="section-number">AUDIT</span><h2 data-copy="adminAudit">Admin audit</h2></div></div><div class="audit-list" id="auditList"></div></article>
+          <article class="panel span-2"><div class="panel-head"><div><span class="section-number" data-copy="eventsLabel">EVENTS</span><h2 data-copy="domainEvents">Domain events</h2></div></div><div class="data-table" id="eventTable"></div></article>
+          <article class="panel"><div class="panel-head"><div><span class="section-number" data-copy="audit">AUDIT</span><h2 data-copy="adminAudit">Admin audit</h2></div></div><div class="audit-list" id="auditList"></div></article>
         </div>
       </section>
 
       <section class="view" data-view="releases">
-        <div class="page-head"><div><span class="eyebrow">VERSION CONTROL</span><h1 data-copy="releases">Releases and rollback</h1><p data-copy="releasesSub">Draft changes, validate them, publish an immutable snapshot, and restore any prior release.</p></div><button class="button primary" id="releasePublishButton" type="button" data-copy="publish">Publish release</button></div>
-        <div class="release-layout"><article class="panel"><div class="panel-head"><div><span class="section-number">HISTORY</span><h2 data-copy="releaseHistory">Release history</h2></div></div><div id="releaseList" class="release-list"></div></article><article class="panel trace-panel"><div class="panel-head"><div><span class="section-number">API</span><h2 data-copy="apiTrace">API trace</h2></div><button class="icon-button" id="clearTraceButton" type="button">×</button></div><pre id="apiTrace">ZONE ADMIN READY</pre></article></div>
+        <div class="page-head"><div><span class="eyebrow" data-copy="versionControl">VERSION CONTROL</span><h1 data-copy="releases">Releases and rollback</h1><p data-copy="releasesSub">Draft changes, validate them, publish an immutable snapshot, and restore any prior release.</p></div><button class="button primary" id="releasePublishButton" type="button" data-copy="publish">Publish release</button></div>
+        <div class="release-layout"><article class="panel"><div class="panel-head"><div><span class="section-number" data-copy="history">HISTORY</span><h2 data-copy="releaseHistory">Release history</h2></div></div><div id="releaseList" class="release-list"></div></article><article class="panel trace-panel"><div class="panel-head"><div><span class="section-number">API</span><h2 data-copy="apiTrace">API trace</h2></div><button class="icon-button" id="clearTraceButton" type="button">×</button></div><pre id="apiTrace">ZONE ADMIN READY</pre></article></div>
       </section>
     </main>
   </div>

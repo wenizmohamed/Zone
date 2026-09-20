@@ -880,7 +880,10 @@ class Component extends DCLogic {
     // log entries written before v2 baked translated text into their args; drop them
     // so the Events panel never mixes languages mid-sentence.
     if (this.p.logV !== 2) { this.p.log = []; this.p.logV = 2; }
-    if (raw && raw.lang) this.state.lang = raw.lang; if (raw && raw.theme) this.state.theme = raw.theme;
+    const requestedLanguage = new URLSearchParams(window.location.search).get('lang');
+    if (requestedLanguage === 'ar' || requestedLanguage === 'en') this.state.lang = requestedLanguage;
+    else if (raw && raw.lang) this.state.lang = raw.lang;
+    if (raw && raw.theme) this.state.theme = raw.theme;
     this.market = [{ item: 'pills', price: 87000, qty: 3, seller: 'Kaya_V' }, { item: 'ak', price: 260000, qty: 1, seller: 'BigSal' }, { item: 'shotgun', price: 140000, qty: 2, seller: 'Marrow' }, { item: 'pistol', price: 19000, qty: 6, seller: 'Sami' }, { item: 'magnum', price: 61000, qty: 1, seller: 'Duke_X' }, { item: 'vest', price: 62000, qty: 1, seller: 'Marrow' }, { item: 'revolver', price: 24000, qty: 1, seller: 'Dmitri' }, { item: 'armor', price: 18000, qty: 2, seller: 'Kaya_V' }, { item: 'medkit', price: 12000, qty: 5, seller: 'Noor' }, { item: 'smallkit', price: 5800, qty: 12, seller: 'Noor' }, { item: 'knife', price: 2600, qty: 4, seller: 'Dmitri' }, { item: 'drink', price: 990, qty: 40, seller: 'Sami' }].map(m => ({ ...m, base: m.price }));
     const mk = (n, i) => now + (i * 7 + 3) * 60000 * rnd(0.6, 1.4);
     this.inmates = ['Marrow', 'Silas', 'Duke_X', 'Tariq', 'Lady_Vega', 'K1ng', 'Sami', 'Noor'].map((n, i) => ({ name: n, lvl: 5 + i * 4, until: mk(n, i), reason: ['crime', 'bust', 'shop', 'graf'][i % 4], out: false }));
