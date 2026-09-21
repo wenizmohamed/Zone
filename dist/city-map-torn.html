@@ -15,12 +15,11 @@
   /* Torn-style rounded-square building badge */
   .zbadge{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:transform .12s ease}
   .zbadge:hover{transform:translateY(-2px);z-index:1000}
-  .zsq{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--cl,#9cf),var(--c,#39f));
-       border:1.5px solid rgba(255,255,255,.82);box-shadow:0 3px 7px rgba(20,26,38,.45),inset 0 1px 0 rgba(255,255,255,.5);
-       display:grid;place-items:center;transition:transform .12s ease}
-  .zbadge:hover .zsq{transform:scale(1.13)}
-  .zsq svg{width:20px;height:20px;fill:#fff;filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))}
-  .zlbl{font-size:10px;font-weight:700;color:#26303f;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);
+  .zico{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.62) 38%,rgba(255,255,255,0) 72%);
+       filter:drop-shadow(0 1px 2px rgba(20,26,38,.32));display:grid;place-items:center;transition:transform .12s ease}
+  .zbadge:hover .zico{transform:scale(1.15)}
+  .zico svg{width:26px;height:26px}
+  .zlbl{font-size:9px;font-weight:600;color:#26303f;background:rgba(255,255,255,.82);border:1px solid rgba(0,0,0,.08);
         padding:2px 6px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.3)}
   .zhere{width:16px;height:16px;border-radius:50%;background:#31e0ff;border:2.5px solid #fff;
          box-shadow:0 0 0 3px rgba(20,26,38,.4),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.45);animation:zpulse 1.6s infinite}
@@ -53,15 +52,15 @@
   var markers=[], hereMk=null, legendCtl=null;
 
   function badgeHtml(p){
-    return '<div class="zbadge" style="--c:'+esc(p.color)+';--cl:'+esc(p.colorLite)+'">'
-      +'<span class="zsq"><svg viewBox="0 0 512 512"><path d="'+(p.d||'')+'"></path></svg></span>'
+    return '<div class="zbadge">'
+      +'<span class="zico"><svg viewBox="0 0 24 24" fill="none" stroke="'+esc(p.color)+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="'+(p.d||'')+'"></path></svg></span>'
       +'<span class="zlbl">'+esc(p.label)+'</span></div>';
   }
   function render(data){
     markers.forEach(function(m){map.removeLayer(m);}); markers=[];
     if(hereMk){map.removeLayer(hereMk);hereMk=null;}
     (data.zonePins||[]).forEach(function(p){
-      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[36,36],iconAnchor:[18,18]});
+      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[38,38],iconAnchor:[19,19]});
       var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true}).addTo(map);
       m.on('click',function(){ if(p.screen) parent.postMessage({zoneGo:p.screen},'*'); });
       markers.push(m);
