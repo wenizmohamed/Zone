@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zone City</title>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body,#map{height:100%;width:100%}
+  body{background:#0e1116;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow:hidden}
+  #map{background:#0e1116}
+  .leaflet-container{background:#0e1116;font-family:inherit}
+  .leaflet-control-attribution{display:none}
+  /* Torn-style rounded-square building badge */
+  .zbadge{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:transform .12s ease}
+  .zbadge:hover{transform:translateY(-2px);z-index:1000}
+  .zsq{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--cl,#9cf),var(--c,#39f));
+       border:1.5px solid rgba(255,255,255,.82);box-shadow:0 3px 7px rgba(20,26,38,.45),inset 0 1px 0 rgba(255,255,255,.5);
+       display:grid;place-items:center;transition:transform .12s ease}
+  .zbadge:hover .zsq{transform:scale(1.13)}
+  .zsq svg{width:20px;height:20px;fill:#fff;filter:drop-shadow(0 1px 1px rgba(0,0,0,.32))}
+  .zlbl{font-size:10px;font-weight:700;color:#26303f;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.14);
+        padding:2px 6px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.3)}
+  .zhere{width:16px;height:16px;border-radius:50%;background:#31e0ff;border:2.5px solid #fff;
+         box-shadow:0 0 0 3px rgba(20,26,38,.4),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.45);animation:zpulse 1.6s infinite}
+  @keyframes zpulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .zlegend{background:rgba(20,24,30,.86);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;
+           color:#e7ecf2;font-size:11px;backdrop-filter:blur(4px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .zlegend .row{display:flex;align-items:center;gap:7px;margin:3px 0}
+  .zlegend .sw{width:16px;height:16px;border-radius:5px;border:1px solid rgba(255,255,255,.55);box-shadow:0 1px 2px rgba(0,0,0,.4);flex:none}
+  .zlegend .ttl{font-weight:700;margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase;font-size:10px;color:#9fb0c2}
+  .leaflet-bar a{background:#1a1f27;color:#dfe6ee;border-bottom-color:#0e1116}
+  .leaflet-bar a:hover{background:#242b35}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="vendor/leaflet/leaflet.min.js"></script>
+<script>
+(function(){
+  var H=100, W=192.6, bounds=[[0,0],[H,W]];
+  var map=L.map('map',{crs:L.CRS.Simple,minZoom:-2,maxZoom:3,zoomControl:true,
+    attributionControl:false,zoomSnap:.25,wheelPxPerZoomLevel:120,maxBoundsViscosity:.9});
+  L.imageOverlay('city-illustrated.svg',bounds).addTo(map);
+  map.fitBounds(bounds);
+  var fit=map.getZoom();
+  map.setMinZoom(fit-0.5); map.setMaxZoom(fit+2.5);
+  map.setMaxBounds(L.latLngBounds(bounds).pad(0.12));
+
+  var ll=function(x,y){ return [H-(y/100*H), x/100*W]; };  // pin %(x,y from top-left) -> latLng
+  var esc=function(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
+  var markers=[], hereMk=null, legendCtl=null;
+
+  function badgeHtml(p){
+    return '<div class="zbadge" style="--c:'+esc(p.color)+';--cl:'+esc(p.colorLite)+'">'
+      +'<span class="zsq"><svg viewBox="0 0 512 512"><path d="'+(p.d||'')+'"></path></svg></span>'
+      +'<span class="zlbl">'+esc(p.label)+'</span></div>';
+  }
+  function render(data){
+    markers.forEach(function(m){map.removeLayer(m);}); markers=[];
+    if(hereMk){map.removeLayer(hereMk);hereMk=null;}
+    (data.zonePins||[]).forEach(function(p){
+      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[36,36],iconAnchor:[18,18]});
+      var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true}).addTo(map);
+      m.on('click',function(){ if(p.screen) parent.postMessage({zoneGo:p.screen},'*'); });
+      markers.push(m);
+    });
+    if(data.here){
+      hereMk=L.marker(ll(data.here.x,data.here.y),{icon:L.divIcon({className:'zmk',html:'<div class="zhere" title="'+esc(data.hereLabel||'')+'"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false,zIndexOffset:-200}).addTo(map);
+    }
+    if(legendCtl){map.removeControl(legendCtl);legendCtl=null;}
+    if(data.legend&&data.legend.length){
+      legendCtl=L.control({position:'bottomleft'});
+      legendCtl.onAdd=function(){
+        var d=L.DomUtil.create('div','zlegend');
+        var h='<div class="ttl">'+esc(data.legendTitle||'Key')+'</div>';
+        data.legend.forEach(function(g){h+='<div class="row"><span class="sw" style="background:linear-gradient(155deg,'+esc(g.colorLite)+','+esc(g.color)+')"></span>'+esc(g.label)+'</div>';});
+        d.innerHTML=h; L.DomEvent.disableClickPropagation(d); return d;
+      };
+      legendCtl.addTo(map);
+    }
+    if(data.dir==='rtl') document.documentElement.dir='rtl';
+    setTimeout(function(){map.invalidateSize();},60);
+  }
+
+  window.addEventListener('message',function(e){
+    var d=e.data||{};
+    if(d.bg) document.body.style.background=d.bg;
+    if(d.zonePins||d.legend||d.here) render(d);
+  });
+  // announce ready so the game pushes the (bilingual) pin data
+  function announce(){ try{ parent.postMessage({zoneMapReady:1},'*'); }catch(_){} }
+  announce(); setTimeout(announce,400); setTimeout(announce,1200);
+})();
+</script>
+</body>
+</html>
