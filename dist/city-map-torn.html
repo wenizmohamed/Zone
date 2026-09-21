@@ -19,13 +19,10 @@
   .zmk{background:none;border:0}
   .zbadge{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .12s ease;outline:none}
   .zbadge:focus-visible .zico{box-shadow:0 0 0 3px rgba(49,224,255,.7)}
-  .zico{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
-        background:radial-gradient(circle,rgba(255,255,255,.66) 38%,rgba(255,255,255,0) 72%);
-        filter:drop-shadow(0 1px 2px rgba(20,26,38,.34));transition:transform .12s ease}
-  .zico svg{width:26px;height:26px}
-  .zbadge:hover .zico,.zbadge.sel .zico{transform:scale(1.16)}
-  .zbadge.sel .zico::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--c,#31e0ff);
-        box-shadow:0 0 8px var(--c,#31e0ff)}
+  .zpin{position:relative;width:34px;height:42px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.55));transition:transform .12s ease}
+  .zbadge:hover .zpin,.zbadge.sel .zpin{transform:translateY(-3px) scale(1.08)}
+  .zbadge.sel .zpin::after{content:"";position:absolute;left:2px;top:2px;width:30px;height:30px;border-radius:50%;
+        border:2.5px solid #fff;box-shadow:0 0 10px var(--c,#31e0ff);pointer-events:none}
   .zlbl{font-size:9px;font-weight:600;color:#26303f;background:rgba(255,255,255,.86);padding:0 5px;border-radius:3px;
         white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.2);max-width:96px;overflow:hidden;text-overflow:ellipsis}
   .zbadge.dim{opacity:.28;filter:grayscale(.4)}
@@ -128,7 +125,7 @@
 <script>
 (function(){
   "use strict";
-  var H=554, W=1070, bounds=[[0,0],[H,W]];
+  var H=1400, W=2400, bounds=[[0,0],[H,W]];
   var PICK = /[?&]pick=1/.test(location.search);
   var map=L.map('map',{crs:L.CRS.Simple,zoomControl:true,attributionControl:false,
     zoomSnap:0.25,zoomDelta:0.5,wheelPxPerZoomLevel:110,inertia:true,keyboard:true,
@@ -158,10 +155,14 @@
     pName:document.getElementById('pName'), pCat:document.getElementById('pCat'),
     pGo:document.getElementById('pGo'), pIco:document.getElementById('pIco'), panelX:document.getElementById('panelX') };
 
-  function glyph(p,size){ return '<svg viewBox="0 0 24 24" fill="none" stroke="'+esc(p.color)+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="'+size+'" height="'+size+'"><path d="'+esc(p.d)+'"></path></svg>'; }
+  function fico(p,size,fill){ return '<svg viewBox="0 0 512 512" width="'+size+'" height="'+size+'" fill="'+fill+'"><path d="'+esc(p.d)+'"></path></svg>'; }
   function badgeHtml(p){
     return '<div class="zbadge" tabindex="0" role="button" aria-label="'+esc(p.label)+'" style="--c:'+esc(p.color)+'">'
-      +'<span class="zico">'+glyph(p,26)+'</span>'
+      +'<span class="zpin"><svg viewBox="0 0 34 42" width="34" height="42">'
+        +'<path d="M17 1C8.7 1 2 7.7 2 16c0 10.5 15 25 15 25s15-14.5 15-25C32 7.7 25.3 1 17 1z" fill="'+esc(p.color)+'" stroke="rgba(0,0,0,.42)" stroke-width="1"></path>'
+        +'<circle cx="17" cy="15.5" r="11" fill="rgba(255,255,255,.18)"></circle>'
+        +'<g transform="translate(8,6.5) scale(0.0352)" fill="#fff">'+(p.d?'<path d="'+esc(p.d)+'"></path>':'')+'</g>'
+      +'</svg></span>'
       +'<span class="zlbl">'+esc(p.label)+'</span></div>';
   }
 
@@ -178,7 +179,7 @@
     var p=m._zp;
     el.pName.textContent=p.label;
     el.pCat.textContent=(p.catLabel||''); el.pCat.style.color=p.color;
-    el.pIco.innerHTML=glyph(p,34);
+    el.pIco.innerHTML=fico(p,34,p.color);
     el.pGo.textContent=(lang==='ar'?TAR.travel:T.travel);
     el.pGo.onclick=function(){ if(p.screen) parent.postMessage({zoneGo:p.screen, MARKER_CLICK:p.id, v:1},'*'); };
     el.panel.classList.add('on');
@@ -249,7 +250,7 @@
     pins.forEach(function(p){
       p.catLabel=catLabel[p.cat]||'';
       if(!groups[p.cat]) groups[p.cat]=L.layerGroup().addTo(map);
-      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[38,52],iconAnchor:[19,19]});
+      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[120,60],iconAnchor:[60,41]});
       var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true,keyboard:true});
       m._zp=p; p._m=m;
       m.bindTooltip('<span>'+esc(p.label)+'</span><span class="cat">'+esc(p.catLabel)+'</span>',{className:'ztt',direction:'top',offset:[0,-20],opacity:1});
