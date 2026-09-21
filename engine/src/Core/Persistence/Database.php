@@ -90,10 +90,15 @@ final class Database
             ['founder-player', 'Vincenzo', 12, 4982, 48500, 150, 50, 3000, 500, 150, 50, 3000, 500, $now, 240, 180, 210, 165, 120000, 'Zone City'],
         );
 
+        // Real Torn Crimes 2.0 roster (from HAR: crimesData step=hub). Nerve cost rises with tier.
         $crimes = [
-            ['pickpocket', 'Pickpocket', 'نشل محفظة', 2, 8800, 120, 280, 8],
-            ['warehouse', 'Warehouse burglary', 'سرقة مستودع', 6, 7200, 700, 1400, 24],
-            ['armored-van', 'Armored van ambush', 'كمين عربة مدرعة', 12, 5400, 2400, 5200, 60],
+            ['searchforcash', 'Search for Cash', 'البحث عن نقود', 2, 9000, 80, 240, 6],
+            ['bootlegging', 'Bootlegging', 'تهريب الكحول', 3, 8500, 200, 520, 10],
+            ['graffiti', 'Graffiti', 'الكتابة على الجدران', 4, 8000, 150, 400, 12],
+            ['shoplifting', 'Shoplifting', 'السرقة من المتاجر', 5, 7500, 350, 900, 16],
+            ['pickpocketing', 'Pickpocketing', 'النشل', 6, 7000, 500, 1300, 20],
+            ['cardskimming', 'Card Skimming', 'نسخ البطاقات', 8, 6200, 900, 2400, 30],
+            ['burglary', 'Burglary', 'السطو على المنازل', 10, 5400, 1600, 4200, 44],
         ];
         foreach ($crimes as $crime) {
             $this->insertIgnore(

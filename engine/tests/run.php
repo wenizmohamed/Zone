@@ -50,8 +50,8 @@ try {
     check($status['cacheAdapter'] === 'memory' && $status['redisPortReady'] === true, 'cache port runs in memory and exposes a Redis production adapter');
     check(count($engine->modules()) >= 27, 'all ported OpenPBBG modules discovered from manifests (>=27)');
     check(count($engine->themes()) === 2, 'two independent themes discovered from manifests');
-    check(count($engine->crimes()) === 3, 'Crime module exposes its catalog');
-    check(count($engine->adminCrimes()) === 3, 'admin content service exposes enabled and disabled crime definitions');
+    check(count($engine->crimes()) === 7, 'Crime module exposes its catalog');
+    check(count($engine->adminCrimes()) === 7, 'admin content service exposes enabled and disabled crime definitions');
 
     $createdCrime = $engine->saveCrime('dockyard-run', [
         'name_en' => 'Dockyard run',
@@ -64,10 +64,10 @@ try {
         'enabled' => true,
     ], 'content-test');
     check($createdCrime['id'] === 'dockyard-run' && (float) $createdCrime['successRate'] === 64.0, 'admin creates a typed crime definition');
-    check(count($engine->crimes()) === 4, 'enabled admin-created crime appears in the public engine catalog');
+    check(count($engine->crimes()) === 8, 'enabled admin-created crime appears in the public engine catalog');
     $disabledCrime = $engine->saveCrime('dockyard-run', [...$createdCrime, 'enabled' => false], 'content-test');
-    check($disabledCrime['enabled'] === false && count($engine->crimes()) === 3, 'admin can disable a crime without deleting its definition');
-    check(count($engine->adminCrimes()) === 4, 'disabled crime remains available to the administrator');
+    check($disabledCrime['enabled'] === false && count($engine->crimes()) === 7, 'admin can disable a crime without deleting its definition');
+    check(count($engine->adminCrimes()) === 8, 'disabled crime remains available to the administrator');
     $crimeAudit = array_values(array_filter($engine->adminAuditLog(), static fn (array $entry): bool => $entry['target_type'] === 'crime'));
     $crimeAuditActions = array_column($crimeAudit, 'action');
     check(count($crimeAudit) === 2 && in_array('CrimeCreated', $crimeAuditActions, true) && in_array('CrimeUpdated', $crimeAuditActions, true), 'crime creation and update are preserved in the admin audit trail');
@@ -81,8 +81,8 @@ try {
 
     $engine->changeModule('achievements', 'disable');
     [$engine, $database] = build_engine($databasePath);
-    $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'pickpocket']);
-    $first = $engine->attemptCrime('pickpocket');
+    $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'searchforcash']);
+    $first = $engine->attemptCrime('searchforcash');
     check($first['success'] === true, 'crime outcome is calculated by the PHP engine');
     check($first['serverProof']['clientSuppliedOutcomeFields'] === 0, 'client cannot supply outcome or reward fields');
     check(count($engine->ledger()) === 1, 'successful reward creates one economy ledger entry');
@@ -90,8 +90,8 @@ try {
 
     $engine->changeModule('achievements', 'enable');
     [$engine, $database] = build_engine($databasePath);
-    $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'pickpocket']);
-    $second = $engine->attemptCrime('pickpocket');
+    $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'searchforcash']);
+    $second = $engine->attemptCrime('searchforcash');
     check($second['success'] === true, 'second server-authoritative crime succeeds under controlled test odds');
     check(count($engine->achievements()) === 1, 'enabled Achievement module reacts through CrimeSucceeded hook');
     $eventNames = array_column($engine->eventLog(), 'event_name');
@@ -103,7 +103,7 @@ try {
     check($engine->crimes() === [], 'uninstalled Crime module removes its API capability');
     $blocked = false;
     try {
-        $engine->attemptCrime('pickpocket');
+        $engine->attemptCrime('searchforcash');
     } catch (RuntimeException) {
         $blocked = true;
     }
@@ -165,10 +165,10 @@ try {
     $applicationRelease = $engine->publishRelease('application-test');
     check($applicationRelease['version'] === 3, 'application layer publishes the next immutable release');
     check($engine->activeRelease()['manifest']['branding']['name']['en'] === 'ZONE Application', 'application layer exposes the newly active manifest');
-    check(count($applicationRelease['manifest']['content']['crimes']) === 4, 'published release snapshots the complete admin crime catalogue');
+    check(count($applicationRelease['manifest']['content']['crimes']) === 8, 'published release snapshots the complete admin crime catalogue');
     check(count($applicationRelease['manifest']['content']['engineModules']) >= 27, 'published release snapshots the full ported module state (>=27)');
     $bootstrap = $engine->gameBootstrap();
-    check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 4, 'game bootstrap exposes the active published content snapshot');
+    check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 8, 'game bootstrap exposes the active published content snapshot');
     $engine->activateRelease($releaseOne['id'], 'application-test');
     check($engine->activeRelease()['version'] === 1, 'application layer can activate a prior release');
     check(count($engine->releaseHistory()) === 3, 'application layer exposes complete release history');
