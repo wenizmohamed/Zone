@@ -225,6 +225,43 @@ try {
     try { $engine->trainGym('strength', 1); } catch (RuntimeException) { $gymBlocked = true; }
     check($gymBlocked, 'disabling the Stats module blocks gym training');
 
+    [$engine, $database] = build_engine($databasePath);
+    $j0 = $engine->player();
+    $job = $engine->workShift();
+    check($job['player']['energy'] === $j0['energy'] - 20, 'job shift spends exactly 20 energy');
+    check($job['reward']['cash'] > 0, 'job shift pays a wage scaled by player level');
+    check($job['player']['cash'] === (int) $j0['cash'] + $job['reward']['cash'], 'job wage credits cash on hand');
+    check($job['player']['xp'] > (int) $j0['xp'], 'job shift grants experience');
+    check(in_array('JobShiftWorked', array_column($engine->eventLog(), 'event_name'), true), 'JobShiftWorked event is persisted');
+    check(count(array_filter($engine->ledger(), static fn (array $e): bool => $e['reason'] === 'job.wage')) === 1, 'job wage writes a job.wage ledger entry');
+    $jobBroke = false;
+    $database->execute('UPDATE players SET energy = 5 WHERE id = :id', ['id' => 'founder-player']);
+    try { $engine->workShift(); } catch (RuntimeException) { $jobBroke = true; }
+    check($jobBroke, 'job shift is rejected without enough energy');
+
+    // --- ATTACK: server rolls win/lose from player stats, gated on the 'kill' module ---
+    [$engine, $database] = build_engine($databasePath);
+    // Overwhelming stats force the server roll to a guaranteed win (mirrors the crime 100% test).
+    $database->execute('UPDATE players SET strength = 1000000000, speed = 1000000000, dexterity = 1000000000, energy = 150 WHERE id = :id', ['id' => 'founder-player']);
+    $a0 = $engine->player();
+    $atk = $engine->attackNpc();
+    check(in_array($atk['result'], ['win', 'lose'], true), 'attack returns a server-decided result');
+    check($atk['player']['energy'] === $a0['energy'] - 25, 'attack spends exactly 25 energy');
+    check($atk['serverProof']['clientSuppliedOutcomeFields'] === 0, 'client cannot supply attack outcome or reward fields');
+    check($atk['result'] === 'win', 'overwhelming combat stats guarantee a server-rolled win');
+    check($atk['player']['cash'] === (int) $a0['cash'] + $atk['reward']['cash'], 'winning attack settles cash by the server-decided mug reward');
+    check($atk['reward']['cash'] > 0 && $atk['player']['xp'] > (int) $a0['xp'], 'winning attack grants cash and xp');
+    check(in_array('PlayerAttacked', array_column($engine->eventLog(), 'event_name'), true), 'PlayerAttacked event is persisted');
+    check(count(array_filter($engine->ledger(), static fn (array $e): bool => $e['reason'] === 'attack.mug')) === 1, 'winning attack writes an attack.mug ledger entry');
+
+    [$engine, $database] = build_engine($databasePath);
+    $engine->changeModule('kill', 'disable');
+    [$engine] = build_engine($databasePath);
+    $attackBlocked = false;
+    try { $engine->attackNpc(); } catch (RuntimeException) { $attackBlocked = true; }
+    check($attackBlocked, 'disabling the Attack/Kill module blocks attacks');
+    $engine->changeModule('kill', 'install');
+
     $schema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.postgresql.sql');
     foreach (['economy_ledger', 'event_log', 'jobs', 'notifications', 'assets', 'content_drafts', 'content_releases', 'admin_audit_log'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");

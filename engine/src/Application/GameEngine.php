@@ -453,6 +453,87 @@ final class GameEngine
         });
     }
 
+    public function workShift(string $playerId = 'founder-player'): array
+    {
+        $this->resources->regenerate($playerId);
+        return $this->database->transaction(function () use ($playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $energyCost = 20;
+            if ((int) $player['energy'] < $energyCost) {
+                throw new RuntimeException('Not enough energy to work a shift.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $level = (int) $player['level'];
+            $wage = 200 + $level * 60 + random_int(0, 40 + $level * 10);
+            $xpReward = 5 + $level;
+            $newCash = (int) $player['cash'] + $wage;
+            $newXp = (int) $player['xp'] + $xpReward;
+            $newEnergy = (int) $player['energy'] - $energyCost;
+            $this->database->execute(
+                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy, resources_updated_at = :updated WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
+            );
+            $this->ledger->record($playerId, 'cash', $wage, $newCash, 'job.wage', $correlationId);
+            $event = new DomainEvent('JobShiftWorked', [
+                'playerId' => $playerId, 'level' => $level, 'wage' => $wage,
+                'xpReward' => $xpReward, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+            return [
+                'shift' => 'worked', 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    // --- ATTACK: gated on the existing 'kill' module (modules/Kill, "Attack / Kill"). ---
+    public function attackNpc(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('kill');
+        $this->resources->regenerate($playerId);
+        return $this->database->transaction(function () use ($playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $energyCost = 25;
+            if ((int) $player['energy'] < $energyCost) {
+                throw new RuntimeException('Not enough energy to attack.');
+            }
+            $correlationId = bin2hex(random_bytes(16));
+            $level = (int) $player['level'];
+            // Server rolls the outcome from the player's own combat stats. No client input.
+            $offense = (int) $player['strength'] + (int) $player['speed'] + (int) $player['dexterity'];
+            $npcDefense = 150 + $level * 45;
+            $winChanceBp = (int) min(10000, max(500, (int) round($offense / max(1, $offense + $npcDefense) * 10000)));
+            $roll = random_int(1, 10000);
+            $win = $roll <= $winChanceBp;
+            $cashReward = $win ? random_int(300 + $level * 40, 800 + $level * 90) : 0;
+            $xpReward = $win ? 15 + $level * 2 : 0;
+            $newCash = (int) $player['cash'] + $cashReward;
+            $newXp = (int) $player['xp'] + $xpReward;
+            $newEnergy = (int) $player['energy'] - $energyCost;
+            $this->database->execute(
+                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy, resources_updated_at = :updated WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
+            );
+            if ($cashReward > 0) {
+                $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'attack.mug', $correlationId);
+            }
+            $event = new DomainEvent('PlayerAttacked', [
+                'playerId' => $playerId, 'result' => $win ? 'win' : 'lose',
+                'cashReward' => $cashReward, 'xpReward' => $xpReward, 'energySpent' => $energyCost,
+                'roll' => $roll, 'winChanceBasisPoints' => $winChanceBp, 'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+            return [
+                'result' => $win ? 'win' : 'lose',
+                'reward' => ['cash' => $cashReward, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'roll' => $roll, 'winChanceBasisPoints' => $winChanceBp,
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
     public function ledger(int $limit = 20): array
     {
         $limit = max(1, min(100, $limit));

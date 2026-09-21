@@ -28,6 +28,40 @@
 <script src="./support.js"></script>
 <script src="./platform-runtime.js"></script>
 <link rel="stylesheet" href="/engine/theme.css">
+<style id="zone-obsidian-final">
+/* ZONE — OBSIDIAN NOIR (forced, direct-hex, highest specificity) */
+html:not([data-theme="light"]){
+  --bg:#080b12 !important; --deep:#05070c !important; --edge:#03040a !important; --track:#04060c !important; --ticker:#070a11 !important; --line:#151a24 !important;
+  --panel:#111623 !important; --panel2:#0d1220 !important; --panelhi:#1a2233 !important; --z1:#131a29 !important; --z2:#182135 !important; --selbg:#12233a !important; --btn:#161d2e !important;
+  --hd1:#141b2b !important; --hd2:#0a0e18 !important; --tb1:#1c2740 !important; --tb2:#111828 !important;
+  --border:#233049 !important; --border2:#2c3a58 !important; --border3:#3a4c72 !important;
+  --t1:#f4f7ff !important; --t2:#dde6f5 !important; --t3:#b7c4de !important; --t4:#8493b3 !important; --mu:#6f7d9c !important; --mu2:#4a566f !important; --ico:#aab8d6 !important;
+  --acc:#31e0ff !important; --acc2:#00b4dc !important; --accText:#7defff !important; --accFill1:#2ad4ff !important; --accFill2:#0091c4 !important; --onAcc:#02121a !important; --on:#02121a !important;
+  --activebg:#0f2b3a !important; --activefg:#7defff !important;
+  --money:#41e08a !important; --good:#54d98c !important; --bad:#ff5d6c !important; --bad2:#ff3b52 !important; --gold:#f2c14e !important; --link:#5cc2ff !important;
+}
+body{ background:
+  radial-gradient(1200px 620px at 84% -14%, rgba(49,224,255,.10), transparent 60%),
+  radial-gradient(900px 700px at -8% 4%, rgba(65,224,138,.06), transparent 55%),
+  #080b12 !important; background-attachment:fixed; }
+[data-zshell], [data-zplayercard]{ backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2); box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 18px 40px -16px rgba(0,0,0,.8); }
+[data-zheaderbar]{ position:relative; background:linear-gradient(180deg,#0c1120,#070a12)!important; backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25); }
+[data-zheaderbar]::after{ content:""; position:absolute; inset-inline:0; bottom:-1px; height:1px; background:linear-gradient(90deg,transparent,var(--acc),transparent); opacity:.6; }
+[data-znav] button{ transition:background .16s ease,color .16s ease,box-shadow .16s ease; }
+[data-znav] button:hover{ box-shadow:inset 3px 0 0 var(--acc), inset 0 0 26px -12px var(--acc); }
+[data-zhead]{ color:var(--t2); letter-spacing:.04em; }
+[data-zfig]{ font-variant-numeric:tabular-nums; text-shadow:0 0 16px rgba(49,224,255,.12); }
+[data-zticker]{ -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
+button{ border-radius:6px; transition:border-color .16s ease, box-shadow .18s ease, transform .1s ease; }
+button:not(:disabled):hover{ border-color:var(--acc)!important; box-shadow:0 0 0 1px rgba(49,224,255,.22), 0 8px 22px -12px rgba(49,224,255,.6); }
+button:not(:disabled):active{ transform:translateY(1px); }
+button:focus-visible{ outline:2px solid var(--acc); outline-offset:2px; }
+[style*="var(--accFill1)"]{ box-shadow:0 8px 22px -8px rgba(49,224,255,.55), 0 1px 0 rgba(255,255,255,.18) inset; }
+::-webkit-scrollbar-thumb{ background:linear-gradient(var(--border3),var(--border2))!important; border-radius:6px; }
+::-webkit-scrollbar-thumb:hover{ background:var(--acc)!important; }
+::selection{ background:rgba(49,224,255,.3); color:#fff; }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} body{background-attachment:scroll} }
+</style>
 </head>
 <body>
 <x-dc>
@@ -122,6 +156,141 @@
       #zone-result > div:last-child > bdi{margin-inline-start:47px}
     }
     :root{--acc:var(--theme-accent,#a3d900);--gold:var(--theme-accent-2,#e0b030);--bg:var(--theme-bg,#191919);--panel:var(--theme-panel,#232323);--panel2:var(--theme-panel-2,#1e1e1e);--t1:var(--theme-text,#eee);--t4:var(--theme-muted,#aaa)}
+/* ===== OBSIDIAN GLASS THEME (ZONE breakthrough) ===== */
+:root{
+  /* ground — cool obsidian graphite, faint blue undertone reads as glass */
+  --bg:var(--theme-bg,#0c0e13);
+  --deep:#08090d;
+  --edge:#050609;
+  --track:#06080b;
+  --ticker:#090b10;
+  --line:#14171d;
+  /* elevated surfaces — translucent so the frosted blur has something to bite */
+  --panel:var(--theme-panel,rgba(23,27,34,.86));
+  --panel2:var(--theme-panel-2,#12151b);
+  --panelhi:#20242d;
+  --z1:#15181f;
+  --z2:#1a1e27;
+  --selbg:#18220f;
+  --btn:#1c2029;
+  /* header + title-bar gradients */
+  --hd1:#181c24;
+  --hd2:#0d1015;
+  --tb1:#232833;
+  --tb2:#161a21;
+  /* structure / hairlines — cool, low, a hint of luminance */
+  --border:#262b34;
+  --border2:#313742;
+  --border3:#3c4350;
+  /* type ramp — crisp cool white down to muted slate (all AA+ on graphite) */
+  --t1:var(--theme-text,#f2f4f8);
+  --t2:#dbe0e8;
+  --t3:#b6bdc9;
+  --t4:var(--theme-muted,#8b93a1);
+  --mu:#767e8c;
+  --mu2:#4d5460;
+  --ico:#aeb6c2;
+  /* THE single confident accent — luminous signal-lime, ZONE's identity refined */
+  --acc:var(--theme-accent,#b9f13a);
+  --acc2:#8fd400;
+  --accText:#c7f556;
+  --accFill1:#b6ef3a;
+  --accFill2:#7fc00e;
+  --onAcc:#0b1400;
+  --on:#0b1400;
+  --activebg:#1f2a12;
+  --activefg:#cef565;
+  /* semantics — money stays lime-family, loss goes premium coral, chain gold warms */
+  --money:#9fe63f;
+  --good:#86d64a;
+  --bad:#ff6a5a;
+  --bad2:#ff4d3d;
+  --gold:var(--theme-accent-2,#e8b53a);
+  --link:#6db4f2;
+}
+/* ================= ZONE — OBSIDIAN GLASS CRAFT LAYER ================= */
+
+/* [1] DEFEAT the legacy theme-bridge :root (line ~124). It re-routes 7 tokens
+   through var(--theme-*, OLD-HEX); those --theme-* are never set, so it silently
+   reverts a plain :root swap on bg/panel/text/accent. Scoped to
+   :not([data-theme=light]) so it out-ranks the bridge in dark/default
+   (0,1,1 > 0,1,0) yet NEVER clobbers the intact light theme (fixes the leak a
+   bare html:root would cause by tying html[data-theme=light]). */
+html:not([data-theme="light"]){
+  --acc:var(--theme-accent,#b9f13a);
+  --gold:var(--theme-accent-2,#e8b53a);
+  --bg:var(--theme-bg,#0c0e13);
+  --panel:var(--theme-panel,rgba(23,27,34,.86));
+  --panel2:var(--theme-panel-2,#12151b);
+  --t1:var(--theme-text,#f2f4f8);
+  --t4:var(--theme-muted,#8b93a1);
+}
+
+/* [2] ambient depth: cool graphite + a whisper of accent glow behind the app */
+body{
+  background:
+    radial-gradient(1100px 560px at 82% -12%,rgba(185,241,58,.06),transparent 60%),
+    radial-gradient(820px 640px at -6% 2%,rgba(109,180,242,.05),transparent 55%),
+    var(--bg);
+  background-attachment:fixed;
+}
+
+/* [3] frosted-glass panels: real blur + layered shadow, dark-scoped so the
+   light theme keeps its own soft-shadow treatment */
+[data-zpanel]{backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15)}
+html:not([data-theme="light"]) [data-zpanel]{
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,
+             0 14px 34px -12px rgba(0,0,0,.7),
+             0 2px 8px rgba(0,0,0,.4)!important;
+}
+
+/* [4] self-anchored frosted header + accent hairline underglow */
+[data-zheaderbar]{position:relative;backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2)}
+[data-zheaderbar]::after{content:"";position:absolute;inset-inline:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.5}
+
+/* [5] section labels a controlled step down from pure white for hierarchy */
+[data-zhead]{color:var(--t2)}
+
+/* [6] nav: smooth motion + inner glow off the active/hovered edge */
+[data-znav] button{transition:background .16s ease,color .16s ease,box-shadow .16s ease,border-color .16s ease}
+[data-znav] button:hover{box-shadow:inset 3px 0 0 var(--acc),inset 0 0 24px -12px var(--acc)}
+
+/* [7] table rows: graphite sheen sweeping away from an accent bar */
+[data-zrow]{transition:background .14s ease,box-shadow .14s ease}
+[data-zrow]:hover{background:linear-gradient(90deg,var(--selbg),transparent 72%)!important;box-shadow:inset 3px 0 0 var(--acc)}
+
+/* [8] buttons: radius floor, tactile press, danger-lit hover, real focus ring */
+button{border-radius:6px;transition:border-color .16s ease,box-shadow .18s ease,transform .1s ease,filter .16s ease}
+button:not(:disabled):hover{border-color:var(--acc)!important;box-shadow:0 0 0 1px rgba(185,241,58,.18),0 8px 20px -12px rgba(185,241,58,.55)}
+button:not(:disabled):active{transform:translateY(1px)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:0 0 0 3px rgba(185,241,58,.28)}
+
+/* [9] accent-fill CTAs carry a true lime glow (hits all 10 inline --accFill1 buttons) */
+[style*="var(--accFill1)"]{box-shadow:0 8px 20px -8px rgba(185,241,58,.5),0 1px 0 rgba(255,255,255,.22) inset}
+
+/* [10] ticker reads like a premium rail, faded at both ends */
+[data-zticker]{-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+
+/* [11] figures: tabular alignment + faint money luminance */
+[data-zfig]{font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(159,230,63,.10)}
+
+/* [12] glossy scrollbar + accent text selection */
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--border3),var(--border2))!important;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--acc)!important}
+::selection{background:rgba(185,241,58,.28);color:var(--t1)}
+
+/* [13] accessibility: honor reduced-motion + high-contrast/forced-colors */
+@media (prefers-reduced-motion:reduce){
+  *,[data-zrow],[data-znav] button,button{transition:none!important;animation:none!important}
+  body{background-attachment:scroll}
+}
+@media (forced-colors:active){
+  button:focus-visible{outline:2px solid CanvasText}
+  [data-zheaderbar]::after{display:none}
+}
+
   </style>
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
@@ -222,6 +391,8 @@
           <strong style="color:#f0a090">{{ status.title }}</strong><span style="color:var(--t3)">{{ status.body }}</span>
           <bdi data-zfig="1" style="margin-inline-start:auto;font-weight:600;font-size:21px;color:#fff">{{ status.left }}</bdi>
           <button onClick="{{ status.act }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
+          <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ status.heal }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
+          <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ status.heal }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
         </div>
       </sc-if>
       <sc-if value="{{ result }}" hint-placeholder-val="{{ false }}">
@@ -415,6 +586,14 @@
           <div style="position:absolute;left:{{ herePin.x }}%;top:{{ herePin.y }}%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:var(--acc);border:2px solid #fff;box-shadow:0 0 0 4px rgba(163,217,0,.35),0 0 12px var(--acc);animation:zblink 1.6s infinite"></div>
         </div>
         </sc-if>
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
+          <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.here }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
+        </div>
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
+          <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.here }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
+        </div>
         <div>
           <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.keyOfSymbols }}</div>
           <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px">
@@ -1172,6 +1351,24 @@ class Component extends DCLogic {
     this.applyServerPlayer(outcome.player);
     this.p.hospUntil = 0;
   }
+  async travel(city) {
+    const response = await fetch('/api/v1/travel', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ city }) });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Travel API ' + response.status));
+    this.applyServerPlayer(outcome.player);
+    this.toast((this.state.lang === 'ar' ? 'وصلت' : 'Arrived') + ' · ' + city);
+  }
+  async work(t) {
+    const response = await fetch('/api/v1/jobs/work', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: '{}' });
+    const outcome = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+    if (!response.ok) throw new Error(outcome.error || ('Jobs API ' + response.status));
+    this.applyServerPlayer(outcome.player);
+    const pay = Number(outcome.pay ?? outcome.reward?.cash ?? 0);
+    this.p.jobPts += Number(outcome.jobPts ?? outcome.points ?? 3);
+    this.p.ctr.shifts++;
+    this.log('work', { job: this.p.job, cash: money(pay) }, 'good');
+    this.result('cash', t.jobNames[this.p.job], fmt(t.resPts, { n: 3 }), '+' + money(pay));
+  }
   renderVals() {
     const { lang, screen } = this.state, t = T[lang], p = this.p, now = Date.now();
     const customPage = CUSTOM_PAGE_MAP[screen] || null;
@@ -1185,7 +1382,7 @@ class Component extends DCLogic {
     const d = new Date(), clock = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(x => String(x).padStart(2, '0')).join(':');
     const bailSelf = p.level * 500;
     const status = jailed ? { title: t.jail, body: t.jailBody, left: mmss(p.jailUntil - now), actLabel: fmt(t.bailSelf, { c: money(bailSelf) }), act: () => { if (p.cash < bailSelf) return this.toast(t.toast.noCash, true); p.cash -= bailSelf; p.jailUntil = 0; this.log('bail', { cash: money(bailSelf) }, 'bad'); this.save(); this.forceUpdate(); } }
-      : hosp ? { title: t.hospital, body: t.hospBody, left: mmss(p.hospUntil - now), actLabel: t.useKit, act: () => { if (!p.inv.smallkit) return this.toast(t.toast.noCash, true); p.inv.smallkit--; p.hospUntil = 0; this.gain('life', 250); this.log('use', { item: 'smallkit' }, 'good'); this.save(); this.forceUpdate(); } } : null;
+      : hosp ? { title: t.hospital, body: t.hospBody, left: mmss(p.hospUntil - now), actLabel: t.useKit, act: () => { if (!p.inv.smallkit) return this.toast(t.toast.noCash, true); p.inv.smallkit--; p.hospUntil = 0; this.gain('life', 250); this.log('use', { item: 'smallkit' }, 'good'); this.save(); this.forceUpdate(); }, healLabel: (lang === 'ar' ? 'ادفع للعلاج' : 'Pay to heal'), heal: () => { this.healSelf(t).then(() => { this.save(); this.forceUpdate(); }).catch(err => this.toast(err.message || String(err), true)); } } : null;
     const LK = { crime: k => (t.cr[k] ? t.cr[k][0] : k), item: k => t.items[k] || k,
       who: k => t.opp[k] || k, stat: k => t[k] || k, job: k => t.jobNames[k] || k,
       gym: k => (t.gyms[k] !== undefined ? t.gyms[k] : k), prop: k => t.props[k] || k };
@@ -1252,7 +1449,8 @@ class Component extends DCLogic {
       liveMap: this.state.mapMode === 'live', gmapsMap: this.state.mapMode === 'gmaps', artMap: this.state.mapMode === 'art',
       pins: PINS.map(([pl, s, cat, x, y]) => ({ label: t.places[pl] || t.nav[pl], go: () => this.go(s), color: PINCOLOR[cat], d: LU(PINICON[pl]), x, y })),
       herePin: (() => { const pn = PINS.find(q => q[1] === (this.state.lastScreen || 'home')) || PINS[0]; return { x: pn[3], y: pn[4] + 1.5 }; })(),
-      legend: Object.keys(PINCOLOR).map(k => ({ color: PINCOLOR[k], label: t.legend[k], d: LU({ fin: 'cash', admin: 'hof', shop: 'market', leisure: 'casino', estate: 'properties', misc: 'crimes' }[k]) })),
+      legend: Object.keys(PINCOLOR).map(k => ({ color: PINCOLOR[k], label: t.legend[k], d: LU({ fin: 'cash', admin: 'hof', shop: 'market', leisure: 'casino', estate: 'properties', misc: 'crimes' }[k]) })),      travelLabel: (lang === 'ar' ? 'السفر' : 'Travel'),
+      travelDests: [{ n: 'Zone City', ar: 'مدينة زون' }, { n: 'Riyadh', ar: 'الرياض' }, { n: 'Dubai', ar: 'دبي' }, { n: 'Cairo', ar: 'القاهرة' }, { n: 'Beirut', ar: 'بيروت' }, { n: 'Istanbul', ar: 'إسطنبول' }].map(cy => { const here = (p.city || 'Zone City') === cy.n; return { id: cy.n, name: lang === 'ar' ? cy.ar : cy.n, here, bg: here ? 'var(--activebg)' : 'var(--btn)', fg: here ? 'var(--activefg)' : 'var(--t3)', go: () => this.act(tt => this.travel(cy.n)) }; }),
       districts: DISTRICTS.map(dd => ({ ...dd, name: t.districts[dd.id], here: p.lastDistrict === dd.id, places: dd.places.map(([pl, s]) => ({ label: t.places[pl], go: () => this.go(s) })) })),
       opps: OPPS.map(o => { const ratio = totalStats / (o.str + o.def + o.spd + o.dex); const odds = ratio > 1.3 ? 'easy' : ratio > 0.8 ? 'fair' : 'hard'; return { name: t.opp[o.id], factionName: t.oppFac[o.id], status: t.oppStatus.ok, lvl: o.lvl, str: num(o.str), def: num(o.def), spd: num(o.spd), dex: num(o.dex), odds: t.oddsN[odds], oddsColor: odds === 'easy' ? 'var(--acc)' : odds === 'fair' ? 'var(--gold)' : '#e05a4a', disabled: energyNow < 25, attack: () => this.act(tt => this.fight(o, tt)) }; }),
       fight: (() => {
@@ -1290,8 +1488,7 @@ class Component extends DCLogic {
       invEmpty: this.state.itemTab !== 'armory' && !Object.keys(p.inv).some(k => p.inv[k] > 0 && (this.state.itemTab === 'all' || CAT[k].type === this.state.itemTab)),
       sel: { name: t.items[sel], type: t.itemType[sc.type], desc: t.itemDesc[sel], rows: selRows,
         grade: sc.mult ? 'T' + Math.min(5, Math.max(1, Math.round(sc.mult * 2.4))) : sc.red ? 'T' + Math.round(sc.red * 12) : 'T1' },
-      job: { name: t.jobNames[p.job], pay: money(job.pay * payMul), pts: num(p.jobPts), next: num(Math.ceil((p.jobPts + 1) / 50) * 50), energy: job.energy, disabled: energyNow < job.energy || !!this.state.busy }, workLabel: this.state.busy === 'work' ? '…' : t.workShift, workBusy: this.state.busy === 'work' ? 1 : null, work: () => this.resolve('work', 620, tt => { if (this.cur('energy') < job.energy) return this.toast(tt.toast.noEnergy, true); this.spend('energy', job.energy); const pay = Math.round(job.pay * payMul); p.cash += pay; p.jobPts += 3; p.ctr.shifts++; this.addXp(4); this.log('work', { job: p.job, cash: money(pay) }, 'good');
-        this.result('cash', tt.jobNames[p.job], fmt(tt.resPts, { n: 3 }), '+' + money(pay)); }),
+      job: { name: t.jobNames[p.job], pay: money(job.pay * payMul), pts: num(p.jobPts), next: num(Math.ceil((p.jobPts + 1) / 50) * 50), energy: job.energy, disabled: energyNow < job.energy || !!this.state.busy }, workLabel: this.state.busy === 'work' ? '…' : t.workShift, workBusy: this.state.busy === 'work' ? 1 : null, work: () => this.resolve('work', 620, tt => { if (this.cur('energy') < job.energy) return this.toast(tt.toast.noEnergy, true); return this.work(tt); }),
       jobs: JOBS.map(j => { const cur = j.id === p.job, locked = p.level < j.lvl; return { name: t.jobNames[j.id], desc: t.jobDesc[j.id], pay: money(j.pay), lvl: j.lvl, disabled: cur || locked,
         img: 'art/j_' + j.id + '.jpg', imgOpacity: locked ? .38 : cur ? 1 : .85, filter: locked ? 'grayscale(1)' : 'none', locked,
         lockedAttr: locked ? '1' : null, nameColor: locked ? 'var(--t4)' : 'var(--t1)',

@@ -223,6 +223,14 @@ try {
         $body = request_json();
         json_response($engine->playBlackjack((int) ($body['bet'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
     }
+    if ($method === 'POST' && $path === '/api/v1/jobs/work') {
+        request_json();
+        json_response($engine->workShift($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
+    if ($method === 'POST' && $path === '/api/v1/attack') {
+        request_json();
+        json_response($engine->attackNpc($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);
