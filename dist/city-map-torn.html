@@ -2,94 +2,305 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zone City</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Zone City Map</title>
 <link rel="stylesheet" href="vendor/leaflet/leaflet.min.css">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body,#map{height:100%;width:100%}
   body{background:#0e1116;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow:hidden}
-  #map{background:#0e1116}
+  #map{background:#0e1116;outline:none}
   .leaflet-container{background:#0e1116;font-family:inherit}
   .leaflet-control-attribution{display:none}
-  /* Torn-style rounded-square building badge */
-  .zbadge{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:transform .12s ease}
-  .zbadge:hover{transform:translateY(-2px);z-index:1000}
-  .zico{width:38px;height:38px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.62) 38%,rgba(255,255,255,0) 72%);
-       filter:drop-shadow(0 1px 2px rgba(20,26,38,.32));display:grid;place-items:center;transition:transform .12s ease}
-  .zbadge:hover .zico{transform:scale(1.15)}
+  .leaflet-bar a{background:#161b22;color:#dfe6ee;border-bottom-color:#0e1116;width:30px;height:30px;line-height:30px;font-size:18px}
+  .leaflet-bar a:hover{background:#232b36;color:#31e0ff}
+
+  /* ---- marker: delicate colored line-art, no solid square (Torn style) ---- */
+  .zmk{background:none;border:0}
+  .zbadge{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .12s ease;outline:none}
+  .zbadge:focus-visible .zico{box-shadow:0 0 0 3px rgba(49,224,255,.7)}
+  .zico{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+        background:radial-gradient(circle,rgba(255,255,255,.66) 38%,rgba(255,255,255,0) 72%);
+        filter:drop-shadow(0 1px 2px rgba(20,26,38,.34));transition:transform .12s ease}
   .zico svg{width:26px;height:26px}
-  .zlbl{font-size:9px;font-weight:600;color:#26303f;background:rgba(255,255,255,.82);border:1px solid rgba(0,0,0,.08);
-        padding:2px 6px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.3)}
+  .zbadge:hover .zico,.zbadge.sel .zico{transform:scale(1.16)}
+  .zbadge.sel .zico::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--c,#31e0ff);
+        box-shadow:0 0 8px var(--c,#31e0ff)}
+  .zlbl{font-size:9px;font-weight:600;color:#26303f;background:rgba(255,255,255,.86);padding:0 5px;border-radius:3px;
+        white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.2);max-width:96px;overflow:hidden;text-overflow:ellipsis}
+  .zbadge.dim{opacity:.28;filter:grayscale(.4)}
+  /* pulsing "you are here" */
   .zhere{width:16px;height:16px;border-radius:50%;background:#31e0ff;border:2.5px solid #fff;
-         box-shadow:0 0 0 3px rgba(20,26,38,.4),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.45);animation:zpulse 1.6s infinite}
-  @keyframes zpulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .zlegend{background:rgba(20,24,30,.86);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;
-           color:#e7ecf2;font-size:11px;backdrop-filter:blur(4px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
-  .zlegend .row{display:flex;align-items:center;gap:7px;margin:3px 0}
-  .zlegend .sw{width:16px;height:16px;border-radius:5px;border:1px solid rgba(255,255,255,.55);box-shadow:0 1px 2px rgba(0,0,0,.4);flex:none}
+         box-shadow:0 0 0 3px rgba(20,26,38,.4),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.45)}
+  .zhere::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(49,224,255,.55);animation:zpulse 1.8s ease-out infinite}
+  @keyframes zpulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+
+  /* ---- tooltip ---- */
+  .leaflet-tooltip.ztt{background:#161b22;border:1px solid rgba(255,255,255,.14);color:#eef3f8;border-radius:7px;
+        font-size:11px;font-weight:600;padding:4px 9px;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+  .leaflet-tooltip.ztt::before{display:none}
+  .ztt .cat{display:block;font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;opacity:.6;margin-top:1px}
+
+  /* ---- search ---- */
+  .ui-search{position:absolute;top:12px;left:50px;z-index:800;width:210px}
+  .ui-search input{width:100%;background:rgba(20,24,30,.92);border:1px solid rgba(255,255,255,.16);color:#eef3f8;
+        border-radius:8px;padding:8px 30px 8px 12px;font:inherit;font-size:12px;outline:none;box-shadow:0 4px 14px rgba(0,0,0,.4);backdrop-filter:blur(4px)}
+  .ui-search input:focus{border-color:#31e0ff}
+  .ui-search .ico{position:absolute;top:9px;right:10px;color:#7f8 da3;pointer-events:none}
+  .ui-results{margin-top:4px;background:rgba(18,22,28,.97);border:1px solid rgba(255,255,255,.14);border-radius:8px;
+        overflow:hidden;box-shadow:0 8px 22px rgba(0,0,0,.5);display:none}
+  .ui-results.on{display:block}
+  .ui-results button{display:flex;align-items:center;gap:8px;width:100%;text-align:start;background:none;border:0;
+        color:#dfe6ee;font:inherit;font-size:12px;padding:7px 10px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.06)}
+  .ui-results button:hover,.ui-results button.hi{background:rgba(49,224,255,.12)}
+  .ui-results .dot{width:9px;height:9px;border-radius:2px;flex:none}
+
+  /* ---- filter chips ---- */
+  .ui-chips{position:absolute;top:12px;right:12px;z-index:800;display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end;max-width:60%}
+  .ui-chips button{background:rgba(20,24,30,.9);border:1px solid rgba(255,255,255,.16);color:#c7d0da;border-radius:20px;
+        padding:5px 11px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;
+        backdrop-filter:blur(4px);transition:all .12s}
+  .ui-chips button .dot{width:9px;height:9px;border-radius:3px}
+  .ui-chips button.off{opacity:.4}
+  .ui-chips button:hover{border-color:rgba(255,255,255,.4)}
+
+  /* ---- side panel ---- */
+  .panel{position:absolute;top:0;right:0;bottom:0;width:250px;max-width:78%;z-index:900;
+        background:rgba(16,20,26,.97);border-left:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);
+        transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.7,.3,1);
+        box-shadow:-10px 0 30px rgba(0,0,0,.4);display:flex;flex-direction:column;padding:16px}
+  .panel.on{transform:translateX(0)}
+  .panel .x{position:absolute;top:10px;right:12px;background:none;border:0;color:#8b97a8;font-size:20px;cursor:pointer;line-height:1}
+  .panel .pico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;margin-bottom:10px;
+        background:radial-gradient(circle,rgba(255,255,255,.1) 40%,transparent 72%)}
+  .panel .pico svg{width:34px;height:34px}
+  .panel h2{color:#f1f5fa;font-size:18px;font-weight:700;margin-bottom:2px}
+  .panel .pcat{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  .panel .go{margin-top:auto;background:linear-gradient(#31e0ff,#1aa9c9);color:#04222b;font-weight:800;border:0;
+        border-radius:9px;padding:12px;font:inherit;font-size:13px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;
+        box-shadow:0 4px 14px rgba(49,224,255,.3)}
+  .panel .go:hover{filter:brightness(1.08)}
+
+  /* ---- legend ---- */
+  .zlegend{background:rgba(18,22,28,.9);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:8px 10px;
+        color:#e7ecf2;font-size:11px;backdrop-filter:blur(4px);box-shadow:0 4px 14px rgba(0,0,0,.4)}
   .zlegend .ttl{font-weight:700;margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase;font-size:10px;color:#9fb0c2}
-  .leaflet-bar a{background:#1a1f27;color:#dfe6ee;border-bottom-color:#0e1116}
-  .leaflet-bar a:hover{background:#242b35}
+  .zlegend .row{display:flex;align-items:center;gap:7px;margin:3px 0}
+  .zlegend .sw{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.5);flex:none}
+  .ui-recenter{width:30px;height:30px;line-height:30px;text-align:center;background:#161b22;color:#dfe6ee;
+        border:1px solid rgba(255,255,255,.14);border-radius:4px;cursor:pointer;font-size:15px}
+  .ui-recenter:hover{color:#31e0ff}
+
+  [dir="rtl"] .ui-search{left:auto;right:50px}
+  [dir="rtl"] .ui-chips{right:auto;left:12px;justify-content:flex-start}
+  [dir="rtl"] .panel{right:auto;left:0;border-left:0;border-right:1px solid rgba(255,255,255,.12);transform:translateX(-105%)}
+  [dir="rtl"] .panel.on{transform:translateX(0)}
+  @media (prefers-reduced-motion:reduce){.zhere::before{animation:none}.panel{transition:none}}
+  @media (max-width:560px){
+    .ui-search{width:150px;left:48px}
+    .ui-chips{max-width:44%}
+    .panel{top:auto;left:0;right:0;width:100%;max-width:100%;height:auto;transform:translateY(105%);border-left:0;border-top:1px solid rgba(255,255,255,.12);flex-direction:row;align-items:center;gap:12px;padding:12px}
+    .panel.on{transform:translateY(0)}
+    .panel .go{margin-top:0;margin-left:auto;padding:10px 16px}
+    .panel .pcat{margin-bottom:0}
+  }
 </style>
 </head>
 <body>
-<div id="map"></div>
+<div id="map" tabindex="0" aria-label="Zone City interactive map"></div>
+
+<div class="ui-search">
+  <input id="search" type="text" placeholder="Search places..." aria-label="Search places" autocomplete="off">
+  <span class="ico">&#128269;</span>
+  <div class="ui-results" id="results"></div>
+</div>
+<div class="ui-chips" id="chips"></div>
+
+<div class="panel" id="panel" role="dialog" aria-label="Location details">
+  <button class="x" id="panelX" aria-label="Close">&times;</button>
+  <div class="pico" id="pIco"></div>
+  <h2 id="pName"></h2>
+  <div class="pcat" id="pCat"></div>
+  <button class="go" id="pGo"></button>
+</div>
+
 <script src="vendor/leaflet/leaflet.min.js"></script>
 <script>
 (function(){
-  var H=100, W=192.6, bounds=[[0,0],[H,W]];
-  var map=L.map('map',{crs:L.CRS.Simple,minZoom:-2,maxZoom:3,zoomControl:true,
-    attributionControl:false,zoomSnap:.25,wheelPxPerZoomLevel:120,maxBoundsViscosity:.9});
-  L.imageOverlay('city-illustrated.svg',bounds).addTo(map);
+  "use strict";
+  var H=554, W=1070, bounds=[[0,0],[H,W]];
+  var PICK = /[?&]pick=1/.test(location.search);
+  var map=L.map('map',{crs:L.CRS.Simple,zoomControl:true,attributionControl:false,
+    zoomSnap:0.25,zoomDelta:0.5,wheelPxPerZoomLevel:110,inertia:true,keyboard:true,
+    minZoom:-5,maxZoom:5});
+  L.control.zoom({position:'topleft'});
+  L.imageOverlay('city-illustrated.svg',bounds,{className:'zart'}).addTo(map);
   map.fitBounds(bounds);
   var fit=map.getZoom();
-  map.setMinZoom(fit-0.5); map.setMaxZoom(fit+2.5);
-  map.setMaxBounds(L.latLngBounds(bounds).pad(0.12));
+  map.setMinZoom(fit-0.5); map.setMaxZoom(fit+3);
+  map.setMaxBounds(L.latLngBounds(bounds).pad(0.15));
 
-  var ll=function(x,y){ return [H-(y/100*H), x/100*W]; };  // pin %(x,y from top-left) -> latLng
-  var esc=function(s){ return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); };
-  var markers=[], hereMk=null, legendCtl=null;
+  // subtle ambient vignette (transform/opacity-safe, pointer-events none)
+  var vig=document.createElement('div');
+  vig.style.cssText='position:absolute;inset:0;z-index:450;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 62%,rgba(10,14,22,.34) 100%)';
+  map.getContainer().appendChild(vig);
 
+  function ll(x,y){ return [H*(1-y/100), x/100*W]; }  // pin %(from top-left) -> CRS.Simple [lat,lng]
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  var lang='en', dir='ltr', T={ search:'Search places...', travel:'Travel here', all:'All', key:'Key of Symbols' };
+  var TAR={ search:'ابحث عن مكان...', travel:'السفر إلى هنا', all:'الكل', key:'مفتاح الرموز' };
+
+  var groups={}, markers=[], hereMk=null, legendCtl=null, recenterCtl=null;
+  var selected=null, activeCats=null, lastData=null;
+  var el={ search:document.getElementById('search'), results:document.getElementById('results'),
+    chips:document.getElementById('chips'), panel:document.getElementById('panel'),
+    pName:document.getElementById('pName'), pCat:document.getElementById('pCat'),
+    pGo:document.getElementById('pGo'), pIco:document.getElementById('pIco'), panelX:document.getElementById('panelX') };
+
+  function glyph(p,size){ return '<svg viewBox="0 0 24 24" fill="none" stroke="'+esc(p.color)+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" width="'+size+'" height="'+size+'"><path d="'+esc(p.d)+'"></path></svg>'; }
   function badgeHtml(p){
-    return '<div class="zbadge">'
-      +'<span class="zico"><svg viewBox="0 0 24 24" fill="none" stroke="'+esc(p.color)+'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="'+(p.d||'')+'"></path></svg></span>'
+    return '<div class="zbadge" tabindex="0" role="button" aria-label="'+esc(p.label)+'" style="--c:'+esc(p.color)+'">'
+      +'<span class="zico">'+glyph(p,26)+'</span>'
       +'<span class="zlbl">'+esc(p.label)+'</span></div>';
   }
-  function render(data){
-    markers.forEach(function(m){map.removeLayer(m);}); markers=[];
-    if(hereMk){map.removeLayer(hereMk);hereMk=null;}
-    (data.zonePins||[]).forEach(function(p){
-      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[38,38],iconAnchor:[19,19]});
-      var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true}).addTo(map);
-      m.on('click',function(){ if(p.screen) parent.postMessage({zoneGo:p.screen},'*'); });
-      markers.push(m);
+
+  function clearMarkers(){
+    Object.keys(groups).forEach(function(k){ map.removeLayer(groups[k]); });
+    groups={}; markers=[];
+    if(hereMk){ map.removeLayer(hereMk); hereMk=null; }
+  }
+
+  function select(m){
+    if(selected && selected.getElement()){ var pe=selected.getElement().querySelector('.zbadge'); if(pe) pe.classList.remove('sel'); }
+    selected=m;
+    var e=m.getElement(); if(e){ var b=e.querySelector('.zbadge'); if(b) b.classList.add('sel'); }
+    var p=m._zp;
+    el.pName.textContent=p.label;
+    el.pCat.textContent=(p.catLabel||''); el.pCat.style.color=p.color;
+    el.pIco.innerHTML=glyph(p,34);
+    el.pGo.textContent=(lang==='ar'?TAR.travel:T.travel);
+    el.pGo.onclick=function(){ if(p.screen) parent.postMessage({zoneGo:p.screen, MARKER_CLICK:p.id, v:1},'*'); };
+    el.panel.classList.add('on');
+    map.flyTo(m.getLatLng(), Math.min(map.getMaxZoom(), map.getZoom()<fit+0.5?fit+1:map.getZoom()), {duration:.5});
+  }
+  function deselect(){
+    if(selected && selected.getElement()){ var b=selected.getElement().querySelector('.zbadge'); if(b) b.classList.remove('sel'); }
+    selected=null; el.panel.classList.remove('on');
+  }
+  el.panelX.onclick=deselect;
+  map.on('click',deselect);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') deselect(); });
+
+  function applyFilter(){
+    markers.forEach(function(m){
+      var on=!activeCats || activeCats.has(m._zp.cat);
+      var e=m.getElement(); if(e){ var b=e.querySelector('.zbadge'); if(b) b.classList.toggle('dim',!on); }
     });
+  }
+
+  function buildChips(legend){
+    el.chips.innerHTML='';
+    if(!legend||!legend.length) return;
+    activeCats=new Set(legend.map(function(g){return g.cat;}));
+    legend.forEach(function(g){
+      var btn=document.createElement('button');
+      btn.innerHTML='<span class="dot" style="background:'+esc(g.color)+'"></span>'+esc(g.label);
+      btn.setAttribute('aria-pressed','true');
+      btn.onclick=function(){
+        if(activeCats.has(g.cat)) activeCats.delete(g.cat); else activeCats.add(g.cat);
+        btn.classList.toggle('off', !activeCats.has(g.cat));
+        btn.setAttribute('aria-pressed', activeCats.has(g.cat)?'true':'false');
+        applyFilter();
+      };
+      el.chips.appendChild(btn);
+    });
+  }
+
+  function buildSearch(pins){
+    var idx=pins.slice();
+    function close(){ el.results.classList.remove('on'); el.results.innerHTML=''; }
+    function run(q){
+      q=(q||'').trim().toLowerCase();
+      if(!q){ close(); return; }
+      var hits=idx.filter(function(p){ return (p.label||'').toLowerCase().indexOf(q)>=0; }).slice(0,6);
+      if(!hits.length){ close(); return; }
+      el.results.innerHTML='';
+      hits.forEach(function(p){
+        var b=document.createElement('button');
+        b.innerHTML='<span class="dot" style="background:'+esc(p.color)+'"></span>'+esc(p.label);
+        b.onclick=function(){ el.search.value=p.label; close(); var m=p._m; if(m){ map.flyTo(m.getLatLng(), fit+1.5, {duration:.7}); select(m); } };
+        el.results.appendChild(b);
+      });
+      el.results.classList.add('on');
+    }
+    el.search.oninput=function(){ run(el.search.value); };
+    el.search.onkeydown=function(e){ if(e.key==='Enter'){ var f=el.results.querySelector('button'); if(f) f.click(); } if(e.key==='Escape'){ el.search.value=''; close(); } };
+    document.addEventListener('click',function(e){ if(!el.search.parentNode.contains(e.target)) close(); });
+  }
+
+  function render(data){
+    lastData=data;
+    clearMarkers();
+    var pins=data.zonePins||[];
+    var legend=data.legend||[];
+    var catLabel={}; legend.forEach(function(g){ catLabel[g.cat]=g.label; });
+
+    pins.forEach(function(p){
+      p.catLabel=catLabel[p.cat]||'';
+      if(!groups[p.cat]) groups[p.cat]=L.layerGroup().addTo(map);
+      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[38,52],iconAnchor:[19,19]});
+      var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true,keyboard:true});
+      m._zp=p; p._m=m;
+      m.bindTooltip('<span>'+esc(p.label)+'</span><span class="cat">'+esc(p.catLabel)+'</span>',{className:'ztt',direction:'top',offset:[0,-20],opacity:1});
+      m.on('click',function(ev){ L.DomEvent.stopPropagation(ev); select(m); });
+      m.on('add',function(){ var e=m.getElement(); if(e){ var b=e.querySelector('.zbadge'); if(b) b.addEventListener('keydown',function(k){ if(k.key==='Enter'||k.key===' '){ k.preventDefault(); select(m); } }); } });
+      groups[p.cat].addLayer(m); markers.push(m);
+    });
+
     if(data.here){
       hereMk=L.marker(ll(data.here.x,data.here.y),{icon:L.divIcon({className:'zmk',html:'<div class="zhere" title="'+esc(data.hereLabel||'')+'"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false,zIndexOffset:-200}).addTo(map);
     }
-    if(legendCtl){map.removeControl(legendCtl);legendCtl=null;}
-    if(data.legend&&data.legend.length){
+
+    buildChips(legend); buildSearch(pins); applyFilter();
+
+    if(legendCtl){ map.removeControl(legendCtl); legendCtl=null; }
+    if(legend.length){
       legendCtl=L.control({position:'bottomleft'});
       legendCtl.onAdd=function(){
         var d=L.DomUtil.create('div','zlegend');
-        var h='<div class="ttl">'+esc(data.legendTitle||'Key')+'</div>';
-        data.legend.forEach(function(g){h+='<div class="row"><span class="sw" style="background:linear-gradient(155deg,'+esc(g.colorLite)+','+esc(g.color)+')"></span>'+esc(g.label)+'</div>';});
+        var h='<div class="ttl">'+esc(data.legendTitle||T.key)+'</div>';
+        legend.forEach(function(g){ h+='<div class="row"><span class="sw" style="background:'+esc(g.color)+'"></span>'+esc(g.label)+'</div>'; });
         d.innerHTML=h; L.DomEvent.disableClickPropagation(d); return d;
       };
       legendCtl.addTo(map);
     }
-    if(data.dir==='rtl') document.documentElement.dir='rtl';
-    setTimeout(function(){map.invalidateSize();},60);
+    if(!recenterCtl){
+      recenterCtl=L.control({position:'topleft'});
+      recenterCtl.onAdd=function(){ var d=L.DomUtil.create('div','leaflet-bar'); d.innerHTML='<a href="#" class="ui-recenter" title="Recenter" aria-label="Recenter">&#8982;</a>';
+        L.DomEvent.on(d,'click',function(e){ L.DomEvent.stop(e); deselect(); map.flyToBounds(bounds,{duration:.6}); }); return d; };
+      recenterCtl.addTo(map);
+    }
+
+    if(data.dir){ dir=data.dir; document.documentElement.dir=dir; }
+    if(data.lang){ lang=data.lang; el.search.placeholder=(lang==='ar'?TAR.search:T.search); }
+    setTimeout(function(){ map.invalidateSize(); },60);
+    requestAnimationFrame(function(){ map.invalidateSize(); });
   }
 
+  if(PICK){ map.on('click',function(e){ console.log('[y,x]=', Math.round(e.latlng.lat), Math.round(e.latlng.lng), '| %=', Math.round(e.latlng.lng/W*100), Math.round((1-e.latlng.lat/H)*100)); }); }
+
   window.addEventListener('message',function(e){
-    var d=e.data||{};
+    var d=e.data; if(!d || typeof d!=='object') return;
     if(d.bg) document.body.style.background=d.bg;
-    if(d.zonePins||d.legend||d.here) render(d);
+    if(d.type==='ON_SHOW'){ setTimeout(function(){ map.invalidateSize(); },50); return; }
+    if(d.type==='FLY_TO' && d.id && lastData){ var p=(lastData.zonePins||[]).find(function(x){return x.id===d.id;}); if(p&&p._m){ map.flyTo(p._m.getLatLng(),fit+1.5,{duration:.7}); select(p._m); } return; }
+    if(d.type==='SET_LANGUAGE'){ if(d.lang){ lang=d.lang; el.search.placeholder=(lang==='ar'?TAR.search:T.search);} if(d.dir){document.documentElement.dir=d.dir;} return; }
+    if(d.zonePins || d.legend || d.here) render(d);
   });
-  // announce ready so the game pushes the (bilingual) pin data
-  function announce(){ try{ parent.postMessage({zoneMapReady:1},'*'); }catch(_){} }
+  window.addEventListener('resize',function(){ map.invalidateSize(); });
+
+  function announce(){ try{ parent.postMessage({zoneMapReady:1, v:1},'*'); }catch(_){} }
   announce(); setTimeout(announce,400); setTimeout(announce,1200);
 })();
 </script>
