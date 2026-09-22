@@ -32,6 +32,8 @@ $adminAudit = Get-ZoneJson '/api/v1/admin/audit'
 $activeFirst = Get-ZoneJson '/api/v1/releases/active'
 $activeSecond = Get-ZoneJson '/api/v1/releases/active'
 $bootstrap = Get-ZoneJson '/api/v1/game/bootstrap'
+$territories = Get-ZoneJson '/api/v1/city/map'
+$adminTerritories = Get-ZoneJson '/api/v1/admin/territories'
 $activeHistory = @($history.releases | Where-Object { $_.active })
 
 Assert-Zone ($draft.channel -eq 'production') 'open admin reads the production draft without login'
@@ -41,6 +43,10 @@ Assert-Zone ($activeHistory.Count -eq 1 -and $activeHistory[0].id -eq $activeFir
 Assert-Zone ($adminCrimes.crimes.Count -ge 3 -and $null -ne $adminCrimes.crimes[0].success_basis_points) 'open admin reads typed crime definitions including balance fields'
 Assert-Zone ($adminAudit.entries.Count -ge 1 -and -not [string]::IsNullOrWhiteSpace($adminAudit.entries[0].actor)) 'administrator mutations retain an attributed audit trail'
 Assert-Zone ($bootstrap.release.id -eq $activeFirst.id -and $bootstrap.content.crimes.Count -ge 3) 'player bootstrap exposes active release content to the game'
+Assert-Zone ($territories.blocks.Count -eq 120 -and $adminTerritories.blocks.Count -eq 120) 'production game and admin expose the complete 120-block city'
+Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq $null -and $_.ownerColor -eq '#68717b' }).Count -gt 0) 'production neutral territory is grey'
+Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq 'vipers' -and $_.ownerColor -eq '#78d628' }).Count -gt 0) 'production player-faction territory is green'
+Assert-Zone (@($territories.blocks | Where-Object { $_.neighbors.Count -gt 0 -and $_.benefits.Count -gt 0 }).Count -eq 120) 'production blocks all expose adjacency and strategic benefits'
 
 $game = Invoke-WebRequest -Uri ($BaseUrl + '/') -UseBasicParsing -TimeoutSec 30
 $admin = Invoke-WebRequest -Uri ($BaseUrl + '/admin') -UseBasicParsing -TimeoutSec 30

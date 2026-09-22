@@ -1,0 +1,16 @@
+{
+  "id": "territories",
+  "name": "City Territories",
+  "version": "1.0.0",
+  "class": "Zone\\Modules\\Territories\\TerritoriesModule",
+  "enabledByDefault": true,
+  "description": "Server-authoritative city blocks, faction ownership, adjacency, strategic benefits, claims, assaults, and control events.",
+  "description_ar": "قطاعات المدينة وملكية العائلات والمزايا والمطالبات والهجمات وأحداث السيطرة من الخادم.",
+  "provides": [
+    "territory.catalog",
+    "territory.claim",
+    "territory.assault",
+    "territory.control"
+  ],
+  "subscribes": []
+}

@@ -15,6 +15,16 @@ const state = {
   releases: [],
   selectedPage: null,
   selectedCrime: null,
+  territoryCatalog: { revision: '', factions: [], blocks: [], summary: {} },
+  selectedTerritory: null,
+  pendingTerritoryOwner: null,
+  territorySearch: '',
+  territoryOwnerFilter: 'all',
+  territoryStateFilter: 'all',
+  territorySectorFilter: 'all',
+  territoryBusy: false,
+  territoryError: '',
+  territoryMapReady: false,
   dirty: false,
 };
 
@@ -28,6 +38,7 @@ const translations = {
     themes: 'Theme studio', themesSub: 'Change the presentation layer without changing game rules or player state.', releaseBranding: 'Release branding', brandEnglish: 'Brand in English', brandArabic: 'Brand in Arabic', accent: 'Accent color', announcementEnabled: 'Announcement enabled', announcementEnglish: 'Announcement in English', announcementArabic: 'Announcement in Arabic',
     assets: 'Asset library', assetsSub: 'One typed registry for images, thumbnails, animation, video, GLB, and GLTF.', economy: 'Economy and balance', economySub: 'Every reward and transfer is traceable through an immutable correlation trail.', economyLedger: 'Economy ledger', sharedSystems: 'Shared systems', events: 'Events and hooks', eventsSub: 'Modules react through contracts without editing the originating system.', releases: 'Releases and rollback', releasesSub: 'Draft changes, validate them, publish an immutable snapshot, and restore any prior release.', apiTrace: 'API trace',
     ready: 'READY', metricEngine: 'ENGINE', metricActiveRelease: 'ACTIVE RELEASE', metricModules: 'MODULES', metricContent: 'CONTENT', metricAuditEvents: 'AUDIT EVENTS', serverAuthoritative: 'server authoritative', enabledPackages: 'enabled packages', crimeDefinitions: 'crime definitions', recentHooks: 'recent hooks', healthPhp: 'PHP runtime', healthDatabase: 'Database adapter', healthCache: 'Cache adapter', healthApi: 'API', healthAuthority: 'Player authority', server: 'SERVER', unknown: 'UNKNOWN', blocksCount: 'BLOCKS', english: 'English', arabic: 'Arabic', moveUp: 'Move block up', moveDown: 'Move block down', removeBlock: 'Remove block', addPage: 'Add page', installed: 'INSTALLED', uninstalled: 'UNINSTALLED', enabled: 'ENABLED', disabled: 'DISABLED', install: 'INSTALL', enable: 'ENABLE', disable: 'DISABLE', uninstall: 'UNINSTALL', active: 'ACTIVE', available: 'AVAILABLE', activate: 'ACTIVATE', viewPackage: 'VIEW PACKAGE', noGameLogic: 'NO GAME LOGIC', crime: 'Crime', nerve: 'Nerve', success: 'Success', cash: 'Cash', xp: 'XP', action: 'Action', edit: 'EDIT', newLabel: 'NEW', disabledLabel: 'DISABLED', reason: 'Reason', amount: 'Amount', balance: 'Balance', player: 'Player', correlation: 'Correlation', event: 'Event', time: 'Time', module: 'Module', payload: 'Payload', eventBusLabel: 'EVENT BUS', rollback: 'ROLL BACK', noLedger: 'Run a server proof in the Engine to generate a ledger entry.', noEvents: 'No engine events have been emitted yet.', noAudit: 'No administrator mutations have been recorded yet.', noOverviewEvents: 'No events yet', noPages: 'No custom pages yet', noBlocks: 'Add the first registered block', noReleases: 'No release has been published yet', adminReady: 'ZONE ADMIN READY', contentEnglish: 'English content', contentArabic: 'Arabic content',
+    territoryControl: 'CITY CONTROL', territories: 'City & Territories', territoriesSub: 'Inspect all 120 city blocks and apply live faction ownership through the server-authoritative territory engine.', refreshTerritories: 'Refresh live state', territoryMap: 'Live territory map', territoryBlocks: 'Territory blocks', searchBlocks: 'Search blocks', searchBlocksPlaceholder: 'ID, name, district, owner, or benefit', ownerFilter: 'Owner', stateFilter: 'State', sectorFilter: 'Sector', blockDetails: 'Selected block', chooseTerritory: 'Choose a block to inspect its live state and ownership.', allOwners: 'All owners', allStates: 'All states', allSectors: 'All sectors', neutral: 'Neutral', owned: 'Owned', contested: 'Contested', totalBlocks: 'Total blocks', ownedBlocks: 'Faction controlled', neutralBlocks: 'Neutral blocks', contestedBlocks: 'Contested blocks', sector: 'Sector', size: 'Size', density: 'Density', slots: 'Wall slots', dailyRespect: 'Daily respect', benefits: 'Benefits', neighbors: 'Neighbors', liveOwner: 'Live owner', stateVersion: 'State version', updatedAt: 'Updated', applyOwnership: 'Apply ownership', ownershipHelp: 'This changes live server state immediately and records an admin audit event.', ownershipUpdated: 'Territory ownership updated and verified from the server.', noTerritoryResults: 'No territory blocks match these filters.', territoryUnavailable: 'Territory data is currently unavailable.', loadingTerritories: 'Loading territory state...', results: 'results', control: 'Control', version: 'Version', district: 'District', noBenefits: 'No configured benefits', noNeighbors: 'No adjacent blocks', live: 'LIVE', apply: 'APPLY',
   },
   ar: {
     controlPlane: 'لوحة تحكم الإدارة', engine: 'المحرك', game: 'افتح اللعبة', publish: 'انشر الإصدار', sourceOwned: 'ملكية كاملة للسورس',
@@ -38,13 +49,14 @@ const translations = {
     themes: 'استوديو الثيمات', themesSub: 'غير طبقة العرض من دون تغيير قوانين اللعب أو بيانات اللاعب.', releaseBranding: 'هوية الإصدار', brandEnglish: 'الاسم بالإنجليزية', brandArabic: 'الاسم بالعربية', accent: 'لون الهوية', announcementEnabled: 'تفعيل الإعلان', announcementEnglish: 'الإعلان بالإنجليزية', announcementArabic: 'الإعلان بالعربية',
     assets: 'مكتبة الملفات', assetsSub: 'سجل موحد للصور والمصغرات والأنيميشن والفيديو و GLB و GLTF.', economy: 'الاقتصاد والتوازن', economySub: 'كل مكافأة وتحويل قابل للتتبع عبر سجل ومعرف ترابط.', economyLedger: 'سجل الاقتصاد', sharedSystems: 'الأنظمة المشتركة', events: 'الأحداث والـ Hooks', eventsSub: 'الموديولات تتفاعل عبر عقود من دون تعديل النظام الأصلي.', releases: 'الإصدارات والرجوع', releasesSub: 'عدّل المسودة وافحصها وانشر نسخة ثابتة وارجع لأي إصدار سابق.', apiTrace: 'تتبع الـ API',
     ready: 'جاهز', metricEngine: 'المحرك', metricActiveRelease: 'الإصدار النشط', metricModules: 'الموديولات', metricContent: 'المحتوى', metricAuditEvents: 'سجلات التدقيق', serverAuthoritative: 'محسوب بالكامل في الخادم', enabledPackages: 'حزم مفعلة', crimeDefinitions: 'تعريفات الجرائم', recentHooks: 'أحداث حديثة', healthPhp: 'تشغيل PHP', healthDatabase: 'موصل قاعدة البيانات', healthCache: 'موصل التخزين المؤقت', healthApi: 'واجهة API', healthAuthority: 'سلطة اللاعب', server: 'الخادم', unknown: 'غير معروف', blocksCount: 'بلوكات', english: 'الإنجليزية', arabic: 'العربية', moveUp: 'نقل البلوك لأعلى', moveDown: 'نقل البلوك لأسفل', removeBlock: 'حذف البلوك', addPage: 'إضافة صفحة', installed: 'مثبت', uninstalled: 'غير مثبت', enabled: 'مفعل', disabled: 'معطل', install: 'تثبيت', enable: 'تفعيل', disable: 'تعطيل', uninstall: 'إزالة', active: 'نشط', available: 'متاح', activate: 'تفعيل', viewPackage: 'عرض الحزمة', noGameLogic: 'بلا منطق لعب', crime: 'الجريمة', nerve: 'الجرأة', success: 'النجاح', cash: 'النقود', xp: 'الخبرة', action: 'الإجراء', edit: 'تعديل', newLabel: 'جديد', disabledLabel: 'معطلة', reason: 'السبب', amount: 'المبلغ', balance: 'الرصيد', player: 'اللاعب', correlation: 'معرف الترابط', event: 'الحدث', time: 'الوقت', module: 'الموديول', payload: 'البيانات', eventBusLabel: 'ناقل الأحداث', rollback: 'رجوع', noLedger: 'شغل إثباتا من المحرك لإنشاء قيد اقتصادي.', noEvents: 'لم يصدر المحرك أي أحداث بعد.', noAudit: 'لم تسجل أي تعديلات إدارية بعد.', noOverviewEvents: 'لا توجد أحداث بعد', noPages: 'لا توجد صفحات مخصصة', noBlocks: 'أضف أول بلوك مسجل', noReleases: 'لم يتم نشر أي إصدار بعد', adminReady: 'لوحة إدارة ZONE جاهزة', contentEnglish: 'المحتوى بالإنجليزية', contentArabic: 'المحتوى بالعربية',
+    territoryControl: 'السيطرة على المدينة', territories: 'المدينة والأراضي', territoriesSub: 'راقب قطاعات المدينة الـ120 وغيّر ملكية العصابات مباشرة عبر محرك الأراضي المحسوب في الخادم.', refreshTerritories: 'تحديث الحالة المباشرة', territoryMap: 'خريطة الأراضي المباشرة', territoryBlocks: 'قطاعات الأراضي', searchBlocks: 'البحث في القطاعات', searchBlocksPlaceholder: 'المعرف أو الاسم أو المنطقة أو المالك أو الميزة', ownerFilter: 'المالك', stateFilter: 'الحالة', sectorFilter: 'الحزام', blockDetails: 'القطاع المحدد', chooseTerritory: 'اختر قطاعا لعرض حالته وملكيته المباشرة.', allOwners: 'كل المالكين', allStates: 'كل الحالات', allSectors: 'كل الأحزمة', neutral: 'محايد', owned: 'مملوك', contested: 'متنازع عليه', totalBlocks: 'إجمالي القطاعات', ownedBlocks: 'تحت سيطرة العصابات', neutralBlocks: 'قطاعات محايدة', contestedBlocks: 'قطاعات متنازع عليها', sector: 'الحزام', size: 'الحجم', density: 'الكثافة', slots: 'خانات الدفاع', dailyRespect: 'الاحترام اليومي', benefits: 'المزايا', neighbors: 'القطاعات المجاورة', liveOwner: 'المالك المباشر', stateVersion: 'إصدار الحالة', updatedAt: 'آخر تحديث', applyOwnership: 'تطبيق الملكية', ownershipHelp: 'هذا الإجراء يغيّر حالة الخادم مباشرة ويسجل حدث تدقيق إداري.', ownershipUpdated: 'تم تحديث ملكية الأرض والتحقق منها من الخادم.', noTerritoryResults: 'لا توجد قطاعات تطابق عوامل التصفية.', territoryUnavailable: 'بيانات الأراضي غير متاحة حاليا.', loadingTerritories: 'جار تحميل حالة الأراضي...', results: 'نتيجة', control: 'السيطرة', version: 'الإصدار', district: 'المنطقة', noBenefits: 'لا توجد مزايا محددة', noNeighbors: 'لا توجد قطاعات مجاورة', live: 'مباشر', apply: 'تطبيق',
   },
 };
 
 const navItems = [
   ['overview', '01', 'Overview', 'نظرة عامة'], ['builder', '02', 'Page Builder', 'مصمم الصفحات'], ['modules', '03', 'Modules', 'الموديولات'],
-  ['content', '04', 'Content', 'المحتوى'], ['themes', '05', 'Themes', 'الثيمات'], ['assets', '06', 'Assets', 'الملفات'],
-  ['economy', '07', 'Economy', 'الاقتصاد'], ['events', '08', 'Events', 'الأحداث'], ['releases', '09', 'Releases', 'الإصدارات'],
+  ['content', '04', 'Content', 'المحتوى'], ['territories', '05', 'City & Territories', 'المدينة والأراضي'], ['themes', '06', 'Themes', 'الثيمات'], ['assets', '07', 'Assets', 'الملفات'],
+  ['economy', '08', 'Economy', 'الاقتصاد'], ['events', '09', 'Events', 'الأحداث'], ['releases', '10', 'Releases', 'الإصدارات'],
 ];
 
 const contentDomains = [
@@ -71,6 +83,39 @@ const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
 const localized = (value) => value?.[state.language] ?? value?.en ?? '';
 const stamp = () => new Date().toLocaleTimeString();
 const blockLabel = (type) => t({ hero: 'blockHero', text: 'blockText', callout: 'blockCallout', 'stat-grid': 'blockStatGrid', 'action-grid': 'blockActionGrid' }[type] ?? type);
+const safeColor = (value, fallback = '#68717b') => /^#[0-9a-f]{6}$/i.test(String(value ?? '')) ? String(value) : fallback;
+const territoryStateLabel = (value) => t({ neutral: 'neutral', owned: 'owned', contested: 'contested' }[value] ?? value);
+
+function normalizeTerritoryCatalog(payload) {
+  const source = payload?.territories ?? payload?.map ?? payload ?? {};
+  const factions = Array.isArray(source.factions) ? source.factions : [];
+  const blocks = Array.isArray(source.blocks) ? source.blocks : [];
+  return {
+    revision: String(source.revision ?? ''),
+    playerFactionId: source.playerFactionId ?? null,
+    neutralColor: safeColor(source.neutralColor),
+    factions,
+    blocks,
+    summary: source.summary && typeof source.summary === 'object' ? source.summary : {},
+  };
+}
+
+function territoryBlockName(block) {
+  return localized(block?.name) || block?.id || '';
+}
+
+function factionName(faction) {
+  return localized(faction?.name) || faction?.id || '';
+}
+
+function formatTerritoryBenefit(benefit) {
+  const value = Number(benefit?.value ?? 0);
+  const unit = String(benefit?.unit ?? '');
+  if (unit === 'basis-points') return `${(value / 100).toLocaleString(state.language, { maximumFractionDigits: 2 })}%`;
+  if (unit === 'cash/hour') return `${value.toLocaleString(state.language)} ${state.language === 'ar' ? 'نقد / ساعة' : 'cash / hour'}`;
+  if (unit === 'percent') return `${value.toLocaleString(state.language)}%`;
+  return `${value.toLocaleString(state.language)}${unit ? ` ${unit}` : ''}`;
+}
 
 function notify(message, bad = false) {
   const toast = $('#toast');
@@ -138,10 +183,13 @@ function applyLanguage() {
   $('#languageButton').setAttribute('aria-label', arabic ? 'Switch the admin interface to English' : 'تغيير واجهة الإدارة إلى العربية');
   $('#addPageButton').setAttribute('aria-label', t('addPage'));
   $$('#previewFrame, .section-preview-frame').forEach((frame) => frame.setAttribute('title', arabic ? 'معاينة مباشرة للعبة ZONE' : 'Live preview of the ZONE game'));
+  $('#territoryMapPreview')?.setAttribute('title', arabic ? 'خريطة أراضي ZONE المباشرة' : 'ZONE live territory map');
   $('#clearTraceButton').setAttribute('aria-label', arabic ? 'مسح تتبع واجهة API' : 'Clear API trace');
   if (!state.dirty) $('#pipelineStatus').textContent = t('ready');
   $$('[data-copy]').forEach((element) => { element.textContent = t(element.dataset.copy); });
+  $$('[data-copy-placeholder]').forEach((element) => { element.placeholder = t(element.dataset.copyPlaceholder); });
   renderAll();
+  ensureTerritoryMapPreview();
   if (state.draft) refreshViewPreview(state.view);
 }
 
@@ -163,6 +211,10 @@ function setView(view) {
   state.view = view;
   $$('.view').forEach((element) => element.classList.toggle('active', element.dataset.view === view));
   renderNavigation();
+  if (view === 'territories') {
+    ensureTerritoryMapPreview();
+    pushTerritoryMap();
+  }
   refreshViewPreview(view);
 }
 
@@ -306,6 +358,191 @@ function renderContent() {
   $('#crimeEnabled').checked = crime?.enabled ?? true;
 }
 
+function territoryCounts() {
+  const blocks = state.territoryCatalog.blocks;
+  const neutral = blocks.filter((block) => block.ownerFactionId === null).length;
+  const contested = blocks.filter((block) => block.state === 'contested').length;
+  return { total: blocks.length, owned: blocks.length - neutral, neutral, contested };
+}
+
+function filteredTerritoryBlocks() {
+  const query = state.territorySearch.trim().toLocaleLowerCase(state.language);
+  return state.territoryCatalog.blocks.filter((block) => {
+    if (state.territoryOwnerFilter === 'neutral' && block.ownerFactionId !== null) return false;
+    if (!['all', 'neutral'].includes(state.territoryOwnerFilter) && block.ownerFactionId !== state.territoryOwnerFilter) return false;
+    if (state.territoryStateFilter !== 'all' && block.state !== state.territoryStateFilter) return false;
+    if (state.territorySectorFilter !== 'all' && String(block.sector) !== state.territorySectorFilter) return false;
+    if (!query) return true;
+    const benefitText = (block.benefits ?? []).flatMap((benefit) => [benefit.key, benefit.name?.en, benefit.name?.ar]).join(' ');
+    const haystack = [block.id, block.name?.en, block.name?.ar, block.districtId, block.ownerName?.en, block.ownerName?.ar, benefitText].join(' ').toLocaleLowerCase(state.language);
+    return haystack.includes(query);
+  });
+}
+
+function renderTerritorySummary() {
+  const counts = territoryCounts();
+  const metrics = [
+    [t('totalBlocks'), counts.total, '#a3d900'],
+    [t('ownedBlocks'), counts.owned, '#55d6be'],
+    [t('neutralBlocks'), counts.neutral, state.territoryCatalog.neutralColor],
+    [t('contestedBlocks'), counts.contested, '#f06d5d'],
+  ];
+  $('#territorySummary').innerHTML = metrics.map(([label, value, color]) => `<article class="territory-metric" style="--territory-metric-color:${safeColor(color)}"><span>${esc(label)}</span><strong>${Number(value).toLocaleString(state.language)}</strong></article>`).join('');
+}
+
+function renderTerritoryGrid() {
+  const blocks = filteredTerritoryBlocks();
+  $('#territoryResultCount').textContent = `${blocks.length.toLocaleString(state.language)} / ${state.territoryCatalog.blocks.length.toLocaleString(state.language)}`;
+  if (state.territoryError) {
+    $('#territoryGrid').innerHTML = `<div class="territory-grid-empty"><strong>${esc(t('territoryUnavailable'))}</strong><span>${esc(state.territoryError)}</span></div>`;
+    return;
+  }
+  $('#territoryGrid').innerHTML = blocks.map((block) => {
+    const selected = block.id === state.selectedTerritory;
+    const owner = localized(block.ownerName) || t('neutral');
+    const color = safeColor(block.ownerColor, state.territoryCatalog.neutralColor);
+    const stateClass = ['neutral', 'owned', 'contested'].includes(block.state) ? block.state : 'neutral';
+    const aria = `${block.id}, ${territoryBlockName(block)}, ${owner}, ${territoryStateLabel(block.state)}`;
+    return `<button class="territory-card ${selected ? 'selected' : ''} ${stateClass}" type="button" data-territory-id="${esc(block.id)}" style="--territory-color:${color}" aria-pressed="${selected}" aria-label="${esc(aria)}"><span class="territory-card-accent" aria-hidden="true"></span><span class="territory-card-top"><code dir="ltr">${esc(block.id)}</code><small>${esc(t('sector'))} ${Number(block.sector).toLocaleString(state.language)}</small></span><strong>${esc(territoryBlockName(block))}</strong><span class="territory-card-owner"><i aria-hidden="true"></i>${esc(owner)}</span><span class="territory-card-foot"><small>${esc(territoryStateLabel(block.state))}</small><b dir="ltr">v${Number(block.version)}</b></span></button>`;
+  }).join('') || `<div class="territory-grid-empty">${esc(t('noTerritoryResults'))}</div>`;
+  $$('[data-territory-id]', $('#territoryGrid')).forEach((button) => button.addEventListener('click', () => selectTerritoryBlock(button.dataset.territoryId)));
+}
+
+function renderTerritoryDetails() {
+  const block = state.territoryCatalog.blocks.find((item) => item.id === state.selectedTerritory) ?? null;
+  $('#territoryDetailEmpty').hidden = Boolean(block);
+  $('#territoryDetails').hidden = !block;
+  if (!block) {
+    $('#territoryDetailState').textContent = '-';
+    $('#territoryDetailState').className = 'status';
+    return;
+  }
+
+  const owner = localized(block.ownerName) || t('neutral');
+  const ownerColor = safeColor(block.ownerColor, state.territoryCatalog.neutralColor);
+  const selectedOwner = state.pendingTerritoryOwner ?? block.ownerFactionId ?? '';
+  const ownerOptions = [`<option value="" ${selectedOwner === '' ? 'selected' : ''}>${esc(t('neutral'))}</option>`, ...state.territoryCatalog.factions.map((faction) => `<option value="${esc(faction.id)}" ${selectedOwner === faction.id ? 'selected' : ''}>${esc(factionName(faction))} · ${esc(faction.id)}</option>`)].join('');
+  const benefits = (block.benefits ?? []).map((benefit) => `<div class="territory-benefit"><span>${esc(localized(benefit.name) || benefit.key)}</span><strong dir="auto">${esc(formatTerritoryBenefit(benefit))}</strong></div>`).join('') || `<span class="territory-muted">${esc(t('noBenefits'))}</span>`;
+  const neighbors = (block.neighbors ?? []).map((id) => `<button type="button" class="territory-neighbor" data-neighbor-id="${esc(id)}" dir="ltr">${esc(id)}</button>`).join('') || `<span class="territory-muted">${esc(t('noNeighbors'))}</span>`;
+  const detailRows = [
+    [t('district'), block.districtId],
+    [t('sector'), Number(block.sector).toLocaleString(state.language)],
+    [t('size'), Number(block.size).toLocaleString(state.language)],
+    [t('density'), Number(block.density).toLocaleString(state.language)],
+    [t('slots'), Number(block.slots).toLocaleString(state.language)],
+    [t('dailyRespect'), Number(block.dailyRespect).toLocaleString(state.language)],
+    [t('control'), `${Number(block.control).toLocaleString(state.language)}%`],
+    [t('stateVersion'), `v${Number(block.version)}`],
+  ];
+
+  $('#territoryDetailState').textContent = territoryStateLabel(block.state);
+  $('#territoryDetailState').className = `status ${block.state === 'contested' ? 'bad' : block.state === 'owned' ? 'active' : ''}`;
+  $('#territoryDetails').innerHTML = `<div class="territory-detail-identity" style="--territory-color:${ownerColor}"><span class="territory-detail-color" aria-hidden="true"></span><div><code dir="ltr">${esc(block.id)}</code><h3>${esc(territoryBlockName(block))}</h3><p><span>${esc(t('liveOwner'))}</span><strong>${esc(owner)}</strong></p></div></div><div class="territory-control-track" aria-label="${esc(t('control'))}: ${Number(block.control)}%"><i style="width:${Math.max(0, Math.min(100, Number(block.control)))}%;background:${ownerColor}"></i></div><div class="territory-stat-grid">${detailRows.map(([label, value]) => `<div><span>${esc(label)}</span><strong dir="auto">${esc(value)}</strong></div>`).join('')}</div><section class="territory-detail-section"><h3>${esc(t('benefits'))}</h3><div class="territory-benefits">${benefits}</div></section><section class="territory-detail-section"><h3>${esc(t('neighbors'))}</h3><div class="territory-neighbors">${neighbors}</div></section><section class="territory-owner-editor"><label><span>${esc(t('liveOwner'))}</span><select id="territoryOwnerSelect">${ownerOptions}</select></label><p>${esc(t('ownershipHelp'))}</p><button class="button primary" id="applyTerritoryOwnerButton" type="button" ${state.territoryBusy || selectedOwner === (block.ownerFactionId ?? '') ? 'disabled' : ''}>${state.territoryBusy ? esc(t('loadingTerritories')) : esc(t('applyOwnership'))}</button></section><small class="territory-updated">${esc(t('updatedAt'))}: <bdi>${esc(block.updatedAt ?? '')}</bdi></small>`;
+
+  $('#territoryOwnerSelect').addEventListener('change', (event) => {
+    state.pendingTerritoryOwner = event.target.value;
+    const apply = $('#applyTerritoryOwnerButton');
+    if (apply) apply.disabled = state.territoryBusy || event.target.value === (block.ownerFactionId ?? '');
+  });
+  $('#applyTerritoryOwnerButton').addEventListener('click', applyTerritoryOwnership);
+  $$('[data-neighbor-id]', $('#territoryDetails')).forEach((button) => button.addEventListener('click', () => selectTerritoryBlock(button.dataset.neighborId)));
+}
+
+function renderTerritories() {
+  const catalog = state.territoryCatalog;
+  if (state.selectedTerritory && !catalog.blocks.some((block) => block.id === state.selectedTerritory)) state.selectedTerritory = null;
+  if (!state.selectedTerritory && catalog.blocks.length) {
+    state.selectedTerritory = catalog.blocks[0].id;
+    state.pendingTerritoryOwner = catalog.blocks[0].ownerFactionId ?? '';
+  }
+  renderTerritorySummary();
+  $('#territoryRevision').textContent = catalog.revision ? `${t('live')} · ${catalog.revision.slice(0, 8)}` : t('live');
+
+  const ownerFilter = $('#territoryOwnerFilter');
+  ownerFilter.innerHTML = `<option value="all">${esc(t('allOwners'))}</option><option value="neutral">${esc(t('neutral'))}</option>${catalog.factions.map((faction) => `<option value="${esc(faction.id)}">${esc(factionName(faction))}</option>`).join('')}`;
+  ownerFilter.value = state.territoryOwnerFilter;
+  const states = [...new Set(catalog.blocks.map((block) => block.state))].sort();
+  $('#territoryStateFilter').innerHTML = `<option value="all">${esc(t('allStates'))}</option>${states.map((value) => `<option value="${esc(value)}">${esc(territoryStateLabel(value))}</option>`).join('')}`;
+  $('#territoryStateFilter').value = state.territoryStateFilter;
+  const sectors = [...new Set(catalog.blocks.map((block) => Number(block.sector)))].sort((left, right) => left - right);
+  $('#territorySectorFilter').innerHTML = `<option value="all">${esc(t('allSectors'))}</option>${sectors.map((value) => `<option value="${value}">${esc(t('sector'))} ${value.toLocaleString(state.language)}</option>`).join('')}`;
+  $('#territorySectorFilter').value = state.territorySectorFilter;
+  $('#territorySearch').value = state.territorySearch;
+
+  $('#territorySearch').oninput = (event) => { state.territorySearch = event.target.value; renderTerritoryGrid(); };
+  ownerFilter.onchange = (event) => { state.territoryOwnerFilter = event.target.value; renderTerritoryGrid(); };
+  $('#territoryStateFilter').onchange = (event) => { state.territoryStateFilter = event.target.value; renderTerritoryGrid(); };
+  $('#territorySectorFilter').onchange = (event) => { state.territorySectorFilter = event.target.value; renderTerritoryGrid(); };
+  renderTerritoryGrid();
+  renderTerritoryDetails();
+  pushTerritoryMap();
+}
+
+function selectTerritoryBlock(id, notifyMap = true) {
+  const block = state.territoryCatalog.blocks.find((item) => item.id === id);
+  if (!block) return;
+  state.selectedTerritory = block.id;
+  state.pendingTerritoryOwner = block.ownerFactionId ?? '';
+  renderTerritoryGrid();
+  renderTerritoryDetails();
+  pushTerritoryMap();
+  if (notifyMap) $('#territoryMapPreview')?.contentWindow?.postMessage({ type: 'ZONE_MAP_SELECT_BLOCK', blockId: block.id }, '*');
+  if (window.matchMedia('(max-width: 850px)').matches) $('#territoryDetails')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function territoryMapPayload() {
+  const blocks = state.territoryCatalog.blocks.map((block) => ({
+    ...block,
+    _lngLat: true,
+    name: territoryBlockName(block),
+    faction: block.ownerFactionId,
+    factionName: localized(block.ownerName) || t('neutral'),
+    color: safeColor(block.ownerColor, state.territoryCatalog.neutralColor),
+    contested: block.state === 'contested',
+    eligible: Boolean(block.action),
+    status: territoryStateLabel(block.state),
+    benefit: block.benefits?.[0] ? { key: block.benefits[0].key, label: localized(block.benefits[0].name) || block.benefits[0].key, value: formatTerritoryBenefit(block.benefits[0]) } : null,
+    respect: block.dailyRespect,
+    blocks: 1,
+    locations: 0,
+    here: block.id === state.selectedTerritory,
+  }));
+  return {
+    type: 'ZONE_MAP_DATA',
+    revision: state.territoryCatalog.revision,
+    playerFactionId: state.territoryCatalog.playerFactionId,
+    blocks,
+    factions: state.territoryCatalog.factions,
+    districts: [...new Set(blocks.map((block) => block.districtId))].map((id) => ({ id })),
+    zonePins: [],
+    legend: [],
+    copy: {
+      places: state.language === 'ar' ? 'المواقع' : 'Locations', territories: t('territories'), searchPlaces: state.language === 'ar' ? 'ابحث في المواقع...' : 'Search locations...', searchTerritories: t('searchBlocksPlaceholder'), cityControl: t('territoryControl'), owner: t('ownerFilter'), control: t('control'), blocks: t('territoryBlocks'), block: t('blockDetails'), district: t('district'), respect: t('dailyRespect'), benefit: t('benefits'), neutral: t('neutral'), contested: t('contested'), controlled: t('owned'), adjacent: t('neighbors'), fullCity: state.language === 'ar' ? 'المدينة كاملة' : 'Full city', current: state.language === 'ar' ? 'محدد' : 'Selected', openFaction: t('liveOwner'), showPlaces: state.language === 'ar' ? 'عرض المواقع' : 'Show locations', versus: state.language === 'ar' ? 'ضد' : 'vs',
+    },
+    lang: state.language,
+    dir: state.language === 'ar' ? 'rtl' : 'ltr',
+    dark: true,
+    bg: '#0e1116',
+  };
+}
+
+function ensureTerritoryMapPreview() {
+  const frame = $('#territoryMapPreview');
+  if (!frame) return;
+  frame.onload = () => { state.territoryMapReady = true; pushTerritoryMap(); };
+  if (frame.dataset.language !== state.language || !frame.getAttribute('src')) {
+    state.territoryMapReady = false;
+    frame.dataset.language = state.language;
+    frame.src = `/dist/city-map-torn.html?admin=territories&lang=${state.language}`;
+  }
+}
+
+function pushTerritoryMap() {
+  const frame = $('#territoryMapPreview');
+  if (!frame?.contentWindow || !state.territoryCatalog.blocks.length) return;
+  frame.contentWindow.postMessage(territoryMapPayload(), '*');
+}
+
 function renderAssets() {
   $('#assetGrid').innerHTML = assets.map(([type, name, detail]) => `<article class="asset-card" data-type="${esc(type)}"><span class="asset-icon" dir="ltr">${esc(type.slice(0, 2))}</span><div><strong>${esc(localized(name))}</strong><span>${esc(localized(detail))}</span></div></article>`).join('');
 }
@@ -334,6 +571,7 @@ function renderAll() {
   renderModules();
   renderThemes();
   renderContent();
+  renderTerritories();
   renderAssets();
   renderEconomy();
   renderEvents();
@@ -479,9 +717,63 @@ async function activateTheme(id) {
   } catch (error) { notify(error.message, true); }
 }
 
+async function loadTerritories({ render = true } = {}) {
+  const refreshButton = $('#refreshTerritoriesButton');
+  if (refreshButton) refreshButton.disabled = true;
+  state.territoryError = '';
+  try {
+    const response = await api('/api/v1/admin/territories');
+    state.territoryCatalog = normalizeTerritoryCatalog(response);
+    const selected = state.territoryCatalog.blocks.find((block) => block.id === state.selectedTerritory) ?? state.territoryCatalog.blocks[0] ?? null;
+    state.selectedTerritory = selected?.id ?? null;
+    state.pendingTerritoryOwner = selected?.ownerFactionId ?? '';
+    if (render) renderTerritories();
+    return state.territoryCatalog;
+  } catch (error) {
+    state.territoryError = error.message;
+    if (render) renderTerritories();
+    throw error;
+  } finally {
+    if (refreshButton) refreshButton.disabled = false;
+  }
+}
+
+async function applyTerritoryOwnership() {
+  const block = state.territoryCatalog.blocks.find((item) => item.id === state.selectedTerritory);
+  if (!block || state.territoryBusy) return;
+  const factionId = state.pendingTerritoryOwner || null;
+  if (factionId === (block.ownerFactionId ?? null)) return;
+
+  state.territoryBusy = true;
+  renderTerritoryDetails();
+  try {
+    const path = `/api/v1/admin/territories/${encodeURIComponent(block.id)}/ownership`;
+    const response = await api(path, { method: 'POST', body: JSON.stringify({ factionId }) });
+    state.territoryCatalog = normalizeTerritoryCatalog(response);
+    const verified = await api('/api/v1/admin/territories');
+    state.territoryCatalog = normalizeTerritoryCatalog(verified);
+    const updated = state.territoryCatalog.blocks.find((item) => item.id === block.id);
+    state.selectedTerritory = updated?.id ?? state.territoryCatalog.blocks[0]?.id ?? null;
+    state.pendingTerritoryOwner = updated?.ownerFactionId ?? '';
+    const [events, audit] = await Promise.all([
+      api('/api/v1/events').catch(() => null),
+      api('/api/v1/admin/audit').catch(() => null),
+    ]);
+    if (events?.events) state.events = events.events;
+    if (audit?.entries) state.audit = audit.entries;
+    notify(t('ownershipUpdated'));
+  } catch (error) {
+    notify(error.message, true);
+  } finally {
+    state.territoryBusy = false;
+    renderTerritories();
+  }
+}
+
 async function load() {
-  const [engine, modules, themes, crimes, ledger, events, audit, draft, releases] = await Promise.all([
+  const [engine, modules, themes, crimes, ledger, events, audit, draft, releases, territories] = await Promise.all([
     api('/api/v1/engine'), api('/api/v1/modules'), api('/api/v1/themes'), api('/api/v1/admin/crimes'), api('/api/v1/ledger'), api('/api/v1/events'), api('/api/v1/admin/audit'), api('/api/v1/admin/draft'), api('/api/v1/admin/releases'),
+    api('/api/v1/admin/territories').catch((error) => ({ __territoryError: error.message })),
   ]);
   Object.assign(state, {
     engine,
@@ -494,7 +786,11 @@ async function load() {
     draft,
     releases: releases.releases,
   });
+  if (territories.__territoryError) state.territoryError = territories.__territoryError;
+  else state.territoryCatalog = normalizeTerritoryCatalog(territories);
   state.selectedCrime = state.crimes[0]?.id ?? null;
+  state.selectedTerritory = state.territoryCatalog.blocks[0]?.id ?? null;
+  state.pendingTerritoryOwner = state.territoryCatalog.blocks[0]?.ownerFactionId ?? '';
   $('#runtimePhp').textContent = `PHP ${engine.php}`;
   $('#runtimeDatabase').textContent = engine.database.toUpperCase();
   $('#runtimeRelease').textContent = `RELEASE ${engine.activeReleaseVersion}`;
@@ -513,6 +809,7 @@ $('#addPageButton').addEventListener('click', addPage);
 $('#addBlockButton').addEventListener('click', addBlock);
 $('#newCrimeButton').addEventListener('click', newCrime);
 $('#crimeForm').addEventListener('submit', saveCrime);
+$('#refreshTerritoriesButton').addEventListener('click', () => loadTerritories().then(() => notify(state.language === 'ar' ? 'تم تحديث حالة الأراضي' : 'Territory state refreshed')).catch((error) => notify(error.message, true)));
 $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textContent = t('adminReady'); });
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
 $$('.viewport-button').forEach((button) => button.addEventListener('click', () => {
@@ -523,6 +820,17 @@ $$('.viewport-button').forEach((button) => button.addEventListener('click', () =
   if (frame) frame.style.width = button.dataset.width;
 }));
 $$('[data-preview-refresh]').forEach((button) => button.addEventListener('click', () => refreshSectionPreview(button.closest('.view').dataset.view)));
+window.addEventListener('message', (event) => {
+  const frame = $('#territoryMapPreview');
+  if (!frame || event.source !== frame.contentWindow || !event.data || typeof event.data !== 'object') return;
+  if (event.data.zoneMapReady || event.data.type === 'ZONE_MAP_READY') {
+    state.territoryMapReady = true;
+    pushTerritoryMap();
+    return;
+  }
+  const blockId = event.data.blockId ?? event.data.TERRITORY_CLICK;
+  if ((event.data.type === 'ZONE_MAP_SELECT_BLOCK' || event.data.TERRITORY_CLICK) && blockId) selectTerritoryBlock(String(blockId), false);
+});
 
 load().catch((error) => {
   trace('BOOT', '/admin', null, { error: error.message }, 500);

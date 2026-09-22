@@ -561,9 +561,10 @@ try {
 
     // --- P0 cooldown values live in a config table AND the engine reads them ---
     [$engine, $database] = build_engine($databasePath);
-    check(count($database->fetchAll('SELECT action, seconds FROM cooldown_config')) === 8, 'cooldown_config seeds all 8 action cooldowns');
+    check(count($database->fetchAll('SELECT action, seconds FROM cooldown_config')) === 9, 'cooldown_config seeds all 9 action cooldowns');
     check((int) $database->fetchOne('SELECT seconds FROM cooldown_config WHERE action = :a', ['a' => 'crime'])['seconds'] === 5, 'crime cooldown lives in config at 5s (moved out of engine code)');
     check((int) $database->fetchOne('SELECT seconds FROM cooldown_config WHERE action = :a', ['a' => 'bank'])['seconds'] === 0, 'bank cooldown config is 0 (balance-gated)');
+    check((int) $database->fetchOne('SELECT seconds FROM cooldown_config WHERE action = :a', ['a' => 'territory'])['seconds'] === 1, 'territory cooldown lives in config at 1s');
     $database->execute("UPDATE cooldown_config SET seconds = 0 WHERE action = 'crime'");
     [$engine, $database] = build_engine($databasePath);
     $database->execute('DELETE FROM action_cooldowns');
@@ -573,14 +574,179 @@ try {
     try { $engine->attemptCrime('searchforcash'); } catch (CooldownException) { $configHonored = false; }
     check($configHonored, 'the engine reads cooldowns from config: setting crime=0 removes the anti-hammer floor');
 
+    // --- Server-authoritative faction territory map ---
+    [$engine, $database] = build_engine($databasePath);
+    $territoryMap = $engine->territoryMap('founder-player');
+    $territoryBlocks = $territoryMap['blocks'] ?? [];
+    $territoryById = array_column($territoryBlocks, null, 'id');
+    $factionById = array_column($territoryMap['factions'] ?? [], null, 'id');
+
+    check(count($territoryBlocks) === 120 && ($territoryMap['summary']['total'] ?? null) === 120, 'territory map exposes all 120 capturable city blocks');
+    check(count($territoryById) === 120 && isset($territoryById['ZC-001'], $territoryById['ZC-120']), 'territory block IDs are unique and span ZC-001 through ZC-120');
+    check(($territoryMap['playerFactionId'] ?? null) === 'vipers' && ($territoryMap['playerFactionRole'] ?? null) === 'leader', 'territory snapshot derives the player faction and role server-side');
+    check(($territoryMap['neutralColor'] ?? null) === '#68717b', 'territory snapshot publishes the canonical grey neutral color');
+    check(($factionById['vipers']['color'] ?? null) === '#78d628', 'the player faction has the canonical green territory color');
+
+    $factionColors = array_column($territoryMap['factions'] ?? [], 'color');
+    check(count($factionColors) >= 4 && count(array_unique($factionColors)) === count($factionColors), 'every seeded faction has a distinct ownership color');
+
+    $neutralBlocks = array_values(array_filter($territoryBlocks, static fn (array $block): bool => ($block['ownerFactionId'] ?? null) === null));
+    $ownedBlocks = array_values(array_filter($territoryBlocks, static fn (array $block): bool => ($block['ownerFactionId'] ?? null) !== null));
+    check(count($neutralBlocks) > 0 && count($ownedBlocks) > 0, 'territory seed contains both neutral and faction-controlled blocks');
+    check(count(array_filter($neutralBlocks, static fn (array $block): bool => ($block['state'] ?? null) === 'neutral' && ($block['ownerColor'] ?? null) === '#68717b')) === count($neutralBlocks), 'every neutral block is grey and has neutral state');
+    check(count(array_filter($ownedBlocks, static function (array $block) use ($factionById): bool {
+        $ownerId = $block['ownerFactionId'] ?? null;
+        return is_string($ownerId)
+            && isset($factionById[$ownerId])
+            && ($block['ownerColor'] ?? null) === $factionById[$ownerId]['color']
+            && in_array($block['state'] ?? null, ['owned', 'contested'], true);
+    })) === count($ownedBlocks), 'every controlled block uses its owner faction color and a controlled state');
+
+    $topologyValid = true;
+    $topologyReciprocal = true;
+    $blockDetailsValid = true;
+    $benefitKeys = [];
+    foreach ($territoryBlocks as $block) {
+        $blockId = (string) ($block['id'] ?? '');
+        $neighbors = $block['neighbors'] ?? null;
+        $polygon = $block['polygon'] ?? null;
+        $centroid = $block['centroid'] ?? null;
+        $benefits = $block['benefits'] ?? null;
+        if (!is_array($neighbors) || $neighbors === [] || count($neighbors) !== count(array_unique($neighbors)) || in_array($blockId, $neighbors, true)) {
+            $topologyValid = false;
+        } else {
+            foreach ($neighbors as $neighborId) {
+                if (!isset($territoryById[$neighborId])) {
+                    $topologyValid = false;
+                    continue;
+                }
+                if (!in_array($blockId, $territoryById[$neighborId]['neighbors'] ?? [], true)) {
+                    $topologyReciprocal = false;
+                }
+            }
+        }
+        $name = $block['name'] ?? [];
+        if (!is_array($polygon) || count($polygon) < 4 || !is_array($centroid) || count($centroid) !== 2
+            || trim((string) ($name['en'] ?? '')) === '' || trim((string) ($name['ar'] ?? '')) === ''
+            || (int) ($block['sector'] ?? 0) < 1 || (int) ($block['sector'] ?? 0) > 7
+            || (int) ($block['size'] ?? 0) < 1 || (int) ($block['density'] ?? 0) < 1
+            || (int) ($block['slots'] ?? 0) < 5 || (int) ($block['dailyRespect'] ?? 0) <= 0
+            || (int) ($block['version'] ?? 0) < 1) {
+            $blockDetailsValid = false;
+        }
+        if (!is_array($benefits) || $benefits === []) {
+            $blockDetailsValid = false;
+            continue;
+        }
+        foreach ($benefits as $benefit) {
+            $benefitName = $benefit['name'] ?? [];
+            if (trim((string) ($benefit['key'] ?? '')) === ''
+                || trim((string) ($benefitName['en'] ?? '')) === ''
+                || trim((string) ($benefitName['ar'] ?? '')) === ''
+                || !is_numeric($benefit['value'] ?? null) || (float) ($benefit['value'] ?? 0) <= 0
+                || trim((string) ($benefit['unit'] ?? '')) === '') {
+                $blockDetailsValid = false;
+            }
+            $benefitKeys[] = (string) ($benefit['key'] ?? '');
+        }
+    }
+    check($topologyValid, 'every territory block has explicit, unique neighbors that reference real blocks');
+    check($topologyReciprocal, 'territory adjacency is reciprocal in both directions');
+    check($blockDetailsValid, 'every territory block exposes bilingual names, geometry, sector stats, version, respect, slots, and typed benefits');
+    check(count(array_unique($benefitKeys)) >= 8, 'territory blocks provide a varied city-wide benefit catalog');
+
+    $reachable = [];
+    $queue = isset($territoryBlocks[0]['id']) ? [(string) $territoryBlocks[0]['id']] : [];
+    while ($queue !== []) {
+        $blockId = array_shift($queue);
+        if (isset($reachable[$blockId]) || !isset($territoryById[$blockId])) {
+            continue;
+        }
+        $reachable[$blockId] = true;
+        foreach ($territoryById[$blockId]['neighbors'] as $neighborId) {
+            if (!isset($reachable[$neighborId])) {
+                $queue[] = $neighborId;
+            }
+        }
+    }
+    check(count($reachable) === 120, 'all 120 territory blocks form one connected adjacency graph');
+
+    $claimable = null;
+    foreach ($territoryBlocks as $block) {
+        if (($block['ownerFactionId'] ?? null) === null && ($block['action'] ?? null) === 'claim') {
+            $claimable = $block;
+            break;
+        }
+    }
+    check($claimable !== null, 'the server exposes at least one neutral block adjacent to the player faction as claimable');
+    if ($claimable !== null) {
+        $claimId = (string) $claimable['id'];
+        $claimVersion = (int) $claimable['version'];
+        $revisionBeforeClaim = (string) $territoryMap['revision'];
+        $database->execute('DELETE FROM action_cooldowns WHERE player_id = :id', ['id' => 'founder-player']);
+        $database->execute('DELETE FROM action_rate_limits WHERE player_id = :id', ['id' => 'founder-player']);
+        $claimResult = $engine->actTerritory($claimId, 'claim', $claimVersion, 'founder-player');
+        $claimedById = array_column($claimResult['map']['blocks'] ?? [], null, 'id');
+        $claimed = $claimedById[$claimId] ?? [];
+        check(($claimResult['action'] ?? null) === 'claim' && ($claimResult['territoryId'] ?? null) === $claimId, 'server accepts a valid adjacent neutral territory claim');
+        check(($claimed['ownerFactionId'] ?? null) === 'vipers' && ($claimed['ownerColor'] ?? null) === '#78d628' && ($claimed['state'] ?? null) === 'owned', 'claim derives ownership from server membership and turns the block player-faction green');
+        check(($claimed['version'] ?? null) === $claimVersion + 1 && ($claimResult['map']['revision'] ?? null) !== $revisionBeforeClaim, 'claim atomically increments the territory version and map revision');
+
+        $storedClaim = $database->fetchOne('SELECT faction_id, state, version FROM territory_control WHERE territory_id = :id', ['id' => $claimId]);
+        check(($storedClaim['faction_id'] ?? null) === 'vipers' && ($storedClaim['state'] ?? null) === 'owned' && (int) ($storedClaim['version'] ?? 0) === $claimVersion + 1, 'claimed ownership and version are persisted in territory_control');
+        $claimEvent = $database->fetchOne("SELECT id FROM event_log WHERE event_name = 'TerritoryControlChanged' ORDER BY occurred_at DESC LIMIT 1");
+        check($claimEvent !== null, 'valid territory claim persists a TerritoryControlChanged domain event');
+
+        $database->execute('DELETE FROM action_cooldowns WHERE player_id = :id', ['id' => 'founder-player']);
+        $database->execute('DELETE FROM action_rate_limits WHERE player_id = :id', ['id' => 'founder-player']);
+        $staleRejected = false;
+        try {
+            $engine->actTerritory($claimId, 'claim', $claimVersion, 'founder-player');
+        } catch (RuntimeException $exception) {
+            $staleRejected = str_starts_with($exception->getMessage(), 'Territory state changed.');
+        }
+        $storedAfterStale = $database->fetchOne('SELECT faction_id, state, version FROM territory_control WHERE territory_id = :id', ['id' => $claimId]);
+        check($staleRejected, 'territory command rejects a stale expectedVersion');
+        check(($storedAfterStale['faction_id'] ?? null) === 'vipers' && (int) ($storedAfterStale['version'] ?? 0) === $claimVersion + 1, 'stale territory command cannot mutate persisted ownership or version');
+
+        $postClaimMap = $engine->territoryMap('founder-player');
+        $nonAdjacent = null;
+        foreach ($postClaimMap['blocks'] as $block) {
+            if (($block['ownerFactionId'] ?? null) === null
+                && ($block['action'] ?? null) === null
+                && str_starts_with((string) ($block['actionReason'] ?? ''), 'Control an adjacent block')) {
+                $nonAdjacent = $block;
+                break;
+            }
+        }
+        check($nonAdjacent !== null, 'the server marks distant neutral blocks as nonadjacent and ineligible');
+        if ($nonAdjacent !== null) {
+            $database->execute('DELETE FROM action_cooldowns WHERE player_id = :id', ['id' => 'founder-player']);
+            $database->execute('DELETE FROM action_rate_limits WHERE player_id = :id', ['id' => 'founder-player']);
+            $nonAdjacentRejected = false;
+            try {
+                $engine->actTerritory((string) $nonAdjacent['id'], 'claim', (int) $nonAdjacent['version'], 'founder-player');
+            } catch (RuntimeException $exception) {
+                $nonAdjacentRejected = str_starts_with($exception->getMessage(), 'Control an adjacent block');
+            }
+            $storedNonAdjacent = $database->fetchOne('SELECT faction_id, state, version FROM territory_control WHERE territory_id = :id', ['id' => $nonAdjacent['id']]);
+            check($nonAdjacentRejected, 'server rejects a claim that is not adjacent to player-faction territory');
+            check(($storedNonAdjacent['faction_id'] ?? null) === null && ($storedNonAdjacent['state'] ?? null) === 'neutral' && (int) ($storedNonAdjacent['version'] ?? 0) === (int) $nonAdjacent['version'], 'rejected nonadjacent claim leaves the territory state unchanged');
+        }
+
+        [$reloadedEngine] = build_engine($databasePath);
+        $reloadedById = array_column($reloadedEngine->territoryMap('founder-player')['blocks'] ?? [], null, 'id');
+        check(($reloadedById[$claimId]['ownerFactionId'] ?? null) === 'vipers' && ($reloadedById[$claimId]['version'] ?? null) === $claimVersion + 1, 'claimed territory survives a fresh engine instance and database reseed pass');
+    }
+
     // --- Both schemas carry the new retention structures ---
-    foreach (['cooldown_config', 'player_contract_progress'] as $table) {
+    foreach (['cooldown_config', 'player_contract_progress', 'factions', 'faction_members', 'territory_blocks', 'territory_control', 'territory_wars'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");
     }
     check(str_contains($schema, 'level_required'), 'PostgreSQL schema adds crimes.level_required');
     check(str_contains($schema, 'login_streak') && str_contains($schema, 'last_login_day'), 'PostgreSQL schema adds player streak columns');
     $sqliteSchema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.sqlite.sql');
-    foreach (['cooldown_config', 'player_contract_progress'] as $table) {
+    foreach (['cooldown_config', 'player_contract_progress', 'factions', 'faction_members', 'territory_blocks', 'territory_control', 'territory_wars'] as $table) {
         check(str_contains($sqliteSchema, "CREATE TABLE IF NOT EXISTS {$table}"), "SQLite schema contains {$table}");
     }
     check(str_contains($sqliteSchema, 'level_required'), 'SQLite schema adds crimes.level_required');

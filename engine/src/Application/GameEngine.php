@@ -19,6 +19,7 @@ use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
+use Zone\Engine\Core\Territories\TerritoryService;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 
 final class GameEngine
@@ -31,6 +32,7 @@ final class GameEngine
     private readonly LevelingService $leveling;
     private readonly DailyService $daily;
     private readonly NotificationService $notifications;
+    private readonly TerritoryService $territories;
 
     /** @var array<string, int> Effective cooldown seconds per action (config over defaults). */
     private readonly array $cooldownSeconds;
@@ -52,6 +54,7 @@ final class GameEngine
         'travel' => 15,
         'hospital' => 5,
         'bank' => 0,
+        'territory' => 1,
     ];
 
     public function __construct(
@@ -69,6 +72,7 @@ final class GameEngine
         $this->cooldowns = new CooldownService($database);
         $this->leveling = new LevelingService($database, $this->ledger, $events);
         $this->daily = new DailyService($database, $this->ledger, $events, $this->leveling);
+        $this->territories = new TerritoryService($database, $events);
         $this->cooldownSeconds = $this->loadCooldownConfig();
         $rateMaxRaw = getenv('ZONE_RATE_LIMIT_MAX');
         $rateWindowRaw = getenv('ZONE_RATE_LIMIT_WINDOW');
@@ -143,6 +147,9 @@ final class GameEngine
                 'draft-preview-publish-rollback',
                 'admin-content-crud',
                 'admin-audit-log',
+                'territory-graph-and-adjacency',
+                'server-authoritative-faction-control',
+                'territory-benefits-and-wars',
             ],
         ];
     }
@@ -283,7 +290,9 @@ final class GameEngine
 
             $correlationId = bin2hex(random_bytes(16));
             $roll = random_int(1, 10000);
-            $success = $roll <= (int) $crime['success_basis_points'];
+            $territoryBonusBp = min(1500, $this->territories->bonusBasisPoints($playerId, 'crime_bonus'));
+            $successThreshold = min(10000, (int) $crime['success_basis_points'] + $territoryBonusBp);
+            $success = $roll <= $successThreshold;
             $cashReward = $success ? random_int((int) $crime['cash_min'], (int) $crime['cash_max']) : 0;
             $xpReward = $success ? (int) $crime['xp_reward'] : 0;
             $newCash = (int) $player['cash'] + $cashReward;
@@ -309,7 +318,8 @@ final class GameEngine
                 'cashReward' => $cashReward,
                 'xpReward' => $xpReward,
                 'roll' => $roll,
-                'successThreshold' => (int) $crime['success_basis_points'],
+                'successThreshold' => $successThreshold,
+                'territoryBonusBasisPoints' => $territoryBonusBp,
                 'correlationId' => $correlationId,
             ]);
             $this->events->publish($event);
@@ -369,10 +379,12 @@ final class GameEngine
             $correlationId = bin2hex(random_bytes(16));
             $happy = (int) $player['happy'];
             $gainPerSession = max(1, (int) floor(5 + $happy / 250));
-            $gain = 0;
+            $baseGain = 0;
             for ($i = 0; $i < $sessions; $i++) {
-                $gain += $gainPerSession + random_int(0, 3);
+                $baseGain += $gainPerSession + random_int(0, 3);
             }
+            $territoryBonusBp = min(2000, $this->territories->bonusBasisPoints($playerId, 'gym_bonus'));
+            $gain = max(1, (int) round($baseGain * (10000 + $territoryBonusBp) / 10000));
             $newStat = (int) $player[$stat] + $gain;
             $newEnergy = (int) $player['energy'] - $energyCost;
             $newXp = (int) $player['xp'] + $gain;
@@ -385,11 +397,12 @@ final class GameEngine
             $this->daily->recordProgress($playerId, 'stat_gain', $gain);
             $event = new DomainEvent('GymTrained', [
                 'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
+                'baseGain' => $baseGain, 'territoryBonusBasisPoints' => $territoryBonusBp,
                 'sessions' => $sessions, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
             ]);
             $this->events->publish($event);
             return [
-                'trained' => $stat, 'gain' => $gain, 'sessions' => $sessions,
+                'trained' => $stat, 'gain' => $gain, 'baseGain' => $baseGain, 'territoryBonusBasisPoints' => $territoryBonusBp, 'sessions' => $sessions,
                 'cost' => ['energy' => $energyCost],
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
@@ -499,7 +512,9 @@ final class GameEngine
             if ($player['city'] === $city) {
                 throw new RuntimeException('You are already in ' . $city . '.');
             }
+            $territoryBonusBp = min(5000, $this->territories->bonusBasisPoints($playerId, 'travel_discount'));
             $fare = 2500;
+            $travelSeconds = max(60, (int) round(1800 * (10000 - $territoryBonusBp) / 10000));
             if ((int) $player['cash'] < $fare) {
                 throw new RuntimeException('Not enough cash for the fare.');
             }
@@ -511,10 +526,10 @@ final class GameEngine
             );
             $this->ledger->record($playerId, 'cash', -$fare, $newCash, 'travel.fare', $correlationId);
             $this->armCooldown($playerId, 'travel');
-            $event = new DomainEvent('PlayerTraveled', ['playerId' => $playerId, 'city' => $city, 'fare' => $fare, 'correlationId' => $correlationId]);
+            $event = new DomainEvent('PlayerTraveled', ['playerId' => $playerId, 'city' => $city, 'fare' => $fare, 'travelSeconds' => $travelSeconds, 'territoryBonusBasisPoints' => $territoryBonusBp, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
-                'city' => $city, 'fare' => $fare,
+                'city' => $city, 'fare' => $fare, 'travelSeconds' => $travelSeconds, 'territoryBonusBasisPoints' => $territoryBonusBp,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -706,6 +721,42 @@ final class GameEngine
         return $this->notifications->unread($playerId);
     }
 
+    /** Public, server-authored city topology merged with live ownership state. */
+    public function territoryMap(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('territories');
+        return $this->territories->snapshot($playerId);
+    }
+
+    /**
+     * Execute a territory command without trusting any client-supplied owner,
+     * faction, reward, control percentage, or outcome.
+     */
+    public function actTerritory(
+        string $territoryId,
+        string $action,
+        int $expectedVersion,
+        string $playerId = 'founder-player',
+    ): array {
+        $this->requireModule('territories');
+        $this->guardAction($playerId, 'territory');
+        $result = $this->territories->act($territoryId, $action, $expectedVersion, $playerId);
+        $this->armCooldown($playerId, 'territory');
+        return $result;
+    }
+
+    public function adminTerritories(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('territories');
+        return $this->territories->adminCatalog($playerId);
+    }
+
+    public function setTerritoryOwnership(string $territoryId, ?string $factionId, string $actor): array
+    {
+        $this->requireModule('territories');
+        return $this->territories->setOwnership($territoryId, $factionId, $actor);
+    }
+
     private function runtimeContent(): array
     {
         $themes = $this->themes->all();
@@ -714,6 +765,7 @@ final class GameEngine
             'engineModules' => $this->modules->all(),
             'themes' => $themes,
             'activeTheme' => array_values(array_filter($themes, static fn (array $theme): bool => $theme['active']))[0]['id'] ?? null,
+            'territoryDefinitions' => $this->territories->snapshot('founder-player'),
             'capturedAt' => gmdate('c'),
         ];
     }

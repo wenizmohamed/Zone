@@ -183,3 +183,69 @@ CREATE TABLE IF NOT EXISTS admin_audit_log (
 );
 CREATE INDEX IF NOT EXISTS admin_audit_target_idx ON admin_audit_log(target_type, target_id, created_at);
 CREATE INDEX IF NOT EXISTS admin_audit_correlation_idx ON admin_audit_log(correlation_id);
+
+-- Territory definitions are immutable authoring data; territory_control and
+-- territory_wars are live world state. Keeping them separate prevents a
+-- content release or rollback from silently rewinding faction ownership.
+CREATE TABLE IF NOT EXISTS factions (
+    id TEXT PRIMARY KEY,
+    name_en TEXT NOT NULL,
+    name_ar TEXT NOT NULL,
+    color TEXT NOT NULL,
+    enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
+);
+
+CREATE TABLE IF NOT EXISTS faction_members (
+    player_id TEXT PRIMARY KEY REFERENCES players(id),
+    faction_id TEXT NOT NULL REFERENCES factions(id),
+    role TEXT NOT NULL DEFAULT 'member',
+    joined_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS territory_blocks (
+    id TEXT PRIMARY KEY,
+    district_id TEXT NOT NULL,
+    name_en TEXT NOT NULL,
+    name_ar TEXT NOT NULL,
+    polygon_json TEXT NOT NULL,
+    centroid_json TEXT NOT NULL,
+    neighbors_json TEXT NOT NULL,
+    sector INTEGER NOT NULL CHECK (sector BETWEEN 1 AND 7),
+    size_tier INTEGER NOT NULL CHECK (size_tier BETWEEN 1 AND 5),
+    density_tier INTEGER NOT NULL CHECK (density_tier BETWEEN 1 AND 3),
+    wall_slots INTEGER NOT NULL CHECK (wall_slots BETWEEN 5 AND 30),
+    daily_respect INTEGER NOT NULL CHECK (daily_respect >= 0),
+    benefit_key TEXT NOT NULL,
+    benefit_name_en TEXT NOT NULL,
+    benefit_name_ar TEXT NOT NULL,
+    benefit_value INTEGER NOT NULL,
+    benefit_unit TEXT NOT NULL,
+    enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1)),
+    definition_version INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS territory_control (
+    territory_id TEXT PRIMARY KEY REFERENCES territory_blocks(id),
+    faction_id TEXT REFERENCES factions(id),
+    state TEXT NOT NULL DEFAULT 'neutral' CHECK (state IN ('neutral', 'owned', 'contested', 'cooldown')),
+    control_basis_points INTEGER NOT NULL DEFAULT 0 CHECK (control_basis_points BETWEEN 0 AND 10000),
+    version INTEGER NOT NULL DEFAULT 1,
+    captured_at TEXT,
+    updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS territory_control_faction_idx ON territory_control(faction_id, state);
+
+CREATE TABLE IF NOT EXISTS territory_wars (
+    id TEXT PRIMARY KEY,
+    territory_id TEXT NOT NULL REFERENCES territory_blocks(id),
+    attacker_faction_id TEXT NOT NULL REFERENCES factions(id),
+    defender_faction_id TEXT NOT NULL REFERENCES factions(id),
+    attacker_score INTEGER NOT NULL DEFAULT 0,
+    defender_score INTEGER NOT NULL DEFAULT 0,
+    target_score INTEGER NOT NULL,
+    state TEXT NOT NULL DEFAULT 'active',
+    started_at TEXT NOT NULL,
+    ends_at TEXT NOT NULL,
+    resolved_at TEXT
+);
+CREATE INDEX IF NOT EXISTS territory_wars_active_idx ON territory_wars(territory_id, state);

@@ -63,6 +63,21 @@ try {
     $engine = Invoke-WebRequest -Uri ($baseUrl + '/engine') -UseBasicParsing -TimeoutSec 15
     Assert-Zone ($engine.StatusCode -eq 200 -and $engine.Content.Contains('ZONE Engine Control Room')) 'engine route opens directly without login'
 
+    $territories = Get-ZoneJson '/api/v1/city/map'
+    Assert-Zone ($territories.blocks.Count -eq 120) 'city API exposes 120 individually selectable territory blocks'
+    Assert-Zone ($territories.summary.neutral -gt 0 -and $territories.summary.ownedByPlayerFaction -gt 0) 'city API exposes both grey neutral land and player-faction holdings'
+    Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq $null -and $_.ownerColor -eq '#68717b' }).Count -gt 0) 'neutral blocks use the canonical grey ownership color'
+    Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq 'vipers' -and $_.ownerColor -eq '#78d628' }).Count -gt 0) 'player faction blocks use the canonical green ownership color'
+    Assert-Zone (@($territories.blocks | Where-Object { $_.neighbors.Count -gt 0 -and $_.benefits.Count -gt 0 }).Count -eq 120) 'every city block has adjacency and a strategic benefit'
+    $claimable = $territories.blocks | Where-Object { $_.action -eq 'claim' } | Select-Object -First 1
+    Assert-Zone ($null -ne $claimable) 'server identifies at least one valid adjacent neutral claim'
+    $claimResult = Invoke-ZoneJson ("/api/v1/territories/{0}/action" -f $claimable.id) 'Post' @{ action = 'claim'; expectedVersion = [int]$claimable.version }
+    $claimed = $claimResult.map.blocks | Where-Object { $_.id -eq $claimable.id } | Select-Object -First 1
+    Assert-Zone ($claimed.ownerFactionId -eq 'vipers' -and $claimed.ownerColor -eq '#78d628' -and $claimed.version -eq ([int]$claimable.version + 1)) 'valid claim changes exactly that block to the server-derived green faction owner'
+    $freshTerritories = Get-ZoneJson '/api/v1/city/map'
+    $persistedClaim = $freshTerritories.blocks | Where-Object { $_.id -eq $claimable.id } | Select-Object -First 1
+    Assert-Zone ($persistedClaim.ownerFactionId -eq 'vipers' -and $freshTerritories.revision -ne $territories.revision) 'claimed ownership persists and advances the live map revision'
+
     foreach ($asset in @('/admin.css', '/admin.js', '/platform-runtime.js')) {
         $response = Invoke-WebRequest -Uri ($baseUrl + $asset) -UseBasicParsing -TimeoutSec 15
         Assert-Zone ($response.StatusCode -eq 200 -and $response.RawContentLength -gt 100) "$asset is available and non-empty"
@@ -74,7 +89,7 @@ try {
     Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $root.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'admin language is synchronized into the embedded player preview'
 
     $adminCrimes = Get-ZoneJson '/api/v1/admin/crimes'
-    Assert-Zone ($adminCrimes.crimes.Count -eq 3) 'open admin loads the full crime catalogue'
+    Assert-Zone ($adminCrimes.crimes.Count -eq 7) 'open admin loads the full seven-tier crime catalogue'
     $crime = Invoke-ZoneJson '/api/v1/admin/crimes/platform-smoke-crime' 'Put' @{
         name_en = 'Platform smoke crime'
         name_ar = 'جريمة فحص المنصة'

@@ -118,11 +118,166 @@ final class Database
         // Bank stays at 0 (balance-gated); the rate limiter still covers it.
         $cooldowns = [
             'crime' => 5, 'attack' => 8, 'gym' => 3, 'job' => 10,
-            'blackjack' => 3, 'travel' => 15, 'hospital' => 5, 'bank' => 0,
+            'blackjack' => 3, 'travel' => 15, 'hospital' => 5, 'bank' => 0, 'territory' => 1,
         ];
         foreach ($cooldowns as $action => $seconds) {
             $this->insertIgnore('cooldown_config', ['action', 'seconds'], [$action, $seconds]);
         }
+
+        $this->seedTerritoryFoundation($now);
+    }
+
+    /**
+     * Seed a dense 120-block city graph. Geometry is stored as real longitude /
+     * latitude polygons so the renderer and every future client consume the
+     * same server-owned topology instead of inventing visual-only districts.
+     */
+    private function seedTerritoryFoundation(string $now): void
+    {
+        $factions = [
+            ['vipers', 'Sand Vipers', 'أفاعي الرمل', '#78d628'],
+            ['kings', 'Harbor Kings', 'ملوك المرفأ', '#3d7cc9'],
+            ['night', 'Night Market', 'السوق الليلي', '#b8529e'],
+            ['oldguard', 'Old Guard', 'الحرس القديم', '#d99332'],
+        ];
+        foreach ($factions as $faction) {
+            $this->insertIgnore('factions', ['id', 'name_en', 'name_ar', 'color', 'enabled'], [...$faction, 1]);
+        }
+        $this->insertIgnore('faction_members', ['player_id', 'faction_id', 'role', 'joined_at'], ['founder-player', 'vipers', 'leader', $now]);
+
+        // Serverless requests construct the engine repeatedly. Once the full
+        // immutable v1 catalog exists, do not issue 240 conflict-only inserts
+        // on every request. Live ownership remains untouched either way.
+        $seeded = $this->fetchOne('SELECT COUNT(*) AS total FROM territory_blocks');
+        if ((int) ($seeded['total'] ?? 0) >= 120) {
+            return;
+        }
+
+        $columns = 12;
+        $rows = 10;
+        $benefits = [
+            ['cash_income', 'Cash flow', 'تدفق نقدي', 18000, 'cash/hour'],
+            ['crime_bonus', 'Crime success', 'نجاح الجرائم', 350, 'basis-points'],
+            ['gym_bonus', 'Gym training', 'تدريب النادي', 300, 'basis-points'],
+            ['medical_discount', 'Medical network', 'شبكة طبية', 500, 'basis-points'],
+            ['market_discount', 'Market leverage', 'نفوذ السوق', 300, 'basis-points'],
+            ['travel_discount', 'Transport corridor', 'ممر نقل', 450, 'basis-points'],
+            ['weapon_supply', 'Weapon supply', 'إمداد أسلحة', 12, 'items/day'],
+            ['contraband', 'Contraband route', 'طريق تهريب', 9, 'crates/day'],
+            ['intel', 'Street intelligence', 'معلومات الشارع', 8, 'percent'],
+            ['defense', 'Defensive position', 'موقع دفاعي', 600, 'basis-points'],
+            ['recruitment', 'Recruitment reach', 'نطاق التجنيد', 5, 'members'],
+        ];
+        $sectorMultipliers = [1 => 2.50, 2 => 2.25, 3 => 2.00, 4 => 1.75, 5 => 1.50, 6 => 1.25, 7 => 1.00];
+        $sizeMultipliers = [1 => 1.00, 2 => 1.25, 3 => 1.50, 4 => 1.75, 5 => 2.00];
+        $densityMultipliers = [1 => 1.00, 2 => 2.00, 3 => 3.00];
+
+        for ($row = 0; $row < $rows; $row++) {
+            for ($column = 0; $column < $columns; $column++) {
+                $ordinal = $row * $columns + $column + 1;
+                $id = sprintf('ZC-%03d', $ordinal);
+                $polygon = [
+                    $this->territoryPoint($column, $row, $columns, $rows),
+                    $this->territoryPoint($column + 1, $row, $columns, $rows),
+                    $this->territoryPoint($column + 1, $row + 1, $columns, $rows),
+                    $this->territoryPoint($column, $row + 1, $columns, $rows),
+                ];
+                $centroid = [
+                    array_sum(array_column($polygon, 0)) / count($polygon),
+                    array_sum(array_column($polygon, 1)) / count($polygon),
+                ];
+                $neighbors = [];
+                foreach ([[-1, 0], [1, 0], [0, -1], [0, 1]] as [$dx, $dy]) {
+                    $neighborColumn = $column + $dx;
+                    $neighborRow = $row + $dy;
+                    if ($neighborColumn >= 0 && $neighborColumn < $columns && $neighborRow >= 0 && $neighborRow < $rows) {
+                        $neighbors[] = sprintf('ZC-%03d', $neighborRow * $columns + $neighborColumn + 1);
+                    }
+                }
+
+                $normalizedX = (($column + 0.5) / $columns) * 2 - 1;
+                $normalizedY = (($row + 0.5) / $rows) * 2 - 1;
+                $radius = max(abs($normalizedX), abs($normalizedY));
+                $sector = min(7, max(1, 1 + (int) floor($radius * 7)));
+                $sizeTier = 1 + (($ordinal * 7 + $row) % 5);
+                $densityTier = min(3, max(1, 4 - (int) ceil($sector / 3) + (($column + $row) % 3 === 0 ? 1 : 0)));
+                $wallSlots = min(30, 5 + $sizeTier * 5);
+                $dailyRespect = (int) round(15 * $sectorMultipliers[$sector] * $sizeMultipliers[$sizeTier] * $densityMultipliers[$densityTier]);
+                $benefit = $benefits[($ordinal + $row * 3 + $column) % count($benefits)];
+                if ($row === 4 && $column === 4) {
+                    $benefit = $benefits[2]; // Sand Vipers: gym training advantage.
+                } elseif ($row === 4 && $column === 5) {
+                    $benefit = $benefits[1]; // Sand Vipers: crime success advantage.
+                } elseif ($row === 4 && $column === 6) {
+                    $benefit = $benefits[5]; // Sand Vipers: travel-time advantage.
+                }
+                $district = match (true) {
+                    $row <= 2 => 'north',
+                    $row >= 7 && $column <= 5 => 'red',
+                    $row >= 7 => 'res',
+                    $column <= 3 => 'west',
+                    $column >= 8 => 'fin',
+                    default => 'center',
+                };
+
+                $this->insertIgnore(
+                    'territory_blocks',
+                    ['id', 'district_id', 'name_en', 'name_ar', 'polygon_json', 'centroid_json', 'neighbors_json', 'sector', 'size_tier', 'density_tier', 'wall_slots', 'daily_respect', 'benefit_key', 'benefit_name_en', 'benefit_name_ar', 'benefit_value', 'benefit_unit', 'enabled', 'definition_version'],
+                    [$id, $district, "Block {$id}", "القطاع {$id}", json_encode($polygon, JSON_THROW_ON_ERROR), json_encode($centroid, JSON_THROW_ON_ERROR), json_encode($neighbors, JSON_THROW_ON_ERROR), $sector, $sizeTier, $densityTier, $wallSlots, $dailyRespect, $benefit[0], $benefit[1], $benefit[2], $benefit[3], $benefit[4], 1, 1],
+                );
+
+                [$owner, $state, $control] = $this->seedTerritoryControl($row, $column);
+                $this->insertIgnore(
+                    'territory_control',
+                    ['territory_id', 'faction_id', 'state', 'control_basis_points', 'version', 'captured_at', 'updated_at'],
+                    [$id, $owner, $state, $control, 1, $owner === null ? null : $now, $now],
+                );
+            }
+        }
+    }
+
+    /** @return array{0: float, 1: float} */
+    private function territoryPoint(int $column, int $row, int $columns, int $rows): array
+    {
+        $x = ($column / $columns) * 2 - 1;
+        $y = 1 - ($row / $rows) * 2;
+        $widthScale = 0.68 + 0.32 * (1 - abs($y));
+        // Shared deterministic intersection jitter breaks the spreadsheet-grid
+        // silhouette while preserving perfectly matching borders and adjacency.
+        $crossJitter = $column > 0 && $column < $columns ? sin($column * 1.91 + $row * 0.73) * 105 : 0;
+        $longJitter = $row > 0 && $row < $rows ? sin($row * 1.47 + $column * 0.61) * 135 : 0;
+        $crossMeters = $x * 2850 * $widthScale + $crossJitter;
+        $longMeters = $y * 5900 + $longJitter;
+        $bearing = deg2rad(29);
+        $eastMeters = $crossMeters * cos($bearing) + $longMeters * sin($bearing);
+        $northMeters = -$crossMeters * sin($bearing) + $longMeters * cos($bearing);
+        $centerLatitude = 40.7562;
+        $centerLongitude = -73.9812;
+        return [
+            round($centerLongitude + $eastMeters / (111320 * cos(deg2rad($centerLatitude))), 7),
+            round($centerLatitude + $northMeters / 111320, 7),
+        ];
+    }
+
+    /** @return array{0: ?string, 1: string, 2: int} */
+    private function seedTerritoryControl(int $row, int $column): array
+    {
+        if ($row >= 4 && $row <= 5 && $column >= 4 && $column <= 6) {
+            return ['vipers', 'owned', 10000];
+        }
+        if ($row === 4 && $column === 7) {
+            return ['kings', 'contested', 5200];
+        }
+        if ($row >= 2 && $row <= 4 && $column >= 8 && $column <= 10) {
+            return ['kings', 'owned', 10000];
+        }
+        if ($row >= 7 && $row <= 8 && $column >= 8 && $column <= 10) {
+            return ['night', 'owned', 10000];
+        }
+        if ($row >= 1 && $row <= 2 && $column >= 1 && $column <= 3) {
+            return ['oldguard', 'owned', 10000];
+        }
+        return [null, 'neutral', 0];
     }
 
     public function insertIgnore(string $table, array $columns, array $values): void

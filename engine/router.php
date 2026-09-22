@@ -152,6 +152,9 @@ try {
     if ($method === 'GET' && $path === '/api/v1/achievements') {
         json_response(['achievements' => $engine->achievements(current_player_id())]);
     }
+    if ($method === 'GET' && $path === '/api/v1/city/map') {
+        json_response($engine->territoryMap(current_player_id()));
+    }
     if ($method === 'GET' && $path === '/api/v1/architecture') {
         json_response([
             'requestFlow' => ['Web or Mobile Client', 'REST API v1', 'Application Use Case', 'Domain Core', 'Port', 'Adapter'],
@@ -177,6 +180,9 @@ try {
     if ($method === 'GET' && $path === '/api/v1/admin/audit') {
         json_response(['entries' => $engine->adminAuditLog()]);
     }
+    if ($method === 'GET' && $path === '/api/v1/admin/territories') {
+        json_response($engine->adminTerritories(current_player_id()));
+    }
     if ($method === 'PUT' && $path === '/api/v1/admin/draft') {
         $actor = require_admin_mutation();
         $payload = request_json();
@@ -196,9 +202,22 @@ try {
         $actor = require_admin_mutation();
         json_response(['crime' => $engine->saveCrime($matches[1], request_json(), $actor)]);
     }
+    if ($method === 'POST' && preg_match('#^/api/v1/admin/territories/(ZC-[0-9]{3})/ownership$#', $path, $matches)) {
+        $actor = require_admin_mutation();
+        $body = request_json();
+        $factionId = array_key_exists('factionId', $body) && $body['factionId'] !== null
+            ? (string) $body['factionId']
+            : null;
+        json_response($engine->setTerritoryOwnership($matches[1], $factionId, $actor));
+    }
     if ($method === 'POST' && preg_match('#^/api/v1/crimes/([a-z0-9-]+)/attempt$#', $path, $matches)) {
         request_json();
         json_response($engine->attemptCrime($matches[1], current_player_id()));
+    }
+    if ($method === 'POST' && preg_match('#^/api/v1/territories/(ZC-[0-9]{3})/action$#', $path, $matches)) {
+        $body = request_json();
+        $expectedVersion = \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion');
+        json_response($engine->actTerritory($matches[1], (string) ($body['action'] ?? ''), $expectedVersion, current_player_id()));
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/modules/([a-z0-9-]+)/(install|uninstall|enable|disable)$#', $path, $matches)) {
         require_admin_mutation();
@@ -278,6 +297,10 @@ try {
         $message === 'Player authentication required to act as another player.' => 401,
         $message === 'Player authentication failed.' => 401,
         $message === 'Player identity header is required.' => 401,
+        str_starts_with($message, 'Territory state changed.') => 409,
+        str_starts_with($message, 'Control an adjacent block') => 409,
+        str_starts_with($message, 'A first foothold') => 409,
+        str_starts_with($message, 'A territory war is already active') => 409,
         str_starts_with($message, 'Production database is not configured.') => 503,
         default => 400,
     };

@@ -572,7 +572,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=24" title="Zone City live map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=46" title="Zone City live territory map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
@@ -1067,12 +1067,12 @@ const MISSIONS = [{ id: 'c5', ctr: 'crimes', n: 5, cash: 5000, pts: 5 }, { id: '
 const COURSES = [{ id: 'bio', cost: 5000, mins: 20 }, { id: 'fit', cost: 12000, mins: 45 }, { id: 'law', cost: 9000, mins: 30 }, { id: 'biz', cost: 15000, mins: 60 }, { id: 'comb', cost: 25000, mins: 90 }];
 const PROPS = [{ id: 'shack', happy: 250, upkeep: 0, price: 0 }, { id: 'trailer', happy: 350, upkeep: 50, price: 40000 }, { id: 'apt', happy: 500, upkeep: 200, price: 150000 }, { id: 'semi', happy: 1000, upkeep: 600, price: 600000 }, { id: 'house', happy: 1500, upkeep: 1500, price: 2500000 }, { id: 'villa', happy: 2500, upkeep: 5000, price: 8000000 }, { id: 'island', happy: 5000, upkeep: 20000, price: 50000000 }];
 const DISTRICTS = [
-  { id: 'west', x: 0, y: 0, w: 36, h: 52, r: '40% 60% 55% 45% / 50% 40% 60% 50%', bg: '#25301f', border: '#3d5030', faction: 'vipers', color: '#a3d900', control: 82, contested: false, rival: 'kings', blocks: 4, respect: 13840, income: 128000, heat: 34, poly: [[0,0],[32,0],[30,18],[36,32],[34,50],[18,46],[0,49]], places: [['gym', 'gym'], ['grocer', 'jobs'], ['school', 'education']] },
-  { id: 'north', x: 30, y: 0, w: 42, h: 50, r: '55% 45% 50% 50% / 45% 55% 45% 55%', bg: '#252a30', border: '#3a4450', faction: 'kings', color: '#3d7cc9', control: 76, contested: false, rival: 'vipers', blocks: 5, respect: 16110, income: 152000, heat: 42, poly: [[32,0],[69,0],[72,18],[65,32],[67,50],[50,43],[34,50],[36,32],[30,18]], places: [['arena', 'attack'], ['news', 'newspaper']] },
-  { id: 'fin', x: 65, y: 0, w: 35, h: 51, r: '45% 55% 40% 60% / 55% 45% 55% 45%', bg: '#2a2d22', border: '#4a5030', faction: 'night', color: '#b8529e', control: 91, contested: false, rival: 'kings', blocks: 6, respect: 22940, income: 248000, heat: 26, poly: [[69,0],[100,0],[100,49],[82,46],[67,50],[65,32],[72,18]], places: [['bank', 'bank'], ['market', 'market'], ['jobs', 'jobs'], ['hof', 'hof']] },
-  { id: 'red', x: 0, y: 46, w: 39, h: 54, r: '52% 48% 60% 40% / 45% 55% 45% 55%', bg: '#331f1f', border: '#5a3030', faction: 'vipers', color: '#a3d900', control: 58, contested: true, rival: 'night', blocks: 3, respect: 11900, income: 176000, heat: 81, poly: [[0,49],[18,46],[34,50],[39,66],[34,82],[36,100],[0,100]], places: [['casino', 'casino'], ['alley', 'crimes'], ['hq', 'faction']] },
-  { id: 'center', x: 34, y: 43, w: 38, h: 57, r: '50% 50% 45% 55% / 60% 40% 60% 40%', bg: 'var(--btn)', border: '#484848', faction: 'oldguard', color: '#d99332', control: 69, contested: false, rival: 'night', blocks: 4, respect: 18220, income: 201000, heat: 55, poly: [[34,50],[50,43],[67,50],[72,64],[66,82],[70,100],[36,100],[34,82],[39,66]], places: [['hospital', 'hospital'], ['jail', 'jail']] },
-  { id: 'res', x: 66, y: 46, w: 34, h: 54, r: '60% 40% 50% 50% / 40% 60% 40% 60%', bg: '#24302a', border: '#3a5040', faction: 'kings', color: '#3d7cc9', control: 53, contested: true, rival: 'vipers', blocks: 3, respect: 10160, income: 143000, heat: 47, poly: [[67,50],[82,46],[100,49],[100,100],[70,100],[66,82],[72,64]], places: [['home', 'properties'], ['shop', 'items']] }];
+  { id: 'west', x: 0, y: 0, w: 36, h: 52, r: '40% 60% 55% 45% / 50% 40% 60% 50%', bg: '#252a2e', border: '#3a4148', places: [['gym', 'gym'], ['grocer', 'jobs'], ['school', 'education']] },
+  { id: 'north', x: 30, y: 0, w: 42, h: 50, r: '55% 45% 50% 50% / 45% 55% 45% 55%', bg: '#272c31', border: '#3c444b', places: [['arena', 'attack'], ['news', 'newspaper']] },
+  { id: 'fin', x: 65, y: 0, w: 35, h: 51, r: '45% 55% 40% 60% / 55% 45% 55% 45%', bg: '#292e32', border: '#40484e', places: [['bank', 'bank'], ['market', 'market'], ['jobs', 'jobs'], ['hof', 'hof']] },
+  { id: 'red', x: 0, y: 46, w: 39, h: 54, r: '52% 48% 60% 40% / 45% 55% 45% 55%', bg: '#24292d', border: '#394147', places: [['casino', 'casino'], ['alley', 'crimes'], ['hq', 'faction']] },
+  { id: 'center', x: 34, y: 43, w: 38, h: 57, r: '50% 50% 45% 55% / 60% 40% 60% 40%', bg: '#2a3034', border: '#464e54', places: [['hospital', 'hospital'], ['jail', 'jail']] },
+  { id: 'res', x: 66, y: 46, w: 34, h: 54, r: '60% 40% 50% 50% / 40% 60% 40% 60%', bg: '#252b2f', border: '#3b4449', places: [['home', 'properties'], ['shop', 'items']] }];
 const PINS = [
   ['gym', 'gym', 'leisure', 18, 30, 'west'], ['school', 'education', 'admin', 25, 19, 'west'], ['grocer', 'jobs', 'shop', 12, 42, 'west'],
   ['arena', 'attack', 'misc', 42, 20, 'north'], ['news', 'newspaper', 'admin', 59, 19, 'north'], ['hof', 'hof', 'admin', 87, 15, 'fin'],
@@ -1083,9 +1083,53 @@ const PINS = [
   ['cityhall', 'city', 'admin', 48, 53, 'center'], ['points', 'points', 'fin', 90, 41, 'fin'], ['church', 'church', 'misc', 60, 68, 'center'], ['racetrack', 'racetrack', 'leisure', 36, 13, 'north'],
   ['bigals', 'bigals', 'shop', 33, 80, 'red'], ['sweetshop', 'sweetshop', 'shop', 26, 43, 'west'], ['university', 'university', 'admin', 10, 25, 'west'], ['docks', 'docks', 'leisure', 22, 88, 'red'],
   ['police', 'police', 'admin', 50, 61, 'center'], ['pawnshop', 'pawnshop', 'shop', 57, 79, 'center']];
+
+const TERRITORY_FACTIONS = [
+  { id: 'vipers', name: { en: 'Sand Vipers', ar: 'أفاعي الرمل' }, color: '#78d628' },
+  { id: 'kings', name: { en: 'Harbor Kings', ar: 'ملوك المرفأ' }, color: '#3d7cc9' },
+  { id: 'night', name: { en: 'Night Market', ar: 'السوق الليلي' }, color: '#b8529e' },
+  { id: 'oldguard', name: { en: 'Old Guard', ar: 'الحرس القديم' }, color: '#d99332' },
+];
+const TERRITORY_BENEFITS = [
+  ['cash_income', 'Cash flow', 'تدفق نقدي', 18000, 'cash/hour'], ['crime_bonus', 'Crime success', 'نجاح الجرائم', 350, 'basis-points'],
+  ['gym_bonus', 'Gym training', 'تدريب النادي', 300, 'basis-points'],
+  ['medical_discount', 'Medical network', 'شبكة طبية', 500, 'basis-points'], ['market_discount', 'Market leverage', 'نفوذ السوق', 300, 'basis-points'],
+  ['travel_discount', 'Transport corridor', 'ممر نقل', 450, 'basis-points'], ['weapon_supply', 'Weapon supply', 'إمداد أسلحة', 12, 'items/day'],
+  ['contraband', 'Contraband route', 'طريق تهريب', 9, 'crates/day'], ['intel', 'Street intelligence', 'معلومات الشارع', 8, 'percent'],
+  ['defense', 'Defensive position', 'موقع دفاعي', 600, 'basis-points'], ['recruitment', 'Recruitment reach', 'نطاق التجنيد', 5, 'members'],
+];
+function zoneTerritoryPoint(column, row) {
+  const x = column / 12 * 2 - 1, y = 1 - row / 10 * 2, widthScale = .68 + .32 * (1 - Math.abs(y));
+  const crossJitter=column>0&&column<12?Math.sin(column*1.91+row*.73)*105:0,longJitter=row>0&&row<10?Math.sin(row*1.47+column*.61)*135:0;
+  const cross = x * 2850 * widthScale + crossJitter, along = y * 5900 + longJitter, bearing = 29 * Math.PI / 180;
+  const east = cross * Math.cos(bearing) + along * Math.sin(bearing), north = -cross * Math.sin(bearing) + along * Math.cos(bearing);
+  return [-73.9812 + east / (111320 * Math.cos(40.7562 * Math.PI / 180)), 40.7562 + north / 111320];
+}
+function buildTerritoryFallback() {
+  const blocks = [];
+  for (let row = 0; row < 10; row++) for (let column = 0; column < 12; column++) {
+    const ordinal = row * 12 + column + 1, id = 'ZC-' + String(ordinal).padStart(3, '0');
+    const polygon = [zoneTerritoryPoint(column,row),zoneTerritoryPoint(column+1,row),zoneTerritoryPoint(column+1,row+1),zoneTerritoryPoint(column,row+1)];
+    const centroid = [polygon.reduce((n,p)=>n+p[0],0)/4,polygon.reduce((n,p)=>n+p[1],0)/4], neighbors = [];
+    [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dx,dy])=>{ const c=column+dx,r=row+dy;if(c>=0&&c<12&&r>=0&&r<10)neighbors.push('ZC-'+String(r*12+c+1).padStart(3,'0')); });
+    const nx=(column+.5)/12*2-1,ny=(row+.5)/10*2-1,sector=Math.min(7,Math.max(1,1+Math.floor(Math.max(Math.abs(nx),Math.abs(ny))*7)));
+    const size=1+(ordinal*7+row)%5,density=Math.min(3,Math.max(1,4-Math.ceil(sector/3)+((column+row)%3===0?1:0)));
+    let ownerFactionId=null,state='neutral',control=0;
+    if(row>=4&&row<=5&&column>=4&&column<=6){ownerFactionId='vipers';state='owned';control=100;}
+    else if(row===4&&column===7){ownerFactionId='kings';state='contested';control=52;}
+    else if(row>=2&&row<=4&&column>=8&&column<=10){ownerFactionId='kings';state='owned';control=100;}
+    else if(row>=7&&row<=8&&column>=8&&column<=10){ownerFactionId='night';state='owned';control=100;}
+    else if(row>=1&&row<=2&&column>=1&&column<=3){ownerFactionId='oldguard';state='owned';control=100;}
+    const faction=TERRITORY_FACTIONS.find(f=>f.id===ownerFactionId);let benefit=TERRITORY_BENEFITS[(ordinal+row*3+column)%TERRITORY_BENEFITS.length];
+    if(row===4&&column===4)benefit=TERRITORY_BENEFITS[2];else if(row===4&&column===5)benefit=TERRITORY_BENEFITS[1];else if(row===4&&column===6)benefit=TERRITORY_BENEFITS[5];
+    const districtId=row<=2?'north':row>=7&&column<=5?'red':row>=7?'res':column<=3?'west':column>=8?'fin':'center';
+    blocks.push({id,districtId,name:{en:'Block '+id,ar:'القطاع '+id},polygon,centroid,neighbors,sector,size,density,slots:Math.min(30,5+size*5),dailyRespect:Math.round(15*([0,2.5,2.25,2,1.75,1.5,1.25,1][sector])*([0,1,1.25,1.5,1.75,2][size])*([0,1,2,3][density])),benefits:[{key:benefit[0],name:{en:benefit[1],ar:benefit[2]},value:benefit[3],unit:benefit[4]}],ownerFactionId,ownerName:faction?faction.name:{en:'Unclaimed',ar:'غير مملوك'},ownerColor:faction?faction.color:'#68717b',state,control,version:1,action:null,actionReason:'Live server connection required.'});
+  }
+  return {revision:'fallback-120-v1',playerFactionId:'vipers',neutralColor:'#68717b',factions:TERRITORY_FACTIONS,blocks,summary:{total:120,ownedByPlayerFaction:6,neutral:92,contested:1,controlPercent:5}};
+}
 const MAP_COPY = {
-  en: { places: 'Locations', territories: 'Territories', searchPlaces: 'Search locations...', searchTerritories: 'Search territories...', cityControl: 'City control', owner: 'Owner', control: 'Control', blocks: 'Blocks', respect: 'Respect', income: 'Income / hour', heat: 'Heat', contested: 'Contested', controlled: 'Controlled', openFaction: 'Open faction', showPlaces: 'Show district locations', current: 'Your territory', versus: 'vs', fullCity: 'Full city', factions: { vipers: 'Sand Vipers', kings: 'Harbor Kings', night: 'Night Market', oldguard: 'Old Guard' } },
-  ar: { places: 'المواقع', territories: 'الأراضي', searchPlaces: 'ابحث في المواقع...', searchTerritories: 'ابحث في الأراضي...', cityControl: 'السيطرة على المدينة', owner: 'المالك', control: 'السيطرة', blocks: 'القطاعات', respect: 'الاحترام', income: 'الدخل / ساعة', heat: 'الخطورة', contested: 'متنازع عليها', controlled: 'تحت السيطرة', openFaction: 'افتح العائلة', showPlaces: 'مواقع المنطقة', current: 'منطقتك الحالية', versus: 'ضد', fullCity: 'المدينة كاملة', factions: { vipers: 'أفاعي الرمل', kings: 'ملوك المرفأ', night: 'السوق الليلي', oldguard: 'الحرس القديم' } }
+  en: { places:'Locations',territories:'Territories',searchPlaces:'Search locations...',searchTerritories:'Search block ID, owner or benefit...',cityControl:'City control',owner:'Owner',control:'Control',blocks:'Blocks',block:'Block',neutral:'Neutral',sector:'Sector',size:'Size',density:'Density',slots:'Wall slots',benefit:'Strategic benefit',dailyRespect:'Daily respect',adjacent:'Adjacent blocks',respect:'Respect',income:'Income / hour',heat:'Heat',contested:'Contested',controlled:'Controlled',owned:'Owned',claim:'Claim block',assault:'Assault block',reinforce:'Reinforce',unavailable:'Unavailable',actionWorking:'Updating territory...',actionSuccess:'Territory state updated',openFaction:'Open faction',showPlaces:'Show district locations',current:'Your territory',versus:'vs',fullCity:'Full city',freeCamera:'Drag to pan · right-drag to rotate · wheel to zoom',factions:{vipers:'Sand Vipers',kings:'Harbor Kings',night:'Night Market',oldguard:'Old Guard'} },
+  ar: { places:'المواقع',territories:'الأراضي',searchPlaces:'ابحث في المواقع...',searchTerritories:'ابحث برقم القطاع أو المالك أو الميزة...',cityControl:'السيطرة على المدينة',owner:'المالك',control:'السيطرة',blocks:'القطاعات',block:'القطاع',neutral:'محايد',sector:'الحلقة',size:'الحجم',density:'الكثافة',slots:'مواقع الجدار',benefit:'الميزة الاستراتيجية',dailyRespect:'الاحترام اليومي',adjacent:'القطاعات المجاورة',respect:'الاحترام',income:'الدخل / ساعة',heat:'الخطورة',contested:'متنازع عليه',controlled:'تحت السيطرة',owned:'مملوك',claim:'استحوذ على القطاع',assault:'هاجم القطاع',reinforce:'عزّز القطاع',unavailable:'غير متاح',actionWorking:'جارٍ تحديث القطاع...',actionSuccess:'تم تحديث السيطرة على القطاع',openFaction:'افتح العائلة',showPlaces:'مواقع المنطقة',current:'أرض عائلتك',versus:'ضد',fullCity:'المدينة كاملة',freeCamera:'اسحب للتحريك · اسحب بالزر الأيمن للدوران · مرّر للتقريب',factions:{vipers:'أفاعي الرمل',kings:'ملوك المرفأ',night:'السوق الليلي',oldguard:'الحرس القديم'} }
 };
 const PINCOLOR = { fin: '#3d7cc9', admin: '#c8502e', shop: '#d9a520', leisure: '#7aa33a', estate: '#2f9c8f', misc: '#8a4fbf' };
 const LIGHTEN = (h, a) => { const n = parseInt(h.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255, m = c => Math.round(c + (255 - c) * a); return '#' + ((1 << 24) + (m(r) << 16) + (m(g) << 8) + m(b)).toString(16).slice(1); };
@@ -1106,6 +1150,8 @@ class Component extends DCLogic {
   state = { screen: 'home', lang: 'en', theme: 'dark', mapMode: 'live', toast: null, fight: null, sel: 'revolver', itemTab: 'all', cat: 'search', tut: false, casino: { card: 7, bet: 1000, msg: 'start' }, tick: 0 };
   constructor(p) {
     super(p);
+    this.territoryMap = buildTerritoryFallback();
+    this.territoryBusy = null;
     const raw = (() => { try { return JSON.parse(localStorage.getItem(LS)); } catch (e) { return null; } })();
     const now = Date.now();
     this.p = raw || { cash: 48500, level: 12, xp: 340, points: 120, merits: 6, bars: { energy: { v: 84, at: now }, nerve: { v: 40, at: now }, happy: { v: 420, at: now }, life: { v: 2760, at: now } }, stats: { str: 1420.4, def: 1180.15, spd: 1330.8, dex: 1050.25 }, skill: {}, crimeXp: 96, gymXp: 260, gym: 2, inv: { revolver: 1, bat: 1, smallkit: 3, drink: 2, sand: 12 }, equip: 'bat', log: [], job: 'grocer', jobPts: 38, fac: { respect: 41820, chain: 0, best: 128, chainAt: 0, ups: {}, warEnd: now + 3600e3 * 1.7 }, jailUntil: 0, hospUntil: 0, lastDistrict: 'center', ctr: { crimes: 0, trains: 0, wins: 0, shifts: 0, buys: 0 }, claimed: {}, edu: null, eduDone: {}, prop: 'apt', casinoNet: 0 };
@@ -1138,10 +1184,12 @@ class Component extends DCLogic {
         this.save(); this.forceUpdate(); return; }
       if (d.zoneEquip) { const k = d.zoneEquip; if (k === 'fists') this.p.equip = null; else if (CAT[k]) { this.p.inv[k] = this.p.inv[k] || 1; this.p.equip = k; this.log('equip', { item: k }, 'good'); }
         this.save(); this.forceUpdate(); return; }
-      if (d.zoneMapReady) { this._mapSig = ''; this.pushMap(); return; }
+      if (d.zoneTerritoryAction || d.type === 'ZONE_MAP_CLAIM_BLOCK') { const cmd=d.zoneTerritoryAction||d; this.territoryAction(cmd); return; }
+      if (d.zoneMapReady || d.type === 'ZONE_MAP_READY') { this._mapSig = ''; this.pushMap(); return; }
       const s = d.zoneGo; if (s && SCREENS.includes(s)) this.go(s);
     };
     window.addEventListener('message', this.onMsg);
+    this.loadTerritories();
     this.iv = setInterval(() => {
       if (this.state.tick % 5 === 0) { this.market.forEach(m => { m.price = Math.max(m.base * 0.85, Math.min(m.base * 1.15, m.price * (1 + rnd(-0.006, 0.006)))); }); this.elimScores = this.elimScores.map(s => s + Math.round(rnd(0, 6))); }
       const p = this.p; if (p.edu && Date.now() >= p.edu.until) { p.eduDone[p.edu.id] = 1; this.log('edudone', { name: T[this.state.lang].courses[p.edu.id][0] }, 'good'); p.edu = null; this.save(); }
@@ -1149,24 +1197,63 @@ class Component extends DCLogic {
     }, 1000);
   }
   componentWillUnmount() { clearInterval(this.iv); window.removeEventListener('message', this.onMsg); }
+  async loadTerritories() {
+    try {
+      const response = await fetch('/api/v1/city/map', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+      if (!response.ok) throw new Error('Territory map unavailable (' + response.status + ')');
+      const snapshot = await response.json();
+      if (!snapshot || !Array.isArray(snapshot.blocks) || snapshot.blocks.length < 120) throw new Error('Territory map is incomplete.');
+      this.territoryMap = snapshot; this._mapSig = ''; this.pushMap();
+    } catch (error) {
+      console.warn('[ZONE territory map] using bundled 120-block snapshot:', error && error.message ? error.message : error);
+      this._mapSig = ''; this.pushMap();
+    }
+  }
+  async territoryAction(command) {
+    const blockId = String(command.blockId || command.territoryId || '');
+    const block = (this.territoryMap.blocks || []).find(item => item.id === blockId);
+    const action = String(command.action || (block && block.action) || '');
+    if (!block || !action || this.territoryBusy) return;
+    const copy = MAP_COPY[this.state.lang];
+    this.territoryBusy = blockId; this.toast(copy.actionWorking);
+    try {
+      const response = await fetch('/api/v1/territories/' + encodeURIComponent(blockId) + '/action', {
+        method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+        body:JSON.stringify({action,expectedVersion:Number(block.version)})
+      });
+      const result = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(result.error || ('Territory action failed (' + response.status + ')'));
+      if (result.map && Array.isArray(result.map.blocks)) this.territoryMap = result.map;
+      else await this.loadTerritories();
+      this._mapSig=''; this.pushMap(); this.toast(copy.actionSuccess);
+    } catch (error) { this.toast(error && error.message ? error.message : copy.unavailable, true); }
+    finally { this.territoryBusy=null; }
+  }
   pushMap() {
     const f = document.getElementById('zone-city-map');
     if (!f || !f.contentWindow) return;
     const lang = this.state.lang, t = T[lang], dark = this.state.theme !== 'light', copy = MAP_COPY[lang];
-    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict;
+    const territoryMap = this.territoryMap || buildTerritoryFallback();
+    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict + '|' + territoryMap.revision;
     if (sig === this._mapSig) return;
-    const territoryById = Object.fromEntries(DISTRICTS.map(dd => [dd.id, dd]));
+    const factions = (territoryMap.factions || TERRITORY_FACTIONS).map(faction=>({id:faction.id,name:(faction.name&&faction.name[lang])||faction.id,color:faction.color}));
+    const blockById = Object.fromEntries((territoryMap.blocks || []).map(block=>[block.id,block]));
+    const blockForPoint=(x,y)=>'ZC-'+String(Math.min(9,Math.max(0,Math.floor(y/100*10)))*12+Math.min(11,Math.max(0,Math.floor(x/100*12)))+1).padStart(3,'0');
     const pins = PINS.map(([pl, sc, cat, x, y, districtId]) => {
-      const district = territoryById[districtId] || territoryById.center;
+      const blockId=blockForPoint(x,y),block=blockById[blockId]||{},coordinates=zoneTerritoryPoint(x/100*12,y/100*10);
       return { id: pl, screen: sc, cat, icon: PINICON[pl], label: t.places[pl] || t.nav[pl], color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), x, y,
-        territory: district.id, territoryName: t.districts[district.id], territoryColor: district.color, ownerName: copy.factions[district.faction] };
+        lng:coordinates[0],lat:coordinates[1],coordinates,territory:blockId,blockId,districtId,territoryName:(block.name&&block.name[lang])||blockId,territoryColor:block.ownerColor||territoryMap.neutralColor||'#68717b',ownerName:(block.ownerName&&block.ownerName[lang])||copy.neutral };
     });
-    const territories = DISTRICTS.map(dd => ({ id: dd.id, name: t.districts[dd.id], faction: dd.faction, factionName: copy.factions[dd.faction], color: dd.color,
-      control: dd.control, contested: dd.contested, status: dd.contested ? copy.contested : copy.controlled, rival: dd.rival, rivalName: copy.factions[dd.rival],
-      blocks: dd.blocks, locations: PINS.filter(pin => pin[5] === dd.id).length, respect: dd.respect, income: dd.income, heat: dd.heat, polygon: dd.poly, here: this.p.lastDistrict === dd.id }));
+    const hp = pins.find(pin=>pin.screen===(this.state.lastScreen||'home'))||pins[0];
+    const blocks = (territoryMap.blocks || []).map(block=>{ const benefit=block.benefits&&block.benefits[0]; return {
+      ...block,name:(block.name&&block.name[lang])||block.id,district:(t.districts&&t.districts[block.districtId])||block.districtId,
+      faction:block.ownerFactionId,factionName:(block.ownerName&&block.ownerName[lang])||copy.neutral,color:block.ownerColor||territoryMap.neutralColor||'#68717b',
+      status:block.state==='contested'?copy.contested:(block.ownerFactionId?copy.owned:copy.neutral),contested:block.state==='contested',eligible:!!block.action,
+      benefit:benefit?{type:benefit.key,label:(benefit.name&&benefit.name[lang])||benefit.key,value:benefit.value,unit:benefit.unit}:null,
+      actionType:block.action,actionLabel:block.action?copy[block.action]:copy.unavailable,canAct:!!block.action,here:hp&&hp.blockId===block.id
+    }; });
     const legend = Object.keys(PINCOLOR).map(k => ({ cat: k, color: PINCOLOR[k], colorLite: LIGHTEN(PINCOLOR[k], .42), label: t.legend[k] }));
-    const hp = PINS.find(q => q[1] === (this.state.lastScreen || 'home')) || PINS[0];
-    f.contentWindow.postMessage({ zonePins: pins, territories, legend, copy, legendTitle: t.keyOfSymbols, here: { x: hp[3], y: hp[4], territory: hp[5] }, hereLabel: t.youAreHere, lang, dir: lang === 'ar' ? 'rtl' : 'ltr', dark, bg: dark ? '#0e1116' : '#e7e4d6' }, '*');
+    f.contentWindow.postMessage({type:'ZONE_MAP_DATA',revision:territoryMap.revision,zonePins:pins,blocks,factions,playerFactionId:territoryMap.playerFactionId,summary:territoryMap.summary,legend,copy,legendTitle:t.keyOfSymbols,here:hp?{x:hp.x,y:hp.y,lng:hp.lng,lat:hp.lat,territory:hp.blockId}:null,hereLabel:t.youAreHere,lang,dir:lang==='ar'?'rtl':'ltr',dark,bg:dark?'#0e1116':'#e7e4d6'},'*');
     this._mapSig = sig;
   }
   pushChar() {
@@ -1515,7 +1602,7 @@ class Component extends DCLogic {
           hosp: () => this.act(tt => this.finish('hosp', tt)),
           leave: () => { clearInterval(this.rv); this.setState({ fight: null }); } };
       })(),
-      facRows: [{ k: t.members, v: '24 / 100' }, { k: t.respect, v: num(p.fac.respect) }, { k: t.chain, v: fmt(t.hits, { n: p.fac.chain }) }, { k: t.bestChain, v: fmt(t.hits, { n: p.fac.best }) }, { k: t.territory, v: fmt(t.blocks, { n: 12 }) }, { k: t.age, v: '412 ' + (lang === 'ar' ? 'يوم' : 'days') }],
+      facRows: [{ k: t.members, v: '24 / 100' }, { k: t.respect, v: num(p.fac.respect) }, { k: t.chain, v: fmt(t.hits, { n: p.fac.chain }) }, { k: t.bestChain, v: fmt(t.hits, { n: p.fac.best }) }, { k: t.territory, v: fmt(t.blocks, { n: (this.territoryMap.summary && this.territoryMap.summary.ownedByPlayerFaction) || 0 }) }, { k: t.age, v: '412 ' + (lang === 'ar' ? 'يوم' : 'days') }],
       upgrades: UPS.map(u => { const owned = !!p.fac.ups[u.id]; return { name: t.up[u.id][0], effect: t.up[u.id][1], btn: owned ? t.owned : t.buy + ' · ' + num(u.cost), bg: owned ? GREY : GREEN, fg: owned ? 'var(--mu)' : 'var(--onAcc)', disabled: owned || p.fac.respect < u.cost, buy: () => this.act(tt => { p.fac.respect -= u.cost; p.fac.ups[u.id] = 1; this.log('upgrade', { name: tt.up[u.id][0] }, 'good'); }) }; }),
       members: t.memberNames.map((n, i) => { const st = ['ok', 'ok', 'hosp', 'ok', 'abroad', 'jail'][i]; return { name: n, role: t.roles[i], lvl: [12, 28, 19, 15, 9, 6][i], state: t.mstate[st], stateColor: st === 'ok' ? 'var(--acc)' : st === 'hosp' ? '#e05a4a' : 'var(--gold)', dot: st === 'ok' ? 'var(--acc)' : 'var(--mu2)' }; }),
       itemTabs: ['all', 'weapon', 'armor', 'medical', 'booster', 'material', 'armory'].map(k => ({ name: t.itemTabs[k], n: k === 'armory' ? ARMORY.length : Object.keys(p.inv).filter(i => p.inv[i] > 0 && (k === 'all' || CAT[i].type === k)).length, go: () => this.setState({ itemTab: k }), bg: this.state.itemTab === k ? 'var(--activebg)' : 'var(--deep)', fg: this.state.itemTab === k ? 'var(--activefg)' : 'var(--t4)' })),

@@ -128,6 +128,41 @@
         </div>
       </section>
 
+      <section class="view" data-view="territories">
+        <div class="page-head">
+          <div><span class="eyebrow" data-copy="territoryControl">CITY CONTROL</span><h1 data-copy="territories">City &amp; Territories</h1><p data-copy="territoriesSub">Inspect every city block and apply live faction ownership through the server-authoritative territory engine.</p></div>
+          <button class="button secondary" id="refreshTerritoriesButton" type="button" data-copy="refreshTerritories">Refresh live state</button>
+        </div>
+
+        <div class="territory-summary" id="territorySummary" aria-live="polite"></div>
+
+        <article class="panel territory-map-panel">
+          <div class="panel-head"><div><span class="section-number">MAP</span><h2 data-copy="territoryMap">Live territory map</h2></div><span class="status active" id="territoryRevision">LIVE</span></div>
+          <div class="territory-map-stage">
+            <iframe id="territoryMapPreview" title="ZONE live territory map" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
+          </div>
+        </article>
+
+        <div class="territory-workspace">
+          <article class="panel territory-browser-panel">
+            <div class="panel-head"><div><span class="section-number">120</span><h2 data-copy="territoryBlocks">Territory blocks</h2></div><span class="status" id="territoryResultCount">0</span></div>
+            <div class="territory-filters">
+              <label class="territory-search"><span data-copy="searchBlocks">Search blocks</span><input id="territorySearch" type="search" autocomplete="off" data-copy-placeholder="searchBlocksPlaceholder" placeholder="ID, name, district, owner, or benefit"></label>
+              <label><span data-copy="ownerFilter">Owner</span><select id="territoryOwnerFilter"></select></label>
+              <label><span data-copy="stateFilter">State</span><select id="territoryStateFilter"></select></label>
+              <label><span data-copy="sectorFilter">Sector</span><select id="territorySectorFilter"></select></label>
+            </div>
+            <div class="territory-grid" id="territoryGrid" aria-live="polite"></div>
+          </article>
+
+          <aside class="panel territory-detail-panel">
+            <div class="panel-head"><div><span class="section-number">BLOCK</span><h2 data-copy="blockDetails">Selected block</h2></div><span class="status" id="territoryDetailState">-</span></div>
+            <div class="territory-empty" id="territoryDetailEmpty" data-copy="chooseTerritory">Choose a block to inspect its live state and ownership.</div>
+            <div class="territory-details" id="territoryDetails" hidden></div>
+          </aside>
+        </div>
+      </section>
+
       <section class="view" data-view="themes">
         <div class="page-head"><div><span class="eyebrow" data-copy="themePackages">THEME PACKAGES</span><h1 data-copy="themes">Theme studio</h1><p data-copy="themesSub">Change the presentation layer without changing game rules or player state.</p></div></div>
         <div class="catalog-grid" id="themeGrid"></div>
