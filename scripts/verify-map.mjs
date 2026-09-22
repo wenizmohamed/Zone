@@ -154,7 +154,7 @@ for (const role of ['fill', 'outline', 'adjacent', 'contested', 'label']) {
   check(new RegExp(`id\\s*:\\s*['"]zone-blocks?-${role}['"]`).test(map),
     `Mapbox block layer is missing: ${role}.`);
 }
-check(/map\.on\(['"]click['"],\s*['"]zone-blocks?-fill['"]/.test(map),
+check(/map\.on\(['"]click['"],\s*['"]zone-blocks?-fill['"]/.test(map) || /map\.on\(['"]click['"],\s*function\(e\)[\s\S]{0,340}?territoryAt\(e\.lngLat\)/.test(map),
   'Every rendered block must be directly selectable.');
 check(/feature-state['"],?\s*['"]selected|\['"]feature-state['"],\s*['"]selected['"]/.test(map),
   'Selected block must receive a distinct feature-state treatment.');
@@ -228,8 +228,18 @@ check(/map\.dragRotate\.enable\(\)/.test(map) && /map\.touchZoomRotate\.enable\(
   'Mouse rotation and touch rotation must be explicitly active.');
 check(map.includes('id="cityReset"') && /cityReset\.onclick\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]{0,320}?fitCity/.test(map),
   'Whole-city fitting must remain available through an explicit reset control.');
-check(/show3dObjects\s*:\s*false/.test(mapConfig),
-  'The territory map must not spend GPU time on hidden 3D basemap objects.');
+check(/show3dObjects\s*:\s*true/.test(mapConfig),
+  'Mapbox 3D buildings must be enabled for street-level exploration.');
+check(/id:'zone-blocks-ground',type:'fill',slot:'middle'/.test(map),
+  'Territory ground color must render behind Mapbox 3D buildings.');
+check(/id:'zone-blocks-fill',type:'fill',source:'zone-blocks'/.test(map) && /function overviewOpacity\(/.test(map),
+  'The clickable full-city ownership layer must remain above the basemap.');
+check(/function territoryAt\(point\)/.test(map) && /var territory=territoryAt\(e\.lngLat\)/.test(map),
+  'Block selection must resolve from authoritative polygon geometry even when 3D buildings obscure the rendered fill.');
+check(map.includes('id="streetView"') && /streetView\.onclick\s*=\s*function/.test(map) && /function view3D\(center\)[\s\S]{0,120}?map\.flyTo\(\{[\s\S]{0,120}?zoom:15\.6,pitch:50/.test(map),
+  'A visible street-view control must reveal 3D buildings without taking away free camera control.');
+check(map.includes('id="pView"') && /pView\.onclick\s*=\s*function\(\)\{closePanel\(\);view3D\(t\._centroidLngLat\)/.test(map),
+  'Selected blocks need a mobile-accessible 3D view action inside the detail panel.');
 const blockLabelLayer = contextAfter(map, `id:'zone-blocks-label'`, 240);
 check(numericOption(blockLabelLayer, 'minzoom') >= 12.5,
   'Block IDs must not collide in the full-city overview.');
