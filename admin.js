@@ -188,6 +188,7 @@ function applyLanguage() {
   if (!state.dirty) $('#pipelineStatus').textContent = t('ready');
   $$('[data-copy]').forEach((element) => { element.textContent = t(element.dataset.copy); });
   $$('[data-copy-placeholder]').forEach((element) => { element.placeholder = t(element.dataset.copyPlaceholder); });
+  $$('[data-preview-toggle]').forEach(updatePreviewToggleLabel);
   renderAll();
   ensureTerritoryMapPreview();
   if (state.draft) refreshViewPreview(state.view);
@@ -198,8 +199,33 @@ function installSectionPreviews() {
   Object.entries(previewScreens).forEach(([view, screen]) => {
     const section = $(`.view[data-view="${view}"]`);
     if (!section || section.querySelector('[data-section-preview]')) return;
-    section.insertAdjacentHTML('beforeend', `<article class="panel section-preview" data-section-preview data-preview-screen="${screen}"><div class="preview-toolbar"><strong data-copy="gamePreview">Game preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="button ghost preview-refresh" data-preview-refresh type="button" data-copy="preview">Refresh preview</button></div></div><div class="preview-stage section-preview-stage"><iframe class="section-preview-frame" title="Live preview of the ZONE game"></iframe></div></article>`);
+    section.insertAdjacentHTML('beforeend', `<article class="panel section-preview" data-section-preview data-preview-screen="${screen}"><div class="preview-toolbar"><strong data-copy="gamePreview">Game preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="button ghost preview-refresh" data-preview-refresh type="button" data-copy="preview">Refresh preview</button><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="sectionPreviewStage-${view}">Collapse preview</button></div></div><div class="preview-stage section-preview-stage" id="sectionPreviewStage-${view}"><iframe class="section-preview-frame" title="Live preview of the ZONE game"></iframe></div></article>`);
   });
+}
+
+function updatePreviewToggleLabel(button) {
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  const isMap = button.getAttribute('aria-controls') === 'territoryMapStage';
+  const label = state.language === 'ar'
+    ? (expanded ? (isMap ? 'طي الخريطة' : 'طي المعاينة') : (isMap ? 'عرض الخريطة' : 'عرض المعاينة'))
+    : (expanded ? (isMap ? 'Collapse map' : 'Collapse preview') : (isMap ? 'Expand map' : 'Expand preview'));
+  button.textContent = label;
+  button.setAttribute('aria-label', label);
+}
+
+function togglePreview(button) {
+  const stage = document.getElementById(button.getAttribute('aria-controls'));
+  if (!stage) return;
+  const expanded = button.getAttribute('aria-expanded') !== 'true';
+  stage.hidden = !expanded;
+  button.closest('.builder-preview, .section-preview, .territory-map-panel')?.classList.toggle('preview-collapsed', !expanded);
+  button.setAttribute('aria-expanded', String(expanded));
+  updatePreviewToggleLabel(button);
+  if (expanded && stage.querySelector('iframe') && !stage.querySelector('iframe').getAttribute('src')) {
+    const view = button.closest('.view')?.dataset.view;
+    if (view === 'territories') ensureTerritoryMapPreview();
+    else if (view) refreshViewPreview(view);
+  }
 }
 
 function renderNavigation() {
@@ -586,7 +612,7 @@ function updatePreviewCache() {
 function refreshPreview() {
   updatePreviewCache();
   const frame = $('#previewFrame');
-  if (!frame) return;
+  if (!frame || $('#draftPreviewStage').hidden) return;
   const screen = state.selectedPage && currentManifest()?.pages.some((page) => page.id === state.selectedPage && page.enabled) ? state.selectedPage : 'home';
   frame.src = `/?zone-preview=1&lang=${state.language}&screen=${encodeURIComponent(screen)}&v=${Date.now()}`;
 }
@@ -595,7 +621,7 @@ function refreshSectionPreview(view) {
   updatePreviewCache();
   const panel = $(`.view[data-view="${view}"] [data-section-preview]`);
   const frame = panel?.querySelector('.section-preview-frame');
-  if (!frame) return;
+  if (!frame || frame.closest('.preview-stage').hidden) return;
   frame.src = `/?zone-preview=1&lang=${state.language}&screen=${encodeURIComponent(panel.dataset.previewScreen || 'home')}&v=${Date.now()}`;
 }
 
@@ -800,6 +826,7 @@ async function load() {
 }
 
 installSectionPreviews();
+$$('[data-preview-toggle]').forEach((button) => button.addEventListener('click', () => togglePreview(button)));
 $('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
 $('#publishButton').addEventListener('click', publishRelease);
 $('#releasePublishButton').addEventListener('click', publishRelease);

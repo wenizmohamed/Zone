@@ -275,6 +275,8 @@ button{border-radius:6px;transition:border-color .16s ease,box-shadow .18s ease,
 button:not(:disabled):hover{border-color:var(--acc)!important;box-shadow:0 0 0 1px rgba(185,241,58,.18),0 8px 20px -12px rgba(185,241,58,.55)}
 button:not(:disabled):active{transform:translateY(1px)}
 button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:0 0 0 3px rgba(185,241,58,.28)}
+.zone-tutorial-toggle{min-height:40px}
+.zone-tutorial-close{min-width:44px;min-height:44px;padding:6px 11px;border:1px solid var(--border3)!important;border-radius:4px;background:var(--btn)!important;color:var(--t1)!important;font-weight:700!important}
 
 /* [9] accent-fill CTAs carry a true lime glow (hits all 10 inline --accFill1 buttons) */
 [style*="var(--accFill1)"]{box-shadow:0 8px 20px -8px rgba(185,241,58,.5),0 1px 0 rgba(255,255,255,.22) inset}
@@ -383,14 +385,14 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
         <span style="color:var(--mu);font-size:12px;flex:1">{{ subtitle }}</span>
         <div style="display:flex;gap:6px">
           <button onClick="{{ goCity }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="color:#fff">{{ t.nav.city }}</button>
-          <button onClick="{{ toggleTut }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="color:#fff">{{ t.tutorial }}</button>
+          <button class="zone-tutorial-toggle" onClick="{{ toggleTut }}" aria-expanded="{{ tut }}" aria-controls="zone-tutorial-panel" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="color:#fff">{{ t.tutorial }}</button>
         </div>
       </div>
       <div style="height:2px;background:linear-gradient(90deg,var(--acc),var(--border2) 60%,transparent)"></div>
 
       <sc-if value="{{ tut }}" hint-placeholder-val="{{ false }}">
-        <div>
-          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.tutorial }}</span><button onClick="{{ toggleTut }}" style="background:none;border:0;color:var(--mu);cursor:pointer;font:inherit">✕</button></div>
+        <div id="zone-tutorial-panel" role="region" aria-label="{{ t.tutorial }}">
+          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between;align-items:center"><span>{{ t.tutorial }}</span><button class="zone-tutorial-close" onClick="{{ toggleTut }}" aria-label="{{ t.closeTutorial }}" style="cursor:pointer;font:inherit">{{ t.closeTutorial }}</button></div>
           <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:10px;color:var(--t3);line-height:1.6">{{ tutText }}</div>
         </div>
       </sc-if>
@@ -401,7 +403,6 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
           <strong style="color:#f0a090">{{ status.title }}</strong><span style="color:var(--t3)">{{ status.body }}</span>
           <bdi data-zfig="1" style="margin-inline-start:auto;font-weight:600;font-size:21px;color:#fff">{{ status.left }}</bdi>
           <button onClick="{{ status.act }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
-          <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ status.heal }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
           <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ status.heal }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
         </div>
       </sc-if>
@@ -572,7 +573,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=47" title="Zone City live territory map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=48" title="Zone City live territory map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
@@ -595,10 +596,6 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
           <div style="position:absolute;left:{{ herePin.x }}%;top:{{ herePin.y }}%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:var(--acc);border:2.5px solid #fff;box-shadow:0 0 0 3px rgba(20,26,38,.35),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.4);animation:zblink 1.6s infinite;z-index:3"></div>
         </div>
         </sc-if>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
-          <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.here }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
-        </div>
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
           <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.here }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
@@ -932,7 +929,7 @@ const CUSTOM_PAGE_MAP = Object.fromEntries(CUSTOM_PAGES.map(p => [p.id, p]));
 const RELEASE_NAV = (() => { const base = Array.isArray(PLATFORM_MANIFEST.navigation) && PLATFORM_MANIFEST.navigation.length ? [...PLATFORM_MANIFEST.navigation] : [...BASE_SCREENS, ...CUSTOM_PAGES.map(p => p.id)]; if (!base.includes('bank')) { const i = base.indexOf('jobs'); base.splice(i >= 0 ? i + 1 : base.length, 0, 'bank'); } return base; })();
 const SCREENS = RELEASE_NAV.filter((id, index, all) => all.indexOf(id) === index && ((BASE_SCREENS.includes(id) && PLATFORM_MANIFEST.modules?.[id] !== false && (id !== 'crimes' || PLATFORM_CRIME_ENABLED)) || CUSTOM_PAGE_MAP[id]));
 const T = {
-  en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial',
+  en: { brand: 'ZONE', tct: 'Zone City Time', player: 'Vincenzo', playerLabel: 'Player', otherLang: 'العربية', information: 'Information', areas: 'Areas', name: 'Name', money: 'Money', level: 'Level', points: 'Points', merits: 'Merits', energy: 'Energy', nerve: 'Nerve', happy: 'Happy', life: 'Life', full: 'FULL', inFmt: '+{n} in {t}', chain: 'Chain', hits: '{n} hits', tutorial: 'Tutorial', closeTutorial: 'Close tutorial',
     topLinks: ['Wiki', 'Rules', 'Forums', 'Discord', 'Staff'],
     nav: { home: 'Home', items: 'Items', city: 'City', jobs: 'Job', bank: 'Bank', gym: 'Gym', properties: 'Properties', education: 'Education', crimes: 'Crimes', missions: 'Missions', newspaper: 'Newspaper', jail: 'Jail', hospital: 'Hospital', casino: 'Casino', hof: 'Hall of Fame', faction: 'My Faction', elimination: 'Elimination', attack: 'Attack', market: 'Item Market' },
     sub: { home: 'Level {lvl} {title} · {fac}', items: 'Your inventory. Equip, use, sell, inspect in 3D.', city: 'Every area of Zone City. Click a place to travel.', jobs: 'Work shifts for wages and job points.', bank: 'Deposit cash to keep it safe, withdraw when you need it.', gym: 'Spend energy to train battle stats. Happy boosts gains.', properties: 'Where you live sets your maximum happiness.', education: 'Courses take time and give permanent perks.', crimes: 'Spend nerve. Categories unlock with crime experience.', missions: 'Daily objectives with cash and point rewards.', newspaper: 'City news and market movers.', jail: 'Inmates awaiting release. Bust them out for nerve or pay bail.', hospital: 'Patients recovering from combat and crime.', casino: 'Gamble your cash.', hof: 'City rankings by total battle stats.', faction: 'Respect buys upgrades; chains multiply it.', elimination: 'Team competition — hospitalize rivals to score.', attack: '25 energy per attack. 25 rounds max.', market: 'Player listings. Prices move live.' },
@@ -981,7 +978,7 @@ const T = {
     log: { travel: 'Travelled {m} m across the city. −{e} energy.', crimeOk: '{crime}: +{cash}, +{xp} crime XP.', crimeItem: 'Found a {item} while searching.', crimeJail: '{crime} failed. Jailed {m} min.', crimeHosp: '{crime} went wrong. {m} min in hospital.', train: 'Trained {stat}: +{n}.', win: 'Defeated {who} in {r} rounds.', mug: 'Mugged {who} for {cash}.', hosp: 'Hospitalized {who}. Chain {n}.', lose: '{who} hospitalized you for {m} min.', work: 'Worked a shift as {job}: +{cash}.', buy: 'Bought {item} for {cash}.', use: 'Used {item}.', equip: 'Equipped {item}.', levelUp: 'Level up! Now level {n}.', upgrade: 'Faction bought {name}.', bail: 'Paid {cash} bail.', milestone: 'Chain milestone {n}! +{r} respect.', job: 'Took a job as {job}.', gymJoin: 'Joined {gym} for {cash}.', mission: 'Mission complete: {name}. +{cash}, +{pts} points.', enroll: 'Enrolled in {name}.', edudone: 'Completed {name}.', prop: 'Moved into {prop}.', bustOk: 'Busted {who} out of jail. +{xp} XP.', bustFail: 'Bust failed. Jailed {m} min.', bailOther: 'Bailed {who} for {cash}.', casinoWin: 'Won {cash} at High-Low.', casinoLose: 'Lost {cash} at High-Low.', sell: 'Sold {item} for {cash}.', revive: 'Revived {who}.' },
     toast: { noNerve: 'Not enough nerve.', noEnergy: 'Not enough energy.', noCash: 'Not enough cash.', blocked: 'You cannot do that right now.', busy: 'Already studying a course.', community: 'The community link has not been configured yet.' },
     titles: ['Rookie', 'Petty Thief', 'Hustler', 'Enforcer', 'Capo', 'Underboss', 'Boss'] },
-  ar: { brand: 'زون', tct: 'توقيت زون', player: 'فينشنزو', playerLabel: 'اللاعب', otherLang: 'English', information: 'المعلومات', areas: 'الأماكن', name: 'الاسم', money: 'النقود', level: 'المستوى', points: 'النقاط', merits: 'الأوسمة', energy: 'الطاقة', nerve: 'الجرأة', happy: 'المعنويات', life: 'الصحة', full: 'ممتلئ', inFmt: '+{n} خلال {t}', chain: 'السلسلة', hits: '{n} ضربة', tutorial: 'شرح',
+  ar: { brand: 'زون', tct: 'توقيت زون', player: 'فينشنزو', playerLabel: 'اللاعب', otherLang: 'English', information: 'المعلومات', areas: 'الأماكن', name: 'الاسم', money: 'النقود', level: 'المستوى', points: 'النقاط', merits: 'الأوسمة', energy: 'الطاقة', nerve: 'الجرأة', happy: 'المعنويات', life: 'الصحة', full: 'ممتلئ', inFmt: '+{n} خلال {t}', chain: 'السلسلة', hits: '{n} ضربة', tutorial: 'شرح', closeTutorial: 'إغلاق الشرح',
     topLinks: ['الويكي', 'القوانين', 'المنتدى', 'ديسكورد', 'الإدارة'],
     nav: { home: 'الرئيسية', items: 'العتاد', city: 'المدينة', jobs: 'الوظيفة', bank: 'البنك', gym: 'النادي', properties: 'العقارات', education: 'التعليم', crimes: 'الجرائم', missions: 'المهام', newspaper: 'الصحيفة', jail: 'السجن', hospital: 'المستشفى', casino: 'الكازينو', hof: 'قاعة المشاهير', faction: 'عائلتي', elimination: 'التصفيات', attack: 'الهجوم', market: 'سوق العتاد' },
     sub: { home: 'المستوى {lvl} {title} · {fac}', items: 'مخزونك. جهّز، استخدم، بِع، وشاهد بثلاثية الأبعاد.', city: 'كل مناطق مدينة زون. اضغط مكاناً للانتقال.', jobs: 'اشتغل ورديات مقابل راتب ونقاط وظيفة.', bank: 'أودع نقودك لتحفظها، واسحبها وقت ما تحتاج.', gym: 'اصرف طاقة لتدريب صفاتك القتالية. المعنويات تزيد المكسب.', properties: 'مكان سكنك يحدد أقصى معنوياتك.', education: 'الدورات تأخذ وقتاً وتعطي مزايا دائمة.', crimes: 'اصرف جرأة. الفئات تنفتح بخبرة الجريمة.', missions: 'أهداف يومية بمكافآت نقود ونقاط.', newspaper: 'أخبار المدينة وتحركات السوق.', jail: 'سجناء ينتظرون الإفراج. هرّبهم بالجرأة أو ادفع الكفالة.', hospital: 'مرضى يتعافون من القتال والجرائم.', casino: 'قامر بنقودك.', hof: 'ترتيب المدينة حسب مجموع الصفات.', faction: 'الاحترام يشتري ترقيات، والسلاسل تضاعفه.', elimination: 'منافسة فرق — أدخل الخصوم المستشفى لتسجّل.', attack: '25 طاقة لكل هجوم. 25 جولة كحد أقصى.', market: 'عروض اللاعبين. الأسعار تتحرك مباشرة.' },
@@ -1185,7 +1182,10 @@ class Component extends DCLogic {
       if (d.zoneEquip) { const k = d.zoneEquip; if (k === 'fists') this.p.equip = null; else if (CAT[k]) { this.p.inv[k] = this.p.inv[k] || 1; this.p.equip = k; this.log('equip', { item: k }, 'good'); }
         this.save(); this.forceUpdate(); return; }
       if (d.zoneTerritoryAction || d.type === 'ZONE_MAP_CLAIM_BLOCK') { const cmd=d.zoneTerritoryAction||d; this.territoryAction(cmd); return; }
-      if (d.zoneMapReady || d.type === 'ZONE_MAP_READY') { this._mapSig = ''; this.pushMap(); return; }
+      if (d.zoneMapReady || d.type === 'ZONE_MAP_READY') {
+        if (d.mapInstanceId !== this._mapInstanceId) { this._mapInstanceId = d.mapInstanceId; this._mapSig = ''; this.pushMap(); }
+        return;
+      }
       const s = d.zoneGo; if (s && SCREENS.includes(s)) this.go(s);
     };
     window.addEventListener('message', this.onMsg);

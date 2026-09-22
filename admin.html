@@ -89,8 +89,8 @@
             </div>
           </section>
           <aside class="builder-preview">
-            <div class="preview-toolbar"><strong data-copy="livePreview">Draft preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button></div></div>
-            <div class="preview-stage"><iframe id="previewFrame" title="ZONE draft preview"></iframe></div>
+            <div class="preview-toolbar"><strong data-copy="livePreview">Draft preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="draftPreviewStage">Collapse preview</button></div></div>
+            <div class="preview-stage" id="draftPreviewStage"><iframe id="previewFrame" title="ZONE draft preview"></iframe></div>
           </aside>
         </div>
       </section>
@@ -137,8 +137,8 @@
         <div class="territory-summary" id="territorySummary" aria-live="polite"></div>
 
         <article class="panel territory-map-panel">
-          <div class="panel-head"><div><span class="section-number">MAP</span><h2 data-copy="territoryMap">Live territory map</h2></div><span class="status active" id="territoryRevision">LIVE</span></div>
-          <div class="territory-map-stage">
+          <div class="panel-head"><div><span class="section-number">MAP</span><h2 data-copy="territoryMap">Live territory map</h2></div><div><span class="status active" id="territoryRevision">LIVE</span><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="territoryMapStage">Collapse map</button></div></div>
+          <div class="territory-map-stage" id="territoryMapStage">
             <iframe id="territoryMapPreview" title="ZONE live territory map" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
           </div>
         </article>

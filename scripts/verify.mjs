@@ -93,7 +93,10 @@ if (existsSync(adminPath) && existsSync(adminJsPath)) {
   }
   check(adminJs.includes('zone.platform.previewRelease'), 'Admin draft preview cache is missing.');
   check(adminJs.includes('zone.platform.activeRelease'), 'Admin active release cache is missing.');
+  check(adminHtml.includes('aria-controls="draftPreviewStage"') && adminHtml.includes('aria-controls="territoryMapStage"') && adminJs.includes('function togglePreview(button)'), 'Admin draft and map previews must be collapsible.');
+  check(adminJs.includes('sectionPreviewStage-${view}') && adminJs.includes('updatePreviewToggleLabel'), 'Every admin section preview must be reversible and bilingual.');
 }
+check(html.includes('aria-controls="zone-tutorial-panel"') && html.includes('closeTutorial:'), 'The game tutorial must expose an accessible close action.');
 
 const literalResources = new Set();
 for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) literalResources.add(match[1]);

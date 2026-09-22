@@ -228,6 +228,25 @@ check(/map\.dragRotate\.enable\(\)/.test(map) && /map\.touchZoomRotate\.enable\(
   'Mouse rotation and touch rotation must be explicitly active.');
 check(map.includes('id="cityReset"') && /cityReset\.onclick\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]{0,320}?fitCity/.test(map),
   'Whole-city fitting must remain available through an explicit reset control.');
+check(/show3dObjects\s*:\s*false/.test(mapConfig),
+  'The territory map must not spend GPU time on hidden 3D basemap objects.');
+const blockLabelLayer = contextAfter(map, `id:'zone-blocks-label'`, 240);
+check(numericOption(blockLabelLayer, 'minzoom') >= 12.5,
+  'Block IDs must not collide in the full-city overview.');
+check(!/map\.on\(['"]move['"],\s*syncLight\)/.test(map) && !/animation\s*:\s*wet\b/.test(map),
+  'Full-screen lighting must not repaint on every camera frame or animate forever.');
+check(!/territoryData\.forEach/.test(functionBody(map, ['updateAdjacency'])),
+  'Changing block selection must not update feature state for all 120 blocks.');
+check(/if\s*\(announced\)\s*return/.test(map) && /mapInstanceId\s*!==\s*this\._mapInstanceId/.test(index),
+  'Map startup handshake must not resend the same 120-block payload repeatedly.');
+check(map.includes('id="sideClose"') && map.includes('id="panelX"') && /sideClose\.onclick\s*=/.test(map) && /panelX\.onclick\s*=/.test(map),
+  'Map controls and detail panels must each have a visible close action.');
+check(/function closeSide\([^)]*\)[\s\S]{0,330}?aria-expanded/.test(map) && /function openSide\([^)]*\)[\s\S]{0,330}?aria-expanded/.test(map),
+  'Map control drawer must expose correct open and closed states.');
+check(/function setCategoryExpanded\([^)]*\)/.test(map) && /list\.inert\s*=\s*!open/.test(map),
+  'Collapsed location categories must not leave hidden rows keyboard-accessible.');
+check(/function closePanel\([^)]*\)[\s\S]{0,320}?aria-hidden/.test(map) && /function openPanel\([^)]*\)[\s\S]{0,320}?aria-hidden/.test(map),
+  'Detail panel open and close states must remain accessible.');
 
 const modeBody = functionBody(map, ['setMode', 'changeMode']);
 const blockSelectionBody = functionBody(map, ['selectBlock', 'selectTerritory']);
