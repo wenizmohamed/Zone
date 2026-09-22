@@ -562,7 +562,7 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" src="dist/city-map-torn.html" title="Zone City live map" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=9" title="Zone City live map" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
@@ -1463,7 +1463,7 @@ class Component extends DCLogic {
       energyText: num(energyNow) + ' / ' + this.maxOf('energy'), energyPct: Math.round(energyNow / this.maxOf('energy') * 100), noEnergy: energyNow < GYMS[p.gym].e, trainOff: energyNow < GYMS[p.gym].e || !!this.state.busy, totalStats: num(totalStats), gymName: t.gyms[p.gym], gymEnergy: GYMS[p.gym].e, gymXp: num(p.gymXp),
       stats: ['str', 'def', 'spd', 'dex'].map(k => ({ label: t[k], d: LU(k), img: 'art/g_' + k + '.jpg', popEl: this.popEl(k), value: dec(p.stats[k]), share: Math.round(p.stats[k] / totalStats * 100), exercise: t.ex[k], gain: this.expGain(k).toFixed(2), busy: this.state.busy === 'tr' + k ? 1 : null, btnLabel: this.state.busy === 'tr' + k ? '…' : t.train, train: () => this.resolve('tr' + k, 480, tt => this.train(k, tt)) })),
       gyms: GYMS.map((g, i) => { const cur = i === p.gym, open = p.gymXp >= g.xp; return { name: t.gyms[i], cost: money(g.cost), energy: g.e, xp: g.xp, opacity: open ? 1 : 0.5, btn: cur ? t.current : open ? t.join : t.locked, disabled: cur || !open || p.cash < g.cost, btnBg: cur ? 'var(--activebg)' : open ? GREEN : GREY, btnFg: cur ? 'var(--activefg)' : open ? 'var(--onAcc)' : 'var(--mu)', join: () => this.act(tt => { p.cash -= g.cost; p.gym = i; this.log('gymJoin', { gym: i, cash: money(g.cost) }, 'good'); }) }; }),
-      mapTabs: ['live', 'gmaps', 'art'].map(k => ({ name: t.mapTab[k], go: () => this.setState({ mapMode: k }), bg: this.state.mapMode === k ? 'var(--panel)' : 'var(--deep)', fg: this.state.mapMode === k ? 'var(--t1)' : 'var(--t4)' })),
+      mapTabs: ['live'].map(k => ({ name: t.mapTab[k], go: () => this.setState({ mapMode: k }), bg: this.state.mapMode === k ? 'var(--panel)' : 'var(--deep)', fg: this.state.mapMode === k ? 'var(--t1)' : 'var(--t4)' })),
       liveMap: this.state.mapMode === 'live', gmapsMap: this.state.mapMode === 'gmaps', artMap: this.state.mapMode === 'art',
       pins: PINS.map(([pl, s, cat, x, y]) => ({ label: t.places[pl] || t.nav[pl], go: () => this.go(s), color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), d: MICON[PINICON[pl]] || MICON.missions, x, y })),
       herePin: (() => { const pn = PINS.find(q => q[1] === (this.state.lastScreen || 'home')) || PINS[0]; return { x: pn[3], y: pn[4] + 1.5 }; })(),

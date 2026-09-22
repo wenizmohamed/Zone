@@ -19,9 +19,9 @@
   .zmk{background:none;border:0}
   .zbadge{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:transform .12s ease;outline:none}
   .zbadge:focus-visible .zico{box-shadow:0 0 0 3px rgba(49,224,255,.7)}
-  .zpin{position:relative;width:34px;height:42px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.55));transition:transform .12s ease}
+  .zpin{position:relative;width:26px;height:32px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.75));transition:transform .12s ease}
   .zbadge:hover .zpin,.zbadge.sel .zpin{transform:translateY(-3px) scale(1.08)}
-  .zbadge.sel .zpin::after{content:"";position:absolute;left:2px;top:2px;width:30px;height:30px;border-radius:50%;
+  .zbadge.sel .zpin::after{content:"";position:absolute;left:1px;top:1px;width:24px;height:24px;border-radius:50%;
         border:2.5px solid #fff;box-shadow:0 0 10px var(--c,#31e0ff);pointer-events:none}
   .zlbl{font-size:9px;font-weight:600;color:#26303f;background:rgba(255,255,255,.86);padding:0 5px;border-radius:3px;
         white-space:nowrap;box-shadow:0 1px 2px rgba(20,26,38,.2);max-width:96px;overflow:hidden;text-overflow:ellipsis}
@@ -134,8 +134,9 @@
   L.imageOverlay('city-ground.png',bounds,{className:'zart'}).addTo(map);
   map.fitBounds(bounds);
   var fit=map.getZoom();
-  map.setMinZoom(fit-0.5); map.setMaxZoom(fit+3);
-  map.setMaxBounds(L.latLngBounds(bounds).pad(0.15));
+  map.setMinZoom(fit); map.setMaxZoom(fit+4);
+  map.setMaxBounds(L.latLngBounds(bounds).pad(0.25));
+  map.setZoom(fit+1.4);
 
   // subtle ambient vignette (transform/opacity-safe, pointer-events none)
   var vig=document.createElement('div');
@@ -158,7 +159,7 @@
   function fico(p,size,fill){ return '<svg viewBox="0 0 512 512" width="'+size+'" height="'+size+'" fill="'+fill+'"><path d="'+esc(p.d)+'"></path></svg>'; }
   function badgeHtml(p){
     return '<div class="zbadge" tabindex="0" role="button" aria-label="'+esc(p.label)+'" style="--c:'+esc(p.color)+'">'
-      +'<span class="zpin"><svg viewBox="0 0 34 42" width="34" height="42">'
+      +'<span class="zpin"><svg viewBox="0 0 34 42" width="26" height="32">'
         +'<path d="M17 1C8.7 1 2 7.7 2 16c0 10.5 15 25 15 25s15-14.5 15-25C32 7.7 25.3 1 17 1z" fill="'+esc(p.color)+'" stroke="rgba(0,0,0,.42)" stroke-width="1"></path>'
         +'<circle cx="17" cy="15.5" r="11" fill="rgba(255,255,255,.18)"></circle>'
         +'<g transform="translate(8,6.5) scale(0.0352)" fill="#fff">'+(p.d?'<path d="'+esc(p.d)+'"></path>':'')+'</g>'
@@ -250,7 +251,7 @@
     pins.forEach(function(p){
       p.catLabel=catLabel[p.cat]||'';
       if(!groups[p.cat]) groups[p.cat]=L.layerGroup().addTo(map);
-      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[120,60],iconAnchor:[60,41]});
+      var icon=L.divIcon({className:'zmk',html:badgeHtml(p),iconSize:[100,46],iconAnchor:[50,31]});
       var m=L.marker(ll(p.x,p.y),{icon:icon,title:p.label,riseOnHover:true,keyboard:true});
       m._zp=p; p._m=m;
       m.bindTooltip('<span>'+esc(p.label)+'</span><span class="cat">'+esc(p.catLabel)+'</span>',{className:'ztt',direction:'top',offset:[0,-20],opacity:1});
