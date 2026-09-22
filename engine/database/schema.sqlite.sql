@@ -61,6 +61,19 @@ CREATE TABLE IF NOT EXISTS crimes (
     enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
 );
 
+CREATE TABLE IF NOT EXISTS action_cooldowns (
+    player_id TEXT NOT NULL,
+    action TEXT NOT NULL,
+    available_at TEXT NOT NULL,
+    PRIMARY KEY (player_id, action)
+);
+
+CREATE TABLE IF NOT EXISTS action_rate_limits (
+    player_id TEXT PRIMARY KEY,
+    window_started_at TEXT NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS economy_ledger (
     id TEXT PRIMARY KEY,
     player_id TEXT NOT NULL REFERENCES players(id),

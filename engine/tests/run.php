@@ -6,9 +6,14 @@ require dirname(__DIR__) . '/bootstrap.php';
 
 use Zone\Engine\Application\GameEngine;
 use Zone\Engine\Core\Events\EventBus;
+use Zone\Engine\Core\Game\CooldownException;
+use Zone\Engine\Core\Game\CooldownService;
+use Zone\Engine\Core\Game\RateLimiter;
+use Zone\Engine\Core\Game\RateLimitException;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
+use Zone\Engine\Core\Security\RequestGuard;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 use Zone\Engine\Infrastructure\Cache\ArrayCacheStore;
 
@@ -91,6 +96,9 @@ try {
     $engine->changeModule('achievements', 'enable');
     [$engine, $database] = build_engine($databasePath);
     $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'searchforcash']);
+    // Reset the anti-hammer cooldown armed by the first attempt: this back-to-back
+    // call exists to exercise the achievement subscriber, not the cooldown gate.
+    $database->execute('DELETE FROM action_cooldowns WHERE player_id = :id', ['id' => 'founder-player']);
     $second = $engine->attemptCrime('searchforcash');
     check($second['success'] === true, 'second server-authoritative crime succeeds under controlled test odds');
     check(count($engine->achievements()) === 1, 'enabled Achievement module reacts through CrimeSucceeded hook');
@@ -236,6 +244,9 @@ try {
     check(count(array_filter($engine->ledger(), static fn (array $e): bool => $e['reason'] === 'job.wage')) === 1, 'job wage writes a job.wage ledger entry');
     $jobBroke = false;
     $database->execute('UPDATE players SET energy = 5 WHERE id = :id', ['id' => 'founder-player']);
+    // Clear the job cooldown from the successful shift above so this rejection is
+    // driven by the energy gate under test, not the cooldown.
+    $database->execute('DELETE FROM action_cooldowns WHERE player_id = :id', ['id' => 'founder-player']);
     try { $engine->workShift(); } catch (RuntimeException) { $jobBroke = true; }
     check($jobBroke, 'job shift is rejected without enough energy');
 
@@ -262,8 +273,140 @@ try {
     check($attackBlocked, 'disabling the Attack/Kill module blocks attacks');
     $engine->changeModule('kill', 'install');
 
+    // ============================================================
+    // SECURITY HARDENING (P0-1 admin auth, P0-2 player identity,
+    // P0-3 server-clock cooldowns + rate limits, strict input validation)
+    // ============================================================
+
+    // --- P0-1: admin/mutation routes are no longer publicly writable ---
+    $publiclyWritable = true;
+    try {
+        // Tokenless client with NO Origin header (curl/bot/server-to-server).
+        RequestGuard::authorizeAdmin([], null);
+    } catch (RuntimeException) {
+        $publiclyWritable = false;
+    }
+    check(!$publiclyWritable, 'EXPLOIT CLOSED: header-less client can no longer write to admin routes');
+    check(
+        RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example'], null) === 'admin-panel',
+        'demo mode still allows the same-origin admin panel (browser sends Origin)',
+    );
+    $crossOriginBlocked = false;
+    try {
+        RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://evil.example', 'HTTP_HOST' => 'zone.example'], null);
+    } catch (RuntimeException) {
+        $crossOriginBlocked = true;
+    }
+    check($crossOriginBlocked, 'demo mode rejects a cross-origin admin request');
+    $tokenMissingBlocked = false;
+    try {
+        RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example'], 'super-secret');
+    } catch (RuntimeException) {
+        $tokenMissingBlocked = true;
+    }
+    check($tokenMissingBlocked, 'production mode rejects an admin request with no token even from same origin');
+    $wrongTokenBlocked = false;
+    try {
+        RequestGuard::authorizeAdmin(['HTTP_X_ZONE_ADMIN_TOKEN' => 'nope'], 'super-secret');
+    } catch (RuntimeException) {
+        $wrongTokenBlocked = true;
+    }
+    check($wrongTokenBlocked, 'production mode rejects a wrong admin token');
+    check(
+        RequestGuard::authorizeAdmin(['HTTP_X_ZONE_ADMIN_TOKEN' => 'super-secret'], 'super-secret') === 'admin-token',
+        'production mode accepts the correct admin token',
+    );
+
+    // --- P0-2: player identity is resolved server-side, not trusted from the header ---
+    check(RequestGuard::resolvePlayerId([], null) === 'founder-player', 'demo mode defaults to the demo player when no header is sent');
+    check(
+        RequestGuard::resolvePlayerId(['HTTP_X_ZONE_PLAYER_ID' => 'founder-player'], null) === 'founder-player',
+        'demo mode accepts the demo player id',
+    );
+    $impersonationBlocked = false;
+    try {
+        // Attacker sets the header to a victim's id to act as / read their account.
+        RequestGuard::resolvePlayerId(['HTTP_X_ZONE_PLAYER_ID' => 'victim-account'], null);
+    } catch (RuntimeException) {
+        $impersonationBlocked = true;
+    }
+    check($impersonationBlocked, 'EXPLOIT CLOSED: demo mode blocks assuming another player via X-Zone-Player-Id');
+    $secret = 'player-hmac-secret';
+    $goodToken = RequestGuard::signPlayer('agent-007', $secret);
+    check(
+        RequestGuard::resolvePlayerId(['HTTP_X_ZONE_PLAYER_ID' => 'agent-007', 'HTTP_X_ZONE_PLAYER_TOKEN' => $goodToken], $secret) === 'agent-007',
+        'production mode accepts a valid HMAC-signed player identity',
+    );
+    $forgedBlocked = false;
+    try {
+        RequestGuard::resolvePlayerId(['HTTP_X_ZONE_PLAYER_ID' => 'agent-007', 'HTTP_X_ZONE_PLAYER_TOKEN' => 'forged'], $secret);
+    } catch (RuntimeException) {
+        $forgedBlocked = true;
+    }
+    check($forgedBlocked, 'EXPLOIT CLOSED: production mode rejects a forged player token');
+    $badIdBlocked = false;
+    try {
+        RequestGuard::resolvePlayerId(['HTTP_X_ZONE_PLAYER_ID' => 'DROP TABLE players', 'HTTP_X_ZONE_PLAYER_TOKEN' => 'x'], $secret);
+    } catch (InvalidArgumentException) {
+        $badIdBlocked = true;
+    }
+    check($badIdBlocked, 'malformed player identifiers are rejected before any query');
+
+    // --- Strict input validation (no silent (int) casts of client values) ---
+    check(RequestGuard::positiveInt(['amount' => 500], 'amount') === 500, 'positiveInt accepts a valid integer');
+    check(RequestGuard::positiveInt(['amount' => '500'], 'amount') === 500, 'positiveInt accepts a numeric string');
+    foreach ([['amount' => 0], ['amount' => -5], ['amount' => 'lots'], ['amount' => 5.5], []] as $badBody) {
+        $rejected = false;
+        try { RequestGuard::positiveInt($badBody, 'amount'); } catch (InvalidArgumentException) { $rejected = true; }
+        check($rejected, 'positiveInt rejects invalid amount ' . json_encode($badBody));
+    }
+    check(RequestGuard::boundedInt(['sessions' => 99], 'sessions', 1, 10, 1) === 10, 'boundedInt clamps an out-of-range value');
+    check(RequestGuard::boundedInt([], 'sessions', 1, 10, 1) === 1, 'boundedInt falls back to the default when absent');
+
+    // --- P0-3: server-clock cooldown service ---
+    $cooldowns = new CooldownService($database);
+    $cooldowns->assertReady('cd-probe', 'crime'); // no row yet -> ready
+    $cooldowns->arm('cd-probe', 'crime', 30);
+    $cooldownEnforced = false;
+    try { $cooldowns->assertReady('cd-probe', 'crime'); } catch (CooldownException) { $cooldownEnforced = true; }
+    check($cooldownEnforced, 'CooldownService enforces a server-clock cooldown after arming');
+    $cooldowns->assertReady('cd-probe', 'gym'); // different action -> independent, still ready
+    check(true, 'cooldowns are tracked per action, not globally');
+
+    // --- P0-3: per-player rate limiter ---
+    $limiter = new RateLimiter($database, 3, 10);
+    $limiter->hit('rl-probe');
+    $limiter->hit('rl-probe');
+    $limiter->hit('rl-probe');
+    $rateEnforced = false;
+    try { $limiter->hit('rl-probe'); } catch (RateLimitException) { $rateEnforced = true; }
+    check($rateEnforced, 'RateLimiter blocks the 4th action inside the window');
+
+    // --- P0-3: cooldown is actually WIRED into the engine action path ---
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute('DELETE FROM action_rate_limits');
+    $database->execute('UPDATE players SET nerve = 50 WHERE id = :id', ['id' => 'founder-player']);
+    $engine->attemptCrime('searchforcash'); // arms the crime cooldown
+    $engineHammerBlocked = false;
+    try { $engine->attemptCrime('searchforcash'); } catch (CooldownException) { $engineHammerBlocked = true; }
+    check($engineHammerBlocked, 'EXPLOIT CLOSED: crime endpoint enforces a server-clock cooldown (anti-hammer)');
+
+    // --- P0-3: rate limit is actually WIRED into the engine action path ---
+    putenv('ZONE_RATE_LIMIT_MAX=1');
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute('DELETE FROM action_rate_limits');
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute('UPDATE players SET cash = 100000 WHERE id = :id', ['id' => 'founder-player']);
+    $engine->bankDeposit(1);
+    $engineRateBlocked = false;
+    try { $engine->bankDeposit(1); } catch (RateLimitException) { $engineRateBlocked = true; }
+    check($engineRateBlocked, 'EXPLOIT CLOSED: GameEngine enforces the per-player action rate limit');
+    putenv('ZONE_RATE_LIMIT_MAX');
+    [$engine, $database] = build_engine($databasePath);
+
     $schema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.postgresql.sql');
-    foreach (['economy_ledger', 'event_log', 'jobs', 'notifications', 'assets', 'content_drafts', 'content_releases', 'admin_audit_log'] as $table) {
+    foreach (['action_cooldowns', 'action_rate_limits', 'economy_ledger', 'event_log', 'jobs', 'notifications', 'assets', 'content_drafts', 'content_releases', 'admin_audit_log'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");
     }
 } catch (Throwable $exception) {

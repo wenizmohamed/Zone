@@ -65,6 +65,19 @@ CREATE TABLE IF NOT EXISTS crimes (
     enabled SMALLINT NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
 );
 
+CREATE TABLE IF NOT EXISTS action_cooldowns (
+    player_id VARCHAR(100) NOT NULL,
+    action VARCHAR(80) NOT NULL,
+    available_at TIMESTAMPTZ NOT NULL,
+    PRIMARY KEY (player_id, action)
+);
+
+CREATE TABLE IF NOT EXISTS action_rate_limits (
+    player_id VARCHAR(100) PRIMARY KEY,
+    window_started_at TIMESTAMPTZ NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS economy_ledger (
     id CHAR(32) PRIMARY KEY,
     player_id VARCHAR(100) NOT NULL REFERENCES players(id),

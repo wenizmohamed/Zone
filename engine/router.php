@@ -84,27 +84,39 @@ function request_json(): array
     return $decoded;
 }
 
-function require_admin_mutation(): void
+function zone_env(string $name): ?string
 {
-    require_same_origin();
+    $value = getenv($name);
+    if ($value === false) {
+        return null;
+    }
+    $value = trim($value);
+    return $value === '' ? null : $value;
 }
 
-function require_same_origin(): void
+/**
+ * Authorize an admin/mutation request and return the actor label to record in
+ * the audit trail. Production requires ZONE_ADMIN_TOKEN via X-Zone-Admin-Token;
+ * demo mode (no token) requires a strict same-origin request. A header-less
+ * client (curl/bot/server-to-server) can no longer write.
+ */
+function require_admin_mutation(): string
 {
-    $origin = trim((string) ($_SERVER['HTTP_ORIGIN'] ?? ''));
-    if ($origin === '') {
-        return;
-    }
-    $originHost = parse_url($origin, PHP_URL_HOST);
-    $requestHost = explode(':', (string) ($_SERVER['HTTP_HOST'] ?? ''))[0];
-    if (!is_string($originHost) || $originHost === '' || !hash_equals(strtolower($requestHost), strtolower($originHost))) {
-        throw new RuntimeException('Cross-origin admin request rejected.');
-    }
+    return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_env('ZONE_ADMIN_TOKEN'));
 }
 
-function request_actor(): string
+/**
+ * Resolve the acting player id server-side. Never trusts the raw
+ * X-Zone-Player-Id header: in demo mode identity is pinned to the demo player;
+ * in production a valid HMAC player token is required to assume an identity.
+ */
+function current_player_id(): string
 {
-    return 'admin-panel';
+    return \Zone\Engine\Core\Security\RequestGuard::resolvePlayerId(
+        $_SERVER,
+        zone_env('ZONE_PLAYER_AUTH'),
+        zone_env('ZONE_DEMO_PLAYER_ID') ?? 'founder-player',
+    );
 }
 
 if ($method === 'OPTIONS') {
@@ -126,7 +138,7 @@ try {
         json_response(['themes' => $engine->themes()]);
     }
     if ($method === 'GET' && $path === '/api/v1/player') {
-        json_response(['player' => $engine->player($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player')]);
+        json_response(['player' => $engine->player(current_player_id())]);
     }
     if ($method === 'GET' && $path === '/api/v1/crimes') {
         json_response(['crimes' => $engine->crimes()]);
@@ -138,7 +150,7 @@ try {
         json_response(['events' => $engine->eventLog()]);
     }
     if ($method === 'GET' && $path === '/api/v1/achievements') {
-        json_response(['achievements' => $engine->achievements($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player')]);
+        json_response(['achievements' => $engine->achievements(current_player_id())]);
     }
     if ($method === 'GET' && $path === '/api/v1/architecture') {
         json_response([
@@ -166,27 +178,27 @@ try {
         json_response(['entries' => $engine->adminAuditLog()]);
     }
     if ($method === 'PUT' && $path === '/api/v1/admin/draft') {
-        require_admin_mutation();
+        $actor = require_admin_mutation();
         $payload = request_json();
-        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, request_actor()));
+        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, $actor));
     }
     if ($method === 'POST' && $path === '/api/v1/admin/releases/publish') {
-        require_admin_mutation();
+        $actor = require_admin_mutation();
         request_json();
-        json_response($engine->publishRelease(request_actor()), 201);
+        json_response($engine->publishRelease($actor), 201);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/releases/([a-f0-9]{32})/activate$#', $path, $matches)) {
-        require_admin_mutation();
+        $actor = require_admin_mutation();
         request_json();
-        json_response($engine->activateRelease($matches[1], request_actor()));
+        json_response($engine->activateRelease($matches[1], $actor));
     }
     if ($method === 'PUT' && preg_match('#^/api/v1/admin/crimes/([a-z0-9-]+)$#', $path, $matches)) {
-        require_admin_mutation();
-        json_response(['crime' => $engine->saveCrime($matches[1], request_json(), request_actor())]);
+        $actor = require_admin_mutation();
+        json_response(['crime' => $engine->saveCrime($matches[1], request_json(), $actor)]);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/crimes/([a-z0-9-]+)/attempt$#', $path, $matches)) {
         request_json();
-        json_response($engine->attemptCrime($matches[1], $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->attemptCrime($matches[1], current_player_id()));
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/modules/([a-z0-9-]+)/(install|uninstall|enable|disable)$#', $path, $matches)) {
         require_admin_mutation();
@@ -201,39 +213,46 @@ try {
     }
     if ($method === 'POST' && $path === '/api/v1/gym/train') {
         $body = request_json();
-        json_response($engine->trainGym((string) ($body['stat'] ?? ''), (int) ($body['sessions'] ?? 1), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        $sessions = \Zone\Engine\Core\Security\RequestGuard::boundedInt($body, 'sessions', 1, 10, 1);
+        json_response($engine->trainGym((string) ($body['stat'] ?? ''), $sessions, current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/bank/deposit') {
         $body = request_json();
-        json_response($engine->bankDeposit((int) ($body['amount'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->bankDeposit(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/bank/withdraw') {
         $body = request_json();
-        json_response($engine->bankWithdraw((int) ($body['amount'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->bankWithdraw(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/hospital/heal') {
         request_json();
-        json_response($engine->hospitalHeal($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->hospitalHeal(current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/travel') {
         $body = request_json();
-        json_response($engine->travel((string) ($body['city'] ?? ''), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->travel((string) ($body['city'] ?? ''), current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/casino/blackjack') {
         $body = request_json();
-        json_response($engine->playBlackjack((int) ($body['bet'] ?? 0), $_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->playBlackjack(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/jobs/work') {
         request_json();
-        json_response($engine->workShift($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->workShift(current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/attack') {
         request_json();
-        json_response($engine->attackNpc($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? 'founder-player'));
+        json_response($engine->attackNpc(current_player_id()));
     }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);
+} catch (\Zone\Engine\Core\Game\CooldownException $exception) {
+    header('Retry-After: ' . $exception->retryAfter);
+    json_response(['error' => $exception->getMessage(), 'type' => $exception::class, 'action' => $exception->action, 'retryAfter' => $exception->retryAfter], 429);
+} catch (\Zone\Engine\Core\Game\RateLimitException $exception) {
+    header('Retry-After: ' . $exception->retryAfter);
+    json_response(['error' => $exception->getMessage(), 'type' => $exception::class, 'retryAfter' => $exception->retryAfter], 429);
 } catch (InvalidArgumentException $exception) {
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class], 422);
 } catch (RuntimeException $exception) {
@@ -241,6 +260,10 @@ try {
     $status = match (true) {
         str_starts_with($message, 'Unknown release:') => 404,
         $message === 'Cross-origin admin request rejected.' => 403,
+        $message === 'Admin authentication required.' => 401,
+        $message === 'Player authentication required to act as another player.' => 401,
+        $message === 'Player authentication failed.' => 401,
+        $message === 'Player identity header is required.' => 401,
         str_starts_with($message, 'Production database is not configured.') => 503,
         default => 400,
     };

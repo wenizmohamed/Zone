@@ -10,6 +10,8 @@ use Zone\Engine\Core\Content\ContentManager;
 use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
+use Zone\Engine\Core\Game\CooldownService;
+use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
@@ -21,6 +23,25 @@ final class GameEngine
     private readonly Ledger $ledger;
     private readonly ResourceService $resources;
     private readonly ContentManager $content;
+    private readonly CooldownService $cooldowns;
+    private readonly RateLimiter $rateLimiter;
+
+    /**
+     * Server-clock cooldown, in seconds, per state-changing action. These are
+     * anti-hammer floors; the real resource gates (nerve/energy/cash) still
+     * apply. Bank stays at 0 (balance-gated) so a deposit-then-withdraw flow is
+     * not blocked; the rate limiter still covers it.
+     */
+    private const COOLDOWNS = [
+        'crime' => 5,
+        'attack' => 8,
+        'gym' => 3,
+        'job' => 10,
+        'blackjack' => 3,
+        'travel' => 15,
+        'hospital' => 5,
+        'bank' => 0,
+    ];
 
     public function __construct(
         private readonly Database $database,
@@ -33,6 +54,31 @@ final class GameEngine
         $this->ledger = new Ledger($database);
         $this->resources = new ResourceService($database);
         $this->content = new ContentManager($database, $events);
+        $this->cooldowns = new CooldownService($database);
+        $rateMaxRaw = getenv('ZONE_RATE_LIMIT_MAX');
+        $rateWindowRaw = getenv('ZONE_RATE_LIMIT_WINDOW');
+        $this->rateLimiter = new RateLimiter(
+            $database,
+            $rateMaxRaw === false ? 120 : (int) $rateMaxRaw,
+            $rateWindowRaw === false ? 10 : max(1, (int) $rateWindowRaw),
+        );
+    }
+
+    /**
+     * Pre-flight guard for every state-changing gameplay action: enforce the
+     * per-player rate limit first, then the per-action server-clock cooldown.
+     * Runs after the module-enabled check and any input validation, before any
+     * mutation. Throws RateLimitException / CooldownException (both -> HTTP 429).
+     */
+    private function guardAction(string $playerId, string $action): void
+    {
+        $this->rateLimiter->hit($playerId);
+        $this->cooldowns->assertReady($playerId, $action);
+    }
+
+    private function armCooldown(string $playerId, string $action): void
+    {
+        $this->cooldowns->arm($playerId, $action, self::COOLDOWNS[$action] ?? 0);
     }
 
     public function status(): array
@@ -181,6 +227,7 @@ final class GameEngine
             throw new RuntimeException('Crime module is disabled. Re-enable it from the module manager.');
         }
         $this->resources->regenerate($playerId);
+        $this->guardAction($playerId, 'crime');
 
         return $this->database->transaction(function () use ($crimeId, $playerId): array {
             $crime = $this->database->fetchOne('SELECT * FROM crimes WHERE id = :id AND enabled = 1', ['id' => $crimeId]);
@@ -212,6 +259,7 @@ final class GameEngine
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'crime.reward', $correlationId);
             }
+            $this->armCooldown($playerId, 'crime');
 
             $eventName = $success ? 'CrimeSucceeded' : 'CrimeFailed';
             $event = new DomainEvent($eventName, [
@@ -268,6 +316,7 @@ final class GameEngine
         }
         $sessions = max(1, min(10, $sessions));
         $this->resources->regenerate($playerId);
+        $this->guardAction($playerId, 'gym');
         return $this->database->transaction(function () use ($stat, $sessions, $playerId): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 10 * $sessions;
@@ -288,6 +337,7 @@ final class GameEngine
                 "UPDATE players SET {$stat} = :stat, energy = :energy, xp = :xp, resources_updated_at = :updated WHERE id = :id",
                 ['id' => $playerId, 'stat' => $newStat, 'energy' => $newEnergy, 'xp' => $newXp, 'updated' => gmdate('c')],
             );
+            $this->armCooldown($playerId, 'gym');
             $event = new DomainEvent('GymTrained', [
                 'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
                 'sessions' => $sessions, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
@@ -318,6 +368,7 @@ final class GameEngine
         if ($amount <= 0) {
             throw new RuntimeException('Amount must be positive.');
         }
+        $this->guardAction($playerId, 'bank');
         return $this->database->transaction(function () use ($direction, $amount, $playerId): array {
             $player = $this->requirePlayer($playerId);
             $cash = (int) $player['cash'];
@@ -354,6 +405,7 @@ final class GameEngine
     {
         $this->requireModule('hospital');
         $this->resources->regenerate($playerId);
+        $this->guardAction($playerId, 'hospital');
         return $this->database->transaction(function () use ($playerId): array {
             $player = $this->requirePlayer($playerId);
             $missing = (int) $player['max_life'] - (int) $player['life'];
@@ -371,6 +423,7 @@ final class GameEngine
                 ['id' => $playerId, 'cash' => $newCash, 'life' => (int) $player['max_life'], 'updated' => gmdate('c')],
             );
             $this->ledger->record($playerId, 'cash', -$cost, $newCash, 'hospital.heal', $correlationId);
+            $this->armCooldown($playerId, 'hospital');
             $event = new DomainEvent('HospitalHealed', ['playerId' => $playerId, 'restored' => $missing, 'cost' => $cost, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
@@ -394,6 +447,7 @@ final class GameEngine
         if (!in_array($city, self::CITIES, true)) {
             throw new RuntimeException('Unknown destination: ' . $city);
         }
+        $this->guardAction($playerId, 'travel');
         return $this->database->transaction(function () use ($city, $playerId): array {
             $player = $this->requirePlayer($playerId);
             if ($player['city'] === $city) {
@@ -410,6 +464,7 @@ final class GameEngine
                 ['id' => $playerId, 'cash' => $newCash, 'city' => $city],
             );
             $this->ledger->record($playerId, 'cash', -$fare, $newCash, 'travel.fare', $correlationId);
+            $this->armCooldown($playerId, 'travel');
             $event = new DomainEvent('PlayerTraveled', ['playerId' => $playerId, 'city' => $city, 'fare' => $fare, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
@@ -426,6 +481,7 @@ final class GameEngine
         if ($bet <= 0) {
             throw new RuntimeException('Bet must be positive.');
         }
+        $this->guardAction($playerId, 'blackjack');
         return $this->database->transaction(function () use ($bet, $playerId): array {
             $player = $this->requirePlayer($playerId);
             if ((int) $player['cash'] < $bet) {
@@ -442,6 +498,7 @@ final class GameEngine
             if ($delta !== 0) {
                 $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.blackjack', $correlationId);
             }
+            $this->armCooldown($playerId, 'blackjack');
             $event = new DomainEvent('BlackjackPlayed', ['playerId' => $playerId, 'bet' => $bet, 'delta' => $delta, 'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
@@ -456,6 +513,7 @@ final class GameEngine
     public function workShift(string $playerId = 'founder-player'): array
     {
         $this->resources->regenerate($playerId);
+        $this->guardAction($playerId, 'job');
         return $this->database->transaction(function () use ($playerId): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 20;
@@ -474,6 +532,7 @@ final class GameEngine
                 ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
             );
             $this->ledger->record($playerId, 'cash', $wage, $newCash, 'job.wage', $correlationId);
+            $this->armCooldown($playerId, 'job');
             $event = new DomainEvent('JobShiftWorked', [
                 'playerId' => $playerId, 'level' => $level, 'wage' => $wage,
                 'xpReward' => $xpReward, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
@@ -492,6 +551,7 @@ final class GameEngine
     {
         $this->requireModule('kill');
         $this->resources->regenerate($playerId);
+        $this->guardAction($playerId, 'attack');
         return $this->database->transaction(function () use ($playerId): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 25;
@@ -518,6 +578,7 @@ final class GameEngine
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'attack.mug', $correlationId);
             }
+            $this->armCooldown($playerId, 'attack');
             $event = new DomainEvent('PlayerAttacked', [
                 'playerId' => $playerId, 'result' => $win ? 'win' : 'lose',
                 'cashReward' => $cashReward, 'xpReward' => $xpReward, 'energySpent' => $energyCost,
