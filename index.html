@@ -17,16 +17,24 @@
       if (root.matches('path[data-zone-path]')) syncPath(root);
       root.querySelectorAll('path[data-zone-path]').forEach(syncPath);
     };
-    new MutationObserver(records => {
+    const observer = new MutationObserver(records => {
       for (const record of records) {
         if (record.type === 'attributes') syncPath(record.target);
         else record.addedNodes.forEach(syncTree);
       }
-    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-path'] });
+    });
+    const startObserver = () => {
+      if (!document.documentElement) return;
+      observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-path'] });
+      syncTree(document.documentElement);
+    };
+    if (document.documentElement) startObserver();
+    else document.addEventListener('DOMContentLoaded', startObserver, { once: true });
   })();
 </script>
 <script src="./support.js"></script>
 <script src="./platform-runtime.js"></script>
+<script src="./dist/map-icons.js"></script>
 <link rel="stylesheet" href="/engine/theme.css">
 <style id="zone-obsidian-final">
 /* ZONE — OBSIDIAN NOIR (forced, direct-hex, highest specificity) */
@@ -143,6 +151,7 @@ button:focus-visible{ outline:2px solid var(--acc); outline-offset:2px; }
       [style*="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"]{grid-template-columns:1fr!important}
       [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
       iframe{max-width:100%}
+      .zone-city-map-shell{height:clamp(420px,62vh,560px)!important;aspect-ratio:auto!important}
       [style*="height:260px"]{height:210px!important}
     }
     @media (max-width:420px){
@@ -561,8 +570,8 @@ button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:
           <sc-for list="{{ mapTabs }}" as="mt" hint-placeholder-count="2"><button onClick="{{ mt.go }}" style="white-space:nowrap;background:{{ mt.bg }};border:1px solid var(--border2);border-bottom:0;color:{{ mt.fg }};border-radius:4px 4px 0 0;padding:6px 14px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ mt.name }}</button></sc-for>
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
-          <div style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=16" title="Zone City live map" style="width:100%;height:100%;border:0;display:block"></iframe>
+          <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
+            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=18" title="Zone City live map" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
@@ -1057,22 +1066,26 @@ const MISSIONS = [{ id: 'c5', ctr: 'crimes', n: 5, cash: 5000, pts: 5 }, { id: '
 const COURSES = [{ id: 'bio', cost: 5000, mins: 20 }, { id: 'fit', cost: 12000, mins: 45 }, { id: 'law', cost: 9000, mins: 30 }, { id: 'biz', cost: 15000, mins: 60 }, { id: 'comb', cost: 25000, mins: 90 }];
 const PROPS = [{ id: 'shack', happy: 250, upkeep: 0, price: 0 }, { id: 'trailer', happy: 350, upkeep: 50, price: 40000 }, { id: 'apt', happy: 500, upkeep: 200, price: 150000 }, { id: 'semi', happy: 1000, upkeep: 600, price: 600000 }, { id: 'house', happy: 1500, upkeep: 1500, price: 2500000 }, { id: 'villa', happy: 2500, upkeep: 5000, price: 8000000 }, { id: 'island', happy: 5000, upkeep: 20000, price: 50000000 }];
 const DISTRICTS = [
-  { id: 'west', x: 1.5, y: 4, w: 30, h: 44, r: '40% 60% 55% 45% / 50% 40% 60% 50%', bg: '#25301f', border: '#3d5030', places: [['gym', 'gym'], ['grocer', 'jobs'], ['school', 'education']] },
-  { id: 'north', x: 33, y: 2, w: 30, h: 30, r: '55% 45% 50% 50% / 45% 55% 45% 55%', bg: '#252a30', border: '#3a4450', places: [['arena', 'attack'], ['news', 'newspaper']] },
-  { id: 'fin', x: 65, y: 3, w: 33.5, h: 42, r: '45% 55% 40% 60% / 55% 45% 55% 45%', bg: '#2a2d22', border: '#4a5030', places: [['bank', 'crimes'], ['market', 'market'], ['jobs', 'jobs'], ['hof', 'hof']] },
-  { id: 'red', x: 1.5, y: 52, w: 36, h: 45, r: '52% 48% 60% 40% / 45% 55% 45% 55%', bg: '#331f1f', border: '#5a3030', places: [['casino', 'casino'], ['alley', 'crimes'], ['hq', 'faction']] },
-  { id: 'center', x: 40, y: 36, w: 30, h: 60, r: '50% 50% 45% 55% / 60% 40% 60% 40%', bg: 'var(--btn)', border: '#484848', places: [['hospital', 'hospital'], ['jail', 'jail']] },
-  { id: 'res', x: 72, y: 49, w: 26.5, h: 47, r: '60% 40% 50% 50% / 40% 60% 40% 60%', bg: '#24302a', border: '#3a5040', places: [['home', 'properties'], ['shop', 'items']] }];
+  { id: 'west', x: 1.5, y: 4, w: 30, h: 44, r: '40% 60% 55% 45% / 50% 40% 60% 50%', bg: '#25301f', border: '#3d5030', faction: 'vipers', color: '#a3d900', control: 82, contested: false, rival: 'kings', blocks: 4, respect: 13840, income: 128000, heat: 34, poly: [[4,7],[31,7],[34,17],[31,49],[4,52]], places: [['gym', 'gym'], ['grocer', 'jobs'], ['school', 'education']] },
+  { id: 'north', x: 33, y: 2, w: 30, h: 30, r: '55% 45% 50% 50% / 45% 55% 45% 55%', bg: '#252a30', border: '#3a4450', faction: 'kings', color: '#3d7cc9', control: 76, contested: false, rival: 'vipers', blocks: 5, respect: 16110, income: 152000, heat: 42, poly: [[31,7],[66,7],[68,29],[58,37],[31,29]], places: [['arena', 'attack'], ['news', 'newspaper']] },
+  { id: 'fin', x: 65, y: 3, w: 33.5, h: 42, r: '45% 55% 40% 60% / 55% 45% 55% 45%', bg: '#2a2d22', border: '#4a5030', faction: 'night', color: '#b8529e', control: 91, contested: false, rival: 'kings', blocks: 6, respect: 22940, income: 248000, heat: 26, poly: [[66,7],[96,7],[96,48],[78,50],[58,37],[68,29]], places: [['bank', 'crimes'], ['market', 'market'], ['jobs', 'jobs'], ['hof', 'hof']] },
+  { id: 'red', x: 1.5, y: 52, w: 36, h: 45, r: '52% 48% 60% 40% / 45% 55% 45% 55%', bg: '#331f1f', border: '#5a3030', faction: 'vipers', color: '#a3d900', control: 58, contested: true, rival: 'night', blocks: 3, respect: 11900, income: 176000, heat: 81, poly: [[4,52],[31,49],[43,59],[39,94],[4,94]], places: [['casino', 'casino'], ['alley', 'crimes'], ['hq', 'faction']] },
+  { id: 'center', x: 40, y: 36, w: 30, h: 60, r: '50% 50% 45% 55% / 60% 40% 60% 40%', bg: 'var(--btn)', border: '#484848', faction: 'oldguard', color: '#d99332', control: 69, contested: false, rival: 'night', blocks: 4, respect: 18220, income: 201000, heat: 55, poly: [[31,29],[58,37],[78,50],[70,94],[39,94],[43,59],[31,49]], places: [['hospital', 'hospital'], ['jail', 'jail']] },
+  { id: 'res', x: 72, y: 49, w: 26.5, h: 47, r: '60% 40% 50% 50% / 40% 60% 40% 60%', bg: '#24302a', border: '#3a5040', faction: 'kings', color: '#3d7cc9', control: 53, contested: true, rival: 'vipers', blocks: 3, respect: 10160, income: 143000, heat: 47, poly: [[78,50],[96,48],[96,94],[70,94]], places: [['home', 'properties'], ['shop', 'items']] }];
 const PINS = [
-  ['gym', 'gym', 'leisure', 19, 44], ['school', 'education', 'admin', 27, 33], ['grocer', 'jobs', 'shop', 15, 60],
-  ['arena', 'attack', 'misc', 43, 26], ['news', 'newspaper', 'admin', 66, 22], ['hof', 'hof', 'admin', 54, 20],
-  ['bank', 'crimes', 'fin', 41, 47], ['market', 'market', 'shop', 47, 58], ['jobs', 'jobs', 'fin', 35, 52],
-  ['casino', 'casino', 'leisure', 47, 75], ['alley', 'crimes', 'misc', 62, 64], ['hq', 'faction', 'misc', 70, 50],
-  ['hospital', 'hospital', 'admin', 78, 38], ['jail', 'jail', 'admin', 85, 28],
-  ['home', 'properties', 'estate', 88, 60], ['shop', 'items', 'shop', 92, 43], ['pier', 'elimination', 'leisure', 80, 82], ['missions', 'missions', 'misc', 30, 24],
-  ['cityhall', 'cityhall', 'admin', 58, 14], ['points', 'points', 'fin', 72, 40], ['church', 'church', 'misc', 52, 46], ['racetrack', 'racetrack', 'leisure', 38, 18],
-  ['bigals', 'bigals', 'shop', 60, 40], ['sweetshop', 'sweetshop', 'shop', 22, 50], ['university', 'university', 'admin', 10, 38], ['docks', 'docks', 'leisure', 20, 88],
-  ['police', 'police', 'admin', 50, 40], ['pawnshop', 'pawnshop', 'shop', 55, 68]];
+  ['gym', 'gym', 'leisure', 18, 30, 'west'], ['school', 'education', 'admin', 25, 19, 'west'], ['grocer', 'jobs', 'shop', 12, 42, 'west'],
+  ['arena', 'attack', 'misc', 42, 20, 'north'], ['news', 'newspaper', 'admin', 59, 19, 'north'], ['hof', 'hof', 'admin', 87, 15, 'fin'],
+  ['bank', 'crimes', 'fin', 76, 22, 'fin'], ['market', 'market', 'shop', 84, 31, 'fin'], ['jobs', 'jobs', 'fin', 73, 39, 'fin'],
+  ['casino', 'casino', 'leisure', 19, 66, 'red'], ['alley', 'crimes', 'misc', 31, 61, 'red'], ['hq', 'faction', 'misc', 12, 78, 'red'],
+  ['hospital', 'hospital', 'admin', 55, 55, 'center'], ['jail', 'jail', 'admin', 63, 46, 'center'],
+  ['home', 'properties', 'estate', 84, 64, 'res'], ['shop', 'items', 'shop', 89, 54, 'res'], ['pier', 'elimination', 'leisure', 80, 84, 'res'], ['missions', 'missions', 'misc', 48, 25, 'north'],
+  ['cityhall', 'cityhall', 'admin', 48, 41, 'center'], ['points', 'points', 'fin', 90, 41, 'fin'], ['church', 'church', 'misc', 60, 68, 'center'], ['racetrack', 'racetrack', 'leisure', 36, 13, 'north'],
+  ['bigals', 'bigals', 'shop', 33, 80, 'red'], ['sweetshop', 'sweetshop', 'shop', 26, 43, 'west'], ['university', 'university', 'admin', 10, 25, 'west'], ['docks', 'docks', 'leisure', 22, 88, 'red'],
+  ['police', 'police', 'admin', 50, 61, 'center'], ['pawnshop', 'pawnshop', 'shop', 57, 79, 'center']];
+const MAP_COPY = {
+  en: { places: 'Locations', territories: 'Territories', searchPlaces: 'Search locations...', searchTerritories: 'Search territories...', cityControl: 'City control', owner: 'Owner', control: 'Control', blocks: 'Blocks', respect: 'Respect', income: 'Income / hour', heat: 'Heat', contested: 'Contested', controlled: 'Controlled', openFaction: 'Open faction', showPlaces: 'Show district locations', current: 'Your territory', versus: 'vs', factions: { vipers: 'Sand Vipers', kings: 'Harbor Kings', night: 'Night Market', oldguard: 'Old Guard' } },
+  ar: { places: 'المواقع', territories: 'الأراضي', searchPlaces: 'ابحث في المواقع...', searchTerritories: 'ابحث في الأراضي...', cityControl: 'السيطرة على المدينة', owner: 'المالك', control: 'السيطرة', blocks: 'القطاعات', respect: 'الاحترام', income: 'الدخل / ساعة', heat: 'الخطورة', contested: 'متنازع عليها', controlled: 'تحت السيطرة', openFaction: 'افتح العائلة', showPlaces: 'مواقع المنطقة', current: 'منطقتك الحالية', versus: 'ضد', factions: { vipers: 'أفاعي الرمل', kings: 'ملوك المرفأ', night: 'السوق الليلي', oldguard: 'الحرس القديم' } }
+};
 const PINCOLOR = { fin: '#3d7cc9', admin: '#c8502e', shop: '#d9a520', leisure: '#7aa33a', estate: '#2f9c8f', misc: '#8a4fbf' };
 const LIGHTEN = (h, a) => { const n = parseInt(h.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255, m = c => Math.round(c + (255 - c) * a); return '#' + ((1 << 24) + (m(r) << 16) + (m(g) << 8) + m(b)).toString(16).slice(1); };
 const PINICON = { gym: 'gym', school: 'education', grocer: 'jobs', arena: 'attack', news: 'newspaper', hof: 'hof', bank: 'cash', market: 'market', jobs: 'jobs', casino: 'casino', alley: 'crimes', hq: 'faction', hospital: 'hospital', jail: 'jail', home: 'properties', shop: 'items', pier: 'elimination', missions: 'missions', cityhall: 'hof', points: 'cash', church: 'faction', racetrack: 'attack', bigals: 'items', sweetshop: 'items', university: 'education', docks: 'elimination', police: 'jail', pawnshop: 'market' };
@@ -1138,13 +1151,21 @@ class Component extends DCLogic {
   pushMap() {
     const f = document.getElementById('zone-city-map');
     if (!f || !f.contentWindow) return;
-    const lang = this.state.lang, t = T[lang], dark = this.state.theme !== 'light';
-    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home');
+    const lang = this.state.lang, t = T[lang], dark = this.state.theme !== 'light', copy = MAP_COPY[lang];
+    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict;
     if (sig === this._mapSig) return;
-    const pins = PINS.map(([pl, sc, cat, x, y]) => ({ id: pl, screen: sc, cat, label: t.places[pl] || t.nav[pl], color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), d: LU(PINICON[pl]), x, y }));
+    const territoryById = Object.fromEntries(DISTRICTS.map(dd => [dd.id, dd]));
+    const pins = PINS.map(([pl, sc, cat, x, y, districtId]) => {
+      const district = territoryById[districtId] || territoryById.center;
+      return { id: pl, screen: sc, cat, icon: PINICON[pl], label: t.places[pl] || t.nav[pl], color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), x, y,
+        territory: district.id, territoryName: t.districts[district.id], territoryColor: district.color, ownerName: copy.factions[district.faction] };
+    });
+    const territories = DISTRICTS.map(dd => ({ id: dd.id, name: t.districts[dd.id], faction: dd.faction, factionName: copy.factions[dd.faction], color: dd.color,
+      control: dd.control, contested: dd.contested, status: dd.contested ? copy.contested : copy.controlled, rival: dd.rival, rivalName: copy.factions[dd.rival],
+      blocks: dd.blocks, respect: dd.respect, income: dd.income, heat: dd.heat, polygon: dd.poly, here: this.p.lastDistrict === dd.id }));
     const legend = Object.keys(PINCOLOR).map(k => ({ cat: k, color: PINCOLOR[k], colorLite: LIGHTEN(PINCOLOR[k], .42), label: t.legend[k] }));
     const hp = PINS.find(q => q[1] === (this.state.lastScreen || 'home')) || PINS[0];
-    f.contentWindow.postMessage({ zonePins: pins, legend, legendTitle: t.keyOfSymbols, here: { x: hp[3], y: hp[4] }, hereLabel: t.youAreHere, lang, dir: lang === 'ar' ? 'rtl' : 'ltr', dark, bg: dark ? '#0e1116' : '#e7e4d6' }, '*');
+    f.contentWindow.postMessage({ zonePins: pins, territories, legend, copy, legendTitle: t.keyOfSymbols, here: { x: hp[3], y: hp[4], territory: hp[5] }, hereLabel: t.youAreHere, lang, dir: lang === 'ar' ? 'rtl' : 'ltr', dark, bg: dark ? '#0e1116' : '#e7e4d6' }, '*');
     this._mapSig = sig;
   }
   pushChar() {
