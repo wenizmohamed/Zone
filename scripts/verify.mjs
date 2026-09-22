@@ -95,6 +95,7 @@ if (existsSync(adminPath) && existsSync(adminJsPath)) {
   check(adminJs.includes('zone.platform.activeRelease'), 'Admin active release cache is missing.');
   check(adminHtml.includes('aria-controls="draftPreviewStage"') && adminHtml.includes('aria-controls="territoryMapStage"') && adminJs.includes('function togglePreview(button)'), 'Admin draft and map previews must be collapsible.');
   check(adminJs.includes('sectionPreviewStage-${view}') && adminJs.includes('updatePreviewToggleLabel'), 'Every admin section preview must be reversible and bilingual.');
+  check(adminHtml.includes('aria-controls="apiTrace"') && adminHtml.includes('data-copy="clearTrace"') && adminJs.includes("isTrace ? 'Collapse trace'"), 'API trace must have separate collapse and clear actions.');
 }
 check(html.includes('aria-controls="zone-tutorial-panel"') && html.includes('closeTutorial:'), 'The game tutorial must expose an accessible close action.');
 
