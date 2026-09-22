@@ -46,7 +46,9 @@ CREATE TABLE IF NOT EXISTS players (
     speed INTEGER NOT NULL DEFAULT 10,
     dexterity INTEGER NOT NULL DEFAULT 10,
     bank_balance INTEGER NOT NULL DEFAULT 0,
-    city TEXT NOT NULL DEFAULT 'Zone City'
+    city TEXT NOT NULL DEFAULT 'Zone City',
+    login_streak INTEGER NOT NULL DEFAULT 0,
+    last_login_day TEXT
 );
 
 CREATE TABLE IF NOT EXISTS crimes (
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS crimes (
     cash_min INTEGER NOT NULL CHECK (cash_min >= 0),
     cash_max INTEGER NOT NULL CHECK (cash_max >= cash_min),
     xp_reward INTEGER NOT NULL CHECK (xp_reward >= 0),
+    level_required INTEGER NOT NULL DEFAULT 1 CHECK (level_required >= 1),
     enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
 );
 
@@ -72,6 +75,22 @@ CREATE TABLE IF NOT EXISTS action_rate_limits (
     player_id TEXT PRIMARY KEY,
     window_started_at TEXT NOT NULL,
     count INTEGER NOT NULL DEFAULT 0
+);
+
+-- Server-clock cooldown durations, moved out of engine code into config so the
+-- anti-hammer floors are tunable without a redeploy (Systems ownership).
+CREATE TABLE IF NOT EXISTS cooldown_config (
+    action TEXT PRIMARY KEY,
+    seconds INTEGER NOT NULL DEFAULT 0 CHECK (seconds >= 0)
+);
+
+-- Per-player progress on the rotating daily contract (Retention Spec 3.3).
+CREATE TABLE IF NOT EXISTS player_contract_progress (
+    player_id TEXT NOT NULL,
+    day TEXT NOT NULL,
+    progress INTEGER NOT NULL DEFAULT 0,
+    claimed INTEGER NOT NULL DEFAULT 0 CHECK (claimed IN (0, 1)),
+    PRIMARY KEY (player_id, day)
 );
 
 CREATE TABLE IF NOT EXISTS economy_ledger (

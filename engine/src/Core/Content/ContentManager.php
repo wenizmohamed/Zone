@@ -37,11 +37,11 @@ final class ContentManager
 
         $this->database->transaction(function () use ($definition, $previous, $actor, $correlationId, $now): void {
             $this->database->execute(
-                'INSERT INTO crimes (id, name_en, name_ar, nerve_cost, success_basis_points, cash_min, cash_max, xp_reward, enabled) '
-                . 'VALUES (:id, :name_en, :name_ar, :nerve_cost, :success_basis_points, :cash_min, :cash_max, :xp_reward, :enabled) '
+                'INSERT INTO crimes (id, name_en, name_ar, nerve_cost, success_basis_points, cash_min, cash_max, xp_reward, level_required, enabled) '
+                . 'VALUES (:id, :name_en, :name_ar, :nerve_cost, :success_basis_points, :cash_min, :cash_max, :xp_reward, :level_required, :enabled) '
                 . 'ON CONFLICT (id) DO UPDATE SET name_en = excluded.name_en, name_ar = excluded.name_ar, nerve_cost = excluded.nerve_cost, '
                 . 'success_basis_points = excluded.success_basis_points, cash_min = excluded.cash_min, cash_max = excluded.cash_max, '
-                . 'xp_reward = excluded.xp_reward, enabled = excluded.enabled',
+                . 'xp_reward = excluded.xp_reward, level_required = excluded.level_required, enabled = excluded.enabled',
                 $definition,
             );
             $this->recordAudit(
@@ -97,6 +97,9 @@ final class ContentManager
         $cashMin = $this->integer($payload['cash_min'] ?? null, 'Minimum cash reward', 0, 2_000_000_000);
         $cashMax = $this->integer($payload['cash_max'] ?? null, 'Maximum cash reward', $cashMin, 2_000_000_000);
         $xpReward = $this->integer($payload['xp_reward'] ?? null, 'XP reward', 0, 1_000_000_000);
+        $levelRequired = array_key_exists('level_required', $payload) && $payload['level_required'] !== null
+            ? $this->integer($payload['level_required'], 'Level required', 1, 100)
+            : 1;
         $enabled = $payload['enabled'] ?? true;
         if (!is_bool($enabled)) {
             throw new InvalidArgumentException('Crime enabled must be a boolean.');
@@ -111,6 +114,7 @@ final class ContentManager
             'cash_min' => $cashMin,
             'cash_max' => $cashMax,
             'xp_reward' => $xpReward,
+            'level_required' => $levelRequired,
             'enabled' => $enabled ? 1 : 0,
         ];
     }
@@ -120,6 +124,7 @@ final class ContentManager
         foreach (['nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward'] as $field) {
             $crime[$field] = (int) $crime[$field];
         }
+        $crime['level_required'] = (int) ($crime['level_required'] ?? 1);
         $crime['enabled'] = (bool) $crime['enabled'];
         $crime['successRate'] = $crime['success_basis_points'] / 100;
         return $crime;

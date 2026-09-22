@@ -44,7 +44,9 @@ CREATE TABLE IF NOT EXISTS players (
     speed BIGINT NOT NULL DEFAULT 10,
     dexterity BIGINT NOT NULL DEFAULT 10,
     bank_balance BIGINT NOT NULL DEFAULT 0,
-    city VARCHAR(60) NOT NULL DEFAULT 'Zone City'
+    city VARCHAR(60) NOT NULL DEFAULT 'Zone City',
+    login_streak INTEGER NOT NULL DEFAULT 0,
+    last_login_day VARCHAR(10)
 );
 ALTER TABLE players ADD COLUMN IF NOT EXISTS strength BIGINT NOT NULL DEFAULT 10;
 ALTER TABLE players ADD COLUMN IF NOT EXISTS defense BIGINT NOT NULL DEFAULT 10;
@@ -52,6 +54,8 @@ ALTER TABLE players ADD COLUMN IF NOT EXISTS speed BIGINT NOT NULL DEFAULT 10;
 ALTER TABLE players ADD COLUMN IF NOT EXISTS dexterity BIGINT NOT NULL DEFAULT 10;
 ALTER TABLE players ADD COLUMN IF NOT EXISTS bank_balance BIGINT NOT NULL DEFAULT 0;
 ALTER TABLE players ADD COLUMN IF NOT EXISTS city VARCHAR(60) NOT NULL DEFAULT 'Zone City';
+ALTER TABLE players ADD COLUMN IF NOT EXISTS login_streak INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE players ADD COLUMN IF NOT EXISTS last_login_day VARCHAR(10);
 
 CREATE TABLE IF NOT EXISTS crimes (
     id VARCHAR(100) PRIMARY KEY,
@@ -62,8 +66,10 @@ CREATE TABLE IF NOT EXISTS crimes (
     cash_min BIGINT NOT NULL CHECK (cash_min >= 0),
     cash_max BIGINT NOT NULL CHECK (cash_max >= cash_min),
     xp_reward INTEGER NOT NULL CHECK (xp_reward >= 0),
+    level_required INTEGER NOT NULL DEFAULT 1 CHECK (level_required >= 1),
     enabled SMALLINT NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
 );
+ALTER TABLE crimes ADD COLUMN IF NOT EXISTS level_required INTEGER NOT NULL DEFAULT 1;
 
 CREATE TABLE IF NOT EXISTS action_cooldowns (
     player_id VARCHAR(100) NOT NULL,
@@ -76,6 +82,22 @@ CREATE TABLE IF NOT EXISTS action_rate_limits (
     player_id VARCHAR(100) PRIMARY KEY,
     window_started_at TIMESTAMPTZ NOT NULL,
     count INTEGER NOT NULL DEFAULT 0
+);
+
+-- Server-clock cooldown durations, moved out of engine code into config so the
+-- anti-hammer floors are tunable without a redeploy (Systems ownership).
+CREATE TABLE IF NOT EXISTS cooldown_config (
+    action VARCHAR(80) PRIMARY KEY,
+    seconds INTEGER NOT NULL DEFAULT 0 CHECK (seconds >= 0)
+);
+
+-- Per-player progress on the rotating daily contract (Retention Spec 3.3).
+CREATE TABLE IF NOT EXISTS player_contract_progress (
+    player_id VARCHAR(100) NOT NULL,
+    day VARCHAR(10) NOT NULL,
+    progress INTEGER NOT NULL DEFAULT 0,
+    claimed SMALLINT NOT NULL DEFAULT 0 CHECK (claimed IN (0, 1)),
+    PRIMARY KEY (player_id, day)
 );
 
 CREATE TABLE IF NOT EXISTS economy_ledger (

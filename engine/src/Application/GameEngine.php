@@ -11,6 +11,9 @@ use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Game\CooldownService;
+use Zone\Engine\Core\Game\DailyService;
+use Zone\Engine\Core\Game\LevelingService;
+use Zone\Engine\Core\Game\NotificationService;
 use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
@@ -25,14 +28,22 @@ final class GameEngine
     private readonly ContentManager $content;
     private readonly CooldownService $cooldowns;
     private readonly RateLimiter $rateLimiter;
+    private readonly LevelingService $leveling;
+    private readonly DailyService $daily;
+    private readonly NotificationService $notifications;
+
+    /** @var array<string, int> Effective cooldown seconds per action (config over defaults). */
+    private readonly array $cooldownSeconds;
 
     /**
-     * Server-clock cooldown, in seconds, per state-changing action. These are
-     * anti-hammer floors; the real resource gates (nerve/energy/cash) still
-     * apply. Bank stays at 0 (balance-gated) so a deposit-then-withdraw flow is
-     * not blocked; the rate limiter still covers it.
+     * Fallback server-clock cooldown floors, in seconds, per state-changing
+     * action. The authoritative values live in the cooldown_config table
+     * (seeded from these); this const is only the defensive default if a row is
+     * missing. These are anti-hammer floors; the real resource gates
+     * (nerve/energy/cash) still apply. Bank stays at 0 (balance-gated) so a
+     * deposit-then-withdraw flow is not blocked; the rate limiter still covers it.
      */
-    private const COOLDOWNS = [
+    private const COOLDOWN_DEFAULTS = [
         'crime' => 5,
         'attack' => 8,
         'gym' => 3,
@@ -52,9 +63,13 @@ final class GameEngine
         private readonly CacheStore $cache,
     ) {
         $this->ledger = new Ledger($database);
-        $this->resources = new ResourceService($database);
+        $this->notifications = new NotificationService($database);
+        $this->resources = new ResourceService($database, $this->notifications);
         $this->content = new ContentManager($database, $events);
         $this->cooldowns = new CooldownService($database);
+        $this->leveling = new LevelingService($database, $this->ledger, $events);
+        $this->daily = new DailyService($database, $this->ledger, $events, $this->leveling);
+        $this->cooldownSeconds = $this->loadCooldownConfig();
         $rateMaxRaw = getenv('ZONE_RATE_LIMIT_MAX');
         $rateWindowRaw = getenv('ZONE_RATE_LIMIT_WINDOW');
         $this->rateLimiter = new RateLimiter(
@@ -62,6 +77,24 @@ final class GameEngine
             $rateMaxRaw === false ? 120 : (int) $rateMaxRaw,
             $rateWindowRaw === false ? 10 : max(1, (int) $rateWindowRaw),
         );
+    }
+
+    /**
+     * Load the per-action cooldown durations from the cooldown_config table,
+     * layered over the code defaults so a missing row can never leave an action
+     * uncovered. Defensive against a pre-migration construction.
+     */
+    private function loadCooldownConfig(): array
+    {
+        $seconds = self::COOLDOWN_DEFAULTS;
+        try {
+            foreach ($this->database->fetchAll('SELECT action, seconds FROM cooldown_config') as $row) {
+                $seconds[(string) $row['action']] = (int) $row['seconds'];
+            }
+        } catch (\Throwable) {
+            // Table not present yet (pre-migration); fall back to defaults.
+        }
+        return $seconds;
     }
 
     /**
@@ -78,7 +111,7 @@ final class GameEngine
 
     private function armCooldown(string $playerId, string $action): void
     {
-        $this->cooldowns->arm($playerId, $action, self::COOLDOWNS[$action] ?? 0);
+        $this->cooldowns->arm($playerId, $action, $this->cooldownSeconds[$action] ?? 0);
     }
 
     public function status(): array
@@ -228,8 +261,9 @@ final class GameEngine
         }
         $this->resources->regenerate($playerId);
         $this->guardAction($playerId, 'crime');
+        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
 
-        return $this->database->transaction(function () use ($crimeId, $playerId): array {
+        return $this->database->transaction(function () use ($crimeId, $playerId, $streak): array {
             $crime = $this->database->fetchOne('SELECT * FROM crimes WHERE id = :id AND enabled = 1', ['id' => $crimeId]);
             if ($crime === null) {
                 throw new RuntimeException("Unknown crime: {$crimeId}");
@@ -237,6 +271,10 @@ final class GameEngine
             $player = $this->database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => $playerId]);
             if ($player === null) {
                 throw new RuntimeException("Unknown player: {$playerId}");
+            }
+            $levelRequired = (int) ($crime['level_required'] ?? 1);
+            if ((int) $player['level'] < $levelRequired) {
+                throw new \InvalidArgumentException("This crime unlocks at level {$levelRequired}.");
             }
             $nerveCost = (int) $crime['nerve_cost'];
             if ((int) $player['nerve'] < $nerveCost) {
@@ -259,7 +297,9 @@ final class GameEngine
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'crime.reward', $correlationId);
             }
+            $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'crime');
+            $this->daily->recordProgress($playerId, 'crimes', 1);
 
             $eventName = $success ? 'CrimeSucceeded' : 'CrimeFailed';
             $event = new DomainEvent($eventName, [
@@ -279,6 +319,8 @@ final class GameEngine
                 'crime' => ['id' => $crimeId, 'name_en' => $crime['name_en'], 'name_ar' => $crime['name_ar']],
                 'cost' => ['nerve' => $nerveCost],
                 'reward' => ['cash' => $cashReward, 'xp' => $xpReward],
+                'levelUp' => $levelUp,
+                'streak' => $streak,
                 'serverProof' => [
                     'eventId' => $event->id,
                     'correlationId' => $correlationId,
@@ -317,7 +359,8 @@ final class GameEngine
         $sessions = max(1, min(10, $sessions));
         $this->resources->regenerate($playerId);
         $this->guardAction($playerId, 'gym');
-        return $this->database->transaction(function () use ($stat, $sessions, $playerId): array {
+        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
+        return $this->database->transaction(function () use ($stat, $sessions, $playerId, $streak): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 10 * $sessions;
             if ((int) $player['energy'] < $energyCost) {
@@ -337,7 +380,9 @@ final class GameEngine
                 "UPDATE players SET {$stat} = :stat, energy = :energy, xp = :xp, resources_updated_at = :updated WHERE id = :id",
                 ['id' => $playerId, 'stat' => $newStat, 'energy' => $newEnergy, 'xp' => $newXp, 'updated' => gmdate('c')],
             );
+            $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'gym');
+            $this->daily->recordProgress($playerId, 'stat_gain', $gain);
             $event = new DomainEvent('GymTrained', [
                 'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
                 'sessions' => $sessions, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
@@ -346,6 +391,7 @@ final class GameEngine
             return [
                 'trained' => $stat, 'gain' => $gain, 'sessions' => $sessions,
                 'cost' => ['energy' => $energyCost],
+                'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -514,7 +560,8 @@ final class GameEngine
     {
         $this->resources->regenerate($playerId);
         $this->guardAction($playerId, 'job');
-        return $this->database->transaction(function () use ($playerId): array {
+        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
+        return $this->database->transaction(function () use ($playerId, $streak): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 20;
             if ((int) $player['energy'] < $energyCost) {
@@ -532,7 +579,9 @@ final class GameEngine
                 ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
             );
             $this->ledger->record($playerId, 'cash', $wage, $newCash, 'job.wage', $correlationId);
+            $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'job');
+            $this->daily->recordProgress($playerId, 'job_cash', $wage);
             $event = new DomainEvent('JobShiftWorked', [
                 'playerId' => $playerId, 'level' => $level, 'wage' => $wage,
                 'xpReward' => $xpReward, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
@@ -540,6 +589,7 @@ final class GameEngine
             $this->events->publish($event);
             return [
                 'shift' => 'worked', 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -552,7 +602,8 @@ final class GameEngine
         $this->requireModule('kill');
         $this->resources->regenerate($playerId);
         $this->guardAction($playerId, 'attack');
-        return $this->database->transaction(function () use ($playerId): array {
+        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
+        return $this->database->transaction(function () use ($playerId, $streak): array {
             $player = $this->requirePlayer($playerId);
             $energyCost = 25;
             if ((int) $player['energy'] < $energyCost) {
@@ -578,7 +629,11 @@ final class GameEngine
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'attack.mug', $correlationId);
             }
+            $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'attack');
+            if ($win) {
+                $this->daily->recordProgress($playerId, 'attack_wins', 1);
+            }
             $event = new DomainEvent('PlayerAttacked', [
                 'playerId' => $playerId, 'result' => $win ? 'win' : 'lose',
                 'cashReward' => $cashReward, 'xpReward' => $xpReward, 'energySpent' => $energyCost,
@@ -589,6 +644,7 @@ final class GameEngine
                 'result' => $win ? 'win' : 'lose',
                 'reward' => ['cash' => $cashReward, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
                 'roll' => $roll, 'winChanceBasisPoints' => $winChanceBp,
+                'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -618,6 +674,36 @@ final class GameEngine
             'SELECT code, unlocked_at, source_event_id FROM achievements WHERE player_id = :player ORDER BY unlocked_at DESC',
             ['player' => $playerId],
         );
+    }
+
+    // --- Daily return hooks (Retention Spec 3.3) ---
+
+    /**
+     * Claim today's login-streak reward (idempotent per UTC day). Returns the
+     * streak block, or null if already claimed today.
+     */
+    public function dailyLogin(string $playerId = 'founder-player'): ?array
+    {
+        $this->resources->regenerate($playerId);
+        return $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
+    }
+
+    /** Today's rotating contract with the player's progress and claim state. */
+    public function dailyContract(string $playerId = 'founder-player'): array
+    {
+        return $this->daily->contractState($playerId);
+    }
+
+    /** Claim today's completed contract (cash + xp). Throws if incomplete/claimed. */
+    public function claimDailyContract(string $playerId = 'founder-player'): array
+    {
+        return $this->daily->claimContract($playerId, bin2hex(random_bytes(16)));
+    }
+
+    /** Unread notifications for the badge (e.g. cap-waste nudges). */
+    public function notifications(string $playerId = 'founder-player'): array
+    {
+        return $this->notifications->unread($playerId);
     }
 
     private function runtimeContent(): array

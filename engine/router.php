@@ -244,6 +244,20 @@ try {
         request_json();
         json_response($engine->attackNpc(current_player_id()));
     }
+    if ($method === 'POST' && $path === '/api/v1/daily/login') {
+        request_json();
+        json_response(['streak' => $engine->dailyLogin(current_player_id())]);
+    }
+    if ($method === 'GET' && $path === '/api/v1/daily/contract') {
+        json_response($engine->dailyContract(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/daily/contract/claim') {
+        request_json();
+        json_response($engine->claimDailyContract(current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/notifications') {
+        json_response(['notifications' => $engine->notifications(current_player_id())]);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

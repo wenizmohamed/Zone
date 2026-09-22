@@ -84,28 +84,44 @@ final class Database
     private function seedFoundationContent(): void
     {
         $now = gmdate('c');
+        // Founder is an inflated demo seed (level 12, oversized bars). last_login_day
+        // is pinned to today so the login-streak hook treats the demo account as
+        // already claimed for the current UTC day.
         $this->insertIgnore(
             'players',
-            ['id', 'username', 'level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'resources_updated_at', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance', 'city'],
-            ['founder-player', 'Vincenzo', 12, 4982, 48500, 150, 50, 3000, 500, 150, 50, 3000, 500, $now, 240, 180, 210, 165, 120000, 'Zone City'],
+            ['id', 'username', 'level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'resources_updated_at', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance', 'city', 'login_streak', 'last_login_day'],
+            ['founder-player', 'Vincenzo', 12, 4982, 48500, 150, 50, 3000, 500, 150, 50, 3000, 500, $now, 240, 180, 210, 165, 120000, 'Zone City', 1, gmdate('Y-m-d')],
         );
 
-        // Real Torn Crimes 2.0 roster (from HAR: crimesData step=hub). Nerve cost rises with tier.
+        // Real Torn Crimes 2.0 roster (from HAR: crimesData step=hub). Nerve cost
+        // rises with tier; cash is rebalanced so cash-per-nerve is monotonic across
+        // tiers (Retention Spec 3.2) and level_required staggers the roster.
+        // [id, name_en, name_ar, nerve_cost, success_bp, cash_min, cash_max, xp, level_required]
         $crimes = [
-            ['searchforcash', 'Search for Cash', 'البحث عن نقود', 2, 9000, 80, 240, 6],
-            ['bootlegging', 'Bootlegging', 'تهريب الكحول', 3, 8500, 200, 520, 10],
-            ['graffiti', 'Graffiti', 'الكتابة على الجدران', 4, 8000, 150, 400, 12],
-            ['shoplifting', 'Shoplifting', 'السرقة من المتاجر', 5, 7500, 350, 900, 16],
-            ['pickpocketing', 'Pickpocketing', 'النشل', 6, 7000, 500, 1300, 20],
-            ['cardskimming', 'Card Skimming', 'نسخ البطاقات', 8, 6200, 900, 2400, 30],
-            ['burglary', 'Burglary', 'السطو على المنازل', 10, 5400, 1600, 4200, 44],
+            ['searchforcash', 'Search for Cash', 'البحث عن نقود', 2, 9000, 80, 240, 6, 1],
+            ['bootlegging', 'Bootlegging', 'تهريب الكحول', 3, 8500, 200, 520, 10, 1],
+            ['graffiti', 'Graffiti', 'الكتابة على الجدران', 4, 8000, 300, 800, 12, 3],
+            ['shoplifting', 'Shoplifting', 'السرقة من المتاجر', 5, 7500, 450, 1150, 16, 5],
+            ['pickpocketing', 'Pickpocketing', 'النشل', 6, 7000, 650, 1600, 20, 8],
+            ['cardskimming', 'Card Skimming', 'نسخ البطاقات', 8, 6200, 1100, 2800, 30, 12],
+            ['burglary', 'Burglary', 'السطو على المنازل', 10, 5400, 1900, 4600, 44, 16],
         ];
         foreach ($crimes as $crime) {
             $this->insertIgnore(
                 'crimes',
-                ['id', 'name_en', 'name_ar', 'nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward', 'enabled'],
+                ['id', 'name_en', 'name_ar', 'nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward', 'level_required', 'enabled'],
                 [...$crime, 1],
             );
+        }
+
+        // Server-clock cooldown floors (seconds), owned as config not code.
+        // Bank stays at 0 (balance-gated); the rate limiter still covers it.
+        $cooldowns = [
+            'crime' => 5, 'attack' => 8, 'gym' => 3, 'job' => 10,
+            'blackjack' => 3, 'travel' => 15, 'hospital' => 5, 'bank' => 0,
+        ];
+        foreach ($cooldowns as $action => $seconds) {
+            $this->insertIgnore('cooldown_config', ['action', 'seconds'], [$action, $seconds]);
         }
     }
 

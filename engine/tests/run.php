@@ -5,9 +5,11 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/bootstrap.php';
 
 use Zone\Engine\Application\GameEngine;
+use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Game\CooldownException;
 use Zone\Engine\Core\Game\CooldownService;
+use Zone\Engine\Core\Game\LevelingService;
 use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\RateLimitException;
 use Zone\Engine\Core\Modules\ModuleRegistry;
@@ -409,6 +411,179 @@ try {
     foreach (['action_cooldowns', 'action_rate_limits', 'economy_ledger', 'event_log', 'jobs', 'notifications', 'assets', 'content_drafts', 'content_releases', 'admin_audit_log'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");
     }
+
+    // ============================================================
+    // RETENTION FLOOR (P0): xp->level, crime gate+rebalance,
+    // daily hooks (streak/contract/cap-nudge), cooldown config
+    // ============================================================
+
+    // --- P0 level curve: pure function of xp, totalXp(L) = 50*L*(L-1) ---
+    [$engine, $database] = build_engine($databasePath);
+    $leveling = new LevelingService($database, new Ledger($database), new EventBus($database));
+    check($leveling->totalXpForLevel(1) === 0, 'level curve: level 1 requires 0 xp');
+    check($leveling->totalXpForLevel(5) === 1000, 'level curve: level 5 requires 1000 xp (50*L*(L-1))');
+    check($leveling->totalXpForLevel(16) === 12000, 'level curve: level 16 requires 12000 xp');
+    check($leveling->levelForXp(0) === 1, 'level curve: 0 xp resolves to level 1');
+    check($leveling->levelForXp(999) === 4, 'level curve: 999 xp resolves to level 4');
+    check($leveling->levelForXp(1000) === 5, 'level curve: 1000 xp resolves to level 5 exactly on the threshold');
+
+    // --- P0 xp advances level AND level-up raises caps + pays out ---
+    $database->insertIgnore(
+        'players',
+        ['id', 'username', 'level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'resources_updated_at', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance', 'city', 'login_streak', 'last_login_day'],
+        ['level-test', 'Rookie', 1, 0, 0, 100, 45, 250, 1000, 100, 45, 250, 1000, gmdate('c'), 10, 10, 10, 10, 0, 'Zone City', 0, null],
+    );
+    $database->execute('UPDATE players SET xp = 1000 WHERE id = :id', ['id' => 'level-test']);
+    $levelUp = $leveling->sync('level-test', 'lvl-' . bin2hex(random_bytes(6)));
+    $lp = $database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => 'level-test']);
+    check($levelUp !== null && (int) $lp['level'] === 5, 'gaining xp across totalXp(L) advances level by the number of thresholds crossed (1->5)');
+    check((int) $lp['max_nerve'] === 49 && (int) $lp['max_energy'] === 112, 'level-up raises max nerve/energy to the Section 3.1 values (49/112 at L5)');
+    check((int) $lp['nerve'] === 49 && (int) $lp['energy'] === 112, 'level-up refills nerve and energy to the new caps');
+    check((int) $lp['cash'] === 3500, 'level-up pays level*250 per level crossed (2+3+4+5 = 3500)');
+    check($database->fetchOne("SELECT id FROM event_log WHERE event_name = 'PlayerLeveledUp'") !== null, 'PlayerLeveledUp event is persisted');
+    $levelBonus = array_values(array_filter($engine->ledger(50), static fn (array $e): bool => $e['reason'] === 'levelup.bonus'));
+    check(count($levelBonus) >= 1 && (int) $levelBonus[0]['amount'] === 3500, 'level-up writes a levelup.bonus ledger entry for the exact payout');
+    // No double-count: syncing again at the same xp is a no-op.
+    check($leveling->sync('level-test', 'lvl-noop') === null, 'level sync is a no-op when xp has not crossed a new threshold');
+
+    // --- P0 crime gate: below level_required is rejected, mutates nothing ---
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute("UPDATE players SET level = 12, nerve = 50, last_login_day = :t WHERE id = :id", ['t' => gmdate('Y-m-d'), 'id' => 'founder-player']);
+    $lockedBefore = $engine->player('founder-player');
+    $gateBlocked = false;
+    try { $engine->attemptCrime('burglary'); } catch (InvalidArgumentException) { $gateBlocked = true; }
+    check($gateBlocked, 'crime below its level_required (Burglary L16 vs player L12) is rejected with 422');
+    $lockedAfter = $engine->player('founder-player');
+    check((int) $lockedBefore['nerve'] === (int) $lockedAfter['nerve'] && (int) $lockedBefore['cash'] === (int) $lockedAfter['cash'], 'a level-gated crime mutates nothing');
+    $database->execute('DELETE FROM action_cooldowns');
+    $gateAllowed = true;
+    try { $engine->attemptCrime('cardskimming'); } catch (InvalidArgumentException) { $gateAllowed = false; }
+    check($gateAllowed, 'a crime at exactly the required level (Card Skimming L12 vs player L12) is allowed');
+
+    // --- P0 crime rebalance: cash-per-nerve monotonic (Graffiti trap killed) ---
+    $order = ['searchforcash', 'bootlegging', 'graffiti', 'shoplifting', 'pickpocketing', 'cardskimming', 'burglary'];
+    $prevRatio = 0.0;
+    $monotonic = true;
+    foreach ($order as $cid) {
+        $c = $database->fetchOne('SELECT * FROM crimes WHERE id = :id', ['id' => $cid]);
+        $ev = (((int) $c['cash_min'] + (int) $c['cash_max']) / 2) * ((int) $c['success_basis_points'] / 10000) / (int) $c['nerve_cost'];
+        if ($ev <= $prevRatio) {
+            $monotonic = false;
+        }
+        $prevRatio = $ev;
+    }
+    check($monotonic, 'crime cash-per-nerve EV is strictly monotonic across all 7 tiers (no-brainer + Graffiti trap removed)');
+    check((int) $database->fetchOne('SELECT level_required FROM crimes WHERE id = :id', ['id' => 'burglary'])['level_required'] === 16, 'Burglary is gated at level 16');
+    check((int) $database->fetchOne('SELECT level_required FROM crimes WHERE id = :id', ['id' => 'searchforcash'])['level_required'] === 1, 'Search for Cash is available from level 1');
+    check(count($engine->crimes()) === 7, 'crime respec preserves all 7 tested crimes');
+    $publicBurglary = array_values(array_filter($engine->crimes(), static fn (array $c): bool => $c['id'] === 'burglary'))[0];
+    check((int) ($publicBurglary['level_required'] ?? 0) === 16, 'public crime catalog exposes level_required for client lock badges');
+    check(!isset($publicBurglary['success_basis_points']), 'public crime catalog still hides success_basis_points');
+
+    // --- P0 login streak pays, is idempotent, advances and resets ---
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute("UPDATE players SET last_login_day = NULL, login_streak = 0, cash = 5000 WHERE id = :id", ['id' => 'founder-player']);
+    $cashBefore = (int) $engine->player('founder-player')['cash'];
+    $s1 = $engine->dailyLogin('founder-player');
+    check($s1 !== null && $s1['streakDay'] === 1 && $s1['rewardCash'] === 1000, 'first login of a new UTC day pays streak day 1 (1000)');
+    check((int) $engine->player('founder-player')['cash'] === $cashBefore + 1000, 'streak reward credits cash on hand');
+    check($engine->dailyLogin('founder-player') === null, 'a second login the same UTC day grants no streak reward (idempotent)');
+    check($database->fetchOne("SELECT id FROM event_log WHERE event_name = 'LoginStreakClaimed'") !== null, 'LoginStreakClaimed event is persisted');
+    check(count(array_filter($engine->ledger(50), static fn (array $e): bool => $e['reason'] === 'streak.reward')) >= 1, 'streak reward writes a streak.reward ledger entry');
+    $yesterday = gmdate('Y-m-d', time() - 86400);
+    $database->execute("UPDATE players SET last_login_day = :y, login_streak = 1 WHERE id = :id", ['y' => $yesterday, 'id' => 'founder-player']);
+    $s2 = $engine->dailyLogin('founder-player');
+    check($s2 !== null && $s2['streakDay'] === 2 && $s2['rewardCash'] === 1500, 'a consecutive UTC day advances the streak to day 2');
+    $database->execute("UPDATE players SET last_login_day = :y, login_streak = 2, nerve = 5 WHERE id = :id", ['y' => $yesterday, 'id' => 'founder-player']);
+    $s3 = $engine->dailyLogin('founder-player');
+    $p3 = $engine->player('founder-player');
+    check($s3['streakDay'] === 3 && (int) $p3['nerve'] === (int) $p3['max_nerve'], 'streak day 3 refills nerve to max');
+    $twoDaysAgo = gmdate('Y-m-d', time() - 2 * 86400);
+    $database->execute("UPDATE players SET last_login_day = :d, login_streak = 5 WHERE id = :id", ['d' => $twoDaysAgo, 'id' => 'founder-player']);
+    $sReset = $engine->dailyLogin('founder-player');
+    check($sReset !== null && $sReset['streakDay'] === 1, 'a missed UTC day resets the streak to day 1');
+
+    // --- P0 daily contract: progress advances, completes, and claims once ---
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute("DELETE FROM player_contract_progress WHERE player_id = :id", ['id' => 'founder-player']);
+    $cs = $engine->dailyContract('founder-player');
+    check($cs['progress'] === 0 && $cs['complete'] === false && isset($cs['contract']['metric']), 'daily contract starts at zero progress');
+    $claimEarly = false;
+    try { $engine->claimDailyContract('founder-player'); } catch (RuntimeException) { $claimEarly = true; }
+    check($claimEarly, 'an incomplete daily contract cannot be claimed');
+    // A matching action advances progress through the real action path.
+    $metric = $cs['contract']['metric'];
+    $database->execute("DELETE FROM action_cooldowns WHERE player_id = :id", ['id' => 'founder-player']);
+    $database->execute("UPDATE players SET nerve = 50, energy = 150, cash = 100000, last_login_day = :t WHERE id = :id", ['t' => gmdate('Y-m-d'), 'id' => 'founder-player']);
+    if ($metric === 'crimes') {
+        $engine->attemptCrime('searchforcash');
+    } elseif ($metric === 'stat_gain') {
+        $engine->trainGym('strength', 1);
+    } elseif ($metric === 'job_cash') {
+        $engine->workShift();
+    } else {
+        $database->execute("UPDATE players SET strength = 1000000000, speed = 1000000000, dexterity = 1000000000, energy = 150 WHERE id = :id", ['id' => 'founder-player']);
+        $engine->attackNpc('founder-player');
+    }
+    check($engine->dailyContract('founder-player')['progress'] > 0, 'a matching action advances daily-contract progress server-side');
+    // Force completion and claim.
+    $database->execute("DELETE FROM player_contract_progress WHERE player_id = :id", ['id' => 'founder-player']);
+    $target = (int) $cs['target'];
+    $database->insertIgnore('player_contract_progress', ['player_id', 'day', 'progress', 'claimed'], ['founder-player', $cs['contract']['day'], $target, 0]);
+    check($engine->dailyContract('founder-player')['complete'] === true, 'daily contract reports complete once progress reaches the target');
+    $rewardCash = (int) $cs['contract']['reward_cash'];
+    $rewardXp = (int) $cs['contract']['reward_xp'];
+    // Pin to the L12 xp floor so the +200 xp reward cannot cross a level
+    // threshold (a level-up would add its own cash bonus and skew the delta).
+    $database->execute("UPDATE players SET level = 12, xp = 6600 WHERE id = :id", ['id' => 'founder-player']);
+    $pcBefore = $engine->player('founder-player');
+    $claim = $engine->claimDailyContract('founder-player');
+    $pcAfter = $engine->player('founder-player');
+    check($claim['rewardCash'] === $rewardCash && (int) $pcAfter['cash'] === (int) $pcBefore['cash'] + $rewardCash, 'claiming a completed daily contract pays its cash reward');
+    check((int) $pcAfter['xp'] === (int) $pcBefore['xp'] + $rewardXp, 'claiming a completed daily contract grants its xp reward');
+    check($database->fetchOne("SELECT id FROM event_log WHERE event_name = 'DailyContractClaimed'") !== null, 'DailyContractClaimed event is persisted');
+    $doubleClaim = false;
+    try { $engine->claimDailyContract('founder-player'); } catch (RuntimeException) { $doubleClaim = true; }
+    check($doubleClaim, 'a daily contract cannot be claimed twice in one UTC day');
+
+    // --- P0 cap-waste nudge: capped bars write a notification (deduped) ---
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute("DELETE FROM notifications WHERE player_id = :id", ['id' => 'founder-player']);
+    $past = gmdate('c', time() - 100 * 60);
+    $database->execute("UPDATE players SET energy = 149, nerve = 49, max_energy = 150, max_nerve = 50, resources_updated_at = :past WHERE id = :id", ['past' => $past, 'id' => 'founder-player']);
+    $engine->player('founder-player');
+    $nudgeTypes = array_column($engine->notifications('founder-player'), 'type');
+    check(in_array('cap-waste:energy', $nudgeTypes, true) && in_array('cap-waste:nerve', $nudgeTypes, true), 'a bar that regenerates to max writes a cap-waste nudge to notifications');
+    $database->execute("UPDATE players SET energy = 149, resources_updated_at = :past WHERE id = :id", ['past' => gmdate('c', time() - 100 * 60), 'id' => 'founder-player']);
+    $engine->player('founder-player');
+    check(count(array_filter($engine->notifications('founder-player'), static fn (array $n): bool => $n['type'] === 'cap-waste:energy')) === 1, 'the cap-waste nudge is de-duplicated while still unread');
+
+    // --- P0 cooldown values live in a config table AND the engine reads them ---
+    [$engine, $database] = build_engine($databasePath);
+    check(count($database->fetchAll('SELECT action, seconds FROM cooldown_config')) === 8, 'cooldown_config seeds all 8 action cooldowns');
+    check((int) $database->fetchOne('SELECT seconds FROM cooldown_config WHERE action = :a', ['a' => 'crime'])['seconds'] === 5, 'crime cooldown lives in config at 5s (moved out of engine code)');
+    check((int) $database->fetchOne('SELECT seconds FROM cooldown_config WHERE action = :a', ['a' => 'bank'])['seconds'] === 0, 'bank cooldown config is 0 (balance-gated)');
+    $database->execute("UPDATE cooldown_config SET seconds = 0 WHERE action = 'crime'");
+    [$engine, $database] = build_engine($databasePath);
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute("UPDATE players SET level = 12, nerve = 50, last_login_day = :t WHERE id = :id", ['t' => gmdate('Y-m-d'), 'id' => 'founder-player']);
+    $engine->attemptCrime('searchforcash');
+    $configHonored = true;
+    try { $engine->attemptCrime('searchforcash'); } catch (CooldownException) { $configHonored = false; }
+    check($configHonored, 'the engine reads cooldowns from config: setting crime=0 removes the anti-hammer floor');
+
+    // --- Both schemas carry the new retention structures ---
+    foreach (['cooldown_config', 'player_contract_progress'] as $table) {
+        check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");
+    }
+    check(str_contains($schema, 'level_required'), 'PostgreSQL schema adds crimes.level_required');
+    check(str_contains($schema, 'login_streak') && str_contains($schema, 'last_login_day'), 'PostgreSQL schema adds player streak columns');
+    $sqliteSchema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.sqlite.sql');
+    foreach (['cooldown_config', 'player_contract_progress'] as $table) {
+        check(str_contains($sqliteSchema, "CREATE TABLE IF NOT EXISTS {$table}"), "SQLite schema contains {$table}");
+    }
+    check(str_contains($sqliteSchema, 'level_required'), 'SQLite schema adds crimes.level_required');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
