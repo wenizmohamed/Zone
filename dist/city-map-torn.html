@@ -17,7 +17,7 @@
   /* colored pin marker (Torn style) + white icon */
   .zbadge{position:relative;cursor:pointer;outline:none;will-change:transform}
   .zbadge:focus-visible .zpin{box-shadow:0 0 0 3px rgba(49,224,255,.7);border-radius:50%}
-  .zpin{position:relative;width:26px;height:32px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.8));transition:transform .12s ease;display:block}
+  .zpin{position:relative;width:26px;height:32px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.85)) drop-shadow(0 0 5px var(--c,#31e0ff));transition:transform .12s ease;display:block}
   .zbadge:hover .zpin,.zbadge.sel .zpin{transform:translateY(-3px) scale(1.12)}
   .zbadge.sel .zpin::after{content:"";position:absolute;left:1px;top:1px;width:24px;height:24px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 10px var(--c,#31e0ff);pointer-events:none}
   .zlbl{position:absolute;top:33px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:#dfe6ee;background:rgba(12,16,22,.82);padding:1px 6px;border-radius:4px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08)}
@@ -170,7 +170,13 @@
     if(d.zonePins||d.legend||d.here) render(d);
   });
   window.addEventListener('resize',function(){ map.resize(); });
-  map.on('load',function(){ map.resize(); });
+  map.on('style.load',function(){
+    try{ map.setFog({'range':[0.6,10],'color':'#0b1622','high-color':'#123a52','horizon-blend':0.22,'space-color':'#05080f','star-intensity':0.6}); }catch(_){}
+  });
+  map.on('load',function(){
+    map.resize();
+    try{ map.easeTo({pitch:60, bearing:-26, zoom:15.4, duration:2800, essential:true}); }catch(_){}
+  });
 
   function announce(){ try{ parent.postMessage({zoneMapReady:1,v:1},'*'); }catch(_){} }
   if(map.loaded()) announce(); else map.on('load',announce);
