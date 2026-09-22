@@ -9,10 +9,11 @@
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;width:100%}
   body{background:#080b12;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow:hidden;color:#e7ecf2}
-  .wrap{display:flex;height:100%;width:100%}
+  .wrap{position:relative;display:flex;height:100%;width:100%}
 
   /* ---- MapGenie-style location sidebar (completionist control-room) ---- */
-  .side{width:256px;flex:none;background:#0d131c;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;z-index:6}
+  .side{position:absolute;inset:0 auto 0 0;width:272px;max-width:86vw;background:rgba(13,19,28,.985);border-right:1px solid rgba(255,255,255,.1);display:flex;flex-direction:column;z-index:40;transform:translateX(-102%);transition:transform .25s cubic-bezier(.2,.7,.3,1);box-shadow:8px 0 30px rgba(0,0,0,.46)}
+  .side.open{transform:translateX(0)}
 
   /* U5.4 - live SVG completion ring + real count readout */
   .sHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -112,10 +113,16 @@
   .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{opacity:.3}
   .mapboxgl-ctrl-group{background:#161b22;border:1px solid rgba(255,255,255,.12)}
   .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon{filter:invert(.85)}
+  .tMapLabel{width:164px;pointer-events:none;text-align:center;color:#f7fbff;text-shadow:0 1px 2px #02050a,0 0 7px #02050a,0 0 12px #02050a;transition:opacity .18s ease}
+  .tMapLabel .tn{display:block;font-size:13px;font-weight:850;line-height:1.2}
+  .tMapLabel .tf{display:block;margin-top:2px;font-size:11px;font-weight:750;line-height:1.2;color:#e1e9f3}
+  .tMapLabel .tb{display:block;margin-top:1px;font-size:10px;font-weight:800;line-height:1.2;color:var(--tc,#c8d1db)}
+  [dir="rtl"] .tMapLabel{font-family:Tahoma,Arial,sans-serif;direction:rtl}
+  body[data-mode="places"] .tMapLabel{opacity:.56}
 
   /* ---- territory-bound POI tokens ---- */
   .zbadge{position:absolute;display:block;width:34px;height:34px;cursor:pointer;outline:none;will-change:transform;transition:opacity .16s ease}
-  body[data-mode="territories"] .zbadge{opacity:.72}body[data-mode="territories"] .zbadge:hover,body[data-mode="territories"] .zbadge.sel{opacity:1}
+  body[data-mode="territories"] .zbadge{display:none}
   .zbadge::before{content:"";position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);width:22px;height:7px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.62) 0%,rgba(0,0,0,0) 72%);z-index:-1;transition:transform .12s ease,opacity .12s ease;pointer-events:none}
   .zbadge:hover::before,.zbadge.sel::before{transform:translateX(-50%) scale(.76);opacity:.62}
   .zpin{position:relative;width:34px;height:34px;transform-origin:50% 50%;filter:drop-shadow(0 2px 2px rgba(0,0,0,.65));transition:transform .12s ease;display:block;
@@ -174,7 +181,12 @@
   .panel .mark.burst{animation:mkburst .45s ease}
   @keyframes mkburst{0%{transform:scale(1)}40%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(65,224,138,.25)}100%{transform:scale(1)}}
 
-  .sideToggle{display:none}
+  .sideToggle,.cityReset,.mapExpand{display:flex;align-items:center;justify-content:center;gap:7px;position:absolute;top:12px;z-index:12;height:38px;background:rgba(13,19,28,.94);border:1px solid rgba(255,255,255,.16);border-radius:9px;color:#dce8f4;font:inherit;font-size:11px;font-weight:800;letter-spacing:.035em;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.42);backdrop-filter:blur(8px)}
+  .sideToggle{left:12px;padding:0 12px;color:#7defff}
+  .sideToggle b{font-size:10px;text-transform:uppercase}
+  .cityReset{left:132px;padding:0 12px}
+  .mapExpand{left:226px;width:38px;font-size:18px}
+  .sideToggle:hover,.cityReset:hover,.mapExpand:hover{border-color:rgba(49,224,255,.58);background:rgba(19,31,43,.96)}
   .zerr{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:20;background:#5a1f1f;color:#ffdede;border:1px solid #a33;border-radius:8px;padding:8px 12px;font-size:12px;display:none}
 
   /* U4.21 - branded first-load reveal overlay */
@@ -183,7 +195,11 @@
   .zbootMark{width:34px;height:34px;border-radius:50%;border:2px solid rgba(49,224,255,.25);border-top-color:#31e0ff;animation:zspin .8s linear infinite;box-shadow:0 0 18px rgba(49,224,255,.35)}
   @keyframes zspin{to{transform:rotate(360deg)}}
 
-  [dir="rtl"] .side{border-right:0;border-left:1px solid rgba(255,255,255,.08)}
+  [dir="rtl"] .side{left:auto;right:0;border-right:0;border-left:1px solid rgba(255,255,255,.08);transform:translateX(102%);box-shadow:-8px 0 30px rgba(0,0,0,.46)}
+  [dir="rtl"] .side.open{transform:translateX(0)}
+  [dir="rtl"] .sideToggle{left:auto;right:12px}
+  [dir="rtl"] .cityReset{left:auto;right:132px}
+  [dir="rtl"] .mapExpand{left:auto;right:226px}
   [dir="rtl"] .clistInner{padding:2px 10px 6px 0}
   [dir="rtl"] .panel{right:auto;left:0;border-left:0;border-right:1px solid rgba(255,255,255,.12);transform:translateX(-105%)}
   [dir="rtl"] .panel.on{transform:translateX(0)}
@@ -198,13 +214,18 @@
   /* U4.19 - mobile drawer backdrop */
   .sideBd{position:absolute;inset:0;background:rgba(3,4,10,.55);backdrop-filter:blur(2px);z-index:5;opacity:0;pointer-events:none;transition:opacity .25s}
   @media (max-width:640px){
-    body[data-mode="territories"] .zbadge{display:none}
-    .side{position:absolute;top:0;bottom:0;left:0;transform:translateX(-102%);transition:transform .25s;box-shadow:6px 0 24px rgba(0,0,0,.5)}
-    [dir="rtl"] .side{left:auto;right:0;transform:translateX(102%);box-shadow:-6px 0 24px rgba(0,0,0,.5)}
-    .side.open{transform:translateX(0)}
     .side.open~.sideBd,.sideBd.on{opacity:1;pointer-events:auto}
-    .sideToggle{display:grid;place-items:center;position:absolute;top:10px;left:10px;z-index:7;width:38px;height:38px;background:#161b22;border:1px solid rgba(255,255,255,.16);border-radius:9px;color:#31e0ff;font-size:18px;cursor:pointer}
+    .sideToggle{top:10px;left:10px;width:40px;padding:0;font-size:18px}
+    .sideToggle b{display:none}
+    .cityReset{top:10px;left:58px;height:40px}
+    .mapExpand{top:10px;left:154px;height:40px}
+    .tMapLabel{width:106px}
+    .tMapLabel .tn{font-size:10.5px;line-height:1.08}
+    .tMapLabel .tf{font-size:8.5px;line-height:1.1}
+    .tMapLabel .tb{font-size:8.5px;line-height:1.1}
     [dir="rtl"] .sideToggle{left:auto;right:10px}
+    [dir="rtl"] .cityReset{left:auto;right:58px}
+    [dir="rtl"] .mapExpand{left:auto;right:154px}
     .panel{width:100%;max-width:100%;background:#0e1218}
   }
 
@@ -234,7 +255,9 @@
     <div class="zempty" id="zempty" hidden>No places match</div>
   </aside>
   <div class="mapcol">
-    <button class="sideToggle" id="sideToggle" aria-label="Locations">&#9776;</button>
+    <button class="sideToggle" id="sideToggle" aria-label="Open map controls"><span aria-hidden="true">&#9776;</span><b id="sideToggleText">Territories</b></button>
+    <button class="cityReset" id="cityReset" aria-label="Show full city">Full city</button>
+    <button class="mapExpand" id="mapExpand" aria-label="Expand map" title="Expand map">&#x26F6;</button>
     <div id="map"></div>
     <div class="mgrade"></div>
     <div class="etaHud" id="etaHud" hidden></div>
@@ -262,31 +285,32 @@
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
   mapboxgl.accessToken=TOKEN;
-  var CENTER=[-73.9812,40.7562], Z=15, SPAN_LNG=0.021, SPAN_LAT=0.012;
+  mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.3.0/mapbox-gl-rtl-text.js',null,true);
+  /* The logical city is wider than it is tall so the six territories use the
+     complete desktop canvas after Web Mercator projection. */
+  var CENTER=[-73.9812,40.7562], Z=15, SPAN_LNG=0.026, SPAN_LAT=0.012;
   function ll(x,y){ return [CENTER[0]+(x/100-0.5)*SPAN_LNG, CENTER[1]+(0.5-y/100)*SPAN_LAT]; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
   var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/standard',
-    center:CENTER, zoom:Z, minZoom:12.5, maxZoom:18, pitch:55, bearing:-18,
+    center:CENTER, zoom:Z, minZoom:12.5, maxZoom:18, pitch:0, bearing:0,
     config:{ basemap:{ lightPreset:'night', showPlaceLabels:false, showRoadLabels:false, showPointOfInterestLabels:false, showTransitLabels:false } },
-    attributionControl:false, dragRotate:true });
-  map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
+    attributionControl:false, dragRotate:false });
+  map.addControl(new mapboxgl.NavigationControl({visualizePitch:false}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
   map.on('error',function(e){ try{ var m=(e&&e.error&&e.error.message)||''; if(/token|401|403|Unauthorized/i.test(m)){ var el=document.getElementById('err'); el.textContent='Map tiles blocked: '+m; el.style.display='block'; } }catch(_){}} );
 
-  var markers=[], mById={}, hereMk=null, hereLL=null, selected=null, selectedTerritory=null, hoveredTerritory=null,
+  var markers=[], territoryLabels=[], mById={}, hereMk=null, hereLL=null, selected=null, selectedTerritory=null, hoveredTerritory=null,
       activeCats={}, territoryData=[], territoryById={}, territoryFilter=null, mapMode='territories', lastData=null, lang='en', didFit=false;
-  function fitPins(pins){
-    if(didFit||!pins||!pins.length) return;
+  function fitCity(list,force){
+    if(didFit&&!force) return;
     var mobile=innerWidth<=640;
     var bounds=new mapboxgl.LngLatBounds();
-    pins.forEach(function(p){bounds.extend(ll(p.x,p.y));});
+    (list||[]).forEach(function(t){(t.polygon||[]).forEach(function(p){bounds.extend(ll(p[0],p[1]));});});
     if(bounds.isEmpty()) return;
-    /* render() already waits for the iframe layout. fitBounds only needs the
-       transform, not a future style load event, so frame immediately. */
     map.resize();
-    map.fitBounds(bounds,{padding:mobile?{top:34,right:20,bottom:34,left:20}:{top:54,right:58,bottom:54,left:58},maxZoom:mobile?14.9:15.55,pitch:mobile?24:48,bearing:mobile?0:-18,duration:RM?0:900,essential:true});
+    map.fitBounds(bounds,{padding:mobile?{top:62,right:12,bottom:12,left:12}:{top:62,right:18,bottom:18,left:18},maxZoom:mobile?14.75:15.35,pitch:0,bearing:0,duration:force&&!RM?650:0,essential:true});
     didFit=true;
   }
   var found; try{ found=new Set(JSON.parse(localStorage.getItem('zoneFound')||'[]')); }catch(_){ found=new Set(); }
@@ -297,11 +321,11 @@
     fHide:document.getElementById('fHide'),fHideT:document.getElementById('fHideT'),fRes:document.getElementById('fRes'),sClear:document.getElementById('sClear'),
     pRib:document.getElementById('pRib'),pMeta:document.getElementById('pMeta'),etaHud:document.getElementById('etaHud'),
     modePlaces:document.getElementById('modePlaces'),modeTerritories:document.getElementById('modeTerritories'),sFilter:document.querySelector('.sFilter'),
-    zboot:document.getElementById('zboot'),zempty:document.getElementById('zempty'),sideBd:document.getElementById('sideBd')};
+    zboot:document.getElementById('zboot'),zempty:document.getElementById('zempty'),sideBd:document.getElementById('sideBd'),cityReset:document.getElementById('cityReset'),mapExpand:document.getElementById('mapExpand'),sideToggleText:document.getElementById('sideToggleText')};
   var T={search:'Search...',travel:'Travel here',confirm:'Confirm travel',mark:'Mark as visited',unmark:'Visited',loc:'Locations',hide:'Hide found',show:'Show all',results:' found',noMatch:'No places match',found:'FOUND',eta:'ETA',cost:'Cost',away:'m away'},
       TAR={search:'ابحث...',travel:'السفر إلى هنا',confirm:'تأكيد السفر',mark:'وضع علامة',unmark:'تمت الزيارة',loc:'المواقع',hide:'إخفاء الموجود',show:'إظهار الكل',results:' نتيجة',noMatch:'لا نتائج مطابقة',found:'تم',eta:'الوقت',cost:'التكلفة',away:' م'};
   function L(k){ return (lang==='ar'?TAR:T)[k]; }
-  var copy={places:'Locations',territories:'Territories',searchPlaces:'Search locations...',searchTerritories:'Search territories...',cityControl:'City control',owner:'Owner',control:'Control',blocks:'Blocks',respect:'Respect',income:'Income / hour',heat:'Heat',contested:'Contested',controlled:'Controlled',openFaction:'Open faction',showPlaces:'Show district locations',current:'Your territory',versus:'vs'};
+  var copy={places:'Locations',territories:'Territories',searchPlaces:'Search locations...',searchTerritories:'Search territories...',cityControl:'City control',owner:'Owner',control:'Control',blocks:'Blocks',respect:'Respect',income:'Income / hour',heat:'Heat',contested:'Contested',controlled:'Controlled',openFaction:'Open faction',showPlaces:'Show district locations',current:'Your territory',versus:'vs',fullCity:'Full city'};
 
   /* ---------- one canonical, semantic icon contract ---------- */
   var ICON_PATHS=window.ZONE_MAP_ICONS||{};
@@ -324,30 +348,43 @@
     return {type:'FeatureCollection',features:(list||[]).map(function(t){
       var ring=(t.polygon||[]).map(function(pt){return ll(pt[0],pt[1]);});
       if(ring.length){ var a=ring[0], b=ring[ring.length-1]; if(a[0]!==b[0]||a[1]!==b[1]) ring.push(a.slice()); }
-      return {type:'Feature',id:t.id,properties:{id:t.id,name:t.name,faction:t.faction,factionName:t.factionName,color:t.color,control:t.control,contested:!!t.contested,here:!!t.here},geometry:{type:'Polygon',coordinates:[ring]}};
+      var label=t.name+'\n'+t.factionName+' · '+Math.round(t.control)+'%\n'+Number(t.blocks||0)+' '+copy.blocks;
+      return {type:'Feature',id:t.id,properties:{id:t.id,name:t.name,label:label,status:t.status,faction:t.faction,factionName:t.factionName,color:t.color,control:t.control,blocks:t.blocks,locations:t.locations||0,contested:!!t.contested,here:!!t.here},geometry:{type:'Polygon',coordinates:[ring]}};
     })};
   }
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded()) return;
     try{
       if(!map.getSource('zone-territories')) map.addSource('zone-territories',{type:'geojson',data:territoryGeo(territoryData)});
-      if(!map.getLayer('zone-territories-fill')) map.addLayer({id:'zone-territories-fill',type:'fill',source:'zone-territories',slot:'middle',paint:{'fill-color':['get','color'],'fill-opacity':['case',['boolean',['feature-state','selected'],false],.42,['get','contested'],.26,.18]}});
+      if(!map.getLayer('zone-territories-fill')) map.addLayer({id:'zone-territories-fill',type:'fill',source:'zone-territories',slot:'middle',paint:{'fill-color':['get','color'],'fill-opacity':['case',['boolean',['feature-state','selected'],false],.54,['boolean',['feature-state','hover'],false],.38,['get','contested'],.33,.27]}});
       if(!map.getLayer('zone-territories-contested')) map.addLayer({id:'zone-territories-contested',type:'line',source:'zone-territories',slot:'middle',filter:['==',['get','contested'],true],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ff7358','line-width':4,'line-opacity':.96,'line-dasharray':[2,1.35]}});
-      if(!map.getLayer('zone-territories-outline')) map.addLayer({id:'zone-territories-outline',type:'line',source:'zone-territories',slot:'middle',layout:{'line-join':'round'},paint:{'line-color':['get','color'],'line-width':['case',['boolean',['feature-state','selected'],false],4,2.1],'line-opacity':.92}});
+      if(!map.getLayer('zone-territories-outline')) map.addLayer({id:'zone-territories-outline',type:'line',source:'zone-territories',slot:'middle',layout:{'line-join':'round'},paint:{'line-color':['get','color'],'line-width':['case',['boolean',['feature-state','selected'],false],5,['boolean',['feature-state','hover'],false],3.5,2.4],'line-opacity':1,'line-blur':['case',['boolean',['feature-state','selected'],false],1.2,0]}});
       if(!map.getLayer('zone-territories-current')) map.addLayer({id:'zone-territories-current',type:'line',source:'zone-territories',slot:'middle',filter:['==',['get','here'],true],paint:{'line-color':'#7defff','line-width':5.5,'line-blur':1.2,'line-opacity':.95}});
-      if(!map.getLayer('zone-territories-label')) map.addLayer({id:'zone-territories-label',type:'symbol',source:'zone-territories',slot:'top',layout:{'text-field':['concat',['get','name'],'\n',['get','factionName']],'text-size':11,'text-line-height':1.12,'text-letter-spacing':.04,'text-allow-overlap':false},paint:{'text-color':'#f4f7fb','text-halo-color':'rgba(5,8,13,.94)','text-halo-width':2,'text-halo-blur':1}});
+      if(!map.getLayer('zone-territories-label')) map.addLayer({id:'zone-territories-label',type:'symbol',source:'zone-territories',slot:'top',layout:{'visibility':'none','text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],13,10.5,15,13.5,17,16],'text-line-height':1.18,'text-letter-spacing':.045,'text-allow-overlap':true,'text-ignore-placement':true,'text-padding':2},paint:{'text-color':'#f7fbff','text-halo-color':'rgba(4,7,12,.97)','text-halo-width':2.4,'text-halo-blur':1.2}});
     }catch(_){}
+  }
+  function clearTerritoryLabels(){ territoryLabels.forEach(function(m){m.remove();}); territoryLabels=[]; }
+  function renderTerritoryLabels(){
+    clearTerritoryLabels();
+    territoryData.forEach(function(t){
+      var poly=t.polygon||[]; if(!poly.length) return;
+      var cx=poly.reduce(function(n,p){return n+p[0];},0)/poly.length, cy=poly.reduce(function(n,p){return n+p[1];},0)/poly.length;
+      var d=document.createElement('div'); d.className='tMapLabel'; d.dir=lang==='ar'?'rtl':'ltr'; d.dataset.zoneTerritoryLabel=t.id; d.style.setProperty('--tc',t.color||'#c8d1db');
+      d.innerHTML='<span class="tn">'+esc(t.name)+'</span><span class="tf">'+esc(t.factionName)+' · '+Math.round(t.control)+'%</span><span class="tb">'+Number(t.blocks||0)+' '+esc(copy.blocks)+'</span>';
+      territoryLabels.push(new mapboxgl.Marker({element:d,anchor:'center'}).setLngLat(ll(cx,cy)).addTo(map));
+    });
   }
   function syncTerritories(list){
     territoryData=Array.isArray(list)?list:[]; territoryById={};
     territoryData.forEach(function(t){territoryById[t.id]=t;});
     ensureTerritoryLayers();
     try{ var src=map.getSource('zone-territories'); if(src) src.setData(territoryGeo(territoryData)); }catch(_){}
+    renderTerritoryLabels();
     renderTerritoryList(); updateProg();
   }
   function fitTerritory(t){
     if(!t||!t.polygon||!t.polygon.length) return;
-    try{ var b=new mapboxgl.LngLatBounds(); t.polygon.forEach(function(p){b.extend(ll(p[0],p[1]));}); map.fitBounds(b,{padding:{top:72,right:72,bottom:72,left:72},maxZoom:16.15,pitch:52,bearing:-18,duration:RM?0:900,essential:true}); }catch(_){}
+    try{ var b=new mapboxgl.LngLatBounds(); t.polygon.forEach(function(p){b.extend(ll(p[0],p[1]));}); map.fitBounds(b,{padding:innerWidth<=640?{top:72,right:26,bottom:34,left:26}:{top:76,right:300,bottom:54,left:54},maxZoom:16.15,pitch:18,bearing:0,duration:RM?0:760,essential:true}); }catch(_){}
   }
   function renderTerritoryList(){
     if(!el.territories) return;
@@ -379,11 +416,12 @@
     el.modePlaces.setAttribute('aria-selected',mapMode==='places'); el.modeTerritories.setAttribute('aria-selected',mapMode==='territories');
     el.cats.hidden=mapMode!=='places'; el.territories.hidden=mapMode!=='territories'; el.sFilter.hidden=mapMode!=='places';
     el.sTitle.textContent=mapMode==='places'?copy.places:copy.cityControl; el.search.placeholder=mapMode==='places'?copy.searchPlaces:copy.searchTerritories;
+    el.sideToggleText.textContent=mapMode==='places'?copy.places:copy.territories;
     markers.forEach(applyMDisp); filterSidebar(); updateProg();
-    try{ if(map.getLayer('zone-territories-fill')) map.setPaintProperty('zone-territories-fill','fill-opacity',mapMode==='territories'?['case',['boolean',['feature-state','selected'],false],.42,['get','contested'],.26,.18]:['case',['boolean',['feature-state','selected'],false],.32,['get','contested'],.16,.1]); }catch(_){}
+    try{ if(map.getLayer('zone-territories-fill')) map.setPaintProperty('zone-territories-fill','fill-opacity',mapMode==='territories'?['case',['boolean',['feature-state','selected'],false],.54,['boolean',['feature-state','hover'],false],.38,['get','contested'],.33,.27]:['case',['boolean',['feature-state','selected'],false],.34,['boolean',['feature-state','hover'],false],.22,['get','contested'],.18,.11]); }catch(_){}
   }
-  el.modePlaces.onclick=function(){setMode('places',null);};
-  el.modeTerritories.onclick=function(){setMode('territories',null);};
+  el.modePlaces.onclick=function(){setMode('places',null);fitCity(territoryData,true);};
+  el.modeTerritories.onclick=function(){deselect();setMode('territories',null);fitCity(territoryData,true);};
 
   /* ---------- U5.4/U5.6/U4.16 - progress ring + counts + per-category bars ---------- */
   function updateProg(){
@@ -455,8 +493,8 @@
     el.pMark.textContent=L(found.has(p.id)?'unmark':'mark');
     el.pMark.onclick=function(){ setFound(p,!found.has(p.id)); el.pMark.classList.remove('burst'); void el.pMark.offsetWidth; el.pMark.classList.add('burst'); };
     el.panel.classList.add('on');
-    /* U5.8 - cinematic fly-to (curve + pitch + bearing lean) with sonar ping */
-    try{ map.flyTo({center:m.getLngLat(),zoom:Math.max(map.getZoom(),16.4),pitch:RM?55:62,bearing:map.getBearing()+(RM?0:6),curve:1.5,speed:0.85,duration:RM?400:1100,essential:true}); }catch(_){}
+    /* Keep a selected location spatially legible inside its territory. */
+    try{ map.flyTo({center:m.getLngLat(),zoom:Math.max(map.getZoom(),16.4),pitch:RM?0:36,bearing:0,curve:1.5,speed:0.85,duration:RM?400:950,essential:true}); }catch(_){}
     m._el.classList.add('png'); setTimeout(function(){ m._el.classList.remove('png'); },900);
   }
   function selectTerritory(t,fly){
@@ -484,8 +522,18 @@
   map.on('click',function(e){ var hit=[]; try{if(map.getLayer('zone-territories-fill')) hit=map.queryRenderedFeatures(e.point,{layers:['zone-territories-fill']});}catch(_){} if(!hit.length)deselect(); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') deselect(); });
   function closeSide(){ el.side.classList.remove('open'); el.sideBd.classList.remove('on'); }
-  document.getElementById('sideToggle').onclick=function(){ var open=el.side.classList.toggle('open'); el.sideBd.classList.toggle('on',open); };
+  document.getElementById('sideToggle').onclick=function(){ var open=el.side.classList.toggle('open'); el.sideBd.classList.toggle('on',open); this.setAttribute('aria-expanded',String(open)); };
   el.sideBd.onclick=closeSide;
+  el.cityReset.onclick=function(){ deselect(); setMode('territories',null); closeSide(); fitCity(territoryData,true); };
+  el.mapExpand.onclick=function(){
+    try{
+      if(document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen();
+    }catch(_){}
+  };
+  document.addEventListener('fullscreenchange',function(){
+    setTimeout(function(){ map.resize(); if(mapMode==='territories') fitCity(territoryData,true); },80);
+  });
 
   /* U5.6 - hide-found filter */
   var hideFound=false;
@@ -497,7 +545,7 @@
   function applyMDisp(m){ m._el.style.display = mVis(m)?'':'none'; }
   function applyCat(cat){ markers.forEach(function(m){ if(m._zp.cat===cat){ m._catOff=!activeCats[cat]; applyMDisp(m); } }); }
 
-  function clearAll(){ markers.forEach(function(m){m.remove();}); markers=[]; mById={}; if(hereMk){hereMk.remove();hereMk=null;} hereLL=null; el.cats.innerHTML=''; }
+  function clearAll(){ markers.forEach(function(m){m.remove();}); markers=[]; clearTerritoryLabels(); mById={}; if(hereMk){hereMk.remove();hereMk=null;} hereLL=null; el.cats.innerHTML=''; }
 
   function render(data){
     lastData=data; clearAll();
@@ -507,6 +555,8 @@
     if(data.copy) copy=data.copy;
     if(data.dir) document.documentElement.dir=data.dir;
     el.modePlaces.querySelector('span').textContent=copy.places; el.modeTerritories.querySelector('span').textContent=copy.territories;
+    el.sideToggleText.textContent=mapMode==='places'?copy.places:copy.territories;
+    el.cityReset.textContent=copy.fullCity||'Full city';
     syncTerritories(data.territories||[]);
 
     /* markers (HTML-marker render path preserved) */
@@ -553,13 +603,13 @@
     el.search.onkeydown=function(e){ if(e.key==='Enter'){ var r=document.querySelector('.loc:not(.hide) .lname'); if(r) r.click(); } };
 
     setMode(mapMode,territoryFilter);
-    setTimeout(function(){ map.resize(); fitPins(pins); },80);
+    setTimeout(function(){ map.resize(); fitCity(territoryData); },80);
     /* U4.21 - fade the boot overlay once pins exist */
     if(el.zboot&&pins.length) el.zboot.classList.add('gone');
   }
 
   window.addEventListener('message',function(e){ var d=e.data; if(!d||typeof d!=='object') return;
-    if(d.type==='ON_SHOW'){ setTimeout(function(){map.resize();},60); return; }
+    if(d.type==='ON_SHOW'){ setTimeout(function(){map.resize();if(mapMode==='territories')fitCity(territoryData,true);},60); return; }
     if(d.type==='FLY_TO'&&d.id&&mById[d.id]){ map.flyTo({center:mById[d.id].getLngLat(),zoom:16.5,duration:800}); selectPin(mById[d.id]); return; }
     if(d.zonePins||d.legend||d.here) render(d);
   });

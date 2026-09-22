@@ -26,6 +26,9 @@ check(index.includes('observer.observe(document.documentElement, {'), 'Path sync
 check(index.includes("document.addEventListener('DOMContentLoaded', startObserver, { once: true });"),
   'Path synchronizer must guard parser timing with DOMContentLoaded.');
 check(index.includes('class="zone-city-map-shell"'), 'Live city map must expose a responsive shell class.');
+check(index.includes('dist/city-map-torn.html?v=24'), 'Parent must load the current full-city map revision.');
+check(/\.zone-city-map-shell\s*\{[^}]*height:\s*clamp\(600px,70vh,760px\)[^}]*aspect-ratio:\s*auto/.test(index),
+  'Desktop city map must use a full-height playable viewport.');
 check(/\.zone-city-map-shell\s*\{[^}]*height:\s*clamp\(420px,62vh,560px\)[^}]*aspect-ratio:\s*auto/.test(index),
   'Phone map must use a usable tall viewport instead of the desktop aspect-ratio sliver.');
 
@@ -62,6 +65,62 @@ for (const district of ['west', 'north', 'fin', 'red', 'center', 'res']) {
   check(new RegExp(`id:\\s*['"]${district}['"][^\\n]+poly:`).test(index),
     `Canonical district is missing a territory polygon: ${district}.`);
 }
+
+// The six canonical territories must partition the complete 0..100 city
+// canvas. A tiny cluster of polygons in the middle is not a city map.
+const districtsSource = index.match(/const DISTRICTS = (\[[\s\S]*?\]);\s*const PINS =/)?.[1];
+let districts = [];
+try {
+  districts = districtsSource ? Function(`"use strict"; return (${districtsSource});`)() : [];
+} catch {
+  failures.push('Canonical DISTRICTS data could not be parsed for coverage verification.');
+}
+const polygons = districts.map(d => d.poly).filter(Array.isArray);
+const coords = polygons.flat();
+if (coords.length) {
+  const xs = coords.map(p => p[0]);
+  const ys = coords.map(p => p[1]);
+  check(Math.min(...xs) === 0 && Math.max(...xs) === 100,
+    'Territories must span the full city width from 0 to 100.');
+  check(Math.min(...ys) === 0 && Math.max(...ys) === 100,
+    'Territories must span the full city height from 0 to 100.');
+}
+function pointInPolygon(x, y, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    const crosses = ((yi > y) !== (yj > y)) &&
+      (x < ((xj - xi) * (y - yi)) / ((yj - yi) || Number.EPSILON) + xi);
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}
+let uncovered = 0;
+for (let y = 0.5; y < 100; y += 2) {
+  for (let x = 0.5; x < 100; x += 2) {
+    if (!polygons.some(poly => pointInPolygon(x, y, poly))) uncovered++;
+  }
+}
+check(uncovered === 0, `Territory polygons leave ${uncovered} sampled city cells uncovered.`);
+const pinsSource = index.match(/const PINS = (\[[\s\S]*?\]);\s*const MAP_COPY =/)?.[1];
+let canonicalPins = [];
+try {
+  canonicalPins = pinsSource ? Function(`"use strict"; return (${pinsSource});`)() : [];
+} catch {
+  failures.push('Canonical PINS data could not be parsed for territory verification.');
+}
+const districtById = new Map(districts.map(d => [d.id, d]));
+for (const pin of canonicalPins) {
+  const [id, , , x, y, districtId] = pin;
+  const district = districtById.get(districtId);
+  check(Boolean(district), `POI ${id} references missing territory: ${districtId}.`);
+  if (district) {
+    check(pointInPolygon(x, y, district.poly),
+      `POI ${id} at ${x},${y} falls outside assigned territory: ${districtId}.`);
+  }
+}
+check(canonicalPins.length >= 28, 'Full city map must retain all 28 canonical POIs.');
 check(index.includes('const MAP_COPY ='), 'Parent must define bilingual territory UI copy.');
 check(index.includes("territories: 'الأراضي'"), 'Territory UI must include Arabic copy.');
 check(index.includes('const territories = DISTRICTS.map'), 'Map payload must derive territories from canonical DISTRICTS.');
@@ -89,19 +148,31 @@ check(map.includes('data-zone-territory'), 'Rendered POIs must expose their terr
 check(map.includes("d.style.setProperty('--tc'"), 'POIs must inherit the controlling territory color.');
 check(map.includes('zone-poi-territory'), 'POI SVGs must include a faction-colored territory ring.');
 check(!map.includes('M17 42C15.5 39.4'), 'Legacy floating balloon marker shape must be removed.');
-check(map.includes('body[data-mode="territories"] .zbadge{display:none}'),
-  'Phone territory overview must hide dense POIs until a district is chosen.');
-check(map.includes('var mobile=innerWidth<=640'),
-  'Initial camera framing must use a phone-specific territory overview.');
+const territoryHideRule = map.indexOf('body[data-mode="territories"] .zbadge{display:none}');
+const firstMediaRule = map.indexOf('@media');
+check(territoryHideRule >= 0 && territoryHideRule < firstMediaRule,
+  'Territory mode must hide dense POIs on every viewport, not only phones.');
 check(map.includes("territoryFilter?pins.filter(function(p){return p.territory===territoryFilter;}):pins"),
   'Location progress must count only the selected territory when filtered.');
 
-// First render must frame the real pin payload. A hard-coded camera can show an
-// empty block of Manhattan even when all locations exist.
-check(map.includes('function fitPins('), 'Map must define fitPins() for the real payload.');
-check(map.includes('fitPins(pins)'), 'Map must frame the real pins after render.');
+// First render must frame the complete territory canvas from directly above.
+// Fitting only POIs makes the city footprint look like a small central widget.
+check(map.includes('function fitCity('), 'Map must define fitCity() for the complete territory canvas.');
+check(map.includes('fitCity(territoryData)'), 'Map must frame every territory after live data is synchronized.');
+check(map.includes('SPAN_LNG=0.026, SPAN_LAT=0.012'),
+  'City projection must use the full wide map canvas instead of a narrow central strip.');
+check(map.includes("mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.3.0/mapbox-gl-rtl-text.js',null,true)"),
+  'Mapbox must load its official Arabic RTL shaping plugin before rendering district labels.');
+check(map.includes('function renderTerritoryLabels(') && map.includes('dataset.zoneTerritoryLabel=t.id'),
+  'Territory names must use browser-shaped labels so Arabic stays connected and readable.');
+check(/@media \(max-width:640px\)\{[\s\S]*?\.tMapLabel\{width:106px\}/.test(map),
+  'Phone territory labels must use compact widths that do not overlap adjacent districts.');
+check(/center:CENTER,\s*zoom:Z,\s*minZoom:[^,]+,\s*maxZoom:[^,]+,\s*pitch:0,\s*bearing:0/.test(map),
+  'The full-city territory overview must start top-down with north up.');
+check(map.includes('id="cityReset"'), 'Full map must expose a one-click city overview reset.');
+check(index.includes('allow="fullscreen" allowfullscreen'), 'Map iframe must authorize its fullscreen control.');
 check(!/if\(map\.loaded\(\)\)\s*frame\(\);\s*else\s*map\.once\(['"]load['"],frame\)/.test(map),
-  'Pin framing must not wait on a load event that may already have fired.');
+  'City framing must not wait on a load event that may already have fired.');
 check(!map.includes('function orbit('), 'The map must not continuously rotate after load.');
 check(/\[dir="rtl"\]\s+\.side\s*\{[^}]*left:\s*auto[^}]*right:\s*0[^}]*translateX\(102%\)/.test(map),
   'Arabic mobile drawer must stage and enter from the right edge.');
