@@ -75,14 +75,15 @@
   if(!window.mapboxgl){ document.getElementById('err').textContent='Mapbox GL failed to load'; document.getElementById('err').style.display='block'; return; }
   mapboxgl.accessToken=TOKEN;
   // Zone City = a dense grid metropolis. Fictional labels off later; dark noir cartography now.
-  var CENTER=[-73.9845,40.7549], Z=13.2;
-  var SPAN_LNG=0.052, SPAN_LAT=0.030;   // pins spread across the opening view
+  var CENTER=[-73.9812,40.7562], Z=15;
+  var SPAN_LNG=0.021, SPAN_LAT=0.012;   // pins spread across the opening view
   function ll(x,y){ return [CENTER[0]+(x/100-0.5)*SPAN_LNG, CENTER[1]+(0.5-y/100)*SPAN_LAT]; }
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 
   var map=new mapboxgl.Map({
-    container:'map', style:'mapbox://styles/mapbox/dark-v11',
-    center:CENTER, zoom:Z, minZoom:11.5, maxZoom:17, pitch:0, bearing:0,
+    container:'map', style:'mapbox://styles/mapbox/standard',
+    center:CENTER, zoom:Z, minZoom:12.5, maxZoom:18, pitch:55, bearing:-18,
+    config:{ basemap:{ lightPreset:'night', showPlaceLabels:false, showRoadLabels:false, showPointOfInterestLabels:false, showTransitLabels:false } },
     attributionControl:false, cooperativeGestures:false, dragRotate:true
   });
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-left');
@@ -111,7 +112,7 @@
     el.pGo.textContent=(lang==='ar'?TAR.travel:T.travel);
     el.pGo.onclick=function(){ if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},'*'); };
     el.panel.classList.add('on');
-    map.flyTo({center:m.getLngLat(),zoom:Math.max(map.getZoom(),14.5),duration:600,essential:true});
+    map.flyTo({center:m.getLngLat(),zoom:Math.max(map.getZoom(),16.2),duration:700,essential:true});
   }
   function deselect(){ if(selected&&selected._el) selected._el.classList.remove('sel'); selected=null; el.panel.classList.remove('on'); }
   el.panelX.onclick=deselect;
@@ -154,7 +155,7 @@
     el.search.oninput=function(){ var q=(el.search.value||'').trim().toLowerCase(); if(!q){closeR();return;}
       var hits=idx.filter(function(p){return (p.label||'').toLowerCase().indexOf(q)>=0;}).slice(0,6); if(!hits.length){closeR();return;}
       el.results.innerHTML=''; hits.forEach(function(p){ var b=document.createElement('button'); b.innerHTML='<span class="dot" style="background:'+esc(p.color)+'"></span>'+esc(p.label);
-        b.onclick=function(){ el.search.value=p.label; closeR(); if(p._m){ map.flyTo({center:p._m.getLngLat(),zoom:15,duration:700,essential:true}); selectPin(p._m); } }; el.results.appendChild(b); });
+        b.onclick=function(){ el.search.value=p.label; closeR(); if(p._m){ map.flyTo({center:p._m.getLngLat(),zoom:16.5,duration:700,essential:true}); selectPin(p._m); } }; el.results.appendChild(b); });
       el.results.classList.add('on'); };
     el.search.onkeydown=function(e){ if(e.key==='Enter'){var f=el.results.querySelector('button'); if(f)f.click();} if(e.key==='Escape'){el.search.value='';closeR();} };
     applyFilter();
@@ -165,7 +166,7 @@
 
   window.addEventListener('message',function(e){ var d=e.data; if(!d||typeof d!=='object') return;
     if(d.type==='ON_SHOW'){ setTimeout(function(){map.resize();},60); return; }
-    if(d.type==='FLY_TO'&&d.id&&lastData){ var p=(lastData.zonePins||[]).find(function(x){return x.id===d.id;}); if(p&&p._m){ map.flyTo({center:p._m.getLngLat(),zoom:15,duration:700}); selectPin(p._m);} return; }
+    if(d.type==='FLY_TO'&&d.id&&lastData){ var p=(lastData.zonePins||[]).find(function(x){return x.id===d.id;}); if(p&&p._m){ map.flyTo({center:p._m.getLngLat(),zoom:16.5,duration:700}); selectPin(p._m);} return; }
     if(d.zonePins||d.legend||d.here) render(d);
   });
   window.addEventListener('resize',function(){ map.resize(); });
