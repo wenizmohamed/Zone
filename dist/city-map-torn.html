@@ -125,13 +125,13 @@
 <script>
 (function(){
   "use strict";
-  var H=1400, W=2400, bounds=[[0,0],[H,W]];
+  var H=768, W=1344, bounds=[[0,0],[H,W]];
   var PICK = /[?&]pick=1/.test(location.search);
   var map=L.map('map',{crs:L.CRS.Simple,zoomControl:true,attributionControl:false,
     zoomSnap:0.25,zoomDelta:0.5,wheelPxPerZoomLevel:110,inertia:true,keyboard:true,
     minZoom:-5,maxZoom:5});
   L.control.zoom({position:'topleft'});
-  L.imageOverlay('city-illustrated.svg',bounds,{className:'zart'}).addTo(map);
+  L.imageOverlay('city-ground.png',bounds,{className:'zart'}).addTo(map);
   map.fitBounds(bounds);
   var fit=map.getZoom();
   map.setMinZoom(fit-0.5); map.setMaxZoom(fit+3);
