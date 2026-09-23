@@ -198,6 +198,21 @@ check(/type\s*:\s*['"]circle['"]/.test(poiLayers.hitbox)
   'POI hitbox layer must provide transparent, map-native interaction targets.');
 check(/map\.on\(['"]click['"],\s*['"]zone-poi-hitbox['"]/.test(map),
   'POI hitbox layer must own click selection.');
+check(/function nearbyVisiblePin\(point\)/.test(map) && /var pin=nearbyVisiblePin\(e\.point\)/.test(map) && /if\(pin\)\{[^}]*selectPin\(pin\);return;\}/.test(map),
+  'Visible location icons must take priority over the block beneath them, including pitched 3D views.');
+check(/\[hidden\]\s*\{\s*display\s*:\s*none\s*!important\s*\}/.test(map),
+  'Hidden map controls must not remain visible through author display styles.');
+check(/el\.search\.onkeydown\s*=\s*function\(e\)[\s\S]{0,450}?mapMode===['"]territories['"][\s\S]{0,250}?el\.territories\.querySelectorAll\(['"]\.terr['"]\)/.test(map),
+  'Enter in territory search must select a visible block, not a hidden location.');
+check(/row\.addEventListener\(['"]click['"],openLoc\)/.test(map),
+  'The whole location list row must be tappable, not just its text.');
+check(/actionReason:localReason\(/.test(map) && map.includes('ACTION_REASON_AR'),
+  'Arabic territory details must localize server action reasons.');
+check(!/travelCost|L\(['"]cost['"]\)/.test(map) && /L\(['"]distance['"]\)/.test(map),
+  'Location navigation must not advertise a fare that the parent game never charges.');
+for (const [, inlineScript] of map.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
+  try { new Function(inlineScript); } catch (error) { failures.push(`Map inline JavaScript syntax error: ${error.message}`); }
+}
 check(/map\.addImage\s*\(/.test(map) && /['"]icon-image['"][^\n}]*\['"]get['"]/.test(poiLayers.icon),
   'Canonical semantic icons must be registered with Mapbox and selected from feature data.');
 const ordinaryPoiLoop = balancedBlockAfter(map, /pins\.forEach\s*\(\s*function\s*\(/);

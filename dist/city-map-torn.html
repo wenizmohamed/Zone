@@ -7,6 +7,7 @@
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.css" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
+  [hidden]{display:none!important}
   html,body{height:100%;width:100%}
   body{background:#080b12;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;overflow:hidden;color:#e7ecf2}
   .wrap{position:relative;display:flex;height:100%;width:100%}
@@ -353,8 +354,8 @@
     pRib:document.getElementById('pRib'),pMeta:document.getElementById('pMeta'),etaHud:document.getElementById('etaHud'),
     modePlaces:document.getElementById('modePlaces'),modeTerritories:document.getElementById('modeTerritories'),sFilter:document.querySelector('.sFilter'),
     zboot:document.getElementById('zboot'),zempty:document.getElementById('zempty'),sideBd:document.getElementById('sideBd'),sideToggle:document.getElementById('sideToggle'),sideClose:document.getElementById('sideClose'),cityReset:document.getElementById('cityReset'),mapExpand:document.getElementById('mapExpand'),streetView:document.getElementById('streetView'),sideToggleText:document.getElementById('sideToggleText')};
-  var T={search:'Search...',travel:'Travel here',confirm:'Confirm travel',mark:'Mark as visited',unmark:'Visited',loc:'Locations',hide:'Hide found',show:'Show all',results:' found',noMatch:'No places match',found:'FOUND',eta:'ETA',cost:'Cost',away:'m away'},
-      TAR={search:'ابحث...',travel:'السفر إلى هنا',confirm:'تأكيد السفر',mark:'وضع علامة',unmark:'تمت الزيارة',loc:'المواقع',hide:'إخفاء الموجود',show:'إظهار الكل',results:' نتيجة',noMatch:'لا نتائج مطابقة',found:'تم',eta:'الوقت',cost:'التكلفة',away:' م'};
+  var T={search:'Search...',travel:'Show direction',confirm:'Open location',open:'Open location',mark:'Mark as visited',unmark:'Visited',loc:'Locations',hide:'Hide found',show:'Show all',results:' found',noMatch:'No places match',found:'FOUND',distance:'Distance',away:'m away'},
+      TAR={search:'ابحث...',travel:'إظهار الاتجاه',confirm:'افتح الموقع',open:'افتح الموقع',mark:'وضع علامة',unmark:'تمت الزيارة',loc:'المواقع',hide:'إخفاء الموجود',show:'إظهار الكل',results:' نتيجة',noMatch:'لا نتائج مطابقة',found:'تم',distance:'المسافة',away:' م'};
   function L(k){ return (lang==='ar'?TAR:T)[k]; }
   var COPY_EN={places:'Locations',territories:'Territories',searchPlaces:'Search locations...',searchTerritories:'Search blocks...',cityControl:'City control',owner:'Owner',control:'Control',blocks:'Blocks',block:'Block',district:'District',sector:'Sector',size:'Size',density:'Density',slots:'Wall slots',dailyRespect:'Daily respect',neighbors:'Adjacent blocks',actionReason:'Action status',respect:'Respect',income:'Income / hour',heat:'Heat',benefit:'Block benefit',value:'Value',neutral:'Neutral',contested:'Contested',controlled:'Controlled',eligible:'Eligible',adjacent:'Adjacent',current:'Your territory',claim:'Claim block',capture:'Capture block',assault:'Assault block',attack:'Contest block',reinforce:'Reinforce block',unavailable:'Unavailable',showPlaces:'Show district locations',versus:'vs',fullCity:'Full city',streetView:'3D city',streetViewLabel:'Explore 3D city',viewBlock3D:'View block in 3D'},
       COPY_AR={places:'المواقع',territories:'الأراضي',searchPlaces:'ابحث في المواقع...',searchTerritories:'ابحث في القطاعات...',cityControl:'السيطرة على المدينة',owner:'المالك',control:'السيطرة',blocks:'القطاعات',block:'القطاع',district:'المنطقة',sector:'الحلقة',size:'الحجم',density:'الكثافة',slots:'مواقع الجدار',dailyRespect:'الاحترام اليومي',neighbors:'القطاعات المجاورة',actionReason:'حالة الإجراء',respect:'الاحترام',income:'الدخل / ساعة',heat:'الخطورة',benefit:'ميزة القطاع',value:'القيمة',neutral:'محايد',contested:'متنازع عليه',controlled:'تحت السيطرة',eligible:'متاح',adjacent:'مجاور',current:'منطقتك الحالية',claim:'استحوذ على القطاع',capture:'السيطرة على القطاع',assault:'هاجم القطاع',attack:'مهاجمة القطاع',reinforce:'تعزيز القطاع',unavailable:'غير متاح',showPlaces:'مواقع المنطقة',versus:'ضد',fullCity:'المدينة كاملة',streetView:'المدينة ثلاثية الأبعاد',streetViewLabel:'استكشف المدينة ثلاثية الأبعاد',viewBlock3D:'استكشف القطاع ثلاثي الأبعاد'};
@@ -382,6 +383,16 @@
   function pick(o,keys,fallback){for(var i=0;i<keys.length;i++){if(o&&o[keys[i]]!==undefined&&o[keys[i]]!==null)return o[keys[i]];}return fallback;}
   function flag(v){return v===true||v===1||v==='1'||v==='true'||v==='yes';}
   function localText(v,fallback){if(v&&typeof v==='object')return String(pick(v,[lang,lang==='ar'?'en':'ar','label','name'],fallback||'')||fallback||'');return String(v==null?(fallback||''):v);}
+  var ACTION_REASON_AR={
+    'Join a faction to control territory.':'انضم إلى عائلة للسيطرة على الأراضي.',
+    'Reinforce this faction block.':'عزّز هذا القطاع التابع لعائلتك.',
+    'A first foothold must be claimed in outer Sector 7.':'يجب الاستحواذ على أول موطئ قدم في الحلقة الخارجية 7.',
+    'Control an adjacent block before expanding here.':'سيطر على قطاع مجاور قبل التوسع إلى هنا.',
+    'This neutral block is connected to your territory.':'هذا القطاع المحايد متصل بأراضي عائلتك.',
+    'A territory war is already active on this block.':'تدور حرب سيطرة بالفعل على هذا القطاع.',
+    'This rival block borders your territory.':'هذا القطاع المنافس يجاور أراضي عائلتك.'
+  };
+  function localReason(value){var reason=localText(value,'');return lang==='ar'?(ACTION_REASON_AR[reason]||reason):reason;}
   function ownerId(raw){var o=raw&&raw.owner,v=pick(raw,['ownerId','ownerFactionId','factionId','faction'],null);if(v==null&&o&&typeof o==='object')v=pick(o,['id','key','slug'],'');else if(v==null&&typeof o==='string')v=o;return String(v||'');}
   function ownerName(raw){var o=raw&&raw.owner,v=pick(raw,['ownerName','factionName'],null);if(v==null&&o&&typeof o==='object')v=pick(o,['name','label'],'');else if(v==null&&typeof o==='string')v=o;return localText(v,'');}
   function playerFactionId(ctx){var p=ctx&&pick(ctx,['playerFactionId','currentFactionId','playerFaction'],''),o=p&&typeof p==='object'?pick(p,['id','key','slug'],''):p;return String(o||'');}
@@ -402,7 +413,7 @@
     var control=Number(pick(raw,['control','captureProgress','progress'],neutral?0:100));if(!isFinite(control))control=neutral?0:100;control=Math.max(0,Math.min(100,control));
     var benefit=benefitOf(raw),action=String(pick(raw,['action','actionType'],neutral?'capture':(isPlayer?'reinforce':'attack'))),canAct=pick(raw,['canAct','actionEnabled'],true)!==false&&!flag(pick(raw,['actionDisabled','locked'],false));
     var status=String(pick(raw,['status','state'],contested?C('contested'):(neutral?C('neutral'):C('controlled'))));
-    return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:lngLat?centroid:blockLL({_lngLat:false},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:neutral?C('neutral'):(ownerName(raw)||oid),faction:oid,factionName:neutral?C('neutral'):(ownerName(raw)||oid),color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localText(pick(raw,['actionReason','reason','lockedReason'],''),''),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
+    return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:lngLat?centroid:blockLL({_lngLat:false},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:neutral?C('neutral'):(ownerName(raw)||oid),faction:oid,factionName:neutral?C('neutral'):(ownerName(raw)||oid),color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localReason(pick(raw,['actionReason','reason','lockedReason'],'')),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
   }
   function territoryGeo(list){
     return {type:'FeatureCollection',features:(list||[]).filter(function(t){return t.polygon&&t.polygon.length>=3;}).map(function(t){
@@ -422,6 +433,16 @@
       if(inside)return t;
     }
     return null;
+  }
+  function nearbyVisiblePin(point){
+    if(mapMode!=='places'||!point)return null;
+    var nearest=null,limit=28*28;
+    pinData.forEach(function(pin){
+      if(!pinVisible(pin))return;
+      var screen=map.project(pin._lngLat),dx=screen.x-point.x,dy=screen.y-point.y,distance=dx*dx+dy*dy;
+      if(distance<limit){nearest=pin;limit=distance;}
+    });
+    return nearest;
   }
   function emptyGeo(){return{type:'FeatureCollection',features:[]};}
   function territoryOpacity(places){
@@ -586,10 +607,8 @@
 
   /* ---------- distance helper ---------- */
   function hav(a,b){var R=6371e3,t=Math.PI/180,dLa=(b[1]-a[1])*t,dLo=(b[0]-a[0])*t,la1=a[1]*t,la2=b[1]*t;var h=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1)*Math.cos(la2)*Math.sin(dLo/2)*Math.sin(dLo/2);return 2*R*Math.asin(Math.sqrt(h));}
-  function eta(m){return Math.max(1,Math.round(m/(250/60)));}
-  function cost(m){return Math.round(m*3);}
 
-  /* ---------- U5.10 - travel route drawing + ETA/cost HUD ---------- */
+  /* ---------- direction preview + distance HUD ---------- */
   var dashT=null;
   function startDash(){ if(dashT||RM) return; var seq=[[0,2.4],[0.6,1.8],[1.2,1.2],[1.8,0.6],[2.4,0]]; var i=0; dashT=setInterval(function(){ try{ if(map.getLayer('zroute-line')) map.setPaintProperty('zroute-line','line-dasharray',seq[i%seq.length]); }catch(_){} i++; },90); }
   function stopDash(){ if(dashT){ clearInterval(dashT); dashT=null; } }
@@ -614,17 +633,17 @@
     var hd=lastData&&lastData.here;
     if(hd&&hereLL){ var dist=Math.round(hav(hereLL,p._lngLat)); el.pMeta.innerHTML='<span style="color:'+esc(p.territoryColor||NEUTRAL_COLOR)+'">'+esc(p.territoryName||'')+'</span> · '+(lang==='ar'?('يبعد '+dist+TAR.away):(dist+T.away)); }
     else el.pMeta.textContent=p.territoryName||'';
-    el.pGo.textContent=L('travel');
+    el.pGo.textContent=L(hereLL?'travel':'open');
     el.pGo.onclick=function(){
       if(!hereLL){ if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},'*'); return; }
-      var a=hereLL,b=p._lngLat,mtr=hav(a,b),t=eta(mtr),c=cost(mtr);
+      var a=hereLL,b=p._lngLat,mtr=Math.round(hav(a,b));
       if(el.pGo.dataset.armed!==String(p.id)){
         drawRoute(a,b);
-        showHud('<span>'+L('eta')+' <b>'+t+'m</b></span><span>'+L('cost')+' <b>$'+c.toLocaleString()+'</b></span>');
+        showHud('<span>'+L('distance')+' <b>'+mtr.toLocaleString()+'m</b></span>');
         el.pGo.dataset.armed=String(p.id); el.pGo.textContent=L('confirm');
         return;
       }
-      if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,travelMin:t,travelCost:c,v:1},'*');
+      if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},'*');
     };
     el.pMark.textContent=L(found.has(p.id)?'unmark':'mark');
     el.pMark.onclick=function(){ setFound(p,!found.has(p.id)); el.pMark.classList.remove('burst'); void el.pMark.offsetWidth; el.pMark.classList.add('burst'); };
@@ -660,6 +679,8 @@
   }
   el.panelX.onclick=deselect;
   map.on('click',function(e){
+    var pin=nearbyVisiblePin(e.point);
+    if(pin){document.body.dataset.zoneClickPoi=pin.id;selectPin(pin);return;}
     try{if(map.getLayer('zone-poi-hitbox')&&map.queryRenderedFeatures(e.point,{layers:['zone-poi-hitbox']}).length)return;}catch(_){}
     var territory=territoryAt(e.lngLat);
     document.body.dataset.zoneClickBlock=territory?territory.id:'';
@@ -733,7 +754,7 @@
         row.innerHTML='<span class="chk"></span><span class="ldot" style="background:'+esc(p.color)+'"></span><span class="lname">'+esc(p.label)+'</span>';
         row.querySelector('.chk').addEventListener('click',function(ev){ ev.stopPropagation(); setFound(p,!found.has(p.id)); });
         function openLoc(){ var pin=pinById[p.id]; if(pin){ selectPin(pin); closeSide(true); } }
-        row.querySelector('.lname').addEventListener('click',openLoc);
+        row.addEventListener('click',openLoc);
         row.addEventListener('keydown',function(k){ if(k.key==='Enter'||k.key===' '){ k.preventDefault(); openLoc(); } });
         inner.appendChild(row); });
       list.appendChild(inner);
@@ -747,7 +768,17 @@
 
     /* search filters both first-class map modes */
     el.search.oninput=filterSidebar;
-    el.search.onkeydown=function(e){ if(e.key==='Enter'){ var r=document.querySelector('.loc:not(.hide) .lname'); if(r) r.click(); } };
+    el.search.onkeydown=function(e){
+      if(e.key!=='Enter')return;
+      e.preventDefault();
+      if(mapMode==='territories'){
+        var block=Array.from(el.territories.querySelectorAll('.terr')).find(function(row){return row.style.display!=='none';});
+        if(block)block.click();
+      }else{
+        var location=Array.from(el.cats.querySelectorAll('.loc:not(.hide)')).find(function(row){return row.closest('.cat').style.display!=='none';});
+        if(location)location.click();
+      }
+    };
 
     setMode(mapMode,territoryFilter);
     setTimeout(function(){map.resize();if(!didFit&&Array.isArray(data.blocks)&&data.blocks.length)fitCity(territoryData,false);},80);
