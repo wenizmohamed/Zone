@@ -325,7 +325,7 @@
   function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
-  var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/standard',
+  var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/dark-v11',
     center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:35, bearing:-15, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
      config:{ basemap:{ theme:'monochrome',lightPreset:'night',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
@@ -858,6 +858,8 @@
     try{ map.setFog({'range':[10,40],'horizon-blend':0.2,'color':'#28323f','high-color':'#3a5570','space-color':'#141c26','star-intensity':0.05}); }catch(_){}
     /* U6.9 - hard-lock every real-world label off so no NYC street/place name ever surfaces (kills the "just Mapbox" tell). Fog above is left untouched. */
     try{map.setConfigProperty('basemap','showPointOfInterestLabels',false);map.setConfigProperty('basemap','showTransitLabels',false);map.setConfigProperty('basemap','showRoadLabels',false);map.setConfigProperty('basemap','showPlaceLabels',false);}catch(_){}
+    /* classic dark-v11: hard-hide every real-world basemap label (place/road/poi) so no NYC name surfaces; keep zone-* / zroute game layers visible */
+    try{(map.getStyle().layers||[]).forEach(function(L){if(L.type==='symbol'&&!/^z(one|route)/.test(L.id)){try{map.setLayoutProperty(L.id,'visibility','none');}catch(_){}}});}catch(_){}
     installCustomLayers();
     /* U5.10 - travel route source + glow/line layers */
     try{ if(!map.getSource('zroute')){
