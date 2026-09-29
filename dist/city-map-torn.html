@@ -326,9 +326,9 @@
   var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
   var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/standard',
-    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:18, bearing:-12, maxPitch:60,
+    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:35, bearing:-15, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
-     config:{ basemap:{ theme:'monochrome',lightPreset:'dusk',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
+     config:{ basemap:{ theme:'monochrome',lightPreset:'night',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
@@ -347,7 +347,7 @@
     (list||[]).forEach(function(t){(t.polygon||[]).forEach(function(p){bounds.extend(blockLL(t,p));});});
     if(bounds.isEmpty()) return;
     map.resize();
-    map.fitBounds(bounds,{padding:mobile?{top:72,right:22,bottom:28,left:22}:{top:72,right:52,bottom:48,left:52},maxZoom:mobile?15.05:15.6,pitch:18,bearing:-12,duration:force&&!RM?700:0,essential:true});
+    map.fitBounds(bounds,{padding:mobile?{top:72,right:22,bottom:28,left:22}:{top:72,right:52,bottom:48,left:52},maxZoom:mobile?15.05:15.6,pitch:35,bearing:-15,duration:force&&!RM?700:0,essential:true});
     didFit=true;
   }
   var found; try{ found=new Set(JSON.parse(localStorage.getItem('zoneFound')||'[]')); }catch(_){ found=new Set(); }
@@ -751,7 +751,7 @@
 
   function clearAll(){if(selected){try{map.setFeatureState({source:'zone-pois',id:selected.id},{selected:false});}catch(_){}selected=null;}pinData=[];pinById={};hereLL=null;el.cats.innerHTML='';}
 
-  var activeLightPreset='dusk';
+  var activeLightPreset='night';
   function render(data){
     var selectedPinId=selected&&selected.id;lastData=data;clearAll();
     var pins=Array.isArray(data.zonePins)?data.zonePins:[],legend=data.legend||[],catLabel={},catColor={};
@@ -762,7 +762,7 @@
     el.sideClose.setAttribute('aria-label',lang==='ar'?'أغلق أدوات الخريطة':'Close map controls');el.sideClose.title=el.sideClose.getAttribute('aria-label');
     el.sideToggle.setAttribute('aria-label',lang==='ar'?(el.side.classList.contains('open')?'أغلق أدوات الخريطة':'افتح أدوات الخريطة'):(el.side.classList.contains('open')?'Close map controls':'Open map controls'));
     el.panelX.setAttribute('aria-label',lang==='ar'?'إغلاق التفاصيل':'Close details');el.panelX.querySelector('.xLabel').textContent=lang==='ar'?'إغلاق':'Close';
-    var nextLightPreset=data.dark===false?'day':'dusk';
+    var nextLightPreset=data.dark===false?'day':'night';
     try{if(map.setConfigProperty&&nextLightPreset!==activeLightPreset){map.setConfigProperty('basemap','lightPreset',nextLightPreset);activeLightPreset=nextLightPreset;}}catch(_){}
     el.modePlaces.querySelector('span').textContent=copy.places; el.modeTerritories.querySelector('span').textContent=copy.territories;
     el.sideToggleText.textContent=mapMode==='places'?copy.places:copy.territories;
@@ -877,7 +877,7 @@
     /* U6.10 - slow ambient bearing drift when idle (living city); pauses on any interaction, honors reduced-motion */
     var idleT,drift;
     function stopDrift(){clearTimeout(idleT);cancelAnimationFrame(drift);}
-    function armDrift(){if(RM)return;stopDrift();idleT=setTimeout(function loop(){map.easeTo({bearing:map.getBearing()-0.06,duration:120,easing:function(t){return t;}});drift=requestAnimationFrame(function(){idleT=setTimeout(loop,120);});},4000);}
+    function armDrift(){/* ambient bearing drift disabled: flat top-down district map stays still and aligned */return;}
     map.on('movestart',stopDrift);map.on('mousedown',stopDrift);map.on('moveend',armDrift);armDrift();
     /* U4.21 - boot overlay fallback so it never hangs */
     setTimeout(function(){ if(el.zboot) el.zboot.classList.add('gone'); },4000);
