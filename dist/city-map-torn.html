@@ -468,9 +468,13 @@
   function emptyGeo(){return{type:'FeatureCollection',features:[]};}
   function territoryOpacity(places){
     var base=places?['case',['boolean',['feature-state','selected'],false],.5,['boolean',['feature-state','hover'],false],.38,['boolean',['get','contested'],false],.32,['boolean',['get','neutral'],false],.2,.26]:['case',['boolean',['feature-state','selected'],false],.94,['boolean',['feature-state','hover'],false],.9,['boolean',['get','contested'],false],.9,['boolean',['get','player'],false],.88,['boolean',['get','neutral'],false],.8,.84];
-    return ['*',base,['interpolate',['linear'],['zoom'],12.5,1,15,.65,17,.38]];
+    /* fill-opacity must NOT multiply a zoom expression: Mapbox rejects the whole
+       fill layer ("zoom expression may only be used as input to a top-level
+       step/interpolate"), which silently dropped both territory fill layers and
+       left the map a bare wireframe. Keep the per-feature case only. */
+    return base;
   }
-  function overviewOpacity(places){return ['*',territoryOpacity(places),['interpolate',['linear'],['zoom'],14,1,15,.001]];}
+  function overviewOpacity(places){return territoryOpacity(places);}
   function adjacencyGeo(t){if(!t)return emptyGeo();return{type:'FeatureCollection',features:t.neighbors.map(function(id){var n=territoryById[id];return n?{type:'Feature',properties:{from:t.id,to:n.id},geometry:{type:'LineString',coordinates:[t._centroidLngLat,n._centroidLngLat]}}:null;}).filter(Boolean)};}
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
