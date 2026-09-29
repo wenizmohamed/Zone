@@ -330,7 +330,6 @@
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
      config:{ basemap:{ theme:'monochrome',lightPreset:'night',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
-  try{window.__zoneMap=map;}catch(_){}
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
   try{map.dragPan.enable();map.scrollZoom.enable();map.boxZoom.enable();map.dragRotate.enable();map.keyboard.enable();map.doubleClickZoom.enable();map.touchZoomRotate.enable();if(map.touchPitch)map.touchPitch.enable();}catch(_){}
