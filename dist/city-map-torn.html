@@ -110,12 +110,17 @@
   /* ---- map column ---- */
   .mapcol{flex:1;position:relative;min-width:0;overflow:hidden}
   #map{position:absolute;inset:0}
-  /* U4.13 - cinematic fog + player-anchored key-light + wet sheen */
+  /* Clean light atmosphere. The old stack (62%+80% near-black vignettes, scanlines,
+     film grain) blacked the map out on zoom AND read as AI over-processing. Kept a
+     whisper of cyan key-light + a faint edge so the map is atmospheric, never dark. */
   .mgrade{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;
-    background:radial-gradient(ellipse 60% 45% at var(--lx,50%) var(--ly,40%), rgba(49,224,255,.10) 0%, rgba(49,224,255,0) 46%),
-               radial-gradient(ellipse 120% 100% at 50% 52%, rgba(6,11,20,0) 50%, rgba(6,11,20,.62) 100%),
-               linear-gradient(180deg, rgba(8,14,24,.30) 0%, rgba(8,14,24,0) 22%)}
-  .mgrade::after{content:"";position:absolute;inset:-10% 0;background:linear-gradient(180deg,rgba(49,224,255,.05) 0%,rgba(49,224,255,0) 42%);opacity:.55}
+    background:radial-gradient(ellipse 70% 55% at var(--lx,50%) var(--ly,42%), rgba(49,224,255,.07) 0%, rgba(49,224,255,0) 55%),
+               radial-gradient(ellipse 150% 130% at 50% 50%, rgba(6,11,20,0) 74%, rgba(6,11,20,.20) 100%)}
+  .mgrade::after{content:none}
+  .mgrade::before{content:none}
+  .mapcol::after{content:none}
+  /* focus mode: a whisper of cyan on the selection, NEVER a dark dim of the map */
+  .mapcol.focus .mgrade{background:radial-gradient(ellipse 60% 48% at var(--lx,50%) var(--ly,45%),rgba(49,224,255,.10) 0%,rgba(49,224,255,0) 52%),radial-gradient(ellipse 150% 130% at 50% 50%,rgba(6,11,20,0) 74%,rgba(6,11,20,.20) 100%)!important;transition:background .35s ease}
   .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{opacity:.3}
   .mapboxgl-ctrl-group{background:#161b22;border:1px solid rgba(255,255,255,.12)}
   .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon{filter:invert(.85)}
@@ -321,7 +326,7 @@
   var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
   var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/standard',
-    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:19, pitch:18, bearing:-12, maxPitch:75,
+    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:18, bearing:-12, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
      config:{ basemap:{ theme:'monochrome',lightPreset:'dusk',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
@@ -363,7 +368,22 @@
   function C(k){return copy[k]||(lang==='ar'?COPY_AR:COPY_EN)[k]||k;}
 
   /* ---------- one canonical, semantic icon contract ---------- */
-  var ICON_PATHS=window.ZONE_MAP_ICONS||{};
+  /* U6.1 - fill the missing-icon gaps that made 12/28 markers render as one generic star.
+     map-icons.js is frozen + untouched; we merge the crafted 24x24 ~2px-stroke paths here. */
+  var ICON_EXTRA={
+    bank:'M3 20h18M4 10l8-5 8 5M6 10v7M10 10v7M14 10v7M18 10v7',
+    police:'M12 3l7 3v5c0 4-3 6-7 8-4-2-7-4-7-8V6zM9 11l2 2 4-4',
+    church:'M12 2v6M9 5h6M6 11l6-4 6 4v9H6zM10 20v-4h4v4',
+    university:'M12 4l10 5-10 5L2 9zM6 12v5c0 1.8 3 3 6 3s6-1.2 6-3v-5',
+    docks:'M12 6v12M8 8h8M5 18c2 1.8 5 1.8 7 0s5-1.8 7 0M12 3a1.6 1.6 0 100 3 1.6 1.6 0 000-3',
+    racetrack:'M4 12a8 4 0 1016 0 8 4 0 10-16 0M8 12V7h6l-1.4 2L14 11h-6',
+    points:'M12 3l2.6 5.2 5.7.8-4.1 4 1 5.7L12 21l-5.1 2.4 1-5.7-4.1-4 5.7-.8z',
+    pawnshop:'M9 6a3 3 0 016 0v2M8 8h8l-1 12H9zM12 12v4',
+    sweetshop:'M12 7a5 5 0 100 10 5 5 0 000-10M4 12H2M22 12h-2M6 7l2 2M18 7l-2 2',
+    bigals:'M6 11h12l-1 8H7zM9 11V8a3 3 0 016 0v3M11 15h2',
+    city:'M4 20V9l6-4 6 4v11M9 20v-4h2v4M6 12h1M13 12h1'
+  };
+  var ICON_PATHS=Object.assign({},ICON_EXTRA,window.ZONE_MAP_ICONS||{});
   var MAPCOLOR=window.ZONE_MAP_CATEGORY_COLORS||{fin:'#4f8fd8',admin:'#d45d3d',shop:'#d8a62e',leisure:'#78a83e',estate:'#35a79b',misc:'#8b63bd'};
   function pinColor(p){var k=String(p.cat||'').toLowerCase().replace(/[^a-z]/g,'');return MAPCOLOR[k]||p.color||'#4f8fd8';}
   function iconPath(p){return ICON_PATHS[p.icon]||ICON_PATHS.missions||'';}
@@ -459,6 +479,9 @@
       if(!map.getLayer('zone-blocks-ground'))map.addLayer({id:'zone-blocks-ground',type:'fill',slot:'middle',source:'zone-blocks',paint:{'fill-color':['get','renderColor'],'fill-emissive-strength':1.5,'fill-opacity':territoryOpacity(false)}});
       if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':['get','renderColor'],'fill-emissive-strength':1.5,'fill-opacity':overviewOpacity(false)}});
       if(!map.getLayer('zone-blocks-outline'))map.addLayer({id:'zone-blocks-outline',type:'line',source:'zone-blocks',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['case',['boolean',['feature-state','selected'],false],'#7defff',['boolean',['get','neutral'],false],'#d2d8de',['get','renderColor']],'line-emissive-strength':1.5,'line-width':['case',['boolean',['feature-state','selected'],false],4.5,['boolean',['feature-state','hover'],false],3.1,['boolean',['get','neutral'],false],1.9,2.6],'line-opacity':['case',['boolean',['get','neutral'],false],.98,1],'line-blur':['case',['boolean',['feature-state','selected'],false],1.1,0]}});
+      /* U6.7 - contested blocks get a diagonal-hatch fill texture so war zones read instantly */
+      if(map.hasImage&&!map.hasImage('zone-hatch')){try{var _hc=document.createElement('canvas');_hc.width=_hc.height=8;var _hx=_hc.getContext('2d');_hx.strokeStyle='rgba(255,115,88,.9)';_hx.lineWidth=2;_hx.beginPath();_hx.moveTo(0,8);_hx.lineTo(8,0);_hx.stroke();map.addImage('zone-hatch',_hx.getImageData(0,0,8,8),{pixelRatio:2});}catch(_){}}
+      if(!map.getLayer('zone-blocks-hatch'))map.addLayer({id:'zone-blocks-hatch',type:'fill',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'fill-pattern':'zone-hatch','fill-opacity':.5}},'zone-blocks-outline');
       if(!map.getLayer('zone-blocks-adjacent'))map.addLayer({id:'zone-blocks-adjacent',type:'line',source:'zone-blocks',paint:{'line-color':'#7defff','line-width':['case',['boolean',['feature-state','adjacent'],false],3,0],'line-opacity':['case',['boolean',['feature-state','adjacent'],false],.94,0],'line-dasharray':[1,1.4],'line-blur':['case',['boolean',['feature-state','adjacent'],false],.45,0]}});
       if(!map.getLayer('zone-blocks-eligible'))map.addLayer({id:'zone-blocks-eligible',type:'line',source:'zone-blocks',filter:['==',['get','eligible'],true],paint:{'line-color':'#b9f13a','line-width':3.2,'line-opacity':.95,'line-dasharray':[2.4,1.35]}});
       if(!map.getLayer('zone-blocks-contested'))map.addLayer({id:'zone-blocks-contested',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#ff7358','line-width':4,'line-opacity':.98,'line-dasharray':[1.4,1.1]}});
@@ -489,12 +512,15 @@
     else{updateAdjacency(null);if(selectedId)closePanel();}
     renderTerritoryList();updateProg();
   }
+  /* U6.11 - per-district crest identity (needs the icons added in U6.1) so the completionist
+     list stops showing 27 identical faction shields */
+  var DCREST={fin:'bank',admin:'city',shop:'market',leisure:'casino',estate:'properties',red:'crimes',center:'faction',north:'attack',west:'gym',res:'properties'};
   function renderTerritoryList(){
     if(!el.territories) return;
     el.territories.innerHTML='';var fragment=document.createDocumentFragment();
     territoryData.forEach(function(t){
       var isAdjacent=selectedNeighborIds.has(t.id),d=document.createElement('div'); d.className='terr'+(t.neutral?' neutral':'')+(t.contested?' contested':'')+(t.eligible?' eligible':'')+(isAdjacent?' adjacent':'')+(selectedTerritory&&selectedTerritory.id===t.id?' sel':''); d.dataset.id=t.id; d.tabIndex=0; d.setAttribute('role','button'); d.style.setProperty('--tc',t.color||NEUTRAL_COLOR);
-      d.innerHTML='<div class="terrTop"><span class="terrCrest">'+iconSvg({icon:'faction'},15,'#fff')+'</span><span class="terrName">'+esc(t.name)+'</span><span class="terrState">'+esc(t.status)+'</span></div>'
+      d.innerHTML='<div class="terrTop"><span class="terrCrest">'+iconSvg({icon:DCREST[t.districtId]||'faction'},15,'#fff')+'</span><span class="terrName">'+esc(t.name)+'</span><span class="terrState">'+esc(t.status)+'</span></div>'
         +'<div class="terrOwner"><span>'+esc(t.ownerName)+'</span><span class="terrCode">'+esc(t.code)+'</span><b>'+Math.round(t.control)+'%</b></div><div class="terrBar"><i style="width:'+Math.round(t.control)+'%"></i></div>'
         +(t.here?'<span class="terrHere">'+esc(copy.current)+'</span>':'');
       function choose(){selectTerritory(t);closeSide(true);}
@@ -548,18 +574,22 @@
       if(!map.getSource('zone-pois'))map.addSource('zone-pois',{type:'geojson',data:poiGeo()});
       if(!map.getSource('zone-here'))map.addSource('zone-here',{type:'geojson',data:emptyGeo()});
       var visible=['==',['get','visible'],true];
+      /* U6.4 - shared selected-scale multiplier so the chosen marker pops across all 3 POI layers */
+      var selScale=['case',['boolean',['feature-state','selected'],false],1.32,1];
+      /* U6.3 - emissive category-colored under-glow beneath the coin: noir "lit from within" read */
+      if(!map.getLayer('zone-poi-underglow'))map.addLayer({id:'zone-poi-underglow',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'map','circle-pitch-scale':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,13,15,18,17,24,19,30],'circle-color':['get','color'],'circle-blur':1,'circle-emissive-strength':1,'circle-opacity':['case',['boolean',['get','found'],false],.04,['boolean',['feature-state','selected'],false],.5,.24]}});
       /* Layer contract id:'zone-poi-halo' */
       if(!map.getLayer('zone-poi-halo'))map.addLayer({id:'zone-poi-halo',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'map','circle-pitch-scale':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,9,15,12,17,16,19,20],'circle-color':'rgba(8,12,19,.9)','circle-stroke-color':['case',['boolean',['feature-state','selected'],false],'#7defff',['get','territoryColor']],'circle-stroke-width':['case',['boolean',['feature-state','selected'],false],4,2.2],'circle-blur':['case',['boolean',['feature-state','selected'],false],.08,.02],'circle-opacity':['case',['boolean',['get','found'],false],.58,.96]}});
       /* Layer contract id:'zone-poi-icon' */
-      if(!map.getLayer('zone-poi-icon'))map.addLayer({id:'zone-poi-icon',type:'symbol',source:'zone-pois',filter:visible,layout:{'icon-image':['get','iconImage'],/* canonical data expression ['"]get' */'icon-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */12.5,.5,15,.68,17,.86,19,1.02],'icon-pitch-alignment':'map','icon-rotation-alignment':'map','icon-allow-overlap':false,'icon-ignore-placement':false,'icon-optional':false,'icon-padding':4},paint:{'icon-color':['case',['boolean',['get','found'],false],'#83a09b',['get','color']],'icon-halo-color':'rgba(255,255,255,.35)','icon-halo-width':.45,'icon-opacity':['case',['boolean',['get','found'],false],.62,1]}});
+      if(!map.getLayer('zone-poi-icon'))map.addLayer({id:'zone-poi-icon',type:'symbol',source:'zone-pois',filter:visible,layout:{'icon-image':['get','iconImage'],/* canonical data expression ['"]get' */'icon-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */12.5,.5,15,.68,17,.86,19,1.02],'icon-pitch-alignment':'map','icon-rotation-alignment':'map','icon-allow-overlap':false,'icon-ignore-placement':false,'icon-optional':false,'icon-padding':4,'symbol-sort-key':['match',['get','cat'],'fin',1,'admin',2,'shop',3,'leisure',4,'estate',5,6]},paint:{'icon-color':['case',['boolean',['get','found'],false],'#83a09b',['get','color']],'icon-halo-color':'rgba(255,255,255,.35)','icon-halo-width':.45,'icon-opacity':['case',['boolean',['get','found'],false],.62,1]}});
       /* Layer contract id:'zone-poi-label' */
-      if(!map.getLayer('zone-poi-label'))map.addLayer({id:'zone-poi-label',type:'symbol',source:'zone-pois',filter:visible,minzoom:14.4,layout:{'text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */14.4,9,17,11,19,12.5],'text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-offset':[0,2.15],'text-anchor':'top','text-max-width':15,'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':false,'text-ignore-placement':false,'text-optional':true,'text-padding':5},paint:{'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-opacity':['interpolate',['linear'],['zoom'],14.4,.25,16,.72,18,1]}});
+      if(!map.getLayer('zone-poi-label'))map.addLayer({id:'zone-poi-label',type:'symbol',source:'zone-pois',filter:visible,minzoom:13,layout:{'text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */14.4,9,17,11,19,12.5],'text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-offset':[0,2.15],'text-anchor':'top','text-max-width':15,'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':false,'text-ignore-placement':false,'text-optional':true,'text-padding':5},paint:{'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-emissive-strength':1,'text-opacity':['case',['boolean',['feature-state','hover'],false],1,['interpolate',['linear'],['zoom'],14.4,.25,16,.72,18,1]]}});
       if(!map.getLayer('zone-poi-found'))map.addLayer({id:'zone-poi-found',type:'symbol',source:'zone-pois',filter:['all',visible,['==',['get','found'],true]],layout:{'text-field':'✓','text-size':['interpolate',['linear'],['zoom'],13,8,17,11,19,13],'text-offset':[1.15,-1.2],'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':'#41e08a','text-halo-color':'#06110b','text-halo-width':1.4}});
       /* Layer contract id:'zone-poi-hitbox' */
       if(!map.getLayer('zone-poi-hitbox'))map.addLayer({id:'zone-poi-hitbox',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'map','circle-pitch-scale':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,15,16,20,19,25],'circle-color':'#ffffff','circle-opacity':0}});
       if(!map.getLayer('zone-here-halo'))map.addLayer({id:'zone-here-halo',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,9,18,15],'circle-color':'rgba(49,224,255,.12)','circle-stroke-color':'rgba(49,224,255,.75)','circle-stroke-width':2,'circle-blur':.18}});
       if(!map.getLayer('zone-here-dot'))map.addLayer({id:'zone-here-dot',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,4,18,7],'circle-color':'#31e0ff','circle-stroke-color':'#ffffff','circle-stroke-width':2}});
-    }catch(_){}
+    }catch(err){try{document.body.dataset.zonePoiErr=String((err&&err.message)||err);}catch(_){}}
   }
   function syncPoiSource(){
     ensurePoiLayers();
@@ -618,9 +648,11 @@
   function hideHud(){ el.etaHud.hidden=true; el.etaHud.innerHTML=''; }
 
   function openPanel(kind){el.panel.inert=false;el.panel.setAttribute('aria-hidden','false');el.panel.setAttribute('aria-label',kind==='block'?(lang==='ar'?'تفاصيل القطاع':'Block details'):(lang==='ar'?'تفاصيل الموقع':'Location details'));el.panel.classList.add('on');}
-  function closePanel(){if(el.panel.contains(document.activeElement))el.sideToggle.focus();el.panel.classList.remove('on');el.panel.inert=true;el.panel.setAttribute('aria-hidden','true');}
+  function closePanel(){if(el.panel.contains(document.activeElement))el.sideToggle.focus();el.panel.classList.remove('on');el.panel.inert=true;el.panel.setAttribute('aria-hidden','true');try{document.querySelector('.mapcol').classList.remove('focus');}catch(_){}}
   function selectPin(p){
     if(!p)return;
+    /* U6.6 - selecting a POI leaves block-focus mode */
+    try{document.querySelector('.mapcol').classList.remove('focus');}catch(_){}
     if(selectedTerritory){var priorId=selectedTerritory.id,priorNeighbors=new Set(selectedNeighborIds);try{map.setFeatureState({source:'zone-blocks',id:priorId},{selected:false});}catch(_){}selectedTerritory=null;updateAdjacency(null);updateTerritoryRows(priorId,priorNeighbors);}
     if(selected){try{map.setFeatureState({source:'zone-pois',id:selected.id},{selected:false});}catch(_){}}
     selected=p;try{map.setFeatureState({source:'zone-pois',id:p.id},{selected:true});}catch(_){}
@@ -656,6 +688,11 @@
     if(selectedTerritory){ try{map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:false});}catch(_){} }
     selectedTerritory=t; try{map.setFeatureState({source:'zone-blocks',id:t.id},{selected:true});}catch(_){}
     updateAdjacency(t);
+    /* Free-camera contract: selecting a block must NOT move or refit the camera. The
+       black-out was fixed by the fog/pitch change, not by a fitBounds; explicit zoom
+       to a block lives on the "View in 3D" control (view3D flyTo). */
+    /* U6.6 - spotlight the chosen block (focus mode dims the rest of the city) */
+    try{document.querySelector('.mapcol').classList.add('focus');}catch(_){}
     clearRoute(); hideHud(); el.pGo.dataset.armed=''; el.panel.classList.remove('isfound'); el.panel.classList.add('territory','block'); el.panel.classList.toggle('contested',!!t.contested); el.panel.style.setProperty('--bc',t.color||NEUTRAL_COLOR);
     el.pName.textContent=t.name; el.pCat.textContent=t.ownerName+' · '+t.status; el.pCat.style.color=t.color;
     el.pIco.innerHTML=iconSvg({icon:'faction'},34,t.color); el.pRib.textContent=t.status;
@@ -794,8 +831,10 @@
   window.addEventListener('resize',function(){ map.resize(); });
 
   map.on('click','zone-poi-hitbox',function(e){var f=e.features&&e.features[0],p=f&&pinById[String(f.properties&&f.properties.id)];if(p)selectPin(p);});
-  map.on('mouseenter','zone-poi-hitbox',function(){map.getCanvas().style.cursor='pointer';});
-  map.on('mouseleave','zone-poi-hitbox',function(){map.getCanvas().style.cursor='';});
+  /* U6.5 - hover reveals the marker name at any zoom via feature-state */
+  var hoveredPoiId=null;
+  map.on('mouseenter','zone-poi-hitbox',function(e){map.getCanvas().style.cursor='pointer';var f=e.features&&e.features[0];if(f&&f.properties){if(hoveredPoiId!=null){try{map.setFeatureState({source:'zone-pois',id:hoveredPoiId},{hover:false});}catch(_){}}hoveredPoiId=String(f.properties.id);try{map.setFeatureState({source:'zone-pois',id:hoveredPoiId},{hover:true});}catch(_){}}});
+  map.on('mouseleave','zone-poi-hitbox',function(){map.getCanvas().style.cursor='';if(hoveredPoiId!=null){try{map.setFeatureState({source:'zone-pois',id:hoveredPoiId},{hover:false});}catch(_){}hoveredPoiId=null;}});
   map.on('mouseenter','zone-blocks-fill',function(e){
     map.getCanvas().style.cursor='pointer'; var f=e.features&&e.features[0];
     if(f&&f.id!=null){ hoveredTerritory=f.id; try{map.setFeatureState({source:'zone-blocks',id:f.id},{hover:true});}catch(_){} }
@@ -815,7 +854,9 @@
   map.on('idle',installCustomLayers);
   map.on('style.load',function(){
     /* U4.13 - deeper cinematic fog (crushed base, lower horizon) */
-    try{ map.setFog({'range':[0.8,8],'horizon-blend':0.35,'color':'#070d16','high-color':'#0e2f44','space-color':'#03040a','star-intensity':0.45}); }catch(_){}
+    try{ map.setFog({'range':[10,40],'horizon-blend':0.2,'color':'#28323f','high-color':'#3a5570','space-color':'#141c26','star-intensity':0.05}); }catch(_){}
+    /* U6.9 - hard-lock every real-world label off so no NYC street/place name ever surfaces (kills the "just Mapbox" tell). Fog above is left untouched. */
+    try{map.setConfigProperty('basemap','showPointOfInterestLabels',false);map.setConfigProperty('basemap','showTransitLabels',false);map.setConfigProperty('basemap','showRoadLabels',false);map.setConfigProperty('basemap','showPlaceLabels',false);}catch(_){}
     installCustomLayers();
     /* U5.10 - travel route source + glow/line layers */
     try{ if(!map.getSource('zroute')){
@@ -833,6 +874,11 @@
   map.on('load',function(){ map.resize();
     installCustomLayers();
     syncLight();
+    /* U6.10 - slow ambient bearing drift when idle (living city); pauses on any interaction, honors reduced-motion */
+    var idleT,drift;
+    function stopDrift(){clearTimeout(idleT);cancelAnimationFrame(drift);}
+    function armDrift(){if(RM)return;stopDrift();idleT=setTimeout(function loop(){map.easeTo({bearing:map.getBearing()-0.06,duration:120,easing:function(t){return t;}});drift=requestAnimationFrame(function(){idleT=setTimeout(loop,120);});},4000);}
+    map.on('movestart',stopDrift);map.on('mousedown',stopDrift);map.on('moveend',armDrift);armDrift();
     /* U4.21 - boot overlay fallback so it never hangs */
     setTimeout(function(){ if(el.zboot) el.zboot.classList.add('gone'); },4000);
   });

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zone - GLB item viewer</title>
+<!-- Vendored, self-contained (bundles three). No unpkg / no internet dependency. -->
+<script type="module" src="../lib/model-viewer.min.js"></script>
+<style>
+  html,body{margin:0;height:100%;background:#16181b;overflow:hidden}
+  model-viewer{width:100%;height:100%;--poster-color:transparent}
+  #err{position:absolute;left:0;right:0;bottom:0;padding:6px 10px;color:#c98;
+       font:11px/1.3 monospace;background:#0008;display:none}
+</style>
+</head>
+<body>
+  <model-viewer id="mv" camera-controls auto-rotate ar
+    ar-modes="webxr scene-viewer quick-look" shadow-intensity="1"
+    interaction-prompt="none" exposure="1"></model-viewer>
+  <div id="err"></div>
+<script>
+  // ZONE item-key -> GLB asset. Extend as real weapon/item GLBs land in assets/.
+  // Falls back to the shipped character mannequin so the viewer always renders.
+  var ASSETS = {
+    mannequin: '../assets/character/mannequin_anim.glb',
+    character: '../assets/character/mannequin_anim.glb'
+  };
+  var FALLBACK = '../assets/character/mannequin_anim.glb';
+  var mv = document.getElementById('mv');
+  var errEl = document.getElementById('err');
+  var current = null;
+
+  function show(key) {
+    var src = ASSETS[key] || FALLBACK;
+    if (src === current) return;
+    current = src;
+    errEl.style.display = 'none';
+    mv.setAttribute('src', src);
+    if (!ASSETS[key]) { errEl.textContent = 'No GLB for "' + key + '" yet - showing fallback'; errEl.style.display = 'block'; }
+  }
+  function bg(hex) { if (hex) document.body.style.background = hex; }
+
+  mv.addEventListener('error', function (e) {
+    errEl.textContent = 'model load error: ' + (e && e.detail ? JSON.stringify(e.detail) : 'unknown');
+    errEl.style.display = 'block';
+  });
+
+  var q = new URLSearchParams(location.search);
+  bg(q.get('bg'));
+  show(q.get('item') || 'mannequin');
+
+  // Same postMessage contract as dist/weapon3d.html: { item, bg }
+  addEventListener('message', function (e) {
+    var m = e.data || {};
+    if (m.bg) bg(m.bg);
+    if (m.item) show(m.item);
+  });
+  try { parent.postMessage({ zoneViewerReady: true }, '*'); } catch (e) {}
+</script>
+</body>
+</html>
