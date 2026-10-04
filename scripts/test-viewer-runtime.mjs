@@ -39,6 +39,20 @@ function context(source, names, values = {}) {
   return ctx;
 }
 
+test('Wardrobe keeps shoulders and upper arms clothed while leaving hands and head visible', () => {
+  const ctx = context(character.template, ['outfitBoneRegion']);
+  for (const outfit of ['street', 'suit', 'tactical']) {
+    assert.equal(ctx.outfitBoneRegion('clavicle_l', outfit), 'top');
+    assert.equal(ctx.outfitBoneRegion('upperarm_r', outfit), 'sleeve');
+    assert.equal(ctx.outfitBoneRegion('hand_r', outfit), 'skin');
+    assert.equal(ctx.outfitBoneRegion('Head', outfit), 'skin');
+    assert.equal(ctx.outfitBoneRegion('thigh_l', outfit), 'bottom');
+    assert.equal(ctx.outfitBoneRegion('foot_r', outfit), 'shoe');
+  }
+  assert.equal(ctx.outfitBoneRegion('lowerarm_l','street'), 'skin');
+  assert.equal(ctx.outfitBoneRegion('lowerarm_l','suit'), 'sleeve');
+});
+
 for (const [name, viewer] of [['character', character], ['weapon', weapon]]) {
   test(`${name}: all decoded scripts parse and every catalog weapon has embedded model data`, () => {
     const scripts = [...Object.values(viewer.scripts)];

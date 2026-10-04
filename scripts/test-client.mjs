@@ -128,6 +128,34 @@ test('animated action remains busy until the asynchronous mutation settles', asy
   settle(); await pending; assert.equal(instance.state.busy, null);
 });
 
+test('compact navigation exposes the current area and closes after a successful route change', () => {
+  const { instance, SCREENS } = game({ manifest: { modules: { casino: false } } });
+  let view = instance.renderVals();
+  assert.equal(view.navigationExpanded, false);
+  assert.equal(view.nav.filter(item => item.current === 'page').length, 1);
+  assert.equal(view.nav.find(item => item.current === 'page').id, 'home');
+  assert.equal(view.nav.some(item => item.id === 'casino'), false);
+  view.toggleNavigation();
+  assert.equal(instance.renderVals().navigationExpanded, true);
+  instance.go('city');
+  view = instance.renderVals();
+  assert.equal(view.navigationExpanded, false);
+  assert.equal(view.nav.find(item => item.current === 'page').id, 'city');
+  assert.equal(view.currentScreen, 'city');
+  assert.equal(view.nav.length, SCREENS.length);
+  instance.state.lang = 'ar';
+  assert.match(instance.renderVals().navigationLabel, /[\u0600-\u06ff]/);
+});
+
+test('accessible HUD values follow authoritative resources and caps', () => {
+  const { instance } = game();
+  instance.applyServerPlayer({ energy: 44, nerve: 7, happy: 88, life: 99, max_energy: 160, max_nerve: 55, max_happy: 6000, max_life: 4000, resources_updated_at: new Date(1800000).toISOString() });
+  const bars = instance.renderVals().bars;
+  assert.deepEqual(Array.from(bars, bar => [bar.id, bar.value, bar.max]), [['energy', 44, 160], ['nerve', 7, 55], ['happy', 88, 6000], ['life', 99, 4000]]);
+  instance.state.lang = 'ar';
+  assert.match(instance.renderVals().bars[0].label, /[\u0600-\u06ff]/);
+});
+
 test('stale high-low rounds refresh the visible card without placing a replacement bet', async () => {
   const { instance, calls, T } = game({ fetchImpl: async (path, options) => options?.method === 'POST'
     ? { ok: false, status: 409, json: async () => ({ error: 'The card changed. Refresh before playing.' }) }

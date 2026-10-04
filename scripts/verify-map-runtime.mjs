@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import ZoneTerritoryGeometry from '../dist/territory-geometry.js';
 
 // Execute the shipped iframe functions with a small Mapbox/DOM adapter. These
 // checks cover data and lifecycle behavior; a real browser still verifies WebGL.
@@ -36,7 +37,7 @@ export function verifyMapRuntime(source) {
   }
   function expect(value, message) { if (!value) throw new Error(message); }
   function context(names, values = {}) {
-    const ctx = vm.createContext({ console, ...values });
+    const ctx = vm.createContext({ console, ZoneTerritoryGeometry, factionFocus: null, ownershipData: { type: 'FeatureCollection', features: [] }, ownershipSignature: '', landmarkController: null, syncLandmarkVisibility() {}, ...values });
     vm.runInContext(names.map(name => functionSource(source, name)).join('\n'), ctx);
     return ctx;
   }
@@ -58,10 +59,10 @@ export function verifyMapRuntime(source) {
       hasImage: () => true,
       getStyle: () => ({ layers }),
     };
-    const ctx = context(['ensureTerritoryLayers', 'ensurePoiLayers', 'territoryOpacity', 'overviewOpacity'], {
+    const ctx = context(['ensureTerritoryLayers', 'ensurePoiLayers', 'territoryOpacity', 'overviewOpacity', 'rebuildOwnership', 'ownershipOpacity'], {
       map, territoryData: [], pinData: [], mapMode: 'territories',
       document: { body: { dataset: {} }, createElement: () => ({ getContext: () => canvasContext }) },
-      territoryGeo: () => ({}), emptyGeo: () => ({}), poiGeo: () => ({}), ensurePoiImage() {},
+      territoryGeo: () => ({ type: 'FeatureCollection', features: [] }), focusedFactionId: () => 'vipers', emptyGeo: () => ({}), poiGeo: () => ({}), ensurePoiImage() {},
     });
     ctx.ensureTerritoryLayers(); ctx.ensurePoiLayers();
     expect(layers.some(layer => layer.id === 'zone-poi-label'), `Location labels were not generated: ${ctx.document.body.dataset.zonePoiErr || ''}`);
@@ -185,7 +186,7 @@ export function verifyMapRuntime(source) {
     const ctx = context(['syncTerritories'], {
       districtData: [], territoryData: [], territoryById: {}, selectedTerritory: block,
       normalizeBlock: item => item, ensureTerritoryLayers() {}, territoryGeo: list => ({ features: list }),
-      updateAdjacency() {}, renderTerritoryList() {}, updateProg() {}, closePanel() {}, renderFamily() {}, syncHoldingMarkers() {},
+      updateAdjacency() {}, renderTerritoryList() {}, updateProg() {}, closePanel() {}, renderFamily() {}, syncHoldingMarkers() {}, applyOwnershipStyle() {},
       selectTerritory: () => opens++, el: { panel: { classList: { contains: () => false } } },
       document: { body: { dataset: {} } }, map: { getSource: () => null, once() {}, setFeatureState() {} },
     });
@@ -195,7 +196,7 @@ export function verifyMapRuntime(source) {
   });
 
   test('Layer recovery repairs a missing label once without recursive setup', () => {
-    const readyLayers = new Set(['zone-blocks-fill', 'zone-blocks-ground', 'zone-blocks-outline', 'zone-blocks-label', 'zone-poi-icon', 'zone-poi-hitbox', 'zone-here-dot', 'zone-buildings-3d', 'zroute-line']);
+    const readyLayers = new Set(['zone-blocks-fill', 'zone-ownership-fill', 'zone-block-feedback', 'zone-poi-icon', 'zone-poi-hitbox', 'zone-here-dot', 'zone-buildings-3d', 'zroute-line']);
     let setups = 0, restoredSelection = 0;
     const ctx = context(['installCustomLayers'], {
       installingLayers: false, selectedTerritory: { id: 'ZC-001' },
@@ -238,16 +239,19 @@ export function verifyMapRuntime(source) {
     const layers = [], sources = new Map();
     const blocks = Array.from({ length: 120 }, (_, n) => {
       const x = n % 12, y = Math.floor(n / 12);
-      return { id: `ZC-${String(n + 1).padStart(3, '0')}`, polygon: [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]], benefit: {} };
+      return { id: `ZC-${String(n + 1).padStart(3, '0')}`, ownerId: x < 6 ? 'vipers' : 'kings', renderColor: x < 6 ? '#c7ec79' : '#c47762', polygon: [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]], benefit: {} };
     });
-    const ctx = context(['ensureTerritoryLayers', 'territoryGeo', 'territoryAt'], {
-      territoryData: blocks, blockLL: (_block, point) => point,
+    const ctx = context(['ensureTerritoryLayers', 'territoryGeo', 'territoryAt', 'rebuildOwnership', 'ownershipOpacity'], {
+      territoryData: blocks, blockLL: (_block, point) => point, focusedFactionId: () => 'vipers', mapMode: 'territories',
       map: { isStyleLoaded: () => true, getSource: id => sources.get(id), addSource: (id, value) => sources.set(id, value), getLayer: id => layers.find(layer => layer.id === id), addLayer: layer => layers.push(layer), getStyle: () => ({ layers }) },
       document: { body: { dataset: {} } },
     });
     ctx.ensureTerritoryLayers(); ctx.ensureTerritoryLayers();
     expect(sources.get('zone-blocks').data.features.length === 120, 'Invisible geometry lost blocks.');
-    expect(layers.length === 1 && layers[0].type === 'fill' && layers[0].paint['fill-opacity'] === 0, 'Ownership setup created visible fills, boundaries, labels or duplicate hit layers.');
+    expect(layers.length === 3 && layers.every(layer => layer.type === 'fill') && layers.find(layer => layer.id === 'zone-blocks-fill').paint['fill-opacity'] === 0, 'Ownership setup added grid lines or duplicated original hit geometry.');
+    expect(layers.filter(layer => layer.id !== 'zone-blocks-fill').every(layer => layer.paint['fill-antialias'] === false && layer.paint['fill-outline-color'] === 'rgba(0,0,0,0)'), 'Ownership or interaction feedback paints polygon boundaries.');
+    const regions = sources.get('zone-ownership').data.features;
+    expect(regions.length === 2 && regions.every(region => region.properties.blockCount === 60), 'Adjacent ownership did not become two coherent faction areas.');
     for (let n = 0; n < 120; n++) expect(ctx.territoryAt({ lng: n % 12 + 0.5, lat: Math.floor(n / 12) + 0.5 })?.id === blocks[n].id, `Block ${n + 1} is no longer selectable.`);
   });
 
@@ -257,7 +261,7 @@ export function verifyMapRuntime(source) {
       { id: 'near', isPlayer: false, dailyRespect: 900, canAct: true, action: 'claim', neighbors: ['own'] },
       { id: 'rival', isPlayer: false, dailyRespect: 200, canAct: false, action: '', neighbors: [] },
     ];
-    const ctx = context(['familyMetrics', 'familyContextBlocks', 'inTerritoryScope', 'familyMarkerBlocks'], { territoryData: blocks, familyScope: 'family', selectedTerritory: null });
+    const ctx = context(['familyMetrics', 'familyContextBlocks', 'inTerritoryScope', 'familyMarkerBlocks'], { territoryData: blocks, familyScope: 'family', selectedTerritory: null, inFocusFaction: block => block.isPlayer });
     const metrics = ctx.familyMetrics(blocks);
     expect(metrics.owned.length === 1 && metrics.respect === 12 && metrics.claimable === 1, 'Family metrics included rival respect or unavailable claims.');
     expect(ctx.familyContextBlocks().map(block => block.id).join(',') === 'own,near', 'Initial camera included distant rival territories.');
@@ -276,17 +280,43 @@ export function verifyMapRuntime(source) {
     expect(items[2].element.style.visibility === 'hidden', 'Behind-camera marker escaped viewport bounds.');
   });
 
-  test('Family default frames a real owned neighborhood and preserves established camera', () => {
-    const own = { id: 'own', isPlayer: true, dailyRespect: 12, _centroidLngLat: [1, 2] };
+  test('Family default frames every actual holding with geographic padding and preserves established camera', () => {
+    const own = { id: 'own', isPlayer: true, dailyRespect: 12, neighbors: ['near'], polygon: [[1,1],[2,1],[2,2],[1,2]] };
+    const island = { id: 'island', isPlayer: true, dailyRespect: 4, neighbors: [], polygon: [[4,4],[5,4],[5,5],[4,5]] };
+    const near = { id: 'near', neighbors: [], polygon: [[2,1],[3,1],[3,2],[2,2]] };
     const moves = [];
-    const ctx = context(['familyMetrics', 'familyAnchor', 'fitFamily'], {
-      territoryData: [own], pinData: [], CENTER: [99, 99], innerWidth: 1024, RM: true, didFit: false,
-      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 430 }), resize() {}, flyTo: options => moves.push(options) },
+    const ctx = context(['familyMetrics', 'familyContextBlocks', 'fitFamily', 'fitOwnership', 'refineOwnershipCamera'], {
+      territoryData: [own, island, near], innerWidth: 1024, RM: true, didFit: false, blockLL: (_block, point) => point,
+      mapboxgl: { LngLatBounds: class { constructor() { this.points=[]; } extend(point) { this.points.push(point); } isEmpty() { return !this.points.length; } } },
+      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 500 }), resize() {}, fitBounds: (bounds, options) => moves.push({bounds, ...options}) },
     });
     ctx.fitFamily(false); ctx.fitFamily(false);
-    expect(moves.length === 1 && moves[0].center[0] === 1 && moves[0].zoom === 15.35 && moves[0].pitch === 35, 'Default view is a distant city overview or ignores own holdings.');
-    ctx.pinData = [{ icon: 'faction', territory: 'own', _lngLat: [3, 4] }]; ctx.innerWidth = 390; ctx.fitFamily(true);
-    expect(moves[1].center[0] === 3 && moves[1].zoom === 15.25, 'Explicit family reset ignored the owned headquarters or mobile camera.');
+    expect(moves.length === 1 && moves[0].bounds.points.length === 10 && moves[0].bounds.points[8][0] === .6 && moves[0].bounds.points[9][1] === 5.4 && moves[0].pitch === 30 && moves[0].retainPadding === false, 'Default view omits an owned island/padding, includes unrelated neighbors or resets an established camera.');
+    ctx.innerWidth = 390; ctx.fitFamily(true);
+    expect(moves[1].padding.left === 30 && moves[1].padding.bottom === 62 && moves[1].bounds.points.length === 10, 'Mobile family reset clips its holdings or map controls.');
+  });
+
+  test('Rotated ownership framing fills available space without clipping any source vertex', () => {
+    let zoom = 12, center = { lng: 0, lat: 0 };
+    const points = [[-3,0],[0,2],[3,0],[0,-2]], padding = { left: 32, right: 52, top: 68, bottom: 58 };
+    const map = {
+      getContainer: () => ({ clientWidth: 900, clientHeight: 500 }), getZoom: () => zoom,
+      getCenter: () => center, getPitch: () => 30, getBearing: () => -12,
+      project(point) { const scale=40*2**(zoom-12); return { x:450+(point[0]-center.lng)*scale, y:250-(point[1]-center.lat)*scale }; },
+      unproject(point) { const scale=40*2**(zoom-12); return { lng:center.lng+(point[0]-450)/scale, lat:center.lat-(point[1]-250)/scale }; },
+      jumpTo(camera) { zoom=camera.zoom; center=camera.center; },
+    };
+    const ctx = context(['refineOwnershipCamera'], { map, document: { body: { dataset: {} } } });
+    ctx.refineOwnershipCamera(points, padding, 14.65);
+    const pixels = points.map(point => map.project(point)), height = Math.max(...pixels.map(p=>p.y))-Math.min(...pixels.map(p=>p.y));
+    expect(height > 300 && zoom > 12.7, 'Conservative geographic rectangle leaves most of the available family viewport unused.');
+    expect(pixels.every(p=>p.x>=padding.left&&p.x<=900-padding.right&&p.y>=padding.top&&p.y<=500-padding.bottom), 'Projection refinement clips an actual holding vertex.');
+  });
+
+  test('Idle recovery retries deferred city model installation after GeoJSON setup settles', () => {
+    const calls = [];
+    const ctx = context(['recoverMapLayers'], { installCustomLayers: () => calls.push('layers'), ensureCityLandmarks: () => calls.push('models') });
+    ctx.recoverMapLayers(); expect(calls.join(',') === 'layers,models', 'Model installation is stranded after a temporarily incomplete style.');
   });
 
   test('Holding names use actual places, preserve custom admin names and localize fallbacks', () => {
@@ -307,7 +337,7 @@ export function verifyMapRuntime(source) {
     const ctx = context(['syncHoldingMarkers', 'blockLandmark', 'holdingAnchor'], {
       pinData: [landmark, other], holdingMarkers: [{ marker: { remove: () => removed.push(true) } }], mapMode: 'territories', selectedTerritory: null,
       familyMarkerBlocks: () => [owned, empty], contextualFamilyPins: () => [landmark, other], layoutHoldingMarkers() {},
-      blockDisplayName: block => block.id, F: key => key, esc: value => String(value), iconSvg: () => '', map: {},
+      blockDisplayName: block => block.id, F: key => key, esc: value => String(value), iconSvg: () => '', factionEmblem: () => '', map: {},
       selectTerritory: block => selected.push(block.id), selectPin: pin => selected.push(pin.id),
       document: { createElement: () => ({ setAttribute() {} }) },
       mapboxgl: { Marker: class { constructor(options) { this.element = options.element; } setLngLat(point) { this.point = point; return this; } addTo() { return this; } } },
@@ -322,13 +352,90 @@ export function verifyMapRuntime(source) {
     expect(selected.join(',') === 'own,shop', 'Merged holding or separate location lost its detail action.');
   });
 
+  test('Wide faction emblems reserve their actual label width during collision layout', () => {
+    const items = [200, 370, 590].map(x => ({ lngLat: { x, y: 160 }, region: {}, element: { offsetWidth: 210, offsetHeight: 48, style: {} } }));
+    const ctx = context(['layoutHoldingMarkers'], { holdingMarkers: items, selectedTerritory: null, innerWidth: 1024, map: { getContainer: () => ({ clientWidth: 900, clientHeight: 500 }), project: point => point } });
+    ctx.layoutHoldingMarkers();
+    expect(items[0].element.style.visibility === 'visible' && items[1].element.style.visibility === 'hidden' && items[2].element.style.visibility === 'visible', 'Wide family nameplates overlap or hide a separated emblem.');
+  });
+
+  test('A partially visible rival uses a real point inside its own region for its nameplate', () => {
+    const region = { properties: { anchor: [9,2], blockIds: ['rival'] }, geometry: { type: 'Polygon', coordinates: [[[3,1],[10,1],[10,3],[3,3],[3,1]]] } };
+    const ctx = context(['regionMarkerAnchor'], {
+      territoryById: { rival: { _centroidLngLat: [6.5,2], polygon: [[3,1],[10,1],[10,3],[3,3]] } },
+      blockLL: (_block, point) => point, holdingMarkers: [],
+      map: { getContainer: () => ({ clientWidth: 800, clientHeight: 400 }), project: point => ({x:point[0]*100,y:point[1]*100}) },
+    });
+    const anchor = ctx.regionMarkerAnchor(region, 80);
+    expect(anchor[0] < 7.2 && anchor[1] > .88 && anchor[1] < 3.42 && ZoneTerritoryGeometry.contains(region.geometry, anchor), 'Visible rival name is culled or placed outside its actual land.');
+    ctx.holdingMarkers = [{ region: {}, lngLat: anchor, element: { offsetWidth: 160 } }];
+    const other = ctx.regionMarkerAnchor(region, 80);
+    expect(Math.abs(other[0]-anchor[0])*100 >= 168 || Math.abs(other[1]-anchor[1])*100 >= 54, 'Rival marker steals the focused emblem position.');
+  });
+
+  test('Faction focus uses only server family IDs and retains disconnected ownership', () => {
+    const moves = [], selected = [], blocks = [{ ownerId: 'vipers' }, { ownerId: 'kings' }, { ownerId: 'kings' }, { neutral: true }];
+    const ctx = context(['focusedFactionId', 'inFocusFaction', 'setFactionFocus'], {
+      lastData: { factions: [{ id: 'vipers' }, { id: 'kings' }] }, playerFactionId: () => 'vipers', familyScope: 'family', innerWidth: 1024, RM: true,
+      ownershipData: { features: [{ properties: { ownerId: 'kings', blockCount: 1, anchor: [9, 9] } }, { properties: { ownerId: 'kings', blockCount: 3, anchor: [2, 3] } }] },
+      territoryData: blocks, fitOwnership: (blocks, duration, pitch) => moves.push({ blocks, duration, pitch }),
+      deselect: () => selected.push('clear'), renderFamily() {}, filterSidebar() {}, applyOwnershipStyle() {}, syncHoldingMarkers() {},
+      map: { getPitch: () => 17, flyTo: options => moves.push(options) },
+    });
+    expect(ctx.inFocusFaction(blocks[0]) && !ctx.inFocusFaction(blocks[1]), 'Default family focus ignores the player family.');
+    ctx.setFactionFocus('unknown', true); expect(moves.length === 0 && selected.length === 0, 'Invented family ID changed the view.');
+    ctx.setFactionFocus('kings', true);
+    expect(blocks.filter(ctx.inFocusFaction).length === 2 && moves[0].blocks.length === 2 && moves[0].pitch === 17, 'Rival focus lost disconnected holdings or user pitch.');
+    ctx.setFactionFocus('neutral', false); expect(ctx.inFocusFaction(blocks[3]) && !ctx.inFocusFaction(blocks[1]), 'Neutral filter includes owned land.');
+    ctx.setFactionFocus('*', false); expect(blocks.every(ctx.inFocusFaction) && ctx.familyScope === 'all', 'All families hides authoritative blocks.');
+  });
+
+  test('Ownership display refreshes after a transfer and caches unchanged source geometry', () => {
+    const ctx = context(['rebuildOwnership'], { document: { body: { dataset: {} } } });
+    const feature = { type: 'Feature', id: 'one', properties: { ownerId: 'vipers', renderColor: '#c7ec79' }, geometry: { type: 'Polygon', coordinates: [[[0,0],[1,0],[1,1],[0,1],[0,0]]] } };
+    const geo = { type: 'FeatureCollection', features: [feature] }, initial = ctx.rebuildOwnership(geo);
+    expect(ctx.rebuildOwnership(geo) === initial, 'Unchanged state rebuilds geometry unnecessarily.');
+    feature.properties.ownerId = 'kings'; feature.properties.renderColor = '#9b89c2';
+    const updated = ctx.rebuildOwnership(geo);
+    expect(updated !== initial && updated.features[0].properties.ownerId === 'kings' && updated.features[0].properties.renderColor === '#9b89c2', 'Transferred territory retains its previous emblem/color.');
+    expect(ctx.document.body.dataset.zoneOwnershipBlocks === '1', 'Ownership diagnostics lost the authoritative block total.');
+  });
+
+  test('Ownership emphasis follows the chosen family or neutral view without changing color identity', () => {
+    let focus = 'vipers';
+    const ctx = context(['ownershipOpacity'], { focusedFactionId: () => focus, mapMode: 'territories' });
+    function evaluate(expr, properties) {
+      if (!Array.isArray(expr)) return expr;
+      if (expr[0] === 'get') return properties[expr[1]];
+      if (expr[0] === 'boolean') return typeof evaluate(expr[1], properties) === 'boolean' ? evaluate(expr[1], properties) : expr[2];
+      if (expr[0] === '==') return evaluate(expr[1], properties) === evaluate(expr[2], properties);
+      if (expr[0] === 'case') { for (let n = 1; n < expr.length - 1; n += 2) if (evaluate(expr[n], properties)) return evaluate(expr[n + 1], properties); return evaluate(expr.at(-1), properties); }
+      throw new Error(`Unsupported expression ${expr[0]}`);
+    }
+    const opacity = properties => evaluate(ctx.ownershipOpacity(), properties);
+    expect(opacity({ ownerId: 'vipers' }) > opacity({ ownerId: 'kings' }), 'Focused family has no visual emphasis.');
+    const backgroundNeutral = opacity({ neutral: true }); focus = 'neutral';
+    expect(opacity({ neutral: true }) > backgroundNeutral, 'Unclaimed area selector cannot reveal neutral geography.');
+    ctx.mapMode = 'places'; expect(opacity({ ownerId: 'vipers' }) === .07, 'Territory fills compete with location browsing.');
+  });
+
+  test('3D models stop rendering offscreen or flat and avoid redundant repaint calls', () => {
+    const visibility = []; let pitch = 30;
+    const ctx = context(['syncLandmarkVisibility'], { landmarkController: { setVisible: value => visibility.push(value) }, landmarkVisibleState: null, mapVisible: true, document: { hidden: false }, map: { getPitch: () => pitch } });
+    ctx.syncLandmarkVisibility(); ctx.syncLandmarkVisibility();
+    ctx.mapVisible = false; ctx.syncLandmarkVisibility(); ctx.syncLandmarkVisibility();
+    ctx.mapVisible = true; ctx.syncLandmarkVisibility(); pitch = 0; ctx.syncLandmarkVisibility();
+    pitch = 35; ctx.document.hidden = true; ctx.syncLandmarkVisibility(); ctx.document.hidden = false; ctx.syncLandmarkVisibility();
+    expect(visibility.join(',') === 'true,false,true,false,true', 'Static models repaint repeatedly, remain visible while hidden, or fail to resume.');
+  });
+
   test('Every family holding remains in the scrollable rail with an explicit locate action', () => {
     const makeNode = () => ({ children: [], attributes: {}, style: { setProperty() {} }, set innerHTML(value) { if (value === '') this.children = []; }, setAttribute(key, value) { this.attributes[key] = value; }, appendChild(child) { this.children.push(child); } });
     const nodes = new Map(), located = [], selected = [];
     const blocks = Array.from({ length: 8 }, (_, n) => ({ id: String(n), code: `ZC-${n}`, isPlayer: true, dailyRespect: 10, ownerName: 'Family' }));
     const ctx = context(['renderFamily', 'familyMetrics', 'inTerritoryScope'], {
       territoryData: blocks, familyScope: 'family', lastData: { factions: [{ id: 'family', name: 'Family' }] }, lang: 'en',
-      playerFactionId: () => 'family', localText: value => value, F: key => key, C: key => key, esc: value => String(value), blockDisplayName: block => block.code,
+      focusedFactionId: () => 'family', inFocusFaction: block => block.isPlayer, renderFactionSelector() {}, playerFactionId: () => 'family', localText: value => value, F: key => key, C: key => key, esc: value => String(value), blockDisplayName: block => block.code,
       selectTerritory: block => selected.push(block.id), locateHolding: block => located.push(block.id), filterSidebar() {}, syncHoldingMarkers() {},
       document: { body: { dataset: {} }, createElement: makeNode, getElementById(id) { if (!nodes.has(id)) nodes.set(id, makeNode()); return nodes.get(id); } },
     });
@@ -400,6 +507,8 @@ export function verifyMapRuntime(source) {
     expect(visible.every(pin => pins.includes(pin)), 'Family context invented new place coordinates.');
     ctx.activeCats.shop = false;
     expect(ctx.contextualFamilyPins().length === 0, 'Category visibility does not apply to family context pins.');
+    ctx.activeCats.shop = true; ctx.mapMode = 'territories'; ctx.map.getZoom = () => 12.8;
+    expect(ctx.contextualFamilyPins().length === 0, 'Generic POIs compete with territory identities at overview zoom.');
   });
 
   test('Location actions use real destination labels and disable unavailable services', () => {

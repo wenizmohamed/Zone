@@ -1,0 +1,257 @@
+{
+  "checked": "2026-10-04",
+  "assets": [
+    {
+      "path": "assets/factions/kings.svg",
+      "bytes": 1609,
+      "sha256": "2cc6c5699d80caab294edeacc318b662bffd0c3a672fe34062d5ef0c37a35fb7",
+      "source": "https://github.com/game-icons/icons",
+      "license": "CC-BY-3.0",
+      "author": "Lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/factions/night.svg",
+      "bytes": 613,
+      "sha256": "e1a7af24b321558574415995f34dd95c1bf5e52845a596c4dc1cc28e66eb67b2",
+      "source": "https://github.com/game-icons/icons",
+      "license": "CC-BY-3.0",
+      "author": "Lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/factions/oldguard.svg",
+      "bytes": 631,
+      "sha256": "9bbb465f5272eae12dfa536a31f0204eb6d65259607db5e86618d55881c945a0",
+      "source": "https://github.com/game-icons/icons",
+      "license": "CC-BY-3.0",
+      "author": "Lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/factions/vipers.svg",
+      "bytes": 1107,
+      "sha256": "37beb95c8c1aae88eb39e502e88aba2fece263744673aa314ac78979285696ba",
+      "source": "https://github.com/game-icons/icons",
+      "license": "CC-BY-3.0",
+      "author": "Lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_A_withoutBase.bin",
+      "bytes": 28820,
+      "sha256": "a0446a10d14c50267c3fa6be98104e8467171b57f288448a5d740e91666d5056",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_A_withoutBase.gltf",
+      "bytes": 3083,
+      "sha256": "37389d47e4ddec9175c40d41a48e2c1d16a1c44146833ec73fef2710e0b6876e",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_C_withoutBase.bin",
+      "bytes": 43548,
+      "sha256": "56ab30ffadc34b91a4ec6a8cc26bb644bb1c516b25afa8fa1eac4a3968dead2b",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_C_withoutBase.gltf",
+      "bytes": 3089,
+      "sha256": "f059362f96617268b7eff7a1f65f853288a79e21316e5793bbc23a0a2e937671",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_E_withoutBase.bin",
+      "bytes": 62084,
+      "sha256": "6403701c0185eeb53b60f76b359e99c47634c3240cd3e51f92aeeb472e7d341c",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_E_withoutBase.gltf",
+      "bytes": 3090,
+      "sha256": "0b2ab5f634eaf0d45ccf5fe585b4a9269f1b8e5b9ab34a412bafca046087e609",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_G_withoutBase.bin",
+      "bytes": 68880,
+      "sha256": "34112472a38f23489211829312a8e9e994ca772ee814c5295e39c62b2d4ca376",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/building_G_withoutBase.gltf",
+      "bytes": 3090,
+      "sha256": "2a2dc998168a01bd34390d6fbb2a273e191c8b6e3258f4f3df09a37465ebf0e1",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/bush.bin",
+      "bytes": 3056,
+      "sha256": "6b00a80ec23cdd55dd1398d648b51f1cf7eb4263cea61d3bf1dc24cc7c171b3e",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/bush.gltf",
+      "bytes": 3022,
+      "sha256": "b1de478b23e6bcfd08d6c070440582195839f66dfd3afc123118fb6298483183",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/car_sedan.bin",
+      "bytes": 55332,
+      "sha256": "1d69e7f098a5456a8c6891c4fd718ad1c71397045c8931817550a8801f00338d",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/car_sedan.gltf",
+      "bytes": 10928,
+      "sha256": "96c9d38e682bc2c77470af09d1a7450208559ca652bf2cf6fd2bc20b8646ef59",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/citybits_texture.png",
+      "bytes": 19885,
+      "sha256": "6d2d9a5a13bce32209cd8c04572ab170504d68f34b1519165c9b0c41871e235b",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/LICENSE.txt",
+      "bytes": 828,
+      "sha256": "b076d86beec660e1550e00796ca24a8b70d7b2187d79954b2e29722b666dce93",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/streetlight.bin",
+      "bytes": 7136,
+      "sha256": "2e95833194e4cccbf00a413187cc54ede953c047f88b7cc7b1bef1a1d0aea9a1",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/streetlight.gltf",
+      "bytes": 3067,
+      "sha256": "4399e9023844319e0f74311779a2c0ebecacec16f5dfd8123b6141a3af903c6a",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/watertower.bin",
+      "bytes": 8268,
+      "sha256": "384bc04add6c6fb56202e16688e375e4ad22739d46f37cd427e81087ffc192f6",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "assets/city/kaykit/watertower.gltf",
+      "bytes": 3065,
+      "sha256": "55ae59f2a21ad38c64312a4c00d6808dc486bf4a8e8a8c969bc9e26cdc84d8f3",
+      "source": "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0",
+      "license": "CC0-1.0",
+      "author": "Kay Lousberg",
+      "modified": false
+    },
+    {
+      "path": "lib/three184/BufferGeometryUtils.js",
+      "bytes": 36985,
+      "sha256": "b01448b995c38d47416e8597c8303e77eba311b039f076748503c33c207dc733",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": true
+    },
+    {
+      "path": "lib/three184/GLTFLoader.js",
+      "bytes": 119817,
+      "sha256": "cfce0949f8fe43bfdec86adcbea11ee21deea8f05990f9fc6de5a68b5063b934",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": true
+    },
+    {
+      "path": "lib/three184/LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": false
+    },
+    {
+      "path": "lib/three184/SkeletonUtils.js",
+      "bytes": 12043,
+      "sha256": "7936004cbe88af2396fdd83650636ee84c5790cbe3de0e63f967fa4aa2997f10",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": true
+    },
+    {
+      "path": "lib/three184/three.core.js",
+      "bytes": 1427497,
+      "sha256": "368dc78835287709a48939e8eb9a7a61d0732098bdf916e56840d458aae9ccf3",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": false
+    },
+    {
+      "path": "lib/three184/three.module.js",
+      "bytes": 648961,
+      "sha256": "61134198639a10885daf893fb29669ca26386e2a4cde76e8399f51e329f741f2",
+      "source": "https://www.npmjs.com/package/three/v/0.184.0",
+      "license": "MIT",
+      "author": "Three.js authors",
+      "modified": false
+    }
+  ]
+}

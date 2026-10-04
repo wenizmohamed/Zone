@@ -23,6 +23,18 @@ if (!existsSync(indexPath)) {
   process.exit(1);
 }
 const html = readFileSync(indexPath, 'utf8');
+// Responsive rules can live in the shared stylesheet rather than inline HTML.
+const styleSources = [html];
+for (const [tag] of html.matchAll(/<link\b[^>]*>/gi)) {
+  if (!/\brel=["']stylesheet["']/i.test(tag)) continue;
+  const href = tag.match(/\bhref=["']([^"']+)["']/i)?.[1];
+  if (!href || /^(https?:|\/\/)/i.test(href) || href.startsWith('/engine/')) continue;
+  const file = resolve(target, href.split(/[?#]/)[0].replace(/^\//, ''));
+  if (relative(target, file).startsWith('..')) continue;
+  check(existsSync(file), `Missing linked stylesheet: ${href}`);
+  if (existsSync(file)) styleSources.push(readFileSync(file, 'utf8'));
+}
+const styles = styleSources.join('\n');
 
 const screens = ['home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
 for (const screen of screens) {
@@ -32,8 +44,8 @@ for (const screen of screens) {
 check(html.includes('data-zheaderbar'), 'Responsive header hook is missing.');
 check(html.includes('data-zshell'), 'Responsive shell hook is missing.');
 check(html.includes('data-znav'), 'Responsive navigation hook is missing.');
-check((html.match(/@media\s*\(/g) || []).length >= 2, 'Mobile breakpoints are missing.');
-check(html.includes('html[dir="rtl"]'), 'RTL stylesheet support is missing.');
+check((styles.match(/@media\s*\(/g) || []).length >= 2, 'Mobile breakpoints are missing.');
+check(styles.includes('html[dir="rtl"]'), 'RTL stylesheet support is missing.');
 check(html.includes("const LS = 'zone.v2.save'"), 'ZONE persistence key is missing.');
 check(html.includes('platform-runtime.js'), 'Player release runtime is missing.');
 check(html.includes('data-zone-custom-page'), 'Release-driven custom page surface is missing.');

@@ -28,6 +28,7 @@ const icons = source(paths.icons, 'canonical icon registry');
 const database = source(paths.database, 'territory seed');
 const territories = source(paths.territories, 'territory service');
 const router = source(paths.router, 'API router');
+const designCss = source(join(root, 'assets', 'zone-design.css'), 'shared visual system');
 
 function balancedBlockAfter(text, marker) {
   const markerAt = typeof marker === 'string' ? text.indexOf(marker) : text.search(marker);
@@ -317,7 +318,7 @@ check(map.includes('mapbox-gl-rtl-text'), 'Mapbox must load Arabic RTL shaping s
 
 // Preserve shell and semantic icon integration around the territory rewrite.
 check(index.includes('class="zone-city-map-shell"'), 'Live city map must keep its responsive shell.');
-check(/\.zone-city-map-shell\s*\{[^}]*height:\s*430px/.test(index),
+check(/\.zone-city-map-shell\s*\{[^}]*height:\s*500px/.test(designCss),
   'Desktop map must retain the requested compact family viewport.');
 check(index.includes('allow="fullscreen" allowfullscreen'), 'Map iframe must authorize fullscreen mode.');
 check(index.includes('dist/map-icons.js') && map.includes('src="map-icons.js"') && map.includes('window.ZONE_MAP_ICONS'),

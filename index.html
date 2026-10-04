@@ -36,40 +36,7 @@
 <script src="./platform-runtime.js"></script>
 <script src="./dist/map-icons.js"></script>
 <link rel="stylesheet" href="/engine/theme.css">
-<style id="zone-obsidian-final">
-/* ZONE — OBSIDIAN NOIR (forced, direct-hex, highest specificity) */
-html:not([data-theme="light"]){
-  --bg:#080b12 !important; --deep:#05070c !important; --edge:#03040a !important; --track:#04060c !important; --ticker:#070a11 !important; --line:#151a24 !important;
-  --panel:#111623 !important; --panel2:#0d1220 !important; --panelhi:#1a2233 !important; --z1:#131a29 !important; --z2:#182135 !important; --selbg:#12233a !important; --btn:#161d2e !important;
-  --hd1:#141b2b !important; --hd2:#0a0e18 !important; --tb1:#1c2740 !important; --tb2:#111828 !important;
-  --border:#233049 !important; --border2:#2c3a58 !important; --border3:#3a4c72 !important;
-  --t1:#f4f7ff !important; --t2:#dde6f5 !important; --t3:#b7c4de !important; --t4:#8493b3 !important; --mu:#6f7d9c !important; --mu2:#4a566f !important; --ico:#aab8d6 !important;
-  --acc:#31e0ff !important; --acc2:#00b4dc !important; --accText:#7defff !important; --accFill1:#2ad4ff !important; --accFill2:#0091c4 !important; --onAcc:#02121a !important; --on:#02121a !important;
-  --activebg:#0f2b3a !important; --activefg:#7defff !important;
-  --money:#41e08a !important; --good:#54d98c !important; --bad:#ff5d6c !important; --bad2:#ff3b52 !important; --gold:#f2c14e !important; --link:#5cc2ff !important;
-}
-body{ background:
-  radial-gradient(1200px 620px at 84% -14%, rgba(49,224,255,.10), transparent 60%),
-  radial-gradient(900px 700px at -8% 4%, rgba(65,224,138,.06), transparent 55%),
-  #080b12 !important; background-attachment:fixed; }
-[data-zshell], [data-zplayercard]{ backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2); box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 18px 40px -16px rgba(0,0,0,.8); }
-[data-zheaderbar]{ position:relative; background:linear-gradient(180deg,#0c1120,#070a12)!important; backdrop-filter:blur(12px) saturate(1.25); -webkit-backdrop-filter:blur(12px) saturate(1.25); }
-[data-zheaderbar]::after{ content:""; position:absolute; inset-inline:0; bottom:-1px; height:1px; background:linear-gradient(90deg,transparent,var(--acc),transparent); opacity:.6; }
-[data-znav] button{ transition:background .16s ease,color .16s ease,box-shadow .16s ease; }
-[data-znav] button:hover{ box-shadow:inset 3px 0 0 var(--acc), inset 0 0 26px -12px var(--acc); }
-[data-zhead]{ color:var(--t2); letter-spacing:.04em; }
-[data-zfig]{ font-variant-numeric:tabular-nums; text-shadow:0 0 16px rgba(49,224,255,.12); }
-[data-zticker]{ -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent); }
-button{ border-radius:6px; transition:border-color .16s ease, box-shadow .18s ease, transform .1s ease; }
-button:not(:disabled):hover{ border-color:var(--acc)!important; box-shadow:0 0 0 1px rgba(49,224,255,.22), 0 8px 22px -12px rgba(49,224,255,.6); }
-button:not(:disabled):active{ transform:translateY(1px); }
-button:focus-visible{ outline:2px solid var(--acc); outline-offset:2px; }
-[style*="var(--accFill1)"]{ box-shadow:0 8px 22px -8px rgba(49,224,255,.55), 0 1px 0 rgba(255,255,255,.18) inset; }
-::-webkit-scrollbar-thumb{ background:linear-gradient(var(--border3),var(--border2))!important; border-radius:6px; }
-::-webkit-scrollbar-thumb:hover{ background:var(--acc)!important; }
-::selection{ background:rgba(49,224,255,.3); color:#fff; }
-@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} body{background-attachment:scroll} }
-</style>
+<link rel="stylesheet" href="./assets/zone-design.css?v=63">
 </head>
 <body>
 <x-dc>
@@ -77,301 +44,32 @@ button:focus-visible{ outline:2px solid var(--acc); outline-offset:2px; }
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="./image-slot.js"></script>
   <script src="./assets/weapons/catalog.js"></script>
-  <style>
-    :root{--bg:#191919;--panel:#232323;--panel2:#1e1e1e;--line:#1a1a1a;--z1:#212121;--z2:#252525;--deep:#1c1c1c;--ticker:#141414;--activebg:#2e3a22;--activefg:#d8f07a;--selbg:#2a2f22;--border:#333;--border2:#3a3a3a;--border3:#444;--btn:#2a2a2a;--edge:#0a0a0a;--track:#111;--hd1:#2f2f2f;--hd2:#202020;--tb1:#3a3a3a;--tb2:#2b2b2b;--t1:#eee;--t2:#ddd;--t3:#ccc;--t4:#aaa;--mu:#888;--mu2:#666;--link:#7fb0e0;--acc:#a3d900;--money:#8fd400;--good:#c8e070;--bad:#e07a6a;--gold:#e0b030;--ico:#c8c8c8;--bad2:#e05a4a;--accText:#a3d900;--onAcc:#111;--accFill1:#8fd400;--accFill2:#6aa614}
-    html[data-theme="light"]{--bg:#e6e6e6;--panel:#f6f6f6;--panel2:#ebebeb;--line:#e2e2e2;--z1:#f2f2f2;--z2:#fafafa;--deep:#eeeeee;--ticker:#f0f0f0;--activebg:#dfe9c2;--activefg:#2f4a05;--selbg:#e6efcf;--border:#cfcfcf;--border2:#c6c6c6;--border3:#bcbcbc;--btn:#e2e2e2;--edge:#b8b8b8;--track:#d6d6d6;--hd1:#f7f7f7;--hd2:#dedede;--tb1:#e3e3e3;--tb2:#cfcfcf;--t1:#111;--t2:#222;--t3:#333;--t4:#444;--mu:#666;--mu2:#7a7a7a;--link:#1a5fa0;--acc:#5d8f0e;--money:#3f7a00;--good:#3f6a00;--bad:#b03020;--gold:#a07a10;--ico:#444;--bad2:#a32a18;--accText:#3f6a00;--onAcc:#10180a;--accFill1:#8fd400;--accFill2:#6aa614}
-    body{margin:0;background:var(--bg);color:var(--t3);font-family:"Rubik",system-ui,sans-serif;font-size:12px;line-height:1.45}
-    a{color:var(--link);text-decoration:none} a:hover{color:#a9cdf0;text-decoration:underline}
-    bdi{unicode-bidi:isolate;direction:ltr;font-variant-numeric:tabular-nums}
-    /* display voice for the game's chrome — figures and headings carry weight,
-       body copy stays Rubik. Arabic keeps Rubik throughout (Oswald has no Arabic). */
-    html[lang="en"] h4,html[lang="en"] [data-zhead],html[lang="en"] [data-zfig]{
-      font-family:"Oswald",Rubik,system-ui,sans-serif;letter-spacing:.01em}
-    [data-zhead]{text-transform:uppercase;letter-spacing:.09em!important;font-size:11.5px!important}
-    [data-zpanel]{box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 6px 18px rgba(0,0,0,.28)}
-    html[data-theme="light"] [data-zpanel]{box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 4px 14px rgba(0,0,0,.09)}
-    [data-znotch]{position:relative}
-    [data-znotch]::after{content:"";position:absolute;inset:0;pointer-events:none;
-      background:repeating-linear-gradient(90deg,transparent 0 9.5%,rgba(0,0,0,.34) 9.5% 10%)}
-    ::-webkit-scrollbar{width:8px;height:8px} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
-    @keyframes zpop{0%{opacity:0;transform:translateY(4px)}18%{opacity:1;transform:translateY(-4px)}100%{opacity:0;transform:translateY(-20px)}}
-    @keyframes zblink{0%,100%{opacity:1}50%{opacity:.3}}
-    @keyframes zticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-    @keyframes zticker-rtl{0%{transform:translateX(0)}100%{transform:translateX(50%)}}
-    html[dir="rtl"] [data-zticker]{animation-name:zticker-rtl!important}
-    @keyframes zin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-    @keyframes zpopin{0%{opacity:0;transform:scale(.9) translateY(6px)}62%{transform:scale(1.02) translateY(0)}100%{opacity:1;transform:scale(1)}}
-    @keyframes zshake{0%,100%{transform:translateX(0)}22%{transform:translateX(-5px)}44%{transform:translateX(5px)}68%{transform:translateX(-3px)}}
-    @keyframes zsweep{0%{transform:translateX(-100%)}100%{transform:translateX(220%)}}
-    @keyframes zflash{0%{transform:scale(1)}38%{transform:scale(1.28)}100%{transform:scale(1)}}
-    @keyframes zspin{to{transform:rotate(360deg)}}
-    button{transition:transform .11s ease,filter .15s ease,box-shadow .15s ease}
-    button:not(:disabled):hover{filter:brightness(1.14)}
-    button:not(:disabled):active{transform:scale(.94)}
-    button:disabled{opacity:.4;cursor:not-allowed}
-    [data-zrow]{transition:background .14s ease,box-shadow .14s ease}
-    [data-zrow]:hover{background:var(--selbg)!important;box-shadow:inset 3px 0 0 var(--acc)}
-    [data-zlocked="1"]:hover{transform:none!important;box-shadow:0 2px 8px rgba(0,0,0,.25)!important}
-    [data-zbusy]{position:relative;overflow:hidden}
-    [data-zbusy]::after{content:"";position:absolute;inset:0;width:40%;
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
-      animation:zsweep .62s linear infinite}
-    button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
-    html[data-theme="dark"] [data-zmap]{filter:brightness(.62) saturate(.7) contrast(1.08) hue-rotate(-8deg)}
-    html[data-theme="dark"] [data-zmapv]{background:radial-gradient(ellipse at 50% 42%,transparent 64%,rgba(15,20,30,.28) 100%)}
-    [data-ztabs],[data-znav],[data-zscroll]{scrollbar-width:thin;scrollbar-color:var(--border3) transparent}
-    .zone-city-map-shell{height:430px!important;aspect-ratio:auto!important}
-    .zone-profile-identity,.zone-profile-bars{display:contents}
-    .zone-profile-mobile-details{display:none}
-    .zone-content-split > *{min-width:0}
-    @media (max-width:760px){
-      body{font-size:13px;overflow-x:hidden;-webkit-text-size-adjust:100%}
-      [data-zheaderbar]{height:auto!important;min-height:50px;padding:8px 10px!important;gap:8px!important;flex-wrap:wrap}
-      [data-zheaderbar] > div:nth-child(2){order:3;width:100%;overflow-x:auto;padding:2px 0 3px;white-space:nowrap;-webkit-overflow-scrolling:touch}
-      [data-zheaderbar] > div:last-child{gap:7px!important;margin-inline-start:auto!important;flex-wrap:wrap;justify-content:flex-end}
-      [data-zheaderbar] > div:last-child > span:first-child,[data-zheaderbar] > div:last-child > span:nth-child(2) bdi{display:none}
-      [data-zshell]{display:block!important;padding:10px 10px 32px!important}
-      [data-zshell] aside{width:100%!important;margin-bottom:10px;gap:8px!important}
-      [data-zplayercard] > [data-zhead],.zone-profile-desktop{display:none!important}
-      [data-zplayercard] > div:last-child{padding:8px 10px!important;border:1px solid var(--border)!important;border-radius:5px!important;gap:7px!important}
-      .zone-profile-identity{display:flex;justify-content:space-between;align-items:center;gap:10px;min-width:0}
-      .zone-profile-identity > div{gap:8px}
-      .zone-profile-identity > div > span:first-child{display:none}
-      .zone-profile-bars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px}
-      .zone-profile-bars > div{margin:0!important;min-width:0;gap:2px!important}
-      .zone-profile-bars [data-zhead]{font-size:10px!important;letter-spacing:.01em!important}
-      .zone-profile-bars [data-zfig]{font-size:11px!important}
-      .zone-profile-bars [data-znotch]{height:12px!important}
-      .zone-profile-bars [data-znotch] [data-zfig]{font-size:8px!important}
-      .zone-profile-mobile-details{display:block;color:var(--mu);font-size:11px}
-      .zone-profile-mobile-details summary{cursor:pointer;min-height:20px;line-height:20px}
-      .zone-profile-mobile-details summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-      .zone-profile-mobile-details > div{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;padding-top:5px}
-      .zone-profile-mobile-details > div > div{display:flex;justify-content:space-between;gap:6px}
-      [data-zshell] aside > div:last-child{max-height:none!important;overflow:visible!important}
-      [data-zshell] aside > div:last-child > [data-zhead]{display:none}
-      [data-znav]{flex-direction:row!important;overflow-x:auto;padding:0!important;border-top:1px solid var(--border)!important;border-radius:5px!important;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-      [data-znav] button{flex:0 0 auto;width:auto!important;min-height:42px;padding:8px 12px!important;border-inline-start-width:2px!important;scroll-snap-align:start}
-      [data-znav] button span:nth-of-type(1){white-space:nowrap}
-      #zone-main h4{font-size:22px!important}
-      #zone-main > div:first-child > span{flex-basis:100%}
-      #zone-result > div:last-child{gap:9px!important;padding:9px 10px!important}
-      #zone-result bdi{font-size:19px!important}
-      [data-ztabs]{overflow-x:auto;white-space:nowrap;padding-bottom:3px;-webkit-overflow-scrolling:touch}
-      [data-ztabs] button{flex:0 0 auto;min-height:40px}
-      [data-zscroll]{width:100%;min-width:0;max-width:100%;box-sizing:border-box;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
-      .zone-content-split{grid-template-columns:minmax(0,1fr)!important}
-      .zone-item-stage{height:340px!important;min-height:340px}
-      .zone-card-image,.zone-card-lock{height:120px!important;aspect-ratio:auto!important}
-      .zone-crime-categories{display:flex!important;overflow-x:auto;max-width:100%;padding-bottom:4px;scroll-snap-type:x proximity}
-      .zone-crime-categories > button{flex:0 0 195px;height:72px;scroll-snap-align:start}
-      .zone-crime-categories > button > span:not(.zone-crime-category-label){display:none!important}
-      .zone-crime-category-label{height:100%;box-sizing:border-box;padding:6px 8px!important;border:0!important}
-      .zone-crime-category-label > span:nth-child(2) > span:first-child{font-size:12px!important}
-      .zone-responsive-table > div,.zone-responsive-table [data-zrow]{min-width:0!important}
-      .zone-table-header{display:none!important}
-      .zone-crime-intro{flex-wrap:wrap}
-      .zone-crime-row{grid-template-columns:minmax(0,1fr) 40px 80px 80px!important;gap:8px!important}
-      .zone-crime-row > div:first-child{grid-column:1/-1}
-      .zone-crime-row > button{min-height:36px;padding-inline:6px!important}
-      .zone-gym-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 82px!important}
-      .zone-gym-row > span:first-child{grid-column:1/-1}
-      .zone-gym-row > button{min-height:36px}
-      .zone-mission-row{display:grid!important;grid-template-columns:minmax(0,1fr) 55px 90px;gap:8px!important}
-      .zone-mission-row > :first-child{grid-column:1/-1;width:auto!important}
-      .zone-mission-row > div:nth-child(2){width:100%!important}
-      .zone-home-mission{display:grid!important;grid-template-columns:minmax(0,1fr) 50px;gap:7px!important}
-      .zone-home-mission > span:first-child{grid-column:1/-1}
-      .zone-home-mission > div{width:100%!important}
-      [data-zscroll] > div{min-width:640px}
-      [data-zscroll] [data-zrow]{min-width:640px}
-      [style*="grid-template-columns:minmax(0,3fr) minmax(0,2fr)"],
-      [style*="grid-template-columns:minmax(0,1fr) minmax(0,1fr)"],
-      [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
-      [style*="grid-template-columns:repeat(auto-fill,minmax(210px,1fr))"],
-      [style*="grid-template-columns:repeat(auto-fill,minmax(212px,1fr))"],
-      [style*="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))"],
-      [style*="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"]{grid-template-columns:1fr!important}
-      [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-      iframe{max-width:100%}
-      .zone-city-map-shell{height:340px!important;aspect-ratio:auto!important}
-      [style*="height:260px"]{height:210px!important}
-    }
-    @media (max-width:420px){
-      [data-zheaderbar] > div:first-child{padding:4px 9px!important}
-      [data-zheaderbar] > div:first-child span{font-size:19px!important}
-      [data-zheaderbar] button{padding:7px 8px!important;min-height:36px}
-      [data-zheaderbar] > div:last-child > span:nth-child(2){display:none!important}
-      [data-zshell]{padding-inline:8px!important}
-      [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"]{grid-template-columns:1fr!important}
-      #zone-result > div:last-child{flex-wrap:wrap}
-      #zone-result > div:last-child > bdi{margin-inline-start:47px}
-    }
-    :root{--acc:var(--theme-accent,#a3d900);--gold:var(--theme-accent-2,#e0b030);--bg:var(--theme-bg,#191919);--panel:var(--theme-panel,#232323);--panel2:var(--theme-panel-2,#1e1e1e);--t1:var(--theme-text,#eee);--t4:var(--theme-muted,#aaa)}
-/* ===== OBSIDIAN GLASS THEME (ZONE breakthrough) ===== */
-:root{
-  /* ground — cool obsidian graphite, faint blue undertone reads as glass */
-  --bg:var(--theme-bg,#0c0e13);
-  --deep:#08090d;
-  --edge:#050609;
-  --track:#06080b;
-  --ticker:#090b10;
-  --line:#14171d;
-  /* elevated surfaces — translucent so the frosted blur has something to bite */
-  --panel:var(--theme-panel,rgba(23,27,34,.86));
-  --panel2:var(--theme-panel-2,#12151b);
-  --panelhi:#20242d;
-  --z1:#15181f;
-  --z2:#1a1e27;
-  --selbg:#18220f;
-  --btn:#1c2029;
-  /* header + title-bar gradients */
-  --hd1:#181c24;
-  --hd2:#0d1015;
-  --tb1:#232833;
-  --tb2:#161a21;
-  /* structure / hairlines — cool, low, a hint of luminance */
-  --border:#262b34;
-  --border2:#313742;
-  --border3:#3c4350;
-  /* type ramp — crisp cool white down to muted slate (all AA+ on graphite) */
-  --t1:var(--theme-text,#f2f4f8);
-  --t2:#dbe0e8;
-  --t3:#b6bdc9;
-  --t4:var(--theme-muted,#8b93a1);
-  --mu:#767e8c;
-  --mu2:#4d5460;
-  --ico:#aeb6c2;
-  /* THE single confident accent — luminous signal-lime, ZONE's identity refined */
-  --acc:var(--theme-accent,#b9f13a);
-  --acc2:#8fd400;
-  --accText:#c7f556;
-  --accFill1:#b6ef3a;
-  --accFill2:#7fc00e;
-  --onAcc:#0b1400;
-  --on:#0b1400;
-  --activebg:#1f2a12;
-  --activefg:#cef565;
-  /* semantics — money stays lime-family, loss goes premium coral, chain gold warms */
-  --money:#9fe63f;
-  --good:#86d64a;
-  --bad:#ff6a5a;
-  --bad2:#ff4d3d;
-  --gold:var(--theme-accent-2,#e8b53a);
-  --link:#6db4f2;
-}
-/* ================= ZONE — OBSIDIAN GLASS CRAFT LAYER ================= */
 
-/* [1] DEFEAT the legacy theme-bridge :root (line ~124). It re-routes 7 tokens
-   through var(--theme-*, OLD-HEX); those --theme-* are never set, so it silently
-   reverts a plain :root swap on bg/panel/text/accent. Scoped to
-   :not([data-theme=light]) so it out-ranks the bridge in dark/default
-   (0,1,1 > 0,1,0) yet NEVER clobbers the intact light theme (fixes the leak a
-   bare html:root would cause by tying html[data-theme=light]). */
-html:not([data-theme="light"]){
-  --acc:var(--theme-accent,#b9f13a);
-  --gold:var(--theme-accent-2,#e8b53a);
-  --bg:var(--theme-bg,#0c0e13);
-  --panel:var(--theme-panel,rgba(23,27,34,.86));
-  --panel2:var(--theme-panel-2,#12151b);
-  --t1:var(--theme-text,#f2f4f8);
-  --t4:var(--theme-muted,#8b93a1);
-}
-
-/* [2] ambient depth: cool graphite + a whisper of accent glow behind the app */
-body{
-  background:
-    radial-gradient(1100px 560px at 82% -12%,rgba(185,241,58,.06),transparent 60%),
-    radial-gradient(820px 640px at -6% 2%,rgba(109,180,242,.05),transparent 55%),
-    var(--bg);
-  background-attachment:fixed;
-}
-
-/* [3] frosted-glass panels: real blur + layered shadow, dark-scoped so the
-   light theme keeps its own soft-shadow treatment */
-[data-zpanel]{backdrop-filter:blur(14px) saturate(1.15);-webkit-backdrop-filter:blur(14px) saturate(1.15)}
-html:not([data-theme="light"]) [data-zpanel]{
-  box-shadow:0 1px 0 rgba(255,255,255,.06) inset,
-             0 14px 34px -12px rgba(0,0,0,.7),
-             0 2px 8px rgba(0,0,0,.4)!important;
-}
-
-/* [4] self-anchored frosted header + accent hairline underglow */
-[data-zheaderbar]{position:relative;backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2)}
-[data-zheaderbar]::after{content:"";position:absolute;inset-inline:0;bottom:-1px;height:1px;
-  background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.5}
-
-/* [5] section labels a controlled step down from pure white for hierarchy */
-[data-zhead]{color:var(--t2)}
-
-/* [6] nav: smooth motion + inner glow off the active/hovered edge */
-[data-znav] button{transition:background .16s ease,color .16s ease,box-shadow .16s ease,border-color .16s ease}
-[data-znav] button:hover{box-shadow:inset 3px 0 0 var(--acc),inset 0 0 24px -12px var(--acc)}
-
-/* [7] table rows: graphite sheen sweeping away from an accent bar */
-[data-zrow]{transition:background .14s ease,box-shadow .14s ease}
-[data-zrow]:hover{background:linear-gradient(90deg,var(--selbg),transparent 72%)!important;box-shadow:inset 3px 0 0 var(--acc)}
-
-/* [8] buttons: radius floor, tactile press, danger-lit hover, real focus ring */
-button{border-radius:6px;transition:border-color .16s ease,box-shadow .18s ease,transform .1s ease,filter .16s ease}
-button:not(:disabled):hover{border-color:var(--acc)!important;box-shadow:0 0 0 1px rgba(185,241,58,.18),0 8px 20px -12px rgba(185,241,58,.55)}
-button:not(:disabled):active{transform:translateY(1px)}
-button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;box-shadow:0 0 0 3px rgba(185,241,58,.28)}
-.zone-tutorial-toggle{min-height:40px}
-.zone-tutorial-close{min-width:44px;min-height:44px;padding:6px 11px;border:1px solid var(--border3)!important;border-radius:4px;background:var(--btn)!important;color:var(--t1)!important;font-weight:700!important}
-html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
-.zone-crime-commit:disabled{background:var(--btn)!important;color:var(--mu)!important;border-color:var(--border3)!important;box-shadow:none!important;opacity:.65;cursor:not-allowed}
-
-/* [9] accent-fill CTAs carry a true lime glow (hits all 10 inline --accFill1 buttons) */
-[style*="var(--accFill1)"]{box-shadow:0 8px 20px -8px rgba(185,241,58,.5),0 1px 0 rgba(255,255,255,.22) inset}
-
-/* [10] ticker reads like a premium rail, faded at both ends */
-[data-zticker]{-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-
-/* [11] figures: tabular alignment + faint money luminance */
-[data-zfig]{font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(159,230,63,.10)}
-
-/* [12] glossy scrollbar + accent text selection */
-::-webkit-scrollbar-thumb{background:linear-gradient(var(--border3),var(--border2))!important;border-radius:6px}
-::-webkit-scrollbar-thumb:hover{background:var(--acc)!important}
-::selection{background:rgba(185,241,58,.28);color:var(--t1)}
-
-/* [13] accessibility: honor reduced-motion + high-contrast/forced-colors */
-@media (prefers-reduced-motion:reduce){
-  *,[data-zrow],[data-znav] button,button{transition:none!important;animation:none!important}
-  body{background-attachment:scroll}
-}
-@media (forced-colors:active){
-  button:focus-visible{outline:2px solid CanvasText}
-  [data-zheaderbar]::after{display:none}
-}
-
-  </style>
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
-<div style="min-height:100vh;background:var(--bg)">
+<a class="zone-skip-link" href="#zone-main">{{ skipToContent }}</a>
+<div class="zone-app" style="min-height:100vh;background:var(--bg)">
   <!-- header -->
-  <div style="background:linear-gradient(var(--hd1),var(--hd2));border-bottom:1px solid var(--edge);box-shadow:0 1px 0 var(--border2) inset">
+  <div class="zone-topbar" style="background:linear-gradient(var(--hd1),var(--hd2));border-bottom:1px solid var(--edge);box-shadow:0 1px 0 var(--border2) inset">
     <div data-zheaderbar="1" style="max-width:1240px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:0 14px;height:50px">
-      <div style="display:flex;align-items:center;gap:10px;padding:5px 14px;background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--track);border-radius:4px;box-shadow:0 1px 0 var(--mu2) inset">
+      <div class="zone-brand" style="display:flex;align-items:center;gap:10px;padding:5px 14px;background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--track);border-radius:4px;box-shadow:0 1px 0 var(--mu2) inset">
         <span data-zfig="1" style="font-weight:600;font-size:23px;letter-spacing:.2em;color:var(--t1);text-shadow:0 1px 0 rgba(0,0,0,.7)">{{ platformBrand }}</span>
       </div>
-      <div style="display:flex;gap:4px;font-size:12px;color:var(--t4)">
+      <div class="zone-header-links" style="display:flex;gap:4px;font-size:12px;color:var(--t4)">
         <sc-for list="{{ topLinks }}" as="l" hint-placeholder-count="5"><button class="zone-header-link" onClick="{{ l.go }}" style="background:none;border:0;color:var(--t4);padding:5px 6px;font:inherit;cursor:pointer;white-space:nowrap" style-hover="color:#fff;background:var(--btn)">{{ l.label }}</button></sc-for>
       </div>
-      <div style="margin-inline-start:auto;display:flex;align-items:center;gap:14px;font-size:12px">
+      <div class="zone-header-actions" style="margin-inline-start:auto;display:flex;align-items:center;gap:14px;font-size:12px">
         <span style="color:var(--mu)">{{ t.tct }} <bdi style="color:var(--accText);font-weight:600">{{ clock }}</bdi></span>
         <span style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">
           <span style="width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 4px var(--acc)"></span>
           <strong style="color:var(--t1)">{{ t.player }}</strong><bdi style="color:var(--mu)">[3418822]</bdi>
         </span>
-        <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
+        <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
         <a href="/admin" style="background:var(--activebg);border:1px solid var(--acc);color:var(--activefg);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600">ADMIN</a>
       </div>
     </div>
-    <div style="background:var(--ticker);border-top:1px solid var(--btn);overflow:hidden;white-space:nowrap;font-size:11px;color:var(--mu);padding:4px 0;display:flex;align-items:center">
+    <div class="zone-bulletin" style="background:var(--ticker);border-top:1px solid var(--btn);overflow:hidden;white-space:nowrap;font-size:11px;color:var(--mu);padding:4px 0;display:flex;align-items:center">
       <span style="flex:none;position:relative;z-index:1;background:var(--ticker);padding:0 10px;font-weight:600">{{ demoBulletin }}</span>
       <div data-zticker="1" style="display:inline-flex;gap:60px;animation:zticker 60s linear infinite;padding-inline-start:20px">
         <sc-for list="{{ ticker }}" as="h" hint-placeholder-count="6"><span>{{ h }}</span></sc-for>
@@ -384,10 +82,10 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
   <div data-zshell="1" style="max-width:1240px;margin:0 auto;display:flex;gap:14px;padding:12px 14px 40px;align-items:flex-start">
     <!-- sidebar -->
-    <aside style="width:200px;flex:none;display:flex;flex-direction:column;gap:10px">
+    <aside class="zone-sidebar" style="width:200px;flex:none;display:flex;flex-direction:column;gap:10px">
       <div data-zplayercard="1">
-        <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.information }}</div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:6px 10px;display:flex;flex-direction:column;gap:4px">
+        <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.information }}</div>
+        <div class="zone-profile-body zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:6px 10px;display:flex;flex-direction:column;gap:4px">
           <div class="zone-profile-identity">
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link)">{{ t.player }}</span></div>
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.money }}</span><bdi id="zone-cash" data-zfig="1" style="color:var(--money);font-weight:600;font-size:13.5px;display:inline-block">{{ cash }}</bdi></div>
@@ -398,15 +96,15 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
           <div class="zone-profile-desktop" style="height:1px;background:var(--border);margin:4px 0"></div>
           <div class="zone-profile-bars">
           <sc-for list="{{ bars }}" as="b" hint-placeholder-count="4">
-            <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:6px">
+            <div class="zone-resource" data-zone-resource="{{ b.id }}" style="display:flex;flex-direction:column;gap:3px;margin-bottom:6px">
               <div style="display:flex;justify-content:space-between;align-items:baseline">
                 <span data-zhead="1" style="color:var(--t4);font-weight:600">{{ b.label }}</span>
                 <bdi data-zfig="1" style="color:var(--t1);font-size:12.5px;font-weight:600">{{ b.text }}</bdi>
               </div>
-              <div data-znotch="1" style="height:16px;background:var(--track);border:1px solid var(--edge);border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.4) inset;overflow:hidden">
+              <div class="zone-resource-track" role="progressbar" aria-label="{{ b.label }}" aria-valuenow="{{ b.value }}" aria-valuemin="0" aria-valuemax="{{ b.max }}" aria-valuetext="{{ b.text }}" data-znotch="1" style="height:16px;background:var(--track);border:1px solid var(--edge);border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.4) inset;overflow:hidden">
                 <div style="height:100%;width:{{ b.pct }}%;background:linear-gradient({{ b.c1 }},{{ b.c2 }});box-shadow:0 0 10px {{ b.c1 }};transition:width .45s cubic-bezier(.2,.8,.2,1)"></div>
-                <bdi data-zfig="1" style="position:absolute;inset:0;display:grid;place-items:center;font-size:9.5px;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 4px rgba(0,0,0,.95);z-index:1">{{ b.timer }}</bdi>
-              </div>
+                </div>
+              <bdi class="zone-resource-timer">{{ b.timer }}</bdi>
             </div>
           </sc-for>
           </div>
@@ -414,11 +112,12 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
           <details class="zone-profile-mobile-details"><summary>{{ t.information }}</summary><div><div><span>{{ t.level }}</span><bdi>{{ level }}</bdi></div><div><span>{{ t.points }}</span><bdi>{{ points }}</bdi></div><div><span>{{ t.merits }}</span><bdi>{{ merits }}</bdi></div><div><span>{{ t.chain }}</span><bdi>{{ chainText }}</bdi></div></div></details>
         </div>
       </div>
-      <div>
-        <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.areas }}</div>
-        <div data-znav="1" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;display:flex;flex-direction:column;padding:3px 0">
+      <div class="zone-nav-section">
+        <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.areas }}</div>
+        <button class="zone-nav-toggle" onClick="{{ toggleNavigation }}" aria-expanded="{{ navigationExpanded }}" aria-controls="zone-area-navigation">{{ navigationLabel }}</button>
+        <div class="zone-panel" id="zone-area-navigation" role="navigation" aria-label="{{ t.areas }}" data-znav="1" data-zone-nav-open="{{ navigationExpanded }}" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;display:flex;flex-direction:column;padding:3px 0">
           <sc-for list="{{ nav }}" as="n" hint-placeholder-count="17">
-            <button data-zone-screen="{{ n.id }}" onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;padding:5px 10px;border:0;border-inline-start:3px solid {{ n.edge }};background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:12px;cursor:pointer;text-align:start;width:100%" style-hover="background:var(--btn);color:#fff">
+            <button data-zone-screen="{{ n.id }}" aria-current="{{ n.current }}" data-zone-primary="{{ n.primary }}" onClick="{{ n.go }}" style="display:flex;align-items:center;gap:9px;padding:5px 10px;border:0;border-inline-start:3px solid {{ n.edge }};background:{{ n.bg }};color:{{ n.fg }};font:inherit;font-size:12px;cursor:pointer;text-align:start;width:100%" style-hover="background:var(--btn);color:#fff">
               <svg width="16" height="16" viewBox="0 0 512 512" style="flex:none;fill:{{ n.ic }}"><path d="M0 0" data-zone-path="{{ n.d }}"></path></svg>
               <span style="flex:1">{{ n.label }}</span>
               <bdi style="font-size:10px;color:var(--acc)">{{ n.badge }}</bdi>
@@ -429,24 +128,24 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
     </aside>
 
     <!-- content -->
-    <main id="zone-main" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <h4 style="margin:0;font-size:26px;font-weight:600;color:var(--t1);text-transform:uppercase;letter-spacing:.02em;line-height:1.1">{{ title }}</h4>
+    <main id="zone-main" tabindex="-1" data-zone-screen="{{ currentScreen }}" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+      <div class="zone-page-heading" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h1 style="margin:0;font-size:26px;font-weight:600;color:var(--t1);text-transform:uppercase;letter-spacing:.02em;line-height:1.1">{{ title }}</h1>
         <span style="color:var(--mu);font-size:12px;flex:1">{{ subtitle }}</span>
         <div style="display:flex;gap:6px">
           <button onClick="{{ goCity }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="color:#fff">{{ t.nav.city }}</button>
           <button class="zone-tutorial-toggle" onClick="{{ toggleTut }}" aria-expanded="{{ tut }}" aria-controls="zone-tutorial-panel" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="color:#fff">{{ t.tutorial }}</button>
         </div>
       </div>
-      <div style="height:2px;background:linear-gradient(90deg,var(--acc),var(--border2) 60%,transparent)"></div>
-      <sc-if value="{{ preview }}" hint-placeholder-val="{{ false }}"><div role="status" data-zone-preview-notice="1" style="padding:9px 12px;border:1px solid var(--border3);border-radius:5px;color:var(--t2);background:var(--panel)">{{ previewNotice }}</div></sc-if>
+      <div class="zone-page-rule" style="height:2px;background:linear-gradient(90deg,var(--acc),var(--border2) 60%,transparent)"></div>
+      <sc-if value="{{ preview }}" hint-placeholder-val="{{ false }}"><div class="zone-panel" role="status" data-zone-preview-notice="1" style="padding:9px 12px;border:1px solid var(--border3);border-radius:5px;color:var(--t2);background:var(--panel)">{{ previewNotice }}</div></sc-if>
       <div role="status" data-zone-connection="1" style="font-size:10px;color:var(--mu);text-align:end">{{ connectionLabel }}</div>
-      <sc-if value="{{ travelStatus.active }}" hint-placeholder-val="{{ false }}"><div role="status" data-zone-travel="1" style="display:flex;align-items:center;gap:12px;padding:9px 12px;border:1px solid var(--border3);border-radius:5px;background:var(--panel);color:var(--t2)"><div><span>{{ travelStatus.label }}</span><div style="font-size:11px;color:var(--mu)">{{ travelStatus.notice }}</div></div><bdi style="margin-inline-start:auto;color:var(--gold);font-weight:600">{{ travelStatus.left }}</bdi></div></sc-if>
+      <sc-if value="{{ travelStatus.active }}" hint-placeholder-val="{{ false }}"><div class="zone-panel" role="status" data-zone-travel="1" style="display:flex;align-items:center;gap:12px;padding:9px 12px;border:1px solid var(--border3);border-radius:5px;background:var(--panel);color:var(--t2)"><div><span>{{ travelStatus.label }}</span><div style="font-size:11px;color:var(--mu)">{{ travelStatus.notice }}</div></div><bdi style="margin-inline-start:auto;color:var(--gold);font-weight:600">{{ travelStatus.left }}</bdi></div></sc-if>
 
       <sc-if value="{{ tut }}" hint-placeholder-val="{{ false }}">
         <div id="zone-tutorial-panel" role="region" aria-label="{{ t.tutorial }}">
-          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between;align-items:center"><span>{{ t.tutorial }}</span><button class="zone-tutorial-close" onClick="{{ toggleTut }}" aria-label="{{ t.closeTutorial }}" style="cursor:pointer;font:inherit">{{ t.closeTutorial }}</button></div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:10px;color:var(--t3);line-height:1.6">{{ tutText }}</div>
+          <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between;align-items:center"><span>{{ t.tutorial }}</span><button class="zone-tutorial-close" onClick="{{ toggleTut }}" aria-label="{{ t.closeTutorial }}" style="cursor:pointer;font:inherit">{{ t.closeTutorial }}</button></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:10px;color:var(--t3);line-height:1.6">{{ tutText }}</div>
         </div>
       </sc-if>
 
@@ -455,12 +154,12 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
           <span style="width:9px;height:9px;border-radius:50%;background:#e04a3a;animation:zblink 1.2s infinite"></span>
           <strong style="color:#f0a090">{{ status.title }}</strong><span style="color:var(--t3)">{{ status.body }}</span>
           <bdi data-zfig="1" style="margin-inline-start:auto;font-weight:600;font-size:21px;color:#fff">{{ status.left }}</bdi>
-           <button onClick="{{ status.act }}" disabled="{{ status.actDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
-           <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button onClick="{{ status.heal }}" disabled="{{ status.healDisabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
+           <button class="zone-action-primary" onClick="{{ status.act }}" disabled="{{ status.actDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
+           <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button class="zone-action-danger" onClick="{{ status.heal }}" disabled="{{ status.healDisabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
         </div>
       </sc-if>
       <sc-if value="{{ result }}" hint-placeholder-val="{{ false }}">
-        <div id="zone-result" style="display:flex;align-items:stretch;gap:0;border:1px solid {{ result.border }};border-radius:6px;overflow:hidden;background:var(--panel)">
+        <div class="zone-panel" id="zone-result" style="display:flex;align-items:stretch;gap:0;border:1px solid {{ result.border }};border-radius:6px;overflow:hidden;background:var(--panel)">
           <div style="width:5px;background:{{ result.accent }}"></div>
           <div style="display:flex;align-items:center;gap:14px;padding:11px 14px;flex:1;min-width:0">
             <span style="width:38px;height:38px;flex:none;border-radius:50%;background:{{ result.wash }};display:grid;place-items:center">
@@ -483,7 +182,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- HOME -->
       <sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
+        <div class="zone-quick-actions zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
           <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
             <button onClick="{{ q.go }}" style="background:linear-gradient(var(--z2),var(--z1));border:1px solid var(--border2);border-radius:5px;padding:10px 12px;text-align:start;cursor:pointer;font:inherit;color:var(--t2);display:flex;align-items:center;gap:10px" style-hover="border-color:var(--acc)">
               <svg width="30" height="30" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ q.d }}"></path></svg>
@@ -491,33 +190,33 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
             </button>
           </sc-for>
         </div>
-        <div class="zone-content-split" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
+        <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
           <div style="display:flex;flex-direction:column;gap:10px">
             <div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.events }}</span><button onClick="{{ clearLog }}" style="background:none;border:0;color:var(--link);cursor:pointer;font:inherit;font-size:11px">{{ t.clear }}</button></div>
-              <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
+              <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.events }}</span><button onClick="{{ clearLog }}" style="background:none;border:0;color:var(--link);cursor:pointer;font:inherit;font-size:11px">{{ t.clear }}</button></div>
+              <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <sc-for list="{{ log }}" as="l" hint-placeholder-count="5"><div style="display:flex;gap:10px;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ l.bg }}"><bdi style="color:var(--mu2);font-size:11px;padding-top:1px">{{ l.time }}</bdi><span style="color:{{ l.color }}">{{ l.text }}</span></div></sc-for>
                 <sc-if value="{{ logEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px;color:var(--mu)">{{ t.noEvents }}</div></sc-if>
               </div>
             </div>
             <div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.missionsActive }}</div>
-              <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
+              <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.missionsActive }}</div>
+              <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <sc-for list="{{ missions }}" as="m" hint-placeholder-count="3"><div class="zone-home-mission" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line)"><span style="flex:1"><span style="color:var(--t2);font-weight:500">{{ m.name }}</span> <span style="color:var(--mu)">· {{ m.reward }}</span></span><div style="width:120px;height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ m.pct }}%;background:var(--acc)"></div></div><bdi style="color:var(--t4);width:48px;text-align:end">{{ m.prog }}</bdi></div></sc-for>
               </div>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;gap:10px">
             <div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between;align-items:center">
+              <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between;align-items:center">
                 <span>{{ t.character }}</span>
                 <span style="display:flex;gap:3px">
                   <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.go }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ o.name }}</button></sc-for>
                 </span>
               </div>
-              <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
-                <div style="position:relative;height:260px;background:var(--deep)">
-                  <iframe id="zone-char-3d" src="dist/character3d.html?v=62" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+              <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
+                <div class="zone-character-stage" style="position:relative;height:260px;background:var(--deep)">
+                  <iframe id="zone-char-3d" src="dist/character3d.html?v=63" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
                   <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
@@ -534,18 +233,18 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
               </div>
             </div>
             <div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.yourStatus }}</div>
-              <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
+              <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.yourStatus }}</div>
+              <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <sc-for list="{{ statusRows }}" as="r" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--mu)">{{ r.k }}</span><bdi style="color:{{ r.color }};font-weight:500">{{ r.v }}</bdi></div></sc-for>
               </div>
             </div>
             <div>
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.war }}</span><span style="color:var(--mu);font-size:10px">{{ demoLabel }}</span></div>
-              <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+              <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.war }}</span><span style="color:var(--mu);font-size:10px">{{ demoLabel }}</span></div>
+              <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
                 <div style="display:flex;justify-content:space-between"><span style="color:var(--t2)">{{ fac.name }}</span><bdi style="color:var(--money);font-weight:600">{{ fac.warPct }}%</bdi></div>
                 <div style="height:11px;background:var(--track);border:1px solid var(--edge);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ fac.warPct }}%;background:linear-gradient(var(--acc),#6aa614)"></div></div>
                 <div style="display:flex;justify-content:space-between;color:var(--mu);font-size:11px"><span>{{ fac.enemy }}</span><span>{{ t.endsIn }} <bdi style="color:var(--gold)">{{ fac.warLeft }}</bdi></span></div>
-                <button onClick="{{ goAttack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.joinWar }}</button>
+                <button class="zone-action-danger" onClick="{{ goAttack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.joinWar }}</button>
               </div>
             </div>
           </div>
@@ -554,7 +253,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- CRIMES -->
       <sc-if value="{{ is.crimes }}" hint-placeholder-val="{{ false }}">
-        <div class="zone-crime-categories" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+        <div class="zone-crime-categories zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
           <sc-for list="{{ crimeCats }}" as="c" hint-placeholder-count="14">
             <button onClick="{{ c.go }}" data-zcard="1" data-zlocked="{{ c.lockedAttr }}" style="position:relative;display:block;padding:0;border:1px solid {{ c.edge }};border-radius:6px;overflow:hidden;background:var(--deep);cursor:{{ c.cursor }};text-align:start;font:inherit;opacity:1;box-shadow:{{ c.shadow }};transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <span style="display:block;aspect-ratio:16/9;background:url('{{ c.img }}') center/cover;opacity:{{ c.imgOpacity }};filter:{{ c.filter }}"></span>
@@ -569,52 +268,52 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
             </button>
           </sc-for>
         </div>
-        <div class="zone-responsive-table" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div class="zone-responsive-table zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div class="zone-crime-intro" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--t4);font-size:11px"><span><strong style="color:var(--t1);font-family:Oswald,Rubik,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-inline-end:8px">{{ catName }}</strong>{{ catDesc }}</span><span style="white-space:nowrap">{{ t.crimeXp }} <bdi style="color:var(--accText);font-weight:600">{{ crimeXp }}</bdi> · {{ t.nerve }} <bdi style="color:var(--bad2);font-weight:600">{{ nerveNow }}</bdi></span></div>
-          <div class="zone-table-header" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2)"><span>{{ t.crime }}</span><span>{{ t.skill }}</span><span>{{ t.nerve }}</span><span>{{ t.success }}</span><span></span></div>
+          <div class="zone-table-header zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2)"><span>{{ t.crime }}</span><span>{{ t.skill }}</span><span>{{ t.nerve }}</span><span>{{ t.success }}</span><span></span></div>
           <sc-for list="{{ crimes }}" as="c" hint-placeholder-count="5">
-            <div class="zone-crime-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);background:{{ c.bg }}">
+            <div class="zone-crime-row zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);background:{{ c.bg }}">
               <div style="min-width:0"><div style="color:var(--t1);font-weight:500">{{ c.name }}</div><div style="color:var(--mu);font-size:11px">{{ c.sub }}</div></div>
               <div style="display:flex;flex-direction:column;gap:2px"><div style="height:6px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ c.skill }}%;background:var(--link)"></div></div><bdi style="font-size:10px;color:var(--mu)">{{ c.skill }}/100</bdi></div>
               <bdi style="color:var(--bad2);font-weight:600">{{ c.nerve }}</bdi>
               <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ c.pct }}%;background:{{ c.barColor }}"></div></div><bdi style="width:34px;color:var(--t2)">{{ c.pctText }}</bdi></div>
-              <button class="zone-crime-commit" onClick="{{ c.commit }}" disabled="{{ c.disabled }}" data-zbusy="{{ c.busy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ c.label }}</button>
+              <button class="zone-crime-commit zone-action-primary" onClick="{{ c.commit }}" disabled="{{ c.disabled }}" data-zbusy="{{ c.busy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ c.label }}</button>
             </div>
           </sc-for>
         </div>
         <div>
-          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.crimeLog }}</div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px"><sc-for list="{{ crimeLog }}" as="l" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:6px 10px;border-bottom:1px solid var(--line)"><bdi style="color:var(--mu2);font-size:11px">{{ l.time }}</bdi><span style="color:{{ l.color }}">{{ l.text }}</span></div></sc-for></div>
+          <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.crimeLog }}</div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px"><sc-for list="{{ crimeLog }}" as="l" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:6px 10px;border-bottom:1px solid var(--line)"><bdi style="color:var(--mu2);font-size:11px">{{ l.time }}</bdi><span style="color:{{ l.color }}">{{ l.text }}</span></div></sc-for></div>
         </div>
       </sc-if>
 
       <!-- GYM -->
       <sc-if value="{{ is.gym }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
-          <div style="flex:2 1 300px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:6px">
+          <div class="zone-panel" style="flex:2 1 300px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;justify-content:space-between"><span style="color:var(--t4)">{{ t.energyAvail }}</span><bdi style="color:var(--t1);font-weight:600">{{ energyText }}</bdi></div>
             <div style="height:14px;background:var(--track);border:1px solid var(--edge);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ energyPct }}%;background:linear-gradient(var(--acc),#6aa614)"></div></div>
             <div style="display:flex;justify-content:space-between;color:var(--mu);font-size:11px"><span>{{ gymName }} · <bdi>{{ gymEnergy }}</bdi> {{ t.energyPer }}</span><span>{{ t.gymXp }} <bdi style="color:var(--acc)">{{ gymXp }}</bdi></span></div>
           </div>
-          <div style="flex:1 1 160px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;justify-content:center;align-items:center"><span style="color:var(--mu);font-size:11px">{{ t.totalStats }}</span><bdi data-zfig="1" style="font-size:31px;font-weight:600;color:var(--acc);line-height:1">{{ totalStats }}</bdi></div>
+          <div class="zone-panel" style="flex:1 1 160px;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;justify-content:center;align-items:center"><span style="color:var(--mu);font-size:11px">{{ t.totalStats }}</span><bdi data-zfig="1" style="font-size:31px;font-weight:600;color:var(--acc);line-height:1">{{ totalStats }}</bdi></div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
           <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
-            <div data-zcard="1" style="position:relative;background:var(--panel);border:1px solid var(--border3);border-radius:6px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
+            <div class="zone-panel" data-zcard="1" style="position:relative;background:var(--panel);border:1px solid var(--border3);border-radius:6px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <div class="zone-card-image" style="aspect-ratio:16/9;background:url('{{ s.img }}') center/cover"></div>
               <div style="background:linear-gradient(var(--tb1),var(--tb2));border-top:1px solid var(--border3);padding:7px 10px;display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:8px;font-weight:600;color:var(--t1)"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ s.d }}"></path></svg>{{ s.label }}</span><span style="font-size:10px;color:var(--t4)">{{ s.exercise }}</span></div>
               <div style="padding:10px;display:flex;flex-direction:column;gap:8px">
                 <div style="display:flex;align-items:baseline;gap:8px"><bdi data-zfig="1" style="font-size:27px;font-weight:600;color:var(--t1);line-height:1">{{ s.value }}</bdi>{{ s.popEl }}<bdi style="color:var(--mu);font-size:11px;margin-inline-start:auto">{{ s.share }}%</bdi></div>
                 <div style="height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ s.share }}%;background:var(--link)"></div></div>
-                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:11px">{{ t.expected }} <bdi style="color:var(--acc)">+{{ s.gain }}</bdi></span><button onClick="{{ s.train }}" disabled="{{ trainOff }}" data-zbusy="{{ s.busy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ s.btnLabel }}</button></div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:11px">{{ t.expected }} <bdi style="color:var(--acc)">+{{ s.gain }}</bdi></span><button class="zone-action-primary" onClick="{{ s.train }}" disabled="{{ trainOff }}" data-zbusy="{{ s.busy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ s.btnLabel }}</button></div>
               </div>
             </div>
           </sc-for>
         </div>
         <div class="zone-responsive-table" data-zscroll="1">
-          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.gymLadder }}</div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
-            <sc-for list="{{ gyms }}" as="g" hint-placeholder-count="8"><div class="zone-gym-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 90px 110px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);opacity:{{ g.opacity }}"><span style="color:var(--t2);font-weight:500">{{ g.name }}</span><bdi style="color:var(--money)">{{ g.cost }}</bdi><span style="color:var(--mu)"><bdi>{{ g.energy }}</bdi> {{ t.energy }}</span><span style="color:var(--mu)">{{ t.gymXp }} <bdi>{{ g.xp }}</bdi></span><button onClick="{{ g.join }}" disabled="{{ g.disabled }}" style="background:{{ g.btnBg }};color:{{ g.btnFg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ g.btn }}</button></div></sc-for>
+          <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.gymLadder }}</div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
+            <sc-for list="{{ gyms }}" as="g" hint-placeholder-count="8"><div class="zone-gym-row zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 90px 110px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);opacity:{{ g.opacity }}"><span style="color:var(--t2);font-weight:500">{{ g.name }}</span><bdi style="color:var(--money)">{{ g.cost }}</bdi><span style="color:var(--mu)"><bdi>{{ g.energy }}</bdi> {{ t.energy }}</span><span style="color:var(--mu)">{{ t.gymXp }} <bdi>{{ g.xp }}</bdi></span><button onClick="{{ g.join }}" disabled="{{ g.disabled }}" style="background:{{ g.btnBg }};color:{{ g.btnFg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ g.btn }}</button></div></sc-for>
           </div>
         </div>
       </sc-if>
@@ -626,7 +325,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
         </div>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=62" title="Zone City family territory map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" src="dist/city-map-torn.html?v=63" title="Zone City family territory map" allow="fullscreen" allowfullscreen style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
@@ -649,13 +348,13 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
           <div style="position:absolute;left:{{ herePin.x }}%;top:{{ herePin.y }}%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:var(--acc);border:2.5px solid #fff;box-shadow:0 0 0 3px rgba(20,26,38,.35),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.4);animation:zblink 1.6s infinite;z-index:3"></div>
         </div>
         </sc-if>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
           <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.disabled }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
         </div>
         <div>
-          <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.keyOfSymbols }}</div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px">
+          <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.keyOfSymbols }}</div>
+          <div class="zone-panel zone-auto-grid" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px">
             <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)"><span style="width:22px;height:22px;flex:none;display:grid;place-items:center;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{ lg.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ lg.d }}"></path></svg></span><span>{{ lg.label }}</span></div></sc-for>
           </div>
         </div>
@@ -663,22 +362,22 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- ATTACK -->
       <sc-if value="{{ is.attack }}" hint-placeholder-val="{{ false }}">
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
           <sc-for list="{{ opps }}" as="o" hint-placeholder-count="4">
-            <div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">
+            <div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">
               <div><div style="color:var(--link);font-weight:500">{{ o.name }}</div><div style="color:var(--mu);font-size:11px">{{ o.factionName }} · <bdi>{{ o.status }}</bdi></div></div>
-              <bdi style="color:var(--t2)">{{ o.lvl }}</bdi><bdi style="color:var(--t4)">{{ o.str }}</bdi><bdi style="color:var(--t4)">{{ o.def }}</bdi><bdi style="color:var(--t4)">{{ o.spd }}</bdi><bdi style="color:var(--t4)">{{ o.dex }}</bdi>
+              <bdi data-label="{{ t.level }}" style="color:var(--t2)">{{ o.lvl }}</bdi><bdi data-label="{{ t.str }}" style="color:var(--t4)">{{ o.str }}</bdi><bdi data-label="{{ t.def }}" style="color:var(--t4)">{{ o.def }}</bdi><bdi data-label="{{ t.spd }}" style="color:var(--t4)">{{ o.spd }}</bdi><bdi data-label="{{ t.dex }}" style="color:var(--t4)">{{ o.dex }}</bdi>
               <span style="color:{{ o.oddsColor }};font-weight:600;font-size:11px">{{ o.odds }}</span>
-              <button onClick="{{ o.attack }}" disabled="{{ o.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.attack }}</button>
+              <button class="zone-action-danger" onClick="{{ o.attack }}" disabled="{{ o.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.attack }}</button>
             </div>
           </sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px">{{ t.attackTip }}</div>
         </div>
         <sc-if value="{{ fight }}" hint-placeholder-val="{{ false }}">
           <div>
-            <div style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.fightVs }} {{ fight.name }}</span><span style="color:{{ fight.vColor }}">{{ fight.verdict }}</span></div>
-            <div style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:10px;display:flex;flex-direction:column;gap:10px">
+            <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1;display:flex;justify-content:space-between"><span>{{ t.fightVs }} {{ fight.name }}</span><span style="color:{{ fight.vColor }}">{{ fight.verdict }}</span></div>
+            <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:10px;display:flex;flex-direction:column;gap:10px">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
                 <div style="position:relative"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--t2)">{{ t.you }}</span><bdi>{{ fight.youLife }}</bdi></div><div style="height:12px;background:var(--track);border-radius:2px;overflow:hidden;box-shadow:0 0 0 {{ fight.youRing }}px rgba(224,90,74,.55)"><div style="height:100%;width:{{ fight.youPct }}%;background:linear-gradient(#5aa0e0,#3a70b0);transition:width .28s ease-out"></div></div><bdi style="position:absolute;inset-inline-end:0;top:-4px;font-size:15px;font-weight:800;color:#ff6a55;opacity:{{ fight.youPopOn }};transform:translateY({{ fight.youPopY }}px);transition:opacity .3s,transform .5s;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.7)">{{ fight.youPop }}</bdi></div>
                 <div style="position:relative"><div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--t2)">{{ fight.name }}</span><bdi>{{ fight.oppLife }}</bdi></div><div style="height:12px;background:var(--track);border-radius:2px;overflow:hidden;box-shadow:0 0 0 {{ fight.oppRing }}px rgba(163,217,0,.5)"><div style="height:100%;width:{{ fight.oppPct }}%;background:linear-gradient(#e05a4a,#a03020);transition:width .28s ease-out"></div></div><bdi style="position:absolute;inset-inline-end:0;top:-4px;font-size:15px;font-weight:800;color:var(--acc);opacity:{{ fight.oppPopOn }};transform:translateY({{ fight.oppPopY }}px);transition:opacity .3s,transform .5s;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.7)">{{ fight.oppPop }}</bdi></div>
@@ -687,8 +386,8 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
                 <sc-if value="{{ fight.paused }}" hint-placeholder-val="{{ false }}"><button onClick="{{ fight.resume }}" disabled="{{ fight.disabled }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--border3);border-radius:3px;padding:5px 14px;font:inherit;cursor:pointer">{{ fight.resumeLabel }}</button></sc-if>
                 <sc-if value="{{ fight.canFinish }}" hint-placeholder-val="{{ false }}">
-                  <button onClick="{{ fight.mug }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.mug }}</button>
-                  <button onClick="{{ fight.hosp }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.hospitalize }}</button>
+                  <button class="zone-action-primary" onClick="{{ fight.mug }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.mug }}</button>
+                  <button class="zone-action-danger" onClick="{{ fight.hosp }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.hospitalize }}</button>
                 </sc-if>
                 <button onClick="{{ fight.leave }}" disabled="{{ fight.disabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.leave }}</button>
                 <sc-if value="{{ fight.rolling }}" hint-placeholder-val="{{ true }}">
@@ -706,28 +405,28 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <!-- FACTION -->
       <sc-if value="{{ is.faction }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:11px;color:var(--mu)">{{ demoFaction }}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--border);border-radius:5px;background:var(--panel)"><div><strong style="color:var(--t1)">{{ familyTerritories.title }}</strong><div style="color:var(--mu);font-size:11px">{{ familyTerritories.description }}</div></div><button onClick="{{ familyTerritories.open }}" style="flex:none;background:var(--activebg);color:var(--activefg);border:1px solid var(--border3);border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer">{{ familyTerritories.button }}</button></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-            <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:8px 10px;display:flex;align-items:center;gap:10px"><span style="width:34px;height:34px;border-radius:4px;background:linear-gradient(#5a6a3a,#3a4a2a);display:grid;place-items:center;color:var(--good);font-weight:700">SV</span><div><div style="font-weight:700;color:var(--t1);font-size:15px">{{ fac.name }}</div><div style="color:var(--mu);font-size:11px">{{ t.rank }}: {{ fac.rank }}</div></div></div>
+        <div class="zone-panel" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--border);border-radius:5px;background:var(--panel)"><div><strong style="color:var(--t1)">{{ familyTerritories.title }}</strong><div style="color:var(--mu);font-size:11px">{{ familyTerritories.description }}</div></div><button onClick="{{ familyTerritories.open }}" style="flex:none;background:var(--activebg);color:var(--activefg);border:1px solid var(--border3);border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer">{{ familyTerritories.button }}</button></div>
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:8px 10px;display:flex;align-items:center;gap:10px"><img class="zone-family-emblem" src="assets/factions/vipers.svg" alt="{{ fac.name }}" width="46" height="46"><div><div style="font-weight:700;color:var(--t1);font-size:15px">{{ fac.name }}</div><div style="color:var(--mu);font-size:11px">{{ t.rank }}: {{ fac.rank }}</div></div></div>
             <sc-for list="{{ facRows }}" as="r" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--mu)">{{ r.k }}</span><bdi style="color:var(--money);font-weight:500">{{ r.v }}</bdi></div></sc-for>
           </div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
             <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2);display:flex;justify-content:space-between"><span>{{ t.chainCard }}</span><span style="color:{{ fac.chainColor }};font-size:10px;text-transform:uppercase">{{ fac.chainState }}</span></div>
             <div style="padding:10px;display:flex;flex-direction:column;gap:6px">
               <bdi data-zfig="1" style="font-size:52px;font-weight:600;color:var(--gold);line-height:.92">{{ fac.chain }}</bdi>
               <div style="color:var(--mu);font-size:11px">{{ t.nextMilestone }} <bdi style="color:var(--t1)">{{ fac.nextMs }}</bdi> · {{ t.chainTimer }} <bdi style="color:var(--t1)">{{ fac.chainLeft }}</bdi></div>
               <div style="height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ fac.msPct }}%;background:var(--gold)"></div></div>
-              <button onClick="{{ goAttack }}" style="align-self:start;background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.extendChain }}</button>
+              <button class="zone-action-danger" onClick="{{ goAttack }}" style="align-self:start;background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:5px 14px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.extendChain }}</button>
             </div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
             <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.upgrades }}</div>
             <sc-for list="{{ upgrades }}" as="u" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--line)"><div><div style="color:var(--t2);font-weight:500">{{ u.name }}</div><div style="color:var(--mu);font-size:11px">{{ u.effect }}</div></div><button onClick="{{ u.buy }}" disabled="{{ u.disabled }}" style="background:{{ u.bg }};color:{{ u.fg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;white-space:nowrap;cursor:pointer">{{ u.btn }}</button></div></sc-for>
           </div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
             <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.members }}</div>
             <sc-for list="{{ members }}" as="m" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="width:7px;height:7px;border-radius:50%;background:{{ m.dot }}"></span><span style="flex:1;color:var(--link)">{{ m.name }}</span><span style="color:var(--mu);font-size:11px">{{ m.role }}</span><bdi style="color:var(--t4);font-size:11px;width:40px;text-align:end">{{ m.lvl }}</bdi><span style="color:{{ m.stateColor }};font-size:10px;text-transform:uppercase;width:64px;text-align:end">{{ m.state }}</span></div></sc-for>
           </div>
@@ -739,10 +438,10 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
         <div data-ztabs="1" style="display:flex;gap:2px">
           <sc-for list="{{ itemTabs }}" as="tb" hint-placeholder-count="5"><button onClick="{{ tb.go }}" style="white-space:nowrap;background:{{ tb.bg }};border:1px solid var(--border2);border-bottom:0;color:{{ tb.fg }};border-radius:4px 4px 0 0;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">{{ tb.name }} <bdi style="color:var(--mu)">{{ tb.n }}</bdi></button></sc-for>
         </div>
-        <div class="zone-content-split" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px;margin-top:-10px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:0 5px 5px 5px">
+        <div class="zone-content-split zone-items-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px;margin-top:-10px">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:0 5px 5px 5px">
             <sc-for list="{{ inv }}" as="i" hint-placeholder-count="5">
-              <div data-zrow="1" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line);background:{{ i.bg }}">
+              <div class="zone-inventory-row" data-zrow="1" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line);background:{{ i.bg }}">
                 <button onClick="{{ i.select }}" style="flex:1;display:flex;align-items:center;gap:10px;background:none;border:0;font:inherit;cursor:pointer;text-align:start;padding:0"><span style="width:34px;height:30px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="20" height="20" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ i.d }}"></path></svg></span><span style="min-width:0"><span style="display:block;color:var(--t1);font-weight:500">{{ i.name }}</span><span style="display:block;color:var(--mu);font-size:11px;white-space:nowrap">{{ i.type }} · {{ i.meta }}</span></span></button>
                 <bdi style="color:var(--t4)">×{{ i.qty }}</bdi>
                 <button onClick="{{ i.act }}" disabled="{{ i.disabled }}" style="background:{{ i.btnBg }};color:{{ i.btnFg }};font-weight:600;border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;white-space:nowrap;cursor:pointer">{{ i.btn }}</button>
@@ -750,14 +449,10 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
             </sc-for>
             <sc-if value="{{ invEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;color:var(--mu)">{{ t.emptyTab }}</div></sc-if>
           </div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-            <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2);display:flex;justify-content:space-between"><span>{{ sel.name }}</span><span style="color:var(--mu);font-size:11px">{{ sel.type }}</span></div>
+          <div class="zone-item-inspector zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-panel-heading" style="padding:6px 10px;font-weight:600;color:var(--t2);display:flex;justify-content:space-between"><span>{{ sel.name }}</span><span style="display:flex;align-items:center;gap:8px"><span class="zone-viewer-badge">3D</span><span style="color:var(--mu);font-size:11px">{{ sel.type }}</span></span></div>
             <div class="zone-item-stage" style="position:relative;height:250px;background:var(--deep)">
-              <iframe id="zone-item-3d" src="dist/weapon3d.html?v=62" title="3D item" style="width:100%;height:100%;border:0;display:block"></iframe>
-              <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;gap:5px;pointer-events:none">
-                <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">3D</span>
-                <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ sel.grade }}</span>
-              </div>
+              <iframe id="zone-item-3d" src="dist/weapon3d.html?v=63" title="3D item" style="width:100%;height:100%;border:0;display:block"></iframe>
             </div>
             <div style="padding:4px 10px;color:var(--mu2);font-size:10px">{{ t.dragToRotate }}</div>
             <div style="padding:8px 10px;color:var(--t3);border-bottom:1px solid var(--line)">{{ sel.desc }}</div>
@@ -768,12 +463,12 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- JOBS -->
       <sc-if value="{{ is.jobs }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
           <div style="flex:1 1 200px"><div style="color:var(--mu);font-size:11px">{{ t.currentJob }}</div><div style="color:var(--t1);font-weight:700;font-size:16px">{{ job.name }}</div><div style="color:var(--mu);font-size:11px">{{ t.pay }} <bdi style="color:var(--money)">{{ job.pay }}</bdi> · {{ t.jobPoints }} <bdi style="color:var(--t1)">{{ job.pts }}</bdi> · {{ t.nextPromo }} <bdi>{{ job.next }}</bdi></div></div>
-          <button onClick="{{ work }}" disabled="{{ job.disabled }}" data-zbusy="{{ workBusy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:6px 16px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ workLabel }} · <bdi>{{ job.energy }}</bdi> {{ t.energy }}</button>
+          <button class="zone-action-primary" onClick="{{ work }}" disabled="{{ job.disabled }}" data-zbusy="{{ workBusy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:6px 16px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ workLabel }} · <bdi>{{ job.energy }}</bdi> {{ t.energy }}</button>
         </div>
         <div style="color:var(--mu);font-size:11px">{{ jobPayNote }}</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px">
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px">
           <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="6">
             <div data-zcard="1" data-zlocked="{{ j.lockedAttr }}" style="position:relative;border:1px solid {{ j.edge }};border-radius:6px;overflow:hidden;background:var(--deep);box-shadow:{{ j.shadow }};transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <div class="zone-card-image" style="aspect-ratio:16/9;background:url('{{ j.img }}') center/cover;filter:{{ j.filter }};opacity:{{ j.imgOpacity }}"></div>
@@ -794,13 +489,13 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <!-- MARKET -->
       <sc-if value="{{ is.market }}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{ marketDiscount }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:var(--good)">{{ marketDiscount }}</div></sc-if>
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.item }}</span><span>{{ t.seller }}</span><span>{{ t.price }}</span><span>{{ t.change }}</span><span></span></div>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.item }}</span><span>{{ t.seller }}</span><span>{{ t.price }}</span><span>{{ t.change }}</span><span></span></div>
           <sc-for list="{{ market }}" as="m" hint-placeholder-count="8">
-            <div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)">
+            <div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)">
               <div style="display:flex;align-items:center;gap:8px"><span style="width:30px;height:26px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ m.d }}"></path></svg></span><div><div style="color:var(--t1)">{{ m.name }}</div><div style="color:var(--mu);font-size:10px">{{ m.type }} · <bdi>{{ m.qty }}</bdi> {{ t.left }}</div></div></div>
-              <span style="color:var(--link)">{{ m.seller }}</span><bdi style="color:var(--money);font-weight:600">{{ m.price }}</bdi><bdi style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi>
-              <button onClick="{{ m.buy }}" disabled="{{ m.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.buy }}</button>
+              <span data-label="{{ t.seller }}" style="color:var(--link)">{{ m.seller }}</span><bdi data-label="{{ t.price }}" style="color:var(--money);font-weight:600">{{ m.price }}</bdi><bdi data-label="{{ t.change }}" style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi>
+              <button class="zone-action-primary" onClick="{{ m.buy }}" disabled="{{ m.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.buy }}</button>
             </div>
           </sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px;display:flex;gap:6px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:var(--acc);animation:zblink 1.2s infinite"></span>{{ t.liveMarket }}</div>
@@ -809,7 +504,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- MISSIONS -->
       <sc-if value="{{ is.missions }}" hint-placeholder-val="{{ false }}">
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <sc-for list="{{ missions }}" as="m" hint-placeholder-count="5">
             <div class="zone-mission-row" data-zrow="1" style="display:flex;align-items:center;gap:12px;padding:9px 10px;border-bottom:1px solid var(--line)">
               <div style="flex:1;min-width:0"><div style="color:var(--t1);font-weight:500">{{ m.name }}</div><div style="color:var(--mu);font-size:11px">{{ m.desc }} · {{ t.reward }}: <span style="color:var(--money)">{{ m.reward }}</span></div></div>
@@ -824,9 +519,9 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <!-- EDUCATION -->
       <sc-if value="{{ is.education }}" hint-placeholder-val="{{ false }}">
         <sc-if value="{{ edu.active }}" hint-placeholder-val="{{ false }}">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:12px"><span style="color:var(--mu)">{{ t.studying }}</span><strong style="color:var(--t1);flex:1">{{ edu.name }}</strong><div style="width:200px;height:9px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ edu.pct }}%;background:var(--link)"></div></div><bdi style="color:var(--gold)">{{ edu.left }}</bdi></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:12px"><span style="color:var(--mu)">{{ t.studying }}</span><strong style="color:var(--t1);flex:1">{{ edu.name }}</strong><div style="width:200px;height:9px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ edu.pct }}%;background:var(--link)"></div></div><bdi style="color:var(--gold)">{{ edu.left }}</bdi></div>
         </sc-if>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
           <sc-for list="{{ courses }}" as="c" hint-placeholder-count="5">
             <div data-zcard="1" style="position:relative;border:1px solid var(--border3);border-radius:6px;overflow:hidden;background:var(--deep);box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <div style="padding:9px 10px;background:linear-gradient(var(--tb1),var(--tb2));border-bottom:1px solid var(--border3);font-family:Oswald,Rubik,sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)">{{ c.name }}</div>
@@ -848,7 +543,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <!-- PROPERTIES -->
       <sc-if value="{{ is.properties }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:11px;color:var(--mu);margin-bottom:8px">{{ propertyUpkeepNote }}</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px">
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));gap:10px">
           <sc-for list="{{ props }}" as="pr" hint-placeholder-count="7">
             <div data-zcard="1" style="position:relative;border:1px solid {{ pr.edge }};border-radius:6px;overflow:hidden;background:var(--deep);box-shadow:{{ pr.shadow }};transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
               <div style="aspect-ratio:16/9;background:url('{{ pr.img }}') center/cover;opacity:{{ pr.imgOpacity }}"></div>
@@ -870,30 +565,30 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <sc-if value="{{ is.newspaper }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:11px;color:var(--mu)">{{ demoBulletin }}</div>
         <div class="zone-content-split" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden"><div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.headlines }}</div><sc-for list="{{ news }}" as="n" hint-placeholder-count="6"><div style="padding:8px 10px;border-bottom:1px solid var(--line)"><div style="color:var(--t1);font-weight:500">{{ n.h }}</div><div style="color:var(--mu);font-size:11px">{{ n.meta }}</div></div></sc-for></div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden"><div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.movers }}</div><sc-for list="{{ market }}" as="m" hint-placeholder-count="7"><div style="display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--t2)">{{ m.name }}</span><span><bdi style="color:var(--money)">{{ m.price }}</bdi> <bdi style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi></span></div></sc-for></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden"><div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.headlines }}</div><sc-for list="{{ news }}" as="n" hint-placeholder-count="6"><div style="padding:8px 10px;border-bottom:1px solid var(--line)"><div style="color:var(--t1);font-weight:500">{{ n.h }}</div><div style="color:var(--mu);font-size:11px">{{ n.meta }}</div></div></sc-for></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden"><div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.movers }}</div><sc-for list="{{ market }}" as="m" hint-placeholder-count="7"><div style="display:flex;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--t2)">{{ m.name }}</span><span><bdi style="color:var(--money)">{{ m.price }}</bdi> <bdi data-label="{{ t.change }}" style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi></span></div></sc-for></div>
         </div>
       </sc-if>
 
       <!-- JAIL -->
       <sc-if value="{{ is.jail }}" hint-placeholder-val="{{ false }}">
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.inmate }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.bustOdds }}</span><span></span></div>
-          <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi style="color:var(--t4)">{{ i.lvl }}</bdi><bdi style="color:var(--gold)">{{ i.left }}</bdi><bdi style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.inmate }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.bustOdds }}</span><span></span></div>
+          <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><bdi data-label="{{ t.bustOdds }}" style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button class="zone-action-primary" onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px">{{ t.jailTip }}</div>
         </div>
       </sc-if>
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.onHandLabel }}</div><bdi style="color:var(--money);font-size:22px;font-weight:700">{{ bank.cash }}</bdi></div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.inBankLabel }}</div><bdi style="color:var(--acc);font-size:22px;font-weight:700">{{ bank.balance }}</bdi></div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.totalLabel }}</div><bdi style="color:var(--t1);font-size:22px;font-weight:700">{{ bank.total }}</bdi></div>
+        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.onHandLabel }}</div><bdi style="color:var(--money);font-size:22px;font-weight:700">{{ bank.cash }}</bdi></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.inBankLabel }}</div><bdi style="color:var(--acc);font-size:22px;font-weight:700">{{ bank.balance }}</bdi></div>
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.totalLabel }}</div><bdi style="color:var(--t1);font-size:22px;font-weight:700">{{ bank.total }}</bdi></div>
         </div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
+        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.depositLabel }}</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button class="zone-action-primary" onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.withdrawLabel }}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ bank.withdrawals }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:var(--btn);color:var(--t2);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t4);font-size:11px;margin-top:12px">{{ bank.msg }}</div>
@@ -902,26 +597,26 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
 
       <!-- HOSPITAL -->
       <sc-if value="{{ is.hospital }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:10px;border:1px solid var(--border);border-radius:5px;background:var(--panel);display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="flex:1;color:var(--t2)">{{ hospitalCare.description }}</span><button onClick="{{ hospitalCare.heal }}" disabled="{{ hospitalCare.disabled }}" style="padding:7px 12px;background:var(--activebg);color:var(--activefg);border:1px solid var(--border3);border-radius:4px;font:inherit;cursor:pointer">{{ hospitalCare.label }}</button></div>
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.patient }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.reason }}</span><span></span></div>
-          <sc-for list="{{ patients }}" as="i" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }}</span><bdi style="color:var(--t4)">{{ i.lvl }}</bdi><bdi style="color:var(--gold)">{{ i.left }}</bdi><span style="color:var(--mu);font-size:11px">{{ i.reason }}</span><button onClick="{{ i.revive }}" disabled="{{ i.disabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.revive }} · 75</button></div></sc-for>
+        <div class="zone-panel" style="padding:10px;border:1px solid var(--border);border-radius:5px;background:var(--panel);display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span style="flex:1;color:var(--t2)">{{ hospitalCare.description }}</span><button onClick="{{ hospitalCare.heal }}" disabled="{{ hospitalCare.disabled }}" style="padding:7px 12px;background:var(--activebg);color:var(--activefg);border:1px solid var(--border3);border-radius:4px;font:inherit;cursor:pointer">{{ hospitalCare.label }}</button></div>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.patient }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.reason }}</span><span></span></div>
+          <sc-for list="{{ patients }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }}</span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><span data-label="{{ t.reason }}" style="color:var(--mu);font-size:11px">{{ i.reason }}</span><button onClick="{{ i.revive }}" disabled="{{ i.disabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.revive }} · 75</button></div></sc-for>
         </div>
       </sc-if>
 
       <!-- CASINO -->
       <sc-if value="{{ is.casino }}" hint-placeholder-val="{{ false }}">
         <div class="zone-content-split" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
             <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.highLow }}</div>
             <div style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px">
               <div style="width:90px;height:126px;border-radius:6px;background:linear-gradient(#f4f4f4,#d8d8d8);color:{{ casino.cardColor }};display:grid;place-items:center;font-size:44px;font-weight:700;box-shadow:0 4px 12px #000">{{ casino.card }}</div>
               <div style="display:flex;gap:6px"><sc-for list="{{ casino.bets }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.pick }}" style="background:{{ b.bg }};border:1px solid var(--border3);color:{{ b.fg }};border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer"><bdi>{{ b.label }}</bdi></button></sc-for></div>
-              <div style="display:flex;gap:8px"><button onClick="{{ casino.higher }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.higher }}</button><button onClick="{{ casino.lower }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.lower }}</button></div>
+              <div style="display:flex;gap:8px"><button class="zone-action-primary" onClick="{{ casino.higher }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.higher }}</button><button class="zone-action-danger" onClick="{{ casino.lower }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.lower }}</button></div>
               <div style="color:var(--t4);font-size:11px">{{ casino.msg }}</div>
             </div>
           </div>
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden">
             <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t2)">{{ t.casinoGames }}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px">
               <sc-for list="{{ casinoGames }}" as="g" hint-placeholder-count="6">
@@ -941,19 +636,19 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
       <!-- HALL OF FAME -->
       <sc-if value="{{ is.hof }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:11px;color:var(--mu)">{{ demoStandings }}</div>
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ t.networth }}</span><span>{{ t.faction }}</span></div>
-          <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi style="color:var(--t4)">{{ h.lvl }}</bdi><bdi style="color:var(--t4)">{{ h.stats }}</bdi><bdi style="color:var(--money)">{{ h.nw }}</bdi><span style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ t.networth }}</span><span>{{ t.faction }}</span></div>
+          <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div class="zone-table-row" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi style="color:var(--t4)">{{ h.lvl }}</bdi><bdi style="color:var(--t4)">{{ h.stats }}</bdi><bdi style="color:var(--money)">{{ h.nw }}</bdi><span style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
         </div>
       </sc-if>
 
       <!-- ELIMINATION -->
       <sc-if value="{{ is.elimination }}" hint-placeholder-val="{{ false }}">
         <div style="font-size:11px;color:var(--mu)">{{ demoStandings }}</div>
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div style="flex:1"><div style="color:var(--mu);font-size:11px">{{ t.yourTeam }}</div><div style="color:var(--t1);font-weight:700;font-size:15px">{{ elim.team }}</div></div><div style="text-align:end"><div style="color:var(--mu);font-size:11px">{{ t.roundEnds }}</div><bdi data-zfig="1" style="color:var(--gold);font-weight:600;font-size:21px">{{ elim.left }}</bdi></div></div>
-        <div data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.team }}</span><span>{{ t.score }}</span><span>{{ t.membersShort }}</span><span>{{ t.lives }}</span></div>
-          <sc-for list="{{ elim.teams }}" as="e" hint-placeholder-count="8"><div style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ e.bg }}"><bdi style="color:var(--t4)">{{ e.rank }}</bdi><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:{{ e.color }}"></span><span style="color:var(--t1)">{{ e.name }}</span></span><bdi style="color:var(--acc);font-weight:600">{{ e.score }}</bdi><bdi style="color:var(--t4)">{{ e.members }}</bdi><bdi style="color:var(--t4)">{{ e.lives }}</bdi></div></sc-for>
+        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap"><div style="flex:1"><div style="color:var(--mu);font-size:11px">{{ t.yourTeam }}</div><div style="color:var(--t1);font-weight:700;font-size:15px">{{ elim.team }}</div></div><div style="text-align:end"><div style="color:var(--mu);font-size:11px">{{ t.roundEnds }}</div><bdi data-zfig="1" style="color:var(--gold);font-weight:600;font-size:21px">{{ elim.left }}</bdi></div></div>
+        <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
+          <div class="zone-table-heading" style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.team }}</span><span>{{ t.score }}</span><span>{{ t.membersShort }}</span><span>{{ t.lives }}</span></div>
+          <sc-for list="{{ elim.teams }}" as="e" hint-placeholder-count="8"><div class="zone-table-row" style="display:grid;grid-template-columns:40px minmax(0,2fr) 100px 100px 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ e.bg }}"><bdi style="color:var(--t4)">{{ e.rank }}</bdi><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:{{ e.color }}"></span><span style="color:var(--t1)">{{ e.name }}</span></span><bdi style="color:var(--acc);font-weight:600">{{ e.score }}</bdi><bdi style="color:var(--t4)">{{ e.members }}</bdi><bdi style="color:var(--t4)">{{ e.lives }}</bdi></div></sc-for>
         </div>
       </sc-if>
 
@@ -969,7 +664,7 @@ html[data-theme="light"] .zone-header-link{color:#d6dedb!important}
         </div>
       </sc-if>
 
-      <div style="color:var(--mu2);font-size:11px;text-align:center;padding-top:10px">{{ t.footer }}</div>
+      <footer class="zone-footer" style="color:var(--mu2);font-size:11px;text-align:center;padding-top:10px">{{ t.footer }} <a href="dist/credits.html">{{ creditsLabel }}</a></footer>
     </main>
   </div>
 </div>
@@ -1277,7 +972,7 @@ const GI = {"knife":"M226.652 235.381l21.57-19.723c-21.518-19.505-39.248-5.543-4
 const LU = s => GI[s] || '';
 
 class Component extends DCLogic {
-  state = { screen: 'home', lang: 'en', theme: 'dark', mapMode: 'live', toast: null, fight: null, sel: 'revolver', itemTab: 'all', cat: 'search', tut: false, casino: { card: 7, bet: 1000, msg: 'start' }, tick: 0 };
+  state = { screen: 'home', lang: 'en', theme: 'dark', mapMode: 'live', toast: null, fight: null, sel: 'revolver', itemTab: 'all', cat: 'search', tut: false, navOpen: false, casino: { card: 7, bet: 1000, msg: 'start' }, tick: 0 };
   constructor(p) {
     super(p);
     this.territoryMap = buildTerritoryFallback();
@@ -1535,7 +1230,7 @@ class Component extends DCLogic {
     if (url.href !== window.location.href) window.history[replace ? 'replaceState' : 'pushState']({}, '', url.href);
   }
   go(s, updateHistory = true) { s = resolveLocationScreen(s); if (!SCREENS.includes(s)) return this.toast(this.state.lang === 'ar' ? 'هذه الخدمة غير متاحة حالياً.' : 'This service is currently unavailable.'); if (this.state.screen === 'city' && s !== 'city') this.mapVisibility(false);
-    this.setState({ screen: s, fight: null, result: null,
+    this.setState({ screen: s, navOpen: false, fight: null, result: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
     () => { if (updateHistory) this.syncRoute(s); this.bump('zone-main', 'zin .34s ease-out'); if (s === 'city') { this.pushMap(); this.mapVisibility(true); } });
     if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); }
@@ -1967,10 +1662,10 @@ class Component extends DCLogic {
     const { lang, screen } = this.state, t = T[lang], p = this.p, now = Date.now();
     const customPage = CUSTOM_PAGE_MAP[screen] || null;
     const jailed = now < p.jailUntil, hosp = now < p.hospUntil;
-    const bars = ['energy', 'nerve', 'happy', 'life'].map(k => { const c = this.cur(k), m = this.maxOf(k); const pct = Math.round(c / m * 100), on = Math.round(pct / 10); return { label: t[k], d: LU({ energy: 'str', nerve: 'skull', happy: 'casino', life: 'hospital' }[k]), pips: Array.from({ length: 10 }, (_, i) => ({ bg: i < on ? 'linear-gradient(' + BARS[k].c1 + ',' + BARS[k].c2 + ')' : 'var(--onAcc)', glow: i < on ? '0 0 4px ' + BARS[k].c1 + '66' : 'none' })), c1: BARS[k].c1, c2: BARS[k].c2, text: num(c) + ' / ' + num(m), pct, timer: c >= m ? t.full : fmt(t.inFmt, { n: this.barClock(k).rate, t: mmss(this.nextIn(k)) }) }; });
+    const bars = ['energy', 'nerve', 'happy', 'life'].map(k => { const c = this.cur(k), m = this.maxOf(k); const pct = Math.round(c / m * 100), on = Math.round(pct / 10); return { id: k, value: c, max: m, label: t[k], d: LU({ energy: 'str', nerve: 'skull', happy: 'casino', life: 'hospital' }[k]), pips: Array.from({ length: 10 }, (_, i) => ({ bg: i < on ? 'linear-gradient(' + BARS[k].c1 + ',' + BARS[k].c2 + ')' : 'var(--onAcc)', glow: i < on ? '0 0 4px ' + BARS[k].c1 + '66' : 'none' })), c1: BARS[k].c1, c2: BARS[k].c2, text: num(c) + ' / ' + num(m), pct, timer: c >= m ? t.full : fmt(t.inFmt, { n: this.barClock(k).rate, t: mmss(this.nextIn(k)) }) }; });
     const invCount = Object.keys(p.inv).filter(k => p.inv[k] > 0 && CAT[k]).length;
     const readyMissions = MISSIONS.filter(m => !p.claimed[m.id] && p.ctr[m.ctr] >= m.n).length;
-    const nav = SCREENS.map(s => ({ id: s, label: t.nav[s] || CUSTOM_PAGE_MAP[s]?.title?.[lang] || CUSTOM_PAGE_MAP[s]?.title?.en || s, d: LU(s) || LU('missions'), ic: s === screen ? 'var(--acc)' : 'var(--ico)', go: () => this.go(s), bg: s === screen ? 'var(--activebg)' : 'transparent', fg: s === screen ? 'var(--activefg)' : 'var(--t3)', edge: s === screen ? 'var(--acc)' : 'transparent', badge: s === 'items' ? invCount : s === 'missions' && readyMissions ? readyMissions : s === 'jail' ? this.inmates.filter(i => !i.out && i.until > now).length : '' }));
+    const nav = SCREENS.map(s => ({ id: s, current: s === screen ? 'page' : 'false', primary: ['home','city','crimes','items','faction'].includes(s), label: t.nav[s] || CUSTOM_PAGE_MAP[s]?.title?.[lang] || CUSTOM_PAGE_MAP[s]?.title?.en || s, d: LU(s) || LU('missions'), ic: s === screen ? 'var(--acc)' : 'var(--ico)', go: () => this.go(s), bg: s === screen ? 'var(--activebg)' : 'transparent', fg: s === screen ? 'var(--activefg)' : 'var(--t3)', edge: s === screen ? 'var(--acc)' : 'transparent', badge: s === 'items' ? invCount : s === 'missions' && readyMissions ? readyMissions : s === 'jail' ? this.inmates.filter(i => !i.out && i.until > now).length : '' }));
     const is = {}; BASE_SCREENS.forEach(s => { is[s] = s === screen; }); is.custom = !!customPage;
     const facName = t.teams[1], enemy = t.teams[2];
     const d = new Date(), clock = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(x => String(x).padStart(2, '0')).join(':');
@@ -1997,13 +1692,14 @@ class Component extends DCLogic {
     const tutKey = t.tut[screen] ? screen : 'default';
     const casino = this.state.casino;
     const view = {
-      t, clock, is, nav, bars, cityDisplay: is.city ? 'flex' : 'none', preview: IS_PREVIEW, previewNotice: PREVIEW_NOTICE[lang],
+      t, clock, is, nav, bars, currentScreen: screen, navigationExpanded: !!this.state.navOpen, navigationLabel: lang === 'ar' ? (this.state.navOpen ? 'إغلاق المناطق' : 'كل المناطق') : (this.state.navOpen ? 'Close areas' : 'All areas'), toggleNavigation: () => this.setState(state => ({ navOpen: !state.navOpen })), skipToContent: lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content', cityDisplay: is.city ? 'flex' : 'none', preview: IS_PREVIEW, previewNotice: PREVIEW_NOTICE[lang],
       connectionLabel: IS_PREVIEW ? (lang === 'ar' ? 'معاينة' : 'Preview') : (this.gameplayError || this.runtimeConnection === 'offline') ? (lang === 'ar' ? 'غير متصل · آخر تقدم محفوظ' : 'Offline · Last saved progress') : this.gameplayReady ? (lang === 'ar' ? 'متصل · تقدمك محفوظ' : 'Connected · Progress saved') : (lang === 'ar' ? 'جارٍ الاتصال...' : 'Connecting...'),
       travelStatus: { active: p.travel?.status === 'traveling', notice: lang === 'ar' ? 'تتاح الإجراءات بعد تأكيد الوصول. يمكنك استعراض المدينة والعناصر.' : 'Actions resume after arrival is confirmed. You can explore screens and inspect items.', label: (lang === 'ar' ? 'في الطريق إلى ' : 'Traveling to ') + this.cityName(p.travel?.destination || ''), left: this.travelRemaining() > 0 ? mmss(this.travelRemaining()) : (lang === 'ar' ? 'جارٍ تأكيد الوصول...' : 'Confirming arrival...') },
       hospitalCare,
       marketDiscount: (() => { const discount = Math.max(0, ...this.market.map(listing => Number(listing.discountBasisPoints || 0))) / 100; return discount > 0 ? (lang === 'ar' ? 'خصم أراضي عائلتك على أسعار التجار: ' : 'Your family territory discount on merchant prices: ') + discount + '%' : ''; })(),
       familyTerritories: { title: lang === 'ar' ? 'أراضي العائلة' : 'Family territories', description: lang === 'ar' ? 'استعرض ممتلكات عائلتك والقطاعات المجاورة.' : 'See your family holdings and neighboring blocks.', button: lang === 'ar' ? 'افتح الخريطة' : 'Open map', open: () => this.openFamilyTerritories() },
       demoBulletin: lang === 'ar' ? 'نشرة المدينة التجريبية' : 'Demo city bulletin',
+      creditsLabel: lang === 'ar' ? 'حقوق الأصول' : 'Asset credits',
       demoLabel: lang === 'ar' ? 'عرض تجريبي' : 'Demo',
       demoFaction: lang === 'ar' ? 'الأعضاء والرتبة نماذج تجريبية. الاحترام والترقيات والسلسلة تعكس تقدمك المحفوظ.' : 'Member roster and rank are samples. Respect, upgrades and chain reflect your saved progress.',
       demoStandings: lang === 'ar' ? 'ترتيب تجريبي بشخصيات وفرق خيالية.' : 'Sample standings with fictional characters and teams.',
