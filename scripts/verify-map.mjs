@@ -30,6 +30,26 @@ const territories = source(paths.territories, 'territory service');
 const router = source(paths.router, 'API router');
 const designCss = source(join(root, 'assets', 'zone-design.css'), 'shared visual system');
 
+// An iframe query key does not invalidate its separately cached JS requests.
+// Check the actual URL graph for the application-owned map entry points.
+const iframeRef = index.match(/src="(dist\/city-map-torn\.html[^\"]*)"/)?.[1];
+const mapUrl = new URL(iframeRef || 'dist/city-map-torn.html', 'https://zone.test/');
+const mapRevision = mapUrl.searchParams.get('v');
+check(!!mapRevision, 'The map iframe needs a release cache revision.');
+const localMapScripts = [...map.matchAll(/<script\s+src="([^\"]+)"/g)].map(match => match[1]).filter(ref => !/^https?:/.test(ref));
+const rendererRef = map.match(/import\(['"](\.\/city-landmarks\.js[^'"]*)['"]\)/)?.[1];
+const rendererSource = source(join(root, 'dist', 'city-landmarks.js'), 'city renderer');
+const layoutRef = rendererSource.match(/import\s+['"](\.\/city-layout\.js[^'"]*)['"]/)?.[1];
+for (const [label, ref, base] of localMapScripts.map(ref => [ref, ref, mapUrl]).concat([
+  ['city renderer', rendererRef, mapUrl],
+  ['city layout dependency', layoutRef, new URL(rendererRef || './city-landmarks.js', mapUrl)],
+])) {
+  const assetUrl = new URL(ref || '', base);
+  check(!!ref && assetUrl.searchParams.get('v') === mapRevision,
+    `${label} must request the same cache revision as the iframe; iframe cache keys do not propagate to scripts.`);
+  check(existsSync(join(root, decodeURIComponent(assetUrl.pathname))), `Missing versioned map asset: ${assetUrl.pathname}`);
+}
+
 function balancedBlockAfter(text, marker) {
   const markerAt = typeof marker === 'string' ? text.indexOf(marker) : text.search(marker);
   if (markerAt < 0) return '';
@@ -321,7 +341,7 @@ check(index.includes('class="zone-city-map-shell"'), 'Live city map must keep it
 check(/\.zone-city-map-shell\s*\{[^}]*height:\s*500px/.test(designCss),
   'Desktop map must retain the requested compact family viewport.');
 check(index.includes('allow="fullscreen" allowfullscreen'), 'Map iframe must authorize fullscreen mode.');
-check(index.includes('dist/map-icons.js') && map.includes('src="map-icons.js"') && map.includes('window.ZONE_MAP_ICONS'),
+check(index.includes('dist/map-icons.js') && localMapScripts.some(ref => new URL(ref, mapUrl).pathname.endsWith('/map-icons.js')) && map.includes('window.ZONE_MAP_ICONS'),
   'Parent and iframe must retain the shared semantic icon registry.');
 for (const icon of ['gym', 'education', 'jobs', 'attack', 'cash', 'market', 'casino', 'crimes', 'faction', 'hospital', 'jail', 'properties', 'items']) {
   check(new RegExp(`${icon}:\\s*['"]`).test(icons), `Canonical icon registry is missing: ${icon}.`);

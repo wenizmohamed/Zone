@@ -1,6 +1,6 @@
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import './city-layout.js';
+import './city-layout.js?v=65';
 
 const ASSET_ROOT = new URL('../assets/city/kaykit/',import.meta.url);
 const MODELS = ['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase','car_sedan','streetlight','watertower','bush'];

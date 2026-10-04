@@ -385,8 +385,8 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js"></script>
-<script src="territory-geometry.js"></script>
+<script src="map-icons.js?v=65"></script>
+<script src="territory-geometry.js?v=65"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -1210,7 +1210,7 @@ initializeMapLocale();
   function ensureCityLandmarks(){
     if(landmarkPending||!map.isStyleLoaded()||(landmarkController&&map.getLayer('zone-city-landmarks')))return;
     if(landmarkController){landmarkController.dispose();landmarkController=null;}
-    landmarkPending=import('./city-landmarks.js').then(function(module){return module.installCityLandmarks(map);}).then(function(controller){landmarkController=controller;landmarkVisibleState=null;if(controller){controller.setTerritories(territoryGeo(territoryData).features);syncLandmarkVisibility();}}).catch(function(error){document.body.dataset.zoneCityModelsError=String(error.message||error);console.warn('[ZONE city models]',error);}).finally(function(){landmarkPending=null;});
+    landmarkPending=import('./city-landmarks.js?v=65').then(function(module){return module.installCityLandmarks(map);}).then(function(controller){landmarkController=controller;landmarkVisibleState=null;if(controller){controller.setTerritories(territoryGeo(territoryData).features);syncLandmarkVisibility();}}).catch(function(error){document.body.dataset.zoneCityModelsError=String(error.message||error);console.warn('[ZONE city models]',error);}).finally(function(){landmarkPending=null;});
   }
   function installCustomLayers(){
     if(installingLayers||!map.isStyleLoaded())return;
