@@ -380,7 +380,7 @@ final class TerritoryService
         // Lock it before the war row to preserve one lock order on PostgreSQL.
         $this->database->execute('UPDATE territory_control SET version = version WHERE territory_id = :id', ['id' => $war['territory_id']]);
         $currentWar = $this->database->fetchOne("SELECT * FROM territory_wars WHERE id = :id AND state = 'active'", ['id' => $war['id']]);
-        if ($currentWar === null || ($reason === 'expired' && (string) $currentWar['ends_at'] > $now)) {
+        if ($currentWar === null || ($reason === 'expired' && strtotime((string) $currentWar['ends_at']) > strtotime($now))) {
             return;
         }
         $war = $currentWar;

@@ -90,6 +90,15 @@ try {
     $resolver = new ReflectionMethod(TerritoryService::class, 'resolveWar');
     $db->transaction(fn() => $resolver->invoke($service, $expiredWar, 'kings', 'expired'));
     proof(block($rival)['activeWar']['id'] === $newWar['id'] && block($rival)['version'] === $newVersion, 'stale expiry snapshot cannot touch a newer active war on the same block');
+    // PostgreSQL returns TIMESTAMPTZ with a space separator and its session
+    // offset, unlike gmdate('c'). A stale expiry candidate must recheck time.
+    $futurePgTimestamp = gmdate('Y-m-d') . ' 23:59:59-12';
+    $db->execute('UPDATE territory_wars SET ends_at = :ends WHERE id = :id', ['ends' => $futurePgTimestamp, 'id' => $newWar['id']]);
+    $candidate = $db->fetchOne('SELECT * FROM territory_wars WHERE id = :id', ['id' => $newWar['id']]);
+    $db->transaction(fn() => $resolver->invoke($service, $candidate, 'kings', 'expired'));
+    proof($db->fetchOne('SELECT state FROM territory_wars WHERE id = :id', ['id' => $newWar['id']])['state'] === 'active', 'PostgreSQL timestamp format cannot prematurely resolve a future war');
+    proof((int) $db->fetchOne('SELECT version FROM territory_control WHERE territory_id = :id', ['id' => $rival])['version'] === $newVersion, 'future PostgreSQL timestamp preserves territory version');
+    $db->execute('UPDATE territory_wars SET ends_at = :ends WHERE id = :id', ['ends' => $newWar['endsAt'], 'id' => $newWar['id']]);
     $db->execute("CREATE TRIGGER cross_war_deadline AFTER UPDATE ON territory_control WHEN NEW.version > OLD.version AND NEW.territory_id = '" . $rival . "' BEGIN UPDATE territory_wars SET ends_at = '2000-01-01T00:00:00+00:00' WHERE territory_id = NEW.territory_id AND state = 'active'; END");
     $beforeDeadlineEnergy = energy();
     rejects(fn() => act($rival, 'assault'), 'Territory state changed.', 'contribution crossing the deadline after eligibility is rejected');
