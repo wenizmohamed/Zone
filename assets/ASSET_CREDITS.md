@@ -52,3 +52,7 @@ Scene strips and the alley masthead reuse the existing project artwork in `../ar
 The existing Quaternius weapon catalog remains in use. The earlier mannequin remains available in source assets for compatibility, but the character viewer now loads the three licensed wardrobe models above. Its unused embedded mannequin payload was removed.
 
 The Mapbox basemap retains its own on-map attribution.
+
+## Detailed weapon models (2026-10-04)
+
+Five CC0 models by LonesomeDucky and khairul169. See [weapon provenance and original sources](weapons/premium/CREDITS.md). Static GLB conversion, browser texture optimization and character grip fitting by ZONE. Original geometry and authored PBR surface maps retained.
