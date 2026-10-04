@@ -1,0 +1,104 @@
+{
+  "file": "assets/weapons/premium/derringer/derringer.glb",
+  "sha256": "a0b0ff993b9730aa552272a5028c42053581b40e001d9afe30d62c88d5197446",
+  "bytes": 1108396,
+  "triangles": 1904,
+  "materialCount": 1,
+  "materials": [
+    {
+      "name": "Derringer_MATERIAL",
+      "normalTexture": {
+        "index": 0
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "name": "Derringer_NORMAL",
+      "mime": "image/png",
+      "bytes": 416066,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Derringer_AO-Derringer_ROUGHNESS-Derringer_METALNESS",
+      "mime": "image/png",
+      "bytes": 514219,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Derringer_BASE_COLOR",
+      "mime": "image/jpeg",
+      "bytes": 120506,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Derringer"
+    }
+  ],
+  "positions": [
+    {
+      "min": [
+        -0.007699905429035425,
+        -0.05736197903752327,
+        -0.06122979521751404
+      ],
+      "max": [
+        0.011151740327477455,
+        0.01266220398247242,
+        0.05990881845355034
+      ]
+    }
+  ],
+  "externalUris": [],
+  "geometryPreserved": true,
+  "geometryBufferSha256": [
+    "0e3d6c3d691b0be374c37a59faed2e2e849667573c6d52ffd7b59cefc07081ae",
+    "043f162f2375984a720b5fac5da5a70a98c9d8fa305a275f0806e9241f8ddfe0",
+    "1a542b88fb2077dc7607206d778393199e7703bcdeb163497e11d25b8d3731a7",
+    "ea285dbf371de34836575503eeb9cb005310e9efa50e554ad173030c20752d54"
+  ],
+  "modification": "PBR texture images capped at1024 pixels;8bit PNG normal/ORM;JPEG89 basecolor;mesh buffers unchanged",
+  "worldBounds": {
+    "min": [
+      -0.007699905429035425,
+      -0.05736197903752327,
+      -0.06122979521751404
+    ],
+    "max": [
+      0.011151740327477455,
+      0.01266220398247242,
+      0.05990881845355034
+    ],
+    "size": [
+      0.01885164575651288,
+      0.07002418301999569,
+      0.12113861367106438
+    ]
+  },
+  "skins": 0,
+  "animations": 0,
+  "headerValidated": true
+}

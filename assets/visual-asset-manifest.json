@@ -468,6 +468,56 @@
       "license": "MIT",
       "author": "Christopher Day",
       "modified": false
+    },
+    {
+      "path": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+      "bytes": 784412,
+      "sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd",
+      "source": "https://opengameart.org/content/old-wooden-baseball-bat",
+      "license": "CC0-1.0",
+      "author": "LonesomeDucky",
+      "modified": true,
+      "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
+    },
+    {
+      "path": "assets/weapons/premium/akm/akm.glb",
+      "bytes": 2529204,
+      "sha256": "50f1d6a0f08e5966ee28317d0de74454fa1473375883a81cd2b80521393819c5",
+      "source": "https://opengameart.org/content/weathered-akm-rifle",
+      "license": "CC0-1.0",
+      "author": "LonesomeDucky",
+      "modified": true,
+      "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
+    },
+    {
+      "path": "assets/weapons/premium/detective-special/detective-special.glb",
+      "bytes": 2607420,
+      "sha256": "f0bdcbacf37981cf132e1a9ab8e0bc28b49a4386676b21838e4b6d4df34296cf",
+      "source": "https://opengameart.org/content/detective-special-revolver",
+      "license": "CC0-1.0",
+      "author": "LonesomeDucky",
+      "modified": true,
+      "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
+    },
+    {
+      "path": "assets/weapons/premium/derringer/derringer.glb",
+      "bytes": 1108396,
+      "sha256": "a0b0ff993b9730aa552272a5028c42053581b40e001d9afe30d62c88d5197446",
+      "source": "https://opengameart.org/content/derringer-pistol",
+      "license": "CC0-1.0",
+      "author": "LonesomeDucky",
+      "modified": true,
+      "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
+    },
+    {
+      "path": "assets/weapons/premium/m9-knife/m9-knife.glb",
+      "bytes": 4084324,
+      "sha256": "2d22ca8e44c998abbf10ce677fd697c59f9adda6e1f8fd95332d57c05db46f56",
+      "source": "https://opengameart.org/content/m9-knife-pbr",
+      "license": "CC0-1.0",
+      "author": "khairul169",
+      "modified": true,
+      "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
     }
   ]
 }

@@ -1,0 +1,45 @@
+{
+  "source_page": "https://opengameart.org/content/derringer-pistol",
+  "author": "LonesomeDucky",
+  "license": "CC0-1.0",
+  "archive_url": "https://opengameart.org/sites/default/files/derringer.zip",
+  "archive_bytes": 7946941,
+  "archive_sha256": "f8ead723bc7218e1f54957d24df4b5d108373222ceeee6f6e17cb9ae898e9de1",
+  "archive_members": [
+    {
+      "path": "derringer.blend",
+      "bytes": 4306723
+    },
+    {
+      "path": "derringer.glb",
+      "bytes": 3708672
+    }
+  ],
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "verified": "2026-10-04",
+  "runtime": {
+    "url": "assets/weapons/premium/derringer/derringer.glb",
+    "sha256": "a0b0ff993b9730aa552272a5028c42053581b40e001d9afe30d62c88d5197446",
+    "bytes": 1108396,
+    "gripPoint": [
+      0,
+      -0.035,
+      0.047
+    ],
+    "gripSpace": "GLTF scene world coordinates after authored node transforms",
+    "scale": 1.15,
+    "rotationEulerXYZ": [
+      0,
+      -1.5707963267948966,
+      0
+    ],
+    "authoredForward": "-Z",
+    "canonicalForward": "+X",
+    "up": "+Y",
+    "skins": 0,
+    "animations": 0,
+    "externalResources": [],
+    "gripStatus": "Estimated from actual mesh side projection; final rendered contact requires viewer verification"
+  },
+  "conversion": "Static mesh GLB; original geometry preserved; embedded PBR textures capped at 1024 pixels (bat 256x1024). Basecolor JPEG; normal/metallic-roughness PNG. Blender run with --disable-autoexec."
+}

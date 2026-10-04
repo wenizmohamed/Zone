@@ -1,0 +1,50 @@
+{
+  "source_page": "https://opengameart.org/content/old-wooden-baseball-bat",
+  "archive_url": "https://opengameart.org/sites/default/files/baseball_bat.zip",
+  "archive_bytes": 15601528,
+  "archive_sha256": "07f95fab8895b87f78e300e0c740c28c264573c57a4aa6a0e6adf4fbbdf4d6c1",
+  "license": "CC0-1.0",
+  "downloaded_utc": "2026-10-04",
+  "archive_members": [
+    {
+      "path": "baseball_bat.blend",
+      "bytes": 9237724
+    },
+    {
+      "path": "baseball_bat.glb",
+      "bytes": 7719952
+    },
+    {
+      "path": "baseball_bat_psx.glb",
+      "bytes": 11480
+    }
+  ],
+  "author": "LonesomeDucky",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "verified": "2026-10-04",
+  "runtime": {
+    "url": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+    "sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd",
+    "bytes": 784412,
+    "gripPoint": [
+      0,
+      -0.03178096,
+      0
+    ],
+    "gripSpace": "GLTF scene world coordinates after authored node transforms",
+    "scale": 0.8395,
+    "rotationEulerXYZ": [
+      0,
+      0,
+      0
+    ],
+    "authoredForward": "+Y",
+    "canonicalForward": "+Y",
+    "up": "+Y",
+    "skins": 0,
+    "animations": 0,
+    "externalResources": [],
+    "gripStatus": "Estimated from actual mesh side projection; final rendered contact requires viewer verification"
+  },
+  "conversion": "Static mesh GLB; original geometry preserved; embedded PBR textures capped at 1024 pixels (bat 256x1024). Basecolor JPEG; normal/metallic-roughness PNG. Blender run with --disable-autoexec."
+}

@@ -1,0 +1,105 @@
+{
+  "file": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+  "sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd",
+  "bytes": 784412,
+  "triangles": 416,
+  "materialCount": 1,
+  "materials": [
+    {
+      "name": "Material",
+      "normalTexture": {
+        "index": 0
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "name": "BaseballBat_NORMAL",
+      "mime": "image/png",
+      "bytes": 371210,
+      "dimensions": [
+        256,
+        1024
+      ]
+    },
+    {
+      "name": "BaseballBat_AO-BaseballBat_ROUGHNESS-BaseballBat_METALNESS",
+      "mime": "image/png",
+      "bytes": 328203,
+      "dimensions": [
+        256,
+        1024
+      ]
+    },
+    {
+      "name": "BaseballBat_BASE_COLOR",
+      "mime": "image/jpeg",
+      "bytes": 68336,
+      "dimensions": [
+        256,
+        1024
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "BaseballBat"
+    }
+  ],
+  "positions": [
+    {
+      "min": [
+        -0.035564836114645004,
+        -0.13898763060569763,
+        -0.035564832389354706
+      ],
+      "max": [
+        0.035564836114645004,
+        0.6731090545654297,
+        0.0355648398399353
+      ]
+    }
+  ],
+  "externalUris": [],
+  "geometryPreserved": true,
+  "geometryBufferSha256": [
+    "5052c4d46082af186c9b7c11ef781825df9becfb776fea940b93304fc8b9569d",
+    "5ec3ef84589f2d7cb01ad393f3b8526d21991644b1bad3c97563153fdd79392d",
+    "320b8ddb12afb692ece0e98258df03a3f8ef534441e619031b9899aceefa88eb",
+    "7544ab6c3ac7b346e4f4626045d2ff9b6d50c83fc225d43c6df8a93c3198dad8",
+    "5ace79f2b74264e251e217f492109f46cd3c196c20c2657381a35cca7da977d2"
+  ],
+  "modification": "PBR texture images capped at1024 pixels;8bit PNG normal/ORM;JPEG89 basecolor;mesh buffers unchanged",
+  "worldBounds": {
+    "min": [
+      -0.035564836114645004,
+      -0.13898763060569763,
+      -0.035564832389354706
+    ],
+    "max": [
+      0.035564836114645004,
+      0.6731090545654297,
+      0.0355648398399353
+    ],
+    "size": [
+      0.07112967222929001,
+      0.8120966851711273,
+      0.07112967222929001
+    ]
+  },
+  "skins": 0,
+  "animations": 0,
+  "headerValidated": true
+}

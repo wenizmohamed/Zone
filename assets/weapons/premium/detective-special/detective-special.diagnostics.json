@@ -1,0 +1,163 @@
+{
+  "file": "assets/weapons/premium/detective-special/detective-special.glb",
+  "sha256": "f0bdcbacf37981cf132e1a9ab8e0bc28b49a4386676b21838e4b6d4df34296cf",
+  "bytes": 2607420,
+  "triangles": 4604,
+  "materialCount": 2,
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Revolver",
+      "normalTexture": {
+        "index": 0
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Bullet",
+      "normalTexture": {
+        "index": 3
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 4
+        },
+        "metallicRoughnessTexture": {
+          "index": 5
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "name": "RevolverNormals",
+      "mime": "image/png",
+      "bytes": 905922,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "AO-Roughness-Metalness",
+      "mime": "image/png",
+      "bytes": 566765,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "RevolverBaseColor",
+      "mime": "image/jpeg",
+      "bytes": 125333,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "BulletNormal",
+      "mime": "image/png",
+      "bytes": 600135,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "BulletBaseColor",
+      "mime": "image/jpeg",
+      "bytes": 85477,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "BulletRoughness",
+      "mime": "image/png",
+      "bytes": 184335,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Revolver"
+    }
+  ],
+  "positions": [
+    {
+      "min": [
+        -0.01945050060749054,
+        -0.06640347838401794,
+        -0.09049949049949646
+      ],
+      "max": [
+        0.019440634176135063,
+        0.06232132017612457,
+        0.09700481593608856
+      ]
+    },
+    {
+      "min": [
+        -0.016338013112545013,
+        0.017899703234434128,
+        -0.026873815804719925
+      ],
+      "max": [
+        0.01634189486503601,
+        0.05384090542793274,
+        0.010931960307061672
+      ]
+    }
+  ],
+  "externalUris": [],
+  "geometryPreserved": true,
+  "geometryBufferSha256": [
+    "8ea88601873216465e86b0e8860260c8b8db5f41fdc55a25bf723de215b14b05",
+    "f21f28d06c59d9ea0c354c503e2c20cad9e5bb4507e3e1f809b9405af6d4831a",
+    "1ea7373fb065c347ab06cd7d7e85b8adf4d62164f869e19a39ae51f54dde6123",
+    "7853699a21fab0f8b865b0a20c2981cc9a7511aa2e358ed055fa1896bfd79fb7",
+    "c8f2e1031a7028b03797ae7b16d3ebcac48fc1da54f9bd6991044e9e87626186",
+    "10273580ece81a7aa056f738bd38b595b0d9025f224a29b78e94fe7bb35ee4d2",
+    "31c6626df0bd1213d4e55fbb451aee3039a849877d7e3b4d136f73d5b17dcd8d",
+    "215aa501f0deda05cef933598828adbda3dec99d9652206f610480b0ab7c049f"
+  ],
+  "modification": "PBR texture images capped at1024 pixels;8bit PNG normal/ORM;JPEG89 basecolor;mesh buffers unchanged",
+  "worldBounds": {
+    "min": [
+      -0.01945050060749054,
+      -0.06640347838401794,
+      -0.09049949049949646
+    ],
+    "max": [
+      0.019440634176135063,
+      0.06232132017612457,
+      0.09700481593608856
+    ],
+    "size": [
+      0.0388911347836256,
+      0.12872479856014252,
+      0.18750430643558502
+    ]
+  },
+  "skins": 0,
+  "animations": 0,
+  "headerValidated": true
+}

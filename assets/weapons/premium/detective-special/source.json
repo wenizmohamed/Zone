@@ -1,0 +1,35 @@
+{
+  "source_page": "https://opengameart.org/content/detective-special-revolver",
+  "author": "LonesomeDucky",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "verified": "2026-10-04",
+  "archive_url": "https://opengameart.org/sites/default/files/detectivespecial46.blend",
+  "archive_bytes": 6943775,
+  "archive_sha256": "d5bfb3f5b095db57da2d01f546f8a033e672aad02a1abc57728c269b2e4052c0",
+  "conversion": "Static mesh GLB; original geometry preserved; embedded PBR textures capped at 1024 pixels (bat 256x1024). Basecolor JPEG; normal/metallic-roughness PNG. Blender run with --disable-autoexec.",
+  "runtime": {
+    "url": "assets/weapons/premium/detective-special/detective-special.glb",
+    "sha256": "f0bdcbacf37981cf132e1a9ab8e0bc28b49a4386676b21838e4b6d4df34296cf",
+    "bytes": 2607420,
+    "gripPoint": [
+      0,
+      -0.028,
+      0.069
+    ],
+    "gripSpace": "GLTF scene world coordinates after authored node transforms",
+    "scale": 1.15,
+    "rotationEulerXYZ": [
+      0,
+      -1.5707963267948966,
+      0
+    ],
+    "authoredForward": "-Z",
+    "canonicalForward": "+X",
+    "up": "+Y",
+    "skins": 0,
+    "animations": 0,
+    "externalResources": [],
+    "gripStatus": "Estimated from actual mesh side projection; final rendered contact requires viewer verification"
+  }
+}

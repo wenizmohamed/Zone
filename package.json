@@ -12,10 +12,11 @@
     "verify:viewers": "node --test scripts/test-viewer-runtime.mjs",
     "verify:visual": "node --test scripts/test-territory-geometry.mjs scripts/test-city-layout.mjs",
     "build": "node scripts/build.mjs",
-    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:modules && npm run verify:viewers && npm run verify:visual && npm run build && node scripts/verify.mjs public",
+    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:modules && npm run verify:viewers && npm run verify:visual && npm run verify:weapons && npm run build && node scripts/verify.mjs public",
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
     "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
-    "verify:platform": "powershell -ExecutionPolicy Bypass -File scripts/verify-platform.ps1"
+    "verify:platform": "powershell -ExecutionPolicy Bypass -File scripts/verify-platform.ps1",
+    "verify:weapons": "node --test scripts/test-weapon-assets.mjs"
   },
   "engines": {
     "node": "22.x"

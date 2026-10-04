@@ -1,0 +1,122 @@
+{
+  "source_page": "https://opengameart.org/content/m9-knife-pbr",
+  "archive_url": "https://opengameart.org/sites/default/files/m9_knife.zip",
+  "archive_bytes": 20538102,
+  "archive_sha256": "c22e5be98e937a5b135209fb2af6fbfa2bdd0e0f7069c08fbf9870a4e4ae8145",
+  "license": "CC0-1.0",
+  "downloaded_utc": "2026-10-04",
+  "archive_members": [
+    {
+      "path": "preview.jpg",
+      "bytes": 141766
+    },
+    {
+      "path": "Scene/",
+      "bytes": 0
+    },
+    {
+      "path": "Scene/M9 Knife.scn",
+      "bytes": 27419
+    },
+    {
+      "path": "Scene/Materials/",
+      "bytes": 0
+    },
+    {
+      "path": "Scene/Materials/Handle.material",
+      "bytes": 1001
+    },
+    {
+      "path": "Scene/Materials/Knife.material",
+      "bytes": 997
+    },
+    {
+      "path": "Textures/",
+      "bytes": 0
+    },
+    {
+      "path": "Textures/Handle_albedo.png",
+      "bytes": 2505388
+    },
+    {
+      "path": "Textures/Handle_ao.png",
+      "bytes": 1054416
+    },
+    {
+      "path": "Textures/Handle_metallic.png",
+      "bytes": 759702
+    },
+    {
+      "path": "Textures/Handle_nm.png",
+      "bytes": 4117320
+    },
+    {
+      "path": "Textures/Handle_roughness.png",
+      "bytes": 2112877
+    },
+    {
+      "path": "Textures/Knife_albedo.png",
+      "bytes": 2525423
+    },
+    {
+      "path": "Textures/Knife_ao.png",
+      "bytes": 790438
+    },
+    {
+      "path": "Textures/Knife_metallic.png",
+      "bytes": 1126309
+    },
+    {
+      "path": "Textures/Knife_nm.png",
+      "bytes": 3121274
+    },
+    {
+      "path": "Textures/Knife_roughness.png",
+      "bytes": 1519907
+    },
+    {
+      "path": "editor_scene.jpg",
+      "bytes": 160520
+    },
+    {
+      "path": "m9_knife.blend",
+      "bytes": 1926344
+    },
+    {
+      "path": "m9_knife.mtl",
+      "bytes": 548
+    },
+    {
+      "path": "m9_knife.obj",
+      "bytes": 119300
+    }
+  ],
+  "author": "khairul169",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "verified": "2026-10-04",
+  "runtime": {
+    "url": "assets/weapons/premium/m9-knife/m9-knife.glb",
+    "sha256": "2d22ca8e44c998abbf10ce677fd697c59f9adda6e1f8fd95332d57c05db46f56",
+    "bytes": 4084324,
+    "gripPoint": [
+      -3.4,
+      0.28,
+      0
+    ],
+    "gripSpace": "GLTF scene world coordinates after authored node transforms",
+    "scale": 0.025,
+    "rotationEulerXYZ": [
+      0,
+      0,
+      0
+    ],
+    "authoredForward": "+X",
+    "canonicalForward": "+X",
+    "up": "+Y",
+    "skins": 0,
+    "animations": 0,
+    "externalResources": [],
+    "gripStatus": "Estimated from actual mesh side projection; final rendered contact requires viewer verification"
+  },
+  "conversion": "Static mesh GLB; original geometry preserved; embedded PBR textures capped at 1024 pixels (bat 256x1024). Basecolor JPEG; normal/metallic-roughness PNG. Blender run with --disable-autoexec."
+}

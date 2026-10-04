@@ -1,0 +1,35 @@
+{
+  "source_page": "https://opengameart.org/content/weathered-akm-rifle",
+  "author": "LonesomeDucky",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "verified": "2026-10-04",
+  "archive_url": "https://opengameart.org/sites/default/files/akm54.blend",
+  "archive_bytes": 42527467,
+  "archive_sha256": "4fe01a2cc27c6d31136e7a776fcef56fc9d336dd0d93e128b2f42778e94cf4d6",
+  "conversion": "Static mesh GLB; original geometry preserved; embedded PBR textures capped at 1024 pixels (bat 256x1024). Basecolor JPEG; normal/metallic-roughness PNG. Blender run with --disable-autoexec.",
+  "runtime": {
+    "url": "assets/weapons/premium/akm/akm.glb",
+    "sha256": "50f1d6a0f08e5966ee28317d0de74454fa1473375883a81cd2b80521393819c5",
+    "bytes": 2529204,
+    "gripPoint": [
+      0,
+      -0.1,
+      0.192
+    ],
+    "gripSpace": "GLTF scene world coordinates after authored node transforms",
+    "scale": 1,
+    "rotationEulerXYZ": [
+      0,
+      -1.5707963267948966,
+      0
+    ],
+    "authoredForward": "-Z",
+    "canonicalForward": "+X",
+    "up": "+Y",
+    "skins": 0,
+    "animations": 0,
+    "externalResources": [],
+    "gripStatus": "Estimated from actual mesh side projection; final rendered contact requires viewer verification"
+  }
+}

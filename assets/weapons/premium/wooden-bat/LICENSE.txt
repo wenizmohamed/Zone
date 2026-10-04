@@ -1,0 +1,6 @@
+Public domain dedication: CC0 1.0 Universal
+Author: LonesomeDucky
+Work source: https://opengameart.org/content/old-wooden-baseball-bat
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Verified on the original author submission, 2026-10-04.
+Original geometry retained. Runtime texture images resized/re-encoded for browser loading.

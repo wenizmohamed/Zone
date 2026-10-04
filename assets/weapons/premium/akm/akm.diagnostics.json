@@ -1,0 +1,111 @@
+{
+  "file": "assets/weapons/premium/akm/akm.glb",
+  "sha256": "50f1d6a0f08e5966ee28317d0de74454fa1473375883a81cd2b80521393819c5",
+  "bytes": 2529204,
+  "triangles": 5322,
+  "materialCount": 1,
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Material",
+      "normalTexture": {
+        "index": 0
+      },
+      "occlusionTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "name": "Material_Normal",
+      "mime": "image/png",
+      "bytes": 1200755,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Material_AmbientOcclusion-Material_Roughness-Material_Metallic",
+      "mime": "image/png",
+      "bytes": 979264,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Material_BaseColor",
+      "mime": "image/jpeg",
+      "bytes": 183684,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "AKM",
+      "rotation": [
+        0,
+        -0.7071067094802856,
+        0,
+        0.7071068286895752
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "min": [
+        -0.489528089761734,
+        -0.22331029176712036,
+        -0.03643245995044708
+      ],
+      "max": [
+        0.482805997133255,
+        0.05052010715007782,
+        0.01762225478887558
+      ]
+    }
+  ],
+  "externalUris": [],
+  "geometryPreserved": true,
+  "geometryBufferSha256": [
+    "f609efc486380ff26264e39a9c1978f3ad973c78bb11e1e49f3ce51077e9d214",
+    "6cfe371c097c6e4edcac68cb9e774b0a72c65c28112f29e175cc1aa9e44771fd",
+    "cc3c447fe0a63b0f76cefb5a384e02e0f0290465ed91f7569a7eba3c8a52e51e",
+    "3e0ca8f22b936002e135ba0da8a3ac2dd9ed3646b7ad0d022d20fc7453222aad"
+  ],
+  "modification": "PBR texture images capped at1024 pixels;8bit PNG normal/ORM;JPEG89 basecolor;mesh buffers unchanged",
+  "worldBounds": {
+    "min": [
+      -0.017622251371277344,
+      -0.22331029176712036,
+      -0.4895280731948147
+    ],
+    "max": [
+      0.03643245335310653,
+      0.05052010715007782,
+      0.48280598196141405
+    ],
+    "size": [
+      0.05405470472438387,
+      0.2738303989171982,
+      0.9723340551562287
+    ]
+  },
+  "skins": 0,
+  "animations": 0,
+  "headerValidated": true
+}

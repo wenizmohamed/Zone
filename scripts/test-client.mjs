@@ -277,7 +277,7 @@ test('both embedded 3D viewer message handlers reject foreign origins and siblin
     const template = JSON.parse(packed.match(/<script type="__bundler\/template">\s*([\s\S]*?)\s*<\/script>/)[1]);
     const handler = template.match(/addEventListener\('message', e => \{([\s\S]*?)\}\);/)[1];
     const parent = {}, changes = [];
-    const context = createContext({ parent, location: { origin: 'http://zone.test' }, setLanguage: lang => changes.push(lang), stage: { setLanguage: lang => changes.push(lang) }, setBg() {}, bg() {}, document: { documentElement: {} } });
+    const context = createContext({ parent, location: { origin: 'http://zone.test' }, setLanguage: lang => changes.push(lang), stage: { dataset: { zoneAssetState: 'ready' }, setLanguage: lang => changes.push(lang) }, itemStatus() {}, setBg() {}, bg() {}, document: { documentElement: {} } });
     runInContext(`globalThis.receive = e => {${handler}};`, context);
     context.receive({ source: parent, origin: 'https://foreign.test', data: { lang: 'ar' } });
     context.receive({ source: {}, origin: 'http://zone.test', data: { lang: 'ar' } });

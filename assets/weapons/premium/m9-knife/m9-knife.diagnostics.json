@@ -1,0 +1,166 @@
+{
+  "file": "assets/weapons/premium/m9-knife/m9-knife.glb",
+  "sha256": "2d22ca8e44c998abbf10ce677fd697c59f9adda6e1f8fd95332d57c05db46f56",
+  "bytes": 4084324,
+  "triangles": 1752,
+  "materialCount": 2,
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "Knife",
+      "normalTexture": {
+        "index": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 1
+        },
+        "metallicRoughnessTexture": {
+          "index": 2
+        }
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "Handle",
+      "normalTexture": {
+        "index": 3
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 4
+        },
+        "metallicRoughnessTexture": {
+          "index": 5
+        }
+      }
+    }
+  ],
+  "textures": [
+    {
+      "name": "Knife_nm",
+      "mime": "image/png",
+      "bytes": 790205,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Knife_albedo",
+      "mime": "image/jpeg",
+      "bytes": 145225,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Knife_metallic-Knife_roughness",
+      "mime": "image/png",
+      "bytes": 787671,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Handle_nm",
+      "mime": "image/png",
+      "bytes": 1143720,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Handle_albedo",
+      "mime": "image/jpeg",
+      "bytes": 140159,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "name": "Handle_metallic-Handle_roughness",
+      "mime": "image/png",
+      "bytes": 1012741,
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "M9_Knife_Cube.003",
+      "rotation": [
+        0.7071068286895752,
+        0,
+        0,
+        0.7071068286895752
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "min": [
+        -0.7909409999847412,
+        -0.12159600108861923,
+        -0.8923370242118835
+      ],
+      "max": [
+        6.123869895935059,
+        0.10022799670696259,
+        0.3356249928474426
+      ]
+    },
+    {
+      "min": [
+        -5.904651165008545,
+        -0.577301025390625,
+        -1.8625450134277344
+      ],
+      "max": [
+        -0.7770730257034302,
+        0.577301025390625,
+        1.007936954498291
+      ]
+    }
+  ],
+  "externalUris": [],
+  "geometryPreserved": true,
+  "geometryBufferSha256": [
+    "331425deab4ad19427df84c05cbcdb8062f619cdf82c87d2ac50d11fd1bfebb6",
+    "d264a877bf144decfd39ba45d688371ee3635243b39ffd65ca808b4e51934926",
+    "7ca5d9209978ea58041e178f0307cdb72a8fce2034e76f38414ceb0ae7aaa03d",
+    "509c6d9676510cc2da63cd71050f4a11541721c46da1370a0e2ab6bd9e2238e1",
+    "473ea6710a33d525c1fc8632e224ab273cf2dd05014ad8dc63c4bb9f2dfd4d2e",
+    "beb74a5e073ae936d2d8e52c3329abdebc7642d7420103d3ff7a7eb22835c255",
+    "087fc20068622743832ea1a57db67ec3176e83901aa73e6caec251fa4ed85511",
+    "7f08ce8f5ce6f5f866389f05c96a9112f9e34be36026a998397bd91a34c923d2"
+  ],
+  "modification": "PBR texture images capped at1024 pixels;8bit PNG normal/ORM;JPEG89 basecolor;mesh buffers unchanged",
+  "worldBounds": {
+    "min": [
+      -5.904651165008545,
+      -1.00793712125133,
+      -0.5773010384939765
+    ],
+    "max": [
+      6.123869895935059,
+      1.8625452636771525,
+      0.5773011674182846
+    ],
+    "size": [
+      12.028521060943604,
+      2.8704823849284824,
+      1.1546022059122611
+    ]
+  },
+  "skins": 0,
+  "animations": 0,
+  "headerValidated": true
+}
