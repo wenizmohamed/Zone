@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { createPlacements, insidePolygon } = require('../dist/city-layout.js');
+const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements } = require('../dist/city-layout.js');
 const cell = (id, x=0) => ({type:'Feature',id,properties:{ownerId:'vipers'},geometry:{type:'Polygon',coordinates:[[[x,0],[x+1,0],[x+1,1],[x,1],[x,0]]]}});
 
 test('placements are deterministic and remain within their authoritative blocks',()=>{
@@ -13,7 +13,7 @@ test('placements are deterministic and remain within their authoritative blocks'
   for(const p of a){
     const block=data.find(f=>f.id===p.blockId);
     assert.ok(insidePolygon(p.coordinates,block.geometry.coordinates));
-    assert.ok(Number.isFinite(p.width) && p.width>0 && p.width<=42);
+    assert.ok(Number.isFinite(p.width) && p.width>0 && p.width<=140);
   }
 });
 test('holes and malformed features never receive invented model placements',()=>{
@@ -26,7 +26,7 @@ test('generation is bounded and does not mutate or infer faction ownership',()=>
   const f=cell('immutable'),before=JSON.stringify(f);
   const placements=createPlacements([f]);
   assert.equal(JSON.stringify(f),before);
-  assert.ok(placements.length<=6);
+  assert.ok(placements.length<=30);
   assert.ok(placements.every(p=>!('ownerId' in p)));
   assert.deepEqual(createPlacements([]),[]);
 });
@@ -39,7 +39,6 @@ const edgeBlocks=[
 test('full rotated model footprints stay inside the two real edge regression blocks',()=>{
   const placements=createPlacements(edgeBlocks);
   assert.ok(placements.length>0,'retain safe landmarks');
-  assert.equal(placements.filter(p=>p.model==='car_sedan').length,0,'omit both edge sedans');
   // Independently reproduce the renderer shared-origin scaling, then sample every
   // edge of the conservative X/Z bounding square after the instance rotation.
   const originLat=placements.reduce((sum,p)=>sum+p.coordinates[1],0)/placements.length;
@@ -62,7 +61,43 @@ test('a hole enclosed by a footprint rejects that placement even with its center
   const hole=[[x+d,y-d*.1],[x+d*1.2,y-d*.1],[x+d*1.2,y+d*.1],[x+d,y+d*.1],[x+d,y-d*.1]];
   feature.geometry.coordinates.push(hole);
   assert.ok(insidePolygon(sedan.coordinates,feature.geometry.coordinates));
-  assert.equal(createPlacements([feature]).some(p=>p.model==='car_sedan'),false);
+  assert.equal(createPlacmentsAtSedan(createPlacements([feature]),sedan),false);
   feature.geometry.coordinates[1][0][0]=NaN;
   assert.deepEqual(createPlacements([feature]),[]);
+});
+
+function createPlacmentsAtSedan(placements,sedan){return placements.some(p=>p.model==='car_sedan'&&p.coordinates[0]===sedan.coordinates[0]&&p.coordinates[1]===sedan.coordinates[1]);}
+
+test('real city cells contain readable varied building clusters instead of two tiny landmarks',()=>{
+  const buildings=createPlacements(edgeBlocks).filter(p=>p.model.startsWith('building_'));
+  for(const block of edgeBlocks){
+    const cluster=buildings.filter(p=>p.blockId===block.id);
+    assert.ok(cluster.length>=8,`${block.id} must read as a neighborhood`);
+    assert.ok(cluster.every(p=>p.width>=50&&p.width<=140),'strategy-scale buildings stay readable');
+    assert.ok(new Set(cluster.map(p=>p.model)).size>=3,'varied roofline uses real kit variants');
+    assert.ok(new Set(cluster.map(p=>p.heightScale)).size>=8,'neighborhood roofline must not repeat four identical heights');
+  }
+});
+
+test('streets use filled internal ground geometry without territory boundary strokes',()=>{
+  const streets=createStreets(edgeBlocks);
+  assert.ok(streets.features.length>=2);
+  assert.ok(streets.features.every(f=>f.geometry.type==='Polygon'&&f.properties.kind==='street'),'no pale paving strips');
+  for(const feature of streets.features){
+    const source=edgeBlocks.find(f=>f.id===feature.properties.blockId);
+    const points=feature.geometry.coordinates[0].slice(0,-1),center=points.reduce((s,p)=>[s[0]+p[0]/points.length,s[1]+p[1]/points.length],[0,0]);
+    assert.ok(insidePolygon(center,source.geometry.coordinates),'street belongs to its authoritative cell');
+    assert.ok(points.every(p=>insidePolygon(p,source.geometry.coordinates)),'local roads never trace or form a cross-cell grid at the block edges');
+  }
+});
+
+test('view culling preserves state and enforces explicit mobile geometry budgets',()=>{
+  const data=Array.from({length:1000},(_,i)=>({blockId:String(i),model:i%2?'building_A_withoutBase':'car_sedan',coordinates:[i%30,i%20],width:80}));
+  data.push({model:'building_G_withoutBase',coordinates:[Number.MAX_VALUE,Number.MAX_VALUE]});
+  const before=JSON.stringify(data);
+  const selected=selectVisiblePlacements(data,{width:390,height:400,mobile:true,project:p=>({x:p[0]*12,y:p[1]*20})});
+  assert.ok(selected.filter(p=>p.model.startsWith('building_')).length<=140);
+  assert.ok(selected.filter(p=>!p.model.startsWith('building_')).length<=80);
+  assert.ok(selected.every(p=>data.includes(p)&&p.coordinates[0]!==Number.MAX_VALUE));
+  assert.equal(JSON.stringify(data),before);
 });

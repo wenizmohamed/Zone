@@ -10,7 +10,7 @@ const html = readFileSync(resolve(root, 'index.html'), 'utf8');
 const source = html.match(/<script type="text\/x-dc"[^>]*>([\s\S]*?)<\/script>/)[1];
 const catalog = readFileSync(resolve(root, 'assets/weapons/catalog.js'), 'utf8');
 
-function game({ manifest = {}, fetchImpl, now = 1800000, preview = false, liveSave, route = '' } = {}) {
+function game({ manifest = {}, fetchImpl, now = 1800000, preview = false, liveSave, route = '', modules = false } = {}) {
   const frames = Object.fromEntries(['zone-city-map', 'zone-char-3d', 'zone-item-3d'].map(id => [id, { contentWindow: { postMessage(data, origin) { messages.push({ id, data, origin }); } } }]));
   const messages = [], timers = [], intervals = [], calls = [], storage = new Map(), listeners = {}, history = [];
   const location = new URL('http://zone.test/' + (preview ? '?zone-preview=1' : route));
@@ -35,6 +35,7 @@ function game({ manifest = {}, fetchImpl, now = 1800000, preview = false, liveSa
     },
   });
   runInContext(catalog, context);
+  if (modules) { runInContext(readFileSync(resolve(root, 'assets/module-panel.js'), 'utf8'), context); context.window.ZoneModulePanel = context.ZoneModulePanel; }
   runInContext(`${source}\nglobalThis.clientExports = { Component, T, SCREENS, CAT };`, context);
   const instance = new context.clientExports.Component({});
   instance.bump = () => {};
@@ -154,6 +155,78 @@ test('accessible HUD values follow authoritative resources and caps', () => {
   assert.deepEqual(Array.from(bars, bar => [bar.id, bar.value, bar.max]), [['energy', 44, 160], ['nerve', 7, 55], ['happy', 88, 6000], ['life', 99, 4000]]);
   instance.state.lang = 'ar';
   assert.match(instance.renderVals().bars[0].label, /[\u0600-\u06ff]/);
+});
+
+test('game presentation retains published navigation and uses real scene assets in both languages', () => {
+  const { instance, SCREENS } = game({ manifest: { modules: { casino: false } } });
+  for (const lang of ['en', 'ar']) {
+    instance.state.lang = lang;
+    for (const screen of SCREENS) {
+      instance.state.screen = screen;
+      const view = instance.renderVals();
+      assert.deepEqual(Array.from(view.nav, item => item.id), Array.from(SCREENS));
+      assert.ok(view.nav.every(item => /^#[a-f0-9]{6}$/i.test(item.iconColor)));
+      assert.ok(view.nav.every(item => /^url\(\/assets\/ui\/icons\/[a-z]+\.svg\)$/.test(item.iconImage)));
+      assert.ok(view.nav.filter(item => item.groupStart).every(item => item.groupLabel.length > 0));
+      assert.match(view.sceneArt, /^\/art\/[a-z0-9_]+\.(jpg|png)$/);
+      assert.ok(readFileSync(resolve(root, view.sceneArt.slice(1))).length > 0);
+    }
+  }
+});
+
+test('character stats remain available before the optional activity adapter loads', () => {
+  const { instance } = game();
+  instance.applyServerPlayer({ strength: 301, defense: 202, speed: 103, dexterity: 404 });
+  for (const lang of ['en', 'ar']) {
+    instance.state.lang = lang;
+    const activity = instance.renderVals().activity;
+    assert.equal(activity.available, false);
+    assert.deepEqual(Array.from(activity.stats, row => row.value), ['301', '202', '103', '404']);
+    assert.ok(activity.stats.every(row => row.label.length > 0));
+  }
+});
+
+test('daily panel loads without claiming and a claim refreshes the main authoritative wallet', async () => {
+  let claimed = false;
+  const { instance, calls } = game({ modules: true, fetchImpl: async (path, options) => {
+    if (options?.method === 'POST') claimed = true;
+    const value = path === '/api/v1/player' ? { player: { id: 'p1', username: 'Vincenzo', cash: 999, login_streak: 2, last_login_day: claimed ? '2026-10-04' : null } }
+      : path === '/api/v1/gameplay' ? { state: { version: 1 }, player: { cash: claimed ? 777 : 100 } }
+      : path === '/api/v1/daily/contract' ? { contract: { id: 'daily1', day: '2026-10-04', metric: 'crimes', name_en: 'Commit crimes', name_ar: 'نفّذ جرائم', reward_cash: 50 }, progress: 1, target: 1, complete: true, claimed: false }
+      : path.includes('achievements') ? { achievements: [] } : path.includes('notifications') ? { notifications: [] }
+      : path === '/api/v1/daily/login' ? { streak: { rewardCash: 677, streakDay: 3 } } : {};
+    return { ok: true, json: async () => value };
+  } });
+  instance.gameplayReady = true;
+  await instance.loadPlayerActivity();
+  assert.equal(calls.some(call => call.options?.method === 'POST'), false);
+  assert.equal(instance.renderVals().activity.contract.title, 'Commit crimes');
+  await instance.claimPlayerReward('login');
+  assert.equal(calls.filter(call => call.options?.method === 'POST').length, 1);
+  assert.equal(calls.find(call => call.options?.method === 'POST').path, '/api/v1/daily/login');
+  assert.equal(instance.p.cash, 777);
+  instance.state.lang = 'ar';
+  assert.equal(instance.renderVals().activity.contract.title, 'نفّذ جرائم');
+});
+
+test('daily reward controls preserve preview and transit guards', async () => {
+  const preview = game({ modules: true, preview: true });
+  await preview.instance.loadPlayerActivity(); await preview.instance.claimPlayerReward('login');
+  assert.equal(preview.calls.length, 0);
+  const transit = game({ modules: true }); transit.instance.gameplayReady = true;
+  transit.instance.p.travel = { status: 'traveling' };
+  await transit.instance.claimPlayerReward('daily');
+  assert.equal(transit.calls.some(call => call.options?.method === 'POST'), false);
+});
+
+test('casino art follows authoritative rank including Ace high without adding a suit to the bet', () => {
+  const { instance } = game();
+  instance.state.casino.card = 14;
+  assert.equal(instance.renderVals().casino.spriteX, -2);
+  instance.state.casino.card = 13;
+  assert.equal(instance.renderVals().casino.spriteX, -878);
+  instance.state.casino.card = 2;
+  assert.equal(instance.renderVals().casino.spriteX, -75);
 });
 
 test('stale high-low rounds refresh the visible card without placing a replacement bet', async () => {

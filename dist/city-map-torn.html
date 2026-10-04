@@ -298,6 +298,7 @@
   .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{opacity:.75}
   .pActions{display:grid;gap:5px;flex:none;margin-top:5px}.panel .pActions button{margin:0}.panel .pmeta{color-scheme:dark;scrollbar-width:thin;scrollbar-color:#536158 #1b2021}.panel .pmeta::-webkit-scrollbar{width:5px}.panel .pmeta::-webkit-scrollbar-thumb{background:#536158;border-radius:5px}.panel .pmeta::-webkit-scrollbar-button{display:none}.benefitCard.planned{border-style:dashed}.benefitCard strong{padding-inline:0}.benefitCard b{position:static;display:block;margin-top:4px;text-align:start}.benefitCard .benefitStatus{color:#c7b98b}
   .warCard{border:1px solid #755f4f;background:#302923;border-radius:5px;padding:9px;margin:8px 0;color:#e7ded1}.warTitle{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700}.warSide{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:10px}.warSide span{color:#bcb5aa}.warSide b{white-space:nowrap;color:#e9e4db}.warRule{margin-top:8px;font-size:10px;line-height:1.4;color:#c5baaa}.warClock{display:block;margin-top:7px;font-size:10px;color:#e8c9a8}.actionCost{padding:7px 0;color:#dbd1b9;font-size:11px;font-weight:700}
+  .familyRail{background:#17191b;border-color:#46494c}.familyRail h1{color:#eee7d8}.familyEyebrow,.familyListHeading{color:#b9b3a8}.familyStat b{color:#c99a45}.familyStat span,.familyNote{color:#b9b3a8}.factionSelectLabel{color:#c5beb1}.factionSelectLabel select{background:#25292d;color:#eee7d8;border-color:#555554}.familyScopes button{background:#25292d;border-color:#46494c;color:#c5beb1}.familyScopes button[aria-pressed="true"],.streetView[aria-pressed="true"]{background:#352f25;border-color:#c99a45;color:#e7bd73}.familyBrowse,.familyHome,.familyLocate,.sideToggle,.cityReset,.mapExpand,.streetView{background:#25292df5;color:#eee7d8;border-color:#555554;box-shadow:0 3px 9px #0005}.familyBrowse:hover,.familyHome:hover,.familyLocate:hover{background:#343638;border-color:#c99a45}.familyRow:hover{background:#303335}.mapLegend{background:#17191bf2;color:#eee7d8;border-color:#555554}.familyRail button:focus-visible,.factionSelectLabel select:focus-visible{outline-color:#c99a45}.panel{background:#1d2227;color:#eee7d8}.panel .go{background:#c99a45;color:#17191b}.regionPin{background:#17191bf2;color:#eee7d8;border-radius:4px}.regionPin small{color:#c5beb1}.placePin{background:#25292d;color:#eee7d8;border-color:#797565}
   @media(max-width:760px){
     .wrap{flex-direction:column}.familyRail{width:100%;height:68px;flex:none;padding:9px 12px;border:0;border-bottom:1px solid #3b4541;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;overflow:hidden}.familyEyebrow{font-size:8px}.familyRail h1{font-size:15px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyStats{grid-column:2;grid-row:1;display:flex;gap:15px}.familyStat b{font-size:19px}.familyStat span{font-size:8px}.familyStat.claimMetric{display:none}.familyNote,.familyScopes,.familyList,.familyBrowse{display:none}.mapcol{min-height:0}.sideToggle{top:8px;left:8px;width:44px;padding:0}.sideToggle b{display:none}.cityReset{top:8px;left:58px;height:44px}.mapExpand{top:8px;left:144px}.streetView{top:8px;left:194px;height:44px}.mapboxgl-ctrl-group button{height:36px;width:36px}.mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:8px 8px 0 0}.familyHome{bottom:29px;inset-inline-start:8px;min-height:36px;padding:6px 8px;font-size:10px}.mapLegend{display:none}.holdingPin{max-width:106px;font-size:9px;min-height:36px;padding:5px 7px}.holdingPin small{font-size:8px}.panel{width:100%;max-width:100%;padding:10px 12px}.panel .pico{display:none}.panel h2{padding-inline-end:74px}.panel .pcat{padding-inline-end:60px}.panel .go{margin-top:6px}.panel .view,.panel .mark{min-height:34px}.panel .pmeta{margin-bottom:3px}.tStats{grid-template-columns:repeat(4,1fr)}.tOwner,.tControl{font-size:10px;margin:3px 0}.blockStates{margin:4px 0}.benefitCard{margin:5px 0;padding:6px}.panel .x{top:5px}
     [dir="rtl"] .sideToggle{right:8px}[dir="rtl"] .cityReset{right:58px}[dir="rtl"] .mapExpand{right:144px}[dir="rtl"] .streetView{right:194px}
@@ -453,8 +454,8 @@ initializeMapLocale();
 
   var familyScope='family',holdingMarkers=[],factionFocus=null,ownershipData={type:'FeatureCollection',features:[]},ownershipSignature='',landmarkController=null,landmarkPending=null;
   var FACTION_EMBLEMS={vipers:'../assets/factions/vipers.svg',kings:'../assets/factions/kings.svg',night:'../assets/factions/night.svg',oldguard:'../assets/factions/oldguard.svg'};
-  var FAMILY_EN={eyebrow:'YOUR FAMILY',none:'No family yet',holdings:'holdings',respect:'respect potential / day',nearby:'Nearby',family:'Family',all:'All',claimable:'ready to claim',browse:'Browse holdings & locations',home:'My family',note:'Select a holding to manage control, or explore nearby opportunities.',empty:'Join a family to build your first foothold.',noHoldings:'No holdings yet. Choose an available outer-sector block.',ownedKey:'Family holding',nearbyKey:'Opportunity',allNote:'All city blocks remain searchable and selectable.',noResults:'No holdings in this view.'};
-  var FAMILY_AR={eyebrow:'عائلتك',none:'لا توجد عائلة',holdings:'قطاعات مملوكة',respect:'احترام محتمل / يوم',nearby:'المجاورة',family:'العائلة',all:'الكل',claimable:'متاح للاستحواذ',browse:'تصفح الأراضي والمواقع',home:'عائلتي',note:'اختر قطاعاً لإدارة السيطرة أو استكشف فرص التوسع المجاورة.',empty:'انضم إلى عائلة لتؤسس أول موطئ قدم.',noHoldings:'لا توجد أراضٍ بعد. اختر قطاعاً متاحاً في الحلقة الخارجية.',ownedKey:'أرض العائلة',nearbyKey:'فرصة توسع',allNote:'جميع قطاعات المدينة متاحة للبحث والاختيار.',noResults:'لا توجد أراضٍ في هذا العرض.'};
+  var FAMILY_EN={eyebrow:'YOUR FAMILY',none:'No family yet',holdings:'holdings',respect:'respect potential / day',nearby:'Nearby',family:'Family',all:'All',claimable:'ready to claim',browse:'Browse holdings & locations',home:'All holdings',note:'Select a holding to manage control, or explore nearby opportunities.',empty:'Join a family to build your first foothold.',noHoldings:'No holdings yet. Choose an available outer-sector block.',ownedKey:'Family holding',nearbyKey:'Opportunity',allNote:'All city blocks remain searchable and selectable.',noResults:'No holdings in this view.'};
+  var FAMILY_AR={eyebrow:'عائلتك',none:'لا توجد عائلة',holdings:'قطاعات مملوكة',respect:'احترام محتمل / يوم',nearby:'المجاورة',family:'العائلة',all:'الكل',claimable:'متاح للاستحواذ',browse:'تصفح الأراضي والمواقع',home:'كل الأراضي',note:'اختر قطاعاً لإدارة السيطرة أو استكشف فرص التوسع المجاورة.',empty:'انضم إلى عائلة لتؤسس أول موطئ قدم.',noHoldings:'لا توجد أراضٍ بعد. اختر قطاعاً متاحاً في الحلقة الخارجية.',ownedKey:'أرض العائلة',nearbyKey:'فرصة توسع',allNote:'جميع قطاعات المدينة متاحة للبحث والاختيار.',noResults:'لا توجد أراضٍ في هذا العرض.'};
   function F(k){return(lang==='ar'?FAMILY_AR:FAMILY_EN)[k];}
   function focusedFactionId(){return factionFocus===null?playerFactionId(lastData):factionFocus;}
   function inFocusFaction(t){var id=focusedFactionId();return id==='*'||(id==='neutral'?t.neutral:(id?t.ownerId===id:t.isPlayer));}
@@ -522,9 +523,19 @@ initializeMapLocale();
     if(previous){var target={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),duration:duration,essential:true};map.jumpTo(previous);map.easeTo(target);}
     return true;
   }
+  function openingFamilyAnchor(){
+    var ownedIds=new Set(familyMetrics(territoryData).owned.map(function(t){return t.id;}));
+    var regions=ownershipData.features.filter(function(region){return region.properties.blockIds.some(function(id){return ownedIds.has(id);});});
+    regions.sort(function(a,b){return b.properties.blockIds.length-a.properties.blockIds.length;});
+    return regions.length?regions[0].properties.anchor:familyAnchor();
+  }
   function fitFamily(force){
     if(didFit&&!force)return;
     if(!territoryData.length)return;
+    var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
+    // Opening is a playable district view. Distant holdings remain discoverable
+    // in the full rail and through the explicit All holdings/faction overview.
+    if(!force){map.resize();map.jumpTo({center:openingFamilyAnchor(),zoom:innerWidth<=760?14.25:14.35,pitch:40,bearing:-12});didFit=true;return;}
     var metrics=familyMetrics(territoryData),blocks=metrics.owned.length?metrics.owned:familyContextBlocks();
     if(fitOwnership(blocks,force&&!RM?450:0,30))didFit=true;
   }
@@ -747,14 +758,17 @@ initializeMapLocale();
     document.body.dataset.zoneOwnershipRegions=String(ownershipData.features.length);document.body.dataset.zoneOwnershipBlocks=String(ownershipData.features.reduce(function(sum,f){return sum+f.properties.blockCount;},0));
     return ownershipData;
   }
-  function ownershipOpacity(){var id=focusedFactionId();return mapMode==='places'?0.07:['case',['boolean',['get','neutral'],false],id==='neutral'?0.23:0.055,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.31,0.19];}
+  function ownershipOpacity(){var id=focusedFactionId();return mapMode==='places'?0.07:['case',['boolean',['get','neutral'],false],id==='neutral'?0.17:0.025,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.18,0.12];}
   function applyOwnershipStyle(){if(map.getLayer('zone-ownership-fill'))map.setPaintProperty('zone-ownership-fill','fill-opacity',ownershipOpacity());}
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
     if(!map.getSource('zone-blocks'))map.addSource('zone-blocks',{type:'geojson',data:territoryGeo(territoryData)});
     var regions=rebuildOwnership(territoryGeo(territoryData));
     if(!map.getSource('zone-ownership'))map.addSource('zone-ownership',{type:'geojson',data:regions});
-    var baseRoad=map.getStyle().layers.find(function(layer){return layer.type==='line'&&/road/.test(layer.id)&&!/^zone-/.test(layer.id);}),before=baseRoad&&baseRoad.id;
+    // Authored city ground covers only the original game extent. Real-world map
+    // context and attribution remain around it, without competing street detail.
+    if(!map.getLayer('zone-city-ground'))map.addLayer({id:'zone-city-ground',type:'fill',source:'zone-blocks',paint:{'fill-color':'#363b3e','fill-opacity':1,'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}});
+    var before;
     if(!map.getLayer('zone-ownership-fill'))map.addLayer({id:'zone-ownership-fill',type:'fill',source:'zone-ownership',paint:{'fill-color':['coalesce',['get','renderColor'],'#87918c'],'fill-opacity':ownershipOpacity(),'fill-outline-color':'rgba(0,0,0,0)','fill-antialias':false}},before);
     if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],'#e4b96b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.22,['boolean',['feature-state','hover'],false],0.13,['boolean',['get','contested'],false],0.09,0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
     // Original block geometry stays invisible and independently selectable.
@@ -1192,7 +1206,7 @@ initializeMapLocale();
   }
   var installingLayers=false;
   var landmarkVisibleState=null;
-  function syncLandmarkVisibility(){if(!landmarkController)return;var visible=mapVisible!==false&&!document.hidden&&map.getPitch()>1;if(visible!==landmarkVisibleState){landmarkVisibleState=visible;landmarkController.setVisible(visible);}}
+  function syncLandmarkVisibility(){if(!landmarkController)return;var visible=mapVisible!==false&&!document.hidden;if(visible!==landmarkVisibleState){landmarkVisibleState=visible;landmarkController.setVisible(visible);}}
   function ensureCityLandmarks(){
     if(landmarkPending||!map.isStyleLoaded()||(landmarkController&&map.getLayer('zone-city-landmarks')))return;
     if(landmarkController){landmarkController.dispose();landmarkController=null;}
@@ -1200,7 +1214,7 @@ initializeMapLocale();
   }
   function installCustomLayers(){
     if(installingLayers||!map.isStyleLoaded())return;
-    var ready=['zone-blocks-fill','zone-ownership-fill','zone-block-feedback','zone-poi-icon','zone-poi-label','zone-poi-hitbox','zone-here-dot','zone-buildings-3d'].every(function(id){return !!map.getLayer(id);});
+    var ready=['zone-city-ground','zone-blocks-fill','zone-ownership-fill','zone-block-feedback','zone-poi-icon','zone-poi-label','zone-poi-hitbox','zone-here-dot','zone-buildings-3d'].every(function(id){return !!map.getLayer(id);});
     if(ready)return;
     installingLayers=true;
     try{

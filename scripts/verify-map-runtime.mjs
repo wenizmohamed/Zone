@@ -196,7 +196,7 @@ export function verifyMapRuntime(source) {
   });
 
   test('Layer recovery repairs a missing label once without recursive setup', () => {
-    const readyLayers = new Set(['zone-blocks-fill', 'zone-ownership-fill', 'zone-block-feedback', 'zone-poi-icon', 'zone-poi-hitbox', 'zone-here-dot', 'zone-buildings-3d', 'zroute-line']);
+    const readyLayers = new Set(['zone-city-ground', 'zone-blocks-fill', 'zone-ownership-fill', 'zone-block-feedback', 'zone-poi-icon', 'zone-poi-hitbox', 'zone-here-dot', 'zone-buildings-3d', 'zroute-line']);
     let setups = 0, restoredSelection = 0;
     const ctx = context(['installCustomLayers'], {
       installingLayers: false, selectedTerritory: { id: 'ZC-001' },
@@ -248,7 +248,7 @@ export function verifyMapRuntime(source) {
     });
     ctx.ensureTerritoryLayers(); ctx.ensureTerritoryLayers();
     expect(sources.get('zone-blocks').data.features.length === 120, 'Invisible geometry lost blocks.');
-    expect(layers.length === 3 && layers.every(layer => layer.type === 'fill') && layers.find(layer => layer.id === 'zone-blocks-fill').paint['fill-opacity'] === 0, 'Ownership setup added grid lines or duplicated original hit geometry.');
+    expect(layers.length === 4 && layers.every(layer => layer.type === 'fill') && layers.find(layer => layer.id === 'zone-blocks-fill').paint['fill-opacity'] === 0, 'Ownership setup added grid lines or duplicated original hit geometry.');
     expect(layers.filter(layer => layer.id !== 'zone-blocks-fill').every(layer => layer.paint['fill-antialias'] === false && layer.paint['fill-outline-color'] === 'rgba(0,0,0,0)'), 'Ownership or interaction feedback paints polygon boundaries.');
     const regions = sources.get('zone-ownership').data.features;
     expect(regions.length === 2 && regions.every(region => region.properties.blockCount === 60), 'Adjacent ownership did not become two coherent faction areas.');
@@ -280,20 +280,23 @@ export function verifyMapRuntime(source) {
     expect(items[2].element.style.visibility === 'hidden', 'Behind-camera marker escaped viewport bounds.');
   });
 
-  test('Family default frames every actual holding with geographic padding and preserves established camera', () => {
+  test('Opening focuses the largest real connected district; All holdings includes the distant island', () => {
     const own = { id: 'own', isPlayer: true, dailyRespect: 12, neighbors: ['near'], polygon: [[1,1],[2,1],[2,2],[1,2]] };
     const island = { id: 'island', isPlayer: true, dailyRespect: 4, neighbors: [], polygon: [[4,4],[5,4],[5,5],[4,5]] };
     const near = { id: 'near', neighbors: [], polygon: [[2,1],[3,1],[3,2],[2,2]] };
     const moves = [];
-    const ctx = context(['familyMetrics', 'familyContextBlocks', 'fitFamily', 'fitOwnership', 'refineOwnershipCamera'], {
+    const ctx = context(['familyMetrics', 'familyContextBlocks', 'fitFamily', 'openingFamilyAnchor', 'fitOwnership', 'refineOwnershipCamera'], {
       territoryData: [own, island, near], innerWidth: 1024, RM: true, didFit: false, blockLL: (_block, point) => point,
+      ownershipData: { features: [{properties:{blockIds:['island'],anchor:[4.5,4.5]}},{properties:{blockIds:['own','second'],anchor:[1.5,1.5]}}] },
+      familyAnchor: () => [9,9],
       mapboxgl: { LngLatBounds: class { constructor() { this.points=[]; } extend(point) { this.points.push(point); } isEmpty() { return !this.points.length; } } },
-      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 500 }), resize() {}, fitBounds: (bounds, options) => moves.push({bounds, ...options}) },
+      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 500 }), resize() {}, jumpTo: options => moves.push(options), fitBounds: (bounds, options) => moves.push({bounds, ...options}) },
     });
+    ctx.territoryData.push({...own,id:'second'});
     ctx.fitFamily(false); ctx.fitFamily(false);
-    expect(moves.length === 1 && moves[0].bounds.points.length === 10 && moves[0].bounds.points[8][0] === .6 && moves[0].bounds.points[9][1] === 5.4 && moves[0].pitch === 30 && moves[0].retainPadding === false, 'Default view omits an owned island/padding, includes unrelated neighbors or resets an established camera.');
+    expect(moves.length === 1 && moves[0].center[0] === 1.5 && moves[0].zoom >= 14 && moves[0].pitch === 40, 'Opening fits a distant island or loses the main connected district.');
     ctx.innerWidth = 390; ctx.fitFamily(true);
-    expect(moves[1].padding.left === 30 && moves[1].padding.bottom === 62 && moves[1].bounds.points.length === 10, 'Mobile family reset clips its holdings or map controls.');
+    expect(moves[1].padding.left === 30 && moves[1].padding.bottom === 62 && moves[1].bounds.points.some(p=>p[0]===5&&p[1]===5), 'All holdings reset omits the distant island or map controls.');
   });
 
   test('Rotated ownership framing fills available space without clipping any source vertex', () => {
@@ -419,12 +422,12 @@ export function verifyMapRuntime(source) {
     ctx.mapMode = 'places'; expect(opacity({ ownerId: 'vipers' }) === .07, 'Territory fills compete with location browsing.');
   });
 
-  test('3D models stop rendering offscreen or flat and avoid redundant repaint calls', () => {
+  test('City models pause offscreen and retain roof plans in flat view without redundant repaint calls', () => {
     const visibility = []; let pitch = 30;
     const ctx = context(['syncLandmarkVisibility'], { landmarkController: { setVisible: value => visibility.push(value) }, landmarkVisibleState: null, mapVisible: true, document: { hidden: false }, map: { getPitch: () => pitch } });
     ctx.syncLandmarkVisibility(); ctx.syncLandmarkVisibility();
     ctx.mapVisible = false; ctx.syncLandmarkVisibility(); ctx.syncLandmarkVisibility();
-    ctx.mapVisible = true; ctx.syncLandmarkVisibility(); pitch = 0; ctx.syncLandmarkVisibility();
+    ctx.mapVisible = true; ctx.syncLandmarkVisibility(); pitch = 0; ctx.syncLandmarkVisibility(); expect(visibility.at(-1) === true, 'Flat camera loses the authored roof plans.');
     pitch = 35; ctx.document.hidden = true; ctx.syncLandmarkVisibility(); ctx.document.hidden = false; ctx.syncLandmarkVisibility();
     expect(visibility.join(',') === 'true,false,true,false,true', 'Static models repaint repeatedly, remain visible while hidden, or fail to resume.');
   });

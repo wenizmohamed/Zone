@@ -115,10 +115,16 @@ const literalResources = new Set();
 for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) literalResources.add(match[1]);
 for (const match of html.matchAll(/url\(["']?([^"')]+)["']?\)/g)) literalResources.add(match[1]);
 for (const resource of literalResources) {
+  // These two URL expressions are resolved from the screen registry, checked below.
+  if (/^\s*\+ GAME_ICON_ASSETS\[(?:s|id)\] \+\s*$/.test(resource)) continue;
   if (/^(?:https?:|data:|blob:|#|\{\{)/.test(resource) || resource.includes('{{')) continue;
   const clean = resource.replace(/^\.\//, '').split(/[?#]/)[0];
   if (['/admin', '/engine', '/engine/theme.css'].includes(clean)) continue;
   check(existsSync(join(target, clean)), `Missing literal resource: ${clean}`);
+}
+for (const screen of screens) {
+  const iconPath = join(target, 'assets', 'ui', 'icons', `${screen}.svg`);
+  check(existsSync(iconPath), `Missing game navigation icon: ${screen}.svg`);
 }
 
 const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

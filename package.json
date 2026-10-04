@@ -8,10 +8,11 @@
     "verify:map": "node scripts/verify-map.mjs",
     "verify:client": "node --test scripts/test-client.mjs",
     "verify:admin": "node --test scripts/test-admin.mjs",
+    "verify:modules": "node --test scripts/test-module-panel.mjs",
     "verify:viewers": "node --test scripts/test-viewer-runtime.mjs",
     "verify:visual": "node --test scripts/test-territory-geometry.mjs scripts/test-city-layout.mjs",
     "build": "node scripts/build.mjs",
-    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:viewers && npm run verify:visual && npm run build && node scripts/verify.mjs public",
+    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:modules && npm run verify:viewers && npm run verify:visual && npm run build && node scripts/verify.mjs public",
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
     "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
     "verify:platform": "powershell -ExecutionPolicy Bypass -File scripts/verify-platform.ps1"

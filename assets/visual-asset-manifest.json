@@ -252,6 +252,222 @@
       "license": "MIT",
       "author": "Three.js authors",
       "modified": false
+    },
+    {
+      "path": "assets/character/quaternius/Casual_Hoodie.glb",
+      "bytes": 1646732,
+      "sha256": "d647ee4ca1c66008bca70aafcc0315b62c8ac0a6bc0f611e369569b43d0b214b",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html",
+      "license": "CC0-1.0",
+      "author": "Quaternius",
+      "modified": true
+    },
+    {
+      "path": "assets/character/quaternius/License.txt",
+      "bytes": 372,
+      "sha256": "e8dbf915a2b82229913e301a0787696611241bdefec4832bc084f54161db1efe",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html",
+      "license": "CC0-1.0",
+      "author": "Quaternius",
+      "modified": false
+    },
+    {
+      "path": "assets/character/quaternius/Suit.glb",
+      "bytes": 1803156,
+      "sha256": "c4b5f9d7870bb17d371f5b47a81d24ac4267cd003cdddbda8a0aecab1763de3a",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html",
+      "license": "CC0-1.0",
+      "author": "Quaternius",
+      "modified": true
+    },
+    {
+      "path": "assets/character/quaternius/Swat.glb",
+      "bytes": 1844596,
+      "sha256": "3a83a6808ad5de59861ef3e05cc82a3cc87654df460d2ee5a27d9252e460bd14",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html",
+      "license": "CC0-1.0",
+      "author": "Quaternius",
+      "modified": true
+    },
+    {
+      "path": "assets/ui/icons/home.svg",
+      "bytes": 337,
+      "sha256": "ec5d8b43fbe66d9c85a1969547b52482cd647bb0c2f81426098f2ef202cb531e",
+      "source": "https://game-icons.net/1x1/delapouite/house.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/items.svg",
+      "bytes": 1815,
+      "sha256": "4c31098d4b301c3327b904715a533122d8b6755d19f657b8753297c69c7f122f",
+      "source": "https://game-icons.net/1x1/lorc/crossed-pistols.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/city.svg",
+      "bytes": 930,
+      "sha256": "94177102af04a0104443c9ecbe2ebf9898d7e6482a23cae10f575e319b3fd2bd",
+      "source": "https://game-icons.net/1x1/delapouite/modern-city.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/jobs.svg",
+      "bytes": 1026,
+      "sha256": "9de6bcd3ecda074fd6395060fdc8cfb67126ae56edce89cca3aa7a3b35e6027d",
+      "source": "https://game-icons.net/1x1/delapouite/briefcase.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/bank.svg",
+      "bytes": 1139,
+      "sha256": "48930c419085e749d0a523bf37cfe94665c5559a0d3b5a97096b434e44ff24a9",
+      "source": "https://game-icons.net/1x1/delapouite/bank.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/gym.svg",
+      "bytes": 1455,
+      "sha256": "425f2eb791734dbe6fc75e2df92fdb2431ce8c91190f9f3b534e48dd2e2a427e",
+      "source": "https://game-icons.net/1x1/delapouite/weight-lifting-up.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/properties.svg",
+      "bytes": 771,
+      "sha256": "1b25f3dc400015140489df6e7ec246e70d98b79b8dcf0ba3f1ae6c6d79f39959",
+      "source": "https://game-icons.net/1x1/delapouite/family-house.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/education.svg",
+      "bytes": 1789,
+      "sha256": "7b00cf0502e2b086f024bd98db2936c395bc3f870fd57a83faab32720c671109",
+      "source": "https://game-icons.net/1x1/delapouite/diploma.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/crimes.svg",
+      "bytes": 913,
+      "sha256": "0b2b02bc124425c32e7c62b46c1a7bc3083d9cb2c0692797ca5f7f42dae7816a",
+      "source": "https://game-icons.net/1x1/lorc/hood.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/missions.svg",
+      "bytes": 504,
+      "sha256": "fb49d79be98a285294bba6163ec7c972ef3816b0b1596359acefbab397eacbb2",
+      "source": "https://game-icons.net/1x1/delapouite/checklist.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/newspaper.svg",
+      "bytes": 1347,
+      "sha256": "e92c82e85251f72862d616b6795af3eff79e41b004ad5f5b67db601e863e880f",
+      "source": "https://game-icons.net/1x1/delapouite/newspaper.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/jail.svg",
+      "bytes": 4789,
+      "sha256": "72310b61edba21ba65167a298d0e2fac6d60f2851ba7dd2adb929061b6958477",
+      "source": "https://game-icons.net/1x1/lorc/handcuffs.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/hospital.svg",
+      "bytes": 374,
+      "sha256": "1b91f0d94b2b99a1143ba660244821d1a0969b326ded1341dd4e9c316daae43f",
+      "source": "https://game-icons.net/1x1/lorc/hospital-cross.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/casino.svg",
+      "bytes": 1626,
+      "sha256": "33ba9478ba19b81126c5c21d9940bac8d383c21abfcfd7097056c3a691060c14",
+      "source": "https://game-icons.net/1x1/lorc/poker-hand.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/hof.svg",
+      "bytes": 2346,
+      "sha256": "7619d146013b40d479cd5ac4190fab026843dec4ebacaf1b89ee21b9ac7dcaf1",
+      "source": "https://game-icons.net/1x1/lorc/trophy.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/faction.svg",
+      "bytes": 2627,
+      "sha256": "0330bce911540ace0b5b22bc446ad873440a9e1c303fc8fb7f9754ff0de3df47",
+      "source": "https://game-icons.net/1x1/lorc/two-shadows.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/elimination.svg",
+      "bytes": 1254,
+      "sha256": "d977de17aa347c15a311e96ee4c7194837e47d119d2b5a06bc1dbbd2cd1a92f2",
+      "source": "https://game-icons.net/1x1/lorc/crossed-swords.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/attack.svg",
+      "bytes": 1333,
+      "sha256": "fcbf49870152f3dd7631325687d302c3cd05211cfb5c53c84423bd3cd31f4e1e",
+      "source": "https://game-icons.net/1x1/lorc/boxing-glove.html",
+      "license": "CC-BY-3.0",
+      "author": "lorc",
+      "modified": false
+    },
+    {
+      "path": "assets/ui/icons/market.svg",
+      "bytes": 1674,
+      "sha256": "6cc8624153d0cdc29babb993d6f1de5d50f848cc77f61df3fd1bdc7123c0e69d",
+      "source": "https://game-icons.net/1x1/delapouite/shop.html",
+      "license": "CC-BY-3.0",
+      "author": "delapouite",
+      "modified": false
+    },
+    {
+      "path": "assets/modules/gl2/cards.png",
+      "bytes": 168145,
+      "sha256": "36d3d74f550c3100164d27159d9d53512d1a2d837809ec49ea4fdfcd4d147bd9",
+      "source": "https://github.com/ChristopherDay/Gangster-Legends-V2/blob/master/modules/installed/blackjack/cards.png",
+      "license": "MIT",
+      "author": "Christopher Day",
+      "modified": false
     }
   ]
 }

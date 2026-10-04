@@ -39,19 +39,56 @@ function context(source, names, values = {}) {
   return ctx;
 }
 
-test('Wardrobe keeps shoulders and upper arms clothed while leaving hands and head visible', () => {
-  const ctx = context(character.template, ['outfitBoneRegion']);
-  for (const outfit of ['street', 'suit', 'tactical']) {
-    assert.equal(ctx.outfitBoneRegion('clavicle_l', outfit), 'top');
-    assert.equal(ctx.outfitBoneRegion('upperarm_r', outfit), 'sleeve');
-    assert.equal(ctx.outfitBoneRegion('hand_r', outfit), 'skin');
-    assert.equal(ctx.outfitBoneRegion('Head', outfit), 'skin');
-    assert.equal(ctx.outfitBoneRegion('thigh_l', outfit), 'bottom');
-    assert.equal(ctx.outfitBoneRegion('foot_r', outfit), 'shoe');
+test('Wardrobe models contain real clothing meshes, skeletal animation and hand attachment bones', () => {
+  const ctx = context(character.template, ['outfitFile'], { OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' } });
+  assert.equal(ctx.outfitFile('untrusted/path'), 'Casual_Hoodie');
+  for (const [outfit, filename] of [['street', 'Casual_Hoodie'], ['suit', 'Suit'], ['tactical', 'Swat']]) {
+    assert.equal(ctx.outfitFile(outfit), filename);
+    const bytes = readFileSync(new URL(`../assets/character/quaternius/${filename}.glb`, import.meta.url));
+    assert.equal(bytes.toString('ascii', 0, 4), 'glTF');
+    assert.equal(bytes.readUInt32LE(8), bytes.length);
+    const gltf = JSON.parse(bytes.toString('utf8', 20, 20 + bytes.readUInt32LE(12)));
+    assert.ok(gltf.meshes.length >= 4);
+    assert.ok(gltf.skins.length > 0);
+    assert.ok(gltf.nodes.some(node => node.name === 'Wrist.R'));
+    for (const required of ['Idle', 'Walk', 'Punch_Right', 'Sword_Slash', 'HitRecieve', 'Death']) {
+      assert.ok(gltf.animations.some(animation => animation.name === required), `${filename} lacks ${required}`);
+    }
+    assert.ok(gltf.buffers.every(buffer => !buffer.uri), 'models must be self-contained');
   }
-  assert.equal(ctx.outfitBoneRegion('lowerarm_l','street'), 'skin');
-  assert.equal(ctx.outfitBoneRegion('lowerarm_l','suit'), 'sleeve');
 });
+
+for (const outcome of ['resolve', 'reject']) {
+  test(`Reselecting the displayed wardrobe cancels a pending rig that later ${outcome}s`, async () => {
+    let settle;
+    const pending = new Promise((resolve, reject) => { settle = outcome === 'resolve' ? resolve : reject; });
+    const status = { hidden: true, textContent: '' }, logged = [], requests = [];
+    const currentModel = { userData: { outfit: 'Casual_Hoodie' }, traverse() {} };
+    const ctx = context(character.template, ['outfitFile', 'paintOutfit', 'loadCharacter'], {
+      state: { outfit: 'suit' }, model: currentModel,
+      OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' },
+      characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null,
+      GLTFLoader: class { loadAsync(path) { requests.push(path); return pending; } },
+      $: () => status, lang: 'en', console: { error: (...values) => logged.push(values) }
+    });
+    const load = ctx.loadCharacter();
+    assert.equal(status.hidden, false);
+    assert.equal(ctx.characterLoadingFile, 'Suit');
+    ctx.state.outfit = 'street';
+    ctx.paintOutfit();
+    assert.equal(status.hidden, true, 'the visible valid outfit must not be covered by a stale loader');
+    assert.equal(ctx.characterLoadingFile, null);
+    if (outcome === 'reject') settle(new Error('late Suit failure'));
+    else settle({ get scene() { assert.fail('cancelled Suit must not be installed or emit a ready event'); } });
+    await load;
+    assert.equal(ctx.model, currentModel);
+    assert.equal(ctx.model.userData.outfit, 'Casual_Hoodie');
+    assert.equal(status.hidden, true);
+    assert.equal(logged.length, 0, 'obsolete failure must not report an error for the selected outfit');
+    assert.equal(requests.length, 1, 'returning to the cached visible rig must not fetch it again');
+    assert.equal(ctx.characterCache.has('Suit'), outcome === 'resolve', 'failed cache entries remain retryable');
+  });
+}
 
 for (const [name, viewer] of [['character', character], ['weapon', weapon]]) {
   test(`${name}: all decoded scripts parse and every catalog weapon has embedded model data`, () => {
@@ -71,8 +108,8 @@ for (const [name, viewer] of [['character', character], ['weapon', weapon]]) {
       assert.ok(existsSync(new URL(`../assets/weapons/${item.file}.${ext}`, import.meta.url)), `${item.file}.${ext} local fallback missing`);
     }
     if (name === 'character') {
-      assert.match(ctx.ZONE_MANNEQUIN_GLB, /^data:.*base64,/);
-      assert.ok(existsSync(new URL('../assets/character/mannequin_anim.glb', import.meta.url)));
+      assert.equal(ctx.ZONE_MANNEQUIN_GLB, undefined, 'unused mannequin should not be downloaded');
+      assert.match(viewer.template, /character\/quaternius\//);
     }
   });
 
