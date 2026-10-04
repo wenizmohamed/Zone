@@ -12,6 +12,7 @@ use Zone\Engine\Core\Game\CooldownService;
 use Zone\Engine\Core\Game\LevelingService;
 use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\RateLimitException;
+use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
@@ -57,8 +58,8 @@ try {
     check($status['cacheAdapter'] === 'memory' && $status['redisPortReady'] === true, 'cache port runs in memory and exposes a Redis production adapter');
     check(count($engine->modules()) >= 27, 'all ported OpenPBBG modules discovered from manifests (>=27)');
     check(count($engine->themes()) === 2, 'two independent themes discovered from manifests');
-    check(count($engine->crimes()) === 7, 'Crime module exposes its catalog');
-    check(count($engine->adminCrimes()) === 7, 'admin content service exposes enabled and disabled crime definitions');
+    check(count($engine->crimes()) === 31, 'Crime module exposes its catalog');
+    check(count($engine->adminCrimes()) === 31, 'admin content service exposes enabled and disabled crime definitions');
 
     $createdCrime = $engine->saveCrime('dockyard-run', [
         'name_en' => 'Dockyard run',
@@ -71,10 +72,10 @@ try {
         'enabled' => true,
     ], 'content-test');
     check($createdCrime['id'] === 'dockyard-run' && (float) $createdCrime['successRate'] === 64.0, 'admin creates a typed crime definition');
-    check(count($engine->crimes()) === 8, 'enabled admin-created crime appears in the public engine catalog');
+    check(count($engine->crimes()) === 31, 'unpublished admin-created crime stays outside the public engine catalog');
     $disabledCrime = $engine->saveCrime('dockyard-run', [...$createdCrime, 'enabled' => false], 'content-test');
-    check($disabledCrime['enabled'] === false && count($engine->crimes()) === 7, 'admin can disable a crime without deleting its definition');
-    check(count($engine->adminCrimes()) === 8, 'disabled crime remains available to the administrator');
+    check($disabledCrime['enabled'] === false && count($engine->crimes()) === 31, 'admin can disable a crime without deleting its definition');
+    check(count($engine->adminCrimes()) === 32, 'disabled crime remains available to the administrator');
     $crimeAudit = array_values(array_filter($engine->adminAuditLog(), static fn (array $entry): bool => $entry['target_type'] === 'crime'));
     $crimeAuditActions = array_column($crimeAudit, 'action');
     check(count($crimeAudit) === 2 && in_array('CrimeCreated', $crimeAuditActions, true) && in_array('CrimeUpdated', $crimeAuditActions, true), 'crime creation and update are preserved in the admin audit trail');
@@ -87,8 +88,9 @@ try {
     check($invalidCrimeRejected, 'crime editor rejects invalid identifiers and incomplete definitions');
 
     $engine->changeModule('achievements', 'disable');
-    [$engine, $database] = build_engine($databasePath);
     $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'searchforcash']);
+    $engine->publishRelease('fixture');
+    [$engine, $database] = build_engine($databasePath);
     $first = $engine->attemptCrime('searchforcash');
     check($first['success'] === true, 'crime outcome is calculated by the PHP engine');
     check($first['serverProof']['clientSuppliedOutcomeFields'] === 0, 'client cannot supply outcome or reward fields');
@@ -96,6 +98,7 @@ try {
     check(count($engine->achievements()) === 0, 'disabled Achievement module does not react');
 
     $engine->changeModule('achievements', 'enable');
+    $engine->publishRelease('fixture');
     [$engine, $database] = build_engine($databasePath);
     $database->execute('UPDATE crimes SET success_basis_points = 10000 WHERE id = :id', ['id' => 'searchforcash']);
     // Reset the anti-hammer cooldown armed by the first attempt: this back-to-back
@@ -104,11 +107,12 @@ try {
     $second = $engine->attemptCrime('searchforcash');
     check($second['success'] === true, 'second server-authoritative crime succeeds under controlled test odds');
     check(count($engine->achievements()) === 1, 'enabled Achievement module reacts through CrimeSucceeded hook');
-    $eventNames = array_column($engine->eventLog(), 'event_name');
+    $eventNames = array_column($engine->eventLog(100), 'event_name');
     check(in_array('CrimeSucceeded', $eventNames, true), 'CrimeSucceeded event is persisted');
     check(in_array('AchievementUnlocked', $eventNames, true), 'subscriber publishes AchievementUnlocked without core edits');
 
     $engine->changeModule('crime', 'uninstall');
+    $engine->publishRelease('fixture');
     [$engine] = build_engine($databasePath);
     check($engine->crimes() === [], 'uninstalled Crime module removes its API capability');
     $blocked = false;
@@ -121,14 +125,17 @@ try {
     $engine->changeModule('crime', 'install');
 
     $activated = $engine->activateTheme('terminal');
-    check($activated['active'] === true, 'theme activates without changing gameplay code');
+    check($activated['active'] === true, 'theme selection updates the admin draft');
+    check(!str_contains($engine->activeThemeStylesheet(), '#42e8e0'), 'unpublished theme selection preserves active CSS');
+    $engine->publishRelease('fixture');
     check(str_contains($engine->activeThemeStylesheet(), '#42e8e0'), 'active theme stylesheet is resolved from its package');
 
     $releases = new ReleaseManager($database, new EventBus($database));
     $draft = $releases->draft();
     check($draft['manifest']['schemaVersion'] === 1, 'release manager creates a schema version 1 draft');
     $activeBeforePublish = $releases->active();
-    check($activeBeforePublish['version'] === 0, 'unpublished engine exposes the immutable initial release');
+    check($activeBeforePublish['version'] === 4, 'fixture publishes precede release manager tests');
+    $auditBefore = count($database->fetchAll("SELECT * FROM admin_audit_log WHERE target_type IN ('content-draft', 'content-release')"));
 
     $invalidDraft = $draft['manifest'];
     $invalidDraft['pages'][] = [
@@ -153,19 +160,19 @@ try {
     check($releases->active()['manifest']['branding']['name']['en'] !== 'ZONE Alpha', 'saving a draft does not mutate the active game release');
 
     $releaseOne = $releases->publish('test-admin');
-    check($releaseOne['version'] === 1, 'first publish creates release version 1');
+    check($releaseOne['version'] === 5, 'publish creates the next version after fixture releases');
     check($releases->active()['manifest']['branding']['name']['en'] === 'ZONE Alpha', 'published manifest becomes active');
 
     $secondDraft = $releaseOne['manifest'];
     $secondDraft['branding']['name']['en'] = 'ZONE Bravo';
     $releases->saveDraft($secondDraft, 'test-admin');
     $releaseTwo = $releases->publish('test-admin');
-    check($releaseTwo['version'] === 2, 'second publish creates release version 2');
-    check(count($releases->releases()) === 2, 'release history retains immutable versions');
+    check($releaseTwo['version'] === 6, 'second publication increments the release version');
+    check(count($releases->releases()) === 6, 'release history retains immutable versions');
 
     $restored = $releases->activate($releaseOne['id'], 'test-admin');
-    check($restored['version'] === 1 && $releases->active()['version'] === 1, 'activating a prior release rolls the game back without deleting history');
-    check(count($database->fetchAll("SELECT * FROM admin_audit_log WHERE target_type IN ('content-draft', 'content-release')")) === 5, 'draft and release mutations are recorded in the admin audit log');
+    check($restored['version'] === 5 && $releases->active()['version'] === 5, 'activating a prior release rolls the game back without deleting history');
+    check(count($database->fetchAll("SELECT * FROM admin_audit_log WHERE target_type IN ('content-draft', 'content-release')")) === $auditBefore + 5, 'draft and release mutations are recorded in the admin audit log');
 
     $applicationDraft = $engine->releaseDraft();
     $applicationActive = $engine->activeRelease();
@@ -173,23 +180,23 @@ try {
     $engine->saveReleaseDraft($applicationDraft['manifest'], 'application-test');
     check($engine->activeRelease()['id'] === $applicationActive['id'], 'application draft save preserves the active release');
     $applicationRelease = $engine->publishRelease('application-test');
-    check($applicationRelease['version'] === 3, 'application layer publishes the next immutable release');
+    check($applicationRelease['version'] === 7, 'application layer publishes the next immutable release');
     check($engine->activeRelease()['manifest']['branding']['name']['en'] === 'ZONE Application', 'application layer exposes the newly active manifest');
-    check(count($applicationRelease['manifest']['content']['crimes']) === 8, 'published release snapshots the complete admin crime catalogue');
+    check(count($applicationRelease['manifest']['content']['crimes']) === 32, 'published release snapshots the complete admin crime catalogue');
     check(count($applicationRelease['manifest']['content']['engineModules']) >= 27, 'published release snapshots the full ported module state (>=27)');
     $bootstrap = $engine->gameBootstrap();
-    check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 8, 'game bootstrap exposes the active published content snapshot');
+    check($bootstrap['release']['id'] === $applicationRelease['id'] && count($bootstrap['content']['crimes']) === 32, 'game bootstrap exposes the active published content snapshot');
     $engine->activateRelease($releaseOne['id'], 'application-test');
-    check($engine->activeRelease()['version'] === 1, 'application layer can activate a prior release');
-    check(count($engine->releaseHistory()) === 3, 'application layer exposes complete release history');
+    check($engine->activeRelease()['version'] === 5, 'application layer can activate a prior release');
+    check(count($engine->releaseHistory()) === 7, 'application layer exposes complete release history');
 
     // --- Ported gameplay systems: server-authoritative, ledger + events ---
     [$engine, $database] = build_engine($databasePath);
     $before = $engine->player();
     $gym = $engine->trainGym('strength', 1);
     check($gym['player']['strength'] > $before['strength'], 'gym training increases strength server-side');
-    check($gym['player']['energy'] === $before['energy'] - 10, 'gym training spends exactly 10 energy per session');
-    check(in_array('GymTrained', array_column($engine->eventLog(), 'event_name'), true), 'GymTrained event is persisted');
+    check($gym['player']['energy'] === $before['energy'] - 5, 'gym training spends its selected gym cost of 5 energy per session');
+    check(in_array('GymTrained', array_column($engine->eventLog(100), 'event_name'), true), 'GymTrained event is persisted');
 
     [$engine, $database] = build_engine($databasePath);
     $p0 = $engine->player();
@@ -209,16 +216,18 @@ try {
     $heal = $engine->hospitalHeal();
     check($heal['player']['life'] === $heal['player']['max_life'], 'hospital restores life to maximum');
     check($heal['cost']['cash'] > 0, 'hospital charges for treatment');
-    check(in_array('HospitalHealed', array_column($engine->eventLog(), 'event_name'), true), 'HospitalHealed event is persisted');
+    check(in_array('HospitalHealed', array_column($engine->eventLog(100), 'event_name'), true), 'HospitalHealed event is persisted');
 
     [$engine, $database] = build_engine($databasePath);
     $t0 = $engine->player();
     $trip = $engine->travel('Dubai');
-    check($trip['player']['city'] === 'Dubai', 'travel moves the player to the chosen city');
+    check($trip['player']['city'] === $t0['city'] && $trip['travel']['status'] === 'traveling', 'travel keeps the origin city until server-clock arrival');
     check($trip['player']['cash'] === (int) $t0['cash'] - 2500, 'travel charges the fare');
     $badCity = false;
     try { $engine->travel('Atlantis'); } catch (RuntimeException) { $badCity = true; }
     check($badCity, 'travel rejects an unknown destination');
+    $database->execute('UPDATE player_travel SET arrives_at = :past WHERE player_id = :id', ['past' => gmdate('c', time() - 1), 'id' => 'founder-player']);
+    check($engine->player()['city'] === 'Dubai', 'arrival settles the destination through a fresh player read');
 
     [$engine, $database] = build_engine($databasePath);
     $c0 = (int) $engine->player()['cash'];
@@ -226,10 +235,11 @@ try {
     check(in_array($bj['result'], ['win', 'lose', 'push'], true), 'blackjack returns a server-decided result');
     $expected = $c0 + $bj['delta'];
     check((int) $bj['player']['cash'] === $expected, 'blackjack settles cash by the server-decided delta');
-    check(in_array('BlackjackPlayed', array_column($engine->eventLog(), 'event_name'), true), 'BlackjackPlayed event is persisted');
+    check(in_array('BlackjackPlayed', array_column($engine->eventLog(100), 'event_name'), true), 'BlackjackPlayed event is persisted');
 
     [$engine, $database] = build_engine($databasePath);
     $engine->changeModule('stats', 'disable');
+    $engine->publishRelease('fixture');
     [$engine] = build_engine($databasePath);
     $gymBlocked = false;
     try { $engine->trainGym('strength', 1); } catch (RuntimeException) { $gymBlocked = true; }
@@ -238,11 +248,11 @@ try {
     [$engine, $database] = build_engine($databasePath);
     $j0 = $engine->player();
     $job = $engine->workShift();
-    check($job['player']['energy'] === $j0['energy'] - 20, 'job shift spends exactly 20 energy');
-    check($job['reward']['cash'] > 0, 'job shift pays a wage scaled by player level');
+    check($job['player']['energy'] === $j0['energy'] - 15, 'job shift spends the selected grocer job cost of 15 energy');
+    check($job['reward']['cash'] > 0, 'job shift pays the selected job wage');
     check($job['player']['cash'] === (int) $j0['cash'] + $job['reward']['cash'], 'job wage credits cash on hand');
     check($job['player']['xp'] > (int) $j0['xp'], 'job shift grants experience');
-    check(in_array('JobShiftWorked', array_column($engine->eventLog(), 'event_name'), true), 'JobShiftWorked event is persisted');
+    check(in_array('JobShiftWorked', array_column($engine->eventLog(100), 'event_name'), true), 'JobShiftWorked event is persisted');
     check(count(array_filter($engine->ledger(), static fn (array $e): bool => $e['reason'] === 'job.wage')) === 1, 'job wage writes a job.wage ledger entry');
     $jobBroke = false;
     $database->execute('UPDATE players SET energy = 5 WHERE id = :id', ['id' => 'founder-player']);
@@ -264,16 +274,19 @@ try {
     check($atk['result'] === 'win', 'overwhelming combat stats guarantee a server-rolled win');
     check($atk['player']['cash'] === (int) $a0['cash'] + $atk['reward']['cash'], 'winning attack settles cash by the server-decided mug reward');
     check($atk['reward']['cash'] > 0 && $atk['player']['xp'] > (int) $a0['xp'], 'winning attack grants cash and xp');
-    check(in_array('PlayerAttacked', array_column($engine->eventLog(), 'event_name'), true), 'PlayerAttacked event is persisted');
+    check(in_array('PlayerAttacked', array_column($engine->eventLog(100), 'event_name'), true), 'PlayerAttacked event is persisted');
     check(count(array_filter($engine->ledger(), static fn (array $e): bool => $e['reason'] === 'attack.mug')) === 1, 'winning attack writes an attack.mug ledger entry');
 
     [$engine, $database] = build_engine($databasePath);
     $engine->changeModule('kill', 'disable');
+    $engine->publishRelease('fixture');
     [$engine] = build_engine($databasePath);
     $attackBlocked = false;
     try { $engine->attackNpc(); } catch (RuntimeException) { $attackBlocked = true; }
     check($attackBlocked, 'disabling the Attack/Kill module blocks attacks');
     $engine->changeModule('kill', 'install');
+    $engine->changeModule('stats', 'enable');
+    $engine->publishRelease('fixture');
 
     // ============================================================
     // SECURITY HARDENING (P0-1 admin auth, P0-2 player identity,
@@ -290,7 +303,7 @@ try {
     }
     check(!$publiclyWritable, 'EXPLOIT CLOSED: header-less client can no longer write to admin routes');
     check(
-        RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example'], null) === 'admin-panel',
+        RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example', 'HTTPS' => 'on'], null) === 'admin-panel',
         'demo mode still allows the same-origin admin panel (browser sends Origin)',
     );
     $crossOriginBlocked = false;
@@ -300,6 +313,29 @@ try {
         $crossOriginBlocked = true;
     }
     check($crossOriginBlocked, 'demo mode rejects a cross-origin admin request');
+    foreach ([
+        'different port' => ['HTTP_ORIGIN' => 'http://127.0.0.1:4286', 'HTTP_HOST' => '127.0.0.1:4285'],
+        'different scheme' => ['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example'],
+        'forged forwarding header' => ['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example', 'HTTP_X_FORWARDED_PROTO' => 'https'],
+        'origin credentials' => ['HTTP_ORIGIN' => 'http://user@zone.example', 'HTTP_HOST' => 'zone.example'],
+        'origin path' => ['HTTP_ORIGIN' => 'http://zone.example/path', 'HTTP_HOST' => 'zone.example'],
+        'null origin' => ['HTTP_ORIGIN' => 'null', 'HTTP_HOST' => 'zone.example'],
+    ] as $reason => $request) {
+        $rejected = false;
+        try { RequestGuard::authorizeAdmin($request, null); } catch (RuntimeException) { $rejected = true; }
+        check($rejected, 'same-origin guard rejects ' . $reason);
+    }
+    foreach ([
+        'local explicit port' => ['HTTP_ORIGIN' => 'http://127.0.0.1:4285', 'HTTP_HOST' => '127.0.0.1:4285'],
+        'equivalent default port and host case' => ['HTTP_ORIGIN' => 'https://ZONE.example:443', 'HTTP_HOST' => 'zone.example', 'HTTPS' => 'on'],
+        'IPv6 host' => ['HTTP_ORIGIN' => 'http://[::1]:4285', 'HTTP_HOST' => '[::1]:4285'],
+    ] as $reason => $request) {
+        check(RequestGuard::authorizeAdmin($request, null) === 'admin-panel', 'same-origin guard accepts ' . $reason);
+    }
+    check(RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example', 'HTTP_X_FORWARDED_PROTO' => 'https'], null, true) === 'admin-panel', 'explicit trusted proxy contract preserves original HTTPS scheme');
+    $proxyMismatchBlocked = false;
+    try { RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'http://zone.example', 'HTTP_HOST' => 'zone.example', 'HTTP_X_FORWARDED_PROTO' => 'https'], null, true); } catch (RuntimeException) { $proxyMismatchBlocked = true; }
+    check($proxyMismatchBlocked, 'trusted proxy still rejects a different origin scheme');
     $tokenMissingBlocked = false;
     try {
         RequestGuard::authorizeAdmin(['HTTP_ORIGIN' => 'https://zone.example', 'HTTP_HOST' => 'zone.example'], 'super-secret');
@@ -357,6 +393,12 @@ try {
     // --- Strict input validation (no silent (int) casts of client values) ---
     check(RequestGuard::positiveInt(['amount' => 500], 'amount') === 500, 'positiveInt accepts a valid integer');
     check(RequestGuard::positiveInt(['amount' => '500'], 'amount') === 500, 'positiveInt accepts a numeric string');
+    check(RequestGuard::nonNegativeInt(['expectedPrice' => 0], 'expectedPrice') === 0, 'quoted price accepts a genuine zero price');
+    foreach ([true, -1, 0.5] as $invalidPrice) {
+        $rejected = false;
+        try { RequestGuard::nonNegativeInt(['expectedPrice' => $invalidPrice], 'expectedPrice'); } catch (InvalidArgumentException) { $rejected = true; }
+        check($rejected, 'quoted price rejects invalid value ' . json_encode($invalidPrice));
+    }
     foreach ([['amount' => 0], ['amount' => -5], ['amount' => 'lots'], ['amount' => 5.5], []] as $badBody) {
         $rejected = false;
         try { RequestGuard::positiveInt($badBody, 'amount'); } catch (InvalidArgumentException) { $rejected = true; }
@@ -457,6 +499,12 @@ try {
     $lockedAfter = $engine->player('founder-player');
     check((int) $lockedBefore['nerve'] === (int) $lockedAfter['nerve'] && (int) $lockedBefore['cash'] === (int) $lockedAfter['cash'], 'a level-gated crime mutates nothing');
     $database->execute('DELETE FROM action_cooldowns');
+    $categoryBlocked = false;
+    try { $engine->attemptCrime('cardskimming'); } catch (InvalidArgumentException $error) { $categoryBlocked = str_starts_with($error->getMessage(), 'Earn more crime experience'); }
+    check($categoryBlocked, 'original crime tiers enforce their category XP prerequisite');
+    $progressFixture = $engine->gameplay()['state'];
+    $progressFixture['crimeXp'] = 300;
+    $database->execute("UPDATE player_progression SET state_json = :state WHERE player_id = 'founder-player'", ['state' => json_encode($progressFixture)]);
     $gateAllowed = true;
     try { $engine->attemptCrime('cardskimming'); } catch (InvalidArgumentException) { $gateAllowed = false; }
     check($gateAllowed, 'a crime at exactly the required level (Card Skimming L12 vs player L12) is allowed');
@@ -476,9 +524,10 @@ try {
     check($monotonic, 'crime cash-per-nerve EV is strictly monotonic across all 7 tiers (no-brainer + Graffiti trap removed)');
     check((int) $database->fetchOne('SELECT level_required FROM crimes WHERE id = :id', ['id' => 'burglary'])['level_required'] === 16, 'Burglary is gated at level 16');
     check((int) $database->fetchOne('SELECT level_required FROM crimes WHERE id = :id', ['id' => 'searchforcash'])['level_required'] === 1, 'Search for Cash is available from level 1');
-    check(count($engine->crimes()) === 7, 'crime respec preserves all 7 tested crimes');
+    check(count($engine->crimes()) === 31, 'crime catalog preserves 7 tiers and 24 existing variants');
     $publicBurglary = array_values(array_filter($engine->crimes(), static fn (array $c): bool => $c['id'] === 'burglary'))[0];
     check((int) ($publicBurglary['level_required'] ?? 0) === 16, 'public crime catalog exposes level_required for client lock badges');
+    check($publicBurglary['category'] === 'burg' && $publicBurglary['crime_xp_required'] === 2200, 'original crime catalog preserves category identity and XP threshold');
     check(!isset($publicBurglary['success_basis_points']), 'public crime catalog still hides success_basis_points');
 
     // --- P0 login streak pays, is idempotent, advances and resets ---
@@ -739,6 +788,98 @@ try {
         check(($reloadedById[$claimId]['ownerFactionId'] ?? null) === 'vipers' && ($reloadedById[$claimId]['version'] ?? null) === $claimVersion + 1, 'claimed territory survives a fresh engine instance and database reseed pass');
     }
 
+    // Frequent polling must not restart the slower resource clocks.
+    $clock = 1800000000; // Divisible by each 60/180/300-second cadence.
+    $database->execute('UPDATE players SET energy = 0, nerve = 0, happy = 0, life = 0, resources_updated_at = :ts WHERE id = :id', ['ts' => gmdate('c', $clock), 'id' => 'founder-player']);
+    $resources = new ResourceService($database, null, static function () use (&$clock): int { return $clock; });
+    for ($minute = 1; $minute <= 15; $minute++) {
+        $clock += 60;
+        $regenerated = $resources->regenerate('founder-player');
+    }
+    check($regenerated['energy'] === 5 && $regenerated['nerve'] === 3 && $regenerated['happy'] === 5 && $regenerated['life'] === 15, 'one-minute player polling preserves all four resource regeneration cadences');
+    $unchanged = $resources->regenerate('founder-player');
+    check($unchanged === $regenerated, 'polling the same resource tick cannot double-credit regeneration');
+    $clock += 59;
+    $resources->regenerate('founder-player');
+    $clock++;
+    $fractional = $resources->regenerate('founder-player');
+    check($fractional['life'] === 16, 'sub-minute polling retains time toward the next resource tick');
+
+    // An active war must remain contested when its defending faction reinforces.
+    $database->execute('UPDATE faction_members SET faction_id = :id WHERE player_id = :player', ['id' => 'kings', 'player' => 'founder-player']);
+    $database->execute("UPDATE territory_control SET faction_id = 'kings', state = 'contested' WHERE territory_id = 'ZC-056'");
+    $warId = bin2hex(random_bytes(16));
+    $database->insertIgnore('territory_wars', ['id', 'territory_id', 'attacker_faction_id', 'defender_faction_id', 'target_score', 'state', 'started_at', 'ends_at'], [$warId, 'ZC-056', 'vipers', 'kings', 100000, 'active', gmdate('c'), gmdate('c', time() + 3600)]);
+    $database->execute('DELETE FROM action_cooldowns');
+    $beforeReinforce = $database->fetchOne('SELECT version FROM territory_control WHERE territory_id = :id', ['id' => 'ZC-056']);
+    $reinforced = $engine->actTerritory('ZC-056', 'reinforce', (int) $beforeReinforce['version']);
+    $reinforcedBlock = array_column($reinforced['map']['blocks'], null, 'id')['ZC-056'];
+    check($reinforcedBlock['state'] === 'contested' && $reinforcedBlock['activeWar'] !== null, 'reinforcement cannot clear contested state while its territory war is active');
+    $engine->setTerritoryOwnership('ZC-056', null, 'regression-test');
+    $overridden = array_column($engine->territoryMap()['blocks'], null, 'id')['ZC-056'];
+    check($overridden['state'] === 'neutral' && $overridden['activeWar'] === null, 'admin ownership override resolves any active war on the reassigned block');
+
+    // Fault injection must roll back ownership together with its required audit.
+    $beforeFault = $database->fetchOne('SELECT * FROM territory_control WHERE territory_id = :id', ['id' => 'ZC-057']);
+    $database->execute("CREATE TRIGGER fail_territory_audit BEFORE INSERT ON admin_audit_log WHEN NEW.action = 'territory.ownership.set' BEGIN SELECT RAISE(ABORT, 'test audit failure'); END");
+    $faultRejected = false;
+    try { $engine->setTerritoryOwnership('ZC-057', 'night', 'regression-test'); } catch (Throwable $exception) { $faultRejected = str_contains($exception->getMessage(), 'test audit failure'); }
+    $database->execute('DROP TRIGGER fail_territory_audit');
+    $afterFault = $database->fetchOne('SELECT * FROM territory_control WHERE territory_id = :id', ['id' => 'ZC-057']);
+    check($faultRejected && $afterFault === $beforeFault, 'ownership update rolls back when its audit insert fails');
+
+    // Higher/lower owns its current card on the server and settles one wager.
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute('DELETE FROM action_rate_limits');
+    $initialCard = $engine->highLowState();
+    check($initialCard === ['card' => 7, 'version' => 1], 'higher/lower initializes a persistent server-owned seven');
+    foreach (['higher', 'lower'] as $direction) {
+        $database->execute('DELETE FROM action_cooldowns');
+        $cardBefore = $engine->highLowState();
+        $cashBefore = (int) $database->fetchOne('SELECT cash FROM players WHERE id = :id', ['id' => 'founder-player'])['cash'];
+        $round = $engine->playHighLow(100, $direction, $cardBefore['version']);
+        $expected = $round['card'] === $cardBefore['card'] ? 'push' : (($direction === 'higher' ? $round['card'] > $cardBefore['card'] : $round['card'] < $cardBefore['card']) ? 'win' : 'lose');
+        $expectedDelta = $expected === 'push' ? 0 : ($expected === 'win' ? 100 : -100);
+        check($round['previousCard'] === $cardBefore['card'] && $round['card'] >= 2 && $round['card'] <= 14 && $round['result'] === $expected && $round['delta'] === $expectedDelta, "higher/lower {$direction} evaluates the drawn rank against the stored card with ace high");
+        check($round['player']['cash'] === $cashBefore + $expectedDelta && $engine->highLowState() === ['card' => $round['card'], 'version' => $cardBefore['version'] + 1], "higher/lower {$direction} atomically persists the wallet and next card");
+        $roundLedger = $database->fetchAll('SELECT amount, reason FROM economy_ledger WHERE correlation_id = :id', ['id' => $round['serverProof']['correlationId']]);
+        check($expectedDelta === 0 ? $roundLedger === [] : count($roundLedger) === 1 && (int) $roundLedger[0]['amount'] === $expectedDelta && $roundLedger[0]['reason'] === 'casino.high-low', "higher/lower {$direction} records its exact settlement in the economy ledger");
+    }
+    $cardAfter = $engine->highLowState();
+    $cooldownRejected = false;
+    try { $engine->playHighLow(100, 'higher', $cardAfter['version']); } catch (CooldownException) { $cooldownRejected = true; }
+    check($cooldownRejected && $engine->highLowState() === $cardAfter, 'higher/lower rejects an immediate repeated bet without advancing the round');
+    $database->execute('DELETE FROM action_cooldowns');
+    $cashBeforeStale = (int) $database->fetchOne('SELECT cash FROM players WHERE id = :id', ['id' => 'founder-player'])['cash'];
+    $attemptsBeforeStale = (int) $database->fetchOne("SELECT count FROM action_rate_limits WHERE player_id = 'founder-player'")['count'];
+    $staleRoundRejected = false;
+    try { $engine->playHighLow(100, 'higher', $initialCard['version']); } catch (RuntimeException $exception) { $staleRoundRejected = str_starts_with($exception->getMessage(), 'Casino round changed.'); }
+    $cashAfterStale = (int) $database->fetchOne('SELECT cash FROM players WHERE id = :id', ['id' => 'founder-player'])['cash'];
+    check($staleRoundRejected && $engine->highLowState() === $cardAfter && $cashAfterStale === $cashBeforeStale, 'a stale higher/lower tab cannot wager against a newer server card');
+    $attemptsAfterStale = (int) $database->fetchOne("SELECT count FROM action_rate_limits WHERE player_id = 'founder-player'")['count'];
+    check($attemptsAfterStale === $attemptsBeforeStale + 1, 'rejected gameplay attempts remain counted after their mutation transaction rolls back');
+    $invalidBetsRejected = 0;
+    foreach ([[0, 'higher'], [-100, 'lower'], [100, 'sideways']] as [$badBet, $badDirection]) {
+        try { $engine->playHighLow($badBet, $badDirection, $cardAfter['version']); } catch (InvalidArgumentException) { $invalidBetsRejected++; }
+    }
+    check($invalidBetsRejected === 3 && $engine->highLowState() === $cardAfter, 'higher/lower rejects invalid amounts and directions before changing its round');
+    $insufficientRejected = false;
+    try { $engine->playHighLow(PHP_INT_MAX, 'lower', $cardAfter['version']); } catch (RuntimeException $exception) { $insufficientRejected = str_contains($exception->getMessage(), 'Not enough cash'); }
+    check($insufficientRejected && $engine->highLowState() === $cardAfter, 'higher/lower cannot wager more than the server wallet');
+    [$reloadedEngine] = build_engine($databasePath);
+    check($reloadedEngine->highLowState() === $cardAfter, 'higher/lower keeps its current card across fresh engine instances');
+    $cashBeforeFault = (int) $database->fetchOne('SELECT cash FROM players WHERE id = :id', ['id' => 'founder-player'])['cash'];
+    $ledgerBeforeFault = (int) $database->fetchOne('SELECT COUNT(*) AS total FROM economy_ledger')['total'];
+    $database->execute("CREATE TRIGGER fail_casino_event BEFORE INSERT ON event_log WHEN NEW.event_name = 'HighLowPlayed' BEGIN SELECT RAISE(ABORT, 'test casino event failure'); END");
+    $casinoFault = false;
+    try { $engine->playHighLow(100, 'higher', $cardAfter['version']); } catch (Throwable $exception) { $casinoFault = str_contains($exception->getMessage(), 'test casino event failure'); }
+    $database->execute('DROP TRIGGER fail_casino_event');
+    $cashAfterFault = (int) $database->fetchOne('SELECT cash FROM players WHERE id = :id', ['id' => 'founder-player'])['cash'];
+    $ledgerAfterFault = (int) $database->fetchOne('SELECT COUNT(*) AS total FROM economy_ledger')['total'];
+    check($casinoFault && $cashAfterFault === $cashBeforeFault && $ledgerAfterFault === $ledgerBeforeFault && $engine->highLowState() === $cardAfter, 'higher/lower rolls back card, wallet, and ledger together when event persistence fails');
+    check($database->fetchOne("SELECT player_id FROM action_cooldowns WHERE player_id = 'founder-player' AND action = 'blackjack'") === null, 'a rolled-back higher/lower round does not arm a cooldown');
+    check(str_contains($schema, 'CREATE TABLE IF NOT EXISTS casino_high_low'), 'PostgreSQL schema persists higher/lower round state');
+
     // --- Both schemas carry the new retention structures ---
     foreach (['cooldown_config', 'player_contract_progress', 'factions', 'faction_members', 'territory_blocks', 'territory_control', 'territory_wars'] as $table) {
         check(str_contains($schema, "CREATE TABLE IF NOT EXISTS {$table}"), "PostgreSQL schema contains {$table}");
@@ -746,6 +887,7 @@ try {
     check(str_contains($schema, 'level_required'), 'PostgreSQL schema adds crimes.level_required');
     check(str_contains($schema, 'login_streak') && str_contains($schema, 'last_login_day'), 'PostgreSQL schema adds player streak columns');
     $sqliteSchema = (string) file_get_contents(dirname(__DIR__) . '/database/schema.sqlite.sql');
+    check(str_contains($sqliteSchema, 'CREATE TABLE IF NOT EXISTS casino_high_low'), 'SQLite schema persists higher/lower round state');
     foreach (['cooldown_config', 'player_contract_progress', 'factions', 'faction_members', 'territory_blocks', 'territory_control', 'territory_wars'] as $table) {
         check(str_contains($sqliteSchema, "CREATE TABLE IF NOT EXISTS {$table}"), "SQLite schema contains {$table}");
     }

@@ -24,7 +24,7 @@ if (!existsSync(indexPath)) {
 }
 const html = readFileSync(indexPath, 'utf8');
 
-const screens = ['home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
+const screens = ['home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'];
 for (const screen of screens) {
   check(new RegExp(`['\"]${screen}['\"]`).test(html), `Screen is missing from source registry: ${screen}`);
   check(html.includes(`is.${screen}`), `Screen template is missing: ${screen}`);
@@ -114,11 +114,12 @@ const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flat
   return entry.isDirectory() ? walk(fullPath) : [fullPath];
 });
 const files = walk(target).filter((file) => !relative(target, file).startsWith('.git'));
-const ignoredRuntimeRoots = new Set(['.git', '.tools', '.vercel', 'node_modules']);
+const ignoredRuntimeRoots = new Set(['.git', '.tools', '.vercel', 'node_modules', 'docs']);
 const runtimeFiles = files.filter((file) => {
   const pathFromTarget = relative(target, file);
   const root = pathFromTarget.split(/[\\/]/)[0];
   if (ignoredRuntimeRoots.has(root)) return false;
+  if (/^engine[\\/]var[\\/]/.test(pathFromTarget)) return false;
   return !['.md', '.json'].includes(extname(file).toLowerCase()) || ['package.json', 'vercel.json'].includes(pathFromTarget);
 });
 check(runtimeFiles.every((file) => statSync(file).size > 0), 'One or more runtime files are empty.');

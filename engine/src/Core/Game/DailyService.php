@@ -68,6 +68,11 @@ final readonly class DailyService
      */
     public function registerLogin(string $playerId, string $correlationId): ?array
     {
+        return $this->database->playerTransaction($playerId, fn (): ?array => $this->registerLoginLocked($playerId, $correlationId));
+    }
+
+    private function registerLoginLocked(string $playerId, string $correlationId): ?array
+    {
         $player = $this->database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => $playerId]);
         if ($player === null) {
             return null;
@@ -144,6 +149,13 @@ final readonly class DailyService
      */
     public function recordProgress(string $playerId, string $metric, int $amount): void
     {
+        $this->database->playerTransaction($playerId, function () use ($playerId, $metric, $amount): void {
+            $this->recordProgressLocked($playerId, $metric, $amount);
+        });
+    }
+
+    private function recordProgressLocked(string $playerId, string $metric, int $amount): void
+    {
         if ($amount <= 0) {
             return;
         }
@@ -191,7 +203,7 @@ final readonly class DailyService
      */
     public function claimContract(string $playerId, string $correlationId): array
     {
-        return $this->database->transaction(function () use ($playerId, $correlationId): array {
+        return $this->database->playerTransaction($playerId, function () use ($playerId, $correlationId): array {
             $contract = $this->todayContract();
             $day = $contract['day'];
             $row = $this->database->fetchOne(

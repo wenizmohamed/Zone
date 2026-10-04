@@ -10,6 +10,8 @@ use Throwable;
 
 final class Database
 {
+    private int $savepointSequence = 0;
+
     private function __construct(private readonly PDO $pdo, private readonly string $driver)
     {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -30,6 +32,7 @@ final class Database
             }
             $pdo = new PDO('sqlite:' . $path);
             $pdo->exec('PRAGMA foreign_keys = ON');
+            $pdo->exec('PRAGMA busy_timeout = 5000');
             $pdo->exec('PRAGMA journal_mode = WAL');
             return new self($pdo, 'sqlite');
         }
@@ -112,6 +115,15 @@ final class Database
                 ['id', 'name_en', 'name_ar', 'nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward', 'level_required', 'enabled'],
                 [...$crime, 1],
             );
+        }
+
+        // Existing game variants are migrated as draft content without
+        // overwriting an administrator's edits or an active release.
+        $variants = json_decode((string) file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json'), true, 64, JSON_THROW_ON_ERROR);
+        foreach ($variants as $crime) {
+            $this->insertIgnore('crimes',
+                ['id', 'name_en', 'name_ar', 'nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward', 'level_required', 'enabled'],
+                [$crime['id'], $crime['name_en'], $crime['name_ar'], $crime['nerve_cost'], $crime['success_basis_points'], $crime['cash_min'], $crime['cash_max'], $crime['xp_reward'], $crime['level_required'], 1]);
         }
 
         // Server-clock cooldown floors (seconds), owned as config not code.
@@ -314,6 +326,19 @@ final class Database
 
     public function transaction(callable $callback): mixed
     {
+        if ($this->pdo->inTransaction()) {
+            $savepoint = 'zone_nested_' . ++$this->savepointSequence;
+            $this->pdo->exec("SAVEPOINT {$savepoint}");
+            try {
+                $result = $callback($this);
+                $this->pdo->exec("RELEASE SAVEPOINT {$savepoint}");
+                return $result;
+            } catch (Throwable $exception) {
+                $this->pdo->exec("ROLLBACK TO SAVEPOINT {$savepoint}");
+                $this->pdo->exec("RELEASE SAVEPOINT {$savepoint}");
+                throw $exception;
+            }
+        }
         $this->pdo->beginTransaction();
         try {
             $result = $callback($this);
@@ -325,5 +350,25 @@ final class Database
             }
             throw $exception;
         }
+    }
+
+    /** Serialize every authoritative mutation before reading this player's state. */
+    public function playerTransaction(string $playerId, callable $callback): mixed
+    {
+        return $this->transaction(function () use ($playerId, $callback): mixed {
+            if ($this->driver === 'sqlite') {
+                // SQLite has no row locks. Acquire its write lock before any
+                // balance reads rather than upgrading a stale read snapshot.
+                $this->execute('UPDATE players SET id = id WHERE id = :id', ['id' => $playerId]);
+            }
+            $player = $this->fetchOne(
+                'SELECT id FROM players WHERE id = :id' . ($this->driver === 'pgsql' ? ' FOR UPDATE' : ''),
+                ['id' => $playerId],
+            );
+            if ($player === null) {
+                throw new RuntimeException("Unknown player: {$playerId}");
+            }
+            return $callback($this);
+        });
     }
 }

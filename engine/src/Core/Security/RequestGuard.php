@@ -35,7 +35,7 @@ final class RequestGuard
      * @param array<string, mixed> $server  Typically $_SERVER.
      * @param string|null          $adminToken  Configured ZONE_ADMIN_TOKEN, or null in demo mode.
      */
-    public static function authorizeAdmin(array $server, ?string $adminToken): string
+    public static function authorizeAdmin(array $server, ?string $adminToken, bool $trustForwardedProto = false): string
     {
         $adminToken = $adminToken !== null ? trim($adminToken) : null;
 
@@ -50,7 +50,7 @@ final class RequestGuard
         // Demo mode: no token configured. A state-changing request MUST carry a
         // matching same-origin header. This closes the previous hole where any
         // header-less client (curl, a bot, server-to-server) was waved through.
-        self::assertSameOrigin($server, true);
+        self::assertSameOrigin($server, true, $trustForwardedProto);
         return 'admin-panel';
     }
 
@@ -60,7 +60,7 @@ final class RequestGuard
      *
      * @param array<string, mixed> $server
      */
-    public static function assertSameOrigin(array $server, bool $requirePresent): void
+    public static function assertSameOrigin(array $server, bool $requirePresent, bool $trustForwardedProto = false): void
     {
         $origin = trim((string) ($server['HTTP_ORIGIN'] ?? ''));
         if ($origin === '') {
@@ -69,11 +69,36 @@ final class RequestGuard
             }
             return;
         }
-        $originHost = parse_url($origin, PHP_URL_HOST);
-        $requestHost = explode(':', (string) ($server['HTTP_HOST'] ?? ''))[0];
-        if (!is_string($originHost) || $originHost === '' || !hash_equals(strtolower($requestHost), strtolower($originHost))) {
+        $https = strtolower((string) ($server['HTTPS'] ?? ''));
+        $scheme = ($https !== '' && $https !== 'off' && $https !== '0') || ($server['REQUEST_SCHEME'] ?? '') === 'https' ? 'https' : 'http';
+        // Only the deployment entry point may opt into the trusted Vercel
+        // proxy contract. A client-supplied forwarding header on localhost or
+        // a direct PHP server never changes the transport used by this check.
+        if ($trustForwardedProto && isset($server['HTTP_X_FORWARDED_PROTO'])) {
+            $scheme = strtolower(trim((string) $server['HTTP_X_FORWARDED_PROTO']));
+        }
+        $originParts = self::originParts($origin);
+        $requestParts = self::originParts($scheme . '://' . trim((string) ($server['HTTP_HOST'] ?? '')));
+        if ($originParts === null || $requestParts === null || $originParts !== $requestParts) {
             throw new RuntimeException('Cross-origin admin request rejected.');
         }
+    }
+
+    /** @return array{string, string, int}|null */
+    private static function originParts(string $url): ?array
+    {
+        if (preg_match('/[\s\\\\]/', $url)) {
+            return null;
+        }
+        $parts = parse_url($url);
+        if (!is_array($parts) || empty($parts['host']) || isset($parts['user']) || isset($parts['pass']) || isset($parts['path']) || isset($parts['query']) || isset($parts['fragment'])) {
+            return null;
+        }
+        $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return null;
+        }
+        return [$scheme, strtolower($parts['host']), (int) ($parts['port'] ?? ($scheme === 'https' ? 443 : 80))];
     }
 
     /**
@@ -140,6 +165,16 @@ final class RequestGuard
         }
         if ($number <= 0) {
             throw new InvalidArgumentException("The '{$key}' field must be greater than zero.");
+        }
+        return $number;
+    }
+
+    /** Strict quoted-price input: zero is valid, negative/fractional values are not. */
+    public static function nonNegativeInt(array $body, string $key): int
+    {
+        $number = self::coerceInt($body[$key] ?? null);
+        if ($number === null || $number < 0) {
+            throw new InvalidArgumentException("The '{$key}' field must be a nonnegative whole number.");
         }
         return $number;
     }

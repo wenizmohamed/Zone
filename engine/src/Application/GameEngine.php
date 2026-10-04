@@ -7,6 +7,7 @@ namespace Zone\Engine\Application;
 use RuntimeException;
 use Zone\Engine\Core\Contracts\CacheStore;
 use Zone\Engine\Core\Content\ContentManager;
+use Zone\Engine\Core\Content\GameplayCatalog;
 use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
@@ -16,9 +17,13 @@ use Zone\Engine\Core\Game\LevelingService;
 use Zone\Engine\Core\Game\NotificationService;
 use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\ResourceService;
+use Zone\Engine\Core\Game\ProgressionService;
+use Zone\Engine\Core\Game\CombatService;
+use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
+use Zone\Engine\Core\Publishing\PublishedRules;
 use Zone\Engine\Core\Territories\TerritoryService;
 use Zone\Engine\Core\Themes\ThemeRegistry;
 
@@ -73,6 +78,7 @@ final class GameEngine
         $this->leveling = new LevelingService($database, $this->ledger, $events);
         $this->daily = new DailyService($database, $this->ledger, $events, $this->leveling);
         $this->territories = new TerritoryService($database, $events);
+        $this->releases->initializeContent($this->runtimeContent());
         $this->cooldownSeconds = $this->loadCooldownConfig();
         $rateMaxRaw = getenv('ZONE_RATE_LIMIT_MAX');
         $rateWindowRaw = getenv('ZONE_RATE_LIMIT_WINDOW');
@@ -102,15 +108,23 @@ final class GameEngine
     }
 
     /**
-     * Pre-flight guard for every state-changing gameplay action: enforce the
-     * per-player rate limit first, then the per-action server-clock cooldown.
-     * Runs after the module-enabled check and any input validation, before any
-     * mutation. Throws RateLimitException / CooldownException (both -> HTTP 429).
+     * Check the per-action cooldown while holding the player's mutation lock.
+     * recordActionAttempt commits the rate-limit attempt before this transaction.
      */
     private function guardAction(string $playerId, string $action): void
     {
-        $this->rateLimiter->hit($playerId);
         $this->cooldowns->assertReady($playerId, $action);
+        (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+        (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, $action);
+    }
+
+    private function recordActionAttempt(string $playerId): void
+    {
+        // Count rejected attempts too. Commit this before the gameplay
+        // transaction so a cooldown or validation rollback cannot erase it.
+        $this->database->playerTransaction($playerId, function () use ($playerId): void {
+            $this->rateLimiter->hit($playerId);
+        });
     }
 
     private function armCooldown(string $playerId, string $action): void
@@ -131,7 +145,7 @@ final class GameEngine
             'api' => 'v1',
             'serverAuthoritative' => true,
             'moduleCount' => count(array_filter($this->modules->all(), static fn (array $module): bool => $module['installed'])),
-            'activeTheme' => array_values(array_filter($this->themes->all(), static fn (array $theme): bool => $theme['active']))[0]['id'] ?? null,
+            'activeTheme' => $this->publishedContent()['activeTheme'] ?? null,
             'activeReleaseId' => $release['id'],
             'activeReleaseVersion' => $release['version'],
             'capabilities' => [
@@ -166,10 +180,12 @@ final class GameEngine
 
     public function publishRelease(string $actor): array
     {
-        $draft = $this->releases->draft();
-        $draft['manifest']['content'] = $this->runtimeContent();
-        $this->releases->saveDraft($draft['manifest'], $actor);
-        return $this->releases->publish($actor);
+        return $this->releases->configurationTransaction(function () use ($actor): array {
+            $draft = $this->releases->draft();
+            $draft['manifest']['content'] = $this->runtimeContent();
+            $this->releases->saveDraft($draft['manifest'], $actor);
+            return $this->releases->publish($actor);
+        });
     }
 
     public function activeRelease(): array
@@ -182,7 +198,7 @@ final class GameEngine
         $release = $this->releases->active();
         $content = $release['manifest']['content'] ?? null;
         if (!is_array($content)) {
-            $content = $this->runtimeContent();
+            $content = $this->releases->foundation()['content'] ?? [];
         }
 
         return [
@@ -213,37 +229,42 @@ final class GameEngine
 
     public function changeModule(string $id, string $action): array
     {
-        $module = $this->modules->changeState($id, $action);
-        $this->events->publish(new DomainEvent('ModuleStateChanged', ['moduleId' => $id, 'action' => $action]));
-        return $module;
+        return $this->releases->configurationTransaction(function () use ($id, $action): array {
+            $module = $this->modules->changeState($id, $action);
+            $this->events->publish(new DomainEvent('ModuleStateChanged', ['moduleId' => $id, 'action' => $action]));
+            return $module;
+        });
     }
 
     public function activateTheme(string $id): array
     {
-        $theme = $this->themes->activate($id);
-        $this->events->publish(new DomainEvent('ThemeActivated', ['themeId' => $id]));
-        return $theme;
+        return $this->releases->configurationTransaction(function () use ($id): array {
+            $theme = $this->themes->activate($id);
+            $this->events->publish(new DomainEvent('ThemeActivated', ['themeId' => $id]));
+            return $theme;
+        });
     }
 
     public function activeThemeStylesheet(): string
     {
-        return $this->themes->activeStylesheet();
+        return $this->themes->activeStylesheet($this->publishedContent()['activeTheme'] ?? null);
     }
 
     public function player(string $playerId = 'founder-player'): array
     {
+        (new TravelService($this->database, $this->events))->snapshot($playerId);
         return $this->resources->regenerate($playerId);
     }
 
     public function crimes(): array
     {
-        if (!$this->modules->isEnabled('crime')) {
+        if (!$this->publishedModuleEnabled('crime')) {
             return [];
         }
         return array_map(static function (array $crime): array {
             unset($crime['success_basis_points'], $crime['enabled']);
             return $crime;
-        }, $this->content->crimes());
+        }, array_values(array_filter($this->publishedContent()['crimes'] ?? [], static fn (array $crime): bool => (bool) ($crime['enabled'] ?? false))));
     }
 
     public function adminCrimes(): array
@@ -253,7 +274,7 @@ final class GameEngine
 
     public function saveCrime(string $id, array $definition, string $actor): array
     {
-        return $this->content->saveCrime($id, $definition, $actor);
+        return $this->releases->configurationTransaction(fn (): array => $this->content->saveCrime($id, $definition, $actor));
     }
 
     public function adminAuditLog(int $limit = 100): array
@@ -261,17 +282,27 @@ final class GameEngine
         return $this->content->auditLog($limit);
     }
 
+    public function adminGameplayCatalog(): array
+    {
+        return (new GameplayCatalog($this->database, $this->events))->draft();
+    }
+
+    public function saveGameplayCatalog(string $category, string $id, array $changes, int $expectedRevision, string $actor): array
+    {
+        return (new GameplayCatalog($this->database, $this->events))->update($category, $id, $changes, $expectedRevision, $actor);
+    }
+
     public function attemptCrime(string $crimeId, string $playerId = 'founder-player'): array
     {
-        if (!$this->modules->isEnabled('crime')) {
+        if (!$this->publishedModuleEnabled('crime')) {
             throw new RuntimeException('Crime module is disabled. Re-enable it from the module manager.');
         }
-        $this->resources->regenerate($playerId);
-        $this->guardAction($playerId, 'crime');
-        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
-
-        return $this->database->transaction(function () use ($crimeId, $playerId, $streak): array {
-            $crime = $this->database->fetchOne('SELECT * FROM crimes WHERE id = :id AND enabled = 1', ['id' => $crimeId]);
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($crimeId, $playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'crime');
+            $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
+            $crime = array_values(array_filter($this->publishedContent()['crimes'] ?? [], static fn (array $crime): bool => $crime['id'] === $crimeId && (bool) ($crime['enabled'] ?? false)))[0] ?? null;
             if ($crime === null) {
                 throw new RuntimeException("Unknown crime: {$crimeId}");
             }
@@ -283,6 +314,11 @@ final class GameEngine
             if ((int) $player['level'] < $levelRequired) {
                 throw new \InvalidArgumentException("This crime unlocks at level {$levelRequired}.");
             }
+            $progression = new ProgressionService($this->database, $this->events);
+            $progress = $progression->snapshot($playerId)['state'];
+            if (($progress['crimeXp'] ?? 0) < (int) ($crime['crime_xp_required'] ?? 0)) {
+                throw new \InvalidArgumentException('Earn more crime experience to unlock this category.');
+            }
             $nerveCost = (int) $crime['nerve_cost'];
             if ((int) $player['nerve'] < $nerveCost) {
                 throw new RuntimeException('Not enough nerve for this crime.');
@@ -290,8 +326,11 @@ final class GameEngine
 
             $correlationId = bin2hex(random_bytes(16));
             $roll = random_int(1, 10000);
-            $territoryBonusBp = min(1500, $this->territories->bonusBasisPoints($playerId, 'crime_bonus'));
+            $territoryBonusBp = min(1500, $this->territoryBonus($playerId, 'crime_bonus'));
             $successThreshold = min(10000, (int) $crime['success_basis_points'] + $territoryBonusBp);
+            if (isset($crime['failure'])) {
+                $successThreshold = min(9700, $successThreshold + (int) round(((int) $player['level'] - 1) * 40 + ($progress['skill'][$crimeId] ?? 0) * 15));
+            }
             $success = $roll <= $successThreshold;
             $cashReward = $success ? random_int((int) $crime['cash_min'], (int) $crime['cash_max']) : 0;
             $xpReward = $success ? (int) $crime['xp_reward'] : 0;
@@ -300,8 +339,8 @@ final class GameEngine
             $newNerve = (int) $player['nerve'] - $nerveCost;
 
             $this->database->execute(
-                'UPDATE players SET cash = :cash, xp = :xp, nerve = :nerve, resources_updated_at = :updated WHERE id = :id',
-                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'nerve' => $newNerve, 'updated' => gmdate('c')],
+                'UPDATE players SET cash = :cash, xp = :xp, nerve = :nerve WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'nerve' => $newNerve],
             );
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'crime.reward', $correlationId);
@@ -309,6 +348,15 @@ final class GameEngine
             $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'crime');
             $this->daily->recordProgress($playerId, 'crimes', 1);
+            $progression->recordCrime($playerId, $crimeId, $success, $xpReward);
+            $loot = null;
+            if ($success && ($crime['category'] ?? null) === 'search' && random_int(1, 100) <= 12) {
+                $progression->grantItem($playerId, 'sand');
+                $loot = ['itemId' => 'sand', 'quantity' => 1];
+            }
+            if (!$success && isset($crime['failure'], $crime['penalty_minutes'])) {
+                $progression->applyPenalty($playerId, (string) $crime['failure'], (int) $crime['penalty_minutes']);
+            }
 
             $eventName = $success ? 'CrimeSucceeded' : 'CrimeFailed';
             $event = new DomainEvent($eventName, [
@@ -329,6 +377,8 @@ final class GameEngine
                 'crime' => ['id' => $crimeId, 'name_en' => $crime['name_en'], 'name_ar' => $crime['name_ar']],
                 'cost' => ['nerve' => $nerveCost],
                 'reward' => ['cash' => $cashReward, 'xp' => $xpReward],
+                'penalty' => !$success && isset($crime['failure']) ? ['type' => $crime['failure'], 'minutes' => (int) $crime['penalty_minutes']] : null,
+                'loot' => $loot,
                 'levelUp' => $levelUp,
                 'streak' => $streak,
                 'serverProof' => [
@@ -353,12 +403,78 @@ final class GameEngine
 
     private function requireModule(string $id): void
     {
-        if (!$this->modules->isEnabled($id)) {
+        if (!$this->publishedModuleEnabled($id)) {
             throw new RuntimeException("Module {$id} is disabled. Re-enable it from the module manager.");
         }
     }
 
     private const GYM_STATS = ['strength', 'defense', 'speed', 'dexterity'];
+
+    private function publishedContent(): array
+    {
+        return $this->releases->active()['manifest']['content'] ?? $this->releases->foundation()['content'] ?? [];
+    }
+
+    private function publishedModuleEnabled(string $id): bool
+    {
+        return (new PublishedRules($this->database))->moduleEnabled($id);
+    }
+
+    private function territoryBonus(string $playerId, string $key): int
+    {
+        return $this->publishedModuleEnabled('territories') ? $this->territories->bonusBasisPoints($playerId, $key) : 0;
+    }
+
+    public function gameplay(string $playerId = 'founder-player'): array
+    {
+        $travel = (new TravelService($this->database, $this->events))->snapshot($playerId);
+        return [...(new ProgressionService($this->database, $this->events))->snapshot($playerId), 'travel' => $travel, 'hospitalQuote' => $this->hospitalQuote($playerId)];
+    }
+
+    public function gameplayAction(string $action, string $id, int $expectedVersion, string $playerId = 'founder-player', ?int $expectedPrice = null): array
+    {
+        $this->recordActionAttempt($playerId);
+        $screen = match (strtok($action, '.')) {
+            'item' => 'items', 'market' => 'market', 'property' => 'properties', 'gym' => 'gym',
+            'course' => 'education', 'job' => 'jobs', 'mission' => 'missions', 'faction' => 'faction',
+            'jail' => 'jail', 'hospital' => 'hospital', default => null,
+        };
+        if ($screen !== null) $this->requireScreen($screen);
+        $module = match (strtok($action, '.')) {
+            'item' => 'inventory', 'market' => 'blackmarket', 'property' => 'properties',
+            'gym' => 'stats', 'jail' => 'jail', 'hospital' => 'hospital', 'faction' => 'gangs', default => null,
+        };
+        if ($module !== null) {
+            $this->requireModule($module);
+        }
+        return $this->database->playerTransaction($playerId, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
+            (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            return (new ProgressionService($this->database, $this->events))->act($action, $id, $expectedVersion, $playerId, $expectedPrice);
+        });
+    }
+
+    private function requireScreen(string $screen): void
+    {
+        if (($this->releases->active()['manifest']['modules'][$screen] ?? true) === false) {
+            throw new RuntimeException("Module {$screen} is disabled in the active release.");
+        }
+    }
+
+    public function combat(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('kill');
+        return (new CombatService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function combatAction(string $action, string $opponentId, string $approach, int $expectedVersion, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('kill');
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($action, $opponentId, $approach, $expectedVersion, $playerId): array {
+            if ($action !== 'finish') (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            return (new CombatService($this->database, $this->events))->act($action, $opponentId, $approach, $expectedVersion, $playerId);
+        });
+    }
 
     public function trainGym(string $stat, int $sessions = 1, string $playerId = 'founder-player'): array
     {
@@ -367,33 +483,41 @@ final class GameEngine
             throw new RuntimeException('Unknown gym stat: ' . $stat);
         }
         $sessions = max(1, min(10, $sessions));
-        $this->resources->regenerate($playerId);
-        $this->guardAction($playerId, 'gym');
-        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
-        return $this->database->transaction(function () use ($stat, $sessions, $playerId, $streak): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($stat, $sessions, $playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'gym');
+            $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
             $player = $this->requirePlayer($playerId);
-            $energyCost = 10 * $sessions;
+            $progress = (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+            $gymIndex = (int) $progress['state']['gym'];
+            $gym = $progress['catalogs']['gyms'][$gymIndex];
+            $energyCost = (int) $gym['e'] * $sessions;
             if ((int) $player['energy'] < $energyCost) {
                 throw new RuntimeException('Not enough energy to train.');
             }
             $correlationId = bin2hex(random_bytes(16));
             $happy = (int) $player['happy'];
-            $gainPerSession = max(1, (int) floor(5 + $happy / 250));
+            $gainPerSession = $gym['e'] * 1.2 * (1 + $gymIndex * .3) * (1 + log(1 + $happy / 500) * .35)
+                * (!empty($progress['state']['fac']['ups']['gymBoost']) ? 1.1 : 1)
+                * (!empty($progress['state']['eduDone']['fit']) ? 1.05 : 1)
+                * max(.35, 1 - (int) $player[$stat] / 60000);
             $baseGain = 0;
             for ($i = 0; $i < $sessions; $i++) {
-                $baseGain += $gainPerSession + random_int(0, 3);
+                $baseGain += max(1, (int) round($gainPerSession * random_int(90, 110) / 100));
             }
-            $territoryBonusBp = min(2000, $this->territories->bonusBasisPoints($playerId, 'gym_bonus'));
+            $territoryBonusBp = min(2000, $this->territoryBonus($playerId, 'gym_bonus'));
             $gain = max(1, (int) round($baseGain * (10000 + $territoryBonusBp) / 10000));
             $newStat = (int) $player[$stat] + $gain;
             $newEnergy = (int) $player['energy'] - $energyCost;
             $newXp = (int) $player['xp'] + $gain;
             $this->database->execute(
-                "UPDATE players SET {$stat} = :stat, energy = :energy, xp = :xp, resources_updated_at = :updated WHERE id = :id",
-                ['id' => $playerId, 'stat' => $newStat, 'energy' => $newEnergy, 'xp' => $newXp, 'updated' => gmdate('c')],
+                "UPDATE players SET {$stat} = :stat, energy = :energy, xp = :xp WHERE id = :id",
+                ['id' => $playerId, 'stat' => $newStat, 'energy' => $newEnergy, 'xp' => $newXp],
             );
             $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'gym');
+            (new ProgressionService($this->database, $this->events))->recordMetric($playerId, 'trains', $sessions);
             $this->daily->recordProgress($playerId, 'stat_gain', $gain);
             $event = new DomainEvent('GymTrained', [
                 'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
@@ -427,8 +551,9 @@ final class GameEngine
         if ($amount <= 0) {
             throw new RuntimeException('Amount must be positive.');
         }
-        $this->guardAction($playerId, 'bank');
-        return $this->database->transaction(function () use ($direction, $amount, $playerId): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($direction, $amount, $playerId): array {
+            $this->guardAction($playerId, 'bank');
             $player = $this->requirePlayer($playerId);
             $cash = (int) $player['cash'];
             $bank = (int) $player['bank_balance'];
@@ -460,33 +585,49 @@ final class GameEngine
         });
     }
 
+    public function hospitalQuote(string $playerId = 'founder-player'): array
+    {
+        $snapshot = (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+        $player = $snapshot['player'];
+        $missing = max(0, (int) $player['max_life'] - (int) $player['life']);
+        $hospitalized = $snapshot['state']['hospUntil'] > (int) floor(microtime(true) * 1000);
+        $discount = min(5000, $this->territoryBonus($playerId, 'medical_discount'));
+        $baseCost = max($hospitalized ? 500 : 0, $missing * 3);
+        return ['cost' => (int) ceil($baseCost * (10000 - $discount) / 10000), 'baseCost' => $baseCost, 'missing' => $missing,
+            'hospitalized' => $hospitalized, 'available' => $missing > 0 || $hospitalized, 'territoryDiscountBasisPoints' => $discount];
+    }
+
     public function hospitalHeal(string $playerId = 'founder-player'): array
     {
         $this->requireModule('hospital');
-        $this->resources->regenerate($playerId);
-        $this->guardAction($playerId, 'hospital');
-        return $this->database->transaction(function () use ($playerId): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'hospital');
             $player = $this->requirePlayer($playerId);
-            $missing = (int) $player['max_life'] - (int) $player['life'];
-            if ($missing <= 0) {
+            $quote = $this->hospitalQuote($playerId);
+            $player = $this->requirePlayer($playerId);
+            $missing = $quote['missing'];
+            if (!$quote['available']) {
                 throw new RuntimeException('You are already at full life.');
             }
-            $cost = $missing * 3;
+            $cost = $quote['cost'];
             if ((int) $player['cash'] < $cost) {
                 throw new RuntimeException('Not enough cash to pay for treatment.');
             }
             $correlationId = bin2hex(random_bytes(16));
             $newCash = (int) $player['cash'] - $cost;
             $this->database->execute(
-                'UPDATE players SET cash = :cash, life = :life, resources_updated_at = :updated WHERE id = :id',
-                ['id' => $playerId, 'cash' => $newCash, 'life' => (int) $player['max_life'], 'updated' => gmdate('c')],
+                'UPDATE players SET cash = :cash, life = :life WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'life' => (int) $player['max_life']],
             );
             $this->ledger->record($playerId, 'cash', -$cost, $newCash, 'hospital.heal', $correlationId);
+            (new ProgressionService($this->database, $this->events))->clearHospital($playerId);
             $this->armCooldown($playerId, 'hospital');
             $event = new DomainEvent('HospitalHealed', ['playerId' => $playerId, 'restored' => $missing, 'cost' => $cost, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
-                'restored' => $missing, 'cost' => ['cash' => $cost],
+                'restored' => $missing, 'cost' => ['cash' => $cost], 'territoryDiscountBasisPoints' => $quote['territoryDiscountBasisPoints'],
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -500,19 +641,26 @@ final class GameEngine
         return self::CITIES;
     }
 
+    public function travelState(string $playerId = 'founder-player'): array
+    {
+        $travel = (new TravelService($this->database, $this->events))->snapshot($playerId);
+        return ['player' => $this->player($playerId), 'travel' => $travel];
+    }
+
     public function travel(string $city, string $playerId = 'founder-player'): array
     {
         $this->requireModule('travel');
         if (!in_array($city, self::CITIES, true)) {
             throw new RuntimeException('Unknown destination: ' . $city);
         }
-        $this->guardAction($playerId, 'travel');
-        return $this->database->transaction(function () use ($city, $playerId): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($city, $playerId): array {
+            $this->guardAction($playerId, 'travel');
             $player = $this->requirePlayer($playerId);
             if ($player['city'] === $city) {
                 throw new RuntimeException('You are already in ' . $city . '.');
             }
-            $territoryBonusBp = min(5000, $this->territories->bonusBasisPoints($playerId, 'travel_discount'));
+            $territoryBonusBp = min(5000, $this->territoryBonus($playerId, 'travel_discount'));
             $fare = 2500;
             $travelSeconds = max(60, (int) round(1800 * (10000 - $territoryBonusBp) / 10000));
             if ((int) $player['cash'] < $fare) {
@@ -521,15 +669,17 @@ final class GameEngine
             $correlationId = bin2hex(random_bytes(16));
             $newCash = (int) $player['cash'] - $fare;
             $this->database->execute(
-                'UPDATE players SET cash = :cash, city = :city WHERE id = :id',
-                ['id' => $playerId, 'cash' => $newCash, 'city' => $city],
+                'UPDATE players SET cash = :cash WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash],
             );
+            $trip = (new TravelService($this->database, $this->events))->depart($playerId, (string) $player['city'], $city, $travelSeconds);
             $this->ledger->record($playerId, 'cash', -$fare, $newCash, 'travel.fare', $correlationId);
             $this->armCooldown($playerId, 'travel');
             $event = new DomainEvent('PlayerTraveled', ['playerId' => $playerId, 'city' => $city, 'fare' => $fare, 'travelSeconds' => $travelSeconds, 'territoryBonusBasisPoints' => $territoryBonusBp, 'correlationId' => $correlationId]);
             $this->events->publish($event);
             return [
                 'city' => $city, 'fare' => $fare, 'travelSeconds' => $travelSeconds, 'territoryBonusBasisPoints' => $territoryBonusBp,
+                'travel' => $trip,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -542,8 +692,9 @@ final class GameEngine
         if ($bet <= 0) {
             throw new RuntimeException('Bet must be positive.');
         }
-        $this->guardAction($playerId, 'blackjack');
-        return $this->database->transaction(function () use ($bet, $playerId): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($bet, $playerId): array {
+            $this->guardAction($playerId, 'blackjack');
             $player = $this->requirePlayer($playerId);
             if ((int) $player['cash'] < $bet) {
                 throw new RuntimeException('Not enough cash for that bet.');
@@ -571,31 +722,98 @@ final class GameEngine
         });
     }
 
+    public function highLowState(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        $this->requirePlayer($playerId);
+        $this->database->insertIgnore('casino_high_low', ['player_id', 'current_card', 'version', 'updated_at'], [$playerId, 7, 1, gmdate('c')]);
+        $state = $this->database->fetchOne('SELECT current_card, version FROM casino_high_low WHERE player_id = :id', ['id' => $playerId]);
+        return ['card' => (int) $state['current_card'], 'version' => (int) $state['version']];
+    }
+
+    public function playHighLow(int $bet, string $direction, int $expectedVersion, string $playerId = 'founder-player'): array
+    {
+        if ($bet <= 0 || $expectedVersion <= 0 || !in_array($direction, ['higher', 'lower'], true)) {
+            throw new \InvalidArgumentException('Choose higher or lower and a positive bet.');
+        }
+        $this->highLowState($playerId);
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($bet, $direction, $expectedVersion, $playerId): array {
+            $player = $this->requirePlayer($playerId);
+            $this->guardAction($playerId, 'blackjack');
+            if ((int) $player['cash'] < $bet) {
+                throw new RuntimeException('Not enough cash for that bet.');
+            }
+            $state = $this->database->fetchOne('SELECT current_card, version FROM casino_high_low WHERE player_id = :id', ['id' => $playerId]);
+            if ((int) $state['version'] !== $expectedVersion) {
+                throw new RuntimeException('Casino round changed. Refresh the game and try again.');
+            }
+            $previousCard = (int) $state['current_card'];
+            $card = random_int(2, 14);
+            $push = $card === $previousCard;
+            $won = $direction === 'higher' ? $card > $previousCard : $card < $previousCard;
+            $delta = $push ? 0 : ($won ? $bet : -$bet);
+            $correlationId = bin2hex(random_bytes(16));
+            $affected = $this->database->execute(
+                'UPDATE casino_high_low SET current_card = :card, version = version + 1, updated_at = :updated WHERE player_id = :id AND version = :version',
+                ['card' => $card, 'updated' => gmdate('c'), 'id' => $playerId, 'version' => (int) $state['version']],
+            );
+            if ($affected !== 1) {
+                throw new RuntimeException('Casino round changed. Refresh the game and try again.');
+            }
+            $this->database->execute('UPDATE players SET cash = cash + :delta WHERE id = :id', ['delta' => $delta, 'id' => $playerId]);
+            $settledPlayer = $this->requirePlayer($playerId);
+            if ($delta !== 0) {
+                $this->ledger->record($playerId, 'cash', $delta, (int) $settledPlayer['cash'], 'casino.high-low', $correlationId);
+            }
+            $this->armCooldown($playerId, 'blackjack');
+            $result = $push ? 'push' : ($won ? 'win' : 'lose');
+            $event = new DomainEvent('HighLowPlayed', [
+                'playerId' => $playerId, 'bet' => $bet, 'direction' => $direction,
+                'previousCard' => $previousCard, 'card' => $card, 'result' => $result,
+                'delta' => $delta, 'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+            return [
+                'previousCard' => $previousCard, 'card' => $card, 'version' => (int) $state['version'] + 1,
+                'result' => $result, 'delta' => $delta,
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
+                'player' => $this->resources->normalize($settledPlayer),
+            ];
+        });
+    }
+
     public function workShift(string $playerId = 'founder-player'): array
     {
-        $this->resources->regenerate($playerId);
-        $this->guardAction($playerId, 'job');
-        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
-        return $this->database->transaction(function () use ($playerId, $streak): array {
+        $this->requireScreen('jobs');
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'job');
+            $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
             $player = $this->requirePlayer($playerId);
-            $energyCost = 20;
+            $progress = (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+            $job = array_values(array_filter($progress['catalogs']['jobs'], static fn (array $job): bool => $job['id'] === $progress['state']['job']))[0] ?? null;
+            if ($job === null || (int) $player['level'] < (int) $job['lvl']) throw new RuntimeException('Your selected job is not available at this level.');
+            $energyCost = (int) $job['energy'];
             if ((int) $player['energy'] < $energyCost) {
                 throw new RuntimeException('Not enough energy to work a shift.');
             }
             $correlationId = bin2hex(random_bytes(16));
             $level = (int) $player['level'];
-            $wage = 200 + $level * 60 + random_int(0, 40 + $level * 10);
+            $wage = (int) round($job['pay'] * (!empty($progress['state']['eduDone']['biz']) ? 1.1 : 1));
             $xpReward = 5 + $level;
             $newCash = (int) $player['cash'] + $wage;
             $newXp = (int) $player['xp'] + $xpReward;
             $newEnergy = (int) $player['energy'] - $energyCost;
             $this->database->execute(
-                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy, resources_updated_at = :updated WHERE id = :id',
-                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
+                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy],
             );
             $this->ledger->record($playerId, 'cash', $wage, $newCash, 'job.wage', $correlationId);
             $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'job');
+            (new ProgressionService($this->database, $this->events))->recordMetric($playerId, 'shifts');
             $this->daily->recordProgress($playerId, 'job_cash', $wage);
             $event = new DomainEvent('JobShiftWorked', [
                 'playerId' => $playerId, 'level' => $level, 'wage' => $wage,
@@ -603,7 +821,7 @@ final class GameEngine
             ]);
             $this->events->publish($event);
             return [
-                'shift' => 'worked', 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'shift' => 'worked', 'jobId' => $job['id'], 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
@@ -615,10 +833,11 @@ final class GameEngine
     public function attackNpc(string $playerId = 'founder-player'): array
     {
         $this->requireModule('kill');
-        $this->resources->regenerate($playerId);
-        $this->guardAction($playerId, 'attack');
-        $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
-        return $this->database->transaction(function () use ($playerId, $streak): array {
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'attack');
+            $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
             $player = $this->requirePlayer($playerId);
             $energyCost = 25;
             if ((int) $player['energy'] < $energyCost) {
@@ -638,8 +857,8 @@ final class GameEngine
             $newXp = (int) $player['xp'] + $xpReward;
             $newEnergy = (int) $player['energy'] - $energyCost;
             $this->database->execute(
-                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy, resources_updated_at = :updated WHERE id = :id',
-                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy, 'updated' => gmdate('c')],
+                'UPDATE players SET cash = :cash, xp = :xp, energy = :energy WHERE id = :id',
+                ['id' => $playerId, 'cash' => $newCash, 'xp' => $newXp, 'energy' => $newEnergy],
             );
             if ($cashReward > 0) {
                 $this->ledger->record($playerId, 'cash', $cashReward, $newCash, 'attack.mug', $correlationId);
@@ -648,6 +867,7 @@ final class GameEngine
             $this->armCooldown($playerId, 'attack');
             if ($win) {
                 $this->daily->recordProgress($playerId, 'attack_wins', 1);
+                (new ProgressionService($this->database, $this->events))->recordMetric($playerId, 'wins');
             }
             $event = new DomainEvent('PlayerAttacked', [
                 'playerId' => $playerId, 'result' => $win ? 'win' : 'lose',
@@ -739,10 +959,14 @@ final class GameEngine
         string $playerId = 'founder-player',
     ): array {
         $this->requireModule('territories');
-        $this->guardAction($playerId, 'territory');
-        $result = $this->territories->act($territoryId, $action, $expectedVersion, $playerId);
-        $this->armCooldown($playerId, 'territory');
-        return $result;
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($territoryId, $action, $expectedVersion, $playerId): array {
+            $this->resources->regenerate($playerId);
+            $this->guardAction($playerId, 'territory');
+            $result = $this->territories->act($territoryId, $action, $expectedVersion, $playerId);
+            $this->armCooldown($playerId, 'territory');
+            return [...$result, 'player' => $this->resources->normalize($this->requirePlayer($playerId))];
+        });
     }
 
     public function adminTerritories(string $playerId = 'founder-player'): array
@@ -760,8 +984,14 @@ final class GameEngine
     private function runtimeContent(): array
     {
         $themes = $this->themes->all();
+        $variants = array_column(json_decode((string) file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json'), true, 64, JSON_THROW_ON_ERROR), null, 'id');
+        foreach (['searchforcash' => ['search', 0], 'bootlegging' => ['boot', 150], 'graffiti' => ['graf', 30], 'shoplifting' => ['shop', 80], 'pickpocketing' => ['pick', 120], 'cardskimming' => ['skim', 300], 'burglary' => ['burg', 2200]] as $id => [$category, $requiredXp]) {
+            $variants[$id] = ['category' => $category, 'crime_xp_required' => $requiredXp];
+        }
+        $crimes = array_map(static fn (array $crime): array => [...($variants[$crime['id']] ?? []), ...$crime], $this->content->crimes(true));
         return [
-            'crimes' => $this->content->crimes(true),
+            'crimes' => $crimes,
+            'gameplayCatalog' => (new GameplayCatalog($this->database, $this->events))->draft()['catalogs'],
             'engineModules' => $this->modules->all(),
             'themes' => $themes,
             'activeTheme' => array_values(array_filter($themes, static fn (array $theme): bool => $theme['active']))[0]['id'] ?? null,

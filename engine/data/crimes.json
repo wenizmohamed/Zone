@@ -1,0 +1,482 @@
+[
+  {
+    "id": "trash",
+    "name_en": "Search the Trash",
+    "name_ar": "فتّش القمامة",
+    "description": {
+      "en": "Bins behind the market",
+      "ar": "حاويات خلف السوق"
+    },
+    "category": "search",
+    "crime_xp_required": 0,
+    "nerve_cost": 2,
+    "success_basis_points": 9000,
+    "cash_min": 40,
+    "cash_max": 220,
+    "xp_reward": 2,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 2
+  },
+  {
+    "id": "subway",
+    "name_en": "Search the Subway",
+    "name_ar": "فتّش المترو",
+    "description": {
+      "en": "Turnstiles and platforms",
+      "ar": "البوابات والأرصفة"
+    },
+    "category": "search",
+    "crime_xp_required": 0,
+    "nerve_cost": 2,
+    "success_basis_points": 8500,
+    "cash_min": 60,
+    "cash_max": 300,
+    "xp_reward": 2,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 2
+  },
+  {
+    "id": "junk",
+    "name_en": "Search the Junkyard",
+    "name_ar": "فتّش الخردة",
+    "description": {
+      "en": "Scrap and lost parts",
+      "ar": "قطع وأجزاء ضايعة"
+    },
+    "category": "search",
+    "crime_xp_required": 0,
+    "nerve_cost": 3,
+    "success_basis_points": 8000,
+    "cash_min": 80,
+    "cash_max": 400,
+    "xp_reward": 3,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 3
+  },
+  {
+    "id": "beach",
+    "name_en": "Search the Beach",
+    "name_ar": "فتّش الشاطئ",
+    "description": {
+      "en": "Under the boardwalk",
+      "ar": "تحت الممشى"
+    },
+    "category": "search",
+    "crime_xp_required": 0,
+    "nerve_cost": 3,
+    "success_basis_points": 7800,
+    "cash_min": 100,
+    "cash_max": 450,
+    "xp_reward": 3,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 3
+  },
+  {
+    "id": "cem",
+    "name_en": "Search the Cemetery",
+    "name_ar": "فتّش المقبرة",
+    "description": {
+      "en": "Offerings left behind",
+      "ar": "قرابين متروكة"
+    },
+    "category": "search",
+    "crime_xp_required": 0,
+    "nerve_cost": 4,
+    "success_basis_points": 7000,
+    "cash_min": 150,
+    "cash_max": 600,
+    "xp_reward": 4,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "east",
+    "name_en": "East Side",
+    "name_ar": "الحي الشرقي",
+    "description": {
+      "en": "Low heat",
+      "ar": "خطر قليل"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 3,
+    "success_basis_points": 8200,
+    "cash_min": 100,
+    "cash_max": 300,
+    "xp_reward": 4,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 3
+  },
+  {
+    "id": "west",
+    "name_en": "West Side",
+    "name_ar": "الحي الغربي",
+    "description": {
+      "en": "Low heat",
+      "ar": "خطر قليل"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 3,
+    "success_basis_points": 8000,
+    "cash_min": 100,
+    "cash_max": 300,
+    "xp_reward": 4,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 3
+  },
+  {
+    "id": "north",
+    "name_en": "North Side",
+    "name_ar": "الحي الشمالي",
+    "description": {
+      "en": "Patrols nearby",
+      "ar": "دوريات قريبة"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 4,
+    "success_basis_points": 7200,
+    "cash_min": 200,
+    "cash_max": 500,
+    "xp_reward": 5,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "res",
+    "name_en": "Residential District",
+    "name_ar": "المنطقة السكنية",
+    "description": {
+      "en": "Neighbors watching",
+      "ar": "الجيران يراقبون"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 4,
+    "success_basis_points": 6800,
+    "cash_min": 250,
+    "cash_max": 600,
+    "xp_reward": 6,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "red",
+    "name_en": "Red-Light District",
+    "name_ar": "الحي الأحمر",
+    "description": {
+      "en": "Crowded, quick escape",
+      "ar": "مزدحم، هروب سريع"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 5,
+    "success_basis_points": 6200,
+    "cash_min": 300,
+    "cash_max": 800,
+    "xp_reward": 7,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 5
+  },
+  {
+    "id": "fin",
+    "name_en": "Financial District",
+    "name_ar": "الحي المالي",
+    "description": {
+      "en": "CCTV everywhere",
+      "ar": "كاميرات في كل مكان"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 6,
+    "success_basis_points": 5200,
+    "cash_min": 500,
+    "cash_max": 1200,
+    "xp_reward": 9,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 6
+  },
+  {
+    "id": "center",
+    "name_en": "City Center",
+    "name_ar": "وسط المدينة",
+    "description": {
+      "en": "Reputation required",
+      "ar": "يحتاج سمعة"
+    },
+    "category": "graf",
+    "crime_xp_required": 30,
+    "nerve_cost": 7,
+    "success_basis_points": 4500,
+    "cash_min": 800,
+    "cash_max": 1800,
+    "xp_reward": 12,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 8
+  },
+  {
+    "id": "candy",
+    "name_en": "Candy Kiosk",
+    "name_ar": "كشك الحلوى",
+    "description": {
+      "en": "1 camera",
+      "ar": "كاميرا 1"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 4,
+    "success_basis_points": 7800,
+    "cash_min": 200,
+    "cash_max": 600,
+    "xp_reward": 5,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "corner",
+    "name_en": "Corner Store",
+    "name_ar": "بقالة الزاوية",
+    "description": {
+      "en": "2 cameras",
+      "ar": "كاميرتان"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 5,
+    "success_basis_points": 7000,
+    "cash_min": 300,
+    "cash_max": 900,
+    "xp_reward": 6,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 5
+  },
+  {
+    "id": "cloth",
+    "name_en": "Zone Clothing",
+    "name_ar": "ملابس زون",
+    "description": {
+      "en": "1 camera · checkpoint",
+      "ar": "كاميرا · نقطة تفتيش"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 6,
+    "success_basis_points": 6400,
+    "cash_min": 500,
+    "cash_max": 1400,
+    "xp_reward": 8,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 6
+  },
+  {
+    "id": "superst",
+    "name_en": "Super Store",
+    "name_ar": "المتجر الكبير",
+    "description": {
+      "en": "2 cameras · checkpoint",
+      "ar": "كاميرتان · تفتيش"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 7,
+    "success_basis_points": 5800,
+    "cash_min": 800,
+    "cash_max": 2000,
+    "xp_reward": 10,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 7
+  },
+  {
+    "id": "pharm",
+    "name_en": "Pharmacy",
+    "name_ar": "الصيدلية",
+    "description": {
+      "en": "3 cameras · checkpoint",
+      "ar": "3 كاميرات · تفتيش"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 8,
+    "success_basis_points": 5000,
+    "cash_min": 1200,
+    "cash_max": 3000,
+    "xp_reward": 13,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 8
+  },
+  {
+    "id": "cyber",
+    "name_en": "Cyber Shop",
+    "name_ar": "متجر الإلكترونيات",
+    "description": {
+      "en": "2 cameras · 1 guard",
+      "ar": "كاميرتان · حارس"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 10,
+    "success_basis_points": 4400,
+    "cash_min": 2000,
+    "cash_max": 5000,
+    "xp_reward": 16,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "hosp",
+    "penalty_minutes": 9
+  },
+  {
+    "id": "jewel",
+    "name_en": "Jewelry Store",
+    "name_ar": "متجر المجوهرات",
+    "description": {
+      "en": "3 cameras · 1 guard",
+      "ar": "3 كاميرات · حارس"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 12,
+    "success_basis_points": 3800,
+    "cash_min": 4000,
+    "cash_max": 9000,
+    "xp_reward": 20,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "hosp",
+    "penalty_minutes": 10
+  },
+  {
+    "id": "gun",
+    "name_en": "Gun Shop",
+    "name_ar": "متجر الأسلحة",
+    "description": {
+      "en": "4 cameras · 2 guards",
+      "ar": "4 كاميرات · حارسان"
+    },
+    "category": "shop",
+    "crime_xp_required": 80,
+    "nerve_cost": 15,
+    "success_basis_points": 3000,
+    "cash_min": 6000,
+    "cash_max": 14000,
+    "xp_reward": 26,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "hosp",
+    "penalty_minutes": 12
+  },
+  {
+    "id": "eldm",
+    "name_en": "Elderly Man",
+    "name_ar": "رجل مسن",
+    "description": {
+      "en": "Slow, low payout",
+      "ar": "بطيء، غنيمة قليلة"
+    },
+    "category": "pick",
+    "crime_xp_required": 120,
+    "nerve_cost": 4,
+    "success_basis_points": 8000,
+    "cash_min": 100,
+    "cash_max": 400,
+    "xp_reward": 5,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "eldw",
+    "name_en": "Elderly Woman",
+    "name_ar": "سيدة مسنة",
+    "description": {
+      "en": "Slow, low payout",
+      "ar": "بطيئة، غنيمة قليلة"
+    },
+    "category": "pick",
+    "crime_xp_required": 120,
+    "nerve_cost": 4,
+    "success_basis_points": 8000,
+    "cash_min": 100,
+    "cash_max": 400,
+    "xp_reward": 5,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 4
+  },
+  {
+    "id": "bizw",
+    "name_en": "Businesswoman",
+    "name_ar": "سيدة أعمال",
+    "description": {
+      "en": "Fast, high payout",
+      "ar": "سريعة، غنيمة كبيرة"
+    },
+    "category": "pick",
+    "crime_xp_required": 120,
+    "nerve_cost": 7,
+    "success_basis_points": 5500,
+    "cash_min": 800,
+    "cash_max": 2500,
+    "xp_reward": 10,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "jail",
+    "penalty_minutes": 6
+  },
+  {
+    "id": "lab",
+    "name_en": "Laborer",
+    "name_ar": "عامل",
+    "description": {
+      "en": "May fight back",
+      "ar": "قد يقاوم"
+    },
+    "category": "pick",
+    "crime_xp_required": 120,
+    "nerve_cost": 6,
+    "success_basis_points": 6000,
+    "cash_min": 300,
+    "cash_max": 900,
+    "xp_reward": 8,
+    "level_required": 1,
+    "enabled": true,
+    "failure": "hosp",
+    "penalty_minutes": 5
+  }
+]

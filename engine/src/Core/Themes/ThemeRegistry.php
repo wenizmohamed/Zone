@@ -73,10 +73,10 @@ final class ThemeRegistry
         return array_values(array_filter($this->all(), static fn (array $theme): bool => $theme['id'] === $id))[0];
     }
 
-    public function activeStylesheet(): string
+    public function activeStylesheet(?string $publishedId = null): string
     {
         $row = $this->database->fetchOne('SELECT id FROM themes WHERE installed = 1 AND active = 1 LIMIT 1');
-        $id = $row['id'] ?? array_key_first($this->manifests);
+        $id = $publishedId ?? $row['id'] ?? array_key_first($this->manifests);
         if ($id === null || !isset($this->manifests[$id])) {
             return '';
         }

@@ -7,4 +7,18 @@ if (-not (Test-Path -LiteralPath $php)) {
 }
 
 & $php (Join-Path $repositoryRoot 'engine\tests\run.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\concurrency.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\publishing.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\gameplay-catalog.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\progression.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\combat.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\gameplay-integration.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\territory-lifecycle.php')
 exit $LASTEXITCODE

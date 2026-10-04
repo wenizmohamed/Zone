@@ -72,11 +72,16 @@ final readonly class LevelingService
 
     /**
      * Recompute the player's level from its current xp and apply the level-up
-     * grants if it rose. Must be called INSIDE the caller's transaction, after
-     * the xp column has already been written. Returns a level-up summary when a
+     * grants if it rose. Joins the caller's transaction after its xp write, or
+     * starts a locked transaction when called alone. Returns a summary when a
      * level was gained, or null when nothing changed.
      */
     public function sync(string $playerId, string $correlationId): ?array
+    {
+        return $this->database->playerTransaction($playerId, fn (): ?array => $this->syncLocked($playerId, $correlationId));
+    }
+
+    private function syncLocked(string $playerId, string $correlationId): ?array
     {
         $player = $this->database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => $playerId]);
         if ($player === null) {

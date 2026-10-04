@@ -102,6 +102,18 @@
 
       <section class="view" data-view="content">
         <div class="page-head"><div><span class="eyebrow" data-copy="contentStudio">CONTENT STUDIO</span><h1 data-copy="content">Game content</h1><p data-copy="contentSub">Manage crimes and the release-bound content that the player game consumes.</p></div></div>
+        <article class="panel gameplay-catalog-panel">
+          <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="gameplayCatalog">Gameplay catalog</h2></div><span class="status" id="catalogRevision"></span></div>
+          <form id="gameplayCatalogForm" class="gameplay-catalog-editor" novalidate>
+            <p class="catalog-help" data-copy="catalogHelp">Edit an existing entry, save the draft, then publish when it is ready for players.</p>
+            <div class="form-grid catalog-selectors">
+              <label><span data-copy="catalogCategory">Category</span><select id="catalogCategory"></select></label>
+              <label><span data-copy="catalogEntry">Entry</span><select id="catalogEntry"></select></label>
+            </div>
+            <div class="form-grid catalog-fields" id="catalogFields"></div>
+            <div class="catalog-actions"><button class="button primary" id="saveCatalogButton" type="submit" disabled data-copy="saveCatalog">Save catalog draft</button><span id="catalogStatus" role="status" aria-live="polite"></span></div>
+          </form>
+        </article>
         <div class="dashboard-grid">
           <article class="panel span-2">
             <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="crimeCatalog">Crime catalog</h2></div><button class="button secondary" id="newCrimeButton" type="button" data-copy="newCrime">New crime</button></div>

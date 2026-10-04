@@ -1,5 +1,18 @@
 PRAGMA foreign_keys = ON;
 
+CREATE TABLE IF NOT EXISTS gameplay_catalogs (
+    channel TEXT PRIMARY KEY,
+    catalog_json TEXT NOT NULL,
+    revision INTEGER NOT NULL DEFAULT 1,
+    updated_by TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS content_foundations (
+    channel TEXT PRIMARY KEY,
+    manifest_json TEXT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS modules (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
@@ -49,6 +62,30 @@ CREATE TABLE IF NOT EXISTS players (
     city TEXT NOT NULL DEFAULT 'Zone City',
     login_streak INTEGER NOT NULL DEFAULT 0,
     last_login_day TEXT
+);
+
+CREATE TABLE IF NOT EXISTS player_progression (
+    player_id TEXT PRIMARY KEY REFERENCES players(id),
+    state_json TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS combat_encounters (
+    player_id TEXT PRIMARY KEY REFERENCES players(id),
+    state_json TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS player_travel (
+    player_id TEXT PRIMARY KEY REFERENCES players(id),
+    origin TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    departed_at TEXT NOT NULL,
+    arrives_at TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('traveling', 'arrived')),
+    version INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS crimes (
@@ -249,3 +286,10 @@ CREATE TABLE IF NOT EXISTS territory_wars (
     resolved_at TEXT
 );
 CREATE INDEX IF NOT EXISTS territory_wars_active_idx ON territory_wars(territory_id, state);
+
+CREATE TABLE IF NOT EXISTS casino_high_low (
+    player_id TEXT PRIMARY KEY REFERENCES players(id),
+    current_card INTEGER NOT NULL DEFAULT 7 CHECK (current_card BETWEEN 2 AND 14),
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL
+);

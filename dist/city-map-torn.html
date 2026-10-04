@@ -256,6 +256,49 @@
     .panel .pribbon{display:none!important}
   }
 
+  /* Compact family control surface. Ownership lives in pins and details, never a grid. */
+  .familyRail{width:242px;flex:none;padding:12px 14px;background:#171a1d;border-inline-end:1px solid #303439;display:flex;flex-direction:column;gap:10px;overflow:auto;z-index:3;color-scheme:dark;scrollbar-width:thin;scrollbar-color:#536158 #171a1d}
+  .familyRail::-webkit-scrollbar,.familyList::-webkit-scrollbar{width:5px}.familyRail::-webkit-scrollbar-thumb,.familyList::-webkit-scrollbar-thumb{background:#536158;border-radius:5px}
+  .familyEyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:#939b9d;font-weight:700}
+  .familyRail h1{font-size:18px;line-height:1.2;color:#f0eee8;margin-top:4px}
+  .familyStats{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:6px;border-block:1px solid #323a35;padding:10px 0}
+  .familyStat b{display:block;color:#e6dcc5;font-size:19px;font-weight:650;font-variant-numeric:tabular-nums}
+  .familyStat span{display:block;color:#a3aaa9;font-size:9px;line-height:1.3;margin-top:2px}
+  .familyNote{font-size:10px;line-height:1.4;color:#a3aaa9}
+  #familyNote{display:none}
+  .familyScopes{display:flex;gap:4px}
+  .familyScopes button{flex:1;min-height:36px;padding:6px;border:1px solid #3a4041;border-radius:4px;background:transparent;color:#aeb6b5;font:inherit;font-size:10px;cursor:pointer}
+  .familyScopes button[aria-pressed="true"]{background:#d1c0a0;border-color:#d1c0a0;color:#202322}
+  .side .familyScopes{display:flex}.side .familyScopes button{min-height:40px}
+  .familyList{display:flex;flex:1;flex-direction:column;gap:2px;min-height:0;overflow:auto}
+  .familyListHeading{display:flex;justify-content:space-between;gap:6px;color:#a3aaa9;font-size:10px}
+  .familyRow{display:flex;align-items:center;gap:8px;min-height:42px;width:100%;border:0;border-bottom:1px solid #2d3233;background:transparent;color:#e4e6e1;text-align:start;padding:7px 0;font:inherit;cursor:pointer}
+  .familyRow{flex-shrink:0;cursor:default}.familyRowDetails{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:0;padding:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}.familyLocate{flex:none;border:1px solid #536054;border-radius:4px;background:#252c2b;color:#e4e6df;padding:6px;min-height:36px;font:inherit;font-size:10px;cursor:pointer}
+  .familyRow:hover{background:#222829}.familyDot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--owner,#a8b3ab)}
+  .familyRow span:nth-child(2){min-width:0;flex:1;font-size:11px}.familyRow small{display:block;color:#929b99;font-size:9px;margin-top:3px}.familyRow em{font-style:normal;color:#beceb6;font-size:10px}
+  .familyBrowse{margin-top:auto;min-height:42px;border:1px solid #525b58;border-radius:4px;color:#e4e6df;background:#252c2b;font:inherit;font-size:11px;font-weight:650;cursor:pointer}
+  .familyHome{position:absolute;bottom:32px;inset-inline-start:12px;z-index:4;border:1px solid #69706a;border-radius:5px;background:#202625;color:#e8e8df;min-height:38px;padding:8px 12px;font:inherit;font-size:11px;cursor:pointer;box-shadow:0 2px 8px #0005}
+  .holdingPin{display:flex;align-items:center;gap:6px;min-height:36px;max-width:135px;padding:6px 9px;background:#222a29;border:1px solid #78847b;border-radius:5px;box-shadow:0 3px 8px #0006;color:#f1f1e8;font:inherit;font-size:10px;cursor:pointer;text-align:start;pointer-events:auto}
+  .holdingPin svg{width:15px;height:15px;flex:none;color:#d1c0a0}.holdingPin span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holdingPin small{display:block;font-size:8px;color:#b1bcb4;line-height:1.4}.holdingPin.nearby{background:#343730;border-color:#a9a28d}.holdingPin.selected{border:2px solid #ebdfc5;background:#424a41}.holdingPin:focus-visible{outline:2px solid #f0d59d;outline-offset:3px}
+  .holdingPin.placePin{background:#e4dfcf;border-color:#a9b4a5;color:#27312c}.holdingPin.placePin svg{color:#516957}.holdingPin.placePin small{color:#526056}
+  .mapLegend{position:absolute;bottom:34px;inset-inline-end:12px;z-index:3;display:flex;gap:10px;color:#d5d9d3;background:#1a211edf;border:1px solid #434c44;border-radius:4px;padding:7px 9px;font-size:9px;pointer-events:none}
+  .mapLegend i{display:inline-block;width:6px;height:6px;background:#b8c8af;border-radius:50%;margin-inline-end:4px}.mapLegend span:last-child i{background:#cbbd9b}
+  .mgrade,.mapcol.focus .mgrade{background:none!important}
+  .side{background:#191e20}.sideToggle,.cityReset,.mapExpand,.streetView{background:#202625;color:#e1e3dc;border:1px solid #616b62;border-radius:5px;box-shadow:0 2px 6px #0004;backdrop-filter:none;font-size:10px;letter-spacing:0}
+  .sideToggle{left:10px;padding:0 10px}.cityReset{left:120px;width:82px;padding:0 7px}.mapExpand{left:205px}.streetView{top:12px;left:255px;width:44px;padding:0 7px}
+  .streetView[aria-pressed="true"]{background:#d1c0a0;border-color:#d1c0a0;color:#202322}
+  [dir="rtl"] .sideToggle{right:10px}[dir="rtl"] .cityReset{right:120px}[dir="rtl"] .mapExpand{right:205px}[dir="rtl"] .streetView{right:255px}
+  .panel{width:276px;padding:14px;background:#1b2021;box-shadow:-4px 0 14px #0004}.panel .pico{height:28px;width:28px;margin:0 0 10px}.panel .pico svg{height:23px;width:23px}.panel .x{height:36px;min-width:64px;top:8px;right:10px;border-radius:4px}.panel h2{font-size:16px;margin-bottom:5px}.panel .pribbon{display:none!important}.panel .pmeta{flex:1;min-height:0;overflow:auto}.panel .go{border-radius:4px;background:#c9b992;color:#242820;box-shadow:none;min-height:42px;padding:10px;font-size:11px}.panel .view,.panel .mark{border-radius:4px;min-height:36px;padding:7px;background:#2b3330;color:#d9dfd5;border-color:#536054;text-transform:none;letter-spacing:0}.panel .view{margin-top:5px}.panel .mark{margin-top:5px}
+  .tControlBar i,.terrBar i{box-shadow:none}.terr.adjacent::after{display:none}.terr{border-left:0;border-radius:4px}.terrState{border:0}.tStat span,.neighborCard span,.reasonCard span{font-size:9px}.tStat b,.neighborCard b,.reasonCard p{font-size:11px}.benefitCard{background:#242c29;border:1px solid #445047;border-radius:4px}.benefitCard strong{font-size:11px}.benefitCard b{font-size:11px}.blockState.good,.blockState.info{color:#c5d2ba;border-color:#65755e;background:#283326}.tControlBar{height:4px}.tStats{gap:5px}.tStat{padding:6px}.familyRail button:focus-visible{outline-color:#d1c0a0}
+  .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{opacity:.75}
+  .pActions{display:grid;gap:5px;flex:none;margin-top:5px}.panel .pActions button{margin:0}.panel .pmeta{color-scheme:dark;scrollbar-width:thin;scrollbar-color:#536158 #1b2021}.panel .pmeta::-webkit-scrollbar{width:5px}.panel .pmeta::-webkit-scrollbar-thumb{background:#536158;border-radius:5px}.panel .pmeta::-webkit-scrollbar-button{display:none}.benefitCard.planned{border-style:dashed}.benefitCard strong{padding-inline:0}.benefitCard b{position:static;display:block;margin-top:4px;text-align:start}.benefitCard .benefitStatus{color:#c7b98b}
+  .warCard{border:1px solid #755f4f;background:#302923;border-radius:5px;padding:9px;margin:8px 0;color:#e7ded1}.warTitle{display:flex;justify-content:space-between;gap:8px;font-size:11px;font-weight:700}.warSide{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:10px}.warSide span{color:#bcb5aa}.warSide b{white-space:nowrap;color:#e9e4db}.warRule{margin-top:8px;font-size:10px;line-height:1.4;color:#c5baaa}.warClock{display:block;margin-top:7px;font-size:10px;color:#e8c9a8}.actionCost{padding:7px 0;color:#dbd1b9;font-size:11px;font-weight:700}
+  @media(max-width:760px){
+    .wrap{flex-direction:column}.familyRail{width:100%;height:68px;flex:none;padding:9px 12px;border:0;border-bottom:1px solid #3b4541;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;overflow:hidden}.familyEyebrow{font-size:8px}.familyRail h1{font-size:15px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyStats{grid-column:2;grid-row:1;display:flex;gap:15px}.familyStat b{font-size:19px}.familyStat span{font-size:8px}.familyStat.claimMetric{display:none}.familyNote,.familyScopes,.familyList,.familyBrowse{display:none}.mapcol{min-height:0}.sideToggle{top:8px;left:8px;width:44px;padding:0}.sideToggle b{display:none}.cityReset{top:8px;left:58px;height:44px}.mapExpand{top:8px;left:144px}.streetView{top:8px;left:194px;height:44px}.mapboxgl-ctrl-group button{height:36px;width:36px}.mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:8px 8px 0 0}.familyHome{bottom:29px;inset-inline-start:8px;min-height:36px;padding:6px 8px;font-size:10px}.mapLegend{display:none}.holdingPin{max-width:106px;font-size:9px;min-height:36px;padding:5px 7px}.holdingPin small{font-size:8px}.panel{width:100%;max-width:100%;padding:10px 12px}.panel .pico{display:none}.panel h2{padding-inline-end:74px}.panel .pcat{padding-inline-end:60px}.panel .go{margin-top:6px}.panel .view,.panel .mark{min-height:34px}.panel .pmeta{margin-bottom:3px}.tStats{grid-template-columns:repeat(4,1fr)}.tOwner,.tControl{font-size:10px;margin:3px 0}.blockStates{margin:4px 0}.benefitCard{margin:5px 0;padding:6px}.panel .x{top:5px}
+    [dir="rtl"] .sideToggle{right:8px}[dir="rtl"] .cityReset{right:58px}[dir="rtl"] .mapExpand{right:144px}[dir="rtl"] .streetView{right:194px}
+    .detailsOpen .familyRail{display:none}.panel .pActions{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.panel .pActions button{min-height:44px;margin:0}.panel .pActions .go{grid-column:1/-1}.panel .pActions:has(.view[hidden]) .mark{grid-column:1/-1}.panel .x{min-height:44px}.familyStat span{max-width:93px;line-height:1.3}
+    .familyListHeading{display:none}
+  }
   /* U3.24 - reduced-motion guard */
   @media (prefers-reduced-motion:reduce){
     .zpin,.loc,.zboot .zbootMark,.zhere::before,.zbadge.png .zpin::before,.mgrade::after,.loc.found .chk.pop{animation:none!important}
@@ -267,6 +310,15 @@
 </head>
 <body>
 <div class="wrap">
+  <section class="familyRail" aria-label="Family holdings" id="familyRail">
+    <div><div class="familyEyebrow" id="familyEyebrow">YOUR FAMILY</div><h1 id="familyName">Loading family...</h1></div>
+    <div class="familyStats" id="familyStats" aria-live="polite"></div>
+    <p class="familyNote" id="familyNote"></p>
+    <div class="familyScopes" id="familyScopes"></div>
+    <div class="familyListHeading"><span id="familyListCount"></span><span id="familyLocateHint"></span></div>
+    <div class="familyList" id="familyList"></div>
+    <button class="familyBrowse" id="familyBrowse" type="button">Browse holdings & locations</button>
+  </section>
   <aside class="side" id="side" aria-hidden="true" inert>
     <div class="sHead">
       <div class="sHtxt"><span class="t" id="sTitle">Locations</span><span class="scount" id="scount">0 / 0</span></div>
@@ -277,6 +329,7 @@
       <button class="modeTab" id="modeTerritories" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4-3 7-7 8-4-1-7-4-7-8V6z"/></svg><span>Territories</span></button>
       <button class="modeTab" id="modePlaces" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="11" r="4"/><path d="M12 21s7-6 7-12a7 7 0 10-14 0c0 6 7 12 7 12z"/></svg><span>Locations</span></button>
     </div>
+    <div class="familyScopes drawerScopes" id="drawerScopes" style="padding:4px 12px"></div>
     <div class="sSearch"><input id="search" type="text" placeholder="Search..." aria-label="Search places" autocomplete="off"><button class="sClear" id="sClear" aria-label="Clear search" hidden>&times;</button></div>
     <div class="sFilter"><button class="fchip" id="fHide" aria-pressed="false"><span class="fdot"></span><span id="fHideT">Hide found</span></button><span class="fres" id="fRes"></span></div>
     <div class="territories" id="territories"></div>
@@ -290,6 +343,8 @@
     <button class="streetView" id="streetView" type="button" aria-label="Explore 3D city">3D city</button>
     <div id="map"></div>
     <div class="mgrade"></div>
+    <button class="familyHome" id="familyHome" type="button">My family</button>
+    <div class="mapLegend" id="mapLegend"></div>
     <div class="etaHud" id="etaHud" hidden></div>
     <div class="panel" id="panel" role="dialog" aria-label="Location details" aria-hidden="true" inert>
       <button class="x" id="panelX" type="button" aria-label="Close details"><span class="xMark" aria-hidden="true">&times;</span><span class="xLabel">Close</span></button>
@@ -298,9 +353,11 @@
       <h2 id="pName"></h2>
       <div class="pcat" id="pCat"></div>
       <div class="pmeta" id="pMeta"></div>
-      <button class="go" id="pGo"></button>
-      <button class="view" id="pView" hidden></button>
-      <button class="mark" id="pMark"></button>
+      <div class="pActions">
+        <button class="go" id="pGo"></button>
+        <button class="view" id="pView" hidden></button>
+        <button class="mark" id="pMark"></button>
+      </div>
     </div>
     <div class="zerr" id="err"></div>
     <div class="zboot" id="zboot"><div class="zbootMark"></div></div>
@@ -308,6 +365,18 @@
   </div>
 </div>
 
+<script>
+function initializeMapLocale(){
+  var language=new URLSearchParams(location.search).get('lang');
+  if(language!=='ar'&&language!=='en'){try{language=parent.document.documentElement.lang;}catch(_){}}
+  language=language==='ar'?'ar':'en';document.documentElement.lang=language;document.documentElement.dir=language==='ar'?'rtl':'ltr';
+  document.getElementById('familyEyebrow').textContent=language==='ar'?'عائلتك':'YOUR FAMILY';
+  document.getElementById('familyName').textContent=language==='ar'?'جارٍ تحميل العائلة...':'Loading family...';
+  document.getElementById('familyBrowse').textContent=language==='ar'?'تصفح الأراضي والمواقع':'Browse holdings & locations';
+  return language;
+}
+initializeMapLocale();
+</script>
 <script src="map-icons.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.9.1/mapbox-gl.js"></script>
 <script>
@@ -326,9 +395,8 @@
   var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
   var map=new mapboxgl.Map({ container:'map', style:'mapbox://styles/mapbox/dark-v11',
-    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:35, bearing:-15, maxPitch:60,
+    center:CENTER, zoom:Z, minZoom:10.5, maxZoom:18, pitch:25, bearing:-12, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
-     config:{ basemap:{ theme:'monochrome',lightPreset:'night',show3dObjects:true,showPlaceLabels:false,showRoadLabels:false,showPointOfInterestLabels:false,showTransitLabels:false } },
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
@@ -336,18 +404,26 @@
   map.getCanvas().addEventListener('contextmenu',function(e){e.preventDefault();});
   map.getCanvasContainer().addEventListener('contextmenu',function(e){e.preventDefault();});
   map.on('contextmenu',function(e){if(e.originalEvent)e.originalEvent.preventDefault();});
-  map.on('error',function(e){ try{ var m=(e&&e.error&&e.error.message)||''; if(/token|401|403|Unauthorized/i.test(m)){ var el=document.getElementById('err'); el.textContent='Map tiles blocked: '+m; el.style.display='block'; } }catch(_){}} );
+  var rendererErrors=[];
+  map.on('error',function(e){
+    var message=String((e&&e.error&&e.error.message)||'Unknown map error');
+    rendererErrors.push(message);if(rendererErrors.length>10)rendererErrors.shift();
+    document.body.dataset.zoneRendererErrors=JSON.stringify(rendererErrors);
+    console.error('[ZONE map]',message);
+    if(/token|401|403|Unauthorized/i.test(message)){var errorPanel=document.getElementById('err');errorPanel.textContent='Map tiles blocked: '+message;errorPanel.style.display='block';document.getElementById('zboot').classList.add('gone');}
+  });
 
   var pinData=[],pinById={},hereLL=null,selected=null,selectedTerritory=null,selectedNeighborIds=new Set(),hoveredTerritory=null,
-      activeCats={},districtData=[],territoryData=[],territoryById={},territoryFilter=null,mapMode='territories',lastData=null,lang='en',didFit=false;
+      activeCats={},districtData=[],territoryData=[],territoryById={},territoryFilter=null,mapMode='territories',lastData=null,lang=document.documentElement.lang==='ar'?'ar':'en',didFit=false;
   function fitCity(list,force){
     if(didFit&&!force) return;
+    var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
     var mobile=innerWidth<=640;
     var bounds=new mapboxgl.LngLatBounds();
     (list||[]).forEach(function(t){(t.polygon||[]).forEach(function(p){bounds.extend(blockLL(t,p));});});
     if(bounds.isEmpty()) return;
     map.resize();
-    map.fitBounds(bounds,{padding:mobile?{top:72,right:22,bottom:28,left:22}:{top:72,right:52,bottom:48,left:52},maxZoom:mobile?15.05:15.6,pitch:35,bearing:-15,duration:force&&!RM?700:0,essential:true});
+    map.fitBounds(bounds,{padding:mobile?{top:72,right:22,bottom:28,left:22}:{top:72,right:52,bottom:48,left:52},maxZoom:mobile?14.5:14.8,pitch:25,bearing:-12,duration:force&&!RM?450:0,essential:true});
     didFit=true;
   }
   var found; try{ found=new Set(JSON.parse(localStorage.getItem('zoneFound')||'[]')); }catch(_){ found=new Set(); }
@@ -366,6 +442,122 @@
       COPY_AR={places:'المواقع',territories:'الأراضي',searchPlaces:'ابحث في المواقع...',searchTerritories:'ابحث في القطاعات...',cityControl:'السيطرة على المدينة',owner:'المالك',control:'السيطرة',blocks:'القطاعات',block:'القطاع',district:'المنطقة',sector:'الحلقة',size:'الحجم',density:'الكثافة',slots:'مواقع الجدار',dailyRespect:'الاحترام اليومي',neighbors:'القطاعات المجاورة',actionReason:'حالة الإجراء',respect:'الاحترام',income:'الدخل / ساعة',heat:'الخطورة',benefit:'ميزة القطاع',value:'القيمة',neutral:'محايد',contested:'متنازع عليه',controlled:'تحت السيطرة',eligible:'متاح',adjacent:'مجاور',current:'منطقتك الحالية',claim:'استحوذ على القطاع',capture:'السيطرة على القطاع',assault:'هاجم القطاع',attack:'مهاجمة القطاع',reinforce:'تعزيز القطاع',unavailable:'غير متاح',showPlaces:'مواقع المنطقة',versus:'ضد',fullCity:'المدينة كاملة',streetView:'المدينة ثلاثية الأبعاد',streetViewLabel:'استكشف المدينة ثلاثية الأبعاد',viewBlock3D:'استكشف القطاع ثلاثي الأبعاد'};
   var copy=Object.assign({},COPY_EN);
   function C(k){return copy[k]||(lang==='ar'?COPY_AR:COPY_EN)[k]||k;}
+
+  var familyScope='family',holdingMarkers=[];
+  var FAMILY_EN={eyebrow:'YOUR FAMILY',none:'No family yet',holdings:'holdings',respect:'respect potential / day',nearby:'Nearby',family:'Family',all:'All',claimable:'ready to claim',browse:'Browse holdings & locations',home:'My family',note:'Select a holding to manage control, or explore nearby opportunities.',empty:'Join a family to build your first foothold.',noHoldings:'No holdings yet. Choose an available outer-sector block.',ownedKey:'Family holding',nearbyKey:'Opportunity',allNote:'All city blocks remain searchable and selectable.',noResults:'No holdings in this view.'};
+  var FAMILY_AR={eyebrow:'عائلتك',none:'لا توجد عائلة',holdings:'قطاعات مملوكة',respect:'احترام محتمل / يوم',nearby:'المجاورة',family:'العائلة',all:'الكل',claimable:'متاح للاستحواذ',browse:'تصفح الأراضي والمواقع',home:'عائلتي',note:'اختر قطاعاً لإدارة السيطرة أو استكشف فرص التوسع المجاورة.',empty:'انضم إلى عائلة لتؤسس أول موطئ قدم.',noHoldings:'لا توجد أراضٍ بعد. اختر قطاعاً متاحاً في الحلقة الخارجية.',ownedKey:'أرض العائلة',nearbyKey:'فرصة توسع',allNote:'جميع قطاعات المدينة متاحة للبحث والاختيار.',noResults:'لا توجد أراضٍ في هذا العرض.'};
+  function F(k){return(lang==='ar'?FAMILY_AR:FAMILY_EN)[k];}
+  function blockLandmark(t){return pinData.find(function(pin){return pin.territory===t.id;})||null;}
+  function holdingAnchor(t){var pin=blockLandmark(t);return pin?pin._lngLat:t._centroidLngLat;}
+  function locateHolding(t){selectTerritory(t);closePanel();map.flyTo({center:holdingAnchor(t),zoom:Math.max(map.getZoom(),innerWidth<=760?15.25:15.35),duration:RM?0:450,essential:true});}
+  function familyMetrics(blocks){
+    var owned=blocks.filter(function(t){return t.isPlayer;}),opportunities=blocks.filter(function(t){return t.canAct&&(t.action==='claim'||t.action==='assault');});
+    return{owned:owned,opportunities:opportunities,respect:owned.reduce(function(sum,t){return sum+t.dailyRespect;},0),claimable:opportunities.filter(function(t){return t.action==='claim';}).length};
+  }
+  function familyContextBlocks(){
+    var metrics=familyMetrics(territoryData),ids=new Set();
+    metrics.owned.forEach(function(t){ids.add(t.id);t.neighbors.forEach(function(id){ids.add(id);});});
+    return ids.size?territoryData.filter(function(t){return ids.has(t.id);}):(metrics.opportunities.length?metrics.opportunities:territoryData);
+  }
+  function familyAnchor(){
+    var metrics=familyMetrics(territoryData),owned=metrics.owned;
+    var headquarters=pinData.find(function(pin){return pin.icon==='faction'&&owned.some(function(t){return t.id===pin.territory;});});
+    if(headquarters)return headquarters._lngLat;
+    var candidates=owned.length?owned:metrics.opportunities;
+    if(!candidates.length)return CENTER;
+    var center=candidates.reduce(function(sum,t){return[sum[0]+t._centroidLngLat[0]/candidates.length,sum[1]+t._centroidLngLat[1]/candidates.length];},[0,0]);
+    var ownedPlaces=pinData.filter(function(pin){return owned.some(function(t){return t.id===pin.territory;});});
+    if(ownedPlaces.length)return ownedPlaces.sort(function(a,b){function distance(pin){return Math.pow((pin._lngLat[0]-center[0])*.76,2)+Math.pow(pin._lngLat[1]-center[1],2);}return distance(a)-distance(b);})[0]._lngLat;
+    return candidates.slice().sort(function(a,b){function distance(t){return Math.pow((t._centroidLngLat[0]-center[0])*.76,2)+Math.pow(t._centroidLngLat[1]-center[1],2);}return distance(a)-distance(b);})[0]._centroidLngLat;
+  }
+  function fitFamily(force){
+    if(didFit&&!force)return;
+    if(!territoryData.length)return;
+    var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
+    map.resize();map.flyTo({center:familyAnchor(),zoom:innerWidth<=760?15.25:15.35,pitch:35,bearing:-12,duration:force&&!RM?450:0,essential:true});didFit=true;
+  }
+  function blockDisplayName(t){
+    if(!/^(?:Block\s+)?ZC-\d+$|^القطاع\s+ZC-\d+$/i.test(t.name))return t.name;
+    var place=blockLandmark(t);
+    return place?place.label:((t.districtName||C('district'))+' · '+(t.benefit&&t.benefit.label||C('benefit')));
+  }
+  function inTerritoryScope(t){
+    if(!t)return false;
+    if(familyScope==='all')return true;
+    if(familyScope==='family')return t.isPlayer;
+    return !t.isPlayer&&(t.canAct||territoryData.some(function(own){return own.isPlayer&&own.neighbors.indexOf(t.id)>=0;}));
+  }
+  function familyMarkerBlocks(){
+    var metrics=familyMetrics(territoryData),list;
+    if(familyScope==='family')list=metrics.owned.concat(metrics.opportunities.slice(0,4));
+    else list=territoryData.filter(inTerritoryScope);
+    if(familyScope==='all'&&typeof map!=='undefined'&&map.getCenter){var center=map.getCenter();list.sort(function(a,b){function distance(t){var p=t._centroidLngLat;return p?Math.pow(p[0]-center.lng,2)+Math.pow(p[1]-center.lat,2):0;}return distance(a)-distance(b);});}
+    list=list.slice(0,familyScope==='all'?24:16);
+    if(selectedTerritory){list=list.filter(function(t){return t.id!==selectedTerritory.id;});list.unshift(selectedTerritory);}
+    return list;
+  }
+  function renderFamily(){
+    var metrics=familyMetrics(territoryData),fid=playerFactionId(lastData),faction=((lastData&&lastData.factions)||[]).find(function(f){return String(f.id)===fid;});
+    document.getElementById('familyRail').setAttribute('aria-label',F('eyebrow'));
+    document.getElementById('familyEyebrow').textContent=F('eyebrow');
+    document.getElementById('familyName').textContent=faction?localText(faction.name,fid):(metrics.owned[0]?metrics.owned[0].ownerName:F('none'));
+    document.getElementById('familyStats').innerHTML='<div class="familyStat"><b>'+metrics.owned.length+'</b><span>'+esc(F('holdings'))+'</span></div><div class="familyStat"><b>'+metrics.respect.toLocaleString()+'</b><span>'+esc(F('respect'))+'</span></div><div class="familyStat claimMetric"><b>'+metrics.claimable+'</b><span>'+esc(F('claimable'))+'</span></div>';
+    document.getElementById('familyNote').textContent=!fid?F('empty'):metrics.owned.length?F('note'):F('noHoldings');
+    document.getElementById('familyHome').textContent=F('home');
+    document.getElementById('familyBrowse').textContent=F('browse');
+    document.getElementById('mapLegend').innerHTML='<span><i></i>'+esc(F('ownedKey'))+'</span><span><i></i>'+esc(F('nearbyKey'))+'</span>';
+    ['familyScopes','drawerScopes'].forEach(function(id){var scopes=document.getElementById(id);scopes.innerHTML='';
+      ['family','nearby','all'].forEach(function(scope){var button=document.createElement('button');button.type='button';button.textContent=F(scope);button.setAttribute('aria-pressed',String(scope===familyScope));button.onclick=function(){familyScope=scope;renderFamily();filterSidebar();syncHoldingMarkers();};scopes.appendChild(button);});
+    });
+    var list=document.getElementById('familyList');list.innerHTML='';
+    var rows=territoryData.filter(inTerritoryScope),locateLabel=lang==='ar'?'حدد الموقع':'Locate';
+    document.getElementById('familyListCount').textContent=rows.length+' '+(familyScope==='family'?F('holdings'):C('blocks'));
+    document.getElementById('familyLocateHint').textContent=lang==='ar'?'على الخريطة':'On the map';
+    list.setAttribute('aria-label',rows.length+' '+(familyScope==='family'?F('holdings'):C('blocks')));
+    if(!rows.length){var note=document.createElement('p');note.className='familyNote';note.textContent=F('noResults');list.appendChild(note);}
+    rows.forEach(function(t){var row=document.createElement('div');row.className='familyRow';row.style.setProperty('--owner',t.color);var button=document.createElement('button');button.type='button';button.className='familyRowDetails';button.innerHTML='<i class="familyDot"></i><span>'+esc(blockDisplayName(t))+'<small><bdi>'+esc(t.code)+'</bdi> · '+esc(t.ownerName)+'</small></span>';button.onclick=function(){selectTerritory(t);};row.appendChild(button);var locate=document.createElement('button');locate.type='button';locate.className='familyLocate';locate.textContent=locateLabel;locate.setAttribute('aria-label',locateLabel+' · '+blockDisplayName(t));locate.onclick=function(){locateHolding(t);};row.appendChild(locate);list.appendChild(row);});
+    document.body.dataset.zoneFamilySummary=JSON.stringify({owned:metrics.owned.length,dailyRespect:metrics.respect,claimable:metrics.claimable});
+  }
+  function syncHoldingMarkers(){
+    holdingMarkers.forEach(function(item){item.marker.remove();});holdingMarkers=[];
+    if(mapMode!=='territories')return;
+    var blocks=familyMarkerBlocks(),representedPins=new Set();
+    blocks.forEach(function(t){
+      var pin=blockLandmark(t),label=pin?pin.label:blockDisplayName(t);if(pin)representedPins.add(pin.id);
+      var button=document.createElement('button');button.type='button';button.className='holdingPin'+(!t.isPlayer?' nearby':'')+(selectedTerritory&&selectedTerritory.id===t.id?' selected':'');
+      button.setAttribute('aria-label',label+', '+t.ownerName+', '+t.code);button.title=label+' · '+t.ownerName+' · '+t.code;
+      button.innerHTML=iconSvg({icon:t.isPlayer?'faction':'properties'},15,'currentColor')+'<span>'+esc(label)+'<small>'+esc(t.isPlayer?F('ownedKey'):(t.canAct?t.actionLabel:t.ownerName))+'</small></span>';
+      button.onclick=function(event){event.stopPropagation();selectTerritory(t);};
+      var marker=new mapboxgl.Marker({element:button,anchor:'bottom'}).setLngLat(holdingAnchor(t)).addTo(map);
+      holdingMarkers.push({marker:marker,element:button,block:t,pin:pin});
+    });
+    contextualFamilyPins().filter(function(pin){return !representedPins.has(pin.id);}).forEach(function(pin){
+      var button=document.createElement('button');button.type='button';button.className='holdingPin placePin';button.setAttribute('aria-label',pin.label);button.title=pin.label;
+      button.innerHTML=iconSvg(pin,15,'currentColor')+'<span>'+esc(pin.label)+'<small>'+esc(pin.catLabel)+'</small></span>';
+      button.onclick=function(event){event.stopPropagation();selectPin(pin);};
+      var marker=new mapboxgl.Marker({element:button,anchor:'bottom'}).setLngLat(pin._lngLat).addTo(map);
+      holdingMarkers.push({marker:marker,element:button,pin:pin});
+    });
+    layoutHoldingMarkers();
+  }
+  function layoutHoldingMarkers(){
+    var boxes=[],container=map.getContainer();
+    holdingMarkers.forEach(function(item){var point=map.project(item.pin?item.pin._lngLat:item.block._centroidLngLat),selectedBlock=item.block&&selectedTerritory&&selectedTerritory.id===item.block.id;
+      var halfWidth=(item.element.offsetWidth||(innerWidth<=760?106:135))/2,markerHeight=item.element.offsetHeight||40;
+      var valid=Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>halfWidth+8&&point.x<container.clientWidth-halfWidth-8&&point.y>60+markerHeight&&point.y<container.clientHeight-58;
+      var overlaps=boxes.some(function(box){return Math.abs(box.x-point.x)<(innerWidth<=760?112:142)&&Math.abs(box.y-point.y)<46;});
+      var visible=valid&&(!overlaps||selectedBlock);item.element.style.visibility=visible?'visible':'hidden';item.element.tabIndex=visible?0:-1;
+      if(visible)boxes.push(point);
+    });
+  }
+  function contextualFamilyPins(){
+    var container=map.getContainer(),cx=container.clientWidth/2,cy=container.clientHeight/2;
+    return pinData.filter(function(pin){var point=map.project(pin._lngLat);return activeCats[pin.cat]!==false&&(!hideFound||!found.has(pin.id))&&Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>40&&point.x<container.clientWidth-40&&point.y>70&&point.y<container.clientHeight-45;}).sort(function(a,b){function distance(pin){var p=map.project(pin._lngLat);return Math.pow(p.x-cx,2)+Math.pow(p.y-cy,2);}return distance(a)-distance(b);}).slice(0,5);
+  }
+  function focusFamily(){deselect();familyScope='family';setMode('territories',null);renderFamily();closeSide();fitFamily(true);}
+  document.getElementById('familyHome').onclick=focusFamily;
+  document.getElementById('familyBrowse').onclick=function(){setMode('territories',null);openSide();};
+  map.on('moveend',syncHoldingMarkers);
 
   /* ---------- one canonical, semantic icon contract ---------- */
   /* U6.1 - fill the missing-icon gaps that made 12/28 markers render as one generic star.
@@ -411,6 +603,9 @@
     'This neutral block is connected to your territory.':'هذا القطاع المحايد متصل بأراضي عائلتك.',
     'A territory war is already active on this block.':'تدور حرب سيطرة بالفعل على هذا القطاع.',
     'This rival block borders your territory.':'هذا القطاع المنافس يجاور أراضي عائلتك.'
+    ,'Contribute to your family assault.':'ساهم في هجوم عائلتك.'
+    ,'Defend this block in the active war.':'دافع عن هذا القطاع في الحرب الجارية.'
+    ,'This block is already fully controlled.':'هذا القطاع تحت السيطرة الكاملة بالفعل.'
   };
   function localReason(value){var reason=localText(value,'');return lang==='ar'?(ACTION_REASON_AR[reason]||reason):reason;}
   function ownerId(raw){var o=raw&&raw.owner,v=pick(raw,['ownerId','ownerFactionId','factionId','faction'],null);if(v==null&&o&&typeof o==='object')v=pick(o,['id','key','slug'],'');else if(v==null&&typeof o==='string')v=o;return String(v||'');}
@@ -420,7 +615,19 @@
   function sourcePolygon(raw){var p=pick(raw,['polygon','points','coordinates'],[]);if(raw&&raw.geometry&&raw.geometry.coordinates)p=raw.geometry.coordinates;if(Array.isArray(p)&&Array.isArray(p[0])&&Array.isArray(p[0][0]))p=p[0];return Array.isArray(p)?p.filter(function(q){return Array.isArray(q)&&q.length>=2&&isFinite(Number(q[0]))&&isFinite(Number(q[1]));}).map(function(q){return[Number(q[0]),Number(q[1])];}):[];}
   function sourceCentroid(raw,polygon){var c=pick(raw,['centroid','center','centre'],null);if(c&&typeof c==='object'&&!Array.isArray(c))c=[pick(c,['lng','longitude','x'],NaN),pick(c,['lat','latitude','y'],NaN)];if(Array.isArray(c)&&c.length>=2&&isFinite(Number(c[0]))&&isFinite(Number(c[1])))return[Number(c[0]),Number(c[1])];if(!polygon.length)return[0,0];return[polygon.reduce(function(n,p){return n+p[0];},0)/polygon.length,polygon.reduce(function(n,p){return n+p[1];},0)/polygon.length];}
   function sourceNeighbors(raw){var n=pick(raw,['neighbors','neighbours','adjacentBlocks'],[]);return Array.isArray(n)?n.map(function(v){return String(v&&typeof v==='object'?pick(v,['id','blockId','code'],''):v);}).filter(Boolean):[];}
-  function benefitOf(raw){var b=pick(raw,['benefit','advantage','perk'],null);if(!b&&Array.isArray(raw&&raw.benefits))b=raw.benefits[0];if(typeof b==='string')b={label:b};if(!b||typeof b!=='object')b={};var value=pick(b,['value','amount','displayValue'],pick(raw,['benefitValue','advantageValue'],'-')),unit=localText(pick(b,['unit','suffix'],pick(raw,['benefitUnit'],'')),'');return {type:String(pick(b,['type','id','key'],pick(raw,['benefitType','advantageType'],'bonus'))||'bonus'),label:localText(pick(b,['label','name','title'],pick(raw,['benefitLabel','advantageLabel'],C('benefit'))),C('benefit')),value:String(value==null?'-':value),unit:unit,displayValue:(String(value==null?'-':value)+(unit?' '+unit:'')).trim(),description:localText(pick(b,['description','desc','copy'],pick(raw,['benefitDescription','advantageDescription'],'')),'')};}
+  function benefitOf(raw){
+    var b=pick(raw,['benefit','advantage','perk'],null);if(!b&&Array.isArray(raw&&raw.benefits))b=raw.benefits[0];if(typeof b==='string')b={label:b};if(!b||typeof b!=='object')b={};
+    var value=pick(b,['value','amount','displayValue'],pick(raw,['benefitValue','advantageValue'],'-')),unit=localText(pick(b,['unit','suffix'],pick(raw,['benefitUnit'],'')),'');
+    var display=String(value==null?'-':value),units=lang==='ar'?{'cash/hour':'نقد / ساعة','items/day':'عناصر / يوم','crates/day':'صناديق / يوم',percent:'%',members:'أعضاء','basis-points':'نقطة أساس'}:{'cash/hour':'cash / hour','items/day':'items / day','crates/day':'crates / day',percent:'%',members:'members','basis-points':'basis points'};
+    if(unit==='basis-points'&&Number.isFinite(Number(value))){display=String(Number(value)/100);unit='percent';}
+    unit=units[unit]||unit;
+    return {type:String(pick(b,['type','id','key'],pick(raw,['benefitType','advantageType'],'bonus'))||'bonus'),active:b.active===true,label:localText(pick(b,['label','name','title'],pick(raw,['benefitLabel','advantageLabel'],C('benefit'))),C('benefit')),value:String(value==null?'-':value),unit:unit,displayValue:(display+(unit?' '+unit:'')).trim(),description:localText(pick(b,['description','desc','copy'],pick(raw,['benefitDescription','advantageDescription'],'')),'')};
+  }
+  function benefitCard(benefit){
+    var planned=benefit.active!==true,label=planned?(lang==='ar'?'ميزة مخططة':'Planned benefit'):C('benefit');
+    return '<div class="benefitCard'+(planned?' planned':'')+'"><span class="benefitStatus">'+esc(label)+'</span><strong>'+esc(benefit.label)+'</strong><b>'+esc(benefit.displayValue||benefit.value)+'</b>'
+      +(planned?'<em>'+(lang==='ar'?'معدل مخطط؛ لا يمنح مكافآت حالياً.':'Planned rate; no rewards are accrued yet.')+'</em>':benefit.description?'<em>'+esc(benefit.description)+'</em>':'')+'</div>';
+  }
   function normalizeBlock(raw,i,ctx){
     raw=raw||{};var polygon=sourcePolygon(raw),centroid=sourceCentroid(raw,polygon),oid=ownerId(raw),pf=playerFactionId(ctx);
     var neutral=flag(pick(raw,['neutral','unclaimed'],false))||!oid||/^(none|neutral|unclaimed|independent)$/i.test(oid);
@@ -431,8 +638,8 @@
     var fallbackColor=rivalColor(oid);if(isPlayer)fallbackColor=PLAYER_COLOR;
     var color=neutral?NEUTRAL_COLOR:String(pick(raw,['color','ownerColor','factionColor'],fallbackColor));
     var control=Number(pick(raw,['control','captureProgress','progress'],neutral?0:100));if(!isFinite(control))control=neutral?0:100;control=Math.max(0,Math.min(100,control));
-    var benefit=benefitOf(raw),action=String(pick(raw,['action','actionType'],neutral?'capture':(isPlayer?'reinforce':'attack'))),canAct=pick(raw,['canAct','actionEnabled'],true)!==false&&!flag(pick(raw,['actionDisabled','locked'],false));
-    var status=String(pick(raw,['status','state'],contested?C('contested'):(neutral?C('neutral'):C('controlled'))));
+    var benefit=benefitOf(raw),action=String(pick(raw,['action','actionType'],'')||''),canAct=!!action&&pick(raw,['canAct','actionEnabled'],true)!==false&&!flag(pick(raw,['actionDisabled','locked'],false));
+    var status=contested?C('contested'):(neutral?C('neutral'):C('controlled'));
     return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:lngLat?centroid:blockLL({_lngLat:false},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:neutral?C('neutral'):(ownerName(raw)||oid),faction:oid,factionName:neutral?C('neutral'):(ownerName(raw)||oid),color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localReason(pick(raw,['actionReason','reason','lockedReason'],'')),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
   }
   function territoryGeo(list){
@@ -465,36 +672,14 @@
     return nearest;
   }
   function emptyGeo(){return{type:'FeatureCollection',features:[]};}
-  function territoryOpacity(places){
-    var base=places?['case',['boolean',['feature-state','selected'],false],.5,['boolean',['feature-state','hover'],false],.38,['boolean',['get','contested'],false],.32,['boolean',['get','neutral'],false],.2,.26]:['case',['boolean',['feature-state','selected'],false],.94,['boolean',['feature-state','hover'],false],.9,['boolean',['get','contested'],false],.9,['boolean',['get','player'],false],.88,['boolean',['get','neutral'],false],.34,.84];
-    /* fill-opacity must NOT multiply a zoom expression: Mapbox rejects the whole
-       fill layer ("zoom expression may only be used as input to a top-level
-       step/interpolate"), which silently dropped both territory fill layers and
-       left the map a bare wireframe. Keep the per-feature case only. */
-    return base;
-  }
-  function overviewOpacity(places){return territoryOpacity(places);}
-  function adjacencyGeo(t){if(!t)return emptyGeo();return{type:'FeatureCollection',features:t.neighbors.map(function(id){var n=territoryById[id];return n?{type:'Feature',properties:{from:t.id,to:n.id},geometry:{type:'LineString',coordinates:[t._centroidLngLat,n._centroidLngLat]}}:null;}).filter(Boolean)};}
+  function territoryOpacity(){return 0;}
+  function overviewOpacity(){return 0;}
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
-    try{
-      if(!map.getSource('zone-blocks'))map.addSource('zone-blocks',{type:'geojson',data:territoryGeo(territoryData)});
-      if(!map.getSource('zone-adjacency-links'))map.addSource('zone-adjacency-links',{type:'geojson',data:emptyGeo()});
-      if(!map.getLayer('zone-blocks-ground'))map.addLayer({id:'zone-blocks-ground',type:'fill',slot:'middle',source:'zone-blocks',paint:{'fill-color':['get','renderColor'],'fill-emissive-strength':1.5,'fill-opacity':territoryOpacity(false)}});
-      if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':['get','renderColor'],'fill-emissive-strength':1.5,'fill-opacity':overviewOpacity(false)}});
-      if(!map.getLayer('zone-blocks-outline'))map.addLayer({id:'zone-blocks-outline',type:'line',source:'zone-blocks',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['case',['boolean',['feature-state','selected'],false],'#7defff',['boolean',['get','neutral'],false],'#586273',['get','renderColor']],'line-emissive-strength':1.5,'line-width':['case',['boolean',['feature-state','selected'],false],4.5,['boolean',['feature-state','hover'],false],3.1,['boolean',['get','neutral'],false],1.9,2.6],'line-opacity':['case',['boolean',['get','neutral'],false],.98,1],'line-blur':['case',['boolean',['feature-state','selected'],false],1.1,0]}});
-      /* U6.7 - contested blocks get a diagonal-hatch fill texture so war zones read instantly */
-      if(map.hasImage&&!map.hasImage('zone-hatch')){try{var _hc=document.createElement('canvas');_hc.width=_hc.height=8;var _hx=_hc.getContext('2d');_hx.strokeStyle='rgba(255,115,88,.9)';_hx.lineWidth=2;_hx.beginPath();_hx.moveTo(0,8);_hx.lineTo(8,0);_hx.stroke();map.addImage('zone-hatch',_hx.getImageData(0,0,8,8),{pixelRatio:2});}catch(_){}}
-      if(!map.getLayer('zone-blocks-hatch'))map.addLayer({id:'zone-blocks-hatch',type:'fill',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'fill-pattern':'zone-hatch','fill-opacity':.5}},'zone-blocks-outline');
-      if(!map.getLayer('zone-blocks-adjacent'))map.addLayer({id:'zone-blocks-adjacent',type:'line',source:'zone-blocks',paint:{'line-color':'#7defff','line-width':['case',['boolean',['feature-state','adjacent'],false],3,0],'line-opacity':['case',['boolean',['feature-state','adjacent'],false],.94,0],'line-dasharray':[1,1.4],'line-blur':['case',['boolean',['feature-state','adjacent'],false],.45,0]}});
-      if(!map.getLayer('zone-blocks-eligible'))map.addLayer({id:'zone-blocks-eligible',type:'line',source:'zone-blocks',filter:['==',['get','eligible'],true],paint:{'line-color':'#b9f13a','line-width':3.2,'line-opacity':.95,'line-dasharray':[2.4,1.35]}});
-      if(!map.getLayer('zone-blocks-contested'))map.addLayer({id:'zone-blocks-contested',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#ff7358','line-width':4,'line-opacity':.98,'line-dasharray':[1.4,1.1]}});
-      if(!map.getLayer('zone-blocks-current'))map.addLayer({id:'zone-blocks-current',type:'line',source:'zone-blocks',filter:['==',['get','here'],true],paint:{'line-color':'#ffffff','line-width':4.8,'line-blur':1.1,'line-opacity':.95}});
-      if(!map.getLayer('zone-adjacency-glow'))map.addLayer({id:'zone-adjacency-glow',type:'line',source:'zone-adjacency-links',layout:{'line-cap':'round'},paint:{'line-color':'#31e0ff','line-width':7,'line-blur':6,'line-opacity':.32}});
-      if(!map.getLayer('zone-adjacency-line'))map.addLayer({id:'zone-adjacency-line',type:'line',source:'zone-adjacency-links',layout:{'line-cap':'round'},paint:{'line-color':'#a5f5ff','line-width':1.8,'line-opacity':.86,'line-dasharray':[1.2,1.6]}});
-       if(!map.getLayer('zone-blocks-label'))map.addLayer({id:'zone-blocks-label',type:'symbol',source:'zone-blocks',minzoom:12.5,maxzoom:15.5,layout:{'text-field':['get','code'],'text-size':['interpolate',['linear'],['zoom'],12.5,9,15,10,17,12],'text-line-height':1.08,'text-letter-spacing':.025,'text-allow-overlap':false,'text-ignore-placement':false,'text-padding':2},paint:{'text-color':'#f6f9fc','text-halo-color':'rgba(4,7,12,.96)','text-halo-width':1.6,'text-halo-blur':.8}});
-      document.body.dataset.zoneLayerCount=String(map.getStyle().layers.filter(function(layer){return layer.id.indexOf('zone-')===0;}).length);
-    }catch(error){console.error('[ZONE territory layers]',error);}
+    if(!map.getSource('zone-blocks'))map.addSource('zone-blocks',{type:'geojson',data:territoryGeo(territoryData)});
+    // Invisible authoritative hit geometry. No boundaries, ownership tint or grid.
+    if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':'#ffffff','fill-opacity':0}});
+    document.body.dataset.zoneLayerCount=String(map.getStyle().layers.filter(function(layer){return layer.id.indexOf('zone-')===0;}).length);
   }
   function updateAdjacency(t,force){
     var previous=selectedNeighborIds,next=new Set(t&&Array.isArray(t.neighbors)?t.neighbors:[]);
@@ -503,18 +688,17 @@
       previous.forEach(function(id){if(force||!next.has(id))try{map.setFeatureState({source:'zone-blocks',id:id},{adjacent:false});}catch(_){}});
       next.forEach(function(id){if(force||!previous.has(id))try{map.setFeatureState({source:'zone-blocks',id:id},{adjacent:true});}catch(_){}});
     }
-    try{var src=map.getSource('zone-adjacency-links');if(src)src.setData(adjacencyGeo(t));}catch(_){}
   }
   function syncTerritories(blocks,context){
-    districtData=[];var incoming=Array.isArray(blocks)?blocks:[],selectedId=selectedTerritory&&selectedTerritory.id;
+    districtData=[];var incoming=Array.isArray(blocks)?blocks:[],selectedId=selectedTerritory&&selectedTerritory.id,panelWasOpen=el.panel.classList.contains('on');
     territoryData=incoming.map(function(t,i){return normalizeBlock(t,i,context||{});}).filter(function(t){return t.polygon.length>=3;});territoryById={};
     territoryData.forEach(function(t){territoryById[t.id]=t;});
     var hadSource=!!map.getSource('zone-blocks');ensureTerritoryLayers();
     try{var geo=territoryGeo(territoryData),src=map.getSource('zone-blocks');if(src&&hadSource)src.setData(geo);document.body.dataset.zoneFeatureCount=String(geo.features.length);map.once('idle',function(){try{var rendered=map.queryRenderedFeatures({layers:['zone-blocks-fill']});document.body.dataset.zoneRenderedCount=String(rendered.length);document.body.dataset.zoneRenderedSummary=JSON.stringify(rendered.reduce(function(acc,feature){var key=feature.properties&&feature.properties.neutral?'neutral':String(feature.properties&&feature.properties.ownerId||'owned');acc[key]=(acc[key]||0)+1;return acc;},{}));}catch(_){}});}catch(_){}
     selectedTerritory=selectedId&&territoryById[selectedId]?territoryById[selectedId]:null;
-    if(selectedTerritory){selectTerritory(selectedTerritory);}
+    if(selectedTerritory){if(panelWasOpen)selectTerritory(selectedTerritory);else{try{map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:true});}catch(_){}updateAdjacency(selectedTerritory,true);}}
     else{updateAdjacency(null);if(selectedId)closePanel();}
-    renderTerritoryList();updateProg();
+    renderTerritoryList();updateProg();renderFamily();syncHoldingMarkers();
   }
   /* U6.11 - per-district crest identity (needs the icons added in U6.1) so the completionist
      list stops showing 27 identical faction shields */
@@ -524,7 +708,7 @@
     el.territories.innerHTML='';var fragment=document.createDocumentFragment();
     territoryData.forEach(function(t){
       var isAdjacent=selectedNeighborIds.has(t.id),d=document.createElement('div'); d.className='terr'+(t.neutral?' neutral':'')+(t.contested?' contested':'')+(t.eligible?' eligible':'')+(isAdjacent?' adjacent':'')+(selectedTerritory&&selectedTerritory.id===t.id?' sel':''); d.dataset.id=t.id; d.tabIndex=0; d.setAttribute('role','button'); d.style.setProperty('--tc',t.color||NEUTRAL_COLOR);
-      d.innerHTML='<div class="terrTop"><span class="terrCrest">'+iconSvg({icon:DCREST[t.districtId]||'faction'},15,'#fff')+'</span><span class="terrName">'+esc(t.name)+'</span><span class="terrState">'+esc(t.status)+'</span></div>'
+      d.innerHTML='<div class="terrTop"><span class="terrCrest">'+iconSvg({icon:DCREST[t.districtId]||'faction'},15,'#fff')+'</span><span class="terrName">'+esc(blockDisplayName(t))+'</span><span class="terrState">'+esc(t.status)+'</span></div>'
         +'<div class="terrOwner"><span>'+esc(t.ownerName)+'</span><span class="terrCode">'+esc(t.code)+'</span><b>'+Math.round(t.control)+'%</b></div><div class="terrBar"><i style="width:'+Math.round(t.control)+'%"></i></div>'
         +(t.here?'<span class="terrHere">'+esc(copy.current)+'</span>':'');
       function choose(){selectTerritory(t);closeSide(true);}
@@ -537,17 +721,17 @@
     previousNeighbors.forEach(function(id){changed.add(id);});selectedNeighborIds.forEach(function(id){changed.add(id);});
     changed.forEach(function(id){if(!id)return;var row=el.territories.querySelector('.terr[data-id="'+CSS.escape(String(id))+'"]');if(row){row.classList.toggle('sel',!!selectedTerritory&&selectedTerritory.id===id);row.classList.toggle('adjacent',selectedNeighborIds.has(id));}});
   }
-  function filterSidebar(){ var q=(el.search.value||'').trim().toLowerCase(); el.sClear.hidden=!q;
+  function filterSidebar(preserveExpanded){ var q=(el.search.value||'').trim().toLowerCase(); el.sClear.hidden=!q;
     if(mapMode==='territories'){
-      var tn=0; el.territories.querySelectorAll('.terr').forEach(function(r){var t=territoryById[r.dataset.id],hay=((t&&t.name)||'')+' '+((t&&t.code)||'')+' '+((t&&t.ownerName)||'')+' '+((t&&t.status)||'')+' '+((t&&t.districtName)||'')+' '+((t&&t.benefit&&t.benefit.label)||'');var hit=!q||hay.toLowerCase().indexOf(q)>=0;r.style.display=hit?'':'none';if(hit)tn++;});
+      var tn=0; el.territories.querySelectorAll('.terr').forEach(function(r){var t=territoryById[r.dataset.id],hay=(t?blockDisplayName(t):'')+' '+((t&&t.name)||'')+' '+((t&&t.code)||'')+' '+((t&&t.ownerName)||'')+' '+((t&&t.status)||'')+' '+((t&&t.districtName)||'')+' '+((t&&t.benefit&&t.benefit.label)||'');var hit=q?hay.toLowerCase().indexOf(q)>=0:inTerritoryScope(t);r.style.display=hit?'':'none';if(hit)tn++;});
       el.fRes.textContent=q?(tn+L('results')):''; if(el.zempty){el.zempty.hidden=!(q&&tn===0);el.zempty.textContent=L('noMatch');} return;
     }
     document.querySelectorAll('.cat').forEach(function(c){ var any=false;
-      c.querySelectorAll('.loc').forEach(function(r){ var inTerritory=!territoryFilter||r.dataset.territory===territoryFilter, hit=inTerritory&&(!q||r.querySelector('.lname').textContent.toLowerCase().indexOf(q)>=0); r.classList.toggle('hide',!hit); if(hit)any=true; });
-      c.style.display=any?'':'none'; if((q||territoryFilter)&&any) setCategoryExpanded(c,true); if(!q&&!territoryFilter) setCategoryExpanded(c,false); });
+      c.querySelectorAll('.loc').forEach(function(r){ var pin=pinById[r.dataset.id],hit=!!pin&&pinInScope(pin)&&(!hideFound||!found.has(pin.id))&&(!q||r.querySelector('.lname').textContent.toLowerCase().indexOf(q)>=0); r.classList.toggle('hide',!hit); if(hit)any=true; });
+      c.style.display=any?'':'none'; if((q||territoryFilter)&&any) setCategoryExpanded(c,true); if(!q&&!territoryFilter&&preserveExpanded!==true) setCategoryExpanded(c,false); });
     var shown=document.querySelectorAll('.loc:not(.hide)').length;
-    el.fRes.textContent=(q||territoryFilter)?(shown+L('results')):'';
-    if(el.zempty){ el.zempty.hidden=!((q||territoryFilter)&&shown===0); el.zempty.textContent=L('noMatch'); }
+    el.fRes.textContent=(q||territoryFilter||hideFound)?(shown+L('results')):'';
+    if(el.zempty){ el.zempty.hidden=!((q||territoryFilter||hideFound)&&shown===0); el.zempty.textContent=L('noMatch'); }
   }
   function setCategoryExpanded(cat,open){
     cat.classList.toggle('open',open);
@@ -565,7 +749,8 @@
   }
   function poiIconKey(p){var key=String(p.icon||'missions').replace(/[^a-z0-9_-]/gi,'').toLowerCase();return ICON_PATHS[key]?key:'missions';}
   function normalizePin(p,i,labels){var n=Object.assign({},p);n.id=String(pick(p,['id','pinId'],'poi-'+i));n.label=localText(pick(p,['label','name','title'],n.id),n.id);n.cat=String(pick(p,['cat','category'],'misc'));n.catLabel=localText(pick(p,['catLabel'],labels[n.cat]||''),'');n.territory=String(pick(p,['territory','blockId','districtId'],'')||'');n._lngLat=pointCoordinates(p);n.icon=poiIconKey(n);return n;}
-  function pinVisible(p){return mapMode==='places'&&activeCats[p.cat]!==false&&(!territoryFilter||p.territory===territoryFilter);}
+  function pinInScope(p){return !territoryFilter||p.territory===territoryFilter||p.districtId===territoryFilter;}
+  function pinVisible(p){return mapMode==='places'&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));}
   function poiGeo(){return{type:'FeatureCollection',features:pinData.map(function(p){return{type:'Feature',id:p.id,properties:{id:p.id,label:p.label,cat:p.cat,iconImage:'zone-poi-'+p.icon,color:pinColor(p),territoryColor:p.territoryColor||NEUTRAL_COLOR,territory:p.territory||'',territoryName:p.territoryName||'',found:found.has(p.id),visible:pinVisible(p)},geometry:{type:'Point',coordinates:p._lngLat}};})};}
   function ensurePoiImage(key){
     var id='zone-poi-'+key;if(map.hasImage&&map.hasImage(id))return;
@@ -587,7 +772,7 @@
       /* Layer contract id:'zone-poi-icon' */
       if(!map.getLayer('zone-poi-icon'))map.addLayer({id:'zone-poi-icon',type:'symbol',source:'zone-pois',filter:visible,layout:{'icon-image':['get','iconImage'],/* canonical data expression ['"]get' */'icon-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */12.5,.5,15,.68,17,.86,19,1.02],'icon-pitch-alignment':'map','icon-rotation-alignment':'map','icon-allow-overlap':false,'icon-ignore-placement':false,'icon-optional':false,'icon-padding':4,'symbol-sort-key':['match',['get','cat'],'fin',1,'admin',2,'shop',3,'leisure',4,'estate',5,6]},paint:{'icon-color':['case',['boolean',['get','found'],false],'#83a09b',['get','color']],'icon-halo-color':'rgba(255,255,255,.35)','icon-halo-width':.45,'icon-opacity':['case',['boolean',['get','found'],false],.62,1]}});
       /* Layer contract id:'zone-poi-label' */
-      if(!map.getLayer('zone-poi-label'))map.addLayer({id:'zone-poi-label',type:'symbol',source:'zone-pois',filter:visible,minzoom:13,layout:{'text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */14.4,9,17,11,19,12.5],'text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-offset':[0,2.15],'text-anchor':'top','text-max-width':15,'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':false,'text-ignore-placement':false,'text-optional':true,'text-padding':5},paint:{'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-emissive-strength':1,'text-opacity':['case',['boolean',['feature-state','hover'],false],1,['interpolate',['linear'],['zoom'],14.4,.25,16,.72,18,1]]}});
+      if(!map.getLayer('zone-poi-label'))map.addLayer({id:'zone-poi-label',type:'symbol',source:'zone-pois',filter:visible,minzoom:13,layout:{'text-field':['get','label'],'text-size':['interpolate',['linear'],['zoom'],/* zoom expression ['"]zoom' */14.4,9,17,11,19,12.5],'text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-offset':[0,2.15],'text-anchor':'top','text-max-width':15,'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':false,'text-ignore-placement':false,'text-optional':true,'text-padding':5},paint:{'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-emissive-strength':1,'text-opacity':['interpolate',['linear'],['zoom'],14.4,['case',['boolean',['feature-state','hover'],false],1,.25],16,['case',['boolean',['feature-state','hover'],false],1,.72],18,1]}});
       if(!map.getLayer('zone-poi-found'))map.addLayer({id:'zone-poi-found',type:'symbol',source:'zone-pois',filter:['all',visible,['==',['get','found'],true]],layout:{'text-field':'✓','text-size':['interpolate',['linear'],['zoom'],13,8,17,11,19,13],'text-offset':[1.15,-1.2],'text-pitch-alignment':'map','text-rotation-alignment':'map','text-allow-overlap':true,'text-ignore-placement':true},paint:{'text-color':'#41e08a','text-halo-color':'#06110b','text-halo-width':1.4}});
       /* Layer contract id:'zone-poi-hitbox' */
       if(!map.getLayer('zone-poi-hitbox'))map.addLayer({id:'zone-poi-hitbox',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'map','circle-pitch-scale':'map','circle-radius':['interpolate',['linear'],['zoom'],12.5,15,16,20,19,25],'circle-color':'#ffffff','circle-opacity':0}});
@@ -604,10 +789,12 @@
     if(el.search.dataset.mode!==mapMode){el.search.value='';el.search.dataset.mode=mapMode;el.sClear.hidden=true;}
     el.modePlaces.setAttribute('aria-selected',mapMode==='places'); el.modeTerritories.setAttribute('aria-selected',mapMode==='territories');
     el.cats.hidden=mapMode!=='places'; el.territories.hidden=mapMode!=='territories'; el.sFilter.hidden=mapMode!=='places';
+    document.getElementById('drawerScopes').hidden=mapMode!=='territories';
     el.sTitle.textContent=mapMode==='places'?copy.places:copy.cityControl; el.search.placeholder=mapMode==='places'?copy.searchPlaces:copy.searchTerritories;
-    el.sideToggleText.textContent=mapMode==='places'?copy.places:copy.territories;
+    el.search.setAttribute('aria-label',el.search.placeholder);
+    el.sideToggleText.textContent=mapMode==='places'?copy.places:(lang==='ar'?'خيارات':'Map options');
     syncPoiSource(); filterSidebar(); updateProg();
-    try{ if(map.getLayer('zone-blocks-ground')) map.setPaintProperty('zone-blocks-ground','fill-opacity',territoryOpacity(mapMode!=='territories'));if(map.getLayer('zone-blocks-fill'))map.setPaintProperty('zone-blocks-fill','fill-opacity',overviewOpacity(mapMode!=='territories')); }catch(_){}
+    syncHoldingMarkers();
   }
   el.modePlaces.onclick=function(){setMode('places',null);if(innerWidth<=640)closeSide(true);};
   el.modeTerritories.onclick=function(){deselect();setMode('territories',null);if(innerWidth<=640)closeSide(true);};
@@ -618,7 +805,7 @@
       var supplied=lastData&&Number(pick(lastData,['cityControl','controlPct','playerControl'],NaN)),owned=territoryData.filter(function(t){return t.isPlayer;}).length,avg=isFinite(supplied)?Math.max(0,Math.min(100,supplied)):(territoryData.length?owned/territoryData.length*100:0),C0=97.4;
       el.rfg.style.strokeDashoffset=(C0*(1-avg/100)).toFixed(1); el.rpct.textContent=Math.round(avg)+'%'; el.scount.textContent=territoryData.length+' '+C('blocks'); el.ring.classList.remove('done'); return;
     }
-    var pins=(lastData&&lastData.zonePins)||[], scoped=territoryFilter?pins.filter(function(p){return p.territory===territoryFilter;}):pins; var tot=scoped.length, fn=scoped.filter(function(p){return found.has(p.id);}).length;
+    var scoped=pinData.filter(pinInScope); var tot=scoped.length, fn=scoped.filter(function(p){return found.has(p.id);}).length;
     var pct=tot?fn/tot:0, circumference=97.4;
     el.rfg.style.strokeDashoffset=(circumference*(1-pct)).toFixed(1);
     el.rpct.textContent=Math.round(pct*100)+'%';
@@ -633,28 +820,52 @@
   }
   function setFound(p,val){ if(val) found.add(p.id); else found.delete(p.id); saveFound();
     syncPoiSource();
-    var row=el.cats.querySelector('.loc[data-id="'+p.id+'"]'); if(row){ row.classList.toggle('found',val);
+    syncHoldingMarkers();
+    var row=el.cats.querySelector('.loc[data-id="'+CSS.escape(String(p.id))+'"]'); if(row){ row.classList.toggle('found',val);
       var chk=row.querySelector('.chk'); if(chk&&val){ chk.classList.remove('pop'); void chk.offsetWidth; chk.classList.add('pop'); } }
     if(selected&&selected.id===p.id){ el.pMark.textContent=L(val?'unmark':'mark'); el.panel.classList.toggle('isfound',val); }
-    updateProg();
+    filterSidebar(true);updateProg();
   }
 
   /* ---------- distance helper ---------- */
   function hav(a,b){var R=6371e3,t=Math.PI/180,dLa=(b[1]-a[1])*t,dLo=(b[0]-a[0])*t,la1=a[1]*t,la2=b[1]*t;var h=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1)*Math.cos(la2)*Math.sin(dLo/2)*Math.sin(dLo/2);return 2*R*Math.asin(Math.sqrt(h));}
 
   /* ---------- direction preview + distance HUD ---------- */
-  var dashT=null;
-  function startDash(){ if(dashT||RM) return; var seq=[[0,2.4],[0.6,1.8],[1.2,1.2],[1.8,0.6],[2.4,0]]; var i=0; dashT=setInterval(function(){ try{ if(map.getLayer('zroute-line')) map.setPaintProperty('zroute-line','line-dasharray',seq[i%seq.length]); }catch(_){} i++; },90); }
+  var dashT=null,routeData=null,mapVisible=true;
+  function startDash(){ /* Directions retain distance and destination actions, without an overlay line. */ }
   function stopDash(){ if(dashT){ clearInterval(dashT); dashT=null; } }
-  function drawRoute(a,b){ try{ var s=map.getSource('zroute'); if(s){ s.setData({type:'Feature',geometry:{type:'LineString',coordinates:[a,b]}}); startDash(); } }catch(_){} }
-  function clearRoute(){ try{ var s=map.getSource('zroute'); if(s) s.setData({type:'Feature',geometry:{type:'LineString',coordinates:[]}}); }catch(_){} stopDash(); }
+  function drawRoute(a,b){routeData={from:a,to:b};}
+  function clearRoute(){routeData=null;stopDash();}
   function showHud(html){ el.etaHud.innerHTML=html; el.etaHud.hidden=false; }
   function hideHud(){ el.etaHud.hidden=true; el.etaHud.innerHTML=''; }
 
-  function openPanel(kind){el.panel.inert=false;el.panel.setAttribute('aria-hidden','false');el.panel.setAttribute('aria-label',kind==='block'?(lang==='ar'?'تفاصيل القطاع':'Block details'):(lang==='ar'?'تفاصيل الموقع':'Location details'));el.panel.classList.add('on');}
-  function closePanel(){if(el.panel.contains(document.activeElement))el.sideToggle.focus();el.panel.classList.remove('on');el.panel.inert=true;el.panel.setAttribute('aria-hidden','true');try{document.querySelector('.mapcol').classList.remove('focus');}catch(_){}}
+  function openPanel(kind){el.panel.inert=false;el.panel.setAttribute('aria-hidden','false');el.panel.setAttribute('aria-label',kind==='block'?(lang==='ar'?'تفاصيل القطاع':'Block details'):(lang==='ar'?'تفاصيل الموقع':'Location details'));el.panel.classList.add('on');document.body.classList.add('detailsOpen');scheduleResize();}
+  function closePanel(){stopWarClock();if(el.panel.contains(document.activeElement))el.sideToggle.focus();el.panel.classList.remove('on');el.panel.inert=true;el.panel.setAttribute('aria-hidden','true');document.body.classList.remove('detailsOpen');scheduleResize();try{document.querySelector('.mapcol').classList.remove('focus');}catch(_){}}
+  var warClock=null;
+  function warTimeRemaining(war,now){
+    var end=Date.parse(war.endsAt),minutes=Number.isFinite(end)?Math.max(0,Math.ceil((end-now)/60000)):null;
+    if(minutes===null)return lang==='ar'?'موعد الانتهاء غير متاح':'End time unavailable';
+    if(!minutes)return lang==='ar'?'بانتظار حسم الخادم':'Awaiting server resolution';
+    return lang==='ar'?'متبقي '+Math.floor(minutes/60)+' س '+minutes%60+' د':Math.floor(minutes/60)+'h '+minutes%60+'m remaining';
+  }
+  function warDetails(t){
+    var war=t.activeWar;if(!war)return '';
+    function factionName(id){var f=((lastData&&lastData.factions)||[]).find(function(item){return String(item.id)===String(id);});return f?localText(f.name,id):String(id||'');}
+    var target=Number(war.targetScore)||0,attacker=Number(war.attackerScore)||0,defender=Number(war.defenderScore)||0;
+    return '<section class="warCard"><div class="warTitle">'+(lang==='ar'?'حرب السيطرة':'Territory war')+'</div>'
+      +'<div class="warSide"><span>'+esc((lang==='ar'?'المهاجم: ':'Attacker: ')+factionName(war.attackerFactionId))+'</span><b><bdi>'+attacker.toLocaleString()+' / '+target.toLocaleString()+'</bdi></b></div>'
+      +'<div class="warSide"><span>'+esc((lang==='ar'?'المدافع: ':'Defender: ')+factionName(war.defenderFactionId))+'</span><b><bdi>'+defender.toLocaleString()+' / '+target.toLocaleString()+'</bdi></b></div>'
+      +'<time class="warClock" id="warRemaining" datetime="'+esc(war.endsAt)+'">'+esc(warTimeRemaining(war,Date.now()))+'</time>'
+      +'<p class="warRule">'+(lang==='ar'?'كل إجراء يضيف 50,000 نقطة. أول عائلة تبلغ الهدف تفوز. يحتفظ المدافع بالأرض عند انتهاء 72 ساعة.':'Each action adds 50,000 points. First to the target wins. The defender keeps the territory when 72 hours expire.')+'</p></section>';
+  }
+  function territoryActionLabel(t){var label=t.canAct?(t.actionLabel||C(t.action)):(t.isPlayer&&!t.activeWar&&t.control>=100?(lang==='ar'?'تحت سيطرة العائلة':'Family controlled'):C('unavailable')),cost=Number(t.actionEnergyCost);return t.canAct&&Number.isFinite(cost)&&cost>0?label+' · '+cost+' '+(lang==='ar'?'طاقة':'energy'):label;}
+  function updateWarClock(){var label=document.getElementById('warRemaining');if(label&&selectedTerritory&&selectedTerritory.activeWar)label.textContent=warTimeRemaining(selectedTerritory.activeWar,Date.now());}
+  function stopWarClock(){if(warClock!==null){clearInterval(warClock);warClock=null;}}
+  function startWarClock(){stopWarClock();if(!mapVisible||document.hidden||!el.panel.classList.contains('on')||!selectedTerritory||!selectedTerritory.activeWar)return;updateWarClock();warClock=setInterval(updateWarClock,30000);}
+  function pinDestinationLabel(pin){return(lang==='ar'?'افتح ':'Open ')+(pin.screenLabel||pin.label);}
   function selectPin(p){
     if(!p)return;
+    stopWarClock();
     /* U6.6 - selecting a POI leaves block-focus mode */
     try{document.querySelector('.mapcol').classList.remove('focus');}catch(_){}
     if(selectedTerritory){var priorId=selectedTerritory.id,priorNeighbors=new Set(selectedNeighborIds);try{map.setFeatureState({source:'zone-blocks',id:priorId},{selected:false});}catch(_){}selectedTerritory=null;updateAdjacency(null);updateTerritoryRows(priorId,priorNeighbors);}
@@ -664,26 +875,31 @@
     el.pName.textContent=p.label; el.pCat.textContent=p.catLabel||''; el.pCat.style.color=pinColor(p);
     el.pIco.innerHTML=iconSvg(p,34,pinColor(p));
     el.pRib.textContent=L('found');
-    el.pMark.hidden=false; el.pView.hidden=true; el.pGo.disabled=false; el.panel.classList.remove('territory','block','contested'); el.panel.style.removeProperty('--bc');
+    var destinationAvailable=p.screenAvailable!==false&&!!p.screen;
+    el.pMark.hidden=false; el.pView.hidden=true; el.pGo.disabled=!destinationAvailable; el.panel.classList.remove('territory','block','contested'); el.panel.style.removeProperty('--bc');
     el.panel.classList.toggle('isfound',found.has(p.id));
     var hd=lastData&&lastData.here;
     if(hd&&hereLL){ var dist=Math.round(hav(hereLL,p._lngLat)); el.pMeta.innerHTML='<span style="color:'+esc(p.territoryColor||NEUTRAL_COLOR)+'">'+esc(p.territoryName||'')+'</span> · '+(lang==='ar'?('يبعد '+dist+TAR.away):(dist+T.away)); }
     else el.pMeta.textContent=p.territoryName||'';
-    el.pGo.textContent=L(hereLL?'travel':'open');
+    var unavailableLabel=lang==='ar'?'الخدمة غير متاحة حالياً':'Service currently unavailable';
+    el.pGo.textContent=destinationAvailable?(hereLL?(lang==='ar'?'المسافة · ':'Distance · '):'')+pinDestinationLabel(p):unavailableLabel;
+    if(!destinationAvailable)el.pMeta.textContent=(p.territoryName?p.territoryName+' · ':'')+unavailableLabel;
     el.pGo.onclick=function(){
-      if(!hereLL){ if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},'*'); return; }
+      if(!destinationAvailable)return;
+      if(!hereLL){ if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},location.origin); return; }
       var a=hereLL,b=p._lngLat,mtr=Math.round(hav(a,b));
       if(el.pGo.dataset.armed!==String(p.id)){
         drawRoute(a,b);
         showHud('<span>'+L('distance')+' <b>'+mtr.toLocaleString()+'m</b></span>');
-        el.pGo.dataset.armed=String(p.id); el.pGo.textContent=L('confirm');
+        el.pGo.dataset.armed=String(p.id); el.pGo.textContent=pinDestinationLabel(p);
         return;
       }
-      if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},'*');
+      if(p.screen) parent.postMessage({zoneGo:p.screen,MARKER_CLICK:p.id,v:1},location.origin);
     };
     el.pMark.textContent=L(found.has(p.id)?'unmark':'mark');
     el.pMark.onclick=function(){ setFound(p,!found.has(p.id)); el.pMark.classList.remove('burst'); void el.pMark.offsetWidth; el.pMark.classList.add('burst'); };
     openPanel('location');
+    syncHoldingMarkers();
   }
   function selectTerritory(t){
     if(!t) return;
@@ -698,25 +914,25 @@
     /* U6.6 - spotlight the chosen block (focus mode dims the rest of the city) */
     try{document.querySelector('.mapcol').classList.add('focus');}catch(_){}
     clearRoute(); hideHud(); el.pGo.dataset.armed=''; el.panel.classList.remove('isfound'); el.panel.classList.add('territory','block'); el.panel.classList.toggle('contested',!!t.contested); el.panel.style.setProperty('--bc',t.color||NEUTRAL_COLOR);
-    el.pName.textContent=t.name; el.pCat.textContent=t.ownerName+' · '+t.status; el.pCat.style.color=t.color;
+    el.pName.textContent=blockDisplayName(t); el.pCat.textContent=t.ownerName+' · '+t.status; el.pCat.style.color=t.color;
     el.pIco.innerHTML=iconSvg({icon:'faction'},34,t.color); el.pRib.textContent=t.status;
     var states=[]; if(t.neutral)states.push('<span class="blockState">'+esc(C('neutral'))+'</span>'); if(t.isPlayer)states.push('<span class="blockState good">'+esc(C('current'))+'</span>'); if(t.eligible)states.push('<span class="blockState good">'+esc(C('eligible'))+'</span>'); if(t.neighbors.length)states.push('<span class="blockState info">'+t.neighbors.length+' '+esc(C('adjacent'))+'</span>'); if(t.contested)states.push('<span class="blockState bad">'+esc(C('contested'))+'</span>');
     var benefit=t.benefit||{label:C('benefit'),value:'-',description:''};
     el.pMeta.innerHTML='<div class="tOwner"><span>'+esc(C('owner'))+'</span><b>'+esc(t.ownerName)+'</b></div>'
       +'<div class="tControl"><span>'+esc(C('control'))+'</span><b>'+Math.round(t.control)+'%</b></div><div class="tControlBar"><i style="width:'+Math.round(t.control)+'%;background:'+esc(t.color)+';color:'+esc(t.color)+'"></i></div>'
-      +'<div class="blockStates">'+states.join('')+'</div><div class="benefitCard"><span>'+esc(C('benefit'))+'</span><strong>'+esc(benefit.label)+'</strong><b>'+esc(benefit.displayValue||benefit.value)+'</b>'+(benefit.description?'<em>'+esc(benefit.description)+'</em>':'')+'</div>'
-      +'<div class="tStats"><div class="tStat"><span>'+esc(C('block'))+'</span><b>'+esc(t.code)+'</b></div><div class="tStat"><span>'+esc(C('district'))+'</span><b>'+esc(t.districtName)+'</b></div><div class="tStat"><span>'+esc(C('sector'))+'</span><b>'+Number(t.sector).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('size'))+'</span><b>'+Number(t.size).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('density'))+'</span><b>'+Number(t.density).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('slots'))+'</span><b>'+Number(t.slots).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('dailyRespect'))+'</span><b>'+Number(t.dailyRespect).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('heat'))+'</span><b>'+Math.round(t.heat||0)+'%</b></div></div>'
+      +'<div class="blockStates">'+states.join('')+'</div>'+warDetails(t)+benefitCard(benefit)
+      +'<div class="tStats"><div class="tStat"><span>'+esc(C('block'))+'</span><b>'+esc(t.code)+'</b></div><div class="tStat"><span>'+esc(C('district'))+'</span><b>'+esc(t.districtName)+'</b></div><div class="tStat"><span>'+esc(C('sector'))+'</span><b>'+Number(t.sector).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('size'))+'</span><b>'+Number(t.size).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('density'))+'</span><b>'+Number(t.density).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('slots'))+'</span><b>'+Number(t.slots).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(F('respect'))+'</span><b>'+Number(t.dailyRespect).toLocaleString()+'</b></div><div class="tStat"><span>'+esc(C('heat'))+'</span><b>'+Math.round(t.heat||0)+'%</b></div></div>'
       +'<div class="neighborCard"><span>'+esc(C('neighbors'))+' · '+t.neighbors.length+'</span><b>'+esc(t.neighbors.join(' · ')||'-')+'</b></div>'
       +(t.actionReason?'<div class="reasonCard"><span>'+esc(C('actionReason'))+'</span><p>'+esc(t.actionReason)+'</p></div>':'');
-    el.pGo.textContent=t.canAct?(t.actionLabel||C(t.action)):C('unavailable'); el.pGo.disabled=!t.canAct; el.pGo.onclick=function(){if(!t.canAct)return;parent.postMessage({type:'ZONE_MAP_CLAIM_BLOCK',zoneTerritoryAction:{blockId:t.id,action:t.action,expectedVersion:t.version},v:1},'*');};
+    el.pGo.textContent=territoryActionLabel(t); el.pGo.disabled=!t.canAct; el.pGo.onclick=function(){if(!t.canAct)return;parent.postMessage({type:'ZONE_MAP_CLAIM_BLOCK',zoneTerritoryAction:{blockId:t.id,action:t.action,expectedVersion:t.version},v:1},location.origin);};
     el.pView.hidden=false;el.pView.textContent=C('viewBlock3D');el.pView.onclick=function(){closePanel();view3D(t._centroidLngLat);};
-    el.pMark.hidden=!t.districtId; el.pMark.textContent=C('showPlaces'); el.pMark.onclick=function(){setMode('places',t.districtId); closeSide();};
-    openPanel('block'); updateTerritoryRows(priorId,priorNeighbors);
+    el.pMark.hidden=!t.districtId; el.pMark.textContent=C('showPlaces'); el.pMark.onclick=function(){setMode('places',t.districtId);deselect();openSide();};
+    openPanel('block');startWarClock();updateTerritoryRows(priorId,priorNeighbors);syncHoldingMarkers();
   }
   function deselect(){
     if(selected){try{map.setFeatureState({source:'zone-pois',id:selected.id},{selected:false});}catch(_){}selected=null;}
     if(selectedTerritory){ var priorId=selectedTerritory.id,priorNeighbors=new Set(selectedNeighborIds);try{map.setFeatureState({source:'zone-blocks',id:priorId},{selected:false});}catch(_){} selectedTerritory=null;updateAdjacency(null);updateTerritoryRows(priorId,priorNeighbors); }
-    closePanel();el.panel.classList.remove('isfound','territory','block','contested'); el.panel.style.removeProperty('--bc'); clearRoute(); hideHud(); el.pGo.dataset.armed=''; el.pGo.disabled=false;
+    syncHoldingMarkers();closePanel();el.panel.classList.remove('isfound','territory','block','contested'); el.panel.style.removeProperty('--bc'); clearRoute(); hideHud(); el.pGo.dataset.armed=''; el.pGo.disabled=false;
   }
   el.panelX.onclick=deselect;
   map.on('click',function(e){
@@ -736,50 +952,78 @@
   el.sideToggle.onclick=function(){if(el.side.classList.contains('open'))closeSide(true);else openSide();};
   el.sideClose.onclick=function(){closeSide(true);};
   el.sideBd.onclick=function(){closeSide(true);};
-  el.cityReset.onclick=function(){ deselect(); setMode('territories',null); closeSide(); fitCity(territoryData,true); };
-  function view3D(center){closeSide();map.flyTo({center:center,zoom:15.6,pitch:50,bearing:-20,duration:RM?0:850,essential:true});}
-  el.streetView.onclick=function(){view3D(selectedTerritory?selectedTerritory._centroidLngLat:map.getCenter());};
+  el.cityReset.onclick=function(){ deselect();familyScope='all';renderFamily();setMode('territories',null);closeSide();fitCity(territoryData,true); };
+  function view3D(center){closeSide();map.flyTo({center:center,zoom:Math.max(map.getZoom(),15),pitch:38,bearing:-12,duration:RM?0:450,essential:true});}
+  function sync3DControl(){var active=map.getPitch()>1;el.streetView.setAttribute('aria-pressed',String(active));el.streetView.setAttribute('aria-label',lang==='ar'?(active?'عرض الخريطة المسطحة':'عرض المدينة ثلاثية الأبعاد'):(active?'Show flat map':'Show 3D city'));el.streetView.title=el.streetView.getAttribute('aria-label');}
+  function toggle3D(){closeSide();map.easeTo({pitch:map.getPitch()>1?0:35,duration:RM?0:450,essential:true});}
+  el.streetView.onclick=toggle3D;map.on('pitch',sync3DControl);sync3DControl();
   el.mapExpand.onclick=async function(){try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch(error){console.warn('[ZONE map fullscreen]',error);}};
   document.addEventListener('fullscreenchange',function(){
     var expanded=!!document.fullscreenElement;el.mapExpand.setAttribute('aria-pressed',String(expanded));el.mapExpand.setAttribute('aria-label',lang==='ar'?(expanded?'تصغير الخريطة':'توسيع الخريطة'):(expanded?'Collapse map':'Expand map'));el.mapExpand.title=el.mapExpand.getAttribute('aria-label');el.mapExpand.textContent=expanded?'×':'⛶';
-    setTimeout(function(){map.resize();},80);
+    scheduleResize();
   });
 
   /* U5.6 - hide-found filter */
   var hideFound=false;
-  el.fHide.onclick=function(){ hideFound=!hideFound; this.setAttribute('aria-pressed',hideFound); el.side.classList.toggle('nofound',hideFound); el.fHideT.textContent=L(hideFound?'show':'hide'); };
+  el.fHide.onclick=function(){ hideFound=!hideFound; this.setAttribute('aria-pressed',hideFound); el.side.classList.toggle('nofound',hideFound); el.fHideT.textContent=L(hideFound?'show':'hide');syncPoiSource();syncHoldingMarkers();filterSidebar(true); };
   /* clear search */
   el.sClear.onclick=function(){ el.search.value=''; el.search.dispatchEvent(new Event('input')); el.search.focus(); };
 
-  function applyCat(){syncPoiSource();}
+  function applyCat(){syncPoiSource();syncHoldingMarkers();}
 
   function clearAll(){if(selected){try{map.setFeatureState({source:'zone-pois',id:selected.id},{selected:false});}catch(_){}selected=null;}pinData=[];pinById={};hereLL=null;el.cats.innerHTML='';}
 
+  function applyCityPalette(){
+    (map.getStyle().layers||[]).forEach(function(layer){
+      if(/^zone-/.test(layer.id))return;
+      try{
+        if(layer.type==='background')map.setPaintProperty(layer.id,'background-color','#282f2d');
+        if(layer.type==='fill'&&/water/.test(layer.id))map.setPaintProperty(layer.id,'fill-color','#2d4147');
+        else if(layer.type==='fill'&&/park|landuse|landcover/.test(layer.id))map.setPaintProperty(layer.id,'fill-color','#39463c');
+        else if(layer.type==='fill'&&/building/.test(layer.id))map.setPaintProperty(layer.id,'fill-color','#535d56');
+        if(layer.type==='line'&&/road|street/.test(layer.id))map.setPaintProperty(layer.id,'line-color',/case/.test(layer.id)?'#242c28':'#4b554e');
+      }catch(_){}
+    });
+  }
   var activeLightPreset='night';
+  function applyBasemapLighting(){
+    // dark-v11 is a classic style, so Standard import config is unavailable.
+    if(!map.isStyleLoaded())return;
+    map.setLight({anchor:'viewport',color:'#e2e8e4',intensity:activeLightPreset==='day'?.5:.42,position:[1.15,210,35]});
+  }
+  function localizeMapControls(){
+    var labels=lang==='ar'?['تكبير الخريطة','تصغير الخريطة','إعادة الاتجاه نحو الشمال والميل','إظهار معلومات الخريطة']:['Zoom in','Zoom out','Reset bearing and pitch','Toggle attribution'];
+    ['.mapboxgl-ctrl-zoom-in','.mapboxgl-ctrl-zoom-out','.mapboxgl-ctrl-compass','.mapboxgl-ctrl-attrib-button'].forEach(function(selector,i){var button=map.getContainer().querySelector(selector);if(!button)return;button.setAttribute('aria-label',labels[i]);button.title=labels[i];if(button.firstElementChild)button.firstElementChild.setAttribute('title',labels[i]);});
+    map.getCanvas().setAttribute('aria-label',lang==='ar'?'خريطة مدينة العائلة التفاعلية':'Interactive family city map');
+  }
   function render(data){
-    var selectedPinId=selected&&selected.id;lastData=data;clearAll();
+    var selectedPinId=selected&&selected.id,panelWasOpen=el.panel.classList.contains('on');lastData=data;clearAll();
     var pins=Array.isArray(data.zonePins)?data.zonePins:[],legend=data.legend||[],catLabel={},catColor={};
     legend.forEach(function(g){ catLabel[g.cat]=g.label; catColor[g.cat]=g.color; if(activeCats[g.cat]===undefined) activeCats[g.cat]=true; });
-    if(data.lang){ lang=data.lang; el.fHideT.textContent=L(hideFound?'show':'hide'); }
+    if(data.lang){ lang=data.lang==='ar'?'ar':'en';document.documentElement.lang=lang;el.fHideT.textContent=L(hideFound?'show':'hide'); }
+    localizeMapControls();
     copy=Object.assign({},lang==='ar'?COPY_AR:COPY_EN,data.copy||{});
     if(data.dir) document.documentElement.dir=data.dir;
     el.sideClose.setAttribute('aria-label',lang==='ar'?'أغلق أدوات الخريطة':'Close map controls');el.sideClose.title=el.sideClose.getAttribute('aria-label');
     el.sideToggle.setAttribute('aria-label',lang==='ar'?(el.side.classList.contains('open')?'أغلق أدوات الخريطة':'افتح أدوات الخريطة'):(el.side.classList.contains('open')?'Close map controls':'Open map controls'));
     el.panelX.setAttribute('aria-label',lang==='ar'?'إغلاق التفاصيل':'Close details');el.panelX.querySelector('.xLabel').textContent=lang==='ar'?'إغلاق':'Close';
     var nextLightPreset=data.dark===false?'day':'night';
-    try{if(map.setConfigProperty&&nextLightPreset!==activeLightPreset){map.setConfigProperty('basemap','lightPreset',nextLightPreset);activeLightPreset=nextLightPreset;}}catch(_){}
+    if(nextLightPreset!==activeLightPreset){activeLightPreset=nextLightPreset;applyBasemapLighting();}
     el.modePlaces.querySelector('span').textContent=copy.places; el.modeTerritories.querySelector('span').textContent=copy.territories;
-    el.sideToggleText.textContent=mapMode==='places'?copy.places:copy.territories;
+    el.sideToggleText.textContent=mapMode==='places'?copy.places:(lang==='ar'?'خيارات':'Map options');
     el.cityReset.textContent=copy.fullCity||'Full city';
     el.cityReset.setAttribute('aria-label',copy.fullCity||'Full city');
     el.mapExpand.setAttribute('aria-label',lang==='ar'?(document.fullscreenElement?'تصغير الخريطة':'توسيع الخريطة'):(document.fullscreenElement?'Collapse map':'Expand map'));
-    el.streetView.textContent=copy.streetView||'3D city';el.streetView.setAttribute('aria-label',copy.streetViewLabel||'Explore 3D city');
+    el.mapExpand.title=el.mapExpand.getAttribute('aria-label');el.sClear.setAttribute('aria-label',lang==='ar'?'مسح البحث':'Clear search');document.querySelector('.modeTabs').setAttribute('aria-label',lang==='ar'?'وضع الخريطة':'Map mode');
+    el.streetView.textContent='3D';sync3DControl();
     syncTerritories(data.blocks||[],data);
 
     /* Ordinary POIs are map-native geometry, never screen-space DOM markers. */
     pinData=pins.map(function(p,i){return normalizePin(p,i,catLabel);});pinData.forEach(function(p){pinById[p.id]=p;});
     hereLL=data.here?pointCoordinates(data.here):null;
-    if(selectedPinId&&pinById[selectedPinId])selectPin(pinById[selectedPinId]);
+    if(selectedTerritory&&panelWasOpen)selectTerritory(selectedTerritory);
+    if(selectedPinId&&pinById[selectedPinId]){if(panelWasOpen)selectPin(pinById[selectedPinId]);else selected=pinById[selectedPinId];}
+    else if(selectedPinId){closePanel();clearRoute();hideHud();}
 
     /* sidebar: category groups with counts + per-category bar + location list */
     legend.forEach(function(g){
@@ -787,7 +1031,7 @@
       var cat=document.createElement('div'); cat.className='cat'; cat.dataset.cat=g.cat; cat.style.cssText='--c:'+g.color;
       if(activeCats[g.cat]===false) cat.classList.add('hid');
       var head=document.createElement('div'); head.className='catHead'; head.tabIndex=0; head.setAttribute('role','button'); head.setAttribute('aria-expanded','false');
-      head.innerHTML='<span class="eye" title="toggle"></span><span class="cname">'+esc(g.label)+'</span><span class="ccount">0/'+cp.length+'</span><span class="chev">▸</span><span class="cbar"><i></i></span>';
+      head.innerHTML='<span class="eye" title="'+(lang==='ar'?'إظهار أو إخفاء الفئة':'Show or hide category')+'"></span><span class="cname">'+esc(g.label)+'</span><span class="ccount">0/'+cp.length+'</span><span class="chev">▸</span><span class="cbar"><i></i></span>';
       cat.appendChild(head);
       var list=document.createElement('div'); list.className='clist'; list.inert=true; list.setAttribute('aria-hidden','true');
       var inner=document.createElement('div'); inner.className='clistInner';
@@ -821,18 +1065,32 @@
       }
     };
 
+    renderFamily();renderTerritoryList();
     setMode(mapMode,territoryFilter);
-    setTimeout(function(){map.resize();if(!didFit&&Array.isArray(data.blocks)&&data.blocks.length)fitCity(territoryData,false);},80);
+    scheduleResize();
     /* U4.21 - fade the boot overlay once pins exist */
     if(el.zboot&&(pins.length||territoryData.length)) el.zboot.classList.add('gone');
   }
 
-  window.addEventListener('message',function(e){ var d=e.data; if(!d||typeof d!=='object') return;
-    if(d.type==='ON_SHOW'){setTimeout(function(){map.resize();},60);return;}
+  function resizeMap(){
+    var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
+    map.resize();if(!didFit&&territoryData.length)fitFamily(false);
+  }
+  var resizeFrame=null;
+  function scheduleResize(){if(resizeFrame!==null)return;resizeFrame=requestAnimationFrame(function(){resizeFrame=null;resizeMap();});}
+  function handleMapMessage(e){ var d=e.data;if(e.source!==parent||e.origin!==location.origin||!d||typeof d!=='object')return;
+    if(d.type==='FOCUS_FAMILY'){focusFamily();return;}
+    if(d.type==='ON_HIDE'){mapVisible=false;stopDash();stopWarClock();return;}
+    if(d.type==='ON_SHOW'){mapVisible=true;scheduleResize();startWarClock();if(routeData)startDash();return;}
     if(d.type==='FLY_TO'&&d.id&&pinById[d.id]){selectPin(pinById[d.id]);return;}
-    if(d.zonePins||d.legend||d.here||d.blocks)render(d);
-  });
-  window.addEventListener('resize',function(){ map.resize(); });
+    if(d.type==='ZONE_MAP_DATA'&&Array.isArray(d.blocks))render(d);
+  }
+  window.addEventListener('message',handleMapMessage);
+  window.addEventListener('resize',scheduleResize);
+  if(window.ResizeObserver){var resizeObserver=new ResizeObserver(scheduleResize);resizeObserver.observe(map.getContainer());}
+  document.addEventListener('visibilitychange',function(){if(document.hidden){stopDash();stopWarClock();}else{scheduleResize();startWarClock();if(routeData)startDash();}});
+  window.addEventListener('pagehide',function(){stopDash();stopWarClock();});
+  window.addEventListener('pageshow',function(){scheduleResize();startWarClock();if(routeData)startDash();});
 
   map.on('click','zone-poi-hitbox',function(e){var f=e.features&&e.features[0],p=f&&pinById[String(f.properties&&f.properties.id)];if(p)selectPin(p);});
   /* U6.5 - hover reveals the marker name at any zoom via feature-state */
@@ -847,14 +1105,24 @@
     map.getCanvas().style.cursor=''; if(hoveredTerritory!=null){try{map.setFeatureState({source:'zone-blocks',id:hoveredTerritory},{hover:false});}catch(_){} hoveredTerritory=null;}
   });
 
-  function installCustomLayers(){
-    if(!map.isStyleLoaded())return;
-    var ready=map.getLayer('zone-blocks-fill')&&map.getLayer('zone-blocks-ground')&&map.getLayer('zone-blocks-outline')&&map.getLayer('zone-poi-hitbox');
-    if(ready)return;
-    ensureTerritoryLayers();ensurePoiLayers();
-    syncPoiSource();updateAdjacency(selectedTerritory,true);
+  function ensureBuildings(){
+    if(!map.getSource('composite')||map.getLayer('zone-buildings-3d'))return;
+    map.addLayer({id:'zone-buildings-3d',type:'fill-extrusion',source:'composite','source-layer':'building',minzoom:14.5,filter:['==','extrude','true'],paint:{'fill-extrusion-color':'#68766d','fill-extrusion-height':['interpolate',['linear'],['zoom'],14.5,0,15.05,['*',['get','height'],.55]],'fill-extrusion-base':['interpolate',['linear'],['zoom'],14.5,0,15.05,['*',['get','min_height'],.55]],'fill-extrusion-opacity':1}},'zone-blocks-fill');
   }
-  map.on('styledata',installCustomLayers);
+  var installingLayers=false;
+  function installCustomLayers(){
+    if(installingLayers||!map.isStyleLoaded())return;
+    var ready=['zone-blocks-fill','zone-poi-icon','zone-poi-label','zone-poi-hitbox','zone-here-dot','zone-buildings-3d'].every(function(id){return !!map.getLayer(id);});
+    if(ready)return;
+    installingLayers=true;
+    try{
+      ensureTerritoryLayers();ensurePoiLayers();ensureBuildings();
+      syncPoiSource();updateAdjacency(selectedTerritory,true);
+      if(selectedTerritory)map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:true});
+    }finally{installingLayers=false;}
+  }
+  // Adding layers during styledata can interrupt symbol placement. Install only
+  // after a style loads or the renderer finishes its current frame/data work.
   map.on('idle',installCustomLayers);
   map.on('style.load',function(){
     /* U4.13 - deeper cinematic fog (crushed base, lower horizon) */
@@ -862,25 +1130,30 @@
        value is emitted as an error event (not caught) and crashes the render loop every
        frame. Keep range within [start, <=20]. */
     try{ map.setFog({'range':[1,15],'horizon-blend':0.2,'color':'#28323f','high-color':'#3a5570','space-color':'#141c26','star-intensity':0.05}); }catch(_){}
-    /* U6.9 - hard-lock every real-world label off so no NYC street/place name ever surfaces (kills the "just Mapbox" tell). Fog above is left untouched. */
-    try{map.setConfigProperty('basemap','showPointOfInterestLabels',false);map.setConfigProperty('basemap','showTransitLabels',false);map.setConfigProperty('basemap','showRoadLabels',false);map.setConfigProperty('basemap','showPlaceLabels',false);}catch(_){}
+    applyBasemapLighting();applyCityPalette();
     /* classic dark-v11: hard-hide every real-world basemap label (place/road/poi) so no NYC name surfaces; keep zone-* / zroute game layers visible */
     try{(map.getStyle().layers||[]).forEach(function(L){if(L.type==='symbol'&&!/^z(one|route)/.test(L.id)){try{map.setLayoutProperty(L.id,'visibility','none');}catch(_){}}});}catch(_){}
     installCustomLayers();
-    /* U5.10 - travel route source + glow/line layers */
-    try{ if(!map.getSource('zroute')){
-      map.addSource('zroute',{type:'geojson',data:{type:'Feature',geometry:{type:'LineString',coordinates:[]}}});
-      map.addLayer({id:'zroute-glow',type:'line',source:'zroute',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#31e0ff','line-width':8,'line-blur':7,'line-opacity':.45}});
-      map.addLayer({id:'zroute-line',type:'line',source:'zroute',layout:{'line-cap':'round'},paint:{'line-color':'#7defff','line-width':2.6,'line-dasharray':[0,2.4]}});
-    } }catch(_){}
   });
+  map.on('webglcontextlost',function(){stopDash();document.body.dataset.zoneWebgl='lost';var errorPanel=document.getElementById('err');errorPanel.textContent=lang==='ar'?'انقطع عرض الخريطة. جارٍ استعادته...':'Map graphics interrupted. Restoring...';errorPanel.style.display='block';});
+  map.on('webglcontextrestored',function(){document.body.dataset.zoneWebgl='restored';document.getElementById('err').style.display='none';scheduleResize();map.once('idle',function(){installCustomLayers();if(routeData)startDash();});});
 
   function syncLight(){
-    if(hereLL){ try{ var pt=map.project(hereLL); document.querySelector('.mgrade').style.setProperty('--lx',pt.x+'px'); document.querySelector('.mgrade').style.setProperty('--ly',pt.y+'px'); }catch(_){} }
+    if(hereLL){try{
+      var container=map.getContainer(),width=container.clientWidth,height=container.clientHeight;
+      if(!width||!height)return;
+      // A point behind a pitched camera can project to Number.MAX_VALUE.
+      // Keep that sentinel out of CSS gradients, where it can black out the compositor.
+      var pt=map.project(hereLL),x=Number.isFinite(pt.x)?Math.max(0,Math.min(width,pt.x)):width/2,
+          y=Number.isFinite(pt.y)?Math.max(0,Math.min(height,pt.y)):height*.42;
+      document.querySelector('.mgrade').style.setProperty('--lx',x+'px');
+      document.querySelector('.mgrade').style.setProperty('--ly',y+'px');
+    }catch(_){} }
   }
   function recordCamera(){try{var center=map.getCenter();document.body.dataset.zoneCamera=JSON.stringify({lng:center.lng,lat:center.lat,zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing()});}catch(_){}}
   map.on('moveend',function(){syncLight();recordCamera();});
-  map.on('load',function(){ map.resize();
+  map.on('load',function(){ scheduleResize();
+    applyBasemapLighting();applyCityPalette();
     installCustomLayers();
     syncLight();
     /* U6.10 - slow ambient bearing drift when idle (living city); pauses on any interaction, honors reduced-motion */
@@ -893,7 +1166,7 @@
   });
 
   var announced=false,mapInstanceId=Math.random().toString(36).slice(2);
-  function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},'*');}catch(_){} }
+  function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},location.origin);}catch(_){} }
   if(map.loaded()) announce(); else map.once('load',announce);
   setTimeout(announce,1600);
 })();

@@ -1,0 +1,604 @@
+{
+  "items": {
+    "revolver": {
+      "type": "weapon",
+      "mult": 1.9,
+      "price": 24000
+    },
+    "magnum": {
+      "type": "weapon",
+      "mult": 2.3,
+      "price": 61000
+    },
+    "pistol": {
+      "type": "weapon",
+      "mult": 1.8,
+      "price": 19000
+    },
+    "pistol_t": {
+      "type": "weapon",
+      "mult": 2,
+      "price": 34000
+    },
+    "sawedoff": {
+      "type": "weapon",
+      "mult": 3.1,
+      "price": 92000
+    },
+    "shotgun": {
+      "type": "weapon",
+      "mult": 3.4,
+      "price": 140000
+    },
+    "smg": {
+      "type": "weapon",
+      "mult": 2.6,
+      "price": 118000
+    },
+    "ak": {
+      "type": "weapon",
+      "mult": 3.8,
+      "price": 260000
+    },
+    "sniper": {
+      "type": "weapon",
+      "mult": 4.6,
+      "price": 480000
+    },
+    "bat": {
+      "type": "weapon",
+      "mult": 1.3,
+      "price": 800
+    },
+    "knife": {
+      "type": "weapon",
+      "mult": 1.45,
+      "price": 2600
+    },
+    "armor": {
+      "type": "armor",
+      "red": 0.15,
+      "price": 18000
+    },
+    "vest": {
+      "type": "armor",
+      "red": 0.25,
+      "price": 62000
+    },
+    "medkit": {
+      "type": "medical",
+      "life": 600,
+      "price": 12000
+    },
+    "smallkit": {
+      "type": "medical",
+      "life": 250,
+      "price": 5800
+    },
+    "drink": {
+      "type": "booster",
+      "nerve": 4,
+      "price": 990
+    },
+    "pills": {
+      "type": "medical",
+      "nerve": 15,
+      "life": 200,
+      "price": 87000
+    },
+    "sand": {
+      "type": "material",
+      "price": 22500
+    },
+    "assaultrifle2_1": {
+      "type": "weapon",
+      "mult": 3.6,
+      "price": 210000
+    },
+    "assaultrifle2_2": {
+      "type": "weapon",
+      "mult": 3.73,
+      "price": 253500
+    },
+    "assaultrifle2_3": {
+      "type": "weapon",
+      "mult": 3.87,
+      "price": 296500
+    },
+    "assaultrifle2_4": {
+      "type": "weapon",
+      "mult": 4,
+      "price": 340000
+    },
+    "assaultrifle_1": {
+      "type": "weapon",
+      "mult": 3.4,
+      "price": 180000
+    },
+    "assaultrifle_2": {
+      "type": "weapon",
+      "mult": 3.52,
+      "price": 215000
+    },
+    "assaultrifle_3": {
+      "type": "weapon",
+      "mult": 3.65,
+      "price": 250000
+    },
+    "assaultrifle_4": {
+      "type": "weapon",
+      "mult": 3.77,
+      "price": 285000
+    },
+    "assaultrifle_5": {
+      "type": "weapon",
+      "mult": 3.9,
+      "price": 320000
+    },
+    "bullpup_1": {
+      "type": "weapon",
+      "mult": 3.5,
+      "price": 240000
+    },
+    "bullpup_2": {
+      "type": "weapon",
+      "mult": 3.7,
+      "price": 300000
+    },
+    "bullpup_3": {
+      "type": "weapon",
+      "mult": 3.9,
+      "price": 360000
+    },
+    "pistol_1": {
+      "type": "weapon",
+      "mult": 1.6,
+      "price": 14000
+    },
+    "pistol_2": {
+      "type": "weapon",
+      "mult": 1.7,
+      "price": 19500
+    },
+    "pistol_3": {
+      "type": "weapon",
+      "mult": 1.8,
+      "price": 25000
+    },
+    "pistol_4": {
+      "type": "weapon",
+      "mult": 1.9,
+      "price": 31000
+    },
+    "pistol_5": {
+      "type": "weapon",
+      "mult": 2,
+      "price": 36500
+    },
+    "pistol_6": {
+      "type": "weapon",
+      "mult": 2.1,
+      "price": 42000
+    },
+    "revolver_1": {
+      "type": "weapon",
+      "mult": 1.7,
+      "price": 18000
+    },
+    "revolver_2": {
+      "type": "weapon",
+      "mult": 1.88,
+      "price": 31000
+    },
+    "revolver_3": {
+      "type": "weapon",
+      "mult": 2.05,
+      "price": 44000
+    },
+    "revolver_4": {
+      "type": "weapon",
+      "mult": 2.22,
+      "price": 57000
+    },
+    "revolver_5": {
+      "type": "weapon",
+      "mult": 2.4,
+      "price": 70000
+    },
+    "shotgun_1": {
+      "type": "weapon",
+      "mult": 3,
+      "price": 85000
+    },
+    "shotgun_2": {
+      "type": "weapon",
+      "mult": 3.12,
+      "price": 100000
+    },
+    "shotgun_3": {
+      "type": "weapon",
+      "mult": 3.24,
+      "price": 115000
+    },
+    "shotgun_4": {
+      "type": "weapon",
+      "mult": 3.36,
+      "price": 130000
+    },
+    "shotgun_sawedoff": {
+      "type": "weapon",
+      "mult": 3.1,
+      "price": 92000
+    },
+    "shotgun_shortstock": {
+      "type": "weapon",
+      "mult": 3.2,
+      "price": 98000
+    },
+    "sniperrifle_1": {
+      "type": "weapon",
+      "mult": 4.2,
+      "price": 380000
+    },
+    "sniperrifle_2": {
+      "type": "weapon",
+      "mult": 4.36,
+      "price": 428000
+    },
+    "sniperrifle_3": {
+      "type": "weapon",
+      "mult": 4.52,
+      "price": 476000
+    },
+    "sniperrifle_4": {
+      "type": "weapon",
+      "mult": 4.68,
+      "price": 524000
+    },
+    "sniperrifle_5": {
+      "type": "weapon",
+      "mult": 4.84,
+      "price": 572000
+    },
+    "sniperrifle_6": {
+      "type": "weapon",
+      "mult": 5,
+      "price": 620000
+    },
+    "submachinegun_1": {
+      "type": "weapon",
+      "mult": 2.4,
+      "price": 90000
+    },
+    "submachinegun_2": {
+      "type": "weapon",
+      "mult": 2.52,
+      "price": 105000
+    },
+    "submachinegun_3": {
+      "type": "weapon",
+      "mult": 2.65,
+      "price": 120000
+    },
+    "submachinegun_4": {
+      "type": "weapon",
+      "mult": 2.77,
+      "price": 135000
+    },
+    "submachinegun_5": {
+      "type": "weapon",
+      "mult": 2.9,
+      "price": 150000
+    }
+  },
+  "jobs": [
+    {
+      "id": "grocer",
+      "pay": 850,
+      "energy": 15,
+      "lvl": 1
+    },
+    {
+      "id": "casino",
+      "pay": 2400,
+      "energy": 15,
+      "lvl": 5
+    },
+    {
+      "id": "clinic",
+      "pay": 4200,
+      "energy": 20,
+      "lvl": 10
+    },
+    {
+      "id": "army",
+      "pay": 5000,
+      "energy": 20,
+      "lvl": 12
+    },
+    {
+      "id": "edu",
+      "pay": 6500,
+      "energy": 20,
+      "lvl": 15
+    },
+    {
+      "id": "firm",
+      "pay": 9000,
+      "energy": 20,
+      "lvl": 20
+    }
+  ],
+  "gyms": [
+    {
+      "e": 5,
+      "xp": 0,
+      "cost": 10
+    },
+    {
+      "e": 5,
+      "xp": 50,
+      "cost": 100
+    },
+    {
+      "e": 5,
+      "xp": 150,
+      "cost": 250
+    },
+    {
+      "e": 5,
+      "xp": 300,
+      "cost": 500
+    },
+    {
+      "e": 5,
+      "xp": 500,
+      "cost": 1000
+    },
+    {
+      "e": 5,
+      "xp": 800,
+      "cost": 2500
+    },
+    {
+      "e": 5,
+      "xp": 1200,
+      "cost": 5000
+    },
+    {
+      "e": 10,
+      "xp": 2000,
+      "cost": 10000
+    }
+  ],
+  "missions": [
+    {
+      "id": "c5",
+      "ctr": "crimes",
+      "n": 5,
+      "cash": 5000,
+      "pts": 5
+    },
+    {
+      "id": "t4",
+      "ctr": "trains",
+      "n": 4,
+      "cash": 3000,
+      "pts": 3
+    },
+    {
+      "id": "w1",
+      "ctr": "wins",
+      "n": 1,
+      "cash": 8000,
+      "pts": 8
+    },
+    {
+      "id": "s2",
+      "ctr": "shifts",
+      "n": 2,
+      "cash": 2500,
+      "pts": 2
+    },
+    {
+      "id": "b1",
+      "ctr": "buys",
+      "n": 1,
+      "cash": 2000,
+      "pts": 2
+    }
+  ],
+  "courses": [
+    {
+      "id": "bio",
+      "cost": 5000,
+      "mins": 20
+    },
+    {
+      "id": "fit",
+      "cost": 12000,
+      "mins": 45
+    },
+    {
+      "id": "law",
+      "cost": 9000,
+      "mins": 30
+    },
+    {
+      "id": "biz",
+      "cost": 15000,
+      "mins": 60
+    },
+    {
+      "id": "comb",
+      "cost": 25000,
+      "mins": 90
+    }
+  ],
+  "properties": [
+    {
+      "id": "shack",
+      "happy": 250,
+      "upkeep": 0,
+      "price": 0
+    },
+    {
+      "id": "trailer",
+      "happy": 350,
+      "upkeep": 50,
+      "price": 40000
+    },
+    {
+      "id": "apt",
+      "happy": 500,
+      "upkeep": 200,
+      "price": 150000
+    },
+    {
+      "id": "semi",
+      "happy": 1000,
+      "upkeep": 600,
+      "price": 600000
+    },
+    {
+      "id": "house",
+      "happy": 1500,
+      "upkeep": 1500,
+      "price": 2500000
+    },
+    {
+      "id": "villa",
+      "happy": 2500,
+      "upkeep": 5000,
+      "price": 8000000
+    },
+    {
+      "id": "island",
+      "happy": 5000,
+      "upkeep": 20000,
+      "price": 50000000
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "gymBoost",
+      "cost": 5000
+    },
+    {
+      "id": "nerveMax",
+      "cost": 8000
+    },
+    {
+      "id": "energyMax",
+      "cost": 12000
+    },
+    {
+      "id": "hospTime",
+      "cost": 15000
+    }
+  ],
+  "opponents": [
+    {
+      "id": "rayan",
+      "lvl": 9,
+      "str": 120,
+      "def": 90,
+      "spd": 140,
+      "dex": 110,
+      "life": 900,
+      "cash": 38000
+    },
+    {
+      "id": "kaya",
+      "lvl": 13,
+      "str": 260,
+      "def": 220,
+      "spd": 245,
+      "dex": 210,
+      "life": 1500,
+      "cash": 76000
+    },
+    {
+      "id": "nadia",
+      "lvl": 16,
+      "str": 620,
+      "def": 520,
+      "spd": 850,
+      "dex": 700,
+      "life": 2400,
+      "cash": 120000
+    },
+    {
+      "id": "sal",
+      "lvl": 31,
+      "str": 4200,
+      "def": 3800,
+      "spd": 2100,
+      "dex": 1800,
+      "life": 4200,
+      "cash": 410000
+    }
+  ],
+  "market": [
+    {
+      "item": "pills",
+      "qty": 3,
+      "seller": "Kaya_V"
+    },
+    {
+      "item": "ak",
+      "qty": 1,
+      "seller": "BigSal"
+    },
+    {
+      "item": "shotgun",
+      "qty": 2,
+      "seller": "Marrow"
+    },
+    {
+      "item": "pistol",
+      "qty": 6,
+      "seller": "Sami"
+    },
+    {
+      "item": "magnum",
+      "qty": 1,
+      "seller": "Duke_X"
+    },
+    {
+      "item": "vest",
+      "qty": 1,
+      "seller": "Marrow"
+    },
+    {
+      "item": "revolver",
+      "qty": 1,
+      "seller": "Dmitri"
+    },
+    {
+      "item": "armor",
+      "qty": 2,
+      "seller": "Kaya_V"
+    },
+    {
+      "item": "medkit",
+      "qty": 5,
+      "seller": "Noor"
+    },
+    {
+      "item": "smallkit",
+      "qty": 12,
+      "seller": "Noor"
+    },
+    {
+      "item": "knife",
+      "qty": 4,
+      "seller": "Dmitri"
+    },
+    {
+      "item": "drink",
+      "qty": 40,
+      "seller": "Sami"
+    }
+  ]
+}

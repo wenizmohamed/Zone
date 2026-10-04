@@ -51,7 +51,10 @@ final class ModuleRegistry
             }
         }
 
-        foreach ($this->database->fetchAll('SELECT id FROM modules WHERE installed = 1 AND enabled = 1 ORDER BY id') as $row) {
+        foreach ($this->database->fetchAll('SELECT id FROM modules ORDER BY id') as $row) {
+            if (!$this->runtimeEnabled((string) $row['id'])) {
+                continue;
+            }
             $manifest = $this->manifests[$row['id']] ?? null;
             if ($manifest === null) {
                 continue;
@@ -88,6 +91,11 @@ final class ModuleRegistry
     {
         $row = $this->database->fetchOne('SELECT installed, enabled FROM modules WHERE id = :id', ['id' => $id]);
         return $row !== null && (bool) $row['installed'] && (bool) $row['enabled'];
+    }
+
+    private function runtimeEnabled(string $id): bool
+    {
+        return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleEnabled($id);
     }
 
     public function changeState(string $id, string $action): array

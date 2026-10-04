@@ -1,3 +1,16 @@
+CREATE TABLE IF NOT EXISTS gameplay_catalogs (
+    channel VARCHAR(40) PRIMARY KEY,
+    catalog_json JSONB NOT NULL,
+    revision INTEGER NOT NULL DEFAULT 1,
+    updated_by VARCHAR(160) NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS content_foundations (
+    channel VARCHAR(40) PRIMARY KEY,
+    manifest_json JSONB NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS modules (
     id VARCHAR(100) PRIMARY KEY,
     name VARCHAR(160) NOT NULL,
@@ -56,6 +69,30 @@ ALTER TABLE players ADD COLUMN IF NOT EXISTS bank_balance BIGINT NOT NULL DEFAUL
 ALTER TABLE players ADD COLUMN IF NOT EXISTS city VARCHAR(60) NOT NULL DEFAULT 'Zone City';
 ALTER TABLE players ADD COLUMN IF NOT EXISTS login_streak INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE players ADD COLUMN IF NOT EXISTS last_login_day VARCHAR(10);
+
+CREATE TABLE IF NOT EXISTS player_progression (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    state_json JSONB NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS combat_encounters (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    state_json JSONB NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS player_travel (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    origin VARCHAR(60) NOT NULL,
+    destination VARCHAR(60) NOT NULL,
+    departed_at TIMESTAMPTZ NOT NULL,
+    arrives_at TIMESTAMPTZ NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('traveling', 'arrived')),
+    version INTEGER NOT NULL DEFAULT 1
+);
 
 CREATE TABLE IF NOT EXISTS crimes (
     id VARCHAR(100) PRIMARY KEY,
@@ -256,3 +293,10 @@ CREATE TABLE IF NOT EXISTS territory_wars (
     resolved_at TIMESTAMPTZ
 );
 CREATE INDEX IF NOT EXISTS territory_wars_active_idx ON territory_wars(territory_id, state);
+
+CREATE TABLE IF NOT EXISTS casino_high_low (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    current_card INTEGER NOT NULL DEFAULT 7 CHECK (current_card BETWEEN 2 AND 14),
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at TIMESTAMPTZ NOT NULL
+);

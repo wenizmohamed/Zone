@@ -9,13 +9,14 @@ use RuntimeException;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Persistence\Database;
+use Zone\Engine\Core\Content\GameplayCatalog;
 
 final class ReleaseManager
 {
     private const CHANNEL = 'production';
 
     private const SCREEN_IDS = [
-        'home', 'items', 'city', 'jobs', 'gym', 'properties', 'education', 'crimes', 'missions',
+        'home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions',
         'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market',
     ];
 
@@ -46,7 +47,37 @@ final class ReleaseManager
         ];
     }
 
+    /** Persist the installation's initial runtime once, before any admin edit. */
+    public function initializeContent(array $content): void
+    {
+        $manifest = $this->defaultManifest();
+        $manifest['content'] = $content;
+        $this->database->insertIgnore('content_foundations', ['channel', 'manifest_json'], [self::CHANNEL, $this->encode($manifest)]);
+    }
+
+    public function foundation(): array
+    {
+        $row = $this->database->fetchOne('SELECT manifest_json FROM content_foundations WHERE channel = :channel', ['channel' => self::CHANNEL]);
+        $manifest = $row === null ? $this->defaultManifest() : $this->decodeManifest((string) $row['manifest_json']);
+        $manifest['content']['gameplayCatalog'] ??= (new GameplayCatalog($this->database, $this->events))->foundation();
+        return $manifest;
+    }
+
     public function saveDraft(array $manifest, string $actor): array
+    {
+        return $this->configurationTransaction(fn (): array => $this->saveDraftLocked($manifest, $actor));
+    }
+
+    /** One shared row serializes publication, rollback and admin configuration edits. */
+    public function configurationTransaction(callable $action): mixed
+    {
+        return $this->database->transaction(function () use ($action): mixed {
+            $this->database->execute('UPDATE content_drafts SET updated_at = updated_at WHERE channel = :channel', ['channel' => self::CHANNEL]);
+            return $action();
+        });
+    }
+
+    private function saveDraftLocked(array $manifest, string $actor): array
     {
         $manifest = $this->validateManifest($manifest);
         $actor = $this->validateActor($actor);
@@ -81,6 +112,11 @@ final class ReleaseManager
     }
 
     public function publish(string $actor): array
+    {
+        return $this->configurationTransaction(fn (): array => $this->publishLocked($actor));
+    }
+
+    private function publishLocked(string $actor): array
     {
         $actor = $this->validateActor($actor);
         $draft = $this->draft();
@@ -134,7 +170,7 @@ final class ReleaseManager
             return [
                 'id' => 'foundation-default',
                 'version' => 0,
-                'manifest' => $this->defaultManifest(),
+                'manifest' => $this->foundation(),
                 'active' => true,
                 'publishedBy' => 'system',
                 'publishedAt' => null,
@@ -155,6 +191,11 @@ final class ReleaseManager
     }
 
     public function activate(string $releaseId, string $actor): array
+    {
+        return $this->configurationTransaction(fn (): array => $this->activateLocked($releaseId, $actor));
+    }
+
+    private function activateLocked(string $releaseId, string $actor): array
     {
         if (!preg_match('/^[a-f0-9]{32}$/', $releaseId)) {
             throw new InvalidArgumentException('Invalid release identifier.');
@@ -385,10 +426,15 @@ final class ReleaseManager
 
     private function normalizeRelease(array $row): array
     {
+        $manifest = $this->decodeManifest((string) $row['manifest_json']);
+        // Legacy releases created before runtime snapshots use the immutable
+        // installation foundation, never the administrator's current draft.
+        $manifest['content'] ??= $this->foundation()['content'] ?? [];
+        $manifest['content']['gameplayCatalog'] ??= (new GameplayCatalog($this->database, $this->events))->foundation();
         return [
             'id' => $row['id'],
             'version' => (int) $row['version'],
-            'manifest' => $this->decodeManifest((string) $row['manifest_json']),
+            'manifest' => $manifest,
             'active' => (bool) $row['active'],
             'publishedBy' => $row['published_by'],
             'publishedAt' => $row['published_at'],

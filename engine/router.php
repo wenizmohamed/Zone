@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 require __DIR__ . '/bootstrap.php';
 
+/** Diagnostic metadata only: never log credentials, request bodies or SQL values. */
+function log_engine_failure(Throwable $exception, string $route): string
+{
+    $requestId = bin2hex(random_bytes(8));
+    error_log(json_encode(['event' => 'zone.engine.error', 'requestId' => $requestId, 'route' => $route,
+        'type' => $exception::class, 'file' => basename($exception->getFile()), 'line' => $exception->getLine()], JSON_THROW_ON_ERROR));
+    return $requestId;
+}
+
 $path = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $repositoryRoot = realpath(__DIR__ . '/..');
@@ -38,6 +47,7 @@ if ($method === 'GET' && ($path === '/admin' || $path === '/admin/')) {
 try {
     $engine = zone_engine();
 } catch (Throwable $exception) {
+    $requestId = log_engine_failure($exception, $path);
     http_response_code(503);
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
@@ -45,6 +55,7 @@ try {
     echo json_encode([
         'error' => 'ZONE engine initialization failed.',
         'type' => $exception::class,
+        'requestId' => $requestId,
     ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     return true;
 }
@@ -102,7 +113,7 @@ function zone_env(string $name): ?string
  */
 function require_admin_mutation(): string
 {
-    return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_env('ZONE_ADMIN_TOKEN'));
+    return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_env('ZONE_ADMIN_TOKEN'), getenv('VERCEL') === '1');
 }
 
 /**
@@ -140,6 +151,21 @@ try {
     if ($method === 'GET' && $path === '/api/v1/player') {
         json_response(['player' => $engine->player(current_player_id())]);
     }
+    if ($method === 'GET' && $path === '/api/v1/gameplay') {
+        json_response($engine->gameplay(current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/combat') {
+        json_response($engine->combat(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/combat/action') {
+        $body = request_json();
+        json_response($engine->combatAction((string) ($body['action'] ?? ''), (string) ($body['opponentId'] ?? ''), (string) ($body['approach'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/gameplay/action') {
+        $body = request_json();
+        $expectedPrice = array_key_exists('expectedPrice', $body) ? \Zone\Engine\Core\Security\RequestGuard::nonNegativeInt($body, 'expectedPrice') : null;
+        json_response($engine->gameplayAction((string) ($body['action'] ?? ''), (string) ($body['id'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), current_player_id(), $expectedPrice));
+    }
     if ($method === 'GET' && $path === '/api/v1/crimes') {
         json_response(['crimes' => $engine->crimes()]);
     }
@@ -176,6 +202,15 @@ try {
     }
     if ($method === 'GET' && $path === '/api/v1/admin/crimes') {
         json_response(['crimes' => $engine->adminCrimes()]);
+    }
+    if ($method === 'GET' && $path === '/api/v1/admin/gameplay-catalog') {
+        json_response($engine->adminGameplayCatalog());
+    }
+    if ($method === 'PUT' && preg_match('#^/api/v1/admin/gameplay-catalog/([a-z]+)/([A-Za-z0-9_-]+)$#', $path, $matches)) {
+        $actor = require_admin_mutation();
+        $body = request_json();
+        if (!is_array($body['changes'] ?? null)) throw new InvalidArgumentException('Catalog changes must be a field object.');
+        json_response($engine->saveGameplayCatalog($matches[1], $matches[2], $body['changes'], \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedRevision'), $actor));
     }
     if ($method === 'GET' && $path === '/api/v1/admin/audit') {
         json_response(['entries' => $engine->adminAuditLog()]);
@@ -255,6 +290,19 @@ try {
         $body = request_json();
         json_response($engine->playBlackjack(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), current_player_id()));
     }
+    if ($method === 'GET' && $path === '/api/v1/casino/high-low') {
+        json_response($engine->highLowState(current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/hospital/quote') {
+        json_response($engine->hospitalQuote(current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/travel') {
+        json_response($engine->travelState(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/casino/high-low') {
+        $body = request_json();
+        json_response($engine->playHighLow(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), (string) ($body['direction'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), current_player_id()));
+    }
     if ($method === 'POST' && $path === '/api/v1/jobs/work') {
         request_json();
         json_response($engine->workShift(current_player_id()));
@@ -288,6 +336,9 @@ try {
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class, 'retryAfter' => $exception->retryAfter], 429);
 } catch (InvalidArgumentException $exception) {
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class], 422);
+} catch (PDOException $exception) {
+    $requestId = log_engine_failure($exception, $path);
+    json_response(['error' => 'The engine could not complete this request.', 'requestId' => $requestId], 500);
 } catch (RuntimeException $exception) {
     $message = $exception->getMessage();
     $status = match (true) {
@@ -298,6 +349,12 @@ try {
         $message === 'Player authentication failed.' => 401,
         $message === 'Player identity header is required.' => 401,
         str_starts_with($message, 'Territory state changed.') => 409,
+        str_starts_with($message, 'Casino round changed.') => 409,
+        str_starts_with($message, 'Gameplay state changed.') => 409,
+        str_starts_with($message, 'Gameplay catalog changed.') => 409,
+        str_starts_with($message, 'Progression state changed.') => 409,
+        str_starts_with($message, 'The market price changed.') => 409,
+        str_starts_with($message, 'Combat state changed.') => 409,
         str_starts_with($message, 'Control an adjacent block') => 409,
         str_starts_with($message, 'A first foothold') => 409,
         str_starts_with($message, 'A territory war is already active') => 409,
@@ -306,6 +363,6 @@ try {
     };
     json_response(['error' => $exception->getMessage(), 'type' => $exception::class], $status);
 } catch (Throwable $exception) {
-    $status = str_contains(strtolower($exception->getMessage()), 'not enough') ? 409 : 400;
-    json_response(['error' => $exception->getMessage(), 'type' => $exception::class], $status);
+    $requestId = log_engine_failure($exception, $path);
+    json_response(['error' => 'The engine could not complete this request.', 'requestId' => $requestId], 500);
 }

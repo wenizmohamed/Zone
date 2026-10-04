@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { verifyMapRuntime } from './verify-map-runtime.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const paths = {
@@ -150,7 +151,7 @@ check(!/zone-territories-(?:fill|outline|label|contested)/.test(map),
   'Regression: legacy zone-territories aggregate layers must be removed.');
 check(map.includes("addSource('zone-blocks'") || map.includes('addSource("zone-blocks"'),
   'Mapbox must render the 120-block GeoJSON source.');
-for (const role of ['fill', 'outline', 'adjacent', 'contested', 'label']) {
+for (const role of ['fill']) {
   check(new RegExp(`id\\s*:\\s*['"]zone-blocks?-${role}['"]`).test(map),
     `Mapbox block layer is missing: ${role}.`);
 }
@@ -243,21 +244,19 @@ check(/map\.dragRotate\.enable\(\)/.test(map) && /map\.touchZoomRotate\.enable\(
   'Mouse rotation and touch rotation must be explicitly active.');
 check(map.includes('id="cityReset"') && /cityReset\.onclick\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]{0,320}?fitCity/.test(map),
   'Whole-city fitting must remain available through an explicit reset control.');
-check(/show3dObjects\s*:\s*true/.test(mapConfig),
-  'Mapbox 3D buildings must be enabled for street-level exploration.');
-check(/id:'zone-blocks-ground',type:'fill',slot:'middle'/.test(map),
-  'Territory ground color must render behind Mapbox 3D buildings.');
+check(/type:'fill-extrusion'/.test(functionBody(map, ['ensureBuildings'])),
+  'The classic basemap must include a real building extrusion layer.');
+check(map.includes("'fill-opacity':0"), 'Territory geometry must remain invisible.');
+check(!/setConfigProperty\s*\(/.test(map),
+  'The classic dark-v11 basemap must not receive Standard-only import configuration.');
 check(/id:'zone-blocks-fill',type:'fill',source:'zone-blocks'/.test(map) && /function overviewOpacity\(/.test(map),
   'The clickable full-city ownership layer must remain above the basemap.');
 check(/function territoryAt\(point\)/.test(map) && /var territory=territoryAt\(e\.lngLat\)/.test(map),
   'Block selection must resolve from authoritative polygon geometry even when 3D buildings obscure the rendered fill.');
-check(map.includes('id="streetView"') && /streetView\.onclick\s*=\s*function/.test(map) && /function view3D\(center\)[\s\S]{0,120}?map\.flyTo\(\{[\s\S]{0,120}?zoom:15\.6,pitch:50/.test(map),
-  'A visible street-view control must reveal 3D buildings without taking away free camera control.');
+check(map.includes('id="streetView"') && /function view3D\(center\)[\s\S]{0,160}?pitch:38/.test(map), 'Optional 3D control must use the restrained 38 degree camera.');
 check(map.includes('id="pView"') && /pView\.onclick\s*=\s*function\(\)\{closePanel\(\);view3D\(t\._centroidLngLat\)/.test(map),
   'Selected blocks need a mobile-accessible 3D view action inside the detail panel.');
-const blockLabelLayer = contextAfter(map, `id:'zone-blocks-label'`, 240);
-check(numericOption(blockLabelLayer, 'minzoom') >= 12.5,
-  'Block IDs must not collide in the full-city overview.');
+check(!/id:['"](?:zone-blocks-(?:outline|adjacent|contested|hatch|eligible|current|label)|zone-adjacency|zroute-)/.test(map), 'Visible territory/grid/adjacency/route overlays must not return.');
 check(!/map\.on\(['"]move['"],\s*syncLight\)/.test(map) && !/animation\s*:\s*wet\b/.test(map),
   'Full-screen lighting must not repaint on every camera frame or animate forever.');
 check(!/territoryData\.forEach/.test(functionBody(map, ['updateAdjacency'])),
@@ -291,15 +290,17 @@ check(Boolean(fullscreen) && !cameraMove.test(fullscreen), 'Fullscreen changes m
 for (const field of ['neighbors', 'benefits', 'dailyRespect', 'sector', 'size', 'density', 'slots', 'actionReason', 'version']) {
   check(map.includes(field), `Map block model/details are missing: ${field}.`);
 }
-for (const copyKey of ['owner', 'control', 'sector', 'size', 'density', 'slots', 'dailyRespect', 'benefit', 'neighbors', 'actionReason']) {
+for (const copyKey of ['owner', 'control', 'sector', 'size', 'density', 'slots', 'benefit', 'neighbors', 'actionReason']) {
   check(new RegExp(`copy\\.${copyKey}|C\\(['"]${copyKey}['"]\\)`).test(map),
     `Block details panel does not render copy field: ${copyKey}.`);
 }
+check(map.includes("esc(F('respect'))") && map.includes('respect potential / day') && map.includes('احترام محتمل / يوم'),
+  'Daily respect must be presented as localized potential until treasury accrual is implemented.');
 check(/t\.neighbors|neighbors\.map|neighbors\.join/.test(blockSelectionBody),
   'Selected block details must list its explicit adjacent block IDs.');
 check(map.includes('ZONE_MAP_CLAIM_BLOCK') && map.includes('expectedVersion'),
   'Block action button must emit block ID, action, and expectedVersion to the parent.');
-check(/zone-blocks?-adjacent/.test(map), 'Adjacent blocks must receive explicit visual feedback.');
+check(/function familyMarkerBlocks/.test(map) && /function inTerritoryScope/.test(map), 'Family holdings and adjacent opportunities must remain discoverable through pins and lists.');
 
 // English and Arabic are both first-class. Check important map copy rather
 // than merely checking that some Arabic glyph happens to exist in the file.
@@ -316,8 +317,8 @@ check(map.includes('mapbox-gl-rtl-text'), 'Mapbox must load Arabic RTL shaping s
 
 // Preserve shell and semantic icon integration around the territory rewrite.
 check(index.includes('class="zone-city-map-shell"'), 'Live city map must keep its responsive shell.');
-check(/\.zone-city-map-shell\s*\{[^}]*height:\s*clamp\(600px,70vh,760px\)/.test(index),
-  'Desktop map must retain a full-height playable viewport.');
+check(/\.zone-city-map-shell\s*\{[^}]*height:\s*430px/.test(index),
+  'Desktop map must retain the requested compact family viewport.');
 check(index.includes('allow="fullscreen" allowfullscreen'), 'Map iframe must authorize fullscreen mode.');
 check(index.includes('dist/map-icons.js') && map.includes('src="map-icons.js"') && map.includes('window.ZONE_MAP_ICONS'),
   'Parent and iframe must retain the shared semantic icon registry.');
@@ -325,10 +326,13 @@ for (const icon of ['gym', 'education', 'jobs', 'attack', 'cash', 'market', 'cas
   check(new RegExp(`${icon}:\\s*['"]`).test(icons), `Canonical icon registry is missing: ${icon}.`);
 }
 
+const runtime = verifyMapRuntime(map);
+failures.push(...runtime.failures);
+
 if (failures.length) {
   console.error(`ZONE territory map verification failed with ${failures.length} issue(s):`);
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
-console.log('ZONE territory map verification passed: 120 server-authored blocks, faction ownership colors, block actions and adjacency, bilingual details, and a user-controlled free camera.');
+console.log(`ZONE territory map verification passed: 120 server-authored blocks, compact family summary, invisible hit geometry, block actions and adjacency, bilingual details, a user-controlled free camera, and ${runtime.checks} executable map regressions.`);

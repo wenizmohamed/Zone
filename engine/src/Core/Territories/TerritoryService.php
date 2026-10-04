@@ -13,6 +13,8 @@ use Zone\Engine\Core\Persistence\Database;
 final class TerritoryService
 {
     private const NEUTRAL_COLOR = '#68717b';
+    private const ACTION_ENERGY = ['claim' => 10, 'assault' => 25, 'reinforce' => 5];
+    private const WAR_CONTRIBUTION = 50000;
 
     public function __construct(
         private readonly Database $database,
@@ -22,6 +24,7 @@ final class TerritoryService
 
     public function snapshot(string $playerId): array
     {
+        $this->resolveExpiredWars();
         $factions = $this->database->fetchAll(
             'SELECT id, name_en, name_ar, color FROM factions WHERE enabled = 1 ORDER BY id',
         );
@@ -58,7 +61,8 @@ final class TerritoryService
             $neighbors = $this->decodeJsonArray($row['neighbors_json']);
             $ownerId = $row['faction_id'] === null ? null : (string) $row['faction_id'];
             $owner = $ownerId === null ? null : ($factionById[$ownerId] ?? null);
-            $eligibility = $this->eligibility($row, $neighbors, $ownedIds, $playerFactionId);
+            $war = $activeWars[(string) $row['id']] ?? null;
+            $eligibility = $this->eligibility($row, $neighbors, $ownedIds, $playerFactionId, $war);
             $blocks[] = [
                 'id' => (string) $row['id'],
                 'districtId' => (string) $row['district_id'],
@@ -76,6 +80,7 @@ final class TerritoryService
                     'name' => ['en' => (string) $row['benefit_name_en'], 'ar' => (string) $row['benefit_name_ar']],
                     'value' => (int) $row['benefit_value'],
                     'unit' => (string) $row['benefit_unit'],
+                    'active' => in_array((string) $row['benefit_key'], ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'], true),
                 ]],
                 'ownerFactionId' => $ownerId,
                 'ownerName' => $owner === null ? ['en' => 'Unclaimed', 'ar' => 'غير مملوك'] : ['en' => (string) $owner['name_en'], 'ar' => (string) $owner['name_ar']],
@@ -87,6 +92,7 @@ final class TerritoryService
                 'updatedAt' => (string) $row['updated_at'],
                 'action' => $eligibility['action'],
                 'actionReason' => $eligibility['reason'],
+                'actionEnergyCost' => self::ACTION_ENERGY[$eligibility['action'] ?? ''] ?? 0,
                 'activeWar' => isset($activeWars[(string) $row['id']]) ? $this->normalizeWar($activeWars[(string) $row['id']]) : null,
             ];
         }
@@ -125,6 +131,7 @@ final class TerritoryService
             throw new InvalidArgumentException('Unknown territory action.');
         }
 
+        $this->resolveExpiredWars();
         $membership = $this->database->fetchOne(
             'SELECT faction_id, role FROM faction_members WHERE player_id = :player',
             ['player' => $playerId],
@@ -134,7 +141,7 @@ final class TerritoryService
         }
         $factionId = (string) $membership['faction_id'];
 
-        $event = $this->database->transaction(function (Database $database) use ($territoryId, $action, $expectedVersion, $playerId, $factionId): DomainEvent {
+        $event = $this->database->playerTransaction($playerId, function (Database $database) use ($territoryId, $action, $expectedVersion, $playerId, $factionId): DomainEvent {
             $row = $database->fetchOne(
                 'SELECT b.*, c.faction_id, c.state, c.control_basis_points, c.version
                  FROM territory_blocks b JOIN territory_control c ON c.territory_id = b.id
@@ -154,7 +161,8 @@ final class TerritoryService
                 ['faction' => $factionId],
             );
             $ownedIds = array_fill_keys(array_map(static fn (array $owned): string => (string) $owned['territory_id'], $ownedRows), true);
-            $eligibility = $this->eligibility($row, $neighbors, $ownedIds, $factionId);
+            $activeWar = $database->fetchOne("SELECT * FROM territory_wars WHERE territory_id = :id AND state = 'active'", ['id' => $territoryId]);
+            $eligibility = $this->eligibility($row, $neighbors, $ownedIds, $factionId, $activeWar);
             if ($eligibility['action'] !== $action) {
                 throw new RuntimeException((string) $eligibility['reason']);
             }
@@ -162,6 +170,10 @@ final class TerritoryService
             $now = gmdate('c');
             $nextVersion = (int) $row['version'] + 1;
             $previousOwner = $row['faction_id'] === null ? null : (string) $row['faction_id'];
+            $energyCost = self::ACTION_ENERGY[$action];
+            if ($database->execute('UPDATE players SET energy = energy - :cost WHERE id = :player AND energy >= :minimum', ['cost' => $energyCost, 'player' => $playerId, 'minimum' => $energyCost]) !== 1) {
+                throw new RuntimeException('Not enough energy for this territory action.');
+            }
             if ($action === 'claim') {
                 $affected = $database->execute(
                     "UPDATE territory_control SET faction_id = :faction, state = 'owned', control_basis_points = 10000, version = :next, captured_at = :captured, updated_at = :updated WHERE territory_id = :id AND version = :expected AND faction_id IS NULL",
@@ -178,19 +190,36 @@ final class TerritoryService
                 if ($affected !== 1 || $previousOwner === null) {
                     throw new RuntimeException('Territory state changed. Refresh the map and try again.');
                 }
-                $database->insertIgnore(
-                    'territory_wars',
-                    ['id', 'territory_id', 'attacker_faction_id', 'defender_faction_id', 'attacker_score', 'defender_score', 'target_score', 'state', 'started_at', 'ends_at'],
-                    [bin2hex(random_bytes(16)), $territoryId, $factionId, $previousOwner, 0, 0, (int) $row['wall_slots'] * 50000, 'active', $now, gmdate('c', time() + 72 * 3600)],
-                );
+                if ($activeWar === null) {
+                    $warId = bin2hex(random_bytes(16));
+                    $database->insertIgnore(
+                        'territory_wars',
+                        ['id', 'territory_id', 'attacker_faction_id', 'defender_faction_id', 'attacker_score', 'defender_score', 'target_score', 'state', 'started_at', 'ends_at'],
+                        [$warId, $territoryId, $factionId, $previousOwner, 0, 0, max(1, (int) $row['wall_slots']) * self::WAR_CONTRIBUTION, 'active', $now, gmdate('c', time() + 72 * 3600)],
+                    );
+                    $activeWar = $database->fetchOne('SELECT * FROM territory_wars WHERE id = :id', ['id' => $warId]);
+                }
             } else {
                 $newControl = min(10000, (int) $row['control_basis_points'] + 1500);
+                $nextState = $activeWar === null ? 'owned' : 'contested';
                 $affected = $database->execute(
-                    "UPDATE territory_control SET state = 'owned', control_basis_points = :control, version = :next, updated_at = :updated WHERE territory_id = :id AND version = :expected AND faction_id = :faction",
-                    ['control' => $newControl, 'next' => $nextVersion, 'updated' => $now, 'id' => $territoryId, 'expected' => $expectedVersion, 'faction' => $factionId],
+                    'UPDATE territory_control SET state = :state, control_basis_points = :control, version = :next, updated_at = :updated WHERE territory_id = :id AND version = :expected AND faction_id = :faction',
+                    ['state' => $nextState, 'control' => $newControl, 'next' => $nextVersion, 'updated' => $now, 'id' => $territoryId, 'expected' => $expectedVersion, 'faction' => $factionId],
                 );
                 if ($affected !== 1) {
                     throw new RuntimeException('Territory state changed. Refresh the map and try again.');
+                }
+            }
+
+            if ($activeWar !== null && in_array($action, ['assault', 'reinforce'], true)) {
+                $scoreColumn = $action === 'assault' ? 'attacker_score' : 'defender_score';
+                $contributed = $database->execute("UPDATE territory_wars SET {$scoreColumn} = {$scoreColumn} + :score WHERE id = :id AND state = 'active' AND ends_at > :now", ['score' => self::WAR_CONTRIBUTION, 'id' => $activeWar['id'], 'now' => gmdate('c')]);
+                if ($contributed !== 1) {
+                    throw new RuntimeException('Territory state changed. Refresh the map and try again.');
+                }
+                $activeWar[$scoreColumn] = (int) $activeWar[$scoreColumn] + self::WAR_CONTRIBUTION;
+                if ($activeWar[$scoreColumn] >= (int) $activeWar['target_score']) {
+                    $this->resolveWar($activeWar, $factionId, 'score');
                 }
             }
 
@@ -200,7 +229,9 @@ final class TerritoryService
                 'playerId' => $playerId,
                 'factionId' => $factionId,
                 'previousOwnerFactionId' => $previousOwner,
-                'version' => $nextVersion,
+                'version' => (int) $database->fetchOne('SELECT version FROM territory_control WHERE territory_id = :id', ['id' => $territoryId])['version'],
+                'energyCost' => $energyCost,
+                'warContribution' => $activeWar === null ? 0 : self::WAR_CONTRIBUTION,
             ]);
             $this->events->publish($event);
             return $event;
@@ -222,6 +253,7 @@ final class TerritoryService
     /** Sum a live faction's owned-block advantage for a server calculation. */
     public function bonusBasisPoints(string $playerId, string $benefitKey): int
     {
+        $this->resolveExpiredWars();
         $row = $this->database->fetchOne(
             "SELECT COALESCE(SUM(b.benefit_value), 0) AS bonus
              FROM faction_members m
@@ -238,34 +270,52 @@ final class TerritoryService
         if ($factionId !== null && $this->database->fetchOne('SELECT id FROM factions WHERE id = :id AND enabled = 1', ['id' => $factionId]) === null) {
             throw new InvalidArgumentException('Unknown faction.');
         }
-        $current = $this->database->fetchOne('SELECT * FROM territory_control WHERE territory_id = :id', ['id' => $territoryId]);
-        if ($current === null) {
-            throw new InvalidArgumentException('Unknown territory block.');
-        }
-        $now = gmdate('c');
-        $nextVersion = (int) $current['version'] + 1;
-        $this->database->execute(
-            'UPDATE territory_control SET faction_id = :faction, state = :state, control_basis_points = :control, version = :version, captured_at = :captured, updated_at = :updated WHERE territory_id = :id',
-            ['faction' => $factionId, 'state' => $factionId === null ? 'neutral' : 'owned', 'control' => $factionId === null ? 0 : 10000, 'version' => $nextVersion, 'captured' => $factionId === null ? null : $now, 'updated' => $now, 'id' => $territoryId],
-        );
-        $correlationId = bin2hex(random_bytes(16));
-        $this->database->insertIgnore(
-            'admin_audit_log',
-            ['id', 'actor', 'action', 'target_type', 'target_id', 'previous_json', 'next_json', 'correlation_id', 'created_at'],
-            [bin2hex(random_bytes(16)), $actor, 'territory.ownership.set', 'territory', $territoryId, json_encode($current, JSON_THROW_ON_ERROR), json_encode(['factionId' => $factionId, 'version' => $nextVersion], JSON_THROW_ON_ERROR), $correlationId, $now],
-        );
-        $this->events->publish(new DomainEvent('TerritoryOwnershipOverridden', ['territoryId' => $territoryId, 'factionId' => $factionId, 'actor' => $actor, 'correlationId' => $correlationId]));
+        $this->database->transaction(function () use ($territoryId, $factionId, $actor): void {
+            $current = $this->database->fetchOne('SELECT * FROM territory_control WHERE territory_id = :id', ['id' => $territoryId]);
+            if ($current === null) {
+                throw new InvalidArgumentException('Unknown territory block.');
+            }
+            $now = gmdate('c');
+            $nextVersion = (int) $current['version'] + 1;
+            $affected = $this->database->execute(
+                'UPDATE territory_control SET faction_id = :faction, state = :state, control_basis_points = :control, version = :version, captured_at = :captured, updated_at = :updated WHERE territory_id = :id AND version = :expected',
+                ['faction' => $factionId, 'state' => $factionId === null ? 'neutral' : 'owned', 'control' => $factionId === null ? 0 : 10000, 'version' => $nextVersion, 'captured' => $factionId === null ? null : $now, 'updated' => $now, 'id' => $territoryId, 'expected' => (int) $current['version']],
+            );
+            if ($affected !== 1) {
+                throw new RuntimeException('Territory state changed. Refresh the map and try again.');
+            }
+            $this->database->execute("UPDATE territory_wars SET state = 'cancelled', resolved_at = :now WHERE territory_id = :id AND state = 'active'", ['now' => $now, 'id' => $territoryId]);
+            $correlationId = bin2hex(random_bytes(16));
+            $this->database->insertIgnore(
+                'admin_audit_log',
+                ['id', 'actor', 'action', 'target_type', 'target_id', 'previous_json', 'next_json', 'correlation_id', 'created_at'],
+                [bin2hex(random_bytes(16)), $actor, 'territory.ownership.set', 'territory', $territoryId, json_encode($current, JSON_THROW_ON_ERROR), json_encode(['factionId' => $factionId, 'version' => $nextVersion], JSON_THROW_ON_ERROR), $correlationId, $now],
+            );
+            $this->events->publish(new DomainEvent('TerritoryOwnershipOverridden', ['territoryId' => $territoryId, 'factionId' => $factionId, 'actor' => $actor, 'correlationId' => $correlationId]));
+        });
         return $this->snapshot('founder-player');
     }
 
     /** @param array<string, bool> $ownedIds */
-    private function eligibility(array $row, array $neighbors, array $ownedIds, ?string $playerFactionId): array
+    private function eligibility(array $row, array $neighbors, array $ownedIds, ?string $playerFactionId, ?array $war = null): array
     {
         if ($playerFactionId === null) {
             return ['action' => null, 'reason' => 'Join a faction to control territory.'];
         }
         $ownerId = $row['faction_id'] === null ? null : (string) $row['faction_id'];
+        if ($war !== null) {
+            if ((string) $war['attacker_faction_id'] === $playerFactionId) {
+                return ['action' => 'assault', 'reason' => 'Contribute to your family assault.'];
+            }
+            if ((string) $war['defender_faction_id'] === $playerFactionId && $ownerId === $playerFactionId) {
+                return ['action' => 'reinforce', 'reason' => 'Defend this block in the active war.'];
+            }
+            return ['action' => null, 'reason' => 'A territory war is already active on this block.'];
+        }
         if ($ownerId === $playerFactionId) {
+            if ((int) $row['control_basis_points'] >= 10000) {
+                return ['action' => null, 'reason' => 'This block is already fully controlled.'];
+            }
             return ['action' => 'reinforce', 'reason' => 'Reinforce this faction block.'];
         }
         $hasLand = count($ownedIds) > 0;
@@ -308,6 +358,47 @@ final class TerritoryService
             'targetScore' => (int) $war['target_score'],
             'startedAt' => (string) $war['started_at'],
             'endsAt' => (string) $war['ends_at'],
+            'scorePerAction' => self::WAR_CONTRIBUTION,
         ];
+    }
+
+    /** Settlement uses persisted server time, so reloads and serverless restarts cannot reset wars. */
+    private function resolveExpiredWars(): void
+    {
+        $wars = $this->database->fetchAll("SELECT * FROM territory_wars WHERE state = 'active' AND ends_at <= :now ORDER BY territory_id", ['now' => gmdate('c')]);
+        foreach ($wars as $war) {
+            $this->database->transaction(function () use ($war): void {
+                $this->resolveWar($war, (string) $war['defender_faction_id'], 'expired');
+            });
+        }
+    }
+
+    private function resolveWar(array $war, string $winnerFactionId, string $reason): void
+    {
+        $now = gmdate('c');
+        // The territory CAS serializes contributions, expiry, and admin overrides.
+        // Lock it before the war row to preserve one lock order on PostgreSQL.
+        $this->database->execute('UPDATE territory_control SET version = version WHERE territory_id = :id', ['id' => $war['territory_id']]);
+        $currentWar = $this->database->fetchOne("SELECT * FROM territory_wars WHERE id = :id AND state = 'active'", ['id' => $war['id']]);
+        if ($currentWar === null || ($reason === 'expired' && (string) $currentWar['ends_at'] > $now)) {
+            return;
+        }
+        $war = $currentWar;
+        $row = $this->database->fetchOne('SELECT * FROM territory_control WHERE territory_id = :id', ['id' => $war['territory_id']]);
+        if ($row === null || $row['state'] !== 'contested') {
+            return;
+        }
+        $updated = $this->database->execute("UPDATE territory_control SET faction_id = :winner, state = 'owned', control_basis_points = 10000, version = version + 1, captured_at = :captured, updated_at = :now WHERE territory_id = :id AND version = :version AND state = 'contested'", [
+            'winner' => $winnerFactionId, 'captured' => $winnerFactionId === (string) $row['faction_id'] ? $row['captured_at'] : $now,
+            'now' => $now, 'id' => $war['territory_id'], 'version' => (int) $row['version'],
+        ]);
+        if ($updated !== 1) {
+            return;
+        }
+        $resolved = $this->database->execute("UPDATE territory_wars SET state = :state, resolved_at = :now WHERE id = :id AND state = 'active'", ['state' => $winnerFactionId === (string) $war['attacker_faction_id'] ? 'attacker_won' : 'defender_won', 'now' => $now, 'id' => $war['id']]);
+        if ($resolved !== 1) {
+            throw new RuntimeException('Territory state changed. Refresh the map and try again.');
+        }
+        $this->events->publish(new DomainEvent('TerritoryWarResolved', ['warId' => $war['id'], 'territoryId' => $war['territory_id'], 'winnerFactionId' => $winnerFactionId, 'reason' => $reason, 'attackerScore' => (int) $war['attacker_score'], 'defenderScore' => (int) $war['defender_score']]));
     }
 }

@@ -5,9 +5,18 @@ const state = {
   language: localStorage.getItem('zone.admin.language') === 'ar' ? 'ar' : 'en',
   view: 'overview',
   engine: null,
+  bootReady: false,
+  bootError: '',
   modules: [],
   themes: [],
   crimes: [],
+  gameplayCatalog: null,
+  catalogCategory: 'items',
+  catalogEntry: null,
+  catalogEdits: {},
+  catalogBusy: false,
+  catalogMessage: '',
+  catalogError: '',
   audit: [],
   ledger: [],
   events: [],
@@ -15,6 +24,7 @@ const state = {
   releases: [],
   selectedPage: null,
   selectedCrime: null,
+  crimeEditorSelection: undefined,
   territoryCatalog: { revision: '', factions: [], blocks: [], summary: {} },
   selectedTerritory: null,
   pendingTerritoryOwner: null,
@@ -30,6 +40,8 @@ const state = {
 
 const translations = {
   en: {
+    gameplayCatalog: 'Gameplay catalog', catalogHelp: 'Edit an existing entry, save the draft, then publish when it is ready for players.', catalogCategory: 'Category', catalogEntry: 'Entry', saveCatalog: 'Save catalog draft', catalogSaved: 'Catalog draft saved. Publish to apply it to the game.', catalogChanged: 'This draft changed elsewhere. Values were refreshed; review your edits before saving again.', catalogUnsaved: 'Unsaved edits', catalogSaving: 'Saving draft...', catalogNoChanges: 'No values changed.', catalogUnavailable: 'The gameplay catalog is unavailable.',
+    connecting: 'Connecting... Please wait for admin data.', adminLoadFailed: 'Unable to load admin data. Reload to retry.',
     controlPlane: 'ADMIN CONTROL PLANE', engine: 'Engine', game: 'Open game', publish: 'Publish release', sourceOwned: 'FULL SOURCE OWNERSHIP',
     zonePlatform: 'ZONE PLATFORM', engineVersion: 'ENGINE 1.0', apiFirst: 'PHP 8.5 + API FIRST', controlCenter: 'CONTROL CENTER', visualBuilder: 'VISUAL BUILDER', extensionSystem: 'EXTENSION SYSTEM', contentStudio: 'CONTENT STUDIO', themePackages: 'THEME PACKAGES', tokens: 'TOKENS', mediaPipeline: 'MEDIA PIPELINE', auditableEconomy: 'AUDITABLE ECONOMY', ledger: 'LEDGER', resources: 'RESOURCES', eventBus: 'EVENT BUS', eventsLabel: 'EVENTS', audit: 'AUDIT', versionControl: 'VERSION CONTROL', history: 'HISTORY',
     overview: 'Platform overview', overviewSub: 'One control plane for the engine, modules, content, releases, and the live game.', releaseHistory: 'Release history', publishPipeline: 'Publishing pipeline', systemHealth: 'System health', recentEvents: 'Recent events',
@@ -41,6 +53,8 @@ const translations = {
     territoryControl: 'CITY CONTROL', territories: 'City & Territories', territoriesSub: 'Inspect all 120 city blocks and apply live faction ownership through the server-authoritative territory engine.', refreshTerritories: 'Refresh live state', territoryMap: 'Live territory map', territoryBlocks: 'Territory blocks', searchBlocks: 'Search blocks', searchBlocksPlaceholder: 'ID, name, district, owner, or benefit', ownerFilter: 'Owner', stateFilter: 'State', sectorFilter: 'Sector', blockDetails: 'Selected block', chooseTerritory: 'Choose a block to inspect its live state and ownership.', allOwners: 'All owners', allStates: 'All states', allSectors: 'All sectors', neutral: 'Neutral', owned: 'Owned', contested: 'Contested', totalBlocks: 'Total blocks', ownedBlocks: 'Faction controlled', neutralBlocks: 'Neutral blocks', contestedBlocks: 'Contested blocks', sector: 'Sector', size: 'Size', density: 'Density', slots: 'Wall slots', dailyRespect: 'Daily respect', benefits: 'Benefits', neighbors: 'Neighbors', liveOwner: 'Live owner', stateVersion: 'State version', updatedAt: 'Updated', applyOwnership: 'Apply ownership', ownershipHelp: 'This changes live server state immediately and records an admin audit event.', ownershipUpdated: 'Territory ownership updated and verified from the server.', noTerritoryResults: 'No territory blocks match these filters.', territoryUnavailable: 'Territory data is currently unavailable.', loadingTerritories: 'Loading territory state...', results: 'results', control: 'Control', version: 'Version', district: 'District', noBenefits: 'No configured benefits', noNeighbors: 'No adjacent blocks', live: 'LIVE', apply: 'APPLY',
   },
   ar: {
+    gameplayCatalog: 'كتالوج اللعب', catalogHelp: 'عدّل عنصراً موجوداً واحفظ المسودة، ثم انشرها عندما تصبح جاهزة للاعبين.', catalogCategory: 'الفئة', catalogEntry: 'العنصر', saveCatalog: 'احفظ مسودة الكتالوج', catalogSaved: 'تم حفظ مسودة الكتالوج. انشرها لتطبيقها في اللعبة.', catalogChanged: 'تغيرت المسودة في مكان آخر. حُدثت القيم؛ راجع تعديلاتك قبل الحفظ مجدداً.', catalogUnsaved: 'تعديلات غير محفوظة', catalogSaving: 'جارٍ حفظ المسودة...', catalogNoChanges: 'لم تتغير القيم.', catalogUnavailable: 'كتالوج اللعب غير متاح حالياً.',
+    connecting: 'جارٍ الاتصال... انتظر تحميل بيانات الإدارة.', adminLoadFailed: 'تعذر تحميل بيانات الإدارة. أعد تحميل الصفحة للمحاولة.',
     controlPlane: 'لوحة تحكم الإدارة', engine: 'المحرك', game: 'افتح اللعبة', publish: 'انشر الإصدار', sourceOwned: 'ملكية كاملة للسورس',
     zonePlatform: 'منصة ZONE', engineVersion: 'المحرك 1.0', apiFirst: 'PHP 8.5 + واجهة API أولا', controlCenter: 'مركز التحكم', visualBuilder: 'المصمم المرئي', extensionSystem: 'نظام الإضافات', contentStudio: 'استوديو المحتوى', themePackages: 'حزم الثيمات', tokens: 'المتغيرات', mediaPipeline: 'مسار الوسائط', auditableEconomy: 'اقتصاد قابل للتدقيق', ledger: 'السجل', resources: 'الموارد', eventBus: 'ناقل الأحداث', eventsLabel: 'الأحداث', audit: 'التدقيق', versionControl: 'إدارة الإصدارات', history: 'السجل',
     overview: 'نظرة عامة على المنصة', overviewSub: 'لوحة واحدة للمحرك والموديولات والمحتوى والإصدارات واللعبة المباشرة.', releaseHistory: 'سجل الإصدارات', publishPipeline: 'مسار النشر', systemHealth: 'حالة النظام', recentEvents: 'آخر الأحداث',
@@ -135,6 +149,7 @@ function trace(method, path, payload, response, status = 200) {
 
 async function api(path, options = {}) {
   const method = options.method ?? 'GET';
+  if (!['GET', 'HEAD'].includes(method.toUpperCase()) && !state.bootReady) throw new Error(t(state.bootError ? 'adminLoadFailed' : 'connecting'));
   const payload = options.body ? JSON.parse(options.body) : null;
   const headers = { Accept: 'application/json', ...(options.headers ?? {}) };
   if (options.body) headers['Content-Type'] = 'application/json';
@@ -150,8 +165,26 @@ async function api(path, options = {}) {
 
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
 function currentManifest() { return state.draft?.manifest; }
+function adminCanMutate() {
+  if (state.bootReady && state.engine && currentManifest()) return true;
+  notify(t(state.bootError ? 'adminLoadFailed' : 'connecting'), true);
+  return false;
+}
+function updateBootControls() {
+  const blocked = !state.bootReady;
+  for (const id of ['publishButton', 'releasePublishButton', 'saveDraftButton', 'saveCrimeButton', 'addPageButton', 'addBlockButton', 'newCrimeButton']) {
+    const button = $('#' + id); if (button) button.disabled = blocked;
+  }
+  if ($('#saveCatalogButton')) $('#saveCatalogButton').disabled = blocked || state.catalogBusy || !catalogEditorData().entry;
+  if (blocked) {
+    $$('[data-module-action], [data-theme-id], [data-activate-release], #applyTerritoryOwnerButton').forEach(button => { button.disabled = true; });
+    $('#pipelineStatus').textContent = t(state.bootError ? 'adminLoadFailed' : 'connecting');
+    $('#pipelineStatus').className = 'status ' + (state.bootError ? 'bad' : 'warn');
+  }
+}
 function runtimeContentSnapshot() {
   return {
+    gameplayCatalog: deepCopy(state.gameplayCatalog?.catalogs ?? {}),
     crimes: deepCopy(state.crimes.map(({ correlationId, ...crime }) => crime)),
     engineModules: deepCopy(state.modules),
     themes: deepCopy(state.themes),
@@ -331,6 +364,7 @@ function moveBlock(page, index, direction) {
   renderBuilder();
 }
 function addPage() {
+  if (!adminCanMutate()) return;
   const manifest = currentManifest();
   const id = `page-${Date.now().toString(36)}`;
   manifest.pages.push({ id, slug: id, enabled: true, title: { en: 'New page', ar: 'صفحة جديدة' }, blocks: [{ id: `hero-${Date.now().toString(36)}`, type: 'hero', content: { en: 'Built from the ZONE Admin Control Plane', ar: 'تم إنشاؤها من لوحة تحكم ZONE' } }] });
@@ -340,6 +374,7 @@ function addPage() {
   renderBuilder();
 }
 function addBlock() {
+  if (!adminCanMutate()) return;
   const page = currentManifest().pages.find((item) => item.id === state.selectedPage);
   if (!page) return;
   const type = $('#blockTypeSelect').value;
@@ -365,7 +400,505 @@ function renderThemes() {
   bindManifestInputs();
 }
 
-function renderContent() {
+// Existing game labels from index.html T and assets/weapons/catalog.js; display fallback only.
+const catalogDefaultLabels = {
+  "items": {
+    "revolver": {
+      "en": "Revolver",
+      "ar": "مسدس دوّار"
+    },
+    "magnum": {
+      "en": "Magnum",
+      "ar": "ماغنوم"
+    },
+    "pistol": {
+      "en": "Pistol",
+      "ar": "مسدس"
+    },
+    "pistol_t": {
+      "en": "Tactical Pistol",
+      "ar": "مسدس تكتيكي"
+    },
+    "sawedoff": {
+      "en": "Sawed-off",
+      "ar": "بندقية مقصوصة"
+    },
+    "shotgun": {
+      "en": "Pump Shotgun",
+      "ar": "بندقية خرطوش"
+    },
+    "smg": {
+      "en": "SMG",
+      "ar": "رشاش قصير"
+    },
+    "ak": {
+      "en": "AK",
+      "ar": "كلاشنكوف"
+    },
+    "sniper": {
+      "en": "Sniper Rifle",
+      "ar": "بندقية قنّاص"
+    },
+    "bat": {
+      "en": "Baseball Bat",
+      "ar": "مضرب بيسبول"
+    },
+    "knife": {
+      "en": "Knife",
+      "ar": "سكين"
+    },
+    "armor": {
+      "en": "Body Armor",
+      "ar": "درع واقي"
+    },
+    "medkit": {
+      "en": "First Aid Kit",
+      "ar": "حقيبة إسعاف"
+    },
+    "smallkit": {
+      "en": "Small First Aid Kit",
+      "ar": "إسعاف صغيرة"
+    },
+    "drink": {
+      "en": "Energy Drink",
+      "ar": "مشروب طاقة"
+    },
+    "pills": {
+      "en": "Painkillers",
+      "ar": "مسكّنات"
+    },
+    "sand": {
+      "en": "Sand",
+      "ar": "رمل"
+    },
+    "vest": {
+      "en": "Kevlar Vest",
+      "ar": "سترة كيفلار"
+    },
+    "assaultrifle2_1": {
+      "en": "AK I",
+      "ar": "كلاشنكوف I"
+    },
+    "assaultrifle2_2": {
+      "en": "AK II",
+      "ar": "كلاشنكوف II"
+    },
+    "assaultrifle2_3": {
+      "en": "AK III",
+      "ar": "كلاشنكوف III"
+    },
+    "assaultrifle2_4": {
+      "en": "AK IV",
+      "ar": "كلاشنكوف IV"
+    },
+    "assaultrifle_1": {
+      "en": "Assault Rifle I",
+      "ar": "بندقية هجومية I"
+    },
+    "assaultrifle_2": {
+      "en": "Assault Rifle II",
+      "ar": "بندقية هجومية II"
+    },
+    "assaultrifle_3": {
+      "en": "Assault Rifle III",
+      "ar": "بندقية هجومية III"
+    },
+    "assaultrifle_4": {
+      "en": "Assault Rifle IV",
+      "ar": "بندقية هجومية IV"
+    },
+    "assaultrifle_5": {
+      "en": "Assault Rifle V",
+      "ar": "بندقية هجومية V"
+    },
+    "bullpup_1": {
+      "en": "Bullpup Rifle I",
+      "ar": "بندقية بولباب I"
+    },
+    "bullpup_2": {
+      "en": "Bullpup Rifle II",
+      "ar": "بندقية بولباب II"
+    },
+    "bullpup_3": {
+      "en": "Bullpup Rifle III",
+      "ar": "بندقية بولباب III"
+    },
+    "pistol_1": {
+      "en": "Pistol I",
+      "ar": "مسدس I"
+    },
+    "pistol_2": {
+      "en": "Pistol II",
+      "ar": "مسدس II"
+    },
+    "pistol_3": {
+      "en": "Pistol III",
+      "ar": "مسدس III"
+    },
+    "pistol_4": {
+      "en": "Pistol IV",
+      "ar": "مسدس IV"
+    },
+    "pistol_5": {
+      "en": "Pistol V",
+      "ar": "مسدس V"
+    },
+    "pistol_6": {
+      "en": "Pistol VI",
+      "ar": "مسدس VI"
+    },
+    "revolver_1": {
+      "en": "Revolver I",
+      "ar": "مسدس دوّار I"
+    },
+    "revolver_2": {
+      "en": "Revolver II",
+      "ar": "مسدس دوّار II"
+    },
+    "revolver_3": {
+      "en": "Revolver III",
+      "ar": "مسدس دوّار III"
+    },
+    "revolver_4": {
+      "en": "Revolver IV",
+      "ar": "مسدس دوّار IV"
+    },
+    "revolver_5": {
+      "en": "Revolver V",
+      "ar": "مسدس دوّار V"
+    },
+    "shotgun_1": {
+      "en": "Shotgun I",
+      "ar": "بندقية خرطوش I"
+    },
+    "shotgun_2": {
+      "en": "Shotgun II",
+      "ar": "بندقية خرطوش II"
+    },
+    "shotgun_3": {
+      "en": "Shotgun III",
+      "ar": "بندقية خرطوش III"
+    },
+    "shotgun_4": {
+      "en": "Shotgun IV",
+      "ar": "بندقية خرطوش IV"
+    },
+    "shotgun_sawedoff": {
+      "en": "Sawed-off",
+      "ar": "بندقية مقصوصة"
+    },
+    "shotgun_shortstock": {
+      "en": "Short-stock Shotgun",
+      "ar": "خرطوش قصير"
+    },
+    "sniperrifle_1": {
+      "en": "Sniper Rifle I",
+      "ar": "بندقية قنّاص I"
+    },
+    "sniperrifle_2": {
+      "en": "Sniper Rifle II",
+      "ar": "بندقية قنّاص II"
+    },
+    "sniperrifle_3": {
+      "en": "Sniper Rifle III",
+      "ar": "بندقية قنّاص III"
+    },
+    "sniperrifle_4": {
+      "en": "Sniper Rifle IV",
+      "ar": "بندقية قنّاص IV"
+    },
+    "sniperrifle_5": {
+      "en": "Sniper Rifle V",
+      "ar": "بندقية قنّاص V"
+    },
+    "sniperrifle_6": {
+      "en": "Sniper Rifle VI",
+      "ar": "بندقية قنّاص VI"
+    },
+    "submachinegun_1": {
+      "en": "SMG I",
+      "ar": "رشاش قصير I"
+    },
+    "submachinegun_2": {
+      "en": "SMG II",
+      "ar": "رشاش قصير II"
+    },
+    "submachinegun_3": {
+      "en": "SMG III",
+      "ar": "رشاش قصير III"
+    },
+    "submachinegun_4": {
+      "en": "SMG IV",
+      "ar": "رشاش قصير IV"
+    },
+    "submachinegun_5": {
+      "en": "SMG V",
+      "ar": "رشاش قصير V"
+    }
+  },
+  "jobs": {
+    "grocer": {
+      "en": "Grocer",
+      "ar": "بقّال"
+    },
+    "casino": {
+      "en": "Casino Dealer",
+      "ar": "موزّع كازينو"
+    },
+    "clinic": {
+      "en": "Clinic Nurse",
+      "ar": "ممرض عيادة"
+    },
+    "firm": {
+      "en": "Law Firm Clerk",
+      "ar": "كاتب مكتب محاماة"
+    },
+    "army": {
+      "en": "Army Private",
+      "ar": "جندي"
+    },
+    "edu": {
+      "en": "Teaching Assistant",
+      "ar": "مساعد تدريس"
+    }
+  },
+  "gyms": {
+    "0": {
+      "en": "Premier Fitness",
+      "ar": "بريمير فتنس"
+    },
+    "1": {
+      "en": "Average Joes",
+      "ar": "أفريج جوز"
+    },
+    "2": {
+      "en": "Woody's Workout",
+      "ar": "نادي وودي"
+    },
+    "3": {
+      "en": "Beach Bods",
+      "ar": "بيتش بودز"
+    },
+    "4": {
+      "en": "Silver Gym",
+      "ar": "النادي الفضي"
+    },
+    "5": {
+      "en": "Pour Femme",
+      "ar": "بور فيم"
+    },
+    "6": {
+      "en": "Davies Den",
+      "ar": "ديفيز دن"
+    },
+    "7": {
+      "en": "Global Gym",
+      "ar": "النادي العالمي"
+    }
+  },
+  "courses": {
+    "bio": {
+      "en": "Biology 101",
+      "ar": "أحياء 101"
+    },
+    "fit": {
+      "en": "Sports Science",
+      "ar": "علوم الرياضة"
+    },
+    "law": {
+      "en": "Criminal Law",
+      "ar": "القانون الجنائي"
+    },
+    "biz": {
+      "en": "Business Basics",
+      "ar": "أساسيات الأعمال"
+    },
+    "comb": {
+      "en": "Self Defense",
+      "ar": "الدفاع عن النفس"
+    }
+  },
+  "properties": {
+    "shack": {
+      "en": "Shack",
+      "ar": "كوخ"
+    },
+    "trailer": {
+      "en": "Trailer",
+      "ar": "مقطورة"
+    },
+    "apt": {
+      "en": "Apartment",
+      "ar": "شقة"
+    },
+    "semi": {
+      "en": "Semi-detached",
+      "ar": "بيت متلاصق"
+    },
+    "house": {
+      "en": "Detached House",
+      "ar": "بيت مستقل"
+    },
+    "villa": {
+      "en": "Beachfront Villa",
+      "ar": "فيلا على الشاطئ"
+    },
+    "island": {
+      "en": "Private Island",
+      "ar": "جزيرة خاصة"
+    }
+  },
+  "upgrades": {
+    "gymBoost": {
+      "en": "Steadfast I",
+      "ar": "ثبات 1"
+    },
+    "nerveMax": {
+      "en": "Criminality I",
+      "ar": "إجرام 1"
+    },
+    "energyMax": {
+      "en": "Fortitude I",
+      "ar": "جَلَد 1"
+    },
+    "hospTime": {
+      "en": "Medical I",
+      "ar": "طب 1"
+    }
+  },
+  "opponents": {
+    "rayan": {
+      "en": "Rayan_Black",
+      "ar": "ريّان الأسود"
+    },
+    "nadia": {
+      "en": "NadiaQuick",
+      "ar": "نادية السريعة"
+    },
+    "sal": {
+      "en": "BigSal",
+      "ar": "سال الكبير"
+    },
+    "kaya": {
+      "en": "Kaya_V",
+      "ar": "كايا"
+    }
+  },
+  "missions": {
+    "c5": {
+      "en": "Petty Criminal",
+      "ar": "مجرم صغير"
+    },
+    "t4": {
+      "en": "Gym Rat",
+      "ar": "فأر النادي"
+    },
+    "w1": {
+      "en": "First Blood",
+      "ar": "أول دم"
+    },
+    "s2": {
+      "en": "Working Stiff",
+      "ar": "شغّيل"
+    },
+    "b1": {
+      "en": "Shopper",
+      "ar": "متسوّق"
+    }
+  }
+};
+const catalogCategoryNames = { items: ['Items', 'العناصر'], jobs: ['Jobs', 'الوظائف'], gyms: ['Gyms', 'الصالات الرياضية'], courses: ['Courses', 'الدورات'], properties: ['Properties', 'العقارات'], upgrades: ['Faction upgrades', 'ترقيات العائلة'], opponents: ['Opponents', 'الخصوم'], missions: ['Objectives', 'الأهداف'] };
+const catalogFieldNames = { price: ['Price', 'السعر'], mult: ['Damage multiplier', 'مضاعف الضرر'], red: ['Damage reduction (0-1)', 'خفض الضرر (٠-١)'], life: ['Life', 'الصحة'], nerve: ['Nerve restored', 'الأعصاب المستعادة'], pay: ['Pay per shift', 'أجر الوردية'], energy: ['Energy per shift', 'طاقة الوردية'], lvl: ['Level', 'المستوى'], e: ['Energy per session', 'طاقة الجلسة'], xp: ['Training XP required', 'خبرة التدريب المطلوبة'], cost: ['Cost', 'التكلفة'], mins: ['Duration in minutes', 'المدة بالدقائق'], happy: ['Maximum happiness', 'الحد الأقصى للسعادة'], upkeep: ['Planned upkeep (not charged)', 'الصيانة المخططة (لا تُخصم)'], str: ['Strength', 'القوة'], def: ['Defense', 'الدفاع'], spd: ['Speed', 'السرعة'], dex: ['Dexterity', 'المهارة'], cash: ['Cash', 'النقود'], n: ['Required progress', 'التقدم المطلوب'], pts: ['Point reward', 'مكافأة النقاط'] };
+const catalogLabel = (labels, fallback) => labels?.[state.language === 'ar' ? 1 : 0] ?? fallback;
+function catalogEntries(category = state.catalogCategory) {
+  const entries = state.gameplayCatalog?.catalogs?.[category] ?? [];
+  if (!Array.isArray(entries)) return Object.entries(entries);
+  return entries.map((entry, index) => [String(category === 'gyms' ? index : entry.id), entry]);
+}
+function catalogEditorData() {
+  const entry = catalogEntries().find(([id]) => id === state.catalogEntry)?.[1];
+  const fields = state.gameplayCatalog?.schema?.[state.catalogCategory]?.fields ?? {};
+  return { entry, fields: Object.entries(fields).filter(([key]) => key === 'name' || Object.hasOwn(entry ?? {}, key)), key: state.catalogCategory + '/' + state.catalogEntry };
+}
+function catalogFieldValue(key, original) {
+  const edits = state.catalogEdits[state.catalogCategory + '/' + state.catalogEntry] ?? {};
+  return Object.hasOwn(edits, key) ? edits[key] : String(original ?? '');
+}
+function catalogEntryName(id, entry, language = state.language) { return entry?.name?.[language] || catalogDefaultLabels[state.catalogCategory]?.[id]?.[language] || id; }
+function renderCatalogStatus() {
+  const target = $('#catalogStatus');
+  const edits = state.catalogEdits[state.catalogCategory + '/' + state.catalogEntry];
+  target.textContent = state.catalogBusy ? t('catalogSaving') : state.catalogError || t(state.catalogMessage || (edits && Object.keys(edits).length ? 'catalogUnsaved' : 'catalogHelp'));
+  target.className = state.catalogError || state.catalogMessage === 'catalogChanged' ? 'bad' : state.catalogMessage === 'catalogSaved' ? 'good' : '';
+  $('#saveCatalogButton').disabled = !state.bootReady || state.catalogBusy || !catalogEditorData().entry;
+}
+function renderGameplayCatalog() {
+  const categories = Object.keys(catalogCategoryNames).filter(category => state.gameplayCatalog?.schema?.[category]);
+  if (!categories.includes(state.catalogCategory)) state.catalogCategory = categories[0] ?? 'items';
+  const categorySelect = $('#catalogCategory'), entrySelect = $('#catalogEntry');
+  categorySelect.innerHTML = categories.map(category => `<option value="${esc(category)}">${esc(catalogLabel(catalogCategoryNames[category], category))}</option>`).join('');
+  categorySelect.value = state.catalogCategory; categorySelect.disabled = !state.bootReady || state.catalogBusy || !categories.length;
+  const entries = catalogEntries();
+  if (!entries.some(([id]) => id === state.catalogEntry)) state.catalogEntry = entries[0]?.[0] ?? null;
+  entrySelect.innerHTML = entries.map(([id, entry]) => `<option value="${esc(id)}">${esc(catalogEntryName(id, entry))} · ${esc(id)}</option>`).join('');
+  entrySelect.value = state.catalogEntry ?? ''; entrySelect.disabled = !state.bootReady || state.catalogBusy || !entries.length;
+  categorySelect.onchange = () => { state.catalogCategory = categorySelect.value; state.catalogEntry = null; state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog(); };
+  entrySelect.onchange = () => { state.catalogEntry = entrySelect.value; state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog(); };
+  $('#catalogRevision').textContent = state.gameplayCatalog ? `${state.language === 'ar' ? 'مسودة' : 'Draft'} v${state.gameplayCatalog.revision}` : t('connecting');
+  const { entry, fields, key: editorKey } = catalogEditorData();
+  const inputs = fields.flatMap(([key, field]) => key === 'name' && field.type === 'bilingual'
+    ? ['en', 'ar'].map(language => ({ key: 'name.' + language, label: language === 'en' ? t('crimeNameEn') : t('crimeNameAr'), type: 'text', value: catalogEntryName(state.catalogEntry, entry, language), maxLength: field.maxLength, dir: language === 'ar' ? 'rtl' : 'ltr' }))
+    : [{ key, label: catalogLabel(catalogFieldNames[key], key), type: 'number', value: entry?.[key], min: field.min, max: field.max, step: field.type === 'integer' ? '1' : 'any', dir: 'ltr' }]);
+  $('#catalogFields').innerHTML = entry ? inputs.map(input => `<label><span>${esc(input.label)}</span><input id="catalogField-${esc(input.key.replace('.', '-'))}" type="${input.type}" dir="${input.dir}" ${input.min !== undefined ? `min="${input.min}"` : ''} ${input.max !== undefined ? `max="${input.max}"` : ''} ${input.maxLength ? `maxlength="${input.maxLength}"` : ''} ${input.step ? `step="${input.step}" required` : ''} ${state.catalogBusy ? 'disabled' : ''}></label>`).join('') : `<p class="catalog-help">${esc(t('catalogUnavailable'))}</p>`;
+  for (const input of inputs) {
+    const element = $('#catalogField-' + input.key.replace('.', '-'));
+    element.value = catalogFieldValue(input.key, input.value);
+    element.oninput = () => {
+      (state.catalogEdits[editorKey] ??= {})[input.key] = element.value;
+      state.catalogError = ''; state.catalogMessage = ''; renderCatalogStatus();
+    };
+  }
+  renderCatalogStatus();
+}
+function catalogChanges() {
+  const { entry, fields, key } = catalogEditorData(), edits = state.catalogEdits[key] ?? {}, changes = {};
+  if (!entry) throw new Error(t('catalogUnavailable'));
+  for (const [fieldName, field] of fields) {
+    if (fieldName === 'name') {
+      if (!Object.hasOwn(edits, 'name.en') && !Object.hasOwn(edits, 'name.ar')) continue;
+      const name = Object.fromEntries(['en', 'ar'].map(language => [language, catalogFieldValue('name.' + language, catalogEntryName(state.catalogEntry, entry, language)).trim()]));
+      if (Object.values(name).some(value => !value || [...value].length > field.maxLength || /[<>\x00-\x1F\x7F]/.test(value))) throw new Error(state.language === 'ar' ? `أدخل اسمين عربي وإنجليزي بنص عادي، بحد أقصى ${field.maxLength} حرفاً لكل اسم.` : `Enter plain-text English and Arabic names, up to ${field.maxLength} characters each.`);
+      if (name.en !== entry.name?.en || name.ar !== entry.name?.ar) changes.name = name;
+      continue;
+    }
+    if (!Object.hasOwn(edits, fieldName)) continue;
+    const raw = edits[fieldName].trim(), value = Number(raw), label = catalogLabel(catalogFieldNames[fieldName], fieldName);
+    if (!raw || !Number.isFinite(value) || (field.type === 'integer' && !Number.isInteger(value)) || value < field.min || value > field.max) throw new Error(state.language === 'ar' ? `${label}: أدخل ${field.type === 'integer' ? 'عدداً صحيحاً' : 'رقماً'} بين ${field.min} و${field.max}.` : `${label}: enter ${field.type === 'integer' ? 'an integer' : 'a number'} from ${field.min} to ${field.max}.`);
+    if (value !== entry[fieldName]) changes[fieldName] = value;
+  }
+  return changes;
+}
+async function saveGameplayCatalog(event) {
+  event?.preventDefault();
+  if (!adminCanMutate() || state.catalogBusy) return;
+  const category = state.catalogCategory, id = state.catalogEntry, editorKey = category + '/' + id;
+  try {
+    const changes = catalogChanges();
+    if (!Object.keys(changes).length) { state.catalogMessage = 'catalogNoChanges'; renderCatalogStatus(); return; }
+    state.catalogBusy = true; state.catalogError = ''; renderGameplayCatalog();
+    const snapshot = await api(`/api/v1/admin/gameplay-catalog/${encodeURIComponent(category)}/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ expectedRevision: state.gameplayCatalog.revision, changes }) });
+    state.gameplayCatalog = snapshot; delete state.catalogEdits[editorKey]; state.catalogMessage = 'catalogSaved';
+    markDirty(); notify(t('catalogSaved')); refreshViewPreview('content');
+  } catch (error) {
+    if (/Gameplay catalog changed/i.test(error.message)) {
+      try { state.gameplayCatalog = await api('/api/v1/admin/gameplay-catalog'); state.catalogMessage = 'catalogChanged'; }
+      catch (_) { state.catalogError = t('catalogUnavailable'); }
+    } else state.catalogError = state.language === 'ar' && !/[\u0600-\u06ff]/.test(error.message) ? 'تعذر حفظ المسودة. تحقق من القيم والاتصال وحاول مجدداً.' : error.message;
+  } finally { state.catalogBusy = false; renderGameplayCatalog(); }
+}
+
+function renderContent(resetEditor = false) {
+  renderGameplayCatalog();
   const header = `<div class="table-row header"><span>${t('crime')}</span><span>${t('nerve')}</span><span>${t('success')}</span><span>${t('cash')}</span><span>${t('xp')}</span><span>${t('action')}</span></div>`;
   $('#crimeTable').innerHTML = header + state.crimes.map((crime) => `<div class="table-row ${crime.enabled ? '' : 'disabled'}"><strong>${esc(state.language === 'ar' ? crime.name_ar : crime.name_en)}<small>${crime.enabled ? '' : ` · ${t('disabledLabel')}`}</small></strong><code>${crime.nerve_cost}</code><code>${crime.successRate}%</code><code>${Number(crime.cash_min).toLocaleString()} - ${Number(crime.cash_max).toLocaleString()}</code><code>${crime.xp_reward}</code><button class="button ghost" type="button" data-edit-crime="${esc(crime.id)}">${t('edit')}</button></div>`).join('');
   $$('[data-edit-crime]').forEach((button) => button.addEventListener('click', () => { state.selectedCrime = button.dataset.editCrime; renderContent(); }));
@@ -373,6 +906,9 @@ function renderContent() {
   const crime = state.crimes.find((item) => item.id === state.selectedCrime) ?? null;
   $('#crimeEditorStatus').textContent = crime ? t('edit') : t('newLabel');
   $('#crimeEditorStatus').className = `status ${crime?.enabled ? 'active' : ''}`;
+  // Language and unrelated panel renders must not overwrite unsaved input.
+  if (!resetEditor && state.crimeEditorSelection === state.selectedCrime) return;
+  state.crimeEditorSelection = state.selectedCrime;
   $('#crimeId').value = crime?.id ?? '';
   $('#crimeId').disabled = Boolean(crime);
   $('#crimeNameEn').value = crime?.name_en ?? '';
@@ -560,7 +1096,7 @@ function ensureTerritoryMapPreview() {
   if (frame.dataset.language !== state.language || !frame.getAttribute('src')) {
     state.territoryMapReady = false;
     frame.dataset.language = state.language;
-    frame.src = `/dist/city-map-torn.html?admin=territories&lang=${state.language}`;
+    frame.src = `/dist/city-map-torn.html?v=62&admin=territories&lang=${state.language}`;
   }
 }
 
@@ -603,6 +1139,7 @@ function renderAll() {
   renderEconomy();
   renderEvents();
   renderReleases();
+  updateBootControls();
 }
 
 function updatePreviewCache() {
@@ -632,6 +1169,7 @@ function refreshViewPreview(view) {
 }
 
 async function saveDraft() {
+  if (!adminCanMutate()) return false;
   try {
     const response = await api('/api/v1/admin/draft', { method: 'PUT', body: JSON.stringify({ manifest: manifestWithRuntimeContent() }) });
     state.draft = response;
@@ -649,6 +1187,7 @@ async function saveDraft() {
 }
 
 async function publishRelease() {
+  if (!adminCanMutate()) return;
   try {
     if (!(await saveDraft())) return;
     const release = await api('/api/v1/admin/releases/publish', { method: 'POST', body: '{}' });
@@ -666,6 +1205,7 @@ async function publishRelease() {
 }
 
 async function activateRelease(id) {
+  if (!adminCanMutate()) return;
   try {
     const release = await api(`/api/v1/admin/releases/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
     localStorage.setItem(ACTIVE_CACHE, JSON.stringify(release));
@@ -681,6 +1221,7 @@ async function activateRelease(id) {
 }
 
 async function mutateModule(id, action) {
+  if (!adminCanMutate()) return;
   try {
     await api(`/api/v1/admin/modules/${encodeURIComponent(id)}/${action}`, { method: 'POST', body: '{}' });
     const response = await api('/api/v1/modules');
@@ -693,13 +1234,15 @@ async function mutateModule(id, action) {
 }
 
 function newCrime() {
+  if (!adminCanMutate()) return;
   state.selectedCrime = null;
-  renderContent();
+  renderContent(true);
   $('#crimeId').focus();
 }
 
 async function saveCrime(event) {
   event.preventDefault();
+  if (!adminCanMutate()) return;
   const id = slugify($('#crimeId').value);
   const definition = {
     name_en: $('#crimeNameEn').value.trim(),
@@ -718,6 +1261,7 @@ async function saveCrime(event) {
     state.crimes = [...state.crimes.filter((crime) => crime.id !== response.crime.id), response.crime]
       .sort((left, right) => left.nerve_cost - right.nerve_cost || left.id.localeCompare(right.id));
     state.selectedCrime = response.crime.id;
+    renderContent(true);
     const [events, audit] = await Promise.all([api('/api/v1/events'), api('/api/v1/admin/audit')]);
     state.events = events.events;
     state.audit = audit.entries;
@@ -733,6 +1277,7 @@ async function saveCrime(event) {
 }
 
 async function activateTheme(id) {
+  if (!adminCanMutate()) return;
   try {
     await api(`/api/v1/admin/themes/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
     const response = await api('/api/v1/themes');
@@ -766,6 +1311,7 @@ async function loadTerritories({ render = true } = {}) {
 }
 
 async function applyTerritoryOwnership() {
+  if (!adminCanMutate()) return;
   const block = state.territoryCatalog.blocks.find((item) => item.id === state.selectedTerritory);
   if (!block || state.territoryBusy) return;
   const factionId = state.pendingTerritoryOwner || null;
@@ -798,10 +1344,14 @@ async function applyTerritoryOwnership() {
 }
 
 async function load() {
-  const [engine, modules, themes, crimes, ledger, events, audit, draft, releases, territories] = await Promise.all([
+  state.bootReady = false; state.bootError = ''; updateBootControls();
+  try {
+  const [engine, modules, themes, crimes, ledger, events, audit, draft, releases, territories, gameplayCatalog] = await Promise.all([
     api('/api/v1/engine'), api('/api/v1/modules'), api('/api/v1/themes'), api('/api/v1/admin/crimes'), api('/api/v1/ledger'), api('/api/v1/events'), api('/api/v1/admin/audit'), api('/api/v1/admin/draft'), api('/api/v1/admin/releases'),
     api('/api/v1/admin/territories').catch((error) => ({ __territoryError: error.message })),
+    api('/api/v1/admin/gameplay-catalog'),
   ]);
+  if (!engine || !draft?.manifest) throw new Error('Admin data is incomplete.');
   Object.assign(state, {
     engine,
     modules: modules.modules,
@@ -812,6 +1362,7 @@ async function load() {
     audit: audit.entries,
     draft,
     releases: releases.releases,
+    gameplayCatalog,
   });
   if (territories.__territoryError) state.territoryError = territories.__territoryError;
   else state.territoryCatalog = normalizeTerritoryCatalog(territories);
@@ -822,11 +1373,17 @@ async function load() {
   $('#runtimeDatabase').textContent = engine.database.toUpperCase();
   $('#runtimeRelease').textContent = `RELEASE ${engine.activeReleaseVersion}`;
   $('#runtimeMode').textContent = engine.database === 'pgsql' ? 'PRODUCTION' : 'LOCAL';
+  state.bootReady = true;
   applyLanguage();
   updatePreviewCache();
+  } catch (error) {
+    state.bootReady = false; state.bootError = error.message;
+    throw error;
+  } finally { updateBootControls(); }
 }
 
 installSectionPreviews();
+updateBootControls();
 $$('[data-preview-toggle]').forEach((button) => button.addEventListener('click', () => togglePreview(button)));
 $('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
 $('#publishButton').addEventListener('click', publishRelease);
@@ -837,6 +1394,7 @@ $('#addPageButton').addEventListener('click', addPage);
 $('#addBlockButton').addEventListener('click', addBlock);
 $('#newCrimeButton').addEventListener('click', newCrime);
 $('#crimeForm').addEventListener('submit', saveCrime);
+$('#gameplayCatalogForm').addEventListener('submit', saveGameplayCatalog);
 $('#refreshTerritoriesButton').addEventListener('click', () => loadTerritories().then(() => notify(state.language === 'ar' ? 'تم تحديث حالة الأراضي' : 'Territory state refreshed')).catch((error) => notify(error.message, true)));
 $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textContent = t('adminReady'); });
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
@@ -862,7 +1420,6 @@ window.addEventListener('message', (event) => {
 
 load().catch((error) => {
   trace('BOOT', '/admin', null, { error: error.message }, 500);
-  notify(error.message, true);
-  $('#pipelineStatus').textContent = 'API ERROR';
-  $('#pipelineStatus').className = 'status bad';
+  notify(t('adminLoadFailed'), true);
+  updateBootControls();
 });

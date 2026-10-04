@@ -9,7 +9,7 @@
       "runtime": "vercel-php@0.9.0",
       "memory": 1024,
       "maxDuration": 30,
-      "excludeFiles": "{.tools/**,.vercel/**,node_modules/**,public/**,art/**,assets/**,dist/**,lib/**,docs/**,scripts/**,engine/bin/**,engine/tests/**,engine/var/**,admin.html,admin.css,admin.js,index.html,support.js,image-slot.js,platform-runtime.js,favicon.*,README.md}"
+      "excludeFiles": "{.tools/**,.vercel/**,node_modules/**,public/**,art/**,assets/**,dist/**,lib/**,docs/**,scripts/**,engine/bin/**,engine/tests/**,engine/var/**,session-export-*.txt,session-report-*.html,zone-map-*.jpeg,build_editionone_icons.py,admin.html,admin.css,admin.js,index.html,support.js,image-slot.js,platform-runtime.js,favicon.*,README.md}"
     }
   },
   "rewrites": [
