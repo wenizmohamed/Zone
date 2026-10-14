@@ -46,6 +46,7 @@
 <link rel="stylesheet" href="./assets/zone-design.css?v=102">
 <link rel="stylesheet" href="./assets/zone-layout.css?v=101">
 <link rel="stylesheet" href="./assets/ui/home-gym.css?v=105">
+<link rel="stylesheet" href="./assets/ui/crimes.css?v=106">
 </head>
 <body>
 <x-dc>
@@ -295,38 +296,28 @@
 
       <!-- CRIMES -->
       <sc-if value="{{ is.crimes }}" hint-placeholder-val="{{ false }}">
-        <div class="zone-crime-categories zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px">
+        <section class="zone-crime-workspace">
+        <div class="zone-crime-goal zone-panel"><div><span class="zone-overline">{{ fieldGuide.eyebrow }}</span><strong>{{ fieldGuide.title }}</strong><p>{{ fieldGuide.description }}</p></div><sc-if value="{{ homeBase.showGoalProgress }}"><bdi>{{ homeBase.goal.progress }}</bdi></sc-if><button onClick="{{ crimeDesk.openGoal }}">{{ t.nav.missions }}</button></div>
+        <nav class="zone-crime-categories" aria-label="{{ crimeDesk.categoriesLabel }}">
           <sc-for list="{{ crimeCats }}" as="c" hint-placeholder-count="14">
-            <button onClick="{{ c.go }}" data-zcard="1" data-zlocked="{{ c.lockedAttr }}" style="position:relative;display:block;padding:0;border:1px solid {{ c.edge }};border-radius:6px;overflow:hidden;background:var(--deep);cursor:{{ c.cursor }};text-align:start;font:inherit;opacity:1;box-shadow:{{ c.shadow }};transition:transform .15s,box-shadow .15s" style-hover="transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.45)">
-              <span style="display:block;aspect-ratio:16/9;background:url('{{ c.img }}') center/cover;opacity:{{ c.imgOpacity }};filter:{{ c.filter }}"></span>
-              <span style="position:absolute;top:8px;inset-inline-start:8px;display:flex;gap:4px"><sc-for list="{{ c.pips }}" as="p" hint-placeholder-count="0"><span style="width:22px;height:22px;border-radius:50%;background:rgba(10,12,15,.72);border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;font-size:9px;font-weight:700;color:{{ p.c }}">{{ p.t }}</span></sc-for></span>
-              <sc-if value="{{ c.locked }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;display:grid;place-items:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--mu)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span></sc-if>
-              <span class="zone-crime-category-label" style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:linear-gradient(var(--tb1),var(--tb2));border-top:1px solid var(--border3)">
-                <span style="width:26px;height:26px;border-radius:50%;background:var(--panel);border:1px solid var(--border3);display:grid;place-items:center;flex:none"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ c.fg }}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ c.d }}"></path></svg></span>
-                <span style="flex:1;min-width:0"><span style="display:block;font-family:Oswald,Rubik,sans-serif;font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:{{ c.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</span><span style="display:block;font-size:10px;color:var(--t4)">{{ c.sub }}</span></span>
-                <bdi style="font-size:11px;font-weight:700;color:{{ c.fg }}">{{ c.right }}</bdi>
-              </span>
-              <span style="position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--track)"><span style="display:block;height:100%;width:{{ c.pct }}%;background:var(--acc)"></span></span>
-            </button>
+            <button data-crime-category="{{ c.id }}" aria-pressed="{{ c.on }}" onClick="{{ c.go }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M0 0" data-zone-path="{{ c.d }}"></path></svg><span>{{ c.name }}<small>{{ c.sub }}</small></span></button>
           </sc-for>
+        </nav>
+        <div class="zone-crime-operation">
+          <div class="zone-crime-neighborhood zone-panel"><div class="zone-crime-location"><span class="zone-overline">{{ crimeDesk.locationLabel }}</span><h2>{{ catName }}</h2><p>{{ catDesc }}</p></div><div class="zone-crime-scene" role="img" aria-label="{{ crimeDesk.sceneLabel }}"></div><div class="zone-crime-resources"><span>{{ t.nerve }} <bdi>{{ crimeDesk.nerve }}</bdi><small>{{ crimeDesk.regeneration }}</small></span><span>{{ t.crimeXp }} <bdi>{{ crimeXp }}</bdi><small>{{ crimeDesk.xpNote }}</small></span></div></div>
+          <section class="zone-crime-plan zone-panel" aria-label="{{ crimeDesk.planLabel }}">
+            <sc-if value="{{ crimeDesk.hasSelection }}"><span class="zone-overline">{{ crimeDesk.planLabel }}</span><h2>{{ crimeDesk.selected.name }}</h2><p>{{ crimeDesk.selected.sub }}</p><dl><div><dt>{{ t.nerve }}</dt><dd><bdi>{{ crimeDesk.selected.nerve }}</bdi></dd></div><div><dt>{{ t.level }}</dt><dd><bdi>{{ crimeDesk.selected.level }}</bdi></dd></div><div><dt>{{ crimeDesk.rewardLabel }}</dt><dd><bdi>{{ crimeDesk.selected.reward }}</bdi></dd></div><div><dt>{{ crimeDesk.estimateLabel }}</dt><dd><bdi>{{ crimeDesk.selected.pctText }}</bdi></dd></div></dl><p class="zone-crime-risk">{{ crimeDesk.selected.risk }}</p><p class="zone-crime-uncertainty">{{ crimeDesk.uncertainty }}</p><div class="zone-crime-readiness" role="status" aria-live="polite">{{ crimeDesk.selected.reason }}</div><button class="zone-action-primary" data-crime-attempt="{{ crimeDesk.selected.id }}" onClick="{{ crimeDesk.selected.commit }}" disabled="{{ crimeDesk.selected.disabled }}">{{ crimeDesk.selected.label }}</button></sc-if>
+            <sc-if value="{{ !crimeDesk.hasSelection }}"><h2>{{ crimeDesk.empty }}</h2><p>{{ crimeDesk.emptyNote }}</p></sc-if>
+          </section>
         </div>
-        <div class="zone-responsive-table zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
-          <div class="zone-crime-intro" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;border-bottom:1px solid var(--line);color:var(--t4);font-size:11px"><span><strong style="color:var(--t1);font-family:Oswald,Rubik,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin-inline-end:8px">{{ catName }}</strong>{{ catDesc }}</span><span style="white-space:nowrap">{{ t.crimeXp }} <bdi style="color:var(--accText);font-weight:600">{{ crimeXp }}</bdi> · {{ t.nerve }} <bdi style="color:var(--bad2);font-weight:600">{{ nerveNow }}</bdi></span></div>
-          <div class="zone-table-header zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2)"><span>{{ t.crime }}</span><span>{{ t.skill }}</span><span>{{ t.nerve }}</span><span>{{ t.success }}</span><span></span></div>
+        <section class="zone-crime-opportunities zone-panel" aria-label="{{ crimeDesk.opportunitiesLabel }}"><div class="zone-panel-heading">{{ crimeDesk.opportunitiesLabel }}</div>
           <sc-for list="{{ crimes }}" as="c" hint-placeholder-count="5">
-            <div class="zone-crime-row zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 60px 140px 90px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);background:{{ c.bg }}">
-              <div style="min-width:0"><div style="color:var(--t1);font-weight:500">{{ c.name }}</div><div style="color:var(--mu);font-size:11px">{{ c.sub }}</div></div>
-              <div style="display:flex;flex-direction:column;gap:2px"><div style="height:6px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ c.skill }}%;background:var(--link)"></div></div><bdi style="font-size:10px;color:var(--mu)">{{ c.skill }}/100</bdi></div>
-              <bdi style="color:var(--bad2);font-weight:600">{{ c.nerve }}</bdi>
-              <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ c.pct }}%;background:{{ c.barColor }}"></div></div><bdi style="width:34px;color:var(--t2)">{{ c.pctText }}</bdi></div>
-              <button class="zone-crime-commit zone-action-primary" onClick="{{ c.commit }}" disabled="{{ c.disabled }}" data-zbusy="{{ c.busy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ c.label }}</button>
-            </div>
+            <button class="zone-crime-choice" data-crime-select="{{ c.id }}" aria-pressed="{{ c.selected }}" onClick="{{ c.select }}"><span><strong>{{ c.name }}</strong><small>{{ c.sub }}</small><small>{{ c.reason }}</small></span><span><bdi>{{ c.nerve }}</bdi> {{ t.nerve }}<small><bdi>{{ c.reward }}</bdi></small><small>{{ t.skill }} <bdi>{{ c.skill }}/100</bdi></small></span></button>
           </sc-for>
-        </div>
-        <div>
-          <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.crimeLog }}</div>
-          <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px"><sc-for list="{{ crimeLog }}" as="l" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:6px 10px;border-bottom:1px solid var(--line)"><bdi style="color:var(--mu2);font-size:11px">{{ l.time }}</bdi><span style="color:{{ l.color }}">{{ l.text }}</span></div></sc-for></div>
-        </div>
+        </section>
+        <div class="zone-crime-receipt zone-panel" role="status" aria-live="polite"><strong>{{ crimeDesk.receiptLabel }}</strong><p>{{ crimeDesk.receipt }}</p><sc-if value="{{ crimeDesk.recovery }}"><button onClick="{{ crimeDesk.recover }}">{{ crimeDesk.recovery }}</button></sc-if></div>
+        <details class="zone-crime-history zone-panel"><summary>{{ t.crimeLog }}</summary><sc-for list="{{ crimeLog }}" as="l"><p><bdi>{{ l.time }}</bdi> {{ l.text }}</p></sc-for></details>
+        </section>
       </sc-if>
 
       <!-- GYM -->
@@ -834,6 +825,7 @@ function applyPublishedCrimes(data) {
     successBasisPoints: Number.isFinite(Number(crime.success_basis_points)) ? Number(crime.success_basis_points) : (Number(crime.successRate) || 0) * 100,
     hasFailureRule: crime.failure != null,
     pay: [Number(crime.cash_min) || 0, Number(crime.cash_max) || 0], xp: Number(crime.xp_reward) || 0,
+    levelRequired: Number(crime.level_required) || 1, crimeXpRequired: Math.max(0, Number(crime.crime_xp_required) || 0),
     fail: crime.failure ?? 'none', mins: Number(crime.penalty_minutes) || 0, serverManaged: true,
     name: { en: String(crime.name_en || crime.id), ar: String(crime.name_ar || crime.name_en || crime.id) },
     category: crime.category || BASE_CRIME_CATEGORIES[crime.id] || 'search',
@@ -1594,6 +1586,23 @@ class Component extends DCLogic {
   }
   crimeName(c, t) { return c.name?.[this.state.lang] || t.cr[c.id]?.[0] || c.id; }
   crimeSub(c, t) { return c.description?.[this.state.lang] || t.cr[c.id]?.[1] || ''; }
+  crimeReason(c) {
+    const ar = this.state.lang === 'ar', say = (en, arabic) => ar ? arabic : en;
+    if (!screenEngineAvailable('crimes')) return say('Crime system is unavailable.', 'نظام الجرائم غير متاح.');
+    if (this.runtimeConnection === 'offline' || this.gameplayError) return say('Reconnect to use your saved character.', 'أعد الاتصال للعب بشخصيتك المحفوظة.');
+    if (IS_PREVIEW || !this.gameplayReady) return say('Waiting for saved player data.', 'بانتظار بيانات اللاعب المحفوظة.');
+    if (Date.now() < this.p.jailUntil) return say('You are in jail. Review your release options.', 'أنت في السجن. راجع خيارات الإفراج.');
+    if (Date.now() < this.p.hospUntil) return say('Recover in hospital before returning.', 'تعافَ في المستشفى قبل العودة.');
+    if (this.p.travel?.status === 'traveling') return say('Available after your arrival is confirmed.', 'متاح بعد تأكيد وصولك.');
+    if (this.state.busy || this.gameplayBusy || this.moduleBusy) return say('Waiting for the current action to finish.', 'بانتظار انتهاء الإجراء الحالي.');
+    if (this.p.level < (c.levelRequired || 1)) return say('Requires level ', 'يتطلب المستوى ') + (c.levelRequired || 1);
+    const required = c.crimeXpRequired ?? CATS.find(category => category.id === this.state.cat)?.req ?? 0;
+    if (this.p.crimeXp < required) return say('Requires crime XP: ', 'يتطلب خبرة جريمة: ') + required;
+    const cooldown = Math.max(0, Math.ceil((Number(this.cooldowns?.actions?.crime?.availableAtEpoch || 0) * 1000 - Date.now()) / 1000));
+    if (cooldown) return say('Cooldown: ', 'الانتظار: ') + mmss(cooldown);
+    if (this.cur('nerve') < c.nerve) return say('Nerve shortfall: ', 'الجرأة الناقصة: ') + (c.nerve - this.cur('nerve'));
+    return '';
+  }
   jailMs(mins) { return mins * 60000 / this.scale * (this.p.eduDone.law ? 0.85 : 1); }
   hospMs(mins) { return mins * 60000 / this.scale * (this.p.fac.ups.hospTime ? 0.8 : 1); }
   commit(c, t) { return this.commitManaged(c, t); }
@@ -1606,6 +1615,7 @@ class Component extends DCLogic {
     const name = this.crimeName(c, t);
     this.applyServerPlayer(outcome.player);
     await this.loadGameplay();
+    this.setState({ crimeReceipt: { id: c.id, success: outcome.success, reward: outcome.reward, cost: outcome.cost, penalty: outcome.penalty, loot: outcome.loot }, crimeRequestError: null });
     this.flash('lastCrime', { id: c.id, ok: Boolean(outcome.success) });
     if (outcome.success) {
       const cash = Number(outcome.reward?.cash || 0), xp = Number(outcome.reward?.xp || 0);
@@ -2340,19 +2350,20 @@ class Component extends DCLogic {
       statusRows: [{ k: t.status, v: jailed ? t.jail : hosp ? t.hospital : t.okay, color: jailed || hosp ? 'var(--bad)' : 'var(--acc)' }, ...(this.serverPlayer ? [{ k: lang === 'ar' ? 'خبرة الأنشطة المحلية' : 'Local activity XP', v: num(p.localXp || 0), color: 'var(--t2)' }] : []), { k: t.battleScore, v: num(totalStats), color: 'var(--t2)' }, { k: t.crimeXpLbl, v: num(p.crimeXp), color: 'var(--t2)' }, { k: t.respectK, v: num(p.fac.respect), color: 'var(--t2)' }, { k: t.xp, v: num(Math.max(0, (this.serverPlayer ? 50 * p.level * (p.level + 1) : p.level * 100) - p.xp)), color: 'var(--t2)' }, { k: t.property, v: t.props[p.prop], color: 'var(--t2)' }, { k: t.job, v: t.jobNames[p.job], color: 'var(--t2)' }],
       fac: { name: facName, enemy, rank: 'Diamond II', warPct: 58, warLeft: mmss(Math.max(0, this.demoWarEnd - now)), chain, chainState: chainActive ? t.active : t.idle, chainColor: chainActive ? 'var(--acc)' : 'var(--mu)', nextMs: ms, chainLeft: chainActive ? mmss(300000 - (now - p.fac.chainAt)) : '--:--', msPct: Math.round((chain - prevMs) / (ms - prevMs) * 100) },
       goAttack: () => this.go('attack'),
-      crimeCats: CATS.map(c => { const list = CRIMES[c.id] || []; const locked = p.crimeXp < c.req || !list.length; const on = c.id === this.state.cat;
+      crimeCats: CATS.map(c => { const list = CRIMES[c.id] || []; const req = list.length ? Math.min(...list.map(crime => crime.crimeXpRequired ?? c.req)) : c.req; const locked = p.crimeXp < req || !list.length; const on = c.id === this.state.cat;
         const skills = list.map(x => p.skill[x.id] || 0); const avg = skills.length ? skills.reduce((a, b) => a + b, 0) / skills.length : 0; const done = skills.filter(s => s >= 100).length;
         const ICONS = { search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM16 16l5 5', boot: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', graf: 'M4 20l4-1 10-10-3-3L5 16zM14 6l3 3M17 3l4 4', shop: 'M6 6h15l-1.5 9h-12zM6 6L5 3H2M9 21a1 1 0 1 0 0-2M18 21a1 1 0 1 0 0-2', pick: 'M20 12V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4M16 12h6', skim: 'M2 8h20v10H2zM2 12h20M6 16h4', burg: 'M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6', hustle: 'M4 6h16v12H4zM8 6V4h8v2M4 12h16', disp: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6', crack: 'M4 4h16v12H4zM8 20h8M12 16v4M8 9l2 2-2 2M12 13h4', forge: 'M12 19l7-7 3 3-7 7-3-3zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5zM2 2l7.586 7.586', scam: 'M4 4h16v16H4zM4 9h16M8 13h8M8 16h5', counter: 'M2 6h20v12H2zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 12h.01M18 12h.01', arson: 'M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-6 1 1 2 2 3 3 0-3-1-5 0-8z' };
         const PIPS = { search: [{ t: '$', c: 'var(--money)' }, { t: '+', c: 'var(--acc)' }], shop: [{ t: '◉', c: '#e05a4a' }, { t: '◉', c: '#e05a4a' }], pick: [{ t: String(list.length), c: 'var(--t1)' }], boot: [{ t: '♫', c: '#7fb0e0' }], graf: [{ t: '7', c: 'var(--gold)' }], arson: [{ t: '?', c: 'var(--t1)' }] };
-        return { name: t.cats[c.id], sub: locked ? fmt(t.catReq, { n: c.req }) : done + '/' + list.length + ' ' + t.mastered, right: locked ? '' : Math.round(avg) + '%', locked, on,
+        return { name: t.cats[c.id], sub: !list.length ? (lang === 'ar' ? 'لا توجد فرص منشورة' : 'No published opportunities') : locked ? fmt(t.catReq, { n: req }) : done + '/' + list.length + ' ' + t.mastered, right: locked ? '' : Math.round(avg) + '%', locked, on,
           img: 'art/' + (locked ? 'locked' : c.id) + '.jpg', imgOpacity: locked ? .35 : on ? 1 : .82, filter: locked ? 'grayscale(1)' : on ? 'none' : 'saturate(.8)',
           edge: on ? 'var(--acc)' : 'var(--border3)', shadow: on ? '0 0 0 1px var(--acc), 0 6px 18px rgba(0,0,0,.4)' : '0 2px 8px rgba(0,0,0,.25)',
           fg: locked ? 'var(--t4)' : 'var(--t1)', d: ICONS[c.id] || ICONS.search, pips: locked ? [] : (PIPS[c.id] || []), pct: Math.round(avg),
           lockedAttr: locked ? '1' : null, cursor: locked ? 'not-allowed' : 'pointer',
-          go: () => { if (!locked) this.setState({ cat: c.id }); } }; }),
+          id: c.id, go: () => this.setState({ cat: c.id, crimeSelection: null }) }; }),
       catName: t.cats[this.state.cat],
       catDesc: catLocked ? t.catDesc.locked : t.catDesc[this.state.cat], crimeXp: num(p.crimeXp), nerveNow,
-      crimes: (CRIMES[this.state.cat] || []).map((c, i) => { const pct = this.pct(c); return { name: this.crimeName(c, t), sub: this.crimeSub(c, t), skill: p.skill[c.id] || 0, nerve: c.nerve, pct: Math.round(pct), pctText: Math.round(pct) + '%', barColor: pct > 75 ? 'var(--acc)' : pct > 50 ? 'var(--gold)' : '#e05a4a', bg: this.state.lastCrime && this.state.lastCrime.id === c.id ? (this.state.lastCrime.ok ? 'rgba(163,217,0,.18)' : 'rgba(224,90,74,.2)') : (i % 2 ? 'var(--z1)' : 'var(--z2)'), disabled: catLocked || nerveNow < c.nerve || !!this.state.busy, busy: this.state.busy === 'cr' + c.id ? 1 : null, label: this.state.busy === 'cr' + c.id ? '…' : t.commit, commit: () => this.resolve('cr' + c.id, 520, tt => this.commit(c, tt)) }; }),
+      crimes: (CRIMES[this.state.cat] || []).map(c => { const reason = this.crimeReason(c), pct = this.pct(c); return { id: c.id, name: this.crimeName(c, t), sub: this.crimeSub(c, t), skill: p.skill[c.id] || 0, nerve: c.nerve, level: c.levelRequired || 1, reward: money(c.pay[0]) + ' - ' + money(c.pay[1]), pct: Math.round(pct), pctText: Math.round(pct) + '%', reason, risk: c.fail === 'none' || !c.mins ? (lang === 'ar' ? 'لا توجد عقوبة مهيأة لهذه الجريمة.' : 'No configured penalty for this crime.') : (lang === 'ar' ? 'الفشل قد يسبب: ' : 'Failure may cause: ') + (c.fail === 'hosp' ? t.hospital : t.jail) + ' · ' + fmt(t.resMin, { n: c.mins }), disabled: !!reason, busy: this.state.busy === 'cr' + c.id ? 1 : null, label: this.state.busy === 'cr' + c.id ? (lang === 'ar' ? 'بانتظار النتيجة...' : 'Awaiting result...') : t.commit,
+        select: () => this.setState({ crimeSelection: c.id }), commit: () => { const blocked = this.crimeReason(c); if (blocked) return this.toast(blocked, true); this.setState({ crimeRequestError: null }); return this.resolve('cr' + c.id, 520, async tt => { try { await this.commit(c, tt); } catch (error) { this.setState({ crimeRequestError: this.serverError(error) }); throw error; } }); } }; }),
       crimeLog: p.log.filter(l => l.k.startsWith('crime')).slice(0, 6).map(logMap),
       trainingBoard: { title: lang === 'ar' ? 'لوحة التدريب' : 'Training board', context: lang === 'ar' ? 'اختر صفة للتدريب. يُخصم مقدار الطاقة المعروض لكل جلسة، والسعادة تؤثر في المكسب.' : 'Choose a stat to train. Each session spends the listed energy; happiness affects the gain.', statLabel: lang === 'ar' ? 'التمرين' : 'Exercise', currentLabel: lang === 'ar' ? 'الصفة الحالية' : 'Current stat', sessionLabel: lang === 'ar' ? 'جلسة واحدة' : 'One session', shareLabel: lang === 'ar' ? 'من المجموع' : 'of total', estimateLabel: lang === 'ar' ? 'المكسب المتوقع' : 'Estimated gain', happyLabel: t.happy, happy: num(this.cur('happy')) + ' / ' + num(this.maxOf('happy')), reason: recordReason || (energyNow < this.gymEnergyCost() ? (lang === 'ar' ? 'الطاقة الناقصة: ' : 'Energy shortfall: ') + num(this.gymEnergyCost() - energyNow) : ''), joinLabel: lang === 'ar' ? 'رسم الاشتراك' : 'Join fee', next: nextGym < 0 ? (lang === 'ar' ? 'كل حدود خبرة الأندية مفتوحة؛ رسم الاشتراك يُراجع لكل نادٍ.' : 'All gym XP thresholds unlocked; membership fees still apply.') : t.gyms[nextGym] + ' · ' + num(GYMS[nextGym].xp - p.gymXp) + (lang === 'ar' ? ' خبرة نادي متبقية لفتح الاشتراك' : ' Gym XP to unlock membership'), hasEvents: !!trainingEvents.length, events: trainingEvents, resultLabel: lang === 'ar' ? 'آخر نتائج التدريب المحفوظة' : 'Latest saved training results' },
       employment: { title: lang === 'ar' ? 'سجل الوظائف' : 'Employment records', hasEvents: !!employmentEvents.length, events: employmentEvents, resultLabel: lang === 'ar' ? 'آخر نتائج العمل المحفوظة' : 'Latest saved employment results' },
@@ -2527,6 +2538,20 @@ class Component extends DCLogic {
       showGoalProgress: Boolean(canGuide && currentGoal && (!readyReward || readyReward.id === currentGoal.missionId)),
       resources: bars.map(resource => { const destination = ({ energy: 'gym', nerve: 'crimes', happy: 'properties', life: 'hospital' })[resource.id]; return { ...resource, destination: t.nav[destination], disabled: !SCREENS.includes(destination), open: () => this.go(destination) }; }),
       equipment: { id: ownsEquipped ? p.equip : 'fists', hasImage: Boolean(ownsEquipped && this.itemThumbnail(p.equip)), image: ownsEquipped ? this.itemThumbnail(p.equip) : '', name: ownsEquipped ? t.items[p.equip] : t.unarmed, detail: ownsEquipped ? (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + equippedItem.mult : (lang === 'ar' ? 'لا يوجد سلاح مجهز. افحص مخزونك لتجهيز سلاح تملكه.' : 'No weapon equipped. Inspect your inventory to equip one you own.') }
+    };
+    const selectedCrime = view.crimes.find(crime => crime.id === this.state.crimeSelection) || view.crimes.find(crime => !crime.disabled) || view.crimes[0];
+    view.crimes.forEach(crime => { crime.selected = crime.id === selectedCrime?.id; });
+    const receipt = this.state.crimeReceipt, receiptName = receipt ? this.crimeName(Object.values(CRIMES).flat().find(crime => crime.id === receipt.id) || { id: receipt.id }, t) : '';
+    view.crimeDesk = {
+      categoriesLabel: lang === 'ar' ? 'أنواع الأنشطة الإجرامية' : 'Crime activities', locationLabel: lang === 'ar' ? 'شوارع الحي' : 'Neighborhood operations', sceneLabel: lang === 'ar' ? 'حي صناعي يضم متجراً ومدخل مترو وزقاق خدمات' : 'Industrial neighborhood with a shop, metro access and service alley',
+      planLabel: lang === 'ar' ? 'خطط لمحاولتك' : 'Plan your attempt', opportunitiesLabel: lang === 'ar' ? 'اختر فرصة في هذه الفئة' : 'Choose an opportunity in this activity', rewardLabel: lang === 'ar' ? 'نقد عند النجاح' : 'Cash on success', estimateLabel: lang === 'ar' ? 'تقدير النجاح الحالي' : 'Current success estimate',
+      uncertainty: lang === 'ar' ? 'هذا تقدير، وليس ضماناً. الخادم يحدد النتيجة والمكافأة عند التنفيذ. تُستهلك الجرأة حتى عند الفشل.' : 'An estimate, not a guarantee. The server resolves the outcome and reward when you act. Nerve is spent even on failure.',
+      selected: selectedCrime ? { ...selectedCrime, reason: selectedCrime.reason || (lang === 'ar' ? 'جاهز للمحاولة. سيُراجع الخادم الشروط.' : 'Ready to attempt. The server rechecks eligibility.') } : null, hasSelection: !!selectedCrime,
+      nerve: bars.find(bar => bar.id === 'nerve').text, regeneration: bars.find(bar => bar.id === 'nerve').timer, xpNote: lang === 'ar' ? 'تفتح خبرة الجريمة أنشطة جديدة' : 'Crime XP unlocks new activities',
+      empty: lang === 'ar' ? 'لا توجد فرص منشورة هنا' : 'No published opportunities here', emptyNote: lang === 'ar' ? 'استعرض فئة أخرى. لا تُستهلك الجرأة أثناء الاستعراض.' : 'Browse another activity. Browsing never spends nerve.', openGoal: () => this.go('missions'),
+      receiptLabel: lang === 'ar' ? 'نتيجة المحاولة' : 'Attempt result',
+      receipt: this.state.crimeRequestError || (receipt ? receiptName + ' · ' + (receipt.success ? money(Number(receipt.reward?.cash || 0)) + ' · ' + fmt(t.resXp, { n: Number(receipt.reward?.xp || 0) }) : t.noCrimeReward) + ' · ' + (lang === 'ar' ? 'الجرأة المستهلكة: ' : 'Nerve spent: ') + Number(receipt.cost?.nerve || 0) + (receipt.penalty?.minutes > 0 ? ' · ' + (receipt.penalty.type === 'hosp' ? t.hospital : t.jail) + ' · ' + fmt(t.resMin, { n: receipt.penalty.minutes }) : '') + (receipt.loot ? ' · ' + (t.items[receipt.loot.itemId] || receipt.loot.itemId) + ' ×' + receipt.loot.quantity : '') : view.crimeLog[0]?.text || (lang === 'ar' ? 'لم تُنفذ محاولة بعد. اختر فرصة وراجع التكلفة والمخاطر.' : 'No attempt yet. Choose an opportunity and review its cost and risk.')),
+      recovery: jailed ? t.nav.jail : hosp ? t.nav.hospital : view.connectionRecovery.visible ? view.connectionRecovery.label : '', recover: jailed ? () => this.go('jail') : hosp ? () => this.go('hospital') : view.connectionRecovery.retry,
     };
     const selectedStation = ['str', 'def', 'spd', 'dex'].includes(this.state.gymStation) ? this.state.gymStation : 'str';
     view.stats = view.stats.map((stat, index) => { const id = ['str', 'def', 'spd', 'dex'][index]; return { ...stat, id, selected: id === selectedStation, selectionMark: id === selectedStation ? '✓' : '', select: () => this.setState({ gymStation: id }) }; });

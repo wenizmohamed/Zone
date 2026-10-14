@@ -1,0 +1,51 @@
+/* Crimes only. Keep the accepted shared shell and other activities unchanged. */
+.zone-crime-workspace { display:grid; gap:10px; min-width:0; }
+.zone-crime-workspace h2 { margin:0; font:500 21px Oswald,"Noto Sans Arabic",Rubik,sans-serif; color:var(--t1); }
+.zone-crime-workspace p { margin:6px 0; color:var(--t3); line-height:1.6; }
+.zone-crime-workspace button { font:inherit; cursor:pointer; }
+.zone-crime-workspace button:focus-visible { outline:2px solid var(--acc); outline-offset:3px; }
+.zone-crime-workspace button:disabled { cursor:not-allowed; opacity:.65; }
+.zone-crime-goal { display:flex; align-items:center; gap:12px; padding:10px 12px; }
+.zone-crime-goal > div { flex:1; min-width:0; }
+.zone-crime-goal strong { display:block; color:var(--t1); }
+.zone-crime-goal p { font-size:11px; margin:3px 0 0; }
+.zone-crime-categories { display:flex; gap:6px; overflow-x:auto; padding:3px 2px 8px; scrollbar-width:thin; }
+.zone-crime-categories button { display:flex; align-items:center; gap:8px; text-align:start; flex:0 0 auto; color:var(--t3); border:1px solid var(--border); border-radius:4px; padding:7px 10px; background:var(--panel); min-height:48px; }
+.zone-crime-categories small { display:block; font-size:10px; color:var(--t4); }
+.zone-crime-categories button[aria-pressed="true"] { color:var(--accText); border-color:var(--acc); background:var(--activebg); }
+.zone-crime-operation { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:10px; align-items:start; }
+.zone-crime-location { padding:10px 12px; }
+.zone-crime-location p { font-size:12px; }
+.zone-crime-scene { aspect-ratio:16/9; background:var(--panel2) url('../../art/zone-crime-neighborhood-v106.webp') 50% 55% / contain no-repeat; }
+.zone-crime-resources { display:flex; gap:14px; padding:10px 12px; border-top:1px solid var(--border); }
+.zone-crime-resources > span { flex:1; }
+.zone-crime-resources bdi { display:block; color:var(--t1); font-size:18px; }
+.zone-crime-resources small { display:block; color:var(--t4); font-size:11px; }
+.zone-crime-plan { padding:12px; }
+.zone-crime-plan > button { width:100%; min-height:44px; margin-top:8px; }
+.zone-crime-plan dl { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+.zone-crime-plan dl > div { border-bottom:1px solid var(--line); padding-bottom:6px; min-width:0; }
+.zone-crime-plan dt { color:var(--t4); font-size:11px; }
+.zone-crime-plan dd { color:var(--t1); margin:3px 0 0; font-weight:600; }
+.zone-crime-plan .zone-crime-risk { color:var(--gold); font-size:12px; }
+.zone-crime-plan .zone-crime-uncertainty { font-size:11px; }
+.zone-crime-readiness { border-inline-start:2px solid var(--acc); padding:6px 10px; font-size:12px; color:var(--t2); }
+.zone-crime-choice { display:flex; justify-content:space-between; gap:12px; width:100%; padding:10px 12px; border:0; border-bottom:1px solid var(--line); text-align:start; background:var(--panel); color:var(--t2); min-height:56px; }
+.zone-crime-choice > span { min-width:0; }
+.zone-crime-choice > span:last-child { text-align:end; flex:none; }
+.zone-crime-choice strong { display:block; color:var(--t1); }
+.zone-crime-choice small { display:block; color:var(--t4); font-size:11px; line-height:1.6; }
+.zone-crime-choice[aria-pressed="true"] { background:var(--activebg); box-shadow:inset 0 0 0 1px var(--acc); }
+.zone-crime-receipt,.zone-crime-history { padding:10px 12px; }
+.zone-crime-receipt strong { color:var(--t1); }
+.zone-crime-history summary { cursor:pointer; color:var(--t2); }
+@media (max-width:650px) {
+  .zone-crime-operation { grid-template-columns:minmax(0,1fr); }
+  .zone-crime-plan { order:0; }
+  .zone-crime-neighborhood { order:1; }
+  .zone-crime-goal { flex-wrap:wrap; }
+  .zone-crime-goal > div { flex-basis:100%; }
+  .zone-crime-location { padding:8px 12px; }
+  .zone-crime-plan { padding:10px 12px; }
+  .zone-crime-choice { gap:8px; padding:10px; }
+}
