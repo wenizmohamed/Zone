@@ -15,15 +15,16 @@ test('candidate upload excludes private sessions, research, artifacts and actual
   const config = JSON.parse(readFileSync(new URL('vercel.json', root), 'utf8'));
   assert.match(config.functions['api/index.php'].excludeFiles, /engine\/\{bin,tests,var,deploy\}/);
   assert.equal(existsSync(new URL('public/engine/deploy', root)), false);
+  assert.ok(ignore.includes('art/source/launch106-crimes/'));
 });
 test('generated public output excludes conversion tools, raw research, sessions and proof artifacts', () => {
-  for (const path of ['assets/weapons/source-tools', 'assets/weapons/sources/v99', 'art/source/launch105-environments', 'engine/var', 'artifacts', '.tools']) assert.equal(existsSync(new URL('public/' + path, root)), false, path);
+  for (const path of ['assets/weapons/source-tools', 'assets/weapons/sources/v99', 'art/source/launch105-environments', 'art/source/launch106-crimes', 'engine/var', 'artifacts', '.tools']) assert.equal(existsSync(new URL('public/' + path, root)), false, path);
   // The tools have not been deleted from the full owner source checkout.
   assert.ok(existsSync(new URL('assets/weapons/source-tools/geometry-audit.mjs', root)));
 });
 
-test('Home and Gym ship only inspected optimized derivatives from the committed asset sources', () => {
-  for (const path of ['art/zone-gym-interior-v105.webp', 'art/zone-hideout-v105.webp']) {
+test('Home, Gym and Crimes ship only inspected optimized derivatives from the committed asset sources', () => {
+  for (const path of ['art/zone-gym-interior-v105.webp', 'art/zone-hideout-v105.webp', 'art/zone-crime-neighborhood-v106.webp']) {
     const source = readFileSync(new URL(path, root));
     assert.equal(sha(source), sha(readFileSync(new URL('public/' + path, root))), path);
     assert.ok(source.length < 250000, path + ' bounded browser payload');

@@ -8,7 +8,7 @@ const runtimeFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admi
 const runtimeDirectories = ['art', 'assets', 'dist', 'lib'];
 // Conversion tools remain in the full owner source checkout and cloud build,
 // but are not browser assets. Raw acquisition archives are private research.
-const privateAssetRoots = ['assets/weapons/source-tools', 'assets/weapons/sources/v99', 'art/source/launch105-environments'];
+const privateAssetRoots = ['assets/weapons/source-tools', 'assets/weapons/sources/v99', 'art/source/launch105-environments', 'art/source/launch106-crimes'];
 const publicAsset = (source) => {
   const path = relative(root, source).replaceAll('\\', '/');
   return !privateAssetRoots.some(privateRoot => path === privateRoot || path.startsWith(privateRoot + '/'));
