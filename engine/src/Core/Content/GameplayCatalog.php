@@ -74,7 +74,8 @@ final class GameplayCatalog
                 $rule = $schema['fields'][$field] ?? throw new InvalidArgumentException('Catalog field is not editable: ' . $field);
                 if (($rule['editable'] ?? true) === false) throw new InvalidArgumentException('This field cannot be changed after creation: ' . $field);
                 $optionalPresentation = in_array($field, ['name', 'description', 'image'], true) || ($field === 'model' && $category === 'items' && ($previous['type'] ?? '') === 'weapon');
-                if (!$optionalPresentation && !array_key_exists($field, $previous)) throw new InvalidArgumentException('This field does not apply to the selected entry.');
+                $applicableItemField = $category === 'items' && in_array($field, $schema['variants'][$previous['type'] ?? ''] ?? [], true);
+                if (!$optionalPresentation && !$applicableItemField && !array_key_exists($field, $previous)) throw new InvalidArgumentException('This field does not apply to the selected entry.');
                 $rows[$key][$field] = GameplayDefinitionValidator::value($field, $value, $rule);
             }
             $rows[$key] = GameplayDefinitionValidator::definition($category, $rows[$key]);

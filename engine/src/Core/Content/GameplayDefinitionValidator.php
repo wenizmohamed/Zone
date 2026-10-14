@@ -13,7 +13,7 @@ final class GameplayDefinitionValidator
         $money = $int(0, 2_000_000_000);
         $enum = static fn (array $values): array => ['type' => 'enum', 'values' => $values, 'editable' => false];
         $definitions = [
-            'items' => ['key', ['type' => $enum(['weapon', 'armor', 'medical', 'booster', 'material']), 'price' => $money, 'mult' => ['type' => 'number', 'min' => .1, 'max' => 20], 'red' => ['type' => 'number', 'min' => 0, 'max' => .8], 'life' => $int(0, 100000), 'nerve' => $int(0, 1000)], ['type', 'price']],
+            'items' => ['key', ['type' => $enum(['weapon', 'armor', 'medical', 'booster', 'material']), 'price' => $money, 'mult' => ['type' => 'number', 'min' => .1, 'max' => 20], 'red' => ['type' => 'number', 'min' => 0, 'max' => .95], 'life' => $int(0, 100000), 'nerve' => $int(0, 1000), 'energy' => $int(0, 1000), 'happy' => $int(0, 100000)], ['type', 'price']],
             'jobs' => ['id', ['pay' => $money, 'energy' => $int(1, 1000), 'lvl' => $int(1, 100)], ['pay', 'energy', 'lvl']],
             'gyms' => ['index', ['e' => $int(1, 1000), 'xp' => $int(0, 1000000000), 'cost' => $money], ['e', 'xp', 'cost']],
             'courses' => ['id', ['cost' => $money, 'mins' => $int(1, 525600)], ['cost', 'mins']],
@@ -30,8 +30,8 @@ final class GameplayDefinitionValidator
                 'image' => ['type' => 'asset', 'maxLength' => 240, 'optional' => true],
             ]];
         }
-        $result['items']['variants'] = ['weapon' => ['price', 'mult'], 'armor' => ['price', 'red'], 'medical' => ['price', 'life', 'nerve'], 'booster' => ['price', 'life', 'nerve'], 'material' => ['price']];
-        $result['items']['createTypes'] = ['weapon', 'medical', 'booster', 'material'];
+        $result['items']['variants'] = ['weapon' => ['price', 'mult'], 'armor' => ['price', 'red'], 'medical' => ['price', 'life', 'nerve', 'energy', 'happy'], 'booster' => ['price', 'life', 'nerve', 'energy', 'happy'], 'material' => ['price']];
+        $result['items']['createTypes'] = ['weapon', 'armor', 'medical', 'booster', 'material'];
         $baseCatalog = json_decode((string) file_get_contents(ZONE_ENGINE_ROOT . '/data/gameplay-catalog.json'), true, 64, JSON_THROW_ON_ERROR);
         $result['items']['fields']['model'] = ['type' => 'enum', 'optional' => true, 'values' => ['', ...array_keys(array_filter($baseCatalog['items'], static fn (array $item): bool => $item['type'] === 'weapon'))]];
         return $result;
@@ -83,13 +83,13 @@ final class GameplayDefinitionValidator
             if (!array_key_exists($field, $normalized)) throw new InvalidArgumentException('Missing required definition field: ' . $field);
         }
         if ($category === 'items') {
-            if ($creating && !in_array($normalized['type'], $schema['createTypes'], true)) throw new InvalidArgumentException('New armor is not supported by the current combat rules.');
+            if ($creating && !in_array($normalized['type'], $schema['createTypes'], true)) throw new InvalidArgumentException('This item type cannot be created.');
             $allowed = [...$schema['variants'][$normalized['type']], 'type', 'name', 'description', 'image', ...($normalized['type'] === 'weapon' ? ['model'] : [])];
             if (array_diff(array_keys($normalized), $allowed)) throw new InvalidArgumentException('Item fields do not apply to its type.');
             foreach (match ($normalized['type']) { 'weapon' => ['mult'], 'armor' => ['red'], default => [] } as $field) {
                 if (!isset($normalized[$field])) throw new InvalidArgumentException('Missing required item field: ' . $field);
             }
-            if (in_array($normalized['type'], ['medical', 'booster'], true) && ($normalized['life'] ?? 0) + ($normalized['nerve'] ?? 0) < 1) throw new InvalidArgumentException('Consumable items must restore life or nerve.');
+            if (in_array($normalized['type'], ['medical', 'booster'], true) && ($normalized['life'] ?? 0) + ($normalized['nerve'] ?? 0) + ($normalized['energy'] ?? 0) + ($normalized['happy'] ?? 0) < 1) throw new InvalidArgumentException('Consumable items must restore life, nerve, energy or happiness.');
             if ($creating && $normalized['price'] < 1) throw new InvalidArgumentException('New item price must be positive.');
         }
         return $normalized;
