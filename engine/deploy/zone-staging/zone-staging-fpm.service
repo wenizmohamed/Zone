@@ -1,0 +1,50 @@
+# PREPARATION ONLY. Separate service/config from distro php8.5-fpm.service.
+[Unit]
+Description=ZONE isolated staging PHP 8.5 FPM
+After=network.target postgresql.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
+ConditionPathExists=/etc/zone-staging/engine.env
+ConditionPathExists=/srv/zone-staging/current/engine/router.php
+
+[Service]
+Type=simple
+# Root master creates the restricted socket and drops all workers to the pool
+# user. No application request executes as root.
+EnvironmentFile=/etc/zone-staging/engine.env
+ExecStartPre=/usr/sbin/php-fpm8.5 --test --fpm-config /etc/zone-staging/php-fpm.conf
+ExecStart=/usr/sbin/php-fpm8.5 --nodaemonize --fpm-config /etc/zone-staging/php-fpm.conf
+KillSignal=SIGQUIT
+KillMode=mixed
+TimeoutStopSec=25
+Restart=on-failure
+RestartSec=5
+RuntimeDirectory=zone-staging
+RuntimeDirectoryMode=0755
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=CAP_SETUID CAP_SETGID CAP_CHOWN CAP_KILL
+ReadOnlyPaths=/srv/zone-staging
+ReadWritePaths=/run/zone-staging /var/log/zone-staging /var/lib/zone-staging
+MemoryHigh=640M
+MemoryMax=768M
+CPUQuota=75%
+TasksMax=16
+LimitNOFILE=2048
+LimitCORE=0
+OOMPolicy=stop
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=zone-staging-fpm
+
+[Install]
+WantedBy=multi-user.target

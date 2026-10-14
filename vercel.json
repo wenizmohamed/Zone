@@ -10,7 +10,7 @@
       "runtime": "vercel-php@0.9.0",
       "memory": 1024,
       "maxDuration": 30,
-      "excludeFiles": "{.tools/**,.vercel/**,node_modules/**,public/**,art/**,assets/**,dist/**,lib/**,docs/**,scripts/**,engine/{bin,tests,var}/**,*.{html,css,js,jpeg,txt,py,ico,svg,md}}"
+      "excludeFiles": "{.tools/**,.vercel/**,node_modules/**,public/**,art/**,assets/**,dist/**,lib/**,docs/**,scripts/**,engine/{bin,tests,var,deploy}/**,*.{html,css,js,jpeg,txt,py,ico,svg,md}}"
     }
   },
   "rewrites": [

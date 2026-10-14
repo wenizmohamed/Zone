@@ -13,6 +13,8 @@ const gym = html.slice(html.indexOf('<!-- GYM -->'), html.indexOf('<!-- CITY -->
 test('narrow Home puts the real first action before optional hideout atmosphere, without changing desktop order', () => {
   const mobile = css.slice(css.indexOf('@media (max-width:650px)'), css.indexOf('@media (prefers-reduced-motion'));
   assert.match(mobile, /\.zone-home-objective\s*\{\s*order:0;/);
+  assert.match(mobile, /\.zone-home-objective\s*\{[^}]*padding:12px;/);
+  assert.match(mobile, /\.zone-home-objective-progress\s*\{\s*margin-block:5px 8px;/);
   assert.match(mobile, /\.zone-hideout-scene\s*\{\s*order:1;/);
   assert.match(mobile, /\.zone-home-resource-strip\s*\{\s*order:2;/);
   assert.doesNotMatch(css.slice(0, css.indexOf('@media (max-width:650px)')), /(?:^|[;{\s])order:\s*[012]/);

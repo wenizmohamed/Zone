@@ -3,7 +3,7 @@
   "timezone": "Asia/Dubai",
   "release": "launch105 candidate",
   "phase": "visible Home/Gym increment integrated and inspected; final history-preserving source gate pending; not production-promoted",
-  "playerSourceRevision": "991d49d9e77c82b9a71dbfc15cbf10813d17b2cb",
+  "playerSourceRevision": "32796c6927b466dad990cf7cea7990284b6e7638",
   "baselineDeployment": "dpl_EqBQUFg4aKThMW4jBpPSLrUW8K32",
   "sourceBaseline": "08e53899d1b25b9a860e5c24d343872e33d92696",
   "ordinaryHTTP": {
@@ -50,7 +50,7 @@
       "staffGrants": false,
       "knifeSniper": "Inspected standalone Studio asset previews, not ordinary acquisition or every-animation proof."
     },
-    "homePhonePrimaryAction": { "widthCSS": 375, "heightCSS": 812, "englishBottom": 771.42, "arabicBottom": 762.94, "overflowObserved": 0 },
+    "homePhonePrimaryAction": { "widthCSS": 375, "heightCSS": 812, "readyRewardEnglishBottom": 771.42, "readyRewardArabicBottom": 762.94, "starterEnglishBottom": 809.87, "starterArabicBottom": 801.40, "ordinaryFreshAccount": true, "overflowObserved": 0 },
     "ordinaryCrime": {
       "beforeCash": 2500,
       "startingStreakReward": 1000,

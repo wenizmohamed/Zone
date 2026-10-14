@@ -8,7 +8,7 @@ const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverag
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 test('candidate upload excludes private sessions, research, artifacts and actual env files', () => {
   const ignore = readFileSync(new URL('.vercelignore', root), 'utf8').split(/\r?\n/);
-  for (const path of ['.tools/', 'engine/var/', 'artifacts/', 'assets/weapons/sources/v99/', 'art/source/launch105-environments/', '.env', '.env.local', '.env.production', '.env.production.local']) assert.ok(ignore.includes(path), path);
+  for (const path of ['.tools/', 'engine/var/', 'engine/deploy/', 'artifacts/', 'screenshots/', 'analysis/', 'brief/', 'idea/', 'docs/', '.claude/', '.github/', 'index.html.bak', 'session_export_love-visualization-20260905.md', 'torn_api_endpoints.json', 'assets/weapons/sources/v99/', 'art/source/launch105-environments/', '.env', '.env.local', '.env.production', '.env.production.local']) assert.ok(ignore.includes(path), path);
 });
 test('generated public output excludes conversion tools, raw research, sessions and proof artifacts', () => {
   for (const path of ['assets/weapons/source-tools', 'assets/weapons/sources/v99', 'art/source/launch105-environments', 'engine/var', 'artifacts', '.tools']) assert.equal(existsSync(new URL('public/' + path, root)), false, path);

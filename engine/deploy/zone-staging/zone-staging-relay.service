@@ -1,0 +1,52 @@
+# PREPARATION ONLY. Verify the actual Node binary path before installing.
+[Unit]
+Description=ZONE isolated staging HTTP relay
+After=network.target zone-staging-fpm.service nginx.service
+Requires=zone-staging-fpm.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
+ConditionPathExists=/etc/zone-staging/relay.env
+ConditionPathExists=/srv/zone-staging/current/engine/bin/relay.mjs
+
+[Service]
+Type=simple
+User=zone-relay-staging
+Group=zone-relay-staging
+WorkingDirectory=/srv/zone-staging/current
+EnvironmentFile=/etc/zone-staging/relay.env
+Environment=NODE_OPTIONS=--max-old-space-size=128
+ExecStartPre=/usr/bin/node --check /srv/zone-staging/current/engine/bin/relay.mjs
+ExecStart=/usr/bin/node /srv/zone-staging/current/engine/bin/relay.mjs
+# Existing authenticated control endpoint drains active requests. Wait for the
+# same service main PID to exit before systemd's bounded signal fallback.
+ExecStop=/usr/bin/node -e 'const h=require("node:http"),p=Number(process.env.ZONE_ENGINE_RELAY_PORT),pid=Number(process.env.MAINPID),end=Date.now()+22000;const r=h.request({host:"127.0.0.1",port:p,method:"POST",path:"/__zone_relay_stop",headers:{Host:"127.0.0.1:"+p,"X-Zone-Relay-Key":process.env.ZONE_ENGINE_RELAY_KEY,"Content-Length":"0"}},s=>{s.resume();s.on("end",()=>{if(s.statusCode!==200)process.exit(1);const t=setInterval(()=>{try{process.kill(pid,0)}catch{clearInterval(t);process.exit(0)}if(Date.now()>end){clearInterval(t);process.exit(1)}},100)})});r.setTimeout(3000,()=>r.destroy());r.on("error",()=>process.exit(1));r.end();'
+KillSignal=SIGTERM
+TimeoutStopSec=25
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ReadOnlyPaths=/srv/zone-staging
+MemoryHigh=192M
+MemoryMax=256M
+CPUQuota=25%
+TasksMax=32
+LimitNOFILE=2048
+LimitCORE=0
+OOMPolicy=stop
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=zone-staging-relay
+
+[Install]
+WantedBy=multi-user.target

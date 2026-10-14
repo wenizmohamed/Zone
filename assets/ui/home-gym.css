@@ -98,7 +98,8 @@ html[dir="rtl"] :is(.zone-hideout-scene .zone-overline,.zone-home-equipment span
   .zone-hideout-scene > div { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; width:100%; gap:3px 12px; }
   .zone-hideout-scene .zone-overline { grid-column:1/-1; }
   .zone-hideout-scene strong { font-size:20px; }
-  .zone-home-objective { order:0; padding:14px; }
+  .zone-home-objective { order:0; padding:12px; }
+  .zone-home-objective-progress { margin-block:5px 8px; }
   .zone-home-objective h2 { font-size:23px; }
   .zone-home-resource-strip { order:2; grid-template-columns:repeat(2,minmax(0,1fr)); }
   .zone-home-resource-strip button { min-height:84px !important; padding:9px 12px; border-block-end:1px solid var(--line); }
