@@ -10,11 +10,23 @@ use Zone\Engine\Core\Game\ProgressionService;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
 
-$url = 'sqlite:' . ZONE_ENGINE_ROOT . '/var/launch-engine-richness-' . bin2hex(random_bytes(6)) . '.sqlite';
+$configuredUrl = getenv('ZONE_RICHNESS_TEST_URL');
+if ($configuredUrl !== false && $configuredUrl !== '') {
+    $target = parse_url($configuredUrl);
+    if ($target === false || !in_array($target['scheme'] ?? '', ['postgres', 'postgresql'], true)
+        || !in_array($target['host'] ?? '', ['127.0.0.1', 'localhost'], true)
+        || ($target['port'] ?? 0) !== 55433
+        || !preg_match('~^/zone_beta_smoke_richness_[a-z0-9_]+$~D', $target['path'] ?? '')
+        || strlen(ltrim($target['path'], '/')) > 63) throw new RuntimeException('Disposable loopback richness database required.');
+    $url = $configuredUrl;
+} else $url = 'sqlite:' . ZONE_ENGINE_ROOT . '/var/launch-engine-richness-' . bin2hex(random_bytes(6)) . '.sqlite';
 $engine = zone_engine($url); $db = Database::connect($url); $events = new EventBus($db); $passed = 0;
 function richProof(bool $ok, string $label): void { global $passed; if (!$ok) throw new RuntimeException('FAIL: ' . $label); $passed++; echo 'PASS: ' . $label . PHP_EOL; }
 function richAct(string $player, string $action, string $id): array { global $engine; $s=$engine->gameplay($player); return $engine->gameplayAction($action,$id,$s['state']['version'],$player); }
 function richPlayer(): string { global $engine; return $engine->browserSessions()->create('richness-' . bin2hex(random_bytes(6)))['playerId']; }
+// JSONB canonicalizes object-key order. Preserve exact values/types and list
+// order while comparing JSON objects independently of storage key ordering.
+function richSorted(array $value): array {foreach($value as &$child) if(is_array($child)) $child=richSorted($child); unset($child); if(!array_is_list($value)) ksort($value); return $value;}
 function richReject(callable $fn, string $fragment = ''): bool { try {$fn();} catch (RuntimeException|InvalidArgumentException $error) {return $fragment === '' || str_contains($error->getMessage(),$fragment);} return false; }
 function richRound(string $player): array { global $db,$events; $s=new CombatService($db,$events,static fn(int $min,int $max):int=>$min); $v=$s->snapshot($player); $v=$s->act('start','dockside-rookie','',$v['version'],$player); return $s->act('strike','','',$v['version'],$player); }
 
@@ -38,7 +50,7 @@ $equipped=richAct($armored,'item.equip','launch-plate');
 richProof($equipped['state']['armorEquip']==='launch-plate' && $equipped['state']['equip']==='fists','armor uses its own persistent slot without replacing the weapon');
 richProof($equipped['loadout']['armorId']==='launch-plate' && $equipped['loadout']['armorReduction']===0.5,'published custom armor produces a truthful authoritative loadout');
 richProof(richReject(fn()=>$engine->gameplayAction('item.unequip','launch-plate',$before['state']['version'],$armored)),'stale loadout mutation cannot erase newer equipment');
-richProof($engine->gameplay($other)['state']===$otherBefore['state'],'loadout actions do not change another player');
+richProof(richSorted($engine->gameplay($other)['state'])===richSorted($otherBefore['state']),'loadout actions do not change another player');
 $reopened=zone_engine($url)->gameplay($armored);
 richProof($reopened['state']['armorEquip']==='launch-plate' && $reopened['player']['cash']===$equipped['player']['cash'],'equipment and exact purchase cash survive engine reconstruction');
 $nakedRound=richRound($plain); $armorRound=richRound($armored);
@@ -102,6 +114,8 @@ $energyBoost=richAct($high,'item.use','launch-boost');
 richProof($energyBoost['result']['restored']===['life'=>0,'nerve'=>0,'energy'=>5,'happy'=>0] && $energyBoost['player']['energy']===100,'same published booster restores only missing energy without exceeding its cap');
 $uses=$db->fetchAll("SELECT amount,balance_after FROM economy_ledger WHERE player_id=:id AND asset='item:launch-boost' AND reason='item.use'",['id'=>$high]);
 richProof(count($uses)===2 && array_sum(array_column($uses,'amount'))===-2,'only the two successful consumptions produce inventory ledger debits');
+$directPassed = $passed;
+echo 'DIRECT RICHNESS RESULT: ' . $directPassed . ' passed, 0 failed (' . $db->driver() . ')' . PHP_EOL;
 // Independent real HTTP owner publication and two ordinary accounts. No grants,
 // edited balances, forced outcomes, fake cooldowns or production configuration.
 function richHttp(string $base,string $method,string $path,?array $body=null,string $cookie=''): array {
@@ -141,4 +155,4 @@ try {
     $version=$returned['state']['version']; richHttpAct($base,$cookieA,'item.unequip','http-plate'); [$status,$stale]=richHttp($base,'POST','/api/v1/gameplay/action',['action'=>'item.equip','id'=>'http-plate','expectedVersion'=>$version],$cookieA); richProof($status===409 && $stale['error']==='Progression state changed. Refresh and try again.','stale HTTP loadout version cannot reapply newer removed armor');
     echo 'HTTP RICHNESS EVIDENCE: '.json_encode(['adapter'=>'sqlite','ordinaryAccounts'=>2,'serverRestarts'=>1,'staffGrants'=>false,'release'=>$release['id'],'database'=>$httpPrefix.'.sqlite','log'=>$httpPrefix.'.log'],JSON_THROW_ON_ERROR).PHP_EOL;
 } finally {if(is_resource($process)){proc_terminate($process); proc_close($process);}}
-echo 'LAUNCH ENGINE RICHNESS RESULT: ' . $passed . ' passed, 0 failed (sqlite)' . PHP_EOL;
+echo 'LAUNCH ENGINE RICHNESS RESULT: ' . $passed . ' passed, 0 failed (direct=' . $db->driver() . '; HTTP=sqlite; HTTP checks=' . ($passed - $directPassed) . ')' . PHP_EOL;
