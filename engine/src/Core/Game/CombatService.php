@@ -52,18 +52,13 @@ final class CombatService
                 if ($opponent === null) throw new InvalidArgumentException('Unknown opponent.');
                 if ($player['energy'] < 25 || $player['life'] < 1) throw new RuntimeException('Not enough energy or life to attack.');
                 $state = $progress['state'];
-                $item = $progress['catalogs']['items'][$state['equip'] ?? ''] ?? [];
-                $weapon = ($state['inv'][$state['equip'] ?? ''] ?? 0) > 0 ? (float) ($item['mult'] ?? 1) : 1.0;
-                $armor = 0;
-                foreach (['armor', 'vest'] as $armorId) {
-                    if (($state['inv'][$armorId] ?? 0) > 0) $armor = max($armor, (float) ($progress['catalogs']['items'][$armorId]['red'] ?? 0));
-                }
+                $loadout = LoadoutService::resolve($state, $progress['catalogs']['items']);
                 $defenseBonus = (new PublishedRules($this->database))->moduleEnabled('territories')
                     ? min(2000, (new TerritoryService($this->database, $this->events))->bonusBasisPoints($playerId, 'defense')) : 0;
                 $encounter = ['id' => bin2hex(random_bytes(16)), 'opponentId' => $opponentId, 'opponent' => $opponent,
                     'enemyHp' => (int) $opponent['life'], 'enemyMaxHp' => (int) $opponent['life'], 'playerHp' => $player['life'], 'playerMaxHp' => $player['max_life'],
-                    'startPlayerHp' => $player['life'], 'turn' => 0, 'phase' => 'fighting', 'log' => [], 'weaponMultiplier' => $weapon,
-                    'armorReduction' => $armor, 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus];
+                    'startPlayerHp' => $player['life'], 'turn' => 0, 'phase' => 'fighting', 'log' => [], 'weaponMultiplier' => $loadout['weaponMultiplier'],
+                    'weaponId' => $loadout['weaponId'], 'armorId' => $loadout['armorId'], 'armorReduction' => $loadout['armorReduction'], 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus];
                 $this->database->execute('UPDATE players SET energy = energy - 25 WHERE id = :id', ['id' => $playerId]);
                 $cooldown = $this->database->fetchOne("SELECT seconds FROM cooldown_config WHERE action = 'attack'");
                 (new CooldownService($this->database))->arm($playerId, 'attack', (int) ($cooldown['seconds'] ?? 8));

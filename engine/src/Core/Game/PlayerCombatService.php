@@ -8,7 +8,6 @@ use Zone\Engine\Core\Economy\Ledger;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Persistence\Database;
-use Zone\Engine\Core\Publishing\PublishedRules;
 use Zone\Engine\Core\Territories\TerritoryService;
 
 /** Human counterparties are reserved and settled under canonical paired player locks. */
@@ -17,7 +16,7 @@ final class PlayerCombatService
     private readonly ProgressionService $progression;
     private readonly ResourceService $resources;
     private readonly Ledger $ledger;
-    public function __construct(private readonly Database $database, private readonly EventBus $events, private readonly ?\Closure $random = null, private readonly ?\Closure $clock = null)
+    public function __construct(private readonly Database $database, private readonly EventBus $events, private readonly ?\Closure $random = null, private readonly ?\Closure $clock = null, private readonly ?\Closure $rulesCaptured = null)
     {
         $this->progression = new ProgressionService($database, $events);
         $this->resources = new ResourceService($database);
@@ -83,7 +82,10 @@ final class PlayerCombatService
                     if ($encounter['phase'] !== 'fighting') throw new RuntimeException('No active fight to strike.');
                     $this->available($playerId); $this->available($defenderId);
                     $player = $this->player($playerId); $defender = $this->player($defenderId);
-                    $attackerGear = $this->gear($playerId); $defenderGear = $this->gear($defenderId);
+                    $rules = LoadoutService::publishedView($this->database, $this->events);
+                    $attackerGear = $this->gear($playerId, $rules);
+                    if ($this->rulesCaptured !== null) ($this->rulesCaptured)($rules);
+                    $defenderGear = $this->gear($defenderId, $rules);
                     $encounter['turn']++;
                     $damage = $this->damage($player, $defender, $attackerGear, $defenderGear);
                     $defender['life'] = max(0, $defender['life'] - $damage);
@@ -195,13 +197,12 @@ final class PlayerCombatService
     {
         return $this->database->fetchOne('SELECT * FROM player_combat_locks WHERE player_id = :id AND expires_at > :now', ['id' => $id, 'now' => $this->now()]);
     }
-    private function gear(string $id): array
+    private function gear(string $id, array $rules): array
     {
-        $progress = $this->progression->snapshot($id); $state = $progress['state']; $items = $progress['catalogs']['items'];
-        $equip = $state['equip'] ?? ''; $weapon = ($state['inv'][$equip] ?? 0) > 0 ? (float) ($items[$equip]['mult'] ?? 1) : 1.0;
-        $armor = 0.0; foreach (['armor', 'vest'] as $armorId) if (($state['inv'][$armorId] ?? 0) > 0) $armor = max($armor, (float) ($items[$armorId]['red'] ?? 0));
-        $territory = (new PublishedRules($this->database))->moduleEnabled('territories') ? min(2000, (new TerritoryService($this->database, $this->events))->bonusBasisPoints($id, 'defense')) : 0;
-        return ['weapon' => max(1.0, $weapon), 'armor' => min(0.95, max(0.0, $armor)), 'defense' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $territory / 10000)];
+        $progress = $this->progression->snapshot($id); $state = $progress['state'];
+        $loadout = LoadoutService::resolve($state, $rules['items']);
+        $territory = $rules['territoriesEnabled'] ? min(2000, (new TerritoryService($this->database, $this->events))->bonusBasisPoints($id, 'defense')) : 0;
+        return ['weapon' => $loadout['weaponMultiplier'], 'armor' => $loadout['armorReduction'], 'defense' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $territory / 10000)];
     }
     private function damage(array $actor, array $target, array $actorGear, array $targetGear): int
     {

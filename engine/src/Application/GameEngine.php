@@ -544,7 +544,8 @@ final class GameEngine
             }
             $correlationId = bin2hex(random_bytes(16));
             $happy = (int) $player['happy'];
-            $gainPerSession = $gym['e'] * 1.2 * (1 + $gymIndex * .3) * (1 + log(1 + $happy / 500) * .35)
+            $happyMultiplier = 1 + log(1 + $happy / 500) * .35;
+            $gainPerSession = $gym['e'] * 1.2 * (1 + $gymIndex * .3) * $happyMultiplier
                 * (!empty($progress['state']['fac']['ups']['gymBoost']) || !empty($progress['family']['upgrades']['gymBoost']) ? 1.1 : 1)
                 * (!empty($progress['state']['eduDone']['fit']) ? 1.05 : 1)
                 * max(.35, 1 - (int) $player[$stat] / 60000);
@@ -569,11 +570,13 @@ final class GameEngine
                 'playerId' => $playerId, 'stat' => $stat, 'gain' => $gain,
                 'baseGain' => $baseGain, 'territoryBonusBasisPoints' => $territoryBonusBp,
                 'sessions' => $sessions, 'energySpent' => $energyCost, 'correlationId' => $correlationId,
+                'happiness' => ['value' => $happy, 'multiplier' => $happyMultiplier],
             ]);
             $this->events->publish($event);
             return [
                 'trained' => $stat, 'gain' => $gain, 'baseGain' => $baseGain, 'territoryBonusBasisPoints' => $territoryBonusBp, 'sessions' => $sessions,
                 'cost' => ['energy' => $energyCost],
+                'happiness' => ['value' => $happy, 'multiplier' => $happyMultiplier],
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),

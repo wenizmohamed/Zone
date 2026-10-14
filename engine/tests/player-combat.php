@@ -117,6 +117,8 @@ $gearA = pvpPlayer(); $gearB = pvpPlayer();
 $progression = new \Zone\Engine\Core\Game\ProgressionService($db, $events);
 $progression->grantItem($gearA, 'revolver'); $progression->grantItem($gearA, 'vest'); $progression->grantItem($gearB, 'revolver'); $progression->grantItem($gearB, 'armor');
 foreach ([$gearA, $gearB] as $id) $engine->gameplayAction('item.equip', 'revolver', $engine->gameplay($id)['state']['version'], $id);
+$engine->gameplayAction('item.equip', 'vest', $engine->gameplay($gearA)['state']['version'], $gearA);
+$engine->gameplayAction('item.equip', 'armor', $engine->gameplay($gearB)['state']['version'], $gearB);
 $geared = $service->act('start', $gearB, '', 1, $gearA); $geared = $service->act('strike', '', '', $geared['version'], $gearA);
 pvpProof($geared['player']['life'] === 182 && $engine->player($gearB)['life'] === 172, 'each real owned revolver and armor applies symmetrically to paired damage');
 $service->act('finish', '', 'leave', $geared['version'], $gearA);

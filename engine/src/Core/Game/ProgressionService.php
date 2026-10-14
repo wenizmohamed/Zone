@@ -69,7 +69,7 @@ final class ProgressionService
             $balance = (int)($state['inv'][$itemId] ?? 0) + $delta;
             if ($balance < 0) throw new RuntimeException('You do not own enough units to list.');
             $state['inv'][$itemId] = $balance;
-            if ($balance === 0 && $state['equip'] === $itemId) $state['equip'] = 'fists';
+            LoadoutService::removeMissing($state, $itemId);
             $this->save($playerId,$state);
             $this->ledger->record($playerId,'item:' . $itemId,$delta,$balance,$reason,$correlationId);
         });
@@ -157,6 +157,7 @@ final class ProgressionService
             if ($metric === 'shifts') $state['jobPts'] += $amount;
             if ($metric === 'wins') {
                 $state['fac']['respect'] += $amount * 25;
+                if ($this->now() - $state['fac']['chainAt'] > 300000) $state['fac']['chain'] = 0;
                 $state['fac']['chain'] += $amount;
                 $state['fac']['best'] = max($state['fac']['best'], $state['fac']['chain']);
                 $state['fac']['chainAt'] = $this->now();
@@ -204,7 +205,7 @@ final class ProgressionService
                     $price = (int) round($item['price'] * 0.9);
                     $state['inv'][$id]--;
                     $inventoryDelta = -1;
-                    if ($state['inv'][$id] === 0 && $state['equip'] === $id) $state['equip'] = null;
+                    LoadoutService::removeMissing($state, $id);
                     $this->cash($playerId, $price, $action, $correlationId);
                     $result['cashDelta'] = $price;
                     break;
@@ -212,22 +213,31 @@ final class ProgressionService
                     if ($id === 'fists') $state['equip'] = null;
                     else {
                         $item = $this->ownedItem($id, $state);
-                        if ($item['type'] !== 'weapon') throw new RuntimeException('Only owned weapons can be equipped.');
-                        $state['equip'] = $id;
+                        if (!in_array($item['type'], ['weapon', 'armor'], true)) throw new RuntimeException('Only owned weapons or armor can be equipped.');
+                        $state[$item['type'] === 'armor' ? 'armorEquip' : 'equip'] = $id;
                     }
+                    break;
+                case 'item.unequip':
+                    $item = $this->ownedItem($id, $state);
+                    if (!in_array($item['type'], ['weapon', 'armor'], true)) throw new RuntimeException('Only weapons or armor can be unequipped.');
+                    $slot = $item['type'] === 'armor' ? 'armorEquip' : 'equip';
+                    if (($state[$slot] ?? null) !== $id) throw new RuntimeException('This item is not equipped.');
+                    $state[$slot] = null;
                     break;
                 case 'item.use':
                     $item = $this->ownedItem($id, $state);
                     if (!in_array($item['type'], ['medical', 'booster'], true)) throw new RuntimeException('This item cannot be consumed.');
                     $life = min($player['max_life'], $player['life'] + (int) ($item['life'] ?? 0));
                     $nerve = min($player['max_nerve'], $player['nerve'] + (int) ($item['nerve'] ?? 0));
+                    $energy = min($player['max_energy'], $player['energy'] + (int) ($item['energy'] ?? 0));
+                    $happy = min($player['max_happy'], $player['happy'] + (int) ($item['happy'] ?? 0));
                     $clearsHospital = !empty($item['life']) && $state['hospUntil'] > $this->now();
-                    if ($life === $player['life'] && $nerve === $player['nerve'] && !$clearsHospital) throw new RuntimeException('Your resources are full. The item has been kept.');
+                    if ($life === $player['life'] && $nerve === $player['nerve'] && $energy === $player['energy'] && $happy === $player['happy'] && !$clearsHospital) throw new RuntimeException('Your resources are full. The item has been kept.');
                     $state['inv'][$id]--;
                     $inventoryDelta = -1;
                     if (!empty($item['life'])) $state['hospUntil'] = 0;
-                    $this->database->execute('UPDATE players SET life = :life, nerve = :nerve WHERE id = :id', ['life' => $life, 'nerve' => $nerve, 'id' => $playerId]);
-                    $result['restored'] = ['life' => $life - $player['life'], 'nerve' => $nerve - $player['nerve']];
+                    $this->database->execute('UPDATE players SET life = :life, nerve = :nerve, energy = :energy, happy = :happy WHERE id = :id', ['life' => $life, 'nerve' => $nerve, 'energy' => $energy, 'happy' => $happy, 'id' => $playerId]);
+                    $result['restored'] = ['life' => $life - $player['life'], 'nerve' => $nerve - $player['nerve'], 'energy' => $energy - $player['energy'], 'happy' => $happy - $player['happy']];
                     break;
                 case 'property.buy':
                     $property = $this->entry('properties', $id);
@@ -404,6 +414,7 @@ final class ProgressionService
         $row = $this->database->fetchOne('SELECT state_json, version FROM player_progression WHERE player_id = :id', ['id' => $playerId]);
         if ($row !== null) {
             $state = json_decode($row['state_json'], true, 512, JSON_THROW_ON_ERROR);
+            $state['armorEquip'] ??= null;
             $state['version'] = (int) $row['version'];
             if (($state['catalogRevision'] ?? null) !== $this->catalogRevision) {
                 // A published balance change invalidates old purchase views,
@@ -424,7 +435,7 @@ final class ProgressionService
         }
         $now = $this->now();
         $state = [
-            'version' => 1, 'catalogRevision' => $this->catalogRevision, 'inv' => ['revolver' => 1, 'bat' => 1, 'smallkit' => 3, 'drink' => 2, 'sand' => 12], 'equip' => 'bat',
+            'version' => 1, 'catalogRevision' => $this->catalogRevision, 'inv' => ['revolver' => 1, 'bat' => 1, 'smallkit' => 3, 'drink' => 2, 'sand' => 12], 'equip' => 'bat', 'armorEquip' => null,
             'points' => 120, 'merits' => 6, 'job' => 'grocer', 'jobPts' => 38, 'gym' => 2, 'gymXp' => 260,
             'prop' => 'apt', 'ownedProperties' => ['apt' => 1, 'shack' => 1], 'edu' => null, 'eduDone' => [],
             'ctr' => ['crimes' => 0, 'trains' => 0, 'wins' => 0, 'shifts' => 0, 'buys' => 0], 'claimed' => [], 'skill' => [], 'crimeXp' => 96,
@@ -490,7 +501,7 @@ final class ProgressionService
             }, $this->catalog['upgrades']);
         }
         $traveling = (new TravelService($this->database, $this->events))->snapshot($playerId)['status'] ?? null;
-        return ['player' => $this->player($playerId), 'state' => $state, 'catalogs' => $this->catalog, 'family' => $family, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
+        return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
     }
 
     private function syncSharedBenefits(string $playerId, array &$state, bool $save = true): void

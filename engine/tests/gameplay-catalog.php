@@ -65,6 +65,7 @@ try {
     (new ProgressionService($db, new EventBus($db)))->recordCrime('founder-player', 'trash', true);
     catalogProof(catalogAction('mission.claim', 'c5')['result']['cashDelta'] === 77, 'published mission threshold and reward drive one-time claim');
     catalogAction('item.buy', 'armor');
+    catalogAction('item.equip', 'armor');
     $fight = $engine->combatAction('start', 'rayan', '', $engine->combat()['version']);
     $stored = json_decode($db->fetchOne("SELECT state_json FROM combat_encounters WHERE player_id = 'founder-player'")['state_json'], true);
     catalogProof($fight['encounter']['enemyMaxHp'] === 111 && $fight['encounter']['opponent']['str'] === 13 && $stored['encounter']['armorReduction'] === .4, 'published opponent and armor values drive a new combat encounter');

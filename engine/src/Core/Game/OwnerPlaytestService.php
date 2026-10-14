@@ -23,7 +23,7 @@ final readonly class OwnerPlaytestService
     private const MAX_OPERATIONS = 100;
     private const TABLES = ['player_progression', 'player_travel', 'combat_encounters', 'casino_high_low', 'player_contract_progress'];
     public const ACTIONS = [
-        'item.buy', 'item.sell', 'item.equip', 'item.use', 'market.buy',
+        'item.buy', 'item.sell', 'item.equip', 'item.unequip', 'item.use', 'market.buy',
         'property.buy', 'course.enroll', 'gym.join', 'job.take', 'mission.claim',
         'gym.train', 'job.work', 'bank.deposit', 'bank.withdraw', 'crime.attempt',
         'hospital.heal', 'travel.start', 'casino.blackjack', 'casino.high-low',
@@ -146,9 +146,9 @@ final readonly class OwnerPlaytestService
     private function dispatch(string $id, string $action, array $payload): array
     {
         $entry = $this->text($payload, 'id', 80);
-        if (in_array($action, ['item.buy', 'item.sell', 'item.equip', 'item.use', 'market.buy', 'property.buy', 'course.enroll', 'gym.join', 'job.take', 'mission.claim'], true)) {
+        if (in_array($action, ['item.buy', 'item.sell', 'item.equip', 'item.unequip', 'item.use', 'market.buy', 'property.buy', 'course.enroll', 'gym.join', 'job.take', 'mission.claim'], true)) {
             if ($action === 'item.use') {
-                $this->database->execute('UPDATE players SET life = 1, nerve = 1 WHERE id = :id', ['id' => $id]);
+                $this->database->execute('UPDATE players SET life = 1, nerve = 1, energy = 1, happy = 1 WHERE id = :id', ['id' => $id]);
             }
             $state = $this->engine->gameplay($id);
             return $this->engine->gameplayAction($action, $entry, $state['state']['version'], $id,
@@ -258,7 +258,9 @@ final readonly class OwnerPlaytestService
 
     private function save(string $id, array $session): void
     {
-        $this->database->execute('UPDATE engine_metadata SET value = :json WHERE name = :key', ['key' => $this->key($id), 'json' => json_encode($session, JSON_THROW_ON_ERROR)]);
+        // Stored idempotent responses must retain whole-valued floats too, so
+        // replay returns the exact same typed authoritative loadout receipt.
+        $this->database->execute('UPDATE engine_metadata SET value = :json WHERE name = :key', ['key' => $this->key($id), 'json' => json_encode($session, JSON_THROW_ON_ERROR | JSON_PRESERVE_ZERO_FRACTION)]);
     }
 
     private function audit(string $actor, string $action, string $sourceId, array $session, array $details): void
