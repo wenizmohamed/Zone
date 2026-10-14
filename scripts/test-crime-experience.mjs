@@ -30,6 +30,9 @@ function game(lang = 'en', fetchImpl, crimes = published) {
 
 test('crime markup is a keyboard-operable selected action workspace, not a poster grid/table, scoped on phone/RTL', () => {
   assert.match(markup, /data-crime-category="\{\{ c.id \}\}" aria-pressed/);
+  assert.match(markup, /class="zone-crime-activity-nav"/);
+  assert.doesNotMatch(markup, /class="zone-crime-categories"/, 'old poster rules hide nested category text in actual rendering');
+  assert.match(css, /\.zone-crime-activity-nav button \{ display:flex/);
   assert.match(markup, /data-crime-select="\{\{ c.id \}\}" aria-pressed/);
   assert.match(markup, /data-crime-attempt="\{\{ crimeDesk.selected.id \}\}"[^>]*disabled/);
   assert.match(markup, /zone-crime-receipt[^>]*role="status" aria-live="polite"/);
@@ -48,7 +51,7 @@ test('published gates/reward ranges/uncertainty survive mapping; every activity 
     let view = instance.renderVals(); assert.equal(view.crimeDesk.selected.level, 7);
     assert.equal(view.crimeDesk.selected.disabled, true); assert.match(view.crimeDesk.selected.reason, /7/);
     assert.match(view.crimeDesk.selected.reward, /40.*220/); assert.ok(view.crimeDesk.uncertainty.length > 40);
-    for (const category of view.crimeCats) { category.go(); assert.equal(instance.state.cat, category.id); }
+    for (const category of view.crimeCats) { if (category.locked && !category.sub.includes('published') && !category.sub.includes('منشورة')) assert.match(category.sub, lang === 'ar' ? /خبرة جرائم/ : /crime XP required/); category.go(); assert.equal(instance.state.cat, category.id); }
     assert.equal(instance.renderVals().crimeDesk.hasSelection, false);
     assert.ok(instance.renderVals().crimeDesk.emptyNote); assert.equal(calls.length, 0); assert.equal(JSON.stringify(instance.p), before);
   }
