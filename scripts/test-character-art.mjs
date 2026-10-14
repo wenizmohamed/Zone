@@ -8,6 +8,7 @@ import { CHARACTER_ART, validateCharacterWardrobe, prepareCharacterArt, computeC
 import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
+import { createArmorController } from '../dist/character-armor.mjs';
 
 async function wardrobe(name) {
   const bytes = readFileSync(new URL(`../assets/character/quaternius/${name}.glb`, import.meta.url));
@@ -139,7 +140,7 @@ test('A missing wardrobe is evicted and retryable, and malformed replacements re
     GLTFLoader: class { loadAsync() { if (++tries === 1) return Promise.reject(new Error('404: missing wardrobe')); return Promise.resolve(tries === 2 ? { scene: new THREE.Group(), animations: [] } : valid); } },
     $: id => id === 'load' ? load : retry, outfitFile: () => 'Suit', scene,
     validateCharacterWardrobe, prepareCharacterArt, prepareCharacterGrip, prepareWeaponPose, disposeCharacterResources,
-    play() {}, fitCharacter() {}, characterStage: { setFloor() {} }, paintOutfit() {}, equip() {}, buildBar() {}, buildRack() {}, buildCompact() {}, sizeMode() {},
+    play() {}, fitCharacter() {}, characterStage: { setFloor() {} }, armorController: createArmorController({ THREE, loadSource: () => wardrobe('Swat') }), paintOutfit() {}, equip() {}, buildBar() {}, buildRack() {}, buildCompact() {}, sizeMode() {},
     q: { get() { return null; } }, parent: { postMessage() {} }, location: { origin: 'http://localhost' }, console: { error: (...items) => errors.push(items) }
   });
   const source = template('character3d'), start = source.indexOf('function characterRequest('), end = source.indexOf("$('character-retry').onclick", start);

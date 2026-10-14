@@ -47,6 +47,7 @@
 <link rel="stylesheet" href="./assets/zone-layout.css?v=101">
 <link rel="stylesheet" href="./assets/ui/home-gym.css?v=105">
 <link rel="stylesheet" href="./assets/ui/crimes.css?v=106">
+<link rel="stylesheet" href="./assets/ui/loadout.css?v=107">
 </head>
 <body>
 <x-dc>
@@ -258,7 +259,7 @@
               </div>
               <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <div class="zone-character-stage" style="position:relative;height:260px;background:var(--deep)">
-                  <iframe id="zone-char-3d" src="dist/character3d.html?v=105" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+                  <iframe id="zone-char-3d" src="dist/character3d.html?v=107" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
                   <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
@@ -328,6 +329,7 @@
             <span class="zone-overline">{{ gymStudio.sessionLabel }}</span><div class="zone-gym-session-identity"><span class="zone-gym-station-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 512 512"><path d="M0 0" data-zone-path="{{ gymSession.d }}"></path></svg></span><div><h3>{{ gymSession.label }}</h3><p>{{ gymSession.exercise }}</p></div></div>
             <dl class="zone-gym-session-metrics"><div><dt>{{ trainingBoard.currentLabel }}</dt><dd><bdi>{{ gymSession.value }}</bdi></dd></div><div><dt>{{ trainingBoard.estimateLabel }}</dt><dd><bdi>+{{ gymSession.gain }}</bdi><small>{{ gymStudio.estimateNote }}</small></dd></div><div><dt>{{ gymStudio.costLabel }}</dt><dd><bdi>{{ gymEnergy }}</bdi> {{ t.energy }}</dd></div><div><dt>{{ gymStudio.balanceLabel }}</dt><dd><bdi>{{ gymStudio.energyAfter }}</bdi> {{ t.energy }}</dd></div></dl>
             <button class="zone-action-primary zone-gym-train" data-gym-train="{{ gymSession.id }}" onClick="{{ gymSession.train }}" disabled="{{ trainOff }}" data-zbusy="{{ gymSession.busy }}">{{ gymSession.btnLabel }} · {{ gymSession.label }}</button><p class="zone-gym-session-reason" id="zone-gym-session-reason" role="status" aria-live="polite">{{ gymStudio.reason }}</p>
+            <div class="zone-gym-happiness"><p>{{ gymStudio.happyNote }}</p><button onClick="{{ gymStudio.openHome }}">{{ gymStudio.homeLabel }}</button></div>
             <div class="zone-gym-last-session" role="status" aria-live="polite" aria-atomic="true"><strong>{{ trainingBoard.resultLabel }}</strong><sc-if value="{{ trainingBoard.hasEvents }}"><sc-for list="{{ trainingBoard.events }}" as="event"><p><bdi>{{ event.time }}</bdi> {{ event.text }}</p></sc-for></sc-if><sc-if value="{{ !trainingBoard.hasEvents }}"><p>{{ gymStudio.emptyResult }}</p></sc-if></div>
           </div>
           <div class="zone-gym-stations" role="group" aria-label="{{ gymStudio.stationLabel }}"><sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><button class="zone-gym-station" data-gym-station="{{ s.id }}" aria-pressed="{{ s.selected }}" onClick="{{ s.select }}"><span class="zone-gym-station-art" style="background-image:url('{{ s.img }}')" aria-hidden="true"></span><span><strong>{{ s.label }}</strong><small>{{ s.exercise }}</small><bdi>{{ s.value }}</bdi></span><span class="zone-gym-station-selection" aria-hidden="true">{{ s.selectionMark }}</span></button></sc-for></div>
@@ -384,6 +386,7 @@
 
       <!-- ATTACK -->
       <sc-if value="{{ is.attack }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-loadout zone-panel" aria-label="{{ loadout.title }}"><header><strong>{{ loadout.title }}</strong><button onClick="{{ loadout.open }}">{{ loadout.manageLabel }}</button></header><div class="zone-loadout-slots"><div><span>{{ loadout.weapon.slot }}</span><strong>{{ loadout.weapon.name }}</strong><bdi>{{ loadout.weapon.detail }}</bdi></div><div><span>{{ loadout.armor.slot }}</span><strong>{{ loadout.armor.name }}</strong><bdi>{{ loadout.armor.detail }}</bdi></div></div><p>{{ loadout.note }}</p></section>
         <section aria-label="{{ combatScene.title }}">
           <div class="zone-combat-hud"><strong>{{ combatScene.title }}</strong><p class="zone-combat-cost">{{ combatScene.cost }}</p><button onClick="{{ combatScene.refresh }}" disabled="{{ combatScene.refreshDisabled }}">{{ combatScene.refreshLabel }}</button></div>
           <sc-if value="{{ fight }}" hint-placeholder-val="{{ false }}">
@@ -399,7 +402,7 @@
               <p class="zone-combat-dock-instruction">{{ combatScene.note }}</p>
             </div>
           </sc-if>
-          <iframe id="zone-combat-frame" class="zone-combat-host" src="./dist/combat.html?v=99" title="{{ combatScene.title }}" loading="eager"></iframe>
+          <iframe id="zone-combat-frame" class="zone-combat-host" src="./dist/combat.html?v=107" title="{{ combatScene.title }}" loading="eager"></iframe>
           <sc-if value="{{ combatScene.showRoster }}"><div class="zone-combat-hud"><p>{{ combatScene.note }}</p></div></sc-if><div class="zone-combat-hud"><bdi>{{ combatScene.stats }}</bdi></div>
           <sc-if value="{{ combatScene.receipt }}"><div class="zone-combat-receipt" role="status"><strong>{{ combatScene.receiptTitle }}</strong><p>{{ combatScene.receipt }}</p></div></sc-if>
         </section>
@@ -482,6 +485,7 @@
       <!-- ITEMS -->
       <sc-if value="{{ is.items }}" hint-placeholder-val="{{ false }}">
         <p class="zone-panel-note">{{ itemsSource }}</p>
+        <section class="zone-loadout zone-panel" aria-label="{{ loadout.title }}"><header><strong>{{ loadout.title }}</strong><span>{{ loadout.note }}</span></header><div class="zone-loadout-slots"><div><span>{{ loadout.weapon.slot }}</span><strong>{{ loadout.weapon.name }}</strong><bdi>{{ loadout.weapon.detail }}</bdi></div><div><span>{{ loadout.armor.slot }}</span><strong>{{ loadout.armor.name }}</strong><bdi>{{ loadout.armor.detail }}</bdi><sc-if value="{{ loadout.armor.id }}"><button onClick="{{ loadout.armor.remove }}" disabled="{{ loadout.armor.disabled }}">{{ loadout.armor.removeLabel }}</button></sc-if></div></div></section>
         <div class="zone-inventory-modes" role="group" aria-label="{{ inventoryModeLabel }}"><button onClick="{{ inventoryOwned }}" aria-pressed="{{ inventoryIsOwned }}">{{ inventoryOwnedLabel }}</button><button onClick="{{ inventoryCatalog }}" aria-pressed="{{ inventoryIsCatalog }}">{{ inventoryCatalogLabel }}</button></div>
         <a href="{{ weaponLibraryUrl }}" style="align-self:flex-end;color:var(--link);font-size:12px;font-weight:600">{{ weaponLibraryLabel }} →</a>
         <div data-ztabs="1" style="display:flex;gap:2px">
@@ -725,9 +729,9 @@ const T = {
     mapTab: { live: 'Family territories', gmaps: 'Live satellite', art: 'Illustrated' }, keyOfSymbols: 'Key of Symbols', legend: { fin: 'Financial', admin: 'Administrative', shop: 'Shopping', leisure: 'Leisure', estate: 'Real Estate', misc: 'Miscellaneous' }, youAreHere: 'You are here', districts: { west: 'West Side', fin: 'Financial District', red: 'Red-Light District', center: 'City Center', res: 'Residential', north: 'North Side' },
     places: { "pharmacy": "Night Pharmacy", "clinic": "West Clinic", "boxinggym": "Ironside Boxing Gym", "library": "Public Library", "bookstore": "Corner Bookstore", "florist": "West Florist", "westflats": "Westside Apartments", "radio": "Radio Tower", "stadium": "North Stadium", "cinema": "Grand Cinema", "arcade": "Neon Arcade", "courthouse": "City Courthouse", "transit": "Transit Hub", "tattoo": "North Ink Tattoo", "exchange": "Stock Exchange", "crypto": "Crypto Exchange", "insurance": "Insurance Tower", "agency": "Staffing Agency", "corptower": "Corporate Tower", "jeweler": "Diamond District Jeweler", "auction": "Auction House", "nightclub": "Pulse Nightclub", "velvet": "Velvet Lounge", "chopshop": "Chop Shop", "smuggler": "Smuggler's Den", "divebar": "The Anchor Dive Bar", "redwarehouse": "Dockside Warehouse", "fightclub": "Underground Fight Club", "morgue": "City Morgue", "community": "Community Center", "diner": "Midtown Diner", "subway": "Central Subway", "electronics": "Electronics Outlet", "lounge": "Midtown Lounge", "motel": "Roadside Motel", "penthouse": "Skyline Penthouse", "marina": "Yacht Marina", "condos": "Harbor Condos", "seafood": "Seafood Market", "waterfrontgym": "Waterfront Gym", "boatstorage": "Boat Storage Yard", "rooftopbar": "Rooftop Bar", pier: 'Pier', missions: 'Missions Office', gym: 'Gym', grocer: 'Grocer', bank: 'Central Bank', market: 'Item Market', jobs: 'Job Center', casino: 'Casino', alley: 'Back Alleys', hospital: 'Hospital', jail: 'Jail', hq: 'Faction HQ', home: 'Your Property', shop: 'Item Shop', school: 'Education Center', hof: 'Hall of Fame', arena: 'Arena', news: 'Newspaper Office', cityhall: 'City Hall', points: 'Points Building', church: 'Church', racetrack: 'Race Track', bigals: "Big Al's Gun Shop", sweetshop: "Sally's Sweet Shop", university: 'University', docks: 'The Docks', police: 'Police Station', pawnshop: 'Pawn Shop' },
     odds: 'Odds', attackTip: 'Odds compare total battle stats. Stalemates return no result.', attack: 'Attack', fightVs: 'Fight vs', you: 'You', mug: 'Mug', hospitalize: 'Hospitalize', leave: 'Leave', won: 'Victory', lost: 'Defeat', stalemate: 'Stalemate', fighting: 'FIGHTING…', resXp: '+{n} crime experience', resMin: '{n} min', crimeFailed: 'Attempt failed', noCrimeReward: 'No cash reward', resPts: '+{n} points', levelUp: 'Level up',
-    character: 'Your character', equipped: 'Equipped', frame: 'Frame', unarmed: 'Bare fists',
+    character: 'Your character', equipped: 'Equipped', frame: 'Stat focus', unarmed: 'Bare fists',
     outfits: { street: 'Street', suit: 'Suit', tactical: 'Tactical' },
-    frames: { lean: 'Lean · speed built', balanced: 'Balanced', heavy: 'Heavy · strength built' }, oddsN: { easy: 'Easy', fair: 'Fair', hard: 'Hard' }, oppStatus: { ok: 'Okay', hosp: 'Hospital' },
+    frames: { lean: 'Speed-led', balanced: 'Balanced', heavy: 'Strength-led' }, oddsN: { easy: 'Easy', fair: 'Fair', hard: 'Hard' }, oppStatus: { ok: 'Okay', hosp: 'Hospital' },
     opp: { rayan: 'Rayan_Black', nadia: 'NadiaQuick', sal: 'BigSal', kaya: 'Kaya_V' }, oppFac: { rayan: 'Harbor Kings', nadia: 'Harbor Kings', sal: 'No faction', kaya: 'Night Market' },
     round: { hit: 'You hit {who} with your {w} for {d}.', miss: 'You swing at {who} and miss.', ohit: '{who} hits you for {d}.', omiss: '{who} misses.' },
     rank: 'Rank', members: 'Members', respect: 'Respect', territory: 'Territory', blocks: '{n} blocks', chainCard: 'Chain', active: 'active', idle: 'idle', nextMilestone: 'Next bonus at', chainTimer: 'expires in', extendChain: 'Extend the chain', upgrades: 'Upgrades', buy: 'Buy', owned: 'Owned', bestChain: 'Best chain', age: 'Age',
@@ -774,9 +778,9 @@ const T = {
     mapTab: { live: 'أراضي العائلة', gmaps: 'قمر صناعي مباشر', art: 'مرسومة' }, keyOfSymbols: 'مفتاح الرموز', legend: { fin: 'مالية', admin: 'إدارية', shop: 'تسوّق', leisure: 'ترفيه', estate: 'عقارات', misc: 'متنوّع' }, youAreHere: 'أنت هنا', districts: { west: 'الحي الغربي', fin: 'الحي المالي', red: 'الحي الأحمر', center: 'وسط المدينة', res: 'المنطقة السكنية', north: 'الحي الشمالي' },
     places: { "pharmacy": "صيدلية الليل", "clinic": "عيادة الغرب", "boxinggym": "نادي أيرونسايد للملاكمة", "library": "المكتبة العامة", "bookstore": "مكتبة الزاوية", "florist": "زهور الغرب", "westflats": "شقق الجانب الغربي", "radio": "برج الإذاعة", "stadium": "ملعب الشمال", "cinema": "السينما الكبرى", "arcade": "صالة الألعاب النيون", "courthouse": "محكمة المدينة", "transit": "محطة النقل", "tattoo": "وشم الشمال", "exchange": "سوق الأسهم", "crypto": "منصة العملات الرقمية", "insurance": "برج التأمين", "agency": "وكالة التوظيف", "corptower": "البرج التجاري", "jeweler": "جواهرجي حي الألماس", "auction": "دار المزادات", "nightclub": "ملهى بولس", "velvet": "صالة فيلفيت", "chopshop": "ورشة التفكيك", "smuggler": "وكر المهربين", "divebar": "حانة المرساة", "redwarehouse": "مستودع الرصيف", "fightclub": "نادي القتال السري", "morgue": "مشرحة المدينة", "community": "المركز المجتمعي", "diner": "مطعم وسط المدينة", "subway": "مترو المركز", "electronics": "متجر الإلكترونيات", "lounge": "صالة وسط المدينة", "motel": "نُزل الطريق", "penthouse": "بنتهاوس الأفق", "marina": "مرسى اليخوت", "condos": "شقق المرفأ", "seafood": "سوق المأكولات البحرية", "waterfrontgym": "نادي الواجهة البحرية", "boatstorage": "ساحة تخزين القوارب", "rooftopbar": "بار السطح", pier: 'الرصيف', missions: 'مكتب المهام', gym: 'النادي', grocer: 'البقالة', bank: 'البنك المركزي', market: 'سوق العتاد', jobs: 'مركز الوظائف', casino: 'الكازينو', alley: 'الأزقّة', hospital: 'المستشفى', jail: 'السجن', hq: 'مقر العائلة', home: 'عقارك', shop: 'متجر العتاد', school: 'مركز التعليم', hof: 'قاعة المشاهير', arena: 'الحلبة', news: 'مكتب الصحيفة', cityhall: 'البلدية', points: 'مبنى النقاط', church: 'الكنيسة', racetrack: 'حلبة السباق', bigals: 'متجر أسلحة بيغ آل', sweetshop: 'متجر حلويات سالي', university: 'الجامعة', docks: 'الأرصفة', police: 'مركز الشرطة', pawnshop: 'متجر الرهن' },
     odds: 'الفرصة', attackTip: 'الفرصة تقارن مجموع الصفات. التعادل بلا نتيجة.', attack: 'هاجم', fightVs: 'قتال ضد', you: 'أنت', mug: 'انشل', hospitalize: 'أدخله المستشفى', leave: 'امشِ', won: 'انتصار', lost: 'هزيمة', stalemate: 'تعادل', fighting: 'جارٍ القتال…', resXp: '+{n} خبرة جريمة', resMin: '{n} دقيقة', crimeFailed: 'فشلت المحاولة', noCrimeReward: 'لا مكافأة نقدية', resPts: '+{n} نقاط', levelUp: 'ارتفع مستواك',
-    character: 'شخصيتك', equipped: 'المجهّز', frame: 'البنية', unarmed: 'بالأيدي',
+    character: 'شخصيتك', equipped: 'المجهّز', frame: 'توزيع القدرات', unarmed: 'بالأيدي',
     outfits: { street: 'الشارع', suit: 'بدلة', tactical: 'تكتيكي' },
-    frames: { lean: 'نحيف · مبني على السرعة', balanced: 'متوازن', heavy: 'ضخم · مبني على القوة' }, oddsN: { easy: 'سهل', fair: 'متكافئ', hard: 'صعب' }, oppStatus: { ok: 'بخير', hosp: 'مستشفى' },
+    frames: { lean: 'تركيز على السرعة', balanced: 'متوازن', heavy: 'تركيز على القوة' }, oddsN: { easy: 'سهل', fair: 'متكافئ', hard: 'صعب' }, oppStatus: { ok: 'بخير', hosp: 'مستشفى' },
     opp: { rayan: 'ريّان الأسود', nadia: 'نادية السريعة', sal: 'سال الكبير', kaya: 'كايا' }, oppFac: { rayan: 'ملوك المرفأ', nadia: 'ملوك المرفأ', sal: 'بدون عائلة', kaya: 'سوق الليل' },
     round: { hit: 'ضربت {who} بـ{w} وسبّبت {d}.', miss: 'حاولت ضرب {who} وأخطأت.', ohit: '{who} ضربك بـ{d}.', omiss: '{who} أخطأ.' },
     rank: 'الرتبة', members: 'الأعضاء', respect: 'الاحترام', territory: 'الأراضي', blocks: '{n} مناطق', chainCard: 'السلسلة', active: 'نشطة', idle: 'متوقفة', nextMilestone: 'المكافأة التالية عند', chainTimer: 'تنتهي خلال', extendChain: 'مدّد السلسلة', upgrades: 'الترقيات', buy: 'اشترِ', owned: 'مملوك', bestChain: 'أفضل سلسلة', age: 'العمر',
@@ -1420,7 +1424,7 @@ class Component extends DCLogic {
     const f = document.getElementById('zone-char-3d');
     if (!f || !f.contentWindow) return;
     const s = this.p.stats;
-    // frame reads strength against speed, so a striker and a bruiser look different
+    // Reserved build payload. The current authored wardrobe has no physique morph.
     const build = Math.max(0, Math.min(1, (s.str + s.def) / (s.str + s.def + s.spd + s.dex) * 2 - .78));
     const LEG = { revolver: 'revolver_1', magnum: 'revolver_5', pistol: 'pistol_1', pistol_t: 'pistol_4', sawedoff: 'shotgun_sawedoff', shotgun: 'shotgun_2', smg: 'submachinegun_1', ak: 'assaultrifle2_1', sniper: 'sniperrifle_3' };
     const eqRaw = this.p.equip && CAT[this.p.equip] && CAT[this.p.equip].type === 'weapon' ? this.p.equip : 'fists';
@@ -1434,17 +1438,18 @@ class Component extends DCLogic {
     }
     const ownedWeapons = Object.keys(equipmentKeys);
     const dark = this.state.theme !== 'light';
+    const armorId = this.equippedArmor(), armor = CAT[armorId];
     f.contentWindow.postMessage({ bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang,
-      character: { build, outfit: this.state.outfit || 'suit', weapon: eq, ownedWeapons, equipmentKeys, fac: this.territoryMap.playerFactionId || '' } }, window.location.origin);
+      character: { build, outfit: this.state.outfit || 'suit', weapon: eq, ownedWeapons, equipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0 } }, window.location.origin);
   }
   charMsg(m) { const f = document.getElementById('zone-char-3d'); if (f && f.contentWindow) f.contentWindow.postMessage(m, window.location.origin); }
   pushCombatScene() {
     const frame = document.getElementById('zone-combat-frame'); if (!frame?.contentWindow) { this._combatSceneSig = ''; return; }
     const lang = this.state.lang, t = T[lang], encounter = this.combatEncounter || this.combatArchive || null;
-    const eq = this.p.equip && CAT[this.p.equip]?.type === 'weapon' ? this.p.equip : 'fists';
+    const eq = this.p.equip && this.p.inv[this.p.equip] > 0 && CAT[this.p.equip]?.type === 'weapon' ? this.p.equip : 'fists';
     const opponentName = this.state.combatMode === 'players' ? (this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === encounter?.opponentId)?.username || encounter?.opponent?.username || encounter?.opponent?.name?.[lang] || encounter?.opponentName || encounter?.opponentId || '') : (encounter?.opponent?.name?.[lang] || t.opp[encounter?.opponentId] || encounter?.opponentId || '');
     const packet = { lang, active: this.state.screen === 'attack', encounter, result: this.combatReceipt || null, opponentName,
-      player: { name: this.p.username || t.you, outfit: this.state.outfit || 'suit', weapon: CAT[eq]?.model || eq, weaponLabel: t.items[eq] || CAT[eq]?.name?.[lang] || t.unarmed } };
+      player: { name: this.p.username || t.you, outfit: this.state.outfit || 'suit', weapon: CAT[eq]?.model || eq, weaponLabel: t.items[eq] || CAT[eq]?.name?.[lang] || t.unarmed, armorId: this.equippedArmor() || null, armorOwned: Boolean(this.equippedArmor()), armorLabel: this.equippedArmor() ? t.items[this.equippedArmor()] || CAT[this.equippedArmor()]?.name?.[lang] || this.equippedArmor() : '', armorReduction: Math.min(.95, Math.max(0, Number(CAT[this.equippedArmor()]?.red) || 0)) } };
     const signature = JSON.stringify(packet); if (signature === this._combatSceneSig) return;
     this._combatSceneSig = signature; frame.contentWindow.postMessage({ zoneCombat: packet }, window.location.origin);
   }
@@ -1509,11 +1514,21 @@ class Component extends DCLogic {
   inventoryAction(id) {
     const type = CAT[id]?.type;
     if (!type || !(this.p.inv[id] > 0)) return this.toast(this.serverError('You do not own this item.'), true);
-    if (type !== 'medical' && type !== 'booster') return this.act(() => this.gameplayAction(type === 'weapon' ? 'item.equip' : 'item.sell', id));
+    if (type !== 'medical' && type !== 'booster') return this.act(() => this.gameplayAction(type === 'weapon' || type === 'armor' ? 'item.equip' : 'item.sell', id));
     // ProgressionService explicitly permits owned item.use during recovery.
     // No other action bypasses act()'s jail/hospital guard, and only the server
     // receipt changes resources, inventory or the hospital deadline.
     return this.gameplayAction('item.use', id).then(() => { this.save(); this.forceUpdate(); }).catch(error => this.toast(this.serverError(error), true));
+  }
+  equippedArmor() {
+    const id = this.p.armorEquip, item = CAT[id];
+    return id && this.p.inv[id] > 0 && item?.type === 'armor' && !item.retired ? id : '';
+  }
+  itemEffects(item, t) {
+    return ['life', 'nerve', 'energy', 'happy'].filter(key => Number(item?.[key]) > 0).map(key => '+' + num(item[key]) + ' ' + t[key]).join(' · ');
+  }
+  itemHasRoom(item) {
+    return ['life', 'nerve', 'energy', 'happy'].some(key => Number(item?.[key]) > 0 && (this.cur(key) < this.maxOf(key) || key === 'life' && this.p.hospUntil > Date.now()));
   }
   enabledDestination(route) { return SCREENS.includes(route) ? route : SCREENS.includes('missions') ? 'missions' : SCREENS.includes('home') ? 'home' : SCREENS[0] || 'home'; }
   allowGameplay() {
@@ -1975,7 +1990,7 @@ class Component extends DCLogic {
     if (snapshot.hospitalQuote) this.hospitalQuote = { ...snapshot.hospitalQuote };
     if (Object.prototype.hasOwnProperty.call(snapshot, 'family')) this.sharedFamily = snapshot.family;
     if (Object.prototype.hasOwnProperty.call(snapshot, 'onboarding')) this.onboarding = snapshot.onboarding;
-    for (const key of ['inv','equip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','market','inmates','patients']) {
+    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','market','inmates','patients']) {
       if (Object.prototype.hasOwnProperty.call(state, key)) this.p[key] = state[key];
     }
     this.p.fac = { chain: 0, best: 0, chainAt: 0, warEnd: 0, respect: 0, ups: {}, ...this.p.fac };
@@ -2065,7 +2080,9 @@ class Component extends DCLogic {
       const t = T[this.state.lang], result = snapshot.result || {}, cash = Number(result.cashDelta || 0);
       const name = this.gameplayName(action, id);
       this.log('gameplay', { action, id, cash, success: result.success !== false }, result.success === false ? 'bad' : 'good'); this.save();
-      this.result(result.success === false ? 'bad' : cash > 0 ? 'cash' : 'good', name || (this.state.lang === 'ar' ? 'تم' : 'Done'), '', cash ? (cash > 0 ? '+' : '-') + money(Math.abs(cash)) : '');
+      const restored = ['life','nerve','energy','happy'].filter(key => Number(result.restored?.[key]) > 0).map(key => '+' + num(result.restored[key]) + ' ' + t[key]).join(' · ');
+      const gearNote = action === 'item.equip' ? (this.state.lang === 'ar' ? 'تم تجهيز العنصر. يُستخدم في مواجهتك التالية.' : 'Equipped. Used in your next encounter.') : action === 'item.unequip' ? (this.state.lang === 'ar' ? 'تم نزع العنصر، وبقي في مخزونك.' : 'Removed from your loadout. Still in your inventory.') : '';
+      this.result(result.success === false ? 'bad' : cash > 0 ? 'cash' : 'good', name || (this.state.lang === 'ar' ? 'تم' : 'Done'), restored || gearNote, cash ? (cash > 0 ? '+' : '-') + money(Math.abs(cash)) : '');
       this.pushChar();
       return snapshot;
     } finally { this.gameplayBusy = false; this.forceUpdate(); }
@@ -2270,7 +2287,7 @@ class Component extends DCLogic {
     const ms = [10, 25, 50, 100, 250, 500].find(m => m > chain) || 1000, prevMs = [0, 10, 25, 50, 100, 250].filter(m => m <= chain).pop() || 0;
     const energyNow = this.cur('energy'), nerveNow = this.cur('nerve');
     const sel = CAT[this.state.sel] ? this.state.sel : Object.keys(CAT)[0], sc = CAT[sel] || { type: 'material', price: 0 };
-    const selRows = []; if (sc.mult) selRows.push({ k: t.dmgMult, v: '×' + sc.mult }); if (sc.red) selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }); if (sc.life) selRows.push({ k: t.restores + ' ' + t.life, v: num(sc.life) }); if (sc.nerve) selRows.push({ k: t.restores + ' ' + t.nerve, v: num(sc.nerve) }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
+    const selRows = []; if (sc.mult) selRows.push({ k: t.dmgMult, v: '×' + sc.mult }); if (sc.red) selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }); for (const key of ['life','nerve','energy','happy']) if (sc[key]) selRows.push({ k: t.restores + ' ' + t[key], v: num(sc[key]) }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
     const job = JOBS.find(j => j.id === p.job); const payMul = p.eduDone.biz ? 1.1 : 1;
     const recordBlocked = this.gameplayDisabled() || this.blocked() || !!this.gameplayBusy || !!this.state.busy;
     const recordReason = this.blocked() ? (lang === 'ar' ? 'متاح بعد انتهاء السجن أو التعافي' : 'Available after release or recovery') : p.travel?.status === 'traveling' ? (lang === 'ar' ? 'متاح عند انتهاء السفر' : 'Available after travel') : this.gameplayError || this.runtimeConnection === 'offline' ? (lang === 'ar' ? 'أعد الاتصال لتنفيذ النشاط' : 'Reconnect to act') : !this.gameplayReady || IS_PREVIEW ? (lang === 'ar' ? 'انتظر تحميل شخصيتك المحفوظة' : 'Awaiting your saved character') : this.gameplayBusy || this.state.busy || this.moduleBusy ? (lang === 'ar' ? 'جارٍ حفظ النشاط الحالي' : 'Current action is pending') : '';
@@ -2413,15 +2430,15 @@ class Component extends DCLogic {
       itemsSource: browsingCatalog ? (lang === 'ar' ? 'كتالوج للمعاينة والشراء. الكمية المعروضة هي ما تملكه؛ السعر مرجعي من الكتالوج وقد يختلف عن مخزون تجار المدينة.' : 'Catalog inspection and purchases. Quantities show what you own; catalog prices can differ from city merchant stock.') : (lang === 'ar' ? 'مخزونك المملوك. التجهيز والاستخدام والبيع يتطلب عنصراً تملكه.' : 'Your owned inventory. Equip, use, and sell act on items you own.'),
       inventoryModeLabel: lang === 'ar' ? 'مصدر العناصر' : 'Item source', inventoryIsOwned: !browsingCatalog, inventoryIsCatalog: browsingCatalog,
       inventoryOwnedLabel: lang === 'ar' ? 'مخزوني المملوك' : 'Owned inventory', inventoryCatalogLabel: lang === 'ar' ? 'استعرض الكتالوج' : 'Browse catalog',
-      inventoryEmptyOwned: lang === 'ar' ? 'لا تملك عناصر في هذه الفئة بعد. استعرض الكتالوج للفحص والشراء، أو فعّل اختبار المالك للاختبار دون تغيير حسابك.' : 'You do not own items in this category yet. Browse the catalog to inspect or buy, or use Owner Playtest to test without changing your account.',
+      inventoryEmptyOwned: lang === 'ar' ? 'لا تملك عناصر في هذه الفئة بعد. استعرض الكتالوج، وافحص ما تحتاجه قبل الشراء.' : 'Nothing in your kit yet. Browse the catalog and inspect what you need before buying.',
       inventoryOwned: () => { this.setState({inventoryMode:'owned',itemTab:'all'},()=>{this.syncInventorySelection();this.forceUpdate();}); }, inventoryCatalog: () => { this.setState({inventoryMode:'catalog',itemTab:'all'},()=>{this.syncInventorySelection();this.forceUpdate();}); },
       inventorySearch: { label: lang === 'ar' ? 'ابحث في العناصر' : 'Find an item', placeholder: lang === 'ar' ? 'اسم العنصر أو فئته' : 'Item name or category', value: this.state.inventoryQuery || '', count: visibleInventoryIds.length + ' / ' + inventoryIds.length, change: event => changeInventorySearch(event.target.value), clear: () => changeInventorySearch(''), clearDisabled: !this.state.inventoryQuery, clearLabel: lang === 'ar' ? 'مسح البحث' : 'Clear search', empty: inventoryQuery ? (lang === 'ar' ? 'لا توجد عناصر مطابقة. امسح البحث أو غيّر الفئة.' : 'No matching items. Clear the search or choose another category.') : t.emptyTab },
       itemTabs: ['all', 'weapon', 'armor', 'medical', 'booster', 'material', 'armory', 'store'].map(k => ({ name: k === 'all' && !browsingCatalog ? (lang === 'ar' ? 'كل ما أملكه' : 'All owned') : t.itemTabs[k], n: k === 'store' ? storeIds.length : k === 'armory' ? armoryIds.length : browsingCatalog ? storeIds.filter(i => k === 'all' || CAT[i].type === k).length : Object.keys(p.inv).filter(i => p.inv[i] > 0 && CAT[i] && (k === 'all' || CAT[i].type === k)).length, go: () => { this._itemInspection = null; this.setState({ itemTab: k, inventoryMode: ['armory','store'].includes(k) ? 'catalog' : this.state.inventoryMode }, () => { this.syncInventorySelection(); this.forceUpdate(); }); }, bg: this.state.itemTab === k ? 'var(--activebg)' : 'var(--deep)', fg: this.state.itemTab === k ? 'var(--activefg)' : 'var(--t4)' })),
-      inv: visibleInventoryIds.map((k, i) => { const c = CAT[k], eq = p.equip === k, thumbnail = this.itemThumbnail(k);
+      inv: visibleInventoryIds.map((k, i) => { const c = CAT[k], gear = c.type === 'weapon' || c.type === 'armor', eq = c.type === 'armor' ? this.equippedArmor() === k : p.equip === k, thumbnail = this.itemThumbnail(k), itemName = t.items[k] || c.name?.[lang] || c.name?.en || k;
         if (browsingCatalog && !(p.inv[k] > 0)) return { thumbnail, name: t.items[k], type: t.itemType[c.type], meta: c.mult ? '×' + c.mult : money(c.price), qty: p.inv[k] || 0, d: LU(k) || LU(c.type === 'weapon' ? 'knife' : 'items'), abbr: (t.items[k] || k).slice(0, 2).toUpperCase(),
           bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.selectInventoryItem(k),
           btn: t.buyFor + ' ' + money(c.price), btnBg: p.cash >= c.price ? GREEN : GREY, btnFg: p.cash >= c.price ? 'var(--onAcc)' : 'var(--mu)', disabled: p.cash < c.price,
-          act: () => this.act(() => this.gameplayAction('item.buy', k)) }; const usable = c.type === 'medical' || c.type === 'booster'; const meta = c.mult ? '×' + c.mult : c.red ? '-' + c.red * 100 + '%' : c.life ? '+' + c.life + ' ' + t.life : c.nerve ? '+' + c.nerve + ' ' + t.nerve : money(c.price); return { thumbnail, name: t.items[k], type: t.itemType[c.type], meta, qty: p.inv[k], d: LU(k === 'sand' ? 'time' : k) || LU(c.type === 'weapon' ? 'knife' : 'items'), abbr: t.items[k].slice(0, 2).toUpperCase(), bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.selectInventoryItem(k), btn: c.type === 'weapon' ? (eq ? t.equipped : t.equip) : c.type === 'armor' ? (lang === 'ar' ? 'حماية تلقائية' : 'Automatic armor') : usable ? t.use : t.sell, btnBg: c.type === 'weapon' && eq ? 'var(--activebg)' : c.type === 'material' ? GREY : GREEN, btnFg: c.type === 'weapon' && eq ? 'var(--activefg)' : c.type === 'material' ? 'var(--t3)' : 'var(--onAcc)', disabled: !!c.retired || (c.type === 'weapon' && eq) || c.type === 'armor' || (this.blocked() && !usable), act: () => this.inventoryAction(k) }; }),
+          act: () => this.act(() => this.gameplayAction('item.buy', k)) }; const usable = c.type === 'medical' || c.type === 'booster'; const meta = c.mult ? '×' + c.mult : c.red ? '-' + Math.round(c.red * 100) + '%' : this.itemEffects(c, t) || money(c.price); return { thumbnail, name: itemName, type: t.itemType[c.type], meta, qty: p.inv[k], d: LU(k === 'sand' ? 'time' : k) || LU(c.type === 'weapon' ? 'knife' : 'items'), abbr: itemName.slice(0, 2).toUpperCase(), bg: sel === k ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)', select: () => this.selectInventoryItem(k), btn: gear ? (eq ? t.equipped : t.equip) : usable ? t.use : t.sell, btnBg: gear && eq ? 'var(--activebg)' : c.type === 'material' ? GREY : GREEN, btnFg: gear && eq ? 'var(--activefg)' : c.type === 'material' ? 'var(--t3)' : 'var(--onAcc)', disabled: !!c.retired || gear && eq || usable && !this.itemHasRoom(c) || this.gameplayBusy || this.state.busy || this.blocked() && !usable, act: () => this.inventoryAction(k) }; }),
       invEmpty: visibleInventoryIds.length === 0,
       sel: { visible: visibleInventoryIds.includes(sel), name: t.items[sel], type: t.itemType[sc.type], desc: t.itemDesc[sel], rows: selRows,
         hasModel: this.itemHasCapturedModel(sel), viewerBadge: this.itemHasCapturedModel(sel) ? '3D' : (lang === 'ar' ? 'رسم توضيحي' : 'Artwork'),
@@ -2532,13 +2549,21 @@ class Component extends DCLogic {
     const steps = (this.onboarding?.steps || []).map((step, index) => { const route = enabledRoute(counterRoutes[step.counter] || 'missions'); return { number: index + 1, current: !!step.current, name: t.ms[step.missionId]?.[0] || step.missionId, description: t.ms[step.missionId]?.[1] || '', progress: step.progress + '/' + step.target, reward: money(step.cash) + ' + ' + step.points + ' ' + t.points, openLabel: (lang === 'ar' ? 'افتح ' : 'Open ') + routeName(route), open: () => this.go(route), claimLabel: step.claimed ? t.claimed : step.claimable ? t.claim : t.inProgress, disabled: unavailable || !SCREENS.includes('missions') || !step.claimable || !!step.claimed, claim: () => this.act(() => this.gameplayAction('mission.claim', step.missionId)) }; });
     view.onboarding = { visible: !!this.onboarding, title: lang === 'ar' ? 'خطواتك الأولى' : 'Your first moves', description: lang === 'ar' ? 'أنجز هذه الأهداف بالترتيب. تبقى الخطوة والمكافآت محفوظة عند عودتك.' : 'Work through these goals in order. Your current step and claimed rewards stay saved when you return.', steps, current: steps.find(step => step.current) || null };
     const equippedItem = CAT[p.equip], ownsEquipped = equippedItem?.type === 'weapon' && (p.inv[p.equip] || 0) > 0;
+    const armorId = this.equippedArmor(), armor = CAT[armorId], weaponId = p.equip && p.inv[p.equip] > 0 && CAT[p.equip]?.type === 'weapon' && !CAT[p.equip].retired ? p.equip : '';
+    view.loadout = {
+      title: lang === 'ar' ? 'عتاد المواجهة' : 'Your fighting kit',
+      note: lang === 'ar' ? 'الحماية من الدرع المجهز، لا من مجرد امتلاكه.' : 'Protection comes from the armor you wear, not merely own.',
+      manageLabel: lang === 'ar' ? 'عدّل عتادك' : 'Manage loadout', open: () => this.go('items'),
+      weapon: { id: weaponId, slot: t.itemType.weapon, name: weaponId ? t.items[weaponId] || CAT[weaponId].name?.[lang] || weaponId : t.unarmed, detail: weaponId ? '×' + CAT[weaponId].mult + ' ' + t.dmgMult : (lang === 'ar' ? 'دون سلاح مجهز' : 'No weapon equipped') },
+      armor: { id: armorId, slot: t.itemType.armor, name: armorId ? t.items[armorId] || armor.name?.[lang] || armorId : (lang === 'ar' ? 'دون درع' : 'No armor worn'), detail: armorId ? Math.round(Math.min(.95, Math.max(0, Number(armor.red) || 0)) * 100) + '% ' + t.dmgReduce : (lang === 'ar' ? 'الحماية: 0%' : 'Protection: 0%'), removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: recordBlocked || Boolean(this.combatEncounter || this.combatIncoming), remove: () => this.act(() => this.gameplayAction('item.unequip', armorId)) }
+    };
     view.homeBase = {
       title: lang === 'ar' ? 'قاعدة عملياتك' : 'Your base of operations', residence: t.props[p.prop] || p.prop,
       identity: view.t.player + ' · ' + t.level + ' ' + num(p.level), resourcesLabel: lang === 'ar' ? 'مواردك والخطوة التالية' : 'Your resources and next action',
       goal: currentGoal ? steps[savedSteps.findIndex(step => step.missionId === currentGoal.missionId)] || null : null,
       showGoalProgress: Boolean(canGuide && currentGoal && (!readyReward || readyReward.id === currentGoal.missionId)),
       resources: bars.map(resource => { const destination = ({ energy: 'gym', nerve: 'crimes', happy: 'properties', life: 'hospital' })[resource.id]; return { ...resource, destination: t.nav[destination], disabled: !SCREENS.includes(destination), open: () => this.go(destination) }; }),
-      equipment: { id: ownsEquipped ? p.equip : 'fists', hasImage: Boolean(ownsEquipped && this.itemThumbnail(p.equip)), image: ownsEquipped ? this.itemThumbnail(p.equip) : '', name: ownsEquipped ? t.items[p.equip] : t.unarmed, detail: ownsEquipped ? (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + equippedItem.mult : (lang === 'ar' ? 'لا يوجد سلاح مجهز. افحص مخزونك لتجهيز سلاح تملكه.' : 'No weapon equipped. Inspect your inventory to equip one you own.') }
+      equipment: { id: ownsEquipped ? p.equip : 'fists', hasImage: Boolean(ownsEquipped && this.itemThumbnail(p.equip)), image: ownsEquipped ? this.itemThumbnail(p.equip) : '', name: ownsEquipped ? t.items[p.equip] : t.unarmed, detail: (ownsEquipped ? (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + equippedItem.mult : (lang === 'ar' ? 'لا يوجد سلاح مجهز. افحص مخزونك لتجهيز سلاح تملكه.' : 'No weapon equipped. Inspect your inventory to equip one you own.')) + ' · ' + view.loadout.armor.name + (armorId ? ' · ' + view.loadout.armor.detail : '') }
     };
     const selectedCrime = view.crimes.find(crime => crime.id === this.state.crimeSelection) || view.crimes.find(crime => !crime.disabled) || view.crimes[0];
     view.crimes.forEach(crime => { crime.selected = crime.id === selectedCrime?.id; });
@@ -2564,6 +2589,8 @@ class Component extends DCLogic {
       eyebrow: lang === 'ar' ? 'تدريب الصالة' : 'On the gym floor', floorNote: lang === 'ar' ? 'اختر محطة تدريب، وراجع الجلسة قبل استهلاك طاقتك.' : 'Choose your station. Review the session before spending energy.',
       sessionLabel: lang === 'ar' ? 'جلستك التالية' : 'Your next session', stationLabel: lang === 'ar' ? 'اختر محطة التدريب' : 'Choose a training station',
       estimateNote: lang === 'ar' ? 'تقدير فقط. يحدد الخادم المكسب الفعلي.' : 'Estimate only. The server resolves the actual gain.',
+      happyNote: (lang === 'ar' ? 'المعنويات الحالية تقوّي تدريبك بمضاعف ' : 'Current happiness boosts training by ') + '×' + (1 + Math.log1p(this.cur('happy') / 500) * .35).toFixed(2) + (lang === 'ar' ? '. المنزل الأفضل يرفع سقف المعنويات، ولا يملأها فوراً.' : '. A better home raises the happiness cap; it does not refill it instantly.'),
+      homeLabel: lang === 'ar' ? 'راجع منزلك' : 'Review your home', openHome: () => this.go('properties'),
       costLabel: lang === 'ar' ? 'تكلفة جلسة واحدة' : 'One-session cost', balanceLabel: lang === 'ar' ? 'الطاقة بعد الجلسة' : 'Energy after session',
       energyNow, energyMax: this.maxOf('energy'), energyAfter: num(Math.max(0, energyNow - this.gymEnergyCost())), busy: Boolean(this.state.busy || this.gameplayBusy),
       reason: view.trainingBoard.reason || (lang === 'ar' ? 'جلسة واحدة. يُحفظ المكسب والطاقة في الخادم.' : 'One session. Gain and energy are saved by the server.'),

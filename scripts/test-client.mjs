@@ -48,14 +48,15 @@ test('empty owned inventory never presents an unowned weapon as a character item
   assert.match(html, /<sc-if value="\{\{ sel\.visible \}\}"><div class="zone-item-inspector/);
 });
 
-test('owned armor describes automatic server protection instead of an unavailable sell action', () => {
+test('owned armor offers an explicit equip action instead of granting automatic protection', () => {
   for (const lang of ['en','ar']) {
     const {instance,T} = game({route:'?screen=items&lang=' + lang});
     instance.p.inv = {armor:1,vest:1};
     const rows = instance.renderVals().inv;
     assert.equal(rows.length,2);
-    assert.ok(rows.every(row=>row.disabled && row.btn !== T[lang].sell));
-    assert.ok(rows.every(row=>row.btn === (lang === 'ar' ? 'حماية تلقائية' : 'Automatic armor')));
+    assert.ok(rows.every(row=>row.btn !== T[lang].sell));
+    assert.ok(rows.every(row=>row.btn === T[lang].equip));
+    assert.equal(instance.equippedArmor(),'');
   }
 });
 
@@ -2173,4 +2174,46 @@ test('beta102 jobs display database cooldown rather than a hardcoded client dura
 });
 test('beta102 model changes reuse the initialized iframe URL instead of reloading Three for every selection',()=>{
  const {instance:c}=game();const first=c.itemViewerUrl('knife');assert.match(first,/item=knife/);assert.equal(c.itemViewerUrl('revolver'),first);assert.equal(c.itemViewerUrl('smallkit'),'');
+});
+
+test('v107 armor hydration is independent from the owned weapon and rejects stale or unowned protection',()=>{
+  const {instance:c}=game();
+  c.applyGameplay({state:{version:1,inv:{bat:1,vest:1},equip:'bat',armorEquip:'vest'}});
+  assert.equal(c.p.armorEquip,'vest'); assert.equal(c.equippedArmor(),'vest'); assert.equal(c.p.equip,'bat');
+  c.applyGameplay({state:{version:2,inv:{bat:1,vest:0},equip:'bat',armorEquip:'vest'}});
+  assert.equal(c.equippedArmor(),''); assert.equal(c.p.equip,'bat');
+});
+
+test('v107 armor inventory offers a real equip action and equipped protection stays localized',()=>{
+  for(const lang of ['en','ar']){
+    const {instance:c,T}=game();c.state.lang=lang;
+    c.applyGameplay({state:{version:1,inv:{bat:1,vest:1},equip:'bat',armorEquip:null}});c.state.itemTab='armor';c.runtimeConnection='connected';
+    const row=c.renderVals().inv[0]; assert.equal(row.btn,T[lang].equip);assert.equal(row.disabled,false);
+    const issued=[];c.act=fn=>fn();c.gameplayAction=(action,id)=>issued.push({action,id});row.act();
+    assert.deepEqual(issued,[{action:'item.equip',id:'vest'}]);
+    c.p.armorEquip='vest';const view=c.renderVals();assert.equal(view.inv[0].btn,T[lang].equipped);
+    assert.equal(view.loadout.armor.id,'vest');assert.match(view.loadout.armor.detail,/25%/);
+    view.loadout.armor.remove();assert.deepEqual(issued.at(-1),{action:'item.unequip',id:'vest'});
+  }
+});
+
+test('v107 character bridge uses actual owned armor without changing the equipped weapon or model assets',()=>{
+  const {instance:c,messages}=game();c.applyGameplay({state:{version:1,inv:{bat:1,vest:1},equip:'bat',armorEquip:'vest'}});
+  c.pushChar(); const character=messages.filter(m=>m.id==='zone-char-3d').at(-1).data.character;
+  assert.equal(character.armorId,'vest');assert.equal(character.armorOwned,true);assert.equal(character.armorReduction,.25);
+  assert.equal(character.weapon,'bat');
+  c.p.inv.vest=0;c.pushChar();assert.equal(messages.filter(m=>m.id==='zone-char-3d').at(-1).data.character.armorId,null);
+});
+
+test('v107 authored four-resource consumables show all effects and keep fully capped items',()=>{
+  for(const lang of ['en','ar']){
+    const {instance:c,CAT,T}=game();c.state.lang=lang;
+    CAT.comfort={type:'booster',price:180,energy:8,happy:40,nerve:2,life:10,name:{en:'Quiet supper',ar:'عشاء هادئ'}};
+    c.applyServerPlayer({id:'ordinary',energy:100,max_energy:100,nerve:15,max_nerve:15,life:250,max_life:250,happy:100,max_happy:100});
+    c.applyGameplay({state:{version:1,inv:{comfort:1},equip:'fists',armorEquip:null}});c.runtimeConnection='connected';c.state.sel='comfort';
+    const full=c.renderVals();assert.equal(full.inv[0].disabled,true);assert.equal(full.sel.rows.filter(row=>row.k.startsWith(T[lang].restores)).length,4);
+    c.applyServerPlayer({id:'ordinary',energy:100,max_energy:100,nerve:15,max_nerve:15,life:250,max_life:250,happy:60,max_happy:100});
+    assert.equal(c.renderVals().inv[0].disabled,false);assert.match(c.renderVals().inv[0].meta,/40/);
+    assert.equal(c.p.inv.comfort,1);assert.equal(c.p.bars.happy.v,60);
+  }
 });

@@ -131,9 +131,9 @@ export function installCombatStage(T, { scene, renderer }) {
 }
 
 export async function mountCombatPresentation({ document: doc = document, window: win = window } = {}) {
-  const [T, { GLTFLoader }, { OBJLoader }, { MTLLoader }, art, grip, poses, weapons] = await Promise.all([
+  const [T, { GLTFLoader }, { OBJLoader }, { MTLLoader }, art, grip, poses, weapons, armor] = await Promise.all([
     import('../lib/three184/three.module.js'), import('../lib/three184/GLTFLoader.js'), import('../lib/three184/OBJLoader.js'), import('../lib/three184/MTLLoader.js'),
-    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=99')
+    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=99'), import('./character-armor.mjs?v=107-fit')
   ]);
   const $ = id => doc.getElementById(id), canvas = $('combat-canvas');
   const renderer = new T.WebGLRenderer({ canvas, antialias: true });
@@ -148,6 +148,19 @@ export async function mountCombatPresentation({ document: doc = document, window
   let packet = null, lang = 'en', frame = null, disposed = false, visible = true, inView = true, lastFrame = 0, elapsed = 0, lastMetrics = 0, audio = null, audioEnabled = false, loadSequence = 0, requestedSignature = null, lastFeedback = null;
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)');
   const names = () => ({ player: packet?.player?.name || (lang === 'ar' ? 'أنت' : 'You'), opponent: packet?.opponentName || (lang === 'ar' ? 'الخصم' : 'Opponent') });
+  let armorSource = null;
+  const loadArmorSource = () => {
+    if (armorSource) return armorSource;
+    armorSource = new Promise((resolve, reject) => {
+      let settled = false;
+      const timer = win.setTimeout(() => { settled = true; armorSource = null; reject(new Error('Optional worn armor timed out')); }, 8000);
+      new GLTFLoader().loadAsync(new URL('../assets/character/quaternius/Swat.glb', import.meta.url).href).then(gltf => {
+        if (settled || disposed) { art.disposeCharacterResources([gltf.scene]); return; }
+        settled = true; win.clearTimeout(timer); sources.add(gltf.scene); resolve(gltf);
+      }, error => { if (settled) return; settled = true; win.clearTimeout(timer); armorSource = null; reject(error); });
+    });
+    return armorSource;
+  };
   const status = text => { $('combat-status').textContent = text; };
   const play = (actor, motion) => {
     if (!actor) return;
@@ -167,12 +180,13 @@ export async function mountCombatPresentation({ document: doc = document, window
     const gltf = await new GLTFLoader().loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href);
     if (disposed || token !== loadSequence) { art.disposeCharacterResources([gltf.scene]); return; }
     art.validateCharacterWardrobe(T, gltf); art.prepareCharacterArt(T, gltf.scene);
-    const root = gltf.scene, clips = Object.fromEntries(gltf.animations.map(clip => [clip.name, clip]));
+    const root = gltf.scene, clips = Object.fromEntries(gltf.animations.map(clip => [clip.name, clip])); root.userData.outfit = file;
     root.traverse(object => { if (object.isMesh) { object.castShadow = true; object.frustumCulled = false; } });
     root.position.x = side === 'player' ? -.75 : .75; root.rotation.y = side === 'player' ? .68 : -.68;
     scene.add(root); sources.add(root);
     const actor = { root, clips, mixer: new T.AnimationMixer(root), weapon: weapon || 'fists', signature: `${outfit}:${weapon}`, materials: [], impact: 0 };
     root.traverse(object => { for (const material of object.isMesh ? (Array.isArray(object.material) ? object.material : [object.material]) : []) if (material.emissive && !actor.materials.some(entry => entry.material === material)) actor.materials.push({ material, emissive: material.emissive.clone(), intensity: material.emissiveIntensity }); });
+    actor.armor = armor.createArmorController({ THREE: T, loadSource: loadArmorSource, publish: receipt => { if (side === 'player') doc.body.dataset.zoneCombatArmor = JSON.stringify(receipt); } });
     actors[side] = actor; play(actor, 'guard'); actor.mixer.update(.01); root.updateMatrixWorld(true);
     actor.grip = grip.prepareCharacterGrip(T, root, clips); actor.pose = poses.prepareWeaponPose(T, root, actor.grip);
     actor.mixer.addEventListener('finished', () => { if (!disposed && actor.motion !== 'down') play(actor, 'guard'); });
@@ -181,10 +195,11 @@ export async function mountCombatPresentation({ document: doc = document, window
       if (disposed || token !== loadSequence || actors[side] !== actor) { weaponLoader.release(mesh); return; }
       if (mesh) { const fit = mesh.userData.zoneWeaponAsset; actor.mesh = mesh; actor.held = grip.attachHeldWeapon(T, actor.grip, mesh, fit.gripPoint, fit.axis, fit.forward); }
     }
+    if (side === 'player') actor.armor.update(packet?.player || {}, root);
     size();
   }
   function releaseActor(actor) {
-    if (!actor) return; actor.mixer.stopAllAction(); actor.mixer.uncacheRoot(actor.root);
+    if (!actor) return; actor.armor?.dispose(); actor.mixer.stopAllAction(); actor.mixer.uncacheRoot(actor.root);
     if (actor.held) actor.held.parent?.remove(actor.held); weaponLoader.release(actor.mesh);
     scene.remove(actor.root); sources.delete(actor.root); art.disposeCharacterResources([actor.root]);
   }
@@ -236,6 +251,7 @@ export async function mountCombatPresentation({ document: doc = document, window
     if (resetFeedback) { playback.stop(); feedback.stop(); lastFeedback = null; clearCombatFeedback(doc, title); }
     else if (languageChanged) status(lastFeedback ? (lastFeedback.replay ? (lang === 'ar' ? 'إعادة عرض: ' : 'Replay: ') : '') + combatEventLabel(lastFeedback, names(), lang) : title);
     if (encounter) playback.ingest(encounter);
+    actors.player?.armor?.update(data.player || {}, actors.player.root);
     const signature = `${data.player?.outfit || 'suit'}:${data.player?.weapon || 'fists'}`;
     if (requestedSignature !== signature) {
       requestedSignature = signature;
@@ -289,7 +305,7 @@ export async function mountCombatPresentation({ document: doc = document, window
   function dispose() {
     if (disposed) return; disposed=true; playback.dispose(); feedback.dispose(); updateVisibility(); resize.disconnect(); intersection?.disconnect();
     win.removeEventListener('message', onMessage); doc.removeEventListener('visibilitychange', updateVisibility); win.removeEventListener('pagehide', dispose);
-    for (const actor of Object.values(actors)) releaseActor(actor); weaponLoader.dispose(); stage.dispose();
+    for (const actor of Object.values(actors)) releaseActor(actor); art.disposeCharacterResources([...sources]); sources.clear(); weaponLoader.dispose(); stage.dispose();
     renderer.dispose(); renderer.forceContextLoss(); audio?.close(); buffers.clear();
   }
   win.addEventListener('pagehide', dispose, { once: true });

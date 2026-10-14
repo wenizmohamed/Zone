@@ -58,6 +58,7 @@ test('actual combat actor loading attaches a source-normalized detailed shotgun 
   const grip = await loadRuntimeModule('../dist/character-grip.js');
   const poses = await loadRuntimeModule('../dist/character-poses.js');
   const art = await loadRuntimeModule('../dist/character-presentation.js');
+  const armor = await loadRuntimeModule('../dist/character-armor.mjs');
   const { createWeaponAssetLoader } = await loadRuntimeModule('../dist/weapon-assets.js');
   const geometryBuffer = bytes => {
     const length = bytes.readUInt32LE(12), data = JSON.parse(bytes.toString('utf8', 20, 20 + length));
@@ -79,7 +80,7 @@ test('actual combat actor loading attaches a source-normalized detailed shotgun 
   const weaponLoader = createWeaponAssetLoader({ THREE: T, GLTFLoader: RetainedLoader });
   assert.ok(Math.hypot(...weaponLoader.descriptor('shotgun').grip) > .4, 'regression must use a large nonzero source grip');
   const actors = {}, scene = new T.Scene();
-  const ctx = vm.createContext({ T, GLTFLoader: RetainedLoader, URL, art, grip, poses, weaponLoader, actors, scene,
+  const ctx = vm.createContext({ T, GLTFLoader: RetainedLoader, URL, art, grip, poses, armor, weaponLoader, actors, scene, packet: {player:{}}, doc: {body:{dataset:{}}}, loadArmorSource: () => new RetainedLoader().loadAsync(new URL('../assets/character/quaternius/Swat.glb',import.meta.url).href),
     loadSequence: 1, disposed: false, sources: new Set(), size() {},
     play(actor) { actor.mixer.clipAction(actor.clips.Idle).play(); } });
   const start = combatSource.indexOf('async function loadActor('), end = combatSource.indexOf('function releaseActor(', start);
