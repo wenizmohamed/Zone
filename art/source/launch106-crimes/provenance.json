@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "project": "ZONE",
+  "increment": "launch106-crimes",
+  "artDirectionSourceCommit": "91de4e1d3bd58b902e5b5c2d50be9a869698404a",
+  "authoringWorktreeBaseCommit": "571440664330786976bc500230bcc675bb35c018",
+  "generatedOn": "2026-10-14",
+  "generationMode": "native image_gen.imagegen",
+  "generationCalls": 1,
+  "generationResult": "exec-e86e1cb1-05b6-4690-92a4-111abf11ab79",
+  "model": "Not exposed by native tool result",
+  "cost": "Not exposed by native tool result",
+  "publicPath": "art/zone-crime-neighborhood-v106.webp",
+  "originalPath": "art/source/launch106-crimes/zone-crime-neighborhood-v106.original.png",
+  "promptPath": "art/source/launch106-crimes/zone-crime-neighborhood-v106.prompt.txt",
+  "sourceReferences": [
+    "ART_DIRECTION.md at 91de4e1",
+    "index.html Crimes markup and current category context at 91de4e1",
+    "Inspected launch105 Gym/Home art direction and materials"
+  ],
+  "intendedUse": "Bounded Crimes neighborhood scene adjacent to real crime selection/action controls. UI headings/status outside image. Full 16:9 retained on phones; artwork is not a clickable map or authority over crime outcomes.",
+  "focalPosition": "50% 55%",
+  "reviewSlots": [
+    {
+      "name": "crime-desktop",
+      "width": 520,
+      "height": 293
+    },
+    {
+      "name": "crime-phone",
+      "width": 351,
+      "height": 197
+    }
+  ],
+  "licensing": {
+    "type": "Generated original environment artwork",
+    "externalStock": false,
+    "externalReferenceImages": false,
+    "notes": "Generated specifically for ZONE using a native image tool. No third-party logos, trademarks, characters or stock imagery requested. Platform terms remain applicable; no invented CC0 attribution or exclusive-rights guarantee."
+  },
+  "artDirection": {
+    "palette": [
+      "#17191b",
+      "#232527",
+      "#303335",
+      "#c99a45",
+      "#d9b76b"
+    ],
+    "style": "Grounded urban stylized realism with PBR-like materials",
+    "lighting": "Restrained cool dusk exterior with warm brass practical/shop light",
+    "scene": "Metro entrance, lit corner shop, central alley/service access, restrained refuse/storage props",
+    "people": false,
+    "weapons": false,
+    "ui": false,
+    "legibleText": false
+  },
+  "original": {
+    "width": 1672,
+    "height": 941,
+    "bytes": 2787981,
+    "sha256": "871589C7B63C422ED3A90A680A57F445A5554B37DA235306D73A78EE113601B3",
+    "format": "png",
+    "space": "srgb",
+    "channels": 3
+  },
+  "derivative": {
+    "width": 1600,
+    "height": 900,
+    "bytes": 226434,
+    "sha256": "B3DC92417CFFCADF5C028BA4025E863194A38882308C2FCA2BC01B673C53538C",
+    "format": "webp"
+  },
+  "conversion": {
+    "library": "sharp",
+    "libraryVersion": "0.35.5",
+    "command": "ZONE_SHARP_MODULE=<sharp module path> node art/source/launch106-crimes/export-asset.mjs",
+    "resize": {
+      "width": 1600,
+      "height": 900,
+      "fit": "cover",
+      "position": "centre",
+      "withoutEnlargement": true
+    },
+    "quality": 82,
+    "effort": 6,
+    "runtimeByteBudgetExclusive": 250000
+  },
+  "pixelReview": "Native original displayed and inspected after generation. Optimized WebP opened at original detail. Actual-size 520x293 and 351x197 previews opened and inspected: metro stairs/rail/canopy at left, shop/awning/window/crates at right, alley service route center. No people, weapons, UI, or legible brand/text observed; shadow detail remains readable.",
+  "acceptanceBoundary": "Standalone environment-art patch and compact-size inspection only. Actual screen integration, EN/AR usability, real actions, performance and production acceptance are separate root/UI-owner gates.",
+  "knownCaveats": [
+    "Native tool produced 1672x941 despite preferred 2048x1152 prompt; actual dimensions recorded rather than claimed as 2K.",
+    "Small packaging/bottle shapes are ambient set dressing, not readable brands or inventory items.",
+    "One neighborhood atmosphere asset does not provide distinct art for all crime categories and does not represent a full world/map."
+  ]
+}
