@@ -5,6 +5,39 @@
   "audience": "Owner launch decision pending; current access unchanged",
   "items": [
     {
+      "id": "OPS-03",
+      "severity": "P1",
+      "status": "doing",
+      "department": "Infrastructure and backend",
+      "impact": "Production auth, owner resume and Studio requests intermittently time out while existing PC engine constructs a PostgreSQL connection",
+      "reproduction": "Canonical v105 auth/session503 and admin/playtest503; Studio startup deadline then retry200; PHP08:25:51 PDOException Database.php64",
+      "dependencies": ["sanitized synchronized connection timing", "isolated production-runtime verification"],
+      "acceptance": "Measured failure phase repaired; owner recovery, ordinary account startup and Studio repeated reads pass without increasing timeouts or replaying writes",
+      "evidence": "Three later direct DB probes129/396/43ms and no blockers establish only momentary health. Root cause UNKNOWN; storage/host contention hypothesis. No service/config/data change."
+    },
+    {
+      "id": "UI-CRIMES-01",
+      "severity": "P1",
+      "status": "integrated-local-production-held",
+      "department": "Player UX and art",
+      "impact": "Old poster grid/table obscures action costs, consequences and selected player goal",
+      "reproduction": "Paired actual ordinary-player desktop/Arabic phone captures before91de4e1 and afterv106",
+      "dependencies": ["OPS-03", "v106 fresh-source gate"],
+      "acceptance": "Selected attempt and real costs/range/risk, coherent neighborhood, earned receipt/progress, mobile/RTL and ordinary persisted actions; production verified",
+      "evidence": "Localcode9edef1c, ordinaryHTTP36/0 x3, actualARtrash104cash/2nerve/2XP/c5=1/5 retainedreload, labels/focus/money fixed; not production106."
+    },
+    {
+      "id": "OWNER-RECOVERY-01",
+      "severity": "P1",
+      "status": "integrated-local-production-held",
+      "department": "Player access recovery",
+      "impact": "Selected owner startup depended on ordinary auth and reconnect omitted explicit authenticated sandbox resume",
+      "reproduction": "Source startup/reconnect sequence plus actual owner selected latch after auth/session503",
+      "dependencies": ["OPS-03", "v106 fresh-source gate"],
+      "acceptance": "Explicit same-session/version recovery with no ordinary fallback, new sandbox or replay; revoked/changed/expired mode blocked",
+      "evidence": "Six regressions red-before then green; independent recovery/focus/bidi208/0; not production106."
+    },
+    {
       "id": "OPS-01",
       "severity": "P1",
       "status": "owner-decision-pending",
@@ -34,7 +67,7 @@
     {
       "id": "SOURCE-01",
       "severity": "P1",
-      "status": "in-progress",
+      "status": "done-v105",
       "department": "Technical direction",
       "impact": "GitHub main alone would rebuild older code than working deployment",
       "reproduction": "Local and remote main 4bec6cb with 224 dirty entries; v104 built from export",
@@ -42,12 +75,12 @@
         "verified current export"
       ],
       "acceptance": "Clean committed checkout builds identical accepted world assets and verified runtime",
-      "evidence": "launch/2026-10-21 isolated source baseline 08e53899"
+      "evidence": "History preserved from4bec6cb to deployed91de4e1; fresh/cloud711/0, six deployed public SHA matches and all51weapon/map baseline bytes preserved. Original dirty checkout untouched."
     },
     {
       "id": "STUDIO-01",
       "severity": "P1",
-      "status": "implemented-awaiting-release",
+      "status": "deployed-v105-availability-gate-open",
       "department": "Admin",
       "impact": "Editing crime rewards can silently remove its level requirement",
       "reproduction": "Old form omitted level_required; backend defaulted to 1",
@@ -58,7 +91,7 @@
     {
       "id": "STUDIO-02",
       "severity": "P2",
-      "status": "implemented-awaiting-release",
+      "status": "deployed-v105-availability-gate-open",
       "department": "Admin",
       "impact": "Delayed save changes the editor after switching categories",
       "reproduction": "Create entry then select another category before response",
@@ -69,7 +102,7 @@
     {
       "id": "MEDIA-01",
       "severity": "P1",
-      "status": "implemented-awaiting-release",
+      "status": "deployed-v105-scoped-viewer-proof",
       "department": "Technical art",
       "impact": "Rejected character assets retry forever and stalled loads lack deadline",
       "reproduction": "Actual baseline rejected load plus 25 heartbeat repaints caused 26 loader calls",
@@ -80,7 +113,7 @@
     {
       "id": "NAV-01",
       "severity": "P2",
-      "status": "implemented-awaiting-release",
+      "status": "deployed-v105",
       "department": "UI/UX",
       "impact": "New sections inherit arbitrary scroll and keyboard focus",
       "reproduction": "Go from scrolled Crimes to Bank; focus remains BODY",
