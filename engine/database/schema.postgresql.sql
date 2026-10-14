@@ -77,6 +77,41 @@ CREATE TABLE IF NOT EXISTS player_progression (
     updated_at TIMESTAMPTZ NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS browser_sessions (
+    token_hash VARCHAR(64) PRIMARY KEY,
+    player_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS browser_sessions_expiry ON browser_sessions(expires_at);
+
+CREATE TABLE IF NOT EXISTS player_credentials (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    login_name VARCHAR(24) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    recovery_hash VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS account_auth_limits (
+    bucket VARCHAR(64) PRIMARY KEY,
+    window_started_at BIGINT NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS account_security_events (
+    id VARCHAR(32) PRIMARY KEY,
+    player_id VARCHAR(100) REFERENCES players(id),
+    action VARCHAR(40) NOT NULL,
+    client_hash VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS session_creation_limits (
+    bucket VARCHAR(64) PRIMARY KEY,
+    window_started_at BIGINT NOT NULL,
+    count INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS combat_encounters (
     player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
     state_json JSONB NOT NULL,
@@ -294,9 +329,92 @@ CREATE TABLE IF NOT EXISTS territory_wars (
 );
 CREATE INDEX IF NOT EXISTS territory_wars_active_idx ON territory_wars(territory_id, state);
 
+-- Additive beta cooperative economy. Existing personal progression is retained.
+CREATE TABLE IF NOT EXISTS family_progression (
+    faction_id VARCHAR(80) PRIMARY KEY REFERENCES factions(id),
+    respect BIGINT NOT NULL DEFAULT 0 CHECK (respect >= 0),
+    upgrades_json TEXT NOT NULL DEFAULT '{}',
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at VARCHAR(40) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS family_respect_ledger (
+    id VARCHAR(40) PRIMARY KEY,
+    faction_id VARCHAR(80) NOT NULL REFERENCES factions(id),
+    player_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    delta BIGINT NOT NULL,
+    balance BIGINT NOT NULL CHECK (balance >= 0),
+    reason VARCHAR(80) NOT NULL,
+    correlation_id VARCHAR(40) NOT NULL UNIQUE,
+    created_at VARCHAR(40) NOT NULL
+);
+CREATE INDEX IF NOT EXISTS family_respect_ledger_family_idx ON family_respect_ledger(faction_id, created_at);
+
 CREATE TABLE IF NOT EXISTS casino_high_low (
     player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
     current_card INTEGER NOT NULL DEFAULT 7 CHECK (current_card BETWEEN 2 AND 14),
     version INTEGER NOT NULL DEFAULT 1,
     updated_at TIMESTAMPTZ NOT NULL
+);
+-- Shared player interactions. All mutations retain original inventory and account records.
+CREATE TABLE IF NOT EXISTS player_market_listings (
+    id VARCHAR(40) PRIMARY KEY,
+    seller_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    item_id VARCHAR(80) NOT NULL,
+    item_json TEXT NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity >= 0),
+    unit_price BIGINT NOT NULL CHECK (unit_price BETWEEN 1 AND 1000000),
+    state VARCHAR(20) NOT NULL DEFAULT 'active',
+    version INTEGER NOT NULL DEFAULT 1,
+    created_at VARCHAR(40) NOT NULL,
+    updated_at VARCHAR(40) NOT NULL
+);
+CREATE INDEX IF NOT EXISTS player_market_active_idx ON player_market_listings(state,created_at);
+CREATE TABLE IF NOT EXISTS player_combat_encounters (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    state_json TEXT NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at VARCHAR(40) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS player_combat_locks (
+    player_id VARCHAR(100) PRIMARY KEY REFERENCES players(id),
+    encounter_id VARCHAR(40) NOT NULL,
+    attacker_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    defender_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    expires_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS family_operations (
+    id VARCHAR(40) PRIMARY KEY,
+    faction_id VARCHAR(80) NOT NULL REFERENCES factions(id),
+    definition_id VARCHAR(80) NOT NULL,
+    state VARCHAR(20) NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1,
+    created_by VARCHAR(100) NOT NULL REFERENCES players(id),
+    created_at VARCHAR(40) NOT NULL,
+    ready_at BIGINT NOT NULL DEFAULT 0,
+    completed_at VARCHAR(40)
+);
+CREATE INDEX IF NOT EXISTS family_operations_family_idx ON family_operations(faction_id,state,created_at);
+CREATE TABLE IF NOT EXISTS family_operation_members (
+    operation_id VARCHAR(40) NOT NULL REFERENCES family_operations(id),
+    player_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    energy_cost INTEGER NOT NULL CHECK (energy_cost > 0),
+    joined_at VARCHAR(40) NOT NULL,
+    PRIMARY KEY (operation_id,player_id)
+);
+CREATE TABLE IF NOT EXISTS family_competition_scores (
+    season_id VARCHAR(40) NOT NULL,
+    faction_id VARCHAR(80) NOT NULL REFERENCES factions(id),
+    score BIGINT NOT NULL DEFAULT 0 CHECK (score >= 0),
+    version INTEGER NOT NULL DEFAULT 1,
+    updated_at VARCHAR(40) NOT NULL,
+    PRIMARY KEY(season_id,faction_id)
+);
+CREATE TABLE IF NOT EXISTS family_competition_events (
+    id VARCHAR(80) PRIMARY KEY,
+    season_id VARCHAR(40) NOT NULL,
+    faction_id VARCHAR(80) NOT NULL REFERENCES factions(id),
+    player_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    kind VARCHAR(80) NOT NULL,
+    score INTEGER NOT NULL,
+    created_at VARCHAR(40) NOT NULL
 );

@@ -1,73 +1,86 @@
-param(
-    [Parameter(Mandatory = $true)]
-    [string]$BaseUrl
-)
+param([Parameter(Mandatory = $true)][string]$BaseUrl)
 
+# Read-only. Never publishes, logs in, creates a player, or performs a game action.
 $ErrorActionPreference = 'Stop'
 $BaseUrl = $BaseUrl.TrimEnd('/')
 $passed = 0
-
-function Assert-Zone {
-    param([bool]$Condition, [string]$Message)
+function Assert-Zone([bool]$Condition, [string]$Message) {
     if (-not $Condition) { throw "FAILED: $Message" }
     $script:passed++
     Write-Output "PASS: $Message"
 }
-
-function Get-ZoneJson {
-    param([string]$Path)
-    return Invoke-RestMethod -Uri ($BaseUrl + $Path) -Method Get -Headers @{ Accept = 'application/json' } -TimeoutSec 30
+function Get-ZoneJson([string]$Path, [hashtable]$Headers = @{}) {
+    return Invoke-RestMethod -Uri ($BaseUrl + $Path) -Method Get -Headers (@{ Accept = 'application/json' } + $Headers) -TimeoutSec 30
 }
-
+function Get-ZoneStatus([string]$Path) {
+    try { return [int](Invoke-WebRequest -Uri ($BaseUrl + $Path) -UseBasicParsing -TimeoutSec 30 -ErrorAction Stop).StatusCode }
+    catch { if ($null -ne $_.Exception.Response) { return [int]$_.Exception.Response.StatusCode }; throw }
+}
 $health = Get-ZoneJson '/api/v1/health'
 Assert-Zone ($health.ok -eq $true) 'health endpoint is healthy'
 Assert-Zone ($health.engine.php -like '8.5.*') 'PHP 8.5 is executing the engine'
-Assert-Zone ($health.engine.database -eq 'pgsql') 'PostgreSQL is the live persistence adapter'
+Assert-Zone ($health.engine.database -eq 'pgsql') 'PostgreSQL is the persistence adapter'
 Assert-Zone ($health.engine.serverAuthoritative -eq $true) 'gameplay authority is on the server'
 
-$draft = Get-ZoneJson '/api/v1/admin/draft'
-$history = Get-ZoneJson '/api/v1/admin/releases'
-$adminCrimes = Get-ZoneJson '/api/v1/admin/crimes'
-$adminAudit = Get-ZoneJson '/api/v1/admin/audit'
+$access = Get-ZoneJson '/api/v1/admin/session'
+$betaAccess = $access.betaTesting -eq $true
+if ($betaAccess) {
+    Assert-Zone ($access.configured -and $access.authenticated -and -not $access.localDevelopment) 'explicit tester beta opens the control plane without owner sign-in'
+} else {
+    Assert-Zone ($access.configured -and -not $access.authenticated -and -not $access.localDevelopment) 'production owner access is configured and anonymous visitors stay locked'
+    foreach ($path in @('/api/v1/admin/draft', '/api/v1/admin/gameplay-catalog', '/api/v1/admin/territories', '/api/v1/ledger', '/api/v1/events')) {
+        Assert-Zone ((Get-ZoneStatus $path) -eq 401) "anonymous owner request is rejected: $path"
+    }
+}
+foreach ($path in @('/api/v1/player', '/api/v1/city/map', '/api/v1/leaderboards')) {
+    Assert-Zone ((Get-ZoneStatus $path) -eq 401) "anonymous private request is rejected: $path"
+}
+
+if (-not $betaAccess -and [string]::IsNullOrWhiteSpace($env:ZONE_VERIFY_OWNER_COOKIE)) { throw 'Owner verification requires an existing ZONE_VERIFY_OWNER_COOKIE as a private input. No account or owner session was created.' }
+$ownerHeaders = if ($betaAccess) { @{} } else { @{ Cookie = $env:ZONE_VERIFY_OWNER_COOKIE } }
+$draft = Get-ZoneJson '/api/v1/admin/draft' $ownerHeaders
+$history = Get-ZoneJson '/api/v1/admin/releases' $ownerHeaders
+$adminCrimes = Get-ZoneJson '/api/v1/admin/crimes' $ownerHeaders
+$catalog = Get-ZoneJson '/api/v1/admin/gameplay-catalog' $ownerHeaders
+$adminAudit = Get-ZoneJson '/api/v1/admin/audit' $ownerHeaders
 $activeFirst = Get-ZoneJson '/api/v1/releases/active'
 $activeSecond = Get-ZoneJson '/api/v1/releases/active'
 $bootstrap = Get-ZoneJson '/api/v1/game/bootstrap'
-$territories = Get-ZoneJson '/api/v1/city/map'
-$adminTerritories = Get-ZoneJson '/api/v1/admin/territories'
+$adminTerritories = Get-ZoneJson '/api/v1/admin/territories' $ownerHeaders
 $activeHistory = @($history.releases | Where-Object { $_.active })
-
-Assert-Zone ($draft.channel -eq 'production') 'open admin reads the production draft without login'
-Assert-Zone ($activeFirst.version -ge 1) 'an immutable production release exists'
-Assert-Zone ($activeFirst.id -eq $activeSecond.id -and $activeFirst.version -eq $activeSecond.version) 'fresh release reads return the same persisted version'
+Assert-Zone ($draft.channel -eq 'production') 'authenticated owner reads the production draft'
+Assert-Zone ($activeFirst.version -ge 1) 'an immutable published release exists'
+Assert-Zone ($activeFirst.id -eq $activeSecond.id -and $activeFirst.version -eq $activeSecond.version) 'fresh reads return the same persisted release'
 Assert-Zone ($activeHistory.Count -eq 1 -and $activeHistory[0].id -eq $activeFirst.id) 'release history and active pointer agree'
-Assert-Zone ($adminCrimes.crimes.Count -ge 3 -and $null -ne $adminCrimes.crimes[0].success_basis_points) 'open admin reads typed crime definitions including balance fields'
-Assert-Zone ($adminAudit.entries.Count -ge 1 -and -not [string]::IsNullOrWhiteSpace($adminAudit.entries[0].actor)) 'administrator mutations retain an attributed audit trail'
-Assert-Zone ($bootstrap.release.id -eq $activeFirst.id -and $bootstrap.content.crimes.Count -ge 3) 'player bootstrap exposes active release content to the game'
-Assert-Zone ($territories.blocks.Count -eq 120 -and $adminTerritories.blocks.Count -eq 120) 'production game and admin expose the complete 120-block city'
-Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq $null -and $_.ownerColor -eq '#68717b' }).Count -gt 0) 'production neutral territory is grey'
-Assert-Zone (@($territories.blocks | Where-Object { $_.ownerFactionId -eq 'vipers' -and $_.ownerColor -eq '#78d628' }).Count -gt 0) 'production player-faction territory is green'
-Assert-Zone (@($territories.blocks | Where-Object { $_.neighbors.Count -gt 0 -and $_.benefits.Count -gt 0 }).Count -eq 120) 'production blocks all expose adjacency and strategic benefits'
+Assert-Zone ($adminCrimes.crimes.Count -ge 3 -and $null -ne $adminCrimes.crimes[0].success_basis_points) 'authenticated owner reads typed crime balance definitions'
+Assert-Zone ($catalog.revision -ge 1 -and $null -ne $catalog.schema.items -and $null -ne $catalog.catalogs.items) 'typed gameplay authoring schema and draft are available to the owner'
+Assert-Zone ($adminAudit.entries.Count -ge 1 -and -not [string]::IsNullOrWhiteSpace($adminAudit.entries[0].actor)) 'control-plane changes retain attributed audit trails'
+Assert-Zone ($bootstrap.release.id -eq $activeFirst.id -and $bootstrap.content.crimes.Count -ge 3) 'public bootstrap exposes the published game content'
+Assert-Zone ($adminTerritories.blocks.Count -eq 120) 'owner inspects all 120 city blocks without creating a player'
+Assert-Zone (@($adminTerritories.blocks | Where-Object { $_.ownerFactionId -eq $null -and $_.ownerColor -eq '#68717b' }).Count -gt 0) 'neutral territory uses the canonical grey color'
+Assert-Zone (@($adminTerritories.blocks | Where-Object { $_.neighbors.Count -gt 0 -and $_.benefits.Count -gt 0 }).Count -eq 120) 'every city block exposes adjacency and strategic benefits'
 
 $game = Invoke-WebRequest -Uri ($BaseUrl + '/') -UseBasicParsing -TimeoutSec 30
 $admin = Invoke-WebRequest -Uri ($BaseUrl + '/admin') -UseBasicParsing -TimeoutSec 30
 $adminScript = Invoke-WebRequest -Uri ($BaseUrl + '/admin.js') -UseBasicParsing -TimeoutSec 30
 $adminScriptText = [System.Text.Encoding]::UTF8.GetString($adminScript.RawContentStream.ToArray())
-$engine = Invoke-WebRequest -Uri ($BaseUrl + '/engine') -UseBasicParsing -MaximumRedirection 0 -TimeoutSec 30
-Assert-Zone ($game.StatusCode -eq 200 -and $game.Content.Contains('ZONE | Browser Crime MMO')) 'player game renders from the deployment'
-Assert-Zone ($admin.StatusCode -eq 200 -and $admin.Content.Contains('ZONE Admin Control Plane') -and -not $admin.Content.Contains('loginForm')) 'admin control plane renders directly with no login form'
-Assert-Zone ($engine.StatusCode -eq 200 -and $engine.Content.Contains('ZONE Engine Control Room')) 'engine control room renders directly with no redirect'
-Assert-Zone ($admin.Content.Contains('Noto+Kufi+Arabic') -and $adminScriptText.Contains('المصمم المرئي') -and $adminScriptText.Contains('اقتصاد قابل للتدقيق')) 'production admin contains the complete Arabic interface bundle'
-Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $game.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'production admin and game synchronize the selected language'
-Assert-Zone ($game.Content.Contains('MANAGED_CRIMES') -and $game.Content.Contains('commitManaged')) 'production player consumes and executes administrator-managed crimes'
-Assert-Zone ($adminScriptText.Contains('installSectionPreviews') -and $adminScriptText.Contains('section-preview-frame')) 'production admin embeds the game preview in every section'
+$engine = Invoke-WebRequest -Uri ($BaseUrl + '/engine') -Headers $ownerHeaders -UseBasicParsing -TimeoutSec 30
+$sessionScript = Invoke-WebRequest -Uri ($BaseUrl + '/player-session.js') -UseBasicParsing -TimeoutSec 30
+Assert-Zone ($game.StatusCode -eq 200 -and $game.Content.Contains('ZONE | Browser Crime MMO')) 'player shell renders'
+Assert-Zone ($admin.StatusCode -eq 200 -and $admin.Content.Contains('adminOwnerToken')) 'Admin shell renders its owner-unlock control'
+Assert-Zone ($engine.StatusCode -eq 200 -and $engine.Content.Contains('ZONE Engine Control Room')) 'owner-authorized engine control room renders'
+Assert-Zone ($admin.Content.Contains('Noto+Kufi+Arabic') -and $adminScriptText.Contains('المصمم المرئي') -and $adminScriptText.Contains('اقتصاد قابل للتدقيق')) 'complete Arabic Admin bundle is shipped'
+Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $game.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'Admin and player preview synchronize language'
+Assert-Zone ($game.Content.Contains('commitManaged') -and $game.Content.Contains('loadLeaderboards') -and $game.Content.Contains('joinFaction')) 'server-backed crime, family and standings clients are shipped'
+Assert-Zone ($sessionScript.Content.Contains('/api/v1/auth/session') -and $sessionScript.Content.Contains('same-origin')) 'server-owned browser-session bootstrap is shipped'
+Assert-Zone ($adminScriptText.Contains('installSectionPreviews') -and $adminScriptText.Contains('section-preview-frame')) 'Admin embeds section previews'
 
-$authStatus = 0
-try {
-    Invoke-WebRequest -Uri ($BaseUrl + '/api/v1/admin/auth') -UseBasicParsing -TimeoutSec 30 -ErrorAction Stop | Out-Null
-    $authStatus = 200
-} catch {
-    if ($null -ne $_.Exception.Response) { $authStatus = [int]$_.Exception.Response.StatusCode }
+if (-not [string]::IsNullOrWhiteSpace($env:ZONE_VERIFY_PLAYER_COOKIE)) {
+    $playerHeaders = @{ Cookie = $env:ZONE_VERIFY_PLAYER_COOKIE }
+    $player = Get-ZoneJson '/api/v1/player' $playerHeaders
+    $map = Get-ZoneJson '/api/v1/city/map' $playerHeaders
+    $standings = Get-ZoneJson '/api/v1/leaderboards' $playerHeaders
+    Assert-Zone ($player.player.id -ne 'founder-player' -and $map.blocks.Count -eq 120) 'existing test-player session reads its own account and complete city'
+    Assert-Zone ($standings.limit -eq 50 -and $standings.rows.Count -le 50) 'existing test-player session reads bounded standings'
 }
-Assert-Zone ($authStatus -eq 404) 'administrator authentication endpoint is absent'
-
-Write-Output "RESULT: $passed production checks passed"
+Write-Output "RESULT: $passed read-only production checks passed"

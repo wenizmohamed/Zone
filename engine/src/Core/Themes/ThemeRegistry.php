@@ -18,6 +18,8 @@ final class ThemeRegistry
 
     public function discover(): void
     {
+        $existingRows = [];
+        foreach ($this->database->fetchAll('SELECT id, manifest_json FROM themes') as $row) $existingRows[$row['id']] = $row;
         foreach (glob($this->themesPath . '/*/theme.json') ?: [] as $manifestPath) {
             $manifest = json_decode((string) file_get_contents($manifestPath), true, 512, JSON_THROW_ON_ERROR);
             foreach (['id', 'name', 'version', 'stylesheet'] as $required) {
@@ -26,12 +28,13 @@ final class ThemeRegistry
                 }
             }
             $this->manifests[$manifest['id']] = $manifest + ['directory' => dirname($manifestPath)];
-            $this->database->insertIgnore(
+            $existing = $existingRows[$manifest['id']] ?? null;
+            if ($existing === null) $this->database->insertIgnore(
                 'themes',
                 ['id', 'name', 'version', 'installed', 'active', 'manifest_json'],
                 [$manifest['id'], $manifest['name'], $manifest['version'], 1, (int) ($manifest['activeByDefault'] ?? false), json_encode($manifest, JSON_THROW_ON_ERROR)],
             );
-            $this->database->execute(
+            if ($existing === null || json_decode((string) $existing['manifest_json'], true, 64, JSON_THROW_ON_ERROR) != $manifest) $this->database->execute(
                 'UPDATE themes SET name = :name, version = :version, manifest_json = :manifest WHERE id = :id',
                 ['id' => $manifest['id'], 'name' => $manifest['name'], 'version' => $manifest['version'], 'manifest' => json_encode($manifest, JSON_THROW_ON_ERROR)],
             );

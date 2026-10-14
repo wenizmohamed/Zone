@@ -26,14 +26,14 @@ final class TerritoryService
     {
         $this->resolveExpiredWars();
         $factions = $this->database->fetchAll(
-            'SELECT id, name_en, name_ar, color FROM factions WHERE enabled = 1 ORDER BY id',
+            'SELECT f.id, f.name_en, f.name_ar, f.color, (SELECT COUNT(*) FROM faction_members m WHERE m.faction_id = f.id) AS member_count FROM factions f WHERE f.enabled = 1 ORDER BY f.id',
         );
         $factionById = [];
         foreach ($factions as $faction) {
             $factionById[(string) $faction['id']] = $faction;
         }
         $membership = $this->database->fetchOne(
-            'SELECT faction_id, role FROM faction_members WHERE player_id = :player',
+            'SELECT faction_id, role, joined_at FROM faction_members WHERE player_id = :player',
             ['player' => $playerId],
         );
         $playerFactionId = $membership === null ? null : (string) $membership['faction_id'];
@@ -85,7 +85,9 @@ final class TerritoryService
                 'ownerFactionId' => $ownerId,
                 'ownerName' => $owner === null ? ['en' => 'Unclaimed', 'ar' => 'غير مملوك'] : ['en' => (string) $owner['name_en'], 'ar' => (string) $owner['name_ar']],
                 'ownerColor' => $owner === null ? self::NEUTRAL_COLOR : (string) $owner['color'],
-                'state' => (string) $row['state'],
+                // Older seeds used a contested illustration without a war.
+                // A live conflict requires its persisted war, not that label.
+                'state' => $war !== null ? 'contested' : ((string) $row['state'] === 'contested' ? ($ownerId === null ? 'neutral' : 'owned') : (string) $row['state']),
                 'control' => (int) round((int) $row['control_basis_points'] / 100),
                 'version' => (int) $row['version'],
                 'capturedAt' => $row['captured_at'],
@@ -108,11 +110,14 @@ final class TerritoryService
             'revision' => $revision,
             'playerFactionId' => $playerFactionId,
             'playerFactionRole' => $membership['role'] ?? null,
+            'playerFactionJoinedAt' => $membership['joined_at'] ?? null,
+            'members' => $playerFactionId === null ? [] : array_map(static fn (array $member): array => ['username' => (string) $member['username'], 'level' => (int) $member['level'], 'role' => (string) $member['role']], $this->database->fetchAll('SELECT p.username, p.level, m.role FROM faction_members m JOIN players p ON p.id = m.player_id WHERE m.faction_id = :faction ORDER BY m.joined_at, p.id', ['faction' => $playerFactionId])),
             'neutralColor' => self::NEUTRAL_COLOR,
             'factions' => array_map(static fn (array $faction): array => [
                 'id' => (string) $faction['id'],
                 'name' => ['en' => (string) $faction['name_en'], 'ar' => (string) $faction['name_ar']],
                 'color' => (string) $faction['color'],
+                'memberCount' => (int) $faction['member_count'],
             ], $factions),
             'blocks' => $blocks,
             'summary' => [
@@ -328,9 +333,6 @@ final class TerritoryService
         }
         if ($ownerId === null) {
             return ['action' => 'claim', 'reason' => 'This neutral block is connected to your territory.'];
-        }
-        if ((string) $row['state'] === 'contested') {
-            return ['action' => null, 'reason' => 'A territory war is already active on this block.'];
         }
         return ['action' => 'assault', 'reason' => 'This rival block borders your territory.'];
     }

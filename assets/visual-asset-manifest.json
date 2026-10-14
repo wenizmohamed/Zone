@@ -1,5 +1,5 @@
 {
-  "checked": "2026-10-04",
+  "checked": "2026-10-10",
   "assets": [
     {
       "path": "assets/factions/kings.svg",
@@ -519,5 +519,109 @@
       "modified": true,
       "modification": "Static GLB conversion where needed, web texture optimization, runtime grip normalization."
     }
+    ,
+    {
+      "path": "assets/weapons/premium/v99/loafbrr-revolver.glb",
+      "bytes": 1938160,
+      "sha256": "ecbbf87bc5a5fdf740d81e8f25c7ceb470e0c08a1ffb79c52478a0003cbf706b",
+      "source": "https://opengameart.org/content/revolver-game-asset",
+      "license": "CC0-1.0",
+      "author": "loafbrr_1",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Retained source geometry and author surface maps.",
+      "materialStatus": "authored-pbr",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/jean-doublebarrel-safe.glb",
+      "bytes": 544104,
+      "sha256": "bfdabc5e83d85c589554c83296abed5f373e3a359f26d6269d1425c09acdc278",
+      "source": "https://opengameart.org/content/double-barrel-shotgun",
+      "license": "CC0-1.0",
+      "author": "JeanPFP / LonesomeDucky",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "JeanPFP geometry. CC0 LonesomeDucky bat wood maps with projected UVs and physical steel; original photographic atlas excluded.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-g3a3.glb",
+      "bytes": 17692,
+      "sha256": "8cc94023997ff5bb83b026fbca8951115640d100255a28940ef6d88006c7cc3e",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-materials",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-l85.glb",
+      "bytes": 26620,
+      "sha256": "620f31d664b16d33170d00c48030907c83b29e481e93729ebaa308b0aab027d2",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE dark blued-metal and matte-polymer material adaptation; no original textured-PBR claim.",
+      "materialStatus": "adapted-materials",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-m1911.glb",
+      "bytes": 466376,
+      "sha256": "ef54b6e53f262f3c8a7b352b8a2d9d8d59792b0860bef18269f977e91636e547",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-dragunov.glb",
+      "bytes": 494144,
+      "sha256": "4e4c8e8560286cb5b4808183822ad8726e1f08a46fe5417ae216eaab35970623",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-mosin9130.glb",
+      "bytes": 476224,
+      "sha256": "8edef8b974533e167e4397c4bb5ef5b9fe9dc1265c617d6264745399e0852674",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    }
+  ],
+  "additionalProvenance": [
+    "art/zone-property-atlas-v1.provenance.json",
+    "assets/ui/combat-assets.json",
+    "assets/city/landmarks-provenance.json"
   ]
 }

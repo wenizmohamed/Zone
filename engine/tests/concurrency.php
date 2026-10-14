@@ -24,6 +24,8 @@ if (($argv[1] ?? '') === '--worker') {
         $result = match (true) {
             $action === 'bank' => $engine->bankDeposit(200),
             $action === 'publish' => $engine->publishRelease('concurrency-child'),
+            $action === 'publish-reviewed' => $engine->publishRelease('concurrency-child', $argv[4] ?? ''),
+            $action === 'save-reviewed' => $engine->saveReleaseDraft([...$engine->releaseDraft()['manifest'], 'brand' => [...$engine->releaseDraft()['manifest']['brand'], 'name' => 'Stale child edit']], 'concurrency-child', $argv[4] ?? ''),
             str_starts_with($action, 'activate:') => $engine->activateRelease(substr($action, 9), 'concurrency-child'),
             default => $engine->playBlackjack(100),
         };
@@ -50,10 +52,10 @@ function concurrencyCheck(bool $condition, string $message): void
     echo ($condition ? 'PASS: ' : 'FAIL: ') . $message . "\n";
 }
 
-function startWorker(string $databasePath, string $action): array
+function startWorker(string $databasePath, string $action, ?string $fingerprint = null): array
 {
     $pipes = [];
-    $worker = proc_open([PHP_BINARY, __FILE__, '--worker', $databasePath, $action], [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes);
+    $worker = proc_open([PHP_BINARY, __FILE__, '--worker', $databasePath, $action, $fingerprint ?? ''], [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']], $pipes);
     if (!is_resource($worker)) {
         throw new RuntimeException('Unable to start concurrency test worker.');
     }
@@ -150,6 +152,21 @@ try {
     $activated = finishWorker($worker, $pipes); $worker = null; $pipes = [];
     $active = $database->fetchAll('SELECT id FROM content_releases WHERE active = 1');
     concurrencyCheck(($activated['status'] ?? '') === 'ok' && count($active) === 1 && $active[0]['id'] === $first['id'], 'concurrent rollback serializes activation and leaves one unambiguous active release');
+
+    foreach (['save-reviewed', 'publish-reviewed'] as $reviewedAction) {
+        $reviewed = $engine->releaseDraft();
+        [$worker, $pipes] = startWorker($databasePath, $reviewedAction, $reviewed['draftFingerprint']);
+        $parentManifest = $reviewed['manifest'];
+        $parentManifest['brand']['name'] = 'Parent committed ' . $reviewedAction;
+        $historyBefore = count($engine->releaseHistory());
+        $releases->configurationTransaction(function () use ($releases, $pipes, $parentManifest, $reviewed): void {
+            releaseWorker($pipes);
+            $releases->saveDraft($parentManifest, 'concurrency-parent', $reviewed['draftFingerprint']);
+        });
+        $reviewedResult = finishWorker($worker, $pipes); $worker = null; $pipes = [];
+        concurrencyCheck(($reviewedResult['status'] ?? '') === 'error' && ($reviewedResult['error'] ?? '') === 'Release draft changed. Refresh and try again.', $reviewedAction . ' checks its fingerprint only after acquiring the parent-held configuration lock');
+        concurrencyCheck($engine->releaseDraft()['manifest']['brand']['name'] === $parentManifest['brand']['name'] && count($engine->releaseHistory()) === $historyBefore, $reviewedAction . ' cannot overwrite the parent draft or publish it without review');
+    }
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FAIL: ' . $exception::class . ': ' . $exception->getMessage() . "\n");

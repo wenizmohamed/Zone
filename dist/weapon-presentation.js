@@ -20,9 +20,18 @@ export function computeWeaponFrame(THREE, box, aspect = 1, fov = 38) {
   return { target, position: target.clone().addScaledVector(direction, distance), distance, near: Math.max(.0001, distance / 200), far: Math.max(10, distance + span * 30), span, center, box: safeBox };
 }
 
-function studioEnvironment(THREE, renderer) {
+const ACCEPTED_WEAPON_IDS = new Set(['old-wooden-bat', 'detective-special', 'akm', 'derringer', 'm9-knife']);
+export function weaponStudioProfile(descriptor) {
+  // These five preserve the last accepted shader environment, exposure and
+  // light ratios exactly. New assets do not raise their diffuse/metal fill.
+  return ACCEPTED_WEAPON_IDS.has(descriptor?.id)
+    ? { name: 'accepted-reference', background: 0x171b20, exposure: 1.04, environment: .8, key: 2.4, fill: .85, rim: 2.0, hemisphere: 0 }
+    : { name: 'realistic-readable', background: 0x353e46, exposure: 1.04, environment: .95, key: 2.4, fill: .95, rim: 2.0, hemisphere: .20 };
+}
+
+function studioEnvironment(THREE, renderer, profile) {
   const room = new THREE.Scene(), geometry = new THREE.PlaneGeometry(1, 1), materials = [];
-  room.background = new THREE.Color(0x171b20);
+  room.background = new THREE.Color(profile.background);
   const cards = [
     [0xf4eee2, 5.5, [-3, 3, 2], [2.1, 3.6]],
     [0xc3d5e8, 2.7, [3, 1.6, 1], [1.3, 3.5]],
@@ -54,8 +63,7 @@ export function installWeaponPresentation(THREE, stage) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, small ? 1.5 : 2));
   const oldEnvironment = scene.environment;
   stage._envPending = false;
-  const environment = studioEnvironment(THREE, renderer);
-  scene.environment = environment.texture; scene.environmentIntensity = .8;
+  const environments = new Map();
   if (oldEnvironment) oldEnvironment.dispose();
   const key = stage._key;
   key.color.set(0xffedda); key.intensity = 2.4;
@@ -63,7 +71,18 @@ export function installWeaponPresentation(THREE, stage) {
   key.shadow.bias = -.00015; key.shadow.normalBias = .001;
   key.shadow.radius = 3;
   const fill = new THREE.DirectionalLight(0xc7d7e9, .85), rim = new THREE.DirectionalLight(0xe9d7b4, 2.0);
-  fill.name = 'studio-fill'; rim.name = 'studio-rim'; scene.add(fill, rim);
+  const ambient = new THREE.HemisphereLight(0xd5dfe7, 0x3d3932, 0);
+  fill.name = 'studio-fill'; rim.name = 'studio-rim'; ambient.name = 'studio-softbox-fill'; scene.add(fill, rim, ambient);
+  function applyProfile(descriptor) {
+    const profile = weaponStudioProfile(descriptor);
+    if (!environments.has(profile.name)) environments.set(profile.name, studioEnvironment(THREE, renderer, profile));
+    scene.environment = environments.get(profile.name).texture;
+    scene.environmentIntensity = profile.environment; renderer.toneMappingExposure = profile.exposure;
+    key.intensity = profile.key; fill.intensity = profile.fill; rim.intensity = profile.rim; ambient.intensity = profile.hemisphere;
+    stage.dataset.zoneLighting = JSON.stringify({ profile: profile.name, exposure: profile.exposure, environment: profile.environment,
+      key: profile.key, fill: profile.fill, rim: profile.rim, hemisphere: profile.hemisphere });
+  }
+  applyProfile({ id: 'derringer' });
   const ground = stage._ground;
   ground.material.dispose();
   ground.material = new THREE.ShadowMaterial({ name: 'studio-contact-shadow', color: 0x000000, opacity: .28, depthWrite: false });
@@ -92,11 +111,16 @@ export function installWeaponPresentation(THREE, stage) {
     const width = stage.clientWidth || 1, height = stage.clientHeight || 1;
     const frame = computeWeaponFrame(THREE, currentBox, width / height, camera.fov);
     camera.aspect = width / height; camera.position.copy(frame.position); camera.near = frame.near; camera.far = frame.far;
-    camera.updateProjectionMatrix(); controls.target.copy(frame.target); controls.minDistance = frame.span * .45; controls.maxDistance = frame.distance * 3.5; controls.update(); controls.saveState();
-    stage.dataset.zoneFrame = JSON.stringify({ span: frame.span, distance: frame.distance, aspect: width / height });
+    camera.updateProjectionMatrix(); camera.lookAt(frame.target); controls.target.copy(frame.target); controls.minDistance = frame.span * .45; controls.maxDistance = frame.distance * 3.5; controls.update(); controls.saveState(); camera.updateMatrixWorld(true);
+    let extentX = 0, extentY = 0;
+    for (const x of [currentBox.min.x, currentBox.max.x]) for (const y of [currentBox.min.y, currentBox.max.y]) for (const z of [currentBox.min.z, currentBox.max.z]) {
+      const point = new THREE.Vector3(x, y, z).project(camera); extentX = Math.max(extentX, Math.abs(point.x)); extentY = Math.max(extentY, Math.abs(point.y));
+    }
+    stage.dataset.zoneFrame = JSON.stringify({ span: frame.span, distance: frame.distance, aspect: width / height, extentX, extentY, clipped: extentX >= 1 || extentY >= 1 });
   }
   const originalSetObject = stage.setObject.bind(stage);
   stage.setObject = object => {
+    applyProfile(object?.userData?.zoneWeaponAsset);
     originalSetObject(object);
     currentBox = new THREE.Box3().setFromObject(object);
     const frame = computeWeaponFrame(THREE, currentBox, (stage.clientWidth || 1) / (stage.clientHeight || 1), camera.fov);
@@ -122,9 +146,9 @@ export function installWeaponPresentation(THREE, stage) {
   return { fit, dispose() {
     if (disposed) return; disposed = true; resize.disconnect(); canvas.removeEventListener('keydown', onKey); controls.stopListenToKeyEvents();
     status.remove(); delete stage.setAssetStatus;
-    scene.remove(fill, rim, fill.target, rim.target); fill.dispose(); rim.dispose();
-    if (scene.environment === environment.texture) scene.environment = null;
-    environment.dispose();
+    scene.remove(fill, rim, ambient, fill.target, rim.target); fill.dispose(); rim.dispose(); ambient.dispose?.();
+    if ([...environments.values()].some(environment => scene.environment === environment.texture)) scene.environment = null;
+    for (const environment of environments.values()) environment.dispose(); environments.clear();
     stage.setObject = originalSetObject; stage.setLanguage = originalLanguage;
   } };
 }

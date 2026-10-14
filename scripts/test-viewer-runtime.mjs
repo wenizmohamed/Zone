@@ -8,6 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
 import { computeWeaponFrame, installWeaponPresentation, createStoredZip, createWeaponObjArchive } from '../dist/weapon-presentation.js';
+import { inspectWeaponObject } from '../dist/weapon-assets.js';
 import { OBJExporter } from '../lib/three184/OBJExporter.js';
 
 function readViewer(name) {
@@ -20,6 +21,13 @@ function readViewer(name) {
   return { html, template: data('template'), scripts };
 }
 const character = readViewer('character3d'), weapon = readViewer('weapon3d');
+
+test('Item quality observer tolerates an iframe detached during asynchronous imports', () => {
+  const calls=[];let callback;
+  const ctx=context(weapon.template,['watchAssetQuality'],{document:{documentElement:null},paintAssetQuality(){throw new Error('Detached page painted');},MutationObserver:class{constructor(fn){callback=fn;}observe(target){assert.ok(target,'Observer received null');calls.push(target);}disconnect(){}}});
+  ctx.watchAssetQuality({isConnected:false},null);assert.equal(calls.length,0);callback();
+  ctx.document.documentElement={nodeType:1};const stage={isConnected:true};ctx.paintAssetQuality=()=>calls.push('paint');ctx.watchAssetQuality(stage,{});assert.equal(calls.length,2);callback();assert.equal(calls[2],'paint');
+});
 
 async function wardrobeGeometry(filename) {
   const bytes = readFileSync(new URL(`../assets/character/quaternius/${filename}.glb`, import.meta.url));
@@ -108,10 +116,26 @@ function extract(source, name, method = false) {
   throw new Error(`Unclosed ${name}`);
 }
 function context(source, names, values = {}) {
-  const ctx = vm.createContext({ document: { body: { dataset: {} } }, weaponAssets: { descriptor: () => null }, ...values });
+  const ctx = vm.createContext({ setTimeout, clearTimeout, document: { body: { dataset: {} } }, weaponAssets: { descriptor: () => null }, ...values });
   vm.runInContext(names.map(name => extract(source, name)).join('\n'), ctx);
   return ctx;
 }
+
+test('embedded character equipment rejects unowned models and sends the original gameplay item ID', () => {
+  const posted = [], equipped = [];
+  const ctx = context(character.template, ['weaponSelectable', 'setWeapon'], {
+    state: { weapon: 'bat', ownedWeapons: ['fists', 'bat', 'revolver_1'], equipmentKeys: { revolver_1: 'revolver' } },
+    equip: () => equipped.push(true), paintRack() {}, paintCompact() {},
+    parent: { postMessage: data => posted.push(data) }, location: { origin: 'http://zone.test' },
+    WCAT: { revolver_1: { anim: 'punch' } }, trigger() {},
+  });
+  ctx.setWeapon('assaultrifle2_1');
+  assert.equal(ctx.state.weapon, 'bat'); assert.equal(posted.length, 0); assert.equal(equipped.length, 0);
+  ctx.setWeapon('revolver_1');
+  assert.equal(ctx.state.weapon, 'revolver_1'); assert.equal(posted[0].zoneEquip, 'revolver');
+  ctx.state.ownedWeapons = undefined;
+  assert.equal(ctx.weaponSelectable('assaultrifle2_1'), true, 'standalone presentation remains available');
+});
 
 test('Wardrobe models contain real clothing meshes, skeletal animation and hand attachment bones', () => {
   const ctx = context(character.template, ['outfitFile'], { OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' } });
@@ -208,7 +232,7 @@ for (const outcome of ['resolve', 'reject']) {
     const pending = new Promise((resolve, reject) => { settle = outcome === 'resolve' ? resolve : reject; });
     const status = { hidden: true, textContent: '' }, logged = [], requests = [];
     const currentModel = { userData: { outfit: 'Casual_Hoodie' }, traverse() {} };
-    const ctx = context(character.template, ['outfitFile', 'paintOutfit', 'loadCharacter'], {
+    const ctx = context(character.template, ['outfitFile', 'paintOutfit', 'characterRequest', 'loadCharacter'], {
       state: { outfit: 'suit' }, model: currentModel,
       OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' },
       characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null,
@@ -381,7 +405,7 @@ test('Late item loads are discarded and successive visible items release previou
     WCAT: { gun: {} }, MODELS: { bat: () => model('bat'), knife: () => model('knife') }, ALIAS: {},
     current: null, showSeq: 0, shownObject: null, pendingKey: null, pendingShow: null, assetLoader: null, itemStatus() {},
     loadGun: () => new Promise(resolve => { finishGun = resolve; }), disposeItem: item => { if (item) disposed.push(item.name); },
-    stage: { dataset: {}, setAttribute() {}, setObject: root => installed.push(root.name) }, THREE,
+    stage: { dataset: {}, setAttribute() {}, setObject: root => installed.push(root.name) }, THREE, inspectAsset: inspectWeaponObject,
   });
   const loading = ctx.show('gun');
   await ctx.show('bat'); finishGun(model('gun')); await loading;
@@ -393,7 +417,7 @@ test('Late item loads are discarded and successive visible items release previou
 function itemHarness(loader) {
   const installed = [], disposed = [], statuses = [], errors = [];
   const ctx = context(weapon.template, ['show'], {
-    THREE, WCAT: { gun: {}, other: {} }, MODELS: {}, ALIAS: {}, current: null, showSeq: 0,
+    THREE, inspectAsset: inspectWeaponObject, WCAT: { gun: {}, other: {} }, MODELS: {}, ALIAS: {}, current: null, showSeq: 0,
     shownObject: null, pendingKey: null, pendingShow: null, assetLoader: loader,
     itemStatus: state => statuses.push(state), disposeItem: object => { if (object) disposed.push(object); },
     stage: { dataset: {}, setAttribute() {}, setObject: object => installed.push(object) },
@@ -401,11 +425,41 @@ function itemHarness(loader) {
   });
   return { ctx, installed, disposed, statuses, errors };
 }
+
+test('bat diagonal thumbnail pose is conditional and leaves ordinary viewer pose unchanged',async()=>{
+  for(const thumbnail of [false,true]) {
+    const bat=managedMesh('old-wooden-bat');
+    const {ctx}=itemHarness({load:async()=>bat});
+    ctx.WCAT.bat={};
+    if(thumbnail)ctx.stage.dataset.zoneThumbnail='true';
+    await ctx.show('bat');
+    assert.equal(ctx.shownObject.rotation.z,thumbnail?-.95:0);
+    if(thumbnail)assert.deepEqual(JSON.parse(ctx.stage.dataset.zoneThumbnailPose),{rotationZ:-.95,scope:'thumbnail-only',sourceId:'old-wooden-bat'});
+    else assert.equal(ctx.stage.dataset.zoneThumbnailPose,undefined);
+    assert.equal(ctx.shownObject._zoneManagedAsset,bat);
+  }
+});
 function managedMesh(name) {
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(.2, .1, .05), new THREE.MeshStandardMaterial());
   mesh.name = name; mesh.userData.zoneWeaponAsset = { id: name };
   return mesh;
 }
+
+test('registered gun aliases resolve their actual target instead of displaying a revolver', async () => {
+  const requested = [], { ctx, installed } = itemHarness({ load: async key => { requested.push(key); return managedMesh(key); } });
+  ctx.WCAT = { ak: {}, smg: {} }; ctx.ALIAS = { rifle: 'ak', smg_c: 'smg' };
+  await ctx.show('rifle'); await ctx.show('smg_c');
+  assert.deepEqual(requested, ['ak', 'smg']); assert.deepEqual(installed.map(object => object.name), ['zone_ak', 'zone_smg']);
+});
+
+test('unknown item models expose an explicit unavailable state without loading a different gun', async () => {
+  let requests = 0; const { ctx, installed, statuses } = itemHarness({ load: async () => { requests++; return managedMesh('wrong'); } });
+  await ctx.show('unregistered-owner-item');
+  assert.equal(requests, 0); assert.equal(installed.length, 0); assert.deepEqual(statuses, ['error']);
+  assert.equal(JSON.parse(ctx.stage.dataset.zoneAssetError).code, 'unregistered-model');
+  assert.equal(JSON.parse(ctx.stage.dataset.zoneAssetError).requestedKey, 'unregistered-owner-item');
+  assert.equal(ctx.stage.dataset.zoneAsset, '{}');
+});
 
 for (const outcome of ['resolve', 'reject']) {
   test(`Selecting the displayed item cancels a pending managed asset that later ${outcome}s`, async () => {
@@ -422,7 +476,7 @@ for (const outcome of ['resolve', 'reject']) {
     assert.equal(requests, 2, 'the same pending selection must share one request');
     assert.equal(installed.length, 1); assert.equal(ctx.current, 'gun');
     assert.equal(ctx.shownObject._zoneManagedAsset, first);
-    assert.deepEqual(JSON.parse(JSON.stringify(ctx.shownObject.userData)), {}, 'GLB extras must not contain a live Three scene graph');
+    assert.deepEqual(JSON.parse(JSON.stringify(ctx.shownObject.userData)), { zoneWeaponAsset: { id: 'gun' } }, 'The stage wrapper retains plain metadata for the source lighting profile; no live Three scene graph');
     assert.equal(ctx.pendingKey, null); assert.equal(statuses.at(-1), 'ready');
     assert.equal(errors.length, 0, 'an obsolete request must not obscure the visible valid item');
     assert.deepEqual(disposed, outcome === 'resolve' ? [late] : []);
@@ -509,12 +563,15 @@ test('Studio presentation owns its lighting and environment cleanup while retain
   const canvasEvents = new Map(), labels = {}, canvas = { setAttribute:(key,value)=>labels[key]=value, addEventListener:(key,fn)=>canvasEvents.set(key,fn), removeEventListener:key=>canvasEvents.delete(key) };
   const renderer = { domElement:canvas, getRenderTarget:()=>null, getClearColor:color=>color.set(0), getClearAlpha:()=>1,
     setRenderTarget() {}, setClearColor() {}, setPixelRatio(value) { this.ratio=value; }, setSize() {} };
-  const pmremTexture = new THREE.Texture();
+  const environmentColors = [], environmentTargets = [];
   const Engine = { ...THREE, PMREMGenerator:class {
     fromScene(room) {
+      environmentColors.push(room.background.getHex());
+      assert.ok([0x171b20, 0x353e46].includes(room.background.getHex()), 'studio must use the accepted reference or bounded new-asset environment');
       const geometries=new Set(); room.traverse(object=>{ if(object.geometry) geometries.add(object.geometry); if(object.material) object.material.addEventListener('dispose',()=>temporaryMaterialDisposals++); });
       geometries.forEach(geometry=>geometry.addEventListener('dispose',()=>temporaryGeometryDisposals++));
-      return { texture:pmremTexture, dispose() { environmentDisposals++; } };
+      const target = { texture:new THREE.Texture(), disposals:0, dispose() { this.disposals++; environmentDisposals++; } };
+      environmentTargets.push(target); return target;
     }
     dispose() { pmremDisposals++; }
   } };
@@ -525,6 +582,8 @@ test('Studio presentation owns its lighting and environment cleanup while retain
   item.geometry.addEventListener('dispose',()=>weaponDisposals++); item.material.addEventListener('dispose',()=>weaponDisposals++); scene.add(key,ground,item);
   const stage={ _scene:scene,_renderer:renderer,_camera:camera,_controls:controls,_key:key,_ground:ground,lang:'ar',clientWidth:320,clientHeight:480,dataset:{},shadowRoot:{appendChild(node){assert.equal(node,status);}},setLanguage(value){this.lang=value;},setObject(object){if(!object.parent)scene.add(object);} };
   const presentation=installWeaponPresentation(Engine,stage);
+  assert.equal(renderer.toneMappingExposure,1.04); assert.equal(scene.environmentIntensity,.8);
+  assert.deepEqual(environmentColors,[0x171b20]); assert.equal(scene.getObjectByName('studio-softbox-fill').intensity,0);
   assert.equal(renderer.ratio,1.5,'phone DPR must stay bounded'); assert.equal(key.shadow.mapSize.x,1024);
   assert.equal(pmremDisposals,1); assert.equal(temporaryGeometryDisposals,1); assert.equal(temporaryMaterialDisposals,5);
   assert.match(labels['aria-label'],/^معاينة/);
@@ -532,12 +591,19 @@ test('Studio presentation owns its lighting and environment cleanup while retain
   stage.setLanguage('en'); assert.match(labels['aria-label'],/^3D item/); assert.equal(status.textContent,'Loading 3D preview...');
   stage.setAssetStatus('ready'); assert.equal(status.hidden,true);
   stage.setObject(item); assert.ok(statesSaved>0 && JSON.parse(stage.dataset.zoneFrame).aspect===320/480);
+  assert.deepEqual(environmentColors,[0x171b20,0x353e46]); assert.equal(scene.environmentIntensity,.95);
+  item.userData.zoneWeaponAsset={id:'m9-knife'}; stage.setObject(item);
+  assert.equal(renderer.toneMappingExposure,1.04); assert.equal(scene.environmentIntensity,.8);
+  assert.equal(key.intensity,2.4); assert.equal(scene.getObjectByName('studio-fill').intensity,.85);
+  assert.equal(scene.getObjectByName('studio-rim').intensity,2.0); assert.equal(scene.getObjectByName('studio-softbox-fill').intensity,0);
+  assert.equal(environmentTargets.length,2,'profile reselection must reuse its original PMREM rather than recreate resources');
   stage.clientWidth=640; resizeCallback(); assert.equal(JSON.parse(stage.dataset.zoneFrame).aspect,640/480);
   presentation.dispose(); presentation.dispose();
-  assert.equal(disconnected,1); assert.equal(environmentDisposals,1); assert.equal(keyStops,1); assert.equal(canvasEvents.size,0);
+  assert.equal(disconnected,1); assert.equal(environmentDisposals,2); assert.ok(environmentTargets.every(target=>target.disposals===1));
+  assert.equal(keyStops,1); assert.equal(canvasEvents.size,0);
   assert.equal(scene.environment,null); assert.equal(weaponDisposals,0); assert.equal(item.parent,scene);
   assert.equal(status.removed,true); assert.equal(stage.setAssetStatus,undefined);
-  assert.equal(scene.getObjectByName('studio-fill'),undefined); assert.equal(scene.getObjectByName('studio-rim'),undefined);
+  assert.equal(scene.getObjectByName('studio-fill'),undefined); assert.equal(scene.getObjectByName('studio-rim'),undefined); assert.equal(scene.getObjectByName('studio-softbox-fill'),undefined);
 });
 
 function zipEntries(bytes) {
@@ -637,7 +703,7 @@ test('Item toolbar inherits Arabic before renderer readiness and updates all lab
 test('Compact character selector reflects equipped bat and knife in both languages', () => {
   const select = () => ({ options: [], value: '', set innerHTML(value) { if (value === '') this.options = []; }, appendChild(option) { this.options.push(option); } });
   const weaponSelect = select(), animationSelect = select();
-  const ctx = context(character.template, ['proceduralWeaponLabel', 'buildCompact', 'paintCompact'], {
+  const ctx = context(character.template, ['weaponSelectable', 'proceduralWeaponLabel', 'buildCompact', 'paintCompact'], {
     MINI: false, lang: 'en', state: { weapon: 'bat' }, lastAct: 'idle', ACTIONS: [], CLIP: {},
     $: id => id === 'cwep' ? weaponSelect : animationSelect, document: { createElement: () => ({}) },
     WEAPON: { bat() {}, knife() {}, revolver() {} },
@@ -655,4 +721,7 @@ test('Compact character selector reflects equipped bat and knife in both languag
   assert.equal(weaponSelect.options.find(option => option.value === 'bat').textContent, 'مضرب بيسبول');
   ctx.state.weapon = 'alias'; ctx.paintCompact(); assert.equal(weaponSelect.value, 'revolver');
   ctx.state.weapon = 'fists'; ctx.paintCompact(); assert.equal(weaponSelect.value, 'fists');
+  ctx.state.ownedWeapons = ['fists', 'bat', 'alias']; ctx.state.weapon = 'alias'; ctx.buildCompact();
+  assert.deepEqual(weaponSelect.options.map(option => option.value), ['fists', 'bat', 'alias']);
+  assert.equal(weaponSelect.value, 'alias', 'an owned model alias remains selectable by its exact ID');
 });

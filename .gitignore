@@ -6,3 +6,9 @@ engine/var/*.sqlite-*
 engine/var/*.log
 
 .env*.local
+
+/engine/var/
+/baseline-engine/
+.env
+.env.*
+!.env.example

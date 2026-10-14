@@ -6,17 +6,21 @@
   "scripts": {
     "verify": "node scripts/verify.mjs",
     "verify:map": "node scripts/verify-map.mjs",
-    "verify:client": "node --test scripts/test-client.mjs",
-    "verify:admin": "node --test scripts/test-admin.mjs",
+    "verify:client": "node --test scripts/test-client.mjs scripts/test-route-navigation.mjs scripts/test-home-gym.mjs scripts/test-map-actions.mjs scripts/test-map-expansion.mjs scripts/test-beta-readiness.mjs scripts/test-beta102-entry.mjs scripts/test-owner-playtest.mjs",
+    "verify:admin": "node --test scripts/test-admin.mjs scripts/test-preview-lifecycle.mjs scripts/test-engine-console.mjs scripts/test-admin-studio.mjs scripts/test-engine-studio-assets.mjs",
     "verify:modules": "node --test scripts/test-module-panel.mjs",
-    "verify:viewers": "node --test scripts/test-viewer-runtime.mjs",
-    "verify:visual": "node --test scripts/test-territory-geometry.mjs scripts/test-city-layout.mjs",
+    "verify:viewers": "node --test scripts/test-viewer-runtime.mjs scripts/test-weapon-loading.mjs scripts/test-launch-media.mjs",
+    "verify:visual": "node --test scripts/test-territory-geometry.mjs scripts/test-city-layout.mjs scripts/test-city-renderer.mjs scripts/test-native-city.mjs scripts/test-map-native-ownership.mjs scripts/test-map-frame-sample.mjs scripts/test-map-camera-ready.mjs scripts/test-compact-district.mjs scripts/test-map-pin-alignment.mjs scripts/test-district-landmarks.mjs scripts/test-player-design.mjs scripts/test-district-buildings.mjs scripts/test-visual99-map-preservation.mjs",
     "build": "node scripts/build.mjs",
-    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:modules && npm run verify:viewers && npm run verify:visual && npm run verify:weapons && npm run build && node scripts/verify.mjs public",
+    "vercel-build": "npm run verify && npm run verify:map && npm run verify:client && npm run verify:admin && npm run verify:modules && npm run verify:viewers && npm run verify:visual && npm run verify:weapons && npm run verify:combat && npm run verify:sessions && npm run build && node scripts/verify.mjs public && npm run verify:package",
+    "verify:package": "node --test scripts/test-visual99-release-packaging.mjs",
+    "verify:combat": "node --test scripts/test-combat-presentation.mjs",
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
     "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
-    "verify:platform": "powershell -ExecutionPolicy Bypass -File scripts/verify-platform.ps1",
-    "verify:weapons": "node --test scripts/test-weapon-assets.mjs"
+    "verify:platform": "pwsh -ExecutionPolicy Bypass -File scripts/verify-platform.ps1",
+    "verify:weapons": "node --test scripts/test-weapon-assets.mjs scripts/test-character-poses.mjs scripts/test-character-art.mjs scripts/test-character-polish.mjs scripts/test-weapon-library.mjs scripts/test-weapon-quality.mjs",
+    "verify:sessions": "node --test scripts/test-player-session.mjs scripts/test-account.mjs",
+    "verify:relay": "node engine/tests/relay-http.mjs"
   },
   "engines": {
     "node": "22.x"

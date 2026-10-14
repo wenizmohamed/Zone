@@ -71,10 +71,12 @@ final class ContentManager
         return [...$this->normalizeCrime($saved), 'correlationId' => $correlationId];
     }
 
-    public function auditLog(int $limit = 100): array
+    public function auditLog(int $limit = 100, bool $includeSnapshots = true): array
     {
         $limit = max(1, min(250, $limit));
-        $rows = $this->database->fetchAll("SELECT * FROM admin_audit_log ORDER BY created_at DESC LIMIT {$limit}");
+        $columns = $includeSnapshots ? '*' : 'id, actor, action, target_type, target_id, correlation_id, created_at';
+        $rows = $this->database->fetchAll("SELECT {$columns} FROM admin_audit_log ORDER BY created_at DESC LIMIT {$limit}");
+        if (!$includeSnapshots) return $rows;
         return array_map(static function (array $row): array {
             foreach (['previous_json' => 'previous', 'next_json' => 'next'] as $source => $target) {
                 $row[$target] = $row[$source] === null ? null : json_decode((string) $row[$source], true, 64, JSON_THROW_ON_ERROR);

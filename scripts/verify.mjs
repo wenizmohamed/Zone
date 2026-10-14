@@ -14,7 +14,7 @@ if (target !== repoRoot && relative(repoRoot, target) !== 'public') {
   process.exit(1);
 }
 
-const requiredRoots = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'platform-runtime.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js', 'art', 'assets', 'dist', 'lib'];
+const requiredRoots = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'account.html', 'account.js', 'platform-runtime.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js', 'art', 'assets', 'dist', 'lib'];
 for (const entry of requiredRoots) check(existsSync(join(target, entry)), `Missing runtime entry: ${entry}`);
 
 const indexPath = join(target, 'index.html');
@@ -120,6 +120,7 @@ for (const resource of literalResources) {
   if (/^(?:https?:|data:|blob:|#|\{\{)/.test(resource) || resource.includes('{{')) continue;
   const clean = resource.replace(/^\.\//, '').split(/[?#]/)[0];
   if (['/admin', '/engine', '/engine/theme.css'].includes(clean)) continue;
+  if (clean === '/account') { check(existsSync(join(target, 'account.html')), 'Account clean URL has no shipped HTML.'); continue; }
   check(existsSync(join(target, clean)), `Missing literal resource: ${clean}`);
 }
 for (const screen of screens) {

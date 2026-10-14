@@ -4,6 +4,26 @@ declare(strict_types=1);
 
 require __DIR__ . '/bootstrap.php';
 
+// Only an authenticated loopback relay can supply the public request context.
+$zoneGatewayRequest = false;
+$gatewayKey = (string) (getenv('ZONE_ENGINE_RELAY_KEY') ?: '');
+if (isset($_SERVER['HTTP_X_ZONE_GATEWAY_KEY'])) {
+    $gatewayHost = (string) ($_SERVER['HTTP_X_ZONE_GATEWAY_HOST'] ?? '');
+    $allowedHosts = array_filter(array_map('trim', explode(',', (string) (getenv('ZONE_ENGINE_PUBLIC_HOSTS') ?: ''))));
+    $gatewayIp = (string) ($_SERVER['HTTP_X_ZONE_GATEWAY_IP'] ?? '');
+    if (strlen($gatewayKey) < 32 || !in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
+        || !hash_equals($gatewayKey, (string) $_SERVER['HTTP_X_ZONE_GATEWAY_KEY'])
+        || !in_array($gatewayHost, $allowedHosts, true)
+        || ($_SERVER['HTTP_X_ZONE_GATEWAY_PROTO'] ?? '') !== 'https'
+        || !filter_var($gatewayIp, FILTER_VALIDATE_IP)) {
+        http_response_code(403); header('Content-Type: application/json'); echo '{"error":"Gateway authentication failed."}'; return true;
+    }
+    $zoneGatewayRequest = true;
+    $_SERVER['HTTP_HOST'] = $gatewayHost;
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['REMOTE_ADDR'] = $gatewayIp;
+}
+
 /** Diagnostic metadata only: never log credentials, request bodies or SQL values. */
 function log_engine_failure(Throwable $exception, string $route): string
 {
@@ -13,18 +33,53 @@ function log_engine_failure(Throwable $exception, string $route): string
     return $requestId;
 }
 
-$path = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
+/** Admin writes must prove which draft/configuration the editor reviewed. */
+function required_draft_fingerprint(array $payload): string
+{
+    $fingerprint = $payload['expectedFingerprint'] ?? null;
+    if (!is_string($fingerprint) || !preg_match('/^[a-f0-9]{64}$/D', $fingerprint)) {
+        throw new InvalidArgumentException('A valid release draft fingerprint is required.');
+    }
+    return $fingerprint;
+}
+
+$path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+// Reject encoded separators/traversal before PHP's static-server fallback.
+// Decode repeatedly so double-encoded private paths cannot become a second route.
+for ($decode = 0; $decode < 5; $decode++) {
+    $decoded = rawurldecode($path);
+    if ($decoded === $path) break;
+    $path = $decoded;
+}
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $repositoryRoot = realpath(__DIR__ . '/..');
+if (str_contains($path, "\0") || str_contains($path, '\\') || str_contains($path, '%')
+    || preg_match('~(?:^|/)\.[^/]*(?:/|$)~', $path)
+    || preg_match('~^/(?:docs|scripts|screenshots|brief|idea|analysis|artifacts)(?:/|$)~i', $path)
+    || (str_starts_with(strtolower($path), '/engine/') && !in_array($path, ['/engine/', '/engine/theme.css', '/engine/assets/engine.css', '/engine/assets/studio-engine.css', '/engine/assets/engine.js'], true))) {
+    http_response_code(404);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo 'Not found.';
+    return true;
+}
 $staticCandidate = realpath($repositoryRoot . str_replace('/', DIRECTORY_SEPARATOR, $path));
 
 if ($path !== '/engine' && $path !== '/engine/' && !str_starts_with($path, '/api/')) {
-    if ($staticCandidate !== false && str_starts_with($staticCandidate, $repositoryRoot) && is_file($staticCandidate)) {
-        return false;
+    if ($staticCandidate !== false && is_file($staticCandidate)) {
+        // Match the build's public roots, not every existing file in this checkout.
+        $publicFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admin-studio.js', 'account.html', 'account.js', 'platform-runtime.js', 'owner-playtest.js', 'player-session.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js'];
+        $relative = str_replace('\\', '/', substr($staticCandidate, strlen($repositoryRoot) + 1));
+        $inside = str_starts_with($staticCandidate, $repositoryRoot . DIRECTORY_SEPARATOR);
+        $public = in_array($relative, $publicFiles, true) || preg_match('~^(?:art|assets|dist|lib)/~', $relative);
+        if ($inside && $public && !preg_match('~(?:^|/)\.|\.(?:php|sqlite[0-9]*|db|env|ini|log|toml|ps1|py)$~i', $relative)) return false;
+        http_response_code(404);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Not found.';
+        return true;
     }
 }
 
-if ($path === '/engine/assets/engine.css' || $path === '/engine/assets/engine.js') {
+if (in_array($path, ['/engine/assets/engine.css', '/engine/assets/studio-engine.css', '/engine/assets/engine.js'], true)) {
     $file = __DIR__ . '/public/assets/' . basename($path);
     header('Content-Type: ' . (str_ends_with($file, '.css') ? 'text/css' : 'application/javascript') . '; charset=utf-8');
     header('Cache-Control: no-store');
@@ -42,6 +97,76 @@ if ($method === 'GET' && ($path === '/admin' || $path === '/admin/')) {
     header('Content-Type: text/html; charset=utf-8');
     readfile(ZONE_REPOSITORY_ROOT . '/admin.html');
     return true;
+}
+
+if ($method === 'GET' && ($path === '/account' || $path === '/account/')) {
+    header('Content-Type: text/html; charset=utf-8');
+    readfile(ZONE_REPOSITORY_ROOT . '/account.html');
+    return true;
+}
+
+/** Reuse the existing deployed owner credentials, never create a new owner. */
+function zone_admin_settings(): array
+{
+    $settings = [];
+    foreach (['ZONE_ADMIN_TOKEN', 'ZONE_ADMIN_USERNAME', 'ZONE_ADMIN_PASSWORD_HASH', 'ZONE_ADMIN_SESSION_SECRET'] as $name) $settings[$name] = trim((string) (getenv($name) ?: ''));
+    return $settings;
+}
+function zone_admin_secret(): string
+{
+    $settings = zone_admin_settings();
+    if ($settings['ZONE_ADMIN_TOKEN'] !== '') return $settings['ZONE_ADMIN_TOKEN'];
+    return $settings['ZONE_ADMIN_USERNAME'] !== '' && (password_get_info($settings['ZONE_ADMIN_PASSWORD_HASH'])['algo'] ?? null) !== null
+        && strlen($settings['ZONE_ADMIN_SESSION_SECRET']) >= 32 ? $settings['ZONE_ADMIN_SESSION_SECRET'] : '';
+}
+function zone_admin_access(): array
+{
+    global $zoneGatewayRequest;
+    $secret = zone_admin_secret();
+    $local = !$zoneGatewayRequest && getenv('VERCEL') !== '1' && in_array(strtolower(explode(':', (string) ($_SERVER['HTTP_HOST'] ?? ''))[0]), ['localhost', '127.0.0.1'], true);
+    $authenticated = ($local && $secret === '') || ($zoneGatewayRequest && ($_SERVER['HTTP_X_ZONE_GATEWAY_OWNER'] ?? '') === '1');
+    if ($secret !== '') {
+        try { \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, $secret); $authenticated = true; }
+        catch (RuntimeException) { $authenticated = false; }
+    }
+    return ['configured' => $secret !== '', 'authenticated' => $authenticated, 'localDevelopment' => $local,
+        'credentialMode' => $secret === '' ? 'unconfigured' : (zone_admin_settings()['ZONE_ADMIN_TOKEN'] !== '' ? 'token' : 'password')];
+}
+
+function zone_cookie(string $name, string $value, int $expires): void
+{
+    setcookie($name, $value, ['expires' => $expires, 'path' => '/', 'secure' => getenv('VERCEL') === '1' || ($_SERVER['HTTPS'] ?? '') === 'on', 'httponly' => true, 'samesite' => 'Strict']);
+}
+
+// Owner access is independent of database availability.
+if ($path === '/api/v1/admin/session') {
+    $access = zone_admin_access();
+    if ($method === 'GET') json_response($access);
+    if ($method === 'POST') {
+        try {
+            \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+            $secret = zone_admin_secret();
+            $settings = zone_admin_settings();
+            $body = request_json();
+            $valid = $access['credentialMode'] === 'password'
+                ? (is_string($body['username'] ?? null) && is_string($body['password'] ?? null)
+                    && strlen($body['password']) <= 1024 && password_verify($body['password'], $settings['ZONE_ADMIN_PASSWORD_HASH'])
+                    && hash_equals($settings['ZONE_ADMIN_USERNAME'], $body['username']))
+                : (is_string($body['token'] ?? null) && hash_equals($secret, $body['token']));
+            if ($secret === '' || !$valid) json_response(['error' => 'Admin authentication required.'], 401);
+            zone_cookie(\Zone\Engine\Core\Security\RequestGuard::ADMIN_COOKIE, \Zone\Engine\Core\Security\RequestGuard::adminSession($secret), time() + 43200);
+            json_response(['configured' => true, 'authenticated' => true, 'localDevelopment' => $access['localDevelopment']]);
+        } catch (Throwable) { json_response(['error' => 'Admin authentication required.'], 401); }
+    }
+    if ($method === 'DELETE') {
+        try { \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1'); }
+        catch (RuntimeException) { json_response(['error' => 'Cross-origin admin request rejected.'], 403); }
+        zone_cookie(\Zone\Engine\Core\Security\RequestGuard::ADMIN_COOKIE, '', time() - 3600);
+        json_response(['authenticated' => false]);
+    }
+}
+if (str_starts_with($path, '/api/v1/admin/') || in_array($path, ['/engine', '/engine/', '/api/v1/ledger', '/api/v1/events'], true)) {
+    if (!zone_admin_access()['authenticated']) json_response(['error' => 'Admin authentication required.'], 401);
 }
 
 try {
@@ -106,28 +231,58 @@ function zone_env(string $name): ?string
 }
 
 /**
- * Authorize an admin/mutation request and return the actor label to record in
- * the audit trail. Production requires ZONE_ADMIN_TOKEN via X-Zone-Admin-Token;
- * demo mode (no token) requires a strict same-origin request. A header-less
- * client (curl/bot/server-to-server) can no longer write.
+ * Authorize owner mutations and return server-fixed audit attribution.
+ * Production accepts the signed owner cookie or a private server-to-server
+ * token. Cookie writes require strict same-origin validation. Only loopback
+ * development without a configured secret gets the local-admin shortcut.
  */
 function require_admin_mutation(): string
 {
-    return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_env('ZONE_ADMIN_TOKEN'), getenv('VERCEL') === '1');
+    global $zoneGatewayRequest;
+    if (!zone_admin_access()['authenticated']) throw new RuntimeException('Admin authentication required.');
+    if (empty($_SERVER['HTTP_X_ZONE_ADMIN_TOKEN'])) \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+    if ($zoneGatewayRequest && ($_SERVER['HTTP_X_ZONE_GATEWAY_OWNER'] ?? '') === '1') return 'admin-session';
+    if (zone_admin_secret() === '') return 'local-admin';
+    return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_admin_secret(), getenv('VERCEL') === '1');
 }
 
 /**
- * Resolve the acting player id server-side. Never trusts the raw
- * X-Zone-Player-Id header: in demo mode identity is pinned to the demo player;
- * in production a valid HMAC player token is required to assume an identity.
+ * Resolve the acting player server-side. Browser sessions never trust a
+ * claimed player ID. Legacy signed HMAC clients remain supported; only the
+ * isolated legacy development adapter can use its pinned founder fixture.
  */
 function current_player_id(): string
 {
+    global $engine;
+    if (zone_sessions_enabled()) {
+        $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
+        if ($token !== '') {
+            $id = $engine->browserSessions()->resolve($token);
+            $claimed = trim((string) ($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? ''));
+            if ($claimed !== '' && $claimed !== $id) throw new RuntimeException('Player authentication failed.');
+            $verb = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+            if (!in_array($verb, ['GET', 'HEAD', 'OPTIONS'], true)) \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+            return $id;
+        }
+        if (zone_env('ZONE_PLAYER_AUTH') === null) throw new RuntimeException('Player session expired.');
+    }
     return \Zone\Engine\Core\Security\RequestGuard::resolvePlayerId(
         $_SERVER,
         zone_env('ZONE_PLAYER_AUTH'),
         zone_env('ZONE_DEMO_PLAYER_ID') ?? 'founder-player',
     );
+}
+
+function zone_sessions_enabled(): bool
+{
+    return getenv('ZONE_PLAYER_SESSIONS') === '1' || getenv('VERCEL') === '1';
+}
+
+function zone_client_address(): string
+{
+    $address = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    if (getenv('VERCEL') === '1' && filter_var($_SERVER['HTTP_X_REAL_IP'] ?? '', FILTER_VALIDATE_IP)) $address = $_SERVER['HTTP_X_REAL_IP'];
+    return $address;
 }
 
 if ($method === 'OPTIONS') {
@@ -136,6 +291,68 @@ if ($method === 'OPTIONS') {
 }
 
 try {
+    // Owner proof and player identity are both server-resolved on every request.
+    // A client flag, claimed playerId or copied sandbox ID grants no access.
+    if ($path === '/api/v1/admin/playtest' && $method === 'GET') {
+        json_response($engine->ownerPlaytest()->status(current_player_id()));
+    }
+    if ($path === '/api/v1/admin/playtest/start' && $method === 'POST') {
+        $actor = require_admin_mutation(); $body = request_json();
+        if (array_diff(array_keys($body), ['idempotencyKey']) !== []) throw new InvalidArgumentException('Unknown owner playtest start fields.');
+        if (!is_string($body['idempotencyKey'] ?? null)) throw new InvalidArgumentException('An owner playtest idempotency key is required.');
+        json_response($engine->ownerPlaytest()->start(current_player_id(), $actor, $body['idempotencyKey'] ?? ''), 201);
+    }
+    if ($path === '/api/v1/admin/playtest/action' && $method === 'POST') {
+        $actor = require_admin_mutation();
+        json_response($engine->ownerPlaytest()->act(current_player_id(), $actor, request_json()));
+    }
+    if ($path === '/api/v1/admin/playtest' && $method === 'DELETE') {
+        $actor = require_admin_mutation(); $body = request_json();
+        if (array_diff(array_keys($body), ['sessionId', 'idempotencyKey']) !== []) throw new InvalidArgumentException('Unknown owner playtest exit fields.');
+        if (!is_string($body['idempotencyKey'] ?? null)) throw new InvalidArgumentException('An owner playtest idempotency key is required.');
+        if (!is_string($body['sessionId'] ?? null)) throw new InvalidArgumentException('An owner playtest sessionId is required.');
+        json_response($engine->ownerPlaytest()->end(current_player_id(), $actor, $body['sessionId'], $body['idempotencyKey']));
+    }
+    if ($path === '/api/v1/auth/account' && $method === 'GET') {
+        $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
+        try { json_response($engine->playerAccounts()->status($token)); }
+        catch (RuntimeException $error) {
+            if ($error->getMessage() !== 'Player session expired.') throw $error;
+            json_response(['authenticated' => false, 'claimed' => false]);
+        }
+    }
+    if (in_array($path, ['/api/v1/auth/claim', '/api/v1/auth/login', '/api/v1/auth/recover', '/api/v1/auth/logout'], true) && $method === 'POST') {
+        \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+        $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
+        if ($path === '/api/v1/auth/logout') {
+            $engine->browserSessions()->revoke($token);
+            zone_cookie(\Zone\Engine\Core\Security\BrowserSessions::COOKIE, '', time() - 3600);
+            json_response(['authenticated' => false]);
+        }
+        $body = request_json();
+        foreach (['username', 'password', ...($path === '/api/v1/auth/recover' ? ['recoveryCode'] : [])] as $field) {
+            if (!is_string($body[$field] ?? null)) throw new InvalidArgumentException('Account fields must be text.');
+        }
+        if (strlen($body['username']) > 80) throw new InvalidArgumentException('Username is too long.');
+        $account = $engine->playerAccounts();
+        $result = match ($path) {
+            '/api/v1/auth/claim' => $account->claim($token, $body['username'], $body['password'], zone_client_address()),
+            '/api/v1/auth/login' => $account->login($body['username'], $body['password'], zone_client_address(), $token),
+            '/api/v1/auth/recover' => $account->recover($body['username'], $body['recoveryCode'], $body['password'], zone_client_address()),
+        };
+        zone_cookie(\Zone\Engine\Core\Security\BrowserSessions::COOKIE, $result['token'], $result['expiresAt']);
+        unset($result['token']);
+        json_response($result);
+    }
+    if ($method === 'POST' && $path === '/api/v1/auth/session') {
+        \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+        if (!zone_sessions_enabled()) json_response(['playerId' => current_player_id(), 'mode' => 'local-development']);
+        $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
+        if ($token !== '') json_response(['playerId' => $engine->browserSessions()->resolve($token), 'mode' => 'persistent-browser']);
+        $session = $engine->browserSessions()->create(zone_client_address());
+        zone_cookie(\Zone\Engine\Core\Security\BrowserSessions::COOKIE, $session['token'], $session['expiresAt']);
+        json_response(['playerId' => $session['playerId'], 'mode' => 'persistent-browser', 'expiresAt' => $session['expiresAt']], 201);
+    }
     if ($method === 'GET' && $path === '/api/v1/health') {
         json_response(['ok' => true, 'time' => gmdate('c'), 'engine' => $engine->status()]);
     }
@@ -151,11 +368,33 @@ try {
     if ($method === 'GET' && $path === '/api/v1/player') {
         json_response(['player' => $engine->player(current_player_id())]);
     }
+    if ($method === 'GET' && $path === '/api/v1/leaderboards') {
+        json_response($engine->leaderboards(current_player_id()));
+    }
     if ($method === 'GET' && $path === '/api/v1/gameplay') {
         json_response($engine->gameplay(current_player_id()));
     }
     if ($method === 'GET' && $path === '/api/v1/combat') {
         json_response($engine->combat(current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/player-combat') json_response($engine->playerCombat(current_player_id()));
+    if ($method === 'GET' && $path === '/api/v1/player-combat/opponents') json_response($engine->playerCombatOpponents(current_player_id()));
+    if ($method === 'POST' && $path === '/api/v1/player-combat/action') {
+        $body=request_json();
+        foreach (['action','opponentId','approach'] as $field) if (isset($body[$field]) && !is_string($body[$field])) throw new InvalidArgumentException('Combat fields must be text.');
+        json_response($engine->playerCombatAction($body['action']??'', $body['opponentId']??'', $body['approach']??'', \Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/player-market') json_response($engine->playerMarket(current_player_id()));
+    if ($method === 'POST' && $path === '/api/v1/player-market/action') {
+        $body=request_json();
+        foreach (['action','id'] as $field) if (!is_string($body[$field]??null)) throw new InvalidArgumentException('Market action and ID must be text.');
+        json_response($engine->playerMarketAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'quantity'),isset($body['unitPrice'])?\Zone\Engine\Core\Security\RequestGuard::nonNegativeInt($body,'unitPrice'):0,\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
+    }
+    if ($method === 'GET' && $path === '/api/v1/family-activities') json_response($engine->familyActivities(current_player_id()));
+    if ($method === 'POST' && $path === '/api/v1/family-activities/action') {
+        $body=request_json();
+        foreach (['action','id'] as $field) if (!is_string($body[$field]??null)) throw new InvalidArgumentException('Family action and ID must be text.');
+        json_response($engine->familyActivityAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
     }
     if ($method === 'POST' && $path === '/api/v1/combat/action') {
         $body = request_json();
@@ -180,6 +419,11 @@ try {
     }
     if ($method === 'GET' && $path === '/api/v1/city/map') {
         json_response($engine->territoryMap(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/factions/join') {
+        $body = request_json();
+        if (array_diff(array_keys($body), ['factionId']) || !is_string($body['factionId'] ?? null)) throw new InvalidArgumentException('Only a faction ID may be submitted.');
+        json_response($engine->joinFaction($body['factionId'], current_player_id()), 201);
     }
     if ($method === 'GET' && $path === '/api/v1/architecture') {
         json_response([
@@ -213,20 +457,31 @@ try {
         json_response($engine->saveGameplayCatalog($matches[1], $matches[2], $body['changes'], \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedRevision'), $actor));
     }
     if ($method === 'GET' && $path === '/api/v1/admin/audit') {
-        json_response(['entries' => $engine->adminAuditLog()]);
+        // Dashboard summaries must not duplicate whole world snapshots per audit row.
+        // Full snapshots stay in storage and are available one record at a time.
+        $details = ($_GET['details'] ?? '') === '1';
+        $limit = \Zone\Engine\Core\Security\RequestGuard::boundedInt($_GET, 'limit', 1, $details ? 1 : 250, $details ? 1 : 100);
+        json_response(['entries' => $engine->adminAuditLog($limit, $details)]);
+    }
+    if ($method === 'POST' && preg_match('#^/api/v1/admin/gameplay-catalog/([a-z]+)$#', $path, $matches)) {
+        $actor = require_admin_mutation();
+        $body = request_json();
+        if (!is_string($body['id'] ?? null) || !is_array($body['definition'] ?? null) || array_is_list($body['definition'])) throw new InvalidArgumentException('A content ID and definition object are required.');
+        json_response($engine->createGameplayCatalog($matches[1], $body['id'], $body['definition'], \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedRevision'), $actor), 201);
     }
     if ($method === 'GET' && $path === '/api/v1/admin/territories') {
-        json_response($engine->adminTerritories(current_player_id()));
+        // Owner tooling does not require, create or borrow a browser player session.
+        json_response($engine->adminTerritories());
     }
     if ($method === 'PUT' && $path === '/api/v1/admin/draft') {
         $actor = require_admin_mutation();
         $payload = request_json();
-        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, $actor));
+        json_response($engine->saveReleaseDraft($payload['manifest'] ?? $payload, $actor, required_draft_fingerprint($payload)));
     }
     if ($method === 'POST' && $path === '/api/v1/admin/releases/publish') {
         $actor = require_admin_mutation();
-        request_json();
-        json_response($engine->publishRelease($actor), 201);
+        $payload = request_json();
+        json_response($engine->publishRelease($actor, required_draft_fingerprint($payload)), 201);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/releases/([a-f0-9]{32})/activate$#', $path, $matches)) {
         $actor = require_admin_mutation();
@@ -348,13 +603,25 @@ try {
         $message === 'Player authentication required to act as another player.' => 401,
         $message === 'Player authentication failed.' => 401,
         $message === 'Player identity header is required.' => 401,
+        $message === 'Player session expired.' => 401,
+        $message === 'Invalid account credentials.' => 401,
+        $message === 'Account is already claimed.' || $message === 'Username is unavailable.' => 409,
+        $message === 'Too many account attempts. Try again in 15 minutes.' => 429,
+        $message === 'Too many new beta accounts. Try again later.' => 429,
         str_starts_with($message, 'Territory state changed.') => 409,
         str_starts_with($message, 'Casino round changed.') => 409,
         str_starts_with($message, 'Gameplay state changed.') => 409,
+        str_starts_with($message, 'Owner playtest state changed.') || str_starts_with($message, 'Owner playtest idempotency') || str_starts_with($message, 'Owner playtest is already active.') => 409,
         str_starts_with($message, 'Gameplay catalog changed.') => 409,
+        str_starts_with($message, 'Release draft changed.') => 409,
         str_starts_with($message, 'Progression state changed.') => 409,
         str_starts_with($message, 'The market price changed.') => 409,
         str_starts_with($message, 'Combat state changed.') => 409,
+        str_starts_with($message, 'Listing state changed.') => 409,
+        str_starts_with($message, 'Listing is no longer available.') => 409,
+        str_starts_with($message, 'Operation changed.') => 409,
+        str_starts_with($message, 'Operation roster changed.') => 409,
+        str_starts_with($message, 'Operation creator changed.') => 409,
         str_starts_with($message, 'Control an adjacent block') => 409,
         str_starts_with($message, 'A first foothold') => 409,
         str_starts_with($message, 'A territory war is already active') => 409,

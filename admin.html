@@ -4,71 +4,127 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="ZONE admin control plane for modules, content, layouts, themes, economy, releases, and live game publishing.">
-  <title>ZONE Admin Control Plane</title>
+  <title>ZONE Open Engine Studio</title>
+  <script src="/assets/ui/canonical-entry.js?v=102"></script>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/admin.css">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin.css?v=97">
 </head>
 <body>
-  <div class="ambient" data-admin-shell aria-hidden="true"></div>
+  <dialog id="adminSessionDialog" class="admin-session-dialog" aria-labelledby="adminSessionTitle">
+    <form id="adminSessionForm">
+      <div class="panel-head"><h2 id="adminSessionTitle" data-copy="ownerAccess">Owner access</h2><button class="button ghost" id="sessionLanguageButton" type="button">العربية</button></div>
+      <p data-copy="ownerAccessHelp">Sign in with the existing owner credentials to open the control plane.</p>
+      <label id="adminUsernameField" hidden><span data-copy="ownerUsername">Username</span><input id="adminOwnerUsername" type="text" autocomplete="username" dir="ltr"></label>
+      <label><span id="adminCredentialLabel" data-copy="ownerToken">Owner token</span><input id="adminOwnerToken" type="password" autocomplete="current-password" required dir="ltr"></label>
+      <p id="adminSessionError" class="bad" role="alert"></p>
+      <button id="adminSessionSubmit" class="button primary" type="submit" data-copy="unlockAdmin">Open control plane</button>
+      <a class="button ghost" href="/" data-copy="game">Open game</a>
+    </form>
+  </dialog>
+  <a class="skip-link" href="#studioWorkspace" data-studio-copy="skipToWorkspace">Skip to workspace</a>
   <header class="topbar" data-admin-shell>
+    <button class="button ghost studio-menu-button" id="studioMenuButton" type="button" aria-controls="studioSidebar" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span data-studio-copy="menu">Menu</span>
+    </button>
     <a class="brand" href="/admin" aria-label="ZONE admin home">
       <span class="brand-mark">Z</span>
       <span><strong>ZONE</strong><small data-copy="controlPlane">ADMIN CONTROL PLANE</small></span>
     </a>
-    <div class="runtime-strip" id="runtimeStrip" aria-live="polite">
-      <span><i class="signal"></i><b id="runtimePhp">PHP 8.5</b></span>
-      <span id="runtimeDatabase">DATABASE</span>
-      <span id="runtimeRelease">RELEASE 0</span>
-      <span id="runtimeMode">PERSISTENT</span>
-    </div>
+    <button class="studio-search-button" id="studioSearchButton" type="button" aria-haspopup="dialog" aria-controls="studioCommandDialog">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
+      <span data-studio-copy="search">Find a page or action</span><kbd aria-hidden="true">Ctrl K</kbd>
+    </button>
     <div class="top-actions">
       <button class="button ghost" id="languageButton" type="button">العربية</button>
-      <a class="button ghost" href="/engine" data-copy="engine">Engine</a>
-      <a class="button ghost" href="/" data-copy="game">Open game</a>
+      <button class="button ghost studio-guide-button" id="studioGuideButton" type="button" aria-haspopup="dialog" aria-controls="studioHelpDialog" data-studio-copy="help">Guide</button>
+      <a class="button ghost studio-game-link" href="/" data-copy="game">Open game</a>
       <button class="button primary" id="publishButton" type="button" data-copy="publish">Publish release</button>
     </div>
   </header>
 
+  <button id="studioNavBackdrop" class="studio-nav-backdrop" type="button" tabindex="-1" data-studio-copy="closeNavigation" aria-hidden="true">Close navigation</button>
   <div class="app-shell" data-admin-shell>
-    <aside class="sidebar">
+    <aside class="sidebar" id="studioSidebar">
+      <button id="studioMenuClose" class="button ghost" type="button" data-studio-copy="closeNavigation" hidden>Close workspace menu</button>
       <div class="workspace-label"><span data-copy="zonePlatform">ZONE PLATFORM</span><strong data-copy="engineVersion">ENGINE 1.0</strong></div>
       <nav id="adminNav" aria-label="Admin sections"></nav>
+      <div class="mobile-admin-links">
+        <a class="button ghost" href="/engine" data-copy="engine">Engine</a>
+        <a class="button ghost" href="/" data-copy="game">Open game</a>
+      </div>
       <div class="sidebar-foot">
+        <a class="sidebar-engine-link" href="/engine"><span data-copy="engine">Engine</span><span aria-hidden="true">↗</span></a>
+        <button class="sidebar-guide-link" type="button" data-studio-help data-studio-copy="workspaceGuide">How this workspace works</button>
         <span data-copy="sourceOwned">FULL SOURCE OWNERSHIP</span>
-        <b data-copy="apiFirst">PHP 8.5 + API FIRST</b>
       </div>
     </aside>
 
-    <main class="workspace">
+    <main class="workspace" id="studioWorkspace" tabindex="-1">
+      <div class="studio-context">
+        <nav id="studioBreadcrumb" class="studio-breadcrumb" aria-label="Breadcrumb"></nav>
+        <div id="studioWorkflowStatus" class="studio-workflow-status" role="status" aria-live="polite" data-studio-copy="connectingWorkspace">Connecting to your workspace</div>
+      </div>
+      <aside id="adminRecovery" class="panel admin-recovery" role="alert" hidden>
+        <strong data-copy="adminLoadFailed">Unable to load admin data. Retry the connection below.</strong>
+        <p id="adminRecoveryDetail"></p>
+        <button class="button secondary" id="retryAdminButton" type="button" data-copy="retryAdmin">Retry connection</button>
+      </aside>
+      <aside id="draftConflictPanel" class="panel admin-recovery" role="alert" hidden>
+        <strong data-copy="draftChanged">The release draft changed elsewhere. Your edits are preserved.</strong>
+        <div class="form-grid draft-conflict-values">
+          <label><span data-copy="yourDraft">Your preserved page and branding edits</span><textarea id="draftConflictLocal" rows="6" dir="ltr" readonly></textarea></label>
+          <label><span data-copy="serverDraft">Latest server pages and branding</span><textarea id="draftConflictServer" rows="6" dir="ltr" readonly></textarea></label>
+        </div>
+        <div class="head-actions">
+          <button class="button secondary" id="useServerDraftButton" type="button" data-copy="useServerDraft">Use server pages and branding</button>
+          <button class="button secondary" id="keepReviewedDraftButton" type="button" data-copy="keepReviewedDraft">Keep my reviewed edits for retry</button>
+        </div>
+      </aside>
       <section class="view active" data-view="overview">
         <div class="page-head">
           <div><span class="eyebrow" data-copy="controlCenter">CONTROL CENTER</span><h1 data-copy="overview">Platform overview</h1><p data-copy="overviewSub">One control plane for the engine, modules, content, releases, and the live game.</p></div>
           <button class="button secondary" type="button" data-go="releases" data-copy="releaseHistory">Release history</button>
         </div>
-        <div class="metric-grid" id="metrics"></div>
-        <div class="dashboard-grid">
-          <article class="panel span-2">
-            <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="publishPipeline">Publishing pipeline</h2></div><span class="status good" id="pipelineStatus">READY</span></div>
-            <div class="pipeline" id="pipeline"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><span class="section-number">02</span><h2 data-copy="systemHealth">System health</h2></div></div>
-            <div class="health-list" id="healthList"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><span class="section-number">03</span><h2 data-copy="recentEvents">Recent events</h2></div></div>
-            <div class="compact-list" id="overviewEvents"></div>
-          </article>
-        </div>
+        <section class="studio-start" aria-labelledby="studioStartTitle">
+          <div class="studio-section-heading"><h2 id="studioStartTitle" data-studio-copy="startCreating">What would you like to create?</h2><p data-studio-copy="startCreatingHelp">Choose a task. Your changes stay in a draft until you publish them.</p></div>
+          <div id="studioTasks" class="studio-tasks"></div>
+        </section>
+        <article class="panel studio-publishing-panel">
+          <div class="panel-head"><div><h2 data-copy="publishPipeline">Publishing pipeline</h2></div><span class="status good" id="pipelineStatus">READY</span></div>
+          <div class="pipeline" id="pipeline"></div>
+        </article>
+        <details class="studio-technical-details">
+          <summary><span data-studio-copy="technicalDetails">System details and recent activity</span><span class="studio-disclosure-hint" data-studio-copy="technicalDetailsHint">For troubleshooting</span></summary>
+          <div class="studio-technical-body">
+            <div class="runtime-strip" id="runtimeStrip" aria-live="polite">
+              <span><i class="signal"></i><b id="runtimePhp">PHP 8.5</b></span>
+              <span id="runtimeDatabase">DATABASE</span>
+              <span id="runtimeRelease">RELEASE 0</span>
+              <span id="runtimeMode">PERSISTENT</span>
+            </div>
+            <div class="metric-grid" id="metrics"></div>
+            <div class="dashboard-grid studio-health-grid">
+              <article class="panel">
+                <div class="panel-head"><div><h2 data-copy="systemHealth">System health</h2></div></div>
+                <div class="health-list" id="healthList"></div>
+              </article>
+              <article class="panel">
+                <div class="panel-head"><div><h2 data-copy="recentEvents">Recent events</h2></div></div>
+                <div class="compact-list" id="overviewEvents"></div>
+              </article>
+            </div>
+          </div>
+        </details>
       </section>
 
       <section class="view" data-view="builder">
         <div class="page-head">
           <div><span class="eyebrow" data-copy="visualBuilder">VISUAL BUILDER</span><h1 data-copy="builder">Page builder</h1><p data-copy="builderSub">Build bilingual responsive game pages from engine-registered blocks.</p></div>
-          <div class="head-actions"><button class="button secondary" id="saveDraftButton" type="button" data-copy="saveDraft">Save draft</button><button class="button primary" id="previewButton" type="button" data-copy="preview">Refresh preview</button></div>
+          <div class="head-actions legacy-editor-actions"><button class="button secondary" id="saveDraftButton" type="button" data-copy="saveDraft">Save draft</button><button class="button primary" id="previewButton" type="button" data-copy="preview">Refresh preview</button></div>
         </div>
         <div class="builder-shell">
           <aside class="builder-pages">
@@ -97,24 +153,31 @@
 
       <section class="view" data-view="modules">
         <div class="page-head"><div><span class="eyebrow" data-copy="extensionSystem">EXTENSION SYSTEM</span><h1 data-copy="modules">Module manager</h1><p data-copy="modulesSub">Install, update, enable, disable, and inspect independent game systems.</p></div></div>
+        <div class="studio-library-controls">
+          <label class="studio-library-search" for="studioModuleSearch"><span data-studio-copy="moduleSearchLabel">Find an extension</span><input id="studioModuleSearch" type="search" autocomplete="off"></label>
+          <label for="studioModuleFilter"><span data-studio-copy="moduleFilterLabel">Show extensions</span><select id="studioModuleFilter"></select></label>
+          <span id="studioModuleCount" class="studio-library-count" role="status" aria-live="polite"></span>
+        </div>
         <div class="catalog-grid" id="moduleGrid"></div>
       </section>
 
       <section class="view" data-view="content">
         <div class="page-head"><div><span class="eyebrow" data-copy="contentStudio">CONTENT STUDIO</span><h1 data-copy="content">Game content</h1><p data-copy="contentSub">Manage crimes and the release-bound content that the player game consumes.</p></div></div>
-        <article class="panel gameplay-catalog-panel">
-          <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="gameplayCatalog">Gameplay catalog</h2></div><span class="status" id="catalogRevision"></span></div>
+        <div id="studioContentTypes" class="studio-content-types" role="tablist" aria-label="Content types"></div>
+        <article class="panel gameplay-catalog-panel" id="studioCatalogPanel">
+          <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="gameplayCatalog">Gameplay catalog</h2></div><div class="catalog-actions"><span class="status" id="catalogRevision"></span><button class="button secondary" id="newCatalogButton" type="button" data-copy="newCatalog">New entry</button></div></div>
           <form id="gameplayCatalogForm" class="gameplay-catalog-editor" novalidate>
-            <p class="catalog-help" data-copy="catalogHelp">Edit an existing entry, save the draft, then publish when it is ready for players.</p>
+            <p class="catalog-help" data-copy="catalogHelp">Create or edit an entry, save the draft, then publish when it is ready for players.</p>
             <div class="form-grid catalog-selectors">
-              <label><span data-copy="catalogCategory">Category</span><select id="catalogCategory"></select></label>
+              <label class="legacy-catalog-category"><span data-copy="catalogCategory">Category</span><select id="catalogCategory"></select></label>
               <label><span data-copy="catalogEntry">Entry</span><select id="catalogEntry"></select></label>
             </div>
+            <label id="catalogNewIdLabel" hidden><span data-copy="catalogId">New entry ID</span><input id="catalogNewId" type="text" dir="ltr" maxlength="64" pattern="[a-z][a-z0-9_-]{1,63}" autocomplete="off"><small data-copy="catalogIdHelp">Permanent ID: 2 to 64 lowercase letters, digits, underscores or hyphens.</small></label>
             <div class="form-grid catalog-fields" id="catalogFields"></div>
-            <div class="catalog-actions"><button class="button primary" id="saveCatalogButton" type="submit" disabled data-copy="saveCatalog">Save catalog draft</button><span id="catalogStatus" role="status" aria-live="polite"></span></div>
+            <div class="catalog-actions"><button class="button primary" id="saveCatalogButton" type="submit" disabled data-copy="saveCatalog">Save catalog draft</button><button class="button ghost" id="discardCatalogButton" type="button" hidden data-copy="discardCatalog">Discard entry edits</button><span id="catalogStatus" role="status" aria-live="polite"></span></div>
           </form>
         </article>
-        <div class="dashboard-grid">
+        <div class="dashboard-grid studio-crime-panels" id="studioCrimePanels">
           <article class="panel span-2">
             <div class="panel-head"><div><span class="section-number">01</span><h2 data-copy="crimeCatalog">Crime catalog</h2></div><button class="button secondary" id="newCrimeButton" type="button" data-copy="newCrime">New crime</button></div>
             <div class="data-table crime-table" id="crimeTable"></div>
@@ -131,9 +194,11 @@
                 <label><span data-copy="cashMinimum">Cash minimum</span><input id="crimeCashMin" type="number" min="0" max="2000000000" required></label>
                 <label><span data-copy="cashMaximum">Cash maximum</span><input id="crimeCashMax" type="number" min="0" max="2000000000" required></label>
                 <label><span data-copy="xpReward">XP reward</span><input id="crimeXp" type="number" min="0" max="1000000000" required></label>
+                <label><span data-copy="crimeLevelRequired">Level required</span><input id="crimeLevel" type="number" min="1" max="100" step="1" dir="ltr" required></label>
                 <label class="toggle-row"><input id="crimeEnabled" type="checkbox" checked><span data-copy="enabledInGame">Enabled in game</span></label>
               </div>
               <button class="button primary" type="submit" id="saveCrimeButton" data-copy="saveCrime">Save crime</button>
+              <button class="button ghost" type="button" id="discardCrimeButton" data-copy="discardCrime">Discard crime edits</button>
             </form>
           </article>
           <article class="panel span-2"><div class="panel-head"><div><span class="section-number">03</span><h2 data-copy="contentDomains">Content domains</h2></div></div><div class="domain-grid" id="contentDomains"></div></article>
@@ -201,12 +266,37 @@
 
       <section class="view" data-view="releases">
         <div class="page-head"><div><span class="eyebrow" data-copy="versionControl">VERSION CONTROL</span><h1 data-copy="releases">Releases and rollback</h1><p data-copy="releasesSub">Draft changes, validate them, publish an immutable snapshot, and restore any prior release.</p></div><button class="button primary" id="releasePublishButton" type="button" data-copy="publish">Publish release</button></div>
-        <div class="release-layout"><article class="panel"><div class="panel-head"><div><span class="section-number" data-copy="history">HISTORY</span><h2 data-copy="releaseHistory">Release history</h2></div></div><div id="releaseList" class="release-list"></div></article><article class="panel trace-panel"><div class="panel-head"><div><span class="section-number">API</span><h2 data-copy="apiTrace">API trace</h2></div><div><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="apiTrace">Collapse trace</button><button class="preview-collapse" id="clearTraceButton" type="button" data-copy="clearTrace">Clear trace</button></div></div><pre id="apiTrace">ZONE ADMIN READY</pre></article></div>
+        <article class="panel studio-release-checklist"><div class="panel-head"><h2 data-studio-copy="reviewTitle">Before publishing</h2></div><ol><li data-studio-copy="reviewSaved">Save every changed item and crime first.</li><li data-studio-copy="reviewPreview">Preview the relevant player screen.</li><li data-studio-copy="reviewRelease">Publish a version, with release history available for recovery.</li></ol></article>
+        <div class="release-layout"><article class="panel"><div class="panel-head"><div><span class="section-number" data-copy="history">HISTORY</span><h2 data-copy="releaseHistory">Release history</h2></div></div><div id="releaseList" class="release-list"></div></article><article class="panel trace-panel"><div class="panel-head"><div><span class="section-number">API</span><h2 data-copy="apiTrace">API trace</h2></div><div><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="false" aria-controls="apiTrace">Expand trace</button><button class="preview-collapse" id="clearTraceButton" type="button" data-copy="clearTrace">Clear trace</button></div></div><pre id="apiTrace" hidden>ZONE ADMIN READY</pre></article></div>
       </section>
+      <div class="studio-save-bar" id="studioSaveBar" hidden>
+        <div class="studio-save-feedback"><span class="studio-save-indicator" aria-hidden="true"></span><p id="studioSaveMessage" role="status" aria-live="polite"></p></div>
+        <div class="studio-save-actions"><button class="button ghost" id="studioPreviewButton" type="button" data-studio-copy="previewChanges">Preview</button><button class="button primary" id="studioSaveButton" type="button" data-studio-copy="saveChanges">Save changes</button></div>
+      </div>
     </main>
   </div>
 
+  <dialog id="studioCommandDialog" class="studio-dialog studio-command-dialog" aria-labelledby="studioCommandTitle">
+    <div class="studio-dialog-head"><h2 id="studioCommandTitle" data-studio-copy="searchTitle">Find your next step</h2><button class="button ghost" id="studioCommandClose" type="button" data-studio-copy="closeDialog">Close</button></div>
+    <label class="studio-command-field" for="studioCommandInput"><span data-studio-copy="searchInputLabel">Search pages and actions</span><input id="studioCommandInput" type="search" autocomplete="off" spellcheck="false" aria-controls="studioCommandResults"></label>
+    <div id="studioCommandResults" class="studio-command-results"></div>
+    <p class="studio-dialog-foot" data-studio-copy="searchKeyboardHelp">Use Tab to choose a result, Enter to open it, or Escape to close.</p>
+  </dialog>
+  <dialog id="studioHelpDialog" class="studio-dialog studio-help-dialog" aria-labelledby="studioHelpTitle">
+    <div class="studio-dialog-head"><h2 id="studioHelpTitle" data-studio-copy="helpTitle">Workspace guide</h2><button class="button ghost" id="studioHelpClose" type="button" data-studio-copy="closeDialog">Close</button></div>
+    <div id="studioHelpContent" class="studio-help-content"></div>
+  </dialog>
+  <dialog id="studioLeaveDialog" class="studio-dialog studio-leave-dialog" aria-labelledby="studioLeaveTitle" aria-describedby="studioLeaveMessage">
+    <div class="studio-dialog-head"><h2 id="studioLeaveTitle" data-studio-copy="leaveTitle">Keep your unsaved changes?</h2></div>
+    <p id="studioLeaveMessage" class="studio-leave-message" data-studio-copy="leaveMessage">Save this crime before opening another one, or stay here to keep editing.</p>
+    <div class="studio-leave-actions">
+      <button class="button ghost" id="studioLeaveStay" type="button" data-studio-copy="leaveStay">Keep editing</button>
+      <button class="button secondary" id="studioLeaveDiscard" type="button" data-studio-copy="leaveDiscard">Discard and continue</button>
+      <button class="button primary" id="studioLeaveSave" type="button" data-studio-copy="leaveSave">Save and continue</button>
+    </div>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/admin.js" defer></script>
+  <script src="/admin.js?v=105" defer></script>
+  <script src="/admin-studio.js?v=105" defer></script>
 </body>
 </html>

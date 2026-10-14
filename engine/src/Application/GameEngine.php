@@ -19,6 +19,10 @@ use Zone\Engine\Core\Game\RateLimiter;
 use Zone\Engine\Core\Game\ResourceService;
 use Zone\Engine\Core\Game\ProgressionService;
 use Zone\Engine\Core\Game\CombatService;
+use Zone\Engine\Core\Game\PlayerCombatService;
+use Zone\Engine\Core\Game\PlayerMarketService;
+use Zone\Engine\Core\Game\FamilyActivityService;
+use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
 use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
@@ -78,7 +82,9 @@ final class GameEngine
         $this->leveling = new LevelingService($database, $this->ledger, $events);
         $this->daily = new DailyService($database, $this->ledger, $events, $this->leveling);
         $this->territories = new TerritoryService($database, $events);
-        $this->releases->initializeContent($this->runtimeContent());
+        $events->subscribe(new FamilyCompetitionSubscriber($database,$events,'PlayerCombatResolved'));
+        $events->subscribe(new FamilyCompetitionSubscriber($database,$events,'TerritoryControlChanged'));
+        if (!$this->releases->hasFoundation()) $this->releases->initializeContent($this->runtimeContent());
         $this->cooldownSeconds = $this->loadCooldownConfig();
         $rateMaxRaw = getenv('ZONE_RATE_LIMIT_MAX');
         $rateWindowRaw = getenv('ZONE_RATE_LIMIT_WINDOW');
@@ -118,11 +124,12 @@ final class GameEngine
         (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, $action);
     }
 
-    private function recordActionAttempt(string $playerId): void
+    private function recordActionAttempt(string $playerId, bool $allowPlayerCombat = false): void
     {
         // Count rejected attempts too. Commit this before the gameplay
         // transaction so a cooldown or validation rollback cannot erase it.
-        $this->database->playerTransaction($playerId, function () use ($playerId): void {
+        $this->database->playerTransaction($playerId, function () use ($playerId,$allowPlayerCombat): void {
+            if (!$allowPlayerCombat) (new ProgressionService($this->database,$this->events))->assertNotInPlayerCombat($playerId);
             $this->rateLimiter->hit($playerId);
         });
     }
@@ -132,9 +139,15 @@ final class GameEngine
         $this->cooldowns->arm($playerId, $action, $this->cooldownSeconds[$action] ?? 0);
     }
 
+    public function leaderboards(string $playerId): array
+    {
+        $this->requireModule('leaderboards');
+        return (new \Zone\Modules\Leaderboards\LeaderboardService($this->database))->snapshot($playerId);
+    }
+
     public function status(): array
     {
-        $release = $this->releases->active();
+        $release = $this->releases->activeSummary();
         return [
             'engine' => 'ZONE Engine',
             'version' => '1.0.0',
@@ -145,7 +158,7 @@ final class GameEngine
             'api' => 'v1',
             'serverAuthoritative' => true,
             'moduleCount' => count(array_filter($this->modules->all(), static fn (array $module): bool => $module['installed'])),
-            'activeTheme' => $this->publishedContent()['activeTheme'] ?? null,
+            'activeTheme' => $release['activeTheme'],
             'activeReleaseId' => $release['id'],
             'activeReleaseVersion' => $release['version'],
             'capabilities' => [
@@ -173,14 +186,15 @@ final class GameEngine
         return $this->releases->draft();
     }
 
-    public function saveReleaseDraft(array $manifest, string $actor): array
+    public function saveReleaseDraft(array $manifest, string $actor, ?string $expectedFingerprint = null): array
     {
-        return $this->releases->saveDraft($manifest, $actor);
+        return $this->releases->saveDraft($manifest, $actor, $expectedFingerprint);
     }
 
-    public function publishRelease(string $actor): array
+    public function publishRelease(string $actor, ?string $expectedFingerprint = null): array
     {
-        return $this->releases->configurationTransaction(function () use ($actor): array {
+        return $this->releases->configurationTransaction(function () use ($actor, $expectedFingerprint): array {
+            $this->releases->assertDraftFingerprint($expectedFingerprint);
             $draft = $this->releases->draft();
             $draft['manifest']['content'] = $this->runtimeContent();
             $this->releases->saveDraft($draft['manifest'], $actor);
@@ -277,9 +291,9 @@ final class GameEngine
         return $this->releases->configurationTransaction(fn (): array => $this->content->saveCrime($id, $definition, $actor));
     }
 
-    public function adminAuditLog(int $limit = 100): array
+    public function adminAuditLog(int $limit = 100, bool $includeSnapshots = true): array
     {
-        return $this->content->auditLog($limit);
+        return $this->content->auditLog($limit, $includeSnapshots);
     }
 
     public function adminGameplayCatalog(): array
@@ -290,6 +304,27 @@ final class GameEngine
     public function saveGameplayCatalog(string $category, string $id, array $changes, int $expectedRevision, string $actor): array
     {
         return (new GameplayCatalog($this->database, $this->events))->update($category, $id, $changes, $expectedRevision, $actor);
+    }
+
+    public function createGameplayCatalog(string $category, string $id, array $definition, int $expectedRevision, string $actor): array
+    {
+        return (new GameplayCatalog($this->database, $this->events))->create($category, $id, $definition, $expectedRevision, $actor);
+    }
+
+    public function browserSessions(): \Zone\Engine\Core\Security\BrowserSessions
+    {
+        return new \Zone\Engine\Core\Security\BrowserSessions($this->database);
+    }
+
+    public function playerAccounts(): \Zone\Engine\Core\Security\PlayerAccounts
+    {
+        return new \Zone\Engine\Core\Security\PlayerAccounts($this->database);
+    }
+
+    /** HTTP callers are owner-authorized by the router before obtaining this service. */
+    public function ownerPlaytest(): \Zone\Engine\Core\Game\OwnerPlaytestService
+    {
+        return new \Zone\Engine\Core\Game\OwnerPlaytestService($this->database, $this);
     }
 
     public function attemptCrime(string $crimeId, string $playerId = 'founder-player'): array
@@ -351,7 +386,7 @@ final class GameEngine
             $progression->recordCrime($playerId, $crimeId, $success, $xpReward);
             $loot = null;
             if ($success && ($crime['category'] ?? null) === 'search' && random_int(1, 100) <= 12) {
-                $progression->grantItem($playerId, 'sand');
+                $progression->grantItem($playerId, 'sand', 1, $correlationId, 'crime.loot');
                 $loot = ['itemId' => 'sand', 'quantity' => 1];
             }
             if (!$success && isset($crime['failure'], $crime['penalty_minutes'])) {
@@ -428,7 +463,18 @@ final class GameEngine
     public function gameplay(string $playerId = 'founder-player'): array
     {
         $travel = (new TravelService($this->database, $this->events))->snapshot($playerId);
-        return [...(new ProgressionService($this->database, $this->events))->snapshot($playerId), 'travel' => $travel, 'hospitalQuote' => $this->hospitalQuote($playerId)];
+        return [...(new ProgressionService($this->database, $this->events))->snapshot($playerId), 'travel' => $travel, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
+    }
+
+    /** Server-clock expiries survive reloads and reflect the configured action durations. */
+    public function actionCooldowns(string $playerId): array
+    {
+        $now = time(); $actions = [];
+        foreach ($this->database->fetchAll('SELECT action, available_at FROM action_cooldowns WHERE player_id = :id', ['id' => $playerId]) as $row) {
+            $availableAt = strtotime((string) $row['available_at']) ?: $now;
+            $actions[$row['action']] = ['availableAt' => gmdate('c', $availableAt), 'availableAtEpoch' => $availableAt, 'remainingSeconds' => max(0, $availableAt - $now)];
+        }
+        return ['serverTime' => gmdate('c', $now), 'serverTimeEpoch' => $now, 'actions' => $actions];
     }
 
     public function gameplayAction(string $action, string $id, int $expectedVersion, string $playerId = 'founder-player', ?int $expectedPrice = null): array
@@ -499,7 +545,7 @@ final class GameEngine
             $correlationId = bin2hex(random_bytes(16));
             $happy = (int) $player['happy'];
             $gainPerSession = $gym['e'] * 1.2 * (1 + $gymIndex * .3) * (1 + log(1 + $happy / 500) * .35)
-                * (!empty($progress['state']['fac']['ups']['gymBoost']) ? 1.1 : 1)
+                * (!empty($progress['state']['fac']['ups']['gymBoost']) || !empty($progress['family']['upgrades']['gymBoost']) ? 1.1 : 1)
                 * (!empty($progress['state']['eduDone']['fit']) ? 1.05 : 1)
                 * max(.35, 1 - (int) $player[$stat] / 60000);
             $baseGain = 0;
@@ -595,6 +641,48 @@ final class GameEngine
         $baseCost = max($hospitalized ? 500 : 0, $missing * 3);
         return ['cost' => (int) ceil($baseCost * (10000 - $discount) / 10000), 'baseCost' => $baseCost, 'missing' => $missing,
             'hospitalized' => $hospitalized, 'available' => $missing > 0 || $hospitalized, 'territoryDiscountBasisPoints' => $discount];
+    }
+
+    public function playerCombat(string $playerId): array
+    {
+        $this->requireScreen('attack'); $this->requireModule('kill');
+        return (new PlayerCombatService($this->database,$this->events))->snapshot($playerId);
+    }
+
+    public function playerCombatOpponents(string $playerId): array
+    {
+        $this->requireScreen('attack'); $this->requireModule('kill');
+        return (new PlayerCombatService($this->database,$this->events))->opponents($playerId);
+    }
+
+    public function playerCombatAction(string $action,string $opponentId,string $approach,int $expectedVersion,string $playerId): array
+    {
+        $this->requireScreen('attack'); $this->requireModule('kill'); $this->recordActionAttempt($playerId,true);
+        return (new PlayerCombatService($this->database,$this->events))->act($action,$opponentId,$approach,$expectedVersion,$playerId);
+    }
+
+    public function playerMarket(string $playerId): array
+    {
+        $this->requireScreen('market'); $this->requireModule('blackmarket');
+        return (new PlayerMarketService($this->database,$this->events))->snapshot($playerId);
+    }
+
+    public function playerMarketAction(string $action,string $id,int $quantity,int $unitPrice,int $expectedVersion,string $playerId): array
+    {
+        $this->requireScreen('market'); $this->requireModule('blackmarket'); $this->recordActionAttempt($playerId);
+        return (new PlayerMarketService($this->database,$this->events))->act($action,$id,$quantity,$unitPrice,$expectedVersion,$playerId);
+    }
+
+    public function familyActivities(string $playerId): array
+    {
+        $this->requireScreen('faction'); $this->requireModule('gangs');
+        return (new FamilyActivityService($this->database,$this->events))->snapshot($playerId);
+    }
+
+    public function familyActivityAction(string $action,string $id,int $expectedVersion,string $playerId): array
+    {
+        $this->requireScreen('faction'); $this->requireModule('gangs'); $this->recordActionAttempt($playerId);
+        return (new FamilyActivityService($this->database,$this->events))->act($action,$id,$expectedVersion,$playerId);
     }
 
     public function hospitalHeal(string $playerId = 'founder-player'): array
@@ -821,7 +909,7 @@ final class GameEngine
             ]);
             $this->events->publish($event);
             return [
-                'shift' => 'worked', 'jobId' => $job['id'], 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'shift' => 'worked', 'jobId' => $job['id'], 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost], 'cooldowns' => $this->actionCooldowns($playerId),
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
@@ -973,6 +1061,18 @@ final class GameEngine
     {
         $this->requireModule('territories');
         return $this->territories->adminCatalog($playerId);
+    }
+
+    public function joinFaction(string $factionId, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('gangs');
+        $this->requireModule('territories');
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($playerId, $factionId): array {
+            $this->guardAction($playerId, 'faction.join');
+            (new \Zone\Modules\Gangs\FactionService($this->database, $this->events))->join($playerId, $factionId);
+            return ['map' => $this->territories->snapshot($playerId)];
+        });
     }
 
     public function setTerritoryOwnership(string $territoryId, ?string $factionId, string $actor): array

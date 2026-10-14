@@ -1,0 +1,6 @@
+# These accepted map inputs are byte-pinned release assets. Keep exact bytes.
+dist/map-icons.js -text whitespace=cr-at-eol
+dist/territory-geometry.js -text
+dist/map-frame-sample.js -text
+# Keep imported third-party vendor sources/license bytes, including authored EOF.
+assets/city/vendor/* -text whitespace=cr-at-eol,-blank-at-eof

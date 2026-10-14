@@ -58,12 +58,9 @@ final class Database
             $database,
             $sslMode,
         );
-        if (str_ends_with(strtolower($parts['host']), '.neon.tech')) {
-            $endpointId = preg_replace('/-pooler$/', '', explode('.', $parts['host'])[0]);
-            if (is_string($endpointId) && preg_match('/^ep-[a-z0-9-]+$/', $endpointId)) {
-                $dsn .= ";options='endpoint={$endpointId}'";
-            }
-        }
+        // Modern libpq sends the endpoint hostname through TLS SNI. Supplying
+        // a second, quoted endpoint option conflicts with Neon routing.
+        $dsn .= ';connect_timeout=10';
         $pdo = new PDO($dsn, urldecode($parts['user'] ?? ''), urldecode($parts['pass'] ?? ''));
         return new self($pdo, 'pgsql');
     }
@@ -80,8 +77,25 @@ final class Database
         if ($sql === false) {
             throw new RuntimeException("Unable to read schema: {$schema}");
         }
-        $this->pdo->exec($sql);
-        $this->seedFoundationContent();
+        $fingerprint = hash('sha256', $sql . (string) file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json'));
+        try {
+            $applied = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'schema-fingerprint'");
+            if (($applied['value'] ?? null) === $fingerprint) return;
+        } catch (\PDOException) {
+            // First boot or an older engine database. Never replace its data.
+        }
+        $this->transaction(function () use ($sql, $fingerprint): void {
+            if ($this->driver === 'pgsql') $this->pdo->exec('SELECT pg_advisory_xact_lock(90120261005)');
+            $this->pdo->exec('CREATE TABLE IF NOT EXISTS engine_metadata (name VARCHAR(80) PRIMARY KEY, value TEXT NOT NULL)');
+            $this->execute("INSERT INTO engine_metadata (name, value) VALUES ('schema-fingerprint', '') ON CONFLICT (name) DO NOTHING");
+            // Serializes SQLite migration callers too, before the recheck.
+            $this->execute("UPDATE engine_metadata SET value = value WHERE name = 'schema-fingerprint'");
+            $applied = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'schema-fingerprint'");
+            if (($applied['value'] ?? null) === $fingerprint) return;
+            $this->pdo->exec($sql);
+            $this->seedFoundationContent();
+            $this->execute("UPDATE engine_metadata SET value = :value WHERE name = 'schema-fingerprint'", ['value' => $fingerprint]);
+        });
     }
 
     private function seedFoundationContent(): void
@@ -350,6 +364,22 @@ final class Database
             }
             throw $exception;
         }
+    }
+
+    /** Acquire every participant row in one canonical order before shared settlement. */
+    public function playersTransaction(array $playerIds, callable $callback): mixed
+    {
+        $ids = array_values(array_unique($playerIds));
+        if ($ids === [] || count($ids) > 100) throw new RuntimeException('Invalid participant set.');
+        foreach ($ids as $id) if (!is_string($id) || $id === '') throw new RuntimeException('Invalid participant identity.');
+        sort($ids, SORT_STRING);
+        return $this->transaction(function () use ($ids, $callback): mixed {
+            foreach ($ids as $id) {
+                if ($this->driver === 'sqlite') $this->execute('UPDATE players SET id=id WHERE id=:id', ['id'=>$id]);
+                if ($this->fetchOne('SELECT id FROM players WHERE id=:id' . ($this->driver === 'pgsql' ? ' FOR UPDATE' : ''), ['id'=>$id]) === null) throw new RuntimeException('Unknown participant.');
+            }
+            return $callback($this);
+        });
     }
 
     /** Serialize every authoritative mutation before reading this player's state. */

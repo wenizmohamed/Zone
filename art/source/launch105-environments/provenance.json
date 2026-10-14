@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "project": "ZONE",
+  "increment": "launch105",
+  "sourceBaseCommit": "4c1afe826f250b6171a53ae62e8fe92561145438",
+  "generatedOn": "2026-10-14",
+  "generationMode": "native image_gen.imagegen",
+  "generationCalls": 2,
+  "model": "Not exposed by native tool result",
+  "cost": "Not exposed by native tool result",
+  "sourceReferences": [
+    "ART_DIRECTION.md",
+    "assets/zone-design.css",
+    "User clarification: Home and Gym visible production pass"
+  ],
+  "licensing": {
+    "type": "Generated original environment artwork",
+    "externalStock": false,
+    "externalReferenceImages": false,
+    "notes": "Generated specifically for ZONE using a native image tool. No third-party logos, trademarks, characters, or stock imagery were requested. Platform terms remain applicable; no independent exclusive-rights claim is made."
+  },
+  "sharedArtDirection": {
+    "canvas": [
+      "#17191b",
+      "#232527",
+      "#303335"
+    ],
+    "practicalLight": [
+      "#c99a45",
+      "#d9b76b"
+    ],
+    "style": "Grounded urban stylized realism with PBR-like materials",
+    "text": false,
+    "people": false,
+    "weapons": false,
+    "ui": false
+  },
+  "conversion": {
+    "library": "sharp",
+    "libraryVersion": "0.35.5",
+    "command": "ZONE_SHARP_MODULE=<sharp module path> node art/source/launch105-environments/export-assets.mjs",
+    "resize": {
+      "width": 1600,
+      "height": 900,
+      "fit": "cover",
+      "position": "centre",
+      "withoutEnlargement": true
+    },
+    "format": "webp",
+    "quality": 82,
+    "effort": 6
+  },
+  "assets": [
+    {
+      "id": "zone-gym-interior-v105",
+      "publicPath": "art/zone-gym-interior-v105.webp",
+      "originalPath": "art/source/launch105-environments/zone-gym-interior-v105.original.png",
+      "promptPath": "art/source/launch105-environments/zone-gym-interior-v105.prompt.txt",
+      "generationResult": "exec-62f4d2df-2119-4a72-aabf-3d89295f3260",
+      "original": {
+        "width": 1672,
+        "height": 941,
+        "bytes": 2814763,
+        "sha256": "980F341F13A671412868D96217F2657374F1A2FFD343B92441980A298F9E632C"
+      },
+      "derivative": {
+        "width": 1600,
+        "height": 900,
+        "bytes": 208764,
+        "sha256": "75DCB1FC63A4D6886089A4EE503B8AF3A5A372FFBC473805A532BF35BDDFC8DA"
+      },
+      "intendedUse": "Gym room alongside real training station selection and Train session controls",
+      "focalPosition": "50% 55%",
+      "reviewSlots": [
+        {
+          "name": "gym-desktop",
+          "width": 520,
+          "height": 280
+        },
+        {
+          "name": "gym-phone",
+          "width": 343,
+          "height": 200
+        }
+      ],
+      "pixelReview": "Original and WebP opened and inspected: dumbbell rack and bench at left, chained heavy bag center, physically plausible bike right, rubber mat foreground; no people, weapons, text or UI."
+    },
+    {
+      "id": "zone-hideout-v105",
+      "publicPath": "art/zone-hideout-v105.webp",
+      "originalPath": "art/source/launch105-environments/zone-hideout-v105.original.png",
+      "promptPath": "art/source/launch105-environments/zone-hideout-v105.prompt.txt",
+      "generationResult": "exec-294de3ea-a6f6-4bf4-bc63-4f9e4efda8e1",
+      "original": {
+        "width": 1672,
+        "height": 941,
+        "bytes": 2475014,
+        "sha256": "42CB901A5905BEC659B1B9D988061084367C9A4EE3B74AF36C8FCAE49655A18D"
+      },
+      "derivative": {
+        "width": 1600,
+        "height": 900,
+        "bytes": 164164,
+        "sha256": "BD0153633D378C1C600F54E53BEAE72318258D8CD13F006FC4AEB0C5789C0020"
+      },
+      "intendedUse": "Home objective briefing environment, actual 3D character remains separate",
+      "focalPosition": "50% 55%",
+      "reviewSlots": [
+        {
+          "name": "home-desktop-square",
+          "width": 180,
+          "height": 180
+        },
+        {
+          "name": "home-phone-strip",
+          "width": 343,
+          "height": 100
+        }
+      ],
+      "pixelReview": "Original and WebP opened and inspected: modest desk and warm lamp, city window, safe, plain equipment shelving, clear foreground; no actor, weapons, text or UI."
+    }
+  ],
+  "cropPixelReview": "Opened four actual-size PNG crop previews after WebP conversion. Gym at 520x280 and 343x200 retains recognizable dumbbell/bench, bag, bike and mat. Home at 180x180 shows the central window/base atmosphere with only desk and safe edges; the 343x100 strip retains the desk, lamp, safe and shelving.",
+  "acceptanceBoundary": "Standalone art and crop review only. Actual screen, mobile/Arabic, interactions and production acceptance belong to integration/browser QA.",
+  "knownCaveats": [
+    "Native tool produced 1672x941 despite requested preferred 2048x1152. Actual dimensions are recorded rather than claimed as 2K.",
+    "Home centered square crop emphasizes the city window and desk edge; shallow phone strip is atmosphere rather than complete room storytelling.",
+    "No new 3D geometry or interactive objects are represented by these raster backgrounds."
+  ]
+}

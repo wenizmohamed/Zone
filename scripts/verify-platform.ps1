@@ -26,12 +26,40 @@ function Get-ZoneJson([string]$path) {
 }
 
 function Invoke-ZoneJson([string]$path, [string]$method, [object]$body) {
-    return Invoke-RestMethod -Uri ($baseUrl + $path) -Method $method -Headers @{ Origin = $baseUrl } -ContentType 'application/json' -Body ($body | ConvertTo-Json -Depth 30 -Compress) -TimeoutSec 15
+    $utf8Body = [System.Text.Encoding]::UTF8.GetBytes(($body | ConvertTo-Json -Depth 30 -Compress))
+    try { return Invoke-RestMethod -Uri ($baseUrl + $path) -Method $method -Headers @{ Origin = $baseUrl } -ContentType 'application/json; charset=utf-8' -Body $utf8Body -TimeoutSec 15 }
+    catch {
+        $details = $_.ErrorDetails.Message
+        if ([string]::IsNullOrWhiteSpace($details) -and $null -ne $_.Exception.Response) {
+            $reader = [System.IO.StreamReader]::new($_.Exception.Response.GetResponseStream(), [System.Text.Encoding]::UTF8)
+            try { $details = $reader.ReadToEnd() } finally { $reader.Dispose() }
+        }
+        throw "Local platform request failed: $method $path. $details"
+    }
+}
+
+function Get-ZoneWriteStatus([string]$path, [string]$method, [object]$body) {
+    $utf8Body = [Text.Encoding]::UTF8.GetBytes(($body | ConvertTo-Json -Depth 30 -Compress))
+    try {
+        $response = Invoke-WebRequest -Uri ($baseUrl + $path) -Method $method -Headers @{ Origin = $baseUrl } -ContentType 'application/json; charset=utf-8' -Body $utf8Body -UseBasicParsing -TimeoutSec 15
+        return [int]$response.StatusCode
+    } catch {
+        if ($null -eq $_.Exception.Response) { throw }
+        return [int]$_.Exception.Response.StatusCode
+    }
 }
 
 try {
     $previousDatabaseUrl = $env:ZONE_DATABASE_URL
+    $previousOwnerToken = $env:ZONE_ADMIN_TOKEN
+    $previousPlayerSessions = $env:ZONE_PLAYER_SESSIONS
+    $previousVercel = $env:VERCEL
     $env:ZONE_DATABASE_URL = 'sqlite:' + $database
+    # This suite deliberately tests the loopback developer adapter; production
+    # access is exercised separately by access-http.php and verify-production.ps1.
+    $env:ZONE_ADMIN_TOKEN = ''
+    $env:ZONE_PLAYER_SESSIONS = ''
+    $env:VERCEL = ''
     $process = Start-Process -FilePath $php -ArgumentList @('-S', "127.0.0.1:$port", $router) -WorkingDirectory $repoRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput $stdout -RedirectStandardError $stderr
 
     $ready = $false
@@ -89,7 +117,8 @@ try {
     Assert-Zone ($adminScriptText.Contains('lang=${state.language}') -and $root.Content.Contains("URLSearchParams(window.location.search).get('lang')")) 'admin language is synchronized into the embedded player preview'
 
     $adminCrimes = Get-ZoneJson '/api/v1/admin/crimes'
-    Assert-Zone ($adminCrimes.crimes.Count -eq 7) 'open admin loads the full seven-tier crime catalogue'
+    $expectedCrimeIds = @(@('searchforcash', 'bootlegging', 'graffiti', 'shoplifting', 'pickpocketing', 'cardskimming', 'burglary') + @((Get-Content -LiteralPath (Join-Path $repoRoot 'engine\data\crimes.json') -Raw -Encoding UTF8 | ConvertFrom-Json).id) | Sort-Object -Unique)
+    Assert-Zone ($adminCrimes.crimes.Count -eq $expectedCrimeIds.Count -and @($expectedCrimeIds | Where-Object { $_ -notin $adminCrimes.crimes.id }).Count -eq 0) 'local developer Admin loads every seeded crime tier and variant'
     $crime = Invoke-ZoneJson '/api/v1/admin/crimes/platform-smoke-crime' 'Put' @{
         name_en = 'Platform smoke crime'
         name_ar = 'جريمة فحص المنصة'
@@ -101,14 +130,19 @@ try {
         enabled = $true
     }
     Assert-Zone ($crime.crime.id -eq 'platform-smoke-crime' -and $crime.crime.successRate -eq 68) 'admin creates a validated server crime definition'
+    Assert-Zone ($crime.crime.name_ar -eq 'جريمة فحص المنصة') 'Arabic owner content round-trips through UTF-8 JSON without corruption'
     $publicCrimes = Get-ZoneJson '/api/v1/crimes'
-    Assert-Zone (@($publicCrimes.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'enabled crime becomes available through the player API'
+    Assert-Zone (@($publicCrimes.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 0) 'unpublished draft crime stays isolated from the player API'
     $audit = Get-ZoneJson '/api/v1/admin/audit'
-    Assert-Zone ($audit.entries[0].action -eq 'CrimeCreated' -and $audit.entries[0].actor -eq 'admin-panel') 'crime mutation records the fixed control-plane actor in the admin audit log'
+    $crimeAudit = @($audit.entries | Where-Object { $_.action -eq 'CrimeCreated' -and $_.target_id -eq 'platform-smoke-crime' -and $_.correlation_id -eq $crime.crime.correlationId })
+    Assert-Zone ($crimeAudit.Count -eq 1 -and $crimeAudit[0].actor -eq 'local-admin') 'crime mutation records its exact correlation and local-developer actor in the admin audit log'
 
     $activeZero = Get-ZoneJson '/api/v1/releases/active'
     Assert-Zone ($activeZero.version -eq 0) 'foundation release is active before publishing'
     $draft = Get-ZoneJson '/api/v1/admin/draft'
+    Assert-Zone ($draft.draftFingerprint -match '^[a-f0-9]{64}$') 'owner draft returns a strong configuration precondition'
+    Assert-Zone ((Get-ZoneWriteStatus '/api/v1/admin/draft' 'Put' @{ manifest = $draft.manifest }) -eq 422) 'draft HTTP writes reject a missing reviewed fingerprint'
+    Assert-Zone ((Get-ZoneWriteStatus '/api/v1/admin/releases/publish' 'Post' @{}) -eq 422) 'publish HTTP writes reject a missing reviewed fingerprint'
     $draft.manifest.branding.name.en = 'ZONE Publish Proof'
     $draft.manifest.pages = @(@{
         id = 'operations'
@@ -118,22 +152,30 @@ try {
         blocks = @(@{ id = 'operations-hero'; type = 'hero'; content = @{ en = 'Published from the admin control plane'; ar = 'تم النشر من لوحة التحكم' } })
     })
     $draft.manifest.navigation += 'operations'
-    $saved = Invoke-ZoneJson '/api/v1/admin/draft' 'Put' @{ manifest = $draft.manifest }
+    $saved = Invoke-ZoneJson '/api/v1/admin/draft' 'Put' @{ manifest = $draft.manifest; expectedFingerprint = $draft.draftFingerprint }
     Assert-Zone ($saved.manifest.branding.name.en -eq 'ZONE Publish Proof') 'admin saves a validated draft'
+    Assert-Zone ($saved.draftFingerprint -ne $draft.draftFingerprint) 'a saved edit invalidates earlier editor preconditions'
+    $staleManifest = $draft.manifest | ConvertTo-Json -Depth 30 | ConvertFrom-Json
+    $staleManifest.branding.name.en = 'Stale tab must not win'
+    Assert-Zone ((Get-ZoneWriteStatus '/api/v1/admin/draft' 'Put' @{ manifest = $staleManifest; expectedFingerprint = $draft.draftFingerprint }) -eq 409) 'a stale editor cannot overwrite the saved owner draft'
+    Assert-Zone ((Get-ZoneJson '/api/v1/admin/draft').manifest.branding.name.en -eq 'ZONE Publish Proof') 'a stale write leaves the winning draft intact'
+    Assert-Zone ((Get-ZoneWriteStatus '/api/v1/admin/releases/publish' 'Post' @{ expectedFingerprint = $draft.draftFingerprint }) -eq 409) 'a stale publish is rejected before it can create a release'
     $activeAfterDraft = Get-ZoneJson '/api/v1/releases/active'
     Assert-Zone ($activeAfterDraft.version -eq 0) 'saving a draft does not alter the active game release'
-    $releaseOne = Invoke-ZoneJson '/api/v1/admin/releases/publish' 'Post' @{}
+    $releaseOne = Invoke-ZoneJson '/api/v1/admin/releases/publish' 'Post' @{ expectedFingerprint = $saved.draftFingerprint }
     Assert-Zone ($releaseOne.version -eq 1 -and $releaseOne.manifest.pages[0].id -eq 'operations') 'publishing creates release 1 with the admin page'
     Assert-Zone (@($releaseOne.manifest.content.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'published release contains the administrator-created crime'
+    $publicCrimes = Get-ZoneJson '/api/v1/crimes'
+    Assert-Zone (@($publicCrimes.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'published crime is exposed through the actual player API'
     $bootstrap = Get-ZoneJson '/api/v1/game/bootstrap'
     Assert-Zone ($bootstrap.release.id -eq $releaseOne.id -and @($bootstrap.content.crimes | Where-Object { $_.id -eq 'platform-smoke-crime' }).Count -eq 1) 'player bootstrap consumes the published crime snapshot'
-    Assert-Zone ($root.Content.Contains('MANAGED_CRIMES') -and $root.Content.Contains('commitManaged')) 'player bundle renders and executes server-managed crimes'
+    Assert-Zone ($root.Content.Contains('applyPublishedCrimes') -and $root.Content.Contains('commitManaged')) 'player bundle hydrates and executes server-managed crimes'
     Assert-Zone ($adminScriptText.Contains('installSectionPreviews') -and $adminScriptText.Contains('section-preview-frame')) 'every administrator section receives an embedded game preview'
 
     $draftTwo = Get-ZoneJson '/api/v1/admin/draft'
     $draftTwo.manifest.branding.name.en = 'ZONE Second Release'
-    $null = Invoke-ZoneJson '/api/v1/admin/draft' 'Put' @{ manifest = $draftTwo.manifest }
-    $releaseTwo = Invoke-ZoneJson '/api/v1/admin/releases/publish' 'Post' @{}
+    $draftTwoSaved = Invoke-ZoneJson '/api/v1/admin/draft' 'Put' @{ manifest = $draftTwo.manifest; expectedFingerprint = $draftTwo.draftFingerprint }
+    $releaseTwo = Invoke-ZoneJson '/api/v1/admin/releases/publish' 'Post' @{ expectedFingerprint = $draftTwoSaved.draftFingerprint }
     Assert-Zone ($releaseTwo.version -eq 2) 'a second publish creates immutable release 2'
     $restored = Invoke-ZoneJson ("/api/v1/admin/releases/{0}/activate" -f $releaseOne.id) 'Post' @{}
     Assert-Zone ($restored.version -eq 1) 'rollback reactivates release 1'
@@ -147,6 +189,9 @@ try {
         Wait-Process -Id $process.Id -Timeout 5 -ErrorAction SilentlyContinue
     }
     $env:ZONE_DATABASE_URL = $previousDatabaseUrl
+    $env:ZONE_ADMIN_TOKEN = $previousOwnerToken
+    $env:ZONE_PLAYER_SESSIONS = $previousPlayerSessions
+    $env:VERCEL = $previousVercel
     foreach ($path in @($database, "$database-wal", "$database-shm", $stdout, $stderr)) {
         if (Test-Path -LiteralPath $path) {
             $resolved = (Resolve-Path -LiteralPath $path).Path

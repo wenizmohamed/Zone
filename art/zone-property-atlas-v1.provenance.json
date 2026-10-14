@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "asset": "art/zone-property-atlas-v1.png",
+  "sha256": "81c55e1f11fe1a1e27354e760d12f23e40d12c3d45e84f6df0ecfffb769ce5ba",
+  "bytes": 3153723,
+  "dimensions": {
+    "width": 1774,
+    "height": 887
+  },
+  "generatedOn": "2026-10-10",
+  "tool": "image_gen.imagegen",
+  "kind": "Original generated fictional ZONE environment artwork",
+  "isPhotograph": false,
+  "isRealEstateListing": false,
+  "referenceImageInputs": [],
+  "prompt": {
+    "path": "art/zone-property-atlas-v1.prompt.txt",
+    "sha256": "01542c81fbdbb343452e9ad8dbe0ec67e568d5b89e8a10a85de7fc6e23393f3f",
+    "text": "Use case: stylized-concept. Create ONE production game-art atlas for ZONE, a gritty urban crime browser RPG. This is a single coherent sheet, precisely 4 columns and 2 rows of EQUAL rectangular panels, no gaps, no borders, no words, no typography, no logos, no UI. Each panel is a detailed cinematic painted environment illustration with realistic architectural proportions and visible tactile materials, muted charcoal, warm amber dusk, steel blue shadows, damp streets, premium crime-game editorial art. Central subject entirely fits within each panel and is recognizable when displayed in a narrow card. Exact row-major order: top row 1 ramshackle wooden shack with corrugated roof in a rundown city alley; 2 old weathered residential trailer in a yard; 3 modest brick city apartment building; 4 pair of attached suburban houses (semi-detached). Bottom row 1 standalone spacious suburban house; 2 luxurious beachfront villa with pool; 3 private tropical island with one mansion and a dock; 4 atmospheric city waterfront establishing scene. All panels same art direction, lens and dusk atmosphere, premium hand-painted realism, no flat vector shapes, no cartoon toys. Avoid weapons or people, focus on residence. Atlas landscape aspect 2:1 if possible, high detail. No text whatsoever."
+  },
+  "atlas": {
+    "columns": 4,
+    "rows": 2,
+    "order": "row-major",
+    "cellWidth": 443.5,
+    "cellHeight": 443.5,
+    "tiles": [
+      {
+        "propertyId": "shack",
+        "row": 0,
+        "column": 0,
+        "backgroundPosition": "0% 0%"
+      },
+      {
+        "propertyId": "trailer",
+        "row": 0,
+        "column": 1,
+        "backgroundPosition": "33.333333% 0%"
+      },
+      {
+        "propertyId": "apt",
+        "row": 0,
+        "column": 2,
+        "backgroundPosition": "66.666667% 0%"
+      },
+      {
+        "propertyId": "semi",
+        "row": 0,
+        "column": 3,
+        "backgroundPosition": "100% 0%"
+      },
+      {
+        "propertyId": "house",
+        "row": 1,
+        "column": 0,
+        "backgroundPosition": "0% 100%"
+      },
+      {
+        "propertyId": "villa",
+        "row": 1,
+        "column": 1,
+        "backgroundPosition": "33.333333% 100%"
+      },
+      {
+        "propertyId": "island",
+        "row": 1,
+        "column": 2,
+        "backgroundPosition": "66.666667% 100%"
+      }
+    ],
+    "unusedCell": {
+      "row": 1,
+      "column": 3,
+      "description": "Fictional city waterfront establishing scene; not used as a property"
+    }
+  },
+  "consumer": {
+    "source": "index.html property-only view models",
+    "stylesheet": "assets/zone-design.css",
+    "backgroundSize": "400% 200%",
+    "panelAspectRatio": "1 / 1",
+    "defaultDossierWidthCssPx": 144,
+    "currentResidenceWidthCssPx": 176,
+    "phoneCurrentResidenceWidthCssPx": 144,
+    "authoredImagePrecedence": "A catalog record image URL takes precedence and is displayed with background-size contain.",
+    "bitmapChanges": "None. The original atlas is used intact; CSS selects each whole cell.",
+    "text": "Property names, prices, benefits and state are rendered as live UI text outside artwork."
+  },
+  "notes": [
+    "The atlas depicts invented game environments, not photographs of actual properties or real locations.",
+    "No reference images were supplied to the generation request. No model identifier, seed or third-party license is asserted.",
+    "This provenance describes the atlas only; catalog-authored custom images retain their own provenance."
+  ]
+}

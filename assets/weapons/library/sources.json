@@ -1,0 +1,512 @@
+{
+  "checkedAt": "2026-10-04T14:39:25.595563+00:00",
+  "sources": [
+    {
+      "url": "https://3dmodelscc0.itch.io/free-cc0-guns-explosives-pack",
+      "licenseEvidenceUrl": "https://3dmodelscc0.itch.io/free-cc0-guns-explosives-pack",
+      "author": "3DModelsCC0",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 19,
+      "packs": [
+        "cc0-guns-explosives-pack-glb"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-guns-explosives-pack-glb.html",
+      "evidenceSha256": "f6b07fe4599cd8d3765294e61acd4ce03fbbd3d666a4c850db8690d53bb5b226"
+    },
+    {
+      "url": "https://3dmodelscc0.itch.io/free-cc0-melee-weapons-pack",
+      "licenseEvidenceUrl": "https://3dmodelscc0.itch.io/free-cc0-melee-weapons-pack",
+      "author": "3DModelsCC0",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 21,
+      "packs": [
+        "cc0-melee-weapons-pack-glb"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-melee-weapons-pack-glb.html",
+      "evidenceSha256": "e7775b8910ebca1f560ef42d2e941e209824d748f200dcc69d32a840d3fe2acb"
+    },
+    {
+      "url": "https://ankersassets.itch.io/low-poly-medieval-weapons",
+      "licenseEvidenceUrl": "https://ankersassets.itch.io/low-poly-medieval-weapons",
+      "author": "Anker's Assets",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 31,
+      "packs": [
+        "ankers-low-poly-medieval-weapons"
+      ],
+      "evidenceFile": ".tools/weapon-library/ankers-page.html",
+      "evidenceSha256": "467053adeba3dfcec630816df57ace38330480808b4b7124af48f184c718611e"
+    },
+    {
+      "url": "https://kenney.nl/assets/blaster-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/blaster-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 20,
+      "packs": [
+        "kenney-blaster-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/444c436a7ca0.html",
+      "evidenceSha256": "a8bb98a9aaa6e952ba0fc6d9160578c2a2812445df61b17da03d8b02ca1b7b67"
+    },
+    {
+      "url": "https://kenney.nl/assets/castle-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/castle-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "kenney-castle-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/c157cfeadf5c.html",
+      "evidenceSha256": "c54af05da2578969446ec04523f4b93868e3556765160e2ad8fe171c920e0150"
+    },
+    {
+      "url": "https://kenney.nl/assets/mini-arena",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/mini-arena",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "kenney-mini-arena"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cb3963c2f52a.html",
+      "evidenceSha256": "52009e35e26fb5f8f20c5274f4d2c7e75135325f3ab4c2d9aeb199fb631b0102"
+    },
+    {
+      "url": "https://kenney.nl/assets/mini-dungeon",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/mini-dungeon",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "kenney-mini-dungeon"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/54a8319ae4b4.html",
+      "evidenceSha256": "676957757bbb43687039e3ee9109f339e8e560412b306f1d5982411e91c58627"
+    },
+    {
+      "url": "https://kenney.nl/assets/mini-forest",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/mini-forest",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 1,
+      "packs": [
+        "kenney-mini-forest"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/dea3584c660d.html",
+      "evidenceSha256": "856247d766757e9c8233627b10166f2444a09e1e6c22be15363cafcd3e934ac4"
+    },
+    {
+      "url": "https://kenney.nl/assets/pirate-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/pirate-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "kenney-pirate-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/bae8c8c8fa7d.html",
+      "evidenceSha256": "889c68b58e8ec91c4ffc82ba9c933fb1a026e58d996240aab2ed43f0bcb0e640"
+    },
+    {
+      "url": "https://kenney.nl/assets/prototype-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/prototype-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 1,
+      "packs": [
+        "kenney-prototype-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/b69ee2580fab.html",
+      "evidenceSha256": "88845e6bdb1298f5eba4edda4c90b70605ae081481a3d48c182decff6a6564f2"
+    },
+    {
+      "url": "https://kenney.nl/assets/space-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/space-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 4,
+      "packs": [
+        "kenney-space-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/f0666bc9d58a.html",
+      "evidenceSha256": "427a74614160728fdccd0396f2702901eb502ddf23f1fe1661d7ba286a4aa910"
+    },
+    {
+      "url": "https://kenney.nl/assets/tower-defense-kit",
+      "licenseEvidenceUrl": "https://kenney.nl/assets/tower-defense-kit",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 4,
+      "packs": [
+        "kenney-tower-defense-kit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/b8d1d52cdbd3.html",
+      "evidenceSha256": "0379be8545f978e1231af8eed93bd50624da9ac8773388f01003099fb2a1b42d"
+    },
+    {
+      "url": "https://opengameart.org/content/30-unique-lowpoly-swords-cc0-swordtember2022",
+      "licenseEvidenceUrl": "https://opengameart.org/content/30-unique-lowpoly-swords-cc0-swordtember2022",
+      "author": "CC0 Game Assets",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 30,
+      "packs": [
+        "30-unique-lowpoly-swords-cc0-swordtember2022"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/30-unique-lowpoly-swords-cc0-swordtember2022.html",
+      "evidenceSha256": "dd3f2d7ffcc7271fdec87a529ba737d1c4cb145cac4df5bca2ace1d55cea165b"
+    },
+    {
+      "url": "https://opengameart.org/content/3d-swords-lowpol-cc0",
+      "licenseEvidenceUrl": "https://opengameart.org/content/3d-swords-lowpol-cc0",
+      "author": "CC0 Game Assets",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 47,
+      "packs": [
+        "3d-swords-lowpol-cc0"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/3d-swords-lowpol-cc0.html",
+      "evidenceSha256": "8575626b4c96a7d205fea4c26049740024c951c85b417694a78d24deb532aa3f"
+    },
+    {
+      "url": "https://opengameart.org/content/3d-weapons-pack",
+      "licenseEvidenceUrl": "https://opengameart.org/content/3d-weapons-pack",
+      "author": "mehrasaur",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 7,
+      "packs": [
+        "3d-weapons-pack"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/3d-weapons-pack.html",
+      "evidenceSha256": "4b7af934379414cdff9a44cfe98af372b6669136732b8fb6ef02da309e38cbb8"
+    },
+    {
+      "url": "https://opengameart.org/content/cc0-flat-grenades",
+      "licenseEvidenceUrl": "https://opengameart.org/content/cc0-flat-grenades",
+      "author": "Pichuliru",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 8,
+      "packs": [
+        "cc0-flat-grenades"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-flat-grenades.html",
+      "evidenceSha256": "f8e43a1aef0cfa097dbc57cca5034ad4b2189ff2b6ce63cf066321c2fbd1be03"
+    },
+    {
+      "url": "https://opengameart.org/content/cc0-flat-guns-east",
+      "licenseEvidenceUrl": "https://opengameart.org/content/cc0-flat-guns-east",
+      "author": "Pichuliru",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 10,
+      "packs": [
+        "cc0-flat-guns-east"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-flat-guns-east.html",
+      "evidenceSha256": "3db6969a9e90cdbd33d253136b78c7ec67fdfb1e40a81ed2402ce1394d22cced"
+    },
+    {
+      "url": "https://opengameart.org/content/cc0-flat-guns-west",
+      "licenseEvidenceUrl": "https://opengameart.org/content/cc0-flat-guns-west",
+      "author": "Pichuliru",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 10,
+      "packs": [
+        "cc0-flat-guns-west"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-flat-guns-west.html",
+      "evidenceSha256": "80c679420b98d0e160124f67a13e445d2b5465a9241275430e2d5668b1c150da"
+    },
+    {
+      "url": "https://opengameart.org/content/cc0-flat-shaded-melee-weapons",
+      "licenseEvidenceUrl": "https://opengameart.org/content/cc0-flat-shaded-melee-weapons",
+      "author": "Pichuliru",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 20,
+      "packs": [
+        "cc0-flat-shaded-melee-weapons"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cc0-flat-shaded-melee-weapons.html",
+      "evidenceSha256": "e5ff535d6817551aba8fde6707ba2ce50be34a0765516e262b025805de9da28a"
+    },
+    {
+      "url": "https://opengameart.org/content/cethiels-weapons-3d",
+      "licenseEvidenceUrl": "https://opengameart.org/content/cethiels-weapons-3d",
+      "author": "Cethiel (submitted by drummyfish)",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 10,
+      "packs": [
+        "cethiels-weapons-3d"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/cethiels-weapons-3d.html",
+      "evidenceSha256": "0742af6132eb4ff161a9e5a014a9daa6f989d9c26fcd63669c4038468a0d4465"
+    },
+    {
+      "url": "https://opengameart.org/content/simple-low-poly-swords",
+      "licenseEvidenceUrl": "https://opengameart.org/content/simple-low-poly-swords",
+      "author": "CC0 Game Assets",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 12,
+      "packs": [
+        "simple-low-poly-swords"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/simple-low-poly-swords.html",
+      "evidenceSha256": "371493bc3713af0fbbc69060ef660ae207621193fce3e734beafb52e5e843587"
+    },
+    {
+      "url": "https://quaternius.com/packs/animatedguns.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/animatedguns.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 6,
+      "packs": [
+        "quaternius-animatedguns"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/16be30e00d9e.html",
+      "evidenceSha256": "83c291cb12100d2de7b98d0c6cf9cfb59017b4c5c6b3a55ed6eb1fbcd53c6cc4"
+    },
+    {
+      "url": "https://quaternius.com/packs/cubeworldkit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/cubeworldkit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "quaternius-cubeworldkit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/9ae3211a413f.html",
+      "evidenceSha256": "446a7a92d458c22c85fca34e3a0f36b8c90b2d03b1d35e36b124a2404e32e04c"
+    },
+    {
+      "url": "https://quaternius.com/packs/fantasypropsmegakit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/fantasypropsmegakit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "quaternius-fantasy-props-megakit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/d1023c76454d.html",
+      "evidenceSha256": "5bbcba722316742693ae1e09e4f9d8d2ff2fb8244aaa8f05a0d0e20651371233"
+    },
+    {
+      "url": "https://quaternius.com/packs/knightcharacter.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/knightcharacter.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 4,
+      "packs": [
+        "quaternius-knightcharacter"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/9d70e629565b.html",
+      "evidenceSha256": "f476c91ab75731fefac0ce1c422213617366cced47113fb4a687203421e21b93"
+    },
+    {
+      "url": "https://quaternius.com/packs/medievalweapons.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/medievalweapons.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 16,
+      "packs": [
+        "quaternius-medieval-weapons"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/96ad480ce141.html",
+      "evidenceSha256": "3663fc44cc6745022ad985f8a57d5c645536ea6f3cdcfd004ac61eba58aafc25"
+    },
+    {
+      "url": "https://quaternius.com/packs/piratekit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/piratekit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 2,
+      "packs": [
+        "quaternius-piratekit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/9cb6c5712697.html",
+      "evidenceSha256": "2ccf442ac3920f4fff2747f017ce764917a2af442136a8637a5ade5ebac03754"
+    },
+    {
+      "url": "https://quaternius.com/packs/rpg.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/rpg.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 4,
+      "packs": [
+        "quaternius-rpg"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/8710f625a9ef.html",
+      "evidenceSha256": "b4f1c477b3f90cc4df56481e838ef23d6880c489421b34c6c9359d69822ff2ba"
+    },
+    {
+      "url": "https://quaternius.com/packs/rpgcharacters.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/rpgcharacters.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 5,
+      "packs": [
+        "quaternius-rpg-characters"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/24b4a93a91c4.html",
+      "evidenceSha256": "942827baa1d92f2112349dc4bb3b388f111fdfdc4fa7a557d97c45759687d654"
+    },
+    {
+      "url": "https://quaternius.com/packs/scifiessentialskit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/scifiessentialskit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 6,
+      "packs": [
+        "quaternius-scifiessentialskit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/45c7ecedd677.html",
+      "evidenceSha256": "9187d93db730136fe37f1fa8ad20711cc2957d106aa6d03512d36b1216063664"
+    },
+    {
+      "url": "https://quaternius.com/packs/scifigun.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/scifigun.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 7,
+      "packs": [
+        "quaternius-scifigun"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/a6023c0efeb7.html",
+      "evidenceSha256": "03c36ef285a8336e5828500b756be48a027c82fa205f6ed229d4d1c4eab6a48f"
+    },
+    {
+      "url": "https://quaternius.com/packs/scifimodularguns.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/scifimodularguns.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 20,
+      "packs": [
+        "quaternius-scifimodularguns"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/a53402413a82.html",
+      "evidenceSha256": "027ce3f318817ebca62dbaf4ecb99d2abfe35e925cbd03a800eec34dff4e4139"
+    },
+    {
+      "url": "https://quaternius.com/packs/survival.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/survival.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 4,
+      "packs": [
+        "quaternius-survival"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/243d6596f9b1.html",
+      "evidenceSha256": "764068b606312b74d25a95be3929c705af42fcb5776ec931d1914e33b478ed62"
+    },
+    {
+      "url": "https://quaternius.com/packs/toonshootergamekit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/toonshootergamekit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 16,
+      "packs": [
+        "quaternius-toonshootergamekit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/4fc172ae7a21.html",
+      "evidenceSha256": "3c21854edc387cf79da656980974d8cc811c93dc4e766592f3942f0394e7c077"
+    },
+    {
+      "url": "https://quaternius.com/packs/ultimategun.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/ultimategun.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 22,
+      "packs": [
+        "quaternius-ultimate-gun"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/644d7813b0f4.html",
+      "evidenceSha256": "ad317c66f3d29f1085a1eef1caa9e8cf8c8f23e5ce8e4804f1a1d32ad84ab2b7"
+    },
+    {
+      "url": "https://quaternius.com/packs/ultimateplatformer.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/ultimateplatformer.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 3,
+      "packs": [
+        "quaternius-ultimateplatformer"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/52c5bb91d154.html",
+      "evidenceSha256": "d819e399c0b386384f592b2f0ed7395c270a081e3d406c9e6dc68c01fc087650"
+    },
+    {
+      "url": "https://quaternius.com/packs/ultimaterpg.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/ultimaterpg.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 3,
+      "packs": [
+        "quaternius-ultimaterpg"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/71f1101168ba.html",
+      "evidenceSha256": "b8c36183c0b3533180cbc8fa093abb3b4be7f9a6b53c609ac2c9b006ef24e75c"
+    },
+    {
+      "url": "https://quaternius.com/packs/zombieapocalypsekit.html",
+      "licenseEvidenceUrl": "https://quaternius.com/packs/zombieapocalypsekit.html",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 7,
+      "packs": [
+        "quaternius-zombieapocalypsekit"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/7e852c829c81.html",
+      "evidenceSha256": "191a5ab7250ddf11f63c6188567fce20217c6cc87d8d2922bf7ce251057a36b0"
+    },
+    {
+      "url": "https://www.thebasemesh.com/",
+      "licenseEvidenceUrl": "https://www.thebasemesh.com/faq",
+      "author": "Tim Steer",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "modelCount": 32,
+      "packs": [
+        "the-base-mesh"
+      ],
+      "evidenceFile": ".tools/weapon-library/sources/42c1977fc827.html",
+      "evidenceSha256": "ec14d53a0cf036193a04375bd6d153d3b49f3ce8a5b2153182195d6def8053c4"
+    }
+  ]
+}

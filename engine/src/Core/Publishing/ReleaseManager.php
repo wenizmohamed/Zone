@@ -10,6 +10,7 @@ use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Content\GameplayCatalog;
+use Zone\Engine\Core\Content\GameplayDefinitionValidator;
 
 final class ReleaseManager
 {
@@ -31,6 +32,11 @@ final class ReleaseManager
 
     public function draft(): array
     {
+        return $this->configurationTransaction(fn (): array => $this->draftLocked());
+    }
+
+    private function draftLocked(): array
+    {
         $row = $this->database->fetchOne(
             'SELECT channel, manifest_json, updated_by, updated_at FROM content_drafts WHERE channel = :channel',
             ['channel' => self::CHANNEL],
@@ -44,10 +50,42 @@ final class ReleaseManager
             'manifest' => $this->decodeManifest((string) $row['manifest_json']),
             'updatedBy' => $row['updated_by'],
             'updatedAt' => $row['updated_at'],
+            'draftFingerprint' => $this->draftFingerprint((string) $row['manifest_json']),
         ];
     }
 
+    /** Fingerprint owner configuration, never ordinary player state or clocks. */
+    private function draftFingerprint(string $manifest): string
+    {
+        $catalog = $this->database->fetchOne("SELECT revision FROM gameplay_catalogs WHERE channel = 'draft'");
+        return hash('sha256', $this->encode([
+            'manifest' => $this->decodeManifest($manifest),
+            'catalogRevision' => (int) ($catalog['revision'] ?? 0),
+            'activeRelease' => $this->database->fetchOne('SELECT id, version FROM content_releases WHERE active = 1 LIMIT 1'),
+            'crimes' => $this->database->fetchAll('SELECT * FROM crimes ORDER BY id'),
+            'modules' => $this->database->fetchAll('SELECT id, version, installed, enabled FROM modules ORDER BY id'),
+            'themes' => $this->database->fetchAll('SELECT id, version, installed, active FROM themes ORDER BY id'),
+        ]));
+    }
+
+    /** Call while holding the configuration transaction, before any write. */
+    public function assertDraftFingerprint(?string $expectedFingerprint): void
+    {
+        if ($expectedFingerprint === null) return; // Trusted internal callers retain their existing contract.
+        if (!preg_match('/^[a-f0-9]{64}$/D', $expectedFingerprint)) {
+            throw new InvalidArgumentException('A valid release draft fingerprint is required.');
+        }
+        if (!hash_equals($this->draftLocked()['draftFingerprint'], $expectedFingerprint)) {
+            throw new RuntimeException('Release draft changed. Refresh and try again.');
+        }
+    }
+
     /** Persist the installation's initial runtime once, before any admin edit. */
+    public function hasFoundation(): bool
+    {
+        return $this->database->fetchOne('SELECT channel FROM content_foundations WHERE channel = :channel', ['channel' => self::CHANNEL]) !== null;
+    }
+
     public function initializeContent(array $content): void
     {
         $manifest = $this->defaultManifest();
@@ -63,9 +101,12 @@ final class ReleaseManager
         return $manifest;
     }
 
-    public function saveDraft(array $manifest, string $actor): array
+    public function saveDraft(array $manifest, string $actor, ?string $expectedFingerprint = null): array
     {
-        return $this->configurationTransaction(fn (): array => $this->saveDraftLocked($manifest, $actor));
+        return $this->configurationTransaction(function () use ($manifest, $actor, $expectedFingerprint): array {
+            $this->assertDraftFingerprint($expectedFingerprint);
+            return $this->saveDraftLocked($manifest, $actor);
+        });
     }
 
     /** One shared row serializes publication, rollback and admin configuration edits. */
@@ -111,9 +152,12 @@ final class ReleaseManager
         return [...$this->draft(), 'correlationId' => $correlationId];
     }
 
-    public function publish(string $actor): array
+    public function publish(string $actor, ?string $expectedFingerprint = null): array
     {
-        return $this->configurationTransaction(fn (): array => $this->publishLocked($actor));
+        return $this->configurationTransaction(function () use ($actor, $expectedFingerprint): array {
+            $this->assertDraftFingerprint($expectedFingerprint);
+            return $this->publishLocked($actor);
+        });
     }
 
     private function publishLocked(string $actor): array
@@ -178,6 +222,29 @@ final class ReleaseManager
         }
 
         return $this->normalizeRelease($row);
+    }
+
+    /** Health reads need identifiers and theme, not the entire city payload. */
+    public function activeSummary(): array
+    {
+        $theme = $this->database->driver() === 'pgsql'
+            ? "manifest_json->'content'->>'activeTheme'"
+            : "json_extract(manifest_json, '$.content.activeTheme')";
+        $contentType = $this->database->driver() === 'pgsql'
+            ? "jsonb_typeof(manifest_json->'content')"
+            : "json_type(manifest_json, '$.content')";
+        $row = $this->database->fetchOne("SELECT id, version, {$theme} AS active_theme, {$contentType} AS content_type FROM content_releases WHERE active = 1 LIMIT 1");
+        if ($row === null) {
+            $row = $this->database->fetchOne("SELECT {$theme} AS active_theme FROM content_foundations WHERE channel = :channel", ['channel' => self::CHANNEL]);
+            return ['id' => 'foundation-default', 'version' => 0, 'activeTheme' => $row['active_theme'] ?? null];
+        }
+        if ($row['content_type'] === null || $row['content_type'] === 'null') {
+            // Match normalizeRelease: older releases inherit the immutable
+            // installation content, never unpublished owner draft changes.
+            $foundation = $this->database->fetchOne("SELECT {$theme} AS active_theme FROM content_foundations WHERE channel = :channel", ['channel' => self::CHANNEL]);
+            $row['active_theme'] = $foundation['active_theme'] ?? null;
+        }
+        return ['id' => $row['id'], 'version' => (int) $row['version'], 'activeTheme' => $row['active_theme']];
     }
 
     public function releases(): array
@@ -334,6 +401,10 @@ final class ReleaseManager
         if (isset($manifest['content'])) {
             if (!is_array($manifest['content'])) {
                 throw new InvalidArgumentException('Manifest content must be an object.');
+            }
+            if (array_key_exists('gameplayCatalog', $manifest['content'])) {
+                if (!is_array($manifest['content']['gameplayCatalog'])) throw new InvalidArgumentException('Manifest gameplayCatalog must be an object.');
+                GameplayDefinitionValidator::catalog($manifest['content']['gameplayCatalog']);
             }
             foreach (['crimes', 'engineModules', 'themes'] as $collection) {
                 if (isset($manifest['content'][$collection]) && !is_array($manifest['content'][$collection])) {

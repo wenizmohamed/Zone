@@ -35,6 +35,7 @@ final class ProgressionService
         return $this->database->playerTransaction($playerId, function () use ($playerId): array {
             $this->resources->regenerate($playerId);
             $state = $this->load($playerId);
+            $this->syncSharedBenefits($playerId, $state);
             if ($this->completeEducation($playerId, $state)) $this->save($playerId, $state);
             return $this->response($playerId, $state);
         });
@@ -42,12 +43,35 @@ final class ProgressionService
 
     public function assertAvailable(string $playerId, string $action = ''): void
     {
+        if ($action !== 'player-combat') $this->assertNotInPlayerCombat($playerId);
         if ($action === 'hospital') return;
         $this->database->playerTransaction($playerId, function () use ($playerId): void {
             $state = $this->load($playerId);
             if ($state['jailUntil'] > $this->now() || $state['hospUntil'] > $this->now()) {
                 throw new RuntimeException('You must leave jail or hospital before this action.');
             }
+        });
+    }
+
+    public function assertNotInPlayerCombat(string $playerId): void
+    {
+        $lock = $this->database->fetchOne('SELECT expires_at FROM player_combat_locks WHERE player_id=:id', ['id'=>$playerId]);
+        if ($lock !== null) throw new RuntimeException((int)$lock['expires_at'] <= time() ? 'Your fight expired. Open Attack to clear it before another action.' : 'Finish the active player fight before another action.');
+    }
+
+    /** Internal escrow settlement; callers hold the player locks and validate listing provenance. */
+    public function escrowInventory(string $playerId, string $itemId, int $delta, string $reason, string $correlationId, ?int $expectedVersion = null): void
+    {
+        if ($delta === 0 || abs($delta) > 1000 || !preg_match('/^[A-Za-z0-9_-]{1,80}$/D', $itemId)) throw new InvalidArgumentException('Invalid escrow item adjustment.');
+        $this->database->playerTransaction($playerId, function () use ($playerId,$itemId,$delta,$reason,$correlationId,$expectedVersion): void {
+            $state = $this->load($playerId);
+            if ($expectedVersion !== null && $state['version'] !== $expectedVersion) throw new RuntimeException('Inventory state changed. Refresh and try again.');
+            $balance = (int)($state['inv'][$itemId] ?? 0) + $delta;
+            if ($balance < 0) throw new RuntimeException('You do not own enough units to list.');
+            $state['inv'][$itemId] = $balance;
+            if ($balance === 0 && $state['equip'] === $itemId) $state['equip'] = 'fists';
+            $this->save($playerId,$state);
+            $this->ledger->record($playerId,'item:' . $itemId,$delta,$balance,$reason,$correlationId);
         });
     }
 
@@ -64,15 +88,17 @@ final class ProgressionService
         });
     }
 
-    public function grantItem(string $playerId, string $itemId, int $quantity = 1): void
+    public function grantItem(string $playerId, string $itemId, int $quantity = 1, ?string $correlationId = null, string $reason = 'item.grant'): void
     {
         $this->item($itemId);
         if ($quantity < 1 || $quantity > 1000) throw new InvalidArgumentException('Invalid item quantity.');
-        $this->database->playerTransaction($playerId, function () use ($playerId, $itemId, $quantity): void {
+        $correlationId ??= bin2hex(random_bytes(16));
+        $this->database->playerTransaction($playerId, function () use ($playerId, $itemId, $quantity, $correlationId, $reason): void {
             $state = $this->load($playerId);
             $state['inv'][$itemId] = ($state['inv'][$itemId] ?? 0) + $quantity;
             $this->save($playerId, $state);
-            $this->events->publish(new DomainEvent('ItemGranted', ['playerId' => $playerId, 'itemId' => $itemId, 'quantity' => $quantity]));
+            $this->ledger->record($playerId, 'item:' . $itemId, $quantity, (int) $state['inv'][$itemId], $reason, $correlationId);
+            $this->events->publish(new DomainEvent('ItemGranted', ['playerId' => $playerId, 'itemId' => $itemId, 'quantity' => $quantity, 'correlationId' => $correlationId]));
         });
     }
 
@@ -81,7 +107,8 @@ final class ProgressionService
         if (!in_array($type, ['jail', 'hosp'], true) || $minutes < 1) throw new InvalidArgumentException('Invalid player penalty.');
         $this->database->playerTransaction($playerId, function () use ($playerId, $type, $minutes): void {
             $state = $this->load($playerId);
-            $multiplier = $type === 'jail' && !empty($state['eduDone']['law']) ? .85 : ($type === 'hosp' && !empty($state['fac']['ups']['hospTime']) ? .8 : 1);
+            $shared = (new FamilyProgressionService($this->database, $this->events))->snapshot($playerId);
+            $multiplier = $type === 'jail' && !empty($state['eduDone']['law']) ? .85 : ($type === 'hosp' && (!empty($state['fac']['ups']['hospTime']) || !empty($shared['upgrades']['hospTime'])) ? .8 : 1);
             $state[$type . 'Until'] = max($state[$type . 'Until'], $this->now() + (int) ($minutes * 60000 * $multiplier));
             $this->save($playerId, $state);
         });
@@ -111,6 +138,8 @@ final class ProgressionService
                 $respect = 25 + $opponentLevel;
                 if (in_array($state['fac']['chain'], [10, 25, 50, 100, 250, 500], true)) $respect += $state['fac']['chain'] * 40;
                 $state['fac']['respect'] += $respect;
+                $family = new FamilyProgressionService($this->database, $this->events);
+                if ($family->snapshot($playerId) !== null) $family->settle($playerId, $respect, 'combat.hospitalize', bin2hex(random_bytes(16)));
             }
             $this->save($playerId, $state);
             return $respect;
@@ -141,6 +170,7 @@ final class ProgressionService
         $this->refreshCatalog();
         if ($expectedVersion < 1) throw new InvalidArgumentException('A current progression version is required.');
         return $this->database->playerTransaction($playerId, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
+            $this->assertNotInPlayerCombat($playerId);
             $this->resources->regenerate($playerId);
             $state = $this->load($playerId);
             if ($state['version'] !== $expectedVersion) throw new RuntimeException('Progression state changed. Refresh and try again.');
@@ -149,6 +179,7 @@ final class ProgressionService
             $player = $this->player($playerId);
             $correlationId = bin2hex(random_bytes(16));
             $result = ['action' => $action, 'id' => $id, 'cashDelta' => 0, 'correlationId' => $correlationId];
+            $inventoryDelta = 0;
             switch ($action) {
                 case 'item.buy':
                 case 'market.buy':
@@ -164,6 +195,7 @@ final class ProgressionService
                     }
                     $this->cash($playerId, -$price, $action, $correlationId);
                     $state['inv'][$id] = ($state['inv'][$id] ?? 0) + 1;
+                    $inventoryDelta = 1;
                     $state['ctr']['buys']++;
                     $result['cashDelta'] = -$price;
                     break;
@@ -171,6 +203,7 @@ final class ProgressionService
                     $item = $this->ownedItem($id, $state);
                     $price = (int) round($item['price'] * 0.9);
                     $state['inv'][$id]--;
+                    $inventoryDelta = -1;
                     if ($state['inv'][$id] === 0 && $state['equip'] === $id) $state['equip'] = null;
                     $this->cash($playerId, $price, $action, $correlationId);
                     $result['cashDelta'] = $price;
@@ -191,6 +224,7 @@ final class ProgressionService
                     $clearsHospital = !empty($item['life']) && $state['hospUntil'] > $this->now();
                     if ($life === $player['life'] && $nerve === $player['nerve'] && !$clearsHospital) throw new RuntimeException('Your resources are full. The item has been kept.');
                     $state['inv'][$id]--;
+                    $inventoryDelta = -1;
                     if (!empty($item['life'])) $state['hospUntil'] = 0;
                     $this->database->execute('UPDATE players SET life = :life, nerve = :nerve WHERE id = :id', ['life' => $life, 'nerve' => $nerve, 'id' => $playerId]);
                     $result['restored'] = ['life' => $life - $player['life'], 'nerve' => $nerve - $player['nerve']];
@@ -242,8 +276,21 @@ final class ProgressionService
                     if ($state['fac']['respect'] < $upgrade['cost']) throw new RuntimeException('Not enough respect.');
                     $state['fac']['respect'] -= $upgrade['cost'];
                     $state['fac']['ups'][$id] = 1;
-                    if ($id === 'nerveMax') $this->database->execute('UPDATE players SET max_nerve = max_nerve + 5 WHERE id = :id', ['id' => $playerId]);
-                    if ($id === 'energyMax') $this->database->execute('UPDATE players SET max_energy = max_energy + 10 WHERE id = :id', ['id' => $playerId]);
+                    if ($id === 'nerveMax' && empty($state['familyApplied'][$id])) $this->database->execute('UPDATE players SET max_nerve = max_nerve + 5 WHERE id = :id', ['id' => $playerId]);
+                    if ($id === 'energyMax' && empty($state['familyApplied'][$id])) $this->database->execute('UPDATE players SET max_energy = max_energy + 10 WHERE id = :id', ['id' => $playerId]);
+                    break;
+                case 'faction.contribute':
+                    if (!ctype_digit($id) || (int) $id < 1 || (int) $id > 1000000) throw new InvalidArgumentException('Contribute between 1 and 1000000 personal respect.');
+                    if ($expectedPrice === null || $expectedPrice < 1) throw new InvalidArgumentException('A current family version is required.');
+                    if ($state['fac']['respect'] < (int) $id) throw new RuntimeException('Not enough personal respect.');
+                    (new FamilyProgressionService($this->database, $this->events))->settle($playerId, (int) $id, 'contribution', $correlationId, $expectedPrice);
+                    $state['fac']['respect'] -= (int) $id;
+                    break;
+                case 'faction.sharedUpgrade':
+                    $upgrade = $this->entry('upgrades', $id);
+                    if ($expectedPrice === null || $expectedPrice < 1) throw new InvalidArgumentException('A current family version is required.');
+                    (new FamilyProgressionService($this->database, $this->events))->settle($playerId, -(int) $upgrade['cost'], 'upgrade.' . $id, $correlationId, $expectedPrice, $id);
+                    $this->syncSharedBenefits($playerId, $state, false);
                     break;
                 case 'jail.bailSelf':
                     if ($state['jailUntil'] <= $this->now()) throw new RuntimeException('You are not in jail.');
@@ -286,6 +333,8 @@ final class ProgressionService
                     throw new InvalidArgumentException('Unknown gameplay action.');
             }
             $this->save($playerId, $state);
+            if ($inventoryDelta !== 0) $this->ledger->record($playerId, 'item:' . $id, $inventoryDelta, (int) $state['inv'][$id], $action, $correlationId);
+            if ($action === 'mission.claim' && in_array($id, $state['onboarding']['sequence'], true)) $this->events->publish(new DomainEvent('OnboardingObjectiveClaimed', ['playerId' => $playerId, 'missionId' => $id, 'correlationId' => $correlationId]));
             $this->events->publish(new DomainEvent('ProgressionAction', ['playerId' => $playerId, ...$result, 'version' => $state['version']]));
             return [...$this->response($playerId, $state), 'result' => $result];
         });
@@ -360,9 +409,15 @@ final class ProgressionService
                 // A published balance change invalidates old purchase views,
                 // while preserving owned IDs, stock, progress and real timers.
                 $state['catalogRevision'] = $this->catalogRevision;
-                $property = $this->entry('properties', $state['prop']);
+                // A rollback may remove a newly authored property from sale.
+                // Ownership and its last authoritative capacity must survive it.
+                $property = null;
+                foreach ($this->catalog['properties'] as $entry) {
+                    if ($entry['id'] === $state['prop']) { $property = $entry; break; }
+                }
                 $player = $this->player($playerId);
-                $this->database->execute('UPDATE players SET max_happy = :maximum, happy = :happy WHERE id = :id', ['maximum' => $property['happy'], 'happy' => min($player['happy'], $property['happy']), 'id' => $playerId]);
+                $capacity = (int) ($property['happy'] ?? $player['max_happy']);
+                $this->database->execute('UPDATE players SET max_happy = :maximum, happy = :happy WHERE id = :id', ['maximum' => $capacity, 'happy' => min($player['happy'], $capacity), 'id' => $playerId]);
                 $this->save($playerId, $state);
             }
             return $state;
@@ -375,7 +430,18 @@ final class ProgressionService
             'ctr' => ['crimes' => 0, 'trains' => 0, 'wins' => 0, 'shifts' => 0, 'buys' => 0], 'claimed' => [], 'skill' => [], 'crimeXp' => 96,
             'fac' => ['respect' => 41820, 'chain' => 0, 'best' => 128, 'chainAt' => 0, 'ups' => [], 'warEnd' => 0],
             'jailUntil' => 0, 'hospUntil' => 0, 'market' => [], 'inmates' => [], 'patients' => [],
+            'onboarding' => ['sequence' => ['c5', 't4', 's2', 'b1', 'w1'], 'currentMissionId' => 'c5', 'completed' => false, 'startedAt' => $now, 'completedAt' => null], 'familyApplied' => [],
         ];
+        // Existing founder data is preserved. New beta accounts begin at level
+        // one without fictitious wealth, faction history or unlocked progression.
+        if ($playerId !== 'founder-player') {
+            $state = array_replace($state, [
+                'inv' => ['smallkit' => 1], 'equip' => 'fists', 'points' => 0, 'merits' => 0,
+                'jobPts' => 0, 'gym' => 0, 'gymXp' => 0, 'prop' => 'shack',
+                'ownedProperties' => ['shack' => 1], 'crimeXp' => 0,
+                'fac' => ['respect' => 0, 'chain' => 0, 'best' => 0, 'chainAt' => 0, 'ups' => [], 'warEnd' => 0],
+            ]);
+        }
         foreach ($this->catalog['market'] as $listing) {
             $price = $this->catalog['items'][$listing['item']]['price'];
             $state['market'][] = [...$listing, 'price' => $price, 'base' => $price];
@@ -387,11 +453,21 @@ final class ProgressionService
             $state['patients'][] = ['id' => 'patient-' . $index, 'name' => $name, 'lvl' => 8 + $index * 5, 'until' => $now + ($index * 9 + 5) * 60000, 'reason' => ['attack', 'crime', 'od'][$index % 3], 'who' => ['BigSal', 'NadiaQuick', 'Duke_X'][$index % 3]];
         }
         $this->database->insertIgnore('player_progression', ['player_id', 'state_json', 'version', 'updated_at'], [$playerId, json_encode($state, JSON_THROW_ON_ERROR), 1, gmdate('c')]);
+        if ($playerId !== 'founder-player') {
+            // Initial ownership is a real issuance too. Existing saved players
+            // return above, so this never invents a historical backfill.
+            $startingGrant = $this->database->fetchOne("SELECT correlation_id FROM economy_ledger WHERE player_id = :id AND asset = 'cash' AND reason = 'beta.starting-grant' ORDER BY created_at, id LIMIT 1", ['id' => $playerId]);
+            $correlationId = $startingGrant['correlation_id'] ?? bin2hex(random_bytes(16));
+            foreach ($state['inv'] as $itemId => $quantity) {
+                $this->ledger->record($playerId, 'item:' . $itemId, (int) $quantity, (int) $quantity, 'beta.starting-inventory', $correlationId);
+            }
+        }
         return $state;
     }
 
     private function save(string $playerId, array &$state): void
     {
+        $this->syncOnboarding($state);
         $state['version']++;
         $this->database->execute('UPDATE player_progression SET state_json = :state, version = :version, updated_at = :updated WHERE player_id = :id', ['state' => json_encode($state, JSON_THROW_ON_ERROR), 'version' => $state['version'], 'updated' => gmdate('c'), 'id' => $playerId]);
     }
@@ -405,7 +481,58 @@ final class ProgressionService
             $listing['discountBasisPoints'] = $discount;
         }
         unset($listing);
-        return ['player' => $this->player($playerId), 'state' => $state, 'catalogs' => $this->catalog];
+        $family = (new FamilyProgressionService($this->database, $this->events))->snapshot($playerId);
+        if ($family !== null) {
+            $family['effectiveUpgrades'] = array_replace($state['fac']['ups'], $family['upgrades']);
+            $family['upgradeEligibility'] = array_map(static function ($u) use ($family): array {
+                $reason = !empty($family['upgrades'][$u['id']]) ? 'owned' : (!$family['permissions']['buyUpgrade'] ? 'leader_required' : ($family['respect'] < $u['cost'] ? 'respect_required' : null));
+                return ['id' => $u['id'], 'cost' => (int) $u['cost'], 'eligible' => $reason === null, 'reason' => $reason];
+            }, $this->catalog['upgrades']);
+        }
+        $traveling = (new TravelService($this->database, $this->events))->snapshot($playerId)['status'] ?? null;
+        return ['player' => $this->player($playerId), 'state' => $state, 'catalogs' => $this->catalog, 'family' => $family, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
+    }
+
+    private function syncSharedBenefits(string $playerId, array &$state, bool $save = true): void
+    {
+        $family = (new FamilyProgressionService($this->database, $this->events))->snapshot($playerId);
+        $changed = false;
+        foreach (['energyMax' => ['max_energy', 10], 'nerveMax' => ['max_nerve', 5]] as $id => [$column, $amount]) {
+            if (empty($family['upgrades'][$id]) || !empty($state['familyApplied'][$id])) continue;
+            if (empty($state['fac']['ups'][$id])) $this->database->execute('UPDATE players SET ' . $column . ' = ' . $column . ' + :amount WHERE id = :id', ['amount' => $amount, 'id' => $playerId]);
+            $state['familyApplied'][$id] = 1;
+            $changed = true;
+        }
+        $beforeGuide = $state['onboarding'] ?? null;
+        $this->syncOnboarding($state);
+        if ($beforeGuide !== $state['onboarding']) $changed = true;
+        if ($changed && $save) $this->save($playerId, $state);
+    }
+
+    private function syncOnboarding(array &$state): void
+    {
+        $state['onboarding'] ??= ['sequence' => ['c5', 't4', 's2', 'b1', 'w1']];
+        $state['onboarding']['startedAt'] ??= $this->now();
+        $current = null;
+        foreach ($state['onboarding']['sequence'] as $id) if (empty($state['claimed'][$id])) { $current = $id; break; }
+        $state['onboarding']['currentMissionId'] = $current;
+        $state['onboarding']['completed'] = $current === null;
+        $state['onboarding']['completedAt'] = $current === null ? ($state['onboarding']['completedAt'] ?? $this->now()) : null;
+    }
+
+    private function onboarding(array $state, bool $traveling = false): array
+    {
+        $steps = []; $current = null; $blocked = $state['jailUntil'] > $this->now() || $state['hospUntil'] > $this->now();
+        foreach ($state['onboarding']['sequence'] ?? ['c5', 't4', 's2', 'b1', 'w1'] as $id) {
+            $definition = null;
+            foreach ($this->catalog['missions'] as $mission) if ($mission['id'] === $id) { $definition = $mission; break; }
+            if ($definition === null) continue;
+            $claimed = !empty($state['claimed'][$id]);
+            if (!$claimed && $current === null) $current = $id;
+            $progress = (int) $state['ctr'][$definition['ctr']]; $ready = $progress >= $definition['n'];
+            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => (int) $definition['n'], 'progress' => $progress, 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
+        }
+        return ['currentMissionId' => $current, 'completed' => $current === null, 'steps' => $steps];
     }
 
     private function marketDiscount(string $playerId): int

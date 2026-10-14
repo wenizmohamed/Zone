@@ -1,0 +1,106 @@
+import * as THREE from '../lib/three184/three.module.js';
+import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
+
+// A deliberately small authored kit at actual game destinations. These models
+// are cosmetic service representations, never ownership/collision geometry.
+const ROOT=new URL('../assets/city/kaykit/',import.meta.url);
+const KIT={bank:{model:'building_E_withoutBase',width:24,rotation:0,color:'#c0b399'},hospital:{model:'building_G_withoutBase',width:24,rotation:Math.PI/2,color:'#d1c9bb'},gym:{model:'building_C_withoutBase',width:18,rotation:0,color:'#87957a'},hq:{model:'building_A_withoutBase',width:26,rotation:Math.PI/2,color:'#8c9295'},market:{model:'building_C_withoutBase',width:20,rotation:Math.PI/2,color:'#bd9f6a'}};
+const ID='zone-authored-landmarks';
+
+export async function createLandmarks(map,pins,isActive=()=>true){
+  const selected=pins.filter(pin=>KIT[pin.id]&&Array.isArray(pin._lngLat));
+  if(!selected.length)throw Error('No published district destinations');
+  if(map.getLayer(ID))throw Error('District landmark layer already installed');
+  const loader=new GLTFLoader(),assets=new Map(),ownedGeometry=new Set(),ownedMaterial=new Set(),ownedTexture=new Set();
+  const release=()=>{ownedGeometry.forEach(v=>v.dispose());ownedMaterial.forEach(v=>v.dispose());ownedTexture.forEach(v=>{v.source?.data?.close?.();v.dispose();});ownedGeometry.clear();ownedMaterial.clear();ownedTexture.clear();assets.clear();};
+  const names=[...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
+  let disposed=false,visible=true,prepared=false,preparing,scene,camera,renderer,origin,local,groups=[];
+  const diagnostics={status:'loading',license:'KayKit City Builder Bits CC0',landmarks:[],calls:0,triangles:0,geometries:0,textures:0,renderMs:0,shadows:0,postPasses:0,continuousAnimation:false};
+  const publish=()=>{if(typeof document==='object')document.body.dataset.zoneDistrictLandmarks=JSON.stringify(diagnostics);};
+  publish();
+  try{
+    const loads=await Promise.allSettled(names.map(async name=>{
+      const gltf=await loader.loadAsync(new URL(name+'.gltf',ROOT).href);
+      gltf.scene.traverse(object=>{if(!object.isMesh)return;ownedGeometry.add(object.geometry);object.castShadow=false;object.receiveShadow=false;
+        const materials=Array.isArray(object.material)?object.material:[object.material];
+        materials.forEach(material=>{ownedMaterial.add(material);material.roughness=.82;material.metalness=.08;material.color.multiplyScalar(.88);Object.values(material).forEach(value=>{if(value?.isTexture)ownedTexture.add(value);});});
+      });
+      assets.set(name,gltf.scene);
+    }));
+    const failure=loads.find(result=>result.status==='rejected');if(failure)throw failure.reason;
+  }catch(error){release();diagnostics.status='failed';diagnostics.error=String(error.message);publish();throw error;}
+  if(!isActive()) {release();diagnostics.status='cancelled';publish();return {setVisible(){},dispose(){},diagnostics};}
+  origin=mapboxgl.MercatorCoordinate.fromLngLat([-73.9865,40.698],0);
+  const meter=origin.meterInMercatorCoordinateUnits();
+  local=new THREE.Matrix4().makeTranslation(origin.x,origin.y,origin.z).scale(new THREE.Vector3(meter,-meter,meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
+  const contactGeometry=new THREE.PlaneGeometry(1,1),contactMaterial=new THREE.MeshBasicMaterial({color:'#141a1c',transparent:true,opacity:.3,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1});
+  ownedGeometry.add(contactGeometry);ownedMaterial.add(contactMaterial);
+  function model(name,width,tint){
+    const object=assets.get(name).clone(true),bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3()),scale=width/Math.max(size.x,size.z);
+    object.scale.setScalar(scale);object.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
+    if(tint)object.traverse(mesh=>{if(!mesh.isMesh)return;const adapt=material=>{const copy=material.clone();copy.color.multiply(new THREE.Color(tint));ownedMaterial.add(copy);return copy;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(adapt):adapt(mesh.material);});
+    const wrapper=new THREE.Group();wrapper.add(object);return wrapper;
+  }
+  function addMark(parent,kind,width){
+    // Service identity is a roof sign, not a decorative new game mechanic.
+    const signGeometry=new THREE.BoxGeometry(width,.5,1.5),signMaterial=new THREE.MeshStandardMaterial({color:kind==='hospital'?'#dfded5':'#c4a16b',roughness:.8});
+    ownedGeometry.add(signGeometry);ownedMaterial.add(signMaterial);
+    const sign=new THREE.Mesh(signGeometry,signMaterial);const height=new THREE.Box3().setFromObject(parent).max.y;sign.position.set(0,height+.45,0);parent.add(sign);
+    if(kind==='hospital'){
+      const material=new THREE.MeshBasicMaterial({color:'#b44f40'});ownedMaterial.add(material);
+      const g=new THREE.BoxGeometry(1.5,.2,5);ownedGeometry.add(g);const cross=new THREE.Mesh(g,material);cross.position.y=height+.85;parent.add(cross);const other=cross.clone();other.rotation.y=Math.PI/2;parent.add(other);
+    }
+  }
+  function build(){
+    selected.forEach(pin=>{
+      const spec=KIT[pin.id],coord=mapboxgl.MercatorCoordinate.fromLngLat(pin._lngLat,0),group=new THREE.Group();
+      group.name='service-'+pin.id;group.position.set((coord.x-origin.x)/meter,.3,(coord.y-origin.y)/meter);group.rotation.y=spec.rotation;
+      const building=model(spec.model,spec.width,spec.color);group.add(building);addMark(building,pin.id,spec.width*.55);
+      const contact=new THREE.Mesh(contactGeometry,contactMaterial);contact.rotation.x=-Math.PI/2;contact.scale.set(spec.width*1.08,spec.width*1.04,1);contact.position.y=.02;group.add(contact);
+      if(pin.id==='hq'){const tower=model('watertower',8);tower.position.set(-9,0,16);group.add(tower);}
+      const car=model('car_sedan',4.5);car.position.set(spec.width*.65,0,-7);group.add(car);
+      const lamp=model('streetlight',2);lamp.position.set(spec.width*.6,0,5);group.add(lamp);
+      scene.add(group);groups.push(group);
+      // Mapbox can elevate symbols onto provider extrusions, but this shared
+      // Three.js custom layer is not part of that index. Publish the measured
+      // top of the authored roof/sign instead of guessing a screen offset.
+      group.updateWorldMatrix(true,true);
+      const heightMeters=new THREE.Box3().setFromObject(building).max.y;
+      diagnostics.landmarks.push({id:pin.id,coordinates:pin._lngLat.slice(),widthMeters:spec.width,heightMeters,model:spec.model,cosmetic:true});
+    });
+  }
+  const layer={id:ID,type:'custom',renderingMode:'3d',
+    onAdd(_map,gl){
+      scene=new THREE.Scene();camera=new THREE.Camera();
+      scene.add(new THREE.HemisphereLight('#d5dce2','#3a3933',1.7));
+      const key=new THREE.DirectionalLight('#ffe4bb',2.5);key.position.set(-100,180,90);scene.add(key);
+      const fill=new THREE.DirectionalLight('#a2bdd0',.6);fill.position.set(100,60,-90);scene.add(fill);
+      renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
+      build();diagnostics.status='preparing';publish();
+      // Prepare shaders/textures while the flat vector district is usable,
+      // not in the player's first animated Tilt frame. Never clear or draw
+      // into Mapbox's shared canvas during this preparation.
+      const started=performance.now();
+      renderer.resetState();
+      ownedTexture.forEach(texture=>renderer.initTexture?.(texture));
+      preparing=Promise.resolve(renderer.compileAsync?.(scene,camera)).then(()=>{
+        if(disposed)return;renderer.resetState();prepared=true;
+        diagnostics.prepareMs=Number((performance.now()-started).toFixed(2));diagnostics.status='ready';publish();
+        if(isActive())map.triggerRepaint();
+      });
+      renderer.resetState();
+    },
+    render(_gl,input){
+      if(disposed||!prepared||!visible||map.getPitch()<10||map.getZoom()<15.8)return;
+      const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16)return;
+      const started=performance.now();camera.projectionMatrix.fromArray(projection).multiply(local);
+      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+      diagnostics.calls=renderer.info.render.calls;diagnostics.triangles=renderer.info.render.triangles;diagnostics.geometries=renderer.info.memory.geometries;diagnostics.textures=renderer.info.memory.textures;diagnostics.renderMs=Number((performance.now()-started).toFixed(2));publish();
+    },
+    onRemove(){
+      if(disposed)return;disposed=true;groups=[];release();renderer?.dispose();diagnostics.status='disposed';publish();
+    }
+  };
+  try{map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);await preparing;}catch(error){if(!disposed){if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();}throw error;}
+  return {setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();},diagnostics};
+}

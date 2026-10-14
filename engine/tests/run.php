@@ -94,7 +94,9 @@ try {
     $first = $engine->attemptCrime('searchforcash');
     check($first['success'] === true, 'crime outcome is calculated by the PHP engine');
     check($first['serverProof']['clientSuppliedOutcomeFields'] === 0, 'client cannot supply outcome or reward fields');
-    check(count($engine->ledger()) === 1, 'successful reward creates one economy ledger entry');
+    check(count(array_filter($engine->ledger(), static fn (array $entry): bool => $entry['asset'] === 'cash')) === 1, 'successful reward creates one cash economy ledger entry');
+    $lootLedger = $database->fetchAll("SELECT amount, reason FROM economy_ledger WHERE asset = 'item:sand' AND correlation_id = :id", ['id' => $first['serverProof']['correlationId']]);
+    check($first['loot'] === null ? $lootLedger === [] : (count($lootLedger) === 1 && (int) $lootLedger[0]['amount'] === 1 && $lootLedger[0]['reason'] === 'crime.loot'), 'crime loot records its inventory provenance under the action correlation only when awarded');
     check(count($engine->achievements()) === 0, 'disabled Achievement module does not react');
 
     $engine->changeModule('achievements', 'enable');

@@ -1,0 +1,90 @@
+{
+  "deadline": "2026-10-21",
+  "timezone": "Asia/Dubai",
+  "release": "launch105 candidate",
+  "phase": "visible Home/Gym increment integrated and inspected; final history-preserving source gate pending; not production-promoted",
+  "playerSourceRevision": "991d49d9e77c82b9a71dbfc15cbf10813d17b2cb",
+  "baselineDeployment": "dpl_EqBQUFg4aKThMW4jBpPSLrUW8K32",
+  "sourceBaseline": "08e53899d1b25b9a860e5c24d343872e33d92696",
+  "ordinaryHTTP": {
+    "checks": 45,
+    "players": 2,
+    "actualPHPProcessRestart": 1,
+    "database": "SQLite",
+    "staffGrants": false
+  },
+  "studioWorkflow": {
+    "checks": 37,
+    "database": "SQLite",
+    "players": 3,
+    "registeredThumbnailAndModel": true,
+    "rollbackPreservesHistory": true
+  },
+  "postgres": {
+    "checks": 201,
+    "suites": 5,
+    "isolated": true,
+    "capacityClaim": false
+  },
+  "browser": {
+    "arabicPhoneRoutes": 19,
+    "widthCSS": 375,
+    "overflowObserved": 0,
+    "brokenVisibleImagesObserved": 0,
+    "physicalPhone": false,
+    "gymUI": {
+      "database": "isolated SQLite, ordinary account",
+      "dexterity": { "before": 10, "after": 16, "energyCost": 5, "singlePOST": true, "retainedAfterReload": true },
+      "defenseArabic": { "before": 10, "after": 17, "energyCost": 5, "singlePOST": true, "savedArabicReceipt": true },
+      "cashUnchangedByTraining": 3721,
+      "gymXPAfterTwoSessions": 20,
+      "nextGymXPRemaining": 30,
+      "nativeMobileClickLimitation": "DevTools click reported success without POST in emulated mobile; actual observed DOM control click exercised original shipped handler and real backend. No fixture response or stat grant."
+    },
+    "equipmentUI": {
+      "ordinaryBatPurchasePrice": 800,
+      "beforeCash": 3721,
+      "afterCash": 2921,
+      "outfitsInspected": ["Suit", "Casual_Hoodie", "Swat"],
+      "ownedNameModelThumbnailAgree": true,
+      "staffGrants": false,
+      "knifeSniper": "Inspected standalone Studio asset previews, not ordinary acquisition or every-animation proof."
+    },
+    "homePhonePrimaryAction": { "widthCSS": 375, "heightCSS": 812, "englishBottom": 771.42, "arabicBottom": 762.94, "overflowObserved": 0 },
+    "ordinaryCrime": {
+      "beforeCash": 2500,
+      "startingStreakReward": 1000,
+      "cashReward": 221,
+      "afterCash": 3721,
+      "nerveSpent": 2,
+      "version": 2,
+      "persistedAfterReload": true,
+      "correlationId": "5f43db2964ef386b1f25e1a9af941f98"
+    },
+    "contextLoss": {
+      "language": "ar",
+      "rendering": "paused",
+      "localizedFallback": true,
+      "viewerOnlyRetryRestored": true
+    }
+  },
+  "screenshots": {
+    "nativeInlineCapturesInspected": true,
+    "persistentExport": "artifacts/launch105-20261014 in original repo: actual native JPEGs unwrapped byte-for-byte from SVG wrappers; no pixel editing/reencoding.",
+    "desktopDevicePixels": "1667x788",
+    "desktopActualCSS": "2084x985, dpr0.8 due existing browser zoom",
+    "phoneCSS": "375x812, dpr1",
+    "beforeAfter": ["home-before-en-desktop1.jpg", "home-after-en-desktop1.jpg", "gym-before-en-desktop1.jpg", "gym-final-en-desktop1.jpg", "home-before-ar-phone-native.jpg", "home-final-ar-phone.jpg", "gym-before-ar-phone-native.jpg", "gym-final-ar-phone.jpg"]
+  },
+  "openGates": [
+    "clean checkout/full build",
+    "independent review",
+    "final operator/media browser gates",
+    "production promotion",
+    "durable hosting",
+    "intended audience entry",
+    "immutable action rules provenance",
+    "restore/alerts",
+    "capacity"
+  ]
+}

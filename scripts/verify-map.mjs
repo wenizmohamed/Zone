@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { verifyMapRuntime } from './verify-map-runtime.mjs';
+import { verifyMapAtlas } from './verify-map-atlas.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const paths = {
@@ -32,18 +33,14 @@ const designCss = source(join(root, 'assets', 'zone-design.css'), 'shared visual
 
 // An iframe query key does not invalidate its separately cached JS requests.
 // Check the actual URL graph for the application-owned map entry points.
-const iframeRef = index.match(/src="(dist\/city-map-torn\.html[^\"]*)"/)?.[1];
+const iframeRef = index.match(/data-map-src="(dist\/city-map-torn\.html[^\"]*)"/)?.[1];
 const mapUrl = new URL(iframeRef || 'dist/city-map-torn.html', 'https://zone.test/');
 const mapRevision = mapUrl.searchParams.get('v');
 check(!!mapRevision, 'The map iframe needs a release cache revision.');
 const localMapScripts = [...map.matchAll(/<script\s+src="([^\"]+)"/g)].map(match => match[1]).filter(ref => !/^https?:/.test(ref));
-const rendererRef = map.match(/import\(['"](\.\/city-landmarks\.js[^'"]*)['"]\)/)?.[1];
-const rendererSource = source(join(root, 'dist', 'city-landmarks.js'), 'city renderer');
-const layoutRef = rendererSource.match(/import\s+['"](\.\/city-layout\.js[^'"]*)['"]/)?.[1];
-for (const [label, ref, base] of localMapScripts.map(ref => [ref, ref, mapUrl]).concat([
-  ['city renderer', rendererRef, mapUrl],
-  ['city layout dependency', layoutRef, new URL(rendererRef || './city-landmarks.js', mapUrl)],
-])) {
+const rendererRef = localMapScripts.find(ref => /\/compact-district\.js\?/.test(ref));
+const rendererSource = source(join(root, 'assets', 'city', 'compact-district.js'), 'compact vector district renderer');
+for (const [label, ref, base] of localMapScripts.map(ref => [ref, ref, mapUrl]).concat([['compact vector renderer', rendererRef, mapUrl]])) {
   const assetUrl = new URL(ref || '', base);
   check(!!ref && assetUrl.searchParams.get('v') === mapRevision,
     `${label} must request the same cache revision as the iframe; iframe cache keys do not propagate to scripts.`);
@@ -188,28 +185,31 @@ check(map.includes("addSource('zone-pois'") || map.includes('addSource("zone-poi
 check(/getSource\(['"]zone-pois['"]\)[\s\S]{0,180}?setData|\bzonePoisSource\b/.test(map),
   'Live POI updates must refresh the zone-pois GeoJSON source.');
 const poiLayers = {};
-for (const role of ['halo', 'icon', 'label', 'hitbox']) {
+for (const role of ['halo', 'icon', 'hitbox']) {
   const single = balancedBlockAfter(map, `id:'zone-poi-${role}'`) || balancedBlockAfter(map, `id:"zone-poi-${role}"`);
   poiLayers[role] = single;
   check(Boolean(single), `Mapbox POI layer is missing: zone-poi-${role}.`);
 }
+// Names now belong to the icon's symbol group, not an independent placement.
+poiLayers.label = poiLayers.icon + balancedBlockAfter(map, 'var nameLayout=');
+check(/Object\.assign\([^\n]*nameLayout/.test(poiLayers.icon), 'The core icon must own its label placement.');
 check(/type\s*:\s*['"]circle['"]/.test(poiLayers.halo)
-    && /circle-pitch-alignment['"]?\s*:\s*['"]map['"]/.test(poiLayers.halo)
-    && /circle-pitch-scale['"]?\s*:\s*['"]map['"]/.test(poiLayers.halo),
-  'POI halos must be map-pitched circles that remain grounded on the city surface.');
+    && /circle-pitch-alignment['"]?\s*:\s*['"]viewport['"]/.test(poiLayers.halo)
+    && /circle-pitch-scale['"]?\s*:\s*['"]viewport['"]/.test(poiLayers.halo),
+  'POI halos retain readable screen size and orientation while anchored to geographic locations.');
 check(/type\s*:\s*['"]symbol['"]/.test(poiLayers.icon) && /['"]icon-image['"]/.test(poiLayers.icon),
   'POI icon layer must render registered Mapbox images, not DOM glyphs.');
-check(/['"]icon-size['"][\s\S]{0,220}?\['"]zoom['"]|\['"]zoom['"][\s\S]{0,220}?['"]icon-size['"]/.test(poiLayers.icon),
-  'POI icon size must respond to zoom instead of staying pasted at one screen size.');
-check(/['"]icon-allow-overlap['"]\s*:\s*false/.test(poiLayers.icon)
+check(/['"]icon-size['"]\s*:\s*\.74/.test(poiLayers.icon), 'Overview icons retain readable screen size at every zoom.');
+check(/['"]icon-allow-overlap['"]\s*:\s*true/.test(poiLayers.icon)
     && /['"]icon-ignore-placement['"]\s*:\s*false/.test(poiLayers.icon),
-  'POI icons must participate in Mapbox collision placement.');
-check(/['"]icon-pitch-alignment['"]\s*:\s*['"]map['"]/.test(poiLayers.icon),
-  'POI icons must align to map pitch so they remain visually attached to blocks.');
+  'The eight core POI glyphs must remain visible and reserve shared collision space for lower priority labels.');
+check(/if\(id==='zone-poi-icon'\)layer\.layout\['icon-allow-overlap'\]=false/.test(map),
+  'Secondary POI icons must retain collision decluttering.');
+check(/['"]icon-pitch-alignment['"]\s*:\s*['"]viewport['"]/.test(poiLayers.icon),
+  'POI icons stay upright and readable during pitch.');
 check(/type\s*:\s*['"]symbol['"]/.test(poiLayers.label) && /['"]text-field['"]/.test(poiLayers.label),
   'POI labels must render through a Mapbox symbol layer.');
-check(/['"]text-size['"][\s\S]{0,220}?\['"]zoom['"]|\['"]zoom['"][\s\S]{0,220}?['"]text-size['"]/.test(poiLayers.label),
-  'POI label size must respond to map zoom.');
+check(/['"]text-size['"]\s*:\s*12/.test(poiLayers.label), 'Core location labels retain a readable 12px size.');
 check(/['"]text-allow-overlap['"]\s*:\s*false/.test(poiLayers.label)
     && /['"]text-ignore-placement['"]\s*:\s*false/.test(poiLayers.label),
   'POI labels must use collision-aware placement.');
@@ -218,10 +218,13 @@ check(/['"]text-pitch-alignment['"]\s*:\s*['"](?:map|viewport)['"]/.test(poiLaye
 check(/type\s*:\s*['"]circle['"]/.test(poiLayers.hitbox)
     && /['"]circle-opacity['"]\s*:\s*0(?:\.0+)?\b/.test(poiLayers.hitbox),
   'POI hitbox layer must provide transparent, map-native interaction targets.');
-check(/map\.on\(['"]click['"],\s*['"]zone-poi-hitbox['"]/.test(map),
-  'POI hitbox layer must own click selection.');
-check(/function nearbyVisiblePin\(point\)/.test(map) && /var pin=nearbyVisiblePin\(e\.point\)/.test(map) && /if\(pin\)\{[^}]*selectPin\(pin\);return;\}/.test(map),
+const renderedPinSelection=functionBody(map,['nearbyVisiblePin']);
+check(/\['zone-poi-icon','zone-poi-icon-service','zone-poi-icon-detail'\]/.test(renderedPinSelection) && /map\.queryRenderedFeatures\(area,\{layers:layers\}\)/.test(renderedPinSelection) && /pin&&pinDisplayed\(pin\)/.test(renderedPinSelection) && !/map\.project\(pin\._lngLat\)/.test(renderedPinSelection) && !map.includes("['zone-poi-hitbox','zone-poi-hitbox-detail'].forEach"), 'Only collision-accepted rendered symbols may own location clicks, at their actual rooftop elevation; hidden ground hitboxes must not steal territory taps.');
+check(/function nearbyVisiblePin\(point\)/.test(map) && /var pin=nearbyVisiblePin\(e\.point\)/.test(map) && /if\(pin\)\{[^}]*activatePin\(pin\);return;\}/.test(map),
   'Visible location icons must take priority over the block beneath them, including pitched 3D views.');
+const activatedPin=functionBody(map,['activatePin']);
+check(/parent!==window/.test(activatedPin) && /p\.screenAvailable!==false&&p\.screen/.test(activatedPin) && /parent\.postMessage\(\{zoneGo:p\.screen,MARKER_CLICK:p\.id,v:1\},location\.origin\)/.test(activatedPin) && /selectPin\(p\)/.test(activatedPin),
+  'One embedded location icon click must open its own available destination, while standalone previews and unavailable services retain details.');
 check(/\[hidden\]\s*\{\s*display\s*:\s*none\s*!important\s*\}/.test(map),
   'Hidden map controls must not remain visible through author display styles.');
 check(/el\.search\.onkeydown\s*=\s*function\(e\)[\s\S]{0,450}?mapMode===['"]territories['"][\s\S]{0,250}?el\.territories\.querySelectorAll\(['"]\.terr['"]\)/.test(map),
@@ -250,23 +253,24 @@ check(!/isPlayer\s*\?\s*PLAYER_COLOR/.test(map),
   'Map renderer must not override the server faction palette with a synthetic player color.');
 
 // Free camera contract. Users can pan, wheel-zoom, rotate, pitch, use touch,
-// and recover the whole-city view only through the explicit reset control.
+// and recover the focused ZONE view only through the explicit reset control.
 const mapConfig = balancedBlockAfter(map, 'new mapboxgl.Map(');
 check(Boolean(mapConfig), 'Mapbox constructor configuration could not be inspected.');
 for (const option of ['dragPan', 'scrollZoom', 'boxZoom', 'dragRotate', 'keyboard', 'doubleClickZoom', 'touchZoomRotate', 'touchPitch']) {
   check(new RegExp(`${option}\\s*:\\s*true`).test(mapConfig), `Free camera option must be enabled: ${option}.`);
 }
-check(numericOption(mapConfig, 'pitch') > 0, 'Map must open with perspective, not a forced top-down pitch of 0.');
-check(numericOption(mapConfig, 'bearing') !== 0, 'Map must open with a nonzero bearing, not a forced north-up view.');
+check(numericOption(mapConfig, 'pitch') === 0, 'The Torn-style strategy map must open overhead; 3D is an explicit player choice.');
+check(numericOption(mapConfig, 'bearing') === 0, 'The strategy map must open north-up so controls and locations are immediately readable.');
 check(numericOption(mapConfig, 'maxPitch') >= 60, 'Map camera must allow at least 60 degrees of pitch freedom.');
+check(numericOption(mapConfig, 'minZoom') >= 13 && numericOption(mapConfig, 'minZoom') <= 14 && map.includes('constrainCity(territoryData)'), 'City overview must allow the full authored city to fit on a phone and remain bounded.');
+check(/constrainCity\(territoryData\)/.test(map) && /map\.setMaxBounds\(bounds\)/.test(map), 'Camera bounds must cover the server-authored playable city.');
 check(/NavigationControl\(\{[^}]*visualizePitch\s*:\s*true/.test(map),
   'Navigation control must expose pitch and compass feedback.');
 check(/map\.dragRotate\.enable\(\)/.test(map) && /map\.touchZoomRotate\.enable\(\)/.test(map),
   'Mouse rotation and touch rotation must be explicitly active.');
 check(map.includes('id="cityReset"') && /cityReset\.onclick\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]{0,320}?fitCity/.test(map),
-  'Whole-city fitting must remain available through an explicit reset control.');
-check(/type:'fill-extrusion'/.test(functionBody(map, ['ensureBuildings'])),
-  'The classic basemap must include a real building extrusion layer.');
+  'Focused ZONE fitting must remain available through an explicit reset control.');
+check(rendererSource.includes("type:'fill-extrusion'") && rendererSource.includes("'source-layer':'building'") && rendererSource.includes('mapbox://mapbox.mapbox-streets-v8'), 'Perspective uses genuine Streets v8 building footprints, heights and vector tiles.');
 check(map.includes("'fill-opacity':0"), 'Territory geometry must remain invisible.');
 check(!/setConfigProperty\s*\(/.test(map),
   'The classic dark-v11 basemap must not receive Standard-only import configuration.');
@@ -338,9 +342,10 @@ check(map.includes('mapbox-gl-rtl-text'), 'Mapbox must load Arabic RTL shaping s
 
 // Preserve shell and semantic icon integration around the territory rewrite.
 check(index.includes('class="zone-city-map-shell"'), 'Live city map must keep its responsive shell.');
-check(/\.zone-city-map-shell\s*\{[^}]*height:\s*500px/.test(designCss),
-  'Desktop map must retain the requested compact family viewport.');
-check(index.includes('allow="fullscreen" allowfullscreen'), 'Map iframe must authorize fullscreen mode.');
+const desktopMapHeight=Number(designCss.match(/\.zone-city-map-shell\s*\{[^}]*height:\s*(\d+)px/)?.[1]);
+check(desktopMapHeight>=360&&desktopMapHeight<=500,
+  'District desktop map has a bounded viewport between 360 and 500 pixels, with fullscreen available.');
+check(/<iframe\b[^>]*\bid="zone-city-map"[^>]*\ballow="[^"]*\bfullscreen\b[^"]*"/.test(index), 'Map iframe must authorize fullscreen mode.');
 check(index.includes('dist/map-icons.js') && localMapScripts.some(ref => new URL(ref, mapUrl).pathname.endsWith('/map-icons.js')) && map.includes('window.ZONE_MAP_ICONS'),
   'Parent and iframe must retain the shared semantic icon registry.');
 for (const icon of ['gym', 'education', 'jobs', 'attack', 'cash', 'market', 'casino', 'crimes', 'faction', 'hospital', 'jail', 'properties', 'items']) {
@@ -349,6 +354,8 @@ for (const icon of ['gym', 'education', 'jobs', 'attack', 'cash', 'market', 'cas
 
 const runtime = verifyMapRuntime(map);
 failures.push(...runtime.failures);
+const atlas = verifyMapAtlas();
+failures.push(...atlas.failures);
 
 if (failures.length) {
   console.error(`ZONE territory map verification failed with ${failures.length} issue(s):`);
@@ -356,4 +363,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`ZONE territory map verification passed: 120 server-authored blocks, compact family summary, invisible hit geometry, block actions and adjacency, bilingual details, a user-controlled free camera, and ${runtime.checks} executable map regressions.`);
+console.log(`ZONE territory map verification passed: genuine Streets v8 vector district, 120 unchanged server-authored blocks, compact family summary, invisible hit geometry, block actions and adjacency, bilingual details, a free camera, ${runtime.checks} executable map regressions, and ${atlas.checks} retained legacy asset checks. Legacy atlas geometry is not imported by the current map.`);

@@ -499,6 +499,21 @@
   ],
   "opponents": [
     {
+      "id": "dockside-rookie",
+      "lvl": 1,
+      "str": 10,
+      "def": 10,
+      "spd": 10,
+      "dex": 10,
+      "life": 120,
+      "cash": 1200,
+      "name": {"en": "Dockside Rookie", "ar": "مبتدئ المرفأ"},
+      "description": {
+        "en": "A novice city opponent with normal combat risk. Build your first win here; defeat still causes hospitalization.",
+        "ar": "خصم مبتدئ بمخاطر القتال المعتادة. ابدأ انتصارك الأول هنا؛ الهزيمة تؤدي إلى المستشفى."
+      }
+    },
+    {
       "id": "rayan",
       "lvl": 9,
       "str": 120,

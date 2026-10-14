@@ -1,0 +1,58 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__) . '/bootstrap.php';
+use Zone\Engine\Core\Persistence\Database;
+use Zone\Engine\Core\Security\BrowserSessions;
+use Zone\Engine\Core\Security\PlayerAccounts;
+
+$db = Database::connect('sqlite::memory:'); $db->migrateAndSeed();
+$sessions = new BrowserSessions($db); $accounts = new PlayerAccounts($db);
+$now = 1791230000; $passed = 0;
+function accountProof(bool $ok, string $label): void { global $passed; if (!$ok) throw new RuntimeException('FAIL: ' . $label); $passed++; echo 'PASS: ' . $label . PHP_EOL; }
+function accountReject(callable $fn): bool { try { $fn(); } catch (RuntimeException|InvalidArgumentException) { return true; } return false; }
+$guest = $sessions->create('guest-a', $now); $other = $sessions->create('guest-b', $now);
+$db->execute('UPDATE players SET cash = 1234, bank_balance = 700, strength = 77 WHERE id = :id', ['id' => $guest['playerId']]);
+$db->execute('INSERT INTO player_progression (player_id, state_json, version, updated_at) VALUES (:id, :state, 8, :now)', ['id' => $guest['playerId'], 'state' => '{"inv":{"drink":2},"equip":"fists"}', 'now' => gmdate('c', $now)]);
+$db->execute('INSERT INTO faction_members (player_id, faction_id, role, joined_at) VALUES (:id, :faction, :role, :now)', ['id' => $guest['playerId'], 'faction' => 'vipers', 'role' => 'member', 'now' => gmdate('c', $now)]);
+accountProof(!$accounts->status($guest['token'], $now)['claimed'], 'guest has an explicit unclaimed status');
+foreach (['ab', 'admin', 'player_fake', '1player', 'bad name', str_repeat('a', 25)] as $name) accountProof(accountReject(fn () => $accounts->claim($guest['token'], $name, 'long unique beta password', 'invalid-name-' . $name, $now)), 'reject invalid or reserved name: ' . $name);
+accountProof(accountReject(fn () => $accounts->claim($guest['token'], 'Keeper', 'short', 'short-pass', $now)), 'short password rejected without creating credentials');
+accountProof(accountReject(fn () => $accounts->claim($guest['token'], 'Keeper', str_repeat('a', 129), 'long-pass', $now)), 'overlong password is not silently truncated');
+accountProof(accountReject(fn () => $accounts->claim($guest['token'], 'Keeper', "long password\0payload", 'null-pass', $now)), 'null bytes cannot enter the password hash');
+accountProof(accountReject(fn () => $accounts->claim(str_repeat('a', 64), 'Keeper', 'long unique beta password', 'unauthorized', $now)), 'claim requires the current server session');
+$claim = $accounts->claim($guest['token'], 'Keeper', 'long unique beta password', 'claim', $now);
+$saved = $db->fetchOne('SELECT * FROM player_credentials WHERE player_id = :id', ['id' => $guest['playerId']]);
+accountProof($claim['playerId'] === $guest['playerId'] && $claim['token'] !== $guest['token'], 'claim keeps the same character and rotates its session');
+accountProof(accountReject(fn () => $sessions->resolve($guest['token'], $now)), 'pre-claim session is revoked');
+accountProof($accounts->status($claim['token'], $now)['claimed'] && $accounts->status($claim['token'], $now)['username'] === 'Keeper', 'claimed status and display name are authoritative');
+accountProof(str_starts_with($saved['password_hash'], '$argon2id$') && password_verify('long unique beta password', $saved['password_hash']), 'available PHP Argon2id stores a verified slow hash, not the password');
+accountProof($saved['recovery_hash'] === hash('sha256', $claim['recoveryCode']) && $saved['recovery_hash'] !== $claim['recoveryCode'], 'high-entropy recovery code is stored only as a hash');
+accountProof(!isset($accounts->status($claim['token'], $now)['password_hash'], $accounts->status($claim['token'], $now)['recoveryCode']), 'account status never exposes password or recovery material');
+accountProof(accountReject(fn () => $accounts->claim($claim['token'], 'KeeperAgain', 'different long password', 'reclaim', $now)), 'a claimed character cannot overwrite credentials through claim');
+accountProof(accountReject(fn () => $accounts->claim($other['token'], 'kEEPER', 'different long password', 'collision', $now)), 'username uniqueness is case-insensitive');
+accountProof(accountReject(fn () => $accounts->login('Keeper', 'incorrect long password', 'bad-login', '', $now)), 'wrong password rejects login');
+accountProof(accountReject(fn () => $accounts->login('Unknown', 'incorrect long password', 'unknown-login', '', $now)), 'unknown account uses the same generic login failure');
+$login = $accounts->login('kEePeR', 'long unique beta password', 'login', '', $now + 1);
+accountProof($sessions->resolve($login['token'], $now + 2) === $guest['playerId'], 'another device signs in to the existing character without a guest grant');
+$sessions->revoke($login['token']);
+accountProof(accountReject(fn () => $sessions->resolve($login['token'], $now + 2)), 'logout revokes only access, not the character');
+$login = $accounts->login('Keeper', 'long unique beta password', 'second-login', '', $now + 2);
+accountProof(accountReject(fn () => $accounts->recover('Keeper', str_repeat('b', 64), 'new long unique password', 'bad-recover', $now + 3)), 'wrong recovery code cannot reset a password');
+$recovered = $accounts->recover('Keeper', $claim['recoveryCode'], 'new long unique password', 'recover', $now + 3);
+accountProof($recovered['playerId'] === $guest['playerId'] && $recovered['recoveryCode'] !== $claim['recoveryCode'], 'recovery keeps the character and replaces the single-use backup code');
+accountProof(accountReject(fn () => $sessions->resolve($claim['token'], $now + 4)) && accountReject(fn () => $sessions->resolve($login['token'], $now + 4)), 'recovery revokes sessions on every prior device');
+accountProof(accountReject(fn () => $accounts->recover('Keeper', $claim['recoveryCode'], 'replayed long password', 'replay', $now + 4)), 'used recovery code cannot be replayed');
+accountProof(accountReject(fn () => $accounts->login('Keeper', 'long unique beta password', 'old-password', '', $now + 4)), 'recovered account rejects its old password');
+accountProof($accounts->login('Keeper', 'new long unique password', 'new-password', '', $now + 4)['playerId'] === $guest['playerId'], 'replacement password restores account access');
+$state = $db->fetchOne('SELECT cash, bank_balance, strength FROM players WHERE id = :id', ['id' => $guest['playerId']]);
+accountProof((int) $state['cash'] === 1234 && (int) $state['bank_balance'] === 700 && (int) $state['strength'] === 77, 'claim, login and recovery preserve money, savings and training');
+$progress = $db->fetchOne('SELECT state_json, version FROM player_progression WHERE player_id = :id', ['id' => $guest['playerId']]);
+accountProof(json_decode($progress['state_json'], true)['inv']['drink'] === 2 && (int) $progress['version'] === 8, 'inventory and progression version are untouched');
+accountProof($db->fetchOne('SELECT faction_id FROM faction_members WHERE player_id = :id', ['id' => $guest['playerId']])['faction_id'] === 'vipers', 'saved family membership survives recovery');
+accountProof((int) $db->fetchOne('SELECT COUNT(*) AS total FROM economy_ledger WHERE player_id = :id', ['id' => $guest['playerId']])['total'] === 1, 'no repeated starting grant or hidden money movement');
+accountProof($sessions->resolve($other['token'], $now + 4) === $other['playerId'], 'another player remains signed in and untouched');
+for ($i = 0; $i < 10; $i++) accountReject(fn () => $accounts->login('Keeper', 'incorrect long password', 'brute-force', '', $now));
+accountProof(accountReject(fn () => $accounts->login('Keeper', 'new long unique password', 'brute-force', '', $now + 1)), 'eleventh account attempt in 15 minutes is throttled');
+accountProof($accounts->login('Keeper', 'new long unique password', 'brute-force', '', $now + 900)['playerId'] === $guest['playerId'], 'account throttle resets by the server clock');
+accountProof($db->fetchOne("SELECT id FROM account_security_events WHERE action = 'recovered'") !== null, 'account security events are retained without credentials');
+echo "PLAYER ACCOUNTS RESULT: {$passed} passed, 0 failed\n";

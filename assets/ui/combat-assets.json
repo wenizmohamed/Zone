@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "opponentAppearance": "Representative generic rig. Server does not publish opponent appearance or equipment.",
+  "audio": "Opt-in original synthesized event cues. Block cue requires an explicit blocked server field; current engine only emits hit/miss.",
+  "assets": [
+    {
+      "path": "assets/character/quaternius/Suit.glb",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "assets/character/quaternius/Casual_Hoodie.glb",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "assets/character/quaternius/Swat.glb",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "source": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "assets/ui/combat-audio/hit.wav",
+      "author": "ZONE original synthesis",
+      "license": "Original project asset",
+      "event": "hit",
+      "format": "PCM16 mono 22050Hz",
+      "method": "Seed9471 envelope-shaped noise/oscillator. No speech or realistic firearm claim."
+    },
+    {
+      "path": "assets/ui/combat-audio/miss.wav",
+      "author": "ZONE original synthesis",
+      "license": "Original project asset",
+      "event": "miss",
+      "format": "PCM16 mono 22050Hz",
+      "method": "Seed9471 envelope-shaped noise/oscillator. No speech or realistic firearm claim."
+    },
+    {
+      "path": "assets/ui/combat-audio/block.wav",
+      "author": "ZONE original synthesis",
+      "license": "Original project asset",
+      "event": "block",
+      "format": "PCM16 mono 22050Hz",
+      "method": "Seed9471 envelope-shaped noise/oscillator. No speech or realistic firearm claim."
+    },
+    {
+      "path": "assets/character/stage/brick_wall_04_Diffuse_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    },
+    {
+      "path": "assets/character/stage/brick_wall_04_nor_gl_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    },
+    {
+      "path": "assets/character/stage/brick_wall_04_Rough_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    },
+    {
+      "path": "assets/character/stage/concrete_floor_02_Diffuse_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    },
+    {
+      "path": "assets/character/stage/concrete_floor_02_nor_gl_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    },
+    {
+      "path": "assets/character/stage/concrete_floor_02_Rough_1k.jpg",
+      "author": "Poly Haven",
+      "license": "CC0-1.0",
+      "source": "See assets/character/stage/PROVENANCE.json"
+    }
+  ]
+}

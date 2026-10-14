@@ -1,0 +1,86 @@
+{
+  "source_page": "https://polyyai.itch.io/3d-low-poly-guns-pack",
+  "author": "Polyy.AI",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+  "license_file": "3D_low_poly_guns_pack_low/LICENSE.txt",
+  "readme_file": "3D_low_poly_guns_pack_low/README.txt",
+  "acquiredAt": "2026-10-13",
+  "downloadFlow": "Author public free download, no payment, no account or authentication bypass. Low-poly LOD upload 19079088.",
+  "aiDisclosure": "Author page: AI Assisted / Graphics. Author README: generated with polyy.ai.",
+  "resaleClarification": "Complete author LICENSE.txt explicitly states the unmodified-pack resale request is not a legal condition. This project integrates selected models, not an unmodified asset pack resale.",
+  "sourceArchive": {
+    "path": "artifacts/visual98-20261013/asset-research/polyy/3D_low_poly_guns_pack_low.zip",
+    "bytes": 45985141,
+    "sha256": "fa733afd61cc2136ffa28c6d50cf6241fc2762ac2668455d307fceac748bda8e"
+  },
+  "adaptations": "Original GLB geometry and images retained. Display-only measured rotation, uniform physical scale and grip normalization. No invented textures, normal map or real-world caliber claim.",
+  "assets": [
+    {
+      "id": "polyy-six-shot-revolver-low",
+      "gameKey": "magnum",
+      "path": "assets/weapons/premium/polyy-low/3D_low_poly_guns_pack_low/models/six_shot_revolver_low.glb",
+      "source": "https://polyyai.itch.io/3d-low-poly-guns-pack",
+      "author": "Polyy.AI",
+      "license": "CC0-1.0",
+      "bytes": 2402552,
+      "sha256": "0165653ba7e03bdd4fe16aff19056415e1904bd0ba8edaec6c5c08c7cd0ba51e",
+      "triangles": 6956,
+      "materials": 1,
+      "images": 2,
+      "triangleBudget": 10000,
+      "textureBudgetBytes": 50331648,
+      "aiAssisted": true,
+      "normalMap": false,
+      "surfaceMaps": [
+        "baseColor",
+        "metallicRoughness"
+      ],
+      "sourceFile": "six_shot_revolver_low.glb"
+    },
+    {
+      "id": "polyy-sawed-off-double-barrel-low",
+      "gameKey": "sawedoff",
+      "path": "assets/weapons/premium/polyy-low/3D_low_poly_guns_pack_low/models/sawed_off_double_barrel_low.glb",
+      "source": "https://polyyai.itch.io/3d-low-poly-guns-pack",
+      "author": "Polyy.AI",
+      "license": "CC0-1.0",
+      "bytes": 1907284,
+      "sha256": "53043a835bf23da70e314d2379b233a971545d3afe39e254f406a52e87b5940d",
+      "triangles": 3299,
+      "materials": 1,
+      "images": 2,
+      "triangleBudget": 10000,
+      "textureBudgetBytes": 50331648,
+      "aiAssisted": true,
+      "normalMap": false,
+      "surfaceMaps": [
+        "baseColor",
+        "metallicRoughness"
+      ],
+      "sourceFile": "sawed_off_double_barrel_low.glb"
+    },
+    {
+      "id": "polyy-bullpup-rifle-low",
+      "gameKey": "bullpup_1",
+      "path": "assets/weapons/premium/polyy-low/3D_low_poly_guns_pack_low/models/bullpup_rifle_low.glb",
+      "source": "https://polyyai.itch.io/3d-low-poly-guns-pack",
+      "author": "Polyy.AI",
+      "license": "CC0-1.0",
+      "bytes": 2633112,
+      "sha256": "0fb02f3078834963aaf31034a717e555951690960dd4bd4973e2a98ae9edbfda",
+      "triangles": 8067,
+      "materials": 1,
+      "images": 2,
+      "triangleBudget": 10000,
+      "textureBudgetBytes": 50331648,
+      "aiAssisted": true,
+      "normalMap": false,
+      "surfaceMaps": [
+        "baseColor",
+        "metallicRoughness"
+      ],
+      "sourceFile": "bullpup_rifle_low.glb"
+    }
+  ]
+}

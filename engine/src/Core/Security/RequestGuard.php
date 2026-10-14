@@ -23,6 +23,7 @@ use RuntimeException;
  */
 final class RequestGuard
 {
+    public const ADMIN_COOKIE = 'zone_admin_session';
     /** Canonical player-id shape: lowercase, digits and hyphens, 3-64 chars. */
     public const PLAYER_ID_PATTERN = '/^[a-z0-9][a-z0-9-]{2,63}$/';
 
@@ -41,6 +42,7 @@ final class RequestGuard
 
         if ($adminToken !== null && $adminToken !== '') {
             $provided = trim((string) ($server['HTTP_X_ZONE_ADMIN_TOKEN'] ?? ''));
+            if (self::validAdminSession(self::cookie($server, self::ADMIN_COOKIE), $adminToken)) return 'admin-session';
             if ($provided === '' || !hash_equals($adminToken, $provided)) {
                 throw new RuntimeException('Admin authentication required.');
             }
@@ -82,6 +84,29 @@ final class RequestGuard
         if ($originParts === null || $requestParts === null || $originParts !== $requestParts) {
             throw new RuntimeException('Cross-origin admin request rejected.');
         }
+    }
+
+    public static function cookie(array $server, string $name): string
+    {
+        foreach (explode(';', (string) ($server['HTTP_COOKIE'] ?? '')) as $part) {
+            $pair = explode('=', trim($part), 2);
+            if (($pair[0] ?? '') === $name) return rawurldecode($pair[1] ?? '');
+        }
+        return '';
+    }
+
+    public static function adminSession(string $secret, ?int $now = null): string
+    {
+        $payload = (string) (($now ?? time()) + 43200) . '.' . bin2hex(random_bytes(16));
+        return $payload . '.' . hash_hmac('sha256', 'admin-session:' . $payload, $secret);
+    }
+
+    public static function validAdminSession(string $cookie, string $secret, ?int $now = null): bool
+    {
+        if (!preg_match('/^([0-9]{10,11})\.([a-f0-9]{32})\.([a-f0-9]{64})$/', $cookie, $match)) return false;
+        $now ??= time();
+        if ((int) $match[1] <= $now || (int) $match[1] > $now + 43200) return false;
+        return hash_equals(hash_hmac('sha256', 'admin-session:' . $match[1] . '.' . $match[2], $secret), $match[3]);
     }
 
     /** @return array{string, string, int}|null */

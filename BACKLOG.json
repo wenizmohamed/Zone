@@ -1,0 +1,307 @@
+{
+  "deadline": "2026-10-21",
+  "timezone": "Asia/Dubai",
+  "updatedAt": "2026-10-14",
+  "audience": "Owner launch decision pending; current access unchanged",
+  "items": [
+    {
+      "id": "OPS-01",
+      "severity": "P1",
+      "status": "owner-decision-pending",
+      "department": "Infrastructure",
+      "impact": "Live game depends on owner's PC, local PG/PHP and reverse tunnel",
+      "reproduction": "Inspect engine/bin/start-local.ps1, keep-public-beta.ps1 and live PIDs 22352/81276/2812",
+      "dependencies": [
+        "hosting target",
+        "isolated migration/backup"
+      ],
+      "acceptance": "Hosted stack remains ready with owner PC unavailable; restore rehearsed away from live DB",
+      "evidence": "Read-only registered relay VPS has no PHP or Docker, 2026-10-14"
+    },
+    {
+      "id": "ACCESS-01",
+      "severity": "P1",
+      "status": "owner-decision-pending",
+      "department": "Infrastructure and Security",
+      "impact": "Owner signed-in access is not invited/public tester access; current beta owner shortcut must not become ordinary-player admin authority",
+      "reproduction": "Anonymous request reaches Vercel authentication; signed-in browser reaches JSON health",
+      "dependencies": [
+        "audience/access arrangement"
+      ],
+      "acceptance": "Two ordinary invited/public accounts enter intended layer and cannot enter admin/playtest",
+      "evidence": "v104 live-verification.json; isolated production-mode first-session access checks"
+    },
+    {
+      "id": "SOURCE-01",
+      "severity": "P1",
+      "status": "in-progress",
+      "department": "Technical direction",
+      "impact": "GitHub main alone would rebuild older code than working deployment",
+      "reproduction": "Local and remote main 4bec6cb with 224 dirty entries; v104 built from export",
+      "dependencies": [
+        "verified current export"
+      ],
+      "acceptance": "Clean committed checkout builds identical accepted world assets and verified runtime",
+      "evidence": "launch/2026-10-21 isolated source baseline 08e53899"
+    },
+    {
+      "id": "STUDIO-01",
+      "severity": "P1",
+      "status": "implemented-awaiting-release",
+      "department": "Admin",
+      "impact": "Editing crime rewards can silently remove its level requirement",
+      "reproduction": "Old form omitted level_required; backend defaulted to 1",
+      "dependencies": [],
+      "acceptance": "EN/AR form saves explicit gate and late response preserves newer field",
+      "evidence": "Studio commit b6fef69; red-before/green-after regressions"
+    },
+    {
+      "id": "STUDIO-02",
+      "severity": "P2",
+      "status": "implemented-awaiting-release",
+      "department": "Admin",
+      "impact": "Delayed save changes the editor after switching categories",
+      "reproduction": "Create entry then select another category before response",
+      "dependencies": [],
+      "acceptance": "Selected editor and pending fields retained; saved entry resumes by canonical ID",
+      "evidence": "Studio delayed-ack regression"
+    },
+    {
+      "id": "MEDIA-01",
+      "severity": "P1",
+      "status": "implemented-awaiting-release",
+      "department": "Technical art",
+      "impact": "Rejected character assets retry forever and stalled loads lack deadline",
+      "reproduction": "Actual baseline rejected load plus 25 heartbeat repaints caused 26 loader calls",
+      "dependencies": [],
+      "acceptance": "One failed request, bounded timeout, explicit localized retry, cleanup and render pause",
+      "evidence": "Media commit a92e18b; 64 focused tests; actual AR context-loss/recovery inspected"
+    },
+    {
+      "id": "NAV-01",
+      "severity": "P2",
+      "status": "implemented-awaiting-release",
+      "department": "UI/UX",
+      "impact": "New sections inherit arbitrary scroll and keyboard focus",
+      "reproduction": "Go from scrolled Crimes to Bank; focus remains BODY",
+      "dependencies": [],
+      "acceptance": "Heading gets focus; Back restores matching saved viewport; rapid navigation fenced",
+      "evidence": "8 navigation tests and 19 AR phone route checks"
+    },
+    {
+      "id": "RULES-01",
+      "severity": "P1",
+      "status": "todo",
+      "department": "Backend",
+      "impact": "Historical consequential receipts cannot identify exact immutable release rules after rollback",
+      "reproduction": "CrimeSucceeded and ProgressionAction payloads contain correlation but no pinned content release",
+      "dependencies": [
+        "atomic rules snapshot identity"
+      ],
+      "acceptance": "Action records exact rules used despite concurrent publish; rollback retains ledger/history",
+      "evidence": "Current event payload code and Studio publish/rollback proof"
+    },
+    {
+      "id": "QA-01",
+      "severity": "P1",
+      "status": "in-progress",
+      "department": "QA",
+      "impact": "A route count does not certify a complete beta journey",
+      "reproduction": "First-session browser crime/reload tested; remaining full route interactions not yet certified",
+      "dependencies": [
+        "all vertical slice checks"
+      ],
+      "acceptance": "Two ordinary browser sessions complete first/return play, progression, economy, EN/AR mobile and error paths",
+      "evidence": "45 ordinary HTTP checks; 37 Studio checks; 201 isolated PG checks"
+    },
+    {
+      "id": "OPS-02",
+      "severity": "P1",
+      "status": "todo",
+      "department": "Infrastructure",
+      "impact": "Backup configuration without restore proof is not recovery",
+      "reproduction": "Current full launch restore not rehearsed in this pass",
+      "dependencies": [
+        "hosting/data target"
+      ],
+      "acceptance": "Named isolated restore matches durable state; measured RTO/RPO; no live restore",
+      "evidence": "Pending"
+    },
+    {
+      "id": "PERF-01",
+      "severity": "P1",
+      "status": "todo",
+      "department": "QA and Frontend",
+      "impact": "Capacity/device tier not yet measured for intended audience",
+      "reproduction": "Prior finite page/read checks are not launch player-count proof",
+      "dependencies": [
+        "audience",
+        "isolated representative dataset"
+      ],
+      "acceptance": "Recorded profile, workload, concurrency, p50/p95, media weights/FPS/CLS and stop thresholds",
+      "evidence": "Pending"
+    },
+    {
+      "id": "CONTENT-01",
+      "severity": "P2",
+      "status": "todo",
+      "department": "Admin and Art",
+      "impact": "Registered image/model selection is not arbitrary asset upload; crime image authoring absent",
+      "reproduction": "Studio uses packaged paths/model IDs and crime schema has no image",
+      "dependencies": [
+        "supported storage/upload contract"
+      ],
+      "acceptance": "Truthful operator capabilities; validate intended asset workflow without unsafe upload",
+      "evidence": "Current form/schema and Studio audit"
+    },
+    {
+      "id": "ART-01",
+      "severity": "P2",
+      "status": "todo",
+      "department": "Art direction",
+      "impact": "Location scenes and full outfit/equipment motion still need in-context review",
+      "reproduction": "One AR suit and viewer failure inspected; all shipped motion not yet visually accepted",
+      "dependencies": [
+        "screenshots",
+        "3D inspection"
+      ],
+      "acceptance": "Inspect every outfit/weapon, head/hands/shoes and distinct usable location screens",
+      "evidence": "Current approved assets retained"
+    }
+  ],
+  "routes": [
+    {
+      "id": "home",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "items",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "city",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "jobs",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "bank",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "gym",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "properties",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "education",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "crimes",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "missions",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "newspaper",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "jail",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "hospital",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "casino",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "hof",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "faction",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "elimination",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "attack",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    },
+    {
+      "id": "market",
+      "classification": null,
+      "verificationStatus": "rendered Arabic phone baseline; full feature acceptance pending",
+      "owner": "Player vertical slice",
+      "evidence": "19-route 375px Arabic ordinary-player sweep: correct headings/focus, no observed overflow or broken visible images; not action certification"
+    }
+  ]
+}

@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, WEAPON_ASSETS } from '../dist/weapon-assets.js';
+import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
+import { computeWeaponFrame } from '../dist/weapon-presentation.js';
 import vm from 'node:vm';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -128,10 +130,18 @@ function inspectObj(path) {
 test('Selected premium weapon manifest has local assets, provenance and valid geometry/resources', t => {
   assert.ok(existsSync(manifestPath), 'premium assets need their canonical manifest before release');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  const weaponBase = resolve(root, 'assets/weapons');
+  const librarySources = JSON.parse(readFileSync(localPath('library/sources.json', weaponBase), 'utf8'));
   const models = Object.values(WEAPON_ASSETS); assert.ok(models.length > 0, 'no selected premium weapon models');
   for (const descriptor of models) {
-    const id = descriptor.id, asset = manifest.assets.find(asset => asset.path === `assets/weapons/${descriptor.url}`);
+    const id = descriptor.id, sourceManifest = descriptor.sourceManifest
+      ? JSON.parse(readFileSync(localPath(descriptor.sourceManifest, weaponBase), 'utf8')) : null;
+    const libraryModel = sourceManifest?.models?.find(model => model.id === id);
+    const asset = libraryModel ? { ...libraryModel, path: libraryModel.modelUrl.slice(1), source: libraryModel.sourceUrl,
+      triangleBudget: 12000, textureBudgetBytes: 32 * 1024 * 1024 }
+      : (sourceManifest || manifest).assets.find(asset => asset.path === `assets/weapons/${descriptor.url}`);
     assert.ok(asset, `${id} is selected at runtime but missing its canonical provenance entry`);
+    assert.equal(asset.path, `assets/weapons/${descriptor.url}`, `${id} selected URL differs from retained provenance`);
     assert.match(asset.source, /^https:\/\//); assert.ok(asset.license && asset.author, `${id} needs source license and author`);
     const format = descriptor.format || descriptor.url.split('.').at(-1);
     assert.ok(['glb','obj'].includes(format), `${id} unsupported runtime format`);
@@ -142,9 +152,29 @@ test('Selected premium weapon manifest has local assets, provenance and valid ge
     assert.ok(Array.isArray(descriptor.grip) && descriptor.grip.length === 3 && descriptor.grip.every(Number.isFinite), `${id} missing measured grip metadata`);
     assert.ok(Number.isFinite(descriptor.scale) && descriptor.scale > 0, `${id} invalid scale`);
     assert.equal(descriptor.source, asset.source); assert.equal(descriptor.license, asset.license); assert.equal(descriptor.author, asset.author);
-    const source = JSON.parse(readFileSync(localPath('source.json',dirname(path)),'utf8'));
-    assert.equal(source.source_page, asset.source); assert.equal(source.license, asset.license);
-    assert.ok(readFileSync(localPath('LICENSE.txt',dirname(path)),'utf8').trim().length > 20, `${id} missing retained license`);
+    if (libraryModel) {
+      const evidence = librarySources.sources.find(source => source.url === asset.source);
+      assert.ok(evidence && evidence.author === asset.author && evidence.license === asset.license, `${id} no matching retained author/license evidence`);
+      assert.match(evidence.licenseEvidenceUrl, /^https:\/\//); assert.match(evidence.evidenceSha256, /^[a-f0-9]{64}$/);
+      assert.match(libraryModel.provenance.originalSha256, /^[a-f0-9]{64}$/);
+      assert.match(libraryModel.provenance.downloadUrl, /^https:\/\//);
+      assert.equal(libraryModel.images, actual.images.length);
+      assert.ok(actual.gltf.materials.some(material => material.pbrMetallicRoughness?.baseColorTexture && material.normalTexture), `${id} retained detailed model must retain its real color and normal maps`);
+    } else {
+      const source = asset.path.startsWith('assets/weapons/premium/v99/')
+        ? JSON.parse(readFileSync(localPath('SOURCES.json',dirname(path)),'utf8')).sources.find(source=>source.source_page===asset.source)
+        : sourceManifest || JSON.parse(readFileSync(localPath('source.json',dirname(path)),'utf8'));
+      assert.ok(source, `${id} has no retained primary-source license record`);
+      assert.equal(source.source_page, asset.source); assert.equal(source.license, asset.license);
+      const licensePath = sourceManifest ? localPath(source.license_file, dirname(localPath(descriptor.sourceManifest, weaponBase))) : localPath('LICENSE.txt', dirname(path));
+      assert.ok(readFileSync(licensePath, 'utf8').trim().length > 20, `${id} missing retained license`);
+      if (descriptor.aiAssisted) {
+        assert.equal(asset.aiAssisted, true); assert.match(source.aiDisclosure, /generated with polyy\.ai/);
+        assert.equal(actual.images.length, 2); assert.equal(asset.normalMap, false);
+        assert.ok(actual.gltf.materials.every(material => !material.normalTexture), `${id} may not invent a normal map`);
+        assert.match(readFileSync(licensePath, 'utf8'), /not a legal condition/);
+      }
+    }
     if (asset.triangleBudget !== undefined) assert.ok(actual.triangles <= asset.triangleBudget, `${id} exceeds approved triangle budget`);
     if (asset.textureBudgetBytes !== undefined) {
       const textureBytes = actual.images.reduce((sum, image) => sum + image.dimensions[0] * image.dimensions[1] * 4 * 4 / 3, 0);
@@ -320,6 +350,56 @@ test('Actual premium knife centers the handle rather than the guard and preserve
   assert.equal(descriptor.forward,false); assert.deepEqual(descriptor.axis,[1,0,0]);
   t.diagnostic(`M9: ${(size.x*100).toFixed(1)}cm long; handle side surfaces ${handleHits.map(value=>(value*1000).toFixed(1)).join('/')}mm`);
 });
+
+for (const [key, minLength, maxLength] of [
+  ['pistol_t', .15, .23], ['shotgun', .9, 1.15], ['smg', .55, .75], ['sniper', .95, 1.2],
+  ['assaultrifle_1', .75, .95], ['magnum', .28, .36], ['sawedoff', .60, .68], ['bullpup_1', .6, .8],
+  ['luger', .23, .26], ['ak47', .85, .90], ['suomi', .85, .90], ['g3a3', .95, 1.0],
+  ['mosin', 1.2, 1.3], ['dragunov', 1.15, 1.25], ['m1911', .20, .23]
+]) {
+  test(`Actual upgraded ${key} has a solid measured grip, physical scale, unclipped frame and centered character attachment`, async t => {
+    const descriptor = resolveWeaponAsset(key), gltf = await geometryOnlyGlb(localPath(descriptor.url, resolve(root, 'assets/weapons')));
+    const normalized = normalizeWeaponAsset(THREE, gltf.scene, descriptor), box = new THREE.Box3().setFromObject(normalized);
+    const size = box.getSize(new THREE.Vector3());
+    assert.ok(size.x >= minLength && size.x <= maxLength && size.x > size.z * 3, `${key} wrong physical size or muzzle axis`);
+    const hits = [-1, 1].map(side => {
+      const hit = new THREE.Raycaster(new THREE.Vector3(0, 0, side * .15), new THREE.Vector3(0, 0, -side)).intersectObject(normalized, true)[0];
+      assert.ok(hit, `${key} grip is in empty space rather than actual source triangles`);
+      assert.ok(hit.point.z * side >= .002 && hit.point.z * side <= .04, `${key} grip is not between its handle surfaces`);
+      return hit.point.z;
+    });
+    assert.ok(Math.abs(hits[0] + hits[1]) <= .001, `${key} grip is laterally off-center in the real handle`);
+    assert.ok(box.max.x > size.x * .45 && box.max.x > -box.min.x, `${key} muzzle points into the stock/forearm`);
+    assert.deepEqual(normalized.userData.zoneWeaponAsset.gripPoint, [0, 0, 0]);
+    if (key === 'pistol_t') assert.equal(normalized.getObjectByName('Magazine'), undefined, 'loose source magazine must not float beside the assembled pistol');
+    for (const aspect of [1.9, 390 / 330, 320 / 270]) {
+      const frame = computeWeaponFrame(THREE, box, aspect), camera = new THREE.PerspectiveCamera(38, aspect, frame.near, frame.far);
+      camera.position.copy(frame.position); camera.lookAt(frame.target); camera.updateMatrixWorld(true);
+      for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+        const point = new THREE.Vector3(x, y, z).project(camera);
+        assert.ok(Math.abs(point.x) < 1 && Math.abs(point.y) < 1 && Math.abs(point.z) < 1, `${key} clipped at aspect ${aspect}`);
+      }
+    }
+    for (const wardrobe of ['Suit', 'Casual_Hoodie', 'Swat']) {
+      const character = await geometryOnlyGlb(localPath(`assets/character/quaternius/${wardrobe}.glb`));
+      const characterRoot = character.scene, rig = prepareCharacterGrip(THREE, characterRoot, Object.fromEntries(character.animations.map(clip => [clip.name, clip])));
+      const instance = normalized.clone(true), fit = instance.userData.zoneWeaponAsset;
+      const hold = attachHeldWeapon(THREE, rig, instance, fit.gripPoint, fit.axis, fit.forward);
+      applyCharacterGrip(rig); characterRoot.updateMatrixWorld(true);
+      const origin = rig.hand.worldToLocal(instance.localToWorld(new THREE.Vector3()));
+      assert.ok(origin.distanceTo(rig.center) < 1e-5, `${key}/${wardrobe} normalized handle floats away from the hand socket`);
+      const barrel = rig.hand.worldToLocal(instance.localToWorld(new THREE.Vector3(1, 0, 0))).sub(origin).normalize();
+      const expected = new THREE.Vector3(0, 1, 0).projectOnPlane(rig.axis).normalize();
+      assert.ok(barrel.dot(expected) > .99999 && barrel.y > .8, `${key}/${wardrobe} barrel axis points into the forearm`);
+      const down = rig.hand.worldToLocal(instance.localToWorld(new THREE.Vector3(0, -1, 0))).sub(origin).normalize();
+      assert.ok(down.dot(rig.axis) > .99999, `${key}/${wardrobe} uncontrolled grip roll`);
+      hold.removeFromParent();
+    }
+    // This verifies real handle surfaces and attachment transforms. It is not
+    // a claim that the bat-calibrated finger skin clears every larger gun grip.
+    t.diagnostic(`${key}: ${(size.x * 100).toFixed(1)}cm; real grip width ${((hits[1] - hits[0]) * 1000).toFixed(2)}mm; all three real rigs centered, canonical barrel axis verified; full finger-skin clearance not asserted`);
+  });
+}
 
 test('Every gameplay weapon resolves a retained premium or licensed catalog asset path', () => {
   const catalog = vm.createContext({}); vm.runInContext(readFileSync(resolve(root,'assets/weapons/catalog.js'),'utf8'),catalog);

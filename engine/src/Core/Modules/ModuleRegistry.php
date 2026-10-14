@@ -23,6 +23,8 @@ final class ModuleRegistry
 
     public function discoverAndBoot(): void
     {
+        $existingRows = [];
+        foreach ($this->database->fetchAll('SELECT id, version, manifest_json FROM modules') as $row) $existingRows[$row['id']] = $row;
         foreach (glob($this->modulesPath . '/*/module.json') ?: [] as $manifestPath) {
             $manifest = json_decode((string) file_get_contents($manifestPath), true, 512, JSON_THROW_ON_ERROR);
             foreach (['id', 'name', 'version', 'class'] as $required) {
@@ -32,13 +34,13 @@ final class ModuleRegistry
             }
             $id = $manifest['id'];
             $this->manifests[$id] = $manifest;
-            $existing = $this->database->fetchOne('SELECT version FROM modules WHERE id = :id', ['id' => $id]);
-            $this->database->insertIgnore(
+            $existing = $existingRows[$id] ?? null;
+            if ($existing === null) $this->database->insertIgnore(
                 'modules',
                 ['id', 'name', 'version', 'installed', 'enabled', 'manifest_json'],
                 [$id, $manifest['name'], $manifest['version'], 1, (int) ($manifest['enabledByDefault'] ?? true), json_encode($manifest, JSON_THROW_ON_ERROR)],
             );
-            $this->database->execute(
+            if ($existing === null || json_decode((string) $existing['manifest_json'], true, 64, JSON_THROW_ON_ERROR) != $manifest) $this->database->execute(
                 'UPDATE modules SET name = :name, version = :version, manifest_json = :manifest WHERE id = :id',
                 ['id' => $id, 'name' => $manifest['name'], 'version' => $manifest['version'], 'manifest' => json_encode($manifest, JSON_THROW_ON_ERROR)],
             );
@@ -51,8 +53,9 @@ final class ModuleRegistry
             }
         }
 
+        $bootStates = (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleStates();
         foreach ($this->database->fetchAll('SELECT id FROM modules ORDER BY id') as $row) {
-            if (!$this->runtimeEnabled((string) $row['id'])) {
+            if (!($bootStates[$row['id']] ?? false)) {
                 continue;
             }
             $manifest = $this->manifests[$row['id']] ?? null;

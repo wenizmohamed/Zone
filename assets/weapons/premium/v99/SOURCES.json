@@ -1,0 +1,147 @@
+{
+  "revision": 99,
+  "license_file": "LICENSE.txt",
+  "sources": [
+    {
+      "author": "loafbrr_1",
+      "license": "CC0-1.0",
+      "source_page": "https://opengameart.org/content/revolver-game-asset",
+      "download_url": "https://opengameart.org/sites/default/files/revolver_fbx_gltf_blend_textures.zip",
+      "archive_sha256": "d404e247c2503937d7ba8fc965e9872a8e3636aef0de6100c2ae30650112eb4d",
+      "conversion": "Seven actual gun parts selected at frame one; scene bullets and ground excluded. Original 1k Revolver_2 author PBR maps retained."
+    },
+    {
+      "author": "Tabasco",
+      "license": "CC0-1.0",
+      "source_page": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "download_url": "https://opengameart.org/sites/default/files/smallarms.zip",
+      "archive_sha256": "fac981bb2df3dac9574e3567ef40df0fa5b77f0d6be0a36b83bdd95fcc86a492",
+      "license_note": "Author changed to public domain on December 15, 2023. Primary page retains both historical CC-BY and new CC0 markers.",
+      "conversion": "Real L85A1, G3A3, M1911, Mosin9130 and Dragunov mesh sources retained. ZONE replaces source color finishes with dark linear blued-steel and matte-polymer materials; wood uses verified retained CC0 LonesomeDucky bat base-color/normal maps with projected UVs and walnut color factor. These are explicit ZONE adaptations, not original author colors/PBR.",
+      "material_color_factor": [
+        0.26,
+        0.2,
+        0.42,
+        1
+      ],
+      "blued_steel_linear_factor": [
+        0.045,
+        0.06,
+        0.075,
+        1
+      ]
+    },
+    {
+      "author": "JeanPFP / LonesomeDucky",
+      "license": "CC0-1.0",
+      "source_page": "https://opengameart.org/content/double-barrel-shotgun",
+      "download_url": "https://opengameart.org/sites/default/files/Shotgun_1.zip",
+      "archive_sha256": "112b1979d64423713f128a94bc10772398eb130715544449afc9eeaf33de0f35",
+      "material_source_page": "https://opengameart.org/content/old-wooden-baseball-bat",
+      "material_source_model": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+      "material_source_sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd",
+      "conversion": "Actual author low-poly geometry retained. All original materials/photos removed. LonesomeDucky's retained CC0 bat wood base color and normal maps sampled only over clean wood with new projected UVs; restrained physical steel material. Not the original author texture atlas and not an exact sawed-off replica.",
+      "excluded_original_materials": "Source packed TexturesCom photo atlas is retained privately for research only, absent from all runtime GLBs."
+    }
+  ],
+  "assets": [
+    {
+      "path": "assets/weapons/premium/v99/loafbrr-revolver.glb",
+      "bytes": 1938160,
+      "sha256": "ecbbf87bc5a5fdf740d81e8f25c7ceb470e0c08a1ffb79c52478a0003cbf706b",
+      "source": "https://opengameart.org/content/revolver-game-asset",
+      "license": "CC0-1.0",
+      "author": "loafbrr_1",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Retained source geometry and author surface maps.",
+      "materialStatus": "authored-pbr",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/jean-doublebarrel-safe.glb",
+      "bytes": 544104,
+      "sha256": "bfdabc5e83d85c589554c83296abed5f373e3a359f26d6269d1425c09acdc278",
+      "source": "https://opengameart.org/content/double-barrel-shotgun",
+      "license": "CC0-1.0",
+      "author": "JeanPFP / LonesomeDucky",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "JeanPFP geometry. CC0 LonesomeDucky bat wood maps with projected UVs and physical steel; original photographic atlas excluded.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-g3a3.glb",
+      "bytes": 17692,
+      "sha256": "8cc94023997ff5bb83b026fbca8951115640d100255a28940ef6d88006c7cc3e",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-materials",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-l85.glb",
+      "bytes": 26620,
+      "sha256": "620f31d664b16d33170d00c48030907c83b29e481e93729ebaa308b0aab027d2",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE dark blued-metal and matte-polymer material adaptation; no original textured-PBR claim.",
+      "materialStatus": "adapted-materials",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-m1911.glb",
+      "bytes": 466376,
+      "sha256": "ef54b6e53f262f3c8a7b352b8a2d9d8d59792b0860bef18269f977e91636e547",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-dragunov.glb",
+      "bytes": 494144,
+      "sha256": "4e4c8e8560286cb5b4808183822ad8726e1f08a46fe5417ae216eaab35970623",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-mosin9130.glb",
+      "bytes": 476224,
+      "sha256": "8edef8b974533e167e4397c4bb5ef5b9fe9dc1265c617d6264745399e0852674",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "license": "CC0-1.0",
+      "author": "Tabasco",
+      "modified": true,
+      "triangleBudget": 12000,
+      "textureBudgetBytes": 33554432,
+      "modification": "Tabasco author geometry. ZONE blued metal and matte polymer; wood uses retained CC0 LonesomeDucky bat color/normal maps with projected UVs and walnut stain. Not original author colors or PBR.",
+      "materialStatus": "adapted-textured",
+      "sourceGeometry": "Retained author geometry; evaluated static pose, no vertex retopology or invented geometry."
+    }
+  ]
+}

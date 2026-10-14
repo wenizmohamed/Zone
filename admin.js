@@ -1,12 +1,21 @@
 const ACTIVE_CACHE = 'zone.platform.activeRelease';
 const PREVIEW_CACHE = 'zone.platform.previewRelease';
 
+function initialAdminLanguage() {
+  const requested = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).get('lang');
+  if (requested === 'en' || requested === 'ar') return requested;
+  return localStorage.getItem('zone.admin.language') === 'ar' ? 'ar' : 'en';
+}
+
 const state = {
-  language: localStorage.getItem('zone.admin.language') === 'ar' ? 'ar' : 'en',
+  language: initialAdminLanguage(),
+  credentialMode: 'token',
   view: 'overview',
   engine: null,
   bootReady: false,
   bootError: '',
+  bootBusy: false,
+  controlBusy: '',
   modules: [],
   themes: [],
   crimes: [],
@@ -17,14 +26,20 @@ const state = {
   catalogBusy: false,
   catalogMessage: '',
   catalogError: '',
+  catalogNewIds: {},
+  sessionRequired: false,
+  sessionBusy: false,
   audit: [],
   ledger: [],
   events: [],
   draft: null,
+  savedDraftManifest: null,
+  draftConflict: null,
   releases: [],
   selectedPage: null,
   selectedCrime: null,
   crimeEditorSelection: undefined,
+  crimeEditorBaseline: null,
   territoryCatalog: { revision: '', factions: [], blocks: [], summary: {} },
   selectedTerritory: null,
   pendingTerritoryOwner: null,
@@ -36,12 +51,13 @@ const state = {
   territoryError: '',
   territoryMapReady: false,
   dirty: false,
+  draftEditRevision: 0,
 };
 
 const translations = {
   en: {
     gameplayCatalog: 'Gameplay catalog', catalogHelp: 'Edit an existing entry, save the draft, then publish when it is ready for players.', catalogCategory: 'Category', catalogEntry: 'Entry', saveCatalog: 'Save catalog draft', catalogSaved: 'Catalog draft saved. Publish to apply it to the game.', catalogChanged: 'This draft changed elsewhere. Values were refreshed; review your edits before saving again.', catalogUnsaved: 'Unsaved edits', catalogSaving: 'Saving draft...', catalogNoChanges: 'No values changed.', catalogUnavailable: 'The gameplay catalog is unavailable.',
-    connecting: 'Connecting... Please wait for admin data.', adminLoadFailed: 'Unable to load admin data. Reload to retry.',
+    connecting: 'Connecting... Please wait for admin data.', adminLoadFailed: 'Unable to load admin data. Retry the connection below.',
     controlPlane: 'ADMIN CONTROL PLANE', engine: 'Engine', game: 'Open game', publish: 'Publish release', sourceOwned: 'FULL SOURCE OWNERSHIP',
     zonePlatform: 'ZONE PLATFORM', engineVersion: 'ENGINE 1.0', apiFirst: 'PHP 8.5 + API FIRST', controlCenter: 'CONTROL CENTER', visualBuilder: 'VISUAL BUILDER', extensionSystem: 'EXTENSION SYSTEM', contentStudio: 'CONTENT STUDIO', themePackages: 'THEME PACKAGES', tokens: 'TOKENS', mediaPipeline: 'MEDIA PIPELINE', auditableEconomy: 'AUDITABLE ECONOMY', ledger: 'LEDGER', resources: 'RESOURCES', eventBus: 'EVENT BUS', eventsLabel: 'EVENTS', audit: 'AUDIT', versionControl: 'VERSION CONTROL', history: 'HISTORY',
     overview: 'Platform overview', overviewSub: 'One control plane for the engine, modules, content, releases, and the live game.', releaseHistory: 'Release history', publishPipeline: 'Publishing pipeline', systemHealth: 'System health', recentEvents: 'Recent events',
@@ -54,7 +70,7 @@ const translations = {
   },
   ar: {
     gameplayCatalog: 'كتالوج اللعب', catalogHelp: 'عدّل عنصراً موجوداً واحفظ المسودة، ثم انشرها عندما تصبح جاهزة للاعبين.', catalogCategory: 'الفئة', catalogEntry: 'العنصر', saveCatalog: 'احفظ مسودة الكتالوج', catalogSaved: 'تم حفظ مسودة الكتالوج. انشرها لتطبيقها في اللعبة.', catalogChanged: 'تغيرت المسودة في مكان آخر. حُدثت القيم؛ راجع تعديلاتك قبل الحفظ مجدداً.', catalogUnsaved: 'تعديلات غير محفوظة', catalogSaving: 'جارٍ حفظ المسودة...', catalogNoChanges: 'لم تتغير القيم.', catalogUnavailable: 'كتالوج اللعب غير متاح حالياً.',
-    connecting: 'جارٍ الاتصال... انتظر تحميل بيانات الإدارة.', adminLoadFailed: 'تعذر تحميل بيانات الإدارة. أعد تحميل الصفحة للمحاولة.',
+    connecting: 'جارٍ الاتصال... انتظر تحميل بيانات الإدارة.', adminLoadFailed: 'تعذر تحميل بيانات الإدارة. أعد الاتصال من الزر أدناه.',
     controlPlane: 'لوحة تحكم الإدارة', engine: 'المحرك', game: 'افتح اللعبة', publish: 'انشر الإصدار', sourceOwned: 'ملكية كاملة للسورس',
     zonePlatform: 'منصة ZONE', engineVersion: 'المحرك 1.0', apiFirst: 'PHP 8.5 + واجهة API أولا', controlCenter: 'مركز التحكم', visualBuilder: 'المصمم المرئي', extensionSystem: 'نظام الإضافات', contentStudio: 'استوديو المحتوى', themePackages: 'حزم الثيمات', tokens: 'المتغيرات', mediaPipeline: 'مسار الوسائط', auditableEconomy: 'اقتصاد قابل للتدقيق', ledger: 'السجل', resources: 'الموارد', eventBus: 'ناقل الأحداث', eventsLabel: 'الأحداث', audit: 'التدقيق', versionControl: 'إدارة الإصدارات', history: 'السجل',
     overview: 'نظرة عامة على المنصة', overviewSub: 'لوحة واحدة للمحرك والموديولات والمحتوى والإصدارات واللعبة المباشرة.', releaseHistory: 'سجل الإصدارات', publishPipeline: 'مسار النشر', systemHealth: 'حالة النظام', recentEvents: 'آخر الأحداث',
@@ -66,6 +82,23 @@ const translations = {
     territoryControl: 'السيطرة على المدينة', territories: 'المدينة والأراضي', territoriesSub: 'راقب قطاعات المدينة الـ120 وغيّر ملكية العصابات مباشرة عبر محرك الأراضي المحسوب في الخادم.', refreshTerritories: 'تحديث الحالة المباشرة', territoryMap: 'خريطة الأراضي المباشرة', territoryBlocks: 'قطاعات الأراضي', searchBlocks: 'البحث في القطاعات', searchBlocksPlaceholder: 'المعرف أو الاسم أو المنطقة أو المالك أو الميزة', ownerFilter: 'المالك', stateFilter: 'الحالة', sectorFilter: 'الحزام', blockDetails: 'القطاع المحدد', chooseTerritory: 'اختر قطاعا لعرض حالته وملكيته المباشرة.', allOwners: 'كل المالكين', allStates: 'كل الحالات', allSectors: 'كل الأحزمة', neutral: 'محايد', owned: 'مملوك', contested: 'متنازع عليه', totalBlocks: 'إجمالي القطاعات', ownedBlocks: 'تحت سيطرة العصابات', neutralBlocks: 'قطاعات محايدة', contestedBlocks: 'قطاعات متنازع عليها', sector: 'الحزام', size: 'الحجم', density: 'الكثافة', slots: 'خانات الدفاع', dailyRespect: 'الاحترام اليومي', benefits: 'المزايا', neighbors: 'القطاعات المجاورة', liveOwner: 'المالك المباشر', stateVersion: 'إصدار الحالة', updatedAt: 'آخر تحديث', applyOwnership: 'تطبيق الملكية', ownershipHelp: 'هذا الإجراء يغيّر حالة الخادم مباشرة ويسجل حدث تدقيق إداري.', ownershipUpdated: 'تم تحديث ملكية الأرض والتحقق منها من الخادم.', noTerritoryResults: 'لا توجد قطاعات تطابق عوامل التصفية.', territoryUnavailable: 'بيانات الأراضي غير متاحة حاليا.', loadingTerritories: 'جار تحميل حالة الأراضي...', results: 'نتيجة', control: 'السيطرة', version: 'الإصدار', district: 'المنطقة', noBenefits: 'لا توجد مزايا محددة', noNeighbors: 'لا توجد قطاعات مجاورة', live: 'مباشر', apply: 'تطبيق',
   },
 };
+
+Object.assign(translations.en, {
+  crimeLevelRequired: 'Level required', crimeLevelInvalid: 'Level required: enter an integer from 1 to 100.',
+  retryAdmin: 'Retry connection', operationBusy: 'An admin operation is in progress. Please wait.', savingDraft: 'Saving release draft...', publishingRelease: 'Publishing release...', activatingRelease: 'Restoring release...', contentNotSaved: 'Save or discard your item and crime edits before publishing. They have not been added to the release yet.', discardCatalog: 'Discard entry edits', draftChanged: 'The release draft changed elsewhere. Your edits are preserved. Review them against the refreshed server draft before saving again.', draftEditedDuringSave: 'The submitted draft was saved, but newer edits remain unsaved. Save again before publishing.', cacheUnavailable: 'The server operation succeeded, but this browser could not update its preview cache. Reload the game to read the active server release.', evidenceUnavailable: 'Saved to the server. Audit details could not refresh; reload them without repeating the write.',
+  yourDraft: 'Your preserved page and branding edits', serverDraft: 'Latest server pages and branding', useServerDraft: 'Use server pages and branding', keepReviewedDraft: 'Keep my reviewed edits for retry',
+  discardCrime: 'Discard crime edits', configurationSaved: 'Configuration saved. Publish a release to apply it to players.', liveGamePreview: 'Active release game preview', requestTimedOut: 'The server did not respond in time. Your edits are preserved. Check the current server state before retrying a write.',
+  catalogHelp: 'Create or edit an entry, save the draft, then publish when it is ready for players.', newCatalog: 'New entry', catalogId: 'New entry ID', catalogIdHelp: 'Permanent ID: 2 to 64 lowercase letters, digits, underscores or hyphens.', catalogType: 'Item type', catalogMetric: 'Progress counter', descriptionEnglish: 'Description in English', descriptionArabic: 'Description in Arabic', catalogImage: 'Image path (optional)', catalogImageHelp: 'Existing art/... or assets/... image. PNG, JPG or WEBP.',
+  ownerAccess: 'Owner access', ownerAccessHelp: 'Sign in with the existing owner credentials to open the control plane. This browser remembers access securely.', ownerUsername: 'Username', ownerPassword: 'Password', ownerToken: 'Owner token', unlockAdmin: 'Open control plane', ownerTokenInvalid: 'Access could not be verified. Check the owner credentials and try again.', ownerConfigurationMissing: 'Owner access has not been configured on this server.',
+});
+Object.assign(translations.ar, {
+  crimeLevelRequired: 'المستوى المطلوب', crimeLevelInvalid: 'المستوى المطلوب: أدخل عدداً صحيحاً بين ١ و١٠٠.',
+  retryAdmin: 'إعادة الاتصال', operationBusy: 'يوجد إجراء إداري قيد التنفيذ. انتظر اكتماله.', savingDraft: 'جار حفظ مسودة الإصدار...', publishingRelease: 'جار نشر الإصدار...', activatingRelease: 'جار استعادة الإصدار...', contentNotSaved: 'احفظ أو تجاهل تعديلات العناصر والجرائم قبل النشر. لم تضف إلى الإصدار بعد.', discardCatalog: 'تجاهل تعديلات العنصر', draftChanged: 'تغيرت مسودة الإصدار في مكان آخر. تعديلاتك محفوظة. راجعها مقارنة بمسودة الخادم المحدثة قبل الحفظ مجددا.', draftEditedDuringSave: 'تم حفظ المسودة المرسلة، لكن توجد تعديلات أحدث غير محفوظة. احفظها مجددا قبل النشر.', cacheUnavailable: 'نجح الإجراء في الخادم، لكن تعذر تحديث ذاكرة المعاينة في المتصفح. أعد تحميل اللعبة لقراءة الإصدار النشط من الخادم.', evidenceUnavailable: 'تم الحفظ في الخادم. تعذر تحديث تفاصيل التدقيق؛ حدثها دون تكرار الحفظ.',
+  yourDraft: 'تعديلات الصفحات والهوية المحفوظة لديك', serverDraft: 'أحدث صفحات وهوية في الخادم', useServerDraft: 'استخدم صفحات وهوية الخادم', keepReviewedDraft: 'احتفظ بتعديلاتي بعد المراجعة للمحاولة مجددا',
+  discardCrime: 'تجاهل تعديلات الجريمة', configurationSaved: 'تم حفظ الإعدادات. انشر إصدارا لتطبيقها على اللاعبين.', liveGamePreview: 'معاينة اللعبة بالإصدار النشط', requestTimedOut: 'لم يستجب الخادم في الوقت المحدد. تعديلاتك محفوظة. تحقق من حالة الخادم الحالية قبل تكرار الحفظ.',
+  catalogHelp: 'أنشئ عنصراً أو عدّله واحفظ المسودة، ثم انشرها عندما تصبح جاهزة للاعبين.', newCatalog: 'عنصر جديد', catalogId: 'معرف العنصر الجديد', catalogIdHelp: 'معرف دائم: من ٢ إلى ٦٤ حرفاً إنجليزياً صغيراً أو رقماً أو شرطة.', catalogType: 'نوع العنصر', catalogMetric: 'عداد التقدم', descriptionEnglish: 'الوصف بالإنجليزية', descriptionArabic: 'الوصف بالعربية', catalogImage: 'مسار الصورة (اختياري)', catalogImageHelp: 'صورة موجودة في art/... أو assets/... بصيغة PNG أو JPG أو WEBP.',
+  ownerAccess: 'دخول المالك', ownerAccessHelp: 'سجّل الدخول ببيانات المالك الحالية لفتح لوحة التحكم. يحتفظ هذا المتصفح بالدخول بشكل آمن.', ownerUsername: 'اسم المستخدم', ownerPassword: 'كلمة المرور', ownerToken: 'رمز المالك', unlockAdmin: 'افتح لوحة التحكم', ownerTokenInvalid: 'تعذر التحقق من الدخول. راجع بيانات المالك وحاول مجدداً.', ownerConfigurationMissing: 'لم يُضبط دخول المالك على هذا الخادم.',
+});
 
 const navItems = [
   ['overview', '01', 'Overview', 'نظرة عامة'], ['builder', '02', 'Page Builder', 'مصمم الصفحات'], ['modules', '03', 'Modules', 'الموديولات'],
@@ -149,37 +182,93 @@ function trace(method, path, payload, response, status = 200) {
 
 async function api(path, options = {}) {
   const method = options.method ?? 'GET';
-  if (!['GET', 'HEAD'].includes(method.toUpperCase()) && !state.bootReady) throw new Error(t(state.bootError ? 'adminLoadFailed' : 'connecting'));
+  if (path !== '/api/v1/admin/session' && !['GET', 'HEAD'].includes(method.toUpperCase()) && !state.bootReady) throw new Error(t(state.bootError ? 'adminLoadFailed' : 'connecting'));
   const payload = options.body ? JSON.parse(options.body) : null;
   const headers = { Accept: 'application/json', ...(options.headers ?? {}) };
   if (options.body) headers['Content-Type'] = 'application/json';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
   const response = await fetch(path, {
     ...options,
+    signal: controller.signal,
+    credentials: 'same-origin',
     headers,
   });
   const data = await response.json().catch(() => ({ error: `Non-JSON response from ${path}` }));
-  trace(method, path, payload, data, response.status);
-  if (!response.ok) throw new Error(data.error ?? `${response.status} ${response.statusText}`);
+  if (path !== '/api/v1/admin/session') trace(method, path, payload, data, response.status);
+  if (response.status === 401 && path !== '/api/v1/admin/session') showAdminSession();
+  if (!response.ok) { const error = new Error(data.error ?? `${response.status} ${response.statusText}`); error.status = response.status; throw error; }
   return data;
+  } catch (error) { if (controller.signal.aborted) throw new Error(t('requestTimedOut')); throw error; }
+  finally { clearTimeout(timeout); }
 }
 
+function showAdminSession() {
+  state.sessionRequired = true; state.bootReady = false;
+  const dialog = $('#adminSessionDialog');
+  if (dialog && !dialog.open) { if (dialog.showModal) dialog.showModal(); else dialog.hidden = false; }
+  updateBootControls();
+}
+async function openAdminSession(event) {
+  event?.preventDefault();
+  if (state.sessionBusy) return;
+  const input = $('#adminOwnerToken'), button = $('#adminSessionSubmit');
+  state.sessionBusy = true; button.disabled = true; $('#adminSessionError').textContent = '';
+  try {
+    const credentials = state.credentialMode === 'password' ? { username: $('#adminOwnerUsername').value, password: input.value } : { token: input.value };
+    const session = await api('/api/v1/admin/session', { method: 'POST', body: JSON.stringify(credentials) });
+    if (session.authenticated !== true) throw new Error('Owner session unavailable.');
+    input.value = ''; state.sessionRequired = false;
+    const dialog = $('#adminSessionDialog'); if (dialog.close) dialog.close(); else dialog.hidden = true;
+    await load();
+  } catch (_) { $('#adminSessionError').textContent = t('ownerTokenInvalid'); }
+  finally { input.value = ''; state.sessionBusy = false; button.disabled = false; }
+}
 function deepCopy(value) { return JSON.parse(JSON.stringify(value)); }
 function currentManifest() { return state.draft?.manifest; }
 function adminCanMutate() {
+  if (state.controlBusy || state.catalogBusy) { notify(t('operationBusy'), true); return false; }
   if (state.bootReady && state.engine && currentManifest()) return true;
   notify(t(state.bootError ? 'adminLoadFailed' : 'connecting'), true);
   return false;
 }
 function updateBootControls() {
-  const blocked = !state.bootReady;
-  for (const id of ['publishButton', 'releasePublishButton', 'saveDraftButton', 'saveCrimeButton', 'addPageButton', 'addBlockButton', 'newCrimeButton']) {
+  const unavailable = !state.bootReady;
+  const blocked = unavailable || Boolean(state.controlBusy) || state.catalogBusy;
+  for (const id of ['publishButton', 'releasePublishButton', 'saveDraftButton', 'saveCrimeButton', 'addPageButton', 'addBlockButton', 'newCrimeButton', 'newCatalogButton']) {
     const button = $('#' + id); if (button) button.disabled = blocked;
   }
-  if ($('#saveCatalogButton')) $('#saveCatalogButton').disabled = blocked || state.catalogBusy || !catalogEditorData().entry;
-  if (blocked) {
-    $$('[data-module-action], [data-theme-id], [data-activate-release], #applyTerritoryOwnerButton').forEach(button => { button.disabled = true; });
+  if ($('#saveCatalogButton')) $('#saveCatalogButton').disabled = blocked || !catalogEditorData().entry;
+  $$('[data-module-action], [data-theme-id], [data-activate-release]').forEach(button => { button.disabled = blocked || (button.dataset?.themeId && state.themes.some(theme => theme.id === button.dataset.themeId && theme.active)); });
+  const territoryApply = $('#applyTerritoryOwnerButton');
+  if (territoryApply) {
+    const block = state.territoryCatalog.blocks.find(item => item.id === state.selectedTerritory);
+    territoryApply.disabled = blocked || state.territoryBusy || !block || (state.pendingTerritoryOwner || '') === (block.ownerFactionId ?? '');
+  }
+  const recovery = $('#adminRecovery');
+  if (recovery) recovery.hidden = !state.bootError;
+  if ($('#adminRecoveryDetail')) $('#adminRecoveryDetail').textContent = state.bootError;
+  if ($('#retryAdminButton')) $('#retryAdminButton').disabled = state.bootBusy;
+  renderDraftConflict();
+  if (unavailable) {
     $('#pipelineStatus').textContent = t(state.bootError ? 'adminLoadFailed' : 'connecting');
     $('#pipelineStatus').className = 'status ' + (state.bootError ? 'bad' : 'warn');
+  } else if (state.controlBusy) {
+    $('#pipelineStatus').textContent = t(state.controlBusy);
+    $('#pipelineStatus').className = 'status warn';
+  }
+  if (typeof window !== 'undefined') window.ZoneStudio?.refresh();
+}
+function beginControlAction(label) {
+  if (!adminCanMutate()) return false;
+  state.controlBusy = label; updateBootControls(); return true;
+}
+function endControlAction() {
+  const previous = state.controlBusy; state.controlBusy = ''; updateBootControls();
+  if ($('#pipelineStatus').textContent === t(previous)) {
+    $('#pipelineStatus').textContent = state.draftConflict ? t('draftChanged') : state.dirty ? (state.language === 'ar' ? 'مسودة معدلة' : 'DRAFT CHANGED') : t('ready');
+    $('#pipelineStatus').className = 'status ' + (state.draftConflict ? 'bad' : state.dirty ? 'warn' : 'good');
   }
 }
 function runtimeContentSnapshot() {
@@ -200,11 +289,13 @@ function manifestWithRuntimeContent() {
 }
 function markDirty() {
   state.dirty = true;
+  state.draftEditRevision += 1;
   $('#pipelineStatus').textContent = state.language === 'ar' ? 'مسودة معدلة' : 'DRAFT CHANGED';
   $('#pipelineStatus').className = 'status warn';
   updatePreviewCache();
   clearTimeout(markDirty.previewTimer);
   markDirty.previewTimer = setTimeout(() => refreshViewPreview(state.view), 180);
+  if (typeof window !== 'undefined') window.ZoneStudio?.refresh();
 }
 
 function applyLanguage() {
@@ -213,6 +304,7 @@ function applyLanguage() {
   document.documentElement.dir = arabic ? 'rtl' : 'ltr';
   document.title = arabic ? 'ZONE | لوحة تحكم الإدارة' : 'ZONE Admin Control Plane';
   $('#languageButton').textContent = arabic ? 'English' : 'العربية';
+  $('#sessionLanguageButton').textContent = arabic ? 'English' : 'العربية';
   $('#languageButton').setAttribute('aria-label', arabic ? 'Switch the admin interface to English' : 'تغيير واجهة الإدارة إلى العربية');
   $('#addPageButton').setAttribute('aria-label', t('addPage'));
   $$('#previewFrame, .section-preview-frame').forEach((frame) => frame.setAttribute('title', arabic ? 'معاينة مباشرة للعبة ZONE' : 'Live preview of the ZONE game'));
@@ -221,6 +313,15 @@ function applyLanguage() {
   if (!state.dirty) $('#pipelineStatus').textContent = t('ready');
   $$('[data-copy]').forEach((element) => { element.textContent = t(element.dataset.copy); });
   $$('[data-copy-placeholder]').forEach((element) => { element.placeholder = t(element.dataset.copyPlaceholder); });
+  $('#adminCredentialLabel').textContent = t(state.credentialMode === 'password' ? 'ownerPassword' : 'ownerToken');
+  $('#adminUsernameField').hidden = state.credentialMode !== 'password';
+  $('#adminOwnerUsername').required = state.credentialMode === 'password';
+  $$('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!/^\/(?:engine|admin)?(?:\?|$)/.test(href ?? '')) return;
+    const url = new URL(href, location.origin); url.searchParams.set('lang', state.language);
+    link.setAttribute('href', url.pathname + url.search);
+  });
   $$('[data-preview-toggle]').forEach(updatePreviewToggleLabel);
   renderAll();
   ensureTerritoryMapPreview();
@@ -232,7 +333,7 @@ function installSectionPreviews() {
   Object.entries(previewScreens).forEach(([view, screen]) => {
     const section = $(`.view[data-view="${view}"]`);
     if (!section || section.querySelector('[data-section-preview]')) return;
-    section.insertAdjacentHTML('beforeend', `<article class="panel section-preview" data-section-preview data-preview-screen="${screen}"><div class="preview-toolbar"><strong data-copy="gamePreview">Game preview</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="button ghost preview-refresh" data-preview-refresh type="button" data-copy="preview">Refresh preview</button><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="sectionPreviewStage-${view}">Collapse preview</button></div></div><div class="preview-stage section-preview-stage" id="sectionPreviewStage-${view}"><iframe class="section-preview-frame" title="Live preview of the ZONE game"></iframe></div></article>`);
+    section.insertAdjacentHTML('beforeend', `<article class="panel section-preview" data-section-preview data-preview-screen="${screen}"><div class="preview-toolbar"><strong data-copy="${view === 'releases' ? 'liveGamePreview' : 'livePreview'}">${view === 'releases' ? t('liveGamePreview') : t('livePreview')}</strong><div><button class="viewport-button active" data-width="100%" type="button" data-copy="desktop">Desktop</button><button class="viewport-button" data-width="390px" type="button" data-copy="mobile">Mobile</button><button class="button ghost preview-refresh" data-preview-refresh type="button" data-copy="preview">Refresh preview</button><button class="preview-collapse" data-preview-toggle type="button" aria-expanded="true" aria-controls="sectionPreviewStage-${view}">Collapse preview</button></div></div><div class="preview-stage section-preview-stage" id="sectionPreviewStage-${view}"><iframe class="section-preview-frame" title="Live preview of the ZONE game"></iframe></div></article>`);
   });
 }
 
@@ -255,6 +356,7 @@ function togglePreview(button) {
   button.closest('.builder-preview, .section-preview, .territory-map-panel')?.classList.toggle('preview-collapsed', !expanded);
   button.setAttribute('aria-expanded', String(expanded));
   updatePreviewToggleLabel(button);
+  suspendInactivePreviews();
   if (expanded && stage.querySelector('iframe') && !stage.querySelector('iframe').getAttribute('src')) {
     const view = button.closest('.view')?.dataset.view;
     if (view === 'territories') ensureTerritoryMapPreview();
@@ -263,19 +365,29 @@ function togglePreview(button) {
 }
 
 function renderNavigation() {
+  if (typeof window !== 'undefined' && window.ZoneStudio?.renderNavigation) { window.ZoneStudio.renderNavigation(); return; }
   $('#adminNav').innerHTML = navItems.map(([id, number, en, ar]) => `<button class="nav-button ${state.view === id ? 'active' : ''}" type="button" data-nav="${id}"><span>${number}</span><b>${state.language === 'ar' ? ar : en}</b></button>`).join('');
   $$('[data-nav]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.nav)));
 }
 
 function setView(view) {
+  if (!['overview', 'builder', 'content', 'territories', 'modules', 'themes', 'assets', 'economy', 'events', 'releases'].includes(view)) view = 'overview';
   state.view = view;
   $$('.view').forEach((element) => element.classList.toggle('active', element.dataset.view === view));
+  suspendInactivePreviews();
   renderNavigation();
   if (view === 'territories') {
     ensureTerritoryMapPreview();
     pushTerritoryMap();
   }
   refreshViewPreview(view);
+  if (typeof window !== 'undefined') window.ZoneStudio?.viewChanged(view);
+}
+
+function suspendInactivePreviews() {
+  // Keep authoring forms/drafts intact, but only the active preview owns a
+  // running document, WebGL context, and game timers.
+  $$('.view:not(.active) iframe, .preview-stage[hidden] iframe, .territory-map-stage[hidden] iframe').forEach(frame => frame.removeAttribute('src'));
 }
 
 function renderOverview() {
@@ -396,6 +508,7 @@ function renderModules() {
 
 function renderThemes() {
   $('#themeGrid').innerHTML = state.themes.map((theme) => `<article class="catalog-card"><div class="catalog-card-head"><div><h2>${esc(theme.name)}</h2><code dir="ltr">${esc(theme.id)}@${esc(theme.version)}</code></div><span class="status ${theme.active ? 'active' : ''}">${theme.active ? t('active') : t('available')}</span></div><p>${esc(state.language === 'ar' ? theme.description_ar : theme.description)}</p><div class="chips"><span>${t('viewPackage')}</span><span dir="ltr">RTL</span><span dir="ltr">LTR</span><span>${t('noGameLogic')}</span></div><div class="card-actions"><button class="button secondary" type="button" data-theme-id="${esc(theme.id)}" ${theme.active ? 'disabled' : ''}>${theme.active ? t('active') : t('activate')}</button></div></article>`).join('');
+  $$('#themeGrid .status.active, #themeGrid button:disabled').forEach(element => { element.textContent = t('themeSelected') === 'themeSelected' ? t('active') : t('themeSelected'); });
   $$('[data-theme-id]').forEach((button) => button.addEventListener('click', () => activateTheme(button.dataset.themeId)));
   bindManifestInputs();
 }
@@ -809,6 +922,7 @@ const catalogDefaultLabels = {
 };
 const catalogCategoryNames = { items: ['Items', 'العناصر'], jobs: ['Jobs', 'الوظائف'], gyms: ['Gyms', 'الصالات الرياضية'], courses: ['Courses', 'الدورات'], properties: ['Properties', 'العقارات'], upgrades: ['Faction upgrades', 'ترقيات العائلة'], opponents: ['Opponents', 'الخصوم'], missions: ['Objectives', 'الأهداف'] };
 const catalogFieldNames = { price: ['Price', 'السعر'], mult: ['Damage multiplier', 'مضاعف الضرر'], red: ['Damage reduction (0-1)', 'خفض الضرر (٠-١)'], life: ['Life', 'الصحة'], nerve: ['Nerve restored', 'الأعصاب المستعادة'], pay: ['Pay per shift', 'أجر الوردية'], energy: ['Energy per shift', 'طاقة الوردية'], lvl: ['Level', 'المستوى'], e: ['Energy per session', 'طاقة الجلسة'], xp: ['Training XP required', 'خبرة التدريب المطلوبة'], cost: ['Cost', 'التكلفة'], mins: ['Duration in minutes', 'المدة بالدقائق'], happy: ['Maximum happiness', 'الحد الأقصى للسعادة'], upkeep: ['Planned upkeep (not charged)', 'الصيانة المخططة (لا تُخصم)'], str: ['Strength', 'القوة'], def: ['Defense', 'الدفاع'], spd: ['Speed', 'السرعة'], dex: ['Dexterity', 'المهارة'], cash: ['Cash', 'النقود'], n: ['Required progress', 'التقدم المطلوب'], pts: ['Point reward', 'مكافأة النقاط'] };
+catalogFieldNames.model = ['Licensed 3D model', 'النموذج ثلاثي الأبعاد المرخص'];
 const catalogLabel = (labels, fallback) => labels?.[state.language === 'ar' ? 1 : 0] ?? fallback;
 function catalogEntries(category = state.catalogCategory) {
   const entries = state.gameplayCatalog?.catalogs?.[category] ?? [];
@@ -816,9 +930,19 @@ function catalogEntries(category = state.catalogCategory) {
   return entries.map((entry, index) => [String(category === 'gyms' ? index : entry.id), entry]);
 }
 function catalogEditorData() {
-  const entry = catalogEntries().find(([id]) => id === state.catalogEntry)?.[1];
-  const fields = state.gameplayCatalog?.schema?.[state.catalogCategory]?.fields ?? {};
-  return { entry, fields: Object.entries(fields).filter(([key]) => key === 'name' || Object.hasOwn(entry ?? {}, key)), key: state.catalogCategory + '/' + state.catalogEntry };
+  const schema = state.gameplayCatalog?.schema?.[state.catalogCategory] ?? {}, fields = schema.fields ?? {};
+  const creating = state.catalogEntry === '__new';
+  let entry = catalogEntries().find(([id]) => id === state.catalogEntry)?.[1];
+  if (creating) {
+    const type = state.catalogEdits[state.catalogCategory + '/__new']?.type ?? schema.createTypes?.[0] ?? 'weapon';
+    const selected = state.catalogCategory === 'items' ? ['type', ...(schema.variants?.[type] ?? []), 'name', 'description', 'image', ...(type === 'weapon' ? ['model'] : [])] : [...(schema.required ?? []), 'description', 'image'];
+    entry = Object.fromEntries(selected.map(key => [key, fields[key]?.type === 'bilingual' ? { en: '', ar: '' } : fields[key]?.type === 'enum' ? (key === 'type' ? type : fields[key].values[0]) : fields[key]?.type === 'asset' ? '' : Math.max(fields[key]?.min ?? 0, key === 'price' || key === 'mult' ? 1 : 0)]));
+  }
+  return { entry, creating, fields: Object.entries(fields).filter(([key, rule]) => creating ? Object.hasOwn(entry ?? {}, key) : (rule.editable ?? true) && (['name', 'description', 'image'].includes(key) || (key === 'model' && entry?.type === 'weapon') || Object.hasOwn(entry ?? {}, key))), key: state.catalogCategory + '/' + state.catalogEntry };
+}
+function newGameplayCatalog() {
+  if (!adminCanMutate() || state.catalogBusy || !state.gameplayCatalog?.schema?.[state.catalogCategory]?.creatable) return;
+  state.catalogEntry = '__new'; state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog();
 }
 function catalogFieldValue(key, original) {
   const edits = state.catalogEdits[state.catalogCategory + '/' + state.catalogEntry] ?? {};
@@ -830,51 +954,68 @@ function renderCatalogStatus() {
   const edits = state.catalogEdits[state.catalogCategory + '/' + state.catalogEntry];
   target.textContent = state.catalogBusy ? t('catalogSaving') : state.catalogError || t(state.catalogMessage || (edits && Object.keys(edits).length ? 'catalogUnsaved' : 'catalogHelp'));
   target.className = state.catalogError || state.catalogMessage === 'catalogChanged' ? 'bad' : state.catalogMessage === 'catalogSaved' ? 'good' : '';
-  $('#saveCatalogButton').disabled = !state.bootReady || state.catalogBusy || !catalogEditorData().entry;
+  $('#saveCatalogButton').disabled = !state.bootReady || state.catalogBusy || Boolean(state.controlBusy) || !catalogEditorData().entry;
+  const discard = $('#discardCatalogButton');
+  if (discard) { discard.hidden = !edits && state.catalogEntry !== '__new'; discard.disabled = state.catalogBusy || Boolean(state.controlBusy); }
+}
+function discardGameplayCatalog() {
+  if (state.catalogBusy || state.controlBusy) return;
+  delete state.catalogEdits[state.catalogCategory + '/' + state.catalogEntry];
+  if (state.catalogEntry === '__new') { delete state.catalogNewIds[state.catalogCategory]; state.catalogEntry = null; }
+  state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog();
 }
 function renderGameplayCatalog() {
-  const categories = Object.keys(catalogCategoryNames).filter(category => state.gameplayCatalog?.schema?.[category]);
+  const categories = Object.keys(state.gameplayCatalog?.schema ?? {});
   if (!categories.includes(state.catalogCategory)) state.catalogCategory = categories[0] ?? 'items';
   const categorySelect = $('#catalogCategory'), entrySelect = $('#catalogEntry');
   categorySelect.innerHTML = categories.map(category => `<option value="${esc(category)}">${esc(catalogLabel(catalogCategoryNames[category], category))}</option>`).join('');
   categorySelect.value = state.catalogCategory; categorySelect.disabled = !state.bootReady || state.catalogBusy || !categories.length;
   const entries = catalogEntries();
-  if (!entries.some(([id]) => id === state.catalogEntry)) state.catalogEntry = entries[0]?.[0] ?? null;
-  entrySelect.innerHTML = entries.map(([id, entry]) => `<option value="${esc(id)}">${esc(catalogEntryName(id, entry))} · ${esc(id)}</option>`).join('');
+  if (state.catalogEntry !== '__new' && !entries.some(([id]) => id === state.catalogEntry)) state.catalogEntry = entries[0]?.[0] ?? null;
+  entrySelect.innerHTML = (state.catalogEntry === '__new' ? `<option value="__new">${esc(t('newCatalog'))}</option>` : '') + entries.map(([id, entry]) => `<option value="${esc(id)}">${esc(catalogEntryName(id, entry))} · ${esc(id)}</option>`).join('');
   entrySelect.value = state.catalogEntry ?? ''; entrySelect.disabled = !state.bootReady || state.catalogBusy || !entries.length;
   categorySelect.onchange = () => { state.catalogCategory = categorySelect.value; state.catalogEntry = null; state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog(); };
   entrySelect.onchange = () => { state.catalogEntry = entrySelect.value; state.catalogError = ''; state.catalogMessage = ''; renderGameplayCatalog(); };
   $('#catalogRevision').textContent = state.gameplayCatalog ? `${state.language === 'ar' ? 'مسودة' : 'Draft'} v${state.gameplayCatalog.revision}` : t('connecting');
-  const { entry, fields, key: editorKey } = catalogEditorData();
-  const inputs = fields.flatMap(([key, field]) => key === 'name' && field.type === 'bilingual'
-    ? ['en', 'ar'].map(language => ({ key: 'name.' + language, label: language === 'en' ? t('crimeNameEn') : t('crimeNameAr'), type: 'text', value: catalogEntryName(state.catalogEntry, entry, language), maxLength: field.maxLength, dir: language === 'ar' ? 'rtl' : 'ltr' }))
-    : [{ key, label: catalogLabel(catalogFieldNames[key], key), type: 'number', value: entry?.[key], min: field.min, max: field.max, step: field.type === 'integer' ? '1' : 'any', dir: 'ltr' }]);
-  $('#catalogFields').innerHTML = entry ? inputs.map(input => `<label><span>${esc(input.label)}</span><input id="catalogField-${esc(input.key.replace('.', '-'))}" type="${input.type}" dir="${input.dir}" ${input.min !== undefined ? `min="${input.min}"` : ''} ${input.max !== undefined ? `max="${input.max}"` : ''} ${input.maxLength ? `maxlength="${input.maxLength}"` : ''} ${input.step ? `step="${input.step}" required` : ''} ${state.catalogBusy ? 'disabled' : ''}></label>`).join('') : `<p class="catalog-help">${esc(t('catalogUnavailable'))}</p>`;
+  const { entry, fields, creating, key: editorKey } = catalogEditorData();
+  $('#newCatalogButton').disabled = !state.bootReady || state.catalogBusy || !state.gameplayCatalog?.schema?.[state.catalogCategory]?.creatable;
+  $('#catalogNewIdLabel').hidden = !creating; $('#catalogNewId').disabled = state.catalogBusy;
+  $('#catalogNewId').value = state.catalogNewIds[state.catalogCategory] ?? '';
+  $('#catalogNewId').oninput = () => { state.catalogNewIds[state.catalogCategory] = $('#catalogNewId').value; state.catalogError = ''; renderCatalogStatus(); };
+  const inputs = fields.flatMap(([key, field]) => field.type === 'bilingual'
+    ? ['en', 'ar'].map(language => ({ key: key + '.' + language, label: key === 'name' ? t(language === 'en' ? 'crimeNameEn' : 'crimeNameAr') : t(language === 'en' ? 'descriptionEnglish' : 'descriptionArabic'), type: 'text', value: key === 'name' && !creating ? catalogEntryName(state.catalogEntry, entry, language) : entry?.[key]?.[language] ?? '', maxLength: field.maxLength, dir: language === 'ar' ? 'rtl' : 'ltr' }))
+    : [{ key, label: key === 'type' ? t('catalogType') : key === 'ctr' ? t('catalogMetric') : key === 'image' ? t('catalogImage') : catalogLabel(catalogFieldNames[key], key), type: field.type === 'enum' ? 'select' : field.type === 'asset' ? 'text' : 'number', values: key === 'type' ? state.gameplayCatalog.schema.items.createTypes : field.values, value: entry?.[key], min: field.min, max: field.max, maxLength: field.maxLength, step: ['integer', 'number'].includes(field.type) ? field.type === 'integer' ? '1' : 'any' : undefined, dir: 'ltr' }]);
+  $('#catalogFields').innerHTML = entry ? inputs.map(input => `<label><span>${esc(input.label)}</span>${input.type === 'select' ? `<select id="catalogField-${esc(input.key)}" ${state.catalogBusy ? 'disabled' : ''}>${input.values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}</select>` : `<input id="catalogField-${esc(input.key.replace('.', '-'))}" type="${input.type}" dir="${input.dir}" ${input.min !== undefined ? `min="${input.min}"` : ''} ${input.max !== undefined ? `max="${input.max}"` : ''} ${input.maxLength ? `maxlength="${input.maxLength}"` : ''} ${input.step ? `step="${input.step}" required` : ''} ${state.catalogBusy ? 'disabled' : ''}>`}${input.key === 'image' ? `<small>${esc(t('catalogImageHelp'))}</small>` : ''}</label>`).join('') : `<p class="catalog-help">${esc(t('catalogUnavailable'))}</p>`;
   for (const input of inputs) {
     const element = $('#catalogField-' + input.key.replace('.', '-'));
     element.value = catalogFieldValue(input.key, input.value);
     element.oninput = () => {
       (state.catalogEdits[editorKey] ??= {})[input.key] = element.value;
-      state.catalogError = ''; state.catalogMessage = ''; renderCatalogStatus();
+      state.catalogError = ''; state.catalogMessage = ''; if (input.key === 'type') renderGameplayCatalog(); else renderCatalogStatus();
     };
   }
   renderCatalogStatus();
+  if (typeof window !== 'undefined') window.ZoneStudio?.decorateCatalog();
 }
 function catalogChanges() {
-  const { entry, fields, key } = catalogEditorData(), edits = state.catalogEdits[key] ?? {}, changes = {};
+  const { entry, fields, creating, key } = catalogEditorData(), edits = state.catalogEdits[key] ?? {}, changes = {};
   if (!entry) throw new Error(t('catalogUnavailable'));
   for (const [fieldName, field] of fields) {
-    if (fieldName === 'name') {
-      if (!Object.hasOwn(edits, 'name.en') && !Object.hasOwn(edits, 'name.ar')) continue;
-      const name = Object.fromEntries(['en', 'ar'].map(language => [language, catalogFieldValue('name.' + language, catalogEntryName(state.catalogEntry, entry, language)).trim()]));
-      if (Object.values(name).some(value => !value || [...value].length > field.maxLength || /[<>\x00-\x1F\x7F]/.test(value))) throw new Error(state.language === 'ar' ? `أدخل اسمين عربي وإنجليزي بنص عادي، بحد أقصى ${field.maxLength} حرفاً لكل اسم.` : `Enter plain-text English and Arabic names, up to ${field.maxLength} characters each.`);
-      if (name.en !== entry.name?.en || name.ar !== entry.name?.ar) changes.name = name;
+    if (field.type === 'bilingual') {
+      if (!creating && !Object.hasOwn(edits, fieldName + '.en') && !Object.hasOwn(edits, fieldName + '.ar')) continue;
+      const name = Object.fromEntries(['en', 'ar'].map(language => [language, catalogFieldValue(fieldName + '.' + language, fieldName === 'name' && !creating ? catalogEntryName(state.catalogEntry, entry, language) : entry[fieldName]?.[language] ?? '').trim()]));
+      if (Object.values(name).some(value => (!field.allowEmpty && !value) || [...value].length > field.maxLength || /[<>\x00-\x1F\x7F]/.test(value))) throw new Error(state.language === 'ar' ? `أدخل نصاً عربياً وإنجليزياً عادياً، بحد أقصى ${field.maxLength} حرفاً لكل نص.` : `Enter plain-text English and Arabic values, up to ${field.maxLength} characters each.`);
+      if (creating && fieldName === 'description' && !name.en && !name.ar) continue;
+      if (creating || name.en !== entry[fieldName]?.en || name.ar !== entry[fieldName]?.ar) changes[fieldName] = name;
       continue;
     }
-    if (!Object.hasOwn(edits, fieldName)) continue;
-    const raw = edits[fieldName].trim(), value = Number(raw), label = catalogLabel(catalogFieldNames[fieldName], fieldName);
+    if (!creating && !Object.hasOwn(edits, fieldName)) continue;
+    const raw = catalogFieldValue(fieldName, entry[fieldName]).trim(), label = catalogLabel(catalogFieldNames[fieldName], fieldName);
+    if (field.type === 'enum') { if (!field.values.includes(raw)) throw new Error('Invalid ' + fieldName); changes[fieldName] = raw; continue; }
+    if (field.type === 'asset') { if (raw && !/^(art|assets)\/[A-Za-z0-9_/-]+\.(png|jpg|jpeg|webp)$/.test(raw)) throw new Error(t('catalogImageHelp')); if (raw || !creating) changes[fieldName] = raw; continue; }
+    const value = Number(raw);
     if (!raw || !Number.isFinite(value) || (field.type === 'integer' && !Number.isInteger(value)) || value < field.min || value > field.max) throw new Error(state.language === 'ar' ? `${label}: أدخل ${field.type === 'integer' ? 'عدداً صحيحاً' : 'رقماً'} بين ${field.min} و${field.max}.` : `${label}: enter ${field.type === 'integer' ? 'an integer' : 'a number'} from ${field.min} to ${field.max}.`);
-    if (value !== entry[fieldName]) changes[fieldName] = value;
+    if (creating || value !== entry[fieldName]) changes[fieldName] = value;
   }
   return changes;
 }
@@ -883,18 +1024,47 @@ async function saveGameplayCatalog(event) {
   if (!adminCanMutate() || state.catalogBusy) return;
   const category = state.catalogCategory, id = state.catalogEntry, editorKey = category + '/' + id;
   try {
+    const creating = id === '__new', newId = (state.catalogNewIds[category] ?? '').trim();
+    if (creating && (!/^[a-z][a-z0-9_-]{1,63}$/.test(newId) || ['constructor', 'prototype', 'fists'].includes(newId))) throw new Error(t('catalogIdHelp'));
     const changes = catalogChanges();
-    if (!Object.keys(changes).length) { state.catalogMessage = 'catalogNoChanges'; renderCatalogStatus(); return; }
-    state.catalogBusy = true; state.catalogError = ''; renderGameplayCatalog();
-    const snapshot = await api(`/api/v1/admin/gameplay-catalog/${encodeURIComponent(category)}/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ expectedRevision: state.gameplayCatalog.revision, changes }) });
+    if (!Object.keys(changes).length) { delete state.catalogEdits[editorKey]; state.catalogMessage = 'catalogNoChanges'; renderCatalogStatus(); return; }
+    state.catalogBusy = true; state.catalogError = ''; renderGameplayCatalog(); updateBootControls();
+    const snapshot = await api(`/api/v1/admin/gameplay-catalog/${encodeURIComponent(category)}${creating ? '' : '/' + encodeURIComponent(id)}`, { method: creating ? 'POST' : 'PUT', body: JSON.stringify(creating ? { id: newId, expectedRevision: state.gameplayCatalog.revision, definition: changes } : { expectedRevision: state.gameplayCatalog.revision, changes }) });
     state.gameplayCatalog = snapshot; delete state.catalogEdits[editorKey]; state.catalogMessage = 'catalogSaved';
+    if (creating) {
+      const savedId = snapshot.created?.id ?? newId;
+      // Studio navigation can select another definition while this request runs.
+      // Acknowledging the submitted draft must not replace that newer selection.
+      if (state.catalogCategory === category && state.catalogEntry === id) state.catalogEntry = savedId;
+      delete state.catalogNewIds[category];
+      if (typeof window !== 'undefined') window.ZoneStudio?.catalogSaved(category, id, savedId);
+    }
     markDirty(); notify(t('catalogSaved')); refreshViewPreview('content');
+    try { await refreshDraftAfterMutation(); } catch (_) { notify(t('evidenceUnavailable'), true); }
   } catch (error) {
     if (/Gameplay catalog changed/i.test(error.message)) {
       try { state.gameplayCatalog = await api('/api/v1/admin/gameplay-catalog'); state.catalogMessage = 'catalogChanged'; }
       catch (_) { state.catalogError = t('catalogUnavailable'); }
     } else state.catalogError = state.language === 'ar' && !/[\u0600-\u06ff]/.test(error.message) ? 'تعذر حفظ المسودة. تحقق من القيم والاتصال وحاول مجدداً.' : error.message;
-  } finally { state.catalogBusy = false; renderGameplayCatalog(); }
+  } finally { state.catalogBusy = false; renderGameplayCatalog(); updateBootControls(); }
+}
+
+function crimeEditorValues() {
+  return JSON.stringify(['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].map(id => $('#' + id).value).concat($('#crimeEnabled').checked));
+}
+function unsavedContentEdits() {
+  const pendingCatalog = Object.entries(state.catalogEdits).find(([, edits]) => Object.keys(edits).length);
+  const pendingId = Object.entries(state.catalogNewIds).find(([, id]) => String(id).trim());
+  const crime = state.crimeEditorBaseline !== null && crimeEditorValues() !== state.crimeEditorBaseline;
+  return { catalog: pendingCatalog?.[0] ?? (pendingId ? pendingId[0] + '/__new' : null), crime };
+}
+function requireSavedContent() {
+  const pending = unsavedContentEdits();
+  if (!pending.catalog && !pending.crime) return true;
+  if (pending.catalog) {
+    const slash = pending.catalog.indexOf('/'); state.catalogCategory = pending.catalog.slice(0, slash); state.catalogEntry = pending.catalog.slice(slash + 1);
+  }
+  setView('content'); renderContent(); notify(t('contentNotSaved'), true); return false;
 }
 
 function renderContent(resetEditor = false) {
@@ -904,8 +1074,7 @@ function renderContent(resetEditor = false) {
   $$('[data-edit-crime]').forEach((button) => button.addEventListener('click', () => { state.selectedCrime = button.dataset.editCrime; renderContent(); }));
   $('#contentDomains').innerHTML = contentDomains.map(([name, detail]) => `<div class="domain"><strong>${esc(localized(name))}</strong><span>${esc(localized(detail))}</span></div>`).join('');
   const crime = state.crimes.find((item) => item.id === state.selectedCrime) ?? null;
-  $('#crimeEditorStatus').textContent = crime ? t('edit') : t('newLabel');
-  $('#crimeEditorStatus').className = `status ${crime?.enabled ? 'active' : ''}`;
+  renderCrimeEditorStatus(resetEditor);
   // Language and unrelated panel renders must not overwrite unsaved input.
   if (!resetEditor && state.crimeEditorSelection === state.selectedCrime) return;
   state.crimeEditorSelection = state.selectedCrime;
@@ -918,7 +1087,17 @@ function renderContent(resetEditor = false) {
   $('#crimeCashMin').value = crime?.cash_min ?? 100;
   $('#crimeCashMax').value = crime?.cash_max ?? 250;
   $('#crimeXp').value = crime?.xp_reward ?? 10;
+  $('#crimeLevel').value = crime?.level_required ?? 1;
   $('#crimeEnabled').checked = crime?.enabled ?? true;
+  state.crimeEditorBaseline = crimeEditorValues();
+  ['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].forEach(id => { $('#' + id).oninput = () => renderCrimeEditorStatus(); });
+  $('#crimeEnabled').onchange = () => renderCrimeEditorStatus();
+}
+function renderCrimeEditorStatus(reset = false) {
+  const crime = state.crimes.find(item => item.id === state.selectedCrime);
+  const pending = !reset && state.crimeEditorSelection === state.selectedCrime && state.crimeEditorBaseline !== null && crimeEditorValues() !== state.crimeEditorBaseline;
+  $('#crimeEditorStatus').textContent = pending ? t('catalogUnsaved') : crime ? t('edit') : t('newLabel');
+  $('#crimeEditorStatus').className = `status ${pending ? 'warn' : crime?.enabled ? 'active' : ''}`;
 }
 
 function territoryCounts() {
@@ -1091,12 +1270,12 @@ function territoryMapPayload() {
 
 function ensureTerritoryMapPreview() {
   const frame = $('#territoryMapPreview');
-  if (!frame) return;
+  if (!frame || state.view !== 'territories' || $('#territoryMapStage').hidden) return;
   frame.onload = () => { state.territoryMapReady = true; pushTerritoryMap(); };
   if (frame.dataset.language !== state.language || !frame.getAttribute('src')) {
     state.territoryMapReady = false;
     frame.dataset.language = state.language;
-    frame.src = `/dist/city-map-torn.html?v=62&admin=territories&lang=${state.language}`;
+    frame.src = `/dist/city-map-torn.html?v=95&admin=territories&lang=${state.language}`;
   }
 }
 
@@ -1144,10 +1323,12 @@ function renderAll() {
 
 function updatePreviewCache() {
   if (!state.draft) return;
-  localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: manifestWithRuntimeContent(), active: false, publishedBy: 'admin-panel', publishedAt: new Date().toISOString() }));
+  try { localStorage.setItem(PREVIEW_CACHE, JSON.stringify({ id: 'draft-preview', version: 'draft', manifest: manifestWithRuntimeContent(), active: false, publishedBy: 'admin-panel', publishedAt: new Date().toISOString() })); }
+  catch (_) { notify(t('cacheUnavailable'), true); }
 }
 
 function refreshPreview() {
+  if (state.view !== 'builder') return;
   updatePreviewCache();
   const frame = $('#previewFrame');
   if (!frame || $('#draftPreviewStage').hidden) return;
@@ -1156,44 +1337,98 @@ function refreshPreview() {
 }
 
 function refreshSectionPreview(view) {
-  updatePreviewCache();
+  if (state.view !== view) return;
+  if (view !== 'releases') updatePreviewCache();
   const panel = $(`.view[data-view="${view}"] [data-section-preview]`);
   const frame = panel?.querySelector('.section-preview-frame');
   if (!frame || frame.closest('.preview-stage').hidden) return;
-  frame.src = `/?zone-preview=1&lang=${state.language}&screen=${encodeURIComponent(panel.dataset.previewScreen || 'home')}&v=${Date.now()}`;
+  frame.src = `/?${view === 'releases' ? '' : 'zone-preview=1&'}lang=${state.language}&screen=${encodeURIComponent(panel.dataset.previewScreen || 'home')}&v=${Date.now()}`;
 }
 
 function refreshViewPreview(view) {
+  if (state.view !== view) return;
   if (view === 'builder') refreshPreview();
   else refreshSectionPreview(view);
 }
 
-async function saveDraft() {
-  if (!adminCanMutate()) return false;
+function authoringManifestText(manifest) {
+  const { content, ...authoring } = manifest ?? {};
+  return JSON.stringify(authoring);
+}
+function renderDraftConflict() {
+  const panel = $('#draftConflictPanel'); if (!panel) return;
+  panel.hidden = !state.draftConflict;
+  if (!state.draftConflict) return;
+  $('#draftConflictLocal').value = JSON.stringify(JSON.parse(authoringManifestText(currentManifest())), null, 2);
+  $('#draftConflictServer').value = JSON.stringify(JSON.parse(authoringManifestText(state.draftConflict.manifest)), null, 2);
+  for (const id of ['useServerDraftButton', 'keepReviewedDraftButton']) $('#' + id).disabled = Boolean(state.controlBusy) || state.catalogBusy;
+}
+function resolveDraftConflict(useServer) {
+  if (!state.draftConflict || state.controlBusy || state.catalogBusy) return;
+  const manifest = useServer ? state.draftConflict.manifest : currentManifest();
+  state.savedDraftManifest = authoringManifestText(state.draftConflict.manifest);
+  state.draft = { ...state.draftConflict, manifest }; state.draftConflict = null;
+  state.dirty = !useServer; state.draftEditRevision += 1;
+  renderAll(); updatePreviewCache(); refreshViewPreview(state.view);
+  $('#pipelineStatus').textContent = useServer ? t('ready') : t('draftEditedDuringSave');
+  $('#pipelineStatus').className = 'status ' + (useServer ? 'good' : 'warn');
+}
+async function refreshDraftAfterMutation() {
+  const fresh = await api('/api/v1/admin/draft');
+  if (!fresh?.manifest || !/^[a-f0-9]{64}$/.test(fresh.draftFingerprint ?? '')) throw new Error(t('adminLoadFailed'));
+  if (state.savedDraftManifest !== null && authoringManifestText(fresh.manifest) !== state.savedDraftManifest) {
+    state.draftConflict = fresh; renderDraftConflict(); notify(t('draftChanged'), true); return false;
+  }
+  state.savedDraftManifest = authoringManifestText(fresh.manifest);
+  state.draft = { ...fresh, manifest: currentManifest() }; return true;
+}
+async function persistDraft() {
+  if (state.draftConflict) { renderDraftConflict(); notify(t('draftChanged'), true); return false; }
+  const submittedAuthoring = authoringManifestText(currentManifest());
+  const editRevision = state.draftEditRevision;
   try {
-    const response = await api('/api/v1/admin/draft', { method: 'PUT', body: JSON.stringify({ manifest: manifestWithRuntimeContent() }) });
-    state.draft = response;
-    state.dirty = false;
-    $('#pipelineStatus').textContent = state.language === 'ar' ? 'تم حفظ المسودة' : 'DRAFT SAVED';
-    $('#pipelineStatus').className = 'status good';
+    const response = await api('/api/v1/admin/draft', { method: 'PUT', body: JSON.stringify({ manifest: manifestWithRuntimeContent(), expectedFingerprint: state.draft.draftFingerprint }) });
+    if (!response?.manifest || !/^[a-f0-9]{64}$/.test(response.draftFingerprint ?? '')) throw new Error(t('adminLoadFailed'));
+    const newerEdits = editRevision !== state.draftEditRevision || submittedAuthoring !== authoringManifestText(currentManifest());
+    state.savedDraftManifest = authoringManifestText(response.manifest);
+    state.draft = { ...response, manifest: newerEdits ? currentManifest() : response.manifest };
+    state.dirty = newerEdits;
+    $('#pipelineStatus').textContent = newerEdits ? t('draftEditedDuringSave') : state.language === 'ar' ? 'تم حفظ المسودة' : 'DRAFT SAVED';
+    $('#pipelineStatus').className = 'status ' + (newerEdits ? 'warn' : 'good');
     updatePreviewCache();
-    notify(state.language === 'ar' ? 'تم حفظ المسودة من دون تغيير اللعبة المباشرة' : 'Draft saved without changing the live game');
+    notify(newerEdits ? t('draftEditedDuringSave') : state.language === 'ar' ? 'تم حفظ المسودة من دون تغيير اللعبة المباشرة' : 'Draft saved without changing the live game');
     renderAll();
-    return true;
+    return !newerEdits;
   } catch (error) {
-    notify(error.message, true);
+    await handleReleaseError(error);
     return false;
   }
 }
-
-async function publishRelease() {
-  if (!adminCanMutate()) return;
+async function handleReleaseError(error) {
+  if (/Release draft changed/i.test(error.message)) {
+    try { state.draftConflict = await api('/api/v1/admin/draft'); renderDraftConflict(); }
+    catch (_) { /* Keep the old fingerprint so a retry cannot overwrite newer server data. */ }
+    notify(t('draftChanged'), true);
+  } else notify(error.message, true);
+}
+async function saveDraft() {
+  if (!beginControlAction('savingDraft')) return false;
+  try { return await persistDraft(); } finally { endControlAction(); }
+}
+function cachePublishedRelease(release) {
   try {
-    if (!(await saveDraft())) return;
-    const release = await api('/api/v1/admin/releases/publish', { method: 'POST', body: '{}' });
     localStorage.setItem(ACTIVE_CACHE, JSON.stringify(release));
     localStorage.setItem('zone.platform.gameData', JSON.stringify(release.manifest.content ?? {}));
     localStorage.removeItem(PREVIEW_CACHE);
+  } catch (_) { notify(t('cacheUnavailable'), true); }
+}
+
+async function publishRelease() {
+  if (!adminCanMutate() || !requireSavedContent() || !beginControlAction('publishingRelease')) return;
+  try {
+    if (!(await persistDraft()) || !requireSavedContent()) return;
+    const release = await api('/api/v1/admin/releases/publish', { method: 'POST', body: JSON.stringify({ expectedFingerprint: state.draft.draftFingerprint }) });
+    cachePublishedRelease(release);
     state.releases = [release, ...state.releases.filter((item) => item.id !== release.id).map((item) => ({ ...item, active: false }))];
     state.engine.activeReleaseId = release.id;
     state.engine.activeReleaseVersion = release.version;
@@ -1201,15 +1436,16 @@ async function publishRelease() {
     notify(`${state.language === 'ar' ? 'تم نشر الإصدار' : 'Published release'} v${release.version}`);
     renderAll();
     refreshViewPreview(state.view);
-  } catch (error) { notify(error.message, true); }
+    try { await refreshDraftAfterMutation(); } catch (_) { notify(t('evidenceUnavailable'), true); }
+  } catch (error) { await handleReleaseError(error); }
+  finally { endControlAction(); }
 }
 
 async function activateRelease(id) {
-  if (!adminCanMutate()) return;
+  if (!beginControlAction('activatingRelease')) return;
   try {
     const release = await api(`/api/v1/admin/releases/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
-    localStorage.setItem(ACTIVE_CACHE, JSON.stringify(release));
-    localStorage.setItem('zone.platform.gameData', JSON.stringify(release.manifest.content ?? {}));
+    cachePublishedRelease(release);
     state.releases = state.releases.map((item) => ({ ...item, active: item.id === release.id }));
     state.engine.activeReleaseId = release.id;
     state.engine.activeReleaseVersion = release.version;
@@ -1218,19 +1454,24 @@ async function activateRelease(id) {
     renderAll();
     refreshViewPreview(state.view);
   } catch (error) { notify(error.message, true); }
+  finally { endControlAction(); }
 }
 
 async function mutateModule(id, action) {
-  if (!adminCanMutate()) return;
+  if (!beginControlAction('operationBusy')) return;
+  let committed = false;
   try {
     await api(`/api/v1/admin/modules/${encodeURIComponent(id)}/${action}`, { method: 'POST', body: '{}' });
+    committed = true;
     const response = await api('/api/v1/modules');
     state.modules = response.modules;
     markDirty();
-    notify(`${id}: ${t(action)}`);
+    notify(`${id}: ${t(action)}. ${t('configurationSaved')}`);
     renderAll();
     refreshViewPreview('modules');
-  } catch (error) { notify(error.message, true); }
+    try { await refreshDraftAfterMutation(); } catch (_) { notify(t('evidenceUnavailable'), true); }
+  } catch (error) { notify(committed ? t('evidenceUnavailable') : error.message, true); }
+  finally { endControlAction(); }
 }
 
 function newCrime() {
@@ -1239,11 +1480,20 @@ function newCrime() {
   renderContent(true);
   $('#crimeId').focus();
 }
+function discardCrimeEdits() {
+  if (state.controlBusy || state.catalogBusy) return;
+  renderContent(true);
+}
 
 async function saveCrime(event) {
   event.preventDefault();
   if (!adminCanMutate()) return;
+  const levelText = $('#crimeLevel').value.trim(), levelRequired = Number(levelText);
+  if (!levelText || !Number.isInteger(levelRequired) || levelRequired < 1 || levelRequired > 100) { notify(t('crimeLevelInvalid'), true); return; }
+  if (!beginControlAction('operationBusy')) return;
   const id = slugify($('#crimeId').value);
+  const selectedBefore = state.selectedCrime;
+  const submittedEditor = crimeEditorValues();
   const definition = {
     name_en: $('#crimeNameEn').value.trim(),
     name_ar: $('#crimeNameAr').value.trim(),
@@ -1252,6 +1502,7 @@ async function saveCrime(event) {
     cash_min: Number($('#crimeCashMin').value),
     cash_max: Number($('#crimeCashMax').value),
     xp_reward: Number($('#crimeXp').value),
+    level_required: levelRequired,
     enabled: $('#crimeEnabled').checked,
   };
   const button = $('#saveCrimeButton');
@@ -1260,33 +1511,47 @@ async function saveCrime(event) {
     const response = await api(`/api/v1/admin/crimes/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(definition) });
     state.crimes = [...state.crimes.filter((crime) => crime.id !== response.crime.id), response.crime]
       .sort((left, right) => left.nerve_cost - right.nerve_cost || left.id.localeCompare(right.id));
-    state.selectedCrime = response.crime.id;
-    renderContent(true);
-    const [events, audit] = await Promise.all([api('/api/v1/events'), api('/api/v1/admin/audit')]);
-    state.events = events.events;
-    state.audit = audit.entries;
+    const changedSelection = state.selectedCrime !== selectedBefore;
+    const changedValues = !changedSelection && crimeEditorValues() !== submittedEditor;
+    const newerEditor = changedValues ? JSON.parse(crimeEditorValues()) : null;
+    if (!changedSelection) {
+      state.selectedCrime = response.crime.id;
+      renderContent(true);
+      if (newerEditor) {
+        ['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].forEach((field, index) => { $('#' + field).value = newerEditor[index]; });
+        $('#crimeEnabled').checked = newerEditor[9];
+      }
+    }
     markDirty();
     notify(state.language === 'ar' ? 'تم حفظ الجريمة في المحرك' : 'Crime saved to the engine');
     renderAll();
     refreshViewPreview('content');
+    const [events, audit, draftRefreshed] = await Promise.all([api('/api/v1/events').catch(() => null), api('/api/v1/admin/audit').catch(() => null), refreshDraftAfterMutation().catch(() => null)]);
+    if (events?.events) state.events = events.events;
+    if (audit?.entries) state.audit = audit.entries;
+    if (!events || !audit || draftRefreshed === null) notify(t('evidenceUnavailable'), true);
   } catch (error) {
     notify(error.message, true);
   } finally {
-    button.disabled = false;
+    endControlAction();
   }
 }
 
 async function activateTheme(id) {
-  if (!adminCanMutate()) return;
+  if (!beginControlAction('operationBusy')) return;
+  let committed = false;
   try {
     await api(`/api/v1/admin/themes/${encodeURIComponent(id)}/activate`, { method: 'POST', body: '{}' });
+    committed = true;
     const response = await api('/api/v1/themes');
     state.themes = response.themes;
     markDirty();
-    notify(`${id}: ${t('active')}`);
+    notify(`${id}: ${t('themeSelected') === 'themeSelected' ? t('active') : t('themeSelected')}. ${t('configurationSaved')}`);
     renderAll();
     refreshViewPreview('themes');
-  } catch (error) { notify(error.message, true); }
+    try { await refreshDraftAfterMutation(); } catch (_) { notify(t('evidenceUnavailable'), true); }
+  } catch (error) { notify(committed ? t('evidenceUnavailable') : error.message, true); }
+  finally { endControlAction(); }
 }
 
 async function loadTerritories({ render = true } = {}) {
@@ -1344,14 +1609,23 @@ async function applyTerritoryOwnership() {
 }
 
 async function load() {
+  if (state.bootBusy) return;
+  state.bootBusy = true;
   state.bootReady = false; state.bootError = ''; updateBootControls();
   try {
+  const session = await api('/api/v1/admin/session');
+  if (typeof session.configured !== 'boolean' || typeof session.authenticated !== 'boolean' || typeof session.localDevelopment !== 'boolean') throw new Error(t('adminLoadFailed'));
+  state.credentialMode = session.credentialMode === 'password' ? 'password' : 'token';
+  applyLanguage();
+  if (session.configured === true && session.authenticated !== true) { showAdminSession(); return; }
+  if (session.configured === false && session.localDevelopment !== true) throw new Error(t('ownerConfigurationMissing'));
+  state.sessionRequired = false;
   const [engine, modules, themes, crimes, ledger, events, audit, draft, releases, territories, gameplayCatalog] = await Promise.all([
     api('/api/v1/engine'), api('/api/v1/modules'), api('/api/v1/themes'), api('/api/v1/admin/crimes'), api('/api/v1/ledger'), api('/api/v1/events'), api('/api/v1/admin/audit'), api('/api/v1/admin/draft'), api('/api/v1/admin/releases'),
     api('/api/v1/admin/territories').catch((error) => ({ __territoryError: error.message })),
     api('/api/v1/admin/gameplay-catalog'),
   ]);
-  if (!engine || !draft?.manifest) throw new Error('Admin data is incomplete.');
+  if (!engine || !draft?.manifest || !/^[a-f0-9]{64}$/.test(draft.draftFingerprint ?? '')) throw new Error('Admin data is incomplete.');
   Object.assign(state, {
     engine,
     modules: modules.modules,
@@ -1363,6 +1637,8 @@ async function load() {
     draft,
     releases: releases.releases,
     gameplayCatalog,
+    savedDraftManifest: authoringManifestText(draft.manifest),
+    draftConflict: null,
   });
   if (territories.__territoryError) state.territoryError = territories.__territoryError;
   else state.territoryCatalog = normalizeTerritoryCatalog(territories);
@@ -1379,13 +1655,23 @@ async function load() {
   } catch (error) {
     state.bootReady = false; state.bootError = error.message;
     throw error;
-  } finally { updateBootControls(); }
+  } finally { state.bootBusy = false; updateBootControls(); }
+}
+async function retryAdminLoad() {
+  try { await load(); }
+  catch (error) { trace('BOOT', '/admin', null, { error: error.message }, 500); notify(t('adminLoadFailed'), true); updateBootControls(); }
 }
 
 installSectionPreviews();
-updateBootControls();
+applyLanguage();
 $$('[data-preview-toggle]').forEach((button) => button.addEventListener('click', () => togglePreview(button)));
-$('#languageButton').addEventListener('click', () => { state.language = state.language === 'en' ? 'ar' : 'en'; localStorage.setItem('zone.admin.language', state.language); applyLanguage(); });
+function toggleAdminLanguage() {
+  state.language = state.language === 'en' ? 'ar' : 'en';
+  localStorage.setItem('zone.admin.language', state.language);
+  const url = new URL(location.href); url.searchParams.set('lang', state.language); history.replaceState(null, '', url.pathname + url.search);
+  applyLanguage();
+}
+$('#languageButton').addEventListener('click', toggleAdminLanguage);
 $('#publishButton').addEventListener('click', publishRelease);
 $('#releasePublishButton').addEventListener('click', publishRelease);
 $('#saveDraftButton').addEventListener('click', saveDraft);
@@ -1393,8 +1679,17 @@ $('#previewButton').addEventListener('click', refreshPreview);
 $('#addPageButton').addEventListener('click', addPage);
 $('#addBlockButton').addEventListener('click', addBlock);
 $('#newCrimeButton').addEventListener('click', newCrime);
+$('#discardCrimeButton')?.addEventListener('click', discardCrimeEdits);
 $('#crimeForm').addEventListener('submit', saveCrime);
 $('#gameplayCatalogForm').addEventListener('submit', saveGameplayCatalog);
+$('#newCatalogButton').addEventListener('click', newGameplayCatalog);
+$('#discardCatalogButton')?.addEventListener('click', discardGameplayCatalog);
+$('#retryAdminButton')?.addEventListener('click', retryAdminLoad);
+$('#useServerDraftButton')?.addEventListener('click', () => resolveDraftConflict(true));
+$('#keepReviewedDraftButton')?.addEventListener('click', () => resolveDraftConflict(false));
+$('#adminSessionForm').addEventListener('submit', openAdminSession);
+$('#adminSessionDialog').addEventListener('cancel', event => event.preventDefault());
+$('#sessionLanguageButton').addEventListener('click', toggleAdminLanguage);
 $('#refreshTerritoriesButton').addEventListener('click', () => loadTerritories().then(() => notify(state.language === 'ar' ? 'تم تحديث حالة الأراضي' : 'Territory state refreshed')).catch((error) => notify(error.message, true)));
 $('#clearTraceButton').addEventListener('click', () => { $('#apiTrace').textContent = t('adminReady'); });
 $$('[data-go]').forEach((button) => button.addEventListener('click', () => setView(button.dataset.go)));
@@ -1418,8 +1713,9 @@ window.addEventListener('message', (event) => {
   if ((event.data.type === 'ZONE_MAP_SELECT_BLOCK' || event.data.TERRITORY_CLICK) && blockId) selectTerritoryBlock(String(blockId), false);
 });
 
-load().catch((error) => {
-  trace('BOOT', '/admin', null, { error: error.message }, 500);
-  notify(t('adminLoadFailed'), true);
-  updateBootControls();
+window.addEventListener('beforeunload', event => {
+  const pending = unsavedContentEdits();
+  const unsavedPages = state.savedDraftManifest !== null && authoringManifestText(currentManifest()) !== state.savedDraftManifest;
+  if (unsavedPages || pending.catalog || pending.crime) { event.preventDefault(); event.returnValue = ''; }
 });
+retryAdminLoad();
