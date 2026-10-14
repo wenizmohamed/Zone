@@ -25,7 +25,7 @@ function game(lang = 'en', fetchImpl, crimes = published) {
   const instance = new context.exports.Component({}); instance.toast = message => notices.push(message);
   instance.applyServerPlayer(player); instance.gameplayReady = true; instance.runtimeConnection = 'connected'; instance.state.screen = 'crimes';
   instance.gameplayVersion = 1; instance.onboarding = onboarding(0); instance.p.ctr.crimes = 0;
-  return { instance, calls, timers, notices, T: context.exports.T };
+  return { instance, calls, timers, notices, context, T: context.exports.T };
 }
 
 test('crime markup is a keyboard-operable selected action workspace, not a poster grid/table, scoped on phone/RTL', () => {
@@ -54,6 +54,25 @@ test('published gates/reward ranges/uncertainty survive mapping; every activity 
     for (const category of view.crimeCats) { if (category.locked && !category.sub.includes('published') && !category.sub.includes('منشورة')) assert.match(category.sub, lang === 'ar' ? /خبرة جرائم/ : /crime XP required/); category.go(); assert.equal(instance.state.cat, category.id); }
     assert.equal(instance.renderVals().crimeDesk.hasSelection, false);
     assert.ok(instance.renderVals().crimeDesk.emptyNote); assert.equal(calls.length, 0); assert.equal(JSON.stringify(instance.p), before);
+  }
+});
+
+test('choosing a lower opportunity returns keyboard and viewport to its plan without sending an action', () => {
+  for (const lang of ['en', 'ar']) {
+    const { instance, context, calls } = game(lang), focus = [];
+    context.document.querySelector = selector => { assert.equal(selector, '.zone-crime-plan h2'); return {
+      setAttribute: (...args) => focus.push(['attribute', ...args]), scrollIntoView: options => focus.push(['scroll', options.block]),
+      focus: options => focus.push(['focus', options.preventScroll]),
+    }; };
+    const before = JSON.stringify(instance.p);
+    instance.renderVals().crimes.find(crime => crime.id === 'trash').select();
+    assert.equal(instance.renderVals().crimeDesk.selected.id, 'trash');
+    assert.deepEqual(focus, [['attribute', 'tabindex', '-1'], ['scroll', 'start'], ['focus', true]]);
+    assert.equal(calls.length, 0); assert.equal(JSON.stringify(instance.p), before);
+    instance.setState({crimeReceipt: {id: 'trash', success: true, reward: {cash: 111, xp: 2}, cost: {nerve: 2}}});
+    const text = instance.renderVals().crimeDesk.receipt;
+    if (lang === 'ar') assert.ok(text.includes('\u2066$111\u2069'), 'Arabic money stays a left-to-right financial token');
+    else assert.ok(!text.includes('\u2066'));
   }
 });
 
