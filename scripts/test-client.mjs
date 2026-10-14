@@ -9,6 +9,29 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const html = readFileSync(resolve(root, 'index.html'), 'utf8');
 const source = html.match(/<script type="text\/x-dc"[^>]*>([\s\S]*?)<\/script>/)[1];
 const catalog = readFileSync(resolve(root, 'assets/weapons/catalog.js'), 'utf8');
+test('selected owner reconnect uses explicit sandbox recovery before ordinary session access', async () => {
+  const {instance,context,calls}=game(); const order=[];
+  context.window.zoneOwnerPlaytest={active:()=>true,recover:async()=>{order.push('owner');}};
+  context.window.ZoneSession={recover:async()=>{throw Error('ordinary session must not precede selected sandbox recovery');}};
+  context.window.ZonePlatform.refresh=async()=>{order.push('platform');return {};};
+  instance.loadGameplay=async()=>{order.push('gameplay');}; instance.loadTerritories=async()=>{};
+  instance.loadPlayerActivity=async()=>{}; instance.loadVisiblePeerResources=async()=>{};
+  await instance.reconnect(); assert.deepEqual(order,['owner','platform','gameplay']); assert.equal(calls.length,0);
+});
+test('failed owner reconnect retains selection and performs no ordinary hydration or mutation', async () => {
+  const {instance,context,calls}=game(); let hydrated=0,ordinary=0;
+  context.window.zoneOwnerPlaytest={active:()=>true,recover:async()=>{throw Error('Selected sandbox unavailable');}};
+  context.window.ZoneSession={recover:async()=>{ordinary++;}}; instance.loadGameplay=async()=>{hydrated++;};
+  await instance.reconnect(); assert.equal(ordinary,0); assert.equal(hydrated,0);
+  assert.equal(instance.gameplayError,'Selected sandbox unavailable'); assert.equal(calls.length,0);
+});
+test('selected sandbox startup probes independently of ordinary-session bootstrap failure', async () => {
+  const {instance,context}=game(); let probes=0,ordinary=0;
+  context.window.zoneOwnerPlaytest={active:()=>true,available:()=>true,snapshot:()=>null,probe:async()=>{probes++;}};
+  context.window.ZoneSession={ensure:async()=>{ordinary++;throw Error('ordinary auth/session unavailable');}};
+  instance.componentDidMount(); await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(probes,1); assert.equal(ordinary,0);
+});
 
 test('inventory match fraction preserves numerator order inside the Arabic RTL shell', () => {
   assert.match(html, /<span role="status" dir="ltr">\{\{ inventorySearch\.count \}\}<\/span>/);

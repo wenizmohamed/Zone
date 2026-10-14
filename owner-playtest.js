@@ -10,6 +10,7 @@
   let lastExit = null;
   let available = false;
   let refreshing = null;
+  let recovering = null;
   let transport = null;
   const selectionKey = 'zone.ownerPlaytest.selection';
   const preview = Boolean(window.ZonePlatform?.preview) || new URLSearchParams(location.search ?? '').get('zone-preview') === '1';
@@ -41,26 +42,28 @@
       serverCloseUnconfirmed: lastExit?.serverCloseUnconfirmed === true, snapshot: selected ? current() : null}}));
   };
   const modeError = message => { const error = new Error(message); error.status = 409; return error; };
-  const block = (error, ticket, expired = true) => {
+  const transientRead = error => error.name !== 'SyntaxError' && (!error.status || [408,429].includes(error.status) || (error.status >= 500 && error.status <= 599));
+  const block = (error, ticket, expired = true, retryableRead = false) => {
     if (ticket !== generation) return current();
+    if (blocked && !blocked.retryableRead && retryableRead) return current();
     if (error.status === 401 || error.status === 403) available = false;
-    if (selected) { blocked = {message: error.message, expired}; pending = null; }
+    if (selected) { blocked = {message: error.message, expired, retryableRead}; pending = null; }
     emit(); return current();
   };
-  const accept = (next, ticket, allowSessionChange = false) => {
+  const accept = (next, ticket, allowSessionChange = false, recoverRead = false) => {
     if (ticket !== generation) return current();
-    if (selected && blocked && !allowSessionChange) return current();
+    if (selected && blocked && !allowSessionChange && !(recoverRead && blocked.retryableRead && !blocked.expired)) return current();
     if (next?.active) {
       if (!next.sessionId || !Number.isInteger(next.version) || next.version < 1 || !next.gameplay) return block(modeError('Invalid owner playtest snapshot.'), ticket);
       if (selectedSessionId && next.sessionId !== selectedSessionId && !allowSessionChange) return block(modeError('Owner playtest session changed. Exit before continuing.'), ticket);
-      if (state && next.sessionId === selectedSessionId && next.version <= state.version) return current();
+      if (state && next.sessionId === selectedSessionId && (next.version < state.version || (next.version === state.version && !recoverRead))) return current();
       selected = true; selectedSessionId = next.sessionId; state = clone(next); blocked = null; pending = null; lastExit = null; rememberSelection(selectedSessionId); emit();
     } else if (selected) return block(modeError('Owner playtest expired or ended. Explicitly return to your account before continuing.'), ticket);
     else emit();
     return current();
   };
   const ready = () => {
-    if (!selected || !state || blocked || pending === 'start' || pending === 'stop') throw modeError(blocked?.message ?? 'Owner playtest is not ready.');
+    if (!selected || !state || blocked || pending === 'start' || pending === 'stop' || pending === 'recover') throw modeError(blocked?.message ?? 'Owner playtest is not ready.');
   };
   async function request(path, method = 'GET', body) {
     if (transport) return transport(path, method, body);
@@ -85,23 +88,55 @@
       emit();
       if (available) await refresh(); else if (selected) block(Object.assign(new Error('Admin authentication required.'), {status: 401}), ticket); else emit();
     } catch (error) {
-      if (error.status !== 401 && error.status !== 403) throw error;
+      if (error.status !== 401 && error.status !== 403) { if (selected) block(error, ticket, false, transientRead(error)); throw error; }
       block(error, ticket);
     }
     return {available, active: selected, expired: Boolean(blocked?.expired), snapshot: selected ? current() : null};
   }
-  async function refresh() {
+  async function refresh() { return refreshSnapshot(); }
+  async function refreshSnapshot(recoverRead = false) {
     if (preview) return {active: false, mode: 'player'};
     const ticket = generation;
     if (!refreshing || refreshing.ticket !== ticket) {
-      const entry = {ticket, promise: null};
-      entry.promise = request('/api/v1/admin/playtest').then(next => accept(next, ticket)).catch(error => {
+      const entry = {ticket, promise: null, recoverRead};
+      entry.promise = request('/api/v1/admin/playtest').then(next => accept(next, ticket, false, entry.recoverRead)).catch(error => {
         if (ticket !== generation) return current();
-        block(error, ticket, error.status === 401 || error.status === 403); throw error;
+        block(error, ticket, error.status === 401 || error.status === 403, transientRead(error)); throw error;
       }).finally(() => { if (refreshing === entry) refreshing = null; });
       refreshing = entry;
     }
+    // Only authenticated explicit recovery can authorize a shared pending read
+    // to unblock the same session. Public refresh arguments grant nothing.
+    if (recoverRead) refreshing.recoverRead = true;
     return refreshing.promise;
+  }
+  async function recover() {
+    if (preview || !selected) return {active:false, mode:'player'};
+    if (recovering?.ticket === generation) return recovering.promise;
+    if (!selectedSessionId || pending === 'start' || pending === 'stop' || (blocked && !blocked.retryableRead)) throw modeError(blocked?.message ?? 'Owner playtest cannot be resumed. Explicitly exit before continuing.');
+    const ticket = generation, entry = {ticket, promise:null};
+    pending = 'recover'; emit();
+    entry.promise = (async () => {
+      try {
+        // Explicit recovery only. Authenticate reads and retain the selected
+        // session, including same-version snapshots. Never resend a mutation.
+        const access = await request('/api/v1/admin/session');
+        if (ticket !== generation) return current();
+        if (access.authenticated !== true) throw Object.assign(new Error('Admin authentication required.'), {status:401});
+        available = true;
+        await refreshSnapshot(true);
+        if (ticket !== generation) return current();
+        if (blocked || !state || state.sessionId !== selectedSessionId) throw modeError(blocked?.message ?? 'Owner playtest is not ready.');
+        pending = null; emit(); return current();
+      } catch (error) {
+        if (ticket !== generation) return current();
+        // Identity/expiry blocks created while validating the snapshot stay
+        // irreversible here; a transient read cannot convert them to retryable.
+        if (!blocked || blocked.retryableRead) block(error, ticket, error.status === 401 || error.status === 403, transientRead(error));
+        throw error;
+      } finally { if (recovering === entry) recovering = null; }
+    })();
+    recovering = entry; return entry.promise;
   }
   async function start(idempotencyKey = key()) {
     if (preview) throw modeError('Owner playtest is not available in preview.');
@@ -230,7 +265,7 @@
   }
   window.zoneOwnerPlaytest = Object.freeze({
     configure: options => { if (options?.request && typeof options.request !== 'function') throw new TypeError('Playtest transport must be a function.'); transport = options?.request ?? null; },
-    probe, refresh, start, stop, action, route,
+    probe, refresh, recover, start, stop, action, route,
     snapshot: () => selected ? current() : null, available: () => available, active: () => selected,
     expired: () => Boolean(blocked?.expired),
   });

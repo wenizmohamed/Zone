@@ -5,6 +5,96 @@ import {runInNewContext} from 'node:vm';
 import {webcrypto} from 'node:crypto';
 
 const source = readFileSync(new URL('../owner-playtest.js', import.meta.url), 'utf8');
+test('explicit transient owner recovery coalesces reads, resumes the same version and never falls through', async () => {
+  const storage = tabStorage(), f = delayedFixture({storage}); await f.begin();
+  const read = f.api.refresh(), failed = assert.rejects(read, /upstream/);
+  f.take('/api/v1/admin/playtest', 'GET').reject(Object.assign(new Error('upstream unavailable'), {status:503})); await failed;
+  await assert.rejects(f.api.route('/api/v1/jobs/work', {}, 'POST'), /upstream/);
+  const recovery = f.api.recover(), duplicate = f.api.recover();
+  f.take('/api/v1/admin/session', 'GET').resolve({authenticated:true}); await new Promise(resolve => setImmediate(resolve));
+  await assert.rejects(f.api.action('job.work'), /not ready|upstream/);
+  f.take('/api/v1/admin/playtest', 'GET').resolve(f.snapshot(1)); await Promise.all([recovery,duplicate]);
+  assert.equal(f.api.snapshot().blocked,false); assert.equal(f.api.snapshot().version,1);
+  assert.equal(f.api.snapshot().sessionId,knownSession); assert.equal(storage.getItem(latchKey),knownSession);
+  assert.equal(f.calls.filter(c=>c.path==='/api/v1/admin/session').length,1);
+  assert.equal(f.calls.filter(c=>c.path.endsWith('/action')).length,0);
+});
+test('revocation and session replacement remain blocked despite explicit recovery', async () => {
+  for (const failure of ['auth','changed']) {
+    const f=delayedFixture(); await f.begin(); const read=f.api.refresh();
+    const rejected=assert.rejects(read); f.take('/api/v1/admin/playtest','GET').reject(Object.assign(new Error('unavailable'),{status:failure==='auth'?401:503})); await rejected;
+    const count=f.calls.length, recovery=f.api.recover(), refusal=assert.rejects(recovery);
+    if(failure==='changed') {
+      f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+      f.take('/api/v1/admin/playtest','GET').resolve(f.snapshot(2,'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'));
+    }
+    await refusal; assert.equal(f.api.active(),true); assert.equal(f.api.snapshot().sessionId,knownSession);
+    assert.equal(Object.hasOwn(f.api.snapshot(),'gameplay'),false);
+    if(failure==='auth') assert.equal(f.calls.length,count);
+    await assert.rejects(f.api.route('/api/v1/jobs/work',{},'POST'));
+  }
+});
+test('late owner recovery after explicit exit cannot reactivate the selected session', async () => {
+  const f=delayedFixture(); await f.begin(); const recovery=f.api.recover();
+  f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+  const pending=f.take('/api/v1/admin/playtest','GET'), stopping=f.api.stop();
+  f.take('/api/v1/admin/playtest','DELETE').resolve({active:false,mode:'player'}); await stopping;
+  pending.resolve(f.snapshot(2)); await recovery; assert.equal(f.api.active(),false);
+});
+
+test('only explicit authenticated recovery can unblock a pending shared owner read', async () => {
+  const f=delayedFixture(); await f.begin();
+  const failed=f.api.refresh(), failure=assert.rejects(failed);
+  f.take('/api/v1/admin/playtest','GET').reject(Object.assign(new Error('upstream unavailable'),{status:503})); await failure;
+  const ordinary=f.api.refresh(true), read=f.take('/api/v1/admin/playtest','GET');
+  read.resolve(f.snapshot()); await ordinary; assert.equal(f.api.snapshot().blocked,true);
+  const shared=f.api.refresh(), pending=f.take('/api/v1/admin/playtest','GET'), recovery=f.api.recover();
+  f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(f.calls.filter(c=>c.path==='/api/v1/admin/playtest'&&c.method==='GET').length,3);
+  pending.resolve(f.snapshot()); await Promise.all([shared,recovery]); assert.equal(f.api.snapshot().blocked,false);
+  assert.equal(f.calls.filter(c=>c.method!=='GET'&&!c.path.endsWith('/start')).length,0);
+});
+
+test('a transient latched startup probe can be explicitly retried without ordinary auth or a new sandbox', async () => {
+  const storage=tabStorage(); storage.setItem(latchKey,knownSession); const f=delayedFixture({storage});
+  const probe=f.api.probe(), failure=assert.rejects(probe);
+  f.take('/api/v1/admin/session','GET').reject(Object.assign(new Error('upstream unavailable'),{status:503})); await failure;
+  assert.equal(f.api.active(),true); assert.equal(f.api.snapshot().blocked,true);
+  const recovery=f.api.recover(); f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+  f.take('/api/v1/admin/playtest','GET').resolve(f.snapshot()); await recovery;
+  assert.equal(f.api.snapshot().sessionId,knownSession); assert.equal(f.api.snapshot().blocked,false);
+  assert.equal(storage.getItem(latchKey),knownSession); assert.equal(f.calls.some(c=>c.path.includes('/auth/')||c.method!=='GET'),false);
+});
+
+test('a second transient recovery failure remains manually retryable with no automatic loop', async () => {
+  const f=delayedFixture(); await f.begin();
+  const recovery=f.api.recover(), failure=assert.rejects(recovery,/upstream/);
+  f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+  f.take('/api/v1/admin/playtest','GET').reject(Object.assign(new Error('upstream unavailable'),{status:503})); await failure;
+  const count=f.calls.length; await new Promise(resolve=>setImmediate(resolve)); assert.equal(f.calls.length,count);
+  const retry=f.api.recover(); f.take('/api/v1/admin/session','GET').resolve({authenticated:true}); await new Promise(resolve=>setImmediate(resolve));
+  f.take('/api/v1/admin/playtest','GET').resolve(f.snapshot()); await retry;
+  assert.equal(f.api.snapshot().blocked,false); assert.equal(f.calls.filter(c=>c.path.endsWith('/action')).length,0);
+});
+
+test('recovery authorization denial, expired snapshot and malformed snapshot cannot be retried into readiness', async () => {
+  for(const failure of ['auth','expired','malformed']) {
+    const f=delayedFixture(); await f.begin(); const recovery=f.api.recover(), rejected=assert.rejects(recovery);
+    f.take('/api/v1/admin/session','GET').resolve({authenticated:failure!=='auth'}); await new Promise(resolve=>setImmediate(resolve));
+    if(failure!=='auth') f.take('/api/v1/admin/playtest','GET').resolve(failure==='expired'?{active:false}: {...f.snapshot(),version:0});
+    await rejected; assert.equal(f.api.active(),true); assert.equal(f.api.snapshot().blocked,true); assert.equal(Object.hasOwn(f.api.snapshot(),'gameplay'),false);
+    const count=f.calls.length; await assert.rejects(f.api.recover()); await assert.rejects(f.api.action('job.work')); assert.equal(f.calls.length,count);
+  }
+});
+
+test('ordinary read failures cannot downgrade a permanent owner block to transient recovery', async () => {
+  const f=delayedFixture(); await f.begin();
+  const expired=f.api.refresh(); f.take('/api/v1/admin/playtest','GET').resolve({active:false}); await expired;
+  const later=f.api.refresh(), rejection=assert.rejects(later);
+  f.take('/api/v1/admin/playtest','GET').reject(Object.assign(new Error('upstream unavailable'),{status:503})); await rejection;
+  const count=f.calls.length; await assert.rejects(f.api.recover(),/expired or ended/); assert.equal(f.calls.length,count);
+  assert.equal(f.api.snapshot().sessionId,knownSession); assert.equal(f.api.expired(),true);
+});
 function fixture({owner = true, storage} = {}) {
   const calls = [], events = [];
   let next = {active: false, mode: 'player'};

@@ -37,7 +37,7 @@
 <script src="./support.js"></script>
 <script src="./player-session.js?v=102"></script>
 <script src="./platform-runtime.js?v=102"></script>
-<script src="./owner-playtest.js?v=102"></script>
+<script src="./owner-playtest.js?v=106"></script>
 <script src="./assets/ui/owner-transport.js?v=102"></script>
 <script src="./assets/module-panel.js?v=64"></script>
 <script src="./dist/map-icons.js"></script>
@@ -1146,7 +1146,7 @@ class Component extends DCLogic {
     this.mapVisibility(this.state.screen === 'city');
     this.loadTerritories();
     if (window.zoneOwnerPlaytest?.active()) {
-      Promise.resolve(window.ZoneSession?.ensure?.()).then(() => window.zoneOwnerPlaytest.probe()).then(() => this.loadGameplay()).catch(error => { this.gameplayError = error.message || String(error); this.forceUpdate(); });
+      Promise.resolve().then(() => window.zoneOwnerPlaytest.probe()).then(() => this.loadGameplay()).catch(error => { this.gameplayError = error.message || String(error); this.forceUpdate(); });
     } else this.loadGameplay().then(() => window.zoneOwnerPlaytest?.probe()).catch(() => {});
     if (this.state.screen === 'casino') this.loadCasino();
     if (this.state.screen === 'home') this.loadPlayerActivity();
@@ -1174,7 +1174,8 @@ class Component extends DCLogic {
       try {
         // Recovery reads only. No previous crime, purchase, bank or attack is
         // automatically repeated when connectivity returns.
-        if (window.ZoneSession?.recover) await window.ZoneSession.recover();
+        if (window.zoneOwnerPlaytest?.active()) await window.zoneOwnerPlaytest.recover();
+        else if (window.ZoneSession?.recover) await window.ZoneSession.recover();
         const platform = await window.ZonePlatform?.refresh?.();
         if (platform) this.runtimeConnection = window.ZonePlatform.status?.() || 'connected';
         await this.loadGameplay();
