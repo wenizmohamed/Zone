@@ -9,6 +9,11 @@ const html = readFileSync(new URL('../admin.html', import.meta.url), 'utf8');
 const escape = value => String(value ?? '').replace(/[&<>"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[character]);
 const decode = value => String(value).replace(/&(?:amp|quot|lt|gt|#39);/g, entity => ({ '&amp;': '&', '&quot;': '"', '&lt;': '<', '&gt;': '>', '&#39;': "'" })[entity]);
 const clone = value => structuredClone(value);
+const defaultLabelsStart = adminSource.indexOf('const catalogDefaultLabels = {'), defaultLabelsEnd = adminSource.indexOf('\n};', defaultLabelsStart) + 3;
+assert.ok(defaultLabelsStart >= 0 && defaultLabelsEnd > defaultLabelsStart, 'Read the actual canonical Admin catalog labels.');
+const defaultLabelsContext = createContext({});
+runInContext(adminSource.slice(defaultLabelsStart, defaultLabelsEnd) + '\nglobalThis.labels = catalogDefaultLabels;', defaultLabelsContext);
+const catalogDefaultLabels = clone(defaultLabelsContext.labels);
 const flush = async () => { await new Promise(resolve => setImmediate(resolve)); };
 function deferred() { let resolve, reject; const promise = new Promise((yes, no) => { resolve = yes; reject = no; }); return { promise, resolve, reject }; }
 
@@ -16,6 +21,20 @@ function deferred() { let resolve, reject; const promise = new Promise((yes, no)
 // browser primitives only; no production selection/dirty/race logic is copied.
 function fixtureDom() {
   const voidTags = new Set(['input', 'img', 'br', 'hr', 'meta', 'link']);
+  const observers = new Set();
+  class MutationObserver {
+    constructor(callback) { this.callback = callback; this.targets = new Map(); this.records = []; this.queued = false; }
+    observe(target, options) { this.targets.set(target, options); observers.add(this); }
+    disconnect() { this.targets.clear(); this.records = []; observers.delete(this); }
+  }
+  function attributeChanged(target, name) {
+    for (const observer of observers) {
+      const options = observer.targets.get(target);
+      if (!options?.attributes || options.attributeFilter && !options.attributeFilter.includes(name)) continue;
+      observer.records.push({ type: 'attributes', target, attributeName: name });
+      if (!observer.queued) { observer.queued = true; queueMicrotask(() => { observer.queued = false; const records = observer.records.splice(0); if (records.length) observer.callback(records, observer); }); }
+    }
+  }
   function matches(element, selector) {
     const tag = selector.match(/^[a-z][a-z0-9-]*/i)?.[0]; if (tag && element.tagName !== tag.toUpperCase()) return false;
     const id = selector.match(/#([\w-]+)/)?.[1]; if (id && element.id !== id) return false;
@@ -37,10 +56,10 @@ function fixtureDom() {
     get value() { return this._value; } set value(value) { this._value = String(value); }
     get disabled() { return this.hasAttribute('disabled'); } set disabled(value) { value ? this.setAttribute('disabled', '') : this.removeAttribute('disabled'); }
     get hidden() { return this.hasAttribute('hidden'); } set hidden(value) { value ? this.setAttribute('hidden', '') : this.removeAttribute('hidden'); }
-    setAttribute(name, value) { this.attributes.set(name, String(value)); if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = String(value); if (name === 'value') this.value = decode(value); if (name === 'checked') this.checked = true; }
+    setAttribute(name, value) { const changed = this.getAttribute(name) !== String(value); this.attributes.set(name, String(value)); if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = String(value); if (name === 'value') this.value = decode(value); if (name === 'checked') this.checked = true; if (changed) attributeChanged(this, name); }
     getAttribute(name) { return this.attributes.get(name) ?? null; }
     hasAttribute(name) { return this.attributes.has(name); }
-    removeAttribute(name) { this.attributes.delete(name); }
+    removeAttribute(name) { if (this.attributes.delete(name)) attributeChanged(this, name); }
     append(...elements) { for (const element of elements) { element.parentElement = this; this.children.push(element); } }
     appendChild(element) { this.append(element); return element; }
     insertBefore(element, sibling) { const index = this.children.indexOf(sibling); assert.ok(index >= 0); element.parentElement = this; this.children.splice(index, 0, element); return element; }
@@ -77,7 +96,7 @@ function fixtureDom() {
     }
     for (const select of parent.querySelectorAll('select')) if (!select.value) select.value = select.querySelector('option')?.getAttribute('value') ?? '';
   }
-  const document = { body: new Element('body'), createElement: tag => new Element(tag), querySelector: selector => document.body.querySelector(selector), querySelectorAll: selector => document.body.querySelectorAll(selector) };
+  const document = { body: new Element('body'), MutationObserver, createElement: tag => new Element(tag), querySelector: selector => document.body.querySelector(selector), querySelectorAll: selector => document.body.querySelectorAll(selector) };
   document.body.innerHTML = html.match(/<body\b[^>]*>([\s\S]*)<\/body>/i)[1];
   return document;
 }
@@ -85,10 +104,10 @@ function fixtureDom() {
 const idA = 'a'.repeat(64), idB = 'b'.repeat(64), idC = 'c'.repeat(64);
 const asset = (id, scale, status = 'ready') => ({ id, name: 'House ' + id[0].toUpperCase(), status, kind: 'model', format: 'obj', metadata: { bounds: { size: [1, 2, 3] } }, transform: { scale, rotation: [0, 0, 0], floorOffset: 0, cameraTarget: [0, 0, 0] } });
 const seedCatalog = () => ({ revision: 10, catalogs: { items: { knife: { type: 'weapon', name: { en: 'Knife', ar: 'سكين' } }, armor: { type: 'armor', name: { en: 'Armor', ar: 'درع' } } }, properties: [{ id: 'apt', name: { en: 'Apartment', ar: 'شقة' } }], market: [{ item: 'knife', qty: 4, seller: 'Dock shop' }] }, schema: {} });
-function media({ apiHook, saveHook, assets = [asset(idA, 1), asset(idB, 2)] } = {}) {
+function media({ apiHook, saveHook, assets = [asset(idA, 1), asset(idB, 2)], catalog = seedCatalog(), catalogCategory = 'items' } = {}) {
   const document = fixtureDom(), calls = [], listeners = new Map(), timers = new Map(); let timerId = 0;
-  const state = { language: 'en', bootReady: true, view: 'overview', catalogBusy: false, controlBusy: false, dirty: false, draft: { manifest: { mediaBindings: [], worldPolicy: { enabled: true, tickSeconds: 60 } } }, gameplayCatalog: seedCatalog(), catalogEdits: {}, catalogCategory: 'items', catalogEntry: 'knife' };
-  const server = { assets: clone(assets), draft: clone(state.draft.manifest), catalog: seedCatalog() };
+  const state = { language: 'en', bootReady: true, view: 'overview', catalogBusy: false, controlBusy: false, dirty: false, draft: { manifest: { mediaBindings: [], worldPolicy: { enabled: true, tickSeconds: 60 } } }, gameplayCatalog: clone(catalog), catalogEdits: {}, catalogCategory, catalogEntry: 'knife' };
+  const server = { assets: clone(assets), draft: clone(state.draft.manifest), catalog: clone(catalog) };
   const window = { addEventListener(type, callback) { const list = listeners.get(type) ?? []; list.push(callback); listeners.set(type, list); } };
   const emitWindow = async (type, fields = {}) => { const event = { type, defaultPrevented: false, preventDefault() { this.defaultPrevented = true; }, ...fields }; for (const callback of listeners.get(type) ?? []) await callback(event); return event; };
   const q = selector => document.querySelector(selector);
@@ -106,7 +125,7 @@ function media({ apiHook, saveHook, assets = [asset(idA, 1), asset(idB, 2)] } = 
     if (path.endsWith('/complete')) { server.assets.push(asset(idC, 3)); return { id: idC }; }
     assert.fail('Unexpected API request: ' + call.method + ' ' + path);
   };
-  const context = createContext({ console, document, window, location: { origin: 'https://zone.test' }, state, Uint8Array, btoa: value => Buffer.from(value, 'binary').toString('base64'), esc: escape,
+  const context = createContext({ console, document, window, MutationObserver: document.MutationObserver, location: { origin: 'https://zone.test' }, state, catalogDefaultLabels, Uint8Array, btoa: value => Buffer.from(value, 'binary').toString('base64'), esc: escape,
     api, adminCanMutate: () => state.bootReady && !state.controlBusy && !state.catalogBusy,
     markDirty() { state.dirty = true; }, renderGameplayCatalog() { calls.push({ render: 'catalog', selection: state.catalogEntry }); },
     notify(value, error) { calls.push({ notify: value, error }); }, unsavedContentEdits: () => ({ catalog: null, crime: false }), renderContent() {}, setView(view) { state.view = view; },
@@ -234,6 +253,97 @@ test('real media inspection mounts a ready iframe and preserves bilingual contro
   m.state.language = 'ar'; m.window.ZoneMedia.refresh(); assert.equal(m.q('[data-media-copy="title"]').textContent, 'اصنع عالمك بملفاتك');
 });
 
+test('changing inspector language preserves unsaved fit values and fences the previous iframe without repeat reloads', async () => {
+  const m = media(); m.state.view = 'assets'; await m.load(); await m.select(idA);
+  await m.q('#mediaScale').input('1.75'); await m.q('#mediaFloor').input('0.4'); await m.q('#mediaRotationX').input('35'); await m.q('#mediaTargetX').input('0.75');
+  const shopRow = m.q('#shopListingRows').children[0]; await shopRow.querySelector('.shop-item').input('armor'); await shopRow.querySelector('.shop-qty').input('13'); await shopRow.querySelector('.shop-seller').input('متجر المسودة');
+  const previous = m.q('#mediaInspector'), calls = m.calls.length;
+  await m.emitWindow('message', { origin: 'https://zone.test', source: previous.contentWindow, data: { type: 'zone:asset-inspected', assetId: idA, transform: asset(idA, 1).transform, applied: false, revision: 9 } });
+  m.state.language = 'ar'; m.window.ZoneMedia.refresh(); const arabic = m.q('#mediaInspector');
+  assert.equal(arabic.src, '/dist/asset-inspector.html?asset=' + idA + '&lang=ar'); assert.notEqual(arabic, previous);
+  assert.equal(arabic.getAttribute('title'), 'فاحص ضبط الأصل ثلاثي الأبعاد'); assert.equal(m.q('#mediaProgress').getAttribute('aria-label'), 'تقدم الرفع');
+  assert.equal(m.q('#mediaRotationX').getAttribute('aria-label'), 'الدوران (درجات) X');
+  assert.equal(m.q('#mediaTargetX').getAttribute('aria-label'), 'هدف الكاميرا X');
+  assert.equal(m.q('#mediaScale').value, '1.75'); assert.equal(m.q('#mediaFloor').value, '0.4'); assert.equal(m.q('#mediaRotationX').value, '35'); assert.equal(m.q('#mediaTargetX').value, '0.75');
+  assert.equal(m.q('#shopListingRows').children[0], shopRow); assert.deepEqual([shopRow.querySelector('.shop-item').value, shopRow.querySelector('.shop-qty').value, shopRow.querySelector('.shop-seller').value], ['armor', '13', 'متجر المسودة']);
+  await m.emitWindow('message', { origin: 'https://zone.test', source: previous.contentWindow, data: { type: 'zone:asset-inspected', assetId: idA, transform: asset(idA, 8).transform, applied: true, revision: 10 } });
+  await m.emitWindow('message', { origin: 'https://zone.test', source: arabic.contentWindow, data: { type: 'zone:asset-inspected', assetId: idA, transform: asset(idA, 1).transform, applied: false, revision: 1 } });
+  assert.equal(m.q('#mediaScale').value, '1.75'); assert.equal(arabic.contentWindow.messages.at(-1).value.transform.scale, 1.75);
+  for (let i = 0; i < 10; i++) m.window.ZoneMedia.refresh();
+  assert.equal(m.q('#mediaInspector'), arabic); assert.equal(m.calls.length, calls, 'Changing locale must not reread or save the selected asset.');
+  await m.select(idB); await m.q('#mediaScale').input('2.4'); await m.select(idA); assert.equal(m.q('#mediaScale').value, '1.75');
+  m.state.language = 'en'; m.window.ZoneMedia.refresh(); assert.match(m.q('#mediaInspector').src, /&lang=en$/);
+  assert.equal(m.q('#mediaInspector').getAttribute('title'), '3D asset fit inspector'); assert.equal(m.q('#mediaProgress').getAttribute('aria-label'), 'Upload progress');
+  assert.equal(m.q('#shopListingRows').children[0], shopRow); assert.deepEqual([shopRow.querySelector('.shop-item').value, shopRow.querySelector('.shop-qty').value, shopRow.querySelector('.shop-seller').value], ['armor', '13', 'متجر المسودة']);
+  assert.equal(m.window.ZoneMedia.hasUnsaved(), true);
+});
+
+test('a hidden inspector resumes in the current locale on Assets activation and after same-locale suspension', async () => {
+  const m = media(); m.state.view = 'assets'; await m.load(); await m.select(idA); await m.q('#mediaScale').input('1.65');
+  const view = m.q('.view[data-view="assets"]'); m.state.view = 'overview'; view.className = 'view'; m.q('#mediaInspector').removeAttribute('src'); await flush();
+  m.state.language = 'ar'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaInspector').getAttribute('src'), null, 'A hidden preview stays unloaded.');
+  m.state.view = 'assets'; view.className = 'view active'; await flush(); const resumed = m.q('#mediaInspector');
+  assert.match(resumed.src, /&lang=ar$/); assert.equal(m.q('#mediaScale').value, '1.65');
+  for (let i = 0; i < 10; i++) m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaInspector'), resumed);
+  m.state.view = 'overview'; view.className = 'view'; resumed.removeAttribute('src'); await flush();
+  m.state.view = 'assets'; view.className = 'view active'; await flush();
+  assert.notEqual(m.q('#mediaInspector'), resumed); assert.match(m.q('#mediaInspector').src, /&lang=ar$/); assert.equal(m.window.ZoneMedia.hasUnsaved(), true);
+});
+
+for (const dirty of [false, true]) {
+  test(`${dirty ? 'dirty' : 'clean'} shop rows translate labels and option captions in place while retaining selected items and values`, async () => {
+    const m = media(), row = m.q('#shopListingRows').children[0], item = row.querySelector('.shop-item'), qty = row.querySelector('.shop-qty'), seller = row.querySelector('.shop-seller'), options = item.querySelectorAll('option');
+    if (dirty) { await item.input('armor'); await qty.input('19'); await seller.input('اسم متجر غير محفوظ'); }
+    const values = [item.value, qty.value, seller.value];
+    m.state.language = 'ar'; m.window.ZoneMedia.refresh();
+    assert.equal(m.q('#shopListingRows').children[0], row); assert.equal(row.querySelector('.shop-item'), item); assert.equal(row.querySelector('.shop-qty'), qty); assert.equal(row.querySelector('.shop-seller'), seller);
+    assert.deepEqual(row.querySelectorAll('label').map(label => label.querySelector('span').textContent), ['عنصر', 'المخزون', 'اسم المتجر']);
+    assert.deepEqual(item.querySelectorAll('option'), options); assert.deepEqual(options.map(option => option.textContent), ['سكين', 'درع']); assert.equal(row.querySelector('button').textContent, 'حذف الصف');
+    assert.deepEqual([item.value, qty.value, seller.value], values); assert.equal(m.window.ZoneMedia.hasUnsaved(), dirty);
+    m.state.language = 'en'; m.window.ZoneMedia.refresh();
+    assert.deepEqual(row.querySelectorAll('label').map(label => label.querySelector('span').textContent), ['Item', 'Stock', 'Shop name']); assert.deepEqual(options.map(option => option.textContent), ['Knife', 'Armor']);
+    assert.equal(row.querySelector('button').textContent, 'Remove'); assert.deepEqual([item.value, qty.value, seller.value], values); assert.equal(m.window.ZoneMedia.hasUnsaved(), dirty);
+  });
+}
+
+test('unnamed preset shop items use the actual item labels in both locales even while the catalog editor shows properties', async () => {
+  const catalog = seedCatalog(), ids = Object.keys(catalogDefaultLabels.items);
+  assert.ok(ids.includes('pills') && ids.includes('ak'));
+  catalog.catalogs.items = Object.fromEntries(ids.map(id => [id, { type: 'item' }])); catalog.catalogs.market = [{ item: 'pills', qty: 5, seller: 'Original shop' }];
+  const m = media({ catalog, catalogCategory: 'properties' }), row = m.q('#shopListingRows').children[0], item = row.querySelector('.shop-item'), options = item.querySelectorAll('option');
+  assert.deepEqual(options.map(option => option.textContent), ids.map(id => catalogDefaultLabels.items[id].en), 'Initial rows need canonical names before any language switch.');
+  await item.input('ak'); await row.querySelector('.shop-qty').input('27'); await row.querySelector('.shop-seller').input('Preserved shop');
+  for (const language of ['en', 'ar', 'en']) {
+    m.state.language = language; m.window.ZoneMedia.refresh();
+    assert.equal(m.state.catalogCategory, 'properties'); assert.equal(m.q('#shopListingRows').children[0], row); assert.deepEqual(item.querySelectorAll('option'), options);
+    assert.deepEqual(options.map(option => option.value), ids); assert.deepEqual(options.map(option => option.textContent), ids.map(id => catalogDefaultLabels.items[id][language]));
+    assert.deepEqual([item.value, row.querySelector('.shop-qty').value, row.querySelector('.shop-seller').value], ['ak', '27', 'Preserved shop']); assert.equal(m.window.ZoneMedia.hasUnsaved(), true);
+    if (language === 'ar') { await m.q('#shopAddListing').click(); const added = m.q('#shopListingRows').children.at(-1); assert.deepEqual(added.querySelector('.shop-item').querySelectorAll('option').map(option => option.textContent), ids.map(id => catalogDefaultLabels.items[id].ar)); }
+  }
+});
+
+test('authored shop names override canonical item labels and an empty locale still falls back to the item table', () => {
+  const catalog = seedCatalog(); catalog.catalogs.items.ak = { type: 'weapon', name: { en: 'Authored rifle', ar: 'بندقية المؤلف' } };
+  catalog.catalogs.items.pills = { type: 'item', name: { en: 'Authored medicine', ar: '' } };
+  const m = media({ catalog, catalogCategory: 'properties' }), row = m.q('#shopListingRows').children[0], options = row.querySelector('.shop-item').querySelectorAll('option');
+  for (const language of ['en', 'ar', 'en']) {
+    m.state.language = language; m.window.ZoneMedia.refresh();
+    assert.equal(options.find(option => option.value === 'ak').textContent, catalog.catalogs.items.ak.name[language]);
+    assert.equal(options.find(option => option.value === 'pills').textContent, language === 'en' ? 'Authored medicine' : catalogDefaultLabels.items.pills.ar);
+    assert.deepEqual([row.querySelector('.shop-item').value, row.querySelector('.shop-qty').value, row.querySelector('.shop-seller').value], ['knife', '4', 'Dock shop']); assert.equal(m.window.ZoneMedia.hasUnsaved(), false);
+  }
+});
+
+test('an inspection pending during a language switch retains its request identity and the other asset fit draft', async () => {
+  const pending = deferred(), m = media({ apiHook: call => call.path === '/api/v1/admin/assets/' + idB ? pending.promise : undefined });
+  m.state.view = 'assets'; await m.load(); await m.select(idA); await m.q('#mediaScale').input('1.8');
+  const selecting = m.select(idB); await flush(); m.state.language = 'ar'; m.window.ZoneMedia.refresh();
+  pending.resolve(asset(idB, 2)); await selecting;
+  assert.equal(m.q('#mediaSelectedName').textContent, 'House B'); assert.match(m.q('#mediaInspector').src, /asset=b{64}&lang=ar$/); assert.equal(m.q('#mediaScale').value, '2');
+  assert.equal(m.calls.filter(call => call.path === '/api/v1/admin/assets/' + idB).length, 1);
+  await m.select(idA); assert.equal(m.q('#mediaScale').value, '1.8'); assert.match(m.q('#mediaInspector').src, /&lang=ar$/); assert.equal(m.window.ZoneMedia.hasUnsaved(), true);
+});
+
 test('unsaved fitted transforms survive selection changes and each successful save acknowledges only its asset', async () => {
   const m = media(); await m.load(); await m.select(idA); await m.q('#mediaScale').input('1.75');
   await m.select(idB); await m.q('#mediaScale').input('2.5'); await m.q('#mediaFitForm').emit('submit');
@@ -284,6 +394,29 @@ test('out-of-order library reads and worker health cannot replace the latest dis
   const workers = media({ apiHook: call => call.path === '/api/v1/admin/workers' ? (++workerReads === 1 ? health.promise : { workers: [{ id: 'latest-worker', healthy: true }] }) : undefined });
   const oldHealth = workers.load(); await flush(); await workers.load(); health.resolve({ workers: [{ id: 'old-worker', healthy: false }] }); await oldHealth;
   assert.match(workers.q('#mediaWorkerStatus').textContent, /latest-worker running/); assert.doesNotMatch(workers.q('#mediaWorkerStatus').textContent, /old-worker/);
+  workers.state.language = 'ar'; workers.window.ZoneMedia.refresh(); assert.equal(workers.q('#mediaWorkerStatus').textContent, 'حالة العامل: latest-worker يعمل');
+  workers.state.language = 'en'; workers.window.ZoneMedia.refresh(); assert.equal(workers.q('#mediaWorkerStatus').textContent, 'Worker health: latest-worker running');
+});
+
+test('worker health translates its latest running and unavailable-worker states EN to AR to EN without rereading', async () => {
+  const m = media({ apiHook: call => call.path === '/api/v1/admin/workers' ? { workers: [{ id: 'studio', healthy: true }, { id: 'world', healthy: false }] } : undefined });
+  await m.load(); const calls = m.calls.length;
+  assert.equal(m.q('#mediaWorkerStatus').textContent, 'Worker health: studio running · world not responding');
+  m.state.language = 'ar'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaWorkerStatus').textContent, 'حالة العامل: studio يعمل · world لا يستجيب');
+  m.state.language = 'en'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaWorkerStatus').textContent, 'Worker health: studio running · world not responding');
+  for (let i = 0; i < 10; i++) m.window.ZoneMedia.refresh();
+  assert.equal(m.calls.length, calls); assert.equal(m.calls.filter(call => call.path === '/api/v1/admin/workers').length, 1); assert.equal(m.window.ZoneMedia.hasUnsaved(), false);
+});
+
+test('failed worker health reads retain a translated unavailable status until an explicit successful refresh', async () => {
+  let reads = 0;
+  const m = media({ apiHook: call => call.path === '/api/v1/admin/workers' ? (++reads === 1 ? Promise.reject(new Error('Worker health unavailable')) : { workers: [{ id: 'recovered', healthy: true }] }) : undefined });
+  await m.load(); const calls = m.calls.length; assert.equal(m.q('#mediaWorkerStatus').textContent, 'Worker health: Unavailable');
+  m.state.language = 'ar'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaWorkerStatus').textContent, 'حالة العامل: غير متاحة');
+  m.state.language = 'en'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaWorkerStatus').textContent, 'Worker health: Unavailable');
+  for (let i = 0; i < 10; i++) m.window.ZoneMedia.refresh(); assert.equal(m.calls.length, calls); assert.equal(reads, 1);
+  await m.load(); assert.equal(reads, 2); assert.equal(m.q('#mediaWorkerStatus').textContent, 'Worker health: recovered running');
+  m.state.language = 'ar'; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaWorkerStatus').textContent, 'حالة العامل: recovered يعمل'); assert.equal(reads, 2);
 });
 
 test('a rejected old library read cannot replace the status of a successful newer refresh', async () => {
