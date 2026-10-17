@@ -488,3 +488,21 @@ CREATE TABLE IF NOT EXISTS worker_heartbeats (
     id VARCHAR(64) PRIMARY KEY, updated_at BIGINT NOT NULL,
     payload_json TEXT NOT NULL DEFAULT '{}'
 );
+
+-- beta110: append-only issuance is retained independently of owned stock/finds.
+CREATE TABLE IF NOT EXISTS material_issuance (
+    source VARCHAR(16) NOT NULL CHECK (source IN ('world','search')),
+    correlation_id VARCHAR(100) NOT NULL,
+    scope_id VARCHAR(100) NOT NULL,
+    hour_start BIGINT NOT NULL,
+    status VARCHAR(24) NOT NULL CHECK (status IN ('awarded','budget-capped','no-eligible-material')),
+    item_id VARCHAR(80),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    unit_value BIGINT NOT NULL CHECK (unit_value >= 0),
+    issued_value BIGINT NOT NULL CHECK (issued_value >= 0),
+    release_id VARCHAR(100) NOT NULL,
+    created_at BIGINT NOT NULL,
+    PRIMARY KEY (source,correlation_id),
+    CHECK (status <> 'awarded' OR item_id IS NOT NULL)
+);
+CREATE INDEX IF NOT EXISTS material_issuance_hour ON material_issuance(source,scope_id,hour_start);

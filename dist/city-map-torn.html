@@ -433,11 +433,11 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js?v=108"></script>
-<script src="territory-geometry.js?v=108"></script>
-<script src="../assets/city/service-buildings108.js?v=108"></script>
-<script src="../assets/city/compact-district.js?v=108"></script>
-<script src="map-frame-sample.js?v=108"></script>
+<script src="map-icons.js?v=110"></script>
+<script src="territory-geometry.js?v=110"></script>
+<script src="../assets/city/service-buildings108.js?v=110"></script>
+<script src="../assets/city/compact-district.js?v=110"></script>
+<script src="map-frame-sample.js?v=110"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -958,18 +958,90 @@ initializeMapLocale();
     if(!point)return null;
     var layers=['zone-poi-icon','zone-poi-icon-service','zone-poi-icon-detail'].filter(function(id){return !!map.getLayer(id);});
     if(!layers.length)return null;
-    var hitDiagnostic={point:{x:point.x,y:point.y},pitch:map.getPitch?map.getPitch():null,zoom:map.getZoom?map.getZoom():null,attempts:[],selectedId:null};
+    var zoom=map.getZoom?map.getZoom():0,pitch=map.getPitch?map.getPitch():0,candidates=new Map(),roofData;
+    var hitDiagnostic={point:{x:point.x,y:point.y},pitch:pitch,zoom:zoom,attempts:[],candidates:[],selectedId:null,selectionReason:null};
     function recordHit(pin){hitDiagnostic.selectedId=pin?pin.id:null;if(typeof document==='object'&&document.body)document.body.dataset.zonePoiHit=JSON.stringify(hitDiagnostic);return pin||null;}
-    // The renderer projects elevated rooftop icons, not their ground points.
-    // Query the real placed symbol first, then its 44px touch neighborhood.
-    // Never reject a visible roof icon by measuring from the ground beneath it.
+    // Evaluate only the numeric expressions used by this map's symbol/roof
+    // contract. Unknown expressions cannot become invented screen coordinates.
+    function numberValue(value,properties,depth){
+      if((depth||0)>12)return NaN;
+      if(!Array.isArray(value))return typeof value==='number'?value:NaN;
+      var read=function(v){return numberValue(v,properties,(depth||0)+1);},kind=value[0];
+      if(kind==='zoom')return zoom;
+      if(kind==='get')return properties[value[1]];
+      if(kind==='to-number'){var n=Number(read(value[1]));return Number.isFinite(n)?n:read(value[2]);}
+      if(kind==='min'||kind==='max')return Math[kind].apply(Math,value.slice(1).map(read));
+      if(kind==='step'){var input=read(value[1]),result=read(value[2]);if(!Number.isFinite(input))return NaN;for(var i=3;i<value.length;i+=2){if(input<value[i])break;result=read(value[i+1]);}return result;}
+      if(kind==='interpolate'&&value[1]&&value[1][0]==='linear'){
+        var x=read(value[2]);if(!Number.isFinite(x))return NaN;
+        for(var j=3;j<value.length-2;j+=2)if(x<=value[j+2]){var fraction=Math.max(0,Math.min(1,(x-value[j])/(value[j+2]-value[j])));return read(value[j+1])+(read(value[j+3])-read(value[j+1]))*fraction;}
+        return read(value[value.length-1]);
+      }
+      return NaN;
+    }
+    function property(layer,key,paint){
+      var value=paint?map.getPaintProperty&&map.getPaintProperty(layer.id,key):map.getLayoutProperty&&map.getLayoutProperty(layer.id,key);
+      return value==null?(paint?layer.paint:layer.layout)?.[key]:value;
+    }
+    function activeRoofs(){
+      if(roofData!==undefined)return roofData;
+      roofData=null;
+      for(var id of ['district-complete-volumes','district-buildings-3d']){
+        var layer=map.getLayer(id);if(!layer||layer.type!=='fill-extrusion'||zoom<(layer.minzoom||0)||zoom>=(layer.maxzoom||24)||property(layer,'visibility',false)==='none')continue;
+        var source=map.getSource&&map.getSource(layer.source),data=source&&source.serialize&&source.serialize().data;
+        var features=data&&Array.isArray(data.features)?data.features:map.querySourceFeatures&&map.querySourceFeatures(layer.source,layer['source-layer']?{sourceLayer:layer['source-layer']}:{});
+        if(Array.isArray(features))roofData={features:features,height:property(layer,'fill-extrusion-height',true),layer:id};
+        break;
+      }
+      return roofData;
+    }
+    function renderedCoin(feature){
+      try{
+        var coordinates=feature.geometry&&feature.geometry.type==='Point'&&feature.geometry.coordinates,layer=map.getLayer(feature.layer&&feature.layer.id)||feature.layer,properties=feature.properties||{};
+        if(!coordinates||!layer||!map.project)return null;
+        var size=numberValue(property(layer,'icon-size',false),properties),altitude=0;
+        if(!(size>0&&Number.isFinite(size)))return null;
+        // This map has no icon translation. Refuse a changed contract rather
+        // than projecting an anchor and silently calling it the drawn coin.
+        for(var key of ['icon-offset','icon-translate']){var shift=property(layer,key,key==='icon-translate');if(shift!=null&&(!Array.isArray(shift)||shift.length!==2||shift.some(function(n){return n!==0;})))return null;}
+        if(pitch>1){
+          if(property(layer,'symbol-z-elevate',false)!==true||typeof ZoneServiceBuildings==='undefined')return null;
+          var roofs=activeRoofs();if(!roofs)return null;
+          var heights=roofs.features.filter(function(f){if(f.properties?.extrude!=='true'||f.properties?.underground==='true')return false;var polygons=f.geometry?.type==='Polygon'?[f.geometry.coordinates]:f.geometry?.type==='MultiPolygon'?f.geometry.coordinates:[];return polygons.some(function(rings){return ZoneServiceBuildings.inside(coordinates,rings);});}).map(function(f){return numberValue(roofs.height,f.properties||{});}).filter(Number.isFinite);
+          if(!heights.length)return null;
+          var offset=property(layer,'symbol-z-offset',true),z=offset==null?0:numberValue(offset,properties);if(!Number.isFinite(z))return null;
+          altitude=Math.max.apply(Math,heights)+z;
+        }
+        var center=map.project(coordinates,altitude);if(!Number.isFinite(center?.x)||!Number.isFinite(center?.y))return null;
+        // 64px art at pixelRatio 2: the r=11.6 circle plus its .8-unit
+        // outline reaches the full 24-unit sprite boundary.
+        return{x:center.x,y:center.y,altitude:altitude,radius:16*size};
+      }catch(_){return null;}
+    }
+    // Paired symbol queries include caption quads. Gather the whole existing
+    // 44px neighborhood before choosing, so an earlier neighbor label cannot
+    // beat a direct coin hit merely because Mapbox returned it first.
     for(var radius of [0,12,22]){
       var area=radius?[[point.x-radius,point.y-radius],[point.x+radius,point.y+radius]]:point;
       var hits=map.queryRenderedFeatures(area,{layers:layers});
-      hitDiagnostic.attempts.push({radius:radius,hits:hits.map(function(feature){return{id:String(feature.properties&&feature.properties.id),layer:feature.layer&&feature.layer.id||null,geometry:feature.geometry||null,landmarkHeight:feature.properties&&feature.properties.landmarkHeight||0};})});
-      for(var feature of hits){var id=String(feature.properties&&feature.properties.id),pin=pinData.find(function(item){return String(item.id)===id;});if(pin&&pinDisplayed(pin))return recordHit(pin);}
+      hitDiagnostic.attempts.push({radius:radius,hits:hits.map(function(feature){return{id:String(feature.properties&&feature.properties.id),layer:feature.layer&&feature.layer.id||null,geometry:feature.geometry||null,iconImage:feature.properties?.iconImage||null,label:feature.properties?.label||null,landmarkHeight:feature.properties&&feature.properties.landmarkHeight||0};})});
+      for(var feature of hits){var id=String(feature.properties&&feature.properties.id),pin=pinData.find(function(item){return String(item.id)===id;});if(!(pin&&pinDisplayed(pin)))continue;var candidate=candidates.get(id);if(!candidate){candidate={pin:pin,exact:false,features:[]};candidates.set(id,candidate);}candidate.exact=candidate.exact||radius===0;if(!candidate.features.some(function(f){return f.layer?.id===feature.layer?.id&&JSON.stringify(f.geometry)===JSON.stringify(feature.geometry);}))candidate.features.push(feature);}
     }
-    return recordHit(null);
+    if(candidates.size===1){hitDiagnostic.selectionReason='unique-rendered-feature';return recordHit(candidates.values().next().value.pin);}
+    if(!candidates.size){hitDiagnostic.selectionReason='no-rendered-location';return recordHit(null);}
+    var ranked=[],unavailable=false;
+    candidates.forEach(function(candidate){
+      var best=null;
+      for(var feature of candidate.features){var center=renderedCoin(feature);if(!center)continue;var dx=point.x-center.x,dy=point.y-center.y,distance=Math.hypot(dx,dy),tier=distance<=center.radius?0:candidate.exact?1:Math.max(Math.abs(dx),Math.abs(dy))<=22+center.radius?2:3;
+        var result={pin:candidate.pin,tier:tier,distance:distance,center:center};if(!best||tier<best.tier||tier===best.tier&&distance<best.distance)best=result;}
+      if(!best){unavailable=true;hitDiagnostic.candidates.push({id:candidate.pin.id,center:null,exact:candidate.exact});return;}
+      hitDiagnostic.candidates.push({id:candidate.pin.id,center:best.center,exact:candidate.exact,tier:best.tier,distance:best.distance});if(best.tier<3)ranked.push(best);
+    });
+    if(unavailable){hitDiagnostic.selectionReason='ambiguous-unavailable-roof-center';return recordHit(null);}
+    ranked.sort(function(a,b){return a.tier-b.tier||a.distance-b.distance;});
+    if(!ranked.length){hitDiagnostic.selectionReason='outside-rendered-coin-neighborhood';return recordHit(null);}
+    if(ranked[1]&&ranked[0].tier===ranked[1].tier&&Math.abs(ranked[0].distance-ranked[1].distance)<.000001){hitDiagnostic.selectionReason='ambiguous-equal-distance';return recordHit(null);}
+    hitDiagnostic.selectionReason=['nearest-direct-coin','nearest-exact-label','nearest-coin-touch'][ranked[0].tier];return recordHit(ranked[0].pin);
   }
   function emptyGeo(){return{type:'FeatureCollection',features:[]};}
   function territoryOpacity(){return 0;}
@@ -1076,7 +1148,7 @@ initializeMapLocale();
   function pinVisible(p){return !(lastData&&lastData.presentation&&lastData.presentation.showLocations===false)&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));}
   var OVERVIEW_POIS=['bank','gym','alley','hospital','market','hq','home','missions'];
   function overviewPoi(p){return OVERVIEW_POIS.indexOf(p.id)!==-1;}
-  function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
+  function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=15.8)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
   function locationPriority(p){
     var primary=['bank','jobs','gym','school','hospital','jail','market','home','casino','alley','hq','missions','arena','news','shop','pier','hof'].indexOf(p&&p.id);
     return primary<0?100:primary;
@@ -1449,6 +1521,10 @@ initializeMapLocale();
 
     /* Ordinary POIs are map-native geometry, never screen-space DOM markers. */
     pinData=pins.map(function(p,i){return normalizePin(p,i,catLabel);});pinData.forEach(function(p){pinById[p.id]=p;});
+    // A refreshed packet must replay available provider associations before
+    // setMode publishes its GeoJSON. Waiting for idle briefly restores authored
+    // anchors even though the existing landmark diagnostics still say ready.
+    if(landmarkController)landmarkController.setDestinations(pinData);
     hereLL=data.here?pointCoordinates(data.here):null;
     if(selectedTerritory&&panelWasOpen)selectTerritory(selectedTerritory);
     if(selectedPinId&&pinById[selectedPinId]){if(panelWasOpen)selectPin(pinById[selectedPinId]);else selected=pinById[selectedPinId];}

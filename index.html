@@ -347,7 +347,7 @@
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=108" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=110" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
           <nav class="zone-city-directory zone-panel" aria-label="{{ cityDirectory.title }}">
             <div class="zone-panel-heading">{{ cityDirectory.title }}<bdi>{{ cityDirectory.count }}</bdi></div>
@@ -695,7 +695,7 @@ const LS = 'zone.v2.save';
 const IS_PREVIEW = Boolean(window.ZonePlatform?.preview) || new URLSearchParams(window.location.search).get('zone-preview') === '1';
 const SAVE_KEY = IS_PREVIEW ? 'zone.v2.preview.save' : LS;
 const savedPresentation = key => { try { return localStorage.getItem(key); } catch (_) { return null; } };
-const PREVIEW_NOTICE = { en: 'Preview mode. Gameplay actions are read-only. Navigation, themes and 3D inspection remain available.', ar: 'وضع المعاينة. إجراءات اللعب للقراءة فقط. يمكنك التنقل وتغيير المظهر وفحص العناصر ثلاثية الأبعاد.' };
+const PREVIEW_NOTICE = { en: 'Draft preview. Gameplay actions are read-only. Player resources, equipment and success estimates are illustrative, not your saved character. Navigation, themes and 3D inspection remain available.', ar: 'معاينة مسودة للقراءة فقط. موارد اللاعب وعتاده وتقديرات النجاح توضيحية، وليست بيانات شخصيتك المحفوظة. يمكنك التنقل وتغيير المظهر وفحص العناصر ثلاثية الأبعاد.' };
 const BADGE = {
   home: ['#5a8a2a', 'M12 3 2 12h3v8h5v-5h4v5h5v-8h3z'], items: ['#8a6a2a', 'M3 8h18v12H3zM3 8l3-5h12l3 5M9 13h6v3H9z'], city: ['#3a6a9a', 'M2 21h20V9l-4 2V5l-6-3-6 3v6L2 9zM8 11h2v2H8zM12 11h2v2h-2zM8 15h2v2H8zM12 15h2v2h-2z'], jobs: ['#7a5a3a', 'M4 7h16v13H4zM9 7V4h6v3M4 12h16v2H4z'], gym: ['#a04a2a', 'M2 10h3V8h3v8H5v-2H2zM22 10h-3V8h-3v8h3v-2h3zM8 11h8v2H8z'], properties: ['#4a7a5a', 'M3 21h18v-2H3zM4 19V9l8-6 8 6v10zM9 19v-6h6v6z'], education: ['#5a4a9a', 'M12 3 1 8l11 5 9-4v6h2V8zM5 13v4c0 2 3 4 7 4s7-2 7-4v-4l-7 3z'], crimes: ['#8a2a2a', 'M6 8h12l-1 13H7zM9 8V6a3 3 0 0 1 6 0v2h-2V6a1 1 0 0 0-2 0v2zM10 12h4v6h-4z'], missions: ['#c08a20', 'M12 2l3 7 7 .5-5.5 4.5L18.5 21 12 17l-6.5 4L7.5 14 2 9.5 9 9z'], newspaper: ['#5a5a5a', 'M3 4h18v16H3zM5 6v5h6V6zM13 6h6v2h-6zM13 10h6v2h-6zM5 14h14v2H5zM5 17h10v1H5z'], jail: ['#4a4a5a', 'M2 3h20v18H2zM6 5v14h2V5zM11 5v14h2V5zM16 5v14h2V5z'], hospital: ['#c03030', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM10 7h4v3h3v4h-3v3h-4v-3H7v-4h3z'], casino: ['#2a7a6a', 'M3 5h18v14H3zM6 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM18 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM12 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z'], hof: ['#b0902a', 'M7 2h10v6a5 5 0 0 1-10 0zM5 4H2v3a4 4 0 0 0 4 4V9a2 2 0 0 1-2-2V6h1zM19 4h3v3a4 4 0 0 1-4 4V9a2 2 0 0 0 2-2V6h-1zM11 13h2v4h4v3H7v-3h4z'], faction: ['#3a7a4a', 'M12 2 3 5v7c0 5.5 4 9.5 9 10 5-.5 9-4.5 9-10V5zM12 6l5 2v4c0 3-2 5.5-5 6.5-3-1-5-3.5-5-6.5V8z'], elimination: ['#6a3a8a', 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM11 6h2v6l4 2-1 2-5-3z'], attack: ['#a02a3a', 'M20 2l2 2-9 11-2-2zM8 12l4 4-2 2-2-2-3 3-2-2 3-3-2-2z'], market: ['#2a6a8a', 'M2 9l3-6h14l3 6zM3 10h18v10H3zM7 13h4v4H7zM13 13h4v4h-4z'] };
 const LUCIDE = { home: 'house', items: 'backpack', city: 'map', jobs: 'briefcase-business', gym: 'dumbbell', properties: 'building-2', education: 'graduation-cap', crimes: 'skull', missions: 'scroll-text', newspaper: 'newspaper', jail: 'lock-keyhole', hospital: 'cross', casino: 'dices', hof: 'trophy', faction: 'shield-half', elimination: 'swords', attack: 'crosshair', market: 'store' };
@@ -1158,7 +1158,11 @@ class Component extends DCLogic {
         if (this._mapExpandedState) this.setMapExpanded(true);
         return;
       }
-      const s = d.zoneGo; if (typeof s === 'string' && s) this.go(s);
+      const s = d.zoneGo;
+      if (typeof s === 'string' && s) {
+        this.recordMapNavigation(s, d.MARKER_CLICK);
+        this.go(s);
+      }
     };
     window.addEventListener('message', this.onMsg);
     this.mapVisibility(this.state.screen === 'city');
@@ -1184,6 +1188,23 @@ class Component extends DCLogic {
     }, 1000);
   }
   componentWillUnmount() { window.ZoneRouteNavigation?.cancel?.(); this.setMapExpanded(false); this.modulePanel?.dispose(); clearInterval(this.iv); clearInterval(this.rv); clearTimeout(this.bt); clearTimeout(this.tt); clearTimeout(this.rt); clearTimeout(this.ct); this._combatRunning = false; window.removeEventListener('message', this.onMsg); window.removeEventListener('zone:runtime', this.onRuntime); window.removeEventListener('zone:owner-playtest', this.onOwnerPlaytest); window.removeEventListener('popstate', this.onPopState); window.removeEventListener('online', this.onOnline); }
+  recordMapNavigation(destination, markerId) {
+    // The iframe is removed by navigation. Retain its already-public pointer
+    // diagnostic first, so pixel targeting can be checked after the route opens.
+    // This contains no player, session, ownership or economic data.
+    try {
+      const raw = document.getElementById('zone-city-map')?.contentDocument?.body?.dataset?.zonePoiHit;
+      let hit = null;
+      if (typeof raw === 'string' && raw.length <= 16384) {
+        try { hit = JSON.parse(raw); } catch (_) {}
+      }
+      document.documentElement.dataset.zoneLastMapNavigation = JSON.stringify({
+        destination: String(destination).slice(0, 100),
+        markerId: typeof markerId === 'string' ? markerId.slice(0, 100) : null,
+        hit
+      });
+    } catch (_) { /* Diagnostics must never prevent ordinary navigation. */ }
+  }
   reconnect() {
     if (IS_PREVIEW || this.gameplayBusy || this.moduleBusy || this.state.busy || this.combatBusy || this.territoryBusy || this.travelBusy || this.hospitalBusy || Object.values(this.peerResources || {}).some(resource => resource.busy)) return Promise.resolve();
     if (this._reconnect) return this._reconnect;
@@ -1674,7 +1695,8 @@ class Component extends DCLogic {
     const ar = this.state.lang === 'ar', say = (en, arabic) => ar ? arabic : en;
     if (!screenEngineAvailable('crimes')) return say('Crime system is unavailable.', 'نظام الجرائم غير متاح.');
     if (this.runtimeConnection === 'offline' || this.gameplayError) return say('Reconnect to use your saved character.', 'أعد الاتصال للعب بشخصيتك المحفوظة.');
-    if (IS_PREVIEW || !this.gameplayReady) return say('Waiting for saved player data.', 'بانتظار بيانات اللاعب المحفوظة.');
+    if (IS_PREVIEW) return say('Read-only draft preview. Publish saved content to use it in the game.', 'معاينة مسودة للقراءة فقط. انشر المحتوى المحفوظ لاستخدامه في اللعبة.');
+    if (!this.gameplayReady) return say('Waiting for saved player data.', 'بانتظار بيانات اللاعب المحفوظة.');
     if (Date.now() < this.p.jailUntil) return say('You are in jail. Review your release options.', 'أنت في السجن. راجع خيارات الإفراج.');
     if (Date.now() < this.p.hospUntil) return say('Recover in hospital before returning.', 'تعافَ في المستشفى قبل العودة.');
     if (this.p.travel?.status === 'traveling') return say('Available after your arrival is confirmed.', 'متاح بعد تأكيد وصولك.');
@@ -2361,7 +2383,7 @@ class Component extends DCLogic {
     const selRows = []; if (sc.mult) selRows.push({ k: t.dmgMult, v: '×' + sc.mult }); if (sc.red) selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }); for (const key of ['life','nerve','energy','happy']) if (sc[key]) selRows.push({ k: t.restores + ' ' + t[key], v: num(sc[key]) }); if (Number(sc.hospitalSeconds) > 0) selRows.push({ k: lang === 'ar' ? 'تقليل وقت المستشفى' : 'Hospital time removed', v: num(sc.hospitalSeconds) + (lang === 'ar' ? ' ثانية' : 's') }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
     const job = JOBS.find(j => j.id === p.job); const payMul = p.eduDone.biz ? 1.1 : 1;
     const recordBlocked = this.gameplayDisabled() || this.blocked() || !!this.gameplayBusy || !!this.state.busy;
-    const recordReason = this.blocked() ? (lang === 'ar' ? 'متاح بعد انتهاء السجن أو التعافي' : 'Available after release or recovery') : p.travel?.status === 'traveling' ? (lang === 'ar' ? 'متاح عند انتهاء السفر' : 'Available after travel') : this.gameplayError || this.runtimeConnection === 'offline' ? (lang === 'ar' ? 'أعد الاتصال لتنفيذ النشاط' : 'Reconnect to act') : !this.gameplayReady || IS_PREVIEW ? (lang === 'ar' ? 'انتظر تحميل شخصيتك المحفوظة' : 'Awaiting your saved character') : this.gameplayBusy || this.state.busy || this.moduleBusy ? (lang === 'ar' ? 'جارٍ حفظ النشاط الحالي' : 'Current action is pending') : '';
+    const recordReason = IS_PREVIEW ? (lang === 'ar' ? 'معاينة مسودة للقراءة فقط. لا تُنفذ إجراءات اللعب هنا.' : 'Read-only draft preview. Gameplay actions are not committed here.') : this.blocked() ? (lang === 'ar' ? 'متاح بعد انتهاء السجن أو التعافي' : 'Available after release or recovery') : p.travel?.status === 'traveling' ? (lang === 'ar' ? 'متاح عند انتهاء السفر' : 'Available after travel') : this.gameplayError || this.runtimeConnection === 'offline' ? (lang === 'ar' ? 'أعد الاتصال لتنفيذ النشاط' : 'Reconnect to act') : !this.gameplayReady ? (lang === 'ar' ? 'انتظر تحميل شخصيتك المحفوظة' : 'Awaiting your saved character') : this.gameplayBusy || this.state.busy || this.moduleBusy ? (lang === 'ar' ? 'جارٍ حفظ النشاط الحالي' : 'Current action is pending') : '';
     const trainingEvents = p.log.filter(entry => entry.k === 'train' || entry.k === 'gameplay' && entry.a.action === 'gym.join').slice(0, 2).map(logMap);
     const employmentEvents = p.log.filter(entry => entry.k === 'work' || entry.k === 'gameplay' && entry.a.action === 'job.take').slice(0, 2).map(logMap);
     const educationEvents = p.log.filter(entry => ['enroll','edudone'].includes(entry.k) || entry.k === 'gameplay' && entry.a.action === 'course.enroll').slice(0, 2).map(logMap);
@@ -2421,7 +2443,7 @@ class Component extends DCLogic {
       topLinks: t.topLinks.map((label, i) => ({ label, go: () => i === 3 ? this.toast(t.toast.community) : this.go(['education', 'newspaper', 'faction', null, 'hof'][i]) })),
       ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
       toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => this.save()); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
-      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; this.setState({ lang: l }, () => { this.save(); this.syncRoute(this.state.screen, true); }); },
+      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; this.setState({ lang: l, toast: null, result: null }, () => { this.save(); this.syncRoute(this.state.screen, true); }); },
       cash: money(p.cash), cashIcon: LU('cash'), chainIcon: LU('cuffs'), level: p.level, levelTitle, points: num(p.points), merits: p.merits, chainText: fmt(t.hits, { n: chain }),
       title: t.nav[screen] || customPage?.title?.[lang] || customPage?.title?.en || screen, subtitle: customPage ? (PLATFORM_MANIFEST.branding?.tagline?.[lang] || PLATFORM_MANIFEST.branding?.tagline?.en || '') : fmt(t.sub[screen], { fac: facName, lvl: p.level, title: levelTitle }), goCity: () => this.go('city'), cityNavigationDisabled: !SCREENS.includes('city'), tut: this.state.tut, toggleTut: () => this.setState(s => ({ tut: !s.tut })), tutText: t.tut[tutKey],
       outfits: ['street', 'suit', 'tactical'].map(k => ({ name: t.outfits[k], selected: (this.state.outfit || 'suit') === k,
@@ -2601,6 +2623,13 @@ class Component extends DCLogic {
       holdings: this._territoryUnavailable || !this.serverPlayer ? (lang === 'ar' ? 'بانتظار بيانات الأراضي' : 'Waiting for territory data') : (this.territoryMap.summary?.ownedByPlayerFaction || 0) + (lang === 'ar' ? ' قطاع تحت سيطرة عائلتك' : ' blocks held by your family'),
       familyNote: this.territoryMap.playerFactionId ? (lang === 'ar' ? 'استكشف القطاعات المجاورة، وافحص تكلفة الاستحواذ أو الهجوم قبل المساهمة.' : 'Scout neighboring blocks. Inspect claim or assault costs before contributing.') : (lang === 'ar' ? 'انضم إلى عائلة من مقر العائلات للمشاركة في السيطرة على الأراضي.' : 'Join a family at Family HQ to take part in territory control.')
     };
+    if (IS_PREVIEW) Object.assign(view.fieldGuide, {
+      eyebrow: lang === 'ar' ? 'مراجعة المسودة' : 'Draft review',
+      title: lang === 'ar' ? 'راجع المحتوى قبل نشره' : 'Review content before publishing',
+      description: lang === 'ar' ? 'افحص الأسماء والتكاليف والمخاطر في المسودة. لا تُصرف موارد ولا تُمنح مكافآت هنا. تُجرّب الإجراءات بحساب لاعب بعد النشر.' : 'Inspect the draft names, costs and risks. No resources are spent or rewards granted here. Test actions with a player account after publication.',
+      goalId: null,
+      holdings: lang === 'ar' ? 'أمثلة توضيحية وليست ممتلكات لاعب' : 'Illustrative state, not player holdings'
+    });
     view.bulletin = { title: lang === 'ar' ? 'سجل شخصيتك' : 'Your character record', description: lang === 'ar' ? 'الأحداث المعروضة تخص شخصيتك. أسعار التجار من مخزون السوق الحالي.' : 'These events belong to your character. Merchant prices come from the current market stock.', empty: lang === 'ar' ? 'لا توجد أحداث بعد. ابدأ نشاطاً لتسجّل أول نتيجة.' : 'No events yet. Start an activity to record your first outcome.', marketNote: lang === 'ar' ? 'متجر تجار داخل اللعبة. السعر والمخزون يُفحصان عند الشراء.' : 'In-game merchant shop. Price and stock are checked when you buy.', openMarket: () => this.go('market') };
     view.casinoGuide = { title: lang === 'ar' ? 'قواعد الطاولة' : 'Table rules', description: lang === 'ar' ? 'اختر الرهان ثم توقّع إن كانت الورقة التالية أعلى أو أقل. التعادل يعيد الرهان، والآس أعلى ورقة.' : 'Choose your stake, then predict whether the next card is higher or lower. A tie returns the stake; ace is high.', betLabel: lang === 'ar' ? 'الرهان المختار' : 'Selected stake', cardLabel: lang === 'ar' ? 'الورقة على الطاولة' : 'Card on the table', netLabel: lang === 'ar' ? 'صافي الربح' : 'Net winnings', scope: lang === 'ar' ? 'هذه طاولة أعلى / أقل المتاحة. لا توجد طاولات بوكر جماعية أو سلوتس مفتوحة في هذه النسخة.' : 'High-low is the available table here. Multiplayer poker and slots are not open in this release.', openBank: () => this.go('bank') };
     view.casino.bet = money(casino.bet); view.casino.net = money(p.casinoNet || 0);
@@ -2659,7 +2688,12 @@ class Component extends DCLogic {
     const liveChain = p.crimeChains?.[selectedCrime?.id];
     view.crimeDesk.rules = crimeDefinition ? (crimeDefinition.requiredItem ? (lang === 'ar' ? 'الأداة: ' : 'Tool: ') + (t.items[crimeDefinition.requiredItem] || crimeDefinition.requiredItem) + ' × ' + crimeDefinition.requiredQuantity + (crimeDefinition.consumesTool ? (lang === 'ar' ? '، تُستهلك عند المحاولة. ' : ', consumed on attempt. ') : '. ') : '') + (lang === 'ar' ? 'الإتقان ' : 'Mastery ') + Number(p.skill?.[selectedCrime.id] || 0) + '/100 · ' + (lang === 'ar' ? 'السلسلة ' : 'Chain ') + (liveChain && Date.now() - liveChain.lastAt <= Number(crimeDefinition.chainWindow ?? 300) * 1000 ? liveChain.count : 0) : '';
     if (crimeDefinition?.criticalFailure) view.crimeDesk.selected.risk = (lang === 'ar' ? 'عند فشل المحاولة، احتمال الإخفاق الحرج ' : 'On a failed attempt, critical consequence chance ') + crimeDefinition.criticalFailure / 100 + '% · ' + (crimeDefinition.jailSeconds ? (lang === 'ar' ? 'سجن ' : 'Jail ') + crimeDefinition.jailSeconds + 's ' : '') + (crimeDefinition.hospitalSeconds ? (lang === 'ar' ? 'مستشفى ' : 'Hospital ') + crimeDefinition.hospitalSeconds + 's' : '');
-    if (receipt?.narrative?.[lang]) view.crimeDesk.receipt = receipt.narrative[lang] + ' · ' + view.crimeDesk.receipt;
+    const lootFeedback = {
+      'budget-capped': lang === 'ar' ? 'لم تُمنح مادة: سقف قيمة لقى البحث الحالي لا يسمح بمكافأة أخرى. حُسب النقد والخبرة كالمعتاد.' : 'No material issued: the current search-loot value limit does not cover another award. Cash and XP settled normally.',
+      'no-eligible-material': lang === 'ar' ? 'لم تتوفر مادة في مجموعة اللقى المنشورة. حُسب النقد والخبرة كالمعتاد.' : 'No material was available in the published loot pool. Cash and XP settled normally.'
+    };
+    if (!this.state.crimeRequestError && receipt?.success && lootFeedback[receipt.lootStatus]) view.crimeDesk.receipt += ' · ' + lootFeedback[receipt.lootStatus];
+    if (!this.state.crimeRequestError && receipt?.narrative?.[lang]) view.crimeDesk.receipt = receipt.narrative[lang] + ' · ' + view.crimeDesk.receipt;
     if (lang === 'ar') view.crimeDesk.receipt = view.crimeDesk.receipt.replace(/([+-]?\$[\d,]+(?:\.\d+)?)/g, '\u2066$1\u2069');
     const selectedStation = ['str', 'def', 'spd', 'dex'].includes(this.state.gymStation) ? this.state.gymStation : 'str';
     view.stats = view.stats.map((stat, index) => { const id = ['str', 'def', 'spd', 'dex'][index]; return { ...stat, id, selected: id === selectedStation, selectionMark: id === selectedStation ? '✓' : '', select: () => this.setState({ gymStation: id }) }; });

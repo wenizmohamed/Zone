@@ -135,7 +135,8 @@ final class ReleaseManager
 
     private function saveDraftLocked(array $manifest, string $actor): array
     {
-        $manifest = $this->validateManifest($manifest);
+        $manifest = \Zone\Engine\Core\Content\ContentManager::preserveWorldPolicy($manifest, $this->draftLocked()['manifest']);
+        $manifest = $this->validateManifest($manifest, true);
         $actor = $this->validateActor($actor);
         $previous = $this->draft();
         $now = gmdate('c');
@@ -331,7 +332,7 @@ final class ReleaseManager
         );
     }
 
-    private function validateManifest(array $manifest): array
+    private function validateManifest(array $manifest, bool $authoring = false): array
     {
         if (($manifest['schemaVersion'] ?? null) !== 1) {
             throw new InvalidArgumentException('Manifest schemaVersion must be 1.');
@@ -450,10 +451,8 @@ final class ReleaseManager
         }
 
         if (array_key_exists('worldPolicy', $manifest)) {
-            $policy = $manifest['worldPolicy'];
-            $bounds = ['tickSeconds' => [30,3600], 'findsPerTick' => [0,3], 'findQuantity' => [1,3], 'findLifetimeSeconds' => [60,86400], 'maxActiveFinds' => [1,64], 'supplyShift' => [0,20], 'supplyCap' => [1,1000], 'eventEveryTicks' => [1,100]];
-            if (!is_array($policy) || array_diff(array_keys($policy), ['enabled', ...array_keys($bounds)]) || (array_key_exists('enabled', $policy) && !is_bool($policy['enabled']))) throw new InvalidArgumentException('Invalid world director policy.');
-            foreach ($bounds as $field => [$min,$max]) if (array_key_exists($field, $policy) && (!is_int($policy[$field]) || $policy[$field] < $min || $policy[$field] > $max)) throw new InvalidArgumentException('Invalid world director setting: ' . $field);
+            $catalog = $authoring ? (new GameplayCatalog($this->database, $this->events))->draft()['catalogs'] : ($manifest['content']['gameplayCatalog'] ?? (new GameplayCatalog($this->database, $this->events))->foundation());
+            \Zone\Engine\Core\Content\ContentManager::validateWorldPolicy($manifest['worldPolicy'], $catalog);
         }
         if (array_key_exists('mediaBindings', $manifest)) \Zone\Engine\Core\Content\MediaReferences::capture($this->database, $manifest);
         $this->rejectExecutableKeys($manifest);

@@ -1,0 +1,82 @@
+{
+  "id": "street-foundations110",
+  "version": 1,
+  "status": "review-candidate-not-auto-installed",
+  "title": { "en": "Street Foundations", "ar": "بداية من الحارة" },
+  "crimes": {
+    "dockside-collection": {
+      "name_en": "Collect at the Docks", "name_ar": "حصّل دين المرفأ",
+      "nerve_cost": 3, "success_basis_points": 8500,
+      "cash_min": 260, "cash_max": 600, "xp_reward": 10,
+      "level_required": 1, "enabled": true,
+      "required_item": "bat", "required_quantity": 1, "consume_tool": false,
+      "mastery_per_success": 2, "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 50, "critical_failure_basis_points": 1000,
+      "jail_seconds": 60, "hospital_seconds": 0
+    },
+    "canal-crate": {
+      "name_en": "Free the Canal Crate", "name_ar": "فكّ صندوق القناة",
+      "nerve_cost": 4, "success_basis_points": 8000,
+      "cash_min": 500, "cash_max": 1000, "xp_reward": 16,
+      "level_required": 2, "enabled": true,
+      "required_item": "knife", "required_quantity": 1, "consume_tool": false,
+      "mastery_per_success": 2, "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75, "critical_failure_basis_points": 1500,
+      "jail_seconds": 0, "hospital_seconds": 120
+    },
+    "freight-decoy": {
+      "name_en": "Switch the Cargo", "name_ar": "بدّل الحمولة",
+      "nerve_cost": 6, "success_basis_points": 9900,
+      "cash_min": 20500, "cash_max": 20700, "xp_reward": 36,
+      "level_required": 3, "enabled": true,
+      "required_item": "sand", "required_quantity": 1, "consume_tool": true,
+      "mastery_per_success": 1, "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 0, "critical_failure_basis_points": 10000,
+      "jail_seconds": 60, "hospital_seconds": 0
+    }
+  },
+  "crimePatches": {
+    "searchforcash": { "chain_window_seconds": 300, "chain_bonus_basis_points": 25 },
+    "bootlegging": { "chain_window_seconds": 300, "chain_bonus_basis_points": 50 }
+  },
+  "items": {
+    "clinic-wrap": {
+      "type": "medical", "price": 180, "life": 0, "hospitalSeconds": 60,
+      "name": { "en": "Clinic Wrap", "ar": "ضمادة الحارة" },
+      "description": {
+        "en": "Keep one in your pocket before a job. Cuts up to 60 seconds off hospital time. No Life restored.",
+        "ar": "حطّ واحدة في جيبك قبل الشغلة. تختصر حتى ٦٠ ثانية من وقت المستشفى، ولا تعيد نقاط الحياة."
+      }
+    },
+    "street-trauma-pack": {
+      "type": "medical", "price": 420, "life": 0, "hospitalSeconds": 180,
+      "name": { "en": "Street Trauma Pack", "ar": "حقيبة إسعاف الشارع" },
+      "description": {
+        "en": "For the job that went sideways. Cuts up to 180 seconds off hospital time. No Life restored.",
+        "ar": "للشغلة اللي انقلبت عليك. تختصر حتى ١٨٠ ثانية من وقت المستشفى، ولا تعيد نقاط الحياة."
+      }
+    }
+  },
+  "marketAdditions": [
+    { "item": "clinic-wrap", "qty": 20, "seller": "Noor" },
+    { "item": "street-trauma-pack", "qty": 10, "seller": "Noor" }
+  ],
+  "materialIssuanceCandidate": {
+    "items": {
+      "copper-scrap": {
+        "type": "material", "price": 40,
+        "name": { "en": "Scrap Copper Wire", "ar": "سلك نحاس خردة" },
+        "description": {
+          "en": "Loose copper from a backstreet scrap pile. A small take at the dealer, not a shortcut to a fortune.",
+          "ar": "نحاس من كومة خردة في الحارة. غلّة بسيطة عند التاجر، مو كنز يغيّر حياتك."
+        }
+      }
+    },
+    "worldPolicyPatch": {
+      "findQuantity": 1,
+      "findValueBudgetPerHour": 360,
+      "searchValueBudgetPerHour": 360,
+      "materialItemIds": ["copper-scrap"]
+    }
+  }
+}

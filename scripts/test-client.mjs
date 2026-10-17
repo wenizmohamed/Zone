@@ -2253,3 +2253,61 @@ test('v107 authored four-resource consumables show all effects and keep fully ca
     assert.equal(c.p.inv.comfort,1);assert.equal(c.p.bars.happy.v,60);
   }
 });
+
+test('v110 crime receipts explain a suppressed material award without pretending cash or XP failed',()=>{
+  for(const lang of ['en','ar']) for(const status of ['budget-capped','no-eligible-material']) {
+    const {instance:c}=game(); c.state.lang=lang;
+    c.state.crimeReceipt={id:'searchforcash',success:true,reward:{cash:160,xp:6},cost:{nerve:2},loot:null,lootRollWon:true,lootStatus:status};
+    const text=c.renderVals().crimeDesk.receipt;
+    assert.match(text,/160/);
+    assert.match(text,lang==='ar'?/النقد والخبرة كالمعتاد/:/Cash and XP settled normally/);
+    assert.match(text,status==='budget-capped'?(lang==='ar'?/سقف قيمة/:/value limit/):(lang==='ar'?/مجموعة اللقى المنشورة/:/published loot pool/));
+    assert.doesNotMatch(text,/×1/);
+  }
+});
+
+test('v110 failed requests cannot inherit a previous crime narrative or material-limit explanation',()=>{
+  for(const lang of ['en','ar']) {
+    const {instance:c}=game(); c.state.lang=lang;
+    c.state.crimeReceipt={id:'searchforcash',success:true,reward:{cash:160,xp:6},lootStatus:'budget-capped',narrative:{en:'Old successful attempt.',ar:'محاولة ناجحة سابقة.'}};
+    c.state.crimeRequestError=lang==='ar'?'تعذر تنفيذ المحاولة.':'Attempt could not settle.';
+    assert.equal(c.renderVals().crimeDesk.receipt,c.state.crimeRequestError);
+  }
+});
+
+test('v110 awarded and legacy receipts retain their actual item rather than showing a cap warning',()=>{
+  const {instance:c}=game();
+  for(const status of [undefined,'awarded','missed','not-rolled']) {
+    c.state.crimeReceipt={id:'searchforcash',success:true,reward:{cash:160,xp:6},cost:{nerve:2},loot:{itemId:'sand',quantity:1},lootStatus:status};
+    const text=c.renderVals().crimeDesk.receipt;
+    assert.match(text,/×1/);assert.doesNotMatch(text,/value limit|published loot pool/);
+  }
+});
+
+test('v110 Studio preview explains read-only actions instead of telling the owner to wait for a player session',()=>{
+  for(const lang of ['en','ar']) {
+    const {instance:c,calls}=game({preview:true,route:'?screen=crimes&lang='+lang});
+    c.state.lang=lang;
+    const view=c.renderVals();
+    assert.match(view.previewNotice,lang==='ar'?/توضيحية، وليست بيانات شخصيتك/:/illustrative, not your saved character/);
+    assert.match(view.fieldGuide.description,lang==='ar'?/لا تُصرف موارد ولا تُمنح مكافآت/:/No resources are spent or rewards granted/);
+    assert.doesNotMatch(view.fieldGuide.description,/Waiting for|جارٍ انتظار/);
+    assert.match(view.crimeDesk.selected.reason,lang==='ar'?/معاينة مسودة للقراءة فقط/:/Read-only draft preview/);
+    assert.doesNotMatch(view.crimeDesk.selected.reason,/Waiting for|بانتظار/);
+    assert.equal(view.crimeDesk.selected.disabled,true);
+    view.crimeDesk.selected.commit();
+    assert.equal(calls.length,0);
+  }
+});
+
+test('v110 language changes dismiss stale transient copy without changing player data or submitting another action',()=>{
+  const {instance:c,calls}=game();
+  c.state.lang='en';c.state.toast={text:'Deposit $100'};c.state.result={title:'Deposit $100'};
+  const before=JSON.stringify(c.p);
+  c.renderVals().toggleLang();
+  assert.equal(c.state.lang,'ar');assert.equal(c.state.toast,null);assert.equal(c.state.result,null);
+  assert.equal(JSON.stringify(c.p),before);assert.equal(calls.length,0);
+  c.state.toast={text:'تم إيداع 100'};c.renderVals().toggleLang();
+  assert.equal(c.state.lang,'en');assert.equal(c.state.toast,null);
+  assert.equal(JSON.stringify(c.p),before);assert.equal(calls.length,0);
+});

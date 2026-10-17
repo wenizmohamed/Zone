@@ -298,12 +298,18 @@ final class GameEngine
 
     public function adminCrimes(): array
     {
-        return $this->content->crimes(true);
+        return $this->enrichedCrimeDefinitions();
     }
 
     public function saveCrime(string $id, array $definition, string $actor): array
     {
-        return $this->releases->configurationTransaction(fn (): array => $this->content->saveCrime($id, $definition, $actor));
+        return $this->releases->configurationTransaction(function () use ($id, $definition, $actor): array {
+            $saved = $this->content->saveCrime($id, $definition, $actor);
+            foreach ($this->enrichedCrimeDefinitions() as $crime) {
+                if ($crime['id'] === $id) return [...$crime, 'correlationId' => $saved['correlationId']];
+            }
+            throw new RuntimeException('Saved crime definition could not be loaded for preview.');
+        });
     }
 
     public function adminAuditLog(int $limit = 100, bool $includeSnapshots = true): array
@@ -353,11 +359,13 @@ final class GameEngine
             throw new RuntimeException('Crime module is disabled. Re-enable it from the module manager.');
         }
         $this->recordActionAttempt($playerId);
-        return $this->database->playerTransaction($playerId, function () use ($crimeId, $playerId): array {
+        $materialLoot = new \Zone\Engine\Core\Game\MaterialLootService($this->database, $this->events);
+        $published = $materialLoot->publishedContext();
+        return $this->database->playerTransaction($playerId, function () use ($crimeId, $playerId, $materialLoot, $published): array {
             $this->resources->regenerate($playerId);
             $this->guardAction($playerId, 'crime');
             $streak = $this->daily->registerLogin($playerId, bin2hex(random_bytes(16)));
-            $crime = array_values(array_filter($this->publishedContent()['crimes'] ?? [], static fn (array $crime): bool => $crime['id'] === $crimeId && (bool) ($crime['enabled'] ?? false)))[0] ?? null;
+            $crime = array_values(array_filter($published['crimes'], static fn (array $crime): bool => $crime['id'] === $crimeId && (bool) ($crime['enabled'] ?? false)))[0] ?? null;
             if ($crime === null) {
                 throw new RuntimeException("Unknown crime: {$crimeId}");
             }
@@ -369,7 +377,7 @@ final class GameEngine
             if ((int) $player['level'] < $levelRequired) {
                 throw new \InvalidArgumentException("This crime unlocks at level {$levelRequired}.");
             }
-            $progression = new ProgressionService($this->database, $this->events);
+            $progression = new ProgressionService($this->database, $this->events, $published['catalog']);
             $progress = $progression->snapshot($playerId)['state'];
             if (($progress['crimeXp'] ?? 0) < (int) ($crime['crime_xp_required'] ?? 0)) {
                 throw new \InvalidArgumentException('Earn more crime experience to unlock this category.');
@@ -406,10 +414,14 @@ final class GameEngine
             $this->armCooldown($playerId, 'crime');
             $this->daily->recordProgress($playerId, 'crimes', 1);
             $crimeProgress = $progression->recordCrime($playerId, $crimeId, $success, $xpReward, $crime);
-            $loot = null;
-            if ($success && ($crime['category'] ?? null) === 'search' && random_int(1, 100) <= 12) {
-                $progression->grantItem($playerId, 'sand', 1, $correlationId, 'crime.loot');
-                $loot = ['itemId' => 'sand', 'quantity' => 1];
+            $loot = null; $lootRollWon = null; $lootStatus = 'not-rolled';
+            if ($success && ($crime['category'] ?? null) === 'search') $lootRollWon = random_int(1, 100) <= 12;
+            if ($lootRollWon === false) $lootStatus = 'missed';
+            if ($lootRollWon === true) {
+                $issued = $materialLoot->issue('search', $correlationId, $playerId, 1, hexdec(substr($correlationId, 0, 6)),
+                    static function (array $receipt) use ($progression, $playerId, $correlationId): void { $progression->grantItem($playerId, $receipt['itemId'], $receipt['quantity'], $correlationId, 'crime.loot'); }, $published);
+                $lootStatus = $issued['status'];
+                if ($lootStatus === 'awarded') $loot = ['itemId' => $issued['itemId'], 'quantity' => $issued['quantity']];
             }
             $penalty = null;
             $critical = !$success && random_int(1, 10000) <= (int) ($crime['critical_failure_basis_points'] ?? 0);
@@ -462,7 +474,7 @@ final class GameEngine
                 'tool' => ['id' => $preparation['tool'], 'consumed' => $preparation['consumed']],
                 'mastery' => $crimeProgress['mastery'], 'chain' => $crimeProgress['chain'],
                 'chainBonusBasisPoints' => $preparation['chainBonusBasisPoints'],
-                'loot' => $loot,
+                'loot' => $loot, 'lootRollWon' => $lootRollWon, 'lootStatus' => $lootStatus,
                 'levelUp' => $levelUp,
                 'streak' => $streak,
                 'serverProof' => [
@@ -1135,16 +1147,21 @@ final class GameEngine
         return $this->territories->setOwnership($territoryId, $factionId, $actor);
     }
 
-    private function runtimeContent(): array
+    /** Studio preview and release capture must share retained variant metadata. */
+    private function enrichedCrimeDefinitions(): array
     {
-        $themes = $this->themes->all();
         $variants = array_column(json_decode((string) file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json'), true, 64, JSON_THROW_ON_ERROR), null, 'id');
         foreach (['searchforcash' => ['search', 0], 'bootlegging' => ['boot', 150], 'graffiti' => ['graf', 30], 'shoplifting' => ['shop', 80], 'pickpocketing' => ['pick', 120], 'cardskimming' => ['skim', 300], 'burglary' => ['burg', 2200]] as $id => [$category, $requiredXp]) {
             $variants[$id] = ['category' => $category, 'crime_xp_required' => $requiredXp];
         }
-        $crimes = array_map(static fn (array $crime): array => [...($variants[$crime['id']] ?? []), ...$crime], $this->content->crimes(true));
+        return array_map(static fn (array $crime): array => [...($variants[$crime['id']] ?? []), ...$crime], $this->content->crimes(true));
+    }
+
+    private function runtimeContent(): array
+    {
+        $themes = $this->themes->all();
         return [
-            'crimes' => $crimes,
+            'crimes' => $this->enrichedCrimeDefinitions(),
             'gameplayCatalog' => (new GameplayCatalog($this->database, $this->events))->draft()['catalogs'],
             'engineModules' => $this->modules->all(),
             'themes' => $themes,

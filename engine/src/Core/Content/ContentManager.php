@@ -9,6 +9,7 @@ use RuntimeException;
 use Zone\Engine\Core\Events\DomainEvent;
 use Zone\Engine\Core\Events\EventBus;
 use Zone\Engine\Core\Persistence\Database;
+use Zone\Engine\Core\Game\WorldDirector;
 
 final class ContentManager
 {
@@ -32,6 +33,27 @@ final class ContentManager
             fn (array $crime): array => $this->normalizeCrime($crime),
             $this->database->fetchAll("SELECT c.*, r.rules_json FROM crimes c LEFT JOIN crime_rules r ON r.crime_id = c.id{$where} ORDER BY c.nerve_cost, c.id"),
         );
+    }
+
+    /** Validate authoring against its complete prospective published catalog. */
+    public static function validateWorldPolicy(mixed $policy, array $catalog): void
+    {
+        $bounds = ['tickSeconds' => [30,3600], 'findsPerTick' => [0,3], 'findQuantity' => [1,3], 'findLifetimeSeconds' => [60,86400], 'maxActiveFinds' => [1,64], 'supplyShift' => [0,20], 'supplyCap' => [1,1000], 'eventEveryTicks' => [1,100]];
+        if (!is_array($policy) || array_diff(array_keys($policy), ['enabled', ...array_keys($bounds), 'findValueBudgetPerHour','searchValueBudgetPerHour','materialItemIds']) || (array_key_exists('enabled', $policy) && !is_bool($policy['enabled']))) throw new InvalidArgumentException('Invalid world director policy.');
+        foreach ($bounds as $field => [$min,$max]) if (array_key_exists($field, $policy) && (!is_int($policy[$field]) || $policy[$field] < $min || $policy[$field] > $max)) throw new InvalidArgumentException('Invalid world director setting: ' . $field);
+        $normalized = WorldDirector::normalizePolicy($policy);
+        foreach ($normalized['materialItemIds'] ?? [] as $id) if (($catalog['items'][$id]['type'] ?? '') !== 'material') throw new InvalidArgumentException('World material item must exist as a material in the release catalog: ' . $id);
+    }
+
+    /** Omitted supported policy fields are retained; explicit null is an opt-out. */
+    public static function preserveWorldPolicy(array $manifest, array $previous): array
+    {
+        if (!array_key_exists('worldPolicy', $manifest)) {
+            if (array_key_exists('worldPolicy', $previous)) $manifest['worldPolicy'] = $previous['worldPolicy'];
+        } elseif (is_array($manifest['worldPolicy']) && is_array($previous['worldPolicy'] ?? null)) {
+            $manifest['worldPolicy'] = [...$previous['worldPolicy'], ...$manifest['worldPolicy']];
+        }
+        return $manifest;
     }
 
     public function saveCrime(string $id, array $payload, string $actor): array

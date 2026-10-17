@@ -22,7 +22,7 @@ final class ProgressionService
     private readonly ResourceService $resources;
     private readonly Ledger $ledger;
 
-    public function __construct(private readonly Database $database, private readonly EventBus $events)
+    public function __construct(private readonly Database $database, private readonly EventBus $events, private readonly ?array $catalogSnapshot = null)
     {
         $this->refreshCatalog();
         $this->resources = new ResourceService($database);
@@ -432,7 +432,7 @@ final class ProgressionService
 
     private function refreshCatalog(): void
     {
-        $this->catalog = (new GameplayCatalog($this->database, $this->events))->active();
+        $this->catalog = $this->catalogSnapshot ?? (new GameplayCatalog($this->database, $this->events))->active();
         $this->catalogRevision = hash('sha256', json_encode($this->catalog, JSON_THROW_ON_ERROR));
     }
 

@@ -36,6 +36,18 @@ final class WorldDirector
             $value = $policy[$key] ?? $defaults[$key];
             $result[$key] = is_int($value) ? max($minimum, min($maximum, $value)) : $defaults[$key];
         }
+        foreach (['findValueBudgetPerHour','searchValueBudgetPerHour'] as $field) {
+            $value = $policy[$field] ?? null;
+            if ($value !== null && (!is_int($value) || $value < 0 || $value > 2_000_000_000)) throw new InvalidArgumentException('Invalid material issuance budget: ' . $field);
+            $result[$field] = $value;
+        }
+        $ids = $policy['materialItemIds'] ?? null;
+        if ($ids !== null) {
+            if (!is_array($ids) || !array_is_list($ids) || count($ids) < 1 || count($ids) > 32) throw new InvalidArgumentException('Material item IDs must be null or a list of 1 to 32 unique material IDs.');
+            foreach ($ids as $id) if (!is_string($id) || !preg_match('/^[A-Za-z0-9_-]{1,80}$/D', $id)) throw new InvalidArgumentException('Invalid material item ID.');
+            if (count(array_unique($ids)) !== count($ids)) throw new InvalidArgumentException('Material item IDs must be unique.');
+        }
+        $result['materialItemIds'] = $ids;
         return $result;
     }
 
@@ -50,16 +62,16 @@ final class WorldDirector
     /** Called by the persistent worker only. One committed tick per interval. */
     public function tick(): array
     {
-        $rules = $this->rules(); $policy = $rules['policy']; $now = time();
-        if (!$policy['enabled']) return ['status' => 'disabled', 'createdFinds' => 0];
-        $bucket = intdiv($now, $policy['tickSeconds']);
-        // Release changes do not generate another tick in the same interval.
-        $tickId = hash('sha256', 'zone-world:' . $policy['tickSeconds'] . ':' . $bucket);
-        $catalog = (new GameplayCatalog($this->database, $this->events))->active();
-        return $this->database->transaction(function () use ($rules, $policy, $now, $bucket, $tickId, $catalog): array {
+        $issuance = new MaterialLootService($this->database, $this->events);
+        return $issuance->withPublishedContext(function (array $context) use ($issuance): array {
+            $rules = $context; $policy = $rules['policy']; $now = time();
+            if (!$policy['enabled']) return ['status' => 'disabled', 'createdFinds' => 0];
+            $bucket = intdiv($now, $policy['tickSeconds']);
+            // Release changes do not generate another tick in the same interval.
+            $tickId = hash('sha256', 'zone-world:' . $policy['tickSeconds'] . ':' . $bucket);
+            $catalog = $context['catalog'];
             $inserted = $this->database->execute('INSERT INTO world_ticks (id,release_id,tick_at) VALUES (:id,:release,:at) ON CONFLICT (id) DO NOTHING', ['id' => $tickId, 'release' => $rules['releaseId'], 'at' => $now]);
             if ($inserted === 0) return ['status' => 'already-ticked', 'tickId' => $tickId, 'createdFinds' => 0];
-            if ($this->database->driver() === 'pgsql') $this->database->fetchOne('SELECT pg_advisory_xact_lock(90120261008)');
             $materials = array_keys(array_filter($catalog['items'] ?? [], static fn (array $item): bool => ($item['type'] ?? '') === 'material'));
             sort($materials, SORT_STRING);
             $active = (int) $this->database->fetchOne('SELECT COUNT(*) AS total FROM world_finds WHERE expires_at > :now AND claimed_by IS NULL', ['now' => $now])['total'];
@@ -67,11 +79,13 @@ final class WorldDirector
             for ($slot = 0; $slot < $policy['findsPerTick'] && $active + $created < $policy['maxActiveFinds'] && $materials !== []; $slot++) {
                 $id = hash('sha256', $tickId . ':find:' . $slot);
                 $choice = hexdec(substr($id, 0, 6));
-                $this->database->execute('INSERT INTO world_finds (id,item_id,quantity,location_id,created_at,expires_at) VALUES (:id,:item,:quantity,:location,:at,:expires)', [
-                    'id' => $id, 'item' => $materials[$choice % count($materials)], 'quantity' => $policy['findQuantity'],
-                    'location' => $locations[$choice % count($locations)], 'at' => $now, 'expires' => $now + $policy['findLifetimeSeconds'],
-                ]);
-                $created++;
+                $receipt = $issuance->issue('world', $id, null, $policy['findQuantity'], $choice, function (array $issued) use ($id, $choice, $locations, $now, $policy): void {
+                    $this->database->execute('INSERT INTO world_finds (id,item_id,quantity,location_id,created_at,expires_at) VALUES (:id,:item,:quantity,:location,:at,:expires)', [
+                        'id' => $id, 'item' => $issued['itemId'], 'quantity' => $issued['quantity'],
+                        'location' => $locations[$choice % count($locations)], 'at' => $now, 'expires' => $now + $policy['findLifetimeSeconds'],
+                    ]);
+                }, $context);
+                if ($receipt['status'] === 'awarded' && !$receipt['replayed']) $created++;
             }
             $listings = [];
             foreach ($catalog['market'] ?? [] as $listing) $listings[$listing['item']] = min($policy['supplyCap'], ($listings[$listing['item']] ?? 0) + (int) $listing['qty']);
