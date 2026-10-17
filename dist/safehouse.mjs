@@ -6,14 +6,16 @@ import { installViewerRuntime } from './viewer-runtime108.mjs';
 
 const $ = id => document.getElementById(id), canvas = $('room');
 let lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en';
-let packet = { property: {}, player: {}, lang }, disposed = false, generation = 0, uploadedHouse = null, lastModel = '', tween = null;
-let renderer, scene, camera, controls, runtime, character;
+let packet = { property: { owned: false }, player: {}, lang, preview: true }, disposed = false, generation = 0, modelGeneration = 0, uploadedHouse = null, lastModel = '', tween = null;
+let renderer, scene, camera, controls, runtime, character, observer, key, cool;
+let controlsWired = false, parentInitialized = false, renderReady = false, renderFailed = false;
+const listeners = new Set();
 const owned = new Set(), hotspots = new Map(), objects = [];
 const T = {
   en: { eyebrow: 'PRIVATE ADDRESS / ZONE CITY', name: 'Your safehouse', mode: 'Step inside. Leave the street outside.', preview: 'Property preview. Your balance and ownership are unchanged.', equipment: 'PERSONAL EFFECTS', loading: 'Opening the safehouse…',
-    armory: 'Armory', vault: 'Vault', lounge: 'Lounge', hint: 'Drag to look around. Choose a room to use its real services.', overview: 'Overview', exit: 'Leave safehouse', retry: 'Retry room', error: 'The room could not load. Your game and property are unchanged.', unarmed: 'Unarmed', noArmor: 'No armor', warning: 'Character unavailable. Room services still work.' },
+    armory: 'Armory', vault: 'Vault', lounge: 'Lounge', rooms: 'Safehouse rooms', hint: 'Drag to look around. Choose a room to use its real services.', overview: 'Overview', exit: 'Leave safehouse', retry: 'Retry room', error: 'The room could not load. Your game and property are unchanged.', unarmed: 'Unarmed', noArmor: 'No armor', warning: 'Character unavailable. Room services still work.', assetFallback: 'Property model unavailable. The retained room and services are shown.' },
   ar: { eyebrow: 'عنوان خاص / مدينة زون', name: 'مخبأك', mode: 'ادخل واترك ضجيج الشارع بالخارج.', preview: 'معاينة العقار. لا يتغير رصيدك أو ملكيتك.', equipment: 'معداتك الشخصية', loading: 'جارٍ فتح المخبأ…',
-    armory: 'خزانة السلاح', vault: 'الخزنة', lounge: 'الاستراحة', hint: 'اسحب لاستكشاف الغرفة. اختر مكاناً لاستخدام خدماته.', overview: 'الغرفة كاملة', exit: 'مغادرة المخبأ', retry: 'إعادة تحميل الغرفة', error: 'تعذر تحميل الغرفة. لعبتك وعقارك لم يتغيرا.', unarmed: 'بدون سلاح', noArmor: 'بدون درع', warning: 'تعذر عرض الشخصية. خدمات الغرفة لا تزال متاحة.' }
+    armory: 'خزانة السلاح', vault: 'الخزنة', lounge: 'الاستراحة', rooms: 'غرف المخبأ', hint: 'اسحب لاستكشاف الغرفة. اختر مكاناً لاستخدام خدماته.', overview: 'الغرفة كاملة', exit: 'مغادرة المخبأ', retry: 'إعادة تحميل الغرفة', error: 'تعذر تحميل الغرفة. لعبتك وعقارك لم يتغيرا.', unarmed: 'بدون سلاح', noArmor: 'بدون درع', warning: 'تعذر عرض الشخصية. خدمات الغرفة لا تزال متاحة.', assetFallback: 'تعذر فتح نموذج العقار. تظهر الغرفة الأساسية وخدماتها.' }
 };
 const localized = value => typeof value === 'object' ? String(value?.[lang] || value?.en || value?.ar || '') : String(value || '');
 function language() {
@@ -23,15 +25,28 @@ function language() {
   $('house-mode').textContent = packet.preview === true || p.owned === false ? t.preview : t.mode;
   document.body.classList.toggle('preview', packet.preview === true || p.owned === false);
   $('equipment-label').textContent = t.equipment; $('house-hint').textContent = t.hint;
-  $('overview').textContent = t.overview; $('exit').textContent = t.exit; $('retry').textContent = t.retry;
+  $('overview').textContent = t.overview; $('exit').textContent = t.exit; $('error-exit').textContent = t.exit; $('retry').textContent = t.retry;
+  $('room-pins').setAttribute('aria-label', t.rooms);
   $('error-message').textContent = t.error; $('loading').querySelector('p').textContent = t.loading;
   for (const button of document.querySelectorAll('[data-action]')) button.querySelector('.pin-label').textContent = t[button.dataset.action];
   const player = packet.player || {};
   $('equipment-line').textContent = [localized(player.weaponLabel) || (player.weapon && player.weapon !== 'fists' ? player.weapon : t.unarmed), localized(player.armorLabel) || t.noArmor].join(' / ');
   canvas.setAttribute('aria-label', lang === 'ar' ? 'مخبأ ثلاثي الأبعاد. اسحب للتدوير أو استخدم أزرار الغرف.' : 'Interactive safehouse. Drag to orbit, or use the room buttons.');
 }
+function servicesReady() { return controlsWired && parentInitialized && renderReady && !renderFailed && !disposed; }
+function syncReadiness() {
+  const ready = servicesReady(), canExit = controlsWired && !disposed && parent !== window;
+  for (const button of document.querySelectorAll('[data-action]')) button.disabled = !ready;
+  $('overview').disabled = !ready; $('exit').disabled = !canExit; $('error-exit').disabled = !canExit; $('retry').disabled = !controlsWired || disposed;
+  $('room-pins').setAttribute('aria-busy', String(!ready && !renderFailed && !disposed));
+  $('room-pins').setAttribute('aria-disabled', String(!ready)); canvas.setAttribute('aria-disabled', String(!ready)); canvas.tabIndex = ready ? 0 : -1;
+  if (controls) controls.enabled = ready;
+  document.body.dataset.zoneSafehouseReadiness = JSON.stringify({ status: disposed ? 'disposed' : renderFailed ? 'error' : ready ? 'ready' : parentInitialized ? 'initializing' : 'waiting-parent', parentInitialized, servicesEnabled: ready, exitEnabled: canExit });
+}
+function listen(target, type, handler) { target.addEventListener(type, handler); listeners.add(() => target.removeEventListener(type, handler)); }
 function action(value) {
-  if (!['armory', 'vault', 'lounge', 'exit'].includes(value)) return;
+  if (disposed || !controlsWired || !['armory', 'vault', 'lounge', 'exit'].includes(value)) return;
+  if (value === 'exit' ? parent === window : !servicesReady()) return;
   // The room never changes cash, inventory or ownership on its own. Parent
   // navigation reaches the existing authoritative game action and receipts.
   parent.postMessage({ type: 'zone:safehouse-action', action: value, propertyId: packet.property?.id,
@@ -108,19 +123,41 @@ function room() {
   return group;
 }
 function focus(id = 'overview') {
+  if (!camera || !controls || disposed || renderFailed) return;
   const spec = hotspots.get(id), mobile = innerWidth < 600;
   tween = { from: camera.position.clone(), fromTarget: controls.target.clone(), to: spec?.camera.clone() || new THREE.Vector3(mobile ? 8.7 : 7.5, mobile ? 7.8 : 6.1, mobile ? 12.8 : 9.1),
     target: spec?.target.clone() || new THREE.Vector3(0, .8, -.1), at: performance.now(), duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600 };
 }
+function placeRoomPin(button, pixel, width, height) {
+  // Keep the complete label inside this iframe. Its action and physical target
+  // stay attached to the same room object; only the projected label is clamped.
+  const margin = 8, availableWidth = Math.max(1, width - margin * 2);
+  button.style.maxWidth = `${availableWidth}px`; button.style.whiteSpace = 'normal';
+  const halfWidth = Math.min(button.offsetWidth, availableWidth) / 2, halfHeight = Math.min(button.offsetHeight, Math.max(1, height - margin * 2)) / 2;
+  const clamp = (value, half, extent) => Math.max(half + margin, Math.min(extent - half - margin, Number.isFinite(value) ? value : extent / 2));
+  const x = clamp((pixel.x * .5 + .5) * width, halfWidth, width), y = clamp((-pixel.y * .5 + .5) * height, halfHeight, height);
+  button.style.left = `${x}px`; button.style.top = `${y}px`; button.style.visibility = 'visible';
+  return { x, y, width: halfWidth * 2, height: halfHeight * 2, action: button.dataset.action };
+}
 async function applyPacket(next) {
-  const token = ++generation; packet = next; lang = next.lang === 'ar' ? 'ar' : 'en'; language();
-  const media = next.property?.mediaAsset || '', modelKey = media + ':' + String(next.draft === true), changed = modelKey !== lastModel; lastModel = modelKey;
-  if (changed) {
+  if (disposed) return;
+  const token = ++generation; packet = { ...next, preview: next.preview === true || next.property.owned !== true }; parentInitialized = true;
+  lang = next.lang === 'ar' ? 'ar' : 'en'; language();
+  const media = next.property?.mediaAsset || '';
+  document.body.dataset.zoneSafehouseProperty = JSON.stringify({ id: next.property.id, owned: next.property.owned === true, preview: packet.preview, assetId: media || null });
+  syncReadiness();
+  if (!renderReady || renderFailed) return;
+  // The retained room and real service handlers are ready now. Uploaded shell
+  // and character bytes are optional and must not hold the controls hostage.
+  $('loading').hidden = true; runtime.start();
+  const modelKey = media + ':' + String(next.draft === true), changed = modelKey !== lastModel; lastModel = modelKey;
+  const loadHouse = async () => { if (changed) {
+    const modelToken = ++modelGeneration;
     uploadedHouse?.wrapper?.removeFromParent(); uploadedHouse?.dispose(); uploadedHouse = null;
     if (/^[a-f0-9]{64}$/.test(media)) {
       try {
         const loaded = await loadAsset(media, { draft:next.draft === true });
-        if (disposed || token !== generation) { loaded.dispose(); return; }
+        if (disposed || renderFailed || modelToken !== modelGeneration) { loaded.dispose(); return; }
         if (!loaded.object) { loaded.dispose(); throw Error('This property asset is not a 3D model'); }
         const interior = normalizeAssetObject(loaded.object, loaded.transform, 8);
         interior.name = 'Published uploaded property'; scene.add(interior); uploadedHouse = loaded; uploadedHouse.wrapper = interior;
@@ -129,18 +166,42 @@ async function applyPacket(next) {
         builtRoom.visible = false;
         document.body.dataset.zoneSafehouseRoom = JSON.stringify({ source: 'published-upload', assetId: media, rooms: [...hotspots.keys()], geometryInScene: true });
       } catch (error) {
+        if (disposed || renderFailed || modelToken !== modelGeneration) return;
         builtRoom.visible = true; document.body.dataset.zoneSafehouseAssetError = error.message;
-        $('house-mode').textContent = lang === 'ar' ? 'تعذر فتح نموذج العقار. تظهر الغرفة الأساسية وخدماتها.' : 'Property model unavailable. The retained room and services are shown.';
+        $('house-mode').textContent = (packet.preview ? T[lang].preview + ' ' : '') + T[lang].assetFallback;
       }
     } else builtRoom.visible = true;
-  }
-  try { await character.update(next.player || {}, {draft:next.draft === true}); }
-  catch { $('equipment-line').textContent = T[lang].warning; }
-  if (disposed || token !== generation) return;
-  document.body.dataset.zoneSafehouseProperty = JSON.stringify({ id: next.property?.id, owned: next.property?.owned === true, preview: next.preview === true, assetId: media || null });
-  $('loading').hidden = true; runtime.start();
+  }};
+  const loadCharacter = async () => { try { await character.update(next.player || {}, {draft:next.draft === true}); }
+    catch { if (!disposed && token === generation) $('equipment-line').textContent = T[lang].warning; } };
+  await Promise.all([loadHouse(), loadCharacter()]);
 }
 let builtRoom;
+function showError(reason) {
+  if (disposed) return;
+  renderFailed = true; $('loading').hidden = true; $('error').hidden = false;
+  document.body.dataset.zoneMediaState = 'error'; document.body.dataset.zoneSafehouseError = String(reason?.message || reason); syncReadiness();
+}
+function disposeViewer(event = {}) {
+  if (event.persisted || disposed) return;
+  disposed = true; ++generation; ++modelGeneration; syncReadiness(); listeners.forEach(remove => remove()); listeners.clear();
+  observer?.disconnect(); runtime?.dispose(); controls?.dispose(); character?.dispose(); uploadedHouse?.wrapper?.removeFromParent(); uploadedHouse?.dispose();
+  owned.forEach(value => value.dispose()); owned.clear(); key?.dispose(); cool?.dispose(); renderer?.dispose();
+}
+const message = event => {
+  if (event.source !== parent || event.origin !== location.origin || event.data?.type !== 'zone:safehouse' || parent === window) return;
+  const next = event.data, property = next.property;
+  if (!property || typeof property.id !== 'string' || !property.id.trim() || typeof property.owned !== 'boolean' || (next.player != null && (typeof next.player !== 'object' || Array.isArray(next.player)))) return;
+  applyPacket(next);
+};
+// Wire navigation/recovery before renderer setup, including its failure path.
+listen(window, 'message', message); listen(window, 'pagehide', disposeViewer);
+for (const button of document.querySelectorAll('[data-action]')) { listen(button, 'pointerenter', () => { if (servicesReady()) focus(button.dataset.action); }); listen(button, 'click', () => action(button.dataset.action)); }
+listen($('overview'), 'click', () => { if (servicesReady()) focus(); }); listen($('exit'), 'click', () => action('exit')); listen($('error-exit'), 'click', () => action('exit'));
+listen($('retry'), 'click', () => { if (!disposed) location.reload(); });
+listen(window, 'keydown', event => { if (event.key === 'Escape') action('exit'); });
+listen(canvas, 'keydown', event => { if (event.key === 'Home' && servicesReady()) { event.preventDefault(); focus(); } });
+controlsWired = true; language(); syncReadiness();
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -148,14 +209,14 @@ try {
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   scene = new THREE.Scene(); scene.background = new THREE.Color('#202a2b');
   scene.add(new THREE.HemisphereLight('#c6cbc1', '#403728', 2.15));
-  const key = new THREE.DirectionalLight('#ffe1b2', 3.1); key.position.set(1, 7, 5); key.castShadow = true;
+  key = new THREE.DirectionalLight('#ffe1b2', 3.1); key.position.set(1, 7, 5); key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024); Object.assign(key.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: .1, far: 20 }); key.shadow.bias = -.0003; key.shadow.normalBias = .02; scene.add(key);
-  const cool = new THREE.DirectionalLight('#90b5c3', 1.7); cool.position.set(-2, 3, -2); scene.add(cool);
+  cool = new THREE.DirectionalLight('#90b5c3', 1.7); cool.position.set(-2, 3, -2); scene.add(cool);
   camera = new THREE.PerspectiveCamera(40, 1, .05, 80); camera.position.set(7.5, 6.1, 9.1);
   controls = new OrbitControls(camera, canvas); controls.enableDamping = true; controls.dampingFactor = .09;
   controls.target.set(0, .8, -.1); controls.enablePan = false; controls.minDistance = 3; controls.maxDistance = 20;
   controls.minPolarAngle = .45; controls.maxPolarAngle = Math.PI * .48; controls.maxAzimuthAngle = Math.PI * .63; controls.minAzimuthAngle = -Math.PI * .1;
-  controls.addEventListener('start', () => { tween = null; });
+  listen(controls, 'start', () => { tween = null; });
   builtRoom = room();
   character = createSafehouseCharacter({ scene, catalog: globalThis.ZONE_WEAPONS, materials: globalThis.ZONE_WEAPON_MATS, pack: globalThis.ZONE_WEAPON_PACK,
     publish: receipt => { if (disposed) return; document.body.dataset.zoneSafehouseCharacter = JSON.stringify({ ...(JSON.parse(document.body.dataset.zoneSafehouseCharacter || '{}')), ...receipt }); } });
@@ -165,32 +226,21 @@ try {
     character.tick(dt, elapsed); controls.update(); renderer.render(scene, camera);
     for (const [id, spec] of hotspots) {
       const pixel = spec.position.clone().project(camera), button = document.querySelector(`[data-action="${id}"]`);
-      button.style.left = `${(pixel.x * .5 + .5) * canvas.clientWidth}px`; button.style.top = `${(-pixel.y * .5 + .5) * canvas.clientHeight}px`;
-      button.style.visibility = pixel.z < 1 && Math.abs(pixel.x) < .94 && Math.abs(pixel.y) < .88 ? 'visible' : 'hidden';
+      placeRoomPin(button, pixel, canvas.clientWidth, canvas.clientHeight);
     }
     document.body.dataset.zoneSafehouseStats = JSON.stringify({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, dpr: renderer.getPixelRatio() });
-  }, fail(reason) { $('loading').hidden = true; $('error').hidden = false; document.body.dataset.zoneSafehouseError = reason; } });
+  }, fail: showError });
   function resize() { const width = canvas.clientWidth || innerWidth, height = canvas.clientHeight || innerHeight; renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); focus(); }
-  const observer = new ResizeObserver(resize); observer.observe(canvas); resize();
+  observer = new ResizeObserver(resize); observer.observe(canvas); resize();
   const ray = new THREE.Raycaster(); let press = null;
-  canvas.addEventListener('pointerdown', event => { press = [event.clientX, event.clientY]; });
-  canvas.addEventListener('pointerup', event => {
+  listen(canvas, 'pointerdown', event => { press = servicesReady() ? [event.clientX, event.clientY] : null; });
+  listen(canvas, 'pointerup', event => {
+    if (!servicesReady()) { press = null; return; }
     if (!press || Math.hypot(event.clientX - press[0], event.clientY - press[1]) > 6) { press = null; return; }
     press = null; const rect = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1), camera);
     for (const hit of ray.intersectObjects(objects, false)) { let node = hit.object; while (node && !node.userData.action) node = node.parent; if (node?.userData.action) { action(node.userData.action); break; } }
   });
-  const message = event => { if (event.source !== parent || event.origin !== location.origin || event.data?.type !== 'zone:safehouse') return; applyPacket(event.data); };
-  addEventListener('message', message);
-  for (const button of document.querySelectorAll('[data-action]')) { button.addEventListener('pointerenter', () => focus(button.dataset.action)); button.addEventListener('click', () => action(button.dataset.action)); }
-  $('overview').addEventListener('click', () => focus()); $('exit').addEventListener('click', () => action('exit')); $('retry').addEventListener('click', () => location.reload());
-  canvas.addEventListener('keydown', event => { if (event.key === 'Home') { event.preventDefault(); focus(); } if (event.key === 'Escape') action('exit'); });
-  addEventListener('pagehide', event => { if (event.persisted || disposed) return; disposed = true; ++generation;
-    removeEventListener('message', message); observer.disconnect(); runtime.dispose(); controls.dispose(); character.dispose(); uploadedHouse?.wrapper?.removeFromParent(); uploadedHouse?.dispose(); owned.forEach(value => value.dispose()); key.dispose(); cool.dispose(); renderer.dispose();
-  });
-  language();
-  $('loading').hidden = true; runtime.start();
-  // The default room is a preview only until the authoritative parent sends
-  // ownership. The viewer cannot grant or alter property access.
-  packet.preview = true; packet.property.owned = false; applyPacket(packet);
-  parent.postMessage({ type: 'zone:safehouse-ready' }, location.origin);
-} catch (error) { $('loading').hidden = true; $('error').hidden = false; document.body.dataset.zoneMediaState = 'error'; document.body.dataset.zoneSafehouseError = error.message; $('retry').addEventListener('click', () => location.reload()); language(); }
+  renderReady = true; syncReadiness(); runtime.start();
+} catch (error) { showError(error); }
+// Parent ownership/auth stays authoritative, even when WebGL is unavailable.
+if (parent !== window) parent.postMessage({ type: 'zone:safehouse-ready' }, location.origin);

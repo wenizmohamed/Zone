@@ -142,6 +142,26 @@ function media({ apiHook, saveHook, assets = [asset(idA, 1), asset(idB, 2)], cat
   };
 }
 
+function uploadLifecycleMedia({ status = 'queued', apiHook, ...options } = {}) {
+  const m = media({ ...options, apiHook(call, environment) {
+    const controlled = apiHook?.(call, environment); if (controlled !== undefined) return controlled;
+    if (call.path === '/api/v1/admin/assets/uploads') environment.server.uploadName = call.body.name;
+    if (call.path.endsWith('/complete')) {
+      const uploaded = { ...asset(idC, 3, status), name: environment.server.uploadName };
+      environment.server.assets.push(uploaded); return clone(uploaded);
+    }
+  } });
+  m.state.view = 'assets'; return m;
+}
+function chooseUpload(m) { m.q('#mediaDiskFile').files = [{ name: 'uploaded-house.obj', size: 1, slice: () => ({ arrayBuffer: async () => new Uint8Array([120]).buffer }) }]; }
+
+const uploadCopy = {
+  queued: { en: 'Upload stored and queued for inspection.', ar: 'تم تخزين الملف وإضافته إلى قائمة انتظار الفحص.' },
+  processing: { en: 'Upload stored. Background inspection is running.', ar: 'تم تخزين الملف. الفحص الخلفي قيد العمل.' },
+  ready: { en: 'Upload ready. Save a binding, preview it, then publish the draft to use it in the game.', ar: 'الملف جاهز. احفظ الربط وعاينه ثم انشر المسودة لاستخدامه في اللعبة.' },
+  failed: { en: 'Upload inspection failed. Review the error and upload a corrected file.', ar: 'فشل فحص الملف. راجع الخطأ وارفع ملفاً مصححاً.' },
+};
+
 test('media inspector ignores a stale response for a different selected asset', async () => {
   const slowA = deferred(); const m = media({ apiHook: call => call.path === '/api/v1/admin/assets/' + idA ? slowA.promise : undefined });
   await m.load(); const first = m.q('[data-inspect-asset="' + idA + '"]').click(); await flush();
@@ -202,6 +222,71 @@ test('late upload completion does not hijack an explicitly newer asset selection
   await m.q('[data-inspect-asset="' + idB + '"]').emit('click');
   complete.resolve({ id: idC }); await uploading;
   assert.equal(m.q('#mediaSelectedName').textContent, 'House B');
+});
+
+test('upload notices follow queued, inspecting and ready poll transitions in both locales without refresh reads', async () => {
+  const m = uploadLifecycleMedia(); await m.load(); chooseUpload(m); await m.q('#mediaUploadForm').emit('submit');
+  for (const status of ['queued', 'processing', 'ready']) {
+    if (status !== 'queued') { m.server.assets.find(entry => entry.id === idC).status = status; await m.poll(); }
+    const calls = m.calls.length;
+    for (const language of ['en', 'ar', 'en']) {
+      m.state.language = language; m.window.ZoneMedia.refresh();
+      assert.equal(m.q('#mediaMessage').textContent, 'uploaded-house.obj: ' + uploadCopy[status][language]); assert.equal(m.q('#mediaMessage').className, '');
+    }
+    for (let i = 0; i < 10; i++) m.window.ZoneMedia.refresh(); assert.equal(m.calls.length, calls, 'Lifecycle translation uses cached upload status.');
+  }
+  assert.equal(m.q('#mediaInspector').dataset.asset, idC); assert.equal(m.q('#mediaSelectedName').textContent, 'uploaded-house.obj');
+  assert.equal(m.calls.filter(call => call.path.endsWith('/complete')).length, 1);
+});
+
+test('an upload already ready in its completion receipt immediately prompts binding, preview and publication', async () => {
+  const m = uploadLifecycleMedia({ status: 'ready' }); await m.load(); chooseUpload(m); await m.q('#mediaUploadForm').emit('submit');
+  assert.equal(m.q('#mediaMessage').textContent, 'uploaded-house.obj: ' + uploadCopy.ready.en); assert.doesNotMatch(m.q('#mediaMessage').textContent, /inspection is running/i);
+  assert.equal(m.q('#mediaInspector').dataset.asset, idC); assert.equal(m.window.ZoneMedia.hasUnsaved(), false);
+});
+
+test('a queued upload becoming ready updates its notice without stealing a newer asset selection or fit draft', async () => {
+  const m = uploadLifecycleMedia(); await m.load(); chooseUpload(m); await m.q('#mediaUploadForm').emit('submit');
+  await m.select(idA); await m.q('#mediaScale').input('1.45');
+  m.server.assets.find(entry => entry.id === idC).status = 'ready'; await m.poll();
+  assert.equal(m.q('#mediaMessage').textContent, 'uploaded-house.obj: ' + uploadCopy.ready.en);
+  assert.equal(m.q('#mediaSelectedName').textContent, 'House A'); assert.equal(m.q('#mediaInspector').dataset.asset, idA); assert.equal(m.q('#mediaScale').value, '1.45'); assert.equal(m.window.ZoneMedia.hasUnsaved(), true);
+});
+
+test('failed inspection notices retain the actual error and translate without polling or implying readiness', async () => {
+  const m = uploadLifecycleMedia(); await m.load(); chooseUpload(m); await m.q('#mediaUploadForm').emit('submit');
+  const uploaded = m.server.assets.find(entry => entry.id === idC); uploaded.status = 'failed'; uploaded.error = 'Invalid mesh <details>';
+  await m.poll(); const calls = m.calls.length;
+  for (const language of ['en', 'ar', 'en']) {
+    m.state.language = language; m.window.ZoneMedia.refresh(); assert.equal(m.q('#mediaMessage').textContent, 'uploaded-house.obj: ' + uploadCopy.failed[language] + ' Invalid mesh <details>');
+    assert.equal(m.q('#mediaMessage').className, 'media-error'); assert.equal(m.q('#mediaBindingForm').hidden, true);
+  }
+  assert.equal(m.calls.length, calls); assert.equal(m.q('#mediaMessage').querySelector('details'), null);
+});
+
+for (const operation of ['fit', 'binding']) for (const outcome of ['saved', 'failed']) {
+  test(`a newer ${operation} ${outcome} message wins over upload polling and locale refresh`, async () => {
+    const m = uploadLifecycleMedia({ apiHook: call => outcome === 'failed' && call.method === 'PUT' && (operation === 'fit' ? call.path.endsWith('/transform') : call.path.startsWith('/api/v1/admin/gameplay-catalog/')) ? Promise.reject(new Error('Newer ' + operation + ' failed')) : undefined });
+    await m.load(); chooseUpload(m); await m.q('#mediaUploadForm').emit('submit'); await m.select(idA);
+    if (operation === 'fit') { await m.q('#mediaScale').input('1.3'); await m.q('#mediaFitForm').emit('submit'); }
+    else { m.q('#mediaTargetType').value = 'property'; m.q('#mediaTargetId').value = 'apt'; await m.q('#mediaBindingForm').emit('submit'); }
+    const text = m.q('#mediaMessage').textContent, className = m.q('#mediaMessage').className;
+    assert.equal(className, outcome === 'failed' ? 'media-error' : ''); assert.match(text, outcome === 'failed' ? /Newer .* failed/ : /Draft saved/);
+    m.server.assets.find(entry => entry.id === idC).status = 'ready'; await m.poll(); m.state.language = 'ar'; m.window.ZoneMedia.refresh();
+    assert.equal(m.q('#mediaMessage').textContent, text); assert.equal(m.q('#mediaMessage').className, className); assert.equal(m.q('#mediaSelectedName').textContent, 'House A');
+    if (operation === 'fit') assert.equal(m.q('#mediaScale').value, '1.3');
+  });
+}
+
+test('late upload completion cannot resurrect its notice over a newer refresh error or dispatched selection', async () => {
+  const complete = deferred(); let reads = 0;
+  const m = uploadLifecycleMedia({ assets: [asset(idA, 1), asset(idB, 2, 'processing')], apiHook: call => call.path.endsWith('/complete') ? complete.promise : call.path === '/api/v1/admin/assets' && ++reads === 2 ? Promise.reject(new Error('Newer library refresh failed')) : undefined });
+  await m.load(); await m.select(idA); chooseUpload(m); const uploading = m.q('#mediaUploadForm').emit('submit'); await flush();
+  await m.poll(); assert.equal(m.q('#mediaMessage').textContent, 'Newer library refresh failed');
+  await m.q('[data-inspect-asset="' + idB + '"]').emit('click');
+  const uploaded = { ...asset(idC, 3, 'queued'), name: 'uploaded-house.obj' }; m.server.assets.push(uploaded); complete.resolve(uploaded); await uploading;
+  m.server.assets.find(entry => entry.id === idC).status = 'ready'; await m.poll();
+  assert.equal(m.q('#mediaMessage').textContent, 'Newer library refresh failed'); assert.equal(m.q('#mediaMessage').className, 'media-error'); assert.equal(m.q('#mediaSelectedName').textContent, 'House B');
 });
 
 test('late media binding response cannot replace a newer catalog revision', async () => {

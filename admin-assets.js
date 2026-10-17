@@ -4,11 +4,18 @@
   const q=s=>document.querySelector(s), tr=(en,ar)=>state.language==='ar'?ar:en;
   const words={title:['Bring your own world','اصنع عالمك بملفاتك'],intro:['Upload, inspect, fit, bind, preview, then publish. Existing preset models remain available.','ارفع وافحص واضبط واربط وعاين ثم انشر. النماذج الجاهزة تبقى متاحة.'],file:['Model or media file','ملف نموذج أو وسائط'],upload:['Upload & inspect','رفع وفحص'],refresh:['Refresh library','تحديث المكتبة'],fit:['Model fit','ضبط النموذج'],scale:['Scale','الحجم'],floor:['Floor offset','ارتفاع الأرضية'],rotation:['Rotation X / Y / Z (degrees)','الدوران X / Y / Z (درجات)'],target:['Camera target X / Y / Z','هدف الكاميرا X / Y / Z'],saveFit:['Save fitted transform','حفظ ضبط النموذج'],binding:['Use this asset in the game','استخدم الملف في اللعبة'],kind:['Content type','نوع المحتوى'],entity:['Content ID','معرّف المحتوى'],bind:['Save binding to draft','حفظ الربط في المسودة'],bindingHint:['Property/item bindings update the catalog draft. Character/map bindings update the release draft. Publish after previewing.','ربط العقارات والعناصر يحدّث مسودة الكتالوج. ربط الشخصيات والخريطة يحدّث مسودة الإصدار. عاين ثم انشر.'],property:['Property / house','عقار / منزل'],item:['Item','عنصر'],weapon:['Weapon','سلاح'],armor:['Armor','درع'],character:['Character outfit','زي الشخصية'],map:['Map service rooftop model','مجسم على سطح مبنى الخدمة'],shop:['Shop inventory','مخزون المتاجر'],shopIntro:['Server-owned shop listings, not player trades. Saving changes the draft only. Removing a row stops stocking it after publication.','عروض المتجر التابعة للخادم وليست سوق اللاعبين. الحفظ يغيّر المسودة فقط. حذف الصف يوقف عرضه بعد النشر.'],add:['Add listing','إضافة عرض'],saveShop:['Save shop draft','حفظ مسودة المتجر'],seller:['Shop name','اسم المتجر'],quantity:['Stock','المخزون'],remove:['Remove','حذف الصف'],world:['Underworld director','مدير أحداث المدينة'],worldIntro:['A persistent server worker creates bounded finds, supply changes and news. Page reads never mint rewards.','عامل مستمر ينشئ اللقى والمخزون والأخبار ضمن حدود واضحة. قراءة الصفحة لا تمنح مكافآت.'],enabled:['Director enabled','تفعيل المدير'],savePolicy:['Save director policy','حفظ سياسة المدير'],crimeRules:['Tools, mastery & consequences','الأدوات والإتقان والعواقب'],requiredTool:['Required item ID (optional)','معرّف العنصر المطلوب (اختياري)'],toolQuantity:['Required quantity','الكمية المطلوبة'],consumeTool:['Consume tool on attempt','استهلاك الأداة عند المحاولة'],mastery:['Mastery per success','الإتقان لكل نجاح'],chainWindow:['Chain window (seconds)','نافذة السلسلة (ثواني)'],chainBonus:['Chain cash bonus (basis points)','مكافأة نقدية للسلسلة (نقاط أساس)'],critical:['Critical chance after a failed attempt (basis points)','احتمال الإخفاق الحرج عند الفشل (نقاط أساس)'],jailSeconds:['Jail consequence (seconds)','عقوبة السجن (ثواني)'],hospitalSeconds:['Hospital consequence (seconds)','عقوبة المستشفى (ثواني)'],rulesHint:['10,000 basis points = 100%. Publish saved rules before players see them.','١٠٬٠٠٠ نقطة أساس = ١٠٠٪. انشر القواعد المحفوظة لتظهر للاعبين.']};
   Object.assign(words,{inspectorTitle:['3D asset fit inspector','فاحص ضبط الأصل ثلاثي الأبعاد'],uploadProgress:['Upload progress','تقدم الرفع'],rotationAxis:['Rotation (degrees)','الدوران (درجات)'],targetAxis:['Camera target','هدف الكاميرا']});
+  Object.assign(words,{
+    uploadSending:['Uploading...','جارٍ الرفع...'],
+    uploadQueued:['Upload stored and queued for inspection.','تم تخزين الملف وإضافته إلى قائمة انتظار الفحص.'],
+    uploadInspecting:['Upload stored. Background inspection is running.','تم تخزين الملف. الفحص الخلفي قيد العمل.'],
+    uploadReady:['Upload ready. Save a binding, preview it, then publish the draft to use it in the game.','الملف جاهز. احفظ الربط وعاينه ثم انشر المسودة لاستخدامه في اللعبة.'],
+    uploadFailed:['Upload inspection failed. Review the error and upload a corrected file.','فشل فحص الملف. راجع الخطأ وارفع ملفاً مصححاً.']
+  });
   const text=k=>words[k]?tr(...words[k]):k, saved=()=>tr('Draft saved. Preview and publish when ready.','تم حفظ المسودة. عاين ثم انشر عندما تصبح جاهزة.');
   const policy={tickSeconds:[60,30,3600,'Tick interval (seconds)','الفاصل بين النبضات (ثواني)'],findsPerTick:[1,0,3,'Finds per tick','اللقى في كل نبضة'],findQuantity:[1,1,3,'Items per find','الكمية في كل لقية'],findLifetimeSeconds:[900,60,86400,'Find lifetime (seconds)','مدة بقاء اللقية (ثواني)'],maxActiveFinds:[24,1,64,'Maximum active finds','الحد الأقصى للقى'],supplyShift:[2,0,20,'Supply shift per tick','تغير المخزون في كل نبضة'],supplyCap:[100,1,1000,'Maximum shop stock','الحد الأقصى للمخزون'],eventEveryTicks:[5,1,100,'Ticks per news event','عدد النبضات لكل خبر']};
   for(const[key,value]of Object.entries(policy))words[key]=value.slice(3);
   let library=[],selected=null,busy=false,language='',loaded=false,poll=null,shopDirty=false,policyDirty=false;
-  let workerHealth;
+  let workerHealth,uploadNotice=null;
   let interactionRevision=0,inspectionRevision=0,libraryRevision=0,inspectorRevision=0,shopEditRevision=0,policyEditRevision=0,shopRenderedRevision=null,shopSaving=false,policySaving=false;
   const fitEdits=new Map();
   const hasUnsaved=()=>fitEdits.size>0||shopDirty||shopSaving||policyDirty||policySaving||busy;
@@ -23,7 +30,23 @@
   q('.view[data-view="assets"]').insertBefore(workshop,q('#assetGrid'));
   const shop=document.createElement('details');shop.className='panel media-shop-workshop';shop.innerHTML=`<summary data-media-copy="shop"></summary><p data-media-copy="shopIntro"></p><form id="shopCatalogForm"><div id="shopListingRows"></div><button type="button" class="button secondary" id="shopAddListing" data-media-copy="add"></button><button class="button primary" data-media-copy="saveShop"></button><span id="shopDraftStatus" role="status"></span></form>`;q('#studioCatalogPanel').after(shop);
   const world=document.createElement('details');world.className='panel media-world-workshop';world.innerHTML=`<summary data-media-copy="world"></summary><p data-media-copy="worldIntro"></p><form id="worldPolicyForm"><label class="toggle-row"><input id="worldPolicyEnabled" type="checkbox" checked><span data-media-copy="enabled"></span></label><div class="form-grid">${Object.entries(policy).map(([key,[value,min,max]])=>`<label><span data-media-copy="${key}"></span><input id="worldPolicy-${key}" type="number" value="${value}" min="${min}" max="${max}" step="1" required></label>`).join('')}</div><button class="button primary" data-media-copy="savePolicy"></button><span id="worldDraftStatus" role="status"></span></form>`;q('.view[data-view="assets"]').append(world);
-  function message(value,error=false){q('#mediaMessage').textContent=value;q('#mediaMessage').className=error?'media-error':'';}
+  function message(value,error=false,owner=null){
+    if(owner&&owner!==uploadNotice)return;
+    if(!owner)uploadNotice=null;
+    const target=q('#mediaMessage'),className=error?'media-error':'';
+    if(target.textContent!==value)target.textContent=value;
+    if(target.className!==className)target.className=className;
+  }
+  function renderUploadNotice(){
+    const notice=uploadNotice;if(!notice)return;
+    const key={uploading:'uploadSending',queued:'uploadQueued',processing:'uploadInspecting',inspecting:'uploadInspecting',ready:'uploadReady',failed:'uploadFailed'}[notice.status]??'uploadQueued';
+    const failed=notice.status==='failed';
+    message((notice.name?notice.name+': ':'')+text(key)+(failed&&notice.error?' '+notice.error:''),failed,notice);
+  }
+  function updateUploadNotice(asset){
+    const notice=uploadNotice;if(!notice?.id||asset?.id!==notice.id)return;
+    notice.status=asset.status??notice.status;notice.name=asset.name??notice.name;notice.error=asset.error??null;renderUploadNotice();
+  }
   function buttons(){const blocked=busy||!adminCanMutate();workshop.querySelectorAll('button').forEach(el=>{el.disabled=blocked;});}
   function renderList(){q('#uploadedMediaList').innerHTML=library.length?library.map(asset=>`<button type="button" class="media-library-entry ${asset.id===selected?'selected':''}" data-inspect-asset="${esc(asset.id)}"><strong>${esc(asset.name)}</strong><span>${esc(asset.format??'')} · ${esc(asset.status)}</span><code>${esc(asset.id)}</code></button>`).join(''):`<p>${tr('No uploaded assets yet.','لا توجد ملفات مرفوعة بعد.')}</p>`;q('#uploadedMediaList').querySelectorAll('[data-inspect-asset]').forEach(el=>el.onclick=()=>inspect(el.dataset.inspectAsset).catch(e=>message(e.message,true)));buttons();}
   function renderWorkerStatus(){if(workerHealth===undefined)return;q('#mediaWorkerStatus').textContent=tr('Worker health: ','حالة العامل: ')+(workerHealth?(workerHealth.workers??[]).map(worker=>worker.id+' '+(worker.healthy?tr('running','يعمل'):tr('not responding','لا يستجيب'))).join(' · '):tr('Unavailable','غير متاحة'));}
@@ -31,7 +54,7 @@
     if(!adminCanMutate())return;
     const request=++libraryRevision;clearTimeout(poll);poll=null;
     let data;try{data=await api('/api/v1/admin/assets');}catch(error){if(request===libraryRevision)throw error;return;}if(request!==libraryRevision)return;
-    library=data.assets??[];loaded=true;renderList();
+    library=data.assets??[];loaded=true;renderList();updateUploadNotice(library.find(asset=>asset.id===uploadNotice?.id));
     const health=await api('/api/v1/admin/workers').catch(()=>null);if(request!==libraryRevision)return;
     workerHealth=health??null;renderWorkerStatus();
     if(library.some(a=>!['ready','failed'].includes(a.status)))poll=setTimeout(()=>{poll=null;if(state.view==='assets')return reloadLibrary().catch(e=>message(e.message,true));},2000);
@@ -40,12 +63,13 @@
   async function upload(event){
     event.preventDefault();if(busy||!adminCanMutate())return;const file=q('#mediaDiskFile').files?.[0];if(!file)return;
     if(!/\.(glb|gltf|fbx|obj|zip|png|webp|jpe?g|mp3)$/i.test(file.name)||file.size<1||file.size>134217728){message(tr('Choose a supported file of up to 128 MiB.','اختر ملفاً مدعوماً بحجم لا يتجاوز ١٢٨ ميبيبايت.'),true);return;}
-    const interaction=interactionRevision;busy=true;buttons();message(tr('Uploading...','جارٍ الرفع...'));
+    const interaction=interactionRevision,notice={id:null,name:file.name,status:'uploading',error:null};uploadNotice=notice;busy=true;buttons();renderUploadNotice();
     try{
       const start=await api('/api/v1/admin/assets/uploads',{method:'POST',body:JSON.stringify({name:file.name,size:file.size})});let offset=0;
       while(offset<file.size){const bytes=new Uint8Array(await file.slice(offset,offset+524288).arrayBuffer());let raw='';for(let i=0;i<bytes.length;i+=16384)raw+=String.fromCharCode(...bytes.subarray(i,i+16384));await api(`/api/v1/admin/assets/uploads/${start.uploadId}/chunks`,{method:'POST',body:JSON.stringify({offset,base64:btoa(raw)})});offset+=bytes.length;q('#mediaProgress').value=Math.round(offset/file.size*100);}
       const result=await api(`/api/v1/admin/assets/uploads/${start.uploadId}/complete`,{method:'POST',body:'{}'}),uploaded=result.id??result.asset?.id;
-      message(tr('Upload stored. Background inspection is running.','تم تخزين الملف. الفحص الخلفي قيد العمل.'));await reloadLibrary();
+      if(uploadNotice===notice){notice.id=uploaded;updateUploadNotice({...result.asset??result,id:uploaded,status:result.asset?.status??result.status??'queued',name:result.asset?.name??result.name??file.name});}
+      await reloadLibrary();
       if(uploaded&&interaction===interactionRevision)await inspect(uploaded,false);
     }catch(error){message(error.message,true);}finally{busy=false;buttons();}
   }
@@ -72,6 +96,7 @@
     selected=id;const request=++inspectionRevision;renderList();let asset;
     try{asset=await api('/api/v1/admin/assets/'+id);}catch(error){if(request===inspectionRevision&&selected===id)throw error;return;}
     if(selected!==id||request!==inspectionRevision)return;
+    updateUploadNotice(asset);
     q('#mediaInspection').hidden=false;q('#mediaSelectedName').textContent=asset.name;q('#mediaMetadata').textContent=JSON.stringify({status:asset.status,format:asset.format,metadata:{...asset.metadata,thumbnail:undefined},error:asset.error},null,2);
     fillTransform(fitEdits.get(id)??asset.transform);
     mountInspector(asset.status==='ready'?id:null);
@@ -87,7 +112,7 @@
     if(language!==state.language){
       document.querySelectorAll('[data-media-copy]').forEach(el=>{el.textContent=text(el.dataset.mediaCopy);});
       document.querySelectorAll('[data-media-aria]').forEach(el=>{el.setAttribute('aria-label',text(el.dataset.mediaAria)+(el.dataset.mediaAxis?' '+el.dataset.mediaAxis:''));});
-      language=state.language;renderList();targets();localizeShopOptions();renderWorkerStatus();
+      language=state.language;renderList();targets();localizeShopOptions();renderWorkerStatus();renderUploadNotice();
     }
     if(state.bootReady&&!shopDirty&&shopRenderedRevision!==state.gameplayCatalog?.revision){q('#shopListingRows').innerHTML='';(state.gameplayCatalog?.catalogs.market??[]).forEach(row=>q('#shopListingRows').append(shopRow(row)));shopRenderedRevision=state.gameplayCatalog?.revision;}
     if(state.bootReady&&!policyDirty&&!policySaving){const value=state.draft.manifest.worldPolicy??{};q('#worldPolicyEnabled').checked=value.enabled??true;for(const[key,[fallback]]of Object.entries(policy))q('#worldPolicy-'+key).value=value[key]??fallback;}
