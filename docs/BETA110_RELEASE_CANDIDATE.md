@@ -99,6 +99,8 @@ an optional competitive discovery bonus, not a promised progression route.
 Only the separate in-app browser was used. No Chrome DevTools, local Chrome
 extension or raw CDP control was used. Configured viewports were 1440 by 900 and
 390 by 844, with no horizontal overflow in the checked Arabic phone screens.
+The later English phone crime-plan check also had zero horizontal overflow;
+the Arabic desktop equipment check used 1440 by 1000.
 
 A fresh ordinary player, not Owner Playtest, completed this actual sequence:
 
@@ -113,6 +115,10 @@ A fresh ordinary player, not Owner Playtest, completed this actual sequence:
    streak reward of 1,000. No staff cash/XP/inventory grant was used.
 5. Entered Gym through the actual map coin and trained Strength from 10 to 17
    with the normal five-Energy cost. Subsequent regeneration remained active.
+6. Equipped the purchased bat through the actual Arabic inventory control and
+   returned to Home. The weapon label, 1.3 damage multiplier and rendered bat in
+   the character's hand agreed. The stored equipment was `bat`, while wallet
+   2,546 and bank 100 remained unchanged. No staff provisioning was used.
 
 Actual Studio save, Arabic dirty-field preservation, draft preview and isolated
 publication were exercised. The isolated release is
@@ -134,7 +140,7 @@ critical outcomes, are not represented as real probabilistic browser outcomes.
 
 ## Verification and promotion gate
 
-Current local evidence before the final migration-guard increment:
+Current local candidate evidence:
 
 - Full frontend/build/package checks: **928 passed, zero failed**, exit zero.
 - Material rules: **78 SQLite / 81 disposable PostgreSQL**, zero failed.
@@ -142,6 +148,13 @@ Current local evidence before the final migration-guard increment:
 - Candidate-content rule tests: **71 passed**, zero failed. These use controlled
   rolls and zero test cooldowns, explicitly not a player-experience timing claim.
 - Map-focused and existing preservation checks: **66 passed**, zero failed.
+- Migration-source guard: **30 SQLite / 30 disposable PostgreSQL**, zero failed,
+  independently rerun. A portable tracked-source checkout without the private
+  helper or local config also passed all 30 checks.
+- Controlled installer rehearsal: **34 passed**, zero failed, including failed
+  SQL restoration retaining the new source guard until old source is proven.
+- Complete engine runner: exit zero, including all existing suites and the four
+  new material, schema-guard, crime-preview HTTP and content suites.
 - Finite isolated stability: **63.451 seconds, 52/52 GET 200, zero new error
   signals**. This is not a capacity benchmark or production acceptance.
 
@@ -149,9 +162,28 @@ Independent review reproduced and closed immediate-save metadata loss and
 snapshotless-release action failure. It separately reproduced an unsafe
 installation race: an old PHP request could resume with cached old migration
 bytes after new schema bookkeeping committed, call the old seeder and revert
-the fingerprint. The current live installer remains hard-blocked until the
-lock-time source reread and guarded source-first barrier are independently
-proven. Do not remove the block merely to deploy.
+the fingerprint. The narrow repair now rereads both SQL and crime bytes after
+the existing migration lock, rather than using a request's captured old bytes.
+Independent isolated tests reproduce both the original stale-capture window and
+a second source change at lock acquisition without seeding or downgrading the
+new fingerprint.
+
+The prepared PC sequence installs that guard first while SQL and metadata stay
+old, then completes a direct health response on the attested single-worker
+Windows PHP process before any SQL replacement. Tests on the actual PHP binary
+show an old request finishing before that same-process barrier and later requests
+loading the new method with CLI opcode caching off. Guard-aware controlled
+rollback restores and proves all other original files, including both SQL
+sources, before restoring the old Database source. An independent edit is
+preserved and reported, never overwritten to force a rollback.
+
+This is bounded installation preparation, not a live-install receipt. Multiple
+interpreters, changed runtime/configuration or missing barrier attestation are
+not accepted. Filesystem replacement and PostgreSQL are not one crash-atomic
+resource; abrupt process/pipe loss or an unresolved independent file edit can
+still require explicit private-backup recovery. Controlled rollback tests do not
+prove arbitrary-crash recovery. The exact committed revision and reviewed
+manifest still require specific owner approval before production writes.
 
 The database change is exactly one append-only table, `material_issuance`, and
 one index. It must use a reviewed additive/no-seed installation, preserve the

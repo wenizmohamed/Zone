@@ -84,12 +84,21 @@ final class Database
         } catch (\PDOException) {
             // First boot or an older engine database. Never replace its data.
         }
-        $this->transaction(function () use ($sql, $fingerprint): void {
+        $this->transaction(function () use ($schema): void {
             if ($this->driver === 'pgsql') $this->pdo->exec('SELECT pg_advisory_xact_lock(90120261005)');
             $this->pdo->exec('CREATE TABLE IF NOT EXISTS engine_metadata (name VARCHAR(80) PRIMARY KEY, value TEXT NOT NULL)');
             $this->execute("INSERT INTO engine_metadata (name, value) VALUES ('schema-fingerprint', '') ON CONFLICT (name) DO NOTHING");
             // Serializes SQLite migration callers too, before the recheck.
             $this->execute("UPDATE engine_metadata SET value = value WHERE name = 'schema-fingerprint'");
+            // An installer may have committed after this request captured its
+            // fast-path bytes. Re-read both sources under the migration lock;
+            // never seed or downgrade bookkeeping from that stale snapshot.
+            $sql = file_get_contents($schema);
+            $crimes = file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json');
+            if ($sql === false || $crimes === false) {
+                throw new RuntimeException('Unable to read current migration sources.');
+            }
+            $fingerprint = hash('sha256', $sql . $crimes);
             $applied = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'schema-fingerprint'");
             if (($applied['value'] ?? null) === $fingerprint) return;
             $this->pdo->exec($sql);

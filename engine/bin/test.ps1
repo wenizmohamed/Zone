@@ -68,6 +68,14 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\launch-underworld108.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\material-policy110.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\schema-guard110.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\crime-preview110-http.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\street-content110.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\launch-assets108.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\studio-media108.php')
