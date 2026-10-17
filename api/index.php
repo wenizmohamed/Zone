@@ -21,6 +21,7 @@ function zone_proxy_error(string $message, int $status): never
 
 function zone_proxy_public_path(string $path): bool
 {
+    if (preg_match('~^/api/v1/assets/[a-f0-9]{64}(?:/content)?$~D', $path) || in_array($path, ['/api/v1/world', '/api/v1/world/claim'], true)) return true;
     if ($path === '/engine/theme.css') return true;
     if (!preg_match('~^/api/v1/[A-Za-z0-9/-]+$~D', $path) || str_contains($path, '//') || str_ends_with($path, '/')) return false;
     $route = substr($path, strlen('/api/v1/'));
@@ -36,6 +37,11 @@ function zone_proxy_public_path(string $path): bool
 /** Explicit owner routes still require the engine's signed owner session. */
 function zone_proxy_owner_methods(string $path): array
 {
+    // Public media reads may carry a signed owner proof for draft inspection.
+    // Without that proof the engine exposes only assets in the active release.
+    if (preg_match('~^/api/v1/assets/[a-f0-9]{64}(?:/content)?$~D', $path) || in_array($path, ['/api/v1/admin/assets', '/api/v1/admin/workers'], true) || preg_match('~^/api/v1/admin/assets/[a-f0-9]{64}$~D', $path)) return ['GET', 'HEAD'];
+    if ($path === '/api/v1/admin/assets/uploads' || preg_match('~^/api/v1/admin/assets/uploads/[a-f0-9]{32}/(?:chunks|complete)$~D', $path)) return ['POST'];
+    if ($path === '/api/v1/admin/shop-catalog' || preg_match('~^/api/v1/admin/assets/[a-f0-9]{64}/transform$~D', $path)) return ['PUT'];
     if (in_array($path, ['/engine', '/engine/', '/engine/assets/engine.css', '/engine/assets/engine.js', '/api/v1/ledger', '/api/v1/events', '/api/v1/architecture'], true)) return ['GET', 'HEAD'];
     if ($path === '/api/v1/admin/session') return ['GET', 'POST', 'DELETE'];
     if ($path === '/api/v1/admin/playtest') return ['GET', 'DELETE'];
@@ -109,7 +115,9 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     $requestOrigin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
     if (in_array($method, ['POST', 'PUT', 'DELETE'], true) && $requestOrigin !== 'https://' . $host) zone_proxy_error('Cross-origin request rejected.', 403);
     // Whole release manifests include the catalog; ordinary actions remain capped at 64 KB.
-    $requestLimit = $method === 'PUT' && $path === '/api/v1/admin/draft' ? 1048576 : 65536;
+    $largeDraft = $method === 'PUT' && in_array($path, ['/api/v1/admin/draft', '/api/v1/admin/shop-catalog'], true);
+    $assetChunk = $method === 'POST' && preg_match('~^/api/v1/admin/assets/uploads/[a-f0-9]{32}/chunks$~D', $path);
+    $requestLimit = $largeDraft || $assetChunk ? 1048576 : 65536;
     if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $requestLimit) zone_proxy_error('Request body is too large.', 413);
     $body = file_get_contents('php://input', false, null, 0, $requestLimit + 1);
     if ($body === false || strlen($body) > $requestLimit) zone_proxy_error('Request body is too large.', 413);

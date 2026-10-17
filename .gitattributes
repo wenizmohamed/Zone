@@ -1,6 +1,22 @@
+* text=auto eol=lf
 # These accepted map inputs are byte-pinned release assets. Keep exact bytes.
-dist/map-icons.js -text whitespace=cr-at-eol
-dist/territory-geometry.js -text
-dist/map-frame-sample.js -text
+dist/map-icons.js -text -diff whitespace=cr-at-eol
+dist/territory-geometry.js -text -diff
+dist/map-frame-sample.js -text -diff
+# Authored/licensed binary assets must never pass through newline filters.
+*.glb -text -diff
+*.gltf -text -diff
+*.fbx -text -diff
+*.obj -text -diff
+*.zip -text -diff
+*.png -text -diff
+*.jpg -text -diff
+*.jpeg -text -diff
+*.webp -text -diff
+*.avif -text -diff
+*.mp3 -text -diff
+*.mp4 -text -diff
+*.woff2 -text -diff
+assets/weapons/** -text -diff
 # Keep imported third-party vendor sources/license bytes, including authored EOF.
 assets/city/vendor/* -text whitespace=cr-at-eol,-blank-at-eof

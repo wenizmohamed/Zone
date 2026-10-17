@@ -75,16 +75,51 @@ final class ProgressionService
         });
     }
 
-    public function recordCrime(string $playerId, string $crimeId, bool $success, int $xpReward = 2): void
+    /** Tool checks and consumption are rolled back with the outer crime command. */
+    public function prepareCrime(string $playerId, array $crime, string $correlationId): array
     {
-        $this->database->playerTransaction($playerId, function () use ($playerId, $crimeId, $success, $xpReward): void {
+        return $this->database->playerTransaction($playerId, function () use ($playerId, $crime, $correlationId): array {
+            $state = $this->load($playerId);
+            $item = $crime['required_item'] ?? null;
+            $quantity = max(1, (int) ($crime['required_quantity'] ?? 1));
+            $consumed = 0;
+            if ($item !== null) {
+                $this->item($item);
+                if ((int) ($state['inv'][$item] ?? 0) < $quantity) throw new RuntimeException('This job needs ' . $quantity . ' owned unit(s) of ' . $item . '.');
+                if (!empty($crime['consume_tool'])) {
+                    $state['inv'][$item] -= $quantity;
+                    LoadoutService::removeMissing($state, $item);
+                    $this->save($playerId, $state);
+                    $this->ledger->record($playerId, 'item:' . $item, -$quantity, (int) $state['inv'][$item], 'crime.tool', $correlationId);
+                    $consumed = $quantity;
+                }
+            }
+            $chain = $state['crimeChains'][$crime['id']] ?? ['count' => 0, 'best' => 0, 'lastAt' => 0];
+            $window = max(0, (int) ($crime['chain_window_seconds'] ?? 300));
+            $alive = $window > 0 && $this->now() - (int) $chain['lastAt'] <= $window * 1000;
+            return ['tool' => $item, 'consumed' => $consumed, 'mastery' => (int) ($state['skill'][$crime['id']] ?? 0),
+                'chainBonusBasisPoints' => $alive ? min(10, (int) $chain['count']) * max(0, min(2000, (int) ($crime['chain_bonus_basis_points'] ?? 0))) : 0];
+        });
+    }
+
+    public function recordCrime(string $playerId, string $crimeId, bool $success, int $xpReward = 2, array $crime = []): array
+    {
+        return $this->database->playerTransaction($playerId, function () use ($playerId, $crimeId, $success, $xpReward, $crime): array {
             $state = $this->load($playerId);
             $state['crimeXp'] = ($state['crimeXp'] ?? 96) + ($success ? max(0, $xpReward) : 1);
+            $chain = $state['crimeChains'][$crimeId] ?? ['count' => 0, 'best' => 0, 'lastAt' => 0];
+            $window = max(0, (int) ($crime['chain_window_seconds'] ?? 300));
+            if ($window === 0 || $this->now() - (int) $chain['lastAt'] > $window * 1000) $chain['count'] = 0;
             if ($success) {
                 $state['ctr']['crimes']++;
-                $state['skill'][$crimeId] = min(100, ($state['skill'][$crimeId] ?? 0) + 1);
-            }
+                $state['skill'][$crimeId] = min(100, ($state['skill'][$crimeId] ?? 0) + max(0, min(100, (int) ($crime['mastery_per_success'] ?? 1))));
+                $chain['count']++;
+                $chain['best'] = max((int) $chain['best'], $chain['count']);
+            } else $chain['count'] = 0;
+            $chain['lastAt'] = $this->now();
+            $state['crimeChains'][$crimeId] = $chain;
             $this->save($playerId, $state);
+            return ['mastery' => (int) ($state['skill'][$crimeId] ?? 0), 'chain' => $chain];
         });
     }
 
@@ -105,11 +140,17 @@ final class ProgressionService
     public function applyPenalty(string $playerId, string $type, int $minutes): void
     {
         if (!in_array($type, ['jail', 'hosp'], true) || $minutes < 1) throw new InvalidArgumentException('Invalid player penalty.');
-        $this->database->playerTransaction($playerId, function () use ($playerId, $type, $minutes): void {
+        $this->applyPenaltySeconds($playerId, $type, $minutes * 60);
+    }
+
+    public function applyPenaltySeconds(string $playerId, string $type, int $seconds): void
+    {
+        if (!in_array($type, ['jail', 'hosp'], true) || $seconds < 1 || $seconds > 86400) throw new InvalidArgumentException('Invalid player penalty.');
+        $this->database->playerTransaction($playerId, function () use ($playerId, $type, $seconds): void {
             $state = $this->load($playerId);
             $shared = (new FamilyProgressionService($this->database, $this->events))->snapshot($playerId);
             $multiplier = $type === 'jail' && !empty($state['eduDone']['law']) ? .85 : ($type === 'hosp' && (!empty($state['fac']['ups']['hospTime']) || !empty($shared['upgrades']['hospTime'])) ? .8 : 1);
-            $state[$type . 'Until'] = max($state[$type . 'Until'], $this->now() + (int) ($minutes * 60000 * $multiplier));
+            $state[$type . 'Until'] = max($state[$type . 'Until'], $this->now() + (int) ($seconds * 1000 * $multiplier));
             $this->save($playerId, $state);
         });
     }
@@ -170,7 +211,9 @@ final class ProgressionService
     {
         $this->refreshCatalog();
         if ($expectedVersion < 1) throw new InvalidArgumentException('A current progression version is required.');
-        return $this->database->playerTransaction($playerId, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
+        $participants = [$playerId];
+        if (in_array($action, ['jail.bail', 'jail.bust'], true) && $this->database->fetchOne('SELECT id FROM players WHERE id=:id', ['id' => $id]) !== null) $participants[] = $id;
+        return $this->database->playersTransaction($participants, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
             $this->assertNotInPlayerCombat($playerId);
             $this->resources->regenerate($playerId);
             $state = $this->load($playerId);
@@ -191,8 +234,11 @@ final class ProgressionService
                         if ($expectedPrice === null || $expectedPrice < 0) throw new InvalidArgumentException('A current market price is required.');
                         if ($price !== $expectedPrice) throw new RuntimeException('The market price changed. Refresh and try again.');
                         $index = array_search($id, array_column($state['market'], 'item'), true);
-                        if ($index === false || $state['market'][$index]['qty'] < 1) throw new RuntimeException('This listing is sold out.');
-                        $state['market'][$index]['qty']--;
+                        if ($index === false) throw new RuntimeException('This listing is no longer published.');
+                        if (!(new WorldDirector($this->database, $this->events))->purchaseStock($id)) {
+                            if ($state['market'][$index]['qty'] < 1) throw new RuntimeException('This listing is sold out.');
+                            $state['market'][$index]['qty']--;
+                        }
                     }
                     $this->cash($playerId, -$price, $action, $correlationId);
                     $state['inv'][$id] = ($state['inv'][$id] ?? 0) + 1;
@@ -231,13 +277,20 @@ final class ProgressionService
                     $nerve = min($player['max_nerve'], $player['nerve'] + (int) ($item['nerve'] ?? 0));
                     $energy = min($player['max_energy'], $player['energy'] + (int) ($item['energy'] ?? 0));
                     $happy = min($player['max_happy'], $player['happy'] + (int) ($item['happy'] ?? 0));
-                    $clearsHospital = !empty($item['life']) && $state['hospUntil'] > $this->now();
-                    if ($life === $player['life'] && $nerve === $player['nerve'] && $energy === $player['energy'] && $happy === $player['happy'] && !$clearsHospital) throw new RuntimeException('Your resources are full. The item has been kept.');
+                    $remainingHospital = max(0, (int) $state['hospUntil'] - $this->now());
+                    // Existing medical definitions retain their historical heal
+                    // behavior. Explicit hospitalSeconds is an exact, bounded
+                    // timer reduction rather than a blanket hospital escape.
+                    $hospitalReduction = array_key_exists('hospitalSeconds', $item)
+                        ? min($remainingHospital, max(0, (int) $item['hospitalSeconds']) * 1000)
+                        : (!empty($item['life']) ? $remainingHospital : 0);
+                    if ($life === $player['life'] && $nerve === $player['nerve'] && $energy === $player['energy'] && $happy === $player['happy'] && $hospitalReduction === 0) throw new RuntimeException('Your resources are full. The item has been kept.');
                     $state['inv'][$id]--;
                     $inventoryDelta = -1;
-                    if (!empty($item['life'])) $state['hospUntil'] = 0;
+                    if ($hospitalReduction > 0) $state['hospUntil'] = $hospitalReduction >= $remainingHospital ? 0 : (int) $state['hospUntil'] - $hospitalReduction;
                     $this->database->execute('UPDATE players SET life = :life, nerve = :nerve, energy = :energy, happy = :happy WHERE id = :id', ['life' => $life, 'nerve' => $nerve, 'energy' => $energy, 'happy' => $happy, 'id' => $playerId]);
                     $result['restored'] = ['life' => $life - $player['life'], 'nerve' => $nerve - $player['nerve'], 'energy' => $energy - $player['energy'], 'happy' => $happy - $player['happy']];
+                    $result['hospitalSecondsReduced'] = (int) ceil($hospitalReduction / 1000);
                     break;
                 case 'property.buy':
                     $property = $this->entry('properties', $id);
@@ -311,9 +364,36 @@ final class ProgressionService
                     break;
                 case 'jail.bail':
                 case 'jail.bust':
+                    $target = $this->database->fetchOne('SELECT id,level FROM players WHERE id=:id', ['id' => $id]);
+                    if ($target !== null) {
+                        if ($id === $playerId) throw new RuntimeException('Use self bail to release your own character.');
+                        $this->assertNotInPlayerCombat($id);
+                        $inmateState = $this->load($id);
+                        if ((int) $inmateState['jailUntil'] <= $this->now()) throw new RuntimeException('This inmate has already been released.');
+                        if ($action === 'jail.bail') {
+                            $price = max(1000, (int) ceil(($inmateState['jailUntil'] - $this->now()) / 60000) * 1000);
+                            $this->cash($playerId, -$price, $action, $correlationId);
+                            $result['cashDelta'] = -$price;
+                            $result['success'] = true;
+                        } else {
+                            if ($player['nerve'] < 5) throw new RuntimeException('Not enough nerve.');
+                            $this->database->execute('UPDATE players SET nerve=nerve-5 WHERE id=:id', ['id' => $playerId]);
+                            $odds = max(15, min(90, 55 + ($player['level'] - (int) $target['level']) * 2 + ($state['skill']['bust'] ?? 0)));
+                            $result['success'] = random_int(1, 100) <= $odds;
+                            if ($result['success']) { $state['skill']['bust'] = ($state['skill']['bust'] ?? 0) + 1; $this->awardXp($playerId, 10, $correlationId); }
+                            else $state['jailUntil'] = $this->now() + (int) (180000 * (!empty($state['eduDone']['law']) ? .85 : 1));
+                        }
+                        $result['targetPlayerId'] = $id; $result['npc'] = false;
+                        if ($result['success']) {
+                            $inmateState['jailUntil'] = 0; $this->save($id, $inmateState);
+                            $this->events->publish(new DomainEvent('PlayerReleased', ['playerId' => $id, 'actorPlayerId' => $playerId, 'method' => $action, 'correlationId' => $correlationId]));
+                        }
+                        break;
+                    }
                     $index = array_search($id, array_column($state['inmates'], 'id'), true);
                     if ($index === false || $state['inmates'][$index]['out'] || $state['inmates'][$index]['until'] <= $this->now()) throw new RuntimeException('This inmate has already been released.');
                     $inmate = $state['inmates'][$index];
+                    $result['npc'] = true;
                     if ($action === 'jail.bail') {
                         $price = max(1, (int) ceil(($inmate['until'] - $this->now()) / 60000)) * 100 * $inmate['lvl'];
                         $this->cash($playerId, -$price, $action, $correlationId);
@@ -415,11 +495,19 @@ final class ProgressionService
         if ($row !== null) {
             $state = json_decode($row['state_json'], true, 512, JSON_THROW_ON_ERROR);
             $state['armorEquip'] ??= null;
+            $state['crimeChains'] ??= [];
             $state['version'] = (int) $row['version'];
             if (($state['catalogRevision'] ?? null) !== $this->catalogRevision) {
                 // A published balance change invalidates old purchase views,
                 // while preserving owned IDs, stock, progress and real timers.
                 $state['catalogRevision'] = $this->catalogRevision;
+                // Studio may add/remove shop stock without resetting inventory,
+                // timers or local sales already made before worker adoption.
+                $previousMarket = array_column($state['market'], null, 'item');
+                $state['market'] = array_map(function (array $listing) use ($previousMarket): array {
+                    $price = (int) $this->catalog['items'][$listing['item']]['price'];
+                    return [...$listing, 'qty' => min((int) $listing['qty'], (int) ($previousMarket[$listing['item']]['qty'] ?? $listing['qty'])), 'price' => $price, 'base' => $price];
+                }, $this->catalog['market']);
                 // A rollback may remove a newly authored property from sale.
                 // Ownership and its last authoritative capacity must survive it.
                 $property = null;
@@ -438,7 +526,7 @@ final class ProgressionService
             'version' => 1, 'catalogRevision' => $this->catalogRevision, 'inv' => ['revolver' => 1, 'bat' => 1, 'smallkit' => 3, 'drink' => 2, 'sand' => 12], 'equip' => 'bat', 'armorEquip' => null,
             'points' => 120, 'merits' => 6, 'job' => 'grocer', 'jobPts' => 38, 'gym' => 2, 'gymXp' => 260,
             'prop' => 'apt', 'ownedProperties' => ['apt' => 1, 'shack' => 1], 'edu' => null, 'eduDone' => [],
-            'ctr' => ['crimes' => 0, 'trains' => 0, 'wins' => 0, 'shifts' => 0, 'buys' => 0], 'claimed' => [], 'skill' => [], 'crimeXp' => 96,
+            'ctr' => ['crimes' => 0, 'trains' => 0, 'wins' => 0, 'shifts' => 0, 'buys' => 0], 'claimed' => [], 'skill' => [], 'crimeXp' => 96, 'crimeChains' => [],
             'fac' => ['respect' => 41820, 'chain' => 0, 'best' => 128, 'chainAt' => 0, 'ups' => [], 'warEnd' => 0],
             'jailUntil' => 0, 'hospUntil' => 0, 'market' => [], 'inmates' => [], 'patients' => [],
             'onboarding' => ['sequence' => ['c5', 't4', 's2', 'b1', 'w1'], 'currentMissionId' => 'c5', 'completed' => false, 'startedAt' => $now, 'completedAt' => null], 'familyApplied' => [],
@@ -486,12 +574,23 @@ final class ProgressionService
     private function response(string $playerId, array $state): array
     {
         $discount = $this->marketDiscount($playerId);
+        $worldStock = (new WorldDirector($this->database, $this->events))->supply();
         foreach ($state['market'] as &$listing) {
             $listing['base'] = (int) $this->catalog['items'][$listing['item']]['price'];
             $listing['price'] = $this->marketPrice($listing['base'], $discount);
             $listing['discountBasisPoints'] = $discount;
+            if (array_key_exists($listing['item'], $worldStock)) {
+                $listing['qty'] = $worldStock[$listing['item']];
+                $listing['stockSource'] = 'world-worker';
+            }
         }
         unset($listing);
+        foreach ($state['inmates'] as &$inmate) $inmate['npc'] = true;
+        unset($inmate);
+        $jailUntil = $this->database->driver() === 'pgsql' ? "CAST(s.state_json->>'jailUntil' AS BIGINT)" : "json_extract(s.state_json, '$.jailUntil')";
+        $realInmates = $this->database->fetchAll("SELECT p.id,p.username AS name,p.level AS lvl,{$jailUntil} AS until FROM players p JOIN player_progression s ON s.player_id=p.id WHERE p.id<>:id AND {$jailUntil}>CAST(:now AS BIGINT) ORDER BY p.username LIMIT 100", ['id' => $playerId, 'now' => $this->now()]);
+        foreach ($realInmates as &$inmate) { $inmate['lvl'] = (int) $inmate['lvl']; $inmate['until'] = (int) $inmate['until']; $inmate['reason'] = 'crime'; $inmate['out'] = false; $inmate['npc'] = false; } unset($inmate);
+        $state['inmates'] = [...$realInmates, ...$state['inmates']];
         $family = (new FamilyProgressionService($this->database, $this->events))->snapshot($playerId);
         if ($family !== null) {
             $family['effectiveUpgrades'] = array_replace($state['fac']['ups'], $family['upgrades']);
@@ -501,7 +600,13 @@ final class ProgressionService
             }, $this->catalog['upgrades']);
         }
         $traveling = (new TravelService($this->database, $this->events))->snapshot($playerId)['status'] ?? null;
-        return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
+        $safehouses = array_map(static fn (array $property): array => [
+            'id' => $property['id'], 'owned' => !empty($state['ownedProperties'][$property['id']]),
+            'active' => $state['prop'] === $property['id'],
+            'enterable' => !empty($state['ownedProperties'][$property['id']]), 'previewable' => true,
+            'mediaAsset' => $property['mediaAsset'] ?? null,
+        ], $this->catalog['properties']);
+        return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'safehouses' => $safehouses, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
     }
 
     private function syncSharedBenefits(string $playerId, array &$state, bool $save = true): void

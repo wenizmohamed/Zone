@@ -12,6 +12,13 @@ use Zone\Engine\Core\Persistence\Database;
 
 final class ContentManager
 {
+    private const RULE_DEFAULTS = [
+        'required_item' => null, 'required_quantity' => 1, 'consume_tool' => false,
+        'mastery_per_success' => 1, 'chain_window_seconds' => 300,
+        'chain_bonus_basis_points' => 0, 'critical_failure_basis_points' => 0,
+        'jail_seconds' => 0, 'hospital_seconds' => 0,
+    ];
+
     public function __construct(
         private readonly Database $database,
         private readonly EventBus $events,
@@ -20,18 +27,20 @@ final class ContentManager
 
     public function crimes(bool $includeDisabled = false): array
     {
-        $where = $includeDisabled ? '' : ' WHERE enabled = 1';
+        $where = $includeDisabled ? '' : ' WHERE c.enabled = 1';
         return array_map(
             fn (array $crime): array => $this->normalizeCrime($crime),
-            $this->database->fetchAll("SELECT * FROM crimes{$where} ORDER BY nerve_cost, id"),
+            $this->database->fetchAll("SELECT c.*, r.rules_json FROM crimes c LEFT JOIN crime_rules r ON r.crime_id = c.id{$where} ORDER BY c.nerve_cost, c.id"),
         );
     }
 
     public function saveCrime(string $id, array $payload, string $actor): array
     {
-        $definition = $this->validateCrime($id, $payload);
         $actor = $this->validateActor($actor);
-        $previous = $this->database->fetchOne('SELECT * FROM crimes WHERE id = :id', ['id' => $id]);
+        $previous = $this->database->fetchOne('SELECT c.*, r.rules_json FROM crimes c LEFT JOIN crime_rules r ON r.crime_id = c.id WHERE c.id = :id', ['id' => $id]);
+        // Authoring a single field must not reset an untouched tool, level,
+        // consequence or reward. New definitions still require the base fields.
+        $definition = $this->validateCrime($id, [...($previous === null ? [] : $this->normalizeCrime($previous)), ...$payload]);
         $correlationId = bin2hex(random_bytes(16));
         $now = gmdate('c');
 
@@ -42,8 +51,11 @@ final class ContentManager
                 . 'ON CONFLICT (id) DO UPDATE SET name_en = excluded.name_en, name_ar = excluded.name_ar, nerve_cost = excluded.nerve_cost, '
                 . 'success_basis_points = excluded.success_basis_points, cash_min = excluded.cash_min, cash_max = excluded.cash_max, '
                 . 'xp_reward = excluded.xp_reward, level_required = excluded.level_required, enabled = excluded.enabled',
-                $definition,
+                array_diff_key($definition, self::RULE_DEFAULTS),
             );
+            $this->database->execute('INSERT INTO crime_rules (crime_id, rules_json) VALUES (:id, :rules) ON CONFLICT (crime_id) DO UPDATE SET rules_json = excluded.rules_json', [
+                'id' => $definition['id'], 'rules' => json_encode(array_intersect_key($definition, self::RULE_DEFAULTS), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
+            ]);
             $this->recordAudit(
                 $previous === null ? 'CrimeCreated' : 'CrimeUpdated',
                 'crime',
@@ -63,7 +75,7 @@ final class ContentManager
             ]));
         });
 
-        $saved = $this->database->fetchOne('SELECT * FROM crimes WHERE id = :id', ['id' => $id]);
+        $saved = $this->database->fetchOne('SELECT c.*, r.rules_json FROM crimes c LEFT JOIN crime_rules r ON r.crime_id = c.id WHERE c.id = :id', ['id' => $id]);
         if ($saved === null) {
             throw new RuntimeException('Saved crime definition could not be loaded.');
         }
@@ -107,6 +119,21 @@ final class ContentManager
             throw new InvalidArgumentException('Crime enabled must be a boolean.');
         }
 
+        $rules = [...self::RULE_DEFAULTS, ...array_intersect_key($payload, self::RULE_DEFAULTS)];
+        if ($rules['required_item'] !== null && (!is_string($rules['required_item']) || !preg_match('/^[A-Za-z0-9_-]{1,80}$/D', $rules['required_item']))) {
+            throw new InvalidArgumentException('Required item must be an item ID or null.');
+        }
+        if ($rules['required_item'] !== null) {
+            $catalog = (new GameplayCatalog($this->database, $this->events))->draft()['catalogs'];
+            if (!isset($catalog['items'][$rules['required_item']])) throw new InvalidArgumentException('Required item must exist in the gameplay catalog.');
+        }
+        if (!is_bool($rules['consume_tool'])) throw new InvalidArgumentException('Consume tool must be a boolean.');
+        foreach (['required_quantity' => [1, 1000], 'mastery_per_success' => [0, 100], 'chain_window_seconds' => [0, 86400], 'chain_bonus_basis_points' => [0, 2000], 'critical_failure_basis_points' => [0, 10000], 'jail_seconds' => [0, 86400], 'hospital_seconds' => [0, 86400]] as $field => [$minimum, $maximum]) {
+            $rules[$field] = $this->integer($rules[$field], $field, $minimum, $maximum);
+        }
+        if ($rules['consume_tool'] && $rules['required_item'] === null) throw new InvalidArgumentException('A consumed tool requires an item ID.');
+        if ($rules['critical_failure_basis_points'] > 0 && $rules['jail_seconds'] + $rules['hospital_seconds'] === 0) throw new InvalidArgumentException('Critical failures require a jail or hospital consequence.');
+
         return [
             'id' => $id,
             'name_en' => $nameEn,
@@ -118,11 +145,15 @@ final class ContentManager
             'xp_reward' => $xpReward,
             'level_required' => $levelRequired,
             'enabled' => $enabled ? 1 : 0,
+            ...$rules,
         ];
     }
 
     private function normalizeCrime(array $crime): array
     {
+        $rules = isset($crime['rules_json']) ? json_decode((string) $crime['rules_json'], true, 64, JSON_THROW_ON_ERROR) : [];
+        unset($crime['rules_json']);
+        $crime = [...self::RULE_DEFAULTS, ...$crime, ...$rules];
         foreach (['nerve_cost', 'success_basis_points', 'cash_min', 'cash_max', 'xp_reward'] as $field) {
             $crime[$field] = (int) $crime[$field];
         }

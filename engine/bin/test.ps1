@@ -66,6 +66,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\launch-studio-richness.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\launch-underworld108.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\launch-assets108.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\studio-media108.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\territory-lifecycle.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\territory-orphan.php')

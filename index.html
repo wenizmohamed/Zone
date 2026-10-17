@@ -48,6 +48,8 @@
 <link rel="stylesheet" href="./assets/ui/home-gym.css?v=105">
 <link rel="stylesheet" href="./assets/ui/crimes.css?v=106">
 <link rel="stylesheet" href="./assets/ui/loadout.css?v=107">
+<link rel="stylesheet" href="./assets/ui/district-compositions108.css?v=108">
+<link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=108">
 </head>
 <body>
 <x-dc>
@@ -307,6 +309,7 @@
         <div class="zone-crime-operation">
           <div class="zone-crime-neighborhood zone-panel"><div class="zone-crime-location"><span class="zone-overline">{{ crimeDesk.locationLabel }}</span><h2>{{ catName }}</h2><p>{{ catDesc }}</p></div><div class="zone-crime-scene" role="img" aria-label="{{ crimeDesk.sceneLabel }}"></div><div class="zone-crime-resources"><span>{{ t.nerve }} <bdi>{{ crimeDesk.nerve }}</bdi><small>{{ crimeDesk.regeneration }}</small></span><span>{{ t.crimeXp }} <bdi>{{ crimeXp }}</bdi><small>{{ crimeDesk.xpNote }}</small></span></div></div>
           <section class="zone-crime-plan zone-panel" aria-label="{{ crimeDesk.planLabel }}">
+            <p class="zone-crime-rule-note">{{ crimeDesk.rules }}</p>
             <sc-if value="{{ crimeDesk.hasSelection }}"><span class="zone-overline">{{ crimeDesk.planLabel }}</span><h2>{{ crimeDesk.selected.name }}</h2><p>{{ crimeDesk.selected.sub }}</p><dl><div><dt>{{ t.nerve }}</dt><dd><bdi>{{ crimeDesk.selected.nerve }}</bdi></dd></div><div><dt>{{ t.level }}</dt><dd><bdi>{{ crimeDesk.selected.level }}</bdi></dd></div><div><dt>{{ crimeDesk.rewardLabel }}</dt><dd><bdi>{{ crimeDesk.selected.reward }}</bdi></dd></div><div><dt>{{ crimeDesk.estimateLabel }}</dt><dd><bdi>{{ crimeDesk.selected.pctText }}</bdi></dd></div></dl><p class="zone-crime-risk">{{ crimeDesk.selected.risk }}</p><p class="zone-crime-uncertainty">{{ crimeDesk.uncertainty }}</p><div class="zone-crime-readiness" role="status" aria-live="polite">{{ crimeDesk.selected.reason }}</div><button class="zone-action-primary" data-crime-attempt="{{ crimeDesk.selected.id }}" onClick="{{ crimeDesk.selected.commit }}" disabled="{{ crimeDesk.selected.disabled }}">{{ crimeDesk.selected.label }}</button></sc-if>
             <sc-if value="{{ !crimeDesk.hasSelection }}"><h2>{{ crimeDesk.empty }}</h2><p>{{ crimeDesk.emptyNote }}</p></sc-if>
           </section>
@@ -340,10 +343,11 @@
       <!-- CITY -->
       <div data-zone-city-view="1" data-zone-active="{{ is.city }}" style="display:{{ cityDisplay }};flex-direction:column;gap:10px">
         <div class="zone-city-caption">{{ cityDirectory.mapLabel }}</div>
+        <section class="zone-street-dispatch" aria-label="{{ world.title }}"><header><h2>{{ world.title }}</h2><button onClick="{{ world.refresh }}" disabled="{{ world.busy }}">{{ world.refreshLabel }}</button></header><sc-if value="{{ !world.hasFinds }}"><p role="status">{{ world.empty }}</p></sc-if><sc-for list="{{ world.finds }}" as="find"><div class="zone-street-find"><span><strong>{{ find.name }}</strong><small>{{ find.place }}</small></span><button onClick="{{ find.claim }}" disabled="{{ world.busy }}">{{ find.claimLabel }}</button></div></sc-for><sc-for list="{{ world.events }}" as="event"><details><summary>{{ event.title }}</summary><p>{{ event.body }}</p></details></sc-for></section>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=104" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=108" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
           <nav class="zone-city-directory zone-panel" aria-label="{{ cityDirectory.title }}">
             <div class="zone-panel-heading">{{ cityDirectory.title }}<bdi>{{ cityDirectory.count }}</bdi></div>
@@ -581,9 +585,10 @@
 
       <!-- PROPERTIES -->
       <sc-if value="{{ is.properties }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ safehouse.visible }}"><section class="zone-safehouse-host" aria-label="{{ safehouse.title }}"><div class="zone-safehouse-toolbar"><strong>{{ safehouse.title }}</strong><button onClick="{{ safehouse.close }}">{{ safehouse.closeLabel }}</button></div><iframe id="zone-safehouse-frame" src="dist/safehouse.html?v=108" title="{{ safehouse.title }}" allow="fullscreen"></iframe></section></sc-if>
         <section class="zone-panel zone-current-property"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ propertyDossier.img }}');background-size:{{ propertyDossier.artSize }};background-position:{{ propertyDossier.artPosition }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ t.living }}</span><h2>{{ propertyDossier.name }}</h2><p>{{ propertyDossier.context }}</p><div class="zone-record-foot"><span>{{ propertyDossier.happyLabel }} <bdi>{{ propertyDossier.happy }}</bdi></span><span>{{ propertyDossier.cashLabel }} <bdi>{{ propertyDossier.cash }}</bdi></span></div></div></section>
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
-        <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><small>{{ pr.reason }}</small></div></article></sc-for></div>
+        <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
         <details class="zone-panel-note"><summary>{{ propertyUpkeepLabel }}</summary><p>{{ propertyUpkeepNote }}</p><sc-for list="{{ props }}" as="pr"><p>{{ pr.name }} · {{ pr.upkeepReference }}</p></sc-for></details>
       </sc-if>
 
@@ -607,12 +612,12 @@
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
-        <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+        <div class="zone-auto-grid zone-bank-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
           <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.onHandLabel }}</div><bdi style="color:var(--money);font-size:22px;font-weight:700">{{ bank.cash }}</bdi></div>
           <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.inBankLabel }}</div><bdi style="color:var(--acc);font-size:22px;font-weight:700">{{ bank.balance }}</bdi></div>
           <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.totalLabel }}</div><bdi style="color:var(--t1);font-size:22px;font-weight:700">{{ bank.total }}</bdi></div>
         </div>
-        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
+        <div class="zone-panel zone-bank-actions" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.depositLabel }}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button class="zone-action-primary" onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.withdrawLabel }}</div>
@@ -830,6 +835,9 @@ function applyPublishedCrimes(data) {
     hasFailureRule: crime.failure != null,
     pay: [Number(crime.cash_min) || 0, Number(crime.cash_max) || 0], xp: Number(crime.xp_reward) || 0,
     levelRequired: Number(crime.level_required) || 1, crimeXpRequired: Math.max(0, Number(crime.crime_xp_required) || 0),
+    requiredItem: crime.required_item || null, requiredQuantity: Number(crime.required_quantity) || 1, consumesTool: !!crime.consume_tool,
+    criticalFailure: Number(crime.critical_failure_basis_points) || 0, jailSeconds: Number(crime.jail_seconds) || 0, hospitalSeconds: Number(crime.hospital_seconds) || 0,
+    chainWindow: Number(crime.chain_window_seconds ?? 300),
     fail: crime.failure ?? 'none', mins: Number(crime.penalty_minutes) || 0, serverManaged: true,
     name: { en: String(crime.name_en || crime.id), ar: String(crime.name_ar || crime.name_en || crime.id) },
     category: crime.category || BASE_CRIME_CATEGORIES[crime.id] || 'search',
@@ -1122,8 +1130,14 @@ class Component extends DCLogic {
       if (e.origin !== window.location.origin || !e.data || typeof e.data !== 'object') return;
       const from = id => { const frame = document.getElementById(id); return Boolean(frame?.contentWindow && e.source === frame.contentWindow); };
       const fromMap = from('zone-city-map'), fromCharacter = from('zone-char-3d'), fromItem = from('zone-item-3d'), fromCombat = from('zone-combat-frame');
-      if (!fromMap && !fromCharacter && !fromItem && !fromCombat) return;
+      const fromSafehouse = from('zone-safehouse-frame');
+      if (!fromMap && !fromCharacter && !fromItem && !fromCombat && !fromSafehouse) return;
       const d = e.data;
+      if (fromSafehouse) {
+        if (d.type === 'zone:safehouse-ready') { this._safehouseSig = ''; this.pushSafehouse(); }
+        if (d.type === 'zone:safehouse-action') this.safehouseAction(d.action);
+        return;
+      }
       if (d.zoneCombatReady && fromCombat) { this._combatSceneSig = ''; this.pushCombatScene(); return; }
       if (fromCombat) return;
       if (d.zoneCharacterReady && fromCharacter) { this.pushChar(); return; }
@@ -1395,7 +1409,7 @@ class Component extends DCLogic {
     const territoryMap = this.territoryMap || buildTerritoryFallback();
     const territoryAuthoritative = !IS_PREVIEW && this._territoryAuthoritative === true;
     const energy = this.cur('energy'), unavailable = this.gameplayDisabled() || this.blocked() || !!this._territoryUnavailable || !screenEngineAvailable('city');
-    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict + '|' + territoryMap.revision + '|' + Boolean(this.gameplayReady) + '|' + (this.p.travel?.status || '') + '|' + energy + '|' + unavailable;
+    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict + '|' + territoryMap.revision + '|' + Boolean(this.gameplayReady) + '|' + (this.p.travel?.status || '') + '|' + energy + '|' + unavailable + '|' + JSON.stringify(window.ZonePlatform?.manifest?.()?.mediaBindings || []);
     if (sig === this._mapSig) return;
     const factions = (territoryMap.factions || TERRITORY_FACTIONS).map(faction=>({id:faction.id,name:(faction.name&&faction.name[lang])||faction.id,color:faction.color}));
     const blockById = Object.fromEntries((territoryMap.blocks || []).map(block=>[block.id,block]));
@@ -1403,7 +1417,7 @@ class Component extends DCLogic {
     const pins = PINS.map(([pl, sc, cat, x, y, districtId]) => {
       const blockId=blockForPoint(x,y),block=blockById[blockId]||{},coordinates=zoneTerritoryPoint(x/100*12,y/100*10);
       const target = resolveLocationScreen(sc);
-      return { id: pl, screen: target, screenAvailable: SCREENS.includes(target), screenLabel: t.nav[target] || '', cat, icon: PINICON[pl], label: t.places[pl] || t.nav[pl], color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), x, y,
+      return { id: pl, mediaAsset: this.mediaAsset('map', pl), screen: target, screenAvailable: SCREENS.includes(target), screenLabel: t.nav[target] || '', cat, icon: PINICON[pl], label: t.places[pl] || t.nav[pl], color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), x, y,
         lng:coordinates[0],lat:coordinates[1],coordinates,territory:blockId,blockId,districtId,territoryName:(block.name&&block.name[lang])||blockId,territoryColor:block.ownerColor||territoryMap.neutralColor||'#68717b',ownerName:(block.ownerName&&block.ownerName[lang])||copy.neutral };
     });
     const hp = pins.find(pin=>pin.screen===(this.state.lastScreen||'home'))||pins[0];
@@ -1440,7 +1454,53 @@ class Component extends DCLogic {
     const dark = this.state.theme !== 'light';
     const armorId = this.equippedArmor(), armor = CAT[armorId];
     f.contentWindow.postMessage({ bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang,
-      character: { build, outfit: this.state.outfit || 'suit', weapon: eq, ownedWeapons, equipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0 } }, window.location.origin);
+      character: { draft: IS_PREVIEW, build, outfit: this.state.outfit || 'suit', weapon: eq, ownedWeapons, equipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0,
+        characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: eqRaw !== 'fists' && this.p.inv[eqRaw] > 0 ? this.mediaAsset('weapon', eqRaw, CAT[eqRaw]?.mediaAsset) : '', armorMediaAsset: armorId ? this.mediaAsset('armor', armorId, armor?.mediaAsset) : '' } }, window.location.origin);
+  }
+  mediaAsset(type, id, fallback = '') {
+    const manifest = window.ZonePlatform?.manifest?.() || {};
+    return (manifest.mediaBindings || []).find(row => (row.targetType === type || (row.targetType === 'item' && ['weapon','armor'].includes(type))) && row.targetId === id)?.assetId || fallback || '';
+  }
+  enterSafehouse(id) {
+    if (!PROPS.some(property => property.id === id)) return;
+    this._safehouseSig = ''; this.setState({ safehouseId: id }, () => {
+      this.pushSafehouse();
+      requestAnimationFrame(() => { const frame = document.getElementById('zone-safehouse-frame'); frame?.scrollIntoView({ block: 'start', behavior: 'auto' }); frame?.focus({ preventScroll: true }); });
+    });
+  }
+  pushSafehouse() {
+    const frame = document.getElementById('zone-safehouse-frame');
+    if (!frame?.contentWindow) { this._safehouseSig = ''; return; }
+    const property = PROPS.find(row => row.id === this.state.safehouseId); if (!property) return;
+    const owned = !IS_PREVIEW && this.gameplayReady && (Array.isArray(this.p.ownedProperties) ? this.p.ownedProperties.includes(property.id) : !!this.p.ownedProperties?.[property.id]);
+    const lang = this.state.lang, weapon = this.p.equip || 'fists', armor = this.equippedArmor(), outfit = this.state.outfit || 'suit';
+    const packet = { type: 'zone:safehouse', property: { ...property, name: property.name || { en: T.en.props[property.id], ar: T.ar.props[property.id] }, owned, mediaAsset: this.mediaAsset('property', property.id, property.mediaAsset) }, preview: !owned, draft: IS_PREVIEW, lang, theme: this.state.theme,
+      player: { outfit, weapon: CAT[weapon]?.model || weapon, weaponLabel: T[lang].items[weapon] || CAT[weapon]?.name?.[lang] || T[lang].unarmed, armorId: armor || null, armorOwned: !!armor, armorLabel: armor ? T[lang].items[armor] || CAT[armor]?.name?.[lang] || armor : '', armorReduction: Number(CAT[armor]?.red) || 0,
+        weaponMediaAsset: this.mediaAsset('weapon', weapon, CAT[weapon]?.mediaAsset), armorMediaAsset: this.mediaAsset('armor', armor, CAT[armor]?.mediaAsset), characterMediaAsset: this.mediaAsset('character', outfit) } };
+    const signature = JSON.stringify(packet); if (signature === this._safehouseSig) return;
+    frame.contentWindow.postMessage(packet, location.origin); this._safehouseSig = signature;
+  }
+  safehouseAction(action) {
+    if (action === 'exit') { this.setState({ safehouseId: null }); return; }
+    const owned = Array.isArray(this.p.ownedProperties) ? this.p.ownedProperties.includes(this.state.safehouseId) : !!this.p.ownedProperties?.[this.state.safehouseId];
+    if (IS_PREVIEW || !this.gameplayReady || !owned) { this.toast(this.state.lang === 'ar' ? 'هذه معاينة. اشتر العقار لدخول مخبئك.' : 'This is a preview. Buy the property to use your safehouse.'); return; }
+    if (action === 'vault') this.go('bank');
+    else if (action === 'armory') this.go('items');
+    else if (action === 'lounge') this.setState({ screen: 'items', itemTab: 'booster', inventoryMode: 'owned', safehouseId: null }, () => this.syncRoute('items'));
+  }
+  async loadWorld(force = false) {
+    if (IS_PREVIEW || this.worldBusy || (!force && Date.now() - (this.worldLoadedAt || 0) < 30000)) return;
+    this.worldBusy = true;
+    try { const response = await fetch('/api/v1/world', { headers: { Accept: 'application/json' }, cache: 'no-store' }); const data = await response.json(); if (!response.ok) throw new Error(data.error || 'City dispatch unavailable.'); this.worldState = data; this.worldError = ''; }
+    catch (error) { this.worldError = this.serverError(error); }
+    finally { this.worldLoadedAt = Date.now(); this.worldBusy = false; this.forceUpdate(); }
+  }
+  async claimStreetFind(id) {
+    if (!this.allowGameplay() || this.worldClaimBusy || IS_PREVIEW) return;
+    this.worldClaimBusy = true; this.forceUpdate();
+    try { const response = await fetch('/api/v1/world/claim', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ findId: id, idempotencyKey: crypto.randomUUID() }) }); const result = await response.json(); if (!response.ok) throw new Error(result.error || 'This find has already gone.'); await this.loadGameplay(); this.toast((this.state.lang === 'ar' ? 'عثرت على: ' : 'Found: ') + (T[this.state.lang].items[result.itemId] || result.itemId) + ' × ' + result.quantity); }
+    catch (error) { this.toast(this.serverError(error), true); }
+    finally { this.worldClaimBusy = false; await this.loadWorld(true); }
   }
   charMsg(m) { const f = document.getElementById('zone-char-3d'); if (f && f.contentWindow) f.contentWindow.postMessage(m, window.location.origin); }
   pushCombatScene() {
@@ -1449,7 +1509,8 @@ class Component extends DCLogic {
     const eq = this.p.equip && this.p.inv[this.p.equip] > 0 && CAT[this.p.equip]?.type === 'weapon' ? this.p.equip : 'fists';
     const opponentName = this.state.combatMode === 'players' ? (this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === encounter?.opponentId)?.username || encounter?.opponent?.username || encounter?.opponent?.name?.[lang] || encounter?.opponentName || encounter?.opponentId || '') : (encounter?.opponent?.name?.[lang] || t.opp[encounter?.opponentId] || encounter?.opponentId || '');
     const packet = { lang, active: this.state.screen === 'attack', encounter, result: this.combatReceipt || null, opponentName,
-      player: { name: this.p.username || t.you, outfit: this.state.outfit || 'suit', weapon: CAT[eq]?.model || eq, weaponLabel: t.items[eq] || CAT[eq]?.name?.[lang] || t.unarmed, armorId: this.equippedArmor() || null, armorOwned: Boolean(this.equippedArmor()), armorLabel: this.equippedArmor() ? t.items[this.equippedArmor()] || CAT[this.equippedArmor()]?.name?.[lang] || this.equippedArmor() : '', armorReduction: Math.min(.95, Math.max(0, Number(CAT[this.equippedArmor()]?.red) || 0)) } };
+      player: { draft: IS_PREVIEW, name: this.p.username || t.you, outfit: this.state.outfit || 'suit', weapon: CAT[eq]?.model || eq, weaponLabel: t.items[eq] || CAT[eq]?.name?.[lang] || t.unarmed, armorId: this.equippedArmor() || null, armorOwned: Boolean(this.equippedArmor()), armorLabel: this.equippedArmor() ? t.items[this.equippedArmor()] || CAT[this.equippedArmor()]?.name?.[lang] || this.equippedArmor() : '', armorReduction: Math.min(.95, Math.max(0, Number(CAT[this.equippedArmor()]?.red) || 0)),
+        characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: eq !== 'fists' ? this.mediaAsset('weapon', eq, CAT[eq]?.mediaAsset) : '', armorMediaAsset: this.equippedArmor() ? this.mediaAsset('armor', this.equippedArmor(), CAT[this.equippedArmor()]?.mediaAsset) : '' } };
     const signature = JSON.stringify(packet); if (signature === this._combatSceneSig) return;
     this._combatSceneSig = signature; frame.contentWindow.postMessage({ zoneCombat: packet }, window.location.origin);
   }
@@ -1473,6 +1534,7 @@ class Component extends DCLogic {
     this.go('items');
   }
   itemHasCapturedModel(id) {
+    if (CAT[id] && this.mediaAsset(CAT[id].type === 'armor' ? 'armor' : 'weapon', id, CAT[id].mediaAsset)) return true;
     const item = CAT[id], model = item?.model || id;
     return !!item && !!(globalThis.ZONE_WEAPONS?.[model] || ['revolver', 'magnum', 'pistol', 'pistol_t', 'sawedoff', 'shotgun', 'smg', 'ak', 'sniper', 'bat', 'knife'].includes(model));
   }
@@ -1491,6 +1553,8 @@ class Component extends DCLogic {
     f.contentWindow.postMessage({ item: CAT[this.state.sel]?.model || this.state.sel, bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang }, window.location.origin);
   }
   itemViewerUrl(id) {
+    const asset = this.mediaAsset(CAT[id]?.type === 'armor' ? 'armor' : 'weapon', id, CAT[id]?.mediaAsset);
+    if (asset) return 'dist/asset-viewer.html?asset=' + encodeURIComponent(asset) + '&lang=' + this.state.lang;
     if (!this.itemHasCapturedModel(id)) return '';
     // The URL seeds only a newly mounted viewer. Later selection changes use
     // the authenticated parent message, preserving its loader/source cache.
@@ -1502,6 +1566,8 @@ class Component extends DCLogic {
     try { this.push3d(); } catch (e) {}
     try { this.pushChar(); } catch (e) {}
     try { this.pushMap(); } catch (e) {}
+    try { this.pushSafehouse(); } catch (e) {}
+    if (this.state.screen === 'city' && !this.worldBusy && Date.now() - (this.worldLoadedAt || 0) >= 30000) this.loadWorld();
     const r = this.state.result;
     if (r && this.lastRes !== r.at) {
       this.lastRes = r.at;
@@ -1525,10 +1591,12 @@ class Component extends DCLogic {
     return id && this.p.inv[id] > 0 && item?.type === 'armor' && !item.retired ? id : '';
   }
   itemEffects(item, t) {
-    return ['life', 'nerve', 'energy', 'happy'].filter(key => Number(item?.[key]) > 0).map(key => '+' + num(item[key]) + ' ' + t[key]).join(' · ');
+    const effects = ['life', 'nerve', 'energy', 'happy'].filter(key => Number(item?.[key]) > 0).map(key => '+' + num(item[key]) + ' ' + t[key]);
+    if (Number(item?.hospitalSeconds) > 0) effects.push('-' + num(item.hospitalSeconds) + (this.state.lang === 'ar' ? ' ثانية من المستشفى' : 's hospital time'));
+    return effects.join(' · ');
   }
   itemHasRoom(item) {
-    return ['life', 'nerve', 'energy', 'happy'].some(key => Number(item?.[key]) > 0 && (this.cur(key) < this.maxOf(key) || key === 'life' && this.p.hospUntil > Date.now()));
+    return Number(item?.hospitalSeconds) > 0 && this.p.hospUntil > Date.now() || ['life', 'nerve', 'energy', 'happy'].some(key => Number(item?.[key]) > 0 && (this.cur(key) < this.maxOf(key) || key === 'life' && !Object.hasOwn(item, 'hospitalSeconds') && this.p.hospUntil > Date.now()));
   }
   enabledDestination(route) { return SCREENS.includes(route) ? route : SCREENS.includes('missions') ? 'missions' : SCREENS.includes('home') ? 'home' : SCREENS[0] || 'home'; }
   allowGameplay() {
@@ -1612,6 +1680,7 @@ class Component extends DCLogic {
     if (this.p.travel?.status === 'traveling') return say('Available after your arrival is confirmed.', 'متاح بعد تأكيد وصولك.');
     if (this.state.busy || this.gameplayBusy || this.moduleBusy) return say('Waiting for the current action to finish.', 'بانتظار انتهاء الإجراء الحالي.');
     if (this.p.level < (c.levelRequired || 1)) return say('Requires level ', 'يتطلب المستوى ') + (c.levelRequired || 1);
+    if (c.requiredItem && Number(this.p.inv?.[c.requiredItem] || 0) < c.requiredQuantity) return say('Required tool: ', 'الأداة المطلوبة: ') + (T[this.state.lang].items[c.requiredItem] || c.requiredItem) + ' × ' + c.requiredQuantity;
     const required = c.crimeXpRequired ?? CATS.find(category => category.id === this.state.cat)?.req ?? 0;
     if (this.p.crimeXp < required) return say('Requires crime XP: ', 'يتطلب خبرة جريمة: ') + required;
     const cooldown = Math.max(0, Math.ceil((Number(this.cooldowns?.actions?.crime?.availableAtEpoch || 0) * 1000 - Date.now()) / 1000));
@@ -1631,7 +1700,7 @@ class Component extends DCLogic {
     const name = this.crimeName(c, t);
     this.applyServerPlayer(outcome.player);
     await this.loadGameplay();
-    this.setState({ crimeReceipt: { id: c.id, success: outcome.success, reward: outcome.reward, cost: outcome.cost, penalty: outcome.penalty, loot: outcome.loot }, crimeRequestError: null });
+    this.setState({ crimeReceipt: { id: c.id, success: outcome.success, outcome: outcome.outcome, narrative: outcome.narrative, reward: outcome.reward, cost: outcome.cost, penalty: outcome.penalty, loot: outcome.loot, mastery: outcome.mastery, chain: outcome.chain, tool: outcome.tool }, crimeRequestError: null });
     this.flash('lastCrime', { id: c.id, ok: Boolean(outcome.success) });
     if (outcome.success) {
       const cash = Number(outcome.reward?.cash || 0), xp = Number(outcome.reward?.xp || 0);
@@ -1990,7 +2059,7 @@ class Component extends DCLogic {
     if (snapshot.hospitalQuote) this.hospitalQuote = { ...snapshot.hospitalQuote };
     if (Object.prototype.hasOwnProperty.call(snapshot, 'family')) this.sharedFamily = snapshot.family;
     if (Object.prototype.hasOwnProperty.call(snapshot, 'onboarding')) this.onboarding = snapshot.onboarding;
-    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','market','inmates','patients']) {
+    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients']) {
       if (Object.prototype.hasOwnProperty.call(state, key)) this.p[key] = state[key];
     }
     this.p.fac = { chain: 0, best: 0, chainAt: 0, warEnd: 0, respect: 0, ups: {}, ...this.p.fac };
@@ -2080,7 +2149,9 @@ class Component extends DCLogic {
       const t = T[this.state.lang], result = snapshot.result || {}, cash = Number(result.cashDelta || 0);
       const name = this.gameplayName(action, id);
       this.log('gameplay', { action, id, cash, success: result.success !== false }, result.success === false ? 'bad' : 'good'); this.save();
-      const restored = ['life','nerve','energy','happy'].filter(key => Number(result.restored?.[key]) > 0).map(key => '+' + num(result.restored[key]) + ' ' + t[key]).join(' · ');
+      const recovery = ['life','nerve','energy','happy'].filter(key => Number(result.restored?.[key]) > 0).map(key => '+' + num(result.restored[key]) + ' ' + t[key]);
+      if (Number(result.hospitalSecondsReduced) > 0) recovery.push('-' + num(result.hospitalSecondsReduced) + (this.state.lang === 'ar' ? ' ثانية من المستشفى' : 's hospital time'));
+      const restored = recovery.join(' · ');
       const gearNote = action === 'item.equip' ? (this.state.lang === 'ar' ? 'تم تجهيز العنصر. يُستخدم في مواجهتك التالية.' : 'Equipped. Used in your next encounter.') : action === 'item.unequip' ? (this.state.lang === 'ar' ? 'تم نزع العنصر، وبقي في مخزونك.' : 'Removed from your loadout. Still in your inventory.') : '';
       this.result(result.success === false ? 'bad' : cash > 0 ? 'cash' : 'good', name || (this.state.lang === 'ar' ? 'تم' : 'Done'), restored || gearNote, cash ? (cash > 0 ? '+' : '-') + money(Math.abs(cash)) : '');
       this.pushChar();
@@ -2287,7 +2358,7 @@ class Component extends DCLogic {
     const ms = [10, 25, 50, 100, 250, 500].find(m => m > chain) || 1000, prevMs = [0, 10, 25, 50, 100, 250].filter(m => m <= chain).pop() || 0;
     const energyNow = this.cur('energy'), nerveNow = this.cur('nerve');
     const sel = CAT[this.state.sel] ? this.state.sel : Object.keys(CAT)[0], sc = CAT[sel] || { type: 'material', price: 0 };
-    const selRows = []; if (sc.mult) selRows.push({ k: t.dmgMult, v: '×' + sc.mult }); if (sc.red) selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }); for (const key of ['life','nerve','energy','happy']) if (sc[key]) selRows.push({ k: t.restores + ' ' + t[key], v: num(sc[key]) }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
+    const selRows = []; if (sc.mult) selRows.push({ k: t.dmgMult, v: '×' + sc.mult }); if (sc.red) selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }); for (const key of ['life','nerve','energy','happy']) if (sc[key]) selRows.push({ k: t.restores + ' ' + t[key], v: num(sc[key]) }); if (Number(sc.hospitalSeconds) > 0) selRows.push({ k: lang === 'ar' ? 'تقليل وقت المستشفى' : 'Hospital time removed', v: num(sc.hospitalSeconds) + (lang === 'ar' ? ' ثانية' : 's') }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
     const job = JOBS.find(j => j.id === p.job); const payMul = p.eduDone.biz ? 1.1 : 1;
     const recordBlocked = this.gameplayDisabled() || this.blocked() || !!this.gameplayBusy || !!this.state.busy;
     const recordReason = this.blocked() ? (lang === 'ar' ? 'متاح بعد انتهاء السجن أو التعافي' : 'Available after release or recovery') : p.travel?.status === 'traveling' ? (lang === 'ar' ? 'متاح عند انتهاء السفر' : 'Available after travel') : this.gameplayError || this.runtimeConnection === 'offline' ? (lang === 'ar' ? 'أعد الاتصال لتنفيذ النشاط' : 'Reconnect to act') : !this.gameplayReady || IS_PREVIEW ? (lang === 'ar' ? 'انتظر تحميل شخصيتك المحفوظة' : 'Awaiting your saved character') : this.gameplayBusy || this.state.busy || this.moduleBusy ? (lang === 'ar' ? 'جارٍ حفظ النشاط الحالي' : 'Current action is pending') : '';
@@ -2460,7 +2531,7 @@ class Component extends DCLogic {
         ...propertyArt(pr), imgOpacity: p.cash < price && !cur ? .6 : 1,
         edge: cur ? 'var(--acc)' : 'var(--border3)', shadow: cur ? '0 0 0 1px var(--acc), 0 6px 18px rgba(0,0,0,.4)' : '0 2px 8px rgba(0,0,0,.25)', btn: cur ? t.living : owned ? (lang === 'ar' ? 'انتقل' : 'Move in') : t.move, btnBg: cur ? 'var(--activebg)' : GREEN, btnFg: cur ? 'var(--activefg)' : 'var(--onAcc)', disabled: recordBlocked || cur || p.cash < price, buy: () => this.act(() => this.gameplayAction('property.buy', pr.id)) }; }),
       news: t.news.map(n => ({ h: n[0], meta: n[1] })),
-      inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = Math.ceil(left / 60000) * 100 * i.lvl; return { name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(() => this.gameplayAction('jail.bust', i.id || i.name)), bail: () => this.act(() => this.gameplayAction('jail.bail', i.id || i.name)) }; }),
+      inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = i.npc === false ? Math.max(1000, Math.ceil(left / 60000) * 1000) : Math.ceil(left / 60000) * 100 * i.lvl; return { id: i.id, name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(() => this.gameplayAction('jail.bust', i.id || i.name)), bail: () => this.act(() => this.gameplayAction('jail.bail', i.id || i.name)) }; }),
       patients: this.patients.filter(i => i.until > now).map(i => ({ name: i.name, lvl: i.lvl, left: mmss(i.until - now), reason: fmt(t.hreasons[i.reason], { who: i.who }), disabled: energyNow < 75, revive: () => this.act(() => this.gameplayAction('hospital.revive', i.id || i.name)) })),
       bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0; const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); return { cash: money(cash), balance: money(bal), total: money(cash + bal), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ حفظ التحويل...' : 'Saving transfer...') : (lang === 'ar' ? 'التحويلات تُحفظ على الخادم. رصيدك لا يتغير إلا بعد تأكيد التحويل.' : 'Transfers are saved on the server. Your balance changes only after confirmation.') }; })(),
       casino: { spriteX: casino.card === 14 ? -2 : -2 - 73 * (Math.max(2, Math.min(13, casino.card)) - 1), cardLabel: (lang === 'ar' ? 'الورقة الحالية: ' : 'Current card: ') + (casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card), card: casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card, cardColor: casino.card % 2 ? '#c0281a' : 'var(--onAcc)', bets: [1000, 5000, 25000].map(b => ({ label: money(b), bg: casino.bet === b ? 'var(--activebg)' : 'var(--btn)', fg: casino.bet === b ? 'var(--activefg)' : 'var(--t3)', pick: () => this.setState({ casino: { ...casino, bet: b } }) })), higher: () => this.act(tt => this.casinoGuess(true, tt)), lower: () => this.act(tt => this.casinoGuess(false, tt)), disabled: !this.casinoReady || !!this.casinoBusy || p.cash < casino.bet, msg: fmt(t.casinoMsg[casino.msg], { c: money(casino.resultBet ?? casino.bet) }) + (p.casinoNet ? ' · ' + (lang === 'ar' ? 'الصافي' : 'Net') + ' ' + (p.casinoNet > 0 ? '+' : '-') + money(Math.abs(p.casinoNet)) : '') },
@@ -2498,6 +2569,11 @@ class Component extends DCLogic {
     }
     view.leaderboard = { busy: !!this.leaderboardBusy || IS_PREVIEW, refreshLabel: lang === 'ar' ? 'تحديث' : 'Refresh', refresh: () => this.loadLeaderboards(), fundsLabel: IS_PREVIEW ? t.networth : lang === 'ar' ? 'النقد + البنك' : 'Cash + bank', message: IS_PREVIEW ? view.demoStandings : this.leaderboardError ? (lang === 'ar' ? 'تعذر تحميل الترتيب. أعد المحاولة.' : 'Standings unavailable. Retry to load server data.') : !this.leaderboard ? (lang === 'ar' ? 'جارٍ تحميل ترتيب اللاعبين...' : 'Loading player standings...') : (lang === 'ar' ? 'أفضل 50 حساباً حسب الصفات القتالية المحفوظة على الخادم.' : 'Top 50 accounts by server-saved battle stats.') };
     if (!IS_PREVIEW) view.hof = (this.leaderboard?.rows || []).map((row, index) => ({ rank: row.rank, name: row.username, lvl: row.level, stats: num(row.totalStats), nw: money(row.liquidFunds), fac: row.family?.name?.[lang] || row.family?.name?.en || (lang === 'ar' ? 'لا توجد عائلة' : 'No family'), color: row.isCurrentPlayer ? 'var(--activefg)' : 'var(--link)', bg: row.isCurrentPlayer ? 'var(--selbg)' : index % 2 ? 'var(--z1)' : 'var(--z2)' }));
+    view.safehouse = { visible: !!this.state.safehouseId && this.state.screen === 'properties', title: lang === 'ar' ? 'داخل المخبأ' : 'Inside the safehouse', closeLabel: lang === 'ar' ? 'العودة للعقارات' : 'Back to properties', close: () => this.setState({ safehouseId: null }) };
+    for (const property of view.props) { property.enter = () => this.enterSafehouse(property.id); property.enterLabel = property.owned ? (lang === 'ar' ? 'ادخل المخبأ' : 'Enter safehouse') : (lang === 'ar' ? 'معاينة المنزل ثلاثي الأبعاد' : 'Preview 3D house'); }
+    view.world = { title: lang === 'ar' ? 'همس الشارع' : 'Word on the street', empty: this.worldError || (lang === 'ar' ? 'لا توجد لقى قريبة الآن. عد لاحقاً.' : 'No nearby finds right now. Check back later.'), hasFinds: !!this.worldState?.finds?.length, refreshLabel: lang === 'ar' ? 'تحديث الأخبار' : 'Refresh dispatch', refresh: () => this.loadWorld(true), busy: !!this.worldBusy || !!this.worldClaimBusy,
+      finds: (this.worldState?.finds || []).map(find => ({ id: find.id, name: (t.items[find.item_id] || find.item_id) + ' × ' + find.quantity, place: t.nav[find.location_id] || find.location_id, claimLabel: lang === 'ar' ? 'التقط' : 'Collect', claim: () => this.claimStreetFind(find.id) })), events: (this.worldState?.events || []).map(event => ({ title: lang === 'ar' ? event.title_ar : event.title_en, body: lang === 'ar' ? event.body_ar : event.body_en })) };
+    for (const inmate of view.inmates || []) { const record = this.inmates.find(row => row.id === inmate.id || row.name === inmate.name); if (record?.npc) inmate.name += lang === 'ar' ? ' · شخصية تدريب' : ' · Practice NPC'; }
     view.t = { ...t, player: p.username || (IS_PREVIEW ? t.player : lang === 'ar' ? 'لاعب جديد' : 'New player') };
     view.accountHref = '/account?lang=' + lang;
     view.adminHref = '/admin?lang=' + lang;
@@ -2579,6 +2655,11 @@ class Component extends DCLogic {
       receipt: this.state.crimeRequestError || (receipt ? receiptName + ' · ' + (receipt.success ? money(Number(receipt.reward?.cash || 0)) + ' · ' + fmt(t.resXp, { n: Number(receipt.reward?.xp || 0) }) : t.noCrimeReward) + ' · ' + (lang === 'ar' ? 'الجرأة المستهلكة: ' : 'Nerve spent: ') + Number(receipt.cost?.nerve || 0) + (receipt.penalty?.minutes > 0 ? ' · ' + (receipt.penalty.type === 'hosp' ? t.hospital : t.jail) + ' · ' + fmt(t.resMin, { n: receipt.penalty.minutes }) : '') + (receipt.loot ? ' · ' + (t.items[receipt.loot.itemId] || receipt.loot.itemId) + ' ×' + receipt.loot.quantity : '') : view.crimeLog[0]?.text || (lang === 'ar' ? 'لم تُنفذ محاولة بعد. اختر فرصة وراجع التكلفة والمخاطر.' : 'No attempt yet. Choose an opportunity and review its cost and risk.')),
       recovery: jailed ? t.nav.jail : hosp ? t.nav.hospital : view.connectionRecovery.visible ? view.connectionRecovery.label : '', recover: jailed ? () => this.go('jail') : hosp ? () => this.go('hospital') : view.connectionRecovery.retry,
     };
+    const crimeDefinition = (CRIMES[this.state.cat] || []).find(crime => crime.id === selectedCrime?.id);
+    const liveChain = p.crimeChains?.[selectedCrime?.id];
+    view.crimeDesk.rules = crimeDefinition ? (crimeDefinition.requiredItem ? (lang === 'ar' ? 'الأداة: ' : 'Tool: ') + (t.items[crimeDefinition.requiredItem] || crimeDefinition.requiredItem) + ' × ' + crimeDefinition.requiredQuantity + (crimeDefinition.consumesTool ? (lang === 'ar' ? '، تُستهلك عند المحاولة. ' : ', consumed on attempt. ') : '. ') : '') + (lang === 'ar' ? 'الإتقان ' : 'Mastery ') + Number(p.skill?.[selectedCrime.id] || 0) + '/100 · ' + (lang === 'ar' ? 'السلسلة ' : 'Chain ') + (liveChain && Date.now() - liveChain.lastAt <= Number(crimeDefinition.chainWindow ?? 300) * 1000 ? liveChain.count : 0) : '';
+    if (crimeDefinition?.criticalFailure) view.crimeDesk.selected.risk = (lang === 'ar' ? 'عند فشل المحاولة، احتمال الإخفاق الحرج ' : 'On a failed attempt, critical consequence chance ') + crimeDefinition.criticalFailure / 100 + '% · ' + (crimeDefinition.jailSeconds ? (lang === 'ar' ? 'سجن ' : 'Jail ') + crimeDefinition.jailSeconds + 's ' : '') + (crimeDefinition.hospitalSeconds ? (lang === 'ar' ? 'مستشفى ' : 'Hospital ') + crimeDefinition.hospitalSeconds + 's' : '');
+    if (receipt?.narrative?.[lang]) view.crimeDesk.receipt = receipt.narrative[lang] + ' · ' + view.crimeDesk.receipt;
     if (lang === 'ar') view.crimeDesk.receipt = view.crimeDesk.receipt.replace(/([+-]?\$[\d,]+(?:\.\d+)?)/g, '\u2066$1\u2069');
     const selectedStation = ['str', 'def', 'spd', 'dex'].includes(this.state.gymStation) ? this.state.gymStation : 'str';
     view.stats = view.stats.map((stat, index) => { const id = ['str', 'def', 'spd', 'dex'][index]; return { ...stat, id, selected: id === selectedStation, selectionMark: id === selectedStation ? '✓' : '', select: () => this.setState({ gymStation: id }) }; });

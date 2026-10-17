@@ -41,7 +41,7 @@ if (Test-Path -LiteralPath $relayConfigPath) {
     $env:ZONE_ENGINE_RELAY_KEY = $relayConfig.relayKey
     $env:ZONE_ENGINE_PUBLIC_HOSTS = $relayConfig.publicHosts -join ','
 }
-$process = Start-Process -FilePath $php -ArgumentList @('-d', 'extension=pdo_pgsql', '-S', "127.0.0.1:$Port", ('"' + $router + '"')) -WorkingDirectory $repo -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $repo '.tools/local-beta-php.log') -RedirectStandardError (Join-Path $repo '.tools/local-beta-php-errors.log')
+$process = Start-Process -FilePath $php -ArgumentList @('-d', 'extension=pdo_pgsql', '-d', 'upload_max_filesize=128M', '-d', 'post_max_size=132M', '-S', "127.0.0.1:$Port", ('"' + $router + '"')) -WorkingDirectory $repo -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $repo '.tools/local-beta-php.log') -RedirectStandardError (Join-Path $repo '.tools/local-beta-php-errors.log')
 @{pid=$process.Id;port=$Port;repo=$repo;targetFingerprint=$targetFingerprint} | ConvertTo-Json | Set-Content -LiteralPath $runtimePath -Encoding utf8
 $ready = $false
 for ($attempt = 0; $attempt -lt 15; $attempt++) {

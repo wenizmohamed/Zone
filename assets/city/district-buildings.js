@@ -90,7 +90,10 @@ export function createDistrictBuildings(map,bounds,token,options={}){
       if(!map.getSource(SOURCE))map.addSource(SOURCE,{type:'geojson',data,tolerance:0,buffer:128,maxzoom:limits.sourceZoom});
       const before=map.getLayer('district-road-casing')?'district-road-casing':undefined;
       if(!map.getLayer(FILL))map.addLayer({id:FILL,type:'fill',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:FOOTPRINT_FILTER,paint:{'fill-color':'#747c79','fill-opacity':1,'fill-outline-color':'#313b40'}},before);
-      if(!map.getLayer(EXTRUSION))map.addLayer({id:EXTRUSION,type:'fill-extrusion',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:EXTRUDE_FILTER,paint:{...BUILDING_PAINT},layout:{visibility:map.getPitch()>1?'visible':'none'}},before);
+      // Ground footprints stay below streets. Their raised provider volumes
+      // belong beside native 3D buildings, after opaque ground surfaces.
+      const beforeVolume=map.getLayer('district-buildings-3d')?'district-buildings-3d':undefined;
+      if(!map.getLayer(EXTRUSION))map.addLayer({id:EXTRUSION,type:'fill-extrusion',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:EXTRUDE_FILTER,paint:{...BUILDING_PAINT},layout:{visibility:map.getPitch()>1?'visible':'none'}},beforeVolume);
       setNativeRange(true);
       if(!installedContract())throw new Error('District detail layer transaction is incomplete');
     }catch(_){failRender();}

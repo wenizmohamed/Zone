@@ -923,10 +923,12 @@ const catalogDefaultLabels = {
 const catalogCategoryNames = { items: ['Items', 'العناصر'], jobs: ['Jobs', 'الوظائف'], gyms: ['Gyms', 'الصالات الرياضية'], courses: ['Courses', 'الدورات'], properties: ['Properties', 'العقارات'], upgrades: ['Faction upgrades', 'ترقيات العائلة'], opponents: ['Opponents', 'الخصوم'], missions: ['Objectives', 'الأهداف'] };
 const catalogFieldNames = { price: ['Price', 'السعر'], mult: ['Damage multiplier', 'مضاعف الضرر'], red: ['Damage reduction (0-1)', 'خفض الضرر (٠-١)'], life: ['Life', 'الصحة'], nerve: ['Nerve restored', 'الأعصاب المستعادة'], pay: ['Pay per shift', 'أجر الوردية'], energy: ['Energy per shift', 'طاقة الوردية'], lvl: ['Level', 'المستوى'], e: ['Energy per session', 'طاقة الجلسة'], xp: ['Training XP required', 'خبرة التدريب المطلوبة'], cost: ['Cost', 'التكلفة'], mins: ['Duration in minutes', 'المدة بالدقائق'], happy: ['Maximum happiness', 'الحد الأقصى للسعادة'], upkeep: ['Planned upkeep (not charged)', 'الصيانة المخططة (لا تُخصم)'], str: ['Strength', 'القوة'], def: ['Defense', 'الدفاع'], spd: ['Speed', 'السرعة'], dex: ['Dexterity', 'المهارة'], cash: ['Cash', 'النقود'], n: ['Required progress', 'التقدم المطلوب'], pts: ['Point reward', 'مكافأة النقاط'] };
 catalogFieldNames.model = ['Licensed 3D model', 'النموذج ثلاثي الأبعاد المرخص'];
+catalogFieldNames.mediaAsset = ['Uploaded media ID (optional)', 'معرّف الوسائط المرفوعة (اختياري)'];
+catalogFieldNames.hospitalSeconds = ['Hospital time removed (seconds)', 'تقليل وقت المستشفى (ثواني)'];
 catalogFieldNames.red = ['Armor reduction (0-0.95)', 'خفض ضرر الدرع (0-0.95)'];
 const catalogEffectNames = { life: ['Life restored', 'الصحة المستعادة'], nerve: ['Nerve restored', 'الجرأة المستعادة'], energy: ['Energy restored', 'الطاقة المستعادة'], happy: ['Happiness restored', 'السعادة المستعادة'] };
-Object.assign(translations.en, { catalogArmorHelp: '0.25 means 25% damage reduction. Players must own and equip this armor. Maximum 0.95. Registered images only; armor has no arbitrary 3D model field.', catalogRecoveryHelp: 'Life, nerve, energy and happiness restoration is capped by the player limits. Enter 0 for no effect. The server reports the amount actually restored; an item stays owned if nothing can change.' });
-Object.assign(translations.ar, { catalogArmorHelp: 'القيمة 0.25 تعني خفض الضرر بنسبة 25%. يجب أن يملك اللاعب الدرع ويجهزه. الحد الأقصى 0.95. الصور المسجلة فقط؛ لا يوجد حقل نموذج ثلاثي الأبعاد عشوائي للدرع.', catalogRecoveryHelp: 'استعادة الصحة والجرأة والطاقة والسعادة مقيدة بحدود اللاعب. أدخل 0 لعدم التأثير. يحدد الخادم الكمية المستعادة فعلياً؛ يبقى العنصر مملوكاً إذا لم يتغير أي مورد.' });
+Object.assign(translations.en, { catalogArmorHelp: '0.25 means 25% damage reduction. Players must own and equip this armor. Maximum 0.95. Use a registered image or bind an inspected model in Media.', catalogRecoveryHelp: 'Life, nerve, energy and happiness restoration is capped by the player limits. Enter 0 for no effect. Hospital time removal is in seconds. The server reports the actual recovery; an item stays owned if nothing can change.' });
+Object.assign(translations.ar, { catalogArmorHelp: 'القيمة 0.25 تعني خفض الضرر بنسبة 25%. يجب أن يملك اللاعب الدرع ويجهزه. الحد الأقصى 0.95. استخدم صورة مسجلة أو اربط نموذجاً مفحوصاً من قسم الوسائط.', catalogRecoveryHelp: 'استعادة الصحة والجرأة والطاقة والسعادة مقيدة بحدود اللاعب. أدخل 0 لعدم التأثير. تقليل وقت المستشفى محسوب بالثواني. يحدد الخادم الاستعادة الفعلية؛ يبقى العنصر مملوكاً إذا لم يتغير شيء.' });
 const catalogLabel = (labels, fallback) => labels?.[state.language === 'ar' ? 1 : 0] ?? fallback;
 function catalogEntries(category = state.catalogCategory) {
   const entries = state.gameplayCatalog?.catalogs?.[category] ?? [];
@@ -939,10 +941,10 @@ function catalogEditorData() {
   let entry = catalogEntries().find(([id]) => id === state.catalogEntry)?.[1];
   if (creating) {
     const type = state.catalogEdits[state.catalogCategory + '/__new']?.type ?? schema.createTypes?.[0] ?? 'weapon';
-    const selected = state.catalogCategory === 'items' ? ['type', ...(schema.variants?.[type] ?? []), 'name', 'description', 'image', ...(type === 'weapon' ? ['model'] : [])] : [...(schema.required ?? []), 'description', 'image'];
-    entry = Object.fromEntries(selected.map(key => [key, fields[key]?.type === 'bilingual' ? { en: '', ar: '' } : fields[key]?.type === 'enum' ? (key === 'type' ? type : fields[key].values[0]) : fields[key]?.type === 'asset' ? '' : Math.max(fields[key]?.min ?? 0, key === 'price' || key === 'mult' ? 1 : 0)]));
+    const selected = state.catalogCategory === 'items' ? ['type', ...(schema.variants?.[type] ?? []), 'name', 'description', 'image', 'mediaAsset', ...(type === 'weapon' ? ['model'] : [])] : [...(schema.required ?? []), 'description', 'image', ...(fields.mediaAsset ? ['mediaAsset'] : [])];
+    entry = Object.fromEntries(selected.map(key => [key, fields[key]?.type === 'bilingual' ? { en: '', ar: '' } : fields[key]?.type === 'enum' ? (key === 'type' ? type : fields[key].values[0]) : ['asset', 'uploadedAsset'].includes(fields[key]?.type) ? '' : Math.max(fields[key]?.min ?? 0, key === 'price' || key === 'mult' ? 1 : 0)]));
   }
-  return { entry, creating, fields: Object.entries(fields).filter(([key, rule]) => creating ? Object.hasOwn(entry ?? {}, key) : (rule.editable ?? true) && (['name', 'description', 'image'].includes(key) || (key === 'model' && entry?.type === 'weapon') || (state.catalogCategory === 'items' && (schema.variants?.[entry?.type] ?? []).includes(key)) || Object.hasOwn(entry ?? {}, key))), key: state.catalogCategory + '/' + state.catalogEntry };
+  return { entry, creating, fields: Object.entries(fields).filter(([key, rule]) => creating ? Object.hasOwn(entry ?? {}, key) : (rule.editable ?? true) && (['name', 'description', 'image', 'mediaAsset'].includes(key) || (key === 'model' && entry?.type === 'weapon') || (state.catalogCategory === 'items' && (schema.variants?.[entry?.type] ?? []).includes(key)) || Object.hasOwn(entry ?? {}, key))), key: state.catalogCategory + '/' + state.catalogEntry };
 }
 function newGameplayCatalog() {
   if (!adminCanMutate() || state.catalogBusy || !state.gameplayCatalog?.schema?.[state.catalogCategory]?.creatable) return;
@@ -988,7 +990,7 @@ function renderGameplayCatalog() {
   $('#catalogNewId').oninput = () => { state.catalogNewIds[state.catalogCategory] = $('#catalogNewId').value; state.catalogError = ''; renderCatalogStatus(); };
   const inputs = fields.flatMap(([key, field]) => field.type === 'bilingual'
     ? ['en', 'ar'].map(language => ({ key: key + '.' + language, label: key === 'name' ? t(language === 'en' ? 'crimeNameEn' : 'crimeNameAr') : t(language === 'en' ? 'descriptionEnglish' : 'descriptionArabic'), type: 'text', value: key === 'name' && !creating ? catalogEntryName(state.catalogEntry, entry, language) : entry?.[key]?.[language] ?? '', maxLength: field.maxLength, dir: language === 'ar' ? 'rtl' : 'ltr' }))
-    : [{ key, label: key === 'type' ? t('catalogType') : key === 'ctr' ? t('catalogMetric') : key === 'image' ? t('catalogImage') : catalogLabel(state.catalogCategory === 'items' ? catalogEffectNames[key] ?? catalogFieldNames[key] : catalogFieldNames[key], key), type: field.type === 'enum' ? 'select' : field.type === 'asset' ? 'text' : 'number', values: key === 'type' ? state.gameplayCatalog.schema.items.createTypes : field.values, value: entry?.[key] ?? (['life', 'nerve', 'energy', 'happy'].includes(key) ? 0 : undefined), min: field.min, max: field.max, maxLength: field.maxLength, step: ['integer', 'number'].includes(field.type) ? field.type === 'integer' ? '1' : 'any' : undefined, dir: 'ltr' }]);
+    : [{ key, label: key === 'type' ? t('catalogType') : key === 'ctr' ? t('catalogMetric') : key === 'image' ? t('catalogImage') : catalogLabel(state.catalogCategory === 'items' ? catalogEffectNames[key] ?? catalogFieldNames[key] : catalogFieldNames[key], key), type: field.type === 'enum' ? 'select' : ['asset', 'uploadedAsset'].includes(field.type) ? 'text' : 'number', values: key === 'type' ? state.gameplayCatalog.schema.items.createTypes : field.values, value: entry?.[key] ?? (['life', 'nerve', 'energy', 'happy', 'hospitalSeconds'].includes(key) ? 0 : undefined), min: field.min, max: field.max, maxLength: field.maxLength, step: ['integer', 'number'].includes(field.type) ? field.type === 'integer' ? '1' : 'any' : undefined, dir: 'ltr' }]);
   $('#catalogFields').innerHTML = entry ? inputs.map(input => `<label><span>${esc(input.label)}</span>${input.type === 'select' ? `<select id="catalogField-${esc(input.key)}" ${state.catalogBusy ? 'disabled' : ''}>${input.values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join('')}</select>` : `<input id="catalogField-${esc(input.key.replace('.', '-'))}" type="${input.type}" dir="${input.dir}" ${input.min !== undefined ? `min="${input.min}"` : ''} ${input.max !== undefined ? `max="${input.max}"` : ''} ${input.maxLength ? `maxlength="${input.maxLength}"` : ''} ${input.step ? `step="${input.step}" required` : ''} ${state.catalogBusy ? 'disabled' : ''}>`}${input.key === 'image' ? `<small>${esc(t('catalogImageHelp'))}</small>` : ''}</label>`).join('') : `<p class="catalog-help">${esc(t('catalogUnavailable'))}</p>`;
   for (const input of inputs) {
     const element = $('#catalogField-' + input.key.replace('.', '-'));
@@ -1018,6 +1020,7 @@ function catalogChanges() {
     if (!creating && !Object.hasOwn(edits, fieldName)) continue;
     const raw = catalogFieldValue(fieldName, entry[fieldName]).trim(), label = catalogLabel(state.catalogCategory === 'items' ? catalogEffectNames[fieldName] ?? catalogFieldNames[fieldName] : catalogFieldNames[fieldName], fieldName);
     if (field.type === 'enum') { if (!field.values.includes(raw)) throw new Error('Invalid ' + fieldName); changes[fieldName] = raw; continue; }
+    if (field.type === 'uploadedAsset') { if (raw && !/^[a-f0-9]{64}$/.test(raw)) throw new Error(state.language === 'ar' ? 'اختر معرّفاً جاهزاً من مكتبة الوسائط.' : 'Choose a ready asset ID from the Media library.'); if (raw || !creating) changes[fieldName] = raw; continue; }
     if (field.type === 'asset') { if (raw && !/^(art|assets)\/[A-Za-z0-9_/-]+\.(png|jpg|jpeg|webp)$/.test(raw)) throw new Error(t('catalogImageHelp')); if (raw || !creating) changes[fieldName] = raw; continue; }
     const value = Number(raw);
     if (!raw || !Number.isFinite(value) || (field.type === 'integer' && !Number.isInteger(value)) || value < field.min || value > field.max) throw new Error(state.language === 'ar' ? `${label}: أدخل ${field.type === 'integer' ? 'عدداً صحيحاً' : 'رقماً'} بين ${field.min} و${field.max}.` : `${label}: enter ${field.type === 'integer' ? 'an integer' : 'a number'} from ${field.min} to ${field.max}.`);
@@ -1055,8 +1058,10 @@ async function saveGameplayCatalog(event) {
   } finally { state.catalogBusy = false; renderGameplayCatalog(); updateBootControls(); }
 }
 
+const crimeRuleFields = { required_item: ['crimeTool', '', 'text'], required_quantity: ['crimeToolQty', 1, 'number'], consume_tool: ['crimeToolConsume', false, 'checkbox'], mastery_per_success: ['crimeMastery', 1, 'number'], chain_window_seconds: ['crimeChainWindow', 300, 'number'], chain_bonus_basis_points: ['crimeChainBonus', 0, 'number'], critical_failure_basis_points: ['crimeCritical', 0, 'number'], jail_seconds: ['crimeJail', 300, 'number'], hospital_seconds: ['crimeHospital', 180, 'number'] };
+function crimeRuleValues() { return Object.values(crimeRuleFields).map(([id,,type]) => type === 'checkbox' ? Boolean($('#' + id)?.checked) : $('#' + id)?.value ?? ''); }
 function crimeEditorValues() {
-  return JSON.stringify(['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].map(id => $('#' + id).value).concat($('#crimeEnabled').checked));
+  return JSON.stringify(['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].map(id => $('#' + id).value).concat($('#crimeEnabled').checked, ...crimeRuleValues()));
 }
 function unsavedContentEdits() {
   const pendingCatalog = Object.entries(state.catalogEdits).find(([, edits]) => Object.keys(edits).length);
@@ -1065,6 +1070,7 @@ function unsavedContentEdits() {
   return { catalog: pendingCatalog?.[0] ?? (pendingId ? pendingId[0] + '/__new' : null), crime };
 }
 function requireSavedContent() {
+  if (typeof window !== 'undefined' && window.ZoneMedia?.hasUnsaved()) { notify(state.language === 'ar' ? 'احفظ تعديلات المتجر والعامل وانتظر اكتمال الرفع أولاً.' : 'Save shop/director changes and finish the upload first.', true); return false; }
   const pending = unsavedContentEdits();
   if (!pending.catalog && !pending.crime) return true;
   if (pending.catalog) {
@@ -1095,6 +1101,12 @@ function renderContent(resetEditor = false) {
   $('#crimeXp').value = crime?.xp_reward ?? 10;
   $('#crimeLevel').value = crime?.level_required ?? 1;
   $('#crimeEnabled').checked = crime?.enabled ?? true;
+  for (const [field, [id, fallback, type]] of Object.entries(crimeRuleFields)) {
+    const control = $('#' + id); if (!control) continue;
+    if (type === 'checkbox') control.checked = crime?.[field] ?? fallback;
+    else control.value = crime?.[field] ?? fallback;
+    control.oninput = control.onchange = () => renderCrimeEditorStatus();
+  }
   state.crimeEditorBaseline = crimeEditorValues();
   ['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].forEach(id => { $('#' + id).oninput = () => renderCrimeEditorStatus(); });
   $('#crimeEnabled').onchange = () => renderCrimeEditorStatus();
@@ -1292,6 +1304,7 @@ function pushTerritoryMap() {
 }
 
 function renderAssets() {
+  if (typeof window !== 'undefined') window.ZoneMedia?.refresh();
   $('#assetGrid').innerHTML = assets.map(([type, name, detail]) => `<article class="asset-card" data-type="${esc(type)}"><span class="asset-icon" dir="ltr">${esc(type.slice(0, 2))}</span><div><strong>${esc(localized(name))}</strong><span>${esc(localized(detail))}</span></div></article>`).join('');
 }
 
@@ -1511,6 +1524,10 @@ async function saveCrime(event) {
     level_required: levelRequired,
     enabled: $('#crimeEnabled').checked,
   };
+  for (const [field, [inputId,,type]] of Object.entries(crimeRuleFields)) {
+    const input = $('#' + inputId); if (!input) continue;
+    definition[field] = type === 'checkbox' ? input.checked : type === 'number' ? Number(input.value) : input.value.trim() || null;
+  }
   const button = $('#saveCrimeButton');
   button.disabled = true;
   try {
@@ -1526,6 +1543,7 @@ async function saveCrime(event) {
       if (newerEditor) {
         ['crimeId', 'crimeNameEn', 'crimeNameAr', 'crimeNerve', 'crimeSuccess', 'crimeCashMin', 'crimeCashMax', 'crimeXp', 'crimeLevel'].forEach((field, index) => { $('#' + field).value = newerEditor[index]; });
         $('#crimeEnabled').checked = newerEditor[9];
+        Object.values(crimeRuleFields).forEach(([inputId,,type], index) => { const input = $('#' + inputId); if (input) { if (type === 'checkbox') input.checked = newerEditor[index + 10]; else input.value = newerEditor[index + 10]; } });
       }
     }
     markDirty();

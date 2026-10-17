@@ -10,12 +10,16 @@ const publicPaths = new Set(['auth/account', 'auth/claim', 'auth/login', 'auth/r
   'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'travel',
   'casino/blackjack', 'casino/high-low', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications']);
 export function isPublicPath(path) {
+  if (/^\/api\/v1\/assets\/[a-f0-9]{64}(?:\/content)?$/.test(path) || ['/api/v1/world', '/api/v1/world/claim'].includes(path)) return true;
   if (path === '/engine/theme.css') return true;
   if (!/^\/api\/v1\/[A-Za-z0-9/-]+$/.test(path) || path.includes('//') || path.endsWith('/')) return false;
   const route = path.slice('/api/v1/'.length);
   return publicPaths.has(route) || /^crimes\/[a-z0-9-]+\/attempt$/.test(route) || /^territories\/ZC-[0-9]{3}\/action$/.test(route);
 }
 export function ownerMethods(path) {
+  if (/^\/api\/v1\/assets\/[a-f0-9]{64}(?:\/content)?$/.test(path) || ['/api/v1/admin/assets', '/api/v1/admin/workers'].includes(path) || /^\/api\/v1\/admin\/assets\/[a-f0-9]{64}$/.test(path)) return ['GET', 'HEAD'];
+  if (path === '/api/v1/admin/assets/uploads' || /^\/api\/v1\/admin\/assets\/uploads\/[a-f0-9]{32}\/(?:chunks|complete)$/.test(path)) return ['POST'];
+  if (path === '/api/v1/admin/shop-catalog' || /^\/api\/v1\/admin\/assets\/[a-f0-9]{64}\/transform$/.test(path)) return ['PUT'];
   if (['/engine', '/engine/', '/engine/assets/engine.css', '/engine/assets/engine.js', '/api/v1/ledger', '/api/v1/events', '/api/v1/architecture'].includes(path)) return ['GET', 'HEAD'];
   if (path === '/api/v1/admin/session') return ['GET', 'POST', 'DELETE'];
   if (path === '/api/v1/admin/playtest') return ['GET', 'DELETE'];
@@ -74,7 +78,9 @@ export function createRelay({ key, publicHosts, upstreamPort = 4301, timeoutMs =
     if (!clientHost || !hosts.has(clientHost) || onceHeader(request, 'x-zone-client-proto') !== 'https' || !isIP(clientIP ?? '')) return reply(response, 403, 'Invalid gateway metadata.');
     const origin = onceHeader(request, 'origin');
     if (['POST', 'PUT', 'DELETE'].includes(request.method) && origin !== `https://${clientHost}`) return reply(response, 403, 'Cross-origin request rejected.');
-    const requestLimit = request.method === 'PUT' && path === '/api/v1/admin/draft' ? maxDraftBytes : maxRequestBytes;
+    const largeDraft = request.method === 'PUT' && ['/api/v1/admin/draft', '/api/v1/admin/shop-catalog'].includes(path);
+    const assetChunk = request.method === 'POST' && /^\/api\/v1\/admin\/assets\/uploads\/[a-f0-9]{32}\/chunks$/.test(path);
+    const requestLimit = largeDraft || assetChunk ? maxDraftBytes : maxRequestBytes;
     if (Number(request.headers['content-length'] ?? 0) > requestLimit) return reply(response, 413, 'Request body is too large.');
     const chunks = []; let bytes = 0;
     try {

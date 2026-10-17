@@ -433,10 +433,11 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js?v=104"></script>
-<script src="territory-geometry.js?v=104"></script>
-<script src="../assets/city/compact-district.js?v=104"></script>
-<script src="map-frame-sample.js?v=104"></script>
+<script src="map-icons.js?v=108"></script>
+<script src="territory-geometry.js?v=108"></script>
+<script src="../assets/city/service-buildings108.js?v=108"></script>
+<script src="../assets/city/compact-district.js?v=108"></script>
+<script src="map-frame-sample.js?v=108"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -1098,17 +1099,20 @@ initializeMapLocale();
       var namePaint={'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-emissive-strength':1,'text-opacity':1};
       /* U6.4 - shared selected-scale multiplier so the chosen marker pops across all 3 POI layers */
       var selScale=['case',['boolean',['feature-state','selected'],false],1.32,1];
+      // The roof anchor stays geographic. Compact overview artwork leaves
+      // neighboring service coins distinct; close detail retains its full size.
+      var overviewCoinSize=['interpolate',['linear'],['zoom'],13.2,.42,15.1,.52,16,.74];
       /* U6.3 - emissive category-colored under-glow beneath the coin: noir "lit from within" read */
       if(!map.getLayer('zone-poi-underglow'))map.addLayer({id:'zone-poi-underglow',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'viewport','circle-pitch-scale':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,13,15,18,17,24,19,30],'circle-color':['get','color'],'circle-blur':1,'circle-emissive-strength':1,'circle-opacity':['case',['boolean',['get','found'],false],.04,['boolean',['feature-state','selected'],false],.5,.24]}});
       /* Layer contract id:'zone-poi-halo' */
       if(!map.getLayer('zone-poi-halo'))map.addLayer({id:'zone-poi-halo',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'viewport','circle-pitch-scale':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,9,15,12,17,16,19,20],'circle-color':'rgba(8,12,19,.9)','circle-stroke-color':['case',['boolean',['feature-state','selected'],false],'#7defff',['get','territoryColor']],'circle-stroke-width':['case',['boolean',['feature-state','selected'],false],4,2.2],'circle-blur':['case',['boolean',['feature-state','selected'],false],.08,.02],'circle-opacity':['case',['boolean',['get','found'],false],.58,.96]}});
       /* Layer contract id:'zone-poi-icon' */
-      if(!map.getLayer('zone-poi-icon'))map.addLayer({id:'zone-poi-icon',type:'symbol',source:'zone-pois',filter:visible,layout:Object.assign({'icon-image':['get','iconImage'],/* canonical data expression ['"]get' */'icon-size':.74,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false,'icon-optional':false,'icon-padding':4,'symbol-sort-key':['get','priority']},nameLayout),paint:Object.assign({'icon-color':['case',['boolean',['get','found'],false],'#83a09b',['get','color']],'icon-halo-color':'rgba(255,255,255,.35)','icon-halo-width':.45,'icon-opacity':['case',['boolean',['get','found'],false],.62,1]},namePaint)});
+      if(!map.getLayer('zone-poi-icon'))map.addLayer({id:'zone-poi-icon',type:'symbol',source:'zone-pois',filter:visible,layout:Object.assign({'icon-image':['get','iconImage'],/* canonical data expression ['"]get' */'icon-size':overviewCoinSize,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false,'icon-optional':false,'icon-padding':4,'symbol-sort-key':['get','priority']},nameLayout),paint:Object.assign({'icon-color':['case',['boolean',['get','found'],false],'#83a09b',['get','color']],'icon-halo-color':'rgba(255,255,255,.35)','icon-halo-width':.45,'icon-opacity':['case',['boolean',['get','found'],false],.62,1]},namePaint)});
       // Reserve all eight real coin footprints before placing any caption.
       // The imperceptible prepass uses the same artwork, size and elevation.
       // Visible coins remain guaranteed; their names yield to every coin and
       // family touch area instead of being covered by a later-drawn marker.
-      if(!map.getLayer('zone-poi-coin-reservations'))map.addLayer({id:'zone-poi-coin-reservations',type:'symbol',source:'zone-pois',filter:visible,layout:{'icon-image':['get','iconImage'],'icon-size':.74,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false,'icon-padding':4,'symbol-sort-key':['get','priority']},paint:{'icon-opacity':.001}});
+      if(!map.getLayer('zone-poi-coin-reservations'))map.addLayer({id:'zone-poi-coin-reservations',type:'symbol',source:'zone-pois',filter:visible,layout:{'icon-image':['get','iconImage'],'icon-size':overviewCoinSize,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false,'icon-padding':4,'symbol-sort-key':['get','priority']},paint:{'icon-opacity':.001}});
       if(!map.getLayer('zone-poi-found'))map.addLayer({id:'zone-poi-found',type:'symbol',source:'zone-pois',filter:['all',visible,['==',['get','found'],true]],layout:{'text-field':'✓','text-size':['interpolate',['linear'],['zoom'],13,8,17,11,19,13],'text-offset':[1.15,-1.2],'text-pitch-alignment':'viewport','text-rotation-alignment':'viewport','text-allow-overlap':false,'text-ignore-placement':false},paint:{'text-color':'#41e08a','text-halo-color':'#06110b','text-halo-width':1.4}});
       /* Layer contract id:'zone-poi-hitbox' */
       if(!map.getLayer('zone-poi-hitbox'))map.addLayer({id:'zone-poi-hitbox',type:'circle',source:'zone-pois',filter:visible,paint:{'circle-pitch-alignment':'viewport','circle-pitch-scale':'viewport','circle-radius':22,'circle-color':'#ffffff','circle-opacity':0}});
@@ -1118,7 +1122,7 @@ initializeMapLocale();
         var base=map.getStyle().layers.find(function(layer){return layer.id===id;}),layer=JSON.parse(JSON.stringify(base));
         layer.id=id+'-detail';layer.filter=details;layer.minzoom=16.8;
         if(layer.layout){layer.layout['symbol-sort-key']=20;if(id==='zone-poi-icon')layer.layout['icon-allow-overlap']=false;if(id==='zone-poi-icon'){
-          Object.assign(layer.layout,{'icon-allow-overlap':false,'icon-optional':false,'text-optional':true,'text-size':11,'symbol-sort-key':['get','detailPriority']});
+          Object.assign(layer.layout,{'icon-size':.74,'icon-allow-overlap':false,'icon-optional':false,'text-optional':true,'text-size':11,'symbol-sort-key':['get','detailPriority']});
           if(!map.getLayer('zone-poi-icon-service')){
             var service=JSON.parse(JSON.stringify(layer));service.id='zone-poi-icon-service';service.filter=services;service.minzoom=15.8;service.layout['icon-allow-overlap']=true;map.addLayer(service);
           }

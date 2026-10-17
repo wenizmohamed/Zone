@@ -73,12 +73,13 @@ final class GameplayCatalog
             foreach ($changes as $field => $value) {
                 $rule = $schema['fields'][$field] ?? throw new InvalidArgumentException('Catalog field is not editable: ' . $field);
                 if (($rule['editable'] ?? true) === false) throw new InvalidArgumentException('This field cannot be changed after creation: ' . $field);
-                $optionalPresentation = in_array($field, ['name', 'description', 'image'], true) || ($field === 'model' && $category === 'items' && ($previous['type'] ?? '') === 'weapon');
+                $optionalPresentation = in_array($field, ['name', 'description', 'image', 'mediaAsset'], true) || ($field === 'model' && $category === 'items' && ($previous['type'] ?? '') === 'weapon');
                 $applicableItemField = $category === 'items' && in_array($field, $schema['variants'][$previous['type'] ?? ''] ?? [], true);
                 if (!$optionalPresentation && !$applicableItemField && !array_key_exists($field, $previous)) throw new InvalidArgumentException('This field does not apply to the selected entry.');
                 $rows[$key][$field] = GameplayDefinitionValidator::value($field, $value, $rule);
             }
             $rows[$key] = GameplayDefinitionValidator::definition($category, $rows[$key]);
+            MediaReferences::assertDefinition($this->database, $category, $rows[$key]);
             $draft['catalogs'][$category] = $rows;
             $correlation = bin2hex(random_bytes(16));
             $now = gmdate('c');
@@ -95,6 +96,7 @@ final class GameplayCatalog
         if ($expectedRevision < 1 || trim($actor) === '' || strlen($actor) > 160 || preg_match('/[\x00-\x1F\x7F]/', $actor)) throw new InvalidArgumentException('A current catalog revision and valid actor are required.');
         GameplayDefinitionValidator::identifier($id);
         $definition = GameplayDefinitionValidator::definition($category, $definition, true);
+        MediaReferences::assertDefinition($this->database, $category, $definition);
         return (new ReleaseManager($this->database, $this->events))->configurationTransaction(function () use ($category, $id, $definition, $expectedRevision, $actor): array {
             $draft = $this->draft();
             if ($draft['revision'] !== $expectedRevision) throw new RuntimeException('Gameplay catalog changed. Refresh and try again.');
@@ -113,6 +115,24 @@ final class GameplayCatalog
             $this->database->execute('INSERT INTO admin_audit_log (id, actor, action, target_type, target_id, previous_json, next_json, correlation_id, created_at) VALUES (:id, :actor, :action, :type, :target, :previous, :next, :correlation, :at)', ['id' => bin2hex(random_bytes(16)), 'actor' => $actor, 'action' => 'GameplayCatalogCreated', 'type' => 'gameplay-catalog', 'target' => $category . ':' . $id, 'previous' => 'null', 'next' => json_encode($entry, JSON_THROW_ON_ERROR), 'correlation' => $correlation, 'at' => $now]);
             $this->events->publish(new DomainEvent('GameplayCatalogCreated', ['category' => $category, 'id' => $id, 'revision' => $draft['revision'] + 1, 'actor' => $actor, 'correlationId' => $correlation]));
             return [...$this->draft(), 'created' => ['category' => $category, 'id' => $id]];
+        });
+    }
+
+    public function updateMarket(array $listings, int $expectedRevision, string $actor): array
+    {
+        if ($expectedRevision < 1 || trim($actor) === '' || strlen($actor) > 160) throw new InvalidArgumentException('A current catalog revision and valid actor are required.');
+        return (new ReleaseManager($this->database, $this->events))->configurationTransaction(function () use ($listings, $expectedRevision, $actor): array {
+            $draft = $this->draft();
+            if ($draft['revision'] !== $expectedRevision) throw new RuntimeException('Gameplay catalog changed. Refresh and try again.');
+            $previous = $draft['catalogs']['market'];
+            $draft['catalogs']['market'] = $listings;
+            GameplayDefinitionValidator::catalog($draft['catalogs']);
+            $now = gmdate('c'); $correlation = bin2hex(random_bytes(16));
+            $this->database->execute("UPDATE gameplay_catalogs SET catalog_json = :catalog, revision = revision + 1, updated_by = :actor, updated_at = :at WHERE channel = 'draft'", ['catalog' => json_encode($draft['catalogs'], JSON_THROW_ON_ERROR), 'actor' => $actor, 'at' => $now]);
+            $this->database->execute('INSERT INTO admin_audit_log (id, actor, action, target_type, target_id, previous_json, next_json, correlation_id, created_at) VALUES (:id, :actor, :action, :type, :target, :previous, :next, :correlation, :at)',
+                ['id' => bin2hex(random_bytes(16)), 'actor' => $actor, 'action' => 'ShopCatalogUpdated', 'type' => 'shop-catalog', 'target' => 'market', 'previous' => json_encode($previous, JSON_THROW_ON_ERROR), 'next' => json_encode($listings, JSON_THROW_ON_ERROR), 'correlation' => $correlation, 'at' => $now]);
+            $this->events->publish(new DomainEvent('ShopCatalogUpdated', ['revision' => $draft['revision'] + 1, 'actor' => $actor, 'correlationId' => $correlation]));
+            return $this->draft();
         });
     }
 

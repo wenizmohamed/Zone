@@ -81,6 +81,15 @@ function poiLayers(){
   Object.defineProperties(layers,{recover:{value:()=>scope.ensurePoiLayers()},diagnostic:{value:()=>scope.document.body.dataset.zonePoiErr}});return layers;
 }
 
+test('overview coin artwork shrinks at the real default zoom with matching reservations and unchanged roof anchors',()=>{
+  const layers=poiLayers(),core=layers.find(l=>l.id==='zone-poi-icon'),reserve=layers.find(l=>l.id==='zone-poi-coin-reservations'),size=core.layout['icon-size'];
+  assert.ok(Array.isArray(size),'overview size is evaluated from the camera zoom');assert.deepEqual(Array.from(size.slice(0,3)),['interpolate',size[1],size[2]]);assert.equal(size[1][0],'linear');assert.equal(size[2][0],'zoom');
+  const at=zoom=>{for(let i=3;i<size.length-2;i+=2)if(zoom<=size[i+2]){const blend=Math.max(0,Math.min(1,(zoom-size[i])/(size[i+2]-size[i])));return size[i+1]+(size[i+3]-size[i+1])*blend;}return size.at(-1);};
+  const overviewPixels=32*at(15.09310012389713);assert.ok(overviewPixels>16&&overviewPixels<17);assert.equal(32*at(16),23.68);assert.deepEqual(reserve.layout['icon-size'],size);
+  for(const layer of [core,reserve]){assert.equal(layer.layout['icon-offset'],undefined);assert.equal(layer.paint['icon-translate'],undefined);assert.deepEqual(Array.from(layer.layout['icon-image']),['get','iconImage']);}
+  assert.equal(layers.find(l=>l.id==='zone-poi-icon-service').layout['icon-size'],.74);assert.equal(layers.find(l=>l.id==='zone-poi-icon-detail').layout['icon-size'],.74);assert.equal(layers.find(l=>l.id==='zone-poi-hitbox').paint['circle-radius'],22);
+});
+
 test('a missing game service layer or reservation is restored without duplicating existing detail icons',()=>{
   const layers=poiLayers();
   for(const id of ['zone-poi-icon-service','zone-poi-service-reservations']){

@@ -67,7 +67,7 @@ $staticCandidate = realpath($repositoryRoot . str_replace('/', DIRECTORY_SEPARAT
 if ($path !== '/engine' && $path !== '/engine/' && !str_starts_with($path, '/api/')) {
     if ($staticCandidate !== false && is_file($staticCandidate)) {
         // Match the build's public roots, not every existing file in this checkout.
-        $publicFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admin-studio.js', 'account.html', 'account.js', 'platform-runtime.js', 'owner-playtest.js', 'player-session.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js'];
+        $publicFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admin-studio.js', 'admin-assets.js', 'account.html', 'account.js', 'platform-runtime.js', 'owner-playtest.js', 'player-session.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js'];
         $relative = str_replace('\\', '/', substr($staticCandidate, strlen($repositoryRoot) + 1));
         $inside = str_starts_with($staticCandidate, $repositoryRoot . DIRECTORY_SEPARATOR);
         $public = in_array($relative, $publicFiles, true) || preg_match('~^(?:art|assets|dist|lib)/~', $relative);
@@ -292,6 +292,43 @@ if ($method === 'OPTIONS') {
 
 try {
     // Owner proof and player identity are both server-resolved on every request.
+    if ($path === '/api/v1/admin/assets/uploads' && $method === 'POST') {
+        json_response($engine->assets()->begin(request_json(), require_admin_mutation()), 201);
+    }
+    if ($method === 'POST' && preg_match('#^/api/v1/admin/assets/uploads/([a-f0-9]{32})/(chunks|complete)$#D', $path, $matches)) {
+        $actor = require_admin_mutation(); $body = request_json();
+        json_response($matches[2] === 'chunks' ? $engine->assets()->append($matches[1], $body, $actor) : $engine->assets()->complete($matches[1], $actor));
+    }
+    if ($path === '/api/v1/admin/assets' && $method === 'GET') json_response(['assets' => $engine->assets()->all()]);
+    if ($path === '/api/v1/admin/workers' && $method === 'GET') json_response($engine->assets()->health());
+    if ($method === 'GET' && preg_match('#^/api/v1/admin/assets/([a-f0-9]{64})$#D', $path, $matches)) json_response($engine->assets()->get($matches[1]));
+    if ($method === 'PUT' && preg_match('#^/api/v1/admin/assets/([a-f0-9]{64})/transform$#D', $path, $matches)) {
+        $actor = require_admin_mutation(); json_response($engine->assets()->updateTransform($matches[1], request_json(), $actor));
+    }
+    if (preg_match('#^/api/v1/assets/([a-f0-9]{64})(/content)?$#D', $path, $matches)) {
+        if (!in_array($method, ['GET', 'HEAD'], true)) json_response(['error' => 'Media is read-only.'], 405);
+        $id = $matches[1];
+        $draftMedia = ($_GET['draft'] ?? '') === '1' && zone_admin_access()['authenticated'];
+        $asset = $draftMedia ? $engine->assets()->get($id) : ($engine->activeRelease()['manifest']['mediaAssets'][$id] ?? null);
+        if (!is_array($asset) || ($asset['status'] ?? '') !== 'ready') json_response(['error' => 'Published media not found.'], 404);
+        if (empty($matches[2])) json_response($asset);
+        $member = $_GET['member'] ?? '';
+        if (!is_string($member)) throw new InvalidArgumentException('Invalid media member.');
+        $offset = \Zone\Engine\Core\Security\RequestGuard::boundedInt($_GET, 'offset', 0, 134217728, 0);
+        $length = \Zone\Engine\Core\Security\RequestGuard::boundedInt($_GET, 'length', 1, 524288, 524288);
+        json_response($engine->assets()->content($id, $member, $offset, $length));
+    }
+    if ($path === '/api/v1/world' && $method === 'GET') json_response($engine->world()->snapshot(current_player_id()));
+    if ($path === '/api/v1/world/claim' && $method === 'POST') {
+        $body = request_json();
+        if (!is_string($body['findId'] ?? null) || !is_string($body['idempotencyKey'] ?? null)) throw new InvalidArgumentException('Find ID and idempotency key required.');
+        json_response($engine->world()->claim(current_player_id(), $body['findId'], $body['idempotencyKey']));
+    }
+    if ($path === '/api/v1/admin/shop-catalog' && $method === 'PUT') {
+        $actor = require_admin_mutation(); $body = request_json();
+        if (!is_array($body['listings'] ?? null)) throw new InvalidArgumentException('Shop listings must be an array.');
+        json_response($engine->saveShopCatalog($body['listings'], \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedRevision'), $actor));
+    }
     // A client flag, claimed playerId or copied sandbox ID grants no access.
     if ($path === '/api/v1/admin/playtest' && $method === 'GET') {
         json_response($engine->ownerPlaytest()->status(current_player_id()));

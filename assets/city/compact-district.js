@@ -8,6 +8,7 @@
   const CENTER=[-73.9865,40.698],EARTH=6378137,CIRCUMFERENCE=2*Math.PI*EARTH,perspectiveStates=new WeakMap(),badgeStates=new WeakMap(),buildingStates=new WeakMap(),poiPerspectiveStates=new WeakMap(),cameraLimitStates=new WeakMap(),coinRoofStates=new WeakMap();
   const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):null;
   const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptUrl.search,scriptUrl).href:null;
+  const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptUrl.search,scriptUrl).href:null;
   const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptUrl.search,scriptUrl).href:null;
   function mercator(p){const latitude=Math.max(-85,Math.min(85,Number(p[1])))*Math.PI/180;return[Number(p[0])*Math.PI/180*EARTH,Math.log(Math.tan(Math.PI/4+latitude/2))*EARTH];}
   function geographic(p){return[p[0]/EARTH*180/Math.PI,(2*Math.atan(Math.exp(p[1]/EARTH))-Math.PI/2)*180/Math.PI];}
@@ -177,11 +178,36 @@
     return {source:'mapbox-streets-v8',zoom:map.getZoom(),pitch:map.getPitch(),footprints:uniqueFootprints.size,renderedVolumeParts:volumes.length,buildingDetail:buildingStates.get(map)?.diagnostics()||null,footprintGeometryHash:hash([...geometryHashes].sort()),roads:uniqueRoads.size,visibleCoreIds,visibleCoreSymbolIds,visibleCoreIconIds,visibleCoreLabelIds,coreIconFeatures,reservationIds,corePins,tilesLoaded:map.areTilesLoaded?map.areTilesLoaded():null};
   }
   function controller(map){
-    let pins=[],landmarks=null,loading=null,disposed=false,visible=true,buildings=null,buildingsLoading=null;
+    let pins=[],landmarks=null,loading=null,disposed=false,visible=true,buildings=null,buildingsLoading=null,mapMedia=null,mapMediaSignature='',mapMediaLoading=null;
     const waits=new Set();
+    let bindingFeatures=null,bindingSignature='',bindingResult=null;
+    function bindServiceBuildings(){
+      const association=globalThis.ZoneServiceBuildings,features=map.getSource?.('district-complete-buildings')?.serialize?.()?.data?.features;
+      if(disposed||!association||!features?.length||!pins.length)return;
+      const before=JSON.stringify(pins.map(pin=>[pin.id,pin._lngLat]));
+      const signature=JSON.stringify(pins.map(pin=>[pin.id,pin._buildingSource||pin._lngLat]));
+      if(features!==bindingFeatures||signature!==bindingSignature){bindingFeatures=features;bindingSignature=signature;bindingResult=association.associate(pins,features);}
+      const result=association.apply(pins,bindingResult);
+      if(typeof document==='object'&&document.body){const diagnostic=JSON.stringify({source:result.source,complete:result.complete,unbound:result.unbound,associations:result.associations.map(({polygon,...a})=>a)});if(document.body.dataset.zoneServiceBuildings!==diagnostic)document.body.dataset.zoneServiceBuildings=diagnostic;}
+      // This runs in the existing idle recovery path. Re-publishing identical
+      // GeoJSON there would trigger another idle forever and prevent settling.
+      if(before!==JSON.stringify(pins.map(pin=>[pin.id,pin._lngLat])))map.fire?.('zone-landmarks-ready');
+      syncMapMedia();
+    }
+    function syncMapMedia(){
+      if(disposed||!mapMediaUrl)return;
+      const bindings=pins.filter(pin=>/^[a-f0-9]{64}$/.test(pin.mediaAsset||'')&&pin._buildingAssociation?.insideRoof);
+      const signature=JSON.stringify(bindings.map(pin=>[pin.id,pin.mediaAsset,pin._lngLat,pin._buildingAssociation.providerId]));
+      if(signature===mapMediaSignature)return;mapMediaSignature=signature;mapMedia?.dispose();mapMedia=null;
+      if(!bindings.length)return;
+      // An earlier shader preparation may still own the one custom map layer.
+      // Let its stale-result disposal finish before installing its replacement.
+      const previous=mapMediaLoading;
+      mapMediaLoading=Promise.resolve(previous).catch(()=>{}).then(()=>{if(disposed||signature!==mapMediaSignature)return;return import(mapMediaUrl);}).then(module=>{if(!module||disposed||signature!==mapMediaSignature)return;return module.createMapMedia(map,bindings,()=>!disposed&&signature===mapMediaSignature);}).then(value=>{if(!value)return;if(disposed||signature!==mapMediaSignature)value.dispose();else{mapMedia=value;value.setVisible(visible);}}).catch(error=>{if(!disposed&&signature===mapMediaSignature&&typeof document==='object'&&document.body)document.body.dataset.zoneMapMedia=JSON.stringify({status:'error',error:String(error.message||error),representation:'matched-service-rooftop-attachment'});});
+    }
     return {
-      setDestinations(next){if(!disposed)pins=Array.isArray(next)?next:[];},
-      destinationHeight(id){const landmark=landmarks?.diagnostics?.landmarks?.find(value=>value.id===id);return landmark&&Number.isFinite(landmark.heightMeters)?landmark.heightMeters+2:0;},
+      setDestinations(next){if(!disposed){pins=Array.isArray(next)?next:[];bindServiceBuildings();}},
+      destinationHeight(id){const landmark=landmarks?.diagnostics?.landmarks?.find(value=>value.id===id);return landmark&&Number.isFinite(landmark.heightMeters)?(landmark.symbolOffset??landmark.heightMeters+2):0;},
       whenReady(){
         if(disposed)return Promise.resolve();
         return new Promise((resolve,reject)=>{
@@ -193,17 +219,19 @@
           waits.add(cancel);timer=setTimeout(()=>{cleanup();reject(new Error('District tiles are still loading'));},15000);
           map.on('idle',finish);map.triggerRepaint?.();
         }).then(()=>buildingsLoading).then(()=>{
-          if(disposed||!landmarksUrl||!pins.length||landmarks)return;
+          bindServiceBuildings();
+          if(disposed)return;
+          if(!landmarksUrl||!pins.length||landmarks)return mapMediaLoading;
           if(!loading)loading=import(landmarksUrl).then(module=>{
             if(disposed)return;
             return module.createLandmarks(map,pins,()=>!disposed);
           }).then(value=>{
             if(!value)return;if(disposed)value.dispose();else{landmarks=value;value.setVisible(visible);map.fire?.('zone-landmarks-ready');}
           }).catch(error=>{loading=null;if(!disposed)throw error;});
-          return loading;
+          return Promise.all([loading,mapMediaLoading]);
         });
       },
-      setVisible(value){if(disposed)return;visible=!!value;landmarks?.setVisible(visible);if(!value)map.stop?.();},
+      setVisible(value){if(disposed)return;visible=!!value;landmarks?.setVisible(visible);mapMedia?.setVisible(visible);if(!value)map.stop?.();},
       setTerritories(features){
         if(disposed||buildingsLoading||buildings||!buildingsUrl||!features?.length)return;
         const points=[];function visit(value){if(typeof value?.[0]==='number'){if(Number.isFinite(value[0])&&Number.isFinite(value[1]))points.push(value);}else if(Array.isArray(value))value.forEach(visit);}
@@ -211,7 +239,7 @@
         const bounds=[[Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1]))],[Math.max(...points.map(p=>p[0])),Math.max(...points.map(p=>p[1]))]];
         buildingsLoading=import(buildingsUrl).then(module=>{if(disposed)return;buildings=module.createDistrictBuildings(map,bounds,globalThis.mapboxgl?.accessToken);buildingStates.set(map,buildings);return buildings.ready;}).catch(error=>{if(typeof document==='object'&&!disposed){document.body.dataset.zoneDistrictBuildings=JSON.stringify({status:'degraded',complete:false,stage:'module-load-failed'});const notice=document.getElementById('districtDetailStatus');if(notice){notice.hidden=false;notice.textContent=document.documentElement.lang==='ar'?'تعذر تحميل تفاصيل المباني. الخريطة الأساسية متاحة.':'Building detail could not load. The base map remains available.';}}});
       },
-      dispose(){if(disposed)return;disposed=true;waits.forEach(cancel=>cancel());landmarks?.dispose();buildings?.dispose();buildingStates.delete(map);}
+      dispose(){if(disposed)return;disposed=true;waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
   return {CENTER,mercator,geographic,createProjection,createStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE};

@@ -199,7 +199,12 @@ check(/type\s*:\s*['"]circle['"]/.test(poiLayers.halo)
   'POI halos retain readable screen size and orientation while anchored to geographic locations.');
 check(/type\s*:\s*['"]symbol['"]/.test(poiLayers.icon) && /['"]icon-image['"]/.test(poiLayers.icon),
   'POI icon layer must render registered Mapbox images, not DOM glyphs.');
-check(/['"]icon-size['"]\s*:\s*\.74/.test(poiLayers.icon), 'Overview icons retain readable screen size at every zoom.');
+const overviewSizeSource = map.match(/var overviewCoinSize\s*=\s*(\[[^;]+\]);/)?.[1];
+let overviewSize;
+try { overviewSize = JSON.parse(overviewSizeSource.replace(/'/g, '"').replace(/([,\s])\.(\d)/g, (_all, prefix, digit) => prefix + '0.' + digit)); } catch { overviewSize = null; }
+check(/['"]icon-size['"]\s*:\s*overviewCoinSize/.test(poiLayers.icon)
+  && JSON.stringify(overviewSize) === JSON.stringify(['interpolate', ['linear'], ['zoom'], 13.2, .42, 15.1, .52, 16, .74]),
+  'Overview coins use the tested zoom scale while retaining full size on close inspection.');
 check(/['"]icon-allow-overlap['"]\s*:\s*true/.test(poiLayers.icon)
     && /['"]icon-ignore-placement['"]\s*:\s*false/.test(poiLayers.icon),
   'The eight core POI glyphs must remain visible and reserve shared collision space for lower priority labels.');

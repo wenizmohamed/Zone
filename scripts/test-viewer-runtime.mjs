@@ -9,6 +9,7 @@ import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
 import { computeWeaponFrame, installWeaponPresentation, createStoredZip, createWeaponObjArchive } from '../dist/weapon-presentation.js';
 import { inspectWeaponObject } from '../dist/weapon-assets.js';
+import { uploadedAssetId, loadUploadedCharacter } from '../dist/uploaded-equipment108.mjs';
 import { OBJExporter } from '../lib/three184/OBJExporter.js';
 
 function readViewer(name) {
@@ -231,17 +232,21 @@ for (const outcome of ['resolve', 'reject']) {
     let settle;
     const pending = new Promise((resolve, reject) => { settle = outcome === 'resolve' ? resolve : reject; });
     const status = { hidden: true, textContent: '' }, logged = [], requests = [];
-    const currentModel = { userData: { outfit: 'Casual_Hoodie' }, traverse() {} };
+    const currentModel = { userData: { outfit: 'Casual_Hoodie', zoneRequestedCharacterAsset: null }, traverse() {} };
     const ctx = context(character.template, ['outfitFile', 'paintOutfit', 'characterRequest', 'loadCharacter'], {
       state: { outfit: 'suit' }, model: currentModel,
       OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' },
-      characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null,
+      characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null, characterLoadingAsset: null, characterMediaAbort: null,
+      uploadedAssetId,
       GLTFLoader: class { loadAsync(path) { requests.push(path); return pending; } },
       $: () => status, lang: 'en', console: { error: (...values) => logged.push(values) }
     });
     const load = ctx.loadCharacter();
     assert.equal(status.hidden, false);
     assert.equal(ctx.characterLoadingFile, 'Suit');
+    ctx.paintOutfit(); await Promise.resolve();
+    assert.equal(requests.length, 1, 'the same pending wardrobe selection must share one request');
+    assert.equal(ctx.characterLoadingAsset, null, 'native wardrobe loading has no uploaded asset identity');
     ctx.state.outfit = 'street';
     ctx.paintOutfit();
     assert.equal(status.hidden, true, 'the visible valid outfit must not be covered by a stale loader');
@@ -257,6 +262,68 @@ for (const outcome of ['resolve', 'reject']) {
     assert.equal(ctx.characterCache.has('Suit'), outcome === 'resolve', 'failed cache entries remain retryable');
   });
 }
+
+function failedCharacterHarness(characterMediaAsset) {
+  const uploadedRequests = [], nativeRequests = [], pending = [], errors = [];
+  const nodes = { load: { hidden: true }, 'character-retry': { hidden: true } };
+  const ctx = context(character.template, ['outfitFile', 'paintOutfit', 'characterRequest', 'loadCharacter'], {
+    state: { outfit: 'suit', fac: 'none', characterMediaAsset }, model: null,
+    OUTFIT_FILES: { street: 'Casual_Hoodie', suit: 'Suit', tactical: 'Swat' },
+    characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null, characterLoadingAsset: null, characterMediaAbort: null,
+    uploadedAssetId, AbortController,
+    // Exercise the real adapter and native fallback, failing only asset I/O.
+    loadUploadedCharacter: (id, fallback, options) => loadUploadedCharacter(id, fallback, { ...options, loader: async requested => {
+      uploadedRequests.push(requested); throw new Error('Isolated uploaded asset unavailable');
+    } }),
+    GLTFLoader: class { loadAsync(path) { nativeRequests.push(path); return Promise.reject(new Error('Isolated native asset unavailable')); } },
+    publishUploadedEquipment() {}, disposeCharacterResources() { assert.fail('A failed request has no scene resources to dispose'); },
+    $: id => nodes[id], lang: 'en', console: { error: (...values) => errors.push(values) },
+  });
+  const originalLoad = ctx.loadCharacter;
+  ctx.loadCharacter = (...args) => { const request = originalLoad(...args); pending.push(request); return request; };
+  return { ctx, nodes, uploadedRequests, nativeRequests, errors, drain: () => Promise.all(pending) };
+}
+
+test('an unchanged failed uploaded character stays sticky through unrelated parent repaints', async () => {
+  const idA = 'a'.repeat(64), h = failedCharacterHarness(idA); await h.ctx.loadCharacter();
+  assert.equal(h.ctx.document.body.dataset.zoneCharacterRequestedAsset, idA, 'The actual load function records the failed uploaded identity.');
+  assert.equal(h.ctx.document.body.dataset.zoneCharacterAssetState, 'error');
+  for (let i = 0; i < 25; i++) { h.ctx.state.fac = i % 2 ? 'vipers' : 'none'; h.ctx.paintOutfit(); }
+  await h.drain(); assert.deepEqual(h.uploadedRequests, [idA]); assert.equal(h.nativeRequests.length, 1);
+  assert.equal(h.ctx.characterLoadSeq, 1); assert.equal(h.errors.length, 1); assert.equal(h.nodes['character-retry'].hidden, false);
+});
+
+test('switching a failed uploaded character from asset A to B retries B within the same outfit', async () => {
+  const idA = 'a'.repeat(64), idB = 'b'.repeat(64), h = failedCharacterHarness(idA); await h.ctx.loadCharacter();
+  h.ctx.state.characterMediaAsset = idB; h.ctx.paintOutfit(); await h.drain();
+  assert.deepEqual(h.uploadedRequests, [idA, idB]); assert.equal(h.nativeRequests.length, 2); assert.equal(h.ctx.state.outfit, 'suit');
+  assert.equal(h.ctx.document.body.dataset.zoneCharacterRequestedAsset, idB); assert.equal(h.ctx.characterLoadSeq, 2);
+  for (let i = 0; i < 25; i++) h.ctx.paintOutfit(); await h.drain();
+  assert.deepEqual(h.uploadedRequests, [idA, idB], 'The newly failed B remains sticky rather than auto-retrying on every heartbeat.');
+  assert.equal(h.ctx.characterLoadSeq, 2);
+});
+
+test('removing a failed uploaded character identity retries the native wardrobe without another upload read', async () => {
+  const idA = 'a'.repeat(64), h = failedCharacterHarness(idA); await h.ctx.loadCharacter();
+  delete h.ctx.state.characterMediaAsset; h.ctx.paintOutfit(); await h.drain();
+  assert.deepEqual(h.uploadedRequests, [idA]); assert.equal(h.nativeRequests.length, 2);
+  assert.ok(h.nativeRequests.every(path => path === '../assets/character/quaternius/Suit.glb'));
+  assert.equal(h.ctx.characterLoadingAsset, null); assert.equal(h.ctx.document.body.dataset.zoneCharacterRequestedAsset, '');
+  assert.equal(h.ctx.characterLoadSeq, 2); h.ctx.paintOutfit(); await h.drain(); assert.equal(h.nativeRequests.length, 2);
+});
+
+test('a different outfit can leave the failed uploaded identity while unchanged native failures retain the old marker contract', async () => {
+  const idA = 'a'.repeat(64), uploaded = failedCharacterHarness(idA); await uploaded.ctx.loadCharacter();
+  uploaded.ctx.state.outfit = 'street'; uploaded.ctx.paintOutfit(); await uploaded.drain();
+  assert.deepEqual(uploaded.uploadedRequests, [idA, idA]); assert.equal(uploaded.nativeRequests.length, 2);
+  assert.equal(uploaded.nativeRequests[1], '../assets/character/quaternius/Casual_Hoodie.glb');
+  assert.equal(uploaded.ctx.document.body.dataset.zoneCharacterRequestedFile, 'Casual_Hoodie');
+  const native = failedCharacterHarness(undefined); await native.ctx.loadCharacter();
+  assert.equal(native.ctx.document.body.dataset.zoneCharacterRequestedAsset, '');
+  delete native.ctx.document.body.dataset.zoneCharacterRequestedAsset;
+  for (let i = 0; i < 25; i++) native.ctx.paintOutfit(); await native.drain();
+  assert.equal(native.nativeRequests.length, 1); assert.deepEqual(native.uploadedRequests, []); assert.equal(native.ctx.characterLoadSeq, 1);
+});
 
 test('All eight catalog family representatives keep their authored grip centered and barrels away from the wrist', async () => {
   const gltf = await wardrobeGeometry('Suit'), root = gltf.scene;

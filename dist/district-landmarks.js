@@ -4,7 +4,7 @@ import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 // A deliberately small authored kit at actual game destinations. These models
 // are cosmetic service representations, never ownership/collision geometry.
 const ROOT=new URL('../assets/city/kaykit/',import.meta.url);
-const KIT={bank:{model:'building_E_withoutBase',width:24,rotation:0,color:'#c0b399'},hospital:{model:'building_G_withoutBase',width:24,rotation:Math.PI/2,color:'#d1c9bb'},gym:{model:'building_C_withoutBase',width:18,rotation:0,color:'#87957a'},hq:{model:'building_A_withoutBase',width:26,rotation:Math.PI/2,color:'#8c9295'},market:{model:'building_C_withoutBase',width:20,rotation:Math.PI/2,color:'#bd9f6a'}};
+const KIT={bank:{model:'building_E_withoutBase',width:24,rotation:0,color:'#c0b399'},hospital:{model:'building_G_withoutBase',width:24,rotation:Math.PI/2,color:'#d1c9bb'},gym:{model:'building_C_withoutBase',width:18,rotation:0,color:'#87957a'},hq:{model:'building_A_withoutBase',width:26,rotation:Math.PI/2,color:'#8c9295'},market:{model:'building_C_withoutBase',width:20,rotation:Math.PI/2,color:'#bd9f6a'},home:{model:'building_A_withoutBase',width:20,rotation:0,color:'#9b8872'},jail:{model:'building_E_withoutBase',width:22,rotation:0,color:'#7f8883'},alley:{model:'building_C_withoutBase',width:18,rotation:0,color:'#9b6d56'},shop:{model:'building_C_withoutBase',width:17,rotation:0,color:'#bd9f6a'}};
 const ID='zone-authored-landmarks';
 
 export async function createLandmarks(map,pins,isActive=()=>true){
@@ -13,7 +13,10 @@ export async function createLandmarks(map,pins,isActive=()=>true){
   if(map.getLayer(ID))throw Error('District landmark layer already installed');
   const loader=new GLTFLoader(),assets=new Map(),ownedGeometry=new Set(),ownedMaterial=new Set(),ownedTexture=new Set();
   const release=()=>{ownedGeometry.forEach(v=>v.dispose());ownedMaterial.forEach(v=>v.dispose());ownedTexture.forEach(v=>{v.source?.data?.close?.();v.dispose();});ownedGeometry.clear();ownedMaterial.clear();ownedTexture.clear();assets.clear();};
-  const names=[...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
+  // A provider-associated service already has its real building. Adding a
+  // second kit building at ground level would overlap two roofs and make
+  // native symbol elevation float the coin above both. Use only a roof sign.
+  const names=selected.every(pin=>pin._buildingAssociation?.insideRoof)?[]:[...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
   let disposed=false,visible=true,prepared=false,preparing,scene,camera,renderer,origin,local,groups=[];
   const diagnostics={status:'loading',license:'KayKit City Builder Bits CC0',landmarks:[],calls:0,triangles:0,geometries:0,textures:0,renderMs:0,shadows:0,postPasses:0,continuousAnimation:false};
   const publish=()=>{if(typeof document==='object')document.body.dataset.zoneDistrictLandmarks=JSON.stringify(diagnostics);};
@@ -55,6 +58,20 @@ export async function createLandmarks(map,pins,isActive=()=>true){
     selected.forEach(pin=>{
       const spec=KIT[pin.id],coord=mapboxgl.MercatorCoordinate.fromLngLat(pin._lngLat,0),group=new THREE.Group();
       group.name='service-'+pin.id;group.position.set((coord.x-origin.x)/meter,.3,(coord.y-origin.y)/meter);group.rotation.y=spec.rotation;
+      if(pin._buildingAssociation?.insideRoof){
+        const association=pin._buildingAssociation,roof=association.heightMeters,room=Math.max(1,Math.min(6,association.clearanceMeters*1.3));
+        const signGeometry=new THREE.BoxGeometry(room,.35,room*.6),signMaterial=new THREE.MeshStandardMaterial({color:spec.color,roughness:.85,metalness:.1});
+        ownedGeometry.add(signGeometry);ownedMaterial.add(signMaterial);
+        const sign=new THREE.Mesh(signGeometry,signMaterial);sign.position.set(0,roof+.1,0);group.add(sign);
+        if(pin.id==='hospital'){
+          const crossGeometry=new THREE.BoxGeometry(room*.25,.09,room*.65),crossMaterial=new THREE.MeshBasicMaterial({color:'#b44f40'});ownedGeometry.add(crossGeometry);ownedMaterial.add(crossMaterial);
+          const a=new THREE.Mesh(crossGeometry,crossMaterial);a.position.y=roof+.31;group.add(a);const b=a.clone();b.rotation.y=Math.PI/2;group.add(b);
+        }
+        scene.add(group);groups.push(group);
+        diagnostics.landmarks.push({id:pin.id,coordinates:pin._lngLat.slice(),widthMeters:room,heightMeters:roof+.6,symbolOffset:2,
+          nativeRoofHeight:roof,providerId:association.providerId,insideRoof:true,model:'actual-provider-building-with-roof-sign',cosmetic:true});
+        return;
+      }
       const building=model(spec.model,spec.width,spec.color);group.add(building);addMark(building,pin.id,spec.width*.55);
       const contact=new THREE.Mesh(contactGeometry,contactMaterial);contact.rotation.x=-Math.PI/2;contact.scale.set(spec.width*1.08,spec.width*1.04,1);contact.position.y=.02;group.add(contact);
       if(pin.id==='hq'){const tower=model('watertower',8);tower.position.set(-9,0,16);group.add(tower);}

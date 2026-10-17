@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin.css?v=97">
+  <link rel="stylesheet" href="/assets/ui/studio-media.css?v=108">
 </head>
 <body>
   <dialog id="adminSessionDialog" class="admin-session-dialog" aria-labelledby="adminSessionTitle">
@@ -198,6 +199,17 @@
                 <label><span data-copy="crimeLevelRequired">Level required</span><input id="crimeLevel" type="number" min="1" max="100" step="1" dir="ltr" required></label>
                 <label class="toggle-row"><input id="crimeEnabled" type="checkbox" checked><span data-copy="enabledInGame">Enabled in game</span></label>
               </div>
+              <fieldset class="crime-rules"><legend data-media-copy="crimeRules">Tools, mastery & consequences</legend><div class="form-grid">
+                <label><span data-media-copy="requiredTool">Required item ID (optional)</span><input id="crimeTool" maxlength="64" dir="ltr"></label>
+                <label><span data-media-copy="toolQuantity">Required quantity</span><input id="crimeToolQty" type="number" min="1" max="1000" step="1"></label>
+                <label class="toggle-row"><input id="crimeToolConsume" type="checkbox"><span data-media-copy="consumeTool">Consume tool on attempt</span></label>
+                <label><span data-media-copy="mastery">Mastery per success</span><input id="crimeMastery" type="number" min="0" max="100" step="1"></label>
+                <label><span data-media-copy="chainWindow">Chain window (seconds)</span><input id="crimeChainWindow" type="number" min="0" max="86400" step="1"></label>
+                <label><span data-media-copy="chainBonus">Chain cash bonus (basis points)</span><input id="crimeChainBonus" type="number" min="0" max="2000" step="1"></label>
+                <label><span data-media-copy="critical">Critical failure chance (basis points)</span><input id="crimeCritical" type="number" min="0" max="10000" step="1"></label>
+                <label><span data-media-copy="jailSeconds">Jail consequence (seconds)</span><input id="crimeJail" type="number" min="0" max="86400" step="1"></label>
+                <label><span data-media-copy="hospitalSeconds">Hospital consequence (seconds)</span><input id="crimeHospital" type="number" min="0" max="86400" step="1"></label>
+              </div><p data-media-copy="rulesHint">10,000 basis points = 100%. Publish saved rules before players see them.</p></fieldset>
               <button class="button primary" type="submit" id="saveCrimeButton" data-copy="saveCrime">Save crime</button>
               <button class="button ghost" type="button" id="discardCrimeButton" data-copy="discardCrime">Discard crime edits</button>
             </form>
@@ -297,7 +309,8 @@
     </div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/admin.js?v=105" defer></script>
+  <script src="/admin.js?v=108" defer></script>
   <script src="/admin-studio.js?v=105" defer></script>
+  <script src="/admin-assets.js?v=108" defer></script>
 </body>
 </html>

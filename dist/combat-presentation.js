@@ -131,9 +131,9 @@ export function installCombatStage(T, { scene, renderer }) {
 }
 
 export async function mountCombatPresentation({ document: doc = document, window: win = window } = {}) {
-  const [T, { GLTFLoader }, { OBJLoader }, { MTLLoader }, art, grip, poses, weapons, armor] = await Promise.all([
+  const [T, { GLTFLoader }, { OBJLoader }, { MTLLoader }, art, grip, poses, weapons, armor, uploaded] = await Promise.all([
     import('../lib/three184/three.module.js'), import('../lib/three184/GLTFLoader.js'), import('../lib/three184/OBJLoader.js'), import('../lib/three184/MTLLoader.js'),
-    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=99'), import('./character-armor.mjs?v=107-fit')
+    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=99'), import('./character-armor.mjs?v=107-fit'), import('./uploaded-equipment108.mjs?v=108')
   ]);
   const $ = id => doc.getElementById(id), canvas = $('combat-canvas');
   const renderer = new T.WebGLRenderer({ canvas, antialias: true });
@@ -143,7 +143,9 @@ export async function mountCombatPresentation({ document: doc = document, window
   const camera = new T.PerspectiveCamera(36, 1, .1, 35);
   const stage = installCombatStage(T, { scene, renderer });
   stage.ready.catch(() => { if (!disposed) doc.body.dataset.stage = 'material-error'; });
-  const weaponLoader = weapons.createWeaponAssetLoader({ THREE: T, GLTFLoader, OBJLoader, MTLLoader, catalog: win.ZONE_WEAPONS || {}, materials: win.ZONE_WEAPON_MATS || {}, pack: win.ZONE_WEAPON_PACK || {}, baseURL: new URL('../assets/weapons/', import.meta.url) });
+  const publishUploaded = receipt => { doc.body.dataset['zoneUploaded' + receipt.slot[0].toUpperCase() + receipt.slot.slice(1)] = JSON.stringify(receipt); };
+  const originalWeaponLoader = weapons.createWeaponAssetLoader({ THREE: T, GLTFLoader, OBJLoader, MTLLoader, catalog: win.ZONE_WEAPONS || {}, materials: win.ZONE_WEAPON_MATS || {}, pack: win.ZONE_WEAPON_PACK || {}, baseURL: new URL('../assets/weapons/', import.meta.url) });
+  const weaponLoader = uploaded.createUploadedWeaponLoader(originalWeaponLoader, { publish: publishUploaded });
   const actors = {}, sources = new Set(), audioSources = new Set(), buffers = new Map();
   let packet = null, lang = 'en', frame = null, disposed = false, visible = true, inView = true, lastFrame = 0, elapsed = 0, lastMetrics = 0, audio = null, audioEnabled = false, loadSequence = 0, requestedSignature = null, lastFeedback = null;
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)');
@@ -174,24 +176,26 @@ export async function mountCombatPresentation({ document: doc = document, window
     action.play(); if (previous && previous !== action) { previous.fadeOut(.12); action.fadeIn(.12); }
     actor.action = action; actor.motion = motion;
   };
-  async function loadActor(side, outfit, weapon) {
+  async function loadActor(side, outfit, weapon, equipment = {}) {
     const file = ({ suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' })[outfit] || 'Suit';
     const token = loadSequence;
-    const gltf = await new GLTFLoader().loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href);
-    if (disposed || token !== loadSequence) { art.disposeCharacterResources([gltf.scene]); return; }
-    art.validateCharacterWardrobe(T, gltf); art.prepareCharacterArt(T, gltf.scene);
+    const retained = () => new GLTFLoader().loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href);
+    const gltf = side === 'player' && equipment.characterMediaAsset ? await uploaded.loadUploadedCharacter(equipment.characterMediaAsset, retained, { publish: publishUploaded, draft: equipment.draft === true }) : await retained();
+    if (disposed || token !== loadSequence) { if (gltf.uploadedMedia) gltf.uploadedMedia.dispose(); else art.disposeCharacterResources([gltf.scene]); return; }
+    art.validateCharacterWardrobe(T, gltf); if (!gltf.uploadedMedia) art.prepareCharacterArt(T, gltf.scene);
     const root = gltf.scene, clips = Object.fromEntries(gltf.animations.map(clip => [clip.name, clip])); root.userData.outfit = file;
     root.traverse(object => { if (object.isMesh) { object.castShadow = true; object.frustumCulled = false; } });
     root.position.x = side === 'player' ? -.75 : .75; root.rotation.y = side === 'player' ? .68 : -.68;
     scene.add(root); sources.add(root);
-    const actor = { root, clips, mixer: new T.AnimationMixer(root), weapon: weapon || 'fists', signature: `${outfit}:${weapon}`, materials: [], impact: 0 };
+    const actor = { root, clips, mixer: new T.AnimationMixer(root), weapon: weapon || 'fists', signature: `${outfit}:${weapon}`, materials: [], impact: 0, uploadedMedia: gltf.uploadedMedia };
     root.traverse(object => { for (const material of object.isMesh ? (Array.isArray(object.material) ? object.material : [object.material]) : []) if (material.emissive && !actor.materials.some(entry => entry.material === material)) actor.materials.push({ material, emissive: material.emissive.clone(), intensity: material.emissiveIntensity }); });
-    actor.armor = armor.createArmorController({ THREE: T, loadSource: loadArmorSource, publish: receipt => { if (side === 'player') doc.body.dataset.zoneCombatArmor = JSON.stringify(receipt); } });
+    const nativeArmor = armor.createArmorController({ THREE: T, loadSource: loadArmorSource, publish: receipt => { if (side === 'player') doc.body.dataset.zoneCombatArmor = JSON.stringify(receipt); } });
+    actor.armor = equipment.armorMediaAsset ? uploaded.createUploadedArmorController(nativeArmor, { publish: receipt => { if (side === 'player') { publishUploaded(receipt); doc.body.dataset.zoneCombatArmor = JSON.stringify(receipt); } } }) : nativeArmor;
     actors[side] = actor; play(actor, 'guard'); actor.mixer.update(.01); root.updateMatrixWorld(true);
     actor.grip = grip.prepareCharacterGrip(T, root, clips); actor.pose = poses.prepareWeaponPose(T, root, actor.grip);
     actor.mixer.addEventListener('finished', () => { if (!disposed && actor.motion !== 'down') play(actor, 'guard'); });
     if (side === 'player' && weapon && weapon !== 'fists') {
-      const mesh = await weaponLoader.load(weapon);
+      const mesh = await weaponLoader.load(weapon, equipment.weaponMediaAsset, { draft: equipment.draft === true });
       if (disposed || token !== loadSequence || actors[side] !== actor) { weaponLoader.release(mesh); return; }
       if (mesh) { const fit = mesh.userData.zoneWeaponAsset; actor.mesh = mesh; actor.held = grip.attachHeldWeapon(T, actor.grip, mesh, fit.gripPoint, fit.axis, fit.forward); }
     }
@@ -201,7 +205,7 @@ export async function mountCombatPresentation({ document: doc = document, window
   function releaseActor(actor) {
     if (!actor) return; actor.armor?.dispose(); actor.mixer.stopAllAction(); actor.mixer.uncacheRoot(actor.root);
     if (actor.held) actor.held.parent?.remove(actor.held); weaponLoader.release(actor.mesh);
-    scene.remove(actor.root); sources.delete(actor.root); art.disposeCharacterResources([actor.root]);
+    scene.remove(actor.root); sources.delete(actor.root); if (actor.uploadedMedia) actor.uploadedMedia.dispose(); else art.disposeCharacterResources([actor.root]);
   }
   const sound = kind => {
     if (!audioEnabled || audio?.state !== 'running' || !buffers.has(kind) || !visible) return;
@@ -252,12 +256,12 @@ export async function mountCombatPresentation({ document: doc = document, window
     else if (languageChanged) status(lastFeedback ? (lastFeedback.replay ? (lang === 'ar' ? 'إعادة عرض: ' : 'Replay: ') : '') + combatEventLabel(lastFeedback, names(), lang) : title);
     if (encounter) playback.ingest(encounter);
     actors.player?.armor?.update(data.player || {}, actors.player.root);
-    const signature = `${data.player?.outfit || 'suit'}:${data.player?.weapon || 'fists'}`;
+    const signature = JSON.stringify([data.player?.outfit || 'suit', data.player?.weapon || 'fists', data.player?.characterMediaAsset || null, data.player?.weaponMediaAsset || null, data.player?.armorMediaAsset || null]);
     if (requestedSignature !== signature) {
       requestedSignature = signature;
       loadSequence++; releaseActor(actors.player); releaseActor(actors.opponent); delete actors.player; delete actors.opponent;
       status(lang === 'ar' ? 'تحميل شخصيات المواجهة...' : 'Loading encounter rigs...');
-      try { await Promise.all([loadActor('player', data.player?.outfit || 'suit', data.player?.weapon || 'fists'), loadActor('opponent', 'street', 'fists')]); if (!disposed) { actors.opponent.root.visible = !!packet?.encounter; doc.body.dataset.ready = 'true'; $('combat-retry').hidden = true; status(title); } }
+      try { await Promise.all([loadActor('player', data.player?.outfit || 'suit', data.player?.weapon || 'fists', data.player || {}), loadActor('opponent', 'street', 'fists')]); if (!disposed && actors.opponent) { actors.opponent.root.visible = !!packet?.encounter; doc.body.dataset.ready = 'true'; $('combat-retry').hidden = true; status(title); } }
       catch (error) { if (!disposed) { doc.body.dataset.ready = 'error'; $('combat-retry').hidden = false; status(lang === 'ar' ? 'تعذر تحميل العرض. سجل القتال وأزراره ما زالت متاحة.' : 'Scene could not load. Combat log and controls remain available.'); } }
     }
     updateVisibility();

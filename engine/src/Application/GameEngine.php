@@ -24,6 +24,8 @@ use Zone\Engine\Core\Game\PlayerMarketService;
 use Zone\Engine\Core\Game\FamilyActivityService;
 use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
 use Zone\Engine\Core\Game\TravelService;
+use Zone\Engine\Core\Game\WorldDirector;
+use Zone\Engine\Core\Media\AssetLibrary;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
 use Zone\Engine\Core\Publishing\ReleaseManager;
@@ -218,7 +220,20 @@ final class GameEngine
         return [
             'release' => $release,
             'content' => $content,
+            'mediaBindings' => $release['manifest']['mediaBindings'] ?? [],
+            'mediaAssets' => $release['manifest']['mediaAssets'] ?? [],
+            'worldPolicy' => WorldDirector::normalizePolicy($release['manifest']['worldPolicy'] ?? []),
         ];
+    }
+
+    public function assets(): AssetLibrary
+    {
+        return new AssetLibrary($this->database);
+    }
+
+    public function world(): WorldDirector
+    {
+        return new WorldDirector($this->database, $this->events);
     }
 
     public function releaseHistory(): array
@@ -306,6 +321,11 @@ final class GameEngine
         return (new GameplayCatalog($this->database, $this->events))->update($category, $id, $changes, $expectedRevision, $actor);
     }
 
+    public function saveShopCatalog(array $listings, int $expectedRevision, string $actor): array
+    {
+        return (new GameplayCatalog($this->database, $this->events))->updateMarket($listings, $expectedRevision, $actor);
+    }
+
     public function createGameplayCatalog(string $category, string $id, array $definition, int $expectedRevision, string $actor): array
     {
         return (new GameplayCatalog($this->database, $this->events))->create($category, $id, $definition, $expectedRevision, $actor);
@@ -360,6 +380,7 @@ final class GameEngine
             }
 
             $correlationId = bin2hex(random_bytes(16));
+            $preparation = $progression->prepareCrime($playerId, $crime, $correlationId);
             $roll = random_int(1, 10000);
             $territoryBonusBp = min(1500, $this->territoryBonus($playerId, 'crime_bonus'));
             $successThreshold = min(10000, (int) $crime['success_basis_points'] + $territoryBonusBp);
@@ -368,6 +389,7 @@ final class GameEngine
             }
             $success = $roll <= $successThreshold;
             $cashReward = $success ? random_int((int) $crime['cash_min'], (int) $crime['cash_max']) : 0;
+            if ($cashReward > 0) $cashReward += (int) floor($cashReward * $preparation['chainBonusBasisPoints'] / 10000);
             $xpReward = $success ? (int) $crime['xp_reward'] : 0;
             $newCash = (int) $player['cash'] + $cashReward;
             $newXp = (int) $player['xp'] + $xpReward;
@@ -383,15 +405,36 @@ final class GameEngine
             $levelUp = $this->leveling->sync($playerId, $correlationId);
             $this->armCooldown($playerId, 'crime');
             $this->daily->recordProgress($playerId, 'crimes', 1);
-            $progression->recordCrime($playerId, $crimeId, $success, $xpReward);
+            $crimeProgress = $progression->recordCrime($playerId, $crimeId, $success, $xpReward, $crime);
             $loot = null;
             if ($success && ($crime['category'] ?? null) === 'search' && random_int(1, 100) <= 12) {
                 $progression->grantItem($playerId, 'sand', 1, $correlationId, 'crime.loot');
                 $loot = ['itemId' => 'sand', 'quantity' => 1];
             }
-            if (!$success && isset($crime['failure'], $crime['penalty_minutes'])) {
+            $penalty = null;
+            $critical = !$success && random_int(1, 10000) <= (int) ($crime['critical_failure_basis_points'] ?? 0);
+            if ($critical) {
+                $jail = (int) ($crime['jail_seconds'] ?? 0); $hospital = (int) ($crime['hospital_seconds'] ?? 0);
+                if ($jail > 0 || $hospital > 0) {
+                    $type = $jail > 0 && ($hospital === 0 || random_int(0, 1) === 0) ? 'jail' : 'hosp';
+                    $seconds = $type === 'jail' ? $jail : $hospital;
+                    $progression->applyPenaltySeconds($playerId, $type, $seconds);
+                    $penalty = ['type' => $type, 'seconds' => $seconds, 'minutes' => (int) ceil($seconds / 60)];
+                }
+            } elseif (!$success && (int) ($crime['jail_seconds'] ?? 0) === 0 && (int) ($crime['hospital_seconds'] ?? 0) === 0 && isset($crime['failure'], $crime['penalty_minutes']) && in_array($crime['failure'], ['jail', 'hosp'], true)) {
+                // Old authored variants retain their original consequences.
+                $critical = true;
                 $progression->applyPenalty($playerId, (string) $crime['failure'], (int) $crime['penalty_minutes']);
+                $penalty = ['type' => $crime['failure'], 'minutes' => (int) $crime['penalty_minutes']];
             }
+            $outcome = $success ? 'success' : ($critical ? 'critical_failure' : 'failure');
+            $narrative = match ($outcome) {
+                'success' => ['en' => 'Clean hands, dirty money. Your contact counts the take and the street remembers your work.', 'ar' => 'شغل نظيف وفلوس وسخة. رجالك يعدّون الغلة، والشارع يحفظ اسمك.'],
+                'critical_failure' => ($penalty['type'] ?? '') === 'jail'
+                    ? ['en' => 'The lookout missed the blue lights. The cuffs close before you reach the corner.', 'ar' => 'المراقب تأخر عن التحذير. الأصفاد سبقتك قبل ما توصل الزاوية.']
+                    : ['en' => 'The job turned violent. Your crew gets you to a hospital bed instead of the payday.', 'ar' => 'الشغلة انقلبت عنف. رجالك وصلوك سرير المستشفى بدل الغلة.'],
+                default => ['en' => 'Bad timing. You walk away empty-handed before the street gets loud.', 'ar' => 'التوقيت خانك. انسحبت بإيد فاضية قبل ما تعلى الأصوات.'],
+            };
 
             $eventName = $success ? 'CrimeSucceeded' : 'CrimeFailed';
             $event = new DomainEvent($eventName, [
@@ -403,16 +446,22 @@ final class GameEngine
                 'roll' => $roll,
                 'successThreshold' => $successThreshold,
                 'territoryBonusBasisPoints' => $territoryBonusBp,
+                'outcome' => $outcome, 'penalty' => $penalty, 'toolConsumed' => $preparation['consumed'],
+                'mastery' => $crimeProgress['mastery'], 'chain' => $crimeProgress['chain'],
                 'correlationId' => $correlationId,
             ]);
             $this->events->publish($event);
 
             return [
                 'success' => $success,
+                'outcome' => $outcome, 'narrative' => $narrative,
                 'crime' => ['id' => $crimeId, 'name_en' => $crime['name_en'], 'name_ar' => $crime['name_ar']],
                 'cost' => ['nerve' => $nerveCost],
                 'reward' => ['cash' => $cashReward, 'xp' => $xpReward],
-                'penalty' => !$success && isset($crime['failure']) ? ['type' => $crime['failure'], 'minutes' => (int) $crime['penalty_minutes']] : null,
+                'penalty' => $penalty,
+                'tool' => ['id' => $preparation['tool'], 'consumed' => $preparation['consumed']],
+                'mastery' => $crimeProgress['mastery'], 'chain' => $crimeProgress['chain'],
+                'chainBonusBasisPoints' => $preparation['chainBonusBasisPoints'],
                 'loot' => $loot,
                 'levelUp' => $levelUp,
                 'streak' => $streak,
@@ -493,7 +542,9 @@ final class GameEngine
         if ($module !== null) {
             $this->requireModule($module);
         }
-        return $this->database->playerTransaction($playerId, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
+        $participants = [$playerId];
+        if (in_array($action, ['jail.bail', 'jail.bust'], true) && $this->database->fetchOne('SELECT id FROM players WHERE id=:id', ['id' => $id]) !== null) $participants[] = $id;
+        return $this->database->playersTransaction($participants, function () use ($action, $id, $expectedVersion, $playerId, $expectedPrice): array {
             (new TravelService($this->database, $this->events))->assertAvailable($playerId);
             return (new ProgressionService($this->database, $this->events))->act($action, $id, $expectedVersion, $playerId, $expectedPrice);
         });

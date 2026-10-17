@@ -57,12 +57,27 @@ final class ReleaseManager
     /** Fingerprint owner configuration, never ordinary player state or clocks. */
     private function draftFingerprint(string $manifest): string
     {
-        $catalog = $this->database->fetchOne("SELECT revision FROM gameplay_catalogs WHERE channel = 'draft'");
+        $catalog = $this->database->fetchOne("SELECT revision, catalog_json FROM gameplay_catalogs WHERE channel = 'draft'");
+        $ids = []; $decoded = $this->decodeManifest($manifest);
+        $definitions = json_decode((string) ($catalog['catalog_json'] ?? '{}'), true, 64, JSON_THROW_ON_ERROR);
+        foreach (['items', 'properties'] as $category) foreach ($definitions[$category] ?? [] as $entry) {
+            if (is_string($entry['mediaAsset'] ?? null) && preg_match('/^[a-f0-9]{64}$/D', $entry['mediaAsset'])) $ids[$entry['mediaAsset']] = true;
+        }
+        foreach (is_array($decoded['mediaBindings'] ?? null) ? $decoded['mediaBindings'] : [] as $binding) {
+            if (is_array($binding) && is_string($binding['assetId'] ?? null) && preg_match('/^[a-f0-9]{64}$/D', $binding['assetId'])) $ids[$binding['assetId']] = true;
+        }
+        ksort($ids); $media = [];
+        foreach (array_keys($ids) as $id) {
+            $asset = $this->database->fetchOne('SELECT status, transform_json, metadata_json, members_json, entry FROM asset_library WHERE id = :id', ['id' => $id]);
+            $media[$id] = $asset === null ? null : hash('sha256', $this->encode($asset));
+        }
         return hash('sha256', $this->encode([
-            'manifest' => $this->decodeManifest($manifest),
+            'manifest' => $decoded,
             'catalogRevision' => (int) ($catalog['revision'] ?? 0),
             'activeRelease' => $this->database->fetchOne('SELECT id, version FROM content_releases WHERE active = 1 LIMIT 1'),
             'crimes' => $this->database->fetchAll('SELECT * FROM crimes ORDER BY id'),
+            'crimeRules' => $this->database->fetchAll('SELECT * FROM crime_rules ORDER BY crime_id'),
+            'boundMedia' => $media,
             'modules' => $this->database->fetchAll('SELECT id, version, installed, enabled FROM modules ORDER BY id'),
             'themes' => $this->database->fetchAll('SELECT id, version, installed, active FROM themes ORDER BY id'),
         ]));
@@ -165,6 +180,9 @@ final class ReleaseManager
         $actor = $this->validateActor($actor);
         $draft = $this->draft();
         $manifest = $this->validateManifest($draft['manifest']);
+        // Freeze fitted transforms and inspected metadata in this version.
+        // Later inspector edits never mutate an already-published game.
+        $manifest['mediaAssets'] = \Zone\Engine\Core\Content\MediaReferences::capture($this->database, $manifest);
         $releaseId = bin2hex(random_bytes(16));
         $correlationId = bin2hex(random_bytes(16));
         $publishedAt = gmdate('c');
@@ -431,6 +449,13 @@ final class ReleaseManager
             }
         }
 
+        if (array_key_exists('worldPolicy', $manifest)) {
+            $policy = $manifest['worldPolicy'];
+            $bounds = ['tickSeconds' => [30,3600], 'findsPerTick' => [0,3], 'findQuantity' => [1,3], 'findLifetimeSeconds' => [60,86400], 'maxActiveFinds' => [1,64], 'supplyShift' => [0,20], 'supplyCap' => [1,1000], 'eventEveryTicks' => [1,100]];
+            if (!is_array($policy) || array_diff(array_keys($policy), ['enabled', ...array_keys($bounds)]) || (array_key_exists('enabled', $policy) && !is_bool($policy['enabled']))) throw new InvalidArgumentException('Invalid world director policy.');
+            foreach ($bounds as $field => [$min,$max]) if (array_key_exists($field, $policy) && (!is_int($policy[$field]) || $policy[$field] < $min || $policy[$field] > $max)) throw new InvalidArgumentException('Invalid world director setting: ' . $field);
+        }
+        if (array_key_exists('mediaBindings', $manifest)) \Zone\Engine\Core\Content\MediaReferences::capture($this->database, $manifest);
         $this->rejectExecutableKeys($manifest);
         return $manifest;
     }

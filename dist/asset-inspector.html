@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark light"><title>ZONE | Asset Inspector</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./asset-inspector.css?v=108"></head>
+<body>
+  <main class="inspector">
+    <section class="viewport" id="viewport" aria-label="Uploaded asset preview"><canvas id="asset-canvas" tabindex="0"></canvas><div id="media-view" hidden></div><header class="asset-heading"><span id="stage-tag">STUDIO / ASSET WORKBENCH</span><h1 id="asset-name">Inspect your upload</h1></header><div class="inspector-tools"><button type="button" id="fit">Fit view</button><button type="button" id="bounds-toggle" aria-pressed="true">Bounds</button><button type="button" id="pivot-toggle" aria-pressed="true">Pivot</button></div><p id="readout" class="asset-readout"></p><section id="asset-loading" class="asset-loading" role="status" aria-live="polite"><span>ZONE</span><p id="status">Choose an uploaded asset in Studio.</p></section><section id="asset-error" class="asset-loading asset-error" role="status" hidden><p id="error-text"></p><button type="button" id="retry">Retry asset</button></section></section>
+    <aside class="inspector-controls" aria-label="Model placement controls"><header><p id="control-tag">BINARY BYTES PRESERVED</p><h2 id="control-title">Fit the scene.</h2><p id="control-help">Center and floor are automatic. Adjust the fit, then save it in Studio.</p></header>
+      <form id="transform-form">
+        <label><span data-label="scale">Scale multiplier</span><input id="scale" name="scale" type="number" min="0.00001" max="100000" step="0.01" value="1"></label>
+        <fieldset><legend data-label="rotation">Rotation / degrees</legend><div class="triple"><label>X<input id="rotation-x" type="number" min="-360" max="360" step="1" value="0"></label><label>Y<input id="rotation-y" type="number" min="-360" max="360" step="1" value="0"></label><label>Z<input id="rotation-z" type="number" min="-360" max="360" step="1" value="0"></label></div></fieldset>
+        <label><span data-label="floor">Floor offset</span><input id="floor" type="number" min="-100000" max="100000" step="0.05" value="0"></label>
+        <fieldset><legend data-label="camera">Camera target offset</legend><div class="triple"><label>X<input id="camera-x" type="number" min="-100000" max="100000" step="0.1" value="0"></label><label>Y<input id="camera-y" type="number" min="-100000" max="100000" step="0.1" value="0"></label><label>Z<input id="camera-z" type="number" min="-100000" max="100000" step="0.1" value="0"></label></div></fieldset>
+        <button id="normalize" type="button">Reset centered fit</button><button id="apply" type="submit">Use this placement</button><p id="placement-status" role="status" aria-live="polite"></p>
+      </form><details open><summary id="measurement-title">Measured geometry</summary><dl><dt data-label="sourceBounds">Source size</dt><dd id="source-bounds">-</dd><dt data-label="triangles">Triangles</dt><dd id="triangle-count">-</dd><dt data-label="members">Bundle members</dt><dd id="member-count">-</dd></dl><p id="warnings"></p></details>
+    </aside>
+  </main>
+  <script type="module" src="./asset-inspector.mjs?v=108"></script>
+</body></html>

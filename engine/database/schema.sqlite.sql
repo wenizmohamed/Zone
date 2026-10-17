@@ -411,3 +411,73 @@ CREATE TABLE IF NOT EXISTS family_competition_events (
     score INTEGER NOT NULL,
     created_at VARCHAR(40) NOT NULL
 );
+
+-- v108 additions are separate tables so established SQLite and PostgreSQL
+-- databases upgrade without rewriting player rows or resetting content.
+CREATE TABLE IF NOT EXISTS crime_rules (
+    crime_id VARCHAR(80) PRIMARY KEY REFERENCES crimes(id),
+    rules_json TEXT NOT NULL DEFAULT '{}'
+);
+CREATE TABLE IF NOT EXISTS world_ticks (
+    id VARCHAR(64) PRIMARY KEY,
+    release_id VARCHAR(100) NOT NULL,
+    tick_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS world_finds (
+    id VARCHAR(64) PRIMARY KEY,
+    item_id VARCHAR(80) NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    location_id VARCHAR(80) NOT NULL,
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    claimed_by VARCHAR(100) REFERENCES players(id),
+    claimed_at BIGINT
+);
+CREATE INDEX IF NOT EXISTS world_finds_available ON world_finds(expires_at,claimed_by);
+CREATE TABLE IF NOT EXISTS world_find_claims (
+    player_id VARCHAR(100) NOT NULL REFERENCES players(id),
+    idempotency_key VARCHAR(100) NOT NULL,
+    find_id VARCHAR(64) NOT NULL REFERENCES world_finds(id),
+    receipt_json TEXT NOT NULL,
+    created_at BIGINT NOT NULL,
+    PRIMARY KEY (player_id,idempotency_key)
+);
+CREATE TABLE IF NOT EXISTS world_shop_supply (
+    item_id VARCHAR(80) PRIMARY KEY,
+    quantity INTEGER NOT NULL CHECK (quantity >= 0),
+    base_quantity INTEGER NOT NULL CHECK (base_quantity >= 0),
+    updated_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS world_events (
+    id VARCHAR(64) PRIMARY KEY,
+    title_en VARCHAR(200) NOT NULL,
+    title_ar VARCHAR(200) NOT NULL,
+    body_en VARCHAR(800) NOT NULL,
+    body_ar VARCHAR(800) NOT NULL,
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS asset_uploads (
+    id VARCHAR(32) PRIMARY KEY, actor VARCHAR(160) NOT NULL,
+    name VARCHAR(240) NOT NULL, expected_bytes BIGINT NOT NULL,
+    received_bytes BIGINT NOT NULL DEFAULT 0, status VARCHAR(20) NOT NULL,
+    asset_id VARCHAR(64), created_at BIGINT NOT NULL, updated_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS asset_library (
+    id VARCHAR(64) PRIMARY KEY, name VARCHAR(240) NOT NULL, actor VARCHAR(160) NOT NULL,
+    status VARCHAR(20) NOT NULL, kind VARCHAR(20) NOT NULL, format VARCHAR(12) NOT NULL,
+    entry VARCHAR(500) NOT NULL DEFAULT '', members_json TEXT NOT NULL DEFAULT '[]',
+    metadata_json TEXT NOT NULL DEFAULT '{}', transform_json TEXT NOT NULL DEFAULT '{}',
+    error TEXT, created_at BIGINT NOT NULL, updated_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS asset_jobs (
+    asset_id VARCHAR(64) PRIMARY KEY, status VARCHAR(20) NOT NULL,
+    attempts INTEGER NOT NULL DEFAULT 0, next_attempt BIGINT NOT NULL DEFAULT 0,
+    lease_until BIGINT NOT NULL DEFAULT 0, lease_owner VARCHAR(64), last_error TEXT,
+    updated_at BIGINT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS asset_jobs_ready ON asset_jobs(status,next_attempt,lease_until);
+CREATE TABLE IF NOT EXISTS worker_heartbeats (
+    id VARCHAR(64) PRIMARY KEY, updated_at BIGINT NOT NULL,
+    payload_json TEXT NOT NULL DEFAULT '{}'
+);

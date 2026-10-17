@@ -31,7 +31,7 @@ function encodedTile(features=[{id:201,properties:{height:95,min_height:0,extrud
 const bytes=encodedTile();
 function harness({zoom=15.1,pitch=0,loaded=true,language='en'}={}){
   const layers=new Map(district.createStyle().layers.map(l=>[l.id,structuredClone(l)])),sources=new Map(),listeners=new Map(),notice={hidden:true,dataset:{},textContent:''},document={body:{dataset:{}},documentElement:{lang:language},getElementById:()=>notice},calls={sources:0,layers:0,requests:[],maxConcurrent:0,concurrent:0,repaints:0};
-  const map={getZoom:()=>zoom,getPitch:()=>pitch,getLayer:id=>layers.get(id),getSource:id=>sources.get(id),isStyleLoaded:()=>true,isSourceLoaded:()=>loaded,setLayerZoomRange(id,min,max){layers.get(id).minzoom=min;layers.get(id).maxzoom=max;},addSource(id,source){calls.sources++;sources.set(id,source);},addLayer(layer){calls.layers++;layers.set(layer.id,layer);},removeLayer:id=>layers.delete(id),removeSource:id=>sources.delete(id),triggerRepaint(){calls.repaints++;},on(event,fn){if(!listeners.has(event))listeners.set(event,new Set());listeners.get(event).add(fn);},off(event,fn){listeners.get(event)?.delete(fn);}};
+  const map={getZoom:()=>zoom,getPitch:()=>pitch,getLayer:id=>layers.get(id),getStyle:()=>({layers:[...layers.values()]}),getSource:id=>sources.get(id),isStyleLoaded:()=>true,isSourceLoaded:()=>loaded,setLayerZoomRange(id,min,max){layers.get(id).minzoom=min;layers.get(id).maxzoom=max;},addSource(id,source){calls.sources++;sources.set(id,source);},addLayer(layer,before){calls.layers++;if(!before){layers.set(layer.id,layer);return;}assert.ok(layers.has(before),'Mapbox insertion target exists');const ordered=[...layers];layers.clear();for(const [id,value]of ordered){if(id===before)layers.set(layer.id,layer);layers.set(id,value);}},removeLayer:id=>layers.delete(id),removeSource:id=>sources.delete(id),triggerRepaint(){calls.repaints++;},on(event,fn){if(!listeners.has(event))listeners.set(event,new Set());listeners.get(event).add(fn);},off(event,fn){listeners.get(event)?.delete(fn);}};
   function emit(event,data){for(const fn of [...(listeners.get(event)||[])])fn(data);}
   const fetch=async(url,options)=>{calls.requests.push({url,options});calls.concurrent++;calls.maxConcurrent=Math.max(calls.maxConcurrent,calls.concurrent);await Promise.resolve();calls.concurrent--;return new Response(bytes);};
   return {map,layers,sources,listeners,notice,document,calls,fetch,emit,setZoom(value){zoom=value;},setPitch(value){pitch=value;},setLoaded(value){loaded=value;},stats:()=>JSON.parse(document.body.dataset.zoneDistrictBuildings)};
@@ -121,6 +121,27 @@ test('overview and native close-detail layer ranges meet at16 with no duplicate 
   for(const zoom of [13.2,15.99,16,17.4]){h.setZoom(zoom);h.emit('moveend');assert.equal(h.stats().activeLOD,zoom<16?'complete-district':'native-provider');}
   assert.equal(h.calls.requests.length,4);loader.dispose();
 });
+test('the captured default overview camera draws provider volumes after opaque ground surfaces and returns to flat',async()=>{
+  // Actual 1440x900 default camera from map-en-desktop-20261017.json. Keep the
+  // value in the test rather than requiring an ignored browser artifact.
+  const zoom=15.09310012389713,h=harness({zoom,pitch:0}),loader=createDistrictBuildings(h.map,bounds,'token',{document:h.document,fetch:h.fetch});
+  const activeVolumes=()=>[...h.layers.values()].filter(l=>l.type==='fill-extrusion'&&zoom>=(l.minzoom??0)&&zoom<(l.maxzoom??24)&&l.layout?.visibility!=='none');
+  try{
+    await loader.ready;assert.equal(h.stats().status,'ready');assert.equal(activeVolumes().length,0);
+    h.map.setLayoutProperty=(id,key,value)=>h.layers.get(id).layout[key]=value;
+    const scope=vm.createContext({closeSide(){},RM:true,CAMERA_MS:180,landmarkController:null,landmarkPending:null,map:{getZoom:()=>zoom,getPitch:()=>h.map.getPitch(),easeTo(options){assert.equal(options.zoom,undefined);h.setPitch(options.pitch);district.setPerspective(h.map,options.pitch>1);}}});
+    vm.runInContext(source('toggle3D'),scope);scope.toggle3D();assert.equal(h.map.getPitch(),35);
+    const active=activeVolumes();assert.deepEqual(active.map(l=>l.id),[EXTRUSION],'one authoritative overview volume layer is active at the real zoom');
+    const order=[...h.layers.keys()],volume=order.indexOf(EXTRUSION);
+    for(const id of ['district-buildings',FILL,'district-road-casing','district-roads','district-paths'])assert.ok(order.indexOf(id)<volume,id+' must not paint over raised provider walls');
+    const properties=h.sources.get(SOURCE).data.features.find(f=>f.properties.extrude==='true').properties;
+    const height=evaluate(active[0].paint['fill-extrusion-height'],properties),base=evaluate(active[0].paint['fill-extrusion-base'],properties),metersPerPixel=district.CIRCUMFERENCE*Math.cos(40.698*Math.PI/180)/(512*2**zoom);
+    assert.equal(height,95);assert.equal(base,40);assert.ok((height-base)*Math.sin(35*Math.PI/180)/metersPerPixel>10,'the retained provider part has measurable vertical screen extent at the default camera');
+    assert.equal(h.layers.get(EXTRUSION).maxzoom,16);assert.equal(h.layers.get('district-buildings-3d').minzoom,16);assert.equal(h.map.getZoom(),zoom);
+    scope.toggle3D();assert.equal(h.map.getPitch(),0);assert.equal(activeVolumes().length,0);assert.equal(h.calls.requests.length,4);
+  }finally{loader.dispose();}
+});
+
 test('tilt synchronizes both real extrusion layers without forcing zoom or rewriting settled layout',async()=>{
   const h=harness(),loader=createDistrictBuildings(h.map,bounds,'token',{document:h.document,fetch:h.fetch});await loader.ready;let writes=0;
   h.map.getLayoutProperty=(id,key)=>h.layers.get(id).layout[key];h.map.setLayoutProperty=(id,key,value)=>{writes++;h.layers.get(id).layout[key]=value;};

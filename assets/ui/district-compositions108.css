@@ -1,0 +1,120 @@
+/* v108 inner-screen art direction. The approved sidebar, header, source art,
+ * map dimensions and weapon assets are intentionally outside this stylesheet.
+ * Six places, six compositions: case file, training floor, vault ledger,
+ * merchant counter, address book and a working city atlas. */
+
+/* CRIMES: open case file, not two matching product cards. */
+.zone-crime-workspace{gap:0;position:relative;padding-block:0 18px}
+.zone-crime-workspace>.zone-panel,.zone-crime-operation>.zone-panel{border-radius:0!important;box-shadow:none!important}
+.zone-crime-workspace .zone-crime-goal{background:transparent;border:0;border-block-end:1px solid var(--border2);padding:10px 2px 13px;margin-block-end:10px}
+.zone-crime-activity-nav{border-block-end:1px solid var(--border2);padding:0 0 8px;gap:0}
+.zone-crime-activity-nav button{border:0;border-inline-end:1px solid var(--border2);border-radius:0!important;background:transparent;box-shadow:none!important;padding:8px 13px;position:relative;min-height:55px!important}
+.zone-crime-activity-nav button[aria-pressed=true]{background:var(--activebg);box-shadow:inset 0 -3px var(--gold)!important;border-color:var(--border2)}
+.zone-crime-operation{position:relative;grid-template-columns:minmax(0,1.7fr) minmax(235px,1fr);gap:0;padding:18px 0 0;align-items:start}
+.zone-crime-neighborhood{border:0!important;background:transparent!important;overflow:visible;position:relative;padding-inline-end:24px;padding-block-end:25px}
+.zone-crime-neighborhood .zone-crime-location{padding:0 0 12px;position:relative;z-index:1}
+.zone-crime-neighborhood h2{font-size:30px;line-height:1.15;text-transform:uppercase}
+.zone-crime-scene{position:relative;aspect-ratio:16/9;background-size:cover;box-shadow:0 10px 18px #0004;clip-path:polygon(0 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%)}
+.zone-crime-scene:after{content:"";position:absolute;inset:0;border:1px solid #b79b6155;pointer-events:none;background:linear-gradient(0deg,#1014124d,transparent 50%)}
+.zone-crime-resources{position:relative;margin:-27px 13px 0;padding:9px 13px;max-width:84%;border:1px solid var(--border3);background:var(--deep);box-shadow:0 6px 12px #0005;z-index:1}
+.zone-crime-resources bdi{font:500 23px Oswald,"Noto Sans Arabic",serif}
+.zone-crime-plan{margin-block-start:18px;position:relative;padding:18px 17px 17px;border:1px solid var(--border2)!important;border-block-start:3px solid var(--gold)!important;background:var(--panel2)!important;box-shadow:4px 5px 0 var(--deep)!important}
+.zone-crime-plan:before{content:"";position:absolute;inset-block-start:-9px;inset-inline-end:18px;width:41px;height:17px;border:1px solid var(--border3);background:var(--btn);transform:rotate(-5deg);opacity:.85}
+.zone-crime-plan h2{font-size:24px;line-height:1.3;margin-block:8px}
+.zone-crime-plan dl{grid-template-columns:minmax(0,1fr);gap:0;margin-block:15px}
+.zone-crime-plan dl>div{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 0;border-block-end:1px dotted var(--border3)}
+.zone-crime-plan dd{margin:0;text-align:end;font-family:monospace}
+.zone-crime-plan>.zone-action-primary{min-height:47px!important;border-radius:0!important;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,0 100%)}
+.zone-crime-opportunities{border:0!important;border-block-start:1px solid var(--border2)!important;background:transparent!important;margin-block-start:7px}
+.zone-crime-opportunities>.zone-panel-heading{background:transparent!important;border:0!important;padding-inline:2px!important;box-shadow:none!important;letter-spacing:.08em!important}
+.zone-crime-choice{background:transparent;border-bottom:1px dotted var(--border2);padding-inline:3px}
+.zone-crime-choice[aria-pressed=true]{background:var(--activebg);box-shadow:inset 3px 0 var(--gold);padding-inline:12px}
+.zone-crime-receipt{border:0!important;border-inline-start:3px solid var(--gold)!important;background:transparent!important;margin-block:17px 8px;padding:3px 14px}
+.zone-crime-history{background:transparent!important;border:0!important;border-block-start:1px solid var(--line)!important;margin-block-start:8px;padding-inline:2px}
+
+/* GYM: the physical training floor leads, a single coach clipboard overlaps. */
+#zone-main[data-zone-screen=gym] .zone-gym-workspace{grid-template-columns:minmax(0,1fr) 312px;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible;position:relative;gap:0}
+#zone-main[data-zone-screen=gym] .zone-gym-floor{grid-column:1/-1;background:transparent;min-width:0}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-scene{min-height:390px;aspect-ratio:16/7;padding:27px 28px;background-position:50% 56%;position:relative;clip-path:polygon(0 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%)}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-scene header{max-width:41%;text-shadow:0 2px 7px #000}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-scene h2{font-size:38px;line-height:1.05;text-transform:uppercase;margin-block:9px}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-scene p{font-size:12px;color:#d4d4c9}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-readout{max-width:calc(100% - 332px);background:var(--deep);border:1px solid var(--border2);margin:-58px 0 0 16px;padding:14px 18px;position:relative;z-index:1;grid-template-columns:1fr 1fr;gap:16px;box-shadow:0 8px 18px #0005}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-caption{display:grid;align-content:center}
+#zone-main[data-zone-screen=gym] .zone-gym-session{grid-column:2;grid-row:1;align-self:end;z-index:2;background:var(--panel2);margin:75px 17px -49px 0;padding:19px 18px 15px;border:1px solid var(--border2);border-block-start:3px solid var(--gold);box-shadow:6px 7px 0 #111b;gap:10px}
+#zone-main[data-zone-screen=gym] .zone-gym-session-metrics{grid-template-columns:1fr;gap:0}
+#zone-main[data-zone-screen=gym] .zone-gym-session-metrics>div{display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px dotted var(--border2);padding:8px 0}
+#zone-main[data-zone-screen=gym] .zone-gym-session-metrics dd{text-align:end;margin:0;max-width:65%}
+#zone-main[data-zone-screen=gym] .zone-gym-session-identity h3{font-size:25px}
+#zone-main[data-zone-screen=gym] .zone-gym-train{border-radius:0!important;min-height:48px!important;font:500 15px Oswald,"Noto Sans Arabic",serif!important;letter-spacing:.04em;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,0 100%)}
+#zone-main[data-zone-screen=gym] .zone-gym-stations{grid-row:2;grid-column:1/-1;margin-block-start:73px;border-block:1px solid var(--border2);background:transparent;gap:0}
+#zone-main[data-zone-screen=gym] .zone-gym-station{min-height:88px!important;background:transparent;box-shadow:none!important;border-inline-end:1px solid var(--border2)}
+#zone-main[data-zone-screen=gym] .zone-gym-station[aria-pressed=true]{background:var(--activebg);box-shadow:inset 0 -3px var(--gold)!important}
+#zone-main[data-zone-screen=gym] .zone-gym-station-art{width:54px;height:62px;filter:saturate(.72)}
+#zone-main[data-zone-screen=gym] .zone-gym-memberships{border:0!important;background:transparent!important;box-shadow:none!important}
+
+/* BANK: one ruled ledger and a protected vault balance, no three equal tiles. */
+#zone-main[data-zone-screen=bank] .zone-bank-summary{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1.8fr)!important;gap:0!important;border:1px solid var(--border2);border-block-start:3px solid var(--gold);background:var(--panel2);position:relative;padding:14px!important;margin:0!important}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;min-width:0;padding:14px 20px!important}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(1){grid-column:1;grid-row:1;border-inline-end:1px solid var(--border2)!important}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(2){grid-column:2;grid-row:1/3;align-self:center;padding-inline:30px!important}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(3){grid-column:1;grid-row:2;border-inline-end:1px solid var(--border2)!important;border-block-start:1px dotted var(--border3)!important}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(2)>bdi{display:block;font:500 clamp(30px,5vw,56px)/1.15 Oswald,serif!important;letter-spacing:.03em;margin-top:12px;color:var(--gold)!important;overflow-wrap:anywhere}
+#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel>div{font:500 9px/1.5 var(--zone-font)!important;letter-spacing:.09em!important}
+#zone-main[data-zone-screen=bank] .zone-bank-actions{background:repeating-linear-gradient(0deg,transparent 0,transparent 31px,var(--line) 32px),var(--panel)!important;border:1px solid var(--border2)!important;border-radius:0!important;padding:25px 28px!important;box-shadow:5px 6px 0 var(--deep)!important;margin-inline-end:6px}
+#zone-main[data-zone-screen=bank] .zone-bank-actions button{border-radius:0!important;min-height:44px!important;min-width:98px;text-align:center}
+
+/* MARKET: a physical counter with stamped rows and a continuous price tape. */
+#zone-main[data-zone-screen=market] .zone-panel-note{margin:0;padding:14px 2px;border-block-end:2px solid var(--gold);font-size:13px;color:var(--t2)}
+#zone-main[data-zone-screen=market] .zone-peer-modes{border-bottom:1px solid var(--border2);gap:0}
+#zone-main[data-zone-screen=market] .zone-peer-modes button{border-radius:0!important;box-shadow:none!important;border-inline-end:1px solid var(--border2)}
+#zone-main[data-zone-screen=market] [data-zscroll]{border:0!important;border-radius:0!important;background:var(--deep)!important;box-shadow:none!important;padding:0 0 10px}
+#zone-main[data-zone-screen=market] .zone-table-heading{padding:13px 12px!important;background:var(--panel2)!important;border-radius:0!important;border-block-end:1px solid var(--gold)}
+#zone-main[data-zone-screen=market] .zone-table-row{padding:13px 12px!important;border-bottom:1px dotted var(--border2)!important;background:linear-gradient(90deg,var(--panel),transparent)}
+#zone-main[data-zone-screen=market] .zone-table-row:nth-of-type(2n){background:transparent}
+#zone-main[data-zone-screen=market] .zone-table-row>div:first-child>span{width:42px!important;height:42px!important;border-radius:0!important;background:var(--panel2)!important;border-color:var(--border2)!important;transform:rotate(-3deg)}
+#zone-main[data-zone-screen=market] .zone-table-row button{min-height:36px!important;border-radius:0!important;box-shadow:none!important}
+#zone-main[data-zone-screen=market] .zone-market-form{border-inline-start:3px solid var(--gold);border-radius:0!important;background:var(--panel2);padding:18px}
+#zone-main[data-zone-screen=market] .zone-market-listing{border-radius:0!important;border:0;border-block-end:1px dotted var(--border2);box-shadow:none!important;background:transparent;padding-block:16px}
+
+/* PROPERTIES: an address register. The enterable room is the hero, ownership
+ * listings become a continuous dossier, with no identical card gallery. */
+#zone-main[data-zone-screen=properties] .zone-current-property{border:0!important;border-radius:0!important;box-shadow:none!important;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);min-height:230px;background:var(--deep)!important;position:relative}
+#zone-main[data-zone-screen=properties] .zone-current-property>.zone-property-art{width:100%;align-self:stretch;display:flex}
+#zone-main[data-zone-screen=properties] .zone-current-property .zone-property-art-panel{aspect-ratio:auto;min-height:230px;align-self:stretch}
+#zone-main[data-zone-screen=properties] .zone-current-property .zone-record-copy{padding:24px;border-inline-start:3px solid var(--gold);align-self:center}
+#zone-main[data-zone-screen=properties] .zone-current-property h2{font:500 32px/1.2 Oswald,"Noto Sans Arabic",serif;text-transform:uppercase}
+#zone-main[data-zone-screen=properties] .zone-property-dossiers{display:flex!important;flex-direction:column;align-items:stretch;gap:0;border-block-start:1px solid var(--border2)}
+#zone-main[data-zone-screen=properties] .zone-property-dossier{display:grid;grid-template-columns:145px minmax(0,1fr);border:0!important;border-block-end:1px dotted var(--border2)!important;background:transparent!important;border-radius:0!important;box-shadow:none!important;min-height:146px}
+#zone-main[data-zone-screen=properties] .zone-property-dossier .zone-property-art{border:0;background-color:transparent}
+#zone-main[data-zone-screen=properties] .zone-property-dossier>.zone-property-art{width:100%}
+#zone-main[data-zone-screen=properties] .zone-property-dossier .zone-record-copy{padding:18px 8px 18px 22px}
+#zone-main[data-zone-screen=properties] .zone-property-dossier h3{font-size:23px;margin-block:3px 9px}
+#zone-main[data-zone-screen=properties] .zone-property-purchase{max-width:440px;gap:24px}
+#zone-main[data-zone-screen=properties] .zone-property-purchase button{min-height:42px!important;border-radius:0!important}
+.zone-safehouse-entry{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;border-block-end:1px solid var(--border2)}
+.zone-safehouse-entry button{min-height:44px!important;border:1px solid var(--gold);padding:10px 17px;background:var(--activebg);color:var(--activefg)}
+.zone-safehouse-host{border:1px solid var(--border2);display:block;width:100%;min-width:0;background:var(--deep)}
+
+/* CITY: map dimensions stay approved; its address book and travel notes gain
+ * an atlas margin, rather than another floating dashboard column. */
+.zone-city-directory{border:0!important;border-inline-start:1px solid var(--border2)!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;padding-inline-start:14px}
+.zone-city-directory .zone-panel-heading{background:transparent!important;border:0!important;box-shadow:none!important;padding-inline:0!important;color:var(--gold)}
+.zone-city-destinations button{background:transparent!important;border:0!important;border-block-end:1px dotted var(--border2)!important;border-radius:0!important;box-shadow:none!important;padding-inline:0!important}
+.zone-city-destinations button:hover{background:var(--activebg)!important}
+.zone-city-place-icon{background:var(--deep)!important;border:1px solid var(--border2);border-radius:0!important}
+.zone-city-caption{font:500 10px/1.5 var(--zone-font);letter-spacing:.08em;color:var(--gold);border-block-end:1px solid var(--border2);padding-block-end:8px}
+.zone-city-legend{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;border-block-start:1px solid var(--border2)!important;padding:14px 0!important}
+
+html[dir=rtl] :is(.zone-crime-neighborhood h2,.zone-crime-plan h2,#zone-main[data-zone-screen=gym] .zone-gym-floor-scene h2,#zone-main[data-zone-screen=properties] .zone-current-property h2){font-family:var(--zone-arabic);letter-spacing:0;line-height:1.55;text-transform:none}
+html[dir=rtl] .zone-crime-choice[aria-pressed=true]{box-shadow:inset -3px 0 var(--gold)}
+@media(max-width:1000px){#zone-main[data-zone-screen=gym] .zone-gym-workspace{grid-template-columns:minmax(0,1fr) 290px}#zone-main[data-zone-screen=gym] .zone-gym-session{margin-inline-end:11px;padding:16px}#zone-main[data-zone-screen=gym] .zone-gym-floor-readout{max-width:calc(100% - 307px);grid-template-columns:1fr;gap:8px}.zone-crime-operation{grid-template-columns:minmax(0,1.25fr) minmax(235px,1fr)}.zone-crime-neighborhood{padding-inline-end:15px}}
+@media(max-width:760px){.zone-city-directory{border-inline-start:0!important;border-block-start:1px solid var(--border2)!important;padding-inline-start:0;padding-block-start:12px}.zone-crime-neighborhood h2{font-size:27px}}
+@media(max-width:650px){
+  .zone-crime-operation{grid-template-columns:minmax(0,1fr);padding-block-start:14px}.zone-crime-neighborhood{order:0;padding:0 0 9px}.zone-crime-location{padding:0 0 9px}.zone-crime-plan{order:1;margin-block:12px 18px;padding:16px}.zone-crime-plan dl{grid-template-columns:1fr 1fr;gap:0 15px}.zone-crime-plan dl>div{display:block}.zone-crime-plan dd{text-align:start;margin-top:6px}.zone-crime-plan:before{inset-inline-end:21px}.zone-crime-resources{margin-block-start:-26px;max-width:90%;margin-inline:12px;padding:9px 11px}.zone-crime-goal{padding-block-start:0}.zone-crime-goal p{font-size:11px}.zone-crime-choice{padding-block:12px}.zone-crime-choice>span:first-child{max-width:66%}
+  #zone-main[data-zone-screen=gym] .zone-gym-workspace{grid-template-columns:minmax(0,1fr)}#zone-main[data-zone-screen=gym] .zone-gym-floor-scene{min-height:245px;aspect-ratio:16/10;padding:17px 16px;background-position:50% 50%}#zone-main[data-zone-screen=gym] .zone-gym-floor-scene header{max-width:70%}#zone-main[data-zone-screen=gym] .zone-gym-floor-scene h2{font-size:30px}#zone-main[data-zone-screen=gym] .zone-gym-floor-scene p{font-size:11px}#zone-main[data-zone-screen=gym] .zone-gym-floor-readout{max-width:none;margin:-30px 12px 0;grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:11px 12px;gap:11px}#zone-main[data-zone-screen=gym] .zone-gym-session{grid-row:auto;grid-column:1;margin:15px 0 0;padding:17px 15px;box-shadow:none}#zone-main[data-zone-screen=gym] .zone-gym-session-metrics{grid-template-columns:1fr 1fr;gap:0 17px}#zone-main[data-zone-screen=gym] .zone-gym-session-metrics>div{display:block}#zone-main[data-zone-screen=gym] .zone-gym-session-metrics dd{text-align:start;max-width:none;margin-top:5px}#zone-main[data-zone-screen=gym] .zone-gym-stations{grid-row:auto;margin-block-start:14px;grid-template-columns:1fr 1fr}#zone-main[data-zone-screen=gym] .zone-gym-station{min-height:82px!important;padding:9px}#zone-main[data-zone-screen=gym] .zone-gym-station-art{width:40px;height:53px}
+  #zone-main[data-zone-screen=bank] .zone-bank-summary{padding:5px!important;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)!important}#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel{padding:13px 10px!important}#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(2){padding-inline:15px!important}#zone-main[data-zone-screen=bank] .zone-bank-summary>.zone-panel:nth-child(2)>bdi{font-size:33px!important}#zone-main[data-zone-screen=bank] .zone-bank-actions{padding:19px 15px!important;margin-inline-end:0;box-shadow:none!important}#zone-main[data-zone-screen=bank] .zone-bank-actions button{min-width:75px;padding-inline:12px!important}
+  #zone-main[data-zone-screen=properties] .zone-current-property{grid-template-columns:minmax(0,1fr);min-height:0}#zone-main[data-zone-screen=properties] .zone-current-property .zone-property-art,#zone-main[data-zone-screen=properties] .zone-current-property .zone-property-art-panel{min-height:180px}#zone-main[data-zone-screen=properties] .zone-current-property .zone-record-copy{padding:15px 17px;border-inline-start:0;border-block-start:2px solid var(--gold)}#zone-main[data-zone-screen=properties] .zone-current-property h2{font-size:28px}#zone-main[data-zone-screen=properties] .zone-property-dossier{grid-template-columns:96px minmax(0,1fr);min-height:160px}#zone-main[data-zone-screen=properties] .zone-property-dossier .zone-record-copy{padding:16px 0 16px 12px}#zone-main[data-zone-screen=properties] .zone-property-dossier h3{font-size:21px}.zone-safehouse-entry{flex-wrap:wrap;gap:10px}.zone-safehouse-entry button{flex:1}
+  #zone-main[data-zone-screen=market] .zone-table-row{padding:12px 9px!important}#zone-main[data-zone-screen=market] .zone-table-row>div:first-child>span{width:36px!important;height:36px!important}
+}
+@media(prefers-reduced-motion:reduce){.zone-crime-workspace *,#zone-main[data-zone-screen=gym] *,#zone-main[data-zone-screen=bank] *{transition:none!important}}

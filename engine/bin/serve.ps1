@@ -8,7 +8,7 @@ if (-not (Test-Path -LiteralPath $php)) {
 
 Push-Location $repositoryRoot
 try {
-    & $php -S 127.0.0.1:4285 engine/router.php
+    & $php -d upload_max_filesize=128M -d post_max_size=132M -S 127.0.0.1:4285 engine/router.php
 } finally {
     Pop-Location
 }

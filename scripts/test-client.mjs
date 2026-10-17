@@ -2205,6 +2205,42 @@ test('v107 character bridge uses actual owned armor without changing the equippe
   c.p.inv.vest=0;c.pushChar();assert.equal(messages.filter(m=>m.id==='zone-char-3d').at(-1).data.character.armorId,null);
 });
 
+test('v108 real-player bail quotes the server price and keeps separate practice NPC pricing',()=>{
+  for(const lang of ['en','ar']){
+    const {instance:c}=game({now:1800000});c.state.lang=lang;c.applyGameplay({player:{id:'ordinary-ui',cash:1500},state:{version:1,inv:{},jailUntil:0,hospUntil:0}});c.runtimeConnection='connected';
+    c.inmates=[{id:'ordinary-jailed',name:'Ordinary inmate',lvl:1,until:1920000,reason:'crime',out:false,npc:false},{id:'inmate-0',name:'Practice inmate',lvl:4,until:1920000,reason:'crime',out:false,npc:true}];
+    const rows=c.renderVals().inmates;
+    assert.equal(rows[0].id,'ordinary-jailed');assert.equal(rows[0].bailCost,'$2,000');assert.equal(rows[0].bailDisabled,true);
+    assert.equal(rows[1].bailCost,'$800');assert.equal(rows[1].bailDisabled,false);
+  }
+});
+
+test('v108 uploaded presentation follows published bindings and never equips unowned media',()=>{
+  const {instance:c,context,messages}=game();const weapon='a'.repeat(64),armor='b'.repeat(64),character='c'.repeat(64),building='d'.repeat(64);
+  context.window.ZonePlatform.manifest=()=>({mediaBindings:[{targetType:'weapon',targetId:'bat',assetId:weapon},{targetType:'armor',targetId:'vest',assetId:armor},{targetType:'character',targetId:'suit',assetId:character},{targetType:'map',targetId:'bank',assetId:building}]});
+  c.applyGameplay({state:{version:1,inv:{bat:1,vest:1},equip:'bat',armorEquip:'vest'}});c.state.outfit='suit';c.pushChar();
+  let packet=messages.filter(m=>m.id==='zone-char-3d').at(-1).data.character;
+  assert.equal(packet.weaponMediaAsset,weapon);assert.equal(packet.armorMediaAsset,armor);assert.equal(packet.characterMediaAsset,character);assert.equal(packet.draft,false);
+  c.pushMap();assert.equal(messages.filter(m=>m.id==='zone-city-map').at(-1).data.zonePins.find(pin=>pin.id==='bank').mediaAsset,building);
+  c.p.inv.bat=0;c.p.inv.vest=0;c.pushChar();packet=messages.filter(m=>m.id==='zone-char-3d').at(-1).data.character;
+  assert.equal(packet.weaponMediaAsset,'');assert.equal(packet.armorMediaAsset,'');
+});
+
+test('v108 timer-only medical items expose their effect and can recover an otherwise full player',()=>{
+  for(const lang of ['en','ar']){
+    const {instance:c,CAT}=game();c.state.lang=lang;
+    CAT.compress={type:'medical',price:10,life:0,nerve:0,energy:0,happy:0,hospitalSeconds:60,name:{en:'Clinic Compress',ar:'ضمادة العيادة'}};
+    c.applyServerPlayer({id:'ordinary',energy:100,max_energy:100,nerve:15,max_nerve:15,life:250,max_life:250,happy:100,max_happy:100});
+    c.applyGameplay({state:{version:1,inv:{compress:1},equip:'fists'}});c.runtimeConnection='connected';c.state.sel='compress';
+    assert.equal(c.renderVals().inv[0].disabled,true);
+    c.p.hospUntil=Date.now()+120000;
+    const view=c.renderVals();assert.equal(view.inv[0].disabled,false);assert.match(view.inv[0].meta,/60/);
+    assert.ok(view.sel.rows.some(row=>/Hospital|المستشفى/.test(row.k)&&/60/.test(row.v)));
+    assert.equal(c.p.inv.compress,1);
+    assert.equal(c.itemHasRoom({...CAT.compress,life:250,hospitalSeconds:0}),false);
+  }
+});
+
 test('v107 authored four-resource consumables show all effects and keep fully capped items',()=>{
   for(const lang of ['en','ar']){
     const {instance:c,CAT,T}=game();c.state.lang=lang;

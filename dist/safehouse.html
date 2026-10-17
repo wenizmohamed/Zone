@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>ZONE | Safehouse</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./safehouse.css?v=108">
+</head>
+<body>
+  <canvas id="room" tabindex="0" role="img" aria-label="Interactive safehouse. Drag to orbit. Use the armory, vault and lounge buttons."></canvas>
+  <header class="house-heading"><p id="eyebrow">PRIVATE ADDRESS / ZONE CITY</p><h1 id="house-name">Your safehouse</h1><p id="house-mode">Step inside. Leave the street outside.</p></header>
+  <div id="equipment" class="house-equipment" aria-live="polite"><span id="equipment-label">PERSONAL EFFECTS</span><strong id="equipment-line">Loading character…</strong></div>
+  <nav class="room-pins" id="room-pins" aria-label="Safehouse rooms">
+    <button data-action="armory" type="button"><span class="pin-symbol">01</span><span class="pin-label">Armory</span></button>
+    <button data-action="vault" type="button"><span class="pin-symbol">02</span><span class="pin-label">Vault</span></button>
+    <button data-action="lounge" type="button"><span class="pin-symbol">03</span><span class="pin-label">Lounge</span></button>
+  </nav>
+  <section id="loading" class="house-loading" role="status" aria-live="polite"><span class="loading-key">Z</span><p>Opening the safehouse…</p></section>
+  <section id="error" class="house-error" role="status" aria-live="polite" hidden><p id="error-message">The room could not load. Your game and property are unchanged.</p><button id="retry" type="button">Retry room</button></section>
+  <footer class="house-rail"><p id="house-hint">Drag to look around. Choose a room to use its real services.</p><div><button id="overview" type="button">Overview</button><button id="exit" type="button">Leave safehouse</button></div></footer>
+  <script src="../assets/weapons/catalog.js?v=99"></script>
+  <script type="module" src="./safehouse.mjs?v=108"></script>
+</body>
+</html>

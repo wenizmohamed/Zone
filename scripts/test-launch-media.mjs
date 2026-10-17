@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { uploadedAssetId } from '../dist/uploaded-equipment108.mjs';
 
 const viewer = name => {
   const html = readFileSync(new URL(`../dist/${name}.html`, import.meta.url), 'utf8');
@@ -78,7 +79,7 @@ for (const language of ['en', 'ar']) {
   test(`${language} failed wardrobe ignores unchanged and unrelated-state heartbeats until actual retry or different outfit`, async () => {
     let requests = 0;
     const clock = timers(), nodes = { load: { hidden: true }, 'character-retry': { hidden: true } };
-    const ctx = vm.createContext({ ...clock, characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null,
+    const ctx = vm.createContext({ ...clock, characterCache: new Map(), characterLoadSeq: 0, characterLoadingFile: null, characterLoadingAsset: null, characterMediaAbort: null, uploadedAssetId,
       state: { outfit: 'suit', fac: 'none' }, model: null, lang: language, document: { body: { dataset: {} } }, $: id => nodes[id],
       OUTFIT_FILES: { suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' },
       GLTFLoader: class { loadAsync() { requests++; return Promise.reject(new Error('missing model')); } },
@@ -101,7 +102,7 @@ for (const language of ['en', 'ar']) {
 
 test('loading character deduplicates parent repaint without advancing the active wardrobe sequence', () => {
   let calls = 0;
-  const ctx = vm.createContext({ state: { outfit: 'suit' }, model: null, characterLoadingFile: 'Suit', characterLoadSeq: 3,
+  const ctx = vm.createContext({ state: { outfit: 'suit' }, model: null, characterLoadingFile: 'Suit', characterLoadingAsset: null, characterLoadSeq: 3, uploadedAssetId,
     document: { body: { dataset: { zoneCharacterAssetState: 'loading' } } }, OUTFIT_FILES: { suit: 'Suit' }, loadCharacter() { calls++; } });
   vm.runInContext(['outfitFile', 'paintOutfit'].map(name => definition(character.template, name)).join('\n'), ctx);
   for (let i = 0; i < 25; i++) ctx.paintOutfit();
