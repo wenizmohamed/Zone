@@ -122,6 +122,7 @@ function fallbackContext(html, language = 'en') {
   const ctx = vm.createContext({ ...clock, document, parent, URLSearchParams, location: { search: '?lang=' + language, origin: 'http://zone.test', reload: () => reloads.push(true) },
     addEventListener: (key, fn) => events.set(key, fn), removeEventListener: key => events.delete(key),
     dispatchEvent: event => events.get(event.type)?.(event), Event: class { constructor(type) { this.type = type; } } });
+  ctx.window = ctx;
   vm.runInContext(definition(html, 'installMediaFallback'), ctx);
   const boot = ctx.installMediaFallback();
   return { boot, ctx, clock, events, nodes, canvasEvents, reloads, posted };
@@ -142,7 +143,11 @@ for (const name of ['character3d', 'weapon3d']) {
     events.get('message')({ source: ctx.parent, origin: 'http://zone.test', data: { lang: 'en' } });
     assert.equal(panel.dir, 'ltr'); assert.match(panel.querySelector('p').textContent, /You can keep playing/);
     const button = panel.querySelector('button'); button.listeners.get('click')(); button.listeners.get('click')();
-    assert.equal(reloads.length, 1); assert.equal(button.disabled, true);
+    if (name === 'character3d') {
+      assert.equal(reloads.length, 0); assert.equal(posted.length, 1);
+      assert.equal(posted[0].zoneCharacterRecover, 1); assert.equal(posted[0].manual, true); assert.equal(posted[0].reason, 'preview-manual-retry');
+    } else assert.equal(reloads.length, 1);
+    assert.equal(button.disabled, true);
   });
   test(`${name}: finite startup deadline fails once and late readiness cannot conceal failure`, () => {
     const { boot, clock, ctx, nodes, reloads } = fallbackContext(current.html);

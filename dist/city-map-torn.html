@@ -415,7 +415,7 @@
     </div>
     <div class="zerr" id="err"></div>
     <div class="districtDetailStatus" id="districtDetailStatus" role="status" hidden></div>
-    <div class="districtDetailStatus" id="districtSurfaceStatus111" role="status" hidden><span id="districtSurfaceMessage111"></span> <button type="button" id="districtSurfaceRetry111" style="min-height:44px;min-width:44px;background:#303335;color:#eee7d8;border:1px solid #626155;padding:6px 10px">Retry detail</button></div>
+    <div class="districtDetailStatus" id="districtSurfaceStatus111" role="status" hidden><span id="districtSurfaceMessage111"></span> <button type="button" id="districtSurfaceRetry111" style="pointer-events:auto;min-height:44px;min-width:44px;background:#303335;color:#eee7d8;border:1px solid #626155;padding:6px 10px">Retry detail</button></div>
     <div class="zboot" id="zboot"><div class="zbootMark"></div></div>
     <div class="sideBd" id="sideBd"></div>
   </div>
@@ -434,11 +434,11 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js?v=113"></script>
-<script src="territory-geometry.js?v=113"></script>
-<script src="../assets/city/service-buildings108.js?v=113"></script>
-<script src="../assets/city/compact-district.js?v=113"></script>
-<script src="map-frame-sample.js?v=113"></script>
+<script src="map-icons.js?v=115"></script>
+<script src="territory-geometry.js?v=115"></script>
+<script src="../assets/city/service-buildings108.js?v=115"></script>
+<script src="../assets/city/compact-district.js?v=115"></script>
+<script src="map-frame-sample.js?v=115"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -476,6 +476,7 @@ initializeMapLocale();
     center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:35, bearing:0, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
+  var mapModuleRetry=ZoneCompactDistrict.createModuleRetry({isActive:function(){return !mapDisposed;},retry:function(){if(mapDisposed||!landmarkController)return Promise.resolve();return Promise.allSettled([Promise.resolve().then(function(){return landmarkController.retrySurfaces();}),Promise.resolve().then(function(){return landmarkController.retryLandmarks();})]);},onState:function(state){document.body.dataset.zoneMapModuleRetry=JSON.stringify(state);}});
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
   // Keep Mapbox's native disabled states and labels, but make zoom/compass as
@@ -1610,6 +1611,7 @@ initializeMapLocale();
     if(resizeObserver)resizeObserver.disconnect();
     window.removeEventListener('message',handleMapMessage);window.removeEventListener('resize',scheduleResize);
     window.removeEventListener('pageshow',handleMapPageShow);document.removeEventListener('visibilitychange',handleMapVisibility);
+    if(typeof mapModuleRetry==='object')mapModuleRetry.dispose();
     cameraSample.dispose();if(landmarkController)landmarkController.dispose();map.remove();
     document.body.dataset.zoneMapLifecycle='disposed';
   }
@@ -1639,7 +1641,7 @@ initializeMapLocale();
   function syncLandmarkVisibility(){if(mapDisposed||!landmarkController)return;var visible=mapVisible!==false&&!document.hidden;if(visible!==landmarkVisibleState){landmarkVisibleState=visible;landmarkController.setVisible(visible);}ZoneCompactDistrict.setPerspective(map,map.getPitch()>1);}
   function ensureCityLandmarks(){
     if(mapDisposed||!map.isStyleLoaded())return;
-    if(!landmarkController){landmarkController=ZoneCompactDistrict.controller(map);landmarkVisibleState=null;}
+    if(!landmarkController){landmarkController=ZoneCompactDistrict.controller(map,{onModuleFetchFailure:function(error){mapModuleRetry.handle(error);}});landmarkVisibleState=null;}
     landmarkController.setDestinations(pinData);
     landmarkController.setTerritories(territoryGeo(territoryData).features);
     syncLandmarkVisibility();

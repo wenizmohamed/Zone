@@ -168,6 +168,89 @@ test('city renderer loads only on its first visible visit and returning reuses t
   assert.match(html,/<iframe id="zone-city-map" data-map-src=/);assert.match(source,/this\.mapVisibility\(this\.state\.screen === 'city'\)/);
 });
 
+test('raw player markup keeps inactive character and combat documents inert until route-aware mount',()=>{
+  for(const tag of html.match(/<iframe\b[^>]*>/g)||[])
+    assert.doesNotMatch(tag,/\ssrc=/,'every raw iframe must wait for the route-aware renderer: '+tag);
+  for(const [id,attribute] of [['zone-char-3d','data-character-src'],['zone-combat-frame','data-combat-src']]){
+    const tag=html.match(new RegExp('<iframe\\b[^>]*id="'+id+'"[^>]*>'))?.[0]||'';
+    assert.ok(tag,id+' is retained in the approved template');
+    assert.match(tag,new RegExp(' '+attribute+'="[^" ]+"'));
+    assert.doesNotMatch(tag,/\ssrc=/,id+' must not navigate from the raw x-dc parser');
+  }
+});
+
+test('character activates once per committed Home frame and its ready bridge resends current state',()=>{
+  const app=game({route:'?screen=city&lang=en'}),attrs=new Map([['data-character-src','dist/character3d.html?v=115']]),loads=[];
+  const frame=app.frames['zone-char-3d'];frame.getAttribute=name=>attrs.get(name)||null;frame.setAttribute=(name,value)=>{attrs.set(name,value);if(name==='src')loads.push(value);};
+  app.instance.componentDidMount();app.instance.pushChar();assert.equal(loads.length,0);
+  app.instance.state.screen='home';app.instance.componentDidUpdate();assert.deepEqual(loads,['dist/character3d.html?v=115']);
+  app.instance.state.lang='ar';app.instance.state.outfit='swat';app.instance.componentDidUpdate();assert.equal(loads.length,1);
+  app.listeners.message({origin:'http://zone.test',source:frame.contentWindow,data:{zoneCharacterReady:1}});
+  const packet=app.messages.filter(m=>m.id==='zone-char-3d').at(-1).data;
+  assert.equal(packet.lang,'ar');assert.equal(packet.character.outfit,'swat');assert.equal(loads.length,1);
+});
+
+test('a trusted character startup failure remounts only that viewer once and the fresh frame receives the exhausted budget',()=>{
+  const app=game({route:'?screen=home'});app.instance.componentDidMount();
+  const frame=app.frames['zone-char-3d'],send=(source,origin,data)=>app.listeners.message({source,origin,data});
+  const failure={zoneCharacterRecover:1,reason:'character-module-load-failed'};
+  const key=app.instance.renderVals().characterFrameKey,cash=app.instance.p.cash,calls=app.calls.length;
+  send(app.frames['zone-city-map'].contentWindow,'http://zone.test',failure);send(frame.contentWindow,'https://other.test',failure);
+  send(frame.contentWindow,'http://zone.test',{...failure,reason:'webgl-context-lost'});assert.equal(app.instance.renderVals().characterFrameKey,key);
+  send(frame.contentWindow,'http://zone.test',failure);assert.notEqual(app.instance.renderVals().characterFrameKey,key);
+  const changed=app.instance.renderVals().characterFrameKey;send(frame.contentWindow,'http://zone.test',failure);assert.equal(app.instance.renderVals().characterFrameKey,changed);
+  assert.equal(app.calls.length,calls);assert.equal(app.instance.p.cash,cash);assert.equal(app.instance.state.screen,'home');
+  const attrs=new Map([['data-character-src','dist/character3d.html?v=115']]);const fresh={contentWindow:{postMessage(data,origin){app.messages.push({id:'fresh-character',data,origin});}},getAttribute:name=>attrs.get(name)||null,setAttribute:(name,value)=>attrs.set(name,value)};
+  app.frames['zone-char-3d']=fresh;app.instance.componentDidUpdate();
+  assert.equal(new URL(attrs.get('src'),'http://zone.test').searchParams.get('__zone_character_boot_retry'),'1');
+  send(fresh.contentWindow,'http://zone.test',{zoneCharacterReady:1});assert.ok(app.messages.some(m=>m.id==='fresh-character'&&m.data.character));
+  app.instance.state.outfit='swat';app.instance.state.lang='ar';app.instance.componentDidUpdate();assert.equal(app.instance.renderVals().characterFrameKey,changed);
+  assert.equal(new URL(attrs.get('src'),'http://zone.test').searchParams.get('v'),'115');
+});
+
+test('the existing character iframe uses a real renderer key without changing its layout or adding wrapper elements',()=>{
+  const tag=html.match(/<iframe\b[^>]*id="zone-char-3d"[^>]*>/)?.[0]||'';
+  assert.match(tag,/sc-camel-key="\{\{ characterFrameKey \}\}"/);
+  const support=readFileSync(resolve(root,'support.js'),'utf8');
+  const code=support.slice(support.indexOf('  function walkElement('),support.indexOf('\n  function ',support.indexOf('  function walkElement(')+5));
+  const context=createContext({RAW_UNWRAP:{},NEVER_CONTENT_KEYED:new Set(['iframe']),NOT_INLINE_SELECTOR:'unused',collectProps:()=>({propGetters:[['key',v=>v.characterFrameKey]],pseudoClasses:[]}),isDeckMountTag:()=>false,walkChildren:()=>[],renderDeckKids:()=>[],h:(tag,props)=>({tag,props})});
+  runInContext(code+'\nglobalThis.renderFrame115=walkElement({localName:"iframe",getAttribute:()=>null,childNodes:[]},{});',context);
+  const before=context.renderFrame115({characterFrameKey:'character:0'},{},'compiled-key'),after=context.renderFrame115({characterFrameKey:'character:1'},{},'compiled-key');
+  assert.equal(before.props.key,'character:0');assert.equal(after.props.key,'character:1');assert.equal(after.tag,'iframe');
+});
+
+test('explicit character Retry can recreate an exhausted viewer without accepting duplicate or stale frame requests',()=>{
+  const app=game({route:'?screen=home'});app.instance.componentDidMount();
+  const send=(frame,data)=>app.listeners.message({origin:'http://zone.test',source:frame.contentWindow,data});
+  const old=app.frames['zone-char-3d'];send(old,{zoneCharacterRecover:1,reason:'character-module-load-failed'});
+  const firstKey=app.instance.renderVals().characterFrameKey,cash=app.instance.p.cash,calls=app.calls.length;
+  const fresh={contentWindow:{postMessage(){}}};app.frames['zone-char-3d']=fresh;
+  send(fresh,{zoneCharacterRecover:1,reason:'character-module-load-failed'});assert.equal(app.instance.renderVals().characterFrameKey,firstKey);
+  const retry={zoneCharacterRecover:1,reason:'preview-manual-retry',manual:true};
+  send(old,retry);assert.equal(app.instance.renderVals().characterFrameKey,firstKey);
+  send(fresh,retry);const secondKey=app.instance.renderVals().characterFrameKey;assert.notEqual(secondKey,firstKey);
+  send(fresh,retry);assert.equal(app.instance.renderVals().characterFrameKey,secondKey);
+  assert.equal(app.calls.length,calls);assert.equal(app.instance.p.cash,cash);assert.equal(app.instance.state.screen,'home');
+});
+
+test('direct Home mount activates its character after the message listener is installed',()=>{
+  const app=game({route:'?screen=home'}),attrs=new Map([['data-character-src','dist/character3d.html?v=115']]);let activated=0;
+  const frame=app.frames['zone-char-3d'];frame.getAttribute=name=>attrs.get(name)||null;frame.setAttribute=(name,value)=>{assert.equal(typeof app.listeners.message,'function');attrs.set(name,value);if(name==='src')activated++;};
+  app.instance.componentDidMount();assert.equal(activated,1);app.instance.componentDidUpdate();assert.equal(activated,1);
+});
+
+test('combat activates only on Attack and every new mounted document receives its authoritative packet',()=>{
+  const app=game({route:'?screen=city'}),makeFrame=()=>{const attrs=new Map([['data-combat-src','./dist/combat.html?v=114']]);return {attrs,contentWindow:{postMessage(data,origin){app.messages.push({id:'zone-combat-frame',data,origin});}},getAttribute:name=>attrs.get(name)||null,setAttribute(name,value){attrs.set(name,value);}};};
+  let frame=makeFrame();app.frames['zone-combat-frame']=frame;
+  app.instance.pushCombatScene();assert.equal(frame.attrs.has('src'),false);
+  app.instance.state.screen='attack';app.instance.componentDidMount();assert.equal(frame.attrs.get('src'),'./dist/combat.html?v=114');
+  const before=app.messages.filter(m=>m.id==='zone-combat-frame').length;app.instance.componentDidUpdate();assert.equal(app.messages.filter(m=>m.id==='zone-combat-frame').length,before);
+  frame=makeFrame();app.frames['zone-combat-frame']=frame;app.instance.componentDidUpdate();assert.equal(frame.attrs.get('src'),'./dist/combat.html?v=114');
+  assert.equal(app.messages.filter(m=>m.id==='zone-combat-frame').length,before+1);
+  app.listeners.message({origin:'http://zone.test',source:frame.contentWindow,data:{zoneCombatReady:1}});
+  assert.equal(app.messages.filter(m=>m.id==='zone-combat-frame').length,before+2);
+});
+
 test('manual reconnect coalesces clicks and hydrates server progress without replaying a previous action', async () => {
   let finishPlatform, refreshes = 0;
   const { instance, context, calls } = game({ fetchImpl: async path => ({ ok: true, json: async () => path.includes('gameplay') ? { player: { id: 'actual-player', cash: 3210 }, state: { version: 6, ctr: { crimes: 2 } } } : path.includes('city/map') ? { blocks: Array.from({ length: 120 }, (_, i) => ({ id: String(i) })) } : { player: { id: 'actual-player', cash: 3210 } } }) });

@@ -42,7 +42,8 @@
 <script src="./assets/ui/owner-transport.js?v=102"></script>
 <script src="./assets/module-panel.js?v=64"></script>
 <script src="./dist/map-icons.js"></script>
-<link rel="stylesheet" href="/engine/theme.css">
+<link id="zone-published-theme" rel="stylesheet" href="/engine/theme.css" media="print">
+<script async src="./assets/ui/published-theme115.js?v=115"></script>
 <link rel="stylesheet" href="./assets/ui/combat.css">
 <link rel="stylesheet" href="./assets/zone-design.css?v=113">
 <link rel="stylesheet" href="./assets/zone-layout.css?v=113">
@@ -261,7 +262,7 @@
               </div>
               <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <div class="zone-character-stage" style="position:relative;height:260px;background:var(--deep)">
-                  <iframe id="zone-char-3d" src="dist/character3d.html?v=114" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+                  <iframe id="zone-char-3d" data-character-src="dist/character3d.html?v=115" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
                   <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
@@ -347,7 +348,7 @@
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=113" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=115" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
           <nav class="zone-city-directory zone-panel" aria-label="{{ cityDirectory.title }}">
             <div class="zone-panel-heading">{{ cityDirectory.title }}<bdi>{{ cityDirectory.count }}</bdi></div>
@@ -358,7 +359,7 @@
         </sc-if>
         <sc-if value="{{ gmapsMap }}" hint-placeholder-val="{{ false }}">
           <div style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0a0c0e">
-            <iframe src="dist/zone-maps-live.html" title="Zone City live satellite" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe sc-camel-src="dist/zone-maps-live.html" title="Zone City live satellite" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
         </sc-if>
         <sc-if value="{{ artMap }}" hint-placeholder-val="{{ true }}">
@@ -406,7 +407,7 @@
               <p class="zone-combat-dock-instruction">{{ combatScene.note }}</p>
             </div>
           </sc-if>
-          <iframe id="zone-combat-frame" class="zone-combat-host" src="./dist/combat.html?v=114" title="{{ combatScene.title }}" loading="eager"></iframe>
+          <iframe id="zone-combat-frame" class="zone-combat-host" data-combat-src="./dist/combat.html?v=114" title="{{ combatScene.title }}" loading="eager"></iframe>
           <sc-if value="{{ combatScene.showRoster }}"><div class="zone-combat-hud"><p>{{ combatScene.note }}</p></div></sc-if><div class="zone-combat-hud"><bdi>{{ combatScene.stats }}</bdi></div>
           <sc-if value="{{ combatScene.receipt }}"><div class="zone-combat-receipt" role="status"><strong>{{ combatScene.receiptTitle }}</strong><p>{{ combatScene.receipt }}</p></div></sc-if>
         </section>
@@ -585,7 +586,7 @@
 
       <!-- PROPERTIES -->
       <sc-if value="{{ is.properties }}" hint-placeholder-val="{{ false }}">
-        <sc-if value="{{ safehouse.visible }}"><section class="zone-safehouse-host" aria-label="{{ safehouse.title }}"><div class="zone-safehouse-toolbar"><strong>{{ safehouse.title }}</strong><button onClick="{{ safehouse.close }}">{{ safehouse.closeLabel }}</button></div><iframe id="zone-safehouse-frame" src="dist/safehouse.html?v=114" title="{{ safehouse.title }}" allow="fullscreen"></iframe></section></sc-if>
+        <sc-if value="{{ safehouse.visible }}"><section class="zone-safehouse-host" aria-label="{{ safehouse.title }}"><div class="zone-safehouse-toolbar"><strong>{{ safehouse.title }}</strong><button onClick="{{ safehouse.close }}">{{ safehouse.closeLabel }}</button></div><iframe id="zone-safehouse-frame" sc-camel-src="dist/safehouse.html?v=114" title="{{ safehouse.title }}" allow="fullscreen"></iframe></section></sc-if>
         <section class="zone-panel zone-current-property"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ propertyDossier.img }}');background-size:{{ propertyDossier.artSize }};background-position:{{ propertyDossier.artPosition }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ t.living }}</span><h2>{{ propertyDossier.name }}</h2><p>{{ propertyDossier.context }}</p><div class="zone-record-foot"><span>{{ propertyDossier.happyLabel }} <bdi>{{ propertyDossier.happy }}</bdi></span><span>{{ propertyDossier.cashLabel }} <bdi>{{ propertyDossier.cash }}</bdi></span></div></div></section>
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
@@ -1141,6 +1142,7 @@ class Component extends DCLogic {
       if (d.zoneCombatReady && fromCombat) { this._combatSceneSig = ''; this.pushCombatScene(); return; }
       if (fromCombat) return;
       if (d.zoneCharacterReady && fromCharacter) { this.pushChar(); return; }
+      if (d.zoneCharacterRecover === 1 && fromCharacter) { this.recoverCharacterFrame(d.reason, d.manual === true); return; }
       if (d.zoneViewerReady && fromItem) { this.push3d(); return; }
       if (d.zoneEquip && fromCharacter) {
         if (!this.allowGameplay()) { this.pushChar(); return; }
@@ -1165,6 +1167,8 @@ class Component extends DCLogic {
       }
     };
     window.addEventListener('message', this.onMsg);
+    this.pushChar();
+    this.pushCombatScene();
     this.mapVisibility(this.state.screen === 'city');
     this.loadTerritories();
     if (window.zoneOwnerPlaytest?.active()) {
@@ -1456,9 +1460,26 @@ class Component extends DCLogic {
     f.contentWindow.postMessage({type:'ZONE_MAP_DATA',presentation:{showLocations:true,compact:true},territoryDataSource:territoryAuthoritative?'server':'bundled',territoryAuthoritative,revision:territoryMap.revision,zonePins:pins,blocks,factions,playerFactionId:territoryMap.playerFactionId,summary:territoryMap.summary,legend,copy,legendTitle:t.keyOfSymbols,here:hp?{x:hp.x,y:hp.y,lng:hp.lng,lat:hp.lat,territory:hp.blockId}:null,hereLabel:t.youAreHere,lang,dir:lang==='ar'?'rtl':'ltr',dark,bg:dark?'#0e1116':'#e7e4d6'},window.location.origin);
     this._mapSig = sig;
   }
+  recoverCharacterFrame(reason, manual = false) {
+    const frame = document.getElementById('zone-char-3d');
+    if (this.state.screen !== 'home' || !frame?.contentWindow || this._characterRecoveryFrame === frame.contentWindow) return false;
+    if (manual ? reason !== 'preview-manual-retry' : !['character-module-load-failed','character-script-load-failed'].includes(reason) || this._characterRecoveryUsed) return false;
+    // A real keyed remount discards only the failed optional browsing context.
+    // The new URL exhausts its budget; neither page nor gameplay is replayed.
+    this._characterRecoveryUsed = true;
+    this._characterRecoveryFrame = frame.contentWindow;
+    this.setState(s => ({ characterFrameEpoch: (Number(s.characterFrameEpoch) || 0) + 1 }));
+    return true;
+  }
   pushChar() {
+    if (this.state.screen !== 'home') return;
     const f = document.getElementById('zone-char-3d');
     if (!f || !f.contentWindow) return;
+    if (f.getAttribute && !f.getAttribute('src')) {
+      let source = f.getAttribute('data-character-src');
+      if (this.state.characterFrameEpoch) { const retry = new URL(source, window.location.href); retry.searchParams.set('__zone_character_boot_retry','1'); source = retry.href; }
+      f.setAttribute('src', source);
+    }
     const s = this.p.stats;
     // Reserved build payload. The current authored wardrobe has no physique morph.
     const build = Math.max(0, Math.min(1, (s.str + s.def) / (s.str + s.def + s.spd + s.dex) * 2 - .78));
@@ -1526,7 +1547,9 @@ class Component extends DCLogic {
   }
   charMsg(m) { const f = document.getElementById('zone-char-3d'); if (f && f.contentWindow) f.contentWindow.postMessage(m, window.location.origin); }
   pushCombatScene() {
+    if (this.state.screen !== 'attack') { this._combatSceneSig = ''; return; }
     const frame = document.getElementById('zone-combat-frame'); if (!frame?.contentWindow) { this._combatSceneSig = ''; return; }
+    if (frame.getAttribute && !frame.getAttribute('src')) { frame.setAttribute('src', frame.getAttribute('data-combat-src')); this._combatSceneSig = ''; }
     const lang = this.state.lang, t = T[lang], encounter = this.combatEncounter || this.combatArchive || null;
     const eq = this.p.equip && this.p.inv[this.p.equip] > 0 && CAT[this.p.equip]?.type === 'weapon' ? this.p.equip : 'fists';
     const opponentName = this.state.combatMode === 'players' ? (this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === encounter?.opponentId)?.username || encounter?.opponent?.username || encounter?.opponent?.name?.[lang] || encounter?.opponentName || encounter?.opponentId || '') : (encounter?.opponent?.name?.[lang] || t.opp[encounter?.opponentId] || encounter?.opponentId || '');
@@ -2843,6 +2866,7 @@ class Component extends DCLogic {
     if (screen === 'elimination') view.subtitle = lang === 'ar' ? 'الموسم الأسبوعي للعائلات. ترتيب حقيقي من الأنشطة المسجلة.' : 'Weekly family season. Real standings from recorded activities.';
     view.topLinks = ['education', 'newspaper', 'faction', 'account', 'hof'].filter(destination => destination === 'account' || SCREENS.includes(destination)).map(destination => ({ label: destination === 'account' ? (lang === 'ar' ? 'الحساب' : 'Account') : destination === 'newspaper' ? view.bulletin.title : t.nav[destination], go: () => destination === 'account' ? window.location.href = view.accountHref : this.go(destination) }));
     if (screen === 'crimes') view.tutText = lang === 'ar' ? 'كل نجاح يزيد مهارة الجريمة. الجرأة هي التكلفة. بعض حالات الفشل تسبب السجن أو المستشفى؛ وتفتح خبرة الجريمة فئات أصعب.' : 'Each success increases that crime\'s skill. Nerve is the cost. Some failures cause jail or hospitalization; crime experience unlocks harder categories.';
+    view.characterFrameKey = 'character:' + (this.state.characterFrameEpoch || 0);
     return view;
   }
 }

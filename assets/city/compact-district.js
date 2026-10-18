@@ -178,11 +178,32 @@
     const corePins=(pins||[]).filter(p=>coreIds.includes(p.id)).map(p=>{const pixel=map.project(p._lngLat);return {id:p.id,coordinates:p._lngLat.slice(),isOnWater:rendered(['district-water'],pixel).length>0};});
     return {source:'mapbox-streets-v8',zoom:map.getZoom(),pitch:map.getPitch(),footprints:uniqueFootprints.size,renderedVolumeParts:volumes.length,buildingDetail:buildingStates.get(map)?.diagnostics()||null,footprintGeometryHash:hash([...geometryHashes].sort()),roads:uniqueRoads.size,visibleCoreIds,visibleCoreSymbolIds,visibleCoreIconIds,visibleCoreLabelIds,coreIconFeatures,reservationIds,corePins,tilesLoaded:map.areTilesLoaded?map.areTilesLoaded():null};
   }
+  function isModuleFetchFailure(error){
+    return error?.name==='TypeError'&&/^(?:Failed to fetch dynamically imported module(?::|$)|Importing a module script failed\.?$|error loading dynamically imported module(?::|$))/i.test(String(error.message||''));
+  }
+  function createModuleRetry(options={}){
+    let attempted=false,disposed=false,timer=null;
+    const active=options.isActive||(()=>true),schedule=options.setTimeout||setTimeout,cancel=options.clearTimeout||clearTimeout;
+    const publish=value=>{if(!disposed&&active()){try{options.onState?.(value);}catch(_){}}};
+    return {
+      handle(error){
+        if(disposed||attempted||timer!==null||!active()||!isModuleFetchFailure(error))return false;
+        // Leave the initial import catch/microtask chain before retrying the
+        // existing controllers. One map lifetime owns at most one such task.
+        timer=schedule(()=>{timer=null;if(disposed||attempted||!active())return;attempted=true;publish({status:'retrying',automaticAttempts:1});
+          return Promise.resolve().then(()=>{if(!disposed&&active())return options.retry();}).catch(()=>{}).then(()=>publish({status:'settled',automaticAttempts:1}));
+        },0);
+        publish({status:'scheduled',automaticAttempts:0});return true;
+      },
+      dispose(){if(disposed)return;disposed=true;if(timer!==null){cancel(timer);timer=null;}}
+    };
+  }
   function controller(map,options={}){
     let pins=[],landmarks=null,loading=null,disposed=false,visible=true,buildings=null,buildingsLoading=null,mapMedia=null,mapMediaSignature='',mapMediaLoading=null,surfaces=null,surfacesLoading=null,surfaceGeneration=0;
     const loadSurfaces=options.loadSurfaces||(surfacesUrl?generation=>import(surfacesUrl+(generation?(surfacesUrl.includes('?')?'&':'?')+'retry='+generation:'')):null);
     const waits=new Set();
     let bindingFeatures=null,bindingSignature='',bindingResult=null,landmarkSignature='',landmarkGeneration=0,landmarksRequested=false,landmarkError=null,landmarkImportRevision=0;
+    function moduleFetchFailed(error){if(!disposed&&isModuleFetchFailure(error)){try{options.onModuleFetchFailure?.(error);}catch(_){}}}
     function syncDetailNotice(){
       if(typeof document!=='object'||!document.body)return;
       const failed=['zoneDistrictSurfaces','zoneDistrictLandmarks'].some(key=>{try{return ['failed','error'].includes(JSON.parse(document.body.dataset[key]||'{}').status);}catch(_){return false;}});
@@ -225,6 +246,7 @@
           document.body.dataset.zoneDistrictLandmarks=JSON.stringify({status:'failed',error:String(error.message||error)});
           syncDetailNotice();
         }
+        moduleFetchFailed(error);
         throw error;
       });
       return loading;
@@ -249,6 +271,7 @@
           document.body.dataset.zoneDistrictSurfaces=JSON.stringify({status:'failed',error:String(error.message||error)});
           syncDetailNotice();
         }
+        if(!disposed&&generation===surfaceGeneration)moduleFetchFailed(error);
       });
       return surfacesLoading;
     }
@@ -326,5 +349,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,mercator,geographic,createProjection,createStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE};
+  return {CENTER,mercator,geographic,createProjection,createStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

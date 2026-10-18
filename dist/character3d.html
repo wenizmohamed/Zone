@@ -55,7 +55,11 @@ function installMediaFallback() {
       retry.addEventListener('click', () => {
         if (disposed || retry.disabled) return;
         retry.disabled = true;
-        // Reload only this optional viewer, retaining its selection and language URL.
+        if (parent !== window) {
+          parent.postMessage({ zoneCharacterRecover: 1, reason: 'preview-manual-retry', manual: true }, location.origin);
+          return;
+        }
+        // A standalone preview has no owning game host.
         location.reload();
       });
       panel.append(message, retry); document.body.append(panel);
@@ -70,6 +74,9 @@ function installMediaFallback() {
     clearTimeout(timer); timer = null;
     if (failed || disposed) return false;
     document.body.dataset.zoneMediaState = 'ready';
+    // The application's genuine handshake can precede (or replace) the
+    // browser's inline-module load event. Close the transport boundary now.
+    globalThis.ZoneMediaBoot?.completeActivation?.();
     const stage = document.getElementById('stage');
     const nodes = [...document.querySelectorAll('canvas'), ...(stage?.shadowRoot?.querySelectorAll('canvas') || [])];
     for (const canvas of nodes) if (!canvases.has(canvas)) {
@@ -77,8 +84,15 @@ function installMediaFallback() {
     }
     return true;
   }
-  function onError(event) { if (event.message || event.error) fail('preview-runtime-error'); }
-  function onRejected(event) { event.preventDefault(); fail('preview-startup-failed'); }
+  function onError(event) {
+    if (globalThis.ZoneMediaBoot?.captureActivationTransport?.(event)) { event.preventDefault?.(); return; }
+    if (event.message || event.error) fail('preview-runtime-error');
+  }
+  function onRejected(event) {
+    event.preventDefault();
+    if (globalThis.ZoneMediaBoot?.captureActivationTransport?.(event)) return;
+    fail('preview-startup-failed');
+  }
   function onMessage(event) {
     if (event.source !== parent || event.origin !== location.origin || !event.data) return;
     if (event.data.lang !== 'ar' && event.data.lang !== 'en') return;
@@ -95,7 +109,7 @@ function installMediaFallback() {
   addEventListener('error', onError); addEventListener('unhandledrejection', onRejected);
   addEventListener('message', onMessage); addEventListener('pagehide', dispose);
   timer = setTimeout(() => fail('preview-startup-timeout'), TIMEOUT_MS);
-  return { fail, ready, dispose, get failed() { return failed; } };
+  return { fail, ready, dispose, get failed() { return failed; }, get disposed() { return disposed; } };
 }
 window.ZoneMediaBoot = installMediaFallback();
 </script>
@@ -107,6 +121,48 @@ window.ZoneMediaBoot = installMediaFallback();
 document.addEventListener('DOMContentLoaded', async function() {
   const loading = document.getElementById('__bundler_loading');
   function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  let characterRecoveryState = 'idle', characterModuleActivation = null;
+  function requestCharacterRecovery(error) {
+    if (!['character-module-load-failed', 'character-script-load-failed'].includes(error?.code)) return false;
+    if (characterRecoveryState === 'requested') return true;
+    if (characterRecoveryState !== 'idle' || parent === window || window.ZoneMediaBoot?.failed || window.ZoneMediaBoot?.disposed
+      || document.documentElement?.isConnected === false || window.frameElement?.isConnected === false) return false;
+    try {
+      const attempts = new URL(location.href).searchParams.getAll('__zone_character_boot_retry');
+      if (attempts.length > 1 || (attempts.length === 1 && attempts[0] !== '0')) return false;
+      characterRecoveryState = 'requested';
+      document.body.dataset.zoneCharacterRecovery = JSON.stringify({ state: 'requested', method: 'host-remount', attempt: 1, reason: error.code });
+      // Only the authenticated parent bridge can replace this optional frame.
+      // The child never navigates, mutates its URL/name, or updates game state.
+      parent.postMessage({ zoneCharacterRecover: 1, reason: error.code }, location.origin);
+      return true;
+    } catch (_) {
+      characterRecoveryState = 'failed';
+      return false;
+    }
+  }
+  function captureCharacterTransport(event) {
+    const active = characterModuleActivation;
+    if (!active) return false;
+    const cause = event?.reason || event?.error;
+    if (cause?.name && cause.name !== 'TypeError') return false;
+    const message = String(cause?.message || event?.message || '');
+    const match = /^(?:Uncaught\s+)?(?:TypeError:\s*)?Failed to fetch dynamically imported module:\s*(\S+)\s*$/.exec(message);
+    if (!match || !active.urls.has(match[1])) return false;
+    // Window error/unhandledrejection may arrive without element.onerror.
+    // Consume duplicates from both listeners, but never promote an unrelated
+    // runtime error or an already-expired preview into automatic recovery.
+    if (active.failed) return true;
+    if (window.ZoneMediaBoot?.failed) return false;
+    active.failed = true;
+    const error = new Error('Character module transport failed: ' + match[1]);
+    error.code = 'character-module-load-failed'; error.transportURL = match[1];
+    active.reject(error);
+    return true;
+  }
+  if (window.ZoneMediaBoot) window.ZoneMediaBoot.captureActivationTransport = captureCharacterTransport;
+  if (window.ZoneMediaBoot) window.ZoneMediaBoot.completeActivation = () => characterModuleActivation?.complete();
 
   const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
   const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
@@ -120,6 +176,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   // Error sink persists across replaceWith since it's on window, not the DOM.
   window.addEventListener('error', function(e) {
+    if (window.ZoneMediaBoot?.captureActivationTransport?.(e)) { e.preventDefault?.(); return; }
     // Failed resource loads (CSP-blocked links, scripts, images) fire plain
     // events at the element — warn only; real JS errors carry message/error.
     if (!e.message && !e.error && e.target && e.target !== window) {
@@ -431,7 +488,44 @@ document.addEventListener('DOMContentLoaded', async function() {
         s.textContent = pre ? await pre.text() : await (await fetch(s.src)).text();
         s.removeAttribute('src');
       }
-      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      // Inline modules load a dependency graph asynchronously too. A resource
+      // error on that script has no message/filename and no src, so the global
+      // error sink cannot distinguish it from an optional image failure.
+      // Keep this required startup boundary explicit and reject failures.
+      const isModule = s.type === 'module';
+      const scriptSource = s.src || 'inline-character-entry';
+      const reportScript = (stage, code, transportURL) => {
+        document.body.dataset.zoneCharacterBootstrap = JSON.stringify({
+          stage, type: isModule ? 'module' : 'classic', source: scriptSource,
+          ...(code ? { code } : {}), ...(transportURL ? { transportURL } : {})
+        });
+      };
+      const p = s.src || isModule ? new Promise(function(resolve, reject) {
+        let settled = false;
+        const rejectScript = error => {
+          if (settled) return; settled = true;
+          reportScript('error', error.code, error.transportURL); reject(error);
+        };
+        const completeScript = () => {
+          if (settled) return; settled = true;
+          if (characterModuleActivation === activation) characterModuleActivation = null;
+          reportScript('ready'); resolve();
+        };
+        const activation = isModule ? { failed: false, reject: rejectScript, complete: completeScript, urls: new Set(
+          [...s.textContent.matchAll(/\bimport\s*\(\s*new URL\(\s*(['"])([^'"]+)\1\s*,\s*location\.href\s*\)\.href\s*\)/g)]
+            .map(match => new URL(match[2], location.href))
+            .filter(url => ['http:', 'https:'].includes(url.protocol) && url.origin === new URL(location.href).origin)
+            .map(url => url.href)
+        ) } : null;
+        if (activation) characterModuleActivation = activation;
+        reportScript('loading');
+        s.onload = completeScript;
+        s.onerror = () => {
+          const error = new Error(isModule ? 'Character module graph failed to load' : 'Character script failed to load: ' + scriptSource);
+          error.code = isModule ? 'character-module-load-failed' : 'character-script-load-failed';
+          rejectScript(error);
+        };
+      }) : null;
       old.replaceWith(s);
       if (p) await p;
     }
@@ -441,7 +535,10 @@ document.addEventListener('DOMContentLoaded', async function() {
       window.Babel.transformScriptTags();
     }
   } catch (err) {
-    window.ZoneMediaBoot?.fail('preview-unpack-failed');
+    if (requestCharacterRecovery(err)) return;
+    const reason = err.code === 'character-module-load-failed' ? 'preview-module-load-failed'
+      : err.code === 'character-script-load-failed' ? 'preview-script-load-failed' : 'preview-unpack-failed';
+    window.ZoneMediaBoot?.fail(reason);
     setStatus('Error unpacking: ' + err.message);
     console.error('Bundle unpack error:', err);
   }
