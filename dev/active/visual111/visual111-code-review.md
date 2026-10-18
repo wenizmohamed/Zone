@@ -5,11 +5,20 @@ Last updated: 2026-10-18, Asia/Dubai.
 ## Executive summary
 
 This is a local source candidate, not a production release or whole-beta acceptance.
-The current source passed the complete `npm run vercel-build` pipeline with
-975 passing checks, zero failures and exit 0. The parent performed the closing
-source and regression review. The independent reviewer completed a partial
-check but reached its usage limit before returning a final verdict. No final
-independent PASS is claimed.
+The first working-copy build passed 975 checks, but the fresh-checkout gate
+then correctly failed on an exact historical receipt hash. The v111 generator
+had recorded an existing CRLF working copy instead of the unchanged LF Git
+blob. The candidate now pins the exact ad00253 blob and SHA-256. The strict
+byte-equality assertion remains intact; no historical file, checkout rule or
+model was rewritten. The repaired fresh-checkout `npm run vercel-build` passed
+975 checks, zero failures, exit 0. Its public output contains 885 files and
+161,444,884 bytes. The receipt generator was also executed and matched the new
+manifest exactly without rewriting the old receipt. Evidence is retained in
+`.tools/beta111-fresh-repaired-build.log` in this verifier checkout.
+
+The parent performed the closing source and regression review. The independent
+reviewer completed a partial check but reached its usage limit before returning
+a final verdict. No final independent PASS is claimed.
 
 The approved layout stylesheet, three byte-pinned map inputs, twenty original
 weapon GLBs and all fifty-one historical weapon thumbnails remain unchanged.
@@ -37,6 +46,13 @@ workaround. Production promotion is not authorized by this review.
 - The original v99 receipt remains immutable. Historical checks explicitly
   select revision 99; current bindings and their three new thumbnails receive
   separate geometry, material, provenance and packaging checks.
+  Its committed baseline is 243,675 bytes, SHA-256
+  `5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644`.
+  The retained integration copy is 252,392 bytes, SHA-256
+  `1df77e3aa00677337dbb50ae34909711f1b360347ddc20b3aee2d12f3130820d`.
+  The latter is an older CRLF checkout representation, not a second accepted
+  release hash. It stays untouched. Release builds must use the fresh checkout
+  and satisfy the original strict receipt assertion against the Git baseline.
 - The city uses actual provider footprints and native heights. Full-height
   masonry, windows, cornices and rooftop details share four draw batches.
   A meter-scaled wall material continues window coverage after the raised-pane

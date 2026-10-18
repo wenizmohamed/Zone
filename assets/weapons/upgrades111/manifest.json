@@ -5,7 +5,13 @@
   "licenseFile": "LICENSE.txt",
   "license_file": "LICENSE.txt",
   "historicalReceipt": "assets/weapons/runtime-coverage.json",
-  "historicalReceiptSha256": "1df77e3aa00677337dbb50ae34909711f1b360347ddc20b3aee2d12f3130820d",
+  "historicalReceiptSha256": "5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644",
+  "historicalReceiptSource": {
+    "revision": "ad002532028975d687d956c7a745be303ddd1852",
+    "blob": "c51b0d48f3f92509a55f023f295c4de7c882d0dc",
+    "bytes": 243675,
+    "sha256": "5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644"
+  },
   "sourceTool": "assets/weapons/source-tools/upgrades111/build_upgrades.py",
   "sourceToolSha256": "f5dfc3bc8b5e97a64ea37d439cd839f3b526672f706ac41049db1266d4dfd04b",
   "renderer": "Blender 4.5.9 CPU Cycles; asset evidence, not browser proof",

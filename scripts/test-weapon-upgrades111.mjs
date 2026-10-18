@@ -109,6 +109,13 @@ test('exact seven-key overlay preserves gameplay categories and leaves all other
 
 test('twenty original assets and v99 viewer receipts stay byte-identical; new evidence is honestly offline',()=>{
   assert.equal(digest(read(manifest.historicalReceipt)),manifest.historicalReceiptSha256);
+  assert.deepEqual(manifest.historicalReceiptSource,{
+    revision:'ad002532028975d687d956c7a745be303ddd1852',
+    blob:'c51b0d48f3f92509a55f023f295c4de7c882d0dc',bytes:243675,
+    sha256:'5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644'
+  });
+  assert.equal(read(manifest.historicalReceipt).length,manifest.historicalReceiptSource.bytes);
+  assert.equal(manifest.historicalReceiptSha256,manifest.historicalReceiptSource.sha256);
   assert.equal(manifest.immutableOriginals.length,20);
   for(const record of manifest.immutableOriginals){const bytes=read(record.path);assert.equal(digest(bytes),record.sha256);assert.equal(bytes.length,record.bytes);}
   assert.equal(manifest.thumbnailCapture,'offline-Blender-Cycles-PNG');assert.equal(manifest.browserCaptureStatus,'pending-review');

@@ -1,17 +1,33 @@
 // Emits a derivative receipt without changing the immutable v99 receipt.
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import { WEAPON_PRESENTATION_UPGRADES111, WEAPON_UPGRADE_SOURCES111 } from '../../../../dist/weapon-assets.js';
 const root = new URL('../../../../', import.meta.url);
 const read = path => readFileSync(new URL(path, root));
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const build = JSON.parse(read('.tools/v111-weapons/build-receipt.json'));
-const old = JSON.parse(read('assets/weapons/runtime-coverage.json'));
+// Pin the actual versioned receipt, not a previously checked-out CRLF working
+// copy whose cached stat can survive a later -text attribute change. Never
+// rewrite or normalize that historical file to make this generator pass.
+const historicalReceipt = 'assets/weapons/runtime-coverage.json';
+const historicalReceiptSource = {
+  revision:'ad002532028975d687d956c7a745be303ddd1852',
+  blob:'c51b0d48f3f92509a55f023f295c4de7c882d0dc',
+  bytes:243675,
+  sha256:'5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644'
+};
+const originalReceipt = execFileSync('git',['show',historicalReceiptSource.revision+':'+historicalReceipt],
+  {cwd:fileURLToPath(root),maxBuffer:1024*1024});
+if(originalReceipt.length!==historicalReceiptSource.bytes || hash(originalReceipt)!==historicalReceiptSource.sha256)
+  throw new Error('The pinned historical receipt differs from the versioned baseline. No asset was rewritten.');
+const old = JSON.parse(originalReceipt);
 const immutableOriginals = [...new Map(old.records.map(record => [record.modelPath,
   { path: record.modelPath, bytes: record.sourceBytes, sha256: record.sourceSha256 }])).values()];
 console.log(JSON.stringify({
   revision:111, status:'offline-asset-review-browser-pending', license:'CC0-1.0', licenseFile:'LICENSE.txt', license_file:'LICENSE.txt',
-  historicalReceipt:'assets/weapons/runtime-coverage.json', historicalReceiptSha256:hash(read('assets/weapons/runtime-coverage.json')),
+  historicalReceipt, historicalReceiptSha256:hash(originalReceipt), historicalReceiptSource,
   sourceTool:'assets/weapons/source-tools/upgrades111/build_upgrades.py',
   sourceToolSha256:hash(read('assets/weapons/source-tools/upgrades111/build_upgrades.py')),
   renderer:build.renderer, thumbnailCapture:'offline-Blender-Cycles-PNG', browserCaptureStatus:'pending-review',
