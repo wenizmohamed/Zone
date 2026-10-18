@@ -1,0 +1,940 @@
+{
+  "revision": 112,
+  "status": "proposal-only-offline-asset-review",
+  "renderer": "Blender 4.5.9 CPU Cycles; exported-GLB asset evidence, not browser proof",
+  "browserCaptureStatus": "pending-review",
+  "thumbnailCapture": "offline-Blender-Cycles-exported-GLB-PNG",
+  "license": "CC0-1.0",
+  "license_file": "LICENSE.txt",
+  "sources": [
+    {
+      "author": "Tabasco",
+      "license": "CC0-1.0",
+      "license_file": "LICENSE.txt",
+      "source_page": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "licenseVerified": "2026-10-18",
+      "licenseNote": "Primary author page retains CC0 and states the 2023-12-15 public-domain dedication. It also retains a historical CC-BY marker. Original sources had only Blender materials; these new surface maps are ZONE work.",
+      "download_url": "https://opengameart.org/sites/default/files/smallarms.zip",
+      "archive_sha256": "fac981bb2df3dac9574e3567ef40df0fa5b77f0d6be0a36b83bdd95fcc86a492"
+    },
+    {
+      "author": "LonesomeDucky",
+      "license": "CC0-1.0",
+      "license_file": "LICENSE.txt",
+      "source_page": "https://opengameart.org/content/old-wooden-baseball-bat",
+      "licenseVerified": "2026-10-18",
+      "licenseNote": "Retained CC0 bat color/normal lineage from the v99 adaptation; original projected UVs and walnut factor preserved, new roughness only.",
+      "retainedSourceModel": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+      "retainedSourceSha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd"
+    }
+  ],
+  "bindings": {
+    "sniperrifle_2": "dragunov-detail112",
+    "sniperrifle_5": "dragunov-detail112",
+    "sniperrifle_3": "mosin9130-detail112",
+    "sniperrifle_6": "mosin9130-detail112"
+  },
+  "assets": [
+    {
+      "id": "dragunov-detail112",
+      "path": "assets/weapons/upgrades112/dragunov-detail112.glb",
+      "sha256": "2f43ce2485a62942d1f7e65b7eee41390a64bf00de97febdcff9ecff5487fac2",
+      "bytes": 4173116,
+      "triangles": 37706,
+      "primitives": 7,
+      "images": 9,
+      "originalSourceId": "tabasco-dragunov",
+      "originalPath": "assets/weapons/premium/v99/tabasco-dragunov.glb",
+      "sourceVertices": 1139,
+      "sourceTriangles": 2063,
+      "baseChamferTriangles": 18922,
+      "addedDetailTriangles": 18784,
+      "detailParts": [
+        {
+          "name": "SVD receiver reinforcing panel",
+          "triangles": 188
+        },
+        {
+          "name": "SVD receiver upper seam",
+          "triangles": 188
+        },
+        {
+          "name": "SVD receiver upper seam.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener.001",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener.002",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.006",
+          "triangles": 188
+        },
+        {
+          "name": "SVD receiver reinforcing panel.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD receiver upper seam.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD receiver upper seam.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener.003",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener.004",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD retained fastener.005",
+          "triangles": 284
+        },
+        {
+          "name": "SVD slotted fastener inset.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.006",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.007",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.008",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.009",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.010",
+          "triangles": 188
+        },
+        {
+          "name": "SVD handguard ventilation recess.011",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD pressed magazine channel.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD wood furniture screw.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.007",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.008",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.009",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.010",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.011",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.012",
+          "triangles": 188
+        },
+        {
+          "name": "SVD grip checkering.013",
+          "triangles": 188
+        },
+        {
+          "name": "SVD right ejection inset",
+          "triangles": 188
+        },
+        {
+          "name": "SVD bolt face in ejection inset",
+          "triangles": 188
+        },
+        {
+          "name": "SVD safety lever",
+          "triangles": 188
+        },
+        {
+          "name": "SVD optic machined collar",
+          "triangles": 384
+        },
+        {
+          "name": "SVD optic machined collar.001",
+          "triangles": 384
+        },
+        {
+          "name": "SVD optic machined collar.002",
+          "triangles": 384
+        },
+        {
+          "name": "SVD optic machined collar.003",
+          "triangles": 384
+        },
+        {
+          "name": "SVD optic machined collar.004",
+          "triangles": 384
+        },
+        {
+          "name": "SVD optic ocular coated surface",
+          "triangles": 380
+        },
+        {
+          "name": "SVD optic objective coated surface",
+          "triangles": 380
+        },
+        {
+          "name": "SVD scope mount foot",
+          "triangles": 188
+        },
+        {
+          "name": "SVD scope clamp screw",
+          "triangles": 284
+        },
+        {
+          "name": "SVD scope clamp screw.001",
+          "triangles": 284
+        },
+        {
+          "name": "SVD scope mount foot.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD scope clamp screw.002",
+          "triangles": 284
+        },
+        {
+          "name": "SVD scope clamp screw.003",
+          "triangles": 284
+        },
+        {
+          "name": "SVD elevation control",
+          "triangles": 284
+        },
+        {
+          "name": "SVD ocular rubber rim",
+          "triangles": 384
+        },
+        {
+          "name": "SVD turret edge knurl",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.001",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.002",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.003",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.004",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.005",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.006",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.007",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.008",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.009",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.010",
+          "triangles": 188
+        },
+        {
+          "name": "SVD turret edge knurl.011",
+          "triangles": 188
+        }
+      ],
+      "physicalBoundsBlender": {
+        "min": [
+          -0.23894065618515015,
+          -0.0290641188621521,
+          -0.0481489896774292
+        ],
+        "max": [
+          0.958820104598999,
+          0.025349998846650124,
+          0.17499999701976776
+        ]
+      },
+      "reviewFrame": {
+        "min": [
+          -0.2389473021030426,
+          -0.0290641188621521,
+          -0.04819874465465546
+        ],
+        "max": [
+          0.958820104598999,
+          0.025349998846650124,
+          0.17499999701976776
+        ]
+      },
+      "detailReviewFrame": {
+        "min": [
+          -0.11999999731779099,
+          -0.07999999821186066,
+          -0.054999999701976776
+        ],
+        "max": [
+          0.3700000047683716,
+          0.07999999821186066,
+          0.20000000298023224
+        ]
+      },
+      "thumbnail": "/assets/weapons/upgrades112/dragunov-thumbnail.png",
+      "thumbnailRenderedFromExportedGLB": true,
+      "author": "Tabasco / LonesomeDucky / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "quality": "adapted-pbr",
+      "materialStatus": "adapted-pbr",
+      "materialLineage": "Tabasco CC0 Dragunov silhouette and measured grip retained. ZONE adds bevelled receiver and optic collars, clamps, lens surfaces, controls, fasteners, vents and magazine detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel and rubber PBR maps.",
+      "modified": true,
+      "modification": "Tabasco CC0 Dragunov silhouette and measured grip retained. ZONE adds bevelled receiver and optic collars, clamps, lens surfaces, controls, fasteners, vents and magazine detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel and rubber PBR maps.",
+      "descriptor": {
+        "id": "dragunov-detail112",
+        "url": "upgrades112/dragunov-detail112.glb",
+        "originalSourceId": "tabasco-dragunov",
+        "legacySourceKey": "dragunov",
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true,
+        "category": "sniper",
+        "revision": 112,
+        "quality": "adapted-pbr",
+        "author": "Tabasco / LonesomeDucky / ZONE derivative",
+        "license": "CC0-1.0",
+        "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+        "sourceManifest": "upgrades112/manifest.json",
+        "surfaceMaps": [
+          "baseColor",
+          "normal",
+          "metallicRoughness"
+        ],
+        "materialLineage": "Tabasco CC0 Dragunov silhouette and measured grip retained. ZONE adds bevelled receiver and optic collars, clamps, lens surfaces, controls, fasteners, vents and magazine detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel and rubber PBR maps.",
+        "identityNote": "Visual-only fictional gameplay sniper representation. The source optic is retained and detailed; opaque coated-lens approximation, no through-scope or functional firearm claim.",
+        "thumbnail": "/assets/weapons/upgrades112/dragunov-thumbnail.png",
+        "thumbnailCapture": "offline-Blender-Cycles-exported-GLB",
+        "browserCaptureStatus": "pending-review"
+      },
+      "physicalBounds": {
+        "min": [
+          -0.23894065618515015,
+          -0.0481489896774292,
+          -0.025349998846650124
+        ],
+        "max": [
+          0.958820104598999,
+          0.17499999701976776,
+          0.0290641188621521
+        ],
+        "size": [
+          1.1977607607841492,
+          0.22314898669719696,
+          0.05441411770880222
+        ]
+      },
+      "gripSurfaces": [
+        {
+          "z": -0.008715569972991943,
+          "mesh": "Cube_1"
+        },
+        {
+          "z": 0.00868069253257886,
+          "mesh": "Cube_1"
+        }
+      ],
+      "thumbnailSha256": "1ad81ce78355093574aaecb2d6ed4a52863241e0c2dad567997cbe9eb500d600",
+      "thumbnailBytes": 41373,
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "thumbnailStatus": "offline-Cycles-render-of-reimported-exported-GLB",
+      "triangleBudget": 60000,
+      "primitiveBudget": 10,
+      "textureBudgetBytes": 16777216
+    },
+    {
+      "id": "mosin9130-detail112",
+      "path": "assets/weapons/upgrades112/mosin9130-detail112.glb",
+      "sha256": "9b7924b287692d9472a4394fa110c669fcb13d0060363f2ba75dd00292206928",
+      "bytes": 2570288,
+      "triangles": 19858,
+      "primitives": 4,
+      "images": 6,
+      "originalSourceId": "tabasco-mosin9130",
+      "originalPath": "assets/weapons/premium/v99/tabasco-mosin9130.glb",
+      "sourceVertices": 775,
+      "sourceTriangles": 1372,
+      "baseChamferTriangles": 11474,
+      "addedDetailTriangles": 8384,
+      "detailParts": [
+        {
+          "name": "Mosin receiver side plate",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver hardware",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver hardware.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.002",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.002",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.003",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.003",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin stock shoulder reinforcing seam",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver side plate.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver hardware.002",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver hardware.003",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.004",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.004",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.005",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.005",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.006",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.006",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin wood and band fastener.007",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin screw inset.007",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin stock shoulder reinforcing seam.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin bolt raceway",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin bolt polished runner",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin receiver ring",
+          "triangles": 384
+        },
+        {
+          "name": "Mosin receiver ring.001",
+          "triangles": 384
+        },
+        {
+          "name": "Mosin bolt knob collar",
+          "triangles": 284
+        },
+        {
+          "name": "Mosin rear sight leaf",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation.002",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation.003",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation.004",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin sight leaf graduation.005",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin fore-end band plate",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin fore-end band plate.001",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin band upper lip",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin fore-end band plate.002",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin fore-end band plate.003",
+          "triangles": 188
+        },
+        {
+          "name": "Mosin band upper lip.001",
+          "triangles": 188
+        }
+      ],
+      "physicalBoundsBlender": {
+        "min": [
+          -0.31244009733200073,
+          -0.03631855919957161,
+          -0.09319566935300827
+        ],
+        "max": [
+          0.9355269074440002,
+          0.020845364779233932,
+          0.09206756949424744
+        ]
+      },
+      "reviewFrame": {
+        "min": [
+          -0.31244009733200073,
+          -0.03641284257173538,
+          -0.09319566935300827
+        ],
+        "max": [
+          0.9355269074440002,
+          0.020845364779233932,
+          0.09213374555110931
+        ]
+      },
+      "detailReviewFrame": {
+        "min": [
+          -0.05000000074505806,
+          -0.07999999821186066,
+          -0.03999999910593033
+        ],
+        "max": [
+          0.4300000071525574,
+          0.07999999821186066,
+          0.14000000059604645
+        ]
+      },
+      "thumbnail": "/assets/weapons/upgrades112/mosin9130-thumbnail.png",
+      "thumbnailRenderedFromExportedGLB": true,
+      "author": "Tabasco / LonesomeDucky / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "quality": "adapted-pbr",
+      "materialStatus": "adapted-pbr",
+      "materialLineage": "Tabasco CC0 Mosin Nagant 91/30 silhouette, iron sights and measured grip retained. ZONE adds bevelled receiver and bolt-raceway surfaces, fasteners, iron-sight graduations and stock-band detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel PBR maps.",
+      "modified": true,
+      "modification": "Tabasco CC0 Mosin Nagant 91/30 silhouette, iron sights and measured grip retained. ZONE adds bevelled receiver and bolt-raceway surfaces, fasteners, iron-sight graduations and stock-band detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel PBR maps.",
+      "descriptor": {
+        "id": "mosin9130-detail112",
+        "url": "upgrades112/mosin9130-detail112.glb",
+        "originalSourceId": "tabasco-mosin9130",
+        "legacySourceKey": "mosin",
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true,
+        "category": "sniper",
+        "revision": 112,
+        "quality": "adapted-pbr",
+        "author": "Tabasco / LonesomeDucky / ZONE derivative",
+        "license": "CC0-1.0",
+        "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+        "sourceManifest": "upgrades112/manifest.json",
+        "surfaceMaps": [
+          "baseColor",
+          "normal",
+          "metallicRoughness"
+        ],
+        "materialLineage": "Tabasco CC0 Mosin Nagant 91/30 silhouette, iron sights and measured grip retained. ZONE adds bevelled receiver and bolt-raceway surfaces, fasteners, iron-sight graduations and stock-band detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel PBR maps.",
+        "identityNote": "Visual-only fictional gameplay sniper representation retaining the original iron-sight configuration; not an exact mechanical replica or a functional firearm design.",
+        "thumbnail": "/assets/weapons/upgrades112/mosin9130-thumbnail.png",
+        "thumbnailCapture": "offline-Blender-Cycles-exported-GLB",
+        "browserCaptureStatus": "pending-review"
+      },
+      "physicalBounds": {
+        "min": [
+          -0.31244009733200073,
+          -0.09319566935300827,
+          -0.020845364779233932
+        ],
+        "max": [
+          0.9355269074440002,
+          0.09206756949424744,
+          0.03631855919957161
+        ],
+        "size": [
+          1.247967004776001,
+          0.1852632388472557,
+          0.05716392397880554
+        ]
+      },
+      "gripSurfaces": [
+        {
+          "z": -0.015067234685204767,
+          "mesh": "Cube_1"
+        },
+        {
+          "z": 0.015070966554503684,
+          "mesh": "Cube_1"
+        }
+      ],
+      "thumbnailSha256": "812d6cc3b6e34cc4d8d65517ccbc50a29e81f83c4ac1367688fa75a55449d8f9",
+      "thumbnailBytes": 35666,
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "thumbnailStatus": "offline-Cycles-render-of-reimported-exported-GLB",
+      "triangleBudget": 60000,
+      "primitiveBudget": 10,
+      "textureBudgetBytes": 16777216
+    }
+  ],
+  "template": "assets/weapons/source-tools/upgrades111/build_upgrades.py",
+  "templateSha256": "f5dfc3bc8b5e97a64ea37d439cd839f3b526672f706ac41049db1266d4dfd04b",
+  "sourceTool": "assets/weapons/source-tools/upgrades112/build_upgrades.py",
+  "sourceToolSha256": "7590a1b5730fd75a42d10a76747bcf32a4fb5ba2a6de16fd83adbff03074d0aa",
+  "historicalReceipt": "assets/weapons/runtime-coverage.json",
+  "historicalReceiptSource": {
+    "revision": "ad002532028975d687d956c7a745be303ddd1852",
+    "blob": "c51b0d48f3f92509a55f023f295c4de7c882d0dc",
+    "bytes": 243675,
+    "sha256": "5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644"
+  },
+  "historicalReceiptSha256": "5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644",
+  "immutableOriginals": [
+    {
+      "path": "assets/weapons/premium/detective-special/detective-special.glb",
+      "bytes": 2607420,
+      "sha256": "f0bdcbacf37981cf132e1a9ab8e0bc28b49a4386676b21838e4b6d4df34296cf"
+    },
+    {
+      "path": "assets/weapons/premium/v99/loafbrr-revolver.glb",
+      "bytes": 1938160,
+      "sha256": "ecbbf87bc5a5fdf740d81e8f25c7ceb470e0c08a1ffb79c52478a0003cbf706b"
+    },
+    {
+      "path": "assets/weapons/premium/derringer/derringer.glb",
+      "bytes": 1108396,
+      "sha256": "a0b0ff993b9730aa552272a5028c42053581b40e001d9afe30d62c88d5197446"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--makarov.glb",
+      "bytes": 850204,
+      "sha256": "64bb1b7c140927ff7c8867b79ecc3dc98d7fd7b19e5ecd29d2100557f7fc5a37"
+    },
+    {
+      "path": "assets/weapons/premium/v99/jean-doublebarrel-safe.glb",
+      "bytes": 544104,
+      "sha256": "bfdabc5e83d85c589554c83296abed5f373e3a359f26d6269d1425c09acdc278"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--shotgun.glb",
+      "bytes": 563712,
+      "sha256": "ba32793ea1bcf6cd19cfce2c07a511a87134b1a5295dbc8dc24cc77aea499f53"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--grease-gun.glb",
+      "bytes": 905148,
+      "sha256": "0de7ba9b04feda6502e4a1bd93246989665514ac9b62506059405341ce5e76f6"
+    },
+    {
+      "path": "assets/weapons/premium/akm/akm.glb",
+      "bytes": 2529204,
+      "sha256": "50f1d6a0f08e5966ee28317d0de74454fa1473375883a81cd2b80521393819c5"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--sniper.glb",
+      "bytes": 431532,
+      "sha256": "c5937b356282ff3306019ccf2943cd87b08eaac6b8f48ac834062732e70e89c8"
+    },
+    {
+      "path": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+      "bytes": 784412,
+      "sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd"
+    },
+    {
+      "path": "assets/weapons/premium/m9-knife/m9-knife.glb",
+      "bytes": 4084324,
+      "sha256": "2d22ca8e44c998abbf10ce677fd697c59f9adda6e1f8fd95332d57c05db46f56"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--ak47.glb",
+      "bytes": 913784,
+      "sha256": "5102a4702c095761d6fe614667f11484cb0627277b78f8ca0ddb4135a1a6faeb"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--m4a1.glb",
+      "bytes": 792256,
+      "sha256": "37b6001e90febb43a9918f1c6460a967aee2045b9b1cd107f29aaaeed993aba3"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-g3a3.glb",
+      "bytes": 17692,
+      "sha256": "8cc94023997ff5bb83b026fbca8951115640d100255a28940ef6d88006c7cc3e"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-l85.glb",
+      "bytes": 26620,
+      "sha256": "620f31d664b16d33170d00c48030907c83b29e481e93729ebaa308b0aab027d2"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--luger.glb",
+      "bytes": 732708,
+      "sha256": "d4e2663df0abb53fcfc7321497693748d8e8209cea93f14778b9fbc796de0cf7"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-m1911.glb",
+      "bytes": 466376,
+      "sha256": "ef54b6e53f262f3c8a7b352b8a2d9d8d59792b0860bef18269f977e91636e547"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-dragunov.glb",
+      "bytes": 494144,
+      "sha256": "4e4c8e8560286cb5b4808183822ad8726e1f08a46fe5417ae216eaab35970623"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-mosin9130.glb",
+      "bytes": 476224,
+      "sha256": "8edef8b974533e167e4397c4bb5ef5b9fe9dc1265c617d6264745399e0852674"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--suomi-kp.glb",
+      "bytes": 1149332,
+      "sha256": "85d3b0800418dac187e9d47d747058384565d5bf7379d7b7e781233f52822f70"
+    }
+  ],
+  "limitations": [
+    "Offline asset renders are not browser pixels or in-app acceptance.",
+    "Source silhouettes remain low-poly; no exact replica claim.",
+    "Mosin keeps its iron sights, no new scope.",
+    "Opaque coated optic lenses have no transmission or through-scope function.",
+    "Finger-skin clearance, phone GPU timing and game integration remain unverified."
+  ]
+}

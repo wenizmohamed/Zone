@@ -144,22 +144,32 @@ test('oversized provider arrays are refused before serializing or allocating det
   assert.throws(()=>module.planDistrictSurfaces([feature(1,[huge])],{center:[0,0]}),/coordinate budget/);
 });
 
-function harness({shader=null,addFailure=false}={}){
-  const renderers=[],layers=new Map(),events=[],resources=[],doc={body:{dataset:{}}};
+const vendorSource=readFileSync(new URL('../lib/three184/three.module.js',import.meta.url),'utf8');
+const propertiesStart=vendorSource.indexOf('function WebGLProperties()'),propertiesEnd=vendorSource.indexOf('function painterSortStable',propertiesStart);
+const makeVendorProperties=new Function(vendorSource.slice(propertiesStart,propertiesEnd)+';return WebGLProperties;')();
+const asyncStart=vendorSource.indexOf('this.compileAsync = function ('),asyncEnd=vendorSource.indexOf('// Animation Loop',asyncStart);
+assert.ok(propertiesStart>=0&&propertiesEnd>propertiesStart&&asyncStart>=0&&asyncEnd>asyncStart);
+
+function harness({shader=null,addFailure=false,linkFailure=false,drawFailure=false,drawShaderError=false,vendorPolling=false}={}){
+  const renderers=[],layers=new Map(),events=[],resources=[],timers=new Map(),doc={body:{dataset:{}}};let timerId=0;
+  const schedule=(fn,ms,kind='application')=>{const id=++timerId,record={fn,ms,kind};timers.set(id,record);if(kind==='application'&&ms===10)record.native=setTimeout(()=>{timers.delete(id);fn();},ms);return id;};
+  const unschedule=id=>{const record=timers.get(id);if(record?.native)clearTimeout(record.native);timers.delete(id);};
+  const gl={shared:true,LINK_STATUS:35714,getProgramParameter:()=>!linkFailure,getProgramInfoLog:()=>linkFailure?'fragment shader link rejected':drawShaderError?'late shader link rejected':''};
   const track=(value,kind)=>{const record={kind,disposals:0,value};value.addEventListener('dispose',()=>record.disposals++);resources.push(record);return value;};
   const THREE={...Three,BufferGeometry:class extends Three.BufferGeometry{constructor(){super();track(this,'geometry');}},MeshStandardMaterial:class extends Three.MeshStandardMaterial{constructor(...args){super(...args);track(this,'material');}},WebGLRenderer:class{
-    constructor(options){this.options=options;this.draws=[];this.disposals=0;this.info={render:{calls:0,triangles:0},memory:{geometries:0,textures:0}};renderers.push(this);}
+    constructor(options){this.options=options;this.draws=[];this.disposals=0;this.properties=makeVendorProperties();this.programReady=shader===null;this.debug={checkShaderErrors:true,onShaderError:null};this.info={programs:[{program:{zoneSurfaceProgram:true},isReady:()=>{if(this.programFailure)throw this.programFailure;return this.programReady;}}],render:{calls:0,triangles:0},memory:{geometries:0,textures:0}};renderers.push(this);}
     resetState(){events.push('reset');}
-    compileAsync(){return typeof shader==='function'?shader():shader;}
-    render(scene,camera){scene.updateMatrixWorld(true);this.draws.push({scene,matrix:camera.projectionMatrix.clone()});this.info.render.calls=scene.children.filter(o=>o.isMesh).length;this.info.render.triangles=scene.children.filter(o=>o.isMesh).reduce((n,o)=>n+o.geometry.getAttribute('position').count/3,0);events.push('draw');}
-    dispose(){this.disposals++;}
+    compile(scene){const materials=new Set(scene.children.filter(o=>o.isMesh).map(o=>o.material));for(const material of materials){this.properties.get(material).currentProgram=this.info.programs[0];material.addEventListener('dispose',()=>this.properties.remove(material));}this.compilation=typeof shader==='function'?shader():shader;if(this.compilation?.then)this.compilation.then(()=>{this.programReady=true;},error=>{this.programFailure=error;this.programReady=true;});else this.programReady=true;return materials;}
+    compileAsync(scene,camera){if(vendorPolling){const actual=new Function('properties','extensions','setTimeout',vendorSource.slice(asyncStart,asyncEnd)+';return this.compileAsync;').call(this,this.properties,{get:()=>({})},(fn,ms)=>schedule(fn,ms,'vendor'));return actual.call(this,scene,camera);}this.compile(scene,camera);return this.compilation;}
+    render(scene,camera){if(drawFailure)throw Error('facade draw failed');if(drawShaderError)this.debug.onShaderError?.(gl,{},null,null);scene.updateMatrixWorld(true);this.draws.push({scene,matrix:camera.projectionMatrix.clone()});this.info.render.calls=scene.children.filter(o=>o.isMesh).length;this.info.render.triangles=scene.children.filter(o=>o.isMesh).reduce((n,o)=>n+o.geometry.getAttribute('position').count/3,0);events.push('draw');}
+    dispose(){this.disposals++;this.properties.dispose();}
     forceContextLoss(){throw Error('The map owns its WebGL context.');}
   }};
-  const map={pitch:35,zoom:15.1,repaints:0,canvas:{map:true},getCanvas(){return this.canvas;},getCenter(){return{lng:0,lat:0};},getPitch(){return this.pitch;},getZoom(){return this.zoom;},getLayer:id=>layers.get(id),addLayer(layer){if(addFailure)throw Error('style rejected');layers.set(layer.id,layer);layer.onAdd(map,{shared:true});},removeLayer(id){const layer=layers.get(id);layers.delete(id);layer?.onRemove();},triggerRepaint(){this.repaints++;}};
-  const context=vm.createContext({THREE,console,document:doc,performance:{now:()=>1}});
+  const map={pitch:35,zoom:15.1,repaints:0,canvas:{map:true},getCanvas(){return this.canvas;},getCenter(){return{lng:0,lat:0};},getPitch(){return this.pitch;},getZoom(){return this.zoom;},getLayer:id=>layers.get(id),addLayer(layer){if(addFailure)throw Error('style rejected');layers.set(layer.id,layer);layer.onAdd(map,gl);},removeLayer(id){const layer=layers.get(id);layers.delete(id);layer?.onRemove();},triggerRepaint(){this.repaints++;}};
+  const context=vm.createContext({THREE,console,document:doc,performance:{now:()=>1},setTimeout:schedule,clearTimeout:unschedule});
   const source=readFileSync(new URL('../dist/district-surfaces111.mjs',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export function ','function ');
   vm.runInContext(source+'\nglobalThis.create=createDistrictSurfaces;',context);
-  return{create:context.create,map,layers,renderers,resources,events,doc};
+  return{create:context.create,map,layers,renderers,resources,events,doc,timers,expirePreparation(){for(const [id,timer]of [...timers])if(timer.kind==='application'&&timer.ms>10){unschedule(id);timer.fn();}},runVendorChecks(){for(const [id,timer]of [...timers])if(timer.kind==='vendor'){unschedule(id);timer.fn();}}};
 }
 
 // Catches applying the old15.8 gate to new surfaces, incorrect georeferencing,
@@ -167,9 +177,10 @@ function harness({shader=null,addFailure=false}={}){
 test('one shared-context batched layer draws at actual15.1 overview and follows the real Mercator matrix',async()=>{
   const h=harness(),input=[feature(12)],before=JSON.stringify(input),control=h.create(h.map,input,{center:[0,0],document:h.doc});await control.ready;
   assert.equal(control.diagnostics.status,'ready');assert.equal(h.layers.size,1);
+  assert.equal(control.diagnostics.shaderLinked,true);assert.equal(control.diagnostics.shaderPrograms,1);assert.equal(control.diagnostics.firstFrameRendered,false);
   const layer=[...h.layers.values()][0],renderer=h.renderers[0];
   assert.equal(renderer.options.canvas,h.map.canvas);assert.equal(renderer.options.context.shared,true);assert.equal(renderer.autoClear,false);
-  layer.render({},new Three.Matrix4().toArray());assert.equal(renderer.draws.length,1);
+  layer.render({},new Three.Matrix4().toArray());assert.equal(renderer.draws.length,1);assert.equal(control.diagnostics.firstFrameRendered,true);
   const expected=new Three.Matrix4().makeTranslation(.5,.5,0).scale(new Three.Vector3(1/40075016.68557849,-1/40075016.68557849,1/40075016.68557849)).multiply(new Three.Matrix4().makeRotationX(Math.PI/2));
   assert.ok(renderer.draws[0].matrix.elements.every((value,i)=>Math.abs(value-expected.elements[i])<1e-12));
   assert.ok(control.diagnostics.calls>0&&control.diagnostics.calls<=4);
@@ -265,6 +276,40 @@ test('shader preparation never draws early and hidden preparation schedules no c
   control.setVisible(true);assert.equal(h.map.repaints,1);layer.render({},new Three.Matrix4().toArray());assert.equal(renderer.draws.length,1);assert.equal(h.map.repaints,1);control.dispose();
 });
 
+test('a hung facade preparation has a finite deadline and late completion cannot revive a failed layer',async()=>{
+  const shader=deferred(),h=harness({shader:shader.promise});h.layers.set('native-provider',{id:'native-provider'});
+  const control=h.create(h.map,[feature(94)],{center:[0,0]});
+  assert.equal([...h.timers.values()].filter(timer=>timer.ms===12000).length,1);
+  const rejected=assert.rejects(control.ready,/preparation timed out/);h.expirePreparation();await rejected;
+  assert.equal(control.diagnostics.status,'error');assert.deepEqual([...h.layers.keys()],['native-provider']);
+  assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));assert.equal(h.timers.size,0);
+  const before=h.doc.body.dataset.zoneDistrictSurfaces;shader.resolve();await Promise.resolve();await Promise.resolve();
+  assert.equal(h.doc.body.dataset.zoneDistrictSurfaces,before);assert.equal(h.map.repaints,0);
+});
+
+test('page disposal settles stalled facade preparation immediately and cancels its timer',async()=>{
+  const shader=deferred(),h=harness({shader:shader.promise}),control=h.create(h.map,[feature(95)],{center:[0,0]});
+  assert.equal([...h.timers.values()].filter(timer=>timer.ms===12000).length,1);control.dispose();await control.ready;
+  assert.equal(h.timers.size,0);assert.equal(control.diagnostics.status,'disposed');assert.equal(h.map.repaints,0);
+  shader.reject(Error('late retired compilation'));await Promise.resolve();await Promise.resolve();
+  assert.equal(control.diagnostics.status,'disposed');assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));
+});
+
+test('facade deadlines reject invalid values before geometry or renderer allocation',()=>{
+  for(const prepareTimeoutMs of [0,-1,NaN,Infinity,30001,1.5,'12000']){
+    const h=harness();assert.throws(()=>h.create(h.map,[feature(96)],{center:[0,0],prepareTimeoutMs}),/timeout/);
+    assert.equal(h.renderers.length,0);assert.equal(h.resources.length,0);assert.equal(h.timers.size,0);
+  }
+});
+
+test('pending preparation disposal never leaves the actual vendored property poller alive',async()=>{
+  const shader=deferred(),h=harness({shader:shader.promise,vendorPolling:true}),control=h.create(h.map,[feature(97)],{center:[0,0]});
+  control.dispose();await control.ready;
+  assert.doesNotThrow(()=>h.runVendorChecks(),'a vendor readiness timer must not access disposed material properties');
+  assert.equal(h.timers.size,0);assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));
+  shader.resolve();await Promise.resolve();
+});
+
 test('map removal during preparation releases every material and geometry once and never queries a removed style',async()=>{
   const shader=deferred(),h=harness({shader:shader.promise}),control=h.create(h.map,[feature(15)],{center:[0,0]});
   h.map.removeLayer([...h.layers.keys()][0]);h.map.getLayer=()=>{throw Error('removed style');};shader.resolve();await control.ready;
@@ -277,13 +322,41 @@ test('shader failure rejects readiness, removes only its layer and releases all 
   assert.deepEqual([...h.layers.keys()],['native-provider']);assert.equal(control.diagnostics.status,'error');assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));control.dispose();
 });
 
+test('a resolved compile promise with an unlinked actual program cannot claim facade readiness',async()=>{
+  const h=harness({linkFailure:true});h.layers.set('native-provider',{id:'native-provider'});
+  const control=h.create(h.map,[feature(91)],{center:[0,0]});
+  await assert.rejects(control.ready,/shader.*link/i);
+  assert.equal(control.diagnostics.status,'error');assert.match(control.diagnostics.error,/fragment shader link rejected/);
+  assert.deepEqual([...h.layers.keys()],['native-provider']);assert.equal(h.map.repaints,0);
+  assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));
+});
+
+test('a facade draw exception restores shared state and leaves the native city usable with explicit recovery',async()=>{
+  const h=harness({drawFailure:true});h.layers.set('native-provider',{id:'native-provider'});
+  const control=h.create(h.map,[feature(92)],{center:[0,0]});await control.ready;
+  const layer=h.layers.get('zone-district-surfaces');
+  assert.doesNotThrow(()=>layer.render({},new Three.Matrix4().toArray()));
+  assert.equal(control.diagnostics.status,'error');assert.match(control.diagnostics.error,/facade draw failed/);
+  assert.deepEqual([...h.layers.keys()],['native-provider']);assert.equal(h.events.at(-1),'reset');
+  assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));
+});
+
+test('Three first-use shader diagnostics cannot silently turn an unsuccessful draw into ready city detail',async()=>{
+  const h=harness({drawShaderError:true});h.layers.set('native-provider',{id:'native-provider'});
+  const control=h.create(h.map,[feature(93)],{center:[0,0]});await control.ready;
+  const layer=h.layers.get('zone-district-surfaces');assert.doesNotThrow(()=>layer.render({},new Three.Matrix4().toArray()));
+  assert.equal(control.diagnostics.status,'error');assert.equal(control.diagnostics.shaderLinked,false);assert.equal(control.diagnostics.firstFrameRendered,false);
+  assert.match(control.diagnostics.error,/late shader link rejected/);assert.deepEqual([...h.layers.keys()],['native-provider']);
+  assert.equal(h.renderers[0].disposals,1);assert.ok(h.resources.every(r=>r.disposals===1));
+});
+
 test('a stale shader failure cannot remove or overwrite a newer style controller',async()=>{
   const shader=deferred();let compiles=0;
-  const h=harness({shader:()=>++compiles===1?shader.promise:Promise.resolve()}),old=h.create(h.map,[feature(89)],{center:[0,0]}),oldRejected=assert.rejects(old.ready,/old style failed/);
-  h.map.removeLayer([...h.layers.keys()][0]);
+  const h=harness({shader:()=>++compiles===1?shader.promise:Promise.resolve()}),old=h.create(h.map,[feature(89)],{center:[0,0]});
+  h.map.removeLayer([...h.layers.keys()][0]);await old.ready;assert.equal(old.diagnostics.status,'disposed');
   const replacement=h.create(h.map,[feature(90)],{center:[0,0]});await replacement.ready;
   const current=[...h.layers.values()][0],before=h.doc.body.dataset.zoneDistrictSurfaces;
-  shader.reject(Error('old style failed'));await oldRejected;
+  shader.reject(Error('old style failed'));await Promise.resolve();await Promise.resolve();
   assert.equal([...h.layers.values()][0],current);assert.equal(h.doc.body.dataset.zoneDistrictSurfaces,before);assert.equal(replacement.diagnostics.status,'ready');
   current.render({},new Three.Matrix4().toArray());assert.equal(h.renderers[1].draws.length,1);replacement.dispose();assert.ok(h.resources.every(r=>r.disposals===1));
 });

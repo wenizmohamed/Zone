@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 const root = new URL('../', import.meta.url);
 const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverage.json', root), 'utf8'));
 const upgrades111 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades111/manifest.json', root), 'utf8'));
+const upgrades112 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades112/manifest.json', root), 'utf8'));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 test('candidate upload excludes private sessions, research, artifacts and actual env files', () => {
   const ignore = readFileSync(new URL('.vercelignore', root), 'utf8').split(/\r?\n/);
@@ -52,6 +53,19 @@ test('all three v111 source derivatives and matching thumbnails ship byte-exact 
   }
   assert.equal(existsSync(new URL('public/assets/weapons/source-tools/upgrades111/',root)),false);
   for(const name of ['build_upgrades.py','inspect_models.py','Glock_HighPoly.obj'])assert.equal(existsSync(new URL('public/assets/weapons/upgrades111/'+name,root)),false,name);
+});
+
+test('two detailed sniper sources and their exact matching previews ship without private review captures or production helpers',()=>{
+  assert.equal(upgrades112.assets.length,2);assert.equal(Object.keys(upgrades112.bindings).length,4);
+  for(const record of upgrades112.assets)for(const [path,expected]of [[record.path,record.sha256],[record.thumbnail.slice(1),record.thumbnailSha256]]){
+    assert.equal(sha(readFileSync(new URL(path,root))),expected,path+' source');
+    assert.equal(sha(readFileSync(new URL('public/'+path,root))),expected,path+' public');
+  }
+  for(const path of ['assets/weapons/upgrades112/manifest.json','assets/weapons/upgrades112/CREDITS.md','assets/weapons/upgrades112/LICENSE.txt'])
+    assert.equal(sha(readFileSync(new URL(path,root))),sha(readFileSync(new URL('public/'+path,root))),path);
+  assert.equal(existsSync(new URL('public/assets/weapons/source-tools/upgrades112/',root)),false);
+  assert.equal(existsSync(new URL('public/.tools/v112-weapons/',root)),false);
+  assert.ok(existsSync(new URL('assets/weapons/source-tools/upgrades112/review-cameras.json',root)),'the owner source retains compact evidence receipts');
 });
 test('the accepted map and final host cache keys match between reviewed source and public output', () => {
   for (const path of ['index.html', 'assets/zone-design.css', 'dist/city-map-torn.html', 'assets/city/compact-district.js', 'assets/city/district-buildings.js']) {

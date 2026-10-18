@@ -113,7 +113,31 @@ export const WEAPON_PRESENTATION_UPGRADES111 = Object.freeze({
   pistol_2:'glock18-detail111', pistol_6:'glock18-detail111'
 });
 
-export function resolveWeaponAsset(key, catalog = {}, { revision = 111 } = {}) {
+const detail112 = (id, originalSourceId, legacySourceKey, geometryNote, identityNote) => ({
+  ...detail111(id, 'Tabasco / LonesomeDucky / ZONE derivative',
+    'https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol',
+    geometryNote + ' Retained licensed CC0 LonesomeDucky wood color/normal lineage preserves its worn grain. ZONE supplies new steel/rubber and nonmetallic wood-roughness surfaces. Not original Tabasco PBR.',
+    originalSourceId, identityNote),
+  url:'upgrades112/'+id+'.glb',revision:112,sourceManifest:'upgrades112/manifest.json',legacySourceKey,
+  thumbnailCapture:'offline-Blender-Cycles-exported-GLB'
+});
+export const WEAPON_UPGRADE_SOURCES112 = Object.freeze({
+  'dragunov-detail112':detail112('dragunov-detail112','tabasco-dragunov','dragunov',
+    'Tabasco CC0 silhouette and measured grip retained, with bevelled receiver, optic collars, clamps, controls, fasteners, vents and magazine detail.',
+    'Visual-only fictional sniper representation retaining the source optic. Coated-lens approximation, not a through-scope view or mechanical replica.'),
+  'mosin9130-detail112':detail112('mosin9130-detail112','tabasco-mosin9130','mosin',
+    'Tabasco CC0 silhouette, iron sights and measured grip retained, with bevelled receiver, bolt-raceway surfaces, fasteners, sight graduations and stock-band detail.',
+    'Visual-only fictional sniper representation retaining its original iron-sight configuration, not a mechanical replica.')
+});
+export const WEAPON_PRESENTATION_UPGRADES112 = Object.freeze({
+  sniperrifle_2:'dragunov-detail112',sniperrifle_5:'dragunov-detail112',
+  sniperrifle_3:'mosin9130-detail112',sniperrifle_6:'mosin9130-detail112'
+});
+
+export function resolveWeaponAsset(key, catalog = {}, { revision = 112 } = {}) {
+  const detailKey = revision >= 112 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key) ? WEAPON_PRESENTATION_UPGRADES112[key] : null;
+  if(detailKey)return{...WEAPON_UPGRADE_SOURCES112[detailKey],requestedKey:key,sourceKey:detailKey,
+    category:weaponCategory(key,catalog),thumbnail:weaponThumbnail(key,{revision})};
   const upgradedKey = revision !== 99 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES111, key) ? WEAPON_PRESENTATION_UPGRADES111[key] : null;
   if (upgradedKey) return { ...WEAPON_UPGRADE_SOURCES111[upgradedKey], requestedKey: key, sourceKey: upgradedKey,
     legacySourceKey: WEAPON_GAME_PRESENTATIONS[key], category: weaponCategory(key, catalog), thumbnail: weaponThumbnail(key, { revision }) };
@@ -142,7 +166,9 @@ export function weaponCategory(key, catalog = {}) {
     || ({ revolver: 'revolver', pistol: 'pistol', ak: 'ak-rifle' })[key] || 'weapon';
 }
 
-export function weaponThumbnail(key, { revision = 111 } = {}) {
+export function weaponThumbnail(key, { revision = 112 } = {}) {
+  const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;
+  if(detailKey)return'/assets/weapons/upgrades112/'+detailKey.replace('-detail112','-thumbnail')+'.png';
   const upgraded = revision !== 99 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES111, key) ? WEAPON_PRESENTATION_UPGRADES111[key] : null;
   if (upgraded) return '/assets/weapons/upgrades111/' + upgraded.replace('-detail111','-thumbnail') + '.png';
   return /^[a-z][a-z0-9_-]{1,79}$/.test(String(key)) ? '/assets/weapons/thumbnails/' + key + '.png' : null;

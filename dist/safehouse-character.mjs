@@ -6,7 +6,7 @@ import { prepareCharacterArt, validateCharacterWardrobe, disposeCharacterResourc
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from './character-grip.js';
 import { prepareWeaponPose, applyWeaponPose, weaponPoseProfile } from './character-poses.js';
 import { createArmorController } from './character-armor.mjs';
-import { createWeaponAssetLoader } from './weapon-assets.js';
+import { createWeaponAssetLoader } from './weapon-assets.js?v=112';
 import { loadAsset, normalizeAssetObject } from './asset-loader.mjs';
 
 const OUTFITS = { suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' };

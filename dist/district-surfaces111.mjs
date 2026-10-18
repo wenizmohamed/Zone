@@ -186,17 +186,52 @@ function appendBox(batch,detail){
 export function createDistrictSurfaces(map,features,options={}){
   if(map.getLayer(LAYER))throw new Error('District surface layer already installed.');
   const doc=options.document??globalThis.document,isActive=options.isActive??(()=>true),at=map.getCenter?.();
+  const prepareTimeoutMs=options.prepareTimeoutMs??12000;
+  if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw new Error('Facade preparation timeout must be 1..30000 milliseconds.');
   const plan=planDistrictSurfaces(features,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:options.maxWindows,maxRoofDetails:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
-  let disposed=false,visible=true,prepared=false,renderer,scene,camera,preparing=Promise.resolve();
-  const geometries=[],materials=[],diagnostics={...plan.diagnostics,status:'preparing',renderer:'provider-footprint-surface-detail',source:'same-native-provider-footprints',origin:plan.center.slice(),geometryVertices:0,geometryTriangles:0,calls:0,triangles:0,textures:0,shadows:0,postPasses:0,continuousAnimation:false};
+  let disposed=false,visible=true,prepared=false,renderer,scene,camera,shaderFailure=null,cancelPreparation=null,preparing=Promise.resolve();
+  const geometries=[],materials=[],diagnostics={...plan.diagnostics,status:'preparing',renderer:'provider-footprint-surface-detail',source:'same-native-provider-footprints',origin:plan.center.slice(),geometryVertices:0,geometryTriangles:0,calls:0,triangles:0,textures:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
   const publish=()=>{
+    if(SURFACE_OWNERS.has(map)&&SURFACE_OWNERS.get(map)!==control)return;
     if(doc?.body?.dataset)doc.body.dataset.zoneDistrictSurfaces=JSON.stringify(diagnostics);
     const notice=doc?.getElementById?.('districtSurfaceStatus111'),message=doc?.getElementById?.('districtSurfaceMessage111');
     if(notice){notice.hidden=diagnostics.status!=='error';if(message)message.textContent=doc.documentElement?.lang==='ar'?'تعذر عرض تفاصيل واجهات المباني. الخريطة وأدواتها ما زالت متاحة.':'Building facade detail could not render. The map and its controls remain available.';}
   };
   const local=new THREE.Matrix4().makeTranslation(plan.origin.x,plan.origin.y,0).scale(new THREE.Vector3(plan.origin.meter,-plan.origin.meter,plan.origin.meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
   function release(){for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();geometries.length=0;materials.length=0;renderer?.dispose();}
-  function remove(){if(disposed)return;disposed=true;prepared=false;if(SURFACE_OWNERS.get(map)===control)SURFACE_OWNERS.delete(map);release();diagnostics.status='disposed';publish();}
+  function remove(){if(disposed)return;disposed=true;prepared=false;cancelPreparation?.();cancelPreparation=null;if(SURFACE_OWNERS.get(map)===control)SURFACE_OWNERS.delete(map);release();diagnostics.status='disposed';publish();}
+  function fail(error){if(disposed)return;control.dispose();diagnostics.status='error';diagnostics.error=String(error.message||error).slice(0,1800);publish();}
+  function shaderLinkFailure(gl,program,vertex,fragment){
+    const logs=[gl.getProgramInfoLog?.(program),vertex&&gl.getShaderInfoLog?.(vertex),fragment&&gl.getShaderInfoLog?.(fragment)].filter(Boolean).join('\n').trim().slice(0,1600);
+    diagnostics.shaderLinked=false;
+    return new Error('Building facade shader link failed'+(logs?': '+logs:'.'));
+  }
+  function prepareShaders(gl){
+    // Own every readiness timer. The vendor async helper retains an internal
+    // material-properties poller that cannot survive immediate GPU disposal.
+    return new Promise((resolve,reject)=>{
+      let settled=false,pollTimer,deadlineTimer;
+      function finish(error){if(settled)return;settled=true;clearTimeout(pollTimer);clearTimeout(deadlineTimer);cancelPreparation=null;if(error)reject(error);else resolve();}
+      cancelPreparation=()=>finish();
+      function check(){
+        if(settled)return;if(disposed||!isActive()){finish();return;}
+        try{
+          const programs=renderer.info.programs||[];diagnostics.shaderPrograms=programs.length;
+          if(!programs.length)throw new Error('No compiled building facade shader programs.');
+          if(shaderFailure)throw shaderFailure;
+          for(const entry of programs){
+            if(typeof entry.isReady!=='function'||!entry.program)throw new Error('Facade shader readiness contract differs from the vendored Three runtime.');
+            if(!entry.isReady()){pollTimer=setTimeout(check,10);return;}
+          }
+          for(const entry of programs)if(gl.getProgramParameter(entry.program,gl.LINK_STATUS)===false)shaderFailure=shaderLinkFailure(gl,entry.program);
+          if(shaderFailure)throw shaderFailure;
+          diagnostics.shaderLinked=true;finish();
+        }catch(error){finish(error);}
+      }
+      deadlineTimer=setTimeout(()=>finish(new Error('Building facade preparation timed out. Use Retry to prepare it again.')),prepareTimeoutMs);
+      pollTimer=setTimeout(check,10);
+    });
+  }
   const layer={id:LAYER,type:'custom',renderingMode:'3d',onAdd(_map,gl){
     scene=new THREE.Scene();camera=new THREE.Camera();
     scene.add(new THREE.HemisphereLight('#d6e1e5','#61686c',1.45));const key=new THREE.DirectionalLight('#e3e8ed',1.8);key.position.set(-90,180,70);scene.add(key);
@@ -219,15 +254,24 @@ export function createDistrictSurfaces(map,features,options={}){
     });
     diagnostics.geometryTriangles=diagnostics.geometryVertices/3;
     renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
-    renderer.resetState();preparing=Promise.resolve(renderer.compileAsync?.(scene,camera)).then(()=>{
+    renderer.debug.checkShaderErrors=true;
+    renderer.debug.onShaderError=(context,program,vertex,fragment)=>{shaderFailure=shaderLinkFailure(context,program,vertex,fragment);};
+    renderer.resetState();
+    renderer.compile(scene,camera);
+    preparing=prepareShaders(gl).then(()=>{
       if(disposed)return;if(!isActive()){if(map.getLayer(LAYER))map.removeLayer(LAYER);else remove();return;}
       prepared=true;renderer.resetState();diagnostics.status='ready';publish();if(visible)map.triggerRepaint?.();
     });renderer.resetState();publish();
   },render(_gl,input){
     if(disposed||!prepared||!visible||!isActive()||map.getPitch()<=1)return;
     const projection=input?.defaultProjectionData?.mainMatrix??input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
-    camera.projectionMatrix.fromArray(projection).multiply(local);renderer.resetState();renderer.render(scene,camera);renderer.resetState();
-    diagnostics.calls=renderer.info.render.calls;diagnostics.triangles=renderer.info.render.triangles;diagnostics.textures=renderer.info.memory.textures;diagnostics.drawnAtZoom=map.getZoom?.()??null;publish();
+    camera.projectionMatrix.fromArray(projection).multiply(local);
+    let frameFailure=null;
+    try{
+      renderer.resetState();renderer.render(scene,camera);if(shaderFailure)throw shaderFailure;
+      diagnostics.calls=renderer.info.render.calls;diagnostics.triangles=renderer.info.render.triangles;diagnostics.textures=renderer.info.memory.textures;diagnostics.drawnAtZoom=map.getZoom?.()??null;diagnostics.firstFrameRendered=true;
+    }catch(error){frameFailure=error;}finally{renderer.resetState();}
+    if(frameFailure){fail(frameFailure);return;}publish();
   },onRemove:remove};
   const control={diagnostics,ready:null,setVisible(value){if(disposed)return;visible=!!value;if(visible&&isActive())map.triggerRepaint?.();},dispose(){if(disposed)return;if(SURFACE_OWNERS.get(map)===control&&map.getLayer(LAYER))map.removeLayer(LAYER);else remove();}};
   publish();
@@ -235,7 +279,7 @@ export function createDistrictSurfaces(map,features,options={}){
   try{
     SURFACE_OWNERS.set(map,control);
     map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);
-    control.ready=preparing.then(()=>control).catch(error=>{if(!disposed){control.dispose();diagnostics.status='error';diagnostics.error=String(error.message||error);publish();}throw error;});
-  }catch(error){control.dispose();diagnostics.status='error';diagnostics.error=String(error.message||error);publish();throw error;}
+    control.ready=preparing.then(()=>control).catch(error=>{fail(error);throw error;});
+  }catch(error){fail(error);throw error;}
   return control;
 }

@@ -1,0 +1,511 @@
+{
+  "revision": 112,
+  "status": "offline-evidence-receipt-not-browser-acceptance",
+  "renderer": "Blender 4.5.9 CPU Cycles; exported-GLB asset evidence, not browser proof",
+  "views": [
+    {
+      "assetId": "dragunov-detail112",
+      "modelSha256": "2f43ce2485a62942d1f7e65b7eee41390a64bf00de97febdcff9ecff5487fac2",
+      "view": "full",
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.9652263522148132,
+            -0.03336811810731888,
+            0.2592771053314209,
+            0.7144826650619507
+          ],
+          [
+            0.2614154517650604,
+            0.12320547550916672,
+            -0.9573308825492859,
+            -1.3109511137008667
+          ],
+          [
+            -2.793732534200899e-8,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.18360239267349243
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "resolution": [
+          1100,
+          620
+        ],
+        "transparent": false,
+        "frame": {
+          "min": [
+            -0.2389473021030426,
+            -0.0290641188621521,
+            -0.04819874465465546
+          ],
+          "max": [
+            0.958820104598999,
+            0.025349998846650124,
+            0.17499999701976776
+          ]
+        },
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -2.0355982780456543,
+              -2.9962754249572754,
+              3.656702995300293
+            ],
+            "rotation": [
+              0.8178885579109192,
+              -6.146687780983484e-8,
+              -0.6747409701347351
+            ],
+            "energy": 200.8505401611328,
+            "size": 2.3955347537994385
+          },
+          {
+            "location": [
+              3.9532387256622314,
+              -1.7985081672668457,
+              1.2611680030822754
+            ],
+            "rotation": [
+              1.281044602394104,
+              -6.966769205973833e-8,
+              1.1071486473083496
+            ],
+            "energy": 78.90557098388672,
+            "size": 2.3955347537994385
+          },
+          {
+            "location": [
+              -0.8378309607505798,
+              2.3936777114868164,
+              2.458935260772705
+            ],
+            "rotation": [
+              0.8410686254501343,
+              3.6633625910553747e-8,
+              -2.677945137023926
+            ],
+            "energy": 258.23638916015625,
+            "size": 1.7966511249542236
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exported-GLB asset evidence, not WebGL browser capture"
+      },
+      "before": {
+        "cameraPath": ".tools/v112-weapons/dragunov-before.camera.json",
+        "cameraSha256": "3c0b3ac2180ccb275b173b5bab04acfab260c696b1d6fd17fbff6609b1533613",
+        "canonicalCameraSha256": "a8330063404aaf74eef34f4f3cf1b761f6d42815bbd6cc1da243b5c331370395",
+        "pngPath": ".tools/v112-weapons/dragunov-before.png",
+        "pngSha256": "9b95f1b8a2342303402c0ea083450cbd2f1512835f5ab8061e611a614288f495",
+        "pngBytes": 706329,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      },
+      "after": {
+        "cameraPath": ".tools/v112-weapons/dragunov-after.camera.json",
+        "cameraSha256": "3c0b3ac2180ccb275b173b5bab04acfab260c696b1d6fd17fbff6609b1533613",
+        "canonicalCameraSha256": "a8330063404aaf74eef34f4f3cf1b761f6d42815bbd6cc1da243b5c331370395",
+        "pngPath": ".tools/v112-weapons/dragunov-after.png",
+        "pngSha256": "61672a1fa192858d9b69a40a39aefe0cb4ac376723b1bf7552ace728a7344c35",
+        "pngBytes": 707493,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      }
+    },
+    {
+      "assetId": "dragunov-detail112",
+      "modelSha256": "2f43ce2485a62942d1f7e65b7eee41390a64bf00de97febdcff9ecff5487fac2",
+      "view": "detail",
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.9652263522148132,
+            -0.03336817026138306,
+            0.2592771053314209,
+            0.30787330865859985
+          ],
+          [
+            0.2614154815673828,
+            0.12320546060800552,
+            -0.9573308229446411,
+            -0.6752245426177979
+          ],
+          [
+            2.2885405570605144e-8,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.14029806852340698
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "resolution": [
+          1100,
+          620
+        ],
+        "transparent": false,
+        "frame": {
+          "min": [
+            -0.11999999731779099,
+            -0.07999999821186066,
+            -0.054999999701976776
+          ],
+          "max": [
+            0.3700000047683716,
+            0.07999999821186066,
+            0.20000000298023224
+          ]
+        },
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -0.8550000190734863,
+              -1.225000023841858,
+              1.5425000190734863
+            ],
+            "rotation": [
+              0.8178886771202087,
+              -4.680241971755095e-8,
+              -0.6747410297393799
+            ],
+            "energy": 33.6140022277832,
+            "size": 0.9800000190734863
+          },
+          {
+            "location": [
+              1.5950000286102295,
+              -0.7350000143051147,
+              0.5625
+            ],
+            "rotation": [
+              1.281044602394104,
+              -1.3026904355228908e-7,
+              1.1071487665176392
+            ],
+            "energy": 13.205500602722168,
+            "size": 0.9800000190734863
+          },
+          {
+            "location": [
+              -0.36500000953674316,
+              0.9800000190734863,
+              1.0525000095367432
+            ],
+            "rotation": [
+              0.8410688638687134,
+              2.6345803760818853e-8,
+              -2.677945137023926
+            ],
+            "energy": 43.21800231933594,
+            "size": 0.7350000143051147
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exported-GLB asset evidence, not WebGL browser capture"
+      },
+      "before": {
+        "cameraPath": ".tools/v112-weapons/dragunov-detail-before.camera.json",
+        "cameraSha256": "71177ee3aca0fd88135c87854ccf3c4f7af639750f05c13fa21af0836cca6539",
+        "canonicalCameraSha256": "64e32fc68b94bed9fbb6bf57c7f108d466d3365a8930fcfc1616c5b4a4b74023",
+        "pngPath": ".tools/v112-weapons/dragunov-detail-before.png",
+        "pngSha256": "2f8c271010cfb6e42989c2bee533f58c2c8492ad6da3ede0eb1854fb03f56fb6",
+        "pngBytes": 734056,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      },
+      "after": {
+        "cameraPath": ".tools/v112-weapons/dragunov-detail-after.camera.json",
+        "cameraSha256": "71177ee3aca0fd88135c87854ccf3c4f7af639750f05c13fa21af0836cca6539",
+        "canonicalCameraSha256": "64e32fc68b94bed9fbb6bf57c7f108d466d3365a8930fcfc1616c5b4a4b74023",
+        "pngPath": ".tools/v112-weapons/dragunov-detail-after.png",
+        "pngSha256": "67cd43ad976e9b6ca277faa80393228a9de155e8f757ef3a97dc15abf748ade8",
+        "pngBytes": 739733,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      }
+    },
+    {
+      "assetId": "mosin9130-detail112",
+      "modelSha256": "9b7924b287692d9472a4394fa110c669fcb13d0060363f2ba75dd00292206928",
+      "view": "full",
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.9652263522148132,
+            -0.03336815908551216,
+            0.2592771351337433,
+            0.6801704168319702
+          ],
+          [
+            0.2614154815673828,
+            0.12320546805858612,
+            -0.9573308229446411,
+            -1.368868112564087
+          ],
+          [
+            1.1084110518311263e-8,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.12432524561882019
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "resolution": [
+          1100,
+          620
+        ],
+        "transparent": false,
+        "frame": {
+          "min": [
+            -0.31244009733200073,
+            -0.03641284257173538,
+            -0.09319566935300827
+          ],
+          "max": [
+            0.9355269074440002,
+            0.020845364779233932,
+            0.09213374555110931
+          ]
+        },
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -2.1843905448913574,
+              -3.1277010440826416,
+              3.7433700561523438
+            ],
+            "rotation": [
+              0.817888617515564,
+              8.242558635629393e-9,
+              -0.6747409701347351
+            ],
+            "energy": 218.03903198242188,
+            "size": 2.495934009552002
+          },
+          {
+            "location": [
+              4.055444240570068,
+              -1.8797342777252197,
+              1.2474360466003418
+            ],
+            "rotation": [
+              1.281044602394104,
+              8.438647114417108e-9,
+              1.1071487665176392
+            ],
+            "energy": 85.65818786621094,
+            "size": 2.495934009552002
+          },
+          {
+            "location": [
+              -0.9364235997200012,
+              2.4881503582000732,
+              2.4954030513763428
+            ],
+            "rotation": [
+              0.8410688638687134,
+              2.6345803760818853e-8,
+              -2.677945137023926
+            ],
+            "energy": 280.3359069824219,
+            "size": 1.8719505071640015
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exported-GLB asset evidence, not WebGL browser capture"
+      },
+      "before": {
+        "cameraPath": ".tools/v112-weapons/mosin9130-before.camera.json",
+        "cameraSha256": "fd55e7a7818419eeeede6f17ae68476d777fabce736df156d93075ffe5778eeb",
+        "canonicalCameraSha256": "b2106b65047cffe59f1ada7609fd6c939354e401fb2df2c7ce1f8a29af85e35f",
+        "pngPath": ".tools/v112-weapons/mosin9130-before.png",
+        "pngSha256": "21027e51c2ddc0ab13292be28f619065c9bbddfe5491554e7e68a5536d4e1865",
+        "pngBytes": 693590,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      },
+      "after": {
+        "cameraPath": ".tools/v112-weapons/mosin9130-after.camera.json",
+        "cameraSha256": "fd55e7a7818419eeeede6f17ae68476d777fabce736df156d93075ffe5778eeb",
+        "canonicalCameraSha256": "b2106b65047cffe59f1ada7609fd6c939354e401fb2df2c7ce1f8a29af85e35f",
+        "pngPath": ".tools/v112-weapons/mosin9130-after.png",
+        "pngSha256": "acd0ac7e9246b0c2b9b4623ef1e77ba0e09e3a136980735b97abf743429e510a",
+        "pngBytes": 695020,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      }
+    },
+    {
+      "assetId": "mosin9130-detail112",
+      "modelSha256": "9b7924b287692d9472a4394fa110c669fcb13d0060363f2ba75dd00292206928",
+      "view": "detail",
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.965226411819458,
+            -0.03336814045906067,
+            0.25927701592445374,
+            0.3419865667819977
+          ],
+          [
+            0.26141536235809326,
+            0.12320546805858612,
+            -0.9573308825492859,
+            -0.5611813068389893
+          ],
+          [
+            6.6725123204491865e-9,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.10304602235555649
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "resolution": [
+          1100,
+          620
+        ],
+        "transparent": false,
+        "frame": {
+          "min": [
+            -0.05000000074505806,
+            -0.07999999821186066,
+            -0.03999999910593033
+          ],
+          "max": [
+            0.4300000071525574,
+            0.07999999821186066,
+            0.14000000059604645
+          ]
+        },
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -0.7700000405311584,
+              -1.2000000476837158,
+              1.4900000095367432
+            ],
+            "rotation": [
+              0.817888617515564,
+              8.242558635629393e-9,
+              -0.6747409701347351
+            ],
+            "energy": 32.256004333496094,
+            "size": 0.9600000381469727
+          },
+          {
+            "location": [
+              1.630000114440918,
+              -0.7200000286102295,
+              0.5300000309944153
+            ],
+            "rotation": [
+              1.281044602394104,
+              -1.3026904355228908e-7,
+              1.1071487665176392
+            ],
+            "energy": 12.672000885009766,
+            "size": 0.9600000381469727
+          },
+          {
+            "location": [
+              -0.2900000214576721,
+              0.9600000381469727,
+              1.0099999904632568
+            ],
+            "rotation": [
+              0.8410686254501343,
+              3.6633625910553747e-8,
+              -2.677945137023926
+            ],
+            "energy": 41.47200393676758,
+            "size": 0.7200000286102295
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exported-GLB asset evidence, not WebGL browser capture"
+      },
+      "before": {
+        "cameraPath": ".tools/v112-weapons/mosin9130-detail-before.camera.json",
+        "cameraSha256": "03c6a346b87b69ff5dd180fc0548a7e0099c75f64a12e4a70158edce396f3015",
+        "canonicalCameraSha256": "3c9afce968d3dfb67a96838c84035812a42ced811fe905f0d12e2b337b21741a",
+        "pngPath": ".tools/v112-weapons/mosin9130-detail-before.png",
+        "pngSha256": "52d7b361b392bec631f83097707fae77347516913d78f4d7ac16e4eef589148d",
+        "pngBytes": 709082,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      },
+      "after": {
+        "cameraPath": ".tools/v112-weapons/mosin9130-detail-after.camera.json",
+        "cameraSha256": "03c6a346b87b69ff5dd180fc0548a7e0099c75f64a12e4a70158edce396f3015",
+        "canonicalCameraSha256": "3c9afce968d3dfb67a96838c84035812a42ced811fe905f0d12e2b337b21741a",
+        "pngPath": ".tools/v112-weapons/mosin9130-detail-after.png",
+        "pngSha256": "574aef466070fe084d387844aab234b250861b7ce20ba3f1830490b9947de685",
+        "pngBytes": 711467,
+        "pngWidth": 1100,
+        "pngHeight": 620
+      }
+    }
+  ]
+}

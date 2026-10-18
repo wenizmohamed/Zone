@@ -133,7 +133,7 @@ export function installCombatStage(T, { scene, renderer }) {
 export async function mountCombatPresentation({ document: doc = document, window: win = window } = {}) {
   const [T, { GLTFLoader }, { OBJLoader }, { MTLLoader }, art, grip, poses, weapons, armor, uploaded] = await Promise.all([
     import('../lib/three184/three.module.js'), import('../lib/three184/GLTFLoader.js'), import('../lib/three184/OBJLoader.js'), import('../lib/three184/MTLLoader.js'),
-    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=111'), import('./character-armor.mjs?v=107-fit'), import('./uploaded-equipment108.mjs?v=108')
+    import('./character-presentation.js?v=86'), import('./character-grip.js?v=68'), import('./character-poses.js?v=89'), import('./weapon-assets.js?v=112'), import('./character-armor.mjs?v=107-fit'), import('./uploaded-equipment108.mjs?v=108')
   ]);
   const $ = id => doc.getElementById(id), canvas = $('combat-canvas');
   const renderer = new T.WebGLRenderer({ canvas, antialias: true });

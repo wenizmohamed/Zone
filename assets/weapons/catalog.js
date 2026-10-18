@@ -429,8 +429,14 @@ globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES111 = Object.freeze({
   pistol_2:'/assets/weapons/upgrades111/glock18-thumbnail.png',
   pistol_6:'/assets/weapons/upgrades111/glock18-thumbnail.png'
 });
+globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES112 = Object.freeze({
+  sniperrifle_2:'/assets/weapons/upgrades112/dragunov-thumbnail.png',
+  sniperrifle_5:'/assets/weapons/upgrades112/dragunov-thumbnail.png',
+  sniperrifle_3:'/assets/weapons/upgrades112/mosin9130-thumbnail.png',
+  sniperrifle_6:'/assets/weapons/upgrades112/mosin9130-thumbnail.png'
+});
 globalThis.ZONE_WEAPON_THUMBNAILS = Object.freeze(Object.fromEntries(
-  [...Object.keys(globalThis.ZONE_WEAPONS), 'bat', 'knife'].map(key => [key, globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES111[key] || '/assets/weapons/thumbnails/' + key + '.png'])
+  [...Object.keys(globalThis.ZONE_WEAPONS), 'bat', 'knife'].map(key => [key, globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES112[key] || globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES111[key] || '/assets/weapons/thumbnails/' + key + '.png'])
 ));
 globalThis.zoneWeaponThumbnail = (key, modelKey) => {
   for (const candidate of [modelKey, key]) if (typeof candidate === 'string' && Object.hasOwn(globalThis.ZONE_WEAPON_THUMBNAILS, candidate)) return globalThis.ZONE_WEAPON_THUMBNAILS[candidate];

@@ -18,7 +18,9 @@
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
     "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
     "verify:platform": "pwsh -ExecutionPolicy Bypass -File scripts/verify-platform.ps1",
-    "verify:weapons": "node --test scripts/test-weapon-assets.mjs scripts/test-character-poses.mjs scripts/test-character-art.mjs scripts/test-character-polish.mjs scripts/test-weapon-library.mjs scripts/test-weapon-quality.mjs scripts/test-weapon-upgrades111.mjs",
+    "verify:weapons": "node --test scripts/test-weapon-assets.mjs scripts/test-character-poses.mjs scripts/test-character-art.mjs scripts/test-character-polish.mjs scripts/test-weapon-library.mjs scripts/test-weapon-quality.mjs scripts/test-weapon-upgrades111.mjs scripts/test-weapon-upgrades112.mjs scripts/test-weapon-bindings112.mjs",
+    "verify:ordinary-journey": "node --test scripts/test-ordinary-journey112.mjs",
+    "verify:weapon-evidence": "node --test scripts/test-weapon-upgrades112-evidence.mjs",
     "verify:sessions": "node --test scripts/test-player-session.mjs scripts/test-account.mjs",
     "verify:relay": "node engine/tests/relay-http.mjs"
   },

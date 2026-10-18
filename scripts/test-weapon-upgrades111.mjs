@@ -91,7 +91,7 @@ const stats=image=>{
 test('exact seven-key overlay preserves gameplay categories and leaves all other identities unchanged',()=>{
   assert.deepEqual(WEAPON_PRESENTATION_UPGRADES111,expected);assert.deepEqual(manifest.bindings,expected);
   for(const record of historical.records) {
-    const current=resolveWeaponAsset(record.key,catalog), old=resolveWeaponAsset(record.key,catalog,{revision:99});
+    const current=resolveWeaponAsset(record.key,catalog,{revision:111}), old=resolveWeaponAsset(record.key,catalog,{revision:99});
     assert.equal(old.id,record.sourceId);assert.equal(old.thumbnail,record.thumbnail);
     assert.equal(current.category,record.category);assert.equal(current.requestedKey,record.key);
     if(expected[record.key]) {

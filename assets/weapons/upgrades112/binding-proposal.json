@@ -1,0 +1,60 @@
+{
+  "revision": 112,
+  "status": "proposal-only-runtime-not-edited",
+  "bindings": {
+    "sniperrifle_2": "dragunov-detail112",
+    "sniperrifle_5": "dragunov-detail112",
+    "sniperrifle_3": "mosin9130-detail112",
+    "sniperrifle_6": "mosin9130-detail112"
+  },
+  "sources": {
+    "dragunov-detail112": {
+      "id": "dragunov-detail112",
+      "url": "upgrades112/dragunov-detail112.glb",
+      "originalSourceId": "tabasco-dragunov",
+      "legacySourceKey": "dragunov",
+      "scale": 1,
+      "grip": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "axis": -1,
+      "forward": true,
+      "category": "sniper",
+      "revision": 112,
+      "quality": "adapted-pbr",
+      "author": "Tabasco / LonesomeDucky / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "sourceManifest": "upgrades112/manifest.json",
+      "surfaceMaps": ["baseColor", "normal", "metallicRoughness"],
+      "materialLineage": "Tabasco CC0 Dragunov silhouette and measured grip retained. ZONE adds bevelled receiver and optic collars, clamps, lens surfaces, controls, fasteners, vents and magazine detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel and rubber PBR maps.",
+      "identityNote": "Visual-only fictional gameplay sniper representation. The source optic is retained and detailed; opaque coated-lens approximation, no through-scope or functional firearm claim.",
+      "thumbnail": "/assets/weapons/upgrades112/dragunov-thumbnail.png",
+      "thumbnailCapture": "offline-Blender-Cycles-exported-GLB",
+      "browserCaptureStatus": "pending-review"
+    },
+    "mosin9130-detail112": {
+      "id": "mosin9130-detail112",
+      "url": "upgrades112/mosin9130-detail112.glb",
+      "originalSourceId": "tabasco-mosin9130",
+      "legacySourceKey": "mosin",
+      "scale": 1,
+      "grip": [0, 0, 0],
+      "rotation": [0, 0, 0],
+      "axis": -1,
+      "forward": true,
+      "category": "sniper",
+      "revision": 112,
+      "quality": "adapted-pbr",
+      "author": "Tabasco / LonesomeDucky / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "sourceManifest": "upgrades112/manifest.json",
+      "surfaceMaps": ["baseColor", "normal", "metallicRoughness"],
+      "materialLineage": "Tabasco CC0 Mosin Nagant 91/30 silhouette, iron sights and measured grip retained. ZONE adds bevelled receiver and bolt-raceway surfaces, fasteners, iron-sight graduations and stock-band detail. Retained LonesomeDucky CC0 bat wood color/normal maps preserve the original worn grain and projected UVs, with new nonmetallic roughness. ZONE supplies original procedural worn-steel PBR maps.",
+      "identityNote": "Visual-only fictional gameplay sniper representation retaining the original iron-sight configuration; not an exact mechanical replica or a functional firearm design.",
+      "thumbnail": "/assets/weapons/upgrades112/mosin9130-thumbnail.png",
+      "thumbnailCapture": "offline-Blender-Cycles-exported-GLB",
+      "browserCaptureStatus": "pending-review"
+    }
+  }
+}

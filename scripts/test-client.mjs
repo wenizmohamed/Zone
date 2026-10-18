@@ -129,6 +129,7 @@ test('owned and catalog weapon rows use model-specific thumbnails with honest ar
   const declaredThumbnails=new Set(Object.values(context.ZONE_WEAPON_THUMBNAILS));
   assert.ok(rows.every(row => declaredThumbnails.has(row.thumbnail)));
   assert.equal(rows.filter(row=>row.thumbnail.startsWith('/assets/weapons/upgrades111/')).length,7,'exactly the seven upgraded selections receive their matching new source render');
+  assert.equal(rows.filter(row=>row.thumbnail.startsWith('/assets/weapons/upgrades112/')).length,4,'exactly four sniper selections use the two separate exported-source previews');
   assert.match(html, /<img sc-camel-src="\{\{ i\.thumbnail \}\}" alt="" loading="lazy"/);
 });
 
@@ -271,6 +272,20 @@ function game({ manifest = {}, platformData = {}, fetchImpl, now = 1800000, prev
   instance.bump = () => {};
   return { instance, ...context.clientExports, context, frames, messages, timers, intervals, calls, storage, listeners, history, location };
 }
+
+test('job feedback explains the exact daily bonus and never invents one for ordinary repeat receipts',async()=>{
+  for(const lang of ['en','ar'])for(const bonus of [1000,undefined,0,-5,NaN,Infinity]){
+    const outcome={player:{cash:3550,job:'grocer'},reward:{cash:850},streak:{rewardCash:bonus}};
+    const {instance,T,calls}=game({route:'?screen=jobs&lang='+lang,fetchImpl:async()=>({ok:true,json:async()=>outcome})});
+    instance.allowScreen=()=>true;instance.allowGameplay=()=>true;instance.loadGameplay=async()=>{};
+    let feedback;instance.result=(kind,title,body,big)=>{feedback={kind,title,body,big};};
+    await instance.work(T[lang]);
+    assert.equal(feedback.big,bonus===1000?'+$1,850':'+$850');
+    if(bonus===1000){assert.match(feedback.body,lang==='ar'?/مكافأة الاستمرارية اليومية/:/Daily streak bonus/);assert.match(feedback.body,/\$850/);assert.match(feedback.body,/\$1,000/);}
+    else assert.doesNotMatch(feedback.body,/Daily streak bonus|مكافأة الاستمرارية/);
+    assert.equal(calls.length,1);assert.equal(calls[0].path,'/api/v1/jobs/work');assert.equal(calls[0].options.method,'POST');assert.equal(calls[0].options.body,'{}');
+  }
+});
 
 test('published custom page slugs resolve to canonical IDs on EN and AR entry, navigation and browser Back', () => {
   const page={id:'page-mv6k9c53',slug:'beta-operations',enabled:true,title:{en:'Beta Operations',ar:'عمليات النسخة التجريبية'},blocks:[{id:'hero-one',type:'hero',content:{en:'Published operations',ar:'عمليات منشورة'}}]};

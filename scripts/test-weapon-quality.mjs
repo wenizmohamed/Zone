@@ -18,6 +18,8 @@ const game = JSON.parse(readFileSync(new URL('engine/data/gameplay-catalog.json'
 const weapons = Object.entries(game.items).filter(([, item]) => item.type === 'weapon').map(([key]) => key);
 const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverage.json', root), 'utf8'));
 const upgrades111 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades111/manifest.json', root), 'utf8'));
+const upgrades112 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades112/manifest.json', root), 'utf8'));
+const currentAssets = [...upgrades111.assets,...upgrades112.assets];
 const digest = data => createHash('sha256').update(data).digest('hex');
 
 test('retained emergency fallback preserves registered metal, polymer, wood and glass palette properties',()=>{
@@ -38,9 +40,11 @@ test('all 51 gameplay identities retain category and engine rules while source r
     assert.equal(d.requestedKey,key);assert.equal(d.category,weaponCategory(key,context.ZONE_WEAPONS));
     const historical=resolveWeaponAsset(key,context.ZONE_WEAPONS,{revision:99});
     assert.equal(historical.id,record.sourceId);assert.equal(historical.thumbnail,'/assets/weapons/thumbnails/'+key+'.png');
-    if(Object.hasOwn(upgrades111.bindings,key)){
-      assert.equal(d.id,upgrades111.bindings[key]);assert.equal(d.originalSourceId,historical.id);
-      assert.match(d.thumbnail,/^\/assets\/weapons\/upgrades111\//);assert.equal(d.thumbnailCapture,'offline-Blender-Cycles');
+    const currentReceipt=Object.hasOwn(upgrades112.bindings,key)?upgrades112:upgrades111;
+    if(Object.hasOwn(currentReceipt.bindings,key)){
+      assert.equal(d.id,currentReceipt.bindings[key]);assert.equal(d.originalSourceId,historical.id);
+      assert.ok(d.thumbnail.startsWith('/assets/weapons/upgrades'+currentReceipt.revision+'/'));
+      assert.equal(d.thumbnailCapture,currentReceipt.revision===112?'offline-Blender-Cycles-exported-GLB':'offline-Blender-Cycles');
     }else{assert.equal(d.id,historical.id);assert.equal(d.thumbnail,historical.thumbnail);}
     assert.ok(!d.aiAssisted && !d.id.startsWith('polyy-'),key);
     sources.add(d.id);categories.add(d.category);
@@ -94,7 +98,7 @@ test('actual retained meshes fit every gameplay identity in desktop, phone and 3
     const object=normalizeWeaponAsset(THREE,(await geometryGlb(fileURLToPath(new URL('assets/weapons/'+d.url,root)))).scene,d);
     const inspection=inspectWeaponObject(THREE,object),record=coverage.records.find(r=>r.key===key);
     assert.ok(inspection.meshes>0 && inspection.triangles>100,key);
-    const upgraded=upgrades111.assets.find(asset=>asset.id===d.id);
+    const upgraded=currentAssets.find(asset=>asset.id===d.id);
     assert.equal(inspection.meshes,upgraded?upgraded.primitives:record.meshes);assert.equal(inspection.triangles,upgraded?upgraded.triangles:record.triangles);
     if(key==='bat')object.rotation.z=-.95; // Actual thumbnail-only pose; normal viewer is untouched.
     const box=new THREE.Box3().setFromObject(object);
@@ -151,7 +155,7 @@ test('shared-source aliases deduplicate network loads without copying the first 
 
 test('classic helper supports owner model overrides and rejects prototype/path inputs',()=>{
   assert.equal(context.zoneWeaponThumbnail('shotgun'),'/assets/weapons/thumbnails/shotgun.png');
-  assert.equal(context.zoneWeaponThumbnail('owner-created-item','sniperrifle_6'),'/assets/weapons/thumbnails/sniperrifle_6.png');
+  assert.equal(context.zoneWeaponThumbnail('owner-created-item','sniperrifle_6'),'/assets/weapons/upgrades112/mosin9130-thumbnail.png');
   for(const key of ['unknown','constructor','__proto__','../private','https://other.test/image.png'])assert.equal(context.zoneWeaponThumbnail(key),null);
   assert.equal(Object.keys(context.ZONE_WEAPON_THUMBNAILS).length,51);
   for(const key of ['constructor','__proto__','toString','unknown'])assert.equal(resolveWeaponAsset(key,context.ZONE_WEAPONS),null);
@@ -162,7 +166,7 @@ test('serialized inspector exposes actual source diagnostics and thumbnail mode 
   const template=JSON.parse(html.match(/<script type="__bundler\/template">([\s\S]*?)<\/script>/)[1]);
   assert.match(template,/root.userData.zoneWeaponAsset = \{ \.\.\.g.userData.zoneWeaponAsset \}/);
   assert.match(template,/inspection:inspectAsset\(THREE, g\)/);assert.match(template,/requestedKey: String\(key\)/);
-  assert.match(template,/weapon-assets\.js\?v=111/);
+  assert.match(template,/weapon-assets\.js\?v=112/);
   assert.match(template,/stage.dataset.zoneThumbnail = 'true'/);
   assert.match(template,/\.toolbar,\.note\{display:none!important\}/);
   assert.match(template,/stage.dataset.zoneThumbnail === 'true' && id === 'bat'/);
