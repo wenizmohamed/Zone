@@ -35,7 +35,7 @@
 <script src="./assets/ui/canonical-entry.js?v=102"></script>
 <script src="./assets/ui/route-navigation.js?v=105"></script>
 <script src="./support.js"></script>
-<script src="./player-session.js?v=102"></script>
+<script src="./player-session.js?v=111"></script>
 <script src="./platform-runtime.js?v=102"></script>
 <script src="./owner-playtest.js?v=106"></script>
 <script src="./assets/ui/owner-transport.js?v=102"></script>
@@ -56,7 +56,7 @@
 <helmet>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="./image-slot.js"></script>
-  <script src="./assets/weapons/catalog.js?v=99"></script>
+  <script src="./assets/weapons/catalog.js?v=111"></script>
 
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
@@ -347,7 +347,7 @@
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=110" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=111" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
           <nav class="zone-city-directory zone-panel" aria-label="{{ cityDirectory.title }}">
             <div class="zone-panel-heading">{{ cityDirectory.title }}<bdi>{{ cityDirectory.count }}</bdi></div>
@@ -1579,7 +1579,7 @@ class Component extends DCLogic {
     if (!this.itemHasCapturedModel(id)) return '';
     // The URL seeds only a newly mounted viewer. Later selection changes use
     // the authenticated parent message, preserving its loader/source cache.
-    return this._itemViewerEntry || (this._itemViewerEntry = 'dist/weapon3d.html?v=105&item=' + encodeURIComponent(CAT[id]?.model || id) + '&lang=' + this.state.lang + '&bg=' + encodeURIComponent(this.state.theme === 'light' ? '#e9e5da' : '#16181b'));
+    return this._itemViewerEntry || (this._itemViewerEntry = 'dist/weapon3d.html?v=111&item=' + encodeURIComponent(CAT[id]?.model || id) + '&lang=' + this.state.lang + '&bg=' + encodeURIComponent(this.state.theme === 'light' ? '#e9e5da' : '#16181b'));
   }
   componentDidUpdate() {
     if (!document.getElementById('zone-item-3d')) this._itemViewerEntry = null;

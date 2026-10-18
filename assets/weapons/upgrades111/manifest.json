@@ -1,0 +1,374 @@
+{
+  "revision": 111,
+  "status": "offline-asset-review-browser-pending",
+  "license": "CC0-1.0",
+  "licenseFile": "LICENSE.txt",
+  "license_file": "LICENSE.txt",
+  "historicalReceipt": "assets/weapons/runtime-coverage.json",
+  "historicalReceiptSha256": "1df77e3aa00677337dbb50ae34909711f1b360347ddc20b3aee2d12f3130820d",
+  "sourceTool": "assets/weapons/source-tools/upgrades111/build_upgrades.py",
+  "sourceToolSha256": "f5dfc3bc8b5e97a64ea37d439cd839f3b526672f706ac41049db1266d4dfd04b",
+  "renderer": "Blender 4.5.9 CPU Cycles; asset evidence, not browser proof",
+  "thumbnailCapture": "offline-Blender-Cycles-PNG",
+  "browserCaptureStatus": "pending-review",
+  "sources": [
+    {
+      "author": "Tabasco",
+      "license": "CC0-1.0",
+      "license_file": "LICENSE.txt",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "source_page": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "download": "https://opengameart.org/sites/default/files/smallarms.zip",
+      "downloadSha256": "fac981bb2df3dac9574e3567ef40df0fa5b77f0d6be0a36b83bdd95fcc86a492",
+      "licenseVerified": "2026-10-18",
+      "licenseNote": "Primary author page offers CC0 and states a 2023-12-15 public-domain dedication. Historical CC-BY marker is retained on that page.",
+      "originals": [
+        "premium/v99/tabasco-g3a3.glb",
+        "premium/v99/tabasco-l85.glb"
+      ]
+    },
+    {
+      "author": "locarem",
+      "license": "CC0-1.0",
+      "license_file": "LICENSE.txt",
+      "source": "https://opengameart.org/content/high-poly-glock-18-no-textures",
+      "source_page": "https://opengameart.org/content/high-poly-glock-18-no-textures",
+      "download": "https://opengameart.org/sites/default/files/Glock_HighPoly.obj",
+      "downloadSha256": "5437aa4cbacfb9838c2ff06cabb13ccf68779ce8af4652a1672923772f35d089",
+      "licenseVerified": "2026-10-18",
+      "licenseNote": "Primary author page offers CC0. OBJ has 15,366 original vertices; no original textures or MTL file supplied. ZONE supplies the new physical surfaces."
+    }
+  ],
+  "bindings": {
+    "assaultrifle_2": "g3a3-detail111",
+    "assaultrifle_4": "g3a3-detail111",
+    "bullpup_1": "l85-detail111",
+    "bullpup_2": "l85-detail111",
+    "bullpup_3": "l85-detail111",
+    "pistol_2": "glock18-detail111",
+    "pistol_6": "glock18-detail111"
+  },
+  "assets": [
+    {
+      "id": "g3a3-detail111",
+      "path": "assets/weapons/upgrades111/g3a3-detail111.glb",
+      "bytes": 3595856,
+      "sha256": "d92e6efff17fe1a39fdc435291a103b50d0d6c787dad142c9c107476873a1b19",
+      "triangles": 19444,
+      "primitives": 5,
+      "images": 9,
+      "physicalBoundsBlender": {
+        "min": [
+          -0.2843935489654541,
+          -0.025499999523162842,
+          -0.03862614184617996
+        ],
+        "max": [
+          0.6918968558311462,
+          0.02355000004172325,
+          0.1691598892211914
+        ]
+      },
+      "reviewFrame": {
+        "min": [
+          -0.28444838523864746,
+          -0.025499999523162842,
+          -0.038672126829624176
+        ],
+        "max": [
+          0.6918968558311462,
+          0.02355000004172325,
+          0.16917553544044495
+        ]
+      },
+      "thumbnail": "/assets/weapons/upgrades111/g3a3-thumbnail.png",
+      "previousRuntimeVertices": 440,
+      "previousRuntimeTriangles": 722,
+      "sourceVertices": 440,
+      "sourceTriangles": 722,
+      "author": "Tabasco / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "quality": "adapted-pbr",
+      "modified": true,
+      "modification": "Tabasco CC0 G3A3 silhouette and grip retained. ZONE adds bevelled receiver, vent, fastener, magazine and grip geometry, with original deterministic worn-steel/polymer base-color, tangent-normal and packed metallic-roughness maps.",
+      "materialStatus": "adapted-pbr",
+      "sourceGeometry": "Tabasco source silhouette retained with bevelled mesh and new receiver, vent, fastener, magazine and grip detail geometry.",
+      "materialLineage": "Tabasco CC0 G3A3 silhouette and grip retained. ZONE adds bevelled receiver, vent, fastener, magazine and grip geometry, with original deterministic worn-steel/polymer base-color, tangent-normal and packed metallic-roughness maps.",
+      "originalSourceId": "tabasco-g3a3",
+      "descriptor": {
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true
+      },
+      "thumbnailSha256": "ec139dc687f18eac54b18ff73111768ee779fd483f11b9fb333532585feda257",
+      "thumbnailBytes": 41348,
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "thumbnailStatus": "offline-Cycles-render-of-exact-exported-geometry-and-materials",
+      "triangleBudget": 60000,
+      "primitiveBudget": 10,
+      "textureBudgetBytes": 16777216
+    },
+    {
+      "id": "l85-detail111",
+      "path": "assets/weapons/upgrades111/l85-detail111.glb",
+      "bytes": 3817988,
+      "sha256": "8c656f145ec7d3f74e277699d181d3ceb8fa5cb53fecd1eec0c64cd34457f288",
+      "triangles": 27118,
+      "primitives": 5,
+      "images": 9,
+      "physicalBoundsBlender": {
+        "min": [
+          -0.33864888548851013,
+          -0.03381344676017761,
+          -0.0859275683760643
+        ],
+        "max": [
+          0.43220818042755127,
+          0.031300000846385956,
+          0.21326583623886108
+        ]
+      },
+      "reviewFrame": {
+        "min": [
+          -0.33872121572494507,
+          -0.03381344676017761,
+          -0.08602457493543625
+        ],
+        "max": [
+          0.43220818042755127,
+          0.031300000846385956,
+          0.2133195698261261
+        ]
+      },
+      "thumbnail": "/assets/weapons/upgrades111/l85-thumbnail.png",
+      "previousRuntimeVertices": 700,
+      "previousRuntimeTriangles": 1308,
+      "sourceVertices": 700,
+      "sourceTriangles": 1308,
+      "author": "Tabasco / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol",
+      "quality": "adapted-pbr",
+      "modified": true,
+      "modification": "Tabasco CC0 L85A1 silhouette and grip retained. ZONE adds bevelled receiver, handguard, ejection-panel, fastener, magazine and grip geometry, with original deterministic worn-steel/olive-polymer base-color, tangent-normal and packed metallic-roughness maps.",
+      "materialStatus": "adapted-pbr",
+      "sourceGeometry": "Tabasco source silhouette retained with bevelled mesh and new receiver, vent, fastener, magazine and grip detail geometry.",
+      "materialLineage": "Tabasco CC0 L85A1 silhouette and grip retained. ZONE adds bevelled receiver, handguard, ejection-panel, fastener, magazine and grip geometry, with original deterministic worn-steel/olive-polymer base-color, tangent-normal and packed metallic-roughness maps.",
+      "originalSourceId": "tabasco-l85",
+      "descriptor": {
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true
+      },
+      "thumbnailSha256": "6fa9b39d1f12411bc6c6f04401341dcb3d6ec3591c70b6897b6ac5a76ccddd66",
+      "thumbnailBytes": 52374,
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "thumbnailStatus": "offline-Cycles-render-of-exact-exported-geometry-and-materials",
+      "triangleBudget": 60000,
+      "primitiveBudget": 10,
+      "textureBudgetBytes": 16777216
+    },
+    {
+      "id": "glock18-detail111",
+      "path": "assets/weapons/upgrades111/glock18-detail111.glb",
+      "bytes": 3470564,
+      "sha256": "a2d2057b300fdea441d2cc081e830043dd6e890f7b0e2c4113363c168ec9a0bd",
+      "triangles": 46690,
+      "primitives": 4,
+      "images": 6,
+      "physicalBoundsBlender": {
+        "min": [
+          -0.04625749588012695,
+          -0.011182725429534912,
+          -0.04946513473987579
+        ],
+        "max": [
+          0.17486174404621124,
+          0.01212338451296091,
+          0.08284691721200943
+        ]
+      },
+      "reviewFrame": {
+        "min": [
+          -0.04625749588012695,
+          -0.015398598276078701,
+          -0.04946513473987579
+        ],
+        "max": [
+          0.17486174404621124,
+          0.01267703715711832,
+          0.09974788129329681
+        ]
+      },
+      "thumbnail": "/assets/weapons/upgrades111/glock18-thumbnail.png",
+      "previousRuntimeVertices": 538,
+      "previousRuntimeTriangles": 980,
+      "sourceVertices": 15366,
+      "sourceTriangles": 30648,
+      "author": "locarem / ZONE derivative",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/high-poly-glock-18-no-textures",
+      "quality": "adapted-pbr",
+      "modified": true,
+      "modification": "locarem CC0 high-poly Glock-18 geometry. ZONE rigidly normalizes its measured handle, adds grip panels and slide serration detail, and supplies original deterministic steel/graphite base-color, tangent-normal and packed metallic-roughness maps. The author supplied no textures.",
+      "materialStatus": "adapted-pbr",
+      "sourceGeometry": "locarem high-poly source geometry with new grip panels and slide-serration detail.",
+      "materialLineage": "locarem CC0 high-poly Glock-18 geometry. ZONE rigidly normalizes its measured handle, adds grip panels and slide serration detail, and supplies original deterministic steel/graphite base-color, tangent-normal and packed metallic-roughness maps. The author supplied no textures.",
+      "originalSourceId": "tabasco-m1911",
+      "descriptor": {
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true
+      },
+      "thumbnailSha256": "8210cfc86a508d2db648b8030d1ccfb94b30bb386dbc0a4a7e3746a37071fef4",
+      "thumbnailBytes": 52221,
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "thumbnailStatus": "offline-Cycles-render-of-exact-exported-geometry-and-materials",
+      "triangleBudget": 60000,
+      "primitiveBudget": 10,
+      "textureBudgetBytes": 16777216
+    }
+  ],
+  "immutableOriginals": [
+    {
+      "path": "assets/weapons/premium/detective-special/detective-special.glb",
+      "bytes": 2607420,
+      "sha256": "f0bdcbacf37981cf132e1a9ab8e0bc28b49a4386676b21838e4b6d4df34296cf"
+    },
+    {
+      "path": "assets/weapons/premium/v99/loafbrr-revolver.glb",
+      "bytes": 1938160,
+      "sha256": "ecbbf87bc5a5fdf740d81e8f25c7ceb470e0c08a1ffb79c52478a0003cbf706b"
+    },
+    {
+      "path": "assets/weapons/premium/derringer/derringer.glb",
+      "bytes": 1108396,
+      "sha256": "a0b0ff993b9730aa552272a5028c42053581b40e001d9afe30d62c88d5197446"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--makarov.glb",
+      "bytes": 850204,
+      "sha256": "64bb1b7c140927ff7c8867b79ecc3dc98d7fd7b19e5ecd29d2100557f7fc5a37"
+    },
+    {
+      "path": "assets/weapons/premium/v99/jean-doublebarrel-safe.glb",
+      "bytes": 544104,
+      "sha256": "bfdabc5e83d85c589554c83296abed5f373e3a359f26d6269d1425c09acdc278"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--shotgun.glb",
+      "bytes": 563712,
+      "sha256": "ba32793ea1bcf6cd19cfce2c07a511a87134b1a5295dbc8dc24cc77aea499f53"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--grease-gun.glb",
+      "bytes": 905148,
+      "sha256": "0de7ba9b04feda6502e4a1bd93246989665514ac9b62506059405341ce5e76f6"
+    },
+    {
+      "path": "assets/weapons/premium/akm/akm.glb",
+      "bytes": 2529204,
+      "sha256": "50f1d6a0f08e5966ee28317d0de74454fa1473375883a81cd2b80521393819c5"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--sniper.glb",
+      "bytes": 431532,
+      "sha256": "c5937b356282ff3306019ccf2943cd87b08eaac6b8f48ac834062732e70e89c8"
+    },
+    {
+      "path": "assets/weapons/premium/wooden-bat/baseball_bat.glb",
+      "bytes": 784412,
+      "sha256": "986198e5b00b999e5459e3b6e46f07a5b8b5ff391f7a1cbcdb6767b66315b3bd"
+    },
+    {
+      "path": "assets/weapons/premium/m9-knife/m9-knife.glb",
+      "bytes": 4084324,
+      "sha256": "2d22ca8e44c998abbf10ce677fd697c59f9adda6e1f8fd95332d57c05db46f56"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--ak47.glb",
+      "bytes": 913784,
+      "sha256": "5102a4702c095761d6fe614667f11484cb0627277b78f8ca0ddb4135a1a6faeb"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--m4a1.glb",
+      "bytes": 792256,
+      "sha256": "37b6001e90febb43a9918f1c6460a967aee2045b9b1cd107f29aaaeed993aba3"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-g3a3.glb",
+      "bytes": 17692,
+      "sha256": "8cc94023997ff5bb83b026fbca8951115640d100255a28940ef6d88006c7cc3e"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-l85.glb",
+      "bytes": 26620,
+      "sha256": "620f31d664b16d33170d00c48030907c83b29e481e93729ebaa308b0aab027d2"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--luger.glb",
+      "bytes": 732708,
+      "sha256": "d4e2663df0abb53fcfc7321497693748d8e8209cea93f14778b9fbc796de0cf7"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-m1911.glb",
+      "bytes": 466376,
+      "sha256": "ef54b6e53f262f3c8a7b352b8a2d9d8d59792b0860bef18269f977e91636e547"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-dragunov.glb",
+      "bytes": 494144,
+      "sha256": "4e4c8e8560286cb5b4808183822ad8726e1f08a46fe5417ae216eaab35970623"
+    },
+    {
+      "path": "assets/weapons/premium/v99/tabasco-mosin9130.glb",
+      "bytes": 476224,
+      "sha256": "8edef8b974533e167e4397c4bb5ef5b9fe9dc1265c617d6264745399e0852674"
+    },
+    {
+      "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--suomi-kp.glb",
+      "bytes": 1149332,
+      "sha256": "85d3b0800418dac187e9d47d747058384565d5bf7379d7b7e781233f52822f70"
+    }
+  ],
+  "limitations": [
+    "Offline renders are not WebGL viewer captures and do not establish in-app pixel acceptance.",
+    "Rifle derivatives retain low-poly source silhouettes; bevelled surfaces and detail geometry are new.",
+    "The new Glock is game-art representation, not an M1911 or real-world performance claim.",
+    "Finger-skin clearance and phone GPU timing require real in-app verification."
+  ]
+}

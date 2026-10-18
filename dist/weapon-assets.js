@@ -83,9 +83,42 @@ export const WEAPON_GAME_PRESENTATIONS = {
   submachinegun_1:'smg', submachinegun_2:'suomi', submachinegun_3:'smg', submachinegun_4:'suomi', submachinegun_5:'smg'
 };
 
-export function resolveWeaponAsset(key, catalog = {}) {
+// Explicit v111 overlay. The v99 descriptors, files and capture receipts above
+// remain historical originals. These are real geometry/surface derivatives,
+// not renamed originals or a claim that ZONE authored the source gun meshes.
+const detail111 = (id, author, source, lineage, originalSourceId, identityNote) => ({
+  id, url: 'upgrades111/' + id + '.glb', scale: 1, grip: [0,0,0], rotation: [0,0,0], axis: -1, forward: true,
+  revision: 111, quality: 'adapted-pbr', license: 'CC0-1.0', author, source,
+  sourceManifest: 'upgrades111/manifest.json', surfaceMaps: ['baseColor','normal','metallicRoughness'],
+  materialLineage: lineage, originalSourceId, identityNote,
+  thumbnailCapture: 'offline-Blender-Cycles', browserCaptureStatus: 'pending-review'
+});
+export const WEAPON_UPGRADE_SOURCES111 = Object.freeze({
+  'g3a3-detail111': detail111('g3a3-detail111', 'Tabasco / ZONE derivative',
+    'https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol',
+    'Tabasco CC0 G3A3 silhouette and grip retained. ZONE adds bevelled receiver, vent, fastener, magazine and grip geometry, with original deterministic worn-steel/polymer base-color, tangent-normal and packed metallic-roughness maps.',
+    'tabasco-g3a3', 'Fictional gameplay assault rifle represented by an explicitly modified G3A3 game-art mesh.'),
+  'l85-detail111': detail111('l85-detail111', 'Tabasco / ZONE derivative',
+    'https://opengameart.org/content/various-small-arms-assault-rifles-sniper-pistol',
+    'Tabasco CC0 L85A1 silhouette and grip retained. ZONE adds bevelled receiver, handguard, ejection-panel, fastener, magazine and grip geometry, with original deterministic worn-steel/olive-polymer base-color, tangent-normal and packed metallic-roughness maps.',
+    'tabasco-l85', 'Fictional gameplay bullpup represented by an explicitly modified L85A1 game-art mesh.'),
+  'glock18-detail111': detail111('glock18-detail111', 'locarem / ZONE derivative',
+    'https://opengameart.org/content/high-poly-glock-18-no-textures',
+    'locarem CC0 high-poly Glock-18 geometry. ZONE rigidly normalizes its measured handle, adds grip panels and slide serration detail, and supplies original deterministic steel/graphite base-color, tangent-normal and packed metallic-roughness maps. The author supplied no textures.',
+    'tabasco-m1911', 'Pistol II/VI now use a separately credited Glock-18 representation, not an M1911 or a real-world performance claim.')
+});
+export const WEAPON_PRESENTATION_UPGRADES111 = Object.freeze({
+  assaultrifle_2:'g3a3-detail111', assaultrifle_4:'g3a3-detail111',
+  bullpup_1:'l85-detail111', bullpup_2:'l85-detail111', bullpup_3:'l85-detail111',
+  pistol_2:'glock18-detail111', pistol_6:'glock18-detail111'
+});
+
+export function resolveWeaponAsset(key, catalog = {}, { revision = 111 } = {}) {
+  const upgradedKey = revision !== 99 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES111, key) ? WEAPON_PRESENTATION_UPGRADES111[key] : null;
+  if (upgradedKey) return { ...WEAPON_UPGRADE_SOURCES111[upgradedKey], requestedKey: key, sourceKey: upgradedKey,
+    legacySourceKey: WEAPON_GAME_PRESENTATIONS[key], category: weaponCategory(key, catalog), thumbnail: weaponThumbnail(key, { revision }) };
   const sourceKey = Object.hasOwn(WEAPON_GAME_PRESENTATIONS,key) ? WEAPON_GAME_PRESENTATIONS[key] : key;
-  if (Object.hasOwn(WEAPON_SOURCE_MODELS, sourceKey)) return { ...WEAPON_SOURCE_MODELS[sourceKey], quality: WEAPON_SOURCE_MODELS[sourceKey].quality || 'authored-pbr', requestedKey: key, sourceKey, category: weaponCategory(key, catalog), thumbnail: weaponThumbnail(key) };
+  if (Object.hasOwn(WEAPON_SOURCE_MODELS, sourceKey)) return { ...WEAPON_SOURCE_MODELS[sourceKey], quality: WEAPON_SOURCE_MODELS[sourceKey].quality || 'authored-pbr', requestedKey: key, sourceKey, category: weaponCategory(key, catalog), thumbnail: weaponThumbnail(key, { revision }) };
   const entry = Object.hasOwn(catalog, key) ? catalog[key] : null;
   if (!entry) return null;
   // Numbered catalog variants have distinct authored meshes. A hero substitute
@@ -109,7 +142,9 @@ export function weaponCategory(key, catalog = {}) {
     || ({ revolver: 'revolver', pistol: 'pistol', ak: 'ak-rifle' })[key] || 'weapon';
 }
 
-export function weaponThumbnail(key) {
+export function weaponThumbnail(key, { revision = 111 } = {}) {
+  const upgraded = revision !== 99 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES111, key) ? WEAPON_PRESENTATION_UPGRADES111[key] : null;
+  if (upgraded) return '/assets/weapons/upgrades111/' + upgraded.replace('-detail111','-thumbnail') + '.png';
   return /^[a-z][a-z0-9_-]{1,79}$/.test(String(key)) ? '/assets/weapons/thumbnails/' + key + '.png' : null;
 }
 
@@ -149,6 +184,7 @@ export function inspectWeaponObject(THREE, root) {
 // normalized object so it cannot call a generated approximation an authored PBR.
 export function weaponPresentationLabel(descriptor, language = 'en') {
   const arabic = language === 'ar';
+  if (descriptor?.quality === 'adapted-pbr') return arabic ? 'نموذج مطور بتفاصيل وخامات فيزيائية - CC0' : 'DETAILED DERIVATIVE / PBR SURFACES / CC0';
   if (descriptor?.quality === 'ai-assisted-textured') return arabic ? 'نموذج بخامات - CC0 - بمساعدة الذكاء الاصطناعي' : 'TEXTURED MODEL / CC0 / AI-ASSISTED';
   if (descriptor?.quality === 'authored-pbr') return arabic ? 'نموذج مفصل - CC0' : 'DETAILED MODEL / CC0';
   if (descriptor?.quality === 'authored-materials') return arabic ? 'نموذج مصمم بخامات لونية - CC0' : 'AUTHORED MODEL / COLOR MATERIALS / CC0';

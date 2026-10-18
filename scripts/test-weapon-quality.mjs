@@ -17,6 +17,7 @@ vm.runInContext(readFileSync(new URL('assets/weapons/pack.js', root), 'utf8'), c
 const game = JSON.parse(readFileSync(new URL('engine/data/gameplay-catalog.json', root), 'utf8'));
 const weapons = Object.entries(game.items).filter(([, item]) => item.type === 'weapon').map(([key]) => key);
 const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverage.json', root), 'utf8'));
+const upgrades111 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades111/manifest.json', root), 'utf8'));
 const digest = data => createHash('sha256').update(data).digest('hex');
 
 test('retained emergency fallback preserves registered metal, polymer, wood and glass palette properties',()=>{
@@ -35,7 +36,12 @@ test('all 51 gameplay identities retain category and engine rules while source r
     const d=resolveWeaponAsset(key,context.ZONE_WEAPONS),record=coverage.records.find(r=>r.key===key);
     assert.ok(d?.url && !d.format, key+' must use a retained real GLB, not a raw OBJ default');
     assert.equal(d.requestedKey,key);assert.equal(d.category,weaponCategory(key,context.ZONE_WEAPONS));
-    assert.equal(d.id,record.sourceId);assert.equal(d.thumbnail,'/assets/weapons/thumbnails/'+key+'.png');
+    const historical=resolveWeaponAsset(key,context.ZONE_WEAPONS,{revision:99});
+    assert.equal(historical.id,record.sourceId);assert.equal(historical.thumbnail,'/assets/weapons/thumbnails/'+key+'.png');
+    if(Object.hasOwn(upgrades111.bindings,key)){
+      assert.equal(d.id,upgrades111.bindings[key]);assert.equal(d.originalSourceId,historical.id);
+      assert.match(d.thumbnail,/^\/assets\/weapons\/upgrades111\//);assert.equal(d.thumbnailCapture,'offline-Blender-Cycles');
+    }else{assert.equal(d.id,historical.id);assert.equal(d.thumbnail,historical.thumbnail);}
     assert.ok(!d.aiAssisted && !d.id.startsWith('polyy-'),key);
     sources.add(d.id);categories.add(d.category);
   }
@@ -49,10 +55,10 @@ test('accepted five use exact original studio profile, not the new material adap
   }
 });
 
-test('five adapted Tabasco finishes use dark linear metal/polymer and honest safe CC0 wood lineage', () => {
+test('retained v99 adapted Tabasco finishes preserve their exact reviewed material and CC0 wood lineage', () => {
   const representatives=['assaultrifle_2','bullpup_1','pistol_2','sniperrifle_2','sniperrifle_3'];
   for(const key of representatives) {
-    const d=resolveWeaponAsset(key,context.ZONE_WEAPONS),bytes=readFileSync(new URL('assets/weapons/'+d.url,root));
+    const d=resolveWeaponAsset(key,context.ZONE_WEAPONS,{revision:99}),bytes=readFileSync(new URL('assets/weapons/'+d.url,root));
     const gltf=JSON.parse(bytes.toString('utf8',20,20+bytes.readUInt32LE(12)));
     assert.match(d.quality,/^adapted-/);assert.match(d.materialLineage,/ZONE/);
     assert.doesNotMatch(weaponPresentationLabel(d,'en'),/DETAILED MODEL|AUTHORED MODEL \/ COLOR MATERIALS/);
@@ -88,7 +94,8 @@ test('actual retained meshes fit every gameplay identity in desktop, phone and 3
     const object=normalizeWeaponAsset(THREE,(await geometryGlb(fileURLToPath(new URL('assets/weapons/'+d.url,root)))).scene,d);
     const inspection=inspectWeaponObject(THREE,object),record=coverage.records.find(r=>r.key===key);
     assert.ok(inspection.meshes>0 && inspection.triangles>100,key);
-    assert.equal(inspection.meshes,record.meshes);assert.equal(inspection.triangles,record.triangles);
+    const upgraded=upgrades111.assets.find(asset=>asset.id===d.id);
+    assert.equal(inspection.meshes,upgraded?upgraded.primitives:record.meshes);assert.equal(inspection.triangles,upgraded?upgraded.triangles:record.triangles);
     if(key==='bat')object.rotation.z=-.95; // Actual thumbnail-only pose; normal viewer is untouched.
     const box=new THREE.Box3().setFromObject(object);
     for(const aspect of [1.9,390/330,320/200]) {
@@ -102,7 +109,7 @@ test('actual retained meshes fit every gameplay identity in desktop, phone and 3
   }
 });
 
-test('all PNGs are source-linked actual WebGL captures, with exact pixels, maps, frame and studio diagnostics',()=>{
+test('all retained v99 PNGs are source-linked actual WebGL captures with exact historical pixels and diagnostics',()=>{
   assert.equal(coverage.status,'captured-local-review');
   assert.equal(coverage.thumbnailCapture,'actual-browser-WebGL-PNG');
   assert.equal(coverage.runtimeWeapons,51);assert.equal(coverage.pbrMapsBakedInThumbnails,true);
@@ -155,7 +162,7 @@ test('serialized inspector exposes actual source diagnostics and thumbnail mode 
   const template=JSON.parse(html.match(/<script type="__bundler\/template">([\s\S]*?)<\/script>/)[1]);
   assert.match(template,/root.userData.zoneWeaponAsset = \{ \.\.\.g.userData.zoneWeaponAsset \}/);
   assert.match(template,/inspection:inspectAsset\(THREE, g\)/);assert.match(template,/requestedKey: String\(key\)/);
-  assert.match(template,/weapon-assets\.js\?v=102/);
+  assert.match(template,/weapon-assets\.js\?v=111/);
   assert.match(template,/stage.dataset.zoneThumbnail = 'true'/);
   assert.match(template,/\.toolbar,\.note\{display:none!important\}/);
   assert.match(template,/stage.dataset.zoneThumbnail === 'true' && id === 'bat'/);

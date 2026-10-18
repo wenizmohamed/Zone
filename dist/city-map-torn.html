@@ -415,6 +415,7 @@
     </div>
     <div class="zerr" id="err"></div>
     <div class="districtDetailStatus" id="districtDetailStatus" role="status" hidden></div>
+    <div class="districtDetailStatus" id="districtSurfaceStatus111" role="status" hidden><span id="districtSurfaceMessage111"></span> <button type="button" id="districtSurfaceRetry111" style="min-height:44px;min-width:44px;background:#303335;color:#eee7d8;border:1px solid #626155;padding:6px 10px">Retry detail</button></div>
     <div class="zboot" id="zboot"><div class="zbootMark"></div></div>
     <div class="sideBd" id="sideBd"></div>
   </div>
@@ -433,11 +434,11 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js?v=110"></script>
-<script src="territory-geometry.js?v=110"></script>
-<script src="../assets/city/service-buildings108.js?v=110"></script>
-<script src="../assets/city/compact-district.js?v=110"></script>
-<script src="map-frame-sample.js?v=110"></script>
+<script src="map-icons.js?v=111"></script>
+<script src="territory-geometry.js?v=111"></script>
+<script src="../assets/city/service-buildings108.js?v=111"></script>
+<script src="../assets/city/compact-district.js?v=111"></script>
+<script src="map-frame-sample.js?v=111"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -472,7 +473,7 @@ initializeMapLocale();
 
   var cityStyle=ZoneCompactDistrict.createStyle();
   var map=new mapboxgl.Map({ container:'map', style:cityStyle,
-    center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:0, bearing:0, maxPitch:60,
+    center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:35, bearing:0, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
@@ -552,7 +553,7 @@ initializeMapLocale();
     // Full city is an explicit overview of every authoritative block, including
     // disconnected holdings. Initial family framing remains in fitFamily().
     if(typeof setCityOverview==='function')setCityOverview(true);
-    if(fitOwnership(list,force&&!RM?CAMERA_MS:0,0,0))didFit=true;
+    if(fitOwnership(list,force&&!RM?CAMERA_MS:0,map.getPitch(),0))didFit=true;
   }
   var authoritativeOverviewFitted=false,initialOverviewPending=false,mapCameraTouched=false;
   function requestInitialOverview(data){
@@ -563,10 +564,10 @@ initializeMapLocale();
     if(!initialOverviewPending||mapCameraTouched||mapIsIllustrative(lastData)||!territoryData.length||!map.isStyleLoaded())return;
     var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
     // The first server snapshot can arrive while the host/style is still
-    // settling. Refine its actual vertices once with the same north-up camera
-    // used by Full city; later snapshots must preserve the player's camera.
+    // settling. Show the actual city in perspective, with every authoritative
+    // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,0,0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -696,11 +697,11 @@ initializeMapLocale();
     if(didFit&&!force)return;
     if(!territoryData.length)return;
     var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
-    // Open as a north-up strategy map. Perspective remains an explicit 3D action.
+    // Keep the same north-up neighborhood, with its real architecture visible.
     // Distant holdings stay discoverable through All holdings/faction overview.
-    if(!force){if(fitOwnership(openingFamilyBlocks(),0,0))didFit=true;return;}
+    if(!force){if(fitOwnership(openingFamilyBlocks(),0,35,0))didFit=true;return;}
     var metrics=familyMetrics(territoryData),blocks=metrics.owned.length?metrics.owned:familyContextBlocks();
-    if(fitOwnership(blocks,force&&!RM?CAMERA_MS:0,0))didFit=true;
+    if(fitOwnership(blocks,force&&!RM?CAMERA_MS:0,map.getPitch(),0))didFit=true;
   }
   function blockDisplayName(t){
     if(!/^(?:Block\s+)?ZC-\d+$|^القطاع\s+ZC-\d+$/i.test(t.name))return t.name;
@@ -1490,6 +1491,8 @@ initializeMapLocale();
     else map.setLight({anchor:'viewport',color:'#e2e8e4',intensity:.52,position:[1.15,210,35]});
   }
   function localizeMapControls(){
+    document.getElementById('districtSurfaceRetry111').textContent=lang==='ar'?'إعادة عرض التفاصيل':'Retry detail';
+    document.getElementById('districtSurfaceMessage111').textContent=lang==='ar'?'تعذر عرض تفاصيل واجهات المباني. الخريطة وأدواتها ما زالت متاحة.':'Building facade detail could not render. The map and its controls remain available.';
     var labels=lang==='ar'?['تكبير الخريطة','تصغير الخريطة','إعادة الاتجاه نحو الشمال والميل','إظهار معلومات الخريطة']:['Zoom in','Zoom out','Reset bearing and pitch','Toggle attribution'];
     ['.mapboxgl-ctrl-zoom-in','.mapboxgl-ctrl-zoom-out','.mapboxgl-ctrl-compass','.mapboxgl-ctrl-attrib-button'].forEach(function(selector,i){var button=map.getContainer().querySelector(selector);if(!button)return;button.setAttribute('aria-label',labels[i]);button.title=labels[i];if(button.firstElementChild)button.firstElementChild.setAttribute('title',labels[i]);});
     map.getCanvas().setAttribute('aria-label',lang==='ar'?'خريطة مدينة العائلة التفاعلية':'Interactive family city map');
@@ -1641,6 +1644,11 @@ initializeMapLocale();
     landmarkController.setTerritories(territoryGeo(territoryData).features);
     syncLandmarkVisibility();
   }
+  document.getElementById('districtSurfaceRetry111').onclick=function(){
+    if(!landmarkController||mapDisposed)return;
+    var button=this;button.disabled=true;button.setAttribute('aria-busy','true');
+    Promise.resolve(landmarkController.retrySurfaces()).finally(function(){if(!mapDisposed){button.disabled=false;button.removeAttribute('aria-busy');}});
+  };
   function installCustomLayers(){
     if(installingLayers||!map.isStyleLoaded())return;
     var ready=['zone-blocks-fill','zone-ownership-fill','zone-block-feedback','zone-poi-icon','zone-poi-coin-reservations','zone-poi-icon-service','zone-poi-service-reservations','zone-poi-hitbox','zone-here-dot'].every(function(id){return !!map.getLayer(id);});

@@ -27,7 +27,7 @@ function browser({ preview = false, existingId, sessionReply, playerReply, now =
 
 test('simultaneous player reads share one server session bootstrap', async () => {
   const b = browser();
-  await Promise.all(['/api/v1/player', '/api/v1/gameplay', '/api/v1/city/map', '/api/v1/leaderboards', '/api/v1/player-combat/opponents', '/api/v1/player-market', '/api/v1/family-activities'].map(path => b.window.fetch(path)));
+  await Promise.all(['/api/v1/player', '/api/v1/world', '/api/v1/gameplay', '/api/v1/city/map', '/api/v1/leaderboards', '/api/v1/player-combat/opponents', '/api/v1/player-market', '/api/v1/family-activities'].map(path => b.window.fetch(path)));
   assert.equal(b.calls.filter(c => c.url === '/api/v1/auth/session').length, 1);
   assert.equal(b.calls[0].url, '/api/v1/auth/session');
   assert.equal(b.calls[0].options.credentials, 'same-origin');
@@ -42,6 +42,18 @@ test('all authoritative player mutations establish access before forwarding unch
     assert.equal(b.calls[1].options, options, path);
     assert.equal(b.calls[1].options.headers, undefined, 'does not forge identity headers');
   }
+});
+
+test('street finds and claims wait for the same initial session as player hydration',async()=>{
+  let release;
+  const session=new Promise(resolve=>{release=resolve;});
+  const b=browser({sessionReply:()=>session});
+  const reads=b.window.fetch('/api/v1/world'),options={method:'POST',body:'{"findId":"real-find","idempotencyKey":"same-command"}'},claim=b.window.fetch('/api/v1/world/claim',options);
+  await Promise.resolve();assert.equal(b.calls.length,1);assert.equal(b.calls[0].url,'/api/v1/auth/session');
+  release({ok:true,json:async()=>({playerId:'player-new',mode:'persistent-browser',expiresAt:99999})});
+  await Promise.all([reads,claim]);
+  assert.deepEqual(b.calls.map(call=>call.url),['/api/v1/auth/session','/api/v1/world','/api/v1/world/claim']);
+  assert.equal(b.calls[2].options,options,'the original claim is sent once and never replayed');
 });
 test('public, Admin, art and external requests do not create players', async () => {
   const b = browser();

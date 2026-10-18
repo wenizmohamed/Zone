@@ -264,7 +264,7 @@ check(Boolean(mapConfig), 'Mapbox constructor configuration could not be inspect
 for (const option of ['dragPan', 'scrollZoom', 'boxZoom', 'dragRotate', 'keyboard', 'doubleClickZoom', 'touchZoomRotate', 'touchPitch']) {
   check(new RegExp(`${option}\\s*:\\s*true`).test(mapConfig), `Free camera option must be enabled: ${option}.`);
 }
-check(numericOption(mapConfig, 'pitch') === 0, 'The Torn-style strategy map must open overhead; 3D is an explicit player choice.');
+check(numericOption(mapConfig, 'pitch') === 35, 'The city opens with readable 35-degree architecture and retains its reversible flat-map control.');
 check(numericOption(mapConfig, 'bearing') === 0, 'The strategy map must open north-up so controls and locations are immediately readable.');
 check(numericOption(mapConfig, 'maxPitch') >= 60, 'Map camera must allow at least 60 degrees of pitch freedom.');
 check(numericOption(mapConfig, 'minZoom') >= 13 && numericOption(mapConfig, 'minZoom') <= 14 && map.includes('constrainCity(territoryData)'), 'City overview must allow the full authored city to fit on a phone and remain bounded.');

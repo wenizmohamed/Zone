@@ -204,11 +204,12 @@ export function verifyMapRuntime(source) {
 
   test('Full city explicitly fits every authoritative block on desktop and phone', () => {
     const moves = [], blocks = [{id:'near'},{id:'distant'}];
-    const ctx = context(['fitCity'], { didFit: true, RM: true, CAMERA_MS:180, innerWidth: 1024, fitOwnership:(list,duration,pitch,bearing)=>{moves.push({list,duration,pitch,bearing});return true;}, map: { getContainer: () => ({ clientWidth: 900, clientHeight: 356 }) } });
+    const ctx = context(['fitCity'], { didFit: true, RM: true, CAMERA_MS:180, innerWidth: 1024, fitOwnership:(list,duration,pitch,bearing)=>{moves.push({list,duration,pitch,bearing});return true;}, map: { getContainer: () => ({ clientWidth: 900, clientHeight: 356 }), getPitch:()=>0 } });
     ctx.fitCity([{}], false); expect(moves.length === 0, 'Background refresh refitted the established camera.');
     ctx.fitCity(blocks, true); ctx.innerWidth = 390; ctx.fitCity(blocks, true);
     expect(moves.length === 2 && moves.every(move=>move.list===blocks&&move.pitch===0&&move.duration===0), 'Full city cropped disconnected holdings or ignored reduced motion.');
     expect(moves[0].bearing===0&&moves[1].bearing===0,'Full city must stay north-up on both desktop and phone.');
+    ctx.map.getPitch=()=>35;ctx.fitCity(blocks,true);expect(moves[2].list===blocks&&moves[2].pitch===35,'Full city must preserve a selected perspective too, rather than flatten the architecture.');
   });
 
   test('Full city directory accounts for every territory including disconnected holdings',()=>{
@@ -407,13 +408,13 @@ export function verifyMapRuntime(source) {
       ownershipData: { features: [{properties:{blockIds:['island'],anchor:[4.5,4.5]}},{properties:{blockIds:['own','second'],anchor:[1.5,1.5]}}] },
       familyAnchor: () => [9,9],
       mapboxgl: { LngLatBounds: class { constructor() { this.points=[]; } extend(point) { this.points.push(point); } isEmpty() { return !this.points.length; } } },
-      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 500 }), resize() {}, jumpTo: options => moves.push(options), fitBounds: (bounds, options) => moves.push({bounds, ...options}) },
+      map: { getContainer: () => ({ clientWidth: 700, clientHeight: 500 }), getPitch:()=>35, resize() {}, jumpTo: options => moves.push(options), fitBounds: (bounds, options) => moves.push({bounds, ...options}) },
     });
     ctx.territoryData.push({...own,id:'second'});
     ctx.fitFamily(false); ctx.fitFamily(false);
-    expect(moves.length === 1 && moves[0].bounds.points.some(p=>p[0]===2&&p[1]===2) && !moves[0].bounds.points.some(p=>p[0]===5&&p[1]===5) && moves[0].pitch === 0 && moves[0].bearing === 0, 'Opening must frame the entire connected family district without pulling in its distant island.');
+    expect(moves.length === 1 && moves[0].bounds.points.some(p=>p[0]===2&&p[1]===2) && !moves[0].bounds.points.some(p=>p[0]===5&&p[1]===5) && moves[0].pitch === 35 && moves[0].bearing === 0, 'Opening must frame the entire connected family district in perspective without pulling in its distant island.');
     ctx.innerWidth = 390; ctx.fitFamily(true);
-    expect(moves[1].padding.left === 30 && moves[1].padding.bottom === 62 && moves[1].pitch === 0 && moves[1].bearing === 0 && moves[1].bounds.points.some(p=>p[0]===5&&p[1]===5), 'All holdings must retain every island and control in the overhead view.');
+    expect(moves[1].padding.left === 12 && moves[1].padding.top === 54 && moves[1].pitch === 35 && moves[1].bearing === 0 && moves[1].bounds.points.some(p=>p[0]===5&&p[1]===5), 'All holdings must retain every island and its current perspective with reserved control space.');
   });
 
   test('3D remains an explicit reversible camera choice with reduced-motion support', () => {
@@ -749,12 +750,14 @@ export function verifyMapRuntime(source) {
   test('Native Mapbox controls and canvas labels switch between Arabic and English', () => {
     const nodes = new Map();
     const node = () => ({ attrs: {}, setAttribute(key, value) { this.attrs[key] = value; }, firstElementChild: { setAttribute() {} } });
-    const canvas = node();
-    const ctx = context(['localizeMapControls'], { lang: 'ar', map: { getCanvas: () => canvas, getContainer: () => ({ querySelector: selector => { if (!nodes.has(selector)) nodes.set(selector, node()); return nodes.get(selector); } }) } });
+    const canvas = node(),retry=node(),message=node();
+    const ctx = context(['localizeMapControls'], { lang: 'ar', document:{getElementById:id=>id==='districtSurfaceRetry111'?retry:message}, map: { getCanvas: () => canvas, getContainer: () => ({ querySelector: selector => { if (!nodes.has(selector)) nodes.set(selector, node()); return nodes.get(selector); } }) } });
     ctx.localizeMapControls();
     expect(nodes.get('.mapboxgl-ctrl-zoom-in').attrs['aria-label'] === 'تكبير الخريطة' && nodes.get('.mapboxgl-ctrl-attrib-button').attrs['aria-label'] === 'إظهار معلومات الخريطة', 'Native control accessible labels stayed English.');
+    expect(retry.textContent==='إعادة عرض التفاصيل'&&message.textContent.includes('واجهات المباني'),'Facade recovery copy must follow Arabic too.');
     ctx.lang = 'en'; ctx.localizeMapControls();
     expect(nodes.get('.mapboxgl-ctrl-zoom-in').attrs['aria-label'] === 'Zoom in' && canvas.attrs['aria-label'] === 'Interactive family city map', 'Switching back to English retained Arabic labels.');
+    expect(retry.textContent==='Retry detail'&&message.textContent.startsWith('Building facade detail'),'Facade recovery copy must return to English.');
   });
 
   test('Benefits preserve engine data but only active bonuses appear in player panels', () => {

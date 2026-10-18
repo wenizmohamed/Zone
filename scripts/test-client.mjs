@@ -120,13 +120,15 @@ test('inventory search filters the real catalog in both languages and never issu
 });
 
 test('owned and catalog weapon rows use model-specific thumbnails with honest artwork fallback', () => {
-  const { instance } = game(); instance.p.inv = { bat: 1, smallkit: 1 };
+  const { instance, context } = game(); instance.p.inv = { bat: 1, smallkit: 1 };
   instance.state.itemTab = 'all';
   assert.match(instance.renderVals().inv.find(item => item.name === 'Baseball Bat').thumbnail, /\/bat\.png$/);
   assert.equal(instance.renderVals().inv.find(item => item.type === 'Medical').thumbnail, '');
   instance.state.itemTab = 'armory';
   const rows = instance.renderVals().inv; assert.ok(rows.length >= 51);
-  assert.ok(rows.every(row => /\/assets\/weapons\/thumbnails\/.+\.png$/.test(row.thumbnail)));
+  const declaredThumbnails=new Set(Object.values(context.ZONE_WEAPON_THUMBNAILS));
+  assert.ok(rows.every(row => declaredThumbnails.has(row.thumbnail)));
+  assert.equal(rows.filter(row=>row.thumbnail.startsWith('/assets/weapons/upgrades111/')).length,7,'exactly the seven upgraded selections receive their matching new source render');
   assert.match(html, /<img sc-camel-src="\{\{ i\.thumbnail \}\}" alt="" loading="lazy"/);
 });
 
