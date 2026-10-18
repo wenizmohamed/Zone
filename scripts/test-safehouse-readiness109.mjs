@@ -47,7 +47,7 @@ function uploaded(){const object=new THREE.Mesh(new THREE.BoxGeometry(4,3,3),new
 
 test('initial HTML has no enabled action before module handlers and marks room initialization busy',()=>{
   const buttons=[...html.matchAll(/<button\b([^>]*)>/g)];assert.equal(buttons.length,7);assert.ok(buttons.every(m=>attributes(m[1]).disabled===true));
-  assert.match(html,/<nav[^>]+id="room-pins"[^>]+aria-busy="true"/);assert.match(html,/<canvas[^>]+tabindex="-1"[^>]+aria-disabled="true"/);assert.match(html,/Property preview\. Your balance and ownership are unchanged\./);assert.match(html,/safehouse\.mjs\?v=112/);
+  assert.match(html,/<nav[^>]+id="room-pins"[^>]+aria-busy="true"/);assert.match(html,/<canvas[^>]+tabindex="-1"[^>]+aria-disabled="true"/);assert.match(html,/Property preview\. Your balance and ownership are unchanged\./);assert.match(html,/safehouse\.mjs\?v=114/);
 });
 
 test('actual module ignores early native and synthetic room clicks until a valid parent initialization',()=>{

@@ -1,0 +1,511 @@
+{
+    "schemaVersion": 1,
+    "generatedBy": "scripts/export-studio-schema114.php",
+    "sourceNormalization": "CRLF-to-LF for ordinary source/data only",
+    "sourceSha256": {
+        "engine/src/Core/Content/GameplayDefinitionValidator.php": "a7907e5bf0bf42dac690b0a1ac1aa0329806e11937fe5730172696699a554b08",
+        "engine/data/gameplay-catalog.json": "59bdcfd6946438010148fc6864c0c4e6c1e2e491b67f9a90db914450f144f11d",
+        "scripts/export-studio-schema114.php": "64fed7196243719445d56a5e68d29a3207d6aee84c2731c60eecafd8ae66500c"
+    },
+    "schema": {
+        "items": {
+            "idField": "key",
+            "creatable": true,
+            "required": [
+                "type",
+                "price",
+                "name"
+            ],
+            "fields": {
+                "type": {
+                    "type": "enum",
+                    "values": [
+                        "weapon",
+                        "armor",
+                        "medical",
+                        "booster",
+                        "material"
+                    ],
+                    "editable": false
+                },
+                "price": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "mult": {
+                    "type": "number",
+                    "min": 0.1,
+                    "max": 20
+                },
+                "red": {
+                    "type": "number",
+                    "min": 0,
+                    "max": 0.95
+                },
+                "life": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 100000
+                },
+                "nerve": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000
+                },
+                "energy": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000
+                },
+                "happy": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 100000
+                },
+                "hospitalSeconds": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 86400
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                },
+                "mediaAsset": {
+                    "type": "uploadedAsset",
+                    "optional": true,
+                    "maxLength": 64
+                },
+                "model": {
+                    "type": "enum",
+                    "optional": true,
+                    "values": [
+                        "",
+                        "revolver",
+                        "magnum",
+                        "pistol",
+                        "pistol_t",
+                        "sawedoff",
+                        "shotgun",
+                        "smg",
+                        "ak",
+                        "sniper",
+                        "bat",
+                        "knife",
+                        "assaultrifle2_1",
+                        "assaultrifle2_2",
+                        "assaultrifle2_3",
+                        "assaultrifle2_4",
+                        "assaultrifle_1",
+                        "assaultrifle_2",
+                        "assaultrifle_3",
+                        "assaultrifle_4",
+                        "assaultrifle_5",
+                        "bullpup_1",
+                        "bullpup_2",
+                        "bullpup_3",
+                        "pistol_1",
+                        "pistol_2",
+                        "pistol_3",
+                        "pistol_4",
+                        "pistol_5",
+                        "pistol_6",
+                        "revolver_1",
+                        "revolver_2",
+                        "revolver_3",
+                        "revolver_4",
+                        "revolver_5",
+                        "shotgun_1",
+                        "shotgun_2",
+                        "shotgun_3",
+                        "shotgun_4",
+                        "shotgun_sawedoff",
+                        "shotgun_shortstock",
+                        "sniperrifle_1",
+                        "sniperrifle_2",
+                        "sniperrifle_3",
+                        "sniperrifle_4",
+                        "sniperrifle_5",
+                        "sniperrifle_6",
+                        "submachinegun_1",
+                        "submachinegun_2",
+                        "submachinegun_3",
+                        "submachinegun_4",
+                        "submachinegun_5"
+                    ]
+                }
+            },
+            "variants": {
+                "weapon": [
+                    "price",
+                    "mult"
+                ],
+                "armor": [
+                    "price",
+                    "red"
+                ],
+                "medical": [
+                    "price",
+                    "life",
+                    "nerve",
+                    "energy",
+                    "happy",
+                    "hospitalSeconds"
+                ],
+                "booster": [
+                    "price",
+                    "life",
+                    "nerve",
+                    "energy",
+                    "happy"
+                ],
+                "material": [
+                    "price"
+                ]
+            },
+            "createTypes": [
+                "weapon",
+                "armor",
+                "medical",
+                "booster",
+                "material"
+            ]
+        },
+        "jobs": {
+            "idField": "id",
+            "creatable": true,
+            "required": [
+                "pay",
+                "energy",
+                "lvl",
+                "name"
+            ],
+            "fields": {
+                "pay": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "energy": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000
+                },
+                "lvl": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 100
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        },
+        "gyms": {
+            "idField": "index",
+            "creatable": false,
+            "required": [
+                "e",
+                "xp",
+                "cost",
+                "name"
+            ],
+            "fields": {
+                "e": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000
+                },
+                "xp": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000000000
+                },
+                "cost": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        },
+        "courses": {
+            "idField": "id",
+            "creatable": true,
+            "required": [
+                "cost",
+                "mins",
+                "name"
+            ],
+            "fields": {
+                "cost": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "mins": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 525600
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        },
+        "properties": {
+            "idField": "id",
+            "creatable": true,
+            "required": [
+                "price",
+                "happy",
+                "name"
+            ],
+            "fields": {
+                "price": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "happy": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 100000
+                },
+                "upkeep": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                },
+                "mediaAsset": {
+                    "type": "uploadedAsset",
+                    "optional": true,
+                    "maxLength": 64
+                }
+            }
+        },
+        "upgrades": {
+            "idField": "id",
+            "creatable": false,
+            "required": [
+                "cost",
+                "name"
+            ],
+            "fields": {
+                "cost": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000000000
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        },
+        "opponents": {
+            "idField": "id",
+            "creatable": true,
+            "required": [
+                "lvl",
+                "str",
+                "def",
+                "spd",
+                "dex",
+                "life",
+                "cash",
+                "name"
+            ],
+            "fields": {
+                "lvl": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 100
+                },
+                "str": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000000
+                },
+                "def": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000000
+                },
+                "spd": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000000
+                },
+                "dex": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000000
+                },
+                "life": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000
+                },
+                "cash": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        },
+        "missions": {
+            "idField": "id",
+            "creatable": true,
+            "required": [
+                "ctr",
+                "n",
+                "cash",
+                "pts",
+                "name"
+            ],
+            "fields": {
+                "ctr": {
+                    "type": "enum",
+                    "values": [
+                        "crimes",
+                        "trains",
+                        "wins",
+                        "shifts",
+                        "buys"
+                    ],
+                    "editable": false
+                },
+                "n": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 1000000
+                },
+                "cash": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 2000000000
+                },
+                "pts": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000000
+                },
+                "name": {
+                    "type": "bilingual",
+                    "maxLength": 120,
+                    "optional": true
+                },
+                "description": {
+                    "type": "bilingual",
+                    "maxLength": 360,
+                    "optional": true,
+                    "allowEmpty": true
+                },
+                "image": {
+                    "type": "asset",
+                    "maxLength": 240,
+                    "optional": true
+                }
+            }
+        }
+    }
+}

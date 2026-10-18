@@ -2,10 +2,10 @@ import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { OBJLoader } from '../lib/three184/OBJLoader.js';
 import { MTLLoader } from '../lib/three184/MTLLoader.js';
-import { prepareCharacterArt, validateCharacterWardrobe, disposeCharacterResources } from './character-presentation.js';
-import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from './character-grip.js';
-import { prepareWeaponPose, applyWeaponPose, weaponPoseProfile } from './character-poses.js';
-import { createArmorController } from './character-armor.mjs';
+import { prepareCharacterArt, validateCharacterWardrobe, disposeCharacterResources } from './character-presentation.js?v=114';
+import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from './character-grip.js?v=114';
+import { prepareWeaponPose, applyWeaponPose, weaponPoseProfile } from './character-poses.js?v=114';
+import { createArmorController } from './character-armor.mjs?v=114';
 import { createWeaponAssetLoader } from './weapon-assets.js?v=112';
 import { loadAsset, normalizeAssetObject } from './asset-loader.mjs';
 

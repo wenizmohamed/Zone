@@ -88,9 +88,53 @@ function weaponOrientation(T, profile, forward) {
   return new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(axis, up, axis.clone().cross(up)));
 }
 
-export function applyWeaponPose(rig, heldWeapon, { profile, action = 'idle', phase = 0, elapsed = 0, dt = 0 } = {}) {
+function configureMosinIdleGrip(rig, heldWeapon, profile, action, enabled) {
+  const source = heldWeapon.userData.zoneGripMesh?.userData?.zoneWeaponAsset;
+  const active = enabled && profile === 'longgun' && action === 'idle' && source?.id === 'mosin9130-detail112';
+  let calibration = heldWeapon.userData.zoneMosinIdleStockGrip;
+  if (active) {
+    if (!calibration) {
+      calibration = { version: 114, mode: 'mosin-idle-carry', sourceId: source.id,
+        originalQuaternion: heldWeapon.quaternion.toArray(), rollDegrees: 15,
+        anchorAdjustmentM: [0, 0, 0], firingGripResolved: false,
+        canonicalArm: Object.fromEntries(['upper', 'lower', 'hand'].map(key => [key, rig.right[key].quaternion.toArray()])) };
+      heldWeapon.userData.zoneMosinIdleStockGrip = calibration;
+    }
+    for (const key of ['upper', 'lower', 'hand']) {
+      const bone = rig.right[key], solved = calibration.solvedArm?.[key];
+      const unchanged = solved && bone.quaternion.toArray().every((value, i) => Math.abs(value - solved[i]) < 1e-12);
+      // AnimationMixer skips writes when a sampled property has not changed.
+      // Do not feed the carry IK result back into the canonical pose branch.
+      // Retain new animation writes; otherwise continue the original IK's
+      // own prior-frame state, maintained below independently of the carry.
+      if (unchanged) bone.quaternion.fromArray(calibration.canonicalArm[key]);
+      else calibration.canonicalArm[key] = bone.quaternion.toArray();
+    }
+    // Traditional stock carry, not the vertical pistol-grip axis. Only the
+    // Mosin idle hand/forearm orientation changes. Natural finger quaternions,
+    // measured palm anchor, source mesh, materials and scale stay unchanged.
+    const T = rig.THREE;
+    heldWeapon.quaternion.setFromUnitVectors(new T.Vector3(1, 0, 0), rig.grip.axis)
+      .multiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(1, 0, 0), T.MathUtils.degToRad(15)));
+  } else if (calibration) {
+    // Guard, fire, locomotion and reactions retain their original attachment.
+    // The idle carrying pose is explicitly NOT a trigger-ready grip fix.
+    heldWeapon.quaternion.fromArray(calibration.originalQuaternion);
+    for (const key of ['upper', 'lower', 'hand']) {
+      const solved = calibration.solvedArm?.[key], bone = rig.right[key];
+      if (solved && bone.quaternion.toArray().every((value, i) => Math.abs(value - solved[i]) < 1e-12)) {
+        bone.quaternion.fromArray(calibration.canonicalArm[key]);
+      }
+    }
+    delete heldWeapon.userData.zoneMosinIdleStockGrip;
+  }
+  return active ? calibration : null;
+}
+
+export function applyWeaponPose(rig, heldWeapon, { profile, action = 'idle', phase = 0, elapsed = 0, dt = 0, mosinIdleGrip = true } = {}) {
   if (!rig || !heldWeapon || profile === 'unarmed') return null;
   const T = rig.THREE;
+  const stockGrip = configureMosinIdleGrip(rig, heldWeapon, profile, action, mosinIdleGrip);
   if (profile === 'knife' && !heldWeapon.userData.zoneKnifeBladeRolled) {
     // Turn the knife within the unchanged handle axis, not the wrist. Applying
     // the same local roll to its attachment and desired weapon orientation
@@ -151,7 +195,20 @@ export function applyWeaponPose(rig, heldWeapon, { profile, action = 'idle', pha
   rig.previousPose = { profile, socket: socket.clone(), rotation: desiredWeapon.clone() };
   const desiredHand = desiredWeapon.clone().multiply(heldWeapon.quaternion.clone().invert());
   const wristTarget = socket.clone().sub(rig.grip.center.clone().applyQuaternion(desiredHand));
-  const right = solveArm(rig, rig.right, wristTarget, point(profile === 'longgun' || profile === 'handgun' ? [-.48, 1.10, .02] : [-.35, 1.02, .02]), desiredHand);
+  const rightPole = point(profile === 'longgun' || profile === 'handgun' ? [-.48, 1.10, .02] : [-.35, 1.02, .02]);
+  if (stockGrip) {
+    // Preserve the original right-arm branch as well as the attachment. This
+    // bounded extra IK solve is Mosin idle only, with no geometry collision
+    // work per frame. It prevents cached mixer properties from carrying the
+    // new arm's twist into a later original guard/fire/reaction frame.
+    const input = Object.fromEntries(['upper', 'lower', 'hand'].map(key => [key, rig.right[key].quaternion.toArray()]));
+    const canonicalHand = desiredWeapon.clone().multiply(new T.Quaternion().fromArray(stockGrip.originalQuaternion).invert());
+    solveArm(rig, rig.right, socket.clone().sub(rig.grip.center.clone().applyQuaternion(canonicalHand)), rightPole, canonicalHand);
+    stockGrip.canonicalArm = Object.fromEntries(['upper', 'lower', 'hand'].map(key => [key, rig.right[key].quaternion.toArray()]));
+    for (const key of ['upper', 'lower', 'hand']) rig.right[key].quaternion.fromArray(input[key]);
+    rig.root.updateMatrixWorld(true);
+  }
+  const right = solveArm(rig, rig.right, wristTarget, rightPole, desiredHand);
   rig.root.updateMatrixWorld(true);
   let left = null, supportTarget = null;
   if (profile === 'longgun') {
@@ -170,7 +227,10 @@ export function applyWeaponPose(rig, heldWeapon, { profile, action = 'idle', pha
     for (const pose of rig.leftFingers) pose.bone.quaternion.copy(pose.quaternion);
   }
   rig.root.updateMatrixWorld(true);
+  if (stockGrip) stockGrip.solvedArm = Object.fromEntries(['upper', 'lower', 'hand'].map(key => [key, rig.right[key].quaternion.toArray()]));
   return { profile, action, rightError: right.error, leftError: left?.error ?? null,
+    ...(stockGrip ? { gripCalibration: { mode: stockGrip.mode, version: stockGrip.version,
+      sourceId: stockGrip.sourceId, rollDegrees: stockGrip.rollDegrees, firingGripResolved: false } } : {}),
     socket: heldWeapon.getWorldPosition(new T.Vector3()).toArray(), supportTarget: supportTarget?.toArray() ?? null,
     axis: forward.normalize().toArray() };
 }

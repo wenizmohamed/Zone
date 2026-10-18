@@ -68,9 +68,11 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\launch-underworld108.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\connected-journey114.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\material-policy110.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& $php (Join-Path $repositoryRoot 'engine\tests\schema-guard110.php')
+& $php (Join-Path $repositoryRoot 'engine\tests\schema-guard110.php') --aged-source
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\crime-preview110-http.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -79,6 +81,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\launch-assets108.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\studio-media108.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\studio-journey114.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\territory-lifecycle.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

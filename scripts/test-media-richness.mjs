@@ -34,7 +34,7 @@ test('unequip and costume changes fence pending armor loads without stale geomet
 });
 test('character template installs same-origin armor bridge, actual controller and teardown',()=>{
   const html=readFileSync(new URL('../dist/character3d.html',import.meta.url),'utf8'),source=JSON.parse(html.match(/<script type="__bundler\/template">([\s\S]*?)<\/script>/)[1]);
-  assert.match(source,/character-armor\.mjs\?v=107/);assert.match(source,/armorController\.update\(state, model\)/);assert.match(source,/armorController\.dispose\(\)/);assert.match(source,/e\.source !== parent \|\| e\.origin !== location\.origin/);
+  assert.match(source,/character-armor\.mjs\?v=114/);assert.match(source,/armorController\.update\(state, model\)/);assert.match(source,/armorController\.dispose\(\)/);assert.match(source,/e\.source !== parent \|\| e\.origin !== location\.origin/);
 });
 test('tactical outfit keeps its existing armor costume without doubling vest geometry',async()=>{
   const actor=await wardrobe('Swat'),receipts=[];actor.scene.userData.outfit='Swat';let requests=0;

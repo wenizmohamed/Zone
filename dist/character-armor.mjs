@@ -13,7 +13,14 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
   const skeleton = target[0].skeleton, boneMap = new Map(skeleton.bones.map((bone,index) => [bone.name,index]));
   const body = sourceRoot.getObjectByName('Swat_Body');
   if (!body) throw new Error('Authored tactical torso is unavailable');
-  const meshes = [];
+  const meshes = [], geometries = new Set(), materials = new Set();
+  let disposed=false;
+  function dispose(){
+    if(disposed)return;disposed=true;
+    for(const mesh of meshes)mesh.removeFromParent();
+    geometries.forEach(geometry=>geometry.dispose());materials.forEach(material=>material.dispose());
+  }
+  try {
   body.traverse(source => {
     if (!source.isSkinnedMesh || !['Swat', 'Swat_Black'].includes(source.material?.name)) return;
     const original = source.geometry, positions = original.attributes.position, joints = original.attributes.skinIndex, weights = original.attributes.skinWeight;
@@ -23,6 +30,7 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
     for (let n=0;n<(index?.count || positions.count);n+=3) { const face=[0,1,2].map(offset => index ? index.getX(n+offset) : n+offset); if (face.every(belongs)) triangles.push(...face); }
     if (triangles.length < 30) throw new Error('Authored vest torso selection is empty');
     const vertices = [...new Set(triangles)], remap = new Map(vertices.map((value,n) => [value,n])), geometry = new THREE.BufferGeometry();
+    geometries.add(geometry);
     for (const [name, attribute] of Object.entries(original.attributes)) {
       const array = new attribute.array.constructor(vertices.length*attribute.itemSize);
       for (let n=0;n<vertices.length;n++) for (let part=0;part<attribute.itemSize;part++) {
@@ -36,7 +44,7 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
     geometry.computeBoundingBox(); const center=geometry.boundingBox.getCenter(new THREE.Vector3()), position=geometry.attributes.position;
     // Whole-vest fitting below uses the actual retained clothing envelope.
     geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere();
-    const material=source.material.clone(); material.roughness=.86; material.metalness=0; material.clearcoat=0;
+    const material=source.material.clone(); materials.add(material); material.roughness=.86; material.metalness=0; material.clearcoat=0;
     const mesh=new THREE.SkinnedMesh(geometry,material); mesh.name='ZONE representative worn vest'; mesh.castShadow=true; mesh.receiveShadow=true; mesh.frustumCulled=false;
     mesh.bind(skeleton,target[0].bindMatrix); mesh.userData.zoneArmorSource='Swat.glb#Swat_Body:'+source.material.name+' torso'; targetRoot.add(mesh); meshes.push(mesh);
   });
@@ -54,23 +62,29 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
   const sourceSize=sourceBox.getSize(new THREE.Vector3()),targetSize=targetBox.getSize(new THREE.Vector3()),sourceCenter=sourceBox.getCenter(new THREE.Vector3()),targetCenter=targetBox.getCenter(new THREE.Vector3());
   const sx=Math.max(1.14,targetSize.x*1.035/sourceSize.x),sz=Math.max(1.35,targetSize.z*1.08/sourceSize.z);
   for(const mesh of meshes){const p=mesh.geometry.attributes.position;for(let n=0;n<p.count;n++){p.setX(n,targetCenter.x+(p.getX(n)-sourceCenter.x)*sx);p.setZ(n,targetCenter.z+(p.getZ(n)-sourceCenter.z)*sz);}p.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();mesh.userData.zoneArmorFit={widthScale:sx,depthScale:sz,source:'retained-clothing-envelope'};}
-  let disposed=false;
-  return { meshes, dispose(){ if(disposed)return;disposed=true; for(const mesh of meshes){mesh.removeFromParent();mesh.geometry.dispose();mesh.material.dispose();} } };
+  return { meshes, dispose };
+  } catch(error) {
+    // Construction may fail after one authored surface was attached. Roll
+    // that partial vest back too; the controller never owns a failed result.
+    dispose();throw error;
+  }
 }
 
 export function createArmorController({THREE,loadSource,publish=()=>{},queueFrame=()=>{}}) {
-  let generation=0,active=null,last='',lastStatus='none',disposed=false;
+  let generation=0,active=null,last='',latestReceipt=null,lastDetails={status:'none'},disposed=false;
   function clear(){active?.dispose();active=null;last='';}
+  function publishLatest(details){if(details)lastDetails=details;publish({...latestReceipt,...lastDetails});}
   async function update(packet,actor){
     const receipt=armorReceipt(packet), key=JSON.stringify([actor?.uuid,receipt.armorId]);
     if (disposed) return;
-    if (last===key) { publish({...receipt,status:lastStatus}); return; }
+    latestReceipt=receipt;
+    if (last===key) { publishLatest(); return; }
     const seq=++generation;clear();last=key;
-    if (!receipt.armorId || receipt.representation==='no-worn-model' || !actor) { lastStatus=receipt.armorId ? 'unrepresented' : 'none';publish({...receipt,status:lastStatus});queueFrame();return; }
-    if (actor.userData.outfit==='Swat') { lastStatus='ready';publish({...receipt,status:lastStatus,representation:'existing-tactical-costume'});queueFrame();return; }
-    lastStatus='loading';publish({...receipt,status:lastStatus});
-    try { const source=await loadSource();if(disposed || seq!==generation)return;active=createWornVest(THREE,actor,source.scene || source);lastStatus='ready';publish({...receipt,status:lastStatus});queueFrame(); }
-    catch(error){if(disposed || seq!==generation)return;lastStatus='unrepresented';publish({...receipt,status:lastStatus,reason:'worn-asset-unavailable'});queueFrame();}
+    if (!receipt.armorId || receipt.representation==='no-worn-model' || !actor) { publishLatest({status:receipt.armorId ? 'unrepresented' : 'none'});queueFrame();return; }
+    if (actor.userData.outfit==='Swat') { publishLatest({status:'ready',representation:'existing-tactical-costume'});queueFrame();return; }
+    publishLatest({status:'loading'});
+    try { const source=await loadSource();if(disposed || seq!==generation)return;active=createWornVest(THREE,actor,source.scene || source);publishLatest({status:'ready'});queueFrame(); }
+    catch(error){if(disposed || seq!==generation)return;publishLatest({status:'unrepresented',reason:'worn-asset-unavailable'});queueFrame();}
   }
   return {update,dispose(){disposed=true;++generation;clear();}};
 }

@@ -261,7 +261,7 @@
               </div>
               <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
                 <div class="zone-character-stage" style="position:relative;height:260px;background:var(--deep)">
-                  <iframe id="zone-char-3d" src="dist/character3d.html?v=112" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+                  <iframe id="zone-char-3d" src="dist/character3d.html?v=114" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
                   <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
@@ -406,7 +406,7 @@
               <p class="zone-combat-dock-instruction">{{ combatScene.note }}</p>
             </div>
           </sc-if>
-          <iframe id="zone-combat-frame" class="zone-combat-host" src="./dist/combat.html?v=112" title="{{ combatScene.title }}" loading="eager"></iframe>
+          <iframe id="zone-combat-frame" class="zone-combat-host" src="./dist/combat.html?v=114" title="{{ combatScene.title }}" loading="eager"></iframe>
           <sc-if value="{{ combatScene.showRoster }}"><div class="zone-combat-hud"><p>{{ combatScene.note }}</p></div></sc-if><div class="zone-combat-hud"><bdi>{{ combatScene.stats }}</bdi></div>
           <sc-if value="{{ combatScene.receipt }}"><div class="zone-combat-receipt" role="status"><strong>{{ combatScene.receiptTitle }}</strong><p>{{ combatScene.receipt }}</p></div></sc-if>
         </section>
@@ -585,7 +585,7 @@
 
       <!-- PROPERTIES -->
       <sc-if value="{{ is.properties }}" hint-placeholder-val="{{ false }}">
-        <sc-if value="{{ safehouse.visible }}"><section class="zone-safehouse-host" aria-label="{{ safehouse.title }}"><div class="zone-safehouse-toolbar"><strong>{{ safehouse.title }}</strong><button onClick="{{ safehouse.close }}">{{ safehouse.closeLabel }}</button></div><iframe id="zone-safehouse-frame" src="dist/safehouse.html?v=112" title="{{ safehouse.title }}" allow="fullscreen"></iframe></section></sc-if>
+        <sc-if value="{{ safehouse.visible }}"><section class="zone-safehouse-host" aria-label="{{ safehouse.title }}"><div class="zone-safehouse-toolbar"><strong>{{ safehouse.title }}</strong><button onClick="{{ safehouse.close }}">{{ safehouse.closeLabel }}</button></div><iframe id="zone-safehouse-frame" src="dist/safehouse.html?v=114" title="{{ safehouse.title }}" allow="fullscreen"></iframe></section></sc-if>
         <section class="zone-panel zone-current-property"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ propertyDossier.img }}');background-size:{{ propertyDossier.artSize }};background-position:{{ propertyDossier.artPosition }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ t.living }}</span><h2>{{ propertyDossier.name }}</h2><p>{{ propertyDossier.context }}</p><div class="zone-record-foot"><span>{{ propertyDossier.happyLabel }} <bdi>{{ propertyDossier.happy }}</bdi></span><span>{{ propertyDossier.cashLabel }} <bdi>{{ propertyDossier.cash }}</bdi></span></div></div></section>
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
@@ -1179,6 +1179,7 @@ class Component extends DCLogic {
       const p = this.p;
       const visible = document.visibilityState !== 'hidden';
       if (visible && this.state.tick % 15 === 0) this.loadVisiblePeerResources();
+      if (visible && this.state.screen === 'attack' && this.state.combatMode === 'players' && Number(this.peerResources?.opponents?.snapshot?.attackCooldownSeconds) > 0) this.loadPeerResource('opponents');
       if (visible && !IS_PREVIEW && (this.state.tick % 120 === 0 || (this.state.tick % 15 === 0 && p.edu && Date.now() >= p.edu.until))) this.loadGameplay();
       if (visible && !IS_PREVIEW && this.state.tick % 60 === 0 && ['city', 'faction'].includes(this.state.screen)) this.loadTerritories();
       if (visible && !IS_PREVIEW && this.state.tick % 60 === 0 && this.state.screen === 'hof') this.loadLeaderboards();
@@ -1619,6 +1620,25 @@ class Component extends DCLogic {
   itemHasRoom(item) {
     return Number(item?.hospitalSeconds) > 0 && this.p.hospUntil > Date.now() || ['life', 'nerve', 'energy', 'happy'].some(key => Number(item?.[key]) > 0 && (this.cur(key) < this.maxOf(key) || key === 'life' && !Object.hasOwn(item, 'hospitalSeconds') && this.p.hospUntil > Date.now()));
   }
+  hospitalRecovery(t) {
+    const ar = this.state.lang === 'ar', pending = this.playerMutationPending();
+    const candidates = Object.keys(this.p.inv).filter(id => {
+      const item = CAT[id];
+      if (!(this.p.inv[id] > 0) || !item || item.retired || !['medical','booster'].includes(item.type)) return false;
+      const timer = Number(item.hospitalSeconds) > 0 || !Object.hasOwn(item, 'hospitalSeconds') && Number(item.life) > 0;
+      const life = Number(item.life) > 0 && this.cur('life') < this.maxOf('life');
+      return (timer || life) && this.itemHasRoom(item);
+    });
+    const id = candidates.find(key => CAT[key].type === 'medical') || candidates[0];
+    if (!id) return {
+      body: ar ? 'لا تملك حالياً إسعافاً يفيد تعافيك. راجع مخزونك، أو ادفع للعلاج، أو انتظر انتهاء الوقت.' : 'No useful recovery supply in your bag. Check your medical items, pay for treatment, or wait for discharge.',
+      actLabel: ar ? 'راجع مخزون الإسعاف' : 'Check medical supplies', actDisabled: pending,
+      act: () => { this._itemInspection = null; this.setState({ inventoryMode:'owned', itemTab:'medical', inventoryQuery:'' }, () => { this.syncInventorySelection(); this.go('items'); }); }
+    };
+    const name = t.items[id] || CAT[id].name?.[this.state.lang] || id;
+    return { body: t.hospBody + ' ' + name + ' · ' + this.itemEffects(CAT[id], t), actLabel: (ar ? 'استخدم ' : 'Use ') + name,
+      actDisabled: pending, act: () => { if (!this.playerMutationPending()) return this.inventoryAction(id); } };
+  }
   enabledDestination(route) { return SCREENS.includes(route) ? route : SCREENS.includes('missions') ? 'missions' : SCREENS.includes('home') ? 'home' : SCREENS[0] || 'home'; }
   allowGameplay() {
     if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[this.state.lang]); return false; }
@@ -1834,7 +1854,7 @@ class Component extends DCLogic {
       // turn it into a failed action or cause the mutation to be replayed.
       this._gameplayRevision = (this._gameplayRevision || 0) + 1;
       try {
-        if (!complete) await this.loadPeerResource(kind, true);
+        if (!complete) await this.loadPeerResource(kind, true, true);
         await this._gameplayLoad; await this.loadGameplay();
       } catch (error) { this.gameplayError = error.message || String(error); }
       resource.receipt.refreshPending = !!this.gameplayError || !!resource.error;
@@ -1892,10 +1912,17 @@ class Component extends DCLogic {
     const approach = receipt.outcome === 'won' ? ({ mug: ar ? 'نُهب' : 'Mugged', hosp: ar ? 'أُدخل المستشفى' : 'Hospitalized', leave: ar ? 'هُزم وتُرك' : 'Defeated and left' }[receipt.approach] || '') : ar ? 'انتهت المواجهة مع' : 'Encounter ended with';
     return approach + ' ' + receipt.name + ' · ' + money(receipt.cash) + ' · +' + num(receipt.xp) + ' XP · +' + num(receipt.respect) + (ar ? ' احترام' : ' respect');
   }
-  peerReason(reason) {
+  remainingAttackCooldown(resource = this.peerResources?.opponents) {
+    const seconds = Number(resource?.snapshot?.attackCooldownSeconds), receivedAt = Number(resource?.receivedAt);
+    if (!Number.isFinite(seconds) || seconds <= 0) return 0;
+    return Math.max(0, Math.ceil((seconds * 1000 + (Number.isFinite(receivedAt) ? receivedAt : Date.now()) - Date.now()) / 1000));
+  }
+  peerReason(reason, remainingSeconds = 0) {
     const ar = this.state.lang === 'ar';
-    const aliases = { 'Player is already in an encounter.': 'busy', 'Player is in jail or hospital.': 'recovery', 'Player is traveling.': 'traveling', 'Opponent needs hospital recovery.': 'hospital', 'Opponent is in another city.': 'other_city' };
+    const aliases = { 'Player is already in an encounter.': 'busy', 'Player is in jail or hospital.': 'recovery', 'Player is traveling.': 'traveling', 'Opponent needs hospital recovery.': 'hospital', 'Opponent is in another city.': 'other_city', 'Attack cooldown is active.':'attack_cooldown', 'Not enough energy or life to attack.':'energy_or_life_required' };
     reason = aliases[reason] || reason;
+    if (reason === 'attack_cooldown') return (ar ? 'انتظار الهجوم نشط' : 'Attack cooldown active') + (remainingSeconds > 0 ? ' · ' + mmss(remainingSeconds * 1000) : '');
+    if (reason === 'energy_or_life_required') return ar ? 'تحتاج طاقة أو صحة إضافية للهجوم' : 'More energy or life required to attack';
     const reasons = { recovery: ['In jail or hospital', 'في السجن أو المستشفى'], other_city: ['In another city', 'في مدينة أخرى'], hospital: ['Recovering in hospital', 'يتعافى في المستشفى'], hospitalised: ['Recovering in hospital', 'يتعافى في المستشفى'], jailed: ['In jail', 'في السجن'], traveling: ['Traveling', 'مسافر'], busy: ['Already in an encounter', 'في مواجهة أخرى'], energy_required: ['More energy required', 'تحتاج طاقة إضافية'], members_required: ['Waiting for more members', 'بانتظار أعضاء إضافيين'], leader_required: ['Family leader required', 'متاح لزعيم العائلة'], family_required: ['Join a family first', 'انضم إلى عائلة أولاً'], operation_active: ['An operation is already active', 'توجد عملية نشطة بالفعل'], cooldown: ['Family cooldown active', 'العائلة في فترة انتظار'] };
     return reason ? (reasons[reason]?.[ar ? 1 : 0] || (ar ? 'غير متاح حالياً' : 'Currently unavailable')) : '';
   }
@@ -1909,11 +1936,23 @@ class Component extends DCLogic {
   }
   peerPath(kind) { return { opponents: '/api/v1/player-combat/opponents', market: '/api/v1/player-market', family: '/api/v1/family-activities' }[kind]; }
   peerRelevant(kind) { return kind === 'opponents' ? this.state.screen === 'attack' && this.state.combatMode === 'players' : kind === 'market' ? this.state.screen === 'market' && this.state.marketMode === 'players' : ['faction', 'elimination'].includes(this.state.screen); }
-  async loadPeerResource(kind, force = false) {
+  async loadPeerResource(kind, force = false, afterPending = false) {
     if (IS_PREVIEW || !screenEngineAvailable({ opponents:'attack', market:'market', family:'faction' }[kind]) || !this.gameplayReady || !this.peerRelevant(kind) || document.visibilityState === 'hidden') return;
     this.peerResources ||= {};
     const resource = this.peerResources[kind] ||= { snapshot: null, error: '', failures: 0, nextAt: 0 };
-    if (resource.pending) return resource.pending;
+    if (resource.pending) {
+      if (!force || !afterPending) return resource.pending;
+      const prior = resource.pending;
+      if (resource.refreshAfter?.prior === prior) return resource.refreshAfter.promise;
+      const epoch = this._modeEpoch || 0, queued = { prior, promise:null };
+      const clear = () => { if (resource.refreshAfter === queued) resource.refreshAfter = null; };
+      queued.promise = prior.catch(() => {}).then(() => {
+        if (this.peerResources?.[kind] !== resource || (this._modeEpoch || 0) !== epoch) return;
+        return this.loadPeerResource(kind, true);
+      }).then(value => { clear(); return value; }, error => { clear(); throw error; });
+      resource.refreshAfter = queued;
+      return queued.promise;
+    }
     if (!force && Date.now() < resource.nextAt) return;
     resource.loading = true; this.forceUpdate();
     resource.pending = (async () => {
@@ -1924,7 +1963,9 @@ class Component extends DCLogic {
         if (!response.ok) throw new Error(snapshot.error || 'Connection unavailable.');
         if (kind === 'opponents' ? !Array.isArray(snapshot.players) : kind === 'market' ? !Array.isArray(snapshot.listings) || !Number.isInteger(snapshot.inventoryVersion) : !Array.isArray(snapshot.operations) || !Array.isArray(snapshot.definitions)) throw new Error('Invalid server response.');
         if ((resource.revision || 0) !== revision) return;
-        resource.snapshot = snapshot; resource.receivedAt = Date.now(); resource.error = ''; resource.failures = 0; resource.nextAt = Date.now() + 30000;
+        resource.snapshot = snapshot; resource.receivedAt = Date.now(); resource.error = ''; resource.failures = 0;
+        const cooldownSeconds = kind === 'opponents' ? Number(snapshot.attackCooldownSeconds) : 0;
+        resource.nextAt = Date.now() + (Number.isFinite(cooldownSeconds) && cooldownSeconds > 0 ? Math.min(30000, Math.max(1000, cooldownSeconds * 1000)) : 30000);
       } catch (error) { resource.error = error.message; resource.failures++; resource.nextAt = Date.now() + Math.min(300000, 15000 * 2 ** resource.failures); }
       finally { resource.loading = false; resource.pending = null; this.forceUpdate(); }
     })();
@@ -2021,9 +2062,9 @@ class Component extends DCLogic {
     if (this.state.combatMode === 'players' && snapshot?.result) {
       const receipt = { name: opponentName, approach: kind, outcome: snapshot.result.outcome, cash, xp: Number(snapshot.result.xp || 0), respect: Number(snapshot.result.respectDelta || 0) };
       this.log('playerFight', receipt, receipt.outcome === 'won' ? 'good' : 'bad');
-      this.result('attack', this.state.lang === 'ar' ? 'تمت تسوية المواجهة' : 'Encounter settled', this.playerFightReceipt(receipt), money(cash));
+      this.result(receipt.outcome === 'won' ? 'good' : 'bad', this.state.lang === 'ar' ? 'تمت تسوية المواجهة' : 'Encounter settled', this.playerFightReceipt(receipt), money(cash));
     }
-    if (this.state.combatMode === 'players') await this.loadPeerResource('opponents', true);
+    if (this.state.combatMode === 'players') await this.loadPeerResource('opponents', true, true);
     if (cash && this.state.combatMode !== 'players') this.result('cash', t.mug, t.opp[opponentId] || this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === opponentId)?.username || opponentId, '+' + money(cash));
   }
   async casinoGuess(higher, t) {
@@ -2372,9 +2413,9 @@ class Component extends DCLogic {
     const facName = family?.name?.[lang] || family?.name?.en || (lang === 'ar' ? 'لا توجد عائلة' : 'No family yet'), enemy = t.teams[2];
     const d = new Date(), clock = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(x => String(x).padStart(2, '0')).join(':');
     const bailSelf = Math.max(1000, Math.ceil((p.jailUntil - now) / 60000) * 1000);
-    const quote = this.hospitalQuote, hospitalCare = { label: (lang === 'ar' ? 'ادفع للعلاج' : 'Pay to heal') + (quote ? ' · ' + money(quote.cost) : ' · ...'), description: !quote ? (lang === 'ar' ? 'جارٍ تحميل سعر العلاج...' : 'Loading treatment price...') : quote.available ? (lang === 'ar' ? 'استعد صحتك وغادر المستشفى.' : 'Restore your life and leave hospital.') : (lang === 'ar' ? 'لا تحتاج إلى علاج حالياً.' : 'No treatment needed right now.'), disabled: !quote?.available || p.cash < Number(quote?.cost || 0) || !!this.hospitalBusy, heal: () => this.healSelf(t).catch(error => this.toast(this.serverError(error), true)) };
+    const quote = this.hospitalQuote, hospitalCare = { label: (lang === 'ar' ? 'ادفع للعلاج' : 'Pay to heal') + (quote ? ' · ' + money(quote.cost) : ' · ...'), description: !quote ? (lang === 'ar' ? 'جارٍ تحميل سعر العلاج...' : 'Loading treatment price...') : quote.available ? (lang === 'ar' ? 'استعد صحتك وغادر المستشفى.' : 'Restore your life and leave hospital.') : (lang === 'ar' ? 'لا تحتاج إلى علاج حالياً.' : 'No treatment needed right now.'), disabled: !quote?.available || p.cash < Number(quote?.cost || 0) || this.playerMutationPending() || this.gameplayDisabled(), heal: () => { if (this.playerMutationPending() || this.gameplayDisabled()) return Promise.resolve(); return this.healSelf(t).catch(error => this.toast(this.serverError(error), true)); } };
     const status = jailed ? { title: t.jail, body: t.jailBody, left: mmss(p.jailUntil - now), actLabel: fmt(t.bailSelf, { c: money(bailSelf) }), act: () => this.gameplayAction('jail.bailSelf').catch(error => this.toast(this.serverError(error), true)) }
-      : hosp ? { title: t.hospital, body: t.hospBody, left: mmss(p.hospUntil - now), actLabel: t.useKit, act: () => this.gameplayAction('item.use', 'smallkit').catch(error => this.toast(this.serverError(error), true)), healLabel: hospitalCare.label, healDisabled: hospitalCare.disabled, heal: hospitalCare.heal } : null;
+      : hosp ? { title: t.hospital, left: mmss(p.hospUntil - now), ...this.hospitalRecovery(t), healLabel: hospitalCare.label, healDisabled: hospitalCare.disabled, heal: hospitalCare.heal } : null;
     const LK = { crime: k => { const crime = Object.values(CRIMES).flat().find(entry => entry.id === k); return crime ? this.crimeName(crime, t) : t.cr[k]?.[0] || k; }, item: k => t.items[k] || k,
       who: k => t.opp[k] || k, stat: k => t[k] || k, job: k => t.jobNames[k] || k,
       gym: k => (t.gyms[k] !== undefined ? t.gyms[k] : k), prop: k => t.props[k] || k };
@@ -2544,7 +2585,7 @@ class Component extends DCLogic {
         hasModel: this.itemHasCapturedModel(sel), viewerBadge: this.itemHasCapturedModel(sel) ? '3D' : (lang === 'ar' ? 'رسم توضيحي' : 'Artwork'),
         artwork: '/assets/ui/icons/' + (sc.type === 'medical' ? 'hospital' : 'items') + '.svg', artworkLabel: lang === 'ar' ? 'رسم توضيحي للفئة، وليس نموذجاً لهذا العنصر' : 'Category artwork, not an item model',
         viewerNote: this.itemHasCapturedModel(sel) ? t.dragToRotate : t.noModel,
-        source: this._itemInspection?.id === sel ? (lang === 'ar' ? 'مخزون تاجر المدينة: ' : 'City merchant stock: ') + this._itemInspection.seller + ' · ' + money(this._itemInspection.price) + ' · ×' + num(this._itemInspection.quantity) + (lang === 'ar' ? ' وقت الفحص. أعد مراجعة السعر والمخزون في السوق قبل الشراء.' : ' at inspection. Recheck price and stock in Market before buying.') : browsingCatalog ? (lang === 'ar' ? 'معاينة الكتالوج. الفحص لا يشتري العنصر ولا يجهّزه.' : 'Catalog inspection. Inspecting does not buy or equip an item.') : (lang === 'ar' ? 'من مخزونك المملوك.' : 'From your owned inventory.'),
+        source: this._itemInspection && this._itemInspection.id === sel ? (lang === 'ar' ? 'مخزون تاجر المدينة: ' : 'City merchant stock: ') + this._itemInspection.seller + ' · ' + money(this._itemInspection.price) + ' · ×' + num(this._itemInspection.quantity) + (lang === 'ar' ? ' وقت الفحص. أعد مراجعة السعر والمخزون في السوق قبل الشراء.' : ' at inspection. Recheck price and stock in Market before buying.') : browsingCatalog ? (lang === 'ar' ? 'معاينة الكتالوج. الفحص لا يشتري العنصر ولا يجهّزه.' : 'Catalog inspection. Inspecting does not buy or equip an item.') : (lang === 'ar' ? 'من مخزونك المملوك.' : 'From your owned inventory.'),
         grade: sc.mult ? 'T' + Math.min(5, Math.max(1, Math.round(sc.mult * 2.4))) : sc.red ? 'T' + Math.round(sc.red * 12) : 'T1' },
       job: { name: t.jobNames[p.job], desc: t.jobDesc[p.job], img: contentArt(job || {}, 'jobNames', 'j_', 'art/j_grocer.jpg'), pay: this.jobPayRange(), pts: num(p.jobPts), next: num(Math.ceil((p.jobPts + 1) / 50) * 50), energy: this.jobEnergyCost(), reason: recordReason || (jobCooldown > 0 ? (lang === 'ar' ? 'الوردية التالية بعد ' : 'Next shift in ') + jobCooldown + 's' : '') || (energyNow < this.jobEnergyCost() ? (lang === 'ar' ? 'الطاقة الناقصة: ' : 'Energy shortfall: ') + num(this.jobEnergyCost() - energyNow) : (lang === 'ar' ? 'متاح للعمل الآن' : 'Ready for a shift')), disabled: recordBlocked || jobCooldown > 0 || energyNow < this.jobEnergyCost() }, workLabel: this.state.busy === 'work' ? '…' : t.workShift, workBusy: this.state.busy === 'work' ? 1 : null, work: () => this.resolve('work', 620, tt => { if (this.cur('energy') < this.jobEnergyCost()) return this.toast(tt.toast.noEnergy, true); return this.work(tt); }),
       jobs: JOBS.map(j => { const cur = j.id === p.job, locked = p.level < j.lvl; return { id: j.id, current: cur, name: t.jobNames[j.id], desc: t.jobDesc[j.id], pay: this.jobPayRange(j), lvl: j.lvl, energy: Number(j.energy || 15), reason: recordReason || (cur ? t.current : locked ? (lang === 'ar' ? 'تحتاج مستويات إضافية: ' : 'Levels still needed: ') + num(j.lvl - p.level) : (lang === 'ar' ? 'متاح للتقديم' : 'Application available')), disabled: recordBlocked || cur || locked,
@@ -2552,7 +2593,7 @@ class Component extends DCLogic {
         lockedAttr: locked ? '1' : null, nameColor: locked ? 'var(--t4)' : 'var(--t1)',
         edge: cur ? 'var(--acc)' : 'var(--border3)', shadow: cur ? '0 0 0 1px var(--acc), 0 6px 18px rgba(0,0,0,.4)' : '0 2px 8px rgba(0,0,0,.25)', btn: cur ? t.current : locked ? t.locked : t.take, bg: cur ? 'var(--activebg)' : locked ? GREY : GREEN, fg: cur ? 'var(--activefg)' : locked ? 'var(--mu)' : 'var(--onAcc)', take: () => this.act(() => this.gameplayAction('job.take', j.id)) }; }),
       merchantNote: lang === 'ar' ? 'مخزون تجار المدينة. الشراء لعنصر واحد بسعر الوحدة المعروض؛ تُراجع الكمية والسعر عند الشراء. الفحص لا يشتري شيئاً.' : 'City merchant stock. Buy one item at the displayed unit price; stock and price are checked on purchase. Inspect does not buy anything.',
-      market: this.market.map(m => { const quotedPrice = Number(m.price), chg = -Number(m.discountBasisPoints || 0) / 100; return { name: t.items[m.item], type: t.itemType[CAT[m.item].type], d: LU(m.item) || LU(CAT[m.item].type === 'weapon' ? 'knife' : 'items'), abbr: t.items[m.item].slice(0, 2).toUpperCase(), qty: m.qty, seller: m.seller, price: money(m.price), chg: (chg >= 0 ? '+' : '') + chg.toFixed(1) + '%', chgColor: chg >= 0 ? 'var(--acc)' : '#e05a4a', inspectLabel: lang === 'ar' ? 'افحص' : 'Inspect', inspect: () => this.inspectMerchantItem(m), disabled: m.qty <= 0 || p.cash < m.price, buy: () => this.act(() => this.gameplayAction('market.buy', m.id || m.item, quotedPrice)) }; }),
+      market: this.market.map(m => { const quotedPrice = Number(m.price), chg = -Number(m.discountBasisPoints || 0) / 100, item = CAT[m.item], available = !!item && !item.retired, name = t.items[m.item] || item?.name?.[lang] || item?.name?.en || String(m.item || ''); return { name, type: available ? t.itemType[item.type] : (lang === 'ar' ? 'غير متاح في هذا الإصدار' : 'Unavailable in this release'), d: LU(m.item) || LU(item?.type === 'weapon' ? 'knife' : 'items'), abbr: name.slice(0, 2).toUpperCase(), qty: m.qty, seller: m.seller, price: Number.isFinite(quotedPrice) ? money(quotedPrice) : (lang === 'ar' ? 'السعر غير متاح' : 'Price unavailable'), chg: (chg >= 0 ? '+' : '') + chg.toFixed(1) + '%', chgColor: chg >= 0 ? 'var(--acc)' : '#e05a4a', inspectLabel: lang === 'ar' ? 'افحص' : 'Inspect', inspect: () => this.inspectMerchantItem(m), disabled: !available || !Number.isFinite(quotedPrice) || quotedPrice < 0 || m.qty <= 0 || p.cash < quotedPrice, buy: () => { if (!CAT[m.item] || CAT[m.item].retired || !Number.isFinite(quotedPrice) || quotedPrice < 0) return; return this.act(() => this.gameplayAction('market.buy', m.id || m.item, quotedPrice)); } }; }),
       missions: MISSIONS.map(m => { const done = !!p.claimed[m.id], prog = Math.min(m.n, p.ctr[m.ctr]), ready = !done && prog >= m.n; return { id: m.id, claimed: done, name: t.ms[m.id][0], desc: t.ms[m.id][1], reward: money(m.cash) + ' + ' + m.pts + ' ' + t.points, pct: Math.round(prog / m.n * 100), barColor: done ? 'var(--mu2)' : ready ? 'var(--acc)' : 'var(--link)', prog: prog + '/' + m.n, btn: done ? t.claimed : ready ? t.claim : t.inProgress, bg: ready ? GREEN : GREY, fg: ready ? 'var(--onAcc)' : 'var(--mu)', disabled: !ready, claim: () => this.act(() => this.gameplayAction('mission.claim', m.id)) }; }),
       edu: p.edu ? { active: true, name: t.courses[p.edu.id]?.[0] || p.edu.id, pct: Math.max(0, Math.min(100, Math.round((1 - (p.edu.until - now) / p.edu.total) * 100))), left: mmss(p.edu.until - now) } : { active: false },
       courses: COURSES.map((c, index) => { const done = !!p.eduDone[c.id], active = !!p.edu && p.edu.id === c.id; const pct = done ? 100 : active ? Math.max(0, Math.min(100, Math.round((1 - (p.edu.until - now) / p.edu.total) * 100))) : 0; return { id: c.id, number: String(index + 1).padStart(2, '0'), done, active, reason: recordReason || (done ? (lang === 'ar' ? 'الميزة الدائمة مكتسبة' : 'Permanent benefit earned') : active ? (lang === 'ar' ? 'الميزة تُمنح عند إكمال الدورة' : 'Benefit awarded on completion') : p.edu ? (lang === 'ar' ? 'أكمل الدورة الحالية أولاً' : 'Finish your current course first') : p.cash < c.cost ? (lang === 'ar' ? 'النقد الناقص: ' : 'Cash shortfall: ') + money(c.cost - p.cash) : (lang === 'ar' ? 'متاح للتسجيل' : 'Enrollment available')), remaining: active ? mmss(Math.max(0, p.edu.until - now)) : '', img: contentArt(c, 'courses', '', 'art/bio.jpg'), imgOpacity: done ? .55 : 1, filter: done ? 'grayscale(.6)' : 'none', pct, prog: pct + '%', barColor: done ? 'var(--mu2)' : active ? 'var(--acc)' : 'var(--border3)', name: t.courses[c.id][0], effect: t.courses[c.id][1], cost: money(c.cost), dur: c.mins + (lang === 'ar' ? ' دقيقة' : ' min'), btn: done ? t.done : active ? t.studying : t.enroll, bg: done || active || !!p.edu ? GREY : GREEN, fg: done || active || !!p.edu ? 'var(--mu)' : 'var(--onAcc)', disabled: recordBlocked || done || active || !!p.edu || p.cash < c.cost, enroll: () => this.act(() => this.gameplayAction('course.enroll', c.id)) }; }),
@@ -2726,7 +2767,7 @@ class Component extends DCLogic {
     const peers = this.peerResources?.opponents;
     view.combatModes = ['npc', 'players'].map(mode => ({ label: mode === 'npc' ? (lang === 'ar' ? 'خصوم المدينة' : 'City opponents') : (lang === 'ar' ? 'لاعبون حقيقيون' : 'Real players'), active: this.state.combatMode === mode, disabled: !!this.combatBusy || !!this.combatEncounter, select: () => this.setCombatMode(mode) }));
     view.peerCombat = { visible: this.state.combatMode === 'players', loading: !!peers?.loading, message: peers?.error || this.combatError ? (lang === 'ar' ? 'تعذر تحديث اللاعبين. أعد الاتصال قبل الهجوم.' : 'Players could not refresh. Reconnect before attacking.') : this.combatIncoming ? (lang === 'ar' ? 'أنت في مواجهة مع ' : 'You are in an encounter with ') + this.combatIncoming.attackerName + (lang === 'ar' ? '. انتظر انتهاء المواجهة أو حد الحجز.' : '. Wait for settlement or reservation expiry.') : peers?.loading ? (lang === 'ar' ? 'جارٍ تحديث اللاعبين...' : 'Refreshing players...') : peers?.snapshot?.players?.length ? '' : (lang === 'ar' ? 'لا يوجد لاعبون آخرون بعد. يمكنك مواجهة خصوم المدينة.' : 'No other players yet. City opponents remain available.'), refreshLabel: lang === 'ar' ? 'تحديث اللاعبين' : 'Refresh players', refresh: () => Promise.all([this.loadPeerResource('opponents', true), this.loadCombat()]) };
-    if (view.peerCombat.visible) view.opps = (peers?.snapshot?.players || []).filter(o => o.id !== peers.snapshot.selfId).map(o => ({ name: o.username, factionName: (this.territoryMap.factions || []).find(family => family.id === o.factionId)?.name?.[lang] || o.factionName?.[lang] || o.factionName || (lang === 'ar' ? 'بلا عائلة' : 'No family'), status: o.eligible ? num(o.life) + '/' + num(o.max_life) : this.peerReason(o.reason), lvl: o.level, str: num(o.strength), def: num(o.defense), spd: num(o.speed), dex: num(o.dexterity), odds: lang === 'ar' ? 'لاعب' : 'Player', oddsColor: 'var(--gold)', disabled: unavailable || !!peers.error || !!peers.loading || !!this.combatError || !!this.combatIncoming || !this.combatVersion || !o.eligible || energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }));
+    if (view.peerCombat.visible) view.opps = (peers?.snapshot?.players || []).filter(o => o.id !== peers.snapshot.selfId).map(o => ({ name: o.username, factionName: (this.territoryMap.factions || []).find(family => family.id === o.factionId)?.name?.[lang] || o.factionName?.[lang] || o.factionName || (lang === 'ar' ? 'بلا عائلة' : 'No family'), status: o.eligible ? num(o.life) + '/' + num(o.max_life) : this.peerReason(o.reason, this.remainingAttackCooldown(peers)), lvl: o.level, str: num(o.strength), def: num(o.defense), spd: num(o.speed), dex: num(o.dexterity), odds: lang === 'ar' ? 'لاعب' : 'Player', oddsColor: 'var(--gold)', disabled: unavailable || !!peers.error || !!peers.loading || !!this.combatError || !!this.combatIncoming || !this.combatVersion || !o.eligible || energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }));
     view.peerCombat.consequences = lang === 'ar' ? 'بعد الفوز: النشل ينقل جزءاً من رصيد الخصم وتعافيه الأساسي 5 دقائق؛ إدخاله المستشفى 10 دقائق؛ تركه دقيقتان (2). الخسارة تعني تعافيك 10 دقائق. هذه مدد أساسية؛ الترقيات قد تقصّر التعافي.' : 'After a win: Mug transfers part of the opponent’s existing wallet and gives 5 min recovery; Hospitalize gives 10 min; Leave gives 2 min. Losing gives you 10 min recovery. These are base durations; upgrades can shorten recovery.';
     view.combatScene = {
       showRoster: !view.fight,

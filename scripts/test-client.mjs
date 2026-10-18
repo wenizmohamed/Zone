@@ -442,6 +442,54 @@ test('owned recovery-item UI requests are allowed once in hospital or jail while
   }
 });
 
+test('hospital recovery uses an owned Studio-published timer medical instead of an unowned starter kit in EN and AR',async()=>{
+  for(const lang of ['en','ar']){
+    const now=1800000,med={type:'medical',price:180,hospitalSeconds:60,name:{en:'Field dressing',ar:'ضماد ميداني'}};
+    const {instance,calls}=game({route:'?screen=hospital&lang='+lang,fetchImpl:async()=>({ok:true,json:async()=>({player:{id:'ordinary114',cash:500,life:100,max_life:100},state:{version:2,inv:{field114:0},hospUntil:now+60000},result:{hospitalSecondsReduced:60}})})});
+    instance.loadVisiblePeerResources=()=>{};
+    instance.applyGameplay({player:{id:'ordinary114',cash:500,life:100,max_life:100},state:{version:1,inv:{field114:1},hospUntil:now+120000},catalogs:{items:{field114:med}}});
+    const view=instance.renderVals();
+    assert.match(view.status.actLabel,lang==='ar'?/ضماد ميداني/:/Field dressing/);
+    assert.match(view.status.body,/60/,'the recovery action explains its actual timer effect');
+    assert.equal(view.status.actDisabled,false);
+    await view.status.act();
+    const posts=calls.filter(call=>call.options?.method==='POST');assert.equal(posts.length,1);
+    assert.deepEqual(JSON.parse(posts[0].options.body),{action:'item.use',id:'field114',expectedVersion:1});
+    assert.equal(instance.p.hospUntil,now+60000,'partial treatment cannot locally erase the remaining timer');
+    assert.equal(instance.p.inv.field114,0);assert.equal(instance.p.cash,500);
+  }
+});
+
+test('hospital recovery without useful owned supplies opens medical inventory without submitting a fake item use',async()=>{
+  for(const lang of ['en','ar'])for(const entry of [{type:'medical',life:20,hospitalSeconds:0},{type:'booster',energy:10},{type:'medical',hospitalSeconds:60,retired:true}]){
+    const {instance,calls}=game({route:'?screen=home&lang='+lang});instance.loadVisiblePeerResources=()=>{};
+    instance.applyGameplay({player:{id:'ordinary114',cash:500,life:100,max_life:100},state:{version:1,inv:{unused114:1},hospUntil:1860000},catalogs:{items:{unused114:{price:20,name:{en:'Unused supply',ar:'مستلزم غير مناسب'},...entry}}}});
+    if(entry.retired)instance.applyCatalogs({items:{}});
+    const view=instance.renderVals();assert.match(view.status.actLabel,lang==='ar'?/الإسعاف|العلاج|الطبي/:/medical|supplies|recovery/i);
+    await view.status.act();assert.equal(calls.filter(call=>call.options?.method==='POST').length,0);
+    assert.equal(instance.state.screen,'items');assert.equal(instance.state.itemTab,'medical');assert.equal(instance.state.inventoryMode,'owned');
+  }
+});
+
+test('hospital recovery controls do not promise another mutation while a player action is pending',()=>{
+  for(const pending of ['gameplayBusy','bankBusy','hospitalBusy','combatBusy']){
+    const {instance}=game();instance.loadVisiblePeerResources=()=>{};instance.applyGameplay({player:{id:'ordinary114',cash:500,life:40,max_life:100},state:{version:1,inv:{smallkit:1},hospUntil:1860000},hospitalQuote:{cost:100,available:true}});
+    instance[pending]=true;const view=instance.renderVals();assert.equal(view.status.actDisabled,true,pending);assert.equal(view.status.healDisabled,true,pending);
+  }
+});
+
+test('a Studio catalog replacement cannot blank player screens when a previous market row is still in memory',async()=>{
+  for(const lang of ['en','ar']){
+    const {instance,calls}=game({route:'?screen=home&lang='+lang});instance.loadVisiblePeerResources=()=>{};
+    instance.applyGameplay({player:{id:'ordinary114',cash:500},state:{version:1,inv:{},market:[{id:'delisted-offer',item:'delisted114',price:50,qty:3,seller:'City merchant'}]},catalogs:{items:{}}});
+    let view;assert.doesNotThrow(()=>{view=instance.renderVals();},'optional stale merchant data cannot take Home down');
+    assert.equal(view.market.length,1,'retain the actual stock row until the server refresh, with no invented inventory deletion');
+    assert.equal(view.market[0].disabled,true);assert.match(view.market[0].type,lang==='ar'?/غير متاح/:/unavailable/i);
+    assert.equal(view.market[0].name,'delisted114');assert.equal(view.market[0].qty,3);
+    await view.market[0].buy();assert.equal(calls.filter(call=>call.options?.method==='POST').length,0);
+  }
+});
+
 test('game routes retain explicit language across account and admin links despite an opposite cached preference', () => {
   assert.match(html, /href="\{\{ adminHref \}\}"/);
   for (const lang of ['en', 'ar']) {
@@ -937,7 +985,7 @@ test('item market and direct recovery controls dispatch server actions instead o
   await instance.renderVals().market[0].buy();
   await instance.renderVals().props.find(prop => !prop.living).buy();
   instance.p.jailUntil = 1900000; await instance.renderVals().status.act();
-  instance.p.jailUntil = 0; instance.p.hospUntil = 1900000; await instance.renderVals().status.act();
+  instance.p.jailUntil = 0; instance.p.hospUntil = 1900000; instance.p.inv.smallkit = 1; await instance.renderVals().status.act();
   assert.deepEqual(actions.map(action => action.action), ['market.buy', 'property.buy', 'jail.bailSelf', 'item.use']);
   assert.equal(instance.p.cash, before);
 });
@@ -1700,6 +1748,64 @@ test('player combat uses its own versioned endpoint and authoritative roster nam
   assert.deepEqual(JSON.parse(post.options.body), { action: 'finish', approach: 'leave', expectedVersion: 4 });
   instance.combatEncounter = null; await instance.setCombatMode('npc');
   assert.ok(calls.some(call => call.path === '/api/v1/combat'));
+});
+
+test('server attack cooldown has bilingual countdowns and refreshes eligibility at its deadline without a client-side unlock',async()=>{
+  for(const lang of ['en','ar']){
+    let clock=1800000,reads=0;
+    const rival={id:'peer',username:'Actual rival',level:1,life:100,max_life:100,strength:10,defense:10,speed:10,dexterity:10};
+    const {instance,context,calls}=game({route:'?screen=attack&lang='+lang,fetchImpl:async()=>({ok:true,json:async()=>({selfId:'self',attackCooldownSeconds:++reads===1?8:0,players:[{...rival,eligible:reads>1,reason:reads===1?'Attack cooldown is active.':null}]})})});
+    context.Date.now=()=>clock;instance.loadVisiblePeerResources=()=>{};
+    instance.applyGameplay({player:{id:'self',energy:100,max_energy:100,life:100,max_life:100},state:{version:1}});instance.state.combatMode='players';instance.combatVersion=1;
+    await instance.loadPeerResource('opponents',true);let row=instance.renderVals().opps[0];assert.equal(row.disabled,true);
+    assert.match(row.status,/00:08/);assert.match(row.status,lang==='ar'?/الهجوم/:/attack/i);assert.doesNotMatch(row.status,/Family|العائلة/);
+    assert.equal(instance.peerResources.opponents.nextAt,1808000,'the 8s server deadline must not be held behind a 30s cache');
+    clock+=7000;row=instance.renderVals().opps[0];assert.match(row.status,/00:01/);assert.equal(row.disabled,true);
+    clock+=1000;row=instance.renderVals().opps[0];assert.equal(row.disabled,true,'expiry alone cannot invent refreshed server eligibility');
+    await instance.loadPeerResource('opponents');assert.equal(reads,2);assert.equal(instance.renderVals().opps[0].disabled,false);
+    assert.equal(calls.filter(call=>call.options?.method==='POST').length,0);
+  }
+});
+
+test('a visible expired attack cooldown uses the normal deduplicated roster read on the next clock tick',async()=>{
+  const {instance,intervals}=game({route:'?screen=attack'});let reads=0;
+  instance.loadGameplay=async()=>{};instance.loadCombat=async()=>{};instance.loadVisiblePeerResources=()=>{};
+  instance.loadPeerResource=async kind=>{if(kind==='opponents')reads++;};instance.state.combatMode='players';instance.state.tick=1;
+  instance.peerResources={opponents:{snapshot:{attackCooldownSeconds:2},receivedAt:1798000,nextAt:1800000}};
+  instance.componentDidMount();intervals.at(-1)();assert.equal(reads,1);
+});
+
+test('a forced post-settlement roster refresh waits out an older read then obtains one fresh server snapshot',async()=>{
+  let firstReply,reads=0;
+  const old={selfId:'self',attackCooldownSeconds:0,players:[{id:'peer',username:'Actual rival',eligible:false,reason:'Player is already in an encounter.'}]};
+  const fresh={selfId:'self',attackCooldownSeconds:8,players:[{id:'peer',username:'Actual rival',eligible:false,reason:'Attack cooldown is active.'}]};
+  const {instance}=game({route:'?screen=attack',fetchImpl:async()=>{if(++reads===1)return await new Promise(resolve=>firstReply=()=>resolve({ok:true,json:async()=>old}));return{ok:true,json:async()=>fresh};}});
+  instance.gameplayReady=true;instance.state.combatMode='players';instance.combatVersion=1;
+  const before=instance.loadPeerResource('opponents',true),after=instance.loadPeerResource('opponents',true,true),again=instance.loadPeerResource('opponents',true,true);
+  firstReply();await Promise.all([before,after,again]);
+  assert.equal(reads,2,'force calls queued behind the same old request coalesce into exactly one subsequent read');
+  assert.equal(instance.peerResources.opponents.snapshot.attackCooldownSeconds,8);
+  assert.match(instance.renderVals().opps[0].status,/00:08/);assert.doesNotMatch(instance.renderVals().opps[0].status,/encounter/i);
+});
+
+test('a queued forced roster refresh cannot restart a retired player domain',async()=>{
+  let firstReply,reads=0;
+  const {instance}=game({route:'?screen=attack',fetchImpl:async()=>{reads++;return await new Promise(resolve=>firstReply=()=>resolve({ok:true,json:async()=>({selfId:'old-player',players:[]})}));}});
+  instance.gameplayReady=true;instance.state.combatMode='players';
+  const before=instance.loadPeerResource('opponents',true),after=instance.loadPeerResource('opponents',true,true);
+  instance.resetPlayerDomains();firstReply();await Promise.all([before,after]);
+  assert.equal(reads,1,'a retired owner/session must not schedule another request');assert.deepEqual(Object.keys(instance.peerResources),[]);
+});
+
+test('the real player-fight finish path refreshes past an older roster read and renders a styled settlement',async()=>{
+  let firstReply,reads=0;
+  const {instance,T}=game({route:'?screen=attack',fetchImpl:async()=>{if(++reads===1)return await new Promise(resolve=>firstReply=()=>resolve({ok:true,json:async()=>({selfId:'self',attackCooldownSeconds:0,players:[{id:'peer',username:'Actual rival',eligible:false,reason:'Player is already in an encounter.'}]})}));return{ok:true,json:async()=>({selfId:'self',attackCooldownSeconds:8,players:[{id:'peer',username:'Actual rival',eligible:false,reason:'Attack cooldown is active.'}]})};}});
+  instance.gameplayReady=true;instance.state.combatMode='players';instance.combatVersion=1;instance.combatEncounter={opponentId:'peer'};
+  instance.loadGameplay=async()=>{};instance.combatAction=async()=>({result:{outcome:'won',cashDelta:25,xp:5,respectDelta:1}});
+  const before=instance.loadPeerResource('opponents',true),finished=instance.finish('mug',T.en);
+  for(let i=0;i<12;i++)await Promise.resolve();assert.equal(reads,1);firstReply();await Promise.all([before,finished]);
+  assert.equal(reads,2);assert.equal(instance.peerResources.opponents.snapshot.attackCooldownSeconds,8);
+  assert.equal(instance.state.result.accent,'var(--acc)');assert.ok(instance.state.result.border);assert.match(instance.state.result.d,/^M/,'settlement cannot emit a missing SVG/result style');
 });
 
 test('escrow listing submits only owned quantity, displayed inventory version and seller price', async () => {

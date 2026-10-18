@@ -37,6 +37,13 @@ final class PlayerCombatService
         $rows = $this->database->fetchAll('SELECT p.id, p.username, p.level, p.life, p.max_life, p.strength, p.defense, p.speed, p.dexterity, p.city, m.faction_id, f.name_en AS faction_name FROM players p LEFT JOIN faction_members m ON m.player_id = p.id LEFT JOIN factions f ON f.id = m.faction_id WHERE p.id <> :id ORDER BY p.username, p.id LIMIT 200', ['id' => $playerId]);
         $selfReason = $this->unavailableReason($playerId);
         if ($selfReason === null && ($self['energy'] < 25 || $self['life'] < 1)) $selfReason = 'Not enough energy or life to attack.';
+        $attackCooldownSeconds = 0;
+        try {
+            (new CooldownService($this->database))->assertReady($playerId, 'attack');
+        } catch (CooldownException $error) {
+            $attackCooldownSeconds = $error->retryAfter;
+            $selfReason ??= 'Attack cooldown is active.';
+        }
         $players = [];
         foreach ($rows as $row) {
             $reason = $selfReason ?? $this->unavailableReason($row['id']);
@@ -44,7 +51,7 @@ final class PlayerCombatService
             if ($reason === null && $row['city'] !== $self['city']) $reason = 'Opponent is in another city.';
             $players[] = ['id' => $row['id'], 'username' => $row['username'], 'level' => (int) $row['level'], 'life' => (int) $row['life'], 'max_life' => (int) $row['max_life'], 'strength' => (int) $row['strength'], 'defense' => (int) $row['defense'], 'speed' => (int) $row['speed'], 'dexterity' => (int) $row['dexterity'], 'totalStats' => (int) $row['strength'] + (int) $row['defense'] + (int) $row['speed'] + (int) $row['dexterity'], 'factionId' => $row['faction_id'], 'factionName' => $row['faction_name'], 'eligible' => $reason === null, 'reason' => $reason];
         }
-        return ['players' => $players, 'energyCost' => 25, 'maxRounds' => 25, 'selfId' => $playerId];
+        return ['players' => $players, 'energyCost' => 25, 'maxRounds' => 25, 'selfId' => $playerId, 'attackCooldownSeconds' => $attackCooldownSeconds];
     }
 
     public function act(string $action, string $opponentId, string $approach, int $expectedVersion, string $playerId): array

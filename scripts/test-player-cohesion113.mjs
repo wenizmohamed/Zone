@@ -58,7 +58,7 @@ test('safehouse and street controls inherit theme surfaces while actual scene ar
   assert.match(district,/\.zone-crime-plan\{[^}]*box-shadow:var\(--zone-content-shadow\)/);
 });
 
-test('the cohesion pass preserves the approved shell geometry, map, scene media and gameplay source',()=>{
+test('player logic can evolve while the approved template, shell geometry and scene media stay pinned',()=>{
   const baseline=JSON.parse(read('scripts/fixtures/player-layout113.json'));
   const hash=value=>createHash('sha256').update(value).digest('hex');
   const geometryProperties=/^(?:display|position|inset(?:-.+)?|top|right|bottom|left|width|height|min-.+|max-.+|grid-.+|flex(?:-.+)?|gap|row-gap|column-gap|padding(?:-.+)?|margin(?:-.+)?|order|overflow(?:-.+)?|aspect-ratio|clip-path|transform)$/;
@@ -66,5 +66,6 @@ test('the cohesion pass preserves the approved shell geometry, map, scene media 
   for(const file of ['assets/zone-design.css','assets/zone-layout.css',...screens,'assets/ui/safehouse-host108.css']){
     assert.equal(hash(geometry(read(file))),baseline.css[file],file+' geometry changed');
   }
-  assert.equal(hash(html.slice(html.indexOf('<body>')).replace(/\?v=\d+/g,'?v=CACHE').replace(/\s*<link href="https:\/\/fonts\.googleapis\.com[^>]+>/,'')),baseline.body);
+  const logicStart=html.indexOf('<script type="text/x-dc"');assert.ok(logicStart>html.indexOf('<body>'));
+  assert.equal(hash(html.slice(html.indexOf('<body>'),logicStart).replace(/\?v=\d+/g,'?v=CACHE').replace(/\s*<link href="https:\/\/fonts\.googleapis\.com[^>]+>/,'')),baseline.template);
 });
