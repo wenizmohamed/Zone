@@ -1,0 +1,5 @@
+/* Existing ZONE typefaces, served with the game. Licenses and exact upstream
+ * sources are retained in assets/fonts/provenance113.json and *-OFL.txt. */
+@font-face{font-family:"Rubik";font-style:normal;font-weight:300 900;font-display:swap;src:url('../fonts/rubik-variable.woff2') format('woff2')}
+@font-face{font-family:"Oswald";font-style:normal;font-weight:200 700;font-display:swap;src:url('../fonts/oswald-variable.woff2') format('woff2')}
+@font-face{font-family:"Noto Sans Arabic";font-style:normal;font-weight:100 900;font-display:swap;src:url('../fonts/noto-sans-arabic-variable.woff2') format('woff2')}

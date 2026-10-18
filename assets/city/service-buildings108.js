@@ -24,46 +24,67 @@
     return {coordinates:geographic(best,origin),clearanceMeters:score,widthMeters:bounds[2]-bounds[0],depthMeters:bounds[3]-bounds[1]};
   }
   function buildingKey(feature){return String(feature.properties?.providerId??feature.id??'');}
-  function closestRoofPoint(rings,origin,anchor){
-    const local=rings.map(ring=>ring.map(p=>meters(p,origin))),center=meters(anchor.coordinates,origin),atOrigin=clearance([0,0],local);
-    if(atOrigin>=1.25)return{...anchor,coordinates:origin.slice(),clearanceMeters:atOrigin};
-    let best=center,score=Math.hypot(...center),room=anchor.clearanceMeters;
-    for(const ring of local)for(let index=0;index<ring.length-1;index++){
-      const a=ring[index],b=ring[index+1],dx=b[0]-a[0],dy=b[1]-a[1],length=dx*dx+dy*dy,t=length?Math.max(0,Math.min(1,(-a[0]*dx-a[1]*dy)/length)):0,edge=[a[0]+dx*t,a[1]+dy*t];
-      for(const fraction of [.04,.08,.15,.3,.5,.8]){const point=[edge[0]+(center[0]-edge[0])*fraction,edge[1]+(center[1]-edge[1])*fraction],distance=Math.hypot(...point),safe=clearance(point,local);if(safe>=1.25&&distance<score){best=point;score=distance;room=safe;}}
+  function nearFootprintBounds(rings,origin,radius){
+    const outline=rings?.[0];
+    if(!Array.isArray(outline)||outline.length<4||outline.some(point=>!Array.isArray(point)||point.length<2||point.slice(0,2).some(value=>!Number.isFinite(value))))return false;
+    const local=outline.map(point=>meters(point,origin)),xs=local.map(point=>point[0]),ys=local.map(point=>point[1]);
+    const dx=Math.max(0,Math.min(...xs),-Math.max(...xs)),dy=Math.max(0,Math.min(...ys),-Math.max(...ys));
+    // The closest point on the actual footprint's bounds is independent of
+    // its ring start and winding. A containing footprint always has distance0.
+    return Math.hypot(dx,dy)<=radius;
+  }
+  function footprintDistance(rings,origin){
+    if(inside(origin,rings))return 0;
+    const local=rings.map(ring=>ring.map(point=>meters(point,origin)));
+    return Math.min(...local.flatMap(ring=>ring.slice(0,-1).map((point,index)=>segmentDistance([0,0],point,ring[index+1]))));
+  }
+  function placeOnOwnedRoof(selected,prior,origin,maximumDistance){
+    const gap=32,shared=prior.filter(entry=>entry.providerId===selected.providerId),near=point=>prior.length?Math.min(...prior.map(entry=>Math.hypot(...meters(point,entry.coordinates)))):Infinity;
+    let anchor=selected;
+    // Ownership is already final. Only services sharing this actual building
+    // may seek another safe interior point; neighboring roofs never steal it.
+    if(shared.length&&near(anchor.coordinates)<gap){
+      const local=selected.polygon.map(ring=>ring.map(point=>meters(point,origin))),outline=local[0],xs=outline.map(point=>point[0]),ys=outline.map(point=>point[1]),bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];
+      const minimumRoom=Math.max(1.25,Math.min(6,selected.clearanceMeters*.4));
+      let best={anchor,spacing:near(anchor.coordinates),offset:Math.hypot(...meters(anchor.coordinates,origin))};
+      for(let y=0;y<=20;y++)for(let x=0;x<=20;x++){
+        const localPoint=[bounds[0]+(bounds[2]-bounds[0])*x/20,bounds[1]+(bounds[3]-bounds[1])*y/20],room=clearance(localPoint,local);
+        if(room+1e-7<minimumRoom)continue;
+        const coordinates=geographic(localPoint,origin),spacing=near(coordinates),offset=Math.hypot(...localPoint),enough=spacing+1e-7>=gap,bestEnough=best.spacing+1e-7>=gap;
+        if(offset>maximumDistance)continue;
+        let better=enough&&!bestEnough;
+        if(enough===bestEnough)better=enough
+          ?room>best.anchor.clearanceMeters+1e-7||Math.abs(room-best.anchor.clearanceMeters)<=1e-7&&offset<best.offset
+          :spacing>best.spacing+1e-7||Math.abs(spacing-best.spacing)<=1e-7&&room>best.anchor.clearanceMeters;
+        if(better)best={anchor:{...selected,coordinates,clearanceMeters:room},spacing,offset};
+      }
+      anchor=best.anchor;
     }
-    return{...anchor,coordinates:geographic(best,origin),clearanceMeters:room};
+    const nearest=near(anchor.coordinates),crowdingWith=prior.filter(entry=>Math.hypot(...meters(anchor.coordinates,entry.coordinates))+1e-7<gap).map(entry=>entry.id);
+    return {...anchor,distanceMeters:Math.hypot(...meters(anchor.coordinates,origin)),sharedRoof:shared.length>0,crowded:crowdingWith.length>0,crowdingWith,crowdingDistanceMeters:Number.isFinite(nearest)?nearest:null,crowdingTargetMeters:gap};
   }
   function associate(pins,features,{maximumDistance=180}={}){
     const valid=(Array.isArray(features)?features:[]).filter(f=>['Polygon','MultiPolygon'].includes(f.geometry?.type)&&f.properties?.underground!=='true'&&f.properties?.type!=='building:part');
-    const used=new Set(),associations=[],unbound=[],anchorCache=new Map();
+    const associations=[],unbound=[],anchorCache=new Map();
     for(const id of SERVICES){
       const pin=(pins||[]).find(p=>p.id===id&&Array.isArray(p._lngLat));if(!pin)continue;
       const origin=pin._buildingSource||pin._lngLat,candidates=[];
-      for(const feature of valid){const key=buildingKey(feature);if(!key||used.has(key))continue;
+      for(const feature of valid){const key=buildingKey(feature);if(!key)continue;
         const polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.coordinates;
         for(const rings of polygons){
-          const first=rings[0]?.[0];if(!first||Math.hypot(...meters(first,origin))>240)continue;
+          if(!nearFootprintBounds(rings,origin,240))continue;
           let anchor=anchorCache.get(rings);if(anchor===undefined){anchor=roofAnchor(rings,origin);anchorCache.set(rings,anchor);}
-          if(!anchor||anchor.clearanceMeters<1)continue;
-          anchor=closestRoofPoint(rings,origin,anchor);
-          // Two different tiny roofs can still be adjacent. Reserve enough
-          // ground separation for the overview coin centers; never offset the
-          // actual icon off its roof just to make a screen-space label fit.
-          let crowded=false;
-          if(associations.some(prior=>Math.hypot(...meters(anchor.coordinates,prior.coordinates))<32)){
-            const interior=anchorCache.get(rings);
-            if(!interior||associations.some(prior=>Math.hypot(...meters(interior.coordinates,prior.coordinates))<32))crowded=true;
-            else anchor=interior;
-          }
+          const containsAuthoredPoint=inside(origin,rings);
+          if(!anchor||anchor.clearanceMeters<=0||!containsAuthoredPoint&&anchor.clearanceMeters+1e-7<1)continue;
           const distance=Math.hypot(...meters(anchor.coordinates,origin));if(distance>maximumDistance)continue;
           candidates.push({...anchor,providerId:key,providerTile:feature.properties?.providerTile||null,heightMeters:Math.max(0,Number(feature.properties?.height)||0),
-            containsAuthoredPoint:inside(origin,rings),distanceMeters:distance,polygon:rings,crowded});
+            containsAuthoredPoint,footprintDistanceMeters:footprintDistance(rings,origin),distanceMeters:distance,polygon:rings});
         }
       }
-      candidates.sort((a,b)=>Number(a.crowded)-Number(b.crowded)||Number(b.containsAuthoredPoint)-Number(a.containsAuthoredPoint)||a.distanceMeters-b.distanceMeters||a.providerId.localeCompare(b.providerId));
-      const selected=candidates[0];if(!selected){unbound.push(id);continue;}
-      used.add(selected.providerId);associations.push({id,...selected,sourceCoordinates:origin.slice(),source:'actual-provider-footprint',insideRoof:inside(selected.coordinates,selected.polygon)});
+      candidates.sort((a,b)=>Number(b.containsAuthoredPoint)-Number(a.containsAuthoredPoint)||a.footprintDistanceMeters-b.footprintDistanceMeters||a.distanceMeters-b.distanceMeters||a.providerId.localeCompare(b.providerId)||a.coordinates[0]-b.coordinates[0]||a.coordinates[1]-b.coordinates[1]||String(a.providerTile||'').localeCompare(String(b.providerTile||''))||JSON.stringify(a.polygon).localeCompare(JSON.stringify(b.polygon)));
+      if(!candidates.length){unbound.push(id);continue;}
+      const selected=placeOnOwnedRoof(candidates[0],associations,origin,maximumDistance);
+      associations.push({id,...selected,sourceCoordinates:origin.slice(),source:'actual-provider-footprint',insideRoof:inside(selected.coordinates,selected.polygon)});
     }
     return {associations,unbound,complete:unbound.length===0,source:'actual-provider-footprint',maximumDistance};
   }

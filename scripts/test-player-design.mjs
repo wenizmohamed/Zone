@@ -88,13 +88,16 @@ test('light navigation labels and real icon masks have contrast without dimming 
   }
 });
 test('Arabic uses the actual loaded Arabic font and avoids display-font letter spacing', () => {
-  assert.match(html, /family=Noto\+Sans\+Arabic/);
+  assert.match(html, /assets\/ui\/fonts113\.css/);
+  const fontCss=readFileSync(resolve(root,'assets/ui/fonts113.css'),'utf8');
+  assert.match(fontCss,/font-family:"Noto Sans Arabic"/);
+  assert.ok(existsSync(resolve(root,'assets/fonts/noto-sans-arabic-variable.woff2')));
   assert.match(css, /--zone-arabic:"Noto Sans Arabic",Rubik/);
   assert.match(css, /html\[dir="rtl"\]\s*\{[^}]*--zone-font:var\(--zone-arabic\)/);
   assert.match(css, /html\[dir="rtl"\][^\n]*letter-spacing:0 !important/);
 });
-test('the corrected shared player sheet follows combat chrome and carries the beta102 cache key', () => {
-  assert.ok(html.indexOf('assets/ui/combat.css') < html.indexOf('assets/zone-design.css?v=102'));
+test('the corrected shared player sheet follows combat chrome and carries the current cohesion cache key', () => {
+  assert.ok(html.indexOf('assets/ui/combat.css') < html.indexOf('assets/zone-design.css?v=113'));
 });
 test('fixed-dark header and fallback navigation tiles retain contrast in either theme', () => {
   const clock = rules('.zone-header-actions > span:first-child')[0];

@@ -434,11 +434,11 @@ function initializeMapLocale(){
 }
 initializeMapLocale();
 </script>
-<script src="map-icons.js?v=112"></script>
-<script src="territory-geometry.js?v=112"></script>
-<script src="../assets/city/service-buildings108.js?v=112"></script>
-<script src="../assets/city/compact-district.js?v=112"></script>
-<script src="map-frame-sample.js?v=112"></script>
+<script src="map-icons.js?v=113"></script>
+<script src="territory-geometry.js?v=113"></script>
+<script src="../assets/city/service-buildings108.js?v=113"></script>
+<script src="../assets/city/compact-district.js?v=113"></script>
+<script src="map-frame-sample.js?v=113"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -1492,7 +1492,7 @@ initializeMapLocale();
   }
   function localizeMapControls(){
     document.getElementById('districtSurfaceRetry111').textContent=lang==='ar'?'إعادة عرض التفاصيل':'Retry detail';
-    document.getElementById('districtSurfaceMessage111').textContent=lang==='ar'?'تعذر عرض تفاصيل واجهات المباني. الخريطة وأدواتها ما زالت متاحة.':'Building facade detail could not render. The map and its controls remain available.';
+    document.getElementById('districtSurfaceMessage111').textContent=lang==='ar'?'تعذر عرض بعض تفاصيل المباني. الخريطة وأدواتها ما زالت متاحة.':'Some building detail could not render. The map and its controls remain available.';
     var labels=lang==='ar'?['تكبير الخريطة','تصغير الخريطة','إعادة الاتجاه نحو الشمال والميل','إظهار معلومات الخريطة']:['Zoom in','Zoom out','Reset bearing and pitch','Toggle attribution'];
     ['.mapboxgl-ctrl-zoom-in','.mapboxgl-ctrl-zoom-out','.mapboxgl-ctrl-compass','.mapboxgl-ctrl-attrib-button'].forEach(function(selector,i){var button=map.getContainer().querySelector(selector);if(!button)return;button.setAttribute('aria-label',labels[i]);button.title=labels[i];if(button.firstElementChild)button.firstElementChild.setAttribute('title',labels[i]);});
     map.getCanvas().setAttribute('aria-label',lang==='ar'?'خريطة مدينة العائلة التفاعلية':'Interactive family city map');
@@ -1647,7 +1647,7 @@ initializeMapLocale();
   document.getElementById('districtSurfaceRetry111').onclick=function(){
     if(!landmarkController||mapDisposed)return;
     var button=this;button.disabled=true;button.setAttribute('aria-busy','true');
-    Promise.resolve(landmarkController.retrySurfaces()).finally(function(){if(!mapDisposed){button.disabled=false;button.removeAttribute('aria-busy');}});
+    return Promise.allSettled([Promise.resolve().then(function(){return landmarkController.retrySurfaces();}),Promise.resolve().then(function(){return landmarkController.retryLandmarks();})]).finally(function(){if(!mapDisposed){button.disabled=false;button.removeAttribute('aria-busy');}});
   };
   function installCustomLayers(){
     if(installingLayers||!map.isStyleLoaded())return;

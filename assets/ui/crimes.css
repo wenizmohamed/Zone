@@ -1,6 +1,6 @@
 /* Crimes only. Keep the accepted shared shell and other activities unchanged. */
 .zone-crime-workspace { display:grid; gap:10px; min-width:0; }
-.zone-crime-workspace h2 { margin:0; font:500 21px Oswald,"Noto Sans Arabic",Rubik,sans-serif; color:var(--t1); }
+.zone-crime-workspace h2 { margin:0; font:500 21px var(--zone-display); color:var(--t1); }
 .zone-crime-workspace p { margin:6px 0; color:var(--t3); line-height:1.6; }
 .zone-crime-workspace button { font:inherit; cursor:pointer; }
 .zone-crime-workspace button:focus-visible { outline:2px solid var(--acc); outline-offset:3px; }

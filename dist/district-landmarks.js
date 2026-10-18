@@ -7,7 +7,9 @@ const ROOT=new URL('../assets/city/kaykit/',import.meta.url);
 const KIT={bank:{model:'building_E_withoutBase',width:24,rotation:0,color:'#c0b399'},hospital:{model:'building_G_withoutBase',width:24,rotation:Math.PI/2,color:'#d1c9bb'},gym:{model:'building_C_withoutBase',width:18,rotation:0,color:'#87957a'},hq:{model:'building_A_withoutBase',width:26,rotation:Math.PI/2,color:'#8c9295'},market:{model:'building_C_withoutBase',width:20,rotation:Math.PI/2,color:'#bd9f6a'},home:{model:'building_A_withoutBase',width:20,rotation:0,color:'#9b8872'},jail:{model:'building_E_withoutBase',width:22,rotation:0,color:'#7f8883'},alley:{model:'building_C_withoutBase',width:18,rotation:0,color:'#9b6d56'},shop:{model:'building_C_withoutBase',width:17,rotation:0,color:'#bd9f6a'}};
 const ID='zone-authored-landmarks';
 
-export async function createLandmarks(map,pins,isActive=()=>true){
+export async function createLandmarks(map,pins,isActive=()=>true,options={}){
+  const prepareTimeoutMs=options.prepareTimeoutMs??12000;
+  if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw Error('Landmark preparation timeout must be 1..30000 milliseconds.');
   const selected=pins.filter(pin=>KIT[pin.id]&&Array.isArray(pin._lngLat));
   if(!selected.length)throw Error('No published district destinations');
   if(map.getLayer(ID))throw Error('District landmark layer already installed');
@@ -17,9 +19,15 @@ export async function createLandmarks(map,pins,isActive=()=>true){
   // second kit building at ground level would overlap two roofs and make
   // native symbol elevation float the coin above both. Use only a roof sign.
   const names=selected.every(pin=>pin._buildingAssociation?.insideRoof)?[]:[...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
-  let disposed=false,visible=true,prepared=false,preparing,scene,camera,renderer,origin,local,groups=[];
-  const diagnostics={status:'loading',license:'KayKit City Builder Bits CC0',landmarks:[],calls:0,triangles:0,geometries:0,textures:0,renderMs:0,shadows:0,postPasses:0,continuousAnimation:false};
-  const publish=()=>{if(typeof document==='object')document.body.dataset.zoneDistrictLandmarks=JSON.stringify(diagnostics);};
+  let disposed=false,visible=true,prepared=false,preparing,cancelPreparation=null,shaderFailure=null,scene,camera,renderer,origin,local,groups=[];
+  const diagnostics={status:'loading',license:'KayKit City Builder Bits CC0',landmarks:[],calls:0,triangles:0,geometries:0,textures:0,renderMs:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
+  const publish=()=>{
+    if(typeof document!=='object')return;
+    if(document.body?.dataset)document.body.dataset.zoneDistrictLandmarks=JSON.stringify(diagnostics);
+    const notice=document.getElementById?.('districtSurfaceStatus111'),message=document.getElementById?.('districtSurfaceMessage111');
+    const failed=['zoneDistrictSurfaces','zoneDistrictLandmarks'].some(key=>{try{return ['failed','error'].includes(JSON.parse(document.body?.dataset?.[key]||'{}').status);}catch(_){return false;}});
+    if(notice){notice.hidden=!failed;if(message&&failed)message.textContent=document.documentElement?.lang==='ar'?'تعذر عرض بعض تفاصيل المباني. الخريطة وأدواتها ما زالت متاحة.':'Some building detail could not render. The map and its controls remain available.';}
+  };
   publish();
   try{
     const loads=await Promise.allSettled(names.map(async name=>{
@@ -86,6 +94,42 @@ export async function createLandmarks(map,pins,isActive=()=>true){
       diagnostics.landmarks.push({id:pin.id,coordinates:pin._lngLat.slice(),widthMeters:spec.width,heightMeters,model:spec.model,cosmetic:true});
     });
   }
+  function shaderLinkFailure(gl,program,vertex,fragment){
+    const logs=[gl.getProgramInfoLog?.(program),vertex&&gl.getShaderInfoLog?.(vertex),fragment&&gl.getShaderInfoLog?.(fragment)].filter(Boolean).join('\n').trim().slice(0,1600);
+    diagnostics.shaderLinked=false;
+    return Error('Landmark shader link failed'+(logs?': '+logs:'.'));
+  }
+  function prepareShaders(gl){
+    // Own both timers. Cancel them synchronously before material properties or
+    // GPU programs are disposed; no vendor material-readiness poller survives.
+    return new Promise((resolve,reject)=>{
+      let settled=false,pollTimer,deadlineTimer;
+      function finish(error){if(settled)return;settled=true;clearTimeout(pollTimer);clearTimeout(deadlineTimer);cancelPreparation=null;if(error)reject(error);else resolve();}
+      cancelPreparation=()=>finish();
+      function check(){
+        if(settled)return;if(disposed||!isActive()){finish();return;}
+        try{
+          const programs=renderer.info.programs||[];diagnostics.shaderPrograms=programs.length;
+          if(!programs.length)throw Error('No compiled landmark shader programs.');
+          if(shaderFailure)throw shaderFailure;
+          for(const entry of programs){
+            if(typeof entry.isReady!=='function'||!entry.program)throw Error('Landmark shader readiness contract differs from the vendored Three runtime.');
+            if(!entry.isReady()){pollTimer=setTimeout(check,10);return;}
+          }
+          for(const entry of programs)if(gl.getProgramParameter(entry.program,gl.LINK_STATUS)===false)shaderFailure=shaderLinkFailure(gl,entry.program);
+          if(shaderFailure)throw shaderFailure;
+          diagnostics.shaderLinked=true;finish();
+        }catch(error){finish(error);}
+      }
+      deadlineTimer=setTimeout(()=>finish(Error('Landmark preparation timed out.')),prepareTimeoutMs);
+      pollTimer=setTimeout(check,10);
+    });
+  }
+  function fail(error){
+    if(disposed)return;
+    if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();
+    diagnostics.status='failed';diagnostics.error=String(error.message||error).slice(0,1800);publish();
+  }
   const layer={id:ID,type:'custom',renderingMode:'3d',
     onAdd(_map,gl){
       scene=new THREE.Scene();camera=new THREE.Camera();
@@ -98,26 +142,33 @@ export async function createLandmarks(map,pins,isActive=()=>true){
       // not in the player's first animated Tilt frame. Never clear or draw
       // into Mapbox's shared canvas during this preparation.
       const started=performance.now();
+      renderer.debug.checkShaderErrors=true;
+      renderer.debug.onShaderError=(gl,program,vertex,fragment)=>{shaderFailure=shaderLinkFailure(gl,program,vertex,fragment);};
       renderer.resetState();
-      ownedTexture.forEach(texture=>renderer.initTexture?.(texture));
-      preparing=Promise.resolve(renderer.compileAsync?.(scene,camera)).then(()=>{
-        if(disposed)return;renderer.resetState();prepared=true;
+      try{ownedTexture.forEach(texture=>renderer.initTexture?.(texture));renderer.compile(scene,camera);}
+      finally{renderer.resetState();}
+      preparing=prepareShaders(gl).then(()=>{
+        if(disposed)return;
+        if(!isActive()){if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();return;}
+        renderer.resetState();prepared=true;
         diagnostics.prepareMs=Number((performance.now()-started).toFixed(2));diagnostics.status='ready';publish();
         if(isActive())map.triggerRepaint();
       });
-      renderer.resetState();
     },
     render(_gl,input){
-      if(disposed||!prepared||!visible||map.getPitch()<10||map.getZoom()<15.8)return;
-      const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16)return;
+      if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||map.getZoom()<15.8)return;
+      const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
       const started=performance.now();camera.projectionMatrix.fromArray(projection).multiply(local);
-      renderer.resetState();renderer.render(scene,camera);renderer.resetState();
+      let frameFailure=null;
+      try{renderer.resetState();renderer.render(scene,camera);if(shaderFailure)throw shaderFailure;diagnostics.firstFrameRendered=true;}
+      catch(error){frameFailure=error;}finally{renderer.resetState();}
+      if(frameFailure){fail(frameFailure);return;}
       diagnostics.calls=renderer.info.render.calls;diagnostics.triangles=renderer.info.render.triangles;diagnostics.geometries=renderer.info.memory.geometries;diagnostics.textures=renderer.info.memory.textures;diagnostics.renderMs=Number((performance.now()-started).toFixed(2));publish();
     },
     onRemove(){
-      if(disposed)return;disposed=true;groups=[];release();renderer?.dispose();diagnostics.status='disposed';publish();
+      if(disposed)return;disposed=true;prepared=false;cancelPreparation?.();cancelPreparation=null;groups=[];release();renderer?.dispose();diagnostics.status='disposed';publish();
     }
   };
-  try{map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);await preparing;}catch(error){if(!disposed){if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();}throw error;}
+  try{map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);await preparing;}catch(error){fail(error);throw error;}
   return {setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();},diagnostics};
 }

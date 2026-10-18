@@ -40,10 +40,10 @@ function harness({manual=false,existing=false,addError=false,shader=null}={}){
     MeshBasicMaterial:trackedClass(Three.MeshBasicMaterial,'material'),
     MeshStandardMaterial:trackedClass(Three.MeshStandardMaterial,'material'),
     WebGLRenderer:class{
-      constructor(options){this.options=options;this.resets=0;this.draws=[];this.disposals=0;this.contextLosses=0;this.info={render:{calls:11,triangles:222},memory:{geometries:9,textures:3}};rendererInstances.push(this);}
+      constructor(options){this.options=options;this.resets=0;this.draws=[];this.disposals=0;this.contextLosses=0;this.programReady=!shader;this.debug={};this.info={programs:[{program:{},isReady:()=>{if(this.programFailure)throw this.programFailure;return this.programReady;}}],render:{calls:11,triangles:222},memory:{geometries:9,textures:3}};rendererInstances.push(this);}
       resetState(){this.resets++;events.push('reset');}
       initTexture(texture){if(shader)events.push('texture');}
-      compileAsync(scene,camera){if(shader){events.push('compile');return shader.promise;}}
+      compile(scene,camera){events.push('compile');if(shader)shader.promise.then(()=>{this.programReady=true;},error=>{this.programFailure=error;this.programReady=true;});}
       render(scene,camera){scene.updateMatrixWorld(true);this.draws.push({scene,camera});events.push('draw');}
       dispose(){this.disposals++;}
       forceContextLoss(){this.contextLosses++;}
@@ -66,7 +66,7 @@ function harness({manual=false,existing=false,addError=false,shader=null}={}){
       if(!manual)pending.resolve(asset(name));return pending.promise;
     }
   }
-  const gl={shared:true},canvas={mapCanvas:true},poi={id:'zone-poi-halo'},ownership={id:'zone-ownership',version:17},territory={type:'FeatureCollection',features:[{id:'ZC-021',properties:{owner:'kings'},geometry:{type:'Polygon',coordinates:[[[1,2],[3,4],[5,6],[1,2]]]}}]};
+  const gl={shared:true,LINK_STATUS:35714,getProgramParameter:()=>true,getProgramInfoLog:()=>''},canvas={mapCanvas:true},poi={id:'zone-poi-halo'},ownership={id:'zone-ownership',version:17},territory={type:'FeatureCollection',features:[{id:'ZC-021',properties:{owner:'kings'},geometry:{type:'Polygon',coordinates:[[[1,2],[3,4],[5,6],[1,2]]]}}]};
   layers.set(poi.id,poi);layers.set(ownership.id,ownership);if(existing)layers.set(ID,{id:ID,external:true});
   const map={pitch:35,zoom:17,repaints:0,territory,
     getCanvas(){canvases.push(canvas);return canvas;},getPitch(){return this.pitch;},getZoom(){return this.zoom;},
@@ -76,7 +76,7 @@ function harness({manual=false,existing=false,addError=false,shader=null}={}){
     triggerRepaint(){this.repaints++;},
   };
   const document={body:{dataset:{}}};
-  const context=vm.createContext({THREE,GLTFLoader,URL,mapboxgl:{MercatorCoordinate:{fromLngLat:mercator}},document,performance:{now:()=>100},console});
+  const context=vm.createContext({THREE,GLTFLoader,URL,mapboxgl:{MercatorCoordinate:{fromLngLat:mercator}},document,performance:{now:()=>100},console,setTimeout,clearTimeout});
   vm.runInContext(source+'\nglobalThis.createLandmarks=createLandmarks;',context,{filename:moduleUrl.pathname});
   return {create:context.createLandmarks,map,gl,canvas,canvases,layers,mutations,resources,requests,rendererInstances,events,document,asset,
     resolveAll(){for(const [name,pending] of requests)pending.resolve(asset(name));},
@@ -116,7 +116,7 @@ test('custom layer uses the map canvas/context, resets shared GPU state and neve
   assert.equal(renderer.options.canvas,h.canvas);assert.equal(renderer.options.context,h.gl);assert.equal(renderer.autoClear,false);
   assert.equal(h.map.repaints,1);const matrix=new Three.Matrix4().makeScale(2,3,4).toArray();
   layer.render(h.gl,{defaultProjectionData:{mainMatrix:matrix}});
-  assert.deepEqual(h.events,['reset','reset','reset','reset','draw','reset']);assert.equal(h.map.repaints,1);assert.equal(control.diagnostics.calls,11);assert.equal(control.diagnostics.triangles,222);assert.equal(control.diagnostics.continuousAnimation,false);
+  assert.deepEqual(h.events,['reset','compile','reset','reset','reset','draw','reset']);assert.equal(h.map.repaints,1);assert.equal(control.diagnostics.calls,11);assert.equal(control.diagnostics.triangles,222);assert.equal(control.diagnostics.continuousAnimation,false);
   assert.ok(renderer.draws[0].camera.projectionMatrix.elements.every(Number.isFinite));
   for(let n=0;n<5;n++)layer.render(h.gl,matrix);
   assert.equal(h.map.repaints,1);assert.equal(renderer.draws.length,6);
@@ -197,9 +197,9 @@ test('map removal during shader preparation cancels late rendering and releases 
 
 test('failed shader preparation cleans its layer, and a late failure after removal never queries the removed style',async()=>{
   for(const removed of [false,true]){
-    const shader=deferred(),h=harness({shader}),task=h.create(h.map,pins());const checked=assert.rejects(task,/shader compilation failed/);await flush();
+    const shader=deferred(),h=harness({shader}),task=h.create(h.map,pins());const checked=removed?task:assert.rejects(task,/shader compilation failed/);await flush();
     const renderer=h.rendererInstances[0];if(removed){h.map.removeLayer(ID);h.map.getLayer=()=>{throw Error('removed style must not be queried');};}
-    shader.reject(Error('shader compilation failed'));await checked;
+    shader.reject(Error('shader compilation failed'));const result=await checked;if(removed)assert.equal(result.diagnostics.status,'disposed','removal settles immediately rather than keeping vendor polling alive');
     assert.equal(h.layers.has(ID),false);assert.equal(renderer.draws.length,0);assert.equal(renderer.disposals,1);assert.equal(renderer.contextLosses,0);h.assertReleased();
   }
 });

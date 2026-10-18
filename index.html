@@ -6,6 +6,7 @@
 <title>ZONE | Browser Crime MMO</title>
 <meta name="description" content="ZONE is a bilingual, responsive browser crime MMO powered by a modular, API-first game engine.">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="./assets/ui/fonts113.css?v=113">
 <script>
   (() => {
     const syncPath = path => {
@@ -43,18 +44,17 @@
 <script src="./dist/map-icons.js"></script>
 <link rel="stylesheet" href="/engine/theme.css">
 <link rel="stylesheet" href="./assets/ui/combat.css">
-<link rel="stylesheet" href="./assets/zone-design.css?v=102">
-<link rel="stylesheet" href="./assets/zone-layout.css?v=101">
+<link rel="stylesheet" href="./assets/zone-design.css?v=113">
+<link rel="stylesheet" href="./assets/zone-layout.css?v=113">
 <link rel="stylesheet" href="./assets/ui/home-gym.css?v=105">
-<link rel="stylesheet" href="./assets/ui/crimes.css?v=106">
-<link rel="stylesheet" href="./assets/ui/loadout.css?v=107">
-<link rel="stylesheet" href="./assets/ui/district-compositions108.css?v=109">
-<link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=108">
+<link rel="stylesheet" href="./assets/ui/crimes.css?v=113">
+<link rel="stylesheet" href="./assets/ui/loadout.css?v=113">
+<link rel="stylesheet" href="./assets/ui/district-compositions108.css?v=113">
+<link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=113">
 </head>
 <body>
 <x-dc>
 <helmet>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="./image-slot.js"></script>
   <script src="./assets/weapons/catalog.js?v=112"></script>
 
@@ -347,7 +347,7 @@
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
           <div class="zone-city-map-shell" style="position:relative;aspect-ratio:1070/554;border:1px solid var(--border);border-radius:0 5px 5px 5px;overflow:hidden;margin-top:-12px;background:#0b0d10">
-            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=112" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <iframe id="zone-city-map" data-map-src="dist/city-map-torn.html?v=113" title="{{ cityMapViewerLabel }}" allow="fullscreen" style="width:100%;height:100%;border:0;display:block"></iframe>
           </div>
           <nav class="zone-city-directory zone-panel" aria-label="{{ cityDirectory.title }}">
             <div class="zone-panel-heading">{{ cityDirectory.title }}<bdi>{{ cityDirectory.count }}</bdi></div>

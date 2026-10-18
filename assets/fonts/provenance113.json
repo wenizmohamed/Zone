@@ -1,0 +1,37 @@
+{
+  "license": "SIL Open Font License 1.1",
+  "acquiredOn": "2026-10-18",
+  "conversion": "fontTools 4.63.0: python -m fontTools.ttLib.woff2 compress source.ttf -o output.woff2. Full glyph and variable-axis sets retained; no shape edits or subsetting.",
+  "fonts": [
+    {
+      "family": "Rubik",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/rubik/Rubik%5Bwght%5D.ttf",
+      "sourceSha256": "1b3a7437ba2af80e465e773ed60c5036d1ba6ace492d89046dbcf18fb31e4e88",
+      "file": "assets/fonts/rubik-variable.woff2",
+      "sha256": "8358f0a47ba7922be1c6c6ee17d6ed2acbf914ab0726126ef6764033c26cadf2",
+      "bytes": 112420,
+      "license": "assets/fonts/rubik-OFL.txt",
+      "licenseSource": "https://raw.githubusercontent.com/google/fonts/main/ofl/rubik/OFL.txt"
+    },
+    {
+      "family": "Oswald",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/oswald/Oswald%5Bwght%5D.ttf",
+      "sourceSha256": "5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817",
+      "file": "assets/fonts/oswald-variable.woff2",
+      "sha256": "6bbc262410618b85e3d3154309cad8346a9e3c3085a61d04b3710a4cf2831f4d",
+      "bytes": 72104,
+      "license": "assets/fonts/oswald-OFL.txt",
+      "licenseSource": "https://raw.githubusercontent.com/google/fonts/main/ofl/oswald/OFL.txt"
+    },
+    {
+      "family": "Noto Sans Arabic",
+      "source": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/NotoSansArabic%5Bwdth,wght%5D.ttf",
+      "sourceSha256": "63111b5b2e074dd48cc67692e0a2726d86ee94c1c37fe8598257b7b4e87e869e",
+      "file": "assets/fonts/noto-sans-arabic-variable.woff2",
+      "sha256": "d383af9d4bce176d3d619bdc9b35c8d494ac15e410ce7efafc4ed9621bbc3d19",
+      "bytes": 361724,
+      "license": "assets/fonts/noto-sans-arabic-OFL.txt",
+      "licenseSource": "https://raw.githubusercontent.com/google/fonts/main/ofl/notosansarabic/OFL.txt"
+    }
+  ]
+}

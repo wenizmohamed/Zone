@@ -66,7 +66,7 @@
   .zone-home-grid > div { gap:12px !important; }
   .zone-home-identity { order:0 !important; }
   .zone-home-activity { order:1 !important; }
-  .zone-panel-heading { font-family:var(--zone-display) !important; text-transform:uppercase !important; letter-spacing:.045em !important; }
+  .zone-panel-heading { font-family:var(--zone-panel-label) !important; text-transform:none !important; letter-spacing:0 !important; }
   .zone-activity-note { padding:10px 12px !important; }
   .zone-daily-objective { padding:12px !important; }
   .zone-objective-identity { display:flex !important; align-items:center !important; gap:10px !important; }
@@ -132,8 +132,8 @@
   .zone-nav-icon { flex:0 0 26px !important; width:26px; height:26px; }
   .zone-nav-icon[data-has-image="true"]::before { width:21px; height:21px; }
   .zone-panel-heading { font-weight:600 !important; font-size:12px !important; line-height:1.45 !important; }
-  .zone-panel-heading[data-zhead] { font-family:var(--zone-font) !important; letter-spacing:0 !important; text-transform:none !important; }
-  .zone-panel-heading h2 { font:600 12px/1.45 var(--zone-display); }
+  .zone-panel-heading[data-zhead] { font-family:var(--zone-panel-label) !important; letter-spacing:0 !important; text-transform:none !important; }
+  .zone-panel-heading h2 { font:600 12px/1.45 var(--zone-panel-label); }
   .zone-panel :is([style*="font-size:10px"],[style*="font-size: 10px"]):not(button) { font-size:10px !important; line-height:1.45; }
   .zone-panel :is([style*="font-size:11px"],[style*="font-size: 11px"]):not(button) { font-size:11px !important; line-height:1.45; }
   .zone-panel > :is(div[style*="linear-gradient"],div[style*="border-bottom"]):not(.zone-resource-track):not(.zone-record-track):not(.zone-item-stage):not(.zone-character-stage):not(.zone-panel-heading) { padding:7px 10px !important; gap:8px; }

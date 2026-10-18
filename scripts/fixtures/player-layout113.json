@@ -1,0 +1,13 @@
+{
+  "baseline": "e6b6bbd6e3316aa8c3472963d166dd7506325ebf",
+  "contract": "CSS layout declarations and player body after cache-key normalization and removal of the old remote font link. This is source preservation, not pixel acceptance.",
+  "css": {
+    "assets/zone-design.css": "177ec8e6ad7b1e102b185692c4a0a8f7d6ae3231d57f43554534132f74fa82ba",
+    "assets/zone-layout.css": "4235bd2b174087453e9a821b9c797b2330ed9a3bb771a7785431d564f2294b8c",
+    "assets/ui/crimes.css": "0da4f6ca5ddca18f627fffbc9b7d7cb3ee581ca1262a6513733db05ee5c2169b",
+    "assets/ui/loadout.css": "a3362aba9aa9071f866710d192eff1ff70df8ea079e804555af30d4d57c81e01",
+    "assets/ui/district-compositions108.css": "a6b4b3a183f0e80044bd6a0b869df2f46e910c55ec67e6b6c3610bcf67ef205f",
+    "assets/ui/safehouse-host108.css": "2b641463b1d1544c1039f9c92e57a95e85576cd4de0fe210d2ef32bb8de81124"
+  },
+  "body": "649087b781989afd009fda8ffc3aa2572008d1cd84c416e12df0a6f1c19e4944"
+}

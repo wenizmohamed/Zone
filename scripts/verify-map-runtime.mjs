@@ -754,10 +754,10 @@ export function verifyMapRuntime(source) {
     const ctx = context(['localizeMapControls'], { lang: 'ar', document:{getElementById:id=>id==='districtSurfaceRetry111'?retry:message}, map: { getCanvas: () => canvas, getContainer: () => ({ querySelector: selector => { if (!nodes.has(selector)) nodes.set(selector, node()); return nodes.get(selector); } }) } });
     ctx.localizeMapControls();
     expect(nodes.get('.mapboxgl-ctrl-zoom-in').attrs['aria-label'] === 'تكبير الخريطة' && nodes.get('.mapboxgl-ctrl-attrib-button').attrs['aria-label'] === 'إظهار معلومات الخريطة', 'Native control accessible labels stayed English.');
-    expect(retry.textContent==='إعادة عرض التفاصيل'&&message.textContent.includes('واجهات المباني'),'Facade recovery copy must follow Arabic too.');
+    expect(retry.textContent==='إعادة عرض التفاصيل'&&message.textContent.includes('تفاصيل المباني'),'Building-detail recovery copy must follow Arabic too.');
     ctx.lang = 'en'; ctx.localizeMapControls();
     expect(nodes.get('.mapboxgl-ctrl-zoom-in').attrs['aria-label'] === 'Zoom in' && canvas.attrs['aria-label'] === 'Interactive family city map', 'Switching back to English retained Arabic labels.');
-    expect(retry.textContent==='Retry detail'&&message.textContent.startsWith('Building facade detail'),'Facade recovery copy must return to English.');
+    expect(retry.textContent==='Retry detail'&&message.textContent.startsWith('Some building detail'),'Building-detail recovery copy must return to English.');
   });
 
   test('Benefits preserve engine data but only active bonuses appear in player panels', () => {

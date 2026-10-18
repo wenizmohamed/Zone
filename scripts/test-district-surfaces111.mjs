@@ -172,6 +172,15 @@ function harness({shader=null,addFailure=false,linkFailure=false,drawFailure=fal
   return{create:context.create,map,layers,renderers,resources,events,doc,timers,expirePreparation(){for(const [id,timer]of [...timers])if(timer.kind==='application'&&timer.ms>10){unschedule(id);timer.fn();}},runVendorChecks(){for(const [id,timer]of [...timers])if(timer.kind==='vendor'){unschedule(id);timer.fn();}}};
 }
 
+test('ready facade publication cannot hide a failed sign notice and hides it only when both producers recover',async()=>{
+  const h=harness(),notice={hidden:false},message={textContent:''};h.doc.getElementById=id=>id==='districtSurfaceStatus111'?notice:message;
+  h.doc.body.dataset.zoneDistrictLandmarks=JSON.stringify({status:'failed'});
+  const control=h.create(h.map,[feature(113)],{center:[0,0],document:h.doc});await control.ready;
+  assert.equal(notice.hidden,false,'facade success is not sign recovery');
+  const layer=h.layers.get('zone-district-surfaces');layer.render({},new Three.Matrix4().toArray());assert.equal(notice.hidden,false);
+  h.doc.body.dataset.zoneDistrictLandmarks=JSON.stringify({status:'ready'});layer.render({},new Three.Matrix4().toArray());assert.equal(notice.hidden,true);control.dispose();
+});
+
 // Catches applying the old15.8 gate to new surfaces, incorrect georeferencing,
 // per-window draw calls, and a flat-mode leak. Only GPU execution is doubled.
 test('one shared-context batched layer draws at actual15.1 overview and follows the real Mercator matrix',async()=>{

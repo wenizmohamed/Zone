@@ -96,7 +96,8 @@ test('player header and item-frame accessible titles localize in English and Ara
   assert.match(html, /title="\{\{ itemViewerLabel \}\}"/);
   assert.match(html, /class="zone-profile-account"[^>]*>\{\{ accountLabel \}\}<\/a>/);
   assert.match(html, /<sc-if value="\{\{ n\.badge \}\}"><bdi/);
-  assert.match(html, /family=Noto\+Sans\+Arabic/);
+  assert.match(html, /assets\/ui\/fonts113\.css/);
+  assert.match(readFileSync(new URL('../assets/ui/fonts113.css',import.meta.url),'utf8'), /font-family:"Noto Sans Arabic"/);
   assert.ok(html.indexOf('assets/ui/combat.css') < html.indexOf('assets/zone-design.css'), 'shared host-control styling follows combat styling');
 });
 

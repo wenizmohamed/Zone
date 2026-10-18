@@ -1,6 +1,6 @@
 .zone-loadout { padding: 12px 14px; border: 1px solid var(--border); border-inline-start: 3px solid var(--gold); border-radius: 4px; background: var(--panel); }
 .zone-loadout header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-block-end: 10px; }
-.zone-loadout header strong { color: var(--t1); font-family: Oswald, 'Noto Sans Arabic', sans-serif; font-size: 18px; }
+.zone-loadout header strong { color: var(--t1); font-family: var(--zone-panel-label); font-size: 18px; }
 .zone-loadout header span, .zone-loadout p { margin: 0; color: var(--mu); font-size: 12px; line-height: 1.6; }
 .zone-loadout-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .zone-loadout-slots > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: start; gap: 3px 10px; padding: 8px 10px; background: var(--deep); border: 1px solid var(--line); border-radius: 3px; }

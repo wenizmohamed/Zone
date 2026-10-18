@@ -195,7 +195,10 @@ export function createDistrictSurfaces(map,features,options={}){
     if(SURFACE_OWNERS.has(map)&&SURFACE_OWNERS.get(map)!==control)return;
     if(doc?.body?.dataset)doc.body.dataset.zoneDistrictSurfaces=JSON.stringify(diagnostics);
     const notice=doc?.getElementById?.('districtSurfaceStatus111'),message=doc?.getElementById?.('districtSurfaceMessage111');
-    if(notice){notice.hidden=diagnostics.status!=='error';if(message)message.textContent=doc.documentElement?.lang==='ar'?'تعذر عرض تفاصيل واجهات المباني. الخريطة وأدواتها ما زالت متاحة.':'Building facade detail could not render. The map and its controls remain available.';}
+    // This recovery control is shared by facade detail and rooftop signs.
+    // One producer reaching ready is not permission to hide the other's error.
+    const failed=['zoneDistrictSurfaces','zoneDistrictLandmarks'].some(key=>{try{return ['failed','error'].includes(JSON.parse(doc?.body?.dataset?.[key]||'{}').status);}catch(_){return false;}});
+    if(notice){notice.hidden=!failed;if(message&&failed)message.textContent=doc.documentElement?.lang==='ar'?'تعذر عرض بعض تفاصيل المباني. الخريطة وأدواتها ما زالت متاحة.':'Some building detail could not render. The map and its controls remain available.';}
   };
   const local=new THREE.Matrix4().makeTranslation(plan.origin.x,plan.origin.y,0).scale(new THREE.Vector3(plan.origin.meter,-plan.origin.meter,plan.origin.meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
   function release(){for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();geometries.length=0;materials.length=0;renderer?.dispose();}
