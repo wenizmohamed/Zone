@@ -1,5 +1,6 @@
 /* Only the Gym's station cues and phone action order change in beta116.
  * The accepted shell, room artwork, desktop composition and other routes stay intact. */
+#zone-main[data-zone-screen=gym] .zone-gym-floor {grid-row:1;}
 #zone-main[data-zone-screen=gym] .zone-gym-station-icon {
   width:64px;height:72px;position:relative;overflow:hidden;
   background-size:cover;background-position:center;background-repeat:no-repeat;

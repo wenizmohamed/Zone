@@ -58,7 +58,8 @@ test('selected station artwork, benefit and real Train action remain one accessi
 test('phone Gym puts station selection before Train and keeps the override inside Gym only',()=>{
   assert.ok(section.indexOf('class="zone-gym-stations"')<section.indexOf('class="zone-gym-session"'),'DOM reading and keyboard order must match station-before-Train on phones');
   const css=read('assets/ui/gym116.css');
-  assert.match(html,/href="\.\/assets\/ui\/gym116\.css\?v=116"/);
+  assert.match(html,/href="\.\/assets\/ui\/gym116\.css\?v=117"/);
+  assert.match(css.slice(0,css.indexOf('@media(max-width:650px)')),/\.zone-gym-floor\s*\{[^}]*grid-row:1[;}]/,'the spanning room must occupy row1 before CSS grid auto-placement considers the fixed console and station tracks');
   const phone=css.slice(css.indexOf('@media(max-width:650px)'));
   for(const [selector,row]of [['zone-gym-floor',1],['zone-gym-stations',2],['zone-gym-session',3]])
     assert.match(phone,new RegExp('\\.'+selector+'\\s*\\{[^}]*grid-row:'+row+'(?:[;}])'));
