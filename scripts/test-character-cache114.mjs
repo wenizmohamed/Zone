@@ -5,13 +5,13 @@ import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 test('Home, combat and safehouse request the current character/equipment entry documents',()=>{
   const html=read('index.html');
-  for(const [name,revision] of [['character3d','115'],['combat','114'],['safehouse','114']]){
+  for(const [name,revision] of [['character3d','116'],['combat','116'],['safehouse','116']]){
     const refs=[...html.matchAll(new RegExp('dist/'+name+'\\.html\\?v=([^"&]+)','g'))];
     assert.ok(refs.length,name+' has a real host entry');for(const match of refs)assert.equal(match[1],revision);
   }
-  assert.match(read('dist/safehouse.html'),/safehouse\.mjs\?v=114/);
-  assert.match(read('dist/safehouse.mjs'),/safehouse-character\.mjs\?v=114/);
-  assert.match(read('dist/combat.html'),/combat-presentation\.js\?v=114/);
+  assert.match(read('dist/safehouse.html'),/safehouse\.mjs\?v=116/);
+  assert.match(read('dist/safehouse.mjs'),/safehouse-character\.mjs\?v=116/);
+  assert.match(read('dist/combat.html'),/combat-presentation\.js\?v=116/);
 });
 test('every actual character consumer imports the revised armor, grip and pose modules including retained bundled templates',()=>{
   for(const file of ['dist/character3d.html','dist/safehouse-character.mjs','dist/combat-presentation.js']){

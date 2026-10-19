@@ -134,7 +134,28 @@ export const WEAPON_PRESENTATION_UPGRADES112 = Object.freeze({
   sniperrifle_3:'mosin9130-detail112',sniperrifle_6:'mosin9130-detail112'
 });
 
-export function resolveWeaponAsset(key, catalog = {}, { revision = 112 } = {}) {
+// Additive116 art derivative. Original M4 geometry and all earlier overlays
+// remain available through their explicit historical revision selectors.
+export const WEAPON_UPGRADE_SOURCES116 = Object.freeze({
+  'm4-detail116': Object.freeze({
+    id:'m4-detail116',url:'upgrades116/m4-detail116.glb',scale:1,grip:[0,0,0],rotation:[0,0,0],axis:-1,forward:true,
+    revision:116,quality:'adapted-pbr',license:'CC0-1.0',author:'3DModelsCC0 / ZONE derivative',
+    source:'https://3dmodelscc0.itch.io/free-cc0-guns-explosives-pack',sourceManifest:'upgrades116/manifest.json',
+    surfaceMaps:['baseColor','normal','metallicRoughness'],originalSourceId:'cc0-guns-explosives-pack-glb--m4a1',
+    legacySourceKey:'assaultrifle_1',
+    materialLineage:'3DModelsCC0 source silhouette, 9236 source triangles and measured grip retained. ZONE adds fitted bevelled receiver, rail, control, stock, grip and magazine detail; retains CC0 atlas wear/normal/ORM at a bounded 512px with a restrained albedo lift; adds original 256px steel/polymer/rubber PBR maps.',
+    identityNote:'Visual-only fictional assault-rifle representation. Three existing M4-backed gameplay identities share this explicitly credited derivative; no real-world performance or newly authored source silhouette is claimed.',
+    thumbnailCapture:'offline-Blender-Cycles-exported-GLB',browserCaptureStatus:'pending-review'
+  })
+});
+export const WEAPON_PRESENTATION_UPGRADES116 = Object.freeze({
+  assaultrifle_1:'m4-detail116',assaultrifle_3:'m4-detail116',assaultrifle_5:'m4-detail116'
+});
+
+export function resolveWeaponAsset(key, catalog = {}, { revision = 116 } = {}) {
+  const newest=revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key)?WEAPON_PRESENTATION_UPGRADES116[key]:null;
+  if(newest)return{...WEAPON_UPGRADE_SOURCES116[newest],requestedKey:key,sourceKey:newest,
+    category:weaponCategory(key,catalog),thumbnail:weaponThumbnail(key,{revision})};
   const detailKey = revision >= 112 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key) ? WEAPON_PRESENTATION_UPGRADES112[key] : null;
   if(detailKey)return{...WEAPON_UPGRADE_SOURCES112[detailKey],requestedKey:key,sourceKey:detailKey,
     category:weaponCategory(key,catalog),thumbnail:weaponThumbnail(key,{revision})};
@@ -166,7 +187,8 @@ export function weaponCategory(key, catalog = {}) {
     || ({ revolver: 'revolver', pistol: 'pistol', ak: 'ak-rifle' })[key] || 'weapon';
 }
 
-export function weaponThumbnail(key, { revision = 112 } = {}) {
+export function weaponThumbnail(key, { revision = 116 } = {}) {
+  if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;
   if(detailKey)return'/assets/weapons/upgrades112/'+detailKey.replace('-detail112','-thumbnail')+'.png';
   const upgraded = revision !== 99 && Object.hasOwn(WEAPON_PRESENTATION_UPGRADES111, key) ? WEAPON_PRESENTATION_UPGRADES111[key] : null;

@@ -435,8 +435,13 @@ globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES112 = Object.freeze({
   sniperrifle_3:'/assets/weapons/upgrades112/mosin9130-thumbnail.png',
   sniperrifle_6:'/assets/weapons/upgrades112/mosin9130-thumbnail.png'
 });
+globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES116 = Object.freeze({
+  assaultrifle_1:'/assets/weapons/upgrades116/m4-thumbnail.png',
+  assaultrifle_3:'/assets/weapons/upgrades116/m4-thumbnail.png',
+  assaultrifle_5:'/assets/weapons/upgrades116/m4-thumbnail.png'
+});
 globalThis.ZONE_WEAPON_THUMBNAILS = Object.freeze(Object.fromEntries(
-  [...Object.keys(globalThis.ZONE_WEAPONS), 'bat', 'knife'].map(key => [key, globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES112[key] || globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES111[key] || '/assets/weapons/thumbnails/' + key + '.png'])
+  [...Object.keys(globalThis.ZONE_WEAPONS), 'bat', 'knife'].map(key => [key, globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES116[key] || globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES112[key] || globalThis.ZONE_WEAPON_THUMBNAIL_UPGRADES111[key] || '/assets/weapons/thumbnails/' + key + '.png'])
 ));
 globalThis.zoneWeaponThumbnail = (key, modelKey) => {
   for (const candidate of [modelKey, key]) if (typeof candidate === 'string' && Object.hasOwn(globalThis.ZONE_WEAPON_THUMBNAILS, candidate)) return globalThis.ZONE_WEAPON_THUMBNAILS[candidate];

@@ -19,6 +19,10 @@
     "art/fit.jpg": 9816,
     "art/forge.jpg": 15786,
     "art/graf.jpg": 18225,
+    "art/gym116/defense.webp": 28748,
+    "art/gym116/dexterity.webp": 30422,
+    "art/gym116/speed.webp": 31430,
+    "art/gym116/strength.webp": 31382,
     "art/g_def.jpg": 10139,
     "art/g_dex.jpg": 9241,
     "art/g_spd.jpg": 13498,
@@ -114,6 +118,7 @@
     "assets/weapons/upgrades111/glock18-thumbnail.png": 52221,
     "assets/weapons/upgrades111/l85-thumbnail.png": 52374,
     "assets/weapons/upgrades112/dragunov-thumbnail.png": 41373,
-    "assets/weapons/upgrades112/mosin9130-thumbnail.png": 35666
+    "assets/weapons/upgrades112/mosin9130-thumbnail.png": 35666,
+    "assets/weapons/upgrades116/m4-thumbnail.png": 48267
   }
 }

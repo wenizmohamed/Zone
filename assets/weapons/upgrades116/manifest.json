@@ -1,0 +1,333 @@
+{
+  "revision": 116,
+  "status": "offline-assets-tested-browser-review-pending",
+  "license": "CC0-1.0",
+  "licenseFile": "LICENSE.txt",
+  "thumbnailCapture": "offline-Blender-Cycles-exported-GLB",
+  "browserCaptureStatus": "pending-review",
+  "historicalReceipt": "assets/weapons/runtime-coverage.json",
+  "historicalReceiptSha256": "5d45a303e52ed7a018d07225cde49bbd60e8274eab6a5264c97fcb75c6271644",
+  "bindings": {
+    "assaultrifle_1": "m4-detail116",
+    "assaultrifle_3": "m4-detail116",
+    "assaultrifle_5": "m4-detail116"
+  },
+  "source": {
+    "path": "assets/weapons/library/models/cc0-guns-explosives-pack-glb--m4a1.glb",
+    "bytes": 792256,
+    "sha256": "37b6001e90febb43a9918f1c6460a967aee2045b9b1cd107f29aaaeed993aba3",
+    "author": "3DModelsCC0",
+    "license": "CC0-1.0",
+    "sourcePage": "https://3dmodelscc0.itch.io/free-cc0-guns-explosives-pack",
+    "licenseVerificationDate": "2026-10-19",
+    "licenseEvidence": "Primary author page labels its19-model pack as CC0 public domain and lists M4A1. Author page inspected directly, not a third-party license inference.",
+    "acquisitionMirror": "https://github.com/BoQsc/cc0-guns-explosives-pack-glb/releases/download/0/Guns.Explosives_glb.zip"
+  },
+  "authoring": {
+    "recipe": "assets/weapons/source-tools/upgrades116/build_m4.py",
+    "recipeSha256": "810aa5202344198729ea12cafe54da9eb4d2087c773c3be2eaba6abf53064e75",
+    "template": "assets/weapons/source-tools/upgrades111/build_upgrades.py",
+    "templateSha256": "f5dfc3bc8b5e97a64ea37d439cd839f3b526672f706ac41049db1266d4dfd04b",
+    "renderer": "Blender 4.5.9 CPU Cycles, exact exported GLB. Not a browser capture.",
+    "invocation": "blender --background --factory-startup --disable-autoexec --python assets/weapons/source-tools/upgrades116/build_m4.py",
+    "outputPaths": [
+      "assets/weapons/upgrades116/",
+      ".tools/beta116-media/"
+    ]
+  },
+  "modifications": [
+    "Source silhouette, 9236 original triangles,UV mapping and measured handle are retained. Original files are never overwritten.",
+    "22344 additional triangles create fitted bevelled receiver/rail/fastener/grip/stock/magazine detail. New hardware is merged with source into6 shared material primitives.",
+    "Retained CC0 albedo receives a bounded value lift, and retained source normal/metallic-roughness maps are filtered from 1024 to 512 pixels for a mobile budget. Their provenance is retained, not claimed as new original texture art.",
+    "ZONE's added steel/polymer/rubber kit has distinct base-color,tangent-normal and packed metallic-roughness maps at 256 pixels. No generated mesh, external photograph, manufacturer logo or new gameplay rule is introduced."
+  ],
+  "assets": [
+    {
+      "id": "m4-detail116",
+      "path": "assets/weapons/upgrades116/m4-detail116.glb",
+      "bytes": 2464364,
+      "sha256": "6a5de7f46c667a9b54d4f6935a5338a02e014db46399e741e92c39d6679cd425",
+      "sourceTriangles": 9236,
+      "chamferedSourceTriangles": 9236,
+      "addedDetailTriangles": 22344,
+      "triangles": 31580,
+      "primitives": 6,
+      "images": 12,
+      "boundsBlender": {
+        "min": [
+          -0.25197547674179077,
+          -0.03272299841046333,
+          -0.10627578943967819
+        ],
+        "max": [
+          0.6068677306175232,
+          0.03088231384754181,
+          0.1600441187620163
+        ]
+      },
+      "frame": {
+        "min": [
+          -0.25197547674179077,
+          -0.03272299841046333,
+          -0.10627578943967819
+        ],
+        "max": [
+          0.6068677306175232,
+          0.03088231384754181,
+          0.1600441187620163
+        ]
+      },
+      "descriptor": {
+        "scale": 1,
+        "grip": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "axis": -1,
+        "forward": true
+      },
+      "thumbnail": "/assets/weapons/upgrades116/m4-thumbnail.png",
+      "thumbnailSha256": "5d0e67f888797d50e72321306f81f96b73e4f2e38a7eaaf8f759d4f1f1985e3b",
+      "thumbnailBytes": 48267,
+      "author": "3DModelsCC0 / ZONE derivative",
+      "license": "CC0-1.0",
+      "quality": "adapted-pbr",
+      "originalSourceId": "cc0-guns-explosives-pack-glb--m4a1",
+      "source": "https://3dmodelscc0.itch.io/free-cc0-guns-explosives-pack",
+      "thumbnailWidth": 384,
+      "thumbnailHeight": 280,
+      "triangleBudget": 40000,
+      "primitiveBudget": 8,
+      "textureBudgetBytes": 8388608,
+      "browserCaptureStatus": "pending-review",
+      "thumbnailCapture": "offline-Blender-Cycles-exported-GLB"
+    }
+  ],
+  "limitations": [
+    "Offline Blender renders are not browser/GPU acceptance and cannot establish actual frame rate.",
+    "Only 3 existing M4-backed gameplay representations are changed. This is not a claim that all 51 weapon models were reauthored.",
+    "No new grip calibration is claimed. Original measured normalization is retained; final finger contact and equipped motion remain browser-review gates.",
+    "This is nonfunctional game-art geometry, not engineering or manufacturing specifications."
+  ],
+  "offlineEvidence": {
+    "full": {
+      "beforeSha256": "66b659021dedaa36fa655e5baed8f0e80331c6685f488d1062be08919b976102",
+      "afterSha256": "4a90d92816d7671a4de3b820e7929d0206985476f0c4877031599b91091c19ac",
+      "identicalCamera": true,
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.9652263522148132,
+            -0.03336811810731888,
+            0.2592771053314209,
+            0.43498265743255615
+          ],
+          [
+            0.2614154517650604,
+            0.12320547550916672,
+            -0.9573308825492859,
+            -0.9518246054649353
+          ],
+          [
+            -2.793732534200899e-8,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.1147046908736229
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "resolution": [
+          1100,
+          620
+        ],
+        "transparent": false,
+        "frame": {
+          "min": [
+            -0.25197547674179077,
+            -0.03272299841046333,
+            -0.10627578943967819
+          ],
+          "max": [
+            0.6068677306175232,
+            0.03088231384754181,
+            0.1600441187620163
+          ]
+        },
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -1.5402402877807617,
+              -2.1480283737182617,
+              2.6034135818481445
+            ],
+            "rotation": [
+              0.8178884983062744,
+              -6.421899456654501e-9,
+              -0.6747409105300903
+            ],
+            "energy": 103.26563262939453,
+            "size": 1.717686414718628
+          },
+          {
+            "location": [
+              2.7539756298065186,
+              -1.2891850471496582,
+              0.8857273459434509
+            ],
+            "rotation": [
+              1.281044602394104,
+              -6.966769205973833e-8,
+              1.1071486473083496
+            ],
+            "energy": 40.568641662597656,
+            "size": 1.717686414718628
+          },
+          {
+            "location": [
+              -0.6813970804214478,
+              1.716766119003296,
+              1.7445706129074097
+            ],
+            "rotation": [
+              0.8410686254501343,
+              4.847489520898307e-8,
+              -2.677945137023926
+            ],
+            "energy": 132.7700958251953,
+            "size": 1.2882647514343262
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exact exported GLB. Not a browser capture."
+      }
+    },
+    "thumbnail": {
+      "beforeSha256": "b96666e6a9407337fe26ef418024d7ca1e6723766bdb809669685c1f40bd31ef",
+      "afterSha256": "5d0e67f888797d50e72321306f81f96b73e4f2e38a7eaaf8f759d4f1f1985e3b",
+      "identicalCamera": true,
+      "camera": {
+        "cameraMatrix": [
+          [
+            0.9652263522148132,
+            -0.03336811810731888,
+            0.2592771053314209,
+            0.4976638853549957
+          ],
+          [
+            0.2614154517650604,
+            0.12320547550916672,
+            -0.9573308825492859,
+            -1.1832630634307861
+          ],
+          [
+            -2.793732534200899e-8,
+            0.9918200373649597,
+            0.1276441216468811,
+            0.14556315541267395
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "resolution": [
+          384,
+          280
+        ],
+        "transparent": true,
+        "frame": {
+          "min": [
+            -0.25197547674179077,
+            -0.03272299841046333,
+            -0.10627578943967819
+          ],
+          "max": [
+            0.6068677306175232,
+            0.03088231384754181,
+            0.1600441187620163
+          ]
+        },
+        "lens": 34.850528717041016,
+        "sensorFit": "VERTICAL",
+        "sensorHeight": 24,
+        "viewTransform": "AgX",
+        "lights": [
+          {
+            "location": [
+              -1.5402402877807617,
+              -2.1480283737182617,
+              2.6034135818481445
+            ],
+            "rotation": [
+              0.8178884983062744,
+              -6.421899456654501e-9,
+              -0.6747409105300903
+            ],
+            "energy": 103.26563262939453,
+            "size": 1.717686414718628
+          },
+          {
+            "location": [
+              2.7539756298065186,
+              -1.2891850471496582,
+              0.8857273459434509
+            ],
+            "rotation": [
+              1.281044602394104,
+              -6.966769205973833e-8,
+              1.1071486473083496
+            ],
+            "energy": 40.568641662597656,
+            "size": 1.717686414718628
+          },
+          {
+            "location": [
+              -0.6813970804214478,
+              1.716766119003296,
+              1.7445706129074097
+            ],
+            "rotation": [
+              0.8410686254501343,
+              4.847489520898307e-8,
+              -2.677945137023926
+            ],
+            "energy": 132.7700958251953,
+            "size": 1.2882647514343262
+          }
+        ],
+        "worldColor": [
+          0.10000000149011612,
+          0.11999999731779099,
+          0.15000000596046448,
+          1
+        ],
+        "worldStrength": 0.44999998807907104,
+        "renderer": "CPU Cycles, exact exported GLB. Not a browser capture."
+      }
+    },
+    "status": "asset-render-comparison-not-browser-acceptance"
+  }
+}

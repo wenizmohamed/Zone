@@ -153,7 +153,7 @@ test('Arabic Defense selection survives repeated view refreshes and sends the ac
 });
 
 test('Gym environment is a bounded scene, separate from energy readout and never stretched to the Train console', () => {
-  const scene = gym.slice(gym.indexOf('<div class="zone-gym-floor-scene">'), gym.indexOf('<div class="zone-gym-floor-readout">'));
+  const scene = gym.slice(gym.indexOf('<div class="zone-gym-floor-scene"'), gym.indexOf('<div class="zone-gym-floor-readout">'));
   assert.match(scene, /<header>/); assert.doesNotMatch(scene, /zone-gym-energy|energyText|energyPct/);
   assert.match(css, /\.zone-gym-floor-scene \{ flex:none; aspect-ratio:16\/9;/);
   const floorRule = css.match(/\.zone-gym-floor \{([^}]+)\}/)[1];

@@ -28,9 +28,14 @@
     } catch (error) { clearTimeout(timer); throw error; }
   };
   const playerPath = /^\/api\/v1\/(?:player|player-combat|player-market|family-activities|world|gameplay|combat|achievements|leaderboards|city\/map|territories|factions|crimes\/[^/]+\/attempt|gym|bank|hospital|travel|casino|jobs|attack|daily|notifications)(?:\/|$)/;
-  const ensure = () => {
+  const sessionExpired = () => {
     if (expired || (identity?.expiresAt && identity.expiresAt * 1000 <= Date.now())) {
       expired = true; document.documentElement.dataset.zonePlayerAccess = 'expired';
+    }
+    return expired;
+  };
+  const ensure = () => {
+    if (sessionExpired()) {
       return Promise.reject(new Error('Player session expired. Open Account to restore your saved character.'));
     }
     if (identity) return Promise.resolve(identity);
@@ -38,6 +43,7 @@
     if (Date.now() < retryAfter) return Promise.reject(new Error('ZONE connection unavailable. Please retry shortly.'));
     pending = boundedRead('/api/v1/auth/session', { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: '{}' })
       .then(async response => {
+        if (response.status === 401) { expired = true; sessionExpired(); }
         const session = await response.json();
         if (!response.ok || typeof session.playerId !== 'string') throw new Error(session.error || 'Unable to establish player access.');
         identity = session;
@@ -52,12 +58,15 @@
       .finally(() => { pending = null; });
     return pending;
   };
-  window.ZoneSession = { ensure, current: () => identity, expired: () => expired, recover: async () => {
+  window.ZoneSession = { ensure, current: () => identity, expired: sessionExpired, recover: async () => {
     retryAfter = 0;
-    if (!expired) return ensure();
+    if (!sessionExpired()) return ensure();
     const response = await boundedRead('/api/v1/auth/account', {credentials:'same-origin', cache:'no-store'});
     const account = await response.json();
-    if (!response.ok || !account.authenticated) throw new Error('Player session expired. Open Account to restore your saved character.');
+    // The real account status returns playerId/username/claimed on success,
+    // not an authenticated boolean. The cookie is still verified again by
+    // auth/session; browser presentation never supplies access or identity.
+    if (!response.ok || typeof account?.playerId !== 'string' || !/^[a-z0-9][a-z0-9-]{2,63}$/.test(account.playerId)) throw new Error('Player session expired. Open Account to restore your saved character.');
     identity = null; expired = false; return ensure();
   } };
   window.fetch = async (input, options) => {
@@ -67,7 +76,7 @@
     const method = String(options?.method || (typeof input === 'object' ? input.method : '') || 'GET').toUpperCase();
     const response = await (playerRequest && method === 'GET' ? boundedRead(input, options) : nativeFetch(input, options));
     if (playerRequest && response.status === 401) {
-      expired = true; document.documentElement.dataset.zonePlayerAccess = 'expired';
+      expired = true; sessionExpired();
     }
     return response;
   };

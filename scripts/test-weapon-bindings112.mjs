@@ -18,10 +18,10 @@ const catalog=context.ZONE_WEAPONS;
 const expected={sniperrifle_2:'dragunov-detail112',sniperrifle_5:'dragunov-detail112',
   sniperrifle_3:'mosin9130-detail112',sniperrifle_6:'mosin9130-detail112'};
 
-test('four actual runtime sniper bindings use the two new sources while v99/v111 remain explicit historical views',()=>{
+test('explicit112 sniper bindings use the two new sources while v99/v111 remain historical views',()=>{
   assert.deepEqual(WEAPON_PRESENTATION_UPGRADES112,expected);assert.deepEqual(manifest.bindings,expected);
   for(const record of historical.records){
-    const current=resolveWeaponAsset(record.key,catalog),v111=resolveWeaponAsset(record.key,catalog,{revision:111}),v99=resolveWeaponAsset(record.key,catalog,{revision:99});
+    const current=resolveWeaponAsset(record.key,catalog,{revision:112}),v111=resolveWeaponAsset(record.key,catalog,{revision:111}),v99=resolveWeaponAsset(record.key,catalog,{revision:99});
     assert.equal(v99.id,record.sourceId);assert.equal(v99.thumbnail,record.thumbnail);
     assert.equal(current.category,v111.category);assert.equal(current.requestedKey,record.key);
     if(expected[record.key]){

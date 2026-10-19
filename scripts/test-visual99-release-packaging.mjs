@@ -8,6 +8,17 @@ const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverag
 const upgrades111 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades111/manifest.json', root), 'utf8'));
 const upgrades112 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades112/manifest.json', root), 'utf8'));
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+
+test('beta116 ships the exact weapon and four bounded Gym images, excluding their production helpers',()=>{
+  const weapon=JSON.parse(readFileSync(new URL('assets/weapons/upgrades116/manifest.json',root),'utf8'));
+  for(const record of weapon.assets)for(const [path,expected] of [[record.path,record.sha256],[record.thumbnail.slice(1),record.thumbnailSha256]]){
+    assert.equal(sha(readFileSync(new URL('public/'+path,root))),expected,path);
+  }
+  const gym=JSON.parse(readFileSync(new URL('art/gym116/provenance.json',root),'utf8'));
+  for(const record of gym.assets)assert.equal(sha(readFileSync(new URL('public/'+record.file,root))),record.sha256,record.file);
+  assert.equal(existsSync(new URL('public/assets/weapons/source-tools/upgrades116',root)),false);
+  assert.equal(existsSync(new URL('public/artifacts/gym116-art-direction.md',root)),false);
+});
 test('candidate upload excludes private sessions, research, artifacts and actual env files', () => {
   const ignore = readFileSync(new URL('.vercelignore', root), 'utf8').split(/\r?\n/);
   for (const path of ['.tools/', 'engine/var/', 'artifacts/', 'screenshots/', 'analysis/', 'brief/', 'idea/', 'docs/', '.claude/', '.github/', 'index.html.bak', 'session_export_love-visualization-20260905.md', 'torn_api_endpoints.json', 'assets/weapons/sources/v99/', 'art/source/launch105-environments/', '.env', '.env.local', '.env.production', '.env.production.local']) assert.ok(ignore.includes(path), path);

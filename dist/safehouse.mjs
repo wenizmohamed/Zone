@@ -1,6 +1,6 @@
 import * as THREE from '../lib/three184/three.module.js';
 import { OrbitControls } from '../lib/three184/OrbitControls.js';
-import { createSafehouseCharacter } from './safehouse-character.mjs?v=114';
+import { createSafehouseCharacter } from './safehouse-character.mjs?v=116';
 import { loadAsset, normalizeAssetObject } from './asset-loader.mjs';
 import { installViewerRuntime } from './viewer-runtime108.mjs';
 

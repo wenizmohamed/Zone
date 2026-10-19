@@ -19,7 +19,8 @@ const weapons = Object.entries(game.items).filter(([, item]) => item.type === 'w
 const coverage = JSON.parse(readFileSync(new URL('assets/weapons/runtime-coverage.json', root), 'utf8'));
 const upgrades111 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades111/manifest.json', root), 'utf8'));
 const upgrades112 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades112/manifest.json', root), 'utf8'));
-const currentAssets = [...upgrades111.assets,...upgrades112.assets];
+const upgrades116 = JSON.parse(readFileSync(new URL('assets/weapons/upgrades116/manifest.json', root), 'utf8'));
+const currentAssets = [...upgrades111.assets,...upgrades112.assets,...upgrades116.assets];
 const digest = data => createHash('sha256').update(data).digest('hex');
 
 test('retained emergency fallback preserves registered metal, polymer, wood and glass palette properties',()=>{
@@ -40,11 +41,11 @@ test('all 51 gameplay identities retain category and engine rules while source r
     assert.equal(d.requestedKey,key);assert.equal(d.category,weaponCategory(key,context.ZONE_WEAPONS));
     const historical=resolveWeaponAsset(key,context.ZONE_WEAPONS,{revision:99});
     assert.equal(historical.id,record.sourceId);assert.equal(historical.thumbnail,'/assets/weapons/thumbnails/'+key+'.png');
-    const currentReceipt=Object.hasOwn(upgrades112.bindings,key)?upgrades112:upgrades111;
+    const currentReceipt=Object.hasOwn(upgrades116.bindings,key)?upgrades116:Object.hasOwn(upgrades112.bindings,key)?upgrades112:upgrades111;
     if(Object.hasOwn(currentReceipt.bindings,key)){
       assert.equal(d.id,currentReceipt.bindings[key]);assert.equal(d.originalSourceId,historical.id);
       assert.ok(d.thumbnail.startsWith('/assets/weapons/upgrades'+currentReceipt.revision+'/'));
-      assert.equal(d.thumbnailCapture,currentReceipt.revision===112?'offline-Blender-Cycles-exported-GLB':'offline-Blender-Cycles');
+      assert.equal(d.thumbnailCapture,currentReceipt.revision>=112?'offline-Blender-Cycles-exported-GLB':'offline-Blender-Cycles');
     }else{assert.equal(d.id,historical.id);assert.equal(d.thumbnail,historical.thumbnail);}
     assert.ok(!d.aiAssisted && !d.id.startsWith('polyy-'),key);
     sources.add(d.id);categories.add(d.category);
@@ -166,7 +167,7 @@ test('serialized inspector exposes actual source diagnostics and thumbnail mode 
   const template=JSON.parse(html.match(/<script type="__bundler\/template">([\s\S]*?)<\/script>/)[1]);
   assert.match(template,/root.userData.zoneWeaponAsset = \{ \.\.\.g.userData.zoneWeaponAsset \}/);
   assert.match(template,/inspection:inspectAsset\(THREE, g\)/);assert.match(template,/requestedKey: String\(key\)/);
-  assert.match(template,/weapon-assets\.js\?v=112/);
+  assert.match(template,/weapon-assets\.js\?v=116/);
   assert.match(template,/stage.dataset.zoneThumbnail = 'true'/);
   assert.match(template,/\.toolbar,\.note\{display:none!important\}/);
   assert.match(template,/stage.dataset.zoneThumbnail === 'true' && id === 'bat'/);

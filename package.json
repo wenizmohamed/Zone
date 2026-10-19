@@ -6,7 +6,7 @@
   "scripts": {
     "verify": "node scripts/verify.mjs",
     "verify:map": "node scripts/verify-map.mjs",
-    "verify:client": "node --test scripts/test-client.mjs scripts/test-route-navigation.mjs scripts/test-home-gym.mjs scripts/test-crime-experience.mjs scripts/test-map-actions.mjs scripts/test-map-navigation110.mjs scripts/test-map-expansion.mjs scripts/test-beta-readiness.mjs scripts/test-beta102-entry.mjs scripts/test-owner-playtest.mjs scripts/test-published-theme115.mjs",
+    "verify:client": "node --test scripts/test-client.mjs scripts/test-route-navigation.mjs scripts/test-home-gym.mjs scripts/test-gym116.mjs scripts/test-crime-experience.mjs scripts/test-map-actions.mjs scripts/test-map-navigation110.mjs scripts/test-map-expansion.mjs scripts/test-beta-readiness.mjs scripts/test-beta102-entry.mjs scripts/test-owner-playtest.mjs scripts/test-published-theme115.mjs",
     "verify:admin": "node --test scripts/test-admin.mjs scripts/test-preview-lifecycle.mjs scripts/test-engine-console.mjs scripts/test-admin-studio.mjs scripts/test-engine-studio-assets.mjs scripts/test-admin-media108.mjs scripts/test-world-policy110.mjs scripts/test-studio-richness.mjs",
     "verify:modules": "node --test scripts/test-module-panel.mjs",
     "verify:viewers": "node --test scripts/test-viewer-runtime.mjs scripts/test-weapon-loading.mjs scripts/test-launch-media.mjs scripts/test-media-richness.mjs scripts/test-universal-media108.mjs scripts/test-uploaded-equipment108.mjs scripts/test-safehouse-readiness109.mjs scripts/test-character-integration114.mjs scripts/test-character-cache114.mjs scripts/test-character-loading115.mjs engine/tests/asset-inspector108.mjs",
@@ -18,11 +18,12 @@
     "engine:test": "powershell -ExecutionPolicy Bypass -File engine/bin/test.ps1",
     "engine:serve": "powershell -ExecutionPolicy Bypass -File engine/bin/serve.ps1",
     "verify:platform": "pwsh -ExecutionPolicy Bypass -File scripts/verify-platform.ps1",
-    "verify:weapons": "node --test scripts/test-weapon-assets.mjs scripts/test-character-poses.mjs scripts/test-character-art.mjs scripts/test-character-polish.mjs scripts/test-character-stock-grip114.mjs scripts/test-weapon-library.mjs scripts/test-weapon-quality.mjs scripts/test-weapon-upgrades111.mjs scripts/test-weapon-upgrades112.mjs scripts/test-weapon-bindings112.mjs",
+    "verify:weapons": "node --test scripts/test-weapon-assets.mjs scripts/test-character-poses.mjs scripts/test-character-art.mjs scripts/test-character-polish.mjs scripts/test-character-stock-grip114.mjs scripts/test-weapon-library.mjs scripts/test-weapon-quality.mjs scripts/test-weapon-upgrades111.mjs scripts/test-weapon-upgrades112.mjs scripts/test-weapon-bindings112.mjs scripts/test-weapon116.mjs scripts/test-weapon-cache116.mjs",
     "verify:ordinary-journey": "node --test scripts/test-ordinary-journey112.mjs",
     "verify:weapon-evidence": "node --test scripts/test-weapon-upgrades112-evidence.mjs",
-    "verify:sessions": "node --test scripts/test-player-session.mjs scripts/test-account.mjs",
-    "verify:relay": "node engine/tests/relay-http.mjs"
+    "verify:sessions": "node --test scripts/test-player-session.mjs scripts/test-account.mjs scripts/test-session-return116.mjs",
+    "verify:relay": "node engine/tests/relay-http.mjs",
+    "verify:release116-http": "node --test scripts/test-session-return116-http.mjs scripts/test-studio-gym116.mjs"
   },
   "engines": {
     "node": "22.x"

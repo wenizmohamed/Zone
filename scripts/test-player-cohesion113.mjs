@@ -69,11 +69,18 @@ test('player logic can evolve while the approved template, shell geometry and sc
   const logicStart=html.indexOf('<script type="text/x-dc"');assert.ok(logicStart>html.indexOf('<body>'));
   // Deferring these existing frame URLs changes startup, not the approved composition.
   // The separate client guard requires both raw native src attributes to be absent.
-  const template=html.slice(html.indexOf('<body>'),logicStart)
+  let template=html.slice(html.indexOf('<body>'),logicStart)
     .replace(/(id="zone-char-3d") data-character-src=/,'$1 src=')
     .replace(/(<iframe id="zone-char-3d"[^>]*?) sc-camel-key="\{\{ characterFrameKey \}\}"/,'$1')
     .replace(/(id="zone-combat-frame" class="zone-combat-host") data-combat-src=/,'$1 src=')
     .replace(/(<iframe) sc-camel-src="dist\/zone-maps-live\.html"/,'$1 src="dist/zone-maps-live.html"')
     .replace(/(id="zone-safehouse-frame") sc-camel-src=/,'$1 src=');
+  // The specifically authorized Gym station cues are pinned separately. Restore
+  // only that exact section before comparing every other approved body byte.
+  const gymPin=JSON.parse(read('scripts/fixtures/gym-layout116.json'));
+  const gymSection=template.slice(template.indexOf('<!-- GYM -->'),template.indexOf('<!-- CITY -->'));
+  assert.equal(hash(gymSection),gymPin.currentSha256,'Gym116 template changed');
+  assert.equal(hash(gymPin.previous),'8105e4e84534f624dbc1af973b10eee73ca078664eb178a72a8d0eafc88217b0','original Gym reference changed');
+  template=template.replace(gymSection,gymPin.previous);
   assert.equal(hash(template.replace(/\?v=\d+/g,'?v=CACHE').replace(/\s*<link href="https:\/\/fonts\.googleapis\.com[^>]+>/,'')),baseline.template);
 });

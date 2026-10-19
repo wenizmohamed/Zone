@@ -1,0 +1,55 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-10-19",
+  "purpose": "Grounded Gym equipment selection cues for ZONE; generated artwork, not photographs of actual premises.",
+  "reference": "art/zone-gym-interior-v105.webp",
+  "referenceSha256": "75dcb1fc63a4d6886089a4ee503b8af3a5a372ffbc473805a532bf35bddfc8da",
+  "prompt": "artifacts/gym116-art-direction.md",
+  "encoding": "FFmpeg libwebp,384x384 Lanczos,quality84,compression_level6,no crop",
+  "assets": [
+    {
+      "station": "str",
+      "file": "art/gym116/strength.webp",
+      "bytes": 31382,
+      "sha256": "374108279b4220464d841f5d7c684ab838ab3565e54bd440dc3d65bb7b8c10e5",
+      "width": 384,
+      "height": 384,
+      "fallback": "art/g_str.jpg",
+      "sourceFile": "exec-5868c80a-9d0b-42e2-a723-e474db9c3acf.png",
+      "sourceSha256": "c2f1ee23826413f9ac4c64061eab33d1f025a8ae8ad133749a3a5605716865ea"
+    },
+    {
+      "station": "def",
+      "file": "art/gym116/defense.webp",
+      "bytes": 28748,
+      "sha256": "d65dad7fb885c7defc998811972fa4ff31c12bd3f55a3080bb529b18d8ec4581",
+      "width": 384,
+      "height": 384,
+      "fallback": "art/g_def.jpg",
+      "sourceFile": "exec-5f468ae7-9891-4244-82ca-e5b94718e118.png",
+      "sourceSha256": "801b657076b89121720a93db9ef4b6194f54ce23b2397714967eec20d7596748"
+    },
+    {
+      "station": "spd",
+      "file": "art/gym116/speed.webp",
+      "bytes": 31430,
+      "sha256": "e31fffeea62313e219ecab185b01361d20c6f3772cfa8d1ff867e98dcb14848a",
+      "width": 384,
+      "height": 384,
+      "fallback": "art/g_spd.jpg",
+      "sourceFile": "exec-87d3f96c-b985-4a35-902a-3108837b7a32.png",
+      "sourceSha256": "dc4c75df363afc09c21b274cd9509d6009bd94be89c0ae0e06dfefa2a641d36b"
+    },
+    {
+      "station": "dex",
+      "file": "art/gym116/dexterity.webp",
+      "bytes": 30422,
+      "sha256": "890cb06bfd9356939f1ce55239f34f6470c1274b501c0dcbc614c0baa92c46c2",
+      "width": 384,
+      "height": 384,
+      "fallback": "art/g_dex.jpg",
+      "sourceFile": "exec-20916969-853c-4de2-91ac-271ed357d168.png",
+      "sourceSha256": "e896a5fc1c029238288e3168e0802b2c1e04529dfa04e9584304f9a24ddcf946"
+    }
+  ]
+}
