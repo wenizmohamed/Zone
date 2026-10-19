@@ -1293,7 +1293,7 @@ function ensureTerritoryMapPreview() {
   if (frame.dataset.language !== state.language || !frame.getAttribute('src')) {
     state.territoryMapReady = false;
     frame.dataset.language = state.language;
-    frame.src = `/dist/city-map-torn.html?v=95&admin=territories&lang=${state.language}`;
+    frame.src = `/dist/city-map-torn.html?v=118&admin=territories&lang=${state.language}`;
   }
 }
 

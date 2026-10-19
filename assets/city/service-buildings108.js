@@ -65,7 +65,7 @@
   }
   function associate(pins,features,{maximumDistance=180}={}){
     const valid=(Array.isArray(features)?features:[]).filter(f=>['Polygon','MultiPolygon'].includes(f.geometry?.type)&&f.properties?.underground!=='true'&&f.properties?.type!=='building:part');
-    const associations=[],unbound=[],anchorCache=new Map();
+    const associations=[],unbound=[],anchorCache=new Map(),destinations=[];
     for(const id of SERVICES){
       const pin=(pins||[]).find(p=>p.id===id&&Array.isArray(p._lngLat));if(!pin)continue;
       const origin=pin._buildingSource||pin._lngLat,candidates=[];
@@ -82,8 +82,40 @@
         }
       }
       candidates.sort((a,b)=>Number(b.containsAuthoredPoint)-Number(a.containsAuthoredPoint)||a.footprintDistanceMeters-b.footprintDistanceMeters||a.distanceMeters-b.distanceMeters||a.providerId.localeCompare(b.providerId)||a.coordinates[0]-b.coordinates[0]||a.coordinates[1]-b.coordinates[1]||String(a.providerTile||'').localeCompare(String(b.providerTile||''))||JSON.stringify(a.polygon).localeCompare(JSON.stringify(b.polygon)));
-      if(!candidates.length){unbound.push(id);continue;}
-      const selected=placeOnOwnedRoof(candidates[0],associations,origin,maximumDistance);
+      // Neighboring tiles may contain several genuine fragments of one roof.
+      // Keep the best fragment for this destination, but reserve its provider
+      // identity only once across the whole assignment.
+      const providers=new Set();
+      destinations.push({id,origin,candidates:candidates.filter(candidate=>{if(providers.has(candidate.providerId))return false;providers.add(candidate.providerId);return true;})});
+    }
+    const reserved=new Set();
+    // Genuine containing ownership precedes every nearest-roof fallback,
+    // including owners appearing later in SERVICES. Shared ownership is valid
+    // only when each owner's authored point really lies in that provider roof.
+    for(const destination of destinations){
+      const candidate=destination.candidates[0];
+      if(candidate?.containsAuthoredPoint){destination.selected=candidate;reserved.add(candidate.providerId);}
+    }
+    const fallbackOwners=new Map();
+    function assignFallback(destination,visited=new Set()){
+      const candidates=destination.candidates.filter(candidate=>!reserved.has(candidate.providerId)&&!visited.has(candidate.providerId));
+      // Preserve the ordinary nearest-free choice. Only an exhausted fallback
+      // may move flexible owners along an augmenting path; genuine owners are
+      // reserved above, and visited providers bound the search to this graph.
+      const free=candidates.find(candidate=>!fallbackOwners.has(candidate.providerId));
+      if(free){destination.selected=free;fallbackOwners.set(free.providerId,destination);return true;}
+      for(const candidate of candidates){
+        visited.add(candidate.providerId);
+        if(assignFallback(fallbackOwners.get(candidate.providerId),visited)){
+          destination.selected=candidate;fallbackOwners.set(candidate.providerId,destination);return true;
+        }
+      }
+      return false;
+    }
+    for(const destination of destinations)if(!destination.selected)assignFallback(destination);
+    for(const {id,origin,selected:owned} of destinations){
+      if(!owned){unbound.push(id);continue;}
+      const selected=placeOnOwnedRoof(owned,associations,origin,maximumDistance);
       associations.push({id,...selected,sourceCoordinates:origin.slice(),source:'actual-provider-footprint',insideRoof:inside(selected.coordinates,selected.polygon)});
     }
     return {associations,unbound,complete:unbound.length===0,source:'actual-provider-footprint',maximumDistance};

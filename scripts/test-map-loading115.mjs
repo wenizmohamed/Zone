@@ -27,7 +27,7 @@ function harness(failures=1){
 test('native Retry overrides the passive notice hit target and the map loads its changed controller at115',()=>{
   assert.match(html,/\.districtDetailStatus\s*\{[^}]*pointer-events\s*:\s*none/);
   assert.match(html,/<button\b[^>]*id="districtSurfaceRetry111"[^>]*pointer-events:auto/);
-  assert.match(html,/<script src="\.\.\/assets\/city\/compact-district\.js\?v=115"><\/script>/);
+  assert.match(html,/<script src="\.\.\/assets\/city\/compact-district\.js\?v=118"><\/script>/);
 });
 
 test('parallel real facade/sign import failures coalesce into one zero-delay retry of their existing APIs',async()=>{
