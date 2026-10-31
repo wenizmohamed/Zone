@@ -22,4 +22,9 @@ final class GangsModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function factionCount(Database $database): int
+    {
+        return (int) (($database->fetchOne('SELECT COUNT(*) AS count FROM factions')['count'] ?? 0));
+    }
 }

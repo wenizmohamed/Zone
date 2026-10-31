@@ -1116,6 +1116,12 @@ try {
     $rlStatEngineWave27 = $engine->rateLimitStatus('founder-player');
     check(($rlStatEngineWave27['enabled'] ?? false) === true && isset($rlStatEngineWave27['remaining'], $rlStatEngineWave27['max']), 'GameEngine rateLimitStatus returns rate limiter status for player');
     check($engine->unreadNotificationCount('founder-player') >= 0, 'GameEngine unreadNotificationCount returns unread notification count for player');
+
+    // --- Wave 28 (zone-beta146): CrimeModule, GangsModule, TerritoriesModule & LeaderboardsModule telemetry ---
+    check(\Zone\Modules\Crime\CrimeModule::enabledCrimeCount($database) >= 31, 'CrimeModule enabledCrimeCount returns enabled crime definition count');
+    check(\Zone\Modules\Gangs\GangsModule::factionCount($database) >= 3, 'GangsModule factionCount returns registered faction count');
+    check(\Zone\Modules\Territories\TerritoriesModule::territoryCount($database) >= 12, 'TerritoriesModule territoryCount returns seeded territory count');
+    check(\Zone\Modules\Leaderboards\LeaderboardsModule::topCashAmount($database) > 0, 'LeaderboardsModule topCashAmount returns highest player cash balance');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

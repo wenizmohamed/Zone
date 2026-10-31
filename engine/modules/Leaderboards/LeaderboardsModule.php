@@ -22,4 +22,9 @@ final class LeaderboardsModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function topCashAmount(Database $database): int
+    {
+        return (int) (($database->fetchOne('SELECT COALESCE(MAX(cash), 0) AS top_cash FROM players')['top_cash'] ?? 0));
+    }
 }

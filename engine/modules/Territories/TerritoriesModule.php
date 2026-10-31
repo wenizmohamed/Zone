@@ -16,4 +16,9 @@ final class TerritoriesModule implements GameModule
         // by the persistence adapter. Gameplay mutations remain behind the
         // application service and publish domain events through EventBus.
     }
+
+    public static function territoryCount(Database $database): int
+    {
+        return (int) (($database->fetchOne('SELECT COUNT(*) AS count FROM territory_blocks WHERE enabled = 1')['count'] ?? 0));
+    }
 }
