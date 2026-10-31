@@ -96,6 +96,16 @@ final class ModuleRegistry
         return $row !== null && (bool) $row['installed'] && (bool) $row['enabled'];
     }
 
+    public function summary(): array
+    {
+        $all = $this->all();
+        return [
+            'total' => count($all),
+            'installed' => count(array_filter($all, static fn (array $m): bool => $m['installed'])),
+            'enabled' => count(array_filter($all, static fn (array $m): bool => $m['installed'] && $m['enabled'])),
+        ];
+    }
+
     private function runtimeEnabled(string $id): bool
     {
         return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleEnabled($id);

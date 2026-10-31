@@ -67,6 +67,15 @@ final readonly class NotificationService
         }, $rows);
     }
 
+    public function unreadCount(string $playerId): int
+    {
+        $row = $this->database->fetchOne(
+            'SELECT COUNT(*) AS total FROM notifications WHERE player_id = :player AND read_at IS NULL',
+            ['player' => $playerId],
+        );
+        return (int) ($row['total'] ?? 0);
+    }
+
     private function barNameAr(string $bar): string
     {
         return match ($bar) {

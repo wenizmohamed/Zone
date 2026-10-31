@@ -629,3 +629,19 @@ test('actual late crime save does not hijack another crime or reset its tool fie
   pending.resolve({ crime: clone(c.crime) }); await saving;
   assert.equal(c.state.selectedCrime, c.other.id); assert.equal(c.q('#crimeTool').value, 'armor'); assert.equal(c.q('#crimeMastery').value, '12');
 });
+
+test('ZoneMedia exposes diagnostics telemetry for library, selection, fit edits and dirty state', async () => {
+  const m = media();
+  assert.equal(m.window.ZoneMedia.diagnostics().loaded, false);
+  await m.load();
+  await m.select(idA);
+  await m.q('#mediaScale').input('1.75');
+  const diag = m.window.ZoneMedia.diagnostics();
+  assert.equal(diag.loaded, true);
+  assert.equal(diag.libraryCount, 2);
+  assert.equal(diag.readyCount, 2);
+  assert.equal(diag.selected, idA);
+  assert.equal(diag.fitEditCount, 1);
+  assert.equal(diag.hasUnsaved, true);
+});
+

@@ -76,6 +76,12 @@ final class ThemeRegistry
         return array_values(array_filter($this->all(), static fn (array $theme): bool => $theme['id'] === $id))[0];
     }
 
+    public function activeTheme(): ?array
+    {
+        $active = array_values(array_filter($this->all(), static fn (array $theme): bool => $theme['installed'] && $theme['active']));
+        return $active[0] ?? null;
+    }
+
     public function activeStylesheet(?string $publishedId = null): string
     {
         $row = $this->database->fetchOne('SELECT id FROM themes WHERE installed = 1 AND active = 1 LIMIT 1');

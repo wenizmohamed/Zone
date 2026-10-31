@@ -28,4 +28,16 @@ final readonly class Ledger
             ],
         );
     }
+
+    public function summary(string $playerId): array
+    {
+        $row = $this->database->fetchOne(
+            "SELECT COUNT(*) AS total_entries, COALESCE(SUM(CASE WHEN asset = 'cash' THEN amount ELSE 0 END), 0) AS net_cash_flow FROM economy_ledger WHERE player_id = :player",
+            ['player' => $playerId],
+        );
+        return [
+            'totalEntries' => (int) ($row['total_entries'] ?? 0),
+            'netCashFlow' => (int) ($row['net_cash_flow'] ?? 0),
+        ];
+    }
 }

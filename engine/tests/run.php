@@ -1002,6 +1002,19 @@ try {
     $assetLibWave19 = new \Zone\Engine\Core\Media\AssetLibrary($database, dirname($databasePath) . '/assets-' . bin2hex(random_bytes(4)));
     $assetHealthWave19 = $assetLibWave19->health();
     check(isset($assetHealthWave19['totalAssets'], $assetHealthWave19['readyAssets']) && $assetHealthWave19['totalAssets'] === 0 && $assetHealthWave19['readyAssets'] === 0, 'AssetLibrary health exposes totalAssets and readyAssets');
+
+    // --- Wave 20 (zone-beta138): NotificationService unreadCount, Ledger summary, ModuleRegistry summary & ThemeRegistry activeTheme ---
+    $notifWave20 = new \Zone\Engine\Core\Game\NotificationService($database);
+    check($notifWave20->unreadCount('founder-player') >= 0, 'NotificationService unreadCount returns non-negative integer');
+    $ledgerWave20 = new Ledger($database);
+    $ledgerSummaryWave20 = $ledgerWave20->summary('founder-player');
+    check(isset($ledgerSummaryWave20['totalEntries'], $ledgerSummaryWave20['netCashFlow']) && $ledgerSummaryWave20['totalEntries'] > 0, 'Ledger summary exposes totalEntries and netCashFlow');
+    $modRegWave20 = new \Zone\Engine\Core\Modules\ModuleRegistry($database, new EventBus($database), dirname(__DIR__) . '/modules');
+    $modSumWave20 = $modRegWave20->summary();
+    check(isset($modSumWave20['total'], $modSumWave20['installed'], $modSumWave20['enabled']) && $modSumWave20['total'] >= $modSumWave20['enabled'] && $modSumWave20['total'] > 0, 'ModuleRegistry summary exposes total, installed and enabled counts');
+    $themeRegWave20 = new \Zone\Engine\Core\Themes\ThemeRegistry($database, dirname(__DIR__) . '/themes');
+    $activeThemeWave20 = $themeRegWave20->activeTheme();
+    check($activeThemeWave20 !== null && isset($activeThemeWave20['id'], $activeThemeWave20['active']) && $activeThemeWave20['active'] === true, 'ThemeRegistry activeTheme returns the currently active installed theme');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
