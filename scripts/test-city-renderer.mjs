@@ -32,7 +32,9 @@ async function harness() {
 test('3D waits for asynchronous shader preparation and keeps flat rendering available',async()=>{
   const h=await harness();h.controller.setTerritories(h.features);h.pitch(35);h.render();assert.equal(h.renders,0);
   assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,false);
+  assert.equal(h.controller.getDiagnostics().shadersReady,false);
   h.warmups[0].resolve();await h.controller.whenReady();h.flush();h.render();assert.equal(h.renders,1);assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,true);
+  assert.equal(h.controller.getDiagnostics().shadersReady,true);
 });
 
 test('pan, zoom, pitch and resize reuse instance buffers instead of allocating and disposing meshes',async()=>{

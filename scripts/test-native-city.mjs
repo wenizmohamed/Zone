@@ -13,6 +13,9 @@ function harness(){
 const turn=()=>new Promise(resolve=>setImmediate(resolve));
 test('native overhead and 3D share exact roof footprints and real rooftop geometry',()=>{
   const plan=atlas.createPlan([cell()]),out=city.compile(plan),roofs=out.data.features.filter(f=>f.properties.kind==='building');
+  const planSummary=atlas.summarizePlan(plan);
+  assert.equal(planSummary.blockCount,1);assert.equal(planSummary.roofCount,plan.roofs.length);
+  assert.equal(planSummary.roofKinds.flat+planSummary.roofKinds.sawtooth+planSummary.roofKinds.glass,plan.roofs.length);
   assert.equal(roofs.length,plan.roofs.length);assert.equal(out.stats.pixels,0);assert.equal(out.stats.source,'native-city-geometry');
   roofs.forEach((f,i)=>{assert.deepEqual(f.geometry.coordinates[0].slice(0,4),plan.roofs[i].corners);assert.ok(f.properties.height>0);});
   const gear=out.data.features.filter(f=>f.properties.kind==='detail');assert.ok(gear.length>=roofs.length*3);assert.ok(gear.every(f=>f.properties.height>f.properties.base));
@@ -31,7 +34,9 @@ test('world updates use native GeoJSON and keep one stable source through camera
   assert.equal(h.layers.get('zone-buildings-3d').paint['fill-extrusion-opacity'],1);
   for(let i=0;i<30;i++){h.pitch(i%2?35:0);city.setPerspective(h.map,i%2);h.emit('move');h.emit('moveend');}
   assert.equal(h.sources.get('zone-city-atlas'),source);assert.equal(source.updates,1);assert.equal(h.repaints,0);assert.equal(h.listeners.has('move'),false);
-  city.updateLabels(h.map,[{...cell(),properties:{districtId:'north',districtName:'الشمال'}}]);assert.equal(source.updates,1);assert.equal(h.sources.get('zone-city-districts').data.features[0].properties.name,'الشمال');control.dispose();
+  city.updateLabels(h.map,[{...cell(),properties:{districtId:'north',districtName:'الشمال'}}]);assert.equal(source.updates,1);assert.equal(h.sources.get('zone-city-districts').data.features[0].properties.name,'الشمال');
+  assert.equal(control.diagnostics().status,'ready');assert.equal(control.diagnostics().visible,true);
+  control.dispose();assert.equal(control.diagnostics().status,'uninstalled');
 });
 test('3D waits for a real native paint and hides cancel preparation without an error',async()=>{
   const h=harness();city.install(h.map,[cell()]);await turn();const control=city.controller(h.map);let ready=false;

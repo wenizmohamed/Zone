@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements } = require('../dist/city-layout.js');
+const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements } = require('../dist/city-layout.js');
 const cell = (id, x=0) => ({type:'Feature',id,properties:{ownerId:'vipers'},geometry:{type:'Polygon',coordinates:[[[x,0],[x+1,0],[x+1,1],[x,1],[x,0]]]}});
 
 test('placements are deterministic and remain within their authoritative blocks',()=>{
@@ -100,4 +100,7 @@ test('view culling preserves state and enforces explicit mobile geometry budgets
   assert.ok(selected.filter(p=>!p.model.startsWith('building_')).length<=80);
   assert.ok(selected.every(p=>data.includes(p)&&p.coordinates[0]!==Number.MAX_VALUE));
   assert.equal(JSON.stringify(data),before);
+  const summary=summarizePlacements(selected);
+  assert.equal(summary.total,selected.length);
+  assert.ok(summary.buildings<=140&&summary.cars<=80&&summary.averageBuildingWidth===80);
 });

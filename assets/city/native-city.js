@@ -183,7 +183,7 @@
     const labels=[...groups].map(([id,d])=>({type:'Feature',properties:{id,name:d.name},geometry:{type:'Point',coordinates:d.points.reduce((sum,p)=>[sum[0]+p[0]/d.points.length,sum[1]+p[1]/d.points.length],[0,0])}}));
     map.getSource('zone-city-districts')?.setData({type:'FeatureCollection',features:labels});
   }
-  function controller(map){return {whenReady(){const entry=entries.get(map);if(!entry)return Promise.reject(new Error('City is loading'));return entry.ready.then(()=>{if(entries.get(map)===entry&&entry.visible)return waitForPaint(map,entry);});},setTerritories(){},setVisible(value){const entry=entries.get(map);if(entry){entry.visible=!!value;entry.sourceVisibility?.();if(!value){entry.cancelPaint?.();map.stop?.();}publish(map);}},dispose:()=>remove(map)};}
+  function controller(map){return {whenReady(){const entry=entries.get(map);if(!entry)return Promise.reject(new Error('City is loading'));return entry.ready.then(()=>{if(entries.get(map)===entry&&entry.visible)return waitForPaint(map,entry);});},diagnostics(){const entry=entries.get(map);return {status:entry?.status??'uninstalled',visible:Boolean(entry?.visible),artReady:Boolean(entry?.artReady),workerUsed:Boolean(entry?.workerUsed),stats:entry?.stats?{...entry.stats}:null};},setTerritories(){},setVisible(value){const entry=entries.get(map);if(entry){entry.visible=!!value;entry.sourceVisibility?.();if(!value){entry.cancelPaint?.();map.stop?.();}publish(map);}},dispose:()=>remove(map)};}
   function remove(map){
     const entry=entries.get(map);entries.delete(map);entry?.cancelBuild?.();entry?.cancelSource?.();entry?.cancelPaintReady?.();entry?.cancelArt?.();
     if(map.getLayer(ART_SOURCE))map.removeLayer(ART_SOURCE);if(map.getSource(ART_SOURCE))map.removeSource(ART_SOURCE);

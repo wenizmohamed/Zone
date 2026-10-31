@@ -141,6 +141,7 @@ export async function installCityLandmarks(map){
       if(placements.length){const center=placements.reduce((sum,p)=>[sum[0]+p.coordinates[0]/placements.length,sum[1]+p.coordinates[1]/placements.length],[0,0]);origin=mapboxgl.MercatorCoordinate.fromLngLat(center,0);const meter=origin.meterInMercatorCoordinateUnits();local.makeTranslation(origin.x,origin.y,origin.z).scale(new THREE.Vector3(meter,-meter,meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));prepareResources();}
     },
     whenReady(){return warmPromise;},
+    getDiagnostics(){return {...diagnostics};},
     setVisible(value){visible=!!value;diagnostics.visible=visible;publish();if(visible)scheduleRebuild();map.triggerRepaint();},
     dispose(){restoreNative();if(map.getLayer(LAYER_ID))map.removeLayer(LAYER_ID);if(map.getLayer('zone-city-streets'))map.removeLayer('zone-city-streets');if(map.getSource('zone-city-streets'))map.removeSource('zone-city-streets');globalThis.ZoneCityAtlas.remove(map);}
   };

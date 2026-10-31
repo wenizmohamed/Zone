@@ -147,5 +147,20 @@
   }
   function removePerspective(map){if(map.getLayer('zone-city-ground-atlas'))map.removeLayer('zone-city-ground-atlas');if(map.getSource('zone-city-ground-atlas'))map.removeSource('zone-city-ground-atlas');}
   function remove(map){removePerspective(map);plans.delete(map);for(const id of ['zone-city-district-labels','zone-city-atlas'])if(map.getLayer(id))map.removeLayer(id);for(const id of ['zone-city-districts','zone-city-atlas'])if(map.getSource(id))map.removeSource(id);}
-  return {createPlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
+  function summarizePlan(plan){
+    const blocks=Array.isArray(plan?.blocks)?plan.blocks:[],roofs=Array.isArray(plan?.roofs)?plan.roofs:[],labels=Array.isArray(plan?.labels)?plan.labels:[];
+    return {
+      blockCount:blocks.length,
+      roofCount:roofs.length,
+      districtCount:labels.length,
+      industrialBlocks:blocks.filter(b=>b?.industrial).length,
+      parkBlocks:blocks.filter(b=>b?.park).length,
+      roofKinds:{
+        flat:roofs.filter(r=>r?.kind==='flat').length,
+        sawtooth:roofs.filter(r=>r?.kind==='sawtooth').length,
+        glass:roofs.filter(r=>r?.kind==='glass').length
+      }
+    };
+  }
+  return {createPlan,summarizePlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
 });

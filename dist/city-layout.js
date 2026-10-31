@@ -77,5 +77,20 @@
     let buildings=0,props=0;
     return visible.filter(({item})=>item.model.startsWith('building_')?++buildings<=(mobile?140:380):++props<=(mobile?80:180)).map(({item})=>item);
   }
-  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements};
+  function summarizePlacements(placements){
+    const list=Array.isArray(placements)?placements:[];
+    const buildings=list.filter(item=>String(item?.model||'').startsWith('building_'));
+    const avgWidth=buildings.length?Number((buildings.reduce((sum,item)=>sum+(Number(item.width)||0),0)/buildings.length).toFixed(2)):0;
+    return {
+      total:list.length,
+      buildings:buildings.length,
+      cars:list.filter(item=>item?.model==='car_sedan').length,
+      bushes:list.filter(item=>item?.model==='bush').length,
+      streetlights:list.filter(item=>item?.model==='streetlight').length,
+      uniqueBlocks:new Set(list.map(item=>item?.blockId).filter(Boolean)).size,
+      uniqueModels:new Set(list.map(item=>item?.model).filter(Boolean)).size,
+      averageBuildingWidth:avgWidth
+    };
+  }
+  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements};
 });
