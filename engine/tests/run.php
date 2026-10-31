@@ -988,6 +988,20 @@ try {
     check(isset($atkWave13['winChancePct'], $atkWave13['npcDefense']) && $atkWave13['winChancePct'] > 0 && $atkWave13['npcDefense'] > 0, 'attackNpc exposes winChancePct and npcDefense');
     $adminCrimesWave13 = $engine->adminCrimes();
     check(!empty($adminCrimesWave13) && isset($adminCrimesWave13[0]['expectedCashPerNerve']) && $adminCrimesWave13[0]['expectedCashPerNerve'] > 0, 'ContentManager normalizeCrime exposes expectedCashPerNerve');
+
+    // --- Wave 19 (zone-beta137): AssetLibrary health, ResourceService derived stats, CooldownService & RateLimiter telemetry ---
+    $playerWave19 = $engine->player('founder-player');
+    check(isset($playerWave19['total_battle_stats'], $playerWave19['net_worth']) && $playerWave19['total_battle_stats'] === ($playerWave19['strength'] + $playerWave19['defense'] + $playerWave19['speed'] + $playerWave19['dexterity']) && $playerWave19['net_worth'] === ($playerWave19['cash'] + $playerWave19['bank_balance']), 'ResourceService normalize exposes total_battle_stats and net_worth');
+    $cdServiceWave19 = new CooldownService($database);
+    $cdServiceWave19->arm('founder-player', 'test-wave19', 30);
+    check($cdServiceWave19->remainingSeconds('founder-player', 'test-wave19') > 0 && $cdServiceWave19->remainingSeconds('founder-player', 'nonexistent-action') === 0, 'CooldownService remainingSeconds returns active remaining seconds and 0 when ready');
+    $rlWave19 = new RateLimiter($database, 10, 60);
+    $rlWave19->hit('wave19-rate-test-player');
+    $rlStatusWave19 = $rlWave19->status('wave19-rate-test-player');
+    check($rlStatusWave19['enabled'] === true && $rlStatusWave19['max'] === 10 && $rlStatusWave19['remaining'] === 9, 'RateLimiter status exposes enabled, count, max and remaining');
+    $assetLibWave19 = new \Zone\Engine\Core\Media\AssetLibrary($database, dirname($databasePath) . '/assets-' . bin2hex(random_bytes(4)));
+    $assetHealthWave19 = $assetLibWave19->health();
+    check(isset($assetHealthWave19['totalAssets'], $assetHealthWave19['readyAssets']) && $assetHealthWave19['totalAssets'] === 0 && $assetHealthWave19['readyAssets'] === 0, 'AssetLibrary health exposes totalAssets and readyAssets');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

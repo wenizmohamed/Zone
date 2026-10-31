@@ -58,4 +58,25 @@ final readonly class RateLimiter
             ['player' => $playerId],
         );
     }
+
+    public function status(string $playerId): array
+    {
+        if ($this->max <= 0) {
+            return ['enabled' => false, 'count' => 0, 'max' => $this->max, 'remaining' => 0, 'windowSeconds' => $this->windowSeconds];
+        }
+        $now = time();
+        $row = $this->database->fetchOne(
+            'SELECT window_started_at, count FROM action_rate_limits WHERE player_id = :player',
+            ['player' => $playerId],
+        );
+        if ($row === null) {
+            return ['enabled' => true, 'count' => 0, 'max' => $this->max, 'remaining' => $this->max, 'windowSeconds' => $this->windowSeconds];
+        }
+        $windowStart = strtotime((string) $row['window_started_at']) ?: 0;
+        if (($now - $windowStart) >= $this->windowSeconds) {
+            return ['enabled' => true, 'count' => 0, 'max' => $this->max, 'remaining' => $this->max, 'windowSeconds' => $this->windowSeconds];
+        }
+        $count = (int) $row['count'];
+        return ['enabled' => true, 'count' => $count, 'max' => $this->max, 'remaining' => max(0, $this->max - $count), 'windowSeconds' => $this->windowSeconds];
+    }
 }

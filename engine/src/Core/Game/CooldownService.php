@@ -58,4 +58,17 @@ final readonly class CooldownService
             );
         }
     }
+
+    public function remainingSeconds(string $playerId, string $action): int
+    {
+        $row = $this->database->fetchOne(
+            'SELECT available_at FROM action_cooldowns WHERE player_id = :player AND action = :action',
+            ['player' => $playerId, 'action' => $action],
+        );
+        if ($row === null) {
+            return 0;
+        }
+        $availableAt = strtotime((string) $row['available_at']) ?: 0;
+        return max(0, $availableAt - time());
+    }
 }

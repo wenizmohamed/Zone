@@ -236,8 +236,10 @@ final class AssetLibrary
     {
         $counts = $this->db->fetchAll('SELECT status,COUNT(*) AS count FROM asset_jobs GROUP BY status'); $queue = [];
         foreach ($counts as $row) $queue[$row['status']] = (int) $row['count'];
+        $totalAssetsRow = $this->db->fetchOne('SELECT COUNT(*) AS count FROM asset_library');
+        $readyAssetsRow = $this->db->fetchOne("SELECT COUNT(*) AS count FROM asset_library WHERE status='ready'");
         $heartbeats = $this->db->fetchAll('SELECT id,updated_at,payload_json FROM worker_heartbeats ORDER BY updated_at DESC LIMIT 10');
-        return ['queue' => $queue, 'workers' => array_map(static function (array $row): array {
+        return ['queue' => $queue, 'totalAssets' => (int) ($totalAssetsRow['count'] ?? 0), 'readyAssets' => (int) ($readyAssetsRow['count'] ?? 0), 'workers' => array_map(static function (array $row): array {
             $payload = json_decode($row['payload_json'], true, 16, JSON_THROW_ON_ERROR);
             return ['id' => $row['id'], 'updatedAt' => (int) $row['updated_at'], 'healthy' => (int) $row['updated_at'] >= time() - 100 && ($payload['status'] ?? '') === 'running', 'payload' => $payload];
         }, $heartbeats), 'limits' => ['uploadBytes' => self::MAX_UPLOAD_BYTES, 'chunkBytes' => self::CHUNK_BYTES, 'expandedBytes' => SafeBundle::MAX_EXPANDED_BYTES, 'bundleMembers' => SafeBundle::MAX_MEMBERS]];

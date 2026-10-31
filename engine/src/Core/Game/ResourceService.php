@@ -73,6 +73,8 @@ final readonly class ResourceService
         foreach (['level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance'] as $field) {
             $player[$field] = (int) $player[$field];
         }
+        $player['total_battle_stats'] = $player['strength'] + $player['defense'] + $player['speed'] + $player['dexterity'];
+        $player['net_worth'] = $player['cash'] + $player['bank_balance'];
         return $player;
     }
 }
