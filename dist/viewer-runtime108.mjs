@@ -25,5 +25,6 @@ export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHid
   function dispose() { if (disposed) return; disposed = true; clearTimeout(deadline); sync(); observer?.disconnect();
     canvas.removeEventListener('webglcontextlost', onLost); document.removeEventListener('visibilitychange', sync);
     removeEventListener('pagehide', onPageHide); removeEventListener('error', onError); removeEventListener('unhandledrejection', onError); }
-  return { start() { if (disposed || failed) return; clearTimeout(deadline); document.body.dataset.zoneMediaState = 'ready'; ready?.(); sync(); }, fail: errorState, dispose };
+  function diagnostics() { return { disposed, failed, intersecting, active: frame !== null, pauseWhenHidden }; }
+  return { start() { if (disposed || failed) return; clearTimeout(deadline); document.body.dataset.zoneMediaState = 'ready'; ready?.(); sync(); }, fail: errorState, diagnostics, dispose };
 }

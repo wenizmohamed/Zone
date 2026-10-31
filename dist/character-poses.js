@@ -29,6 +29,16 @@ export function prepareWeaponPose(THREE, root, gripRig) {
   return rig;
 }
 
+export function inspectWeaponPoseRig(rig) {
+  if (!rig) return null;
+  return {
+    hasChest: !!rig.chest,
+    rightArmLengthsM: [Number((rig.right?.upperLength || 0).toFixed(5)), Number((rig.right?.lowerLength || 0).toFixed(5))],
+    leftArmLengthsM: [Number((rig.left?.upperLength || 0).toFixed(5)), Number((rig.left?.lowerLength || 0).toFixed(5))],
+    leftFingerCount: Array.isArray(rig.leftFingers) ? rig.leftFingers.length : 0,
+  };
+}
+
 function worldQuaternion(rig, bone, desired) {
   const parent = bone.parent.getWorldQuaternion(new rig.THREE.Quaternion()).invert();
   bone.quaternion.copy(parent.multiply(desired));

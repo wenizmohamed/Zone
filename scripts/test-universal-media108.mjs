@@ -185,7 +185,9 @@ test('published map model is measured mesh geometry on the matched service roof 
   h.layers.get('zone-published-map-media').render(null,{defaultProjectionData:{mainMatrix:new THREE.Matrix4().toArray()}});
   const actual=group.position.clone().applyMatrix4(renderer.camera.projectionMatrix),expected=h.mercator.fromLngLat(pin._lngLat),units=expected.meterInMercatorCoordinateUnits();
   assert.ok(Math.abs(actual.x-expected.x)<1e-10);assert.ok(Math.abs(actual.y-expected.y)<1e-10);assert.ok(Math.abs(actual.z-(20.4+.25)*units)<1e-10);
-  assert.equal(control.diagnostics.bindings[0].providerId,'actual-roof-42');assert.deepEqual(Array.from(control.diagnostics.bindings[0].coordinates),pin._lngLat);control.dispose();
+  assert.equal(control.diagnostics.bindings[0].providerId,'actual-roof-42');assert.deepEqual(Array.from(control.diagnostics.bindings[0].coordinates),pin._lngLat);
+  const snap=control.getDiagnostics();assert.equal(snap.status,'ready');assert.equal(snap.bindings.length,1);snap.bindings[0].providerId='mutated';assert.equal(control.diagnostics.bindings[0].providerId,'actual-roof-42');
+  control.dispose();
 });
 test('map attachment respects flat, distant, hidden and invalid projection views and releases resources once',async()=>{
   const h=mapMediaHarness(),control=await h.scope.createMapMedia(h.map,[mediaPin()]),layer=h.layers.get('zone-published-map-media'),renderer=h.renderers[0],matrix=new THREE.Matrix4().toArray();

@@ -7,7 +7,7 @@ const LAYER='zone-published-map-media',HASH=/^[a-f0-9]{64}$/;
 // neighboring roof. The matching target ID must already have a measured roof.
 export async function createMapMedia(map,pins,isActive=()=>true){
   const entries=pins.filter(pin=>HASH.test(pin.mediaAsset||'')&&pin._buildingAssociation?.insideRoof===true);
-  if(!entries.length)return{setVisible(){},dispose(){},diagnostics:{status:'empty',bindings:[]}};
+  if(!entries.length)return{setVisible(){},dispose(){},diagnostics:{status:'empty',bindings:[]},getDiagnostics(){return{status:'empty',bindings:[]};}};
   if(map.getLayer(LAYER))throw Error('Published map asset layer already exists');
   let disposed=false,visible=true,prepared=false,renderer,scene,camera,local,preparing;
   const records=[],controllers=[],diagnostics={status:'loading',representation:'matched-service-rooftop-attachment',bindings:[],calls:0,triangles:0,continuousAnimation:false};
@@ -23,7 +23,7 @@ export async function createMapMedia(map,pins,isActive=()=>true){
     }));
     const failed=results.find(r=>r.status==='rejected');if(failed)throw failed.reason;
   }catch(error){release();diagnostics.status='error';diagnostics.error=error.message;publish();throw error;}
-  if(!isActive()){release();diagnostics.status='cancelled';publish();return{setVisible(){},dispose(){},diagnostics};}
+  if(!isActive()){release();diagnostics.status='cancelled';publish();return{setVisible(){},dispose(){},diagnostics,getDiagnostics(){return{...diagnostics,bindings:diagnostics.bindings.map(b=>({...b}))};}};}
   const average=entries.reduce((s,p)=>[s[0]+p._lngLat[0]/entries.length,s[1]+p._lngLat[1]/entries.length],[0,0]);
   const origin=mapboxgl.MercatorCoordinate.fromLngLat(average,0),meter=origin.meterInMercatorCoordinateUnits();
   local=new THREE.Matrix4().makeTranslation(origin.x,origin.y,origin.z).scale(new THREE.Vector3(meter,-meter,meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
@@ -44,5 +44,5 @@ export async function createMapMedia(map,pins,isActive=()=>true){
     camera.projectionMatrix.fromArray(projection).multiply(local);renderer.resetState();renderer.render(scene,camera);renderer.resetState();diagnostics.calls=renderer.info.render.calls;diagnostics.triangles=renderer.info.render.triangles;publish();
   },onRemove(){if(disposed)return;disposed=true;release();renderer?.dispose();diagnostics.status='disposed';publish();}};
   try{map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);await preparing;}catch(error){if(!disposed){if(map.getLayer(LAYER))map.removeLayer(LAYER);else layer.onRemove();}throw error;}
-  return{diagnostics,setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(LAYER))map.removeLayer(LAYER);else layer.onRemove();}};
+  return{diagnostics,getDiagnostics(){return{...diagnostics,bindings:diagnostics.bindings.map(b=>({...b}))};},setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(LAYER))map.removeLayer(LAYER);else layer.onRemove();}};
 }

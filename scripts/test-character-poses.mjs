@@ -65,6 +65,12 @@ for (const file of ['Casual_Hoodie','Suit','Swat']) {
   mixer.clipAction(clips.Idle).play(); mixer.setTime(.01); model.updateMatrixWorld(true);
   const grip=prepareCharacterGrip(THREE,model,clips), bones={}; model.traverse(node=>{if(node.isBone) bones[node.name.replace(/[._-]/g,'')]=node;});
   const poseRig = usePose ? poseModule.prepareWeaponPose(THREE,model,grip) : null;
+  if (usePose) {
+    const inspected = poseModule.inspectWeaponPoseRig(poseRig);
+    assert.equal(inspected.hasChest, true);
+    assert.equal(inspected.leftFingerCount, 19);
+    assert.ok(inspected.rightArmLengthsM[0] > 0.15 && inspected.rightArmLengthsM[1] > 0.20);
+  }
   applyCharacterGrip(grip); model.updateMatrixWorld(true);
   // Use the actual portrait camera, not the legacy viewer azimuth, when
   // measuring whether the broad blade face survives the Home-card framing.

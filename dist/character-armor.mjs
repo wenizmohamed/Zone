@@ -86,5 +86,8 @@ export function createArmorController({THREE,loadSource,publish=()=>{},queueFram
     try { const source=await loadSource();if(disposed || seq!==generation)return;active=createWornVest(THREE,actor,source.scene || source);publishLatest({status:'ready'});queueFrame(); }
     catch(error){if(disposed || seq!==generation)return;publishLatest({status:'unrepresented',reason:'worn-asset-unavailable'});queueFrame();}
   }
-  return {update,dispose(){disposed=true;++generation;clear();}};
+  function diagnostics() {
+    return { disposed, generation, hasActiveVest: !!active, latestReceipt: latestReceipt ? { ...latestReceipt } : null, lastDetails: { ...lastDetails } };
+  }
+  return {update,diagnostics,dispose(){disposed=true;++generation;clear();}};
 }
