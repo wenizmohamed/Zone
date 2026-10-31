@@ -1268,11 +1268,12 @@ class Component extends DCLogic {
   }
   playerActivityView() {
     const source = this.modulePanel?.view(this.state.lang);
+    const totalBattleScore = num(Object.values(this.p.stats).reduce((a, b) => a + b, 0));
     const stats = ['str','def','spd','dex'].map(id => ({ label: T[this.state.lang][id], value: num(this.p.stats[id]) }));
-    if (!source) return { available: false, stats };
+    if (!source) return { available: false, totalBattleScore, stats };
     const ar = this.state.lang === 'ar', disabled = this.gameplayDisabled() || !!this.moduleBusy;
-    return { ...source, available: true, hasContract: !!source.contract, hasStreak: !!source.streak,
-      contract: source.contract ? { ...source.contract, reward: money(source.contract.rewardCash) + ' · ' + num(source.contract.rewardXp) + ' XP', disabled: disabled || !source.contract.canClaim, claim: () => this.claimPlayerReward('daily'), open: () => this.go(this.enabledDestination(source.contract.screen || 'missions')), openLabel: ar ? 'تابع الهدف' : 'Continue objective' } : {},
+    return { ...source, available: true, totalBattleScore, hasContract: !!source.contract, hasStreak: !!source.streak,
+      contract: source.contract ? { ...source.contract, progressPct: source.contract.target > 0 ? Math.min(100, Math.round((Number(source.contract.progress || 0) / Number(source.contract.target)) * 100)) : 0, remaining: Math.max(0, Number(source.contract.target || 0) - Number(source.contract.progress || 0)), reward: money(source.contract.rewardCash) + ' · ' + num(source.contract.rewardXp) + ' XP', disabled: disabled || !source.contract.canClaim, claim: () => this.claimPlayerReward('daily'), open: () => this.go(this.enabledDestination(source.contract.screen || 'missions')), openLabel: ar ? 'تابع الهدف' : 'Continue objective' } : {},
       streak: { ...(source.streak || {}), disabled: disabled || !source.streak?.canClaim, claim: () => this.claimPlayerReward('login') },
       refresh: () => this.loadPlayerActivity(), refreshDisabled: source.loading || !!source.pending,
       hasAchievements: source.achievements.length > 0, hasNotifications: source.notifications.length > 0,
@@ -1453,7 +1454,8 @@ class Component extends DCLogic {
       faction:block.ownerFactionId,factionName:(block.ownerName&&block.ownerName[lang])||copy.neutral,color:block.ownerColor||territoryMap.neutralColor||'#68717b',
        status:block.state==='contested'?copy.contested:(block.ownerFactionId?copy.owned:copy.neutral),contested:block.state==='contested',eligible:canAct,
       benefit:benefit?{type:benefit.key,label:(benefit.name&&benefit.name[lang])||benefit.key,value:benefit.value,unit:benefit.unit,active:benefit.active}:null,
-       actionType:block.action,actionLabel:block.action?copy[block.action]:copy.unavailable,canAct,availableEnergy:energy,
+      benefitSummary:benefit?((benefit.name&&benefit.name[lang])||benefit.key)+' +'+(benefit.unit==='basis_points'?(Number(benefit.value||0)/100)+'%':benefit.value):(lang==='ar'?'نقطة نفوذ استراتيجية':'Strategic control point'),
+       actionType:block.action,actionLabel:block.action?copy[block.action]:copy.unavailable,canAct,availableEnergy:energy,energyDeficit:Math.max(0,Number(block.actionEnergyCost||0)-energy),
        actionReason:!block.action?block.actionReason:unavailable?(lang==='ar'?'الإجراء غير متاح الآن. تحقق من حالتك واتصال الخادم.':'Action unavailable now. Check your status and server connection.'):!affordable?(lang==='ar'?'الطاقة غير كافية. المتاح: ':'Not enough energy. Available: ')+energy+' / '+Number(block.actionEnergyCost):block.actionReason,
        here:hp&&hp.blockId===block.id
     }; });
@@ -2561,7 +2563,7 @@ class Component extends DCLogic {
       pins: PINS.map(([pl, s, cat, x, y]) => ({ label: t.places[pl] || t.nav[pl], go: () => this.go(s), color: PINCOLOR[cat], colorLite: LIGHTEN(PINCOLOR[cat], .42), d: MICON[PINICON[pl]] || MICON.missions, x, y })),
       herePin: (() => { const pn = PINS.find(q => q[1] === (this.state.lastScreen || 'home')) || PINS[0]; return { x: pn[3], y: pn[4] + 1.5 }; })(),
       legend: Object.keys(PINCOLOR).map(k => ({ color: PINCOLOR[k], colorLite: LIGHTEN(PINCOLOR[k], .42), label: t.legend[k], d: MICON[{ fin: 'cash', admin: 'hof', shop: 'market', leisure: 'casino', estate: 'properties', misc: 'crimes' }[k]] })),      travelLabel: (lang === 'ar' ? 'السفر · ٢٬٥٠٠$ · حتى ٣٠ دقيقة' : 'Travel · $2,500 · Up to 30 min'),
-      travelDests: ['Zone City', 'Riyadh', 'Dubai', 'Cairo', 'Beirut', 'Istanbul'].map(city => { const here = (p.city || 'Zone City') === city; return { id: city, name: this.cityName(city), here, disabled: here || p.travel?.status === 'traveling' || !!this.travelBusy, bg: here ? 'var(--activebg)' : 'var(--btn)', fg: here ? 'var(--activefg)' : 'var(--t3)', go: () => this.act(() => this.travel(city)) }; }),
+      travelDests: ['Zone City', 'Riyadh', 'Dubai', 'Cairo', 'Beirut', 'Istanbul'].map(city => { const here = (p.city || 'Zone City') === city; return { id: city, name: this.cityName(city), here, cost: money(2500), canAfford: p.cash >= 2500, disabled: here || p.travel?.status === 'traveling' || !!this.travelBusy, bg: here ? 'var(--activebg)' : 'var(--btn)', fg: here ? 'var(--activefg)' : 'var(--t3)', go: () => this.act(() => this.travel(city)) }; }),
       districts: DISTRICTS.map(dd => ({ ...dd, name: t.districts[dd.id], here: p.lastDistrict === dd.id, places: dd.places.map(([pl, s]) => ({ label: t.places[pl], go: () => this.go(s) })) })),
       opps: [...OPPS].sort((a, b) => a.lvl - b.lvl).map(o => { const ratio = totalStats / (o.str + o.def + o.spd + o.dex); const odds = ratio > 1.3 ? 'easy' : ratio > 0.8 ? 'fair' : 'hard'; return { name: t.opp[o.id] || o.id, factionName: t.oppFac[o.id] || t.oppFac.sal, status: t.oppStatus.ok, lvl: o.lvl, str: num(o.str), def: num(o.def), spd: num(o.spd), dex: num(o.dex), oppTotal: num(o.str + o.def + o.spd + o.dex), powerRatio: Math.round(ratio * 100) + '%', odds: t.oddsN[odds], oddsColor: odds === 'easy' ? 'var(--acc)' : odds === 'fair' ? 'var(--gold)' : '#e05a4a', disabled: energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }; }),
       fight: (() => {
@@ -2718,7 +2720,7 @@ class Component extends DCLogic {
       visible: !!shared, title: lang === 'ar' ? 'احترام العائلة المشترك' : 'Shared family respect', respect: num(Number(shared?.respect || 0)),
       description: lang === 'ar' ? 'ساهم من احترامك الفردي. يشتري الزعيم أو المسؤول ترقيات مشتركة يستفيد منها جميع الأعضاء.' : 'Contribute personal respect. Leaders and officers purchase shared upgrades that benefit every member.', personal: (lang === 'ar' ? 'احترامك المتاح: ' : 'Your available respect: ') + num(p.fac.respect),
       amounts: [100, 1000, 5000].map(amount => ({ label: (lang === 'ar' ? 'ساهم بـ ' : 'Contribute ') + num(amount), disabled: unavailable || !shared?.permissions?.contribute || p.fac.respect < amount || !Number.isInteger(familyVersion), contribute: () => this.act(() => this.gameplayAction('faction.contribute', amount, familyVersion)) })),
-      upgrades: (shared?.upgradeEligibility || []).map(entry => ({ name: t.up[entry.id]?.[0] || entry.id, effect: t.up[entry.id]?.[1] || '', label: shared?.upgrades?.[entry.id] ? t.owned : t.buy + ' · ' + num(entry.cost), reason: sharedReasons[lang][entry.reason] || '', disabled: unavailable || !shared?.permissions?.buyUpgrade || !entry.eligible || !Number.isInteger(familyVersion), buy: () => this.act(() => this.gameplayAction('faction.sharedUpgrade', entry.id, familyVersion)) })),
+      upgrades: (shared?.upgradeEligibility || []).map(entry => ({ name: t.up[entry.id]?.[0] || entry.id, effect: t.up[entry.id]?.[1] || '', owned: !!shared?.upgrades?.[entry.id], costRespect: num(entry.cost), respectShortfall: Math.max(0, Number(entry.cost || 0) - Number(shared?.respect || 0)), label: shared?.upgrades?.[entry.id] ? t.owned : t.buy + ' · ' + num(entry.cost), reason: sharedReasons[lang][entry.reason] || '', disabled: unavailable || !shared?.permissions?.buyUpgrade || !entry.eligible || !Number.isInteger(familyVersion), buy: () => this.act(() => this.gameplayAction('faction.sharedUpgrade', entry.id, familyVersion)) })),
       historyTitle: lang === 'ar' ? 'سجل مساهمات العائلة' : 'Family contribution history', empty: !(shared?.ledger || []).length, emptyLabel: lang === 'ar' ? 'لا توجد مساهمات بعد.' : 'No contributions yet.',
       ledger: (shared?.ledger || []).map(entry => ({ name: entry.username, delta: (entry.delta > 0 ? '+' : '') + num(entry.delta), at: new Date(entry.at).toLocaleString(lang === 'ar' ? 'ar-AE' : 'en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC', reason: entry.delta >= 0 ? (lang === 'ar' ? 'مساهمة احترام' : 'Respect contribution') : (lang === 'ar' ? 'شراء ترقية مشتركة' : 'Shared upgrade purchase') }))
     };
@@ -2771,7 +2773,7 @@ class Component extends DCLogic {
     const stationBenefits = lang === 'ar'
       ? ['ضرر أكبر عندما تصيب ضربتك.', 'تخفيف الضرر الذي تتلقاه من ضربات الخصم.', 'زيادة فرصة إصابة ضرباتك للخصم.', 'تقليل فرصة أن تصيبك ضربات الخصم.']
       : ['More damage when your attack lands.', 'Reduce damage from incoming hits.', 'Improve the chance your attacks connect.', 'Make enemy attacks less likely to hit.'];
-    view.stats = view.stats.map((stat, index) => { const id = ['str', 'def', 'spd', 'dex'][index]; return { ...stat, id, fallbackImg: stat.img, img: 'art/gym116/' + ['strength', 'defense', 'speed', 'dexterity'][index] + '.webp', benefit: stationBenefits[index], selected: id === selectedStation, selectionMark: id === selectedStation ? '✓' : '', select: () => this.setState({ gymStation: id }) }; });
+    view.stats = view.stats.map((stat, index) => { const id = ['str', 'def', 'spd', 'dex'][index]; const parts = String(stat.gain || '').split('-').map(x => Number(x.trim())); const avg = parts.length === 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1]) ? (parts[0] + parts[1]) / 2 : Number(parts[0] || 1); return { ...stat, id, fallbackImg: stat.img, img: 'art/gym116/' + ['strength', 'defense', 'speed', 'dexterity'][index] + '.webp', benefit: stationBenefits[index], gainPerEnergy: (avg / Math.max(1, this.gymEnergyCost())).toFixed(2) + '/' + (lang === 'ar' ? 'طاقة' : 'energy'), selected: id === selectedStation, selectionMark: id === selectedStation ? '✓' : '', select: () => this.setState({ gymStation: id }) }; });
     view.gymSession = view.stats.find(stat => stat.selected);
     const nextThreshold = nextGym < 0 ? 0 : Number(GYMS[nextGym].xp), currentThreshold = Number(GYMS[p.gym]?.xp || 0);
     const nextTarget = Math.max(0, nextThreshold - currentThreshold), nextProgress = Math.min(nextTarget, Math.max(0, p.gymXp - currentThreshold));
@@ -2783,6 +2785,8 @@ class Component extends DCLogic {
       eyebrow: lang === 'ar' ? 'تدريب الصالة' : 'On the gym floor', floorNote: typeof publishedGymNote === 'string' && publishedGymNote.trim() ? publishedGymNote : (lang === 'ar' ? 'اختر محطة تدريب، وراجع الجلسة قبل استهلاك طاقتك.' : 'Choose your station. Review the session before spending energy.'),
       sessionLabel: lang === 'ar' ? 'جلستك التالية' : 'Your next session', stationLabel: lang === 'ar' ? 'اختر محطة التدريب' : 'Choose a training station',
       estimateNote: lang === 'ar' ? 'تقدير فقط. يحدد الخادم المكسب الفعلي.' : 'Estimate only. The server resolves the actual gain.',
+      happyMultiplier: '×' + (1 + Math.log1p(this.cur('happy') / 500) * .35).toFixed(2),
+      sessionsAvailable: Math.floor(energyNow / Math.max(1, this.gymEnergyCost())),
       happyNote: (lang === 'ar' ? 'المعنويات الحالية تقوّي تدريبك بمضاعف ' : 'Current happiness boosts training by ') + '×' + (1 + Math.log1p(this.cur('happy') / 500) * .35).toFixed(2) + (lang === 'ar' ? '. المنزل الأفضل يرفع سقف المعنويات، ولا يملأها فوراً.' : '. A better home raises the happiness cap; it does not refill it instantly.'),
       homeLabel: lang === 'ar' ? 'راجع منزلك' : 'Review your home', openHome: () => this.go('properties'),
       costLabel: lang === 'ar' ? 'تكلفة جلسة واحدة' : 'One-session cost', balanceLabel: lang === 'ar' ? 'الطاقة بعد الجلسة' : 'Energy after session',

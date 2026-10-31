@@ -188,5 +188,13 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.ok(peerView.familyActivities.definitions[0].payoutPerMember && peerView.familyActivities.definitions[0].cashPerEnergy.includes('/'), 'familyActivities definitions include payoutPerMember and cashPerEnergy');
     assert.equal(peerView.familyActivities.operations[0].fillPct, 25);
     assert.equal(peerView.familyActivities.operations[0].slotsRemaining, 3);
+    assert.ok(peerView.activity.totalBattleScore, 'activity includes totalBattleScore');
+    assert.ok(peerView.stats.every(s => s.gainPerEnergy && s.gainPerEnergy.includes('/')), 'stats include gainPerEnergy');
+    assert.ok(peerView.gymStudio.happyMultiplier.startsWith('×') && typeof peerView.gymStudio.sessionsAvailable === 'number', 'gymStudio includes happyMultiplier and sessionsAvailable');
+    assert.ok(peerView.travelDests.every(d => d.cost && typeof d.canAfford === 'boolean'), 'travelDests include cost and canAfford');
+    instance.sharedFamily = { respect: 1500, version: 1, upgrades: {}, upgradeEligibility: [{ id: 'nerveMax', cost: 2000, eligible: false, reason: 'respect_required' }] };
+    const sharedView = instance.renderVals();
+    assert.equal(sharedView.sharedFamily.upgrades[0].owned, false);
+    assert.equal(sharedView.sharedFamily.upgrades[0].respectShortfall, 500);
   }
 });
