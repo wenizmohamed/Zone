@@ -157,4 +157,12 @@ test('closed ring rotation and reversed winding cannot skip the authored contain
         'Winding and starting-vertex changes cannot change the selected physical roof anchor.');
     }
   }
+  assert.equal(buildings.serviceCount(), 17);
+  assert.equal(buildings.isSupportedServiceId('bank'), true);
+  assert.equal(buildings.isSupportedServiceId('unknown-service'), false);
+  const summary = buildings.summarizeAssociations(buildings.associate([source], [roof('containing', 0, 0, 190)]));
+  assert.equal(summary.boundCount, 1);
+  assert.equal(summary.unboundCount, 0);
+  assert.equal(summary.complete, true);
+  assert.equal(summary.insideRoofCount, 1);
 });

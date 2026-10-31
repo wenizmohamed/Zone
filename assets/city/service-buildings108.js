@@ -176,5 +176,7 @@
       source:result?.source||'actual-provider-footprint'
     };
   }
-  return {SERVICES,associate,apply,summarizeAssociations,inside,roofAnchor,meters};
+  function serviceCount(){return SERVICES.length;}
+  function isSupportedServiceId(id){return SERVICES.includes(String(id));}
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,isSupportedServiceId,inside,roofAnchor,meters};
 });

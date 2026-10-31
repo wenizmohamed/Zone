@@ -1720,4 +1720,34 @@ final class GameEngine
     {
         return \Zone\Engine\Core\Security\BrowserSessions::LIFETIME;
     }
+
+    /** @return list<string> */
+    public function ownerPlaytestActions(): array
+    {
+        return \Zone\Engine\Core\Game\OwnerPlaytestService::ACTIONS;
+    }
+
+    public function ownerPlaytestActionCount(): int
+    {
+        return count(\Zone\Engine\Core\Game\OwnerPlaytestService::ACTIONS);
+    }
+
+    public function isSupportedOwnerPlaytestAction(string $action): bool
+    {
+        return in_array($action, \Zone\Engine\Core\Game\OwnerPlaytestService::ACTIONS, true);
+    }
+
+    /**
+     * @param array<string, mixed> $policy
+     * @return array<string, mixed>
+     */
+    public function normalizeWorldPolicy(array $policy = []): array
+    {
+        return \Zone\Engine\Core\Game\WorldDirector::normalizePolicy($policy);
+    }
+
+    public function playerUsername(string $playerId = 'founder-player'): string
+    {
+        return (string) $this->requirePlayer($playerId)['username'];
+    }
 }

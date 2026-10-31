@@ -1372,6 +1372,13 @@ try {
     check($engine->isPublishedModuleEnabled('crime') === true && $engine->isPublishedModuleEnabled('nonexistent-mod') === false, 'GameEngine isPublishedModuleEnabled checks published module gate');
     check($engine->browserSessionCookieName() === 'zone_player_session', 'GameEngine browserSessionCookieName returns session cookie name');
     check($engine->browserSessionLifetimeSeconds() === 2592000, 'GameEngine browserSessionLifetimeSeconds returns 30-day session lifetime');
+
+    // --- Wave 59 (zone-beta177): GameEngine ownerPlaytestActions, ownerPlaytestActionCount, isSupportedOwnerPlaytestAction, normalizeWorldPolicy & playerUsername ---
+    check(count($engine->ownerPlaytestActions()) === 25 && in_array('crime.attempt', $engine->ownerPlaytestActions(), true), 'GameEngine ownerPlaytestActions returns 25 sandbox actions');
+    check($engine->ownerPlaytestActionCount() === 25, 'GameEngine ownerPlaytestActionCount returns 25');
+    check($engine->isSupportedOwnerPlaytestAction('gym.train') === true && $engine->isSupportedOwnerPlaytestAction('admin.publish') === false, 'GameEngine isSupportedOwnerPlaytestAction validates sandbox actions');
+    check($engine->normalizeWorldPolicy()['tickSeconds'] === 60 && $engine->normalizeWorldPolicy(['tickSeconds' => 5])['tickSeconds'] === 30, 'GameEngine normalizeWorldPolicy clamps and normalizes world director policy');
+    check($engine->playerUsername('founder-player') !== '', 'GameEngine playerUsername returns non-empty player username');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
