@@ -948,6 +948,21 @@ try {
     $playtestStarted = $engine->ownerPlaytest()->start('founder-player', 'wave10-owner', str_repeat('w', 24));
     check(($playtestStarted['operationsRemaining'] ?? null) === 100 && ($playtestStarted['maxOperations'] ?? null) === 100, 'OwnerPlaytestService response exposes operationsRemaining and maxOperations');
     $engine->ownerPlaytest()->end('founder-player', 'wave10-owner', (string) $playtestStarted['sessionId'], str_repeat('x', 24));
+
+    // --- Wave 11 (zone-beta129): DailyService, TravelService & ProgressionService telemetry ---
+    $database->execute("UPDATE players SET last_login_day = NULL, login_streak = 0 WHERE id = 'founder-player'");
+    $streakWave11 = $engine->dailyLogin('founder-player');
+    check(($streakWave11['nextDayRewardCash'] ?? null) === 1500, 'DailyService login streak receipt exposes nextDayRewardCash');
+    $contractWave11 = $engine->dailyContract('founder-player');
+    check(isset($contractWave11['remaining'], $contractWave11['progressPct']) && is_int($contractWave11['progressPct']), 'DailyService contractState exposes remaining and progressPct');
+    $gpWave11 = $engine->gameplay('founder-player');
+    check(!empty($gpWave11['safehouses']) && isset($gpWave11['safehouses'][0]['trainingBoostPct'], $gpWave11['safehouses'][0]['happy']), 'ProgressionService safehouses expose happy and trainingBoostPct');
+    check(isset($gpWave11['onboarding']['completedCount'], $gpWave11['onboarding']['totalCount']) && isset($gpWave11['onboarding']['steps'][0]['progressPct']), 'ProgressionService onboarding exposes completedCount, totalCount and step progressPct');
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute("UPDATE players SET city = 'Zone City', cash = 50000 WHERE id = 'founder-player'");
+    $database->execute("DELETE FROM player_travel WHERE player_id = 'founder-player'");
+    $tripWave11 = $engine->travel('Riyadh', 'founder-player');
+    check(isset($tripWave11['travel']['totalSeconds'], $tripWave11['travel']['progressPct']) && $tripWave11['travel']['totalSeconds'] > 0, 'TravelService snapshot exposes totalSeconds and progressPct');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

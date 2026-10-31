@@ -126,6 +126,7 @@ final readonly class DailyService
         return [
             'streakDay' => $streakDay,
             'rewardCash' => $rewardCash,
+            'nextDayRewardCash' => self::STREAK_SCHEDULE[($streakDay % 7) + 1][0],
             'nerveRefilled' => $refillNerve,
             'energyRefilled' => $refillEnergy,
         ];
@@ -187,11 +188,14 @@ final readonly class DailyService
         );
         $progress = $row === null ? 0 : (int) $row['progress'];
         $claimed = $row !== null && (bool) $row['claimed'];
+        $target = (int) $contract['target'];
         return [
             'contract' => $contract,
             'progress' => $progress,
-            'target' => (int) $contract['target'],
-            'complete' => $progress >= (int) $contract['target'],
+            'target' => $target,
+            'remaining' => max(0, $target - $progress),
+            'progressPct' => (int) min(100, round($progress / max(1, $target) * 100)),
+            'complete' => $progress >= $target,
             'claimed' => $claimed,
         ];
     }

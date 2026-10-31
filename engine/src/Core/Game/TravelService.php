@@ -23,7 +23,10 @@ final class TravelService
                 $row['status'] = 'arrived';
                 $this->events->publish(new DomainEvent('PlayerArrived', ['playerId' => $playerId, 'city' => $row['destination'], 'arrivedAt' => $row['arrives_at'], 'version' => (int) $row['version']]));
             }
-            return ['origin' => $row['origin'], 'destination' => $row['destination'], 'departedAt' => $row['departed_at'], 'arrivesAt' => $row['arrives_at'], 'status' => $row['status'], 'remainingSeconds' => $row['status'] === 'arrived' ? 0 : max(0, $arrives - $now), 'version' => (int) $row['version']];
+            $departed = strtotime($row['departed_at']);
+            $totalSeconds = max(1, $arrives - $departed);
+            $remaining = $row['status'] === 'arrived' ? 0 : max(0, $arrives - $now);
+            return ['origin' => $row['origin'], 'destination' => $row['destination'], 'departedAt' => $row['departed_at'], 'arrivesAt' => $row['arrives_at'], 'status' => $row['status'], 'remainingSeconds' => $remaining, 'totalSeconds' => $totalSeconds, 'progressPct' => $row['status'] === 'arrived' ? 100 : (int) min(100, max(0, round(($totalSeconds - $remaining) / $totalSeconds * 100))), 'version' => (int) $row['version']];
         });
     }
 

@@ -604,6 +604,8 @@ final class ProgressionService
             'id' => $property['id'], 'owned' => !empty($state['ownedProperties'][$property['id']]),
             'active' => $state['prop'] === $property['id'],
             'enterable' => !empty($state['ownedProperties'][$property['id']]), 'previewable' => true,
+            'happy' => (int) $property['happy'], 'price' => (int) $property['price'],
+            'trainingBoostPct' => round(log(1 + (int) $property['happy'] / 500) * 35, 1),
             'mediaAsset' => $property['mediaAsset'] ?? null,
         ], $this->catalog['properties']);
         return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'safehouses' => $safehouses, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
@@ -645,10 +647,10 @@ final class ProgressionService
             if ($definition === null) continue;
             $claimed = !empty($state['claimed'][$id]);
             if (!$claimed && $current === null) $current = $id;
-            $progress = (int) $state['ctr'][$definition['ctr']]; $ready = $progress >= $definition['n'];
-            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => (int) $definition['n'], 'progress' => $progress, 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
+            $progress = (int) $state['ctr'][$definition['ctr']]; $target = (int) $definition['n']; $ready = $progress >= $target;
+            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => $target, 'progress' => $progress, 'remaining' => max(0, $target - $progress), 'progressPct' => (int) min(100, round($progress / max(1, $target) * 100)), 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
         }
-        return ['currentMissionId' => $current, 'completed' => $current === null, 'steps' => $steps];
+        return ['currentMissionId' => $current, 'completed' => $current === null, 'completedCount' => count(array_filter($steps, static fn (array $s): bool => $s['claimed'])), 'totalCount' => count($steps), 'steps' => $steps];
     }
 
     private function marketDiscount(string $playerId): int
