@@ -268,5 +268,17 @@
     probe, refresh, recover, start, stop, action, route,
     snapshot: () => selected ? current() : null, available: () => available, active: () => selected,
     expired: () => Boolean(blocked?.expired),
+    diagnostics: () => ({
+      preview,
+      available,
+      active: selected,
+      sessionId: selectedSessionId,
+      version: state?.version ?? null,
+      blocked: Boolean(blocked),
+      expired: Boolean(blocked?.expired),
+      retryableRead: Boolean(blocked?.retryableRead),
+      pending,
+      capabilityCount: Array.isArray(state?.capabilities) ? state.capabilities.length : 0,
+    }),
   });
 })();

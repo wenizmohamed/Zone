@@ -22,17 +22,18 @@
       const daily=contract?{
         id:String(contract.id),day:String(contract.day),title:localized({en:contract.name_en,ar:contract.name_ar},languageKey),
         metric:String(contract.metric),screen:({crimes:'crimes',stat_gain:'gym',job_cash:'jobs',attack_wins:'attack'})[contract.metric]||null,
-        progress:number(source.progress),target:number(source.target),percent:source.target>0?Math.min(100,Math.max(0,number(source.progress)/number(source.target)*100)):0,
+        progress:number(source.progress),target:number(source.target),remaining:Math.max(0,number(source.target)-number(source.progress)),percent:source.target>0?Math.min(100,Math.max(0,number(source.progress)/number(source.target)*100)):0,
         complete:source.complete===true,claimed:source.claimed===true,rewardCash:number(contract.reward_cash),rewardXp:number(contract.reward_xp),
         canClaim:source.complete===true&&source.claimed!==true&&!loading&&!pending&&!errors.contract&&!options.preview
       }:null;
-      const profile=player?{id:String(player.id),name:String(player.username),level:number(player.level),xp:number(player.xp),cash:number(player.cash),bank:number(player.bank_balance),city:String(player.city),stats:['strength','defense','speed','dexterity'].map(id=>({id,label:labels[id],value:number(player[id])}))}:null;
+      const statsList=player?['strength','defense','speed','dexterity'].map(id=>({id,label:labels[id],value:number(player[id])})):[];
+      const profile=player?{id:String(player.id),name:String(player.username),level:number(player.level),xp:number(player.xp),cash:number(player.cash),bank:number(player.bank_balance),netWorth:number(player.cash)+number(player.bank_balance),totalBattleStats:statsList.reduce((sum,item)=>sum+item.value,0),city:String(player.city),stats:statsList}:null;
       return clone({
         preview:!!options.preview,loading,pending,error:actionError?(actionError.kind==='refresh'?labels.refreshFailed:labels.actionFailed):Object.keys(errors).length?labels.failed:null,
         errorDetail:actionError?.message||null,errors,labels,player,profile,contract:daily,
         achievements:raw.achievements.map(item=>({code:String(item.code),title:item.code==='first-score'?labels.firstScore:String(item.code),description:item.code==='first-score'?labels.firstScoreDescription:'',unlockedAt:item.unlocked_at})),
         notifications:raw.notifications.map(item=>({id:String(item.id),type:String(item.type),message:localized({en:item.payload?.message_en,ar:item.payload?.message_ar},languageKey,labels.unknown),createdAt:item.created_at,bar:item.payload?.bar||null})),
-        streak:player?{day:number(player.login_streak),lastLoginDay:player.last_login_day||null,claimed:!!contract?.day&&player.last_login_day===contract.day,canClaim:!!contract?.day&&player.last_login_day!==contract.day&&!loading&&!pending&&!errors.player&&!errors.contract&&!options.preview}:null,
+        streak:player?{day:number(player.login_streak),nextRewardCash:Math.min(7,number(player.login_streak)+1)*500,lastLoginDay:player.last_login_day||null,claimed:!!contract?.day&&player.last_login_day===contract.day,canClaim:!!contract?.day&&player.last_login_day!==contract.day&&!loading&&!pending&&!errors.player&&!errors.contract&&!options.preview}:null,
         lastReward
       });
     }

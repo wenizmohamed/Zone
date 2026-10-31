@@ -261,6 +261,21 @@ function revealEngineSection(hash) {
   return section;
 }
 
+function engineSummary() {
+  return {
+    language: state.language,
+    ready: state.ready,
+    busy: state.busy,
+    refreshing: state.refreshing,
+    moduleCount: state.modules.length,
+    enabledModuleCount: state.modules.filter(module => module.installed && module.enabled).length,
+    crimeCount: state.crimes.length,
+    hasPlayer: Boolean(state.player),
+    eventCount: state.events.length,
+    ledgerCount: state.ledger.length,
+  };
+}
+
 function bindEngineNavigation() {
   $('#engineMenuButton')?.addEventListener('click', () => setEngineMenu($('#engineMenuButton').getAttribute('aria-expanded') !== 'true'));
   document.querySelectorAll('#engineNav a').forEach(link => link.addEventListener('click', () => {

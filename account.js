@@ -93,6 +93,19 @@
   element('languageToggle').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; translate(); });
   window.addEventListener('beforeunload', event => { if (backup && !element('backupSaved').checked) { event.preventDefault(); event.returnValue = ''; } });
   // Exposed controller contains no credentials or recovery-code state.
-  window.ZoneAccount = { submit, current: () => identity };
+  window.ZoneAccount = {
+    submit,
+    current: () => identity,
+    diagnostics: () => ({
+      lang,
+      ready,
+      busy,
+      backup,
+      active: Boolean(identity?.playerId),
+      claimed: Boolean(identity?.claimed),
+      messageKey,
+      messageError,
+    }),
+  };
   translate(); status().catch(() => { ready = false; paint(); message('failed', true); });
 })();

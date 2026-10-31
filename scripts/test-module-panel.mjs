@@ -45,11 +45,15 @@ test('read-only load uses four real same-origin APIs and bilingual server data',
   assert.equal(players.length, 0, 'background reads cannot overwrite main gameplay state');
   assert.equal(snapshots[0].loading, true);
   assert.equal(view.profile.bank, 100);
+  assert.equal(view.profile.netWorth, 600);
+  assert.equal(view.profile.totalBattleStats, 22);
   assert.equal(view.profile.stats[3].value, 7);
   assert.equal(view.contract.title, 'Commit 15 crimes');
   assert.equal(view.contract.screen, 'crimes');
   assert.equal(view.contract.canClaim, true);
+  assert.equal(view.contract.remaining, 0);
   assert.equal(view.contract.percent, 100);
+  assert.equal(view.streak.nextRewardCash, 1500);
   assert.equal(panel.view('ar').contract.title, 'نفّذ 15 جريمة');
   assert.equal(panel.read('ar').notifications[0].message, 'شريط الأعصاب ممتلئ.');
   assert.equal(panel.read('ar').achievements[0].title, 'الضربة الأولى');

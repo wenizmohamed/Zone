@@ -62,4 +62,5 @@ test('sign-out clears transient recovery material and never auto-creates a repla
 test('status names render through textContent; account UI has touch targets and no secret storage', async () => {
   const p = await page({ identity: { playerId: 'player-owned', username: '<img onerror=attack()>', claimed: true } });
   assert.equal(p.node('identityName').textContent, '<img onerror=attack()>'); assert.doesNotMatch(source, /innerHTML|localStorage|sessionStorage/); assert.match(html, /min-height:44px/); assert.match(html, /role="status"/);
+  assert.deepEqual({ ...p.window.ZoneAccount.diagnostics() }, { lang: 'en', ready: true, busy: false, backup: false, active: true, claimed: true, messageKey: 'claimed', messageError: false });
 });
