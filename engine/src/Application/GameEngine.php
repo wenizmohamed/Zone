@@ -1222,4 +1222,29 @@ final class GameEngine
             'activeSessions' => \Zone\Modules\UsersOnline\UsersOnlineModule::activeSessionCount($this->database),
         ];
     }
+
+    public function activeCooldownCount(string $playerId = 'founder-player'): int
+    {
+        return count($this->cooldowns->activeCooldowns($playerId));
+    }
+
+    public function isTraveling(string $playerId = 'founder-player'): bool
+    {
+        return (new TravelService($this->database, $this->events))->isTraveling($playerId);
+    }
+
+    public function hasActiveCombat(string $playerId = 'founder-player'): bool
+    {
+        return (new CombatService($this->database, $this->events))->hasActiveEncounter($playerId);
+    }
+
+    public function playerRank(string $playerId = 'founder-player'): ?int
+    {
+        return (new \Zone\Modules\Leaderboards\LeaderboardService($this->database))->playerRank($playerId);
+    }
+
+    public function playerFactionId(string $playerId = 'founder-player'): ?string
+    {
+        return (new \Zone\Modules\Gangs\FactionService($this->database, $this->events))->playerFactionId($playerId);
+    }
 }

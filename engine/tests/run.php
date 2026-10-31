@@ -1239,6 +1239,13 @@ try {
     check($database->tableCount() >= 20, 'Database tableCount returns count of migrated schema tables');
     $adminCookieWave39 = RequestGuard::adminSession('wave39-secret', 1000);
     check(RequestGuard::isAdminSessionExpired($adminCookieWave39, 1001) === false && RequestGuard::isAdminSessionExpired($adminCookieWave39, 50000) === true, 'RequestGuard isAdminSessionExpired checks admin cookie expiry timestamp');
+
+    // --- Wave 40 (zone-beta158): GameEngine activeCooldownCount, isTraveling, hasActiveCombat, playerRank & playerFactionId ---
+    check($engine->activeCooldownCount('founder-player') >= 0, 'GameEngine activeCooldownCount returns active cooldown count for player');
+    check(is_bool($engine->isTraveling('founder-player')), 'GameEngine isTraveling returns boolean travel state for player');
+    check(is_bool($engine->hasActiveCombat('founder-player')), 'GameEngine hasActiveCombat returns boolean NPC combat encounter state for player');
+    check($engine->playerRank('founder-player') === null, 'GameEngine playerRank returns leaderboard rank or null for fixture player');
+    check($engine->playerFactionId('founder-player') === 'vipers', 'GameEngine playerFactionId returns faction ID for player');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
