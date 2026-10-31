@@ -92,5 +92,16 @@
       averageBuildingWidth:avgWidth
     };
   }
-  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements};
+  function summarizeStreets(collection){
+    const features=Array.isArray(collection?.features)?collection.features:[];
+    const blockIds=features.map(f=>f?.properties?.blockId).filter(Boolean);
+    const vertexCount=features.reduce((sum,f)=>sum+(Array.isArray(f?.geometry?.coordinates?.[0])?f.geometry.coordinates[0].length:0),0);
+    return {
+      featureCount:features.length,
+      uniqueBlockCount:new Set(blockIds).size,
+      blockIds,
+      vertexCount
+    };
+  }
+  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets};
 });

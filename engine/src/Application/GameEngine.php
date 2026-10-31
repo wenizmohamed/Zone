@@ -1693,4 +1693,31 @@ final class GameEngine
     {
         return (int) ($this->adminGameplayCatalog()['revision'] ?? 1);
     }
+
+    /** @return array{totalModules: int, enabledCount: int, disabledCount: int} */
+    public function publishedRulesSummary(): array
+    {
+        return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->summary();
+    }
+
+    /** @return list<string> */
+    public function disabledPublishedModuleIds(): array
+    {
+        return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->disabledModuleIds();
+    }
+
+    public function isPublishedModuleEnabled(string $moduleId): bool
+    {
+        return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleEnabled($moduleId);
+    }
+
+    public function browserSessionCookieName(): string
+    {
+        return \Zone\Engine\Core\Security\BrowserSessions::COOKIE;
+    }
+
+    public function browserSessionLifetimeSeconds(): int
+    {
+        return \Zone\Engine\Core\Security\BrowserSessions::LIFETIME;
+    }
 }

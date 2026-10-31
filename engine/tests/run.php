@@ -1365,6 +1365,13 @@ try {
     check($engine->maxUploadBytes() === 134217728, 'GameEngine maxUploadBytes returns 128MB upload cap');
     check($engine->uploadChunkBytes() === 524288, 'GameEngine uploadChunkBytes returns 512KB upload chunk size');
     check($engine->catalogDraftRevision() >= 1, 'GameEngine catalogDraftRevision returns current Studio draft catalog revision');
+
+    // --- Wave 58 (zone-beta176): GameEngine publishedRulesSummary, disabledPublishedModuleIds, isPublishedModuleEnabled, browserSessionCookieName & browserSessionLifetimeSeconds ---
+    check($engine->publishedRulesSummary()['totalModules'] >= 27 && $engine->publishedRulesSummary()['enabledCount'] >= 20, 'GameEngine publishedRulesSummary returns published module gate counts');
+    check(is_array($engine->disabledPublishedModuleIds()), 'GameEngine disabledPublishedModuleIds returns disabled module ID list');
+    check($engine->isPublishedModuleEnabled('crime') === true && $engine->isPublishedModuleEnabled('nonexistent-mod') === false, 'GameEngine isPublishedModuleEnabled checks published module gate');
+    check($engine->browserSessionCookieName() === 'zone_player_session', 'GameEngine browserSessionCookieName returns session cookie name');
+    check($engine->browserSessionLifetimeSeconds() === 2592000, 'GameEngine browserSessionLifetimeSeconds returns 30-day session lifetime');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
