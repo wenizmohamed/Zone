@@ -1668,4 +1668,29 @@ final class GameEngine
         $p = $this->requirePlayer($playerId);
         return (int) $p['strength'] + (int) $p['defense'] + (int) $p['speed'] + (int) $p['dexterity'];
     }
+
+    public function isValidPlayerId(string $playerId): bool
+    {
+        return \Zone\Engine\Core\Security\RequestGuard::isValidPlayerId($playerId);
+    }
+
+    public function configuredCacheAdapter(): string
+    {
+        return \Zone\Engine\Infrastructure\Cache\CacheFactory::configuredAdapter();
+    }
+
+    public function maxUploadBytes(): int
+    {
+        return \Zone\Engine\Core\Media\AssetLibrary::MAX_UPLOAD_BYTES;
+    }
+
+    public function uploadChunkBytes(): int
+    {
+        return \Zone\Engine\Core\Media\AssetLibrary::CHUNK_BYTES;
+    }
+
+    public function catalogDraftRevision(): int
+    {
+        return (int) ($this->adminGameplayCatalog()['revision'] ?? 1);
+    }
 }

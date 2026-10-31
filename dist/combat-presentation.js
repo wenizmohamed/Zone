@@ -72,7 +72,10 @@ export function createCombatFeedbackTimeline({ attack, impact, schedule = setTim
       if (disposed) return; stop();
       if (reducedMotion) { impact(event, false); return; }
       attack(event); timer = schedule(() => { timer = null; if (!disposed) impact(event, true); }, delay);
-    }, stop, dispose() { disposed = true; stop(); }
+    },
+    stop,
+    dispose() { disposed = true; stop(); },
+    diagnostics() { return { disposed, hasActiveTimer: timer !== null, delay }; }
   };
 }
 export function clearCombatFeedback(doc, statusText) {

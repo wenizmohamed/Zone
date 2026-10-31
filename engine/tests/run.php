@@ -1358,6 +1358,13 @@ try {
     check($engine->playerMaxNerve('founder-player') >= $engine->playerNerve('founder-player'), 'GameEngine playerMaxNerve returns player max nerve');
     check($engine->playerMaxHappy('founder-player') >= $engine->playerHappy('founder-player'), 'GameEngine playerMaxHappy returns player max happy');
     check($engine->playerTotalCombatStats('founder-player') === $engine->playerStrength('founder-player') + $engine->playerDefense('founder-player') + $engine->playerSpeed('founder-player') + $engine->playerDexterity('founder-player'), 'GameEngine playerTotalCombatStats returns sum of 4 gym stats');
+
+    // --- Wave 57 (zone-beta175): GameEngine isValidPlayerId, configuredCacheAdapter, maxUploadBytes, uploadChunkBytes & catalogDraftRevision ---
+    check($engine->isValidPlayerId('founder-player') === true && $engine->isValidPlayerId('bad id!') === false, 'GameEngine isValidPlayerId validates player ID format');
+    check(in_array($engine->configuredCacheAdapter(), ['array', 'redis'], true), 'GameEngine configuredCacheAdapter returns configured cache adapter');
+    check($engine->maxUploadBytes() === 134217728, 'GameEngine maxUploadBytes returns 128MB upload cap');
+    check($engine->uploadChunkBytes() === 524288, 'GameEngine uploadChunkBytes returns 512KB upload chunk size');
+    check($engine->catalogDraftRevision() >= 1, 'GameEngine catalogDraftRevision returns current Studio draft catalog revision');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

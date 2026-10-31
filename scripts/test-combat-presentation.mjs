@@ -166,4 +166,10 @@ test('combatExchangeSummary aggregates accuracy, damage, and bilingual tactical 
   assert.match(en.summaryLabel, /Weni: 2\/2 \(35 dmg\).*Rival: 1\/2 \(8 dmg\)/);
   const ar = combatExchangeSummary(sample, { player: 'وني', opponent: 'خصم' }, 'ar');
   assert.match(ar.summaryLabel, /وني: 2\/2 \(35 ضرر\).*خصم: 1\/2 \(8 ضرر\)/);
+  const timeline = createCombatFeedbackTimeline({ attack() {}, impact() {}, schedule: () => 42, cancel() {}, delay: 300 });
+  assert.deepEqual(timeline.diagnostics(), { disposed: false, hasActiveTimer: false, delay: 300 });
+  timeline.play({ actor: 'player', target: 'opponent', kind: 'hit', damage: 10 }, false);
+  assert.equal(timeline.diagnostics().hasActiveTimer, true);
+  timeline.dispose();
+  assert.deepEqual(timeline.diagnostics(), { disposed: true, hasActiveTimer: false, delay: 300 });
 });
