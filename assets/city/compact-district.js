@@ -316,6 +316,17 @@
       mapMediaLoading=Promise.resolve(previous).catch(()=>{}).then(()=>{if(disposed||signature!==mapMediaSignature)return;return import(mapMediaUrl);}).then(module=>{if(!module||disposed||signature!==mapMediaSignature)return;return module.createMapMedia(map,bindings,()=>!disposed&&signature===mapMediaSignature);}).then(value=>{if(!value)return;if(disposed||signature!==mapMediaSignature)value.dispose();else{mapMedia=value;value.setVisible(visible);}}).catch(error=>{if(!disposed&&signature===mapMediaSignature&&typeof document==='object'&&document.body)document.body.dataset.zoneMapMedia=JSON.stringify({status:'error',error:String(error.message||error),representation:'matched-service-rooftop-attachment'});});
     }
     return {
+      diagnostics(){
+        return {
+          disposed,
+          visible,
+          destinationCount:pins.length,
+          landmarksStatus:landmarks?.diagnostics?.status??(landmarkError?'failed':(loading?'loading':'idle')),
+          surfacesStatus:surfaces?.diagnostics?.status??(surfacesLoading?'loading':'idle'),
+          buildingsStatus:buildings?.diagnostics?.()?.status??(buildingsLoading?'loading':'idle'),
+          mapMediaStatus:mapMedia?.diagnostics?.status??(mapMediaLoading?'loading':'idle'),
+        };
+      },
       setDestinations(next){if(!disposed){pins=Array.isArray(next)?next:[];bindServiceBuildings();if(landmarksRequested)void ensureLandmarks().catch(()=>{});}},
       retrySurfaces(){if(disposed)return Promise.resolve();if(surfaces?.diagnostics?.status==='ready')return surfacesLoading;surfaceGeneration++;surfaces?.dispose();surfaces=null;surfacesLoading=null;return ensureSurfaces();},
       retryLandmarks(){if(disposed)return Promise.resolve();if((landmarks?.diagnostics?.status==='ready'||!landmarks&&loading&&landmarkSignature)&&!landmarkError)return loading;landmarkImportRevision++;landmarkError=null;landmarkSignature='';return ensureLandmarks();},

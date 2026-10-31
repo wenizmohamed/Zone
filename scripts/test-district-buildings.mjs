@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,planTiles,decodeTile,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,planTiles,decodeTile,summarizeDecodedFeatures,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -225,4 +225,9 @@ test('actual F keyboard shortcut closes the focused drawer and restores a visibl
 });
 test('drawer close preserves unrelated focus and retains explicit toggle restoration',()=>{
   for(const [inside,explicit,expected]of[[true,false,true],[false,false,false],[false,true,true]]){const h=drawerHarness('en',inside);h.scope.closeSide(explicit);assert.equal(h.document.activeElement,expected?h.toggle:h.outside);assert.equal(h.calls.filter(value=>value==='focus').length,expected?1:0);assert.equal(h.side.inert,true);}
+});
+test('summarizeDecodedFeatures calculates total, extrudable, raisedParts, maximumHeight, and uniqueTiles',()=>{
+  const features=decodeTile(bytes,planTiles(bounds)[0]);
+  const summary=summarizeDecodedFeatures(features);
+  assert.deepEqual(summary,{total:2,extrudable:1,raisedParts:1,maximumHeight:95,uniqueTiles:1});
 });

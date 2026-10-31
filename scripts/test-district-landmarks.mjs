@@ -88,6 +88,11 @@ test('real scene graph installs one cosmetic layer at published destinations wit
   const h=harness(),input=pins(),before=JSON.stringify(input),territory=JSON.stringify(h.map.territory);
   const control=await h.create(h.map,input);
   assert.equal(control.diagnostics.status,'ready');assert.equal(h.requests.size,7);
+  const snap=control.getDiagnostics();
+  assert.equal(snap.status,'ready');
+  assert.equal(snap.landmarks.length,5);
+  snap.landmarks[0].id='mutated';
+  assert.equal(control.diagnostics.landmarks[0].id,'bank');
   assert.deepEqual(Array.from(control.diagnostics.landmarks,v=>v.id),['bank','hospital','gym','hq','market']);
   assert.equal(JSON.stringify(input),before);assert.equal(JSON.stringify(h.map.territory),territory);
   assert.deepEqual(h.mutations,[{action:'add',id:ID,before:'zone-poi-halo'}]);

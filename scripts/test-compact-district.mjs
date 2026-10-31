@@ -305,3 +305,15 @@ test('beta102 a live existing style can apply perspective while unrelated tile r
   const map={isStyleLoaded:()=>false,getStyle:()=>({layers:[...layers.values()]}),getLayer:id=>layers.get(id),setLayoutProperty(id,key,value){writes++;layers.get(id).layout[key]=value;}};
   district.setPerspective(map,true);assert.equal(layers.get('district-buildings-3d').layout.visibility,'visible');assert.equal(writes,1,'pending provider sources must not leave perspective and its safe camera envelope stuck in the flat state');
 });
+
+test('controller diagnostics report lifecycle, destination count, and sub-controller statuses',()=>{
+  const map={on(){},off(){},getLayer(){return null;},getSource(){return null;},triggerRepaint(){},stop(){}};
+  const ctrl=district.controller(map,{});
+  assert.deepEqual(ctrl.diagnostics(),{disposed:false,visible:true,destinationCount:0,landmarksStatus:'idle',surfacesStatus:'idle',buildingsStatus:'idle',mapMediaStatus:'idle'});
+  ctrl.setDestinations([{id:'bank',_lngLat:[-73.98,40.69]},{id:'gym',_lngLat:[-73.99,40.70]}]);
+  assert.equal(ctrl.diagnostics().destinationCount,2);
+  ctrl.setVisible(false);
+  assert.equal(ctrl.diagnostics().visible,false);
+  ctrl.dispose();
+  assert.equal(ctrl.diagnostics().disposed,true);
+});

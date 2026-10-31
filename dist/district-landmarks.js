@@ -40,7 +40,7 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
     }));
     const failure=loads.find(result=>result.status==='rejected');if(failure)throw failure.reason;
   }catch(error){release();diagnostics.status='failed';diagnostics.error=String(error.message);publish();throw error;}
-  if(!isActive()) {release();diagnostics.status='cancelled';publish();return {setVisible(){},dispose(){},diagnostics};}
+  if(!isActive()) {release();diagnostics.status='cancelled';publish();return {setVisible(){},dispose(){},diagnostics,getDiagnostics(){return {...diagnostics,landmarks:diagnostics.landmarks.map(item=>({...item}))};}};}
   origin=mapboxgl.MercatorCoordinate.fromLngLat([-73.9865,40.698],0);
   const meter=origin.meterInMercatorCoordinateUnits();
   local=new THREE.Matrix4().makeTranslation(origin.x,origin.y,origin.z).scale(new THREE.Vector3(meter,-meter,meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
@@ -170,5 +170,5 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
     }
   };
   try{map.addLayer(layer,map.getLayer('zone-poi-halo')?'zone-poi-halo':undefined);await preparing;}catch(error){fail(error);throw error;}
-  return {setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();},diagnostics};
+  return {setVisible(value){if(disposed)return;visible=!!value;map.triggerRepaint();},dispose(){if(disposed)return;if(map.getLayer(ID))map.removeLayer(ID);else layer.onRemove();},diagnostics,getDiagnostics(){return {...diagnostics,landmarks:diagnostics.landmarks.map(item=>({...item}))};}};
 }

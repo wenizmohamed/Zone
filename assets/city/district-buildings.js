@@ -38,6 +38,18 @@ export function decodeTile(bytes,tile){
   }
   return result;
 }
+export function summarizeDecodedFeatures(features){
+  const list=Array.isArray(features)?features:[];
+  let extrudable=0,raisedParts=0,maximumHeight=0;
+  const tiles=new Set();
+  for(const f of list){
+    const h=Number(f?.properties?.height)||0,b=Number(f?.properties?.min_height)||0;
+    if(f?.properties?.extrude==='true'&&h>b){extrudable++;maximumHeight=Math.max(maximumHeight,h);}
+    if(b>0)raisedParts++;
+    if(f?.properties?.providerTile)tiles.add(String(f.properties.providerTile));
+  }
+  return {total:list.length,extrudable,raisedParts,maximumHeight,uniqueTiles:tiles.size};
+}
 async function readBounded(response,maxBytes){
   if(!response.ok)throw new Error('Provider district request failed (HTTP '+response.status+')');
   const declared=Number(response.headers?.get('content-length'));
