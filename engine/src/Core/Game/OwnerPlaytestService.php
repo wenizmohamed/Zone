@@ -218,6 +218,7 @@ final readonly class OwnerPlaytestService
     private function response(array $session, array $capture): array
     {
         return ['active' => true, 'mode' => 'owner-playtest', 'version' => $session['version'], 'sessionId' => $session['id'], 'expiresAt' => $session['expiresAt'],
+            'operationsRemaining' => max(0, self::MAX_OPERATIONS - count($session['operations'] ?? [])), 'maxOperations' => self::MAX_OPERATIONS,
             'gameplay' => $capture['gameplay'], 'combat' => $capture['combat'], 'highLow' => $capture['highLow'], 'dailyContract' => $capture['dailyContract'],
             'notifications' => $capture['notifications'], 'result' => $capture['result'], 'receipt' => $capture['receipt'], 'capabilities' => self::ACTIONS,
             'rules' => ['resourcesRefill' => true, 'allCatalogItemsProvisioned' => true, 'progressionUnlocked' => true, 'timersAdvance' => true, 'penaltiesClear' => true, 'liveEconomyModified' => false, 'sharedMutationsAllowed' => false]];

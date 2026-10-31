@@ -126,6 +126,7 @@ final class TerritoryService
                 'neutral' => count(array_filter($blocks, static fn (array $block): bool => $block['ownerFactionId'] === null)),
                 'contested' => $contested,
                 'controlPercent' => count($blocks) === 0 ? 0 : round($owned / count($blocks) * 100, 1),
+                'dailyRespectIncome' => array_sum(array_map(static fn (array $block): int => $block['ownerFactionId'] !== null && $block['ownerFactionId'] === $playerFactionId && $block['state'] === 'owned' ? (int) $block['dailyRespect'] : 0, $blocks)),
             ],
         ];
     }
@@ -358,6 +359,8 @@ final class TerritoryService
             'attackerScore' => (int) $war['attacker_score'],
             'defenderScore' => (int) $war['defender_score'],
             'targetScore' => (int) $war['target_score'],
+            'attackerProgressPct' => (int) min(100, round((int) $war['attacker_score'] / max(1, (int) $war['target_score']) * 100)),
+            'defenderProgressPct' => (int) min(100, round((int) $war['defender_score'] / max(1, (int) $war['target_score']) * 100)),
             'startedAt' => (string) $war['started_at'],
             'endsAt' => (string) $war['ends_at'],
             'scorePerAction' => self::WAR_CONTRIBUTION,

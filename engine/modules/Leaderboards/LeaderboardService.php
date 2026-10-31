@@ -19,10 +19,13 @@ final readonly class LeaderboardService
              WHERE p.id <> :fixture
              ORDER BY total_stats DESC, p.level DESC, p.id ASC LIMIT 50', ['fixture' => 'founder-player'],
         );
+        $topStats = empty($rows) ? 1 : max(1, (int) $rows[0]['total_stats']);
         return ['generatedAt' => gmdate('c'), 'limit' => 50, 'metric' => 'battle-stats', 'rows' => array_map(
             static fn (array $row, int $index): array => [
                 'rank' => $index + 1, 'username' => (string) $row['username'], 'level' => (int) $row['level'],
                 'totalStats' => (int) $row['total_stats'], 'liquidFunds' => (int) $row['liquid_funds'],
+                'powerTier' => (int) $row['total_stats'] >= 4000 ? 'Apex' : ((int) $row['total_stats'] >= 2000 ? 'Elite' : ((int) $row['total_stats'] >= 800 ? 'Veteran' : 'Rising')),
+                'vsLeaderPct' => (int) round((int) $row['total_stats'] / $topStats * 100),
                 'family' => $row['faction_id'] === null ? null : ['id' => (string) $row['faction_id'], 'name' => ['en' => (string) $row['name_en'], 'ar' => (string) $row['name_ar']]],
                 'isCurrentPlayer' => (string) $row['id'] === $playerId,
             ], $rows, array_keys($rows)),

@@ -936,6 +936,18 @@ try {
     $marketVer = (int) $engine->gameplay('founder-player')['state']['version'];
     $marketListed = $engine->playerMarketAction('list', 'medkit', 2, 350, $marketVer, 'founder-player');
     check(!empty($marketListed['listings']) && ($marketListed['listings'][0]['totalPrice'] ?? null) === 700, 'player market listings expose totalPrice (quantity * unitPrice)');
+
+    // --- Wave 10 (zone-beta128): WorldDirector, LeaderboardService, TerritoryService & OwnerPlaytestService telemetry ---
+    $engine->world()->tick();
+    $worldSnap = $engine->world()->snapshot('founder-player');
+    check(isset($worldSnap['activeFindCount']) && is_int($worldSnap['activeFindCount']) && (empty($worldSnap['finds']) || isset($worldSnap['finds'][0]['remainingSeconds'])), 'WorldDirector snapshot exposes activeFindCount and remainingSeconds on finds');
+    $lbSnap = $engine->leaderboards('founder-player');
+    check(!empty($lbSnap['rows']) && isset($lbSnap['rows'][0]['powerTier'], $lbSnap['rows'][0]['vsLeaderPct']) && $lbSnap['rows'][0]['vsLeaderPct'] === 100, 'LeaderboardService snapshot exposes powerTier and vsLeaderPct');
+    $terrSnap = $engine->territoryMap('founder-player');
+    check(isset($terrSnap['summary']['dailyRespectIncome']) && $terrSnap['summary']['dailyRespectIncome'] > 0, 'TerritoryService summary exposes dailyRespectIncome for owned blocks');
+    $playtestStarted = $engine->ownerPlaytest()->start('founder-player', 'wave10-owner', str_repeat('w', 24));
+    check(($playtestStarted['operationsRemaining'] ?? null) === 100 && ($playtestStarted['maxOperations'] ?? null) === 100, 'OwnerPlaytestService response exposes operationsRemaining and maxOperations');
+    $engine->ownerPlaytest()->end('founder-player', 'wave10-owner', (string) $playtestStarted['sessionId'], str_repeat('x', 24));
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

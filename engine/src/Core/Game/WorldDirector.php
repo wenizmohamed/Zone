@@ -123,9 +123,11 @@ final class WorldDirector
         if ($this->database->fetchOne('SELECT id FROM players WHERE id=:id', ['id' => $playerId]) === null) throw new InvalidArgumentException('Unknown player.');
         $rules = $this->rules(); $now = time();
         $finds = $rules['policy']['enabled'] ? $this->database->fetchAll('SELECT id,item_id,quantity,location_id,expires_at FROM world_finds WHERE expires_at>:now AND claimed_by IS NULL ORDER BY created_at DESC,id LIMIT 64', ['now' => $now]) : [];
-        foreach ($finds as &$find) { $find['quantity'] = (int) $find['quantity']; $find['expires_at'] = (int) $find['expires_at']; } unset($find);
-        return ['policy' => $rules['policy'], 'finds' => $finds, 'supply' => $this->supply(),
-            'events' => $this->database->fetchAll('SELECT id,title_en,title_ar,body_en,body_ar,created_at,expires_at FROM world_events WHERE expires_at>:now ORDER BY created_at DESC LIMIT 10', ['now' => $now]),
+        foreach ($finds as &$find) { $find['quantity'] = (int) $find['quantity']; $find['expires_at'] = (int) $find['expires_at']; $find['remainingSeconds'] = max(0, $find['expires_at'] - $now); } unset($find);
+        $events = $this->database->fetchAll('SELECT id,title_en,title_ar,body_en,body_ar,created_at,expires_at FROM world_events WHERE expires_at>:now ORDER BY created_at DESC LIMIT 10', ['now' => $now]);
+        foreach ($events as &$ev) { $ev['remainingSeconds'] = max(0, (int) $ev['expires_at'] - $now); } unset($ev);
+        return ['policy' => $rules['policy'], 'finds' => $finds, 'activeFindCount' => count($finds), 'supply' => $this->supply(),
+            'events' => $events,
             'lastTick' => $this->database->fetchOne('SELECT tick_at FROM world_ticks ORDER BY tick_at DESC LIMIT 1')['tick_at'] ?? null];
     }
 
