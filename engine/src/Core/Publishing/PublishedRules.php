@@ -45,4 +45,13 @@ final class PublishedRules
             'disabledCount' => count($states) - $enabledCount,
         ];
     }
+
+    /** @return list<string> */
+    public function disabledModuleIds(): array
+    {
+        return array_values(array_keys(array_filter(
+            $this->moduleStates(),
+            static fn (bool $enabled): bool => !$enabled,
+        )));
+    }
 }

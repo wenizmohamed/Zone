@@ -132,6 +132,12 @@ final class ContentManager
         ];
     }
 
+    public function auditEntryCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM admin_audit_log');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
+
     private function validateCrime(string $id, array $payload): array
     {
         if (!preg_match('/^[a-z][a-z0-9-]{1,79}$/', $id)) {

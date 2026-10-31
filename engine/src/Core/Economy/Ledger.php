@@ -40,4 +40,14 @@ final readonly class Ledger
             'netCashFlow' => (int) ($row['net_cash_flow'] ?? 0),
         ];
     }
+
+    /** @return list<array<string, mixed>> */
+    public function recentEntries(string $playerId, int $limit = 10): array
+    {
+        $safeLimit = max(1, min(50, $limit));
+        return $this->database->fetchAll(
+            "SELECT id, asset, amount, balance_after, reason, correlation_id, created_at FROM economy_ledger WHERE player_id = :player ORDER BY created_at DESC LIMIT {$safeLimit}",
+            ['player' => $playerId],
+        );
+    }
 }

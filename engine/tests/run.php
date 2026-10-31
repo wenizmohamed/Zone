@@ -1161,6 +1161,16 @@ try {
     check(count($ebWave32->recentEvents(5)) >= 1, 'EventBus recentEvents returns bounded recent event rows');
     $modDiagWave32 = $engine->moduleDiagnostics('founder-player');
     check(isset($modDiagWave32['enabledCrimes'], $modDiagWave32['factions'], $modDiagWave32['territories'], $modDiagWave32['registeredPlayers']) && $modDiagWave32['enabledCrimes'] >= 31 && $modDiagWave32['registeredPlayers'] >= 1, 'GameEngine moduleDiagnostics aggregates telemetry across all authoritative modules');
+
+    // --- Wave 33 (zone-beta151): ReleaseManager screen/block lists, PublishedRules disabledModuleIds, ContentManager auditEntryCount & Ledger recentEntries ---
+    check(count(ReleaseManager::supportedScreenIds()) === 19 && in_array('crimes', ReleaseManager::supportedScreenIds(), true), 'ReleaseManager supportedScreenIds returns 19 canonical screen IDs');
+    check(count(ReleaseManager::supportedBlockTypes()) === 5 && in_array('hero', ReleaseManager::supportedBlockTypes(), true), 'ReleaseManager supportedBlockTypes returns 5 builder block types');
+    $pubRulesWave33 = new \Zone\Engine\Core\Publishing\PublishedRules($database);
+    check(is_array($pubRulesWave33->disabledModuleIds()), 'PublishedRules disabledModuleIds returns list of disabled module IDs');
+    $cmWave33 = new \Zone\Engine\Core\Content\ContentManager($database, new EventBus($database));
+    check($cmWave33->auditEntryCount() >= 1, 'ContentManager auditEntryCount returns admin audit log row count');
+    $ledgerWave33 = new Ledger($database);
+    check(count($ledgerWave33->recentEntries('founder-player', 5)) >= 1, 'Ledger recentEntries returns bounded player economy ledger entries');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

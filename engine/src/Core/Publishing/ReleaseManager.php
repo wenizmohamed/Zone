@@ -282,6 +282,18 @@ final class ReleaseManager
         return (int) ($row['total'] ?? 0);
     }
 
+    /** @return list<string> */
+    public static function supportedScreenIds(): array
+    {
+        return self::SCREEN_IDS;
+    }
+
+    /** @return list<string> */
+    public static function supportedBlockTypes(): array
+    {
+        return self::BLOCK_TYPES;
+    }
+
     public function activate(string $releaseId, string $actor): array
     {
         return $this->configurationTransaction(fn (): array => $this->activateLocked($releaseId, $actor));
