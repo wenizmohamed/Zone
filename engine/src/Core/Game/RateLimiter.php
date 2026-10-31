@@ -79,4 +79,9 @@ final readonly class RateLimiter
         $count = (int) $row['count'];
         return ['enabled' => true, 'count' => $count, 'max' => $this->max, 'remaining' => max(0, $this->max - $count), 'windowSeconds' => $this->windowSeconds];
     }
+
+    public function reset(string $playerId): int
+    {
+        return $this->database->execute('DELETE FROM action_rate_limits WHERE player_id = :player', ['player' => $playerId]);
+    }
 }

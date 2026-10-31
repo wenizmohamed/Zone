@@ -77,4 +77,10 @@ final readonly class ResourceService
         $player['net_worth'] = $player['cash'] + $player['bank_balance'];
         return $player;
     }
+
+    /** @return array{life: int, energy: int, happy: int, nerve: int} */
+    public static function regenIntervalsSeconds(): array
+    {
+        return ['life' => 60, 'energy' => 180, 'happy' => 180, 'nerve' => 300];
+    }
 }

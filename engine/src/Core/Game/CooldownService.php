@@ -71,4 +71,18 @@ final readonly class CooldownService
         $availableAt = strtotime((string) $row['available_at']) ?: 0;
         return max(0, $availableAt - time());
     }
+
+    /** @return array<string, int> */
+    public function activeCooldowns(string $playerId): array
+    {
+        $now = time();
+        $active = [];
+        foreach ($this->database->fetchAll('SELECT action, available_at FROM action_cooldowns WHERE player_id = :player', ['player' => $playerId]) as $row) {
+            $rem = max(0, (strtotime((string) $row['available_at']) ?: 0) - $now);
+            if ($rem > 0) {
+                $active[(string) $row['action']] = $rem;
+            }
+        }
+        return $active;
+    }
 }

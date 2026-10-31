@@ -287,4 +287,11 @@ final readonly class OwnerPlaytestService
             'lifetimeSeconds' => self::LIFETIME,
         ];
     }
+
+    public function isSessionActive(string $sourcePlayerId): bool
+    {
+        $row = $this->database->fetchOne('SELECT value FROM engine_metadata WHERE name = :key', ['key' => $this->key($sourcePlayerId)]);
+        $session = $row === null || $row['value'] === '' ? null : json_decode((string) $row['value'], true, 512, JSON_THROW_ON_ERROR);
+        return $this->active(is_array($session) ? $session : null);
+    }
 }

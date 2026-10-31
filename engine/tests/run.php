@@ -1205,6 +1205,20 @@ try {
     check($wdWave36->tickCount() >= 1, 'WorldDirector tickCount returns persisted world tick count');
     $tsWave36 = new \Zone\Engine\Core\Territories\TerritoryService($database, new EventBus($database));
     check($tsWave36->ownedBlockCount() >= 1 && $tsWave36->ownedBlockCount('vipers') >= 1, 'TerritoryService ownedBlockCount returns owned territory block count');
+
+    // --- Wave 37 (zone-beta155): OwnerPlaytestService isSessionActive, LevelingService grantsForLevel, ResourceService regenIntervalsSeconds, CooldownService activeCooldowns & RateLimiter reset ---
+    check($engine->ownerPlaytest()->isSessionActive('founder-player') === false, 'OwnerPlaytestService isSessionActive returns false when no playtest session is active');
+    $grantsWave37 = LevelingService::grantsForLevel(5);
+    check($grantsWave37['level'] === 5 && $grantsWave37['nerve'] === 1 && $grantsWave37['energy'] === 3 && $grantsWave37['cash'] === 1250, 'LevelingService grantsForLevel returns level-up nerve, energy and cash grants');
+    $regenWave37 = ResourceService::regenIntervalsSeconds();
+    check($regenWave37['life'] === 60 && $regenWave37['energy'] === 180 && $regenWave37['nerve'] === 300, 'ResourceService regenIntervalsSeconds returns canonical Torn regen cadence');
+    $cdWave37 = new CooldownService($database);
+    $cdWave37->arm('founder-player', 'crime', 10);
+    $activeCdWave37 = $cdWave37->activeCooldowns('founder-player');
+    check(isset($activeCdWave37['crime']) && $activeCdWave37['crime'] > 0, 'CooldownService activeCooldowns returns map of active player cooldowns');
+    $rlWave37 = new RateLimiter($database, 120, 10);
+    $rlWave37->hit('founder-player');
+    check($rlWave37->reset('founder-player') >= 1 && $rlWave37->status('founder-player')['count'] === 0, 'RateLimiter reset clears player rate-limit window');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

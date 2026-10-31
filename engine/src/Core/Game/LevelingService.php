@@ -159,4 +159,16 @@ final readonly class LevelingService
             'progressPct' => (int) min(100, max(0, round(($xp - $floorXp) / $span * 100))),
         ];
     }
+
+    /** @return array{level: int, nerve: int, energy: int, cash: int} */
+    public static function grantsForLevel(int $level): array
+    {
+        $safeLevel = max(1, $level);
+        return [
+            'level' => $safeLevel,
+            'nerve' => self::NERVE_PER_LEVEL,
+            'energy' => self::ENERGY_PER_LEVEL,
+            'cash' => $safeLevel * self::CASH_PER_LEVEL,
+        ];
+    }
 }
