@@ -7,7 +7,7 @@ import vm from 'node:vm';
 // directory's module semantics. mountCombatPresentation is exercised in Chrome.
 const combatSource=fs.readFileSync(new URL('../dist/combat-presentation.js',import.meta.url),'utf8');
 const combatModuleUrl=new URL('../dist/combat-presentation.js',import.meta.url).href;
-const { combatEvents, combatEventLabel, createCombatPlayback, attackMotion, combatCameraDistance, COMBAT_CLIPS, createCombatFeedbackTimeline, installCombatStage, clearCombatFeedback, combatFeedbackBoundary } = await import('data:text/javascript;base64,'+Buffer.from(combatSource.replaceAll('import.meta.url',JSON.stringify(combatModuleUrl))).toString('base64'));
+const { combatEvents, combatEventLabel, combatExchangeSummary, createCombatPlayback, attackMotion, combatCameraDistance, COMBAT_CLIPS, createCombatFeedbackTimeline, installCombatStage, clearCombatFeedback, combatFeedbackBoundary } = await import('data:text/javascript;base64,'+Buffer.from(combatSource.replaceAll('import.meta.url',JSON.stringify(combatModuleUrl))).toString('base64'));
 function loadRuntimeModule(relative){const url=new URL(relative,import.meta.url),source=fs.readFileSync(url,'utf8');return import('data:text/javascript;base64,'+Buffer.from(source.replaceAll('import.meta.url',JSON.stringify(url.href))).toString('base64'));}
 const encounter = (version=1, log=[]) => ({ id:'actual-server-id', version, phase:'fighting', log });
 const hit = { n:1, actor:'player', side:'opp', d:12, yl:900, ol:88 };
@@ -143,4 +143,27 @@ test('PvP replay -> actual NPC turn0 and archive settlement reset feedback, ordi
   assert.equal(combatFeedbackBoundary(next,{...next,encounter:{...next.encounter,version:3,log:[hit]}}),false);
   assert.equal(combatFeedbackBoundary(prior,{...prior,result:{outcome:'lost',approach:'leave',cashDelta:0}}),true);
   assert.equal(combatFeedbackBoundary(prior,{encounter:null,result:null}),true);
+});
+
+test('combatExchangeSummary aggregates accuracy, damage, and bilingual tactical summary labels from server exchanges', () => {
+  const sample = { id: 'enc-1', turn: 3, log: [
+    { n: 1, actor: 'player', d: 15, yl: 95, ol: 85 },
+    { n: 1, actor: 'opponent', d: 0, yl: 95, ol: 85 },
+    { n: 2, actor: 'player', d: 20, yl: 95, ol: 65 },
+    { n: 2, actor: 'opponent', d: 8, yl: 87, ol: 65 }
+  ] };
+  const en = combatExchangeSummary(sample, { player: 'Weni', opponent: 'Rival' }, 'en');
+  assert.equal(en.turns, 3);
+  assert.equal(en.exchanges, 4);
+  assert.equal(en.playerHits, 2);
+  assert.equal(en.playerDamageDealt, 35);
+  assert.equal(en.playerAccuracyPct, 100);
+  assert.equal(en.opponentHits, 1);
+  assert.equal(en.opponentMisses, 1);
+  assert.equal(en.opponentDamageDealt, 8);
+  assert.equal(en.opponentAccuracyPct, 50);
+  assert.equal(en.netDamage, 27);
+  assert.match(en.summaryLabel, /Weni: 2\/2 \(35 dmg\).*Rival: 1\/2 \(8 dmg\)/);
+  const ar = combatExchangeSummary(sample, { player: 'وني', opponent: 'خصم' }, 'ar');
+  assert.match(ar.summaryLabel, /وني: 2\/2 \(35 ضرر\).*خصم: 1\/2 \(8 ضرر\)/);
 });

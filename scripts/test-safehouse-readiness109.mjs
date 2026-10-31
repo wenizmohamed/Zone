@@ -113,3 +113,18 @@ test('the reported Arabic phone Vault label and all three actual projected room 
 test('standalone safehouse cannot claim a parent handshake or offer a dead parent exit',()=>{
   const h=harness({standalone:true});h.run();h.send();assert.equal(h.readiness.parentInitialized,false);assert.equal(h.nodes.get('exit').disabled,true);assert.equal(h.nodes.get('error-exit').disabled,true);assert.ok(h.pins.every(p=>p.disabled));h.dispose();
 });
+
+test('safehouse property metadata includes happyMax and trainingBoost, and keyboard 1/2/3/0 shortcuts focus rooms when ready', () => {
+  const h = harness(); h.run();
+  h.send(validPacket({ property: { id: 'v108-loft', owned: true, happy: 500, name: { en: 'Canal loft', ar: 'شقة القناة' } } }));
+  const propMeta = JSON.parse(h.document.body.dataset.zoneSafehouseProperty);
+  assert.equal(propMeta.happyMax, 500);
+  assert.ok(propMeta.trainingBoost.startsWith('×1.'));
+  const canvas = h.nodes.get('room');
+  let prevented = 0;
+  for (const key of ['1', '2', '3', '0']) {
+    canvas.emit('keydown', { key, preventDefault() { prevented++; } });
+  }
+  assert.equal(prevented, 4);
+  h.dispose();
+});

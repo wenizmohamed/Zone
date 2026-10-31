@@ -21,7 +21,7 @@ function functionSource(name) {
   throw new Error('Unterminated '+name);
 }
 const context = createContext({ console, THREE, AbortController });
-runInContext(['isModernArmoryModel','initialLibrarySelection','filterModels','disposeModel','normalizeLibraryModel','createModelSelection'].map(functionSource).join('\n'), context);
+runInContext(['isModernArmoryModel','initialLibrarySelection','filterModels','summarizeLibraryCollection','disposeModel','normalizeLibraryModel','createModelSelection'].map(functionSource).join('\n'), context);
 function bytesFor(model) {
   assert.match(model.modelUrl,/^\/assets\/weapons\/library\/models\/[a-z0-9_-]+\.glb$/);
   return readFileSync(new URL(model.modelUrl.slice(1),root));
@@ -123,4 +123,13 @@ test('owned shared geometry, PBR maps and decoded images dispose once each',()=>
   const root=new THREE.Group(),geometry=new THREE.BoxGeometry(),image={close(){count.image++;}},texture=new THREE.Texture(image),material=new THREE.MeshStandardMaterial({map:texture,roughnessMap:texture,metalnessMap:texture});
   const count={geometry:0,material:0,texture:0,image:0};geometry.addEventListener('dispose',()=>count.geometry++);material.addEventListener('dispose',()=>count.material++);texture.addEventListener('dispose',()=>count.texture++);
   root.add(new THREE.Mesh(geometry,material),new THREE.Mesh(geometry,[material,material]));context.disposeModel(root);assert.deepEqual(count,{geometry:1,material:1,texture:1,image:1});
+});
+
+test('summarizeLibraryCollection computes exact triangles, bytes, textured PBR count, and category histogram', () => {
+  const summary = context.summarizeLibraryCollection(manifest.models);
+  assert.equal(summary.count, manifest.counts.models);
+  assert.equal(summary.totalTriangles, manifest.counts.triangles);
+  assert.equal(summary.totalBytes, manifest.counts.bytes);
+  assert.ok(summary.texturedCount > 20);
+  assert.ok(summary.categories.firearm > 0 && summary.categories.melee > 0);
 });

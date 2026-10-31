@@ -143,8 +143,8 @@ async function applyPacket(next) {
   if (disposed) return;
   const token = ++generation; packet = { ...next, preview: next.preview === true || next.property.owned !== true }; parentInitialized = true;
   lang = next.lang === 'ar' ? 'ar' : 'en'; language();
-  const media = next.property?.mediaAsset || '';
-  document.body.dataset.zoneSafehouseProperty = JSON.stringify({ id: next.property.id, owned: next.property.owned === true, preview: packet.preview, assetId: media || null });
+  const media = next.property?.mediaAsset || '', happyMax = Number(next.property?.happy || 0);
+  document.body.dataset.zoneSafehouseProperty = JSON.stringify({ id: next.property.id, owned: next.property.owned === true, preview: packet.preview, assetId: media || null, happyMax, trainingBoost: happyMax > 0 ? '×' + (1 + Math.log1p(happyMax / 500) * .35).toFixed(2) : null });
   syncReadiness();
   if (!renderReady || renderFailed) return;
   // The retained room and real service handlers are ready now. Uploaded shell
@@ -200,7 +200,7 @@ for (const button of document.querySelectorAll('[data-action]')) { listen(button
 listen($('overview'), 'click', () => { if (servicesReady()) focus(); }); listen($('exit'), 'click', () => action('exit')); listen($('error-exit'), 'click', () => action('exit'));
 listen($('retry'), 'click', () => { if (!disposed) location.reload(); });
 listen(window, 'keydown', event => { if (event.key === 'Escape') action('exit'); });
-listen(canvas, 'keydown', event => { if (event.key === 'Home' && servicesReady()) { event.preventDefault(); focus(); } });
+listen(canvas, 'keydown', event => { if (!servicesReady()) return; const keyMap = { Home: 'overview', '0': 'overview', '1': 'armory', '2': 'vault', '3': 'lounge' }; if (keyMap[event.key]) { event.preventDefault(); focus(keyMap[event.key]); } });
 controlsWired = true; language(); syncReadiness();
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });

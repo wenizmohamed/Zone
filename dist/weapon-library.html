@@ -50,6 +50,16 @@ function filterModels(models, filters) {
     && (!filters.source || (model.source?.title || model.author) === filters.source)
     && (!query || [model.name,model.id,model.category,model.author,model.source?.title,...(model.styles || [])].join(' ').toLowerCase().includes(query)));
 }
+function summarizeLibraryCollection(models) {
+  let totalTriangles = 0, totalBytes = 0, texturedCount = 0; const categories = {};
+  for (const model of models || []) {
+    totalTriangles += Number(model.triangles || 0);
+    totalBytes += Number(model.bytes || 0);
+    if ((model.styles || []).includes('textured PBR')) texturedCount++;
+    if (model.category) categories[model.category] = (categories[model.category] || 0) + 1;
+  }
+  return { count: (models || []).length, totalTriangles, totalBytes, totalMegabytes: +(totalBytes / 1048576).toFixed(2), texturedCount, categories };
+}
 function disposeModel(root) {
   if (!root) return;
   const geometries = new Set(), materials = new Set(), textures = new Set(), images = new Set();
@@ -110,7 +120,7 @@ function status(state) { currentState=state; document.body.dataset.zoneLibrarySt
 function options(id, values) { const select=$(id), previous=select.value; select.replaceChildren(new Option(tr('all'),'')); for(const value of [...new Set(values.filter(Boolean))].sort((a,b)=>a.localeCompare(b))) select.add(new Option(filterLabel(id,value),value)); select.value=previous; }
 function renderList() {
   const shown=filterModels(models,{collection:$('collection').value,query:$('search').value,category:$('category').value,style:$('style').value,source:$('source').value});
-  document.body.dataset.zoneLibraryShown=String(shown.length); document.body.dataset.zoneLibraryCollection=$('collection').value;
+  document.body.dataset.zoneLibraryShown=String(shown.length); document.body.dataset.zoneLibraryCollection=$('collection').value; document.body.dataset.zoneLibrarySummary=JSON.stringify(summarizeLibraryCollection(shown));
   const fragment=document.createDocumentFragment();
   for(const model of shown) { const row=document.createElement('li'),button=document.createElement('button'),name=document.createElement('b'),meta=document.createElement('small'); button.type='button';button.dataset.id=model.id;button.setAttribute('aria-pressed',String(selected?.id===model.id));name.textContent=modelLabel(model);meta.textContent=[filterLabel('category',model.category),model.author].filter(Boolean).join(' · ');button.append(name,meta);button.onclick=()=>choose(model);row.append(button);fragment.append(row); }
   $('list').replaceChildren(fragment);$('count').textContent=shown.length+' / '+models.length+' '+tr('models');$('empty').hidden=shown.length>0;

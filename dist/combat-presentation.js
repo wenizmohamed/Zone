@@ -16,6 +16,22 @@ export function combatEventLabel(event, names, lang = 'en') {
   return lang === 'ar' ? `${actor}: ضربة لم تصب` : `${actor} missed`;
 }
 
+export function combatExchangeSummary(encounter, names = {}, lang = 'en') {
+  const events = combatEvents(encounter);
+  const playerEvents = events.filter(e => e.actor === 'player'), opponentEvents = events.filter(e => e.actor === 'opponent');
+  const playerHits = playerEvents.filter(e => e.kind === 'hit').length, playerMisses = playerEvents.filter(e => e.kind === 'miss').length, playerBlocks = playerEvents.filter(e => e.kind === 'block').length;
+  const opponentHits = opponentEvents.filter(e => e.kind === 'hit').length, opponentMisses = opponentEvents.filter(e => e.kind === 'miss').length, opponentBlocks = opponentEvents.filter(e => e.kind === 'block').length;
+  const playerDamageDealt = playerEvents.reduce((sum, e) => sum + e.damage, 0), opponentDamageDealt = opponentEvents.reduce((sum, e) => sum + e.damage, 0);
+  const playerSwings = playerEvents.length, opponentSwings = opponentEvents.length;
+  const playerAccuracyPct = playerSwings > 0 ? Math.round((playerHits / playerSwings) * 100) : 0;
+  const opponentAccuracyPct = opponentSwings > 0 ? Math.round((opponentHits / opponentSwings) * 100) : 0;
+  const pName = names.player || (lang === 'ar' ? 'أنت' : 'You'), oName = names.opponent || (lang === 'ar' ? 'الخصم' : 'Opponent');
+  const summaryLabel = lang === 'ar'
+    ? `${pName}: ${playerHits}/${playerSwings} (${playerDamageDealt} ضرر) · ${oName}: ${opponentHits}/${opponentSwings} (${opponentDamageDealt} ضرر)`
+    : `${pName}: ${playerHits}/${playerSwings} (${playerDamageDealt} dmg) · ${oName}: ${opponentHits}/${opponentSwings} (${opponentDamageDealt} dmg)`;
+  return { turns: Number(encounter?.turn || 0), exchanges: events.length, playerHits, playerMisses, playerBlocks, playerDamageDealt, playerAccuracyPct, opponentHits, opponentMisses, opponentBlocks, opponentDamageDealt, opponentAccuracyPct, netDamage: playerDamageDealt - opponentDamageDealt, summaryLabel };
+}
+
 // Appended events play once. Hydrated history is never silently replayed.
 export function createCombatPlayback({ emit, schedule = setTimeout, cancel = clearTimeout, spacing = 780 }) {
   let identity = null, version = 0, count = 0, queue = [], timer = null, disposed = false, active = true, latest = null;
@@ -254,7 +270,8 @@ export async function mountCombatPresentation({ document: doc = document, window
     $('combat-state').textContent = title;
     if (resetFeedback) { playback.stop(); feedback.stop(); lastFeedback = null; clearCombatFeedback(doc, title); }
     else if (languageChanged) status(lastFeedback ? (lastFeedback.replay ? (lang === 'ar' ? 'إعادة عرض: ' : 'Replay: ') : '') + combatEventLabel(lastFeedback, names(), lang) : title);
-    if (encounter) playback.ingest(encounter);
+    if (encounter) { playback.ingest(encounter); doc.body.dataset.zoneCombatSummary = JSON.stringify(combatExchangeSummary(encounter, names(), lang)); }
+    else delete doc.body.dataset.zoneCombatSummary;
     actors.player?.armor?.update(data.player || {}, actors.player.root);
     const signature = JSON.stringify([data.player?.outfit || 'suit', data.player?.weapon || 'fists', data.player?.characterMediaAsset || null, data.player?.weaponMediaAsset || null, data.player?.armorMediaAsset || null]);
     if (requestedSignature !== signature) {

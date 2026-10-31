@@ -208,5 +208,8 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.equal(sharedView.competition.ranks[0].leadGap, '0');
     assert.equal(sharedView.competition.ranks[1].scorePerMember, '15');
     assert.equal(sharedView.competition.ranks[1].leadGap, '45');
+    assert.equal(sharedView.combatScene.turnsRemaining, 25);
+    assert.equal(sharedView.combatScene.playerHpPct, 100);
+    assert.equal(sharedView.combatScene.enemyHpPct, 100);
   }
 });

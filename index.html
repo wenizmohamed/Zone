@@ -2812,6 +2812,9 @@ class Component extends DCLogic {
       note: this.combatInstruction(lang),
       stats: `${t.str} ${num(p.stats.str)} · ${t.def} ${num(p.stats.def)} · ${t.spd} ${num(p.stats.spd)} · ${t.dex} ${num(p.stats.dex)} · ${t.battleScore} ${num(totalStats)} · ${view.loadout.weapon.name} (${view.loadout.weapon.detail}) · ${view.loadout.armor.name} (${view.loadout.armor.detail})`,
       health: this.combatEncounter ? `${t.you} ${num(this.combatEncounter.playerHp)}/${num(this.combatEncounter.playerMaxHp)} · ${t.life} ${num(this.combatEncounter.enemyHp)}/${num(this.combatEncounter.enemyMaxHp)} · ${lang === 'ar' ? 'الجولة' : 'Turn'} ${this.combatEncounter.turn}/25` : '',
+      turnsRemaining: this.combatEncounter ? Math.max(0, 25 - Number(this.combatEncounter.turn || 0)) : 25,
+      playerHpPct: this.combatEncounter ? Math.round((Number(this.combatEncounter.playerHp || 0) / Math.max(1, Number(this.combatEncounter.playerMaxHp || 1))) * 100) : 100,
+      enemyHpPct: this.combatEncounter ? Math.round((Number(this.combatEncounter.enemyHp || 0) / Math.max(1, Number(this.combatEncounter.enemyMaxHp || 1))) * 100) : 100,
       receiptTitle: lang === 'ar' ? 'تسوية محفوظة' : 'Recorded settlement',
       receipt: this.combatReceipt ? (lang === 'ar' ? 'النتيجة: ' : 'Outcome: ') + ({ won: t.won, lost: t.lost, stalemate: t.stalemate, fighting: lang === 'ar' ? 'انسحاب' : 'Withdrawn' }[this.combatReceipt.outcome] || this.combatReceipt.outcome || '') + ' · ' + (lang === 'ar' ? 'النقد ' : 'Cash ') + money(Number(this.combatReceipt.cashDelta || 0)) + ' · XP ' + num(Number(this.combatReceipt.xp || 0)) + ' · ' + t.respect + ' ' + num(Number(this.combatReceipt.respectDelta || 0)) : ''
     };
