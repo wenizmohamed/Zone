@@ -1529,4 +1529,40 @@ final class GameEngine
     {
         return in_array($city, self::CITIES, true);
     }
+
+    public function ledgerEntryCount(?string $playerId = null): int
+    {
+        if ($playerId !== null && $playerId !== '') {
+            $row = $this->database->fetchOne('SELECT COUNT(*) AS c FROM economy_ledger WHERE player_id = :player', ['player' => $playerId]);
+            return (int) ($row['c'] ?? 0);
+        }
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS c FROM economy_ledger');
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function eventLogCount(?string $eventName = null): int
+    {
+        if ($eventName !== null && $eventName !== '') {
+            $row = $this->database->fetchOne('SELECT COUNT(*) AS c FROM event_log WHERE event_name = :name', ['name' => $eventName]);
+            return (int) ($row['c'] ?? 0);
+        }
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS c FROM event_log');
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function achievementCount(string $playerId = 'founder-player'): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS c FROM achievements WHERE player_id = :player', ['player' => $playerId]);
+        return (int) ($row['c'] ?? 0);
+    }
+
+    public function playerCash(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['cash'];
+    }
+
+    public function playerLevel(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['level'];
+    }
 }

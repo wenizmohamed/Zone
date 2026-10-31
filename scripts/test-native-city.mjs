@@ -16,6 +16,11 @@ test('native overhead and 3D share exact roof footprints and real rooftop geomet
   const planSummary=atlas.summarizePlan(plan);
   assert.equal(planSummary.blockCount,1);assert.equal(planSummary.roofCount,plan.roofs.length);
   assert.equal(planSummary.roofKinds.flat+planSummary.roofKinds.sawtooth+planSummary.roofKinds.glass,plan.roofs.length);
+  const compiledSummary=city.summarizeCompiled(out);
+  assert.equal(compiledSummary.featureCount,out.data.features.length);
+  assert.equal(compiledSummary.buildingCount,roofs.length);
+  assert.equal(compiledSummary.blockCount,1);
+  assert.equal(compiledSummary.roofCount,plan.roofs.length);
   assert.equal(roofs.length,plan.roofs.length);assert.equal(out.stats.pixels,0);assert.equal(out.stats.source,'native-city-geometry');
   roofs.forEach((f,i)=>{assert.deepEqual(f.geometry.coordinates[0].slice(0,4),plan.roofs[i].corners);assert.ok(f.properties.height>0);});
   const gear=out.data.features.filter(f=>f.properties.kind==='detail');assert.ok(gear.length>=roofs.length*3);assert.ok(gear.every(f=>f.properties.height>f.properties.base));

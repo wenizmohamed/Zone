@@ -1323,6 +1323,13 @@ try {
     check($engine->resetRateLimit('founder-player') >= 0, 'GameEngine resetRateLimit resets rate-limit window for player');
     check($engine->cityCount() === 6, 'GameEngine cityCount returns 6 travel cities');
     check($engine->isSupportedCity('Dubai') === true && $engine->isSupportedCity('Atlantis') === false, 'GameEngine isSupportedCity validates travel destination city names');
+
+    // --- Wave 52 (zone-beta170): GameEngine ledgerEntryCount, eventLogCount, achievementCount, playerCash & playerLevel ---
+    check($engine->ledgerEntryCount() >= 1 && $engine->ledgerEntryCount('founder-player') >= 1, 'GameEngine ledgerEntryCount returns economy ledger row count');
+    check($engine->eventLogCount() >= 1 && $engine->eventLogCount('CrimeCommitted') >= 0, 'GameEngine eventLogCount returns event log row count');
+    check($engine->achievementCount('founder-player') >= 1, 'GameEngine achievementCount returns unlocked achievement count');
+    check($engine->playerCash('founder-player') >= 0, 'GameEngine playerCash returns current cash balance');
+    check($engine->playerLevel('founder-player') >= 1, 'GameEngine playerLevel returns current player level');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -190,5 +190,9 @@
     for(const id of ids.slice().reverse())if(map.getLayer(id))map.removeLayer(id);
     for(const id of ['zone-city-districts',SOURCE])if(map.getSource(id))map.removeSource(id);
   }
-  return {compile,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
+  function summarizeCompiled(compiled){
+    const features=Array.isArray(compiled?.data?.features)?compiled.data.features:[],labels=Array.isArray(compiled?.labels?.features)?compiled.labels.features:[],stats=compiled?.stats||{};
+    return {featureCount:features.length,buildingCount:features.filter(f=>f?.properties?.kind==='building').length,detailCount:features.filter(f=>f?.properties?.kind==='detail').length,overviewBuildingCount:features.filter(f=>f?.properties?.kind==='overviewBuilding').length,labelCount:labels.length,roofCount:Number(stats.roofs||0),blockCount:Number(stats.blocks||0),districtCount:Number(stats.districts||0)};
+  }
+  return {compile,summarizeCompiled,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
 });
