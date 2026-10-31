@@ -22,4 +22,13 @@ final class MailModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function unreadNotificationCount(Database $database, string $playerId): int
+    {
+        $row = $database->fetchOne(
+            'SELECT COUNT(*) AS total FROM notifications WHERE player_id = :player AND read_at IS NULL',
+            ['player' => $playerId],
+        );
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

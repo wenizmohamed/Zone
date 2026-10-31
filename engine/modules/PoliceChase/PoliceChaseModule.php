@@ -22,4 +22,10 @@ final class PoliceChaseModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    /** @return list<string> */
+    public static function evasionDifficultyTiers(): array
+    {
+        return ['street', 'cruiser', 'interceptor', 'roadblock', 'helicopter'];
+    }
 }

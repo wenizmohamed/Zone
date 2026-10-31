@@ -22,4 +22,13 @@ final class UsersOnlineModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function activeSessionCount(Database $database): int
+    {
+        $row = $database->fetchOne(
+            'SELECT COUNT(*) AS total FROM browser_sessions WHERE expires_at > :now',
+            ['now' => time()],
+        );
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

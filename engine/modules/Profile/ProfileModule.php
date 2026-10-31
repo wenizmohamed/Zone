@@ -22,4 +22,10 @@ final class ProfileModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function playerCount(Database $database): int
+    {
+        $row = $database->fetchOne('SELECT COUNT(*) AS total FROM players');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

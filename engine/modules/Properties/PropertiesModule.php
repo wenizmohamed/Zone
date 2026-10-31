@@ -22,4 +22,9 @@ final class PropertiesModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function safehouseTierCount(): int
+    {
+        return 15;
+    }
 }

@@ -22,4 +22,13 @@ final class SearchModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function unclaimedStreetFindCount(Database $database): int
+    {
+        $row = $database->fetchOne(
+            'SELECT COUNT(*) AS total FROM world_finds WHERE claimed_by IS NULL AND expires_at > :now',
+            ['now' => time()],
+        );
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

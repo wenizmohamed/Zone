@@ -1141,6 +1141,16 @@ try {
     check(\Zone\Modules\Garage\GarageModule::maxGarageSlots() === 10, 'GarageModule maxGarageSlots returns 10');
     check(\Zone\Modules\Inventory\InventoryModule::marketListingCount($database) >= 0, 'InventoryModule marketListingCount returns active market listing count');
     check(\Zone\Modules\Jail\JailModule::bustNerveCost() === 5, 'JailModule bustNerveCost returns 5');
+
+    // --- Wave 31 (zone-beta149): Mail, News, PoliceChase, Profile, Properties, Search, Theft & UsersOnline module telemetry ---
+    check(\Zone\Modules\Mail\MailModule::unreadNotificationCount($database, 'founder-player') >= 0, 'MailModule unreadNotificationCount returns unread notification count');
+    check(\Zone\Modules\News\NewsModule::activeWorldEventCount($database) >= 0, 'NewsModule activeWorldEventCount returns active world event count');
+    check(count(\Zone\Modules\PoliceChase\PoliceChaseModule::evasionDifficultyTiers()) === 5, 'PoliceChaseModule evasionDifficultyTiers returns 5 chase difficulty tiers');
+    check(\Zone\Modules\Profile\ProfileModule::playerCount($database) >= 1, 'ProfileModule playerCount returns registered player count');
+    check(\Zone\Modules\Properties\PropertiesModule::safehouseTierCount() === 15, 'PropertiesModule safehouseTierCount returns 15 safehouse tiers');
+    check(\Zone\Modules\Search\SearchModule::unclaimedStreetFindCount($database) >= 0, 'SearchModule unclaimedStreetFindCount returns active unclaimed street find count');
+    check(\Zone\Modules\Theft\TheftModule::maxPickpocketNerveCost() === 10, 'TheftModule maxPickpocketNerveCost returns 10');
+    check(\Zone\Modules\UsersOnline\UsersOnlineModule::activeSessionCount($database) >= 0, 'UsersOnlineModule activeSessionCount returns active browser session count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
