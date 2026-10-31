@@ -22,4 +22,9 @@ final class HospitalModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function injuredPlayerCount(Database $database): int
+    {
+        return (int) (($database->fetchOne('SELECT COUNT(*) AS count FROM players WHERE life < max_life')['count'] ?? 0));
+    }
 }

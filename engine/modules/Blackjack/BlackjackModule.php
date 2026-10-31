@@ -22,4 +22,10 @@ final class BlackjackModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    /** @return list<string> */
+    public static function supportedGames(): array
+    {
+        return ['blackjack', 'high-low'];
+    }
 }

@@ -22,4 +22,9 @@ final class BankModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function totalBankedCash(Database $database): int
+    {
+        return (int) (($database->fetchOne('SELECT COALESCE(SUM(bank_balance), 0) AS total_bank FROM players')['total_bank'] ?? 0));
+    }
 }

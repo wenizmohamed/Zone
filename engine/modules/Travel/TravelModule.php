@@ -22,4 +22,9 @@ final class TravelModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function activeTravelerCount(Database $database): int
+    {
+        return (int) (($database->fetchOne("SELECT COUNT(*) AS count FROM player_travel WHERE status = 'traveling'")['count'] ?? 0));
+    }
 }

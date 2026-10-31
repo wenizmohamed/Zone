@@ -1122,6 +1122,14 @@ try {
     check(\Zone\Modules\Gangs\GangsModule::factionCount($database) >= 3, 'GangsModule factionCount returns registered faction count');
     check(\Zone\Modules\Territories\TerritoriesModule::territoryCount($database) >= 12, 'TerritoriesModule territoryCount returns seeded territory count');
     check(\Zone\Modules\Leaderboards\LeaderboardsModule::topCashAmount($database) > 0, 'LeaderboardsModule topCashAmount returns highest player cash balance');
+
+    // --- Wave 29 (zone-beta147): BankModule, HospitalModule, StatsModule, TravelModule, BlackjackModule & KillModule telemetry ---
+    check(\Zone\Modules\Bank\BankModule::totalBankedCash($database) >= 0, 'BankModule totalBankedCash returns aggregate player bank balance');
+    check(\Zone\Modules\Hospital\HospitalModule::injuredPlayerCount($database) >= 0, 'HospitalModule injuredPlayerCount returns injured player count');
+    check(\Zone\Modules\Stats\StatsModule::trainableStats() === ['strength', 'defense', 'speed', 'dexterity'], 'StatsModule trainableStats returns canonical 4 gym stat keys');
+    check(\Zone\Modules\Travel\TravelModule::activeTravelerCount($database) >= 0, 'TravelModule activeTravelerCount returns active traveling player count');
+    check(\Zone\Modules\Blackjack\BlackjackModule::supportedGames() === ['blackjack', 'high-low'], 'BlackjackModule supportedGames returns casino game list');
+    check(\Zone\Modules\Kill\KillModule::npcAttackEnergyCost() === 25, 'KillModule npcAttackEnergyCost returns 25 energy');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

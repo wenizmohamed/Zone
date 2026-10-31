@@ -22,4 +22,10 @@ final class StatsModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    /** @return list<string> */
+    public static function trainableStats(): array
+    {
+        return ['strength', 'defense', 'speed', 'dexterity'];
+    }
 }
