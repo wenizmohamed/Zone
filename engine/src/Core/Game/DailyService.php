@@ -271,4 +271,10 @@ final readonly class DailyService
     {
         return self::STREAK_SCHEDULE;
     }
+
+    /** @return list<array<string, int|string>> */
+    public static function contractPool(): array
+    {
+        return self::CONTRACT_POOL;
+    }
 }

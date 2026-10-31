@@ -146,4 +146,16 @@ final class CombatService
         $phase = json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '';
         return in_array($phase, ['fighting', 'won'], true);
     }
+
+    public function activeEncounterCount(): int
+    {
+        $count = 0;
+        foreach ($this->database->fetchAll('SELECT state_json FROM combat_encounters') as $row) {
+            $phase = json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '';
+            if (in_array($phase, ['fighting', 'won'], true)) {
+                $count++;
+            }
+        }
+        return $count;
+    }
 }

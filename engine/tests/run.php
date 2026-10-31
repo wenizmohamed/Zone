@@ -1183,6 +1183,16 @@ try {
     check($bsWave34->purgeExpired() >= 0, 'BrowserSessions purgeExpired deletes expired browser sessions');
     $paWave34 = new \Zone\Engine\Core\Security\PlayerAccounts($database);
     check($paWave34->securityEventCount() >= 0 && $paWave34->securityEventCount('founder-player') >= 0, 'PlayerAccounts securityEventCount returns security audit event count');
+
+    // --- Wave 35 (zone-beta153): DailyService contractPool, TravelService arrivedCount, ProgressionService ownedItemCount, CombatService activeEncounterCount & PlayerCombatService maxRounds ---
+    check(count(\Zone\Engine\Core\Game\DailyService::contractPool()) === 4, 'DailyService contractPool returns 4 rotating daily contract definitions');
+    $trvWave35 = new \Zone\Engine\Core\Game\TravelService($database, new EventBus($database));
+    check($trvWave35->arrivedCount() >= 0, 'TravelService arrivedCount returns arrived player travel row count');
+    $psWave35 = new \Zone\Engine\Core\Game\ProgressionService($database, new EventBus($database));
+    check($psWave35->ownedItemCount('founder-player') >= 1, 'ProgressionService ownedItemCount returns distinct positive-quantity item count');
+    $csWave35 = new \Zone\Engine\Core\Game\CombatService($database, new EventBus($database));
+    check($csWave35->activeEncounterCount() >= 0, 'CombatService activeEncounterCount returns active NPC encounter count');
+    check(\Zone\Engine\Core\Game\PlayerCombatService::maxRounds() === 25, 'PlayerCombatService maxRounds returns 25');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

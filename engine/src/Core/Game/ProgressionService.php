@@ -669,4 +669,13 @@ final class ProgressionService
     {
         return $this->catalogRevision;
     }
+
+    public function ownedItemCount(string $playerId): int
+    {
+        $state = $this->load($playerId);
+        return count(array_filter(
+            is_array($state['inv'] ?? null) ? $state['inv'] : [],
+            static fn (mixed $qty): bool => (int) $qty > 0,
+        ));
+    }
 }

@@ -40,6 +40,12 @@ final class TravelService
         return ($this->snapshot($playerId)['status'] ?? null) === 'traveling';
     }
 
+    public function arrivedCount(): int
+    {
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM player_travel WHERE status = 'arrived'");
+        return max(0, (int) ($row['total'] ?? 0));
+    }
+
     /** Must share the player transaction that debits the fare. */
     public function depart(string $playerId, string $origin, string $destination, int $seconds): array
     {

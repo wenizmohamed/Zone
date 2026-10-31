@@ -257,4 +257,9 @@ final class PlayerCombatService
         $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM player_combat_locks WHERE expires_at > :now', ['now' => $now]);
         return (int) ($row['total'] ?? 0);
     }
+
+    public static function maxRounds(): int
+    {
+        return 25;
+    }
 }
