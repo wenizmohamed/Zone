@@ -174,5 +174,19 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.ok(weaponView.missions.every(m => typeof m.remaining === 'number' && m.cashReward && typeof m.pointsReward === 'number'), 'missions include remaining, cashReward, pointsReward');
     assert.ok(weaponView.inmates.every(i => i.bustRiskTier && i.nerveCost === 5), 'inmates include bustRiskTier and nerveCost');
     assert.ok(weaponView.patients.every(pt => pt.energyCost === 75 && typeof pt.reviveReady === 'boolean'), 'patients include energyCost and reviveReady');
+    assert.ok(weaponView.cityDirectory.rows.every(r => r.categoryId && r.categoryLabel), 'cityDirectory rows include categoryId and categoryLabel');
+    assert.ok(weaponView.hof.every(r => r.powerTier && r.powerTier.length >= 3), 'hof rows include powerTier');
+    instance.worldState = { finds: [{ id: 'f1', item_id: 'knife', quantity: 2, location_id: 'crimes' }], events: [] };
+    instance.peerResources = {
+      market: { snapshot: { listings: [{ id: 'l1', itemId: 'knife', sellerName: 'Sami', own: false, quantity: 3, unitPrice: 1500, version: 1 }] } },
+      family: { snapshot: { definitions: [{ id: 'docks', name: { en: 'Dock heist', ar: 'عملية المرفأ' }, requiredMembers: 4, energyCost: 25, cashReward: 40000, respectReward: 50, durationSeconds: 600 }], operations: [{ id: 'op1', definitionId: 'docks', state: 'forming', requiredMembers: 4, participants: [{ username: 'Newcomer' }], payoutPerMember: 10000, version: 1 }] } }
+    };
+    const peerView = instance.renderVals();
+    assert.ok(peerView.world.finds[0].unitValue && peerView.world.finds[0].totalValue, 'world finds include unitValue and totalValue');
+    assert.equal(typeof peerView.playerMarket.listings[0].vsCatalogPct, 'number');
+    assert.ok(peerView.playerMarket.listings[0].dealTier.length >= 3, 'playerMarket listings include dealTier');
+    assert.ok(peerView.familyActivities.definitions[0].payoutPerMember && peerView.familyActivities.definitions[0].cashPerEnergy.includes('/'), 'familyActivities definitions include payoutPerMember and cashPerEnergy');
+    assert.equal(peerView.familyActivities.operations[0].fillPct, 25);
+    assert.equal(peerView.familyActivities.operations[0].slotsRemaining, 3);
   }
 });
