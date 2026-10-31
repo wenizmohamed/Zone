@@ -8,6 +8,15 @@ import { FBXLoader } from '../../lib/three184/FBXLoader.js';
 
 const MAX_VERTICES = 3_000_000, MAX_TRIANGLES = 2_000_000, MAX_NODES = 50_000;
 const MAX_BYTES = 125_829_120;
+export function inspectorBudgetDiagnostics() {
+  return {
+    maxVertices: MAX_VERTICES,
+    maxTriangles: MAX_TRIANGLES,
+    maxNodes: MAX_NODES,
+    maxBytes: MAX_BYTES,
+    supportedFormats: ['glb', 'gltf', 'obj', 'fbx'],
+  };
+}
 const safeVector = v => [v.x, v.y, v.z].map(n => Math.round(n * 1e7) / 1e7);
 // Browser-only progress notifications do not alter the parsed geometry.
 globalThis.ProgressEvent ??= class ProgressEvent extends Event {

@@ -1295,6 +1295,13 @@ try {
     check($engine->leaderboardRowCount() >= 1, 'GameEngine leaderboardRowCount returns public leaderboard row count');
     check($engine->activeFamilyOperationCount() >= 0, 'GameEngine activeFamilyOperationCount returns forming/running family operation count');
     check($engine->soldMarketListingCount() >= 0, 'GameEngine soldMarketListingCount returns sold player market listing count');
+
+    // --- Wave 48 (zone-beta166): GameEngine activeEncounterCount, playerCombatMaxRounds, familyUpgradeCount, resourceRegenIntervals & levelUpGrants ---
+    check($engine->activeEncounterCount() >= 0 && $engine->activeEncounterCount('founder-player') >= 0, 'GameEngine activeEncounterCount returns active NPC encounter count');
+    check($engine->playerCombatMaxRounds() === 25, 'GameEngine playerCombatMaxRounds returns 25');
+    check($engine->familyUpgradeCount('vipers') >= 0, 'GameEngine familyUpgradeCount returns owned family upgrade count');
+    check($engine->resourceRegenIntervals()['life'] === 60 && $engine->resourceRegenIntervals()['energy'] === 180, 'GameEngine resourceRegenIntervals returns canonical Torn regen intervals');
+    check($engine->levelUpGrants(5)['cash'] === 1250, 'GameEngine levelUpGrants returns level-up grant schedule');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

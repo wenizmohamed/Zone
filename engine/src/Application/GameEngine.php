@@ -1424,4 +1424,31 @@ final class GameEngine
     {
         return (new PlayerMarketService($this->database, $this->events))->soldListingCount();
     }
+
+    public function activeEncounterCount(?string $playerId = null): int
+    {
+        return (new CombatService($this->database, $this->events))->activeEncounterCount($playerId);
+    }
+
+    public function playerCombatMaxRounds(): int
+    {
+        return PlayerCombatService::maxRounds();
+    }
+
+    public function familyUpgradeCount(string $factionId = 'vipers'): int
+    {
+        return (new \Zone\Engine\Core\Game\FamilyProgressionService($this->database, $this->events))->upgradeCount($factionId);
+    }
+
+    /** @return array<string, int> */
+    public function resourceRegenIntervals(): array
+    {
+        return ResourceService::regenIntervalsSeconds();
+    }
+
+    /** @return array{level: int, nerve: int, energy: int, cash: int} */
+    public function levelUpGrants(int $level): array
+    {
+        return LevelingService::grantsForLevel($level);
+    }
 }

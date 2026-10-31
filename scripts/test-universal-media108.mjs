@@ -8,6 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
+import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const obj='o ActualTriangle\nv 0 0 0\nv 2 0 0\nv 0 3 0\nf 1 2 3\n';
@@ -208,4 +209,9 @@ test('failed or incompatible map assets cannot leave partial models or GPU layer
 test('new production viewers fence same-origin parent messages and keep draft-only authoring out of ordinary viewer',()=>{
   const inspector=readFileSync(new URL('../dist/asset-inspector.mjs',import.meta.url),'utf8'),viewer=readFileSync(new URL('../dist/asset-viewer.mjs',import.meta.url),'utf8');
   assert.match(safeSource,/event\.source !== parent \|\| event\.origin !== location\.origin/);assert.match(inspector,/event\.source !== parent \|\| event\.origin !== location\.origin/);assert.match(inspector,/draft:true/);assert.doesNotMatch(viewer,/draft\s*:\s*true/);assert.match(viewer,/loadAsset\(id,/);assert.match(safeSource,/new THREE\.Raycaster/);
+  const budget=inspectorBudgetDiagnostics();
+  assert.equal(budget.maxVertices,3_000_000);
+  assert.equal(budget.maxTriangles,2_000_000);
+  assert.equal(budget.maxNodes,50_000);
+  assert.deepEqual(budget.supportedFormats,['glb','gltf','obj','fbx']);
 });
