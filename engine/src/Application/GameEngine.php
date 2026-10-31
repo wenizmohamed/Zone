@@ -1451,4 +1451,31 @@ final class GameEngine
     {
         return LevelingService::grantsForLevel($level);
     }
+
+    /** @return list<array<string, mixed>> */
+    public function dailyContractPool(): array
+    {
+        return DailyService::contractPool();
+    }
+
+    public function arrivedTravelCount(): int
+    {
+        return (new TravelService($this->database, $this->events))->arrivedCount();
+    }
+
+    public function ownedItemCount(string $playerId = 'founder-player'): int
+    {
+        return (new ProgressionService($this->database, $this->events))->ownedItemCount($playerId);
+    }
+
+    public function totalMaterialLootAwardedCount(?string $source = null): int
+    {
+        return (new \Zone\Engine\Core\Game\MaterialLootService($this->database, $this->events))->totalAwardedCount($source);
+    }
+
+    /** @return list<string> */
+    public function editableCatalogCategories(): array
+    {
+        return GameplayCatalog::editableCategories();
+    }
 }

@@ -214,4 +214,6 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(budget.maxTriangles,2_000_000);
   assert.equal(budget.maxNodes,50_000);
   assert.deepEqual(budget.supportedFormats,['glb','gltf','obj','fbx']);
+  assert.match(viewer,/window\.ZoneAssetViewer=\{diagnostics:/);
+  assert.match(inspector,/window\.ZoneAssetInspector = \{ diagnostics:/);
 });

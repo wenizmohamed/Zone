@@ -1302,6 +1302,13 @@ try {
     check($engine->familyUpgradeCount('vipers') >= 0, 'GameEngine familyUpgradeCount returns owned family upgrade count');
     check($engine->resourceRegenIntervals()['life'] === 60 && $engine->resourceRegenIntervals()['energy'] === 180, 'GameEngine resourceRegenIntervals returns canonical Torn regen intervals');
     check($engine->levelUpGrants(5)['cash'] === 1250, 'GameEngine levelUpGrants returns level-up grant schedule');
+
+    // --- Wave 49 (zone-beta167): GameEngine dailyContractPool, arrivedTravelCount, ownedItemCount, totalMaterialLootAwardedCount & editableCatalogCategories ---
+    check(count($engine->dailyContractPool()) === 4, 'GameEngine dailyContractPool returns 4 daily contracts');
+    check($engine->arrivedTravelCount() >= 0, 'GameEngine arrivedTravelCount returns arrived travel row count');
+    check($engine->ownedItemCount('founder-player') >= 1, 'GameEngine ownedItemCount returns distinct positive-quantity item count');
+    check($engine->totalMaterialLootAwardedCount() >= 0 && $engine->totalMaterialLootAwardedCount('world') >= 0, 'GameEngine totalMaterialLootAwardedCount returns awarded material loot count');
+    check(count($engine->editableCatalogCategories()) === 8, 'GameEngine editableCatalogCategories returns 8 editable catalog categories');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
