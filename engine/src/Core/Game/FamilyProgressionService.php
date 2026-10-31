@@ -64,4 +64,14 @@ final readonly class FamilyProgressionService
         $row = $this->database->fetchOne('SELECT respect FROM family_progression WHERE faction_id = :id', ['id' => $factionId]);
         return (int) ($row['respect'] ?? 0);
     }
+
+    public function upgradeCount(string $factionId): int
+    {
+        $row = $this->database->fetchOne('SELECT upgrades_json FROM family_progression WHERE faction_id = :id', ['id' => $factionId]);
+        if ($row === null) {
+            return 0;
+        }
+        $upgrades = json_decode((string) $row['upgrades_json'], true, 512, JSON_THROW_ON_ERROR);
+        return is_array($upgrades) ? count(array_filter($upgrades)) : 0;
+    }
 }

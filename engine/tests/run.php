@@ -1193,6 +1193,18 @@ try {
     $csWave35 = new \Zone\Engine\Core\Game\CombatService($database, new EventBus($database));
     check($csWave35->activeEncounterCount() >= 0, 'CombatService activeEncounterCount returns active NPC encounter count');
     check(\Zone\Engine\Core\Game\PlayerCombatService::maxRounds() === 25, 'PlayerCombatService maxRounds returns 25');
+
+    // --- Wave 36 (zone-beta154): PlayerMarketService soldListingCount, FamilyActivityService activeOperationCount, FamilyProgressionService upgradeCount, WorldDirector tickCount & TerritoryService ownedBlockCount ---
+    $pmsWave36 = new \Zone\Engine\Core\Game\PlayerMarketService($database, new EventBus($database));
+    check($pmsWave36->soldListingCount() >= 0, 'PlayerMarketService soldListingCount returns sold market listing count');
+    $fasWave36 = new \Zone\Engine\Core\Game\FamilyActivityService($database, new EventBus($database));
+    check($fasWave36->activeOperationCount() >= 0 && $fasWave36->activeOperationCount('vipers') >= 0, 'FamilyActivityService activeOperationCount returns forming/running operation count');
+    $fpsWave36 = new \Zone\Engine\Core\Game\FamilyProgressionService($database, new EventBus($database));
+    check($fpsWave36->upgradeCount('vipers') >= 0, 'FamilyProgressionService upgradeCount returns owned shared upgrade count');
+    $wdWave36 = new \Zone\Engine\Core\Game\WorldDirector($database, new EventBus($database));
+    check($wdWave36->tickCount() >= 1, 'WorldDirector tickCount returns persisted world tick count');
+    $tsWave36 = new \Zone\Engine\Core\Territories\TerritoryService($database, new EventBus($database));
+    check($tsWave36->ownedBlockCount() >= 1 && $tsWave36->ownedBlockCount('vipers') >= 1, 'TerritoryService ownedBlockCount returns owned territory block count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

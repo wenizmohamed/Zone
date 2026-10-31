@@ -94,4 +94,10 @@ final readonly class PlayerMarketService
             : $this->database->fetchOne("SELECT COUNT(*) AS total FROM player_market_listings WHERE seller_id=:seller AND state='active' AND quantity>0", ['seller' => $sellerId]);
         return (int) ($row['total'] ?? 0);
     }
+
+    public function soldListingCount(): int
+    {
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM player_market_listings WHERE state = 'sold'");
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

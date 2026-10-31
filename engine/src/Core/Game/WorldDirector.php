@@ -189,4 +189,10 @@ final class WorldDirector
         $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM world_events WHERE expires_at > :now', ['now' => $now]);
         return (int) ($row['total'] ?? 0);
     }
+
+    public function tickCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM world_ticks');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

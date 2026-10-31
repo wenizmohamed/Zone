@@ -413,4 +413,17 @@ final class TerritoryService
         $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM territory_wars WHERE state = 'active'");
         return (int) ($row['total'] ?? 0);
     }
+
+    public function ownedBlockCount(?string $factionId = null): int
+    {
+        if ($factionId !== null) {
+            $row = $this->database->fetchOne(
+                "SELECT COUNT(*) AS total FROM territory_control WHERE state = 'owned' AND faction_id = :faction",
+                ['faction' => $factionId],
+            );
+            return max(0, (int) ($row['total'] ?? 0));
+        }
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM territory_control WHERE state = 'owned' AND faction_id IS NOT NULL");
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

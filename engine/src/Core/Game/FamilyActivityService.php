@@ -269,4 +269,17 @@ final readonly class FamilyActivityService
     {
         return $this->season();
     }
+
+    public function activeOperationCount(?string $factionId = null): int
+    {
+        if ($factionId !== null) {
+            $row = $this->database->fetchOne(
+                "SELECT COUNT(*) AS total FROM family_operations WHERE faction_id = :faction AND state IN ('forming', 'running')",
+                ['faction' => $factionId],
+            );
+            return max(0, (int) ($row['total'] ?? 0));
+        }
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM family_operations WHERE state IN ('forming', 'running')");
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }
