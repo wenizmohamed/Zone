@@ -58,4 +58,13 @@ final readonly class BrowserSessions
     {
         $this->database->execute('DELETE FROM browser_sessions WHERE token_hash = :hash', ['hash' => hash('sha256', $token)]);
     }
+
+    public function activeCount(?int $now = null): int
+    {
+        $row = $this->database->fetchOne(
+            'SELECT COUNT(*) AS total FROM browser_sessions WHERE expires_at > :now',
+            ['now' => $now ?? time()],
+        );
+        return (int) ($row['total'] ?? 0);
+    }
 }

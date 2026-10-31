@@ -35,4 +35,15 @@ final class ArrayCacheStore implements CacheStore
     {
         unset($this->values[$key]);
     }
+
+    public function count(): int
+    {
+        $now = time();
+        foreach ($this->values as $key => $entry) {
+            if ($entry['expires'] < $now) {
+                unset($this->values[$key]);
+            }
+        }
+        return count($this->values);
+    }
 }

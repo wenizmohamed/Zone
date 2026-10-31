@@ -58,6 +58,20 @@ final class GameplayCatalog
             'updatedBy' => $row['updated_by'], 'updatedAt' => $row['updated_at'], 'schema' => self::schema()];
     }
 
+    public function summary(): array
+    {
+        $draft = $this->draft();
+        $counts = [];
+        foreach ($draft['catalogs'] as $category => $entries) {
+            $counts[$category] = is_array($entries) ? count($entries) : 0;
+        }
+        return [
+            'revision' => $draft['revision'],
+            'updatedBy' => $draft['updatedBy'],
+            'categoryCounts' => $counts,
+        ];
+    }
+
     public function update(string $category, string $id, array $changes, int $expectedRevision, string $actor): array
     {
         if ($expectedRevision < 1 || trim($actor) === '' || strlen($actor) > 160) throw new InvalidArgumentException('A current catalog revision and valid actor are required.');

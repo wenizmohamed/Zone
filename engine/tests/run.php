@@ -1015,6 +1015,27 @@ try {
     $themeRegWave20 = new \Zone\Engine\Core\Themes\ThemeRegistry($database, dirname(__DIR__) . '/themes');
     $activeThemeWave20 = $themeRegWave20->activeTheme();
     check($activeThemeWave20 !== null && isset($activeThemeWave20['id'], $activeThemeWave20['active']) && $activeThemeWave20['active'] === true, 'ThemeRegistry activeTheme returns the currently active installed theme');
+
+    // --- Wave 21 (zone-beta139): EventBus, PublishedRules, GameplayCatalog, MaterialLootService, BrowserSessions & ArrayCacheStore telemetry ---
+    $eventBusWave21 = new EventBus($database);
+    $ebSumWave21 = $eventBusWave21->summary();
+    check(isset($ebSumWave21['persistedCount'], $ebSumWave21['subscribedEvents'], $ebSumWave21['subscriberCount']) && $ebSumWave21['persistedCount'] > 0, 'EventBus summary exposes persistedCount, subscribedEvents and subscriberCount');
+    $pubRulesWave21 = new \Zone\Engine\Core\Publishing\PublishedRules($database);
+    $prSumWave21 = $pubRulesWave21->summary();
+    check(isset($prSumWave21['totalModules'], $prSumWave21['enabledCount'], $prSumWave21['disabledCount']) && $prSumWave21['totalModules'] === ($prSumWave21['enabledCount'] + $prSumWave21['disabledCount']), 'PublishedRules summary exposes totalModules, enabledCount and disabledCount');
+    $gpCatWave21 = new \Zone\Engine\Core\Content\GameplayCatalog($database, $eventBusWave21);
+    $catSumWave21 = $gpCatWave21->summary();
+    check(isset($catSumWave21['revision'], $catSumWave21['categoryCounts']['items']) && $catSumWave21['categoryCounts']['items'] > 0, 'GameplayCatalog summary exposes revision and categoryCounts');
+    $matLootWave21 = new \Zone\Engine\Core\Game\MaterialLootService($database, $eventBusWave21);
+    $usageWave21 = $matLootWave21->hourlyUsage('world', '*');
+    check($usageWave21['source'] === 'world' && isset($usageWave21['awardCount'], $usageWave21['spentValue']), 'MaterialLootService hourlyUsage exposes awardCount and spentValue');
+    $bsWave21 = new \Zone\Engine\Core\Security\BrowserSessions($database);
+    $issuedWave21 = $bsWave21->issue('founder-player');
+    check($bsWave21->activeCount() >= 1, 'BrowserSessions activeCount returns count of non-expired sessions');
+    $bsWave21->revoke($issuedWave21['token']);
+    $cacheWave21 = new ArrayCacheStore();
+    $cacheWave21->set('k1', 'v1', 60);
+    check($cacheWave21->count() === 1, 'ArrayCacheStore count returns active non-expired entry count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

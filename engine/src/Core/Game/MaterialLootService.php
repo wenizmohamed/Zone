@@ -115,4 +115,20 @@ final class MaterialLootService
             'hourStart' => (int) $row['hour_start'], 'itemId' => $row['item_id'], 'quantity' => (int) $row['quantity'],
             'unitValue' => (int) $row['unit_value'], 'issuedValue' => (int) $row['issued_value'], 'releaseId' => $row['release_id']];
     }
+
+    public function hourlyUsage(string $source, string $scopeId = '*', ?int $now = null): array
+    {
+        $hour = intdiv($now ?? time(), 3600) * 3600;
+        $row = $this->database->fetchOne(
+            'SELECT COUNT(*) AS award_count, COALESCE(SUM(issued_value), 0) AS spent_value FROM material_issuance WHERE source = :source AND scope_id = :scope AND hour_start = :hour',
+            ['source' => $source, 'scope' => $scopeId, 'hour' => $hour],
+        );
+        return [
+            'source' => $source,
+            'scopeId' => $scopeId,
+            'hourStart' => $hour,
+            'awardCount' => (int) ($row['award_count'] ?? 0),
+            'spentValue' => (int) ($row['spent_value'] ?? 0),
+        ];
+    }
 }

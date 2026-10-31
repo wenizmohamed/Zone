@@ -34,4 +34,15 @@ final class PublishedRules
         }
         return $states;
     }
+
+    public function summary(): array
+    {
+        $states = $this->moduleStates();
+        $enabledCount = count(array_filter($states));
+        return [
+            'totalModules' => count($states),
+            'enabledCount' => $enabledCount,
+            'disabledCount' => count($states) - $enabledCount,
+        ];
+    }
 }

@@ -37,4 +37,18 @@ final class EventBus
             $subscriber->handle($event);
         }
     }
+
+    public function summary(): array
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM event_log');
+        $subscriberCount = 0;
+        foreach ($this->subscribers as $list) {
+            $subscriberCount += count($list);
+        }
+        return [
+            'persistedCount' => (int) ($row['total'] ?? 0),
+            'subscribedEvents' => array_keys($this->subscribers),
+            'subscriberCount' => $subscriberCount,
+        ];
+    }
 }
