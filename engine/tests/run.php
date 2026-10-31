@@ -1078,6 +1078,22 @@ try {
     check(is_bool($trvWave24->isTraveling('founder-player')), 'TravelService isTraveling returns boolean travel status');
     $schedWave24 = \Zone\Engine\Core\Game\DailyService::streakSchedule();
     check(count($schedWave24) === 7 && $schedWave24[7][0] === 12000, 'DailyService streakSchedule returns 7-day reward schedule');
+
+    // --- Wave 25 (zone-beta143): CombatService, PlayerCombatService, PlayerMarketService, FamilyActivityService, FamilyProgressionService & LevelingService telemetry ---
+    $csWave25 = new \Zone\Engine\Core\Game\CombatService($database, new EventBus($database));
+    check(is_bool($csWave25->hasActiveEncounter('founder-player')), 'CombatService hasActiveEncounter returns boolean encounter state');
+    $pcsWave25 = new \Zone\Engine\Core\Game\PlayerCombatService($database, new EventBus($database));
+    check($pcsWave25->activeLockCount() >= 0, 'PlayerCombatService activeLockCount returns non-expired lock count');
+    $pmsWave25 = new \Zone\Engine\Core\Game\PlayerMarketService($database, new EventBus($database));
+    check($pmsWave25->activeListingCount() >= 0 && $pmsWave25->activeListingCount('founder-player') >= 0, 'PlayerMarketService activeListingCount returns active market listing count');
+    $fasWave25 = new \Zone\Engine\Core\Game\FamilyActivityService($database, new EventBus($database));
+    $seasonWave25 = $fasWave25->currentSeason();
+    check(isset($seasonWave25['seasonId'], $seasonWave25['startsAt'], $seasonWave25['endsAt']) && $seasonWave25['endsAt'] > $seasonWave25['startsAt'], 'FamilyActivityService currentSeason exposes seasonId, startsAt and endsAt');
+    $fpsWave25 = new \Zone\Engine\Core\Game\FamilyProgressionService($database, new EventBus($database));
+    check($fpsWave25->factionRespect('crimson-syndicate') >= 0, 'FamilyProgressionService factionRespect returns shared respect balance');
+    $lvlWave25 = new LevelingService($database, new Ledger($database), new EventBus($database));
+    $xpProgWave25 = $lvlWave25->xpProgressForPlayer(2, 150);
+    check($xpProgWave25['currentLevel'] === 2 && $xpProgWave25['nextLevelXp'] === 300 && $xpProgWave25['xpToNextLevel'] === 150 && $xpProgWave25['progressPct'] === 25, 'LevelingService xpProgressForPlayer computes nextLevelXp, xpToNextLevel and progressPct');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

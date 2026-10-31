@@ -264,4 +264,9 @@ final readonly class FamilyActivityService
         $this->database->execute('UPDATE players SET energy = energy + :cost WHERE id = :id', ['cost' => $cost, 'id' => $member['player_id']]);
         (new Ledger($this->database))->record($member['player_id'], 'energy', $cost, (int) $this->player($member['player_id'])['energy'], 'family.operation.refund', $correlation);
     }
+
+    public function currentSeason(): array
+    {
+        return $this->season();
+    }
 }

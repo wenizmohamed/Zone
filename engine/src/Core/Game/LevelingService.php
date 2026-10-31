@@ -144,4 +144,19 @@ final readonly class LevelingService
             'nextLevelXp' => $this->totalXpForLevel($newLevel + 1),
         ];
     }
+
+    public function xpProgressForPlayer(int $level, int $xp): array
+    {
+        $level = max(1, $level);
+        $floorXp = $this->totalXpForLevel($level);
+        $nextXp = $this->totalXpForLevel($level + 1);
+        $span = max(1, $nextXp - $floorXp);
+        return [
+            'currentLevel' => $level,
+            'currentXp' => $xp,
+            'nextLevelXp' => $nextXp,
+            'xpToNextLevel' => max(0, $nextXp - $xp),
+            'progressPct' => (int) min(100, max(0, round(($xp - $floorXp) / $span * 100))),
+        ];
+    }
 }

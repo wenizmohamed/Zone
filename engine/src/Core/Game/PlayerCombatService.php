@@ -250,4 +250,11 @@ final class PlayerCombatService
     }
     private function roll(int $min, int $max): int { return $this->random === null ? random_int($min, $max) : ($this->random)($min, $max); }
     private function now(): int { return $this->clock === null ? time() : ($this->clock)(); }
+
+    public function activeLockCount(?int $now = null): int
+    {
+        $now ??= $this->now();
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM player_combat_locks WHERE expires_at > :now', ['now' => $now]);
+        return (int) ($row['total'] ?? 0);
+    }
 }

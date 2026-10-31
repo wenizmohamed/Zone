@@ -138,4 +138,12 @@ final class CombatService
     {
         return $this->random === null ? random_int($min, $max) : ($this->random)($min, $max);
     }
+
+    public function hasActiveEncounter(string $playerId): bool
+    {
+        $row = $this->database->fetchOne('SELECT state_json FROM combat_encounters WHERE player_id = :id', ['id' => $playerId]);
+        if ($row === null) return false;
+        $phase = json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '';
+        return in_array($phase, ['fighting', 'won'], true);
+    }
 }

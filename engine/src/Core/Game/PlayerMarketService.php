@@ -86,4 +86,12 @@ final readonly class PlayerMarketService
             return [...$this->snapshot($playerId),'result'=>$result];
         });
     }
+
+    public function activeListingCount(?string $sellerId = null): int
+    {
+        $row = $sellerId === null
+            ? $this->database->fetchOne("SELECT COUNT(*) AS total FROM player_market_listings WHERE state='active' AND quantity>0")
+            : $this->database->fetchOne("SELECT COUNT(*) AS total FROM player_market_listings WHERE seller_id=:seller AND state='active' AND quantity>0", ['seller' => $sellerId]);
+        return (int) ($row['total'] ?? 0);
+    }
 }

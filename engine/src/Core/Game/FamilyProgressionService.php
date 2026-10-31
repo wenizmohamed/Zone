@@ -58,4 +58,10 @@ final readonly class FamilyProgressionService
         $this->events->publish(new DomainEvent('FamilyRespectChanged', ['playerId' => $playerId, 'factionId' => $id, 'delta' => $delta, 'balance' => $balance, 'reason' => $reason, 'upgradeId' => $upgradeId, 'correlationId' => $correlationId]));
         return $this->snapshot($playerId);
     }
+
+    public function factionRespect(string $factionId): int
+    {
+        $row = $this->database->fetchOne('SELECT respect FROM family_progression WHERE faction_id = :id', ['id' => $factionId]);
+        return (int) ($row['respect'] ?? 0);
+    }
 }
