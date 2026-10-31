@@ -45,7 +45,7 @@ function admin({ save = async () => ({ crime: { ...savedCrime } }), request, net
     notify = noticeStub;
     const guardedApi = api;
     api = apiStub;
-    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty };
+    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts };
   `, context);
   app = context.admin;
   app.state.crimes = [{ ...savedCrime }];
@@ -549,4 +549,15 @@ test('an incomplete draft fingerprint keeps boot mutations locked', async () => 
   const fixture = { php: '8.5', database: 'sqlite', modules: [], themes: [], crimes: [], entries: [], events: [], releases: [], manifest: { pages: [], navigation: [] } };
   const app = admin({ ready: false, request: async url => url.endsWith('/session') ? { configured: false, authenticated: true, localDevelopment: true } : fixture });
   await assert.rejects(app.load(), /incomplete/); assert.equal(app.state.bootReady, false); assert.equal(app.element('#publishButton').disabled, true);
+});
+test('territoryCounts computes total, owned, neutral, contested and daily respect totals', () => {
+  const app = admin();
+  app.state.territoryCatalog.blocks = [
+    { id: 'ZC-001', ownerFactionId: 'vipers', state: 'owned', dailyRespect: 25 },
+    { id: 'ZC-002', ownerFactionId: null, state: 'neutral', dailyRespect: 15 },
+    { id: 'ZC-003', ownerFactionId: 'kings', state: 'contested', dailyRespect: 40 },
+  ];
+  assert.deepEqual({ ...app.territoryCounts() }, {
+    total: 3, owned: 2, neutral: 1, contested: 1, totalDailyRespect: 80, ownedDailyRespect: 65,
+  });
 });

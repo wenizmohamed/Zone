@@ -1122,7 +1122,9 @@ function territoryCounts() {
   const blocks = state.territoryCatalog.blocks;
   const neutral = blocks.filter((block) => block.ownerFactionId === null).length;
   const contested = blocks.filter((block) => block.state === 'contested').length;
-  return { total: blocks.length, owned: blocks.length - neutral, neutral, contested };
+  const totalDailyRespect = blocks.reduce((sum, block) => sum + (Number(block.dailyRespect) || 0), 0);
+  const ownedDailyRespect = blocks.reduce((sum, block) => sum + (block.ownerFactionId !== null ? (Number(block.dailyRespect) || 0) : 0), 0);
+  return { total: blocks.length, owned: blocks.length - neutral, neutral, contested, totalDailyRespect, ownedDailyRespect };
 }
 
 function filteredTerritoryBlocks() {

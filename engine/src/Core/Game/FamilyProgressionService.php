@@ -23,13 +23,17 @@ final readonly class FamilyProgressionService
         $ledger = $this->database->fetchAll('SELECT l.player_id, p.username, l.delta, l.balance, l.reason, l.created_at FROM family_respect_ledger l JOIN players p ON p.id = l.player_id WHERE l.faction_id = :id ORDER BY l.created_at DESC, l.id DESC LIMIT 20', ['id' => $id]);
         $contributions = $this->database->fetchAll('SELECT l.player_id, p.username, SUM(l.delta) AS respect FROM family_respect_ledger l JOIN players p ON p.id = l.player_id WHERE l.faction_id = :id AND l.delta > 0 GROUP BY l.player_id, p.username ORDER BY respect DESC, l.player_id', ['id' => $id]);
         $leadership = $this->database->fetchOne("SELECT COUNT(*) AS total FROM faction_members WHERE faction_id = :id AND role IN ('leader', 'officer')", ['id' => $id]);
+        $membersCount = (int) $this->database->fetchOne('SELECT COUNT(*) AS total FROM faction_members WHERE faction_id = :id', ['id' => $id])['total'];
+        $upgrades = json_decode($account['upgrades_json'], true, 512, JSON_THROW_ON_ERROR);
+        $totalContributed = array_sum(array_map(static fn ($r): int => (int) $r['respect'], $contributions));
         return [
             'id' => $id, 'name' => ['en' => $membership['name_en'], 'ar' => $membership['name_ar']], 'role' => $membership['role'],
-            'respect' => (int) $account['respect'], 'version' => (int) $account['version'], 'upgrades' => json_decode($account['upgrades_json'], true, 512, JSON_THROW_ON_ERROR),
+            'respect' => (int) $account['respect'], 'version' => (int) $account['version'], 'upgrades' => $upgrades,
+            'memberCount' => $membersCount, 'upgradeCount' => count(array_filter($upgrades)),
             'permissions' => ['contribute' => true, 'buyUpgrade' => in_array($membership['role'], ['leader', 'officer'], true)],
             'leadershipMissing' => (int) $leadership['total'] === 0,
             'ledger' => array_map(static fn ($r) => ['playerId' => $r['player_id'], 'username' => $r['username'], 'delta' => (int) $r['delta'], 'balance' => (int) $r['balance'], 'reason' => $r['reason'], 'at' => $r['created_at']], $ledger),
-            'contributions' => array_map(static fn ($r) => ['playerId' => $r['player_id'], 'username' => $r['username'], 'respect' => (int) $r['respect']], $contributions),
+            'contributions' => array_map(static fn ($r) => ['playerId' => $r['player_id'], 'username' => $r['username'], 'respect' => (int) $r['respect'], 'sharePct' => $totalContributed > 0 ? (int) round((int) $r['respect'] / $totalContributed * 100) : 0], $contributions),
         ];
     }
 

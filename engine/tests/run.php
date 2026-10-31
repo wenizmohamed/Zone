@@ -963,6 +963,13 @@ try {
     $database->execute("DELETE FROM player_travel WHERE player_id = 'founder-player'");
     $tripWave11 = $engine->travel('Riyadh', 'founder-player');
     check(isset($tripWave11['travel']['totalSeconds'], $tripWave11['travel']['progressPct']) && $tripWave11['travel']['totalSeconds'] > 0, 'TravelService snapshot exposes totalSeconds and progressPct');
+
+    // --- Wave 12 (zone-beta130): FamilyProgressionService & LoadoutService telemetry ---
+    $database->execute("UPDATE player_travel SET status = 'arrived', arrives_at = :past WHERE player_id = 'founder-player'", ['past' => gmdate('c', time() - 60)]);
+    $database->execute("UPDATE players SET city = 'Zone City' WHERE id = 'founder-player'");
+    $gpWave12 = $engine->gameplay('founder-player');
+    check(isset($gpWave12['loadout']['weaponBonusPct'], $gpWave12['loadout']['armorMitigationPct']) && $gpWave12['loadout']['weaponBonusPct'] >= 0, 'LoadoutService resolve exposes weaponBonusPct and armorMitigationPct');
+    check(isset($gpWave12['family']['memberCount'], $gpWave12['family']['upgradeCount']) && $gpWave12['family']['memberCount'] >= 1, 'FamilyProgressionService snapshot exposes memberCount and upgradeCount');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -36,9 +36,13 @@ final class LoadoutService
         $armorId = $state['armorEquip'] ?? null;
         if (!is_string($weaponId) || ($state['inv'][$weaponId] ?? 0) < 1 || ($items[$weaponId]['type'] ?? null) !== 'weapon') $weaponId = null;
         if (!is_string($armorId) || ($state['inv'][$armorId] ?? 0) < 1 || ($items[$armorId]['type'] ?? null) !== 'armor') $armorId = null;
+        $weaponMultiplier = $weaponId === null ? 1.0 : max(1.0, (float) ($items[$weaponId]['mult'] ?? 1));
+        $armorReduction = $armorId === null ? 0.0 : min(0.95, max(0.0, (float) ($items[$armorId]['red'] ?? 0)));
         return ['weaponId' => $weaponId, 'armorId' => $armorId,
-            'weaponMultiplier' => $weaponId === null ? 1.0 : max(1.0, (float) ($items[$weaponId]['mult'] ?? 1)),
-            'armorReduction' => $armorId === null ? 0.0 : min(0.95, max(0.0, (float) ($items[$armorId]['red'] ?? 0)))];
+            'weaponMultiplier' => $weaponMultiplier,
+            'armorReduction' => $armorReduction,
+            'weaponBonusPct' => (int) round(($weaponMultiplier - 1.0) * 100),
+            'armorMitigationPct' => (int) round($armorReduction * 100)];
     }
 
     public static function removeMissing(array &$state, string $id): void
