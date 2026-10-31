@@ -1399,4 +1399,29 @@ final class GameEngine
     {
         return (int) ($this->assets()->health()['readyAssets'] ?? 0);
     }
+
+    public function tableCount(): int
+    {
+        return $this->database->tableCount();
+    }
+
+    public function isPlaytestActive(string $playerId = 'founder-player'): bool
+    {
+        return $this->ownerPlaytest()->isSessionActive($playerId);
+    }
+
+    public function leaderboardRowCount(): int
+    {
+        return (new \Zone\Modules\Leaderboards\LeaderboardService($this->database))->rowCount();
+    }
+
+    public function activeFamilyOperationCount(): int
+    {
+        return (new FamilyActivityService($this->database, $this->events))->activeOperationCount();
+    }
+
+    public function soldMarketListingCount(): int
+    {
+        return (new PlayerMarketService($this->database, $this->events))->soldListingCount();
+    }
 }

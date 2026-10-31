@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Script } from 'node:vm';
-import { createRelay } from '../engine/bin/relay.mjs';
+import { createRelay, relayRouteDiagnostics } from '../engine/bin/relay.mjs';
 
 // Static contracts only. No server, network request, shell or database is opened.
 const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
@@ -282,4 +282,9 @@ test('operator path distinguishes unexecuted Linux gates, authoritative PC, immu
   assert.match(readme, /archive with LF line endings, not an auto-CRLF Windows checkout/);
   assert.match(readme, /third-party maintainer source, not the Ubuntu archive/);
   assert.doesNotMatch(readme, /(?:Linux runtime|staging runtime) (?:passed|accepted|verified|ready)/i);
+  const diag = relayRouteDiagnostics();
+  assert.ok(diag.publicRouteCount >= 35);
+  assert.equal(diag.supportsAssetContent, true);
+  assert.equal(diag.supportsWorldRoutes, true);
+  assert.equal(diag.supportsThemeCss, true);
 });

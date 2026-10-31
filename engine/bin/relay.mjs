@@ -30,6 +30,14 @@ export function ownerMethods(path) {
   if (path === '/api/v1/admin/releases/publish' || /^\/api\/v1\/admin\/(?:releases\/[a-f0-9]{32}\/activate|modules\/[a-z0-9-]+\/(?:install|uninstall|enable|disable)|themes\/[a-z0-9-]+\/activate|territories\/ZC-[0-9]{3}\/ownership|gameplay-catalog\/[a-z]+)$/.test(path)) return ['POST'];
   return [];
 }
+export function relayRouteDiagnostics() {
+  return {
+    publicRouteCount: publicPaths.size,
+    supportsAssetContent: isPublicPath('/api/v1/assets/' + 'a'.repeat(64) + '/content'),
+    supportsWorldRoutes: isPublicPath('/api/v1/world') && isPublicPath('/api/v1/world/claim'),
+    supportsThemeCss: isPublicPath('/engine/theme.css'),
+  };
+}
 function host(value) {
   const normalized = String(value ?? '').toLowerCase();
   return /^(?:localhost|[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?)(?::443)?$/.test(normalized) && !normalized.includes('..') ? normalized.replace(/:443$/, '') : null;

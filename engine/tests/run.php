@@ -1288,6 +1288,13 @@ try {
     check($engine->ownedTerritoryCount() >= 0 && $engine->ownedTerritoryCount('vipers') >= 0, 'GameEngine ownedTerritoryCount returns owned territory block count');
     check($engine->uploadingAssetCount() >= 0, 'GameEngine uploadingAssetCount returns active uploading asset count');
     check($engine->readyAssetCount() >= 0, 'GameEngine readyAssetCount returns ready asset count');
+
+    // --- Wave 47 (zone-beta165): GameEngine tableCount, isPlaytestActive, leaderboardRowCount, activeFamilyOperationCount & soldMarketListingCount ---
+    check($engine->tableCount() >= 25, 'GameEngine tableCount returns migrated database table count');
+    check(is_bool($engine->isPlaytestActive('founder-player')), 'GameEngine isPlaytestActive returns boolean playtest session state');
+    check($engine->leaderboardRowCount() >= 1, 'GameEngine leaderboardRowCount returns public leaderboard row count');
+    check($engine->activeFamilyOperationCount() >= 0, 'GameEngine activeFamilyOperationCount returns forming/running family operation count');
+    check($engine->soldMarketListingCount() >= 0, 'GameEngine soldMarketListingCount returns sold player market listing count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
