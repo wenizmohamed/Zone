@@ -244,4 +244,7 @@ test('disposing during a claim never starts follow-up GETs or callbacks', async 
   const panel = create({ fetch: server.fetch, onPlayer: player => players.push(player) });
   const claim = panel.claimLogin(); panel.dispose(); gate.resolve(); await claim;
   assert.equal(server.calls.length, 1); assert.equal(players.length, 0);
+  const diag = panel.diagnostics();
+  assert.equal(diag.disposed, true);
+  assert.equal(diag.pending, null);
 });

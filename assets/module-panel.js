@@ -97,7 +97,10 @@
       })().finally(()=>{if(actionPromise===run)actionPromise=null;});
       actionPromise=run;return run;
     }
-    return {load,view,read:view,claimDaily:()=>claim('daily'),claimLogin:()=>claim('login'),dispose(){disposed=true;generation++;}};
+    function diagnostics(){
+      return {preview:!!options.preview,loading,pending,disposed,generation,hasPlayer:Boolean(raw.player),hasContract:Boolean(raw.contract),achievementCount:raw.achievements.length,notificationCount:raw.notifications.length,errorCount:Object.keys(errors).length,hasLastReward:Boolean(lastReward)};
+    }
+    return {load,view,read:view,diagnostics,claimDaily:()=>claim('daily'),claimLogin:()=>claim('login'),dispose(){disposed=true;generation++;}};
   }
   return {create};
 });

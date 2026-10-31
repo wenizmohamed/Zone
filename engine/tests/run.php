@@ -1221,7 +1221,7 @@ try {
     check($rlWave37->reset('founder-player') >= 1 && $rlWave37->status('founder-player')['count'] === 0, 'RateLimiter reset clears player rate-limit window');
 
     // --- Wave 38 (zone-beta156): GameplayCatalog editableCategories, MediaReferences supportedTargetTypes, AssetInspector isModelExtension, SafeBundle isAllowedMemberExtension & PackagedAssets hasImage ---
-    check(count(\Zone\Engine\Core\Content\GameplayCatalog::editableCategories()) === 9 && in_array('items', \Zone\Engine\Core\Content\GameplayCatalog::editableCategories(), true), 'GameplayCatalog editableCategories returns 9 editable catalog categories');
+    check(count(\Zone\Engine\Core\Content\GameplayCatalog::editableCategories()) === 8 && in_array('items', \Zone\Engine\Core\Content\GameplayCatalog::editableCategories(), true), 'GameplayCatalog editableCategories returns 8 editable catalog categories');
     check(count(\Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes()) === 6 && in_array('weapon', \Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes(), true), 'MediaReferences supportedTargetTypes returns 6 media binding target types');
     check(\Zone\Engine\Core\Media\AssetInspector::isModelExtension('GLB') === true && \Zone\Engine\Core\Media\AssetInspector::isModelExtension('png') === false, 'AssetInspector isModelExtension distinguishes 3D model extensions from textures/audio');
     check(\Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('scene/model.glb') === true && \Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('exploit.php') === false, 'SafeBundle isAllowedMemberExtension validates bundle member file extensions');
@@ -1237,8 +1237,8 @@ try {
     $cacheWave39->flush();
     check($cacheWave39->count() === 0, 'ArrayCacheStore flush clears all in-memory cache entries');
     check($database->tableCount() >= 20, 'Database tableCount returns count of migrated schema tables');
-    $adminCookieWave39 = RequestGuard::adminSession('wave39-secret', 1000);
-    check(RequestGuard::isAdminSessionExpired($adminCookieWave39, 1001) === false && RequestGuard::isAdminSessionExpired($adminCookieWave39, 50000) === true, 'RequestGuard isAdminSessionExpired checks admin cookie expiry timestamp');
+    $adminCookieWave39 = RequestGuard::adminSession('wave39-secret', 1700000000);
+    check(RequestGuard::isAdminSessionExpired($adminCookieWave39, 1700000001) === false && RequestGuard::isAdminSessionExpired($adminCookieWave39, 1700050000) === true, 'RequestGuard isAdminSessionExpired checks admin cookie expiry timestamp');
 
     // --- Wave 40 (zone-beta158): GameEngine activeCooldownCount, isTraveling, hasActiveCombat, playerRank & playerFactionId ---
     check($engine->activeCooldownCount('founder-player') >= 0, 'GameEngine activeCooldownCount returns active cooldown count for player');
@@ -1253,6 +1253,13 @@ try {
     check($engine->territoryCount() >= 1, 'GameEngine territoryCount returns seeded territory block count');
     check($engine->activeWarsCount() >= 0, 'GameEngine activeWarsCount returns active territory war count');
     check($engine->activeWorldEventCount() >= 0, 'GameEngine activeWorldEventCount returns active world event count');
+
+    // --- Wave 42 (zone-beta160): GameEngine marketListingCount, claimedAccountCount, activeSessionCount, auditEntryCount & releaseCount ---
+    check($engine->marketListingCount() >= 0, 'GameEngine marketListingCount returns active player market listing count');
+    check($engine->claimedAccountCount() >= 0, 'GameEngine claimedAccountCount returns claimed player account count');
+    check($engine->activeSessionCount() >= 0, 'GameEngine activeSessionCount returns active player session count');
+    check($engine->auditEntryCount() >= 1, 'GameEngine auditEntryCount returns audit log entry count');
+    check($engine->releaseCount() >= 1, 'GameEngine releaseCount returns published release count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

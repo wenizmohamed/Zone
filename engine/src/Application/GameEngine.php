@@ -1265,11 +1265,38 @@ final class GameEngine
 
     public function activeWarsCount(): int
     {
-        return (int) $this->database->scalar("SELECT COUNT(*) FROM territory_wars WHERE status IN ('declared', 'active', 'contested')");
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM territory_wars WHERE state IN ('declared', 'active', 'contested')");
+        return (int) ($row['total'] ?? 0);
     }
 
     public function activeWorldEventCount(): int
     {
         return \Zone\Modules\News\NewsModule::activeWorldEventCount($this->database);
+    }
+
+    public function marketListingCount(): int
+    {
+        return \Zone\Modules\Inventory\InventoryModule::marketListingCount($this->database);
+    }
+
+    public function claimedAccountCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM player_credentials');
+        return (int) ($row['total'] ?? 0);
+    }
+
+    public function activeSessionCount(): int
+    {
+        return \Zone\Modules\UsersOnline\UsersOnlineModule::activeSessionCount($this->database);
+    }
+
+    public function auditEntryCount(): int
+    {
+        return $this->content->auditEntryCount();
+    }
+
+    public function releaseCount(): int
+    {
+        return count($this->releases->releases());
     }
 }
