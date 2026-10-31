@@ -163,5 +163,16 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.equal(typeof view.casino.lowerOddsPct, 'number');
     assert.ok(view.casinoGuide.scope.includes(view.casino.higherOddsPct + '%') && view.casinoGuide.scope.includes(view.casino.lowerOddsPct + '%'), 'casinoGuide.scope includes live deck higher/lower odds');
     assert.ok(view.employment.payBonusText.includes('10%'), 'employment.payBonusText includes +10% Business Basics career synergy');
+    instance.setState({ sel: 'knife' });
+    const weaponView = instance.renderVals();
+    assert.ok(weaponView.sel.rows.some(r => /Vs equipped weapon|مقارنة بسلاحك المجهز/.test(r.k) && /upgrade|أقوى/.test(r.v)), 'sel.rows compares weapon against equipped weapon');
+    assert.ok(weaponView.fac.chainBonusPct.endsWith('%'), 'fac.chainBonusPct populated');
+    assert.equal(typeof weaponView.educationBoard.completedCount, 'number');
+    assert.equal(typeof weaponView.educationBoard.remainingCount, 'number');
+    assert.ok(weaponView.courses.every(c => c.hoursLabel.length >= 3), 'courses include hoursLabel');
+    assert.ok(weaponView.market.every(m => typeof m.vsCatalogPct === 'number' && m.dealTier.length >= 3), 'market rows include vsCatalogPct and dealTier');
+    assert.ok(weaponView.missions.every(m => typeof m.remaining === 'number' && m.cashReward && typeof m.pointsReward === 'number'), 'missions include remaining, cashReward, pointsReward');
+    assert.ok(weaponView.inmates.every(i => i.bustRiskTier && i.nerveCost === 5), 'inmates include bustRiskTier and nerveCost');
+    assert.ok(weaponView.patients.every(pt => pt.energyCost === 75 && typeof pt.reviveReady === 'boolean'), 'patients include energyCost and reviveReady');
   }
 });
