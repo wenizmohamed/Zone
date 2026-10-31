@@ -1617,4 +1617,29 @@ final class GameEngine
     {
         return (string) $this->requirePlayer($playerId)['city'];
     }
+
+    public function playerHappy(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['happy'];
+    }
+
+    public function playerStrength(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['strength'];
+    }
+
+    public function playerDefense(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['defense'];
+    }
+
+    public function playerSpeed(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['speed'];
+    }
+
+    public function playerDexterity(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['dexterity'];
+    }
 }

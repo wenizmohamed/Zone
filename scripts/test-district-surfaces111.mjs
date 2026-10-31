@@ -17,6 +17,12 @@ test('real extrudable provider part receives measured facade detail above its na
   assert.ok(plan.windows.length>0);
   assert.ok(plan.floorLines.length>0);
   assert.ok(plan.cornices.length>0);
+  const summary=module.summarizeSurfacePlan(plan);
+  assert.equal(summary.acceptedFeatures,1);
+  assert.equal(summary.windows,plan.windows.length);
+  assert.equal(summary.floorLines,plan.floorLines.length);
+  assert.equal(summary.cornices,plan.cornices.length);
+  assert.ok(summary.triangles>0);
   for(const surface of [...plan.windows,...plan.floorLines,...plan.cornices]){
     assert.equal(surface.providerId,'7');assert.equal(surface.base,8);assert.equal(surface.top,20);
     assert.ok(surface.points.every(p=>p.length===3&&p.every(Number.isFinite)&&p[1]>=8&&p[1]<=20));

@@ -1344,6 +1344,13 @@ try {
     check($engine->playerBankBalance('founder-player') >= 0, 'GameEngine playerBankBalance returns current bank balance');
     check($engine->playerXp('founder-player') >= 0, 'GameEngine playerXp returns current player XP');
     check($engine->isSupportedCity($engine->playerCity('founder-player')) === true, 'GameEngine playerCity returns valid player city');
+
+    // --- Wave 55 (zone-beta173): GameEngine playerHappy, playerStrength, playerDefense, playerSpeed & playerDexterity ---
+    check($engine->playerHappy('founder-player') >= 0, 'GameEngine playerHappy returns current player happiness');
+    check($engine->playerStrength('founder-player') >= 1, 'GameEngine playerStrength returns current player strength');
+    check($engine->playerDefense('founder-player') >= 1, 'GameEngine playerDefense returns current player defense');
+    check($engine->playerSpeed('founder-player') >= 1, 'GameEngine playerSpeed returns current player speed');
+    check($engine->playerDexterity('founder-player') >= 1, 'GameEngine playerDexterity returns current player dexterity');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

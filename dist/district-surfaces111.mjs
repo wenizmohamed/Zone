@@ -131,6 +131,20 @@ export function planDistrictSurfaces(features,{center=[-73.9865,40.698],maxWindo
   return plan;
 }
 
+export function summarizeSurfacePlan(plan){
+  const d=plan?.diagnostics||{};
+  return {
+    acceptedFeatures:Number(d.acceptedFeatures||0),
+    polygons:Number(d.polygons||0),
+    wallPanels:Array.isArray(plan?.wallPanels)?plan.wallPanels.length:0,
+    windows:Array.isArray(plan?.windows)?plan.windows.length:0,
+    floorLines:Array.isArray(plan?.floorLines)?plan.floorLines.length:0,
+    cornices:Array.isArray(plan?.cornices)?plan.cornices.length:0,
+    roofDetails:Array.isArray(plan?.roofDetails)?plan.roofDetails.length:0,
+    triangles:Number(d.triangles||0),
+  };
+}
+
 export function facadeCell(u,v,width=3.1){
   const height=3.2,x=((u%width)+width)%width/width,y=((v%height)+height)%height/height;
   return {column:Math.floor(u/width),floor:Math.floor(v/height),glass:Math.abs(x-.5)<=.64/width&&y>=1/height&&y<=2.5/height,frame:Math.abs(x-.5)<=.77/width&&y>=.87/height&&y<=2.63/height};
