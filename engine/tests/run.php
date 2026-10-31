@@ -1379,6 +1379,13 @@ try {
     check($engine->isSupportedOwnerPlaytestAction('gym.train') === true && $engine->isSupportedOwnerPlaytestAction('admin.publish') === false, 'GameEngine isSupportedOwnerPlaytestAction validates sandbox actions');
     check($engine->normalizeWorldPolicy()['tickSeconds'] === 60 && $engine->normalizeWorldPolicy(['tickSeconds' => 5])['tickSeconds'] === 30, 'GameEngine normalizeWorldPolicy clamps and normalizes world director policy');
     check($engine->playerUsername('founder-player') !== '', 'GameEngine playerUsername returns non-empty player username');
+
+    // --- Wave 60 (zone-beta178): GameEngine playerLoginStreak, playerLastLoginDay, playerNetWorth, neutralTerritoryCount & contestedTerritoryCount ---
+    check($engine->playerLoginStreak('founder-player') >= 1, 'GameEngine playerLoginStreak returns player login streak');
+    check($engine->playerLastLoginDay('founder-player') === null || preg_match('/^\d{4}-\d{2}-\d{2}$/', $engine->playerLastLoginDay('founder-player')) === 1, 'GameEngine playerLastLoginDay returns null or ISO date string');
+    check($engine->playerNetWorth('founder-player') === $engine->playerCash('founder-player') + $engine->playerBankBalance('founder-player'), 'GameEngine playerNetWorth returns cash + bank balance');
+    check($engine->neutralTerritoryCount() >= 0, 'GameEngine neutralTerritoryCount returns neutral block count');
+    check($engine->contestedTerritoryCount() >= 0, 'GameEngine contestedTerritoryCount returns contested block count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -1750,4 +1750,30 @@ final class GameEngine
     {
         return (string) $this->requirePlayer($playerId)['username'];
     }
+
+    public function playerLoginStreak(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['login_streak'];
+    }
+
+    public function playerLastLoginDay(string $playerId = 'founder-player'): ?string
+    {
+        $day = $this->requirePlayer($playerId)['last_login_day'] ?? null;
+        return is_string($day) && $day !== '' ? $day : null;
+    }
+
+    public function playerNetWorth(string $playerId = 'founder-player'): int
+    {
+        return $this->playerCash($playerId) + $this->playerBankBalance($playerId);
+    }
+
+    public function neutralTerritoryCount(): int
+    {
+        return (int) ($this->territories->snapshot('founder-player')['summary']['neutral'] ?? 0);
+    }
+
+    public function contestedTerritoryCount(): int
+    {
+        return (int) ($this->territories->snapshot('founder-player')['summary']['contested'] ?? 0);
+    }
 }

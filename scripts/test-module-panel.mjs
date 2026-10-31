@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRequire } from 'node:module';
 
-const { create } = createRequire(import.meta.url)('../assets/module-panel.js');
+const { create, endpoints, supportedLanguages } = createRequire(import.meta.url)('../assets/module-panel.js');
 const paths = ['/api/v1/player', '/api/v1/daily/contract', '/api/v1/achievements', '/api/v1/notifications'];
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const response = (payload, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => payload });
@@ -247,4 +247,6 @@ test('disposing during a claim never starts follow-up GETs or callbacks', async 
   const diag = panel.diagnostics();
   assert.equal(diag.disposed, true);
   assert.equal(diag.pending, null);
+  assert.deepEqual(supportedLanguages(), ['en', 'ar']);
+  assert.deepEqual(Object.values(endpoints()), paths);
 });
