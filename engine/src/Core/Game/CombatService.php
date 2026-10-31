@@ -100,7 +100,9 @@ final class CombatService
                     $leveling->sync($playerId, $correlationId);
                     (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
                 }
-                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'correlationId' => $correlationId];
+                $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
+                $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
+                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'correlationId' => $correlationId];
                 $encounter = null;
             }
             $stored = ['version' => $stored['version'] + 1, 'encounter' => $encounter];

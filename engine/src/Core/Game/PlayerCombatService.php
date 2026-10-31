@@ -44,12 +44,14 @@ final class PlayerCombatService
             $attackCooldownSeconds = $error->retryAfter;
             $selfReason ??= 'Attack cooldown is active.';
         }
+        $selfTotalStats = (int) $self['strength'] + (int) $self['defense'] + (int) $self['speed'] + (int) $self['dexterity'];
         $players = [];
         foreach ($rows as $row) {
             $reason = $selfReason ?? $this->unavailableReason($row['id']);
             if ($reason === null && (int) $row['life'] < 1) $reason = 'Opponent needs hospital recovery.';
             if ($reason === null && $row['city'] !== $self['city']) $reason = 'Opponent is in another city.';
-            $players[] = ['id' => $row['id'], 'username' => $row['username'], 'level' => (int) $row['level'], 'life' => (int) $row['life'], 'max_life' => (int) $row['max_life'], 'strength' => (int) $row['strength'], 'defense' => (int) $row['defense'], 'speed' => (int) $row['speed'], 'dexterity' => (int) $row['dexterity'], 'totalStats' => (int) $row['strength'] + (int) $row['defense'] + (int) $row['speed'] + (int) $row['dexterity'], 'factionId' => $row['faction_id'], 'factionName' => $row['faction_name'], 'eligible' => $reason === null, 'reason' => $reason];
+            $oppTotalStats = (int) $row['strength'] + (int) $row['defense'] + (int) $row['speed'] + (int) $row['dexterity'];
+            $players[] = ['id' => $row['id'], 'username' => $row['username'], 'level' => (int) $row['level'], 'life' => (int) $row['life'], 'max_life' => (int) $row['max_life'], 'strength' => (int) $row['strength'], 'defense' => (int) $row['defense'], 'speed' => (int) $row['speed'], 'dexterity' => (int) $row['dexterity'], 'totalStats' => $oppTotalStats, 'powerRatioPct' => (int) round($selfTotalStats / max(1, $oppTotalStats) * 100), 'factionId' => $row['faction_id'], 'factionName' => $row['faction_name'], 'eligible' => $reason === null, 'reason' => $reason];
         }
         return ['players' => $players, 'energyCost' => 25, 'maxRounds' => 25, 'selfId' => $playerId, 'attackCooldownSeconds' => $attackCooldownSeconds];
     }
@@ -126,7 +128,9 @@ final class PlayerCombatService
                         (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
                         $this->progression->applyPenalty($defenderId, 'hosp', $approach === 'hosp' ? 10 : ($approach === 'mug' ? 5 : 2));
                     }
-                    $result = ['playerId' => $playerId, 'defenderId' => $defenderId, 'opponentId' => $defenderId, 'encounterId' => $encounter['id'], 'approach' => $approach, 'outcome' => $encounter['phase'], 'totalRounds' => $encounter['turn'], 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'correlationId' => $correlationId];
+                    $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
+                    $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
+                    $result = ['playerId' => $playerId, 'defenderId' => $defenderId, 'opponentId' => $defenderId, 'encounterId' => $encounter['id'], 'approach' => $approach, 'outcome' => $encounter['phase'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'correlationId' => $correlationId];
                     $this->database->execute('DELETE FROM player_combat_locks WHERE encounter_id = :id', ['id' => $encounter['id']]);
                     $encounter = null;
                 }

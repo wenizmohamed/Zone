@@ -168,7 +168,7 @@ final readonly class FamilyActivityService
         foreach ($rows as $index => $row) {
             if ($previous !== (int) $row['score']) $rank = $index + 1;
             $previous = (int) $row['score'];
-            $ranks[] = ['rank' => $rank, 'factionId' => $row['id'], 'name' => ['en' => $row['name_en'], 'ar' => $row['name_ar']], 'color' => $row['color'], 'memberCount' => (int) $row['members'], 'score' => $previous, 'version' => (int) $row['version']];
+            $ranks[] = ['rank' => $rank, 'factionId' => $row['id'], 'name' => ['en' => $row['name_en'], 'ar' => $row['name_ar']], 'color' => $row['color'], 'memberCount' => (int) $row['members'], 'score' => $previous, 'scorePerMember' => (int) round($previous / max(1, (int) $row['members'])), 'version' => (int) $row['version']];
         }
         return $season + ['status' => 'active', 'serverNow' => time() * 1000, 'ownFactionId' => $familyId, 'ranks' => $ranks, 'scoring' => ['player-hospitalize' => 10, 'territory-assault' => 1, 'operation' => 5]];
     }
@@ -202,7 +202,7 @@ final readonly class FamilyActivityService
             };
         }
         return ['id' => $row['id'], 'definitionId' => $row['definition_id'], 'name' => $definition['name'], 'state' => $row['state'], 'version' => (int) $row['version'], 'createdBy' => $row['created_by'], 'createdAt' => $row['created_at'], 'readyAt' => (int) $row['ready_at'], 'completedAt' => $row['completed_at'],
-            'requiredMembers' => $definition['requiredMembers'], 'energyCost' => $definition['energyCost'], 'cashReward' => $definition['cashReward'], 'respectReward' => $definition['respectReward'], 'payoutPerMember' => intdiv($definition['cashReward'], $definition['requiredMembers']),
+            'requiredMembers' => $definition['requiredMembers'], 'fillPct' => (int) min(100, round(count($members) / max(1, $definition['requiredMembers']) * 100)), 'slotsRemaining' => max(0, $definition['requiredMembers'] - count($members)), 'energyCost' => $definition['energyCost'], 'cashReward' => $definition['cashReward'], 'respectReward' => $definition['respectReward'], 'payoutPerMember' => intdiv($definition['cashReward'], $definition['requiredMembers']),
             'participants' => array_map(static fn ($m) => ['playerId' => $m['player_id'], 'username' => $m['username'], 'energyCost' => (int) $m['energy_cost'], 'joinedAt' => $m['joined_at']], $members),
             'joinReason' => $joinReason, 'reason' => $reason,
             'permissions' => ['join' => $forming && !$joined && count($members) < $definition['requiredMembers'] && $joinReason === '', 'leave' => $forming && $joined, 'start' => $forming && $leader && $rosterReady, 'cancel' => $forming && $leader, 'resolve' => $row['state'] === 'running' && (int) $row['ready_at'] <= time() * 1000]];

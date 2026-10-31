@@ -18,9 +18,9 @@ final readonly class PlayerMarketService
     {
         $inventory = (new ProgressionService($this->database,$this->events))->snapshot($playerId);
         $rows = $this->database->fetchAll("SELECT l.*,p.username FROM player_market_listings l JOIN players p ON p.id=l.seller_id WHERE l.state='active' AND l.quantity>0 ORDER BY l.created_at DESC,l.id DESC LIMIT 200");
-        $listings = array_map(static fn($r)=>['id'=>$r['id'],'sellerId'=>$r['seller_id'],'sellerName'=>$r['username'],'itemId'=>$r['item_id'],'itemName'=>json_decode($r['item_json'],true,512,JSON_THROW_ON_ERROR)['name'] ?? $r['item_id'],'quantity'=>(int)$r['quantity'],'unitPrice'=>(int)$r['unit_price'],'version'=>(int)$r['version'],'own'=>$r['seller_id']===$playerId],$rows);
+        $listings = array_map(static fn($r)=>['id'=>$r['id'],'sellerId'=>$r['seller_id'],'sellerName'=>$r['username'],'itemId'=>$r['item_id'],'itemName'=>json_decode($r['item_json'],true,512,JSON_THROW_ON_ERROR)['name'] ?? $r['item_id'],'quantity'=>(int)$r['quantity'],'unitPrice'=>(int)$r['unit_price'],'totalPrice'=>(int)$r['quantity']*(int)$r['unit_price'],'version'=>(int)$r['version'],'own'=>$r['seller_id']===$playerId],$rows);
         $ownRows = $this->database->fetchAll("SELECT l.*,p.username FROM player_market_listings l JOIN players p ON p.id=l.seller_id WHERE l.seller_id=:id AND l.state='active' ORDER BY l.created_at DESC,l.id DESC",['id'=>$playerId]);
-        $own = array_map(static fn($r)=>['id'=>$r['id'],'sellerId'=>$r['seller_id'],'sellerName'=>$r['username'],'itemId'=>$r['item_id'],'itemName'=>json_decode($r['item_json'],true,512,JSON_THROW_ON_ERROR)['name'] ?? $r['item_id'],'quantity'=>(int)$r['quantity'],'unitPrice'=>(int)$r['unit_price'],'version'=>(int)$r['version'],'own'=>true],$ownRows);
+        $own = array_map(static fn($r)=>['id'=>$r['id'],'sellerId'=>$r['seller_id'],'sellerName'=>$r['username'],'itemId'=>$r['item_id'],'itemName'=>json_decode($r['item_json'],true,512,JSON_THROW_ON_ERROR)['name'] ?? $r['item_id'],'quantity'=>(int)$r['quantity'],'unitPrice'=>(int)$r['unit_price'],'totalPrice'=>(int)$r['quantity']*(int)$r['unit_price'],'version'=>(int)$r['version'],'own'=>true],$ownRows);
         return ['listings'=>$listings,'ownListings'=>$own,'inventoryVersion'=>$inventory['state']['version']];
     }
 

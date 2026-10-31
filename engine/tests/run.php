@@ -908,6 +908,34 @@ try {
     check(isset($bankTelemetry['vaultSharePct']) && $bankTelemetry['vaultSharePct'] >= 0 && $bankTelemetry['vaultSharePct'] <= 100, 'bank transfer receipt exposes vaultSharePct');
     $hospQuote = $engine->hospitalQuote('founder-player');
     check(isset($hospQuote['discountPct']) && is_float($hospQuote['discountPct']), 'hospitalQuote exposes discountPct');
+
+    // --- Wave 9 (zone-beta127): Combat, PvP, Family Activity & Player Market telemetry ---
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute('DELETE FROM action_rate_limits');
+    $database->execute("UPDATE players SET life = 250, max_life = 250, energy = 150, strength = 10000000, speed = 10000000, defense = 10000000, dexterity = 10000000 WHERE id = 'founder-player'");
+    $combatSnap = $engine->combat('founder-player');
+    $firstNpcId = $engine->gameplay('founder-player')['catalogs']['opponents'][0]['id'];
+    $combatStarted = $engine->combatAction('start', $firstNpcId, 'mug', (int) $combatSnap['version'], 'founder-player');
+    $combatStruck = $engine->combatAction('strike', $firstNpcId, 'mug', (int) $combatStarted['version'], 'founder-player');
+    $combatFinished = $engine->combatAction('finish', $firstNpcId, 'mug', (int) $combatStruck['version'], 'founder-player');
+    check(isset($combatFinished['result']['damageDealt'], $combatFinished['result']['damageTaken']) && $combatFinished['result']['damageDealt'] > 0, 'NPC combat finish receipt exposes damageDealt and damageTaken');
+
+    $pvpOpps = $engine->playerCombatOpponents('founder-player');
+    check(!empty($pvpOpps['players']) && isset($pvpOpps['players'][0]['powerRatioPct']) && $pvpOpps['players'][0]['powerRatioPct'] > 0, 'playerCombatOpponents exposes powerRatioPct on opponent rows');
+
+    $database->execute("UPDATE faction_members SET faction_id = 'vipers', role = 'leader' WHERE player_id = 'founder-player'");
+    $famBefore = $engine->familyActivities('founder-player');
+    check(!empty($famBefore['competition']['ranks']) && isset($famBefore['competition']['ranks'][0]['scorePerMember']), 'family competition ranks expose scorePerMember');
+    $famCreated = $engine->familyActivityAction('create', 'dock-intercept', 1, 'founder-player');
+    $famJoined = $engine->familyActivityAction('join', (string) $famCreated['operations'][0]['id'], (int) $famCreated['operations'][0]['version'], 'founder-player');
+    check(($famCreated['operations'][0]['fillPct'] ?? null) === 0 && ($famJoined['operations'][0]['fillPct'] ?? null) === 50 && ($famJoined['operations'][0]['slotsRemaining'] ?? null) === 1, 'family operation exposes fillPct and slotsRemaining');
+    $engine->familyActivityAction('cancel', (string) $famJoined['operations'][0]['id'], (int) $famJoined['operations'][0]['version'], 'founder-player');
+
+    $progForMarket = new \Zone\Engine\Core\Game\ProgressionService($database, new EventBus($database));
+    $progForMarket->grantItem('founder-player', 'medkit', 2, 'wave9-test', 'test.seed');
+    $marketVer = (int) $engine->gameplay('founder-player')['state']['version'];
+    $marketListed = $engine->playerMarketAction('list', 'medkit', 2, 350, $marketVer, 'founder-player');
+    check(!empty($marketListed['listings']) && ($marketListed['listings'][0]['totalPrice'] ?? null) === 700, 'player market listings expose totalPrice (quantity * unitPrice)');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
