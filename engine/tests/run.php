@@ -1130,6 +1130,17 @@ try {
     check(\Zone\Modules\Travel\TravelModule::activeTravelerCount($database) >= 0, 'TravelModule activeTravelerCount returns active traveling player count');
     check(\Zone\Modules\Blackjack\BlackjackModule::supportedGames() === ['blackjack', 'high-low'], 'BlackjackModule supportedGames returns casino game list');
     check(\Zone\Modules\Kill\KillModule::npcAttackEnergyCost() === 25, 'KillModule npcAttackEnergyCost returns 25 energy');
+
+    // --- Wave 30 (zone-beta148): BlackMarket, Bounties, Bullets, Cars, Detectives, GangBank, Garage, Inventory & Jail module telemetry ---
+    check(\Zone\Modules\BlackMarket\BlackMarketModule::activeSupplyCount($database) >= 0, 'BlackMarketModule activeSupplyCount returns active shop supply count');
+    check(\Zone\Modules\Bounties\BountiesModule::minBountyAmount() === 5000, 'BountiesModule minBountyAmount returns 5000');
+    check(\Zone\Modules\Bullets\BulletsModule::defaultPricePerBullet() === 250, 'BulletsModule defaultPricePerBullet returns 250');
+    check(count(\Zone\Modules\Cars\CarsModule::supportedVehicleClasses()) === 5, 'CarsModule supportedVehicleClasses returns 5 vehicle classes');
+    check(\Zone\Modules\Detectives\DetectivesModule::baseInvestigationCost() === 10000, 'DetectivesModule baseInvestigationCost returns 10000');
+    check(\Zone\Modules\GangBank\GangBankModule::totalFamilyRespect($database) >= 0, 'GangBankModule totalFamilyRespect returns aggregate family respect');
+    check(\Zone\Modules\Garage\GarageModule::maxGarageSlots() === 10, 'GarageModule maxGarageSlots returns 10');
+    check(\Zone\Modules\Inventory\InventoryModule::marketListingCount($database) >= 0, 'InventoryModule marketListingCount returns active market listing count');
+    check(\Zone\Modules\Jail\JailModule::bustNerveCost() === 5, 'JailModule bustNerveCost returns 5');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

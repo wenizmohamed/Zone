@@ -22,4 +22,9 @@ final class BountiesModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function minBountyAmount(): int
+    {
+        return 5000;
+    }
 }

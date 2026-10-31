@@ -22,4 +22,10 @@ final class CarsModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    /** @return list<string> */
+    public static function supportedVehicleClasses(): array
+    {
+        return ['compact', 'sedan', 'muscle', 'sports', 'armored'];
+    }
 }

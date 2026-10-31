@@ -22,4 +22,10 @@ final class GangBankModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function totalFamilyRespect(Database $database): int
+    {
+        $row = $database->fetchOne('SELECT COALESCE(SUM(respect), 0) AS total FROM family_progression');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

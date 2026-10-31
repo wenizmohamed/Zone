@@ -22,4 +22,9 @@ final class DetectivesModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function baseInvestigationCost(): int
+    {
+        return 10000;
+    }
 }

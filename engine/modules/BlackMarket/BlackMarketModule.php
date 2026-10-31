@@ -22,4 +22,10 @@ final class BlackMarketModule implements GameModule
         // Registered and enabled via ModuleRegistry. Gameplay logic ports from the
         // embedded OpenPBBG source into server-authoritative handlers.
     }
+
+    public static function activeSupplyCount(Database $database): int
+    {
+        $row = $database->fetchOne('SELECT COUNT(*) AS total FROM world_shop_supply WHERE quantity > 0');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }
