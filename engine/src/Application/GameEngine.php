@@ -1478,4 +1478,30 @@ final class GameEngine
     {
         return GameplayCatalog::editableCategories();
     }
+
+    /** @return list<string> */
+    public function supportedMediaTargetTypes(): array
+    {
+        return \Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes();
+    }
+
+    public function isModelExtension(string $extension): bool
+    {
+        return \Zone\Engine\Core\Media\AssetInspector::isModelExtension($extension);
+    }
+
+    public function isAllowedBundleMemberExtension(string $memberPath): bool
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension($memberPath);
+    }
+
+    public function hasPackagedImage(string $relativePath): bool
+    {
+        return \Zone\Engine\Core\Content\PackagedAssets::hasImage($relativePath);
+    }
+
+    public function securityEventCount(?string $playerId = null): int
+    {
+        return $this->playerAccounts()->securityEventCount($playerId);
+    }
 }

@@ -216,4 +216,5 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.deepEqual(budget.supportedFormats,['glb','gltf','obj','fbx']);
   assert.match(viewer,/window\.ZoneAssetViewer=\{diagnostics:/);
   assert.match(inspector,/window\.ZoneAssetInspector = \{ diagnostics:/);
+  assert.match(safeSource,/window\.ZoneSafehouse = \{ diagnostics:/);
 });

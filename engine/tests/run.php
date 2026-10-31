@@ -1309,6 +1309,13 @@ try {
     check($engine->ownedItemCount('founder-player') >= 1, 'GameEngine ownedItemCount returns distinct positive-quantity item count');
     check($engine->totalMaterialLootAwardedCount() >= 0 && $engine->totalMaterialLootAwardedCount('world') >= 0, 'GameEngine totalMaterialLootAwardedCount returns awarded material loot count');
     check(count($engine->editableCatalogCategories()) === 8, 'GameEngine editableCatalogCategories returns 8 editable catalog categories');
+
+    // --- Wave 50 (zone-beta168): GameEngine supportedMediaTargetTypes, isModelExtension, isAllowedBundleMemberExtension, hasPackagedImage & securityEventCount ---
+    check(count($engine->supportedMediaTargetTypes()) === 6, 'GameEngine supportedMediaTargetTypes returns 6 media binding target types');
+    check($engine->isModelExtension('glb') === true && $engine->isModelExtension('png') === false, 'GameEngine isModelExtension validates 3D model extensions');
+    check($engine->isAllowedBundleMemberExtension('model.glb') === true && $engine->isAllowedBundleMemberExtension('shell.php') === false, 'GameEngine isAllowedBundleMemberExtension validates bundle member paths');
+    check($engine->hasPackagedImage('missing.png') === false, 'GameEngine hasPackagedImage checks packaged image existence');
+    check($engine->securityEventCount() >= 0 && $engine->securityEventCount('founder-player') >= 0, 'GameEngine securityEventCount returns security audit event count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
