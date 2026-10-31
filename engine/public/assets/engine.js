@@ -276,6 +276,17 @@ function engineSummary() {
   };
 }
 
+function engineDiagnostics() {
+  return {
+    ...engineSummary(),
+    themeCount: state.themes.length,
+    activeThemeId: state.themes.find(theme => theme.active)?.id ?? null,
+    hasArchitecture: Boolean(state.architecture),
+    databaseDriver: state.engine?.database ?? null,
+    phpVersion: state.engine?.php ?? null,
+  };
+}
+
 function bindEngineNavigation() {
   $('#engineMenuButton')?.addEventListener('click', () => setEngineMenu($('#engineMenuButton').getAttribute('aria-expanded') !== 'true'));
   document.querySelectorAll('#engineNav a').forEach(link => link.addEventListener('click', () => {

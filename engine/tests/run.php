@@ -1260,6 +1260,13 @@ try {
     check($engine->activeSessionCount() >= 0, 'GameEngine activeSessionCount returns active player session count');
     check($engine->auditEntryCount() >= 1, 'GameEngine auditEntryCount returns audit log entry count');
     check($engine->releaseCount() >= 1, 'GameEngine releaseCount returns published release count');
+
+    // --- Wave 43 (zone-beta161): GameEngine topCashAmount, totalBankedCash, injuredPlayerCount, activeTravelerCount & activeShopSupplyCount ---
+    check($engine->topCashAmount() >= 1, 'GameEngine topCashAmount returns highest player cash balance');
+    check($engine->totalBankedCash() >= 0, 'GameEngine totalBankedCash returns aggregate bank vault balance');
+    check($engine->injuredPlayerCount() >= 0, 'GameEngine injuredPlayerCount returns currently hospitalized player count');
+    check($engine->activeTravelerCount() >= 0, 'GameEngine activeTravelerCount returns currently traveling player count');
+    check($engine->activeShopSupplyCount() >= 0, 'GameEngine activeShopSupplyCount returns active NPC shop supply count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

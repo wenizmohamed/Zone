@@ -1299,4 +1299,29 @@ final class GameEngine
     {
         return count($this->releases->releases());
     }
+
+    public function topCashAmount(): int
+    {
+        return \Zone\Modules\Leaderboards\LeaderboardsModule::topCashAmount($this->database);
+    }
+
+    public function totalBankedCash(): int
+    {
+        return \Zone\Modules\Bank\BankModule::totalBankedCash($this->database);
+    }
+
+    public function injuredPlayerCount(): int
+    {
+        return \Zone\Modules\Hospital\HospitalModule::injuredPlayerCount($this->database);
+    }
+
+    public function activeTravelerCount(): int
+    {
+        return \Zone\Modules\Travel\TravelModule::activeTravelerCount($this->database);
+    }
+
+    public function activeShopSupplyCount(): int
+    {
+        return \Zone\Modules\BlackMarket\BlackMarketModule::activeSupplyCount($this->database);
+    }
 }
