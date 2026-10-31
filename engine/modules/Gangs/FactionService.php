@@ -36,4 +36,10 @@ final readonly class FactionService
         $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM faction_members WHERE faction_id = :id', ['id' => $factionId]);
         return (int) ($row['total'] ?? 0);
     }
+
+    public function playerFactionId(string $playerId): ?string
+    {
+        $row = $this->database->fetchOne('SELECT faction_id FROM faction_members WHERE player_id = :id', ['id' => $playerId]);
+        return isset($row['faction_id']) ? (string) $row['faction_id'] : null;
+    }
 }

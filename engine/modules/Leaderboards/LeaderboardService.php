@@ -41,4 +41,9 @@ final readonly class LeaderboardService
         }
         return null;
     }
+
+    public function rowCount(string $playerId = 'founder-player'): int
+    {
+        return count($this->snapshot($playerId)['rows']);
+    }
 }

@@ -46,4 +46,9 @@ final class ArrayCacheStore implements CacheStore
         }
         return count($this->values);
     }
+
+    public function flush(): void
+    {
+        $this->values = [];
+    }
 }

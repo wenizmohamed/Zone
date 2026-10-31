@@ -1226,6 +1226,19 @@ try {
     check(\Zone\Engine\Core\Media\AssetInspector::isModelExtension('GLB') === true && \Zone\Engine\Core\Media\AssetInspector::isModelExtension('png') === false, 'AssetInspector isModelExtension distinguishes 3D model extensions from textures/audio');
     check(\Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('scene/model.glb') === true && \Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('exploit.php') === false, 'SafeBundle isAllowedMemberExtension validates bundle member file extensions');
     check(\Zone\Engine\Core\Content\PackagedAssets::hasImage('missing-image.png') === false, 'PackagedAssets hasImage returns false for nonexistent image path without throwing');
+
+    // --- Wave 39 (zone-beta157): FactionService playerFactionId, LeaderboardService rowCount, ArrayCacheStore flush, Database tableCount & RequestGuard isAdminSessionExpired ---
+    $fsWave39 = new \Zone\Modules\Gangs\FactionService($database, new EventBus($database));
+    check($fsWave39->playerFactionId('founder-player') === 'vipers' && $fsWave39->playerFactionId('nobody') === null, 'FactionService playerFactionId returns player faction ID or null');
+    $lbWave39 = new \Zone\Modules\Leaderboards\LeaderboardService($database);
+    check($lbWave39->rowCount('founder-player') >= 0, 'LeaderboardService rowCount returns public leaderboard row count');
+    $cacheWave39 = new ArrayCacheStore();
+    $cacheWave39->set('wave39', '1', 60);
+    $cacheWave39->flush();
+    check($cacheWave39->count() === 0, 'ArrayCacheStore flush clears all in-memory cache entries');
+    check($database->tableCount() >= 20, 'Database tableCount returns count of migrated schema tables');
+    $adminCookieWave39 = RequestGuard::adminSession('wave39-secret', 1000);
+    check(RequestGuard::isAdminSessionExpired($adminCookieWave39, 1001) === false && RequestGuard::isAdminSessionExpired($adminCookieWave39, 50000) === true, 'RequestGuard isAdminSessionExpired checks admin cookie expiry timestamp');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

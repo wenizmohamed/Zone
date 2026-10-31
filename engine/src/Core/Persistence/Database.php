@@ -80,6 +80,15 @@ final class Database
         ];
     }
 
+    public function tableCount(): int
+    {
+        $sql = $this->driver === 'sqlite'
+            ? "SELECT COUNT(*) AS total FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
+            : "SELECT COUNT(*) AS total FROM information_schema.tables WHERE table_schema = 'public'";
+        $row = $this->fetchOne($sql);
+        return (int) ($row['total'] ?? 0);
+    }
+
     public function migrateAndSeed(): void
     {
         $schema = ZONE_ENGINE_ROOT . '/database/schema.' . ($this->driver === 'pgsql' ? 'postgresql' : 'sqlite') . '.sql';

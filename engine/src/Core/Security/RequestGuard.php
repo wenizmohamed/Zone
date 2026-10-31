@@ -243,4 +243,12 @@ final class RequestGuard
     {
         return preg_match(self::PLAYER_ID_PATTERN, $playerId) === 1;
     }
+
+    public static function isAdminSessionExpired(string $cookie, ?int $now = null): bool
+    {
+        if (!preg_match('/^([0-9]{10,11})\.[a-f0-9]{32}\.[a-f0-9]{64}$/', $cookie, $match)) {
+            return true;
+        }
+        return (int) $match[1] <= ($now ?? time());
+    }
 }
