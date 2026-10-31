@@ -265,4 +265,10 @@ final readonly class DailyService
             ];
         });
     }
+
+    /** @return array<int, array{0:int,1:bool,2:bool}> */
+    public static function streakSchedule(): array
+    {
+        return self::STREAK_SCHEDULE;
+    }
 }

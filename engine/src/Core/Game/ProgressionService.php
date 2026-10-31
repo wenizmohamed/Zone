@@ -664,4 +664,9 @@ final class ProgressionService
     {
         return max(1, (int) ceil($base * (10000 - $discount) / 10000));
     }
+
+    public function catalogRevision(): string
+    {
+        return $this->catalogRevision;
+    }
 }

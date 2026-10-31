@@ -406,4 +406,11 @@ final class TerritoryService
         }
         $this->events->publish(new DomainEvent('TerritoryWarResolved', ['warId' => $war['id'], 'territoryId' => $war['territory_id'], 'winnerFactionId' => $winnerFactionId, 'reason' => $reason, 'attackerScore' => (int) $war['attacker_score'], 'defenderScore' => (int) $war['defender_score']]));
     }
+
+    public function activeWarsCount(): int
+    {
+        $this->resolveExpiredWars();
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM territory_wars WHERE state = 'active'");
+        return (int) ($row['total'] ?? 0);
+    }
 }

@@ -35,6 +35,11 @@ final class TravelService
         if (($this->snapshot($playerId)['status'] ?? null) === 'traveling') throw new RuntimeException('You are traveling. Wait for arrival before this action.');
     }
 
+    public function isTraveling(string $playerId): bool
+    {
+        return ($this->snapshot($playerId)['status'] ?? null) === 'traveling';
+    }
+
     /** Must share the player transaction that debits the fare. */
     public function depart(string $playerId, string $origin, string $destination, int $seconds): array
     {

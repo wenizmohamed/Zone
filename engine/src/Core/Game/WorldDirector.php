@@ -182,4 +182,11 @@ final class WorldDirector
             return $result;
         });
     }
+
+    public function activeEventCount(?int $now = null): int
+    {
+        $now ??= time();
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM world_events WHERE expires_at > :now', ['now' => $now]);
+        return (int) ($row['total'] ?? 0);
+    }
 }

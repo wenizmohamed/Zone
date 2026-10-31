@@ -1064,6 +1064,20 @@ try {
     check(RequestGuard::isValidPlayerId('founder-player') === true && RequestGuard::isValidPlayerId('BAD_ID!') === false, 'RequestGuard isValidPlayerId validates canonical player ID shape');
     $cdConfigWave23 = $engine->cooldownConfig();
     check(isset($cdConfigWave23['crime'], $cdConfigWave23['gym']) && $cdConfigWave23['crime'] >= 0, 'GameEngine cooldownConfig exposes effective action cooldown map');
+
+    // --- Wave 24 (zone-beta142): TerritoryService, OwnerPlaytestService, WorldDirector, ProgressionService, TravelService & DailyService telemetry ---
+    $tsWave24 = new \Zone\Engine\Core\Territories\TerritoryService($database, new EventBus($database));
+    check($tsWave24->activeWarsCount() >= 0, 'TerritoryService activeWarsCount returns active war count');
+    $opCapsWave24 = \Zone\Engine\Core\Game\OwnerPlaytestService::capabilities();
+    check($opCapsWave24['actionCount'] === 25 && $opCapsWave24['maxOperations'] === 100 && $opCapsWave24['lifetimeSeconds'] === 43200, 'OwnerPlaytestService capabilities exposes actionCount, maxOperations and lifetimeSeconds');
+    $wdWave24 = new \Zone\Engine\Core\Game\WorldDirector($database, new EventBus($database));
+    check($wdWave24->activeEventCount() >= 0, 'WorldDirector activeEventCount returns non-expired world event count');
+    $psWave24 = new \Zone\Engine\Core\Game\ProgressionService($database, new EventBus($database));
+    check(strlen($psWave24->catalogRevision()) === 64, 'ProgressionService catalogRevision returns 64-char sha256 revision');
+    $trvWave24 = new \Zone\Engine\Core\Game\TravelService($database, new EventBus($database));
+    check(is_bool($trvWave24->isTraveling('founder-player')), 'TravelService isTraveling returns boolean travel status');
+    $schedWave24 = \Zone\Engine\Core\Game\DailyService::streakSchedule();
+    check(count($schedWave24) === 7 && $schedWave24[7][0] === 12000, 'DailyService streakSchedule returns 7-day reward schedule');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

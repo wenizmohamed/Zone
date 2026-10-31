@@ -277,4 +277,14 @@ final readonly class OwnerPlaytestService
     private function validateSessionId(mixed $id): void { if (!is_string($id) || !preg_match('/^[a-f0-9]{32}$/D', $id)) throw new InvalidArgumentException('A valid owner playtest sessionId is required.'); }
     private function text(array $payload, string $key, int $max): string { $value = $payload[$key] ?? ''; if (!is_string($value) || strlen($value) > $max) throw new InvalidArgumentException('Invalid owner playtest ' . $key . '.'); return $value; }
     private function integer(array $payload, string $key, int $minimum, int $maximum, ?int $default = null): int { $value = $payload[$key] ?? $default; if (!is_int($value) || $value < $minimum || $value > $maximum) throw new InvalidArgumentException('Invalid owner playtest ' . $key . '.'); return $value; }
+
+    public static function capabilities(): array
+    {
+        return [
+            'actions' => self::ACTIONS,
+            'actionCount' => count(self::ACTIONS),
+            'maxOperations' => self::MAX_OPERATIONS,
+            'lifetimeSeconds' => self::LIFETIME,
+        ];
+    }
 }
