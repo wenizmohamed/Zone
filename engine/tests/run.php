@@ -1151,6 +1151,16 @@ try {
     check(\Zone\Modules\Search\SearchModule::unclaimedStreetFindCount($database) >= 0, 'SearchModule unclaimedStreetFindCount returns active unclaimed street find count');
     check(\Zone\Modules\Theft\TheftModule::maxPickpocketNerveCost() === 10, 'TheftModule maxPickpocketNerveCost returns 10');
     check(\Zone\Modules\UsersOnline\UsersOnlineModule::activeSessionCount($database) >= 0, 'UsersOnlineModule activeSessionCount returns active browser session count');
+
+    // --- Wave 32 (zone-beta150): ModuleRegistry enabledModuleIds, ThemeRegistry installedThemeIds, EventBus recentEvents & GameEngine moduleDiagnostics ---
+    $modRegWave32 = new ModuleRegistry($database, new EventBus($database), ZONE_ENGINE_ROOT . '/modules');
+    check(count($modRegWave32->enabledModuleIds()) >= 27, 'ModuleRegistry enabledModuleIds returns enabled module ID list');
+    $themeRegWave32 = new ThemeRegistry($database, ZONE_ENGINE_ROOT . '/themes');
+    check(count($themeRegWave32->installedThemeIds()) >= 2, 'ThemeRegistry installedThemeIds returns installed theme ID list');
+    $ebWave32 = new EventBus($database);
+    check(count($ebWave32->recentEvents(5)) >= 1, 'EventBus recentEvents returns bounded recent event rows');
+    $modDiagWave32 = $engine->moduleDiagnostics('founder-player');
+    check(isset($modDiagWave32['enabledCrimes'], $modDiagWave32['factions'], $modDiagWave32['territories'], $modDiagWave32['registeredPlayers']) && $modDiagWave32['enabledCrimes'] >= 31 && $modDiagWave32['registeredPlayers'] >= 1, 'GameEngine moduleDiagnostics aggregates telemetry across all authoritative modules');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

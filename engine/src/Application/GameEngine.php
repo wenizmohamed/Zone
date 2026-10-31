@@ -1200,4 +1200,26 @@ final class GameEngine
     {
         return $this->notifications->unreadCount($playerId);
     }
+
+    /** @return array<string, int> */
+    public function moduleDiagnostics(string $playerId = 'founder-player'): array
+    {
+        return [
+            'enabledCrimes' => \Zone\Modules\Crime\CrimeModule::enabledCrimeCount($this->database),
+            'factions' => \Zone\Modules\Gangs\GangsModule::factionCount($this->database),
+            'territories' => \Zone\Modules\Territories\TerritoriesModule::territoryCount($this->database),
+            'topCash' => \Zone\Modules\Leaderboards\LeaderboardsModule::topCashAmount($this->database),
+            'totalBankedCash' => \Zone\Modules\Bank\BankModule::totalBankedCash($this->database),
+            'injuredPlayers' => \Zone\Modules\Hospital\HospitalModule::injuredPlayerCount($this->database),
+            'activeTravelers' => \Zone\Modules\Travel\TravelModule::activeTravelerCount($this->database),
+            'activeShopSupplies' => \Zone\Modules\BlackMarket\BlackMarketModule::activeSupplyCount($this->database),
+            'totalFamilyRespect' => \Zone\Modules\GangBank\GangBankModule::totalFamilyRespect($this->database),
+            'marketListings' => \Zone\Modules\Inventory\InventoryModule::marketListingCount($this->database),
+            'unreadNotifications' => \Zone\Modules\Mail\MailModule::unreadNotificationCount($this->database, $playerId),
+            'activeWorldEvents' => \Zone\Modules\News\NewsModule::activeWorldEventCount($this->database),
+            'registeredPlayers' => \Zone\Modules\Profile\ProfileModule::playerCount($this->database),
+            'unclaimedStreetFinds' => \Zone\Modules\Search\SearchModule::unclaimedStreetFindCount($this->database),
+            'activeSessions' => \Zone\Modules\UsersOnline\UsersOnlineModule::activeSessionCount($this->database),
+        ];
+    }
 }

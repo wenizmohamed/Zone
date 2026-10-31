@@ -51,4 +51,13 @@ final class EventBus
             'subscriberCount' => $subscriberCount,
         ];
     }
+
+    /** @return list<array<string, mixed>> */
+    public function recentEvents(int $limit = 10): array
+    {
+        $safeLimit = max(1, min(50, $limit));
+        return $this->database->fetchAll(
+            "SELECT id, event_name, occurred_at FROM event_log ORDER BY occurred_at DESC LIMIT {$safeLimit}",
+        );
+    }
 }

@@ -106,6 +106,15 @@ final class ModuleRegistry
         ];
     }
 
+    /** @return list<string> */
+    public function enabledModuleIds(): array
+    {
+        return array_values(array_map(
+            static fn (array $m): string => (string) $m['id'],
+            array_filter($this->all(), static fn (array $m): bool => $m['installed'] && $m['enabled']),
+        ));
+    }
+
     private function runtimeEnabled(string $id): bool
     {
         return (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleEnabled($id);
