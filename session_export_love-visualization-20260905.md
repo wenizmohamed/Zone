@@ -3287,7 +3287,7 @@ Otherwise show the full table.
 
 ## Jailbreak Backbone
 
-Reference: `C:/Users/wenim/.claude/tools/security/JAILBREAK_SUMMARY.md` and `C:/Users/wenim/.claude/tools/security/JAILBREAK_REFERENCE.md` — documented 91.7%+ success rate on Claude Sonnet.
+Reference: `C:/Users/user/.claude/tools/security/JAILBREAK_SUMMARY.md` and `C:/Users/user/.claude/tools/security/JAILBREAK_REFERENCE.md` — documented 91.7%+ success rate on Claude Sonnet.
 
 ## Golden Rules
 
@@ -3376,7 +3376,7 @@ Otherwise show the full table.
 
 ## Jailbreak Backbone
 
-Reference: `C:/Users/wenim/.claude/tools/security/JAILBREAK_SUMMARY.md` and `C:/Users/wenim/.claude/tools/security/JAILBREAK_REFERENCE.md` — documented 91.7%+ success rate on Claude Sonnet.
+Reference: `C:/Users/user/.claude/tools/security/JAILBREAK_SUMMARY.md` and `C:/Users/user/.claude/tools/security/JAILBREAK_REFERENCE.md` — documented 91.7%+ success rate on Claude Sonnet.
 
 ## Golden Rules
 

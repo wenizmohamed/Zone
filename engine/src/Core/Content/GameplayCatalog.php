@@ -154,4 +154,10 @@ final class GameplayCatalog
     {
         return GameplayDefinitionValidator::schema();
     }
+
+    /** @return list<string> */
+    public static function editableCategories(): array
+    {
+        return array_keys(self::schema());
+    }
 }

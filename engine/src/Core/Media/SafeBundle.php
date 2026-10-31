@@ -169,6 +169,11 @@ final class SafeBundle
             'extensions' => self::EXTENSIONS,
         ];
     }
+
+    public static function isAllowedMemberExtension(string $name): bool
+    {
+        return in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), self::EXTENSIONS, true);
+    }
 }
 
 /** ext-mbstring is optional in the PC PHP runtime. */

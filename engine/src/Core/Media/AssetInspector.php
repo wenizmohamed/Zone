@@ -280,4 +280,9 @@ final class AssetInspector
     {
         return self::EXTENSIONS;
     }
+
+    public static function isModelExtension(string $extension): bool
+    {
+        return in_array(strtolower($extension), ['glb', 'gltf', 'fbx', 'obj'], true);
+    }
 }

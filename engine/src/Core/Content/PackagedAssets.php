@@ -34,4 +34,14 @@ final class PackagedAssets
             'totalBytes' => (int) array_sum(array_map('intval', $images)),
         ];
     }
+
+    public static function hasImage(string $path, ?string $inventoryPath = null): bool
+    {
+        try {
+            self::assertImage($path, $inventoryPath);
+            return true;
+        } catch (InvalidArgumentException) {
+            return false;
+        }
+    }
 }

@@ -68,4 +68,10 @@ final class MediaReferences
             'byTargetType' => $byType,
         ];
     }
+
+    /** @return list<string> */
+    public static function supportedTargetTypes(): array
+    {
+        return ['property', 'item', 'weapon', 'armor', 'character', 'map'];
+    }
 }

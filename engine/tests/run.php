@@ -1219,6 +1219,13 @@ try {
     $rlWave37 = new RateLimiter($database, 120, 10);
     $rlWave37->hit('founder-player');
     check($rlWave37->reset('founder-player') >= 1 && $rlWave37->status('founder-player')['count'] === 0, 'RateLimiter reset clears player rate-limit window');
+
+    // --- Wave 38 (zone-beta156): GameplayCatalog editableCategories, MediaReferences supportedTargetTypes, AssetInspector isModelExtension, SafeBundle isAllowedMemberExtension & PackagedAssets hasImage ---
+    check(count(\Zone\Engine\Core\Content\GameplayCatalog::editableCategories()) === 9 && in_array('items', \Zone\Engine\Core\Content\GameplayCatalog::editableCategories(), true), 'GameplayCatalog editableCategories returns 9 editable catalog categories');
+    check(count(\Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes()) === 6 && in_array('weapon', \Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes(), true), 'MediaReferences supportedTargetTypes returns 6 media binding target types');
+    check(\Zone\Engine\Core\Media\AssetInspector::isModelExtension('GLB') === true && \Zone\Engine\Core\Media\AssetInspector::isModelExtension('png') === false, 'AssetInspector isModelExtension distinguishes 3D model extensions from textures/audio');
+    check(\Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('scene/model.glb') === true && \Zone\Engine\Core\Media\SafeBundle::isAllowedMemberExtension('exploit.php') === false, 'SafeBundle isAllowedMemberExtension validates bundle member file extensions');
+    check(\Zone\Engine\Core\Content\PackagedAssets::hasImage('missing-image.png') === false, 'PackagedAssets hasImage returns false for nonexistent image path without throwing');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
