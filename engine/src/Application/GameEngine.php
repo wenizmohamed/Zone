@@ -1642,4 +1642,30 @@ final class GameEngine
     {
         return (int) $this->requirePlayer($playerId)['dexterity'];
     }
+
+    public function playerMaxLife(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['max_life'];
+    }
+
+    public function playerMaxEnergy(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['max_energy'];
+    }
+
+    public function playerMaxNerve(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['max_nerve'];
+    }
+
+    public function playerMaxHappy(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['max_happy'];
+    }
+
+    public function playerTotalCombatStats(string $playerId = 'founder-player'): int
+    {
+        $p = $this->requirePlayer($playerId);
+        return (int) $p['strength'] + (int) $p['defense'] + (int) $p['speed'] + (int) $p['dexterity'];
+    }
 }

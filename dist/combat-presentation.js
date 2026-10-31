@@ -57,6 +57,7 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
     setActive(value) { active = !!value; if (!active) stop(); },
     stop,
     dispose() { if (disposed) return; disposed = true; stop(); latest = null; },
+    diagnostics() { return { disposed, active, identity, version, count, pending: queue.length, hasLatest: !!latest }; },
     get pending() { return queue.length; }
   };
 }

@@ -1351,6 +1351,13 @@ try {
     check($engine->playerDefense('founder-player') >= 1, 'GameEngine playerDefense returns current player defense');
     check($engine->playerSpeed('founder-player') >= 1, 'GameEngine playerSpeed returns current player speed');
     check($engine->playerDexterity('founder-player') >= 1, 'GameEngine playerDexterity returns current player dexterity');
+
+    // --- Wave 56 (zone-beta174): GameEngine playerMaxLife, playerMaxEnergy, playerMaxNerve, playerMaxHappy & playerTotalCombatStats ---
+    check($engine->playerMaxLife('founder-player') >= $engine->playerLife('founder-player'), 'GameEngine playerMaxLife returns player max life');
+    check($engine->playerMaxEnergy('founder-player') >= $engine->playerEnergy('founder-player'), 'GameEngine playerMaxEnergy returns player max energy');
+    check($engine->playerMaxNerve('founder-player') >= $engine->playerNerve('founder-player'), 'GameEngine playerMaxNerve returns player max nerve');
+    check($engine->playerMaxHappy('founder-player') >= $engine->playerHappy('founder-player'), 'GameEngine playerMaxHappy returns player max happy');
+    check($engine->playerTotalCombatStats('founder-player') === $engine->playerStrength('founder-player') + $engine->playerDefense('founder-player') + $engine->playerSpeed('founder-player') + $engine->playerDexterity('founder-player'), 'GameEngine playerTotalCombatStats returns sum of 4 gym stats');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
