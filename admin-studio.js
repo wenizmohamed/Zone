@@ -49,7 +49,13 @@
     const active = state.releases?.find(release => release.active);
     const savedDifferent = Boolean(active && state.savedDraftManifest !== null && authoringManifestText(active.manifest) !== state.savedDraftManifest);
     const contentDifferent = Boolean(active?.manifest?.content && canonical(publicationContent(active.manifest.content)) !== canonical(publicationContent({ gameplayCatalog: state.gameplayCatalog?.catalogs, crimes: state.crimes, engineModules: state.modules, activeTheme: state.themes?.find(theme => theme.active)?.id })));
-    return { ready: state.bootReady, busy: Boolean(state.controlBusy || state.catalogBusy), pending, pageChanges, unsaved: pageChanges || pending.catalog || pending.crime, awaitingPublication: Boolean(state.dirty || savedDifferent || contentDifferent), view: state.view, language: state.language };
+    const counts = {
+      catalogEntries: Object.values(state.gameplayCatalog?.catalogs ?? {}).reduce((sum, cat) => sum + Object.keys(cat ?? {}).length, 0),
+      crimes: (state.crimes ?? []).length,
+      pages: (currentManifest()?.pages ?? []).length,
+      enabledModules: (state.modules ?? []).filter(m => m.installed && m.enabled).length
+    };
+    return { ready: state.bootReady, busy: Boolean(state.controlBusy || state.catalogBusy), pending, pageChanges, unsaved: pageChanges || pending.catalog || pending.crime, awaitingPublication: Boolean(state.dirty || savedDifferent || contentDifferent), view: state.view, language: state.language, counts };
   }
   function renderNavigation() {
     const groups = [['workspace', ['overview']], ['build', ['content', 'builder', 'territories']], ['extend', ['modules', 'themes', 'assets']], ['operate', ['releases', 'economy', 'events']]];
@@ -202,6 +208,7 @@
     for (const module of state.modules) entries.push({ label: module.name, search: [module.id, module.name, module.description_ar, module.description].join(' '), detail: tr('modules') + ' ' + module.version, action: () => { setView('modules'); moduleQuery = module.id; q('#studioModuleSearch').value = moduleQuery; filterModules(); } });
     for (const page of currentManifest()?.pages ?? []) entries.push({ label: page.title?.[state.language] || page.title?.en || page.id, search: [page.id, page.slug, page.title?.en, page.title?.ar].join(' '), detail: tr('builder'), action: () => { state.selectedPage = page.id; renderBuilder(); setView('builder'); } });
     for (const [category, catalog] of Object.entries(state.gameplayCatalog?.catalogs ?? {})) for (const [id, entry] of Object.entries(catalog ?? {})) entries.push({ label: entry.name?.[state.language] || entry.name?.en || catalogDefaultLabels[category]?.[id]?.[state.language] || id, search: [id, entry.name?.en, entry.name?.ar, category].join(' '), detail: catName(category), action: () => openCatalog(category, id) });
+    for (const crime of state.crimes ?? []) entries.push({ label: (state.language === 'ar' ? crime.name_ar || crime.name_en : crime.name_en || crime.name_ar) || crime.id, search: [crime.id, crime.name_en, crime.name_ar, 'crime crimes جريمة الجرائم'].join(' '), detail: tr('crime'), action: () => requestCrimeSwitch(() => { contentMode = 'crimes'; state.selectedCrime = crime.id; if (typeof renderContent === 'function') renderContent(); setView('content'); renderContentChooser(); refresh(); }) });
     return entries;
   }
   function renderSearch() {

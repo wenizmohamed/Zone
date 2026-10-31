@@ -640,3 +640,17 @@ test('capture timestamps, read correlations and package-list order do not manufa
   assert.equal(f.app.snapshot().awaitingPublication, false);
   assert.equal(f.q('#studioWorkflowStatus').dataset.state, 'ready');
 });
+
+test('Studio snapshot exposes content counts and command search indexes authored crimes in EN and AR', () => {
+  for (const language of ['en', 'ar']) {
+    const f = publishedFixture(language);
+    const snap = f.app.snapshot();
+    assert.equal(snap.counts.catalogEntries, 4);
+    assert.equal(snap.counts.crimes, 1);
+    assert.equal(snap.counts.enabledModules, 1);
+    const entries = f.app.buildSearchEntries();
+    const crimeEntry = entries.find(e => e.search.includes('shoplift'));
+    assert.ok(crimeEntry, 'shoplift crime is indexed in command search');
+    assert.equal(crimeEntry.label, language === 'ar' ? 'سرقة متجر' : 'Shoplift');
+  }
+});

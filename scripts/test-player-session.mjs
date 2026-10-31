@@ -111,3 +111,17 @@ test('a player401 marks expired access and leaves the existing saved presentatio
  await assert.rejects(b.window.fetch('/api/v1/bank/deposit',{method:'POST',body:'{"amount":100}'}),/session expired/);
  assert.equal(b.calls.filter(c=>c.url==='/api/v1/auth/session').length,1);assert.equal(b.storage.get('zone.v2.save'),'old account presentation');
 });
+
+test('ZoneSession.diagnostics reports session establishment, playerId, mode, TTL, and backoff without leaking secrets', async () => {
+  const b = browser({ now: 5000 });
+  const before = b.window.ZoneSession.diagnostics();
+  assert.equal(before.established, false);
+  assert.equal(before.playerId, null);
+  await b.window.ZoneSession.ensure();
+  const after = b.window.ZoneSession.diagnostics();
+  assert.equal(after.established, true);
+  assert.equal(after.playerId, 'player-new');
+  assert.equal(after.mode, 'persistent-browser');
+  assert.equal(after.expired, false);
+  assert.equal(after.ttlSeconds, 99994);
+});

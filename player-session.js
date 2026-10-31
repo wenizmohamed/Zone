@@ -58,7 +58,9 @@
       .finally(() => { pending = null; });
     return pending;
   };
-  window.ZoneSession = { ensure, current: () => identity, expired: sessionExpired, recover: async () => {
+  window.ZoneSession = { ensure, current: () => identity, expired: sessionExpired,
+    diagnostics: () => ({ established: Boolean(identity), playerId: identity?.playerId || null, mode: identity?.mode || null, expired: sessionExpired(), retryAfterMs: Math.max(0, retryAfter - Date.now()), ttlSeconds: identity?.expiresAt ? Math.max(0, Math.floor(identity.expiresAt - Date.now() / 1000)) : null }),
+    recover: async () => {
     retryAfter = 0;
     if (!sessionExpired()) return ensure();
     const response = await boundedRead('/api/v1/auth/account', {credentials:'same-origin', cache:'no-store'});
