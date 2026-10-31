@@ -1349,4 +1349,29 @@ final class GameEngine
     {
         return count(array_filter($this->modules->all(), static fn (array $module): bool => (bool) ($module['installed'] ?? false) && (bool) ($module['enabled'] ?? false)));
     }
+
+    public function installedThemeCount(): int
+    {
+        return count($this->themes->installedThemeIds());
+    }
+
+    public function activeThemeId(): ?string
+    {
+        return $this->releases->activeSummary()['activeTheme'] ?? null;
+    }
+
+    public function activeReleaseId(): ?string
+    {
+        return $this->releases->activeSummary()['id'] ?? null;
+    }
+
+    public function activeReleaseVersion(): int
+    {
+        return (int) ($this->releases->activeSummary()['version'] ?? 0);
+    }
+
+    public function databaseDriver(): string
+    {
+        return $this->database->driver();
+    }
 }

@@ -1274,6 +1274,13 @@ try {
     check($engine->unclaimedStreetFindCount() >= 0, 'GameEngine unclaimedStreetFindCount returns active unclaimed street find count');
     check($engine->installedModuleCount() >= 27, 'GameEngine installedModuleCount returns installed module count');
     check($engine->enabledModuleCount() >= 27, 'GameEngine enabledModuleCount returns enabled module count');
+
+    // --- Wave 45 (zone-beta163): GameEngine installedThemeCount, activeThemeId, activeReleaseId, activeReleaseVersion & databaseDriver ---
+    check($engine->installedThemeCount() >= 2, 'GameEngine installedThemeCount returns installed theme count');
+    check(is_string($engine->activeThemeId()) && $engine->activeThemeId() !== '', 'GameEngine activeThemeId returns active theme ID');
+    check(is_string($engine->activeReleaseId()) && $engine->activeReleaseId() !== '', 'GameEngine activeReleaseId returns active release ID');
+    check($engine->activeReleaseVersion() >= 1, 'GameEngine activeReleaseVersion returns active release version');
+    check(in_array($engine->databaseDriver(), ['sqlite', 'pgsql'], true), 'GameEngine databaseDriver returns active database driver');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

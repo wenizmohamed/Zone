@@ -221,4 +221,8 @@ test('a selected material becoming ineligible is rejected after refresh instead 
   const w = world(); await w.materials(['sand']); w.state.gameplayCatalog.catalogs.items.sand.type = 'weapon'; w.state.language = 'ar'; w.window.ZoneMedia.refresh();
   assert.equal(w.q('#worldPolicy-materialItemIds').querySelectorAll('option').some(option => option.value === 'sand'), false); await w.save(); assert.equal(w.puts().length, 0);
   await w.materials(['test_scrap']); await w.save(); assert.deepEqual(w.puts()[0].body.manifest.worldPolicy.materialItemIds, ['test_scrap']);
+  const diag = w.window.ZoneMedia.diagnostics();
+  assert.equal(diag.policyDirty, false);
+  assert.equal(diag.policySaving, false);
+  assert.equal(diag.policyMaterialCount, 1);
 });

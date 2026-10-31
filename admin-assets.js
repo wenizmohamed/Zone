@@ -191,6 +191,6 @@
   });
   window.addEventListener('beforeunload',event=>{if(hasUnsaved()){event.preventDefault();event.returnValue='';}});
   if(typeof MutationObserver==='function')new MutationObserver(()=>{if(state.view==='assets')refresh();}).observe(q('.view[data-view="assets"]'),{attributes:true,attributeFilter:['class']});
-  const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,hasUnsaved:hasUnsaved(),language});
+  const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,shopSaving,policySaving,policyMaterialCount:policyMaterialSelection.length,hasUnsaved:hasUnsaved(),language});
   window.ZoneMedia={refresh,hasUnsaved,diagnostics};refresh();
 })();
