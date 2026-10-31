@@ -1324,4 +1324,29 @@ final class GameEngine
     {
         return \Zone\Modules\BlackMarket\BlackMarketModule::activeSupplyCount($this->database);
     }
+
+    public function totalFamilyRespect(): int
+    {
+        return \Zone\Modules\GangBank\GangBankModule::totalFamilyRespect($this->database);
+    }
+
+    public function registeredPlayerCount(): int
+    {
+        return \Zone\Modules\Profile\ProfileModule::playerCount($this->database);
+    }
+
+    public function unclaimedStreetFindCount(): int
+    {
+        return \Zone\Modules\Search\SearchModule::unclaimedStreetFindCount($this->database);
+    }
+
+    public function installedModuleCount(): int
+    {
+        return count(array_filter($this->modules->all(), static fn (array $module): bool => (bool) ($module['installed'] ?? false)));
+    }
+
+    public function enabledModuleCount(): int
+    {
+        return count(array_filter($this->modules->all(), static fn (array $module): bool => (bool) ($module['installed'] ?? false) && (bool) ($module['enabled'] ?? false)));
+    }
 }

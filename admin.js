@@ -1688,6 +1688,21 @@ async function retryAdminLoad() {
   catch (error) { trace('BOOT', '/admin', null, { error: error.message }, 500); notify(t('adminLoadFailed'), true); updateBootControls(); }
 }
 
+function adminDiagnostics() {
+  return {
+    bootReady: Boolean(state.bootReady),
+    bootBusy: Boolean(state.bootBusy),
+    view: state.view,
+    language: state.language,
+    dirty: Boolean(state.dirty),
+    hasDraft: Boolean(state.draft?.manifest),
+    moduleCount: Array.isArray(state.modules) ? state.modules.length : 0,
+    crimeCount: Array.isArray(state.crimes) ? state.crimes.length : 0,
+    releaseCount: Array.isArray(state.releases) ? state.releases.length : 0,
+    territoryCount: Array.isArray(state.territoryCatalog?.blocks) ? state.territoryCatalog.blocks.length : 0,
+  };
+}
+
 installSectionPreviews();
 applyLanguage();
 $$('[data-preview-toggle]').forEach((button) => button.addEventListener('click', () => togglePreview(button)));

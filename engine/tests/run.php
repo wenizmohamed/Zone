@@ -1267,6 +1267,13 @@ try {
     check($engine->injuredPlayerCount() >= 0, 'GameEngine injuredPlayerCount returns currently hospitalized player count');
     check($engine->activeTravelerCount() >= 0, 'GameEngine activeTravelerCount returns currently traveling player count');
     check($engine->activeShopSupplyCount() >= 0, 'GameEngine activeShopSupplyCount returns active NPC shop supply count');
+
+    // --- Wave 44 (zone-beta162): GameEngine totalFamilyRespect, registeredPlayerCount, unclaimedStreetFindCount, installedModuleCount & enabledModuleCount ---
+    check($engine->totalFamilyRespect() >= 0, 'GameEngine totalFamilyRespect returns aggregate family respect');
+    check($engine->registeredPlayerCount() >= 1, 'GameEngine registeredPlayerCount returns registered player count');
+    check($engine->unclaimedStreetFindCount() >= 0, 'GameEngine unclaimedStreetFindCount returns active unclaimed street find count');
+    check($engine->installedModuleCount() >= 27, 'GameEngine installedModuleCount returns installed module count');
+    check($engine->enabledModuleCount() >= 27, 'GameEngine enabledModuleCount returns enabled module count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

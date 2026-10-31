@@ -45,7 +45,7 @@ function admin({ save = async () => ({ crime: { ...savedCrime } }), request, net
     notify = noticeStub;
     const guardedApi = api;
     api = apiStub;
-    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts };
+    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts, adminDiagnostics };
   `, context);
   app = context.admin;
   app.state.crimes = [{ ...savedCrime }];
@@ -560,4 +560,9 @@ test('territoryCounts computes total, owned, neutral, contested and daily respec
   assert.deepEqual({ ...app.territoryCounts() }, {
     total: 3, owned: 2, neutral: 1, contested: 1, totalDailyRespect: 80, ownedDailyRespect: 65,
   });
+  const diag = app.adminDiagnostics();
+  assert.equal(diag.bootReady, true);
+  assert.equal(diag.crimeCount, 1);
+  assert.equal(diag.territoryCount, 3);
+  assert.equal(diag.hasDraft, true);
 });
