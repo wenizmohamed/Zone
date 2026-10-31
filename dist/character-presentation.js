@@ -192,3 +192,19 @@ export function disposeCharacterResources(roots) {
   skeletons.forEach(value => value.dispose()); textures.forEach(value => value.dispose());
   materials.forEach(value => value.dispose()); geometries.forEach(value => value.dispose()); images.forEach(value => value.close());
 }
+
+export function inspectCharacterWardrobe(THREE, root) {
+  let boneCount = 0, meshCount = 0, vertexCount = 0, triangleCount = 0;
+  root?.traverse(object => {
+    if (object.isBone) boneCount++;
+    if (object.isMesh && object.geometry) {
+      meshCount++;
+      const pos = object.geometry.attributes.position;
+      if (pos) vertexCount += pos.count;
+      triangleCount += Math.round((object.geometry.index?.count || pos?.count || 0) / 3);
+    }
+  });
+  root?.updateMatrixWorld(true);
+  const size = root ? new THREE.Box3().setFromObject(root).getSize(new THREE.Vector3()).toArray().map(v => +v.toFixed(4)) : [0, 0, 0];
+  return { boneCount, meshCount, vertexCount, triangleCount, boundsSizeM: size };
+}

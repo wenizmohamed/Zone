@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { CHARACTER_ART, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources } from '../dist/character-presentation.js';
+import { CHARACTER_ART, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
 import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
@@ -42,6 +42,8 @@ for (const name of ['Suit', 'Swat', 'Casual_Hoodie']) {
     originalHead.setFromPoints(actualHeadPoints());
     const clipBytes = JSON.stringify(gltf.animations.map(clip => clip.toJSON()));
     const art = prepareCharacterArt(THREE, root); root.updateMatrixWorld(true);
+    const inspected = inspectCharacterWardrobe(THREE, root);
+    assert.ok(inspected.boneCount >= 40 && inspected.meshCount >= 1 && inspected.vertexCount > 500 && inspected.triangleCount > 500 && inspected.boundsSizeM[1] > 1.2);
     assert.ok(art.adjustedVertices > 100 && art.materialCount >= 5);
     assert.equal(gltf.animations.length, 24); assert.equal(JSON.stringify(gltf.animations.map(clip => clip.toJSON())), clipBytes);
     for (const bone of bones) {

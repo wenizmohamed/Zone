@@ -894,6 +894,20 @@ try {
         check(str_contains($sqliteSchema, "CREATE TABLE IF NOT EXISTS {$table}"), "SQLite schema contains {$table}");
     }
     check(str_contains($sqliteSchema, 'level_required'), 'SQLite schema adds crimes.level_required');
+
+    // --- Authoritative telemetry fields on crime, gym, bank, and hospital ---
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute("UPDATE players SET nerve = 20, energy = 100, cash = 5000, bank_balance = 5000 WHERE id = 'founder-player'");
+    $crimeTelemetry = $engine->attemptCrime('searchforcash', 'founder-player');
+    check(isset($crimeTelemetry['successThresholdBasisPoints'], $crimeTelemetry['territoryBonusBasisPoints']) && $crimeTelemetry['successThresholdBasisPoints'] > 0, 'crime receipt exposes successThresholdBasisPoints and territoryBonusBasisPoints');
+    $database->execute('DELETE FROM action_cooldowns');
+    $gymTelemetry = $engine->trainGym('strength', 1, 'founder-player');
+    check(isset($gymTelemetry['gainPerEnergy']) && $gymTelemetry['gainPerEnergy'] > 0, 'gym training receipt exposes gainPerEnergy');
+    $database->execute('DELETE FROM action_cooldowns');
+    $bankTelemetry = $engine->bankDeposit(1000, 'founder-player');
+    check(isset($bankTelemetry['vaultSharePct']) && $bankTelemetry['vaultSharePct'] >= 0 && $bankTelemetry['vaultSharePct'] <= 100, 'bank transfer receipt exposes vaultSharePct');
+    $hospQuote = $engine->hospitalQuote('founder-player');
+    check(isset($hospQuote['discountPct']) && is_float($hospQuote['discountPct']), 'hospitalQuote exposes discountPct');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -474,6 +474,8 @@ final class GameEngine
                 'tool' => ['id' => $preparation['tool'], 'consumed' => $preparation['consumed']],
                 'mastery' => $crimeProgress['mastery'], 'chain' => $crimeProgress['chain'],
                 'chainBonusBasisPoints' => $preparation['chainBonusBasisPoints'],
+                'successThresholdBasisPoints' => $successThreshold,
+                'territoryBonusBasisPoints' => $territoryBonusBp,
                 'loot' => $loot, 'lootRollWon' => $lootRollWon, 'lootStatus' => $lootStatus,
                 'levelUp' => $levelUp,
                 'streak' => $streak,
@@ -637,7 +639,7 @@ final class GameEngine
             ]);
             $this->events->publish($event);
             return [
-                'trained' => $stat, 'gain' => $gain, 'baseGain' => $baseGain, 'territoryBonusBasisPoints' => $territoryBonusBp, 'sessions' => $sessions,
+                'trained' => $stat, 'gain' => $gain, 'baseGain' => $baseGain, 'gainPerEnergy' => round($gain / max(1, $energyCost), 2), 'territoryBonusBasisPoints' => $territoryBonusBp, 'sessions' => $sessions,
                 'cost' => ['energy' => $energyCost],
                 'happiness' => ['value' => $happy, 'multiplier' => $happyMultiplier],
                 'levelUp' => $levelUp, 'streak' => $streak,
@@ -691,6 +693,7 @@ final class GameEngine
             $this->events->publish($event);
             return [
                 'direction' => $direction, 'amount' => $amount,
+                'vaultSharePct' => ($cash + $bank) > 0 ? (int) round($bank / ($cash + $bank) * 100) : 0,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
@@ -706,7 +709,7 @@ final class GameEngine
         $discount = min(5000, $this->territoryBonus($playerId, 'medical_discount'));
         $baseCost = max($hospitalized ? 500 : 0, $missing * 3);
         return ['cost' => (int) ceil($baseCost * (10000 - $discount) / 10000), 'baseCost' => $baseCost, 'missing' => $missing,
-            'hospitalized' => $hospitalized, 'available' => $missing > 0 || $hospitalized, 'territoryDiscountBasisPoints' => $discount];
+            'hospitalized' => $hospitalized, 'available' => $missing > 0 || $hospitalized, 'territoryDiscountBasisPoints' => $discount, 'discountPct' => round($discount / 100, 1)];
     }
 
     public function playerCombat(string $playerId): array
