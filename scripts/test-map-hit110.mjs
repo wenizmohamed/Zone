@@ -133,3 +133,26 @@ test('cold startup remains authored only until the controller and provider data 
     h.makeReady();assert.deepEqual(h.writes.at(-1).geometry.coordinates,h.bound);const settled=h.writes.length;h.scope.render(h.packet('ar'));assert.ok(h.writes.slice(settled).every(f=>JSON.stringify(f.geometry.coordinates)===JSON.stringify(h.bound)));assert.equal(h.computations,1);
   }finally{h.close();}}
 });
+
+test('all 17 bound service building coins route directly to their destination screens at pitched 3D roof elevation without cross-interference',()=>{
+  const services=buildings.SERVICES;
+  assert.equal(services.length,17);
+  const pins=services.map((id,idx)=>pin(id,100+(idx%5)*42,100+Math.floor(idx/5)*42,14+(idx%4)*8));
+  const roofs=pins.map((p,idx)=>({...roof(p),properties:{...roof(p).properties,providerId:String(9000+idx)}}));
+  const associated=buildings.associate(pins,roofs);
+  assert.equal(associated.complete,true);
+  assert.equal(associated.associations.length,17);
+  buildings.apply(pins,associated);
+  for(const target of pins){
+    const layer=target.id==='bank'||target.id==='gym'||target.id==='alley'||target.id==='hospital'||target.id==='market'||target.id==='home'||target.id==='hq'||target.id==='missions'?'zone-poi-icon':'zone-poi-icon-service';
+    const h=harness(pins,{zoom:16.2,pitch:35,completeRoofs:roofs,nativeRoofs:roofs,query:()=>pins.map(p=>feature(p,p.id===target.id?layer:'zone-poi-icon-service'))});
+    const click=h.center(target);
+    h.click(click);
+    assert.equal(h.messages.length,1,target.id+' must emit one route event');
+    assert.equal(h.messages[0].data.zoneGo,target.id);
+    assert.equal(h.messages[0].data.MARKER_CLICK,target.id);
+    assert.equal(h.receipt.selectedId,target.id);
+    assert.equal(h.receipt.selectionReason,'nearest-direct-coin');
+  }
+});
+

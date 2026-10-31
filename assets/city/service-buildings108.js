@@ -42,8 +42,9 @@
     const gap=32,shared=prior.filter(entry=>entry.providerId===selected.providerId),near=point=>prior.length?Math.min(...prior.map(entry=>Math.hypot(...meters(point,entry.coordinates)))):Infinity;
     let anchor=selected;
     // Ownership is already final. Only services sharing this actual building
-    // may seek another safe interior point; neighboring roofs never steal it.
-    if(shared.length&&near(anchor.coordinates)<gap){
+    // or fallback services crowding an adjacent roof seek another safe interior
+    // point on their own roof; neighboring roofs never steal ownership.
+    if((shared.length||!selected.containsAuthoredPoint)&&near(anchor.coordinates)<gap){
       const local=selected.polygon.map(ring=>ring.map(point=>meters(point,origin))),outline=local[0],xs=outline.map(point=>point[0]),ys=outline.map(point=>point[1]),bounds=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];
       const minimumRoom=Math.max(1.25,Math.min(6,selected.clearanceMeters*.4));
       let best={anchor,spacing:near(anchor.coordinates),offset:Math.hypot(...meters(anchor.coordinates,origin))};
@@ -117,6 +118,48 @@
       if(!owned){unbound.push(id);continue;}
       const selected=placeOnOwnedRoof(owned,associations,origin,maximumDistance);
       associations.push({id,...selected,sourceCoordinates:origin.slice(),source:'actual-provider-footprint',insideRoof:inside(selected.coordinates,selected.polygon)});
+    }
+    if(associations.some(entry=>entry.crowded)){
+      for(let pass=0;pass<2;pass++)for(let i=0;i<associations.length;i++){
+        if(associations[i].containsAuthoredPoint)continue;
+        const others=associations.filter((_,idx)=>idx!==i);
+        if(!others.some(other=>Math.hypot(...meters(associations[i].coordinates,other.coordinates))+1e-7<32))continue;
+        const destination=destinations.find(d=>d.id===associations[i].id);
+        let reanchored=placeOnOwnedRoof(destination.selected,others,destination.origin,maximumDistance);
+        if(others.some(other=>Math.hypot(...meters(reanchored.coordinates,other.coordinates))+1e-7<32)){
+          for(let j=0;j<associations.length;j++){
+            if(i===j||associations[j].containsAuthoredPoint)continue;
+            if(Math.hypot(...meters(associations[i].coordinates,associations[j].coordinates))+1e-7>=32)continue;
+            const otherDest=destinations.find(d=>d.id===associations[j].id);
+            const localA=destination.selected.polygon.map(r=>r.map(p=>meters(p,destination.origin))),xsA=localA[0].map(p=>p[0]),ysA=localA[0].map(p=>p[1]),bA=[Math.min(...xsA),Math.min(...ysA),Math.max(...xsA),Math.max(...ysA)],minA=Math.max(1.25,Math.min(6,destination.selected.clearanceMeters*.4));
+            const localB=otherDest.selected.polygon.map(r=>r.map(p=>meters(p,otherDest.origin))),xsB=localB[0].map(p=>p[0]),ysB=localB[0].map(p=>p[1]),bB=[Math.min(...xsB),Math.min(...ysB),Math.max(...xsB),Math.max(...ysB)],minB=Math.max(1.25,Math.min(6,otherDest.selected.clearanceMeters*.4));
+            const rest=associations.filter((_,idx)=>idx!==i&&idx!==j);
+            const ptsA=[],ptsB=[];
+            for(let y=0;y<=12;y++)for(let x=0;x<=12;x++){
+              const pA=[bA[0]+(bA[2]-bA[0])*x/12,bA[1]+(bA[3]-bA[1])*y/12],rA=clearance(pA,localA),oA=Math.hypot(...pA);
+              if(rA+1e-7>=minA&&oA<=maximumDistance){const cA=geographic(pA,destination.origin);if(rest.every(r=>Math.hypot(...meters(cA,r.coordinates))+1e-7>=32))ptsA.push({coordinates:cA,clearanceMeters:rA,offset:oA});}
+              const pB=[bB[0]+(bB[2]-bB[0])*x/12,bB[1]+(bB[3]-bB[1])*y/12],rB=clearance(pB,localB),oB=Math.hypot(...pB);
+              if(rB+1e-7>=minB&&oB<=maximumDistance){const cB=geographic(pB,otherDest.origin);if(rest.every(r=>Math.hypot(...meters(cB,r.coordinates))+1e-7>=32))ptsB.push({coordinates:cB,clearanceMeters:rB,offset:oB});}
+            }
+            let bestPair=null;
+            for(const a of ptsA)for(const b of ptsB){
+              const d=Math.hypot(...meters(a.coordinates,b.coordinates));if(d+1e-7<32)continue;
+              const minRoom=Math.min(a.clearanceMeters,b.clearanceMeters),totOff=a.offset+b.offset;
+              if(!bestPair||minRoom>bestPair.minRoom+1e-7||Math.abs(minRoom-bestPair.minRoom)<=1e-7&&totOff<bestPair.totOff)bestPair={a,b,minRoom,totOff};
+            }
+            if(bestPair){
+              reanchored={...destination.selected,coordinates:bestPair.a.coordinates,clearanceMeters:bestPair.a.clearanceMeters,distanceMeters:bestPair.a.offset};
+              associations[j]={...associations[j],coordinates:bestPair.b.coordinates,clearanceMeters:bestPair.b.clearanceMeters,distanceMeters:bestPair.b.offset,insideRoof:inside(bestPair.b.coordinates,otherDest.selected.polygon)};
+            }
+          }
+        }
+        associations[i]={id:destination.id,...reanchored,sourceCoordinates:destination.origin.slice(),source:'actual-provider-footprint',insideRoof:inside(reanchored.coordinates,reanchored.polygon)};
+      }
+      for(let i=0;i<associations.length;i++){
+        const prior=associations.slice(0,i),near=prior.length?Math.min(...prior.map(entry=>Math.hypot(...meters(associations[i].coordinates,entry.coordinates)))):Infinity;
+        const crowdingWith=prior.filter(entry=>Math.hypot(...meters(associations[i].coordinates,entry.coordinates))+1e-7<32).map(entry=>entry.id);
+        associations[i]={...associations[i],crowded:crowdingWith.length>0,crowdingWith,crowdingDistanceMeters:Number.isFinite(near)?near:null};
+      }
     }
     return {associations,unbound,complete:unbound.length===0,source:'actual-provider-footprint',maximumDistance};
   }

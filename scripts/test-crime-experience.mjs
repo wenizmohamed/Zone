@@ -141,3 +141,27 @@ test('real failed outcome spends server nerve without advancing success goal and
     assert.equal(view.crimeDesk.recovery, T.ar.nav[penalty === 'jail' ? 'jail' : 'hospital']); assert.match(view.crimeDesk.receipt, /2/);
   }
 });
+
+test('tactical heist, combat, safehouse, bank, casino, and career telemetry render accurately in EN and AR', () => {
+  for (const lang of ['en', 'ar']) {
+    const { instance } = game(lang);
+    instance.p.bankBalance = 7500;
+    instance.p.cash = 2500;
+    const view = instance.renderVals();
+    assert.ok(view.crimeDesk.selected.evPerNerve.includes('/'), 'evPerNerve formatted per nerve');
+    assert.ok(view.crimeDesk.selected.heatTier.length > 3, 'heatTier populated');
+    assert.ok(view.crimeDesk.selected.masteryTier.length > 3, 'masteryTier populated');
+    assert.ok(view.crimeDesk.rules.includes(view.crimeDesk.selected.evPerNerve), 'crimeDesk.rules includes evPerNerve');
+    assert.ok(view.crimeDesk.rules.includes(view.crimeDesk.selected.heatTier), 'crimeDesk.rules includes heatTier');
+    assert.ok(view.opps.length > 0 && view.opps.every(o => o.oppTotal && o.powerRatio.endsWith('%')), 'opps include oppTotal and powerRatio');
+    assert.ok(view.combatScene.stats.includes(view.loadout.weapon.name) && view.combatScene.stats.includes(view.loadout.armor.name), 'combatScene.stats includes equipped weapon and armor telemetry');
+    assert.ok(view.propertyDossier.trainingBoost.startsWith('×') && view.propertyDossier.context.includes(view.propertyDossier.trainingBoost), 'propertyDossier includes max-happy gym trainingBoost');
+    assert.ok(view.props.every(pr => typeof pr.happyDelta === 'number' && pr.trainingBoost.startsWith('×')), 'each property includes happyDelta and trainingBoost');
+    assert.equal(view.bank.vaultSharePct, 75);
+    assert.ok(view.bank.msg.includes('75%'), 'bank.msg includes vault protection share percentage');
+    assert.equal(typeof view.casino.higherOddsPct, 'number');
+    assert.equal(typeof view.casino.lowerOddsPct, 'number');
+    assert.ok(view.casinoGuide.scope.includes(view.casino.higherOddsPct + '%') && view.casinoGuide.scope.includes(view.casino.lowerOddsPct + '%'), 'casinoGuide.scope includes live deck higher/lower odds');
+    assert.ok(view.employment.payBonusText.includes('10%'), 'employment.payBonusText includes +10% Business Basics career synergy');
+  }
+});

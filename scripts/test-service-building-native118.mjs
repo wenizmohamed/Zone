@@ -84,6 +84,8 @@ test('real native provider replay keeps every captured service on a distinct saf
     assert.equal(result.complete, true);
     assert.equal(result.associations.length, 17);
     assert.equal(new Set(result.associations.map(entry => entry.providerId)).size, 17);
+    assert.deepEqual(metrics(result).closePairs, [], 'Every captured service pair must maintain >= 32m separation on its owned roof.');
+    assert.deepEqual(metrics(result).crowdedFlags, [], 'No captured service may remain crowded after bilateral interior roof separation.');
     for (const entry of result.associations) {
       assert.ok(entry.insideRoof && buildings.inside(entry.coordinates, entry.polygon), entry.id + ' needs a real interior anchor.');
       assert.ok(entry.clearanceMeters > 0 && (entry.containsAuthoredPoint || entry.clearanceMeters + 1e-7 >= 1));

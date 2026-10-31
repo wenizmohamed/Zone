@@ -114,3 +114,21 @@ test('exclusive fallback assignment is stable through tile arrival, language and
     assert.equal(JSON.stringify(pins), applied);
   }
 });
+
+test('adjacent fallback roofs bilaterally separate within their own interiors to clear the 32 m crowding threshold', () => {
+  const roofA = {
+    type: 'Feature', id: '16/1/1/jail-roof', properties: { providerId: 'jail-roof', providerTile: '16/1/1', height: 24, extrude: 'true' },
+    geometry: { type: 'Polygon', coordinates: [[point(-22, -20), point(-4, -20), point(-4, 20), point(-22, 20), point(-22, -20)]] }
+  };
+  const roofB = {
+    type: 'Feature', id: '16/1/1/jobs-roof', properties: { providerId: 'jobs-roof', providerTile: '16/1/1', height: 16, extrude: 'true' },
+    geometry: { type: 'Polygon', coordinates: [[point(4, -20), point(22, -20), point(22, 20), point(4, 20), point(4, -20)]] }
+  };
+  const pins = [pin('jail', -30, 0), pin('jobs', 30, 0)];
+  const result = buildings.associate(pins, [roofA, roofB]);
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.associations.map(entry => entry.providerId), ['jail-roof', 'jobs-roof']);
+  assert.ok(result.associations.every(entry => entry.insideRoof && !entry.crowded && !entry.sharedRoof));
+  const separation = Math.hypot(...buildings.meters(result.associations[0].coordinates, result.associations[1].coordinates));
+  assert.ok(separation + 1e-7 >= 32, 'Adjacent elongated fallback roofs should pick opposite interior ends to clear 32 m.');
+});
