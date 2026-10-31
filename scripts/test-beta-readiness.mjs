@@ -183,3 +183,16 @@ test('server hydration enables genuine resource display and keeps preview fixtur
   assert.equal(JSON.parse(storage.get('zone.v2.save')).cash, 2500);
   assert.equal(visitor({ preview: true }).client.p.cash, 48500);
 });
+
+test('ZonePlatform.diagnostics reports status, releaseId, releaseVersion, preview, failures and builtinScreenCount', async () => {
+  const remote = { release: { id: 'rel-145', version: 145, manifest: { schemaVersion: 1 } }, content: {} };
+  const runtime = connectionRuntime('platform-runtime.js', { fetchImpl: async () => ({ ok: true, json: async () => remote }) });
+  await runtime.window.ZonePlatform.refresh();
+  const diag = runtime.window.ZonePlatform.diagnostics();
+  assert.equal(diag.status, 'connected');
+  assert.equal(diag.releaseId, 'rel-145');
+  assert.equal(diag.releaseVersion, 145);
+  assert.equal(diag.preview, false);
+  assert.equal(diag.failures, 0);
+  assert.equal(diag.builtinScreenCount, 19);
+});

@@ -16,6 +16,11 @@ final class AchievementsModule implements GameModule
     {
         $events->subscribe(new FirstCrimeSubscriber($database, $events));
     }
+
+    public static function unlockedCount(Database $database, string $playerId = 'founder-player'): int
+    {
+        return (int) (($database->fetchOne('SELECT COUNT(*) AS count FROM achievements WHERE player_id = :player', ['player' => $playerId])['count'] ?? 0));
+    }
 }
 
 final readonly class FirstCrimeSubscriber implements EventSubscriber

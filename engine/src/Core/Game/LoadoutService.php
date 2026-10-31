@@ -51,4 +51,10 @@ final class LoadoutService
         if (($state['equip'] ?? null) === $id) $state['equip'] = null;
         if (($state['armorEquip'] ?? null) === $id) $state['armorEquip'] = null;
     }
+
+    public static function equippedSlotCount(array $state, array $items): int
+    {
+        $resolved = self::resolve($state, $items);
+        return (int) ($resolved['weaponId'] !== null) + (int) ($resolved['armorId'] !== null);
+    }
 }

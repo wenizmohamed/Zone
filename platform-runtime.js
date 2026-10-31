@@ -83,6 +83,7 @@
     status: () => connection,
     resolvePage,
     preview,
+    diagnostics: () => ({ status: connection, releaseId: release.id, releaseVersion: release.version, preview, failures, nextAutomaticRefresh, builtinScreenCount: builtinScreens.length }),
     refresh: async () => {
       if (preview) return { release, content: gameData };
       if (pendingRefresh) return pendingRefresh;

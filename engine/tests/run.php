@@ -1106,6 +1106,16 @@ try {
     $rlExWave26 = new \Zone\Engine\Core\Game\RateLimitException(12);
     $rlArrWave26 = $rlExWave26->toArray();
     check($rlArrWave26['error'] === 'rate_limit' && $rlArrWave26['retryAfter'] === 12, 'RateLimitException toArray serializes retryAfter');
+
+    // --- Wave 27 (zone-beta145): LoadoutService, FamilyCompetitionSubscriber, AchievementsModule & GameEngine telemetry ---
+    $loadoutItemsWave27 = ['pistol' => ['type' => 'weapon', 'mult' => 1.5], 'vest' => ['type' => 'armor', 'red' => 0.25]];
+    check(\Zone\Engine\Core\Game\LoadoutService::equippedSlotCount(['equip' => 'pistol', 'armorEquip' => 'vest', 'inv' => ['pistol' => 1, 'vest' => 1]], $loadoutItemsWave27) === 2 && \Zone\Engine\Core\Game\LoadoutService::equippedSlotCount(['equip' => 'pistol', 'inv' => []], $loadoutItemsWave27) === 0, 'LoadoutService equippedSlotCount returns count of owned equipped weapon/armor slots');
+    $subEventsWave27 = \Zone\Engine\Core\Game\FamilyCompetitionSubscriber::supportedEvents();
+    check($subEventsWave27 === ['PlayerCombatResolved', 'TerritoryControlChanged'], 'FamilyCompetitionSubscriber supportedEvents returns authoritative competition event list');
+    check(\Zone\Modules\Achievements\AchievementsModule::unlockedCount($database, 'founder-player') >= 1, 'AchievementsModule unlockedCount returns unlocked achievement count for player');
+    $rlStatEngineWave27 = $engine->rateLimitStatus('founder-player');
+    check(($rlStatEngineWave27['enabled'] ?? false) === true && isset($rlStatEngineWave27['remaining'], $rlStatEngineWave27['max']), 'GameEngine rateLimitStatus returns rate limiter status for player');
+    check($engine->unreadNotificationCount('founder-player') >= 0, 'GameEngine unreadNotificationCount returns unread notification count for player');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

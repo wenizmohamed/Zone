@@ -1189,4 +1189,15 @@ final class GameEngine
     {
         return $this->cooldownSeconds;
     }
+
+    /** @return array{maxHits: int, windowSeconds: int, currentHits: int, remainingHits: int} */
+    public function rateLimitStatus(string $playerId = 'founder-player'): array
+    {
+        return $this->rateLimiter->status($playerId);
+    }
+
+    public function unreadNotificationCount(string $playerId = 'founder-player'): int
+    {
+        return $this->notifications->unreadCount($playerId);
+    }
 }

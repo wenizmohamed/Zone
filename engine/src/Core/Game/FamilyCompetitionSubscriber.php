@@ -18,4 +18,6 @@ final readonly class FamilyCompetitionSubscriber implements EventSubscriber
         if ($event->name==='TerritoryControlChanged' && in_array($payload['action']??'', ['assault','reinforce'],true) && ($payload['warContribution']??0)>0) $kind='territory-assault';
         if ($kind!==null && is_string($payload['playerId']??null)) (new FamilyActivityService($this->database,$this->events))->recordCompetition($payload['playerId'],$kind,(string)($payload['correlationId']??$event->id));
     }
+    /** @return list<string> */
+    public static function supportedEvents(): array { return ['PlayerCombatResolved', 'TerritoryControlChanged']; }
 }
