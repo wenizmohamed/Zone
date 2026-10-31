@@ -132,4 +132,17 @@ final readonly class PlayerAccounts
         $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM player_credentials');
         return (int) ($row['total'] ?? 0);
     }
+
+    public function securityEventCount(?string $playerId = null): int
+    {
+        if ($playerId !== null) {
+            $row = $this->database->fetchOne(
+                'SELECT COUNT(*) AS total FROM account_security_events WHERE player_id = :player',
+                ['player' => $playerId],
+            );
+            return max(0, (int) ($row['total'] ?? 0));
+        }
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM account_security_events');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

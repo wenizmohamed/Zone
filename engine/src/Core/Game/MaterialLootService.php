@@ -131,4 +131,17 @@ final class MaterialLootService
             'spentValue' => (int) ($row['spent_value'] ?? 0),
         ];
     }
+
+    public function totalAwardedCount(?string $source = null): int
+    {
+        if ($source !== null) {
+            $row = $this->database->fetchOne(
+                "SELECT COUNT(*) AS total FROM material_issuance WHERE status = 'awarded' AND source = :source",
+                ['source' => $source],
+            );
+            return max(0, (int) ($row['total'] ?? 0));
+        }
+        $row = $this->database->fetchOne("SELECT COUNT(*) AS total FROM material_issuance WHERE status = 'awarded'");
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }

@@ -76,6 +76,14 @@ final readonly class NotificationService
         return (int) ($row['total'] ?? 0);
     }
 
+    public function markAllRead(string $playerId): int
+    {
+        return $this->database->execute(
+            'UPDATE notifications SET read_at = :now WHERE player_id = :player AND read_at IS NULL',
+            ['now' => gmdate('c'), 'player' => $playerId],
+        );
+    }
+
     private function barNameAr(string $bar): string
     {
         return match ($bar) {

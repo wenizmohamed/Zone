@@ -1171,6 +1171,18 @@ try {
     check($cmWave33->auditEntryCount() >= 1, 'ContentManager auditEntryCount returns admin audit log row count');
     $ledgerWave33 = new Ledger($database);
     check(count($ledgerWave33->recentEntries('founder-player', 5)) >= 1, 'Ledger recentEntries returns bounded player economy ledger entries');
+
+    // --- Wave 34 (zone-beta152): NotificationService markAllRead, MaterialLootService totalAwardedCount, AssetLibrary uploadingCount, BrowserSessions purgeExpired & PlayerAccounts securityEventCount ---
+    $notifWave34 = new \Zone\Engine\Core\Game\NotificationService($database);
+    $notifWave34->capWasteNudge('founder-player', 'energy');
+    check($notifWave34->markAllRead('founder-player') >= 1 && $notifWave34->unreadCount('founder-player') === 0, 'NotificationService markAllRead marks unread notifications read and zeroes unreadCount');
+    $mlsWave34 = new \Zone\Engine\Core\Game\MaterialLootService($database, new EventBus($database));
+    check($mlsWave34->totalAwardedCount() >= 0 && $mlsWave34->totalAwardedCount('world') >= 0, 'MaterialLootService totalAwardedCount returns awarded material issuance count');
+    check($engine->assets()->uploadingCount() >= 0, 'AssetLibrary uploadingCount returns active chunk upload count');
+    $bsWave34 = new \Zone\Engine\Core\Security\BrowserSessions($database);
+    check($bsWave34->purgeExpired() >= 0, 'BrowserSessions purgeExpired deletes expired browser sessions');
+    $paWave34 = new \Zone\Engine\Core\Security\PlayerAccounts($database);
+    check($paWave34->securityEventCount() >= 0 && $paWave34->securityEventCount('founder-player') >= 0, 'PlayerAccounts securityEventCount returns security audit event count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

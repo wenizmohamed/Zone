@@ -245,6 +245,12 @@ final class AssetLibrary
         }, $heartbeats), 'limits' => ['uploadBytes' => self::MAX_UPLOAD_BYTES, 'chunkBytes' => self::CHUNK_BYTES, 'expandedBytes' => SafeBundle::MAX_EXPANDED_BYTES, 'bundleMembers' => SafeBundle::MAX_MEMBERS]];
     }
 
+    public function uploadingCount(): int
+    {
+        $row = $this->db->fetchOne("SELECT COUNT(*) AS count FROM asset_uploads WHERE status = 'uploading'");
+        return max(0, (int) ($row['count'] ?? 0));
+    }
+
     private function claim(): ?array
     {
         return $this->db->transaction(function (): ?array {

@@ -67,4 +67,12 @@ final readonly class BrowserSessions
         );
         return (int) ($row['total'] ?? 0);
     }
+
+    public function purgeExpired(?int $now = null): int
+    {
+        return $this->database->execute(
+            'DELETE FROM browser_sessions WHERE expires_at <= :now',
+            ['now' => $now ?? time()],
+        );
+    }
 }
