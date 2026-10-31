@@ -141,6 +141,7 @@ final readonly class LevelingService
             'cashBonus' => $cashBonus,
             'maxNerve' => $newMaxNerve,
             'maxEnergy' => $newMaxEnergy,
+            'nextLevelXp' => $this->totalXpForLevel($newLevel + 1),
         ];
     }
 }

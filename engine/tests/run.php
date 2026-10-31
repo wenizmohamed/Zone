@@ -970,6 +970,24 @@ try {
     $gpWave12 = $engine->gameplay('founder-player');
     check(isset($gpWave12['loadout']['weaponBonusPct'], $gpWave12['loadout']['armorMitigationPct']) && $gpWave12['loadout']['weaponBonusPct'] >= 0, 'LoadoutService resolve exposes weaponBonusPct and armorMitigationPct');
     check(isset($gpWave12['family']['memberCount'], $gpWave12['family']['upgradeCount']) && $gpWave12['family']['memberCount'] >= 1, 'FamilyProgressionService snapshot exposes memberCount and upgradeCount');
+
+    // --- Wave 13 (zone-beta131): Casino, Job Shift, NPC Attack, Leveling & ContentManager Crime EV telemetry ---
+    $database->execute('DELETE FROM action_cooldowns');
+    $database->execute("UPDATE players SET cash = 20000, energy = 100, life = 250 WHERE id = 'founder-player'");
+    $bjWave13 = $engine->playBlackjack(500, 'founder-player');
+    check(($bjWave13['bet'] ?? null) === 500 && isset($bjWave13['netRoiPct']) && in_array($bjWave13['netRoiPct'], [-100, 0, 100], true), 'playBlackjack exposes bet and netRoiPct');
+    $database->execute('DELETE FROM action_cooldowns');
+    $hlStateWave13 = $engine->highLowState('founder-player');
+    $hlWave13 = $engine->playHighLow(250, 'higher', (int) $hlStateWave13['version'], 'founder-player');
+    check(($hlWave13['bet'] ?? null) === 250 && ($hlWave13['direction'] ?? null) === 'higher' && isset($hlWave13['higherOddsPct'], $hlWave13['lowerOddsPct']), 'playHighLow exposes bet, direction, higherOddsPct and lowerOddsPct');
+    $database->execute('DELETE FROM action_cooldowns');
+    $jobWave13 = $engine->workShift('founder-player');
+    check(isset($jobWave13['cashPerEnergy'], $jobWave13['educationBonusApplied']) && $jobWave13['cashPerEnergy'] > 0 && is_bool($jobWave13['educationBonusApplied']), 'workShift exposes cashPerEnergy and educationBonusApplied');
+    $database->execute('DELETE FROM action_cooldowns');
+    $atkWave13 = $engine->attackNpc('founder-player');
+    check(isset($atkWave13['winChancePct'], $atkWave13['npcDefense']) && $atkWave13['winChancePct'] > 0 && $atkWave13['npcDefense'] > 0, 'attackNpc exposes winChancePct and npcDefense');
+    $adminCrimesWave13 = $engine->adminCrimes();
+    check(!empty($adminCrimesWave13) && isset($adminCrimesWave13[0]['expectedCashPerNerve']) && $adminCrimesWave13[0]['expectedCashPerNerve'] > 0, 'ContentManager normalizeCrime exposes expectedCashPerNerve');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -182,6 +182,7 @@ final class ContentManager
         $crime['level_required'] = (int) ($crime['level_required'] ?? 1);
         $crime['enabled'] = (bool) $crime['enabled'];
         $crime['successRate'] = $crime['success_basis_points'] / 100;
+        $crime['expectedCashPerNerve'] = round(((($crime['cash_min'] + $crime['cash_max']) / 2) * ($crime['success_basis_points'] / 10000)) / max(1, $crime['nerve_cost']), 2);
         return $crime;
     }
 

@@ -872,6 +872,8 @@ final class GameEngine
             $this->events->publish($event);
             return [
                 'result' => $push ? 'push' : ($won ? 'win' : 'lose'),
+                'bet' => $bet,
+                'netRoiPct' => $push ? 0 : ($won ? 100 : -100),
                 'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'delta' => $delta,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
@@ -933,6 +935,9 @@ final class GameEngine
             $this->events->publish($event);
             return [
                 'previousCard' => $previousCard, 'card' => $card, 'version' => (int) $state['version'] + 1,
+                'bet' => $bet, 'direction' => $direction,
+                'higherOddsPct' => (int) round((14 - $card) / 13 * 100),
+                'lowerOddsPct' => (int) round(($card - 2) / 13 * 100),
                 'result' => $result, 'delta' => $delta,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($settledPlayer),
@@ -978,7 +983,10 @@ final class GameEngine
             ]);
             $this->events->publish($event);
             return [
-                'shift' => 'worked', 'jobId' => $job['id'], 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost], 'cooldowns' => $this->actionCooldowns($playerId),
+                'shift' => 'worked', 'jobId' => $job['id'], 'reward' => ['cash' => $wage, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
+                'cashPerEnergy' => round($wage / max(1, $energyCost), 2),
+                'educationBonusApplied' => !empty($progress['state']['eduDone']['biz']),
+                'cooldowns' => $this->actionCooldowns($playerId),
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
@@ -1036,6 +1044,8 @@ final class GameEngine
                 'result' => $win ? 'win' : 'lose',
                 'reward' => ['cash' => $cashReward, 'xp' => $xpReward], 'cost' => ['energy' => $energyCost],
                 'roll' => $roll, 'winChanceBasisPoints' => $winChanceBp,
+                'winChancePct' => round($winChanceBp / 100, 1),
+                'npcDefense' => $npcDefense,
                 'levelUp' => $levelUp, 'streak' => $streak,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION, 'clientSuppliedOutcomeFields' => 0],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
