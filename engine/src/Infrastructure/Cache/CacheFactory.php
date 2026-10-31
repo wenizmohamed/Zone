@@ -13,4 +13,9 @@ final class CacheFactory
         $redisUrl = getenv('ZONE_REDIS_URL') ?: '';
         return $redisUrl === '' ? new ArrayCacheStore() : new RedisCacheStore($redisUrl);
     }
+
+    public static function configuredAdapter(): string
+    {
+        return (getenv('ZONE_REDIS_URL') ?: '') === '' ? 'array' : 'redis';
+    }
 }

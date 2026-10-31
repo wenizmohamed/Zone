@@ -1094,6 +1094,18 @@ try {
     $lvlWave25 = new LevelingService($database, new Ledger($database), new EventBus($database));
     $xpProgWave25 = $lvlWave25->xpProgressForPlayer(2, 150);
     check($xpProgWave25['currentLevel'] === 2 && $xpProgWave25['nextLevelXp'] === 300 && $xpProgWave25['xpToNextLevel'] === 150 && $xpProgWave25['progressPct'] === 25, 'LevelingService xpProgressForPlayer computes nextLevelXp, xpToNextLevel and progressPct');
+
+    // --- Wave 26 (zone-beta144): CacheFactory, DomainEvent, CooldownException & RateLimitException telemetry ---
+    check(in_array(\Zone\Engine\Infrastructure\Cache\CacheFactory::configuredAdapter(), ['array', 'redis'], true), 'CacheFactory configuredAdapter returns active cache adapter name');
+    $evWave26 = new \Zone\Engine\Core\Events\DomainEvent('Wave26TestEvent', ['ok' => true], 'ev-wave26-id', '2026-11-01T00:00:00Z');
+    $evArrWave26 = $evWave26->toArray();
+    check($evArrWave26['id'] === 'ev-wave26-id' && $evArrWave26['name'] === 'Wave26TestEvent' && ($evArrWave26['payload']['ok'] ?? false) === true, 'DomainEvent toArray serializes id, name, payload and occurredAt');
+    $cdExWave26 = new \Zone\Engine\Core\Game\CooldownException('crime', 5);
+    $cdArrWave26 = $cdExWave26->toArray();
+    check($cdArrWave26['error'] === 'cooldown' && $cdArrWave26['action'] === 'crime' && $cdArrWave26['retryAfter'] === 5, 'CooldownException toArray serializes action and retryAfter');
+    $rlExWave26 = new \Zone\Engine\Core\Game\RateLimitException(12);
+    $rlArrWave26 = $rlExWave26->toArray();
+    check($rlArrWave26['error'] === 'rate_limit' && $rlArrWave26['retryAfter'] === 12, 'RateLimitException toArray serializes retryAfter');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

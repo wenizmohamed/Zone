@@ -50,7 +50,16 @@
       observer.observe(doc.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen'] });
       ready();
     }
-    return { remember, enter, cancel };
+    function diagnostics() {
+      return {
+        generation,
+        entrySerial,
+        activeScreen: activeEntry?.screen || null,
+        hasObserver: observer !== null,
+        hasFrame: frame !== null,
+      };
+    }
+    return { remember, enter, cancel, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {

@@ -16,4 +16,13 @@ final class RateLimitException extends RuntimeException
     {
         parent::__construct("Too many actions. Retry in {$retryAfter}s.");
     }
+
+    public function toArray(): array
+    {
+        return [
+            'error' => 'rate_limit',
+            'retryAfter' => $this->retryAfter,
+            'message' => $this->getMessage(),
+        ];
+    }
 }

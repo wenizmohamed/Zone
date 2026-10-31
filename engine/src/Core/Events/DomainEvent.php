@@ -18,4 +18,14 @@ final readonly class DomainEvent
         $this->id = $id ?? bin2hex(random_bytes(16));
         $this->occurredAt = $occurredAt ?? gmdate('c');
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'payload' => $this->payload,
+            'occurredAt' => $this->occurredAt,
+        ];
+    }
 }

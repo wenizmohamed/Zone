@@ -89,3 +89,13 @@ export function attachHeldWeapon(THREE, rig, mesh, gripPoint, axisSign = 1, forw
   rig.hand.add(hold);
   return hold;
 }
+
+export function inspectCharacterGrip(rig) {
+  return {
+    hasHand: Boolean(rig?.hand),
+    poseBoneCount: Array.isArray(rig?.pose) ? rig.pose.length : 0,
+    hiddenPropCount: Array.isArray(rig?.hiddenProps) ? rig.hiddenProps.length : 0,
+    hasCenter: Boolean(rig?.center),
+    hasAxis: Boolean(rig?.axis),
+  };
+}

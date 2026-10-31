@@ -19,4 +19,14 @@ final class CooldownException extends RuntimeException
     ) {
         parent::__construct("Action '{$action}' is on cooldown for {$retryAfter}s.");
     }
+
+    public function toArray(): array
+    {
+        return [
+            'error' => 'cooldown',
+            'action' => $this->action,
+            'retryAfter' => $this->retryAfter,
+            'message' => $this->getMessage(),
+        ];
+    }
 }

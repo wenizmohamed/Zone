@@ -30,7 +30,20 @@
     clearDeadline();
     publish('unavailable', 'load-error');
   };
-  window.ZonePublishedTheme115 = { link, dispose, get disposed() { return disposed; } };
+  window.ZonePublishedTheme115 = {
+    link,
+    dispose,
+    get disposed() { return disposed; },
+    get ready() { return ready; },
+    diagnostics() {
+      return {
+        ready,
+        disposed,
+        status: document.documentElement.dataset.zonePublishedTheme || null,
+        reason: document.documentElement.dataset.zonePublishedThemeReason || null,
+      };
+    },
+  };
   publish('pending');
   link.addEventListener('load', onLoad);
   link.addEventListener('error', onError);

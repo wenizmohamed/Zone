@@ -104,4 +104,10 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   assert.match(html, /ZoneRouteNavigation\?\.enter\?\.\(s, routeView\)/);
   assert.match(html, /event\?\.state\?\.zoneView/);
   assert.match(html, /ZoneRouteNavigation\?\.cancel\?\.\(\)/);
+  const s = setup('home');
+  s.nav.enter('home');
+  s.flush();
+  const diag = s.nav.diagnostics();
+  assert.equal(diag.activeScreen, 'home');
+  assert.equal(diag.hasObserver, false);
 });

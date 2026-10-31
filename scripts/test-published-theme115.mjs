@@ -145,4 +145,8 @@ test('a later successful stylesheet load can recover after an earlier load error
   assert.equal(b.timers.size, 0);
   assert.equal(b.listenerCount(), 0);
   assert.deepEqual(b.calls, []);
+  const diag = b.window.ZonePublishedTheme115.diagnostics();
+  assert.equal(diag.ready, true);
+  assert.equal(diag.disposed, false);
+  assert.equal(diag.status, 'ready');
 });
