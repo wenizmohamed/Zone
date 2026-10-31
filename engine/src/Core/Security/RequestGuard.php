@@ -238,4 +238,9 @@ final class RequestGuard
         }
         return null;
     }
+
+    public static function isValidPlayerId(string $playerId): bool
+    {
+        return preg_match(self::PLAYER_ID_PATTERN, $playerId) === 1;
+    }
 }

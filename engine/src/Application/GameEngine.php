@@ -1183,4 +1183,10 @@ final class GameEngine
             'capturedAt' => gmdate('c'),
         ];
     }
+
+    /** @return array<string, int> */
+    public function cooldownConfig(): array
+    {
+        return $this->cooldownSeconds;
+    }
 }

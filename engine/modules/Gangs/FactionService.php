@@ -29,4 +29,11 @@ final readonly class FactionService
             $this->events->publish(new DomainEvent('FactionJoined', ['playerId' => $playerId, 'factionId' => $factionId, 'role' => $role, 'correlationId' => bin2hex(random_bytes(16))]));
         });
     }
+
+    public function memberCount(string $factionId): int
+    {
+        if (!preg_match('/^[a-z0-9-]{2,64}$/D', $factionId)) return 0;
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM faction_members WHERE faction_id = :id', ['id' => $factionId]);
+        return (int) ($row['total'] ?? 0);
+    }
 }

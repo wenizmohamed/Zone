@@ -1744,4 +1744,20 @@ window.addEventListener('beforeunload', event => {
   const unsavedPages = state.savedDraftManifest !== null && authoringManifestText(currentManifest()) !== state.savedDraftManifest;
   if (unsavedPages || pending.catalog || pending.crime) { event.preventDefault(); event.returnValue = ''; }
 });
+if (typeof window !== 'undefined') {
+  window.ZoneAdmin = {
+    diagnostics() {
+      return {
+        bootReady: Boolean(state.bootReady),
+        bootBusy: Boolean(state.bootBusy),
+        view: state.view,
+        language: state.language,
+        moduleCount: Array.isArray(state.modules) ? state.modules.length : 0,
+        crimeCount: Array.isArray(state.crimes) ? state.crimes.length : 0,
+        releaseCount: Array.isArray(state.releases) ? state.releases.length : 0,
+        territoryCount: Array.isArray(state.territoryCatalog?.blocks) ? state.territoryCatalog.blocks.length : 0,
+      };
+    },
+  };
+}
 retryAdminLoad();

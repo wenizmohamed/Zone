@@ -1051,6 +1051,19 @@ try {
     check($crimeSumWave22['totalCount'] >= 31 && $crimeSumWave22['enabledCount'] >= 31 && $crimeSumWave22['maxExpectedCashPerNerve'] > 0, 'ContentManager crimeSummary exposes totalCount, enabledCount and maxExpectedCashPerNerve');
     $mrSumWave22 = \Zone\Engine\Core\Content\MediaReferences::summarizeManifestBindings(['mediaBindings' => [['targetType' => 'map', 'targetId' => 'bank', 'assetId' => str_repeat('a', 64)]]]);
     check($mrSumWave22['bindingCount'] === 1 && ($mrSumWave22['byTargetType']['map'] ?? 0) === 1, 'MediaReferences summarizeManifestBindings counts bindings by targetType');
+
+    // --- Wave 23 (zone-beta141): FactionService, LeaderboardService, AssetInspector, SafeBundle, RequestGuard & GameEngine telemetry ---
+    $fsWave23 = new \Zone\Modules\Gangs\FactionService($database, new EventBus($database));
+    check($fsWave23->memberCount('iron-Lotus') === 0 && $fsWave23->memberCount('crimson-syndicate') >= 0, 'FactionService memberCount returns integer member count and 0 for invalid faction ID');
+    $lbWave23 = new \Zone\Modules\Leaderboards\LeaderboardService($database);
+    check($lbWave23->playerRank('founder-player') === null, 'LeaderboardService playerRank returns null when fixture player is excluded from public rows');
+    $extsWave23 = \Zone\Engine\Core\Media\AssetInspector::supportedExtensions();
+    check(in_array('glb', $extsWave23, true) && in_array('png', $extsWave23, true), 'AssetInspector supportedExtensions returns allowed asset extension list');
+    $limitsWave23 = \Zone\Engine\Core\Media\SafeBundle::limits();
+    check($limitsWave23['maxExpandedBytes'] === 125829120 && $limitsWave23['maxMembers'] === 256, 'SafeBundle limits exposes maxExpandedBytes, maxMembers and extensions');
+    check(RequestGuard::isValidPlayerId('founder-player') === true && RequestGuard::isValidPlayerId('BAD_ID!') === false, 'RequestGuard isValidPlayerId validates canonical player ID shape');
+    $cdConfigWave23 = $engine->cooldownConfig();
+    check(isset($cdConfigWave23['crime'], $cdConfigWave23['gym']) && $cdConfigWave23['crime'] >= 0, 'GameEngine cooldownConfig exposes effective action cooldown map');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

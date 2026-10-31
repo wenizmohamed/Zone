@@ -31,4 +31,14 @@ final readonly class LeaderboardService
             ], $rows, array_keys($rows)),
         ];
     }
+
+    public function playerRank(string $playerId): ?int
+    {
+        foreach ($this->snapshot($playerId)['rows'] as $row) {
+            if (!empty($row['isCurrentPlayer'])) {
+                return (int) $row['rank'];
+            }
+        }
+        return null;
+    }
 }

@@ -274,4 +274,10 @@ final class AssetInspector
         if (!is_array($metadata) || !isset($metadata['bounds']['size']) || !is_array($metadata['bounds']['size'])) throw new RuntimeException('Model inspector did not return actual geometry bounds.');
         return $metadata;
     }
+
+    /** @return list<string> */
+    public static function supportedExtensions(): array
+    {
+        return self::EXTENSIONS;
+    }
 }

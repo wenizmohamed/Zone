@@ -160,6 +160,15 @@ final class SafeBundle
             $offset += $count;
         }
     }
+
+    public static function limits(): array
+    {
+        return [
+            'maxExpandedBytes' => self::MAX_EXPANDED_BYTES,
+            'maxMembers' => self::MAX_MEMBERS,
+            'extensions' => self::EXTENSIONS,
+        ];
+    }
 }
 
 /** ext-mbstring is optional in the PC PHP runtime. */
