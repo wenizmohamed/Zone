@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,planTiles,decodeTile,summarizeDecodedFeatures,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -39,6 +39,7 @@ function harness({zoom=15.1,pitch=0,loaded=true,language='en'}={}){
 
 test('all120 actual server parcels select exactly4 z16 detail tiles without mutating gameplay data',()=>{
   const plan=planTiles(bounds);assert.equal(plan.length,4);assert.equal(new Set(plan.map(p=>p.z+'/'+p.x+'/'+p.y)).size,4);assert.ok(plan.every(p=>p.z===16));assert.equal(JSON.stringify(fixture.blocks),original);assert.equal(fixture.blocks.length,120);
+  const tileSummary=summarizePlanTiles(plan);assert.equal(tileSummary.tileCount,4);assert.equal(tileSummary.uniqueTileCount,4);assert.deepEqual(tileSummary.zooms,[16]);
 });
 test('planner rejects invalid, broad and degenerate geometry before any provider request',()=>{
   for(const value of [null,[[0,0],[0,1]],[[NaN,0],[1,1]],[[-181,0],[1,1]],[[-74,40],[-73,41]]])assert.throws(()=>planTiles(value));

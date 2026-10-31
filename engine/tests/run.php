@@ -1330,6 +1330,13 @@ try {
     check($engine->achievementCount('founder-player') >= 1, 'GameEngine achievementCount returns unlocked achievement count');
     check($engine->playerCash('founder-player') >= 0, 'GameEngine playerCash returns current cash balance');
     check($engine->playerLevel('founder-player') >= 1, 'GameEngine playerLevel returns current player level');
+
+    // --- Wave 53 (zone-beta171): GameEngine configuredCooldownSeconds, totalAuthoredCrimeCount, playerEnergy, playerNerve & playerLife ---
+    check($engine->configuredCooldownSeconds()['crime'] >= 0 && isset($engine->configuredCooldownSeconds()['gym']), 'GameEngine configuredCooldownSeconds returns action cooldown map');
+    check($engine->totalAuthoredCrimeCount() >= $engine->enabledCrimeCount(), 'GameEngine totalAuthoredCrimeCount returns total authored crime count');
+    check($engine->playerEnergy('founder-player') >= 0, 'GameEngine playerEnergy returns current player energy');
+    check($engine->playerNerve('founder-player') >= 0, 'GameEngine playerNerve returns current player nerve');
+    check($engine->playerLife('founder-player') >= 1, 'GameEngine playerLife returns current player life');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

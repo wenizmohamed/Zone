@@ -50,6 +50,12 @@ export function summarizeDecodedFeatures(features){
   }
   return {total:list.length,extrudable,raisedParts,maximumHeight,uniqueTiles:tiles.size};
 }
+export function summarizePlanTiles(tiles){
+  const list=Array.isArray(tiles)?tiles:[];
+  const unique=new Set(list.map(t=>`${t?.z}/${t?.x}/${t?.y}`));
+  const zooms=new Set(list.map(t=>Number(t?.z)).filter(Number.isFinite));
+  return {tileCount:list.length,uniqueTileCount:unique.size,zooms:[...zooms]};
+}
 async function readBounded(response,maxBytes){
   if(!response.ok)throw new Error('Provider district request failed (HTTP '+response.status+')');
   const declared=Number(response.headers?.get('content-length'));

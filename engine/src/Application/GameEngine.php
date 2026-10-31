@@ -1565,4 +1565,30 @@ final class GameEngine
     {
         return (int) $this->requirePlayer($playerId)['level'];
     }
+
+    /** @return array<string, int> */
+    public function configuredCooldownSeconds(): array
+    {
+        return $this->cooldownSeconds;
+    }
+
+    public function totalAuthoredCrimeCount(): int
+    {
+        return count($this->adminCrimes());
+    }
+
+    public function playerEnergy(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['energy'];
+    }
+
+    public function playerNerve(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['nerve'];
+    }
+
+    public function playerLife(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['life'];
+    }
 }
