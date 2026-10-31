@@ -193,8 +193,20 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.ok(peerView.gymStudio.happyMultiplier.startsWith('×') && typeof peerView.gymStudio.sessionsAvailable === 'number', 'gymStudio includes happyMultiplier and sessionsAvailable');
     assert.ok(peerView.travelDests.every(d => d.cost && typeof d.canAfford === 'boolean'), 'travelDests include cost and canAfford');
     instance.sharedFamily = { respect: 1500, version: 1, upgrades: {}, upgradeEligibility: [{ id: 'nerveMax', cost: 2000, eligible: false, reason: 'respect_required' }] };
+    instance.onboarding = { steps: [{ missionId: 'm_train', counter: 'train', progress: 2, target: 5, cash: 500, points: 2, current: true }] };
+    instance.setState({ combatMode: 'players' });
+    instance.peerResources.opponents = { snapshot: { selfId: 'u1', players: [{ id: 'u2', username: 'Rami', factionId: 'crow', life: 100, max_life: 100, level: 3, strength: 15, defense: 15, speed: 15, dexterity: 15, eligible: true }] } };
+    instance.peerResources.family.snapshot.competition = { seasonId: '2026-W44', endsAt: Date.now() + 86400000, ownFactionId: 'crow', ranks: [{ id: 'crow', rank: 1, name: { en: 'Black Crow', ar: 'الغراب الأسود' }, memberCount: 4, score: 120 }, { id: 'veil', rank: 2, name: { en: 'Red Veil', ar: 'الحجاب الأحمر' }, memberCount: 5, score: 75 }] };
     const sharedView = instance.renderVals();
     assert.equal(sharedView.sharedFamily.upgrades[0].owned, false);
     assert.equal(sharedView.sharedFamily.upgrades[0].respectShortfall, 500);
+    assert.equal(sharedView.onboarding.steps[0].pct, 40);
+    assert.equal(sharedView.onboarding.steps[0].remaining, 3);
+    assert.ok(sharedView.homeBase.resources.every(r => typeof r.missing === 'number' && typeof r.fullIn === 'string' && r.fullIn.length > 0), 'homeBase resources include missing and fullIn');
+    assert.ok(sharedView.opps[0].oppTotal && sharedView.opps[0].powerRatio.endsWith('%') && sharedView.opps[0].threatTier, 'peer combat opps include oppTotal, powerRatio, and threatTier');
+    assert.equal(sharedView.competition.ranks[0].scorePerMember, '30');
+    assert.equal(sharedView.competition.ranks[0].leadGap, '0');
+    assert.equal(sharedView.competition.ranks[1].scorePerMember, '15');
+    assert.equal(sharedView.competition.ranks[1].leadGap, '45');
   }
 });
