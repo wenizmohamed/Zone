@@ -1386,6 +1386,13 @@ try {
     check($engine->playerNetWorth('founder-player') === $engine->playerCash('founder-player') + $engine->playerBankBalance('founder-player'), 'GameEngine playerNetWorth returns cash + bank balance');
     check($engine->neutralTerritoryCount() >= 0, 'GameEngine neutralTerritoryCount returns neutral block count');
     check($engine->contestedTerritoryCount() >= 0, 'GameEngine contestedTerritoryCount returns contested block count');
+
+    // --- Wave 61 (zone-beta179): GameEngine territoryControlPercent, territoryDailyRespectIncome, territoryNeutralColor, playerFactionRole & isTerritoriesModulePublished ---
+    check($engine->territoryControlPercent('founder-player') >= 0.0, 'GameEngine territoryControlPercent returns player faction control percentage');
+    check($engine->territoryDailyRespectIncome('founder-player') >= 0, 'GameEngine territoryDailyRespectIncome returns player faction daily respect income');
+    check($engine->territoryNeutralColor() === '#68717b', 'GameEngine territoryNeutralColor returns canonical neutral territory color');
+    check($engine->playerFactionRole('founder-player') === null || is_string($engine->playerFactionRole('founder-player')), 'GameEngine playerFactionRole returns null or role string');
+    check(is_bool($engine->isTerritoriesModulePublished()), 'GameEngine isTerritoriesModulePublished returns boolean published territory gate');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

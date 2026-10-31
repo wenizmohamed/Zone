@@ -4,6 +4,7 @@ import { validateCharacterWardrobe } from './character-presentation.js';
 
 const HASH = /^[a-f0-9]{64}$/;
 export const uploadedAssetId = value => typeof value === 'string' && HASH.test(value) ? value : null;
+export const isUploadedAssetId = value => uploadedAssetId(value) !== null;
 
 // Publication selects identity; this adapter changes presentation only. No
 // inventory grants, armor reduction, combat results or player resources live here.

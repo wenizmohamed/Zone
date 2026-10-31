@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { uploadedAssetId, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
+import { uploadedAssetId, isUploadedAssetId, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -13,7 +13,7 @@ function nativeArmor(){const calls=[];return{calls,update:async(...args)=>{calls
 async function suit(){const bytes=readFileSync(new URL('../assets/character/quaternius/Suit.glb',import.meta.url));return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');}
 
 test('only published hash identities may request uploaded equipment',()=>{
-  assert.equal(uploadedAssetId(id),id);for(const value of ['../../asset','https://example.test/model.glb','A'.repeat(64),null,{},''])assert.equal(uploadedAssetId(value),null);
+  assert.equal(uploadedAssetId(id),id);assert.equal(isUploadedAssetId(id),true);for(const value of ['../../asset','https://example.test/model.glb','A'.repeat(64),null,{},'']){assert.equal(uploadedAssetId(value),null);assert.equal(isUploadedAssetId(value),false);}
 });
 test('real retained rig uploaded through the adapter keeps all clips and original geometry while fitting the stage',async()=>{
   const source=await suit(),owned=media(source.scene,source.animations),receipt=[];
@@ -85,4 +85,24 @@ test('Home and Combat consume the same optional published identities while prese
   assert.match(template,/uploaded-equipment108\.mjs/);assert.match(template,/loadUploadedCharacter\(requestedAsset/);assert.match(template,/weaponAssets\.load\(key, state\.weaponMediaAsset, \{ draft: state\.draft === true \}\)/);assert.match(template,/e\.source !== parent \|\| e\.origin !== location\.origin/);
   const combat=readFileSync(new URL('../dist/combat-presentation.js',import.meta.url),'utf8');
   assert.match(combat,/equipment\.characterMediaAsset/);assert.match(combat,/equipment\.weaponMediaAsset/);assert.match(combat,/equipment\.armorMediaAsset/);assert.match(combat,/new T\.WebGLRenderer/);
+});
+
+test('weapon and armor controllers expose structured upload diagnostics',async()=>{
+  const weapon=createUploadedWeaponLoader(nativeWeapon(),{loader:async()=>media()});
+  assert.deepEqual(weapon.diagnostics(),{disposed:false,activeUploadCount:0,pendingUploadCount:0});
+  const mesh=await weapon.load('bat',id);
+  assert.equal(weapon.diagnostics().activeUploadCount,1);
+  weapon.release(mesh);
+  assert.equal(weapon.diagnostics().activeUploadCount,0);
+  weapon.dispose();
+  assert.equal(weapon.diagnostics().disposed,true);
+
+  const actor=new T.Group(),chest=new T.Bone();chest.name='Chest';actor.add(chest);
+  const armor=createUploadedArmorController(nativeArmor(),{loader:async()=>media()});
+  assert.deepEqual(armor.diagnostics(),{disposed:false,sequence:0,hasActiveUpload:false,lastReceipt:null});
+  await armor.update({armorId:'vest',armorOwned:true,armorMediaAsset:id},actor);
+  assert.equal(armor.diagnostics().hasActiveUpload,true);
+  assert.equal(armor.diagnostics().lastReceipt?.status,'ready');
+  armor.dispose();
+  assert.equal(armor.diagnostics().disposed,true);
 });

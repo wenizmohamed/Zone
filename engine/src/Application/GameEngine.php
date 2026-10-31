@@ -1776,4 +1776,30 @@ final class GameEngine
     {
         return (int) ($this->territories->snapshot('founder-player')['summary']['contested'] ?? 0);
     }
+
+    public function territoryControlPercent(string $playerId = 'founder-player'): float
+    {
+        return (float) ($this->territories->snapshot($playerId)['summary']['controlPercent'] ?? 0.0);
+    }
+
+    public function territoryDailyRespectIncome(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->territories->snapshot($playerId)['summary']['dailyRespectIncome'] ?? 0);
+    }
+
+    public function territoryNeutralColor(): string
+    {
+        return (string) ($this->territories->snapshot('founder-player')['neutralColor'] ?? '#68717b');
+    }
+
+    public function playerFactionRole(string $playerId = 'founder-player'): ?string
+    {
+        $role = $this->territories->snapshot($playerId)['playerFactionRole'] ?? null;
+        return is_string($role) && $role !== '' ? $role : null;
+    }
+
+    public function isTerritoriesModulePublished(): bool
+    {
+        return (bool) (\Zone\Engine\Core\Game\LoadoutService::publishedView($this->database, $this->events)['territoriesEnabled'] ?? false);
+    }
 }
