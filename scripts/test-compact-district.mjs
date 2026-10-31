@@ -43,6 +43,8 @@ test('both map modes retain locations, category toggles remain effective and exp
 });
 test('real vector street and building detail replaces raster/procedural imports and keeps attribution',()=>{
   const style=district.createStyle();assert.equal(style.sources['district-streets'].type,'vector');assert.equal(style.sources['district-streets'].url,'mapbox://mapbox.mapbox-streets-v8');
+  const styleSummary=district.summarizeStyle(style);
+  assert.equal(styleSummary.layerCount,10);assert.equal(styleSummary.sourceCount,1);assert.equal(styleSummary.hasExtrusionLayer,true);assert.equal(styleSummary.hasRoadLayer,true);assert.equal(styleSummary.hasBuildingLayer,true);
   assert.ok(style.layers.some(l=>l['source-layer']==='building'&&l.type==='fill'));assert.ok(style.layers.some(l=>l['source-layer']==='road'&&l.type==='line'));
   assert.ok(style.layers.some(l=>l['source-layer']==='building'&&l.type==='fill-extrusion'));assert.ok(!style.layers.some(l=>l.type==='raster'));
   assert.doesNotMatch(html,/<script src="[^\"]*(?:atlas|native-city)\.js/);assert.match(html,/new mapboxgl.AttributionControl/);assert.doesNotMatch(html,/id:['"]zone-(?:ownership-outline|hatch|connector)/);

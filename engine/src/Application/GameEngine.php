@@ -1591,4 +1591,30 @@ final class GameEngine
     {
         return (int) $this->requirePlayer($playerId)['life'];
     }
+
+    /** @return list<string> */
+    public function gymStats(): array
+    {
+        return self::GYM_STATS;
+    }
+
+    public function isSupportedGymStat(string $stat): bool
+    {
+        return in_array($stat, self::GYM_STATS, true);
+    }
+
+    public function playerBankBalance(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['bank_balance'];
+    }
+
+    public function playerXp(string $playerId = 'founder-player'): int
+    {
+        return (int) $this->requirePlayer($playerId)['xp'];
+    }
+
+    public function playerCity(string $playerId = 'founder-player'): string
+    {
+        return (string) $this->requirePlayer($playerId)['city'];
+    }
 }

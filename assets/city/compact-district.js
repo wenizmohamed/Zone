@@ -44,6 +44,10 @@
       {id:'district-buildings-3d',type:'fill-extrusion',source,'source-layer':'building',minzoom:16,filter:['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']],paint:{'fill-extrusion-color':['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#68716f',18,'#838b81',60,'#9b9887'],'fill-extrusion-height':['max',0,['to-number',['get','height'],0]],'fill-extrusion-base':['min',['max',0,['to-number',['get','height'],0]],['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1},layout:{visibility:'none'}}
     ]};
   }
+  function summarizeStyle(style){
+    const layers=Array.isArray(style?.layers)?style.layers:[],sources=style?.sources||{};
+    return {layerCount:layers.length,sourceCount:Object.keys(sources).length,hasExtrusionLayer:layers.some(l=>l?.type==='fill-extrusion'),hasRoadLayer:layers.some(l=>l?.['source-layer']==='road'),hasBuildingLayer:layers.some(l=>l?.['source-layer']==='building')};
+  }
   function setPerspective(map,value){
     // Visibility may fire after pagehide has removed the map's style.
     if(map.isStyleLoaded&&!map.isStyleLoaded()&&(!map.getStyle||!map.getStyle()))return;
@@ -360,5 +364,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,mercator,geographic,createProjection,createStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  return {CENTER,mercator,geographic,createProjection,createStyle,summarizeStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

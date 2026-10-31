@@ -1337,6 +1337,13 @@ try {
     check($engine->playerEnergy('founder-player') >= 0, 'GameEngine playerEnergy returns current player energy');
     check($engine->playerNerve('founder-player') >= 0, 'GameEngine playerNerve returns current player nerve');
     check($engine->playerLife('founder-player') >= 1, 'GameEngine playerLife returns current player life');
+
+    // --- Wave 54 (zone-beta172): GameEngine gymStats, isSupportedGymStat, playerBankBalance, playerXp & playerCity ---
+    check(count($engine->gymStats()) === 4 && $engine->gymStats()[0] === 'strength', 'GameEngine gymStats returns 4 canonical gym stats');
+    check($engine->isSupportedGymStat('dexterity') === true && $engine->isSupportedGymStat('luck') === false, 'GameEngine isSupportedGymStat validates gym stat names');
+    check($engine->playerBankBalance('founder-player') >= 0, 'GameEngine playerBankBalance returns current bank balance');
+    check($engine->playerXp('founder-player') >= 0, 'GameEngine playerXp returns current player XP');
+    check($engine->isSupportedCity($engine->playerCity('founder-player')) === true, 'GameEngine playerCity returns valid player city');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
