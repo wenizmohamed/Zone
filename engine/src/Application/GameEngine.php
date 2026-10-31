@@ -1374,4 +1374,29 @@ final class GameEngine
     {
         return $this->database->driver();
     }
+
+    public function cacheAdapterName(): string
+    {
+        return $this->cache->adapterName();
+    }
+
+    public function worldTickCount(): int
+    {
+        return $this->world()->tickCount();
+    }
+
+    public function ownedTerritoryCount(?string $factionId = null): int
+    {
+        return $this->territories->ownedBlockCount($factionId);
+    }
+
+    public function uploadingAssetCount(): int
+    {
+        return $this->assets()->uploadingCount();
+    }
+
+    public function readyAssetCount(): int
+    {
+        return (int) ($this->assets()->health()['readyAssets'] ?? 0);
+    }
 }

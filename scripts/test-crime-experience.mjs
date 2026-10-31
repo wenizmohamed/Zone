@@ -211,5 +211,11 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.equal(sharedView.combatScene.turnsRemaining, 25);
     assert.equal(sharedView.combatScene.playerHpPct, 100);
     assert.equal(sharedView.combatScene.enemyHpPct, 100);
+    instance.p.inv = { knife: 2 };
+    const diag = instance.diagnostics();
+    assert.equal(diag.lang, lang);
+    assert.equal(diag.gameplayReady, true);
+    assert.equal(diag.cash, 2500);
+    assert.equal(diag.ownedItemCount, 2);
   }
 });

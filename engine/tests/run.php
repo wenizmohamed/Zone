@@ -1281,6 +1281,13 @@ try {
     check(is_string($engine->activeReleaseId()) && $engine->activeReleaseId() !== '', 'GameEngine activeReleaseId returns active release ID');
     check($engine->activeReleaseVersion() >= 1, 'GameEngine activeReleaseVersion returns active release version');
     check(in_array($engine->databaseDriver(), ['sqlite', 'pgsql'], true), 'GameEngine databaseDriver returns active database driver');
+
+    // --- Wave 46 (zone-beta164): GameEngine cacheAdapterName, worldTickCount, ownedTerritoryCount, uploadingAssetCount & readyAssetCount ---
+    check(is_string($engine->cacheAdapterName()) && $engine->cacheAdapterName() !== '', 'GameEngine cacheAdapterName returns cache adapter name');
+    check($engine->worldTickCount() >= 1, 'GameEngine worldTickCount returns world tick count');
+    check($engine->ownedTerritoryCount() >= 0 && $engine->ownedTerritoryCount('vipers') >= 0, 'GameEngine ownedTerritoryCount returns owned territory block count');
+    check($engine->uploadingAssetCount() >= 0, 'GameEngine uploadingAssetCount returns active uploading asset count');
+    check($engine->readyAssetCount() >= 0, 'GameEngine readyAssetCount returns ready asset count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

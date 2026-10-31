@@ -2884,6 +2884,23 @@ class Component extends DCLogic {
     view.characterFrameKey = 'character:' + (this.state.characterFrameEpoch || 0);
     return view;
   }
+
+  diagnostics() {
+    const inv = this.p?.inv || {};
+    const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);
+    return {
+      screen: this.state?.screen || 'home',
+      lang: this.state?.lang || 'en',
+      gameplayReady: Boolean(this.gameplayReady ?? this.state?.gameplayReady),
+      gameplayBusy: this.state?.busy || this.gameplayBusy || null,
+      runtimeConnection: this.runtimeConnection || 'online',
+      level: Number(this.p?.level || 1),
+      cash: Number(this.p?.cash || 0),
+      ownedItemCount,
+      equippedWeapon: this.p?.equip || null,
+      equippedArmor: this.equippedArmor?.() || null,
+    };
+  }
 }
 </script>
 </body>
