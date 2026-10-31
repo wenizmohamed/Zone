@@ -276,6 +276,12 @@ final class ReleaseManager
         );
     }
 
+    public function releaseCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM content_releases');
+        return (int) ($row['total'] ?? 0);
+    }
+
     public function activate(string $releaseId, string $actor): array
     {
         return $this->configurationTransaction(fn (): array => $this->activateLocked($releaseId, $actor));

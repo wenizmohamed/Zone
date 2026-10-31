@@ -15,4 +15,23 @@ final class PackagedAssets
         catch (\JsonException) { throw new InvalidArgumentException('The shipped image inventory is invalid. Rebuild this release.'); }
         if (($inventory['schemaVersion'] ?? null) !== 1 || !is_int($inventory['images'][$path] ?? null) || $inventory['images'][$path] < 1) throw new InvalidArgumentException('Image asset does not exist in this game.');
     }
+
+    public static function summary(?string $inventoryPath = null): array
+    {
+        $inventoryPath ??= ZONE_ENGINE_ROOT . '/config/image-assets.json';
+        if (!is_file($inventoryPath)) {
+            return ['available' => false, 'imageCount' => 0, 'totalBytes' => 0];
+        }
+        try {
+            $inventory = json_decode((string) file_get_contents($inventoryPath), true, 16, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return ['available' => false, 'imageCount' => 0, 'totalBytes' => 0];
+        }
+        $images = is_array($inventory['images'] ?? null) ? $inventory['images'] : [];
+        return [
+            'available' => ($inventory['schemaVersion'] ?? null) === 1,
+            'imageCount' => count($images),
+            'totalBytes' => (int) array_sum(array_map('intval', $images)),
+        ];
+    }
 }

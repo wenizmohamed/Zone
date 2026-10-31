@@ -1036,6 +1036,21 @@ try {
     $cacheWave21 = new ArrayCacheStore();
     $cacheWave21->set('k1', 'v1', 60);
     check($cacheWave21->count() === 1, 'ArrayCacheStore count returns active non-expired entry count');
+
+    // --- Wave 22 (zone-beta140): ReleaseManager, PlayerAccounts, PackagedAssets, Database, ContentManager & MediaReferences telemetry ---
+    $rmWave22 = new \Zone\Engine\Core\Publishing\ReleaseManager($database, new EventBus($database));
+    check($rmWave22->releaseCount() >= 1, 'ReleaseManager releaseCount returns published release count');
+    $paWave22 = new \Zone\Engine\Core\Security\PlayerAccounts($database);
+    check($paWave22->claimedCount() >= 0, 'PlayerAccounts claimedCount returns claimed account count');
+    $pkgWave22 = \Zone\Engine\Core\Content\PackagedAssets::summary();
+    check($pkgWave22['available'] === true && $pkgWave22['imageCount'] > 0 && $pkgWave22['totalBytes'] > 0, 'PackagedAssets summary exposes available, imageCount and totalBytes');
+    $dbHealthWave22 = $database->health();
+    check($dbHealthWave22['driver'] === 'sqlite' && $dbHealthWave22['inTransaction'] === false && is_string($dbHealthWave22['schemaFingerprint']) && strlen($dbHealthWave22['schemaFingerprint']) === 64, 'Database health exposes driver, inTransaction and schemaFingerprint');
+    $cmWave22 = new \Zone\Engine\Core\Content\ContentManager($database, new EventBus($database));
+    $crimeSumWave22 = $cmWave22->crimeSummary();
+    check($crimeSumWave22['totalCount'] >= 31 && $crimeSumWave22['enabledCount'] >= 31 && $crimeSumWave22['maxExpectedCashPerNerve'] > 0, 'ContentManager crimeSummary exposes totalCount, enabledCount and maxExpectedCashPerNerve');
+    $mrSumWave22 = \Zone\Engine\Core\Content\MediaReferences::summarizeManifestBindings(['mediaBindings' => [['targetType' => 'map', 'targetId' => 'bank', 'assetId' => str_repeat('a', 64)]]]);
+    check($mrSumWave22['bindingCount'] === 1 && ($mrSumWave22['byTargetType']['map'] ?? 0) === 1, 'MediaReferences summarizeManifestBindings counts bindings by targetType');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

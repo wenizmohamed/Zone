@@ -70,6 +70,16 @@ final class Database
         return $this->driver;
     }
 
+    public function health(): array
+    {
+        $row = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'schema-fingerprint'");
+        return [
+            'driver' => $this->driver,
+            'inTransaction' => $this->pdo->inTransaction(),
+            'schemaFingerprint' => $row['value'] ?? null,
+        ];
+    }
+
     public function migrateAndSeed(): void
     {
         $schema = ZONE_ENGINE_ROOT . '/database/schema.' . ($this->driver === 'pgsql' ? 'postgresql' : 'sqlite') . '.sql';

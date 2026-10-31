@@ -120,6 +120,18 @@ final class ContentManager
         }, $rows);
     }
 
+    public function crimeSummary(): array
+    {
+        $all = $this->crimes(true);
+        $enabled = array_filter($all, static fn (array $c): bool => (bool) ($c['enabled'] ?? false));
+        $evValues = array_map(static fn (array $c): float => (float) ($c['expectedCashPerNerve'] ?? 0.0), $enabled);
+        return [
+            'totalCount' => count($all),
+            'enabledCount' => count($enabled),
+            'maxExpectedCashPerNerve' => $evValues === [] ? 0.0 : max($evValues),
+        ];
+    }
+
     private function validateCrime(string $id, array $payload): array
     {
         if (!preg_match('/^[a-z][a-z0-9-]{1,79}$/', $id)) {

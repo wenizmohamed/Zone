@@ -52,4 +52,20 @@ final class MediaReferences
         }
         return $result;
     }
+
+    public static function summarizeManifestBindings(array $manifest): array
+    {
+        $bindings = is_array($manifest['mediaBindings'] ?? null) ? $manifest['mediaBindings'] : [];
+        $byType = [];
+        foreach ($bindings as $binding) {
+            if (is_array($binding) && is_string($binding['targetType'] ?? null)) {
+                $t = $binding['targetType'];
+                $byType[$t] = ($byType[$t] ?? 0) + 1;
+            }
+        }
+        return [
+            'bindingCount' => count($bindings),
+            'byTargetType' => $byType,
+        ];
+    }
 }

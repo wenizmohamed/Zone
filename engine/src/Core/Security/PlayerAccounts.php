@@ -126,4 +126,10 @@ final readonly class PlayerAccounts
         $this->database->execute('INSERT INTO account_security_events (id, player_id, action, client_hash, created_at) VALUES (:id, :player, :action, :client, :now)',
             ['id' => bin2hex(random_bytes(16)), 'player' => $player, 'action' => $action, 'client' => hash('sha256', $address), 'now' => $now]);
     }
+
+    public function claimedCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM player_credentials');
+        return (int) ($row['total'] ?? 0);
+    }
 }
