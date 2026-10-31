@@ -111,7 +111,16 @@ export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, 
       throw error;
     }
   }
-  return { update, tick(dt, elapsed) {
+  return { update, diagnostics() {
+    return {
+      disposed,
+      sequence,
+      hasActiveActor: !!active,
+      activeOutfit: active?.root?.userData?.outfit || null,
+      activeWeapon: active?.weapon || null,
+      hasArmorSource: !!armorSource,
+    };
+  }, tick(dt, elapsed) {
     if (!active || disposed) return;
     active.mixer?.update(Math.min(dt, .05));
     if (active.held && active.grip && active.pose) {

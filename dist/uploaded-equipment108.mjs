@@ -72,6 +72,9 @@ export function createUploadedWeaponLoader(base, { loader = loadAsset, publish =
       if (owned) { if(released.has(mesh))return;released.add(mesh);mesh.removeFromParent();if(active.delete(owned))owned.dispose(); }
       else base.release(mesh);
     },
+    diagnostics() {
+      return { disposed, activeUploadCount: active.size, pendingUploadCount: pending.size };
+    },
     dispose() { if (disposed) return; disposed=true; pending.forEach(controller=>controller.abort()); pending.clear(); active.forEach(media=>media.dispose()); active.clear(); base.dispose(); }
   };
 }
@@ -104,6 +107,7 @@ export function createUploadedArmorController(base, { loader = loadAsset, publis
         await base.update(packet,actor);queueFrame();
       }
     },
+    diagnostics(){return {disposed,sequence,hasActiveUpload:!!active,lastReceipt:lastReceipt?{...lastReceipt}:null};},
     dispose(){if(disposed)return;disposed=true;++sequence;clear();base.dispose();}
   };
 }

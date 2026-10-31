@@ -49,6 +49,22 @@ export function validateAssetManifest(asset, id) {
   return asset;
 }
 
+export function summarizeAssetBundle(asset) {
+  const members = Array.isArray(asset?.members) ? asset.members : [];
+  const totalBytes = members.reduce((sum, m) => sum + (Number.isSafeInteger(m?.size) && m.size > 0 ? m.size : 0), 0);
+  const entry = String(asset?.entry || '');
+  const entryExtension = entry.includes('.') ? entry.split('.').at(-1).toLowerCase() : '';
+  return {
+    id: asset?.id || null,
+    status: asset?.status || 'unknown',
+    kind: asset?.kind || 'unknown',
+    memberCount: members.length,
+    totalBytes,
+    entry,
+    entryExtension,
+  };
+}
+
 export function validateAssetTransform(value = {}) {
   const number = (value, fallback, low, high) => Number.isFinite(Number(value)) ? Math.max(low, Math.min(high, Number(value))) : fallback;
   const vector = (value, limit) => [0, 1, 2].map(index => number(Array.isArray(value) ? value[index] : 0, 0, -limit, limit));

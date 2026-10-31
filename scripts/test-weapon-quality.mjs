@@ -148,10 +148,14 @@ test('shared-source aliases deduplicate network loads without copying the first 
   }});
   const [first,second]=await Promise.all([loader.load('pistol_1'),loader.load('pistol_5')]);
   assert.equal(requests,1);assert.equal(first.userData.zoneWeaponAsset.id,second.userData.zoneWeaponAsset.id);
+  assert.equal(loader.diagnostics().cachedAssetCount,1);
+  assert.equal(loader.diagnostics().disposed,false);
   assert.equal(first.userData.zoneWeaponAsset.requestedKey,'pistol_1');assert.equal(second.userData.zoneWeaponAsset.requestedKey,'pistol_5');
   assert.equal(first.userData.zoneWeaponAsset.thumbnail,'/assets/weapons/thumbnails/pistol_1.png');
   assert.equal(second.userData.zoneWeaponAsset.thumbnail,'/assets/weapons/thumbnails/pistol_5.png');
   loader.release(first);loader.release(second);await loader.dispose();
+  assert.equal(loader.diagnostics().disposed,true);
+  assert.equal(loader.diagnostics().cachedAssetCount,0);
 });
 
 test('classic helper supports owner model overrides and rejects prototype/path inputs',()=>{

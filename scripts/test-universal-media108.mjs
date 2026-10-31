@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
-import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,validateAssetTransform,normalizeAssetObject,measureAssetObject,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
+import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -26,6 +26,8 @@ test('relative resources stay in their own bundle and reject remote, filesystem,
 });
 test('ready manifest validates identity, unique immutable members, finite sizes and entry instead of trusting arbitrary metadata',()=>{
   const h=server({'house.obj':obj},'house.obj');assert.equal(validateAssetManifest(h.asset,HASH),h.asset);
+  const summary=summarizeAssetBundle(h.asset);
+  assert.equal(summary.id,HASH);assert.equal(summary.memberCount,1);assert.equal(summary.entryExtension,'obj');assert.ok(summary.totalBytes>0);
   for(const change of [{id:'b'.repeat(64)},{status:'inspecting'},{members:[{name:'../house.obj',size:5}]},{members:[{name:'a',size:-1}]},{members:[{name:'a',size:134217729}]},{entry:'missing.obj'},{members:[{name:'house.obj',size:1},{name:'house.obj',size:1}]}])assert.throws(()=>validateAssetManifest({...h.asset,...change},HASH));
 });
 test('large member download reconstructs exact bytes with three bounded response chunks',async()=>{
@@ -104,8 +106,10 @@ async function wardrobe(name){const bytes=readFileSync(new URL(`../assets/charac
 test('safehouse character actually stands in the same Three scene with retained rig, animation and owned armor',async()=>{
   const scene=new THREE.Scene(),receipts=[],actor=createSafehouseCharacter({scene,wardrobeLoader:wardrobe,publish:r=>receipts.push(r)});
   const first=await actor.update({outfit:'suit',weapon:'fists',armorId:'vest',armorOwned:true,armorReduction:.25});
+  assert.equal(actor.diagnostics().hasActiveActor,true);assert.equal(actor.diagnostics().activeOutfit,'Suit');
   assert.equal(first.root.parent,scene);assert.ok(first.root.getObjectByName('WristR'));assert.ok(first.root.getObjectByName('ZONE representative worn vest'));actor.tick(.016,1);assert.ok(first.mixer.time>.01);assert.ok(receipts.some(r=>r.meshInRoom===true));
   const replacement=await actor.update({outfit:'street',weapon:'fists',armorOwned:false});assert.equal(first.root.parent,null);assert.equal(replacement.root.parent,scene);assert.equal(scene.children.length,1);assert.equal(replacement.root.getObjectByName('ZONE representative worn vest'),undefined);actor.dispose();actor.dispose();assert.equal(scene.children.length,0);
+  assert.equal(actor.diagnostics().disposed,true);
 });
 test('late wardrobe completion cannot replace the newest safehouse character or leave an extra mesh',async()=>{
   let release;const scene=new THREE.Scene(),actor=createSafehouseCharacter({scene,wardrobeLoader:file=>file==='Suit'?new Promise(r=>release=()=>wardrobe(file).then(r)):wardrobe(file)});
