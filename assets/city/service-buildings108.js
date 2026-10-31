@@ -164,5 +164,17 @@
     return {associations,unbound,complete:unbound.length===0,source:'actual-provider-footprint',maximumDistance};
   }
   function apply(pins,result){const byId=new Map(result.associations.map(a=>[a.id,a]));for(const pin of pins||[]){const association=byId.get(pin.id);if(!association)continue;pin._buildingSource=association.sourceCoordinates.slice();pin._lngLat=association.coordinates.slice();pin._buildingAssociation={...association};}return result;}
-  return {SERVICES,associate,apply,inside,roofAnchor,meters};
+  function summarizeAssociations(result){
+    const associations=Array.isArray(result?.associations)?result.associations:[];
+    const unbound=Array.isArray(result?.unbound)?result.unbound:[];
+    return {
+      boundCount:associations.length,
+      unboundCount:unbound.length,
+      complete:Boolean(result?.complete),
+      insideRoofCount:associations.filter(a=>a?.insideRoof).length,
+      crowdedCount:associations.filter(a=>a?.crowded).length,
+      source:result?.source||'actual-provider-footprint'
+    };
+  }
+  return {SERVICES,associate,apply,summarizeAssociations,inside,roofAnchor,meters};
 });

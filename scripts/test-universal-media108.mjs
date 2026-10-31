@@ -217,4 +217,8 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.match(viewer,/window\.ZoneAssetViewer=\{diagnostics:/);
   assert.match(inspector,/window\.ZoneAssetInspector = \{ diagnostics:/);
   assert.match(safeSource,/window\.ZoneSafehouse = \{ diagnostics:/);
+  const assocSummary=buildings.summarizeAssociations({associations:[{id:'bank',insideRoof:true,crowded:false}],unbound:[],complete:true,source:'actual-provider-footprint'});
+  assert.equal(assocSummary.boundCount,1);
+  assert.equal(assocSummary.insideRoofCount,1);
+  assert.equal(assocSummary.complete,true);
 });

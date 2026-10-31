@@ -1316,6 +1316,13 @@ try {
     check($engine->isAllowedBundleMemberExtension('model.glb') === true && $engine->isAllowedBundleMemberExtension('shell.php') === false, 'GameEngine isAllowedBundleMemberExtension validates bundle member paths');
     check($engine->hasPackagedImage('missing.png') === false, 'GameEngine hasPackagedImage checks packaged image existence');
     check($engine->securityEventCount() >= 0 && $engine->securityEventCount('founder-player') >= 0, 'GameEngine securityEventCount returns security audit event count');
+
+    // --- Wave 51 (zone-beta169): GameEngine purgeExpiredBrowserSessions, markAllNotificationsRead, resetRateLimit, cityCount & isSupportedCity ---
+    check($engine->purgeExpiredBrowserSessions() >= 0, 'GameEngine purgeExpiredBrowserSessions purges expired browser sessions');
+    check($engine->markAllNotificationsRead('founder-player') >= 0, 'GameEngine markAllNotificationsRead marks unread notifications read');
+    check($engine->resetRateLimit('founder-player') >= 0, 'GameEngine resetRateLimit resets rate-limit window for player');
+    check($engine->cityCount() === 6, 'GameEngine cityCount returns 6 travel cities');
+    check($engine->isSupportedCity('Dubai') === true && $engine->isSupportedCity('Atlantis') === false, 'GameEngine isSupportedCity validates travel destination city names');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

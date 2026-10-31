@@ -1504,4 +1504,29 @@ final class GameEngine
     {
         return $this->playerAccounts()->securityEventCount($playerId);
     }
+
+    public function purgeExpiredBrowserSessions(): int
+    {
+        return $this->browserSessions()->purgeExpired();
+    }
+
+    public function markAllNotificationsRead(string $playerId = 'founder-player'): int
+    {
+        return $this->notifications->markAllRead($playerId);
+    }
+
+    public function resetRateLimit(string $playerId = 'founder-player'): int
+    {
+        return $this->rateLimiter->reset($playerId);
+    }
+
+    public function cityCount(): int
+    {
+        return count(self::CITIES);
+    }
+
+    public function isSupportedCity(string $city): bool
+    {
+        return in_array($city, self::CITIES, true);
+    }
 }
