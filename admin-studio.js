@@ -304,6 +304,9 @@
     contentMode = requestedType || state.catalogCategory; initialRequestedType = requestedType; handlingHistory = true; try { setView(next.view); } finally { handlingHistory = false; }
     applyLanguage(); if (!initialRequestedType) updateUrl(true); refresh();
   }
-  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
+  function diagnostics() {
+    return { initialized, contentMode, moduleFilter, moduleQuery, searchEntryCount: buildSearchEntries().length, ...snapshot() };
+  }
+  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, diagnostics, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
   initialize();
 }());

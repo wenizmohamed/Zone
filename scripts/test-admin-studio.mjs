@@ -648,6 +648,10 @@ test('Studio snapshot exposes content counts and command search indexes authored
     assert.equal(snap.counts.catalogEntries, 4);
     assert.equal(snap.counts.crimes, 1);
     assert.equal(snap.counts.enabledModules, 1);
+    const diag = f.app.diagnostics();
+    assert.equal(diag.initialized, true);
+    assert.equal(diag.moduleFilter, 'all');
+    assert.ok(diag.searchEntryCount >= 18);
     const entries = f.app.buildSearchEntries();
     const crimeEntry = entries.find(e => e.search.includes('shoplift'));
     assert.ok(crimeEntry, 'shoplift crime is indexed in command search');

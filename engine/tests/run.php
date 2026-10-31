@@ -1246,6 +1246,13 @@ try {
     check(is_bool($engine->hasActiveCombat('founder-player')), 'GameEngine hasActiveCombat returns boolean NPC combat encounter state for player');
     check($engine->playerRank('founder-player') === null, 'GameEngine playerRank returns leaderboard rank or null for fixture player');
     check($engine->playerFactionId('founder-player') === 'vipers', 'GameEngine playerFactionId returns faction ID for player');
+
+    // --- Wave 41 (zone-beta159): GameEngine enabledCrimeCount, factionCount, territoryCount, activeWarsCount & activeWorldEventCount ---
+    check($engine->enabledCrimeCount() >= 1, 'GameEngine enabledCrimeCount returns active crime definition count');
+    check($engine->factionCount() >= 2, 'GameEngine factionCount returns seeded faction count');
+    check($engine->territoryCount() >= 1, 'GameEngine territoryCount returns seeded territory block count');
+    check($engine->activeWarsCount() >= 0, 'GameEngine activeWarsCount returns active territory war count');
+    check($engine->activeWorldEventCount() >= 0, 'GameEngine activeWorldEventCount returns active world event count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

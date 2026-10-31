@@ -1247,4 +1247,29 @@ final class GameEngine
     {
         return (new \Zone\Modules\Gangs\FactionService($this->database, $this->events))->playerFactionId($playerId);
     }
+
+    public function enabledCrimeCount(): int
+    {
+        return \Zone\Modules\Crime\CrimeModule::enabledCrimeCount($this->database);
+    }
+
+    public function factionCount(): int
+    {
+        return \Zone\Modules\Gangs\GangsModule::factionCount($this->database);
+    }
+
+    public function territoryCount(): int
+    {
+        return \Zone\Modules\Territories\TerritoriesModule::territoryCount($this->database);
+    }
+
+    public function activeWarsCount(): int
+    {
+        return (int) $this->database->scalar("SELECT COUNT(*) FROM territory_wars WHERE status IN ('declared', 'active', 'contested')");
+    }
+
+    public function activeWorldEventCount(): int
+    {
+        return \Zone\Modules\News\NewsModule::activeWorldEventCount($this->database);
+    }
 }
