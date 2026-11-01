@@ -5636,4 +5636,29 @@ final class GameEngine
     {
         return 2;
     }
+
+    public function playerCombatDefaultHospitalWinMinutes(): int
+    {
+        return 15;
+    }
+
+    public function playerCombatLossHospitalMinutes(): int
+    {
+        return 10;
+    }
+
+    public function playerCombatMugMinShareRatio(): float
+    {
+        return 0.06;
+    }
+
+    public function playerCombatMugMaxShareRatio(): float
+    {
+        return 0.12;
+    }
+
+    public function playerCombatWinRespectGrant(): int
+    {
+        return 3;
+    }
 }

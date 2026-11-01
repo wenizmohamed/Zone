@@ -2394,6 +2394,13 @@ try {
     check($engine->playerCombatMaxLockRetryAttempts() === 5, 'GameEngine playerCombatMaxLockRetryAttempts returns 5');
     check($engine->playerCombatMugWinHospitalMinutes() === 5, 'GameEngine playerCombatMugWinHospitalMinutes returns 5');
     check($engine->playerCombatLeaveWinHospitalMinutes() === 2, 'GameEngine playerCombatLeaveWinHospitalMinutes returns 2');
+
+    // --- Wave 205 (zone-beta323): GameEngine playerCombatDefaultHospitalWinMinutes, playerCombatLossHospitalMinutes, playerCombatMugMinShareRatio, playerCombatMugMaxShareRatio & playerCombatWinRespectGrant ---
+    check($engine->playerCombatDefaultHospitalWinMinutes() === 15, 'GameEngine playerCombatDefaultHospitalWinMinutes returns 15');
+    check($engine->playerCombatLossHospitalMinutes() === 10, 'GameEngine playerCombatLossHospitalMinutes returns 10');
+    check($engine->playerCombatMugMinShareRatio() === 0.06, 'GameEngine playerCombatMugMinShareRatio returns 0.06');
+    check($engine->playerCombatMugMaxShareRatio() === 0.12, 'GameEngine playerCombatMugMaxShareRatio returns 0.12');
+    check($engine->playerCombatWinRespectGrant() === 3, 'GameEngine playerCombatWinRespectGrant returns 3');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

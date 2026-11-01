@@ -15,6 +15,11 @@ export function mapMediaMaxTargetSizeMeters(){return 12;}
 export function mapMediaClearanceScaleFactor(){return 1.35;}
 export function mapMediaRoofBaseOffsetMeters(){return .25;}
 export function mapMediaToneMappingExposure(){return 1.15;}
+export function mapMediaRepresentation(){return 'matched-service-rooftop-attachment';}
+export function mapMediaHaloLayerId(){return 'zone-poi-halo';}
+export function mapMediaHemisphereIntensity(){return 2;}
+export function mapMediaDirectionalIntensity(){return 2.7;}
+export function mapMediaProjectionMatrixSize(){return 16;}
 // A map model is explicitly a service's rooftop attachment. It does not replace
 // the provider's whole building, move territory parcels, or claim an arbitrary
 // neighboring roof. The matching target ID must already have a measured roof.

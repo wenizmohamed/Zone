@@ -8,7 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,isValidAssetId,assetChunkCount,defaultNormalizedTargetSize,maxAssetRequestPathLength,maxAssetTransformScale,minAssetTransformScale,maxAssetTransformOffset,defaultAssetBaseUrl,assetBundleUrlPrefix,normalizedPivotGroupName,normalizedOrientationGroupName,maxAssetRotationDegrees,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
-import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,eligibleMapMediaPinCount,isMapMediaViewVisible,minMapMediaPitch,minMapMediaZoom,mapMediaTargetSizeMeters,mapMediaMinTargetSizeMeters,mapMediaMaxTargetSizeMeters,mapMediaClearanceScaleFactor,mapMediaRoofBaseOffsetMeters,mapMediaToneMappingExposure} from '../dist/map-media108.mjs';
+import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,eligibleMapMediaPinCount,isMapMediaViewVisible,minMapMediaPitch,minMapMediaZoom,mapMediaTargetSizeMeters,mapMediaMinTargetSizeMeters,mapMediaMaxTargetSizeMeters,mapMediaClearanceScaleFactor,mapMediaRoofBaseOffsetMeters,mapMediaToneMappingExposure,mapMediaRepresentation,mapMediaHaloLayerId,mapMediaHemisphereIntensity,mapMediaDirectionalIntensity,mapMediaProjectionMatrixSize} from '../dist/map-media108.mjs';
 import {VIEWER_STARTUP_TIMEOUT_MS,viewerStartupTimeoutMs,maxRenderDeltaSeconds,isViewerRenderDeltaValid,defaultPauseWhenHidden,viewerStartupTimeoutReason,viewerContextLostReason,viewerDefaultRenderErrorReason,viewerDefaultRuntimeErrorReason} from '../dist/viewer-runtime108.mjs';
 import {inspectorBudgetDiagnostics,isSupportedInspectorFormat,isWithinInspectorBudget,maxInspectorVertices,maxInspectorTriangles,maxInspectorNodes,maxInspectorBytes,supportedInspectorFormats,supportedInspectorFormatCount} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
@@ -288,4 +288,9 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(normalizedPivotGroupName(),'ZONE asset centered pivot');
   assert.equal(normalizedOrientationGroupName(),'ZONE asset orientation');
   assert.equal(maxAssetRotationDegrees(),360);
+  assert.equal(mapMediaRepresentation(),'matched-service-rooftop-attachment');
+  assert.equal(mapMediaHaloLayerId(),'zone-poi-halo');
+  assert.equal(mapMediaHemisphereIntensity(),2);
+  assert.equal(mapMediaDirectionalIntensity(),2.7);
+  assert.equal(mapMediaProjectionMatrixSize(),16);
 });
