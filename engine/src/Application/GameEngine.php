@@ -2853,4 +2853,29 @@ final class GameEngine
     {
         return $this->playerGymXp($playerId) > 0;
     }
+
+    public function playerHasJobPoints(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerJobPoints($playerId) > 0;
+    }
+
+    public function playerHasRespect(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerRespect($playerId) > 0;
+    }
+
+    public function playerHasBestChain(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerBestChain($playerId) > 0;
+    }
+
+    public function playerHasCrimeSuccesses(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCrimeSuccessCount($playerId) > 0;
+    }
+
+    public function playerHasGymTrains(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerGymTrainCount($playerId) > 0;
+    }
 }

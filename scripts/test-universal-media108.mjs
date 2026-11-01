@@ -8,7 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,isValidAssetId,assetChunkCount,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
-import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,mapMediaTargetSizeMeters} from '../dist/map-media108.mjs';
+import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,eligibleMapMediaPinCount,isMapMediaViewVisible,mapMediaTargetSizeMeters} from '../dist/map-media108.mjs';
 import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -236,4 +236,7 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(isValidAssetId(HASH),true);
   assert.equal(isValidAssetId('bad'),false);
   assert.equal(assetChunkCount(ASSET_CHUNK_BYTES * 2 + 10),3);
+  assert.equal(eligibleMapMediaPinCount([mediaPin(),{...mediaPin('gym'),_buildingAssociation:{insideRoof:false}}]),1);
+  assert.equal(isMapMediaViewVisible(35,17),true);
+  assert.equal(isMapMediaViewVisible(5,17),false);
 });
