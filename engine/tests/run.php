@@ -1512,6 +1512,13 @@ try {
     check($engine->playerHappyPct('founder-player') >= 0.0 && $engine->playerHappyPct('founder-player') <= 100.0, 'GameEngine playerHappyPct returns happy percentage');
     check($engine->playerLifePct('founder-player') >= 0.0 && $engine->playerLifePct('founder-player') <= 100.0, 'GameEngine playerLifePct returns life percentage');
     check($engine->playerXpToNextLevel('founder-player') >= 0, 'GameEngine playerXpToNextLevel returns XP remaining to next level');
+
+    // --- Wave 79 (zone-beta197): GameEngine playerStrengthSharePct, playerDefenseSharePct, playerSpeedSharePct, playerDexteritySharePct & playerDominantStat ---
+    check($engine->playerStrengthSharePct('founder-player') > 0.0, 'GameEngine playerStrengthSharePct returns strength share percentage');
+    check($engine->playerDefenseSharePct('founder-player') > 0.0, 'GameEngine playerDefenseSharePct returns defense share percentage');
+    check($engine->playerSpeedSharePct('founder-player') > 0.0, 'GameEngine playerSpeedSharePct returns speed share percentage');
+    check($engine->playerDexteritySharePct('founder-player') > 0.0, 'GameEngine playerDexteritySharePct returns dexterity share percentage');
+    check(in_array($engine->playerDominantStat('founder-player'), ['strength', 'defense', 'speed', 'dexterity'], true), 'GameEngine playerDominantStat returns highest battle stat name');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

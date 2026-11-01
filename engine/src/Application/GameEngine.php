@@ -2270,4 +2270,40 @@ final class GameEngine
         $level = $this->playerLevel($playerId);
         return max(0, $this->xpForLevel($level + 1) - $this->playerXp($playerId));
     }
+
+    public function playerStrengthSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCombatStats($playerId);
+        return $total > 0 ? round($this->playerStrength($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerDefenseSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCombatStats($playerId);
+        return $total > 0 ? round($this->playerDefense($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerSpeedSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCombatStats($playerId);
+        return $total > 0 ? round($this->playerSpeed($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerDexteritySharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCombatStats($playerId);
+        return $total > 0 ? round($this->playerDexterity($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerDominantStat(string $playerId = 'founder-player'): string
+    {
+        $stats = [
+            'strength' => $this->playerStrength($playerId),
+            'defense' => $this->playerDefense($playerId),
+            'speed' => $this->playerSpeed($playerId),
+            'dexterity' => $this->playerDexterity($playerId),
+        ];
+        arsort($stats);
+        return (string) array_key_first($stats);
+    }
 }

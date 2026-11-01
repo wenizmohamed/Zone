@@ -59,6 +59,8 @@
     return pending;
   };
   window.ZoneSession = { ensure, current: () => identity, expired: sessionExpired,
+    isPlayerRoute: path => typeof path === 'string' && playerPath.test(path),
+    readTimeoutMs: () => 25000,
     diagnostics: () => ({ established: Boolean(identity), playerId: identity?.playerId || null, mode: identity?.mode || null, expired: sessionExpired(), retryAfterMs: Math.max(0, retryAfter - Date.now()), ttlSeconds: identity?.expiresAt ? Math.max(0, Math.floor(identity.expiresAt - Date.now() / 1000)) : null }),
     recover: async () => {
     retryAfter = 0;

@@ -124,4 +124,7 @@ test('ZoneSession.diagnostics reports session establishment, playerId, mode, TTL
   assert.equal(after.mode, 'persistent-browser');
   assert.equal(after.expired, false);
   assert.equal(after.ttlSeconds, 99994);
+  assert.equal(b.window.ZoneSession.isPlayerRoute('/api/v1/player'), true);
+  assert.equal(b.window.ZoneSession.isPlayerRoute('/api/v1/health'), false);
+  assert.equal(b.window.ZoneSession.readTimeoutMs(), 25000);
 });
