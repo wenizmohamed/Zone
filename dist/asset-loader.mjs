@@ -22,6 +22,14 @@ export function isEmbeddedDataUri(uri) {
   return typeof uri === 'string' && EMBEDDED.test(uri);
 }
 
+export function isValidAssetId(id) {
+  return typeof id === 'string' && HASH.test(id);
+}
+
+export function assetChunkCount(totalBytes) {
+  return Math.max(1, Math.ceil(Math.max(0, Number(totalBytes) || 0) / ASSET_CHUNK_BYTES));
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

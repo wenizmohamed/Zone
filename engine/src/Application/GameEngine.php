@@ -2828,4 +2828,29 @@ final class GameEngine
     {
         return $this->playerBankBalance($playerId) > 0;
     }
+
+    public function playerHasCash(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCash($playerId) > 0;
+    }
+
+    public function playerHasPoints(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerPoints($playerId) > 0;
+    }
+
+    public function playerHasMerits(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMerits($playerId) > 0;
+    }
+
+    public function playerHasCrimeXp(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCrimeXp($playerId) > 0;
+    }
+
+    public function playerHasGymXp(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerGymXp($playerId) > 0;
+    }
 }
