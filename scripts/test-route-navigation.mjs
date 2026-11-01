@@ -115,4 +115,6 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   assert.equal(s.nav.isActiveScreen('bank'), false);
   assert.ok(s.nav.activeKey().startsWith('zone-'));
   assert.equal(s.nav.isPending(), false);
+  assert.equal(s.nav.hasActiveEntry(), true);
+  assert.deepEqual(JSON.parse(JSON.stringify(s.nav.currentScroll())), { x: 0, y: 500 });
 });

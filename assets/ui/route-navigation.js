@@ -62,6 +62,12 @@
     function isPending() {
       return observer !== null || frame !== null;
     }
+    function hasActiveEntry() {
+      return activeEntry !== null;
+    }
+    function currentScroll() {
+      return { x: win.scrollX || 0, y: win.scrollY || 0 };
+    }
     function diagnostics() {
       return {
         generation,
@@ -71,7 +77,7 @@
         hasFrame: frame !== null,
       };
     }
-    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, diagnostics };
+    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, hasActiveEntry, currentScroll, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {

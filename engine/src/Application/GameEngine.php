@@ -2753,4 +2753,29 @@ final class GameEngine
     {
         return $this->publishedOpponentCount() > 0;
     }
+
+    public function hasPublishedCourses(): bool
+    {
+        return $this->publishedCourseCount() > 0;
+    }
+
+    public function hasPublishedMissions(): bool
+    {
+        return $this->publishedMissionCount() > 0;
+    }
+
+    public function hasPublishedUpgrades(): bool
+    {
+        return $this->publishedUpgradeCount() > 0;
+    }
+
+    public function hasPublishedMarketCatalog(): bool
+    {
+        return $this->publishedMarketCatalogCount() > 0;
+    }
+
+    public function hasPublishedMaterials(): bool
+    {
+        return $this->publishedMaterialItemCount() > 0;
+    }
 }
