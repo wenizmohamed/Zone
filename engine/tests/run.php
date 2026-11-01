@@ -2450,6 +2450,13 @@ try {
     check($engine->contentCrimeMaxChainWindowSeconds() === 86400, 'GameEngine contentCrimeMaxChainWindowSeconds returns 86400');
     check($engine->contentCrimeMaxChainBonusBasisPoints() === 2000, 'GameEngine contentCrimeMaxChainBonusBasisPoints returns 2000');
     check($engine->contentCrimeMaxConsequenceSeconds() === 86400, 'GameEngine contentCrimeMaxConsequenceSeconds returns 86400');
+
+    // --- Wave 213 (zone-beta331): GameEngine contentCrimeMaxActorLength, contentAuditLogMaxLimit, territoryNeutralHexColor, territoryWarContributionTarget & territorySupportedBenefitKeys ---
+    check($engine->contentCrimeMaxActorLength() === 160, 'GameEngine contentCrimeMaxActorLength returns 160');
+    check($engine->contentAuditLogMaxLimit() === 250, 'GameEngine contentAuditLogMaxLimit returns 250');
+    check($engine->territoryNeutralHexColor() === '#68717b', 'GameEngine territoryNeutralHexColor returns #68717b');
+    check($engine->territoryWarContributionTarget() === 50000, 'GameEngine territoryWarContributionTarget returns 50000');
+    check($engine->territorySupportedBenefitKeys() === ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'], 'GameEngine territorySupportedBenefitKeys returns 6 benefit keys');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

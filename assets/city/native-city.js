@@ -218,5 +218,11 @@
   function isLayerId(id){
     return ids.includes(String(id||''));
   }
-  return {compile,summarizeCompiled,layerIds,layerIdCount,roofPalette,roofPaletteCount,artRevision,isInstalled,isArtReady,isLayerId,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
+  function nativeCitySourceId(){
+    return SOURCE;
+  }
+  function nativeCityArtSourceId(){
+    return ART_SOURCE;
+  }
+  return {compile,summarizeCompiled,layerIds,layerIdCount,roofPalette,roofPaletteCount,artRevision,isInstalled,isArtReady,isLayerId,nativeCitySourceId,nativeCityArtSourceId,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
 });

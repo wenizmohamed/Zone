@@ -5839,4 +5839,30 @@ final class GameEngine
     {
         return 86400;
     }
+
+    public function contentCrimeMaxActorLength(): int
+    {
+        return 160;
+    }
+
+    public function contentAuditLogMaxLimit(): int
+    {
+        return 250;
+    }
+
+    public function territoryNeutralHexColor(): string
+    {
+        return '#68717b';
+    }
+
+    public function territoryWarContributionTarget(): int
+    {
+        return 50000;
+    }
+
+    /** @return list<string> */
+    public function territorySupportedBenefitKeys(): array
+    {
+        return ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'];
+    }
 }

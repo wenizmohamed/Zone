@@ -14,6 +14,11 @@ const turn=()=>new Promise(resolve=>setImmediate(resolve));
 test('native overhead and 3D share exact roof footprints and real rooftop geometry',()=>{
   const plan=atlas.createPlan([cell()]),out=city.compile(plan),roofs=out.data.features.filter(f=>f.properties.kind==='building');
   assert.deepEqual(atlas.atlasLimits(),{size:4096,maxBlocks:240,maxRoofs:12000});
+  assert.equal(atlas.atlasMaxCanvasSize(),4096);
+  assert.equal(atlas.atlasMaxBlocks(),240);
+  assert.equal(atlas.atlasMaxRoofs(),12000);
+  assert.equal(city.nativeCitySourceId(),'zone-city-atlas');
+  assert.equal(city.nativeCityArtSourceId(),'zone-city-original-art');
   assert.equal(atlas.roofPalette().length,8);
   assert.equal(atlas.roofPaletteCount(),8);
   assert.deepEqual(atlas.supportedRoofKinds(),['flat','sawtooth','glass']);

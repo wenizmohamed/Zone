@@ -183,5 +183,14 @@
   function hasPlan(map){
     return Boolean(map&&plans.has(map));
   }
-  return {createPlan,summarizePlan,atlasLimits,roofPalette,roofPaletteCount,supportedRoofKinds,supportedRoofKindCount,isSupportedRoofKind,hasPlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
+  function atlasMaxCanvasSize(){
+    return SIZE;
+  }
+  function atlasMaxBlocks(){
+    return MAX_BLOCKS;
+  }
+  function atlasMaxRoofs(){
+    return MAX_ROOFS;
+  }
+  return {createPlan,summarizePlan,atlasLimits,atlasMaxCanvasSize,atlasMaxBlocks,atlasMaxRoofs,roofPalette,roofPaletteCount,supportedRoofKinds,supportedRoofKindCount,isSupportedRoofKind,hasPlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
 });
