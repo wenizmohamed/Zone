@@ -2541,6 +2541,13 @@ try {
     check($engine->progressionChainMilestoneBonusMultiplier() === 40, 'GameEngine progressionChainMilestoneBonusMultiplier returns 40');
     check($engine->progressionTrainGymXpPerSession() === 10, 'GameEngine progressionTrainGymXpPerSession returns 10');
     check($engine->progressionMaxMerchantDiscountBasisPoints() === 800, 'GameEngine progressionMaxMerchantDiscountBasisPoints returns 800');
+
+    // --- Wave 226 (zone-beta344): GameEngine progressionJailBustXpReward, progressionJailBustFailureMs, progressionHospitalReviveXpReward, progressionRealInmatesQueryLimit & progressionSeedInmateNames ---
+    check($engine->progressionJailBustXpReward() === 10, 'GameEngine progressionJailBustXpReward returns 10');
+    check($engine->progressionJailBustFailureMs() === 180000, 'GameEngine progressionJailBustFailureMs returns 180000');
+    check($engine->progressionHospitalReviveXpReward() === 15, 'GameEngine progressionHospitalReviveXpReward returns 15');
+    check($engine->progressionRealInmatesQueryLimit() === 100, 'GameEngine progressionRealInmatesQueryLimit returns 100');
+    check(count($engine->progressionSeedInmateNames()) === 8, 'GameEngine progressionSeedInmateNames returns 8 inmate names');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -6190,4 +6190,30 @@ final class GameEngine
     {
         return 800;
     }
+
+    public function progressionJailBustXpReward(): int
+    {
+        return 10;
+    }
+
+    public function progressionJailBustFailureMs(): int
+    {
+        return 180000;
+    }
+
+    public function progressionHospitalReviveXpReward(): int
+    {
+        return 15;
+    }
+
+    public function progressionRealInmatesQueryLimit(): int
+    {
+        return 100;
+    }
+
+    /** @return list<string> */
+    public function progressionSeedInmateNames(): array
+    {
+        return ['Marrow', 'Silas', 'Duke_X', 'Tariq', 'Lady_Vega', 'K1ng', 'Sami', 'Noor'];
+    }
 }
