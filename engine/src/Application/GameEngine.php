@@ -3945,4 +3945,29 @@ final class GameEngine
     {
         return (string) ($this->releases->foundation()['theme'] ?? 'noir-crime');
     }
+
+    public function releaseFoundationModuleCount(): int
+    {
+        return count((array) ($this->releases->foundation()['modules'] ?? []));
+    }
+
+    public function releaseFoundationPageCount(): int
+    {
+        return count((array) ($this->releases->foundation()['pages'] ?? []));
+    }
+
+    public function hasReleaseFoundationPages(): bool
+    {
+        return $this->releaseFoundationPageCount() > 0;
+    }
+
+    public function releaseFoundationHasWorldPolicy(): bool
+    {
+        return isset($this->releases->foundation()['worldPolicy']) && is_array($this->releases->foundation()['worldPolicy']);
+    }
+
+    public function releaseFoundationWorldTickSeconds(): int
+    {
+        return (int) ($this->releases->foundation()['worldPolicy']['tickSeconds'] ?? 60);
+    }
 }

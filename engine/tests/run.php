@@ -1960,6 +1960,13 @@ try {
     check($engine->supportedReleaseScreenCount() === 19, 'GameEngine supportedReleaseScreenCount returns 19');
     check($engine->supportedReleaseBlockTypeCount() === 5, 'GameEngine supportedReleaseBlockTypeCount returns 5');
     check($engine->releaseFoundationThemeId() !== '', 'GameEngine releaseFoundationThemeId returns foundation theme ID');
+
+    // --- Wave 143 (zone-beta261): GameEngine releaseFoundationModuleCount, releaseFoundationPageCount, hasReleaseFoundationPages, releaseFoundationHasWorldPolicy & releaseFoundationWorldTickSeconds ---
+    check($engine->releaseFoundationModuleCount() >= 19, 'GameEngine releaseFoundationModuleCount returns foundation module count');
+    check($engine->releaseFoundationPageCount() >= 0, 'GameEngine releaseFoundationPageCount returns foundation page count');
+    check(is_bool($engine->hasReleaseFoundationPages()), 'GameEngine hasReleaseFoundationPages returns boolean foundation pages status');
+    check(is_bool($engine->releaseFoundationHasWorldPolicy()), 'GameEngine releaseFoundationHasWorldPolicy returns boolean foundation world policy status');
+    check($engine->releaseFoundationWorldTickSeconds() > 0, 'GameEngine releaseFoundationWorldTickSeconds returns positive foundation world tick seconds');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
