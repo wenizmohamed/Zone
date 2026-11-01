@@ -1743,6 +1743,13 @@ try {
     check(is_bool($engine->playerHasActivePropertyCost()), 'GameEngine playerHasActivePropertyCost returns boolean active property cost status');
     check(is_bool($engine->playerHasActivePropertyHappyBonus()), 'GameEngine playerHasActivePropertyHappyBonus returns boolean active property happy bonus status');
     check(is_bool($engine->playerHasAvailableGymSessions()), 'GameEngine playerHasAvailableGymSessions returns boolean available gym sessions status');
+
+    // --- Wave 112 (zone-beta230): GameEngine playerHasEnergyRegenRemaining, playerHasNerveRegenRemaining, playerHasHappyRegenRemaining, playerHasLifeRegenRemaining & playerHasXpToNextLevel ---
+    check(is_bool($engine->playerHasEnergyRegenRemaining()), 'GameEngine playerHasEnergyRegenRemaining returns boolean energy regen remaining status');
+    check(is_bool($engine->playerHasNerveRegenRemaining()), 'GameEngine playerHasNerveRegenRemaining returns boolean nerve regen remaining status');
+    check(is_bool($engine->playerHasHappyRegenRemaining()), 'GameEngine playerHasHappyRegenRemaining returns boolean happy regen remaining status');
+    check(is_bool($engine->playerHasLifeRegenRemaining()), 'GameEngine playerHasLifeRegenRemaining returns boolean life regen remaining status');
+    check(is_bool($engine->playerHasXpToNextLevel()), 'GameEngine playerHasXpToNextLevel returns boolean xp to next level status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

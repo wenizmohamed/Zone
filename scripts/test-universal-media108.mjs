@@ -10,7 +10,7 @@ import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summ
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
 import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,eligibleMapMediaPinCount,isMapMediaViewVisible,mapMediaTargetSizeMeters} from '../dist/map-media108.mjs';
 import {VIEWER_STARTUP_TIMEOUT_MS} from '../dist/viewer-runtime108.mjs';
-import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
+import {inspectorBudgetDiagnostics,isSupportedInspectorFormat,isWithinInspectorBudget} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const obj='o ActualTriangle\nv 0 0 0\nv 2 0 0\nv 0 3 0\nf 1 2 3\n';
@@ -243,4 +243,8 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(buildings.earthRadiusMeters(),6378137);
   assert.equal(buildings.defaultMaximumDistanceMeters(),180);
   assert.equal(VIEWER_STARTUP_TIMEOUT_MS,25000);
+  assert.equal(isSupportedInspectorFormat('GLB'),true);
+  assert.equal(isSupportedInspectorFormat('stl'),false);
+  assert.equal(isWithinInspectorBudget({vertices:100,triangles:50,nodes:10,bytes:1024}),true);
+  assert.equal(isWithinInspectorBudget({vertices:3_000_001}),false);
 });

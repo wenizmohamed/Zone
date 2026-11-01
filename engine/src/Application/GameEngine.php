@@ -3154,4 +3154,29 @@ final class GameEngine
     {
         return $this->playerAvailableGymSessions($playerId) > 0;
     }
+
+    public function playerHasEnergyRegenRemaining(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerEnergyRegenSecondsRemaining($playerId) > 0;
+    }
+
+    public function playerHasNerveRegenRemaining(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerNerveRegenSecondsRemaining($playerId) > 0;
+    }
+
+    public function playerHasHappyRegenRemaining(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerHappyRegenSecondsRemaining($playerId) > 0;
+    }
+
+    public function playerHasLifeRegenRemaining(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLifeRegenSecondsRemaining($playerId) > 0;
+    }
+
+    public function playerHasXpToNextLevel(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerXpToNextLevel($playerId) > 0;
+    }
 }

@@ -17,6 +17,12 @@ export function inspectorBudgetDiagnostics() {
     supportedFormats: ['glb', 'gltf', 'obj', 'fbx'],
   };
 }
+export function isSupportedInspectorFormat(format) {
+  return ['glb', 'gltf', 'obj', 'fbx'].includes(String(format || '').toLowerCase());
+}
+export function isWithinInspectorBudget({ vertices = 0, triangles = 0, nodes = 0, bytes = 0 } = {}) {
+  return vertices >= 0 && vertices <= MAX_VERTICES && triangles >= 0 && triangles <= MAX_TRIANGLES && nodes >= 0 && nodes <= MAX_NODES && bytes >= 0 && bytes <= MAX_BYTES;
+}
 const safeVector = v => [v.x, v.y, v.z].map(n => Math.round(n * 1e7) / 1e7);
 // Browser-only progress notifications do not alter the parsed geometry.
 globalThis.ProgressEvent ??= class ProgressEvent extends Event {
