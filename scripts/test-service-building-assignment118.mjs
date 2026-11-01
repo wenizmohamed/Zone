@@ -131,4 +131,7 @@ test('adjacent fallback roofs bilaterally separate within their own interiors to
   assert.ok(result.associations.every(entry => entry.insideRoof && !entry.crowded && !entry.sharedRoof));
   const separation = Math.hypot(...buildings.meters(result.associations[0].coordinates, result.associations[1].coordinates));
   assert.ok(separation + 1e-7 >= 32, 'Adjacent elongated fallback roofs should pick opposite interior ends to clear 32 m.');
+  assert.deepEqual(buildings.insideRoofServiceIds(result), ['jail', 'jobs']);
+  assert.deepEqual(buildings.sharedRoofServiceIds(result), []);
+  assert.deepEqual(buildings.containsAuthoredPointServiceIds(result), []);
 });

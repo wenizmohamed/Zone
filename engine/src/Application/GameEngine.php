@@ -4708,4 +4708,30 @@ final class GameEngine
     {
         return 1500;
     }
+
+    public function assetLibraryMaxUploadBytes(): int
+    {
+        return AssetLibrary::MAX_UPLOAD_BYTES;
+    }
+
+    public function assetLibraryChunkBytes(): int
+    {
+        return AssetLibrary::CHUNK_BYTES;
+    }
+
+    /** @return list<string> */
+    public function supportedAssetTransformKeys(): array
+    {
+        return ['scale', 'rotation', 'floorOffset', 'cameraTarget'];
+    }
+
+    public function isSupportedAssetTransformKey(string $key): bool
+    {
+        return in_array($key, $this->supportedAssetTransformKeys(), true);
+    }
+
+    public function assetWorkerMaxBatchLimit(): int
+    {
+        return 8;
+    }
 }

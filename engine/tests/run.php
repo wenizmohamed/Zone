@@ -2142,6 +2142,13 @@ try {
     check($engine->territoryWarDurationSeconds() === 259200, 'GameEngine territoryWarDurationSeconds returns 259200');
     check($engine->territoryFootholdSector() === 7, 'GameEngine territoryFootholdSector returns 7');
     check($engine->territoryReinforceControlGainBasisPoints() === 1500, 'GameEngine territoryReinforceControlGainBasisPoints returns 1500');
+
+    // --- Wave 169 (zone-beta287): GameEngine assetLibraryMaxUploadBytes, assetLibraryChunkBytes, supportedAssetTransformKeys, isSupportedAssetTransformKey & assetWorkerMaxBatchLimit ---
+    check($engine->assetLibraryMaxUploadBytes() === 134217728, 'GameEngine assetLibraryMaxUploadBytes returns 134217728');
+    check($engine->assetLibraryChunkBytes() === 524288, 'GameEngine assetLibraryChunkBytes returns 524288');
+    check($engine->supportedAssetTransformKeys() === ['scale', 'rotation', 'floorOffset', 'cameraTarget'], 'GameEngine supportedAssetTransformKeys returns 4 transform keys');
+    check($engine->isSupportedAssetTransformKey('scale') === true && $engine->isSupportedAssetTransformKey('opacity') === false, 'GameEngine isSupportedAssetTransformKey validates transform key');
+    check($engine->assetWorkerMaxBatchLimit() === 8, 'GameEngine assetWorkerMaxBatchLimit returns 8');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

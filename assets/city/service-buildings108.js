@@ -187,5 +187,8 @@
   function isSupportedServiceId(id){return SERVICES.includes(String(id));}
   function unboundServiceIds(result){return Array.isArray(result?.unbound)?[...result.unbound]:[];}
   function boundServiceIds(result){return Array.isArray(result?.associations)?result.associations.map(a=>a?.id).filter(Boolean):[];}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,inside,roofAnchor,meters};
+  function insideRoofServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.insideRoof)).map(a=>a.id):[];}
+  function sharedRoofServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.sharedRoof)).map(a=>a.id):[];}
+  function containsAuthoredPointServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.containsAuthoredPoint)).map(a=>a.id):[];}
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,insideRoofServiceIds,sharedRoofServiceIds,containsAuthoredPointServiceIds,inside,roofAnchor,meters};
 });

@@ -166,6 +166,9 @@ test('closed ring rotation and reversed winding cannot skip the authored contain
   assert.equal(buildings.isSupportedServiceId('unknown-service'), false);
   const associated = buildings.associate([source], [roof('containing', 0, 0, 190)]);
   assert.equal(buildings.hasCrowding(associated), false);
+  assert.deepEqual(buildings.insideRoofServiceIds(associated), ['bank']);
+  assert.deepEqual(buildings.sharedRoofServiceIds(associated), []);
+  assert.deepEqual(buildings.containsAuthoredPointServiceIds(associated), ['bank']);
   const summary = buildings.summarizeAssociations(associated);
   assert.equal(summary.boundCount, 1);
   assert.equal(summary.unboundCount, 0);
