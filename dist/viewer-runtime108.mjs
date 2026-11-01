@@ -1,6 +1,8 @@
 // Optional WebGL never blocks the game. One local retry, explicit state, hidden
 // frames pause, and every listener/observer is owned by the viewer lifecycle.
 export const VIEWER_STARTUP_TIMEOUT_MS = 25000;
+export function viewerStartupTimeoutMs() { return VIEWER_STARTUP_TIMEOUT_MS; }
+export function maxRenderDeltaSeconds() { return .1; }
 export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHidden = true }) {
   let frame = null, disposed = false, failed = false, intersecting = true, last = 0;
   const sync = () => {

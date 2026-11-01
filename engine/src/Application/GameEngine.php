@@ -3737,4 +3737,30 @@ final class GameEngine
     {
         return $this->activeReleaseMediaBindingCount() > 0;
     }
+
+    /** @return array<string, mixed> */
+    public function activeReleaseWorldPolicy(): array
+    {
+        return (array) ($this->activeReleaseManifest()['worldPolicy'] ?? []);
+    }
+
+    public function isWorldPolicyEnabledInActiveRelease(): bool
+    {
+        return ($this->activeReleaseWorldPolicy()['enabled'] ?? true) !== false;
+    }
+
+    public function activeReleaseWorldTickSeconds(): int
+    {
+        return (int) ($this->activeReleaseWorldPolicy()['tickSeconds'] ?? 60);
+    }
+
+    public function activeReleasePublishedAt(): string
+    {
+        return (string) ($this->releases->active()['published_at'] ?? $this->releases->active()['created_at'] ?? '');
+    }
+
+    public function hasActiveReleasePublishedAt(): bool
+    {
+        return $this->activeReleasePublishedAt() !== '';
+    }
 }

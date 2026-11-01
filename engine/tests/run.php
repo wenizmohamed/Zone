@@ -1904,6 +1904,13 @@ try {
     check($engine->activeReleaseThemeId() !== '', 'GameEngine activeReleaseThemeId returns active release theme id');
     check($engine->activeReleaseMediaBindingCount() >= 0, 'GameEngine activeReleaseMediaBindingCount returns active release media binding count');
     check(is_bool($engine->hasActiveReleaseMediaBindings()), 'GameEngine hasActiveReleaseMediaBindings returns boolean active release media bindings status');
+
+    // --- Wave 135 (zone-beta253): GameEngine activeReleaseWorldPolicy, isWorldPolicyEnabledInActiveRelease, activeReleaseWorldTickSeconds, activeReleasePublishedAt & hasActiveReleasePublishedAt ---
+    check(is_array($engine->activeReleaseWorldPolicy()), 'GameEngine activeReleaseWorldPolicy returns active release world policy array');
+    check(is_bool($engine->isWorldPolicyEnabledInActiveRelease()), 'GameEngine isWorldPolicyEnabledInActiveRelease returns boolean world policy enabled status');
+    check($engine->activeReleaseWorldTickSeconds() > 0, 'GameEngine activeReleaseWorldTickSeconds returns positive world tick seconds');
+    check(is_string($engine->activeReleasePublishedAt()), 'GameEngine activeReleasePublishedAt returns active release published at string');
+    check(is_bool($engine->hasActiveReleasePublishedAt()), 'GameEngine hasActiveReleasePublishedAt returns boolean active release published at status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

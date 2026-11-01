@@ -20,7 +20,7 @@ let asset, renderer, scene, camera, controls, root, box, pivot, runtime, observe
 const transfer = new AbortController();
 let boundsVisible = true, pivotVisible = true;
 const canvas = $('asset-canvas');
-window.ZoneAssetInspector = { diagnostics: () => ({ assetId, lang, kind: asset?.kind || null, boundsVisible, pivotVisible, revision, disposed, mediaState: document.body.dataset.zoneMediaState || 'loading' }) };
+window.ZoneAssetInspector = { diagnostics: () => ({ assetId, lang, kind: asset?.kind || null, boundsVisible, pivotVisible, revision, disposed, mediaState: document.body.dataset.zoneMediaState || 'loading' }), isDisposed: () => disposed, isReady: () => document.body.dataset.zoneMediaState === 'ready' && !disposed, hasAsset: () => Boolean(asset) && !disposed };
 function readControls() { return validateAssetTransform({ scale: $('scale').value, rotation: ['x','y','z'].map(axis => $('rotation-' + axis).value), floorOffset: $('floor').value, cameraTarget: ['x','y','z'].map(axis => $('camera-' + axis).value) }); }
 function paintControls() {
   $('scale').value = transform.scale; $('floor').value = transform.floorOffset;
