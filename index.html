@@ -2885,6 +2885,22 @@ class Component extends DCLogic {
     return view;
   }
 
+  supportedOutfits() {
+    return ['street', 'suit', 'tactical'];
+  }
+
+  isSupportedOutfit(outfit) {
+    return ['street', 'suit', 'tactical'].includes(String(outfit ?? ''));
+  }
+
+  supportedCombatModes() {
+    return ['npc', 'players'];
+  }
+
+  supportedMarketModes() {
+    return ['merchants', 'players'];
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

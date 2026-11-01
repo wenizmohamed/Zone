@@ -1617,6 +1617,13 @@ try {
     check($engine->isUsersOnlineModuleEnabled() === true, 'GameEngine isUsersOnlineModuleEnabled returns published usersonline module status');
     check(is_bool($engine->isTerminalThemeActive()), 'GameEngine isTerminalThemeActive returns boolean terminal theme status');
     check(is_bool($engine->isZoneThemeActive()), 'GameEngine isZoneThemeActive returns boolean zone theme status');
+
+    // --- Wave 94 (zone-beta212): GameEngine isPaperThemeActive, hasActiveRelease, hasPublishedCrimes, hasPublishedModules & hasMediaBindings ---
+    check(is_bool($engine->isPaperThemeActive()), 'GameEngine isPaperThemeActive returns boolean paper theme status');
+    check($engine->hasActiveRelease() === true, 'GameEngine hasActiveRelease returns boolean active release status');
+    check($engine->hasPublishedCrimes() === true, 'GameEngine hasPublishedCrimes returns boolean published crimes status');
+    check($engine->hasPublishedModules() === true, 'GameEngine hasPublishedModules returns boolean published modules status');
+    check(is_bool($engine->hasMediaBindings()), 'GameEngine hasMediaBindings returns boolean media bindings status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

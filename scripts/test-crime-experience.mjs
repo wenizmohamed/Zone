@@ -217,5 +217,10 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.equal(diag.gameplayReady, true);
     assert.equal(diag.cash, 2500);
     assert.equal(diag.ownedItemCount, 2);
+    assert.deepEqual(Array.from(instance.supportedOutfits()), ['street', 'suit', 'tactical']);
+    assert.equal(instance.isSupportedOutfit('suit'), true);
+    assert.equal(instance.isSupportedOutfit('unknown'), false);
+    assert.deepEqual(Array.from(instance.supportedCombatModes()), ['npc', 'players']);
+    assert.deepEqual(Array.from(instance.supportedMarketModes()), ['merchants', 'players']);
   }
 });

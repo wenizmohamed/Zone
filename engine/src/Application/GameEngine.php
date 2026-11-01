@@ -2703,4 +2703,29 @@ final class GameEngine
     {
         return $this->activeThemeId() === 'zone';
     }
+
+    public function isPaperThemeActive(): bool
+    {
+        return $this->activeThemeId() === 'paper';
+    }
+
+    public function hasActiveRelease(): bool
+    {
+        return $this->activeReleaseVersion() >= 1;
+    }
+
+    public function hasPublishedCrimes(): bool
+    {
+        return $this->publishedCrimeCount() > 0;
+    }
+
+    public function hasPublishedModules(): bool
+    {
+        return $this->enabledModuleCount() > 0;
+    }
+
+    public function hasMediaBindings(): bool
+    {
+        return count($this->gameBootstrap()['mediaBindings'] ?? []) > 0;
+    }
 }
