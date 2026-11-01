@@ -5,6 +5,19 @@ import * as THREE from '../lib/three184/three.module.js';
 const CIRCUMFERENCE=40075016.68557849;
 const LIMITS=Object.freeze({maxWindows:12000,maxRoofDetails:600,maxWallPanels:12000,maxBands:6000,maxFeatures:5000,maxCoordinates:160000});
 const PALETTE=Object.freeze({glass:['#354550','#728a92','#bcc6c7','#aab6b7'],walls:['#969d9f','#a6acad','#929b9f','#b7b7af','#98a19e','#a3a6a0','#b7b9b2','#929b9e'],stone:['#acb1ad','#8d9999','#a9aeaa'],metal:['#79888b','#929b9a','#63757b']});
+
+export function surfaceLimits(){
+  return {...LIMITS};
+}
+
+export function surfacePalette(){
+  return {
+    glass:[...PALETTE.glass],
+    walls:[...PALETTE.walls],
+    stone:[...PALETTE.stone],
+    metal:[...PALETTE.metal],
+  };
+}
 const LAYER='zone-district-surfaces';
 const SURFACE_OWNERS=new WeakMap();
 const ORDER_CACHE=new Map(); // Only grid sizes1..100, shared across every wall.

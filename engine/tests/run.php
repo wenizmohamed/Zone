@@ -1414,6 +1414,13 @@ try {
     check($engine->playerCombatWinCount('founder-player') >= 0, 'GameEngine playerCombatWinCount returns lifetime combat win counter');
     check($engine->playerJobShiftCount('founder-player') >= 0, 'GameEngine playerJobShiftCount returns lifetime job shift counter');
     check($engine->playerMarketBuyCount('founder-player') >= 0, 'GameEngine playerMarketBuyCount returns lifetime market buy counter');
+
+    // --- Wave 65 (zone-beta183): GameEngine playerActiveMarketListingCount, playerHourlySearchMaterialUsage, playerInJail, playerInHospital & playerCompletedEducationCount ---
+    check($engine->playerActiveMarketListingCount('founder-player') >= 0, 'GameEngine playerActiveMarketListingCount returns player active listing count');
+    check(array_key_exists('awardCount', $engine->playerHourlySearchMaterialUsage('founder-player')), 'GameEngine playerHourlySearchMaterialUsage returns hourly search material usage');
+    check(is_bool($engine->playerInJail('founder-player')), 'GameEngine playerInJail returns boolean jail status');
+    check(is_bool($engine->playerInHospital('founder-player')), 'GameEngine playerInHospital returns boolean hospital status');
+    check($engine->playerCompletedEducationCount('founder-player') >= 0, 'GameEngine playerCompletedEducationCount returns completed education course count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

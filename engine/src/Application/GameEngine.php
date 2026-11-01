@@ -1880,4 +1880,33 @@ final class GameEngine
     {
         return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['buys'] ?? 0);
     }
+
+    public function playerActiveMarketListingCount(string $playerId = 'founder-player'): int
+    {
+        return (new \Zone\Engine\Core\Game\PlayerMarketService($this->database, $this->events))->activeListingCount($playerId);
+    }
+
+    /** @return array<string, mixed> */
+    public function playerHourlySearchMaterialUsage(string $playerId = 'founder-player'): array
+    {
+        return (new \Zone\Engine\Core\Game\MaterialLootService($this->database, $this->events))->hourlyUsage('search', $playerId);
+    }
+
+    public function playerInJail(string $playerId = 'founder-player'): bool
+    {
+        $until = (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['jailUntil'] ?? 0);
+        return $until > (int) round(microtime(true) * 1000);
+    }
+
+    public function playerInHospital(string $playerId = 'founder-player'): bool
+    {
+        $until = (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['hospUntil'] ?? 0);
+        return $until > (int) round(microtime(true) * 1000);
+    }
+
+    public function playerCompletedEducationCount(string $playerId = 'founder-player'): int
+    {
+        $done = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['eduDone'] ?? []);
+        return count(array_filter($done));
+    }
 }
