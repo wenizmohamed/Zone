@@ -168,5 +168,14 @@
   function roofPalette(){
     return ROOFS.slice();
   }
-  return {createPlan,summarizePlan,atlasLimits,roofPalette,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
+  function supportedRoofKinds(){
+    return ['flat','sawtooth','glass'];
+  }
+  function isSupportedRoofKind(kind){
+    return supportedRoofKinds().includes(String(kind||''));
+  }
+  function hasPlan(map){
+    return Boolean(map&&plans.has(map));
+  }
+  return {createPlan,summarizePlan,atlasLimits,roofPalette,supportedRoofKinds,isSupportedRoofKind,hasPlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
 });

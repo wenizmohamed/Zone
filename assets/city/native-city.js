@@ -200,5 +200,14 @@
   function roofPalette(){
     return roofColors.slice();
   }
-  return {compile,summarizeCompiled,layerIds,roofPalette,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
+  function isInstalled(map){
+    return Boolean(map&&entries.has(map));
+  }
+  function isArtReady(map){
+    return Boolean(map&&entries.get(map)?.artReady);
+  }
+  function isLayerId(id){
+    return ids.includes(String(id||''));
+  }
+  return {compile,summarizeCompiled,layerIds,roofPalette,isInstalled,isArtReady,isLayerId,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
 });

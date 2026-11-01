@@ -15,7 +15,13 @@ test('native overhead and 3D share exact roof footprints and real rooftop geomet
   const plan=atlas.createPlan([cell()]),out=city.compile(plan),roofs=out.data.features.filter(f=>f.properties.kind==='building');
   assert.deepEqual(atlas.atlasLimits(),{size:4096,maxBlocks:240,maxRoofs:12000});
   assert.equal(atlas.roofPalette().length,8);
+  assert.deepEqual(atlas.supportedRoofKinds(),['flat','sawtooth','glass']);
+  assert.equal(atlas.isSupportedRoofKind('glass'),true);
+  assert.equal(atlas.isSupportedRoofKind('unknown'),false);
+  assert.equal(atlas.hasPlan(null),false);
   assert.equal(city.layerIds().length,13);
+  assert.equal(city.isLayerId('zone-buildings-3d'),true);
+  assert.equal(city.isLayerId('unknown'),false);
   assert.equal(city.roofPalette().length,8);
   const planSummary=atlas.summarizePlan(plan);
   assert.equal(planSummary.blockCount,1);assert.equal(planSummary.roofCount,plan.roofs.length);
@@ -45,7 +51,10 @@ test('world updates use native GeoJSON and keep one stable source through camera
   assert.equal(h.sources.get('zone-city-atlas'),source);assert.equal(source.updates,1);assert.equal(h.repaints,0);assert.equal(h.listeners.has('move'),false);
   city.updateLabels(h.map,[{...cell(),properties:{districtId:'north',districtName:'الشمال'}}]);assert.equal(source.updates,1);assert.equal(h.sources.get('zone-city-districts').data.features[0].properties.name,'الشمال');
   assert.equal(control.diagnostics().status,'ready');assert.equal(control.diagnostics().visible,true);
+  assert.equal(city.isInstalled(h.map),true);
+  assert.equal(city.isArtReady(h.map),false);
   control.dispose();assert.equal(control.diagnostics().status,'uninstalled');
+  assert.equal(city.isInstalled(h.map),false);
 });
 test('3D waits for a real native paint and hides cancel preparation without an error',async()=>{
   const h=harness();city.install(h.map,[cell()]);await turn();const control=city.controller(h.map);let ready=false;

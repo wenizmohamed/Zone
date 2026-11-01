@@ -1820,6 +1820,13 @@ try {
     check($engine->hasTerritories() === true, 'GameEngine hasTerritories returns boolean territories status');
     check(is_bool($engine->hasActiveWars()), 'GameEngine hasActiveWars returns boolean active wars status');
     check(is_bool($engine->hasActiveWorldEvents()), 'GameEngine hasActiveWorldEvents returns boolean active world events status');
+
+    // --- Wave 123 (zone-beta241): GameEngine hasMarketListings, hasClaimedAccounts, hasActiveSessions, hasAuditEntries & hasReleases ---
+    check(is_bool($engine->hasMarketListings()), 'GameEngine hasMarketListings returns boolean market listings status');
+    check(is_bool($engine->hasClaimedAccounts()), 'GameEngine hasClaimedAccounts returns boolean claimed accounts status');
+    check(is_bool($engine->hasActiveSessions()), 'GameEngine hasActiveSessions returns boolean active sessions status');
+    check($engine->hasAuditEntries() === true, 'GameEngine hasAuditEntries returns boolean audit entries status');
+    check($engine->hasReleases() === true, 'GameEngine hasReleases returns boolean releases status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

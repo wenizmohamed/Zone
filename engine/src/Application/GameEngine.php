@@ -3431,4 +3431,29 @@ final class GameEngine
     {
         return $this->activeWorldEventCount() > 0;
     }
+
+    public function hasMarketListings(): bool
+    {
+        return $this->marketListingCount() > 0;
+    }
+
+    public function hasClaimedAccounts(): bool
+    {
+        return $this->claimedAccountCount() > 0;
+    }
+
+    public function hasActiveSessions(): bool
+    {
+        return $this->activeSessionCount() > 0;
+    }
+
+    public function hasAuditEntries(): bool
+    {
+        return $this->auditEntryCount() > 0;
+    }
+
+    public function hasReleases(): bool
+    {
+        return $this->releaseCount() > 0;
+    }
 }
