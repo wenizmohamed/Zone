@@ -38,6 +38,27 @@ export function relayRouteDiagnostics() {
     supportsThemeCss: isPublicPath('/engine/theme.css'),
   };
 }
+export function publicRoutePaths() {
+  return Array.from(publicPaths);
+}
+export function publicRouteCount() {
+  return publicPaths.size;
+}
+export function defaultRelayUpstreamPort() {
+  return 4301;
+}
+export function defaultRelayTimeoutMs() {
+  return 18000;
+}
+export function defaultRelayMaxRequestBytes() {
+  return 65536;
+}
+export function defaultRelayMaxDraftBytes() {
+  return 1048576;
+}
+export function defaultRelayMaxResponseBytes() {
+  return 4194304;
+}
 function host(value) {
   const normalized = String(value ?? '').toLowerCase();
   return /^(?:localhost|[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?)(?::443)?$/.test(normalized) && !normalized.includes('..') ? normalized.replace(/:443$/, '') : null;

@@ -4869,4 +4869,29 @@ final class GameEngine
     {
         return 50;
     }
+
+    public function combatNpcEncounterEnergyCost(): int
+    {
+        return 25;
+    }
+
+    public function combatNpcStalemateTurnLimit(): int
+    {
+        return 25;
+    }
+
+    public function combatNpcLostHospitalPenaltySeconds(): int
+    {
+        return 10;
+    }
+
+    public function combatNpcMaxTerritoryDefenseBonusBasisPoints(): int
+    {
+        return 2000;
+    }
+
+    public function combatNpcWinXpMultiplierPerLevel(): int
+    {
+        return 3;
+    }
 }

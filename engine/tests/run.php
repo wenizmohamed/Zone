@@ -2184,6 +2184,13 @@ try {
     check($engine->isSupportedDefaultCooldownAction('gym') === true && $engine->isSupportedDefaultCooldownAction('slots') === false, 'GameEngine isSupportedDefaultCooldownAction validates cooldown action');
     check($engine->notificationMaxUnreadQueryLimit() === 100, 'GameEngine notificationMaxUnreadQueryLimit returns 100');
     check($engine->ledgerMaxRecentEntriesLimit() === 50, 'GameEngine ledgerMaxRecentEntriesLimit returns 50');
+
+    // --- Wave 175 (zone-beta293): GameEngine combatNpcEncounterEnergyCost, combatNpcStalemateTurnLimit, combatNpcLostHospitalPenaltySeconds, combatNpcMaxTerritoryDefenseBonusBasisPoints & combatNpcWinXpMultiplierPerLevel ---
+    check($engine->combatNpcEncounterEnergyCost() === 25, 'GameEngine combatNpcEncounterEnergyCost returns 25');
+    check($engine->combatNpcStalemateTurnLimit() === 25, 'GameEngine combatNpcStalemateTurnLimit returns 25');
+    check($engine->combatNpcLostHospitalPenaltySeconds() === 10, 'GameEngine combatNpcLostHospitalPenaltySeconds returns 10');
+    check($engine->combatNpcMaxTerritoryDefenseBonusBasisPoints() === 2000, 'GameEngine combatNpcMaxTerritoryDefenseBonusBasisPoints returns 2000');
+    check($engine->combatNpcWinXpMultiplierPerLevel() === 3, 'GameEngine combatNpcWinXpMultiplierPerLevel returns 3');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

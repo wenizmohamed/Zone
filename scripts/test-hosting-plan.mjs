@@ -2,7 +2,17 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { Script } from 'node:vm';
-import { createRelay, relayRouteDiagnostics } from '../engine/bin/relay.mjs';
+import {
+  createRelay,
+  relayRouteDiagnostics,
+  publicRoutePaths,
+  publicRouteCount,
+  defaultRelayUpstreamPort,
+  defaultRelayTimeoutMs,
+  defaultRelayMaxRequestBytes,
+  defaultRelayMaxDraftBytes,
+  defaultRelayMaxResponseBytes,
+} from '../engine/bin/relay.mjs';
 
 // Static contracts only. No server, network request, shell or database is opened.
 const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
@@ -287,4 +297,11 @@ test('operator path distinguishes unexecuted Linux gates, authoritative PC, immu
   assert.equal(diag.supportsAssetContent, true);
   assert.equal(diag.supportsWorldRoutes, true);
   assert.equal(diag.supportsThemeCss, true);
+  assert.equal(publicRouteCount(), diag.publicRouteCount);
+  assert.ok(Array.isArray(publicRoutePaths()) && publicRoutePaths().includes('health'));
+  assert.equal(defaultRelayUpstreamPort(), 4301);
+  assert.equal(defaultRelayTimeoutMs(), 18000);
+  assert.equal(defaultRelayMaxRequestBytes(), 65536);
+  assert.equal(defaultRelayMaxDraftBytes(), 1048576);
+  assert.equal(defaultRelayMaxResponseBytes(), 4194304);
 });
