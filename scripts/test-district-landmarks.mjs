@@ -13,6 +13,8 @@ const source=readFileSync(moduleUrl,'utf8')
   .replaceAll('import.meta.url',JSON.stringify(moduleUrl.href))
   .replace('export function supportedLandmarkIds','function supportedLandmarkIds')
   .replace('export function isSupportedLandmarkId','function isSupportedLandmarkId')
+  .replace('export function landmarkLayerId','function landmarkLayerId')
+  .replace('export function landmarkSpec','function landmarkSpec')
   .replace('export async function createLandmarks','async function createLandmarks');
 const ID='zone-authored-landmarks';
 const KIT_NAMES=['building_E_withoutBase','building_G_withoutBase','building_C_withoutBase','building_A_withoutBase','watertower','car_sedan','streetlight'];
@@ -79,8 +81,8 @@ function harness({manual=false,existing=false,addError=false,shader=null}={}){
   };
   const document={body:{dataset:{}}};
   const context=vm.createContext({THREE,GLTFLoader,URL,mapboxgl:{MercatorCoordinate:{fromLngLat:mercator}},document,performance:{now:()=>100},console,setTimeout,clearTimeout});
-  vm.runInContext(source+'\nglobalThis.createLandmarks=createLandmarks;globalThis.supportedLandmarkIds=supportedLandmarkIds;globalThis.isSupportedLandmarkId=isSupportedLandmarkId;',context,{filename:moduleUrl.pathname});
-  return {create:context.createLandmarks,supportedLandmarkIds:context.supportedLandmarkIds,isSupportedLandmarkId:context.isSupportedLandmarkId,map,gl,canvas,canvases,layers,mutations,resources,requests,rendererInstances,events,document,asset,
+  vm.runInContext(source+'\nglobalThis.createLandmarks=createLandmarks;globalThis.supportedLandmarkIds=supportedLandmarkIds;globalThis.isSupportedLandmarkId=isSupportedLandmarkId;globalThis.landmarkLayerId=landmarkLayerId;globalThis.landmarkSpec=landmarkSpec;',context,{filename:moduleUrl.pathname});
+  return {create:context.createLandmarks,supportedLandmarkIds:context.supportedLandmarkIds,isSupportedLandmarkId:context.isSupportedLandmarkId,landmarkLayerId:context.landmarkLayerId,landmarkSpec:context.landmarkSpec,map,gl,canvas,canvases,layers,mutations,resources,requests,rendererInstances,events,document,asset,
     resolveAll(){for(const [name,pending] of requests)pending.resolve(asset(name));},
     assertReleased(){assert.ok(resources.length>0);for(const r of resources)assert.equal(r.disposals,1,`${r.kind} must be disposed exactly once`);},
   };
@@ -91,6 +93,9 @@ test('real scene graph installs one cosmetic layer at published destinations wit
   assert.deepEqual(Array.from(h.supportedLandmarkIds()),['bank','hospital','gym','hq','market','home','jail','alley','shop']);
   assert.equal(h.isSupportedLandmarkId('bank'),true);
   assert.equal(h.isSupportedLandmarkId('crime'),false);
+  assert.equal(h.landmarkLayerId(),'zone-authored-landmarks');
+  assert.equal(h.landmarkSpec('bank')?.model,'building_E_withoutBase');
+  assert.equal(h.landmarkSpec('crime'),null);
   const control=await h.create(h.map,input);
   assert.equal(control.diagnostics.status,'ready');assert.equal(h.requests.size,7);
   const snap=control.getDiagnostics();

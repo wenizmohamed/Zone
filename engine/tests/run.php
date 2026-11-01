@@ -1561,6 +1561,13 @@ try {
     check($engine->playerCombatWinSharePct('founder-player') >= 0.0 && $engine->playerCombatWinSharePct('founder-player') <= 100.0, 'GameEngine playerCombatWinSharePct returns combat win share of career actions');
     check($engine->playerJobShiftSharePct('founder-player') >= 0.0 && $engine->playerJobShiftSharePct('founder-player') <= 100.0, 'GameEngine playerJobShiftSharePct returns job shift share of career actions');
     check($engine->playerMarketBuySharePct('founder-player') >= 0.0 && $engine->playerMarketBuySharePct('founder-player') <= 100.0, 'GameEngine playerMarketBuySharePct returns market buy share of career actions');
+
+    // --- Wave 86 (zone-beta204): GameEngine playerHasOwnedProperties, playerHasCompletedEducation, playerHasCompletedMissions, playerHasPurchasedUpgrades & playerHasActiveMarketListings ---
+    check(is_bool($engine->playerHasOwnedProperties('founder-player')), 'GameEngine playerHasOwnedProperties returns boolean property ownership status');
+    check(is_bool($engine->playerHasCompletedEducation('founder-player')), 'GameEngine playerHasCompletedEducation returns boolean education completion status');
+    check(is_bool($engine->playerHasCompletedMissions('founder-player')), 'GameEngine playerHasCompletedMissions returns boolean mission completion status');
+    check(is_bool($engine->playerHasPurchasedUpgrades('founder-player')), 'GameEngine playerHasPurchasedUpgrades returns boolean upgrade purchase status');
+    check(is_bool($engine->playerHasActiveMarketListings('founder-player')), 'GameEngine playerHasActiveMarketListings returns boolean active market listing status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

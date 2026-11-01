@@ -15,6 +15,14 @@ export function isSupportedLandmarkId(id){
   return typeof id==='string'&&Object.prototype.hasOwnProperty.call(KIT,id);
 }
 
+export function landmarkLayerId(){
+  return ID;
+}
+
+export function landmarkSpec(id){
+  return isSupportedLandmarkId(id)?{...KIT[id]}:null;
+}
+
 export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw Error('Landmark preparation timeout must be 1..30000 milliseconds.');

@@ -2503,4 +2503,29 @@ final class GameEngine
         $total = $this->playerTotalCareerActions($playerId);
         return $total > 0 ? round($this->playerMarketBuyCount($playerId) / $total * 100, 2) : 0.0;
     }
+
+    public function playerHasOwnedProperties(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerOwnedPropertyCount($playerId) > 0;
+    }
+
+    public function playerHasCompletedEducation(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCompletedEducationCount($playerId) > 0;
+    }
+
+    public function playerHasCompletedMissions(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCompletedMissionCount($playerId) > 0;
+    }
+
+    public function playerHasPurchasedUpgrades(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerPurchasedUpgradeCount($playerId) > 0;
+    }
+
+    public function playerHasActiveMarketListings(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActiveMarketListingCount($playerId) > 0;
+    }
 }
