@@ -2002,6 +2002,13 @@ try {
     check($engine->hasTerritoryFactions() === true, 'GameEngine hasTerritoryFactions returns boolean territory factions status');
     check($engine->territoryPlayerFactionId() === null || is_string($engine->territoryPlayerFactionId()), 'GameEngine territoryPlayerFactionId returns nullable faction ID');
     check(is_bool($engine->isPlayerInTerritoryFaction()), 'GameEngine isPlayerInTerritoryFaction returns boolean faction membership status');
+
+    // --- Wave 149 (zone-beta267): GameEngine dailyContractId, dailyContractMetric, dailyContractProgress, dailyContractTarget & dailyContractProgressPct ---
+    check($engine->dailyContractId() !== '', 'GameEngine dailyContractId returns active daily contract ID');
+    check($engine->dailyContractMetric() !== '', 'GameEngine dailyContractMetric returns active daily contract metric');
+    check($engine->dailyContractProgress() >= 0, 'GameEngine dailyContractProgress returns daily contract progress');
+    check($engine->dailyContractTarget() > 0, 'GameEngine dailyContractTarget returns daily contract target');
+    check($engine->dailyContractProgressPct() >= 0 && $engine->dailyContractProgressPct() <= 100, 'GameEngine dailyContractProgressPct returns daily contract progress percentage');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

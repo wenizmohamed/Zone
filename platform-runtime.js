@@ -83,6 +83,11 @@
     status: () => connection,
     resolvePage,
     preview,
+    builtinScreens: () => builtinScreens.slice(),
+    isBuiltinScreen: (id) => builtinScreens.includes(String(id || '')),
+    isConnected: () => connection === 'connected',
+    isOffline: () => connection === 'offline',
+    isPending: () => Boolean(pendingRefresh),
     diagnostics: () => ({ status: connection, releaseId: release.id, releaseVersion: release.version, preview, failures, nextAutomaticRefresh, builtinScreenCount: builtinScreens.length }),
     refresh: async () => {
       if (preview) return { release, content: gameData };

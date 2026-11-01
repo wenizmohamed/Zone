@@ -196,3 +196,17 @@ test('ZonePlatform.diagnostics reports status, releaseId, releaseVersion, previe
   assert.equal(diag.failures, 0);
   assert.equal(diag.builtinScreenCount, 19);
 });
+
+test('ZonePlatform exposes builtinScreens, isBuiltinScreen, isConnected, isOffline and isPending helpers', async () => {
+  const remote = { release: { id: 'rel-149', version: 149, manifest: { schemaVersion: 1 } }, content: {} };
+  const runtime = connectionRuntime('platform-runtime.js', { fetchImpl: async () => ({ ok: true, json: async () => remote }) });
+  assert.equal(runtime.window.ZonePlatform.isConnected(), false);
+  assert.equal(runtime.window.ZonePlatform.isOffline(), false);
+  assert.equal(runtime.window.ZonePlatform.isPending(), false);
+  assert.equal(runtime.window.ZonePlatform.builtinScreens().length, 19);
+  assert.equal(runtime.window.ZonePlatform.isBuiltinScreen('home'), true);
+  assert.equal(runtime.window.ZonePlatform.isBuiltinScreen('unknown'), false);
+  await runtime.window.ZonePlatform.refresh();
+  assert.equal(runtime.window.ZonePlatform.isConnected(), true);
+  assert.equal(runtime.window.ZonePlatform.isOffline(), false);
+});

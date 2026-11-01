@@ -4100,4 +4100,29 @@ final class GameEngine
     {
         return $this->territoryPlayerFactionId($playerId) !== null;
     }
+
+    public function dailyContractId(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->dailyContract($playerId)['contract']['id'] ?? '');
+    }
+
+    public function dailyContractMetric(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->dailyContract($playerId)['contract']['metric'] ?? '');
+    }
+
+    public function dailyContractProgress(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['progress'] ?? 0);
+    }
+
+    public function dailyContractTarget(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['target'] ?? 0);
+    }
+
+    public function dailyContractProgressPct(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['progressPct'] ?? 0);
+    }
 }
