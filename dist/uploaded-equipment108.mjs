@@ -32,8 +32,20 @@ export function isMeleeWeaponKey(key) {
   return key === 'bat' || key === 'knife';
 }
 
+export function isLongGunWeaponKey(key) {
+  return typeof key === 'string' && /(?:sniper|shotgun|rifle|ak|smg|bullpup)/i.test(key);
+}
+
+export function uploadedCharacterTargetHeight() {
+  return 1.82;
+}
+
+export function uploadedArmorTargetSize() {
+  return .70;
+}
+
 export function uploadedWeaponTargetLength(key) {
-  return key === 'bat' ? .715 : key === 'knife' ? .22 : /(?:sniper|shotgun|rifle|ak|smg|bullpup)/i.test(key) ? .88 : .29;
+  return key === 'bat' ? .715 : key === 'knife' ? .22 : isLongGunWeaponKey(key) ? .88 : .29;
 }
 
 export function uploadedWeaponFit(object, transform, key) {

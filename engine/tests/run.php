@@ -1890,6 +1890,13 @@ try {
     check($engine->enabledReleaseScreenCount() >= 19, 'GameEngine enabledReleaseScreenCount returns enabled release screen count');
     check($engine->disabledReleaseScreenCount() >= 0, 'GameEngine disabledReleaseScreenCount returns disabled release screen count');
     check($engine->hasEnabledReleaseScreens() === true, 'GameEngine hasEnabledReleaseScreens returns boolean enabled release screens status');
+
+    // --- Wave 133 (zone-beta251): GameEngine hasDisabledReleaseScreens, activeReleaseScreenRatioPct, activeReleaseHasModules, activeReleaseModuleNames & isKnownReleaseModule ---
+    check(is_bool($engine->hasDisabledReleaseScreens()), 'GameEngine hasDisabledReleaseScreens returns boolean disabled release screens status');
+    check($engine->activeReleaseScreenRatioPct() > 0.0 && $engine->activeReleaseScreenRatioPct() <= 100.0, 'GameEngine activeReleaseScreenRatioPct returns active release screen ratio percentage');
+    check($engine->activeReleaseHasModules() === true, 'GameEngine activeReleaseHasModules returns boolean active release modules status');
+    check(in_array('crimes', $engine->activeReleaseModuleNames(), true), 'GameEngine activeReleaseModuleNames returns list of active release module names');
+    check($engine->isKnownReleaseModule('crimes') === true && $engine->isKnownReleaseModule('unknown') === false, 'GameEngine isKnownReleaseModule validates release module name');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

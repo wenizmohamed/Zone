@@ -30,6 +30,14 @@ export function assetChunkCount(totalBytes) {
   return Math.max(1, Math.ceil(Math.max(0, Number(totalBytes) || 0) / ASSET_CHUNK_BYTES));
 }
 
+export function isAssetWithinByteBudget(totalBytes) {
+  return Number.isSafeInteger(totalBytes) && totalBytes >= 0 && totalBytes <= ASSET_MAX_BYTES;
+}
+
+export function maxAssetMemberCount() {
+  return 512;
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

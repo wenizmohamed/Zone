@@ -3685,4 +3685,31 @@ final class GameEngine
     {
         return $this->enabledReleaseScreenCount() > 0;
     }
+
+    public function hasDisabledReleaseScreens(): bool
+    {
+        return $this->disabledReleaseScreenCount() > 0;
+    }
+
+    public function activeReleaseScreenRatioPct(): float
+    {
+        $total = $this->activeReleaseModuleCount();
+        return $total > 0 ? round($this->enabledReleaseScreenCount() / $total * 100, 2) : 100.0;
+    }
+
+    public function activeReleaseHasModules(): bool
+    {
+        return $this->activeReleaseModuleCount() > 0;
+    }
+
+    /** @return list<string> */
+    public function activeReleaseModuleNames(): array
+    {
+        return array_keys($this->activeReleaseManifest()['modules'] ?? []);
+    }
+
+    public function isKnownReleaseModule(string $module): bool
+    {
+        return in_array($module, $this->activeReleaseModuleNames(), true);
+    }
 }
