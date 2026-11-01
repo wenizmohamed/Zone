@@ -2240,6 +2240,13 @@ try {
     check($engine->databaseSqliteBusyTimeoutMs() === 5000, 'GameEngine databaseSqliteBusyTimeoutMs returns 5000');
     check($engine->databasePostgresDefaultPort() === 5432, 'GameEngine databasePostgresDefaultPort returns 5432');
     check($engine->databasePostgresConnectTimeoutSeconds() === 10, 'GameEngine databasePostgresConnectTimeoutSeconds returns 10');
+
+    // --- Wave 183 (zone-beta301): GameEngine cacheDefaultTtlSeconds, cacheMinTtlSeconds, redisDefaultPort, redisConnectTimeoutSeconds & supportedCacheAdapterNames ---
+    check($engine->cacheDefaultTtlSeconds() === 300, 'GameEngine cacheDefaultTtlSeconds returns 300');
+    check($engine->cacheMinTtlSeconds() === 1, 'GameEngine cacheMinTtlSeconds returns 1');
+    check($engine->redisDefaultPort() === 6379, 'GameEngine redisDefaultPort returns 6379');
+    check($engine->redisConnectTimeoutSeconds() === 2.5, 'GameEngine redisConnectTimeoutSeconds returns 2.5');
+    check($engine->supportedCacheAdapterNames() === ['memory', 'redis'], 'GameEngine supportedCacheAdapterNames returns memory and redis');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

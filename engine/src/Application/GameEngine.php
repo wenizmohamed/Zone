@@ -5085,4 +5085,30 @@ final class GameEngine
     {
         return 10;
     }
+
+    public function cacheDefaultTtlSeconds(): int
+    {
+        return 300;
+    }
+
+    public function cacheMinTtlSeconds(): int
+    {
+        return 1;
+    }
+
+    public function redisDefaultPort(): int
+    {
+        return 6379;
+    }
+
+    public function redisConnectTimeoutSeconds(): float
+    {
+        return 2.5;
+    }
+
+    /** @return list<string> */
+    public function supportedCacheAdapterNames(): array
+    {
+        return ['memory', 'redis'];
+    }
 }

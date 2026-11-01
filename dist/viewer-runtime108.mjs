@@ -4,6 +4,11 @@ export const VIEWER_STARTUP_TIMEOUT_MS = 25000;
 export function viewerStartupTimeoutMs() { return VIEWER_STARTUP_TIMEOUT_MS; }
 export function maxRenderDeltaSeconds() { return .1; }
 export function isViewerRenderDeltaValid(dt) { return Number.isFinite(dt) && dt >= 0 && dt <= .1; }
+export function defaultPauseWhenHidden() { return true; }
+export function viewerStartupTimeoutReason() { return 'viewer-startup-timeout'; }
+export function viewerContextLostReason() { return 'webgl-context-lost'; }
+export function viewerDefaultRenderErrorReason() { return 'viewer-render-failed'; }
+export function viewerDefaultRuntimeErrorReason() { return 'viewer-runtime-error'; }
 export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHidden = true }) {
   let frame = null, disposed = false, failed = false, intersecting = true, last = 0;
   const sync = () => {
