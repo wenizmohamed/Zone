@@ -3003,4 +3003,29 @@ final class GameEngine
     {
         return $this->eligiblePlayerCombatOpponentCount($playerId) > 0;
     }
+
+    public function hasFamilyMembers(string $playerId = 'founder-player'): bool
+    {
+        return $this->familyMemberCount($playerId) > 0;
+    }
+
+    public function hasFamilyRespect(string $playerId = 'founder-player'): bool
+    {
+        return $this->familyRespectBalance($playerId) > 0;
+    }
+
+    public function hasHospitalMissingLife(string $playerId = 'founder-player'): bool
+    {
+        return $this->hospitalMissingLife($playerId) > 0;
+    }
+
+    public function hasHospitalDiscount(string $playerId = 'founder-player'): bool
+    {
+        return $this->hospitalDiscountPct($playerId) > 0.0;
+    }
+
+    public function hasRateLimitRemainingHits(string $playerId = 'founder-player'): bool
+    {
+        return $this->rateLimitRemainingHits($playerId) > 0;
+    }
 }

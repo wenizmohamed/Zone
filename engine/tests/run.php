@@ -1701,6 +1701,13 @@ try {
     check($engine->hasFamilyOperationDefinitions() === true, 'GameEngine hasFamilyOperationDefinitions returns boolean family operation definitions status');
     check($engine->hasDailyContractPool() === true, 'GameEngine hasDailyContractPool returns boolean daily contract pool status');
     check(is_bool($engine->hasEligiblePlayerCombatOpponents()), 'GameEngine hasEligiblePlayerCombatOpponents returns boolean eligible player combat opponents status');
+
+    // --- Wave 106 (zone-beta224): GameEngine hasFamilyMembers, hasFamilyRespect, hasHospitalMissingLife, hasHospitalDiscount & hasRateLimitRemainingHits ---
+    check(is_bool($engine->hasFamilyMembers()), 'GameEngine hasFamilyMembers returns boolean family members status');
+    check(is_bool($engine->hasFamilyRespect()), 'GameEngine hasFamilyRespect returns boolean family respect status');
+    check(is_bool($engine->hasHospitalMissingLife()), 'GameEngine hasHospitalMissingLife returns boolean hospital missing life status');
+    check(is_bool($engine->hasHospitalDiscount()), 'GameEngine hasHospitalDiscount returns boolean hospital discount status');
+    check(is_bool($engine->hasRateLimitRemainingHits()), 'GameEngine hasRateLimitRemainingHits returns boolean rate limit remaining hits status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

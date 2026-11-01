@@ -7,7 +7,7 @@ import vm from 'node:vm';
 // directory's module semantics. mountCombatPresentation is exercised in Chrome.
 const combatSource=fs.readFileSync(new URL('../dist/combat-presentation.js',import.meta.url),'utf8');
 const combatModuleUrl=new URL('../dist/combat-presentation.js',import.meta.url).href;
-const { combatEvents, combatEventLabel, combatExchangeSummary, createCombatPlayback, attackMotion, combatCameraDistance, COMBAT_CLIPS, supportedCombatActions, isSupportedCombatAction, createCombatFeedbackTimeline, installCombatStage, clearCombatFeedback, combatFeedbackBoundary } = await import('data:text/javascript;base64,'+Buffer.from(combatSource.replaceAll('import.meta.url',JSON.stringify(combatModuleUrl))).toString('base64'));
+const { combatEvents, combatEventLabel, combatExchangeSummary, createCombatPlayback, attackMotion, combatCameraDistance, COMBAT_CLIPS, supportedCombatActions, isSupportedCombatAction, resolveCombatClipName, createCombatFeedbackTimeline, installCombatStage, clearCombatFeedback, combatFeedbackBoundary } = await import('data:text/javascript;base64,'+Buffer.from(combatSource.replaceAll('import.meta.url',JSON.stringify(combatModuleUrl))).toString('base64'));
 function loadRuntimeModule(relative){const url=new URL(relative,import.meta.url),source=fs.readFileSync(url,'utf8');return import('data:text/javascript;base64,'+Buffer.from(source.replaceAll('import.meta.url',JSON.stringify(url.href))).toString('base64'));}
 const encounter = (version=1, log=[]) => ({ id:'actual-server-id', version, phase:'fighting', log });
 const hit = { n:1, actor:'player', side:'opp', d:12, yl:900, ol:88 };
@@ -172,4 +172,11 @@ test('combatExchangeSummary aggregates accuracy, damage, and bilingual tactical 
   assert.equal(timeline.diagnostics().hasActiveTimer, true);
   timeline.dispose();
   assert.deepEqual(timeline.diagnostics(), { disposed: true, hasActiveTimer: false, delay: 300 });
+  assert.equal(resolveCombatClipName('slash'), 'Sword_Slash');
+  assert.equal(resolveCombatClipName('unknown'), 'Idle');
+  const h = harness();
+  assert.equal(h.playback.isDisposed(), false);
+  assert.equal(h.playback.isActive(), true);
+  h.playback.dispose();
+  assert.equal(h.playback.isDisposed(), true);
 });
