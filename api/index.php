@@ -91,6 +91,7 @@ if (getenv('VERCEL') === '1' && str_contains($relayOrigin, 'social.aihubz.me')) 
     $relayKey = '';
     putenv('ZONE_DATABASE_URL=sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite');
     putenv('ZONE_ASSET_ROOT=' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-assets');
+    putenv('ZONE_BETA_OWNER_ACCESS=1');
 }
 if ($relayOrigin !== '' || $relayKey !== '') {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);

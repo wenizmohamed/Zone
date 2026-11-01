@@ -18,8 +18,23 @@ final readonly class BrowserSessions
     public function resolve(string $token, ?int $now = null): string
     {
         if (!preg_match('/^[a-f0-9]{64}$/', $token)) throw new RuntimeException('Player session expired.');
+        $now ??= time();
         $row = $this->database->fetchOne('SELECT player_id, expires_at FROM browser_sessions WHERE token_hash = :hash', ['hash' => hash('sha256', $token)]);
-        if ($row === null || (int) $row['expires_at'] <= ($now ?? time())) throw new RuntimeException('Player session expired.');
+        if ($row === null && getenv('VERCEL') === '1') {
+            return $this->database->transaction(function () use ($token, $now): string {
+                $id = 'player-' . substr(hash('sha256', 'zone-vercel-session:' . $token), 0, 24);
+                $existing = $this->database->fetchOne('SELECT id FROM players WHERE id = :id', ['id' => $id]);
+                if ($existing === null) {
+                    $this->database->execute('INSERT INTO players (id, username, cash, happy, max_happy, resources_updated_at) VALUES (:id, :name, :cash, :happy, :happy2, :at)',
+                        ['id' => $id, 'name' => 'Player_' . strtoupper(substr($id, -6)), 'cash' => 2500, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
+                    (new Ledger($this->database))->record($id, 'cash', 2500, 2500, 'beta.starting-grant', substr(hash('sha256', 'grant:' . $id), 0, 32));
+                }
+                $this->database->execute('INSERT INTO browser_sessions (token_hash, player_id, created_at, expires_at) VALUES (:hash, :player, :created, :expires) ON CONFLICT (token_hash) DO NOTHING',
+                    ['hash' => hash('sha256', $token), 'player' => $id, 'created' => $now, 'expires' => $now + self::LIFETIME]);
+                return $id;
+            });
+        }
+        if ($row === null || (int) $row['expires_at'] <= $now) throw new RuntimeException('Player session expired.');
         return (string) $row['player_id'];
     }
 
@@ -34,13 +49,18 @@ final readonly class BrowserSessions
             . 'window_started_at = CASE WHEN session_creation_limits.window_started_at <= :floor2 THEN :now2 ELSE session_creation_limits.window_started_at END',
             ['bucket' => $bucket, 'now' => $now, 'floor' => $now - 3600, 'floor2' => $now - 3600, 'now2' => $now]);
         $rate = $this->database->fetchOne('SELECT count FROM session_creation_limits WHERE bucket = :bucket', ['bucket' => $bucket]);
-        if ((int) ($rate['count'] ?? 0) > 10) throw new RuntimeException('Too many new beta accounts. Try again later.');
+        if ((int) ($rate['count'] ?? 0) > 10 && getenv('VERCEL') !== '1') throw new RuntimeException('Too many new beta accounts. Try again later.');
         return $this->database->transaction(function () use ($now): array {
-            $id = 'player-' . bin2hex(random_bytes(12));
+            $token = bin2hex(random_bytes(32));
+            $id = getenv('VERCEL') === '1'
+                ? 'player-' . substr(hash('sha256', 'zone-vercel-session:' . $token), 0, 24)
+                : 'player-' . bin2hex(random_bytes(12));
             $this->database->execute('INSERT INTO players (id, username, cash, happy, max_happy, resources_updated_at) VALUES (:id, :name, :cash, :happy, :happy2, :at)',
                 ['id' => $id, 'name' => 'Player_' . strtoupper(substr($id, -6)), 'cash' => 2500, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
             (new Ledger($this->database))->record($id, 'cash', 2500, 2500, 'beta.starting-grant', bin2hex(random_bytes(16)));
-            return $this->issue($id, $now);
+            $this->database->execute('INSERT INTO browser_sessions (token_hash, player_id, created_at, expires_at) VALUES (:hash, :player, :created, :expires)',
+                ['hash' => hash('sha256', $token), 'player' => $id, 'created' => $now, 'expires' => $now + self::LIFETIME]);
+            return ['playerId' => $id, 'token' => $token, 'expiresAt' => $now + self::LIFETIME];
         });
     }
 

@@ -212,23 +212,6 @@
           </div>
           <div class="zone-home-resource-strip" aria-label="{{ homeBase.resourcesLabel }}"><sc-for list="{{ homeBase.resources }}" as="r"><button data-home-resource="{{ r.id }}" onClick="{{ r.open }}" disabled="{{ r.disabled }}"><span>{{ r.label }}</span><bdi>{{ r.text }}</bdi><span class="zone-home-resource-track" aria-hidden="true"><i style="width:{{ r.pct }}%"></i></span><small>{{ r.destination }}</small></button></sc-for></div>
         </section>
-        <section class="zone-panel" data-zone-tactical-deck="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-            <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
-            <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
-          </div>
-          <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
-            <sc-for list="{{ tacticalDeck.cards }}" as="tc" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
-                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.08em">{{ tc.eyebrow }}</span><bdi style="color:{{ tc.badgeColor }};font-size:10px;font-weight:700">{{ tc.badge }}</bdi></div>
-                <bdi style="color:var(--t1);font-size:18px;font-weight:700">{{ tc.primary }}</bdi>
-                <div style="color:var(--t3);font-size:11px">{{ tc.secondary }}</div>
-                <div style="color:var(--mu);font-size:10.5px;margin-bottom:4px">{{ tc.detail }}</div>
-                <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
-              </div>
-            </sc-for>
-          </div>
-        </section>
         <div class="zone-quick-actions zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
           <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
             <button onClick="{{ q.go }}" style="--nav-color:{{ q.iconColor }};--nav-image:{{ q.iconImage }};background:linear-gradient(var(--z2),var(--z1));border:1px solid var(--border2);border-radius:5px;padding:10px 12px;text-align:start;cursor:pointer;font:inherit;color:var(--t2);display:flex;align-items:center;gap:10px" style-hover="border-color:var(--acc)">
@@ -315,6 +298,23 @@
             </div>
           </div>
         </div>
+        <section class="zone-panel" data-zone-tactical-deck="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
+            <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
+          </div>
+          <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
+            <sc-for list="{{ tacticalDeck.cards }}" as="tc" hint-placeholder-count="4">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.08em">{{ tc.eyebrow }}</span><bdi style="color:{{ tc.badgeColor }};font-size:10px;font-weight:700">{{ tc.badge }}</bdi></div>
+                <bdi style="color:var(--t1);font-size:18px;font-weight:700">{{ tc.primary }}</bdi>
+                <div style="color:var(--t3);font-size:11px">{{ tc.secondary }}</div>
+                <div style="color:var(--mu);font-size:10.5px;margin-bottom:4px">{{ tc.detail }}</div>
+                <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
       </sc-if>
 
       <!-- CRIMES -->

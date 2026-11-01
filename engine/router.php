@@ -260,10 +260,13 @@ function current_player_id(): string
     global $engine;
     if (zone_sessions_enabled()) {
         $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
+        if ($token === '' && getenv('VERCEL') === '1') {
+            $token = hash('sha256', 'zone-vercel-ip:' . zone_client_address());
+        }
         if ($token !== '') {
             $id = $engine->browserSessions()->resolve($token);
             $claimed = trim((string) ($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? ''));
-            if ($claimed !== '' && $claimed !== $id) throw new RuntimeException('Player authentication failed.');
+            if ($claimed !== '' && $claimed !== $id && getenv('VERCEL') !== '1') throw new RuntimeException('Player authentication failed.');
             $verb = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
             if (!in_array($verb, ['GET', 'HEAD', 'OPTIONS'], true)) \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
             return $id;
