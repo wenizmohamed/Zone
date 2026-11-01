@@ -2597,6 +2597,13 @@ try {
     check($engine->gameplayCatalogSupportedChannels() === ['foundation', 'draft'], 'GameEngine gameplayCatalogSupportedChannels returns foundation and draft');
     check($engine->contentAuditDefaultLimit() === 100, 'GameEngine contentAuditDefaultLimit returns 100');
     check($engine->contentAuditEntryCount() >= 0, 'GameEngine contentAuditEntryCount returns non-negative count');
+
+    // --- Wave 234 (zone-beta352): GameEngine ledgerSummaryForPlayer, rateLimiterStatusForPlayer, cooldownRemainingSecondsForPlayer, activeCooldownCountForPlayer & unreadNotificationCountForPlayer ---
+    check(isset($engine->ledgerSummaryForPlayer()['totalEntries']), 'GameEngine ledgerSummaryForPlayer returns totalEntries');
+    check(isset($engine->rateLimiterStatusForPlayer()['enabled']), 'GameEngine rateLimiterStatusForPlayer returns enabled status');
+    check($engine->cooldownRemainingSecondsForPlayer('founder-player', 'crime') >= 0, 'GameEngine cooldownRemainingSecondsForPlayer returns non-negative seconds');
+    check($engine->activeCooldownCountForPlayer() >= 0, 'GameEngine activeCooldownCountForPlayer returns non-negative count');
+    check($engine->unreadNotificationCountForPlayer() >= 0, 'GameEngine unreadNotificationCountForPlayer returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

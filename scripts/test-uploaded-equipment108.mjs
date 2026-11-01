@@ -5,7 +5,7 @@ import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, uploadedShortGunTargetLength, uploadedLongGunTargetLength, uploadedKnifeTargetLength, uploadedBatTargetLength, uploadedArmorChestOffsetY, uploadedAssetHashLength, uploadedEquipmentSlots, isSupportedUploadedEquipmentSlot, uploadedCharacterRepresentation, uploadedArmorRepresentation, uploadedWeaponRepresentation, uploadedWeaponGripQuality, uploadedArmorRiggingMode, uploadedWeaponDescriptorPrefix, uploadedArmorBoneName, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
-import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount } from '../dist/character-presentation.js';
+import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount, characterArtSourceUrl, characterArtQualityTier, defaultFallbackSurfaceHexColor, defaultFallbackSurfaceRoughness, preservedSurfaceMapKeys } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
@@ -219,4 +219,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(armReachMaxMarginM(), .008);
   assert.deepEqual(defaultMosinAnchorAdjustmentM(), [0, 0, 0]);
   assert.deepEqual(requiredArmSides(), ['r', 'l']);
+  assert.equal(characterArtSourceUrl(), 'https://quaternius.com/packs/ultimatemodularcharacters.html');
+  assert.equal(characterArtQualityTier(), 'stylized-rigged');
+  assert.equal(defaultFallbackSurfaceHexColor(), 0x61645e);
+  assert.equal(defaultFallbackSurfaceRoughness(), .82);
+  assert.deepEqual(preservedSurfaceMapKeys(), ['map', 'normalMap', 'aoMap', 'emissiveMap']);
 });

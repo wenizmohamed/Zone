@@ -6397,4 +6397,31 @@ final class GameEngine
     {
         return $this->content->auditEntryCount();
     }
+
+    /** @return array{totalEntries: int, netCashFlow: int} */
+    public function ledgerSummaryForPlayer(string $playerId = 'founder-player'): array
+    {
+        return $this->ledger->summary($playerId);
+    }
+
+    /** @return array<string, mixed> */
+    public function rateLimiterStatusForPlayer(string $playerId = 'founder-player'): array
+    {
+        return $this->rateLimiter->status($playerId);
+    }
+
+    public function cooldownRemainingSecondsForPlayer(string $playerId, string $action): int
+    {
+        return $this->cooldowns->remainingSeconds($playerId, $action);
+    }
+
+    public function activeCooldownCountForPlayer(string $playerId = 'founder-player'): int
+    {
+        return count($this->cooldowns->activeCooldowns($playerId));
+    }
+
+    public function unreadNotificationCountForPlayer(string $playerId = 'founder-player'): int
+    {
+        return $this->notifications->unreadCount($playerId);
+    }
 }

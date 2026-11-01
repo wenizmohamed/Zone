@@ -87,6 +87,26 @@ export function stageTextureAssets() {
   return ['concrete_floor_02', 'brick_wall_04'];
 }
 
+export function characterArtSourceUrl() {
+  return CHARACTER_ART.source;
+}
+
+export function characterArtQualityTier() {
+  return CHARACTER_ART.quality;
+}
+
+export function defaultFallbackSurfaceHexColor() {
+  return 0x61645e;
+}
+
+export function defaultFallbackSurfaceRoughness() {
+  return .82;
+}
+
+export function preservedSurfaceMapKeys() {
+  return ['map', 'normalMap', 'aoMap', 'emissiveMap'];
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });
