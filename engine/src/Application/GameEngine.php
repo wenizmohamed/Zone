@@ -3893,4 +3893,31 @@ final class GameEngine
     {
         return strlen($this->draftReleaseFingerprint()) === 64;
     }
+
+    public function publishedReleaseCount(): int
+    {
+        return $this->releases->releaseCount();
+    }
+
+    public function hasPublishedReleases(): bool
+    {
+        return $this->publishedReleaseCount() > 0;
+    }
+
+    /** @return list<string> */
+    public function supportedReleaseScreenIds(): array
+    {
+        return ReleaseManager::supportedScreenIds();
+    }
+
+    /** @return list<string> */
+    public function supportedReleaseBlockTypes(): array
+    {
+        return ReleaseManager::supportedBlockTypes();
+    }
+
+    public function hasReleaseFoundation(): bool
+    {
+        return $this->releases->hasFoundation();
+    }
 }

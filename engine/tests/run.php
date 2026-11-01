@@ -1946,6 +1946,13 @@ try {
     check($engine->draftReleaseUpdatedAt() !== '', 'GameEngine draftReleaseUpdatedAt returns draft release updatedAt timestamp');
     check(strlen($engine->draftReleaseFingerprint()) === 64, 'GameEngine draftReleaseFingerprint returns 64-char sha256 fingerprint');
     check($engine->hasDraftReleaseFingerprint() === true, 'GameEngine hasDraftReleaseFingerprint returns boolean draft fingerprint status');
+
+    // --- Wave 141 (zone-beta259): GameEngine publishedReleaseCount, hasPublishedReleases, supportedReleaseScreenIds, supportedReleaseBlockTypes & hasReleaseFoundation ---
+    check($engine->publishedReleaseCount() >= 1, 'GameEngine publishedReleaseCount returns published release count');
+    check($engine->hasPublishedReleases() === true, 'GameEngine hasPublishedReleases returns boolean published releases status');
+    check(count($engine->supportedReleaseScreenIds()) === 19, 'GameEngine supportedReleaseScreenIds returns 19 supported screen IDs');
+    check(count($engine->supportedReleaseBlockTypes()) === 5, 'GameEngine supportedReleaseBlockTypes returns 5 supported block types');
+    check($engine->hasReleaseFoundation() === true, 'GameEngine hasReleaseFoundation returns boolean release foundation status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

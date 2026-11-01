@@ -96,6 +96,10 @@
   window.ZoneAccount = {
     submit,
     current: () => identity,
+    supportedActions: () => ['claim', 'login', 'recover', 'logout'],
+    isSupportedAction: action => ['claim', 'login', 'recover', 'logout'].includes(String(action ?? '')),
+    isClaimed: () => Boolean(identity?.claimed),
+    isGuest: () => Boolean(identity?.playerId && !identity?.claimed),
     diagnostics: () => ({
       lang,
       ready,
