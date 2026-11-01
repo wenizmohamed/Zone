@@ -4655,4 +4655,31 @@ final class GameEngine
     {
         return 1000;
     }
+
+    /** @return list<string> */
+    public function supportedProgressionPenaltyTypes(): array
+    {
+        return ['jail', 'hosp'];
+    }
+
+    public function isSupportedProgressionPenaltyType(string $type): bool
+    {
+        return in_array($type, $this->supportedProgressionPenaltyTypes(), true);
+    }
+
+    public function progressionMaxPenaltySeconds(): int
+    {
+        return 86400;
+    }
+
+    public function progressionCombatChainWindowMs(): int
+    {
+        return 300000;
+    }
+
+    /** @return list<int> */
+    public function progressionCombatChainMilestones(): array
+    {
+        return [10, 25, 50, 100, 250, 500];
+    }
 }

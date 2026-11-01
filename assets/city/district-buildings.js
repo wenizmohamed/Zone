@@ -19,6 +19,22 @@ export function buildingLayerIds(){
   return [FILL,EXTRUSION];
 }
 
+export function buildingLayerCount(){
+  return buildingLayerIds().length;
+}
+
+export function defaultSourceZoom(){
+  return LIMITS.sourceZoom;
+}
+
+export function maxTileBudget(){
+  return LIMITS.maxTiles;
+}
+
+export function maxTileConcurrency(){
+  return LIMITS.concurrency;
+}
+
 export function buildingSourceId(){
   return SOURCE;
 }
@@ -178,5 +194,5 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     }catch(_){abort.abort();data=null;if(!disposed){cleanupLayers();state.status='degraded';state.stage='load-failed';state.complete=false;publish();}}
     finally{clearTimeout(timer);timer=null;}
   })();
-  return {ready,ensure:styleLoaded,isDisposed:()=>disposed,isComplete:()=>state.complete,isReady:()=>state.status==='ready',isDegraded:()=>state.status==='degraded',diagnostics:()=>({...state}),dispose(){if(disposed)return;disposed=true;abort.abort();clearTimeout(timer);clearTimeout(renderTimer);resolveRender?.();resolveRender=null;map.off?.('style.load',styleLoaded);map.off?.('idle',checkRendered);map.off?.('sourcedata',sourceData);map.off?.('moveend',cameraChanged);cleanupLayers();data=null;state.status='disposed';state.complete=false;publish();}};
+  return {ready,ensure:styleLoaded,isDisposed:()=>disposed,isComplete:()=>state.complete,isReady:()=>state.status==='ready',isDegraded:()=>state.status==='degraded',loadedTileCount:()=>state.loadedTiles,expectedTileCount:()=>state.expectedTiles,diagnostics:()=>({...state}),dispose(){if(disposed)return;disposed=true;abort.abort();clearTimeout(timer);clearTimeout(renderTimer);resolveRender?.();resolveRender=null;map.off?.('style.load',styleLoaded);map.off?.('idle',checkRendered);map.off?.('sourcedata',sourceData);map.off?.('moveend',cameraChanged);cleanupLayers();data=null;state.status='disposed';state.complete=false;publish();}};
 }

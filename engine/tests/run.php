@@ -2128,6 +2128,13 @@ try {
     check($engine->supportedProgressionMetricIds() === ['crimes', 'trains', 'wins', 'shifts', 'buys'], 'GameEngine supportedProgressionMetricIds returns 5 progression metrics');
     check($engine->isSupportedProgressionMetricId('crimes') === true && $engine->isSupportedProgressionMetricId('gambling') === false, 'GameEngine isSupportedProgressionMetricId validates metric ID');
     check($engine->progressionMaxEscrowDelta() === 1000, 'GameEngine progressionMaxEscrowDelta returns 1000');
+
+    // --- Wave 167 (zone-beta285): GameEngine supportedProgressionPenaltyTypes, isSupportedProgressionPenaltyType, progressionMaxPenaltySeconds, progressionCombatChainWindowMs & progressionCombatChainMilestones ---
+    check($engine->supportedProgressionPenaltyTypes() === ['jail', 'hosp'], 'GameEngine supportedProgressionPenaltyTypes returns jail and hosp');
+    check($engine->isSupportedProgressionPenaltyType('jail') === true && $engine->isSupportedProgressionPenaltyType('ban') === false, 'GameEngine isSupportedProgressionPenaltyType validates penalty type');
+    check($engine->progressionMaxPenaltySeconds() === 86400, 'GameEngine progressionMaxPenaltySeconds returns 86400');
+    check($engine->progressionCombatChainWindowMs() === 300000, 'GameEngine progressionCombatChainWindowMs returns 300000');
+    check($engine->progressionCombatChainMilestones() === [10, 25, 50, 100, 250, 500], 'GameEngine progressionCombatChainMilestones returns 6 chain milestones');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
