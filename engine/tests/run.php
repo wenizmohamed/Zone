@@ -2632,6 +2632,13 @@ try {
     check($engine->releaseActiveSummaryVersion() >= 1, 'GameEngine releaseActiveSummaryVersion returns positive version');
     check($engine->releaseActiveSummaryThemeId() !== '', 'GameEngine releaseActiveSummaryThemeId returns non-empty theme ID');
     check($engine->moduleRegistryInstalledListCount() >= 27, 'GameEngine moduleRegistryInstalledListCount returns >= 27');
+
+    // --- Wave 239 (zone-beta357): GameEngine mediaAssetInspectorSupportedExtensions, mediaAssetInspectorMimeForFile, mediaSafeBundleMaxExpandedBytes, mediaSafeBundleMaxMembers & mediaSafeBundleLimits ---
+    check(in_array('glb', $engine->mediaAssetInspectorSupportedExtensions(), true), 'GameEngine mediaAssetInspectorSupportedExtensions includes glb');
+    check($engine->mediaAssetInspectorMimeForFile('model.glb') === 'model/gltf-binary', 'GameEngine mediaAssetInspectorMimeForFile returns model/gltf-binary');
+    check($engine->mediaSafeBundleMaxExpandedBytes() === 125829120, 'GameEngine mediaSafeBundleMaxExpandedBytes returns 125829120');
+    check($engine->mediaSafeBundleMaxMembers() === 256, 'GameEngine mediaSafeBundleMaxMembers returns 256');
+    check(($engine->mediaSafeBundleLimits()['maxMembers'] ?? 0) === 256, 'GameEngine mediaSafeBundleLimits returns maxMembers 256');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -6529,4 +6529,31 @@ final class GameEngine
     {
         return count(array_filter($this->modules->all(), static fn (array $module): bool => (bool) ($module['installed'] ?? false)));
     }
+
+    /** @return list<string> */
+    public function mediaAssetInspectorSupportedExtensions(): array
+    {
+        return \Zone\Engine\Core\Media\AssetInspector::supportedExtensions();
+    }
+
+    public function mediaAssetInspectorMimeForFile(string $name): string
+    {
+        return \Zone\Engine\Core\Media\AssetInspector::mime($name);
+    }
+
+    public function mediaSafeBundleMaxExpandedBytes(): int
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::MAX_EXPANDED_BYTES;
+    }
+
+    public function mediaSafeBundleMaxMembers(): int
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::MAX_MEMBERS;
+    }
+
+    /** @return array{maxExpandedBytes: int, maxMembers: int, extensions: list<string>} */
+    public function mediaSafeBundleLimits(): array
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::limits();
+    }
 }

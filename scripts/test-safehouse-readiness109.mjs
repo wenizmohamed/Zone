@@ -179,6 +179,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(h.window.ZoneSafehouse.isRenderReady(), true);
   assert.equal(h.window.ZoneSafehouse.isRenderFailed(), false);
   assert.equal(h.window.ZoneSafehouse.isParentInitialized(), true);
+  assert.deepEqual(Array.from(h.window.ZoneSafehouse.defaultCameraPosition()), [7.5, 6.1, 9.1]);
+  assert.deepEqual(Array.from(h.window.ZoneSafehouse.mobileCameraPosition()), [8.7, 7.8, 12.8]);
+  assert.deepEqual(Array.from(h.window.ZoneSafehouse.defaultCameraTarget()), [0, .8, -.1]);
+  assert.equal(h.window.ZoneSafehouse.pinClampMarginPx(), 8);
+  assert.deepEqual({ ...h.window.ZoneSafehouse.keyboardShortcutMap() }, { Home: 'overview', '0': 'overview', '1': 'armory', '2': 'vault', '3': 'lounge' });
   h.dispose();
   assert.equal(h.window.ZoneSafehouse.isReady(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), true);
