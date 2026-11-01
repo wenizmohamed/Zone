@@ -327,3 +327,8 @@ export function surfacePaletteColors(category){return isSupportedSurfacePaletteC
 export function maxSurfaceWindowLimit(){return LIMITS.maxWindows;}
 export function maxSurfaceRoofDetailLimit(){return LIMITS.maxRoofDetails;}
 export function maxSurfaceWallPanelLimit(){return LIMITS.maxWallPanels;}
+export function maxSurfaceBandLimit(){return LIMITS.maxBands;}
+export function maxSurfaceFeatureLimit(){return LIMITS.maxFeatures;}
+export function maxSurfaceCoordinateLimit(){return LIMITS.maxCoordinates;}
+export function defaultSurfacePrepareTimeoutMs(){return 12000;}
+export function maxSurfacePrepareTimeoutMs(){return 30000;}

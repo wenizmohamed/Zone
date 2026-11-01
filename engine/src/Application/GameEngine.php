@@ -5764,4 +5764,29 @@ final class GameEngine
     {
         return 43200;
     }
+
+    public function playerAccountMaxFailedLoginsPerHour(): int
+    {
+        return 10;
+    }
+
+    public function playerAccountMinUsernameLength(): int
+    {
+        return 3;
+    }
+
+    public function playerAccountMaxUsernameLength(): int
+    {
+        return 24;
+    }
+
+    public function playerAccountMinPasswordLength(): int
+    {
+        return 8;
+    }
+
+    public function playerAccountMaxPasswordLength(): int
+    {
+        return 128;
+    }
 }

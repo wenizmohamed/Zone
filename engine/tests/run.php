@@ -2429,6 +2429,13 @@ try {
     check($engine->worldDirectorMaxMaxFinds() === 5, 'GameEngine worldDirectorMaxMaxFinds returns 5');
     check($engine->worldDirectorDefaultMaxFinds() === 2, 'GameEngine worldDirectorDefaultMaxFinds returns 2');
     check($engine->ownerPlaytestSessionTtlSeconds() === 43200, 'GameEngine ownerPlaytestSessionTtlSeconds returns 43200');
+
+    // --- Wave 210 (zone-beta328): GameEngine playerAccountMaxFailedLoginsPerHour, playerAccountMinUsernameLength, playerAccountMaxUsernameLength, playerAccountMinPasswordLength & playerAccountMaxPasswordLength ---
+    check($engine->playerAccountMaxFailedLoginsPerHour() === 10, 'GameEngine playerAccountMaxFailedLoginsPerHour returns 10');
+    check($engine->playerAccountMinUsernameLength() === 3, 'GameEngine playerAccountMinUsernameLength returns 3');
+    check($engine->playerAccountMaxUsernameLength() === 24, 'GameEngine playerAccountMaxUsernameLength returns 24');
+    check($engine->playerAccountMinPasswordLength() === 8, 'GameEngine playerAccountMinPasswordLength returns 8');
+    check($engine->playerAccountMaxPasswordLength() === 128, 'GameEngine playerAccountMaxPasswordLength returns 128');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -401,6 +401,11 @@ test('surfacePaletteCategories, isDisposed, and isVisible expose district surfac
   assert.equal(module.maxSurfaceWindowLimit(),12000);
   assert.equal(module.maxSurfaceRoofDetailLimit(),600);
   assert.equal(module.maxSurfaceWallPanelLimit(),12000);
+  assert.equal(module.maxSurfaceBandLimit(),6000);
+  assert.equal(module.maxSurfaceFeatureLimit(),5000);
+  assert.equal(module.maxSurfaceCoordinateLimit(),160000);
+  assert.equal(module.defaultSurfacePrepareTimeoutMs(),12000);
+  assert.equal(module.maxSurfacePrepareTimeoutMs(),30000);
   const h=harness(),control=h.create(h.map,[feature(17)],{center:[0,0]});await control.ready;
   assert.equal(control.isDisposed(),false);assert.equal(control.isVisible(),true);assert.equal(control.isPrepared(),true);
   control.setVisible(false);assert.equal(control.isVisible(),false);
