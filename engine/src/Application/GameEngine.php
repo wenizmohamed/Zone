@@ -180,6 +180,19 @@ final class GameEngine
                 'server-authoritative-faction-control',
                 'territory-benefits-and-wars',
             ],
+            'geminiArsenal' => [
+                'primaryModel' => 'gemini-3.7-flash',
+                'thinkingLevels' => ['LOW', 'MEDIUM', 'HIGH'],
+                'googleProducts' => [
+                    'Gemini 3.7 Flash Function Calling',
+                    'Vertex AI Agent Engine',
+                    'Google Maps 3D Tiles & Street Dispatch',
+                    'Imagen 3 + Blender Cycles 3D PBR Pipeline',
+                    'Gemini Live Bilingual Voice Synthesis (en-US / ar-SA)',
+                ],
+                'clothedWardrobeRigs' => ['Suit.glb', 'Casual_Hoodie.glb', 'Swat.glb'],
+                'pbrWeaponsCount' => 51,
+            ],
         ];
     }
 

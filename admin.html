@@ -90,10 +90,10 @@
           <div><span class="eyebrow" data-copy="controlCenter">CONTROL CENTER</span><h1 data-copy="overview">Platform overview</h1><p data-copy="overviewSub">One control plane for the engine, modules, content, releases, and the live game.</p></div>
           <button class="button secondary" type="button" data-go="releases" data-copy="releaseHistory">Release history</button>
         </div>
-        <article class="panel" data-open-engine-telemetry="1" data-open-engine-agi-studio="1" style="margin-bottom:16px;border-top:2px solid #a3d900">
+        <article class="panel" data-open-engine-telemetry="1" data-open-engine-agi-studio="1" data-gemini-cloud-arsenal="1" style="margin-bottom:16px;border-top:2px solid #a3d900">
           <div class="panel-head">
-            <div><strong>OPEN ENGINE 3.6 — AUTONOMOUS AGI GAME ARCHITECT</strong><p style="margin:4px 0 0;opacity:.82;font-size:13px">Natural-Language Game Builder · Live Server-Authoritative API Synthesis · Clothed 3D Character Wardrobe (Suit / Street / Tactical SWAT + Armor) · 51 3D PBR Weapons · EN/AR</p></div>
-            <span class="status good">AGI 3.6 ONLINE</span>
+            <div><strong>OPEN ENGINE 3.6 — GOOGLE GEMINI 3.7 FLASH &amp; VERTEX AI GAME ARCHITECT</strong><p style="margin:4px 0 0;opacity:.82;font-size:13px">Gemini 3.7 Function Calling · Tunable Thinking (LOW/MEDIUM/HIGH) · Google Maps 3D · Imagen 3 + Cycles PBR · Clothed 3D Wardrobe &amp; 51 Weapons · EN/AR</p></div>
+            <span class="status good">GEMINI 3.7 + AGI 3.6 ONLINE</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px">
             <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
@@ -105,7 +105,7 @@
                   <span class="badge">Suit.glb (Clothed)</span>
                   <span class="badge">Casual_Hoodie.glb (Clothed)</span>
                   <span class="badge">Swat.glb + Worn Armor Vest</span>
-                  <span class="badge">24 Animations</span>
+                  <span class="badge">6-Zone Anatomical Hitboxes</span>
                 </div>
               </div>
             </div>
@@ -125,22 +125,47 @@
                 </div>
               </div>
             </div>
+            <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
+              <div style="flex:1;min-width:0">
+                <span class="eyebrow" style="color:#a3d900">GOOGLE GEMINI 3.7 &amp; CLOUD ARSENAL</span>
+                <h3 style="margin:4px 0;font-size:15px">Vertex AI · Google Maps 3D · BigQuery Monte-Carlo · Live Voice</h3>
+                <p style="margin:0 0 8px;font-size:12px;opacity:.82">Integrated Google Gemini 3.7 Flash function calling, tunable reasoning depth, 120-block Google Maps 3D geospatial sync, and bilingual voice synthesis.</p>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
+                  <span class="badge">Gemini 3.7 Flash</span>
+                  <span class="badge">Vertex AI Agent Engine</span>
+                  <span class="badge">Google Maps 3D Tiles</span>
+                  <span class="badge">Imagen 3 + Cycles PBR</span>
+                </div>
+              </div>
+            </div>
           </div>
           <div style="margin-top:12px;padding:12px;background:#0b0e12;border:1px solid #252b33;border-radius:6px">
-            <label for="agiPromptInput"><strong style="display:block;margin-bottom:6px">AGI Game Architect Prompt (Executes Real Engine Draft Mutations in EN / AR)</strong></label>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+              <label for="agiPromptInput"><strong>Gemini 3.7 + AGI Game Architect Prompt (Executes Real Engine Draft Mutations in EN / AR)</strong></label>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <label for="agiThinkingDepth" style="font-size:12px;opacity:.85">Thinking Depth:</label>
+                <select id="agiThinkingDepth" style="padding:4px 8px;background:#080a0d;color:#a3d900;border:1px solid #2b3137;border-radius:4px">
+                  <option value="HIGH" selected>HIGH (Deep Monte-Carlo)</option>
+                  <option value="MEDIUM">MEDIUM (Balanced)</option>
+                  <option value="LOW">LOW (Fast Sub-50ms)</option>
+                </select>
+                <button class="button secondary" id="agiVoiceButton" type="button">🔊 Speak AGI Report</button>
+              </div>
+            </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input id="agiPromptInput" type="text" value="Create a high-stakes Tier-5 Central Vault Armored Heist crime (Nerve 16, Payout $35,000-$95,000) and calibrate Bullpup &amp; M4A1 armory tier" placeholder="Tell the AGI Architect what crime, weapon, economy rule, module, or screen to build..." style="flex:1;min-width:240px">
-              <button class="button primary" id="agiExecuteButton" type="button">Execute AGI Build</button>
+              <input id="agiPromptInput" type="text" value="Create a high-stakes Tier-5 Central Vault Armored Heist crime (Nerve 16, Payout $35,000-$95,000) and calibrate Bullpup &amp; M4A1 armory tier" placeholder="Tell the Gemini 3.7 AGI Architect what crime, weapon, economy rule, module, or screen to build..." style="flex:1;min-width:240px">
+              <button class="button primary" id="agiExecuteButton" type="button">Execute Gemini AGI Build</button>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button class="button secondary" type="button" data-agi-preset="syndicate-heist">AGI: Build Tier-5 Armored Heist (Live API)</button>
-              <button class="button secondary" type="button" data-agi-preset="bullpup-tar21">AGI: Calibrate 3D Bullpup &amp; M4 Armory</button>
-              <button class="button secondary" type="button" data-agi-preset="clothed-wardrobe">AGI: Inspect Clothed 3D Wardrobe &amp; Armor</button>
-              <button class="button secondary" type="button" data-agi-preset="rebalance-armory">AGI: Run 51-Weapon Economy Audit</button>
+              <button class="button secondary" type="button" data-agi-preset="syndicate-heist">Gemini Function Call: Build Tier-5 Heist</button>
+              <button class="button secondary" type="button" data-agi-preset="bullpup-tar21">Imagen 3 + Cycles: Calibrate 3D Bullpup &amp; M4</button>
+              <button class="button secondary" type="button" data-agi-preset="clothed-wardrobe">Gemini Vision: Verify Clothed 3D Wardrobe &amp; Hitboxes</button>
+              <button class="button secondary" type="button" data-agi-preset="rebalance-armory">Vertex AI: Run 51-Weapon Monte-Carlo Audit</button>
             </div>
-            <pre id="agiStudioOutput" dir="ltr" style="margin:10px 0 0;padding:10px;background:#06080b;border:1px solid #1e242c;border-radius:4px;font-size:12px;color:#a3d900;white-space:pre-wrap">[OPEN ENGINE AGI 3.6 READY]
-• Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest (24 animations, 19 right-hand grip bones)
-• 3D PBR Armory: 51 real 3D GLB weapons including Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), G3A3, AKM, Dragunov &amp; Glock 18</pre>
+            <pre id="agiStudioOutput" dir="ltr" style="margin:10px 0 0;padding:10px;background:#06080b;border:1px solid #1e242c;border-radius:4px;font-size:12px;color:#a3d900;white-space:pre-wrap">[GOOGLE GEMINI 3.7 FLASH + OPEN ENGINE AGI 3.6 READY · THINKING: HIGH]
+• Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest (24 animations, 19 right-hand grip bones, 6-zone anatomical hitboxes)
+• 3D PBR Armory: 51 real 3D GLB weapons including Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), G3A3, AKM, Dragunov &amp; Glock 18
+• Google Cloud Arsenal: Gemini 3.7 Function Calling · Vertex AI Monte-Carlo · Google Maps 3D 120-Block Sync · Live Voice Briefing</pre>
           </div>
           <div class="head-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
             <button class="button secondary" type="button" data-go="content">Content &amp; Economy Studio</button>

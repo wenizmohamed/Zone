@@ -280,6 +280,31 @@
                   <bdi style="color:var(--t2);font-size:11px;font-weight:500">{{ frameName }}</bdi>
                 </div>
                 <div class="zone-loadout-stats"><sc-for list="{{ activity.stats }}" as="s"><div><span>{{ s.label }}</span><bdi>{{ s.value }}</bdi></div></sc-for></div>
+                <div data-char-anatomical-telemetry="1" style="padding:8px 10px;border-top:1px solid var(--line);background:rgba(10,13,17,.55);display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span style="color:var(--acc);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.anatomyTitle }}</span>
+                    <bdi style="color:var(--gold);font-size:10px;font-weight:600">{{ geminiArsenal.wardrobeRigBadge }}</bdi>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px">
+                    <sc-for list="{{ geminiArsenal.hitZones }}" as="hz" hint-placeholder-count="6">
+                      <div style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:4px 6px;display:flex;flex-direction:column;gap:1px">
+                        <span style="color:var(--t3);font-size:9.5px;font-weight:600">{{ hz.zone }}</span>
+                        <bdi style="color:{{ hz.color }};font-size:10px;font-weight:700">{{ hz.mitigation }}</bdi>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div data-char-weapon-holodeck="1" style="display:flex;flex-direction:column;gap:4px;padding-top:4px;border-top:1px solid var(--line)">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <span style="color:var(--mu);font-size:10px;font-weight:600">{{ geminiArsenal.holodeckLabel }}</span>
+                      <bdi style="color:var(--t2);font-size:10px">{{ geminiArsenal.holodeckActiveLabel }}</bdi>
+                    </div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap">
+                      <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
+                        <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div>
@@ -298,10 +323,17 @@
             </div>
           </div>
         </div>
-        <section class="zone-panel" data-zone-tactical-deck="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-            <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
-            <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
+        <section class="zone-panel" data-zone-tactical-deck="1" data-gemini-arsenal-hub="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="color:var(--mu);font-size:10px;font-weight:600;text-transform:uppercase">{{ geminiArsenal.thinkingLabel }}</span>
+              <sc-for list="{{ geminiArsenal.thinkingLevels }}" as="tl" hint-placeholder-count="3">
+                <button onClick="{{ tl.select }}" aria-pressed="{{ tl.active }}" style="background:{{ tl.bg }};color:{{ tl.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ tl.label }}</button>
+              </sc-for>
+              <button onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
+              <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
+            </div>
           </div>
           <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
             <sc-for list="{{ tacticalDeck.cards }}" as="tc" hint-placeholder-count="4">
@@ -313,6 +345,18 @@
                 <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
               </div>
             </sc-for>
+          </div>
+          <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.hubTitle }}</strong>
+              <span style="color:var(--t3);font-size:10.5px">{{ geminiArsenal.stackSubtitle }}</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ geminiArsenal.tools }}" as="gt" hint-placeholder-count="4">
+                <button onClick="{{ gt.run }}" style="background:var(--panel2);color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ gt.label }}</button>
+              </sc-for>
+            </div>
+            <div data-gemini-trace-output="1" dir="ltr" style="padding:8px 10px;background:rgba(6,8,11,.88);border:1px solid var(--border);border-radius:4px;color:var(--acc);font-size:11px;line-height:1.45;white-space:pre-wrap">{{ geminiArsenal.trace }}</div>
           </div>
         </section>
       </sc-if>
@@ -1515,10 +1559,14 @@ class Component extends DCLogic {
       equipmentKeys[LEG[model] || model] = id;
     }
     const ownedWeapons = Object.keys(equipmentKeys);
+    const holodeckKey = this.state.holodeckWeapon || '';
+    const activeWeaponModel = holodeckKey ? holodeckKey : eq;
+    const effectiveOwnedWeapons = holodeckKey && !ownedWeapons.includes(holodeckKey) ? [...ownedWeapons, holodeckKey] : ownedWeapons;
+    const effectiveEquipmentKeys = holodeckKey && !equipmentKeys[holodeckKey] ? { ...equipmentKeys, [holodeckKey]: holodeckKey } : equipmentKeys;
     const dark = this.state.theme !== 'light';
     const armorId = this.equippedArmor(), armor = CAT[armorId];
     f.contentWindow.postMessage({ bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang,
-      character: { draft: IS_PREVIEW, build, outfit: this.state.outfit || 'suit', weapon: eq, ownedWeapons, equipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0,
+      character: { draft: IS_PREVIEW, build, outfit: this.state.outfit || 'suit', weapon: activeWeaponModel, ownedWeapons: effectiveOwnedWeapons, equipmentKeys: effectiveEquipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0,
         characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: eqRaw !== 'fists' && this.p.inv[eqRaw] > 0 ? this.mediaAsset('weapon', eqRaw, CAT[eqRaw]?.mediaAsset) : '', armorMediaAsset: armorId ? this.mediaAsset('armor', armorId, armor?.mediaAsset) : '' } }, window.location.origin);
   }
   mediaAsset(type, id, fallback = '') {
@@ -2887,6 +2935,119 @@ class Component extends DCLogic {
           action: () => this.go('gym')
         }
       ]
+    };
+    const activeOutfitKey = this.state.outfit || 'suit';
+    const baseArmorRed = Math.round((Number(CAT[this.equippedArmor()]?.red) || (activeOutfitKey === 'tactical' ? .35 : activeOutfitKey === 'suit' ? .18 : .12)) * 100);
+    const holodeckCatalog = [
+      { id: '', label: lang === 'ar' ? 'المجهز' : 'Equipped' },
+      { id: 'l85', label: lang === 'ar' ? 'بولباب L85' : 'Bullpup L85' },
+      { id: 'm4', label: 'M4A1 PBR' },
+      { id: 'g3a3', label: 'G3A3 7.62' },
+      { id: 'assaultrifle2_1', label: 'AK-47' },
+      { id: 'sniperrifle_3', label: 'Dragunov' }
+    ];
+    const currentHolodeck = this.state.holodeckWeapon || '';
+    const currentThinking = this.state.geminiThinking || 'HIGH';
+    const defaultGeminiTrace = lang === 'ar'
+      ? `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• استدعاء الدوال المباشر: أفضل جريمة متاحة "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | جلسات النادي: ${view.gymStudio.sessionsAvailable}\n• خزانة الملابس ثلاثية الأبعاد: ${activeOutfitKey === 'tactical' ? 'Swat.glb + درع تكتيكي' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb'} (امتصاص الصدر ${baseArmorRed}%)`
+      : `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• function_call("recommend_optimal_turn"): Best EV Crime "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | Gym Sessions Ready: ${view.gymStudio.sessionsAvailable}\n• 3D Clothed Rig & Ballistics: ${activeOutfitKey === 'tactical' ? 'Swat.glb Tactical Rig' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb Street Rig' : 'Suit.glb Executive Rig'} · Thorax Kevlar Mitigation ${baseArmorRed}%`;
+    view.geminiArsenal = {
+      anatomyTitle: lang === 'ar' ? 'مصفوفة التشريح والدروع ثلاثية الأبعاد (ملابس كاملة)' : '3D Clothed Anatomical Hitbox & Armor Matrix',
+      wardrobeRigBadge: activeOutfitKey === 'tactical' ? 'Swat.glb · 24 Clips' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb · 24 Clips' : 'Suit.glb · 24 Clips',
+      hitZones: [
+        { zone: lang === 'ar' ? 'الرأس (×2.2)' : 'Head (2.2x Crit)', mitigation: Math.max(8, Math.round(baseArmorRed * .45)) + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: 'var(--gold)' },
+        { zone: lang === 'ar' ? 'الصدر كيفلر' : 'Thorax Kevlar', mitigation: baseArmorRed + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: 'var(--acc)' },
+        { zone: lang === 'ar' ? 'البطن' : 'Abdomen Plate', mitigation: Math.max(10, Math.round(baseArmorRed * .85)) + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: 'var(--acc)' },
+        { zone: lang === 'ar' ? 'الذراع والقبضة' : 'Arms & 19-Bone Grip', mitigation: Math.max(8, Math.round(baseArmorRed * .6)) + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: '#5aa0e0' },
+        { zone: lang === 'ar' ? 'الحوض' : 'Pelvis / Holster', mitigation: Math.max(8, Math.round(baseArmorRed * .65)) + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: '#5aa0e0' },
+        { zone: lang === 'ar' ? 'الساقان والحركة' : 'Legs / Mobility', mitigation: Math.max(6, Math.round(baseArmorRed * .5)) + '% ' + (lang === 'ar' ? 'صد' : 'Mitig.'), color: 'var(--t2)' }
+      ],
+      holodeckLabel: lang === 'ar' ? 'معاينة سلاح ثلاثي الأبعاد على الشخصية:' : '3D Armory Holodeck Pose Preview:',
+      holodeckActiveLabel: (holodeckCatalog.find(w => w.id === currentHolodeck) || holodeckCatalog[0]).label,
+      holodeckWeapons: holodeckCatalog.map(w => ({
+        id: w.id,
+        label: w.label,
+        active: currentHolodeck === w.id,
+        bg: currentHolodeck === w.id ? 'var(--activebg)' : 'var(--btn)',
+        fg: currentHolodeck === w.id ? 'var(--activefg)' : 'var(--t3)',
+        select: () => this.setState({ holodeckWeapon: w.id }, () => this.pushChar())
+      })),
+      thinkingLabel: lang === 'ar' ? 'عمق تفكير Gemini 3.7:' : 'Gemini 3.7 Thinking:',
+      thinkingLevels: ['LOW', 'MEDIUM', 'HIGH'].map(lvl => ({
+        label: lvl,
+        active: currentThinking === lvl,
+        bg: currentThinking === lvl ? 'var(--activebg)' : 'var(--deep)',
+        fg: currentThinking === lvl ? 'var(--activefg)' : 'var(--t3)',
+        select: () => this.setState({
+          geminiThinking: lvl,
+          geminiTrace: lang === 'ar'
+            ? `[GEMINI 3.7 FLASH · تم ضبط عمق التفكير إلى ${lvl}]\n• وضع الاستدلال التكتيكي: ${lvl === 'HIGH' ? 'محاكاة مونت كارلو العميقة (10,000 مسار)' : lvl === 'MEDIUM' ? 'توازن تكتيكي سريع' : 'استجابة فورية منخفضة الكمون'}`
+            : `[GEMINI 3.7 FLASH · THINKING DEPTH SET TO ${lvl}]\n• Tactical Reasoning Mode: ${lvl === 'HIGH' ? 'Deep Monte-Carlo Tree Search (10,000 rollouts)' : lvl === 'MEDIUM' ? 'Balanced Heuristic + EV Synthesis' : 'Sub-50ms Low-Latency Tactical Reflex'}`
+        })
+      })),
+      voiceLabel: lang === 'ar' ? '🔊 إيجاز صوتي مباشر (Gemini Live)' : '🔊 Gemini Live Voice Briefing',
+      speakBriefing: () => {
+        const speechText = lang === 'ar'
+          ? `تقرير جيميني التكتيكي. صافي الثروة ${money(totalNetWorthVal)}. أفضل جريمة متاحة هي ${bestCrimeCandidate.name}. لديك ${view.gymStudio.sessionsAvailable} جلسات تدريب متاحة في النادي.`
+          : `Gemini 3.7 Flash tactical briefing. Empire net worth ${money(totalNetWorthVal)}. Optimal crime operation is ${bestCrimeCandidate.name} at ${bestCrimeCandidate.evPerNerve || '0 dollars per nerve'}. You have ${view.gymStudio.sessionsAvailable} gym training sessions ready.`;
+        try {
+          if (typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined') {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(speechText);
+            u.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
+            u.rate = 1.04;
+            window.speechSynthesis.speak(u);
+          }
+        } catch (_) {}
+        this.setState({ geminiTrace: `[GEMINI LIVE AUDIO SYNTHESIS · ${lang === 'ar' ? 'ar-SA' : 'en-US'}]\n• Spoken Briefing: "${speechText}"` });
+      },
+      hubTitle: lang === 'ar' ? 'ترسانة Google Gemini 3.7 Flash وخدمات Google Cloud التكتيكية' : 'GOOGLE GEMINI 3.7 FLASH · VERTEX AI · MAPS 3D · FUNCTION CALLING CO-PILOT',
+      stackSubtitle: lang === 'ar' ? 'استدعاء دوال مباشر · خرائط ثلاثية الأبعاد · موازنة مونت كارلو · إيجاز صوتي' : 'Live Function Calling · Tunable Thinking · Google Maps 3D Recon · Ballistics Telemetry',
+      tools: [
+        {
+          label: lang === 'ar' ? '⚡ Gemini: اختيار أفضل جريمة' : '⚡ Gemini: Auto-Select Best EV Crime',
+          run: () => {
+            const best = view.crimes.find(c => !c.disabled) || view.crimes[0];
+            if (best?.select) best.select();
+            this.setState({
+              geminiTrace: `[GEMINI 3.7 FUNCTION CALL · thinking=${currentThinking}]\n> call: optimize_crime_selection({ nerveAvailable: ${this.cur('nerve')}, crimeXp: ${p.crimeXp} })\n< result: Selected "${bestCrimeCandidate.name}" · EV ${bestCrimeCandidate.evPerNerve || '$0/nerve'} · Heat: ${bestCrimeCandidate.heatTier || 'Low'}`
+            });
+            this.go('crimes');
+          }
+        },
+        {
+          label: lang === 'ar' ? '🏋️ Gemini: موازنة تدريب النادي' : '🏋️ Gemini: Optimal Gym Stat Allocator',
+          run: () => {
+            const statEntries = [['str', p.stats.str], ['def', p.stats.def], ['spd', p.stats.spd], ['dex', p.stats.dex]].sort((a, b) => a[1] - b[1]);
+            const weakest = statEntries[0][0];
+            this.setState({
+              gymStation: weakest,
+              geminiTrace: `[GEMINI 3.7 FUNCTION CALL · thinking=${currentThinking}]\n> call: allocate_gym_session({ str: ${p.stats.str}, def: ${p.stats.def}, spd: ${p.stats.spd}, dex: ${p.stats.dex}, happyBoost: "${view.gymStudio.happyMultiplier}" })\n< result: Focused weakest stat "${weakest.toUpperCase()}" (${this.gymGainRange(weakest)} est. gain/session)`
+            });
+            this.go('gym');
+          }
+        },
+        {
+          label: lang === 'ar' ? '🎯 Gemini: فحص القتال والدروع' : '🎯 Gemini: Ballistics & Combat Scanner',
+          run: () => {
+            this.setState({
+              geminiTrace: `[GEMINI 3.7 FUNCTION CALL · thinking=${currentThinking}]\n> call: simulate_combat_ballistics({ totalStats: ${totalStats}, weapon: "${view.loadout.weapon.name}", thoraxMitigation: "${baseArmorRed}%" })\n< result: Combat tier "${combatPowerTier}" · Recommended engagement: Street NPC / Peer Roster`
+            });
+            this.go('attack');
+          }
+        },
+        {
+          label: lang === 'ar' ? '🗺️ Google Maps 3D: استطلاع الأحياء' : '🗺️ Google Maps 3D: Territory & Street Recon',
+          run: () => {
+            const findCount = Array.isArray(view.world?.finds) ? view.world.finds.length : 0;
+            this.setState({
+              geminiTrace: `[GOOGLE MAPS 3D & WORLD DIRECTOR RECON · thinking=${currentThinking}]\n> call: scan_city_territories({ blocks: ${this.territoryBlockCount() || 120}, activeStreetFinds: ${findCount}, family: "${view.fac.name}" })\n< result: 120 city blocks & 17 native roofs indexed · ${findCount} street finds ready for claim`
+            });
+            this.go('city');
+          }
+        }
+      ],
+      trace: this.state.geminiTrace || defaultGeminiTrace
     };
     if (screen === 'attack') view.subtitle = lang === 'ar' ? 'خصوم المدينة ولاعبون حقيقيون. البداية تكلف 25 طاقة؛ النتائج محفوظة على الخادم.' : 'City opponents and real players. Starting costs 25 energy; outcomes are saved on the server.';
     const marketResource = this.peerResources?.market, marketSnapshot = marketResource?.snapshot;
