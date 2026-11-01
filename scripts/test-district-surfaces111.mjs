@@ -395,8 +395,14 @@ test('duplicate, empty, cancelled and failed installation paths never steal anot
 
 test('surfacePaletteCategories, isDisposed, and isVisible expose district surface state cleanly',async()=>{
   assert.deepEqual(module.surfacePaletteCategories(),['glass','walls','stone','metal']);
+  assert.equal(module.surfacePaletteCategoryCount(),4);
+  assert.equal(module.surfacePaletteColors('glass').length,4);
+  assert.deepEqual(module.surfacePaletteColors('unknown'),[]);
+  assert.equal(module.maxSurfaceWindowLimit(),12000);
+  assert.equal(module.maxSurfaceRoofDetailLimit(),600);
+  assert.equal(module.maxSurfaceWallPanelLimit(),12000);
   const h=harness(),control=h.create(h.map,[feature(17)],{center:[0,0]});await control.ready;
-  assert.equal(control.isDisposed(),false);assert.equal(control.isVisible(),true);
+  assert.equal(control.isDisposed(),false);assert.equal(control.isVisible(),true);assert.equal(control.isPrepared(),true);
   control.setVisible(false);assert.equal(control.isVisible(),false);
-  control.dispose();assert.equal(control.isDisposed(),true);
+  control.dispose();assert.equal(control.isDisposed(),true);assert.equal(control.isPrepared(),false);
 });

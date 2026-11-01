@@ -2135,6 +2135,13 @@ try {
     check($engine->progressionMaxPenaltySeconds() === 86400, 'GameEngine progressionMaxPenaltySeconds returns 86400');
     check($engine->progressionCombatChainWindowMs() === 300000, 'GameEngine progressionCombatChainWindowMs returns 300000');
     check($engine->progressionCombatChainMilestones() === [10, 25, 50, 100, 250, 500], 'GameEngine progressionCombatChainMilestones returns 6 chain milestones');
+
+    // --- Wave 168 (zone-beta286): GameEngine supportedTerritoryBenefitKeys, isSupportedTerritoryBenefitKey, territoryWarDurationSeconds, territoryFootholdSector & territoryReinforceControlGainBasisPoints ---
+    check($engine->supportedTerritoryBenefitKeys() === ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'], 'GameEngine supportedTerritoryBenefitKeys returns 6 territory benefits');
+    check($engine->isSupportedTerritoryBenefitKey('crime_bonus') === true && $engine->isSupportedTerritoryBenefitKey('tax_free') === false, 'GameEngine isSupportedTerritoryBenefitKey validates benefit key');
+    check($engine->territoryWarDurationSeconds() === 259200, 'GameEngine territoryWarDurationSeconds returns 259200');
+    check($engine->territoryFootholdSector() === 7, 'GameEngine territoryFootholdSector returns 7');
+    check($engine->territoryReinforceControlGainBasisPoints() === 1500, 'GameEngine territoryReinforceControlGainBasisPoints returns 1500');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

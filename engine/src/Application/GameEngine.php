@@ -4682,4 +4682,30 @@ final class GameEngine
     {
         return [10, 25, 50, 100, 250, 500];
     }
+
+    /** @return list<string> */
+    public function supportedTerritoryBenefitKeys(): array
+    {
+        return ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'];
+    }
+
+    public function isSupportedTerritoryBenefitKey(string $key): bool
+    {
+        return in_array($key, $this->supportedTerritoryBenefitKeys(), true);
+    }
+
+    public function territoryWarDurationSeconds(): int
+    {
+        return 259200;
+    }
+
+    public function territoryFootholdSector(): int
+    {
+        return 7;
+    }
+
+    public function territoryReinforceControlGainBasisPoints(): int
+    {
+        return 1500;
+    }
 }
