@@ -141,5 +141,10 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(isSafehouseAssetHash('not-a-hash'), false);
   assert.equal(defaultSafehouseOutfitFile(), 'Suit');
   assert.equal(typeof safehouseActorKey({ outfit: 'suit', weapon: 'glock' }, false), 'string');
+  assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
+  assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
+  assert.equal(h.window.ZoneSafehouse.isSupportedAction('other'), false);
+  assert.equal(h.window.ZoneSafehouse.isDisposed(), false);
   h.dispose();
+  assert.equal(h.window.ZoneSafehouse.isDisposed(), true);
 });

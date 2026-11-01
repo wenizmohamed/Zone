@@ -1750,6 +1750,13 @@ try {
     check(is_bool($engine->playerHasHappyRegenRemaining()), 'GameEngine playerHasHappyRegenRemaining returns boolean happy regen remaining status');
     check(is_bool($engine->playerHasLifeRegenRemaining()), 'GameEngine playerHasLifeRegenRemaining returns boolean life regen remaining status');
     check(is_bool($engine->playerHasXpToNextLevel()), 'GameEngine playerHasXpToNextLevel returns boolean xp to next level status');
+
+    // --- Wave 113 (zone-beta231): GameEngine playerHasActiveGymCost, playerHasHospitalHealCost, playerHasTerritoryDailyRespectIncome, playerHasTerritoryControl & playerHasTotalCombatStats ---
+    check($engine->playerHasActiveGymCost() === true, 'GameEngine playerHasActiveGymCost returns boolean active gym cost status');
+    check(is_bool($engine->playerHasHospitalHealCost()), 'GameEngine playerHasHospitalHealCost returns boolean hospital heal cost status');
+    check(is_bool($engine->playerHasTerritoryDailyRespectIncome()), 'GameEngine playerHasTerritoryDailyRespectIncome returns boolean territory daily respect income status');
+    check(is_bool($engine->playerHasTerritoryControl()), 'GameEngine playerHasTerritoryControl returns boolean territory control status');
+    check($engine->playerHasTotalCombatStats() === true, 'GameEngine playerHasTotalCombatStats returns boolean total combat stats status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

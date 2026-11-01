@@ -3179,4 +3179,29 @@ final class GameEngine
     {
         return $this->playerXpToNextLevel($playerId) > 0;
     }
+
+    public function playerHasActiveGymCost(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActiveGymCost($playerId) > 0;
+    }
+
+    public function playerHasHospitalHealCost(string $playerId = 'founder-player'): bool
+    {
+        return $this->hospitalHealCost($playerId) > 0;
+    }
+
+    public function playerHasTerritoryDailyRespectIncome(string $playerId = 'founder-player'): bool
+    {
+        return $this->territoryDailyRespectIncome($playerId) > 0;
+    }
+
+    public function playerHasTerritoryControl(string $playerId = 'founder-player'): bool
+    {
+        return $this->territoryControlPercent($playerId) > 0.0;
+    }
+
+    public function playerHasTotalCombatStats(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerTotalCombatStats($playerId) > 0;
+    }
 }
