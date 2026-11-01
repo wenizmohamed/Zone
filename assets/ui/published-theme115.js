@@ -42,6 +42,11 @@
     hasActiveTimer() { return timer !== null; },
     currentStatus() { return document.documentElement.dataset.zonePublishedTheme || null; },
     currentReason() { return document.documentElement.dataset.zonePublishedThemeReason || null; },
+    stylesheetHref() { return link.getAttribute?.('href') ?? link.href ?? '/engine/theme.css'; },
+    stylesheetMedia() { return link.media || 'print'; },
+    supportedReasons() { return ['timeout', 'load-error']; },
+    isSupportedReason(reason) { return ['timeout', 'load-error'].includes(String(reason ?? '')); },
+    isUnavailable() { return document.documentElement.dataset.zonePublishedTheme === 'unavailable'; },
     get disposed() { return disposed; },
     get ready() { return ready; },
     diagnostics() {

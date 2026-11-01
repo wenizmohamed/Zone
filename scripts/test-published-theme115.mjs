@@ -159,4 +159,10 @@ test('a later successful stylesheet load can recover after an earlier load error
   assert.equal(b.window.ZonePublishedTheme115.hasActiveTimer(), false);
   assert.equal(b.window.ZonePublishedTheme115.currentStatus(), 'ready');
   assert.equal(b.window.ZonePublishedTheme115.currentReason(), null);
+  assert.equal(b.window.ZonePublishedTheme115.stylesheetHref(), '/engine/theme.css');
+  assert.equal(b.window.ZonePublishedTheme115.stylesheetMedia(), 'all');
+  assert.deepEqual(Array.from(b.window.ZonePublishedTheme115.supportedReasons()), ['timeout', 'load-error']);
+  assert.equal(b.window.ZonePublishedTheme115.isSupportedReason('timeout'), true);
+  assert.equal(b.window.ZonePublishedTheme115.isSupportedReason('unknown'), false);
+  assert.equal(b.window.ZonePublishedTheme115.isUnavailable(), false);
 });

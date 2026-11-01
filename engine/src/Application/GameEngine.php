@@ -5311,4 +5311,29 @@ final class GameEngine
     {
         return count($this->status()['capabilities']);
     }
+
+    public function crimeMaxTerritoryBonusBasisPoints(): int
+    {
+        return 1500;
+    }
+
+    public function crimeMaxSuccessThresholdBasisPoints(): int
+    {
+        return 10000;
+    }
+
+    public function crimeLegacyFailureMaxThresholdBasisPoints(): int
+    {
+        return 9700;
+    }
+
+    public function crimeSearchMaterialRollWinPct(): int
+    {
+        return 12;
+    }
+
+    public function crimeAllowedLegacyPenaltyTypes(): array
+    {
+        return ['jail', 'hosp'];
+    }
 }

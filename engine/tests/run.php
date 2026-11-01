@@ -2303,6 +2303,13 @@ try {
     check($engine->isServerAuthoritativeEngine() === true, 'GameEngine isServerAuthoritativeEngine returns true');
     check(in_array('api-first-gameplay', $engine->engineDeclaredCapabilities(), true), 'GameEngine engineDeclaredCapabilities includes api-first-gameplay');
     check($engine->engineDeclaredCapabilityCount() === 15, 'GameEngine engineDeclaredCapabilityCount returns 15');
+
+    // --- Wave 192 (zone-beta310): GameEngine crimeMaxTerritoryBonusBasisPoints, crimeMaxSuccessThresholdBasisPoints, crimeLegacyFailureMaxThresholdBasisPoints, crimeSearchMaterialRollWinPct & crimeAllowedLegacyPenaltyTypes ---
+    check($engine->crimeMaxTerritoryBonusBasisPoints() === 1500, 'GameEngine crimeMaxTerritoryBonusBasisPoints returns 1500');
+    check($engine->crimeMaxSuccessThresholdBasisPoints() === 10000, 'GameEngine crimeMaxSuccessThresholdBasisPoints returns 10000');
+    check($engine->crimeLegacyFailureMaxThresholdBasisPoints() === 9700, 'GameEngine crimeLegacyFailureMaxThresholdBasisPoints returns 9700');
+    check($engine->crimeSearchMaterialRollWinPct() === 12, 'GameEngine crimeSearchMaterialRollWinPct returns 12');
+    check($engine->crimeAllowedLegacyPenaltyTypes() === ['jail', 'hosp'], 'GameEngine crimeAllowedLegacyPenaltyTypes returns jail and hosp');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
