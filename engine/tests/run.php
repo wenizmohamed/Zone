@@ -1575,6 +1575,13 @@ try {
     check(is_bool($engine->playerHasSafehouses('founder-player')), 'GameEngine playerHasSafehouses returns boolean safehouse presence status');
     check(is_bool($engine->playerHasAchievements('founder-player')), 'GameEngine playerHasAchievements returns boolean achievement status');
     check(is_bool($engine->playerHasOwnedItems('founder-player')), 'GameEngine playerHasOwnedItems returns boolean owned item status');
+
+    // --- Wave 88 (zone-beta206): GameEngine isCrimeModuleEnabled, isGymModuleEnabled, isBankModuleEnabled, isHospitalModuleEnabled & isTravelModuleEnabled ---
+    check($engine->isCrimeModuleEnabled() === true, 'GameEngine isCrimeModuleEnabled returns published crime module status');
+    check($engine->isGymModuleEnabled() === true, 'GameEngine isGymModuleEnabled returns published gym module status');
+    check($engine->isBankModuleEnabled() === true, 'GameEngine isBankModuleEnabled returns published bank module status');
+    check($engine->isHospitalModuleEnabled() === true, 'GameEngine isHospitalModuleEnabled returns published hospital module status');
+    check($engine->isTravelModuleEnabled() === true, 'GameEngine isTravelModuleEnabled returns published travel module status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

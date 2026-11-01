@@ -78,7 +78,7 @@ function consoleApp({ request, language = 'en' } = {}) {
   // Only the toast timer and automatic initial network call are omitted.
   runInContext(source.slice(0, bindingStart) + '\n' + source.slice(bindingStart, startupStart) + `
     toast = noticeStub;
-    globalThis.engineApp = { state, refresh, updateControls, renderAll, changeModule, activateTheme, attemptCrime, engineSummary, engineDiagnostics };
+    globalThis.engineApp = { state, refresh, updateControls, renderAll, changeModule, activateTheme, attemptCrime, engineSummary, engineDiagnostics, permittedEngineSections, isPermittedEngineSection };
   `, context);
   const app = context.engineApp;
   app.updateControls();
@@ -175,4 +175,7 @@ test('an explicit refresh recovers failed bootstrap without granting player acti
   assert.equal(app.element('#attemptButton').disabled, true); assert.equal(app.element('#runCrimeButton').disabled, true);
   assert.deepEqual({ ...app.engineSummary() }, { language: 'ar', ready: true, busy: false, refreshing: false, moduleCount: 1, enabledModuleCount: 1, crimeCount: 1, hasPlayer: false, eventCount: 0, ledgerCount: 0 });
   assert.deepEqual({ ...app.engineDiagnostics() }, { language: 'ar', ready: true, busy: false, refreshing: false, moduleCount: 1, enabledModuleCount: 1, crimeCount: 1, hasPlayer: false, eventCount: 0, ledgerCount: 0, themeCount: 1, activeThemeId: null, hasArchitecture: true, databaseDriver: 'pgsql', phpVersion: '8.5.10' });
+  assert.deepEqual(Array.from(app.permittedEngineSections()), ['start', 'extensions', 'appearance', 'testing', 'activity', 'architecture']);
+  assert.equal(app.isPermittedEngineSection('extensions'), true);
+  assert.equal(app.isPermittedEngineSection('unknown'), false);
 });

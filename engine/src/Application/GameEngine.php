@@ -2553,4 +2553,29 @@ final class GameEngine
     {
         return $this->ownedItemCount($playerId) > 0;
     }
+
+    public function isCrimeModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('crime');
+    }
+
+    public function isGymModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('stats');
+    }
+
+    public function isBankModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('bank');
+    }
+
+    public function isHospitalModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('hospital');
+    }
+
+    public function isTravelModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('travel');
+    }
 }

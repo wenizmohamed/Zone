@@ -246,8 +246,16 @@ function setEngineMenu(open) {
   else $('#engineNav')?.classList.remove('is-open');
 }
 
+function permittedEngineSections() {
+  return ['start', 'extensions', 'appearance', 'testing', 'activity', 'architecture'];
+}
+
+function isPermittedEngineSection(id) {
+  return permittedEngineSections().includes(String(id || ''));
+}
+
 function revealEngineSection(hash) {
-  const permitted = ['start', 'extensions', 'appearance', 'testing', 'activity', 'architecture'];
+  const permitted = permittedEngineSections();
   const id = String(hash || '#start').slice(1);
   if (!permitted.includes(id)) return;
   const section = document.getElementById?.(id);
