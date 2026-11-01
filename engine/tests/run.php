@@ -2408,6 +2408,13 @@ try {
     check($engine->familyUpgradeSupportedBranches() === ['combat', 'crime', 'territory'], 'GameEngine familyUpgradeSupportedBranches returns combat, crime, territory');
     check($engine->isSupportedFamilyUpgradeBranch('combat') && !$engine->isSupportedFamilyUpgradeBranch('invalid'), 'GameEngine isSupportedFamilyUpgradeBranch validates branch');
     check($engine->familyUpgradeAllowedRoles() === ['leader', 'boss', 'underboss', 'officer', 'founder'], 'GameEngine familyUpgradeAllowedRoles returns allowed roles');
+
+    // --- Wave 207 (zone-beta325): GameEngine familySeasonWeekAnchorIso, familyMaxLeaderboardRows, playerMarketMaxListingQuantity, playerMarketMinListingPriceCash & playerMarketMaxListingPriceCash ---
+    check($engine->familySeasonWeekAnchorIso() === '2026-01-05T00:00:00Z', 'GameEngine familySeasonWeekAnchorIso returns 2026-01-05T00:00:00Z');
+    check($engine->familyMaxLeaderboardRows() === 8, 'GameEngine familyMaxLeaderboardRows returns 8');
+    check($engine->playerMarketMaxListingQuantity() === 100, 'GameEngine playerMarketMaxListingQuantity returns 100');
+    check($engine->playerMarketMinListingPriceCash() === 100, 'GameEngine playerMarketMinListingPriceCash returns 100');
+    check($engine->playerMarketMaxListingPriceCash() === 1000000000, 'GameEngine playerMarketMaxListingPriceCash returns 1000000000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

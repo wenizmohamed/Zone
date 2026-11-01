@@ -70,6 +70,21 @@
   function maxNeighborhoodMeters(){
     return 1500;
   }
+  function familyReservationLayerId(){
+    return 'zone-family-reservations';
+  }
+  function familyReservationImageId(){
+    return 'zone-family-touch-reservation';
+  }
+  function familyTouchReservationSizePx(){
+    return 44;
+  }
+  function districtWaitTimeoutMs(){
+    return 15000;
+  }
+  function coinRoofCacheTtlMs(){
+    return 250;
+  }
   function setPerspective(map,value){
     // Visibility may fire after pagehide has removed the map's style.
     if(map.isStyleLoaded&&!map.isStyleLoaded()&&(!map.getStyle||!map.getStyle()))return;
@@ -394,5 +409,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,earthRadiusMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,styleLayerCount,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,familyReservationLayerId,familyReservationImageId,familyTouchReservationSizePx,districtWaitTimeoutMs,coinRoofCacheTtlMs,earthRadiusMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,styleLayerCount,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

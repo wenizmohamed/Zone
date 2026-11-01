@@ -5688,4 +5688,29 @@ final class GameEngine
     {
         return ['leader', 'boss', 'underboss', 'officer', 'founder'];
     }
+
+    public function familySeasonWeekAnchorIso(): string
+    {
+        return '2026-01-05T00:00:00Z';
+    }
+
+    public function familyMaxLeaderboardRows(): int
+    {
+        return 8;
+    }
+
+    public function playerMarketMaxListingQuantity(): int
+    {
+        return 100;
+    }
+
+    public function playerMarketMinListingPriceCash(): int
+    {
+        return 100;
+    }
+
+    public function playerMarketMaxListingPriceCash(): int
+    {
+        return 1000000000;
+    }
 }

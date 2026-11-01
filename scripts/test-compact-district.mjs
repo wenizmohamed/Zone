@@ -329,6 +329,11 @@ test('controller diagnostics report lifecycle, destination count, and sub-contro
   assert.deepEqual(serviceBuildings.boundServiceIds({associations:[{id:'bank'},{id:'hospital'}]}),['bank','hospital']);
   assert.equal(district.defaultNeighborhoodMeters(),600);
   assert.equal(district.maxNeighborhoodMeters(),1500);
+  assert.equal(district.familyReservationLayerId(),'zone-family-reservations');
+  assert.equal(district.familyReservationImageId(),'zone-family-touch-reservation');
+  assert.equal(district.familyTouchReservationSizePx(),44);
+  assert.equal(district.districtWaitTimeoutMs(),15000);
+  assert.equal(district.coinRoofCacheTtlMs(),250);
   assert.equal(ctrl.isVisible(),true);
   assert.equal(ctrl.isDisposed(),false);
   ctrl.setVisible(false);
