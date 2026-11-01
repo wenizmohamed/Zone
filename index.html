@@ -2982,6 +2982,26 @@ class Component extends DCLogic {
     return Boolean(this.territoryBusy);
   }
 
+  activeScreen() {
+    return this.state?.screen || 'home';
+  }
+
+  activeLanguage() {
+    return this.state?.lang || 'en';
+  }
+
+  activeCombatMode() {
+    return this.state?.combatMode || 'npc';
+  }
+
+  activeMarketMode() {
+    return this.state?.marketMode || 'merchants';
+  }
+
+  activeItemTab() {
+    return this.state?.itemTab || 'all';
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

@@ -5944,4 +5944,29 @@ final class GameEngine
     {
         return 3000000;
     }
+
+    public function assetInspectorMaxObjLines(): int
+    {
+        return 4000000;
+    }
+
+    public function assetInspectorMaxMtlBytes(): int
+    {
+        return 2097152;
+    }
+
+    public function assetInspectorMaxGlbJsonBytes(): int
+    {
+        return 8388608;
+    }
+
+    public function assetInspectorMaxGltfNodes(): int
+    {
+        return 50000;
+    }
+
+    public function assetInspectorMaxGltfMeshes(): int
+    {
+        return 20000;
+    }
 }

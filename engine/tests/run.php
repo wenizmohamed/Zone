@@ -2478,6 +2478,13 @@ try {
     check($engine->assetInspectorMaxImageDimensionPx() === 16384, 'GameEngine assetInspectorMaxImageDimensionPx returns 16384');
     check($engine->assetInspectorMaxImagePixels() === 67108864, 'GameEngine assetInspectorMaxImagePixels returns 67108864');
     check($engine->assetInspectorMaxObjVertices() === 3000000, 'GameEngine assetInspectorMaxObjVertices returns 3000000');
+
+    // --- Wave 217 (zone-beta335): GameEngine assetInspectorMaxObjLines, assetInspectorMaxMtlBytes, assetInspectorMaxGlbJsonBytes, assetInspectorMaxGltfNodes & assetInspectorMaxGltfMeshes ---
+    check($engine->assetInspectorMaxObjLines() === 4000000, 'GameEngine assetInspectorMaxObjLines returns 4000000');
+    check($engine->assetInspectorMaxMtlBytes() === 2097152, 'GameEngine assetInspectorMaxMtlBytes returns 2097152');
+    check($engine->assetInspectorMaxGlbJsonBytes() === 8388608, 'GameEngine assetInspectorMaxGlbJsonBytes returns 8388608');
+    check($engine->assetInspectorMaxGltfNodes() === 50000, 'GameEngine assetInspectorMaxGltfNodes returns 50000');
+    check($engine->assetInspectorMaxGltfMeshes() === 20000, 'GameEngine assetInspectorMaxGltfMeshes returns 20000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -44,6 +44,11 @@ test('each real Gym station explains its combat purpose in the active language, 
       assert.equal(view.gymEnergy,5);assert.equal(view.gymStudio.energyAfter,'95');
     }
     assert.equal(JSON.stringify(instance.p),before);assert.equal(calls.length,0);
+    assert.equal(instance.activeScreen(),'gym');
+    assert.equal(instance.activeLanguage(),lang);
+    assert.equal(instance.activeCombatMode(),'npc');
+    assert.equal(instance.activeMarketMode(),'merchants');
+    assert.equal(instance.activeItemTab(),'all');
   }
 });
 
