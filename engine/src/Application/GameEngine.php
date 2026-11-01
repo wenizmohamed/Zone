@@ -4894,4 +4894,29 @@ final class GameEngine
     {
         return 3;
     }
+
+    public function playerCombatMaxRoundsLimit(): int
+    {
+        return 25;
+    }
+
+    public function playerCombatReservationSeconds(): int
+    {
+        return 900;
+    }
+
+    public function playerCombatOpponentQueryLimit(): int
+    {
+        return 200;
+    }
+
+    public function defaultActionRateLimitMax(): int
+    {
+        return 120;
+    }
+
+    public function defaultActionRateLimitWindowSeconds(): int
+    {
+        return 10;
+    }
 }

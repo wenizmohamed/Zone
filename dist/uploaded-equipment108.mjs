@@ -48,6 +48,26 @@ export function uploadedWeaponTargetLength(key) {
   return key === 'bat' ? .715 : key === 'knife' ? .22 : isLongGunWeaponKey(key) ? .88 : .29;
 }
 
+export function uploadedShortGunTargetLength() {
+  return .29;
+}
+
+export function uploadedLongGunTargetLength() {
+  return .88;
+}
+
+export function uploadedKnifeTargetLength() {
+  return .22;
+}
+
+export function uploadedBatTargetLength() {
+  return .715;
+}
+
+export function uploadedArmorChestOffsetY() {
+  return -.35;
+}
+
 export function uploadedWeaponFit(object, transform, key) {
   const melee = isMeleeWeaponKey(key);
   const length = uploadedWeaponTargetLength(key);

@@ -2191,6 +2191,13 @@ try {
     check($engine->combatNpcLostHospitalPenaltySeconds() === 10, 'GameEngine combatNpcLostHospitalPenaltySeconds returns 10');
     check($engine->combatNpcMaxTerritoryDefenseBonusBasisPoints() === 2000, 'GameEngine combatNpcMaxTerritoryDefenseBonusBasisPoints returns 2000');
     check($engine->combatNpcWinXpMultiplierPerLevel() === 3, 'GameEngine combatNpcWinXpMultiplierPerLevel returns 3');
+
+    // --- Wave 176 (zone-beta294): GameEngine playerCombatMaxRoundsLimit, playerCombatReservationSeconds, playerCombatOpponentQueryLimit, defaultActionRateLimitMax & defaultActionRateLimitWindowSeconds ---
+    check($engine->playerCombatMaxRoundsLimit() === 25, 'GameEngine playerCombatMaxRoundsLimit returns 25');
+    check($engine->playerCombatReservationSeconds() === 900, 'GameEngine playerCombatReservationSeconds returns 900');
+    check($engine->playerCombatOpponentQueryLimit() === 200, 'GameEngine playerCombatOpponentQueryLimit returns 200');
+    check($engine->defaultActionRateLimitMax() === 120, 'GameEngine defaultActionRateLimitMax returns 120');
+    check($engine->defaultActionRateLimitWindowSeconds() === 10, 'GameEngine defaultActionRateLimitWindowSeconds returns 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
