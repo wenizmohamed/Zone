@@ -61,6 +61,21 @@ export function weaponStudioCardCount() {
 export function weaponStudioMinCameraFov() {
   return 20;
 }
+export function weaponStudioMaxCameraFov() {
+  return 80;
+}
+export function weaponStudioAcceptedBackgroundHex() {
+  return 0x171b20;
+}
+export function weaponStudioReadableBackgroundHex() {
+  return 0x353e46;
+}
+export function weaponStudioKeyLightIntensity() {
+  return 2.4;
+}
+export function weaponStudioRimLightIntensity() {
+  return 2.0;
+}
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
   // light ratios exactly. New assets do not raise their diffuse/metal fill.

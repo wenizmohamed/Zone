@@ -6452,4 +6452,30 @@ final class GameEngine
     {
         return (new TravelService($this->database, $this->events))->arrivedCount();
     }
+
+    public function npcCombatActiveEncounterCount(): int
+    {
+        return (new CombatService($this->database, $this->events))->activeEncounterCount();
+    }
+
+    public function playerMarketActiveListingCount(?string $sellerId = null): int
+    {
+        return (new PlayerMarketService($this->database, $this->events))->activeListingCount($sellerId);
+    }
+
+    public function playerMarketSoldListingCount(): int
+    {
+        return (new PlayerMarketService($this->database, $this->events))->soldListingCount();
+    }
+
+    public function materialLootTotalAwardedCount(?string $source = null): int
+    {
+        return (new \Zone\Engine\Core\Game\MaterialLootService($this->database, $this->events))->totalAwardedCount($source);
+    }
+
+    /** @return array<string, mixed> */
+    public function gameplayCatalogSummary(): array
+    {
+        return (new GameplayCatalog($this->database, $this->events))->summary();
+    }
 }

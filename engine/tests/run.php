@@ -2611,6 +2611,13 @@ try {
     check($engine->mediaReferencesSupportedCharacterOutfits() === ['suit', 'street', 'tactical'], 'GameEngine mediaReferencesSupportedCharacterOutfits returns 3 outfits');
     check(count($engine->mediaReferencesSupportedMapTargets()) === 17, 'GameEngine mediaReferencesSupportedMapTargets returns 17 map targets');
     check($engine->travelArrivedPlayerCount() >= 0, 'GameEngine travelArrivedPlayerCount returns non-negative count');
+
+    // --- Wave 236 (zone-beta354): GameEngine npcCombatActiveEncounterCount, playerMarketActiveListingCount, playerMarketSoldListingCount, materialLootTotalAwardedCount & gameplayCatalogSummary ---
+    check($engine->npcCombatActiveEncounterCount() >= 0, 'GameEngine npcCombatActiveEncounterCount returns non-negative count');
+    check($engine->playerMarketActiveListingCount() >= 0, 'GameEngine playerMarketActiveListingCount returns non-negative count');
+    check($engine->playerMarketSoldListingCount() >= 0, 'GameEngine playerMarketSoldListingCount returns non-negative count');
+    check($engine->materialLootTotalAwardedCount() >= 0, 'GameEngine materialLootTotalAwardedCount returns non-negative count');
+    check(isset($engine->gameplayCatalogSummary()['categoryCounts']), 'GameEngine gameplayCatalogSummary returns categoryCounts');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

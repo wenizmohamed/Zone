@@ -7,7 +7,7 @@ import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKe
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount, characterArtSourceUrl, characterArtQualityTier, defaultFallbackSurfaceHexColor, defaultFallbackSurfaceRoughness, preservedSurfaceMapKeys } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
-import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength } from '../dist/weapon-presentation.js';
+import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength, weaponStudioMaxCameraFov, weaponStudioAcceptedBackgroundHex, weaponStudioReadableBackgroundHex, weaponStudioKeyLightIntensity, weaponStudioRimLightIntensity } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount, defaultCatalogMaterialHexColor, defaultCatalogMaterialRoughness, defaultCatalogMaterialMetalness, inspectedWeaponMaterialMapKeys, sniperRifle5ObjGripOffset } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
 import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees, mosinIdleCalibrationVersion, armReachMinClearanceM, armReachMaxMarginM, defaultMosinAnchorAdjustmentM, requiredArmSides } from '../dist/character-poses.js';
@@ -229,4 +229,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(defaultCatalogMaterialMetalness(), .15);
   assert.deepEqual(inspectedWeaponMaterialMapKeys(), ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'bumpMap']);
   assert.deepEqual(sniperRifle5ObjGripOffset(), [-.8312214901, -.0506842372, 0]);
+  assert.equal(weaponStudioMaxCameraFov(), 80);
+  assert.equal(weaponStudioAcceptedBackgroundHex(), 0x171b20);
+  assert.equal(weaponStudioReadableBackgroundHex(), 0x353e46);
+  assert.equal(weaponStudioKeyLightIntensity(), 2.4);
+  assert.equal(weaponStudioRimLightIntensity(), 2.0);
 });
