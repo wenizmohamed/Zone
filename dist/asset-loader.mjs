@@ -54,6 +54,26 @@ export function isAssetManifestReady(asset) {
   return Boolean(asset && asset.status === 'ready' && Array.isArray(asset.members) && asset.members.length > 0);
 }
 
+export function defaultNormalizedTargetSize() {
+  return 2;
+}
+
+export function maxAssetRequestPathLength() {
+  return 2048;
+}
+
+export function maxAssetTransformScale() {
+  return 10000;
+}
+
+export function minAssetTransformScale() {
+  return .000001;
+}
+
+export function maxAssetTransformOffset() {
+  return 10000;
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

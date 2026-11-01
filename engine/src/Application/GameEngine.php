@@ -4970,4 +4970,30 @@ final class GameEngine
     {
         return 2_000_000_000;
     }
+
+    /** @return list<string> */
+    public function materialIssuanceSupportedSources(): array
+    {
+        return ['world', 'search'];
+    }
+
+    public function isSupportedMaterialIssuanceSource(string $source): bool
+    {
+        return in_array($source, $this->materialIssuanceSupportedSources(), true);
+    }
+
+    public function materialIssuanceMaxQuantity(): int
+    {
+        return 1000;
+    }
+
+    public function materialIssuanceMaxCorrelationIdLength(): int
+    {
+        return 100;
+    }
+
+    public function loadoutMaxArmorReductionCap(): float
+    {
+        return 0.95;
+    }
 }

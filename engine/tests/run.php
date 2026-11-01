@@ -2212,6 +2212,13 @@ try {
     check($engine->worldMaterialItemMaxListCount() === 32, 'GameEngine worldMaterialItemMaxListCount returns 32');
     check($engine->worldMaterialItemMaxIdLength() === 80, 'GameEngine worldMaterialItemMaxIdLength returns 80');
     check($engine->worldMaxMaterialIssuanceBudgetPerHour() === 2000000000, 'GameEngine worldMaxMaterialIssuanceBudgetPerHour returns 2000000000');
+
+    // --- Wave 179 (zone-beta297): GameEngine materialIssuanceSupportedSources, isSupportedMaterialIssuanceSource, materialIssuanceMaxQuantity, materialIssuanceMaxCorrelationIdLength & loadoutMaxArmorReductionCap ---
+    check($engine->materialIssuanceSupportedSources() === ['world', 'search'], 'GameEngine materialIssuanceSupportedSources returns world and search');
+    check($engine->isSupportedMaterialIssuanceSource('world') === true && $engine->isSupportedMaterialIssuanceSource('drop') === false, 'GameEngine isSupportedMaterialIssuanceSource validates source');
+    check($engine->materialIssuanceMaxQuantity() === 1000, 'GameEngine materialIssuanceMaxQuantity returns 1000');
+    check($engine->materialIssuanceMaxCorrelationIdLength() === 100, 'GameEngine materialIssuanceMaxCorrelationIdLength returns 100');
+    check($engine->loadoutMaxArmorReductionCap() === 0.95, 'GameEngine loadoutMaxArmorReductionCap returns 0.95');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
