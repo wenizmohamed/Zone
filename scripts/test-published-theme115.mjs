@@ -151,4 +151,7 @@ test('a later successful stylesheet load can recover after an earlier load error
   assert.equal(diag.status, 'ready');
   assert.equal(b.window.ZonePublishedTheme115.linkId(), 'zone-published-theme');
   assert.equal(b.window.ZonePublishedTheme115.timeoutMs(), 8000);
+  assert.equal(b.window.ZonePublishedTheme115.isReady(), true);
+  assert.equal(b.window.ZonePublishedTheme115.isDisposed(), false);
+  assert.deepEqual(Array.from(b.window.ZonePublishedTheme115.supportedStatuses()), ['pending', 'ready', 'unavailable']);
 });

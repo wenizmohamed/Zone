@@ -3329,4 +3329,29 @@ final class GameEngine
     {
         return $this->playerUsername($playerId) !== '';
     }
+
+    public function playerHasLastLoginDay(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLastLoginDay($playerId) !== null;
+    }
+
+    public function playerHasFactionRole(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerFactionRole($playerId) !== null;
+    }
+
+    public function playerHasDominantStat(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerDominantStat($playerId) !== '';
+    }
+
+    public function playerHasLoadoutSummary(string $playerId = 'founder-player'): bool
+    {
+        return count($this->playerLoadoutSummary($playerId)) > 0;
+    }
+
+    public function playerHasOnboardingSummary(string $playerId = 'founder-player'): bool
+    {
+        return count($this->playerOnboardingSummary($playerId)) > 0;
+    }
 }

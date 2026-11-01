@@ -1792,6 +1792,13 @@ try {
     check($engine->playerHasActiveJob() === true, 'GameEngine playerHasActiveJob returns boolean active job status');
     check($engine->playerHasCity() === true, 'GameEngine playerHasCity returns boolean city status');
     check($engine->playerHasUsername() === true, 'GameEngine playerHasUsername returns boolean username status');
+
+    // --- Wave 119 (zone-beta237): GameEngine playerHasLastLoginDay, playerHasFactionRole, playerHasDominantStat, playerHasLoadoutSummary & playerHasOnboardingSummary ---
+    check(is_bool($engine->playerHasLastLoginDay()), 'GameEngine playerHasLastLoginDay returns boolean last login day status');
+    check(is_bool($engine->playerHasFactionRole()), 'GameEngine playerHasFactionRole returns boolean faction role status');
+    check($engine->playerHasDominantStat() === true, 'GameEngine playerHasDominantStat returns boolean dominant stat status');
+    check($engine->playerHasLoadoutSummary() === true, 'GameEngine playerHasLoadoutSummary returns boolean loadout summary status');
+    check($engine->playerHasOnboardingSummary() === true, 'GameEngine playerHasOnboardingSummary returns boolean onboarding summary status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

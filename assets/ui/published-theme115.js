@@ -35,6 +35,9 @@
     dispose,
     linkId() { return 'zone-published-theme'; },
     timeoutMs() { return 8000; },
+    isReady() { return ready; },
+    isDisposed() { return disposed; },
+    supportedStatuses() { return ['pending', 'ready', 'unavailable']; },
     get disposed() { return disposed; },
     get ready() { return ready; },
     diagnostics() {
