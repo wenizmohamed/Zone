@@ -5261,4 +5261,29 @@ final class GameEngine
     {
         return 100;
     }
+
+    public function attackWinBaseXpReward(): int
+    {
+        return 15;
+    }
+
+    public function attackWinXpPerLevel(): int
+    {
+        return 2;
+    }
+
+    public function enrichedCrimeVariantDefaultsCount(): int
+    {
+        return 7;
+    }
+
+    public function moduleDiagnosticsMetricKeys(): array
+    {
+        return array_keys($this->moduleDiagnostics());
+    }
+
+    public function moduleDiagnosticsMetricCount(): int
+    {
+        return count($this->moduleDiagnostics());
+    }
 }

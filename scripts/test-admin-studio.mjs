@@ -666,6 +666,12 @@ test('Studio snapshot exposes content counts and command search indexes authored
     assert.equal(f.app.helpers.supportedCategoryIds().length, 8);
     assert.equal(f.app.activeContentMode(), 'items');
     assert.equal(f.app.activeModuleFilter(), 'all');
+    assert.equal(f.app.activeModuleQuery(), '');
+    assert.equal(f.app.supportedSectionCount(), 10);
+    assert.deepEqual(Array.from(f.app.supportedModuleFilters()), ['all', 'installed', 'available', 'disabled']);
+    assert.equal(f.app.isSupportedModuleFilter('installed'), true);
+    assert.equal(f.app.isSupportedModuleFilter('unknown'), false);
+    assert.equal(f.app.maxCommandSearchResultCount(), 18);
     assert.equal(f.app.isReady(), true);
     assert.equal(f.app.hasUnsavedChanges(), false);
   }

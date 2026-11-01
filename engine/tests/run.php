@@ -2289,6 +2289,13 @@ try {
     check($engine->attackWinCashMaxBase() === 800, 'GameEngine attackWinCashMaxBase returns 800');
     check($engine->attackWinCashMaxPerLevel() === 90, 'GameEngine attackWinCashMaxPerLevel returns 90');
     check($engine->eventLogQueryMaxLimit() === 100, 'GameEngine eventLogQueryMaxLimit returns 100');
+
+    // --- Wave 190 (zone-beta308): GameEngine attackWinBaseXpReward, attackWinXpPerLevel, enrichedCrimeVariantDefaultsCount, moduleDiagnosticsMetricKeys & moduleDiagnosticsMetricCount ---
+    check($engine->attackWinBaseXpReward() === 15, 'GameEngine attackWinBaseXpReward returns 15');
+    check($engine->attackWinXpPerLevel() === 2, 'GameEngine attackWinXpPerLevel returns 2');
+    check($engine->enrichedCrimeVariantDefaultsCount() === 7, 'GameEngine enrichedCrimeVariantDefaultsCount returns 7');
+    check(in_array('enabledCrimes', $engine->moduleDiagnosticsMetricKeys(), true), 'GameEngine moduleDiagnosticsMetricKeys includes enabledCrimes');
+    check($engine->moduleDiagnosticsMetricCount() === 15, 'GameEngine moduleDiagnosticsMetricCount returns 15');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

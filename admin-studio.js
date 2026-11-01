@@ -29,7 +29,11 @@
   const isReservedCatalogId = id => ['constructor', 'prototype', 'fists'].includes(String(id ?? ''));
   const isValidGeneratedId = id => /^[a-z][a-z0-9_-]{1,63}$/.test(String(id ?? '')) && !isReservedCatalogId(id);
   const supportedCategoryIds = () => Object.keys(categoryNames);
-  const helpers = { sections, isSupportedSection, categoryLabel, isReservedCatalogId, isValidGeneratedId, supportedCategoryIds, normalize: plain, route, makeId, copy, categoryNames };
+  const supportedSectionCount = () => sections.length;
+  const supportedModuleFilters = () => ['all', 'installed', 'available', 'disabled'];
+  const isSupportedModuleFilter = filter => ['all', 'installed', 'available', 'disabled'].includes(String(filter ?? ''));
+  const maxCommandSearchResultCount = () => 18;
+  const helpers = { sections, isSupportedSection, categoryLabel, isReservedCatalogId, isValidGeneratedId, supportedCategoryIds, supportedSectionCount, supportedModuleFilters, isSupportedModuleFilter, maxCommandSearchResultCount, normalize: plain, route, makeId, copy, categoryNames };
   if (typeof window === 'undefined' || typeof state === 'undefined') { globalThis.ZoneStudioHelpers = helpers; return; }
   const q = selector => document.querySelector(selector), qa = selector => [...document.querySelectorAll(selector)];
   const tr = key => copy[state.language]?.[key] ?? copy.en[key] ?? key;
@@ -314,8 +318,9 @@
   }
   const activeContentMode = () => contentMode;
   const activeModuleFilter = () => moduleFilter;
+  const activeModuleQuery = () => moduleQuery;
   const isReady = () => Boolean(state.bootReady);
   const hasUnsavedChanges = () => Boolean(snapshot().unsaved);
-  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, diagnostics, activeContentMode, activeModuleFilter, isReady, hasUnsavedChanges, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
+  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, diagnostics, activeContentMode, activeModuleFilter, activeModuleQuery, supportedSectionCount, supportedModuleFilters, isSupportedModuleFilter, maxCommandSearchResultCount, isReady, hasUnsavedChanges, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
   initialize();
 }());
