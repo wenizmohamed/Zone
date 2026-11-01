@@ -74,6 +74,26 @@ export function maxAssetTransformOffset() {
   return 10000;
 }
 
+export function defaultAssetBaseUrl() {
+  return '/api/v1/assets/';
+}
+
+export function assetBundleUrlPrefix() {
+  return 'asset://bundle/';
+}
+
+export function normalizedPivotGroupName() {
+  return 'ZONE asset centered pivot';
+}
+
+export function normalizedOrientationGroupName() {
+  return 'ZONE asset orientation';
+}
+
+export function maxAssetRotationDegrees() {
+  return 360;
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

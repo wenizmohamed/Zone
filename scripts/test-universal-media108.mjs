@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
-import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,isValidAssetId,assetChunkCount,defaultNormalizedTargetSize,maxAssetRequestPathLength,maxAssetTransformScale,minAssetTransformScale,maxAssetTransformOffset,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
+import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,isValidAssetId,assetChunkCount,defaultNormalizedTargetSize,maxAssetRequestPathLength,maxAssetTransformScale,minAssetTransformScale,maxAssetTransformOffset,defaultAssetBaseUrl,assetBundleUrlPrefix,normalizedPivotGroupName,normalizedOrientationGroupName,maxAssetRotationDegrees,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
 import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,eligibleMapMediaPinCount,isMapMediaViewVisible,minMapMediaPitch,minMapMediaZoom,mapMediaTargetSizeMeters,mapMediaMinTargetSizeMeters,mapMediaMaxTargetSizeMeters,mapMediaClearanceScaleFactor,mapMediaRoofBaseOffsetMeters,mapMediaToneMappingExposure} from '../dist/map-media108.mjs';
 import {VIEWER_STARTUP_TIMEOUT_MS,viewerStartupTimeoutMs,maxRenderDeltaSeconds,isViewerRenderDeltaValid,defaultPauseWhenHidden,viewerStartupTimeoutReason,viewerContextLostReason,viewerDefaultRenderErrorReason,viewerDefaultRuntimeErrorReason} from '../dist/viewer-runtime108.mjs';
@@ -283,4 +283,9 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(isViewerRenderDeltaValid(0.25),false);
   assert.deepEqual(supportedInspectorFormats(),['glb','gltf','obj','fbx']);
   assert.equal(supportedInspectorFormatCount(),4);
+  assert.equal(defaultAssetBaseUrl(),'/api/v1/assets/');
+  assert.equal(assetBundleUrlPrefix(),'asset://bundle/');
+  assert.equal(normalizedPivotGroupName(),'ZONE asset centered pivot');
+  assert.equal(normalizedOrientationGroupName(),'ZONE asset orientation');
+  assert.equal(maxAssetRotationDegrees(),360);
 });

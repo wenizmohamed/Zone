@@ -5586,4 +5586,29 @@ final class GameEngine
     {
         return 75;
     }
+
+    public function npcCombatSupportedActions(): array
+    {
+        return ['start', 'strike', 'finish'];
+    }
+
+    public function npcCombatSupportedFinishApproaches(): array
+    {
+        return ['mug', 'hosp', 'leave'];
+    }
+
+    public function npcCombatMaxStalemateTurns(): int
+    {
+        return 25;
+    }
+
+    public function npcCombatLossHospitalMinutes(): int
+    {
+        return 10;
+    }
+
+    public function npcCombatWinXpPerOpponentLevel(): int
+    {
+        return 3;
+    }
 }

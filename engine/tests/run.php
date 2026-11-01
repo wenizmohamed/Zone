@@ -2380,6 +2380,13 @@ try {
     check($engine->progressionJailBustMaxOddsPct() === 90, 'GameEngine progressionJailBustMaxOddsPct returns 90');
     check($engine->progressionJailBustBaseOddsPct() === 55, 'GameEngine progressionJailBustBaseOddsPct returns 55');
     check($engine->progressionHospitalReviveEnergyCost() === 75, 'GameEngine progressionHospitalReviveEnergyCost returns 75');
+
+    // --- Wave 203 (zone-beta321): GameEngine npcCombatSupportedActions, npcCombatSupportedFinishApproaches, npcCombatMaxStalemateTurns, npcCombatLossHospitalMinutes & npcCombatWinXpPerOpponentLevel ---
+    check($engine->npcCombatSupportedActions() === ['start', 'strike', 'finish'], 'GameEngine npcCombatSupportedActions returns start, strike, finish');
+    check($engine->npcCombatSupportedFinishApproaches() === ['mug', 'hosp', 'leave'], 'GameEngine npcCombatSupportedFinishApproaches returns mug, hosp, leave');
+    check($engine->npcCombatMaxStalemateTurns() === 25, 'GameEngine npcCombatMaxStalemateTurns returns 25');
+    check($engine->npcCombatLossHospitalMinutes() === 10, 'GameEngine npcCombatLossHospitalMinutes returns 10');
+    check($engine->npcCombatWinXpPerOpponentLevel() === 3, 'GameEngine npcCombatWinXpPerOpponentLevel returns 3');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
