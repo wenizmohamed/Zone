@@ -4492,4 +4492,30 @@ final class GameEngine
     {
         return (int) ($this->resourceRegenIntervals()[$bar] ?? 0);
     }
+
+    /** @return list<string> */
+    public function supportedRegenBars(): array
+    {
+        return array_keys($this->resourceRegenIntervals());
+    }
+
+    public function isSupportedRegenBar(string $bar): bool
+    {
+        return array_key_exists($bar, $this->resourceRegenIntervals());
+    }
+
+    public function totalRegenIntervalsSeconds(): int
+    {
+        return array_sum($this->resourceRegenIntervals());
+    }
+
+    public function maxRegenIntervalSeconds(): int
+    {
+        return max($this->resourceRegenIntervals());
+    }
+
+    public function minRegenIntervalSeconds(): int
+    {
+        return min($this->resourceRegenIntervals());
+    }
 }

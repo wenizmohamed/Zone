@@ -2086,6 +2086,13 @@ try {
     check($engine->rateLimitWindowSeconds() === 10, 'GameEngine rateLimitWindowSeconds returns 10');
     check($engine->rateLimitCurrentCount() >= 0, 'GameEngine rateLimitCurrentCount returns non-negative hit count');
     check($engine->resourceRegenIntervalForBar('energy') === 180 && $engine->resourceRegenIntervalForBar('nerve') === 300, 'GameEngine resourceRegenIntervalForBar returns exact bar intervals');
+
+    // --- Wave 161 (zone-beta279): GameEngine supportedRegenBars, isSupportedRegenBar, totalRegenIntervalsSeconds, maxRegenIntervalSeconds & minRegenIntervalSeconds ---
+    check($engine->supportedRegenBars() === ['life', 'energy', 'happy', 'nerve'], 'GameEngine supportedRegenBars returns 4 regenerating bars');
+    check($engine->isSupportedRegenBar('energy') === true && $engine->isSupportedRegenBar('mana') === false, 'GameEngine isSupportedRegenBar validates bar name');
+    check($engine->totalRegenIntervalsSeconds() === 720, 'GameEngine totalRegenIntervalsSeconds returns 720');
+    check($engine->maxRegenIntervalSeconds() === 300, 'GameEngine maxRegenIntervalSeconds returns 300');
+    check($engine->minRegenIntervalSeconds() === 60, 'GameEngine minRegenIntervalSeconds returns 60');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

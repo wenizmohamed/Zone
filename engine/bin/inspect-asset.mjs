@@ -27,6 +27,8 @@ export function maxInspectorVertices() { return MAX_VERTICES; }
 export function maxInspectorTriangles() { return MAX_TRIANGLES; }
 export function maxInspectorNodes() { return MAX_NODES; }
 export function maxInspectorBytes() { return MAX_BYTES; }
+export function supportedInspectorFormats() { return ['glb', 'gltf', 'obj', 'fbx']; }
+export function supportedInspectorFormatCount() { return 4; }
 const safeVector = v => [v.x, v.y, v.z].map(n => Math.round(n * 1e7) / 1e7);
 // Browser-only progress notifications do not alter the parsed geometry.
 globalThis.ProgressEvent ??= class ProgressEvent extends Event {
