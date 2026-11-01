@@ -193,6 +193,12 @@ test('membership progression reflects earned XP and published thresholds, not de
   assert.ok(view.gymStudio.nextTarget > 20);
   assert.equal(view.gymStudio.progressPct, Math.round(20 / view.gymStudio.nextTarget * 100));
   assert.ok(view.gyms.some(gym => gym.current && gym.disabled));
+  assert.deepEqual(Array.from(instance.supportedGymStationIds()), ['str', 'def', 'spd', 'dex']);
+  assert.equal(instance.isSupportedGymStationId('str'), true);
+  assert.equal(instance.isSupportedGymStationId('unknown'), false);
+  assert.equal(instance.isTraveling(), false);
+  assert.equal(instance.totalBattleStats(), 40);
+  assert.equal(instance.netWorth(), 2500);
 });
 
 test('Home/Gym artwork has honest existing fallbacks, local layout boundaries, mobile stations and RTL type', () => {

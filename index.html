@@ -2941,6 +2941,27 @@ class Component extends DCLogic {
     return Date.now() < Number(this.p?.hospUntil || 0);
   }
 
+  supportedGymStationIds() {
+    return ['str', 'def', 'spd', 'dex'];
+  }
+
+  isSupportedGymStationId(id) {
+    return ['str', 'def', 'spd', 'dex'].includes(String(id ?? ''));
+  }
+
+  isTraveling() {
+    return this.p?.travel?.status === 'traveling';
+  }
+
+  totalBattleStats() {
+    const s = this.p?.stats || {};
+    return Number(s.str || 0) + Number(s.def || 0) + Number(s.spd || 0) + Number(s.dex || 0);
+  }
+
+  netWorth() {
+    return Number(this.p?.cash || 0) + Number(this.p?.bankBalance || 0);
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

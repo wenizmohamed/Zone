@@ -1974,6 +1974,13 @@ try {
     check(is_string($engine->activeThemeDescription()), 'GameEngine activeThemeDescription returns active theme description');
     check($engine->isThemeInstalled($engine->installedThemeIds()[0]) === true && $engine->isThemeInstalled('unknown') === false, 'GameEngine isThemeInstalled validates installed theme ID');
     check($engine->activeThemePreviewColor() !== '', 'GameEngine activeThemePreviewColor returns active theme preview hex color');
+
+    // --- Wave 145 (zone-beta263): GameEngine enabledModuleIdList, enabledModuleIdCount, isModuleEnabledById, moduleRegistryTotalCount & moduleRegistryInstalledCount ---
+    check(count($engine->enabledModuleIdList()) >= 25, 'GameEngine enabledModuleIdList returns enabled module IDs');
+    check($engine->enabledModuleIdCount() >= 25, 'GameEngine enabledModuleIdCount returns enabled module ID count');
+    check($engine->isModuleEnabledById('crime') === true && $engine->isModuleEnabledById('unknown') === false, 'GameEngine isModuleEnabledById validates enabled module ID');
+    check($engine->moduleRegistryTotalCount() >= 27, 'GameEngine moduleRegistryTotalCount returns total registered module count');
+    check($engine->moduleRegistryInstalledCount() >= 27, 'GameEngine moduleRegistryInstalledCount returns installed module count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

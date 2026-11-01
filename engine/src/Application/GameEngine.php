@@ -3996,4 +3996,30 @@ final class GameEngine
     {
         return (string) ($this->themes->activeTheme()['preview'] ?? '#d7ff3f');
     }
+
+    /** @return list<string> */
+    public function enabledModuleIdList(): array
+    {
+        return $this->modules->enabledModuleIds();
+    }
+
+    public function enabledModuleIdCount(): int
+    {
+        return count($this->enabledModuleIdList());
+    }
+
+    public function isModuleEnabledById(string $id): bool
+    {
+        return $this->modules->isEnabled($id);
+    }
+
+    public function moduleRegistryTotalCount(): int
+    {
+        return (int) ($this->modules->summary()['total'] ?? 0);
+    }
+
+    public function moduleRegistryInstalledCount(): int
+    {
+        return (int) ($this->modules->summary()['installed'] ?? 0);
+    }
 }
