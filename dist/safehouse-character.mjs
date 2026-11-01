@@ -64,6 +64,26 @@ export function safehouseWeaponSupportPoint() {
   return [.24, .06, 0];
 }
 
+export function safehouseArmorTargetBoneName() {
+  return 'Chest';
+}
+
+export function safehouseCustomArmorRepresentation() {
+  return 'uploaded-chest-attachment';
+}
+
+export function safehouseCustomArmorTargetOffset() {
+  return [0, 1.12, .04];
+}
+
+export function safehouseMaxTickDeltaSeconds() {
+  return .05;
+}
+
+export function safehouseDefaultWeaponKey() {
+  return 'fists';
+}
+
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
   const loader = new GLTFLoader(), wardrobe = wardrobeLoader || (file => loader.loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href)), weaponAssets = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoader,
     catalog, materials, pack, baseURL: new URL('../assets/weapons/', import.meta.url) });

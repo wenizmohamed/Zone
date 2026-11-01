@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
-import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey, safehouseCustomCharacterTargetHeight, safehouseCustomWeaponTargetSize, safehouseCustomArmorTargetSize, safehouseCharacterDefaultYaw, safehouseWeaponSupportPoint} from '../dist/safehouse-character.mjs';
+import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey, safehouseCustomCharacterTargetHeight, safehouseCustomWeaponTargetSize, safehouseCustomArmorTargetSize, safehouseCharacterDefaultYaw, safehouseWeaponSupportPoint, safehouseArmorTargetBoneName, safehouseCustomArmorRepresentation, safehouseCustomArmorTargetOffset, safehouseMaxTickDeltaSeconds, safehouseDefaultWeaponKey} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -148,6 +148,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(safehouseCustomArmorTargetSize(), .52);
   assert.equal(safehouseCharacterDefaultYaw(), -.15);
   assert.deepEqual(safehouseWeaponSupportPoint(), [.24, .06, 0]);
+  assert.equal(safehouseArmorTargetBoneName(), 'Chest');
+  assert.equal(safehouseCustomArmorRepresentation(), 'uploaded-chest-attachment');
+  assert.deepEqual(safehouseCustomArmorTargetOffset(), [0, 1.12, .04]);
+  assert.equal(safehouseMaxTickDeltaSeconds(), .05);
+  assert.equal(safehouseDefaultWeaponKey(), 'fists');
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('other'), false);

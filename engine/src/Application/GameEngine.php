@@ -5611,4 +5611,29 @@ final class GameEngine
     {
         return 3;
     }
+
+    public function playerCombatBaseDamageCoefficient(): int
+    {
+        return 120;
+    }
+
+    public function playerCombatLockExpirationSeconds(): int
+    {
+        return 900;
+    }
+
+    public function playerCombatMaxLockRetryAttempts(): int
+    {
+        return 5;
+    }
+
+    public function playerCombatMugWinHospitalMinutes(): int
+    {
+        return 5;
+    }
+
+    public function playerCombatLeaveWinHospitalMinutes(): int
+    {
+        return 2;
+    }
 }

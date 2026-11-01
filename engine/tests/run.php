@@ -2387,6 +2387,13 @@ try {
     check($engine->npcCombatMaxStalemateTurns() === 25, 'GameEngine npcCombatMaxStalemateTurns returns 25');
     check($engine->npcCombatLossHospitalMinutes() === 10, 'GameEngine npcCombatLossHospitalMinutes returns 10');
     check($engine->npcCombatWinXpPerOpponentLevel() === 3, 'GameEngine npcCombatWinXpPerOpponentLevel returns 3');
+
+    // --- Wave 204 (zone-beta322): GameEngine playerCombatBaseDamageCoefficient, playerCombatLockExpirationSeconds, playerCombatMaxLockRetryAttempts, playerCombatMugWinHospitalMinutes & playerCombatLeaveWinHospitalMinutes ---
+    check($engine->playerCombatBaseDamageCoefficient() === 120, 'GameEngine playerCombatBaseDamageCoefficient returns 120');
+    check($engine->playerCombatLockExpirationSeconds() === 900, 'GameEngine playerCombatLockExpirationSeconds returns 900');
+    check($engine->playerCombatMaxLockRetryAttempts() === 5, 'GameEngine playerCombatMaxLockRetryAttempts returns 5');
+    check($engine->playerCombatMugWinHospitalMinutes() === 5, 'GameEngine playerCombatMugWinHospitalMinutes returns 5');
+    check($engine->playerCombatLeaveWinHospitalMinutes() === 2, 'GameEngine playerCombatLeaveWinHospitalMinutes returns 2');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
