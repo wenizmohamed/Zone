@@ -2928,4 +2928,29 @@ final class GameEngine
     {
         return $this->totalMaterialLootAwardedCount($source) > 0;
     }
+
+    public function hasSecurityEvents(?string $playerId = null): bool
+    {
+        return $this->securityEventCount($playerId) > 0;
+    }
+
+    public function hasLedgerEntries(?string $playerId = null): bool
+    {
+        return $this->ledgerEntryCount($playerId) > 0;
+    }
+
+    public function hasEventLogs(?string $eventName = null): bool
+    {
+        return $this->eventLogCount($eventName) > 0;
+    }
+
+    public function hasReadyAssets(): bool
+    {
+        return $this->readyAssetCount() > 0;
+    }
+
+    public function hasUploadingAssets(): bool
+    {
+        return $this->uploadingAssetCount() > 0;
+    }
 }

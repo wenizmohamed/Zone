@@ -18,6 +18,14 @@ const GRIP_POSE = {
   pinky4r: [.39358854,-.02463288,.01859723,-.91876857]
 };
 
+export function gripPoseBoneKeys() {
+  return Object.keys(GRIP_POSE);
+}
+
+export function isGripPoseBoneKey(key) {
+  return typeof key === 'string' && Object.prototype.hasOwnProperty.call(GRIP_POSE, key);
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {

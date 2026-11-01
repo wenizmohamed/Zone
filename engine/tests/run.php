@@ -1680,6 +1680,13 @@ try {
     check(is_bool($engine->hasActiveEncounters()), 'GameEngine hasActiveEncounters returns boolean active encounters status');
     check(is_bool($engine->hasArrivedTravels()), 'GameEngine hasArrivedTravels returns boolean arrived travels status');
     check(is_bool($engine->hasMaterialLootAwarded()), 'GameEngine hasMaterialLootAwarded returns boolean material loot awarded status');
+
+    // --- Wave 103 (zone-beta221): GameEngine hasSecurityEvents, hasLedgerEntries, hasEventLogs, hasReadyAssets & hasUploadingAssets ---
+    check(is_bool($engine->hasSecurityEvents()), 'GameEngine hasSecurityEvents returns boolean security events status');
+    check($engine->hasLedgerEntries() === true, 'GameEngine hasLedgerEntries returns boolean ledger entries status');
+    check($engine->hasEventLogs() === true, 'GameEngine hasEventLogs returns boolean event logs status');
+    check(is_bool($engine->hasReadyAssets()), 'GameEngine hasReadyAssets returns boolean ready assets status');
+    check(is_bool($engine->hasUploadingAssets()), 'GameEngine hasUploadingAssets returns boolean uploading assets status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

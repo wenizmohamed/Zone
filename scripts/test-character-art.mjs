@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
-import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
+import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
 import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId, clampArmorReduction } from '../dist/character-armor.mjs';
@@ -142,6 +142,9 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.equal(ctrl.hasActiveVest(), false);
   ctrl.dispose();
   assert.equal(ctrl.isDisposed(), true);
+  assert.equal(gripPoseBoneKeys().length, 12);
+  assert.equal(isGripPoseBoneKey('index2r'), true);
+  assert.equal(isGripPoseBoneKey('head'), false);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {
