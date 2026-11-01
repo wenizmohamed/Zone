@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -44,6 +44,8 @@ test('all120 actual server parcels select exactly4 z16 detail tiles without muta
 test('planner rejects invalid, broad and degenerate geometry before any provider request',()=>{
   for(const value of [null,[[0,0],[0,1]],[[NaN,0],[1,1]],[[-181,0],[1,1]],[[-74,40],[-73,41]]])assert.throws(()=>planTiles(value));
   assert.equal(LIMITS.maxTiles,9);assert.equal(LIMITS.concurrency,2);assert.equal(LIMITS.maxTileBytes,1048576);assert.equal(LIMITS.maxBytes,4194304);
+  assert.deepEqual(buildingLimits(),LIMITS);
+  assert.deepEqual(buildingLayerIds(),[FILL,EXTRUSION]);
 });
 test('actual canonical MVT decoder preserves holes, multipolygons, raised-part heights and provider identity',()=>{
   const features=decodeTile(bytes,planTiles(bounds)[0]);assert.equal(features.length,2);assert.equal(features[0].geometry.type,'Polygon');assert.equal(features[0].geometry.coordinates.length,2);assert.equal(features[1].geometry.type,'MultiPolygon');assert.equal(features[1].geometry.coordinates.length,2);

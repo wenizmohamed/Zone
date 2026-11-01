@@ -1449,6 +1449,13 @@ try {
     check($engine->dailyContractPoolCount() === 4, 'GameEngine dailyContractPoolCount returns 4 rotating daily contracts');
     check(is_bool($engine->isDailyContractComplete('founder-player')), 'GameEngine isDailyContractComplete returns boolean completion status');
     check(is_bool($engine->isDailyContractClaimed('founder-player')), 'GameEngine isDailyContractClaimed returns boolean claim status');
+
+    // --- Wave 70 (zone-beta188): GameEngine xpForLevel, levelForXp, familyMemberCount, familyRespectBalance & eligiblePlayerCombatOpponentCount ---
+    check($engine->xpForLevel(1) === 0 && $engine->xpForLevel(2) === 100, 'GameEngine xpForLevel returns server XP threshold for level');
+    check($engine->levelForXp(0) === 1 && $engine->levelForXp(100) === 2, 'GameEngine levelForXp resolves player level from XP');
+    check($engine->familyMemberCount('founder-player') >= 1, 'GameEngine familyMemberCount returns active family member count');
+    check($engine->familyRespectBalance('founder-player') >= 0, 'GameEngine familyRespectBalance returns shared family respect balance');
+    check($engine->eligiblePlayerCombatOpponentCount('founder-player') >= 0, 'GameEngine eligiblePlayerCombatOpponentCount returns eligible PvP opponent count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

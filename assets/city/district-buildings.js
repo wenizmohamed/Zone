@@ -11,6 +11,14 @@ export const BUILDING_PAINT=Object.freeze({'fill-extrusion-color':['interpolate'
 export const EXTRUDE_FILTER=['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']];
 export const FOOTPRINT_FILTER=['all',['!=',['get','type'],'building:part'],['!=',['get','underground'],'true']];
 
+export function buildingLimits(){
+  return {...LIMITS};
+}
+
+export function buildingLayerIds(){
+  return [FILL,EXTRUSION];
+}
+
 export function planTiles(bounds,limits=LIMITS){
   if(!Array.isArray(bounds)||bounds.length!==2||bounds.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n))))throw new Error('District bounds are unavailable');
   const [[west,south],[east,north]]=bounds,z=limits.sourceZoom,n=2**z;

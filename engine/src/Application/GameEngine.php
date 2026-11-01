@@ -2015,4 +2015,32 @@ final class GameEngine
     {
         return (bool) ($this->dailyContract($playerId)['claimed'] ?? false);
     }
+
+    public function xpForLevel(int $level): int
+    {
+        return $this->leveling->totalXpForLevel($level);
+    }
+
+    public function levelForXp(int $xp): int
+    {
+        return $this->leveling->levelForXp($xp);
+    }
+
+    public function familyMemberCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\FamilyProgressionService($this->database, $this->events))->snapshot($playerId)['memberCount'] ?? 0);
+    }
+
+    public function familyRespectBalance(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\FamilyProgressionService($this->database, $this->events))->snapshot($playerId)['respect'] ?? 0);
+    }
+
+    public function eligiblePlayerCombatOpponentCount(string $playerId = 'founder-player'): int
+    {
+        return count(array_filter(
+            (new \Zone\Engine\Core\Game\PlayerCombatService($this->database, $this->events))->opponents($playerId)['players'] ?? [],
+            static fn (array $p): bool => !empty($p['eligible']),
+        ));
+    }
 }
