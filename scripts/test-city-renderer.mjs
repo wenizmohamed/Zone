@@ -33,6 +33,10 @@ test('3D waits for asynchronous shader preparation and keeps flat rendering avai
   const h=await harness();
   assert.equal(h.scope.cityLandmarkModels().length,8);
   assert.equal(h.scope.cityLandmarkLayerId(),'zone-city-landmarks');
+  assert.equal(h.scope.isSupportedCityLandmarkModel('car_sedan'),true);
+  assert.equal(h.scope.isSupportedCityLandmarkModel('ufo'),false);
+  assert.equal(h.controller.isDisposed(),false);
+  assert.equal(h.controller.isVisible(),true);
   h.controller.setTerritories(h.features);h.pitch(35);h.render();assert.equal(h.renders,0);
   assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,false);
   assert.equal(h.controller.getDiagnostics().shadersReady,false);

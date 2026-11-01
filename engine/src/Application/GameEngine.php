@@ -3379,4 +3379,31 @@ final class GameEngine
     {
         return $this->configuredCacheAdapter() !== '';
     }
+
+    public function hasValidBrowserSessionCookieName(): bool
+    {
+        return $this->browserSessionCookieName() !== '';
+    }
+
+    public function hasValidTerritoryNeutralColor(): bool
+    {
+        return $this->territoryNeutralColor() !== '';
+    }
+
+    public function hasValidActiveReleaseId(): bool
+    {
+        $id = $this->activeReleaseId();
+        return is_string($id) && $id !== '';
+    }
+
+    public function hasValidActiveThemeId(): bool
+    {
+        $id = $this->activeThemeId();
+        return is_string($id) && $id !== '';
+    }
+
+    public function hasValidDatabaseDriver(): bool
+    {
+        return $this->databaseDriver() !== '';
+    }
 }

@@ -1806,6 +1806,13 @@ try {
     check($engine->hasCurrentFamilySeason() === true, 'GameEngine hasCurrentFamilySeason returns boolean current family season status');
     check($engine->hasPublishedRulesSummary() === true, 'GameEngine hasPublishedRulesSummary returns boolean published rules summary status');
     check($engine->hasConfiguredCacheAdapter() === true, 'GameEngine hasConfiguredCacheAdapter returns boolean configured cache adapter status');
+
+    // --- Wave 121 (zone-beta239): GameEngine hasValidBrowserSessionCookieName, hasValidTerritoryNeutralColor, hasValidActiveReleaseId, hasValidActiveThemeId & hasValidDatabaseDriver ---
+    check($engine->hasValidBrowserSessionCookieName() === true, 'GameEngine hasValidBrowserSessionCookieName returns boolean valid browser session cookie name status');
+    check($engine->hasValidTerritoryNeutralColor() === true, 'GameEngine hasValidTerritoryNeutralColor returns boolean valid territory neutral color status');
+    check($engine->hasValidActiveReleaseId() === true, 'GameEngine hasValidActiveReleaseId returns boolean valid active release id status');
+    check($engine->hasValidActiveThemeId() === true, 'GameEngine hasValidActiveThemeId returns boolean valid active theme id status');
+    check($engine->hasValidDatabaseDriver() === true, 'GameEngine hasValidDatabaseDriver returns boolean valid database driver status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

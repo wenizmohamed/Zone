@@ -15,6 +15,10 @@ export function cityLandmarkLayerId(){
   return LAYER_ID;
 }
 
+export function isSupportedCityLandmarkModel(name){
+  return MODELS.includes(String(name ?? ''));
+}
+
 // One renderer shares Mapbox's context. There is no independent animation loop.
 export async function installCityLandmarks(map){
   if(map.getLayer(LAYER_ID))return null;
@@ -150,6 +154,8 @@ export async function installCityLandmarks(map){
     },
     whenReady(){return warmPromise;},
     getDiagnostics(){return {...diagnostics};},
+    isDisposed(){return disposed;},
+    isVisible(){return visible;},
     setVisible(value){visible=!!value;diagnostics.visible=visible;publish();if(visible)scheduleRebuild();map.triggerRepaint();},
     dispose(){restoreNative();if(map.getLayer(LAYER_ID))map.removeLayer(LAYER_ID);if(map.getLayer('zone-city-streets'))map.removeLayer('zone-city-streets');if(map.getSource('zone-city-streets'))map.removeSource('zone-city-streets');globalThis.ZoneCityAtlas.remove(map);}
   };
