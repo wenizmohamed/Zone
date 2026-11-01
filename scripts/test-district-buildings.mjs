@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,buildingLayerCount,defaultSourceZoom,maxTileBudget,maxTileConcurrency,buildingSourceId,isBuildingLayerId,isWithinBuildingLimits,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,buildingLayerCount,defaultSourceZoom,maxTileBudget,maxTileConcurrency,maxTileBytesBudget,maxAggregateBytesBudget,maxFeatureBudget,maxCoordinateBudget,buildingLoadTimeoutMs,buildingSourceId,isBuildingLayerId,isWithinBuildingLimits,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -240,4 +240,9 @@ test('summarizeDecodedFeatures calculates total, extrudable, raisedParts, maximu
   assert.equal(maxTileConcurrency(),2);
   assert.equal(isBuildingLayerId(FILL),true);
   assert.equal(isBuildingLayerId('unknown'),false);
+  assert.equal(maxTileBytesBudget(),1048576);
+  assert.equal(maxAggregateBytesBudget(),4194304);
+  assert.equal(maxFeatureBudget(),5000);
+  assert.equal(maxCoordinateBudget(),160000);
+  assert.equal(buildingLoadTimeoutMs(),15000);
 });

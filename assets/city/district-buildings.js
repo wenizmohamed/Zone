@@ -35,6 +35,26 @@ export function maxTileConcurrency(){
   return LIMITS.concurrency;
 }
 
+export function maxTileBytesBudget(){
+  return LIMITS.maxTileBytes;
+}
+
+export function maxAggregateBytesBudget(){
+  return LIMITS.maxBytes;
+}
+
+export function maxFeatureBudget(){
+  return LIMITS.maxFeatures;
+}
+
+export function maxCoordinateBudget(){
+  return LIMITS.maxCoordinates;
+}
+
+export function buildingLoadTimeoutMs(){
+  return LIMITS.timeoutMs;
+}
+
 export function buildingSourceId(){
   return SOURCE;
 }

@@ -2415,6 +2415,13 @@ try {
     check($engine->playerMarketMaxListingQuantity() === 100, 'GameEngine playerMarketMaxListingQuantity returns 100');
     check($engine->playerMarketMinListingPriceCash() === 100, 'GameEngine playerMarketMinListingPriceCash returns 100');
     check($engine->playerMarketMaxListingPriceCash() === 1000000000, 'GameEngine playerMarketMaxListingPriceCash returns 1000000000');
+
+    // --- Wave 208 (zone-beta326): GameEngine materialLootSupportedSources, isSupportedMaterialLootSource, materialLootHourlyWindowSeconds, worldDirectorMinTickSeconds & worldDirectorMaxTickSeconds ---
+    check($engine->materialLootSupportedSources() === ['crimes', 'search', 'combat', 'world'], 'GameEngine materialLootSupportedSources returns crimes, search, combat, world');
+    check($engine->isSupportedMaterialLootSource('crimes') && !$engine->isSupportedMaterialLootSource('invalid'), 'GameEngine isSupportedMaterialLootSource validates source');
+    check($engine->materialLootHourlyWindowSeconds() === 3600, 'GameEngine materialLootHourlyWindowSeconds returns 3600');
+    check($engine->worldDirectorMinTickSeconds() === 15, 'GameEngine worldDirectorMinTickSeconds returns 15');
+    check($engine->worldDirectorMaxTickSeconds() === 3600, 'GameEngine worldDirectorMaxTickSeconds returns 3600');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

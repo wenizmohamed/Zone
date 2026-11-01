@@ -5713,4 +5713,30 @@ final class GameEngine
     {
         return 1000000000;
     }
+
+    /** @return list<string> */
+    public function materialLootSupportedSources(): array
+    {
+        return ['crimes', 'search', 'combat', 'world'];
+    }
+
+    public function isSupportedMaterialLootSource(string $source): bool
+    {
+        return in_array($source, $this->materialLootSupportedSources(), true);
+    }
+
+    public function materialLootHourlyWindowSeconds(): int
+    {
+        return 3600;
+    }
+
+    public function worldDirectorMinTickSeconds(): int
+    {
+        return 15;
+    }
+
+    public function worldDirectorMaxTickSeconds(): int
+    {
+        return 3600;
+    }
 }
