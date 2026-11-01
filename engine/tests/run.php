@@ -2443,6 +2443,13 @@ try {
     check($engine->contentCrimeMaxCashReward() === 2000000000, 'GameEngine contentCrimeMaxCashReward returns 2000000000');
     check($engine->contentCrimeMaxXpReward() === 1000000000, 'GameEngine contentCrimeMaxXpReward returns 1000000000');
     check($engine->contentCrimeMaxLevelRequired() === 100, 'GameEngine contentCrimeMaxLevelRequired returns 100');
+
+    // --- Wave 212 (zone-beta330): GameEngine contentCrimeMaxRequiredQuantity, contentCrimeMaxMasteryPerSuccess, contentCrimeMaxChainWindowSeconds, contentCrimeMaxChainBonusBasisPoints & contentCrimeMaxConsequenceSeconds ---
+    check($engine->contentCrimeMaxRequiredQuantity() === 1000, 'GameEngine contentCrimeMaxRequiredQuantity returns 1000');
+    check($engine->contentCrimeMaxMasteryPerSuccess() === 100, 'GameEngine contentCrimeMaxMasteryPerSuccess returns 100');
+    check($engine->contentCrimeMaxChainWindowSeconds() === 86400, 'GameEngine contentCrimeMaxChainWindowSeconds returns 86400');
+    check($engine->contentCrimeMaxChainBonusBasisPoints() === 2000, 'GameEngine contentCrimeMaxChainBonusBasisPoints returns 2000');
+    check($engine->contentCrimeMaxConsequenceSeconds() === 86400, 'GameEngine contentCrimeMaxConsequenceSeconds returns 86400');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

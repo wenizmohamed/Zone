@@ -127,5 +127,20 @@
   function isBuildingLayoutModel(model){
     return buildingLayoutModels().includes(String(model||''));
   }
-  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,isSupportedLayoutModel,maxPlacementWidthMeters,cullingBudgets,supportedLayoutModelCount,buildingLayoutModels,propLayoutModels,isBuildingLayoutModel};
+  function layoutSedanWidthMeters(){
+    return 13;
+  }
+  function layoutBushWidthMeters(){
+    return 27;
+  }
+  function layoutStreetlightWidthMeters(){
+    return 10;
+  }
+  function layoutMaxMercatorLatitude(){
+    return 85.051129;
+  }
+  function layoutCandidatesPerCellCount(){
+    return 26;
+  }
+  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,isSupportedLayoutModel,maxPlacementWidthMeters,cullingBudgets,supportedLayoutModelCount,buildingLayoutModels,propLayoutModels,isBuildingLayoutModel,layoutSedanWidthMeters,layoutBushWidthMeters,layoutStreetlightWidthMeters,layoutMaxMercatorLatitude,layoutCandidatesPerCellCount};
 });

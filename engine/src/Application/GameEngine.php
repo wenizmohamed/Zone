@@ -5814,4 +5814,29 @@ final class GameEngine
     {
         return 100;
     }
+
+    public function contentCrimeMaxRequiredQuantity(): int
+    {
+        return 1000;
+    }
+
+    public function contentCrimeMaxMasteryPerSuccess(): int
+    {
+        return 100;
+    }
+
+    public function contentCrimeMaxChainWindowSeconds(): int
+    {
+        return 86400;
+    }
+
+    public function contentCrimeMaxChainBonusBasisPoints(): int
+    {
+        return 2000;
+    }
+
+    public function contentCrimeMaxConsequenceSeconds(): int
+    {
+        return 86400;
+    }
 }
