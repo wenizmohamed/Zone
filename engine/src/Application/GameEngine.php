@@ -3103,4 +3103,30 @@ final class GameEngine
     {
         return $this->browserSessionLifetimeSeconds() > 0;
     }
+
+    public function hasValidMaxUploadBytes(): bool
+    {
+        return $this->maxUploadBytes() > 0;
+    }
+
+    public function hasValidUploadChunkBytes(): bool
+    {
+        return $this->uploadChunkBytes() > 0;
+    }
+
+    public function hasValidCatalogDraftRevision(): bool
+    {
+        return $this->catalogDraftRevision() >= 1;
+    }
+
+    public function hasValidHighLowVersion(string $playerId = 'founder-player'): bool
+    {
+        return $this->highLowVersion($playerId) >= 1;
+    }
+
+    public function hasValidHighLowCard(string $playerId = 'founder-player'): bool
+    {
+        $card = $this->highLowCurrentCard($playerId);
+        return $card >= 1 && $card <= 13;
+    }
 }

@@ -1729,6 +1729,13 @@ try {
     check($engine->hasDailyStreakSchedule() === true, 'GameEngine hasDailyStreakSchedule returns boolean daily streak schedule status');
     check($engine->hasResourceRegenIntervals() === true, 'GameEngine hasResourceRegenIntervals returns boolean resource regen intervals status');
     check($engine->hasValidBrowserSessionLifetime() === true, 'GameEngine hasValidBrowserSessionLifetime returns boolean valid browser session lifetime status');
+
+    // --- Wave 110 (zone-beta228): GameEngine hasValidMaxUploadBytes, hasValidUploadChunkBytes, hasValidCatalogDraftRevision, hasValidHighLowVersion & hasValidHighLowCard ---
+    check($engine->hasValidMaxUploadBytes() === true, 'GameEngine hasValidMaxUploadBytes returns boolean valid max upload bytes status');
+    check($engine->hasValidUploadChunkBytes() === true, 'GameEngine hasValidUploadChunkBytes returns boolean valid upload chunk bytes status');
+    check($engine->hasValidCatalogDraftRevision() === true, 'GameEngine hasValidCatalogDraftRevision returns boolean valid catalog draft revision status');
+    check($engine->hasValidHighLowVersion() === true, 'GameEngine hasValidHighLowVersion returns boolean valid high-low version status');
+    check($engine->hasValidHighLowCard() === true, 'GameEngine hasValidHighLowCard returns boolean valid high-low card status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

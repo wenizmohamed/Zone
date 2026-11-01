@@ -311,7 +311,7 @@ export function createDistrictSurfaces(map,features,options={}){
     }catch(error){frameFailure=error;}finally{renderer.resetState();}
     if(frameFailure){fail(frameFailure);return;}publish();
   },onRemove:remove};
-  const control={diagnostics,getDiagnostics(){return {...diagnostics};},ready:null,setVisible(value){if(disposed)return;visible=!!value;if(visible&&isActive())map.triggerRepaint?.();},dispose(){if(disposed)return;if(SURFACE_OWNERS.get(map)===control&&map.getLayer(LAYER))map.removeLayer(LAYER);else remove();}};
+  const control={diagnostics,getDiagnostics(){return {...diagnostics};},isDisposed(){return disposed;},isVisible(){return visible;},ready:null,setVisible(value){if(disposed)return;visible=!!value;if(visible&&isActive())map.triggerRepaint?.();},dispose(){if(disposed)return;if(SURFACE_OWNERS.get(map)===control&&map.getLayer(LAYER))map.removeLayer(LAYER);else remove();}};
   publish();
   if(!isActive()||diagnostics.geometryTriangles===0&&plan.diagnostics.triangles===0){diagnostics.status=isActive()?'empty':'cancelled';control.ready=Promise.resolve(control);publish();return control;}
   try{
@@ -321,3 +321,4 @@ export function createDistrictSurfaces(map,features,options={}){
   }catch(error){fail(error);throw error;}
   return control;
 }
+export function surfacePaletteCategories(){return Object.keys(PALETTE);}

@@ -392,3 +392,11 @@ test('duplicate, empty, cancelled and failed installation paths never steal anot
   for(const [features,options,status]of[[[],{},'empty'],[[feature(17)],{isActive:()=>false},'cancelled']]){const empty=harness(),c=empty.create(empty.map,features,{center:[0,0],...options});await c.ready;assert.equal(c.diagnostics.status,status);assert.equal(empty.layers.size,0);assert.equal(empty.renderers.length,0);c.dispose();}
   const broken=harness({addFailure:true});broken.layers.set('native-provider',{id:'native-provider'});assert.throws(()=>broken.create(broken.map,[feature(18)],{center:[0,0]}),/style rejected/);assert.deepEqual([...broken.layers.keys()],['native-provider']);assert.equal(broken.renderers.length,0);
 });
+
+test('surfacePaletteCategories, isDisposed, and isVisible expose district surface state cleanly',async()=>{
+  assert.deepEqual(module.surfacePaletteCategories(),['glass','walls','stone','metal']);
+  const h=harness(),control=h.create(h.map,[feature(17)],{center:[0,0]});await control.ready;
+  assert.equal(control.isDisposed(),false);assert.equal(control.isVisible(),true);
+  control.setVisible(false);assert.equal(control.isVisible(),false);
+  control.dispose();assert.equal(control.isDisposed(),true);
+});
