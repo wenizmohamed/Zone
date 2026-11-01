@@ -35,8 +35,16 @@ export function requiredWardrobeBones() {
   return ['head', 'chest', 'upperarmr', 'lowerarmr', 'wristr', 'upperarml', 'lowerarml', 'wristl'];
 }
 
+export function isRequiredWardrobeBone(name) {
+  return typeof name === 'string' && requiredWardrobeBones().includes(name.toLowerCase().replace(/[._-]/g, ''));
+}
+
 export function requiredWardrobeClips() {
   return ['Idle', 'Idle_Sword', 'Walk', 'Gun_Shoot', 'Sword_Slash', 'HitRecieve', 'Death'];
+}
+
+export function isRequiredWardrobeClip(name) {
+  return typeof name === 'string' && requiredWardrobeClips().includes(name);
 }
 
 export function validateCharacterWardrobe(THREE, gltf) {
@@ -187,7 +195,7 @@ export function installCharacterStage(THREE, { scene, renderer, key, rim, ground
       .catch(error => { if (!disposed) document.body.dataset.zoneCharacterStage = 'material-load-error'; console.error('Character stage material load failed', error); });
   }
   ground.material.opacity = .32; ground.position.y = .002; ring.visible = false;
-  return { ready, setFloor(y) { floor.position.y = y - .012; ground.position.y = y + .002; }, dispose() {
+  return { ready, isDisposed() { return disposed; }, setFloor(y) { floor.position.y = y - .012; ground.position.y = y + .002; }, dispose() {
     if (disposed) return; disposed = true;
     scene.remove(fill, floor); fill.dispose(); floor.geometry.dispose(); floor.material.dispose();
     for (const object of stageObjects) { scene.remove(object); object.geometry.dispose(); if (object.material !== steel) object.material.dispose(); }

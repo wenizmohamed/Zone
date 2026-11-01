@@ -1869,6 +1869,13 @@ try {
     check($engine->knownCooldownActionCount() === 9, 'GameEngine knownCooldownActionCount returns known cooldown action count');
     check($engine->maxDefaultCooldownSeconds() === 15, 'GameEngine maxDefaultCooldownSeconds returns maximum default cooldown seconds');
     check($engine->minDefaultCooldownSeconds() === 0, 'GameEngine minDefaultCooldownSeconds returns minimum default cooldown seconds');
+
+    // --- Wave 130 (zone-beta248): GameEngine effectiveCooldownSeconds, hasEffectiveCooldown, effectiveCooldownMap, maxEffectiveCooldownSeconds & minEffectiveCooldownSeconds ---
+    check($engine->effectiveCooldownSeconds('gym') === 3, 'GameEngine effectiveCooldownSeconds returns effective cooldown seconds');
+    check($engine->hasEffectiveCooldown('gym') === true && $engine->hasEffectiveCooldown('bank') === false, 'GameEngine hasEffectiveCooldown returns boolean effective cooldown status');
+    check(count($engine->effectiveCooldownMap()) === 9, 'GameEngine effectiveCooldownMap returns effective cooldown map');
+    check($engine->maxEffectiveCooldownSeconds() === 15, 'GameEngine maxEffectiveCooldownSeconds returns maximum effective cooldown seconds');
+    check($engine->minEffectiveCooldownSeconds() === 0, 'GameEngine minEffectiveCooldownSeconds returns minimum effective cooldown seconds');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

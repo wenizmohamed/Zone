@@ -26,6 +26,14 @@ export function isGripPoseBoneKey(key) {
   return typeof key === 'string' && Object.prototype.hasOwnProperty.call(GRIP_POSE, key);
 }
 
+export function requiredGripPoseBoneCount() {
+  return 19;
+}
+
+export function defaultGripCenterArray() {
+  return [.014, .143, -.034];
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {

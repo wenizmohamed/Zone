@@ -3608,4 +3608,30 @@ final class GameEngine
     {
         return min(self::COOLDOWN_DEFAULTS);
     }
+
+    public function effectiveCooldownSeconds(string $action): int
+    {
+        return $this->cooldownSeconds[$action] ?? $this->defaultCooldownSeconds($action);
+    }
+
+    public function hasEffectiveCooldown(string $action): bool
+    {
+        return $this->effectiveCooldownSeconds($action) > 0;
+    }
+
+    /** @return array<string, int> */
+    public function effectiveCooldownMap(): array
+    {
+        return $this->cooldownSeconds;
+    }
+
+    public function maxEffectiveCooldownSeconds(): int
+    {
+        return max($this->cooldownSeconds ?: [0]);
+    }
+
+    public function minEffectiveCooldownSeconds(): int
+    {
+        return min($this->cooldownSeconds ?: [0]);
+    }
 }

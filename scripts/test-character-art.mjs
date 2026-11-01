@@ -4,9 +4,9 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, requiredWardrobeBones, requiredWardrobeClips, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
-import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey } from '../dist/character-grip.js';
-import { prepareWeaponPose, supportedWeaponPoseProfiles, isSupportedWeaponPoseProfile } from '../dist/character-poses.js';
+import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, requiredWardrobeBones, isRequiredWardrobeBone, requiredWardrobeClips, isRequiredWardrobeClip, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
+import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey, requiredGripPoseBoneCount, defaultGripCenterArray } from '../dist/character-grip.js';
+import { prepareWeaponPose, supportedWeaponPoseProfiles, isSupportedWeaponPoseProfile, isMeleePoseProfile, isFirearmPoseProfile } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader, supportedWeaponSourceKeys, isSupportedWeaponSourceKey } from '../dist/weapon-assets.js';
 import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId, clampArmorReduction } from '../dist/character-armor.mjs';
 
@@ -155,7 +155,17 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.equal(wLoader.isDisposed(), false);
   assert.equal(wLoader.cachedAssetCount(), 0);
   assert.equal(requiredWardrobeBones().length, 8);
+  assert.equal(isRequiredWardrobeBone('UpperArm.R'), true);
+  assert.equal(isRequiredWardrobeBone('toe_l'), false);
   assert.equal(requiredWardrobeClips().length, 7);
+  assert.equal(isRequiredWardrobeClip('Idle_Sword'), true);
+  assert.equal(isRequiredWardrobeClip('Dance'), false);
+  assert.equal(requiredGripPoseBoneCount(), 19);
+  assert.deepEqual(defaultGripCenterArray(), [.014, .143, -.034]);
+  assert.equal(isMeleePoseProfile('knife'), true);
+  assert.equal(isMeleePoseProfile('handgun'), false);
+  assert.equal(isFirearmPoseProfile('longgun'), true);
+  assert.equal(isFirearmPoseProfile('bat'), false);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

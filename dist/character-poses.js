@@ -16,6 +16,14 @@ export function isSupportedWeaponPoseProfile(profile) {
   return ['unarmed', 'bat', 'knife', 'handgun', 'longgun'].includes(String(profile ?? ''));
 }
 
+export function isMeleePoseProfile(profile) {
+  return profile === 'bat' || profile === 'knife';
+}
+
+export function isFirearmPoseProfile(profile) {
+  return profile === 'handgun' || profile === 'longgun';
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });
