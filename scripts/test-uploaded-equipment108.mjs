@@ -7,7 +7,7 @@ import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKe
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
-import { defaultWeaponCameraFov, acceptedWeaponStudioCount } from '../dist/weapon-presentation.js';
+import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
 import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees } from '../dist/character-poses.js';
@@ -137,6 +137,11 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(wornVestMeshName(), 'ZONE representative worn vest');
   assert.equal(defaultWeaponCameraFov(), 38);
   assert.equal(acceptedWeaponStudioCount(), 5);
+  assert.equal(defaultWeaponStudioExposure(), 1.04);
+  assert.equal(weaponStudioAutoRotateSpeed(), .55);
+  assert.equal(weaponStudioDampingFactor(), .075);
+  assert.equal(weaponStudioContactShadowOpacity(), .28);
+  assert.equal(maxExportBasenameLength(), 96);
   assert.equal(supportedWeaponSourceCount(), 20);
   assert.equal(upgradedWeaponKeyCount(116), 14);
   assert.equal(supportedCombatActionCount(), 7);

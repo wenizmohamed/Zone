@@ -2233,6 +2233,13 @@ try {
     check($engine->themeDefaultPreviewHexColor() === '#d7ff3f', 'GameEngine themeDefaultPreviewHexColor returns #d7ff3f');
     check($engine->activeThemeByteLength() > 0, 'GameEngine activeThemeByteLength returns positive byte length');
     check($engine->moduleVersionHistoryRowCount() >= 0, 'GameEngine moduleVersionHistoryRowCount returns non-negative count');
+
+    // --- Wave 182 (zone-beta300): GameEngine eventBusMaxRecentLimit, eventBusDefaultRecentLimit, databaseSqliteBusyTimeoutMs, databasePostgresDefaultPort & databasePostgresConnectTimeoutSeconds ---
+    check($engine->eventBusMaxRecentLimit() === 50, 'GameEngine eventBusMaxRecentLimit returns 50');
+    check($engine->eventBusDefaultRecentLimit() === 10, 'GameEngine eventBusDefaultRecentLimit returns 10');
+    check($engine->databaseSqliteBusyTimeoutMs() === 5000, 'GameEngine databaseSqliteBusyTimeoutMs returns 5000');
+    check($engine->databasePostgresDefaultPort() === 5432, 'GameEngine databasePostgresDefaultPort returns 5432');
+    check($engine->databasePostgresConnectTimeoutSeconds() === 10, 'GameEngine databasePostgresConnectTimeoutSeconds returns 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

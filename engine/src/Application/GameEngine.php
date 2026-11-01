@@ -5060,4 +5060,29 @@ final class GameEngine
         $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM module_version_history');
         return max(0, (int) ($row['total'] ?? 0));
     }
+
+    public function eventBusMaxRecentLimit(): int
+    {
+        return 50;
+    }
+
+    public function eventBusDefaultRecentLimit(): int
+    {
+        return 10;
+    }
+
+    public function databaseSqliteBusyTimeoutMs(): int
+    {
+        return 5000;
+    }
+
+    public function databasePostgresDefaultPort(): int
+    {
+        return 5432;
+    }
+
+    public function databasePostgresConnectTimeoutSeconds(): int
+    {
+        return 10;
+    }
 }

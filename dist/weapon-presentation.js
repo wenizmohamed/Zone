@@ -40,6 +40,21 @@ export function defaultWeaponCameraFov() {
 export function acceptedWeaponStudioCount() {
   return ACCEPTED_WEAPON_IDS.size;
 }
+export function defaultWeaponStudioExposure() {
+  return 1.04;
+}
+export function weaponStudioAutoRotateSpeed() {
+  return .55;
+}
+export function weaponStudioDampingFactor() {
+  return .075;
+}
+export function weaponStudioContactShadowOpacity() {
+  return .28;
+}
+export function maxExportBasenameLength() {
+  return 96;
+}
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
   // light ratios exactly. New assets do not raise their diffuse/metal fill.
