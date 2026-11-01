@@ -1765,6 +1765,26 @@ function adminLanguageStorageKey() {
   return 'zone.admin.language';
 }
 
+function selectedCrimeId() {
+  return state.selectedCrime ? String(state.selectedCrime) : null;
+}
+
+function credentialMode() {
+  return state.credentialMode || 'token';
+}
+
+function isSessionRequired() {
+  return Boolean(state.sessionRequired);
+}
+
+function isCatalogBusy() {
+  return Boolean(state.catalogBusy);
+}
+
+function isControlBusy() {
+  return Boolean(state.controlBusy);
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1857,6 +1877,11 @@ if (typeof window !== 'undefined') {
     sectionPreviewScreenForView,
     draftEditRevisionCount,
     adminLanguageStorageKey,
+    selectedCrimeId,
+    credentialMode,
+    isSessionRequired,
+    isCatalogBusy,
+    isControlBusy,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),

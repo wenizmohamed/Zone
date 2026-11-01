@@ -5918,4 +5918,30 @@ final class GameEngine
     {
         return ['glb', 'gltf', 'fbx', 'obj', 'zip'];
     }
+
+    /** @return list<string> */
+    public function assetInspectorSupportedExtensions(): array
+    {
+        return \Zone\Engine\Core\Media\AssetInspector::EXTENSIONS;
+    }
+
+    public function isSupportedAssetInspectorExtension(string $extension): bool
+    {
+        return in_array(strtolower($extension), $this->assetInspectorSupportedExtensions(), true);
+    }
+
+    public function assetInspectorMaxImageDimensionPx(): int
+    {
+        return 16384;
+    }
+
+    public function assetInspectorMaxImagePixels(): int
+    {
+        return 67108864;
+    }
+
+    public function assetInspectorMaxObjVertices(): int
+    {
+        return 3000000;
+    }
 }

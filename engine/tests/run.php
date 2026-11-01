@@ -2471,6 +2471,13 @@ try {
     check($engine->assetLibraryMaxBase64ChunkChars() === 699052, 'GameEngine assetLibraryMaxBase64ChunkChars returns 699052');
     check($engine->assetLibrarySupportedStorageDirectories() === ['uploads', 'objects', 'heartbeats'], 'GameEngine assetLibrarySupportedStorageDirectories returns uploads, objects, heartbeats');
     check($engine->assetLibraryModelExtensions() === ['glb', 'gltf', 'fbx', 'obj', 'zip'], 'GameEngine assetLibraryModelExtensions returns glb, gltf, fbx, obj, zip');
+
+    // --- Wave 216 (zone-beta334): GameEngine assetInspectorSupportedExtensions, isSupportedAssetInspectorExtension, assetInspectorMaxImageDimensionPx, assetInspectorMaxImagePixels & assetInspectorMaxObjVertices ---
+    check(count($engine->assetInspectorSupportedExtensions()) === 10, 'GameEngine assetInspectorSupportedExtensions returns 10 extensions');
+    check($engine->isSupportedAssetInspectorExtension('glb') && !$engine->isSupportedAssetInspectorExtension('exe'), 'GameEngine isSupportedAssetInspectorExtension validates extension');
+    check($engine->assetInspectorMaxImageDimensionPx() === 16384, 'GameEngine assetInspectorMaxImageDimensionPx returns 16384');
+    check($engine->assetInspectorMaxImagePixels() === 67108864, 'GameEngine assetInspectorMaxImagePixels returns 67108864');
+    check($engine->assetInspectorMaxObjVertices() === 3000000, 'GameEngine assetInspectorMaxObjVertices returns 3000000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
