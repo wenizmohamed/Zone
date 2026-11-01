@@ -2065,6 +2065,13 @@ try {
     check($engine->dailyStreakNerveRefillDayCount() === 2, 'GameEngine dailyStreakNerveRefillDayCount returns 2');
     check($engine->dailyStreakEnergyRefillDayCount() === 2, 'GameEngine dailyStreakEnergyRefillDayCount returns 2');
     check($engine->isFullRefillDailyStreakDay(7) === true && $engine->isFullRefillDailyStreakDay(3) === false, 'GameEngine isFullRefillDailyStreakDay identifies day 7');
+
+    // --- Wave 158 (zone-beta276): GameEngine levelingXpCoefficient, levelingNervePerLevel, levelingEnergyPerLevel, levelingCashPerLevel & levelUpCashBonusForLevel ---
+    check($engine->levelingXpCoefficient() === 50, 'GameEngine levelingXpCoefficient returns 50');
+    check($engine->levelingNervePerLevel() === 1, 'GameEngine levelingNervePerLevel returns 1');
+    check($engine->levelingEnergyPerLevel() === 3, 'GameEngine levelingEnergyPerLevel returns 3');
+    check($engine->levelingCashPerLevel() === 250, 'GameEngine levelingCashPerLevel returns 250');
+    check($engine->levelUpCashBonusForLevel(10) === 2500, 'GameEngine levelUpCashBonusForLevel returns 2500 for level 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

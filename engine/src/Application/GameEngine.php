@@ -4405,4 +4405,29 @@ final class GameEngine
     {
         return $this->dailyStreakDayRefillsNerve($day) && $this->dailyStreakDayRefillsEnergy($day);
     }
+
+    public function levelingXpCoefficient(): int
+    {
+        return LevelingService::XP_COEFFICIENT;
+    }
+
+    public function levelingNervePerLevel(): int
+    {
+        return LevelingService::NERVE_PER_LEVEL;
+    }
+
+    public function levelingEnergyPerLevel(): int
+    {
+        return LevelingService::ENERGY_PER_LEVEL;
+    }
+
+    public function levelingCashPerLevel(): int
+    {
+        return LevelingService::CASH_PER_LEVEL;
+    }
+
+    public function levelUpCashBonusForLevel(int $level): int
+    {
+        return max(0, $level) * LevelingService::CASH_PER_LEVEL;
+    }
 }

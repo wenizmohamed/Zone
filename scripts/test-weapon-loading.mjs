@@ -157,7 +157,13 @@ test('viewer teardown is bounded even when a request never responds, and late so
   let finish;
   const late = fixture('disposed-late-original');
   const loader = createWeaponAssetLoader({ THREE, loadTimeoutMs: 20, GLTFLoader: class { loadAsync() { return new Promise(resolve => { finish = resolve; }); } } });
-  const selection = loader.load('bat'); await loader.dispose(); assert.equal(await selection, null);
+  assert.equal(loader.loadTimeoutMs(), 20);
+  assert.equal(loader.hasCachedAssets(), false);
+  assert.deepEqual(loader.cachedAssetIds(), []);
+  const selection = loader.load('bat');
+  assert.equal(loader.hasCachedAssets(), true);
+  assert.deepEqual(loader.cachedAssetIds(), ['old-wooden-bat']);
+  await loader.dispose(); assert.equal(await selection, null);
   finish({ scene: late.scene }); await new Promise(resolve => setImmediate(resolve));
   assert.deepEqual(late.counts, { geometry: 1, material: 1, texture: 1, image: 1 });
   await assert.rejects(loader.load('bat'), /disposed/);

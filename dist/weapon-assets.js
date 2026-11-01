@@ -465,6 +465,6 @@ export function createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoade
   function diagnostics() {
     return { disposed, cachedAssetCount: cache.size, cachedAssetIds: [...cache.keys()], timeoutMs, hasGrainTexture: !!grain };
   }
-  return { load, release, descriptor, isDisposed: () => disposed, cachedAssetCount: () => cache.size, diagnostics, dispose };
+  return { load, release, descriptor, isDisposed: () => disposed, cachedAssetCount: () => cache.size, hasCachedAssets: () => cache.size > 0, cachedAssetIds: () => [...cache.keys()], loadTimeoutMs: () => timeoutMs, diagnostics, dispose };
 }
 
