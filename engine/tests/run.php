@@ -2324,6 +2324,13 @@ try {
     check($engine->hospitalMaxTerritoryDiscountBasisPoints() === 5000, 'GameEngine hospitalMaxTerritoryDiscountBasisPoints returns 5000');
     check($engine->travelBaseFareCash() === 2500, 'GameEngine travelBaseFareCash returns 2500');
     check($engine->travelBaseDurationSeconds() === 1800, 'GameEngine travelBaseDurationSeconds returns 1800');
+
+    // --- Wave 195 (zone-beta313): GameEngine travelMinDurationSeconds, travelMaxTerritoryDiscountBasisPoints, blackjackMinRandomHand, blackjackMaxRandomHand & highLowInitialCardValue ---
+    check($engine->travelMinDurationSeconds() === 60, 'GameEngine travelMinDurationSeconds returns 60');
+    check($engine->travelMaxTerritoryDiscountBasisPoints() === 5000, 'GameEngine travelMaxTerritoryDiscountBasisPoints returns 5000');
+    check($engine->blackjackMinRandomHand() === 16, 'GameEngine blackjackMinRandomHand returns 16');
+    check($engine->blackjackMaxRandomHand() === 21, 'GameEngine blackjackMaxRandomHand returns 21');
+    check($engine->highLowInitialCardValue() === 7, 'GameEngine highLowInitialCardValue returns 7');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

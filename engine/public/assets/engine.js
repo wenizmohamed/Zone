@@ -270,6 +270,26 @@ function installedModuleCount() {
   return state.modules.filter(module => Boolean(module.installed)).length;
 }
 
+function activeThemeId() {
+  return state.themes.find(theme => theme.active)?.id ?? null;
+}
+
+function isEngineReady() {
+  return Boolean(state.ready);
+}
+
+function isEngineBusy() {
+  return Boolean(state.busy);
+}
+
+function isEngineRefreshing() {
+  return Boolean(state.refreshing);
+}
+
+function activeEngineLanguage() {
+  return state.language;
+}
+
 function revealEngineSection(hash) {
   const permitted = permittedEngineSections();
   const id = String(hash || '#start').slice(1);

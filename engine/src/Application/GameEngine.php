@@ -5386,4 +5386,29 @@ final class GameEngine
     {
         return 1800;
     }
+
+    public function travelMinDurationSeconds(): int
+    {
+        return 60;
+    }
+
+    public function travelMaxTerritoryDiscountBasisPoints(): int
+    {
+        return 5000;
+    }
+
+    public function blackjackMinRandomHand(): int
+    {
+        return 16;
+    }
+
+    public function blackjackMaxRandomHand(): int
+    {
+        return 21;
+    }
+
+    public function highLowInitialCardValue(): int
+    {
+        return 7;
+    }
 }

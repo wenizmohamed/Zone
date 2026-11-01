@@ -78,7 +78,7 @@ function consoleApp({ request, language = 'en' } = {}) {
   // Only the toast timer and automatic initial network call are omitted.
   runInContext(source.slice(0, bindingStart) + '\n' + source.slice(bindingStart, startupStart) + `
     toast = noticeStub;
-    globalThis.engineApp = { state, refresh, updateControls, renderAll, changeModule, activateTheme, attemptCrime, engineSummary, engineDiagnostics, permittedEngineSections, isPermittedEngineSection, supportedEngineLanguages, isSupportedEngineLanguage, canAttemptCrime, installedModuleCount };
+    globalThis.engineApp = { state, refresh, updateControls, renderAll, changeModule, activateTheme, attemptCrime, engineSummary, engineDiagnostics, permittedEngineSections, isPermittedEngineSection, supportedEngineLanguages, isSupportedEngineLanguage, canAttemptCrime, installedModuleCount, activeThemeId, isEngineReady, isEngineBusy, isEngineRefreshing, activeEngineLanguage };
   `, context);
   const app = context.engineApp;
   app.updateControls();
@@ -183,4 +183,9 @@ test('an explicit refresh recovers failed bootstrap without granting player acti
   assert.equal(app.isSupportedEngineLanguage('fr'), false);
   assert.equal(app.canAttemptCrime(), false);
   assert.equal(app.installedModuleCount(), 1);
+  assert.equal(app.activeThemeId(), null);
+  assert.equal(app.isEngineReady(), true);
+  assert.equal(app.isEngineBusy(), false);
+  assert.equal(app.isEngineRefreshing(), false);
+  assert.equal(app.activeEngineLanguage(), 'ar');
 });
