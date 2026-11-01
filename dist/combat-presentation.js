@@ -63,6 +63,8 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
 }
 
 export const COMBAT_CLIPS = { idle: 'Idle', guard: 'Idle_Sword', punch: 'Punch_Right', slash: 'Sword_Slash', heavy: 'Kick_Right', hit: 'HitRecieve', down: 'Death' };
+export function supportedCombatActions() { return Object.keys(COMBAT_CLIPS); }
+export function isSupportedCombatAction(action) { return typeof action === 'string' && Object.prototype.hasOwnProperty.call(COMBAT_CLIPS, action); }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {
   let timer = null, disposed = false;

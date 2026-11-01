@@ -2118,4 +2118,29 @@ final class GameEngine
     {
         return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['opponents'] ?? []);
     }
+
+    public function publishedCourseCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['courses'] ?? []);
+    }
+
+    public function publishedMissionCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['missions'] ?? []);
+    }
+
+    public function publishedUpgradeCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['upgrades'] ?? []);
+    }
+
+    public function publishedMarketCatalogCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['market'] ?? []);
+    }
+
+    public function publishedDropTableCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['dropTables'] ?? []);
+    }
 }
