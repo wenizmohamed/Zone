@@ -2023,6 +2023,13 @@ try {
     check($engine->dailyStreakDayRewardCash(1) === 1000 && $engine->dailyStreakDayRewardCash(7) === 12000, 'GameEngine dailyStreakDayRewardCash returns day 1 and day 7 streak cash');
     check($engine->dailyStreakDayRefillsNerve(3) === true && $engine->dailyStreakDayRefillsNerve(1) === false, 'GameEngine dailyStreakDayRefillsNerve returns day 3 nerve refill');
     check($engine->dailyStreakDayRefillsEnergy(5) === true && $engine->dailyStreakDayRefillsEnergy(1) === false, 'GameEngine dailyStreakDayRefillsEnergy returns day 5 energy refill');
+
+    // --- Wave 152 (zone-beta270): GameEngine dailyStreakDayCount, maxDailyStreakCashReward, minDailyStreakCashReward, totalDailyStreakCycleCashReward & isValidDailyStreakDay ---
+    check($engine->dailyStreakDayCount() === 7, 'GameEngine dailyStreakDayCount returns 7 days');
+    check($engine->maxDailyStreakCashReward() === 12000, 'GameEngine maxDailyStreakCashReward returns 12000');
+    check($engine->minDailyStreakCashReward() === 1000, 'GameEngine minDailyStreakCashReward returns 1000');
+    check($engine->totalDailyStreakCycleCashReward() === 32500, 'GameEngine totalDailyStreakCycleCashReward returns 32500');
+    check($engine->isValidDailyStreakDay(1) === true && $engine->isValidDailyStreakDay(8) === false, 'GameEngine isValidDailyStreakDay validates 1..7 streak days');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -102,6 +102,12 @@ export function createUploadedWeaponLoader(base, { loader = loadAsset, publish =
     pendingUploadCount() {
       return pending.size;
     },
+    hasActiveUploads() {
+      return active.size > 0;
+    },
+    hasPendingUploads() {
+      return pending.size > 0;
+    },
     diagnostics() {
       return { disposed, activeUploadCount: active.size, pendingUploadCount: pending.size };
     },
@@ -139,6 +145,8 @@ export function createUploadedArmorController(base, { loader = loadAsset, publis
     },
     isDisposed(){return disposed;},
     hasActiveUpload(){return !!active;},
+    currentSequence(){return sequence;},
+    lastReceiptStatus(){return lastReceipt?.status ?? null;},
     diagnostics(){return {disposed,sequence,hasActiveUpload:!!active,lastReceipt:lastReceipt?{...lastReceipt}:null};},
     dispose(){if(disposed)return;disposed=true;++sequence;clear();base.dispose();}
   };

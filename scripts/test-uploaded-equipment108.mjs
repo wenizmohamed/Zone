@@ -94,6 +94,8 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(weapon.isDisposed(), false);
   assert.equal(weapon.activeUploadCount(), 0);
   assert.equal(weapon.pendingUploadCount(), 0);
+  assert.equal(weapon.hasActiveUploads(), false);
+  assert.equal(weapon.hasPendingUploads(), false);
   assert.equal(isMeleeWeaponKey('bat'), true);
   assert.equal(isMeleeWeaponKey('glock'), false);
   assert.equal(isLongGunWeaponKey('sniperrifle_1'), true);
@@ -119,9 +121,13 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.deepEqual(armor.diagnostics(),{disposed:false,sequence:0,hasActiveUpload:false,lastReceipt:null});
   assert.equal(armor.isDisposed(), false);
   assert.equal(armor.hasActiveUpload(), false);
+  assert.equal(armor.currentSequence(), 0);
+  assert.equal(armor.lastReceiptStatus(), null);
   await armor.update({armorId:'vest',armorOwned:true,armorMediaAsset:id},actor);
   assert.equal(armor.diagnostics().hasActiveUpload,true);
   assert.equal(armor.hasActiveUpload(), true);
+  assert.equal(armor.currentSequence(), 1);
+  assert.equal(armor.lastReceiptStatus(), 'ready');
   assert.equal(armor.diagnostics().lastReceipt?.status,'ready');
   armor.dispose();
   assert.equal(armor.diagnostics().disposed,true);

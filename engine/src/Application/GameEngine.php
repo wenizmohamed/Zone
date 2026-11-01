@@ -4176,4 +4176,32 @@ final class GameEngine
     {
         return (bool) ($this->dailyStreakSchedule()[$day][2] ?? false);
     }
+
+    public function dailyStreakDayCount(): int
+    {
+        return count($this->dailyStreakSchedule());
+    }
+
+    public function maxDailyStreakCashReward(): int
+    {
+        $rewards = array_map(static fn (array $row): int => (int) ($row[0] ?? 0), $this->dailyStreakSchedule());
+        return $rewards === [] ? 0 : max($rewards);
+    }
+
+    public function minDailyStreakCashReward(): int
+    {
+        $rewards = array_map(static fn (array $row): int => (int) ($row[0] ?? 0), $this->dailyStreakSchedule());
+        return $rewards === [] ? 0 : min($rewards);
+    }
+
+    public function totalDailyStreakCycleCashReward(): int
+    {
+        $rewards = array_map(static fn (array $row): int => (int) ($row[0] ?? 0), $this->dailyStreakSchedule());
+        return array_sum($rewards);
+    }
+
+    public function isValidDailyStreakDay(int $day): bool
+    {
+        return isset($this->dailyStreakSchedule()[$day]);
+    }
 }
