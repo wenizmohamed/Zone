@@ -270,6 +270,8 @@
     expired: () => Boolean(blocked?.expired),
     supportedReadRoutes: () => Object.keys(reads),
     supportedWriteRoutes: () => Object.keys(writes),
+    isSupportedReadRoute: path => Object.hasOwn(reads, String(path ?? '')),
+    isSupportedWriteRoute: path => Object.hasOwn(writes, String(path ?? '')),
     diagnostics: () => ({
       preview,
       available,

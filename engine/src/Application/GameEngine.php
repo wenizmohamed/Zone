@@ -2678,4 +2678,29 @@ final class GameEngine
     {
         return $this->isPublishedModuleEnabled('garage');
     }
+
+    public function isPoliceChaseModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('policechase');
+    }
+
+    public function isTheftModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('theft');
+    }
+
+    public function isUsersOnlineModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('usersonline');
+    }
+
+    public function isTerminalThemeActive(): bool
+    {
+        return $this->activeThemeId() === 'terminal';
+    }
+
+    public function isZoneThemeActive(): bool
+    {
+        return $this->activeThemeId() === 'zone';
+    }
 }

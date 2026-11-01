@@ -139,6 +139,10 @@ test('start is explicit, cookie-authenticated and broadcasts labeled server stat
   assert.equal(f.api.diagnostics().capabilityCount, 5);
   assert.equal(f.api.supportedReadRoutes().length, 8);
   assert.equal(f.api.supportedWriteRoutes().length, 10);
+  assert.equal(f.api.isSupportedReadRoute('/api/v1/gameplay'), true);
+  assert.equal(f.api.isSupportedReadRoute('/api/v1/unknown'), false);
+  assert.equal(f.api.isSupportedWriteRoute('/api/v1/gym/train'), true);
+  assert.equal(f.api.isSupportedWriteRoute('/api/v1/unknown'), false);
   assert.equal(f.calls[0].options.credentials, 'same-origin');
   assert.equal(f.calls[0].body.idempotencyKey, 'start-owner-key-0001');
   assert.equal(f.events.at(-1).type, 'zone:owner-playtest');
