@@ -198,7 +198,7 @@ test('membership progression reflects earned XP and published thresholds, not de
   assert.equal(instance.isSupportedGymStationId('unknown'), false);
   assert.equal(instance.isTraveling(), false);
   assert.equal(instance.totalBattleStats(), 40);
-  assert.equal(instance.netWorth(), 2500);
+  assert.equal(instance.liquidNetWorth(), 2500);
 });
 
 test('Home/Gym artwork has honest existing fallbacks, local layout boundaries, mobile stations and RTL type', () => {

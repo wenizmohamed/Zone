@@ -2958,7 +2958,7 @@ class Component extends DCLogic {
     return Number(s.str || 0) + Number(s.def || 0) + Number(s.spd || 0) + Number(s.dex || 0);
   }
 
-  netWorth() {
+  liquidNetWorth() {
     return Number(this.p?.cash || 0) + Number(this.p?.bankBalance || 0);
   }
 
