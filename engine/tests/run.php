@@ -2107,6 +2107,13 @@ try {
     check(is_bool($engine->hasIncomingPlayerCombat()), 'GameEngine hasIncomingPlayerCombat returns boolean incoming state');
     check($engine->playerCombatEnergyCost() === 25, 'GameEngine playerCombatEnergyCost returns 25');
     check($engine->totalPlayerCombatOpponentCount() >= 0, 'GameEngine totalPlayerCombatOpponentCount returns non-negative opponent count');
+
+    // --- Wave 164 (zone-beta282): GameEngine supportedPlayerMarketActions, isSupportedPlayerMarketAction, playerMarketMaxActiveListings, playerMarketMaxUnitPrice & playerMarketInventoryVersion ---
+    check($engine->supportedPlayerMarketActions() === ['list', 'buy', 'cancel'], 'GameEngine supportedPlayerMarketActions returns 3 market actions');
+    check($engine->isSupportedPlayerMarketAction('list') === true && $engine->isSupportedPlayerMarketAction('steal') === false, 'GameEngine isSupportedPlayerMarketAction validates market action');
+    check($engine->playerMarketMaxActiveListings() === 50, 'GameEngine playerMarketMaxActiveListings returns 50');
+    check($engine->playerMarketMaxUnitPrice() === 1000000, 'GameEngine playerMarketMaxUnitPrice returns 1000000');
+    check($engine->playerMarketInventoryVersion() >= 1, 'GameEngine playerMarketInventoryVersion returns >= 1');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

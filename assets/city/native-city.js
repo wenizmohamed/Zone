@@ -197,8 +197,17 @@
   function layerIds(){
     return ids.slice();
   }
+  function layerIdCount(){
+    return ids.length;
+  }
   function roofPalette(){
     return roofColors.slice();
+  }
+  function roofPaletteCount(){
+    return roofColors.length;
+  }
+  function artRevision(){
+    return ART_REVISION;
   }
   function isInstalled(map){
     return Boolean(map&&entries.has(map));
@@ -209,5 +218,5 @@
   function isLayerId(id){
     return ids.includes(String(id||''));
   }
-  return {compile,summarizeCompiled,layerIds,roofPalette,isInstalled,isArtReady,isLayerId,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
+  return {compile,summarizeCompiled,layerIds,layerIdCount,roofPalette,roofPaletteCount,artRevision,isInstalled,isArtReady,isLayerId,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
 });

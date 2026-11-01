@@ -4570,4 +4570,30 @@ final class GameEngine
     {
         return count((array) ((new PlayerCombatService($this->database, $this->events))->opponents($playerId)['players'] ?? []));
     }
+
+    /** @return list<string> */
+    public function supportedPlayerMarketActions(): array
+    {
+        return ['list', 'buy', 'cancel'];
+    }
+
+    public function isSupportedPlayerMarketAction(string $action): bool
+    {
+        return in_array($action, $this->supportedPlayerMarketActions(), true);
+    }
+
+    public function playerMarketMaxActiveListings(): int
+    {
+        return 50;
+    }
+
+    public function playerMarketMaxUnitPrice(): int
+    {
+        return 1000000;
+    }
+
+    public function playerMarketInventoryVersion(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new PlayerMarketService($this->database, $this->events))->snapshot($playerId)['inventoryVersion'] ?? 1);
+    }
 }
