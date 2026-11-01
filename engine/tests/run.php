@@ -1478,12 +1478,19 @@ try {
     check($engine->publishedPropertyCount() >= 1, 'GameEngine publishedPropertyCount returns published property catalog count');
     check($engine->publishedOpponentCount() >= 1, 'GameEngine publishedOpponentCount returns published NPC opponent catalog count');
 
-    // --- Wave 74 (zone-beta192): GameEngine publishedCourseCount, publishedMissionCount, publishedUpgradeCount, publishedMarketCatalogCount & publishedDropTableCount ---
+    // --- Wave 74 (zone-beta192): GameEngine publishedCourseCount, publishedMissionCount, publishedUpgradeCount, publishedMarketCatalogCount & publishedMaterialItemCount ---
     check($engine->publishedCourseCount() >= 1, 'GameEngine publishedCourseCount returns published education course count');
     check($engine->publishedMissionCount() >= 1, 'GameEngine publishedMissionCount returns published mission catalog count');
     check($engine->publishedUpgradeCount() >= 1, 'GameEngine publishedUpgradeCount returns published family upgrade catalog count');
     check($engine->publishedMarketCatalogCount() >= 1, 'GameEngine publishedMarketCatalogCount returns published NPC shop catalog count');
-    check($engine->publishedDropTableCount() >= 1, 'GameEngine publishedDropTableCount returns published drop table catalog count');
+    check($engine->publishedMaterialItemCount() >= 1, 'GameEngine publishedMaterialItemCount returns published material item catalog count');
+
+    // --- Wave 75 (zone-beta193): GameEngine publishedWeaponItemCount, publishedArmorItemCount, publishedMedicalItemCount, publishedBoosterItemCount & publishedCrimeCount ---
+    check($engine->publishedWeaponItemCount() >= 10, 'GameEngine publishedWeaponItemCount returns published weapon catalog count');
+    check($engine->publishedArmorItemCount() >= 2, 'GameEngine publishedArmorItemCount returns published armor catalog count');
+    check($engine->publishedMedicalItemCount() >= 2, 'GameEngine publishedMedicalItemCount returns published medical item catalog count');
+    check($engine->publishedBoosterItemCount() >= 1, 'GameEngine publishedBoosterItemCount returns published booster item catalog count');
+    check($engine->publishedCrimeCount() >= 1, 'GameEngine publishedCrimeCount returns published crime catalog count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

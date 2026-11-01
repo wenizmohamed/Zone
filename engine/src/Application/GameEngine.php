@@ -2139,8 +2139,48 @@ final class GameEngine
         return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['market'] ?? []);
     }
 
-    public function publishedDropTableCount(): int
+    public function publishedMaterialItemCount(): int
     {
-        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['dropTables'] ?? []);
+        return count(array_filter(
+            (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? [],
+            static fn (array $item): bool => ($item['type'] ?? '') === 'material',
+        ));
+    }
+
+    public function publishedWeaponItemCount(): int
+    {
+        return count(array_filter(
+            (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? [],
+            static fn (array $item): bool => ($item['type'] ?? '') === 'weapon',
+        ));
+    }
+
+    public function publishedArmorItemCount(): int
+    {
+        return count(array_filter(
+            (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? [],
+            static fn (array $item): bool => ($item['type'] ?? '') === 'armor',
+        ));
+    }
+
+    public function publishedMedicalItemCount(): int
+    {
+        return count(array_filter(
+            (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? [],
+            static fn (array $item): bool => ($item['type'] ?? '') === 'medical',
+        ));
+    }
+
+    public function publishedBoosterItemCount(): int
+    {
+        return count(array_filter(
+            (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? [],
+            static fn (array $item): bool => ($item['type'] ?? '') === 'booster',
+        ));
+    }
+
+    public function publishedCrimeCount(): int
+    {
+        return count($this->crimes());
     }
 }

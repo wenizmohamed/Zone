@@ -19,6 +19,14 @@ export function surfacePalette(){
   };
 }
 const LAYER='zone-district-surfaces';
+
+export function surfaceLayerId(){
+  return LAYER;
+}
+
+export function isSupportedSurfacePaletteCategory(category){
+  return Object.hasOwn(PALETTE,String(category??''));
+}
 const SURFACE_OWNERS=new WeakMap();
 const ORDER_CACHE=new Map(); // Only grid sizes1..100, shared across every wall.
 function mercator(point){return[(point[0]+180)/360,(1-Math.log(Math.tan(Math.PI/4+point[1]*Math.PI/360))/Math.PI)/2];}
