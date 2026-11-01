@@ -3481,4 +3481,29 @@ final class GameEngine
     {
         return $this->activeShopSupplyCount() > 0;
     }
+
+    public function hasTotalFamilyRespect(): bool
+    {
+        return $this->totalFamilyRespect() > 0;
+    }
+
+    public function hasRegisteredPlayers(): bool
+    {
+        return $this->registeredPlayerCount() > 0;
+    }
+
+    public function hasUnclaimedStreetFinds(): bool
+    {
+        return $this->unclaimedStreetFindCount() > 0;
+    }
+
+    public function hasValidCacheAdapterName(): bool
+    {
+        return $this->cacheAdapterName() !== '';
+    }
+
+    public function hasValidPlayerCombatMaxRounds(): bool
+    {
+        return $this->playerCombatMaxRounds() > 0;
+    }
 }

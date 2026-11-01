@@ -1834,6 +1834,13 @@ try {
     check(is_bool($engine->hasInjuredPlayers()), 'GameEngine hasInjuredPlayers returns boolean injured players status');
     check(is_bool($engine->hasActiveTravelers()), 'GameEngine hasActiveTravelers returns boolean active travelers status');
     check(is_bool($engine->hasActiveShopSupplies()), 'GameEngine hasActiveShopSupplies returns boolean active shop supplies status');
+
+    // --- Wave 125 (zone-beta243): GameEngine hasTotalFamilyRespect, hasRegisteredPlayers, hasUnclaimedStreetFinds, hasValidCacheAdapterName & hasValidPlayerCombatMaxRounds ---
+    check(is_bool($engine->hasTotalFamilyRespect()), 'GameEngine hasTotalFamilyRespect returns boolean total family respect status');
+    check($engine->hasRegisteredPlayers() === true, 'GameEngine hasRegisteredPlayers returns boolean registered players status');
+    check(is_bool($engine->hasUnclaimedStreetFinds()), 'GameEngine hasUnclaimedStreetFinds returns boolean unclaimed street finds status');
+    check($engine->hasValidCacheAdapterName() === true, 'GameEngine hasValidCacheAdapterName returns boolean valid cache adapter name status');
+    check($engine->hasValidPlayerCombatMaxRounds() === true, 'GameEngine hasValidPlayerCombatMaxRounds returns boolean valid player combat max rounds status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,buildingSourceId,isBuildingLayerId,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,buildingSourceId,isBuildingLayerId,isWithinBuildingLimits,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -56,7 +56,7 @@ test('all4 tiles load with concurrency2 and publish exactly once only after actu
   const h=harness({loaded:false}),loader=createDistrictBuildings(h.map,bounds,'public-test-token',{fetch:h.fetch,document:h.document});
   await new Promise(r=>setImmediate(r));assert.equal(h.calls.requests.length,4);assert.equal(h.calls.maxConcurrent,2);assert.equal(h.stats().loadedTiles,4);assert.equal(h.stats().status,'loading');assert.equal(h.stats().stage,'rendering');assert.equal(h.stats().complete,false);assert.equal(h.calls.sources,1);
   h.setLoaded(true);h.emit('idle');await loader.ready;
-  const stats=h.stats();assert.equal(stats.status,'ready');assert.equal(stats.complete,true);assert.equal(stats.expectedTiles,4);assert.equal(stats.loadedTiles,4);assert.equal(stats.features,8);assert.equal(stats.extrudableFeatures,4);assert.equal(stats.raisedParts,4);assert.equal(stats.collapsedRaisedParts,0);assert.equal(h.notice.hidden,true);assert.equal(h.calls.sources,1);assert.equal(h.calls.layers,2);assert.equal(h.sources.get(SOURCE).data.features.length,8);
+  const stats=h.stats();assert.equal(stats.status,'ready');assert.equal(stats.complete,true);assert.equal(loader.isReady(),true);assert.equal(loader.isDegraded(),false);assert.equal(isWithinBuildingLimits(stats),true);assert.equal(stats.expectedTiles,4);assert.equal(stats.loadedTiles,4);assert.equal(stats.features,8);assert.equal(stats.extrudableFeatures,4);assert.equal(stats.raisedParts,4);assert.equal(stats.collapsedRaisedParts,0);assert.equal(h.notice.hidden,true);assert.equal(h.calls.sources,1);assert.equal(h.calls.layers,2);assert.equal(h.sources.get(SOURCE).data.features.length,8);
   assert.equal(h.calls.requests[0].options.credentials,'omit');assert.ok(h.calls.requests.every(r=>r.url.startsWith('https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/16/')));loader.dispose();
 });
 test('beta102 native tile loading cannot churn source zoom ranges or invalidate GPU buckets while preserving all decoded geometry',async()=>{
