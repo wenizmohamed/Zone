@@ -162,5 +162,11 @@
       }
     };
   }
-  return {createPlan,summarizePlan,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
+  function atlasLimits(){
+    return {size:SIZE,maxBlocks:MAX_BLOCKS,maxRoofs:MAX_ROOFS};
+  }
+  function roofPalette(){
+    return ROOFS.slice();
+  }
+  return {createPlan,summarizePlan,atlasLimits,roofPalette,render,install,preparePerspective,setPerspective,remove,inside,SIZE};
 });

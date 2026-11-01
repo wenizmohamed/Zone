@@ -2043,4 +2043,29 @@ final class GameEngine
             static fn (array $p): bool => !empty($p['eligible']),
         ));
     }
+
+    public function cooldownRemainingSeconds(string $action, string $playerId = 'founder-player'): int
+    {
+        return $this->cooldowns->remainingSeconds($playerId, $action);
+    }
+
+    public function isActionReady(string $action, string $playerId = 'founder-player'): bool
+    {
+        return $this->cooldowns->remainingSeconds($playerId, $action) === 0;
+    }
+
+    public function canPlayerBuyFamilyUpgrade(string $playerId = 'founder-player'): bool
+    {
+        return (bool) ((new \Zone\Engine\Core\Game\FamilyProgressionService($this->database, $this->events))->snapshot($playerId)['permissions']['buyUpgrade'] ?? false);
+    }
+
+    public function isHospitalHealAvailable(string $playerId = 'founder-player'): bool
+    {
+        return (bool) ($this->hospitalQuote($playerId)['available'] ?? false);
+    }
+
+    public function hospitalHealCost(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->hospitalQuote($playerId)['cost'] ?? 0);
+    }
 }

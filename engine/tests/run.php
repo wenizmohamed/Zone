@@ -1456,6 +1456,13 @@ try {
     check($engine->familyMemberCount('founder-player') >= 1, 'GameEngine familyMemberCount returns active family member count');
     check($engine->familyRespectBalance('founder-player') >= 0, 'GameEngine familyRespectBalance returns shared family respect balance');
     check($engine->eligiblePlayerCombatOpponentCount('founder-player') >= 0, 'GameEngine eligiblePlayerCombatOpponentCount returns eligible PvP opponent count');
+
+    // --- Wave 71 (zone-beta189): GameEngine cooldownRemainingSeconds, isActionReady, canPlayerBuyFamilyUpgrade, isHospitalHealAvailable & hospitalHealCost ---
+    check($engine->cooldownRemainingSeconds('crime', 'founder-player') >= 0, 'GameEngine cooldownRemainingSeconds returns remaining cooldown seconds');
+    check(is_bool($engine->isActionReady('crime', 'founder-player')), 'GameEngine isActionReady returns boolean action cooldown readiness');
+    check(is_bool($engine->canPlayerBuyFamilyUpgrade('founder-player')), 'GameEngine canPlayerBuyFamilyUpgrade returns family upgrade permission');
+    check(is_bool($engine->isHospitalHealAvailable('founder-player')), 'GameEngine isHospitalHealAvailable returns hospital treatment availability');
+    check($engine->hospitalHealCost('founder-player') >= 0, 'GameEngine hospitalHealCost returns hospital treatment cost quote');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

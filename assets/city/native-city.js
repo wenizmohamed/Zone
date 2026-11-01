@@ -194,5 +194,11 @@
     const features=Array.isArray(compiled?.data?.features)?compiled.data.features:[],labels=Array.isArray(compiled?.labels?.features)?compiled.labels.features:[],stats=compiled?.stats||{};
     return {featureCount:features.length,buildingCount:features.filter(f=>f?.properties?.kind==='building').length,detailCount:features.filter(f=>f?.properties?.kind==='detail').length,overviewBuildingCount:features.filter(f=>f?.properties?.kind==='overviewBuilding').length,labelCount:labels.length,roofCount:Number(stats.roofs||0),blockCount:Number(stats.blocks||0),districtCount:Number(stats.districts||0)};
   }
-  return {compile,summarizeCompiled,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
+  function layerIds(){
+    return ids.slice();
+  }
+  function roofPalette(){
+    return roofColors.slice();
+  }
+  return {compile,summarizeCompiled,layerIds,roofPalette,install,ensureBuildings,setPerspective,updateLabels,ownershipColors,updateOwnership,controller,remove};
 });

@@ -13,6 +13,10 @@ function harness(){
 const turn=()=>new Promise(resolve=>setImmediate(resolve));
 test('native overhead and 3D share exact roof footprints and real rooftop geometry',()=>{
   const plan=atlas.createPlan([cell()]),out=city.compile(plan),roofs=out.data.features.filter(f=>f.properties.kind==='building');
+  assert.deepEqual(atlas.atlasLimits(),{size:4096,maxBlocks:240,maxRoofs:12000});
+  assert.equal(atlas.roofPalette().length,8);
+  assert.equal(city.layerIds().length,13);
+  assert.equal(city.roofPalette().length,8);
   const planSummary=atlas.summarizePlan(plan);
   assert.equal(planSummary.blockCount,1);assert.equal(planSummary.roofCount,plan.roofs.length);
   assert.equal(planSummary.roofKinds.flat+planSummary.roofKinds.sawtooth+planSummary.roofKinds.glass,plan.roofs.length);
