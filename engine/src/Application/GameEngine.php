@@ -2628,4 +2628,29 @@ final class GameEngine
     {
         return $this->isPublishedModuleEnabled('achievements');
     }
+
+    public function isGangBankModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('gangbank');
+    }
+
+    public function isMailModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('mail');
+    }
+
+    public function isNewsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('news');
+    }
+
+    public function isProfileModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('profile');
+    }
+
+    public function isSearchModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('search');
+    }
 }

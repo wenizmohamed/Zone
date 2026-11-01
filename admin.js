@@ -1688,6 +1688,14 @@ async function retryAdminLoad() {
   catch (error) { trace('BOOT', '/admin', null, { error: error.message }, 500); notify(t('adminLoadFailed'), true); updateBootControls(); }
 }
 
+function supportedCatalogCategories() {
+  return Object.keys(catalogCategoryNames);
+}
+
+function isSupportedCatalogCategory(category) {
+  return Object.hasOwn(catalogCategoryNames, String(category ?? ''));
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1761,6 +1769,8 @@ window.addEventListener('beforeunload', event => {
 });
 if (typeof window !== 'undefined') {
   window.ZoneAdmin = {
+    supportedCatalogCategories,
+    isSupportedCatalogCategory,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),

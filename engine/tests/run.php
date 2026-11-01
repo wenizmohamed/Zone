@@ -1596,6 +1596,13 @@ try {
     check($engine->isJailModuleEnabled() === true, 'GameEngine isJailModuleEnabled returns published jail module status');
     check($engine->isLeaderboardsModuleEnabled() === true, 'GameEngine isLeaderboardsModuleEnabled returns published leaderboards module status');
     check($engine->isAchievementsModuleEnabled() === true, 'GameEngine isAchievementsModuleEnabled returns published achievements module status');
+
+    // --- Wave 91 (zone-beta209): GameEngine isGangBankModuleEnabled, isMailModuleEnabled, isNewsModuleEnabled, isProfileModuleEnabled & isSearchModuleEnabled ---
+    check($engine->isGangBankModuleEnabled() === true, 'GameEngine isGangBankModuleEnabled returns published gangbank module status');
+    check($engine->isMailModuleEnabled() === true, 'GameEngine isMailModuleEnabled returns published mail module status');
+    check($engine->isNewsModuleEnabled() === true, 'GameEngine isNewsModuleEnabled returns published news module status');
+    check($engine->isProfileModuleEnabled() === true, 'GameEngine isProfileModuleEnabled returns published profile module status');
+    check($engine->isSearchModuleEnabled() === true, 'GameEngine isSearchModuleEnabled returns published search module status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
