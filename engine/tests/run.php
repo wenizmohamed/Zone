@@ -2555,6 +2555,13 @@ try {
     check($engine->familyProgressionBuyUpgradeRoles() === ['leader', 'officer'], 'GameEngine familyProgressionBuyUpgradeRoles returns leader and officer');
     check(abs($engine->loadoutDefaultWeaponMultiplier() - 1.0) < 0.0001, 'GameEngine loadoutDefaultWeaponMultiplier returns 1.0');
     check(abs($engine->loadoutDefaultArmorReduction() - 0.0) < 0.0001, 'GameEngine loadoutDefaultArmorReduction returns 0.0');
+
+    // --- Wave 228 (zone-beta346): GameEngine familyOperationQueryLimit, familyOperationDurationSeconds, familyOperationCooldownSeconds, familyOperationDockInterceptCashReward & familyOperationWarehouseHeistCashReward ---
+    check($engine->familyOperationQueryLimit() === 20, 'GameEngine familyOperationQueryLimit returns 20');
+    check($engine->familyOperationDurationSeconds() === 300, 'GameEngine familyOperationDurationSeconds returns 300');
+    check($engine->familyOperationCooldownSeconds() === 300, 'GameEngine familyOperationCooldownSeconds returns 300');
+    check($engine->familyOperationDockInterceptCashReward() === 1200, 'GameEngine familyOperationDockInterceptCashReward returns 1200');
+    check($engine->familyOperationWarehouseHeistCashReward() === 3000, 'GameEngine familyOperationWarehouseHeistCashReward returns 3000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

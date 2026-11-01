@@ -69,6 +69,11 @@ test('each real Gym station explains its combat purpose in the active language, 
     assert.equal(instance.playerBankBalance(),0);
     assert.equal(instance.playerPoints(),0);
     assert.equal(instance.playerMerits(),0);
+    assert.equal(instance.playerLevel(),1);
+    assert.equal(instance.playerXp(),0);
+    assert.equal(instance.playerCrimeXp(),0);
+    assert.equal(instance.playerGymXp(),0);
+    assert.equal(instance.playerJobPoints(),0);
   }
 });
 

@@ -3084,6 +3084,26 @@ class Component extends DCLogic {
     return Number(this.p?.merits || 0);
   }
 
+  playerLevel() {
+    return Number(this.p?.level || 1);
+  }
+
+  playerXp() {
+    return Number(this.p?.xp || 0);
+  }
+
+  playerCrimeXp() {
+    return Number(this.p?.crimeXp || 0);
+  }
+
+  playerGymXp() {
+    return Number(this.p?.gymXp || 0);
+  }
+
+  playerJobPoints() {
+    return Number(this.p?.jobPoints || 0);
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

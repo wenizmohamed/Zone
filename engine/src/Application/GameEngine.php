@@ -6243,4 +6243,29 @@ final class GameEngine
     {
         return 0.0;
     }
+
+    public function familyOperationQueryLimit(): int
+    {
+        return 20;
+    }
+
+    public function familyOperationDurationSeconds(): int
+    {
+        return 300;
+    }
+
+    public function familyOperationCooldownSeconds(): int
+    {
+        return 300;
+    }
+
+    public function familyOperationDockInterceptCashReward(): int
+    {
+        return 1200;
+    }
+
+    public function familyOperationWarehouseHeistCashReward(): int
+    {
+        return 3000;
+    }
 }
