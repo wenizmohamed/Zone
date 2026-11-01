@@ -5486,4 +5486,29 @@ final class GameEngine
     {
         return ['deposit', 'withdraw'];
     }
+
+    public function isSupportedBankTransferDirection(string $direction): bool
+    {
+        return in_array($direction, ['deposit', 'withdraw'], true);
+    }
+
+    public function defaultOriginCityName(): string
+    {
+        return self::CITIES[0];
+    }
+
+    public function activeWarStates(): array
+    {
+        return ['declared', 'active', 'contested'];
+    }
+
+    public function ledgerDefaultLimit(): int
+    {
+        return 20;
+    }
+
+    public function eventLogDefaultLimit(): int
+    {
+        return 30;
+    }
 }

@@ -2352,6 +2352,13 @@ try {
     check(abs($engine->gymMinSoftCapRetentionFactor() - 0.35) < 0.0001, 'GameEngine gymMinSoftCapRetentionFactor returns 0.35');
     check(abs($engine->gymEnergyBaseFactor() - 1.2) < 0.0001, 'GameEngine gymEnergyBaseFactor returns 1.2');
     check($engine->supportedBankTransferDirections() === ['deposit', 'withdraw'], 'GameEngine supportedBankTransferDirections returns deposit and withdraw');
+
+    // --- Wave 199 (zone-beta317): GameEngine isSupportedBankTransferDirection, defaultOriginCityName, activeWarStates, ledgerDefaultLimit & eventLogDefaultLimit ---
+    check($engine->isSupportedBankTransferDirection('deposit') === true && $engine->isSupportedBankTransferDirection('wire') === false, 'GameEngine isSupportedBankTransferDirection validates direction');
+    check($engine->defaultOriginCityName() === 'Zone City', 'GameEngine defaultOriginCityName returns Zone City');
+    check($engine->activeWarStates() === ['declared', 'active', 'contested'], 'GameEngine activeWarStates returns declared, active, contested');
+    check($engine->ledgerDefaultLimit() === 20, 'GameEngine ledgerDefaultLimit returns 20');
+    check($engine->eventLogDefaultLimit() === 30, 'GameEngine eventLogDefaultLimit returns 30');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

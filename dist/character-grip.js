@@ -54,6 +54,18 @@ export function equippedWeaponGroupName() {
   return 'ZONE equipped weapon';
 }
 
+export function hiddenWardrobePropNames() {
+  return ['pistol', 'gun', 'sword'];
+}
+
+export function thumbSlerpFactor() {
+  return 1;
+}
+
+export function nonThumbDefaultSlerpFactor() {
+  return 0.5;
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {

@@ -8,8 +8,8 @@ import * as T from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {geometryGlb} from '../assets/weapons/source-tools/geometry-audit.mjs';
 import {normalizeWeaponAsset,resolveWeaponAsset} from '../dist/weapon-assets.js';
-import {prepareCharacterGrip,applyCharacterGrip,attachHeldWeapon} from '../dist/character-grip.js';
-import {prepareWeaponPose,applyWeaponPose,weaponPoseProfile} from '../dist/character-poses.js';
+import {prepareCharacterGrip,applyCharacterGrip,attachHeldWeapon,hiddenWardrobePropNames,thumbSlerpFactor,nonThumbDefaultSlerpFactor} from '../dist/character-grip.js';
+import {prepareWeaponPose,applyWeaponPose,weaponPoseProfile,mosinIdleCarryMode,mosinIdleCarrySourceId} from '../dist/character-poses.js';
 const root=new URL('../',import.meta.url),read=path=>readFileSync(new URL(path,root));
 const catalogContext=vm.createContext({});vm.runInContext(read('assets/weapons/catalog.js').toString(),catalogContext);const catalog=catalogContext.ZONE_WEAPONS;
 async function fixture(outfit,key){
@@ -97,4 +97,9 @@ test('idle calibration changes only the arm solution, retaining authored bone le
   const hips=f.rig.bones.get('hips').quaternion.toArray();const result=pose(f,'idle');
   for(const [bone,position,scale]of lengths){assert.deepEqual(bone.position.toArray(),position);assert.deepEqual(bone.scale.toArray(),scale);}
   assert.deepEqual(f.rig.bones.get('hips').quaternion.toArray(),hips);assert.ok(result.rightError<.005&&(result.leftError||0)<.005);
+  assert.deepEqual(hiddenWardrobePropNames(),['pistol','gun','sword']);
+  assert.equal(thumbSlerpFactor(),1);
+  assert.equal(nonThumbDefaultSlerpFactor(),0.5);
+  assert.equal(mosinIdleCarryMode(),'mosin-idle-carry');
+  assert.equal(mosinIdleCarrySourceId(),'mosin9130-detail112');
 });

@@ -40,6 +40,14 @@ export function knifeBladeRollDegrees() {
   return 70;
 }
 
+export function mosinIdleCarryMode() {
+  return 'mosin-idle-carry';
+}
+
+export function mosinIdleCarrySourceId() {
+  return 'mosin9130-detail112';
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });
