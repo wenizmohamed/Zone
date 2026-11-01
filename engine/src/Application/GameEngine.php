@@ -3868,4 +3868,29 @@ final class GameEngine
     {
         return trim((string) ($this->releases->draft()['notes'] ?? '')) !== '';
     }
+
+    public function draftReleaseChannel(): string
+    {
+        return (string) ($this->releases->draft()['channel'] ?? 'production');
+    }
+
+    public function draftReleaseUpdatedBy(): string
+    {
+        return (string) ($this->releases->draft()['updatedBy'] ?? '');
+    }
+
+    public function draftReleaseUpdatedAt(): string
+    {
+        return (string) ($this->releases->draft()['updatedAt'] ?? '');
+    }
+
+    public function draftReleaseFingerprint(): string
+    {
+        return (string) ($this->releases->draft()['draftFingerprint'] ?? '');
+    }
+
+    public function hasDraftReleaseFingerprint(): bool
+    {
+        return strlen($this->draftReleaseFingerprint()) === 64;
+    }
 }

@@ -1939,6 +1939,13 @@ try {
     check($engine->activeReleasePageCount() >= 0, 'GameEngine activeReleasePageCount returns active release page count');
     check(is_bool($engine->hasActiveReleasePages()), 'GameEngine hasActiveReleasePages returns boolean active release pages status');
     check(is_bool($engine->draftReleaseHasNotes()), 'GameEngine draftReleaseHasNotes returns boolean draft release notes status');
+
+    // --- Wave 140 (zone-beta258): GameEngine draftReleaseChannel, draftReleaseUpdatedBy, draftReleaseUpdatedAt, draftReleaseFingerprint & hasDraftReleaseFingerprint ---
+    check($engine->draftReleaseChannel() === 'production', 'GameEngine draftReleaseChannel returns draft release channel');
+    check(is_string($engine->draftReleaseUpdatedBy()), 'GameEngine draftReleaseUpdatedBy returns draft release updatedBy string');
+    check($engine->draftReleaseUpdatedAt() !== '', 'GameEngine draftReleaseUpdatedAt returns draft release updatedAt timestamp');
+    check(strlen($engine->draftReleaseFingerprint()) === 64, 'GameEngine draftReleaseFingerprint returns 64-char sha256 fingerprint');
+    check($engine->hasDraftReleaseFingerprint() === true, 'GameEngine hasDraftReleaseFingerprint returns boolean draft fingerprint status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

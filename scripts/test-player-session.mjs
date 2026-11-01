@@ -127,4 +127,8 @@ test('ZoneSession.diagnostics reports session establishment, playerId, mode, TTL
   assert.equal(b.window.ZoneSession.isPlayerRoute('/api/v1/player'), true);
   assert.equal(b.window.ZoneSession.isPlayerRoute('/api/v1/health'), false);
   assert.equal(b.window.ZoneSession.readTimeoutMs(), 25000);
+  assert.equal(b.window.ZoneSession.retryBackoffMs(), 15000);
+  assert.equal(b.window.ZoneSession.isPending(), false);
+  assert.equal(b.window.ZoneSession.isEstablished(), true);
+  assert.equal(b.window.ZoneSession.isBackingOff(), false);
 });
