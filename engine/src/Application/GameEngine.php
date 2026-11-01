@@ -2653,4 +2653,29 @@ final class GameEngine
     {
         return $this->isPublishedModuleEnabled('search');
     }
+
+    public function isBountiesModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('bounties');
+    }
+
+    public function isBulletsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('bullets');
+    }
+
+    public function isCarsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('cars');
+    }
+
+    public function isDetectivesModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('detectives');
+    }
+
+    public function isGarageModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('garage');
+    }
 }

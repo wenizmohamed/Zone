@@ -102,5 +102,5 @@
     }
     return {load,view,read:view,diagnostics,claimDaily:()=>claim('daily'),claimLogin:()=>claim('login'),dispose(){disposed=true;generation++;}};
   }
-  return {create,endpoints:()=>clone(endpoints),sections:()=>Object.keys(endpoints),supportedLanguages:()=>['en','ar'],isSupportedLanguage:lang=>lang==='en'||lang==='ar'};
+  return {create,endpoints:()=>clone(endpoints),sections:()=>Object.keys(endpoints),isSupportedSection:section=>Object.hasOwn(endpoints,String(section??'')),contractScreenForMetric:metric=>({crimes:'crimes',stat_gain:'gym',job_cash:'jobs',attack_wins:'attack'})[String(metric??'')]||null,supportedLanguages:()=>['en','ar'],isSupportedLanguage:lang=>lang==='en'||lang==='ar'};
 });

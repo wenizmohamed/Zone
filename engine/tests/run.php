@@ -1603,6 +1603,13 @@ try {
     check($engine->isNewsModuleEnabled() === true, 'GameEngine isNewsModuleEnabled returns published news module status');
     check($engine->isProfileModuleEnabled() === true, 'GameEngine isProfileModuleEnabled returns published profile module status');
     check($engine->isSearchModuleEnabled() === true, 'GameEngine isSearchModuleEnabled returns published search module status');
+
+    // --- Wave 92 (zone-beta210): GameEngine isBountiesModuleEnabled, isBulletsModuleEnabled, isCarsModuleEnabled, isDetectivesModuleEnabled & isGarageModuleEnabled ---
+    check($engine->isBountiesModuleEnabled() === true, 'GameEngine isBountiesModuleEnabled returns published bounties module status');
+    check($engine->isBulletsModuleEnabled() === true, 'GameEngine isBulletsModuleEnabled returns published bullets module status');
+    check($engine->isCarsModuleEnabled() === true, 'GameEngine isCarsModuleEnabled returns published cars module status');
+    check($engine->isDetectivesModuleEnabled() === true, 'GameEngine isDetectivesModuleEnabled returns published detectives module status');
+    check($engine->isGarageModuleEnabled() === true, 'GameEngine isGarageModuleEnabled returns published garage module status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
