@@ -7,6 +7,8 @@ import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKe
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid } from '../dist/character-grip.js';
+import { defaultWeaponCameraFov, acceptedWeaponStudioCount } from '../dist/weapon-presentation.js';
+import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -118,6 +120,10 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(requiredWardrobeClipCount(), 7);
   assert.deepEqual(defaultGripAxisArray(), [-.98519729, .17142433, 0]);
   assert.equal(isGripRigValid(null), false);
+  assert.equal(defaultWeaponCameraFov(), 38);
+  assert.equal(acceptedWeaponStudioCount(), 5);
+  assert.equal(supportedWeaponSourceCount(), 20);
+  assert.equal(upgradedWeaponKeyCount(116), 14);
   assert.equal(uploadedWeaponTargetLength('bat'), .715);
   assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);

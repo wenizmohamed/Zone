@@ -207,6 +207,14 @@ export function isUpgradedWeaponKey(key, revision = 116) {
   return upgradedWeaponKeys(revision).includes(String(key || ''));
 }
 
+export function supportedWeaponSourceCount() {
+  return supportedWeaponSourceKeys().length;
+}
+
+export function upgradedWeaponKeyCount(revision = 116) {
+  return upgradedWeaponKeys(revision).length;
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;

@@ -34,6 +34,12 @@ export function supportedStudioProfileNames() {
 export function isSupportedStudioProfileName(name) {
   return typeof name === 'string' && STUDIO_PROFILE_NAMES.includes(name);
 }
+export function defaultWeaponCameraFov() {
+  return 38;
+}
+export function acceptedWeaponStudioCount() {
+  return ACCEPTED_WEAPON_IDS.size;
+}
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
   // light ratios exactly. New assets do not raise their diffuse/metal fill.

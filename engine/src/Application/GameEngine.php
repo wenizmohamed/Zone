@@ -4281,4 +4281,53 @@ final class GameEngine
         );
         return $targets === [] ? 0 : max($targets);
     }
+
+    public function minDailyContractTarget(): int
+    {
+        $targets = array_map(
+            static fn (array $contract): int => (int) ($contract['target'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+        return $targets === [] ? 0 : min($targets);
+    }
+
+    public function dailyContractTargetById(string $id): int
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (int) ($contract['target'] ?? 0);
+            }
+        }
+        return 0;
+    }
+
+    public function dailyContractRewardCashById(string $id): int
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (int) ($contract['reward_cash'] ?? 0);
+            }
+        }
+        return 0;
+    }
+
+    public function dailyContractRewardXpById(string $id): int
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (int) ($contract['reward_xp'] ?? 0);
+            }
+        }
+        return 0;
+    }
+
+    public function dailyContractMetricById(string $id): string
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (string) ($contract['metric'] ?? '');
+            }
+        }
+        return '';
+    }
 }
