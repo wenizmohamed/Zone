@@ -4628,4 +4628,31 @@ final class GameEngine
             default => 0,
         };
     }
+
+    /** @return list<string> */
+    public function progressionOnboardingMissionSequence(): array
+    {
+        return ['c5', 't4', 's2', 'b1', 'w1'];
+    }
+
+    public function progressionOnboardingMissionCount(): int
+    {
+        return count($this->progressionOnboardingMissionSequence());
+    }
+
+    /** @return list<string> */
+    public function supportedProgressionMetricIds(): array
+    {
+        return ['crimes', 'trains', 'wins', 'shifts', 'buys'];
+    }
+
+    public function isSupportedProgressionMetricId(string $metric): bool
+    {
+        return in_array($metric, $this->supportedProgressionMetricIds(), true);
+    }
+
+    public function progressionMaxEscrowDelta(): int
+    {
+        return 1000;
+    }
 }

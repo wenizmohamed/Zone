@@ -31,6 +31,26 @@ export function landmarkWidthMeters(id){
   return isSupportedLandmarkId(id)?KIT[id].width:0;
 }
 
+export function landmarkModelName(id){
+  return isSupportedLandmarkId(id)?KIT[id].model:null;
+}
+
+export function landmarkColor(id){
+  return isSupportedLandmarkId(id)?KIT[id].color:null;
+}
+
+export function landmarkRotationRadians(id){
+  return isSupportedLandmarkId(id)?KIT[id].rotation:0;
+}
+
+export function kitModelNames(){
+  return [...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
+}
+
+export function kitModelCount(){
+  return kitModelNames().length;
+}
+
 export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw Error('Landmark preparation timeout must be 1..30000 milliseconds.');

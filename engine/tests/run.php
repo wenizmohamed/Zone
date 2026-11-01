@@ -2121,6 +2121,13 @@ try {
     check($engine->familyOperationIds() === ['dock-intercept', 'warehouse-heist'], 'GameEngine familyOperationIds returns 2 family operations');
     check($engine->isKnownFamilyOperationId('dock-intercept') === true && $engine->isKnownFamilyOperationId('bank-vault') === false, 'GameEngine isKnownFamilyOperationId validates family operation ID');
     check($engine->familyCompetitionPointsForKind('player-hospitalize') === 10 && $engine->familyCompetitionPointsForKind('operation') === 5 && $engine->familyCompetitionPointsForKind('unknown') === 0, 'GameEngine familyCompetitionPointsForKind returns competition points');
+
+    // --- Wave 166 (zone-beta284): GameEngine progressionOnboardingMissionSequence, progressionOnboardingMissionCount, supportedProgressionMetricIds, isSupportedProgressionMetricId & progressionMaxEscrowDelta ---
+    check($engine->progressionOnboardingMissionSequence() === ['c5', 't4', 's2', 'b1', 'w1'], 'GameEngine progressionOnboardingMissionSequence returns 5 onboarding missions');
+    check($engine->progressionOnboardingMissionCount() === 5, 'GameEngine progressionOnboardingMissionCount returns 5');
+    check($engine->supportedProgressionMetricIds() === ['crimes', 'trains', 'wins', 'shifts', 'buys'], 'GameEngine supportedProgressionMetricIds returns 5 progression metrics');
+    check($engine->isSupportedProgressionMetricId('crimes') === true && $engine->isSupportedProgressionMetricId('gambling') === false, 'GameEngine isSupportedProgressionMetricId validates metric ID');
+    check($engine->progressionMaxEscrowDelta() === 1000, 'GameEngine progressionMaxEscrowDelta returns 1000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
