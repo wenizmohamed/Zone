@@ -2520,6 +2520,13 @@ try {
     check($engine->databaseTerritoryFoundationTotalBlocks() === 120, 'GameEngine databaseTerritoryFoundationTotalBlocks returns 120');
     check(abs($engine->databaseTerritoryFoundationCenterLatitude() - 40.7562) < 0.0001, 'GameEngine databaseTerritoryFoundationCenterLatitude returns 40.7562');
     check(abs($engine->databaseTerritoryFoundationCenterLongitude() - (-73.9812)) < 0.0001, 'GameEngine databaseTerritoryFoundationCenterLongitude returns -73.9812');
+
+    // --- Wave 223 (zone-beta341): GameEngine databaseSeedFactionIds, isDatabaseSeedFactionId, databaseFounderPlayerId, databaseFounderUsername & databaseFounderDefaultCity ---
+    check($engine->databaseSeedFactionIds() === ['vipers', 'kings', 'night', 'oldguard'], 'GameEngine databaseSeedFactionIds returns 4 faction IDs');
+    check($engine->isDatabaseSeedFactionId('vipers') && !$engine->isDatabaseSeedFactionId('unknown'), 'GameEngine isDatabaseSeedFactionId validates faction ID');
+    check($engine->databaseFounderPlayerId() === 'founder-player', 'GameEngine databaseFounderPlayerId returns founder-player');
+    check($engine->databaseFounderUsername() === 'Vincenzo', 'GameEngine databaseFounderUsername returns Vincenzo');
+    check($engine->databaseFounderDefaultCity() === 'Zone City', 'GameEngine databaseFounderDefaultCity returns Zone City');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

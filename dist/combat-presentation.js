@@ -62,6 +62,7 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
     hasLatest() { return !!latest; },
     currentIdentity() { return identity; },
     currentVersion() { return version; },
+    currentCount() { return count; },
     diagnostics() { return { disposed, active, identity, version, count, pending: queue.length, hasLatest: !!latest }; },
     get pending() { return queue.length; }
   };
@@ -79,8 +80,13 @@ export function defaultCombatFeedbackDelayMs() { return 340; }
 export function supportedCombatActors() { return ['player', 'opponent']; }
 export function isSupportedCombatActor(actor) { return actor === 'player' || actor === 'opponent'; }
 export function supportedCombatEventKinds() { return ['hit', 'block', 'miss']; }
+export function isSupportedCombatEventKind(kind) { return kind === 'hit' || kind === 'block' || kind === 'miss'; }
 export function combatStageGroupName() { return 'ZONE staged loading bay'; }
 export function combatCameraMinDistance() { return 4.3; }
+export function combatCameraFovDegrees() { return 36; }
+export function combatDefaultCanvasWidth() { return 640; }
+export function combatDefaultCanvasHeight() { return 330; }
+export function combatMaxFrameDeltaSeconds() { return 0.05; }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {
   let timer = null, disposed = false;

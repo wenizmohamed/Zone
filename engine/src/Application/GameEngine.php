@@ -6113,4 +6113,30 @@ final class GameEngine
     {
         return -73.9812;
     }
+
+    /** @return list<string> */
+    public function databaseSeedFactionIds(): array
+    {
+        return ['vipers', 'kings', 'night', 'oldguard'];
+    }
+
+    public function isDatabaseSeedFactionId(string $factionId): bool
+    {
+        return in_array($factionId, $this->databaseSeedFactionIds(), true);
+    }
+
+    public function databaseFounderPlayerId(): string
+    {
+        return 'founder-player';
+    }
+
+    public function databaseFounderUsername(): string
+    {
+        return 'Vincenzo';
+    }
+
+    public function databaseFounderDefaultCity(): string
+    {
+        return 'Zone City';
+    }
 }
