@@ -1589,6 +1589,13 @@ try {
     check($engine->isInventoryModuleEnabled() === true, 'GameEngine isInventoryModuleEnabled returns published inventory module status');
     check($engine->isMarketModuleEnabled() === true, 'GameEngine isMarketModuleEnabled returns published market module status');
     check($engine->isGangsModuleEnabled() === true, 'GameEngine isGangsModuleEnabled returns published gangs module status');
+
+    // --- Wave 90 (zone-beta208): GameEngine isTerritoriesModuleEnabled, isPropertiesModuleEnabled, isJailModuleEnabled, isLeaderboardsModuleEnabled & isAchievementsModuleEnabled ---
+    check($engine->isTerritoriesModuleEnabled() === true, 'GameEngine isTerritoriesModuleEnabled returns published territories module status');
+    check($engine->isPropertiesModuleEnabled() === true, 'GameEngine isPropertiesModuleEnabled returns published properties module status');
+    check($engine->isJailModuleEnabled() === true, 'GameEngine isJailModuleEnabled returns published jail module status');
+    check($engine->isLeaderboardsModuleEnabled() === true, 'GameEngine isLeaderboardsModuleEnabled returns published leaderboards module status');
+    check($engine->isAchievementsModuleEnabled() === true, 'GameEngine isAchievementsModuleEnabled returns published achievements module status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

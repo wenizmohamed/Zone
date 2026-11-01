@@ -2603,4 +2603,29 @@ final class GameEngine
     {
         return $this->isPublishedModuleEnabled('gangs');
     }
+
+    public function isTerritoriesModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('territories');
+    }
+
+    public function isPropertiesModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('properties');
+    }
+
+    public function isJailModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('jail');
+    }
+
+    public function isLeaderboardsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('leaderboards');
+    }
+
+    public function isAchievementsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('achievements');
+    }
 }

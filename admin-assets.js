@@ -191,6 +191,9 @@
   });
   window.addEventListener('beforeunload',event=>{if(hasUnsaved()){event.preventDefault();event.returnValue='';}});
   if(typeof MutationObserver==='function')new MutationObserver(()=>{if(state.view==='assets')refresh();}).observe(q('.view[data-view="assets"]'),{attributes:true,attributeFilter:['class']});
+  const supportedUploadExtensions=()=>['glb','gltf','fbx','obj','zip','png','webp','jpg','jpeg','mp3'];
+  const isSupportedUploadFile=(name,size=1)=>/\.(glb|gltf|fbx|obj|zip|png|webp|jpe?g|mp3)$/i.test(String(name??''))&&Number.isFinite(Number(size))&&Number(size)>=1&&Number(size)<=134217728;
+  const supportedBindingKinds=()=>['property','item','weapon','armor','character','map'];
   const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,shopSaving,policySaving,policyMaterialCount:policyMaterialSelection.length,hasUnsaved:hasUnsaved(),language});
-  window.ZoneMedia={refresh,hasUnsaved,diagnostics};refresh();
+  window.ZoneMedia={refresh,hasUnsaved,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds};refresh();
 })();

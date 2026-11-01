@@ -643,5 +643,9 @@ test('ZoneMedia exposes diagnostics telemetry for library, selection, fit edits 
   assert.equal(diag.selected, idA);
   assert.equal(diag.fitEditCount, 1);
   assert.equal(diag.hasUnsaved, true);
+  assert.equal(m.window.ZoneMedia.supportedUploadExtensions().length, 10);
+  assert.equal(m.window.ZoneMedia.isSupportedUploadFile('weapon.glb', 1024), true);
+  assert.equal(m.window.ZoneMedia.isSupportedUploadFile('virus.exe', 1024), false);
+  assert.deepEqual(m.window.ZoneMedia.supportedBindingKinds(), ['property', 'item', 'weapon', 'armor', 'character', 'map']);
 });
 
