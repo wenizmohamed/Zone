@@ -67,6 +67,7 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
 export const COMBAT_CLIPS = { idle: 'Idle', guard: 'Idle_Sword', punch: 'Punch_Right', slash: 'Sword_Slash', heavy: 'Kick_Right', hit: 'HitRecieve', down: 'Death' };
 export function supportedCombatActions() { return Object.keys(COMBAT_CLIPS); }
 export function isSupportedCombatAction(action) { return typeof action === 'string' && Object.prototype.hasOwnProperty.call(COMBAT_CLIPS, action); }
+export function isResolvedEncounterPhase(phase) { return ['won', 'lost', 'fled', 'settled'].includes(String(phase ?? '')); }
 export function resolveCombatClipName(action) { return COMBAT_CLIPS[action] || 'Idle'; }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {
@@ -79,6 +80,8 @@ export function createCombatFeedbackTimeline({ attack, impact, schedule = setTim
       attack(event); timer = schedule(() => { timer = null; if (!disposed) impact(event, true); }, delay);
     },
     stop,
+    isDisposed() { return disposed; },
+    hasActiveTimer() { return timer !== null; },
     dispose() { disposed = true; stop(); },
     diagnostics() { return { disposed, hasActiveTimer: timer !== null, delay }; }
   };
@@ -152,7 +155,7 @@ export function installCombatStage(T, { scene, renderer }) {
   }));
   const ready=Promise.all([surface(floor,'concrete_floor_02',[4,5]),surface(back,'brick_wall_04',[3,1.8])]);
   // Return walls intentionally share the back wall material and its maps.
-  return { root, ready, dispose(){if(disposed)return;disposed=true;scene.remove(root);scene.fog=oldFog;renderer.toneMapping=oldTone;renderer.toneMappingExposure=oldExposure;textures.forEach(value=>value.dispose());materials.forEach(value=>value.dispose());geometries.forEach(value=>value.dispose());for(const light of [key,rim,fill,practical])light.dispose();} };
+  return { root, ready, isDisposed() { return disposed; }, dispose(){if(disposed)return;disposed=true;scene.remove(root);scene.fog=oldFog;renderer.toneMapping=oldTone;renderer.toneMappingExposure=oldExposure;textures.forEach(value=>value.dispose());materials.forEach(value=>value.dispose());geometries.forEach(value=>value.dispose());for(const light of [key,rim,fill,practical])light.dispose();} };
 }
 
 export async function mountCombatPresentation({ document: doc = document, window: win = window } = {}) {

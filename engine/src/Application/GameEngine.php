@@ -3634,4 +3634,29 @@ final class GameEngine
     {
         return min($this->cooldownSeconds ?: [0]);
     }
+
+    public function isActionCooldownZero(string $action): bool
+    {
+        return $this->effectiveCooldownSeconds($action) === 0;
+    }
+
+    public function zeroCooldownActionCount(): int
+    {
+        return count(array_filter($this->cooldownSeconds, static fn (int $s): bool => $s === 0));
+    }
+
+    public function positiveCooldownActionCount(): int
+    {
+        return count(array_filter($this->cooldownSeconds, static fn (int $s): bool => $s > 0));
+    }
+
+    public function totalDefaultCooldownSeconds(): int
+    {
+        return array_sum(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function totalEffectiveCooldownSeconds(): int
+    {
+        return array_sum($this->cooldownSeconds);
+    }
 }
