@@ -2268,6 +2268,13 @@ try {
     check($engine->playerAccountMaxPasswordBytes() === 1024, 'GameEngine playerAccountMaxPasswordBytes returns 1024');
     check($engine->playerAccountAuthRateLimitWindowSeconds() === 900, 'GameEngine playerAccountAuthRateLimitWindowSeconds returns 900');
     check($engine->defaultDemoPlayerId() === 'founder-player', 'GameEngine defaultDemoPlayerId returns founder-player');
+
+    // --- Wave 187 (zone-beta305): GameEngine defaultCooldownConfigMap, defaultCooldownActionCount, isConfiguredCooldownAction, configuredCooldownSecondsForAction & attackBaseEnergyCost ---
+    check($engine->defaultCooldownConfigMap()['crime'] === 5, 'GameEngine defaultCooldownConfigMap returns crime cooldown 5');
+    check($engine->defaultCooldownActionCount() === 9, 'GameEngine defaultCooldownActionCount returns 9');
+    check($engine->isConfiguredCooldownAction('crime') === true && $engine->isConfiguredCooldownAction('unknown') === false, 'GameEngine isConfiguredCooldownAction validates action');
+    check($engine->configuredCooldownSecondsForAction('attack') === 8, 'GameEngine configuredCooldownSecondsForAction returns 8 for attack');
+    check($engine->attackBaseEnergyCost() === 25, 'GameEngine attackBaseEnergyCost returns 25');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

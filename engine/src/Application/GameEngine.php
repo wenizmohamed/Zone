@@ -5186,4 +5186,29 @@ final class GameEngine
     {
         return 'founder-player';
     }
+
+    public function defaultCooldownConfigMap(): array
+    {
+        return self::COOLDOWN_DEFAULTS;
+    }
+
+    public function defaultCooldownActionCount(): int
+    {
+        return count(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function isConfiguredCooldownAction(string $action): bool
+    {
+        return isset($this->cooldownSeconds[$action]);
+    }
+
+    public function configuredCooldownSecondsForAction(string $action): int
+    {
+        return $this->cooldownSeconds[$action] ?? 0;
+    }
+
+    public function attackBaseEnergyCost(): int
+    {
+        return 25;
+    }
 }

@@ -278,6 +278,11 @@
     isPending: () => Boolean(pending),
     isReady: () => Boolean(selected && state && !blocked && !['start', 'stop', 'recover'].includes(pending)),
     selectedSessionId: () => selectedSessionId,
+    supportedReadRouteCount: () => Object.keys(reads).length,
+    supportedWriteRouteCount: () => Object.keys(writes).length,
+    playtestEndpointPath: () => '/api/v1/admin/playtest',
+    playtestActionEndpointPath: () => '/api/v1/admin/playtest/action',
+    adminSessionEndpointPath: () => '/api/v1/admin/session',
     diagnostics: () => ({
       preview,
       available,

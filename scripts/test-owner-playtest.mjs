@@ -357,4 +357,9 @@ test('resume cannot switch silently to a different server session than the latch
   assert.equal(f.api.isPending(), false);
   assert.equal(f.api.isReady(), false);
   assert.equal(f.api.selectedSessionId(), knownSession);
+  assert.equal(f.api.supportedReadRouteCount(), 8);
+  assert.equal(f.api.supportedWriteRouteCount(), 10);
+  assert.equal(f.api.playtestEndpointPath(), '/api/v1/admin/playtest');
+  assert.equal(f.api.playtestActionEndpointPath(), '/api/v1/admin/playtest/action');
+  assert.equal(f.api.adminSessionEndpointPath(), '/api/v1/admin/session');
 });
