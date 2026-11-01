@@ -6,7 +6,7 @@ import { dirname, resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, WEAPON_ASSETS } from '../dist/weapon-assets.js';
+import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, upgradedWeaponKeys, isUpgradedWeaponKey, WEAPON_ASSETS } from '../dist/weapon-assets.js';
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
 import { computeWeaponFrame, acceptedWeaponStudioIds, isAcceptedWeaponStudioId } from '../dist/weapon-presentation.js';
 import vm from 'node:vm';
@@ -414,4 +414,7 @@ test('Every gameplay weapon resolves a retained premium or licensed catalog asse
   assert.equal(acceptedWeaponStudioIds().length, 5);
   assert.equal(isAcceptedWeaponStudioId('akm'), true);
   assert.equal(isAcceptedWeaponStudioId('unknown-weapon'), false);
+  assert.equal(upgradedWeaponKeys(116).length, 14);
+  assert.equal(isUpgradedWeaponKey('assaultrifle_1', 116), true);
+  assert.equal(isUpgradedWeaponKey('assaultrifle_1', 99), false);
 });

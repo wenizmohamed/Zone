@@ -195,6 +195,18 @@ export function isSupportedWeaponSourceKey(key) {
   return typeof key === 'string' && Object.hasOwn(WEAPON_SOURCE_MODELS, key);
 }
 
+export function upgradedWeaponKeys(revision = 116) {
+  return [...new Set([
+    ...(revision >= 111 && revision !== 99 ? Object.keys(WEAPON_PRESENTATION_UPGRADES111) : []),
+    ...(revision >= 112 ? Object.keys(WEAPON_PRESENTATION_UPGRADES112) : []),
+    ...(revision >= 116 ? Object.keys(WEAPON_PRESENTATION_UPGRADES116) : [])
+  ])];
+}
+
+export function isUpgradedWeaponKey(key, revision = 116) {
+  return upgradedWeaponKeys(revision).includes(String(key || ''));
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;

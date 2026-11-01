@@ -3557,4 +3557,29 @@ final class GameEngine
     {
         return in_array($capability, $this->engineCapabilities(), true);
     }
+
+    public function isRedisPortReady(): bool
+    {
+        return (bool) ($this->status()['redisPortReady'] ?? false);
+    }
+
+    public function isServerAuthoritative(): bool
+    {
+        return (bool) ($this->status()['serverAuthoritative'] ?? false);
+    }
+
+    public function engineVersion(): string
+    {
+        return (string) ($this->status()['version'] ?? '1.0.0');
+    }
+
+    public function engineApiVersion(): string
+    {
+        return (string) ($this->status()['api'] ?? 'v1');
+    }
+
+    public function engineName(): string
+    {
+        return (string) ($this->status()['engine'] ?? 'ZONE Engine');
+    }
 }

@@ -1855,6 +1855,13 @@ try {
     check($engine->isKnownCooldownAction('crime') === true && $engine->isKnownCooldownAction('unknown') === false, 'GameEngine isKnownCooldownAction validates known cooldown actions');
     check(count($engine->engineCapabilities()) >= 14, 'GameEngine engineCapabilities returns non-empty capability list');
     check($engine->hasEngineCapability('server-authoritative-faction-control') === true && $engine->hasEngineCapability('unknown') === false, 'GameEngine hasEngineCapability validates engine capabilities');
+
+    // --- Wave 128 (zone-beta246): GameEngine isRedisPortReady, isServerAuthoritative, engineVersion, engineApiVersion & engineName ---
+    check($engine->isRedisPortReady() === true, 'GameEngine isRedisPortReady returns boolean redis port ready status');
+    check($engine->isServerAuthoritative() === true, 'GameEngine isServerAuthoritative returns boolean server authoritative status');
+    check($engine->engineVersion() === '1.0.0', 'GameEngine engineVersion returns engine version string');
+    check($engine->engineApiVersion() === 'v1', 'GameEngine engineApiVersion returns engine api version string');
+    check($engine->engineName() === 'ZONE Engine', 'GameEngine engineName returns engine name string');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
