@@ -5511,4 +5511,29 @@ final class GameEngine
     {
         return 30;
     }
+
+    public function progressionEscrowMaxAbsDelta(): int
+    {
+        return 1000;
+    }
+
+    public function progressionItemSellRefundRatio(): float
+    {
+        return 0.9;
+    }
+
+    public function progressionConsumableItemTypes(): array
+    {
+        return ['medical', 'booster'];
+    }
+
+    public function progressionEquippableItemTypes(): array
+    {
+        return ['weapon', 'armor'];
+    }
+
+    public function progressionBioEducationMaxLifeBonus(): int
+    {
+        return 50;
+    }
 }

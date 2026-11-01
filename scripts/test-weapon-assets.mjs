@@ -6,7 +6,7 @@ import { dirname, resolve, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, upgradedWeaponKeys, isUpgradedWeaponKey, WEAPON_ASSETS } from '../dist/weapon-assets.js';
+import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, upgradedWeaponKeys, isUpgradedWeaponKey, premiumWeaponAssetKeys, premiumWeaponAssetCount, upgradeSourceIds111, upgradeSourceIds112, upgradeSourceIds116, WEAPON_ASSETS } from '../dist/weapon-assets.js';
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
 import { computeWeaponFrame, acceptedWeaponStudioIds, isAcceptedWeaponStudioId } from '../dist/weapon-presentation.js';
 import vm from 'node:vm';
@@ -417,4 +417,9 @@ test('Every gameplay weapon resolves a retained premium or licensed catalog asse
   assert.equal(upgradedWeaponKeys(116).length, 14);
   assert.equal(isUpgradedWeaponKey('assaultrifle_1', 116), true);
   assert.equal(isUpgradedWeaponKey('assaultrifle_1', 99), false);
+  assert.equal(premiumWeaponAssetCount(), 13);
+  assert.ok(premiumWeaponAssetKeys().includes('bat'));
+  assert.deepEqual(upgradeSourceIds111(), ['g3a3-detail111', 'l85-detail111', 'glock18-detail111']);
+  assert.deepEqual(upgradeSourceIds112(), ['dragunov-detail112', 'mosin9130-detail112']);
+  assert.deepEqual(upgradeSourceIds116(), ['m4-detail116']);
 });

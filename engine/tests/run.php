@@ -2359,6 +2359,13 @@ try {
     check($engine->activeWarStates() === ['declared', 'active', 'contested'], 'GameEngine activeWarStates returns declared, active, contested');
     check($engine->ledgerDefaultLimit() === 20, 'GameEngine ledgerDefaultLimit returns 20');
     check($engine->eventLogDefaultLimit() === 30, 'GameEngine eventLogDefaultLimit returns 30');
+
+    // --- Wave 200 (zone-beta318): GameEngine progressionEscrowMaxAbsDelta, progressionItemSellRefundRatio, progressionConsumableItemTypes, progressionEquippableItemTypes & progressionBioEducationMaxLifeBonus ---
+    check($engine->progressionEscrowMaxAbsDelta() === 1000, 'GameEngine progressionEscrowMaxAbsDelta returns 1000');
+    check(abs($engine->progressionItemSellRefundRatio() - 0.9) < 0.0001, 'GameEngine progressionItemSellRefundRatio returns 0.9');
+    check($engine->progressionConsumableItemTypes() === ['medical', 'booster'], 'GameEngine progressionConsumableItemTypes returns medical and booster');
+    check($engine->progressionEquippableItemTypes() === ['weapon', 'armor'], 'GameEngine progressionEquippableItemTypes returns weapon and armor');
+    check($engine->progressionBioEducationMaxLifeBonus() === 50, 'GameEngine progressionBioEducationMaxLifeBonus returns 50');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
