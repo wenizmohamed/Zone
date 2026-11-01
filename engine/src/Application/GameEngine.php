@@ -3204,4 +3204,29 @@ final class GameEngine
     {
         return $this->playerTotalCombatStats($playerId) > 0;
     }
+
+    public function playerHasStrength(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerStrength($playerId) > 0;
+    }
+
+    public function playerHasDefense(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerDefense($playerId) > 0;
+    }
+
+    public function playerHasSpeed(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerSpeed($playerId) > 0;
+    }
+
+    public function playerHasDexterity(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerDexterity($playerId) > 0;
+    }
+
+    public function playerHasMaxLife(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMaxLife($playerId) > 0;
+    }
 }

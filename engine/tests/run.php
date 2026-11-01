@@ -1757,6 +1757,13 @@ try {
     check(is_bool($engine->playerHasTerritoryDailyRespectIncome()), 'GameEngine playerHasTerritoryDailyRespectIncome returns boolean territory daily respect income status');
     check(is_bool($engine->playerHasTerritoryControl()), 'GameEngine playerHasTerritoryControl returns boolean territory control status');
     check($engine->playerHasTotalCombatStats() === true, 'GameEngine playerHasTotalCombatStats returns boolean total combat stats status');
+
+    // --- Wave 114 (zone-beta232): GameEngine playerHasStrength, playerHasDefense, playerHasSpeed, playerHasDexterity & playerHasMaxLife ---
+    check($engine->playerHasStrength() === true, 'GameEngine playerHasStrength returns boolean strength status');
+    check($engine->playerHasDefense() === true, 'GameEngine playerHasDefense returns boolean defense status');
+    check($engine->playerHasSpeed() === true, 'GameEngine playerHasSpeed returns boolean speed status');
+    check($engine->playerHasDexterity() === true, 'GameEngine playerHasDexterity returns boolean dexterity status');
+    check($engine->playerHasMaxLife() === true, 'GameEngine playerHasMaxLife returns boolean max life status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

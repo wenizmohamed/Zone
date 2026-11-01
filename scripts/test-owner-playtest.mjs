@@ -350,4 +350,7 @@ test('resume cannot switch silently to a different server session than the latch
   f.take('/api/v1/admin/session').resolve({authenticated: true}); await new Promise(resolve => setImmediate(resolve)); f.take('/api/v1/admin/playtest', 'GET').resolve(f.snapshot(1, 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')); await probe;
   assert.equal(f.api.expired(), true); assert.equal(f.api.snapshot().sessionId, knownSession); assert.equal(storage.getItem(latchKey), knownSession);
   assert.equal(Object.hasOwn(f.api.snapshot(), 'gameplay'), false);
+  assert.equal(f.api.selectionStorageKey(), latchKey);
+  assert.equal(f.api.isValidPlaytestSessionId(knownSession), true);
+  assert.equal(f.api.isValidPlaytestSessionId('invalid'), false);
 });
