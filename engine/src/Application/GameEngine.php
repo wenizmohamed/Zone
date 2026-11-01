@@ -5865,4 +5865,30 @@ final class GameEngine
     {
         return ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'];
     }
+
+    /** @return list<string> */
+    public function territorySupportedActions(): array
+    {
+        return ['claim', 'assault', 'reinforce'];
+    }
+
+    public function isSupportedTerritoryAction(string $action): bool
+    {
+        return in_array($action, $this->territorySupportedActions(), true);
+    }
+
+    public function territoryClaimEnergyCost(): int
+    {
+        return 10;
+    }
+
+    public function territoryAssaultEnergyCost(): int
+    {
+        return 25;
+    }
+
+    public function territoryReinforceEnergyCost(): int
+    {
+        return 5;
+    }
 }

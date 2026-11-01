@@ -55,6 +55,12 @@ export function weaponStudioContactShadowOpacity() {
 export function maxExportBasenameLength() {
   return 96;
 }
+export function weaponStudioCardCount() {
+  return 5;
+}
+export function weaponStudioMinCameraFov() {
+  return 20;
+}
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
   // light ratios exactly. New assets do not raise their diffuse/metal fill.

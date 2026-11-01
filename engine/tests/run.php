@@ -2457,6 +2457,13 @@ try {
     check($engine->territoryNeutralHexColor() === '#68717b', 'GameEngine territoryNeutralHexColor returns #68717b');
     check($engine->territoryWarContributionTarget() === 50000, 'GameEngine territoryWarContributionTarget returns 50000');
     check($engine->territorySupportedBenefitKeys() === ['crime_bonus', 'gym_bonus', 'travel_discount', 'market_discount', 'medical_discount', 'defense'], 'GameEngine territorySupportedBenefitKeys returns 6 benefit keys');
+
+    // --- Wave 214 (zone-beta332): GameEngine territorySupportedActions, isSupportedTerritoryAction, territoryClaimEnergyCost, territoryAssaultEnergyCost & territoryReinforceEnergyCost ---
+    check($engine->territorySupportedActions() === ['claim', 'assault', 'reinforce'], 'GameEngine territorySupportedActions returns claim, assault, reinforce');
+    check($engine->isSupportedTerritoryAction('claim') && !$engine->isSupportedTerritoryAction('invalid'), 'GameEngine isSupportedTerritoryAction validates action');
+    check($engine->territoryClaimEnergyCost() === 10, 'GameEngine territoryClaimEnergyCost returns 10');
+    check($engine->territoryAssaultEnergyCost() === 25, 'GameEngine territoryAssaultEnergyCost returns 25');
+    check($engine->territoryReinforceEnergyCost() === 5, 'GameEngine territoryReinforceEnergyCost returns 5');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -255,6 +255,18 @@ export function upgradeSourceIds116() {
   return Object.keys(WEAPON_UPGRADE_SOURCES116);
 }
 
+export function defaultWeaponLoadTimeoutMs() {
+  return WEAPON_LOAD_TIMEOUT_MS;
+}
+
+export function supportedWeaponQualityLabels() {
+  return ['adapted-pbr', 'ai-assisted-textured', 'authored-pbr', 'authored-materials', 'adapted-materials', 'adapted-textured', 'catalog-stylized'];
+}
+
+export function isSupportedWeaponQualityLabel(label) {
+  return supportedWeaponQualityLabels().includes(String(label || ''));
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;

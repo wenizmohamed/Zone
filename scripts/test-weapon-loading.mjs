@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
-import { createWeaponAssetLoader, inspectWeaponObject, WEAPON_LOAD_TIMEOUT_MS } from '../dist/weapon-assets.js';
+import { createWeaponAssetLoader, inspectWeaponObject, WEAPON_LOAD_TIMEOUT_MS, defaultWeaponLoadTimeoutMs, supportedWeaponQualityLabels, isSupportedWeaponQualityLabel } from '../dist/weapon-assets.js';
+import { weaponStudioCardCount, weaponStudioMinCameraFov } from '../dist/weapon-presentation.js';
 
 const html = readFileSync(new URL('../dist/weapon3d.html', import.meta.url), 'utf8');
 const template = JSON.parse(html.match(/<script type="__bundler\/template">([\s\S]*?)<\/script>/)[1]);
@@ -135,6 +136,12 @@ test('a different parent selection can leave a sticky failed selection without a
 
 test('a stalled original asset has a finite deadline, no artwork substitution, and a retriable cache entry', async () => {
   assert.equal(WEAPON_LOAD_TIMEOUT_MS, 15000);
+  assert.equal(defaultWeaponLoadTimeoutMs(), 15000);
+  assert.equal(supportedWeaponQualityLabels().length, 7);
+  assert.equal(isSupportedWeaponQualityLabel('adapted-pbr'), true);
+  assert.equal(isSupportedWeaponQualityLabel('unknown'), false);
+  assert.equal(weaponStudioCardCount(), 5);
+  assert.equal(weaponStudioMinCameraFov(), 20);
   let requests = 0, finishLate, fallbackRequests = 0;
   const late = fixture('timed-out-original'), fresh = fixture('retry-original');
   const loader = createWeaponAssetLoader({ THREE, loadTimeoutMs: 25, catalog: { revolver: { file: 'Revolver_1', scale: .15 } },
