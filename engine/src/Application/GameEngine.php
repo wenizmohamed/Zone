@@ -6052,4 +6052,40 @@ final class GameEngine
     {
         return ['install', 'uninstall', 'enable', 'disable'];
     }
+
+    /** @return array<string, string> */
+    public function publishedRulesModuleScreenMap(): array
+    {
+        return [
+            'crime' => 'crimes',
+            'stats' => 'gym',
+            'kill' => 'attack',
+            'blackjack' => 'casino',
+            'inventory' => 'items',
+            'blackmarket' => 'market',
+            'gangs' => 'faction',
+            'territories' => 'city',
+            'leaderboards' => 'hof',
+        ];
+    }
+
+    public function publishedRulesScreenForModule(string $moduleId): string
+    {
+        return $this->publishedRulesModuleScreenMap()[$moduleId] ?? $moduleId;
+    }
+
+    public function eventBusRecentEventsDefaultLimit(): int
+    {
+        return 10;
+    }
+
+    public function eventBusRecentEventsMaxLimit(): int
+    {
+        return 50;
+    }
+
+    public function databasePgAdvisoryLockId(): int
+    {
+        return 90120261005;
+    }
 }

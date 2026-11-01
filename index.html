@@ -3024,6 +3024,26 @@ class Component extends DCLogic {
     return eq !== '' && eq !== 'fists';
   }
 
+  equippedWeaponId() {
+    return String(this.p?.equip || 'fists');
+  }
+
+  activePropertyId() {
+    return String(this.p?.prop || 'shack');
+  }
+
+  activeJobId() {
+    return String(this.p?.job || 'grocer');
+  }
+
+  activeGymIndex() {
+    return Number(this.p?.gym || 0);
+  }
+
+  activeDistrictId() {
+    return String(this.p?.lastDistrict || 'center');
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

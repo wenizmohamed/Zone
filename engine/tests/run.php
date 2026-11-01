@@ -2506,6 +2506,13 @@ try {
     check($engine->themeRegistryRequiredManifestFields() === ['id', 'name', 'version', 'stylesheet'], 'GameEngine themeRegistryRequiredManifestFields returns 4 fields');
     check($engine->moduleRegistryRequiredManifestFields() === ['id', 'name', 'version', 'class'], 'GameEngine moduleRegistryRequiredManifestFields returns 4 fields');
     check($engine->moduleRegistrySupportedStateActions() === ['install', 'uninstall', 'enable', 'disable'], 'GameEngine moduleRegistrySupportedStateActions returns 4 actions');
+
+    // --- Wave 221 (zone-beta339): GameEngine publishedRulesModuleScreenMap, publishedRulesScreenForModule, eventBusRecentEventsDefaultLimit, eventBusRecentEventsMaxLimit & databasePgAdvisoryLockId ---
+    check(count($engine->publishedRulesModuleScreenMap()) === 9, 'GameEngine publishedRulesModuleScreenMap returns 9 mappings');
+    check($engine->publishedRulesScreenForModule('crime') === 'crimes' && $engine->publishedRulesScreenForModule('bank') === 'bank', 'GameEngine publishedRulesScreenForModule maps module to screen');
+    check($engine->eventBusRecentEventsDefaultLimit() === 10, 'GameEngine eventBusRecentEventsDefaultLimit returns 10');
+    check($engine->eventBusRecentEventsMaxLimit() === 50, 'GameEngine eventBusRecentEventsMaxLimit returns 50');
+    check($engine->databasePgAdvisoryLockId() === 90120261005, 'GameEngine databasePgAdvisoryLockId returns 90120261005');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -54,6 +54,11 @@ test('each real Gym station explains its combat purpose in the active language, 
     assert.equal(instance.isGameplayBusy(),false);
     assert.equal(instance.ownedInventoryKeyCount(),0);
     assert.equal(instance.hasEquippedWeapon(),false);
+    assert.equal(instance.equippedWeaponId(),'fists');
+    assert.equal(instance.activePropertyId(),'shack');
+    assert.equal(instance.activeJobId(),'grocer');
+    assert.equal(instance.activeGymIndex(),0);
+    assert.equal(instance.activeDistrictId(),'center');
   }
 });
 
