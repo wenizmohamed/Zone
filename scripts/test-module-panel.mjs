@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRequire } from 'node:module';
 
-const { create, endpoints, sections, isSupportedSection, contractScreenForMetric, supportedLanguages, isSupportedLanguage } = createRequire(import.meta.url)('../assets/module-panel.js');
+const { create, endpoints, sections, isSupportedSection, supportedContractMetrics, contractScreenForMetric, supportedLanguages, isSupportedLanguage } = createRequire(import.meta.url)('../assets/module-panel.js');
 const paths = ['/api/v1/player', '/api/v1/daily/contract', '/api/v1/achievements', '/api/v1/notifications'];
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const response = (payload, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => payload });
@@ -258,4 +258,7 @@ test('disposing during a claim never starts follow-up GETs or callbacks', async 
   assert.equal(contractScreenForMetric('crimes'), 'crimes');
   assert.equal(contractScreenForMetric('stat_gain'), 'gym');
   assert.equal(contractScreenForMetric('unknown'), null);
+  assert.deepEqual(supportedContractMetrics(), ['crimes', 'stat_gain', 'job_cash', 'attack_wins']);
+  assert.equal(panel.isDisposed(), true);
+  assert.equal(panel.isLoading(), false);
 });

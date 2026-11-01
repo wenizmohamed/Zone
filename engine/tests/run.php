@@ -1785,6 +1785,13 @@ try {
     check(is_bool($engine->playerHasMissingHappy()), 'GameEngine playerHasMissingHappy returns boolean missing happy status');
     check(is_bool($engine->playerHasMissingLifePoints()), 'GameEngine playerHasMissingLifePoints returns boolean missing life points status');
     check($engine->playerHasActiveGymIndex() === true, 'GameEngine playerHasActiveGymIndex returns boolean active gym index status');
+
+    // --- Wave 118 (zone-beta236): GameEngine playerHasActiveJobRank, playerHasActiveProperty, playerHasActiveJob, playerHasCity & playerHasUsername ---
+    check($engine->playerHasActiveJobRank() === true, 'GameEngine playerHasActiveJobRank returns boolean active job rank status');
+    check($engine->playerHasActiveProperty() === true, 'GameEngine playerHasActiveProperty returns boolean active property status');
+    check($engine->playerHasActiveJob() === true, 'GameEngine playerHasActiveJob returns boolean active job status');
+    check($engine->playerHasCity() === true, 'GameEngine playerHasCity returns boolean city status');
+    check($engine->playerHasUsername() === true, 'GameEngine playerHasUsername returns boolean username status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -3304,4 +3304,29 @@ final class GameEngine
     {
         return $this->playerActiveGymIndex($playerId) >= 0;
     }
+
+    public function playerHasActiveJobRank(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActiveJobRankIndex($playerId) >= 0;
+    }
+
+    public function playerHasActiveProperty(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActivePropertyId($playerId) !== '';
+    }
+
+    public function playerHasActiveJob(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActiveJobId($playerId) !== '';
+    }
+
+    public function playerHasCity(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCity($playerId) !== '';
+    }
+
+    public function playerHasUsername(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerUsername($playerId) !== '';
+    }
 }
