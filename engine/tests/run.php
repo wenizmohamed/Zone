@@ -1841,6 +1841,13 @@ try {
     check(is_bool($engine->hasUnclaimedStreetFinds()), 'GameEngine hasUnclaimedStreetFinds returns boolean unclaimed street finds status');
     check($engine->hasValidCacheAdapterName() === true, 'GameEngine hasValidCacheAdapterName returns boolean valid cache adapter name status');
     check($engine->hasValidPlayerCombatMaxRounds() === true, 'GameEngine hasValidPlayerCombatMaxRounds returns boolean valid player combat max rounds status');
+
+    // --- Wave 126 (zone-beta244): GameEngine playerHasUnreadNotifications, playerHasActiveCooldowns, playerHasRank, playerHasTravelStatus & hasAuthoredCrimes ---
+    check(is_bool($engine->playerHasUnreadNotifications()), 'GameEngine playerHasUnreadNotifications returns boolean unread notifications status');
+    check(is_bool($engine->playerHasActiveCooldowns()), 'GameEngine playerHasActiveCooldowns returns boolean active cooldowns status');
+    check(is_bool($engine->playerHasRank()), 'GameEngine playerHasRank returns boolean player rank status');
+    check($engine->playerHasTravelStatus() === true, 'GameEngine playerHasTravelStatus returns boolean travel status');
+    check($engine->hasAuthoredCrimes() === true, 'GameEngine hasAuthoredCrimes returns boolean authored crimes status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

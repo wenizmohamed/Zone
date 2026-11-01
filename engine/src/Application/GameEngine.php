@@ -3127,7 +3127,7 @@ final class GameEngine
     public function hasValidHighLowCard(string $playerId = 'founder-player'): bool
     {
         $card = $this->highLowCurrentCard($playerId);
-        return $card >= 1 && $card <= 13;
+        return $card >= 1 && $card <= 14;
     }
 
     public function playerHasWeaponBonus(string $playerId = 'founder-player'): bool
@@ -3505,5 +3505,30 @@ final class GameEngine
     public function hasValidPlayerCombatMaxRounds(): bool
     {
         return $this->playerCombatMaxRounds() > 0;
+    }
+
+    public function playerHasUnreadNotifications(string $playerId = 'founder-player'): bool
+    {
+        return $this->unreadNotificationCount($playerId) > 0;
+    }
+
+    public function playerHasActiveCooldowns(string $playerId = 'founder-player'): bool
+    {
+        return $this->activeCooldownCount($playerId) > 0;
+    }
+
+    public function playerHasRank(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerRank($playerId) !== null;
+    }
+
+    public function playerHasTravelStatus(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerTravelStatus($playerId) !== '';
+    }
+
+    public function hasAuthoredCrimes(): bool
+    {
+        return $this->totalAuthoredCrimeCount() > 0;
     }
 }

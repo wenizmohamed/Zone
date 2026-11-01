@@ -181,6 +181,9 @@
   function crowdingTargetMeters(){return 32;}
   function earthRadiusMeters(){return EARTH;}
   function defaultMaximumDistanceMeters(){return 180;}
+  function maxRoofSpanMeters(){return 200;}
+  function footprintSearchRadiusMeters(){return 240;}
+  function hasCrowding(result){return Array.isArray(result?.associations)&&result.associations.some(a=>Boolean(a?.crowded));}
   function isSupportedServiceId(id){return SERVICES.includes(String(id));}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,isSupportedServiceId,inside,roofAnchor,meters};
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,inside,roofAnchor,meters};
 });
