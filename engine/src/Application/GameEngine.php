@@ -4919,4 +4919,29 @@ final class GameEngine
     {
         return 10;
     }
+
+    public function worldDefaultTickSeconds(): int
+    {
+        return 60;
+    }
+
+    public function worldDefaultFindLifetimeSeconds(): int
+    {
+        return 900;
+    }
+
+    public function worldDefaultMaxActiveFinds(): int
+    {
+        return 24;
+    }
+
+    public function worldDefaultSupplyCap(): int
+    {
+        return 100;
+    }
+
+    public function worldDefaultEventEveryTicks(): int
+    {
+        return 5;
+    }
 }

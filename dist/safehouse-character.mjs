@@ -44,6 +44,26 @@ export function safehouseActorKey(player = {}, draft = false) {
   return JSON.stringify([player.outfit, player.weapon, player.weaponMediaAsset, player.armorId, player.armorOwned, player.armorMediaAsset, player.characterMediaAsset, Boolean(draft)]);
 }
 
+export function safehouseCustomCharacterTargetHeight() {
+  return 1.8;
+}
+
+export function safehouseCustomWeaponTargetSize() {
+  return .65;
+}
+
+export function safehouseCustomArmorTargetSize() {
+  return .52;
+}
+
+export function safehouseCharacterDefaultYaw() {
+  return -.15;
+}
+
+export function safehouseWeaponSupportPoint() {
+  return [.24, .06, 0];
+}
+
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
   const loader = new GLTFLoader(), wardrobe = wardrobeLoader || (file => loader.loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href)), weaponAssets = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoader,
     catalog, materials, pack, baseURL: new URL('../assets/weapons/', import.meta.url) });

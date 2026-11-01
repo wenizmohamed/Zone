@@ -2198,6 +2198,13 @@ try {
     check($engine->playerCombatOpponentQueryLimit() === 200, 'GameEngine playerCombatOpponentQueryLimit returns 200');
     check($engine->defaultActionRateLimitMax() === 120, 'GameEngine defaultActionRateLimitMax returns 120');
     check($engine->defaultActionRateLimitWindowSeconds() === 10, 'GameEngine defaultActionRateLimitWindowSeconds returns 10');
+
+    // --- Wave 177 (zone-beta295): GameEngine worldDefaultTickSeconds, worldDefaultFindLifetimeSeconds, worldDefaultMaxActiveFinds, worldDefaultSupplyCap & worldDefaultEventEveryTicks ---
+    check($engine->worldDefaultTickSeconds() === 60, 'GameEngine worldDefaultTickSeconds returns 60');
+    check($engine->worldDefaultFindLifetimeSeconds() === 900, 'GameEngine worldDefaultFindLifetimeSeconds returns 900');
+    check($engine->worldDefaultMaxActiveFinds() === 24, 'GameEngine worldDefaultMaxActiveFinds returns 24');
+    check($engine->worldDefaultSupplyCap() === 100, 'GameEngine worldDefaultSupplyCap returns 100');
+    check($engine->worldDefaultEventEveryTicks() === 5, 'GameEngine worldDefaultEventEveryTicks returns 5');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

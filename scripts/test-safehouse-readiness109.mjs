@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
-import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey} from '../dist/safehouse-character.mjs';
+import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey, safehouseCustomCharacterTargetHeight, safehouseCustomWeaponTargetSize, safehouseCustomArmorTargetSize, safehouseCharacterDefaultYaw, safehouseWeaponSupportPoint} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -143,6 +143,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(supportedSafehouseOutfitCount(), 3);
   assert.deepEqual(safehouseOutfitFileMap(), { suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' });
   assert.equal(typeof safehouseActorKey({ outfit: 'suit', weapon: 'glock' }, false), 'string');
+  assert.equal(safehouseCustomCharacterTargetHeight(), 1.8);
+  assert.equal(safehouseCustomWeaponTargetSize(), .65);
+  assert.equal(safehouseCustomArmorTargetSize(), .52);
+  assert.equal(safehouseCharacterDefaultYaw(), -.15);
+  assert.deepEqual(safehouseWeaponSupportPoint(), [.24, .06, 0]);
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('other'), false);
