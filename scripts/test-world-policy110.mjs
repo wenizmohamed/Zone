@@ -225,4 +225,7 @@ test('a selected material becoming ineligible is rejected after refresh instead 
   assert.equal(diag.policyDirty, false);
   assert.equal(diag.policySaving, false);
   assert.equal(diag.policyMaterialCount, 1);
+  assert.deepEqual(Array.from(w.window.ZoneMedia.issuanceBudgetKeys()), ['findValueBudgetPerHour', 'searchValueBudgetPerHour']);
+  assert.equal(w.window.ZoneMedia.maxMaterialSelectionCount(), 32);
+  assert.equal(w.window.ZoneMedia.maxHourlyBudgetValue(), 2000000000);
 });

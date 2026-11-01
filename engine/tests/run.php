@@ -1925,6 +1925,13 @@ try {
     check(is_bool($engine->isWorldPolicyEnabledInDraftRelease()), 'GameEngine isWorldPolicyEnabledInDraftRelease returns boolean draft world policy enabled status');
     check($engine->draftReleaseWorldTickSeconds() > 0, 'GameEngine draftReleaseWorldTickSeconds returns positive draft world tick seconds');
     check($engine->isScreenEnabledInDraftRelease('crimes') === true, 'GameEngine isScreenEnabledInDraftRelease returns boolean draft screen enabled status');
+
+    // --- Wave 138 (zone-beta256): GameEngine draftReleaseEnabledScreenCount, draftReleaseDisabledScreenCount, hasDraftReleaseEnabledScreens, hasDraftReleaseDisabledScreens & draftReleaseScreenRatioPct ---
+    check($engine->draftReleaseEnabledScreenCount() >= 19, 'GameEngine draftReleaseEnabledScreenCount returns draft release enabled screen count');
+    check($engine->draftReleaseDisabledScreenCount() >= 0, 'GameEngine draftReleaseDisabledScreenCount returns draft release disabled screen count');
+    check($engine->hasDraftReleaseEnabledScreens() === true, 'GameEngine hasDraftReleaseEnabledScreens returns boolean draft release enabled screens status');
+    check(is_bool($engine->hasDraftReleaseDisabledScreens()), 'GameEngine hasDraftReleaseDisabledScreens returns boolean draft release disabled screens status');
+    check($engine->draftReleaseScreenRatioPct() > 0.0 && $engine->draftReleaseScreenRatioPct() <= 100.0, 'GameEngine draftReleaseScreenRatioPct returns draft release screen ratio percentage');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

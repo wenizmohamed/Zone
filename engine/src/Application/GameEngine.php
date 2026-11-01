@@ -3815,4 +3815,32 @@ final class GameEngine
     {
         return ($this->draftReleaseManifest()['modules'][$screen] ?? true) !== false;
     }
+
+    public function draftReleaseEnabledScreenCount(): int
+    {
+        $modules = (array) ($this->draftReleaseManifest()['modules'] ?? []);
+        return count(array_filter($modules, static fn ($enabled): bool => $enabled !== false));
+    }
+
+    public function draftReleaseDisabledScreenCount(): int
+    {
+        $modules = (array) ($this->draftReleaseManifest()['modules'] ?? []);
+        return count(array_filter($modules, static fn ($enabled): bool => $enabled === false));
+    }
+
+    public function hasDraftReleaseEnabledScreens(): bool
+    {
+        return $this->draftReleaseEnabledScreenCount() > 0;
+    }
+
+    public function hasDraftReleaseDisabledScreens(): bool
+    {
+        return $this->draftReleaseDisabledScreenCount() > 0;
+    }
+
+    public function draftReleaseScreenRatioPct(): float
+    {
+        $total = $this->draftReleaseModuleCount();
+        return $total > 0 ? round(($this->draftReleaseEnabledScreenCount() / $total) * 100.0, 2) : 0.0;
+    }
 }
