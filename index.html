@@ -2940,11 +2940,11 @@ class Component extends DCLogic {
     const baseArmorRed = Math.round((Number(CAT[this.equippedArmor()]?.red) || (activeOutfitKey === 'tactical' ? .35 : activeOutfitKey === 'suit' ? .18 : .12)) * 100);
     const holodeckCatalog = [
       { id: '', label: lang === 'ar' ? 'المجهز' : 'Equipped' },
-      { id: 'l85', label: lang === 'ar' ? 'بولباب L85' : 'Bullpup L85' },
-      { id: 'm4', label: 'M4A1 PBR' },
-      { id: 'g3a3', label: 'G3A3 7.62' },
+      { id: 'bullpup_1', label: lang === 'ar' ? 'بولباب L85' : 'Bullpup L85' },
+      { id: 'assaultrifle_3', label: 'M4A1 PBR' },
+      { id: 'assaultrifle_2', label: 'G3A3 7.62' },
       { id: 'assaultrifle2_1', label: 'AK-47' },
-      { id: 'sniperrifle_3', label: 'Dragunov' }
+      { id: 'sniperrifle_2', label: 'Dragunov' }
     ];
     const currentHolodeck = this.state.holodeckWeapon || '';
     const currentThinking = this.state.geminiThinking || 'HIGH';
