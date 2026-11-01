@@ -21,6 +21,12 @@ export function computeWeaponFrame(THREE, box, aspect = 1, fov = 38) {
 }
 
 const ACCEPTED_WEAPON_IDS = new Set(['old-wooden-bat', 'detective-special', 'akm', 'derringer', 'm9-knife']);
+export function acceptedWeaponStudioIds() {
+  return [...ACCEPTED_WEAPON_IDS];
+}
+export function isAcceptedWeaponStudioId(id) {
+  return typeof id === 'string' && ACCEPTED_WEAPON_IDS.has(id);
+}
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
   // light ratios exactly. New assets do not raise their diffuse/metal fill.

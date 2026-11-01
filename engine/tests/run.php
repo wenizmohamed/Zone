@@ -1421,6 +1421,13 @@ try {
     check(is_bool($engine->playerInJail('founder-player')), 'GameEngine playerInJail returns boolean jail status');
     check(is_bool($engine->playerInHospital('founder-player')), 'GameEngine playerInHospital returns boolean hospital status');
     check($engine->playerCompletedEducationCount('founder-player') >= 0, 'GameEngine playerCompletedEducationCount returns completed education course count');
+
+    // --- Wave 66 (zone-beta184): GameEngine worldHourlyMaterialUsage, playerRespect, playerBestChain, playerEquippedWeaponId & playerEquippedArmorId ---
+    check(array_key_exists('awardCount', $engine->worldHourlyMaterialUsage()) && $engine->worldHourlyMaterialUsage()['source'] === 'world', 'GameEngine worldHourlyMaterialUsage returns world hourly material loot usage');
+    check($engine->playerRespect('founder-player') >= 0, 'GameEngine playerRespect returns player faction respect');
+    check($engine->playerBestChain('founder-player') >= 0, 'GameEngine playerBestChain returns player best combat chain');
+    check($engine->playerEquippedWeaponId('founder-player') === null || is_string($engine->playerEquippedWeaponId('founder-player')), 'GameEngine playerEquippedWeaponId returns equipped weapon ID or null');
+    check($engine->playerEquippedArmorId('founder-player') === null || is_string($engine->playerEquippedArmorId('founder-player')), 'GameEngine playerEquippedArmorId returns equipped armor ID or null');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

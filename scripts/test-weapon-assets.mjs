@@ -8,7 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { createWeaponAssetLoader, normalizeWeaponAsset, resolveWeaponAsset, WEAPON_ASSETS } from '../dist/weapon-assets.js';
 import { prepareCharacterGrip, applyCharacterGrip, attachHeldWeapon } from '../dist/character-grip.js';
-import { computeWeaponFrame } from '../dist/weapon-presentation.js';
+import { computeWeaponFrame, acceptedWeaponStudioIds, isAcceptedWeaponStudioId } from '../dist/weapon-presentation.js';
 import vm from 'node:vm';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -411,4 +411,7 @@ test('Every gameplay weapon resolves a retained premium or licensed catalog asse
     assert.ok(Number.isFinite(descriptor.scale) && descriptor.scale > 0, `${key} has invalid scale`);
     assert.ok(descriptor.grip.length === 3 && descriptor.grip.every(Number.isFinite));
   }
+  assert.equal(acceptedWeaponStudioIds().length, 5);
+  assert.equal(isAcceptedWeaponStudioId('akm'), true);
+  assert.equal(isAcceptedWeaponStudioId('unknown-weapon'), false);
 });

@@ -1909,4 +1909,32 @@ final class GameEngine
         $done = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['eduDone'] ?? []);
         return count(array_filter($done));
     }
+
+    /** @return array<string, mixed> */
+    public function worldHourlyMaterialUsage(): array
+    {
+        return (new \Zone\Engine\Core\Game\MaterialLootService($this->database, $this->events))->hourlyUsage('world', '*');
+    }
+
+    public function playerRespect(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['fac']['respect'] ?? 0);
+    }
+
+    public function playerBestChain(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['fac']['best'] ?? 0);
+    }
+
+    public function playerEquippedWeaponId(string $playerId = 'founder-player'): ?string
+    {
+        $id = (new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['weaponId'] ?? null;
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
+    public function playerEquippedArmorId(string $playerId = 'founder-player'): ?string
+    {
+        $id = (new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['armorId'] ?? null;
+        return is_string($id) && $id !== '' ? $id : null;
+    }
 }
