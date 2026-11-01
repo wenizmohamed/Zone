@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
-import {createArmorController,createWornVest} from '../dist/character-armor.mjs';
+import {createArmorController,createWornVest,authoredTorsoSourceName,authoredTorsoMaterialNames,minTorsoTriangleVertices,minVestWidthScale,minVestDepthScale} from '../dist/character-armor.mjs';
 const root=new URL('../',import.meta.url);
 async function wardrobe(name){const bytes=readFileSync(new URL('assets/character/quaternius/'+name+'.glb',root));return new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');}
 const armorMeshes=actor=>{const meshes=[];actor.traverse(o=>{if(o.name==='ZONE representative worn vest')meshes.push(o);});return meshes;};
@@ -66,5 +66,11 @@ test('failed armor source keeps its truthful reason through repeated packets wit
   const packet={armorId:'vest',armorOwned:true,armorLabel:'Vest'};
   await controller.update(packet,actor);await controller.update({...packet,armorLabel:'Updated vest'},actor);
   assert.equal(requests,1);assert.equal(receipts.at(-1).status,'unrepresented');assert.equal(receipts.at(-1).reason,'worn-asset-unavailable');assert.equal(receipts.at(-1).label,'Updated vest');
+  assert.equal(controller.latestArmorId(),'vest');
+  assert.equal(authoredTorsoSourceName(),'Swat_Body');
+  assert.deepEqual(authoredTorsoMaterialNames(),['Swat','Swat_Black']);
+  assert.equal(minTorsoTriangleVertices(),30);
+  assert.equal(minVestWidthScale(),1.14);
+  assert.equal(minVestDepthScale(),1.35);
   controller.dispose();
 });

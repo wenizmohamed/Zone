@@ -5436,4 +5436,29 @@ final class GameEngine
     {
         return 5;
     }
+
+    public function jobShiftXpPerLevel(): int
+    {
+        return 1;
+    }
+
+    public function jobBusinessEducationWageMultiplier(): float
+    {
+        return 1.1;
+    }
+
+    public function gymHappyDenominator(): int
+    {
+        return 500;
+    }
+
+    public function gymHappyLogCoefficient(): float
+    {
+        return 0.35;
+    }
+
+    public function gymIndexMultiplierStep(): float
+    {
+        return 0.3;
+    }
 }

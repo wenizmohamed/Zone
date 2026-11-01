@@ -29,6 +29,26 @@ export function wornVestMeshName() {
   return 'ZONE representative worn vest';
 }
 
+export function authoredTorsoSourceName() {
+  return 'Swat_Body';
+}
+
+export function authoredTorsoMaterialNames() {
+  return ['Swat', 'Swat_Black'];
+}
+
+export function minTorsoTriangleVertices() {
+  return 30;
+}
+
+export function minVestWidthScale() {
+  return 1.14;
+}
+
+export function minVestDepthScale() {
+  return 1.35;
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
   return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id ? clampArmorReduction(packet.armorReduction) : 0,
@@ -117,5 +137,5 @@ export function createArmorController({THREE,loadSource,publish=()=>{},queueFram
   function diagnostics() {
     return { disposed, generation, hasActiveVest: !!active, latestReceipt: latestReceipt ? { ...latestReceipt } : null, lastDetails: { ...lastDetails } };
   }
-  return {update,isDisposed:()=>disposed,hasActiveVest:()=>!!active,currentGeneration:()=>generation,lastStatus:()=>lastDetails?.status ?? 'none',diagnostics,dispose(){disposed=true;++generation;clear();}};
+  return {update,isDisposed:()=>disposed,hasActiveVest:()=>!!active,currentGeneration:()=>generation,lastStatus:()=>lastDetails?.status ?? 'none',latestArmorId:()=>latestReceipt?.armorId ?? null,diagnostics,dispose(){disposed=true;++generation;clear();}};
 }

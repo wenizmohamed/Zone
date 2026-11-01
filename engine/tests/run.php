@@ -2338,6 +2338,13 @@ try {
     check($engine->highLowSupportedDirections() === ['higher', 'lower'], 'GameEngine highLowSupportedDirections returns higher and lower');
     check($engine->isSupportedHighLowDirection('higher') === true && $engine->isSupportedHighLowDirection('sideways') === false, 'GameEngine isSupportedHighLowDirection validates direction');
     check($engine->jobShiftBaseXpReward() === 5, 'GameEngine jobShiftBaseXpReward returns 5');
+
+    // --- Wave 197 (zone-beta315): GameEngine jobShiftXpPerLevel, jobBusinessEducationWageMultiplier, gymHappyDenominator, gymHappyLogCoefficient & gymIndexMultiplierStep ---
+    check($engine->jobShiftXpPerLevel() === 1, 'GameEngine jobShiftXpPerLevel returns 1');
+    check(abs($engine->jobBusinessEducationWageMultiplier() - 1.1) < 0.0001, 'GameEngine jobBusinessEducationWageMultiplier returns 1.1');
+    check($engine->gymHappyDenominator() === 500, 'GameEngine gymHappyDenominator returns 500');
+    check(abs($engine->gymHappyLogCoefficient() - 0.35) < 0.0001, 'GameEngine gymHappyLogCoefficient returns 0.35');
+    check(abs($engine->gymIndexMultiplierStep() - 0.3) < 0.0001, 'GameEngine gymIndexMultiplierStep returns 0.3');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
