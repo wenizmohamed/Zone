@@ -31,6 +31,26 @@ export function cityLandmarkPropModels(){
   return MODELS.filter(m => !m.startsWith('building_'));
 }
 
+export function cityLandmarkBuildingPoolBudget(){
+  return 380;
+}
+
+export function cityLandmarkPropPoolBudget(){
+  return 180;
+}
+
+export function cityLandmarkNativeLayerId(){
+  return 'zone-buildings-3d';
+}
+
+export function cityLandmarkStreetsSourceId(){
+  return 'zone-city-streets';
+}
+
+export function cityLandmarkCullDebounceMs(){
+  return 80;
+}
+
 // One renderer shares Mapbox's context. There is no independent animation loop.
 export async function installCityLandmarks(map){
   if(map.getLayer(LAYER_ID))return null;

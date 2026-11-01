@@ -36,6 +36,11 @@ test('3D waits for asynchronous shader preparation and keeps flat rendering avai
   assert.deepEqual(Array.from(h.scope.cityLandmarkBuildingModels()),['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase']);
   assert.deepEqual(Array.from(h.scope.cityLandmarkPropModels()),['car_sedan','streetlight','watertower','bush']);
   assert.equal(h.scope.cityLandmarkLayerId(),'zone-city-landmarks');
+  assert.equal(h.scope.cityLandmarkBuildingPoolBudget(),380);
+  assert.equal(h.scope.cityLandmarkPropPoolBudget(),180);
+  assert.equal(h.scope.cityLandmarkNativeLayerId(),'zone-buildings-3d');
+  assert.equal(h.scope.cityLandmarkStreetsSourceId(),'zone-city-streets');
+  assert.equal(h.scope.cityLandmarkCullDebounceMs(),80);
   assert.equal(h.scope.isSupportedCityLandmarkModel('car_sedan'),true);
   assert.equal(h.scope.isSupportedCityLandmarkModel('ufo'),false);
   assert.equal(h.controller.isDisposed(),false);

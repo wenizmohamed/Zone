@@ -5789,4 +5789,29 @@ final class GameEngine
     {
         return 128;
     }
+
+    public function contentCrimeMaxNameLength(): int
+    {
+        return 160;
+    }
+
+    public function contentCrimeMaxNerveCost(): int
+    {
+        return 1000;
+    }
+
+    public function contentCrimeMaxCashReward(): int
+    {
+        return 2000000000;
+    }
+
+    public function contentCrimeMaxXpReward(): int
+    {
+        return 1000000000;
+    }
+
+    public function contentCrimeMaxLevelRequired(): int
+    {
+        return 100;
+    }
 }

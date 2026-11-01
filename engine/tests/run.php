@@ -2436,6 +2436,13 @@ try {
     check($engine->playerAccountMaxUsernameLength() === 24, 'GameEngine playerAccountMaxUsernameLength returns 24');
     check($engine->playerAccountMinPasswordLength() === 8, 'GameEngine playerAccountMinPasswordLength returns 8');
     check($engine->playerAccountMaxPasswordLength() === 128, 'GameEngine playerAccountMaxPasswordLength returns 128');
+
+    // --- Wave 211 (zone-beta329): GameEngine contentCrimeMaxNameLength, contentCrimeMaxNerveCost, contentCrimeMaxCashReward, contentCrimeMaxXpReward & contentCrimeMaxLevelRequired ---
+    check($engine->contentCrimeMaxNameLength() === 160, 'GameEngine contentCrimeMaxNameLength returns 160');
+    check($engine->contentCrimeMaxNerveCost() === 1000, 'GameEngine contentCrimeMaxNerveCost returns 1000');
+    check($engine->contentCrimeMaxCashReward() === 2000000000, 'GameEngine contentCrimeMaxCashReward returns 2000000000');
+    check($engine->contentCrimeMaxXpReward() === 1000000000, 'GameEngine contentCrimeMaxXpReward returns 1000000000');
+    check($engine->contentCrimeMaxLevelRequired() === 100, 'GameEngine contentCrimeMaxLevelRequired returns 100');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
