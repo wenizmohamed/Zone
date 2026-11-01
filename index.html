@@ -2901,6 +2901,22 @@ class Component extends DCLogic {
     return ['merchants', 'players'];
   }
 
+  supportedBarKeys() {
+    return ['energy', 'nerve', 'happy', 'life'];
+  }
+
+  isSupportedBarKey(key) {
+    return ['energy', 'nerve', 'happy', 'life'].includes(String(key ?? ''));
+  }
+
+  supportedItemTabs() {
+    return ['all', 'weapon', 'armor', 'medical', 'booster', 'material'];
+  }
+
+  isSupportedItemTab(tab) {
+    return ['all', 'weapon', 'armor', 'medical', 'booster', 'material'].includes(String(tab ?? ''));
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

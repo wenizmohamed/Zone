@@ -1624,6 +1624,13 @@ try {
     check($engine->hasPublishedCrimes() === true, 'GameEngine hasPublishedCrimes returns boolean published crimes status');
     check($engine->hasPublishedModules() === true, 'GameEngine hasPublishedModules returns boolean published modules status');
     check(is_bool($engine->hasMediaBindings()), 'GameEngine hasMediaBindings returns boolean media bindings status');
+
+    // --- Wave 95 (zone-beta213): GameEngine hasPublishedItems, hasPublishedJobs, hasPublishedGyms, hasPublishedProperties & hasPublishedOpponents ---
+    check($engine->hasPublishedItems() === true, 'GameEngine hasPublishedItems returns boolean published items status');
+    check($engine->hasPublishedJobs() === true, 'GameEngine hasPublishedJobs returns boolean published jobs status');
+    check($engine->hasPublishedGyms() === true, 'GameEngine hasPublishedGyms returns boolean published gyms status');
+    check($engine->hasPublishedProperties() === true, 'GameEngine hasPublishedProperties returns boolean published properties status');
+    check($engine->hasPublishedOpponents() === true, 'GameEngine hasPublishedOpponents returns boolean published opponents status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

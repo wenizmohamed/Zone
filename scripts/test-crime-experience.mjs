@@ -222,5 +222,11 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.equal(instance.isSupportedOutfit('unknown'), false);
     assert.deepEqual(Array.from(instance.supportedCombatModes()), ['npc', 'players']);
     assert.deepEqual(Array.from(instance.supportedMarketModes()), ['merchants', 'players']);
+    assert.deepEqual(Array.from(instance.supportedBarKeys()), ['energy', 'nerve', 'happy', 'life']);
+    assert.equal(instance.isSupportedBarKey('energy'), true);
+    assert.equal(instance.isSupportedBarKey('invalid'), false);
+    assert.deepEqual(Array.from(instance.supportedItemTabs()), ['all', 'weapon', 'armor', 'medical', 'booster', 'material']);
+    assert.equal(instance.isSupportedItemTab('weapon'), true);
+    assert.equal(instance.isSupportedItemTab('invalid'), false);
   }
 });

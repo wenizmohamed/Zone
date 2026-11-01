@@ -2728,4 +2728,29 @@ final class GameEngine
     {
         return count($this->gameBootstrap()['mediaBindings'] ?? []) > 0;
     }
+
+    public function hasPublishedItems(): bool
+    {
+        return $this->publishedItemCount() > 0;
+    }
+
+    public function hasPublishedJobs(): bool
+    {
+        return $this->publishedJobCount() > 0;
+    }
+
+    public function hasPublishedGyms(): bool
+    {
+        return $this->publishedGymCount() > 0;
+    }
+
+    public function hasPublishedProperties(): bool
+    {
+        return $this->publishedPropertyCount() > 0;
+    }
+
+    public function hasPublishedOpponents(): bool
+    {
+        return $this->publishedOpponentCount() > 0;
+    }
 }
