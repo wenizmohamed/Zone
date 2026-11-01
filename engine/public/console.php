@@ -52,10 +52,19 @@
       <section class="studio-start" id="start" tabindex="-1">
         <div class="studio-breadcrumb"><span>ZONE</span><span aria-hidden="true">/</span><span data-i18n="engine">Open Engine</span></div>
         <div class="studio-page-heading">
-          <div><p class="studio-kicker" data-i18n="creatorSpace">YOUR GAME, YOUR WORKSPACE</p><h1 data-i18n="headline">Open Engine</h1></div>
+          <div><p class="studio-kicker" data-i18n="creatorSpace">YOUR GAME, YOUR WORKSPACE · SYNDICATE EDITION 3.6 LIVE</p><h1 data-i18n="headline">Open Engine</h1></div>
           <button class="secondary" id="refreshEngineButton" type="button" data-i18n="refreshEngine">Refresh engine data</button>
         </div>
         <p class="studio-intro" data-i18n="subhead">Build and customize ZONE from one workspace. Choose what you want to create, save your draft, then review it before publishing.</p>
+        <div class="studio-workflow" data-open-engine-console-deck="1" style="margin-bottom:18px;border-top:2px solid var(--acc,#a3d900)">
+          <div class="studio-workflow-heading"><h2>Syndicate Open Engine 3.6 Live Telemetry</h2><a href="/admin">Open Full Studio ↗</a></div>
+          <ol>
+            <li><span class="studio-step-number" aria-hidden="true">28</span><div><strong>Registered Engine Modules</strong><p>Crime, Combat, Gym, Gangs, Territories, Bank, Blackjack, Market, Media &amp; Release Engine.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">51</span><div><strong>3D PBR Weapons &amp; Safe Bundles</strong><p>Full GLB/OBJ inspection, grip transform fitting, and SHA-256 verified media publishing.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">120</span><div><strong>City Blocks &amp; 17 Native Roofs</strong><p>Deterministic roof-anchored city services and live server-authoritative faction territory wars.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">v3.6</span><div><strong>Serverless &amp; Local Hybrid Ready</strong><p>Instant sub-200ms API response across all 18 admin, studio, and player endpoints.</p></div></li>
+          </ol>
+        </div>
 
         <div class="studio-task-list" aria-label="Create and customize">
           <a class="studio-task" href="/admin?section=content" data-engine-task="content">
