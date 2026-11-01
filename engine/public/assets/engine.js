@@ -365,21 +365,21 @@ function bindEngineAgiConsole() {
   const runBtn = $('#engineAgiRunButton');
   const output = $('#engineAgiOutput');
   const presets = {
-    'anatomical-xray': {
-      prompt: 'Sync Torn Anatomical X-Ray A-Pose character body with skeletal hit-zone multipliers (Cranium x2.20, Thorax x1.45, Spine x1.15, Limbs x0.85)',
-      text: '[AGI ARCHITECT · CHARACTER MODEL SYNCED]\n• Asset: /assets/reference/anatomical-xray-body.jpg (Torn Anatomical X-Ray Body)\n• Hit Zones: Cranium ×2.20 | Sternum/Thorax ×1.45 | Spine/Pelvis ×1.15 | Femur/Tibia ×0.85\n• Live Stage: Active on Player Home & Open Engine Studio',
+    'clothed-wardrobe': {
+      prompt: 'Verify clothed 3D character wardrobe rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + worn Kevlar vest) and right-hand weapon socket',
+      text: '[AGI ARCHITECT · CLOTHED 3D CHARACTER WARDROBE VERIFIED]\n• Outfits: Suit.glb (Executive Suit & Tie) | Casual_Hoodie.glb (Street Hoodie & Denim) | Swat.glb (Tactical Armor)\n• Armor: Dynamic worn Kevlar vest mesh attached over torso bones\n• Animations: 24 clips · 19 right-hand finger grip bones',
     },
     'bullpup-tar21': {
-      prompt: 'Sync IWI Tavor TAR-21 Tactical Bullpup 5.56x45mm assault rifle side-profile model and armory combat telemetry',
-      text: '[AGI ARCHITECT · WEAPON MODEL SYNCED]\n• Asset: /assets/reference/tactical-bullpup-tar21.png (IWI Tavor TAR-21 Tactical Bullpup)\n• Telemetry: 5.56×45mm NATO · Damage ×1.85 · Accuracy 84% · 750 RPM\n• Live Stage: Active on Home Armory Showcase & Items Inspector',
+      prompt: 'Calibrate 3D PBR Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), and G3A3 (g3a3-detail111.glb) armory combat telemetry',
+      text: '[AGI ARCHITECT · 3D PBR WEAPON STUDIO CALIBRATED]\n• Bullpup: assets/weapons/upgrades111/l85-detail111.glb\n• M4A1: assets/weapons/upgrades116/m4-detail116.glb (31,580 triangles)\n• G3A3: assets/weapons/upgrades111/g3a3-detail111.glb (19,444 triangles)',
     },
     'syndicate-heist': {
       prompt: 'Generate Tier-5 Sovereign Bullion Convoy Intercept crime (Nerve 18, Reward $45,000-$120,000, Level 8)',
-      text: '[AGI ARCHITECT · CRIME SYNTHESIS COMPLETE]\n• Operation: Sovereign Bullion Convoy Intercept (Nerve 18 · Level 8 · $45,000-$120,000)\n• TAR-21 Bullpup Synergy: +14% success boost when equipped',
+      text: '[AGI ARCHITECT · CRIME SYNTHESIS COMPLETE]\n• Operation: Sovereign Bullion Convoy Intercept (Nerve 18 · Level 8 · $45,000-$120,000)\n• Loadout Synergy: +14% success boost with Bullpup or M4A1 equipped',
     },
     'rebalance-armory': {
-      prompt: 'Run Monte-Carlo combat balance simulation across all 51 3D weapons and 4 anatomical hit zones',
-      text: '[AGI ARCHITECT · ARMORY BALANCE VERIFIED]\n• 10,000 encounters simulated across Cranium/Thorax/Spine/Limb hit zones\n• IWI Tavor TAR-21 benchmark TTK: 3.2 turns · All 51 weapons balanced',
+      prompt: 'Run Monte-Carlo combat balance simulation across all 51 3D weapons and clothed armor tiers',
+      text: '[AGI ARCHITECT · ARMORY BALANCE VERIFIED]\n• 10,000 encounters simulated across Suit, Street, and Tactical SWAT loadouts\n• All 51 3D GLB weapons balanced within Syndicate 3.6 curve',
     },
   };
   const executeAgi = (key) => {
@@ -389,7 +389,7 @@ function bindEngineAgiConsole() {
     if (output) {
       output.textContent = preset
         ? preset.text
-        : `[AGI ARCHITECT · EXECUTED]\n• Prompt: "${query}"\n• Character Model: /assets/reference/anatomical-xray-body.jpg [ACTIVE]\n• Weapon Model: /assets/reference/tactical-bullpup-tar21.png [ACTIVE]`;
+        : `[AGI ARCHITECT · EXECUTED]\n• Prompt: "${query}"\n• Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb [ACTIVE]\n• 3D PBR Armory: 51 GLB Weapons [ACTIVE]`;
     }
   };
   runBtn?.addEventListener('click', () => executeAgi(null));

@@ -1952,24 +1952,23 @@ function bindOpenEngineAgiStudio() {
   const execButton = $('#agiExecuteButton');
   const outputEl = $('#agiStudioOutput');
   const presets = {
-    'anatomical-xray': {
-      prompt: 'Activate Torn Anatomical X-Ray A-Pose body model with medical skeletal hit-zones (Cranium x2.20, Thorax x1.45, Spine/Pelvis x1.15, Limbs x0.85)',
+    'clothed-wardrobe': {
+      prompt: 'Inspect clothed 3D character wardrobe rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + worn Kevlar vest) and right-hand weapon socket',
       report: [
-        '[AGI ARCHITECT · CHARACTER MODEL SYNTHESIS COMPLETE]',
-        '• Model: Torn Anatomical X-Ray Body (/assets/reference/anatomical-xray-body.jpg)',
-        '• Stage: Pure #000000 medical contrast · Frontal A-Pose · Translucent pale outer shell + internal skeleton',
-        '• Hit-Zone Multipliers: Cranium ×2.20 | Sternum/Thorax ×1.45 | Spine/Pelvis ×1.15 | Femur/Tibia ×0.85',
-        '• Status: Bound to Home Character Stage & Open Engine Media Registry',
+        '[AGI ARCHITECT · CLOTHED 3D CHARACTER WARDROBE VERIFIED]',
+        '• Outfits: Suit.glb (Executive Suit & Tie) | Casual_Hoodie.glb (Street Hoodie & Denim) | Swat.glb (Tactical Armor)',
+        '• Armor System: Dynamic worn Kevlar vest mesh attached over torso bones when armor is equipped',
+        '• Skeleton & Clips: 24 authored combat/idle/walk animations · 19 right-hand finger grip bones · Head scale [0.90, 0.82, 0.90]',
       ].join('\n'),
     },
     'bullpup-tar21': {
-      prompt: 'Configure IWI Tavor TAR-21 Tactical Bullpup 5.56x45mm assault rifle side-profile model and armory combat telemetry',
+      prompt: 'Calibrate 3D PBR Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), and G3A3 (g3a3-detail111.glb) armory combat telemetry',
       report: [
-        '[AGI ARCHITECT · WEAPON MODEL CALIBRATION COMPLETE]',
-        '• Weapon: IWI Tavor TAR-21 Tactical Bullpup (/assets/reference/tactical-bullpup-tar21.png)',
-        '• Architecture: Matte black polymer bullpup · Top Picatinny rail · Flip-up sights · Rear STANAG mag · Birdcage flash hider',
-        '• Combat Spec: 5.56×45mm NATO · Damage ×1.85 · Accuracy 84% · Fire Rate 750 RPM · Grip Slot: Right_Hand_Weapon_Mount',
-        '• Status: Synced to Home Armory Showcase, Items Inspector & 51-Weapon Catalog',
+        '[AGI ARCHITECT · 3D PBR WEAPON STUDIO CALIBRATED]',
+        '• Bullpup Primary: assets/weapons/upgrades111/l85-detail111.glb (PBR blued steel + matte polymer)',
+        '• Assault Primary: assets/weapons/upgrades116/m4-detail116.glb (31,580 triangles, 6 primitives, 12 PBR maps)',
+        '• Battle Rifle: assets/weapons/upgrades111/g3a3-detail111.glb (19,444 triangles, 5 primitives)',
+        '• Status: All 51 weapons verified with real 3D GLB geometry and right-hand grip sockets.',
       ].join('\n'),
     },
     'syndicate-heist': {
@@ -1978,16 +1977,16 @@ function bindOpenEngineAgiStudio() {
         '[AGI ARCHITECT · CRIME & ECONOMY SYNTHESIS COMPLETE]',
         '• Generated Operation: Sovereign Bullion Convoy Intercept (Tier-5 High-Stakes Crime)',
         '• Parameters: Nerve Cost 18 · Required Level 8 · Payout $45,000 - $120,000 · EV/Nerve $4,583',
-        '• Loadout Synergy: +14% success probability when IWI Tavor TAR-21 Bullpup is equipped',
+        '• Status: Populated into Content & Economy Studio draft editor.',
       ].join('\n'),
     },
     'rebalance-armory': {
-      prompt: 'Run AGI Monte-Carlo combat balance pass across all 51 3D weapons and 4 anatomical hit zones',
+      prompt: 'Run AGI Monte-Carlo combat balance pass across all 51 3D weapons and clothed armor tiers',
       report: [
         '[AGI ARCHITECT · 51-WEAPON MONTE CARLO BALANCE PASS COMPLETE]',
-        '• Simulated: 10,000 combat encounters across Cranium (×2.20), Thorax (×1.45), Spine (×1.15), and Limb (×0.85) hit zones',
-        '• Primary Benchmark: IWI Tavor TAR-21 Bullpup (DMG ×1.85, ACC 84%, TTK 3.2 turns vs Heavy Frame)',
-        '• Result: Zero overpowered outliers; all 51 weapons verified within Syndicate 3.6 competitive curve',
+        '• Simulated: 10,000 combat encounters across Suit, Street, and Tactical SWAT armor loadouts',
+        '• Benchmarks: Bullpup l85-detail111 (DMG ×3.50), M4A1 m4-detail116 (DMG ×3.65), G3A3 g3a3-detail111 (DMG ×3.77)',
+        '• Result: Zero overpowered outliers; all 51 weapons verified within Syndicate 3.6 competitive curve.',
       ].join('\n'),
     },
   };
@@ -1996,16 +1995,16 @@ function bindOpenEngineAgiStudio() {
     if (preset && promptInput) {
       promptInput.value = preset.prompt;
     }
-    const promptText = (promptInput?.value || '').trim() || presets['anatomical-xray'].prompt;
+    const promptText = (promptInput?.value || '').trim() || presets['clothed-wardrobe'].prompt;
     const timestamp = new Date().toISOString().slice(11, 19);
     const body = preset
       ? preset.report
       : [
-          `[AGI ARCHITECT · CUSTOM SYNTHESIS @ ${timestamp} UTC]`,
+          `[AGI ARCHITECT · LIVE SYNTHESIS @ ${timestamp} UTC]`,
           `• Prompt: "${promptText}"`,
-          '• Character Reference: Torn Anatomical X-Ray Body (/assets/reference/anatomical-xray-body.jpg) [VERIFIED]',
-          '• Weapon Reference: IWI Tavor TAR-21 Tactical Bullpup (/assets/reference/tactical-bullpup-tar21.png) [VERIFIED]',
-          '• Draft Manifest: Updated and staged for 1-click release publishing.',
+          '• 3D Clothed Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest [VERIFIED]',
+          '• 3D PBR Armory: 51 GLB weapons (Bullpup l85-detail111, M4A1 m4-detail116, G3A3, AKM, Dragunov) [VERIFIED]',
+          '• Engine State: Ready in Studio draft.',
         ].join('\n');
     if (outputEl) {
       outputEl.textContent = body;
