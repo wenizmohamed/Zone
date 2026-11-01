@@ -1554,6 +1554,13 @@ try {
     check($engine->playerUpgradeCompletionPct('founder-player') >= 0.0 && $engine->playerUpgradeCompletionPct('founder-player') <= 100.0, 'GameEngine playerUpgradeCompletionPct returns upgrade completion percentage');
     check($engine->playerPropertyOwnershipPct('founder-player') >= 0.0 && $engine->playerPropertyOwnershipPct('founder-player') <= 100.0, 'GameEngine playerPropertyOwnershipPct returns property ownership percentage');
     check($engine->playerGymUnlockRatioPct('founder-player') > 0.0 && $engine->playerGymUnlockRatioPct('founder-player') <= 100.0, 'GameEngine playerGymUnlockRatioPct returns gym unlock ratio percentage');
+
+    // --- Wave 85 (zone-beta203): GameEngine playerCrimeSuccessSharePct, playerGymTrainSharePct, playerCombatWinSharePct, playerJobShiftSharePct & playerMarketBuySharePct ---
+    check($engine->playerCrimeSuccessSharePct('founder-player') >= 0.0 && $engine->playerCrimeSuccessSharePct('founder-player') <= 100.0, 'GameEngine playerCrimeSuccessSharePct returns crime share of career actions');
+    check($engine->playerGymTrainSharePct('founder-player') >= 0.0 && $engine->playerGymTrainSharePct('founder-player') <= 100.0, 'GameEngine playerGymTrainSharePct returns gym training share of career actions');
+    check($engine->playerCombatWinSharePct('founder-player') >= 0.0 && $engine->playerCombatWinSharePct('founder-player') <= 100.0, 'GameEngine playerCombatWinSharePct returns combat win share of career actions');
+    check($engine->playerJobShiftSharePct('founder-player') >= 0.0 && $engine->playerJobShiftSharePct('founder-player') <= 100.0, 'GameEngine playerJobShiftSharePct returns job shift share of career actions');
+    check($engine->playerMarketBuySharePct('founder-player') >= 0.0 && $engine->playerMarketBuySharePct('founder-player') <= 100.0, 'GameEngine playerMarketBuySharePct returns market buy share of career actions');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

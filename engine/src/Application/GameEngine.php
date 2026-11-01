@@ -2473,4 +2473,34 @@ final class GameEngine
         $total = $this->publishedGymCount();
         return $total > 0 ? round(($this->playerActiveGymIndex($playerId) + 1) / $total * 100, 2) : 0.0;
     }
+
+    public function playerCrimeSuccessSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCareerActions($playerId);
+        return $total > 0 ? round($this->playerCrimeSuccessCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerGymTrainSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCareerActions($playerId);
+        return $total > 0 ? round($this->playerGymTrainCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerCombatWinSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCareerActions($playerId);
+        return $total > 0 ? round($this->playerCombatWinCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerJobShiftSharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCareerActions($playerId);
+        return $total > 0 ? round($this->playerJobShiftCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerMarketBuySharePct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->playerTotalCareerActions($playerId);
+        return $total > 0 ? round($this->playerMarketBuyCount($playerId) / $total * 100, 2) : 0.0;
+    }
 }

@@ -8,7 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
-import {mapMediaLayerId,isMapMediaPinEligible} from '../dist/map-media108.mjs';
+import {mapMediaLayerId,isMapMediaPinEligible,filterEligibleMapMediaPins,mapMediaTargetSizeMeters} from '../dist/map-media108.mjs';
 import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -230,4 +230,7 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(isSupportedModelExtension('png'),false);
   assert.equal(isEmbeddedDataUri('data:image/png;base64,YQ=='),true);
   assert.equal(isEmbeddedDataUri('https://example.invalid/x.png'),false);
+  assert.equal(filterEligibleMapMediaPins([mediaPin(),{...mediaPin('gym'),_buildingAssociation:{insideRoof:false}}]).length,1);
+  assert.equal(mapMediaTargetSizeMeters(4),5.4);
+  assert.equal(mapMediaTargetSizeMeters(20),12);
 });
