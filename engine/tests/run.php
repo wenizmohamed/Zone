@@ -2345,6 +2345,13 @@ try {
     check($engine->gymHappyDenominator() === 500, 'GameEngine gymHappyDenominator returns 500');
     check(abs($engine->gymHappyLogCoefficient() - 0.35) < 0.0001, 'GameEngine gymHappyLogCoefficient returns 0.35');
     check(abs($engine->gymIndexMultiplierStep() - 0.3) < 0.0001, 'GameEngine gymIndexMultiplierStep returns 0.3');
+
+    // --- Wave 198 (zone-beta316): GameEngine gymFamilyBoostMultiplier, gymFitnessEducationMultiplier, gymMinSoftCapRetentionFactor, gymEnergyBaseFactor & supportedBankTransferDirections ---
+    check(abs($engine->gymFamilyBoostMultiplier() - 1.1) < 0.0001, 'GameEngine gymFamilyBoostMultiplier returns 1.1');
+    check(abs($engine->gymFitnessEducationMultiplier() - 1.05) < 0.0001, 'GameEngine gymFitnessEducationMultiplier returns 1.05');
+    check(abs($engine->gymMinSoftCapRetentionFactor() - 0.35) < 0.0001, 'GameEngine gymMinSoftCapRetentionFactor returns 0.35');
+    check(abs($engine->gymEnergyBaseFactor() - 1.2) < 0.0001, 'GameEngine gymEnergyBaseFactor returns 1.2');
+    check($engine->supportedBankTransferDirections() === ['deposit', 'withdraw'], 'GameEngine supportedBankTransferDirections returns deposit and withdraw');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

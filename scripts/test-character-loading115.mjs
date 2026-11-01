@@ -283,4 +283,9 @@ test('character wrapper contains no experimental name budget, automatic navigati
  const helper=html.slice(html.indexOf('let characterRecoveryState'),html.indexOf('const FONT_MIME',html.indexOf('let characterRecoveryState')));
  assert.doesNotMatch(helper,/window\.name|location\.(?:reload|replace)|setTimeout|sessionStorage/);
  assert.equal((html.split('<script type="__bundler/manifest">')[0].match(/location\.reload\(\)/g)||[]).length,1,'Only the existing manual Retry reload remains');
+ assert.equal(presentation.characterArtLicense(),'CC0-1.0');
+ assert.equal(presentation.characterArtAuthor(),'Quaternius');
+ assert.equal(presentation.characterArtVersion(),'crime-wardrobe-1');
+ assert.equal(presentation.requiredGripBoneCount(),19);
+ assert.deepEqual(presentation.stageTextureAssets(),['concrete_floor_02','brick_wall_04']);
 });

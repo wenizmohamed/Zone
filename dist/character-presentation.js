@@ -67,6 +67,26 @@ export function requiredWardrobeBoneCount() {
   return requiredWardrobeBones().length;
 }
 
+export function characterArtLicense() {
+  return CHARACTER_ART.license;
+}
+
+export function characterArtAuthor() {
+  return CHARACTER_ART.author;
+}
+
+export function characterArtVersion() {
+  return CHARACTER_ART.version;
+}
+
+export function requiredGripBoneCount() {
+  return 19;
+}
+
+export function stageTextureAssets() {
+  return ['concrete_floor_02', 'brick_wall_04'];
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });

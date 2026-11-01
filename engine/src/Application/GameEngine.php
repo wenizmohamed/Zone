@@ -5461,4 +5461,29 @@ final class GameEngine
     {
         return 0.3;
     }
+
+    public function gymFamilyBoostMultiplier(): float
+    {
+        return 1.1;
+    }
+
+    public function gymFitnessEducationMultiplier(): float
+    {
+        return 1.05;
+    }
+
+    public function gymMinSoftCapRetentionFactor(): float
+    {
+        return 0.35;
+    }
+
+    public function gymEnergyBaseFactor(): float
+    {
+        return 1.2;
+    }
+
+    public function supportedBankTransferDirections(): array
+    {
+        return ['deposit', 'withdraw'];
+    }
 }
