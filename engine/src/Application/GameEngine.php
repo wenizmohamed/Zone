@@ -4734,4 +4734,29 @@ final class GameEngine
     {
         return 8;
     }
+
+    public function assetUploadExpirationSeconds(): int
+    {
+        return 86400;
+    }
+
+    public function assetInspectionMaxAttempts(): int
+    {
+        return 3;
+    }
+
+    public function assetInspectionLeaseSeconds(): int
+    {
+        return 90;
+    }
+
+    public function assetWorkerHealthyWindowSeconds(): int
+    {
+        return 100;
+    }
+
+    public function assetMaxPendingUploadsPerActor(): int
+    {
+        return 10;
+    }
 }

@@ -212,6 +212,9 @@
     const active=options.isActive||(()=>true),schedule=options.setTimeout||setTimeout,cancel=options.clearTimeout||clearTimeout;
     const publish=value=>{if(!disposed&&active()){try{options.onState?.(value);}catch(_){}}};
     return {
+      isAttempted(){return attempted;},
+      isDisposed(){return disposed;},
+      isPending(){return timer!==null;},
       handle(error){
         if(disposed||attempted||timer!==null||!active()||!isModuleFetchFailure(error))return false;
         // Leave the initial import catch/microtask chain before retrying the

@@ -33,10 +33,16 @@ test('native Retry overrides the passive notice hit target and the map loads its
 test('parallel real facade/sign import failures coalesce into one zero-delay retry of their existing APIs',async()=>{
   const h=harness();await assert.rejects(h.controller.whenReady(),/Failed to fetch dynamically imported module/);await flush();
   assert.deepEqual(h.counts,{landmarkLoads:1,surfaceLoads:1,retries:0});assert.equal(h.tasks.size,1);
+  assert.equal(h.retry.isPending(),true);
+  assert.equal(h.retry.isAttempted(),false);
+  assert.equal(h.retry.isDisposed(),false);
   await h.run();await h.controller.whenReady();
+  assert.equal(h.retry.isPending(),false);
+  assert.equal(h.retry.isAttempted(),true);
   assert.deepEqual(h.counts,{landmarkLoads:2,surfaceLoads:2,retries:1});assert.equal(h.tasks.size,0);
   assert.match(h.urls[1],/[?&]retry=1/);assert.equal(JSON.parse(h.scope.document.body.dataset.zoneDistrictLandmarks).status,'ready');
   assert.equal(h.retry.handle(fetchError()),false);assert.equal(h.tasks.size,0);h.dispose();
+  assert.equal(h.retry.isDisposed(),true);
 });
 
 test('a second import failure cannot auto-loop, and the actual native Retry recovers on the third import',async()=>{

@@ -2149,6 +2149,13 @@ try {
     check($engine->supportedAssetTransformKeys() === ['scale', 'rotation', 'floorOffset', 'cameraTarget'], 'GameEngine supportedAssetTransformKeys returns 4 transform keys');
     check($engine->isSupportedAssetTransformKey('scale') === true && $engine->isSupportedAssetTransformKey('opacity') === false, 'GameEngine isSupportedAssetTransformKey validates transform key');
     check($engine->assetWorkerMaxBatchLimit() === 8, 'GameEngine assetWorkerMaxBatchLimit returns 8');
+
+    // --- Wave 170 (zone-beta288): GameEngine assetUploadExpirationSeconds, assetInspectionMaxAttempts, assetInspectionLeaseSeconds, assetWorkerHealthyWindowSeconds & assetMaxPendingUploadsPerActor ---
+    check($engine->assetUploadExpirationSeconds() === 86400, 'GameEngine assetUploadExpirationSeconds returns 86400');
+    check($engine->assetInspectionMaxAttempts() === 3, 'GameEngine assetInspectionMaxAttempts returns 3');
+    check($engine->assetInspectionLeaseSeconds() === 90, 'GameEngine assetInspectionLeaseSeconds returns 90');
+    check($engine->assetWorkerHealthyWindowSeconds() === 100, 'GameEngine assetWorkerHealthyWindowSeconds returns 100');
+    check($engine->assetMaxPendingUploadsPerActor() === 10, 'GameEngine assetMaxPendingUploadsPerActor returns 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
