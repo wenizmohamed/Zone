@@ -3970,4 +3970,30 @@ final class GameEngine
     {
         return (int) ($this->releases->foundation()['worldPolicy']['tickSeconds'] ?? 60);
     }
+
+    /** @return list<string> */
+    public function installedThemeIds(): array
+    {
+        return $this->themes->installedThemeIds();
+    }
+
+    public function activeThemeVersion(): string
+    {
+        return (string) ($this->themes->activeTheme()['version'] ?? '1.0.0');
+    }
+
+    public function activeThemeDescription(): string
+    {
+        return (string) ($this->themes->activeTheme()['description'] ?? '');
+    }
+
+    public function isThemeInstalled(string $id): bool
+    {
+        return in_array($id, $this->installedThemeIds(), true);
+    }
+
+    public function activeThemePreviewColor(): string
+    {
+        return (string) ($this->themes->activeTheme()['preview'] ?? '#d7ff3f');
+    }
 }

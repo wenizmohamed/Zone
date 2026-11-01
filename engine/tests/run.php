@@ -1967,6 +1967,13 @@ try {
     check(is_bool($engine->hasReleaseFoundationPages()), 'GameEngine hasReleaseFoundationPages returns boolean foundation pages status');
     check(is_bool($engine->releaseFoundationHasWorldPolicy()), 'GameEngine releaseFoundationHasWorldPolicy returns boolean foundation world policy status');
     check($engine->releaseFoundationWorldTickSeconds() > 0, 'GameEngine releaseFoundationWorldTickSeconds returns positive foundation world tick seconds');
+
+    // --- Wave 144 (zone-beta262): GameEngine installedThemeIds, activeThemeVersion, activeThemeDescription, isThemeInstalled & activeThemePreviewColor ---
+    check(count($engine->installedThemeIds()) >= 2, 'GameEngine installedThemeIds returns installed theme IDs');
+    check($engine->activeThemeVersion() !== '', 'GameEngine activeThemeVersion returns active theme version');
+    check(is_string($engine->activeThemeDescription()), 'GameEngine activeThemeDescription returns active theme description');
+    check($engine->isThemeInstalled($engine->installedThemeIds()[0]) === true && $engine->isThemeInstalled('unknown') === false, 'GameEngine isThemeInstalled validates installed theme ID');
+    check($engine->activeThemePreviewColor() !== '', 'GameEngine activeThemePreviewColor returns active theme preview hex color');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

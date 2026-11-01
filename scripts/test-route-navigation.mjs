@@ -117,4 +117,8 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   assert.equal(s.nav.isPending(), false);
   assert.equal(s.nav.hasActiveEntry(), true);
   assert.deepEqual(JSON.parse(JSON.stringify(s.nav.currentScroll())), { x: 0, y: 500 });
+  assert.equal(s.nav.hasObserver(), false);
+  assert.equal(s.nav.hasFrame(), false);
+  assert.ok(s.nav.currentGeneration() >= 1);
+  assert.ok(s.nav.currentEntrySerial() >= 1);
 });

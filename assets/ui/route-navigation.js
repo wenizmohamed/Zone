@@ -68,6 +68,18 @@
     function currentScroll() {
       return { x: win.scrollX || 0, y: win.scrollY || 0 };
     }
+    function hasObserver() {
+      return observer !== null;
+    }
+    function hasFrame() {
+      return frame !== null;
+    }
+    function currentGeneration() {
+      return generation;
+    }
+    function currentEntrySerial() {
+      return entrySerial;
+    }
     function diagnostics() {
       return {
         generation,
@@ -77,7 +89,7 @@
         hasFrame: frame !== null,
       };
     }
-    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, hasActiveEntry, currentScroll, diagnostics };
+    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, hasActiveEntry, currentScroll, hasObserver, hasFrame, currentGeneration, currentEntrySerial, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {
