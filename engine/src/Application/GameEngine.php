@@ -3229,4 +3229,29 @@ final class GameEngine
     {
         return $this->playerMaxLife($playerId) > 0;
     }
+
+    public function playerHasMaxEnergy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMaxEnergy($playerId) > 0;
+    }
+
+    public function playerHasMaxNerve(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMaxNerve($playerId) > 0;
+    }
+
+    public function playerHasMaxHappy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMaxHappy($playerId) > 0;
+    }
+
+    public function playerHasEnergy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerEnergy($playerId) > 0;
+    }
+
+    public function playerHasNerve(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerNerve($playerId) > 0;
+    }
 }

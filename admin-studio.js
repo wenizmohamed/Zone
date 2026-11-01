@@ -26,7 +26,9 @@
   };
   const isSupportedSection = section => sections.includes(String(section ?? ''));
   const categoryLabel = (category, language = 'en') => categoryNames[category]?.[language === 'ar' ? 1 : 0] ?? String(category ?? '');
-  const helpers = { sections, isSupportedSection, categoryLabel, normalize: plain, route, makeId, copy, categoryNames };
+  const isReservedCatalogId = id => ['constructor', 'prototype', 'fists'].includes(String(id ?? ''));
+  const supportedCategoryIds = () => Object.keys(categoryNames);
+  const helpers = { sections, isSupportedSection, categoryLabel, isReservedCatalogId, supportedCategoryIds, normalize: plain, route, makeId, copy, categoryNames };
   if (typeof window === 'undefined' || typeof state === 'undefined') { globalThis.ZoneStudioHelpers = helpers; return; }
   const q = selector => document.querySelector(selector), qa = selector => [...document.querySelectorAll(selector)];
   const tr = key => copy[state.language]?.[key] ?? copy.en[key] ?? key;
