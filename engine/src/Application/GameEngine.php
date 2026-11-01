@@ -2371,4 +2371,43 @@ final class GameEngine
     {
         return $this->playerActiveCourseId($playerId) !== null;
     }
+
+    public function playerActiveJobRankIndex(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['jobRank'] ?? 0);
+    }
+
+    public function playerActivePropertyHappyBonus(string $playerId = 'founder-player'): int
+    {
+        $activeId = $this->playerActivePropertyId($playerId);
+        foreach ((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['properties'] ?? [] as $prop) {
+            if (($prop['id'] ?? null) === $activeId) {
+                return (int) ($prop['h'] ?? 0);
+            }
+        }
+        return 0;
+    }
+
+    public function playerActivePropertyCost(string $playerId = 'founder-player'): int
+    {
+        $activeId = $this->playerActivePropertyId($playerId);
+        foreach ((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['properties'] ?? [] as $prop) {
+            if (($prop['id'] ?? null) === $activeId) {
+                return (int) ($prop['cost'] ?? 0);
+            }
+        }
+        return 0;
+    }
+
+    public function playerCompletedMissionCount(string $playerId = 'founder-player'): int
+    {
+        $done = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['msnDone'] ?? []);
+        return count(array_filter($done));
+    }
+
+    public function playerPurchasedUpgradeCount(string $playerId = 'founder-player'): int
+    {
+        $done = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['upgDone'] ?? []);
+        return count(array_filter($done));
+    }
 }

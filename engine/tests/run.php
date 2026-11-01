@@ -1533,6 +1533,13 @@ try {
     check($engine->playerAvailableGymSessions('founder-player') >= 0, 'GameEngine playerAvailableGymSessions returns available gym training sessions');
     check($engine->playerActiveCourseId('founder-player') === null || is_string($engine->playerActiveCourseId('founder-player')), 'GameEngine playerActiveCourseId returns active course ID or null');
     check(is_bool($engine->isPlayerEnrolledInCourse('founder-player')), 'GameEngine isPlayerEnrolledInCourse returns boolean enrollment status');
+
+    // --- Wave 82 (zone-beta200): GameEngine playerActiveJobRankIndex, playerActivePropertyHappyBonus, playerActivePropertyCost, playerCompletedMissionCount & playerPurchasedUpgradeCount ---
+    check($engine->playerActiveJobRankIndex('founder-player') >= 0, 'GameEngine playerActiveJobRankIndex returns active job rank index');
+    check($engine->playerActivePropertyHappyBonus('founder-player') >= 0, 'GameEngine playerActivePropertyHappyBonus returns active property happy bonus');
+    check($engine->playerActivePropertyCost('founder-player') >= 0, 'GameEngine playerActivePropertyCost returns active property cost');
+    check($engine->playerCompletedMissionCount('founder-player') >= 0, 'GameEngine playerCompletedMissionCount returns completed mission count');
+    check($engine->playerPurchasedUpgradeCount('founder-player') >= 0, 'GameEngine playerPurchasedUpgradeCount returns purchased upgrade count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

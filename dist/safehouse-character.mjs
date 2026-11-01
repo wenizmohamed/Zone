@@ -16,8 +16,16 @@ export function supportedSafehouseOutfits() {
   return Object.keys(OUTFITS);
 }
 
+export function isSupportedSafehouseOutfit(outfit) {
+  return Object.prototype.hasOwnProperty.call(OUTFITS, outfit);
+}
+
 export function resolveSafehouseOutfitFile(outfit) {
   return OUTFITS[outfit] || 'Suit';
+}
+
+export function isSafehouseAssetHash(value) {
+  return typeof value === 'string' && HASH.test(value);
 }
 
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
