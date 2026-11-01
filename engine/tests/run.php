@@ -1995,6 +1995,13 @@ try {
     check($engine->territoryBlockTotalCount() === 120, 'GameEngine territoryBlockTotalCount returns 120 territory blocks');
     check($engine->hasTerritoryBlocks() === true, 'GameEngine hasTerritoryBlocks returns boolean territory blocks status');
     check(strlen($engine->territoryMapRevision()) === 64, 'GameEngine territoryMapRevision returns 64-char sha256 territory map revision');
+
+    // --- Wave 148 (zone-beta266): GameEngine territoryPlayerFactionRole, territoryFactionCount, hasTerritoryFactions, territoryPlayerFactionId & isPlayerInTerritoryFaction ---
+    check($engine->territoryPlayerFactionRole() === null || is_string($engine->territoryPlayerFactionRole()), 'GameEngine territoryPlayerFactionRole returns nullable faction role');
+    check($engine->territoryFactionCount() >= 1, 'GameEngine territoryFactionCount returns territory faction count');
+    check($engine->hasTerritoryFactions() === true, 'GameEngine hasTerritoryFactions returns boolean territory factions status');
+    check($engine->territoryPlayerFactionId() === null || is_string($engine->territoryPlayerFactionId()), 'GameEngine territoryPlayerFactionId returns nullable faction ID');
+    check(is_bool($engine->isPlayerInTerritoryFaction()), 'GameEngine isPlayerInTerritoryFaction returns boolean faction membership status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

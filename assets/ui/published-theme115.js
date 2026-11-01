@@ -38,6 +38,10 @@
     isReady() { return ready; },
     isDisposed() { return disposed; },
     supportedStatuses() { return ['pending', 'ready', 'unavailable']; },
+    isSupportedStatus(status) { return ['pending', 'ready', 'unavailable'].includes(String(status ?? '')); },
+    hasActiveTimer() { return timer !== null; },
+    currentStatus() { return document.documentElement.dataset.zonePublishedTheme || null; },
+    currentReason() { return document.documentElement.dataset.zonePublishedThemeReason || null; },
     get disposed() { return disposed; },
     get ready() { return ready; },
     diagnostics() {

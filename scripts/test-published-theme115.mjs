@@ -154,4 +154,9 @@ test('a later successful stylesheet load can recover after an earlier load error
   assert.equal(b.window.ZonePublishedTheme115.isReady(), true);
   assert.equal(b.window.ZonePublishedTheme115.isDisposed(), false);
   assert.deepEqual(Array.from(b.window.ZonePublishedTheme115.supportedStatuses()), ['pending', 'ready', 'unavailable']);
+  assert.equal(b.window.ZonePublishedTheme115.isSupportedStatus('ready'), true);
+  assert.equal(b.window.ZonePublishedTheme115.isSupportedStatus('unknown'), false);
+  assert.equal(b.window.ZonePublishedTheme115.hasActiveTimer(), false);
+  assert.equal(b.window.ZonePublishedTheme115.currentStatus(), 'ready');
+  assert.equal(b.window.ZonePublishedTheme115.currentReason(), null);
 });

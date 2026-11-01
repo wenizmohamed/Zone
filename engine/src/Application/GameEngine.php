@@ -4073,4 +4073,31 @@ final class GameEngine
     {
         return (string) ($this->territories->snapshot($playerId)['revision'] ?? '');
     }
+
+    public function territoryPlayerFactionRole(string $playerId = 'founder-player'): ?string
+    {
+        $val = $this->territories->snapshot($playerId)['playerRole'] ?? null;
+        return is_string($val) && $val !== '' ? $val : null;
+    }
+
+    public function territoryFactionCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ($this->territories->snapshot($playerId)['factions'] ?? []));
+    }
+
+    public function hasTerritoryFactions(string $playerId = 'founder-player'): bool
+    {
+        return $this->territoryFactionCount($playerId) > 0;
+    }
+
+    public function territoryPlayerFactionId(string $playerId = 'founder-player'): ?string
+    {
+        $val = $this->territories->snapshot($playerId)['playerFactionId'] ?? null;
+        return is_string($val) && $val !== '' ? $val : null;
+    }
+
+    public function isPlayerInTerritoryFaction(string $playerId = 'founder-player'): bool
+    {
+        return $this->territoryPlayerFactionId($playerId) !== null;
+    }
 }
