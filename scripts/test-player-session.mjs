@@ -131,4 +131,9 @@ test('ZoneSession.diagnostics reports session establishment, playerId, mode, TTL
   assert.equal(b.window.ZoneSession.isPending(), false);
   assert.equal(b.window.ZoneSession.isEstablished(), true);
   assert.equal(b.window.ZoneSession.isBackingOff(), false);
+  assert.equal(b.window.ZoneSession.playerIdStorageKey(), 'zone.player.id');
+  assert.equal(b.window.ZoneSession.legacySaveStorageKey(), 'zone.v2.save');
+  assert.equal(b.window.ZoneSession.sessionEndpointPath(), '/api/v1/auth/session');
+  assert.equal(b.window.ZoneSession.accountEndpointPath(), '/api/v1/auth/account');
+  assert.equal(b.window.ZoneSession.isPreviewUrl(), false);
 });

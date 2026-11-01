@@ -5161,4 +5161,29 @@ final class GameEngine
     {
         return 10;
     }
+
+    public function playerAccountMinPasswordCharacters(): int
+    {
+        return 15;
+    }
+
+    public function playerAccountMaxPasswordCharacters(): int
+    {
+        return 128;
+    }
+
+    public function playerAccountMaxPasswordBytes(): int
+    {
+        return 1024;
+    }
+
+    public function playerAccountAuthRateLimitWindowSeconds(): int
+    {
+        return 900;
+    }
+
+    public function defaultDemoPlayerId(): string
+    {
+        return 'founder-player';
+    }
 }

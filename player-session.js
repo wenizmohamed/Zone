@@ -65,6 +65,11 @@
     isPending: () => Boolean(pending),
     isEstablished: () => Boolean(identity) && !sessionExpired(),
     isBackingOff: () => Date.now() < retryAfter,
+    playerIdStorageKey: () => 'zone.player.id',
+    legacySaveStorageKey: () => 'zone.v2.save',
+    sessionEndpointPath: () => '/api/v1/auth/session',
+    accountEndpointPath: () => '/api/v1/auth/account',
+    isPreviewUrl: () => new URLSearchParams(location.search).get('zone-preview') === '1',
     diagnostics: () => ({ established: Boolean(identity), playerId: identity?.playerId || null, mode: identity?.mode || null, expired: sessionExpired(), retryAfterMs: Math.max(0, retryAfter - Date.now()), ttlSeconds: identity?.expiresAt ? Math.max(0, Math.floor(identity.expiresAt - Date.now() / 1000)) : null }),
     recover: async () => {
     retryAfter = 0;

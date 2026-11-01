@@ -2261,6 +2261,13 @@ try {
     check($engine->browserSessionStartingGrantCash() === 2500, 'GameEngine browserSessionStartingGrantCash returns 2500');
     check($engine->browserSessionStartingHappy() === 100, 'GameEngine browserSessionStartingHappy returns 100');
     check($engine->browserSessionMaxCreationPerHour() === 10, 'GameEngine browserSessionMaxCreationPerHour returns 10');
+
+    // --- Wave 186 (zone-beta304): GameEngine playerAccountMinPasswordCharacters, playerAccountMaxPasswordCharacters, playerAccountMaxPasswordBytes, playerAccountAuthRateLimitWindowSeconds & defaultDemoPlayerId ---
+    check($engine->playerAccountMinPasswordCharacters() === 15, 'GameEngine playerAccountMinPasswordCharacters returns 15');
+    check($engine->playerAccountMaxPasswordCharacters() === 128, 'GameEngine playerAccountMaxPasswordCharacters returns 128');
+    check($engine->playerAccountMaxPasswordBytes() === 1024, 'GameEngine playerAccountMaxPasswordBytes returns 1024');
+    check($engine->playerAccountAuthRateLimitWindowSeconds() === 900, 'GameEngine playerAccountAuthRateLimitWindowSeconds returns 900');
+    check($engine->defaultDemoPlayerId() === 'founder-player', 'GameEngine defaultDemoPlayerId returns founder-player');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
