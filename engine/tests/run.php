@@ -2499,6 +2499,13 @@ try {
     check($engine->releaseManagerSupportedBlockTypes() === ['hero', 'text', 'callout', 'stat-grid', 'action-grid'], 'GameEngine releaseManagerSupportedBlockTypes returns 5 block types');
     check($engine->releaseManagerMaxBilingualStringBytes() === 12000, 'GameEngine releaseManagerMaxBilingualStringBytes returns 12000');
     check($engine->releaseManagerMaxActorBytes() === 480, 'GameEngine releaseManagerMaxActorBytes returns 480');
+
+    // --- Wave 220 (zone-beta338): GameEngine releaseManagerDefaultBrandingAccent, themeRegistryDefaultPreviewHexColor, themeRegistryRequiredManifestFields, moduleRegistryRequiredManifestFields & moduleRegistrySupportedStateActions ---
+    check($engine->releaseManagerDefaultBrandingAccent() === '#a3d900', 'GameEngine releaseManagerDefaultBrandingAccent returns #a3d900');
+    check($engine->themeRegistryDefaultPreviewHexColor() === '#d7ff3f', 'GameEngine themeRegistryDefaultPreviewHexColor returns #d7ff3f');
+    check($engine->themeRegistryRequiredManifestFields() === ['id', 'name', 'version', 'stylesheet'], 'GameEngine themeRegistryRequiredManifestFields returns 4 fields');
+    check($engine->moduleRegistryRequiredManifestFields() === ['id', 'name', 'version', 'class'], 'GameEngine moduleRegistryRequiredManifestFields returns 4 fields');
+    check($engine->moduleRegistrySupportedStateActions() === ['install', 'uninstall', 'enable', 'disable'], 'GameEngine moduleRegistrySupportedStateActions returns 4 actions');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

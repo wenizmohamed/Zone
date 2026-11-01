@@ -1785,6 +1785,26 @@ function isControlBusy() {
   return Boolean(state.controlBusy);
 }
 
+function selectedPageId() {
+  return state.selectedPage ? String(state.selectedPage) : null;
+}
+
+function crimeCount() {
+  return Array.isArray(state.crimes) ? state.crimes.length : 0;
+}
+
+function moduleCount() {
+  return Array.isArray(state.modules) ? state.modules.length : 0;
+}
+
+function releaseCount() {
+  return Array.isArray(state.releases) ? state.releases.length : 0;
+}
+
+function themeCount() {
+  return Array.isArray(state.themes) ? state.themes.length : 0;
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1882,6 +1902,11 @@ if (typeof window !== 'undefined') {
     isSessionRequired,
     isCatalogBusy,
     isControlBusy,
+    selectedPageId,
+    crimeCount,
+    moduleCount,
+    releaseCount,
+    themeCount,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),

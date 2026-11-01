@@ -6024,4 +6024,32 @@ final class GameEngine
     {
         return 480;
     }
+
+    public function releaseManagerDefaultBrandingAccent(): string
+    {
+        return '#a3d900';
+    }
+
+    public function themeRegistryDefaultPreviewHexColor(): string
+    {
+        return '#d7ff3f';
+    }
+
+    /** @return list<string> */
+    public function themeRegistryRequiredManifestFields(): array
+    {
+        return ['id', 'name', 'version', 'stylesheet'];
+    }
+
+    /** @return list<string> */
+    public function moduleRegistryRequiredManifestFields(): array
+    {
+        return ['id', 'name', 'version', 'class'];
+    }
+
+    /** @return list<string> */
+    public function moduleRegistrySupportedStateActions(): array
+    {
+        return ['install', 'uninstall', 'enable', 'disable'];
+    }
 }
