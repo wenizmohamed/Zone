@@ -80,6 +80,21 @@
     function currentEntrySerial() {
       return entrySerial;
     }
+    function mainElementId() {
+      return 'zone-main';
+    }
+    function headingSelector() {
+      return 'h1';
+    }
+    function topScrollPaddingPx() {
+      return 12;
+    }
+    function observedAttributeName() {
+      return 'data-zone-screen';
+    }
+    function routeKeyPrefix() {
+      return 'zone-';
+    }
     function diagnostics() {
       return {
         generation,
@@ -89,7 +104,7 @@
         hasFrame: frame !== null,
       };
     }
-    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, hasActiveEntry, currentScroll, hasObserver, hasFrame, currentGeneration, currentEntrySerial, diagnostics };
+    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, hasActiveEntry, currentScroll, hasObserver, hasFrame, currentGeneration, currentEntrySerial, mainElementId, headingSelector, topScrollPaddingPx, observedAttributeName, routeKeyPrefix, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {

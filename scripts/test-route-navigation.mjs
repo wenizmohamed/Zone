@@ -121,4 +121,9 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   assert.equal(s.nav.hasFrame(), false);
   assert.ok(s.nav.currentGeneration() >= 1);
   assert.ok(s.nav.currentEntrySerial() >= 1);
+  assert.equal(s.nav.mainElementId(), 'zone-main');
+  assert.equal(s.nav.headingSelector(), 'h1');
+  assert.equal(s.nav.topScrollPaddingPx(), 12);
+  assert.equal(s.nav.observedAttributeName(), 'data-zone-screen');
+  assert.equal(s.nav.routeKeyPrefix(), 'zone-');
 });

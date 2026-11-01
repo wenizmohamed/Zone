@@ -2310,6 +2310,13 @@ try {
     check($engine->crimeLegacyFailureMaxThresholdBasisPoints() === 9700, 'GameEngine crimeLegacyFailureMaxThresholdBasisPoints returns 9700');
     check($engine->crimeSearchMaterialRollWinPct() === 12, 'GameEngine crimeSearchMaterialRollWinPct returns 12');
     check($engine->crimeAllowedLegacyPenaltyTypes() === ['jail', 'hosp'], 'GameEngine crimeAllowedLegacyPenaltyTypes returns jail and hosp');
+
+    // --- Wave 193 (zone-beta311): GameEngine gymMaxSessionsPerRequest, gymMaxTerritoryBonusBasisPoints, gymRollVarianceMinPercent, gymRollVarianceMaxPercent & gymStatSoftCapDenominator ---
+    check($engine->gymMaxSessionsPerRequest() === 10, 'GameEngine gymMaxSessionsPerRequest returns 10');
+    check($engine->gymMaxTerritoryBonusBasisPoints() === 2000, 'GameEngine gymMaxTerritoryBonusBasisPoints returns 2000');
+    check($engine->gymRollVarianceMinPercent() === 90, 'GameEngine gymRollVarianceMinPercent returns 90');
+    check($engine->gymRollVarianceMaxPercent() === 110, 'GameEngine gymRollVarianceMaxPercent returns 110');
+    check($engine->gymStatSoftCapDenominator() === 60000, 'GameEngine gymStatSoftCapDenominator returns 60000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

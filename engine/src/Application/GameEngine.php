@@ -5336,4 +5336,29 @@ final class GameEngine
     {
         return ['jail', 'hosp'];
     }
+
+    public function gymMaxSessionsPerRequest(): int
+    {
+        return 10;
+    }
+
+    public function gymMaxTerritoryBonusBasisPoints(): int
+    {
+        return 2000;
+    }
+
+    public function gymRollVarianceMinPercent(): int
+    {
+        return 90;
+    }
+
+    public function gymRollVarianceMaxPercent(): int
+    {
+        return 110;
+    }
+
+    public function gymStatSoftCapDenominator(): int
+    {
+        return 60000;
+    }
 }
