@@ -55,6 +55,15 @@
     const target=style||createStyle();
     return Array.isArray(target?.layers)?target.layers.map(l=>l.id):[];
   }
+  function isStyleLayerId(id,style){
+    return styleLayerIds(style).includes(String(id||''));
+  }
+  function defaultNeighborhoodMeters(){
+    return 600;
+  }
+  function maxNeighborhoodMeters(){
+    return 1500;
+  }
   function setPerspective(map,value){
     // Visibility may fire after pagehide has removed the map's style.
     if(map.isStyleLoaded&&!map.isStyleLoaded()&&(!map.getStyle||!map.getStyle()))return;
@@ -330,6 +339,7 @@
       isDisposed(){return disposed;},
       isVisible(){return visible;},
       destinationCount(){return pins.length;},
+      hasDestination(id){return pins.some(p=>p?.id===id);},
       diagnostics(){
         return {
           disposed,
@@ -374,5 +384,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,defaultCenter,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

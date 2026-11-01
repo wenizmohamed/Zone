@@ -3456,4 +3456,29 @@ final class GameEngine
     {
         return $this->releaseCount() > 0;
     }
+
+    public function hasTopCashAmount(): bool
+    {
+        return $this->topCashAmount() > 0;
+    }
+
+    public function hasTotalBankedCash(): bool
+    {
+        return $this->totalBankedCash() > 0;
+    }
+
+    public function hasInjuredPlayers(): bool
+    {
+        return $this->injuredPlayerCount() > 0;
+    }
+
+    public function hasActiveTravelers(): bool
+    {
+        return $this->activeTravelerCount() > 0;
+    }
+
+    public function hasActiveShopSupplies(): bool
+    {
+        return $this->activeShopSupplyCount() > 0;
+    }
 }

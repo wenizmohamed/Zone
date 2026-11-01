@@ -1827,6 +1827,13 @@ try {
     check(is_bool($engine->hasActiveSessions()), 'GameEngine hasActiveSessions returns boolean active sessions status');
     check($engine->hasAuditEntries() === true, 'GameEngine hasAuditEntries returns boolean audit entries status');
     check($engine->hasReleases() === true, 'GameEngine hasReleases returns boolean releases status');
+
+    // --- Wave 124 (zone-beta242): GameEngine hasTopCashAmount, hasTotalBankedCash, hasInjuredPlayers, hasActiveTravelers & hasActiveShopSupplies ---
+    check($engine->hasTopCashAmount() === true, 'GameEngine hasTopCashAmount returns boolean top cash amount status');
+    check($engine->hasTotalBankedCash() === true, 'GameEngine hasTotalBankedCash returns boolean total banked cash status');
+    check(is_bool($engine->hasInjuredPlayers()), 'GameEngine hasInjuredPlayers returns boolean injured players status');
+    check(is_bool($engine->hasActiveTravelers()), 'GameEngine hasActiveTravelers returns boolean active travelers status');
+    check(is_bool($engine->hasActiveShopSupplies()), 'GameEngine hasActiveShopSupplies returns boolean active shop supplies status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
