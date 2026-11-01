@@ -1722,6 +1722,13 @@ try {
     check($engine->hasOwnerPlaytestActions() === true, 'GameEngine hasOwnerPlaytestActions returns boolean owner playtest actions status');
     check($engine->hasDatabaseTables() === true, 'GameEngine hasDatabaseTables returns boolean database tables status');
     check($engine->hasCities() === true, 'GameEngine hasCities returns boolean cities status');
+
+    // --- Wave 109 (zone-beta227): GameEngine hasEditableCatalogCategories, hasSupportedMediaTargetTypes, hasDailyStreakSchedule, hasResourceRegenIntervals & hasValidBrowserSessionLifetime ---
+    check($engine->hasEditableCatalogCategories() === true, 'GameEngine hasEditableCatalogCategories returns boolean editable catalog categories status');
+    check($engine->hasSupportedMediaTargetTypes() === true, 'GameEngine hasSupportedMediaTargetTypes returns boolean supported media target types status');
+    check($engine->hasDailyStreakSchedule() === true, 'GameEngine hasDailyStreakSchedule returns boolean daily streak schedule status');
+    check($engine->hasResourceRegenIntervals() === true, 'GameEngine hasResourceRegenIntervals returns boolean resource regen intervals status');
+    check($engine->hasValidBrowserSessionLifetime() === true, 'GameEngine hasValidBrowserSessionLifetime returns boolean valid browser session lifetime status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

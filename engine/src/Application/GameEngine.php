@@ -3078,4 +3078,29 @@ final class GameEngine
     {
         return $this->cityCount() > 0;
     }
+
+    public function hasEditableCatalogCategories(): bool
+    {
+        return count($this->editableCatalogCategories()) > 0;
+    }
+
+    public function hasSupportedMediaTargetTypes(): bool
+    {
+        return count($this->supportedMediaTargetTypes()) > 0;
+    }
+
+    public function hasDailyStreakSchedule(): bool
+    {
+        return count($this->dailyStreakSchedule()) > 0;
+    }
+
+    public function hasResourceRegenIntervals(): bool
+    {
+        return count($this->resourceRegenIntervals()) > 0;
+    }
+
+    public function hasValidBrowserSessionLifetime(): bool
+    {
+        return $this->browserSessionLifetimeSeconds() > 0;
+    }
 }

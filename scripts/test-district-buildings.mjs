@@ -7,7 +7,7 @@ import {PbfWriter} from '../assets/city/vendor/pbf.mjs';
 // Resolve the actual browser ES module's two relative canonical imports without
 // changing the application's CommonJS package mode or suppressing Node warnings.
 const helperURL=new URL('../assets/city/district-buildings.js',import.meta.url),helperSource=readFileSync(helperURL,'utf8').replace(/from '(\.\/vendor\/[^']+)'/g,(_match,path)=>"from '"+new URL(path,helperURL).href+"'");
-const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
+const {LIMITS,SOURCE,FILL,EXTRUSION,BUILDING_PAINT,buildingLimits,buildingLayerIds,buildingSourceId,isBuildingLayerId,planTiles,decodeTile,summarizeDecodedFeatures,summarizePlanTiles,createDistrictBuildings}=await import('data:text/javascript;base64,'+Buffer.from(helperSource).toString('base64'));
 const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js');
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/map-public-ownership-20261010.json',import.meta.url),'utf8'));
 const original=JSON.stringify(fixture.blocks),projection=district.createProjection(fixture.blocks.flatMap(b=>b.polygon)),bounds=projection.bounds;
@@ -233,4 +233,7 @@ test('summarizeDecodedFeatures calculates total, extrudable, raisedParts, maximu
   const features=decodeTile(bytes,planTiles(bounds)[0]);
   const summary=summarizeDecodedFeatures(features);
   assert.deepEqual(summary,{total:2,extrudable:1,raisedParts:1,maximumHeight:95,uniqueTiles:1});
+  assert.equal(buildingSourceId(),SOURCE);
+  assert.equal(isBuildingLayerId(FILL),true);
+  assert.equal(isBuildingLayerId('unknown'),false);
 });

@@ -19,6 +19,14 @@ export function buildingLayerIds(){
   return [FILL,EXTRUSION];
 }
 
+export function buildingSourceId(){
+  return SOURCE;
+}
+
+export function isBuildingLayerId(id){
+  return id===FILL||id===EXTRUSION;
+}
+
 export function planTiles(bounds,limits=LIMITS){
   if(!Array.isArray(bounds)||bounds.length!==2||bounds.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n))))throw new Error('District bounds are unavailable');
   const [[west,south],[east,north]]=bounds,z=limits.sourceZoom,n=2**z;
@@ -166,5 +174,5 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     }catch(_){abort.abort();data=null;if(!disposed){cleanupLayers();state.status='degraded';state.stage='load-failed';state.complete=false;publish();}}
     finally{clearTimeout(timer);timer=null;}
   })();
-  return {ready,ensure:styleLoaded,diagnostics:()=>({...state}),dispose(){if(disposed)return;disposed=true;abort.abort();clearTimeout(timer);clearTimeout(renderTimer);resolveRender?.();resolveRender=null;map.off?.('style.load',styleLoaded);map.off?.('idle',checkRendered);map.off?.('sourcedata',sourceData);map.off?.('moveend',cameraChanged);cleanupLayers();data=null;state.status='disposed';state.complete=false;publish();}};
+  return {ready,ensure:styleLoaded,isDisposed:()=>disposed,isComplete:()=>state.complete,diagnostics:()=>({...state}),dispose(){if(disposed)return;disposed=true;abort.abort();clearTimeout(timer);clearTimeout(renderTimer);resolveRender?.();resolveRender=null;map.off?.('style.load',styleLoaded);map.off?.('idle',checkRendered);map.off?.('sourcedata',sourceData);map.off?.('moveend',cameraChanged);cleanupLayers();data=null;state.status='disposed';state.complete=false;publish();}};
 }
