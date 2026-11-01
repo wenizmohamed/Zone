@@ -209,4 +209,9 @@ test('ZonePlatform exposes builtinScreens, isBuiltinScreen, isConnected, isOffli
   await runtime.window.ZonePlatform.refresh();
   assert.equal(runtime.window.ZonePlatform.isConnected(), true);
   assert.equal(runtime.window.ZonePlatform.isOffline(), false);
+  assert.equal(runtime.window.ZonePlatform.activeReleaseCacheKey(), 'zone.platform.activeRelease');
+  assert.equal(runtime.window.ZonePlatform.previewReleaseCacheKey(), 'zone.platform.previewRelease');
+  assert.equal(runtime.window.ZonePlatform.gameDataCacheKey(), 'zone.platform.gameData');
+  assert.equal(runtime.window.ZonePlatform.bootstrapEndpointPath(), '/api/v1/game/bootstrap');
+  assert.equal(runtime.window.ZonePlatform.bootstrapReadTimeoutMs(), 25000);
 });

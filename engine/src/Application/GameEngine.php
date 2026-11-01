@@ -5361,4 +5361,29 @@ final class GameEngine
     {
         return 60000;
     }
+
+    public function hospitalHealCostPerMissingLife(): int
+    {
+        return 3;
+    }
+
+    public function hospitalizedMinBaseCost(): int
+    {
+        return 500;
+    }
+
+    public function hospitalMaxTerritoryDiscountBasisPoints(): int
+    {
+        return 5000;
+    }
+
+    public function travelBaseFareCash(): int
+    {
+        return 2500;
+    }
+
+    public function travelBaseDurationSeconds(): int
+    {
+        return 1800;
+    }
 }

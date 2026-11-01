@@ -2317,6 +2317,13 @@ try {
     check($engine->gymRollVarianceMinPercent() === 90, 'GameEngine gymRollVarianceMinPercent returns 90');
     check($engine->gymRollVarianceMaxPercent() === 110, 'GameEngine gymRollVarianceMaxPercent returns 110');
     check($engine->gymStatSoftCapDenominator() === 60000, 'GameEngine gymStatSoftCapDenominator returns 60000');
+
+    // --- Wave 194 (zone-beta312): GameEngine hospitalHealCostPerMissingLife, hospitalizedMinBaseCost, hospitalMaxTerritoryDiscountBasisPoints, travelBaseFareCash & travelBaseDurationSeconds ---
+    check($engine->hospitalHealCostPerMissingLife() === 3, 'GameEngine hospitalHealCostPerMissingLife returns 3');
+    check($engine->hospitalizedMinBaseCost() === 500, 'GameEngine hospitalizedMinBaseCost returns 500');
+    check($engine->hospitalMaxTerritoryDiscountBasisPoints() === 5000, 'GameEngine hospitalMaxTerritoryDiscountBasisPoints returns 5000');
+    check($engine->travelBaseFareCash() === 2500, 'GameEngine travelBaseFareCash returns 2500');
+    check($engine->travelBaseDurationSeconds() === 1800, 'GameEngine travelBaseDurationSeconds returns 1800');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

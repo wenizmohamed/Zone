@@ -88,6 +88,11 @@
     isConnected: () => connection === 'connected',
     isOffline: () => connection === 'offline',
     isPending: () => Boolean(pendingRefresh),
+    activeReleaseCacheKey: () => ACTIVE_CACHE,
+    previewReleaseCacheKey: () => PREVIEW_CACHE,
+    gameDataCacheKey: () => GAME_DATA_CACHE,
+    bootstrapEndpointPath: () => '/api/v1/game/bootstrap',
+    bootstrapReadTimeoutMs: () => 25000,
     diagnostics: () => ({ status: connection, releaseId: release.id, releaseVersion: release.version, preview, failures, nextAutomaticRefresh, builtinScreenCount: builtinScreens.length }),
     refresh: async () => {
       if (preview) return { release, content: gameData };
