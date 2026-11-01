@@ -21,11 +21,18 @@ export function computeWeaponFrame(THREE, box, aspect = 1, fov = 38) {
 }
 
 const ACCEPTED_WEAPON_IDS = new Set(['old-wooden-bat', 'detective-special', 'akm', 'derringer', 'm9-knife']);
+const STUDIO_PROFILE_NAMES = Object.freeze(['accepted-reference', 'realistic-readable']);
 export function acceptedWeaponStudioIds() {
   return [...ACCEPTED_WEAPON_IDS];
 }
 export function isAcceptedWeaponStudioId(id) {
   return typeof id === 'string' && ACCEPTED_WEAPON_IDS.has(id);
+}
+export function supportedStudioProfileNames() {
+  return [...STUDIO_PROFILE_NAMES];
+}
+export function isSupportedStudioProfileName(name) {
+  return typeof name === 'string' && STUDIO_PROFILE_NAMES.includes(name);
 }
 export function weaponStudioProfile(descriptor) {
   // These five preserve the last accepted shader environment, exposure and
@@ -149,7 +156,15 @@ export function installWeaponPresentation(THREE, stage) {
   canvas.addEventListener('keydown', onKey);
   const resize = new ResizeObserver(fit); resize.observe(stage);
   renderer.setSize(stage.clientWidth || 1, stage.clientHeight || 1, false);
-  return { fit, dispose() {
+  return {
+    fit,
+    isDisposed() {
+      return disposed;
+    },
+    hasObject() {
+      return currentBox !== null && !disposed;
+    },
+    dispose() {
     if (disposed) return; disposed = true; resize.disconnect(); canvas.removeEventListener('keydown', onKey); controls.stopListenToKeyEvents();
     status.remove(); delete stage.setAssetStatus;
     scene.remove(fill, rim, ambient, fill.target, rim.target); fill.dispose(); rim.dispose(); ambient.dispose?.();

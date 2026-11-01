@@ -1862,6 +1862,13 @@ try {
     check($engine->engineVersion() === '1.0.0', 'GameEngine engineVersion returns engine version string');
     check($engine->engineApiVersion() === 'v1', 'GameEngine engineApiVersion returns engine api version string');
     check($engine->engineName() === 'ZONE Engine', 'GameEngine engineName returns engine name string');
+
+    // --- Wave 129 (zone-beta247): GameEngine hasEngineCapabilities, knownCooldownActions, knownCooldownActionCount, maxDefaultCooldownSeconds & minDefaultCooldownSeconds ---
+    check($engine->hasEngineCapabilities() === true, 'GameEngine hasEngineCapabilities returns boolean engine capabilities status');
+    check(in_array('crime', $engine->knownCooldownActions(), true), 'GameEngine knownCooldownActions returns list of known cooldown actions');
+    check($engine->knownCooldownActionCount() === 9, 'GameEngine knownCooldownActionCount returns known cooldown action count');
+    check($engine->maxDefaultCooldownSeconds() === 15, 'GameEngine maxDefaultCooldownSeconds returns maximum default cooldown seconds');
+    check($engine->minDefaultCooldownSeconds() === 0, 'GameEngine minDefaultCooldownSeconds returns minimum default cooldown seconds');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

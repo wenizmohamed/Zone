@@ -9,7 +9,7 @@ import { OBJLoader } from '../lib/three184/OBJLoader.js';
 import { MTLLoader } from '../lib/three184/MTLLoader.js';
 import { geometryGlb } from '../assets/weapons/source-tools/geometry-audit.mjs';
 import { catalogMaterialProfile, createWeaponAssetLoader, inspectWeaponObject, resolveWeaponAsset, normalizeWeaponAsset, weaponCategory, weaponPresentationLabel } from '../dist/weapon-assets.js';
-import { computeWeaponFrame, weaponStudioProfile } from '../dist/weapon-presentation.js';
+import { acceptedWeaponStudioIds, computeWeaponFrame, isAcceptedWeaponStudioId, isSupportedStudioProfileName, supportedStudioProfileNames, weaponStudioProfile } from '../dist/weapon-presentation.js';
 
 const root = new URL('../', import.meta.url), context = vm.createContext({});
 vm.runInContext(readFileSync(new URL('assets/weapons/catalog.js', root), 'utf8'), context);
@@ -54,6 +54,13 @@ test('all 51 gameplay identities retain category and engine rules while source r
 });
 
 test('accepted five use exact original studio profile, not the new material adaptation lighting', () => {
+  assert.deepEqual(acceptedWeaponStudioIds(), ['old-wooden-bat', 'detective-special', 'akm', 'derringer', 'm9-knife']);
+  assert.equal(isAcceptedWeaponStudioId('akm'), true);
+  assert.equal(isAcceptedWeaponStudioId('mosin9130'), false);
+  assert.deepEqual(supportedStudioProfileNames(), ['accepted-reference', 'realistic-readable']);
+  assert.equal(isSupportedStudioProfileName('accepted-reference'), true);
+  assert.equal(isSupportedStudioProfileName('realistic-readable'), true);
+  assert.equal(isSupportedStudioProfileName('custom'), false);
   for(const key of ['revolver','pistol','ak','bat','knife']) {
     const profile=weaponStudioProfile(resolveWeaponAsset(key,context.ZONE_WEAPONS));
     assert.deepEqual(profile,{name:'accepted-reference',background:0x171b20,exposure:1.04,environment:.8,key:2.4,fill:.85,rim:2,hemisphere:0});

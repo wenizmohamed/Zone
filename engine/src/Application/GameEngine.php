@@ -3582,4 +3582,30 @@ final class GameEngine
     {
         return (string) ($this->status()['engine'] ?? 'ZONE Engine');
     }
+
+    public function hasEngineCapabilities(): bool
+    {
+        return count($this->engineCapabilities()) > 0;
+    }
+
+    /** @return list<string> */
+    public function knownCooldownActions(): array
+    {
+        return array_keys(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function knownCooldownActionCount(): int
+    {
+        return count(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function maxDefaultCooldownSeconds(): int
+    {
+        return max(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function minDefaultCooldownSeconds(): int
+    {
+        return min(self::COOLDOWN_DEFAULTS);
+    }
 }
