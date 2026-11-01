@@ -2,6 +2,8 @@ import * as THREE from '../lib/three184/three.module.js';
 import {loadAsset,normalizeAssetObject} from './asset-loader.mjs';
 
 const LAYER='zone-published-map-media',HASH=/^[a-f0-9]{64}$/;
+export function mapMediaLayerId(){return LAYER;}
+export function isMapMediaPinEligible(pin){return Boolean(pin&&HASH.test(pin.mediaAsset||'')&&pin._buildingAssociation?.insideRoof===true);}
 // A map model is explicitly a service's rooftop attachment. It does not replace
 // the provider's whole building, move territory parcels, or claim an arbitrary
 // neighboring roof. The matching target ID must already have a measured roof.

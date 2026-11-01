@@ -1937,4 +1937,31 @@ final class GameEngine
         $id = (new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['armorId'] ?? null;
         return is_string($id) && $id !== '' ? $id : null;
     }
+
+    /** @return list<array<string, mixed>> */
+    public function familyOperationDefinitions(): array
+    {
+        return (new \Zone\Engine\Core\Game\FamilyActivityService($this->database, $this->events))->definitions();
+    }
+
+    public function familyOperationDefinitionCount(): int
+    {
+        return count((new \Zone\Engine\Core\Game\FamilyActivityService($this->database, $this->events))->definitions());
+    }
+
+    /** @return array<string, mixed> */
+    public function currentFamilySeason(): array
+    {
+        return (new \Zone\Engine\Core\Game\FamilyActivityService($this->database, $this->events))->currentSeason();
+    }
+
+    public function playerWeaponBonusPct(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['weaponBonusPct'] ?? 0);
+    }
+
+    public function playerArmorMitigationPct(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['armorMitigationPct'] ?? 0);
+    }
 }

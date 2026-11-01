@@ -1428,6 +1428,13 @@ try {
     check($engine->playerBestChain('founder-player') >= 0, 'GameEngine playerBestChain returns player best combat chain');
     check($engine->playerEquippedWeaponId('founder-player') === null || is_string($engine->playerEquippedWeaponId('founder-player')), 'GameEngine playerEquippedWeaponId returns equipped weapon ID or null');
     check($engine->playerEquippedArmorId('founder-player') === null || is_string($engine->playerEquippedArmorId('founder-player')), 'GameEngine playerEquippedArmorId returns equipped armor ID or null');
+
+    // --- Wave 67 (zone-beta185): GameEngine familyOperationDefinitions, familyOperationDefinitionCount, currentFamilySeason, playerWeaponBonusPct & playerArmorMitigationPct ---
+    check(count($engine->familyOperationDefinitions()) === 2 && $engine->familyOperationDefinitions()[0]['id'] === 'dock-intercept', 'GameEngine familyOperationDefinitions returns cooperative operation definitions');
+    check($engine->familyOperationDefinitionCount() === 2, 'GameEngine familyOperationDefinitionCount returns 2');
+    check(array_key_exists('seasonId', $engine->currentFamilySeason()) && array_key_exists('startsAt', $engine->currentFamilySeason()), 'GameEngine currentFamilySeason returns current family competition season');
+    check($engine->playerWeaponBonusPct('founder-player') >= 0, 'GameEngine playerWeaponBonusPct returns equipped weapon bonus percentage');
+    check($engine->playerArmorMitigationPct('founder-player') >= 0 && $engine->playerArmorMitigationPct('founder-player') <= 95, 'GameEngine playerArmorMitigationPct returns equipped armor mitigation percentage');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -8,6 +8,7 @@ import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
 import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
+import {mapMediaLayerId,isMapMediaPinEligible} from '../dist/map-media108.mjs';
 import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
 const require=createRequire(import.meta.url),buildings=require('../assets/city/service-buildings108.js');
 const HASH='a'.repeat(64),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -174,7 +175,7 @@ function mapMediaHarness({failId=null,imageId=null,compileError=null}={}){
     const object=id===imageId?null:new THREE.Mesh(new THREE.BoxGeometry(20,40,6),new THREE.MeshStandardMaterial());if(object)object.position.set(30,12,-9);
     const asset={object,asset:{id},transform:{scale:1,rotation:[0,35,0],floorOffset:.2,cameraTarget:[0,0,0]},disposals:0,dispose(){this.disposals++;}};assets.push(asset);return asset;};
   const document={body:{dataset:{}}},scope=vm.createContext({THREE:{...THREE,WebGLRenderer:RecordingRenderer},loadAsset:load,normalizeAssetObject,AbortController,mapboxgl:{MercatorCoordinate:mercator},document});
-  vm.runInContext(mapMediaSource.replace(/^import[^\n]*\n/gm,'').replace('export async function createMapMedia','async function createMapMedia'),scope);
+  vm.runInContext(mapMediaSource.replace(/^import[^\n]*\n/gm,'').replace(/^export\s+/gm,''),scope);
   return{map,scope,assets,renderers,loads,mercator,document,layers,setView(p,z){pitch=p;zoom=z;}};
 }
 function mediaPin(id='bank',assetId=HASH){return{id,mediaAsset:assetId,_lngLat:[-73.9848,40.6983],_buildingAssociation:{insideRoof:true,providerId:'actual-roof-42',heightMeters:20.4,clearanceMeters:4}};}
@@ -221,4 +222,7 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(assocSummary.boundCount,1);
   assert.equal(assocSummary.insideRoofCount,1);
   assert.equal(assocSummary.complete,true);
+  assert.equal(mapMediaLayerId(),'zone-published-map-media');
+  assert.equal(isMapMediaPinEligible(mediaPin()),true);
+  assert.equal(isMapMediaPinEligible({...mediaPin(),_buildingAssociation:{insideRoof:false}}),false);
 });
