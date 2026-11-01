@@ -2443,4 +2443,34 @@ final class GameEngine
     {
         return $this->playerFactionId($playerId) !== null;
     }
+
+    public function playerCourseCompletionPct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->publishedCourseCount();
+        return $total > 0 ? round($this->playerCompletedEducationCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerMissionCompletionPct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->publishedMissionCount();
+        return $total > 0 ? round($this->playerCompletedMissionCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerUpgradeCompletionPct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->publishedUpgradeCount();
+        return $total > 0 ? round($this->playerPurchasedUpgradeCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerPropertyOwnershipPct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->publishedPropertyCount();
+        return $total > 0 ? round($this->playerOwnedPropertyCount($playerId) / $total * 100, 2) : 0.0;
+    }
+
+    public function playerGymUnlockRatioPct(string $playerId = 'founder-player'): float
+    {
+        $total = $this->publishedGymCount();
+        return $total > 0 ? round(($this->playerActiveGymIndex($playerId) + 1) / $total * 100, 2) : 0.0;
+    }
 }

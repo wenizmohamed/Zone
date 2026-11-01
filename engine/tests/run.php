@@ -1547,6 +1547,13 @@ try {
     check(is_bool($engine->playerHasEquippedArmor('founder-player')), 'GameEngine playerHasEquippedArmor returns boolean equipped armor status');
     check(is_bool($engine->playerIsIdle('founder-player')), 'GameEngine playerIsIdle returns boolean idle status');
     check(is_bool($engine->playerHasFaction('founder-player')), 'GameEngine playerHasFaction returns boolean faction membership status');
+
+    // --- Wave 84 (zone-beta202): GameEngine playerCourseCompletionPct, playerMissionCompletionPct, playerUpgradeCompletionPct, playerPropertyOwnershipPct & playerGymUnlockRatioPct ---
+    check($engine->playerCourseCompletionPct('founder-player') >= 0.0 && $engine->playerCourseCompletionPct('founder-player') <= 100.0, 'GameEngine playerCourseCompletionPct returns education course completion percentage');
+    check($engine->playerMissionCompletionPct('founder-player') >= 0.0 && $engine->playerMissionCompletionPct('founder-player') <= 100.0, 'GameEngine playerMissionCompletionPct returns mission completion percentage');
+    check($engine->playerUpgradeCompletionPct('founder-player') >= 0.0 && $engine->playerUpgradeCompletionPct('founder-player') <= 100.0, 'GameEngine playerUpgradeCompletionPct returns upgrade completion percentage');
+    check($engine->playerPropertyOwnershipPct('founder-player') >= 0.0 && $engine->playerPropertyOwnershipPct('founder-player') <= 100.0, 'GameEngine playerPropertyOwnershipPct returns property ownership percentage');
+    check($engine->playerGymUnlockRatioPct('founder-player') > 0.0 && $engine->playerGymUnlockRatioPct('founder-player') <= 100.0, 'GameEngine playerGymUnlockRatioPct returns gym unlock ratio percentage');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

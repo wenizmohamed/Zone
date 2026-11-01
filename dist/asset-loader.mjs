@@ -10,6 +10,18 @@ const HASH = /^[a-f0-9]{64}$/;
 const MODEL_EXTENSIONS = new Set(['glb', 'gltf', 'fbx', 'obj']);
 const EMBEDDED = /^data:(?:image\/(?:png|jpeg|webp|gif|bmp)|application\/(?:octet-stream|gltf-buffer));base64,[a-z\d+/=\s]+$/i;
 
+export function supportedModelExtensions() {
+  return [...MODEL_EXTENSIONS];
+}
+
+export function isSupportedModelExtension(extension) {
+  return typeof extension === 'string' && MODEL_EXTENSIONS.has(extension.toLowerCase());
+}
+
+export function isEmbeddedDataUri(uri) {
+  return typeof uri === 'string' && EMBEDDED.test(uri);
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {GLTFLoader} from '../lib/three184/GLTFLoader.js';
-import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
+import {loadAsset,fetchAssetMember,resolveAssetMember,validateAssetManifest,summarizeAssetBundle,validateAssetTransform,normalizeAssetObject,measureAssetObject,supportedModelExtensions,isSupportedModelExtension,isEmbeddedDataUri,ASSET_CHUNK_BYTES} from '../dist/asset-loader.mjs';
 import {createSafehouseCharacter} from '../dist/safehouse-character.mjs';
 import {mapMediaLayerId,isMapMediaPinEligible} from '../dist/map-media108.mjs';
 import {inspectorBudgetDiagnostics} from '../engine/bin/inspect-asset.mjs';
@@ -225,4 +225,9 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(mapMediaLayerId(),'zone-published-map-media');
   assert.equal(isMapMediaPinEligible(mediaPin()),true);
   assert.equal(isMapMediaPinEligible({...mediaPin(),_buildingAssociation:{insideRoof:false}}),false);
+  assert.deepEqual(supportedModelExtensions(),['glb','gltf','fbx','obj']);
+  assert.equal(isSupportedModelExtension('GLB'),true);
+  assert.equal(isSupportedModelExtension('png'),false);
+  assert.equal(isEmbeddedDataUri('data:image/png;base64,YQ=='),true);
+  assert.equal(isEmbeddedDataUri('https://example.invalid/x.png'),false);
 });
