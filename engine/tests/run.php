@@ -1988,6 +1988,13 @@ try {
     check($engine->moduleRegistryUninstalledCount() >= 0, 'GameEngine moduleRegistryUninstalledCount returns uninstalled module count');
     check($engine->moduleRegistryEnabledRatioPct() > 0.0 && $engine->moduleRegistryEnabledRatioPct() <= 100.0, 'GameEngine moduleRegistryEnabledRatioPct returns enabled module ratio percentage');
     check(is_bool($engine->hasUninstalledModules()), 'GameEngine hasUninstalledModules returns boolean uninstalled modules status');
+
+    // --- Wave 147 (zone-beta265): GameEngine activeTerritoryWarCount, hasActiveTerritoryWars, territoryBlockTotalCount, hasTerritoryBlocks & territoryMapRevision ---
+    check($engine->activeTerritoryWarCount() >= 0, 'GameEngine activeTerritoryWarCount returns active territory war count');
+    check(is_bool($engine->hasActiveTerritoryWars()), 'GameEngine hasActiveTerritoryWars returns boolean active territory wars status');
+    check($engine->territoryBlockTotalCount() === 120, 'GameEngine territoryBlockTotalCount returns 120 territory blocks');
+    check($engine->hasTerritoryBlocks() === true, 'GameEngine hasTerritoryBlocks returns boolean territory blocks status');
+    check(strlen($engine->territoryMapRevision()) === 64, 'GameEngine territoryMapRevision returns 64-char sha256 territory map revision');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

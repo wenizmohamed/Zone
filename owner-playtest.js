@@ -274,6 +274,10 @@
     isSupportedWriteRoute: path => Object.hasOwn(writes, String(path ?? '')),
     selectionStorageKey: () => selectionKey,
     isValidPlaytestSessionId: id => typeof id === 'string' && /^[a-f0-9]{32}$/.test(id),
+    isBlocked: () => Boolean(blocked) || (selected && !state),
+    isPending: () => Boolean(pending),
+    isReady: () => Boolean(selected && state && !blocked && !['start', 'stop', 'recover'].includes(pending)),
+    selectedSessionId: () => selectedSessionId,
     diagnostics: () => ({
       preview,
       available,

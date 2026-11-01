@@ -4048,4 +4048,29 @@ final class GameEngine
     {
         return $this->moduleRegistryUninstalledCount() > 0;
     }
+
+    public function activeTerritoryWarCount(): int
+    {
+        return $this->territories->activeWarsCount();
+    }
+
+    public function hasActiveTerritoryWars(): bool
+    {
+        return $this->activeTerritoryWarCount() > 0;
+    }
+
+    public function territoryBlockTotalCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ($this->territories->snapshot($playerId)['blocks'] ?? []));
+    }
+
+    public function hasTerritoryBlocks(string $playerId = 'founder-player'): bool
+    {
+        return $this->territoryBlockTotalCount($playerId) > 0;
+    }
+
+    public function territoryMapRevision(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->territories->snapshot($playerId)['revision'] ?? '');
+    }
 }

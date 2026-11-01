@@ -353,4 +353,8 @@ test('resume cannot switch silently to a different server session than the latch
   assert.equal(f.api.selectionStorageKey(), latchKey);
   assert.equal(f.api.isValidPlaytestSessionId(knownSession), true);
   assert.equal(f.api.isValidPlaytestSessionId('invalid'), false);
+  assert.equal(f.api.isBlocked(), true);
+  assert.equal(f.api.isPending(), false);
+  assert.equal(f.api.isReady(), false);
+  assert.equal(f.api.selectedSessionId(), knownSession);
 });
