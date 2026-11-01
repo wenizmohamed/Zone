@@ -6165,4 +6165,29 @@ final class GameEngine
     {
         return 0.85;
     }
+
+    public function progressionHospTimeUpgradeMultiplier(): float
+    {
+        return 0.8;
+    }
+
+    public function progressionHospitalizeBaseRespect(): int
+    {
+        return 25;
+    }
+
+    public function progressionChainMilestoneBonusMultiplier(): int
+    {
+        return 40;
+    }
+
+    public function progressionTrainGymXpPerSession(): int
+    {
+        return 10;
+    }
+
+    public function progressionMaxMerchantDiscountBasisPoints(): int
+    {
+        return 800;
+    }
 }

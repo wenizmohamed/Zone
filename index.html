@@ -3044,6 +3044,26 @@ class Component extends DCLogic {
     return String(this.p?.lastDistrict || 'center');
   }
 
+  isHospitalized() {
+    return Number(this.p?.hospUntil || 0) > Date.now();
+  }
+
+  isJailed() {
+    return Number(this.p?.jailUntil || 0) > Date.now();
+  }
+
+  hasActiveEducation() {
+    return Boolean(this.p?.edu && Number(this.p.edu.until || 0) > 0);
+  }
+
+  inmateCount() {
+    return Array.isArray(this.inmates) ? this.inmates.length : 0;
+  }
+
+  patientCount() {
+    return Array.isArray(this.patients) ? this.patients.length : 0;
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

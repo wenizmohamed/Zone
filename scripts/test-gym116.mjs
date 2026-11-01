@@ -59,6 +59,11 @@ test('each real Gym station explains its combat purpose in the active language, 
     assert.equal(instance.activeJobId(),'grocer');
     assert.equal(instance.activeGymIndex(),0);
     assert.equal(instance.activeDistrictId(),'center');
+    assert.equal(instance.isHospitalized(),false);
+    assert.equal(instance.isJailed(),false);
+    assert.equal(instance.hasActiveEducation(),false);
+    assert.equal(instance.inmateCount(),8);
+    assert.equal(instance.patientCount(),7);
   }
 });
 

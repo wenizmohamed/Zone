@@ -2534,6 +2534,13 @@ try {
     check($engine->progressionCrimeMaxMasterySkill() === 100, 'GameEngine progressionCrimeMaxMasterySkill returns 100');
     check($engine->progressionSupportedPenaltyTypes() === ['jail', 'hosp'], 'GameEngine progressionSupportedPenaltyTypes returns jail and hosp');
     check(abs($engine->progressionLawCourseJailTimeMultiplier() - 0.85) < 0.0001, 'GameEngine progressionLawCourseJailTimeMultiplier returns 0.85');
+
+    // --- Wave 225 (zone-beta343): GameEngine progressionHospTimeUpgradeMultiplier, progressionHospitalizeBaseRespect, progressionChainMilestoneBonusMultiplier, progressionTrainGymXpPerSession & progressionMaxMerchantDiscountBasisPoints ---
+    check(abs($engine->progressionHospTimeUpgradeMultiplier() - 0.8) < 0.0001, 'GameEngine progressionHospTimeUpgradeMultiplier returns 0.8');
+    check($engine->progressionHospitalizeBaseRespect() === 25, 'GameEngine progressionHospitalizeBaseRespect returns 25');
+    check($engine->progressionChainMilestoneBonusMultiplier() === 40, 'GameEngine progressionChainMilestoneBonusMultiplier returns 40');
+    check($engine->progressionTrainGymXpPerSession() === 10, 'GameEngine progressionTrainGymXpPerSession returns 10');
+    check($engine->progressionMaxMerchantDiscountBasisPoints() === 800, 'GameEngine progressionMaxMerchantDiscountBasisPoints returns 800');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
