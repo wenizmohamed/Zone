@@ -6424,4 +6424,32 @@ final class GameEngine
     {
         return $this->notifications->unreadCount($playerId);
     }
+
+    public function mediaReferencesMaxBindingCount(): int
+    {
+        return 256;
+    }
+
+    /** @return list<string> */
+    public function mediaReferencesSupportedTargetTypes(): array
+    {
+        return \Zone\Engine\Core\Content\MediaReferences::supportedTargetTypes();
+    }
+
+    /** @return list<string> */
+    public function mediaReferencesSupportedCharacterOutfits(): array
+    {
+        return ['suit', 'street', 'tactical'];
+    }
+
+    /** @return list<string> */
+    public function mediaReferencesSupportedMapTargets(): array
+    {
+        return ['bank', 'gym', 'alley', 'hospital', 'jail', 'market', 'shop', 'home', 'hq', 'jobs', 'school', 'casino', 'missions', 'arena', 'news', 'hof', 'pier'];
+    }
+
+    public function travelArrivedPlayerCount(): int
+    {
+        return (new TravelService($this->database, $this->events))->arrivedCount();
+    }
 }

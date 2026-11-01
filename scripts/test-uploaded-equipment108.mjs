@@ -8,7 +8,7 @@ import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supporte
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount, characterArtSourceUrl, characterArtQualityTier, defaultFallbackSurfaceHexColor, defaultFallbackSurfaceRoughness, preservedSurfaceMapKeys } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength } from '../dist/weapon-presentation.js';
-import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
+import { supportedWeaponSourceCount, upgradedWeaponKeyCount, defaultCatalogMaterialHexColor, defaultCatalogMaterialRoughness, defaultCatalogMaterialMetalness, inspectedWeaponMaterialMapKeys, sniperRifle5ObjGripOffset } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
 import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees, mosinIdleCalibrationVersion, armReachMinClearanceM, armReachMaxMarginM, defaultMosinAnchorAdjustmentM, requiredArmSides } from '../dist/character-poses.js';
 import { supportedArmorRepresentationCount, maxArmorReduction, representedArmorIds, wornVestMeshName, vestMaterialRoughness, vestMaterialMetalness, vestMaterialClearcoat, torsoSkinInfluenceThreshold, targetTorsoSkinInfluenceThreshold, createArmorController } from '../dist/character-armor.mjs';
@@ -224,4 +224,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(defaultFallbackSurfaceHexColor(), 0x61645e);
   assert.equal(defaultFallbackSurfaceRoughness(), .82);
   assert.deepEqual(preservedSurfaceMapKeys(), ['map', 'normalMap', 'aoMap', 'emissiveMap']);
+  assert.equal(defaultCatalogMaterialHexColor(), 0x68717b);
+  assert.equal(defaultCatalogMaterialRoughness(), .58);
+  assert.equal(defaultCatalogMaterialMetalness(), .15);
+  assert.deepEqual(inspectedWeaponMaterialMapKeys(), ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'bumpMap']);
+  assert.deepEqual(sniperRifle5ObjGripOffset(), [-.8312214901, -.0506842372, 0]);
 });

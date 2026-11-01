@@ -267,6 +267,26 @@ export function isSupportedWeaponQualityLabel(label) {
   return supportedWeaponQualityLabels().includes(String(label || ''));
 }
 
+export function defaultCatalogMaterialHexColor() {
+  return 0x68717b;
+}
+
+export function defaultCatalogMaterialRoughness() {
+  return .58;
+}
+
+export function defaultCatalogMaterialMetalness() {
+  return .15;
+}
+
+export function inspectedWeaponMaterialMapKeys() {
+  return ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'bumpMap'];
+}
+
+export function sniperRifle5ObjGripOffset() {
+  return [-.8312214901, -.0506842372, 0];
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;

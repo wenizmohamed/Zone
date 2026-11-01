@@ -2604,6 +2604,13 @@ try {
     check($engine->cooldownRemainingSecondsForPlayer('founder-player', 'crime') >= 0, 'GameEngine cooldownRemainingSecondsForPlayer returns non-negative seconds');
     check($engine->activeCooldownCountForPlayer() >= 0, 'GameEngine activeCooldownCountForPlayer returns non-negative count');
     check($engine->unreadNotificationCountForPlayer() >= 0, 'GameEngine unreadNotificationCountForPlayer returns non-negative count');
+
+    // --- Wave 235 (zone-beta353): GameEngine mediaReferencesMaxBindingCount, mediaReferencesSupportedTargetTypes, mediaReferencesSupportedCharacterOutfits, mediaReferencesSupportedMapTargets & travelArrivedPlayerCount ---
+    check($engine->mediaReferencesMaxBindingCount() === 256, 'GameEngine mediaReferencesMaxBindingCount returns 256');
+    check($engine->mediaReferencesSupportedTargetTypes() === ['property', 'item', 'weapon', 'armor', 'character', 'map'], 'GameEngine mediaReferencesSupportedTargetTypes returns 6 target types');
+    check($engine->mediaReferencesSupportedCharacterOutfits() === ['suit', 'street', 'tactical'], 'GameEngine mediaReferencesSupportedCharacterOutfits returns 3 outfits');
+    check(count($engine->mediaReferencesSupportedMapTargets()) === 17, 'GameEngine mediaReferencesSupportedMapTargets returns 17 map targets');
+    check($engine->travelArrivedPlayerCount() >= 0, 'GameEngine travelArrivedPlayerCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
