@@ -1407,6 +1407,13 @@ try {
     check($engine->playerJobPoints('founder-player') >= 0, 'GameEngine playerJobPoints returns current job points');
     check($engine->playerOwnedPropertyCount('founder-player') >= 1, 'GameEngine playerOwnedPropertyCount returns owned safehouse count');
     check(array_key_exists('completed', $engine->playerOnboardingSummary('founder-player')) && array_key_exists('steps', $engine->playerOnboardingSummary('founder-player')), 'GameEngine playerOnboardingSummary returns onboarding mission status');
+
+    // --- Wave 64 (zone-beta182): GameEngine playerCrimeSuccessCount, playerGymTrainCount, playerCombatWinCount, playerJobShiftCount & playerMarketBuyCount ---
+    check($engine->playerCrimeSuccessCount('founder-player') >= 0, 'GameEngine playerCrimeSuccessCount returns lifetime crime success counter');
+    check($engine->playerGymTrainCount('founder-player') >= 0, 'GameEngine playerGymTrainCount returns lifetime gym training counter');
+    check($engine->playerCombatWinCount('founder-player') >= 0, 'GameEngine playerCombatWinCount returns lifetime combat win counter');
+    check($engine->playerJobShiftCount('founder-player') >= 0, 'GameEngine playerJobShiftCount returns lifetime job shift counter');
+    check($engine->playerMarketBuyCount('founder-player') >= 0, 'GameEngine playerMarketBuyCount returns lifetime market buy counter');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

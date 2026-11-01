@@ -12,6 +12,14 @@ import { loadAsset, normalizeAssetObject } from './asset-loader.mjs';
 const OUTFITS = { suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' };
 const HASH = /^[a-f0-9]{64}$/;
 
+export function supportedSafehouseOutfits() {
+  return Object.keys(OUTFITS);
+}
+
+export function resolveSafehouseOutfitFile(outfit) {
+  return OUTFITS[outfit] || 'Suit';
+}
+
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
   const loader = new GLTFLoader(), wardrobe = wardrobeLoader || (file => loader.loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href)), weaponAssets = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoader,
     catalog, materials, pack, baseURL: new URL('../assets/weapons/', import.meta.url) });

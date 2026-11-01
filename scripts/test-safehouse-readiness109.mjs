@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
+import {supportedSafehouseOutfits, resolveSafehouseOutfitFile} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -126,5 +127,13 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
     canvas.emit('keydown', { key, preventDefault() { prevented++; } });
   }
   assert.equal(prevented, 4);
+  const diag = h.window.ZoneSafehouse.diagnostics();
+  assert.equal(diag.propertyId, 'v108-loft');
+  assert.equal(diag.owned, true);
+  assert.equal(diag.servicesReady, true);
+  assert.equal(diag.hotspotCount, 3);
+  assert.deepEqual(supportedSafehouseOutfits(), ['suit', 'street', 'tactical']);
+  assert.equal(resolveSafehouseOutfitFile('street'), 'Casual_Hoodie');
+  assert.equal(resolveSafehouseOutfitFile('unknown'), 'Suit');
   h.dispose();
 });

@@ -1855,4 +1855,29 @@ final class GameEngine
     {
         return (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['onboarding'] ?? []);
     }
+
+    public function playerCrimeSuccessCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['crimes'] ?? 0);
+    }
+
+    public function playerGymTrainCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['trains'] ?? 0);
+    }
+
+    public function playerCombatWinCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['wins'] ?? 0);
+    }
+
+    public function playerJobShiftCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['shifts'] ?? 0);
+    }
+
+    public function playerMarketBuyCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ctr']['buys'] ?? 0);
+    }
 }
