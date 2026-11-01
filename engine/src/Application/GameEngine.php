@@ -5411,4 +5411,29 @@ final class GameEngine
     {
         return 7;
     }
+
+    public function highLowMinRandomCard(): int
+    {
+        return 2;
+    }
+
+    public function highLowMaxRandomCard(): int
+    {
+        return 14;
+    }
+
+    public function highLowSupportedDirections(): array
+    {
+        return ['higher', 'lower'];
+    }
+
+    public function isSupportedHighLowDirection(string $direction): bool
+    {
+        return in_array($direction, ['higher', 'lower'], true);
+    }
+
+    public function jobShiftBaseXpReward(): int
+    {
+        return 5;
+    }
 }

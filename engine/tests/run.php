@@ -2331,6 +2331,13 @@ try {
     check($engine->blackjackMinRandomHand() === 16, 'GameEngine blackjackMinRandomHand returns 16');
     check($engine->blackjackMaxRandomHand() === 21, 'GameEngine blackjackMaxRandomHand returns 21');
     check($engine->highLowInitialCardValue() === 7, 'GameEngine highLowInitialCardValue returns 7');
+
+    // --- Wave 196 (zone-beta314): GameEngine highLowMinRandomCard, highLowMaxRandomCard, highLowSupportedDirections, isSupportedHighLowDirection & jobShiftBaseXpReward ---
+    check($engine->highLowMinRandomCard() === 2, 'GameEngine highLowMinRandomCard returns 2');
+    check($engine->highLowMaxRandomCard() === 14, 'GameEngine highLowMaxRandomCard returns 14');
+    check($engine->highLowSupportedDirections() === ['higher', 'lower'], 'GameEngine highLowSupportedDirections returns higher and lower');
+    check($engine->isSupportedHighLowDirection('higher') === true && $engine->isSupportedHighLowDirection('sideways') === false, 'GameEngine isSupportedHighLowDirection validates direction');
+    check($engine->jobShiftBaseXpReward() === 5, 'GameEngine jobShiftBaseXpReward returns 5');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
