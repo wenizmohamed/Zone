@@ -7,6 +7,14 @@ const ROOT=new URL('../assets/city/kaykit/',import.meta.url);
 const KIT={bank:{model:'building_E_withoutBase',width:24,rotation:0,color:'#c0b399'},hospital:{model:'building_G_withoutBase',width:24,rotation:Math.PI/2,color:'#d1c9bb'},gym:{model:'building_C_withoutBase',width:18,rotation:0,color:'#87957a'},hq:{model:'building_A_withoutBase',width:26,rotation:Math.PI/2,color:'#8c9295'},market:{model:'building_C_withoutBase',width:20,rotation:Math.PI/2,color:'#bd9f6a'},home:{model:'building_A_withoutBase',width:20,rotation:0,color:'#9b8872'},jail:{model:'building_E_withoutBase',width:22,rotation:0,color:'#7f8883'},alley:{model:'building_C_withoutBase',width:18,rotation:0,color:'#9b6d56'},shop:{model:'building_C_withoutBase',width:17,rotation:0,color:'#bd9f6a'}};
 const ID='zone-authored-landmarks';
 
+export function supportedLandmarkIds(){
+  return Object.keys(KIT);
+}
+
+export function isSupportedLandmarkId(id){
+  return typeof id==='string'&&Object.prototype.hasOwnProperty.call(KIT,id);
+}
+
 export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw Error('Landmark preparation timeout must be 1..30000 milliseconds.');

@@ -1435,6 +1435,13 @@ try {
     check(array_key_exists('seasonId', $engine->currentFamilySeason()) && array_key_exists('startsAt', $engine->currentFamilySeason()), 'GameEngine currentFamilySeason returns current family competition season');
     check($engine->playerWeaponBonusPct('founder-player') >= 0, 'GameEngine playerWeaponBonusPct returns equipped weapon bonus percentage');
     check($engine->playerArmorMitigationPct('founder-player') >= 0 && $engine->playerArmorMitigationPct('founder-player') <= 95, 'GameEngine playerArmorMitigationPct returns equipped armor mitigation percentage');
+
+    // --- Wave 68 (zone-beta186): GameEngine activeWorldFindCount, worldShopSupplyCount, playerInmateCount, playerPatientCount & playerSafehouseCount ---
+    check($engine->activeWorldFindCount('founder-player') >= 0, 'GameEngine activeWorldFindCount returns active street find count');
+    check($engine->worldShopSupplyCount() >= 0, 'GameEngine worldShopSupplyCount returns world shop supply item count');
+    check($engine->playerInmateCount('founder-player') >= 1, 'GameEngine playerInmateCount returns active jail inmate count');
+    check($engine->playerPatientCount('founder-player') >= 1, 'GameEngine playerPatientCount returns active hospital patient count');
+    check($engine->playerSafehouseCount('founder-player') >= 1, 'GameEngine playerSafehouseCount returns published safehouse catalog count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

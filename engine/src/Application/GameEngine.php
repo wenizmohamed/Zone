@@ -1964,4 +1964,29 @@ final class GameEngine
     {
         return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout']['armorMitigationPct'] ?? 0);
     }
+
+    public function activeWorldFindCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\WorldDirector($this->database, $this->events))->snapshot($playerId)['activeFindCount'] ?? 0);
+    }
+
+    public function worldShopSupplyCount(): int
+    {
+        return count((new \Zone\Engine\Core\Game\WorldDirector($this->database, $this->events))->supply());
+    }
+
+    public function playerInmateCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['inmates'] ?? []));
+    }
+
+    public function playerPatientCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['patients'] ?? []));
+    }
+
+    public function playerSafehouseCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['safehouses'] ?? []));
+    }
 }
