@@ -27,8 +27,9 @@
   const isSupportedSection = section => sections.includes(String(section ?? ''));
   const categoryLabel = (category, language = 'en') => categoryNames[category]?.[language === 'ar' ? 1 : 0] ?? String(category ?? '');
   const isReservedCatalogId = id => ['constructor', 'prototype', 'fists'].includes(String(id ?? ''));
+  const isValidGeneratedId = id => /^[a-z][a-z0-9_-]{1,63}$/.test(String(id ?? '')) && !isReservedCatalogId(id);
   const supportedCategoryIds = () => Object.keys(categoryNames);
-  const helpers = { sections, isSupportedSection, categoryLabel, isReservedCatalogId, supportedCategoryIds, normalize: plain, route, makeId, copy, categoryNames };
+  const helpers = { sections, isSupportedSection, categoryLabel, isReservedCatalogId, isValidGeneratedId, supportedCategoryIds, normalize: plain, route, makeId, copy, categoryNames };
   if (typeof window === 'undefined' || typeof state === 'undefined') { globalThis.ZoneStudioHelpers = helpers; return; }
   const q = selector => document.querySelector(selector), qa = selector => [...document.querySelectorAll(selector)];
   const tr = key => copy[state.language]?.[key] ?? copy.en[key] ?? key;
@@ -311,6 +312,10 @@
   function diagnostics() {
     return { initialized, contentMode, moduleFilter, moduleQuery, searchEntryCount: buildSearchEntries().length, ...snapshot() };
   }
-  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, diagnostics, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
+  const activeContentMode = () => contentMode;
+  const activeModuleFilter = () => moduleFilter;
+  const isReady = () => Boolean(state.bootReady);
+  const hasUnsavedChanges = () => Boolean(snapshot().unsaved);
+  window.ZoneStudio = Object.freeze({ renderNavigation, viewChanged, refresh, snapshot, diagnostics, activeContentMode, activeModuleFilter, isReady, hasUnsavedChanges, openCatalog, catalogSaved, createCatalog, createPage, requestCrimeSwitch, resolveCrimeSwitch, saveCurrent, previewCurrent, buildSearchEntries, showSearch, chooseType, initialize, decorateCatalog, helpers });
   initialize();
 }());

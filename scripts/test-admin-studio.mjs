@@ -661,6 +661,12 @@ test('Studio snapshot exposes content counts and command search indexes authored
     assert.equal(f.app.helpers.categoryLabel('items', language), language === 'ar' ? 'العناصر' : 'Items');
     assert.equal(f.app.helpers.isReservedCatalogId('fists'), true);
     assert.equal(f.app.helpers.isReservedCatalogId('knife'), false);
+    assert.equal(f.app.helpers.isValidGeneratedId('knife-3'), true);
+    assert.equal(f.app.helpers.isValidGeneratedId('fists'), false);
     assert.equal(f.app.helpers.supportedCategoryIds().length, 8);
+    assert.equal(f.app.activeContentMode(), 'items');
+    assert.equal(f.app.activeModuleFilter(), 'all');
+    assert.equal(f.app.isReady(), true);
+    assert.equal(f.app.hasUnsavedChanges(), false);
   }
 });

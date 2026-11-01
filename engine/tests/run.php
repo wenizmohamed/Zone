@@ -1932,6 +1932,13 @@ try {
     check($engine->hasDraftReleaseEnabledScreens() === true, 'GameEngine hasDraftReleaseEnabledScreens returns boolean draft release enabled screens status');
     check(is_bool($engine->hasDraftReleaseDisabledScreens()), 'GameEngine hasDraftReleaseDisabledScreens returns boolean draft release disabled screens status');
     check($engine->draftReleaseScreenRatioPct() > 0.0 && $engine->draftReleaseScreenRatioPct() <= 100.0, 'GameEngine draftReleaseScreenRatioPct returns draft release screen ratio percentage');
+
+    // --- Wave 139 (zone-beta257): GameEngine draftReleasePageCount, hasDraftReleasePages, activeReleasePageCount, hasActiveReleasePages & draftReleaseHasNotes ---
+    check($engine->draftReleasePageCount() >= 0, 'GameEngine draftReleasePageCount returns draft release page count');
+    check(is_bool($engine->hasDraftReleasePages()), 'GameEngine hasDraftReleasePages returns boolean draft release pages status');
+    check($engine->activeReleasePageCount() >= 0, 'GameEngine activeReleasePageCount returns active release page count');
+    check(is_bool($engine->hasActiveReleasePages()), 'GameEngine hasActiveReleasePages returns boolean active release pages status');
+    check(is_bool($engine->draftReleaseHasNotes()), 'GameEngine draftReleaseHasNotes returns boolean draft release notes status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

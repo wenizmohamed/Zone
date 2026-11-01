@@ -3843,4 +3843,29 @@ final class GameEngine
         $total = $this->draftReleaseModuleCount();
         return $total > 0 ? round(($this->draftReleaseEnabledScreenCount() / $total) * 100.0, 2) : 0.0;
     }
+
+    public function draftReleasePageCount(): int
+    {
+        return count((array) ($this->draftReleaseManifest()['pages'] ?? []));
+    }
+
+    public function hasDraftReleasePages(): bool
+    {
+        return $this->draftReleasePageCount() > 0;
+    }
+
+    public function activeReleasePageCount(): int
+    {
+        return count((array) ($this->activeReleaseManifest()['pages'] ?? []));
+    }
+
+    public function hasActiveReleasePages(): bool
+    {
+        return $this->activeReleasePageCount() > 0;
+    }
+
+    public function draftReleaseHasNotes(): bool
+    {
+        return trim((string) ($this->releases->draft()['notes'] ?? '')) !== '';
+    }
 }
