@@ -8,6 +8,14 @@ export function weaponPoseProfile(key, catalog = {}) {
   return /pistol|revolver/i.test(family) ? 'handgun' : 'longgun';
 }
 
+export function supportedWeaponPoseProfiles() {
+  return ['unarmed', 'bat', 'knife', 'handgun', 'longgun'];
+}
+
+export function isSupportedWeaponPoseProfile(profile) {
+  return ['unarmed', 'bat', 'knife', 'handgun', 'longgun'].includes(String(profile ?? ''));
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });

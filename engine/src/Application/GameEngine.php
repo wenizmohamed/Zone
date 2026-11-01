@@ -2953,4 +2953,29 @@ final class GameEngine
     {
         return $this->uploadingAssetCount() > 0;
     }
+
+    public function hasActiveWorldFinds(string $playerId = 'founder-player'): bool
+    {
+        return $this->activeWorldFindCount($playerId) > 0;
+    }
+
+    public function hasWorldShopSupply(): bool
+    {
+        return $this->worldShopSupplyCount() > 0;
+    }
+
+    public function hasOwnedTerritories(?string $factionId = null): bool
+    {
+        return $this->ownedTerritoryCount($factionId) > 0;
+    }
+
+    public function hasNeutralTerritories(): bool
+    {
+        return $this->neutralTerritoryCount() > 0;
+    }
+
+    public function hasContestedTerritories(): bool
+    {
+        return $this->contestedTerritoryCount() > 0;
+    }
 }

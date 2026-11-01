@@ -1687,6 +1687,13 @@ try {
     check($engine->hasEventLogs() === true, 'GameEngine hasEventLogs returns boolean event logs status');
     check(is_bool($engine->hasReadyAssets()), 'GameEngine hasReadyAssets returns boolean ready assets status');
     check(is_bool($engine->hasUploadingAssets()), 'GameEngine hasUploadingAssets returns boolean uploading assets status');
+
+    // --- Wave 104 (zone-beta222): GameEngine hasActiveWorldFinds, hasWorldShopSupply, hasOwnedTerritories, hasNeutralTerritories & hasContestedTerritories ---
+    check(is_bool($engine->hasActiveWorldFinds()), 'GameEngine hasActiveWorldFinds returns boolean active world finds status');
+    check($engine->hasWorldShopSupply() === true, 'GameEngine hasWorldShopSupply returns boolean world shop supply status');
+    check(is_bool($engine->hasOwnedTerritories()), 'GameEngine hasOwnedTerritories returns boolean owned territories status');
+    check(is_bool($engine->hasNeutralTerritories()), 'GameEngine hasNeutralTerritories returns boolean neutral territories status');
+    check(is_bool($engine->hasContestedTerritories()), 'GameEngine hasContestedTerritories returns boolean contested territories status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
