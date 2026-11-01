@@ -3254,4 +3254,29 @@ final class GameEngine
     {
         return $this->playerNerve($playerId) > 0;
     }
+
+    public function playerHasHappy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerHappy($playerId) > 0;
+    }
+
+    public function playerHasLife(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLife($playerId) > 0;
+    }
+
+    public function playerHasXp(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerXp($playerId) > 0;
+    }
+
+    public function playerHasLevel(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLevel($playerId) >= 1;
+    }
+
+    public function playerHasNetWorth(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerNetWorth($playerId) > 0;
+    }
 }

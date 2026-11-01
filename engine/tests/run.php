@@ -1771,6 +1771,13 @@ try {
     check($engine->playerHasMaxHappy() === true, 'GameEngine playerHasMaxHappy returns boolean max happy status');
     check(is_bool($engine->playerHasEnergy()), 'GameEngine playerHasEnergy returns boolean energy status');
     check(is_bool($engine->playerHasNerve()), 'GameEngine playerHasNerve returns boolean nerve status');
+
+    // --- Wave 116 (zone-beta234): GameEngine playerHasHappy, playerHasLife, playerHasXp, playerHasLevel & playerHasNetWorth ---
+    check(is_bool($engine->playerHasHappy()), 'GameEngine playerHasHappy returns boolean happy status');
+    check($engine->playerHasLife() === true, 'GameEngine playerHasLife returns boolean life status');
+    check(is_bool($engine->playerHasXp()), 'GameEngine playerHasXp returns boolean xp status');
+    check($engine->playerHasLevel() === true, 'GameEngine playerHasLevel returns boolean level status');
+    check($engine->playerHasNetWorth() === true, 'GameEngine playerHasNetWorth returns boolean net worth status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
