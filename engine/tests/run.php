@@ -2618,6 +2618,13 @@ try {
     check($engine->playerMarketSoldListingCount() >= 0, 'GameEngine playerMarketSoldListingCount returns non-negative count');
     check($engine->materialLootTotalAwardedCount() >= 0, 'GameEngine materialLootTotalAwardedCount returns non-negative count');
     check(isset($engine->gameplayCatalogSummary()['categoryCounts']), 'GameEngine gameplayCatalogSummary returns categoryCounts');
+
+    // --- Wave 237 (zone-beta355): GameEngine requestGuardAdminCookieName, requestGuardPlayerIdPattern, requestGuardIsValidPlayerId, cacheConfiguredEnvironmentAdapter & cacheEntryCount ---
+    check($engine->requestGuardAdminCookieName() === 'zone_admin_session', 'GameEngine requestGuardAdminCookieName returns zone_admin_session');
+    check($engine->requestGuardPlayerIdPattern() === '/^[a-z0-9][a-z0-9-]{2,63}$/', 'GameEngine requestGuardPlayerIdPattern returns canonical pattern');
+    check($engine->requestGuardIsValidPlayerId('founder-player') && !$engine->requestGuardIsValidPlayerId('INVALID'), 'GameEngine requestGuardIsValidPlayerId validates player ID');
+    check(in_array($engine->cacheConfiguredEnvironmentAdapter(), ['array', 'redis'], true), 'GameEngine cacheConfiguredEnvironmentAdapter returns array or redis');
+    check($engine->cacheEntryCount() >= 0, 'GameEngine cacheEntryCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

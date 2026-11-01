@@ -6478,4 +6478,29 @@ final class GameEngine
     {
         return (new GameplayCatalog($this->database, $this->events))->summary();
     }
+
+    public function requestGuardAdminCookieName(): string
+    {
+        return \Zone\Engine\Core\Security\RequestGuard::ADMIN_COOKIE;
+    }
+
+    public function requestGuardPlayerIdPattern(): string
+    {
+        return \Zone\Engine\Core\Security\RequestGuard::PLAYER_ID_PATTERN;
+    }
+
+    public function requestGuardIsValidPlayerId(string $playerId): bool
+    {
+        return \Zone\Engine\Core\Security\RequestGuard::isValidPlayerId($playerId);
+    }
+
+    public function cacheConfiguredEnvironmentAdapter(): string
+    {
+        return \Zone\Engine\Infrastructure\Cache\CacheFactory::configuredAdapter();
+    }
+
+    public function cacheEntryCount(): int
+    {
+        return method_exists($this->cache, 'count') ? $this->cache->count() : 0;
+    }
 }

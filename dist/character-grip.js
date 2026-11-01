@@ -66,6 +66,26 @@ export function nonThumbDefaultSlerpFactor() {
   return 0.5;
 }
 
+export function gripClosedPoseClipName() {
+  return 'Idle_Sword';
+}
+
+export function gripOpenPoseClipName() {
+  return 'Idle';
+}
+
+export function gripPoseQuaternionMap() {
+  return { ...GRIP_POSE };
+}
+
+export function defaultForwardBarrelAxis() {
+  return [0, 1, 0];
+}
+
+export function defaultMeshZeroRotation() {
+  return [0, 0, 0];
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {

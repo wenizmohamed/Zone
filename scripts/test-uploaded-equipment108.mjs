@@ -6,7 +6,7 @@ import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, uploadedShortGunTargetLength, uploadedLongGunTargetLength, uploadedKnifeTargetLength, uploadedBatTargetLength, uploadedArmorChestOffsetY, uploadedAssetHashLength, uploadedEquipmentSlots, isSupportedUploadedEquipmentSlot, uploadedCharacterRepresentation, uploadedArmorRepresentation, uploadedWeaponRepresentation, uploadedWeaponGripQuality, uploadedArmorRiggingMode, uploadedWeaponDescriptorPrefix, uploadedArmorBoneName, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount, characterArtSourceUrl, characterArtQualityTier, defaultFallbackSurfaceHexColor, defaultFallbackSurfaceRoughness, preservedSurfaceMapKeys } from '../dist/character-presentation.js';
-import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
+import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName, gripClosedPoseClipName, gripOpenPoseClipName, gripPoseQuaternionMap, defaultForwardBarrelAxis, defaultMeshZeroRotation } from '../dist/character-grip.js';
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength, weaponStudioMaxCameraFov, weaponStudioAcceptedBackgroundHex, weaponStudioReadableBackgroundHex, weaponStudioKeyLightIntensity, weaponStudioRimLightIntensity } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount, defaultCatalogMaterialHexColor, defaultCatalogMaterialRoughness, defaultCatalogMaterialMetalness, inspectedWeaponMaterialMapKeys, sniperRifle5ObjGripOffset } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
@@ -234,4 +234,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(weaponStudioReadableBackgroundHex(), 0x353e46);
   assert.equal(weaponStudioKeyLightIntensity(), 2.4);
   assert.equal(weaponStudioRimLightIntensity(), 2.0);
+  assert.equal(gripClosedPoseClipName(), 'Idle_Sword');
+  assert.equal(gripOpenPoseClipName(), 'Idle');
+  assert.equal(Object.keys(gripPoseQuaternionMap()).length, 12);
+  assert.deepEqual(defaultForwardBarrelAxis(), [0, 1, 0]);
+  assert.deepEqual(defaultMeshZeroRotation(), [0, 0, 0]);
 });
