@@ -86,9 +86,10 @@ function zone_proxy_json(array $data): never
 
 $relayOrigin = trim((string) (getenv('ZONE_ENGINE_ORIGIN') ?: ''));
 $relayKey = (string) (getenv('ZONE_ENGINE_RELAY_KEY') ?: '');
-if (getenv('VERCEL') === '1' && str_contains($relayOrigin, 'social.aihubz.me') && (getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: getenv('ZONE_DATABASE_URL')) !== '') {
+if (getenv('VERCEL') === '1' && str_contains($relayOrigin, 'social.aihubz.me')) {
     $relayOrigin = '';
     $relayKey = '';
+    putenv('ZONE_DATABASE_URL=sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite');
 }
 if ($relayOrigin !== '' || $relayKey !== '') {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
