@@ -2051,6 +2051,13 @@ try {
     check($engine->dailyContractRewardCashById('crime-spree') === 4000, 'GameEngine dailyContractRewardCashById returns 4000 for crime-spree');
     check($engine->dailyContractRewardXpById('crime-spree') === 200, 'GameEngine dailyContractRewardXpById returns 200 for crime-spree');
     check($engine->dailyContractMetricById('crime-spree') === 'crimes', 'GameEngine dailyContractMetricById returns crimes for crime-spree');
+
+    // --- Wave 156 (zone-beta274): GameEngine dailyContractTitleEnById, dailyContractTitleArById, playerNextStreakDay, playerNextStreakRewardCash & isPlayerStreakClaimedToday ---
+    check($engine->dailyContractTitleEnById('crime-spree') === 'Commit 15 crimes', 'GameEngine dailyContractTitleEnById returns English title');
+    check($engine->dailyContractTitleArById('crime-spree') !== '', 'GameEngine dailyContractTitleArById returns Arabic title');
+    check($engine->playerNextStreakDay() >= 1 && $engine->playerNextStreakDay() <= 7, 'GameEngine playerNextStreakDay returns 1..7');
+    check($engine->playerNextStreakRewardCash() >= 1000, 'GameEngine playerNextStreakRewardCash returns next streak cash reward');
+    check(is_bool($engine->isPlayerStreakClaimedToday()), 'GameEngine isPlayerStreakClaimedToday returns boolean streak claim status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

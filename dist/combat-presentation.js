@@ -59,6 +59,9 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
     dispose() { if (disposed) return; disposed = true; stop(); latest = null; },
     isDisposed() { return disposed; },
     isActive() { return active; },
+    hasLatest() { return !!latest; },
+    currentIdentity() { return identity; },
+    currentVersion() { return version; },
     diagnostics() { return { disposed, active, identity, version, count, pending: queue.length, hasLatest: !!latest }; },
     get pending() { return queue.length; }
   };
@@ -66,8 +69,10 @@ export function createCombatPlayback({ emit, schedule = setTimeout, cancel = cle
 
 export const COMBAT_CLIPS = { idle: 'Idle', guard: 'Idle_Sword', punch: 'Punch_Right', slash: 'Sword_Slash', heavy: 'Kick_Right', hit: 'HitRecieve', down: 'Death' };
 export function supportedCombatActions() { return Object.keys(COMBAT_CLIPS); }
+export function supportedCombatActionCount() { return supportedCombatActions().length; }
 export function isSupportedCombatAction(action) { return typeof action === 'string' && Object.prototype.hasOwnProperty.call(COMBAT_CLIPS, action); }
-export function isResolvedEncounterPhase(phase) { return ['won', 'lost', 'fled', 'settled'].includes(String(phase ?? '')); }
+export function resolvedEncounterPhases() { return ['won', 'lost', 'fled', 'settled']; }
+export function isResolvedEncounterPhase(phase) { return resolvedEncounterPhases().includes(String(phase ?? '')); }
 export function resolveCombatClipName(action) { return COMBAT_CLIPS[action] || 'Idle'; }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {

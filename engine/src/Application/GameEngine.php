@@ -4330,4 +4330,40 @@ final class GameEngine
         }
         return '';
     }
+
+    public function dailyContractTitleEnById(string $id): string
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (string) ($contract['name_en'] ?? '');
+            }
+        }
+        return '';
+    }
+
+    public function dailyContractTitleArById(string $id): string
+    {
+        foreach (\Zone\Engine\Core\Game\DailyService::contractPool() as $contract) {
+            if (($contract['id'] ?? '') === $id) {
+                return (string) ($contract['name_ar'] ?? '');
+            }
+        }
+        return '';
+    }
+
+    public function playerNextStreakDay(string $playerId = 'founder-player'): int
+    {
+        $streak = $this->playerLoginStreak($playerId);
+        return ($streak >= 1 && $streak <= 7) ? ($streak % 7) + 1 : 1;
+    }
+
+    public function playerNextStreakRewardCash(string $playerId = 'founder-player'): int
+    {
+        return $this->dailyStreakDayRewardCash($this->playerNextStreakDay($playerId));
+    }
+
+    public function isPlayerStreakClaimedToday(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLastLoginDay($playerId) === gmdate('Y-m-d');
+    }
 }
