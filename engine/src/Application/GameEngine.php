@@ -2068,4 +2068,29 @@ final class GameEngine
     {
         return (int) ($this->hospitalQuote($playerId)['cost'] ?? 0);
     }
+
+    public function hospitalMissingLife(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->hospitalQuote($playerId)['missing'] ?? 0);
+    }
+
+    public function hospitalDiscountPct(string $playerId = 'founder-player'): float
+    {
+        return (float) ($this->hospitalQuote($playerId)['discountPct'] ?? 0.0);
+    }
+
+    public function highLowCurrentCard(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->highLowState($playerId)['card'] ?? 7);
+    }
+
+    public function highLowVersion(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->highLowState($playerId)['version'] ?? 1);
+    }
+
+    public function rateLimitRemainingHits(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->rateLimitStatus($playerId)['remainingHits'] ?? 0);
+    }
 }

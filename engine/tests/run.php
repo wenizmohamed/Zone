@@ -1463,6 +1463,13 @@ try {
     check(is_bool($engine->canPlayerBuyFamilyUpgrade('founder-player')), 'GameEngine canPlayerBuyFamilyUpgrade returns family upgrade permission');
     check(is_bool($engine->isHospitalHealAvailable('founder-player')), 'GameEngine isHospitalHealAvailable returns hospital treatment availability');
     check($engine->hospitalHealCost('founder-player') >= 0, 'GameEngine hospitalHealCost returns hospital treatment cost quote');
+
+    // --- Wave 72 (zone-beta190): GameEngine hospitalMissingLife, hospitalDiscountPct, highLowCurrentCard, highLowVersion & rateLimitRemainingHits ---
+    check($engine->hospitalMissingLife('founder-player') >= 0, 'GameEngine hospitalMissingLife returns missing life points');
+    check($engine->hospitalDiscountPct('founder-player') >= 0.0, 'GameEngine hospitalDiscountPct returns territory medical discount percentage');
+    check($engine->highLowCurrentCard('founder-player') >= 2 && $engine->highLowCurrentCard('founder-player') <= 14, 'GameEngine highLowCurrentCard returns current casino High-Low card');
+    check($engine->highLowVersion('founder-player') >= 1, 'GameEngine highLowVersion returns current casino High-Low state version');
+    check($engine->rateLimitRemainingHits('founder-player') >= 0, 'GameEngine rateLimitRemainingHits returns remaining rate limit hits in window');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
