@@ -2342,4 +2342,33 @@ final class GameEngine
             && $this->playerMissingHappy($playerId) === 0
             && $this->playerMissingLifePoints($playerId) === 0;
     }
+
+    public function playerActiveGymIndex(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['gym'] ?? 0);
+    }
+
+    public function playerActiveGymCost(string $playerId = 'founder-player'): int
+    {
+        $gyms = (new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['gyms'] ?? [];
+        $idx = $this->playerActiveGymIndex($playerId);
+        return (int) ($gyms[$idx]['e'] ?? 5);
+    }
+
+    public function playerAvailableGymSessions(string $playerId = 'founder-player'): int
+    {
+        $cost = max(1, $this->playerActiveGymCost($playerId));
+        return intdiv($this->playerEnergy($playerId), $cost);
+    }
+
+    public function playerActiveCourseId(string $playerId = 'founder-player'): ?string
+    {
+        $id = (new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['activeCourseId'] ?? null;
+        return is_string($id) && $id !== '' ? $id : null;
+    }
+
+    public function isPlayerEnrolledInCourse(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActiveCourseId($playerId) !== null;
+    }
 }

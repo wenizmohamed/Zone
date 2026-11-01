@@ -113,4 +113,6 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   assert.equal(s.nav.activeScreen(), 'home');
   assert.equal(s.nav.isActiveScreen('home'), true);
   assert.equal(s.nav.isActiveScreen('bank'), false);
+  assert.ok(s.nav.activeKey().startsWith('zone-'));
+  assert.equal(s.nav.isPending(), false);
 });

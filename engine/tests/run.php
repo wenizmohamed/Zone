@@ -1526,6 +1526,13 @@ try {
     check($engine->playerHappyRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerHappyRegenSecondsRemaining returns remaining happy regen seconds');
     check($engine->playerLifeRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerLifeRegenSecondsRemaining returns remaining life regen seconds');
     check(is_bool($engine->isPlayerAtFullResources('founder-player')), 'GameEngine isPlayerAtFullResources returns boolean full-resource status');
+
+    // --- Wave 81 (zone-beta199): GameEngine playerActiveGymIndex, playerActiveGymCost, playerAvailableGymSessions, playerActiveCourseId & isPlayerEnrolledInCourse ---
+    check($engine->playerActiveGymIndex('founder-player') >= 0, 'GameEngine playerActiveGymIndex returns active gym index');
+    check($engine->playerActiveGymCost('founder-player') >= 1, 'GameEngine playerActiveGymCost returns active gym energy cost');
+    check($engine->playerAvailableGymSessions('founder-player') >= 0, 'GameEngine playerAvailableGymSessions returns available gym training sessions');
+    check($engine->playerActiveCourseId('founder-player') === null || is_string($engine->playerActiveCourseId('founder-player')), 'GameEngine playerActiveCourseId returns active course ID or null');
+    check(is_bool($engine->isPlayerEnrolledInCourse('founder-player')), 'GameEngine isPlayerEnrolledInCourse returns boolean enrollment status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

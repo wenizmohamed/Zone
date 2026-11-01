@@ -56,6 +56,12 @@
     function isActiveScreen(screen) {
       return typeof screen === 'string' && activeEntry?.screen === screen;
     }
+    function activeKey() {
+      return activeEntry?.key || null;
+    }
+    function isPending() {
+      return observer !== null || frame !== null;
+    }
     function diagnostics() {
       return {
         generation,
@@ -65,7 +71,7 @@
         hasFrame: frame !== null,
       };
     }
-    return { remember, enter, cancel, activeScreen, isActiveScreen, diagnostics };
+    return { remember, enter, cancel, activeScreen, isActiveScreen, activeKey, isPending, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {
