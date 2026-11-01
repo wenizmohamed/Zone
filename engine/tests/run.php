@@ -2296,6 +2296,13 @@ try {
     check($engine->enrichedCrimeVariantDefaultsCount() === 7, 'GameEngine enrichedCrimeVariantDefaultsCount returns 7');
     check(in_array('enabledCrimes', $engine->moduleDiagnosticsMetricKeys(), true), 'GameEngine moduleDiagnosticsMetricKeys includes enabledCrimes');
     check($engine->moduleDiagnosticsMetricCount() === 15, 'GameEngine moduleDiagnosticsMetricCount returns 15');
+
+    // --- Wave 191 (zone-beta309): GameEngine engineStatusName, engineStatusVersion, isServerAuthoritativeEngine, engineDeclaredCapabilities & engineDeclaredCapabilityCount ---
+    check($engine->engineStatusName() === 'ZONE Engine', 'GameEngine engineStatusName returns ZONE Engine');
+    check($engine->engineStatusVersion() === '1.0.0', 'GameEngine engineStatusVersion returns 1.0.0');
+    check($engine->isServerAuthoritativeEngine() === true, 'GameEngine isServerAuthoritativeEngine returns true');
+    check(in_array('api-first-gameplay', $engine->engineDeclaredCapabilities(), true), 'GameEngine engineDeclaredCapabilities includes api-first-gameplay');
+    check($engine->engineDeclaredCapabilityCount() === 15, 'GameEngine engineDeclaredCapabilityCount returns 15');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

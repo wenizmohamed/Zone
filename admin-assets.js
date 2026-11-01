@@ -203,6 +203,11 @@
   const hasSelection=()=>Boolean(selected);
   const readyAssetCount=()=>library.filter(a=>a?.status==='ready').length;
   const failedAssetCount=()=>library.filter(a=>a?.status==='failed').length;
+  const maxUploadSizeBytes=()=>134217728;
+  const uploadChunkSizeBytes=()=>524288;
+  const selectedAssetId=()=>selected;
+  const fitEditCount=()=>fitEdits.size;
+  const isBusy=()=>Boolean(busy||shopSaving||policySaving);
   const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,shopSaving,policySaving,policyMaterialCount:policyMaterialSelection.length,hasUnsaved:hasUnsaved(),language});
-  window.ZoneMedia={refresh,hasUnsaved,isLoaded,hasSelection,readyAssetCount,failedAssetCount,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys,issuanceBudgetKeys,maxMaterialSelectionCount,maxHourlyBudgetValue};refresh();
+  window.ZoneMedia={refresh,hasUnsaved,isLoaded,hasSelection,readyAssetCount,failedAssetCount,maxUploadSizeBytes,uploadChunkSizeBytes,selectedAssetId,fitEditCount,isBusy,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys,issuanceBudgetKeys,maxMaterialSelectionCount,maxHourlyBudgetValue};refresh();
 })();

@@ -5286,4 +5286,29 @@ final class GameEngine
     {
         return count($this->moduleDiagnostics());
     }
+
+    public function engineStatusName(): string
+    {
+        return 'ZONE Engine';
+    }
+
+    public function engineStatusVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    public function isServerAuthoritativeEngine(): bool
+    {
+        return true;
+    }
+
+    public function engineDeclaredCapabilities(): array
+    {
+        return $this->status()['capabilities'];
+    }
+
+    public function engineDeclaredCapabilityCount(): int
+    {
+        return count($this->status()['capabilities']);
+    }
 }

@@ -654,5 +654,10 @@ test('ZoneMedia exposes diagnostics telemetry for library, selection, fit edits 
   assert.equal(m.window.ZoneMedia.hasSelection(), true);
   assert.equal(m.window.ZoneMedia.readyAssetCount(), 2);
   assert.equal(m.window.ZoneMedia.failedAssetCount(), 0);
+  assert.equal(m.window.ZoneMedia.maxUploadSizeBytes(), 134217728);
+  assert.equal(m.window.ZoneMedia.uploadChunkSizeBytes(), 524288);
+  assert.equal(m.window.ZoneMedia.selectedAssetId(), idA);
+  assert.equal(m.window.ZoneMedia.fitEditCount(), 1);
+  assert.equal(m.window.ZoneMedia.isBusy(), false);
 });
 
