@@ -6139,4 +6139,30 @@ final class GameEngine
     {
         return 'Zone City';
     }
+
+    public function progressionEscrowMaxDelta(): int
+    {
+        return 1000;
+    }
+
+    public function progressionCrimeChainMaxMultiplier(): int
+    {
+        return 10;
+    }
+
+    public function progressionCrimeMaxMasterySkill(): int
+    {
+        return 100;
+    }
+
+    /** @return list<string> */
+    public function progressionSupportedPenaltyTypes(): array
+    {
+        return ['jail', 'hosp'];
+    }
+
+    public function progressionLawCourseJailTimeMultiplier(): float
+    {
+        return 0.85;
+    }
 }

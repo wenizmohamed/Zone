@@ -169,6 +169,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(h.window.ZoneSafehouse.maxCameraDistance(), 20);
   assert.equal(h.window.ZoneSafehouse.uploadedHouseTargetSize(), 8);
   assert.equal(h.window.ZoneSafehouse.tweenDurationMs(), 600);
+  assert.equal(h.window.ZoneSafehouse.hotspotCount(), 3);
+  assert.ok(h.window.ZoneSafehouse.sceneObjectCount() > 20);
+  assert.equal(h.window.ZoneSafehouse.isRenderReady(), true);
+  assert.equal(h.window.ZoneSafehouse.isRenderFailed(), false);
+  assert.equal(h.window.ZoneSafehouse.isParentInitialized(), true);
   h.dispose();
   assert.equal(h.window.ZoneSafehouse.isReady(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), true);

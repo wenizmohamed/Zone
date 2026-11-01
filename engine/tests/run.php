@@ -2527,6 +2527,13 @@ try {
     check($engine->databaseFounderPlayerId() === 'founder-player', 'GameEngine databaseFounderPlayerId returns founder-player');
     check($engine->databaseFounderUsername() === 'Vincenzo', 'GameEngine databaseFounderUsername returns Vincenzo');
     check($engine->databaseFounderDefaultCity() === 'Zone City', 'GameEngine databaseFounderDefaultCity returns Zone City');
+
+    // --- Wave 224 (zone-beta342): GameEngine progressionEscrowMaxDelta, progressionCrimeChainMaxMultiplier, progressionCrimeMaxMasterySkill, progressionSupportedPenaltyTypes & progressionLawCourseJailTimeMultiplier ---
+    check($engine->progressionEscrowMaxDelta() === 1000, 'GameEngine progressionEscrowMaxDelta returns 1000');
+    check($engine->progressionCrimeChainMaxMultiplier() === 10, 'GameEngine progressionCrimeChainMaxMultiplier returns 10');
+    check($engine->progressionCrimeMaxMasterySkill() === 100, 'GameEngine progressionCrimeMaxMasterySkill returns 100');
+    check($engine->progressionSupportedPenaltyTypes() === ['jail', 'hosp'], 'GameEngine progressionSupportedPenaltyTypes returns jail and hosp');
+    check(abs($engine->progressionLawCourseJailTimeMultiplier() - 0.85) < 0.0001, 'GameEngine progressionLawCourseJailTimeMultiplier returns 0.85');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
