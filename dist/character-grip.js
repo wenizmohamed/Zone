@@ -42,6 +42,18 @@ export function isGripRigValid(rig) {
   return Boolean(rig?.hand && Array.isArray(rig?.pose) && rig.pose.length === 19 && rig?.center && rig?.axis);
 }
 
+export function gripPoseExplicitBoneCount() {
+  return Object.keys(GRIP_POSE).length;
+}
+
+export function gripRightWristBoneKey() {
+  return 'wristr';
+}
+
+export function equippedWeaponGroupName() {
+  return 'ZONE equipped weapon';
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {

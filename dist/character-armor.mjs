@@ -21,6 +21,14 @@ export function maxArmorReduction() {
   return .95;
 }
 
+export function representedArmorIds() {
+  return ['armor', 'vest'];
+}
+
+export function wornVestMeshName() {
+  return 'ZONE representative worn vest';
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
   return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id ? clampArmorReduction(packet.armorReduction) : 0,

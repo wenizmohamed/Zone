@@ -32,6 +32,14 @@ export function isUnarmedPoseProfile(profile) {
   return profile === 'unarmed';
 }
 
+export function mosinIdleRollDegrees() {
+  return 15;
+}
+
+export function knifeBladeRollDegrees() {
+  return 70;
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });

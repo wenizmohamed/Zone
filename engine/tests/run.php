@@ -2226,6 +2226,13 @@ try {
     check($engine->crimeDefaultChainWindowSeconds() === 300, 'GameEngine crimeDefaultChainWindowSeconds returns 300');
     check($engine->adminAuditLogMaxLimit() === 250, 'GameEngine adminAuditLogMaxLimit returns 250');
     check($engine->publishedRulesDisabledModuleCount() >= 0, 'GameEngine publishedRulesDisabledModuleCount returns non-negative count');
+
+    // --- Wave 181 (zone-beta299): GameEngine requiredThemeManifestFields, requiredModuleManifestFields, themeDefaultPreviewHexColor, activeThemeByteLength & moduleVersionHistoryRowCount ---
+    check($engine->requiredThemeManifestFields() === ['id', 'name', 'version', 'stylesheet'], 'GameEngine requiredThemeManifestFields returns 4 fields');
+    check($engine->requiredModuleManifestFields() === ['id', 'name', 'version', 'class'], 'GameEngine requiredModuleManifestFields returns 4 fields');
+    check($engine->themeDefaultPreviewHexColor() === '#d7ff3f', 'GameEngine themeDefaultPreviewHexColor returns #d7ff3f');
+    check($engine->activeThemeByteLength() > 0, 'GameEngine activeThemeByteLength returns positive byte length');
+    check($engine->moduleVersionHistoryRowCount() >= 0, 'GameEngine moduleVersionHistoryRowCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

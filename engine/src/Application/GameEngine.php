@@ -5032,4 +5032,32 @@ final class GameEngine
     {
         return count((new PublishedRules($this->database))->disabledModuleIds());
     }
+
+    /** @return list<string> */
+    public function requiredThemeManifestFields(): array
+    {
+        return ['id', 'name', 'version', 'stylesheet'];
+    }
+
+    /** @return list<string> */
+    public function requiredModuleManifestFields(): array
+    {
+        return ['id', 'name', 'version', 'class'];
+    }
+
+    public function themeDefaultPreviewHexColor(): string
+    {
+        return '#d7ff3f';
+    }
+
+    public function activeThemeByteLength(): int
+    {
+        return strlen($this->themes->activeStylesheet());
+    }
+
+    public function moduleVersionHistoryRowCount(): int
+    {
+        $row = $this->database->fetchOne('SELECT COUNT(*) AS total FROM module_version_history');
+        return max(0, (int) ($row['total'] ?? 0));
+    }
 }
