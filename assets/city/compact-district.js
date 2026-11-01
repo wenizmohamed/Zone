@@ -48,6 +48,13 @@
     const layers=Array.isArray(style?.layers)?style.layers:[],sources=style?.sources||{};
     return {layerCount:layers.length,sourceCount:Object.keys(sources).length,hasExtrusionLayer:layers.some(l=>l?.type==='fill-extrusion'),hasRoadLayer:layers.some(l=>l?.['source-layer']==='road'),hasBuildingLayer:layers.some(l=>l?.['source-layer']==='building')};
   }
+  function defaultCenter(){
+    return CENTER.slice();
+  }
+  function styleLayerIds(style){
+    const target=style||createStyle();
+    return Array.isArray(target?.layers)?target.layers.map(l=>l.id):[];
+  }
   function setPerspective(map,value){
     // Visibility may fire after pagehide has removed the map's style.
     if(map.isStyleLoaded&&!map.isStyleLoaded()&&(!map.getStyle||!map.getStyle()))return;
@@ -364,5 +371,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,mercator,geographic,createProjection,createStyle,summarizeStyle,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  return {CENTER,defaultCenter,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

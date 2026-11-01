@@ -1442,6 +1442,13 @@ try {
     check($engine->playerInmateCount('founder-player') >= 1, 'GameEngine playerInmateCount returns active jail inmate count');
     check($engine->playerPatientCount('founder-player') >= 1, 'GameEngine playerPatientCount returns active hospital patient count');
     check($engine->playerSafehouseCount('founder-player') >= 1, 'GameEngine playerSafehouseCount returns published safehouse catalog count');
+
+    // --- Wave 69 (zone-beta187): GameEngine playerTravelStatus, dailyStreakSchedule, dailyContractPoolCount, isDailyContractComplete & isDailyContractClaimed ---
+    check(in_array($engine->playerTravelStatus('founder-player'), ['idle', 'traveling', 'arrived'], true), 'GameEngine playerTravelStatus returns canonical travel status');
+    check(count($engine->dailyStreakSchedule()) === 7 && $engine->dailyStreakSchedule()[7][0] === 12000, 'GameEngine dailyStreakSchedule returns 7-day login streak schedule');
+    check($engine->dailyContractPoolCount() === 4, 'GameEngine dailyContractPoolCount returns 4 rotating daily contracts');
+    check(is_bool($engine->isDailyContractComplete('founder-player')), 'GameEngine isDailyContractComplete returns boolean completion status');
+    check(is_bool($engine->isDailyContractClaimed('founder-player')), 'GameEngine isDailyContractClaimed returns boolean claim status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -1989,4 +1989,30 @@ final class GameEngine
     {
         return count((array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['safehouses'] ?? []));
     }
+
+    public function playerTravelStatus(string $playerId = 'founder-player'): string
+    {
+        return (string) ((new \Zone\Engine\Core\Game\TravelService($this->database, $this->events))->snapshot($playerId)['status'] ?? 'idle');
+    }
+
+    /** @return array<int, array{0:int,1:bool,2:bool}> */
+    public function dailyStreakSchedule(): array
+    {
+        return \Zone\Engine\Core\Game\DailyService::streakSchedule();
+    }
+
+    public function dailyContractPoolCount(): int
+    {
+        return count(\Zone\Engine\Core\Game\DailyService::contractPool());
+    }
+
+    public function isDailyContractComplete(string $playerId = 'founder-player'): bool
+    {
+        return (bool) ($this->dailyContract($playerId)['complete'] ?? false);
+    }
+
+    public function isDailyContractClaimed(string $playerId = 'founder-player'): bool
+    {
+        return (bool) ($this->dailyContract($playerId)['claimed'] ?? false);
+    }
 }
