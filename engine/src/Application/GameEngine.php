@@ -4596,4 +4596,36 @@ final class GameEngine
     {
         return (int) ((new PlayerMarketService($this->database, $this->events))->snapshot($playerId)['inventoryVersion'] ?? 1);
     }
+
+    /** @return list<string> */
+    public function supportedFamilyOperationActions(): array
+    {
+        return ['create', 'join', 'leave', 'start', 'cancel', 'resolve'];
+    }
+
+    public function isSupportedFamilyOperationAction(string $action): bool
+    {
+        return in_array($action, $this->supportedFamilyOperationActions(), true);
+    }
+
+    /** @return list<string> */
+    public function familyOperationIds(): array
+    {
+        return ['dock-intercept', 'warehouse-heist'];
+    }
+
+    public function isKnownFamilyOperationId(string $id): bool
+    {
+        return in_array($id, $this->familyOperationIds(), true);
+    }
+
+    public function familyCompetitionPointsForKind(string $kind): int
+    {
+        return match ($kind) {
+            'player-hospitalize' => 10,
+            'territory-assault' => 1,
+            'operation' => 5,
+            default => 0,
+        };
+    }
 }

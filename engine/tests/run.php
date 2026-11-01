@@ -2114,6 +2114,13 @@ try {
     check($engine->playerMarketMaxActiveListings() === 50, 'GameEngine playerMarketMaxActiveListings returns 50');
     check($engine->playerMarketMaxUnitPrice() === 1000000, 'GameEngine playerMarketMaxUnitPrice returns 1000000');
     check($engine->playerMarketInventoryVersion() >= 1, 'GameEngine playerMarketInventoryVersion returns >= 1');
+
+    // --- Wave 165 (zone-beta283): GameEngine supportedFamilyOperationActions, isSupportedFamilyOperationAction, familyOperationIds, isKnownFamilyOperationId & familyCompetitionPointsForKind ---
+    check($engine->supportedFamilyOperationActions() === ['create', 'join', 'leave', 'start', 'cancel', 'resolve'], 'GameEngine supportedFamilyOperationActions returns 6 family operation actions');
+    check($engine->isSupportedFamilyOperationAction('join') === true && $engine->isSupportedFamilyOperationAction('betray') === false, 'GameEngine isSupportedFamilyOperationAction validates family operation action');
+    check($engine->familyOperationIds() === ['dock-intercept', 'warehouse-heist'], 'GameEngine familyOperationIds returns 2 family operations');
+    check($engine->isKnownFamilyOperationId('dock-intercept') === true && $engine->isKnownFamilyOperationId('bank-vault') === false, 'GameEngine isKnownFamilyOperationId validates family operation ID');
+    check($engine->familyCompetitionPointsForKind('player-hospitalize') === 10 && $engine->familyCompetitionPointsForKind('operation') === 5 && $engine->familyCompetitionPointsForKind('unknown') === 0, 'GameEngine familyCompetitionPointsForKind returns competition points');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

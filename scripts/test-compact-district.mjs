@@ -317,10 +317,16 @@ test('controller diagnostics report lifecycle, destination count, and sub-contro
   ctrl.setDestinations([{id:'bank',_lngLat:[-73.98,40.69]},{id:'gym',_lngLat:[-73.99,40.70]}]);
   assert.equal(ctrl.diagnostics().destinationCount,2);
   assert.equal(ctrl.destinationCount(),2);
+  assert.deepEqual(ctrl.destinationIds(),['bank','gym']);
   assert.equal(ctrl.hasDestination('bank'),true);
   assert.equal(ctrl.hasDestination('hospital'),false);
   assert.equal(district.isStyleLayerId('district-buildings-3d'),true);
   assert.equal(district.isStyleLayerId('unknown'),false);
+  assert.equal(district.styleLayerCount(),10);
+  assert.equal(district.earthRadiusMeters(),6378137);
+  const serviceBuildings=require('../assets/city/service-buildings108.js');
+  assert.deepEqual(serviceBuildings.unboundServiceIds({unbound:['bank','gym']}),['bank','gym']);
+  assert.deepEqual(serviceBuildings.boundServiceIds({associations:[{id:'bank'},{id:'hospital'}]}),['bank','hospital']);
   assert.equal(district.defaultNeighborhoodMeters(),600);
   assert.equal(district.maxNeighborhoodMeters(),1500);
   assert.equal(ctrl.isVisible(),true);

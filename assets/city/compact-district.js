@@ -58,6 +58,12 @@
   function isStyleLayerId(id,style){
     return styleLayerIds(style).includes(String(id||''));
   }
+  function styleLayerCount(style){
+    return styleLayerIds(style).length;
+  }
+  function earthRadiusMeters(){
+    return EARTH;
+  }
   function defaultNeighborhoodMeters(){
     return 600;
   }
@@ -339,6 +345,7 @@
       isDisposed(){return disposed;},
       isVisible(){return visible;},
       destinationCount(){return pins.length;},
+      destinationIds(){return pins.map(p=>p?.id).filter(Boolean);},
       hasDestination(id){return pins.some(p=>p?.id===id);},
       diagnostics(){
         return {
@@ -384,5 +391,5 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,earthRadiusMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,styleLayerCount,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });

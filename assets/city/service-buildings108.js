@@ -185,5 +185,7 @@
   function footprintSearchRadiusMeters(){return 240;}
   function hasCrowding(result){return Array.isArray(result?.associations)&&result.associations.some(a=>Boolean(a?.crowded));}
   function isSupportedServiceId(id){return SERVICES.includes(String(id));}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,inside,roofAnchor,meters};
+  function unboundServiceIds(result){return Array.isArray(result?.unbound)?[...result.unbound]:[];}
+  function boundServiceIds(result){return Array.isArray(result?.associations)?result.associations.map(a=>a?.id).filter(Boolean):[];}
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,inside,roofAnchor,meters};
 });
