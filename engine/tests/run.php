@@ -1736,6 +1736,13 @@ try {
     check($engine->hasValidCatalogDraftRevision() === true, 'GameEngine hasValidCatalogDraftRevision returns boolean valid catalog draft revision status');
     check($engine->hasValidHighLowVersion() === true, 'GameEngine hasValidHighLowVersion returns boolean valid high-low version status');
     check($engine->hasValidHighLowCard() === true, 'GameEngine hasValidHighLowCard returns boolean valid high-low card status');
+
+    // --- Wave 111 (zone-beta229): GameEngine playerHasWeaponBonus, playerHasArmorMitigation, playerHasActivePropertyCost, playerHasActivePropertyHappyBonus & playerHasAvailableGymSessions ---
+    check(is_bool($engine->playerHasWeaponBonus()), 'GameEngine playerHasWeaponBonus returns boolean weapon bonus status');
+    check(is_bool($engine->playerHasArmorMitigation()), 'GameEngine playerHasArmorMitigation returns boolean armor mitigation status');
+    check(is_bool($engine->playerHasActivePropertyCost()), 'GameEngine playerHasActivePropertyCost returns boolean active property cost status');
+    check(is_bool($engine->playerHasActivePropertyHappyBonus()), 'GameEngine playerHasActivePropertyHappyBonus returns boolean active property happy bonus status');
+    check(is_bool($engine->playerHasAvailableGymSessions()), 'GameEngine playerHasAvailableGymSessions returns boolean available gym sessions status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

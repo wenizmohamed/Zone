@@ -3129,4 +3129,29 @@ final class GameEngine
         $card = $this->highLowCurrentCard($playerId);
         return $card >= 1 && $card <= 13;
     }
+
+    public function playerHasWeaponBonus(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerWeaponBonusPct($playerId) > 0;
+    }
+
+    public function playerHasArmorMitigation(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerArmorMitigationPct($playerId) > 0;
+    }
+
+    public function playerHasActivePropertyCost(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActivePropertyCost($playerId) > 0;
+    }
+
+    public function playerHasActivePropertyHappyBonus(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerActivePropertyHappyBonus($playerId) > 0;
+    }
+
+    public function playerHasAvailableGymSessions(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerAvailableGymSessions($playerId) > 0;
+    }
 }

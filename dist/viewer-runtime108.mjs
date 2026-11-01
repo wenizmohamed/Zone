@@ -1,5 +1,6 @@
 // Optional WebGL never blocks the game. One local retry, explicit state, hidden
 // frames pause, and every listener/observer is owned by the viewer lifecycle.
+export const VIEWER_STARTUP_TIMEOUT_MS = 25000;
 export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHidden = true }) {
   let frame = null, disposed = false, failed = false, intersecting = true, last = 0;
   const sync = () => {
@@ -21,10 +22,10 @@ export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHid
   observer?.observe(canvas); canvas.addEventListener('webglcontextlost', onLost);
   document.addEventListener('visibilitychange', sync); addEventListener('pagehide', onPageHide);
   addEventListener('error', onError); addEventListener('unhandledrejection', onError);
-  const deadline = setTimeout(() => errorState('viewer-startup-timeout'), 25000);
+  const deadline = setTimeout(() => errorState('viewer-startup-timeout'), VIEWER_STARTUP_TIMEOUT_MS);
   function dispose() { if (disposed) return; disposed = true; clearTimeout(deadline); sync(); observer?.disconnect();
     canvas.removeEventListener('webglcontextlost', onLost); document.removeEventListener('visibilitychange', sync);
     removeEventListener('pagehide', onPageHide); removeEventListener('error', onError); removeEventListener('unhandledrejection', onError); }
   function diagnostics() { return { disposed, failed, intersecting, active: frame !== null, pauseWhenHidden }; }
-  return { start() { if (disposed || failed) return; clearTimeout(deadline); document.body.dataset.zoneMediaState = 'ready'; ready?.(); sync(); }, fail: errorState, diagnostics, dispose };
+  return { start() { if (disposed || failed) return; clearTimeout(deadline); document.body.dataset.zoneMediaState = 'ready'; ready?.(); sync(); }, fail: errorState, diagnostics, isDisposed: () => disposed, isFailed: () => failed, isActive: () => frame !== null, dispose };
 }
