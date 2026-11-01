@@ -12,6 +12,7 @@ import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weap
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
 import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees } from '../dist/character-poses.js';
 import { supportedArmorRepresentationCount, maxArmorReduction, representedArmorIds, wornVestMeshName, createArmorController } from '../dist/character-armor.mjs';
+import { isSupportedViewerMediaState, viewerMaxDeltaMilliseconds, viewerRenderingDatasetKey, viewerMediaStateDatasetKey, viewerEventNames } from '../dist/viewer-runtime108.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -197,4 +198,10 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(isSupportedUploadedEquipmentSlot('helmet'), false);
   assert.equal(uploadedCharacterRepresentation(), 'uploaded-compatible-rig');
   assert.equal(uploadedArmorRepresentation(), 'uploaded-rigid-chest-model');
+  assert.equal(isSupportedViewerMediaState('ready'), true);
+  assert.equal(isSupportedViewerMediaState('pending'), false);
+  assert.equal(viewerMaxDeltaMilliseconds(), 100);
+  assert.equal(viewerRenderingDatasetKey(), 'zoneRendering');
+  assert.equal(viewerMediaStateDatasetKey(), 'zoneMediaState');
+  assert.deepEqual(viewerEventNames(), ['webglcontextlost', 'visibilitychange', 'pagehide', 'error', 'unhandledrejection']);
 });

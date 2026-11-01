@@ -2569,6 +2569,13 @@ try {
     check($engine->playerMarketMaxOrderQuantity() === 1000, 'GameEngine playerMarketMaxOrderQuantity returns 1000');
     check($engine->worldDirectorSnapshotMaxFindsLimit() === 64, 'GameEngine worldDirectorSnapshotMaxFindsLimit returns 64');
     check($engine->worldDirectorSnapshotMaxEventsLimit() === 10, 'GameEngine worldDirectorSnapshotMaxEventsLimit returns 10');
+
+    // --- Wave 230 (zone-beta348): GameEngine materialLootPgAdvisoryLockId, materialLootUnitValueRatio, dailyStreakCycleDays, dailyContractPoolSize & dailyContractSupportedIds ---
+    check($engine->materialLootPgAdvisoryLockId() === 90120261008, 'GameEngine materialLootPgAdvisoryLockId returns 90120261008');
+    check(abs($engine->materialLootUnitValueRatio() - 0.9) < 0.0001, 'GameEngine materialLootUnitValueRatio returns 0.9');
+    check($engine->dailyStreakCycleDays() === 7, 'GameEngine dailyStreakCycleDays returns 7');
+    check($engine->dailyContractPoolSize() === 4, 'GameEngine dailyContractPoolSize returns 4');
+    check($engine->dailyContractSupportedIds() === ['crime-spree', 'gym-grind', 'honest-work', 'street-brawler'], 'GameEngine dailyContractSupportedIds returns 4 contract IDs');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

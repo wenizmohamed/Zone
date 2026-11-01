@@ -6294,4 +6294,30 @@ final class GameEngine
     {
         return 10;
     }
+
+    public function materialLootPgAdvisoryLockId(): int
+    {
+        return 90120261008;
+    }
+
+    public function materialLootUnitValueRatio(): float
+    {
+        return 0.9;
+    }
+
+    public function dailyStreakCycleDays(): int
+    {
+        return 7;
+    }
+
+    public function dailyContractPoolSize(): int
+    {
+        return 4;
+    }
+
+    /** @return list<string> */
+    public function dailyContractSupportedIds(): array
+    {
+        return ['crime-spree', 'gym-grind', 'honest-work', 'street-brawler'];
+    }
 }

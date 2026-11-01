@@ -12,6 +12,11 @@ export function viewerDefaultRuntimeErrorReason() { return 'viewer-runtime-error
 export function viewerRenderingStates() { return ['active', 'paused']; }
 export function viewerMediaStates() { return ['ready', 'error']; }
 export function isSupportedViewerRenderingState(state) { return ['active', 'paused'].includes(String(state)); }
+export function isSupportedViewerMediaState(state) { return ['ready', 'error'].includes(String(state)); }
+export function viewerMaxDeltaMilliseconds() { return 100; }
+export function viewerRenderingDatasetKey() { return 'zoneRendering'; }
+export function viewerMediaStateDatasetKey() { return 'zoneMediaState'; }
+export function viewerEventNames() { return ['webglcontextlost', 'visibilitychange', 'pagehide', 'error', 'unhandledrejection']; }
 export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHidden = true }) {
   let frame = null, disposed = false, failed = false, intersecting = true, last = 0;
   const sync = () => {
