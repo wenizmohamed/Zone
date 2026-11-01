@@ -670,3 +670,21 @@ test('Studio snapshot exposes content counts and command search indexes authored
     assert.equal(f.app.hasUnsavedChanges(), false);
   }
 });
+
+test('admin.js exposes isBootBusy, isTerritoryBusy, isTerritoryMapReady, selectedTerritoryId and selectedCatalogCategory helpers', () => {
+  const f = publishedFixture('en');
+  runInContext(
+    originalDefinition('isBootBusy') + '\n' +
+    originalDefinition('isTerritoryBusy') + '\n' +
+    originalDefinition('isTerritoryMapReady') + '\n' +
+    originalDefinition('selectedTerritoryId') + '\n' +
+    originalDefinition('selectedCatalogCategory') + '\n' +
+    'globalThis.adminHelpers = { isBootBusy, isTerritoryBusy, isTerritoryMapReady, selectedTerritoryId, selectedCatalogCategory };',
+    f.context
+  );
+  assert.equal(f.context.adminHelpers.isBootBusy(), false);
+  assert.equal(f.context.adminHelpers.isTerritoryBusy(), false);
+  assert.equal(f.context.adminHelpers.isTerritoryMapReady(), false);
+  assert.equal(f.context.adminHelpers.selectedTerritoryId(), null);
+  assert.equal(f.context.adminHelpers.selectedCatalogCategory(), 'items');
+});

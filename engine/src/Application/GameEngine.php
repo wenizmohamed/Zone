@@ -4151,4 +4151,29 @@ final class GameEngine
         $state = $this->dailyContract($playerId);
         return (bool) ($state['complete'] ?? false) && !(bool) ($state['claimed'] ?? false);
     }
+
+    public function dailyContractTitleEn(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->dailyContract($playerId)['contract']['name_en'] ?? '');
+    }
+
+    public function dailyContractTitleAr(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->dailyContract($playerId)['contract']['name_ar'] ?? '');
+    }
+
+    public function dailyStreakDayRewardCash(int $day = 1): int
+    {
+        return (int) ($this->dailyStreakSchedule()[$day][0] ?? 0);
+    }
+
+    public function dailyStreakDayRefillsNerve(int $day = 1): bool
+    {
+        return (bool) ($this->dailyStreakSchedule()[$day][1] ?? false);
+    }
+
+    public function dailyStreakDayRefillsEnergy(int $day = 1): bool
+    {
+        return (bool) ($this->dailyStreakSchedule()[$day][2] ?? false);
+    }
 }

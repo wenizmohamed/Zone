@@ -2016,6 +2016,13 @@ try {
     check($engine->dailyContractRewardXp() === 200, 'GameEngine dailyContractRewardXp returns daily contract XP reward');
     check(preg_match('/^\d{4}-\d{2}-\d{2}$/', $engine->dailyContractDay()) === 1, 'GameEngine dailyContractDay returns YYYY-MM-DD UTC day');
     check(is_bool($engine->canClaimDailyContract()), 'GameEngine canClaimDailyContract returns boolean claim eligibility');
+
+    // --- Wave 151 (zone-beta269): GameEngine dailyContractTitleEn, dailyContractTitleAr, dailyStreakDayRewardCash, dailyStreakDayRefillsNerve & dailyStreakDayRefillsEnergy ---
+    check($engine->dailyContractTitleEn() !== '', 'GameEngine dailyContractTitleEn returns English contract title');
+    check($engine->dailyContractTitleAr() !== '', 'GameEngine dailyContractTitleAr returns Arabic contract title');
+    check($engine->dailyStreakDayRewardCash(1) === 1000 && $engine->dailyStreakDayRewardCash(7) === 12000, 'GameEngine dailyStreakDayRewardCash returns day 1 and day 7 streak cash');
+    check($engine->dailyStreakDayRefillsNerve(3) === true && $engine->dailyStreakDayRefillsNerve(1) === false, 'GameEngine dailyStreakDayRefillsNerve returns day 3 nerve refill');
+    check($engine->dailyStreakDayRefillsEnergy(5) === true && $engine->dailyStreakDayRefillsEnergy(1) === false, 'GameEngine dailyStreakDayRefillsEnergy returns day 5 energy refill');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

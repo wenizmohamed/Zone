@@ -1725,6 +1725,26 @@ function crimeRuleFieldKeys() {
   return Object.keys(crimeRuleFields);
 }
 
+function isBootBusy() {
+  return Boolean(state.bootBusy);
+}
+
+function isTerritoryBusy() {
+  return Boolean(state.territoryBusy);
+}
+
+function isTerritoryMapReady() {
+  return Boolean(state.territoryMapReady);
+}
+
+function selectedTerritoryId() {
+  return state.selectedTerritory ? String(state.selectedTerritory) : null;
+}
+
+function selectedCatalogCategory() {
+  return String(state.catalogCategory || 'items');
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1807,6 +1827,11 @@ if (typeof window !== 'undefined') {
     hasDraftConflict,
     hasUnsavedChanges,
     crimeRuleFieldKeys,
+    isBootBusy,
+    isTerritoryBusy,
+    isTerritoryMapReady,
+    selectedTerritoryId,
+    selectedCatalogCategory,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),
