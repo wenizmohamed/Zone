@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { CHARACTER_ART, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
+import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
 import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
@@ -128,6 +128,10 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.match(weapon, /id="asset-quality"/); assert.match(weapon, /assetLabel\(asset\?\.source/);
   assert.match(weapon, /qualityObserver\.disconnect\(\)/);
   assert.equal(CHARACTER_ART.quality, 'stylized-rigged');
+  assert.equal(supportedSurfaceNames().length, 13);
+  assert.equal(isSupportedSurfaceName('Suit'), true);
+  assert.equal(isSupportedSurfaceName('Swat_Black'), true);
+  assert.equal(isSupportedSurfaceName('UnknownSurface'), false);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

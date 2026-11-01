@@ -1828,4 +1828,31 @@ final class GameEngine
     {
         return (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout'] ?? []);
     }
+
+    public function playerCrimeXp(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['crimeXp'] ?? 0);
+    }
+
+    public function playerGymXp(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['gymXp'] ?? 0);
+    }
+
+    public function playerJobPoints(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['jobPts'] ?? 0);
+    }
+
+    public function playerOwnedPropertyCount(string $playerId = 'founder-player'): int
+    {
+        $owned = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['ownedProperties'] ?? []);
+        return count(array_filter($owned));
+    }
+
+    /** @return array<string, mixed> */
+    public function playerOnboardingSummary(string $playerId = 'founder-player'): array
+    {
+        return (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['onboarding'] ?? []);
+    }
 }

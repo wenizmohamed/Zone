@@ -1400,6 +1400,13 @@ try {
     check($engine->playerActivePropertyId('founder-player') !== '', 'GameEngine playerActivePropertyId returns active safehouse property ID');
     check($engine->playerActiveJobId('founder-player') !== '', 'GameEngine playerActiveJobId returns active job ID');
     check(array_key_exists('weaponMultiplier', $engine->playerLoadoutSummary('founder-player')) && array_key_exists('armorReduction', $engine->playerLoadoutSummary('founder-player')), 'GameEngine playerLoadoutSummary returns resolved weapon and armor stats');
+
+    // --- Wave 63 (zone-beta181): GameEngine playerCrimeXp, playerGymXp, playerJobPoints, playerOwnedPropertyCount & playerOnboardingSummary ---
+    check($engine->playerCrimeXp('founder-player') >= 0, 'GameEngine playerCrimeXp returns current crime XP');
+    check($engine->playerGymXp('founder-player') >= 0, 'GameEngine playerGymXp returns current gym XP');
+    check($engine->playerJobPoints('founder-player') >= 0, 'GameEngine playerJobPoints returns current job points');
+    check($engine->playerOwnedPropertyCount('founder-player') >= 1, 'GameEngine playerOwnedPropertyCount returns owned safehouse count');
+    check(array_key_exists('completed', $engine->playerOnboardingSummary('founder-player')) && array_key_exists('steps', $engine->playerOnboardingSummary('founder-player')), 'GameEngine playerOnboardingSummary returns onboarding mission status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

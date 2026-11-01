@@ -23,6 +23,14 @@ const SURFACES = {
   LightBlue: { color: 0x242e38, roughness: .94, sheen: .12, sheenColor: 0x6a7883 }
 };
 
+export function supportedSurfaceNames() {
+  return Object.keys(SURFACES);
+}
+
+export function isSupportedSurfaceName(name) {
+  return typeof name === 'string' && Object.prototype.hasOwnProperty.call(SURFACES, name);
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });
