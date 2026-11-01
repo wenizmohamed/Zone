@@ -59,6 +59,14 @@ export function requiredWardrobeClipCount() {
   return requiredWardrobeClips().length;
 }
 
+export function supportedSurfaceCount() {
+  return supportedSurfaceNames().length;
+}
+
+export function requiredWardrobeBoneCount() {
+  return requiredWardrobeBones().length;
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });

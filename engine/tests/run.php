@@ -2170,6 +2170,13 @@ try {
     check($engine->dailyStreakRefillsNerveForDay(3) === true && $engine->dailyStreakRefillsNerveForDay(7) === true && $engine->dailyStreakRefillsNerveForDay(1) === false, 'GameEngine dailyStreakRefillsNerveForDay validates nerve refill days');
     check($engine->dailyStreakRefillsEnergyForDay(5) === true && $engine->dailyStreakRefillsEnergyForDay(7) === true && $engine->dailyStreakRefillsEnergyForDay(2) === false, 'GameEngine dailyStreakRefillsEnergyForDay validates energy refill days');
     check($engine->dailyContractXpGrantAmount() === 200, 'GameEngine dailyContractXpGrantAmount returns 200');
+
+    // --- Wave 173 (zone-beta291): GameEngine levelingXpCoefficientValue, levelingNerveGrantPerLevel, levelingEnergyGrantPerLevel, levelingCashBonusPerLevelMultiplier & resourceRegenTickSecondsForBar ---
+    check($engine->levelingXpCoefficientValue() === 50, 'GameEngine levelingXpCoefficientValue returns 50');
+    check($engine->levelingNerveGrantPerLevel() === 1, 'GameEngine levelingNerveGrantPerLevel returns 1');
+    check($engine->levelingEnergyGrantPerLevel() === 3, 'GameEngine levelingEnergyGrantPerLevel returns 3');
+    check($engine->levelingCashBonusPerLevelMultiplier() === 250, 'GameEngine levelingCashBonusPerLevelMultiplier returns 250');
+    check($engine->resourceRegenTickSecondsForBar('life') === 60 && $engine->resourceRegenTickSecondsForBar('energy') === 180 && $engine->resourceRegenTickSecondsForBar('nerve') === 300 && $engine->resourceRegenTickSecondsForBar('unknown') === 0, 'GameEngine resourceRegenTickSecondsForBar returns bar regen interval');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

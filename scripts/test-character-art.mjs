@@ -4,11 +4,11 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, requiredWardrobeBones, isRequiredWardrobeBone, requiredWardrobeClips, isRequiredWardrobeClip, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
-import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey, requiredGripPoseBoneCount, defaultGripCenterArray } from '../dist/character-grip.js';
-import { prepareWeaponPose, supportedWeaponPoseProfiles, isSupportedWeaponPoseProfile, isMeleePoseProfile, isFirearmPoseProfile } from '../dist/character-poses.js';
+import { CHARACTER_ART, supportedSurfaceNames, supportedSurfaceCount, isSupportedSurfaceName, requiredWardrobeBones, requiredWardrobeBoneCount, isRequiredWardrobeBone, requiredWardrobeClips, requiredWardrobeClipCount, isRequiredWardrobeClip, defaultCharacterOutfit, characterHeadScale, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
+import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey, requiredGripPoseBoneCount, defaultGripCenterArray, defaultGripAxisArray } from '../dist/character-grip.js';
+import { prepareWeaponPose, supportedWeaponPoseProfiles, supportedWeaponPoseProfileCount, isSupportedWeaponPoseProfile, isMeleePoseProfile, isFirearmPoseProfile, isUnarmedPoseProfile } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader, supportedWeaponSourceKeys, isSupportedWeaponSourceKey } from '../dist/weapon-assets.js';
-import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId, clampArmorReduction } from '../dist/character-armor.mjs';
+import { createArmorController, supportedArmorRepresentations, supportedArmorRepresentationCount, isRepresentedArmorId, clampArmorReduction, maxArmorReduction } from '../dist/character-armor.mjs';
 
 async function wardrobe(name) {
   const bytes = readFileSync(new URL(`../assets/character/quaternius/${name}.glb`, import.meta.url));
@@ -166,6 +166,17 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.equal(isMeleePoseProfile('handgun'), false);
   assert.equal(isFirearmPoseProfile('longgun'), true);
   assert.equal(isFirearmPoseProfile('bat'), false);
+  assert.equal(supportedSurfaceCount(), 13);
+  assert.equal(requiredWardrobeBoneCount(), 8);
+  assert.equal(requiredWardrobeClipCount(), 7);
+  assert.equal(defaultCharacterOutfit(), 'suit');
+  assert.deepEqual(characterHeadScale(), [.90, .82, .90]);
+  assert.deepEqual(defaultGripAxisArray(), [-.98519729, .17142433, 0]);
+  assert.equal(supportedWeaponPoseProfileCount(), 5);
+  assert.equal(isUnarmedPoseProfile('unarmed'), true);
+  assert.equal(isUnarmedPoseProfile('bat'), false);
+  assert.equal(supportedArmorRepresentationCount(), 4);
+  assert.equal(maxArmorReduction(), .95);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

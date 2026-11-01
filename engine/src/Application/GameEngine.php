@@ -4818,4 +4818,29 @@ final class GameEngine
     {
         return 200;
     }
+
+    public function levelingXpCoefficientValue(): int
+    {
+        return 50;
+    }
+
+    public function levelingNerveGrantPerLevel(): int
+    {
+        return 1;
+    }
+
+    public function levelingEnergyGrantPerLevel(): int
+    {
+        return 3;
+    }
+
+    public function levelingCashBonusPerLevelMultiplier(): int
+    {
+        return 250;
+    }
+
+    public function resourceRegenTickSecondsForBar(string $bar): int
+    {
+        return ResourceService::regenIntervalsSeconds()[$bar] ?? 0;
+    }
 }
