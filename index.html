@@ -263,7 +263,7 @@
                 </span>
               </div>
               <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px">
-                <div class="zone-character-stage" style="position:relative;height:260px;background:var(--deep)">
+                <div class="zone-character-stage" style="position:relative;height:350px;background:var(--deep)">
                   <iframe id="zone-char-3d" data-character-src="dist/character3d.html?v=116" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
                   <div style="position:absolute;top:8px;inset-inline-start:8px;display:flex;flex-direction:column;gap:4px;pointer-events:none">
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
@@ -301,6 +301,11 @@
                     <div style="display:flex;gap:4px;flex-wrap:wrap">
                       <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
                         <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
+                      </sc-for>
+                    </div>
+                    <div data-char-stance-controls="1" style="display:flex;gap:4px;flex-wrap:wrap;padding-top:3px">
+                      <sc-for list="{{ geminiArsenal.stanceActions }}" as="sa" hint-placeholder-count="3">
+                        <button onClick="{{ sa.run }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ sa.label }}</button>
                       </sc-for>
                     </div>
                   </div>
@@ -345,6 +350,20 @@
                 <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
               </div>
             </sc-for>
+          </div>
+          <div data-day1-instant-ops="1" style="background:linear-gradient(90deg,rgba(163,217,0,.1),rgba(10,13,17,.88));border:1px solid #4d7a0c;border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong>
+              <span style="color:var(--gold);font-size:10.5px;font-weight:700">{{ geminiArsenal.instantOpsBadge }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+              <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="4">
+                <button class="zone-action-primary" onClick="{{ io.run }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:7px 10px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
+                  <span>{{ io.label }}</span>
+                  <small style="color:rgba(10,12,15,.84);font-size:9.5px;font-weight:700">{{ io.sub }}</small>
+                </button>
+              </sc-for>
+            </div>
           </div>
           <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1615,6 +1634,21 @@ class Component extends DCLogic {
     finally { this.worldClaimBusy = false; await this.loadWorld(true); }
   }
   charMsg(m) { const f = document.getElementById('zone-char-3d'); if (f && f.contentWindow) f.contentWindow.postMessage(m, window.location.origin); }
+  playTacticalSfx(kind = 'click') {
+    try {
+      const Ctx = typeof window !== 'undefined' && (window.AudioContext || window.webkitAudioContext);
+      if (!Ctx) return;
+      this._audioCtx ||= new Ctx();
+      if (this._audioCtx.state === 'suspended') this._audioCtx.resume().catch(() => {});
+      const ctx = this._audioCtx, now = ctx.currentTime;
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      if (kind === 'rack') { osc.type = 'triangle'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(420, now + 0.08); gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09); osc.start(now); osc.stop(now + 0.095); }
+      else if (kind === 'crime') { osc.type = 'sine'; osc.frequency.setValueAtTime(520, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.14); gain.gain.setValueAtTime(0.09, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16); osc.start(now); osc.stop(now + 0.17); }
+      else if (kind === 'gym') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.exponentialRampToValueAtTime(360, now + 0.12); gain.gain.setValueAtTime(0.06, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13); osc.start(now); osc.stop(now + 0.14); }
+      else { osc.type = 'sine'; osc.frequency.setValueAtTime(340, now); osc.frequency.exponentialRampToValueAtTime(540, now + 0.07); gain.gain.setValueAtTime(0.06, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08); osc.start(now); osc.stop(now + 0.085); }
+    } catch (_) {}
+  }
   pushCombatScene() {
     if (this.state.screen !== 'attack') { this._combatSceneSig = ''; return; }
     const frame = document.getElementById('zone-combat-frame'); if (!frame?.contentWindow) { this._combatSceneSig = ''; return; }
@@ -2970,8 +3004,112 @@ class Component extends DCLogic {
         active: currentHolodeck === w.id,
         bg: currentHolodeck === w.id ? 'var(--activebg)' : 'var(--btn)',
         fg: currentHolodeck === w.id ? 'var(--activefg)' : 'var(--t3)',
-        select: () => this.setState({ holodeckWeapon: w.id }, () => this.pushChar())
+        select: () => { this.playTacticalSfx('rack'); this.setState({ holodeckWeapon: w.id }, () => this.pushChar()); }
       })),
+      stanceActions: [
+        {
+          label: lang === 'ar' ? '⚡ حركة هجوم وارتداد' : '⚡ 3D Attack & Recoil',
+          run: () => {
+            this.playTacticalSfx('rack');
+            this.charMsg({ combat: { side: 'you', hit: true } });
+            this.setState({ geminiTrace: `[3D RIG KINEMATICS · 24 CLIPS]\n> Triggered Combat Attack & Recoil Impulse on ${activeOutfitKey === 'tactical' ? 'Swat.glb' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb'} (${(holodeckCatalog.find(w => w.id === currentHolodeck) || holodeckCatalog[0]).label})` });
+          }
+        },
+        {
+          label: lang === 'ar' ? '🛡️ وضع التصويب التكتيكي' : '🛡️ Tactical Aim Stance',
+          run: () => {
+            this.playTacticalSfx('rack');
+            const nextWep = currentHolodeck || 'bullpup_1';
+            this.setState({ holodeckWeapon: nextWep }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: false } });
+            });
+          }
+        },
+        {
+          label: lang === 'ar' ? '💥 اختبار صد الدروع' : '💥 Kevlar Impact Test',
+          run: () => {
+            this.playTacticalSfx('gym');
+            this.charMsg({ combat: { side: 'opp', hit: true } });
+            this.setState({ geminiTrace: `[3D ANATOMICAL HITBOX TEST · KEVLAR MITIGATION ${baseArmorRed}%]\n> Simulated incoming ballistic impact on Thorax Kevlar plate (${baseArmorRed}% absorbed)` });
+          }
+        }
+      ],
+      instantOpsTitle: lang === 'ar' ? '⚡ عمليات اليوم الأول الفورية (تنفيذ مباشر بضغطة واحدة من الرئيسية)' : '⚡ DAY-1 INSTANT OPERATIONS DECK (1-CLICK LIVE SERVER EXECUTION ON HOME)',
+      instantOpsBadge: lang === 'ar' ? 'صفر نقرات إضافية · خادم مباشر' : 'ZERO-FRICTION · AUTHORITATIVE API',
+      instantOps: [
+        {
+          label: lang === 'ar' ? '⚡ نفّذ أفضل جريمة فوراً' : '⚡ 1-Click Commit Best Crime',
+          sub: `${bestCrimeCandidate.name} · ${bestCrimeCandidate.evPerNerve || '$0/nerve'}`,
+          run: () => {
+            this.playTacticalSfx('crime');
+            const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
+            const rawBest = rawCrimes.find(c => !this.crimeReason(c)) || rawCrimes[0];
+            if (!rawBest) return this.go('crimes');
+            const blocked = this.crimeReason(rawBest);
+            if (blocked) { this.toast(blocked, true); return; }
+            this.setState({
+              crimeRequestError: null,
+              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/crimes/${rawBest.id}/attempt]\n> Committing "${this.crimeName(rawBest, t)}" directly from Home Command Deck...`
+            });
+            return this.resolve('cr' + rawBest.id, 320, async tt => {
+              await this.commit(rawBest, tt);
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+          }
+        },
+        {
+          label: lang === 'ar' ? '🏋️ درّب أضعف صفة قتالية الآن' : '🏋️ 1-Click Train Weakest Stat',
+          sub: (() => {
+            const w = [['str', p.stats.str], ['def', p.stats.def], ['spd', p.stats.spd], ['dex', p.stats.dex]].sort((a, b) => a[1] - b[1])[0][0];
+            return `${w.toUpperCase()} (+${this.gymGainRange(w)}) · ${this.gymEnergyCost()} ${t.energy}`;
+          })(),
+          run: () => {
+            this.playTacticalSfx('gym');
+            const weakest = [['str', p.stats.str], ['def', p.stats.def], ['spd', p.stats.spd], ['dex', p.stats.dex]].sort((a, b) => a[1] - b[1])[0][0];
+            if (this.cur('energy') < this.gymEnergyCost()) return this.toast(t.toast.noEnergy, true);
+            this.setState({
+              gymStation: weakest,
+              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/gym/train]\n> Training weakest stat "${weakest.toUpperCase()}" (${view.gymStudio.happyMultiplier} Happy Boost)...`
+            });
+            return this.resolve('tr' + weakest, 320, async tt => {
+              await this.train(weakest, tt);
+              this.charMsg({ combat: { side: 'you', hit: false } });
+            });
+          }
+        },
+        {
+          label: lang === 'ar' ? '💼 نفّذ وردية عمل فورية' : '💼 1-Click Work Syndicate Shift',
+          sub: `${t.jobNames[p.job]} · +${this.jobPayRange()}`,
+          run: () => {
+            this.playTacticalSfx('crime');
+            if (this.cur('energy') < this.jobEnergyCost()) return this.toast(t.toast.noEnergy, true);
+            this.setState({
+              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/jobs/work]\n> Executing shift for "${t.jobNames[p.job]}" (+${this.jobPayRange()})...`
+            });
+            return this.resolve('work', 320, tt => this.work(tt));
+          }
+        },
+        {
+          label: lang === 'ar' ? '🔫 سلّح وجهّز بندقية الهولوديك' : '🔫 1-Click Arm & Pose Bullpup L85',
+          sub: lang === 'ar' ? 'تجهيز أفضل سلاح مملوك + عرض L85' : 'Equip Best Owned Weapon + 3D L85 Pose',
+          run: () => {
+            this.playTacticalSfx('rack');
+            const ownedWeapons = Object.keys(p.inv || {}).filter(id => p.inv[id] > 0 && CAT[id]?.type === 'weapon' && !CAT[id].retired).sort((a, b) => Number(CAT[b].mult || 0) - Number(CAT[a].mult || 0));
+            const bestOwned = ownedWeapons[0];
+            this.setState({
+              holodeckWeapon: 'bullpup_1',
+              geminiTrace: `[3D ARMORY HOLODECK + LOADOUT SYNC]\n> 3D Stage armed with Bullpup L85 (l85-detail111.glb)${bestOwned ? ' · Syncing owned weapon: ' + (t.items[bestOwned] || bestOwned) : ''}`
+            }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+            if (bestOwned && p.equip !== bestOwned && !this.gameplayDisabled() && !this.blocked()) {
+              return this.act(() => this.gameplayAction('item.equip', bestOwned));
+            }
+          }
+        }
+      ],
       thinkingLabel: lang === 'ar' ? 'عمق تفكير Gemini 3.7:' : 'Gemini 3.7 Thinking:',
       thinkingLevels: ['LOW', 'MEDIUM', 'HIGH'].map(lvl => ({
         label: lvl,
