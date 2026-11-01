@@ -2513,6 +2513,13 @@ try {
     check($engine->eventBusRecentEventsDefaultLimit() === 10, 'GameEngine eventBusRecentEventsDefaultLimit returns 10');
     check($engine->eventBusRecentEventsMaxLimit() === 50, 'GameEngine eventBusRecentEventsMaxLimit returns 50');
     check($engine->databasePgAdvisoryLockId() === 90120261005, 'GameEngine databasePgAdvisoryLockId returns 90120261005');
+
+    // --- Wave 222 (zone-beta340): GameEngine databaseTerritoryFoundationGridColumns, databaseTerritoryFoundationGridRows, databaseTerritoryFoundationTotalBlocks, databaseTerritoryFoundationCenterLatitude & databaseTerritoryFoundationCenterLongitude ---
+    check($engine->databaseTerritoryFoundationGridColumns() === 12, 'GameEngine databaseTerritoryFoundationGridColumns returns 12');
+    check($engine->databaseTerritoryFoundationGridRows() === 10, 'GameEngine databaseTerritoryFoundationGridRows returns 10');
+    check($engine->databaseTerritoryFoundationTotalBlocks() === 120, 'GameEngine databaseTerritoryFoundationTotalBlocks returns 120');
+    check(abs($engine->databaseTerritoryFoundationCenterLatitude() - 40.7562) < 0.0001, 'GameEngine databaseTerritoryFoundationCenterLatitude returns 40.7562');
+    check(abs($engine->databaseTerritoryFoundationCenterLongitude() - (-73.9812)) < 0.0001, 'GameEngine databaseTerritoryFoundationCenterLongitude returns -73.9812');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

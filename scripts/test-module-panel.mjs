@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createRequire } from 'node:module';
 
-const { create, endpoints, sections, isSupportedSection, supportedContractMetrics, contractScreenForMetric, supportedLanguages, isSupportedLanguage, supportedBattleStats, isSupportedBattleStat, dailyClaimEndpointPath, loginClaimEndpointPath, streakMaxRewardMultiplierDays, streakRewardCashPerDay, supportedClaimKinds } = createRequire(import.meta.url)('../assets/module-panel.js');
+const { create, endpoints, sections, isSupportedSection, supportedContractMetrics, contractScreenForMetric, supportedLanguages, isSupportedLanguage, supportedBattleStats, isSupportedBattleStat, dailyClaimEndpointPath, loginClaimEndpointPath, streakMaxRewardMultiplierDays, streakRewardCashPerDay, supportedClaimKinds, isSupportedClaimKind } = createRequire(import.meta.url)('../assets/module-panel.js');
 const paths = ['/api/v1/player', '/api/v1/daily/contract', '/api/v1/achievements', '/api/v1/notifications'];
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const response = (payload, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => payload });
@@ -273,4 +273,11 @@ test('disposing during a claim never starts follow-up GETs or callbacks', async 
   assert.equal(streakMaxRewardMultiplierDays(), 7);
   assert.equal(streakRewardCashPerDay(), 500);
   assert.deepEqual(supportedClaimKinds(), ['daily', 'login']);
+  assert.equal(isSupportedClaimKind('daily'), true);
+  assert.equal(isSupportedClaimKind('invalid'), false);
+  assert.equal(panel.achievementCount(), 0);
+  assert.equal(panel.notificationCount(), 0);
+  assert.equal(panel.errorCount(), 0);
+  assert.equal(panel.hasLastReward(), false);
+  assert.equal(panel.generationCount() >= 2, true);
 });

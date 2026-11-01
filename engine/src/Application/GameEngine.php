@@ -6088,4 +6088,29 @@ final class GameEngine
     {
         return 90120261005;
     }
+
+    public function databaseTerritoryFoundationGridColumns(): int
+    {
+        return 12;
+    }
+
+    public function databaseTerritoryFoundationGridRows(): int
+    {
+        return 10;
+    }
+
+    public function databaseTerritoryFoundationTotalBlocks(): int
+    {
+        return 120;
+    }
+
+    public function databaseTerritoryFoundationCenterLatitude(): float
+    {
+        return 40.7562;
+    }
+
+    public function databaseTerritoryFoundationCenterLongitude(): float
+    {
+        return -73.9812;
+    }
 }
