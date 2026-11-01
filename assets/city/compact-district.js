@@ -327,6 +327,9 @@
       mapMediaLoading=Promise.resolve(previous).catch(()=>{}).then(()=>{if(disposed||signature!==mapMediaSignature)return;return import(mapMediaUrl);}).then(module=>{if(!module||disposed||signature!==mapMediaSignature)return;return module.createMapMedia(map,bindings,()=>!disposed&&signature===mapMediaSignature);}).then(value=>{if(!value)return;if(disposed||signature!==mapMediaSignature)value.dispose();else{mapMedia=value;value.setVisible(visible);}}).catch(error=>{if(!disposed&&signature===mapMediaSignature&&typeof document==='object'&&document.body)document.body.dataset.zoneMapMedia=JSON.stringify({status:'error',error:String(error.message||error),representation:'matched-service-rooftop-attachment'});});
     }
     return {
+      isDisposed(){return disposed;},
+      isVisible(){return visible;},
+      destinationCount(){return pins.length;},
       diagnostics(){
         return {
           disposed,

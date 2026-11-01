@@ -316,8 +316,13 @@ test('controller diagnostics report lifecycle, destination count, and sub-contro
   assert.deepEqual(ctrl.diagnostics(),{disposed:false,visible:true,destinationCount:0,landmarksStatus:'idle',surfacesStatus:'idle',buildingsStatus:'idle',mapMediaStatus:'idle'});
   ctrl.setDestinations([{id:'bank',_lngLat:[-73.98,40.69]},{id:'gym',_lngLat:[-73.99,40.70]}]);
   assert.equal(ctrl.diagnostics().destinationCount,2);
+  assert.equal(ctrl.destinationCount(),2);
+  assert.equal(ctrl.isVisible(),true);
+  assert.equal(ctrl.isDisposed(),false);
   ctrl.setVisible(false);
   assert.equal(ctrl.diagnostics().visible,false);
+  assert.equal(ctrl.isVisible(),false);
   ctrl.dispose();
   assert.equal(ctrl.diagnostics().disposed,true);
+  assert.equal(ctrl.isDisposed(),true);
 });

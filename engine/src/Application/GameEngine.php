@@ -3053,4 +3053,29 @@ final class GameEngine
     {
         return $this->installedThemeCount() > 0;
     }
+
+    public function hasInstalledModules(): bool
+    {
+        return $this->installedModuleCount() > 0;
+    }
+
+    public function hasWorldTicks(): bool
+    {
+        return $this->worldTickCount() > 0;
+    }
+
+    public function hasOwnerPlaytestActions(): bool
+    {
+        return $this->ownerPlaytestActionCount() > 0;
+    }
+
+    public function hasDatabaseTables(): bool
+    {
+        return $this->tableCount() > 0;
+    }
+
+    public function hasCities(): bool
+    {
+        return $this->cityCount() > 0;
+    }
 }

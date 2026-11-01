@@ -1715,6 +1715,13 @@ try {
     check(is_bool($engine->hasDisabledAdminCrimes()), 'GameEngine hasDisabledAdminCrimes returns boolean disabled admin crimes status');
     check($engine->hasAdminCrimes() === true, 'GameEngine hasAdminCrimes returns boolean admin crimes status');
     check($engine->hasInstalledThemes() === true, 'GameEngine hasInstalledThemes returns boolean installed themes status');
+
+    // --- Wave 108 (zone-beta226): GameEngine hasInstalledModules, hasWorldTicks, hasOwnerPlaytestActions, hasDatabaseTables & hasCities ---
+    check($engine->hasInstalledModules() === true, 'GameEngine hasInstalledModules returns boolean installed modules status');
+    check(is_bool($engine->hasWorldTicks()), 'GameEngine hasWorldTicks returns boolean world ticks status');
+    check($engine->hasOwnerPlaytestActions() === true, 'GameEngine hasOwnerPlaytestActions returns boolean owner playtest actions status');
+    check($engine->hasDatabaseTables() === true, 'GameEngine hasDatabaseTables returns boolean database tables status');
+    check($engine->hasCities() === true, 'GameEngine hasCities returns boolean cities status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
