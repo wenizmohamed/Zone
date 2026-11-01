@@ -158,6 +158,8 @@ test('closed ring rotation and reversed winding cannot skip the authored contain
     }
   }
   assert.equal(buildings.serviceCount(), 17);
+  assert.equal(buildings.serviceIds().length, 17);
+  assert.equal(buildings.crowdingTargetMeters(), 32);
   assert.equal(buildings.isSupportedServiceId('bank'), true);
   assert.equal(buildings.isSupportedServiceId('unknown-service'), false);
   const summary = buildings.summarizeAssociations(buildings.associate([source], [roof('containing', 0, 0, 190)]));

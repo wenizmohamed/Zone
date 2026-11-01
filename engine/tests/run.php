@@ -1491,6 +1491,13 @@ try {
     check($engine->publishedMedicalItemCount() >= 2, 'GameEngine publishedMedicalItemCount returns published medical item catalog count');
     check($engine->publishedBoosterItemCount() >= 1, 'GameEngine publishedBoosterItemCount returns published booster item catalog count');
     check($engine->publishedCrimeCount() >= 1, 'GameEngine publishedCrimeCount returns published crime catalog count');
+
+    // --- Wave 76 (zone-beta194): GameEngine adminCrimeCount, disabledAdminCrimeCount, disabledModuleCount, configuredActionCooldownSeconds & configuredCooldownActionCount ---
+    check($engine->adminCrimeCount() >= 1, 'GameEngine adminCrimeCount returns total admin crime catalog count');
+    check($engine->disabledAdminCrimeCount() >= 0, 'GameEngine disabledAdminCrimeCount returns disabled admin crime count');
+    check($engine->disabledModuleCount() >= 0, 'GameEngine disabledModuleCount returns disabled installed module count');
+    check($engine->configuredActionCooldownSeconds('crime') >= 0, 'GameEngine configuredActionCooldownSeconds returns configured action cooldown floor');
+    check($engine->configuredCooldownActionCount() >= 9, 'GameEngine configuredCooldownActionCount returns configured cooldown action count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

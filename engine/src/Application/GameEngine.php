@@ -2183,4 +2183,35 @@ final class GameEngine
     {
         return count($this->crimes());
     }
+
+    public function adminCrimeCount(): int
+    {
+        return count($this->adminCrimes());
+    }
+
+    public function disabledAdminCrimeCount(): int
+    {
+        return count(array_filter(
+            $this->adminCrimes(),
+            static fn (array $crime): bool => !(bool) ($crime['enabled'] ?? false),
+        ));
+    }
+
+    public function disabledModuleCount(): int
+    {
+        return count(array_filter(
+            $this->modules->all(),
+            static fn (array $module): bool => (bool) ($module['installed'] ?? false) && !(bool) ($module['enabled'] ?? false),
+        ));
+    }
+
+    public function configuredActionCooldownSeconds(string $action): int
+    {
+        return (int) ($this->cooldownSeconds[$action] ?? 0);
+    }
+
+    public function configuredCooldownActionCount(): int
+    {
+        return count($this->cooldownSeconds);
+    }
 }

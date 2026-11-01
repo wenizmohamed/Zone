@@ -177,6 +177,8 @@
     };
   }
   function serviceCount(){return SERVICES.length;}
+  function serviceIds(){return [...SERVICES];}
+  function crowdingTargetMeters(){return 32;}
   function isSupportedServiceId(id){return SERVICES.includes(String(id));}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,isSupportedServiceId,inside,roofAnchor,meters};
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,isSupportedServiceId,inside,roofAnchor,meters};
 });
