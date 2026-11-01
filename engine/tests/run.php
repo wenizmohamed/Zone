@@ -2275,6 +2275,13 @@ try {
     check($engine->isConfiguredCooldownAction('crime') === true && $engine->isConfiguredCooldownAction('unknown') === false, 'GameEngine isConfiguredCooldownAction validates action');
     check($engine->configuredCooldownSecondsForAction('attack') === 8, 'GameEngine configuredCooldownSecondsForAction returns 8 for attack');
     check($engine->attackBaseEnergyCost() === 25, 'GameEngine attackBaseEnergyCost returns 25');
+
+    // --- Wave 188 (zone-beta306): GameEngine attackNpcBaseDefense, attackNpcDefensePerLevel, attackMinWinChanceBasisPoints, attackMaxWinChanceBasisPoints & ledgerQueryMaxLimit ---
+    check($engine->attackNpcBaseDefense() === 150, 'GameEngine attackNpcBaseDefense returns 150');
+    check($engine->attackNpcDefensePerLevel() === 45, 'GameEngine attackNpcDefensePerLevel returns 45');
+    check($engine->attackMinWinChanceBasisPoints() === 500, 'GameEngine attackMinWinChanceBasisPoints returns 500');
+    check($engine->attackMaxWinChanceBasisPoints() === 10000, 'GameEngine attackMaxWinChanceBasisPoints returns 10000');
+    check($engine->ledgerQueryMaxLimit() === 100, 'GameEngine ledgerQueryMaxLimit returns 100');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

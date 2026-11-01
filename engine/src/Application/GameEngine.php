@@ -5211,4 +5211,29 @@ final class GameEngine
     {
         return 25;
     }
+
+    public function attackNpcBaseDefense(): int
+    {
+        return 150;
+    }
+
+    public function attackNpcDefensePerLevel(): int
+    {
+        return 45;
+    }
+
+    public function attackMinWinChanceBasisPoints(): int
+    {
+        return 500;
+    }
+
+    public function attackMaxWinChanceBasisPoints(): int
+    {
+        return 10000;
+    }
+
+    public function ledgerQueryMaxLimit(): int
+    {
+        return 100;
+    }
 }

@@ -68,4 +68,10 @@ test('status names render through textContent; account UI has touch targets and 
   assert.equal(p.window.ZoneAccount.isSupportedAction('unknown'), false);
   assert.equal(p.window.ZoneAccount.isClaimed(), true);
   assert.equal(p.window.ZoneAccount.isGuest(), false);
+  assert.deepEqual(Array.from(p.window.ZoneAccount.supportedLanguages()), ['en', 'ar']);
+  assert.equal(p.window.ZoneAccount.isSupportedLanguage('ar'), true);
+  assert.equal(p.window.ZoneAccount.isSupportedLanguage('fr'), false);
+  assert.equal(p.window.ZoneAccount.currentLanguage(), 'en');
+  assert.equal(p.window.ZoneAccount.accountStatusEndpointPath(), '/api/v1/auth/account');
+  assert.equal(p.window.ZoneAccount.isReady(), true);
 });

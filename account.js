@@ -100,6 +100,11 @@
     isSupportedAction: action => ['claim', 'login', 'recover', 'logout'].includes(String(action ?? '')),
     isClaimed: () => Boolean(identity?.claimed),
     isGuest: () => Boolean(identity?.playerId && !identity?.claimed),
+    supportedLanguages: () => Object.keys(copy),
+    isSupportedLanguage: language => Object.hasOwn(copy, String(language ?? '')),
+    currentLanguage: () => lang,
+    accountStatusEndpointPath: () => '/api/v1/auth/account',
+    isReady: () => Boolean(ready && !busy),
     diagnostics: () => ({
       lang,
       ready,
