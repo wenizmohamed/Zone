@@ -8,10 +8,14 @@ export function isRepresentedArmorId(armorId) {
   return typeof armorId === 'string' && ['armor', 'vest'].includes(armorId);
 }
 
+export function clampArmorReduction(reduction) {
+  const n = Number(reduction);
+  return Number.isFinite(n) ? Math.max(0, Math.min(.95, n)) : 0;
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
-  const reduction = Number(packet.armorReduction);
-  return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id && Number.isFinite(reduction) ? Math.max(0,Math.min(.95,reduction)) : 0,
+  return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id ? clampArmorReduction(packet.armorReduction) : 0,
     representation:id && ['armor','vest'].includes(id) ? 'authored-tactical-vest' : id ? 'no-worn-model' : 'none', itemExact:false };
 }
 
@@ -97,5 +101,5 @@ export function createArmorController({THREE,loadSource,publish=()=>{},queueFram
   function diagnostics() {
     return { disposed, generation, hasActiveVest: !!active, latestReceipt: latestReceipt ? { ...latestReceipt } : null, lastDetails: { ...lastDetails } };
   }
-  return {update,diagnostics,dispose(){disposed=true;++generation;clear();}};
+  return {update,isDisposed:()=>disposed,hasActiveVest:()=>!!active,diagnostics,dispose(){disposed=true;++generation;clear();}};
 }

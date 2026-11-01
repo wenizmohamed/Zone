@@ -8,7 +8,7 @@ import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateC
 import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
-import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId } from '../dist/character-armor.mjs';
+import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId, clampArmorReduction } from '../dist/character-armor.mjs';
 
 async function wardrobe(name) {
   const bytes = readFileSync(new URL(`../assets/character/quaternius/${name}.glb`, import.meta.url));
@@ -135,6 +135,13 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.deepEqual(supportedArmorRepresentations(), ['authored-tactical-vest', 'existing-tactical-costume', 'no-worn-model', 'none']);
   assert.equal(isRepresentedArmorId('vest'), true);
   assert.equal(isRepresentedArmorId('helmet'), false);
+  assert.equal(clampArmorReduction(1.5), .95);
+  assert.equal(clampArmorReduction(-.2), 0);
+  const ctrl = createArmorController({ THREE, loadSource: async () => ({}) });
+  assert.equal(ctrl.isDisposed(), false);
+  assert.equal(ctrl.hasActiveVest(), false);
+  ctrl.dispose();
+  assert.equal(ctrl.isDisposed(), true);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

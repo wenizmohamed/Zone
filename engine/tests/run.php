@@ -1673,6 +1673,13 @@ try {
     check(is_bool($engine->playerHasMarketBuys()), 'GameEngine playerHasMarketBuys returns boolean market buys status');
     check(is_bool($engine->playerHasTotalCareerActions()), 'GameEngine playerHasTotalCareerActions returns boolean total career actions status');
     check(is_bool($engine->playerHasLoginStreak()), 'GameEngine playerHasLoginStreak returns boolean login streak status');
+
+    // --- Wave 102 (zone-beta220): GameEngine hasActiveFamilyOperations, hasSoldMarketListings, hasActiveEncounters, hasArrivedTravels & hasMaterialLootAwarded ---
+    check(is_bool($engine->hasActiveFamilyOperations()), 'GameEngine hasActiveFamilyOperations returns boolean active family operations status');
+    check(is_bool($engine->hasSoldMarketListings()), 'GameEngine hasSoldMarketListings returns boolean sold market listings status');
+    check(is_bool($engine->hasActiveEncounters()), 'GameEngine hasActiveEncounters returns boolean active encounters status');
+    check(is_bool($engine->hasArrivedTravels()), 'GameEngine hasArrivedTravels returns boolean arrived travels status');
+    check(is_bool($engine->hasMaterialLootAwarded()), 'GameEngine hasMaterialLootAwarded returns boolean material loot awarded status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -2903,4 +2903,29 @@ final class GameEngine
     {
         return $this->playerLoginStreak($playerId) > 0;
     }
+
+    public function hasActiveFamilyOperations(): bool
+    {
+        return $this->activeFamilyOperationCount() > 0;
+    }
+
+    public function hasSoldMarketListings(): bool
+    {
+        return $this->soldMarketListingCount() > 0;
+    }
+
+    public function hasActiveEncounters(?string $playerId = null): bool
+    {
+        return $this->activeEncounterCount($playerId) > 0;
+    }
+
+    public function hasArrivedTravels(): bool
+    {
+        return $this->arrivedTravelCount() > 0;
+    }
+
+    public function hasMaterialLootAwarded(?string $source = null): bool
+    {
+        return $this->totalMaterialLootAwardedCount($source) > 0;
+    }
 }
