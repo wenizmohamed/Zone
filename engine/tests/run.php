@@ -2282,6 +2282,13 @@ try {
     check($engine->attackMinWinChanceBasisPoints() === 500, 'GameEngine attackMinWinChanceBasisPoints returns 500');
     check($engine->attackMaxWinChanceBasisPoints() === 10000, 'GameEngine attackMaxWinChanceBasisPoints returns 10000');
     check($engine->ledgerQueryMaxLimit() === 100, 'GameEngine ledgerQueryMaxLimit returns 100');
+
+    // --- Wave 189 (zone-beta307): GameEngine attackWinCashMinBase, attackWinCashMinPerLevel, attackWinCashMaxBase, attackWinCashMaxPerLevel & eventLogQueryMaxLimit ---
+    check($engine->attackWinCashMinBase() === 300, 'GameEngine attackWinCashMinBase returns 300');
+    check($engine->attackWinCashMinPerLevel() === 40, 'GameEngine attackWinCashMinPerLevel returns 40');
+    check($engine->attackWinCashMaxBase() === 800, 'GameEngine attackWinCashMaxBase returns 800');
+    check($engine->attackWinCashMaxPerLevel() === 90, 'GameEngine attackWinCashMaxPerLevel returns 90');
+    check($engine->eventLogQueryMaxLimit() === 100, 'GameEngine eventLogQueryMaxLimit returns 100');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

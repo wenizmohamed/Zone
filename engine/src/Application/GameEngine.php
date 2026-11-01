@@ -5236,4 +5236,29 @@ final class GameEngine
     {
         return 100;
     }
+
+    public function attackWinCashMinBase(): int
+    {
+        return 300;
+    }
+
+    public function attackWinCashMinPerLevel(): int
+    {
+        return 40;
+    }
+
+    public function attackWinCashMaxBase(): int
+    {
+        return 800;
+    }
+
+    public function attackWinCashMaxPerLevel(): int
+    {
+        return 90;
+    }
+
+    public function eventLogQueryMaxLimit(): int
+    {
+        return 100;
+    }
 }

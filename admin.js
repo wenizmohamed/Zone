@@ -1745,6 +1745,26 @@ function selectedCatalogCategory() {
   return String(state.catalogCategory || 'items');
 }
 
+function sectionPreviewViews() {
+  return Object.keys(previewScreens);
+}
+
+function isSectionPreviewView(view) {
+  return Object.hasOwn(previewScreens, String(view ?? ''));
+}
+
+function sectionPreviewScreenForView(view) {
+  return previewScreens[String(view ?? '')] || null;
+}
+
+function draftEditRevisionCount() {
+  return Number(state.draftEditRevision || 0);
+}
+
+function adminLanguageStorageKey() {
+  return 'zone.admin.language';
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1832,6 +1852,11 @@ if (typeof window !== 'undefined') {
     isTerritoryMapReady,
     selectedTerritoryId,
     selectedCatalogCategory,
+    sectionPreviewViews,
+    isSectionPreviewView,
+    sectionPreviewScreenForView,
+    draftEditRevisionCount,
+    adminLanguageStorageKey,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),
