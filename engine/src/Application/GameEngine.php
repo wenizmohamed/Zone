@@ -2240,4 +2240,34 @@ final class GameEngine
         $netWorth = $this->playerNetWorth($playerId);
         return $netWorth > 0 ? round($this->playerBankBalance($playerId) / $netWorth * 100, 2) : 0.0;
     }
+
+    public function playerEnergyPct(string $playerId = 'founder-player'): float
+    {
+        $max = $this->playerMaxEnergy($playerId);
+        return $max > 0 ? round($this->playerEnergy($playerId) / $max * 100, 2) : 0.0;
+    }
+
+    public function playerNervePct(string $playerId = 'founder-player'): float
+    {
+        $max = $this->playerMaxNerve($playerId);
+        return $max > 0 ? round($this->playerNerve($playerId) / $max * 100, 2) : 0.0;
+    }
+
+    public function playerHappyPct(string $playerId = 'founder-player'): float
+    {
+        $max = $this->playerMaxHappy($playerId);
+        return $max > 0 ? round($this->playerHappy($playerId) / $max * 100, 2) : 0.0;
+    }
+
+    public function playerLifePct(string $playerId = 'founder-player'): float
+    {
+        $max = $this->playerMaxLife($playerId);
+        return $max > 0 ? round($this->playerLife($playerId) / $max * 100, 2) : 0.0;
+    }
+
+    public function playerXpToNextLevel(string $playerId = 'founder-player'): int
+    {
+        $level = $this->playerLevel($playerId);
+        return max(0, $this->xpForLevel($level + 1) - $this->playerXp($playerId));
+    }
 }

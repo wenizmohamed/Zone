@@ -137,6 +137,8 @@ test('start is explicit, cookie-authenticated and broadcasts labeled server stat
   assert.equal(f.api.diagnostics().active, true);
   assert.equal(f.api.diagnostics().version, 1);
   assert.equal(f.api.diagnostics().capabilityCount, 5);
+  assert.equal(f.api.supportedReadRoutes().length, 8);
+  assert.equal(f.api.supportedWriteRoutes().length, 10);
   assert.equal(f.calls[0].options.credentials, 'same-origin');
   assert.equal(f.calls[0].body.idempotencyKey, 'start-owner-key-0001');
   assert.equal(f.events.at(-1).type, 'zone:owner-playtest');

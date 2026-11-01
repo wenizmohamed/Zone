@@ -1505,6 +1505,13 @@ try {
     check($engine->playerMissingHappy('founder-player') >= 0, 'GameEngine playerMissingHappy returns missing happy');
     check($engine->playerMissingLifePoints('founder-player') >= 0, 'GameEngine playerMissingLifePoints returns missing life');
     check($engine->playerBankSharePct('founder-player') >= 0.0 && $engine->playerBankSharePct('founder-player') <= 100.0, 'GameEngine playerBankSharePct returns bank share percentage');
+
+    // --- Wave 78 (zone-beta196): GameEngine playerEnergyPct, playerNervePct, playerHappyPct, playerLifePct & playerXpToNextLevel ---
+    check($engine->playerEnergyPct('founder-player') >= 0.0 && $engine->playerEnergyPct('founder-player') <= 100.0, 'GameEngine playerEnergyPct returns energy percentage');
+    check($engine->playerNervePct('founder-player') >= 0.0 && $engine->playerNervePct('founder-player') <= 100.0, 'GameEngine playerNervePct returns nerve percentage');
+    check($engine->playerHappyPct('founder-player') >= 0.0 && $engine->playerHappyPct('founder-player') <= 100.0, 'GameEngine playerHappyPct returns happy percentage');
+    check($engine->playerLifePct('founder-player') >= 0.0 && $engine->playerLifePct('founder-player') <= 100.0, 'GameEngine playerLifePct returns life percentage');
+    check($engine->playerXpToNextLevel('founder-player') >= 0, 'GameEngine playerXpToNextLevel returns XP remaining to next level');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

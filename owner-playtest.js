@@ -268,6 +268,8 @@
     probe, refresh, recover, start, stop, action, route,
     snapshot: () => selected ? current() : null, available: () => available, active: () => selected,
     expired: () => Boolean(blocked?.expired),
+    supportedReadRoutes: () => Object.keys(reads),
+    supportedWriteRoutes: () => Object.keys(writes),
     diagnostics: () => ({
       preview,
       available,
