@@ -5136,4 +5136,29 @@ final class GameEngine
     {
         return (bool) ($this->database->health()['inTransaction'] ?? false);
     }
+
+    public function adminSessionLifetimeSeconds(): int
+    {
+        return 43200;
+    }
+
+    public function browserSessionCreationWindowSeconds(): int
+    {
+        return 3600;
+    }
+
+    public function browserSessionStartingGrantCash(): int
+    {
+        return 2500;
+    }
+
+    public function browserSessionStartingHappy(): int
+    {
+        return 100;
+    }
+
+    public function browserSessionMaxCreationPerHour(): int
+    {
+        return 10;
+    }
 }

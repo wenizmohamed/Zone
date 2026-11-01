@@ -2254,6 +2254,13 @@ try {
     check($engine->routerMaxPathDecodePasses() === 5, 'GameEngine routerMaxPathDecodePasses returns 5');
     check($engine->databaseTableCount() > 10, 'GameEngine databaseTableCount returns table count');
     check($engine->databaseInTransaction() === false, 'GameEngine databaseInTransaction returns false outside transaction');
+
+    // --- Wave 185 (zone-beta303): GameEngine adminSessionLifetimeSeconds, browserSessionCreationWindowSeconds, browserSessionStartingGrantCash, browserSessionStartingHappy & browserSessionMaxCreationPerHour ---
+    check($engine->adminSessionLifetimeSeconds() === 43200, 'GameEngine adminSessionLifetimeSeconds returns 43200');
+    check($engine->browserSessionCreationWindowSeconds() === 3600, 'GameEngine browserSessionCreationWindowSeconds returns 3600');
+    check($engine->browserSessionStartingGrantCash() === 2500, 'GameEngine browserSessionStartingGrantCash returns 2500');
+    check($engine->browserSessionStartingHappy() === 100, 'GameEngine browserSessionStartingHappy returns 100');
+    check($engine->browserSessionMaxCreationPerHour() === 10, 'GameEngine browserSessionMaxCreationPerHour returns 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

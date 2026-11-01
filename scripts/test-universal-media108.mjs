@@ -261,7 +261,9 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(viewerDefaultRenderErrorReason(),'viewer-render-failed');
   assert.equal(viewerDefaultRuntimeErrorReason(),'viewer-runtime-error');
   assert.match(viewer,/isDisposed:\(\)=>disposed/);
+  assert.match(viewer,/defaultTargetSize:\(\)=>2\.5,defaultCameraFov:\(\)=>36,maxPixelRatio:\(\)=>1\.5/);
   assert.match(inspector,/isDisposed: \(\) => disposed/);
+  assert.match(inspector,/defaultTargetSize: \(\) => 3, defaultCameraFov: \(\) => 38, maxPixelRatio: \(\) => 1\.5/);
   assert.equal(isSupportedInspectorFormat('GLB'),true);
   assert.equal(isSupportedInspectorFormat('stl'),false);
   assert.equal(isWithinInspectorBudget({vertices:100,triangles:50,nodes:10,bytes:1024}),true);
