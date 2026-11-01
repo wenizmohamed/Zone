@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
-import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES } from '../dist/asset-loader.mjs';
+import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -105,6 +105,12 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(isAssetWithinByteBudget(1024), true);
   assert.equal(isAssetWithinByteBudget(ASSET_MAX_BYTES + 1), false);
   assert.equal(maxAssetMemberCount(), 512);
+  assert.deepEqual(supportedNonModelExtensions(), ['png', 'jpg', 'jpeg', 'webp', 'mp3']);
+  assert.equal(isSupportedNonModelExtension('webp'), true);
+  assert.equal(isSupportedNonModelExtension('exe'), false);
+  assert.equal(maxParallelAssetStreams(), 3);
+  assert.equal(isAssetManifestReady({ status: 'ready', members: [{ name: 'a.glb', size: 10 }] }), true);
+  assert.equal(isAssetManifestReady({ status: 'pending', members: [] }), false);
   assert.equal(uploadedWeaponTargetLength('bat'), .715);
   assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);

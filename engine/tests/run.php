@@ -2030,6 +2030,13 @@ try {
     check($engine->minDailyStreakCashReward() === 1000, 'GameEngine minDailyStreakCashReward returns 1000');
     check($engine->totalDailyStreakCycleCashReward() === 32500, 'GameEngine totalDailyStreakCycleCashReward returns 32500');
     check($engine->isValidDailyStreakDay(1) === true && $engine->isValidDailyStreakDay(8) === false, 'GameEngine isValidDailyStreakDay validates 1..7 streak days');
+
+    // --- Wave 153 (zone-beta271): GameEngine dailyContractPoolIds, isKnownDailyContractId, maxDailyContractRewardCash, minDailyContractRewardCash & dailyContractDefaultRewardXp ---
+    check(count($engine->dailyContractPoolIds()) === 4, 'GameEngine dailyContractPoolIds returns 4 rotating contract IDs');
+    check($engine->isKnownDailyContractId('crime-spree') === true && $engine->isKnownDailyContractId('unknown') === false, 'GameEngine isKnownDailyContractId validates contract ID');
+    check($engine->maxDailyContractRewardCash() === 6000, 'GameEngine maxDailyContractRewardCash returns 6000');
+    check($engine->minDailyContractRewardCash() === 3000, 'GameEngine minDailyContractRewardCash returns 3000');
+    check($engine->dailyContractDefaultRewardXp() === 200, 'GameEngine dailyContractDefaultRewardXp returns 200');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

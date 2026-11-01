@@ -38,6 +38,22 @@ export function maxAssetMemberCount() {
   return 512;
 }
 
+export function supportedNonModelExtensions() {
+  return ['png', 'jpg', 'jpeg', 'webp', 'mp3'];
+}
+
+export function isSupportedNonModelExtension(extension) {
+  return typeof extension === 'string' && supportedNonModelExtensions().includes(extension.toLowerCase());
+}
+
+export function maxParallelAssetStreams() {
+  return 3;
+}
+
+export function isAssetManifestReady(asset) {
+  return Boolean(asset && asset.status === 'ready' && Array.isArray(asset.members) && asset.members.length > 0);
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {

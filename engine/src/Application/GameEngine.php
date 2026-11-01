@@ -4204,4 +4204,42 @@ final class GameEngine
     {
         return isset($this->dailyStreakSchedule()[$day]);
     }
+
+    /** @return list<string> */
+    public function dailyContractPoolIds(): array
+    {
+        return array_map(
+            static fn (array $contract): string => (string) ($contract['id'] ?? ''),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+    }
+
+    public function isKnownDailyContractId(string $id): bool
+    {
+        return in_array($id, $this->dailyContractPoolIds(), true);
+    }
+
+    public function maxDailyContractRewardCash(): int
+    {
+        $rewards = array_map(
+            static fn (array $contract): int => (int) ($contract['reward_cash'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+        return $rewards === [] ? 0 : max($rewards);
+    }
+
+    public function minDailyContractRewardCash(): int
+    {
+        $rewards = array_map(
+            static fn (array $contract): int => (int) ($contract['reward_cash'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+        return $rewards === [] ? 0 : min($rewards);
+    }
+
+    public function dailyContractDefaultRewardXp(): int
+    {
+        $first = \Zone\Engine\Core\Game\DailyService::contractPool()[0] ?? [];
+        return (int) ($first['reward_xp'] ?? 200);
+    }
 }
