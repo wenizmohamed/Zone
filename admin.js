@@ -1696,6 +1696,18 @@ function isSupportedCatalogCategory(category) {
   return Object.hasOwn(catalogCategoryNames, String(category ?? ''));
 }
 
+function isBootReady() {
+  return Boolean(state.bootReady);
+}
+
+function isDirty() {
+  return Boolean(state.dirty);
+}
+
+function activeAdminLanguage() {
+  return state.language;
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1771,6 +1783,9 @@ if (typeof window !== 'undefined') {
   window.ZoneAdmin = {
     supportedCatalogCategories,
     isSupportedCatalogCategory,
+    isBootReady,
+    isDirty,
+    activeAdminLanguage,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),
