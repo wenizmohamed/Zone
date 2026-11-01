@@ -2219,6 +2219,13 @@ try {
     check($engine->materialIssuanceMaxQuantity() === 1000, 'GameEngine materialIssuanceMaxQuantity returns 1000');
     check($engine->materialIssuanceMaxCorrelationIdLength() === 100, 'GameEngine materialIssuanceMaxCorrelationIdLength returns 100');
     check($engine->loadoutMaxArmorReductionCap() === 0.95, 'GameEngine loadoutMaxArmorReductionCap returns 0.95');
+
+    // --- Wave 180 (zone-beta298): GameEngine crimeRuleDefaultKeys, isSupportedCrimeRuleKey, crimeDefaultChainWindowSeconds, adminAuditLogMaxLimit & publishedRulesDisabledModuleCount ---
+    check(count($engine->crimeRuleDefaultKeys()) === 9 && in_array('chain_window_seconds', $engine->crimeRuleDefaultKeys(), true), 'GameEngine crimeRuleDefaultKeys returns 9 rule keys');
+    check($engine->isSupportedCrimeRuleKey('jail_seconds') === true && $engine->isSupportedCrimeRuleKey('loot_table') === false, 'GameEngine isSupportedCrimeRuleKey validates crime rule key');
+    check($engine->crimeDefaultChainWindowSeconds() === 300, 'GameEngine crimeDefaultChainWindowSeconds returns 300');
+    check($engine->adminAuditLogMaxLimit() === 250, 'GameEngine adminAuditLogMaxLimit returns 250');
+    check($engine->publishedRulesDisabledModuleCount() >= 0, 'GameEngine publishedRulesDisabledModuleCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

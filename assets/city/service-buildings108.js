@@ -190,5 +190,10 @@
   function insideRoofServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.insideRoof)).map(a=>a.id):[];}
   function sharedRoofServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.sharedRoof)).map(a=>a.id):[];}
   function containsAuthoredPointServiceIds(result){return Array.isArray(result?.associations)?result.associations.filter(a=>Boolean(a?.containsAuthoredPoint)).map(a=>a.id):[];}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,insideRoofServiceIds,sharedRoofServiceIds,containsAuthoredPointServiceIds,inside,roofAnchor,meters};
+  function minimumSharedRoofRoomMeters(){return 1.25;}
+  function maximumSharedRoofRoomMeters(){return 6;}
+  function sharedRoofClearanceRatio(){return .4;}
+  function initialRoofScanSteps(){return 7;}
+  function refinementRoofScanSteps(){return 5;}
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,insideRoofServiceIds,sharedRoofServiceIds,containsAuthoredPointServiceIds,minimumSharedRoofRoomMeters,maximumSharedRoofRoomMeters,sharedRoofClearanceRatio,initialRoofScanSteps,refinementRoofScanSteps,inside,roofAnchor,meters};
 });

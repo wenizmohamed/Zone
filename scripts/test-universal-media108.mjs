@@ -247,6 +247,11 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(isMapMediaViewVisible(5,17),false);
   assert.equal(buildings.earthRadiusMeters(),6378137);
   assert.equal(buildings.defaultMaximumDistanceMeters(),180);
+  assert.equal(buildings.minimumSharedRoofRoomMeters(),1.25);
+  assert.equal(buildings.maximumSharedRoofRoomMeters(),6);
+  assert.equal(buildings.sharedRoofClearanceRatio(),.4);
+  assert.equal(buildings.initialRoofScanSteps(),7);
+  assert.equal(buildings.refinementRoofScanSteps(),5);
   assert.equal(VIEWER_STARTUP_TIMEOUT_MS,25000);
   assert.equal(viewerStartupTimeoutMs(),25000);
   assert.equal(maxRenderDeltaSeconds(),.1);

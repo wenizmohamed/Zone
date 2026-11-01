@@ -4996,4 +4996,40 @@ final class GameEngine
     {
         return 0.95;
     }
+
+    /** @return list<string> */
+    public function crimeRuleDefaultKeys(): array
+    {
+        return [
+            'required_item',
+            'required_quantity',
+            'consume_tool',
+            'mastery_per_success',
+            'chain_window_seconds',
+            'chain_bonus_basis_points',
+            'critical_failure_basis_points',
+            'jail_seconds',
+            'hospital_seconds',
+        ];
+    }
+
+    public function isSupportedCrimeRuleKey(string $key): bool
+    {
+        return in_array($key, $this->crimeRuleDefaultKeys(), true);
+    }
+
+    public function crimeDefaultChainWindowSeconds(): int
+    {
+        return 300;
+    }
+
+    public function adminAuditLogMaxLimit(): int
+    {
+        return 250;
+    }
+
+    public function publishedRulesDisabledModuleCount(): int
+    {
+        return count((new PublishedRules($this->database))->disabledModuleIds());
+    }
 }
