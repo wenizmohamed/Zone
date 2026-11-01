@@ -659,5 +659,10 @@ test('ZoneMedia exposes diagnostics telemetry for library, selection, fit edits 
   assert.equal(m.window.ZoneMedia.selectedAssetId(), idA);
   assert.equal(m.window.ZoneMedia.fitEditCount(), 1);
   assert.equal(m.window.ZoneMedia.isBusy(), false);
+  assert.equal(m.window.ZoneMedia.isShopDirty(), false);
+  assert.equal(m.window.ZoneMedia.isPolicyDirty(), false);
+  assert.equal(m.window.ZoneMedia.libraryAssetCount(), 2);
+  assert.equal(m.window.ZoneMedia.policyMaterialSelectionCount(), 0);
+  assert.equal(m.window.ZoneMedia.mediaPollIntervalMs(), 2000);
 });
 

@@ -2464,6 +2464,13 @@ try {
     check($engine->territoryClaimEnergyCost() === 10, 'GameEngine territoryClaimEnergyCost returns 10');
     check($engine->territoryAssaultEnergyCost() === 25, 'GameEngine territoryAssaultEnergyCost returns 25');
     check($engine->territoryReinforceEnergyCost() === 5, 'GameEngine territoryReinforceEnergyCost returns 5');
+
+    // --- Wave 215 (zone-beta333): GameEngine assetLibraryMaxFileNameLength, assetLibraryMinFreeDiskOverheadBytes, assetLibraryMaxBase64ChunkChars, assetLibrarySupportedStorageDirectories & assetLibraryModelExtensions ---
+    check($engine->assetLibraryMaxFileNameLength() === 240, 'GameEngine assetLibraryMaxFileNameLength returns 240');
+    check($engine->assetLibraryMinFreeDiskOverheadBytes() === 268435456, 'GameEngine assetLibraryMinFreeDiskOverheadBytes returns 268435456');
+    check($engine->assetLibraryMaxBase64ChunkChars() === 699052, 'GameEngine assetLibraryMaxBase64ChunkChars returns 699052');
+    check($engine->assetLibrarySupportedStorageDirectories() === ['uploads', 'objects', 'heartbeats'], 'GameEngine assetLibrarySupportedStorageDirectories returns uploads, objects, heartbeats');
+    check($engine->assetLibraryModelExtensions() === ['glb', 'gltf', 'fbx', 'obj', 'zip'], 'GameEngine assetLibraryModelExtensions returns glb, gltf, fbx, obj, zip');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

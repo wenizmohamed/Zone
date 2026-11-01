@@ -5891,4 +5891,31 @@ final class GameEngine
     {
         return 5;
     }
+
+    public function assetLibraryMaxFileNameLength(): int
+    {
+        return 240;
+    }
+
+    public function assetLibraryMinFreeDiskOverheadBytes(): int
+    {
+        return 268435456;
+    }
+
+    public function assetLibraryMaxBase64ChunkChars(): int
+    {
+        return 699052;
+    }
+
+    /** @return list<string> */
+    public function assetLibrarySupportedStorageDirectories(): array
+    {
+        return ['uploads', 'objects', 'heartbeats'];
+    }
+
+    /** @return list<string> */
+    public function assetLibraryModelExtensions(): array
+    {
+        return ['glb', 'gltf', 'fbx', 'obj', 'zip'];
+    }
 }
