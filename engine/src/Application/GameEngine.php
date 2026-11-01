@@ -2306,4 +2306,40 @@ final class GameEngine
         arsort($stats);
         return (string) array_key_first($stats);
     }
+
+    public function playerEnergyRegenSecondsRemaining(string $playerId = 'founder-player'): int
+    {
+        $missing = $this->playerMissingEnergy($playerId);
+        $interval = (int) ($this->resourceRegenIntervals()['energy'] ?? 120);
+        return $missing * $interval;
+    }
+
+    public function playerNerveRegenSecondsRemaining(string $playerId = 'founder-player'): int
+    {
+        $missing = $this->playerMissingNerve($playerId);
+        $interval = (int) ($this->resourceRegenIntervals()['nerve'] ?? 300);
+        return $missing * $interval;
+    }
+
+    public function playerHappyRegenSecondsRemaining(string $playerId = 'founder-player'): int
+    {
+        $missing = $this->playerMissingHappy($playerId);
+        $interval = (int) ($this->resourceRegenIntervals()['happy'] ?? 300);
+        return $missing * $interval;
+    }
+
+    public function playerLifeRegenSecondsRemaining(string $playerId = 'founder-player'): int
+    {
+        $missing = $this->playerMissingLifePoints($playerId);
+        $interval = (int) ($this->resourceRegenIntervals()['life'] ?? 300);
+        return $missing * $interval;
+    }
+
+    public function isPlayerAtFullResources(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMissingEnergy($playerId) === 0
+            && $this->playerMissingNerve($playerId) === 0
+            && $this->playerMissingHappy($playerId) === 0
+            && $this->playerMissingLifePoints($playerId) === 0;
+    }
 }

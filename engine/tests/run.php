@@ -1519,6 +1519,13 @@ try {
     check($engine->playerSpeedSharePct('founder-player') > 0.0, 'GameEngine playerSpeedSharePct returns speed share percentage');
     check($engine->playerDexteritySharePct('founder-player') > 0.0, 'GameEngine playerDexteritySharePct returns dexterity share percentage');
     check(in_array($engine->playerDominantStat('founder-player'), ['strength', 'defense', 'speed', 'dexterity'], true), 'GameEngine playerDominantStat returns highest battle stat name');
+
+    // --- Wave 80 (zone-beta198): GameEngine playerEnergyRegenSecondsRemaining, playerNerveRegenSecondsRemaining, playerHappyRegenSecondsRemaining, playerLifeRegenSecondsRemaining & isPlayerAtFullResources ---
+    check($engine->playerEnergyRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerEnergyRegenSecondsRemaining returns remaining energy regen seconds');
+    check($engine->playerNerveRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerNerveRegenSecondsRemaining returns remaining nerve regen seconds');
+    check($engine->playerHappyRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerHappyRegenSecondsRemaining returns remaining happy regen seconds');
+    check($engine->playerLifeRegenSecondsRemaining('founder-player') >= 0, 'GameEngine playerLifeRegenSecondsRemaining returns remaining life regen seconds');
+    check(is_bool($engine->isPlayerAtFullResources('founder-player')), 'GameEngine isPlayerAtFullResources returns boolean full-resource status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

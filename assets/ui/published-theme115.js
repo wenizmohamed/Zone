@@ -33,6 +33,8 @@
   window.ZonePublishedTheme115 = {
     link,
     dispose,
+    linkId() { return 'zone-published-theme'; },
+    timeoutMs() { return 8000; },
     get disposed() { return disposed; },
     get ready() { return ready; },
     diagnostics() {
