@@ -102,5 +102,5 @@
     }
     return {load,view,read:view,diagnostics,claimDaily:()=>claim('daily'),claimLogin:()=>claim('login'),dispose(){disposed=true;generation++;}};
   }
-  return {create,endpoints:()=>clone(endpoints),supportedLanguages:()=>['en','ar']};
+  return {create,endpoints:()=>clone(endpoints),sections:()=>Object.keys(endpoints),supportedLanguages:()=>['en','ar'],isSupportedLanguage:lang=>lang==='en'||lang==='ar'};
 });

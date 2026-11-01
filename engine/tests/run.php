@@ -1498,6 +1498,13 @@ try {
     check($engine->disabledModuleCount() >= 0, 'GameEngine disabledModuleCount returns disabled installed module count');
     check($engine->configuredActionCooldownSeconds('crime') >= 0, 'GameEngine configuredActionCooldownSeconds returns configured action cooldown floor');
     check($engine->configuredCooldownActionCount() >= 9, 'GameEngine configuredCooldownActionCount returns configured cooldown action count');
+
+    // --- Wave 77 (zone-beta195): GameEngine playerMissingEnergy, playerMissingNerve, playerMissingHappy, playerMissingLifePoints & playerBankSharePct ---
+    check($engine->playerMissingEnergy('founder-player') >= 0, 'GameEngine playerMissingEnergy returns missing energy');
+    check($engine->playerMissingNerve('founder-player') >= 0, 'GameEngine playerMissingNerve returns missing nerve');
+    check($engine->playerMissingHappy('founder-player') >= 0, 'GameEngine playerMissingHappy returns missing happy');
+    check($engine->playerMissingLifePoints('founder-player') >= 0, 'GameEngine playerMissingLifePoints returns missing life');
+    check($engine->playerBankSharePct('founder-player') >= 0.0 && $engine->playerBankSharePct('founder-player') <= 100.0, 'GameEngine playerBankSharePct returns bank share percentage');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

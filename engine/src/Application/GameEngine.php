@@ -2214,4 +2214,30 @@ final class GameEngine
     {
         return count($this->cooldownSeconds);
     }
+
+    public function playerMissingEnergy(string $playerId = 'founder-player'): int
+    {
+        return max(0, $this->playerMaxEnergy($playerId) - $this->playerEnergy($playerId));
+    }
+
+    public function playerMissingNerve(string $playerId = 'founder-player'): int
+    {
+        return max(0, $this->playerMaxNerve($playerId) - $this->playerNerve($playerId));
+    }
+
+    public function playerMissingHappy(string $playerId = 'founder-player'): int
+    {
+        return max(0, $this->playerMaxHappy($playerId) - $this->playerHappy($playerId));
+    }
+
+    public function playerMissingLifePoints(string $playerId = 'founder-player'): int
+    {
+        return max(0, $this->playerMaxLife($playerId) - $this->playerLife($playerId));
+    }
+
+    public function playerBankSharePct(string $playerId = 'founder-player'): float
+    {
+        $netWorth = $this->playerNetWorth($playerId);
+        return $netWorth > 0 ? round($this->playerBankBalance($playerId) / $netWorth * 100, 2) : 0.0;
+    }
 }
