@@ -2492,6 +2492,13 @@ try {
     check($engine->assetInspectorModelTimeoutSeconds() === 60, 'GameEngine assetInspectorModelTimeoutSeconds returns 60');
     check($engine->safeBundleMaxExpandedBytes() === 125829120, 'GameEngine safeBundleMaxExpandedBytes returns 125829120');
     check($engine->safeBundleMaxMembers() === 256, 'GameEngine safeBundleMaxMembers returns 256');
+
+    // --- Wave 219 (zone-beta337): GameEngine releaseManagerDefaultChannel, releaseManagerSupportedScreenIds, releaseManagerSupportedBlockTypes, releaseManagerMaxBilingualStringBytes & releaseManagerMaxActorBytes ---
+    check($engine->releaseManagerDefaultChannel() === 'production', 'GameEngine releaseManagerDefaultChannel returns production');
+    check(count($engine->releaseManagerSupportedScreenIds()) === 19, 'GameEngine releaseManagerSupportedScreenIds returns 19 screen IDs');
+    check($engine->releaseManagerSupportedBlockTypes() === ['hero', 'text', 'callout', 'stat-grid', 'action-grid'], 'GameEngine releaseManagerSupportedBlockTypes returns 5 block types');
+    check($engine->releaseManagerMaxBilingualStringBytes() === 12000, 'GameEngine releaseManagerMaxBilingualStringBytes returns 12000');
+    check($engine->releaseManagerMaxActorBytes() === 480, 'GameEngine releaseManagerMaxActorBytes returns 480');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

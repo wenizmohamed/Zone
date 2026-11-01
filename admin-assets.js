@@ -213,6 +213,11 @@
   const libraryAssetCount=()=>library.length;
   const policyMaterialSelectionCount=()=>policyMaterialSelection.length;
   const mediaPollIntervalMs=()=>2000;
+  const queuedAssetCount=()=>library.filter(a=>a?.status==='queued').length;
+  const processingAssetCount=()=>library.filter(a=>a?.status==='processing').length;
+  const isShopSaving=()=>shopSaving;
+  const isPolicySaving=()=>policySaving;
+  const activeMediaLanguage=()=>language;
   const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,shopSaving,policySaving,policyMaterialCount:policyMaterialSelection.length,hasUnsaved:hasUnsaved(),language});
-  window.ZoneMedia={refresh,hasUnsaved,isLoaded,hasSelection,readyAssetCount,failedAssetCount,maxUploadSizeBytes,uploadChunkSizeBytes,selectedAssetId,fitEditCount,isBusy,isShopDirty,isPolicyDirty,libraryAssetCount,policyMaterialSelectionCount,mediaPollIntervalMs,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys,issuanceBudgetKeys,maxMaterialSelectionCount,maxHourlyBudgetValue};refresh();
+  window.ZoneMedia={refresh,hasUnsaved,isLoaded,hasSelection,readyAssetCount,failedAssetCount,maxUploadSizeBytes,uploadChunkSizeBytes,selectedAssetId,fitEditCount,isBusy,isShopDirty,isPolicyDirty,libraryAssetCount,policyMaterialSelectionCount,mediaPollIntervalMs,queuedAssetCount,processingAssetCount,isShopSaving,isPolicySaving,activeMediaLanguage,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys,issuanceBudgetKeys,maxMaterialSelectionCount,maxHourlyBudgetValue};refresh();
 })();

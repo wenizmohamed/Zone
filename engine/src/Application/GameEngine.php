@@ -5994,4 +5994,34 @@ final class GameEngine
     {
         return \Zone\Engine\Core\Media\SafeBundle::MAX_MEMBERS;
     }
+
+    public function releaseManagerDefaultChannel(): string
+    {
+        return 'production';
+    }
+
+    /** @return list<string> */
+    public function releaseManagerSupportedScreenIds(): array
+    {
+        return [
+            'home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions',
+            'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market',
+        ];
+    }
+
+    /** @return list<string> */
+    public function releaseManagerSupportedBlockTypes(): array
+    {
+        return ['hero', 'text', 'callout', 'stat-grid', 'action-grid'];
+    }
+
+    public function releaseManagerMaxBilingualStringBytes(): int
+    {
+        return 12000;
+    }
+
+    public function releaseManagerMaxActorBytes(): int
+    {
+        return 480;
+    }
 }
