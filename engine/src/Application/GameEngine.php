@@ -4467,4 +4467,29 @@ final class GameEngine
     {
         return $this->playerLevel($playerId) >= $targetLevel;
     }
+
+    public function isRateLimiterEnabled(string $playerId = 'founder-player'): bool
+    {
+        return (bool) ($this->rateLimitStatus($playerId)['enabled'] ?? false);
+    }
+
+    public function rateLimitMaxHits(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->rateLimitStatus($playerId)['max'] ?? 120);
+    }
+
+    public function rateLimitWindowSeconds(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->rateLimitStatus($playerId)['windowSeconds'] ?? 10);
+    }
+
+    public function rateLimitCurrentCount(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->rateLimitStatus($playerId)['count'] ?? 0);
+    }
+
+    public function resourceRegenIntervalForBar(string $bar): int
+    {
+        return (int) ($this->resourceRegenIntervals()[$bar] ?? 0);
+    }
 }

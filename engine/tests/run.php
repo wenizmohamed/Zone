@@ -2079,6 +2079,13 @@ try {
     check($engine->levelUpEnergyGrantBetweenLevels(1, 5) === 12, 'GameEngine levelUpEnergyGrantBetweenLevels returns 12 for 1->5');
     check($engine->playerLevelFloorProgressPct() >= 0.0 && $engine->playerLevelFloorProgressPct() <= 100.0, 'GameEngine playerLevelFloorProgressPct returns 0..100 percentage');
     check($engine->isPlayerAtOrAboveLevel(1) === true, 'GameEngine isPlayerAtOrAboveLevel returns true for level 1');
+
+    // --- Wave 160 (zone-beta278): GameEngine isRateLimiterEnabled, rateLimitMaxHits, rateLimitWindowSeconds, rateLimitCurrentCount & resourceRegenIntervalForBar ---
+    check($engine->isRateLimiterEnabled() === true, 'GameEngine isRateLimiterEnabled returns true');
+    check($engine->rateLimitMaxHits() === 120, 'GameEngine rateLimitMaxHits returns 120');
+    check($engine->rateLimitWindowSeconds() === 10, 'GameEngine rateLimitWindowSeconds returns 10');
+    check($engine->rateLimitCurrentCount() >= 0, 'GameEngine rateLimitCurrentCount returns non-negative hit count');
+    check($engine->resourceRegenIntervalForBar('energy') === 180 && $engine->resourceRegenIntervalForBar('nerve') === 300, 'GameEngine resourceRegenIntervalForBar returns exact bar intervals');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

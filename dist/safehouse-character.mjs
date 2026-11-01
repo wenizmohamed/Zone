@@ -32,6 +32,14 @@ export function defaultSafehouseOutfitFile() {
   return 'Suit';
 }
 
+export function supportedSafehouseOutfitCount() {
+  return Object.keys(OUTFITS).length;
+}
+
+export function safehouseOutfitFileMap() {
+  return { ...OUTFITS };
+}
+
 export function safehouseActorKey(player = {}, draft = false) {
   return JSON.stringify([player.outfit, player.weapon, player.weaponMediaAsset, player.armorId, player.armorOwned, player.armorMediaAsset, player.characterMediaAsset, Boolean(draft)]);
 }
@@ -135,7 +143,7 @@ export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, 
       throw error;
     }
   }
-  return { update, isDisposed() { return disposed; }, hasActiveActor() { return !!active && !disposed; }, diagnostics() {
+  return { update, isDisposed() { return disposed; }, hasActiveActor() { return !!active && !disposed; }, currentSequence() { return sequence; }, activeOutfit() { return active?.root?.userData?.outfit || null; }, diagnostics() {
     return {
       disposed,
       sequence,

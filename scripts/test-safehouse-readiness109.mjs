@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
-import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, safehouseActorKey} from '../dist/safehouse-character.mjs';
+import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -140,6 +140,8 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(isSafehouseAssetHash(HASH), true);
   assert.equal(isSafehouseAssetHash('not-a-hash'), false);
   assert.equal(defaultSafehouseOutfitFile(), 'Suit');
+  assert.equal(supportedSafehouseOutfitCount(), 3);
+  assert.deepEqual(safehouseOutfitFileMap(), { suit: 'Suit', street: 'Casual_Hoodie', tactical: 'Swat' });
   assert.equal(typeof safehouseActorKey({ outfit: 'suit', weapon: 'glock' }, false), 'string');
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
@@ -147,6 +149,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(h.window.ZoneSafehouse.isReady(), true);
   assert.equal(h.window.ZoneSafehouse.hasUploadedHouse(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), false);
+  assert.equal(h.window.ZoneSafehouse.isPreview(), false);
+  assert.equal(h.window.ZoneSafehouse.isOwned(), true);
+  assert.equal(h.window.ZoneSafehouse.currentPropertyId(), 'v108-loft');
+  assert.equal(h.window.ZoneSafehouse.currentLanguage(), 'en');
+  assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedLanguages()), ['en', 'ar']);
   h.dispose();
   assert.equal(h.window.ZoneSafehouse.isReady(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), true);
