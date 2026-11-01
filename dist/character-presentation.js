@@ -31,13 +31,21 @@ export function isSupportedSurfaceName(name) {
   return typeof name === 'string' && Object.prototype.hasOwnProperty.call(SURFACES, name);
 }
 
+export function requiredWardrobeBones() {
+  return ['head', 'chest', 'upperarmr', 'lowerarmr', 'wristr', 'upperarml', 'lowerarml', 'wristl'];
+}
+
+export function requiredWardrobeClips() {
+  return ['Idle', 'Idle_Sword', 'Walk', 'Gun_Shoot', 'Sword_Slash', 'HitRecieve', 'Death'];
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });
-  for (const required of ['head', 'chest', 'upperarmr', 'lowerarmr', 'wristr', 'upperarml', 'lowerarml', 'wristl']) {
+  for (const required of requiredWardrobeBones()) {
     if (!bones.has(required)) throw new Error('Character wardrobe is missing ' + required);
   }
-  for (const required of ['Idle', 'Idle_Sword', 'Walk', 'Gun_Shoot', 'Sword_Slash', 'HitRecieve', 'Death']) {
+  for (const required of requiredWardrobeClips()) {
     if (!clips.has(required)) throw new Error('Character wardrobe is missing clip ' + required);
   }
   const gripBones = new Set();

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
+import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, requiredWardrobeBones, requiredWardrobeClips, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
 import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey } from '../dist/character-grip.js';
 import { prepareWeaponPose, supportedWeaponPoseProfiles, isSupportedWeaponPoseProfile } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader, supportedWeaponSourceKeys, isSupportedWeaponSourceKey } from '../dist/weapon-assets.js';
@@ -154,6 +154,8 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   const wLoader = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader: class {}, MTLLoader: class {} });
   assert.equal(wLoader.isDisposed(), false);
   assert.equal(wLoader.cachedAssetCount(), 0);
+  assert.equal(requiredWardrobeBones().length, 8);
+  assert.equal(requiredWardrobeClips().length, 7);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

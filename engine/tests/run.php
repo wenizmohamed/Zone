@@ -1799,6 +1799,13 @@ try {
     check($engine->playerHasDominantStat() === true, 'GameEngine playerHasDominantStat returns boolean dominant stat status');
     check($engine->playerHasLoadoutSummary() === true, 'GameEngine playerHasLoadoutSummary returns boolean loadout summary status');
     check($engine->playerHasOnboardingSummary() === true, 'GameEngine playerHasOnboardingSummary returns boolean onboarding summary status');
+
+    // --- Wave 120 (zone-beta238): GameEngine playerHasHourlySearchMaterialUsage, hasWorldHourlyMaterialUsage, hasCurrentFamilySeason, hasPublishedRulesSummary & hasConfiguredCacheAdapter ---
+    check($engine->playerHasHourlySearchMaterialUsage() === true, 'GameEngine playerHasHourlySearchMaterialUsage returns boolean hourly search material usage status');
+    check($engine->hasWorldHourlyMaterialUsage() === true, 'GameEngine hasWorldHourlyMaterialUsage returns boolean world hourly material usage status');
+    check($engine->hasCurrentFamilySeason() === true, 'GameEngine hasCurrentFamilySeason returns boolean current family season status');
+    check($engine->hasPublishedRulesSummary() === true, 'GameEngine hasPublishedRulesSummary returns boolean published rules summary status');
+    check($engine->hasConfiguredCacheAdapter() === true, 'GameEngine hasConfiguredCacheAdapter returns boolean configured cache adapter status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

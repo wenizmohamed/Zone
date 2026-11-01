@@ -3354,4 +3354,29 @@ final class GameEngine
     {
         return count($this->playerOnboardingSummary($playerId)) > 0;
     }
+
+    public function playerHasHourlySearchMaterialUsage(string $playerId = 'founder-player'): bool
+    {
+        return count($this->playerHourlySearchMaterialUsage($playerId)) > 0;
+    }
+
+    public function hasWorldHourlyMaterialUsage(): bool
+    {
+        return count($this->worldHourlyMaterialUsage()) > 0;
+    }
+
+    public function hasCurrentFamilySeason(): bool
+    {
+        return count($this->currentFamilySeason()) > 0;
+    }
+
+    public function hasPublishedRulesSummary(): bool
+    {
+        return count($this->publishedRulesSummary()) > 0;
+    }
+
+    public function hasConfiguredCacheAdapter(): bool
+    {
+        return $this->configuredCacheAdapter() !== '';
+    }
 }
