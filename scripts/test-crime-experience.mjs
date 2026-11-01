@@ -228,5 +228,12 @@ test('tactical heist, combat, safehouse, bank, casino, and career telemetry rend
     assert.deepEqual(Array.from(instance.supportedItemTabs()), ['all', 'weapon', 'armor', 'medical', 'booster', 'material']);
     assert.equal(instance.isSupportedItemTab('weapon'), true);
     assert.equal(instance.isSupportedItemTab('invalid'), false);
+    assert.deepEqual(Array.from(instance.supportedLanguages()), ['en', 'ar']);
+    assert.equal(instance.isSupportedLanguage(lang), true);
+    assert.equal(instance.isSupportedLanguage('fr'), false);
+    assert.equal(instance.isSupportedCombatMode('npc'), true);
+    assert.equal(instance.isSupportedMarketMode('players'), true);
+    assert.equal(instance.isInJail(), false);
+    assert.equal(instance.isInHospital(), false);
   }
 });

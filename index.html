@@ -2917,6 +2917,30 @@ class Component extends DCLogic {
     return ['all', 'weapon', 'armor', 'medical', 'booster', 'material'].includes(String(tab ?? ''));
   }
 
+  supportedLanguages() {
+    return ['en', 'ar'];
+  }
+
+  isSupportedLanguage(lang) {
+    return ['en', 'ar'].includes(String(lang ?? ''));
+  }
+
+  isSupportedCombatMode(mode) {
+    return ['npc', 'players'].includes(String(mode ?? ''));
+  }
+
+  isSupportedMarketMode(mode) {
+    return ['merchants', 'players'].includes(String(mode ?? ''));
+  }
+
+  isInJail() {
+    return Date.now() < Number(this.p?.jailUntil || 0);
+  }
+
+  isInHospital() {
+    return Date.now() < Number(this.p?.hospUntil || 0);
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

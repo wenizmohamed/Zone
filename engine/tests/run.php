@@ -1953,6 +1953,13 @@ try {
     check(count($engine->supportedReleaseScreenIds()) === 19, 'GameEngine supportedReleaseScreenIds returns 19 supported screen IDs');
     check(count($engine->supportedReleaseBlockTypes()) === 5, 'GameEngine supportedReleaseBlockTypes returns 5 supported block types');
     check($engine->hasReleaseFoundation() === true, 'GameEngine hasReleaseFoundation returns boolean release foundation status');
+
+    // --- Wave 142 (zone-beta260): GameEngine isSupportedReleaseScreenId, isSupportedReleaseBlockType, supportedReleaseScreenCount, supportedReleaseBlockTypeCount & releaseFoundationThemeId ---
+    check($engine->isSupportedReleaseScreenId('crimes') === true && $engine->isSupportedReleaseScreenId('unknown') === false, 'GameEngine isSupportedReleaseScreenId validates release screen ID');
+    check($engine->isSupportedReleaseBlockType('hero') === true && $engine->isSupportedReleaseBlockType('unknown') === false, 'GameEngine isSupportedReleaseBlockType validates release block type');
+    check($engine->supportedReleaseScreenCount() === 19, 'GameEngine supportedReleaseScreenCount returns 19');
+    check($engine->supportedReleaseBlockTypeCount() === 5, 'GameEngine supportedReleaseBlockTypeCount returns 5');
+    check($engine->releaseFoundationThemeId() !== '', 'GameEngine releaseFoundationThemeId returns foundation theme ID');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

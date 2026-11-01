@@ -3920,4 +3920,29 @@ final class GameEngine
     {
         return $this->releases->hasFoundation();
     }
+
+    public function isSupportedReleaseScreenId(string $screen): bool
+    {
+        return in_array($screen, $this->supportedReleaseScreenIds(), true);
+    }
+
+    public function isSupportedReleaseBlockType(string $type): bool
+    {
+        return in_array($type, $this->supportedReleaseBlockTypes(), true);
+    }
+
+    public function supportedReleaseScreenCount(): int
+    {
+        return count($this->supportedReleaseScreenIds());
+    }
+
+    public function supportedReleaseBlockTypeCount(): int
+    {
+        return count($this->supportedReleaseBlockTypes());
+    }
+
+    public function releaseFoundationThemeId(): string
+    {
+        return (string) ($this->releases->foundation()['theme'] ?? 'noir-crime');
+    }
 }
