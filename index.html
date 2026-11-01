@@ -78,6 +78,7 @@
         <span style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">
           <span style="width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 4px var(--acc)"></span>
           <strong style="color:var(--t1)">{{ t.player }}</strong>
+          <bdi data-zone-edition-badge="1" style="color:var(--gold);font-size:10px;font-weight:700;padding-inline-start:6px;border-inline-start:1px solid var(--border3)">{{ tacticalDeck.editionBadge }} · {{ tacticalDeck.netWorth }}</bdi>
         </span>
         <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
@@ -211,6 +212,23 @@
           </div>
           <div class="zone-home-resource-strip" aria-label="{{ homeBase.resourcesLabel }}"><sc-for list="{{ homeBase.resources }}" as="r"><button data-home-resource="{{ r.id }}" onClick="{{ r.open }}" disabled="{{ r.disabled }}"><span>{{ r.label }}</span><bdi>{{ r.text }}</bdi><span class="zone-home-resource-track" aria-hidden="true"><i style="width:{{ r.pct }}%"></i></span><small>{{ r.destination }}</small></button></sc-for></div>
         </section>
+        <section class="zone-panel" data-zone-tactical-deck="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
+            <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
+          </div>
+          <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
+            <sc-for list="{{ tacticalDeck.cards }}" as="tc" hint-placeholder-count="4">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.08em">{{ tc.eyebrow }}</span><bdi style="color:{{ tc.badgeColor }};font-size:10px;font-weight:700">{{ tc.badge }}</bdi></div>
+                <bdi style="color:var(--t1);font-size:18px;font-weight:700">{{ tc.primary }}</bdi>
+                <div style="color:var(--t3);font-size:11px">{{ tc.secondary }}</div>
+                <div style="color:var(--mu);font-size:10.5px;margin-bottom:4px">{{ tc.detail }}</div>
+                <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
         <div class="zone-quick-actions zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
           <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
             <button onClick="{{ q.go }}" style="--nav-color:{{ q.iconColor }};--nav-image:{{ q.iconImage }};background:linear-gradient(var(--z2),var(--z1));border:1px solid var(--border2);border-radius:5px;padding:10px 12px;text-align:start;cursor:pointer;font:inherit;color:var(--t2);display:flex;align-items:center;gap:10px" style-hover="border-color:var(--acc)">
@@ -318,7 +336,7 @@
         </div>
         <section class="zone-crime-opportunities zone-panel" aria-label="{{ crimeDesk.opportunitiesLabel }}"><div class="zone-panel-heading">{{ crimeDesk.opportunitiesLabel }}</div>
           <sc-for list="{{ crimes }}" as="c" hint-placeholder-count="5">
-            <button class="zone-crime-choice" data-crime-select="{{ c.id }}" aria-pressed="{{ c.selected }}" onClick="{{ c.select }}"><span><strong>{{ c.name }}</strong><small>{{ c.sub }}</small><small>{{ c.reason }}</small></span><span><bdi>{{ c.nerve }}</bdi> {{ t.nerve }}<small><bdi>{{ c.reward }}</bdi></small><small>{{ t.skill }} <bdi>{{ c.skill }}/100</bdi></small></span></button>
+            <button class="zone-crime-choice" data-crime-select="{{ c.id }}" aria-pressed="{{ c.selected }}" onClick="{{ c.select }}"><span><strong>{{ c.name }}</strong><small>{{ c.sub }}</small><small>{{ c.reason }}</small></span><span><bdi>{{ c.nerve }}</bdi> {{ t.nerve }}<small><bdi>{{ c.reward }}</bdi> · <bdi>{{ c.evPerNerve }}</bdi></small><small>{{ t.skill }} <bdi>{{ c.skill }}/100</bdi> · <bdi>{{ c.heatTier }}</bdi></small></span></button>
           </sc-for>
         </section>
         <div class="zone-crime-receipt zone-panel" role="status" aria-live="polite"><strong>{{ crimeDesk.receiptLabel }}</strong><p>{{ crimeDesk.receipt }}</p><sc-if value="{{ crimeDesk.recovery }}"><button onClick="{{ crimeDesk.recover }}">{{ crimeDesk.recovery }}</button></sc-if></div>
@@ -418,7 +436,7 @@
           <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.str }}</span><span>{{ t.def }}</span><span>{{ t.spd }}</span><span>{{ t.dex }}</span><span>{{ t.odds }}</span><span></span></div>
           <sc-for list="{{ opps }}" as="o" hint-placeholder-count="4">
             <div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 60px repeat(4,70px) 90px 90px;gap:8px;align-items:center;padding:7px 10px;border-bottom:1px solid var(--line)">
-              <div><div style="color:var(--link);font-weight:500">{{ o.name }}</div><div style="color:var(--mu);font-size:11px">{{ o.factionName }} · <bdi>{{ o.status }}</bdi></div></div>
+              <div><div style="color:var(--link);font-weight:500">{{ o.name }}</div><div style="color:var(--mu);font-size:11px">{{ o.factionName }} · <bdi>{{ o.status }}</bdi> · <bdi style="color:var(--gold)">{{ o.powerRatio }}</bdi></div></div>
               <bdi data-label="{{ t.level }}" style="color:var(--t2)">{{ o.lvl }}</bdi><bdi data-label="{{ t.str }}" style="color:var(--t4)">{{ o.str }}</bdi><bdi data-label="{{ t.def }}" style="color:var(--t4)">{{ o.def }}</bdi><bdi data-label="{{ t.spd }}" style="color:var(--t4)">{{ o.spd }}</bdi><bdi data-label="{{ t.dex }}" style="color:var(--t4)">{{ o.dex }}</bdi>
               <span style="color:{{ o.oddsColor }};font-weight:600;font-size:11px">{{ o.odds }}</span>
               <button class="zone-action-danger" onClick="{{ o.attack }}" disabled="{{ o.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.attack }}</button>
@@ -2817,6 +2835,58 @@ class Component extends DCLogic {
       enemyHpPct: this.combatEncounter ? Math.round((Number(this.combatEncounter.enemyHp || 0) / Math.max(1, Number(this.combatEncounter.enemyMaxHp || 1))) * 100) : 100,
       receiptTitle: lang === 'ar' ? 'تسوية محفوظة' : 'Recorded settlement',
       receipt: this.combatReceipt ? (lang === 'ar' ? 'النتيجة: ' : 'Outcome: ') + ({ won: t.won, lost: t.lost, stalemate: t.stalemate, fighting: lang === 'ar' ? 'انسحاب' : 'Withdrawn' }[this.combatReceipt.outcome] || this.combatReceipt.outcome || '') + ' · ' + (lang === 'ar' ? 'النقد ' : 'Cash ') + money(Number(this.combatReceipt.cashDelta || 0)) + ' · XP ' + num(Number(this.combatReceipt.xp || 0)) + ' · ' + t.respect + ' ' + num(Number(this.combatReceipt.respectDelta || 0)) : ''
+    };
+    const totalNetWorthVal = this.netWorth(), liquidWealthVal = this.liquidNetWorth(), assetWealthVal = Math.max(0, totalNetWorthVal - liquidWealthVal);
+    const bestCrimeCandidate = view.crimes.find(c => !c.disabled) || selectedCrime || view.crimes[0] || { name: t.nav.crimes, evPerNerve: '$0/nerve', heatTier: lang === 'ar' ? 'حرارة منخفضة' : 'Low heat', skill: 0 };
+    const combatPowerTier = totalStats >= 2500 ? (lang === 'ar' ? 'نخبة الميدان' : 'Apex Enforcer') : totalStats >= 800 ? (lang === 'ar' ? 'مقاتل متمرس' : 'Street Veteran') : (lang === 'ar' ? 'صاعد في الشارع' : 'Rising Contender');
+    view.tacticalDeck = {
+      editionBadge: lang === 'ar' ? 'إصدار سينديكيت 3.6 المباشر' : 'SYNDICATE EDITION 3.6 LIVE',
+      title: lang === 'ar' ? 'مركز القيادة التكتيكي للنقابة' : 'Syndicate Tactical Command Deck',
+      subtitle: lang === 'ar' ? 'قياس حي للثروة والجاهزية القتالية وعائد الجرائم ومضاعفات التدريب' : 'Live telemetry for empire wealth, combat readiness, crime EV, and gym multipliers',
+      netWorthLabel: t.networth,
+      netWorth: money(totalNetWorthVal),
+      cards: [
+        {
+          eyebrow: lang === 'ar' ? 'صافي ثروة الإمبراطورية' : 'Empire Net Worth',
+          badge: lang === 'ar' ? 'خزينة نشطة' : 'VAULT LIVE',
+          badgeColor: 'var(--money)',
+          primary: money(totalNetWorthVal),
+          secondary: (lang === 'ar' ? 'سيولة نقدية وبنكية: ' : 'Liquid Cash + Bank: ') + money(liquidWealthVal),
+          detail: (lang === 'ar' ? 'قيمة الأصول والعقارات: ' : 'Assets & Property Value: ') + money(assetWealthVal),
+          actionLabel: t.nav.bank,
+          action: () => this.go('bank')
+        },
+        {
+          eyebrow: lang === 'ar' ? 'الجاهزية القتالية والعتاد' : 'Combat Readiness & Loadout',
+          badge: combatPowerTier,
+          badgeColor: 'var(--gold)',
+          primary: num(totalStats) + ' ' + t.totalStats,
+          secondary: view.loadout.weapon.name + ' (' + view.loadout.weapon.detail + ')',
+          detail: view.loadout.armor.name + ' · ' + view.loadout.armor.detail,
+          actionLabel: t.nav.attack,
+          action: () => this.go('attack')
+        },
+        {
+          eyebrow: lang === 'ar' ? 'أفضل فرصة جريمة وعائد الجرأة' : 'Best Crime EV & Heat Advisory',
+          badge: bestCrimeCandidate.heatTier || (lang === 'ar' ? 'حرارة منخفضة' : 'Low heat'),
+          badgeColor: 'var(--acc)',
+          primary: bestCrimeCandidate.name,
+          secondary: (lang === 'ar' ? 'العائد المتوقع: ' : 'Expected Return: ') + (bestCrimeCandidate.evPerNerve || '$0/nerve'),
+          detail: t.crimeXp + ': ' + num(p.crimeXp) + ' · ' + t.skill + ': ' + num(bestCrimeCandidate.skill || 0) + '/100',
+          actionLabel: t.nav.crimes,
+          action: () => this.go('crimes')
+        },
+        {
+          eyebrow: lang === 'ar' ? 'مضاعف النادي وحرب العائلات' : 'Gym Multiplier & Territory War',
+          badge: view.gymStudio.happyMultiplier + ' ' + t.happy,
+          badgeColor: '#5aa0e0',
+          primary: view.gymStudio.sessionsAvailable + (lang === 'ar' ? ' جلسات متاحة الآن' : ' Sessions Ready Now'),
+          secondary: view.gymName + ' · ' + t.gymXp + ' ' + num(p.gymXp),
+          detail: view.fac.name + ' · ' + view.fieldGuide.holdings,
+          actionLabel: t.nav.gym,
+          action: () => this.go('gym')
+        }
+      ]
     };
     if (screen === 'attack') view.subtitle = lang === 'ar' ? 'خصوم المدينة ولاعبون حقيقيون. البداية تكلف 25 طاقة؛ النتائج محفوظة على الخادم.' : 'City opponents and real players. Starting costs 25 energy; outcomes are saved on the server.';
     const marketResource = this.peerResources?.market, marketSnapshot = marketResource?.snapshot;

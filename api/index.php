@@ -86,6 +86,10 @@ function zone_proxy_json(array $data): never
 
 $relayOrigin = trim((string) (getenv('ZONE_ENGINE_ORIGIN') ?: ''));
 $relayKey = (string) (getenv('ZONE_ENGINE_RELAY_KEY') ?: '');
+if (getenv('VERCEL') === '1' && str_contains($relayOrigin, 'social.aihubz.me') && (getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: getenv('ZONE_DATABASE_URL')) !== '') {
+    $relayOrigin = '';
+    $relayKey = '';
+}
 if ($relayOrigin !== '' || $relayKey !== '') {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     if (!is_string($path)) zone_proxy_error('Route not found.', 404);
@@ -194,6 +198,9 @@ if (getenv('VERCEL') === '1' && !getenv('ZONE_DATABASE_URL')) {
     if ($databaseUrl !== '') {
         putenv('ZONE_DATABASE_URL=' . $databaseUrl);
     }
+}
+if (getenv('VERCEL') === '1' && !getenv('ZONE_PLAYER_SESSIONS')) {
+    putenv('ZONE_PLAYER_SESSIONS=1');
 }
 
 require dirname(__DIR__) . '/engine/router.php';
