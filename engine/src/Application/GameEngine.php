@@ -3789,4 +3789,30 @@ final class GameEngine
     {
         return count($this->draftReleaseManifest()['mediaBindings'] ?? []);
     }
+
+    public function hasDraftReleaseMediaBindings(): bool
+    {
+        return $this->draftReleaseMediaBindingCount() > 0;
+    }
+
+    /** @return array<string, mixed> */
+    public function draftReleaseWorldPolicy(): array
+    {
+        return (array) ($this->draftReleaseManifest()['worldPolicy'] ?? []);
+    }
+
+    public function isWorldPolicyEnabledInDraftRelease(): bool
+    {
+        return ($this->draftReleaseWorldPolicy()['enabled'] ?? true) !== false;
+    }
+
+    public function draftReleaseWorldTickSeconds(): int
+    {
+        return (int) ($this->draftReleaseWorldPolicy()['tickSeconds'] ?? 60);
+    }
+
+    public function isScreenEnabledInDraftRelease(string $screen): bool
+    {
+        return ($this->draftReleaseManifest()['modules'][$screen] ?? true) !== false;
+    }
 }

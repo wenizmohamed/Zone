@@ -1918,6 +1918,13 @@ try {
     check($engine->draftReleaseModuleCount() >= 19, 'GameEngine draftReleaseModuleCount returns draft release module count');
     check($engine->draftReleaseThemeId() !== '', 'GameEngine draftReleaseThemeId returns draft release theme id');
     check($engine->draftReleaseMediaBindingCount() >= 0, 'GameEngine draftReleaseMediaBindingCount returns draft release media binding count');
+
+    // --- Wave 137 (zone-beta255): GameEngine hasDraftReleaseMediaBindings, draftReleaseWorldPolicy, isWorldPolicyEnabledInDraftRelease, draftReleaseWorldTickSeconds & isScreenEnabledInDraftRelease ---
+    check(is_bool($engine->hasDraftReleaseMediaBindings()), 'GameEngine hasDraftReleaseMediaBindings returns boolean draft release media bindings status');
+    check(is_array($engine->draftReleaseWorldPolicy()), 'GameEngine draftReleaseWorldPolicy returns draft release world policy array');
+    check(is_bool($engine->isWorldPolicyEnabledInDraftRelease()), 'GameEngine isWorldPolicyEnabledInDraftRelease returns boolean draft world policy enabled status');
+    check($engine->draftReleaseWorldTickSeconds() > 0, 'GameEngine draftReleaseWorldTickSeconds returns positive draft world tick seconds');
+    check($engine->isScreenEnabledInDraftRelease('crimes') === true, 'GameEngine isScreenEnabledInDraftRelease returns boolean draft screen enabled status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

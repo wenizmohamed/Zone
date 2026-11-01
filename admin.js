@@ -1708,6 +1708,23 @@ function activeAdminLanguage() {
   return state.language;
 }
 
+function activeAdminView() {
+  return state.view;
+}
+
+function hasDraftConflict() {
+  return Boolean(state.draftConflict);
+}
+
+function hasUnsavedChanges() {
+  const pending = unsavedContentEdits();
+  return Boolean(state.dirty || pending.catalog || pending.crime);
+}
+
+function crimeRuleFieldKeys() {
+  return Object.keys(crimeRuleFields);
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1786,6 +1803,10 @@ if (typeof window !== 'undefined') {
     isBootReady,
     isDirty,
     activeAdminLanguage,
+    activeAdminView,
+    hasDraftConflict,
+    hasUnsavedChanges,
+    crimeRuleFieldKeys,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),

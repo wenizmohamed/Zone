@@ -45,7 +45,7 @@ function admin({ save = async () => ({ crime: { ...savedCrime } }), request, net
     notify = noticeStub;
     const guardedApi = api;
     api = apiStub;
-    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts, supportedCatalogCategories, isSupportedCatalogCategory, isBootReady, isDirty, activeAdminLanguage, adminDiagnostics };
+    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts, supportedCatalogCategories, isSupportedCatalogCategory, isBootReady, isDirty, activeAdminLanguage, activeAdminView, hasDraftConflict, hasUnsavedChanges, crimeRuleFieldKeys, adminDiagnostics };
   `, context);
   app = context.admin;
   app.state.crimes = [{ ...savedCrime }];
@@ -571,4 +571,8 @@ test('territoryCounts computes total, owned, neutral, contested and daily respec
   assert.equal(app.isBootReady(), true);
   assert.equal(app.isDirty(), false);
   assert.equal(app.activeAdminLanguage(), 'en');
+  assert.equal(app.activeAdminView(), 'overview');
+  assert.equal(app.hasDraftConflict(), false);
+  assert.equal(app.hasUnsavedChanges(), false);
+  assert.equal(app.crimeRuleFieldKeys().length, 9);
 });
