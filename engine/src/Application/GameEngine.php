@@ -4430,4 +4430,41 @@ final class GameEngine
     {
         return max(0, $level) * LevelingService::CASH_PER_LEVEL;
     }
+
+    public function levelUpTotalCashBonusBetweenLevels(int $fromLevel, int $toLevel): int
+    {
+        if ($toLevel <= $fromLevel) {
+            return 0;
+        }
+        $total = 0;
+        for ($l = max(1, $fromLevel) + 1; $l <= $toLevel; $l++) {
+            $total += $this->levelUpCashBonusForLevel($l);
+        }
+        return $total;
+    }
+
+    public function levelUpNerveGrantBetweenLevels(int $fromLevel, int $toLevel): int
+    {
+        return max(0, $toLevel - max(1, $fromLevel)) * LevelingService::NERVE_PER_LEVEL;
+    }
+
+    public function levelUpEnergyGrantBetweenLevels(int $fromLevel, int $toLevel): int
+    {
+        return max(0, $toLevel - max(1, $fromLevel)) * LevelingService::ENERGY_PER_LEVEL;
+    }
+
+    public function playerLevelFloorProgressPct(string $playerId = 'founder-player'): float
+    {
+        $level = $this->playerLevel($playerId);
+        $floorXp = $this->xpForLevel($level);
+        $nextXp = $this->xpForLevel($level + 1);
+        $span = max(1, $nextXp - $floorXp);
+        $progress = max(0, $this->playerXp($playerId) - $floorXp);
+        return min(100.0, round(($progress / $span) * 100.0, 2));
+    }
+
+    public function isPlayerAtOrAboveLevel(int $targetLevel, string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLevel($playerId) >= $targetLevel;
+    }
 }

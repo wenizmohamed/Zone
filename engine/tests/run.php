@@ -2072,6 +2072,13 @@ try {
     check($engine->levelingEnergyPerLevel() === 3, 'GameEngine levelingEnergyPerLevel returns 3');
     check($engine->levelingCashPerLevel() === 250, 'GameEngine levelingCashPerLevel returns 250');
     check($engine->levelUpCashBonusForLevel(10) === 2500, 'GameEngine levelUpCashBonusForLevel returns 2500 for level 10');
+
+    // --- Wave 159 (zone-beta277): GameEngine levelUpTotalCashBonusBetweenLevels, levelUpNerveGrantBetweenLevels, levelUpEnergyGrantBetweenLevels, playerLevelFloorProgressPct & isPlayerAtOrAboveLevel ---
+    check($engine->levelUpTotalCashBonusBetweenLevels(1, 3) === 1250, 'GameEngine levelUpTotalCashBonusBetweenLevels returns 1250 for 1->3');
+    check($engine->levelUpNerveGrantBetweenLevels(1, 5) === 4, 'GameEngine levelUpNerveGrantBetweenLevels returns 4 for 1->5');
+    check($engine->levelUpEnergyGrantBetweenLevels(1, 5) === 12, 'GameEngine levelUpEnergyGrantBetweenLevels returns 12 for 1->5');
+    check($engine->playerLevelFloorProgressPct() >= 0.0 && $engine->playerLevelFloorProgressPct() <= 100.0, 'GameEngine playerLevelFloorProgressPct returns 0..100 percentage');
+    check($engine->isPlayerAtOrAboveLevel(1) === true, 'GameEngine isPlayerAtOrAboveLevel returns true for level 1');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -9,6 +9,10 @@ test('owned deployment entry uses the existing canonical origin without forwardi
  assert.deepEqual(result.redirects,['https://zone-torn-style-game-mockup-6cf978c.vercel.app/?screen=city&lang=ar']);assert.equal(result.window.ZoneCanonicalEntry,true);
  assert.equal(result.window.ZoneCanonicalEntryStatus.redirected,true);
  assert.equal(result.window.ZoneCanonicalEntryStatus.canonicalOrigin,'https://zone-torn-style-game-mockup-6cf978c.vercel.app');
+ assert.equal(result.window.ZoneCanonicalEntryStatus.isPreview,false);
+ assert.deepEqual(Array.from(result.window.ZoneCanonicalEntryStatus.forwardedKeys()),['screen','lang']);
+ assert.equal(result.window.ZoneCanonicalEntryStatus.isForwardedKey('screen'),true);
+ assert.equal(result.window.ZoneCanonicalEntryStatus.isForwardedKey('token'),false);
 });
 test('canonical, local, explicit read-only preview and lookalike hosts are not redirected',()=>{
  for(const url of ['https://zone-torn-style-game-mockup-6cf978c.vercel.app/?screen=city','http://beta102.localhost:4317/','https://zone-final-d6u7x1nxt-team-auraa.vercel.app/?zone-preview=1','https://zone-final-gciua8337-team-auraa.vercel.app.evil.test/','https://unrelated-team-auraa.vercel.app/']) assert.equal(visit(url).redirects.length,0,url);
@@ -21,4 +25,9 @@ test('owner transport does not forward a denied sandbox command to the live play
  assert.equal(diag.installed,true);
  assert.equal(diag.interceptedCount,1);
  assert.equal(diag.playtestActive,true);
+ assert.equal(window.ZoneOwnerTransport.isInstalled(),true);
+ assert.equal(window.ZoneOwnerTransport.interceptedCount(),1);
+ assert.equal(window.ZoneOwnerTransport.isPlaytestActive(),true);
+ assert.equal(window.ZoneOwnerTransport.isInterceptablePath('/api/v1/player-market/action'),true);
+ assert.equal(window.ZoneOwnerTransport.isInterceptablePath('/api/v1/admin/overview'),false);
 });
