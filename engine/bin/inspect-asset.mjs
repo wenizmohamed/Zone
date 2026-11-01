@@ -23,6 +23,10 @@ export function isSupportedInspectorFormat(format) {
 export function isWithinInspectorBudget({ vertices = 0, triangles = 0, nodes = 0, bytes = 0 } = {}) {
   return vertices >= 0 && vertices <= MAX_VERTICES && triangles >= 0 && triangles <= MAX_TRIANGLES && nodes >= 0 && nodes <= MAX_NODES && bytes >= 0 && bytes <= MAX_BYTES;
 }
+export function maxInspectorVertices() { return MAX_VERTICES; }
+export function maxInspectorTriangles() { return MAX_TRIANGLES; }
+export function maxInspectorNodes() { return MAX_NODES; }
+export function maxInspectorBytes() { return MAX_BYTES; }
 const safeVector = v => [v.x, v.y, v.z].map(n => Math.round(n * 1e7) / 1e7);
 // Browser-only progress notifications do not alter the parsed geometry.
 globalThis.ProgressEvent ??= class ProgressEvent extends Event {

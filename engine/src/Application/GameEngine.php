@@ -3712,4 +3712,29 @@ final class GameEngine
     {
         return in_array($module, $this->activeReleaseModuleNames(), true);
     }
+
+    public function activeReleaseNotes(): string
+    {
+        return (string) ($this->releases->active()['notes'] ?? '');
+    }
+
+    public function hasActiveReleaseNotes(): bool
+    {
+        return $this->activeReleaseNotes() !== '';
+    }
+
+    public function activeReleaseThemeId(): string
+    {
+        return (string) ($this->activeReleaseManifest()['theme'] ?? 'noir-crime');
+    }
+
+    public function activeReleaseMediaBindingCount(): int
+    {
+        return count($this->activeReleaseManifest()['mediaBindings'] ?? []);
+    }
+
+    public function hasActiveReleaseMediaBindings(): bool
+    {
+        return $this->activeReleaseMediaBindingCount() > 0;
+    }
 }

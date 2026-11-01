@@ -1897,6 +1897,13 @@ try {
     check($engine->activeReleaseHasModules() === true, 'GameEngine activeReleaseHasModules returns boolean active release modules status');
     check(in_array('crimes', $engine->activeReleaseModuleNames(), true), 'GameEngine activeReleaseModuleNames returns list of active release module names');
     check($engine->isKnownReleaseModule('crimes') === true && $engine->isKnownReleaseModule('unknown') === false, 'GameEngine isKnownReleaseModule validates release module name');
+
+    // --- Wave 134 (zone-beta252): GameEngine activeReleaseNotes, hasActiveReleaseNotes, activeReleaseThemeId, activeReleaseMediaBindingCount & hasActiveReleaseMediaBindings ---
+    check(is_string($engine->activeReleaseNotes()), 'GameEngine activeReleaseNotes returns active release notes string');
+    check(is_bool($engine->hasActiveReleaseNotes()), 'GameEngine hasActiveReleaseNotes returns boolean active release notes status');
+    check($engine->activeReleaseThemeId() !== '', 'GameEngine activeReleaseThemeId returns active release theme id');
+    check($engine->activeReleaseMediaBindingCount() >= 0, 'GameEngine activeReleaseMediaBindingCount returns active release media binding count');
+    check(is_bool($engine->hasActiveReleaseMediaBindings()), 'GameEngine hasActiveReleaseMediaBindings returns boolean active release media bindings status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
