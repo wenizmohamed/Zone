@@ -74,6 +74,8 @@ export function isSupportedCombatAction(action) { return typeof action === 'stri
 export function resolvedEncounterPhases() { return ['won', 'lost', 'fled', 'settled']; }
 export function isResolvedEncounterPhase(phase) { return resolvedEncounterPhases().includes(String(phase ?? '')); }
 export function resolveCombatClipName(action) { return COMBAT_CLIPS[action] || 'Idle'; }
+export function defaultCombatSpacingMs() { return 780; }
+export function defaultCombatFeedbackDelayMs() { return 340; }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {
   let timer = null, disposed = false;

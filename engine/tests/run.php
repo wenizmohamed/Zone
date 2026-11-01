@@ -2156,6 +2156,13 @@ try {
     check($engine->assetInspectionLeaseSeconds() === 90, 'GameEngine assetInspectionLeaseSeconds returns 90');
     check($engine->assetWorkerHealthyWindowSeconds() === 100, 'GameEngine assetWorkerHealthyWindowSeconds returns 100');
     check($engine->assetMaxPendingUploadsPerActor() === 10, 'GameEngine assetMaxPendingUploadsPerActor returns 10');
+
+    // --- Wave 171 (zone-beta289): GameEngine releaseManagerChannel, releaseManagerSchemaVersion, releaseTextMaxByteLength, releaseTextMaxCharLength & releaseDefaultBrandingAccentColor ---
+    check($engine->releaseManagerChannel() === 'production', 'GameEngine releaseManagerChannel returns production');
+    check($engine->releaseManagerSchemaVersion() === 1, 'GameEngine releaseManagerSchemaVersion returns 1');
+    check($engine->releaseTextMaxByteLength() === 12000, 'GameEngine releaseTextMaxByteLength returns 12000');
+    check($engine->releaseTextMaxCharLength() === 4000, 'GameEngine releaseTextMaxCharLength returns 4000');
+    check($engine->releaseDefaultBrandingAccentColor() === '#a3d900', 'GameEngine releaseDefaultBrandingAccentColor returns #a3d900');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -4759,4 +4759,29 @@ final class GameEngine
     {
         return 10;
     }
+
+    public function releaseManagerChannel(): string
+    {
+        return 'production';
+    }
+
+    public function releaseManagerSchemaVersion(): int
+    {
+        return 1;
+    }
+
+    public function releaseTextMaxByteLength(): int
+    {
+        return 12000;
+    }
+
+    public function releaseTextMaxCharLength(): int
+    {
+        return 4000;
+    }
+
+    public function releaseDefaultBrandingAccentColor(): string
+    {
+        return '#a3d900';
+    }
 }
