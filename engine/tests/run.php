@@ -2247,6 +2247,13 @@ try {
     check($engine->redisDefaultPort() === 6379, 'GameEngine redisDefaultPort returns 6379');
     check($engine->redisConnectTimeoutSeconds() === 2.5, 'GameEngine redisConnectTimeoutSeconds returns 2.5');
     check($engine->supportedCacheAdapterNames() === ['memory', 'redis'], 'GameEngine supportedCacheAdapterNames returns memory and redis');
+
+    // --- Wave 184 (zone-beta302): GameEngine gatewayKeyMinimumByteLength, draftFingerprintHexByteLength, routerMaxPathDecodePasses, databaseTableCount & databaseInTransaction ---
+    check($engine->gatewayKeyMinimumByteLength() === 32, 'GameEngine gatewayKeyMinimumByteLength returns 32');
+    check($engine->draftFingerprintHexByteLength() === 64, 'GameEngine draftFingerprintHexByteLength returns 64');
+    check($engine->routerMaxPathDecodePasses() === 5, 'GameEngine routerMaxPathDecodePasses returns 5');
+    check($engine->databaseTableCount() > 10, 'GameEngine databaseTableCount returns table count');
+    check($engine->databaseInTransaction() === false, 'GameEngine databaseInTransaction returns false outside transaction');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

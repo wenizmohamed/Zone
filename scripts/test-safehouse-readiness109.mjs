@@ -159,6 +159,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(h.window.ZoneSafehouse.currentPropertyId(), 'v108-loft');
   assert.equal(h.window.ZoneSafehouse.currentLanguage(), 'en');
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedLanguages()), ['en', 'ar']);
+  assert.equal(h.window.ZoneSafehouse.defaultCameraFov(), 40);
+  assert.equal(h.window.ZoneSafehouse.minCameraDistance(), 3);
+  assert.equal(h.window.ZoneSafehouse.maxCameraDistance(), 20);
+  assert.equal(h.window.ZoneSafehouse.uploadedHouseTargetSize(), 8);
+  assert.equal(h.window.ZoneSafehouse.tweenDurationMs(), 600);
   h.dispose();
   assert.equal(h.window.ZoneSafehouse.isReady(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), true);

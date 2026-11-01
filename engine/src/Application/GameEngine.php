@@ -5111,4 +5111,29 @@ final class GameEngine
     {
         return ['memory', 'redis'];
     }
+
+    public function gatewayKeyMinimumByteLength(): int
+    {
+        return 32;
+    }
+
+    public function draftFingerprintHexByteLength(): int
+    {
+        return 64;
+    }
+
+    public function routerMaxPathDecodePasses(): int
+    {
+        return 5;
+    }
+
+    public function databaseTableCount(): int
+    {
+        return $this->database->tableCount();
+    }
+
+    public function databaseInTransaction(): bool
+    {
+        return (bool) ($this->database->health()['inTransaction'] ?? false);
+    }
 }
