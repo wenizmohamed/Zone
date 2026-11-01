@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, uploadedShortGunTargetLength, uploadedLongGunTargetLength, uploadedKnifeTargetLength, uploadedBatTargetLength, uploadedArmorChestOffsetY, uploadedAssetHashLength, uploadedEquipmentSlots, isSupportedUploadedEquipmentSlot, uploadedCharacterRepresentation, uploadedArmorRepresentation, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
+import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, uploadedShortGunTargetLength, uploadedLongGunTargetLength, uploadedKnifeTargetLength, uploadedBatTargetLength, uploadedArmorChestOffsetY, uploadedAssetHashLength, uploadedEquipmentSlots, isSupportedUploadedEquipmentSlot, uploadedCharacterRepresentation, uploadedArmorRepresentation, uploadedWeaponRepresentation, uploadedWeaponGripQuality, uploadedArmorRiggingMode, uploadedWeaponDescriptorPrefix, uploadedArmorBoneName, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName } from '../dist/character-grip.js';
@@ -204,4 +204,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(viewerRenderingDatasetKey(), 'zoneRendering');
   assert.equal(viewerMediaStateDatasetKey(), 'zoneMediaState');
   assert.deepEqual(viewerEventNames(), ['webglcontextlost', 'visibilitychange', 'pagehide', 'error', 'unhandledrejection']);
+  assert.equal(uploadedWeaponRepresentation(), 'uploaded-model');
+  assert.equal(uploadedWeaponGripQuality(), 'bounds-estimated');
+  assert.equal(uploadedArmorRiggingMode(), 'rigid-attachment-not-retargeted');
+  assert.equal(uploadedWeaponDescriptorPrefix(), 'uploaded:');
+  assert.equal(uploadedArmorBoneName(), 'Chest');
 });

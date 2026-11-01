@@ -2576,6 +2576,13 @@ try {
     check($engine->dailyStreakCycleDays() === 7, 'GameEngine dailyStreakCycleDays returns 7');
     check($engine->dailyContractPoolSize() === 4, 'GameEngine dailyContractPoolSize returns 4');
     check($engine->dailyContractSupportedIds() === ['crime-spree', 'gym-grind', 'honest-work', 'street-brawler'], 'GameEngine dailyContractSupportedIds returns 4 contract IDs');
+
+    // --- Wave 231 (zone-beta349): GameEngine notificationDefaultUnreadLimit, notificationCapWasteTypePrefix, resourceRegenNormalizedFields, levelingTotalXpForLevel & levelingLevelForXp ---
+    check($engine->notificationDefaultUnreadLimit() === 20, 'GameEngine notificationDefaultUnreadLimit returns 20');
+    check($engine->notificationCapWasteTypePrefix() === 'cap-waste:', 'GameEngine notificationCapWasteTypePrefix returns cap-waste:');
+    check(count($engine->resourceRegenNormalizedFields()) === 16, 'GameEngine resourceRegenNormalizedFields returns 16 fields');
+    check($engine->levelingTotalXpForLevel(1) === 0 && $engine->levelingTotalXpForLevel(2) === 100, 'GameEngine levelingTotalXpForLevel computes XP threshold');
+    check($engine->levelingLevelForXp(0) === 1 && $engine->levelingLevelForXp(100) === 2, 'GameEngine levelingLevelForXp computes level for XP');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

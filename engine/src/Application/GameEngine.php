@@ -6320,4 +6320,30 @@ final class GameEngine
     {
         return ['crime-spree', 'gym-grind', 'honest-work', 'street-brawler'];
     }
+
+    public function notificationDefaultUnreadLimit(): int
+    {
+        return 20;
+    }
+
+    public function notificationCapWasteTypePrefix(): string
+    {
+        return 'cap-waste:';
+    }
+
+    /** @return list<string> */
+    public function resourceRegenNormalizedFields(): array
+    {
+        return ['level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance'];
+    }
+
+    public function levelingTotalXpForLevel(int $level): int
+    {
+        return (new LevelingService($this->database, $this->ledger, $this->events))->totalXpForLevel($level);
+    }
+
+    public function levelingLevelForXp(int $xp): int
+    {
+        return (new LevelingService($this->database, $this->ledger, $this->events))->levelForXp($xp);
+    }
 }

@@ -88,6 +88,26 @@ export function uploadedArmorRepresentation() {
   return 'uploaded-rigid-chest-model';
 }
 
+export function uploadedWeaponRepresentation() {
+  return 'uploaded-model';
+}
+
+export function uploadedWeaponGripQuality() {
+  return 'bounds-estimated';
+}
+
+export function uploadedArmorRiggingMode() {
+  return 'rigid-attachment-not-retargeted';
+}
+
+export function uploadedWeaponDescriptorPrefix() {
+  return 'uploaded:';
+}
+
+export function uploadedArmorBoneName() {
+  return 'Chest';
+}
+
 export function uploadedWeaponFit(object, transform, key) {
   const melee = isMeleeWeaponKey(key);
   const length = uploadedWeaponTargetLength(key);
