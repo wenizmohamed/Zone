@@ -2562,6 +2562,13 @@ try {
     check($engine->familyOperationCooldownSeconds() === 300, 'GameEngine familyOperationCooldownSeconds returns 300');
     check($engine->familyOperationDockInterceptCashReward() === 1200, 'GameEngine familyOperationDockInterceptCashReward returns 1200');
     check($engine->familyOperationWarehouseHeistCashReward() === 3000, 'GameEngine familyOperationWarehouseHeistCashReward returns 3000');
+
+    // --- Wave 229 (zone-beta347): GameEngine familyCompetitionSupportedEvents, playerMarketListingQueryLimit, playerMarketMaxOrderQuantity, worldDirectorSnapshotMaxFindsLimit & worldDirectorSnapshotMaxEventsLimit ---
+    check($engine->familyCompetitionSupportedEvents() === ['PlayerCombatResolved', 'TerritoryControlChanged'], 'GameEngine familyCompetitionSupportedEvents returns 2 events');
+    check($engine->playerMarketListingQueryLimit() === 200, 'GameEngine playerMarketListingQueryLimit returns 200');
+    check($engine->playerMarketMaxOrderQuantity() === 1000, 'GameEngine playerMarketMaxOrderQuantity returns 1000');
+    check($engine->worldDirectorSnapshotMaxFindsLimit() === 64, 'GameEngine worldDirectorSnapshotMaxFindsLimit returns 64');
+    check($engine->worldDirectorSnapshotMaxEventsLimit() === 10, 'GameEngine worldDirectorSnapshotMaxEventsLimit returns 10');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

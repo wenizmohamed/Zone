@@ -84,6 +84,26 @@ export function safehouseDefaultWeaponKey() {
   return 'fists';
 }
 
+export function safehouseDefaultArmorOutfitFile() {
+  return 'Swat';
+}
+
+export function safehouseDefaultAnimationClipName() {
+  return 'Idle';
+}
+
+export function safehouseInitialMixerWarmupSeconds() {
+  return .01;
+}
+
+export function safehouseCustomWeaponGripDescriptor() {
+  return { gripPoint: [0, 0, 0], axis: 1, forward: false };
+}
+
+export function safehouseMinCharacterHeightEpsilon() {
+  return .01;
+}
+
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
   const loader = new GLTFLoader(), wardrobe = wardrobeLoader || (file => loader.loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href)), weaponAssets = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoader,
     catalog, materials, pack, baseURL: new URL('../assets/weapons/', import.meta.url) });

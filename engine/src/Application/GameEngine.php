@@ -6268,4 +6268,30 @@ final class GameEngine
     {
         return 3000;
     }
+
+    /** @return list<string> */
+    public function familyCompetitionSupportedEvents(): array
+    {
+        return \Zone\Engine\Core\Game\FamilyCompetitionSubscriber::supportedEvents();
+    }
+
+    public function playerMarketListingQueryLimit(): int
+    {
+        return 200;
+    }
+
+    public function playerMarketMaxOrderQuantity(): int
+    {
+        return 1000;
+    }
+
+    public function worldDirectorSnapshotMaxFindsLimit(): int
+    {
+        return 64;
+    }
+
+    public function worldDirectorSnapshotMaxEventsLimit(): int
+    {
+        return 10;
+    }
 }

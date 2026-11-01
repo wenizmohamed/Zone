@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
-import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey, safehouseCustomCharacterTargetHeight, safehouseCustomWeaponTargetSize, safehouseCustomArmorTargetSize, safehouseCharacterDefaultYaw, safehouseWeaponSupportPoint, safehouseArmorTargetBoneName, safehouseCustomArmorRepresentation, safehouseCustomArmorTargetOffset, safehouseMaxTickDeltaSeconds, safehouseDefaultWeaponKey} from '../dist/safehouse-character.mjs';
+import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, supportedSafehouseOutfitCount, safehouseOutfitFileMap, safehouseActorKey, safehouseCustomCharacterTargetHeight, safehouseCustomWeaponTargetSize, safehouseCustomArmorTargetSize, safehouseCharacterDefaultYaw, safehouseWeaponSupportPoint, safehouseArmorTargetBoneName, safehouseCustomArmorRepresentation, safehouseCustomArmorTargetOffset, safehouseMaxTickDeltaSeconds, safehouseDefaultWeaponKey, safehouseDefaultArmorOutfitFile, safehouseDefaultAnimationClipName, safehouseInitialMixerWarmupSeconds, safehouseCustomWeaponGripDescriptor, safehouseMinCharacterHeightEpsilon} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -153,6 +153,11 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.deepEqual(safehouseCustomArmorTargetOffset(), [0, 1.12, .04]);
   assert.equal(safehouseMaxTickDeltaSeconds(), .05);
   assert.equal(safehouseDefaultWeaponKey(), 'fists');
+  assert.equal(safehouseDefaultArmorOutfitFile(), 'Swat');
+  assert.equal(safehouseDefaultAnimationClipName(), 'Idle');
+  assert.equal(safehouseInitialMixerWarmupSeconds(), .01);
+  assert.deepEqual(safehouseCustomWeaponGripDescriptor(), { gripPoint: [0, 0, 0], axis: 1, forward: false });
+  assert.equal(safehouseMinCharacterHeightEpsilon(), .01);
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('other'), false);
