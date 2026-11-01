@@ -135,7 +135,7 @@ export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, 
       throw error;
     }
   }
-  return { update, diagnostics() {
+  return { update, isDisposed() { return disposed; }, hasActiveActor() { return !!active && !disposed; }, diagnostics() {
     return {
       disposed,
       sequence,

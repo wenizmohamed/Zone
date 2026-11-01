@@ -1883,6 +1883,13 @@ try {
     check($engine->positiveCooldownActionCount() >= 7, 'GameEngine positiveCooldownActionCount returns positive cooldown action count');
     check($engine->totalDefaultCooldownSeconds() === 50, 'GameEngine totalDefaultCooldownSeconds returns total default cooldown seconds');
     check($engine->totalEffectiveCooldownSeconds() > 0, 'GameEngine totalEffectiveCooldownSeconds returns total effective cooldown seconds');
+
+    // --- Wave 132 (zone-beta250): GameEngine activeReleaseManifest, activeReleaseModuleCount, enabledReleaseScreenCount, disabledReleaseScreenCount & hasEnabledReleaseScreens ---
+    check(isset($engine->activeReleaseManifest()['modules']), 'GameEngine activeReleaseManifest returns active release manifest array');
+    check($engine->activeReleaseModuleCount() >= 19, 'GameEngine activeReleaseModuleCount returns active release module count');
+    check($engine->enabledReleaseScreenCount() >= 19, 'GameEngine enabledReleaseScreenCount returns enabled release screen count');
+    check($engine->disabledReleaseScreenCount() >= 0, 'GameEngine disabledReleaseScreenCount returns disabled release screen count');
+    check($engine->hasEnabledReleaseScreens() === true, 'GameEngine hasEnabledReleaseScreens returns boolean enabled release screens status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

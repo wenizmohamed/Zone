@@ -144,7 +144,10 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.deepEqual(Array.from(h.window.ZoneSafehouse.supportedHotspots()), ['armory', 'vault', 'lounge']);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('vault'), true);
   assert.equal(h.window.ZoneSafehouse.isSupportedAction('other'), false);
+  assert.equal(h.window.ZoneSafehouse.isReady(), true);
+  assert.equal(h.window.ZoneSafehouse.hasUploadedHouse(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), false);
   h.dispose();
+  assert.equal(h.window.ZoneSafehouse.isReady(), false);
   assert.equal(h.window.ZoneSafehouse.isDisposed(), true);
 });

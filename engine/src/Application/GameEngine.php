@@ -3659,4 +3659,30 @@ final class GameEngine
     {
         return array_sum($this->cooldownSeconds);
     }
+
+    /** @return array<string, mixed> */
+    public function activeReleaseManifest(): array
+    {
+        return (array) ($this->releases->active()['manifest'] ?? []);
+    }
+
+    public function activeReleaseModuleCount(): int
+    {
+        return count($this->releases->active()['manifest']['modules'] ?? []);
+    }
+
+    public function enabledReleaseScreenCount(): int
+    {
+        return count(array_filter($this->releases->active()['manifest']['modules'] ?? [], static fn ($enabled): bool => $enabled !== false));
+    }
+
+    public function disabledReleaseScreenCount(): int
+    {
+        return count(array_filter($this->releases->active()['manifest']['modules'] ?? [], static fn ($enabled): bool => $enabled === false));
+    }
+
+    public function hasEnabledReleaseScreens(): bool
+    {
+        return $this->enabledReleaseScreenCount() > 0;
+    }
 }
