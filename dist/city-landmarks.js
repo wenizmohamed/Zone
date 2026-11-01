@@ -19,6 +19,18 @@ export function isSupportedCityLandmarkModel(name){
   return MODELS.includes(String(name ?? ''));
 }
 
+export function cityLandmarkModelCount(){
+  return MODELS.length;
+}
+
+export function cityLandmarkBuildingModels(){
+  return MODELS.filter(m => m.startsWith('building_'));
+}
+
+export function cityLandmarkPropModels(){
+  return MODELS.filter(m => !m.startsWith('building_'));
+}
+
 // One renderer shares Mapbox's context. There is no independent animation loop.
 export async function installCityLandmarks(map){
   if(map.getLayer(LAYER_ID))return null;
@@ -156,6 +168,8 @@ export async function installCityLandmarks(map){
     getDiagnostics(){return {...diagnostics};},
     isDisposed(){return disposed;},
     isVisible(){return visible;},
+    isShadersReady(){return prepared && !disposed;},
+    poolAllocationCount(){return diagnostics.poolAllocations;},
     setVisible(value){visible=!!value;diagnostics.visible=visible;publish();if(visible)scheduleRebuild();map.triggerRepaint();},
     dispose(){restoreNative();if(map.getLayer(LAYER_ID))map.removeLayer(LAYER_ID);if(map.getLayer('zone-city-streets'))map.removeLayer('zone-city-streets');if(map.getSource('zone-city-streets'))map.removeSource('zone-city-streets');globalThis.ZoneCityAtlas.remove(map);}
   };

@@ -32,16 +32,22 @@ async function harness() {
 test('3D waits for asynchronous shader preparation and keeps flat rendering available',async()=>{
   const h=await harness();
   assert.equal(h.scope.cityLandmarkModels().length,8);
+  assert.equal(h.scope.cityLandmarkModelCount(),8);
+  assert.deepEqual(Array.from(h.scope.cityLandmarkBuildingModels()),['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase']);
+  assert.deepEqual(Array.from(h.scope.cityLandmarkPropModels()),['car_sedan','streetlight','watertower','bush']);
   assert.equal(h.scope.cityLandmarkLayerId(),'zone-city-landmarks');
   assert.equal(h.scope.isSupportedCityLandmarkModel('car_sedan'),true);
   assert.equal(h.scope.isSupportedCityLandmarkModel('ufo'),false);
   assert.equal(h.controller.isDisposed(),false);
   assert.equal(h.controller.isVisible(),true);
+  assert.equal(h.controller.isShadersReady(),false);
   h.controller.setTerritories(h.features);h.pitch(35);h.render();assert.equal(h.renders,0);
   assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,false);
   assert.equal(h.controller.getDiagnostics().shadersReady,false);
+  assert.ok(h.controller.poolAllocationCount()>0);
   h.warmups[0].resolve();await h.controller.whenReady();h.flush();h.render();assert.equal(h.renders,1);assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,true);
   assert.equal(h.controller.getDiagnostics().shadersReady,true);
+  assert.equal(h.controller.isShadersReady(),true);
 });
 
 test('pan, zoom, pitch and resize reuse instance buffers instead of allocating and disposing meshes',async()=>{

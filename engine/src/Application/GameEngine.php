@@ -4545,4 +4545,29 @@ final class GameEngine
     {
         return in_array($approach, $this->supportedCombatFinishes(), true);
     }
+
+    public function playerCombatVersion(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new PlayerCombatService($this->database, $this->events))->snapshot($playerId)['version'] ?? 1);
+    }
+
+    public function hasActivePlayerCombat(string $playerId = 'founder-player'): bool
+    {
+        return ((new PlayerCombatService($this->database, $this->events))->snapshot($playerId)['encounter'] ?? null) !== null;
+    }
+
+    public function hasIncomingPlayerCombat(string $playerId = 'founder-player'): bool
+    {
+        return ((new PlayerCombatService($this->database, $this->events))->snapshot($playerId)['incoming'] ?? null) !== null;
+    }
+
+    public function playerCombatEnergyCost(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new PlayerCombatService($this->database, $this->events))->opponents($playerId)['energyCost'] ?? 25);
+    }
+
+    public function totalPlayerCombatOpponentCount(string $playerId = 'founder-player'): int
+    {
+        return count((array) ((new PlayerCombatService($this->database, $this->events))->opponents($playerId)['players'] ?? []));
+    }
 }

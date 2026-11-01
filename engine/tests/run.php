@@ -2100,6 +2100,13 @@ try {
     check($engine->isSupportedCombatAction('strike') === true && $engine->isSupportedCombatAction('flee') === false, 'GameEngine isSupportedCombatAction validates combat action');
     check($engine->supportedCombatFinishes() === ['mug', 'hosp', 'leave'], 'GameEngine supportedCombatFinishes returns 3 finish approaches');
     check($engine->isSupportedCombatFinish('mug') === true && $engine->isSupportedCombatFinish('arrest') === false, 'GameEngine isSupportedCombatFinish validates finish approach');
+
+    // --- Wave 163 (zone-beta281): GameEngine playerCombatVersion, hasActivePlayerCombat, hasIncomingPlayerCombat, playerCombatEnergyCost & totalPlayerCombatOpponentCount ---
+    check($engine->playerCombatVersion() >= 1, 'GameEngine playerCombatVersion returns >= 1');
+    check(is_bool($engine->hasActivePlayerCombat()), 'GameEngine hasActivePlayerCombat returns boolean encounter state');
+    check(is_bool($engine->hasIncomingPlayerCombat()), 'GameEngine hasIncomingPlayerCombat returns boolean incoming state');
+    check($engine->playerCombatEnergyCost() === 25, 'GameEngine playerCombatEnergyCost returns 25');
+    check($engine->totalPlayerCombatOpponentCount() >= 0, 'GameEngine totalPlayerCombatOpponentCount returns non-negative opponent count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
