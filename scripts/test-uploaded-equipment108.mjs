@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { uploadedAssetId, isUploadedAssetId, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
+import { uploadedAssetId, isUploadedAssetId, uploadedWeaponTargetLength, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -90,19 +90,29 @@ test('Home and Combat consume the same optional published identities while prese
 test('weapon and armor controllers expose structured upload diagnostics',async()=>{
   const weapon=createUploadedWeaponLoader(nativeWeapon(),{loader:async()=>media()});
   assert.deepEqual(weapon.diagnostics(),{disposed:false,activeUploadCount:0,pendingUploadCount:0});
+  assert.equal(weapon.isDisposed(), false);
+  assert.equal(weapon.activeUploadCount(), 0);
+  assert.equal(uploadedWeaponTargetLength('bat'), .715);
+  assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);
   assert.equal(weapon.diagnostics().activeUploadCount,1);
+  assert.equal(weapon.activeUploadCount(), 1);
   weapon.release(mesh);
   assert.equal(weapon.diagnostics().activeUploadCount,0);
   weapon.dispose();
   assert.equal(weapon.diagnostics().disposed,true);
+  assert.equal(weapon.isDisposed(), true);
 
   const actor=new T.Group(),chest=new T.Bone();chest.name='Chest';actor.add(chest);
   const armor=createUploadedArmorController(nativeArmor(),{loader:async()=>media()});
   assert.deepEqual(armor.diagnostics(),{disposed:false,sequence:0,hasActiveUpload:false,lastReceipt:null});
+  assert.equal(armor.isDisposed(), false);
+  assert.equal(armor.hasActiveUpload(), false);
   await armor.update({armorId:'vest',armorOwned:true,armorMediaAsset:id},actor);
   assert.equal(armor.diagnostics().hasActiveUpload,true);
+  assert.equal(armor.hasActiveUpload(), true);
   assert.equal(armor.diagnostics().lastReceipt?.status,'ready');
   armor.dispose();
   assert.equal(armor.diagnostics().disposed,true);
+  assert.equal(armor.isDisposed(), true);
 });

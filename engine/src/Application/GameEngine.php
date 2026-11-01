@@ -2410,4 +2410,37 @@ final class GameEngine
         $done = (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['upgDone'] ?? []);
         return count(array_filter($done));
     }
+
+    public function playerTotalCareerActions(string $playerId = 'founder-player'): int
+    {
+        return $this->playerCrimeSuccessCount($playerId)
+            + $this->playerGymTrainCount($playerId)
+            + $this->playerCombatWinCount($playerId)
+            + $this->playerJobShiftCount($playerId)
+            + $this->playerMarketBuyCount($playerId);
+    }
+
+    public function playerHasEquippedWeapon(string $playerId = 'founder-player'): bool
+    {
+        $id = $this->playerEquippedWeaponId($playerId);
+        return $id !== null && $id !== 'fists';
+    }
+
+    public function playerHasEquippedArmor(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerEquippedArmorId($playerId) !== null;
+    }
+
+    public function playerIsIdle(string $playerId = 'founder-player'): bool
+    {
+        return !$this->isTraveling($playerId)
+            && !$this->playerInJail($playerId)
+            && !$this->playerInHospital($playerId)
+            && !$this->hasActiveCombat($playerId);
+    }
+
+    public function playerHasFaction(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerFactionId($playerId) !== null;
+    }
 }

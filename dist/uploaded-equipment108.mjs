@@ -28,9 +28,13 @@ export async function loadUploadedCharacter(id, fallback, { loader = loadAsset, 
   }
 }
 
+export function uploadedWeaponTargetLength(key) {
+  return key === 'bat' ? .715 : key === 'knife' ? .22 : /(?:sniper|shotgun|rifle|ak|smg|bullpup)/i.test(key) ? .88 : .29;
+}
+
 export function uploadedWeaponFit(object, transform, key) {
   const melee = key === 'bat' || key === 'knife';
-  const length = key === 'bat' ? .715 : key === 'knife' ? .22 : /(?:sniper|shotgun|rifle|ak|smg|bullpup)/i.test(key) ? .88 : .29;
+  const length = uploadedWeaponTargetLength(key);
   const root = normalizeAssetObject(object, transform, length);
   root.updateMatrixWorld(true);
   const box = new T.Box3().setFromObject(root), size = box.getSize(new T.Vector3()), center = box.getCenter(new T.Vector3());
@@ -73,6 +77,12 @@ export function createUploadedWeaponLoader(base, { loader = loadAsset, publish =
       if (owned) { if(released.has(mesh))return;released.add(mesh);mesh.removeFromParent();if(active.delete(owned))owned.dispose(); }
       else base.release(mesh);
     },
+    isDisposed() {
+      return disposed;
+    },
+    activeUploadCount() {
+      return active.size;
+    },
     diagnostics() {
       return { disposed, activeUploadCount: active.size, pendingUploadCount: pending.size };
     },
@@ -108,6 +118,8 @@ export function createUploadedArmorController(base, { loader = loadAsset, publis
         await base.update(packet,actor);queueFrame();
       }
     },
+    isDisposed(){return disposed;},
+    hasActiveUpload(){return !!active;},
     diagnostics(){return {disposed,sequence,hasActiveUpload:!!active,lastReceipt:lastReceipt?{...lastReceipt}:null};},
     dispose(){if(disposed)return;disposed=true;++sequence;clear();base.dispose();}
   };

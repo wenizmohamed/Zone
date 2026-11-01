@@ -1540,6 +1540,13 @@ try {
     check($engine->playerActivePropertyCost('founder-player') >= 0, 'GameEngine playerActivePropertyCost returns active property cost');
     check($engine->playerCompletedMissionCount('founder-player') >= 0, 'GameEngine playerCompletedMissionCount returns completed mission count');
     check($engine->playerPurchasedUpgradeCount('founder-player') >= 0, 'GameEngine playerPurchasedUpgradeCount returns purchased upgrade count');
+
+    // --- Wave 83 (zone-beta201): GameEngine playerTotalCareerActions, playerHasEquippedWeapon, playerHasEquippedArmor, playerIsIdle & playerHasFaction ---
+    check($engine->playerTotalCareerActions('founder-player') >= 0, 'GameEngine playerTotalCareerActions returns total career actions');
+    check(is_bool($engine->playerHasEquippedWeapon('founder-player')), 'GameEngine playerHasEquippedWeapon returns boolean equipped weapon status');
+    check(is_bool($engine->playerHasEquippedArmor('founder-player')), 'GameEngine playerHasEquippedArmor returns boolean equipped armor status');
+    check(is_bool($engine->playerIsIdle('founder-player')), 'GameEngine playerIsIdle returns boolean idle status');
+    check(is_bool($engine->playerHasFaction('founder-player')), 'GameEngine playerHasFaction returns boolean faction membership status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
