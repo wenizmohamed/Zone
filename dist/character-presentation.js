@@ -47,6 +47,18 @@ export function isRequiredWardrobeClip(name) {
   return typeof name === 'string' && requiredWardrobeClips().includes(name);
 }
 
+export function defaultCharacterOutfit() {
+  return CHARACTER_ART.defaultOutfit;
+}
+
+export function characterHeadScale() {
+  return CHARACTER_ART.headScale.slice();
+}
+
+export function requiredWardrobeClipCount() {
+  return requiredWardrobeClips().length;
+}
+
 export function validateCharacterWardrobe(THREE, gltf) {
   const bones = new Set(), clips = new Map((gltf?.animations || []).map(clip => [clip.name, clip]));
   gltf?.scene?.traverse(object => { if (object.isBone) bones.add(object.name.toLowerCase().replace(/[._-]/g, '')); });

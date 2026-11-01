@@ -4242,4 +4242,43 @@ final class GameEngine
         $first = \Zone\Engine\Core\Game\DailyService::contractPool()[0] ?? [];
         return (int) ($first['reward_xp'] ?? 200);
     }
+
+    /** @return list<string> */
+    public function dailyContractPoolMetrics(): array
+    {
+        return array_map(
+            static fn (array $contract): string => (string) ($contract['metric'] ?? ''),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+    }
+
+    public function isKnownDailyContractMetric(string $metric): bool
+    {
+        return in_array($metric, $this->dailyContractPoolMetrics(), true);
+    }
+
+    public function totalDailyContractPoolRewardCash(): int
+    {
+        return array_sum(array_map(
+            static fn (array $contract): int => (int) ($contract['reward_cash'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        ));
+    }
+
+    public function totalDailyContractPoolRewardXp(): int
+    {
+        return array_sum(array_map(
+            static fn (array $contract): int => (int) ($contract['reward_xp'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        ));
+    }
+
+    public function maxDailyContractTarget(): int
+    {
+        $targets = array_map(
+            static fn (array $contract): int => (int) ($contract['target'] ?? 0),
+            \Zone\Engine\Core\Game\DailyService::contractPool(),
+        );
+        return $targets === [] ? 0 : max($targets);
+    }
 }

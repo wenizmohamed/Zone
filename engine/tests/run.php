@@ -2037,6 +2037,13 @@ try {
     check($engine->maxDailyContractRewardCash() === 6000, 'GameEngine maxDailyContractRewardCash returns 6000');
     check($engine->minDailyContractRewardCash() === 3000, 'GameEngine minDailyContractRewardCash returns 3000');
     check($engine->dailyContractDefaultRewardXp() === 200, 'GameEngine dailyContractDefaultRewardXp returns 200');
+
+    // --- Wave 154 (zone-beta272): GameEngine dailyContractPoolMetrics, isKnownDailyContractMetric, totalDailyContractPoolRewardCash, totalDailyContractPoolRewardXp & maxDailyContractTarget ---
+    check(count($engine->dailyContractPoolMetrics()) === 4, 'GameEngine dailyContractPoolMetrics returns 4 contract metrics');
+    check($engine->isKnownDailyContractMetric('crimes') === true && $engine->isKnownDailyContractMetric('unknown') === false, 'GameEngine isKnownDailyContractMetric validates contract metric');
+    check($engine->totalDailyContractPoolRewardCash() === 18000, 'GameEngine totalDailyContractPoolRewardCash returns 18000');
+    check($engine->totalDailyContractPoolRewardXp() === 800, 'GameEngine totalDailyContractPoolRewardXp returns 800');
+    check($engine->maxDailyContractTarget() === 6000, 'GameEngine maxDailyContractTarget returns 6000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

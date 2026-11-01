@@ -5,6 +5,8 @@ import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
+import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount } from '../dist/character-presentation.js';
+import { defaultGripAxisArray, isGripRigValid } from '../dist/character-grip.js';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -111,6 +113,11 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(maxParallelAssetStreams(), 3);
   assert.equal(isAssetManifestReady({ status: 'ready', members: [{ name: 'a.glb', size: 10 }] }), true);
   assert.equal(isAssetManifestReady({ status: 'pending', members: [] }), false);
+  assert.equal(defaultCharacterOutfit(), 'suit');
+  assert.deepEqual(characterHeadScale(), [.90, .82, .90]);
+  assert.equal(requiredWardrobeClipCount(), 7);
+  assert.deepEqual(defaultGripAxisArray(), [-.98519729, .17142433, 0]);
+  assert.equal(isGripRigValid(null), false);
   assert.equal(uploadedWeaponTargetLength('bat'), .715);
   assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);

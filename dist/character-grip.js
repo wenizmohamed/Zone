@@ -34,6 +34,14 @@ export function defaultGripCenterArray() {
   return [.014, .143, -.034];
 }
 
+export function defaultGripAxisArray() {
+  return [-.98519729, .17142433, 0];
+}
+
+export function isGripRigValid(rig) {
+  return Boolean(rig?.hand && Array.isArray(rig?.pose) && rig.pose.length === 19 && rig?.center && rig?.axis);
+}
+
 function poseTracks(THREE, clip) {
   const values = new Map();
   for (const track of clip?.tracks || []) {
