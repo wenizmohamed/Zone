@@ -5969,4 +5969,29 @@ final class GameEngine
     {
         return 20000;
     }
+
+    public function assetInspectorMaxGltfAccessors(): int
+    {
+        return 100000;
+    }
+
+    public function assetInspectorMaxMp3Frames(): int
+    {
+        return 1000000;
+    }
+
+    public function assetInspectorModelTimeoutSeconds(): int
+    {
+        return 60;
+    }
+
+    public function safeBundleMaxExpandedBytes(): int
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::MAX_EXPANDED_BYTES;
+    }
+
+    public function safeBundleMaxMembers(): int
+    {
+        return \Zone\Engine\Core\Media\SafeBundle::MAX_MEMBERS;
+    }
 }

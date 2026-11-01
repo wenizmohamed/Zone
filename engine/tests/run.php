@@ -2485,6 +2485,13 @@ try {
     check($engine->assetInspectorMaxGlbJsonBytes() === 8388608, 'GameEngine assetInspectorMaxGlbJsonBytes returns 8388608');
     check($engine->assetInspectorMaxGltfNodes() === 50000, 'GameEngine assetInspectorMaxGltfNodes returns 50000');
     check($engine->assetInspectorMaxGltfMeshes() === 20000, 'GameEngine assetInspectorMaxGltfMeshes returns 20000');
+
+    // --- Wave 218 (zone-beta336): GameEngine assetInspectorMaxGltfAccessors, assetInspectorMaxMp3Frames, assetInspectorModelTimeoutSeconds, safeBundleMaxExpandedBytes & safeBundleMaxMembers ---
+    check($engine->assetInspectorMaxGltfAccessors() === 100000, 'GameEngine assetInspectorMaxGltfAccessors returns 100000');
+    check($engine->assetInspectorMaxMp3Frames() === 1000000, 'GameEngine assetInspectorMaxMp3Frames returns 1000000');
+    check($engine->assetInspectorModelTimeoutSeconds() === 60, 'GameEngine assetInspectorModelTimeoutSeconds returns 60');
+    check($engine->safeBundleMaxExpandedBytes() === 125829120, 'GameEngine safeBundleMaxExpandedBytes returns 125829120');
+    check($engine->safeBundleMaxMembers() === 256, 'GameEngine safeBundleMaxMembers returns 256');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

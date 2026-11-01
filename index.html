@@ -3002,6 +3002,28 @@ class Component extends DCLogic {
     return this.state?.itemTab || 'all';
   }
 
+  activeOutfit() {
+    return String(this.p?.outfit || 'street');
+  }
+
+  isGameplayReady() {
+    return Boolean(this.gameplayReady);
+  }
+
+  isGameplayBusy() {
+    return Boolean(this.gameplayBusy);
+  }
+
+  ownedInventoryKeyCount() {
+    const inv = this.p?.inv || {};
+    return Object.keys(inv).filter(k => Number(inv[k] || 0) > 0).length;
+  }
+
+  hasEquippedWeapon() {
+    const eq = String(this.p?.equip || 'fists');
+    return eq !== '' && eq !== 'fists';
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);

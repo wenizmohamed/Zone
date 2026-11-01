@@ -49,6 +49,11 @@ test('each real Gym station explains its combat purpose in the active language, 
     assert.equal(instance.activeCombatMode(),'npc');
     assert.equal(instance.activeMarketMode(),'merchants');
     assert.equal(instance.activeItemTab(),'all');
+    assert.equal(instance.activeOutfit(),'street');
+    assert.equal(instance.isGameplayReady(),true);
+    assert.equal(instance.isGameplayBusy(),false);
+    assert.equal(instance.ownedInventoryKeyCount(),0);
+    assert.equal(instance.hasEquippedWeapon(),false);
   }
 });
 
