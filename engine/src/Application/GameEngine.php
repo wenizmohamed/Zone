@@ -2878,4 +2878,29 @@ final class GameEngine
     {
         return $this->playerGymTrainCount($playerId) > 0;
     }
+
+    public function playerHasCombatWins(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerCombatWinCount($playerId) > 0;
+    }
+
+    public function playerHasJobShifts(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerJobShiftCount($playerId) > 0;
+    }
+
+    public function playerHasMarketBuys(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMarketBuyCount($playerId) > 0;
+    }
+
+    public function playerHasTotalCareerActions(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerTotalCareerActions($playerId) > 0;
+    }
+
+    public function playerHasLoginStreak(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerLoginStreak($playerId) > 0;
+    }
 }

@@ -1666,6 +1666,13 @@ try {
     check(is_bool($engine->playerHasBestChain()), 'GameEngine playerHasBestChain returns boolean best chain status');
     check(is_bool($engine->playerHasCrimeSuccesses()), 'GameEngine playerHasCrimeSuccesses returns boolean crime successes status');
     check(is_bool($engine->playerHasGymTrains()), 'GameEngine playerHasGymTrains returns boolean gym trains status');
+
+    // --- Wave 101 (zone-beta219): GameEngine playerHasCombatWins, playerHasJobShifts, playerHasMarketBuys, playerHasTotalCareerActions & playerHasLoginStreak ---
+    check(is_bool($engine->playerHasCombatWins()), 'GameEngine playerHasCombatWins returns boolean combat wins status');
+    check(is_bool($engine->playerHasJobShifts()), 'GameEngine playerHasJobShifts returns boolean job shifts status');
+    check(is_bool($engine->playerHasMarketBuys()), 'GameEngine playerHasMarketBuys returns boolean market buys status');
+    check(is_bool($engine->playerHasTotalCareerActions()), 'GameEngine playerHasTotalCareerActions returns boolean total career actions status');
+    check(is_bool($engine->playerHasLoginStreak()), 'GameEngine playerHasLoginStreak returns boolean login streak status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
