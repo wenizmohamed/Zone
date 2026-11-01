@@ -4843,4 +4843,30 @@ final class GameEngine
     {
         return ResourceService::regenIntervalsSeconds()[$bar] ?? 0;
     }
+
+    public function defaultCooldownActionSeconds(string $action): int
+    {
+        return self::COOLDOWN_DEFAULTS[$action] ?? 0;
+    }
+
+    /** @return list<string> */
+    public function supportedDefaultCooldownActions(): array
+    {
+        return array_keys(self::COOLDOWN_DEFAULTS);
+    }
+
+    public function isSupportedDefaultCooldownAction(string $action): bool
+    {
+        return array_key_exists($action, self::COOLDOWN_DEFAULTS);
+    }
+
+    public function notificationMaxUnreadQueryLimit(): int
+    {
+        return 100;
+    }
+
+    public function ledgerMaxRecentEntriesLimit(): int
+    {
+        return 50;
+    }
 }

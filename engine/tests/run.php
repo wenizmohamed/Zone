@@ -2177,6 +2177,13 @@ try {
     check($engine->levelingEnergyGrantPerLevel() === 3, 'GameEngine levelingEnergyGrantPerLevel returns 3');
     check($engine->levelingCashBonusPerLevelMultiplier() === 250, 'GameEngine levelingCashBonusPerLevelMultiplier returns 250');
     check($engine->resourceRegenTickSecondsForBar('life') === 60 && $engine->resourceRegenTickSecondsForBar('energy') === 180 && $engine->resourceRegenTickSecondsForBar('nerve') === 300 && $engine->resourceRegenTickSecondsForBar('unknown') === 0, 'GameEngine resourceRegenTickSecondsForBar returns bar regen interval');
+
+    // --- Wave 174 (zone-beta292): GameEngine defaultCooldownActionSeconds, supportedDefaultCooldownActions, isSupportedDefaultCooldownAction, notificationMaxUnreadQueryLimit & ledgerMaxRecentEntriesLimit ---
+    check($engine->defaultCooldownActionSeconds('crime') === 5 && $engine->defaultCooldownActionSeconds('bank') === 0 && $engine->defaultCooldownActionSeconds('unknown') === 0, 'GameEngine defaultCooldownActionSeconds returns default cooldown');
+    check(count($engine->supportedDefaultCooldownActions()) === 9 && in_array('attack', $engine->supportedDefaultCooldownActions(), true), 'GameEngine supportedDefaultCooldownActions returns 9 actions');
+    check($engine->isSupportedDefaultCooldownAction('gym') === true && $engine->isSupportedDefaultCooldownAction('slots') === false, 'GameEngine isSupportedDefaultCooldownAction validates cooldown action');
+    check($engine->notificationMaxUnreadQueryLimit() === 100, 'GameEngine notificationMaxUnreadQueryLimit returns 100');
+    check($engine->ledgerMaxRecentEntriesLimit() === 50, 'GameEngine ledgerMaxRecentEntriesLimit returns 50');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

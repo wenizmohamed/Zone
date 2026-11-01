@@ -3,7 +3,7 @@ import test from 'node:test';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { inspectAsset } from '../bin/inspect-asset.mjs';
+import { inspectAsset, inspectorBudgetDiagnostics, isSupportedInspectorFormat, isWithinInspectorBudget, maxInspectorVertices, maxInspectorTriangles, maxInspectorNodes, maxInspectorBytes, maxInspectorMeshes, maxSampledThumbnailTriangles, supportedInspectorFormats, supportedInspectorFormatCount } from '../bin/inspect-asset.mjs';
 
 const root = fileURLToPath(new URL('../var/', import.meta.url));
 await fs.mkdir(root, { recursive: true });
@@ -118,4 +118,17 @@ test('valid indexed geometry preserves actual counts and the bounded projection 
   const view = await indexedFixture('valid-indices.gltf');
   assert.equal(view.vertices,3); assert.equal(view.triangles,300);
   assert.deepEqual(view.bounds.size,[2,3,0]); assert.equal(view.thumbnailKind,'geometry-projection');
+  assert.equal(maxInspectorVertices(), 3_000_000);
+  assert.equal(maxInspectorTriangles(), 2_000_000);
+  assert.equal(maxInspectorNodes(), 50_000);
+  assert.equal(maxInspectorBytes(), 125_829_120);
+  assert.equal(maxInspectorMeshes(), 20_000);
+  assert.equal(maxSampledThumbnailTriangles(), 1600);
+  assert.deepEqual(supportedInspectorFormats(), ['glb', 'gltf', 'obj', 'fbx']);
+  assert.equal(supportedInspectorFormatCount(), 4);
+  assert.equal(isSupportedInspectorFormat('glb'), true);
+  assert.equal(isSupportedInspectorFormat('blend'), false);
+  assert.equal(isWithinInspectorBudget({ vertices: 100, triangles: 50, nodes: 10, bytes: 1024 }), true);
+  assert.equal(isWithinInspectorBudget({ vertices: 4_000_000 }), false);
+  assert.equal(inspectorBudgetDiagnostics().maxTriangles, 2_000_000);
 });
