@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, cullingBudgets } = require('../dist/city-layout.js');
+const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, isSupportedLayoutModel, maxPlacementWidthMeters, cullingBudgets } = require('../dist/city-layout.js');
 const cell = (id, x=0) => ({type:'Feature',id,properties:{ownerId:'vipers'},geometry:{type:'Polygon',coordinates:[[[x,0],[x+1,0],[x+1,1],[x,1],[x,0]]]}});
 
 test('placements are deterministic and remain within their authoritative blocks',()=>{
@@ -109,6 +109,10 @@ test('view culling preserves state and enforces explicit mobile geometry budgets
   assert.deepEqual(streetSummary.blockIds,['ZC-018','ZC-045']);
   assert.ok(streetSummary.vertexCount>=16);
   assert.equal(supportedLayoutModels().length,7);
+  assert.equal(isSupportedLayoutModel('building_A_withoutBase'),true);
+  assert.equal(isSupportedLayoutModel('car_sedan'),true);
+  assert.equal(isSupportedLayoutModel('unknown'),false);
+  assert.equal(maxPlacementWidthMeters(),140);
   assert.deepEqual(cullingBudgets(true),{buildings:140,props:80});
   assert.deepEqual(cullingBudgets(false),{buildings:380,props:180});
 });

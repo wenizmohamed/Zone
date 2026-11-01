@@ -106,8 +106,14 @@
   function supportedLayoutModels(){
     return ['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase','car_sedan','bush','streetlight'];
   }
+  function isSupportedLayoutModel(model){
+    return supportedLayoutModels().includes(String(model||''));
+  }
+  function maxPlacementWidthMeters(){
+    return 140;
+  }
   function cullingBudgets(mobile=false){
     return {buildings:mobile?140:380,props:mobile?80:180};
   }
-  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,cullingBudgets};
+  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,isSupportedLayoutModel,maxPlacementWidthMeters,cullingBudgets};
 });

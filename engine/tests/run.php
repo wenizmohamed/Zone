@@ -1813,6 +1813,13 @@ try {
     check($engine->hasValidActiveReleaseId() === true, 'GameEngine hasValidActiveReleaseId returns boolean valid active release id status');
     check($engine->hasValidActiveThemeId() === true, 'GameEngine hasValidActiveThemeId returns boolean valid active theme id status');
     check($engine->hasValidDatabaseDriver() === true, 'GameEngine hasValidDatabaseDriver returns boolean valid database driver status');
+
+    // --- Wave 122 (zone-beta240): GameEngine hasEnabledCrimes, hasFactions, hasTerritories, hasActiveWars & hasActiveWorldEvents ---
+    check($engine->hasEnabledCrimes() === true, 'GameEngine hasEnabledCrimes returns boolean enabled crimes status');
+    check($engine->hasFactions() === true, 'GameEngine hasFactions returns boolean factions status');
+    check($engine->hasTerritories() === true, 'GameEngine hasTerritories returns boolean territories status');
+    check(is_bool($engine->hasActiveWars()), 'GameEngine hasActiveWars returns boolean active wars status');
+    check(is_bool($engine->hasActiveWorldEvents()), 'GameEngine hasActiveWorldEvents returns boolean active world events status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

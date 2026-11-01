@@ -3406,4 +3406,29 @@ final class GameEngine
     {
         return $this->databaseDriver() !== '';
     }
+
+    public function hasEnabledCrimes(): bool
+    {
+        return $this->enabledCrimeCount() > 0;
+    }
+
+    public function hasFactions(): bool
+    {
+        return $this->factionCount() > 0;
+    }
+
+    public function hasTerritories(): bool
+    {
+        return $this->territoryCount() > 0;
+    }
+
+    public function hasActiveWars(): bool
+    {
+        return $this->activeWarsCount() > 0;
+    }
+
+    public function hasActiveWorldEvents(): bool
+    {
+        return $this->activeWorldEventCount() > 0;
+    }
 }
