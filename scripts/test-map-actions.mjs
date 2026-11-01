@@ -75,4 +75,10 @@ test('a rejected action refreshes server energy and emits a failure, never a suc
   assert.equal(messages.at(-1).data.status, 'error');
   assert.equal(messages.filter(item => item.data.status === 'success').length, 0);
   app.pushMap(); assert.equal(messages.at(-1).data.blocks[0].canAct, false);
+  assert.deepEqual(Array.from(app.supportedTerritoryActions()), ['claim', 'contest', 'fortify', 'collect']);
+  assert.equal(app.isSupportedTerritoryAction('claim'), true);
+  assert.equal(app.isSupportedTerritoryAction('unknown'), false);
+  assert.equal(app.territoryBlockCount(), 120);
+  assert.equal(app.hasTerritoryMap(), true);
+  assert.equal(app.isTerritoryBusy(), false);
 });

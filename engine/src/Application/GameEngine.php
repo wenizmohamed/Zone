@@ -4022,4 +4022,30 @@ final class GameEngine
     {
         return (int) ($this->modules->summary()['installed'] ?? 0);
     }
+
+    public function moduleRegistryEnabledCount(): int
+    {
+        return (int) ($this->modules->summary()['enabled'] ?? 0);
+    }
+
+    public function moduleRegistryDisabledCount(): int
+    {
+        return max(0, $this->moduleRegistryInstalledCount() - $this->moduleRegistryEnabledCount());
+    }
+
+    public function moduleRegistryUninstalledCount(): int
+    {
+        return max(0, $this->moduleRegistryTotalCount() - $this->moduleRegistryInstalledCount());
+    }
+
+    public function moduleRegistryEnabledRatioPct(): float
+    {
+        $total = $this->moduleRegistryTotalCount();
+        return $total > 0 ? round(($this->moduleRegistryEnabledCount() / $total) * 100.0, 2) : 0.0;
+    }
+
+    public function hasUninstalledModules(): bool
+    {
+        return $this->moduleRegistryUninstalledCount() > 0;
+    }
 }

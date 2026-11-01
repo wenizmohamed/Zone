@@ -1981,6 +1981,13 @@ try {
     check($engine->isModuleEnabledById('crime') === true && $engine->isModuleEnabledById('unknown') === false, 'GameEngine isModuleEnabledById validates enabled module ID');
     check($engine->moduleRegistryTotalCount() >= 27, 'GameEngine moduleRegistryTotalCount returns total registered module count');
     check($engine->moduleRegistryInstalledCount() >= 27, 'GameEngine moduleRegistryInstalledCount returns installed module count');
+
+    // --- Wave 146 (zone-beta264): GameEngine moduleRegistryEnabledCount, moduleRegistryDisabledCount, moduleRegistryUninstalledCount, moduleRegistryEnabledRatioPct & hasUninstalledModules ---
+    check($engine->moduleRegistryEnabledCount() >= 25, 'GameEngine moduleRegistryEnabledCount returns enabled module count');
+    check($engine->moduleRegistryDisabledCount() >= 0, 'GameEngine moduleRegistryDisabledCount returns disabled module count');
+    check($engine->moduleRegistryUninstalledCount() >= 0, 'GameEngine moduleRegistryUninstalledCount returns uninstalled module count');
+    check($engine->moduleRegistryEnabledRatioPct() > 0.0 && $engine->moduleRegistryEnabledRatioPct() <= 100.0, 'GameEngine moduleRegistryEnabledRatioPct returns enabled module ratio percentage');
+    check(is_bool($engine->hasUninstalledModules()), 'GameEngine hasUninstalledModules returns boolean uninstalled modules status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

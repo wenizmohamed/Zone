@@ -2962,6 +2962,26 @@ class Component extends DCLogic {
     return Number(this.p?.cash || 0) + Number(this.p?.bankBalance || 0);
   }
 
+  supportedTerritoryActions() {
+    return ['claim', 'contest', 'fortify', 'collect'];
+  }
+
+  isSupportedTerritoryAction(action) {
+    return ['claim', 'contest', 'fortify', 'collect'].includes(String(action ?? ''));
+  }
+
+  territoryBlockCount() {
+    return Array.isArray(this.territoryMap?.blocks) ? this.territoryMap.blocks.length : 0;
+  }
+
+  hasTerritoryMap() {
+    return this.territoryBlockCount() > 0;
+  }
+
+  isTerritoryBusy() {
+    return Boolean(this.territoryBusy);
+  }
+
   diagnostics() {
     const inv = this.p?.inv || {};
     const ownedItemCount = Object.values(inv).reduce((sum, count) => sum + Math.max(0, Number(count) || 0), 0);
