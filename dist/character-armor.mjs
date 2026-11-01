@@ -1,5 +1,13 @@
 // Worn armor uses only a derived torso surface from the retained CC0 Swat asset.
 // It is a representative vest, not an item-exact model for arbitrary content.
+export function supportedArmorRepresentations() {
+  return ['authored-tactical-vest', 'existing-tactical-costume', 'no-worn-model', 'none'];
+}
+
+export function isRepresentedArmorId(armorId) {
+  return typeof armorId === 'string' && ['armor', 'vest'].includes(armorId);
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
   const reduction = Number(packet.armorReduction);

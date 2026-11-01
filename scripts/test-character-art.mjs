@@ -8,7 +8,7 @@ import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateC
 import { prepareCharacterGrip, applyCharacterGrip } from '../dist/character-grip.js';
 import { prepareWeaponPose } from '../dist/character-poses.js';
 import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
-import { createArmorController } from '../dist/character-armor.mjs';
+import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId } from '../dist/character-armor.mjs';
 
 async function wardrobe(name) {
   const bytes = readFileSync(new URL(`../assets/character/quaternius/${name}.glb`, import.meta.url));
@@ -132,6 +132,9 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.equal(isSupportedSurfaceName('Suit'), true);
   assert.equal(isSupportedSurfaceName('Swat_Black'), true);
   assert.equal(isSupportedSurfaceName('UnknownSurface'), false);
+  assert.deepEqual(supportedArmorRepresentations(), ['authored-tactical-vest', 'existing-tactical-costume', 'no-worn-model', 'none']);
+  assert.equal(isRepresentedArmorId('vest'), true);
+  assert.equal(isRepresentedArmorId('helmet'), false);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

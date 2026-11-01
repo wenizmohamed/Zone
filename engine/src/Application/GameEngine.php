@@ -2528,4 +2528,29 @@ final class GameEngine
     {
         return $this->playerActiveMarketListingCount($playerId) > 0;
     }
+
+    public function playerHasInmates(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerInmateCount($playerId) > 0;
+    }
+
+    public function playerHasPatients(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerPatientCount($playerId) > 0;
+    }
+
+    public function playerHasSafehouses(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerSafehouseCount($playerId) > 0;
+    }
+
+    public function playerHasAchievements(string $playerId = 'founder-player'): bool
+    {
+        return $this->achievementCount($playerId) > 0;
+    }
+
+    public function playerHasOwnedItems(string $playerId = 'founder-player'): bool
+    {
+        return $this->ownedItemCount($playerId) > 0;
+    }
 }

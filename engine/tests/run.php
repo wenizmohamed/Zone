@@ -1568,6 +1568,13 @@ try {
     check(is_bool($engine->playerHasCompletedMissions('founder-player')), 'GameEngine playerHasCompletedMissions returns boolean mission completion status');
     check(is_bool($engine->playerHasPurchasedUpgrades('founder-player')), 'GameEngine playerHasPurchasedUpgrades returns boolean upgrade purchase status');
     check(is_bool($engine->playerHasActiveMarketListings('founder-player')), 'GameEngine playerHasActiveMarketListings returns boolean active market listing status');
+
+    // --- Wave 87 (zone-beta205): GameEngine playerHasInmates, playerHasPatients, playerHasSafehouses, playerHasAchievements & playerHasOwnedItems ---
+    check(is_bool($engine->playerHasInmates('founder-player')), 'GameEngine playerHasInmates returns boolean inmate presence status');
+    check(is_bool($engine->playerHasPatients('founder-player')), 'GameEngine playerHasPatients returns boolean patient presence status');
+    check(is_bool($engine->playerHasSafehouses('founder-player')), 'GameEngine playerHasSafehouses returns boolean safehouse presence status');
+    check(is_bool($engine->playerHasAchievements('founder-player')), 'GameEngine playerHasAchievements returns boolean achievement status');
+    check(is_bool($engine->playerHasOwnedItems('founder-player')), 'GameEngine playerHasOwnedItems returns boolean owned item status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
