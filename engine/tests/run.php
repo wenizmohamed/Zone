@@ -1848,6 +1848,13 @@ try {
     check(is_bool($engine->playerHasRank()), 'GameEngine playerHasRank returns boolean player rank status');
     check($engine->playerHasTravelStatus() === true, 'GameEngine playerHasTravelStatus returns boolean travel status');
     check($engine->hasAuthoredCrimes() === true, 'GameEngine hasAuthoredCrimes returns boolean authored crimes status');
+
+    // --- Wave 127 (zone-beta245): GameEngine isScreenEnabledInActiveRelease, defaultCooldownSeconds, isKnownCooldownAction, engineCapabilities & hasEngineCapability ---
+    check($engine->isScreenEnabledInActiveRelease('crimes') === true, 'GameEngine isScreenEnabledInActiveRelease returns boolean screen enabled status');
+    check($engine->defaultCooldownSeconds('crime') === 5, 'GameEngine defaultCooldownSeconds returns default cooldown seconds');
+    check($engine->isKnownCooldownAction('crime') === true && $engine->isKnownCooldownAction('unknown') === false, 'GameEngine isKnownCooldownAction validates known cooldown actions');
+    check(count($engine->engineCapabilities()) >= 14, 'GameEngine engineCapabilities returns non-empty capability list');
+    check($engine->hasEngineCapability('server-authoritative-faction-control') === true && $engine->hasEngineCapability('unknown') === false, 'GameEngine hasEngineCapability validates engine capabilities');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

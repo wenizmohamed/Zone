@@ -107,8 +107,12 @@ test('rapid selection and teardown never display stale models and dispose every 
   const pending=new Map(),displayed=[],disposed=[],states=[];
   const selection=context.createModelSelection({load:model=>new Promise(resolve=>pending.set(model,resolve)),dispose:object=>disposed.push(object),display:object=>displayed.push(object),state:state=>states.push(state)});
   const a=selection.select('A'),b=selection.select('B');pending.get('B')('objectB');await b;pending.get('A')('objectA');await a;
+  assert.equal(selection.hasSelection(),true);
+  assert.equal(selection.isDisposed(),false);
   assert.deepEqual(displayed,['objectB']);assert.deepEqual(disposed,['objectA']);
   const c=selection.select('C');assert.deepEqual(disposed,['objectA','objectB']);selection.dispose();pending.get('C')('objectC');await c;
+  assert.equal(selection.hasSelection(),false);
+  assert.equal(selection.isDisposed(),true);
   assert.deepEqual(disposed,['objectA','objectB','objectC']);assert.equal(await selection.select('D'),false);assert.equal(states.filter(s=>s==='ready').length,1);
 });
 

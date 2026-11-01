@@ -3531,4 +3531,30 @@ final class GameEngine
     {
         return $this->totalAuthoredCrimeCount() > 0;
     }
+
+    public function isScreenEnabledInActiveRelease(string $screen): bool
+    {
+        return ($this->releases->active()['manifest']['modules'][$screen] ?? true) !== false;
+    }
+
+    public function defaultCooldownSeconds(string $action): int
+    {
+        return self::COOLDOWN_DEFAULTS[$action] ?? 0;
+    }
+
+    public function isKnownCooldownAction(string $action): bool
+    {
+        return array_key_exists($action, self::COOLDOWN_DEFAULTS);
+    }
+
+    /** @return list<string> */
+    public function engineCapabilities(): array
+    {
+        return $this->status()['capabilities'];
+    }
+
+    public function hasEngineCapability(string $capability): bool
+    {
+        return in_array($capability, $this->engineCapabilities(), true);
+    }
 }

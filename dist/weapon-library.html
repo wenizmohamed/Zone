@@ -82,6 +82,8 @@ function normalizeLibraryModel(THREE, object) {
 function createModelSelection({ load, dispose, display, state }) {
   let sequence = 0, current = null, closed = false;
   return {
+    isDisposed() { return closed; },
+    hasSelection() { return current !== null; },
     async select(model) {
       if (closed) return false;
       const request = ++sequence;
