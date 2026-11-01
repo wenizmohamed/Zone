@@ -2366,6 +2366,13 @@ try {
     check($engine->progressionConsumableItemTypes() === ['medical', 'booster'], 'GameEngine progressionConsumableItemTypes returns medical and booster');
     check($engine->progressionEquippableItemTypes() === ['weapon', 'armor'], 'GameEngine progressionEquippableItemTypes returns weapon and armor');
     check($engine->progressionBioEducationMaxLifeBonus() === 50, 'GameEngine progressionBioEducationMaxLifeBonus returns 50');
+
+    // --- Wave 201 (zone-beta319): GameEngine progressionFactionNerveMaxUpgradeBonus, progressionFactionEnergyMaxUpgradeBonus, progressionFactionMaxContributionRespect, progressionSelfBailMinPriceCash & progressionSelfBailPricePerMinuteCash ---
+    check($engine->progressionFactionNerveMaxUpgradeBonus() === 5, 'GameEngine progressionFactionNerveMaxUpgradeBonus returns 5');
+    check($engine->progressionFactionEnergyMaxUpgradeBonus() === 10, 'GameEngine progressionFactionEnergyMaxUpgradeBonus returns 10');
+    check($engine->progressionFactionMaxContributionRespect() === 1000000, 'GameEngine progressionFactionMaxContributionRespect returns 1000000');
+    check($engine->progressionSelfBailMinPriceCash() === 1000, 'GameEngine progressionSelfBailMinPriceCash returns 1000');
+    check($engine->progressionSelfBailPricePerMinuteCash() === 1000, 'GameEngine progressionSelfBailPricePerMinuteCash returns 1000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

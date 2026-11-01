@@ -5536,4 +5536,29 @@ final class GameEngine
     {
         return 50;
     }
+
+    public function progressionFactionNerveMaxUpgradeBonus(): int
+    {
+        return 5;
+    }
+
+    public function progressionFactionEnergyMaxUpgradeBonus(): int
+    {
+        return 10;
+    }
+
+    public function progressionFactionMaxContributionRespect(): int
+    {
+        return 1000000;
+    }
+
+    public function progressionSelfBailMinPriceCash(): int
+    {
+        return 1000;
+    }
+
+    public function progressionSelfBailPricePerMinuteCash(): int
+    {
+        return 1000;
+    }
 }

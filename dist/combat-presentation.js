@@ -76,6 +76,11 @@ export function isResolvedEncounterPhase(phase) { return resolvedEncounterPhases
 export function resolveCombatClipName(action) { return COMBAT_CLIPS[action] || 'Idle'; }
 export function defaultCombatSpacingMs() { return 780; }
 export function defaultCombatFeedbackDelayMs() { return 340; }
+export function supportedCombatActors() { return ['player', 'opponent']; }
+export function isSupportedCombatActor(actor) { return actor === 'player' || actor === 'opponent'; }
+export function supportedCombatEventKinds() { return ['hit', 'block', 'miss']; }
+export function combatStageGroupName() { return 'ZONE staged loading bay'; }
+export function combatCameraMinDistance() { return 4.3; }
 export function combatCameraDistance(aspect) { return Math.max(4.3, 1.65 / (Math.tan(36 * Math.PI/360) * Math.max(.3, aspect))); }
 export function createCombatFeedbackTimeline({ attack, impact, schedule = setTimeout, cancel = clearTimeout, delay = 340 }) {
   let timer = null, disposed = false;
