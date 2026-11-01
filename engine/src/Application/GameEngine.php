@@ -6346,4 +6346,29 @@ final class GameEngine
     {
         return (new LevelingService($this->database, $this->ledger, $this->events))->levelForXp($xp);
     }
+
+    public function territoryClaimControlBasisPoints(): int
+    {
+        return 10000;
+    }
+
+    public function territoryAssaultInitialControlBasisPoints(): int
+    {
+        return 5000;
+    }
+
+    public function territoryActiveWarsCount(): int
+    {
+        return (new \Zone\Engine\Core\Territories\TerritoryService($this->database, $this->events))->activeWarsCount();
+    }
+
+    public function territoryOwnedBlockCount(?string $factionId = null): int
+    {
+        return (new \Zone\Engine\Core\Territories\TerritoryService($this->database, $this->events))->ownedBlockCount($factionId);
+    }
+
+    public function familyActiveOperationCount(?string $factionId = null): int
+    {
+        return (new FamilyActivityService($this->database, $this->events))->activeOperationCount($factionId);
+    }
 }

@@ -11,7 +11,7 @@ import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioE
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
 import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees } from '../dist/character-poses.js';
-import { supportedArmorRepresentationCount, maxArmorReduction, representedArmorIds, wornVestMeshName, createArmorController } from '../dist/character-armor.mjs';
+import { supportedArmorRepresentationCount, maxArmorReduction, representedArmorIds, wornVestMeshName, vestMaterialRoughness, vestMaterialMetalness, vestMaterialClearcoat, torsoSkinInfluenceThreshold, targetTorsoSkinInfluenceThreshold, createArmorController } from '../dist/character-armor.mjs';
 import { isSupportedViewerMediaState, viewerMaxDeltaMilliseconds, viewerRenderingDatasetKey, viewerMediaStateDatasetKey, viewerEventNames } from '../dist/viewer-runtime108.mjs';
 
 const id='a'.repeat(64);
@@ -209,4 +209,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(uploadedArmorRiggingMode(), 'rigid-attachment-not-retargeted');
   assert.equal(uploadedWeaponDescriptorPrefix(), 'uploaded:');
   assert.equal(uploadedArmorBoneName(), 'Chest');
+  assert.equal(vestMaterialRoughness(), .86);
+  assert.equal(vestMaterialMetalness(), 0);
+  assert.equal(vestMaterialClearcoat(), 0);
+  assert.equal(torsoSkinInfluenceThreshold(), .75);
+  assert.equal(targetTorsoSkinInfluenceThreshold(), .4);
 });

@@ -49,6 +49,26 @@ export function minVestDepthScale() {
   return 1.35;
 }
 
+export function vestMaterialRoughness() {
+  return .86;
+}
+
+export function vestMaterialMetalness() {
+  return 0;
+}
+
+export function vestMaterialClearcoat() {
+  return 0;
+}
+
+export function torsoSkinInfluenceThreshold() {
+  return .75;
+}
+
+export function targetTorsoSkinInfluenceThreshold() {
+  return .4;
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
   return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id ? clampArmorReduction(packet.armorReduction) : 0,

@@ -2583,6 +2583,13 @@ try {
     check(count($engine->resourceRegenNormalizedFields()) === 16, 'GameEngine resourceRegenNormalizedFields returns 16 fields');
     check($engine->levelingTotalXpForLevel(1) === 0 && $engine->levelingTotalXpForLevel(2) === 100, 'GameEngine levelingTotalXpForLevel computes XP threshold');
     check($engine->levelingLevelForXp(0) === 1 && $engine->levelingLevelForXp(100) === 2, 'GameEngine levelingLevelForXp computes level for XP');
+
+    // --- Wave 232 (zone-beta350): GameEngine territoryClaimControlBasisPoints, territoryAssaultInitialControlBasisPoints, territoryActiveWarsCount, territoryOwnedBlockCount & familyActiveOperationCount ---
+    check($engine->territoryClaimControlBasisPoints() === 10000, 'GameEngine territoryClaimControlBasisPoints returns 10000');
+    check($engine->territoryAssaultInitialControlBasisPoints() === 5000, 'GameEngine territoryAssaultInitialControlBasisPoints returns 5000');
+    check($engine->territoryActiveWarsCount() >= 0, 'GameEngine territoryActiveWarsCount returns non-negative count');
+    check($engine->territoryOwnedBlockCount() >= 0, 'GameEngine territoryOwnedBlockCount returns non-negative count');
+    check($engine->familyActiveOperationCount() >= 0, 'GameEngine familyActiveOperationCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
