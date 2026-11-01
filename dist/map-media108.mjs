@@ -10,6 +10,11 @@ export function isMapMediaViewVisible(pitch,zoom){return Number(pitch||0)>=10&&N
 export function minMapMediaPitch(){return 10;}
 export function minMapMediaZoom(){return 15.8;}
 export function mapMediaTargetSizeMeters(clearanceMeters){return Math.max(1,Math.min(12,Number(clearanceMeters||0)*1.35));}
+export function mapMediaMinTargetSizeMeters(){return 1;}
+export function mapMediaMaxTargetSizeMeters(){return 12;}
+export function mapMediaClearanceScaleFactor(){return 1.35;}
+export function mapMediaRoofBaseOffsetMeters(){return .25;}
+export function mapMediaToneMappingExposure(){return 1.15;}
 // A map model is explicitly a service's rooftop attachment. It does not replace
 // the provider's whole building, move territory parcels, or claim an arbitrary
 // neighboring roof. The matching target ID must already have a measured roof.

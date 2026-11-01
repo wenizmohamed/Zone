@@ -2205,6 +2205,13 @@ try {
     check($engine->worldDefaultMaxActiveFinds() === 24, 'GameEngine worldDefaultMaxActiveFinds returns 24');
     check($engine->worldDefaultSupplyCap() === 100, 'GameEngine worldDefaultSupplyCap returns 100');
     check($engine->worldDefaultEventEveryTicks() === 5, 'GameEngine worldDefaultEventEveryTicks returns 5');
+
+    // --- Wave 178 (zone-beta296): GameEngine worldSupportedFindLocationIds, isSupportedWorldFindLocationId, worldMaterialItemMaxListCount, worldMaterialItemMaxIdLength & worldMaxMaterialIssuanceBudgetPerHour ---
+    check(count($engine->worldSupportedFindLocationIds()) === 7 && in_array('market', $engine->worldSupportedFindLocationIds(), true), 'GameEngine worldSupportedFindLocationIds returns 7 find locations');
+    check($engine->isSupportedWorldFindLocationId('bank') === true && $engine->isSupportedWorldFindLocationId('casino') === false, 'GameEngine isSupportedWorldFindLocationId validates find location');
+    check($engine->worldMaterialItemMaxListCount() === 32, 'GameEngine worldMaterialItemMaxListCount returns 32');
+    check($engine->worldMaterialItemMaxIdLength() === 80, 'GameEngine worldMaterialItemMaxIdLength returns 80');
+    check($engine->worldMaxMaterialIssuanceBudgetPerHour() === 2000000000, 'GameEngine worldMaxMaterialIssuanceBudgetPerHour returns 2000000000');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

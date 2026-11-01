@@ -4944,4 +4944,30 @@ final class GameEngine
     {
         return 5;
     }
+
+    /** @return list<string> */
+    public function worldSupportedFindLocationIds(): array
+    {
+        return ['market', 'gym', 'bank', 'hospital', 'jail', 'properties', 'crimes'];
+    }
+
+    public function isSupportedWorldFindLocationId(string $locationId): bool
+    {
+        return in_array($locationId, $this->worldSupportedFindLocationIds(), true);
+    }
+
+    public function worldMaterialItemMaxListCount(): int
+    {
+        return 32;
+    }
+
+    public function worldMaterialItemMaxIdLength(): int
+    {
+        return 80;
+    }
+
+    public function worldMaxMaterialIssuanceBudgetPerHour(): int
+    {
+        return 2_000_000_000;
+    }
 }
