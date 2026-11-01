@@ -7,6 +7,14 @@ const ASSET_ROOT = new URL('../assets/city/kaykit/',import.meta.url);
 const MODELS = ['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase','car_sedan','streetlight','watertower','bush'];
 const LAYER_ID = 'zone-city-landmarks';
 
+export function cityLandmarkModels(){
+  return MODELS.slice();
+}
+
+export function cityLandmarkLayerId(){
+  return LAYER_ID;
+}
+
 // One renderer shares Mapbox's context. There is no independent animation loop.
 export async function installCityLandmarks(map){
   if(map.getLayer(LAYER_ID))return null;

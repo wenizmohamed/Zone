@@ -1470,6 +1470,13 @@ try {
     check($engine->highLowCurrentCard('founder-player') >= 2 && $engine->highLowCurrentCard('founder-player') <= 14, 'GameEngine highLowCurrentCard returns current casino High-Low card');
     check($engine->highLowVersion('founder-player') >= 1, 'GameEngine highLowVersion returns current casino High-Low state version');
     check($engine->rateLimitRemainingHits('founder-player') >= 0, 'GameEngine rateLimitRemainingHits returns remaining rate limit hits in window');
+
+    // --- Wave 73 (zone-beta191): GameEngine publishedItemCount, publishedJobCount, publishedGymCount, publishedPropertyCount & publishedOpponentCount ---
+    check($engine->publishedItemCount() >= 1, 'GameEngine publishedItemCount returns published item catalog count');
+    check($engine->publishedJobCount() >= 1, 'GameEngine publishedJobCount returns published job catalog count');
+    check($engine->publishedGymCount() >= 1, 'GameEngine publishedGymCount returns published gym catalog count');
+    check($engine->publishedPropertyCount() >= 1, 'GameEngine publishedPropertyCount returns published property catalog count');
+    check($engine->publishedOpponentCount() >= 1, 'GameEngine publishedOpponentCount returns published NPC opponent catalog count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

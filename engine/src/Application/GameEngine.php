@@ -2093,4 +2093,29 @@ final class GameEngine
     {
         return (int) ($this->rateLimitStatus($playerId)['remainingHits'] ?? 0);
     }
+
+    public function publishedItemCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['items'] ?? []);
+    }
+
+    public function publishedJobCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['jobs'] ?? []);
+    }
+
+    public function publishedGymCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['gyms'] ?? []);
+    }
+
+    public function publishedPropertyCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['properties'] ?? []);
+    }
+
+    public function publishedOpponentCount(): int
+    {
+        return count((new \Zone\Engine\Core\Content\GameplayCatalog($this->database, $this->events))->active()['opponents'] ?? []);
+    }
 }

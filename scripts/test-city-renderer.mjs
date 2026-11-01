@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 
-const source = readFileSync(new URL('../dist/city-landmarks.js', import.meta.url), 'utf8').replace(/^import .*;\r?\n/gm, '').replace('export async function', 'async function');
+const source = readFileSync(new URL('../dist/city-landmarks.js', import.meta.url), 'utf8').replace(/^import .*;\r?\n/gm, '').replaceAll('export function ', 'function ').replace('export async function', 'async function');
 
 async function harness() {
   const allocated = [], frames = new Map(), listeners = new Map(), warmups = [], layers = new Map([['zone-blocks-fill', {}], ['zone-buildings-3d', {}]]), sources = new Map([['zone-city-atlas', {}]]);
@@ -30,7 +30,10 @@ async function harness() {
 }
 
 test('3D waits for asynchronous shader preparation and keeps flat rendering available',async()=>{
-  const h=await harness();h.controller.setTerritories(h.features);h.pitch(35);h.render();assert.equal(h.renders,0);
+  const h=await harness();
+  assert.equal(h.scope.cityLandmarkModels().length,8);
+  assert.equal(h.scope.cityLandmarkLayerId(),'zone-city-landmarks');
+  h.controller.setTerritories(h.features);h.pitch(35);h.render();assert.equal(h.renders,0);
   assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,false);
   assert.equal(h.controller.getDiagnostics().shadersReady,false);
   h.warmups[0].resolve();await h.controller.whenReady();h.flush();h.render();assert.equal(h.renders,1);assert.equal(JSON.parse(h.scope.document.body.dataset.zoneCityModels).shadersReady,true);
