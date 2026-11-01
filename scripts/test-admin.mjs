@@ -45,7 +45,7 @@ function admin({ save = async () => ({ crime: { ...savedCrime } }), request, net
     notify = noticeStub;
     const guardedApi = api;
     api = apiStub;
-    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts, supportedCatalogCategories, isSupportedCatalogCategory, isBootReady, isDirty, activeAdminLanguage, activeAdminView, hasDraftConflict, hasUnsavedChanges, crimeRuleFieldKeys, sectionPreviewViews, isSectionPreviewView, sectionPreviewScreenForView, draftEditRevisionCount, adminLanguageStorageKey, selectedCrimeId, credentialMode, isSessionRequired, isCatalogBusy, isControlBusy, selectedPageId, crimeCount, moduleCount, releaseCount, themeCount, adminDiagnostics };
+    globalThis.admin = { state, renderContent, applyLanguage, newCrime, saveCrime, saveDraft, publishRelease, activateRelease, mutateModule, activateTheme, applyTerritoryOwnership, addPage, addBlock, load, updateBootControls, guardedApi, renderGameplayCatalog, saveGameplayCatalog, catalogChanges, runtimeContentSnapshot, newGameplayCatalog, openAdminSession, showAdminSession, discardGameplayCatalog, discardCrimeEdits, unsavedContentEdits, resolveDraftConflict, refreshDraftAfterMutation, retryAdminLoad, markDirty, territoryCounts, supportedCatalogCategories, isSupportedCatalogCategory, isBootReady, isDirty, activeAdminLanguage, activeAdminView, hasDraftConflict, hasUnsavedChanges, crimeRuleFieldKeys, sectionPreviewViews, isSectionPreviewView, sectionPreviewScreenForView, draftEditRevisionCount, adminLanguageStorageKey, selectedCrimeId, credentialMode, isSessionRequired, isCatalogBusy, isControlBusy, selectedPageId, crimeCount, moduleCount, releaseCount, themeCount, ledgerEntryCount, eventEntryCount, territoryBlockCount, hasSavedDraftManifest, adminPageCount, adminDiagnostics };
   `, context);
   app = context.admin;
   app.state.crimes = [{ ...savedCrime }];
@@ -591,4 +591,9 @@ test('territoryCounts computes total, owned, neutral, contested and daily respec
   assert.equal(app.moduleCount(), 0);
   assert.equal(app.releaseCount(), 0);
   assert.equal(app.themeCount(), 0);
+  assert.equal(app.ledgerEntryCount(), 0);
+  assert.equal(app.eventEntryCount(), 0);
+  assert.equal(app.territoryBlockCount(), 3);
+  assert.equal(app.hasSavedDraftManifest(), true);
+  assert.equal(app.adminPageCount(), 0);
 });

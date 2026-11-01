@@ -2548,6 +2548,13 @@ try {
     check($engine->progressionHospitalReviveXpReward() === 15, 'GameEngine progressionHospitalReviveXpReward returns 15');
     check($engine->progressionRealInmatesQueryLimit() === 100, 'GameEngine progressionRealInmatesQueryLimit returns 100');
     check(count($engine->progressionSeedInmateNames()) === 8, 'GameEngine progressionSeedInmateNames returns 8 inmate names');
+
+    // --- Wave 227 (zone-beta345): GameEngine progressionSeedPatientNames, familyProgressionRespectLedgerLimit, familyProgressionBuyUpgradeRoles, loadoutDefaultWeaponMultiplier & loadoutDefaultArmorReduction ---
+    check(count($engine->progressionSeedPatientNames()) === 7, 'GameEngine progressionSeedPatientNames returns 7 patient names');
+    check($engine->familyProgressionRespectLedgerLimit() === 20, 'GameEngine familyProgressionRespectLedgerLimit returns 20');
+    check($engine->familyProgressionBuyUpgradeRoles() === ['leader', 'officer'], 'GameEngine familyProgressionBuyUpgradeRoles returns leader and officer');
+    check(abs($engine->loadoutDefaultWeaponMultiplier() - 1.0) < 0.0001, 'GameEngine loadoutDefaultWeaponMultiplier returns 1.0');
+    check(abs($engine->loadoutDefaultArmorReduction() - 0.0) < 0.0001, 'GameEngine loadoutDefaultArmorReduction returns 0.0');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -1805,6 +1805,26 @@ function themeCount() {
   return Array.isArray(state.themes) ? state.themes.length : 0;
 }
 
+function ledgerEntryCount() {
+  return Array.isArray(state.entries) ? state.entries.length : 0;
+}
+
+function eventEntryCount() {
+  return Array.isArray(state.events) ? state.events.length : 0;
+}
+
+function territoryBlockCount() {
+  return Array.isArray(state.territoryCatalog?.blocks) ? state.territoryCatalog.blocks.length : 0;
+}
+
+function hasSavedDraftManifest() {
+  return state.savedDraftManifest !== null;
+}
+
+function adminPageCount() {
+  return Array.isArray(state.draft?.manifest?.pages) ? state.draft.manifest.pages.length : 0;
+}
+
 function adminDiagnostics() {
   return {
     bootReady: Boolean(state.bootReady),
@@ -1907,6 +1927,11 @@ if (typeof window !== 'undefined') {
     moduleCount,
     releaseCount,
     themeCount,
+    ledgerEntryCount,
+    eventEntryCount,
+    territoryBlockCount,
+    hasSavedDraftManifest,
+    adminPageCount,
     diagnostics() {
       return {
         bootReady: Boolean(state.bootReady),

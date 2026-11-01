@@ -6216,4 +6216,31 @@ final class GameEngine
     {
         return ['Marrow', 'Silas', 'Duke_X', 'Tariq', 'Lady_Vega', 'K1ng', 'Sami', 'Noor'];
     }
+
+    /** @return list<string> */
+    public function progressionSeedPatientNames(): array
+    {
+        return ['Omar_Z', 'Rayan_Black', 'Dmitri', 'Layla_R', 'Silas', 'BigSal', 'Kaya_V'];
+    }
+
+    public function familyProgressionRespectLedgerLimit(): int
+    {
+        return 20;
+    }
+
+    /** @return list<string> */
+    public function familyProgressionBuyUpgradeRoles(): array
+    {
+        return ['leader', 'officer'];
+    }
+
+    public function loadoutDefaultWeaponMultiplier(): float
+    {
+        return 1.0;
+    }
+
+    public function loadoutDefaultArmorReduction(): float
+    {
+        return 0.0;
+    }
 }
