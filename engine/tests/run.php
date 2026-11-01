@@ -1638,6 +1638,13 @@ try {
     check($engine->hasPublishedUpgrades() === true, 'GameEngine hasPublishedUpgrades returns boolean published upgrades status');
     check($engine->hasPublishedMarketCatalog() === true, 'GameEngine hasPublishedMarketCatalog returns boolean published market catalog status');
     check($engine->hasPublishedMaterials() === true, 'GameEngine hasPublishedMaterials returns boolean published materials status');
+
+    // --- Wave 97 (zone-beta215): GameEngine hasPublishedWeapons, hasPublishedArmors, hasPublishedMedicalItems, hasPublishedBoosters & hasConfiguredCooldowns ---
+    check($engine->hasPublishedWeapons() === true, 'GameEngine hasPublishedWeapons returns boolean published weapons status');
+    check($engine->hasPublishedArmors() === true, 'GameEngine hasPublishedArmors returns boolean published armors status');
+    check($engine->hasPublishedMedicalItems() === true, 'GameEngine hasPublishedMedicalItems returns boolean published medical items status');
+    check($engine->hasPublishedBoosters() === true, 'GameEngine hasPublishedBoosters returns boolean published boosters status');
+    check($engine->hasConfiguredCooldowns() === true, 'GameEngine hasConfiguredCooldowns returns boolean configured cooldowns status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

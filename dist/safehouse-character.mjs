@@ -28,6 +28,14 @@ export function isSafehouseAssetHash(value) {
   return typeof value === 'string' && HASH.test(value);
 }
 
+export function defaultSafehouseOutfitFile() {
+  return 'Suit';
+}
+
+export function safehouseActorKey(player = {}, draft = false) {
+  return JSON.stringify([player.outfit, player.weapon, player.weaponMediaAsset, player.armorId, player.armorOwned, player.armorMediaAsset, player.characterMediaAsset, Boolean(draft)]);
+}
+
 export function createSafehouseCharacter({ scene, catalog = {}, materials = {}, pack = {}, publish = () => {}, wardrobeLoader }) {
   const loader = new GLTFLoader(), wardrobe = wardrobeLoader || (file => loader.loadAsync(new URL(`../assets/character/quaternius/${file}.glb`, import.meta.url).href)), weaponAssets = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoader,
     catalog, materials, pack, baseURL: new URL('../assets/weapons/', import.meta.url) });

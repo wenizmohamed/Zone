@@ -2778,4 +2778,29 @@ final class GameEngine
     {
         return $this->publishedMaterialItemCount() > 0;
     }
+
+    public function hasPublishedWeapons(): bool
+    {
+        return $this->publishedWeaponItemCount() > 0;
+    }
+
+    public function hasPublishedArmors(): bool
+    {
+        return $this->publishedArmorItemCount() > 0;
+    }
+
+    public function hasPublishedMedicalItems(): bool
+    {
+        return $this->publishedMedicalItemCount() > 0;
+    }
+
+    public function hasPublishedBoosters(): bool
+    {
+        return $this->publishedBoosterItemCount() > 0;
+    }
+
+    public function hasConfiguredCooldowns(): bool
+    {
+        return $this->configuredCooldownActionCount() > 0;
+    }
 }

@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {normalizeAssetObject} from '../dist/asset-loader.mjs';
-import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash} from '../dist/safehouse-character.mjs';
+import {supportedSafehouseOutfits, isSupportedSafehouseOutfit, resolveSafehouseOutfitFile, isSafehouseAssetHash, defaultSafehouseOutfitFile, safehouseActorKey} from '../dist/safehouse-character.mjs';
 
 const html=readFileSync(new URL('../dist/safehouse.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../dist/safehouse.mjs',import.meta.url),'utf8');
@@ -139,5 +139,7 @@ test('safehouse property metadata includes happyMax and trainingBoost, and keybo
   assert.equal(resolveSafehouseOutfitFile('unknown'), 'Suit');
   assert.equal(isSafehouseAssetHash(HASH), true);
   assert.equal(isSafehouseAssetHash('not-a-hash'), false);
+  assert.equal(defaultSafehouseOutfitFile(), 'Suit');
+  assert.equal(typeof safehouseActorKey({ outfit: 'suit', weapon: 'glock' }, false), 'string');
   h.dispose();
 });
