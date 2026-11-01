@@ -2058,6 +2058,13 @@ try {
     check($engine->playerNextStreakDay() >= 1 && $engine->playerNextStreakDay() <= 7, 'GameEngine playerNextStreakDay returns 1..7');
     check($engine->playerNextStreakRewardCash() >= 1000, 'GameEngine playerNextStreakRewardCash returns next streak cash reward');
     check(is_bool($engine->isPlayerStreakClaimedToday()), 'GameEngine isPlayerStreakClaimedToday returns boolean streak claim status');
+
+    // --- Wave 157 (zone-beta275): GameEngine dailyStreakNerveRefillDays, dailyStreakEnergyRefillDays, dailyStreakNerveRefillDayCount, dailyStreakEnergyRefillDayCount & isFullRefillDailyStreakDay ---
+    check($engine->dailyStreakNerveRefillDays() === [3, 7], 'GameEngine dailyStreakNerveRefillDays returns [3, 7]');
+    check($engine->dailyStreakEnergyRefillDays() === [5, 7], 'GameEngine dailyStreakEnergyRefillDays returns [5, 7]');
+    check($engine->dailyStreakNerveRefillDayCount() === 2, 'GameEngine dailyStreakNerveRefillDayCount returns 2');
+    check($engine->dailyStreakEnergyRefillDayCount() === 2, 'GameEngine dailyStreakEnergyRefillDayCount returns 2');
+    check($engine->isFullRefillDailyStreakDay(7) === true && $engine->isFullRefillDailyStreakDay(3) === false, 'GameEngine isFullRefillDailyStreakDay identifies day 7');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

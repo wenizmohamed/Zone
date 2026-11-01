@@ -4366,4 +4366,43 @@ final class GameEngine
     {
         return $this->playerLastLoginDay($playerId) === gmdate('Y-m-d');
     }
+
+    /** @return list<int> */
+    public function dailyStreakNerveRefillDays(): array
+    {
+        $days = [];
+        foreach ($this->dailyStreakSchedule() as $day => $row) {
+            if (!empty($row[1])) {
+                $days[] = (int) $day;
+            }
+        }
+        return $days;
+    }
+
+    /** @return list<int> */
+    public function dailyStreakEnergyRefillDays(): array
+    {
+        $days = [];
+        foreach ($this->dailyStreakSchedule() as $day => $row) {
+            if (!empty($row[2])) {
+                $days[] = (int) $day;
+            }
+        }
+        return $days;
+    }
+
+    public function dailyStreakNerveRefillDayCount(): int
+    {
+        return count($this->dailyStreakNerveRefillDays());
+    }
+
+    public function dailyStreakEnergyRefillDayCount(): int
+    {
+        return count($this->dailyStreakEnergyRefillDays());
+    }
+
+    public function isFullRefillDailyStreakDay(int $day): bool
+    {
+        return $this->dailyStreakDayRefillsNerve($day) && $this->dailyStreakDayRefillsEnergy($day);
+    }
 }

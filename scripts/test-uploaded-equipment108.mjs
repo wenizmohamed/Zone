@@ -10,6 +10,8 @@ import { defaultGripAxisArray, isGripRigValid } from '../dist/character-grip.js'
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
+import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile } from '../dist/character-poses.js';
+import { supportedArmorRepresentationCount, maxArmorReduction, createArmorController } from '../dist/character-armor.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -136,6 +138,15 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(pb.currentIdentity(), 'enc-1');
   assert.equal(pb.currentVersion(), 2);
   pb.dispose();
+  assert.equal(supportedWeaponPoseProfileCount(), 5);
+  assert.equal(isUnarmedPoseProfile('unarmed'), true);
+  assert.equal(isUnarmedPoseProfile('bat'), false);
+  assert.equal(supportedArmorRepresentationCount(), 4);
+  assert.equal(maxArmorReduction(), .95);
+  const ac = createArmorController({ THREE: T, loadSource: async () => ({}) });
+  assert.equal(ac.currentGeneration(), 0);
+  assert.equal(ac.lastStatus(), 'none');
+  ac.dispose();
   assert.equal(uploadedWeaponTargetLength('bat'), .715);
   assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);

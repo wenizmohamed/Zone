@@ -24,6 +24,14 @@ export function isFirearmPoseProfile(profile) {
   return profile === 'handgun' || profile === 'longgun';
 }
 
+export function supportedWeaponPoseProfileCount() {
+  return supportedWeaponPoseProfiles().length;
+}
+
+export function isUnarmedPoseProfile(profile) {
+  return profile === 'unarmed';
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });

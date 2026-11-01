@@ -13,6 +13,14 @@ export function clampArmorReduction(reduction) {
   return Number.isFinite(n) ? Math.max(0, Math.min(.95, n)) : 0;
 }
 
+export function supportedArmorRepresentationCount() {
+  return supportedArmorRepresentations().length;
+}
+
+export function maxArmorReduction() {
+  return .95;
+}
+
 export function armorReceipt(packet = {}) {
   const id = typeof packet.armorId === 'string' && packet.armorId && packet.armorOwned === true ? packet.armorId : null;
   return { armorId:id, label:id ? String(packet.armorLabel || id) : '', reduction:id ? clampArmorReduction(packet.armorReduction) : 0,
@@ -101,5 +109,5 @@ export function createArmorController({THREE,loadSource,publish=()=>{},queueFram
   function diagnostics() {
     return { disposed, generation, hasActiveVest: !!active, latestReceipt: latestReceipt ? { ...latestReceipt } : null, lastDetails: { ...lastDetails } };
   }
-  return {update,isDisposed:()=>disposed,hasActiveVest:()=>!!active,diagnostics,dispose(){disposed=true;++generation;clear();}};
+  return {update,isDisposed:()=>disposed,hasActiveVest:()=>!!active,currentGeneration:()=>generation,lastStatus:()=>lastDetails?.status ?? 'none',diagnostics,dispose(){disposed=true;++generation;clear();}};
 }
