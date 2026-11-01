@@ -48,6 +48,26 @@ export function mosinIdleCarrySourceId() {
   return 'mosin9130-detail112';
 }
 
+export function mosinIdleCalibrationVersion() {
+  return 114;
+}
+
+export function armReachMinClearanceM() {
+  return .005;
+}
+
+export function armReachMaxMarginM() {
+  return .008;
+}
+
+export function defaultMosinAnchorAdjustmentM() {
+  return [0, 0, 0];
+}
+
+export function requiredArmSides() {
+  return ['r', 'l'];
+}
+
 export function prepareWeaponPose(THREE, root, gripRig) {
   const bones = new Map();
   root.traverse(o => { if (o.isBone) bones.set(o.name.toLowerCase().replace(/[._-]/g, ''), o); });

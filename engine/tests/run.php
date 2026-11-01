@@ -2590,6 +2590,13 @@ try {
     check($engine->territoryActiveWarsCount() >= 0, 'GameEngine territoryActiveWarsCount returns non-negative count');
     check($engine->territoryOwnedBlockCount() >= 0, 'GameEngine territoryOwnedBlockCount returns non-negative count');
     check($engine->familyActiveOperationCount() >= 0, 'GameEngine familyActiveOperationCount returns non-negative count');
+
+    // --- Wave 233 (zone-beta351): GameEngine gameplayCatalogMaxCategoryEntries, gameplayCatalogMaxActorLength, gameplayCatalogSupportedChannels, contentAuditDefaultLimit & contentAuditEntryCount ---
+    check($engine->gameplayCatalogMaxCategoryEntries() === 1000, 'GameEngine gameplayCatalogMaxCategoryEntries returns 1000');
+    check($engine->gameplayCatalogMaxActorLength() === 160, 'GameEngine gameplayCatalogMaxActorLength returns 160');
+    check($engine->gameplayCatalogSupportedChannels() === ['foundation', 'draft'], 'GameEngine gameplayCatalogSupportedChannels returns foundation and draft');
+    check($engine->contentAuditDefaultLimit() === 100, 'GameEngine contentAuditDefaultLimit returns 100');
+    check($engine->contentAuditEntryCount() >= 0, 'GameEngine contentAuditEntryCount returns non-negative count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -6371,4 +6371,30 @@ final class GameEngine
     {
         return (new FamilyActivityService($this->database, $this->events))->activeOperationCount($factionId);
     }
+
+    public function gameplayCatalogMaxCategoryEntries(): int
+    {
+        return 1000;
+    }
+
+    public function gameplayCatalogMaxActorLength(): int
+    {
+        return 160;
+    }
+
+    /** @return list<string> */
+    public function gameplayCatalogSupportedChannels(): array
+    {
+        return ['foundation', 'draft'];
+    }
+
+    public function contentAuditDefaultLimit(): int
+    {
+        return 100;
+    }
+
+    public function contentAuditEntryCount(): int
+    {
+        return $this->content->auditEntryCount();
+    }
 }

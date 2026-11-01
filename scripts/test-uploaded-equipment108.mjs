@@ -10,7 +10,7 @@ import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRi
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength } from '../dist/weapon-presentation.js';
 import { supportedWeaponSourceCount, upgradedWeaponKeyCount } from '../dist/weapon-assets.js';
 import { createCombatPlayback, supportedCombatActionCount, resolvedEncounterPhases } from '../dist/combat-presentation.js';
-import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees } from '../dist/character-poses.js';
+import { supportedWeaponPoseProfileCount, isUnarmedPoseProfile, mosinIdleRollDegrees, knifeBladeRollDegrees, mosinIdleCalibrationVersion, armReachMinClearanceM, armReachMaxMarginM, defaultMosinAnchorAdjustmentM, requiredArmSides } from '../dist/character-poses.js';
 import { supportedArmorRepresentationCount, maxArmorReduction, representedArmorIds, wornVestMeshName, vestMaterialRoughness, vestMaterialMetalness, vestMaterialClearcoat, torsoSkinInfluenceThreshold, targetTorsoSkinInfluenceThreshold, createArmorController } from '../dist/character-armor.mjs';
 import { isSupportedViewerMediaState, viewerMaxDeltaMilliseconds, viewerRenderingDatasetKey, viewerMediaStateDatasetKey, viewerEventNames } from '../dist/viewer-runtime108.mjs';
 
@@ -214,4 +214,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(vestMaterialClearcoat(), 0);
   assert.equal(torsoSkinInfluenceThreshold(), .75);
   assert.equal(targetTorsoSkinInfluenceThreshold(), .4);
+  assert.equal(mosinIdleCalibrationVersion(), 114);
+  assert.equal(armReachMinClearanceM(), .005);
+  assert.equal(armReachMaxMarginM(), .008);
+  assert.deepEqual(defaultMosinAnchorAdjustmentM(), [0, 0, 0]);
+  assert.deepEqual(requiredArmSides(), ['r', 'l']);
 });
