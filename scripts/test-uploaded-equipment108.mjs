@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
-import { uploadedAssetId, isUploadedAssetId, uploadedWeaponTargetLength, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
+import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, uploadedWeaponTargetLength, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
 
 const id='a'.repeat(64);
 const box=()=>new T.Mesh(new T.BoxGeometry(.2,.4,.1),new T.MeshStandardMaterial({color:0x80694b}));
@@ -92,6 +92,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.deepEqual(weapon.diagnostics(),{disposed:false,activeUploadCount:0,pendingUploadCount:0});
   assert.equal(weapon.isDisposed(), false);
   assert.equal(weapon.activeUploadCount(), 0);
+  assert.equal(weapon.pendingUploadCount(), 0);
+  assert.equal(isMeleeWeaponKey('bat'), true);
+  assert.equal(isMeleeWeaponKey('glock'), false);
   assert.equal(uploadedWeaponTargetLength('bat'), .715);
   assert.equal(uploadedWeaponTargetLength('sniperrifle_1'), .88);
   const mesh=await weapon.load('bat',id);

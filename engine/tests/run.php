@@ -1645,6 +1645,13 @@ try {
     check($engine->hasPublishedMedicalItems() === true, 'GameEngine hasPublishedMedicalItems returns boolean published medical items status');
     check($engine->hasPublishedBoosters() === true, 'GameEngine hasPublishedBoosters returns boolean published boosters status');
     check($engine->hasConfiguredCooldowns() === true, 'GameEngine hasConfiguredCooldowns returns boolean configured cooldowns status');
+
+    // --- Wave 98 (zone-beta216): GameEngine playerIsFullEnergy, playerIsFullNerve, playerIsFullHappy, playerIsFullLife & playerHasBankBalance ---
+    check(is_bool($engine->playerIsFullEnergy()), 'GameEngine playerIsFullEnergy returns boolean full energy status');
+    check(is_bool($engine->playerIsFullNerve()), 'GameEngine playerIsFullNerve returns boolean full nerve status');
+    check(is_bool($engine->playerIsFullHappy()), 'GameEngine playerIsFullHappy returns boolean full happy status');
+    check(is_bool($engine->playerIsFullLife()), 'GameEngine playerIsFullLife returns boolean full life status');
+    check(is_bool($engine->playerHasBankBalance()), 'GameEngine playerHasBankBalance returns boolean bank balance status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -2803,4 +2803,29 @@ final class GameEngine
     {
         return $this->configuredCooldownActionCount() > 0;
     }
+
+    public function playerIsFullEnergy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMissingEnergy($playerId) === 0;
+    }
+
+    public function playerIsFullNerve(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMissingNerve($playerId) === 0;
+    }
+
+    public function playerIsFullHappy(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMissingHappy($playerId) === 0;
+    }
+
+    public function playerIsFullLife(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerMissingLifePoints($playerId) === 0;
+    }
+
+    public function playerHasBankBalance(string $playerId = 'founder-player'): bool
+    {
+        return $this->playerBankBalance($playerId) > 0;
+    }
 }

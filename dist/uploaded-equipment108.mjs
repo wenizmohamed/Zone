@@ -28,12 +28,16 @@ export async function loadUploadedCharacter(id, fallback, { loader = loadAsset, 
   }
 }
 
+export function isMeleeWeaponKey(key) {
+  return key === 'bat' || key === 'knife';
+}
+
 export function uploadedWeaponTargetLength(key) {
   return key === 'bat' ? .715 : key === 'knife' ? .22 : /(?:sniper|shotgun|rifle|ak|smg|bullpup)/i.test(key) ? .88 : .29;
 }
 
 export function uploadedWeaponFit(object, transform, key) {
-  const melee = key === 'bat' || key === 'knife';
+  const melee = isMeleeWeaponKey(key);
   const length = uploadedWeaponTargetLength(key);
   const root = normalizeAssetObject(object, transform, length);
   root.updateMatrixWorld(true);
@@ -82,6 +86,9 @@ export function createUploadedWeaponLoader(base, { loader = loadAsset, publish =
     },
     activeUploadCount() {
       return active.size;
+    },
+    pendingUploadCount() {
+      return pending.size;
     },
     diagnostics() {
       return { disposed, activeUploadCount: active.size, pendingUploadCount: pending.size };
