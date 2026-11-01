@@ -2009,6 +2009,13 @@ try {
     check($engine->dailyContractProgress() >= 0, 'GameEngine dailyContractProgress returns daily contract progress');
     check($engine->dailyContractTarget() > 0, 'GameEngine dailyContractTarget returns daily contract target');
     check($engine->dailyContractProgressPct() >= 0 && $engine->dailyContractProgressPct() <= 100, 'GameEngine dailyContractProgressPct returns daily contract progress percentage');
+
+    // --- Wave 150 (zone-beta268): GameEngine dailyContractRemaining, dailyContractRewardCash, dailyContractRewardXp, dailyContractDay & canClaimDailyContract ---
+    check($engine->dailyContractRemaining() >= 0, 'GameEngine dailyContractRemaining returns remaining daily contract amount');
+    check($engine->dailyContractRewardCash() >= 3000, 'GameEngine dailyContractRewardCash returns daily contract cash reward');
+    check($engine->dailyContractRewardXp() === 200, 'GameEngine dailyContractRewardXp returns daily contract XP reward');
+    check(preg_match('/^\d{4}-\d{2}-\d{2}$/', $engine->dailyContractDay()) === 1, 'GameEngine dailyContractDay returns YYYY-MM-DD UTC day');
+    check(is_bool($engine->canClaimDailyContract()), 'GameEngine canClaimDailyContract returns boolean claim eligibility');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

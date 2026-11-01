@@ -4125,4 +4125,30 @@ final class GameEngine
     {
         return (int) ($this->dailyContract($playerId)['progressPct'] ?? 0);
     }
+
+    public function dailyContractRemaining(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['remaining'] ?? 0);
+    }
+
+    public function dailyContractRewardCash(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['contract']['reward_cash'] ?? 0);
+    }
+
+    public function dailyContractRewardXp(string $playerId = 'founder-player'): int
+    {
+        return (int) ($this->dailyContract($playerId)['contract']['reward_xp'] ?? 0);
+    }
+
+    public function dailyContractDay(string $playerId = 'founder-player'): string
+    {
+        return (string) ($this->dailyContract($playerId)['contract']['day'] ?? '');
+    }
+
+    public function canClaimDailyContract(string $playerId = 'founder-player'): bool
+    {
+        $state = $this->dailyContract($playerId);
+        return (bool) ($state['complete'] ?? false) && !(bool) ($state['claimed'] ?? false);
+    }
 }

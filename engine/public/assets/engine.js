@@ -254,6 +254,22 @@ function isPermittedEngineSection(id) {
   return permittedEngineSections().includes(String(id || ''));
 }
 
+function supportedEngineLanguages() {
+  return ['en', 'ar'];
+}
+
+function isSupportedEngineLanguage(lang) {
+  return supportedEngineLanguages().includes(String(lang || ''));
+}
+
+function canAttemptCrime() {
+  return Boolean(state.ready && !state.busy && !state.refreshing && state.player && state.crimes.length > 0);
+}
+
+function installedModuleCount() {
+  return state.modules.filter(module => Boolean(module.installed)).length;
+}
+
 function revealEngineSection(hash) {
   const permitted = permittedEngineSections();
   const id = String(hash || '#start').slice(1);
