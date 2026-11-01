@@ -2578,4 +2578,29 @@ final class GameEngine
     {
         return $this->isPublishedModuleEnabled('travel');
     }
+
+    public function isCasinoModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('blackjack');
+    }
+
+    public function isCombatModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('kill');
+    }
+
+    public function isInventoryModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('inventory');
+    }
+
+    public function isMarketModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('blackmarket');
+    }
+
+    public function isGangsModuleEnabled(): bool
+    {
+        return $this->isPublishedModuleEnabled('gangs');
+    }
 }

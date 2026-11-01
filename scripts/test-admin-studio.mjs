@@ -656,5 +656,8 @@ test('Studio snapshot exposes content counts and command search indexes authored
     const crimeEntry = entries.find(e => e.search.includes('shoplift'));
     assert.ok(crimeEntry, 'shoplift crime is indexed in command search');
     assert.equal(crimeEntry.label, language === 'ar' ? 'سرقة متجر' : 'Shoplift');
+    assert.equal(f.app.helpers.isSupportedSection('content'), true);
+    assert.equal(f.app.helpers.isSupportedSection('unknown'), false);
+    assert.equal(f.app.helpers.categoryLabel('items', language), language === 'ar' ? 'العناصر' : 'Items');
   }
 });

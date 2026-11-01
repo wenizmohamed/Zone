@@ -1582,6 +1582,13 @@ try {
     check($engine->isBankModuleEnabled() === true, 'GameEngine isBankModuleEnabled returns published bank module status');
     check($engine->isHospitalModuleEnabled() === true, 'GameEngine isHospitalModuleEnabled returns published hospital module status');
     check($engine->isTravelModuleEnabled() === true, 'GameEngine isTravelModuleEnabled returns published travel module status');
+
+    // --- Wave 89 (zone-beta207): GameEngine isCasinoModuleEnabled, isCombatModuleEnabled, isInventoryModuleEnabled, isMarketModuleEnabled & isGangsModuleEnabled ---
+    check($engine->isCasinoModuleEnabled() === true, 'GameEngine isCasinoModuleEnabled returns published casino module status');
+    check($engine->isCombatModuleEnabled() === true, 'GameEngine isCombatModuleEnabled returns published combat module status');
+    check($engine->isInventoryModuleEnabled() === true, 'GameEngine isInventoryModuleEnabled returns published inventory module status');
+    check($engine->isMarketModuleEnabled() === true, 'GameEngine isMarketModuleEnabled returns published market module status');
+    check($engine->isGangsModuleEnabled() === true, 'GameEngine isGangsModuleEnabled returns published gangs module status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
