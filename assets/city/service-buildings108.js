@@ -179,6 +179,8 @@
   function serviceCount(){return SERVICES.length;}
   function serviceIds(){return [...SERVICES];}
   function crowdingTargetMeters(){return 32;}
+  function earthRadiusMeters(){return EARTH;}
+  function defaultMaximumDistanceMeters(){return 180;}
   function isSupportedServiceId(id){return SERVICES.includes(String(id));}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,isSupportedServiceId,inside,roofAnchor,meters};
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,isSupportedServiceId,inside,roofAnchor,meters};
 });

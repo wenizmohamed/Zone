@@ -239,4 +239,6 @@ test('new production viewers fence same-origin parent messages and keep draft-on
   assert.equal(eligibleMapMediaPinCount([mediaPin(),{...mediaPin('gym'),_buildingAssociation:{insideRoof:false}}]),1);
   assert.equal(isMapMediaViewVisible(35,17),true);
   assert.equal(isMapMediaViewVisible(5,17),false);
+  assert.equal(buildings.earthRadiusMeters(),6378137);
+  assert.equal(buildings.defaultMaximumDistanceMeters(),180);
 });

@@ -3028,4 +3028,29 @@ final class GameEngine
     {
         return $this->rateLimitRemainingHits($playerId) > 0;
     }
+
+    public function hasDisabledModules(): bool
+    {
+        return $this->disabledModuleCount() > 0;
+    }
+
+    public function hasDisabledPublishedModules(): bool
+    {
+        return count($this->disabledPublishedModuleIds()) > 0;
+    }
+
+    public function hasDisabledAdminCrimes(): bool
+    {
+        return $this->disabledAdminCrimeCount() > 0;
+    }
+
+    public function hasAdminCrimes(): bool
+    {
+        return $this->adminCrimeCount() > 0;
+    }
+
+    public function hasInstalledThemes(): bool
+    {
+        return $this->installedThemeCount() > 0;
+    }
 }

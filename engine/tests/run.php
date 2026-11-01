@@ -1708,6 +1708,13 @@ try {
     check(is_bool($engine->hasHospitalMissingLife()), 'GameEngine hasHospitalMissingLife returns boolean hospital missing life status');
     check(is_bool($engine->hasHospitalDiscount()), 'GameEngine hasHospitalDiscount returns boolean hospital discount status');
     check(is_bool($engine->hasRateLimitRemainingHits()), 'GameEngine hasRateLimitRemainingHits returns boolean rate limit remaining hits status');
+
+    // --- Wave 107 (zone-beta225): GameEngine hasDisabledModules, hasDisabledPublishedModules, hasDisabledAdminCrimes, hasAdminCrimes & hasInstalledThemes ---
+    check(is_bool($engine->hasDisabledModules()), 'GameEngine hasDisabledModules returns boolean disabled modules status');
+    check(is_bool($engine->hasDisabledPublishedModules()), 'GameEngine hasDisabledPublishedModules returns boolean disabled published modules status');
+    check(is_bool($engine->hasDisabledAdminCrimes()), 'GameEngine hasDisabledAdminCrimes returns boolean disabled admin crimes status');
+    check($engine->hasAdminCrimes() === true, 'GameEngine hasAdminCrimes returns boolean admin crimes status');
+    check($engine->hasInstalledThemes() === true, 'GameEngine hasInstalledThemes returns boolean installed themes status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
