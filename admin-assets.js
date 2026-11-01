@@ -196,6 +196,10 @@
   const supportedBindingKinds=()=>['property','item','weapon','armor','character','map'];
   const isSupportedBindingKind=kind=>supportedBindingKinds().includes(String(kind??''));
   const worldPolicyKeys=()=>Object.keys(policy);
+  const isLoaded=()=>loaded;
+  const hasSelection=()=>Boolean(selected);
+  const readyAssetCount=()=>library.filter(a=>a?.status==='ready').length;
+  const failedAssetCount=()=>library.filter(a=>a?.status==='failed').length;
   const diagnostics=()=>({loaded,libraryCount:library.length,readyCount:library.filter(a=>a?.status==='ready').length,selected,busy,fitEditCount:fitEdits.size,shopDirty,policyDirty,shopSaving,policySaving,policyMaterialCount:policyMaterialSelection.length,hasUnsaved:hasUnsaved(),language});
-  window.ZoneMedia={refresh,hasUnsaved,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys};refresh();
+  window.ZoneMedia={refresh,hasUnsaved,isLoaded,hasSelection,readyAssetCount,failedAssetCount,diagnostics,supportedUploadExtensions,isSupportedUploadFile,supportedBindingKinds,isSupportedBindingKind,worldPolicyKeys};refresh();
 })();

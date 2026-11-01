@@ -650,5 +650,9 @@ test('ZoneMedia exposes diagnostics telemetry for library, selection, fit edits 
   assert.equal(m.window.ZoneMedia.isSupportedBindingKind('weapon'), true);
   assert.equal(m.window.ZoneMedia.isSupportedBindingKind('invalid'), false);
   assert.equal(m.window.ZoneMedia.worldPolicyKeys().length, 8);
+  assert.equal(m.window.ZoneMedia.isLoaded(), true);
+  assert.equal(m.window.ZoneMedia.hasSelection(), true);
+  assert.equal(m.window.ZoneMedia.readyAssetCount(), 2);
+  assert.equal(m.window.ZoneMedia.failedAssetCount(), 0);
 });
 

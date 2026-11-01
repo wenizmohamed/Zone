@@ -1911,6 +1911,13 @@ try {
     check($engine->activeReleaseWorldTickSeconds() > 0, 'GameEngine activeReleaseWorldTickSeconds returns positive world tick seconds');
     check(is_string($engine->activeReleasePublishedAt()), 'GameEngine activeReleasePublishedAt returns active release published at string');
     check(is_bool($engine->hasActiveReleasePublishedAt()), 'GameEngine hasActiveReleasePublishedAt returns boolean active release published at status');
+
+    // --- Wave 136 (zone-beta254): GameEngine draftReleaseVersion, draftReleaseManifest, draftReleaseModuleCount, draftReleaseThemeId & draftReleaseMediaBindingCount ---
+    check($engine->draftReleaseVersion() >= 1, 'GameEngine draftReleaseVersion returns draft release version');
+    check(isset($engine->draftReleaseManifest()['modules']), 'GameEngine draftReleaseManifest returns draft release manifest array');
+    check($engine->draftReleaseModuleCount() >= 19, 'GameEngine draftReleaseModuleCount returns draft release module count');
+    check($engine->draftReleaseThemeId() !== '', 'GameEngine draftReleaseThemeId returns draft release theme id');
+    check($engine->draftReleaseMediaBindingCount() >= 0, 'GameEngine draftReleaseMediaBindingCount returns draft release media binding count');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

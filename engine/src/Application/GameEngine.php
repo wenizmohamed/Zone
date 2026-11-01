@@ -3763,4 +3763,30 @@ final class GameEngine
     {
         return $this->activeReleasePublishedAt() !== '';
     }
+
+    public function draftReleaseVersion(): int
+    {
+        return (int) ($this->releases->draft()['version'] ?? 1);
+    }
+
+    /** @return array<string, mixed> */
+    public function draftReleaseManifest(): array
+    {
+        return (array) ($this->releases->draft()['manifest'] ?? []);
+    }
+
+    public function draftReleaseModuleCount(): int
+    {
+        return count($this->draftReleaseManifest()['modules'] ?? []);
+    }
+
+    public function draftReleaseThemeId(): string
+    {
+        return (string) ($this->draftReleaseManifest()['theme'] ?? 'noir-crime');
+    }
+
+    public function draftReleaseMediaBindingCount(): int
+    {
+        return count($this->draftReleaseManifest()['mediaBindings'] ?? []);
+    }
 }
