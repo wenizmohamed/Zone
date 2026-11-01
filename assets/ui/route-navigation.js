@@ -50,6 +50,12 @@
       observer.observe(doc.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen'] });
       ready();
     }
+    function activeScreen() {
+      return activeEntry?.screen || null;
+    }
+    function isActiveScreen(screen) {
+      return typeof screen === 'string' && activeEntry?.screen === screen;
+    }
     function diagnostics() {
       return {
         generation,
@@ -59,7 +65,7 @@
         hasFrame: frame !== null,
       };
     }
-    return { remember, enter, cancel, diagnostics };
+    return { remember, enter, cancel, activeScreen, isActiveScreen, diagnostics };
   }
   host.ZoneRouteNavigation = { create };
   if (host.document && host.MutationObserver && host.requestAnimationFrame) {

@@ -110,4 +110,7 @@ test('shared client loads the same helper for English, Arabic and all valid rout
   const diag = s.nav.diagnostics();
   assert.equal(diag.activeScreen, 'home');
   assert.equal(diag.hasObserver, false);
+  assert.equal(s.nav.activeScreen(), 'home');
+  assert.equal(s.nav.isActiveScreen('home'), true);
+  assert.equal(s.nav.isActiveScreen('bank'), false);
 });

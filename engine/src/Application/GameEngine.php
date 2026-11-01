@@ -1802,4 +1802,30 @@ final class GameEngine
     {
         return (bool) (\Zone\Engine\Core\Game\LoadoutService::publishedView($this->database, $this->events)['territoriesEnabled'] ?? false);
     }
+
+    public function playerPoints(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['points'] ?? 0);
+    }
+
+    public function playerMerits(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['merits'] ?? 0);
+    }
+
+    public function playerActivePropertyId(string $playerId = 'founder-player'): string
+    {
+        return (string) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['prop'] ?? 'shack');
+    }
+
+    public function playerActiveJobId(string $playerId = 'founder-player'): string
+    {
+        return (string) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['state']['job'] ?? 'grocer');
+    }
+
+    /** @return array<string, mixed> */
+    public function playerLoadoutSummary(string $playerId = 'founder-player'): array
+    {
+        return (array) ((new \Zone\Engine\Core\Game\ProgressionService($this->database, $this->events))->snapshot($playerId)['loadout'] ?? []);
+    }
 }

@@ -1393,6 +1393,13 @@ try {
     check($engine->territoryNeutralColor() === '#68717b', 'GameEngine territoryNeutralColor returns canonical neutral territory color');
     check($engine->playerFactionRole('founder-player') === null || is_string($engine->playerFactionRole('founder-player')), 'GameEngine playerFactionRole returns null or role string');
     check(is_bool($engine->isTerritoriesModulePublished()), 'GameEngine isTerritoriesModulePublished returns boolean published territory gate');
+
+    // --- Wave 62 (zone-beta180): GameEngine playerPoints, playerMerits, playerActivePropertyId, playerActiveJobId & playerLoadoutSummary ---
+    check($engine->playerPoints('founder-player') >= 0, 'GameEngine playerPoints returns current player points balance');
+    check($engine->playerMerits('founder-player') >= 0, 'GameEngine playerMerits returns current player merits balance');
+    check($engine->playerActivePropertyId('founder-player') !== '', 'GameEngine playerActivePropertyId returns active safehouse property ID');
+    check($engine->playerActiveJobId('founder-player') !== '', 'GameEngine playerActiveJobId returns active job ID');
+    check(array_key_exists('weaponMultiplier', $engine->playerLoadoutSummary('founder-player')) && array_key_exists('armorReduction', $engine->playerLoadoutSummary('founder-player')), 'GameEngine playerLoadoutSummary returns resolved weapon and armor stats');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
