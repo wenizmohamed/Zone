@@ -5661,4 +5661,31 @@ final class GameEngine
     {
         return 3;
     }
+
+    public function playerCombatWinXpBaseReward(): int
+    {
+        return 15;
+    }
+
+    public function playerCombatWinXpPerOpponentLevel(): int
+    {
+        return 2;
+    }
+
+    /** @return list<string> */
+    public function familyUpgradeSupportedBranches(): array
+    {
+        return ['combat', 'crime', 'territory'];
+    }
+
+    public function isSupportedFamilyUpgradeBranch(string $branch): bool
+    {
+        return in_array($branch, $this->familyUpgradeSupportedBranches(), true);
+    }
+
+    /** @return list<string> */
+    public function familyUpgradeAllowedRoles(): array
+    {
+        return ['leader', 'boss', 'underboss', 'officer', 'founder'];
+    }
 }

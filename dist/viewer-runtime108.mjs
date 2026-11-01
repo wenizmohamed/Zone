@@ -9,6 +9,9 @@ export function viewerStartupTimeoutReason() { return 'viewer-startup-timeout'; 
 export function viewerContextLostReason() { return 'webgl-context-lost'; }
 export function viewerDefaultRenderErrorReason() { return 'viewer-render-failed'; }
 export function viewerDefaultRuntimeErrorReason() { return 'viewer-runtime-error'; }
+export function viewerRenderingStates() { return ['active', 'paused']; }
+export function viewerMediaStates() { return ['ready', 'error']; }
+export function isSupportedViewerRenderingState(state) { return ['active', 'paused'].includes(String(state)); }
 export function installViewerRuntime({ canvas, render, fail, ready, pauseWhenHidden = true }) {
   let frame = null, disposed = false, failed = false, intersecting = true, last = 0;
   const sync = () => {

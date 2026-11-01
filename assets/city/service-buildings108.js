@@ -195,5 +195,7 @@
   function sharedRoofClearanceRatio(){return .4;}
   function initialRoofScanSteps(){return 7;}
   function refinementRoofScanSteps(){return 5;}
-  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,insideRoofServiceIds,sharedRoofServiceIds,containsAuthoredPointServiceIds,minimumSharedRoofRoomMeters,maximumSharedRoofRoomMeters,sharedRoofClearanceRatio,initialRoofScanSteps,refinementRoofScanSteps,inside,roofAnchor,meters};
+  function bilateralSeparationGridSteps(){return 12;}
+  function sharedRoofGridSteps(){return 20;}
+  return {SERVICES,associate,apply,summarizeAssociations,serviceCount,serviceIds,crowdingTargetMeters,earthRadiusMeters,defaultMaximumDistanceMeters,maxRoofSpanMeters,footprintSearchRadiusMeters,hasCrowding,isSupportedServiceId,unboundServiceIds,boundServiceIds,insideRoofServiceIds,sharedRoofServiceIds,containsAuthoredPointServiceIds,minimumSharedRoofRoomMeters,maximumSharedRoofRoomMeters,sharedRoofClearanceRatio,initialRoofScanSteps,refinementRoofScanSteps,bilateralSeparationGridSteps,sharedRoofGridSteps,inside,roofAnchor,meters};
 });

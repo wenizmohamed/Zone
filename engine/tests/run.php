@@ -2401,6 +2401,13 @@ try {
     check($engine->playerCombatMugMinShareRatio() === 0.06, 'GameEngine playerCombatMugMinShareRatio returns 0.06');
     check($engine->playerCombatMugMaxShareRatio() === 0.12, 'GameEngine playerCombatMugMaxShareRatio returns 0.12');
     check($engine->playerCombatWinRespectGrant() === 3, 'GameEngine playerCombatWinRespectGrant returns 3');
+
+    // --- Wave 206 (zone-beta324): GameEngine playerCombatWinXpBaseReward, playerCombatWinXpPerOpponentLevel, familyUpgradeSupportedBranches, isSupportedFamilyUpgradeBranch & familyUpgradeAllowedRoles ---
+    check($engine->playerCombatWinXpBaseReward() === 15, 'GameEngine playerCombatWinXpBaseReward returns 15');
+    check($engine->playerCombatWinXpPerOpponentLevel() === 2, 'GameEngine playerCombatWinXpPerOpponentLevel returns 2');
+    check($engine->familyUpgradeSupportedBranches() === ['combat', 'crime', 'territory'], 'GameEngine familyUpgradeSupportedBranches returns combat, crime, territory');
+    check($engine->isSupportedFamilyUpgradeBranch('combat') && !$engine->isSupportedFamilyUpgradeBranch('invalid'), 'GameEngine isSupportedFamilyUpgradeBranch validates branch');
+    check($engine->familyUpgradeAllowedRoles() === ['leader', 'boss', 'underboss', 'officer', 'founder'], 'GameEngine familyUpgradeAllowedRoles returns allowed roles');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
