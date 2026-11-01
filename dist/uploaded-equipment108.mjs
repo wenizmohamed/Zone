@@ -68,6 +68,26 @@ export function uploadedArmorChestOffsetY() {
   return -.35;
 }
 
+export function uploadedAssetHashLength() {
+  return 64;
+}
+
+export function uploadedEquipmentSlots() {
+  return ['character', 'weapon', 'armor'];
+}
+
+export function isSupportedUploadedEquipmentSlot(slot) {
+  return ['character', 'weapon', 'armor'].includes(String(slot ?? ''));
+}
+
+export function uploadedCharacterRepresentation() {
+  return 'uploaded-compatible-rig';
+}
+
+export function uploadedArmorRepresentation() {
+  return 'uploaded-rigid-chest-model';
+}
+
 export function uploadedWeaponFit(object, transform, key) {
   const melee = isMeleeWeaponKey(key);
   const length = uploadedWeaponTargetLength(key);

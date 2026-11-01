@@ -2373,6 +2373,13 @@ try {
     check($engine->progressionFactionMaxContributionRespect() === 1000000, 'GameEngine progressionFactionMaxContributionRespect returns 1000000');
     check($engine->progressionSelfBailMinPriceCash() === 1000, 'GameEngine progressionSelfBailMinPriceCash returns 1000');
     check($engine->progressionSelfBailPricePerMinuteCash() === 1000, 'GameEngine progressionSelfBailPricePerMinuteCash returns 1000');
+
+    // --- Wave 202 (zone-beta320): GameEngine progressionJailBustNerveCost, progressionJailBustMinOddsPct, progressionJailBustMaxOddsPct, progressionJailBustBaseOddsPct & progressionHospitalReviveEnergyCost ---
+    check($engine->progressionJailBustNerveCost() === 5, 'GameEngine progressionJailBustNerveCost returns 5');
+    check($engine->progressionJailBustMinOddsPct() === 15, 'GameEngine progressionJailBustMinOddsPct returns 15');
+    check($engine->progressionJailBustMaxOddsPct() === 90, 'GameEngine progressionJailBustMaxOddsPct returns 90');
+    check($engine->progressionJailBustBaseOddsPct() === 55, 'GameEngine progressionJailBustBaseOddsPct returns 55');
+    check($engine->progressionHospitalReviveEnergyCost() === 75, 'GameEngine progressionHospitalReviveEnergyCost returns 75');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -5561,4 +5561,29 @@ final class GameEngine
     {
         return 1000;
     }
+
+    public function progressionJailBustNerveCost(): int
+    {
+        return 5;
+    }
+
+    public function progressionJailBustMinOddsPct(): int
+    {
+        return 15;
+    }
+
+    public function progressionJailBustMaxOddsPct(): int
+    {
+        return 90;
+    }
+
+    public function progressionJailBustBaseOddsPct(): int
+    {
+        return 55;
+    }
+
+    public function progressionHospitalReviveEnergyCost(): int
+    {
+        return 75;
+    }
 }
