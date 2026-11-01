@@ -4784,4 +4784,38 @@ final class GameEngine
     {
         return '#a3d900';
     }
+
+    public function dailyStreakCycleTotalCash(): int
+    {
+        return 32500;
+    }
+
+    public function dailyStreakCashAmountForDay(int $day): int
+    {
+        return match ($day) {
+            1 => 1000,
+            2 => 1500,
+            3 => 2500,
+            4 => 3500,
+            5 => 5000,
+            6 => 7000,
+            7 => 12000,
+            default => 0,
+        };
+    }
+
+    public function dailyStreakRefillsNerveForDay(int $day): bool
+    {
+        return in_array($day, [3, 7], true);
+    }
+
+    public function dailyStreakRefillsEnergyForDay(int $day): bool
+    {
+        return in_array($day, [5, 7], true);
+    }
+
+    public function dailyContractXpGrantAmount(): int
+    {
+        return 200;
+    }
 }

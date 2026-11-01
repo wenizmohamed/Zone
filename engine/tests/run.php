@@ -2163,6 +2163,13 @@ try {
     check($engine->releaseTextMaxByteLength() === 12000, 'GameEngine releaseTextMaxByteLength returns 12000');
     check($engine->releaseTextMaxCharLength() === 4000, 'GameEngine releaseTextMaxCharLength returns 4000');
     check($engine->releaseDefaultBrandingAccentColor() === '#a3d900', 'GameEngine releaseDefaultBrandingAccentColor returns #a3d900');
+
+    // --- Wave 172 (zone-beta290): GameEngine dailyStreakCycleTotalCash, dailyStreakCashAmountForDay, dailyStreakRefillsNerveForDay, dailyStreakRefillsEnergyForDay & dailyContractXpGrantAmount ---
+    check($engine->dailyStreakCycleTotalCash() === 32500, 'GameEngine dailyStreakCycleTotalCash returns 32500');
+    check($engine->dailyStreakCashAmountForDay(1) === 1000 && $engine->dailyStreakCashAmountForDay(7) === 12000 && $engine->dailyStreakCashAmountForDay(8) === 0, 'GameEngine dailyStreakCashAmountForDay returns streak cash');
+    check($engine->dailyStreakRefillsNerveForDay(3) === true && $engine->dailyStreakRefillsNerveForDay(7) === true && $engine->dailyStreakRefillsNerveForDay(1) === false, 'GameEngine dailyStreakRefillsNerveForDay validates nerve refill days');
+    check($engine->dailyStreakRefillsEnergyForDay(5) === true && $engine->dailyStreakRefillsEnergyForDay(7) === true && $engine->dailyStreakRefillsEnergyForDay(2) === false, 'GameEngine dailyStreakRefillsEnergyForDay validates energy refill days');
+    check($engine->dailyContractXpGrantAmount() === 200, 'GameEngine dailyContractXpGrantAmount returns 200');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

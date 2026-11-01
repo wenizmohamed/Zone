@@ -215,6 +215,26 @@ export function upgradedWeaponKeyCount(revision = 116) {
   return upgradedWeaponKeys(revision).length;
 }
 
+export function defaultWeaponRevision() {
+  return 116;
+}
+
+export function supportedWeaponUpgradeRevisions() {
+  return [111, 112, 116];
+}
+
+export function isSupportedWeaponUpgradeRevision(revision) {
+  return supportedWeaponUpgradeRevisions().includes(Number(revision));
+}
+
+export function weaponGamePresentationKeys() {
+  return Object.keys(WEAPON_GAME_PRESENTATIONS);
+}
+
+export function weaponGamePresentationCount() {
+  return weaponGamePresentationKeys().length;
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;

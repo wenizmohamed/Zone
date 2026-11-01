@@ -6,6 +6,8 @@ import vm from 'node:vm';
 import * as THREE from '../lib/three184/three.module.js';
 import {geometryGlb} from '../assets/weapons/source-tools/geometry-audit.mjs';
 import {resolveWeaponAsset,weaponThumbnail,createWeaponAssetLoader,
+  defaultWeaponRevision,supportedWeaponUpgradeRevisions,isSupportedWeaponUpgradeRevision,
+  weaponGamePresentationKeys,weaponGamePresentationCount,supportedWeaponSourceCount,upgradedWeaponKeyCount,
   WEAPON_UPGRADE_SOURCES112,WEAPON_PRESENTATION_UPGRADES112} from '../dist/weapon-assets.js';
 
 const root=new URL('../',import.meta.url),base=new URL('assets/weapons/',root);
@@ -39,6 +41,15 @@ test('explicit112 sniper bindings use the two new sources while v99/v111 remain 
   }
   for(const [key,id]of Object.entries(previous.bindings))assert.equal(resolveWeaponAsset(key,catalog).id,id);
   assert.equal(Object.keys(WEAPON_UPGRADE_SOURCES112).length,2);
+  assert.equal(defaultWeaponRevision(),116);
+  assert.deepEqual(supportedWeaponUpgradeRevisions(),[111,112,116]);
+  assert.equal(isSupportedWeaponUpgradeRevision(112),true);
+  assert.equal(isSupportedWeaponUpgradeRevision(99),false);
+  assert.equal(weaponGamePresentationCount(),40);
+  assert.equal(weaponGamePresentationKeys().length,40);
+  assert.equal(supportedWeaponSourceCount(),20);
+  assert.equal(upgradedWeaponKeyCount(112),11);
+  assert.equal(upgradedWeaponKeyCount(116),14);
 });
 
 test('classic game thumbnails and authored-model overrides match the actual current runtime, not the old source image',()=>{
