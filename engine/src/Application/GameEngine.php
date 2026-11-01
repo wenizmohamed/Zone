@@ -5739,4 +5739,29 @@ final class GameEngine
     {
         return 3600;
     }
+
+    public function worldDirectorDefaultTickSeconds(): int
+    {
+        return 60;
+    }
+
+    public function worldDirectorMinMaxFinds(): int
+    {
+        return 1;
+    }
+
+    public function worldDirectorMaxMaxFinds(): int
+    {
+        return 5;
+    }
+
+    public function worldDirectorDefaultMaxFinds(): int
+    {
+        return 2;
+    }
+
+    public function ownerPlaytestSessionTtlSeconds(): int
+    {
+        return 43200;
+    }
 }

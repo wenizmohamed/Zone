@@ -51,6 +51,26 @@ export function kitModelCount(){
   return kitModelNames().length;
 }
 
+export function defaultLandmarkPrepareTimeoutMs(){
+  return 12000;
+}
+
+export function maxLandmarkPrepareTimeoutMs(){
+  return 30000;
+}
+
+export function landmarkLicense(){
+  return 'KayKit City Builder Bits CC0';
+}
+
+export function minLandmarkPitch(){
+  return 10;
+}
+
+export function minLandmarkZoom(){
+  return 15.8;
+}
+
 export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw Error('Landmark preparation timeout must be 1..30000 milliseconds.');

@@ -6,7 +6,7 @@ import * as Three from '../lib/three184/three.module.js';
 
 const moduleUrl = new URL('../dist/district-landmarks.js', import.meta.url);
 const source = readFileSync(moduleUrl, 'utf8').replace(/^import .*;\r?\n/gm, '')
-  .replaceAll('import.meta.url', JSON.stringify(moduleUrl.href)).replace('export async function createLandmarks', 'async function createLandmarks');
+  .replaceAll('import.meta.url', JSON.stringify(moduleUrl.href)).replace(/^export\s+/gm, '');
 const vendor = readFileSync(new URL('../lib/three184/three.module.js', import.meta.url), 'utf8');
 const propertyStart = vendor.indexOf('function WebGLProperties()'), propertyEnd = vendor.indexOf('function painterSortStable', propertyStart);
 const asyncStart = vendor.indexOf('this.compileAsync = function ('), asyncEnd = vendor.indexOf('// Animation Loop', asyncStart);

@@ -2422,6 +2422,13 @@ try {
     check($engine->materialLootHourlyWindowSeconds() === 3600, 'GameEngine materialLootHourlyWindowSeconds returns 3600');
     check($engine->worldDirectorMinTickSeconds() === 15, 'GameEngine worldDirectorMinTickSeconds returns 15');
     check($engine->worldDirectorMaxTickSeconds() === 3600, 'GameEngine worldDirectorMaxTickSeconds returns 3600');
+
+    // --- Wave 209 (zone-beta327): GameEngine worldDirectorDefaultTickSeconds, worldDirectorMinMaxFinds, worldDirectorMaxMaxFinds, worldDirectorDefaultMaxFinds & ownerPlaytestSessionTtlSeconds ---
+    check($engine->worldDirectorDefaultTickSeconds() === 60, 'GameEngine worldDirectorDefaultTickSeconds returns 60');
+    check($engine->worldDirectorMinMaxFinds() === 1, 'GameEngine worldDirectorMinMaxFinds returns 1');
+    check($engine->worldDirectorMaxMaxFinds() === 5, 'GameEngine worldDirectorMaxMaxFinds returns 5');
+    check($engine->worldDirectorDefaultMaxFinds() === 2, 'GameEngine worldDirectorDefaultMaxFinds returns 2');
+    check($engine->ownerPlaytestSessionTtlSeconds() === 43200, 'GameEngine ownerPlaytestSessionTtlSeconds returns 43200');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -11,18 +11,7 @@ const moduleUrl=new URL('../dist/district-landmarks.js',import.meta.url);
 const source=readFileSync(moduleUrl,'utf8')
   .replace(/^import .*;\r?\n/gm,'')
   .replaceAll('import.meta.url',JSON.stringify(moduleUrl.href))
-  .replace('export function supportedLandmarkIds','function supportedLandmarkIds')
-  .replace('export function isSupportedLandmarkId','function isSupportedLandmarkId')
-  .replace('export function landmarkLayerId','function landmarkLayerId')
-  .replace('export function landmarkSpec','function landmarkSpec')
-  .replace('export function supportedLandmarkCount','function supportedLandmarkCount')
-  .replace('export function landmarkWidthMeters','function landmarkWidthMeters')
-  .replace('export function landmarkModelName','function landmarkModelName')
-  .replace('export function landmarkColor','function landmarkColor')
-  .replace('export function landmarkRotationRadians','function landmarkRotationRadians')
-  .replace('export function kitModelNames','function kitModelNames')
-  .replace('export function kitModelCount','function kitModelCount')
-  .replace('export async function createLandmarks','async function createLandmarks');
+  .replace(/^export\s+/gm,'');
 const ID='zone-authored-landmarks';
 const KIT_NAMES=['building_E_withoutBase','building_G_withoutBase','building_C_withoutBase','building_A_withoutBase','watertower','car_sedan','streetlight'];
 const pins=()=>[
@@ -88,8 +77,8 @@ function harness({manual=false,existing=false,addError=false,shader=null}={}){
   };
   const document={body:{dataset:{}}};
   const context=vm.createContext({THREE,GLTFLoader,URL,mapboxgl:{MercatorCoordinate:{fromLngLat:mercator}},document,performance:{now:()=>100},console,setTimeout,clearTimeout});
-  vm.runInContext(source+'\nglobalThis.createLandmarks=createLandmarks;globalThis.supportedLandmarkIds=supportedLandmarkIds;globalThis.isSupportedLandmarkId=isSupportedLandmarkId;globalThis.landmarkLayerId=landmarkLayerId;globalThis.landmarkSpec=landmarkSpec;globalThis.supportedLandmarkCount=supportedLandmarkCount;globalThis.landmarkWidthMeters=landmarkWidthMeters;globalThis.landmarkModelName=landmarkModelName;globalThis.landmarkColor=landmarkColor;globalThis.landmarkRotationRadians=landmarkRotationRadians;globalThis.kitModelNames=kitModelNames;globalThis.kitModelCount=kitModelCount;',context,{filename:moduleUrl.pathname});
-  return {create:context.createLandmarks,supportedLandmarkIds:context.supportedLandmarkIds,isSupportedLandmarkId:context.isSupportedLandmarkId,landmarkLayerId:context.landmarkLayerId,landmarkSpec:context.landmarkSpec,supportedLandmarkCount:context.supportedLandmarkCount,landmarkWidthMeters:context.landmarkWidthMeters,landmarkModelName:context.landmarkModelName,landmarkColor:context.landmarkColor,landmarkRotationRadians:context.landmarkRotationRadians,kitModelNames:context.kitModelNames,kitModelCount:context.kitModelCount,map,gl,canvas,canvases,layers,mutations,resources,requests,rendererInstances,events,document,asset,
+  vm.runInContext(source+'\nglobalThis.createLandmarks=createLandmarks;globalThis.supportedLandmarkIds=supportedLandmarkIds;globalThis.isSupportedLandmarkId=isSupportedLandmarkId;globalThis.landmarkLayerId=landmarkLayerId;globalThis.landmarkSpec=landmarkSpec;globalThis.supportedLandmarkCount=supportedLandmarkCount;globalThis.landmarkWidthMeters=landmarkWidthMeters;globalThis.landmarkModelName=landmarkModelName;globalThis.landmarkColor=landmarkColor;globalThis.landmarkRotationRadians=landmarkRotationRadians;globalThis.kitModelNames=kitModelNames;globalThis.kitModelCount=kitModelCount;globalThis.defaultLandmarkPrepareTimeoutMs=defaultLandmarkPrepareTimeoutMs;globalThis.maxLandmarkPrepareTimeoutMs=maxLandmarkPrepareTimeoutMs;globalThis.landmarkLicense=landmarkLicense;globalThis.minLandmarkPitch=minLandmarkPitch;globalThis.minLandmarkZoom=minLandmarkZoom;',context,{filename:moduleUrl.pathname});
+  return {create:context.createLandmarks,supportedLandmarkIds:context.supportedLandmarkIds,isSupportedLandmarkId:context.isSupportedLandmarkId,landmarkLayerId:context.landmarkLayerId,landmarkSpec:context.landmarkSpec,supportedLandmarkCount:context.supportedLandmarkCount,landmarkWidthMeters:context.landmarkWidthMeters,landmarkModelName:context.landmarkModelName,landmarkColor:context.landmarkColor,landmarkRotationRadians:context.landmarkRotationRadians,kitModelNames:context.kitModelNames,kitModelCount:context.kitModelCount,defaultLandmarkPrepareTimeoutMs:context.defaultLandmarkPrepareTimeoutMs,maxLandmarkPrepareTimeoutMs:context.maxLandmarkPrepareTimeoutMs,landmarkLicense:context.landmarkLicense,minLandmarkPitch:context.minLandmarkPitch,minLandmarkZoom:context.minLandmarkZoom,map,gl,canvas,canvases,layers,mutations,resources,requests,rendererInstances,events,document,asset,
     resolveAll(){for(const [name,pending] of requests)pending.resolve(asset(name));},
     assertReleased(){assert.ok(resources.length>0);for(const r of resources)assert.equal(r.disposals,1,`${r.kind} must be disposed exactly once`);},
   };
@@ -113,6 +102,11 @@ test('real scene graph installs one cosmetic layer at published destinations wit
   assert.equal(h.landmarkRotationRadians('hospital'),Math.PI/2);
   assert.equal(h.kitModelCount(),7);
   assert.deepEqual(Array.from(h.kitModelNames()),KIT_NAMES);
+  assert.equal(h.defaultLandmarkPrepareTimeoutMs(),12000);
+  assert.equal(h.maxLandmarkPrepareTimeoutMs(),30000);
+  assert.equal(h.landmarkLicense(),'KayKit City Builder Bits CC0');
+  assert.equal(h.minLandmarkPitch(),10);
+  assert.equal(h.minLandmarkZoom(),15.8);
   const control=await h.create(h.map,input);
   assert.equal(control.diagnostics.status,'ready');assert.equal(h.requests.size,7);
   const snap=control.getDiagnostics();
