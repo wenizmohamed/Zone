@@ -115,5 +115,17 @@
   function cullingBudgets(mobile=false){
     return {buildings:mobile?140:380,props:mobile?80:180};
   }
-  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,isSupportedLayoutModel,maxPlacementWidthMeters,cullingBudgets};
+  function supportedLayoutModelCount(){
+    return supportedLayoutModels().length;
+  }
+  function buildingLayoutModels(){
+    return ['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase'];
+  }
+  function propLayoutModels(){
+    return ['car_sedan','bush','streetlight'];
+  }
+  function isBuildingLayoutModel(model){
+    return buildingLayoutModels().includes(String(model||''));
+  }
+  return {createPlacements,insidePolygon,createStreets,selectVisiblePlacements,summarizePlacements,summarizeStreets,supportedLayoutModels,isSupportedLayoutModel,maxPlacementWidthMeters,cullingBudgets,supportedLayoutModelCount,buildingLayoutModels,propLayoutModels,isBuildingLayoutModel};
 });

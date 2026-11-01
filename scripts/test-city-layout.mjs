@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
-const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, isSupportedLayoutModel, maxPlacementWidthMeters, cullingBudgets } = require('../dist/city-layout.js');
+const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, isSupportedLayoutModel, maxPlacementWidthMeters, cullingBudgets, supportedLayoutModelCount, buildingLayoutModels, propLayoutModels, isBuildingLayoutModel } = require('../dist/city-layout.js');
 const cell = (id, x=0) => ({type:'Feature',id,properties:{ownerId:'vipers'},geometry:{type:'Polygon',coordinates:[[[x,0],[x+1,0],[x+1,1],[x,1],[x,0]]]}});
 
 test('placements are deterministic and remain within their authoritative blocks',()=>{
@@ -115,4 +115,9 @@ test('view culling preserves state and enforces explicit mobile geometry budgets
   assert.equal(maxPlacementWidthMeters(),140);
   assert.deepEqual(cullingBudgets(true),{buildings:140,props:80});
   assert.deepEqual(cullingBudgets(false),{buildings:380,props:180});
+  assert.equal(supportedLayoutModelCount(),7);
+  assert.deepEqual(buildingLayoutModels(),['building_A_withoutBase','building_C_withoutBase','building_E_withoutBase','building_G_withoutBase']);
+  assert.deepEqual(propLayoutModels(),['car_sedan','bush','streetlight']);
+  assert.equal(isBuildingLayoutModel('building_A_withoutBase'),true);
+  assert.equal(isBuildingLayoutModel('car_sedan'),false);
 });

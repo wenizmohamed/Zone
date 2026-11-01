@@ -2093,6 +2093,13 @@ try {
     check($engine->totalRegenIntervalsSeconds() === 720, 'GameEngine totalRegenIntervalsSeconds returns 720');
     check($engine->maxRegenIntervalSeconds() === 300, 'GameEngine maxRegenIntervalSeconds returns 300');
     check($engine->minRegenIntervalSeconds() === 60, 'GameEngine minRegenIntervalSeconds returns 60');
+
+    // --- Wave 162 (zone-beta280): GameEngine combatVersion, supportedCombatActions, isSupportedCombatAction, supportedCombatFinishes & isSupportedCombatFinish ---
+    check($engine->combatVersion() >= 1, 'GameEngine combatVersion returns >= 1');
+    check($engine->supportedCombatActions() === ['start', 'strike', 'finish'], 'GameEngine supportedCombatActions returns 3 combat actions');
+    check($engine->isSupportedCombatAction('strike') === true && $engine->isSupportedCombatAction('flee') === false, 'GameEngine isSupportedCombatAction validates combat action');
+    check($engine->supportedCombatFinishes() === ['mug', 'hosp', 'leave'], 'GameEngine supportedCombatFinishes returns 3 finish approaches');
+    check($engine->isSupportedCombatFinish('mug') === true && $engine->isSupportedCombatFinish('arrest') === false, 'GameEngine isSupportedCombatFinish validates finish approach');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -4518,4 +4518,31 @@ final class GameEngine
     {
         return min($this->resourceRegenIntervals());
     }
+
+    public function combatVersion(string $playerId = 'founder-player'): int
+    {
+        return (int) ((new CombatService($this->database, $this->events))->snapshot($playerId)['version'] ?? 1);
+    }
+
+    /** @return list<string> */
+    public function supportedCombatActions(): array
+    {
+        return ['start', 'strike', 'finish'];
+    }
+
+    public function isSupportedCombatAction(string $action): bool
+    {
+        return in_array($action, $this->supportedCombatActions(), true);
+    }
+
+    /** @return list<string> */
+    public function supportedCombatFinishes(): array
+    {
+        return ['mug', 'hosp', 'leave'];
+    }
+
+    public function isSupportedCombatFinish(string $approach): bool
+    {
+        return in_array($approach, $this->supportedCombatFinishes(), true);
+    }
 }
