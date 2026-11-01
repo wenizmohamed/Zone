@@ -2978,4 +2978,29 @@ final class GameEngine
     {
         return $this->contestedTerritoryCount() > 0;
     }
+
+    public function hasLeaderboardRows(): bool
+    {
+        return $this->leaderboardRowCount() > 0;
+    }
+
+    public function hasFamilyUpgradeDefinitions(string $factionId = 'vipers'): bool
+    {
+        return $this->familyUpgradeCount($factionId) > 0;
+    }
+
+    public function hasFamilyOperationDefinitions(): bool
+    {
+        return $this->familyOperationDefinitionCount() > 0;
+    }
+
+    public function hasDailyContractPool(): bool
+    {
+        return $this->dailyContractPoolCount() > 0;
+    }
+
+    public function hasEligiblePlayerCombatOpponents(string $playerId = 'founder-player'): bool
+    {
+        return $this->eligiblePlayerCombatOpponentCount($playerId) > 0;
+    }
 }

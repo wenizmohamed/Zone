@@ -187,6 +187,14 @@ export function weaponCategory(key, catalog = {}) {
     || ({ revolver: 'revolver', pistol: 'pistol', ak: 'ak-rifle' })[key] || 'weapon';
 }
 
+export function supportedWeaponSourceKeys() {
+  return Object.keys(WEAPON_SOURCE_MODELS);
+}
+
+export function isSupportedWeaponSourceKey(key) {
+  return typeof key === 'string' && Object.hasOwn(WEAPON_SOURCE_MODELS, key);
+}
+
 export function weaponThumbnail(key, { revision = 116 } = {}) {
   if(revision>=116&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES116,key))return'/assets/weapons/upgrades116/m4-thumbnail.png';
   const detailKey=revision>=112&&Object.hasOwn(WEAPON_PRESENTATION_UPGRADES112,key)?WEAPON_PRESENTATION_UPGRADES112[key]:null;
@@ -437,6 +445,6 @@ export function createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader, MTLLoade
   function diagnostics() {
     return { disposed, cachedAssetCount: cache.size, cachedAssetIds: [...cache.keys()], timeoutMs, hasGrainTexture: !!grain };
   }
-  return { load, release, descriptor, diagnostics, dispose };
+  return { load, release, descriptor, isDisposed: () => disposed, cachedAssetCount: () => cache.size, diagnostics, dispose };
 }
 

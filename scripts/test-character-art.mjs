@@ -7,7 +7,7 @@ import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { CHARACTER_ART, supportedSurfaceNames, isSupportedSurfaceName, validateCharacterWardrobe, prepareCharacterArt, computeCharacterFrame, disposeCharacterResources, inspectCharacterWardrobe } from '../dist/character-presentation.js';
 import { prepareCharacterGrip, applyCharacterGrip, gripPoseBoneKeys, isGripPoseBoneKey } from '../dist/character-grip.js';
 import { prepareWeaponPose, supportedWeaponPoseProfiles, isSupportedWeaponPoseProfile } from '../dist/character-poses.js';
-import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader } from '../dist/weapon-assets.js';
+import { resolveWeaponAsset, weaponPresentationLabel, createWeaponAssetLoader, supportedWeaponSourceKeys, isSupportedWeaponSourceKey } from '../dist/weapon-assets.js';
 import { createArmorController, supportedArmorRepresentations, isRepresentedArmorId, clampArmorReduction } from '../dist/character-armor.mjs';
 
 async function wardrobe(name) {
@@ -148,6 +148,12 @@ test('Templates install the art stage, truthful badge, keyboard controls and col
   assert.deepEqual(supportedWeaponPoseProfiles(), ['unarmed', 'bat', 'knife', 'handgun', 'longgun']);
   assert.equal(isSupportedWeaponPoseProfile('handgun'), true);
   assert.equal(isSupportedWeaponPoseProfile('bow'), false);
+  assert.ok(supportedWeaponSourceKeys().length >= 20);
+  assert.equal(isSupportedWeaponSourceKey('bat'), true);
+  assert.equal(isSupportedWeaponSourceKey('unknown_gun'), false);
+  const wLoader = createWeaponAssetLoader({ THREE, GLTFLoader, OBJLoader: class {}, MTLLoader: class {} });
+  assert.equal(wLoader.isDisposed(), false);
+  assert.equal(wLoader.cachedAssetCount(), 0);
 });
 
 test('A missing wardrobe is evicted and retryable, and malformed replacements retain the visible rig', async () => {

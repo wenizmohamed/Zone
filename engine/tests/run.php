@@ -1694,6 +1694,13 @@ try {
     check(is_bool($engine->hasOwnedTerritories()), 'GameEngine hasOwnedTerritories returns boolean owned territories status');
     check(is_bool($engine->hasNeutralTerritories()), 'GameEngine hasNeutralTerritories returns boolean neutral territories status');
     check(is_bool($engine->hasContestedTerritories()), 'GameEngine hasContestedTerritories returns boolean contested territories status');
+
+    // --- Wave 105 (zone-beta223): GameEngine hasLeaderboardRows, hasFamilyUpgradeDefinitions, hasFamilyOperationDefinitions, hasDailyContractPool & hasEligiblePlayerCombatOpponents ---
+    check($engine->hasLeaderboardRows() === true, 'GameEngine hasLeaderboardRows returns boolean leaderboard rows status');
+    check(is_bool($engine->hasFamilyUpgradeDefinitions()), 'GameEngine hasFamilyUpgradeDefinitions returns boolean family upgrade definitions status');
+    check($engine->hasFamilyOperationDefinitions() === true, 'GameEngine hasFamilyOperationDefinitions returns boolean family operation definitions status');
+    check($engine->hasDailyContractPool() === true, 'GameEngine hasDailyContractPool returns boolean daily contract pool status');
+    check(is_bool($engine->hasEligiblePlayerCombatOpponents()), 'GameEngine hasEligiblePlayerCombatOpponents returns boolean eligible player combat opponents status');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");
