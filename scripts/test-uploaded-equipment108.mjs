@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import * as T from '../lib/three184/three.module.js';
 import { GLTFLoader } from '../lib/three184/GLTFLoader.js';
 import { uploadedAssetId, isUploadedAssetId, isMeleeWeaponKey, isLongGunWeaponKey, uploadedCharacterTargetHeight, uploadedArmorTargetSize, uploadedWeaponTargetLength, uploadedShortGunTargetLength, uploadedLongGunTargetLength, uploadedKnifeTargetLength, uploadedBatTargetLength, uploadedArmorChestOffsetY, uploadedAssetHashLength, uploadedEquipmentSlots, isSupportedUploadedEquipmentSlot, uploadedCharacterRepresentation, uploadedArmorRepresentation, uploadedWeaponRepresentation, uploadedWeaponGripQuality, uploadedArmorRiggingMode, uploadedWeaponDescriptorPrefix, uploadedArmorBoneName, loadUploadedCharacter, createUploadedWeaponLoader, createUploadedArmorController } from '../dist/uploaded-equipment108.mjs';
-import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady } from '../dist/asset-loader.mjs';
+import { isAssetWithinByteBudget, maxAssetMemberCount, ASSET_MAX_BYTES, supportedNonModelExtensions, isSupportedNonModelExtension, maxParallelAssetStreams, isAssetManifestReady, assetChunkByteLength, assetMaxBundleBytes, maxBase64ChunkChars, defaultAssetMimeFallback, maxBundledResourceErrorUrlChars } from '../dist/asset-loader.mjs';
 import { defaultCharacterOutfit, characterHeadScale, requiredWardrobeClipCount, characterArtSourceUrl, characterArtQualityTier, defaultFallbackSurfaceHexColor, defaultFallbackSurfaceRoughness, preservedSurfaceMapKeys } from '../dist/character-presentation.js';
 import { defaultGripAxisArray, isGripRigValid, gripPoseExplicitBoneCount, gripRightWristBoneKey, equippedWeaponGroupName, gripClosedPoseClipName, gripOpenPoseClipName, gripPoseQuaternionMap, defaultForwardBarrelAxis, defaultMeshZeroRotation } from '../dist/character-grip.js';
 import { defaultWeaponCameraFov, acceptedWeaponStudioCount, defaultWeaponStudioExposure, weaponStudioAutoRotateSpeed, weaponStudioDampingFactor, weaponStudioContactShadowOpacity, maxExportBasenameLength, weaponStudioMaxCameraFov, weaponStudioAcceptedBackgroundHex, weaponStudioReadableBackgroundHex, weaponStudioKeyLightIntensity, weaponStudioRimLightIntensity } from '../dist/weapon-presentation.js';
@@ -239,4 +239,9 @@ test('weapon and armor controllers expose structured upload diagnostics',async()
   assert.equal(Object.keys(gripPoseQuaternionMap()).length, 12);
   assert.deepEqual(defaultForwardBarrelAxis(), [0, 1, 0]);
   assert.deepEqual(defaultMeshZeroRotation(), [0, 0, 0]);
+  assert.equal(assetChunkByteLength(), 524288);
+  assert.equal(assetMaxBundleBytes(), 134217728);
+  assert.equal(maxBase64ChunkChars(), 699060);
+  assert.equal(defaultAssetMimeFallback(), 'application/octet-stream');
+  assert.equal(maxBundledResourceErrorUrlChars(), 120);
 });

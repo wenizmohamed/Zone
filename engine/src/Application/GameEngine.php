@@ -6503,4 +6503,30 @@ final class GameEngine
     {
         return method_exists($this->cache, 'count') ? $this->cache->count() : 0;
     }
+
+    /** @return array{totalCount: int, enabledCount: int, maxExpectedCashPerNerve: float} */
+    public function crimeSummary(): array
+    {
+        return $this->content->crimeSummary();
+    }
+
+    public function releaseActiveSummaryId(): string
+    {
+        return (string) ($this->releases->activeSummary()['id'] ?? 'foundation');
+    }
+
+    public function releaseActiveSummaryVersion(): int
+    {
+        return (int) ($this->releases->activeSummary()['version'] ?? 1);
+    }
+
+    public function releaseActiveSummaryThemeId(): string
+    {
+        return (string) ($this->releases->activeSummary()['activeTheme'] ?? 'dark');
+    }
+
+    public function moduleRegistryInstalledListCount(): int
+    {
+        return count(array_filter($this->modules->all(), static fn (array $module): bool => (bool) ($module['installed'] ?? false)));
+    }
 }

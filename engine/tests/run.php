@@ -2625,6 +2625,13 @@ try {
     check($engine->requestGuardIsValidPlayerId('founder-player') && !$engine->requestGuardIsValidPlayerId('INVALID'), 'GameEngine requestGuardIsValidPlayerId validates player ID');
     check(in_array($engine->cacheConfiguredEnvironmentAdapter(), ['array', 'redis'], true), 'GameEngine cacheConfiguredEnvironmentAdapter returns array or redis');
     check($engine->cacheEntryCount() >= 0, 'GameEngine cacheEntryCount returns non-negative count');
+
+    // --- Wave 238 (zone-beta356): GameEngine crimeSummary, releaseActiveSummaryId, releaseActiveSummaryVersion, releaseActiveSummaryThemeId & moduleRegistryInstalledListCount ---
+    check(isset($engine->crimeSummary()['totalCount']), 'GameEngine crimeSummary returns totalCount');
+    check($engine->releaseActiveSummaryId() !== '', 'GameEngine releaseActiveSummaryId returns non-empty ID');
+    check($engine->releaseActiveSummaryVersion() >= 1, 'GameEngine releaseActiveSummaryVersion returns positive version');
+    check($engine->releaseActiveSummaryThemeId() !== '', 'GameEngine releaseActiveSummaryThemeId returns non-empty theme ID');
+    check($engine->moduleRegistryInstalledListCount() >= 27, 'GameEngine moduleRegistryInstalledListCount returns >= 27');
 } catch (Throwable $exception) {
     $failed++;
     fwrite(STDERR, 'FATAL: ' . $exception::class . ': ' . $exception->getMessage() . "\n" . $exception->getTraceAsString() . "\n");

@@ -94,6 +94,26 @@ export function maxAssetRotationDegrees() {
   return 360;
 }
 
+export function assetChunkByteLength() {
+  return ASSET_CHUNK_BYTES;
+}
+
+export function assetMaxBundleBytes() {
+  return ASSET_MAX_BYTES;
+}
+
+export function maxBase64ChunkChars() {
+  return Math.ceil(ASSET_CHUNK_BYTES / 3) * 4 + 8;
+}
+
+export function defaultAssetMimeFallback() {
+  return 'application/octet-stream';
+}
+
+export function maxBundledResourceErrorUrlChars() {
+  return 120;
+}
+
 // The browser is not a remote-resource proxy. Bundle references can only reach
 // immutable, validated members of this exact upload, or embedded image/buffer data.
 export function resolveAssetMember(request, entry = '') {
