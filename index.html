@@ -262,26 +262,28 @@
                 </sc-for>
               </div>
             </div>
-            <div data-ai-studio-live-comms="1" style="background:rgba(8,11,15,.92);border:1px solid #4d7a0c;border-radius:5px;padding:7px 10px;display:flex;flex-direction:column;gap:6px">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <details data-ai-studio-live-comms="1" style="background:rgba(8,11,15,.92);border:1px solid #2b6478;border-radius:5px;padding:5px 10px">
+              <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;list-style:none">
+                <span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
                   <span style="width:7px;height:7px;border-radius:50%;background:#31e0ff;box-shadow:0 0 8px #31e0ff"></span>
                   <strong style="color:#31e0ff;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.aiCommsTitle }}</strong>
                   <span style="padding:1px 6px;background:rgba(224,90,74,.16);border:1px solid #e05a4a;border-radius:3px;color:#ff9b8e;font-size:9.5px;font-weight:700">{{ geminiArsenal.nemesisAlert }}</span>
-                </div>
-                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                </span>
+                <span style="display:flex;gap:4px;flex-wrap:wrap" onClick="event.stopPropagation()">
                   <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="ao" hint-placeholder-count="4">
                     <button onClick="{{ ao.run }}" style="background:linear-gradient(180deg,#1d262b,#11171b);color:#7defff;border:1px solid #2b6478;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ ao.label }}</button>
                   </sc-for>
                   <button onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
+                </span>
+              </summary>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(49,224,255,.2)">
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                  <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 9px;font:inherit;font-size:11px" />
+                  <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
                 </div>
+                <div data-ai-fixer-response="1" dir="ltr" style="padding:5px 8px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
               </div>
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-                <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 9px;font:inherit;font-size:11px" />
-                <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
-              </div>
-              <div data-ai-fixer-response="1" dir="ltr" style="padding:5px 8px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
-            </div>
+            </details>
           </div>
         </section>
       </sc-if>
