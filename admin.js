@@ -2027,8 +2027,97 @@ function bindOpenEngineAgiStudio() {
     } catch (_) {}
   });
   document.querySelectorAll('[data-agi-preset]').forEach((btn) => {
-    btn.addEventListener('click', () => runAgiSynthesis(btn.getAttribute('data-agi-preset')));
+    btn.addEventListener('click', () => {
+      const key = btn.getAttribute('data-agi-preset');
+      runAgiSynthesis(key);
+      if (key === 'syndicate-heist' && typeof window !== 'undefined' && window.navigator?.userAgent) {
+        try {
+          newCrime();
+          const fields = {
+            crimeId: 'bullion_convoy_heist',
+            crimeNameEn: 'Sovereign Bullion Convoy Intercept',
+            crimeNameAr: 'اعتراض قافلة السبائك السيادية',
+            crimeNerve: '18',
+            crimeSuccess: '68',
+            crimeCashMin: '45000',
+            crimeCashMax: '120000',
+            crimeXp: '85',
+            crimeLevel: '8',
+          };
+          for (const [id, val] of Object.entries(fields)) {
+            const el = $('#' + id);
+            if (el) el.value = val;
+          }
+        } catch (_) {}
+      }
+    });
   });
+
+  if (typeof window !== 'undefined' && window.navigator?.userAgent) {
+    const holoFrame = $('#agiCharacterHolodeckFrame');
+    let holoOutfit = 'tactical';
+    let holoWeapon = 'bullpup_1';
+    const weaponMeta = {
+      bullpup_1: { label: 'Bullpup L85 Rifle ×3.5', mult: 3.5 },
+      m4_1: { label: 'M4A1 Tactical Carbine ×3.65', mult: 3.65 },
+      ak: { label: 'AKM Assault Rifle ×3.1', mult: 3.1 },
+      sniper: { label: 'Dragunov Sniper ×4.2', mult: 4.2 },
+    };
+    const pushHolo = (fireCombat = false) => {
+      if (!holoFrame) return;
+      if (!holoFrame.getAttribute('src')) {
+        holoFrame.setAttribute('src', holoFrame.getAttribute('data-character-src') || '/dist/character3d.html?v=116');
+      }
+      if (!holoFrame.contentWindow) return;
+      const meta = weaponMeta[holoWeapon] || weaponMeta.bullpup_1;
+      const isSwat = holoOutfit === 'tactical';
+      holoFrame.contentWindow.postMessage({
+        character: {
+          name: 'OPEN ENGINE 3.6 RIG',
+          title: 'Gemini 3.7 Holodeck',
+          outfit: holoOutfit,
+          outfitLabel: holoOutfit === 'tactical' ? 'Swat.glb + Kevlar' : holoOutfit === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb',
+          weapon: holoWeapon,
+          weaponId: holoWeapon,
+          weaponLabel: meta.label,
+          weaponMultiplier: meta.mult,
+          armor: isSwat ? 'vest' : 'none',
+          armorId: isSwat ? 'vest' : '',
+          armorOwned: isSwat,
+          armorLabel: isSwat ? 'Tactical Kevlar Vest' : 'Unarmored',
+          armorReduction: isSwat ? 0.35 : 0,
+          armorPct: isSwat ? 35 : 0,
+          lifePct: 100,
+          level: 15,
+          stats: { str: 420, def: 390, spd: 410, dex: 405 },
+        },
+        bg: '#080a0d',
+        lang: state.language,
+      }, window.location.origin);
+      if (fireCombat) {
+        holoFrame.contentWindow.postMessage({ combat: { side: 'you', hit: true } }, window.location.origin);
+      }
+    };
+    holoFrame?.addEventListener('load', () => pushHolo(false));
+    setTimeout(() => pushHolo(false), 120);
+    document.querySelectorAll('[data-agi-holodeck]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const [o, w] = (btn.getAttribute('data-agi-holodeck') || 'tactical:bullpup_1').split(':');
+        holoOutfit = o || 'tactical';
+        holoWeapon = w || 'bullpup_1';
+        pushHolo(true);
+        if (outputEl) {
+          outputEl.textContent = `[OPEN ENGINE 3D HOLODECK · LIVE RIG UPDATED]\n• Active Wardrobe: ${holoOutfit === 'tactical' ? 'Swat.glb + Worn Kevlar Vest (35% Mitigation)' : holoOutfit === 'street' ? 'Casual_Hoodie.glb (Street Hoodie & Denim)' : 'Suit.glb (Executive Suit & Tie)'}\n• Active 3D Weapon Socket: ${(weaponMeta[holoWeapon] || weaponMeta.bullpup_1).label} (19-Bone Right-Hand Grip + Left-Hand Foregrip)`;
+        }
+      });
+    });
+    $('#agiHolodeckFireButton')?.addEventListener('click', () => {
+      pushHolo(true);
+      if (outputEl) {
+        outputEl.textContent = `[OPEN ENGINE 3D BALLISTICS TEST · 24 ANIMATION CLIPS]\n• Fired 3D Attack & Recoil Impulse on ${holoOutfit} rig holding ${(weaponMeta[holoWeapon] || weaponMeta.bullpup_1).label}`;
+      }
+    });
+  }
 }
 
 bindOpenEngineAgiStudio();

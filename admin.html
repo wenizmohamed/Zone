@@ -162,6 +162,26 @@
               <button class="button secondary" type="button" data-agi-preset="clothed-wardrobe">Gemini Vision: Verify Clothed 3D Wardrobe &amp; Hitboxes</button>
               <button class="button secondary" type="button" data-agi-preset="rebalance-armory">Vertex AI: Run 51-Weapon Monte-Carlo Audit</button>
             </div>
+            <div data-open-engine-3d-holodeck="1" style="margin-top:12px;padding:10px;background:#080a0d;border:1px solid #252b33;border-radius:6px;display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:12px;align-items:stretch">
+              <div style="position:relative;min-height:240px;background:#050709;border:1px solid #1e242c;border-radius:5px;overflow:hidden">
+                <iframe id="agiCharacterHolodeckFrame" data-character-src="/dist/character3d.html?v=116" title="Open Engine 3D Character &amp; Weapon Holodeck" style="width:100%;height:240px;border:0;display:block"></iframe>
+              </div>
+              <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px">
+                <div>
+                  <span class="eyebrow" style="color:#a3d900">LIVE OPEN ENGINE 3D WARDROBE &amp; WEAPON HOLODECK</span>
+                  <h4 style="margin:4px 0;font-size:14px">Interactive Clothed 3D Character + 51-Weapon Grip Socket Inspector</h4>
+                  <p style="margin:0;font-size:12px;opacity:.82">Test clothed 3D rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + Kevlar Vest) with live 2-handed rifle/pistol sockets and recoil kinematics directly inside Open Engine.</p>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="button secondary" type="button" data-agi-holodeck="suit:bullpup_1">👔 Suit.glb + Bullpup L85</button>
+                  <button class="button secondary" type="button" data-agi-holodeck="tactical:bullpup_1">🛡️ Swat.glb Kevlar + Bullpup L85</button>
+                  <button class="button secondary" type="button" data-agi-holodeck="tactical:m4_1">🔫 Swat.glb Kevlar + M4A1</button>
+                  <button class="button secondary" type="button" data-agi-holodeck="street:ak">🧥 Street Hoodie + AKM</button>
+                  <button class="button secondary" type="button" data-agi-holodeck="tactical:sniper">🎯 Swat.glb + Dragunov</button>
+                  <button class="button primary" type="button" id="agiHolodeckFireButton">⚡ Fire 3D Recoil &amp; Ballistics Test</button>
+                </div>
+              </div>
+            </div>
             <pre id="agiStudioOutput" dir="ltr" style="margin:10px 0 0;padding:10px;background:#06080b;border:1px solid #1e242c;border-radius:4px;font-size:12px;color:#a3d900;white-space:pre-wrap">[GOOGLE GEMINI 3.7 FLASH + OPEN ENGINE AGI 3.6 READY · THINKING: HIGH]
 • Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest (24 animations, 19 right-hand grip bones, 6-zone anatomical hitboxes)
 • 3D PBR Armory: 51 real 3D GLB weapons including Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), G3A3, AKM, Dragunov &amp; Glock 18
