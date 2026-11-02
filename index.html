@@ -1871,7 +1871,7 @@ class Component extends DCLogic {
   go(s, updateHistory = true, routeView = null) { s = resolveLocationScreen(s); if (!SCREENS.includes(s)) return this.toast(this.state.lang === 'ar' ? 'هذه الخدمة غير متاحة حالياً.' : 'This service is currently unavailable.'); if (updateHistory && s !== this.state.screen) window.ZoneRouteNavigation?.remember?.(this.state.screen); if (this.state.screen === 'city' && s !== 'city') this.mapVisibility(false);
     this.setState({ screen: s, navOpen: false, fight: null, result: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
-    () => { if (updateHistory) this.syncRoute(s); window.ZoneRouteNavigation?.enter?.(s, routeView); this.bump('zone-main', 'zin .34s ease-out'); if (s === 'city') { this.pushMap(); this.mapVisibility(true); } });
+    () => { if (typeof document !== 'undefined' && document.activeElement?.classList?.contains('zone-skip-link')) document.activeElement.blur(); if (updateHistory) this.syncRoute(s); window.ZoneRouteNavigation?.enter?.(s, routeView); this.bump('zone-main', 'zin .34s ease-out'); if (s === 'city') { this.pushMap(); this.mapVisibility(true); } });
     if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); }
     if (s !== 'attack') { this._combatRunning = false; clearTimeout(this.ct); } else this.loadCombat();
     this.loadVisiblePeerResources(true);
@@ -2881,15 +2881,20 @@ class Component extends DCLogic {
     view.onboarding = { visible: !!this.onboarding, title: lang === 'ar' ? 'خطواتك الأولى' : 'Your first moves', description: lang === 'ar' ? 'أنجز هذه الأهداف بالترتيب. تبقى الخطوة والمكافآت محفوظة عند عودتك.' : 'Work through these goals in order. Your current step and claimed rewards stay saved when you return.', steps, current: steps.find(step => step.current) || null };
     const equippedItem = CAT[p.equip], ownsEquipped = equippedItem?.type === 'weapon' && (p.inv[p.equip] || 0) > 0;
     const armorId = this.equippedArmor(), armor = CAT[armorId], weaponId = p.equip && p.inv[p.equip] > 0 && CAT[p.equip]?.type === 'weapon' && !CAT[p.equip].retired ? p.equip : '';
+    const holodeckRigItem = isLiveBrowserRuntime && !ownsEquipped && this.state.holodeckWeapon ? CAT[this.state.holodeckWeapon] : null;
+    const holodeckRigId = holodeckRigItem ? this.state.holodeckWeapon : '';
+    const useCombatHolodeckLoadout = Boolean(holodeckRigItem && screen === 'attack');
     view.loadout = {
       title: lang === 'ar' ? 'عتاد المواجهة' : 'Your fighting kit',
       note: lang === 'ar' ? 'الحماية من الدرع المجهز، لا من مجرد امتلاكه.' : 'Protection comes from the armor you wear, not merely own.',
       manageLabel: lang === 'ar' ? 'عدّل عتادك' : 'Manage loadout', open: () => this.go('items'),
-      weapon: { id: weaponId, slot: t.itemType.weapon, name: weaponId ? t.items[weaponId] || CAT[weaponId].name?.[lang] || weaponId : t.unarmed, detail: weaponId ? '×' + CAT[weaponId].mult + ' ' + t.dmgMult : (lang === 'ar' ? 'دون سلاح مجهز' : 'No weapon equipped') },
-      armor: { id: armorId, slot: t.itemType.armor, name: armorId ? t.items[armorId] || armor.name?.[lang] || armorId : (lang === 'ar' ? 'دون درع' : 'No armor worn'), detail: armorId ? Math.round(Math.min(.95, Math.max(0, Number(armor.red) || 0)) * 100) + '% ' + t.dmgReduce : (lang === 'ar' ? 'الحماية: 0%' : 'Protection: 0%'), removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: recordBlocked || Boolean(this.combatEncounter || this.combatIncoming), remove: () => this.act(() => this.gameplayAction('item.unequip', armorId)) }
+      weapon: useCombatHolodeckLoadout
+        ? { id: holodeckRigId, slot: t.itemType.weapon, name: (t.items[holodeckRigId] || holodeckRigItem.name?.[lang] || 'Bullpup Rifle I') + (lang === 'ar' ? ' (تسليح الميدان النشط)' : ' (Active Armory Rig)'), detail: '×' + holodeckRigItem.mult + ' ' + t.dmgMult }
+        : { id: weaponId, slot: t.itemType.weapon, name: weaponId ? t.items[weaponId] || CAT[weaponId].name?.[lang] || weaponId : t.unarmed, detail: weaponId ? '×' + CAT[weaponId].mult + ' ' + t.dmgMult : (lang === 'ar' ? 'دون سلاح مجهز' : 'No weapon equipped') },
+      armor: (useCombatHolodeckLoadout && !armorId)
+        ? { id: '', slot: t.itemType.armor, name: lang === 'ar' ? 'درع كيفلر التكتيكي' : 'Tactical Kevlar Rig', detail: '35% ' + t.dmgReduce, removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: true, remove: () => {} }
+        : { id: armorId, slot: t.itemType.armor, name: armorId ? t.items[armorId] || armor.name?.[lang] || armorId : (lang === 'ar' ? 'دون درع' : 'No armor worn'), detail: armorId ? Math.round(Math.min(.95, Math.max(0, Number(armor.red) || 0)) * 100) + '% ' + t.dmgReduce : (lang === 'ar' ? 'الحماية: 0%' : 'Protection: 0%'), removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: recordBlocked || Boolean(this.combatEncounter || this.combatIncoming), remove: () => this.act(() => this.gameplayAction('item.unequip', armorId)) }
     };
-    const holodeckRigItem = isLiveBrowserRuntime && !ownsEquipped && this.state.holodeckWeapon ? CAT[this.state.holodeckWeapon] : null;
-    const holodeckRigId = holodeckRigItem ? this.state.holodeckWeapon : '';
     view.homeBase = {
       title: lang === 'ar' ? 'قاعدة عملياتك' : 'Your base of operations', residence: t.props[p.prop] || p.prop,
       identity: view.t.player + ' · ' + t.level + ' ' + num(p.level), resourcesLabel: lang === 'ar' ? 'مواردك والخطوة التالية' : 'Your resources and next action',
