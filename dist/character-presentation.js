@@ -126,6 +126,30 @@ export function validateCharacterWardrobe(THREE, gltf) {
   return true;
 }
 
+function smoothGeometryNormals(THREE, geometry) {
+  geometry.computeVertexNormals();
+  const position = geometry.attributes.position, normal = geometry.attributes.normal;
+  if (!position || !normal) return;
+  const groups = new Map();
+  for (let i = 0; i < position.count; i++) {
+    const key = `${Math.round(position.getX(i) * 10000)},${Math.round(position.getY(i) * 10000)},${Math.round(position.getZ(i) * 10000)}`;
+    let list = groups.get(key);
+    if (!list) { list = []; groups.set(key, list); }
+    list.push(i);
+  }
+  const sum = new THREE.Vector3(), temp = new THREE.Vector3();
+  for (const list of groups.values()) {
+    if (list.length < 2) continue;
+    sum.set(0, 0, 0);
+    for (const idx of list) sum.add(temp.fromBufferAttribute(normal, idx));
+    if (sum.lengthSq() > 1e-8) {
+      sum.normalize();
+      for (const idx of list) normal.setXYZ(idx, sum.x, sum.y, sum.z);
+    }
+  }
+  normal.needsUpdate = true;
+}
+
 export function prepareCharacterArt(THREE, root) {
   if (root.userData.zoneCharacterArt) return root.userData.zoneCharacterArt;
   root.updateMatrixWorld(true);
@@ -137,30 +161,32 @@ export function prepareCharacterArt(THREE, root) {
   let adjustedVertices = 0;
   root.traverse(mesh => {
     if (!mesh.isMesh) return;
-    mesh.castShadow = true; mesh.receiveShadow = true;
+    mesh.castShadow = true; mesh.receiveShadow = false;
     const original = mesh.geometry, positions = original.attributes.position;
     const joints = original.attributes.skinIndex, weights = original.attributes.skinWeight;
     const headIndex = mesh.skeleton?.bones.indexOf(head) ?? -1;
-    if (mesh.isSkinnedMesh && headIndex >= 0 && positions && joints && weights) {
+    if (positions) {
       if (!changedGeometries.has(original)) {
         const geometry = original.clone(), position = geometry.attributes.position;
-        const pivot = mesh.worldToLocal(headPosition.clone()), point = new THREE.Vector3();
         let changed = 0;
-        for (let index = 0; index < position.count; index++) {
-          let influence = 0;
-          for (let component = 0; component < 4; component++) {
-            if (joints.getComponent(index, component) === headIndex) influence += weights.getComponent(index, component);
+        if (mesh.isSkinnedMesh && headIndex >= 0 && joints && weights) {
+          const pivot = mesh.worldToLocal(headPosition.clone()), point = new THREE.Vector3();
+          for (let index = 0; index < position.count; index++) {
+            let influence = 0;
+            for (let component = 0; component < 4; component++) {
+              if (joints.getComponent(index, component) === headIndex) influence += weights.getComponent(index, component);
+            }
+            if (influence <= 0) continue;
+            point.fromBufferAttribute(position, index).sub(pivot);
+            point.x *= 1 + (CHARACTER_ART.headScale[0] - 1) * influence;
+            point.y *= 1 + (CHARACTER_ART.headScale[1] - 1) * influence;
+            point.z *= 1 + (CHARACTER_ART.headScale[2] - 1) * influence;
+            point.add(pivot); position.setXYZ(index, point.x, point.y, point.z); changed++;
           }
-          if (influence <= 0) continue;
-          point.fromBufferAttribute(position, index).sub(pivot);
-          point.x *= 1 + (CHARACTER_ART.headScale[0] - 1) * influence;
-          point.y *= 1 + (CHARACTER_ART.headScale[1] - 1) * influence;
-          point.z *= 1 + (CHARACTER_ART.headScale[2] - 1) * influence;
-          point.add(pivot); position.setXYZ(index, point.x, point.y, point.z); changed++;
         }
-        if (changed) { geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere(); }
-        changedGeometries.set(original, changed ? geometry : original);
-        if (!changed) geometry.dispose();
+        smoothGeometryNormals(THREE, geometry);
+        geometry.computeBoundingBox(); geometry.computeBoundingSphere();
+        changedGeometries.set(original, geometry);
         adjustedVertices += changed;
       }
       mesh.geometry = changedGeometries.get(original);
@@ -211,7 +237,7 @@ export function installCharacterStage(THREE, { scene, renderer, key, rim, ground
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.02;
   scene.environmentIntensity = .42;
   key.color.set(0xffddba); key.intensity = 3.3; key.position.set(-2.5, 3.8, 3);
-  key.shadow.mapSize.set(1024, 1024); key.shadow.normalBias = .012; key.shadow.bias = -.0002;
+  key.shadow.mapSize.set(2048, 2048); key.shadow.normalBias = .012; key.shadow.bias = -.0002;
   rim.color.set(0x819aac); rim.intensity = 2.5; rim.position.set(2.3, 2.7, -2);
   const fill = new THREE.DirectionalLight(0xb5bdc4, .75); fill.position.set(1.8, 1.5, 3); scene.add(fill);
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 12),

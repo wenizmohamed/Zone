@@ -113,7 +113,7 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
     // Whole-vest fitting below uses the actual retained clothing envelope.
     geometry.computeVertexNormals(); geometry.computeBoundingBox(); geometry.computeBoundingSphere();
     const material=source.material.clone(); materials.add(material); material.roughness=.86; material.metalness=0; material.clearcoat=0;
-    const mesh=new THREE.SkinnedMesh(geometry,material); mesh.name='ZONE representative worn vest'; mesh.castShadow=true; mesh.receiveShadow=true; mesh.frustumCulled=false;
+    const mesh=new THREE.SkinnedMesh(geometry,material); mesh.name='ZONE representative worn vest'; mesh.castShadow=true; mesh.receiveShadow=false; mesh.frustumCulled=false;
     mesh.bind(skeleton,target[0].bindMatrix); mesh.userData.zoneArmorSource='Swat.glb#Swat_Body:'+source.material.name+' torso'; targetRoot.add(mesh); meshes.push(mesh);
   });
   if (!meshes.length) throw new Error('Authored vest surface is unavailable');
@@ -129,7 +129,7 @@ export function createWornVest(THREE, targetRoot, sourceRoot) {
   if(targetBox.isEmpty())throw new Error('Retained torso fit is unavailable');
   const sourceSize=sourceBox.getSize(new THREE.Vector3()),targetSize=targetBox.getSize(new THREE.Vector3()),sourceCenter=sourceBox.getCenter(new THREE.Vector3()),targetCenter=targetBox.getCenter(new THREE.Vector3());
   const sx=Math.max(1.14,targetSize.x*1.035/sourceSize.x),sz=Math.max(1.35,targetSize.z*1.08/sourceSize.z);
-  for(const mesh of meshes){const p=mesh.geometry.attributes.position;for(let n=0;n<p.count;n++){p.setX(n,targetCenter.x+(p.getX(n)-sourceCenter.x)*sx);p.setZ(n,targetCenter.z+(p.getZ(n)-sourceCenter.z)*sz);}p.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();mesh.userData.zoneArmorFit={widthScale:sx,depthScale:sz,source:'retained-clothing-envelope'};}
+  for(const mesh of meshes){const p=mesh.geometry.attributes.position;for(let n=0;n<p.count;n++){p.setX(n,targetCenter.x+(p.getX(n)-sourceCenter.x)*sx);p.setZ(n,targetCenter.z+(p.getZ(n)-sourceCenter.z)*sz);}p.needsUpdate=true;mesh.geometry.computeVertexNormals();const norm=mesh.geometry.attributes.normal;if(norm){const groups=new Map();for(let i=0;i<p.count;i++){const k=`${Math.round(p.getX(i)*10000)},${Math.round(p.getY(i)*10000)},${Math.round(p.getZ(i)*10000)}`;let l=groups.get(k);if(!l){l=[];groups.set(k,l);}l.push(i);}const s=new THREE.Vector3(),t=new THREE.Vector3();for(const l of groups.values()){if(l.length<2)continue;s.set(0,0,0);for(const idx of l)s.add(t.fromBufferAttribute(norm,idx));if(s.lengthSq()>1e-8){s.normalize();for(const idx of l)norm.setXYZ(idx,s.x,s.y,s.z);}}norm.needsUpdate=true;}mesh.geometry.computeBoundingBox();mesh.geometry.computeBoundingSphere();mesh.userData.zoneArmorFit={widthScale:sx,depthScale:sz,source:'retained-clothing-envelope'};}
   return { meshes, dispose };
   } catch(error) {
     // Construction may fail after one authored surface was attached. Roll
