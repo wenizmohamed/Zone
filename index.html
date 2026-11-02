@@ -203,12 +203,9 @@
 
       <!-- PERSISTENT 3D OPERATIVE & LOADOUT STAGE (VISIBLE ACROSS ALL SCREENS) -->
       <sc-if value="{{ showGlobalCharStage }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-global-character-stage="1" style="background:linear-gradient(135deg,#13181f 0%,#0b0e12 100%);border:1px solid #4d7a0c;border-top:2px solid var(--acc);border-radius:6px;padding:8px 12px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:12px;align-items:stretch">
-          <div style="position:relative;height:175px;background:var(--deep);border:1px solid var(--border3);border-radius:5px;overflow:hidden">
+        <section class="zone-panel" data-global-character-stage="1" style="background:linear-gradient(135deg,#13181f 0%,#0b0e12 100%);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px;align-items:stretch">
+          <div style="position:relative;height:150px;background:var(--deep);border:1px solid var(--border3);border-radius:5px;overflow:hidden">
             <iframe id="zone-global-char-3d" data-character-src="dist/character3d.html?v=116&mini=1" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
-            <div style="position:absolute;bottom:6px;inset-inline-start:6px;display:flex;gap:4px;pointer-events:none">
-              <span style="padding:2px 6px;border-radius:6px;background:rgba(10,12,15,.76);color:var(--acc);font-size:8.5px;font-weight:700;letter-spacing:.08em">3D LIVE OPERATIVE</span>
-            </div>
           </div>
           <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
@@ -216,12 +213,10 @@
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                   <span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span>
                   <strong style="color:var(--t1);font-size:13px;text-transform:uppercase;letter-spacing:.08em">{{ t.player }} · {{ levelTitle }} ({{ title }})</strong>
-                  <span style="padding:2px 7px;background:rgba(163,217,0,.14);border:1px solid #4d7a0c;border-radius:4px;color:var(--acc);font-size:10px;font-weight:700">{{ geminiArsenal.wardrobeRigBadge }}</span>
                 </div>
                 <div style="color:var(--t3);font-size:11px;margin-top:3px">{{ subtitle }}</div>
               </div>
               <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-                <button onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:3px 8px;border-radius:3px;background:rgba(10,12,15,.85);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
                 <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3">
                   <button onClick="{{ o.go }}" aria-pressed="{{ o.selected }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ o.name }}</button>
                 </sc-for>
@@ -229,61 +224,34 @@
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px">
               <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">3D Primary Rig</span>
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Primary Weapon</span>
                 <strong style="color:var(--acc);font-size:12px">{{ loadout.weapon.name }}</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.weapon.detail }} · {{ geminiArsenal.weaponModsBadge }}</small>
+                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.weapon.detail }}</small>
               </div>
               <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Body Armor &amp; Frame</span>
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Body Armor</span>
                 <strong style="color:var(--t1);font-size:12px">{{ loadout.armor.name }}</strong>
                 <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.armor.detail }} · {{ frameName }}</small>
               </div>
               <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Liquid &amp; Vault</span>
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Cash &amp; Vault</span>
                 <strong style="color:var(--money);font-size:12px">{{ bank.cash }} Street</strong>
                 <small style="display:block;color:var(--t4);font-size:10px">Vault: {{ bank.balance }} ({{ bank.vaultSharePct }}% Safe)</small>
               </div>
               <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Combat Score</span>
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Battle Stats</span>
                 <strong style="color:var(--gold);font-size:12px">{{ activity.totalBattleScore }} Total</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">STR/DEF/SPD/DEX Live</small>
+                <small style="display:block;color:var(--t4);font-size:10px">STR / DEF / SPD / DEX</small>
               </div>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding-top:4px;border-top:1px solid rgba(255,255,255,.07)">
               <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-                <span style="color:var(--mu);font-size:10px;font-weight:700;text-transform:uppercase">3D Weapon Pose:</span>
+                <span style="color:var(--mu);font-size:10px;font-weight:700;text-transform:uppercase">Weapon Inspection:</span>
                 <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
                   <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
                 </sc-for>
               </div>
-              <div style="display:flex;gap:5px;flex-wrap:wrap">
-                <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
-                  <button onClick="{{ io.run }}" style="background:rgba(163,217,0,.12);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ io.label }}</button>
-                </sc-for>
-              </div>
             </div>
-            <details data-ai-studio-live-comms="1" style="background:rgba(8,11,15,.92);border:1px solid #2b6478;border-radius:5px;padding:5px 10px">
-              <summary style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;list-style:none">
-                <span style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="width:7px;height:7px;border-radius:50%;background:#31e0ff;box-shadow:0 0 8px #31e0ff"></span>
-                  <strong style="color:#31e0ff;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.aiCommsTitle }}</strong>
-                  <span style="padding:1px 6px;background:rgba(224,90,74,.16);border:1px solid #e05a4a;border-radius:3px;color:#ff9b8e;font-size:9.5px;font-weight:700">{{ geminiArsenal.nemesisAlert }}</span>
-                </span>
-                <span style="display:flex;gap:4px;flex-wrap:wrap" onClick="event.stopPropagation()">
-                  <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="ao" hint-placeholder-count="4">
-                    <button onClick="{{ ao.run }}" style="background:linear-gradient(180deg,#1d262b,#11171b);color:#7defff;border:1px solid #2b6478;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ ao.label }}</button>
-                  </sc-for>
-                  <button onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
-                </span>
-              </summary>
-              <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(49,224,255,.2)">
-                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-                  <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 9px;font:inherit;font-size:11px" />
-                  <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
-                </div>
-                <div data-ai-fixer-response="1" dir="ltr" style="padding:5px 8px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
-              </div>
-            </details>
           </div>
         </section>
       </sc-if>
@@ -340,42 +308,6 @@
                 <sc-for list="{{ activeMissions }}" as="m" hint-placeholder-count="3"><div class="zone-home-mission" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line)"><span style="flex:1"><span style="color:var(--t2);font-weight:500">{{ m.name }}</span> <span style="color:var(--mu)">· {{ m.reward }}</span></span><div style="width:120px;height:8px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ m.pct }}%;background:var(--acc)"></div></div><bdi style="color:var(--t4);width:48px;text-align:end">{{ m.prog }}</bdi></div></sc-for>
               </div>
             </div>
-            <section class="zone-panel" data-zone-tactical-deck="1" data-gemini-arsenal-hub="1" aria-label="{{ tacticalDeck.title }}" style="background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--t1);font-size:12px;text-transform:uppercase;letter-spacing:.08em">{{ tacticalDeck.title }}</strong><span style="color:var(--mu);font-size:11px">· {{ tacticalDeck.subtitle }}</span></div>
-                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                  <span style="color:var(--mu);font-size:10px;font-weight:600;text-transform:uppercase">{{ geminiArsenal.thinkingLabel }}</span>
-                  <sc-for list="{{ geminiArsenal.thinkingLevels }}" as="tl" hint-placeholder-count="3">
-                    <button onClick="{{ tl.select }}" aria-pressed="{{ tl.active }}" style="background:{{ tl.bg }};color:{{ tl.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ tl.label }}</button>
-                  </sc-for>
-                  <button onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
-                  <bdi style="color:var(--gold);font-size:11px;font-weight:600">{{ tacticalDeck.editionBadge }}</bdi>
-                </div>
-              </div>
-              <div class="zone-auto-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">
-                <sc-for list="{{ tacticalDeck.cards }}" as="tc" hint-placeholder-count="4">
-                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:5px">
-                    <div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:.08em">{{ tc.eyebrow }}</span><bdi style="color:{{ tc.badgeColor }};font-size:10px;font-weight:700">{{ tc.badge }}</bdi></div>
-                    <bdi style="color:var(--t1);font-size:18px;font-weight:700">{{ tc.primary }}</bdi>
-                    <div style="color:var(--t3);font-size:11px">{{ tc.secondary }}</div>
-                    <div style="color:var(--mu);font-size:10.5px;margin-bottom:4px">{{ tc.detail }}</div>
-                    <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
-                  </div>
-                </sc-for>
-              </div>
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-                  <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.hubTitle }}</strong>
-                  <span style="color:var(--t3);font-size:10.5px">{{ geminiArsenal.stackSubtitle }}</span>
-                </div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap">
-                  <sc-for list="{{ geminiArsenal.tools }}" as="gt" hint-placeholder-count="4">
-                    <button onClick="{{ gt.run }}" style="background:var(--panel2);color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ gt.label }}</button>
-                  </sc-for>
-                </div>
-                <div data-gemini-trace-output="1" dir="ltr" style="padding:8px 10px;background:rgba(6,8,11,.88);border:1px solid var(--border);border-radius:4px;color:var(--acc);font-size:11px;line-height:1.45;white-space:pre-wrap">{{ geminiArsenal.trace }}</div>
-              </div>
-            </section>
           </div>
           <div class="zone-home-identity" style="display:flex;flex-direction:column;gap:10px">
             <div class="zone-home-character">
@@ -392,21 +324,6 @@
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
                   </div>
-                  <div style="position:absolute;top:8px;inset-inline-end:8px;display:flex;gap:4px;z-index:4">
-                    <button data-char-xray-toggle="1" onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.82);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
-                  </div>
-                  <sc-if value="{{ geminiArsenal.xrayMode }}">
-                    <div data-char-xray-overlay="1" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 34%,rgba(224,60,50,.12),transparent 58%);display:flex;flex-direction:column;justify-content:space-between;padding:38px 8px 8px;z-index:3">
-                      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
-                        <span style="padding:3px 7px;background:rgba(10,12,15,.84);border:1px solid rgba(255,90,75,.5);border-radius:4px;font-size:9px;color:#ffb4a8;font-weight:700;letter-spacing:.04em">CRANIAL 2.2x · THORAX KEVLAR</span>
-                        <span style="padding:3px 7px;background:rgba(10,12,15,.84);border:1px solid rgba(163,217,0,.45);border-radius:4px;font-size:9px;color:var(--acc);font-weight:700;letter-spacing:.04em">3D SKELETAL TELEMETRY</span>
-                      </div>
-                      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:rgba(10,12,15,.88);border:1px solid rgba(255,90,75,.45);border-radius:4px;font-size:9.5px;color:#ffb4a8;font-weight:700">
-                        <span>{{ geminiArsenal.xrayStatusLeft }}</span>
-                        <span>{{ geminiArsenal.xrayStatusRight }}</span>
-                      </div>
-                    </div>
-                  </sc-if>
                 </div>
                 <div class="zone-equipped-summary zone-home-equipment" data-home-equipment="{{ homeBase.equipment.id }}">
                   <sc-if value="{{ homeBase.equipment.hasImage }}"><img sc-camel-src="{{ homeBase.equipment.image }}" alt="" width="70" height="56" loading="lazy"></sc-if>
@@ -418,47 +335,6 @@
                   <bdi style="color:var(--t2);font-size:11px;font-weight:500">{{ frameName }}</bdi>
                 </div>
                 <div class="zone-loadout-stats"><sc-for list="{{ activity.stats }}" as="s"><div><span>{{ s.label }}</span><bdi>{{ s.value }}</bdi></div></sc-for></div>
-                <div data-char-anatomical-telemetry="1" style="padding:8px 10px;border-top:1px solid var(--line);background:rgba(10,13,17,.55);display:flex;flex-direction:column;gap:6px">
-                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
-                    <span style="color:var(--acc);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.anatomyTitle }}</span>
-                    <bdi style="color:var(--gold);font-size:10px;font-weight:600">{{ geminiArsenal.wardrobeRigBadge }}</bdi>
-                  </div>
-                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px">
-                    <sc-for list="{{ geminiArsenal.hitZones }}" as="hz" hint-placeholder-count="6">
-                      <div style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:4px 6px;display:flex;flex-direction:column;gap:1px">
-                        <span style="color:var(--t3);font-size:9.5px;font-weight:600">{{ hz.zone }}</span>
-                        <bdi style="color:{{ hz.color }};font-size:10px;font-weight:700">{{ hz.mitigation }}</bdi>
-                      </div>
-                    </sc-for>
-                  </div>
-                  <div data-char-weapon-holodeck="1" style="display:flex;flex-direction:column;gap:4px;padding-top:4px;border-top:1px solid var(--line)">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                      <span style="color:var(--mu);font-size:10px;font-weight:600">{{ geminiArsenal.holodeckLabel }}</span>
-                      <bdi style="color:var(--t2);font-size:10px">{{ geminiArsenal.holodeckActiveLabel }}</bdi>
-                    </div>
-                    <div style="display:flex;gap:4px;flex-wrap:wrap">
-                      <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
-                        <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
-                      </sc-for>
-                    </div>
-                    <div data-char-stance-controls="1" style="display:flex;gap:4px;flex-wrap:wrap;padding-top:3px">
-                      <sc-for list="{{ geminiArsenal.stanceActions }}" as="sa" hint-placeholder-count="3">
-                        <button onClick="{{ sa.run }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ sa.label }}</button>
-                      </sc-for>
-                    </div>
-                    <div data-char-weapon-mods="1" style="display:flex;flex-direction:column;gap:4px;padding-top:4px;border-top:1px solid var(--line)">
-                      <div style="display:flex;justify-content:space-between;align-items:center">
-                        <span style="color:var(--mu);font-size:9.5px;font-weight:600">{{ geminiArsenal.weaponModsLabel }}</span>
-                        <bdi style="color:var(--gold);font-size:9.5px;font-weight:700">{{ geminiArsenal.weaponModsBadge }}</bdi>
-                      </div>
-                      <div style="display:flex;gap:4px;flex-wrap:wrap">
-                        <sc-for list="{{ geminiArsenal.weaponMods }}" as="wm" hint-placeholder-count="4">
-                          <button onClick="{{ wm.toggle }}" aria-pressed="{{ wm.active }}" style="background:{{ wm.bg }};color:{{ wm.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9px;font-weight:700;cursor:pointer">{{ wm.label }}</button>
-                        </sc-for>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
             <div>
@@ -477,47 +353,6 @@
             </div>
           </div>
         </div>
-        <div data-day1-instant-ops="1" data-vault-heist-prologue="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--acc);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong></div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="color:var(--t2);font-size:10.5px;font-weight:600">{{ geminiArsenal.worldTickerText }}</span><span style="color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">{{ geminiArsenal.instantOpsBadge }}</span></div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
-            <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
-              <button class="zone-instant-op-btn" onClick="{{ io.run }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:start">
-                <strong style="color:#e5bf71;font-size:11.5px;font-weight:700">{{ io.label }}</strong>
-                <small style="color:#c4cfb4;font-size:10px;font-weight:500">{{ io.sub }}</small>
-              </button>
-            </sc-for>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:6px;border-top:1px solid rgba(163,217,0,.22)">
-            <span style="color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.06em">{{ geminiArsenal.prologueTitle }}</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <sc-for list="{{ geminiArsenal.prologueStages }}" as="ps" hint-placeholder-count="3">
-                <button onClick="{{ ps.run }}" aria-pressed="{{ ps.active }}" style="background:{{ ps.bg }};color:{{ ps.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ps.label }}</button>
-              </sc-for>
-            </div>
-          </div>
-          <div data-ai-studio-live-comms-home="1" style="background:rgba(8,11,15,.92);border:1px solid #2b6478;border-radius:5px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                <span style="width:7px;height:7px;border-radius:50%;background:#31e0ff;box-shadow:0 0 8px #31e0ff"></span>
-                <strong style="color:#31e0ff;font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.aiCommsTitle }}</strong>
-                <span style="padding:1px 6px;background:rgba(224,90,74,.16);border:1px solid #e05a4a;border-radius:3px;color:#ff9b8e;font-size:9.5px;font-weight:700">{{ geminiArsenal.nemesisAlert }}</span>
-              </div>
-              <div style="display:flex;gap:4px;flex-wrap:wrap">
-                <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="ao" hint-placeholder-count="4">
-                  <button onClick="{{ ao.run }}" style="background:linear-gradient(180deg,#1d262b,#11171b);color:#7defff;border:1px solid #2b6478;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ao.label }}</button>
-                </sc-for>
-              </div>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-              <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:6px 9px;font:inherit;font-size:11px" />
-              <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
-            </div>
-            <div data-ai-fixer-response-home="1" dir="ltr" style="padding:6px 9px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10.5px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
-          </div>
-        </div>
       </sc-if>
 
       <!-- CRIMES -->
@@ -531,28 +366,6 @@
         </nav>
         <div class="zone-crime-operation">
           <div class="zone-crime-neighborhood zone-panel"><div class="zone-crime-location"><span class="zone-overline">{{ crimeDesk.locationLabel }}</span><h2>{{ catName }}</h2><p>{{ catDesc }}</p></div><div class="zone-crime-scene" role="img" aria-label="{{ crimeDesk.sceneLabel }}"></div><div class="zone-crime-resources"><span>{{ t.nerve }} <bdi>{{ crimeDesk.nerve }}</bdi><small>{{ crimeDesk.regeneration }}</small></span><span>{{ t.crimeXp }} <bdi>{{ crimeXp }}</bdi><small>{{ crimeDesk.xpNote }}</small></span></div>
-            <div data-crime-tactical-deck="1" style="margin-top:8px;padding:10px;border-top:1px solid var(--border);background:linear-gradient(180deg,rgba(163,217,0,.1),rgba(10,13,17,.9));border-radius:4px;display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
-                <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.06em">{{ geminiArsenal.crimeDeckTitle }}</strong>
-                <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ geminiArsenal.crimeDeckBadge }}</bdi>
-              </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <sc-for list="{{ geminiArsenal.crimeTelemetry }}" as="ct" hint-placeholder-count="3">
-                  <div style="flex:1;min-width:100px;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 7px;display:flex;flex-direction:column;gap:2px">
-                    <span style="color:var(--mu);font-size:9.5px;font-weight:600">{{ ct.label }}</span>
-                    <bdi style="color:{{ ct.color }};font-size:10.5px;font-weight:700">{{ ct.value }}</bdi>
-                  </div>
-                </sc-for>
-              </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <sc-for list="{{ crimes }}" as="qc" hint-placeholder-count="3">
-                  <button onClick="{{ qc.commit }}" disabled="{{ qc.disabled }}" style="flex:1;min-width:110px;background:linear-gradient(180deg,#252a21,#171a15);color:#e5bf71;border:1px solid #4d7a0c;border-radius:4px;padding:6px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
-                    <span>⚡ {{ qc.name }}</span>
-                    <small style="color:#c4cfb4;font-size:9.5px;font-weight:500">{{ qc.evPerNerve }} · {{ qc.pctText }}</small>
-                  </button>
-                </sc-for>
-              </div>
-            </div>
           </div>
           <section class="zone-crime-plan zone-panel" aria-label="{{ crimeDesk.planLabel }}">
             <p class="zone-crime-rule-note">{{ crimeDesk.rules }}</p>
@@ -574,24 +387,6 @@
       <sc-if value="{{ is.gym }}" hint-placeholder-val="{{ false }}">
         <section class="zone-panel zone-gym-workspace" aria-label="{{ trainingBoard.title }}">
           <div class="zone-gym-floor"><div class="zone-gym-floor-scene" style="background-image:{{ gymStudio.floorBackground }}"><header><span class="zone-overline">{{ gymStudio.eyebrow }}</span><h2>{{ gymName }}</h2><p>{{ gymStudio.floorNote }}</p></header></div><div class="zone-gym-floor-readout"><div class="zone-gym-energy"><span>{{ t.energyAvail }}</span><bdi>{{ energyText }}</bdi><div class="zone-record-track" role="progressbar" aria-label="{{ t.energy }}" aria-valuemin="0" aria-valuemax="{{ gymStudio.energyMax }}" aria-valuenow="{{ gymStudio.energyNow }}"><span style="width:{{ energyPct }}%"></span></div></div><div class="zone-gym-floor-caption"><span>{{ t.totalStats }} <bdi>{{ totalStats }}</bdi></span><span>{{ trainingBoard.happyLabel }} <bdi>{{ trainingBoard.happy }}</bdi></span></div></div>
-            <div data-gym-rapid-deck="1" style="max-width:calc(100% - 332px);margin:8px 0 0 16px;padding:10px 14px;border:1px solid var(--border2);background:linear-gradient(180deg,rgba(163,217,0,.1),rgba(10,13,17,.94));border-radius:4px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:1">
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
-                <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.06em">{{ geminiArsenal.gymDeckTitle }}</strong>
-                <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ gymStudio.happyMultiplier }} · {{ gymStudio.sessionsAvailable }} READY</bdi>
-              </div>
-              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
-                <sc-for list="{{ stats }}" as="gs" hint-placeholder-count="4">
-                  <button onClick="{{ gs.train }}" disabled="{{ trainOff }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:7px 9px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
-                    <div style="display:flex;justify-content:space-between;width:100%;align-items:center"><strong style="color:#e5bf71;font-size:11px">🏋️ {{ gs.label }}</strong><bdi style="color:var(--acc);font-size:10.5px;font-weight:700">{{ gs.value }}</bdi></div>
-                    <small style="color:#c4cfb4;font-size:9.5px">+{{ gs.gain }} · {{ gs.share }}% {{ trainingBoard.shareLabel }}</small>
-                  </button>
-                </sc-for>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--line)">
-                <span style="color:var(--t3);font-size:10px">{{ geminiArsenal.gymDeckSub }}</span>
-                <button onClick="{{ geminiArsenal.gymAutoTrain }}" disabled="{{ trainOff }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.gymAutoTrainLabel }}</button>
-              </div>
-            </div>
           </div>
           <div class="zone-gym-stations" role="group" aria-label="{{ gymStudio.stationLabel }}"><sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><button class="zone-gym-station" data-gym-station="{{ s.id }}" aria-pressed="{{ s.selected }}" onClick="{{ s.select }}"><span class="zone-gym-station-art" style="background-image:url('{{ s.img }}'),url('{{ s.fallbackImg }}')" aria-hidden="true"></span><span><strong>{{ s.label }}</strong><small>{{ s.exercise }}</small><bdi>{{ s.value }}</bdi></span><span class="zone-gym-station-selection" aria-hidden="true">{{ s.selectionMark }}</span></button></sc-for></div>
           <div class="zone-gym-session" aria-label="{{ gymStudio.sessionLabel }}" aria-busy="{{ gymStudio.busy }}">
@@ -608,17 +403,6 @@
       <!-- CITY -->
       <div data-zone-city-view="1" data-zone-active="{{ is.city }}" style="display:{{ cityDisplay }};flex-direction:column;gap:10px">
         <div class="zone-city-caption">{{ cityDirectory.mapLabel }}</div>
-        <div data-city-fast-travel="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:7px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.cityDeckTitle }}</strong>
-            <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ fieldGuide.holdings }} · 120 BLOCKS LIVE</bdi>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <sc-for list="{{ geminiArsenal.cityFastLinks }}" as="cf" hint-placeholder-count="8">
-              <button onClick="{{ cf.open }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#e5bf71;border:1px solid #4d7a0c;border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ cf.label }}</button>
-            </sc-for>
-          </div>
-        </div>
         <section class="zone-street-dispatch" aria-label="{{ world.title }}" style="display:{{ world.hasFinds || world.events.length ? '' : 'none' }}"><header><div class="zone-street-heading"><h2>{{ world.title }}</h2><bdi class="zone-street-count" aria-label="{{ world.countLabel }}">{{ world.finds.length }}</bdi></div><button onClick="{{ world.refresh }}" disabled="{{ world.busy }}">{{ world.refreshLabel }}</button></header><sc-if value="{{ !world.hasFinds }}"><p role="status">{{ world.empty }}</p></sc-if><sc-if value="{{ world.hasFinds }}"><div class="zone-street-find-list" role="list" aria-label="{{ world.title }}" tabindex="0"><sc-for list="{{ world.finds }}" as="find"><div class="zone-street-find" role="listitem"><span><strong>{{ find.name }}</strong><small>{{ find.place }}</small></span><button onClick="{{ find.claim }}" disabled="{{ world.busy }}">{{ find.claimLabel }}</button></div></sc-for></div></sc-if><sc-for list="{{ world.events }}" as="event"><details><summary>{{ event.title }}</summary><p>{{ event.body }}</p></details></sc-for></section>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
@@ -667,20 +451,6 @@
       <!-- ATTACK -->
       <sc-if value="{{ is.attack }}" hint-placeholder-val="{{ false }}">
         <section class="zone-loadout zone-panel" aria-label="{{ loadout.title }}"><header><strong>{{ loadout.title }}</strong><button onClick="{{ loadout.open }}">{{ loadout.manageLabel }}</button></header><div class="zone-loadout-slots"><div><span>{{ loadout.weapon.slot }}</span><strong>{{ loadout.weapon.name }}</strong><bdi>{{ loadout.weapon.detail }}</bdi></div><div><span>{{ loadout.armor.slot }}</span><strong>{{ loadout.armor.name }}</strong><bdi>{{ loadout.armor.detail }}</bdi></div></div><p>{{ loadout.note }}</p></section>
-        <div data-combat-tactical-bar="1" style="background:linear-gradient(90deg,rgba(199,74,58,.16),rgba(10,13,17,.94));border:1px solid #6a2018;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:#ff6a55;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.combatEngageTitle }}</strong>
-            <div style="display:flex;gap:4px;flex-wrap:wrap">
-              <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.go }}" aria-pressed="{{ o.selected }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ o.name }}</button></sc-for>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <div style="display:flex;gap:4px;flex-wrap:wrap">
-              <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6"><button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 7px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hw.label }}</button></sc-for>
-            </div>
-            <button class="zone-action-danger" onClick="{{ geminiArsenal.combatEngageRun }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;font-weight:800;cursor:pointer">{{ geminiArsenal.combatEngageLabel }} · <small style="font-weight:600;opacity:.92">{{ geminiArsenal.combatEngageSub }}</small></button>
-          </div>
-        </div>
         <section aria-label="{{ combatScene.title }}">
           <div class="zone-combat-hud"><strong>{{ combatScene.title }}</strong><p class="zone-combat-cost">{{ combatScene.cost }}</p><button onClick="{{ combatScene.refresh }}" disabled="{{ combatScene.refreshDisabled }}">{{ combatScene.refreshLabel }}</button></div>
           <sc-if value="{{ fight }}" hint-placeholder-val="{{ false }}">
@@ -780,17 +550,6 @@
       <sc-if value="{{ is.items }}" hint-placeholder-val="{{ false }}">
         <p class="zone-panel-note">{{ itemsSource }}</p>
         <section class="zone-loadout zone-panel" aria-label="{{ loadout.title }}"><header><strong>{{ loadout.title }}</strong><span>{{ loadout.note }}</span></header><div class="zone-loadout-slots"><div><span>{{ loadout.weapon.slot }}</span><strong>{{ loadout.weapon.name }}</strong><bdi>{{ loadout.weapon.detail }}</bdi></div><div><span>{{ loadout.armor.slot }}</span><strong>{{ loadout.armor.name }}</strong><bdi>{{ loadout.armor.detail }}</bdi><sc-if value="{{ loadout.armor.id }}"><button onClick="{{ loadout.armor.remove }}" disabled="{{ loadout.armor.disabled }}">{{ loadout.armor.removeLabel }}</button></sc-if></div></div></section>
-        <div data-items-holodeck-bar="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:7px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.armoryDeckTitle }}</strong>
-            <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ geminiArsenal.weaponModsBadge }} · {{ geminiArsenal.holodeckActiveLabel }}</bdi>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <sc-for list="{{ geminiArsenal.armoryQuickWeapons }}" as="aq" hint-placeholder-count="6">
-              <button onClick="{{ aq.inspect }}" aria-pressed="{{ aq.active }}" style="background:{{ aq.bg }};color:{{ aq.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">🔫 {{ aq.label }}</button>
-            </sc-for>
-          </div>
-        </div>
         <div class="zone-inventory-modes" role="group" aria-label="{{ inventoryModeLabel }}"><button onClick="{{ inventoryOwned }}" aria-pressed="{{ inventoryIsOwned }}">{{ inventoryOwnedLabel }}</button><button onClick="{{ inventoryCatalog }}" aria-pressed="{{ inventoryIsCatalog }}">{{ inventoryCatalogLabel }}</button></div>
         <a href="{{ weaponLibraryUrl }}" style="align-self:flex-end;color:var(--link);font-size:12px;font-weight:600">{{ weaponLibraryLabel }} →</a>
         <div data-ztabs="1" style="display:flex;gap:2px">
@@ -913,12 +672,12 @@
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-bank-command-deck="1" style="background:linear-gradient(135deg,rgba(18,25,34,.96),rgba(10,13,18,.98));border:1px solid #3d7cc9;border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
+        <section class="zone-panel" data-bank-command-deck="1" style="background:linear-gradient(135deg,rgba(18,25,34,.96),rgba(10,13,18,.98));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
           <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;padding:12px;align-items:stretch">
             <div style="border-radius:5px;border:1px solid var(--border3);background:center / cover no-repeat url('{{ sceneArt }}');position:relative;min-height:135px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:inset 0 -60px 48px rgba(0,0,0,.82)">
-              <span style="font-size:9.5px;color:var(--acc);font-weight:800;letter-spacing:.12em;text-transform:uppercase">AAA BIOMETRIC TITANIUM VAULT</span>
+              <span style="font-size:9.5px;color:var(--acc);font-weight:800;letter-spacing:.12em;text-transform:uppercase">SYNDICATE VAULT RESERVE</span>
               <strong style="color:#fff;font-size:14px">Zone Reserve &amp; Offshore Wire</strong>
-              <small style="color:var(--t3);font-size:10.5px">100% Mug-Proof Capital Protection</small>
+              <small style="color:var(--t3);font-size:10.5px">Mug-Protected Capital Storage</small>
             </div>
             <div style="display:flex;flex-direction:column;justify-content:space-between;gap:10px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -946,9 +705,9 @@
                 </div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                <button onClick="{{ bank.quickLockAll }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">⚡ Lock 100% Street Cash in Vault</button>
-                <button onClick="{{ bank.quickCombatFloat }}" style="background:linear-gradient(180deg,#263242,#18202c);color:#9ad0ff;font-weight:700;border:1px solid #3d7cc9;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">⚡ Withdraw $10K Tactical Float</button>
-                <button onClick="{{ bank.openMarket }}" style="background:var(--btn);color:var(--gold);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">🔫 Open Armory Market</button>
+                <button onClick="{{ bank.quickLockAll }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Deposit 100% Street Cash</button>
+                <button onClick="{{ bank.quickCombatFloat }}" style="background:linear-gradient(180deg,#263242,#18202c);color:#9ad0ff;font-weight:700;border:1px solid #3d7cc9;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Withdraw $10,000 Float</button>
+                <button onClick="{{ bank.openMarket }}" style="background:var(--btn);color:var(--gold);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Open Armory Market</button>
               </div>
             </div>
           </div>
