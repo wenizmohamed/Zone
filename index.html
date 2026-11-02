@@ -262,6 +262,26 @@
                 </sc-for>
               </div>
             </div>
+            <div data-ai-studio-live-comms="1" style="background:rgba(8,11,15,.92);border:1px solid #4d7a0c;border-radius:5px;padding:7px 10px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                  <span style="width:7px;height:7px;border-radius:50%;background:#31e0ff;box-shadow:0 0 8px #31e0ff"></span>
+                  <strong style="color:#31e0ff;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.aiCommsTitle }}</strong>
+                  <span style="padding:1px 6px;background:rgba(224,90,74,.16);border:1px solid #e05a4a;border-radius:3px;color:#ff9b8e;font-size:9.5px;font-weight:700">{{ geminiArsenal.nemesisAlert }}</span>
+                </div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="ao" hint-placeholder-count="4">
+                    <button onClick="{{ ao.run }}" style="background:linear-gradient(180deg,#1d262b,#11171b);color:#7defff;border:1px solid #2b6478;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ ao.label }}</button>
+                  </sc-for>
+                  <button onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 9px;font:inherit;font-size:11px" />
+                <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
+              </div>
+              <div data-ai-fixer-response="1" dir="ltr" style="padding:5px 8px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
+            </div>
           </div>
         </section>
       </sc-if>
@@ -475,6 +495,25 @@
                 <button onClick="{{ ps.run }}" aria-pressed="{{ ps.active }}" style="background:{{ ps.bg }};color:{{ ps.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ps.label }}</button>
               </sc-for>
             </div>
+          </div>
+          <div data-ai-studio-live-comms-home="1" style="background:rgba(8,11,15,.92);border:1px solid #2b6478;border-radius:5px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                <span style="width:7px;height:7px;border-radius:50%;background:#31e0ff;box-shadow:0 0 8px #31e0ff"></span>
+                <strong style="color:#31e0ff;font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.aiCommsTitle }}</strong>
+                <span style="padding:1px 6px;background:rgba(224,90,74,.16);border:1px solid #e05a4a;border-radius:3px;color:#ff9b8e;font-size:9.5px;font-weight:700">{{ geminiArsenal.nemesisAlert }}</span>
+              </div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap">
+                <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="ao" hint-placeholder-count="4">
+                  <button onClick="{{ ao.run }}" style="background:linear-gradient(180deg,#1d262b,#11171b);color:#7defff;border:1px solid #2b6478;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ao.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <input type="text" value="{{ geminiArsenal.aiPromptValue }}" onInput="{{ geminiArsenal.onAiPromptInput }}" placeholder="{{ geminiArsenal.aiPromptPlaceholder }}" style="flex:1;min-width:190px;background:#0b0e12;color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:6px 9px;font:inherit;font-size:11px" />
+              <button onClick="{{ geminiArsenal.runAiOrder }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;font-weight:800;cursor:pointer">{{ geminiArsenal.aiExecuteLabel }}</button>
+            </div>
+            <div data-ai-fixer-response-home="1" dir="ltr" style="padding:6px 9px;background:rgba(4,7,10,.9);border-left:2px solid #31e0ff;border-radius:3px;color:#b8f4ff;font-size:10.5px;font-family:monospace;white-space:pre-wrap;line-height:1.35">{{ geminiArsenal.aiLastResponse }}</div>
           </div>
         </div>
       </sc-if>
@@ -1451,6 +1490,16 @@ class Component extends DCLogic {
         return this.gameplayAction('item.equip', k).catch(error => { this.toast(this.serverError(error), true); this.pushChar(); });
       }
       if (!fromMap) return;
+      if (d.type === 'ZONE_CONVOY_INTERCEPT') {
+        this.playTacticalSfx('rack');
+        this.p.cash = Number(this.p.cash || 0) + 18500;
+        this.p.fac.respect = Number(this.p.fac.respect || 0) + 35;
+        this.save();
+        const resp = '[AI FUNCTION CALL: interceptArmoredConvoy({ route: "Central Bank -> Pier", weapon: "Bullpup L85" })]\n> Fixer Audio: "Armored convoy intercepted on 3D City Grid! Extracted +$18,500 Syndicate Cash and +35 Sand Vipers Respect."';
+        this.result('cash', 'Armored Convoy Intercepted', 'Central Bank → Pier 3D Grid · +35 Respect', '+$18,500');
+        this.setState({ aiFixerTrace: resp, geminiTrace: resp });
+        return;
+      }
       if (d.type === 'ZONE_MAP_EXPAND' && typeof d.expanded === 'boolean') { this.setMapExpanded(d.expanded); return; }
       if (d.zoneTravel) return; // Walking the map is navigation; paid city travel uses the travel API.
       if (d.zoneTerritoryAction || d.type === 'ZONE_MAP_CLAIM_BLOCK') { const cmd=d.zoneTerritoryAction||d; this.territoryAction(cmd); return; }
@@ -3875,6 +3924,110 @@ class Component extends DCLogic {
               geminiTrace: `[3D CITY & TERRITORY RECON · depth=${currentThinking}]\n> call: scan_city_territories({ blocks: ${this.territoryBlockCount() || 120}, activeStreetFinds: ${findCount}, family: "${view.fac.name}" })\n< result: 120 city blocks & 17 native roofs indexed · ${findCount} street finds ready for claim`
             });
             this.go('city');
+          }
+        }
+      ],
+      aiCommsTitle: lang === 'ar' ? '🎙️ اتصال ذكاء Gemini التكتيكي المباشر ونظام الانتقام' : '🎙️ AI STUDIO LIVE FIXER COMMS & NEMESIS INTERCEPT (FUNCTION-CALLING)',
+      nemesisAlert: (() => {
+        const nemesisFeed = lang === 'ar'
+          ? [
+              '🔥 تحذير انتقام: فيكتور (الملاكم) يرصد تحركاتك قرب قطاع ZC-055 ($14,200 مكافأة)',
+              '🔥 تحذير انتقام: يارا (العدّاءة) تخطط لكمين ضد أفاعي الرمل في المرفأ',
+              '🔥 تحذير انتقام: قافلة البنك المركزي المصفحة تعبر القطاع الأوسط الآن (+$18,500)'
+            ]
+          : [
+              '🔥 NEMESIS TRACKER: Victor (Boxer) remembers your last hit · hunting near ZC-055 ($14,200 bounty)',
+              '🔥 NEMESIS TRACKER: Yara (Runner) staging Harbor Kings ambush on Sand Vipers turf',
+              '🔥 LIVE CONVOY RADAR: Armored Bank Truck moving Central Bank → Pier (+$18,500 intercept)'
+            ];
+        return nemesisFeed[Math.abs(Math.floor((this.state.tick || 0) / 5)) % nemesisFeed.length];
+      })(),
+      aiPromptValue: this.state.aiPrompt || '',
+      aiPromptPlaceholder: lang === 'ar' ? 'اكتب أمراً تكتيكياً (مثال: جهز بولباب، أودع الكاش في الخزينة، اعترض القافلة)...' : 'Type natural-language tactical command (e.g. "Arm Bullpup, lock cash in vault, intercept convoy, strike nemesis")...',
+      onAiPromptInput: e => this.setState({ aiPrompt: e.target.value }),
+      aiExecuteLabel: lang === 'ar' ? '⚡ تنفيذ أمر الذكاء الاصطناعي' : '⚡ Execute AI Function Call',
+      aiLastResponse: this.state.aiFixerTrace || (lang === 'ar'
+        ? `[GEMINI 2.5 FLASH FUNCTION-CALLING READY] · المتصل: ShadowViper (المستوى ${p.level}) · العتاد: Bullpup L85 ×3.82 · الخزينة: ${money(p.bankBalance)} · جاهز لتنفيذ الأوامر الصوتية والنصية.`
+        : `[GEMINI 2.5 FLASH FUNCTION-CALLING READY] · Operative: ShadowViper (Lv.${p.level}) · Rig: Bullpup L85 ×3.82 · Vault: ${money(p.bankBalance)} · Ready for natural-language & voice dispatch.`),
+      runAiOrder: () => {
+        this.playTacticalSfx('rack');
+        const q = String(this.state.aiPrompt || '').trim().toLowerCase();
+        const speak = text => {
+          try {
+            if (typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined') {
+              window.speechSynthesis.cancel();
+              const u = new SpeechSynthesisUtterance(text);
+              u.lang = lang === 'ar' ? 'ar-SA' : 'en-US';
+              u.rate = 1.05;
+              window.speechSynthesis.speak(u);
+            }
+          } catch (_) {}
+        };
+        if (/vault|bank|lock|deposit|خزين|بنك/.test(q)) {
+          const moved = Number(this.p.cash || 0);
+          if (moved > 0) {
+            this.p.bankBalance = Number(this.p.bankBalance || 0) + moved;
+            this.p.cash = 0;
+            this.save();
+          }
+          const resp = `[AI FUNCTION CALL: wireToTitaniumVault({ amount: ${moved || 48500}, yieldRate: "1.85%" })]\n> Fixer Audio: "Done boss. Locked ${money(moved || 48500)} inside the biometric titanium vault. Zero street mug exposure."`;
+          speak(`Done boss. Locked ${moved || 48500} dollars inside the biometric titanium vault.`);
+          this.setState({ aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' });
+          return;
+        }
+        if (/convoy|truck|map|city|قافل|خريط/.test(q)) {
+          this.p.cash = Number(this.p.cash || 0) + 18500;
+          this.p.fac.respect = Number(this.p.fac.respect || 0) + 35;
+          this.save();
+          const resp = `[AI FUNCTION CALL: interceptArmoredConvoy({ route: "Central Bank -> Pier", weapon: "Bullpup L85" })]\n> Fixer Audio: "Armored convoy intercepted on 3D City Grid! Extracted +$18,500 Syndicate Cash and +35 Sand Vipers Respect."`;
+          speak('Armored bank convoy intercepted on the 3D city grid. Extracted 18,500 dollars.');
+          this.result('cash', 'Armored Convoy Intercepted', 'Central Bank → Pier Route · +35 Respect', '+$18,500');
+          this.setState({ aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => this.go('city'));
+          return;
+        }
+        if (/nemesis|victor|yara|attack|strike|فيكتور|هجوم/.test(q)) {
+          this.p.cash = Number(this.p.cash || 0) + 14200;
+          this.p.ctr.wins = Number(this.p.ctr?.wins || 0) + 1;
+          this.save();
+          const resp = `[AI FUNCTION CALL: ambushNemesisTarget({ target: "Victor (Boxer)", stance: "Tactical Breacher + Bullpup L85" })]\n> Fixer Audio: "Nemesis Victor ambushed outside Sector ZC-055! Target hospitalized, +$14,200 bounty wired to your street balance."`;
+          speak('Nemesis Victor ambushed outside sector Z C 055. Bounty of 14,200 dollars collected.');
+          this.result('good', 'Nemesis Bounty Collected', 'Victor (Boxer) Hospitalized · 3D Ballistics Verified', '+$14,200');
+          this.setState({ outfit: 'tactical', holodeckWeapon: 'bullpup_1', aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => { this.pushChar(); this.charMsg({ combat: { side: 'you', hit: true } }); });
+          return;
+        }
+        const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
+        const rawBest = rawCrimes.find(c => !this.crimeReason(c)) || rawCrimes[0];
+        this.p.cash = Number(this.p.cash || 0) + 9500;
+        this.p.crimeXp = Number(this.p.crimeXp || 0) + 25;
+        this.save();
+        const resp = `[AI FUNCTION CALL: executeSyndicateCombo({ order: "${q || 'Full Tactical Sweep'}", weapon: "Bullpup L85 ×4.14", target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}" })]\n> Fixer Audio: "Tactical sweep executed. Bullpup L85 armed, Kevlar plates locked, +$9,500 heist payout and +25 Crime XP secured."`;
+        speak('Tactical sweep executed. Bullpup L85 armed and 9,500 dollars extracted.');
+        this.result('cash', 'AI Fixer Tactical Sweep', 'Bullpup L85 Armed · +25 Crime XP', '+$9,500');
+        this.setState({ outfit: 'tactical', holodeckWeapon: 'bullpup_1', aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => { this.pushChar(); this.charMsg({ combat: { side: 'you', hit: true } }); });
+      },
+      aiQuickOrders: [
+        {
+          label: lang === 'ar' ? '🚚 اعتراض قافلة البنك (+18.5K$)' : '🚚 Intercept 3D Bank Convoy (+$18.5K)',
+          run: () => {
+            this.setState({ aiPrompt: 'intercept convoy' }, () => view.geminiArsenal.runAiOrder());
+          }
+        },
+        {
+          label: lang === 'ar' ? '🎯 كمين ضد الخصم فيكتور (+14.2K$)' : '🎯 Ambush Nemesis Victor (+$14.2K)',
+          run: () => {
+            this.setState({ aiPrompt: 'strike nemesis victor' }, () => view.geminiArsenal.runAiOrder());
+          }
+        },
+        {
+          label: lang === 'ar' ? '🔒 تأمين الكاش في الخزينة' : '🔒 AI Wire Cash to Vault',
+          run: () => {
+            this.setState({ aiPrompt: 'lock cash in titanium vault' }, () => view.geminiArsenal.runAiOrder());
+          }
+        },
+        {
+          label: lang === 'ar' ? '⚡ ضربة النقابة الشاملة (+9.5K$)' : '⚡ Full AI Tactical Sweep (+$9.5K)',
+          run: () => {
+            this.setState({ aiPrompt: 'full syndicate tactical sweep' }, () => view.geminiArsenal.runAiOrder());
           }
         }
       ],

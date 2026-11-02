@@ -1719,6 +1719,21 @@ initializeMapLocale();
   });
 
   var announced=false,mapInstanceId=Math.random().toString(36).slice(2);
+  if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){
+    try{
+      var convoyHud=document.createElement('button');
+      convoyHud.type='button';
+      convoyHud.id='zoneLiveConvoyHud';
+      convoyHud.style.cssText='position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:4;background:linear-gradient(90deg,#1a2318,#101619);color:#c7ec79;border:1px solid #a3d900;border-radius:5px;padding:6px 12px;font:700 10.5px/1.2 system-ui,sans-serif;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.65);display:flex;align-items:center;gap:7px';
+      convoyHud.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#ff5a4a;box-shadow:0 0 8px #ff5a4a"></span><span>🚚 LIVE 3D BANK CONVOY: CENTRAL BANK → PIER · CLICK TO INTERCEPT (+$18.5K)</span>';
+      convoyHud.onclick=function(){
+        convoyHud.innerHTML='<span style="width:8px;height:8px;border-radius:50%;background:#a3d900;box-shadow:0 0 8px #a3d900"></span><span>⚡ CONVOY INTERCEPTED! +$18,500 WIRED TO SHADOWVIPER</span>';
+        try{parent.postMessage({type:'ZONE_CONVOY_INTERCEPT',v:1},location.origin);}catch(_){}
+      };
+      var mc=document.querySelector('.mapcol');
+      if(mc)mc.appendChild(convoyHud);
+    }catch(_){}
+  }
   function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},location.origin);}catch(_){} }
   if(map.loaded()) announce(); else map.once('load',announce);
   setTimeout(announce,1600);
