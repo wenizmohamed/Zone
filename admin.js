@@ -2111,6 +2111,15 @@ function bindOpenEngineAgiStudio() {
         }
       });
     });
+    $('#agiHolodeckXrayButton')?.addEventListener('click', () => {
+      const xrayEl = $('#agiHolodeckXrayOverlay');
+      if (!xrayEl) return;
+      const next = xrayEl.style.display === 'none';
+      xrayEl.style.display = next ? 'flex' : 'none';
+      if (outputEl) {
+        outputEl.textContent = `[OPEN ENGINE 3D ANATOMICAL X-RAY · ${next ? 'ACTIVE' : 'STANDBY'}]\n• Cardiac/Thorax Hotspot + 6-Zone Skeletal Wireframe Overlay active on ${holoOutfit} rig`;
+      }
+    });
     $('#agiHolodeckFireButton')?.addEventListener('click', () => {
       pushHolo(true);
       if (outputEl) {

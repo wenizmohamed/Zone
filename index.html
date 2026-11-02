@@ -220,7 +220,7 @@
             </button>
           </sc-for>
         </div>
-        <div data-day1-instant-ops="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+        <div data-day1-instant-ops="1" data-vault-heist-prologue="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--acc);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong></div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="color:var(--t2);font-size:10.5px;font-weight:600">{{ geminiArsenal.worldTickerText }}</span><span style="color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">{{ geminiArsenal.instantOpsBadge }}</span></div>
@@ -232,6 +232,14 @@
                 <small style="color:rgba(10,12,15,.86);font-size:9.5px;font-weight:700">{{ io.sub }}</small>
               </button>
             </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:6px;border-top:1px solid rgba(163,217,0,.22)">
+            <span style="color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.06em">{{ geminiArsenal.prologueTitle }}</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ geminiArsenal.prologueStages }}" as="ps" hint-placeholder-count="3">
+                <button onClick="{{ ps.run }}" aria-pressed="{{ ps.active }}" style="background:{{ ps.bg }};color:{{ ps.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ps.label }}</button>
+              </sc-for>
+            </div>
           </div>
         </div>
         <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
@@ -283,6 +291,41 @@
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--t3);font-size:9px;letter-spacing:.14em">{{ t.player }}</span>
                     <span style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.62);color:var(--acc);font-size:9px;letter-spacing:.14em">{{ levelTitle }}</span>
                   </div>
+                  <div style="position:absolute;top:8px;inset-inline-end:8px;display:flex;gap:4px;z-index:4">
+                    <button data-char-xray-toggle="1" onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.82);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
+                  </div>
+                  <sc-if value="{{ geminiArsenal.xrayMode }}">
+                    <div data-char-xray-overlay="1" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 34%,rgba(224,60,50,.22),rgba(8,10,14,.62) 68%);display:flex;align-items:center;justify-content:center;z-index:3">
+                      <svg viewBox="0 0 220 340" width="210" height="330" style="opacity:.92;filter:drop-shadow(0 0 8px rgba(255,90,75,.38))">
+                        <defs>
+                          <radialGradient id="zoneCardiacGlow" cx="52%" cy="34%" r="28%">
+                            <stop offset="0%" stop-color="#ff3b2f" stop-opacity="0.92"></stop>
+                            <stop offset="55%" stop-color="#ff6b5b" stop-opacity="0.42"></stop>
+                            <stop offset="100%" stop-color="#ff3b2f" stop-opacity="0"></stop>
+                          </radialGradient>
+                        </defs>
+                        <ellipse cx="110" cy="40" rx="19" ry="24" fill="rgba(235,215,215,.22)" stroke="#ff9d92" stroke-width="1.3"></ellipse>
+                        <line x1="110" y1="64" x2="110" y2="178" stroke="rgba(245,230,230,.58)" stroke-width="4" stroke-dasharray="4 2"></line>
+                        <path d="M74 82 Q110 72 146 82 L140 154 Q110 164 80 154 Z" fill="rgba(240,210,210,.16)" stroke="rgba(255,150,140,.55)" stroke-width="1.2"></path>
+                        <path d="M82 94 Q110 88 138 94 M80 106 Q110 100 140 106 M82 118 Q110 112 138 118 M85 130 Q110 124 135 130" stroke="rgba(255,220,215,.52)" stroke-width="2.2" fill="none"></path>
+                        <circle cx="115" cy="112" r="34" fill="url(#zoneCardiacGlow)"></circle>
+                        <circle cx="115" cy="112" r="8" fill="#ff3b2f" stroke="#ffd2ce" stroke-width="1.4"></circle>
+                        <path d="M84 176 Q110 186 136 176 L130 206 Q110 214 90 206 Z" fill="rgba(235,215,215,.18)" stroke="rgba(255,160,150,.45)" stroke-width="1.2"></path>
+                        <line x1="74" y1="84" x2="46" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                        <line x1="46" y1="152" x2="34" y2="205" stroke="rgba(240,225,225,.42)" stroke-width="4" stroke-linecap="round"></line>
+                        <line x1="146" y1="84" x2="174" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                        <line x1="174" y1="152" x2="186" y2="205" stroke="rgba(240,225,225,.42)" stroke-width="4" stroke-linecap="round"></line>
+                        <line x1="94" y1="204" x2="86" y2="272" stroke="rgba(240,225,225,.52)" stroke-width="6" stroke-linecap="round"></line>
+                        <line x1="86" y1="272" x2="84" y2="326" stroke="rgba(240,225,225,.44)" stroke-width="4.5" stroke-linecap="round"></line>
+                        <line x1="126" y1="204" x2="134" y2="272" stroke="rgba(240,225,225,.52)" stroke-width="6" stroke-linecap="round"></line>
+                        <line x1="134" y1="272" x2="136" y2="326" stroke="rgba(240,225,225,.44)" stroke-width="4.5" stroke-linecap="round"></line>
+                      </svg>
+                      <div style="position:absolute;bottom:8px;inset-inline:8px;display:flex;justify-content:space-between;padding:4px 8px;background:rgba(10,12,15,.86);border:1px solid rgba(255,90,75,.45);border-radius:4px;font-size:9.5px;color:#ffb4a8;font-weight:700">
+                        <span>{{ geminiArsenal.xrayStatusLeft }}</span>
+                        <span>{{ geminiArsenal.xrayStatusRight }}</span>
+                      </div>
+                    </div>
+                  </sc-if>
                 </div>
                 <div class="zone-equipped-summary zone-home-equipment" data-home-equipment="{{ homeBase.equipment.id }}">
                   <sc-if value="{{ homeBase.equipment.hasImage }}"><img sc-camel-src="{{ homeBase.equipment.image }}" alt="" width="70" height="56" loading="lazy"></sc-if>
@@ -321,6 +364,17 @@
                       <sc-for list="{{ geminiArsenal.stanceActions }}" as="sa" hint-placeholder-count="3">
                         <button onClick="{{ sa.run }}" style="background:var(--deep);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ sa.label }}</button>
                       </sc-for>
+                    </div>
+                    <div data-char-weapon-mods="1" style="display:flex;flex-direction:column;gap:4px;padding-top:4px;border-top:1px solid var(--line)">
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="color:var(--mu);font-size:9.5px;font-weight:600">{{ geminiArsenal.weaponModsLabel }}</span>
+                        <bdi style="color:var(--gold);font-size:9.5px;font-weight:700">{{ geminiArsenal.weaponModsBadge }}</bdi>
+                      </div>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap">
+                        <sc-for list="{{ geminiArsenal.weaponMods }}" as="wm" hint-placeholder-count="4">
+                          <button onClick="{{ wm.toggle }}" aria-pressed="{{ wm.active }}" style="background:{{ wm.bg }};color:{{ wm.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9px;font-weight:700;cursor:pointer">{{ wm.label }}</button>
+                        </sc-for>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3003,6 +3057,18 @@ class Component extends DCLogic {
       ? `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• استدعاء الدوال المباشر: أفضل جريمة متاحة "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | جلسات النادي: ${view.gymStudio.sessionsAvailable}\n• خزانة الملابس ثلاثية الأبعاد: ${activeOutfitKey === 'tactical' ? 'Swat.glb + درع تكتيكي' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb'} (امتصاص الصدر ${baseArmorRed}%)`
       : `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• function_call("recommend_optimal_turn"): Best EV Crime "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | Gym Sessions Ready: ${view.gymStudio.sessionsAvailable}\n• 3D Clothed Rig & Ballistics: ${activeOutfitKey === 'tactical' ? 'Swat.glb Tactical Rig' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb Street Rig' : 'Suit.glb Executive Rig'} · Thorax Kevlar Mitigation ${baseArmorRed}%`;
     view.geminiArsenal = {
+      xrayMode: !!this.state.xrayMode,
+      xrayToggleLabel: lang === 'ar' ? (this.state.xrayMode ? '🔬 إيقاف أشعة X-Ray التشريحية' : '🔬 أشعة X-Ray والقلب ثلاثية الأبعاد') : (this.state.xrayMode ? '🔬 X-Ray Scanner: ON' : '🔬 3D Anatomical X-Ray'),
+      xrayStatusLeft: lang === 'ar' ? `القلب والصدر: حماية كيفلر ${baseArmorRed}%` : `CARDIAC/THORAX HOTSPOT · KEVLAR ${baseArmorRed}%`,
+      xrayStatusRight: lang === 'ar' ? 'الرأس ×2.2 حرج · 19 عظمة قبضة' : 'CRANIAL 2.2x CRIT · 19-BONE GRIP',
+      toggleXray: () => {
+        this.playTacticalSfx('rack');
+        const next = !this.state.xrayMode;
+        this.setState({
+          xrayMode: next,
+          geminiTrace: `[3D ANATOMICAL X-RAY & CARDIAC SCANNER · ${next ? 'ACTIVE' : 'STANDBY'}]\n> Translucent Skeletal/Thoracic Overlay: Cardiac Hotspot (${baseArmorRed}% Kevlar Mitigation) · Cranial 2.2x Crit · 19-Bone Right-Hand Grip`
+        });
+      },
       anatomyTitle: lang === 'ar' ? 'مصفوفة التشريح والدروع ثلاثية الأبعاد (ملابس كاملة)' : '3D Clothed Anatomical Hitbox & Armor Matrix',
       wardrobeRigBadge: activeOutfitKey === 'tactical' ? 'Swat.glb · 24 Clips' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb · 24 Clips' : 'Suit.glb · 24 Clips',
       hitZones: [
@@ -3023,6 +3089,42 @@ class Component extends DCLogic {
         fg: currentHolodeck === w.id ? 'var(--activefg)' : 'var(--t3)',
         select: () => { this.playTacticalSfx('rack'); this.setState({ holodeckWeapon: w.id }, () => { this.pushChar(); this.pushCombatScene(); }); }
       })),
+      weaponModsLabel: lang === 'ar' ? 'ملحقات البولباب TAR-21 / L85 التكتيكية:' : 'Modular Bullpup TAR-21 / L85 Attachments:',
+      weaponModsBadge: (() => {
+        const mods = this.state.weaponMods || { optic: true, laser: true };
+        const count = Object.values(mods).filter(Boolean).length;
+        const mult = (3.5 + count * 0.16).toFixed(2);
+        return `×${mult} (${count}/4 MODS)`;
+      })(),
+      weaponMods: [
+        { id: 'optic', label: lang === 'ar' ? '🔭 منظار MARS (+8% دقة)' : '🔭 MARS Optic (+8% Acc)' },
+        { id: 'suppressor', label: lang === 'ar' ? '🔇 كاتم صوت (-25% حرارة)' : '🔇 Suppressor (-25% Heat)' },
+        { id: 'laser', label: lang === 'ar' ? '🔦 ليزر PEQ-15 (+12% حرج)' : '🔦 PEQ-15 Laser (+12% Crit)' },
+        { id: 'mag', label: lang === 'ar' ? '🔋 مخزن 45 طلقة (+18% كثافة)' : '🔋 45-Rd Mag (+18% Vol)' }
+      ].map(m => {
+        const mods = this.state.weaponMods || { optic: true, laser: true };
+        const active = !!mods[m.id];
+        return {
+          id: m.id,
+          label: m.label,
+          active,
+          bg: active ? 'var(--activebg)' : 'var(--deep)',
+          fg: active ? 'var(--activefg)' : 'var(--t3)',
+          toggle: () => {
+            this.playTacticalSfx('rack');
+            const nextMods = { ...(this.state.weaponMods || { optic: true, laser: true }), [m.id]: !active };
+            const activeCount = Object.values(nextMods).filter(Boolean).length;
+            this.setState({
+              holodeckWeapon: this.state.holodeckWeapon || 'bullpup_1',
+              weaponMods: nextMods,
+              geminiTrace: `[BULLPUP TAR-21 / L85 MODULAR RAIL SYSTEM]\n> Attachment "${m.label}" ${!active ? 'MOUNTED' : 'DETACHED'} · Effective Multiplier ×${(3.5 + activeCount * 0.16).toFixed(2)}`
+            }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+          }
+        };
+      }),
       combatEngageTitle: lang === 'ar' ? '⚔️ قيادة القتال التكتيكية ثلاثية الأبعاد (تجهيز وضربة فورية)' : '⚔️ 3D TACTICAL COMBAT ARENA DECK (LIVE RIG & 1-CLICK ENGAGE)',
       combatEngageLabel: lang === 'ar' ? '⚡ اشتباك فوري مع أفضل هدف' : '⚡ 1-Click Engage Best Target',
       combatEngageSub: view.fight
@@ -3178,6 +3280,73 @@ class Component extends DCLogic {
                 await this.commit(rawBest, tt);
                 this.playTacticalSfx('crime');
                 this.charMsg({ combat: { side: 'you', hit: true } });
+              });
+            }
+          }
+        }
+      ],
+      prologueTitle: lang === 'ar' ? '🎬 برولوغ سطو الخزينة (٣ مراحل تفاعلية):' : '🎬 INTERACTIVE 3-STAGE VAULT HEIST PROLOGUE:',
+      prologueStages: [
+        {
+          id: 1,
+          label: lang === 'ar' ? '١. تجهيز Swat + بولباب L85' : '1. Arm Swat.glb + Bullpup L85',
+          active: (this.state.heistStage || 1) === 1,
+          bg: (this.state.heistStage || 1) === 1 ? 'var(--activebg)' : 'var(--deep)',
+          fg: (this.state.heistStage || 1) === 1 ? 'var(--activefg)' : 'var(--t2)',
+          run: () => {
+            this.playTacticalSfx('rack');
+            this.setState({
+              heistStage: 2,
+              outfit: 'tactical',
+              holodeckWeapon: 'bullpup_1',
+              xrayMode: true,
+              weaponMods: { optic: true, suppressor: true, laser: true, mag: true },
+              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 1/3 COMPLETE]\n> Armed Swat.glb Kevlar Rig + Modded Bullpup L85 (×4.14) · 3D Cardiac X-Ray Active`
+            }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: false } });
+            });
+          }
+        },
+        {
+          id: 2,
+          label: lang === 'ar' ? '٢. اشتباك وتثبيت الحراس (3D)' : '2. Suppress Vault Guards (3D)',
+          active: this.state.heistStage === 2,
+          bg: this.state.heistStage === 2 ? 'var(--activebg)' : 'var(--deep)',
+          fg: this.state.heistStage === 2 ? 'var(--activefg)' : 'var(--t2)',
+          run: () => {
+            this.playTacticalSfx('rack');
+            this.setState({
+              heistStage: 3,
+              outfit: 'tactical',
+              holodeckWeapon: 'bullpup_1',
+              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 2/3 COMPLETE]\n> Vault Guard Suppression Firefight Executed · 3D Recoil & Kevlar Thorax Absorption Verified`
+            }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+          }
+        },
+        {
+          id: 3,
+          label: lang === 'ar' ? '٣. كسر الخزينة واستلام العائد' : '3. Crack Safe & Collect Payout',
+          active: this.state.heistStage === 3,
+          bg: this.state.heistStage === 3 ? 'var(--activebg)' : 'var(--deep)',
+          fg: this.state.heistStage === 3 ? 'var(--activefg)' : 'var(--t2)',
+          run: () => {
+            this.playTacticalSfx('crime');
+            const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
+            const rawBest = rawCrimes.find(c => !this.crimeReason(c)) || rawCrimes[0];
+            this.setState({
+              heistStage: 1,
+              crimeRequestError: null,
+              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 3/3 COMPLETE]\n> Executing live server extraction on "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
+            }, () => {
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+            if (rawBest && !this.crimeReason(rawBest)) {
+              return this.resolve('cr' + rawBest.id, 320, async tt => {
+                await this.commit(rawBest, tt);
               });
             }
           }

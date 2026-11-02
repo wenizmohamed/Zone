@@ -165,12 +165,32 @@
             <div data-open-engine-3d-holodeck="1" style="margin-top:12px;padding:10px;background:#080a0d;border:1px solid #252b33;border-radius:6px;display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:12px;align-items:stretch">
               <div style="position:relative;min-height:240px;background:#050709;border:1px solid #1e242c;border-radius:5px;overflow:hidden">
                 <iframe id="agiCharacterHolodeckFrame" data-character-src="/dist/character3d.html?v=116" title="Open Engine 3D Character &amp; Weapon Holodeck" style="width:100%;height:240px;border:0;display:block"></iframe>
+                <div id="agiHolodeckXrayOverlay" data-open-engine-xray-overlay="1" style="display:none;position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,rgba(224,60,50,.24),rgba(5,7,10,.65) 70%);align-items:center;justify-content:center">
+                  <svg viewBox="0 0 220 340" width="160" height="220" style="opacity:.92;filter:drop-shadow(0 0 8px rgba(255,90,75,.42))">
+                    <defs>
+                      <radialGradient id="agiCardiacGlow" cx="52%" cy="34%" r="28%">
+                        <stop offset="0%" stop-color="#ff3b2f" stop-opacity="0.92"></stop>
+                        <stop offset="55%" stop-color="#ff6b5b" stop-opacity="0.42"></stop>
+                        <stop offset="100%" stop-color="#ff3b2f" stop-opacity="0"></stop>
+                      </radialGradient>
+                    </defs>
+                    <ellipse cx="110" cy="40" rx="19" ry="24" fill="rgba(235,215,215,.22)" stroke="#ff9d92" stroke-width="1.3"></ellipse>
+                    <line x1="110" y1="64" x2="110" y2="178" stroke="rgba(245,230,230,.58)" stroke-width="4" stroke-dasharray="4 2"></line>
+                    <path d="M74 82 Q110 72 146 82 L140 154 Q110 164 80 154 Z" fill="rgba(240,210,210,.16)" stroke="rgba(255,150,140,.55)" stroke-width="1.2"></path>
+                    <circle cx="115" cy="112" r="34" fill="url(#agiCardiacGlow)"></circle>
+                    <circle cx="115" cy="112" r="8" fill="#ff3b2f" stroke="#ffd2ce" stroke-width="1.4"></circle>
+                    <line x1="74" y1="84" x2="46" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                    <line x1="146" y1="84" x2="174" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                    <line x1="94" y1="204" x2="86" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
+                    <line x1="126" y1="204" x2="134" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
+                  </svg>
+                </div>
               </div>
               <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px">
                 <div>
                   <span class="eyebrow" style="color:#a3d900">LIVE OPEN ENGINE 3D WARDROBE &amp; WEAPON HOLODECK</span>
                   <h4 style="margin:4px 0;font-size:14px">Interactive Clothed 3D Character + 51-Weapon Grip Socket Inspector</h4>
-                  <p style="margin:0;font-size:12px;opacity:.82">Test clothed 3D rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + Kevlar Vest) with live 2-handed rifle/pistol sockets and recoil kinematics directly inside Open Engine.</p>
+                  <p style="margin:0;font-size:12px;opacity:.82">Test clothed 3D rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + Kevlar Vest), translucent Anatomical Cardiac X-Ray hitboxes, and Bullpup TAR-21 / L85 sockets directly inside Open Engine.</p>
                 </div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
                   <button class="button secondary" type="button" data-agi-holodeck="suit:bullpup_1">👔 Suit.glb + Bullpup L85</button>
@@ -178,6 +198,7 @@
                   <button class="button secondary" type="button" data-agi-holodeck="tactical:m4_1">🔫 Swat.glb Kevlar + M4A1</button>
                   <button class="button secondary" type="button" data-agi-holodeck="street:ak">🧥 Street Hoodie + AKM</button>
                   <button class="button secondary" type="button" data-agi-holodeck="tactical:sniper">🎯 Swat.glb + Dragunov</button>
+                  <button class="button secondary" type="button" id="agiHolodeckXrayButton">🔬 Toggle 3D Cardiac X-Ray</button>
                   <button class="button primary" type="button" id="agiHolodeckFireButton">⚡ Fire 3D Recoil &amp; Ballistics Test</button>
                 </div>
               </div>
