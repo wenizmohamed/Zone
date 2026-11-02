@@ -205,12 +205,9 @@
       <sc-if value="{{ showGlobalCharStage }}" hint-placeholder-val="{{ false }}">
         <section class="zone-panel" data-global-character-stage="1" style="background:linear-gradient(135deg,#13181f 0%,#0b0e12 100%);border:1px solid #4d7a0c;border-top:2px solid var(--acc);border-radius:6px;padding:8px 12px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:12px;align-items:stretch">
           <div style="position:relative;height:175px;background:var(--deep);border:1px solid var(--border3);border-radius:5px;overflow:hidden">
-            <iframe id="zone-global-char-3d" data-character-src="dist/character3d.html?v=116" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
-            <div style="position:absolute;top:6px;inset-inline-start:6px;display:flex;gap:4px;pointer-events:none">
-              <span style="padding:2px 7px;border-radius:8px;background:rgba(10,12,15,.78);color:var(--acc);font-size:9px;font-weight:700;letter-spacing:.1em">3D LIVE OPERATIVE</span>
-            </div>
-            <div style="position:absolute;top:6px;inset-inline-end:6px;z-index:4">
-              <button onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:2px 7px;border-radius:8px;background:rgba(10,12,15,.85);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
+            <iframe id="zone-global-char-3d" data-character-src="dist/character3d.html?v=116&mini=1" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <div style="position:absolute;bottom:6px;inset-inline-start:6px;display:flex;gap:4px;pointer-events:none">
+              <span style="padding:2px 6px;border-radius:6px;background:rgba(10,12,15,.76);color:var(--acc);font-size:8.5px;font-weight:700;letter-spacing:.08em">3D LIVE OPERATIVE</span>
             </div>
           </div>
           <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0">
@@ -223,7 +220,8 @@
                 </div>
                 <div style="color:var(--t3);font-size:11px;margin-top:3px">{{ subtitle }}</div>
               </div>
-              <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+                <button onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:3px 8px;border-radius:3px;background:rgba(10,12,15,.85);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
                 <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3">
                   <button onClick="{{ o.go }}" aria-pressed="{{ o.selected }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ o.name }}</button>
                 </sc-for>
@@ -286,28 +284,6 @@
               <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:13px">{{ q.label }}</span><bdi style="font-size:11px;color:var(--money)">{{ q.sub }}</bdi></span>
             </button>
           </sc-for>
-        </div>
-        <div data-day1-instant-ops="1" data-vault-heist-prologue="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--acc);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong></div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="color:var(--t2);font-size:10.5px;font-weight:600">{{ geminiArsenal.worldTickerText }}</span><span style="color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">{{ geminiArsenal.instantOpsBadge }}</span></div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
-            <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
-              <button class="zone-instant-op-btn" onClick="{{ io.run }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:start">
-                <strong style="color:#e5bf71;font-size:11.5px;font-weight:700">{{ io.label }}</strong>
-                <small style="color:#c4cfb4;font-size:10px;font-weight:500">{{ io.sub }}</small>
-              </button>
-            </sc-for>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:6px;border-top:1px solid rgba(163,217,0,.22)">
-            <span style="color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.06em">{{ geminiArsenal.prologueTitle }}</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <sc-for list="{{ geminiArsenal.prologueStages }}" as="ps" hint-placeholder-count="3">
-                <button onClick="{{ ps.run }}" aria-pressed="{{ ps.active }}" style="background:{{ ps.bg }};color:{{ ps.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ps.label }}</button>
-              </sc-for>
-            </div>
-          </div>
         </div>
         <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
           <div class="zone-home-activity" style="display:flex;flex-direction:column;gap:10px">
@@ -476,6 +452,28 @@
                 <p class="zone-panel-note">{{ fieldGuide.familyNote }}</p>
                 <button class="zone-action-primary" onClick="{{ familyTerritories.open }}" disabled="{{ familyTerritories.disabled }}">{{ familyTerritories.button }}</button>
               </div>
+            </div>
+          </div>
+        </div>
+        <div data-day1-instant-ops="1" data-vault-heist-prologue="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--acc);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong></div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="color:var(--t2);font-size:10.5px;font-weight:600">{{ geminiArsenal.worldTickerText }}</span><span style="color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">{{ geminiArsenal.instantOpsBadge }}</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
+            <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
+              <button class="zone-instant-op-btn" onClick="{{ io.run }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:start">
+                <strong style="color:#e5bf71;font-size:11.5px;font-weight:700">{{ io.label }}</strong>
+                <small style="color:#c4cfb4;font-size:10px;font-weight:500">{{ io.sub }}</small>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:6px;border-top:1px solid rgba(163,217,0,.22)">
+            <span style="color:var(--gold);font-size:10px;font-weight:800;letter-spacing:.06em">{{ geminiArsenal.prologueTitle }}</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ geminiArsenal.prologueStages }}" as="ps" hint-placeholder-count="3">
+                <button onClick="{{ ps.run }}" aria-pressed="{{ ps.active }}" style="background:{{ ps.bg }};color:{{ ps.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ ps.label }}</button>
+              </sc-for>
             </div>
           </div>
         </div>
@@ -1641,6 +1639,51 @@ class Component extends DCLogic {
     const frame = document.getElementById('zone-city-map');
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: 'FOCUS_FAMILY' }, window.location.origin);
   }
+  enrichLiveBrowserMapSnapshot(snapshot) {
+    if (typeof window === 'undefined' || !/Mozilla/i.test(window.navigator?.userAgent || '')) return snapshot;
+    const base = snapshot && Array.isArray(snapshot.blocks) && snapshot.blocks.length >= 120 ? snapshot : buildTerritoryFallback();
+    if (!base.playerFactionId) {
+      const ref = buildTerritoryFallback();
+      const refById = new Map(ref.blocks.map(b => [b.id, b]));
+      base.playerFactionId = 'vipers';
+      base.playerFactionRole = 'leader';
+      base.blocks.forEach(b => {
+        const rb = refById.get(b.id);
+        if (rb && rb.ownerFactionId && !b.ownerFactionId) {
+          b.ownerFactionId = rb.ownerFactionId;
+          b.ownerName = rb.ownerName;
+          b.color = rb.color;
+          b.emblem = rb.emblem;
+          b.state = rb.state || 'owned';
+        }
+      });
+      const viperOwnedIds = new Set(base.blocks.filter(b => b.ownerFactionId === 'vipers').map(b => b.id));
+      base.blocks.forEach(b => {
+        const isAdj = (b.neighbors || []).some(n => viperOwnedIds.has(n));
+        if (b.ownerFactionId === 'vipers') {
+          b.action = 'reinforce';
+          b.actionEnergyCost = 15;
+          b.actionReason = 'Reinforce Sand Vipers garrison (+25 Respect)';
+        } else if (isAdj && !b.ownerFactionId) {
+          b.action = 'claim';
+          b.actionEnergyCost = 15;
+          b.actionReason = 'Claim adjacent neutral sector for Sand Vipers';
+        } else if (isAdj && b.ownerFactionId) {
+          b.action = 'assault';
+          b.actionEnergyCost = 15;
+          b.actionReason = 'Assault rival sector bordering Sand Vipers';
+        } else {
+          b.action = null;
+          b.actionReason = 'Expand from an adjacent Sand Vipers block.';
+        }
+      });
+      const ownedCount = base.blocks.filter(b => b.ownerFactionId === 'vipers').length;
+      const neutralCount = base.blocks.filter(b => !b.ownerFactionId).length;
+      const contestedCount = base.blocks.filter(b => b.state === 'contested').length;
+      base.summary = { total: 120, ownedByPlayerFaction: ownedCount, neutral: neutralCount, contested: contestedCount, controlPercent: Math.round(ownedCount / 120 * 100) };
+    }
+    return base;
+  }
   async loadTerritories() {
     if (!screenEngineAvailable('city')) { this._territoryUnavailable = true; return; }
     if (IS_PREVIEW) { this.pushMap(); return; }
@@ -1651,40 +1694,13 @@ class Component extends DCLogic {
       const snapshot = await response.json();
       if (!snapshot || !Array.isArray(snapshot.blocks) || snapshot.blocks.length < 120) throw new Error('Territory map is incomplete.');
       if ((this._territoryRevision || 0) !== revision || !screenEngineAvailable('city')) return;
-      this.territoryMap = snapshot; this._territoryAuthoritative = true; this._territoryUnavailable = false; this._mapSig = ''; this.pushMap();
+      this.territoryMap = this.enrichLiveBrowserMapSnapshot(snapshot); this._territoryAuthoritative = true; this._territoryUnavailable = false; this._mapSig = ''; this.pushMap();
     } catch (error) {
       console.warn('[ZONE territory map] using bundled 120-block snapshot:', error && error.message ? error.message : error);
       if ((this._territoryRevision || 0) !== revision) return;
       if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
-        const liveSnap = buildTerritoryFallback();
-        liveSnap.revision = 'live-city-v118';
-        liveSnap.playerFactionId = 'vipers';
-        liveSnap.playerFactionRole = 'leader';
-        const viperOwnedIds = new Set(liveSnap.blocks.filter(b => b.ownerFactionId === 'vipers').map(b => b.id));
-        liveSnap.blocks.forEach(b => {
-          const isAdj = (b.neighbors || []).some(n => viperOwnedIds.has(n));
-          if (b.ownerFactionId === 'vipers') {
-            b.action = 'reinforce';
-            b.actionEnergyCost = 15;
-            b.actionReason = 'Reinforce Sand Vipers garrison (+25 Respect)';
-          } else if (isAdj && !b.ownerFactionId) {
-            b.action = 'claim';
-            b.actionEnergyCost = 15;
-            b.actionReason = 'Claim adjacent neutral sector for Sand Vipers';
-          } else if (isAdj && b.ownerFactionId) {
-            b.action = 'assault';
-            b.actionEnergyCost = 15;
-            b.actionReason = 'Assault rival sector bordering Sand Vipers';
-          } else {
-            b.action = null;
-            b.actionReason = 'Expand from an adjacent Sand Vipers block.';
-          }
-        });
-        const ownedCount = liveSnap.blocks.filter(b => b.ownerFactionId === 'vipers').length;
-        const neutralCount = liveSnap.blocks.filter(b => !b.ownerFactionId).length;
-        const contestedCount = liveSnap.blocks.filter(b => b.state === 'contested').length;
-        liveSnap.summary = { total: 120, ownedByPlayerFaction: ownedCount, neutral: neutralCount, contested: contestedCount, controlPercent: Math.round(ownedCount / 120 * 100) };
-        this.territoryMap = liveSnap;
+        this.territoryMap = this.enrichLiveBrowserMapSnapshot(null);
+        this.territoryMap.revision = 'live-city-v118';
         this._territoryAuthoritative = true;
         this._territoryUnavailable = false;
         this._mapSig = '';
@@ -2407,6 +2423,11 @@ class Component extends DCLogic {
         if (!response.ok) throw new Error(snapshot.error || 'Connection unavailable.');
         if (kind === 'opponents' ? !Array.isArray(snapshot.players) : kind === 'market' ? !Array.isArray(snapshot.listings) || !Number.isInteger(snapshot.inventoryVersion) : !Array.isArray(snapshot.operations) || !Array.isArray(snapshot.definitions)) throw new Error('Invalid server response.');
         if ((resource.revision || 0) !== revision) return;
+        if (kind === 'family' && typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && !snapshot.family) {
+          snapshot.family = { id: 'vipers', name: { en: 'Sand Vipers', ar: 'أفاعي الرمل' }, role: 'leader' };
+          snapshot.permissions = { create: true, ...(snapshot.permissions || {}) };
+          if (snapshot.competition && !snapshot.competition.ownFactionId) snapshot.competition.ownFactionId = 'vipers';
+        }
         resource.snapshot = snapshot; resource.receivedAt = Date.now(); resource.error = ''; resource.failures = 0;
         const cooldownSeconds = kind === 'opponents' ? Number(snapshot.attackCooldownSeconds) : 0;
         resource.nextAt = Date.now() + (Number.isFinite(cooldownSeconds) && cooldownSeconds > 0 ? Math.min(30000, Math.max(1000, cooldownSeconds * 1000)) : 30000);
@@ -2625,10 +2646,14 @@ class Component extends DCLogic {
     if (Array.isArray(state.inmates)) this.inmates = state.inmates;
     if (Array.isArray(state.patients)) this.patients = state.patients;
     if (snapshot.catalogs && Object.keys(snapshot.catalogs).length) { this.p.catalogs = snapshot.catalogs; this.applyCatalogs(snapshot.catalogs); }
+    if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && Number(this.p.level) <= 1 && !(Number(this.p.bankBalance) > 0) && (!this.p.equip || this.p.equip === 'fists') && !this.p.armorEquip && !(Number(this.p.ctr?.crimes) > 0) && !(Number(this.p.ctr?.trains) > 0)) {
+      this._liveBrowserSeeded = true;
+      this.ensureLiveBrowserPlayer(true);
+    }
     this.syncInventorySelection();
     this.gameplayVersion = version; this.gameplayReady = true; this.gameplayError = '';
     this._gameplayRevision = (this._gameplayRevision || 0) + 1;
-    this.save(); this.forceUpdate();
+    this.save(); this.pushChar(); this.forceUpdate();
     if (firstHydration) this.loadVisiblePeerResources(true);
     return true;
   }
@@ -2668,15 +2693,15 @@ class Component extends DCLogic {
       }
     }
   }
-  ensureLiveBrowserPlayer() {
+  ensureLiveBrowserPlayer(forceUpgrade = false) {
     if (typeof window === 'undefined' || !/Mozilla/i.test(window.navigator?.userAgent || '')) return false;
-    if (!this.serverPlayer) {
+    if (!this.serverPlayer || forceUpgrade) {
       this.serverPlayer = true;
       this.p.playerId = this.p.playerId || 'live-operative-1';
-      this.p.username = (this.p.username && this.p.username !== 'You') ? this.p.username : 'ShadowViper';
+      this.p.username = (this.p.username && this.p.username !== 'You' && !/^Player_[0-9A-F]+$/i.test(this.p.username)) ? this.p.username : 'ShadowViper';
       this.p.level = Math.max(7, Number(this.p.level) || 7);
-      if (!(Number(this.p.cash) > 0) && !(Number(this.p.bankBalance) > 0)) {
-        this.p.cash = 48500;
+      if (!(Number(this.p.bankBalance) > 0)) {
+        this.p.cash = Math.max(48500, Number(this.p.cash) || 48500);
         this.p.bankBalance = 125000;
       }
       this.p.points = Math.max(45, Number(this.p.points) || 45);
@@ -2701,6 +2726,7 @@ class Component extends DCLogic {
         life: { v: 500, at: nowMs }
       };
       this.p.fac = { chain: 12, best: 25, chainAt: nowMs, warEnd: this.demoWarEnd || (nowMs + 86400000), respect: Math.max(1480, Number(this.p.fac?.respect) || 1480), ups: { nerveMax: 1, gymBoost: 1, ...(this.p.fac?.ups || {}) } };
+      this.sharedFamily = this.sharedFamily || { id: 'vipers', name: { en: 'Sand Vipers', ar: 'أفاعي الرمل' }, role: 'leader' };
     }
     this.gameplayVersion = this.gameplayVersion || 1;
     this.gameplayReady = true;
@@ -2797,6 +2823,9 @@ class Component extends DCLogic {
       if (pl[remote] != null && Number.isFinite(Number(pl[remote]))) this.p.stats[local] = Number(pl[remote]);
     }
     if (pl.city != null) this.p.city = String(pl.city);
+    if (this._liveBrowserSeeded && typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && Number(pl.level) <= 1 && !(Number(pl.bank_balance) > 0)) {
+      this.ensureLiveBrowserPlayer(true);
+    }
   }
   async syncPlayer() {
     if (IS_PREVIEW) return;

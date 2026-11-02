@@ -568,7 +568,7 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);var pts=(pinData||[]).slice(0,18).map(function(p){return p&&p._lngLat;}).filter(function(c){return Array.isArray(c)&&isFinite(c[0])&&isFinite(c[1]);});if(pts.length&&map.jumpTo){map.jumpTo({pitch:36,bearing:-61});refineOwnershipCamera(pts,{top:42,right:44,bottom:92,left:44},16.3,1.12);}if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.getLayer&&map.getLayer('district-buildings-3d')&&map.setLayerZoomRange)map.setLayerZoomRange('district-buildings-3d',14,24);var pts=(pinData||[]).slice(0,18).map(function(p){return p&&p._lngLat;}).filter(function(c){return Array.isArray(c)&&isFinite(c[0])&&isFinite(c[1]);});if(pts.length&&map.jumpTo){map.jumpTo({pitch:36,bearing:-61});refineOwnershipCamera(pts,{top:42,right:44,bottom:92,left:44},16.3,1.12);}if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -1221,7 +1221,7 @@ initializeMapLocale();
   }
   // One source refresh after actual roof/sign measurement. No screen-space
   // marker recreation or continual source writes during camera movement.
-  map.on('zone-landmarks-ready',function(){if(!mapDisposed){syncPoiSource();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&!mapCameraTouched){var pts=(pinData||[]).slice(0,18).map(function(p){return p&&p._lngLat;}).filter(function(c){return Array.isArray(c)&&isFinite(c[0])&&isFinite(c[1]);});if(pts.length&&map.jumpTo&&typeof refineOwnershipCamera==='function'){map.jumpTo({pitch:36,bearing:-61});refineOwnershipCamera(pts,{top:42,right:44,bottom:92,left:44},16.3,1.12);}}}});
+  map.on('zone-landmarks-ready',function(){if(!mapDisposed){syncPoiSource();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&!mapCameraTouched){if(map.getLayer&&map.getLayer('district-buildings-3d')&&map.setLayerZoomRange)map.setLayerZoomRange('district-buildings-3d',14,24);var pts=(pinData||[]).slice(0,18).map(function(p){return p&&p._lngLat;}).filter(function(c){return Array.isArray(c)&&isFinite(c[0])&&isFinite(c[1]);});if(pts.length&&map.jumpTo&&typeof refineOwnershipCamera==='function'){map.jumpTo({pitch:36,bearing:-61});refineOwnershipCamera(pts,{top:42,right:44,bottom:92,left:44},16.3,1.12);}}}});
   function setMode(mode,filterId){
     mapMode=mode==='places'?'places':'territories'; territoryFilter=mapMode==='places'?(filterId||null):null; document.body.dataset.mode=mapMode;
     if(el.search.dataset.mode!==mapMode){el.search.value='';el.search.dataset.mode=mapMode;el.sClear.hidden=true;}
