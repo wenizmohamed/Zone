@@ -205,7 +205,7 @@
       <sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
         <section class="zone-panel zone-home-brief" aria-label="{{ homeBase.title }}">
           <div class="zone-hideout-scene"><div><span class="zone-overline">{{ homeBase.title }}</span><strong>{{ homeBase.residence }}</strong><span>{{ homeBase.identity }}</span></div></div>
-          <div class="zone-home-objective">
+          <div class="zone-home-objective" style="display:none">
             <span class="zone-overline">{{ fieldGuide.eyebrow }}</span><h2>{{ fieldGuide.title }}</h2><p>{{ fieldGuide.description }}</p>
             <sc-if value="{{ homeBase.showGoalProgress }}"><div class="zone-home-objective-progress"><bdi>{{ homeBase.goal.progress }}</bdi><span>{{ homeBase.goal.reward }}</span></div></sc-if>
             <div class="zone-home-objective-actions"><button class="zone-action-primary" data-home-objective="open" onClick="{{ fieldGuide.open }}">{{ fieldGuide.action }}</button><sc-if value="{{ homeBase.showGoalProgress }}"><button data-home-objective="claim" onClick="{{ homeBase.goal.claim }}" disabled="{{ homeBase.goal.disabled }}">{{ homeBase.goal.claimLabel }}</button></sc-if></div>
@@ -417,7 +417,7 @@
       <!-- CRIMES -->
       <sc-if value="{{ is.crimes }}" hint-placeholder-val="{{ false }}">
         <section class="zone-crime-workspace">
-        <div class="zone-crime-goal zone-panel"><div><span class="zone-overline">{{ fieldGuide.eyebrow }}</span><strong>{{ fieldGuide.title }}</strong><p>{{ fieldGuide.description }}</p></div><sc-if value="{{ homeBase.showGoalProgress }}"><bdi>{{ homeBase.goal.progress }}</bdi></sc-if><button onClick="{{ crimeDesk.openGoal }}">{{ t.nav.missions }}</button></div>
+        <div class="zone-crime-goal zone-panel" style="display:none"><div><span class="zone-overline">{{ fieldGuide.eyebrow }}</span><strong>{{ fieldGuide.title }}</strong><p>{{ fieldGuide.description }}</p></div><sc-if value="{{ homeBase.showGoalProgress }}"><bdi>{{ homeBase.goal.progress }}</bdi></sc-if><button onClick="{{ crimeDesk.openGoal }}">{{ t.nav.missions }}</button></div>
         <nav class="zone-crime-activity-nav" aria-label="{{ crimeDesk.categoriesLabel }}">
           <sc-for list="{{ crimeCats }}" as="c" hint-placeholder-count="14">
             <button data-crime-category="{{ c.id }}" aria-pressed="{{ c.on }}" onClick="{{ c.go }}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M0 0" data-zone-path="{{ c.d }}"></path></svg><span>{{ c.name }}<small>{{ c.sub }}</small></span></button>
@@ -2840,9 +2840,9 @@ class Component extends DCLogic {
     const canGuide = !recoveryRoute && !this.gameplayDisabled();
     const readyReward = canGuide ? view.missions.find(mission => !mission.claimed && !mission.disabled) : null;
     const nextRoute = enabledRoute(recoveryRoute || (this.gameplayDisabled() ? 'missions' : readyMissions || currentGoal?.claimable ? 'missions' : goalRoute ? (routeEligible[goalRoute] ? goalRoute : 'missions') : routeEligible.crimes ? 'crimes' : routeEligible.gym ? 'gym' : routeEligible.jobs ? 'jobs' : 'missions'));
-    const guideTitles = { en: { crimes: 'Build your reputation', gym: 'Make your next fight count', missions: 'Put a reward within reach', jobs: 'Earn your next upgrade', jail: 'Get back to the streets', hospital: 'Recover and return' }, ar: { crimes: 'ابنِ سمعتك', gym: 'استعد لمواجهتك القادمة', missions: 'اقترب من مكافأتك التالية', jobs: 'اكسب ثمن ترقيتك القادمة', jail: 'عُد إلى الشوارع', hospital: 'تعافَ وعُد إلى المدينة' } };
+    const guideTitles = { en: { crimes: 'Street Operations', gym: 'Combat Training', missions: 'Syndicate Contracts', jobs: 'City Employment', jail: 'Get back to the streets', hospital: 'Recover and return' }, ar: { crimes: 'عمليات الشارع', gym: 'التدريب القتالي', missions: 'عقود النقابة', jobs: 'العمل في المدينة', jail: 'عُد إلى الشوارع', hospital: 'تعافَ وعُد إلى المدينة' } };
     view.fieldGuide = {
-      eyebrow: lang === 'ar' ? 'خطوتك التالية' : 'Your next move', title: readyReward ? readyReward.name : canGuide && currentGoal ? t.ms[currentGoal.missionId][0] : guideTitles[lang][nextRoute] || routeName(nextRoute),
+      eyebrow: lang === 'ar' ? 'حالة العمليات' : 'Operations Status', title: readyReward ? readyReward.name : canGuide && currentGoal ? t.ms[currentGoal.missionId][0] : guideTitles[lang][nextRoute] || routeName(nextRoute),
       description: recoveryRoute ? (recoveryRoute === 'jail' ? t.jailBody : t.hospBody) : this.gameplayDisabled() ? (lang === 'ar' ? 'جارٍ انتظار بيانات شخصيتك. استعرض الأهداف الآن؛ تتاح الإجراءات والمكافآت عند الاتصال بالخادم.' : 'Waiting for your character data. Explore your goals now; actions and rewards become available when connected.') : readyReward ? t.claim + ' · ' + readyReward.reward + ' · ' + readyReward.prog : currentGoal ? t.ms[currentGoal.missionId][1] + ' · ' + currentGoal.progress + '/' + currentGoal.target + (currentGoal.claimable ? ' · ' + t.claim : ' · ' + (routeEligible[goalRoute] ? '' : (lang === 'ar' ? 'غير متاح حالياً؛ راجع هدفك. ' : 'Unavailable now; review your goal. ')) + requirements[goalRoute]) : lang === 'ar' ? 'جرأة للجريمة، وطاقة للتدريب والعمل. اختر هدفاً واحداً، ثم تابع نتيجته في سجل الأحداث.' : 'Nerve fuels crime. Energy fuels training and work. Pick one goal, then follow its outcome in your event history.',
       goalId: readyReward?.id || currentGoal?.missionId || null, route: nextRoute,
       action: (lang === 'ar' ? 'افتح ' : 'Open ') + routeName(nextRoute), open: () => this.go(nextRoute),

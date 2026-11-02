@@ -712,3 +712,10 @@ html[dir="rtl"] .zone-next-move-art { border-radius:0 var(--zone-radius) var(--z
   font-weight:500 !important;
   line-height:1.3 !important;
 }
+.zone-home-brief {
+  grid-template-columns:minmax(0,1fr) !important;
+}
+.zone-home-objective,
+.zone-crime-goal {
+  display:none !important;
+}
