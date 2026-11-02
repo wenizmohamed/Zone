@@ -62,7 +62,7 @@
 
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#191919"/><text x="100" y="118" text-anchor="middle" font-family="Rubik,system-ui,sans-serif" font-weight="700" font-size="52" letter-spacing="6" fill="#a3d900">ZONE</text></svg></template>
 </helmet>
-<a class="zone-skip-link" href="#zone-main">{{ skipToContent }}</a>
+<a class="zone-skip-link" href="#zone-main" style="position:fixed;inset-block-start:-200px;inset-inline-start:-200px;opacity:0;pointer-events:none">{{ skipToContent }}</a>
 <div class="zone-app" style="min-height:100vh;background:var(--bg)">
   <!-- header -->
   <div class="zone-topbar" style="background:linear-gradient(var(--hd1),var(--hd2));border-bottom:1px solid var(--edge);box-shadow:0 1px 0 var(--border2) inset">
@@ -424,7 +424,30 @@
           </sc-for>
         </nav>
         <div class="zone-crime-operation">
-          <div class="zone-crime-neighborhood zone-panel"><div class="zone-crime-location"><span class="zone-overline">{{ crimeDesk.locationLabel }}</span><h2>{{ catName }}</h2><p>{{ catDesc }}</p></div><div class="zone-crime-scene" role="img" aria-label="{{ crimeDesk.sceneLabel }}"></div><div class="zone-crime-resources"><span>{{ t.nerve }} <bdi>{{ crimeDesk.nerve }}</bdi><small>{{ crimeDesk.regeneration }}</small></span><span>{{ t.crimeXp }} <bdi>{{ crimeXp }}</bdi><small>{{ crimeDesk.xpNote }}</small></span></div></div>
+          <div class="zone-crime-neighborhood zone-panel"><div class="zone-crime-location"><span class="zone-overline">{{ crimeDesk.locationLabel }}</span><h2>{{ catName }}</h2><p>{{ catDesc }}</p></div><div class="zone-crime-scene" role="img" aria-label="{{ crimeDesk.sceneLabel }}"></div><div class="zone-crime-resources"><span>{{ t.nerve }} <bdi>{{ crimeDesk.nerve }}</bdi><small>{{ crimeDesk.regeneration }}</small></span><span>{{ t.crimeXp }} <bdi>{{ crimeXp }}</bdi><small>{{ crimeDesk.xpNote }}</small></span></div>
+            <div data-crime-tactical-deck="1" style="margin-top:8px;padding:10px;border-top:1px solid var(--border);background:linear-gradient(180deg,rgba(163,217,0,.1),rgba(10,13,17,.9));border-radius:4px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+                <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.06em">{{ geminiArsenal.crimeDeckTitle }}</strong>
+                <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ geminiArsenal.crimeDeckBadge }}</bdi>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <sc-for list="{{ geminiArsenal.crimeTelemetry }}" as="ct" hint-placeholder-count="3">
+                  <div style="flex:1;min-width:100px;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 7px;display:flex;flex-direction:column;gap:2px">
+                    <span style="color:var(--mu);font-size:9.5px;font-weight:600">{{ ct.label }}</span>
+                    <bdi style="color:{{ ct.color }};font-size:10.5px;font-weight:700">{{ ct.value }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <sc-for list="{{ crimes }}" as="qc" hint-placeholder-count="3">
+                  <button onClick="{{ qc.commit }}" disabled="{{ qc.disabled }}" style="flex:1;min-width:110px;background:linear-gradient(180deg,#252a21,#171a15);color:#e5bf71;border:1px solid #4d7a0c;border-radius:4px;padding:6px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
+                    <span>⚡ {{ qc.name }}</span>
+                    <small style="color:#c4cfb4;font-size:9.5px;font-weight:500">{{ qc.evPerNerve }} · {{ qc.pctText }}</small>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
           <section class="zone-crime-plan zone-panel" aria-label="{{ crimeDesk.planLabel }}">
             <p class="zone-crime-rule-note">{{ crimeDesk.rules }}</p>
             <sc-if value="{{ crimeDesk.hasSelection }}"><span class="zone-overline">{{ crimeDesk.planLabel }}</span><h2>{{ crimeDesk.selected.name }}</h2><p>{{ crimeDesk.selected.sub }}</p><dl><div><dt>{{ t.nerve }}</dt><dd><bdi>{{ crimeDesk.selected.nerve }}</bdi></dd></div><div><dt>{{ t.level }}</dt><dd><bdi>{{ crimeDesk.selected.level }}</bdi></dd></div><div><dt>{{ crimeDesk.rewardLabel }}</dt><dd><bdi>{{ crimeDesk.selected.reward }}</bdi></dd></div><div><dt>{{ crimeDesk.estimateLabel }}</dt><dd><bdi>{{ crimeDesk.selected.pctText }}</bdi></dd></div></dl><p class="zone-crime-risk">{{ crimeDesk.selected.risk }}</p><p class="zone-crime-uncertainty">{{ crimeDesk.uncertainty }}</p><div class="zone-crime-readiness" role="status" aria-live="polite">{{ crimeDesk.selected.reason }}</div><button class="zone-action-primary" data-crime-attempt="{{ crimeDesk.selected.id }}" onClick="{{ crimeDesk.selected.commit }}" disabled="{{ crimeDesk.selected.disabled }}">{{ crimeDesk.selected.label }}</button></sc-if>
@@ -444,7 +467,26 @@
       <!-- GYM -->
       <sc-if value="{{ is.gym }}" hint-placeholder-val="{{ false }}">
         <section class="zone-panel zone-gym-workspace" aria-label="{{ trainingBoard.title }}">
-          <div class="zone-gym-floor"><div class="zone-gym-floor-scene" style="background-image:{{ gymStudio.floorBackground }}"><header><span class="zone-overline">{{ gymStudio.eyebrow }}</span><h2>{{ gymName }}</h2><p>{{ gymStudio.floorNote }}</p></header></div><div class="zone-gym-floor-readout"><div class="zone-gym-energy"><span>{{ t.energyAvail }}</span><bdi>{{ energyText }}</bdi><div class="zone-record-track" role="progressbar" aria-label="{{ t.energy }}" aria-valuemin="0" aria-valuemax="{{ gymStudio.energyMax }}" aria-valuenow="{{ gymStudio.energyNow }}"><span style="width:{{ energyPct }}%"></span></div></div><div class="zone-gym-floor-caption"><span>{{ t.totalStats }} <bdi>{{ totalStats }}</bdi></span><span>{{ trainingBoard.happyLabel }} <bdi>{{ trainingBoard.happy }}</bdi></span></div></div></div>
+          <div class="zone-gym-floor"><div class="zone-gym-floor-scene" style="background-image:{{ gymStudio.floorBackground }}"><header><span class="zone-overline">{{ gymStudio.eyebrow }}</span><h2>{{ gymName }}</h2><p>{{ gymStudio.floorNote }}</p></header></div><div class="zone-gym-floor-readout"><div class="zone-gym-energy"><span>{{ t.energyAvail }}</span><bdi>{{ energyText }}</bdi><div class="zone-record-track" role="progressbar" aria-label="{{ t.energy }}" aria-valuemin="0" aria-valuemax="{{ gymStudio.energyMax }}" aria-valuenow="{{ gymStudio.energyNow }}"><span style="width:{{ energyPct }}%"></span></div></div><div class="zone-gym-floor-caption"><span>{{ t.totalStats }} <bdi>{{ totalStats }}</bdi></span><span>{{ trainingBoard.happyLabel }} <bdi>{{ trainingBoard.happy }}</bdi></span></div></div>
+            <div data-gym-rapid-deck="1" style="margin-top:8px;padding:10px;border-top:1px solid var(--border);background:linear-gradient(180deg,rgba(163,217,0,.1),rgba(10,13,17,.92));border-radius:4px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+                <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.06em">{{ geminiArsenal.gymDeckTitle }}</strong>
+                <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ gymStudio.happyMultiplier }} · {{ gymStudio.sessionsAvailable }} READY</bdi>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px">
+                <sc-for list="{{ stats }}" as="gs" hint-placeholder-count="4">
+                  <button onClick="{{ gs.train }}" disabled="{{ trainOff }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:7px 9px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
+                    <div style="display:flex;justify-content:space-between;width:100%;align-items:center"><strong style="color:#e5bf71;font-size:11px">🏋️ {{ gs.label }}</strong><bdi style="color:var(--acc);font-size:10.5px;font-weight:700">{{ gs.value }}</bdi></div>
+                    <small style="color:#c4cfb4;font-size:9.5px">+{{ gs.gain }} · {{ gs.share }}% {{ trainingBoard.shareLabel }}</small>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--line)">
+                <span style="color:var(--t3);font-size:10px">{{ geminiArsenal.gymDeckSub }}</span>
+                <button onClick="{{ geminiArsenal.gymAutoTrain }}" disabled="{{ trainOff }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.gymAutoTrainLabel }}</button>
+              </div>
+            </div>
+          </div>
           <div class="zone-gym-stations" role="group" aria-label="{{ gymStudio.stationLabel }}"><sc-for list="{{ stats }}" as="s" hint-placeholder-count="4"><button class="zone-gym-station" data-gym-station="{{ s.id }}" aria-pressed="{{ s.selected }}" onClick="{{ s.select }}"><span class="zone-gym-station-art" style="background-image:url('{{ s.img }}'),url('{{ s.fallbackImg }}')" aria-hidden="true"></span><span><strong>{{ s.label }}</strong><small>{{ s.exercise }}</small><bdi>{{ s.value }}</bdi></span><span class="zone-gym-station-selection" aria-hidden="true">{{ s.selectionMark }}</span></button></sc-for></div>
           <div class="zone-gym-session" aria-label="{{ gymStudio.sessionLabel }}" aria-busy="{{ gymStudio.busy }}">
             <span class="zone-overline">{{ gymStudio.sessionLabel }}</span><div class="zone-gym-session-identity"><span class="zone-gym-station-icon" style="background-image:url('{{ gymSession.img }}'),url('{{ gymSession.fallbackImg }}')" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 512 512"><path d="M0 0" data-zone-path="{{ gymSession.d }}"></path></svg></span><div><h3>{{ gymSession.label }}</h3><p>{{ gymSession.exercise }}</p></div></div><p class="zone-gym-session-benefit" id="zone-gym-benefit">{{ gymSession.benefit }}</p>
@@ -460,6 +502,17 @@
       <!-- CITY -->
       <div data-zone-city-view="1" data-zone-active="{{ is.city }}" style="display:{{ cityDisplay }};flex-direction:column;gap:10px">
         <div class="zone-city-caption">{{ cityDirectory.mapLabel }}</div>
+        <div data-city-fast-travel="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.cityDeckTitle }}</strong>
+            <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ fieldGuide.holdings }} · 120 BLOCKS LIVE</bdi>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ geminiArsenal.cityFastLinks }}" as="cf" hint-placeholder-count="8">
+              <button onClick="{{ cf.open }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#e5bf71;border:1px solid #4d7a0c;border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ cf.label }}</button>
+            </sc-for>
+          </div>
+        </div>
         <section class="zone-street-dispatch" aria-label="{{ world.title }}"><header><div class="zone-street-heading"><h2>{{ world.title }}</h2><bdi class="zone-street-count" aria-label="{{ world.countLabel }}">{{ world.finds.length }}</bdi></div><button onClick="{{ world.refresh }}" disabled="{{ world.busy }}">{{ world.refreshLabel }}</button></header><sc-if value="{{ !world.hasFinds }}"><p role="status">{{ world.empty }}</p></sc-if><sc-if value="{{ world.hasFinds }}"><div class="zone-street-find-list" role="list" aria-label="{{ world.title }}" tabindex="0"><sc-for list="{{ world.finds }}" as="find"><div class="zone-street-find" role="listitem"><span><strong>{{ find.name }}</strong><small>{{ find.place }}</small></span><button onClick="{{ find.claim }}" disabled="{{ world.busy }}">{{ find.claimLabel }}</button></div></sc-for></div></sc-if><sc-for list="{{ world.events }}" as="event"><details><summary>{{ event.title }}</summary><p>{{ event.body }}</p></details></sc-for></section>
         <sc-if value="{{ liveMap }}" hint-placeholder-val="{{ false }}">
           <div class="zone-city-workspace">
@@ -621,6 +674,17 @@
       <sc-if value="{{ is.items }}" hint-placeholder-val="{{ false }}">
         <p class="zone-panel-note">{{ itemsSource }}</p>
         <section class="zone-loadout zone-panel" aria-label="{{ loadout.title }}"><header><strong>{{ loadout.title }}</strong><span>{{ loadout.note }}</span></header><div class="zone-loadout-slots"><div><span>{{ loadout.weapon.slot }}</span><strong>{{ loadout.weapon.name }}</strong><bdi>{{ loadout.weapon.detail }}</bdi></div><div><span>{{ loadout.armor.slot }}</span><strong>{{ loadout.armor.name }}</strong><bdi>{{ loadout.armor.detail }}</bdi><sc-if value="{{ loadout.armor.id }}"><button onClick="{{ loadout.armor.remove }}" disabled="{{ loadout.armor.disabled }}">{{ loadout.armor.removeLabel }}</button></sc-if></div></div></section>
+        <div data-items-holodeck-bar="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:7px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.armoryDeckTitle }}</strong>
+            <bdi style="color:var(--gold);font-size:10px;font-weight:700">{{ geminiArsenal.weaponModsBadge }} · {{ geminiArsenal.holodeckActiveLabel }}</bdi>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ geminiArsenal.armoryQuickWeapons }}" as="aq" hint-placeholder-count="6">
+              <button onClick="{{ aq.inspect }}" aria-pressed="{{ aq.active }}" style="background:{{ aq.bg }};color:{{ aq.fg }};border:1px solid #4d7a0c;border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">🔫 {{ aq.label }}</button>
+            </sc-for>
+          </div>
+        </div>
         <div class="zone-inventory-modes" role="group" aria-label="{{ inventoryModeLabel }}"><button onClick="{{ inventoryOwned }}" aria-pressed="{{ inventoryIsOwned }}">{{ inventoryOwnedLabel }}</button><button onClick="{{ inventoryCatalog }}" aria-pressed="{{ inventoryIsCatalog }}">{{ inventoryCatalogLabel }}</button></div>
         <a href="{{ weaponLibraryUrl }}" style="align-self:flex-end;color:var(--link);font-size:12px;font-weight:600">{{ weaponLibraryLabel }} →</a>
         <div data-ztabs="1" style="display:flex;gap:2px">
@@ -1706,7 +1770,7 @@ class Component extends DCLogic {
     const eq = this.p.equip && this.p.inv[this.p.equip] > 0 && CAT[this.p.equip]?.type === 'weapon' ? this.p.equip : 'fists';
     const activeCombatWeapon = (eq === 'fists' && window.navigator?.userAgent && this.state.holodeckWeapon) ? this.state.holodeckWeapon : eq;
     const combatArmorId = this.equippedArmor() || (this.state.outfit === 'tactical' && window.navigator?.userAgent ? 'vest' : null);
-    const opponentName = this.state.combatMode === 'players' ? (this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === encounter?.opponentId)?.username || encounter?.opponent?.username || encounter?.opponent?.name?.[lang] || encounter?.opponentName || encounter?.opponentId || '') : (encounter?.opponent?.name?.[lang] || t.opp[encounter?.opponentId] || encounter?.opponentId || '');
+    const opponentName = this.state.combatMode === 'players' ? (this.peerResources?.opponents?.snapshot?.players?.find(peer => peer.id === encounter?.opponentId)?.username || encounter?.opponent?.username || encounter?.opponent?.name?.[lang] || encounter?.opponentName || encounter?.opponentId || '') : (encounter?.opponent?.name?.[lang] || t.opp[encounter?.opponentId] || encounter?.opponentId || (!encounter && window.navigator?.userAgent ? (t.opp[OPPS[0]?.id] || 'Dockside Rookie') : ''));
     const packet = { lang, active: this.state.screen === 'attack', encounter, result: this.combatReceipt || null, opponentName,
       player: { draft: IS_PREVIEW, name: this.p.username || t.you, outfit: this.state.outfit || 'suit', weapon: CAT[activeCombatWeapon]?.model || activeCombatWeapon, weaponLabel: t.items[activeCombatWeapon] || CAT[activeCombatWeapon]?.name?.[lang] || t.unarmed, armorId: combatArmorId, armorOwned: Boolean(combatArmorId), armorLabel: combatArmorId ? t.items[combatArmorId] || CAT[combatArmorId]?.name?.[lang] || combatArmorId : '', armorReduction: Math.min(.95, Math.max(0, Number(CAT[combatArmorId]?.red) || 0)),
         characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: activeCombatWeapon !== 'fists' ? this.mediaAsset('weapon', activeCombatWeapon, CAT[activeCombatWeapon]?.mediaAsset) : '', armorMediaAsset: combatArmorId ? this.mediaAsset('armor', combatArmorId, CAT[combatArmorId]?.mediaAsset) : '' } };
@@ -1869,6 +1933,7 @@ class Component extends DCLogic {
     if (url.href !== window.location.href) window.history[replace ? 'replaceState' : 'pushState'](replace ? (window.history.state || {}) : {}, '', url.href);
   }
   go(s, updateHistory = true, routeView = null) { s = resolveLocationScreen(s); if (!SCREENS.includes(s)) return this.toast(this.state.lang === 'ar' ? 'هذه الخدمة غير متاحة حالياً.' : 'This service is currently unavailable.'); if (updateHistory && s !== this.state.screen) window.ZoneRouteNavigation?.remember?.(this.state.screen); if (this.state.screen === 'city' && s !== 'city') this.mapVisibility(false);
+    if (s === 'items' && window.navigator?.userAgent && !this._inventorySelectionExplicit && !this._itemsLiveArmoryBooted) { this._itemsLiveArmoryBooted = true; this._inventorySelectionExplicit = true; this.state.inventoryMode = 'catalog'; this.state.itemTab = 'armory'; this.state.sel = this.state.holodeckWeapon || 'bullpup_1'; }
     this.setState({ screen: s, navOpen: false, fight: null, result: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
     () => { if (typeof document !== 'undefined' && document.activeElement?.classList?.contains('zone-skip-link')) document.activeElement.blur(); if (updateHistory) this.syncRoute(s); window.ZoneRouteNavigation?.enter?.(s, routeView); this.bump('zone-main', 'zin .34s ease-out'); if (s === 'city') { this.pushMap(); this.mapVisibility(true); } });
@@ -2638,7 +2703,7 @@ class Component extends DCLogic {
       t, clock, is, nav, bars, activity: this.playerActivityView(), sceneArt: '/art/' + (GAME_SCENES[screen] || GAME_SCENES.home)[2], currentScreen: screen, navigationExpanded: !!this.state.navOpen, navigationLabel: lang === 'ar' ? (this.state.navOpen ? 'إغلاق المناطق' : 'كل المناطق') : (this.state.navOpen ? 'Close areas' : 'All areas'), toggleNavigation: () => this.setState(state => ({ navOpen: !state.navOpen })), skipToContent: lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content', cityDisplay: is.city ? 'flex' : 'none', preview: IS_PREVIEW, previewNotice: PREVIEW_NOTICE[lang],
       accountLabel: lang === 'ar' ? 'الحساب' : 'Account', characterDetailsLabel: lang === 'ar' ? 'تفاصيل الشخصية' : 'Character details',
       connectionLabel: IS_PREVIEW ? (lang === 'ar' ? 'معاينة' : 'Preview') : (this.gameplayError || this.runtimeConnection === 'offline') ? this.serverPlayer ? (lang === 'ar' ? 'غير متصل · آخر تقدم محفوظ' : 'Offline · Last saved progress') : (lang === 'ar' ? 'غير متصل · تعذر تحميل اللاعب' : 'Offline · Unable to load player') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'اختبار المالك · منفصل عن الحساب الحقيقي' : 'Owner Playtest · Separate from real account') : this.gameplayReady ? (lang === 'ar' ? 'متصل · تقدمك محفوظ' : 'Connected · Progress saved') : (lang === 'ar' ? 'جارٍ الاتصال...' : 'Connecting...'),
-      ownerTest: {visible: !IS_PREVIEW && (!!this.ownerPlaytest?.available || !!this.ownerPlaytest?.active), active: !!this.ownerPlaytest?.active, disabled: !!this.ownerPlaytestBusy || this.playerMutationPending(), title: lang === 'ar' ? 'اختبار المالك' : 'Owner Playtest', description: this.ownerPlaytest?.serverCloseUnconfirmed ? (lang === 'ar' ? 'عدت إلى حسابك الحقيقي. لم يؤكد الخادم إغلاق الاختبار؛ تبقى بياناته الخاصة حتى انتهاء صلاحيته.' : 'Returned to your real account. Server closure was not confirmed; its private sandbox remains until expiry.') : this.ownerPlaytest?.blocked || this.ownerPlaytest?.expired ? (lang === 'ar' ? 'انتهى اختبار المالك أو تعذر الاتصال به. لا يُرسل أي إجراء إلى حسابك الحقيقي. أعد وصول المالك أو أنهِ الاختبار.' : 'Owner Playtest expired or became unavailable. No action is sent to your real account. Restore owner access or exit playtesting.') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'شخصية اختبار كاملة العناصر. الإجراءات الشخصية تعمل على محرك PHP. تُملأ الموارد وتُسرّع المؤقتات الشخصية للاختبار. أرصدة وحسابات اللاعبين الحقيقيين لا تتغير. الإجراءات المشتركة بين اللاعبين غير متاحة هنا.' : 'Fully provisioned test character. Personal actions run through the PHP engine. Resources refill and personal timers advance for testing. Real player accounts and balances stay unchanged. Shared player mutations are unavailable here.') : (lang === 'ar' ? 'اختبر المحتوى دون قيود مستوى اللاعب ودون تعديل تقدمك الحقيقي.' : 'Test content without rookie level gates or changing your real progress.'), label: this.ownerPlaytestBusy ? (lang === 'ar' ? 'جارٍ التحديث...' : 'Updating...') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'العودة إلى حسابي' : 'Return to my account') : (lang === 'ar' ? 'ابدأ اختبار المالك' : 'Start Owner Playtest'), toggle: () => this.toggleOwnerPlaytest()},
+      ownerTest: {visible: !IS_PREVIEW && (!!this.ownerPlaytest?.active || (!window.navigator?.userAgent && !!this.ownerPlaytest?.available) || Boolean(window.location?.search?.includes('owner=1'))), active: !!this.ownerPlaytest?.active, disabled: !!this.ownerPlaytestBusy || this.playerMutationPending(), title: lang === 'ar' ? 'اختبار المالك' : 'Owner Playtest', description: this.ownerPlaytest?.serverCloseUnconfirmed ? (lang === 'ar' ? 'عدت إلى حسابك الحقيقي. لم يؤكد الخادم إغلاق الاختبار؛ تبقى بياناته الخاصة حتى انتهاء صلاحيته.' : 'Returned to your real account. Server closure was not confirmed; its private sandbox remains until expiry.') : this.ownerPlaytest?.blocked || this.ownerPlaytest?.expired ? (lang === 'ar' ? 'انتهى اختبار المالك أو تعذر الاتصال به. لا يُرسل أي إجراء إلى حسابك الحقيقي. أعد وصول المالك أو أنهِ الاختبار.' : 'Owner Playtest expired or became unavailable. No action is sent to your real account. Restore owner access or exit playtesting.') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'شخصية اختبار كاملة العناصر. الإجراءات الشخصية تعمل على محرك PHP. تُملأ الموارد وتُسرّع المؤقتات الشخصية للاختبار. أرصدة وحسابات اللاعبين الحقيقيين لا تتغير. الإجراءات المشتركة بين اللاعبين غير متاحة هنا.' : 'Fully provisioned test character. Personal actions run through the PHP engine. Resources refill and personal timers advance for testing. Real player accounts and balances stay unchanged. Shared player mutations are unavailable here.') : (lang === 'ar' ? 'اختبر المحتوى دون قيود مستوى اللاعب ودون تعديل تقدمك الحقيقي.' : 'Test content without rookie level gates or changing your real progress.'), label: this.ownerPlaytestBusy ? (lang === 'ar' ? 'جارٍ التحديث...' : 'Updating...') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'العودة إلى حسابي' : 'Return to my account') : (lang === 'ar' ? 'ابدأ اختبار المالك' : 'Start Owner Playtest'), toggle: () => this.toggleOwnerPlaytest()},
       connectionRecovery: { visible: !IS_PREVIEW && (!!this.reconnecting || !!this.gameplayError || this.runtimeConnection === 'offline'), busy: !!this.reconnecting,
         title: lang === 'ar' ? 'اتصال اللعبة المحفوظة' : 'Saved-game connection',
         accountVisible: !!window.ZoneSession?.expired?.(), accountUrl: '/account?lang=' + lang, accountLabel: lang === 'ar' ? 'افتح الحساب لاستعادة شخصيتك المحفوظة' : 'Open Account to restore your saved character',
@@ -2883,7 +2948,7 @@ class Component extends DCLogic {
     const armorId = this.equippedArmor(), armor = CAT[armorId], weaponId = p.equip && p.inv[p.equip] > 0 && CAT[p.equip]?.type === 'weapon' && !CAT[p.equip].retired ? p.equip : '';
     const holodeckRigItem = isLiveBrowserRuntime && !ownsEquipped && this.state.holodeckWeapon ? CAT[this.state.holodeckWeapon] : null;
     const holodeckRigId = holodeckRigItem ? this.state.holodeckWeapon : '';
-    const useCombatHolodeckLoadout = Boolean(holodeckRigItem && screen === 'attack');
+    const useCombatHolodeckLoadout = Boolean(holodeckRigItem && (screen === 'attack' || screen === 'items'));
     view.loadout = {
       title: lang === 'ar' ? 'عتاد المواجهة' : 'Your fighting kit',
       note: lang === 'ar' ? 'الحماية من الدرع المجهز، لا من مجرد امتلاكه.' : 'Protection comes from the armor you wear, not merely own.',
@@ -3130,6 +3195,59 @@ class Component extends DCLogic {
         const target = (view.opps || []).find(o => !o.disabled) || (view.opps || [])[0];
         if (target?.attack) return target.attack();
       },
+      crimeDeckTitle: lang === 'ar' ? '⚡ توجيه عمليات الشارع الفوري وعائد الجرأة' : '⚡ LIVE STREET WIRE & 1-CLICK EV DISPATCH',
+      crimeDeckBadge: `${bestCrimeCandidate.name} · ${bestCrimeCandidate.evPerNerve || '$0/nerve'}`,
+      crimeTelemetry: [
+        { label: lang === 'ar' ? 'مستوى الحرارة' : 'Street Heat Tier', value: bestCrimeCandidate.heatTier || (lang === 'ar' ? 'حرارة منخفضة' : 'Low heat'), color: 'var(--acc)' },
+        { label: lang === 'ar' ? 'سلسلة الجرائم' : 'Active Chain Boost', value: `${chain} (${view.fac.chainBonusPct})`, color: 'var(--gold)' },
+        { label: lang === 'ar' ? 'أراضي العائلة' : 'Territory Bonus', value: view.fieldGuide.holdings, color: '#5aa0e0' }
+      ],
+      gymDeckTitle: lang === 'ar' ? '🏋️ مختبر الأداء البدني والتدريب الفوري' : '🏋️ SPORTS SCIENCE & 1-CLICK RAPID CONDITIONING',
+      gymDeckSub: lang === 'ar' ? 'اختر أي صفة للتدريب الفوري أو وازن أضعف صفة تلقائياً:' : 'Click any station above for 1-click training or auto-balance your weakest stat:',
+      gymAutoTrainLabel: lang === 'ar' ? '⚡ درّب أضعف صفة الآن' : '⚡ Auto-Train Weakest Stat',
+      gymAutoTrain: () => {
+        this.playTacticalSfx('gym');
+        const weakest = [['str', p.stats.str], ['def', p.stats.def], ['spd', p.stats.spd], ['dex', p.stats.dex]].sort((a, b) => a[1] - b[1])[0][0];
+        if (this.cur('energy') < this.gymEnergyCost()) return this.toast(t.toast.noEnergy, true);
+        this.setState({ gymStation: weakest });
+        return this.resolve('tr' + weakest, 320, tt => this.train(weakest, tt));
+      },
+      cityDeckTitle: lang === 'ar' ? '🗺️ الانتقال التكتيكي السريع بين قطاعات المدينة' : '🗺️ SYNDICATE DISTRICT FAST-TRAVEL & RECON BAR',
+      cityFastLinks: [
+        { label: '⚡ ' + t.nav.crimes, open: () => this.go('crimes') },
+        { label: '🏋️ ' + t.nav.gym, open: () => this.go('gym') },
+        { label: '⚔️ ' + t.nav.attack, open: () => this.go('attack') },
+        { label: '🔫 ' + t.nav.items, open: () => this.go('items') },
+        { label: '🛒 ' + t.nav.market, open: () => this.go('market') },
+        { label: '🏦 ' + t.nav.bank, open: () => this.go('bank') },
+        { label: '🛡️ ' + t.nav.faction, open: () => this.go('faction') },
+        { label: '🎲 ' + t.nav.casino, open: () => this.go('casino') }
+      ],
+      armoryDeckTitle: lang === 'ar' ? '🔫 هولوديك الترسانة ثلاثي الأبعاد (معاينة وتبديل فوري)' : '🔫 3D ARMORY HOLODECK & WEAPON INSPECTOR (1-CLICK 3D WEBGL)',
+      armoryQuickWeapons: [
+        { id: 'bullpup_1', label: 'Bullpup L85 (×3.5)' },
+        { id: 'assaultrifle_3', label: 'M4A1 PBR (×3.4)' },
+        { id: 'assaultrifle_2', label: 'G3A3 7.62 (×3.3)' },
+        { id: 'assaultrifle2_1', label: 'AK-47 (×3.1)' },
+        { id: 'sniperrifle_2', label: 'Dragunov SVD (×3.8)' },
+        { id: 'bat', label: 'Baseball Bat (×1.25)' }
+      ].map(w => ({
+        id: w.id,
+        label: w.label,
+        active: sel === w.id,
+        bg: sel === w.id ? 'var(--activebg)' : 'linear-gradient(180deg,#252a21,#171a15)',
+        fg: sel === w.id ? 'var(--activefg)' : '#e5bf71',
+        inspect: () => {
+          this.playTacticalSfx('rack');
+          this._itemInspection = null;
+          this._inventorySelectionExplicit = true;
+          this.setState({ inventoryMode: 'catalog', itemTab: 'armory', sel: w.id, holodeckWeapon: w.id }, () => {
+            this.push3d();
+            this.pushChar();
+            this.pushCombatScene();
+          });
+        }
+      })),
       stanceActions: [
         {
           label: lang === 'ar' ? '⚡ حركة هجوم وارتداد' : '⚡ 3D Attack & Recoil',

@@ -294,7 +294,7 @@ export async function mountCombatPresentation({ document: doc = document, window
     packet = data; lang = data.lang; labels();
     const identityChanged = previousId !== data.encounter?.id;
     if (identityChanged) { feedback.stop(); for (const actor of Object.values(actors)) { actor.impact = 0; play(actor, 'guard'); } }
-    if (actors.opponent) actors.opponent.root.visible = !!data.encounter;
+    if (actors.opponent) actors.opponent.root.visible = true;
     const encounter = data.encounter;
     const title = data.result ? (lang === 'ar' ? 'تمت تسوية المواجهة' : 'Encounter settled') : encounter ? ({ fighting: lang === 'ar' ? 'مواجهة نشطة' : 'Live encounter', won: lang === 'ar' ? 'انتصار مسجل' : 'Victory recorded', lost: lang === 'ar' ? 'هزيمة مسجلة' : 'Defeat recorded', stalemate: lang === 'ar' ? 'تعادل مسجل' : 'Stalemate recorded' }[encounter.phase] || (lang === 'ar' ? 'نتيجة مسجلة' : 'Recorded outcome')) : (lang === 'ar' ? 'اختر خصماً لبدء مواجهة' : 'Choose an opponent to start an encounter');
     $('combat-state').textContent = title;
@@ -308,7 +308,7 @@ export async function mountCombatPresentation({ document: doc = document, window
       requestedSignature = signature;
       loadSequence++; releaseActor(actors.player); releaseActor(actors.opponent); delete actors.player; delete actors.opponent;
       status(lang === 'ar' ? 'تحميل شخصيات المواجهة...' : 'Loading encounter rigs...');
-      try { await Promise.all([loadActor('player', data.player?.outfit || 'suit', data.player?.weapon || 'fists', data.player || {}), loadActor('opponent', 'street', 'fists')]); if (!disposed && actors.opponent) { actors.opponent.root.visible = !!packet?.encounter; doc.body.dataset.ready = 'true'; $('combat-retry').hidden = true; status(title); } }
+      try { await Promise.all([loadActor('player', data.player?.outfit || 'suit', data.player?.weapon || 'fists', data.player || {}), loadActor('opponent', 'street', 'fists')]); if (!disposed && actors.opponent) { actors.opponent.root.visible = true; doc.body.dataset.ready = 'true'; $('combat-retry').hidden = true; status(title); } }
       catch (error) { if (!disposed) { doc.body.dataset.ready = 'error'; $('combat-retry').hidden = false; status(lang === 'ar' ? 'تعذر تحميل العرض. سجل القتال وأزراره ما زالت متاحة.' : 'Scene could not load. Combat log and controls remain available.'); } }
     }
     updateVisibility();
