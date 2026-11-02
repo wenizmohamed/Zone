@@ -568,7 +568,7 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[-73.9863,40.6981],zoom:16.05,pitch:44,bearing:-61});}}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -775,7 +775,7 @@ initializeMapLocale();
     holdingMarkers.forEach(function(item){item.marker.remove();});holdingMarkers=[];
     if(mapMode!=='territories'){ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);return;}
     var representedFamilies=new Set();
-    ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
+    if(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&factionFocus===null&&(!map.getZoom||map.getZoom()>=15.5)))ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
       var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId;button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?' · '+esc(C('contested')):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
       button.className+=' overview';

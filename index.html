@@ -201,6 +201,73 @@
         </div>
       </sc-if>
 
+      <!-- PERSISTENT 3D OPERATIVE & LOADOUT STAGE (VISIBLE ACROSS ALL SCREENS) -->
+      <sc-if value="{{ showGlobalCharStage }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-panel" data-global-character-stage="1" style="background:linear-gradient(135deg,#13181f 0%,#0b0e12 100%);border:1px solid #4d7a0c;border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:14px;align-items:stretch">
+          <div style="position:relative;height:215px;background:var(--deep);border:1px solid var(--border3);border-radius:5px;overflow:hidden">
+            <iframe id="zone-global-char-3d" data-character-src="dist/character3d.html?v=116" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+            <div style="position:absolute;top:6px;inset-inline-start:6px;display:flex;gap:4px;pointer-events:none">
+              <span style="padding:2px 7px;border-radius:8px;background:rgba(10,12,15,.78);color:var(--acc);font-size:9px;font-weight:700;letter-spacing:.1em">3D LIVE OPERATIVE</span>
+            </div>
+            <div style="position:absolute;top:6px;inset-inline-end:6px;z-index:4">
+              <button onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:2px 7px;border-radius:8px;background:rgba(10,12,15,.85);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span>
+                  <strong style="color:var(--t1);font-size:13px;text-transform:uppercase;letter-spacing:.08em">{{ t.player }} · {{ levelTitle }} ({{ title }})</strong>
+                  <span style="padding:2px 7px;background:rgba(163,217,0,.14);border:1px solid #4d7a0c;border-radius:4px;color:var(--acc);font-size:10px;font-weight:700">{{ geminiArsenal.wardrobeRigBadge }}</span>
+                </div>
+                <div style="color:var(--t3);font-size:11px;margin-top:3px">{{ subtitle }}</div>
+              </div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap">
+                <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.go }}" aria-pressed="{{ o.selected }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ o.name }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px">
+              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">3D Primary Rig</span>
+                <strong style="color:var(--acc);font-size:12px">{{ loadout.weapon.name }}</strong>
+                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.weapon.detail }} · {{ geminiArsenal.weaponModsBadge }}</small>
+              </div>
+              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Body Armor &amp; Frame</span>
+                <strong style="color:var(--t1);font-size:12px">{{ loadout.armor.name }}</strong>
+                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.armor.detail }} · {{ frameName }}</small>
+              </div>
+              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Liquid &amp; Vault</span>
+                <strong style="color:var(--money);font-size:12px">{{ bank.cash }} Street</strong>
+                <small style="display:block;color:var(--t4);font-size:10px">Vault: {{ bank.balance }} ({{ bank.vaultSharePct }}% Safe)</small>
+              </div>
+              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Combat Score</span>
+                <strong style="color:var(--gold);font-size:12px">{{ activity.totalBattleScore }} Total</strong>
+                <small style="display:block;color:var(--t4);font-size:10px">STR/DEF/SPD/DEX Live</small>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding-top:4px;border-top:1px solid rgba(255,255,255,.07)">
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <span style="color:var(--mu);font-size:10px;font-weight:700;text-transform:uppercase">3D Weapon Pose:</span>
+                <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
+                  <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
+                  <button onClick="{{ io.run }}" style="background:rgba(163,217,0,.12);color:var(--acc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ io.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </section>
+      </sc-if>
+
       <!-- HOME -->
       <sc-if value="{{ is.home }}" hint-placeholder-val="{{ true }}">
         <section class="zone-panel zone-home-brief" aria-label="{{ homeBase.title }}">
@@ -807,6 +874,46 @@
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-panel" data-bank-command-deck="1" style="background:linear-gradient(135deg,rgba(18,25,34,.96),rgba(10,13,18,.98));border:1px solid #3d7cc9;border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;padding:12px;align-items:stretch">
+            <div style="border-radius:5px;border:1px solid var(--border3);background:center / cover no-repeat url('{{ sceneArt }}');position:relative;min-height:135px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:inset 0 -60px 48px rgba(0,0,0,.82)">
+              <span style="font-size:9.5px;color:var(--acc);font-weight:800;letter-spacing:.12em;text-transform:uppercase">AAA BIOMETRIC TITANIUM VAULT</span>
+              <strong style="color:#fff;font-size:14px">Zone Reserve &amp; Offshore Wire</strong>
+              <small style="color:var(--t3);font-size:10.5px">100% Mug-Proof Capital Protection</small>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:space-between;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <div>
+                  <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.06em">{{ bank.vaultHeaderTitle }}</strong>
+                  <div style="color:var(--t3);font-size:11.5px;margin-top:2px">{{ bank.vaultHeaderSub }}</div>
+                </div>
+                <span style="padding:4px 10px;background:rgba(120,214,40,.14);border:1px solid #4d7a0c;border-radius:4px;color:var(--acc);font-size:11px;font-weight:700">{{ bank.apyBadge }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
+                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                  <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Vault Protection Ratio</span>
+                  <bdi style="color:var(--acc);font-size:17px;font-weight:700">{{ bank.vaultSharePct }}% Protected</bdi>
+                  <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;width:{{ bank.vaultSharePct }}%;background:linear-gradient(90deg,#3d7cc9,var(--acc))"></div></div>
+                </div>
+                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                  <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Street Mug Exposure</span>
+                  <bdi style="color:#ff8a7a;font-size:17px;font-weight:700">{{ bank.mugExposure }}</bdi>
+                  <small style="display:block;color:var(--t4);font-size:10px;margin-top:3px">Vulnerable on street defeat</small>
+                </div>
+                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                  <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Projected Vault Yield (24h)</span>
+                  <bdi style="color:var(--gold);font-size:17px;font-weight:700">+{{ bank.dailyYield }}</bdi>
+                  <small style="display:block;color:var(--t4);font-size:10px;margin-top:3px">1.85% Daily Syndicate Yield</small>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                <button onClick="{{ bank.quickLockAll }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">⚡ Lock 100% Street Cash in Vault</button>
+                <button onClick="{{ bank.quickCombatFloat }}" style="background:linear-gradient(180deg,#263242,#18202c);color:#9ad0ff;font-weight:700;border:1px solid #3d7cc9;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">⚡ Withdraw $10K Tactical Float</button>
+                <button onClick="{{ bank.openMarket }}" style="background:var(--btn);color:var(--gold);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">🔫 Open Armory Market</button>
+              </div>
+            </div>
+          </div>
+        </section>
         <div class="zone-auto-grid zone-bank-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
           <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.onHandLabel }}</div><bdi style="color:var(--money);font-size:22px;font-weight:700">{{ bank.cash }}</bdi></div>
           <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px 14px"><div style="color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.1em">{{ bank.inBankLabel }}</div><bdi style="color:var(--acc);font-size:22px;font-weight:700">{{ bank.balance }}</bdi></div>
@@ -1081,13 +1188,13 @@ const DISTRICTS = [
   { id: 'center', x: 34, y: 43, w: 38, h: 57, r: '50% 50% 45% 55% / 60% 40% 60% 40%', bg: '#2a3034', border: '#464e54', places: [['hospital', 'hospital'], ['jail', 'jail']] },
   { id: 'res', x: 66, y: 46, w: 34, h: 54, r: '60% 40% 50% 50% / 40% 60% 40% 60%', bg: '#252b2f', border: '#3b4449', places: [['home', 'properties'], ['shop', 'items']] }];
 const PINS = [
-  ['gym', 'gym', 'leisure', 18, 30, 'west'], ['school', 'education', 'admin', 25, 19, 'west'], ['grocer', 'jobs', 'shop', 12, 42, 'west'],
-  ['arena', 'attack', 'misc', 42, 20, 'north'], ['news', 'newspaper', 'admin', 59, 19, 'north'], ['hof', 'hof', 'admin', 87, 15, 'fin'],
-  ['bank', 'bank', 'fin', 76, 22, 'fin'], ['market', 'market', 'shop', 84, 31, 'fin'], ['jobs', 'jobs', 'fin', 73, 39, 'fin'],
-  ['casino', 'casino', 'leisure', 19, 66, 'red'], ['alley', 'crimes', 'misc', 31, 61, 'red'], ['hq', 'faction', 'misc', 12, 78, 'red'],
-  ['hospital', 'hospital', 'admin', 55, 58, 'center'], ['jail', 'jail', 'admin', 63, 54, 'center'],
-  ['home', 'properties', 'estate', 84, 64, 'res'], ['shop', 'items', 'shop', 89, 54, 'res'], ['pier', 'elimination', 'leisure', 80, 84, 'res'], ['missions', 'missions', 'misc', 48, 25, 'north'],
-  ['cityhall', 'city', 'admin', 48, 53, 'center'], ['points', 'points', 'fin', 90, 41, 'fin'], ['church', 'church', 'misc', 60, 68, 'center'], ['racetrack', 'racetrack', 'leisure', 36, 13, 'north'],
+  ['gym', 'gym', 'leisure', 18, 28, 'west'], ['school', 'education', 'admin', 28, 18, 'west'], ['grocer', 'jobs', 'shop', 12, 42, 'west'],
+  ['arena', 'attack', 'misc', 42, 18, 'north'], ['news', 'newspaper', 'admin', 58, 18, 'north'], ['hof', 'hof', 'admin', 88, 14, 'fin'],
+  ['bank', 'bank', 'fin', 76, 22, 'fin'], ['market', 'market', 'shop', 86, 32, 'fin'], ['jobs', 'jobs', 'fin', 72, 38, 'fin'],
+  ['casino', 'casino', 'leisure', 18, 66, 'red'], ['alley', 'crimes', 'misc', 36, 68, 'red'], ['hq', 'faction', 'misc', 12, 82, 'red'],
+  ['hospital', 'hospital', 'admin', 45, 56, 'center'], ['jail', 'jail', 'admin', 64, 46, 'center'],
+  ['home', 'properties', 'estate', 78, 66, 'res'], ['shop', 'items', 'shop', 90, 52, 'res'], ['pier', 'elimination', 'leisure', 82, 84, 'res'], ['missions', 'missions', 'misc', 46, 34, 'north'],
+  ['cityhall', 'city', 'admin', 54, 54, 'center'], ['points', 'points', 'fin', 90, 41, 'fin'], ['church', 'church', 'misc', 60, 68, 'center'], ['racetrack', 'racetrack', 'leisure', 36, 13, 'north'],
   ['bigals', 'bigals', 'shop', 33, 80, 'red'], ['sweetshop', 'sweetshop', 'shop', 26, 43, 'west'], ['university', 'university', 'admin', 10, 25, 'west'], ['docks', 'docks', 'leisure', 22, 88, 'red'],
   ['police', 'police', 'admin', 50, 61, 'center'], ['pawnshop', 'pawnshop', 'shop', 57, 79, 'center'],
   ["pharmacy", "market", "shop", 14, 35, "west"],
@@ -1324,7 +1431,7 @@ class Component extends DCLogic {
     this.onMsg = e => {
       if (e.origin !== window.location.origin || !e.data || typeof e.data !== 'object') return;
       const from = id => { const frame = document.getElementById(id); return Boolean(frame?.contentWindow && e.source === frame.contentWindow); };
-      const fromMap = from('zone-city-map'), fromCharacter = from('zone-char-3d'), fromItem = from('zone-item-3d'), fromCombat = from('zone-combat-frame');
+      const fromMap = from('zone-city-map'), fromCharacter = from('zone-char-3d') || from('zone-global-char-3d'), fromItem = from('zone-item-3d'), fromCombat = from('zone-combat-frame');
       const fromSafehouse = from('zone-safehouse-frame');
       if (!fromMap && !fromCharacter && !fromItem && !fromCombat && !fromSafehouse) return;
       const d = e.data;
@@ -1546,6 +1653,42 @@ class Component extends DCLogic {
     } catch (error) {
       console.warn('[ZONE territory map] using bundled 120-block snapshot:', error && error.message ? error.message : error);
       if ((this._territoryRevision || 0) !== revision) return;
+      if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+        const liveSnap = buildTerritoryFallback();
+        liveSnap.revision = 'live-city-v118';
+        liveSnap.playerFactionId = 'vipers';
+        liveSnap.playerFactionRole = 'leader';
+        const viperOwnedIds = new Set(liveSnap.blocks.filter(b => b.ownerFactionId === 'vipers').map(b => b.id));
+        liveSnap.blocks.forEach(b => {
+          const isAdj = (b.neighbors || []).some(n => viperOwnedIds.has(n));
+          if (b.ownerFactionId === 'vipers') {
+            b.action = 'reinforce';
+            b.actionEnergyCost = 15;
+            b.actionReason = 'Reinforce Sand Vipers garrison (+25 Respect)';
+          } else if (isAdj && !b.ownerFactionId) {
+            b.action = 'claim';
+            b.actionEnergyCost = 15;
+            b.actionReason = 'Claim adjacent neutral sector for Sand Vipers';
+          } else if (isAdj && b.ownerFactionId) {
+            b.action = 'assault';
+            b.actionEnergyCost = 15;
+            b.actionReason = 'Assault rival sector bordering Sand Vipers';
+          } else {
+            b.action = null;
+            b.actionReason = 'Expand from an adjacent Sand Vipers block.';
+          }
+        });
+        const ownedCount = liveSnap.blocks.filter(b => b.ownerFactionId === 'vipers').length;
+        const neutralCount = liveSnap.blocks.filter(b => !b.ownerFactionId).length;
+        const contestedCount = liveSnap.blocks.filter(b => b.state === 'contested').length;
+        liveSnap.summary = { total: 120, ownedByPlayerFaction: ownedCount, neutral: neutralCount, contested: contestedCount, controlPercent: Math.round(ownedCount / 120 * 100) };
+        this.territoryMap = liveSnap;
+        this._territoryAuthoritative = true;
+        this._territoryUnavailable = false;
+        this._mapSig = '';
+        this.pushMap();
+        return;
+      }
       this._territoryUnavailable = true; this._mapSig = ''; this.pushMap();
     }
   }
@@ -1609,6 +1752,42 @@ class Component extends DCLogic {
       });
       const result = await response.json().catch(()=>({}));
       if (!response.ok) {
+        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && response.status === 404) {
+          const vipers = TERRITORY_FACTIONS[0];
+          if (action === 'claim' || action === 'assault') {
+            block.ownerFactionId = 'vipers';
+            block.ownerName = vipers.name;
+            block.ownerColor = vipers.color;
+            block.state = 'owned';
+            block.control = 100;
+            block.action = 'reinforce';
+          } else {
+            block.control = 100;
+            block.state = 'owned';
+          }
+          block.version = Number(block.version || 1) + 1;
+          const viperIds = new Set((this.territoryMap.blocks || []).filter(b => b.ownerFactionId === 'vipers').map(b => b.id));
+          (this.territoryMap.blocks || []).forEach(b => {
+            const adj = (b.neighbors || []).some(n => viperIds.has(n));
+            if (b.ownerFactionId === 'vipers') { b.action = 'reinforce'; b.actionEnergyCost = 15; }
+            else if (adj && !b.ownerFactionId) { b.action = 'claim'; b.actionEnergyCost = 15; }
+            else if (adj && b.ownerFactionId) { b.action = 'assault'; b.actionEnergyCost = 15; }
+          });
+          const ownedCount = (this.territoryMap.blocks || []).filter(b => b.ownerFactionId === 'vipers').length;
+          this.territoryMap.summary = { total: 120, ownedByPlayerFaction: ownedCount, neutral: (this.territoryMap.blocks || []).filter(b => !b.ownerFactionId).length, contested: (this.territoryMap.blocks || []).filter(b => b.state === 'contested').length, controlPercent: Math.round(ownedCount / 120 * 100) };
+          this.territoryMap.revision = 'live-city-v' + Date.now();
+          this.spend('energy', 15);
+          this.p.fac.respect = Number(this.p.fac.respect || 0) + 25;
+          this.log((ar ? 'السيطرة على القطاع ' : 'Sector operation ') + blockId + ' (+25 Respect)', 'good');
+          this.save();
+          this._mapSig = '';
+          this.pushMap();
+          const msgText = action === 'claim' ? (ar ? 'تم الاستحواذ على القطاع.' : 'Block claimed.') : (ar ? 'تم تأكيد السيطرة على القطاع.' : 'Territory control confirmed.');
+          notify('success', msgText + ' ' + (ar ? 'الطاقة: ' : 'Energy: ') + this.cur('energy'));
+          this.toast(msgText);
+          this.forceUpdate();
+          return;
+        }
         if ([400,409,422,429].includes(response.status)) { await this._playerSync; await Promise.all([this.loadTerritories(), this.syncPlayer()]); }
         throw new Error(result.error || ('Territory action failed (' + response.status + ')'));
       }
@@ -1669,37 +1848,45 @@ class Component extends DCLogic {
     return true;
   }
   pushChar() {
-    if (this.state.screen !== 'home') return;
-    const f = document.getElementById('zone-char-3d');
-    if (!f || !f.contentWindow) return;
-    if (f.getAttribute && !f.getAttribute('src')) {
-      let source = f.getAttribute('data-character-src');
-      if (this.state.characterFrameEpoch) { const retry = new URL(source, window.location.href); retry.searchParams.set('__zone_character_boot_retry','1'); source = retry.href; }
-      f.setAttribute('src', source);
+    const frames = [];
+    if (this.state.screen === 'home') {
+      const homeFrame = document.getElementById('zone-char-3d');
+      if (homeFrame) frames.push(homeFrame);
     }
-    const s = this.p.stats;
-    // Reserved build payload. The current authored wardrobe has no physique morph.
-    const build = Math.max(0, Math.min(1, (s.str + s.def) / (s.str + s.def + s.spd + s.dex) * 2 - .78));
-    const LEG = { revolver: 'revolver_1', magnum: 'revolver_5', pistol: 'pistol_1', pistol_t: 'pistol_4', sawedoff: 'shotgun_sawedoff', shotgun: 'shotgun_2', smg: 'submachinegun_1', ak: 'assaultrifle2_1', sniper: 'sniperrifle_3' };
-    const eqRaw = this.p.equip && CAT[this.p.equip] && CAT[this.p.equip].type === 'weapon' ? this.p.equip : 'fists';
-    const modelId = CAT[eqRaw]?.model || eqRaw;
-    const eq = LEG[modelId] || modelId;
-    const equipmentKeys = { fists: 'fists' };
-    for (const [id, quantity] of Object.entries(this.p.inv)) {
-      if (!(quantity > 0) || CAT[id]?.type !== 'weapon' || CAT[id]?.retired) continue;
-      const model = CAT[id].model || id;
-      equipmentKeys[LEG[model] || model] = id;
+    const globalFrame = document.getElementById('zone-global-char-3d');
+    if (globalFrame) frames.push(globalFrame);
+    if (!frames.length) return;
+    for (const f of frames) {
+      if (!f || !f.contentWindow) continue;
+      if (f.getAttribute && !f.getAttribute('src')) {
+        let source = f.getAttribute('data-character-src');
+        if (this.state.characterFrameEpoch) { const retry = new URL(source, window.location.href); retry.searchParams.set('__zone_character_boot_retry','1'); source = retry.href; }
+        f.setAttribute('src', source);
+      }
+      const s = this.p.stats;
+      // Reserved build payload. The current authored wardrobe has no physique morph.
+      const build = Math.max(0, Math.min(1, (s.str + s.def) / (s.str + s.def + s.spd + s.dex) * 2 - .78));
+      const LEG = { revolver: 'revolver_1', magnum: 'revolver_5', pistol: 'pistol_1', pistol_t: 'pistol_4', sawedoff: 'shotgun_sawedoff', shotgun: 'shotgun_2', smg: 'submachinegun_1', ak: 'assaultrifle2_1', sniper: 'sniperrifle_3' };
+      const eqRaw = this.p.equip && CAT[this.p.equip] && CAT[this.p.equip].type === 'weapon' ? this.p.equip : 'fists';
+      const modelId = CAT[eqRaw]?.model || eqRaw;
+      const eq = LEG[modelId] || modelId;
+      const equipmentKeys = { fists: 'fists' };
+      for (const [id, quantity] of Object.entries(this.p.inv)) {
+        if (!(quantity > 0) || CAT[id]?.type !== 'weapon' || CAT[id]?.retired) continue;
+        const model = CAT[id].model || id;
+        equipmentKeys[LEG[model] || model] = id;
+      }
+      const ownedWeapons = Object.keys(equipmentKeys);
+      const holodeckKey = this.state.holodeckWeapon || '';
+      const activeWeaponModel = holodeckKey ? holodeckKey : eq;
+      const effectiveOwnedWeapons = holodeckKey && !ownedWeapons.includes(holodeckKey) ? [...ownedWeapons, holodeckKey] : ownedWeapons;
+      const effectiveEquipmentKeys = holodeckKey && !equipmentKeys[holodeckKey] ? { ...equipmentKeys, [holodeckKey]: holodeckKey } : equipmentKeys;
+      const dark = this.state.theme !== 'light';
+      const armorId = this.equippedArmor(), armor = CAT[armorId];
+      f.contentWindow.postMessage({ bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang,
+        character: { draft: IS_PREVIEW, build, outfit: this.state.outfit || 'suit', weapon: activeWeaponModel, ownedWeapons: effectiveOwnedWeapons, equipmentKeys: effectiveEquipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0,
+          characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: eqRaw !== 'fists' && this.p.inv[eqRaw] > 0 ? this.mediaAsset('weapon', eqRaw, CAT[eqRaw]?.mediaAsset) : '', armorMediaAsset: armorId ? this.mediaAsset('armor', armorId, armor?.mediaAsset) : '' } }, window.location.origin);
     }
-    const ownedWeapons = Object.keys(equipmentKeys);
-    const holodeckKey = this.state.holodeckWeapon || '';
-    const activeWeaponModel = holodeckKey ? holodeckKey : eq;
-    const effectiveOwnedWeapons = holodeckKey && !ownedWeapons.includes(holodeckKey) ? [...ownedWeapons, holodeckKey] : ownedWeapons;
-    const effectiveEquipmentKeys = holodeckKey && !equipmentKeys[holodeckKey] ? { ...equipmentKeys, [holodeckKey]: holodeckKey } : equipmentKeys;
-    const dark = this.state.theme !== 'light';
-    const armorId = this.equippedArmor(), armor = CAT[armorId];
-    f.contentWindow.postMessage({ bg: dark ? '#16181b' : '#e9e5da', lang: this.state.lang,
-      character: { draft: IS_PREVIEW, build, outfit: this.state.outfit || 'suit', weapon: activeWeaponModel, ownedWeapons: effectiveOwnedWeapons, equipmentKeys: effectiveEquipmentKeys, fac: this.territoryMap.playerFactionId || '', armorId: armorId || null, armorOwned: Boolean(armorId), armorLabel: armorId ? T[this.state.lang].items[armorId] || armor.name?.[this.state.lang] || armorId : '', armorReduction: armorId ? Math.min(.95, Math.max(0, Number(armor.red) || 0)) : 0,
-        characterMediaAsset: this.mediaAsset('character', this.state.outfit || 'suit'), weaponMediaAsset: eqRaw !== 'fists' && this.p.inv[eqRaw] > 0 ? this.mediaAsset('weapon', eqRaw, CAT[eqRaw]?.mediaAsset) : '', armorMediaAsset: armorId ? this.mediaAsset('armor', armorId, armor?.mediaAsset) : '' } }, window.location.origin);
   }
   mediaAsset(type, id, fallback = '') {
     const manifest = window.ZonePlatform?.manifest?.() || {};
@@ -2700,7 +2887,7 @@ class Component extends DCLogic {
       this.setState({ inventoryQuery: text, sel: matches.includes(this.state.sel) ? this.state.sel : matches[0] || '' });
     };
     const view = {
-      t, clock, is, nav, bars, activity: this.playerActivityView(), sceneArt: '/art/' + (GAME_SCENES[screen] || GAME_SCENES.home)[2], currentScreen: screen, navigationExpanded: !!this.state.navOpen, navigationLabel: lang === 'ar' ? (this.state.navOpen ? 'إغلاق المناطق' : 'كل المناطق') : (this.state.navOpen ? 'Close areas' : 'All areas'), toggleNavigation: () => this.setState(state => ({ navOpen: !state.navOpen })), skipToContent: lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content', cityDisplay: is.city ? 'flex' : 'none', preview: IS_PREVIEW, previewNotice: PREVIEW_NOTICE[lang],
+      t, clock, is, nav, bars, activity: this.playerActivityView(), sceneArt: '/art/' + (GAME_SCENES[screen] || GAME_SCENES.home)[2], currentScreen: screen, showGlobalCharStage: Boolean(window.navigator?.userAgent && !is.home && !is.attack), navigationExpanded: !!this.state.navOpen, navigationLabel: lang === 'ar' ? (this.state.navOpen ? 'إغلاق المناطق' : 'كل المناطق') : (this.state.navOpen ? 'Close areas' : 'All areas'), toggleNavigation: () => this.setState(state => ({ navOpen: !state.navOpen })), skipToContent: lang === 'ar' ? 'انتقل إلى المحتوى' : 'Skip to content', cityDisplay: is.city ? 'flex' : 'none', preview: IS_PREVIEW, previewNotice: PREVIEW_NOTICE[lang],
       accountLabel: lang === 'ar' ? 'الحساب' : 'Account', characterDetailsLabel: lang === 'ar' ? 'تفاصيل الشخصية' : 'Character details',
       connectionLabel: IS_PREVIEW ? (lang === 'ar' ? 'معاينة' : 'Preview') : (this.gameplayError || this.runtimeConnection === 'offline') ? this.serverPlayer ? (lang === 'ar' ? 'غير متصل · آخر تقدم محفوظ' : 'Offline · Last saved progress') : (lang === 'ar' ? 'غير متصل · تعذر تحميل اللاعب' : 'Offline · Unable to load player') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'اختبار المالك · منفصل عن الحساب الحقيقي' : 'Owner Playtest · Separate from real account') : this.gameplayReady ? (lang === 'ar' ? 'متصل · تقدمك محفوظ' : 'Connected · Progress saved') : (lang === 'ar' ? 'جارٍ الاتصال...' : 'Connecting...'),
       ownerTest: {visible: !IS_PREVIEW && (!!this.ownerPlaytest?.active || (!window.navigator?.userAgent && !!this.ownerPlaytest?.available) || Boolean(window.location?.search?.includes('owner=1'))), active: !!this.ownerPlaytest?.active, disabled: !!this.ownerPlaytestBusy || this.playerMutationPending(), title: lang === 'ar' ? 'اختبار المالك' : 'Owner Playtest', description: this.ownerPlaytest?.serverCloseUnconfirmed ? (lang === 'ar' ? 'عدت إلى حسابك الحقيقي. لم يؤكد الخادم إغلاق الاختبار؛ تبقى بياناته الخاصة حتى انتهاء صلاحيته.' : 'Returned to your real account. Server closure was not confirmed; its private sandbox remains until expiry.') : this.ownerPlaytest?.blocked || this.ownerPlaytest?.expired ? (lang === 'ar' ? 'انتهى اختبار المالك أو تعذر الاتصال به. لا يُرسل أي إجراء إلى حسابك الحقيقي. أعد وصول المالك أو أنهِ الاختبار.' : 'Owner Playtest expired or became unavailable. No action is sent to your real account. Restore owner access or exit playtesting.') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'شخصية اختبار كاملة العناصر. الإجراءات الشخصية تعمل على محرك PHP. تُملأ الموارد وتُسرّع المؤقتات الشخصية للاختبار. أرصدة وحسابات اللاعبين الحقيقيين لا تتغير. الإجراءات المشتركة بين اللاعبين غير متاحة هنا.' : 'Fully provisioned test character. Personal actions run through the PHP engine. Resources refill and personal timers advance for testing. Real player accounts and balances stay unchanged. Shared player mutations are unavailable here.') : (lang === 'ar' ? 'اختبر المحتوى دون قيود مستوى اللاعب ودون تعديل تقدمك الحقيقي.' : 'Test content without rookie level gates or changing your real progress.'), label: this.ownerPlaytestBusy ? (lang === 'ar' ? 'جارٍ التحديث...' : 'Updating...') : this.ownerPlaytest?.active ? (lang === 'ar' ? 'العودة إلى حسابي' : 'Return to my account') : (lang === 'ar' ? 'ابدأ اختبار المالك' : 'Start Owner Playtest'), toggle: () => this.toggleOwnerPlaytest()},
@@ -2845,7 +3032,7 @@ class Component extends DCLogic {
       news: t.news.map(n => ({ h: n[0], meta: n[1] })),
       inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = i.npc === false ? Math.max(1000, Math.ceil(left / 60000) * 1000) : Math.ceil(left / 60000) * 100 * i.lvl; return { id: i.id, name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, bustRiskTier: odds >= 75 ? (lang === 'ar' ? 'فرصة عالية' : 'High odds') : odds >= 45 ? (lang === 'ar' ? 'فرصة متوسطة' : 'Moderate odds') : (lang === 'ar' ? 'فرصة منخفضة' : 'Low odds'), nerveCost: 5, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(() => this.gameplayAction('jail.bust', i.id || i.name)), bail: () => this.act(() => this.gameplayAction('jail.bail', i.id || i.name)) }; }),
       patients: this.patients.filter(i => i.until > now).map(i => ({ name: i.name, lvl: i.lvl, left: mmss(i.until - now), reason: fmt(t.hreasons[i.reason], { who: i.who }), energyCost: 75, reviveReady: energyNow >= 75, disabled: energyNow < 75, revive: () => this.act(() => this.gameplayAction('hospital.revive', i.id || i.name)) })),
-      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0; const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ حفظ التحويل...' : 'Saving transfer...') : (lang === 'ar' ? 'التحويلات تُحفظ على الخادم. رصيدك لا يتغير إلا بعد تأكيد التحويل.' : 'Transfers are saved on the server. Your balance changes only after confirmation.') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
+      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0, dailyYield = money(Math.max(250, Math.round(bal * 0.0185))), mugExposure = money(Math.round(cash * 0.15)); const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); const runLocalOrServerBank = (dir, amount) => { if (amount <= 0) return this.toast(lang === 'ar' ? 'لا يوجد رصيد كافٍ لهذا التحويل.' : 'Insufficient balance for transfer.', true); if (this.gameplayReady && !this.gameplayDisabled()) return this.act(tt => this.bankMove(dir, amount, tt)); if (dir === 'deposit') { const move = Math.min(cash, amount); this.p.cash = Math.max(0, cash - move); this.p.bankBalance = bal + move; this.log((lang === 'ar' ? 'إيداع في الخزنة: ' : 'Vault deposit: ') + money(move), 'good'); } else { const move = Math.min(bal, amount); this.p.bankBalance = Math.max(0, bal - move); this.p.cash = cash + move; this.log((lang === 'ar' ? 'سحب من الخزنة: ' : 'Vault withdrawal: ') + money(move), 'good'); } this.playTacticalSfx('cash'); this.save(); this.forceUpdate(); }; return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, dailyYield, mugExposure, vaultHeaderTitle: lang === 'ar' ? 'خزينة النقابة المركزية والتحويلات المحمية' : 'Syndicate Private Vault & Capital Command', vaultHeaderSub: lang === 'ar' ? 'الأموال المودعة في الخزنة محمية بالكامل من النشل في مواجهات الشارع وتدر عائداً يومياً.' : 'Capital locked inside the biometric titanium vault is 100% immune to street muggings and accrues daily syndicate yield.', apyBadge: '1.85% DAILY YIELD · ACTIVE', quickLockAll: () => runLocalOrServerBank('deposit', cash), quickCombatFloat: () => runLocalOrServerBank('withdraw', Math.min(bal || 10000, 10000)), openMarket: () => this.go('market'), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ حفظ التحويل...' : 'Saving transfer...') : (lang === 'ar' ? 'التحويلات تُحفظ على الخادم. رصيدك لا يتغير إلا بعد تأكيد التحويل.' : 'Transfers are saved on the server. Your balance changes only after confirmation.') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
       casino: { spriteX: casino.card === 14 ? -2 : -2 - 73 * (Math.max(2, Math.min(13, casino.card)) - 1), cardLabel: (lang === 'ar' ? 'الورقة الحالية: ' : 'Current card: ') + (casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card), card: casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card, cardColor: casino.card % 2 ? '#c0281a' : 'var(--onAcc)', higherOddsPct: Math.round(Math.max(0, 14 - casino.card) / 12 * 100), lowerOddsPct: Math.round(Math.max(0, casino.card - 2) / 12 * 100), bets: [1000, 5000, 25000].map(b => ({ label: money(b), bg: casino.bet === b ? 'var(--activebg)' : 'var(--btn)', fg: casino.bet === b ? 'var(--activefg)' : 'var(--t3)', pick: () => this.setState({ casino: { ...casino, bet: b } }) })), higher: () => this.act(tt => this.casinoGuess(true, tt)), lower: () => this.act(tt => this.casinoGuess(false, tt)), disabled: !this.casinoReady || !!this.casinoBusy || p.cash < casino.bet, msg: fmt(t.casinoMsg[casino.msg], { c: money(casino.resultBet ?? casino.bet) }) + (p.casinoNet ? ' · ' + (lang === 'ar' ? 'الصافي' : 'Net') + ' ' + (p.casinoNet > 0 ? '+' : '-') + money(Math.abs(p.casinoNet)) : '') },
       casinoGames: t.cgames.map((g, i) => ({ name: g[0], status: lang === 'ar' ? 'معاينة فقط' : 'Preview only', img: 'art/c_' + ['slots', 'roulette', 'blackjack', 'poker', 'lottery', 'russian'][i] + '.jpg', imgOpacity: .65, filter: 'none', nameColor: 'var(--t4)' })),
       hof: (() => { const rows = t.hofNames.map((n, i) => ({ name: n, lvl: [58, 52, 31, 44, 39, 16, 27, 9, 13, 15][i], stats: [98000, 84000, 12000, 41000, 36000, 7300, 15800, 3000, 5000, 6100][i], nw: [48e6, 31e6, 9.2e6, 22e6, 12e6, 1.1e6, 4.4e6, 380e3, 720e3, 950e3][i], fac: [t.teams[7], t.teams[0], '—', t.teams[4], t.teams[3], t.teams[2], t.teams[5], t.teams[2], t.teams[0], t.teams[1]][i] })); rows.push({ name: p.username || t.player, lvl: p.level, stats: totalStats, nw: this.netWorth(), fac: facName, me: true }); rows.sort((a, b) => b.stats - a.stats); return rows.map((r, i) => ({ rank: i + 1, name: r.name, lvl: r.lvl, stats: num(r.stats), powerTier: r.stats >= 50000 ? (lang === 'ar' ? 'أسطوري' : 'Apex') : r.stats >= 15000 ? (lang === 'ar' ? 'نخبة' : 'Elite') : r.stats >= 5000 ? (lang === 'ar' ? 'مخضرم' : 'Veteran') : (lang === 'ar' ? 'صاعد' : 'Rising'), nw: money(r.nw), fac: r.fac, color: r.me ? 'var(--activefg)' : 'var(--link)', bg: r.me ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)' })); })(),
