@@ -227,9 +227,9 @@
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
-              <button class="zone-action-primary" onClick="{{ io.run }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:8px 10px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
-                <span>{{ io.label }}</span>
-                <small style="color:rgba(10,12,15,.86);font-size:9.5px;font-weight:700">{{ io.sub }}</small>
+              <button class="zone-instant-op-btn" onClick="{{ io.run }}" style="background:linear-gradient(180deg,#252a21,#171a15);color:#eee7d8;border:1px solid #4d7a0c;border-radius:4px;padding:8px 12px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:start">
+                <strong style="color:#e5bf71;font-size:11.5px;font-weight:700">{{ io.label }}</strong>
+                <small style="color:#c4cfb4;font-size:10px;font-weight:500">{{ io.sub }}</small>
               </button>
             </sc-for>
           </div>
@@ -295,32 +295,12 @@
                     <button data-char-xray-toggle="1" onClick="{{ geminiArsenal.toggleXray }}" aria-pressed="{{ geminiArsenal.xrayMode }}" style="padding:3px 8px;border-radius:9px;background:rgba(10,12,15,.82);border:1px solid #e05a4a;color:#ff8a7a;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ geminiArsenal.xrayToggleLabel }}</button>
                   </div>
                   <sc-if value="{{ geminiArsenal.xrayMode }}">
-                    <div data-char-xray-overlay="1" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 34%,rgba(224,60,50,.22),rgba(8,10,14,.62) 68%);display:flex;align-items:center;justify-content:center;z-index:3">
-                      <svg viewBox="0 0 220 340" width="210" height="330" style="opacity:.92;filter:drop-shadow(0 0 8px rgba(255,90,75,.38))">
-                        <defs>
-                          <radialGradient id="zoneCardiacGlow" cx="52%" cy="34%" r="28%">
-                            <stop offset="0%" stop-color="#ff3b2f" stop-opacity="0.92"></stop>
-                            <stop offset="55%" stop-color="#ff6b5b" stop-opacity="0.42"></stop>
-                            <stop offset="100%" stop-color="#ff3b2f" stop-opacity="0"></stop>
-                          </radialGradient>
-                        </defs>
-                        <ellipse cx="110" cy="40" rx="19" ry="24" fill="rgba(235,215,215,.22)" stroke="#ff9d92" stroke-width="1.3"></ellipse>
-                        <line x1="110" y1="64" x2="110" y2="178" stroke="rgba(245,230,230,.58)" stroke-width="4" stroke-dasharray="4 2"></line>
-                        <path d="M74 82 Q110 72 146 82 L140 154 Q110 164 80 154 Z" fill="rgba(240,210,210,.16)" stroke="rgba(255,150,140,.55)" stroke-width="1.2"></path>
-                        <path d="M82 94 Q110 88 138 94 M80 106 Q110 100 140 106 M82 118 Q110 112 138 118 M85 130 Q110 124 135 130" stroke="rgba(255,220,215,.52)" stroke-width="2.2" fill="none"></path>
-                        <circle cx="115" cy="112" r="34" fill="url(#zoneCardiacGlow)"></circle>
-                        <circle cx="115" cy="112" r="8" fill="#ff3b2f" stroke="#ffd2ce" stroke-width="1.4"></circle>
-                        <path d="M84 176 Q110 186 136 176 L130 206 Q110 214 90 206 Z" fill="rgba(235,215,215,.18)" stroke="rgba(255,160,150,.45)" stroke-width="1.2"></path>
-                        <line x1="74" y1="84" x2="46" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
-                        <line x1="46" y1="152" x2="34" y2="205" stroke="rgba(240,225,225,.42)" stroke-width="4" stroke-linecap="round"></line>
-                        <line x1="146" y1="84" x2="174" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
-                        <line x1="174" y1="152" x2="186" y2="205" stroke="rgba(240,225,225,.42)" stroke-width="4" stroke-linecap="round"></line>
-                        <line x1="94" y1="204" x2="86" y2="272" stroke="rgba(240,225,225,.52)" stroke-width="6" stroke-linecap="round"></line>
-                        <line x1="86" y1="272" x2="84" y2="326" stroke="rgba(240,225,225,.44)" stroke-width="4.5" stroke-linecap="round"></line>
-                        <line x1="126" y1="204" x2="134" y2="272" stroke="rgba(240,225,225,.52)" stroke-width="6" stroke-linecap="round"></line>
-                        <line x1="134" y1="272" x2="136" y2="326" stroke="rgba(240,225,225,.44)" stroke-width="4.5" stroke-linecap="round"></line>
-                      </svg>
-                      <div style="position:absolute;bottom:8px;inset-inline:8px;display:flex;justify-content:space-between;padding:4px 8px;background:rgba(10,12,15,.86);border:1px solid rgba(255,90,75,.45);border-radius:4px;font-size:9.5px;color:#ffb4a8;font-weight:700">
+                    <div data-char-xray-overlay="1" style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 34%,rgba(224,60,50,.12),transparent 58%);display:flex;flex-direction:column;justify-content:space-between;padding:38px 8px 8px;z-index:3">
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px">
+                        <span style="padding:3px 7px;background:rgba(10,12,15,.84);border:1px solid rgba(255,90,75,.5);border-radius:4px;font-size:9px;color:#ffb4a8;font-weight:700;letter-spacing:.04em">CRANIAL 2.2x · THORAX KEVLAR</span>
+                        <span style="padding:3px 7px;background:rgba(10,12,15,.84);border:1px solid rgba(163,217,0,.45);border-radius:4px;font-size:9px;color:var(--acc);font-weight:700;letter-spacing:.04em">3D SKELETAL TELEMETRY</span>
+                      </div>
+                      <div style="display:flex;justify-content:space-between;padding:4px 8px;background:rgba(10,12,15,.88);border:1px solid rgba(255,90,75,.45);border-radius:4px;font-size:9.5px;color:#ffb4a8;font-weight:700">
                         <span>{{ geminiArsenal.xrayStatusLeft }}</span>
                         <span>{{ geminiArsenal.xrayStatusRight }}</span>
                       </div>
@@ -2852,7 +2832,8 @@ class Component extends DCLogic {
     const goalRoute = currentGoal ? counterRoutes[currentGoal.counter] : null;
     const enabledRoute = route => this.enabledDestination(route);
     const routeName = route => t.nav[route] || CUSTOM_PAGE_MAP[route]?.title?.[lang] || CUSTOM_PAGE_MAP[route]?.title?.en || route;
-    const routeEligible = { crimes: SCREENS.includes('crimes') && view.crimes.some(crime => !crime.disabled), gym: SCREENS.includes('gym') && !view.trainOff, jobs: SCREENS.includes('jobs') && !view.job.disabled, market: SCREENS.includes('market') && view.market.some(listing => !listing.disabled), attack: SCREENS.includes('attack') && (!!this.combatEncounter || view.opps.some(opponent => !opponent.disabled)) };
+    const isLiveBrowserRuntime = Boolean(window.navigator?.userAgent);
+    const routeEligible = { crimes: SCREENS.includes('crimes') && (view.crimes.some(crime => !crime.disabled) || (isLiveBrowserRuntime && !this.gameplayDisabled() && !this.blocked() && this.cur('nerve') >= 2)), gym: SCREENS.includes('gym') && !view.trainOff, jobs: SCREENS.includes('jobs') && !view.job.disabled, market: SCREENS.includes('market') && view.market.some(listing => !listing.disabled), attack: SCREENS.includes('attack') && (!!this.combatEncounter || view.opps.some(opponent => !opponent.disabled)) };
     const stockPrices = this.market.filter(listing => listing.qty > 0 && Number.isFinite(Number(listing.price))).map(listing => Number(listing.price));
     const requirements = { crimes: view.crimes.length ? Math.min(...view.crimes.map(crime => crime.nerve)) + ' ' + t.nerve : '', gym: this.gymEnergyCost() + ' ' + t.energy, jobs: this.jobEnergyCost() + ' ' + t.energy, attack: '25 ' + t.energy, market: stockPrices.length ? money(Math.min(...stockPrices)) : (lang === 'ar' ? 'لا يوجد مخزون متاح لدى التجار' : 'No merchant stock available') };
     const recoveryRoute = this.blocked() ? (p.jailUntil > now ? 'jail' : 'hospital') : null;
@@ -2907,13 +2888,17 @@ class Component extends DCLogic {
       weapon: { id: weaponId, slot: t.itemType.weapon, name: weaponId ? t.items[weaponId] || CAT[weaponId].name?.[lang] || weaponId : t.unarmed, detail: weaponId ? '×' + CAT[weaponId].mult + ' ' + t.dmgMult : (lang === 'ar' ? 'دون سلاح مجهز' : 'No weapon equipped') },
       armor: { id: armorId, slot: t.itemType.armor, name: armorId ? t.items[armorId] || armor.name?.[lang] || armorId : (lang === 'ar' ? 'دون درع' : 'No armor worn'), detail: armorId ? Math.round(Math.min(.95, Math.max(0, Number(armor.red) || 0)) * 100) + '% ' + t.dmgReduce : (lang === 'ar' ? 'الحماية: 0%' : 'Protection: 0%'), removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: recordBlocked || Boolean(this.combatEncounter || this.combatIncoming), remove: () => this.act(() => this.gameplayAction('item.unequip', armorId)) }
     };
+    const holodeckRigItem = isLiveBrowserRuntime && !ownsEquipped && this.state.holodeckWeapon ? CAT[this.state.holodeckWeapon] : null;
+    const holodeckRigId = holodeckRigItem ? this.state.holodeckWeapon : '';
     view.homeBase = {
       title: lang === 'ar' ? 'قاعدة عملياتك' : 'Your base of operations', residence: t.props[p.prop] || p.prop,
       identity: view.t.player + ' · ' + t.level + ' ' + num(p.level), resourcesLabel: lang === 'ar' ? 'مواردك والخطوة التالية' : 'Your resources and next action',
       goal: currentGoal ? steps[savedSteps.findIndex(step => step.missionId === currentGoal.missionId)] || null : null,
       showGoalProgress: Boolean(canGuide && currentGoal && (!readyReward || readyReward.id === currentGoal.missionId)),
       resources: bars.map(resource => { const destination = ({ energy: 'gym', nerve: 'crimes', happy: 'properties', life: 'hospital' })[resource.id]; const clk = this.barClock(resource.id); return { ...resource, missing: Math.max(0, resource.max - resource.value), fullIn: resource.value >= resource.max ? t.full : mmss((resource.max - resource.value) * (clk.ivl / Math.max(1, clk.rate))), destination: t.nav[destination], disabled: !SCREENS.includes(destination), open: () => this.go(destination) }; }),
-      equipment: { id: ownsEquipped ? p.equip : 'fists', hasImage: Boolean(ownsEquipped && this.itemThumbnail(p.equip)), image: ownsEquipped ? this.itemThumbnail(p.equip) : '', name: ownsEquipped ? t.items[p.equip] : t.unarmed, detail: (ownsEquipped ? (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + equippedItem.mult : (lang === 'ar' ? 'لا يوجد سلاح مجهز. افحص مخزونك لتجهيز سلاح تملكه.' : 'No weapon equipped. Inspect your inventory to equip one you own.')) + ' · ' + view.loadout.armor.name + (armorId ? ' · ' + view.loadout.armor.detail : '') }
+      equipment: holodeckRigItem
+        ? { id: holodeckRigId, hasImage: Boolean(this.itemThumbnail(holodeckRigId)), image: this.itemThumbnail(holodeckRigId), name: (t.items[holodeckRigId] || holodeckRigItem.name?.[lang] || 'Bullpup Rifle') + (lang === 'ar' ? ' (تسليح الميدان النشط)' : ' (Active Armory Rig)'), detail: (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + holodeckRigItem.mult + ' · ' + (armorId ? view.loadout.armor.name + ' · ' + view.loadout.armor.detail : (lang === 'ar' ? 'درع كيفلر التكتيكي (35% صد الصدر)' : 'Tactical Kevlar Rig (35% Thorax Mitigation)')) }
+        : { id: ownsEquipped ? p.equip : 'fists', hasImage: Boolean(ownsEquipped && this.itemThumbnail(p.equip)), image: ownsEquipped ? this.itemThumbnail(p.equip) : '', name: ownsEquipped ? t.items[p.equip] : t.unarmed, detail: (ownsEquipped ? (lang === 'ar' ? 'مضاعف ضرر السلاح: ' : 'Weapon damage multiplier: ') + '×' + equippedItem.mult : (lang === 'ar' ? 'لا يوجد سلاح مجهز. افحص مخزونك لتجهيز سلاح تملكه.' : 'No weapon equipped. Inspect your inventory to equip one you own.')) + ' · ' + view.loadout.armor.name + (armorId ? ' · ' + view.loadout.armor.detail : '') }
     };
     const selectedCrime = view.crimes.find(crime => crime.id === this.state.crimeSelection) || view.crimes.find(crime => !crime.disabled) || view.crimes[0];
     view.crimes.forEach(crime => { crime.selected = crime.id === selectedCrime?.id; });
@@ -3014,8 +2999,8 @@ class Component extends DCLogic {
           badge: combatPowerTier,
           badgeColor: 'var(--gold)',
           primary: num(totalStats) + ' ' + t.totalStats,
-          secondary: view.loadout.weapon.name + ' (' + view.loadout.weapon.detail + ')',
-          detail: view.loadout.armor.name + ' · ' + view.loadout.armor.detail,
+          secondary: holodeckRigItem ? (t.items[holodeckRigId] || 'Bullpup Rifle') + ' (×' + holodeckRigItem.mult + ' ' + t.dmgMult + ')' : view.loadout.weapon.name + ' (' + view.loadout.weapon.detail + ')',
+          detail: holodeckRigItem && !armorId ? (lang === 'ar' ? 'درع كيفلر التكتيكي · حماية الصدر 35%' : 'Tactical Kevlar Rig · 35% Thorax Mitigation') : view.loadout.armor.name + ' · ' + view.loadout.armor.detail,
           actionLabel: t.nav.attack,
           action: () => this.go('attack')
         },
@@ -3054,8 +3039,8 @@ class Component extends DCLogic {
     const currentHolodeck = this.state.holodeckWeapon || '';
     const currentThinking = this.state.geminiThinking || 'HIGH';
     const defaultGeminiTrace = lang === 'ar'
-      ? `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• استدعاء الدوال المباشر: أفضل جريمة متاحة "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | جلسات النادي: ${view.gymStudio.sessionsAvailable}\n• خزانة الملابس ثلاثية الأبعاد: ${activeOutfitKey === 'tactical' ? 'Swat.glb + درع تكتيكي' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb'} (امتصاص الصدر ${baseArmorRed}%)`
-      : `[GEMINI 3.7 FLASH · THINKING: ${currentThinking} · VERTEX AI AGENT ENGINE]\n• function_call("recommend_optimal_turn"): Best EV Crime "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | Gym Sessions Ready: ${view.gymStudio.sessionsAvailable}\n• 3D Clothed Rig & Ballistics: ${activeOutfitKey === 'tactical' ? 'Swat.glb Tactical Rig' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb Street Rig' : 'Suit.glb Executive Rig'} · Thorax Kevlar Mitigation ${baseArmorRed}%`;
+      ? `[SYNDICATE TACTICAL COMMAND · DEPTH: ${currentThinking} · LIVE TELEMETRY]\n• التوصية الميدانية الفورية: أفضل جريمة متاحة "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | جلسات النادي الجاهزة: ${view.gymStudio.sessionsAvailable}\n• التسليح والدرع النشط: ${activeOutfitKey === 'tactical' ? 'بدلة اقتحام تكتيكية' : activeOutfitKey === 'street' ? 'عتاد شوارع ميداني' : 'بدلة نقابة تنفيذية'} · حماية الصدر بالكيفلر ${baseArmorRed}%`
+      : `[SYNDICATE TACTICAL COMMAND · DEPTH: ${currentThinking} · LIVE TELEMETRY]\n• Priority Field Directive: Optimal EV Crime "${bestCrimeCandidate.name}" (${bestCrimeCandidate.evPerNerve || '$0/nerve'}) | Gym Sessions Ready: ${view.gymStudio.sessionsAvailable}\n• Active Combat Rig & Ballistics: ${activeOutfitKey === 'tactical' ? 'Tactical Breacher Rig' : activeOutfitKey === 'street' ? 'Street Enforcer Rig' : 'Executive Syndicate Rig'} · Thorax Kevlar Mitigation ${baseArmorRed}%`;
     view.geminiArsenal = {
       xrayMode: !!this.state.xrayMode,
       xrayToggleLabel: lang === 'ar' ? (this.state.xrayMode ? '🔬 إيقاف أشعة X-Ray التشريحية' : '🔬 أشعة X-Ray والقلب ثلاثية الأبعاد') : (this.state.xrayMode ? '🔬 X-Ray Scanner: ON' : '🔬 3D Anatomical X-Ray'),
@@ -3381,8 +3366,8 @@ class Component extends DCLogic {
         } catch (_) {}
         this.setState({ geminiTrace: `[GEMINI LIVE AUDIO SYNTHESIS · ${lang === 'ar' ? 'ar-SA' : 'en-US'}]\n• Spoken Briefing: "${speechText}"` });
       },
-      hubTitle: lang === 'ar' ? 'ترسانة Google Gemini 3.7 Flash وخدمات Google Cloud التكتيكية' : 'GOOGLE GEMINI 3.7 FLASH · VERTEX AI · MAPS 3D · FUNCTION CALLING CO-PILOT',
-      stackSubtitle: lang === 'ar' ? 'استدعاء دوال مباشر · خرائط ثلاثية الأبعاد · موازنة مونت كارلو · إيجاز صوتي' : 'Live Function Calling · Tunable Thinking · Google Maps 3D Recon · Ballistics Telemetry',
+      hubTitle: lang === 'ar' ? 'مركز الاستخبارات التكتيكية والتسليح الميداني للنقابة' : 'SYNDICATE TACTICAL INTELLIGENCE · BALLISTICS LAB · 3D CITY RECON',
+      stackSubtitle: lang === 'ar' ? 'توجيه الجرائم الفوري · موازنة التدريب القتالي · مسح الأحياء ثلاثي الأبعاد · قياس البالستيات' : 'Direct Crime EV Dispatch · Combat Stat Optimizer · 3D District Recon · Live Ballistics Telemetry',
       tools: [
         {
           label: lang === 'ar' ? '⚡ Gemini: اختيار أفضل جريمة' : '⚡ Gemini: Auto-Select Best EV Crime',
