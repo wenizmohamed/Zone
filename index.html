@@ -220,6 +220,20 @@
             </button>
           </sc-for>
         </div>
+        <div data-day1-instant-ops="1" style="background:linear-gradient(90deg,rgba(163,217,0,.14),rgba(10,13,17,.94));border:1px solid #4d7a0c;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span><strong style="color:var(--acc);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong></div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="color:var(--t2);font-size:10.5px;font-weight:600">{{ geminiArsenal.worldTickerText }}</span><span style="color:var(--gold);font-size:10px;font-weight:700;padding:2px 7px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">{{ geminiArsenal.instantOpsBadge }}</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+            <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="5">
+              <button class="zone-action-primary" onClick="{{ io.run }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:8px 10px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
+                <span>{{ io.label }}</span>
+                <small style="color:rgba(10,12,15,.86);font-size:9.5px;font-weight:700">{{ io.sub }}</small>
+              </button>
+            </sc-for>
+          </div>
+        </div>
         <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
           <div class="zone-home-activity" style="display:flex;flex-direction:column;gap:10px">
             <sc-if value="{{ activity.available }}">
@@ -350,20 +364,6 @@
                 <button class="zone-action-primary" onClick="{{ tc.action }}" style="margin-top:auto;align-self:start;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ tc.actionLabel }}</button>
               </div>
             </sc-for>
-          </div>
-          <div data-day1-instant-ops="1" style="background:linear-gradient(90deg,rgba(163,217,0,.1),rgba(10,13,17,.88));border:1px solid #4d7a0c;border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-              <strong style="color:var(--acc);font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ geminiArsenal.instantOpsTitle }}</strong>
-              <span style="color:var(--gold);font-size:10.5px;font-weight:700">{{ geminiArsenal.instantOpsBadge }}</span>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
-              <sc-for list="{{ geminiArsenal.instantOps }}" as="io" hint-placeholder-count="4">
-                <button class="zone-action-primary" onClick="{{ io.run }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:7px 10px;font:inherit;font-size:10.5px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:start">
-                  <span>{{ io.label }}</span>
-                  <small style="color:rgba(10,12,15,.84);font-size:9.5px;font-weight:700">{{ io.sub }}</small>
-                </button>
-              </sc-for>
-            </div>
           </div>
           <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
@@ -1249,6 +1249,7 @@ class Component extends DCLogic {
       }
     };
     window.addEventListener('message', this.onMsg);
+    if (window.navigator?.userAgent && !this.state.holodeckWeapon && (!this.p.equip || this.p.equip === 'fists')) this.state.holodeckWeapon = 'bullpup_1';
     this.pushChar();
     this.pushCombatScene();
     this.mapVisibility(this.state.screen === 'city');
@@ -3037,6 +3038,22 @@ class Component extends DCLogic {
       ],
       instantOpsTitle: lang === 'ar' ? '⚡ عمليات اليوم الأول الفورية (تنفيذ مباشر بضغطة واحدة من الرئيسية)' : '⚡ DAY-1 INSTANT OPERATIONS DECK (1-CLICK LIVE SERVER EXECUTION ON HOME)',
       instantOpsBadge: lang === 'ar' ? 'صفر نقرات إضافية · خادم مباشر' : 'ZERO-FRICTION · AUTHORITATIVE API',
+      worldTickerText: (() => {
+        const feed = lang === 'ar'
+          ? [
+              '📡 بث النقابة المباشر: استيلاء عائلة فايبرز على قطاع ZC-042 (+4% عائد جرائم)',
+              '📡 بث النقابة المباشر: صفقة سلاح بولباب L85 في سوق الضمان مقابل $148,000',
+              '📡 بث النقابة المباشر: عملية سطو مستودع الميناء مكتملة · +$3,000 لكل عضو',
+              '📡 بث النقابة المباشر: مواجهة شارع حية · إسقاط خصم بدرع تكتيكي Swat.glb'
+            ]
+          : [
+              '📡 LIVE SYNDICATE WIRE: Block ZC-042 fortified (+4% Crime EV bonus active)',
+              '📡 LIVE SYNDICATE WIRE: Bullpup L85 rifle settled on Player Escrow Market ($148,000)',
+              '📡 LIVE SYNDICATE WIRE: Warehouse Heist crew operation settled · +$3,000/member',
+              '📡 LIVE SYNDICATE WIRE: Street Enforcer hospitalized in District Center (25E)'
+            ];
+        return feed[Math.abs(Math.floor((this.state.tick || 0) / 4)) % feed.length];
+      })(),
       instantOps: [
         {
           label: lang === 'ar' ? '⚡ نفّذ أفضل جريمة فوراً' : '⚡ 1-Click Commit Best Crime',
@@ -3106,6 +3123,31 @@ class Component extends DCLogic {
             });
             if (bestOwned && p.equip !== bestOwned && !this.gameplayDisabled() && !this.blocked()) {
               return this.act(() => this.gameplayAction('item.equip', bestOwned));
+            }
+          }
+        },
+        {
+          label: lang === 'ar' ? '🎬 عملية سطو الخزينة الكبرى (برولوغ)' : '🎬 1-Click Vault Heist Blitz',
+          sub: lang === 'ar' ? 'بدلة Swat + بندقية L85 + ضربة خزينة' : 'Tactical Swat + L85 + Live Heist Run',
+          run: () => {
+            this.playTacticalSfx('rack');
+            const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
+            const rawBest = rawCrimes.find(c => !this.crimeReason(c)) || rawCrimes[0];
+            this.setState({
+              outfit: 'tactical',
+              holodeckWeapon: 'bullpup_1',
+              crimeRequestError: null,
+              geminiTrace: `[DAY-1 VAULT HEIST PROLOGUE · GEMINI 3.7 DIRECTOR]\n> Equipped Swat.glb Tactical Rig (35% Kevlar) + Bullpup L85 Rifle\n> Breaching syndicate target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
+            }, () => {
+              this.pushChar();
+              this.charMsg({ combat: { side: 'you', hit: true } });
+            });
+            if (rawBest && !this.crimeReason(rawBest)) {
+              return this.resolve('cr' + rawBest.id, 360, async tt => {
+                await this.commit(rawBest, tt);
+                this.playTacticalSfx('crime');
+                this.charMsg({ combat: { side: 'you', hit: true } });
+              });
             }
           }
         }
