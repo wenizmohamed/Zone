@@ -129,7 +129,8 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   function build(){
     selected.forEach(pin=>{
       const spec=KIT[pin.id],coord=mapboxgl.MercatorCoordinate.fromLngLat(pin._lngLat,0),group=new THREE.Group();
-      group.name='service-'+pin.id;group.position.set((coord.x-origin.x)/meter,.3,(coord.y-origin.y)/meter);group.rotation.y=spec.rotation;
+      const baseX=(coord.x-origin.x)/meter,baseZ=(coord.y-origin.y)/meter;
+      group.name='service-'+pin.id;group.position.set(baseX,.3,baseZ);group.rotation.y=spec.rotation;group.userData={baseX,baseZ};
       if(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&pin._buildingAssociation?.insideRoof){
         const association=pin._buildingAssociation,roof=association.heightMeters,room=Math.max(1,Math.min(6,association.clearanceMeters*1.3));
         const signGeometry=new THREE.BoxGeometry(room,.35,room*.6),signMaterial=new THREE.MeshStandardMaterial({color:spec.color,roughness:.85,metalness:.1});
@@ -221,6 +222,10 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
     },
     render(_gl,input){
       if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&map.getZoom()<15.8))return;
+      if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.getZoom){
+        const z=map.getZoom(),spread=Math.pow(2,Math.max(0,16.28-z)*0.82),mScale=Math.pow(2,Math.max(0,16.28-z)*0.75);
+        groups.forEach(g=>{if(g.userData&&Number.isFinite(g.userData.baseX)){g.position.set(g.userData.baseX*spread,.3,g.userData.baseZ*spread);g.scale.setScalar(mScale);}});
+      }
       const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
       const started=performance.now();camera.projectionMatrix.fromArray(projection).multiply(local);
       let frameFailure=null;
