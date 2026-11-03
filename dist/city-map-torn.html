@@ -542,8 +542,8 @@ initializeMapLocale();
     var requiredWidth=Math.max((northeast[0]-southwest[0])*1.18,requiredHeight*aspect),cx=(southwest[0]+northeast[0])/2,cy=(southwest[1]+northeast[1])/2;
     var bounds=[ZoneCompactDistrict.geographic([cx-requiredWidth/2,cy-requiredHeight/2]),ZoneCompactDistrict.geographic([cx+requiredWidth/2,cy+requiredHeight/2])];
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){
-      bounds=[[CENTER[0]-0.032,CENTER[1]-0.020],[CENTER[0]+0.032,CENTER[1]+0.020]];
-      if(map.setMinZoom)map.setMinZoom(14.2);
+      bounds=[[CENTER[0]-0.012,CENTER[1]-0.0075],[CENTER[0]+0.012,CENTER[1]+0.0075]];
+      if(map.setMinZoom)map.setMinZoom(15.2);
     }
     // Use every server-authored block, including distant holdings. Restrict the
     // camera, not the gameplay data, and never refit on an ownership refresh.
@@ -572,7 +572,7 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.05,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.28,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -684,7 +684,7 @@ initializeMapLocale();
     map.fitBounds(bounds,{padding:padding,maxZoom:maxZoom,pitch:pitch,bearing:Number.isFinite(bearing)?bearing:pitch===0?0:-12,duration:0,retainPadding:false,essential:true});
     refineOwnershipCamera(points,padding,maxZoom,overview?1.03:1.2);
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.jumpTo){
-      if((blocks||[]).length>=20){map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:didFit?15.35:16.05,pitch:Math.max(36,pitch||38),bearing:0});}
+      if((blocks||[]).length>=20){map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:didFit?15.55:16.28,pitch:Math.max(36,pitch||38),bearing:0});}
     }
     if(previous){var target={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),duration:duration,essential:true};map.jumpTo(previous);map.easeTo(target);}
     return true;
@@ -795,7 +795,7 @@ initializeMapLocale();
       button.className+=' overview'+(liveBrowserTurf?' turfBanner':'');
       var anchor=liveBrowserTurf&&coreTurfCoords[p.ownerId]?coreTurfCoords[p.ownerId]:regionMarkerAnchor(region,22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.
-      button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor});
+      button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor,baseTurfOffset:liveBrowserTurf&&coreTurfCoords[p.ownerId]?[coreTurfCoords[p.ownerId][0]-c0,coreTurfCoords[p.ownerId][1]-c1]:null});
     });
     var blocks=selectedTerritory?[selectedTerritory]:[],representedPins=new Set();
     blocks.forEach(function(t){
@@ -833,7 +833,13 @@ initializeMapLocale();
   function layoutHoldingMarkers(){
     packFamilyMarkers();
     var boxes=[],container=map.getContainer();
-    holdingMarkers.forEach(function(item){var point=map.project(item.lngLat||(item.pin?item.pin._lngLat:item.block._centroidLngLat)),selectedBlock=item.block&&selectedTerritory&&selectedTerritory.id===item.block.id;
+    holdingMarkers.forEach(function(item){
+      if(item.baseTurfOffset&&map.getZoom){
+        var zFactor=Math.pow(2,Math.max(0,16.15-map.getZoom()));
+        var dynAnchor=[-73.9865+item.baseTurfOffset[0]*zFactor,40.698+item.baseTurfOffset[1]*zFactor];
+        item.lngLat=dynAnchor;item.marker.setLngLat(dynAnchor);
+      }
+      var point=map.project(item.lngLat||(item.pin?item.pin._lngLat:item.block._centroidLngLat)),selectedBlock=item.block&&selectedTerritory&&selectedTerritory.id===item.block.id;
       var halfWidth=(item.element.offsetWidth||(innerWidth<=760?106:135))/2,markerHeight=item.element.offsetHeight||40;
       var valid=Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>halfWidth+8&&point.x<container.clientWidth-halfWidth-8&&point.y>64+(item.region?markerHeight/2:markerHeight)&&point.y<container.clientHeight-58&&(point.x<container.clientWidth-halfWidth-68||point.y>170);
       var centerY=point.y-(item.region?0:markerHeight/2),overlaps=boxes.some(function(box){return Math.abs(box.x-point.x)<box.halfWidth+halfWidth+8&&Math.abs(box.y-centerY)<box.halfHeight+markerHeight/2+6;});
@@ -948,8 +954,8 @@ initializeMapLocale();
     var synthName='',synthColor='';
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&i>=0&&i<120){
       var bRow=Math.floor(i/12),bCol=i%12;
-      var wLng=CENTER[0]-0.0048+(bCol/12)*0.0096,eLng=CENTER[0]-0.0048+((bCol+1)/12)*0.0096;
-      var nLat=CENTER[1]+0.0028-(bRow/10)*0.0056,sLat=CENTER[1]+0.0028-((bRow+1)/10)*0.0056;
+      var wLng=CENTER[0]-0.0026+(bCol/12)*0.0052,eLng=CENTER[0]-0.0026+((bCol+1)/12)*0.0052;
+      var nLat=CENTER[1]+0.0013-(bRow/10)*0.0026,sLat=CENTER[1]+0.0013-((bRow+1)/10)*0.0026;
       polygon=[[wLng,nLat],[eLng,nLat],[eLng,sLat],[wLng,sLat]];
       centroid=[(wLng+eLng)/2,(nLat+sLat)/2];
       lngLat=true;
@@ -1142,10 +1148,8 @@ initializeMapLocale();
           map.setPaintProperty('district-complete-volumes','fill-extrusion-opacity',1);
         }
       }catch(_){}
-      if(!map.getLayer('turf-surface-wash'))map.addLayer({id:'turf-surface-wash',type:'fill',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'fill-color':['coalesce',['get','renderColor'],'#78d628'],'fill-opacity':0.34,'fill-antialias':false}},beforeGround);
-      if(!map.getLayer('turf-grid-line'))map.addLayer({id:'turf-grid-line',type:'line',source:'zone-blocks',paint:{'line-color':['case',['boolean',['get','contested'],false],'#ff6b3d',['boolean',['get','neutral'],false],'rgba(148,163,184,0.35)',['coalesce',['get','renderColor'],'#78d628']],'line-width':['case',['boolean',['get','contested'],false],2.4,['boolean',['get','neutral'],false],1,1.35],'line-dasharray':[2,1.5],'line-opacity':0.92}},beforeGround);
-      if(!map.getLayer('turf-border-glow'))map.addLayer({id:'turf-border-glow',type:'line',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':10,'line-blur':4,'line-opacity':0.85}},beforeGround);
-      if(!map.getLayer('turf-border-line'))map.addLayer({id:'turf-border-line',type:'line',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':3.4,'line-opacity':0.98}},beforeGround);
+      if(!map.getLayer('turf-surface-wash'))map.addLayer({id:'turf-surface-wash',type:'fill',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'fill-color':['coalesce',['get','renderColor'],'#78d628'],'fill-opacity':0.18,'fill-antialias':false}},beforeGround);
+      if(!map.getLayer('turf-grid-line'))map.addLayer({id:'turf-grid-line',type:'line',source:'zone-blocks',paint:{'line-color':['case',['boolean',['get','contested'],false],'#ff6b3d',['boolean',['get','neutral'],false],'rgba(148,163,184,0.35)',['coalesce',['get','renderColor'],'#78d628']],'line-width':['case',['boolean',['get','contested'],false],2.4,['boolean',['get','neutral'],false],1,1.35],'line-dasharray':[2,1.5],'line-opacity':0.85}},beforeGround);
     }
     // Original block geometry stays invisible and independently selectable.
     if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':'#ffffff','fill-opacity':0}},before);
@@ -1307,7 +1311,7 @@ initializeMapLocale();
             var service=JSON.parse(JSON.stringify(layer));service.id='zone-poi-icon-service';service.filter=services;service.minzoom=15.8;service.layout['icon-allow-overlap']=true;map.addLayer(service);
           }
           if(!map.getLayer('zone-poi-service-reservations'))map.addLayer({id:'zone-poi-service-reservations',type:'symbol',source:'zone-pois',filter:services,minzoom:15.8,layout:{'icon-image':['get','iconImage'],'icon-size':.74,'icon-padding':4,'icon-allow-overlap':true,'icon-ignore-placement':false,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport'},paint:{'icon-opacity':.001}});
-          if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayerZoomRange){map.setLayerZoomRange('zone-poi-icon-service',13.2,24);if(map.getLayer('zone-poi-service-reservations'))map.setLayerZoomRange('zone-poi-service-reservations',13.2,24);if(map.setLayoutProperty){if(map.getLayer('zone-poi-coin-reservations'))map.setLayoutProperty('zone-poi-coin-reservations','visibility','none');if(map.getLayer('zone-poi-service-reservations'))map.setLayoutProperty('zone-poi-service-reservations','visibility','none');['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(!map.getLayer(lid))return;map.setLayoutProperty(lid,'icon-size',0.62);map.setLayoutProperty(lid,'text-size',11);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'icon-ignore-placement',true);map.setLayoutProperty(lid,'text-allow-overlap',true);map.setLayoutProperty(lid,'text-ignore-placement',true);map.setLayoutProperty(lid,'text-optional',false);map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'text-offset',[0,1.72]);});}}
+          if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayerZoomRange){map.setLayerZoomRange('zone-poi-icon-service',13.2,24);if(map.getLayer('zone-poi-service-reservations'))map.setLayerZoomRange('zone-poi-service-reservations',13.2,24);if(map.setLayoutProperty){if(map.getLayer('zone-poi-coin-reservations'))map.setLayoutProperty('zone-poi-coin-reservations','visibility','none');if(map.getLayer('zone-poi-service-reservations'))map.setLayoutProperty('zone-poi-service-reservations','visibility','none');['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(!map.getLayer(lid))return;map.setLayoutProperty(lid,'icon-size',0.62);map.setLayoutProperty(lid,'text-size',11);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'icon-ignore-placement',true);map.setLayoutProperty(lid,'text-allow-overlap',['step',['zoom'],false,15.85,true]);map.setLayoutProperty(lid,'text-ignore-placement',false);map.setLayoutProperty(lid,'text-optional',true);map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'text-offset',[0,1.72]);});}}
         }}
         // Detail coin and glyph share one RGBA image and one placement decision.
         // Its name shares that decision and roof elevation too. A rejected
@@ -1317,7 +1321,7 @@ initializeMapLocale();
       });
       ZoneCompactDistrict.syncPoiPerspective(map,map.getPitch?map.getPitch()>1:false);
       if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayoutProperty){
-        ['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(map.getLayer(lid)){map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'text-allow-overlap',true);map.setLayoutProperty(lid,'text-optional',false);}});
+        ['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(map.getLayer(lid)){map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'text-allow-overlap',['step',['zoom'],false,15.85,true]);map.setLayoutProperty(lid,'text-optional',true);}});
       }
       if(!map.getLayer('zone-here-halo'))map.addLayer({id:'zone-here-halo',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,9,18,15],'circle-color':'rgba(49,224,255,.12)','circle-stroke-color':'rgba(49,224,255,.75)','circle-stroke-width':2,'circle-blur':.18}});
       if(!map.getLayer('zone-here-dot'))map.addLayer({id:'zone-here-dot',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,4,18,7],'circle-color':'#31e0ff','circle-stroke-color':'#ffffff','circle-stroke-width':2}});

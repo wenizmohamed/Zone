@@ -130,7 +130,7 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
     selected.forEach(pin=>{
       const spec=KIT[pin.id],coord=mapboxgl.MercatorCoordinate.fromLngLat(pin._lngLat,0),group=new THREE.Group();
       group.name='service-'+pin.id;group.position.set((coord.x-origin.x)/meter,.3,(coord.y-origin.y)/meter);group.rotation.y=spec.rotation;
-      if(pin._buildingAssociation?.insideRoof){
+      if(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&pin._buildingAssociation?.insideRoof){
         const association=pin._buildingAssociation,roof=association.heightMeters,room=Math.max(1,Math.min(6,association.clearanceMeters*1.3));
         const signGeometry=new THREE.BoxGeometry(room,.35,room*.6),signMaterial=new THREE.MeshStandardMaterial({color:spec.color,roughness:.85,metalness:.1});
         ownedGeometry.add(signGeometry);ownedMaterial.add(signMaterial);
