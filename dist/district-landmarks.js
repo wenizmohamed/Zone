@@ -220,7 +220,7 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
       });
     },
     render(_gl,input){
-      if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||map.getZoom()<(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')?13.2:15.8))return;
+      if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&map.getZoom()<15.8))return;
       const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
       const started=performance.now();camera.projectionMatrix.fromArray(projection).multiply(local);
       let frameFailure=null;
