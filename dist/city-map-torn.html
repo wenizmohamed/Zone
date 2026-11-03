@@ -572,7 +572,7 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,38,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.38,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.38,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
