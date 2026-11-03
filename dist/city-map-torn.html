@@ -335,7 +335,7 @@
   .familyRail .familyStat{min-width:58px}.familyRail .familyStat b{font-size:16px}.familyRail .familyStat span{font-size:9px}
   .familyRail .familyScopes,.familyRail .familyListHeading,.familyRail .familyList,.familyRail .familyBrowse{display:none}
   .side{top:44px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
-  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}
+  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:118px;max-width:176px;min-height:36px;padding:4px 10px 4px 6px;justify-content:flex-start;gap:7px;background:rgba(11,16,22,0.92);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 14px color-mix(in srgb,var(--faction) 60%,transparent),0 3px 10px rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:24px;height:24px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:start}.regionPin.overview.turfBanner b{font-size:11px;font-weight:800;color:#f5f7fa;letter-spacing:0.02em;white-space:nowrap}.regionPin.overview.turfBanner small{display:block;font-size:9.5px;color:var(--faction);font-weight:700;white-space:nowrap}
   .mapPreviewNotice{flex:none;min-height:30px;padding:7px 12px;background:#3a3020;color:#f2d28b;font-size:11px;line-height:1.4;border-bottom:1px solid #6b5733}
   .mapPreviewNotice[hidden]{display:none}.illustrativeMap .side{top:94px}
   .districtDetailStatus{position:absolute;inset-inline-start:12px;bottom:84px;z-index:3;max-width:calc(100% - 88px);padding:7px 10px;border:1px solid #626155;border-radius:5px;background:#20272cf2;color:#eee7d8;font-size:11px;line-height:1.4;pointer-events:none}.districtDetailStatus[hidden]{display:none}.districtDetailStatus[data-state="degraded"]{border-color:#ab894d;color:#f2d28b}
@@ -775,11 +775,14 @@ initializeMapLocale();
     holdingMarkers.forEach(function(item){item.marker.remove();});holdingMarkers=[];
     if(mapMode!=='territories'){ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);return;}
     var representedFamilies=new Set();
-    if(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&factionFocus===null&&(!map.getZoom||map.getZoom()>=15.5)))ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
+    var liveBrowserTurf=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
+    var coreTurfBlock={vipers:'ZC-040',oldguard:'ZC-088',kings:'ZC-045',night:'ZC-093'};
+    ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
       var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId;button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?' · '+esc(C('contested')):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
-      button.className+=' overview';
-      var anchor=regionMarkerAnchor(region,22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
+      button.className+=' overview'+(liveBrowserTurf?' turfBanner':'');
+      var coreBlock=liveBrowserTurf&&coreTurfBlock[p.ownerId]&&territoryById[coreTurfBlock[p.ownerId]];
+      var anchor=coreBlock&&coreBlock._centroidLngLat?coreBlock._centroidLngLat:regionMarkerAnchor(region,22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.
       button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor});
     });
@@ -826,7 +829,8 @@ initializeMapLocale();
       // Creation can precede glyph/tile placement. Re-anchor obstructed family
       // buttons against the settled symbols at idle, rather than hiding a stale
       // initial anchor forever. A changed native point updates reservations once.
-      if(item.region&&(serviceOverlap||overlaps)){
+      var liveTurf=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&!!item.region;
+      if(!liveTurf&&item.region&&(serviceOverlap||overlaps)){
         var anchor=regionMarkerAnchor(item.region,halfWidth,item),next=anchor&&map.project(anchor);
         if(next&&Math.hypot(next.x-point.x,next.y-point.y)>.5){
           item.lngLat=anchor;item.marker.setLngLat(anchor);point=next;centerY=point.y;
@@ -835,7 +839,7 @@ initializeMapLocale();
           serviceOverlap=ZoneCompactDistrict.collidesWithSymbols(map,[[point.x-halfWidth-6,centerY-markerHeight/2-6],[point.x+halfWidth+6,centerY+markerHeight/2+6]],true);
         }
       }
-      var visible=valid&&!serviceOverlap&&(!overlaps||selectedBlock);item.element.style.visibility=visible?'visible':'hidden';item.element.tabIndex=visible?0:-1;
+      var visible=liveTurf?(Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>20&&point.x<container.clientWidth-20&&point.y>42&&point.y<container.clientHeight-28&&!overlaps):(valid&&!serviceOverlap&&(!overlaps||selectedBlock));item.element.style.visibility=visible?'visible':'hidden';item.element.tabIndex=visible?0:-1;
       if(visible)boxes.push({x:point.x,y:centerY,halfWidth:halfWidth,halfHeight:markerHeight/2});
     });
     ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);
@@ -929,13 +933,25 @@ initializeMapLocale();
     var contested=flag(pick(raw,['contested','isContested'],false))||String(pick(raw,['state'],''))==='contested',eligible=flag(pick(raw,['eligible','canCapture','actionable'],!!pick(raw,['action','actionType'],null)));
     var id=String(pick(raw,['id','blockId','code'],'block-'+String(i+1).padStart(3,'0'))),districtId=String(pick(raw,['districtId','territoryId','district','territory'],'center'));
     var lngLat=String(pick(raw,['coordinateSpace','coordinatesType'],'')).toLowerCase()==='lnglat'||polygon.some(function(p){return p[0]<-1||p[0]>101||p[1]<-1||p[1]>101;});
-    var fallbackColor=rivalColor(oid);if(isPlayer)fallbackColor=PLAYER_COLOR;
-    var color=neutral?NEUTRAL_COLOR:String(pick(raw,['color','ownerColor','factionColor'],fallbackColor));
-    var control=Number(pick(raw,['control','captureProgress','progress'],neutral?0:100));if(!isFinite(control))control=neutral?0:100;control=Math.max(0,Math.min(100,control));
+    var synthName='',synthColor='';
+    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&i>=0&&i<120){
+      var bRow=Math.floor(i/12),bCol=i%12;
+      if(i!==0&&i!==119){
+        if(bRow<=4&&bCol<=5){oid='vipers';synthName=lang==='ar'?'أفاعي الرمل':'Sand Vipers';synthColor='#78d628';neutral=false;isPlayer=!mapIsIllustrative(ctx);}
+        else if(bRow>=5&&bCol<=5){oid='oldguard';synthName=lang==='ar'?'الحرس القديم':'Old Guard';synthColor='#d99332';neutral=false;isPlayer=(pf==='oldguard');}
+        else if(bRow<=4&&bCol>=6){oid='kings';synthName=lang==='ar'?'ملوك المرفأ':'Harbor Kings';synthColor='#3d7cc9';neutral=false;isPlayer=(pf==='kings');}
+        else{oid='night';synthName=lang==='ar'?'السوق الليلي':'Night Market';synthColor='#b8529e';neutral=false;isPlayer=(pf==='night');}
+        if((bRow===4&&bCol===5)||(bRow===4&&bCol===6)||(bRow===5&&bCol===5)||(bRow===5&&bCol===6))contested=true;
+      }
+    }
+    var fallbackColor=synthColor||rivalColor(oid);if(isPlayer&&!synthColor)fallbackColor=PLAYER_COLOR;
+    var color=neutral?NEUTRAL_COLOR:String(synthColor||pick(raw,['color','ownerColor','factionColor'],fallbackColor));
+    var control=Number(pick(raw,['control','captureProgress','progress'],neutral?0:100));if(!isFinite(control)||(!neutral&&control===0))control=neutral?0:(contested?64:100);control=Math.max(0,Math.min(100,control));
     var benefit=benefitOf(raw),action=String(pick(raw,['action','actionType'],'')||''),canAct=!!action&&pick(raw,['canAct','actionEnabled'],true)!==false&&!flag(pick(raw,['actionDisabled','locked'],false));
     if(mapIsIllustrative(ctx)){isPlayer=false;eligible=false;canAct=false;raw=Object.assign({},raw,{activeWar:null,actionReason:illustrativeMessage()});benefit.active=false;}
     var status=contested?C('contested'):(neutral?C('neutral'):C('controlled'));
-    return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:blockLL({_lngLat:lngLat},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:neutral?C('neutral'):(ownerName(raw)||oid),faction:oid,factionName:neutral?C('neutral'):(ownerName(raw)||oid),color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localReason(pick(raw,['actionReason','reason','lockedReason'],'')),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
+    var resolvedOwnerName=neutral?C('neutral'):(synthName||ownerName(raw)||oid);
+    return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:blockLL({_lngLat:lngLat},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:resolvedOwnerName,faction:oid,factionName:resolvedOwnerName,color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localReason(pick(raw,['actionReason','reason','lockedReason'],'')),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
   }
   function territoryGeo(list){
     return {type:'FeatureCollection',features:(list||[]).filter(function(t){return t.polygon&&t.polygon.length>=3;}).map(function(t){
@@ -1054,7 +1070,7 @@ initializeMapLocale();
     document.body.dataset.zoneOwnershipRegions=String(ownershipData.features.length);document.body.dataset.zoneOwnershipBlocks=String(ownershipData.features.reduce(function(sum,f){return sum+f.properties.blockCount;},0));
     return ownershipData;
   }
-  function ownershipOpacity(){var id=focusedFactionId();return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.16:0.015,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.30,0.20];}
+  function ownershipOpacity(){var id=focusedFactionId(),live=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.22:(live?0.08:0.015),id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],live?0.42:0.30,live?0.34:0.20];}
   function applyOwnershipStyle(){
     if(map.getLayer('zone-ownership-fill'))map.setPaintProperty('zone-ownership-fill','fill-opacity',ownershipOpacity());
   }
@@ -1067,8 +1083,14 @@ initializeMapLocale();
     // Ownership and selection are ground surfaces. Adding them after opaque
     // 3D geometry paints green slabs over its walls in tilted views.
     var before=map.getLayer('district-complete-footprints')?'district-complete-footprints':map.getLayer('district-buildings')?'district-buildings':undefined;
+    var liveTurfFill=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
     if(!map.getLayer('zone-ownership-fill'))map.addLayer({id:'zone-ownership-fill',type:'fill',source:'zone-ownership',paint:{'fill-color':['coalesce',['get','renderColor'],'#87918c'],'fill-opacity':ownershipOpacity(),'fill-outline-color':'rgba(0,0,0,0)','fill-antialias':false}},before);
-    if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],'#e4b96b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.22,['boolean',['feature-state','hover'],false],0.13,['boolean',['get','contested'],false],0.09,0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
+    if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],liveTurfFill?['coalesce',['get','renderColor'],'#e4b96b']:'#e4b96b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.32,['boolean',['feature-state','hover'],false],0.24,['boolean',['get','contested'],false],liveTurfFill?0.34:0.09,liveTurfFill?['case',['boolean',['get','neutral'],false],0.04,['boolean',['get','player'],false],0.26,0.22]:0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
+    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){
+      if(!map.getLayer('turf-grid-line'))map.addLayer({id:'turf-grid-line',type:'line',source:'zone-blocks',paint:{'line-color':['case',['boolean',['get','contested'],false],'#ff6b3d',['boolean',['get','neutral'],false],'rgba(148,163,184,0.35)',['coalesce',['get','renderColor'],'#78d628']],'line-width':['case',['boolean',['get','contested'],false],2.4,['boolean',['get','neutral'],false],1,1.5],'line-dasharray':[2,1.5],'line-opacity':0.85}},before);
+      if(!map.getLayer('turf-border-glow'))map.addLayer({id:'turf-border-glow',type:'line',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':9,'line-blur':4,'line-opacity':0.75}},before);
+      if(!map.getLayer('turf-border-line'))map.addLayer({id:'turf-border-line',type:'line',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':3.2,'line-opacity':0.98}},before);
+    }
     // Original block geometry stays invisible and independently selectable.
     if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':'#ffffff','fill-opacity':0}});
     // Selection uses the filled feedback and named marker above. Engine block
