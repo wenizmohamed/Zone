@@ -75,20 +75,39 @@
       </div>
       <div class="zone-header-actions" style="margin-inline-start:auto;display:flex;align-items:center;gap:14px;font-size:12px">
         <span style="color:var(--mu)">{{ t.tct }} <bdi style="color:var(--accText);font-weight:600">{{ clock }}</bdi></span>
-        <span style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px;background:var(--deep);border:1px solid var(--border3);border-radius:3px">
+        <button data-omar-header-profile="1" onClick="{{ omar.openOwnProfile }}" style="display:inline-flex;align-items:center;gap:8px;padding:4px 10px;background:var(--deep);border:1px solid var(--acc);border-radius:3px;color:var(--t1);font:inherit;font-size:11.5px;cursor:pointer">
           <span style="width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 4px var(--acc)"></span>
-          <strong style="color:var(--t1)">{{ t.player }}</strong>
-          <bdi data-zone-edition-badge="1" style="color:var(--gold);font-size:10px;font-weight:700;padding-inline-start:6px;border-inline-start:1px solid var(--border3)">{{ tacticalDeck.editionBadge }} · {{ tacticalDeck.netWorth }}</bdi>
-        </span>
+          <strong style="color:var(--t1)">{{ t.player }} <bdi style="color:var(--acc)">[#{{ omar.playerId }}]</bdi></strong>
+          <bdi data-zone-edition-badge="1" style="color:var(--gold);font-size:10px;font-weight:700;padding-inline-start:6px;border-inline-start:1px solid var(--border3)">{{ omar.viewProfileLabel }} · {{ tacticalDeck.netWorth }}</bdi>
+        </button>
+        <button onClick="{{ omar.toggleTicker }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer">{{ omar.tickerBtnLabel }}</button>
         <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
         <a href="{{ adminHref }}" style="background:var(--activebg);border:1px solid var(--acc);color:var(--activefg);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600">{{ adminLabel }}</a>
       </div>
     </div>
-    <div class="zone-bulletin" style="background:var(--ticker);border-top:1px solid var(--btn);overflow:hidden;white-space:nowrap;font-size:11px;color:var(--mu);padding:4px 0;display:flex;align-items:center">
+    <div class="zone-bulletin" style="background:var(--ticker);border-top:1px solid var(--btn);overflow:hidden;white-space:nowrap;font-size:11px;color:var(--mu);padding:4px 0;display:{{ omar.tickerDisplay }};align-items:center">
       <span style="flex:none;position:relative;z-index:1;background:var(--ticker);padding:0 10px;font-weight:600">{{ demoBulletin }}</span>
       <div data-zticker="1" style="display:inline-flex;gap:60px;animation:zticker 60s linear infinite;padding-inline-start:20px">
         <sc-for list="{{ ticker }}" as="h" hint-placeholder-count="6"><span>{{ h }}</span></sc-for>
+      </div>
+    </div>
+    <div data-omar-commandbar="1" style="background:rgba(12,15,19,.96);border-top:1px solid var(--border);padding:5px 14px">
+      <div style="max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="color:var(--mu);font-weight:600">{{ omar.searchBarLabel }}:</span>
+          <sc-for list="{{ omar.searchCategories }}" as="sc" hint-placeholder-count="6">
+            <button onClick="{{ sc.select }}" style="background:{{ sc.bg }};color:{{ sc.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10.5px;cursor:pointer">{{ sc.label }}</button>
+          </sc-for>
+          <input type="search" value="{{ omar.searchQuery }}" onInput="{{ omar.onSearchInput }}" placeholder="{{ omar.searchPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:3px 9px;font:inherit;font-size:11px;min-width:185px">
+          <button onClick="{{ omar.runQuickSearch }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.searchBtnLabel }}</button>
+          <button onClick="{{ omar.toggleAdvSearch }}" style="background:{{ omar.advSearchBtnBg }};color:{{ omar.advSearchBtnFg }};border:1px solid var(--acc);border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.advSearchBtnLabel }}</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <button onClick="{{ omar.openOwnProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.myProfileBtnLabel }} [#{{ omar.playerId }}]</button>
+          <button onClick="{{ omar.openOtherSampleProfile }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">🎯 {{ omar.inspectRivalBtnLabel }}</button>
+          <button onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">📖 {{ omar.wikiRulesBtnLabel }}</button>
+        </div>
       </div>
     </div>
     <sc-if value="{{ announcement.enabled }}" hint-placeholder-val="{{ false }}">
@@ -103,8 +122,10 @@
         <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.information }}</div>
         <div class="zone-profile-body zone-panel" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:6px 10px;display:flex;flex-direction:column;gap:4px">
           <div class="zone-profile-identity">
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link)">{{ t.player }}</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link);font-weight:600">{{ t.player }} <bdi style="color:var(--acc)">[#{{ omar.playerId }}]</bdi></span></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--mu)">{{ omar.loginEmailLabel }}</span><bdi style="color:var(--t3)">{{ omar.accountEmail }}</bdi></div>
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.money }}</span><bdi id="zone-cash" data-zfig="1" style="color:var(--money);font-weight:600;font-size:13.5px;display:inline-block">{{ cash }}</bdi></div>
+            <button data-omar-sidebar-profile="1" onClick="{{ omar.openOwnProfile }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
           </div>
           <a class="zone-profile-account" href="{{ accountHref }}" style="color:var(--link);display:block;padding:10px 0;min-height:44px">{{ accountLabel }}</a>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.level }}</span><bdi style="color:var(--t1)">{{ level }} <span style="color:var(--mu);font-size:10px">{{ levelTitle }}</span></bdi></div>
@@ -201,57 +222,151 @@
         </div>
       </sc-if>
 
-      <!-- PERSISTENT 3D OPERATIVE & LOADOUT STAGE (VISIBLE ACROSS ALL SCREENS) -->
-      <sc-if value="{{ showGlobalCharStage }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-global-character-stage="1" style="background:linear-gradient(135deg,#13181f 0%,#0b0e12 100%);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px;align-items:stretch">
-          <div style="position:relative;height:175px;background:var(--deep);border:1px solid var(--border3);border-radius:5px;overflow:hidden">
-            <iframe id="zone-global-char-3d" data-character-src="dist/character3d.html?v=116&mini=1" sc-camel-key="{{ characterFrameKey }}" title="{{ t.character }}" style="width:100%;height:100%;border:0;display:block"></iframe>
+      <!-- OMAR FEEDBACK: PLAYER PROFILE VIEW (OWN & OTHER PLAYERS + 9 ACTIONS + BAZAAR) -->
+      <sc-if value="{{ omar.profileOpen }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-panel" data-omar-profile-modal="1" style="background:linear-gradient(180deg,#161b22 0%,#0f1318 100%);border:1px solid var(--acc);border-top:3px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <span style="padding:3px 8px;background:var(--activebg);border:1px solid var(--acc);border-radius:4px;color:var(--activefg);font-size:11px;font-weight:700">ID #{{ omar.activeProfile.id }}</span>
+              <strong style="color:var(--t1);font-size:18px">{{ omar.activeProfile.name }} <span style="color:var(--acc);font-size:14px">[#{{ omar.activeProfile.id }}]</span></strong>
+              <span style="color:var(--gold);font-size:12px;font-weight:600">{{ omar.activeProfile.rankTitle }}</span>
+              <span style="padding:2px 8px;border-radius:10px;background:var(--deep);border:1px solid var(--border3);color:{{ omar.activeProfile.statusColor }};font-size:11px;font-weight:600">{{ omar.activeProfile.statusText }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="color:var(--mu);font-size:11px">{{ omar.switchProfileLabel }}:</span>
+              <sc-for list="{{ omar.profileDirectory }}" as="pr" hint-placeholder-count="6">
+                <button onClick="{{ pr.open }}" style="background:{{ pr.bg }};color:{{ pr.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ pr.label }}</button>
+              </sc-for>
+              <button onClick="{{ omar.closeProfile }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+            </div>
           </div>
-          <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-width:0">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
-              <div>
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                  <span style="width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)"></span>
-                  <strong style="color:var(--t1);font-size:13px;text-transform:uppercase;letter-spacing:.08em">{{ t.player }} · {{ levelTitle }} ({{ title }})</strong>
+
+          <div style="padding:6px 10px;background:rgba(163,217,0,.08);border:1px solid rgba(163,217,0,.3);border-radius:4px;font-size:11px;color:var(--t2)">
+            {{ omar.identityRuleBanner }}
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
+            <sc-for list="{{ omar.activeProfile.rows }}" as="row" hint-placeholder-count="10">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <span style="color:var(--mu);font-size:11px">{{ row.k }}</span>
+                <bdi style="color:{{ row.color }};font-weight:600;font-size:12px">{{ row.v }}</bdi>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="color:var(--t2);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em">{{ omar.profileActionsTitle }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px">
+              <sc-for list="{{ omar.activeProfile.actions }}" as="act" hint-placeholder-count="9">
+                <button onClick="{{ act.run }}" style="background:{{ act.bg }};color:{{ act.fg }};border:1px solid {{ act.border }};border-radius:4px;padding:6px 10px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:2px">
+                  <span>{{ act.label }}</span>
+                  <small style="color:var(--mu);font-size:9.5px;font-weight:400">{{ act.sub }}</small>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ omar.profileActionFeedback }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 10px;background:var(--activebg);border:1px solid var(--acc);border-radius:4px;color:var(--activefg);font-size:11.5px;font-weight:600">{{ omar.profileActionFeedback }}</div>
+          </sc-if>
+
+          <sc-if value="{{ omar.showStatsCompare }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--panel);border:1px solid var(--border3);border-radius:5px;padding:10px">
+              <div style="font-weight:700;color:var(--gold);font-size:12px;margin-bottom:6px">📊 {{ omar.compareStatsTitle }}</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+                <sc-for list="{{ omar.activeProfile.compareRows }}" as="cr" hint-placeholder-count="5">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                    <span style="display:block;color:var(--mu);font-size:10px">{{ cr.stat }}</span>
+                    <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:3px">
+                      <span style="color:var(--acc)">{{ omar.youLabel }}: <bdi>{{ cr.you }}</bdi></span>
+                      <span style="color:var(--gold)">{{ omar.targetLabel }}: <bdi>{{ cr.them }}</bdi></span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ omar.showPlayerBazaar }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--panel);border:1px solid var(--gold);border-radius:5px;padding:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <strong style="color:var(--gold);font-size:12.5px">🏪 {{ omar.activeProfile.bazaarTitle }}</strong>
+                <span style="color:var(--mu);font-size:11px">{{ omar.bazaarSub }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
+                <sc-for list="{{ omar.activeProfile.bazaarItems }}" as="bz" hint-placeholder-count="3">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <div>
+                      <strong style="color:var(--t1);font-size:12px;display:block">{{ bz.name }}</strong>
+                      <small style="color:var(--money);font-weight:600">{{ bz.price }} · ×{{ bz.qty }}</small>
+                    </div>
+                    <button onClick="{{ bz.buy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ t.buy }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px 10px">
+            <div style="font-weight:700;color:var(--t1);font-size:11.5px;margin-bottom:6px">🏅 {{ omar.medalsCabinetTitle }} ({{ omar.activeProfile.medals.length }})</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ omar.activeProfile.medals }}" as="md" hint-placeholder-count="6">
+                <span style="padding:4px 9px;background:var(--deep);border:1px solid var(--gold);border-radius:4px;color:var(--gold);font-size:10.5px;font-weight:600">🏅 {{ md }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- OMAR FEEDBACK: ADVANCED PLAYER SEARCH MODAL -->
+      <sc-if value="{{ omar.advSearchOpen }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-panel" data-omar-adv-search="1" style="background:var(--panel);border:1px solid var(--acc);border-top:3px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong style="color:var(--t1);font-size:15px">🔍 {{ omar.advSearchTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.advSearchSub }}</div>
+            </div>
+            <button onClick="{{ omar.toggleAdvSearch }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <span style="color:var(--mu);font-size:11px">{{ omar.filterStatusLabel }}:</span>
+            <sc-for list="{{ omar.advFilters }}" as="af" hint-placeholder-count="5">
+              <button onClick="{{ af.select }}" style="background:{{ af.bg }};color:{{ af.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">{{ af.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:grid;gap:6px">
+            <sc-for list="{{ omar.advSearchResults }}" as="sr" hint-placeholder-count="6">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <strong style="color:var(--link);font-size:12.5px">{{ sr.name }} <bdi style="color:var(--acc)">[#{{ sr.id }}]</bdi></strong>
+                  <span style="color:var(--t3);font-size:11px">Lv.{{ sr.level }} · {{ sr.ageDays }}d · {{ sr.gender }}</span>
+                  <span style="color:var(--mu);font-size:11px">{{ sr.faction }} · {{ sr.property }}</span>
+                  <span style="color:{{ sr.statusColor }};font-size:11px;font-weight:600">{{ sr.statusText }}</span>
                 </div>
-                <div style="color:var(--t3);font-size:11px;margin-top:3px">{{ subtitle }}</div>
+                <div style="display:flex;gap:6px">
+                  <button onClick="{{ sr.openProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.viewProfileLabel }}</button>
+                  <button onClick="{{ sr.attack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">⚔️ {{ t.nav.attack }}</button>
+                </div>
               </div>
-              <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-                <sc-for list="{{ outfits }}" as="o" hint-placeholder-count="3">
-                  <button onClick="{{ o.go }}" aria-pressed="{{ o.selected }}" style="background:{{ o.bg }};border:1px solid var(--border3);color:{{ o.fg }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ o.name }}</button>
-                </sc-for>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- OMAR FEEDBACK: WIKI, RULES & GAME GUIDE -->
+      <sc-if value="{{ omar.wikiOpen }}" hint-placeholder-val="{{ false }}">
+        <section class="zone-panel" data-omar-wiki="1" style="background:var(--panel);border:1px solid var(--gold);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong style="color:var(--gold);font-size:14px">📖 {{ omar.wikiTitle }}</strong>
+            <button onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
+            <sc-for list="{{ omar.wikiArticles }}" as="wa" hint-placeholder-count="6">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                <strong style="color:var(--acc);font-size:12px;display:block;margin-bottom:3px">{{ wa.title }}</strong>
+                <p style="margin:0;color:var(--t3);font-size:11px;line-height:1.45">{{ wa.body }}</p>
               </div>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px">
-              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Primary Weapon</span>
-                <strong style="color:var(--acc);font-size:12px">{{ loadout.weapon.name }}</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.weapon.detail }}</small>
-              </div>
-              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Body Armor</span>
-                <strong style="color:var(--t1);font-size:12px">{{ loadout.armor.name }}</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">{{ loadout.armor.detail }} · {{ frameName }}</small>
-              </div>
-              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Cash &amp; Vault</span>
-                <strong style="color:var(--money);font-size:12px">{{ bank.cash }} Street</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">Vault: {{ bank.balance }} ({{ bank.vaultSharePct }}% Safe)</small>
-              </div>
-              <div style="background:rgba(16,20,26,.9);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
-                <span style="display:block;color:var(--mu);font-size:9.5px;text-transform:uppercase">Battle Stats</span>
-                <strong style="color:var(--gold);font-size:12px">{{ activity.totalBattleScore }} Total</strong>
-                <small style="display:block;color:var(--t4);font-size:10px">STR / DEF / SPD / DEX</small>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding-top:4px;border-top:1px solid rgba(255,255,255,.07)">
-              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-                <span style="color:var(--mu);font-size:10px;font-weight:700;text-transform:uppercase">Weapon Inspection:</span>
-                <sc-for list="{{ geminiArsenal.holodeckWeapons }}" as="hw" hint-placeholder-count="6">
-                  <button onClick="{{ hw.select }}" aria-pressed="{{ hw.active }}" style="background:{{ hw.bg }};color:{{ hw.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hw.label }}</button>
-                </sc-for>
-              </div>
-            </div>
+            </sc-for>
           </div>
         </section>
       </sc-if>
@@ -275,6 +390,121 @@
             </button>
           </sc-for>
         </div>
+        <!-- OMAR FEEDBACK: TORN-STYLE HOME INFORMATION ARCHITECTURE (8 CORE CARDS) -->
+        <section class="zone-panel" data-omar-home-architecture="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div>
+              <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.04em">{{ omar.homeDashboardTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+              <button onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">🏆 {{ t.merits }} ({{ merits }})</button>
+              <button onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">🏠 {{ omar.propertyCardTitle }}</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
+            <!-- Card 1: General Information -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between">
+                <span>📋 {{ omar.generalInfoTitle }}</span>
+                <span style="color:var(--acc)">ID #{{ omar.playerId }}</span>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.generalInfoRows }}" as="gr" hint-placeholder-count="8">
+                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ gr.k }}</span>
+                    <bdi style="color:{{ gr.color }};font-weight:600">{{ gr.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 2: Battle Stats -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>⚔️ {{ omar.battleStatsTitle }}</span>
+                <button onClick="{{ omar.openGymScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.gym }}</button>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.battleStatsRows }}" as="bs" hint-placeholder-count="5">
+                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ bs.k }}</span>
+                    <bdi style="color:{{ bs.color }};font-weight:600">{{ bs.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 3: Working Stats & Job Information -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>💼 {{ omar.workingStatsTitle }}</span>
+                <button onClick="{{ omar.openJobsScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.jobs }}</button>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.workingStatsRows }}" as="ws" hint-placeholder-count="6">
+                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ ws.k }}</span>
+                    <bdi style="color:{{ ws.color }};font-weight:600">{{ ws.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 4: Personal Perks -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc)">
+                <span>✨ {{ omar.personalPerksTitle }}</span>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11px">
+                <sc-for list="{{ omar.personalPerks }}" as="pk" hint-placeholder-count="6">
+                  <div style="display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--gold);font-weight:600">[{{ pk.source }}]</span>
+                    <span style="color:var(--t2);text-align:end">{{ pk.effect }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 5: Property Information & Rental Lease -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>🏠 {{ omar.propertyCardTitle }}</span>
+                <button onClick="{{ omar.rentPrivateIslandQuick }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ omar.rentIslandBtnLabel }}</button>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.propertyCardRows }}" as="prw" hint-placeholder-count="5">
+                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ prw.k }}</span>
+                    <bdi style="color:{{ prw.color }};font-weight:600">{{ prw.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 6: Merits & Skill Upgrades (1->2->3->4 pt progression) -->
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>🏆 {{ omar.meritsTreeTitle }}</span>
+                <bdi style="color:var(--gold);font-size:11px">{{ merits }} {{ t.merits }}</bdi>
+              </div>
+              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;font-size:11px">
+                <sc-for list="{{ omar.meritBranches }}" as="mb" hint-placeholder-count="6">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <div>
+                      <strong style="color:var(--t1)">{{ mb.name }}</strong>
+                      <small style="display:block;color:var(--mu);font-size:10px">Lv.{{ mb.level }}/10 · {{ mb.bonusText }}</small>
+                    </div>
+                    <button onClick="{{ mb.upgrade }}" style="background:{{ mb.btnBg }};color:{{ mb.btnFg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ mb.btnLabel }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
           <div class="zone-home-activity" style="display:flex;flex-direction:column;gap:10px">
             <sc-if value="{{ activity.available }}">
@@ -440,6 +670,53 @@
           <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
           <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.disabled }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
         </div>
+        <!-- OMAR FEEDBACK: CITY MAP RANDOM ITEM SPAWNS ("AWARENESS" MERIT & CIRCLED FINDS UP TO $5M) -->
+        <section class="zone-panel" data-omar-city-awareness="1" style="background:linear-gradient(180deg,#161c22,#0f1318);border:1px solid var(--gold);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong style="color:var(--gold);font-size:13px">👁️ {{ omar.awarenessCityTitle }}</strong>
+              <div style="color:var(--t3);font-size:11px">{{ omar.awarenessCitySub }}</div>
+            </div>
+            <button onClick="{{ omar.rollLuckyCitySpawn }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🎲 {{ omar.rollSpawnBtnLabel }}</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
+            <sc-for list="{{ omar.cityMapSpawns }}" as="sp" hint-placeholder-count="4">
+              <div style="background:var(--deep);border:1px dashed {{ sp.borderColor }};border-radius:5px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <div>
+                  <span style="display:inline-block;padding:1px 6px;border-radius:8px;background:rgba(235,201,128,.16);color:var(--gold);font-size:9.5px;font-weight:700">⭕ {{ sp.rarity }}</span>
+                  <strong style="display:block;color:var(--t1);font-size:12px;margin-top:2px">{{ sp.name }}</strong>
+                  <small style="color:var(--money);font-weight:600">{{ sp.valueText }} · {{ sp.district }}</small>
+                </div>
+                <button onClick="{{ sp.claim }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ sp.claimLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <!-- OMAR FEEDBACK: REGIONAL TRAVEL PLUSHIES / SOUVENIRS & MUSEUM -> FREE POINTS LOOP -->
+        <section class="zone-panel" data-omar-museum-plushies="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong style="color:var(--t1);font-size:13px">🏛️ {{ omar.museumTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.museumSub }}</div>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button onClick="{{ omar.collectRegionalPlushieSet }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">✈️ {{ omar.buyAllPlushiesBtn }}</button>
+              <button onClick="{{ omar.exchangeMuseumSetForPoints }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🏛️ {{ omar.exchangeMuseumBtn }} (+10 {{ t.points }})</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
+            <sc-for list="{{ omar.plushieCatalog }}" as="pl" hint-placeholder-count="6">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <div>
+                  <strong style="color:var(--t1);font-size:11.5px;display:block">{{ pl.icon }} {{ pl.name }}</strong>
+                  <small style="color:var(--mu);font-size:10px">{{ pl.city }} · {{ pl.priceText }} · {{ omar.ownedLabel }}: <bdi style="color:var(--acc);font-weight:700">{{ pl.owned }}</bdi></small>
+                </div>
+                <button onClick="{{ pl.buy }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.buy }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
         <div>
           <div class="zone-panel-heading" style="background:linear-gradient(var(--tb1),var(--tb2));border:1px solid var(--border3);border-bottom:2px solid var(--acc);border-radius:5px 5px 0 0;padding:7px 10px;font-weight:600;color:var(--t1)" data-zhead="1">{{ t.keyOfSymbols }}</div>
           <div class="zone-panel zone-city-legend" style="background:var(--panel);border:1px solid var(--border);border-top:0;border-radius:0 0 5px 5px;padding:8px 10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px 14px">
@@ -633,6 +910,26 @@
             </div>
           </sc-for>
         </div>
+        <section class="zone-panel" data-omar-honors-merits="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong style="color:var(--gold);font-size:14px">🏅 {{ omar.honorsSectionTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.honorsSectionSub }}</div>
+            </div>
+            <button onClick="{{ omar.triggerIpecacHonor }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🧪 {{ omar.ipecacBtnLabel }}</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
+            <sc-for list="{{ omar.honorsList }}" as="hn" hint-placeholder-count="6">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <div>
+                  <strong style="color:var(--t1);font-size:12px;display:block">{{ hn.title }}</strong>
+                  <small style="color:var(--mu);font-size:10.5px">{{ hn.desc }} · <bdi style="color:var(--gold)">+1 {{ t.merits }}</bdi></small>
+                </div>
+                <button onClick="{{ hn.claim }}" style="background:{{ hn.bg }};color:{{ hn.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ hn.btn }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
       </sc-if>
 
       <!-- EDUCATION -->
@@ -649,6 +946,26 @@
         <section class="zone-panel zone-current-property"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ propertyDossier.img }}');background-size:{{ propertyDossier.artSize }};background-position:{{ propertyDossier.artPosition }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ t.living }}</span><h2>{{ propertyDossier.name }}</h2><p>{{ propertyDossier.context }}</p><div class="zone-record-foot"><span>{{ propertyDossier.happyLabel }} <bdi>{{ propertyDossier.happy }}</bdi></span><span>{{ propertyDossier.cashLabel }} <bdi>{{ propertyDossier.cash }}</bdi></span></div></div></section>
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
+        <section class="zone-panel" data-omar-property-rental="1" style="background:var(--panel);border:1px solid var(--acc);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong style="color:var(--t1);font-size:13.5px">🔑 {{ omar.rentalDeskTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.rentalDeskSub }}</div>
+            </div>
+            <bdi style="color:var(--acc);font-weight:700;font-size:12px">{{ omar.propertyInfo.leaseText }}</bdi>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
+            <sc-for list="{{ omar.rentalOptions }}" as="ro" hint-placeholder-count="4">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <div>
+                  <strong style="color:var(--t1);font-size:12px;display:block">{{ ro.name }}</strong>
+                  <small style="color:var(--mu);font-size:10.5px">{{ ro.daysLabel }} · {{ ro.happyText }} · <bdi style="color:var(--money)">{{ ro.costText }}</bdi></small>
+                </div>
+                <button onClick="{{ ro.rent }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ ro.btnLabel }}</button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
         <details class="zone-panel-note"><summary>{{ propertyUpkeepLabel }}</summary><p>{{ propertyUpkeepNote }}</p><sc-for list="{{ props }}" as="pr"><p>{{ pr.name }} · {{ pr.upkeepReference }}</p></sc-for></details>
       </sc-if>
 
@@ -784,6 +1101,45 @@
           </sc-for>
         </div>
       </sc-if>
+
+      <!-- OMAR FEEDBACK: PERSISTENT MULTI-CHANNEL CONTEXT-AWARE CHAT DOCK & PERSONAL NOTEPAD -->
+      <section class="zone-panel" data-omar-chat-dock="1" style="background:linear-gradient(180deg,#151920,#0d1015);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <strong style="color:var(--t1);font-size:12px">💬 {{ omar.chatDockTitle }}</strong>
+            <sc-for list="{{ omar.chatChannels }}" as="ch" hint-placeholder-count="7">
+              <button onClick="{{ ch.select }}" style="background:{{ ch.bg }};color:{{ ch.fg }};border:1px solid {{ ch.border }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ ch.label }}</button>
+            </sc-for>
+          </div>
+          <span style="color:var(--acc);font-size:10.5px;font-weight:600">{{ omar.chatContextBadge }}</span>
+        </div>
+
+        <sc-if value="{{ !omar.isNotesTab }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;max-height:135px;overflow-y:auto;font-size:11.5px">
+            <sc-for list="{{ omar.activeChatMessages }}" as="cm" hint-placeholder-count="4">
+              <div style="display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:3px">
+                <bdi style="color:var(--mu);font-size:10px">[{{ cm.time }}]</bdi>
+                <button onClick="{{ cm.openSender }}" style="background:none;border:0;padding:0;color:var(--acc);font:inherit;font-weight:700;cursor:pointer">{{ cm.sender }} [#{{ cm.senderId }}]:</button>
+                <span style="color:var(--t2);flex:1">{{ cm.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:6px">
+            <input type="text" value="{{ omar.chatDraft }}" onInput="{{ omar.onChatInput }}" placeholder="{{ omar.chatPlaceholder }}" style="flex:1;background:var(--deep);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:4px 10px;font:inherit;font-size:11.5px">
+            <button onClick="{{ omar.sendChatMessage }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 14px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.sendChatLabel }}</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ omar.isNotesTab }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <textarea rows="3" value="{{ omar.notesText }}" onInput="{{ omar.onNotesInput }}" placeholder="{{ omar.notesPlaceholder }}" style="width:100%;background:var(--deep);border:1px solid var(--gold);color:var(--t1);border-radius:4px;padding:8px;font:inherit;font-size:11.5px;box-sizing:border-box"></textarea>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="color:var(--mu);font-size:10.5px">{{ omar.notesSavedHint }}</span>
+              <button onClick="{{ omar.saveNotes }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">💾 {{ omar.saveNotesBtn }}</button>
+            </div>
+          </div>
+        </sc-if>
+      </section>
 
       <footer class="zone-footer" style="color:var(--mu2);font-size:11px;text-align:center;padding-top:10px">{{ t.footer }} <a href="dist/credits.html?v=99">{{ creditsLabel }}</a></footer>
     </main>
@@ -2806,7 +3162,7 @@ class Component extends DCLogic {
     const is = {}; BASE_SCREENS.forEach(s => { is[s] = s === screen; }); is.custom = !!customPage;
     const family = (this.territoryMap.factions || []).find(f => f.id === this.territoryMap.playerFactionId);
     const facName = family?.name?.[lang] || family?.name?.en || (lang === 'ar' ? 'لا توجد عائلة' : 'No family yet'), enemy = t.teams[2];
-    const d = new Date(), clock = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()].map(x => String(x).padStart(2, '0')).join(':');
+    const d = new Date(), h24 = d.getUTCHours(), h12 = String(h24 % 12 || 12).padStart(2, '0'), ampm = h24 >= 12 ? (lang === 'ar' ? 'PM م' : 'PM') : (lang === 'ar' ? 'AM ص' : 'AM'), clock = [h12, String(d.getUTCMinutes()).padStart(2, '0'), String(d.getUTCSeconds()).padStart(2, '0')].join(':') + ' ' + ampm;
     const bailSelf = Math.max(1000, Math.ceil((p.jailUntil - now) / 60000) * 1000);
     const quote = this.hospitalQuote, hospitalCare = { label: (lang === 'ar' ? 'ادفع للعلاج' : 'Pay to heal') + (quote ? ' · ' + money(quote.cost) : ' · ...'), description: !quote ? (lang === 'ar' ? 'جارٍ تحميل سعر العلاج...' : 'Loading treatment price...') : quote.available ? (lang === 'ar' ? 'استعد صحتك وغادر المستشفى.' : 'Restore your life and leave hospital.') : (lang === 'ar' ? 'لا تحتاج إلى علاج حالياً.' : 'No treatment needed right now.'), disabled: !quote?.available || p.cash < Number(quote?.cost || 0) || this.playerMutationPending() || this.gameplayDisabled(), heal: () => { if (this.playerMutationPending() || this.gameplayDisabled()) return Promise.resolve(); return this.healSelf(t).catch(error => this.toast(this.serverError(error), true)); } };
     const status = jailed ? { title: t.jail, body: t.jailBody, left: mmss(p.jailUntil - now), actLabel: fmt(t.bailSelf, { c: money(bailSelf) }), act: () => this.gameplayAction('jail.bailSelf').catch(error => this.toast(this.serverError(error), true)) }
@@ -3794,6 +4150,722 @@ class Component extends DCLogic {
       ],
       trace: this.state.geminiTrace || defaultGeminiTrace
     };
+    // === OMAR FEEDBACK COMPLETE CONTROLLER & VIEW-MODEL ===
+    const meritDefs = [
+      { id: 'crit', en: 'Critical Hit Rate', ar: 'معدل الضربة الحرجة', stepEn: '+0.5% Crit / lvl', stepAr: '+0.5% حرج / مستوى' },
+      { id: 'awareness', en: 'City Awareness', ar: 'الوعي في خريطة المدينة (Awareness)', stepEn: '+15% City Item Spawn / lvl', stepAr: '+15% ظهور لقى المدينة / مستوى' },
+      { id: 'emp', en: 'Employee Effectiveness', ar: 'كفاءة الموظف والعمل', stepEn: '+2 Effectiveness / lvl', stepAr: '+2 كفاءة عمل / مستوى' },
+      { id: 'life', en: 'Max Life Points', ar: 'نقاط الحياة القصوى', stepEn: '+2% Max Life / lvl', stepAr: '+2% صحة قصوى / مستوى' },
+      { id: 'gym', en: 'Gym Stat Gains', ar: 'مكاسب تدريب النادي', stepEn: '+1.5% Gym Gain / lvl', stepAr: '+1.5% مكسب نادي / مستوى' },
+      { id: 'stealth', en: 'Stealth & Mugging', ar: 'التخفي وعائد النشل', stepEn: '+3% Mug & Stealth / lvl', stepAr: '+3% تخفي ونشل / مستوى' }
+    ];
+    const meritTree = this.p.meritTree || { crit: 2, awareness: 2, emp: 1, life: 1, gym: 1, stealth: 1 };
+    const meritBranches = meritDefs.map(md => {
+      const lvl = Number(meritTree?.[md.id] || 0);
+      const nextCost = lvl + 1;
+      const canBuy = Number(p.merits || 0) >= nextCost && lvl < 10;
+      return {
+        id: md.id,
+        name: lang === 'ar' ? md.ar : md.en,
+        level: lvl,
+        bonusText: lang === 'ar' ? md.stepAr : md.stepEn,
+        btnLabel: lvl >= 10 ? (lang === 'ar' ? 'الحد الأقصى' : 'MAX') : (lang === 'ar' ? `تطوير (${nextCost} ميرت)` : `Upgrade (${nextCost} pt)`),
+        btnBg: canBuy ? 'linear-gradient(var(--accFill1),var(--accFill2))' : 'var(--btn)',
+        btnFg: canBuy ? 'var(--onAcc)' : 'var(--t3)',
+        upgrade: () => {
+          if (lvl >= 10) return this.toast(lang === 'ar' ? 'وصلت للحد الأقصى لهذه المهارة.' : 'Skill already at max tier.');
+          if (Number(this.p.merits || 0) < nextCost) return this.toast(lang === 'ar' ? `تحتاج ${nextCost} نقاط ميرت للترقية.` : `Requires ${nextCost} Merit points for Tier ${lvl + 1}.`, true);
+          this.p.merits = Number(this.p.merits || 0) - nextCost;
+          this.p.meritTree = { ...meritTree, [md.id]: lvl + 1 };
+          this.save();
+          this.result('good', lang === 'ar' ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${lang === 'ar' ? md.ar : md.en} → Lv.${lvl + 1}`, `-${nextCost} Merit`);
+          this.forceUpdate();
+        }
+      };
+    });
+
+    const awarenessLvl = Number(meritTree?.awareness || 2);
+    const critLvl = Number(meritTree?.crit || 2);
+    const empLvl = Number(meritTree?.emp || 1);
+    const playerNumericId = String(this.p.numericId || '1042');
+    const accountEmail = this.p.email || 'vincenzo@zone.city';
+    const leaseInfo = this.p.propertyLease || { id: 'island', nameEn: 'Private Island (Airstrip)', nameAr: 'جزيرة خاصة (مهبط طائرات)', daysLeft: 33, totalDays: 100, happy: 2500 };
+
+    const plushies = [
+      { id: 'plush_camel', icon: '🐪', city: lang === 'ar' ? 'دبي' : 'Dubai', en: 'Dubai Camel Plushie', ar: 'دبدوب الجمل الإماراتي', price: 1200 },
+      { id: 'plush_bear', icon: '🧸', city: lang === 'ar' ? 'لندن (بريطانيا)' : 'London (UK)', en: 'UK Royal Guard Bear', ar: 'دبدوب الحرس الملكي', price: 1500 },
+      { id: 'plush_moose', icon: '🫎', city: lang === 'ar' ? 'مونتريال (كندا)' : 'Canada', en: 'Canada Maple Moose', ar: 'دبدوب الموظ الكندي', price: 1400 },
+      { id: 'plush_pharaoh', icon: '🏺', city: lang === 'ar' ? 'القاهرة' : 'Cairo', en: 'Golden Pharaoh Relic', ar: 'تمثال الفرعون الذهبي', price: 1800 },
+      { id: 'plush_falcon', icon: '🦅', city: lang === 'ar' ? 'الرياض' : 'Riyadh', en: 'Arabian Falcon Plushie', ar: 'دبدوب الصقر العربي', price: 1350 },
+      { id: 'plush_lion', icon: '🦁', city: lang === 'ar' ? 'إسطنبول' : 'Istanbul', en: 'Anatolian Lion Plushie', ar: 'دمية الأسد الأناضولي', price: 1600 }
+    ];
+    const ownedPlushies = this.p.plushies || { plush_camel: 1, plush_bear: 1, plush_moose: 1, plush_pharaoh: 1, plush_falcon: 1, plush_lion: 1 };
+
+    const defaultMapSpawns = [
+      { id: 'sp_briefcase', rarity: lang === 'ar' ? 'ندر أسطوري (كل 2-3 أيام بالحظ)' : 'ULTRA RARE (2-3 Day Lucky Drop)', name: lang === 'ar' ? 'حقيبة نقابة سرية (5 مليون دولار!)' : 'Unmarked Syndicate Briefcase ($5M Drop!)', value: 5000000, district: lang === 'ar' ? 'القطاع المالي' : 'Financial District', borderColor: 'var(--gold)' },
+      { id: 'sp_rolex', rarity: lang === 'ar' ? 'لقطة نادرة على الخريطة' : 'RARE MAP SPAWN', name: lang === 'ar' ? 'ساعة رولكس ذهبية مفقودة' : 'Dropped Gold Rolex Watch', value: 85000, district: lang === 'ar' ? 'وسط المدينة' : 'City Center', borderColor: 'var(--acc)' },
+      { id: 'sp_medkit', rarity: lang === 'ar' ? 'لقطة وعي (Awareness)' : 'AWARENESS FIND', name: lang === 'ar' ? 'حقيبة إسعافات ميدانية' : 'Combat Medical Supply Box', value: 12000, district: lang === 'ar' ? 'حي المستشفى' : 'Hospital Block', borderColor: '#5aa0e0' },
+      { id: 'sp_camel', rarity: lang === 'ar' ? 'دمية سفر نادرة' : 'SOUVENIR DROP', name: lang === 'ar' ? 'دبدوب الجمل الإماراتي (للمتحف)' : 'Dubai Camel Plushie (Museum Set)', value: 15000, district: lang === 'ar' ? 'المرفأ' : 'Harbor Pier', borderColor: 'var(--acc)' }
+    ];
+    const claimedSpawns = this.state.claimedCitySpawns || {};
+    const activeMapSpawns = defaultMapSpawns.filter(s => !claimedSpawns[s.id]).map(s => ({
+      ...s,
+      valueText: money(s.value),
+      claimLabel: lang === 'ar' ? '⭕ التقط من الخريطة' : '⭕ Pick Up Item',
+      claim: () => {
+        this.p.cash = Number(this.p.cash || 0) + s.value;
+        this.p.plushies = { ...ownedPlushies };
+        if (s.id === 'sp_camel') this.p.plushies.plush_camel = Number(this.p.plushies.plush_camel || 0) + 1;
+        this.setState({ claimedCitySpawns: { ...claimedSpawns, [s.id]: true } });
+        this.save();
+        this.result('cash', lang === 'ar' ? 'التقاط لقطة من خريطة المدينة!' : 'City Map Item Picked Up!', s.name, '+' + money(s.value));
+      }
+    }));
+
+    const samplePlayers = [
+      {
+        id: playerNumericId,
+        isSelf: true,
+        name: view.t.player,
+        rankTitle: `#4 ${levelTitle} / Heist Combatant`,
+        emailNote: `${accountEmail} (${lang === 'ar' ? 'تسجيل دخول بالإيميل · المعرف الرقمي فريد' : 'Email Login · Unique Numeric ID'})`,
+        level: p.level,
+        ageDays: 71,
+        gender: lang === 'ar' ? 'ذكر' : 'Male',
+        spouse: lang === 'ar' ? 'متزوج من Layla_R [#1104]' : 'Married to Layla_R [#1104]',
+        faction: facName,
+        property: `${lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn} (${leaseInfo.daysLeft}/${leaseInfo.totalDays}d)`,
+        statusKey: hosp ? 'hosp' : jailed ? 'jail' : 'ok',
+        statusText: hosp ? (lang === 'ar' ? 'في المستشفى' : 'In Hospital') : jailed ? (lang === 'ar' ? 'في السجن' : 'In Jail') : (lang === 'ar' ? 'متصل · سليم (Okay)' : 'Online · Okay'),
+        statusColor: hosp || jailed ? '#e05a4a' : 'var(--acc)',
+        lifeText: `${num(this.cur('life'))} / ${num(this.maxOf('life'))}`,
+        netWorth: money(totalNetWorthVal),
+        stats: { str: p.stats.str, def: p.stats.def, spd: p.stats.spd, dex: p.stats.dex },
+        medals: lang === 'ar' ? ['أول دم (First Blood)', '1,000 قتيل في الشارع', '100 عملية نشل ناجحة', '250 دخول مستشفى', 'وسام شراب الإيبيكاك (Ipecac)', 'جامع تحف المتحف'] : ['First Blood', '1,000 Street Kills', '100 Muggings Master', '250 Hospital Visits', 'Ipecac Self-Hospitalization', 'Museum Set Collector'],
+        bazaar: [
+          { id: 'bullpup_1', name: 'Bullpup L85 Rifle', price: 145000, qty: 1 },
+          { id: 'plush_camel', name: 'Dubai Camel Plushie', price: 14000, qty: 3 },
+          { id: 'medkit', name: 'First Aid Medkit', price: 9500, qty: 5 }
+        ]
+      },
+      {
+        id: '1048',
+        isSelf: false,
+        name: 'Mohammed',
+        rankTitle: '#9 Apex Enforcer / Hoarder',
+        emailNote: lang === 'ar' ? 'إيميل خاص · الاسم مكرر ولكن رقم الحساب #1048 فريد' : 'Private Email · Duplicate Name "Mohammed" distinguished by ID #1048',
+        level: 24,
+        ageDays: 71,
+        gender: lang === 'ar' ? 'ذكر' : 'Male',
+        spouse: lang === 'ar' ? 'أعزب (Single)' : 'Single',
+        faction: lang === 'ar' ? 'ملوك المرفأ (Harbor Kings)' : 'Harbor Kings',
+        property: lang === 'ar' ? 'جزيرة خاصة (مستأجرة · 33/100 يوم)' : 'Private Island (Rented · 33/100d)',
+        statusKey: 'ok',
+        statusText: lang === 'ar' ? 'متصل · سليم (Okay)' : 'Online · Okay',
+        statusColor: 'var(--acc)',
+        lifeText: '1,200 / 1,200',
+        netWorth: '$4,850,000',
+        stats: { str: 610, def: 540, spd: 590, dex: 520 },
+        medals: ['1,000 Kills Honor', '100 Muggings Medal', 'Private Island Tenant', 'Museum Trader'],
+        bazaar: [
+          { id: 'plush_bear', name: 'UK Royal Guard Bear', price: 16500, qty: 2 },
+          { id: 'vest', name: 'Tactical Kevlar Vest', price: 54000, qty: 1 },
+          { id: 'pills', name: 'Adrenaline Pills', price: 79000, qty: 2 }
+        ]
+      },
+      {
+        id: '2091',
+        isSelf: false,
+        name: 'Mohammed',
+        rankTitle: '#18 Street Operative',
+        emailNote: lang === 'ar' ? 'إيميل خاص · لاعب آخر بنفس اسم Mohammed ومعرف مختلف #2091' : 'Private Email · Second player named "Mohammed" with unique ID #2091',
+        level: 15,
+        ageDays: 44,
+        gender: lang === 'ar' ? 'ذكر' : 'Male',
+        spouse: lang === 'ar' ? 'أعزب (Single)' : 'Single',
+        faction: lang === 'ar' ? 'حراس الليل (Night Watch)' : 'Night Watch',
+        property: lang === 'ar' ? 'فيلا ساحلية (مستأجرة · 18/30 يوم)' : 'Coastal Villa (Rented · 18/30d)',
+        statusKey: 'travel',
+        statusText: lang === 'ar' ? '✈️ مسافر إلى دبي (Traveling)' : '✈️ Traveling to Dubai',
+        statusColor: 'var(--gold)',
+        lifeText: '750 / 750',
+        netWorth: '$1,290,000',
+        stats: { str: 310, def: 290, spd: 340, dex: 280 },
+        medals: ['Dubai Frequent Flyer', '100 Crimes Honor', 'Bazaar Merchant'],
+        bazaar: [
+          { id: 'plush_camel', name: 'Dubai Camel Plushie', price: 11500, qty: 4 },
+          { id: 'smallkit', name: 'Small First Aid Kit', price: 5200, qty: 8 }
+        ]
+      },
+      {
+        id: '1104',
+        isSelf: false,
+        name: 'Layla_R',
+        rankTitle: '#6 Syndicate Surgeon',
+        emailNote: lang === 'ar' ? 'إيميل موثق · رقم الحساب الفريد #1104' : 'Verified Email · Unique Account ID #1104',
+        level: 28,
+        ageDays: 94,
+        gender: lang === 'ar' ? 'أنثى' : 'Female',
+        spouse: `Married to ${view.t.player} [#${playerNumericId}]`,
+        faction: facName,
+        property: lang === 'ar' ? 'جزيرة خاصة (شريكة السكن)' : 'Private Island (Shared Spouse Residence)',
+        statusKey: 'ok',
+        statusText: lang === 'ar' ? 'متصلة · سليمة (Okay)' : 'Online · Okay',
+        statusColor: 'var(--acc)',
+        lifeText: '1,500 / 1,500',
+        netWorth: '$8,400,000',
+        stats: { str: 720, def: 690, spd: 780, dex: 740 },
+        medals: ['500 Medical Items Used', 'Revive Specialist', 'Museum Points Baron'],
+        bazaar: [
+          { id: 'medkit', name: 'Hospital Medkit', price: 10500, qty: 10 },
+          { id: 'plush_moose', name: 'Canada Maple Moose', price: 13800, qty: 3 }
+        ]
+      },
+      {
+        id: '1337',
+        isSelf: false,
+        name: 'Duke_X',
+        rankTitle: '#14 Underground Arms Dealer',
+        emailNote: lang === 'ar' ? 'إيميل موثق · رقم الحساب الفريد #1337' : 'Verified Email · Unique Account ID #1337',
+        level: 19,
+        ageDays: 58,
+        gender: lang === 'ar' ? 'ذكر' : 'Male',
+        spouse: lang === 'ar' ? 'أعزب (Single)' : 'Single',
+        faction: lang === 'ar' ? 'الحرس القديم (Old Guard)' : 'Old Guard',
+        property: lang === 'ar' ? 'شقة فاخرة' : 'Luxury Apartment',
+        statusKey: 'hosp',
+        statusText: lang === 'ar' ? '🏥 في المستشفى (34 دقيقة متبقية)' : '🏥 In Hospital (34m left)',
+        statusColor: '#e05a4a',
+        lifeText: '45 / 950',
+        netWorth: '$2,150,000',
+        stats: { str: 460, def: 410, spd: 390, dex: 400 },
+        medals: ['250 Hospital Visits', 'Ipecac Syrup Survivor', 'Heavy Ordinance'],
+        bazaar: [
+          { id: 'assaultrifle_3', name: 'M4A1 Tactical Rifle', price: 118000, qty: 1 },
+          { id: 'drink', name: 'Tactical Energy Drink', price: 920, qty: 20 }
+        ]
+      }
+    ];
+
+    const selectedProfileId = this.state.omarProfileId || playerNumericId;
+    const activeProf = samplePlayers.find(sp => sp.id === selectedProfileId) || samplePlayers[0];
+    const friendsList = this.p.friendsList || {};
+    const targetsList = this.p.targetsList || {};
+
+    const profileRows = [
+      { k: lang === 'ar' ? 'الاسم ورقم الحساب (ID)' : 'Name & Player ID', v: `${activeProf.name} [#${activeProf.id}]`, color: 'var(--acc)' },
+      { k: lang === 'ar' ? 'المستوى والرتبة' : 'Level & Rank', v: `Lv.${activeProf.level} · ${activeProf.rankTitle}`, color: 'var(--t1)' },
+      { k: lang === 'ar' ? 'العمر في اللعبة (Age)' : 'Account Age', v: `${activeProf.ageDays} ${lang === 'ar' ? 'يوم' : 'days old'}`, color: 'var(--t2)' },
+      { k: lang === 'ar' ? 'الحالة الصحية (Life)' : 'Life / Health', v: activeProf.lifeText, color: 'var(--acc)' },
+      { k: lang === 'ar' ? 'الحالة الراهنة' : 'Current Status', v: activeProf.statusText, color: activeProf.statusColor },
+      { k: lang === 'ar' ? 'العائلة / الفاكشن' : 'Faction', v: activeProf.faction, color: 'var(--gold)' },
+      { k: lang === 'ar' ? 'العقار الحالي' : 'Property', v: activeProf.property, color: 'var(--t2)' },
+      { k: lang === 'ar' ? 'الحالة الاجتماعية والجنس' : 'Marital & Gender', v: `${activeProf.spouse} · ${activeProf.gender}`, color: 'var(--t2)' },
+      { k: lang === 'ar' ? 'صافي الثروة' : 'Est. Net Worth', v: activeProf.netWorth, color: 'var(--money)' },
+      { k: lang === 'ar' ? 'قائمة الأصدقاء / الأهداف' : 'Relationship Tag', v: friendsList[activeProf.id] ? (lang === 'ar' ? '⭐ صديق مضاف' : '⭐ Friend') : targetsList[activeProf.id] ? (lang === 'ar' ? '🎯 هدف (Target)' : '🎯 Enemy Target') : (lang === 'ar' ? 'محايد' : 'Neutral'), color: 'var(--gold)' }
+    ];
+
+    const profileActions = [
+      {
+        label: lang === 'ar' ? '⚔️ 1. مهاجمة اللاعب (Attack)' : '⚔️ 1. Attack Player',
+        sub: lang === 'ar' ? '25 طاقة · اشتباك مباشر' : '25 Energy · Start street fight',
+        bg: 'linear-gradient(#c74a3a,#9a3428)', fg: '#fff', border: '#6a2018',
+        run: () => {
+          this.setState({ omarProfileOpen: false });
+          this.go('attack');
+          this.toast(lang === 'ar' ? `تم فتح شاشة الهجوم ضد ${activeProf.name} [#${activeProf.id}]` : `Engaging target ${activeProf.name} [#${activeProf.id}]`);
+        }
+      },
+      {
+        label: lang === 'ar' ? '✉️ 2. إرسال رسالة (Message)' : '✉️ 2. Send Message',
+        sub: lang === 'ar' ? 'بريد خاص إلى صندوق اللاعب' : 'Send direct inbox dispatch',
+        bg: 'var(--btn)', fg: 'var(--t1)', border: 'var(--border3)',
+        run: () => {
+          this.setState({ omarProfileFeedback: lang === 'ar' ? `✉️ تم إرسال رسالة خاصة إلى ${activeProf.name} [#${activeProf.id}] بنجاح.` : `✉️ Direct message dispatched to ${activeProf.name} [#${activeProf.id}].` });
+        }
+      },
+      {
+        label: lang === 'ar' ? '💬 3. فتح محادثة (Live Chat)' : '💬 3. Open Live Chat',
+        sub: lang === 'ar' ? 'فتح شات فوري في الشريط السفلي' : 'Open private tab in Chat Dock',
+        bg: 'var(--btn)', fg: 'var(--acc)', border: 'var(--border3)',
+        run: () => {
+          this.setState({ omarChatTab: 'private', omarProfileFeedback: lang === 'ar' ? `💬 تم فتح قناة الشات الخاص مع ${activeProf.name} [#${activeProf.id}] بالأسفل.` : `💬 Private chat channel opened with ${activeProf.name} [#${activeProf.id}] in the bottom dock.` });
+        }
+      },
+      {
+        label: lang === 'ar' ? '💵 4. إرسال أموال (Send Cash)' : '💵 4. Send Cash ($5,000)',
+        sub: lang === 'ar' ? 'تحويل نقدي فوري لحساب اللاعب' : 'Wire $5,000 street cash to player',
+        bg: 'var(--btn)', fg: 'var(--money)', border: 'var(--border3)',
+        run: () => {
+          if (Number(this.p.cash || 0) < 5000) return this.toast(lang === 'ar' ? 'لا تملك 5,000$ كاش لإرسالها.' : 'Insufficient cash to send $5,000.', true);
+          this.p.cash = Number(this.p.cash || 0) - 5000;
+          this.save();
+          this.setState({ omarProfileFeedback: lang === 'ar' ? `💵 تم تحويل 5,000$ نقداً إلى ${activeProf.name} [#${activeProf.id}].` : `💵 Wired $5,000 cash to ${activeProf.name} [#${activeProf.id}].` });
+        }
+      },
+      {
+        label: lang === 'ar' ? '🤝 5. بدء مقايضة (Trade)' : '🤝 5. Initiate Trade',
+        sub: lang === 'ar' ? 'تبادل عناصر ودباديب وأسلحة' : 'Trade items, weapons & plushies',
+        bg: 'var(--btn)', fg: 'var(--t1)', border: 'var(--border3)',
+        run: () => {
+          this.setState({ omarProfileFeedback: lang === 'ar' ? `🤝 تم فتح طلب مقايضة آمنة (Trade Escrow) مع ${activeProf.name} [#${activeProf.id}].` : `🤝 Safe Trade Escrow request sent to ${activeProf.name} [#${activeProf.id}].` });
+        }
+      },
+      {
+        label: lang === 'ar' ? '🎯 6. وضع مكافأة (Place Bounty)' : '🎯 6. Place Bounty ($25,000)',
+        sub: lang === 'ar' ? 'مكافأة مالية لمن يدخله المستشفى' : 'Post $25,000 hit contract on target',
+        bg: 'var(--btn)', fg: '#ff9b8a', border: 'var(--border3)',
+        run: () => {
+          if (Number(this.p.cash || 0) < 25000) return this.toast(lang === 'ar' ? 'تحتاج 25,000$ لوضع باونتي.' : 'Need $25,000 cash to post a bounty.', true);
+          this.p.cash -= 25000;
+          this.save();
+          this.setState({ omarProfileFeedback: lang === 'ar' ? `🎯 تم رصد مكافأة باونتي بقيمة 25,000$ على رأس ${activeProf.name} [#${activeProf.id}]!` : `🎯 $25,000 Bounty placed on ${activeProf.name} [#${activeProf.id}]!` });
+        }
+      },
+      {
+        label: lang === 'ar' ? '⭐ 7. إضافة صديق / تارجت' : '⭐ 7. Add Friend / Target',
+        sub: lang === 'ar' ? 'تبديل بين قائمة الأصدقاء والأهداف' : 'Toggle Friend or Enemy Target list',
+        bg: 'var(--btn)', fg: 'var(--gold)', border: 'var(--border3)',
+        run: () => {
+          this.p.friendsList = { ...friendsList };
+          this.p.targetsList = { ...targetsList };
+          const isFriend = !!this.p.friendsList[activeProf.id];
+          if (!isFriend) {
+            this.p.friendsList[activeProf.id] = true;
+            delete this.p.targetsList[activeProf.id];
+            this.setState({ omarProfileFeedback: lang === 'ar' ? `⭐ تمت إضافة ${activeProf.name} [#${activeProf.id}] إلى قائمة الأصدقاء.` : `⭐ Added ${activeProf.name} [#${activeProf.id}] to Friends List.` });
+          } else {
+            delete this.p.friendsList[activeProf.id];
+            this.p.targetsList[activeProf.id] = true;
+            this.setState({ omarProfileFeedback: lang === 'ar' ? `🎯 تم نقل ${activeProf.name} [#${activeProf.id}] إلى قائمة الأهداف (Targets).` : `🎯 Moved ${activeProf.name} [#${activeProf.id}] to Enemy Target List.` });
+          }
+          this.save();
+        }
+      },
+      {
+        label: lang === 'ar' ? '📊 8. مقارنة الإحصائيات (Compare)' : '📊 8. Compare Personal Stats',
+        sub: lang === 'ar' ? 'مقارنة صفاتك القتالية بصفاته' : 'Compare your stats vs target stats',
+        bg: this.state.omarShowCompare ? 'var(--activebg)' : 'var(--btn)', fg: this.state.omarShowCompare ? 'var(--activefg)' : 'var(--t1)', border: 'var(--acc)',
+        run: () => this.setState({ omarShowCompare: !this.state.omarShowCompare })
+      },
+      {
+        label: lang === 'ar' ? '🏪 9. فتح البازار الشخصي (Bazaar)' : '🏪 9. Open Player Bazaar',
+        sub: lang === 'ar' ? 'تصفح متجر اللاعب الشخصي والشراء منه' : 'Browse & buy from player storefront',
+        bg: this.state.omarShowBazaar !== false ? 'var(--activebg)' : 'var(--btn)', fg: 'var(--gold)', border: 'var(--gold)',
+        run: () => this.setState({ omarShowBazaar: this.state.omarShowBazaar === false ? true : false })
+      }
+    ];
+
+    const searchFilter = this.state.omarAdvFilter || 'all';
+    const rawQuery = String(this.state.omarSearchQuery || '').trim().toLowerCase();
+    const filteredPlayers = samplePlayers.filter(sp => {
+      if (searchFilter === 'ok' && sp.statusKey !== 'ok') return false;
+      if (searchFilter === 'hosp' && sp.statusKey !== 'hosp') return false;
+      if (searchFilter === 'travel' && sp.statusKey !== 'travel') return false;
+      if (searchFilter === 'female' && !/Female|أنثى/.test(sp.gender)) return false;
+      if (rawQuery && !sp.name.toLowerCase().includes(rawQuery) && !sp.id.includes(rawQuery) && !sp.faction.toLowerCase().includes(rawQuery)) return false;
+      return true;
+    });
+
+    const honorsDefs = [
+      { id: 'h_kills1000', titleEn: '1,000 Street Kills Medal', titleAr: 'وسام 1,000 قتيل في الشارع', descEn: 'Defeat 1,000 rivals in street combat', descAr: 'اهزم 1,000 خصم في قتال الشوارع' },
+      { id: 'h_mugs100', titleEn: '100 Master Muggings Honor', titleAr: 'وسام 100 عملية سرقة ونشل', descEn: 'Successfully mug 100 targets after combat', descAr: 'انشل 100 هدف بنجاح بعد الهجوم' },
+      { id: 'h_crimes1000', titleEn: '1,000 Syndicate Crimes Medal', titleAr: 'ميدالية 1,000 جريمة منظمة', descEn: 'Execute 1,000 street crimes across categories', descAr: 'نفذ 1,000 جريمة في شوارع المدينة' },
+      { id: 'h_hosp250', titleEn: '250 Hospital Visits Honor', titleAr: 'وسام 250 دخول للمستشفى', descEn: 'Survive 250 hospitalizations', descAr: 'ادخل المستشفى 250 مرة وتعافَ منها' },
+      { id: 'h_meds500', titleEn: '500 Medical Items Used', titleAr: 'وسام استخدام 500 عنصر طبي', descEn: 'Consume 500 medical kits, pills, or blood bags', descAr: 'استخدم 500 حقيبة إسعافات أو أكياس دم' },
+      { id: 'h_ipecac', titleEn: 'Wrong Blood Bag / Ipecac Honor', titleAr: 'وسام كيس الدم الخاطئ / شراب Ipecac', descEn: 'Hospitalize yourself for 1h with Ipecac or wrong blood type', descAr: 'أدخل نفسك المستشفى لمدة ساعة بشراب Ipecac أو فصيلة دم خاطئة' }
+    ];
+    const claimedHonors = this.p.claimedHonors || {};
+
+    const chatTab = this.state.omarChatTab || (hosp ? 'hospital' : p.travel?.status === 'traveling' ? 'travel' : 'global');
+    const chatHistory = this.p.chatHistory || {
+      global: [
+        { time: '04:31 AM', sender: 'Mohammed', senderId: '1048', text: lang === 'ar' ? 'شباب من عنده دبدوب الجمل من دبي؟ أحتاج أكمل مجموعة المتحف عشان أبدلها بـ 10 بوينت!' : 'Anyone selling Dubai Camel Plushies? Need 1 more to trade full set at the Museum for +10 Points!' },
+        { time: '04:34 AM', sender: 'Layla_R', senderId: '1104', text: lang === 'ar' ? 'لقيت حقيبة نادرة في خريطة المدينة اليوم بفضل ميزة الوعي (Awareness)!' : 'Just spotted a circled rare item on the City Map thanks to Lv.3 Awareness!' }
+      ],
+      faction: [
+        { time: '04:20 AM', sender: 'Layla_R', senderId: '1104', text: lang === 'ar' ? 'سلسلة العائلة وصلت 12 ضربة، استمروا بالهجوم!' : 'Family chain is at 12 hits, keep pushing block ZC-042!' }
+      ],
+      private: [
+        { time: '04:35 AM', sender: 'Mohammed', senderId: '1048', text: lang === 'ar' ? 'افتح البازار حقي من بروفايلي #1048، حطيت لك الدرع التكتيكي بسعر ممتاز.' : 'Check my Bazaar on profile #1048, listed a Tactical Kevlar Vest for you.' }
+      ],
+      hospital: [
+        { time: '04:36 AM', sender: 'Duke_X', senderId: '1337', text: lang === 'ar' ? 'أخذت شراب Ipecac عشان أفتح وسام المستشفى (+1 ميرت) هههه، من ينعشني؟' : 'Took Ipecac Syrup to unlock the self-hospitalization Honor (+1 Merit) lol, need a revive!' }
+      ],
+      travel: [
+        { time: '04:37 AM', sender: 'Mohammed', senderId: '2091', text: lang === 'ar' ? 'في الطيارة رايح دبي أشتري كمية دباديب قبل ما يخلص الستوك!' : 'In flight to Dubai right now to buy Camel Plushies before stock runs out!' }
+      ],
+      company: [
+        { time: '04:15 AM', sender: 'Sami', senderId: '1088', text: lang === 'ar' ? 'لا تنسوا ترفعوا Employee Effectiveness في الميرتس عشان يزيد دخل الشركة.' : 'Remember to upgrade Employee Effectiveness in Merits to boost daily company effectiveness.' }
+      ]
+    };
+
+    view.omar = {
+      playerId: playerNumericId,
+      accountEmail,
+      loginEmailLabel: lang === 'ar' ? 'الحساب (إيميل)' : 'Account Login',
+      viewProfileLabel: lang === 'ar' ? 'عرض البروفايل' : 'View Profile',
+      myProfileBtnLabel: lang === 'ar' ? 'بروفايلي الشخصي' : 'My Profile',
+      inspectRivalBtnLabel: lang === 'ar' ? 'معاينة بروفايل لاعب (#1048)' : 'Inspect Rival Profile (#1048)',
+      wikiRulesBtnLabel: lang === 'ar' ? 'الويكي والقوانين' : 'Wiki & Rules',
+      closeLabel: lang === 'ar' ? 'إغلاق' : 'Close',
+      youLabel: lang === 'ar' ? 'أنت' : 'You',
+      targetLabel: lang === 'ar' ? 'الهدف' : 'Target',
+      ownedLabel: lang === 'ar' ? 'تملك' : 'Owned',
+      tickerDisplay: this.state.hideTicker ? 'none' : 'flex',
+      tickerBtnLabel: this.state.hideTicker ? (lang === 'ar' ? '📰 إظهار الأخبار' : '📰 Show Ticker') : (lang === 'ar' ? '📰 إخفاء الأخبار' : '📰 Hide Ticker'),
+      toggleTicker: () => this.setState({ hideTicker: !this.state.hideTicker }),
+
+      // Profile Modal
+      profileOpen: !!this.state.omarProfileOpen,
+      openOwnProfile: () => this.setState({ omarProfileOpen: true, omarProfileId: playerNumericId, omarShowBazaar: true }),
+      openOtherSampleProfile: () => this.setState({ omarProfileOpen: true, omarProfileId: '1048', omarShowBazaar: true }),
+      closeProfile: () => this.setState({ omarProfileOpen: false }),
+      switchProfileLabel: lang === 'ar' ? 'معاينة بروفايل' : 'Inspect Player',
+      identityRuleBanner: lang === 'ar'
+        ? '🔒 نظام الهوية (مطابق لتورن): تسجيل الدخول يتم عبر الإيميل الخاص · يمكن لأي لاعب اختيار أي اسم عرض (حتى لو تكرر مثل Mohammed) · رقم الحساب الرقمي [#ID] هو المعرف الفريد الدائم.'
+        : '🔒 Identity Architecture: Account login is strictly via Email · Players can choose any Display Name (even duplicates like two "Mohammed" accounts) · Numeric Player ID [#ID] is the permanent unique key.',
+      profileDirectory: samplePlayers.map(sp => ({
+        label: `${sp.name} [#${sp.id}]`,
+        bg: activeProf.id === sp.id ? 'var(--activebg)' : 'var(--btn)',
+        fg: activeProf.id === sp.id ? 'var(--activefg)' : 'var(--t2)',
+        open: () => this.setState({ omarProfileOpen: true, omarProfileId: sp.id, omarProfileFeedback: '' })
+      })),
+      profileActionsTitle: lang === 'ar' ? 'إجراءات التفاعل مع اللاعب (9 أوامر كاملة)' : 'Player Interaction Bar (All 9 Profile Actions)',
+      profileActionFeedback: this.state.omarProfileFeedback || '',
+      showStatsCompare: !!this.state.omarShowCompare,
+      compareStatsTitle: lang === 'ar' ? `مقارنة الصفات القتالية مع ${activeProf.name} [#${activeProf.id}]` : `Personal Stats Comparison vs. ${activeProf.name} [#${activeProf.id}]`,
+      showPlayerBazaar: this.state.omarShowBazaar !== false,
+      bazaarSub: lang === 'ar' ? 'متجر شخصي مباشر من داخل بروفايل اللاعب' : 'Personal player storefront hosted directly on their profile',
+      medalsCabinetTitle: lang === 'ar' ? 'خزانة الأوسمة والميداليات المكتسبة' : 'Honors, Medals & Awards Showcase',
+      activeProfile: {
+        ...activeProf,
+        rows: profileRows,
+        actions: profileActions,
+        compareRows: [
+          { stat: t.str, you: num(p.stats.str), them: num(activeProf.stats.str) },
+          { stat: t.def, you: num(p.stats.def), them: num(activeProf.stats.def) },
+          { stat: t.spd, you: num(p.stats.spd), them: num(activeProf.stats.spd) },
+          { stat: t.dex, you: num(p.stats.dex), them: num(activeProf.stats.dex) },
+          { stat: t.totalStats, you: num(totalStats), them: num(activeProf.stats.str + activeProf.stats.def + activeProf.stats.spd + activeProf.stats.dex) }
+        ],
+        bazaarTitle: lang === 'ar' ? `بازار ${activeProf.name} [#${activeProf.id}] الشخصي` : `${activeProf.name} [#${activeProf.id}]'s Personal Bazaar`,
+        bazaarItems: (activeProf.bazaar || []).map(bz => ({
+          name: bz.name,
+          price: money(bz.price),
+          qty: bz.qty,
+          buy: () => {
+            if (Number(this.p.cash || 0) < bz.price) return this.toast(lang === 'ar' ? 'النقد غير كافٍ للشراء من البازار.' : 'Not enough cash to buy from Bazaar.', true);
+            this.p.cash -= bz.price;
+            this.p.plushies = { ...ownedPlushies };
+            if (bz.id.startsWith('plush_')) this.p.plushies[bz.id] = Number(this.p.plushies[bz.id] || 0) + 1;
+            else this.p.inv[bz.id] = Number(this.p.inv[bz.id] || 0) + 1;
+            this.save();
+            this.result('good', lang === 'ar' ? 'شراء من بازار اللاعب' : 'Purchased from Player Bazaar', `${bz.name} (${activeProf.name} [#${activeProf.id}])`, '-' + money(bz.price));
+          }
+        }))
+      },
+
+      // Global Search & Advanced Search
+      searchBarLabel: lang === 'ar' ? 'البحث الشامل' : 'Global Search',
+      searchPlaceholder: lang === 'ar' ? 'اسم اللاعب أو رقم الحساب #ID أو العائلة...' : 'Player Name, #ID, Faction, or Item...',
+      searchBtnLabel: lang === 'ar' ? 'بحث' : 'Search',
+      advSearchBtnLabel: lang === 'ar' ? 'بحث متقدم (فلاتر)' : 'Advanced Search',
+      advSearchBtnBg: this.state.omarAdvSearchOpen ? 'var(--activebg)' : 'var(--btn)',
+      advSearchBtnFg: this.state.omarAdvSearchOpen ? 'var(--activefg)' : 'var(--acc)',
+      searchQuery: this.state.omarSearchQuery || '',
+      onSearchInput: e => this.setState({ omarSearchQuery: e.target.value }),
+      searchCategories: [
+        { id: 'user', en: 'User', ar: 'لاعب' },
+        { id: 'faction', en: 'Faction', ar: 'عائلة' },
+        { id: 'company', en: 'Company', ar: 'شركة' },
+        { id: 'market', en: 'Market', ar: 'السوق' },
+        { id: 'wiki', en: 'Wiki', ar: 'الويكي' },
+        { id: 'forums', en: 'Forums', ar: 'المنتديات' }
+      ].map(c => ({
+        label: lang === 'ar' ? c.ar : c.en,
+        bg: (this.state.omarSearchCat || 'user') === c.id ? 'var(--activebg)' : 'var(--deep)',
+        fg: (this.state.omarSearchCat || 'user') === c.id ? 'var(--activefg)' : 'var(--t3)',
+        select: () => this.setState({ omarSearchCat: c.id })
+      })),
+      runQuickSearch: () => {
+        const cat = this.state.omarSearchCat || 'user';
+        if (cat === 'wiki') return this.setState({ omarWikiOpen: true });
+        if (cat === 'market') return this.go('market');
+        if (cat === 'faction') return this.go('faction');
+        this.setState({ omarAdvSearchOpen: true });
+      },
+      advSearchOpen: !!this.state.omarAdvSearchOpen,
+      toggleAdvSearch: () => this.setState({ omarAdvSearchOpen: !this.state.omarAdvSearchOpen }),
+      advSearchTitle: lang === 'ar' ? 'البحث المتقدم عن اللاعبين والأهداف (Advanced Player Search)' : 'Advanced Player & Target Search',
+      advSearchSub: lang === 'ar' ? 'تصفية اللاعبين حسب الاسم، المعرف الرقمي #ID، العائلة، الجنس، العقار، المستوى، والحالة' : 'Filter players by Name, Numeric #ID, Faction, Gender, Property, Level, Age, and Status',
+      filterStatusLabel: lang === 'ar' ? 'فلتر سريع' : 'Quick Filter',
+      advFilters: [
+        { id: 'all', en: 'All Players', ar: 'الكل' },
+        { id: 'ok', en: 'Online / Okay', ar: 'متصل / سليم' },
+        { id: 'hosp', en: 'In Hospital', ar: 'في المستشفى' },
+        { id: 'travel', en: 'Traveling', ar: 'مسافر بالطائرة' },
+        { id: 'female', en: 'Female Operatives', ar: 'إناث' }
+      ].map(f => ({
+        label: lang === 'ar' ? f.ar : f.en,
+        bg: searchFilter === f.id ? 'var(--activebg)' : 'var(--btn)',
+        fg: searchFilter === f.id ? 'var(--activefg)' : 'var(--t2)',
+        select: () => this.setState({ omarAdvFilter: f.id })
+      })),
+      advSearchResults: filteredPlayers.map(sp => ({
+        ...sp,
+        openProfile: () => this.setState({ omarProfileOpen: true, omarProfileId: sp.id }),
+        attack: () => { this.setState({ omarAdvSearchOpen: false }); this.go('attack'); }
+      })),
+
+      // Wiki & Rules
+      wikiOpen: !!this.state.omarWikiOpen,
+      toggleWiki: () => this.setState({ omarWikiOpen: !this.state.omarWikiOpen }),
+      wikiTitle: lang === 'ar' ? 'موسوعة اللعبة والقوانين (ZONE Wiki, Rules & Mechanics)' : 'ZONE Encyclopedia, Rules & Core Mechanics Wiki',
+      wikiArticles: [
+        { title: lang === 'ar' ? '1. نظام التوقيت 12 ساعة (AM / PM)' : '1. 12-Hour AM / PM Zone Time', body: lang === 'ar' ? 'تعتمد اللعبة نظام 12 ساعة (صباحاً AM ومساءً PM) لسهولة متابعة مؤقتات السفر والمستشفى والسلاسل.' : 'All city clocks and event logs use clear 12-hour AM / PM formatting for effortless timer tracking.' },
+        { title: lang === 'ar' ? '2. السفر، الدباديب، والمتحف (Points)' : '2. Travel Plushies & Museum Points Loop', body: lang === 'ar' ? 'سافر بين المدن (دبي، لندن، كندا، القاهرة) لشراء الدباديب الحصرية، ثم استبدل المجموعة الكاملة في المتحف مقابل نقاط شحن (Points) مجاناً!' : 'Travel to regional cities (Dubai, UK, Canada, Cairo) to buy exclusive plushies and trade full sets at the Museum for premium Points!' },
+        { title: lang === 'ar' ? '3. لقى خريطة المدينة وميزة الوعي (Awareness)' : '3. City Map Item Spawns & Awareness', body: lang === 'ar' ? 'تظهر عناصر محاطة بدائرة على خريطة المدينة بالحظ كل 2-3 أيام (تصل قيمتها إلى 5,000,000$). تطوير ميزة Awareness في الميرتس يضاعف فرصة ظهورها.' : 'Circled items spawn on the City Map every 2-3 days by luck (worth up to $5,000,000). Upgrading Awareness in Merits boosts spawn frequency.' },
+        { title: lang === 'ar' ? '4. نظام الميرتس والأوسمة (1→2→3→4)' : '4. Merits & Honors Progression', body: lang === 'ar' ? 'كل وسام أو ميدالية تكملها تمنحك +1 ميرت. تكلفة تطوير المهارات تتدرج: المستوى 1 بـ 1 نقطة، المستوى 2 بـ 2 نقطة، المستوى 3 بـ 3 نقاط.' : 'Completing Honors awards +1 Merit. Skill upgrades scale progressively: Tier 1 = 1 pt, Tier 2 = 2 pts, Tier 3 = 3 pts, Tier 4 = 4 pts.' },
+        { title: lang === 'ar' ? '5. استئجار العقارات وشراؤها' : '5. Property Renting & Ownership', body: lang === 'ar' ? 'يمكنك استئجار العقارات الفاخرة (مثل الجزيرة الخاصة) لعدد محدد من الأيام لرفع السعادة القصوى ومكاسب النادي بدون دفع سعر الشراء الكامل.' : 'Rent high-tier estates (like Private Islands) for 30-100 days to unlock maximum Happiness and Airstrip perks at a fraction of purchase cost.' },
+        { title: lang === 'ar' ? '6. الهوية، البروفايل، والبازار' : '6. Email Login, Numeric ID & Bazaar', body: lang === 'ar' ? 'تسجيل الدخول بالإيميل، والاسم اختياري (يسمح بالتكرار)، بينما رقم الحساب [#ID] فريد لكل لاعب مع 9 أوامر تفاعل وبازار شخصي.' : 'Email login with freely chosen display names and unique Numeric IDs [#ID], complete with 9 profile actions and personal Bazaars.' }
+      ],
+
+      // Torn-Style Home Dashboard Cards
+      homeDashboardTitle: lang === 'ar' ? 'ملف الشخصية والإحصائيات الشاملة (الصفحة الرئيسية)' : 'Character Overview & Personal Dossier (Home Index)',
+      homeDashboardSub: lang === 'ar' ? 'المعلومات العامة · الصفات القتالية · إحصائيات العمل · المزايا النشطة · العقار والإيجار · الميرتس' : 'General Info · Battle Stats · Working Stats · Personal Perks · Property & Lease · Merits Tree',
+      generalInfoTitle: lang === 'ar' ? 'المعلومات العامة (General Information)' : 'General Information',
+      battleStatsTitle: lang === 'ar' ? 'الصفات القتالية (Battle Stats)' : 'Battle Stats',
+      workingStatsTitle: lang === 'ar' ? 'إحصائيات العمل والوظيفة (Working Stats & Job)' : 'Working Stats & Job Info',
+      personalPerksTitle: lang === 'ar' ? 'المزايا الشخصية النشطة (Personal Perks)' : 'Personal Perks & Active Bonuses',
+      propertyCardTitle: lang === 'ar' ? 'معلومات العقار والإيجار (Property Info)' : 'Property & Rental Information',
+      meritsTreeTitle: lang === 'ar' ? 'شجرة الميرتس والمهارات (Merits)' : 'Merits & Skill Upgrades',
+      openMeritsScreen: () => this.go('missions'),
+      openPropertiesScreen: () => this.go('properties'),
+      openGymScreen: () => this.go('gym'),
+      openJobsScreen: () => this.go('jobs'),
+      generalInfoRows: [
+        { k: lang === 'ar' ? 'الاسم ورقم الحساب' : 'Name & ID', v: `${view.t.player} [#${playerNumericId}]`, color: 'var(--acc)' },
+        { k: lang === 'ar' ? 'المستوى والرتبة' : 'Level & Rank', v: `${p.level} (${levelTitle})`, color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'العمر (Age)' : 'Age', v: lang === 'ar' ? '71 يوم' : '71 days old', color: 'var(--t2)' },
+        { k: lang === 'ar' ? 'النقد في اليد' : 'Money on Hand', v: money(p.cash), color: 'var(--money)' },
+        { k: lang === 'ar' ? 'رصيد خزينة البنك' : 'Bank Vault', v: money(p.bankBalance || 0), color: 'var(--acc)' },
+        { k: lang === 'ar' ? 'صافي الثروة الكلي' : 'Total Net Worth', v: money(totalNetWorthVal), color: 'var(--gold)' },
+        { k: lang === 'ar' ? 'العائلة / الفاكشن' : 'Faction', v: `${facName} (${view.fac.rank})`, color: 'var(--t2)' },
+        { k: lang === 'ar' ? 'النقاط والميرتس' : 'Points / Merits', v: `${num(p.points)} Pts · ${num(p.merits)} Merits`, color: 'var(--gold)' }
+      ],
+      battleStatsRows: [
+        { k: t.str, v: `${dec(p.stats.str)} (${totalStats > 0 ? Math.round(p.stats.str / totalStats * 100) : 25}%)`, color: 'var(--t1)' },
+        { k: t.def, v: `${dec(p.stats.def)} (${totalStats > 0 ? Math.round(p.stats.def / totalStats * 100) : 25}%)`, color: 'var(--t1)' },
+        { k: t.spd, v: `${dec(p.stats.spd)} (${totalStats > 0 ? Math.round(p.stats.spd / totalStats * 100) : 25}%)`, color: 'var(--t1)' },
+        { k: t.dex, v: `${dec(p.stats.dex)} (${totalStats > 0 ? Math.round(p.stats.dex / totalStats * 100) : 25}%)`, color: 'var(--t1)' },
+        { k: t.totalStats, v: num(totalStats), color: 'var(--gold)' }
+      ],
+      workingStatsRows: [
+        { k: lang === 'ar' ? 'العمل اليدوي (Manual Labor)' : 'Manual Labor', v: num(340 + p.level * 28), color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'الذكاء (Intelligence)' : 'Intelligence', v: num(410 + p.level * 32), color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'التحمل (Endurance)' : 'Endurance', v: num(385 + p.level * 30), color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'كفاءة الموظف (Effectiveness)' : 'Employee Effectiveness', v: `+${empLvl * 2} (${lang === 'ar' ? 'ميرت' : 'Merits'})`, color: 'var(--acc)' },
+        { k: lang === 'ar' ? 'الوظيفة الحالية' : 'Current Job', v: t.jobNames[p.job], color: 'var(--gold)' },
+        { k: lang === 'ar' ? 'الأجر ونقاط العمل' : 'Wage & Job Points', v: `${this.jobPayRange()} · ${num(p.jobPts)} JP`, color: 'var(--money)' }
+      ],
+      personalPerks: [
+        { source: lang === 'ar' ? 'العقار' : 'Property', effect: lang === 'ar' ? '+2% مكاسب نادي · +2% ضرر · مهبط طائرات خاص' : '+2% Gym Gains · +2% Damage · Private Airstrip Access' },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${(critLvl * 0.5).toFixed(1)}% معدل ضربة حرجة (Critical Hit Rate)` : `+${(critLvl * 0.5).toFixed(1)}% Critical Hit Rate (Tier ${critLvl})` },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${awarenessLvl * 15}% وعي (Awareness) لظهور عناصر خريطة المدينة` : `+${awarenessLvl * 15}% City Awareness (Lucky Map Item Spawns)` },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${empLvl * 2} كفاءة الموظف في العمل` : `+${empLvl * 2} Employee Effectiveness` },
+        { source: lang === 'ar' ? 'الفاكشن' : 'Faction', effect: lang === 'ar' ? `${view.fac.chainBonusPct} مضاعف احترام السلسلة` : `${view.fac.chainBonusPct} Chain Respect Multiplier` },
+        { source: lang === 'ar' ? 'التعليم' : 'Education', effect: view.employment.payBonusText }
+      ],
+      rentIslandBtnLabel: lang === 'ar' ? 'تمديد إيجار الجزيرة (+30 يوم)' : 'Extend Island Lease (+30d)',
+      rentPrivateIslandQuick: () => {
+        const rentCost = 15000;
+        if (Number(this.p.cash || 0) < rentCost) return this.toast(lang === 'ar' ? 'تحتاج 15,000$ لتمديد عقد الإيجار.' : 'Need $15,000 cash to extend Private Island lease.', true);
+        this.p.cash -= rentCost;
+        this.p.propertyLease = {
+          id: 'island',
+          nameEn: 'Private Island (Airstrip)',
+          nameAr: 'جزيرة خاصة (مهبط طائرات)',
+          daysLeft: Number(leaseInfo.daysLeft || 33) + 30,
+          totalDays: Number(leaseInfo.totalDays || 100) + 30,
+          happy: 2500
+        };
+        this.save();
+        this.result('good', lang === 'ar' ? 'تمديد عقد إيجار العقار' : 'Property Lease Extended', `${lang === 'ar' ? 'جزيرة خاصة' : 'Private Island'} (${this.p.propertyLease.daysLeft}/${this.p.propertyLease.totalDays}d)`, '-' + money(rentCost));
+      },
+      propertyInfo: {
+        leaseText: lang === 'ar'
+          ? `${leaseInfo.nameAr} — مستأجر (${leaseInfo.daysLeft} يوم متبقي من ${leaseInfo.totalDays} يوم)`
+          : `${leaseInfo.nameEn} — Rented (${leaseInfo.daysLeft} days of ${leaseInfo.totalDays} days remaining)`
+      },
+      propertyCardRows: [
+        { k: lang === 'ar' ? 'السكن الفعلي الحالي' : 'Active Residence', v: lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn, color: 'var(--acc)' },
+        { k: lang === 'ar' ? 'حالة الإيجار (Rental)' : 'Rental Status', v: lang === 'ar' ? `${leaseInfo.daysLeft} من ${leaseInfo.totalDays} يوم متبقية` : `${leaseInfo.daysLeft} of ${leaseInfo.totalDays} days remaining`, color: 'var(--gold)' },
+        { k: lang === 'ar' ? 'حد السعادة الأقصى' : 'Max Happiness Cap', v: `${num(Math.max(this.maxOf('happy'), leaseInfo.happy || 2500))} Happy`, color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'العقارات المملوكة' : 'Owned Properties', v: lang === 'ar' ? 'كوخ (Shack)، مقطورة (Trailer)، شقة (Apartment)' : 'Shack, Trailer, Apartment', color: 'var(--t2)' },
+        { k: lang === 'ar' ? 'مزايا العقار' : 'Property Perks', v: lang === 'ar' ? '+2% مكسب نادي · مهبط طائرات خاص' : '+2% Gym Gains · Private Airstrip', color: 'var(--acc)' }
+      ],
+      meritBranches,
+
+      // City Map Random Spawns & Awareness
+      awarenessCityTitle: lang === 'ar' ? `لقى خريطة المدينة العشوائية (ميزة الوعي Awareness Lv.${awarenessLvl})` : `City Map Lucky Item Spawns (Awareness Lv.${awarenessLvl} · +${awarenessLvl * 15}% Chance)`,
+      awarenessCitySub: lang === 'ar' ? 'تظهر عناصر محاطة بدائرة على خريطة المدينة كل 2-3 أيام بالحظ (تصل إلى 5,000,000$). اضغط على أي عنصر لالتقاطه فوراً!' : 'Circled ground items spawn across the City Map every 2-3 days by luck (including rare $5,000,000 jackpots). Click any spotted item to claim!',
+      rollSpawnBtnLabel: lang === 'ar' ? 'توليد لقطة حظ جديدة على الخريطة' : 'Roll 2-3 Day Lucky Spawn',
+      rollLuckyCitySpawn: () => {
+        this.setState({ claimedCitySpawns: {} });
+        this.toast(lang === 'ar' ? '👁️ بفضل ميزة الوعي (Awareness)، رصدت عناصر جديدة محاطة بدائرة على خريطة المدينة!' : '👁️ Your Awareness spotted fresh circled items across the City Map!');
+      },
+      cityMapSpawns: activeMapSpawns,
+
+      // Travel Plushies & Museum -> Points Exchange
+      museumTitle: lang === 'ar' ? 'المتحف ومتجر دباديب المدن (استبدال المجموعات بنقاط الشحن Points)' : 'The Museum & Regional Travel Plushies (Exchange Sets for Free Points)',
+      museumSub: lang === 'ar' ? 'كل مدينة سفر تبيع دبدوباً أو تحفة حصرية. اجمع المجموعة الكاملة واستبدلها في المتحف مقابل +10 بوينت (نفس نقاط الشحن)!' : 'Each travel city sells an exclusive regional plushie/souvenir. Assemble a full collection and trade it at the Museum for +10 Premium Points!',
+      buyAllPlushiesBtn: lang === 'ar' ? 'شراء طقم دباديب المدن الكامل ($8,850)' : 'Buy Full 6-City Plushie Set ($8,850)',
+      exchangeMuseumBtn: lang === 'ar' ? 'استبدال المجموعة في المتحف' : 'Trade Set at Museum',
+      plushieTotalOwned: plushies.filter(pl => Number(ownedPlushies?.[pl.id] || 0) > 0).length,
+      plushieCatalog: plushies.map(pl => ({
+        icon: pl.icon,
+        name: lang === 'ar' ? pl.ar : pl.en,
+        city: pl.city,
+        priceText: money(pl.price),
+        owned: Number(ownedPlushies?.[pl.id] || 0),
+        buy: () => {
+          if (Number(this.p.cash || 0) < pl.price) return this.toast(lang === 'ar' ? 'النقد غير كافٍ لشراء الدبدوب.' : 'Not enough cash to buy regional plushie.', true);
+          this.p.cash -= pl.price;
+          this.p.plushies = { ...ownedPlushies };
+          this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
+          this.save();
+          this.toast(lang === 'ar' ? `🧸 اشتريت ${pl.ar} من ${pl.city}!` : `🧸 Purchased ${pl.en} (${pl.city})!`);
+          this.forceUpdate();
+        }
+      })),
+      collectRegionalPlushieSet: () => {
+        const totalCost = 8850;
+        if (Number(this.p.cash || 0) < totalCost) return this.toast(lang === 'ar' ? 'تحتاج 8,850$ لشراء طقم الدباديب الكامل.' : 'Need $8,850 cash to buy the full 6-city plushie set.', true);
+        this.p.cash -= totalCost;
+        this.p.plushies = { ...ownedPlushies };
+        for (const pl of plushies) this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
+        this.save();
+        this.result('good', lang === 'ar' ? 'اكتمال مجموعة دباديب المدن' : 'Full 6-City Plushie Set Collected', lang === 'ar' ? 'جاهز للاستبدال في المتحف مقابل +10 بوينت' : 'Ready to exchange at The Museum for +10 Points', '6/6 Set');
+      },
+      exchangeMuseumSetForPoints: () => {
+        const hasAll = plushies.every(pl => Number(ownedPlushies?.[pl.id] || 0) >= 1);
+        if (!hasAll) return this.toast(lang === 'ar' ? 'أكمل جمع الدباديب الستة من المدن أولاً لاستبدالها في المتحف!' : 'Collect at least 1 of each of the 6 regional plushies first to trade at the Museum!', true);
+        this.p.plushies = { ...ownedPlushies };
+        for (const pl of plushies) this.p.plushies[pl.id] -= 1;
+        this.p.points = Number(this.p.points || 0) + 10;
+        this.save();
+        this.result('good', lang === 'ar' ? '🏛️ استبدال المتحف مكتمل!' : '🏛️ Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', '+10 Points');
+      },
+
+      // Honors & Medals + Ipecac Self-Hospitalization
+      honorsSectionTitle: lang === 'ar' ? 'الأوسمة والميداليات (كل وسام يمنح +1 نقطة ميرت)' : 'Honors & Medals Milestones (Each Honor Awards +1 Merit Point)',
+      honorsSectionSub: lang === 'ar' ? 'أكمل تحديات القتال والجرائم والمستشفى لكسب نقاط الميرتس وتطوير شخصيتك' : 'Complete combat, crime, and hospital milestones to earn Merit points for your character tree',
+      ipecacBtnLabel: lang === 'ar' ? 'استخدم كيس دم خاطئ / شراب Ipecac (دخول المستشفى 1 ساعة + وسام +1 ميرت)' : 'Take Wrong Blood Bag / Ipecac Syrup (1h Hospital + Unlock Honor +1 Merit)',
+      triggerIpecacHonor: () => {
+        this.p.hospUntil = Date.now() + 3600000;
+        this.p.claimedHonors = { ...claimedHonors };
+        if (!this.p.claimedHonors.h_ipecac) {
+          this.p.claimedHonors.h_ipecac = true;
+          this.p.merits = Number(this.p.merits || 0) + 1;
+        }
+        this.save();
+        this.result('good', lang === 'ar' ? 'وسام شراب Ipecac / كيس الدم الخاطئ!' : 'Ipecac / Wrong Blood Bag Honor Unlocked!', lang === 'ar' ? 'دخلت المستشفى لمدة ساعة وحصلت على +1 نقطة ميرت!' : 'Self-hospitalized for 1 hour · Earned +1 Merit Point!', '+1 Merit');
+      },
+      honorsList: honorsDefs.map(hd => {
+        const claimed = !!claimedHonors?.[hd.id];
+        return {
+          title: lang === 'ar' ? hd.titleAr : hd.titleEn,
+          desc: lang === 'ar' ? hd.descAr : hd.descEn,
+          btn: claimed ? (lang === 'ar' ? 'مكتسب ✓' : 'Claimed ✓') : (lang === 'ar' ? 'استلام +1 ميرت' : 'Claim +1 Merit'),
+          bg: claimed ? 'var(--btn)' : 'linear-gradient(var(--accFill1),var(--accFill2))',
+          fg: claimed ? 'var(--mu)' : 'var(--onAcc)',
+          claim: () => {
+            if (claimed) return this.toast(lang === 'ar' ? 'تم استلام هذا الوسام مسبقاً.' : 'Honor already claimed.');
+            this.p.claimedHonors = { ...claimedHonors, [hd.id]: true };
+            this.p.merits = Number(this.p.merits || 0) + 1;
+            this.save();
+            this.result('good', lang === 'ar' ? 'وسام جديد مكتسب!' : 'Honor Medal Unlocked!', lang === 'ar' ? hd.titleAr : hd.titleEn, '+1 Merit');
+            this.forceUpdate();
+          }
+        };
+      }),
+
+      // Property Rental Desk on Properties Screen
+      rentalDeskTitle: lang === 'ar' ? 'مكتب استئجار العقارات (Property Rental & Lease Desk)' : 'Property Rental & Lease Desk (Rent for 30–100 Days)',
+      rentalDeskSub: lang === 'ar' ? 'استأجر عقاراً فاخراً لرفع السعادة القصوى ومضاعفات النادي بدون دفع كامل سعر الشراء' : 'Rent high-tier properties to enjoy maximum Happiness and Airstrip perks without paying full purchase price',
+      rentalOptions: [
+        { id: 'island', nameEn: 'Private Island (Airstrip)', nameAr: 'جزيرة خاصة (مهبط طائرات)', days: 100, happy: 2500, cost: 45000 },
+        { id: 'villa', nameEn: 'Coastal Villa', nameAr: 'فيلا ساحلية', days: 60, happy: 1500, cost: 22000 },
+        { id: 'house', nameEn: 'Detached House', nameAr: 'منزل مستقل', days: 30, happy: 900, cost: 9500 },
+        { id: 'apt', nameEn: 'Luxury Apartment', nameAr: 'شقة فاخرة', days: 30, happy: 500, cost: 4000 }
+      ].map(ro => ({
+        name: lang === 'ar' ? ro.nameAr : ro.nameEn,
+        daysLabel: `${ro.days} ${lang === 'ar' ? 'يوم إيجار' : 'Days Lease'}`,
+        happyText: `${num(ro.happy)} ${t.happy}`,
+        costText: money(ro.cost),
+        btnLabel: lang === 'ar' ? `استأجر (${ro.days} يوم)` : `Rent (${ro.days}d)`,
+        rent: () => {
+          if (Number(this.p.cash || 0) < ro.cost) return this.toast(lang === 'ar' ? 'النقد غير كافٍ لاستئجار هذا العقار.' : 'Insufficient cash to rent this property.', true);
+          this.p.cash -= ro.cost;
+          this.p.prop = ro.id;
+          this.p.propertyLease = { id: ro.id, nameEn: ro.nameEn, nameAr: ro.nameAr, daysLeft: ro.days, totalDays: ro.days, happy: ro.happy };
+          this.save();
+          this.result('good', lang === 'ar' ? 'تم توقيع عقد إيجار العقار' : 'Property Lease Signed', `${lang === 'ar' ? ro.nameAr : ro.nameEn} (${ro.days}/${ro.days}d)`, '-' + money(ro.cost));
+        }
+      })),
+
+      // Multi-Channel Context-Aware Chat Dock & Personal Notepad
+      chatDockTitle: lang === 'ar' ? 'الشات الميداني والمفكرة الشخصية' : 'Multi-Channel Comms & Personal Notepad',
+      chatContextBadge: hosp
+        ? (lang === 'ar' ? '🏥 أنت في المستشفى · شات المستشفى نشط' : '🏥 IN HOSPITAL · Hospital Chat Active')
+        : p.travel?.status === 'traveling'
+          ? (lang === 'ar' ? '✈️ أنت في الطائرة · شات السفر نشط' : '✈️ IN FLIGHT · Travel Plane Chat Active')
+          : (lang === 'ar' ? '🟢 متصل · الشات العام والفاكشن والمفكرة جاهزة' : '🟢 ONLINE · Global, Faction, Location & Notes Active'),
+      chatChannels: [
+        { id: 'global', label: lang === 'ar' ? '🌐 العام' : '🌐 Global' },
+        { id: 'faction', label: lang === 'ar' ? '🛡️ الفاكشن' : '🛡️ Faction' },
+        { id: 'private', label: lang === 'ar' ? '💬 الخاص' : '💬 Private' },
+        { id: 'hospital', label: lang === 'ar' ? '🏥 المستشفى' : '🏥 Hospital' },
+        { id: 'travel', label: lang === 'ar' ? '✈️ الطائرة' : '✈️ Travel' },
+        { id: 'company', label: lang === 'ar' ? '💼 العمل' : '💼 Company' },
+        { id: 'notes', label: lang === 'ar' ? '📝 المفكرة (Notes)' : '📝 Notes' }
+      ].map(ch => ({
+        label: ch.label,
+        bg: chatTab === ch.id ? 'var(--activebg)' : 'var(--btn)',
+        fg: chatTab === ch.id ? 'var(--activefg)' : (ch.id === 'notes' ? 'var(--gold)' : 'var(--t2)'),
+        border: chatTab === ch.id ? 'var(--acc)' : 'var(--border3)',
+        select: () => this.setState({ omarChatTab: ch.id })
+      })),
+      isNotesTab: chatTab === 'notes',
+      activeChatMessages: (chatHistory[chatTab] || chatHistory.global || []).map(cm => ({
+        ...cm,
+        openSender: () => this.setState({ omarProfileOpen: true, omarProfileId: cm.senderId || '1048' })
+      })),
+      chatDraft: this.state.omarChatDraft || '',
+      chatPlaceholder: lang === 'ar' ? 'اكتب رسالة في القناة الحالية...' : 'Type message in active channel...',
+      sendChatLabel: lang === 'ar' ? 'إرسال' : 'Send',
+      onChatInput: e => this.setState({ omarChatDraft: e.target.value }),
+      sendChatMessage: () => {
+        const txt = String(this.state.omarChatDraft || '').trim();
+        if (!txt) return;
+        const chan = chatTab === 'notes' ? 'global' : chatTab;
+        this.p.chatHistory = { ...chatHistory, [chan]: [...(chatHistory[chan] || []), { time: clock, sender: view.t.player, senderId: playerNumericId, text: txt }] };
+        this.setState({ omarChatDraft: '' });
+        this.save();
+      },
+      notesText: this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : (this.p.personalNotes || (lang === 'ar' ? '• أهداف الباونتي والنشل: Mohammed [#1048]، Duke_X [#1337]\n• تذكير: جمع دبدوب الجمل من دبي + دبدوب الحرس من لندن لاستبدالها بـ +10 بوينت في المتحف.' : '• Target List: Mohammed [#1048], Duke_X [#1337]\n• Reminder: Collect Dubai Camel Plushie + UK Bear to trade full set at Museum for +10 Points.')),
+      notesPlaceholder: lang === 'ar' ? 'اكتب ملاحظاتك، أرقام أهدافك #ID، أو مؤقتات المستشفى...' : 'Write target #IDs, hospital timers, or trade notes...',
+      notesSavedHint: lang === 'ar' ? 'تُحفظ المفكرة تلقائياً في حسابك.' : 'Personal scratchpad persisted to your character.',
+      saveNotesBtn: lang === 'ar' ? 'حفظ الملاحظات' : 'Save Notes',
+      onNotesInput: e => this.setState({ omarNotesDraft: e.target.value }),
+      saveNotes: () => {
+        this.p.personalNotes = this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : this.p.personalNotes;
+        this.save();
+        this.toast(lang === 'ar' ? '📝 تم حفظ المفكرة الشخصية.' : '📝 Personal Notes saved.');
+      }
+    };
+
     if (screen === 'attack') view.subtitle = lang === 'ar' ? 'خصوم المدينة ولاعبون حقيقيون. البداية تكلف 25 طاقة؛ النتائج محفوظة على الخادم.' : 'City opponents and real players. Starting costs 25 energy; outcomes are saved on the server.';
     const marketResource = this.peerResources?.market, marketSnapshot = marketResource?.snapshot;
     const marketUnavailable = unavailable || !screenEngineAvailable('market') || !marketSnapshot || !!marketResource?.error || !!marketResource?.loading || !!marketResource?.busy;
