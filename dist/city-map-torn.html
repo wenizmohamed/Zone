@@ -542,8 +542,8 @@ initializeMapLocale();
     var requiredWidth=Math.max((northeast[0]-southwest[0])*1.18,requiredHeight*aspect),cx=(southwest[0]+northeast[0])/2,cy=(southwest[1]+northeast[1])/2;
     var bounds=[ZoneCompactDistrict.geographic([cx-requiredWidth/2,cy-requiredHeight/2]),ZoneCompactDistrict.geographic([cx+requiredWidth/2,cy+requiredHeight/2])];
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){
-      bounds=[[CENTER[0]-0.0038,CENTER[1]-0.0022],[CENTER[0]+0.0038,CENTER[1]+0.0022]];
-      if(map.setMinZoom)map.setMinZoom(16.15);
+      bounds=[[CENTER[0]-0.032,CENTER[1]-0.020],[CENTER[0]+0.032,CENTER[1]+0.020]];
+      if(map.setMinZoom)map.setMinZoom(14.2);
     }
     // Use every server-authored block, including distant holdings. Restrict the
     // camera, not the gameplay data, and never refit on an ownership refresh.
@@ -572,7 +572,7 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.38,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.05,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -684,8 +684,7 @@ initializeMapLocale();
     map.fitBounds(bounds,{padding:padding,maxZoom:maxZoom,pitch:pitch,bearing:Number.isFinite(bearing)?bearing:pitch===0?0:-12,duration:0,retainPadding:false,essential:true});
     refineOwnershipCamera(points,padding,maxZoom,overview?1.03:1.2);
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.jumpTo){
-      if((blocks||[]).length>=20){map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.38,pitch:Math.max(36,pitch||38),bearing:0});}
-      else if(map.getZoom()<16.25){map.jumpTo({zoom:16.25,pitch:Math.max(36,pitch||38)});}
+      if((blocks||[]).length>=20){map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:didFit?15.35:16.05,pitch:Math.max(36,pitch||38),bearing:0});}
     }
     if(previous){var target={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),duration:duration,essential:true};map.jumpTo(previous);map.easeTo(target);}
     return true;
@@ -1117,11 +1116,27 @@ initializeMapLocale();
     if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],liveTurfFill?['coalesce',['get','renderColor'],'#e4b96b']:'#e4b96b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.32,['boolean',['feature-state','hover'],false],0.24,['boolean',['get','contested'],false],liveTurfFill?0.38:0.09,liveTurfFill?['case',['boolean',['get','neutral'],false],0.06,['boolean',['get','player'],false],0.32,0.28]:0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
     if(liveTurfFill){
       var beforeGround=map.getLayer('district-road-labels')?'district-road-labels':before;
+      var beforeOwn=map.getLayer('zone-ownership-fill')?'zone-ownership-fill':before;
+      if(!map.getSource('turf-quadrant-backdrop')){
+        var qw=0.036,qh=0.024,c0=CENTER[0],c1=CENTER[1];
+        map.addSource('turf-quadrant-backdrop',{type:'geojson',data:{type:'FeatureCollection',features:[
+          {type:'Feature',properties:{renderColor:'#78d628'},geometry:{type:'Polygon',coordinates:[[[c0-qw,c1+qh],[c0,c1+qh],[c0,c1],[c0-qw,c1],[c0-qw,c1+qh]]]}},
+          {type:'Feature',properties:{renderColor:'#3d7cc9'},geometry:{type:'Polygon',coordinates:[[[c0,c1+qh],[c0+qw,c1+qh],[c0+qw,c1],[c0,c1],[c0,c1+qh]]]}},
+          {type:'Feature',properties:{renderColor:'#d99332'},geometry:{type:'Polygon',coordinates:[[[c0-qw,c1],[c0,c1],[c0,c1-qh],[c0-qw,c1-qh],[c0-qw,c1]]]}},
+          {type:'Feature',properties:{renderColor:'#b8529e'},geometry:{type:'Polygon',coordinates:[[[c0,c1],[c0+qw,c1],[c0+qw,c1-qh],[c0,c1-qh],[c0,c1]]]}}
+        ]}});
+      }
+      if(!map.getLayer('turf-quadrant-fill'))map.addLayer({id:'turf-quadrant-fill',type:'fill',source:'turf-quadrant-backdrop',paint:{'fill-color':['get','renderColor'],'fill-opacity':0.52,'fill-antialias':false}},beforeOwn);
+      if(!map.getLayer('turf-quadrant-glow'))map.addLayer({id:'turf-quadrant-glow',type:'line',source:'turf-quadrant-backdrop',paint:{'line-color':['get','renderColor'],'line-width':8,'line-blur':4,'line-opacity':0.75}},beforeGround);
+      if(!map.getLayer('turf-quadrant-line'))map.addLayer({id:'turf-quadrant-line',type:'line',source:'turf-quadrant-backdrop',paint:{'line-color':['get','renderColor'],'line-width':2.8,'line-opacity':0.92}},beforeGround);
       try{
         if(map.getLayer('district-buildings')){map.setPaintProperty('district-buildings','fill-color','#28323c');map.setPaintProperty('district-buildings','fill-opacity',0.55);}
         if(map.getLayer('district-buildings-3d')){
           map.setLayoutProperty('district-buildings-3d','visibility','visible');
           map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);
+          if(!map.getLayer('turf-wide-buildings-3d')){
+            map.addLayer({id:'turf-wide-buildings-3d',type:'fill-extrusion',source:'district-streets','source-layer':'building',minzoom:13,maxzoom:16,filter:['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']],paint:{'fill-extrusion-color':['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#68716f',18,'#838b81',60,'#9b9887'],'fill-extrusion-height':['max',0,['to-number',['get','height'],0]],'fill-extrusion-base':['min',['max',0,['to-number',['get','height'],0]],['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1},layout:{visibility:'visible'}},'district-buildings-3d');
+          }
         }
         if(map.getLayer('district-complete-volumes')){
           map.setPaintProperty('district-complete-volumes','fill-extrusion-opacity',1);
@@ -1231,7 +1246,7 @@ initializeMapLocale();
   }
   var OVERVIEW_POIS=['bank','gym','alley','hospital','market','hq','home','missions'];
   function overviewPoi(p){return OVERVIEW_POIS.indexOf(p.id)!==-1;}
-  function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=15.8)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
+  function pinDisplayed(p){var minServiceZoom=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')?13.2:15.8;return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=minServiceZoom)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
   function locationPriority(p){
     var primary=['bank','jobs','gym','school','hospital','jail','market','home','casino','alley','hq','missions','arena','news','shop','pier','hof'].indexOf(p&&p.id);
     return primary<0?100:primary;
@@ -1315,7 +1330,7 @@ initializeMapLocale();
   }
   // One source refresh after actual roof/sign measurement. No screen-space
   // marker recreation or continual source writes during camera movement.
-  map.on('zone-landmarks-ready',function(){if(!mapDisposed){syncPoiSource();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&!mapCameraTouched){var allPts=[];territoryData.forEach(function(t){(t.polygon||[]).forEach(function(p){allPts.push(blockLL(t,p));});});if(allPts.length&&map.jumpTo&&typeof refineOwnershipCamera==='function'){map.jumpTo({pitch:34,bearing:0});refineOwnershipCamera(allPts,{top:74,right:28,bottom:50,left:28},17.4,1.05);}if(map.getLayer&&map.getLayer('zone-district-surfaces'))map.setLayoutProperty('zone-district-surfaces','visibility','none');}}});
+  map.on('zone-landmarks-ready',function(){if(!mapDisposed){syncPoiSource();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.getLayer&&map.getLayer('zone-district-surfaces'))map.setLayoutProperty('zone-district-surfaces','visibility','none');}});
   function setMode(mode,filterId){
     mapMode=mode==='places'?'places':'territories'; territoryFilter=mapMode==='places'?(filterId||null):null; document.body.dataset.mode=mapMode;
     if(el.search.dataset.mode!==mapMode){el.search.value='';el.search.dataset.mode=mapMode;el.sClear.hidden=true;}
@@ -1742,8 +1757,12 @@ initializeMapLocale();
       try{
         ['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(map.getLayer(lid))map.setLayoutProperty(lid,'symbol-z-elevate',false);});
         if(map.getLayer('district-buildings-3d')){
-          map.setLayoutProperty('district-buildings-3d','visibility','visible');
+          map.setLayoutProperty('district-buildings-3d','visibility',map.getPitch()>1?'visible':'none');
           map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);
+        }
+        if(map.getLayer('turf-wide-buildings-3d')){
+          map.setLayoutProperty('turf-wide-buildings-3d','visibility',map.getPitch()>1?'visible':'none');
+          map.setPaintProperty('turf-wide-buildings-3d','fill-extrusion-opacity',1);
         }
         if(map.getLayer('district-complete-volumes'))map.setPaintProperty('district-complete-volumes','fill-extrusion-opacity',1);
       }catch(_){}
@@ -1759,7 +1778,8 @@ initializeMapLocale();
     if(!landmarkController){landmarkController=ZoneCompactDistrict.controller(map,{onModuleFetchFailure:function(error){mapModuleRetry.handle(error);}});landmarkVisibleState=null;}
     if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){pinData.forEach(function(p){if(LIVE_PIN_COORDS[p.id])p._lngLat=LIVE_PIN_COORDS[p.id].slice();});}
     landmarkController.setDestinations(pinData);
-    landmarkController.setTerritories(territoryGeo(territoryData).features);
+    var liveBrowser=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
+    landmarkController.setTerritories(liveBrowser?[{type:'Feature',geometry:{type:'Polygon',coordinates:[[[CENTER[0]-0.0026,CENTER[1]-0.0013],[CENTER[0]+0.0026,CENTER[1]-0.0013],[CENTER[0]+0.0026,CENTER[1]+0.0013],[CENTER[0]-0.0026,CENTER[1]+0.0013],[CENTER[0]-0.0026,CENTER[1]-0.0013]]]}}]:territoryGeo(territoryData).features);
     syncLandmarkVisibility();
   }
   document.getElementById('districtSurfaceRetry111').onclick=function(){
