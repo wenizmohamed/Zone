@@ -419,6 +419,119 @@ final class ProgressionService
                     $state['patients'][$index]['until'] = 0;
                     $this->awardXp($playerId, 15, $correlationId);
                     break;
+                case 'merit.upgrade':
+                    $state['meritTree'] = is_array($state['meritTree'] ?? null) ? $state['meritTree'] : ['crit' => 2, 'awareness' => 2, 'emp' => 1, 'life' => 1, 'gym' => 1, 'stealth' => 1];
+                    $lvl = (int) ($state['meritTree'][$id] ?? 0);
+                    if ($lvl >= 10) throw new RuntimeException('Skill already at max tier.');
+                    $cost = $lvl + 1;
+                    if ((int) ($state['merits'] ?? 0) < $cost) throw new RuntimeException('Not enough merits.');
+                    $state['merits'] = (int) $state['merits'] - $cost;
+                    $state['meritTree'][$id] = $lvl + 1;
+                    break;
+                case 'property.lease':
+                    $leases = [
+                        'island_ext' => ['id' => 'island', 'nameEn' => 'Private Island (Airstrip)', 'nameAr' => 'جزيرة خاصة (مهبط طائرات)', 'days' => 30, 'happy' => 2500, 'cost' => 15000, 'extend' => true],
+                        'island' => ['id' => 'island', 'nameEn' => 'Private Island (Airstrip)', 'nameAr' => 'جزيرة خاصة (مهبط طائرات)', 'days' => 100, 'happy' => 2500, 'cost' => 45000],
+                        'villa' => ['id' => 'villa', 'nameEn' => 'Coastal Villa', 'nameAr' => 'فيلا ساحلية', 'days' => 60, 'happy' => 1500, 'cost' => 22000],
+                        'house' => ['id' => 'house', 'nameEn' => 'Detached House', 'nameAr' => 'منزل مستقل', 'days' => 30, 'happy' => 900, 'cost' => 9500],
+                        'apt' => ['id' => 'apt', 'nameEn' => 'Luxury Apartment', 'nameAr' => 'شقة فاخرة', 'days' => 30, 'happy' => 500, 'cost' => 4000],
+                    ];
+                    $cfg = $leases[$id] ?? $leases['island_ext'];
+                    $this->changeCash($playerId, -(int) $cfg['cost'], 'property.lease:' . $id, $correlationId);
+                    $curLease = is_array($state['propertyLease'] ?? null) ? $state['propertyLease'] : ['daysLeft' => 33, 'totalDays' => 100];
+                    $daysLeft = !empty($cfg['extend']) ? ((int) ($curLease['daysLeft'] ?? 33) + (int) $cfg['days']) : (int) $cfg['days'];
+                    $totalDays = !empty($cfg['extend']) ? ((int) ($curLease['totalDays'] ?? 100) + (int) $cfg['days']) : (int) $cfg['days'];
+                    $state['prop'] = $cfg['id'];
+                    $state['propertyLease'] = ['id' => $cfg['id'], 'nameEn' => $cfg['nameEn'], 'nameAr' => $cfg['nameAr'], 'daysLeft' => $daysLeft, 'totalDays' => $totalDays, 'happy' => (int) $cfg['happy']];
+                    $result['cashDelta'] = -(int) $cfg['cost'];
+                    break;
+                case 'city.spawnClaim':
+                    $rewards = ['sp_briefcase' => 5000000, 'sp_rolex' => 85000, 'sp_medkit' => 12000, 'sp_camel' => 15000];
+                    $val = (int) ($rewards[$id] ?? 12000);
+                    $state['claimedCitySpawns'] = is_array($state['claimedCitySpawns'] ?? null) ? $state['claimedCitySpawns'] : [];
+                    $state['claimedCitySpawns'][$id] = true;
+                    if ($id === 'sp_camel') {
+                        $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : [];
+                        $state['plushies']['plush_camel'] = (int) ($state['plushies']['plush_camel'] ?? 1) + 1;
+                    }
+                    $this->changeCash($playerId, $val, 'city.spawnClaim:' . $id, $correlationId);
+                    $result['cashDelta'] = $val;
+                    break;
+                case 'museum.plushieBuy':
+                    $prices = ['plush_camel' => 1200, 'plush_bear' => 1500, 'plush_moose' => 1400, 'plush_pharaoh' => 1800, 'plush_falcon' => 1350, 'plush_lion' => 1600, 'all_set' => 8850];
+                    $cost = (int) ($prices[$id] ?? 1200);
+                    $this->changeCash($playerId, -$cost, 'museum.plushieBuy:' . $id, $correlationId);
+                    $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : ['plush_camel' => 1, 'plush_bear' => 1, 'plush_moose' => 1, 'plush_pharaoh' => 1, 'plush_falcon' => 1, 'plush_lion' => 1];
+                    if ($id === 'all_set') {
+                        foreach (['plush_camel', 'plush_bear', 'plush_moose', 'plush_pharaoh', 'plush_falcon', 'plush_lion'] as $pk) {
+                            $state['plushies'][$pk] = (int) ($state['plushies'][$pk] ?? 0) + 1;
+                        }
+                    } else {
+                        $state['plushies'][$id] = (int) ($state['plushies'][$id] ?? 0) + 1;
+                    }
+                    $result['cashDelta'] = -$cost;
+                    break;
+                case 'museum.exchange':
+                    $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : ['plush_camel' => 1, 'plush_bear' => 1, 'plush_moose' => 1, 'plush_pharaoh' => 1, 'plush_falcon' => 1, 'plush_lion' => 1];
+                    foreach (['plush_camel', 'plush_bear', 'plush_moose', 'plush_pharaoh', 'plush_falcon', 'plush_lion'] as $pk) {
+                        $state['plushies'][$pk] = max(0, (int) ($state['plushies'][$pk] ?? 1) - 1);
+                    }
+                    $state['points'] = (int) ($state['points'] ?? 0) + 10;
+                    break;
+                case 'honor.claim':
+                    $state['claimedHonors'] = is_array($state['claimedHonors'] ?? null) ? $state['claimedHonors'] : [];
+                    if (empty($state['claimedHonors'][$id])) {
+                        $state['claimedHonors'][$id] = true;
+                        $state['merits'] = (int) ($state['merits'] ?? 0) + 1;
+                    }
+                    if ($id === 'h_ipecac') {
+                        $state['hospUntil'] = $this->now() + 3600000;
+                    }
+                    break;
+                case 'social.bazaarBuy':
+                    $cost = max(0, (int) ($expectedPrice ?? 0));
+                    if ($cost > 0) $this->changeCash($playerId, -$cost, 'social.bazaarBuy:' . $id, $correlationId);
+                    if (str_starts_with($id, 'plush_')) {
+                        $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : [];
+                        $state['plushies'][$id] = (int) ($state['plushies'][$id] ?? 0) + 1;
+                    } else {
+                        $state['inv'][$id] = (int) ($state['inv'][$id] ?? 0) + 1;
+                    }
+                    $result['cashDelta'] = -$cost;
+                    break;
+                case 'social.sendCash':
+                case 'social.bounty':
+                    $cost = max(0, (int) ($expectedPrice ?? ($action === 'social.bounty' ? 25000 : 5000)));
+                    if ($cost > 0) $this->changeCash($playerId, -$cost, $action . ':' . $id, $correlationId);
+                    $result['cashDelta'] = -$cost;
+                    break;
+                case 'social.tag':
+                    $parts = explode(':', $id, 2);
+                    $targetId = $parts[0] ?? '1048';
+                    $mode = $parts[1] ?? 'friend';
+                    $state['friendsList'] = is_array($state['friendsList'] ?? null) ? $state['friendsList'] : [];
+                    $state['targetsList'] = is_array($state['targetsList'] ?? null) ? $state['targetsList'] : [];
+                    if ($mode === 'friend') {
+                        $state['friendsList'][$targetId] = true;
+                        unset($state['targetsList'][$targetId]);
+                    } else {
+                        unset($state['friendsList'][$targetId]);
+                        $state['targetsList'][$targetId] = true;
+                    }
+                    break;
+                case 'social.chat':
+                    $parts = explode(':', $id, 2);
+                    $chan = $parts[0] ?: 'global';
+                    $txt = trim($parts[1] ?? '');
+                    if ($txt !== '') {
+                        $state['chatHistory'] = is_array($state['chatHistory'] ?? null) ? $state['chatHistory'] : [];
+                        $state['chatHistory'][$chan] = is_array($state['chatHistory'][$chan] ?? null) ? $state['chatHistory'][$chan] : [];
+                        $state['chatHistory'][$chan][] = ['time' => gmdate('h:i A'), 'sender' => (string) ($player['username'] ?? 'Vincenzo'), 'senderId' => '1042', 'text' => mb_substr($txt, 0, 280)];
+                    }
+                    break;
+                case 'social.noteSave':
+                    $state['personalNotes'] = mb_substr($id, 0, 2000);
+                    break;
                 default:
                     throw new InvalidArgumentException('Unknown gameplay action.');
             }

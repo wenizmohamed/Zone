@@ -1827,7 +1827,7 @@ class Component extends DCLogic {
     const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
     if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
-      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v123') : rawSrc);
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v124') : rawSrc);
     }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
@@ -2904,8 +2904,11 @@ class Component extends DCLogic {
     if (snapshot.hospitalQuote) this.hospitalQuote = { ...snapshot.hospitalQuote };
     if (Object.prototype.hasOwnProperty.call(snapshot, 'family')) this.sharedFamily = snapshot.family;
     if (Object.prototype.hasOwnProperty.call(snapshot, 'onboarding')) this.onboarding = snapshot.onboarding;
-    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients']) {
+    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients','meritTree','propertyLease','plushies','claimedHonors','friendsList','targetsList','chatHistory','personalNotes','claimedCitySpawns']) {
       if (Object.prototype.hasOwnProperty.call(state, key)) this.p[key] = state[key];
+    }
+    if (state.claimedCitySpawns && typeof state.claimedCitySpawns === 'object') {
+      this.state.claimedCitySpawns = { ...(this.state.claimedCitySpawns || {}), ...state.claimedCitySpawns };
     }
     this.p.fac = { chain: 0, best: 0, chainAt: 0, warEnd: 0, respect: 0, ups: {}, ...this.p.fac };
     this.p.ctr = { crimes: 0, trains: 0, wins: 0, shifts: 0, buys: 0, ...this.p.ctr };
@@ -3047,6 +3050,20 @@ class Component extends DCLogic {
       this.pushChar();
       return snapshot;
     } finally { this.gameplayBusy = false; this.forceUpdate(); }
+  }
+  async syncOmarAction(action, id = '', expectedPrice) {
+    if (IS_PREVIEW || typeof fetch !== 'function') return null;
+    try {
+      const request = { action, id: String(id), expectedVersion: this.gameplayVersion || 1 };
+      if (expectedPrice !== undefined) request.expectedPrice = expectedPrice;
+      const response = await fetch('/api/v1/gameplay/action', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(request) });
+      const snapshot = await response.json().catch(() => ({}));
+      if (response.ok && snapshot && snapshot.state) {
+        this.applyGameplay(snapshot);
+        return snapshot;
+      }
+    } catch (_) {}
+    return null;
   }
   gameplayName(action, id) {
     const t = T[this.state.lang], kind = action.split('.')[0];
@@ -4279,6 +4296,7 @@ class Component extends DCLogic {
           this.p.merits = Number(this.p.merits || 0) - nextCost;
           this.p.meritTree = { ...meritTree, [md.id]: lvl + 1 };
           this.save();
+          this.syncOmarAction('merit.upgrade', md.id);
           this.result('good', lang === 'ar' ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${lang === 'ar' ? md.ar : md.en} → Lv.${lvl + 1}`, `-${nextCost} Merit`);
           this.forceUpdate();
         }
@@ -4308,7 +4326,7 @@ class Component extends DCLogic {
       { id: 'sp_medkit', rarity: lang === 'ar' ? 'لقطة وعي (Awareness)' : 'AWARENESS FIND', name: lang === 'ar' ? 'حقيبة إسعافات ميدانية' : 'Combat Medical Supply Box', value: 12000, district: lang === 'ar' ? 'حي المستشفى' : 'Hospital Block', borderColor: '#5aa0e0' },
       { id: 'sp_camel', rarity: lang === 'ar' ? 'دمية سفر نادرة' : 'SOUVENIR DROP', name: lang === 'ar' ? 'دبدوب الجمل الإماراتي (للمتحف)' : 'Dubai Camel Plushie (Museum Set)', value: 15000, district: lang === 'ar' ? 'المرفأ' : 'Harbor Pier', borderColor: 'var(--acc)' }
     ];
-    const claimedSpawns = this.state.claimedCitySpawns || {};
+    const claimedSpawns = { ...(this.p.claimedCitySpawns || {}), ...(this.state.claimedCitySpawns || {}) };
     const activeMapSpawns = defaultMapSpawns.filter(s => !claimedSpawns[s.id]).map(s => ({
       ...s,
       valueText: money(s.value),
@@ -4317,8 +4335,10 @@ class Component extends DCLogic {
         this.p.cash = Number(this.p.cash || 0) + s.value;
         this.p.plushies = { ...ownedPlushies };
         if (s.id === 'sp_camel') this.p.plushies.plush_camel = Number(this.p.plushies.plush_camel || 0) + 1;
+        this.p.claimedCitySpawns = { ...claimedSpawns, [s.id]: true };
         this.setState({ claimedCitySpawns: { ...claimedSpawns, [s.id]: true } });
         this.save();
+        this.syncOmarAction('city.spawnClaim', s.id);
         this.result('cash', lang === 'ar' ? 'التقاط لقطة من خريطة المدينة!' : 'City Map Item Picked Up!', s.name, '+' + money(s.value));
       }
     }));
@@ -4501,6 +4521,7 @@ class Component extends DCLogic {
           if (Number(this.p.cash || 0) < 5000) return this.toast(lang === 'ar' ? 'لا تملك 5,000$ كاش لإرسالها.' : 'Insufficient cash to send $5,000.', true);
           this.p.cash = Number(this.p.cash || 0) - 5000;
           this.save();
+          this.syncOmarAction('social.sendCash', activeProf.id, 5000);
           this.setState({ omarProfileFeedback: lang === 'ar' ? `💵 تم تحويل 5,000$ نقداً إلى ${activeProf.name} [#${activeProf.id}].` : `💵 Wired $5,000 cash to ${activeProf.name} [#${activeProf.id}].` });
         }
       },
@@ -4520,6 +4541,7 @@ class Component extends DCLogic {
           if (Number(this.p.cash || 0) < 25000) return this.toast(lang === 'ar' ? 'تحتاج 25,000$ لوضع باونتي.' : 'Need $25,000 cash to post a bounty.', true);
           this.p.cash -= 25000;
           this.save();
+          this.syncOmarAction('social.bounty', activeProf.id, 25000);
           this.setState({ omarProfileFeedback: lang === 'ar' ? `🎯 تم رصد مكافأة باونتي بقيمة 25,000$ على رأس ${activeProf.name} [#${activeProf.id}]!` : `🎯 $25,000 Bounty placed on ${activeProf.name} [#${activeProf.id}]!` });
         }
       },
@@ -4534,10 +4556,12 @@ class Component extends DCLogic {
           if (!isFriend) {
             this.p.friendsList[activeProf.id] = true;
             delete this.p.targetsList[activeProf.id];
+            this.syncOmarAction('social.tag', `${activeProf.id}:friend`);
             this.setState({ omarProfileFeedback: lang === 'ar' ? `⭐ تمت إضافة ${activeProf.name} [#${activeProf.id}] إلى قائمة الأصدقاء.` : `⭐ Added ${activeProf.name} [#${activeProf.id}] to Friends List.` });
           } else {
             delete this.p.friendsList[activeProf.id];
             this.p.targetsList[activeProf.id] = true;
+            this.syncOmarAction('social.tag', `${activeProf.id}:target`);
             this.setState({ omarProfileFeedback: lang === 'ar' ? `🎯 تم نقل ${activeProf.name} [#${activeProf.id}] إلى قائمة الأهداف (Targets).` : `🎯 Moved ${activeProf.name} [#${activeProf.id}] to Enemy Target List.` });
           }
           this.save();
@@ -4662,6 +4686,7 @@ class Component extends DCLogic {
             if (bz.id.startsWith('plush_')) this.p.plushies[bz.id] = Number(this.p.plushies[bz.id] || 0) + 1;
             else this.p.inv[bz.id] = Number(this.p.inv[bz.id] || 0) + 1;
             this.save();
+            this.syncOmarAction('social.bazaarBuy', bz.id, bz.price);
             this.result('good', lang === 'ar' ? 'شراء من بازار اللاعب' : 'Purchased from Player Bazaar', `${bz.name} (${activeProf.name} [#${activeProf.id}])`, '-' + money(bz.price));
           }
         }))
@@ -4792,6 +4817,7 @@ class Component extends DCLogic {
           happy: 2500
         };
         this.save();
+        this.syncOmarAction('property.lease', 'island_ext');
         this.result('good', lang === 'ar' ? 'تمديد عقد إيجار العقار' : 'Property Lease Extended', `${lang === 'ar' ? 'جزيرة خاصة' : 'Private Island'} (${this.p.propertyLease.daysLeft}/${this.p.propertyLease.totalDays}d)`, '-' + money(rentCost));
       },
       propertyInfo: {
@@ -4836,6 +4862,7 @@ class Component extends DCLogic {
           this.p.plushies = { ...ownedPlushies };
           this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
           this.save();
+          this.syncOmarAction('museum.plushieBuy', pl.id);
           this.toast(lang === 'ar' ? `🧸 اشتريت ${pl.ar} من ${pl.city}!` : `🧸 Purchased ${pl.en} (${pl.city})!`);
           this.forceUpdate();
         }
@@ -4847,6 +4874,7 @@ class Component extends DCLogic {
         this.p.plushies = { ...ownedPlushies };
         for (const pl of plushies) this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
         this.save();
+        this.syncOmarAction('museum.plushieBuy', 'all_set');
         this.result('good', lang === 'ar' ? 'اكتمال مجموعة دباديب المدن' : 'Full 6-City Plushie Set Collected', lang === 'ar' ? 'جاهز للاستبدال في المتحف مقابل +10 بوينت' : 'Ready to exchange at The Museum for +10 Points', '6/6 Set');
       },
       exchangeMuseumSetForPoints: () => {
@@ -4856,6 +4884,7 @@ class Component extends DCLogic {
         for (const pl of plushies) this.p.plushies[pl.id] -= 1;
         this.p.points = Number(this.p.points || 0) + 10;
         this.save();
+        this.syncOmarAction('museum.exchange', 'set');
         this.result('good', lang === 'ar' ? '🏛️ استبدال المتحف مكتمل!' : '🏛️ Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', '+10 Points');
       },
 
@@ -4871,6 +4900,7 @@ class Component extends DCLogic {
           this.p.merits = Number(this.p.merits || 0) + 1;
         }
         this.save();
+        this.syncOmarAction('honor.claim', 'h_ipecac');
         this.result('good', lang === 'ar' ? 'وسام شراب Ipecac / كيس الدم الخاطئ!' : 'Ipecac / Wrong Blood Bag Honor Unlocked!', lang === 'ar' ? 'دخلت المستشفى لمدة ساعة وحصلت على +1 نقطة ميرت!' : 'Self-hospitalized for 1 hour · Earned +1 Merit Point!', '+1 Merit');
       },
       honorsList: honorsDefs.map(hd => {
@@ -4886,6 +4916,7 @@ class Component extends DCLogic {
             this.p.claimedHonors = { ...claimedHonors, [hd.id]: true };
             this.p.merits = Number(this.p.merits || 0) + 1;
             this.save();
+            this.syncOmarAction('honor.claim', hd.id);
             this.result('good', lang === 'ar' ? 'وسام جديد مكتسب!' : 'Honor Medal Unlocked!', lang === 'ar' ? hd.titleAr : hd.titleEn, '+1 Merit');
             this.forceUpdate();
           }
@@ -4912,6 +4943,7 @@ class Component extends DCLogic {
           this.p.prop = ro.id;
           this.p.propertyLease = { id: ro.id, nameEn: ro.nameEn, nameAr: ro.nameAr, daysLeft: ro.days, totalDays: ro.days, happy: ro.happy };
           this.save();
+          this.syncOmarAction('property.lease', ro.id);
           this.result('good', lang === 'ar' ? 'تم توقيع عقد إيجار العقار' : 'Property Lease Signed', `${lang === 'ar' ? ro.nameAr : ro.nameEn} (${ro.days}/${ro.days}d)`, '-' + money(ro.cost));
         }
       })),
@@ -4986,6 +5018,7 @@ class Component extends DCLogic {
         this.p.chatHistory = { ...chatHistory, [chan]: [...(chatHistory[chan] || []), { time: clock, sender: view.t.player, senderId: playerNumericId, text: txt }] };
         this.setState({ omarChatDraft: '' });
         this.save();
+        this.syncOmarAction('social.chat', `${chan}:${txt}`);
       },
       notesText: this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : (this.p.personalNotes || (lang === 'ar' ? '• أهداف الباونتي والنشل: Mohammed [#1048]، Duke_X [#1337]\n• تذكير: جمع دبدوب الجمل من دبي + دبدوب الحرس من لندن لاستبدالها بـ +10 بوينت في المتحف.' : '• Target List: Mohammed [#1048], Duke_X [#1337]\n• Reminder: Collect Dubai Camel Plushie + UK Bear to trade full set at Museum for +10 Points.')),
       notesPlaceholder: lang === 'ar' ? 'اكتب ملاحظاتك، أرقام أهدافك #ID، أو مؤقتات المستشفى...' : 'Write target #IDs, hospital timers, or trade notes...',
@@ -4993,8 +5026,10 @@ class Component extends DCLogic {
       saveNotesBtn: lang === 'ar' ? 'حفظ الملاحظات' : 'Save Notes',
       onNotesInput: e => this.setState({ omarNotesDraft: e.target.value }),
       saveNotes: () => {
-        this.p.personalNotes = this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : this.p.personalNotes;
+        const nextNotes = this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : this.p.personalNotes;
+        this.p.personalNotes = nextNotes;
         this.save();
+        this.syncOmarAction('social.noteSave', String(nextNotes || ''));
         this.toast(lang === 'ar' ? '📝 تم حفظ المفكرة الشخصية.' : '📝 Personal Notes saved.');
       }
     };

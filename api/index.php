@@ -197,10 +197,16 @@ if ($relayOrigin !== '' || $relayKey !== '') {
 }
 
 if (getenv('VERCEL') === '1' && !getenv('ZONE_DATABASE_URL')) {
-    $databaseUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: '';
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: ('sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite');
     if ($databaseUrl !== '') {
         putenv('ZONE_DATABASE_URL=' . $databaseUrl);
     }
+}
+if (getenv('VERCEL') === '1' && !getenv('ZONE_ASSET_ROOT')) {
+    putenv('ZONE_ASSET_ROOT=' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-assets');
+}
+if (getenv('VERCEL') === '1' && !getenv('ZONE_BETA_OWNER_ACCESS')) {
+    putenv('ZONE_BETA_OWNER_ACCESS=1');
 }
 if (getenv('VERCEL') === '1' && !getenv('ZONE_PLAYER_SESSIONS')) {
     putenv('ZONE_PLAYER_SESSIONS=1');
