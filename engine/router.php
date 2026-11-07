@@ -204,6 +204,9 @@ if (($path === '/engine' || $path === '/engine/') && $method === 'GET') {
 function json_response(mixed $payload, int $status = 200): never
 {
     http_response_code($status);
+    if (!empty($GLOBALS['__zone_ledger_cookie']) && !headers_sent()) {
+        zone_cookie('zone_player_ledger', (string) $GLOBALS['__zone_ledger_cookie'], time() + 60 * 60 * 24 * 30);
+    }
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
     header('X-Content-Type-Options: nosniff');
@@ -571,11 +574,17 @@ try {
     }
     if ($method === 'POST' && $path === '/api/v1/bank/deposit') {
         $body = request_json();
-        json_response($engine->bankDeposit(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->bankDeposit(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), $pid);
+        if (getenv('VERCEL') === '1') $engine->gameplay($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/bank/withdraw') {
         $body = request_json();
-        json_response($engine->bankWithdraw(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->bankWithdraw(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), $pid);
+        if (getenv('VERCEL') === '1') $engine->gameplay($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/hospital/heal') {
         request_json();

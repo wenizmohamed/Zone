@@ -155,7 +155,7 @@ if ($relayOrigin !== '' || $relayKey !== '') {
         $value = $_SERVER[$input] ?? '';
         if (is_string($value) && $value !== '' && !preg_match('/[\r\n\x00]/', $value)) $headers[] = $name . ': ' . $value;
     }
-    $cookieNames = $ownerMethods === [] ? ['zone_player_session'] : ['zone_player_session', 'zone_admin_session'];
+    $cookieNames = $ownerMethods === [] ? ['zone_player_session', 'zone_player_ledger'] : ['zone_player_session', 'zone_player_ledger', 'zone_admin_session'];
     $cookies = array_filter(explode(';', (string) ($_SERVER['HTTP_COOKIE'] ?? '')), static fn ($part) => in_array(explode('=', trim($part), 2)[0], $cookieNames, true));
     if ($cookies !== []) $headers[] = 'Cookie: ' . implode(';', $cookies);
     $query = http_build_query($_GET, '', '&', PHP_QUERY_RFC3986);
@@ -187,7 +187,7 @@ if ($relayOrigin !== '' || $relayKey !== '') {
         [$name, $value] = $parts; $name = strtolower(trim($name)); $value = trim($value);
         if (preg_match('/[\r\n\x00]/', $value)) continue;
         if (in_array($name, ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy'], true)) header($name . ': ' . $value);
-        elseif ($name === 'set-cookie' && (str_starts_with($value, 'zone_player_session=') || ($path === '/api/v1/admin/session' && str_starts_with($value, 'zone_admin_session=')))) {
+        elseif ($name === 'set-cookie' && (str_starts_with($value, 'zone_player_session=') || str_starts_with($value, 'zone_player_ledger=') || ($path === '/api/v1/admin/session' && str_starts_with($value, 'zone_admin_session=')))) {
             $parts = array_filter(explode(';', $value), static fn ($part) => !preg_match('/^\s*(?:domain|secure|httponly|samesite)\b/i', $part));
             header('Set-Cookie: ' . implode(';', [...$parts, 'Secure', 'HttpOnly', 'SameSite=Strict']), false);
         } elseif ($name === 'location' && zone_proxy_public_path($value)) header('Location: ' . $value);

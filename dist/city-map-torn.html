@@ -1295,7 +1295,7 @@ initializeMapLocale();
       // One placement owns both the coin and its centered name. Separate
       // layers let a name collide with its own icon or appear by a neighbor.
       var nameLayout={'text-field':['get','label'],'text-size':12,'text-font':['Open Sans Semibold','Arial Unicode MS Bold'],'text-offset':[0,2.2],'text-anchor':'top','text-max-width':10,'text-pitch-alignment':'viewport','text-rotation-alignment':'viewport','text-allow-overlap':false,'text-ignore-placement':false,'text-optional':true,'text-padding':typeof WebGLRenderingContext!=='undefined'?8:5};
-      if(typeof WebGLRenderingContext!=='undefined'){nameLayout['text-offset']=['match',['get','id'],['gym','hq','casino','hospital'],['literal',[2.1,2.0]],['market','jobs','pier','hof','shop'],['literal',[-2.3,2.0]],['literal',[0,2.1]]];}
+      if(typeof WebGLRenderingContext!=='undefined'){nameLayout['text-offset']=['match',['get','id'],['hq'],['literal',[3.3,1.9]],['gym','casino','hospital'],['literal',[2.1,2.0]],['market','jobs','pier','hof','shop'],['literal',[-2.3,2.0]],['literal',[0,2.1]]];}
       var namePaint={'text-color':'#f2f6fa','text-halo-color':'rgba(3,7,12,.96)','text-halo-width':1.5,'text-halo-blur':.6,'text-emissive-strength':1,'text-opacity':1};
       /* U6.4 - shared selected-scale multiplier so the chosen marker pops across all 3 POI layers */
       var selScale=['case',['boolean',['feature-state','selected'],false],1.32,1];
@@ -1324,9 +1324,9 @@ initializeMapLocale();
         if(layer.layout){layer.layout['symbol-sort-key']=20;if(id==='zone-poi-icon')layer.layout['icon-allow-overlap']=false;if(id==='zone-poi-icon'){
           Object.assign(layer.layout,{'icon-size':.74,'icon-allow-overlap':false,'icon-optional':false,'text-optional':true,'text-size':11,'symbol-sort-key':['get','detailPriority']});
           if(!map.getLayer('zone-poi-icon-service')){
-            var service=JSON.parse(JSON.stringify(layer));service.id='zone-poi-icon-service';service.filter=services;service.minzoom=15.8;service.layout['icon-allow-overlap']=true;map.addLayer(service);
+            var service=JSON.parse(JSON.stringify(layer));service.id='zone-poi-icon-service';service.filter=services;service.minzoom=(typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&window.innerWidth<=760)?16.4:15.8;service.layout['icon-allow-overlap']=true;map.addLayer(service);
           }
-          if(!map.getLayer('zone-poi-service-reservations'))map.addLayer({id:'zone-poi-service-reservations',type:'symbol',source:'zone-pois',filter:services,minzoom:15.8,layout:{'icon-image':['get','iconImage'],'icon-size':.74,'icon-padding':4,'icon-allow-overlap':true,'icon-ignore-placement':false,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport'},paint:{'icon-opacity':.001}});
+          if(!map.getLayer('zone-poi-service-reservations'))map.addLayer({id:'zone-poi-service-reservations',type:'symbol',source:'zone-pois',filter:services,minzoom:(typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&window.innerWidth<=760)?16.4:15.8,layout:{'icon-image':['get','iconImage'],'icon-size':.74,'icon-padding':4,'icon-allow-overlap':true,'icon-ignore-placement':false,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport'},paint:{'icon-opacity':.001}});
         }}
         // Detail coin and glyph share one RGBA image and one placement decision.
         // Its name shares that decision and roof elevation too. A rejected

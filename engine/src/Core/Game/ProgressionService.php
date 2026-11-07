@@ -37,6 +37,7 @@ final class ProgressionService
             $state = $this->load($playerId);
             $this->syncSharedBenefits($playerId, $state);
             if ($this->completeEducation($playerId, $state)) $this->save($playerId, $state);
+            if (getenv('VERCEL') === '1') $this->emitLedgerCookie($playerId, $state);
             return $this->response($playerId, $state);
         });
     }
@@ -228,7 +229,7 @@ final class ProgressionService
             if (!in_array($action, ['jail.bailSelf', 'item.use'], true)) $this->assertAvailable($playerId);
             $player = $this->player($playerId);
             if (getenv('VERCEL') === '1') {
-                if ((int) ($player['cash'] ?? 0) <= 2500) {
+                if ((int) ($state['version'] ?? 1) <= 1 && (int) ($player['cash'] ?? 0) <= 2500) {
                     $this->database->execute('UPDATE players SET cash = 85000, bank_balance = CASE WHEN bank_balance < 125000 THEN 125000 ELSE bank_balance END WHERE id = :id', ['id' => $playerId]);
                     $player = $this->player($playerId);
                 }
@@ -645,6 +646,9 @@ final class ProgressionService
                 $this->database->execute('UPDATE players SET max_happy = :maximum, happy = :happy WHERE id = :id', ['maximum' => $capacity, 'happy' => min($player['happy'], $capacity), 'id' => $playerId]);
                 $this->save($playerId, $state);
             }
+            if (getenv('VERCEL') === '1') {
+                $this->hydrateVercelLedgerCookie($playerId, $state, (int) ($row['version'] ?? 1));
+            }
             return $state;
         }
         $now = $this->now();
@@ -699,7 +703,82 @@ final class ProgressionService
                 $this->ledger->record($playerId, 'item:' . $itemId, (int) $quantity, (int) $quantity, 'beta.starting-inventory', $correlationId);
             }
         }
+        if (getenv('VERCEL') === '1') {
+            $this->hydrateVercelLedgerCookie($playerId, $state, 0);
+        }
         return $state;
+    }
+
+    private function hydrateVercelLedgerCookie(string $playerId, array &$state, int $dbVersion): void
+    {
+        $raw = (string) ($_COOKIE['zone_player_ledger'] ?? \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, 'zone_player_ledger'));
+        if ($raw === '' || !str_contains($raw, '.')) return;
+        [$payload, $sig] = explode('.', $raw, 2);
+        if (!hash_equals(hash_hmac('sha256', $payload, 'zone-vercel-ledger-v126'), $sig)) return;
+        $b64 = strtr($payload, '-_', '+/');
+        $pad = strlen($b64) % 4;
+        if ($pad > 0) $b64 .= str_repeat('=', 4 - $pad);
+        $rawBin = base64_decode($b64, true);
+        if ($rawBin === false) return;
+        $json = @gzinflate($rawBin);
+        if ($json === false) return;
+        $snap = json_decode($json, true);
+        if (!is_array($snap) || ($snap['p'] ?? '') !== $playerId) return;
+        $snapVersion = (int) ($snap['v'] ?? 0);
+        if ($snapVersion < (int) ($state['version'] ?? 1)) return;
+        $state['version'] = max((int) ($state['version'] ?? 1), $snapVersion);
+        if (isset($snap['pts'])) $state['points'] = (int) $snap['pts'];
+        if (isset($snap['m'])) $state['merits'] = (int) $snap['m'];
+        if (!empty($snap['mt']) && is_array($snap['mt'])) $state['meritTree'] = $snap['mt'];
+        if (!empty($snap['pl']) && is_array($snap['pl'])) {
+            $state['propertyLease'] = $snap['pl'];
+            if (!empty($snap['pl']['id'])) $state['prop'] = (string) $snap['pl']['id'];
+        }
+        if (!empty($snap['plu']) && is_array($snap['plu'])) $state['plushies'] = $snap['plu'];
+        if (!empty($snap['ch']) && is_array($snap['ch'])) $state['claimedHonors'] = $snap['ch'];
+        if (!empty($snap['cs']) && is_array($snap['cs'])) $state['claimedCitySpawns'] = $snap['cs'];
+        if (!empty($snap['fl']) && is_array($snap['fl'])) $state['friendsList'] = $snap['fl'];
+        if (!empty($snap['tl']) && is_array($snap['tl'])) $state['targetsList'] = $snap['tl'];
+        if (isset($snap['pn']) && is_string($snap['pn']) && $snap['pn'] !== '') $state['personalNotes'] = $snap['pn'];
+        if ($snapVersion > $dbVersion) {
+            if ($snapVersion > 1 && isset($snap['c'], $snap['b'])) {
+                $this->database->execute('UPDATE players SET cash = :c, bank_balance = :b WHERE id = :id', ['c' => (int) $snap['c'], 'b' => (int) $snap['b'], 'id' => $playerId]);
+            }
+            $this->database->execute('UPDATE player_progression SET state_json = :state, version = :version, updated_at = :updated WHERE player_id = :id', [
+                'state' => json_encode($state, JSON_THROW_ON_ERROR),
+                'version' => $state['version'],
+                'updated' => gmdate('c'),
+                'id' => $playerId,
+            ]);
+        }
+    }
+
+    private function emitLedgerCookie(string $playerId, array $state): void
+    {
+        if (getenv('VERCEL') !== '1') return;
+        $p = $this->player($playerId);
+        $snap = [
+            'p' => $playerId,
+            'u' => (string) ($p['username'] ?? ''),
+            'c' => (int) ($p['cash'] ?? 85000),
+            'b' => (int) ($p['bank_balance'] ?? 125000),
+            'v' => (int) ($state['version'] ?? 1),
+            'pts' => (int) ($state['points'] ?? 45),
+            'm' => (int) ($state['merits'] ?? 6),
+            'mt' => $state['meritTree'] ?? [],
+            'pl' => $state['propertyLease'] ?? [],
+            'plu' => $state['plushies'] ?? [],
+            'ch' => $state['claimedHonors'] ?? [],
+            'cs' => $state['claimedCitySpawns'] ?? [],
+            'fl' => $state['friendsList'] ?? [],
+            'tl' => $state['targetsList'] ?? [],
+            'pn' => substr((string) ($state['personalNotes'] ?? ''), 0, 350),
+        ];
+        $deflated = gzdeflate((string) json_encode($snap, JSON_UNESCAPED_UNICODE), 6);
+        if ($deflated === false) return;
+        $payload = rtrim(strtr(base64_encode($deflated), '+/', '-_'), '=');
+        $sig = hash_hmac('sha256', $payload, 'zone-vercel-ledger-v126');
+        $GLOBALS['__zone_ledger_cookie'] = $payload . '.' . $sig;
     }
 
     private function save(string $playerId, array &$state): void
@@ -707,6 +786,7 @@ final class ProgressionService
         $this->syncOnboarding($state);
         $state['version']++;
         $this->database->execute('UPDATE player_progression SET state_json = :state, version = :version, updated_at = :updated WHERE player_id = :id', ['state' => json_encode($state, JSON_THROW_ON_ERROR), 'version' => $state['version'], 'updated' => gmdate('c'), 'id' => $playerId]);
+        if (getenv('VERCEL') === '1') $this->emitLedgerCookie($playerId, $state);
     }
 
     private function response(string $playerId, array $state): array
