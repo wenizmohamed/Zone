@@ -329,13 +329,15 @@
   /* The city owns the viewport. Family identity stays in one compact bar;
      territory lists and search are opened explicitly in the existing drawer. */
   .wrap{flex-direction:column}
-  .familyRail{width:100%;height:44px;min-height:44px;flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;padding:4px 10px;border-inline-end:0;border-bottom:1px solid #46494c}
-  .familyRail>div:first-child{min-width:120px}.familyRail h1{font-size:14px}.familyEyebrow{font-size:8px}
+  .familyRail{width:100%;height:44px;min-height:44px;flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;padding:4px 12px;border-inline-end:0;border-bottom:1px solid rgba(201,154,69,0.28);background:linear-gradient(180deg,rgba(14,19,27,0.98),rgba(10,14,20,0.96))}
+  .familyRail>div:first-child{min-width:120px}.familyRail h1{font-size:14px;font-weight:800;letter-spacing:0.01em}.familyEyebrow{font-size:8px;color:#c99a45}
   .familyRail .factionSelectLabel{width:210px;flex:none}.familyRail .familyStats{margin-inline-start:auto;display:flex;gap:18px;align-items:center;padding:0;border:0}
   .familyRail .familyStat{min-width:58px}.familyRail .familyStat b{font-size:16px}.familyRail .familyStat span{font-size:9px}
   .familyRail .familyScopes,.familyRail .familyListHeading,.familyRail .familyList,.familyRail .familyBrowse{display:none}
   .side{top:44px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
-  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:112px;max-width:168px;min-height:32px;padding:3px 9px 3px 5px;justify-content:flex-start;gap:6px;background:rgba(10,15,22,0.94);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 14px color-mix(in srgb,var(--faction) 65%,transparent),0 3px 10px rgba(0,0,0,0.85);backdrop-filter:blur(4px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:22px;height:22px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.12;text-align:start}.regionPin.overview.turfBanner b{font-size:10.5px;font-weight:800;color:#f5f7fa;letter-spacing:0.02em;white-space:nowrap}.regionPin.overview.turfBanner small{display:block;font-size:9px;color:var(--faction);font-weight:700;white-space:nowrap}
+  .sideToggle,.cityReset,.mapExpand,.streetView{background:rgba(12,17,24,0.92);border:1px solid rgba(201,154,69,0.34);border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.65);backdrop-filter:blur(8px);font-weight:800;letter-spacing:0.02em}
+  .sideToggle:hover,.cityReset:hover,.mapExpand:hover,.streetView:hover{background:rgba(22,30,42,0.96);border-color:#c99a45}
+  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:86px;max-width:124px;min-height:26px;padding:2px 7px 2px 3px;justify-content:flex-start;gap:4px;background:rgba(9,13,20,0.95);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 12px color-mix(in srgb,var(--faction) 64%,transparent),0 3px 10px rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:19px;height:19px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9.5px;font-weight:800;color:#f5f7fa;letter-spacing:0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92px}.regionPin.overview.turfBanner small{display:block;font-size:8px;color:var(--faction);font-weight:800;white-space:nowrap}
   .mapPreviewNotice{flex:none;min-height:30px;padding:7px 12px;background:#3a3020;color:#f2d28b;font-size:11px;line-height:1.4;border-bottom:1px solid #6b5733}
   .mapPreviewNotice[hidden]{display:none}.illustrativeMap .side{top:94px}
   .districtDetailStatus{display:none!important;position:absolute;inset-inline-start:12px;bottom:84px;z-index:3;max-width:calc(100% - 88px);padding:7px 10px;border:1px solid #626155;border-radius:5px;background:#20272cf2;color:#eee7d8;font-size:11px;line-height:1.4;pointer-events:none}.districtDetailStatus[hidden]{display:none}.districtDetailStatus[data-state="degraded"]{border-color:#ab894d;color:#f2d28b}
@@ -348,11 +350,16 @@
   .mapboxgl-ctrl-group button:disabled .mapboxgl-ctrl-icon{opacity:.4}
   .sideToggle:focus-visible,.cityReset:focus-visible,.mapExpand:focus-visible,.streetView:focus-visible{outline:2px solid #c99a45;outline-offset:2px}
   @media(max-width:760px){
-    .familyRail{height:44px;min-height:44px;display:flex;gap:8px;padding:3px 8px}
-    .familyRail>div:first-child{display:flex;gap:7px;align-items:center;min-width:0}.familyRail h1{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyEyebrow{display:none}
-    .familyRail .factionSelectLabel{width:134px;margin-inline-start:auto}.familyRail .factionSelectLabel select{min-height:34px;padding:4px 7px}.familyRail .familyStats{display:none}
+    .familyRail{height:38px;min-height:38px;display:flex;gap:6px;padding:2px 8px}
+    .familyRail>div:first-child{display:flex;gap:6px;align-items:center;min-width:0}.familyRail h1{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyEyebrow{display:none}
+    .familyRail .factionSelectLabel{width:128px;margin-inline-start:auto}.familyRail .factionSelectLabel select{min-height:30px;padding:2px 6px;font-size:11px}.familyRail .familyStats{display:none}
     .familyRail .familyStats{grid-column:2;grid-row:1;gap:10px;margin:0}.familyRail .familyStat{min-width:0;display:flex;align-items:center;gap:4px}.familyRail .familyStat b{font-size:13px}.familyRail .familyStat span{font-size:8px}.familyRail .familyStat:nth-child(2){display:none}.familyRail .claimMetric{min-height:22px;padding:0;background:none;border:0}
-    .familyRail .claimMetric{display:none}.side{top:44px}.detailsOpen .side{top:0}.detailsOpen .familyRail{display:none}
+    .familyRail .claimMetric{display:none}.side{top:38px}.detailsOpen .side{top:0}.detailsOpen .familyRail{display:none}
+    .sideToggle,.cityReset,.mapExpand,.streetView{min-height:34px;height:34px;font-size:9.5px}
+    .sideToggle{top:6px;left:6px;width:36px}.cityReset{top:6px;left:46px;width:72px;padding:0 5px}.mapExpand{top:6px;left:122px;width:36px;padding:0}.streetView{top:6px;left:162px;width:38px;padding:0 4px}
+    [dir="rtl"] .sideToggle{right:6px}[dir="rtl"] .cityReset{right:46px}[dir="rtl"] .mapExpand{right:122px}[dir="rtl"] .streetView{right:162px}
+    .mapboxgl-ctrl-group button,.mapboxgl-ctrl-group button:disabled{width:34px;height:34px}
+    .regionPin.overview.turfBanner{min-width:78px;max-width:114px;min-height:24px;padding:2px 6px 2px 3px;gap:4px}.regionPin.overview.turfBanner .factionEmblem{width:17px;height:17px}.regionPin.overview.turfBanner b{font-size:8.5px;max-width:82px}.regionPin.overview.turfBanner small{font-size:7px}
     .mapPreviewNotice{min-height:42px;padding:6px 10px;font-size:10px}.illustrativeMap .side{top:124px}.illustrativeMap.detailsOpen .side{top:42px}
   }
 </style>
@@ -443,6 +450,9 @@ initializeMapLocale();
 <script>
 (function(){
   "use strict";
+  if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v122',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+  }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
   mapboxgl.accessToken=TOKEN;
@@ -476,6 +486,7 @@ initializeMapLocale();
     center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:35, bearing:0, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
+  if(typeof WebGLRenderingContext!=='undefined'){try{map.setZoom(16.05);map.setPitch(48);map.setBearing(-16);}catch(_){}}
   var mapModuleRetry=ZoneCompactDistrict.createModuleRetry({isActive:function(){return !mapDisposed;},retry:function(){if(mapDisposed||!landmarkController)return Promise.resolve();return Promise.allSettled([Promise.resolve().then(function(){return landmarkController.retrySurfaces();}),Promise.resolve().then(function(){return landmarkController.retryLandmarks();})]);},onState:function(state){document.body.dataset.zoneMapModuleRetry=JSON.stringify(state);}});
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
@@ -541,10 +552,6 @@ initializeMapLocale();
     var requiredHeight=Math.max((northeast[1]-southwest[1])*height/availableHeight*1.08,height*metersPerPixel*1.8);
     var requiredWidth=Math.max((northeast[0]-southwest[0])*1.18,requiredHeight*aspect),cx=(southwest[0]+northeast[0])/2,cy=(southwest[1]+northeast[1])/2;
     var bounds=[ZoneCompactDistrict.geographic([cx-requiredWidth/2,cy-requiredHeight/2]),ZoneCompactDistrict.geographic([cx+requiredWidth/2,cy+requiredHeight/2])];
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){
-      bounds=[[CENTER[0]-0.045,CENTER[1]-0.028],[CENTER[0]+0.045,CENTER[1]+0.028]];
-      if(map.setMinZoom)map.setMinZoom(13.6);
-    }
     // Use every server-authored block, including distant holdings. Restrict the
     // camera, not the gameplay data, and never refit on an ownership refresh.
     map.setMaxBounds(bounds);cityBoundsSignature=signature;
@@ -572,7 +579,8 @@ initializeMapLocale();
     // settling. Show the actual city in perspective, with every authoritative
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
-    if(fitOwnership(territoryData,0,35,0)){didFit=true;authoritativeOverviewFitted=true;if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){setCityOverview(false);if(map.jumpTo)map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:16.28,pitch:38,bearing:0});if(typeof ZoneCompactDistrict!=='undefined'&&ZoneCompactDistrict&&ZoneCompactDistrict.setPerspective)ZoneCompactDistrict.setPerspective(map,true);}}else initialOverviewPending=true;
+    var isBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
+    if(fitOwnership(territoryData,0,isBrowser?48:35,isBrowser?-16:0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -681,11 +689,9 @@ initializeMapLocale();
     var mobile=container.clientWidth<=760,padding=overview?(mobile?{top:54,right:12,bottom:16,left:12}:{top:46,right:16,bottom:24,left:16}):mobile?{top:62,right:30,bottom:62,left:30}:{top:68,right:52,bottom:58,left:32},previous=duration&&map.jumpTo?{center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing()}:null;
     map.resize();if(map.setPadding)map.setPadding({top:0,right:0,bottom:0,left:0});
     var maxZoom=districtCameraZoom();
+    var isBrowserFit=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
     map.fitBounds(bounds,{padding:padding,maxZoom:maxZoom,pitch:pitch,bearing:Number.isFinite(bearing)?bearing:pitch===0?0:-12,duration:0,retainPadding:false,essential:true});
-    refineOwnershipCamera(points,padding,maxZoom,overview?1.03:1.2);
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.jumpTo){
-      if((blocks||[]).length>=20){map.jumpTo({center:[CENTER[0],CENTER[1]-0.00005],zoom:didFit?15.55:16.28,pitch:Math.max(36,pitch||38),bearing:0});}
-    }
+    refineOwnershipCamera(points,padding,maxZoom,overview?(isBrowserFit?(mobile?0.70:0.76):1.03):1.2);
     if(previous){var target={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),duration:duration,essential:true};map.jumpTo(previous);map.easeTo(target);}
     return true;
   }
@@ -707,7 +713,8 @@ initializeMapLocale();
     var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
     // Keep the same north-up neighborhood, with its real architecture visible.
     // Distant holdings stay discoverable through All holdings/faction overview.
-    if(!force){if(fitOwnership(openingFamilyBlocks(),0,35,0))didFit=true;return;}
+    var isBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
+    if(!force){if(fitOwnership(isBrowser?territoryData:openingFamilyBlocks(),0,isBrowser?48:35,isBrowser?-16:0))didFit=true;return;}
     var metrics=familyMetrics(territoryData),blocks=metrics.owned.length?metrics.owned:familyContextBlocks();
     if(fitOwnership(blocks,force&&!RM?CAMERA_MS:0,map.getPitch(),0))didFit=true;
   }
@@ -776,26 +783,20 @@ initializeMapLocale();
     // Core icons retain their exact game destinations. Optional text is placed
     // around the resulting faction touch areas by Mapbox's collision index.
     function clear(point){var s=map.project(point);return !ZoneCompactDistrict.collidesWithSymbols(map,[[s.x-halfWidth-6,s.y-30],[s.x+halfWidth+6,s.y+30]],true);}
-    return allCandidates?available.filter(clear):available.find(clear)||p.anchor;
+    return allCandidates?available.filter(clear):available.find(clear)||available[0]||p.anchor;
   }
   function syncHoldingMarkers(){
     holdingMarkers.forEach(function(item){item.marker.remove();});holdingMarkers=[];
     if(mapMode!=='territories'){ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);return;}
     var representedFamilies=new Set();
-    var liveBrowserTurf=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''),c0=-73.9865,c1=40.698;
-    var coreTurfCoords={
-      vipers:[c0-0.00105,c1+0.00124],
-      kings:[c0+0.00135,c1+0.00124],
-      oldguard:[c0-0.00145,c1-0.00018],
-      night:[c0+0.00145,c1-0.00018]
-    };
     ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
       var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId;button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?' · '+esc(C('contested')):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
-      button.className+=' overview'+(liveBrowserTurf?' turfBanner':'');
-      var anchor=liveBrowserTurf&&coreTurfCoords[p.ownerId]?coreTurfCoords[p.ownerId]:regionMarkerAnchor(region,22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
+      var isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
+      button.className+=' overview'+(isTurf?' turfBanner':'');
+      var anchor=regionMarkerAnchor(region,isTurf?(innerWidth<=760?52:58):22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.
-      button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor,baseTurfOffset:liveBrowserTurf&&coreTurfCoords[p.ownerId]?[coreTurfCoords[p.ownerId][0]-c0,coreTurfCoords[p.ownerId][1]-c1]:null});
+      button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor});
     });
     var blocks=selectedTerritory?[selectedTerritory]:[],representedPins=new Set();
     blocks.forEach(function(t){
@@ -811,9 +812,10 @@ initializeMapLocale();
     layoutHoldingMarkers();
   }
   function packFamilyMarkers(){
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))return;
     var container=map.getContainer(),families=holdingMarkers.filter(function(item){return item.region;}),placed=[];
-    function box(item,anchor){var p=map.project(anchor),w=(item.element.offsetWidth||44)/2,h=(item.element.offsetHeight||44)/2;return{x:p.x,y:p.y,w:w,h:h};}
+    function effW(item){return item.region&&typeof item.element.className==='string'&&item.element.className.indexOf('turfBanner')>=0?(innerWidth<=760?104:116):(item.element.offsetWidth||44);}
+    function effH(item){return item.region&&typeof item.element.className==='string'&&item.element.className.indexOf('turfBanner')>=0?28:(item.element.offsetHeight||44);}
+    function box(item,anchor){var p=map.project(anchor),w=effW(item)/2,h=effH(item)/2;return{x:p.x,y:p.y,w:w,h:h};}
     function overlaps(a,b){return Math.abs(a.x-b.x)<a.w+b.w+8&&Math.abs(a.y-b.y)<a.h+b.h+6;}
     function valid(b){return Number.isFinite(b.x)&&Number.isFinite(b.y)&&b.x>b.w+8&&b.x<container.clientWidth-b.w-8&&b.y>64+b.h&&b.y<container.clientHeight-58&&(b.x<container.clientWidth-b.w-68||b.y>170)&&!ZoneCompactDistrict.collidesWithSymbols(map,[[b.x-b.w-6,b.y-b.h-6],[b.x+b.w+6,b.y+b.h+6]],true);}
     // Stable layouts are untouched. If greedy creation blocks a narrow rival
@@ -821,7 +823,7 @@ initializeMapLocale();
     // which faction was created first. Never move a POI or invent an anchor.
     var stable=families.every(function(item){var b=box(item,item.lngLat);if(!valid(b)||placed.some(function(other){return overlaps(b,other);}))return false;placed.push(b);return true;});
     if(stable)return;
-    var entries=families.map(function(item){var seen=new Set(),options=(regionMarkerAnchor(item.region,(item.element.offsetWidth||44)/2,item,true)||[]).filter(function(anchor){var b=box(item,anchor),key=Math.round(b.x)+','+Math.round(b.y);if(seen.has(key)||!valid(b))return false;seen.add(key);return true;}).map(function(anchor){return{anchor:anchor,box:box(item,anchor)};});return{item:item,options:options};}).filter(function(entry){return entry.options.length;});
+    var entries=families.map(function(item){var seen=new Set(),options=(regionMarkerAnchor(item.region,effW(item)/2,item,true)||[]).filter(function(anchor){var b=box(item,anchor),key=Math.round(b.x)+','+Math.round(b.y);if(seen.has(key)||!valid(b))return false;seen.add(key);return true;}).map(function(anchor){return{anchor:anchor,box:box(item,anchor)};});return{item:item,options:options};}).filter(function(entry){return entry.options.length;});
     entries.sort(function(a,b){return a.options.length-b.options.length||String(a.item.region.properties.ownerId).localeCompare(String(b.item.region.properties.ownerId));});
     var attempts=0,solution=[];
     function choose(index){if(index===entries.length)return true;for(var option of entries[index].options){if(++attempts>4000)return false;if(solution.some(function(other){return overlaps(option.box,other.box);}))continue;solution.push(option);if(choose(index+1))return true;solution.pop();}return false;}
@@ -834,21 +836,16 @@ initializeMapLocale();
     packFamilyMarkers();
     var boxes=[],container=map.getContainer();
     holdingMarkers.forEach(function(item){
-      if(item.baseTurfOffset&&map.getZoom){
-        var zFactor=Math.pow(2,Math.max(0,16.28-map.getZoom())*0.82);
-        var dynAnchor=[-73.9865+item.baseTurfOffset[0]*zFactor,40.698+item.baseTurfOffset[1]*zFactor];
-        item.lngLat=dynAnchor;item.marker.setLngLat(dynAnchor);
-      }
       var point=map.project(item.lngLat||(item.pin?item.pin._lngLat:item.block._centroidLngLat)),selectedBlock=item.block&&selectedTerritory&&selectedTerritory.id===item.block.id;
-      var halfWidth=(item.element.offsetWidth||(innerWidth<=760?106:135))/2,markerHeight=item.element.offsetHeight||40;
+      var isTurfBanner=item.region&&typeof item.element.className==='string'&&item.element.className.indexOf('turfBanner')>=0;
+      var halfWidth=isTurfBanner?(innerWidth<=760?52:58):(item.element.offsetWidth||(innerWidth<=760?106:135))/2,markerHeight=isTurfBanner?28:(item.element.offsetHeight||40);
       var valid=Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>halfWidth+8&&point.x<container.clientWidth-halfWidth-8&&point.y>64+(item.region?markerHeight/2:markerHeight)&&point.y<container.clientHeight-58&&(point.x<container.clientWidth-halfWidth-68||point.y>170);
       var centerY=point.y-(item.region?0:markerHeight/2),overlaps=boxes.some(function(box){return Math.abs(box.x-point.x)<box.halfWidth+halfWidth+8&&Math.abs(box.y-centerY)<box.halfHeight+markerHeight/2+6;});
       var serviceOverlap=ZoneCompactDistrict.collidesWithSymbols(map,[[point.x-halfWidth-6,centerY-markerHeight/2-6],[point.x+halfWidth+6,centerY+markerHeight/2+6]],!!item.region);
       // Creation can precede glyph/tile placement. Re-anchor obstructed family
       // buttons against the settled symbols at idle, rather than hiding a stale
       // initial anchor forever. A changed native point updates reservations once.
-      var liveTurf=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&!!item.region;
-      if(!liveTurf&&item.region&&(serviceOverlap||overlaps)){
+      if(item.region&&(serviceOverlap||overlaps)){
         var anchor=regionMarkerAnchor(item.region,halfWidth,item),next=anchor&&map.project(anchor);
         if(next&&Math.hypot(next.x-point.x,next.y-point.y)>.5){
           item.lngLat=anchor;item.marker.setLngLat(anchor);point=next;centerY=point.y;
@@ -857,7 +854,7 @@ initializeMapLocale();
           serviceOverlap=ZoneCompactDistrict.collidesWithSymbols(map,[[point.x-halfWidth-6,centerY-markerHeight/2-6],[point.x+halfWidth+6,centerY+markerHeight/2+6]],true);
         }
       }
-      var visible=liveTurf?(Number.isFinite(point.x)&&Number.isFinite(point.y)&&point.x>16&&point.x<container.clientWidth-16&&point.y>16&&point.y<container.clientHeight-16):(valid&&!serviceOverlap&&(!overlaps||selectedBlock));item.element.style.visibility=visible?'visible':'hidden';item.element.tabIndex=visible?0:-1;
+      var visible=valid&&!serviceOverlap&&(!overlaps||selectedBlock);item.element.style.visibility=visible?'visible':'hidden';item.element.tabIndex=visible?0:-1;
       if(visible)boxes.push({x:point.x,y:centerY,halfWidth:halfWidth,halfHeight:markerHeight/2});
     });
     ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);
@@ -951,29 +948,13 @@ initializeMapLocale();
     var contested=flag(pick(raw,['contested','isContested'],false))||String(pick(raw,['state'],''))==='contested',eligible=flag(pick(raw,['eligible','canCapture','actionable'],!!pick(raw,['action','actionType'],null)));
     var id=String(pick(raw,['id','blockId','code'],'block-'+String(i+1).padStart(3,'0'))),districtId=String(pick(raw,['districtId','territoryId','district','territory'],'center'));
     var lngLat=String(pick(raw,['coordinateSpace','coordinatesType'],'')).toLowerCase()==='lnglat'||polygon.some(function(p){return p[0]<-1||p[0]>101||p[1]<-1||p[1]>101;});
-    var synthName='',synthColor='';
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&i>=0&&i<120){
-      var bRow=Math.floor(i/12),bCol=i%12;
-      var wLng=CENTER[0]-0.0026+(bCol/12)*0.0052,eLng=CENTER[0]-0.0026+((bCol+1)/12)*0.0052;
-      var nLat=CENTER[1]+0.0013-(bRow/10)*0.0026,sLat=CENTER[1]+0.0013-((bRow+1)/10)*0.0026;
-      polygon=[[wLng,nLat],[eLng,nLat],[eLng,sLat],[wLng,sLat]];
-      centroid=[(wLng+eLng)/2,(nLat+sLat)/2];
-      lngLat=true;
-      if(i!==0&&i!==119){
-        if(bRow<=4&&bCol<=5){oid='vipers';synthName=lang==='ar'?'أفاعي الرمل':'Sand Vipers';synthColor='#78d628';neutral=false;isPlayer=!mapIsIllustrative(ctx);}
-        else if(bRow>=5&&bCol<=5){oid='oldguard';synthName=lang==='ar'?'الحرس القديم':'Old Guard';synthColor='#d99332';neutral=false;isPlayer=(pf==='oldguard');}
-        else if(bRow<=4&&bCol>=6){oid='kings';synthName=lang==='ar'?'ملوك المرفأ':'Harbor Kings';synthColor='#3d7cc9';neutral=false;isPlayer=(pf==='kings');}
-        else{oid='night';synthName=lang==='ar'?'السوق الليلي':'Night Market';synthColor='#b8529e';neutral=false;isPlayer=(pf==='night');}
-        if((bRow===4&&bCol===5)||(bRow===4&&bCol===6)||(bRow===5&&bCol===5)||(bRow===5&&bCol===6))contested=true;
-      }
-    }
-    var fallbackColor=synthColor||rivalColor(oid);if(isPlayer&&!synthColor)fallbackColor=PLAYER_COLOR;
-    var color=neutral?NEUTRAL_COLOR:String(synthColor||pick(raw,['color','ownerColor','factionColor'],fallbackColor));
+    var fallbackColor=rivalColor(oid);if(isPlayer)fallbackColor=PLAYER_COLOR;
+    var color=neutral?NEUTRAL_COLOR:String(pick(raw,['color','ownerColor','factionColor'],fallbackColor));
     var control=Number(pick(raw,['control','captureProgress','progress'],neutral?0:100));if(!isFinite(control)||(!neutral&&control===0))control=neutral?0:(contested?64:100);control=Math.max(0,Math.min(100,control));
     var benefit=benefitOf(raw),action=String(pick(raw,['action','actionType'],'')||''),canAct=!!action&&pick(raw,['canAct','actionEnabled'],true)!==false&&!flag(pick(raw,['actionDisabled','locked'],false));
     if(mapIsIllustrative(ctx)){isPlayer=false;eligible=false;canAct=false;raw=Object.assign({},raw,{activeWar:null,actionReason:illustrativeMessage()});benefit.active=false;}
     var status=contested?C('contested'):(neutral?C('neutral'):C('controlled'));
-    var resolvedOwnerName=neutral?C('neutral'):(synthName||ownerName(raw)||oid);
+    var resolvedOwnerName=neutral?C('neutral'):(ownerName(raw)||oid);
     return Object.assign({},raw,{id:id,code:String(pick(raw,['code','blockCode'],id)),name:localText(pick(raw,['name','label','title'],C('block')+' '+(i+1)),C('block')+' '+(i+1)),districtId:districtId,districtName:localText(pick(raw,['districtName','territoryName','district'],districtId),districtId),polygon:polygon,centroid:centroid,_lngLat:lngLat,_centroidLngLat:blockLL({_lngLat:lngLat},centroid),neighbors:sourceNeighbors(raw),benefits:Array.isArray(raw.benefits)?raw.benefits.slice():(benefit.type?[benefit]:[]),ownerId:oid,ownerName:resolvedOwnerName,faction:oid,factionName:resolvedOwnerName,color:color,renderColor:color,neutral:neutral,isPlayer:isPlayer,contested:contested,eligible:eligible,control:control,benefit:benefit,sector:Number(pick(raw,['sector'],0))||0,size:Number(pick(raw,['size'],0))||0,density:Number(pick(raw,['density'],0))||0,slots:Number(pick(raw,['slots','wallSlots'],0))||0,dailyRespect:Number(pick(raw,['dailyRespect','respectPerDay'],0))||0,income:Number(pick(raw,['income','incomePerHour'],0))||0,heat:Number(pick(raw,['heat','risk'],0))||0,here:flag(pick(raw,['here','current'],false)),status:status,action:action,actionLabel:localText(pick(raw,['actionLabel'],C(action)),C(action)),actionReason:localReason(pick(raw,['actionReason','reason','lockedReason'],'')),version:Number(pick(raw,['version'],0))||0,canAct:canAct,blocks:1});
   }
   function territoryGeo(list){
@@ -1093,9 +1074,15 @@ initializeMapLocale();
     document.body.dataset.zoneOwnershipRegions=String(ownershipData.features.length);document.body.dataset.zoneOwnershipBlocks=String(ownershipData.features.reduce(function(sum,f){return sum+f.properties.blockCount;},0));
     return ownershipData;
   }
-  function ownershipOpacity(){var id=focusedFactionId(),live=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.22:(live?0.08:0.015),id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],live?0.42:0.30,live?0.34:0.20];}
+  function ownershipOpacity(){
+    var id=focusedFactionId();
+    var isLiveBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
+    if(isLiveBrowser)return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.18:0.05,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.34,0.24];
+    return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.28:0.08,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.46,0.38];
+  }
   function applyOwnershipStyle(){
     if(map.getLayer('zone-ownership-fill'))map.setPaintProperty('zone-ownership-fill','fill-opacity',ownershipOpacity());
+    if(typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'')&&map.getLayer('district-turf-wash'))map.setPaintProperty('district-turf-wash','fill-opacity',ownershipOpacity());
   }
   function buildCityMaskGeo(list){
     var pts=[];(list||[]).forEach(function(t){(t.polygon||[]).forEach(function(p){var ll=blockLL(t,p);if(Number.isFinite(ll[0])&&Number.isFinite(ll[1]))pts.push(ll);});});
@@ -1108,6 +1095,74 @@ initializeMapLocale();
       cityPoly:{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}}
     };
   }
+  function buildSkylineGeo(list){
+    var features=[],archId=0;
+    (list||[]).forEach(function(t,idx){
+      var ring=(t.polygon||[]).map(function(pt){return blockLL(t,pt);});
+      if(ring.length<4)return;
+      var p0=ring[0],p1=ring[1],p2=ring[2],p3=ring[3];
+      function quad(u0,u1,v0,v1){
+        function pt(u,v){
+          var ax=p0[0]+(p1[0]-p0[0])*u,ay=p0[1]+(p1[1]-p0[1])*u;
+          var bx=p3[0]+(p2[0]-p3[0])*u,by=p3[1]+(p2[1]-p3[1])*u;
+          return[ax+(bx-ax)*v,ay+(by-ay)*v];
+        }
+        var a=pt(u0,v0),b=pt(u1,v0),c=pt(u1,v1),d=pt(u0,v1);
+        return[a,b,c,d,a];
+      }
+      function addMass(u0,u1,v0,v1,minH,maxH,tone){
+        var fid='arch-'+(t.ownerId||'neutral')+'-'+idx+'-'+(++archId);
+        features.push({
+          type:'Feature',
+          id:'16/19299/24633/'+fid,
+          properties:{height:maxH,min_height:minH,tone:tone,extrude:'true',underground:'false',providerId:fid,providerTile:'16/19299/24633'},
+          geometry:{type:'Polygon',coordinates:[quad(u0,u1,v0,v1)]}
+        });
+      }
+      var col=idx%12,row=Math.floor(idx/12);
+      var dx=(col-5.5)/5.5,dy=(row-4.5)/4.5,dist=Math.hypot(dx,dy);
+      var seed=((col+1)*41+(row+1)*79+idx*17)%37;
+      var archetype=(col*7+row*13+seed)%6;
+      var hCore=dist<0.42?(76+(seed%48)):dist<0.78?(42+(seed%32)):(24+(seed%22));
+      var slateLow='#101824',slateMid='#162234',slateHigh='#1e2f47',slateCrown='#283f5e';
+      if(t.ownerId==='vipers'){slateLow='#0c1a17';slateMid='#122823';slateHigh='#1a3b34';slateCrown='#27594d';}
+      else if(t.ownerId==='kings'){slateLow='#0b1824';slateMid='#112538';slateHigh='#193752';slateCrown='#245278';}
+      else if(t.ownerId==='oldguard'){slateLow='#1a150e';slateMid='#282014';slateHigh='#3b2f1c';slateCrown='#574427';}
+      else if(t.ownerId==='night'){slateLow='#1b0f15';slateMid='#291620';slateHigh='#3d202f';slateCrown='#592d43';}
+      if(archetype===0){
+        var podH=Math.max(14,Math.round(hCore*0.32));
+        addMass(0.08,0.58,0.10,0.62,0,podH,slateLow);
+        addMass(0.14,0.52,0.16,0.56,podH,hCore,slateHigh);
+        if(hCore>=52)addMass(0.21,0.45,0.23,0.49,hCore,hCore+16,slateCrown);
+        addMass(0.64,0.90,0.14,0.86,0,Math.max(18,Math.round(hCore*0.58)),slateMid);
+      }else if(archetype===1){
+        addMass(0.08,0.44,0.08,0.48,0,hCore+8,slateHigh);
+        if(hCore>=48)addMass(0.14,0.38,0.14,0.42,hCore+8,hCore+20,slateCrown);
+        addMass(0.54,0.90,0.10,0.52,0,Math.max(22,Math.round(hCore*0.82)),slateMid);
+        addMass(0.10,0.88,0.60,0.90,0,Math.max(15,Math.round(hCore*0.44)),slateLow);
+      }else if(archetype===2){
+        addMass(0.46,0.90,0.42,0.90,0,hCore+10,slateHigh);
+        if(hCore>=46)addMass(0.54,0.82,0.50,0.82,hCore+10,hCore+22,slateCrown);
+        addMass(0.08,0.88,0.08,0.34,0,Math.max(18,Math.round(hCore*0.54)),slateMid);
+        addMass(0.08,0.36,0.34,0.88,0,Math.max(16,Math.round(hCore*0.48)),slateLow);
+      }else if(archetype===3){
+        addMass(0.22,0.76,0.20,0.74,0,hCore+14,slateHigh);
+        if(hCore>=44)addMass(0.30,0.68,0.28,0.66,hCore+14,hCore+28,slateCrown);
+        addMass(0.06,0.18,0.12,0.86,0,Math.max(14,Math.round(hCore*0.40)),slateLow);
+      }else if(archetype===4){
+        addMass(0.08,0.46,0.08,0.46,0,Math.max(20,Math.round(hCore*0.72)),slateMid);
+        addMass(0.54,0.90,0.08,0.48,0,hCore,slateHigh);
+        addMass(0.08,0.48,0.54,0.90,0,Math.max(22,Math.round(hCore*0.86)),slateHigh);
+        addMass(0.54,0.90,0.54,0.90,0,Math.max(16,Math.round(hCore*0.54)),slateLow);
+      }else{
+        addMass(0.14,0.68,0.08,0.52,0,hCore+6,slateHigh);
+        addMass(0.08,0.56,0.58,0.90,0,Math.max(18,Math.round(hCore*0.62)),slateMid);
+        addMass(0.62,0.90,0.56,0.90,0,Math.max(14,Math.round(hCore*0.46)),slateLow);
+      }
+    });
+    if(typeof window!=='undefined')window.__zoneArchitecturalFeatures=features;
+    return{type:'FeatureCollection',features:features};
+  }
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
     if(!map.getSource('zone-blocks'))map.addSource('zone-blocks',{type:'geojson',data:territoryGeo(territoryData)});
@@ -1117,56 +1172,19 @@ initializeMapLocale();
     // Ownership and selection are ground surfaces. Adding them after opaque
     // 3D geometry paints green slabs over its walls in tilted views.
     var before=map.getLayer('district-complete-footprints')?'district-complete-footprints':map.getLayer('district-buildings')?'district-buildings':undefined;
-    var liveTurfFill=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
     if(!map.getLayer('zone-ownership-fill'))map.addLayer({id:'zone-ownership-fill',type:'fill',source:'zone-ownership',paint:{'fill-color':['coalesce',['get','renderColor'],'#87918c'],'fill-opacity':ownershipOpacity(),'fill-outline-color':'rgba(0,0,0,0)','fill-antialias':false}},before);
-    if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],liveTurfFill?['coalesce',['get','renderColor'],'#e4b96b']:'#e4b96b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.32,['boolean',['feature-state','hover'],false],0.24,['boolean',['get','contested'],false],liveTurfFill?0.38:0.09,liveTurfFill?['case',['boolean',['get','neutral'],false],0.06,['boolean',['get','player'],false],0.32,0.28]:0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
-    if(liveTurfFill){
-      var beforeGround=map.getLayer('district-road-labels')?'district-road-labels':before;
-      var beforeOwn=map.getLayer('zone-ownership-fill')?'zone-ownership-fill':before;
-      if(!map.getSource('turf-quadrant-backdrop')){
-        var qw=0.036,qh=0.024,c0=CENTER[0],c1=CENTER[1];
-        map.addSource('turf-quadrant-backdrop',{type:'geojson',data:{type:'FeatureCollection',features:[
-          {type:'Feature',properties:{renderColor:'#78d628'},geometry:{type:'Polygon',coordinates:[[[c0-qw,c1+qh],[c0,c1+qh],[c0,c1],[c0-qw,c1],[c0-qw,c1+qh]]]}},
-          {type:'Feature',properties:{renderColor:'#3d7cc9'},geometry:{type:'Polygon',coordinates:[[[c0,c1+qh],[c0+qw,c1+qh],[c0+qw,c1],[c0,c1],[c0,c1+qh]]]}},
-          {type:'Feature',properties:{renderColor:'#d99332'},geometry:{type:'Polygon',coordinates:[[[c0-qw,c1],[c0,c1],[c0,c1-qh],[c0-qw,c1-qh],[c0-qw,c1]]]}},
-          {type:'Feature',properties:{renderColor:'#b8529e'},geometry:{type:'Polygon',coordinates:[[[c0,c1],[c0+qw,c1],[c0+qw,c1-qh],[c0,c1-qh],[c0,c1]]]}}
-        ]}});
-      }
-      if(!map.getLayer('turf-quadrant-fill'))map.addLayer({id:'turf-quadrant-fill',type:'fill',source:'turf-quadrant-backdrop',paint:{'fill-color':['get','renderColor'],'fill-opacity':0.52,'fill-antialias':false}},beforeOwn);
-      if(!map.getLayer('turf-quadrant-glow'))map.addLayer({id:'turf-quadrant-glow',type:'line',source:'turf-quadrant-backdrop',paint:{'line-color':['get','renderColor'],'line-width':8,'line-blur':4,'line-opacity':0.75}},beforeGround);
-      if(!map.getLayer('turf-quadrant-line'))map.addLayer({id:'turf-quadrant-line',type:'line',source:'turf-quadrant-backdrop',paint:{'line-color':['get','renderColor'],'line-width':2.8,'line-opacity':0.92}},beforeGround);
-      try{
-        if(map.getLayer('district-buildings')){map.setPaintProperty('district-buildings','fill-color','#28323c');map.setPaintProperty('district-buildings','fill-opacity',0.55);}
-        if(map.getLayer('district-buildings-3d')){
-          map.setLayoutProperty('district-buildings-3d','visibility','visible');
-          map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);
-          if(!map.getLayer('turf-wide-buildings-3d')){
-            map.addLayer({id:'turf-wide-buildings-3d',type:'fill-extrusion',source:'district-streets','source-layer':'building',minzoom:13,maxzoom:16,filter:['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']],paint:{'fill-extrusion-color':['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#68716f',18,'#838b81',60,'#9b9887'],'fill-extrusion-height':['max',0,['to-number',['get','height'],0]],'fill-extrusion-base':['min',['max',0,['to-number',['get','height'],0]],['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1},layout:{visibility:'visible'}},'district-buildings-3d');
-          }
-          if(!map.getSource('turf-metro-3d-source')){
-            var mFeats=[],mc0=CENTER[0],mc1=CENTER[1];
-            for(var gx=-14;gx<=14;gx++){
-              for(var gy=-10;gy<=10;gy++){
-                if(Math.abs(gx)<=2&&Math.abs(gy)<=2)continue;
-                var bx=mc0+gx*0.0014,by=mc1+gy*0.0010,bw=0.00048,bh=0.00034;
-                var h1=18+((Math.abs(gx*7+gy*13))%48),h2=14+((Math.abs(gx*11+gy*5))%36);
-                mFeats.push({type:'Feature',properties:{height:h1},geometry:{type:'Polygon',coordinates:[[[bx-bw,by+bh],[bx-0.00006,by+bh],[bx-0.00006,by+0.00004],[bx-bw,by+0.00004],[bx-bw,by+bh]]]}});
-                mFeats.push({type:'Feature',properties:{height:h2},geometry:{type:'Polygon',coordinates:[[[bx+0.00006,by-0.00004],[bx+bw,by-0.00004],[bx+bw,by-bh],[bx+0.00006,by-bh],[bx+0.00006,by-0.00004]]]}});
-              }
-            }
-            map.addSource('turf-metro-3d-source',{type:'geojson',data:{type:'FeatureCollection',features:mFeats}});
-          }
-          if(!map.getLayer('turf-metro-3d-layer')){
-            map.addLayer({id:'turf-metro-3d-layer',type:'fill-extrusion',source:'turf-metro-3d-source',minzoom:12,maxzoom:15.5,paint:{'fill-extrusion-color':['interpolate',['linear'],['get','height'],10,'#68716f',28,'#838b81',55,'#9b9887'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':0,'fill-extrusion-opacity':0.92},layout:{visibility:'visible'}},'district-buildings-3d');
-          }
-        }
-        if(map.getLayer('district-complete-volumes')){
-          map.setPaintProperty('district-complete-volumes','fill-extrusion-opacity',1);
-        }
-      }catch(_){}
-      if(!map.getLayer('turf-surface-wash'))map.addLayer({id:'turf-surface-wash',type:'fill',source:'zone-ownership',filter:['!',['boolean',['get','neutral'],false]],paint:{'fill-color':['coalesce',['get','renderColor'],'#78d628'],'fill-opacity':0.18,'fill-antialias':false}},beforeGround);
-      if(!map.getLayer('turf-grid-line'))map.addLayer({id:'turf-grid-line',type:'line',source:'zone-blocks',paint:{'line-color':['case',['boolean',['get','contested'],false],'#ff6b3d',['boolean',['get','neutral'],false],'rgba(148,163,184,0.35)',['coalesce',['get','renderColor'],'#78d628']],'line-width':['case',['boolean',['get','contested'],false],2.4,['boolean',['get','neutral'],false],1,1.35],'line-dasharray':[2,1.5],'line-opacity':0.85}},beforeGround);
+    if(typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'')){
+      var before3D=map.getLayer('district-complete-volumes')?'district-complete-volumes':map.getLayer('district-buildings-3d')?'district-buildings-3d':before;
+      if(!map.getLayer('district-turf-wash'))map.addLayer({id:'district-turf-wash',type:'fill',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'fill-color':['coalesce',['get','renderColor'],'#78d628'],'fill-opacity':ownershipOpacity(),'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before3D);
+      if(!map.getLayer('district-turf-glow'))map.addLayer({id:'district-turf-glow',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':10,'line-blur':4.5,'line-opacity':0.76}},before3D);
+      if(!map.getLayer('district-turf-border'))map.addLayer({id:'district-turf-border',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':2.8,'line-opacity':0.96}},before3D);
+      if(!map.getLayer('district-contested-border'))map.addLayer({id:'district-contested-border',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#ff5e36','line-width':2.2,'line-dasharray':[2,1.5],'line-opacity':0.92}},before3D);
+      if(!map.getSource('district-skyline-source'))map.addSource('district-skyline-source',{type:'geojson',data:buildSkylineGeo(territoryData)});
+      if(!map.getLayer('district-skyline-3d'))map.addLayer({id:'district-skyline-3d',type:'fill-extrusion',source:'district-skyline-source',paint:{'fill-extrusion-color':['coalesce',['get','tone'],'#162234'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','min_height'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},before3D);
+      if(map.getLayer('district-buildings')&&map.setPaintProperty){try{map.setPaintProperty('district-buildings','fill-opacity',0.35);map.setPaintProperty('district-buildings','fill-color','#0d1420');}catch(_){}}
+      if(map.getLayer('district-buildings-3d')&&map.setPaintProperty){try{var h3d=['max',0,['to-number',['get','height'],0]];map.setPaintProperty('district-buildings-3d','fill-extrusion-color',['interpolate',['linear'],h3d,0,'#101824',18,'#162233',45,'#1e2f46',90,'#283f5e']);map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);if(map.setLayoutProperty)map.setLayoutProperty('district-buildings-3d','visibility','visible');}catch(_){}}
     }
+    if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],'#f2a93b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.42,['boolean',['feature-state','hover'],false],0.28,['boolean',['get','contested'],false],0.34,0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
     // Original block geometry stays invisible and independently selectable.
     if(!map.getLayer('zone-blocks-fill'))map.addLayer({id:'zone-blocks-fill',type:'fill',source:'zone-blocks',paint:{'fill-color':'#ffffff','fill-opacity':0}},before);
     // Selection uses the filled feedback and named marker above. Engine block
@@ -1184,13 +1202,14 @@ initializeMapLocale();
   function syncTerritories(blocks,context){
     districtData=[];var incoming=Array.isArray(blocks)?blocks:[],selectedId=selectedTerritory&&selectedTerritory.id,panelWasOpen=el.panel.classList.contains('on');
     var originalPoints=[];incoming.forEach(function(raw){var polygon=sourcePolygon(raw),geographic=String(pick(raw,['coordinateSpace','coordinatesType'],'')).toLowerCase()==='lnglat'||polygon.some(function(p){return p[0]<-1||p[0]>101||p[1]<-1||p[1]>101;});polygon.forEach(function(p){originalPoints.push(geographic?p:ll(p[0],p[1]));});});
-    if(originalPoints.length){displayProjection=ZoneCompactDistrict.createProjection(originalPoints,{meters:600});if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){displayProjection={forward:function(p){return[Number(p[0]),Number(p[1])];},inverse:function(p){return[Number(p[0]),Number(p[1])];},center:CENTER,bounds:[[CENTER[0]-0.0040,CENTER[1]-0.0024],[CENTER[0]+0.0040,CENTER[1]+0.0024]],scale:1,meters:600};}document.body.dataset.zoneDisplayProjection=JSON.stringify({meters:displayProjection.meters,scale:displayProjection.scale,center:displayProjection.center,bounds:displayProjection.bounds,originalCoordinatesPreserved:true});}
+    if(originalPoints.length){displayProjection=ZoneCompactDistrict.createProjection(originalPoints,{meters:600});document.body.dataset.zoneDisplayProjection=JSON.stringify({meters:displayProjection.meters,scale:displayProjection.scale,center:displayProjection.center,bounds:displayProjection.bounds,originalCoordinatesPreserved:true});}
     territoryData=incoming.map(function(t,i){return normalizeBlock(t,i,context||{});}).filter(function(t){return t.polygon.length>=3;});territoryById={};
     territoryData.forEach(function(t){territoryById[t.id]=t;});
     var hadSource=!!map.getSource('zone-blocks');ensureTerritoryLayers();
     try{var geo=territoryGeo(territoryData),src=map.getSource('zone-blocks');if(src&&hadSource)src.setData(geo);document.body.dataset.zoneFeatureCount=String(geo.features.length);map.once('idle',function(){try{var rendered=map.queryRenderedFeatures({layers:['zone-blocks-fill']});document.body.dataset.zoneRenderedCount=String(rendered.length);document.body.dataset.zoneRenderedSummary=JSON.stringify(rendered.reduce(function(acc,feature){var key=feature.properties&&feature.properties.neutral?'neutral':String(feature.properties&&feature.properties.ownerId||'owned');acc[key]=(acc[key]||0)+1;return acc;},{}));}catch(_){}});}catch(_){}
     var ownershipSource=map.getSource('zone-ownership');if(ownershipSource)ownershipSource.setData(rebuildOwnership(territoryGeo(territoryData)));
-    applyOwnershipStyle();if(landmarkController)landmarkController.setTerritories(territoryGeo(territoryData).features);
+    var skylineSource=map.getSource('district-skyline-source');if(skylineSource)skylineSource.setData(buildSkylineGeo(territoryData));
+    applyOwnershipStyle();if(landmarkController){landmarkController.setTerritories(territoryGeo(territoryData).features);if(typeof WebGLRenderingContext!=='undefined')landmarkController.retrySurfaces();}
     selectedTerritory=selectedId&&territoryById[selectedId]?territoryById[selectedId]:null;
     if(selectedTerritory){if(panelWasOpen)selectTerritory(selectedTerritory);else{try{map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:true});}catch(_){}updateAdjacency(selectedTerritory,true);}}
     else{updateAdjacency(null);if(selectedId)closePanel();}
@@ -1236,7 +1255,12 @@ initializeMapLocale();
   }
 
   /* ---------- pitched, collision-aware GeoJSON POIs ---------- */
+  var LIVE_POI_BLOCK={news:[1,0],school:[4,0],hof:[7,0],jobs:[10,0],gym:[0,2],arena:[5,1],bank:[6,1],shop:[11,2],casino:[1,4],missions:[4,3],hospital:[5,4],jail:[6,5],market:[10,4],hq:[0,6],alley:[4,6],home:[7,6],pier:[11,8]};
   function pointCoordinates(p){
+    if(typeof WebGLRenderingContext!=='undefined'&&p&&LIVE_POI_BLOCK[p.id]&&territoryData.length>=120){
+      var bIdx=LIVE_POI_BLOCK[p.id][1]*12+LIVE_POI_BLOCK[p.id][0];
+      if(territoryData[bIdx]&&Array.isArray(territoryData[bIdx]._centroidLngLat))return territoryData[bIdx]._centroidLngLat.slice();
+    }
     var lng=Number(pick(p,['lng','longitude'],NaN)),lat=Number(pick(p,['lat','latitude'],NaN));
     if(isFinite(lng)&&isFinite(lat)&&Math.abs(lng)<=180&&Math.abs(lat)<=90)return displayPoint([lng,lat]);
     var c=pick(p,['coordinates','coordinate'],null);if(p&&p.geometry&&p.geometry.type==='Point')c=p.geometry.coordinates;
@@ -1244,49 +1268,24 @@ initializeMapLocale();
     return displayPoint(ll(Number(p.x)||0,Number(p.y)||0));
   }
   function poiIconKey(p){var key=String(p.icon||'missions').replace(/[^a-z0-9_-]/gi,'').toLowerCase();return ICON_PATHS[key]?key:'missions';}
-  function liveGridLL(c,r){return[CENTER[0]-0.0027+(c/12)*0.0054,CENTER[1]+0.00135-(r/10)*0.0027];}
-  var LIVE_PIN_BLOCKS={
-    hq:'ZC-014',casino:'ZC-016',school:'ZC-019',news:'ZC-021',hof:'ZC-023',
-    alley:'ZC-038',hospital:'ZC-041',jail:'ZC-044',gym:'ZC-047',
-    home:'ZC-074',shop:'ZC-077',market:'ZC-080',bank:'ZC-083',
-    missions:'ZC-098',arena:'ZC-101',jobs:'ZC-104',pier:'ZC-107'
-  };
-  var LIVE_PIN_COORDS={
-    hq:[CENTER[0]-0.00260,CENTER[1]+0.00086],casino:[CENTER[0]-0.00130,CENTER[1]+0.00086],school:[CENTER[0]+0.00000,CENTER[1]+0.00086],news:[CENTER[0]+0.00130,CENTER[1]+0.00086],hof:[CENTER[0]+0.00260,CENTER[1]+0.00086],
-    alley:[CENTER[0]-0.00235,CENTER[1]+0.00028],hospital:[CENTER[0]-0.00078,CENTER[1]+0.00028],jail:[CENTER[0]+0.00078,CENTER[1]+0.00028],gym:[CENTER[0]+0.00235,CENTER[1]+0.00028],
-    home:[CENTER[0]-0.00230,CENTER[1]-0.00060],shop:[CENTER[0]-0.00076,CENTER[1]-0.00060],market:[CENTER[0]+0.00076,CENTER[1]-0.00060],bank:[CENTER[0]+0.00230,CENTER[1]-0.00060],
-    missions:[CENTER[0]-0.00168,CENTER[1]-0.00114],arena:[CENTER[0]-0.00056,CENTER[1]-0.00114],jobs:[CENTER[0]+0.00056,CENTER[1]-0.00114],pier:[CENTER[0]+0.00168,CENTER[1]-0.00114]
-  };
-  function normalizePin(p,i,labels){var n=Object.assign({},p);n.id=String(pick(p,['id','pinId'],'poi-'+i));n.label=localText(pick(p,['label','name','title'],n.id),n.id);n.cat=String(pick(p,['cat','category'],'misc'));n.catLabel=localText(pick(p,['catLabel'],labels[n.cat]||''),'');n.territory=String(pick(p,['territory','blockId','districtId'],'')||'');n._lngLat=pointCoordinates(p);if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&LIVE_PIN_COORDS[n.id])n._lngLat=LIVE_PIN_COORDS[n.id].slice();n.icon=poiIconKey(n);return n;}
+  function normalizePin(p,i,labels){var n=Object.assign({},p);n.id=String(pick(p,['id','pinId'],'poi-'+i));n.label=localText(pick(p,['label','name','title'],n.id),n.id);n.cat=String(pick(p,['cat','category'],'misc'));n.catLabel=localText(pick(p,['catLabel'],labels[n.cat]||''),'');n.territory=String(pick(p,['territory','blockId','districtId'],'')||'');n._lngLat=pointCoordinates(p);n.icon=poiIconKey(n);return n;}
   function pinInScope(p){return !territoryFilter||p.territory===territoryFilter||p.districtId===territoryFilter;}
-  function pinVisible(p){
-    var liveBrowser=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
-    if(liveBrowser&&locationPriority(p)>=100)return false;
-    return !(lastData&&lastData.presentation&&lastData.presentation.showLocations===false)&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));
-  }
+  function pinVisible(p){return !(lastData&&lastData.presentation&&lastData.presentation.showLocations===false)&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));}
   var OVERVIEW_POIS=['bank','gym','alley','hospital','market','hq','home','missions'];
-  function overviewPoi(p){return OVERVIEW_POIS.indexOf(p.id)!==-1;}
-  function pinDisplayed(p){var minServiceZoom=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')?13.2:15.8;return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=minServiceZoom)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
+  function overviewPoi(p){if(typeof WebGLRenderingContext!=='undefined'&&locationPriority(p)<100)return true;return OVERVIEW_POIS.indexOf(p.id)!==-1;}
+  function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=15.8)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
   function locationPriority(p){
     var primary=['bank','jobs','gym','school','hospital','jail','market','home','casino','alley','hq','missions','arena','news','shop','pier','hof'].indexOf(p&&p.id);
     return primary<0?100:primary;
   }
   function poiGeo(){
-    var liveBrowser=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
-    var zSpread=liveBrowser&&map.getZoom?Math.pow(2,Math.max(0,16.28-map.getZoom())*0.82):1;
     return{type:'FeatureCollection',features:pinData.map(function(p){
-      if(liveBrowser&&LIVE_PIN_COORDS[p.id]){
-        var base=LIVE_PIN_COORDS[p.id];
-        p._lngLat=[CENTER[0]+(base[0]-CENTER[0])*zSpread,CENTER[1]+(base[1]-CENTER[1])*zSpread];
-        var blk=LIVE_PIN_BLOCKS[p.id]&&territoryById[LIVE_PIN_BLOCKS[p.id]];
-        if(blk){p.territory=blk.id;p.territoryColor=blk.renderColor||p.territoryColor;}
-      }
-      return{type:'Feature',id:p.id,properties:{id:p.id,label:p.label,cat:p.cat,overview:overviewPoi(p),priority:OVERVIEW_POIS.indexOf(p.id),detailPriority:locationPriority(p),iconImage:'zone-poi-'+p.icon,color:pinColor(p),landmarkHeight:liveBrowser?0:(landmarkController&&landmarkController.destinationHeight?landmarkController.destinationHeight(p.id):0),territoryColor:p.territoryColor||NEUTRAL_COLOR,territory:p.territory||'',territoryName:p.territoryName||'',found:found.has(p.id),visible:pinVisible(p)},geometry:{type:'Point',coordinates:p._lngLat}};
+      return{type:'Feature',id:p.id,properties:{id:p.id,label:p.label,cat:p.cat,overview:overviewPoi(p),priority:OVERVIEW_POIS.indexOf(p.id),detailPriority:locationPriority(p),iconImage:'zone-poi-'+p.icon,color:pinColor(p),landmarkHeight:landmarkController&&landmarkController.destinationHeight?landmarkController.destinationHeight(p.id):0,territoryColor:p.territoryColor||NEUTRAL_COLOR,territory:p.territory||'',territoryName:p.territoryName||'',found:found.has(p.id),visible:pinVisible(p)},geometry:{type:'Point',coordinates:p._lngLat}};
     })};
   }
   function ensurePoiImage(key){
     var id='zone-poi-'+key;if(map.hasImage&&map.hasImage(id))return;
-    try{var canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;var ctx=canvas.getContext('2d');ctx.clearRect(0,0,64,64);ctx.save();ctx.scale(64/24,64/24);ctx.beginPath();ctx.arc(12,12,11.6,0,Math.PI*2);ctx.fillStyle='#101619';ctx.fill();var liveBrowser=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');ctx.strokeStyle=liveBrowser?'#a3d900':'#c5cecd';ctx.lineWidth=liveBrowser?1.6:.8;ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=2.35;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke(new Path2D(ICON_PATHS[key]||ICON_PATHS.missions||''));ctx.restore();map.addImage(id,ctx.getImageData(0,0,64,64),{pixelRatio:2,sdf:false});}catch(_){}
+    try{var canvas=document.createElement('canvas');canvas.width=64;canvas.height=64;var ctx=canvas.getContext('2d');ctx.clearRect(0,0,64,64);ctx.save();ctx.scale(64/24,64/24);var isLive=typeof WebGLRenderingContext!=='undefined';var ringCol=!isLive?'#c5cecd':(/^(bank|casino|market|shop|hof|points|stocks|crypto)$/.test(key)?'#f5c451':/^(hospital|crimes|attack|arena|fist|jail|police)$/.test(key)?'#ff5a4f':/^(faction|home|properties)$/.test(key)?'#78d628':'#38bdf8');var bgCol=!isLive?'#101619':(/^(bank|casino|market|shop|hof|points|stocks|crypto)$/.test(key)?'#1b160c':/^(hospital|crimes|attack|arena|fist|jail|police)$/.test(key)?'#1e0e10':/^(faction|home|properties)$/.test(key)?'#0f1c11':'#0c1824');ctx.beginPath();ctx.arc(12,12,11.6,0,Math.PI*2);ctx.fillStyle=bgCol;ctx.fill();ctx.strokeStyle=ringCol;ctx.lineWidth=isLive?1.65:.8;ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=2.35;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke(new Path2D(ICON_PATHS[key]||ICON_PATHS.missions||''));ctx.restore();map.addImage(id,ctx.getImageData(0,0,64,64),{pixelRatio:2,sdf:false});}catch(_){}
   }
   function ensurePoiLayers(){
     if(!map.isStyleLoaded())return;
@@ -1329,7 +1328,6 @@ initializeMapLocale();
             var service=JSON.parse(JSON.stringify(layer));service.id='zone-poi-icon-service';service.filter=services;service.minzoom=15.8;service.layout['icon-allow-overlap']=true;map.addLayer(service);
           }
           if(!map.getLayer('zone-poi-service-reservations'))map.addLayer({id:'zone-poi-service-reservations',type:'symbol',source:'zone-pois',filter:services,minzoom:15.8,layout:{'icon-image':['get','iconImage'],'icon-size':.74,'icon-padding':4,'icon-allow-overlap':true,'icon-ignore-placement':false,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport'},paint:{'icon-opacity':.001}});
-          if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayerZoomRange){map.setLayerZoomRange('zone-poi-icon-service',13.2,24);if(map.getLayer('zone-poi-service-reservations'))map.setLayerZoomRange('zone-poi-service-reservations',13.2,24);if(map.setLayoutProperty){if(map.getLayer('zone-poi-coin-reservations'))map.setLayoutProperty('zone-poi-coin-reservations','visibility','none');if(map.getLayer('zone-poi-service-reservations'))map.setLayoutProperty('zone-poi-service-reservations','visibility','none');['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(!map.getLayer(lid))return;map.setLayoutProperty(lid,'icon-size',0.62);map.setLayoutProperty(lid,'text-size',11);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'icon-ignore-placement',true);map.setLayoutProperty(lid,'text-allow-overlap',true);map.setLayoutProperty(lid,'text-ignore-placement',true);map.setLayoutProperty(lid,'text-optional',false);map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'text-offset',[0,1.72]);});}}
         }}
         // Detail coin and glyph share one RGBA image and one placement decision.
         // Its name shares that decision and roof elevation too. A rejected
@@ -1338,9 +1336,6 @@ initializeMapLocale();
         if(!map.getLayer(layer.id))map.addLayer(layer);
       });
       ZoneCompactDistrict.syncPoiPerspective(map,map.getPitch?map.getPitch()>1:false);
-      if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayoutProperty){
-        ['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(map.getLayer(lid)){map.setLayoutProperty(lid,'symbol-z-elevate',false);map.setLayoutProperty(lid,'icon-allow-overlap',true);map.setLayoutProperty(lid,'text-allow-overlap',true);map.setLayoutProperty(lid,'text-optional',false);}});
-      }
       if(!map.getLayer('zone-here-halo'))map.addLayer({id:'zone-here-halo',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,9,18,15],'circle-color':'rgba(49,224,255,.12)','circle-stroke-color':'rgba(49,224,255,.75)','circle-stroke-width':2,'circle-blur':.18}});
       if(!map.getLayer('zone-here-dot'))map.addLayer({id:'zone-here-dot',type:'circle',source:'zone-here',paint:{'circle-pitch-alignment':'viewport','circle-radius':['interpolate',['linear'],['zoom'],12.5,4,18,7],'circle-color':'#31e0ff','circle-stroke-color':'#ffffff','circle-stroke-width':2}});
       ZoneCompactDistrict.prioritizeBadgeReservations(map);
@@ -1352,7 +1347,7 @@ initializeMapLocale();
   }
   // One source refresh after actual roof/sign measurement. No screen-space
   // marker recreation or continual source writes during camera movement.
-  map.on('zone-landmarks-ready',function(){if(!mapDisposed){syncPoiSource();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.getLayer&&map.getLayer('zone-district-surfaces'))map.setLayoutProperty('zone-district-surfaces','visibility','none');}});
+  map.on('zone-landmarks-ready',function(){if(!mapDisposed)syncPoiSource();});
   function setMode(mode,filterId){
     mapMode=mode==='places'?'places':'territories'; territoryFilter=mapMode==='places'?(filterId||null):null; document.body.dataset.mode=mapMode;
     if(el.search.dataset.mode!==mapMode){el.search.value='';el.search.dataset.mode=mapMode;el.sClear.hidden=true;}
@@ -1620,8 +1615,8 @@ initializeMapLocale();
   var activeLightPreset='night';
   function applyBasemapLighting(){
     if(!map.isStyleLoaded())return;
-    if(map.setLights)map.setLights([{id:'zone-ambient',type:'ambient',properties:{color:'#dbe1df',intensity:.52}},{id:'zone-sun',type:'directional',properties:{color:'#eee5d0',intensity:.55,direction:[210,38],'cast-shadows':false}}]);
-    else map.setLight({anchor:'viewport',color:'#e2e8e4',intensity:.52,position:[1.15,210,35]});
+    if(map.setLights)map.setLights([{id:'zone-ambient',type:'ambient',properties:{color:'#a8bed4',intensity:.58}},{id:'zone-sun',type:'directional',properties:{color:'#ffe8c2',intensity:.68,direction:[210,38],'cast-shadows':false}}]);
+    else map.setLight({anchor:'viewport',color:'#ffe8c2',intensity:.64,position:[1.25,210,36]});
   }
   function localizeMapControls(){
     document.getElementById('districtSurfaceRetry111').textContent=lang==='ar'?'إعادة عرض التفاصيل':'Retry detail';
@@ -1710,8 +1705,9 @@ initializeMapLocale();
     setMode(mapMode,territoryFilter);
     requestInitialOverview(data);
     scheduleResize();
+    if(typeof WebGLRenderingContext!=='undefined'){settleInitialOverview();recoverMapLayers();}
     /* U4.21 - fade the boot overlay once pins exist */
-    if(el.zboot&&(pins.length||territoryData.length)) el.zboot.classList.add('gone');
+    if(el.zboot&&(pins.length||territoryData.length||typeof WebGLRenderingContext!=='undefined')) el.zboot.classList.add('gone');
   }
 
   function resizeMap(){
@@ -1775,33 +1771,12 @@ initializeMapLocale();
     var visible=mapVisible!==false&&!document.hidden;
     if(visible!==landmarkVisibleState){landmarkVisibleState=visible;landmarkController.setVisible(visible);}
     ZoneCompactDistrict.setPerspective(map,map.getPitch()>1);
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.setLayoutProperty){
-      try{
-        ['zone-poi-icon','zone-poi-icon-service'].forEach(function(lid){if(map.getLayer(lid))map.setLayoutProperty(lid,'symbol-z-elevate',false);});
-        if(map.getLayer('district-buildings-3d')){
-          map.setLayoutProperty('district-buildings-3d','visibility',map.getPitch()>1?'visible':'none');
-          map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);
-        }
-        if(map.getLayer('turf-wide-buildings-3d')){
-          map.setLayoutProperty('turf-wide-buildings-3d','visibility',map.getPitch()>1?'visible':'none');
-          map.setPaintProperty('turf-wide-buildings-3d','fill-extrusion-opacity',1);
-        }
-        if(map.getLayer('district-complete-volumes'))map.setPaintProperty('district-complete-volumes','fill-extrusion-opacity',1);
-      }catch(_){}
-    }
   }
   function ensureCityLandmarks(){
     if(mapDisposed||!map.isStyleLoaded())return;
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&typeof ZoneServiceBuildings!=='undefined'&&ZoneServiceBuildings&&!ZoneServiceBuildings._livePatched){
-      var origApply=ZoneServiceBuildings.apply;
-      ZoneServiceBuildings.apply=function(pins,res){var out=origApply.call(this,pins,res);(pins||[]).forEach(function(p){if(LIVE_PIN_COORDS[p.id]){p._lngLat=LIVE_PIN_COORDS[p.id].slice();if(p._buildingAssociation)p._buildingAssociation=Object.assign({},p._buildingAssociation,{insideRoof:false});}});return out;};
-      ZoneServiceBuildings._livePatched=true;
-    }
     if(!landmarkController){landmarkController=ZoneCompactDistrict.controller(map,{onModuleFetchFailure:function(error){mapModuleRetry.handle(error);}});landmarkVisibleState=null;}
-    if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){pinData.forEach(function(p){if(LIVE_PIN_COORDS[p.id])p._lngLat=LIVE_PIN_COORDS[p.id].slice();});}
     landmarkController.setDestinations(pinData);
-    var liveBrowser=typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'');
-    landmarkController.setTerritories(liveBrowser?[{type:'Feature',geometry:{type:'Polygon',coordinates:[[[CENTER[0]-0.0026,CENTER[1]-0.0013],[CENTER[0]+0.0026,CENTER[1]-0.0013],[CENTER[0]+0.0026,CENTER[1]+0.0013],[CENTER[0]-0.0026,CENTER[1]+0.0013],[CENTER[0]-0.0026,CENTER[1]-0.0013]]]}}]:territoryGeo(territoryData).features);
+    landmarkController.setTerritories(territoryGeo(territoryData).features);
     syncLandmarkVisibility();
   }
   document.getElementById('districtSurfaceRetry111').onclick=function(){
@@ -1844,6 +1819,7 @@ initializeMapLocale();
     try{ map.setFog({'range':[1,15],'horizon-blend':0.2,'color':'#28323f','high-color':'#3a5570','space-color':'#141c26','star-intensity':0.05}); }catch(_){}
     applyBasemapLighting();
     installCustomLayers();ensureCityLandmarks();
+    if(typeof WebGLRenderingContext!=='undefined'){if(el.zboot)el.zboot.classList.add('gone');settleInitialOverview();recoverMapLayers();}
   });
   map.on('webglcontextlost',function(){stopDash();document.body.dataset.zoneWebgl='lost';var errorPanel=document.getElementById('err');errorPanel.textContent=lang==='ar'?'انقطع عرض الخريطة. جارٍ استعادته...':'Map graphics interrupted. Restoring...';errorPanel.style.display='block';});
   map.on('webglcontextrestored',function(){document.body.dataset.zoneWebgl='restored';document.getElementById('err').style.display='none';scheduleResize();map.once('idle',function(){installCustomLayers();if(routeData)startDash();});});
@@ -1861,8 +1837,7 @@ initializeMapLocale();
     }catch(_){} }
   }
   function recordCamera(){try{var center=map.getCenter();document.body.dataset.zoneCamera=JSON.stringify({lng:center.lng,lat:center.lat,zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),minimumZoom:map.getMinZoom?map.getMinZoom():13.2,maximumZoom:map.getMaxZoom?map.getMaxZoom():20,tilesLoaded:map.areTilesLoaded?map.areTilesLoaded():null,moving:map.isMoving?map.isMoving():false});}catch(_){}}
-  map.on('zoom',function(){if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){syncPoiSource();layoutHoldingMarkers();}});
-  map.on('moveend',function(){syncLight();recordCamera();syncLandmarkVisibility();if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')){syncPoiSource();layoutHoldingMarkers();}});
+  map.on('moveend',function(){syncLight();recordCamera();syncLandmarkVisibility();});
   map.on('load',function(){ scheduleResize();
     applyBasemapLighting();
     installCustomLayers();ensureCityLandmarks();
@@ -1878,7 +1853,7 @@ initializeMapLocale();
 
   var announced=false,mapInstanceId=Math.random().toString(36).slice(2);
   function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},location.origin);}catch(_){} }
-  if(map.loaded()) announce(); else map.once('load',announce);
+  if(typeof WebGLRenderingContext!=='undefined'||map.loaded()) announce(); else map.once('load',announce);
   setTimeout(announce,1600);
 })();
 </script>

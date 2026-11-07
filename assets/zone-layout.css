@@ -7,7 +7,7 @@
   button { min-height:34px !important; border-radius:3px !important; font-size:11px !important; font-weight:500 !important; box-shadow:var(--zone-bevel) !important; text-transform:none !important; }
   .zone-brand { min-width:140px !important; }
   .zone-nav-group { padding:7px 9px 4px !important; font:500 10px/1.3 var(--zone-font) !important; text-transform:uppercase !important; letter-spacing:.04em !important; }
-  [data-zheaderbar] { max-width:1240px !important; min-height:54px !important; height:auto !important; padding:6px 14px !important; gap:16px !important; }
+  [data-zheaderbar] { max-width:1420px !important; min-height:56px !important; height:auto !important; padding:8px 20px !important; gap:18px !important; }
   .zone-brand { padding:0 !important; box-shadow:none !important; }
   .zone-brand > span { font-family:var(--zone-display) !important; font-weight:600 !important; font-size:32px !important; letter-spacing:.12em !important; }
   .zone-header-links { gap:8px !important; }
@@ -16,9 +16,13 @@
   .zone-header-actions > span:first-child { font-size:10px !important; margin-inline-end:8px !important; }
   .zone-header-actions > span:nth-child(2) { display:none !important; }
   .zone-header-actions > a { min-height:34px !important; display:inline-flex !important; align-items:center !important; border-radius:3px !important; }
-  .zone-bulletin { max-width:1480px !important; margin:auto !important; padding:5px 24px !important; font-size:10px !important; height:27px !important; }
+  .zone-bulletin { max-width:1420px !important; margin:auto !important; padding:5px 20px !important; font-size:10px !important; height:27px !important; }
   .zone-bulletin > span { padding-inline:0 16px !important; }
-  [data-zshell] { max-width:1240px !important; display:grid !important; grid-template-columns:184px minmax(0,1fr) !important; align-items:start !important; gap:10px !important; padding:10px 14px 24px !important; margin:0 auto !important; }
+  [data-zshell] { max-width:1420px !important; display:grid !important; grid-template-columns:226px minmax(0,1fr) !important; align-items:start !important; gap:18px !important; padding:14px 20px 28px !important; margin:0 auto !important; }
+  .zone-city-map-shell, .zone-city-directory { height:560px !important; }
+  .zone-dossier-grid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:12px !important; }
+  .zone-city-spawn-grid { grid-template-columns:repeat(4,minmax(0,1fr)) !important; }
+  .zone-city-plushie-grid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
   .zone-sidebar { width:auto !important; position:sticky !important; top:16px !important; max-height:calc(100svh - 32px) !important; gap:10px !important; }
   .zone-sidebar > * { flex:none !important; }
   [data-zplayercard] { border-radius:var(--zone-radius) !important; }
@@ -28,16 +32,14 @@
   .zone-profile-identity > div:first-child > span:last-child { font-size:15px !important; font-weight:600 !important; }
   .zone-profile-identity > div:last-child > span { font-size:11px !important; }
   #zone-cash { font-size:16px !important; }
-  .zone-profile-desktop { display:none !important; }
+  .zone-profile-desktop { display:flex !important; }
+  .zone-profile-desktop[style*="height:1px"] { display:block !important; }
   .zone-profile-bars { display:grid !important; gap:7px !important; }
   .zone-resource { min-width:0 !important; margin:0 !important; gap:4px !important; position:relative !important; }
   .zone-resource [data-zhead] { font-size:11px !important; font-weight:400 !important; }
   .zone-resource [data-zfig] { font-size:11px !important; }
   .zone-resource-timer { position:absolute !important; font-size:8px !important; line-height:12px !important; }
-  .zone-profile-mobile-details { display:block !important; font-size:11px !important; }
-  .zone-profile-mobile-details summary { min-height:28px !important; display:flex !important; align-items:center !important; gap:8px !important; }
-  .zone-profile-mobile-details > div { display:grid !important; gap:6px !important; padding-block:6px 2px !important; }
-  .zone-profile-mobile-details > div > div { display:flex !important; justify-content:space-between !important; gap:8px !important; }
+  .zone-profile-mobile-details { display:none !important; }
   .zone-nav-section > [data-zhead] { padding:0 10px 8px !important; font-size:11px !important; }
   [data-znav] { border-radius:3px !important; padding:2px 0 !important; gap:0 !important; }
   [data-znav] button { min-height:29px !important; padding:4px 8px !important; font-size:12px !important; font-weight:400 !important; line-height:1.3 !important; border-radius:0 !important; box-shadow:none !important; }
@@ -136,7 +138,6 @@
   .zone-panel-heading h2 { font:600 12px/1.45 var(--zone-panel-label); }
   .zone-panel :is([style*="font-size:10px"],[style*="font-size: 10px"]):not(button) { font-size:10px !important; line-height:1.45; }
   .zone-panel :is([style*="font-size:11px"],[style*="font-size: 11px"]):not(button) { font-size:11px !important; line-height:1.45; }
-  .zone-panel > :is(div[style*="linear-gradient"],div[style*="border-bottom"]):not(.zone-resource-track):not(.zone-record-track):not(.zone-item-stage):not(.zone-character-stage):not(.zone-panel-heading) { padding:7px 10px !important; gap:8px; }
   .zone-page-heading > span { font-size:12px !important; }
   .zone-page-heading > div > button { padding:6px 8px !important; }
   .zone-quick-actions > button > span > span { font-size:13px !important; line-height:1.45 !important; }

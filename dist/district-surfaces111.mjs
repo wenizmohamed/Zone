@@ -196,12 +196,35 @@ if (vZoneFacade.z > .5) {
   vec2 masks = zoneFacadeMasks();
   vec2 cell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
   float variation = zoneFacadeHash(cell,vZoneFacade.w);
-  float stoneVariation = .94 + .08 * zoneFacadeHash(floor(vZoneFacade.xy * 3.0),vZoneFacade.w);
-  diffuseColor.rgb *= stoneVariation;
-  vec3 frameColor = vec3(.16,.19,.20);
-  vec3 paneColor = mix(vec3(.045,.075,.09),vec3(.27,.35,.37),variation);
+  float litSeed = zoneFacadeHash(cell + vec2(17.0, 31.0), vZoneFacade.w + 9.0);
+  float suiteSeed = zoneFacadeHash(vec2(floor(cell.x * 0.34), cell.y), vZoneFacade.w + 5.0);
+  float floorActive = step(0.42, zoneFacadeHash(vec2(cell.y, 3.0), vZoneFacade.w + 13.0));
+  float isLit = step(0.62, litSeed) * step(0.45, suiteSeed) * floorActive;
+  float heightGrad = clamp(vZoneFacade.y / 52.0, 0.0, 1.0);
+  float stoneVariation = .94 + .08 * zoneFacadeHash(floor(vZoneFacade.xy * 1.5),vZoneFacade.w);
+  float floorBand = smoothstep(0.0, 0.08, fract(vZoneFacade.y / 3.2)) * (1.0 - smoothstep(0.90, 0.98, fract(vZoneFacade.y / 3.2)));
+  float pierBand = smoothstep(0.04, 0.12, fract(vZoneFacade.x / max(vZoneFacade.z, .001))) * (1.0 - smoothstep(0.88, 0.96, fract(vZoneFacade.x / max(vZoneFacade.z, .001))));
+  diffuseColor.rgb *= stoneVariation * mix(0.72, 1.08, heightGrad) * mix(0.82, 1.02, floorBand * pierBand);
+  vec3 frameColor = mix(vec3(.07,.10,.16), vec3(.38,.31,.20), isLit);
+  vec3 paneColor = mix(vec3(.025,.045,.075),vec3(.085,.135,.205),variation * (0.5 + 0.5 * heightGrad));
+  vec3 warmInterior = mix(vec3(.98,.74,.30), vec3(1.0,.88,.55), variation);
+  vec3 coolInterior = mix(vec3(.20,.82,.98), vec3(.44,.94,.84), variation);
+  vec3 activePane = mix(paneColor, mix(warmInterior, coolInterior, step(0.82, litSeed)), isLit * 0.96);
   diffuseColor.rgb = mix(diffuseColor.rgb,frameColor,masks.y);
   diffuseColor.rgb = mix(diffuseColor.rgb,paneColor,masks.x);
+  diffuseColor.rgb = mix(diffuseColor.rgb,activePane,masks.x * isLit);
+}`).replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
+if (vZoneFacade.z > .5) {
+  vec2 eMasks = zoneFacadeMasks();
+  vec2 eCell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
+  float eSeed = zoneFacadeHash(eCell + vec2(17.0, 31.0), vZoneFacade.w + 9.0);
+  float eSuite = zoneFacadeHash(vec2(floor(eCell.x * 0.34), eCell.y), vZoneFacade.w + 5.0);
+  float eFloor = step(0.42, zoneFacadeHash(vec2(eCell.y, 3.0), vZoneFacade.w + 13.0));
+  float eVar = zoneFacadeHash(eCell, vZoneFacade.w);
+  float eLit = step(0.62, eSeed) * step(0.45, eSuite) * eFloor;
+  vec3 eWarm = mix(vec3(.98,.72,.26), vec3(1.0,.88,.52), eVar);
+  vec3 eCool = mix(vec3(.20,.82,.98), vec3(.42,.92,.80), eVar);
+  totalEmissiveRadiance += mix(eWarm, eCool, step(0.82, eSeed)) * eMasks.x * eLit * 1.32;
 }`);
     shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor,.31,zoneFacadeMasks().x);');
   };
@@ -213,9 +236,17 @@ function appendQuad(batch,points,color,facade=null){
   const metric=[[0,0],[width,0],[width,height],[0,height]];
   for(const index of [0,1,2,0,2,3]){batch.positions.push(...points[index]);batch.colors.push(shade.r,shade.g,shade.b);batch.facades.push(metric[index][0],metric[index][1],spacing,seed);}
 }
-function appendBox(batch,detail){
-  const [x,y,z]=detail.position,[w,h,d]=detail.size.map(n=>n/2),p=[[-w,-h,-d],[w,-h,-d],[w,h,-d],[-w,h,-d],[-w,-h,d],[w,-h,d],[w,h,d],[-w,h,d]].map(q=>[q[0]+x,q[1]+y,q[2]+z]);
-  for(const face of [[0,3,2,1],[4,5,6,7],[0,4,7,3],[1,2,6,5],[3,7,6,2],[0,1,5,4]])appendQuad(batch,face.map(i=>p[i]),PALETTE.metal[detail.color]);
+function appendRawBox(batch,position,size,colorHex){
+  const [x,y,z]=position,[w,h,d]=size.map(n=>n/2),p=[[-w,-h,-d],[w,-h,-d],[w,h,-d],[-w,h,-d],[-w,-h,d],[w,-h,d],[w,h,d],[-w,h,d]].map(q=>[q[0]+x,q[1]+y,q[2]+z]);
+  for(const face of [[0,3,2,1],[4,5,6,7],[0,4,7,3],[1,2,6,5],[3,7,6,2],[0,1,5,4]])appendQuad(batch,face.map(i=>p[i]),colorHex);
+}
+function appendBox(batch,detail,browserRich=false){
+  if(!browserRich){appendRawBox(batch,detail.position,detail.size,PALETTE.metal[detail.color]);return;}
+  const [cx,,cz]=detail.position,[bw,bh,bd]=detail.size,top=detail.top;
+  const h1=bh*2.8,h2=bh*2.4,h3=bh*2.2;
+  appendRawBox(batch,[cx,top+.05+h1/2,cz],[bw*1.55,h1,bd*1.55],'#263649');
+  appendRawBox(batch,[cx,top+.05+h1+h2/2,cz],[bw*.96,h2,bd*.96],'#3b526b');
+  appendRawBox(batch,[cx,top+.05+h1+h2+h3/2,cz],[bw*.46,h3,bd*.46],['#f5c451','#38bdf8','#78d628'][detail.color%3]);
 }
 
 export function createDistrictSurfaces(map,features,options={}){
@@ -223,7 +254,9 @@ export function createDistrictSurfaces(map,features,options={}){
   const doc=options.document??globalThis.document,isActive=options.isActive??(()=>true),at=map.getCenter?.();
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw new Error('Facade preparation timeout must be 1..30000 milliseconds.');
-  const plan=planDistrictSurfaces(features,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:options.maxWindows,maxRoofDetails:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
+  const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
+  const activeFeatures=isBrowserRuntime&&Array.isArray(globalThis.__zoneArchitecturalFeatures)?[...features,...globalThis.__zoneArchitecturalFeatures].slice(0,LIMITS.maxFeatures):features;
+  const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?0:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
   let disposed=false,visible=true,prepared=false,renderer,scene,camera,shaderFailure=null,cancelPreparation=null,preparing=Promise.resolve();
   const geometries=[],materials=[],diagnostics={...plan.diagnostics,status:'preparing',renderer:'provider-footprint-surface-detail',source:'same-native-provider-footprints',origin:plan.center.slice(),geometryVertices:0,geometryTriangles:0,calls:0,triangles:0,textures:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
   const publish=()=>{
@@ -271,18 +304,35 @@ export function createDistrictSurfaces(map,features,options={}){
     });
   }
   const layer={id:LAYER,type:'custom',renderingMode:'3d',onAdd(_map,gl){
+    const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
     scene=new THREE.Scene();camera=new THREE.Camera();
-    scene.add(new THREE.HemisphereLight('#d6e1e5','#61686c',1.45));const key=new THREE.DirectionalLight('#e3e8ed',1.8);key.position.set(-90,180,70);scene.add(key);
+    scene.add(new THREE.HemisphereLight(isBrowserRuntime?'#7ea6d4':'#d6e1e5',isBrowserRuntime?'#121d2d':'#61686c',isBrowserRuntime?1.25:1.45));const key=new THREE.DirectionalLight(isBrowserRuntime?'#bdd6f2':'#e3e8ed',isBrowserRuntime?1.45:1.8);key.position.set(-90,180,70);scene.add(key);
     const batches=Array.from({length:4},()=>({positions:[],colors:[],facades:[]}));
-    for(const window of plan.windows)appendQuad(batches[0],window.points,PALETTE.glass[window.color]);
-    for(const wall of plan.wallPanels)appendQuad(batches[1],wall.points,PALETTE.walls[wall.color],wall);
-    for(const line of plan.floorLines)appendQuad(batches[1],line.points,PALETTE.stone[line.color]);
-    for(const cornice of plan.cornices)appendQuad(batches[2],cornice.points,PALETTE.stone[cornice.color]);
-    for(const detail of plan.roofDetails)appendBox(batches[3],detail);
+    if(!isBrowserRuntime){
+      for(const window of plan.windows)appendQuad(batches[0],window.points,PALETTE.glass[window.color]);
+      for(const wall of plan.wallPanels)appendQuad(batches[1],wall.points,PALETTE.walls[wall.color],wall);
+      for(const line of plan.floorLines)appendQuad(batches[1],line.points,PALETTE.stone[line.color]);
+      for(const cornice of plan.cornices)appendQuad(batches[2],cornice.points,PALETTE.stone[cornice.color]);
+      for(const detail of plan.roofDetails)appendBox(batches[3],detail,false);
+    }else{
+      const noirWalls=['#0c1420','#0f1826','#121d2d','#0a101b','#0e1623','#111b2a','#142032','#0b121e'];
+      const noirCornices=['#243d59','#2e4d70','#1e334b'];
+      const factionWallPalettes={
+        vipers:['#0a1a17','#0d221e','#112b26','#081513'],
+        kings:['#0a1824','#0d2030','#11283c','#08131d'],
+        oldguard:['#1b150d','#231c11','#2b2316','#14100a'],
+        night:['#1b0e15','#24121b','#2d1722','#140a10']
+      };
+      const factionCornices={vipers:'#23594a',kings:'#225278',oldguard:'#594522',night:'#5c2840'};
+      const factionOf=rec=>{const id=String(rec?.providerId||'');const m=/^arch-(vipers|kings|oldguard|night)-/.exec(id);return m?m[1]:null;};
+      for(const wall of plan.wallPanels){const f=factionOf(wall),pal=f?factionWallPalettes[f]:noirWalls;appendQuad(batches[1],wall.points,pal[wall.color%pal.length],wall);}
+      for(const line of plan.floorLines)appendQuad(batches[1],line.points,'#17253a');
+      for(const cornice of plan.cornices){const f=factionOf(cornice);appendQuad(batches[2],cornice.points,f?factionCornices[f]:noirCornices[cornice.color%noirCornices.length]);}
+    }
     batches.forEach((batch,index)=>{
       if(!batch.positions.length)return;
       const geometry=new THREE.BufferGeometry();geometries.push(geometry);geometry.setAttribute('position',new THREE.Float32BufferAttribute(batch.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(batch.colors,3));geometry.setAttribute('zoneFacade',new THREE.Float32BufferAttribute(batch.facades,4));geometry.computeVertexNormals();geometry.computeBoundingSphere();
-      const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.88,metalness:index===0?.18:index===3?.28:.03,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});materials.push(material);
+      const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.88,metalness:index===0?.18:index===3?.28:.03,emissive:isBrowserRuntime&&index>=2?new THREE.Color(index===2?'#28415c':'#1e3246'):new THREE.Color(0x000000),emissiveIntensity:isBrowserRuntime?(index===2?.48:index===3?.35:0):0,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});materials.push(material);
       if(index===1)installFacadeShader(material);
       const mesh=new THREE.Mesh(geometry,material);mesh.name=['measured-facade-glass','measured-stone-floorlines','measured-roof-cornices','interior-roof-metal'][index];
       // Explicit order beats opaque-material sorting: full walls write depth

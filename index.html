@@ -80,7 +80,7 @@
           <strong style="color:var(--t1)">{{ t.player }} <bdi style="color:var(--acc)">[#{{ omar.playerId }}]</bdi></strong>
           <bdi data-zone-edition-badge="1" style="color:var(--gold);font-size:10px;font-weight:700;padding-inline-start:6px;border-inline-start:1px solid var(--border3)">{{ omar.viewProfileLabel }} · {{ tacticalDeck.netWorth }}</bdi>
         </button>
-        <button onClick="{{ omar.toggleTicker }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer">{{ omar.tickerBtnLabel }}</button>
+        <button class="zone-hide-mobile" onClick="{{ omar.toggleTicker }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer">{{ omar.tickerBtnLabel }}</button>
         <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
         <a href="{{ adminHref }}" style="background:var(--activebg);border:1px solid var(--acc);color:var(--activefg);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600">{{ adminLabel }}</a>
@@ -92,21 +92,21 @@
         <sc-for list="{{ ticker }}" as="h" hint-placeholder-count="6"><span>{{ h }}</span></sc-for>
       </div>
     </div>
-    <div data-omar-commandbar="1" style="background:rgba(12,15,19,.96);border-top:1px solid var(--border);padding:5px 14px">
-      <div style="max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:11px">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="color:var(--mu);font-weight:600">{{ omar.searchBarLabel }}:</span>
+    <div data-omar-commandbar="1" style="background:var(--deep);border-top:1px solid var(--border);padding:5px 14px">
+      <div class="zone-cmd-inner" style="max-width:1420px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px">
+        <div class="zone-cmd-search-group" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;min-width:0">
+          <span class="zone-cmd-label" style="color:var(--mu);font-weight:600">{{ omar.searchBarLabel }}:</span>
           <sc-for list="{{ omar.searchCategories }}" as="sc" hint-placeholder-count="6">
-            <button onClick="{{ sc.select }}" style="background:{{ sc.bg }};color:{{ sc.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10.5px;cursor:pointer">{{ sc.label }}</button>
+            <button class="zone-cmd-cat-pill" onClick="{{ sc.select }}" style="background:{{ sc.bg }};color:{{ sc.fg }};border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10.5px;cursor:pointer">{{ sc.label }}</button>
           </sc-for>
-          <input type="search" value="{{ omar.searchQuery }}" onInput="{{ omar.onSearchInput }}" placeholder="{{ omar.searchPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:3px 9px;font:inherit;font-size:11px;min-width:185px">
-          <button onClick="{{ omar.runQuickSearch }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.searchBtnLabel }}</button>
-          <button onClick="{{ omar.toggleAdvSearch }}" style="background:{{ omar.advSearchBtnBg }};color:{{ omar.advSearchBtnFg }};border:1px solid var(--acc);border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.advSearchBtnLabel }}</button>
+          <input class="zone-cmd-input" type="search" value="{{ omar.searchQuery }}" onInput="{{ omar.onSearchInput }}" placeholder="{{ omar.searchPlaceholder }}" style="background:var(--panel2);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:3px 9px;font:inherit;font-size:11px;min-width:165px">
+          <button class="zone-cmd-btn zone-cmd-btn-primary" onClick="{{ omar.runQuickSearch }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.searchBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.toggleAdvSearch }}" style="background:{{ omar.advSearchBtnBg }};color:{{ omar.advSearchBtnFg }};border:1px solid var(--acc);border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.advSearchBtnLabel }}</button>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <button onClick="{{ omar.openOwnProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.myProfileBtnLabel }} [#{{ omar.playerId }}]</button>
-          <button onClick="{{ omar.openOtherSampleProfile }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">🎯 {{ omar.inspectRivalBtnLabel }}</button>
-          <button onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">📖 {{ omar.wikiRulesBtnLabel }}</button>
+        <div class="zone-cmd-actions" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <button class="zone-cmd-btn" onClick="{{ omar.openOtherSampleProfile }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">🎯 {{ omar.inspectRivalBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">📖 {{ omar.wikiRulesBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.toggleChatDock }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">💬 {{ omar.chatToggleBtnLabel }}</button>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link);font-weight:600">{{ t.player }} <bdi style="color:var(--acc)">[#{{ omar.playerId }}]</bdi></span></div>
             <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--mu)">{{ omar.loginEmailLabel }}</span><bdi style="color:var(--t3)">{{ omar.accountEmail }}</bdi></div>
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.money }}</span><bdi id="zone-cash" data-zfig="1" style="color:var(--money);font-weight:600;font-size:13.5px;display:inline-block">{{ cash }}</bdi></div>
-            <button data-omar-sidebar-profile="1" onClick="{{ omar.openOwnProfile }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+            <button data-omar-sidebar-profile="1" onClick="{{ omar.openOwnProfile }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
           </div>
           <a class="zone-profile-account" href="{{ accountHref }}" style="color:var(--link);display:block;padding:10px 0;min-height:44px">{{ accountLabel }}</a>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.level }}</span><bdi style="color:var(--t1)">{{ level }} <span style="color:var(--mu);font-size:10px">{{ levelTitle }}</span></bdi></div>
@@ -196,7 +196,7 @@
           <span style="width:9px;height:9px;border-radius:50%;background:#e04a3a;animation:zblink 1.2s infinite"></span>
           <strong style="color:#f0a090">{{ status.title }}</strong><span style="color:var(--t3)">{{ status.body }}</span>
           <bdi data-zfig="1" style="margin-inline-start:auto;font-weight:600;font-size:21px;color:#fff">{{ status.left }}</bdi>
-           <button class="zone-action-primary" onClick="{{ status.act }}" disabled="{{ status.actDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
+           <button class="zone-action-primary" onClick="{{ status.act }}" disabled="{{ status.actDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.actLabel }}</button>
            <sc-if value="{{ status.heal }}" hint-placeholder-val="{{ false }}"><button class="zone-action-danger" onClick="{{ status.heal }}" disabled="{{ status.healDisabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ status.healLabel }}</button></sc-if>
         </div>
       </sc-if>
@@ -224,7 +224,8 @@
 
       <!-- OMAR FEEDBACK: PLAYER PROFILE VIEW (OWN & OTHER PLAYERS + 9 ACTIONS + BAZAAR) -->
       <sc-if value="{{ omar.profileOpen }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-omar-profile-modal="1" style="background:linear-gradient(180deg,#161b22 0%,#0f1318 100%);border:1px solid var(--acc);border-top:3px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
+        <section class="zone-panel" data-omar-profile-modal="1">
+          <div class="zone-modal-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
               <span style="padding:3px 8px;background:var(--activebg);border:1px solid var(--acc);border-radius:4px;color:var(--activefg);font-size:11px;font-weight:700">ID #{{ omar.activeProfile.id }}</span>
@@ -235,13 +236,13 @@
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
               <span style="color:var(--mu);font-size:11px">{{ omar.switchProfileLabel }}:</span>
               <sc-for list="{{ omar.profileDirectory }}" as="pr" hint-placeholder-count="6">
-                <button onClick="{{ pr.open }}" style="background:{{ pr.bg }};color:{{ pr.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ pr.label }}</button>
+                <button class="zone-compact-btn" onClick="{{ pr.open }}" style="background:{{ pr.bg }};color:{{ pr.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ pr.label }}</button>
               </sc-for>
-              <button onClick="{{ omar.closeProfile }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.closeProfile }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
             </div>
           </div>
 
-          <div style="padding:6px 10px;background:rgba(163,217,0,.08);border:1px solid rgba(163,217,0,.3);border-radius:4px;font-size:11px;color:var(--t2)">
+          <div style="padding:6px 10px;background:var(--selbg);border:1px solid var(--acc2);border-radius:4px;font-size:11px;color:var(--t2)">
             {{ omar.identityRuleBanner }}
           </div>
 
@@ -300,7 +301,7 @@
                       <strong style="color:var(--t1);font-size:12px;display:block">{{ bz.name }}</strong>
                       <small style="color:var(--money);font-weight:600">{{ bz.price }} · ×{{ bz.qty }}</small>
                     </div>
-                    <button onClick="{{ bz.buy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ t.buy }}</button>
+                    <button onClick="{{ bz.buy }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ t.buy }}</button>
                   </div>
                 </sc-for>
               </div>
@@ -315,23 +316,25 @@
               </sc-for>
             </div>
           </div>
+          </div>
         </section>
       </sc-if>
 
       <!-- OMAR FEEDBACK: ADVANCED PLAYER SEARCH MODAL -->
       <sc-if value="{{ omar.advSearchOpen }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-omar-adv-search="1" style="background:var(--panel);border:1px solid var(--acc);border-top:3px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <section class="zone-panel" data-omar-adv-search="1">
+          <div class="zone-modal-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
               <strong style="color:var(--t1);font-size:15px">🔍 {{ omar.advSearchTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.advSearchSub }}</div>
             </div>
-            <button onClick="{{ omar.toggleAdvSearch }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+            <button class="zone-compact-btn" onClick="{{ omar.toggleAdvSearch }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <span style="color:var(--mu);font-size:11px">{{ omar.filterStatusLabel }}:</span>
             <sc-for list="{{ omar.advFilters }}" as="af" hint-placeholder-count="5">
-              <button onClick="{{ af.select }}" style="background:{{ af.bg }};color:{{ af.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">{{ af.label }}</button>
+              <button class="zone-compact-btn" onClick="{{ af.select }}" style="background:{{ af.bg }};color:{{ af.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">{{ af.label }}</button>
             </sc-for>
           </div>
           <div style="display:grid;gap:6px">
@@ -344,21 +347,23 @@
                   <span style="color:{{ sr.statusColor }};font-size:11px;font-weight:600">{{ sr.statusText }}</span>
                 </div>
                 <div style="display:flex;gap:6px">
-                  <button onClick="{{ sr.openProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.viewProfileLabel }}</button>
-                  <button onClick="{{ sr.attack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">⚔️ {{ t.nav.attack }}</button>
+                  <button class="zone-compact-btn" onClick="{{ sr.openProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.viewProfileLabel }}</button>
+                  <button class="zone-compact-btn" onClick="{{ sr.attack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">⚔️ {{ t.nav.attack }}</button>
                 </div>
               </div>
             </sc-for>
+          </div>
           </div>
         </section>
       </sc-if>
 
       <!-- OMAR FEEDBACK: WIKI, RULES & GAME GUIDE -->
       <sc-if value="{{ omar.wikiOpen }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-omar-wiki="1" style="background:var(--panel);border:1px solid var(--gold);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px">
+        <section class="zone-panel" data-omar-wiki="1">
+          <div class="zone-modal-card">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <strong style="color:var(--gold);font-size:14px">📖 {{ omar.wikiTitle }}</strong>
-            <button onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
+            <button class="zone-compact-btn" onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
             <sc-for list="{{ omar.wikiArticles }}" as="wa" hint-placeholder-count="6">
@@ -367,6 +372,7 @@
                 <p style="margin:0;color:var(--t3);font-size:11px;line-height:1.45">{{ wa.body }}</p>
               </div>
             </sc-for>
+          </div>
           </div>
         </section>
       </sc-if>
@@ -390,121 +396,6 @@
             </button>
           </sc-for>
         </div>
-        <!-- OMAR FEEDBACK: TORN-STYLE HOME INFORMATION ARCHITECTURE (8 CORE CARDS) -->
-        <section class="zone-panel" data-omar-home-architecture="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
-            <div>
-              <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.04em">{{ omar.homeDashboardTitle }}</strong>
-              <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
-              <button onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">🏆 {{ t.merits }} ({{ merits }})</button>
-              <button onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">🏠 {{ omar.propertyCardTitle }}</button>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
-            <!-- Card 1: General Information -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between">
-                <span>📋 {{ omar.generalInfoTitle }}</span>
-                <span style="color:var(--acc)">ID #{{ omar.playerId }}</span>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
-                <sc-for list="{{ omar.generalInfoRows }}" as="gr" hint-placeholder-count="8">
-                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <span style="color:var(--mu)">{{ gr.k }}</span>
-                    <bdi style="color:{{ gr.color }};font-weight:600">{{ gr.v }}</bdi>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-
-            <!-- Card 2: Battle Stats -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>⚔️ {{ omar.battleStatsTitle }}</span>
-                <button onClick="{{ omar.openGymScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.gym }}</button>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
-                <sc-for list="{{ omar.battleStatsRows }}" as="bs" hint-placeholder-count="5">
-                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <span style="color:var(--mu)">{{ bs.k }}</span>
-                    <bdi style="color:{{ bs.color }};font-weight:600">{{ bs.v }}</bdi>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-
-            <!-- Card 3: Working Stats & Job Information -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>💼 {{ omar.workingStatsTitle }}</span>
-                <button onClick="{{ omar.openJobsScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.jobs }}</button>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
-                <sc-for list="{{ omar.workingStatsRows }}" as="ws" hint-placeholder-count="6">
-                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <span style="color:var(--mu)">{{ ws.k }}</span>
-                    <bdi style="color:{{ ws.color }};font-weight:600">{{ ws.v }}</bdi>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-
-            <!-- Card 4: Personal Perks -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc)">
-                <span>✨ {{ omar.personalPerksTitle }}</span>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11px">
-                <sc-for list="{{ omar.personalPerks }}" as="pk" hint-placeholder-count="6">
-                  <div style="display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <span style="color:var(--gold);font-weight:600">[{{ pk.source }}]</span>
-                    <span style="color:var(--t2);text-align:end">{{ pk.effect }}</span>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-
-            <!-- Card 5: Property Information & Rental Lease -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏠 {{ omar.propertyCardTitle }}</span>
-                <button onClick="{{ omar.rentPrivateIslandQuick }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ omar.rentIslandBtnLabel }}</button>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
-                <sc-for list="{{ omar.propertyCardRows }}" as="prw" hint-placeholder-count="5">
-                  <div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <span style="color:var(--mu)">{{ prw.k }}</span>
-                    <bdi style="color:{{ prw.color }};font-weight:600">{{ prw.v }}</bdi>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-
-            <!-- Card 6: Merits & Skill Upgrades (1->2->3->4 pt progression) -->
-            <div style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏆 {{ omar.meritsTreeTitle }}</span>
-                <bdi style="color:var(--gold);font-size:11px">{{ merits }} {{ t.merits }}</bdi>
-              </div>
-              <div style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;font-size:11px">
-                <sc-for list="{{ omar.meritBranches }}" as="mb" hint-placeholder-count="6">
-                  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
-                    <div>
-                      <strong style="color:var(--t1)">{{ mb.name }}</strong>
-                      <small style="display:block;color:var(--mu);font-size:10px">Lv.{{ mb.level }}/10 · {{ mb.bonusText }}</small>
-                    </div>
-                    <button onClick="{{ mb.upgrade }}" style="background:{{ mb.btnBg }};color:{{ mb.btnFg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ mb.btnLabel }}</button>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <div class="zone-content-split zone-home-grid" style="display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:10px">
           <div class="zone-home-activity" style="display:flex;flex-direction:column;gap:10px">
             <sc-if value="{{ activity.available }}">
@@ -583,6 +474,121 @@
             </div>
           </div>
         </div>
+
+        <!-- OMAR FEEDBACK: TORN-STYLE HOME INFORMATION ARCHITECTURE (8 CORE CARDS) -->
+        <section class="zone-panel zone-dossier-deck" data-omar-home-architecture="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
+          <div class="zone-dossier-header" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div>
+              <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.04em">{{ omar.homeDashboardTitle }}</strong>
+              <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
+            </div>
+            <div class="zone-dossier-actions" style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="zone-compact-btn" onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">🏆 {{ t.merits }} ({{ merits }})</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">🏠 {{ omar.propertyCardTitle }}</button>
+            </div>
+          </div>
+
+          <div class="zone-dossier-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
+            <!-- Card 1: General Information -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>📋 {{ omar.generalInfoTitle }}</span>
+                <span style="color:var(--acc)">ID #{{ omar.playerId }}</span>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.generalInfoRows }}" as="gr" hint-placeholder-count="8">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ gr.k }}</span>
+                    <bdi style="color:{{ gr.color }};font-weight:600">{{ gr.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 2: Battle Stats -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>⚔️ {{ omar.battleStatsTitle }}</span>
+                <button class="zone-compact-btn" onClick="{{ omar.openGymScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.gym }}</button>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.battleStatsRows }}" as="bs" hint-placeholder-count="5">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ bs.k }}</span>
+                    <bdi style="color:{{ bs.color }};font-weight:600">{{ bs.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 3: Working Stats & Job Information -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>💼 {{ omar.workingStatsTitle }}</span>
+                <button class="zone-compact-btn" onClick="{{ omar.openJobsScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.jobs }}</button>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.workingStatsRows }}" as="ws" hint-placeholder-count="6">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ ws.k }}</span>
+                    <bdi style="color:{{ ws.color }};font-weight:600">{{ ws.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 4: Personal Perks -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>✨ {{ omar.personalPerksTitle }}</span>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11px">
+                <sc-for list="{{ omar.personalPerks }}" as="pk" hint-placeholder-count="6">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--gold);font-weight:600">[{{ pk.source }}]</span>
+                    <span style="color:var(--t2);text-align:end">{{ pk.effect }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 5: Property Information & Rental Lease -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>🏠 {{ omar.propertyCardTitle }}</span>
+                <button class="zone-compact-btn" onClick="{{ omar.rentPrivateIslandQuick }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ omar.rentIslandBtnLabel }}</button>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
+                <sc-for list="{{ omar.propertyCardRows }}" as="prw" hint-placeholder-count="5">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <span style="color:var(--mu)">{{ prw.k }}</span>
+                    <bdi style="color:{{ prw.color }};font-weight:600">{{ prw.v }}</bdi>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Card 6: Merits & Skill Upgrades (1->2->3->4 pt progression) -->
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
+                <span>🏆 {{ omar.meritsTreeTitle }}</span>
+                <bdi style="color:var(--gold);font-size:11px">{{ merits }} {{ t.merits }}</bdi>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;font-size:11px">
+                <sc-for list="{{ omar.meritBranches }}" as="mb" hint-placeholder-count="6">
+                  <div class="zone-dossier-row" style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid var(--line)">
+                    <div>
+                      <strong style="color:var(--t1)">{{ mb.name }}</strong>
+                      <small style="display:block;color:var(--mu);font-size:10px">Lv.{{ mb.level }}/10 · {{ mb.bonusText }}</small>
+                    </div>
+                    <button class="zone-compact-btn" onClick="{{ mb.upgrade }}" style="background:{{ mb.btnBg }};color:{{ mb.btnFg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ mb.btnLabel }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </section>
       </sc-if>
 
       <!-- CRIMES -->
@@ -656,7 +662,7 @@
           <div style="position:absolute;inset:0;background:#e7e4d6"><svg viewBox="0 0 1070 554" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;display:block" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zwater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9ccd4"/><stop offset="1" stop-color="#8bb9c6"/></linearGradient><pattern id="zgrid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0H0V30" fill="none" stroke="#00000009" stroke-width="1"/></pattern></defs><rect width="1070" height="554" fill="#e7e4d6"/><rect width="1070" height="554" fill="url(#zgrid)"/><rect x="18" y="20" width="328" height="232" rx="16" fill="#d6ddc8"/><rect x="360" y="14" width="330" height="162" rx="16" fill="#e2cfc0"/><rect x="702" y="20" width="350" height="232" rx="16" fill="#d3dce9"/><rect x="18" y="300" width="374" height="172" rx="16" fill="#e6cbc9"/><rect x="400" y="190" width="290" height="272" rx="16" fill="#dedbcd"/><rect x="702" y="270" width="350" height="200" rx="16" fill="#cadfd6"/><rect x="470" y="250" width="150" height="150" rx="20" fill="#b8d29e"/><circle cx="545" cy="325" r="42" fill="#a7c78b" opacity=".8"/><circle cx="512" cy="300" r="16" fill="#9bbd7e"/><circle cx="585" cy="352" r="18" fill="#9bbd7e"/><rect x="60" y="70" width="96" height="70" rx="14" fill="#bcd4a3"/><g stroke-linecap="round"><line x1="0" y1="178" x2="1070" y2="178" stroke="#d2ccc9" stroke-width="22"/><line x1="0" y1="178" x2="1070" y2="178" stroke="#f3efe4" stroke-width="13"/><line x1="0" y1="360" x2="1070" y2="360" stroke="#d2ccb9" stroke-width="22"/><line x1="0" y1="360" x2="1070" y2="360" stroke="#f3efe4" stroke-width="13"/><line x1="352" y1="0" x2="352" y2="478" stroke="#d2ccb9" stroke-width="22"/><line x1="352" y1="0" x2="352" y2="478" stroke="#f3efe4" stroke-width="13"/><line x1="696" y1="0" x2="696" y2="478" stroke="#d2ccb9" stroke-width="22"/><line x1="696" y1="0" x2="696" y2="478" stroke="#f3efe4" stroke-width="13"/><line x1="120" y1="30" x2="470" y2="300" stroke="#d2ccb9" stroke-width="18"/><line x1="120" y1="30" x2="470" y2="300" stroke="#f3efe4" stroke-width="10"/><line x1="180" y1="0" x2="180" y2="478" stroke="#eae5d8" stroke-width="6"/><line x1="880" y1="0" x2="880" y2="478" stroke="#eae5d8" stroke-width="6"/><line x1="0" y1="90" x2="1070" y2="90" stroke="#eae5d8" stroke-width="6"/><line x1="0" y1="270" x2="1070" y2="270" stroke="#eae5d8" stroke-width="6"/></g><line x1="0" y1="178" x2="1070" y2="178" stroke="#e8b84d" stroke-width="1.6" stroke-dasharray="10 12" opacity=".7"/><line x1="352" y1="0" x2="352" y2="478" stroke="#e8b84d" stroke-width="1.6" stroke-dasharray="10 12" opacity=".7"/><rect x="35" y="40" width="38" height="25" rx="4" fill="#c7cdb4"/><rect x="35" y="40" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="38" y="140" width="26" height="35" rx="4" fill="#c7cdb4"/><rect x="38" y="140" width="26" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="85" y="34" width="34" height="20" rx="4" fill="#c7cdb4"/><rect x="85" y="34" width="34" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="91" y="141" width="26" height="29" rx="4" fill="#c7cdb4"/><rect x="91" y="141" width="26" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="85" y="193" width="29" height="23" rx="4" fill="#c7cdb4"/><rect x="85" y="193" width="29" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="141" y="41" width="24" height="32" rx="4" fill="#c7cdb4"/><rect x="141" y="41" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="142" y="141" width="31" height="28" rx="4" fill="#c7cdb4"/><rect x="142" y="141" width="31" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="140" y="196" width="35" height="24" rx="4" fill="#c7cdb4"/><rect x="140" y="196" width="35" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="191" y="91" width="28" height="30" rx="4" fill="#c7cdb4"/><rect x="191" y="91" width="28" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="192" y="142" width="27" height="23" rx="4" fill="#c7cdb4"/><rect x="192" y="142" width="27" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="188" y="196" width="25" height="25" rx="4" fill="#c7cdb4"/><rect x="188" y="196" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="242" y="40" width="25" height="23" rx="4" fill="#c7cdb4"/><rect x="242" y="40" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="246" y="88" width="38" height="30" rx="4" fill="#c7cdb4"/><rect x="246" y="88" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="299" y="195" width="36" height="26" rx="4" fill="#c7cdb4"/><rect x="299" y="195" width="36" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="377" y="139" width="30" height="33" rx="4" fill="#d3c2b2"/><rect x="377" y="139" width="30" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="426" y="34" width="26" height="24" rx="4" fill="#d3c2b2"/><rect x="426" y="34" width="26" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="426" y="139" width="37" height="27" rx="4" fill="#d3c2b2"/><rect x="426" y="139" width="37" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="480" y="132" width="34" height="27" rx="4" fill="#d3c2b2"/><rect x="480" y="132" width="34" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="533" y="32" width="31" height="32" rx="4" fill="#d3c2b2"/><rect x="533" y="32" width="31" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="533" y="84" width="39" height="32" rx="4" fill="#d3c2b2"/><rect x="533" y="84" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="587" y="139" width="38" height="35" rx="4" fill="#d3c2b2"/><rect x="587" y="139" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="637" y="29" width="32" height="33" rx="4" fill="#d3c2b2"/><rect x="637" y="29" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="635" y="80" width="30" height="31" rx="4" fill="#d3c2b2"/><rect x="635" y="80" width="30" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="716" y="34" width="32" height="22" rx="4" fill="#c3ccdc"/><rect x="716" y="34" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="720" y="89" width="39" height="26" rx="4" fill="#c3ccdc"/><rect x="720" y="89" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="722" y="144" width="35" height="29" rx="4" fill="#c3ccdc"/><rect x="722" y="144" width="35" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="717" y="191" width="31" height="22" rx="4" fill="#c3ccdc"/><rect x="717" y="191" width="31" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="773" y="93" width="37" height="21" rx="4" fill="#c3ccdc"/><rect x="773" y="93" width="37" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="772" y="143" width="29" height="33" rx="4" fill="#c3ccdc"/><rect x="772" y="143" width="29" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="772" y="190" width="27" height="27" rx="4" fill="#c3ccdc"/><rect x="772" y="190" width="27" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="826" y="41" width="26" height="34" rx="4" fill="#c3ccdc"/><rect x="826" y="41" width="26" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="825" y="90" width="35" height="23" rx="4" fill="#c3ccdc"/><rect x="825" y="90" width="35" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="826" y="141" width="38" height="21" rx="4" fill="#c3ccdc"/><rect x="826" y="141" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="821" y="193" width="32" height="35" rx="4" fill="#c3ccdc"/><rect x="821" y="193" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="879" y="40" width="39" height="23" rx="4" fill="#c3ccdc"/><rect x="879" y="40" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="879" y="145" width="25" height="31" rx="4" fill="#c3ccdc"/><rect x="879" y="145" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="929" y="196" width="39" height="26" rx="4" fill="#c3ccdc"/><rect x="929" y="196" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="981" y="143" width="35" height="29" rx="4" fill="#c3ccdc"/><rect x="981" y="143" width="35" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="977" y="190" width="38" height="21" rx="4" fill="#c3ccdc"/><rect x="977" y="190" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="37" y="317" width="29" height="31" rx="4" fill="#d8c1c0"/><rect x="37" y="317" width="29" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="34" y="423" width="39" height="27" rx="4" fill="#d8c1c0"/><rect x="34" y="423" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="87" y="316" width="38" height="31" rx="4" fill="#d8c1c0"/><rect x="87" y="316" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="91" y="422" width="38" height="34" rx="4" fill="#d8c1c0"/><rect x="91" y="422" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="136" y="317" width="32" height="32" rx="4" fill="#d8c1c0"/><rect x="136" y="317" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="141" y="421" width="39" height="20" rx="4" fill="#d8c1c0"/><rect x="141" y="421" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="245" y="320" width="39" height="34" rx="4" fill="#d8c1c0"/><rect x="245" y="320" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="241" y="424" width="36" height="21" rx="4" fill="#d8c1c0"/><rect x="241" y="424" width="36" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="292" y="321" width="28" height="28" rx="4" fill="#d8c1c0"/><rect x="292" y="321" width="28" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="419" y="205" width="24" height="31" rx="4" fill="#cecabb"/><rect x="419" y="205" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="414" y="257" width="39" height="33" rx="4" fill="#cecabb"/><rect x="414" y="257" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="419" y="414" width="29" height="32" rx="4" fill="#cecabb"/><rect x="419" y="414" width="29" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="468" y="261" width="37" height="32" rx="4" fill="#cecabb"/><rect x="468" y="261" width="37" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="472" y="308" width="25" height="27" rx="4" fill="#cecabb"/><rect x="472" y="308" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="470" y="360" width="29" height="31" rx="4" fill="#cecabb"/><rect x="470" y="360" width="29" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="525" y="260" width="37" height="35" rx="4" fill="#cecabb"/><rect x="525" y="260" width="37" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="521" y="313" width="36" height="22" rx="4" fill="#cecabb"/><rect x="521" y="313" width="36" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="525" y="360" width="38" height="20" rx="4" fill="#cecabb"/><rect x="525" y="360" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="519" y="416" width="28" height="23" rx="4" fill="#cecabb"/><rect x="519" y="416" width="28" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="576" y="259" width="24" height="26" rx="4" fill="#cecabb"/><rect x="576" y="259" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="626" y="208" width="32" height="33" rx="4" fill="#cecabb"/><rect x="626" y="208" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="627" y="310" width="25" height="25" rx="4" fill="#cecabb"/><rect x="627" y="310" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="629" y="365" width="27" height="31" rx="4" fill="#cecabb"/><rect x="629" y="365" width="27" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="622" y="419" width="27" height="33" rx="4" fill="#cecabb"/><rect x="622" y="419" width="27" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="719" y="285" width="35" height="28" rx="4" fill="#bdd0c6"/><rect x="719" y="285" width="35" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="723" y="342" width="27" height="24" rx="4" fill="#bdd0c6"/><rect x="723" y="342" width="27" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="721" y="392" width="36" height="33" rx="4" fill="#bdd0c6"/><rect x="721" y="392" width="36" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="769" y="343" width="25" height="35" rx="4" fill="#bdd0c6"/><rect x="769" y="343" width="25" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="775" y="388" width="39" height="26" rx="4" fill="#bdd0c6"/><rect x="775" y="388" width="39" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="768" y="445" width="28" height="30" rx="4" fill="#bdd0c6"/><rect x="768" y="445" width="28" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="821" y="291" width="32" height="27" rx="4" fill="#bdd0c6"/><rect x="821" y="291" width="32" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="824" y="340" width="30" height="29" rx="4" fill="#bdd0c6"/><rect x="824" y="340" width="30" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="820" y="389" width="38" height="32" rx="4" fill="#bdd0c6"/><rect x="820" y="389" width="38" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="826" y="444" width="31" height="33" rx="4" fill="#bdd0c6"/><rect x="826" y="444" width="31" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="873" y="394" width="24" height="33" rx="4" fill="#bdd0c6"/><rect x="873" y="394" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="876" y="444" width="26" height="27" rx="4" fill="#bdd0c6"/><rect x="876" y="444" width="26" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="925" y="341" width="30" height="32" rx="4" fill="#bdd0c6"/><rect x="925" y="341" width="30" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="929" y="388" width="36" height="25" rx="4" fill="#bdd0c6"/><rect x="929" y="388" width="36" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="978" y="284" width="24" height="29" rx="4" fill="#bdd0c6"/><rect x="978" y="284" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="982" y="341" width="33" height="24" rx="4" fill="#bdd0c6"/><rect x="982" y="341" width="33" height="4" rx="2" fill="#ffffff" opacity=".35"/><rect x="977" y="443" width="24" height="26" rx="4" fill="#bdd0c6"/><rect x="977" y="443" width="24" height="4" rx="2" fill="#ffffff" opacity=".35"/><path d="M0 486 C 180 470 300 500 470 490 C 640 480 780 505 1070 484 L1070 554 L0 554 Z" fill="url(#zwater)"/><path d="M0 486 C 180 470 300 500 470 490 C 640 480 780 505 1070 484" fill="none" stroke="#7ba7b3" stroke-width="2" opacity=".7"/><rect x="200" y="486" width="10" height="34" fill="#c9b99a"/><rect x="850" y="480" width="10" height="34" fill="#c9b99a"/><path d="M300 522 l26 0 -5 9 -16 0 Z" fill="#e7e4d6" opacity=".9"/><path d="M720 528 l22 0 -4 8 -14 0 Z" fill="#e7e4d6" opacity=".9"/><g transform="translate(40,42)" opacity=".55"><circle r="15" fill="#ffffff" stroke="#b7b09a" stroke-width="1.5"/><path d="M0 -12 L4 0 L0 12 L-4 0 Z" fill="#c8502e"/><text x="0" y="-17" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#6b6752">N</text></g></svg></div>
           <div data-zmapv="1" style="position:absolute;inset:0;pointer-events:none"></div>
           <sc-for list="{{ pins }}" as="pn" hint-placeholder-count="16">
-            <button onClick="{{ pn.go }}" title="{{ pn.label }}" style="position:absolute;left:{{ pn.x }}%;top:{{ pn.y }}%;transform:translate(-50%,-50%);background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:2" style-hover="z-index:6">
+            <button class="zone-map-pin-btn" onClick="{{ pn.go }}" title="{{ pn.label }}" style="position:absolute;left:{{ pn.x }}%;top:{{ pn.y }}%;transform:translate(-50%,-50%);background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:2" style-hover="z-index:6">
               <span style="width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.62) 38%,rgba(255,255,255,0) 72%);filter:drop-shadow(0 1px 2px rgba(0,0,0,.32))">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="{{ pn.color }}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ pn.d }}"></path></svg>
               </span>
@@ -666,53 +672,53 @@
           <div style="position:absolute;left:{{ herePin.x }}%;top:{{ herePin.y }}%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:var(--acc);border:2.5px solid #fff;box-shadow:0 0 0 3px rgba(20,26,38,.35),0 0 0 6px rgba(49,224,255,.35),0 1px 4px rgba(0,0,0,.4);animation:zblink 1.6s infinite;z-index:3"></div>
         </div>
         </sc-if>
-        <div class="zone-panel" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
-          <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button onClick="{{ cy.go }}" disabled="{{ cy.disabled }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
+        <div class="zone-panel zone-city-travel-bar" style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:8px 10px;margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span class="zone-city-travel-label" style="font-size:11px;color:var(--mu);font-weight:600">{{ travelLabel }}</span>
+          <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button class="zone-compact-btn zone-city-travel-pill" onClick="{{ cy.go }}" disabled="{{ cy.disabled }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
         </div>
         <!-- OMAR FEEDBACK: CITY MAP RANDOM ITEM SPAWNS ("AWARENESS" MERIT & CIRCLED FINDS UP TO $5M) -->
-        <section class="zone-panel" data-omar-city-awareness="1" style="background:linear-gradient(180deg,#161c22,#0f1318);border:1px solid var(--gold);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <section class="zone-panel zone-city-intel-panel" data-omar-city-awareness="1" style="background:var(--panel);border:1px solid var(--border2);border-inline-start:3px solid var(--gold);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div class="zone-city-intel-head" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
               <strong style="color:var(--gold);font-size:13px">👁️ {{ omar.awarenessCityTitle }}</strong>
               <div style="color:var(--t3);font-size:11px">{{ omar.awarenessCitySub }}</div>
             </div>
-            <button onClick="{{ omar.rollLuckyCitySpawn }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🎲 {{ omar.rollSpawnBtnLabel }}</button>
+            <button class="zone-compact-btn" onClick="{{ omar.rollLuckyCitySpawn }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🎲 {{ omar.rollSpawnBtnLabel }}</button>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
+          <div class="zone-city-spawn-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
             <sc-for list="{{ omar.cityMapSpawns }}" as="sp" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px dashed {{ sp.borderColor }};border-radius:5px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div class="zone-city-spawn-card" style="background:var(--deep);border:1px solid var(--border);border-inline-start:3px solid {{ sp.borderColor }};border-radius:5px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <div>
                   <span style="display:inline-block;padding:1px 6px;border-radius:8px;background:rgba(235,201,128,.16);color:var(--gold);font-size:9.5px;font-weight:700">⭕ {{ sp.rarity }}</span>
                   <strong style="display:block;color:var(--t1);font-size:12px;margin-top:2px">{{ sp.name }}</strong>
                   <small style="color:var(--money);font-weight:600">{{ sp.valueText }} · {{ sp.district }}</small>
                 </div>
-                <button onClick="{{ sp.claim }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ sp.claimLabel }}</button>
+                <button class="zone-compact-btn" onClick="{{ sp.claim }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ sp.claimLabel }}</button>
               </div>
             </sc-for>
           </div>
         </section>
 
         <!-- OMAR FEEDBACK: REGIONAL TRAVEL PLUSHIES / SOUVENIRS & MUSEUM -> FREE POINTS LOOP -->
-        <section class="zone-panel" data-omar-museum-plushies="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <section class="zone-panel zone-city-museum-panel" data-omar-museum-plushies="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+          <div class="zone-city-museum-head" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
               <strong style="color:var(--t1);font-size:13px">🏛️ {{ omar.museumTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.museumSub }}</div>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button onClick="{{ omar.collectRegionalPlushieSet }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">✈️ {{ omar.buyAllPlushiesBtn }}</button>
-              <button onClick="{{ omar.exchangeMuseumSetForPoints }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🏛️ {{ omar.exchangeMuseumBtn }} (+10 {{ t.points }})</button>
+              <button class="zone-compact-btn" onClick="{{ omar.collectRegionalPlushieSet }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">✈️ {{ omar.buyAllPlushiesBtn }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.exchangeMuseumSetForPoints }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🏛️ {{ omar.exchangeMuseumBtn }} (+10 {{ t.points }})</button>
             </div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
+          <div class="zone-city-plushie-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
             <sc-for list="{{ omar.plushieCatalog }}" as="pl" hint-placeholder-count="6">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+              <div class="zone-city-plushie-card" style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <div>
                   <strong style="color:var(--t1);font-size:11.5px;display:block">{{ pl.icon }} {{ pl.name }}</strong>
                   <small style="color:var(--mu);font-size:10px">{{ pl.city }} · {{ pl.priceText }} · {{ omar.ownedLabel }}: <bdi style="color:var(--acc);font-weight:700">{{ pl.owned }}</bdi></small>
                 </div>
-                <button onClick="{{ pl.buy }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.buy }}</button>
+                <button class="zone-compact-btn" onClick="{{ pl.buy }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.buy }}</button>
               </div>
             </sc-for>
           </div>
@@ -882,7 +888,7 @@
             <div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 90px 100px 90px 80px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)">
               <div style="display:flex;align-items:center;gap:8px"><span style="width:30px;height:26px;border-radius:3px;background:linear-gradient(var(--btn),var(--z1));border:1px solid var(--border3);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 512 512" style="flex:none;fill:var(--ico)"><path d="M0 0" data-zone-path="{{ m.d }}"></path></svg></span><div><div style="color:var(--t1)">{{ m.name }}</div><div style="color:var(--mu);font-size:10px">{{ m.type }} · <bdi>{{ m.qty }}</bdi> {{ t.left }}</div></div></div>
               <span data-label="{{ t.seller }}" style="color:var(--link)">{{ m.seller }}</span><bdi data-label="{{ t.price }}" style="color:var(--money);font-weight:600">{{ m.price }}</bdi><bdi class="zone-market-change" data-label="{{ t.change }}" style="color:{{ m.chgColor }};font-size:11px">{{ m.chg }}</bdi>
-              <div style="display:flex;flex-direction:column;gap:4px"><button onClick="{{ m.inspect }}" style="border:1px solid var(--border3);border-radius:3px;background:var(--btn);color:var(--t2);padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ m.inspectLabel }}</button><button class="zone-action-primary" onClick="{{ m.buy }}" disabled="{{ m.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.buy }} ×1</button></div>
+              <div style="display:flex;flex-direction:column;gap:4px"><button onClick="{{ m.inspect }}" style="border:1px solid var(--border3);border-radius:3px;background:var(--btn);color:var(--t2);padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ m.inspectLabel }}</button><button class="zone-action-primary" onClick="{{ m.buy }}" disabled="{{ m.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:3px;padding:3px 10px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.buy }} ×1</button></div>
             </div>
           </sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px;display:flex;gap:6px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:var(--acc);animation:zblink 1.2s infinite"></span>{{ t.liveMarket }}</div>
@@ -961,7 +967,7 @@
                   <strong style="color:var(--t1);font-size:12px;display:block">{{ ro.name }}</strong>
                   <small style="color:var(--mu);font-size:10.5px">{{ ro.daysLabel }} · {{ ro.happyText }} · <bdi style="color:var(--money)">{{ ro.costText }}</bdi></small>
                 </div>
-                <button onClick="{{ ro.rent }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ ro.btnLabel }}</button>
+                <button onClick="{{ ro.rent }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ ro.btnLabel }}</button>
               </div>
             </sc-for>
           </div>
@@ -982,14 +988,14 @@
       <sc-if value="{{ is.jail }}" hint-placeholder-val="{{ false }}">
         <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.inmate }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.bustOdds }}</span><span></span></div>
-          <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><bdi data-label="{{ t.bustOdds }}" style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button class="zone-action-primary" onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
+          <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><bdi data-label="{{ t.bustOdds }}" style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button class="zone-action-primary" onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px">{{ t.jailTip }}</div>
         </div>
       </sc-if>
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-bank-command-deck="1" style="background:linear-gradient(135deg,rgba(18,25,34,.96),rgba(10,13,18,.98));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
+        <section class="zone-panel" data-bank-command-deck="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
           <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;padding:12px;align-items:stretch">
             <div style="border-radius:5px;border:1px solid var(--border3);background:center / cover no-repeat url('{{ sceneArt }}');position:relative;min-height:135px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:inset 0 -60px 48px rgba(0,0,0,.82)">
               <span style="font-size:9.5px;color:var(--acc);font-weight:800;letter-spacing:.12em;text-transform:uppercase">SYNDICATE VAULT RESERVE</span>
@@ -1002,28 +1008,28 @@
                   <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.06em">{{ bank.vaultHeaderTitle }}</strong>
                   <div style="color:var(--t3);font-size:11.5px;margin-top:2px">{{ bank.vaultHeaderSub }}</div>
                 </div>
-                <span style="padding:4px 10px;background:rgba(120,214,40,.14);border:1px solid #4d7a0c;border-radius:4px;color:var(--acc);font-size:11px;font-weight:700">{{ bank.apyBadge }}</span>
+                <span style="padding:4px 10px;background:var(--activebg);border:1px solid var(--acc2);border-radius:4px;color:var(--activefg);font-size:11px;font-weight:700">{{ bank.apyBadge }}</span>
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
-                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
                   <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Vault Protection Ratio</span>
                   <bdi style="color:var(--acc);font-size:17px;font-weight:700">{{ bank.vaultSharePct }}% Protected</bdi>
-                  <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;width:{{ bank.vaultSharePct }}%;background:linear-gradient(90deg,#3d7cc9,var(--acc))"></div></div>
+                  <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;width:{{ bank.vaultSharePct }}%;background:linear-gradient(90deg,var(--acc2),var(--acc))"></div></div>
                 </div>
-                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
                   <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Street Mug Exposure</span>
                   <bdi style="color:#ff8a7a;font-size:17px;font-weight:700">{{ bank.mugExposure }}</bdi>
                   <small style="display:block;color:var(--t4);font-size:10px;margin-top:3px">Vulnerable on street defeat</small>
                 </div>
-                <div style="background:rgba(9,12,16,.88);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
+                <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px">
                   <span style="display:block;color:var(--mu);font-size:10px;text-transform:uppercase">Projected Vault Yield (24h)</span>
                   <bdi style="color:var(--gold);font-size:17px;font-weight:700">+{{ bank.dailyYield }}</bdi>
                   <small style="display:block;color:var(--t4);font-size:10px;margin-top:3px">1.85% Daily Syndicate Yield</small>
                 </div>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                <button onClick="{{ bank.quickLockAll }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Deposit 100% Street Cash</button>
-                <button onClick="{{ bank.quickCombatFloat }}" style="background:linear-gradient(180deg,#263242,#18202c);color:#9ad0ff;font-weight:700;border:1px solid #3d7cc9;border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Withdraw $10,000 Float</button>
+                <button onClick="{{ bank.quickLockAll }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Deposit 100% Street Cash</button>
+                <button onClick="{{ bank.quickCombatFloat }}" style="background:var(--btn);color:var(--t1);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Withdraw $10,000 Float</button>
                 <button onClick="{{ bank.openMarket }}" style="background:var(--btn);color:var(--gold);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:6px 12px;font:inherit;font-size:11px;cursor:pointer">Open Armory Market</button>
               </div>
             </div>
@@ -1036,7 +1042,7 @@
         </div>
         <div class="zone-panel zone-bank-actions" style="background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:14px">
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.depositLabel }}</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button class="zone-action-primary" onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"><sc-for list="{{ bank.deposits }}" as="b" hint-placeholder-count="3"><button class="zone-action-primary" onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t2);font-weight:600;margin-bottom:8px">{{ bank.withdrawLabel }}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ bank.withdrawals }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:var(--btn);color:var(--t2);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t4);font-size:11px;margin-top:12px">{{ bank.msg }}</div>
@@ -1060,7 +1066,7 @@
             <div style="padding:14px;display:flex;flex-direction:column;align-items:center;gap:12px">
               <div class="zone-playing-card-stage"><div class="zone-playing-card" role="img" aria-label="{{ casino.cardLabel }}" style="background-position:{{ casino.spriteX }}px -198px"></div></div>
               <div style="display:flex;gap:6px"><sc-for list="{{ casino.bets }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.pick }}" style="background:{{ b.bg }};border:1px solid var(--border3);color:{{ b.fg }};border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer"><bdi>{{ b.label }}</bdi></button></sc-for></div>
-              <div style="display:flex;gap:8px"><button class="zone-action-primary" onClick="{{ casino.higher }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid #4d7a0c;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.higher }}</button><button class="zone-action-danger" onClick="{{ casino.lower }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.lower }}</button></div>
+              <div style="display:flex;gap:8px"><button class="zone-action-primary" onClick="{{ casino.higher }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.higher }}</button><button class="zone-action-danger" onClick="{{ casino.lower }}" disabled="{{ casino.disabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;font-weight:700;border:1px solid #6a2018;border-radius:3px;padding:6px 18px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer">{{ t.lower }}</button></div>
               <div style="color:var(--t4);font-size:11px">{{ casino.msg }}</div>
             </div>
           </div>
@@ -1077,7 +1083,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:11px;color:var(--mu);padding:8px 0"><span aria-live="polite">{{ leaderboard.message }}</span><button onClick="{{ leaderboard.refresh }}" disabled="{{ leaderboard.busy }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);padding:8px 12px">{{ leaderboard.refreshLabel }}</button></div>
         <div class="zone-panel" data-zscroll="1" style="background:var(--panel);border:1px solid var(--border);border-radius:5px">
           <div class="zone-table-heading" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ leaderboard.fundsLabel }}</span><span>{{ t.faction }}</span></div>
-          <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div class="zone-table-row" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi style="color:var(--t4)">{{ h.lvl }}</bdi><bdi style="color:var(--t4)">{{ h.stats }}</bdi><bdi style="color:var(--money)">{{ h.nw }}</bdi><span style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
+          <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div class="zone-table-row" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi data-label="#" style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span data-label="{{ t.playerLabel }}" style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ h.lvl }}</bdi><bdi data-label="{{ t.totalStats }}" style="color:var(--t4)">{{ h.stats }}</bdi><bdi data-label="{{ leaderboard.fundsLabel }}" style="color:var(--money)">{{ h.nw }}</bdi><span data-label="{{ t.faction }}" style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
         </div>
       </sc-if>
 
@@ -1103,43 +1109,59 @@
       </sc-if>
 
       <!-- OMAR FEEDBACK: PERSISTENT MULTI-CHANNEL CONTEXT-AWARE CHAT DOCK & PERSONAL NOTEPAD -->
-      <section class="zone-panel" data-omar-chat-dock="1" style="background:linear-gradient(180deg,#151920,#0d1015);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+      <section class="zone-panel" data-omar-chat-dock="1" data-chat-collapsed="{{ omar.chatCollapsedAttr }}" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             <strong style="color:var(--t1);font-size:12px">💬 {{ omar.chatDockTitle }}</strong>
-            <sc-for list="{{ omar.chatChannels }}" as="ch" hint-placeholder-count="7">
-              <button onClick="{{ ch.select }}" style="background:{{ ch.bg }};color:{{ ch.fg }};border:1px solid {{ ch.border }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ ch.label }}</button>
-            </sc-for>
+            <sc-if value="{{ !omar.chatCollapsed }}" hint-placeholder-val="{{ false }}">
+              <sc-for list="{{ omar.chatChannels }}" as="ch" hint-placeholder-count="7">
+                <button class="zone-compact-btn" onClick="{{ ch.select }}" style="background:{{ ch.bg }};color:{{ ch.fg }};border:1px solid {{ ch.border }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ ch.label }}</button>
+              </sc-for>
+            </sc-if>
           </div>
-          <span style="color:var(--acc);font-size:10.5px;font-weight:600">{{ omar.chatContextBadge }}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="zone-hide-mobile" style="color:var(--acc);font-size:10.5px;font-weight:600">{{ omar.chatContextBadge }}</span>
+            <button class="zone-compact-btn" onClick="{{ omar.toggleChatDock }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.chatExpandLabel }}</button>
+          </div>
         </div>
 
-        <sc-if value="{{ !omar.isNotesTab }}" hint-placeholder-val="{{ true }}">
-          <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;max-height:135px;overflow-y:auto;font-size:11.5px">
-            <sc-for list="{{ omar.activeChatMessages }}" as="cm" hint-placeholder-count="4">
-              <div style="display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:3px">
-                <bdi style="color:var(--mu);font-size:10px">[{{ cm.time }}]</bdi>
-                <button onClick="{{ cm.openSender }}" style="background:none;border:0;padding:0;color:var(--acc);font:inherit;font-weight:700;cursor:pointer">{{ cm.sender }} [#{{ cm.senderId }}]:</button>
-                <span style="color:var(--t2);flex:1">{{ cm.text }}</span>
-              </div>
-            </sc-for>
-          </div>
-          <div style="display:flex;gap:6px">
-            <input type="text" value="{{ omar.chatDraft }}" onInput="{{ omar.onChatInput }}" placeholder="{{ omar.chatPlaceholder }}" style="flex:1;background:var(--deep);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:4px 10px;font:inherit;font-size:11.5px">
-            <button onClick="{{ omar.sendChatMessage }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid #4d7a0c;border-radius:3px;padding:4px 14px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.sendChatLabel }}</button>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ omar.isNotesTab }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <textarea rows="3" value="{{ omar.notesText }}" onInput="{{ omar.onNotesInput }}" placeholder="{{ omar.notesPlaceholder }}" style="width:100%;background:var(--deep);border:1px solid var(--gold);color:var(--t1);border-radius:4px;padding:8px;font:inherit;font-size:11.5px;box-sizing:border-box"></textarea>
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span style="color:var(--mu);font-size:10.5px">{{ omar.notesSavedHint }}</span>
-              <button onClick="{{ omar.saveNotes }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">💾 {{ omar.saveNotesBtn }}</button>
+        <sc-if value="{{ !omar.chatCollapsed }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ !omar.isNotesTab }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;max-height:135px;overflow-y:auto;font-size:11.5px">
+              <sc-for list="{{ omar.activeChatMessages }}" as="cm" hint-placeholder-count="4">
+                <div style="display:flex;gap:8px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:3px">
+                  <bdi style="color:var(--mu);font-size:10px">[{{ cm.time }}]</bdi>
+                  <button class="zone-chat-sender-btn" onClick="{{ cm.openSender }}" style="background:none;border:0;padding:0;color:var(--acc);font:inherit;font-weight:700;cursor:pointer">{{ cm.sender }} [#{{ cm.senderId }}]:</button>
+                  <span style="color:var(--t2);flex:1">{{ cm.text }}</span>
+                </div>
+              </sc-for>
             </div>
-          </div>
+            <div style="display:flex;gap:6px">
+              <input type="text" value="{{ omar.chatDraft }}" onInput="{{ omar.onChatInput }}" placeholder="{{ omar.chatPlaceholder }}" style="flex:1;background:var(--deep);border:1px solid var(--border3);color:var(--t1);border-radius:3px;padding:4px 10px;font:inherit;font-size:11.5px;min-height:34px">
+              <button class="zone-compact-btn" onClick="{{ omar.sendChatMessage }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 14px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.sendChatLabel }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ omar.isNotesTab }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <textarea rows="3" value="{{ omar.notesText }}" onInput="{{ omar.onNotesInput }}" placeholder="{{ omar.notesPlaceholder }}" style="width:100%;background:var(--deep);border:1px solid var(--gold);color:var(--t1);border-radius:4px;padding:8px;font:inherit;font-size:11.5px;box-sizing:border-box"></textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="color:var(--mu);font-size:10.5px">{{ omar.notesSavedHint }}</span>
+                <button class="zone-compact-btn" onClick="{{ omar.saveNotes }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">💾 {{ omar.saveNotesBtn }}</button>
+              </div>
+            </div>
+          </sc-if>
         </sc-if>
       </section>
+
+      <nav class="zone-mobile-tabbar" data-zone-mobile-tabbar="1" aria-label="{{ t.areas }}">
+        <sc-for list="{{ omar.mobileTabs }}" as="mt" hint-placeholder-count="6">
+          <button onClick="{{ mt.go }}" aria-current="{{ mt.current }}" aria-expanded="{{ mt.expanded }}">
+            <span>{{ mt.icon }}</span>
+            <span>{{ mt.label }}</span>
+          </button>
+        </sc-for>
+      </nav>
 
       <footer class="zone-footer" style="color:var(--mu2);font-size:11px;text-align:center;padding-top:10px">{{ t.footer }} <a href="dist/credits.html?v=99">{{ creditsLabel }}</a></footer>
     </main>
@@ -1410,9 +1432,10 @@ const TERRITORY_BENEFITS = [
   ['defense', 'Defensive position', 'موقع دفاعي', 600, 'basis-points'], ['recruitment', 'Recruitment reach', 'نطاق التجنيد', 5, 'members'],
 ];
 function zoneTerritoryPoint(column, row) {
-  const x = column / 12 * 2 - 1, y = 1 - row / 10 * 2, widthScale = .68 + .32 * (1 - Math.abs(y));
-  const crossJitter=column>0&&column<12?Math.sin(column*1.91+row*.73)*105:0,longJitter=row>0&&row<10?Math.sin(row*1.47+column*.61)*135:0;
-  const cross = x * 2850 * widthScale + crossJitter, along = y * 5900 + longJitter, bearing = 29 * Math.PI / 180;
+  const isLiveBrowser = typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '');
+  const x = column / 12 * 2 - 1, y = 1 - row / 10 * 2, widthScale = isLiveBrowser ? (.92 + .08 * (1 - Math.abs(y))) : (.68 + .32 * (1 - Math.abs(y)));
+  const crossJitter=column>0&&column<12?Math.sin(column*1.91+row*.73)*(isLiveBrowser?18:105):0,longJitter=row>0&&row<10?Math.sin(row*1.47+column*.61)*(isLiveBrowser?20:135):0;
+  const cross = x * (isLiveBrowser ? 1350 : 2850) * widthScale + crossJitter, along = y * (isLiveBrowser ? 860 : 5900) + longJitter, bearing = (isLiveBrowser ? -5 : 29) * Math.PI / 180;
   const east = cross * Math.cos(bearing) + along * Math.sin(bearing), north = -cross * Math.sin(bearing) + along * Math.cos(bearing);
   return [-73.9812 + east / (111320 * Math.cos(40.7562 * Math.PI / 180)), 40.7562 + north / 111320];
 }
@@ -1478,7 +1501,12 @@ class Component extends DCLogic {
   state = { screen: 'home', lang: 'en', theme: 'dark', mapMode: 'live', cityQuery: '', gymStation: 'str', combatMode: 'npc', marketMode: 'merchants', toast: null, fight: null, sel: 'revolver', itemTab: 'all', cat: 'search', tut: false, navOpen: false, casino: { card: 7, bet: 1000, msg: 'start' }, tick: 0 };
   constructor(p) {
     super(p);
-    this.territoryMap = buildTerritoryFallback();
+    const isLiveBrowserBoot = typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '');
+    this.territoryMap = isLiveBrowserBoot ? this.enrichLiveBrowserMapSnapshot(null) : buildTerritoryFallback();
+    if (isLiveBrowserBoot) {
+      this.territoryMap.revision = 'live-city-v118';
+      this._territoryAuthoritative = true;
+    }
     this.territoryBusy = null;
     const cached = (() => { try { return JSON.parse(savedPresentation(SAVE_KEY) || (IS_PREVIEW ? savedPresentation(LS) : null)); } catch (e) { return null; } })();
     const raw = IS_PREVIEW || (cached?.serverMax && savedPresentation('zone.player.id')) ? cached : null;
@@ -1796,7 +1824,11 @@ class Component extends DCLogic {
   mapVisibility(visible) {
     if (!visible) this.setMapExpanded(false);
     const frame = document.getElementById('zone-city-map');
-    if (visible && frame?.getAttribute && !frame.getAttribute('src')) frame.setAttribute('src', frame.getAttribute('data-map-src'));
+    const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
+    if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
+      const rawSrc = frame.getAttribute('data-map-src');
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v123') : rawSrc);
+    }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
   openFamilyTerritories() {
@@ -1809,18 +1841,79 @@ class Component extends DCLogic {
     if (typeof window === 'undefined' || !/Mozilla/i.test(window.navigator?.userAgent || '')) return snapshot;
     const base = snapshot && Array.isArray(snapshot.blocks) && snapshot.blocks.length >= 120 ? snapshot : buildTerritoryFallback();
     if (!base.playerFactionId) {
-      const ref = buildTerritoryFallback();
-      const refById = new Map(ref.blocks.map(b => [b.id, b]));
       base.playerFactionId = 'vipers';
       base.playerFactionRole = 'leader';
-      base.blocks.forEach(b => {
-        const rb = refById.get(b.id);
-        if (rb && rb.ownerFactionId && !b.ownerFactionId) {
-          b.ownerFactionId = rb.ownerFactionId;
-          b.ownerName = rb.ownerName;
-          b.color = rb.color;
-          b.emblem = rb.emblem;
-          b.state = rb.state || 'owned';
+      const factionMeta = {
+        vipers: { id: 'vipers', name: { en: 'Sand Vipers', ar: 'أفاعي الرمل' }, color: '#39e7a3', emblem: 'SV' },
+        kings: { id: 'kings', name: { en: 'Harbor Kings', ar: 'ملوك المرفأ' }, color: '#31e0ff', emblem: 'HK' },
+        oldguard: { id: 'oldguard', name: { en: 'Old Guard', ar: 'الحرس القديم' }, color: '#f3b63f', emblem: 'OG' },
+        night: { id: 'night', name: { en: 'Night Market', ar: 'سوق الليل' }, color: '#ff5d6c', emblem: 'NM' }
+      };
+      base.blocks.forEach((b, idx) => {
+        const num = Number(String(b.id || '').replace(/\D+/g, '')) || (idx + 1);
+        const c = (num - 1) % 12;
+        const r = Math.floor((num - 1) / 12);
+        if (typeof WebGLRenderingContext !== 'undefined') {
+          b.polygon = [
+            zoneTerritoryPoint(c, r),
+            zoneTerritoryPoint(c + 1, r),
+            zoneTerritoryPoint(c + 1, r + 1),
+            zoneTerritoryPoint(c, r + 1)
+          ];
+          b.centroid = [
+            b.polygon.reduce((n, p) => n + p[0], 0) / 4,
+            b.polygon.reduce((n, p) => n + p[1], 0) / 4
+          ];
+        }
+        let ownerKey = null;
+        const isNeutralPocket = (r === 0 && (c === 5 || c === 6)) || (r === 9 && (c === 5 || c === 6)) || (r === 4 && c === 0) || (r === 5 && c === 11);
+        if (!isNeutralPocket) {
+          if (r <= 4 && c <= 5) ownerKey = 'oldguard';
+          else if (r <= 4 && c >= 6) ownerKey = 'kings';
+          else if (r >= 5 && c <= 5) ownerKey = 'vipers';
+          else if (r >= 5 && c >= 6) ownerKey = 'night';
+        }
+        const isContestedBorder = !isNeutralPocket && (
+          (r === 4 && (c === 2 || c === 4 || c === 5 || c === 6 || c === 7 || c === 9)) ||
+          (r === 5 && (c === 2 || c === 4 || c === 5 || c === 6 || c === 7 || c === 9)) ||
+          (c === 5 && (r === 2 || r === 3 || r === 6 || r === 7)) ||
+          (c === 6 && (r === 2 || r === 3 || r === 6 || r === 7))
+        );
+        if (ownerKey && factionMeta[ownerKey]) {
+          const fm = factionMeta[ownerKey];
+          b.ownerFactionId = fm.id;
+          b.ownerId = fm.id;
+          b.ownerName = fm.name;
+          b.ownerColor = fm.color;
+          b.color = fm.color;
+          b.emblem = fm.emblem;
+          b.isPlayerFaction = fm.id === 'vipers';
+          b.state = isContestedBorder ? 'contested' : 'owned';
+          b.contested = Boolean(isContestedBorder);
+          b.control = isContestedBorder ? 64 : 100;
+          if (isContestedBorder) {
+            const rivalId = fm.id === 'vipers' ? 'kings' : 'vipers';
+            b.activeWar = {
+              id: `war-${b.id}`,
+              attackerFactionId: rivalId,
+              defenderFactionId: fm.id,
+              attackerScore: 145000,
+              defenderScore: 182000,
+              targetScore: 250000,
+              endsAt: '2030-01-01T04:15:00Z'
+            };
+          }
+        } else {
+          b.ownerFactionId = null;
+          b.ownerId = null;
+          b.ownerName = { en: 'Unclaimed', ar: 'غير خاضع' };
+          b.ownerColor = '#68717b';
+          b.color = '#68717b';
+          b.emblem = '—';
+          b.isPlayerFaction = false;
+          b.state = 'neutral';
+          b.contested = false;
+          b.control = 0;
         }
       });
       const viperOwnedIds = new Set(base.blocks.filter(b => b.ownerFactionId === 'vipers').map(b => b.id));
@@ -1828,18 +1921,26 @@ class Component extends DCLogic {
         const isAdj = (b.neighbors || []).some(n => viperOwnedIds.has(n));
         if (b.ownerFactionId === 'vipers') {
           b.action = 'reinforce';
+          b.canAct = true;
+          b.eligible = true;
           b.actionEnergyCost = 15;
           b.actionReason = 'Reinforce Sand Vipers garrison (+25 Respect)';
         } else if (isAdj && !b.ownerFactionId) {
           b.action = 'claim';
+          b.canAct = true;
+          b.eligible = true;
           b.actionEnergyCost = 15;
           b.actionReason = 'Claim adjacent neutral sector for Sand Vipers';
         } else if (isAdj && b.ownerFactionId) {
           b.action = 'assault';
+          b.canAct = true;
+          b.eligible = true;
           b.actionEnergyCost = 15;
           b.actionReason = 'Assault rival sector bordering Sand Vipers';
         } else {
           b.action = null;
+          b.canAct = false;
+          b.eligible = false;
           b.actionReason = 'Expand from an adjacent Sand Vipers block.';
         }
       });
@@ -3470,7 +3571,7 @@ class Component extends DCLogic {
         : { id: armorId, slot: t.itemType.armor, name: armorId ? t.items[armorId] || armor.name?.[lang] || armorId : (lang === 'ar' ? 'دون درع' : 'No armor worn'), detail: armorId ? Math.round(Math.min(.95, Math.max(0, Number(armor.red) || 0)) * 100) + '% ' + t.dmgReduce : (lang === 'ar' ? 'الحماية: 0%' : 'Protection: 0%'), removeLabel: lang === 'ar' ? 'انزع الدرع' : 'Remove armor', disabled: recordBlocked || Boolean(this.combatEncounter || this.combatIncoming), remove: () => this.act(() => this.gameplayAction('item.unequip', armorId)) }
     };
     view.homeBase = {
-      title: lang === 'ar' ? 'قاعدة عملياتك' : 'Your base of operations', residence: t.props[p.prop] || p.prop,
+      title: lang === 'ar' ? 'قاعدة عملياتك' : 'Your base of operations', residence: (typeof WebGLRenderingContext !== 'undefined' && (!p.prop || p.prop === 'shack')) ? (lang === 'ar' ? (this.p.propertyLease?.nameAr || 'جزيرة خاصة (مهبط طائرات)') : (this.p.propertyLease?.nameEn || 'Private Island (Airstrip)')) : (t.props[p.prop] || p.prop),
       identity: view.t.player + ' · ' + t.level + ' ' + num(p.level), resourcesLabel: lang === 'ar' ? 'مواردك والخطوة التالية' : 'Your resources and next action',
       goal: currentGoal ? steps[savedSteps.findIndex(step => step.missionId === currentGoal.missionId)] || null : null,
       showGoalProgress: Boolean(canGuide && currentGoal && (!readyReward || readyReward.id === currentGoal.missionId)),
@@ -4389,7 +4490,7 @@ class Component extends DCLogic {
         sub: lang === 'ar' ? 'فتح شات فوري في الشريط السفلي' : 'Open private tab in Chat Dock',
         bg: 'var(--btn)', fg: 'var(--acc)', border: 'var(--border3)',
         run: () => {
-          this.setState({ omarChatTab: 'private', omarProfileFeedback: lang === 'ar' ? `💬 تم فتح قناة الشات الخاص مع ${activeProf.name} [#${activeProf.id}] بالأسفل.` : `💬 Private chat channel opened with ${activeProf.name} [#${activeProf.id}] in the bottom dock.` });
+          this.setState({ omarChatTab: 'private', omarChatCollapsed: false, omarProfileFeedback: lang === 'ar' ? `💬 تم فتح قناة الشات الخاص مع ${activeProf.name} [#${activeProf.id}] بالأسفل.` : `💬 Private chat channel opened with ${activeProf.name} [#${activeProf.id}] in the bottom dock.` });
         }
       },
       {
@@ -4816,6 +4917,38 @@ class Component extends DCLogic {
       })),
 
       // Multi-Channel Context-Aware Chat Dock & Personal Notepad
+      chatCollapsed: this.state.omarChatCollapsed !== false,
+      chatCollapsedAttr: this.state.omarChatCollapsed !== false ? 'true' : 'false',
+      chatToggleBtnLabel: lang === 'ar' ? 'الشات والمفكرة' : 'Comms & Notes',
+      chatExpandLabel: this.state.omarChatCollapsed !== false ? (lang === 'ar' ? '▲ فتح الشات' : '▲ Expand') : (lang === 'ar' ? '▼ تصغير' : '▼ Minimize'),
+      toggleChatDock: () => this.setState({ omarChatCollapsed: this.state.omarChatCollapsed === false ? true : false }),
+      mobileTabs: [
+        { id: 'home', icon: '🏠', label: t.nav.home },
+        { id: 'city', icon: '🗺️', label: t.nav.city },
+        { id: 'crimes', icon: '⚡', label: t.nav.crimes },
+        { id: 'gym', icon: '🏋️', label: t.nav.gym },
+        { id: 'attack', icon: '⚔️', label: t.nav.attack },
+        { id: 'menu', icon: '☰', label: lang === 'ar' ? 'القائمة' : 'Menu', isMenu: true }
+      ].map(mt => ({
+        id: mt.id,
+        icon: mt.icon,
+        label: mt.label,
+        current: mt.isMenu ? 'false' : (screen === mt.id && !this.state.navOpen ? 'page' : 'false'),
+        expanded: mt.isMenu ? (this.state.navOpen ? 'true' : 'false') : 'false',
+        go: () => {
+          if (mt.isMenu) {
+            const nextOpen = !this.state.navOpen;
+            this.setState({ navOpen: nextOpen }, () => {
+              if (nextOpen && typeof document !== 'undefined') {
+                const navEl = document.querySelector('[data-znav]');
+                if (navEl && typeof navEl.scrollIntoView === 'function') navEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            });
+            return;
+          }
+          this.setState({ navOpen: false }, () => this.go(mt.id));
+        }
+      })),
       chatDockTitle: lang === 'ar' ? 'الشات الميداني والمفكرة الشخصية' : 'Multi-Channel Comms & Personal Notepad',
       chatContextBadge: hosp
         ? (lang === 'ar' ? '🏥 أنت في المستشفى · شات المستشفى نشط' : '🏥 IN HOSPITAL · Hospital Chat Active')

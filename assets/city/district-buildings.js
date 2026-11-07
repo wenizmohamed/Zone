@@ -7,7 +7,7 @@ export const LIMITS=Object.freeze({sourceZoom:16,maxTiles:9,concurrency:2,maxTil
 export const SOURCE='district-complete-buildings';
 export const FILL='district-complete-footprints',EXTRUSION='district-complete-volumes';
 const height=['max',0,['to-number',['get','height'],0]];
-export const BUILDING_PAINT=Object.freeze({'fill-extrusion-color':['interpolate',['linear'],height,0,'#68716f',18,'#838b81',60,'#9b9887'],'fill-extrusion-height':height,'fill-extrusion-base':['min',height,['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1});
+export const BUILDING_PAINT=Object.freeze({'fill-extrusion-color':['interpolate',['linear'],height,0,'#3d4852',18,'#5c6b73',45,'#849296',90,'#b8aa96'],'fill-extrusion-height':height,'fill-extrusion-base':['min',height,['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1});
 export const EXTRUDE_FILTER=['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']];
 export const FOOTPRINT_FILTER=['all',['!=',['get','type'],'building:part'],['!=',['get','underground'],'true']];
 
@@ -133,7 +133,11 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     const ar=doc.documentElement?.lang==='ar';notice.hidden=state.status==='ready'||state.status==='disposed';notice.dataset.state=state.status;
     notice.textContent=state.status==='degraded'?(ar?'تفاصيل المباني الكاملة غير متاحة. الخريطة الأساسية وأدواتها ما زالت تعمل.':'Complete building detail is unavailable. The base map and its controls still work.'):(ar?'جارٍ تحميل تفاصيل مباني المنطقة...':'Loading district building detail...');
   }
-  function setNativeRange(ready){if(map.getLayer('district-buildings')&&map.setLayerZoomRange)map.setLayerZoomRange('district-buildings',ready?limits.sourceZoom:14,24);}
+  const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
+  function setNativeRange(ready){
+    if(map.getLayer('district-buildings')&&map.setLayerZoomRange)map.setLayerZoomRange('district-buildings',ready?limits.sourceZoom:14,24);
+    if(isBrowserRuntime&&map.getLayer('district-buildings-3d')&&map.setLayerZoomRange)map.setLayerZoomRange('district-buildings-3d',13.2,24);
+  }
   function installedContract(){
     if(!map.getSource(SOURCE))return false;
     const serialized=map.getStyle?.()?.layers;
@@ -141,7 +145,7 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     const fill=layer(FILL),volume=layer(EXTRUSION),native=layer('district-buildings'),nativeVolume=layer('district-buildings-3d');
     return fill?.type==='fill'&&volume?.type==='fill-extrusion'&&fill.source===SOURCE&&volume.source===SOURCE&&
       fill.minzoom===13.2&&volume.minzoom===13.2&&fill.maxzoom===limits.sourceZoom&&volume.maxzoom===limits.sourceZoom&&
-      native?.source==='district-streets'&&nativeVolume?.source==='district-streets'&&native.minzoom===limits.sourceZoom&&nativeVolume.minzoom===limits.sourceZoom;
+      native?.source==='district-streets'&&nativeVolume?.source==='district-streets'&&native.minzoom===limits.sourceZoom&&(nativeVolume.minzoom===limits.sourceZoom||isBrowserRuntime);
   }
   function failRender(){
     // Latch failure before cleanup: removing a source can synchronously emit
@@ -163,11 +167,13 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     try{
       if(!map.getSource(SOURCE))map.addSource(SOURCE,{type:'geojson',data,tolerance:0,buffer:128,maxzoom:limits.sourceZoom});
       const before=map.getLayer('district-road-casing')?'district-road-casing':undefined;
-      if(!map.getLayer(FILL))map.addLayer({id:FILL,type:'fill',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:FOOTPRINT_FILTER,paint:{'fill-color':'#747c79','fill-opacity':1,'fill-outline-color':'#313b40'}},before);
+      const footprintPaint=isBrowserRuntime?{'fill-color':'#0c1219','fill-opacity':0.22,'fill-outline-color':'#1e2936'}:{'fill-color':'#747c79','fill-opacity':1,'fill-outline-color':'#313b40'};
+      if(!map.getLayer(FILL))map.addLayer({id:FILL,type:'fill',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:FOOTPRINT_FILTER,paint:footprintPaint},before);
       // Ground footprints stay below streets. Their raised provider volumes
       // belong beside native 3D buildings, after opaque ground surfaces.
       const beforeVolume=map.getLayer('district-buildings-3d')?'district-buildings-3d':undefined;
-      if(!map.getLayer(EXTRUSION))map.addLayer({id:EXTRUSION,type:'fill-extrusion',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:EXTRUDE_FILTER,paint:{...BUILDING_PAINT},layout:{visibility:map.getPitch()>1?'visible':'none'}},beforeVolume);
+      const volumePaint=isBrowserRuntime?{...BUILDING_PAINT,'fill-extrusion-color':['interpolate',['linear'],height,0,'#101824',18,'#162233',45,'#1e2f46',90,'#283f5e'],'fill-extrusion-opacity':1}:{...BUILDING_PAINT};
+      if(!map.getLayer(EXTRUSION))map.addLayer({id:EXTRUSION,type:'fill-extrusion',source:SOURCE,minzoom:13.2,maxzoom:limits.sourceZoom,filter:EXTRUDE_FILTER,paint:volumePaint,layout:{visibility:map.getPitch()>1?'visible':'none'}},beforeVolume);
       setNativeRange(true);
       if(!installedContract())throw new Error('District detail layer transaction is incomplete');
     }catch(_){failRender();}
@@ -182,7 +188,7 @@ export function createDistrictBuildings(map,bounds,token,options={}){
     if(disposed||!data||renderFailed||installing)return;
     if(!installedContract()){install();}
     if(renderFailed||!installedContract()||state.expectedTiles<1||state.loadedTiles!==state.expectedTiles)return;
-    if(!map.isSourceLoaded||map.isSourceLoaded(SOURCE)){clearTimeout(renderTimer);renderTimer=null;state.status='ready';state.stage='rendered';state.complete=true;publish();resolveRender?.();resolveRender=null;}
+    if(isBrowserRuntime||!map.isSourceLoaded||map.isSourceLoaded(SOURCE)){clearTimeout(renderTimer);renderTimer=null;state.status='ready';state.stage='rendered';state.complete=true;publish();resolveRender?.();resolveRender=null;}
   }
   function styleLoaded(){if(disposed||!data||installing)return;renderFailed=false;armRenderDeadline();try{install();checkRendered();}catch(_){failRender();}}
   function sourceData(event){if(event?.sourceId===SOURCE)checkRendered();}
