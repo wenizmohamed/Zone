@@ -782,7 +782,7 @@ initializeMapLocale();
     available.sort(function(a,b){function distance(point){var s=map.project(point);return Math.hypot(s.x-original.x,s.y-original.y);}return distance(a)-distance(b);});
     // Core icons retain their exact game destinations. Optional text is placed
     // around the resulting faction touch areas by Mapbox's collision index.
-    function clear(point){var s=map.project(point);return !ZoneCompactDistrict.collidesWithSymbols(map,[[s.x-halfWidth-6,s.y-30],[s.x+halfWidth+6,s.y+30]],true);}
+    function clear(point){var s=map.project(point),padY=typeof WebGLRenderingContext!=='undefined'?38:30,padX=typeof WebGLRenderingContext!=='undefined'?12:6;return !ZoneCompactDistrict.collidesWithSymbols(map,[[s.x-halfWidth-padX,s.y-padY],[s.x+halfWidth+padX,s.y+padY]],true);}
     return allCandidates?available.filter(clear):available.find(clear)||available[0]||p.anchor;
   }
   function syncHoldingMarkers(){
@@ -792,7 +792,7 @@ initializeMapLocale();
     ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
       var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId,isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'')+' overview'+(isTurf?' turfBanner':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?(isTurf?' · ⚔'+p.contestedCount:' · '+esc(C('contested'))):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
-      var anchor=regionMarkerAnchor(region,isTurf?(innerWidth<=760?52:58):22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
+      var anchor=regionMarkerAnchor(region,isTurf?(innerWidth<=760?66:68):22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.
       button.setAttribute('role','button');holdingMarkers.push({marker:marker,element:button,region:region,lngLat:anchor});
     });
@@ -1270,7 +1270,7 @@ initializeMapLocale();
   function pinInScope(p){return !territoryFilter||p.territory===territoryFilter||p.districtId===territoryFilter;}
   function pinVisible(p){return !(lastData&&lastData.presentation&&lastData.presentation.showLocations===false)&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));}
   var OVERVIEW_POIS=['bank','gym','alley','hospital','market','hq','home','missions'];
-  function overviewPoi(p){if(typeof WebGLRenderingContext!=='undefined'){if(typeof window!=='undefined'&&window.innerWidth<=760)return['bank','gym','alley','hospital','market','home','missions'].indexOf(p.id)!==-1;return['bank','gym','alley','hospital','market','home','missions','jobs'].indexOf(p.id)!==-1;}return OVERVIEW_POIS.indexOf(p.id)!==-1;}
+  function overviewPoi(p){if(typeof WebGLRenderingContext!=='undefined'){if(typeof window!=='undefined'&&window.innerWidth<=760)return['bank','alley','hospital','home','missions'].indexOf(p.id)!==-1;return['bank','gym','alley','hospital','market','home','missions','jobs'].indexOf(p.id)!==-1;}return OVERVIEW_POIS.indexOf(p.id)!==-1;}
   function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=15.8)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
   function locationPriority(p){
     var primary=['bank','jobs','gym','school','hospital','jail','market','home','casino','alley','hq','missions','arena','news','shop','pier','hof'].indexOf(p&&p.id);

@@ -1827,7 +1827,7 @@ class Component extends DCLogic {
     const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
     if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
-      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v127') : rawSrc);
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v128') : rawSrc);
     }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
