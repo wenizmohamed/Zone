@@ -451,7 +451,7 @@ initializeMapLocale();
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v130',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v131',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -1084,11 +1084,11 @@ initializeMapLocale();
   function supplyLinesGeo(list){
     var features=[],seen={};
     (list||[]).forEach(function(b,idx){
-      if(!b||b.neutral||!b.ownerId||(idx%2!==0&&!b.contested))return;
+      if(!b||b.neutral||!b.ownerId||!Array.isArray(b._centroidLngLat)||(idx%2!==0&&!b.contested))return;
       (b.neighbors||[]).slice(0,2).forEach(function(nid){
-        var nb=territoryById[nid];if(!nb||nb.neutral||nb.ownerId!==b.ownerId)return;
+        var nb=territoryById[nid];if(!nb||nb.neutral||nb.ownerId!==b.ownerId||!Array.isArray(nb._centroidLngLat))return;
         var key=b.id<nb.id?b.id+':'+nb.id:nb.id+':'+b.id;if(seen[key])return;seen[key]=1;
-        features.push({type:'Feature',properties:{color:b.color||'#39e7a3'},geometry:{type:'LineString',coordinates:[blockAnchor(b),blockAnchor(nb)]}});
+        features.push({type:'Feature',properties:{color:b.color||'#39e7a3'},geometry:{type:'LineString',coordinates:[b._centroidLngLat,nb._centroidLngLat]}});
       });
     });
     return {type:'FeatureCollection',features:features};

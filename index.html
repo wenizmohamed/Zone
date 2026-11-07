@@ -1831,7 +1831,7 @@ class Component extends DCLogic {
     const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
     if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
-      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v130') : rawSrc);
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v131') : rawSrc);
     }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
@@ -2163,7 +2163,7 @@ class Component extends DCLogic {
       if (f.getAttribute && !f.getAttribute('src')) {
         let source = f.getAttribute('data-character-src');
         if (this.state.characterFrameEpoch) { const retry = new URL(source, window.location.href); retry.searchParams.set('__zone_character_boot_retry','1'); source = retry.href; }
-        else if (typeof WebGLRenderingContext !== 'undefined' && source) { source += (source.includes('?') ? '&' : '?') + 'cb=v130'; }
+        else if (typeof WebGLRenderingContext !== 'undefined' && source) { source += (source.includes('?') ? '&' : '?') + 'cb=v131'; }
         f.setAttribute('src', source);
       }
       const s = this.p.stats;

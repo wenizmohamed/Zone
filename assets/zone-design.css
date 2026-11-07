@@ -769,7 +769,9 @@ html[dir="rtl"] .zone-next-move-art { border-radius:0 var(--zone-radius) var(--z
 [data-omar-chat-dock="1"][data-chat-collapsed="true"] {
   width:auto;
   max-width:calc(100vw - 24px);
-  padding:6px 12px !important;
+  inset-block-end:6px !important;
+  padding:4px 10px !important;
+  font-size:10.5px !important;
 }
 .zone-mobile-tabbar {
   display:none;
@@ -817,6 +819,7 @@ h2:focus-visible,
   font-size:12px !important;
 }
 .zone-crime-scene {
+  aspect-ratio:auto !important;
   min-height:66px !important;
   height:auto !important;
   padding:7px 10px !important;
