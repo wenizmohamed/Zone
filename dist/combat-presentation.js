@@ -126,8 +126,8 @@ export function installCombatStage(T, { scene, renderer }) {
   const root = new T.Group(); root.name = 'ZONE staged loading bay'; scene.add(root);
   const materials = new Set(), geometries = new Set(), textures = new Set(); let disposed = false;
   const material = parameters => { const value = new T.MeshStandardMaterial(parameters); materials.add(value); return value; };
-  const concrete = material({ color:0x757978, roughness:.94 }), brick = material({ color:0x666b69, roughness:.96 });
-  const steel = material({ color:0x353f45, metalness:.7, roughness:.48 }), shutter = material({ color:0x52636b, metalness:.55, roughness:.72 });
+  const concrete = material({ color:0x23272a, roughness:.94 }), brick = material({ color:0x1e2226, roughness:.96 });
+  const steel = material({ color:0x1c2226, metalness:.7, roughness:.48 }), shutter = material({ color:0x273036, metalness:.55, roughness:.72 });
   const paint = material({ color:0xa69163, roughness:.9 }), rubber = material({ color:0x1b2023, roughness:.94 });
   const lamp = material({ color:0xe9d9b5, emissive:0xe9c38a, emissiveIntensity:1.2, roughness:.4 });
   const mesh = (geometry, surface, position, rotation=[0,0,0]) => {
