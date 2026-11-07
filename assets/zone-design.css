@@ -826,6 +826,10 @@ h2:focus-visible,
   background:linear-gradient(180deg,#1d2024,#14171a) !important;
   border-block:1px solid var(--line) !important;
 }
+.zone-crime-resources {
+  margin:8px 0 0 !important;
+  max-width:100% !important;
+}
 .zone-gym-floor-scene {
   min-height:74px !important;
   padding:12px 16px !important;
