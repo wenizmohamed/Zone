@@ -451,7 +451,7 @@ initializeMapLocale();
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v129',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v130',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -790,7 +790,7 @@ initializeMapLocale();
     if(mapMode!=='territories'){ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);return;}
     var representedFamilies=new Set();
     ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
-      var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId,isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'')+' overview'+(isTurf?' turfBanner':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?(isTurf?' · ⚔'+p.contestedCount:' · '+esc(C('contested'))):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
+      var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId,isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'')+' overview'+(isTurf?' turfBanner':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?(isTurf?' · ⚔'+p.contestedCount+' · ★RACKET':' · '+esc(C('contested'))):(isTurf?' · ★RACKET':''))+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
       var anchor=regionMarkerAnchor(region,isTurf?(innerWidth<=760?66:68):22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.
@@ -1081,6 +1081,18 @@ initializeMapLocale();
   function applyOwnershipStyle(){
     if(map.getLayer('zone-ownership-fill'))map.setPaintProperty('zone-ownership-fill','fill-opacity',ownershipOpacity());
   }
+  function supplyLinesGeo(list){
+    var features=[],seen={};
+    (list||[]).forEach(function(b,idx){
+      if(!b||b.neutral||!b.ownerId||(idx%2!==0&&!b.contested))return;
+      (b.neighbors||[]).slice(0,2).forEach(function(nid){
+        var nb=territoryById[nid];if(!nb||nb.neutral||nb.ownerId!==b.ownerId)return;
+        var key=b.id<nb.id?b.id+':'+nb.id:nb.id+':'+b.id;if(seen[key])return;seen[key]=1;
+        features.push({type:'Feature',properties:{color:b.color||'#39e7a3'},geometry:{type:'LineString',coordinates:[blockAnchor(b),blockAnchor(nb)]}});
+      });
+    });
+    return {type:'FeatureCollection',features:features};
+  }
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
     if(!map.getSource('zone-blocks'))map.addSource('zone-blocks',{type:'geojson',data:territoryGeo(territoryData)});
@@ -1093,6 +1105,8 @@ initializeMapLocale();
     if(!map.getLayer('zone-ownership-fill'))map.addLayer({id:'zone-ownership-fill',type:'fill',source:'zone-ownership',paint:{'fill-color':['coalesce',['get','renderColor'],'#87918c'],'fill-opacity':ownershipOpacity(),'fill-outline-color':'rgba(0,0,0,0)','fill-antialias':false}},before);
     if(typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'')){
       var before3D=map.getLayer('district-complete-volumes')?'district-complete-volumes':map.getLayer('district-buildings-3d')?'district-buildings-3d':before;
+      if(!map.getSource('district-supply-source'))map.addSource('district-supply-source',{type:'geojson',data:supplyLinesGeo(territoryData)});
+      if(!map.getLayer('district-supply-lines'))map.addLayer({id:'district-supply-lines',type:'line',source:'district-supply-source',paint:{'line-color':['coalesce',['get','color'],'#39e7a3'],'line-width':1.35,'line-dasharray':[2,2],'line-opacity':0.62}},before3D);
       if(!map.getLayer('district-turf-border'))map.addLayer({id:'district-turf-border',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':2,'line-opacity':0.88}},before3D);
       if(!map.getLayer('district-contested-border'))map.addLayer({id:'district-contested-border',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#d96a48','line-width':1.8,'line-dasharray':[2,1.5],'line-opacity':0.88}},before3D);
     }
@@ -1120,6 +1134,7 @@ initializeMapLocale();
     var hadSource=!!map.getSource('zone-blocks');ensureTerritoryLayers();
     try{var geo=territoryGeo(territoryData),src=map.getSource('zone-blocks');if(src&&hadSource)src.setData(geo);document.body.dataset.zoneFeatureCount=String(geo.features.length);map.once('idle',function(){try{var rendered=map.queryRenderedFeatures({layers:['zone-blocks-fill']});document.body.dataset.zoneRenderedCount=String(rendered.length);document.body.dataset.zoneRenderedSummary=JSON.stringify(rendered.reduce(function(acc,feature){var key=feature.properties&&feature.properties.neutral?'neutral':String(feature.properties&&feature.properties.ownerId||'owned');acc[key]=(acc[key]||0)+1;return acc;},{}));}catch(_){}});}catch(_){}
     var ownershipSource=map.getSource('zone-ownership');if(ownershipSource)ownershipSource.setData(rebuildOwnership(territoryGeo(territoryData)));
+    var supplySource=map.getSource('district-supply-source');if(supplySource)supplySource.setData(supplyLinesGeo(territoryData));
     applyOwnershipStyle();if(landmarkController){landmarkController.setTerritories(territoryGeo(territoryData).features);if(typeof WebGLRenderingContext!=='undefined')landmarkController.retrySurfaces();}
     selectedTerritory=selectedId&&territoryById[selectedId]?territoryById[selectedId]:null;
     if(selectedTerritory){if(panelWasOpen)selectTerritory(selectedTerritory);else{try{map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:true});}catch(_){}updateAdjacency(selectedTerritory,true);}}

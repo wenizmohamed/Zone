@@ -817,9 +817,10 @@ h2:focus-visible,
   font-size:12px !important;
 }
 .zone-crime-scene {
-  min-height:10px !important;
-  height:10px !important;
-  background:linear-gradient(90deg,var(--acc2),var(--panel2)) !important;
+  min-height:66px !important;
+  height:auto !important;
+  padding:7px 10px !important;
+  background:linear-gradient(180deg,#1d2024,#14171a) !important;
   border-block:1px solid var(--line) !important;
 }
 .zone-gym-floor-scene {
