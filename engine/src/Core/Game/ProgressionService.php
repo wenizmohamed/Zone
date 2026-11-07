@@ -437,7 +437,7 @@ final class ProgressionService
                         'apt' => ['id' => 'apt', 'nameEn' => 'Luxury Apartment', 'nameAr' => 'شقة فاخرة', 'days' => 30, 'happy' => 500, 'cost' => 4000],
                     ];
                     $cfg = $leases[$id] ?? $leases['island_ext'];
-                    $this->changeCash($playerId, -(int) $cfg['cost'], 'property.lease:' . $id, $correlationId);
+                    $this->cash($playerId, -(int) $cfg['cost'], 'property.lease:' . $id, $correlationId);
                     $curLease = is_array($state['propertyLease'] ?? null) ? $state['propertyLease'] : ['daysLeft' => 33, 'totalDays' => 100];
                     $daysLeft = !empty($cfg['extend']) ? ((int) ($curLease['daysLeft'] ?? 33) + (int) $cfg['days']) : (int) $cfg['days'];
                     $totalDays = !empty($cfg['extend']) ? ((int) ($curLease['totalDays'] ?? 100) + (int) $cfg['days']) : (int) $cfg['days'];
@@ -454,13 +454,13 @@ final class ProgressionService
                         $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : [];
                         $state['plushies']['plush_camel'] = (int) ($state['plushies']['plush_camel'] ?? 1) + 1;
                     }
-                    $this->changeCash($playerId, $val, 'city.spawnClaim:' . $id, $correlationId);
+                    $this->cash($playerId, $val, 'city.spawnClaim:' . $id, $correlationId);
                     $result['cashDelta'] = $val;
                     break;
                 case 'museum.plushieBuy':
                     $prices = ['plush_camel' => 1200, 'plush_bear' => 1500, 'plush_moose' => 1400, 'plush_pharaoh' => 1800, 'plush_falcon' => 1350, 'plush_lion' => 1600, 'all_set' => 8850];
                     $cost = (int) ($prices[$id] ?? 1200);
-                    $this->changeCash($playerId, -$cost, 'museum.plushieBuy:' . $id, $correlationId);
+                    $this->cash($playerId, -$cost, 'museum.plushieBuy:' . $id, $correlationId);
                     $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : ['plush_camel' => 1, 'plush_bear' => 1, 'plush_moose' => 1, 'plush_pharaoh' => 1, 'plush_falcon' => 1, 'plush_lion' => 1];
                     if ($id === 'all_set') {
                         foreach (['plush_camel', 'plush_bear', 'plush_moose', 'plush_pharaoh', 'plush_falcon', 'plush_lion'] as $pk) {
@@ -490,7 +490,7 @@ final class ProgressionService
                     break;
                 case 'social.bazaarBuy':
                     $cost = max(0, (int) ($expectedPrice ?? 0));
-                    if ($cost > 0) $this->changeCash($playerId, -$cost, 'social.bazaarBuy:' . $id, $correlationId);
+                    if ($cost > 0) $this->cash($playerId, -$cost, 'social.bazaarBuy:' . $id, $correlationId);
                     if (str_starts_with($id, 'plush_')) {
                         $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : [];
                         $state['plushies'][$id] = (int) ($state['plushies'][$id] ?? 0) + 1;
@@ -502,7 +502,7 @@ final class ProgressionService
                 case 'social.sendCash':
                 case 'social.bounty':
                     $cost = max(0, (int) ($expectedPrice ?? ($action === 'social.bounty' ? 25000 : 5000)));
-                    if ($cost > 0) $this->changeCash($playerId, -$cost, $action . ':' . $id, $correlationId);
+                    if ($cost > 0) $this->cash($playerId, -$cost, $action . ':' . $id, $correlationId);
                     $result['cashDelta'] = -$cost;
                     break;
                 case 'social.tag':
