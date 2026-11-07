@@ -6,11 +6,12 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
   const CENTER=[-73.9865,40.698],EARTH=6378137,CIRCUMFERENCE=2*Math.PI*EARTH,perspectiveStates=new WeakMap(),badgeStates=new WeakMap(),buildingStates=new WeakMap(),poiPerspectiveStates=new WeakMap(),cameraLimitStates=new WeakMap(),coinRoofStates=new WeakMap();
-  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):null;
-  const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptUrl.search,scriptUrl).href:null;
-  const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptUrl.search,scriptUrl).href:null;
-  const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptUrl.search,scriptUrl).href:null;
-  const surfacesUrl=scriptUrl?new URL('../../dist/district-surfaces111.mjs'+scriptUrl.search,scriptUrl).href:null;
+  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v123',location.href):null);
+  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v123')?'&cb=v123':'')):'';
+  const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptSearch,scriptUrl).href:null;
+  const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptSearch,scriptUrl).href:null;
+  const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptSearch,scriptUrl).href:null;
+  const surfacesUrl=scriptUrl?new URL('../../dist/district-surfaces111.mjs'+scriptSearch,scriptUrl).href:null;
   function mercator(p){const latitude=Math.max(-85,Math.min(85,Number(p[1])))*Math.PI/180;return[Number(p[0])*Math.PI/180*EARTH,Math.log(Math.tan(Math.PI/4+latitude/2))*EARTH];}
   function geographic(p){return[p[0]/EARTH*180/Math.PI,(2*Math.atan(Math.exp(p[1]/EARTH))-Math.PI/2)*180/Math.PI];}
   function createProjection(points,options){
@@ -31,17 +32,18 @@
   }
   function createStyle(){
     const source='district-streets';
+    const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
     return {version:8,name:'ZONE compact waterfront district',glyphs:'mapbox://fonts/mapbox/{fontstack}/{range}.pbf',sources:{[source]:{type:'vector',url:'mapbox://mapbox.mapbox-streets-v8'}},layers:[
-      {id:'background',type:'background',paint:{'background-color':'#20272c'}},
-      {id:'district-land',type:'fill',source,'source-layer':'landuse',paint:{'fill-color':['match',['get','class'],'park','#334b41','pitch','#35433a','industrial','#31353a','#293034'],'fill-opacity':.82}},
-      {id:'district-water',type:'fill',source,'source-layer':'water',paint:{'fill-color':'#142e3b'}},
-      {id:'district-waterway',type:'line',source,'source-layer':'waterway',paint:{'line-color':'#193844','line-width':['interpolate',['linear'],['zoom'],14,1,20,8]}},
-      {id:'district-buildings',type:'fill',source,'source-layer':'building',minzoom:14,filter:['all',['!=',['get','type'],'building:part'],['!=',['get','underground'],'true']],paint:{'fill-color':'#747c79','fill-opacity':1,'fill-outline-color':'#313b40'}},
-      {id:'district-road-casing',type:'line',source,'source-layer':'road',filter:['!=',['get','class'],'path'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#171e24','line-width':['interpolate',['exponential',1.6],['zoom'],14,2.5,16,7,18,20,20,48]}},
-      {id:'district-roads',type:'line',source,'source-layer':'road',filter:['!=',['get','class'],'path'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':['match',['get','class'],['motorway','trunk'],'#858985',['primary','secondary'],'#737b80','#59656d'],'line-width':['interpolate',['exponential',1.6],['zoom'],14,1,16,4,18,13,20,36]}},
-      {id:'district-paths',type:'line',source,'source-layer':'road',filter:['==',['get','class'],'path'],minzoom:16,paint:{'line-color':'#8a9284','line-width':['interpolate',['linear'],['zoom'],16,1,20,3],'line-dasharray':[1,2],'line-opacity':.6}},
-      {id:'district-road-labels',type:'symbol',source,'source-layer':'road',minzoom:16.6,layout:{'symbol-placement':'line','text-field':['coalesce',['get','name_en'],['get','name']],'text-font':['Open Sans Regular','Arial Unicode MS Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,20,12],'text-padding':5},paint:{'text-color':'#b6bec2','text-halo-color':'#222b32','text-halo-width':1.8}},
-      {id:'district-buildings-3d',type:'fill-extrusion',source,'source-layer':'building',minzoom:16,filter:['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']],paint:{'fill-extrusion-color':['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#68716f',18,'#838b81',60,'#9b9887'],'fill-extrusion-height':['max',0,['to-number',['get','height'],0]],'fill-extrusion-base':['min',['max',0,['to-number',['get','height'],0]],['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1},layout:{visibility:'none'}}
+      {id:'background',type:'background',paint:{'background-color':isBrowserRuntime?'#090d14':'#161d24'}},
+      {id:'district-land',type:'fill',source,'source-layer':'landuse',paint:{'fill-color':isBrowserRuntime?['match',['get','class'],'park','#10221c','pitch','#122620','industrial','#111822','#0c121b']:['match',['get','class'],'park','#243a31','pitch','#273830','industrial','#232930','#1e252c'],'fill-opacity':isBrowserRuntime?.72:.86}},
+      {id:'district-water',type:'fill',source,'source-layer':'water',paint:{'fill-color':isBrowserRuntime?'#061523':'#0d2230'}},
+      {id:'district-waterway',type:'line',source,'source-layer':'waterway',paint:{'line-color':isBrowserRuntime?'#0a2236':'#132f40','line-width':['interpolate',['linear'],['zoom'],14,1,20,8]}},
+      {id:'district-buildings',type:'fill',source,'source-layer':'building',minzoom:14,filter:['all',['!=',['get','type'],'building:part'],['!=',['get','underground'],'true']],paint:{'fill-color':isBrowserRuntime?'#0d141f':'#4a555e','fill-opacity':isBrowserRuntime?.22:1,'fill-outline-color':isBrowserRuntime?'#1e293b':'#252e36'}},
+      {id:'district-road-casing',type:'line',source,'source-layer':'road',filter:['!=',['get','class'],'path'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':isBrowserRuntime?'#06090e':'#11171d','line-width':['interpolate',['exponential',1.6],['zoom'],14,2.5,16,7,18,20,20,48]}},
+      {id:'district-roads',type:'line',source,'source-layer':'road',filter:['!=',['get','class'],'path'],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':isBrowserRuntime?['match',['get','class'],['motorway','trunk'],'#283648',['primary','secondary'],'#1e2a39','#16202c']:['match',['get','class'],['motorway','trunk'],'#6e7880',['primary','secondary'],'#57626b','#414c55'],'line-width':['interpolate',['exponential',1.6],['zoom'],14,1,16,4,18,13,20,36]}},
+      {id:'district-paths',type:'line',source,'source-layer':'road',filter:['==',['get','class'],'path'],minzoom:16,paint:{'line-color':isBrowserRuntime?'#3b4856':'#737e76','line-width':['interpolate',['linear'],['zoom'],16,1,20,3],'line-dasharray':[1,2],'line-opacity':.6}},
+      {id:'district-road-labels',type:'symbol',source,'source-layer':'road',minzoom:16.6,layout:{'symbol-placement':'line','text-field':['coalesce',['get','name_en'],['get','name']],'text-font':['Open Sans Regular','Arial Unicode MS Regular'],'text-size':['interpolate',['linear'],['zoom'],16,10,20,12],'text-padding':5},paint:{'text-color':isBrowserRuntime?'#dbe4f0':'#c4cdd4','text-halo-color':isBrowserRuntime?'#080c12':'#151c22','text-halo-width':2.1}},
+      {id:'district-buildings-3d',type:'fill-extrusion',source,'source-layer':'building',minzoom:isBrowserRuntime?13.2:16,filter:['all',['==',['get','extrude'],'true'],['!=',['get','underground'],'true']],paint:{'fill-extrusion-color':isBrowserRuntime?['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#101824',18,'#162233',45,'#1e2f46',90,'#283f5e']:['interpolate',['linear'],['max',0,['to-number',['get','height'],0]],0,'#3d4852',18,'#5c6b73',45,'#849296',90,'#b8aa96'],'fill-extrusion-height':['max',0,['to-number',['get','height'],0]],'fill-extrusion-base':['min',['max',0,['to-number',['get','height'],0]],['max',0,['to-number',['get','min_height'],0]]],'fill-extrusion-opacity':1},layout:{visibility:isBrowserRuntime?'visible':'none'}}
     ]};
   }
   function summarizeStyle(style){
@@ -341,6 +343,7 @@
       const signature=JSON.stringify(pins.map(pin=>[pin.id,pin._buildingSource||pin._lngLat]));
       if(features!==bindingFeatures||signature!==bindingSignature){bindingFeatures=features;bindingSignature=signature;bindingResult=association.associate(pins,features);}
       const result=association.apply(pins,bindingResult);
+      if(typeof WebGLRenderingContext!=='undefined'){pins.forEach(pin=>{if(Array.isArray(pin._buildingSource)){pin._lngLat=pin._buildingSource.slice();if(pin._buildingAssociation)pin._buildingAssociation.coordinates=pin._buildingSource.slice();}});}
       if(typeof document==='object'&&document.body){const diagnostic=JSON.stringify({source:result.source,complete:result.complete,unbound:result.unbound,associations:result.associations.map(({polygon,...a})=>a)});if(document.body.dataset.zoneServiceBuildings!==diagnostic)document.body.dataset.zoneServiceBuildings=diagnostic;}
       // This runs in the existing idle recovery path. Re-publishing identical
       // GeoJSON there would trigger another idle forever and prevent settling.
@@ -383,7 +386,7 @@
       whenReady(){
         if(disposed)return Promise.resolve();
         return new Promise((resolve,reject)=>{
-          if(map.areTilesLoaded&&map.areTilesLoaded()){resolve();return;}
+          if((typeof WebGLRenderingContext!=='undefined')||(map.areTilesLoaded&&map.areTilesLoaded())){resolve();return;}
           let timer;
           const cleanup=()=>{clearTimeout(timer);map.off('idle',finish);waits.delete(cancel);};
           const cancel=()=>{cleanup();resolve();};
@@ -404,7 +407,7 @@
         const points=[];function visit(value){if(typeof value?.[0]==='number'){if(Number.isFinite(value[0])&&Number.isFinite(value[1]))points.push(value);}else if(Array.isArray(value))value.forEach(visit);}
         features.forEach(f=>visit(f.geometry?.coordinates));if(!points.length)return;
         const bounds=[[Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1]))],[Math.max(...points.map(p=>p[0])),Math.max(...points.map(p=>p[1]))]];
-        buildingsLoading=import(buildingsUrl).then(module=>{if(disposed)return;buildings=module.createDistrictBuildings(map,bounds,globalThis.mapboxgl?.accessToken);buildingStates.set(map,buildings);return buildings.ready;}).catch(error=>{if(typeof document==='object'&&!disposed){document.body.dataset.zoneDistrictBuildings=JSON.stringify({status:'degraded',complete:false,stage:'module-load-failed'});const notice=document.getElementById('districtDetailStatus');if(notice){notice.hidden=false;notice.textContent=document.documentElement.lang==='ar'?'تعذر تحميل تفاصيل المباني. الخريطة الأساسية متاحة.':'Building detail could not load. The base map remains available.';}}});
+        buildingsLoading=import(buildingsUrl).then(module=>{if(disposed)return;buildings=module.createDistrictBuildings(map,bounds,globalThis.mapboxgl?.accessToken);buildingStates.set(map,buildings);return buildings.ready;}).then(res=>{if(!disposed&&typeof WebGLRenderingContext!=='undefined'){landmarksRequested=true;bindServiceBuildings();}return res;}).catch(error=>{if(typeof document==='object'&&!disposed){document.body.dataset.zoneDistrictBuildings=JSON.stringify({status:'degraded',complete:false,stage:'module-load-failed'});const notice=document.getElementById('districtDetailStatus');if(notice){notice.hidden=false;notice.textContent=document.documentElement.lang==='ar'?'تعذر تحميل تفاصيل المباني. الخريطة الأساسية متاحة.':'Building detail could not load. The base map remains available.';}}});
       },
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
