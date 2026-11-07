@@ -104,9 +104,9 @@
           <button class="zone-cmd-btn" onClick="{{ omar.toggleAdvSearch }}" style="background:{{ omar.advSearchBtnBg }};color:{{ omar.advSearchBtnFg }};border:1px solid var(--acc);border-radius:3px;padding:3px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.advSearchBtnLabel }}</button>
         </div>
         <div class="zone-cmd-actions" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <button class="zone-cmd-btn" onClick="{{ omar.openOtherSampleProfile }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">🎯 {{ omar.inspectRivalBtnLabel }}</button>
-          <button class="zone-cmd-btn" onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">📖 {{ omar.wikiRulesBtnLabel }}</button>
-          <button class="zone-cmd-btn" onClick="{{ omar.toggleChatDock }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">💬 {{ omar.chatToggleBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.openOtherSampleProfile }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.inspectRivalBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;cursor:pointer">{{ omar.wikiRulesBtnLabel }}</button>
+          <button class="zone-cmd-btn" onClick="{{ omar.toggleChatDock }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.chatToggleBtnLabel }}</button>
         </div>
       </div>
     </div>
@@ -125,7 +125,7 @@
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.name }}</span><span style="color:var(--link);font-weight:600">{{ t.player }} <bdi style="color:var(--acc)">[#{{ omar.playerId }}]</bdi></span></div>
             <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--mu)">{{ omar.loginEmailLabel }}</span><bdi style="color:var(--t3)">{{ omar.accountEmail }}</bdi></div>
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.money }}</span><bdi id="zone-cash" data-zfig="1" style="color:var(--money);font-weight:600;font-size:13.5px;display:inline-block">{{ cash }}</bdi></div>
-            <button data-omar-sidebar-profile="1" onClick="{{ omar.openOwnProfile }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+            <button data-omar-sidebar-profile="1" onClick="{{ omar.openOwnProfile }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:5px 8px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;width:100%;text-align:center">{{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
           </div>
           <a class="zone-profile-account" href="{{ accountHref }}" style="color:var(--link);display:block;padding:10px 0;min-height:44px">{{ accountLabel }}</a>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.level }}</span><bdi style="color:var(--t1)">{{ level }} <span style="color:var(--mu);font-size:10px">{{ levelTitle }}</span></bdi></div>
@@ -272,11 +272,11 @@
           </sc-if>
 
           <sc-if value="{{ omar.showStatsCompare }}" hint-placeholder-val="{{ false }}">
-            <div style="background:var(--panel);border:1px solid var(--border3);border-radius:5px;padding:10px">
-              <div style="font-weight:700;color:var(--gold);font-size:12px;margin-bottom:6px">📊 {{ omar.compareStatsTitle }}</div>
+            <div style="background:var(--panel);border:1px solid var(--border3);border-radius:3px;padding:10px">
+              <div style="font-weight:700;color:var(--gold);font-size:12px;margin-bottom:6px">{{ omar.compareStatsTitle }}</div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
                 <sc-for list="{{ omar.activeProfile.compareRows }}" as="cr" hint-placeholder-count="5">
-                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 9px">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:6px 9px">
                     <span style="display:block;color:var(--mu);font-size:10px">{{ cr.stat }}</span>
                     <div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:3px">
                       <span style="color:var(--acc)">{{ omar.youLabel }}: <bdi>{{ cr.you }}</bdi></span>
@@ -289,14 +289,14 @@
           </sc-if>
 
           <sc-if value="{{ omar.showPlayerBazaar }}" hint-placeholder-val="{{ false }}">
-            <div style="background:var(--panel);border:1px solid var(--gold);border-radius:5px;padding:10px">
+            <div style="background:var(--panel);border:1px solid var(--gold);border-radius:3px;padding:10px">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                <strong style="color:var(--gold);font-size:12.5px">🏪 {{ omar.activeProfile.bazaarTitle }}</strong>
+                <strong style="color:var(--gold);font-size:12.5px">{{ omar.activeProfile.bazaarTitle }}</strong>
                 <span style="color:var(--mu);font-size:11px">{{ omar.bazaarSub }}</span>
               </div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
                 <sc-for list="{{ omar.activeProfile.bazaarItems }}" as="bz" hint-placeholder-count="3">
-                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                     <div>
                       <strong style="color:var(--t1);font-size:12px;display:block">{{ bz.name }}</strong>
                       <small style="color:var(--money);font-weight:600">{{ bz.price }} · ×{{ bz.qty }}</small>
@@ -308,11 +308,11 @@
             </div>
           </sc-if>
 
-          <div style="background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px 10px">
-            <div style="font-weight:700;color:var(--t1);font-size:11.5px;margin-bottom:6px">🏅 {{ omar.medalsCabinetTitle }} ({{ omar.activeProfile.medals.length }})</div>
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:3px;padding:9px 10px">
+            <div style="font-weight:700;color:var(--t1);font-size:11.5px;margin-bottom:6px">{{ omar.medalsCabinetTitle }} ({{ omar.activeProfile.medals.length }})</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <sc-for list="{{ omar.activeProfile.medals }}" as="md" hint-placeholder-count="6">
-                <span style="padding:4px 9px;background:var(--deep);border:1px solid var(--gold);border-radius:4px;color:var(--gold);font-size:10.5px;font-weight:600">🏅 {{ md }}</span>
+                <span style="padding:4px 9px;background:var(--deep);border:1px solid var(--gold);border-radius:3px;color:var(--gold);font-size:10.5px;font-weight:600">{{ md }}</span>
               </sc-for>
             </div>
           </div>
@@ -326,7 +326,7 @@
           <div class="zone-modal-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
-              <strong style="color:var(--t1);font-size:15px">🔍 {{ omar.advSearchTitle }}</strong>
+              <strong style="color:var(--t1);font-size:15px">{{ omar.advSearchTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.advSearchSub }}</div>
             </div>
             <button class="zone-compact-btn" onClick="{{ omar.toggleAdvSearch }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
@@ -339,7 +339,7 @@
           </div>
           <div style="display:grid;gap:6px">
             <sc-for list="{{ omar.advSearchResults }}" as="sr" hint-placeholder-count="6">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
                 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                   <strong style="color:var(--link);font-size:12.5px">{{ sr.name }} <bdi style="color:var(--acc)">[#{{ sr.id }}]</bdi></strong>
                   <span style="color:var(--t3);font-size:11px">Lv.{{ sr.level }} · {{ sr.ageDays }}d · {{ sr.gender }}</span>
@@ -347,8 +347,8 @@
                   <span style="color:{{ sr.statusColor }};font-size:11px;font-weight:600">{{ sr.statusText }}</span>
                 </div>
                 <div style="display:flex;gap:6px">
-                  <button class="zone-compact-btn" onClick="{{ sr.openProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">👤 {{ omar.viewProfileLabel }}</button>
-                  <button class="zone-compact-btn" onClick="{{ sr.attack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">⚔️ {{ t.nav.attack }}</button>
+                  <button class="zone-compact-btn" onClick="{{ sr.openProfile }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.viewProfileLabel }}</button>
+                  <button class="zone-compact-btn" onClick="{{ sr.attack }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ t.nav.attack }}</button>
                 </div>
               </div>
             </sc-for>
@@ -362,7 +362,7 @@
         <section class="zone-panel" data-omar-wiki="1">
           <div class="zone-modal-card">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <strong style="color:var(--gold);font-size:14px">📖 {{ omar.wikiTitle }}</strong>
+            <strong style="color:var(--gold);font-size:14px">{{ omar.wikiTitle }}</strong>
             <button class="zone-compact-btn" onClick="{{ omar.toggleWiki }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 10px;font:inherit;font-size:11px;cursor:pointer">✕ {{ omar.closeLabel }}</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
@@ -483,17 +483,17 @@
               <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
             </div>
             <div class="zone-dossier-actions" style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="zone-compact-btn" onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
-              <button class="zone-compact-btn" onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">🏆 {{ t.merits }} ({{ merits }})</button>
-              <button class="zone-compact-btn" onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">🏠 {{ omar.propertyCardTitle }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ t.merits }} ({{ merits }})</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">{{ omar.propertyCardTitle }}</button>
             </div>
           </div>
 
           <div class="zone-dossier-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
             <!-- Card 1: General Information -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>📋 {{ omar.generalInfoTitle }}</span>
+                <span>{{ omar.generalInfoTitle }}</span>
                 <span style="color:var(--acc)">ID #{{ omar.playerId }}</span>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -507,9 +507,9 @@
             </div>
 
             <!-- Card 2: Battle Stats -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>⚔️ {{ omar.battleStatsTitle }}</span>
+                <span>{{ omar.battleStatsTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.openGymScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.gym }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -523,9 +523,9 @@
             </div>
 
             <!-- Card 3: Working Stats & Job Information -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>💼 {{ omar.workingStatsTitle }}</span>
+                <span>{{ omar.workingStatsTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.openJobsScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.jobs }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -539,9 +539,9 @@
             </div>
 
             <!-- Card 4: Personal Perks -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>✨ {{ omar.personalPerksTitle }}</span>
+                <span>{{ omar.personalPerksTitle }}</span>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11px">
                 <sc-for list="{{ omar.personalPerks }}" as="pk" hint-placeholder-count="6">
@@ -554,9 +554,9 @@
             </div>
 
             <!-- Card 5: Property Information & Rental Lease -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏠 {{ omar.propertyCardTitle }}</span>
+                <span>{{ omar.propertyCardTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.rentPrivateIslandQuick }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ omar.rentIslandBtnLabel }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -570,9 +570,9 @@
             </div>
 
             <!-- Card 6: Merits & Skill Upgrades (1->2->3->4 pt progression) -->
-            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
+            <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;overflow:hidden">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏆 {{ omar.meritsTreeTitle }}</span>
+                <span>{{ omar.meritsTreeTitle }}</span>
                 <bdi style="color:var(--gold);font-size:11px">{{ merits }} {{ t.merits }}</bdi>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;font-size:11px">
@@ -677,19 +677,19 @@
           <sc-for list="{{ travelDests }}" as="cy" hint-placeholder-count="5"><button class="zone-compact-btn zone-city-travel-pill" onClick="{{ cy.go }}" disabled="{{ cy.disabled }}" style="white-space:nowrap;background:{{ cy.bg }};color:{{ cy.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ cy.name }}</button></sc-for>
         </div>
         <!-- OMAR FEEDBACK: CITY MAP RANDOM ITEM SPAWNS ("AWARENESS" MERIT & CIRCLED FINDS UP TO $5M) -->
-        <section class="zone-panel zone-city-intel-panel" data-omar-city-awareness="1" style="background:var(--panel);border:1px solid var(--border2);border-inline-start:3px solid var(--gold);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+        <section class="zone-panel zone-city-intel-panel" data-omar-city-awareness="1" style="background:var(--panel);border:1px solid var(--border2);border-inline-start:3px solid var(--gold);border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
           <div class="zone-city-intel-head" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
-              <strong style="color:var(--gold);font-size:13px">👁️ {{ omar.awarenessCityTitle }}</strong>
+              <strong style="color:var(--gold);font-size:13px">{{ omar.awarenessCityTitle }}</strong>
               <div style="color:var(--t3);font-size:11px">{{ omar.awarenessCitySub }}</div>
             </div>
-            <button class="zone-compact-btn" onClick="{{ omar.rollLuckyCitySpawn }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🎲 {{ omar.rollSpawnBtnLabel }}</button>
+            <button class="zone-compact-btn" onClick="{{ omar.rollLuckyCitySpawn }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.rollSpawnBtnLabel }}</button>
           </div>
           <div class="zone-city-spawn-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
             <sc-for list="{{ omar.cityMapSpawns }}" as="sp" hint-placeholder-count="4">
-              <div class="zone-city-spawn-card" style="background:var(--deep);border:1px solid var(--border);border-inline-start:3px solid {{ sp.borderColor }};border-radius:5px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div class="zone-city-spawn-card" style="background:var(--deep);border:1px solid var(--border);border-inline-start:3px solid {{ sp.borderColor }};border-radius:3px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <div>
-                  <span style="display:inline-block;padding:1px 6px;border-radius:8px;background:rgba(235,201,128,.16);color:var(--gold);font-size:9.5px;font-weight:700">⭕ {{ sp.rarity }}</span>
+                  <span style="display:inline-block;padding:1px 6px;border-radius:2px;background:rgba(235,201,128,.16);color:var(--gold);font-size:9.5px;font-weight:700">{{ sp.rarity }}</span>
                   <strong style="display:block;color:var(--t1);font-size:12px;margin-top:2px">{{ sp.name }}</strong>
                   <small style="color:var(--money);font-weight:600">{{ sp.valueText }} · {{ sp.district }}</small>
                 </div>
@@ -700,22 +700,22 @@
         </section>
 
         <!-- OMAR FEEDBACK: REGIONAL TRAVEL PLUSHIES / SOUVENIRS & MUSEUM -> FREE POINTS LOOP -->
-        <section class="zone-panel zone-city-museum-panel" data-omar-museum-plushies="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+        <section class="zone-panel zone-city-museum-panel" data-omar-museum-plushies="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
           <div class="zone-city-museum-head" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
-              <strong style="color:var(--t1);font-size:13px">🏛️ {{ omar.museumTitle }}</strong>
+              <strong style="color:var(--t1);font-size:13px">{{ omar.museumTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.museumSub }}</div>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="zone-compact-btn" onClick="{{ omar.collectRegionalPlushieSet }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">✈️ {{ omar.buyAllPlushiesBtn }}</button>
-              <button class="zone-compact-btn" onClick="{{ omar.exchangeMuseumSetForPoints }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🏛️ {{ omar.exchangeMuseumBtn }} (+10 {{ t.points }})</button>
+              <button class="zone-compact-btn" onClick="{{ omar.collectRegionalPlushieSet }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ omar.buyAllPlushiesBtn }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.exchangeMuseumSetForPoints }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.exchangeMuseumBtn }} (+10 {{ t.points }})</button>
             </div>
           </div>
           <div class="zone-city-plushie-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px">
             <sc-for list="{{ omar.plushieCatalog }}" as="pl" hint-placeholder-count="6">
-              <div class="zone-city-plushie-card" style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+              <div class="zone-city-plushie-card" style="background:var(--deep);border:1px solid var(--border);border-radius:3px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <div>
-                  <strong style="color:var(--t1);font-size:11.5px;display:block">{{ pl.icon }} {{ pl.name }}</strong>
+                  <strong style="color:var(--t1);font-size:11.5px;display:block">{{ pl.name }}</strong>
                   <small style="color:var(--mu);font-size:10px">{{ pl.city }} · {{ pl.priceText }} · {{ omar.ownedLabel }}: <bdi style="color:var(--acc);font-weight:700">{{ pl.owned }}</bdi></small>
                 </div>
                 <button class="zone-compact-btn" onClick="{{ pl.buy }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.buy }}</button>
@@ -916,13 +916,13 @@
             </div>
           </sc-for>
         </div>
-        <section class="zone-panel" data-omar-honors-merits="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <section class="zone-panel" data-omar-honors-merits="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
-              <strong style="color:var(--gold);font-size:14px">🏅 {{ omar.honorsSectionTitle }}</strong>
+              <strong style="color:var(--gold);font-size:14px">{{ omar.honorsSectionTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.honorsSectionSub }}</div>
             </div>
-            <button onClick="{{ omar.triggerIpecacHonor }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">🧪 {{ omar.ipecacBtnLabel }}</button>
+            <button onClick="{{ omar.triggerIpecacHonor }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.ipecacBtnLabel }}</button>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
             <sc-for list="{{ omar.honorsList }}" as="hn" hint-placeholder-count="6">
@@ -952,10 +952,10 @@
         <section class="zone-panel zone-current-property"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ propertyDossier.img }}');background-size:{{ propertyDossier.artSize }};background-position:{{ propertyDossier.artPosition }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ t.living }}</span><h2>{{ propertyDossier.name }}</h2><p>{{ propertyDossier.context }}</p><div class="zone-record-foot"><span>{{ propertyDossier.happyLabel }} <bdi>{{ propertyDossier.happy }}</bdi></span><span>{{ propertyDossier.cashLabel }} <bdi>{{ propertyDossier.cash }}</bdi></span></div></div></section>
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
-        <section class="zone-panel" data-omar-property-rental="1" style="background:var(--panel);border:1px solid var(--acc);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:8px">
+        <section class="zone-panel" data-omar-property-rental="1" style="background:var(--panel);border:1px solid var(--acc);border-radius:3px;padding:12px;display:flex;flex-direction:column;gap:8px">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
             <div>
-              <strong style="color:var(--t1);font-size:13.5px">🔑 {{ omar.rentalDeskTitle }}</strong>
+              <strong style="color:var(--t1);font-size:13.5px">{{ omar.rentalDeskTitle }}</strong>
               <div style="color:var(--mu);font-size:11px">{{ omar.rentalDeskSub }}</div>
             </div>
             <bdi style="color:var(--acc);font-weight:700;font-size:12px">{{ omar.propertyInfo.leaseText }}</bdi>
@@ -995,9 +995,9 @@
 
       <!-- BANK -->
       <sc-if value="{{ is.bank }}" hint-placeholder-val="{{ false }}">
-        <section class="zone-panel" data-bank-command-deck="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;overflow:hidden;margin-bottom:12px">
+        <section class="zone-panel" data-bank-command-deck="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:3px;overflow:hidden;margin-bottom:12px">
           <div style="display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;padding:12px;align-items:stretch">
-            <div style="border-radius:5px;border:1px solid var(--border3);background:center / cover no-repeat url('{{ sceneArt }}');position:relative;min-height:135px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:inset 0 -60px 48px rgba(0,0,0,.82)">
+            <div style="border-radius:3px;border:1px solid var(--border3);background:linear-gradient(135deg,#2a2d30 0%,#17191b 100%);position:relative;min-height:135px;display:flex;flex-direction:column;justify-content:flex-end;padding:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)">
               <span style="font-size:9.5px;color:var(--acc);font-weight:800;letter-spacing:.12em;text-transform:uppercase">SYNDICATE VAULT RESERVE</span>
               <strong style="color:#fff;font-size:14px">Zone Reserve &amp; Offshore Wire</strong>
               <small style="color:var(--t3);font-size:10.5px">Mug-Protected Capital Storage</small>
@@ -1109,10 +1109,10 @@
       </sc-if>
 
       <!-- OMAR FEEDBACK: PERSISTENT MULTI-CHANNEL CONTEXT-AWARE CHAT DOCK & PERSONAL NOTEPAD -->
-      <section class="zone-panel" data-omar-chat-dock="1" data-chat-collapsed="{{ omar.chatCollapsedAttr }}" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+      <section class="zone-panel" data-omar-chat-dock="1" data-chat-collapsed="{{ omar.chatCollapsedAttr }}" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <strong style="color:var(--t1);font-size:12px">💬 {{ omar.chatDockTitle }}</strong>
+            <strong style="color:var(--t1);font-size:12px">{{ omar.chatDockTitle }}</strong>
             <sc-if value="{{ !omar.chatCollapsed }}" hint-placeholder-val="{{ false }}">
               <sc-for list="{{ omar.chatChannels }}" as="ch" hint-placeholder-count="7">
                 <button class="zone-compact-btn" onClick="{{ ch.select }}" style="background:{{ ch.bg }};color:{{ ch.fg }};border:1px solid {{ ch.border }};border-radius:3px;padding:3px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ ch.label }}</button>
@@ -1147,7 +1147,7 @@
               <textarea rows="3" value="{{ omar.notesText }}" onInput="{{ omar.onNotesInput }}" placeholder="{{ omar.notesPlaceholder }}" style="width:100%;background:var(--deep);border:1px solid var(--gold);color:var(--t1);border-radius:4px;padding:8px;font:inherit;font-size:11.5px;box-sizing:border-box"></textarea>
               <div style="display:flex;justify-content:space-between;align-items:center">
                 <span style="color:var(--mu);font-size:10.5px">{{ omar.notesSavedHint }}</span>
-                <button class="zone-compact-btn" onClick="{{ omar.saveNotes }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">💾 {{ omar.saveNotesBtn }}</button>
+                <button class="zone-compact-btn" onClick="{{ omar.saveNotes }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.saveNotesBtn }}</button>
               </div>
             </div>
           </sc-if>
@@ -1827,7 +1827,7 @@ class Component extends DCLogic {
     const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
     if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
-      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v128') : rawSrc);
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v129') : rawSrc);
     }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
@@ -2159,6 +2159,7 @@ class Component extends DCLogic {
       if (f.getAttribute && !f.getAttribute('src')) {
         let source = f.getAttribute('data-character-src');
         if (this.state.characterFrameEpoch) { const retry = new URL(source, window.location.href); retry.searchParams.set('__zone_character_boot_retry','1'); source = retry.href; }
+        else if (typeof WebGLRenderingContext !== 'undefined' && source) { source += (source.includes('?') ? '&' : '?') + 'cb=v129'; }
         f.setAttribute('src', source);
       }
       const s = this.p.stats;
@@ -4330,7 +4331,7 @@ class Component extends DCLogic {
     const activeMapSpawns = defaultMapSpawns.filter(s => !claimedSpawns[s.id]).map(s => ({
       ...s,
       valueText: money(s.value),
-      claimLabel: lang === 'ar' ? '⭕ التقط من الخريطة' : '⭕ Pick Up Item',
+      claimLabel: lang === 'ar' ? 'التقط من الخريطة' : 'Pick Up Item',
       claim: () => {
         this.p.cash = Number(this.p.cash || 0) + s.value;
         this.p.plushies = { ...ownedPlushies };
@@ -4638,7 +4639,7 @@ class Component extends DCLogic {
       targetLabel: lang === 'ar' ? 'الهدف' : 'Target',
       ownedLabel: lang === 'ar' ? 'تملك' : 'Owned',
       tickerDisplay: this.state.hideTicker ? 'none' : 'flex',
-      tickerBtnLabel: this.state.hideTicker ? (lang === 'ar' ? '📰 إظهار الأخبار' : '📰 Show Ticker') : (lang === 'ar' ? '📰 إخفاء الأخبار' : '📰 Hide Ticker'),
+      tickerBtnLabel: this.state.hideTicker ? (lang === 'ar' ? 'إظهار الأخبار' : 'Show Ticker') : (lang === 'ar' ? 'إخفاء الأخبار' : 'Hide Ticker'),
       toggleTicker: () => this.setState({ hideTicker: !this.state.hideTicker }),
 
       // Profile Modal
@@ -4955,11 +4956,11 @@ class Component extends DCLogic {
       chatExpandLabel: this.state.omarChatCollapsed !== false ? (lang === 'ar' ? '▲ فتح الشات' : '▲ Expand') : (lang === 'ar' ? '▼ تصغير' : '▼ Minimize'),
       toggleChatDock: () => this.setState({ omarChatCollapsed: this.state.omarChatCollapsed === false ? true : false }),
       mobileTabs: [
-        { id: 'home', icon: '🏠', label: t.nav.home },
-        { id: 'city', icon: '🗺️', label: t.nav.city },
-        { id: 'crimes', icon: '⚡', label: t.nav.crimes },
-        { id: 'gym', icon: '🏋️', label: t.nav.gym },
-        { id: 'attack', icon: '⚔️', label: t.nav.attack },
+        { id: 'home', icon: '◆', label: t.nav.home },
+        { id: 'city', icon: '◈', label: t.nav.city },
+        { id: 'crimes', icon: '▲', label: t.nav.crimes },
+        { id: 'gym', icon: '■', label: t.nav.gym },
+        { id: 'attack', icon: '✕', label: t.nav.attack },
         { id: 'menu', icon: '☰', label: lang === 'ar' ? 'القائمة' : 'Menu', isMenu: true }
       ].map(mt => ({
         id: mt.id,
@@ -4983,18 +4984,18 @@ class Component extends DCLogic {
       })),
       chatDockTitle: lang === 'ar' ? 'الشات الميداني والمفكرة الشخصية' : 'Multi-Channel Comms & Personal Notepad',
       chatContextBadge: hosp
-        ? (lang === 'ar' ? '🏥 أنت في المستشفى · شات المستشفى نشط' : '🏥 IN HOSPITAL · Hospital Chat Active')
+        ? (lang === 'ar' ? 'أنت في المستشفى · شات المستشفى نشط' : 'IN HOSPITAL · Hospital Chat Active')
         : p.travel?.status === 'traveling'
-          ? (lang === 'ar' ? '✈️ أنت في الطائرة · شات السفر نشط' : '✈️ IN FLIGHT · Travel Plane Chat Active')
-          : (lang === 'ar' ? '🟢 متصل · الشات العام والفاكشن والمفكرة جاهزة' : '🟢 ONLINE · Global, Faction, Location & Notes Active'),
+          ? (lang === 'ar' ? 'أنت في الطائرة · شات السفر نشط' : 'IN FLIGHT · Travel Plane Chat Active')
+          : (lang === 'ar' ? 'متصل · الشات العام والفاكشن والمفكرة جاهزة' : 'ONLINE · Global, Faction, Location & Notes Active'),
       chatChannels: [
-        { id: 'global', label: lang === 'ar' ? '🌐 العام' : '🌐 Global' },
-        { id: 'faction', label: lang === 'ar' ? '🛡️ الفاكشن' : '🛡️ Faction' },
-        { id: 'private', label: lang === 'ar' ? '💬 الخاص' : '💬 Private' },
-        { id: 'hospital', label: lang === 'ar' ? '🏥 المستشفى' : '🏥 Hospital' },
-        { id: 'travel', label: lang === 'ar' ? '✈️ الطائرة' : '✈️ Travel' },
-        { id: 'company', label: lang === 'ar' ? '💼 العمل' : '💼 Company' },
-        { id: 'notes', label: lang === 'ar' ? '📝 المفكرة (Notes)' : '📝 Notes' }
+        { id: 'global', label: lang === 'ar' ? 'العام' : 'Global' },
+        { id: 'faction', label: lang === 'ar' ? 'الفاكشن' : 'Faction' },
+        { id: 'private', label: lang === 'ar' ? 'الخاص' : 'Private' },
+        { id: 'hospital', label: lang === 'ar' ? 'المستشفى' : 'Hospital' },
+        { id: 'travel', label: lang === 'ar' ? 'الطائرة' : 'Travel' },
+        { id: 'company', label: lang === 'ar' ? 'العمل' : 'Company' },
+        { id: 'notes', label: lang === 'ar' ? 'المفكرة (Notes)' : 'Notes' }
       ].map(ch => ({
         label: ch.label,
         bg: chatTab === ch.id ? 'var(--activebg)' : 'var(--btn)',

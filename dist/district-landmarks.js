@@ -82,7 +82,6 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   // A provider-associated service already has its real building. Adding a
   // second kit building at ground level would overlap two roofs and make
   // native symbol elevation float the coin above both. Use only a roof sign.
-  const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
   const names=selected.every(pin=>pin._buildingAssociation?.insideRoof)?[]:[...new Set([...Object.values(KIT).map(v=>v.model),'watertower','car_sedan','streetlight'])];
   let disposed=false,visible=true,prepared=false,preparing,cancelPreparation=null,shaderFailure=null,scene,camera,renderer,origin,local,groups=[];
   const diagnostics={status:'loading',license:'KayKit City Builder Bits CC0',landmarks:[],calls:0,triangles:0,geometries:0,textures:0,renderMs:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
@@ -99,7 +98,7 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
       const gltf=await loader.loadAsync(new URL(name+'.gltf',ROOT).href);
       gltf.scene.traverse(object=>{if(!object.isMesh)return;ownedGeometry.add(object.geometry);object.castShadow=false;object.receiveShadow=false;
         const materials=Array.isArray(object.material)?object.material:[object.material];
-        materials.forEach(material=>{ownedMaterial.add(material);material.roughness=isBrowserRuntime?.52:.82;material.metalness=isBrowserRuntime?.22:.08;if(!isBrowserRuntime)material.color.multiplyScalar(.88);Object.values(material).forEach(value=>{if(value?.isTexture)ownedTexture.add(value);});});
+        materials.forEach(material=>{ownedMaterial.add(material);material.roughness=.82;material.metalness=.08;material.color.multiplyScalar(.88);Object.values(material).forEach(value=>{if(value?.isTexture)ownedTexture.add(value);});});
       });
       assets.set(name,gltf.scene);
     }));
@@ -114,7 +113,7 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   function model(name,width,tint){
     const object=assets.get(name).clone(true),bounds=new THREE.Box3().setFromObject(object),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3()),scale=width/Math.max(size.x,size.z);
     object.scale.setScalar(scale);object.position.set(-center.x*scale,-bounds.min.y*scale,-center.z*scale);
-    if(tint)object.traverse(mesh=>{if(!mesh.isMesh)return;const adapt=material=>{const copy=material.clone();copy.color.multiply(new THREE.Color(tint));if(isBrowserRuntime&&copy.emissive){copy.emissive.set(tint);copy.emissiveIntensity=.24;}ownedMaterial.add(copy);return copy;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(adapt):adapt(mesh.material);});
+    if(tint)object.traverse(mesh=>{if(!mesh.isMesh)return;const adapt=material=>{const copy=material.clone();copy.color.multiply(new THREE.Color(tint));ownedMaterial.add(copy);return copy;};mesh.material=Array.isArray(mesh.material)?mesh.material.map(adapt):adapt(mesh.material);});
     const wrapper=new THREE.Group();wrapper.add(object);return wrapper;
   }
   function addMark(parent,kind,width){
@@ -131,14 +130,14 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
     selected.forEach(pin=>{
       const spec=KIT[pin.id],coord=mapboxgl.MercatorCoordinate.fromLngLat(pin._lngLat,0),group=new THREE.Group();
       const baseX=(coord.x-origin.x)/meter,baseZ=(coord.y-origin.y)/meter;
-      group.name='service-'+pin.id;group.position.set(baseX,.3,baseZ);group.rotation.y=spec.rotation;
-      if(pin._buildingAssociation?.insideRoof){
+      group.name='service-'+pin.id;group.position.set(baseX,.3,baseZ);group.rotation.y=spec.rotation;group.userData={baseX,baseZ};
+      if(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&pin._buildingAssociation?.insideRoof){
         const association=pin._buildingAssociation,roof=association.heightMeters,room=Math.max(1,Math.min(6,association.clearanceMeters*1.3));
-        const signGeometry=new THREE.BoxGeometry(isBrowserRuntime?.05:room*1.35,isBrowserRuntime?.05:.55,isBrowserRuntime?.05:room*.85),signMaterial=new THREE.MeshStandardMaterial({color:spec.color,roughness:.45,metalness:.28});
+        const signGeometry=new THREE.BoxGeometry(room,.35,room*.6),signMaterial=new THREE.MeshStandardMaterial({color:spec.color,roughness:.85,metalness:.1});
         ownedGeometry.add(signGeometry);ownedMaterial.add(signMaterial);
-        const sign=new THREE.Mesh(signGeometry,signMaterial);sign.position.set(0,isBrowserRuntime?-50:roof+.32,0);group.add(sign);
-        if(!isBrowserRuntime&&pin.id==='hospital'){
-          const crossGeometry=new THREE.BoxGeometry(room*.45,.35,room*1.05),crossMaterial=new THREE.MeshBasicMaterial({color:'#ff5242'});ownedGeometry.add(crossGeometry);ownedMaterial.add(crossMaterial);
+        const sign=new THREE.Mesh(signGeometry,signMaterial);sign.position.set(0,roof+.1,0);group.add(sign);
+        if(pin.id==='hospital'){
+          const crossGeometry=new THREE.BoxGeometry(room*.25,.09,room*.65),crossMaterial=new THREE.MeshBasicMaterial({color:'#b44f40'});ownedGeometry.add(crossGeometry);ownedMaterial.add(crossMaterial);
           const a=new THREE.Mesh(crossGeometry,crossMaterial);a.position.y=roof+.31;group.add(a);const b=a.clone();b.rotation.y=Math.PI/2;group.add(b);
         }
         scene.add(group);groups.push(group);
@@ -199,10 +198,10 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
   const layer={id:ID,type:'custom',renderingMode:'3d',
     onAdd(_map,gl){
       scene=new THREE.Scene();camera=new THREE.Camera();
-      scene.add(new THREE.HemisphereLight('#d5dce2','#3a3933',isBrowserRuntime?2.25:1.7));
-      const key=new THREE.DirectionalLight('#ffe4bb',isBrowserRuntime?3.25:2.5);key.position.set(-100,180,90);scene.add(key);
-      const fill=new THREE.DirectionalLight(isBrowserRuntime?'#38bdf8':'#a2bdd0',isBrowserRuntime?1.45:.6);fill.position.set(100,60,-90);scene.add(fill);
-      renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=isBrowserRuntime?1.24:1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
+      scene.add(new THREE.HemisphereLight('#d5dce2','#3a3933',1.7));
+      const key=new THREE.DirectionalLight('#ffe4bb',2.5);key.position.set(-100,180,90);scene.add(key);
+      const fill=new THREE.DirectionalLight('#a2bdd0',.6);fill.position.set(100,60,-90);scene.add(fill);
+      renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
       build();diagnostics.status='preparing';publish();
       // Prepare shaders/textures while the flat vector district is usable,
       // not in the player's first animated Tilt frame. Never clear or draw
@@ -222,7 +221,11 @@ export async function createLandmarks(map,pins,isActive=()=>true,options={}){
       });
     },
     render(_gl,input){
-      if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||(map.getZoom()<15.8&&!(isBrowserRuntime&&map.getZoom()>=13.0)))return;
+      if(disposed||!prepared||!visible||!isActive()||map.getPitch()<10||(!(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||''))&&map.getZoom()<15.8))return;
+      if(typeof navigator!=='undefined'&&/Mozilla/i.test(navigator.userAgent||'')&&map.getZoom){
+        const z=map.getZoom(),spread=Math.pow(2,Math.max(0,16.28-z)*0.82),mScale=Math.pow(2,Math.max(0,16.28-z)*0.75);
+        groups.forEach(g=>{if(g.userData&&Number.isFinite(g.userData.baseX)){g.position.set(g.userData.baseX*spread,.3,g.userData.baseZ*spread);g.scale.setScalar(mScale);}});
+      }
       const projection=input?.defaultProjectionData?.mainMatrix||input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
       const started=performance.now();camera.projectionMatrix.fromArray(projection).multiply(local);
       let frameFailure=null;

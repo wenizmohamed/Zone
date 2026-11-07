@@ -329,15 +329,15 @@
   /* The city owns the viewport. Family identity stays in one compact bar;
      territory lists and search are opened explicitly in the existing drawer. */
   .wrap{flex-direction:column}
-  .familyRail{width:100%;height:44px;min-height:44px;flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;padding:4px 12px;border-inline-end:0;border-bottom:1px solid rgba(201,154,69,0.28);background:linear-gradient(180deg,rgba(14,19,27,0.98),rgba(10,14,20,0.96))}
-  .familyRail>div:first-child{min-width:120px}.familyRail h1{font-size:14px;font-weight:800;letter-spacing:0.01em}.familyEyebrow{font-size:8px;color:#c99a45}
+  .familyRail{width:100%;height:44px;min-height:44px;flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;padding:4px 12px;border-inline-end:0;border-bottom:1px solid #46494c;background:linear-gradient(180deg,#26292c 0%,#17191b 100%)}
+  .familyRail>div:first-child{min-width:120px}.familyRail h1{font-size:14px;font-weight:700;letter-spacing:0.01em}.familyEyebrow{font-size:8px;color:#c99a45}
   .familyRail .factionSelectLabel{width:210px;flex:none}.familyRail .familyStats{margin-inline-start:auto;display:flex;gap:18px;align-items:center;padding:0;border:0}
   .familyRail .familyStat{min-width:58px}.familyRail .familyStat b{font-size:16px}.familyRail .familyStat span{font-size:9px}
   .familyRail .familyScopes,.familyRail .familyListHeading,.familyRail .familyList,.familyRail .familyBrowse{display:none}
   .side{top:44px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
-  .sideToggle,.cityReset,.mapExpand,.streetView{background:rgba(12,17,24,0.92);border:1px solid rgba(201,154,69,0.34);border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.65);backdrop-filter:blur(8px);font-weight:800;letter-spacing:0.02em}
-  .sideToggle:hover,.cityReset:hover,.mapExpand:hover,.streetView:hover{background:rgba(22,30,42,0.96);border-color:#c99a45}
-  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:96px;max-width:158px;min-height:26px;padding:2px 8px 2px 3px;justify-content:flex-start;gap:4px;background:rgba(9,13,20,0.95);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 12px color-mix(in srgb,var(--faction) 64%,transparent),0 3px 10px rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:19px;height:19px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9.5px;font-weight:800;color:#f5f7fa;letter-spacing:0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}.regionPin.overview.turfBanner small{display:block;font-size:8px;color:var(--faction);font-weight:800;white-space:nowrap}
+  .sideToggle,.cityReset,.mapExpand,.streetView{background:#1f2225;border:1px solid #4a4d50;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,0.75);backdrop-filter:none;font-weight:700;letter-spacing:0.01em}
+  .sideToggle:hover,.cityReset:hover,.mapExpand:hover,.streetView:hover{background:#2d3134;border-color:#c99a45}
+  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#17191bf2;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:96px;max-width:158px;min-height:26px;padding:3px 8px 3px 5px;justify-content:flex-start;gap:5px;background:#17191bf4;border:1px solid #4a4d50;border-inline-start:3px solid var(--faction);border-radius:2px;box-shadow:0 2px 7px rgba(0,0,0,0.85);backdrop-filter:none;z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:18px;height:18px;border-width:1.5px;border-radius:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9.5px;font-weight:700;color:#eee7d8;letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}.regionPin.overview.turfBanner small{display:block;font-size:8px;color:#c5beb1;font-weight:700;white-space:nowrap}
   .mapPreviewNotice{flex:none;min-height:30px;padding:7px 12px;background:#3a3020;color:#f2d28b;font-size:11px;line-height:1.4;border-bottom:1px solid #6b5733}
   .mapPreviewNotice[hidden]{display:none}.illustrativeMap .side{top:94px}
   .districtDetailStatus{display:none!important;position:absolute;inset-inline-start:12px;bottom:84px;z-index:3;max-width:calc(100% - 88px);padding:7px 10px;border:1px solid #626155;border-radius:5px;background:#20272cf2;color:#eee7d8;font-size:11px;line-height:1.4;pointer-events:none}.districtDetailStatus[hidden]{display:none}.districtDetailStatus[data-state="degraded"]{border-color:#ab894d;color:#f2d28b}
@@ -451,7 +451,7 @@ initializeMapLocale();
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v122',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v129',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -486,7 +486,7 @@ initializeMapLocale();
     center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:35, bearing:0, maxPitch:60,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
-  if(typeof WebGLRenderingContext!=='undefined'){try{map.setZoom(16.05);map.setPitch(48);map.setBearing(-16);}catch(_){}}
+  if(typeof WebGLRenderingContext!=='undefined'){try{map.setZoom(16.0);map.setPitch(42);map.setBearing(-14);}catch(_){}}
   var mapModuleRetry=ZoneCompactDistrict.createModuleRetry({isActive:function(){return !mapDisposed;},retry:function(){if(mapDisposed||!landmarkController)return Promise.resolve();return Promise.allSettled([Promise.resolve().then(function(){return landmarkController.retrySurfaces();}),Promise.resolve().then(function(){return landmarkController.retryLandmarks();})]);},onState:function(state){document.body.dataset.zoneMapModuleRetry=JSON.stringify(state);}});
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
@@ -580,7 +580,7 @@ initializeMapLocale();
     // parcel included. Later snapshots must preserve the player's camera.
     initialOverviewPending=false;setCityOverview(true);
     var isBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
-    if(fitOwnership(territoryData,0,isBrowser?48:35,isBrowser?-16:0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
+    if(fitOwnership(territoryData,0,isBrowser?42:35,isBrowser?-14:0)){didFit=true;authoritativeOverviewFitted=true;}else initialOverviewPending=true;
   }
   document.addEventListener('pointerdown',markCameraInteraction,{capture:true,passive:true});
   document.addEventListener('wheel',markCameraInteraction,{capture:true,passive:true});
@@ -691,7 +691,7 @@ initializeMapLocale();
     var maxZoom=districtCameraZoom();
     var isBrowserFit=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
     map.fitBounds(bounds,{padding:padding,maxZoom:maxZoom,pitch:pitch,bearing:Number.isFinite(bearing)?bearing:pitch===0?0:-12,duration:0,retainPadding:false,essential:true});
-    refineOwnershipCamera(points,padding,maxZoom,overview?(isBrowserFit?(mobile?0.70:0.76):1.03):1.2);
+    refineOwnershipCamera(points,padding,maxZoom,overview?(isBrowserFit?(mobile?0.74:0.86):1.03):1.2);
     if(previous){var target={center:map.getCenter(),zoom:map.getZoom(),pitch:map.getPitch(),bearing:map.getBearing(),duration:duration,essential:true};map.jumpTo(previous);map.easeTo(target);}
     return true;
   }
@@ -714,7 +714,7 @@ initializeMapLocale();
     // Keep the same north-up neighborhood, with its real architecture visible.
     // Distant holdings stay discoverable through All holdings/faction overview.
     var isBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
-    if(!force){if(fitOwnership(isBrowser?territoryData:openingFamilyBlocks(),0,isBrowser?48:35,isBrowser?-16:0))didFit=true;return;}
+    if(!force){if(fitOwnership(isBrowser?territoryData:openingFamilyBlocks(),0,isBrowser?42:35,isBrowser?-14:0))didFit=true;return;}
     var metrics=familyMetrics(territoryData),blocks=metrics.owned.length?metrics.owned:familyContextBlocks();
     if(fitOwnership(blocks,force&&!RM?CAMERA_MS:0,map.getPitch(),0))didFit=true;
   }
@@ -1075,91 +1075,11 @@ initializeMapLocale();
   function ownershipOpacity(){
     var id=focusedFactionId();
     var isLiveBrowser=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');
-    if(isLiveBrowser)return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.18:0.05,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.34,0.24];
+    if(isLiveBrowser)return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.16:0.05,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.30,0.20];
     return ['case',['boolean',['get','neutral'],false],id==='neutral'?0.28:0.08,id&&id!=='*'?['==',['get','ownerId'],id]:['boolean',['get','player'],false],0.46,0.38];
   }
   function applyOwnershipStyle(){
     if(map.getLayer('zone-ownership-fill'))map.setPaintProperty('zone-ownership-fill','fill-opacity',ownershipOpacity());
-    if(typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'')&&map.getLayer('district-turf-wash'))map.setPaintProperty('district-turf-wash','fill-opacity',ownershipOpacity());
-  }
-  function buildCityMaskGeo(list){
-    var pts=[];(list||[]).forEach(function(t){(t.polygon||[]).forEach(function(p){var ll=blockLL(t,p);if(Number.isFinite(ll[0])&&Number.isFinite(ll[1]))pts.push(ll);});});
-    if(!pts.length)return{mask:emptyGeo(),frame:emptyGeo(),cityPoly:null};
-    var w=Math.min.apply(null,pts.map(function(p){return p[0];})),e=Math.max.apply(null,pts.map(function(p){return p[0];})),s=Math.min.apply(null,pts.map(function(p){return p[1];})),n=Math.max.apply(null,pts.map(function(p){return p[1];}));
-    var hole=[[w,s],[w,n],[e,n],[e,s],[w,s]],ring=[[w,s],[e,s],[e,n],[w,n],[w,s]];
-    return{
-      mask:{type:'FeatureCollection',features:[{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[[[-180,-85],[180,-85],[180,85],[-180,85],[-180,-85]],hole]}}]},
-      frame:{type:'FeatureCollection',features:[{type:'Feature',properties:{},geometry:{type:'LineString',coordinates:ring}}]},
-      cityPoly:{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[ring]}}
-    };
-  }
-  function buildSkylineGeo(list){
-    var features=[],archId=0;
-    (list||[]).forEach(function(t,idx){
-      var ring=(t.polygon||[]).map(function(pt){return blockLL(t,pt);});
-      if(ring.length<4)return;
-      var p0=ring[0],p1=ring[1],p2=ring[2],p3=ring[3];
-      function quad(u0,u1,v0,v1){
-        function pt(u,v){
-          var ax=p0[0]+(p1[0]-p0[0])*u,ay=p0[1]+(p1[1]-p0[1])*u;
-          var bx=p3[0]+(p2[0]-p3[0])*u,by=p3[1]+(p2[1]-p3[1])*u;
-          return[ax+(bx-ax)*v,ay+(by-ay)*v];
-        }
-        var a=pt(u0,v0),b=pt(u1,v0),c=pt(u1,v1),d=pt(u0,v1);
-        return[a,b,c,d,a];
-      }
-      function addMass(u0,u1,v0,v1,minH,maxH,tone){
-        var fid='arch-'+(t.ownerId||'neutral')+'-'+idx+'-'+(++archId);
-        features.push({
-          type:'Feature',
-          id:'16/19299/24633/'+fid,
-          properties:{height:maxH,min_height:minH,tone:tone,extrude:'true',underground:'false',providerId:fid,providerTile:'16/19299/24633'},
-          geometry:{type:'Polygon',coordinates:[quad(u0,u1,v0,v1)]}
-        });
-      }
-      var col=idx%12,row=Math.floor(idx/12);
-      var dx=(col-5.5)/5.5,dy=(row-4.5)/4.5,dist=Math.hypot(dx,dy);
-      var seed=((col+1)*41+(row+1)*79+idx*17)%37;
-      var archetype=(col*7+row*13+seed)%6;
-      var hCore=dist<0.42?(76+(seed%48)):dist<0.78?(42+(seed%32)):(24+(seed%22));
-      var slateLow='#101824',slateMid='#162234',slateHigh='#1e2f47',slateCrown='#283f5e';
-      if(t.ownerId==='vipers'){slateLow='#0c1a17';slateMid='#122823';slateHigh='#1a3b34';slateCrown='#27594d';}
-      else if(t.ownerId==='kings'){slateLow='#0b1824';slateMid='#112538';slateHigh='#193752';slateCrown='#245278';}
-      else if(t.ownerId==='oldguard'){slateLow='#1a150e';slateMid='#282014';slateHigh='#3b2f1c';slateCrown='#574427';}
-      else if(t.ownerId==='night'){slateLow='#1b0f15';slateMid='#291620';slateHigh='#3d202f';slateCrown='#592d43';}
-      if(archetype===0){
-        var podH=Math.max(14,Math.round(hCore*0.32));
-        addMass(0.08,0.58,0.10,0.62,0,podH,slateLow);
-        addMass(0.14,0.52,0.16,0.56,podH,hCore,slateHigh);
-        if(hCore>=52)addMass(0.21,0.45,0.23,0.49,hCore,hCore+16,slateCrown);
-        addMass(0.64,0.90,0.14,0.86,0,Math.max(18,Math.round(hCore*0.58)),slateMid);
-      }else if(archetype===1){
-        addMass(0.08,0.44,0.08,0.48,0,hCore+8,slateHigh);
-        if(hCore>=48)addMass(0.14,0.38,0.14,0.42,hCore+8,hCore+20,slateCrown);
-        addMass(0.54,0.90,0.10,0.52,0,Math.max(22,Math.round(hCore*0.82)),slateMid);
-        addMass(0.10,0.88,0.60,0.90,0,Math.max(15,Math.round(hCore*0.44)),slateLow);
-      }else if(archetype===2){
-        addMass(0.46,0.90,0.42,0.90,0,hCore+10,slateHigh);
-        if(hCore>=46)addMass(0.54,0.82,0.50,0.82,hCore+10,hCore+22,slateCrown);
-        addMass(0.08,0.88,0.08,0.34,0,Math.max(18,Math.round(hCore*0.54)),slateMid);
-        addMass(0.08,0.36,0.34,0.88,0,Math.max(16,Math.round(hCore*0.48)),slateLow);
-      }else if(archetype===3){
-        addMass(0.22,0.76,0.20,0.74,0,hCore+14,slateHigh);
-        if(hCore>=44)addMass(0.30,0.68,0.28,0.66,hCore+14,hCore+28,slateCrown);
-        addMass(0.06,0.18,0.12,0.86,0,Math.max(14,Math.round(hCore*0.40)),slateLow);
-      }else if(archetype===4){
-        addMass(0.08,0.46,0.08,0.46,0,Math.max(20,Math.round(hCore*0.72)),slateMid);
-        addMass(0.54,0.90,0.08,0.48,0,hCore,slateHigh);
-        addMass(0.08,0.48,0.54,0.90,0,Math.max(22,Math.round(hCore*0.86)),slateHigh);
-        addMass(0.54,0.90,0.54,0.90,0,Math.max(16,Math.round(hCore*0.54)),slateLow);
-      }else{
-        addMass(0.14,0.68,0.08,0.52,0,hCore+6,slateHigh);
-        addMass(0.08,0.56,0.58,0.90,0,Math.max(18,Math.round(hCore*0.62)),slateMid);
-        addMass(0.62,0.90,0.56,0.90,0,Math.max(14,Math.round(hCore*0.46)),slateLow);
-      }
-    });
-    if(typeof window!=='undefined')window.__zoneArchitecturalFeatures=features;
-    return{type:'FeatureCollection',features:features};
   }
   function ensureTerritoryLayers(){
     if(!map.isStyleLoaded())return;
@@ -1173,14 +1093,8 @@ initializeMapLocale();
     if(!map.getLayer('zone-ownership-fill'))map.addLayer({id:'zone-ownership-fill',type:'fill',source:'zone-ownership',paint:{'fill-color':['coalesce',['get','renderColor'],'#87918c'],'fill-opacity':ownershipOpacity(),'fill-outline-color':'rgba(0,0,0,0)','fill-antialias':false}},before);
     if(typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'')){
       var before3D=map.getLayer('district-complete-volumes')?'district-complete-volumes':map.getLayer('district-buildings-3d')?'district-buildings-3d':before;
-      if(!map.getLayer('district-turf-wash'))map.addLayer({id:'district-turf-wash',type:'fill',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'fill-color':['coalesce',['get','renderColor'],'#78d628'],'fill-opacity':ownershipOpacity(),'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before3D);
-      if(!map.getLayer('district-turf-glow'))map.addLayer({id:'district-turf-glow',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':10,'line-blur':4.5,'line-opacity':0.76}},before3D);
-      if(!map.getLayer('district-turf-border'))map.addLayer({id:'district-turf-border',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':2.8,'line-opacity':0.96}},before3D);
-      if(!map.getLayer('district-contested-border'))map.addLayer({id:'district-contested-border',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#ff5e36','line-width':2.2,'line-dasharray':[2,1.5],'line-opacity':0.92}},before3D);
-      if(!map.getSource('district-skyline-source'))map.addSource('district-skyline-source',{type:'geojson',data:buildSkylineGeo(territoryData)});
-      if(!map.getLayer('district-skyline-3d'))map.addLayer({id:'district-skyline-3d',type:'fill-extrusion',source:'district-skyline-source',paint:{'fill-extrusion-color':['coalesce',['get','tone'],'#162234'],'fill-extrusion-height':['get','height'],'fill-extrusion-base':['get','min_height'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}},before3D);
-      if(map.getLayer('district-buildings')&&map.setPaintProperty){try{map.setPaintProperty('district-buildings','fill-opacity',0.35);map.setPaintProperty('district-buildings','fill-color','#0d1420');}catch(_){}}
-      if(map.getLayer('district-buildings-3d')&&map.setPaintProperty){try{var h3d=['max',0,['to-number',['get','height'],0]];map.setPaintProperty('district-buildings-3d','fill-extrusion-color',['interpolate',['linear'],h3d,0,'#101824',18,'#162233',45,'#1e2f46',90,'#283f5e']);map.setPaintProperty('district-buildings-3d','fill-extrusion-opacity',1);if(map.setLayoutProperty)map.setLayoutProperty('district-buildings-3d','visibility','visible');}catch(_){}}
+      if(!map.getLayer('district-turf-border'))map.addLayer({id:'district-turf-border',type:'line',source:'zone-ownership',filter:['!=',['get','neutral'],true],paint:{'line-color':['coalesce',['get','renderColor'],'#78d628'],'line-width':2,'line-opacity':0.88}},before3D);
+      if(!map.getLayer('district-contested-border'))map.addLayer({id:'district-contested-border',type:'line',source:'zone-blocks',filter:['==',['get','contested'],true],paint:{'line-color':'#d96a48','line-width':1.8,'line-dasharray':[2,1.5],'line-opacity':0.88}},before3D);
     }
     if(!map.getLayer('zone-block-feedback'))map.addLayer({id:'zone-block-feedback',type:'fill',source:'zone-blocks',paint:{'fill-color':['case',['boolean',['feature-state','selected'],false],'#edf0e8',['boolean',['get','contested'],false],'#f2a93b',['coalesce',['get','renderColor'],'#87918c']],'fill-opacity':['case',['boolean',['feature-state','selected'],false],0.42,['boolean',['feature-state','hover'],false],0.28,['boolean',['get','contested'],false],0.34,0],'fill-antialias':false,'fill-outline-color':'rgba(0,0,0,0)'}},before);
     // Original block geometry stays invisible and independently selectable.
@@ -1206,7 +1120,6 @@ initializeMapLocale();
     var hadSource=!!map.getSource('zone-blocks');ensureTerritoryLayers();
     try{var geo=territoryGeo(territoryData),src=map.getSource('zone-blocks');if(src&&hadSource)src.setData(geo);document.body.dataset.zoneFeatureCount=String(geo.features.length);map.once('idle',function(){try{var rendered=map.queryRenderedFeatures({layers:['zone-blocks-fill']});document.body.dataset.zoneRenderedCount=String(rendered.length);document.body.dataset.zoneRenderedSummary=JSON.stringify(rendered.reduce(function(acc,feature){var key=feature.properties&&feature.properties.neutral?'neutral':String(feature.properties&&feature.properties.ownerId||'owned');acc[key]=(acc[key]||0)+1;return acc;},{}));}catch(_){}});}catch(_){}
     var ownershipSource=map.getSource('zone-ownership');if(ownershipSource)ownershipSource.setData(rebuildOwnership(territoryGeo(territoryData)));
-    var skylineSource=map.getSource('district-skyline-source');if(skylineSource)skylineSource.setData(buildSkylineGeo(territoryData));
     applyOwnershipStyle();if(landmarkController){landmarkController.setTerritories(territoryGeo(territoryData).features);if(typeof WebGLRenderingContext!=='undefined')landmarkController.retrySurfaces();}
     selectedTerritory=selectedId&&territoryById[selectedId]?territoryById[selectedId]:null;
     if(selectedTerritory){if(panelWasOpen)selectTerritory(selectedTerritory);else{try{map.setFeatureState({source:'zone-blocks',id:selectedTerritory.id},{selected:true});}catch(_){}updateAdjacency(selectedTerritory,true);}}
@@ -1253,12 +1166,7 @@ initializeMapLocale();
   }
 
   /* ---------- pitched, collision-aware GeoJSON POIs ---------- */
-  var LIVE_POI_BLOCK={news:[1,0],school:[4,0],hof:[7,0],jobs:[10,0],gym:[0,2],arena:[5,1],bank:[6,1],shop:[11,2],casino:[1,4],missions:[4,3],hospital:[5,4],jail:[6,5],market:[10,4],hq:[0,6],alley:[4,6],home:[7,6],pier:[11,8]};
   function pointCoordinates(p){
-    if(typeof WebGLRenderingContext!=='undefined'&&p&&LIVE_POI_BLOCK[p.id]&&territoryData.length>=120){
-      var bIdx=LIVE_POI_BLOCK[p.id][1]*12+LIVE_POI_BLOCK[p.id][0];
-      if(territoryData[bIdx]&&Array.isArray(territoryData[bIdx]._centroidLngLat))return territoryData[bIdx]._centroidLngLat.slice();
-    }
     var lng=Number(pick(p,['lng','longitude'],NaN)),lat=Number(pick(p,['lat','latitude'],NaN));
     if(isFinite(lng)&&isFinite(lat)&&Math.abs(lng)<=180&&Math.abs(lat)<=90)return displayPoint([lng,lat]);
     var c=pick(p,['coordinates','coordinate'],null);if(p&&p.geometry&&p.geometry.type==='Point')c=p.geometry.coordinates;
@@ -1614,8 +1522,8 @@ initializeMapLocale();
   var activeLightPreset='night';
   function applyBasemapLighting(){
     if(!map.isStyleLoaded())return;
-    if(map.setLights)map.setLights([{id:'zone-ambient',type:'ambient',properties:{color:'#a8bed4',intensity:.58}},{id:'zone-sun',type:'directional',properties:{color:'#ffe8c2',intensity:.68,direction:[210,38],'cast-shadows':false}}]);
-    else map.setLight({anchor:'viewport',color:'#ffe8c2',intensity:.64,position:[1.25,210,36]});
+    if(map.setLights)map.setLights([{id:'zone-ambient',type:'ambient',properties:{color:'#ffffff',intensity:.46}},{id:'zone-sun',type:'directional',properties:{color:'#fff6e8',intensity:.62,direction:[210,40],'cast-shadows':false}}]);
+    else map.setLight({anchor:'viewport',color:'#fff6e8',intensity:.54,position:[1.2,210,40]});
   }
   function localizeMapControls(){
     document.getElementById('districtSurfaceRetry111').textContent=lang==='ar'?'إعادة عرض التفاصيل':'Retry detail';
@@ -1815,7 +1723,7 @@ initializeMapLocale();
     /* classic dark-v11 caps fog range[1] at 20 (Standard allowed 40). An out-of-range
        value is emitted as an error event (not caught) and crashes the render loop every
        frame. Keep range within [start, <=20]. */
-    try{ map.setFog({'range':[1,15],'horizon-blend':0.2,'color':'#28323f','high-color':'#3a5570','space-color':'#141c26','star-intensity':0.05}); }catch(_){}
+    try{ map.setFog({'range':[1.2,18],'horizon-blend':0.08,'color':'#171a1d','high-color':'#22262a','space-color':'#0f1215','star-intensity':0.02}); }catch(_){}
     applyBasemapLighting();
     installCustomLayers();ensureCityLandmarks();
     if(typeof WebGLRenderingContext!=='undefined'){if(el.zboot)el.zboot.classList.add('gone');settleInitialOverview();recoverMapLayers();}
