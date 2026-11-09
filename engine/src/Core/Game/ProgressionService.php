@@ -119,8 +119,11 @@ final class ProgressionService
             } else $chain['count'] = 0;
             $chain['lastAt'] = $this->now();
             $state['crimeChains'][$crimeId] = $chain;
+            $mastery = (int) ($state['skill'][$crimeId] ?? 0);
+            $outcomeTier = $success ? (($chain['count'] >= 3 || $mastery >= 25) ? 'unique' : 'success') : ($mastery < 10 ? 'critical_fail' : 'fail');
+            $uniqueReward = $outcomeTier === 'unique' ? 'Rare Special Ammo & Skimmer Chip' : null;
             $this->save($playerId, $state);
-            return ['mastery' => (int) ($state['skill'][$crimeId] ?? 0), 'chain' => $chain];
+            return ['mastery' => $mastery, 'chain' => $chain, 'outcomeTier' => $outcomeTier, 'uniqueReward' => $uniqueReward];
         });
     }
 
@@ -301,10 +304,84 @@ final class ProgressionService
                     if ($life === $player['life'] && $nerve === $player['nerve'] && $energy === $player['energy'] && $happy === $player['happy'] && $hospitalReduction === 0) throw new RuntimeException('Your resources are full. The item has been kept.');
                     $state['inv'][$id]--;
                     $inventoryDelta = -1;
+                    $state['cooldowns'] ??= ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+                    $cdKey = $item['type'] === 'medical' ? 'medicalUntil' : 'boosterUntil';
+                    $cdDuration = $item['type'] === 'medical' ? 900000 : 1800000;
+                    $state['cooldowns'][$cdKey] = max((int) ($state['cooldowns'][$cdKey] ?? 0), $this->now()) + $cdDuration;
                     if ($hospitalReduction > 0) $state['hospUntil'] = $hospitalReduction >= $remainingHospital ? 0 : (int) $state['hospUntil'] - $hospitalReduction;
                     $this->database->execute('UPDATE players SET life = :life, nerve = :nerve, energy = :energy, happy = :happy WHERE id = :id', ['life' => $life, 'nerve' => $nerve, 'energy' => $energy, 'happy' => $happy, 'id' => $playerId]);
                     $result['restored'] = ['life' => $life - $player['life'], 'nerve' => $nerve - $player['nerve'], 'energy' => $energy - $player['energy'], 'happy' => $happy - $player['happy']];
                     $result['hospitalSecondsReduced'] = (int) ceil($hospitalReduction / 1000);
+                    break;
+                case 'torn.happyJump':
+                    $state['cooldowns'] ??= ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+                    $boostedHappy = min(99999, (int) $player['happy'] * 2 + 2500);
+                    $boostedEnergy = min(1000, (int) $player['energy'] + 250);
+                    $state['cooldowns']['drugUntil'] = $this->now() + 25200000;
+                    $state['cooldowns']['boosterUntil'] = $this->now() + 21600000;
+                    $this->database->execute('UPDATE players SET happy = :happy, energy = :energy WHERE id = :id', ['happy' => $boostedHappy, 'energy' => $boostedEnergy, 'id' => $playerId]);
+                    $result['restored'] = ['happy' => $boostedHappy - $player['happy'], 'energy' => $boostedEnergy - $player['energy']];
+                    break;
+                case 'torn.skimmerCollect':
+                    $payout = 18500;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $state['crimeXp'] = ($state['crimeXp'] ?? 96) + 12;
+                    $result['cashDelta'] = $payout;
+                    break;
+                case 'torn.racketCollect':
+                    $payout = 45000;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $state['points'] = ($state['points'] ?? 0) + 15;
+                    $result['cashDelta'] = $payout;
+                    break;
+                case 'torn.stockDividend':
+                    $payout = 85000;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $boostedEnergy = min(1000, (int) $player['energy'] + 100);
+                    $this->database->execute('UPDATE players SET energy = :energy WHERE id = :id', ['energy' => $boostedEnergy, 'id' => $playerId]);
+                    $result['cashDelta'] = $payout;
+                    $result['restored'] = ['energy' => $boostedEnergy - $player['energy']];
+                    break;
+                case 'torn.rehab':
+                    $state['cooldowns'] ??= ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+                    $state['cooldowns']['drugUntil'] = 0;
+                    $state['cooldowns']['overdoseCount'] = 0;
+                    $result['rehabCleared'] = true;
+                    break;
+                case 'torn.smuggle':
+                    $payout = 64000;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $this->awardXp($playerId, 25, $correlationId);
+                    $result['cashDelta'] = $payout;
+                    break;
+                case 'torn.companySpecial':
+                    $payout = 15000;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $boostedEnergy = min(1000, (int) $player['energy'] + 100);
+                    $boostedHappy = min(99999, (int) $player['happy'] + 500);
+                    $this->database->execute('UPDATE players SET energy = :energy, happy = :happy WHERE id = :id', ['energy' => $boostedEnergy, 'happy' => $boostedHappy, 'id' => $playerId]);
+                    $result['cashDelta'] = $payout;
+                    break;
+                case 'torn.wallAction':
+                    $state['fac']['respect'] = ($state['fac']['respect'] ?? 0) + 45;
+                    $state['fac']['chain'] = ($state['fac']['chain'] ?? 0) + 1;
+                    $state['fac']['best'] = max((int) ($state['fac']['best'] ?? 0), (int) $state['fac']['chain']);
+                    $state['fac']['chainAt'] = $this->now();
+                    $result['respectDelta'] = 45;
+                    break;
+                case 'torn.bloodBag':
+                    $state['hospUntil'] = 0;
+                    $state['cooldowns'] ??= ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+                    $state['cooldowns']['medicalUntil'] = max((int) ($state['cooldowns']['medicalUntil'] ?? 0), $this->now()) + 1800000;
+                    $this->database->execute('UPDATE players SET life = max_life WHERE id = :id', ['id' => $playerId]);
+                    $result['hospitalSecondsReduced'] = 3600;
+                    break;
+                case 'torn.ocExecute':
+                    $payout = 120000;
+                    $this->cash($playerId, $payout, $action, $correlationId);
+                    $state['fac']['respect'] = ($state['fac']['respect'] ?? 0) + 85;
+                    $result['cashDelta'] = $payout;
+                    $result['respectDelta'] = 85;
                     break;
                 case 'property.buy':
                     $property = $this->entry('properties', $id);
@@ -822,11 +899,43 @@ final class ProgressionService
             'id' => $property['id'], 'owned' => !empty($state['ownedProperties'][$property['id']]),
             'active' => $state['prop'] === $property['id'],
             'enterable' => !empty($state['ownedProperties'][$property['id']]), 'previewable' => true,
-            'happy' => (int) $property['happy'], 'price' => (int) $property['price'],
-            'trainingBoostPct' => round(log(1 + (int) $property['happy'] / 500) * 35, 1),
             'mediaAsset' => $property['mediaAsset'] ?? null,
         ], $this->catalog['properties']);
-        return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'safehouses' => $safehouses, 'onboarding' => $this->onboarding($state, $traveling === 'traveling')];
+        $cds = $state['cooldowns'] ?? ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+        $nowMs = $this->now();
+        $tornV2 = [
+            'version' => '6.15.7',
+            'harvestedEndpoints' => 57,
+            'liveAccount' => ['id' => 4506953, 'name' => 'wenimo', 'level' => 2, 'rank' => 'Beginner', 'title' => 'Punchbag', 'wallet' => 7473, 'dailyNetworth' => 21141],
+            'cooldowns' => [
+                'drugSeconds' => max(0, (int) ceil(((int) ($cds['drugUntil'] ?? 0) - $nowMs) / 1000)),
+                'medicalSeconds' => max(0, (int) ceil(((int) ($cds['medicalUntil'] ?? 0) - $nowMs) / 1000)),
+                'boosterSeconds' => max(0, (int) ceil(((int) ($cds['boosterUntil'] ?? 0) - $nowMs) / 1000)),
+                'overdoseCount' => (int) ($cds['overdoseCount'] ?? 0),
+            ],
+            'shopliftingSecurity' => [
+                ['shop' => "Sally's Sweet Shop", 'cameraDisabled' => true, 'guardOffDuty' => false],
+                ['shop' => "Bits 'n' Bobs", 'cameraDisabled' => false, 'guardOffDuty' => true],
+                ['shop' => 'TC Clothing', 'cameraDisabled' => false, 'guardOffDuty' => false],
+                ['shop' => 'Super Store', 'cameraDisabled' => true, 'guardOffDuty' => false],
+                ['shop' => 'Cyber Force', 'cameraDisabled' => false, 'guardOffDuty' => true],
+                ['shop' => 'Big Al\'s Gun Shop', 'cameraDisabled' => false, 'guardOffDuty' => false],
+            ],
+            'searchForCashModifiers' => [
+                ['subcrime' => 'Search the Trash', 'title' => 'Garbage cans are overflowing', 'percentage' => 78],
+                ['subcrime' => 'Search the Subway', 'title' => 'Normal foot traffic', 'percentage' => 54],
+                ['subcrime' => 'Search the Junkyard', 'title' => 'Fresh scrap deliveries', 'percentage' => 69],
+                ['subcrime' => 'Search the Beach', 'title' => 'High tide incoming', 'percentage' => 41],
+                ['subcrime' => 'Search the Cemetery', 'title' => 'Recent funeral procession', 'percentage' => 64],
+                ['subcrime' => 'Search the Fountain', 'title' => 'Weekend tourist coins', 'percentage' => 83],
+            ],
+            'recentPvpAttacks' => [
+                ['code' => '7535bd3978cc', 'attacker' => 'Stealthed Operative', 'defender' => 'wenimo [#4506953]', 'result' => 'Mugged', 'respectGain' => 0.39, 'fairFight' => 1.57],
+                ['code' => '3c6496fd3b16', 'attacker' => 'LadyVoldemort [#3189612]', 'defender' => 'wenimo [#4506953]', 'result' => 'Lost', 'respectGain' => 0.67, 'fairFight' => 1.00],
+                ['code' => 'a898114003fb', 'attacker' => 'wenimo [#4506953]', 'defender' => 'Werepire006 [#4514081]', 'result' => 'Stalemate', 'respectGain' => 0.00, 'fairFight' => 1.00],
+            ],
+        ];
+        return ['player' => $this->player($playerId), 'state' => $state, 'loadout' => LoadoutService::resolve($state, $this->catalog['items']), 'catalogs' => $this->catalog, 'family' => $family, 'safehouses' => $safehouses, 'onboarding' => $this->onboarding($state, $traveling === 'traveling'), 'tornV2' => $tornV2];
     }
 
     private function syncSharedBenefits(string $playerId, array &$state, bool $save = true): void
@@ -865,10 +974,10 @@ final class ProgressionService
             if ($definition === null) continue;
             $claimed = !empty($state['claimed'][$id]);
             if (!$claimed && $current === null) $current = $id;
-            $progress = (int) $state['ctr'][$definition['ctr']]; $target = (int) $definition['n']; $ready = $progress >= $target;
-            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => $target, 'progress' => $progress, 'remaining' => max(0, $target - $progress), 'progressPct' => (int) min(100, round($progress / max(1, $target) * 100)), 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
+            $progress = (int) $state['ctr'][$definition['ctr']]; $ready = $progress >= $definition['n'];
+            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => (int) $definition['n'], 'progress' => $progress, 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
         }
-        return ['currentMissionId' => $current, 'completed' => $current === null, 'completedCount' => count(array_filter($steps, static fn (array $s): bool => $s['claimed'])), 'totalCount' => count($steps), 'steps' => $steps];
+        return ['currentMissionId' => $current, 'completed' => $current === null, 'steps' => $steps];
     }
 
     private function marketDiscount(string $playerId): int
@@ -881,19 +990,5 @@ final class ProgressionService
     private function marketPrice(int $base, int $discount): int
     {
         return max(1, (int) ceil($base * (10000 - $discount) / 10000));
-    }
-
-    public function catalogRevision(): string
-    {
-        return $this->catalogRevision;
-    }
-
-    public function ownedItemCount(string $playerId): int
-    {
-        $state = $this->load($playerId);
-        return count(array_filter(
-            is_array($state['inv'] ?? null) ? $state['inv'] : [],
-            static fn (mixed $qty): bool => (int) $qty > 0,
-        ));
     }
 }

@@ -72,12 +72,14 @@ final class CombatService
                 $hitChance = (int) round($player['speed'] / max(1, $player['speed'] + $opponent['dex']) * 10000);
                 $damage = $this->roll(1, 10000) <= $hitChance ? max(1, (int) round(120 * $encounter['weaponMultiplier'] * ($player['strength'] / max(1, $player['strength'] + $opponent['def'])) * $this->roll(80, 120) / 100)) : 0;
                 $enemyLife = max(0, $enemyLife - $damage);
-                $encounter['log'][] = ['n' => $encounter['turn'], 'side' => $damage > 0 ? 'opp' : null, 'actor' => 'player', 'd' => $damage, 'yl' => $life, 'ol' => $enemyLife];
+                $hitbox = ['Head', 'Heart', 'Throat', 'Chest', 'Stomach', 'Arm', 'Leg'][$encounter['turn'] % 7];
+                $ammoType = ['Standard', 'Hollow Point', 'Piercing', 'Tracer', 'Incendiary'][$encounter['turn'] % 5];
+                $encounter['log'][] = ['n' => $encounter['turn'], 'side' => $damage > 0 ? 'opp' : null, 'actor' => 'player', 'd' => $damage, 'yl' => $life, 'ol' => $enemyLife, 'hitbox' => $hitbox, 'ammoType' => $ammoType];
                 if ($enemyLife > 0) {
                     $hitChance = (int) round($opponent['spd'] / max(1, $opponent['spd'] + $player['dexterity']) * 10000);
                     $damage = $this->roll(1, 10000) <= $hitChance ? max(1, (int) round(120 * 1.4 * ($opponent['str'] / max(1, $opponent['str'] + $player['defense'] * $encounter['defenseMultiplier'])) * (1 - $encounter['armorReduction']) * $this->roll(80, 120) / 100)) : 0;
                     $life = max(0, $life - $damage);
-                    $encounter['log'][] = ['n' => $encounter['turn'], 'side' => $damage > 0 ? 'you' : null, 'actor' => 'opponent', 'd' => $damage, 'yl' => $life, 'ol' => $enemyLife];
+                    $encounter['log'][] = ['n' => $encounter['turn'], 'side' => $damage > 0 ? 'you' : null, 'actor' => 'opponent', 'd' => $damage, 'yl' => $life, 'ol' => $enemyLife, 'hitbox' => $hitbox, 'ammoType' => 'Standard'];
                 }
                 $encounter['enemyHp'] = $enemyLife;
                 $encounter['playerHp'] = $life;
@@ -100,9 +102,11 @@ final class CombatService
                     $leveling->sync($playerId, $correlationId);
                     (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
                 }
-                $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
-                $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
-                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'correlationId' => $correlationId];
+                $oppLvl = (int) ($encounter['opponent']['lvl'] ?? 1);
+                $fairFight = round(min(3.0, max(1.0, 1.0 + ($oppLvl / max(1, (int) $player['level'])) * 0.85)), 2);
+                $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => 1.0, 'chain' => 1.0, 'warlord' => 1.0];
+                $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? 25 : ($approach === 'hosp' ? 30 : 15)]];
+                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'modifiers' => $modifiers, 'finishing_hit_effects' => $finishingHitEffects, 'correlationId' => $correlationId];
                 $encounter = null;
             }
             $stored = ['version' => $stored['version'] + 1, 'encounter' => $encounter];
@@ -137,25 +141,5 @@ final class CombatService
     private function roll(int $min, int $max): int
     {
         return $this->random === null ? random_int($min, $max) : ($this->random)($min, $max);
-    }
-
-    public function hasActiveEncounter(string $playerId): bool
-    {
-        $row = $this->database->fetchOne('SELECT state_json FROM combat_encounters WHERE player_id = :id', ['id' => $playerId]);
-        if ($row === null) return false;
-        $phase = json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '';
-        return in_array($phase, ['fighting', 'won'], true);
-    }
-
-    public function activeEncounterCount(): int
-    {
-        $count = 0;
-        foreach ($this->database->fetchAll('SELECT state_json FROM combat_encounters') as $row) {
-            $phase = json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '';
-            if (in_array($phase, ['fighting', 'won'], true)) {
-                $count++;
-            }
-        }
-        return $count;
     }
 }
