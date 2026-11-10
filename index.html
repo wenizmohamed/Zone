@@ -453,26 +453,31 @@
           </div>
         </div>
 
-        <!-- OMAR FEEDBACK: TORN-STYLE HOME INFORMATION ARCHITECTURE (8 CORE CARDS) -->
-        <section class="zone-panel zone-dossier-deck" data-omar-home-architecture="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:12px">
-          <div class="zone-dossier-header" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
-            <div>
-              <strong style="color:var(--t1);font-size:14px;text-transform:uppercase;letter-spacing:.04em">{{ omar.homeDashboardTitle }}</strong>
-              <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
+        <!-- SYNDICATE OPERATIVE DOSSIER & TACTICAL COMMAND (8 CORE CARDS) -->
+        <section class="zone-panel zone-dossier-deck" data-omar-home-architecture="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 28px rgba(0,0,0,.32)">
+          <div class="zone-dossier-header" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:32px;height:32px;border-radius:5px;background:var(--activebg);border:1px solid var(--acc);display:grid;place-items:center;flex:none">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 5v7c0 5.5 4 9.5 9 10 5-.5 9-4.5 9-10V5z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+              </span>
+              <div>
+                <strong style="color:var(--t1);font-size:13.5px;text-transform:uppercase;letter-spacing:.06em;display:block">{{ omar.homeDashboardTitle }}</strong>
+                <div style="color:var(--mu);font-size:11px">{{ omar.homeDashboardSub }}</div>
+              </div>
             </div>
             <div class="zone-dossier-actions" style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="zone-compact-btn" onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">👤 {{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
-              <button class="zone-compact-btn" onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">🏆 {{ t.merits }} ({{ merits }})</button>
-              <button class="zone-compact-btn" onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer">🏠 {{ omar.propertyCardTitle }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openOwnProfile }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>{{ omar.viewProfileLabel }} [#{{ omar.playerId }}]</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openMeritsScreen }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.6 5.8 21 7 14 2 9.3 9 8.5 12 2"></polygon></svg>{{ t.merits }} ({{ merits }})</button>
+              <button class="zone-compact-btn" onClick="{{ omar.openPropertiesScreen }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path></svg>{{ omar.propertyCardTitle }}</button>
             </div>
           </div>
 
           <div class="zone-dossier-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
             <!-- Card 1: General Information -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>📋 {{ omar.generalInfoTitle }}</span>
-                <span style="color:var(--acc)">ID #{{ omar.playerId }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 8h8M8 12h8M8 16h5"></path></svg>{{ omar.generalInfoTitle }}</span>
+                <span style="color:var(--acc);font-size:10.5px;padding:1px 6px;border-radius:3px;background:rgba(163,217,0,.1);border:1px solid rgba(163,217,0,.25)">ID #{{ omar.playerId }}</span>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
                 <sc-for list="{{ omar.generalInfoRows }}" as="gr" hint-placeholder-count="8">
@@ -486,8 +491,8 @@
 
             <!-- Card 2: Battle Stats -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>⚔️ {{ omar.battleStatsTitle }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path></svg>{{ omar.battleStatsTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.openGymScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.gym }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -502,8 +507,8 @@
 
             <!-- Card 3: Working Stats & Job Information -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>💼 {{ omar.workingStatsTitle }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>{{ omar.workingStatsTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.openJobsScreen }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ t.nav.jobs }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -518,8 +523,8 @@
 
             <!-- Card 4: Personal Perks -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>✨ {{ omar.personalPerksTitle }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 2L15 9l7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"></path></svg>{{ omar.personalPerksTitle }}</span>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11px">
                 <sc-for list="{{ omar.personalPerks }}" as="pk" hint-placeholder-count="6">
@@ -533,8 +538,8 @@
 
             <!-- Card 5: Property Information & Rental Lease -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏠 {{ omar.propertyCardTitle }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path><path d="M9 21v-6h6v6"></path></svg>{{ omar.propertyCardTitle }}</span>
                 <button class="zone-compact-btn" onClick="{{ omar.rentPrivateIslandQuick }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ omar.rentIslandBtnLabel }}</button>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:4px;font-size:11.5px">
@@ -547,10 +552,10 @@
               </div>
             </div>
 
-            <!-- Card 6: Merits & Skill Upgrades (1->2->3->4 pt progression) -->
+            <!-- Card 6: Merits & Skill Upgrades -->
             <div class="zone-dossier-card" style="background:var(--deep);border:1px solid var(--border);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>🏆 {{ omar.meritsTreeTitle }}</span>
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="8" r="5"></circle><path d="M9 13l-2 8 5-3 5 3-2-8"></path></svg>{{ omar.meritsTreeTitle }}</span>
                 <bdi style="color:var(--gold);font-size:11px">{{ merits }} {{ t.merits }}</bdi>
               </div>
               <div class="zone-dossier-card-body" style="padding:6px 10px;display:flex;flex-direction:column;gap:5px;font-size:11px">
@@ -566,39 +571,42 @@
               </div>
             </div>
 
-            <!-- Card 7: Torn v6.15.7 Live Cooldown Stack & Happy Jump -->
-            <div class="zone-dossier-card" data-torn-v2-cooldowns="1" style="background:var(--deep);border:1px solid var(--acc);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--t1);font-size:12px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center">
-                <span>{{ omar.tornHarvestTitle }}</span>
+            <!-- Card 7: Toxicology, Medical & Booster Cooldown Monitor -->
+            <div class="zone-dossier-card" data-torn-v2-cooldowns="1" style="background:var(--deep);border:1px solid var(--border2);border-top:2px solid var(--acc);border-radius:5px;overflow:hidden;display:flex;flex-direction:column">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--t1);font-size:11.5px;border-bottom:1px solid var(--acc);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>{{ omar.tornHarvestTitle }}</span>
+                <span style="font-size:9.5px;color:var(--acc);padding:1px 6px;border-radius:3px;background:rgba(163,217,0,.1);border:1px solid rgba(163,217,0,.25)">BIO-TELEMETRY</span>
               </div>
-              <div class="zone-dossier-card-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:11px">
-                <sc-for list="{{ omar.tornCooldowns }}" as="cd" hint-placeholder-count="3">
-                  <div style="display:flex;flex-direction:column;gap:3px">
-                    <div style="display:flex;justify-content:space-between">
-                      <span style="color:var(--t2);font-weight:600">{{ cd.label }}</span>
-                      <bdi style="color:{{ cd.color }};font-weight:700">{{ cd.val }}</bdi>
+              <div class="zone-dossier-card-body" style="padding:10px;display:flex;flex-direction:column;gap:8px;font-size:11px;flex:1;justify-content:space-between">
+                <div style="display:flex;flex-direction:column;gap:7px">
+                  <sc-for list="{{ omar.tornCooldowns }}" as="cd" hint-placeholder-count="3">
+                    <div style="display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:6px 8px">
+                      <div style="display:flex;justify-content:space-between;align-items:center">
+                        <span style="color:var(--t2);font-weight:600;display:inline-flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:{{ cd.color }};box-shadow:0 0 6px {{ cd.color }}"></span>{{ cd.label }}</span>
+                        <bdi style="color:{{ cd.color }};font-weight:700;font-size:10.5px">{{ cd.val }}</bdi>
+                      </div>
+                      <div style="height:6px;background:var(--track);border:1px solid var(--edge);border-radius:3px;overflow:hidden">
+                        <div style="height:100%;width:{{ cd.pct }}%;background:{{ cd.color }};box-shadow:0 0 8px {{ cd.color }}"></div>
+                      </div>
                     </div>
-                    <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden">
-                      <div style="height:100%;width:{{ cd.pct }}%;background:{{ cd.color }}"></div>
-                    </div>
-                  </div>
-                </sc-for>
-                <button class="zone-compact-btn" onClick="{{ omar.runHappyJump }}" style="margin-top:4px;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.happyJumpBtnLabel }}</button>
+                  </sc-for>
+                </div>
+                <button class="zone-compact-btn" onClick="{{ omar.runHappyJump }}" style="width:100%;background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:7px 10px;font:inherit;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.03em">{{ omar.happyJumpBtnLabel }}</button>
               </div>
             </div>
 
-            <!-- Card 8: Gemini 4 Argon & Google Ecosystem Live Command -->
-            <div class="zone-dossier-card" data-gemini-4-argon="1" style="background:var(--deep);border:1px solid var(--gold);border-radius:5px;overflow:hidden">
-              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:6px 10px;font-weight:600;color:var(--gold);font-size:12px;border-bottom:1px solid var(--gold);display:flex;justify-content:space-between;align-items:center">
-                <span>{{ omar.geminiArgonTitle }}</span>
-                <button class="zone-compact-btn" onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer">{{ geminiArsenal.voiceLabel }}</button>
+            <!-- Card 8: Syndicate Tactical Wire & Field Operations -->
+            <div class="zone-dossier-card" data-gemini-4-argon="1" style="background:var(--deep);border:1px solid var(--border2);border-top:2px solid var(--gold);border-radius:5px;overflow:hidden;display:flex;flex-direction:column">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:7px 10px;font-weight:600;color:var(--gold);font-size:11.5px;border-bottom:1px solid var(--gold);display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;letter-spacing:.04em">
+                <span style="display:inline-flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>{{ omar.geminiArgonTitle }}</span>
+                <button class="zone-compact-btn" onClick="{{ geminiArsenal.speakBriefing }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:2px 8px;font:inherit;font-size:10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>{{ geminiArsenal.voiceLabel }}</button>
               </div>
-              <div class="zone-dossier-card-body" style="padding:8px 10px;display:flex;flex-direction:column;gap:6px;font-size:11px">
+              <div class="zone-dossier-card-body" style="padding:10px;display:flex;flex-direction:column;gap:8px;font-size:11px;flex:1;justify-content:space-between">
                 <div style="color:var(--mu);font-size:10.5px">{{ omar.geminiArgonSub }}</div>
-                <div style="padding:6px 8px;background:var(--panel);border:1px solid var(--border3);border-radius:4px;color:var(--acc);font-family:monospace;font-size:10.5px;white-space:pre-wrap">{{ geminiArsenal.aiLastResponse }}</div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <div style="padding:7px 9px;background:var(--panel);border:1px solid var(--border);border-inline-start:3px solid var(--gold);border-radius:4px;color:var(--t2);font-size:11px;line-height:1.45;white-space:pre-wrap">{{ geminiArsenal.aiLastResponse }}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
                   <sc-for list="{{ geminiArsenal.aiQuickOrders }}" as="qo" hint-placeholder-count="4">
-                    <button class="zone-compact-btn" onClick="{{ qo.run }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ qo.label }}</button>
+                    <button class="zone-compact-btn" onClick="{{ qo.run }}" style="background:linear-gradient(180deg,var(--btn),var(--panel));color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:6px 8px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer;text-align:start">{{ qo.label }}</button>
                   </sc-for>
                 </div>
               </div>
@@ -816,43 +824,64 @@
             </div>
           </div>
         </sc-if>
-        <section class="zone-panel" data-torn-combat2-panel="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.combatModifiersTitle }}</strong>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <sc-for list="{{ omar.ammoTypes }}" as="am" hint-placeholder-count="5">
-              <button class="zone-compact-btn" onClick="{{ am.select }}" style="background:{{ am.bg }};color:{{ am.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ am.label }}</button>
-            </sc-for>
+        <section class="zone-panel" data-torn-combat2-panel="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="3"></circle><path d="M12 3v3M12 18v3M3 12h3M18 12h3"></path></svg>
+              <strong style="color:var(--gold);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em">{{ omar.combatModifiersTitle }}</strong>
+            </div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">
+              <sc-for list="{{ omar.ammoTypes }}" as="am" hint-placeholder-count="5">
+                <button class="zone-compact-btn" onClick="{{ am.select }}" style="background:{{ am.bg }};color:{{ am.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 9px;font:inherit;font-size:10.5px;font-weight:600;cursor:pointer">{{ am.label }}</button>
+              </sc-for>
+            </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:6px">
             <sc-for list="{{ omar.combatModifiers }}" as="cm" hint-placeholder-count="6">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px">
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 9px;font-size:11px">
                 <div style="display:flex;justify-content:space-between"><strong style="color:var(--t1)">{{ cm.k }}</strong><bdi style="color:var(--acc);font-weight:700">{{ cm.v }}</bdi></div>
                 <small style="color:var(--mu);font-size:10px">{{ cm.desc }}</small>
               </div>
             </sc-for>
           </div>
-          <div style="display:grid;gap:4px">
-            <sc-for list="{{ omar.liveTornAttacks }}" as="atk" hint-placeholder-count="3">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:5px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px">
-                <span style="color:var(--t2)"><bdi style="color:var(--mu)">{{ atk.code }}</bdi> · {{ atk.match }}</span>
-                <span style="color:var(--gold);font-weight:600">{{ atk.outcome }} · {{ atk.ff }} · {{ atk.respect }}</span>
-              </div>
-            </sc-for>
-          </div>
-          <div data-torn-hitbox-loadout="1" style="display:grid;gap:6px;border-top:1px solid var(--line);padding-top:6px">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:6px">
-              <sc-for list="{{ omar.loadoutSlots4 }}" as="ls" hint-placeholder-count="4">
-                <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:5px 8px;font-size:10.5px">
-                  <span style="color:var(--acc);font-weight:700;display:block">{{ ls.slot }}</span>
-                  <strong style="color:var(--t1)">{{ ls.weapon }}</strong> · <small style="color:var(--gold)">{{ ls.mod }}</small>
-                </div>
-              </sc-for>
+          <div data-torn-hitbox-loadout="1" style="display:grid;grid-template-columns:130px 1fr;gap:12px;border-top:1px solid var(--line);padding-top:10px;align-items:center">
+            <div style="background:var(--deep);border:1px solid var(--border2);border-radius:5px;padding:8px;display:grid;place-items:center">
+              <svg width="92" height="145" viewBox="0 0 100 160" aria-label="Anatomical Target Silhouette">
+                <circle cx="50" cy="20" r="12" fill="rgba(224,90,74,.28)" stroke="#ff6a55" stroke-width="1.5"/>
+                <rect x="45" y="33" width="10" height="7" rx="2" fill="rgba(243,182,63,.3)" stroke="var(--gold)" stroke-width="1.2"/>
+                <rect x="33" y="42" width="34" height="34" rx="5" fill="rgba(163,217,0,.18)" stroke="var(--acc)" stroke-width="1.5"/>
+                <circle cx="55" cy="54" r="6" fill="rgba(224,90,74,.45)" stroke="#ff6a55" stroke-width="1.2"/>
+                <rect x="36" y="78" width="28" height="20" rx="4" fill="rgba(90,160,224,.18)" stroke="#5aa0e0" stroke-width="1.2"/>
+                <rect x="19" y="44" width="11" height="42" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="70" y="44" width="11" height="42" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="35" y="100" width="13" height="48" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="52" y="100" width="13" height="48" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
+              </svg>
             </div>
-            <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
-              <span style="font-size:10.5px;color:var(--mu);font-weight:700">{{ omar.hitboxBarLabel }}</span>
-              <sc-for list="{{ omar.anatomicalHitboxes }}" as="hb" hint-placeholder-count="6">
-                <button class="zone-compact-btn" onClick="{{ hb.aim }}" style="background:{{ hb.bg }};color:{{ hb.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 7px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hb.part }} ({{ hb.mult }})</button>
-              </sc-for>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:6px">
+                <sc-for list="{{ omar.loadoutSlots4 }}" as="ls" hint-placeholder-count="4">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-inline-start:2px solid var(--acc);border-radius:4px;padding:6px 8px;font-size:10.5px">
+                    <span style="color:var(--acc);font-weight:700;font-size:9.5px;letter-spacing:.05em;display:block">{{ ls.slot }}</span>
+                    <strong style="color:var(--t1);display:block">{{ ls.weapon }}</strong>
+                    <small style="color:var(--gold)">{{ ls.mod }}</small>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+                <span style="font-size:10.5px;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.04em">{{ omar.hitboxBarLabel }}</span>
+                <sc-for list="{{ omar.anatomicalHitboxes }}" as="hb" hint-placeholder-count="10">
+                  <button class="zone-compact-btn" onClick="{{ hb.aim }}" style="background:{{ hb.bg }};color:{{ hb.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hb.part }} ({{ hb.mult }})</button>
+                </sc-for>
+              </div>
+              <div style="display:grid;gap:4px">
+                <sc-for list="{{ omar.liveTornAttacks }}" as="atk" hint-placeholder-count="3">
+                  <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:5px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px">
+                    <span style="color:var(--t2)"><bdi style="color:var(--mu)">{{ atk.code }}</bdi> · {{ atk.match }}</span>
+                    <span style="color:var(--gold);font-weight:600">{{ atk.outcome }} · {{ atk.ff }} · {{ atk.respect }}</span>
+                  </div>
+                </sc-for>
+              </div>
             </div>
           </div>
         </section>
@@ -4019,7 +4048,7 @@ class Component extends DCLogic {
             if (blocked) { this.toast(blocked, true); return; }
             this.setState({
               crimeRequestError: null,
-              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/crimes/${rawBest.id}/attempt]\n> Committing "${this.crimeName(rawBest, t)}" directly from Home Command Deck...`
+              geminiTrace: `[SYNDICATE STREET DISPATCH · /api/v1/crimes/${rawBest.id}/attempt]\n> Committing "${this.crimeName(rawBest, t)}" directly from Home Command Deck...`
             });
             return this.resolve('cr' + rawBest.id, 320, async tt => {
               await this.commit(rawBest, tt);
@@ -4039,7 +4068,7 @@ class Component extends DCLogic {
             if (this.cur('energy') < this.gymEnergyCost()) return this.toast(t.toast.noEnergy, true);
             this.setState({
               gymStation: weakest,
-              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/gym/train]\n> Training weakest stat "${weakest.toUpperCase()}" (${view.gymStudio.happyMultiplier} Happy Boost)...`
+              geminiTrace: `[SYNDICATE CONDITIONING · /api/v1/gym/train]\n> Training weakest stat "${weakest.toUpperCase()}" (${view.gymStudio.happyMultiplier} Happy Boost)...`
             });
             return this.resolve('tr' + weakest, 320, async tt => {
               await this.train(weakest, tt);
@@ -4054,7 +4083,7 @@ class Component extends DCLogic {
             this.playTacticalSfx('crime');
             if (this.cur('energy') < this.jobEnergyCost()) return this.toast(t.toast.noEnergy, true);
             this.setState({
-              geminiTrace: `[GEMINI 3.7 LIVE EXECUTION · /api/v1/jobs/work]\n> Executing shift for "${t.jobNames[p.job]}" (+${this.jobPayRange()})...`
+              geminiTrace: `[SYNDICATE SHIFT PAYROLL · /api/v1/jobs/work]\n> Executing shift for "${t.jobNames[p.job]}" (+${this.jobPayRange()})...`
             });
             return this.resolve('work', 320, tt => this.work(tt));
           }
@@ -4089,7 +4118,7 @@ class Component extends DCLogic {
               outfit: 'tactical',
               holodeckWeapon: 'bullpup_1',
               crimeRequestError: null,
-              geminiTrace: `[DAY-1 VAULT HEIST PROLOGUE · GEMINI 3.7 DIRECTOR]\n> Equipped Swat.glb Tactical Rig (35% Kevlar) + Bullpup L85 Rifle\n> Breaching syndicate target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
+              geminiTrace: `[SYNDICATE VAULT BREACH · TACTICAL COMMAND]\n> Equipped Swat.glb Tactical Rig (35% Kevlar) + Bullpup L85 Rifle\n> Breaching syndicate target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: true } });
@@ -4184,7 +4213,7 @@ class Component extends DCLogic {
             : `[SYNDICATE TACTICAL COMMAND · INTEL DEPTH SET TO ${lvl}]\n• Tactical Reasoning Mode: ${lvl === 'HIGH' ? 'Deep Monte-Carlo Tree Search (10,000 rollouts)' : lvl === 'MEDIUM' ? 'Balanced Heuristic + EV Synthesis' : 'Sub-50ms Low-Latency Tactical Reflex'}`
         })
       })),
-      voiceLabel: lang === 'ar' ? '🔊 إيجاز صوتي تكتيكي مباشر' : '🔊 Tactical Voice Briefing',
+      voiceLabel: lang === 'ar' ? 'إيجاز صوتي' : 'Audio Dispatch',
       speakBriefing: () => {
         const speechText = lang === 'ar'
           ? `تقرير القيادة التكتيكية للنقابة. صافي الثروة ${money(totalNetWorthVal)}. أفضل جريمة متاحة هي ${bestCrimeCandidate.name}. لديك ${view.gymStudio.sessionsAvailable} جلسات تدريب متاحة في النادي.`
@@ -4246,7 +4275,7 @@ class Component extends DCLogic {
           }
         }
       ],
-      aiCommsTitle: lang === 'ar' ? '🎙️ اتصال ذكاء Gemini 4 Argon التكتيكي المباشر ونظام الانتقام' : '🎙️ GEMINI 4 ARGON & 3.8 LIVE FIXER COMMS · GOOGLE GROUNDING & FUNCTION-CALLING',
+      aiCommsTitle: lang === 'ar' ? 'شبكة العمليات التكتيكية للنقابة ورادار الخصوم' : 'SYNDICATE TACTICAL OPERATIONS & NEMESIS RADAR',
       nemesisAlert: (() => {
         const nemesisFeed = lang === 'ar'
           ? [
@@ -4262,12 +4291,12 @@ class Component extends DCLogic {
         return nemesisFeed[Math.abs(Math.floor((this.state.tick || 0) / 5)) % nemesisFeed.length];
       })(),
       aiPromptValue: this.state.aiPrompt || '',
-      aiPromptPlaceholder: lang === 'ar' ? 'اكتب أمراً تكتيكياً لـ Gemini 4 Argon (مثال: جهز بولباب، نفذ Happy Jump، اعترض القافلة)...' : 'Type natural-language command for Gemini 4 Argon (e.g. "Arm Bullpup, execute Happy Jump, intercept convoy, strike nemesis")...',
+      aiPromptPlaceholder: lang === 'ar' ? 'أدخل أمر عمليات ميداني (اعترض القافلة، كمين فيكتور، تأمين الخزينة)...' : 'Enter tactical operation directive (intercept convoy, ambush victor, lock vault)...',
       onAiPromptInput: e => this.setState({ aiPrompt: e.target.value }),
-      aiExecuteLabel: lang === 'ar' ? '⚡ تنفيذ أمر Gemini 4 Argon' : '⚡ Execute Gemini 4 Argon Call',
+      aiExecuteLabel: lang === 'ar' ? 'تنفيذ الأمر الميداني' : 'Execute Tactical Directive',
       aiLastResponse: this.state.aiFixerTrace || (lang === 'ar'
-        ? `[GEMINI 4 ARGON & GEMINI 3.8 LIVE READY] · حساب تورن المربوط: wenimo [#4506953] · 57/57 نقطة API محصودة · العتاد: Bullpup L85 ×3.82 · الخزينة: ${money(p.bankBalance)} · جاهز للأوامر الصوتية والتكتيكية.`
-        : `[GEMINI 4 ARGON & GEMINI 3.8 LIVE READY] · Linked Torn Account: wenimo [#4506953] (57/57 v6.15.7 Endpoints) · Rig: Bullpup L85 ×3.82 · Vault: ${money(p.bankBalance)} · Google Search Grounding & Function-Calling Active.`),
+        ? `العمليات الميدانية جاهزة · العميل: ${view.t.player} [#${String(this.p.numericId || '1042')}] · التسليح: Bullpup L85 (×3.82) · رصيد الخزينة المؤمن: ${money(p.bankBalance)} · خطوط الاتصال التكتيكية نشطة.`
+        : `Syndicate Wire Active · Operative: ${view.t.player} [#${String(this.p.numericId || '1042')}] · Primary Rig: Bullpup L85 (×3.82) · Vault Balance: ${money(p.bankBalance)} · Encrypted District Telemetry Online.`),
       runAiOrder: () => {
         this.playTacticalSfx('rack');
         const q = String(this.state.aiPrompt || '').trim().toLowerCase();
@@ -4289,7 +4318,7 @@ class Component extends DCLogic {
             this.p.cash = 0;
             this.save();
           }
-          const resp = `[AI FUNCTION CALL: wireToTitaniumVault({ amount: ${moved || 48500}, yieldRate: "1.85%" })]\n> Fixer Audio: "Done boss. Locked ${money(moved || 48500)} inside the biometric titanium vault. Zero street mug exposure."`;
+          const resp = `Titanium Vault Transfer Confirmed · Locked ${money(moved || 48500)} at 1.85% weekly yield. Street mug exposure reduced to 0%.`;
           speak(`Done boss. Locked ${moved || 48500} dollars inside the biometric titanium vault.`);
           this.setState({ aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' });
           return;
@@ -4298,7 +4327,7 @@ class Component extends DCLogic {
           this.p.cash = Number(this.p.cash || 0) + 18500;
           this.p.fac.respect = Number(this.p.fac.respect || 0) + 35;
           this.save();
-          const resp = `[AI FUNCTION CALL: interceptArmoredConvoy({ route: "Central Bank -> Pier", weapon: "Bullpup L85" })]\n> Fixer Audio: "Armored convoy intercepted on 3D City Grid! Extracted +$18,500 Syndicate Cash and +35 Sand Vipers Respect."`;
+          const resp = `Armored Convoy Intercepted (Central Bank -> Pier) · Extracted +$18,500 cash and +35 Faction Respect.`;
           speak('Armored bank convoy intercepted on the 3D city grid. Extracted 18,500 dollars.');
           this.result('cash', 'Armored Convoy Intercepted', 'Central Bank → Pier Route · +35 Respect', '+$18,500');
           this.setState({ aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => this.go('city'));
@@ -4308,7 +4337,7 @@ class Component extends DCLogic {
           this.p.cash = Number(this.p.cash || 0) + 14200;
           this.p.ctr.wins = Number(this.p.ctr?.wins || 0) + 1;
           this.save();
-          const resp = `[AI FUNCTION CALL: ambushNemesisTarget({ target: "Victor (Boxer)", stance: "Tactical Breacher + Bullpup L85" })]\n> Fixer Audio: "Nemesis Victor ambushed outside Sector ZC-055! Target hospitalized, +$14,200 bounty wired to your street balance."`;
+          const resp = `Rival Enforcer Victor Ambushed (Sector ZC-055) · Target hospitalized and +$14,200 contract bounty collected.`;
           speak('Nemesis Victor ambushed outside sector Z C 055. Bounty of 14,200 dollars collected.');
           this.result('good', 'Nemesis Bounty Collected', 'Victor (Boxer) Hospitalized · 3D Ballistics Verified', '+$14,200');
           this.setState({ outfit: 'tactical', holodeckWeapon: 'bullpup_1', aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => { this.pushChar(); this.charMsg({ combat: { side: 'you', hit: true } }); });
@@ -4319,32 +4348,32 @@ class Component extends DCLogic {
         this.p.cash = Number(this.p.cash || 0) + 9500;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 25;
         this.save();
-        const resp = `[AI FUNCTION CALL: executeSyndicateCombo({ order: "${q || 'Full Tactical Sweep'}", weapon: "Bullpup L85 ×4.14", target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}" })]\n> Fixer Audio: "Tactical sweep executed. Bullpup L85 armed, Kevlar plates locked, +$9,500 heist payout and +25 Crime XP secured."`;
+        const resp = `District Tactical Sweep Complete · Bullpup L85 & Kevlar Rig verified · +$9,500 payout and +25 Crime XP secured.`;
         speak('Tactical sweep executed. Bullpup L85 armed and 9,500 dollars extracted.');
         this.result('cash', 'AI Fixer Tactical Sweep', 'Bullpup L85 Armed · +25 Crime XP', '+$9,500');
         this.setState({ outfit: 'tactical', holodeckWeapon: 'bullpup_1', aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => { this.pushChar(); this.charMsg({ combat: { side: 'you', hit: true } }); });
       },
       aiQuickOrders: [
         {
-          label: lang === 'ar' ? '🚚 اعتراض قافلة البنك (+18.5K$)' : '🚚 Intercept 3D Bank Convoy (+$18.5K)',
+          label: lang === 'ar' ? 'اعتراض قافلة البنك (+$18.5K)' : 'Intercept Armored Convoy (+$18.5K)',
           run: () => {
             this.setState({ aiPrompt: 'intercept convoy' }, () => view.geminiArsenal.runAiOrder());
           }
         },
         {
-          label: lang === 'ar' ? '🎯 كمين ضد الخصم فيكتور (+14.2K$)' : '🎯 Ambush Nemesis Victor (+$14.2K)',
+          label: lang === 'ar' ? 'كمين ضد الخصم فيكتور (+$14.2K)' : 'Ambush Rival Enforcer (+$14.2K)',
           run: () => {
             this.setState({ aiPrompt: 'strike nemesis victor' }, () => view.geminiArsenal.runAiOrder());
           }
         },
         {
-          label: lang === 'ar' ? '🔒 تأمين الكاش في الخزينة' : '🔒 AI Wire Cash to Vault',
+          label: lang === 'ar' ? 'تحويل النقد للخزينة المؤمنة' : 'Wire Street Cash to Vault',
           run: () => {
             this.setState({ aiPrompt: 'lock cash in titanium vault' }, () => view.geminiArsenal.runAiOrder());
           }
         },
         {
-          label: lang === 'ar' ? '⚡ ضربة النقابة الشاملة (+9.5K$)' : '⚡ Full AI Tactical Sweep (+$9.5K)',
+          label: lang === 'ar' ? 'مسح تكتيكي للقطاع (+$9.5K)' : 'Execute District Sweep (+$9.5K)',
           run: () => {
             this.setState({ aiPrompt: 'full syndicate tactical sweep' }, () => view.geminiArsenal.runAiOrder());
           }
@@ -5117,13 +5146,13 @@ class Component extends DCLogic {
         this.toast(lang === 'ar' ? '📝 تم حفظ المفكرة الشخصية.' : '📝 Personal Notes saved.');
       },
       // === TORN API v2 (v6.15.7) + GEMINI 4 ARGON LIVE HARVEST TELEMETRY ===
-      tornHarvestTitle: lang === 'ar' ? '🧬 أنظمة Torn v6.15.7 المحصودة حياً (wenimo [#4506953] · 57/57 API)' : '🧬 TORN v6.15.7 LIVE HARVEST & COOLDOWN STACK (wenimo [#4506953] · 57/57 API)',
+      tornHarvestTitle: lang === 'ar' ? 'المؤشرات الحيوية وتهدئة المنشطات والطب' : 'Active Bio-Cooldowns & Toxicology Monitor',
       tornCooldowns: [
-        { id: 'drug', label: lang === 'ar' ? '💊 تهدئة المخدرات (Drug CD)' : '💊 Drug Cooldown', val: this.state.tornDrugCd || '04h 18m / 24h', pct: this.state.tornDrugPct || 38, color: '#ff5d6c' },
-        { id: 'med', label: lang === 'ar' ? '🏥 تهدئة الطب (Medical CD)' : '🏥 Medical Cooldown', val: this.state.tornMedCd || '01h 12m / 06h', pct: this.state.tornMedPct || 22, color: '#39e7a3' },
-        { id: 'boost', label: lang === 'ar' ? '⚡ تهدئة المعززات (Booster CD)' : '⚡ Booster Cooldown', val: this.state.tornBoostCd || '06h 00m / 24h', pct: this.state.tornBoostPct || 25, color: '#f3b63f' }
+        { id: 'drug', label: lang === 'ar' ? 'تهدئة المنشطات (Narcotics CD)' : 'Narcotics Cooldown', val: this.state.tornDrugCd || '04h 18m / 24h', pct: this.state.tornDrugPct || 38, color: '#ff5d6c' },
+        { id: 'med', label: lang === 'ar' ? 'تهدئة الإسعافات (Trauma CD)' : 'Medical Cooldown', val: this.state.tornMedCd || '01h 12m / 06h', pct: this.state.tornMedPct || 22, color: '#39e7a3' },
+        { id: 'boost', label: lang === 'ar' ? 'تهدئة المعززات (Morale CD)' : 'Booster Cooldown', val: this.state.tornBoostCd || '06h 00m / 24h', pct: this.state.tornBoostPct || 25, color: '#f3b63f' }
       ],
-      happyJumpBtnLabel: lang === 'ar' ? '🚀 تنفيذ قفزة السعادة (Erotic DVD + Ecstasy 2x + Xanax +250E)' : '🚀 1-Click Happy Jump (Erotic DVD +2500H → Ecstasy 2x → Xanax +250E)',
+      happyJumpBtnLabel: lang === 'ar' ? 'تنفيذ بروتوكول قفزة المعنويات (+2,500 معنويات · مضاعفة 2x · +250 طاقة)' : 'Execute Happy-Stack Protocol (+2,500 Happy · 2x Peak · +250E)',
       runHappyJump: () => {
         this.playTacticalSfx('gym');
         this.p.happy = Math.min(99999, Number(this.p.happy || 500) * 2 + 2500);
@@ -5134,20 +5163,20 @@ class Component extends DCLogic {
           tornDrugPct: 68,
           tornBoostCd: '12h 00m / 24h (Erotic DVD ×2)',
           tornBoostPct: 50,
-          aiFixerTrace: `[GEMINI 4 ARGON · TORN v6.15.7 HAPPY JUMP EXECUTED]\n> Stacked 2x Erotic DVD (+5,000 Happy) -> 1x Ecstasy (2x Happy) -> 1x Xanax (+250 Energy, 3.5% OD Roll Cleared) · Ready for Gym Conditioning.`
+          aiFixerTrace: `Happy-Stack Conditioning Active · Stacked Booster Media (+5,000 Happy) + 2x Morale Catalyst + +250 Tactical Energy (0% Overdose). Ready for Heavy Gym Conditioning.`
         });
-        this.result('good', lang === 'ar' ? '🚀 قفزة السعادة (Happy Jump) مكتملة!' : '🚀 Torn v6.15.7 Happy Jump Executed!', lang === 'ar' ? 'تضاعفت السعادة +250 طاقة من Xanax' : 'Happiness Doubled + 250 Xanax Energy Stacked', '+250E / 2x Happy');
+        this.result('good', lang === 'ar' ? 'اكتمل بروتوكول قفزة المعنويات' : 'Happy-Stack Protocol Executed', lang === 'ar' ? 'تضاعفت المعنويات +250 طاقة للتدريب' : 'Happiness Doubled + 250 Conditioning Energy Stacked', '+250E / 2x Happy');
       },
-      geminiArgonTitle: lang === 'ar' ? '🧠 مركز قيادة Gemini 4 Argon & 3.8 Live التكتيكي' : '🧠 GEMINI 4 ARGON & 3.8 LIVE COMMAND (GOOGLE SEARCH GROUNDING)',
-      geminiArgonSub: lang === 'ar' ? 'استدلال 1M توكن · ربط حي مع 57 نقطة Torn v6.15.7 · توجيه صوتي وتكتيكي' : '1M Context Reasoning · 57 Live Torn v6.15.7 Endpoints · Google Search Grounding & Voice Fixer',
-      shopliftingTitle: lang === 'ar' ? '🛡️ حالة كاميرات وحراس المتاجر الحية (TornShoplifting v2)' : '🛡️ TORN CRIMES 2.0 LIVE SHOPLIFTING SECURITY & SEARCH MODIFIERS',
+      geminiArgonTitle: lang === 'ar' ? 'غرفة العمليات التكتيكية والاتصالات المشفرة' : 'Syndicate Tactical Operations & Encrypted Wire',
+      geminiArgonSub: lang === 'ar' ? 'توجيه العمليات الميدانية · اعتراض القوافل · تأمين السيولة · استطلاع القطاعات' : 'Live District Recon · Armored Convoy Intercept · Offshore Vault Escrow · Target Ambush',
+      shopliftingTitle: lang === 'ar' ? 'حالة أنظمة المراقبة والحراسة في المتاجر وكثافة البحث' : 'Storefront Security Telemetry & District Search Density',
       shopliftingShops: [
-        { shop: "Sally's Sweet Shop", status: lang === 'ar' ? '🟢 الكاميرات معطلة (فرصة مثالية)' : '🟢 Cameras Disabled (Optimal Window)', color: 'var(--acc)' },
-        { shop: "Bits 'n' Bobs", status: lang === 'ar' ? '🟢 الحارس خارج الخدمة' : '🟢 Guard Off-Duty (Window Open)', color: 'var(--acc)' },
-        { shop: 'Super Store', status: lang === 'ar' ? '🟢 الكاميرات معطلة' : '🟢 Cameras Disabled (Low Risk)', color: 'var(--acc)' },
-        { shop: 'Cyber Force', status: lang === 'ar' ? '🟡 حارس واحد معطل · كاميرات نشطة' : '🟡 1 Guard Off-Duty · CCTV Active', color: 'var(--gold)' },
-        { shop: 'TC Clothing', status: lang === 'ar' ? '🔴 الكاميرات والحراس نشطون' : '🔴 CCTV & Guards Active', color: '#ff8a7a' },
-        { shop: "Big Al's Gun Shop", status: lang === 'ar' ? '🔴 حراسة مشددة (4 كاميرات)' : '🔴 Heavy Security (4 Cameras · 2 Guards)', color: '#ff8a7a' }
+        { shop: "Sally's Sweet Shop", status: lang === 'ar' ? '[مفتوح] الكاميرات معطلة' : '[OPEN] Cameras Offline · Low Risk', color: 'var(--acc)' },
+        { shop: "Bits 'n' Bobs", status: lang === 'ar' ? '[مفتوح] الحارس خارج النوبة' : '[OPEN] Guard Off-Duty · Clear', color: 'var(--acc)' },
+        { shop: 'Super Store', status: lang === 'ar' ? '[مفتوح] نقطة التفتيش معطلة' : '[OPEN] Checkpoint Disabled', color: 'var(--acc)' },
+        { shop: 'Cyber Force', status: lang === 'ar' ? '[متوسط] كاميرات نشطة · حارس غائب' : '[CAUTION] 1 Guard Off-Duty · CCTV Live', color: 'var(--gold)' },
+        { shop: 'Zone Clothing', status: lang === 'ar' ? '[خطر] الكاميرات والحراس في الموقع' : '[ALERT] CCTV & Patrol Active', color: '#ff8a7a' },
+        { shop: "Big Al's Gun Shop", status: lang === 'ar' ? '[خطر عالٍ] 4 كاميرات وحارسان' : '[LOCKED] 4 Cameras · 2 Armed Guards', color: '#ff8a7a' }
       ],
       searchModifiers: [
         { loc: lang === 'ar' ? 'نافورة المدينة (Fountain)' : 'Search the Fountain', state: lang === 'ar' ? 'عملات السياح مكدسة' : 'Weekend tourist coins', pct: '83%' },
@@ -5155,23 +5184,23 @@ class Component extends DCLogic {
         { loc: lang === 'ar' ? 'ساحة الخردة (Junkyard)' : 'Search the Junkyard', state: lang === 'ar' ? 'شحنات خردة جديدة' : 'Fresh scrap deliveries', pct: '69%' },
         { loc: lang === 'ar' ? 'المقبرة (Cemetery)' : 'Search the Cemetery', state: lang === 'ar' ? 'موكب جنازة حديث' : 'Recent funeral procession', pct: '64%' }
       ],
-      skimmerBtnLabel: lang === 'ar' ? '💳 سحب بيانات صرافة البطاقات (Card Skimming +$18,500)' : '💳 Collect ATM Skimmer Dump (+247 Cards · +$18,500)',
-      crackBtnLabel: lang === 'ar' ? '🔐 تشغيل منصة كسر التشفير (740 MIPS Rig +$14,200)' : '🔐 Run 740 MIPS Password Cracking Rig (+$14,200)',
+      skimmerBtnLabel: lang === 'ar' ? 'سحب بيانات ناسخ الصراف (+$18,500)' : 'Harvest ATM Skimmer Dump (+247 Cards · +$18,500)',
+      crackBtnLabel: lang === 'ar' ? 'تشغيل منصة كسر التشفير (740 MIPS · +$14,200)' : 'Run 740 MIPS Cipher Cracking Rig (+$14,200)',
       collectSkimmerDump: () => {
         this.playTacticalSfx('crime');
         this.p.cash = Number(this.p.cash || 0) + 18500;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 18;
         this.save();
-        this.result('cash', lang === 'ar' ? '💳 سحب بيانات Skimmer ناجح!' : '💳 ATM Card Skimmer Dump Collected!', lang === 'ar' ? '247 بطاقة مستنسخة من محطة المترو · +18 خبرة جرائم' : '247 cloned cards from Subway ATM · +18 Crime XP', '+$18,500');
+        this.result('cash', lang === 'ar' ? 'تم سحب بيانات الصراف بنجاح' : 'ATM Skimmer Dump Harvested', lang === 'ar' ? '247 بطاقة مستنسخة من محطة المترو · +18 خبرة جرائم' : '247 cloned cards from Subway Terminal · +18 Crime XP', '+$18,500');
       },
       runCrackingRig: () => {
         this.playTacticalSfx('crime');
         this.p.cash = Number(this.p.cash || 0) + 14200;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 15;
         this.save();
-        this.result('cash', lang === 'ar' ? '🔐 كسر شفرة SHA-512 مكتمل!' : '🔐 SHA-512 Hash Cracked (740 MIPS Rig)!', lang === 'ar' ? 'تم استخراج محفظة تشفير سرية · +15 خبرة جرائم' : 'Extracted offshore ledger key · +15 Crime XP', '+$14,200');
+        this.result('cash', lang === 'ar' ? 'اكتمل كسر التشفير SHA-512' : 'SHA-512 Ledger Cipher Cracked', lang === 'ar' ? 'تم استخراج محفظة تشفير سرية · +15 خبرة جرائم' : 'Extracted offshore ledger key · +15 Crime XP', '+$14,200');
       },
-      combatModifiersTitle: lang === 'ar' ? '⚔️ معادلة الاحترام القتالي السباعية وسجل قتال wenimo [#4506953] الحي' : '⚔️ TORN v6.15.7 7-MODIFIER RESPECT ENGINE & LIVE PVP LOG (wenimo [#4506953])',
+      combatModifiersTitle: lang === 'ar' ? 'مضاعفات الاحترام القتالي، الذخيرة الخاصة، ومصفوفة الإصابة التشريحية' : 'Ballistics Modifiers, Special Ammunition & Anatomical Target Matrix',
       combatModifiers: [
         { k: 'Fair Fight', v: '1.57x – 3.00x', desc: lang === 'ar' ? 'مكافأة تكافؤ القوة القتالية' : 'Stat parity multiplier (1.00x–3.00x)' },
         { k: 'Ranked War', v: '2.00x', desc: lang === 'ar' ? 'مضاعف الحرب المصنفة (#51815)' : 'Active Ranked War target bonus' },
@@ -5181,11 +5210,11 @@ class Component extends DCLogic {
         { k: 'Warlord Weapon', v: '1.25x', desc: lang === 'ar' ? 'تأثير الضربة القاضية للسلاح' : 'Finishing hit weapon perk (+25%)' }
       ],
       ammoTypes: [
-        { id: 'std', label: '⚪ Standard' },
-        { id: 'hp', label: '🔴 Hollow Point (+50% Dmg)' },
-        { id: 'ap', label: '🔵 Piercing (-50% Armor)' },
-        { id: 'tr', label: '🟢 Tracer (+10 Acc)' },
-        { id: 'inc', label: '🟠 Incendiary (+40% Burn)' }
+        { id: 'std', label: 'StandardFMJ' },
+        { id: 'hp', label: 'Hollow Point (+50% Dmg)' },
+        { id: 'ap', label: 'Armor Piercing (-50% Armor)' },
+        { id: 'tr', label: 'Tracer (+10 Acc)' },
+        { id: 'inc', label: 'Incendiary (+40% Burn)' }
       ].map(am => {
         const curAmmo = this.state.tornAmmo || 'hp';
         return {
@@ -5200,16 +5229,16 @@ class Component extends DCLogic {
         };
       }),
       liveTornAttacks: [
-        { code: '#7535bd39', match: 'Stealthed Operative → wenimo [#4506953]', outcome: 'Mugged', ff: 'FF 1.57x', respect: '+0.39 Respect' },
-        { code: '#3c6496fd', match: 'LadyVoldemort [#3189612] (Fody\'s Shack #56798) → wenimo [#4506953]', outcome: 'Defeat', ff: 'FF 1.00x', respect: '+0.67 Respect' },
-        { code: '#a8981140', match: 'wenimo [#4506953] → Werepire006 [#4514081]', outcome: 'Stalemate', ff: 'FF 1.00x', respect: '0.00 Respect' }
+        { code: '#7535bd39', match: 'Vincenzo [#1042] -> Rayan_Black [#1088]', outcome: 'Hospitalized', ff: 'Fair Fight 2.45x', respect: '+3.82 Respect' },
+        { code: '#3c6496fd', match: 'Vincenzo [#1042] -> Duke_X [#1337] (Old Guard)', outcome: 'Mugged ($42,500)', ff: 'Fair Fight 1.88x', respect: '+2.64 Respect' },
+        { code: '#a8981140', match: 'Layla_R [#1104] -> BigSal [#1094] (Harbor Kings)', outcome: 'Hospitalized', ff: 'Ranked War 2.00x', respect: '+4.10 Respect' }
       ],
-      oc2Title: lang === 'ar' ? '🏛️ الجرائم المنظمة 2.0 (أدوار الطاقم P1–P6) وإيرادات أراضي الفاكشن (Rackets)' : '🏛️ TORN ORGANIZED CRIMES 2.0 (P1–P6 CREW SLOTS) & LIVE TERRITORY RACKETS',
+      oc2Title: lang === 'ar' ? 'عمليات الطاقم المنظمة (P1-P4) وعوائد قطاعات العائلة' : 'Syndicate Crew Operations (P1-P4 Roles) & Territory Rackets',
       oc2Slots: [
         { slot: 'P1 · Muscle', item: 'Jemmy', rate: '92% Pass Rate', status: lang === 'ar' ? 'جاهز (Vincenzo)' : 'Locked In (Vincenzo)' },
         { slot: 'P2 · Lockpicker', item: 'Lockpicks', rate: '88% Pass Rate', status: lang === 'ar' ? 'جاهز (Layla_R)' : 'Locked In (Layla_R)' },
         { slot: 'P3 · Hacker', item: 'RF Detector', rate: '95% Pass Rate', status: lang === 'ar' ? 'جاهز (Omar_Z)' : 'Locked In (Omar_Z)' },
-        { slot: 'P4 · Lookout', item: 'Dog Treats', rate: '86% Pass Rate', status: lang === 'ar' ? 'جاهز (wenimo #4506953)' : 'Locked In (wenimo #4506953)' }
+        { slot: 'P4 · Lookout', item: 'Signal Jammer', rate: '91% Pass Rate', status: lang === 'ar' ? 'جاهز (Tariq)' : 'Locked In (Tariq)' }
       ],
       activeRackets: [
         { sector: 'Sector KDB · Drug Lab V', yieldText: '400x Xanax / day', fac: 'Catalysis [#89]' },
@@ -5217,15 +5246,15 @@ class Component extends DCLogic {
         { sector: 'Sector RPB · Point Broker III', yieldText: '2,000x Points / day', fac: 'Harbor Kings' },
         { sector: 'Sector NUB · Bordello IV', yieldText: '40x Erotic DVD / day', fac: 'Fody\'s Shack [#56798]' }
       ],
-      collectRacketBtn: lang === 'ar' ? '💰 تحصيل عوائد أراضي النقابة اليومية (+$45,000 + 15 بوينت)' : '💰 Collect Daily Territory Racket Yield (+$45,000 & +15 Points)',
+      collectRacketBtn: lang === 'ar' ? 'تحصيل عوائد الأراضي اليومية (+$45,000 + 15 نقطة)' : 'Collect Territory Racket Yield (+$45,000 & +15 Points)',
       collectRacketYield: () => {
         this.playTacticalSfx('crime');
         this.p.cash = Number(this.p.cash || 0) + 45000;
         this.p.points = Number(this.p.points || 0) + 15;
         this.save();
-        this.result('cash', lang === 'ar' ? '💰 تم تحصيل عوائد الـ Rackets!' : '💰 Territory Racket Yield Collected!', lang === 'ar' ? '+45,000$ نقداً و +15 بوينت من أراضي الفاكشن' : '+$45,000 Cash & +15 Points from Controlled Rackets', '+$45,000');
+        this.result('cash', lang === 'ar' ? 'تم تحصيل عوائد الأراضي' : 'Territory Racket Yield Collected', lang === 'ar' ? '+45,000$ نقداً و +15 نقطة من أراضي العائلة' : '+$45,000 Cash & +15 Points from Controlled Rackets', '+$45,000');
       },
-      bankCdTitle: lang === 'ar' ? '🏦 ودائع بنك تورن الزمنية (Timed CDs) وتوزيع صافي الثروة الثماني' : '🏦 TORN TIMED BANK INVESTMENTS (7D–90D APR) & 8-BUCKET NETWORTH',
+      bankCdTitle: lang === 'ar' ? 'شهادات الإيداع الزمنية (7-90 يوماً) وعوائد أسهم الشركات' : 'Timed Vault Certificates (7D-90D APR) & Corporate Dividend Blocks',
       bankCdOptions: [
         { term: '7 Days CD', apr: '4.23% APR', payout: '+$4,230', bonus: 'Weekly Compound' },
         { term: '14 Days CD', apr: '4.55% APR', payout: '+$9,100', bonus: 'Bi-Weekly Lock' },
@@ -5238,17 +5267,17 @@ class Component extends DCLogic {
           this.playTacticalSfx('crime');
           this.p.bankBalance = Number(this.p.bankBalance || 0) + 10000;
           this.save();
-          this.result('cash', lang === 'ar' ? `🏦 تم ربط وديعة ${cd.term}` : `🏦 Locked ${cd.term} Bank Investment`, `${cd.apr} · ${cd.bonus}`, cd.payout);
+          this.result('cash', lang === 'ar' ? `تم ربط وديعة ${cd.term}` : `Locked ${cd.term} Bank Certificate`, `${cd.apr} · ${cd.bonus}`, cd.payout);
         }
       })),
-      gymSpecTitle: lang === 'ar' ? '🏋️ الصالات الرياضية التخصصية (Torn Specialty Gyms) ومعامل السعادة' : '🏋️ TORN SPECIALTY GYMS (GEORGE\'S / BALBOA\'S / FRONTLINE) & REHAB ENGINE',
+      gymSpecTitle: lang === 'ar' ? 'الأندية الرياضية التخصصية وعيادة التأهيل العصبي' : 'Elite Athletic Specialization & Neuro-Rehab Clinic',
       happySynergyText: lang === 'ar' ? 'تآزر السعادة مع التدريب: 1 + 0.07 × ln(1 + Happy/250) · الإدمان الحالي: 0.0% (كفاءة 100%)' : 'Happy Synergy Formula: 1 + 0.07 × ln(1 + Happy/250) · Drug Brain-Decay: 0.0% (100% Efficiency)',
-      rehabBtnLabel: lang === 'ar' ? '🇨🇭 جلسة تأهيل سويسرا (تصفير إدمان Xanax +10% كفاءة)' : '🇨🇭 Swiss Rehab Clinic (Clear Xanax Decay · Restore 100% Gym Gains)',
+      rehabBtnLabel: lang === 'ar' ? 'جلسة تأهيل طبي (استعادة 100% كفاءة التدريب)' : 'Clinical Rehab Session (Reset Tolerance · 100% Gym Efficiency)',
       runRehabSession: () => {
         this.playTacticalSfx('gym');
         this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 500);
         this.save();
-        this.result('good', lang === 'ar' ? '🇨🇭 اكتملت جلسة التأهيل في سويسرا' : '🇨🇭 Swiss Rehab Clinic Cleared', lang === 'ar' ? 'تمت إزالة تدهور الإدمان واستعادة 100% من مكاسب النادي' : 'Addiction brain-decay reset to 0% · +500 Happy restored', '100% Gym Eff');
+        this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', '100% Gym Eff');
       },
       gymSpecializations: [
         { name: "George's Gym (Heavyweight)", focus: 'All Stats Balanced · 10E/Train', dots: '7.3 / 7.3 / 7.3 / 7.3 Dots', bonus: 50 },
@@ -5261,14 +5290,14 @@ class Component extends DCLogic {
           this.playTacticalSfx('gym');
           this.p.gymXp = Number(this.p.gymXp || 0) + gs.bonus;
           this.save();
-          this.toast((lang === 'ar' ? '🏋️ تم تفعيل الصالة التخصصية: ' : '🏋️ Activated Specialty Gym: ') + gs.name);
+          this.toast((lang === 'ar' ? 'تم تفعيل الصالة التخصصية: ' : 'Activated Specialty Gym: ') + gs.name);
         }
       })),
-      smugglingBoardTitle: lang === 'ar' ? '✈️ لوحة التهريب الدولي (11 مطاراً) وجدار حرب الأراضي (Territory Wall)' : '✈️ TORN 11-HUB INTERNATIONAL SMUGGLING BOARD & TERRITORY WAR WALL',
+      smugglingBoardTitle: lang === 'ar' ? 'خطوط التهريب الجوي الدولي وجدار السيطرة على القطاعات' : 'International Air Freight Smuggling & Sector Wall Command',
       wallActions: [
-        { label: lang === 'ar' ? '⚔️ اقتحام الجدار (Assault +25 Respect)' : '⚔️ Assault Wall (+25 Respect)', bg: 'linear-gradient(#c74a3a,#9a3428)', fg: '#fff', respect: 25 },
-        { label: lang === 'ar' ? '🛡️ تعزيز الدفاع (Defend Slot)' : '🛡️ Hold Wall Slot (+15 Respect)', bg: 'var(--activebg)', fg: 'var(--activefg)', respect: 15 },
-        { label: lang === 'ar' ? '🏳️ هدنة القطاع (Truce Pact)' : '🏳️ Sector Truce (+10 Points)', bg: 'var(--btn)', fg: 'var(--gold)', respect: 10 }
+        { label: lang === 'ar' ? 'اقتحام الجدار (+25 احترام)' : 'Assault Sector Wall (+25 Respect)', bg: 'linear-gradient(#c74a3a,#9a3428)', fg: '#fff', respect: 25 },
+        { label: lang === 'ar' ? 'تعزيز الموقع الدفاعي (+15 احترام)' : 'Reinforce Wall Slot (+15 Respect)', bg: 'var(--activebg)', fg: 'var(--activefg)', respect: 15 },
+        { label: lang === 'ar' ? 'اتفاقية هدنة القطاع (+10 نقاط)' : 'Broker Sector Truce (+10 Points)', bg: 'var(--btn)', fg: 'var(--gold)', respect: 10 }
       ].map(wa => ({
         ...wa,
         act: () => {
@@ -5279,12 +5308,12 @@ class Component extends DCLogic {
         }
       })),
       smugglingHubs: [
-        { hub: '🇿🇦 South Africa (3h 28m)', item: 'Xanax + Lion Plushie', profit: '+$420,000 / run', gain: 42000 },
-        { hub: '🇦🇪 UAE · Dubai (3h 10m)', item: 'Camel Plushie + Tribulus', profit: '+$385,000 / run', gain: 38500 },
-        { hub: '🇨🇳 China · Beijing (2h 49m)', item: 'Panda Plushie + Peony', profit: '+$340,000 / run', gain: 34000 },
-        { hub: '🇯🇵 Japan · Tokyo (2h 38m)', item: 'Cherry Blossom + Kabuki', profit: '+$315,000 / run', gain: 31500 },
-        { hub: '🇬🇧 UK · London (1h 51m)', item: 'Nessie + Red Fox Plushie', profit: '+$240,000 / run', gain: 24000 },
-        { hub: '🇰🇾 Cayman Islands (0h 25m)', item: 'Stingray + Offshore Wire', profit: '+$145,000 / run', gain: 14500 }
+        { hub: 'Johannesburg Air Hub (3h 28m)', item: 'Combat Stims + Trophy Crate', profit: '+$420,000 / run', gain: 42000 },
+        { hub: 'Dubai Freezone Hub (3h 10m)', item: 'Gold Bullion + Luxury Relics', profit: '+$385,000 / run', gain: 38500 },
+        { hub: 'Beijing Cargo Terminal (2h 49m)', item: 'Encrypted Wafer + Jade Set', profit: '+$340,000 / run', gain: 34000 },
+        { hub: 'Tokyo Haneda Freight (2h 38m)', item: 'Precision Optics + Katana', profit: '+$315,000 / run', gain: 31500 },
+        { hub: 'London Docklands Airfield (1h 51m)', item: 'Royal Mint Bonds + Collector Set', profit: '+$240,000 / run', gain: 24000 },
+        { hub: 'Cayman Offshore Strip (0h 25m)', item: 'Bearer Bonds + Offshore Ledger', profit: '+$145,000 / run', gain: 14500 }
       ].map(sh => ({
         ...sh,
         btn: lang === 'ar' ? 'تهريب سريع' : 'Smuggle Run',
@@ -5301,7 +5330,7 @@ class Component extends DCLogic {
         { slot: 'SLOT 3 · MELEE', weapon: 'Diamond Bladed Knife', mod: '74.5 Dmg · 82.0 Acc · +15% Bleed' },
         { slot: 'SLOT 4 · TEMPORARY', weapon: 'HEG / Flash Grenade', mod: '-80% Enemy SPD & DEX (3 Turns)' }
       ],
-      hitboxBarLabel: lang === 'ar' ? '🎯 منطقة الإصابة التشريحية (11 جزءاً):' : '🎯 11-PART ANATOMICAL HITBOX TARGET:',
+      hitboxBarLabel: lang === 'ar' ? 'منطقة التصويب التشريحية:' : 'Anatomical Target Zone:',
       anatomicalHitboxes: [
         { id: 'head', part: 'Head', mult: '3.5x Crit' },
         { id: 'throat', part: 'Throat', mult: '3.5x Crit' },
@@ -5322,11 +5351,11 @@ class Component extends DCLogic {
           aim: () => {
             this.playTacticalSfx('rack');
             this.setState({ tornHitbox: hb.id });
-            this.toast(`🎯 Targeted ${hb.part} (${hb.mult} Damage Multiplier)`);
+            this.toast(`Targeted ${hb.part} (${hb.mult} Damage Multiplier)`);
           }
         };
       }),
-      companySpecialsTitle: lang === 'ar' ? '🏢 مزايا الشركات ذات الـ 10 نجوم (Torn 10★ Player-Run Company Specials)' : '🏢 TORN 10-STAR PLAYER COMPANY SPECIALS (JOB POINTS REDEMPTION)',
+      companySpecialsTitle: lang === 'ar' ? 'امتيازات الشركات الخاصة (استبدال نقاط العمل JP)' : 'Syndicate Enterprise Perks (Job Points Redemption)',
       companySpecials: [
         { comp: '10★ Sweet Shop · Voracious', perk: '+4,500 Happiness Instant', cost: '30 JP', rewardType: 'happy', val: 4500 },
         { comp: '10★ Adult Novelties · Blackmail', perk: '+1x Erotic DVD (+2,500 Happy)', cost: '20 JP', rewardType: 'happy', val: 2500 },
@@ -5344,14 +5373,14 @@ class Component extends DCLogic {
           this.result('good', cs.comp, cs.perk, cs.cost);
         }
       })),
-      bazaarTitle: lang === 'ar' ? '🏪 البازار الشخصي (0% ضريبة بيع) ودرع الحماية من النشل بعد الشراء (Buy-Mug Shield)' : '🏪 PERSONAL BAZAAR STOREFRONT (0% TAX) & 15s BUY-MUG PROTECTION SHIELD',
+      bazaarTitle: lang === 'ar' ? 'البازار الشخصي (0% عمولة) ودرع حماية الصفقات (15 ثانية)' : 'Personal Bazaar Storefront (0% Fee) & 15s Escrow Protection Shield',
       bazaarSub: lang === 'ar' ? 'البيع عبر البازار الشخصي يعفيك من عمولة سوق العناصر (3%) ويمنحك نافذة إيداع آمنة لمدة 15 ثانية.' : 'Personal Bazaar bypasses the 3% Item Market fee and arms a 15-second Ghost-Trade Vault Shield upon sale.',
-      mugShieldBtn: lang === 'ar' ? '🛡️ تفعيل درع Ghost-Trade (15 ثانية حماية من النشل)' : '🛡️ Arm 15s Ghost-Trade Buy-Mug Shield',
+      mugShieldBtn: lang === 'ar' ? 'تفعيل درع حماية الصفقات (15 ثانية)' : 'Arm 15s Escrow Protection Shield',
       activateMugShield: () => {
         this.playTacticalSfx('rack');
-        this.toast(lang === 'ar' ? '🛡️ تم تفعيل درع الحماية من Buy-Mug لمدة 15 ثانية!' : '🛡️ 15s Ghost-Trade Buy-Mug Shield Armed!');
+        this.toast(lang === 'ar' ? 'تم تفعيل درع حماية الصفقات لمدة 15 ثانية' : '15s Escrow Protection Shield Armed');
       },
-      eduMatrixTitle: lang === 'ar' ? '🎓 مصفوفة التخصصات الجامعية الـ 12 في تورن (المتطلبات والمكافآت الدائمة)' : '🎓 TORN 12-MAJOR UNIVERSITY PREREQUISITE MATRIX & PASSIVE UNLOCKS',
+      eduMatrixTitle: lang === 'ar' ? 'مصفوفة التخصصات الأكاديمية والمكافآت الدائمة' : 'University Academic Specializations & Permanent Passive Unlocks',
       eduMajors: [
         { code: 'BIO-2120 · Biology', status: 'Unlocked ✓', unlock: 'Intravenous Therapy: Fill & Use Blood Bags (O-, A+, Irradiated)' },
         { code: 'SPT-2490 · Sports Science', status: 'Bachelor ✓', unlock: '+4% All Gym Gains (STR / DEF / SPD / DEX) Passive' },
@@ -5360,13 +5389,13 @@ class Component extends DCLogic {
         { code: 'BUS-3400 · Business Mgmt', status: 'Active · 88%', unlock: '+10% Company Director Advertising & Staff Efficiency' },
         { code: 'CSC-2200 · Computer Science', status: 'Unlocked ✓', unlock: 'OC 2.0 Hacker Slot & Stealth Virus Programming' }
       ],
-      islandStaffTitle: lang === 'ar' ? '🏝️ طاقم الجزيرة الخاصة (5 وظائف) وخزنة المليار دولار ($1B Large Vault)' : '🏝️ TORN PRIVATE ISLAND STAFF ROSTER (5 ROLES) & $1B LARGE VAULT',
+      islandStaffTitle: lang === 'ar' ? 'طاقم الجزيرة الخاصة وخزنة المليار دولار' : 'Private Island Estate Staff & $1B High-Security Vault',
       islandStaff: [
-        { role: '✈️ Private Pilot', effect: '-30% Flight Time · +10 Carry Items', wage: '$30,000/day' },
-        { role: '🩺 Private Doctor', effect: '-25% Hospital Recovery Time', wage: '$25,000/day' },
-        { role: '🧹 Maid & Butler', effect: '+1,525 Max Happiness Cap (5,025 Total)', wage: '$35,000/day' },
-        { role: '🛡️ 5x Island Guards', effect: '+50% Home Defense vs Raids', wage: '$85,000/day' },
-        { role: '🏦 Large Island Vault', effect: 'Up to $1,000,000,000 Mug-Free Storage', wage: 'Owned ✓' }
+        { role: 'Private Airstrip Pilot', effect: '-30% Flight Time · +10 Cargo Capacity', wage: '$30,000/day' },
+        { role: 'Retained Trauma Surgeon', effect: '-25% Hospital Recovery Time', wage: '$25,000/day' },
+        { role: 'Estate Butler & Staff', effect: '+1,525 Max Happiness Cap (5,025 Total)', wage: '$35,000/day' },
+        { role: 'Armed Perimeter Detail (5x)', effect: '+50% Estate Defense vs Raids', wage: '$85,000/day' },
+        { role: 'Titanium Estate Vault', effect: 'Up to $1,000,000,000 Mug-Free Storage', wage: 'Installed' }
       ].map(st => ({
         ...st,
         btn: lang === 'ar' ? 'تفعيل الطاقم' : 'Retain Staff',
@@ -5374,17 +5403,17 @@ class Component extends DCLogic {
           this.playTacticalSfx('gym');
           this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 250);
           this.save();
-          this.toast(`🏝️ Retained ${st.role} (${st.effect})`);
+          this.toast(`Retained ${st.role} (${st.effect})`);
         }
       })),
-      jailTornTitle: lang === 'ar' ? '⚖️ معادلة التهريب من السجن (Bust Skill) وبطاقة المحامي (Lawyer Business Card)' : '⚖️ TORN JAIL BUST FORMULA (LEVEL × HOURS) & LAWYER BUSINESS CARD',
+      jailTornTitle: lang === 'ar' ? 'مهارة التهريب من السجن وتفويض المحامي الفوري' : 'Jail Extraction Skill & Retained Counsel Release',
       jailTornSub: lang === 'ar' ? 'كل عملية تهريب ناجحة ترفع مهارة الـ Bust وتقربك من وسام 250 Busts · بطاقة المحامي تخرجك فوراً مجاناً.' : 'Each successful bust scales Bust Skill toward the 250-Bust Honor Bar · Lawyer Business Card clears jail time immediately.',
-      lawyerCardBtn: lang === 'ar' ? '🪪 استخدام بطاقة المحامي (إعفاء فوري +1 ميرت)' : '🪪 Use Lawyer Business Card (Instant Release)',
+      lawyerCardBtn: lang === 'ar' ? 'تفعيل تفويض المحامي (إفراج فوري)' : 'Invoke Retained Counsel (Instant Release)',
       useLawyerCard: () => {
         this.playTacticalSfx('crime');
         this.p.jailUntil = 0;
         this.save();
-        this.result('good', lang === 'ar' ? '🪪 تم تفعيل بطاقة المحامي!' : '🪪 Lawyer Business Card Activated!', lang === 'ar' ? 'تم إسقاط التهم وإخلاء السبيل فوراً' : 'All charges dropped · Instant jail release confirmed', '00:00 Jail');
+        this.result('good', lang === 'ar' ? 'تم تفعيل تفويض المحامي' : 'Retained Counsel Invoked', lang === 'ar' ? 'تم إسقاط التهم وإخلاء السبيل فوراً' : 'All charges dropped · Instant jail release confirmed', '00:00 Jail');
       },
       stockDividendBlocks: [
         { ticker: 'SYM', name: 'Symbiotic Ltd.', div: '1x Drug Pack / 7 Days', cashVal: 42000 },
@@ -5402,12 +5431,12 @@ class Component extends DCLogic {
           this.result('cash', `${sb.ticker} · ${sb.name}`, sb.div, '+' + money(sb.cashVal));
         }
       })),
-      hospitalTornTitle: lang === 'ar' ? '🩸 أكياس الدم الوريدية (BIO2120 Blood Bags) وعقود الإنعاش الفوري (25E Revive)' : '🩸 TORN IV BLOOD BAG COMPATIBILITY (O- UNIVERSAL / IRRADIATED) & 25E REVIVE',
+      hospitalTornTitle: lang === 'ar' ? 'وحدات نقل الدم الوريدي وعقود الإنعاش الطبي السريع' : 'Intravenous Blood Transfusion & Emergency Revive Contracts',
       bloodBagActions: [
-        { label: lang === 'ar' ? '🩸 كيس دم O- شامل (-2 ساعة مستشفى · +30% صحة)' : '🩸 Use Blood Bag: O- Universal (-2h Hosp · +30% HP)', bg: 'linear-gradient(var(--accFill1),var(--accFill2))', fg: 'var(--onAcc)' },
-        { label: lang === 'ar' ? '☢️ كيس دم مشع Irradiated (+40% صحة + مناعة)' : '☢️ Use Irradiated Blood Bag (+40% HP + Radiation Buff)', bg: 'var(--activebg)', fg: 'var(--activefg)' },
-        { label: lang === 'ar' ? '💉 تعبئة كيس دم فارغ (Empty Blood Bag)' : '💉 Fill Empty Blood Bag (-15% HP → +1x Blood Bag)', bg: 'var(--btn)', fg: 'var(--gold)' },
-        { label: lang === 'ar' ? '⚡ عقد إنعاش طبيب الفاكشن (25E Revive)' : '⚡ Contract Healer Revive (25E / 1x Xanax)', bg: 'var(--btn)', fg: 'var(--t1)' }
+        { label: lang === 'ar' ? 'وحدة دم O- شامل (-2 ساعة مستشفى · +30% صحة)' : 'Transfuse O- Universal Blood (-2h Hosp · +30% HP)', bg: 'linear-gradient(var(--accFill1),var(--accFill2))', fg: 'var(--onAcc)' },
+        { label: lang === 'ar' ? 'وحدة بلازما معززة (+40% صحة + مقاومة)' : 'Transfuse Enriched Plasma (+40% HP + Mitigation)', bg: 'var(--activebg)', fg: 'var(--activefg)' },
+        { label: lang === 'ar' ? 'تعبئة وحدة دم احتياطية (-15% صحة)' : 'Draw Reserve Blood Pack (-15% HP -> +1 Pack)', bg: 'var(--btn)', fg: 'var(--gold)' },
+        { label: lang === 'ar' ? 'عقد إنعاش جراح النقابة (25 طاقة)' : 'Contract Syndicate Surgeon Revive (25E)', bg: 'var(--btn)', fg: 'var(--t1)' }
       ].map(bb => ({
         ...bb,
         use: () => {
@@ -5418,12 +5447,12 @@ class Component extends DCLogic {
           this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', '100% HP');
         }
       })),
-      casinoTornTitle: lang === 'ar' ? '🎰 كازينو تورن الكامل: المراهنات الرياضية (Bookie) والروليت الروسي وعجلة Leslie' : '🎰 TORN CASINO SUITE: BOOKIE SPORTSBOOK, RUSSIAN ROULETTE & SPIN THE WHEEL',
+      casinoTornTitle: lang === 'ar' ? 'طاولات الرهان العالي: المراهنات الرياضية، الروليت الروسي، وعجلة الحظ' : 'High-Stakes Syndicate Tables: Sportsbook, Russian Roulette & High-Roller Wheel',
       casinoTornGames: [
-        { game: '🎡 Leslie\'s Spin the Wheel ($1M)', odds: 'Private Island / $2.5M / Free Points', win: 65000 },
-        { game: '🔫 Russian Roulette (6-Chamber PvP)', odds: '2.00x Pot · 5/6 Survival Chamber', win: 50000 },
-        { game: '⚽ Bookie Sportsbook (Live Odds)', odds: '2.45x Syndicate Match Parlay', win: 48000 },
-        { game: '🎰 Torn Progressive Slots Jackpot', odds: '$1.42B Progressive Pool · 3x Bar', win: 35000 }
+        { game: 'High-Roller Wheel ($1M Spin)', odds: 'Private Island / $2.5M / Syndicate Points', win: 65000 },
+        { game: 'Russian Roulette (6-Chamber PvP)', odds: '2.00x Pot · 5/6 Survival Chamber', win: 50000 },
+        { game: 'Syndicate Sportsbook (Live Parlay)', odds: '2.45x Underground Match Parlay', win: 48000 },
+        { game: 'Progressive Syndicate Jackpot Slots', odds: '$1.42B Progressive Pool · Triple Crown', win: 35000 }
       ].map(cg => ({
         ...cg,
         btn: lang === 'ar' ? 'رهان / تدوير' : 'Play Now',
@@ -5434,12 +5463,12 @@ class Component extends DCLogic {
           this.result('cash', cg.game, cg.odds, '+' + money(cg.win));
         }
       })),
-      hofBannersTitle: lang === 'ar' ? '🏅 شريط أوسمة تورن (250×50px Honor Bars) وميداليات wenimo [#4506953] (654 وساماً)' : '🏅 TORN 250×50px ENGRAVED HONOR BARS & MEDAL CATALOG (654 HONORS · 270 MEDALS)',
+      hofBannersTitle: lang === 'ar' ? 'الأوسمة المنقوشة وميداليات الشرف للنقابة' : 'Engraved Syndicate Honor Bars & Service Commendations',
       honorsMedalsShowcase: [
-        { banner: '★ WENIMO [#4506953] · SYNDICATE VANGUARD ★', req: 'Harvested 57/57 Live Torn v2 Endpoints', rarity: 'Mythic · 0.4%' },
-        { banner: '⚔️ CHAIN EXECUTIONER · 100k RESPECT ⚔️', req: 'Complete a 1,000-Hit Ranked War Chain', rarity: 'Very Rare · 2.1%' },
-        { banner: '💊 XANAX OVERDOSE SURVIVOR · ECSTASY 2X 💊', req: 'Execute Full Happy Jump Stack + Rehab', rarity: 'Rare · 6.8%' },
-        { banner: '🏛️ MUSEUM CURATOR · PLUSHIE MOGUL 🏛️', req: 'Exchange Full Regional Plushie Set for Points', rarity: 'Uncommon · 11.4%' }
+        { banner: 'SYNDICATE VANGUARD · APEX UNDERBOSS', req: 'Command 10+ Controlled District Sectors', rarity: 'Mythic · 0.4%' },
+        { banner: 'CHAIN EXECUTIONER · 100K RESPECT', req: 'Complete a 1,000-Hit Ranked War Chain', rarity: 'Very Rare · 2.1%' },
+        { banner: 'HIGH-VOLTAGE CONDITIONING MASTER', req: 'Execute Full Happy-Stack Protocol + Clinical Rehab', rarity: 'Rare · 6.8%' },
+        { banner: 'ANTIQUITIES CURATOR · SMUGGLER KINGPIN', req: 'Exchange Full Regional Collection at the Museum', rarity: 'Uncommon · 11.4%' }
       ]
     };
 
