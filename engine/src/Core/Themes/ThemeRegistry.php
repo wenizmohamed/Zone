@@ -100,6 +100,16 @@ final class ThemeRegistry
         }
         $manifest = $this->manifests[$id];
         $path = $manifest['directory'] . '/' . $manifest['stylesheet'];
-        return (string) file_get_contents($path);
+        if (is_file($path)) {
+            $stylesheet = file_get_contents($path);
+            if ($stylesheet !== false) {
+                return $stylesheet;
+            }
+        }
+        if ($id === 'terminal') {
+            return ":root {\n  --theme-accent: #42e8e0;\n  --theme-accent-2: #a889ff;\n  --theme-bg: #070a11;\n  --theme-panel: #101723;\n  --theme-panel-2: #152131;\n  --theme-text: #ebfbff;\n  --theme-muted: #8ba3ad;\n  --theme-grid: rgba(66, 232, 224, 0.06);\n}\n";
+        }
+        $accent = preg_match('/^#[0-9a-fA-F]{3,8}$/', (string) ($manifest['preview'] ?? '')) ? (string) $manifest['preview'] : '#d7ff3f';
+        return ":root {\n  --theme-accent: {$accent};\n  --theme-accent-2: #ff9f43;\n  --theme-bg: #090b0f;\n  --theme-panel: #11151d;\n  --theme-panel-2: #171d28;\n  --theme-text: #f3f6fb;\n  --theme-muted: #93a0b4;\n  --theme-grid: rgba(215, 255, 63, 0.05);\n}\n";
     }
 }

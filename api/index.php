@@ -86,13 +86,6 @@ function zone_proxy_json(array $data): never
 
 $relayOrigin = trim((string) (getenv('ZONE_ENGINE_ORIGIN') ?: ''));
 $relayKey = (string) (getenv('ZONE_ENGINE_RELAY_KEY') ?: '');
-if (getenv('VERCEL') === '1' && str_contains($relayOrigin, 'social.aihubz.me')) {
-    $relayOrigin = '';
-    $relayKey = '';
-    putenv('ZONE_DATABASE_URL=sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite');
-    putenv('ZONE_ASSET_ROOT=' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-assets');
-    putenv('ZONE_BETA_OWNER_ACCESS=1');
-}
 if ($relayOrigin !== '' || $relayKey !== '') {
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     if (!is_string($path)) zone_proxy_error('Route not found.', 404);
@@ -197,16 +190,15 @@ if ($relayOrigin !== '' || $relayKey !== '') {
 }
 
 if (getenv('VERCEL') === '1' && !getenv('ZONE_DATABASE_URL')) {
-    $databaseUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: ('sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite');
-    if ($databaseUrl !== '') {
-        putenv('ZONE_DATABASE_URL=' . $databaseUrl);
+    $databaseUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL') ?: '';
+    if ($databaseUrl === '') {
+        $databaseUrl = 'sqlite:' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-engine.sqlite';
+        putenv('ZONE_EPHEMERAL_VERCEL_SQLITE=1');
     }
+    putenv('ZONE_DATABASE_URL=' . $databaseUrl);
 }
 if (getenv('VERCEL') === '1' && !getenv('ZONE_ASSET_ROOT')) {
     putenv('ZONE_ASSET_ROOT=' . rtrim(sys_get_temp_dir(), '/\\') . '/zone-assets');
-}
-if (getenv('VERCEL') === '1' && !getenv('ZONE_BETA_OWNER_ACCESS')) {
-    putenv('ZONE_BETA_OWNER_ACCESS=1');
 }
 if (getenv('VERCEL') === '1' && !getenv('ZONE_PLAYER_SESSIONS')) {
     putenv('ZONE_PLAYER_SESSIONS=1');

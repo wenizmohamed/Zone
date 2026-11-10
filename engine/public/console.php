@@ -57,14 +57,14 @@
         </div>
         <p class="studio-intro" data-i18n="subhead">Build and customize ZONE from one workspace. Choose what you want to create, save your draft, then review it before publishing.</p>
         <div class="studio-workflow" data-open-engine-console-deck="1" data-open-engine-agi-console="1" data-gemini-cloud-arsenal="1" style="margin-bottom:18px;border-top:2px solid var(--acc,#a3d900)">
-          <div class="studio-workflow-heading"><h2>Open Engine 3.6 — Google Gemini 3.7 Flash &amp; Vertex AI Game Architect</h2><a href="/admin">Open Full AGI Studio ↗</a></div>
+          <div class="studio-workflow-heading"><h2 data-i18n="agiDeckHeading">Open Engine 3.6 — Google Gemini 3.7 Flash &amp; Vertex AI Game Architect</h2><a href="/admin" data-i18n="openFullAgiStudio">Open Full AGI Studio ↗</a></div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin:12px 0">
             <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
               <div style="flex:1;min-width:0">
-                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em">3D CLOTHED CHARACTER WARDROBE</small>
-                <strong style="display:block;margin:3px 0;font-size:14px">Suit.glb · Casual_Hoodie.glb · Swat.glb + Armor</strong>
-                <p style="margin:0 0 6px;font-size:12px;opacity:.82">Fully clothed 3D character rigs with 24 combat/idle/walk animations, 19 right-hand finger grip bones, 6-zone anatomical hitboxes, and dynamic worn Kevlar vest attachment.</p>
-                <small style="color:#a3d900">Executive Suit · Street Hoodie · Tactical SWAT</small>
+                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em" data-i18n="wardrobeTag">3D CLOTHED CHARACTER WARDROBE</small>
+                <strong style="display:block;margin:3px 0;font-size:14px" data-i18n="wardrobeModels">Suit.glb · Casual_Hoodie.glb · Swat.glb + Armor</strong>
+                <p style="margin:0 0 6px;font-size:12px;opacity:.82" data-i18n="wardrobeCopy">Fully clothed 3D character rigs with 24 combat/idle/walk animations, 19 right-hand finger grip bones, 6-zone anatomical hitboxes, and dynamic worn Kevlar vest attachment.</p>
+                <small style="color:#a3d900" data-i18n="wardrobeFooter">Executive Suit · Street Hoodie · Tactical SWAT</small>
               </div>
             </div>
             <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
@@ -72,32 +72,32 @@
                 <img src="/assets/weapons/upgrades111/l85-thumbnail.png" alt="3D PBR Bullpup Assault Rifle" style="width:100%;height:100%;object-fit:contain;display:block">
               </div>
               <div style="flex:1;min-width:0">
-                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em">3D PBR WEAPON STUDIO (51 WEAPONS)</small>
-                <strong style="display:block;margin:3px 0;font-size:14px">Bullpup L85 · M4A1 · G3A3 · AKM · Dragunov</strong>
-                <p style="margin:0 0 6px;font-size:12px;opacity:.82">High-detail 3D GLB weapon models with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon sockets.</p>
-                <small style="color:#a3d900">51 Real 3D GLB Weapons · Offline Cycles Thumbnails</small>
+                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em" data-i18n="weaponStudioTag">3D PBR WEAPON STUDIO (51 WEAPONS)</small>
+                <strong style="display:block;margin:3px 0;font-size:14px" data-i18n="weaponStudioModels">Bullpup L85 · M4A1 · G3A3 · AKM · Dragunov</strong>
+                <p style="margin:0 0 6px;font-size:12px;opacity:.82" data-i18n="weaponStudioCopy">High-detail 3D GLB weapon models with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon sockets.</p>
+                <small style="color:#a3d900" data-i18n="weaponStudioFooter">51 Real 3D GLB Weapons · Offline Cycles Thumbnails</small>
               </div>
             </div>
             <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
               <div style="flex:1;min-width:0">
-                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em">GOOGLE GEMINI 3.7 &amp; CLOUD ARSENAL</small>
-                <strong style="display:block;margin:3px 0;font-size:14px">Vertex AI · Google Maps 3D · Imagen 3 PBR · Live Voice</strong>
-                <p style="margin:0 0 6px;font-size:12px;opacity:.82">Tunable Thinking (LOW/MEDIUM/HIGH), real-time function calling, 120-block Google Maps 3D geospatial sync, and Monte-Carlo economy telemetry.</p>
-                <small style="color:#a3d900">Gemini 3.7 Flash · Vertex AI Agent Engine</small>
+                <small style="color:#a3d900;font-weight:700;letter-spacing:.08em" data-i18n="cloudArsenalTag">GOOGLE GEMINI 3.7 &amp; CLOUD ARSENAL</small>
+                <strong style="display:block;margin:3px 0;font-size:14px" data-i18n="cloudArsenalModels">Vertex AI · Google Maps 3D · Imagen 3 PBR · Live Voice</strong>
+                <p style="margin:0 0 6px;font-size:12px;opacity:.82" data-i18n="cloudArsenalCopy">Tunable Thinking (LOW/MEDIUM/HIGH), real-time function calling, 120-block Google Maps 3D geospatial sync, and Monte-Carlo economy telemetry.</p>
+                <small style="color:#a3d900" data-i18n="cloudArsenalFooter">Gemini 3.7 Flash · Vertex AI Agent Engine</small>
               </div>
             </div>
           </div>
           <div style="margin:12px 0;padding:12px;background:#0b0e12;border:1px solid #252b33;border-radius:6px">
-            <label for="engineAgiPromptInput" style="display:block;font-weight:700;margin-bottom:6px">Gemini 3.7 + AGI Game Architect Prompt (EN / AR)</label>
+            <label for="engineAgiPromptInput" style="display:block;font-weight:700;margin-bottom:6px" data-i18n="agiPromptLabel">Gemini 3.7 + AGI Game Architect Prompt (EN / AR)</label>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <input id="engineAgiPromptInput" type="text" value="Synthesize Tier-5 Armored Heist crime and verify clothed 3D character wardrobe + 51 PBR weapons" style="flex:1;min-width:220px">
-              <button class="primary" id="engineAgiRunButton" type="button">Run Gemini AGI Architect</button>
+              <button class="primary" id="engineAgiRunButton" type="button" data-i18n="agiRunButton">Run Gemini AGI Architect</button>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button class="secondary" type="button" data-engine-agi-preset="clothed-wardrobe">Gemini Vision: Clothed 3D Wardrobe</button>
-              <button class="secondary" type="button" data-engine-agi-preset="bullpup-tar21">Imagen 3 + Cycles: 3D Bullpup &amp; M4</button>
-              <button class="secondary" type="button" data-engine-agi-preset="syndicate-heist">Gemini Function Call: Tier-5 Heist</button>
-              <button class="secondary" type="button" data-engine-agi-preset="rebalance-armory">Vertex AI: Balance 51 Weapons</button>
+              <button class="secondary" type="button" data-engine-agi-preset="clothed-wardrobe" data-i18n="agiPresetWardrobe">Gemini Vision: Clothed 3D Wardrobe</button>
+              <button class="secondary" type="button" data-engine-agi-preset="bullpup-tar21" data-i18n="agiPresetWeapons">Imagen 3 + Cycles: 3D Bullpup &amp; M4</button>
+              <button class="secondary" type="button" data-engine-agi-preset="syndicate-heist" data-i18n="agiPresetHeist">Gemini Function Call: Tier-5 Heist</button>
+              <button class="secondary" type="button" data-engine-agi-preset="rebalance-armory" data-i18n="agiPresetArmory">Vertex AI: Balance 51 Weapons</button>
             </div>
             <pre id="engineAgiOutput" dir="ltr" style="margin:10px 0 0;padding:10px;background:#06080b;border:1px solid #1e242c;border-radius:4px;font-size:12px;color:#a3d900;white-space:pre-wrap">[GOOGLE GEMINI 3.7 FLASH + OPEN ENGINE AGI 3.6 READY · THINKING: HIGH]
 • Clothed 3D Character Rigs: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest + 6 Hitbox Zones
@@ -105,10 +105,10 @@
 • Google Cloud Stack: Vertex AI Agent Engine · Google Maps 3D 120-Block Sync · Live Voice Briefing</pre>
           </div>
           <ol>
-            <li><span class="studio-step-number" aria-hidden="true">28</span><div><strong>Registered Engine Modules</strong><p>Crime, Combat, Gym, Gangs, Territories, Bank, Blackjack, Market, Media &amp; Release Engine.</p></div></li>
-            <li><span class="studio-step-number" aria-hidden="true">51</span><div><strong>3D PBR Weapons &amp; Safe Bundles</strong><p>Full GLB/OBJ inspection, grip transform fitting, and SHA-256 verified media publishing.</p></div></li>
-            <li><span class="studio-step-number" aria-hidden="true">120</span><div><strong>City Blocks &amp; 17 Native Roofs</strong><p>Deterministic roof-anchored city services and live server-authoritative faction territory wars.</p></div></li>
-            <li><span class="studio-step-number" aria-hidden="true">v3.6</span><div><strong>Serverless &amp; Local Hybrid Ready</strong><p>Instant sub-200ms API response across all 18 admin, studio, and player endpoints.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">28</span><div><strong data-i18n="deckStatModulesTitle">Registered Engine Modules</strong><p data-i18n="deckStatModulesCopy">Crime, Combat, Gym, Gangs, Territories, Bank, Blackjack, Market, Media &amp; Release Engine.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">51</span><div><strong data-i18n="deckStatWeaponsTitle">3D PBR Weapons &amp; Safe Bundles</strong><p data-i18n="deckStatWeaponsCopy">Full GLB/OBJ inspection, grip transform fitting, and SHA-256 verified media publishing.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">120</span><div><strong data-i18n="deckStatBlocksTitle">City Blocks &amp; 17 Native Roofs</strong><p data-i18n="deckStatBlocksCopy">Deterministic roof-anchored city services and live server-authoritative faction territory wars.</p></div></li>
+            <li><span class="studio-step-number" aria-hidden="true">v3.6</span><div><strong data-i18n="deckStatRuntimeTitle">Serverless &amp; Local Hybrid Ready</strong><p data-i18n="deckStatRuntimeCopy">Instant sub-200ms API response across all 18 admin, studio, and player endpoints.</p></div></li>
           </ol>
         </div>
 
@@ -206,7 +206,7 @@
     </main>
   </div>
 
-  <footer><span>ZONE OPEN ENGINE</span><span data-i18n="footer">Create. Customize. Review. Publish.</span></footer>
+  <footer><span data-i18n="footerBrand">ZONE OPEN ENGINE</span><span data-i18n="footer">Create. Customize. Review. Publish.</span></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="/engine/assets/engine.js?v=97" defer></script>
 </body>

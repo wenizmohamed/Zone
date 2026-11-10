@@ -5,7 +5,12 @@ import { loadAsset, normalizeAssetObject } from './asset-loader.mjs';
 import { installViewerRuntime } from './viewer-runtime108.mjs';
 
 const $ = id => document.getElementById(id), canvas = $('room');
-let lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en';
+let lang = (() => {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q === 'ar' || q === 'en') return q;
+  try { if (parent && parent !== window && (parent.document?.documentElement?.lang === 'ar' || parent.document?.documentElement?.dir === 'rtl')) return 'ar'; } catch {}
+  return 'en';
+})();
 let packet = { property: { owned: false }, player: {}, lang, preview: true }, disposed = false, generation = 0, modelGeneration = 0, uploadedHouse = null, lastModel = '', tween = null;
 let renderer, scene, camera, controls, runtime, character, observer, key, cool;
 let controlsWired = false, parentInitialized = false, renderReady = false, renderFailed = false;

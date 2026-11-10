@@ -23,10 +23,13 @@ final readonly class BrowserSessions
 
     private function decodeVercelLedger(string $playerId): ?array
     {
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') !== '1') return null;
+        $secret = RequestGuard::ledgerSecret();
+        if ($secret === '') return null;
         $raw = (string) ($_COOKIE['zone_player_ledger'] ?? RequestGuard::cookie($_SERVER, 'zone_player_ledger'));
         if ($raw === '' || !str_contains($raw, '.')) return null;
         [$payload, $sig] = explode('.', $raw, 2);
-        if (!hash_equals(hash_hmac('sha256', $payload, 'zone-vercel-ledger-v126'), $sig)) return null;
+        if (!hash_equals(hash_hmac('sha256', $payload, $secret), $sig)) return null;
         $b64 = strtr($payload, '-_', '+/');
         $pad = strlen($b64) % 4;
         if ($pad > 0) $b64 .= str_repeat('=', 4 - $pad);
@@ -43,9 +46,13 @@ final readonly class BrowserSessions
     {
         if (!preg_match('/^[a-f0-9]{64}$/', $token)) throw new RuntimeException('Player session expired.');
         $now ??= time();
-        $row = $this->database->fetchOne('SELECT player_id, expires_at FROM browser_sessions WHERE token_hash = :hash', ['hash' => hash('sha256', $token)]);
-        if ($row === null && getenv('VERCEL') === '1') {
-            return $this->database->transaction(function () use ($token, $now): string {
+        $tokenHash = hash('sha256', $token);
+        $row = $this->database->fetchOne('SELECT player_id, expires_at FROM browser_sessions WHERE token_hash = :hash', ['hash' => $tokenHash]);
+        $isEphemeralVercel = getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1';
+        if ($row === null && $isEphemeralVercel) {
+            $revoked = $this->database->fetchOne('SELECT value FROM engine_metadata WHERE name = :name', ['name' => 'revoked:' . substr($tokenHash, 0, 48)]);
+            if ($revoked !== null) throw new RuntimeException('Player session expired.');
+            return $this->database->transaction(function () use ($token, $tokenHash, $now): string {
                 $id = 'player-' . substr(hash('sha256', 'zone-vercel-session:' . $token), 0, 24);
                 $handle = $this->vercelHandle($id);
                 $snap = $this->decodeVercelLedger($id);
@@ -53,19 +60,20 @@ final readonly class BrowserSessions
                 $initBank = isset($snap['b']) ? (int) $snap['b'] : 125000;
                 $existing = $this->database->fetchOne('SELECT id, username FROM players WHERE id = :id', ['id' => $id]);
                 if ($existing === null) {
-                    $this->database->execute('INSERT INTO players (id, username, level, cash, bank_balance, happy, max_happy, resources_updated_at) VALUES (:id, :name, :lvl, :cash, :bank, :happy, :happy2, :at)',
-                        ['id' => $id, 'name' => $handle, 'lvl' => 7, 'cash' => $initCash, 'bank' => $initBank, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
+                    $this->database->execute('INSERT INTO players (id, username, level, cash, bank_balance, happy, max_happy, strength, defense, speed, dexterity, resources_updated_at) VALUES (:id, :name, :lvl, :cash, :bank, :happy, :happy2, :str, :def, :spd, :dex, :at)',
+                        ['id' => $id, 'name' => $handle, 'lvl' => 7, 'cash' => $initCash, 'bank' => $initBank, 'happy' => 250, 'happy2' => 500, 'str' => 140, 'def' => 125, 'spd' => 135, 'dex' => 130, 'at' => gmdate('c', $now)]);
                     (new Ledger($this->database))->record($id, 'cash', $initCash, $initCash, 'beta.starting-grant', substr(hash('sha256', 'grant:' . $id), 0, 32));
+                    $this->database->insertIgnore('faction_members', ['player_id', 'faction_id', 'role', 'joined_at'], [$id, 'vipers', 'leader', gmdate('c', $now)]);
                 } elseif (str_starts_with((string) ($existing['username'] ?? ''), 'Player_')) {
                     $this->database->execute('UPDATE players SET username = :name WHERE id = :id', ['name' => $handle, 'id' => $id]);
                 }
                 $this->database->execute('INSERT INTO browser_sessions (token_hash, player_id, created_at, expires_at) VALUES (:hash, :player, :created, :expires) ON CONFLICT (token_hash) DO NOTHING',
-                    ['hash' => hash('sha256', $token), 'player' => $id, 'created' => $now, 'expires' => $now + self::LIFETIME]);
+                    ['hash' => $tokenHash, 'player' => $id, 'created' => $now, 'expires' => $now + self::LIFETIME]);
                 return $id;
             });
         }
         if ($row === null || (int) $row['expires_at'] <= $now) throw new RuntimeException('Player session expired.');
-        if (getenv('VERCEL') === '1') {
+        if ($isEphemeralVercel) {
             $id = (string) $row['player_id'];
             $existing = $this->database->fetchOne('SELECT id, username FROM players WHERE id = :id', ['id' => $id]);
             if ($existing !== null && str_starts_with((string) ($existing['username'] ?? ''), 'Player_')) {
@@ -86,6 +94,7 @@ final readonly class BrowserSessions
     public function create(string $clientAddress, ?int $now = null): array
     {
         $now ??= time();
+        $isEphemeralVercel = getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1';
         $bucket = hash('sha256', 'beta-session:' . $clientAddress);
         // Atomic upsert counts attempts even if later account creation fails.
         $this->database->execute('INSERT INTO session_creation_limits (bucket, window_started_at, count) VALUES (:bucket, :now, 1) '
@@ -93,18 +102,23 @@ final readonly class BrowserSessions
             . 'window_started_at = CASE WHEN session_creation_limits.window_started_at <= :floor2 THEN :now2 ELSE session_creation_limits.window_started_at END',
             ['bucket' => $bucket, 'now' => $now, 'floor' => $now - 3600, 'floor2' => $now - 3600, 'now2' => $now]);
         $rate = $this->database->fetchOne('SELECT count FROM session_creation_limits WHERE bucket = :bucket', ['bucket' => $bucket]);
-        if ((int) ($rate['count'] ?? 0) > 10 && getenv('VERCEL') !== '1') throw new RuntimeException('Too many new beta accounts. Try again later.');
-        return $this->database->transaction(function () use ($now): array {
+        if ((int) ($rate['count'] ?? 0) > 10 && !$isEphemeralVercel) throw new RuntimeException('Too many new beta accounts. Try again later.');
+        return $this->database->transaction(function () use ($now, $isEphemeralVercel): array {
             $token = bin2hex(random_bytes(32));
-            $id = getenv('VERCEL') === '1'
-                ? 'player-' . substr(hash('sha256', 'zone-vercel-session:' . $token), 0, 24)
-                : 'player-' . bin2hex(random_bytes(12));
-            $handle = getenv('VERCEL') === '1'
-                ? $this->vercelHandle($id)
-                : ('Player_' . strtoupper(substr($id, -6)));
-            $this->database->execute('INSERT INTO players (id, username, cash, happy, max_happy, resources_updated_at) VALUES (:id, :name, :cash, :happy, :happy2, :at)',
-                ['id' => $id, 'name' => $handle, 'cash' => 2500, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
-            (new Ledger($this->database))->record($id, 'cash', 2500, 2500, 'beta.starting-grant', bin2hex(random_bytes(16)));
+            if ($isEphemeralVercel) {
+                $id = 'player-' . substr(hash('sha256', 'zone-vercel-session:' . $token), 0, 24);
+                $handle = $this->vercelHandle($id);
+                $this->database->execute('INSERT INTO players (id, username, level, cash, bank_balance, happy, max_happy, strength, defense, speed, dexterity, resources_updated_at) VALUES (:id, :name, :lvl, :cash, :bank, :happy, :happy2, :str, :def, :spd, :dex, :at)',
+                    ['id' => $id, 'name' => $handle, 'lvl' => 7, 'cash' => 85000, 'bank' => 125000, 'happy' => 250, 'happy2' => 500, 'str' => 140, 'def' => 125, 'spd' => 135, 'dex' => 130, 'at' => gmdate('c', $now)]);
+                (new Ledger($this->database))->record($id, 'cash', 85000, 85000, 'beta.starting-grant', bin2hex(random_bytes(16)));
+                $this->database->insertIgnore('faction_members', ['player_id', 'faction_id', 'role', 'joined_at'], [$id, 'vipers', 'leader', gmdate('c', $now)]);
+            } else {
+                $id = 'player-' . bin2hex(random_bytes(12));
+                $handle = 'Player_' . strtoupper(substr($id, -6));
+                $this->database->execute('INSERT INTO players (id, username, cash, happy, max_happy, resources_updated_at) VALUES (:id, :name, :cash, :happy, :happy2, :at)',
+                    ['id' => $id, 'name' => $handle, 'cash' => 2500, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
+                (new Ledger($this->database))->record($id, 'cash', 2500, 2500, 'beta.starting-grant', bin2hex(random_bytes(16)));
+            }
             $this->database->execute('INSERT INTO browser_sessions (token_hash, player_id, created_at, expires_at) VALUES (:hash, :player, :created, :expires)',
                 ['hash' => hash('sha256', $token), 'player' => $id, 'created' => $now, 'expires' => $now + self::LIFETIME]);
             return ['playerId' => $id, 'token' => $token, 'expiresAt' => $now + self::LIFETIME];
@@ -123,7 +137,11 @@ final readonly class BrowserSessions
 
     public function revoke(string $token): void
     {
-        $this->database->execute('DELETE FROM browser_sessions WHERE token_hash = :hash', ['hash' => hash('sha256', $token)]);
+        $tokenHash = hash('sha256', $token);
+        $this->database->execute('DELETE FROM browser_sessions WHERE token_hash = :hash', ['hash' => $tokenHash]);
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1' && preg_match('/^[a-f0-9]{64}$/', $token)) {
+            $this->database->execute("INSERT INTO engine_metadata (name, value) VALUES (:name, '1') ON CONFLICT (name) DO UPDATE SET value = '1'", ['name' => 'revoked:' . substr($tokenHash, 0, 48)]);
+        }
     }
 
     public function activeCount(?int $now = null): int

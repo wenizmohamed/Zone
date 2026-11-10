@@ -46,6 +46,9 @@ function zone_engine(?string $databaseUrl = null): GameEngine
 
     $database = Database::connect($resolvedDatabaseUrl);
     $database->migrateAndSeed();
+    if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') {
+        $database->seedEphemeralVercelWorld();
+    }
 
     $events = new EventBus($database);
     $modules = new ModuleRegistry($database, $events, ZONE_ENGINE_ROOT . '/modules');

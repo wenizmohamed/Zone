@@ -35,19 +35,14 @@ final class LoadoutService
         $weaponId = $state['equip'] ?? null;
         $armorId = $state['armorEquip'] ?? null;
         if (!is_string($weaponId) || ($state['inv'][$weaponId] ?? 0) < 1 || ($items[$weaponId]['type'] ?? null) !== 'weapon') $weaponId = null;
-        if (!is_string($armorId) || ($state['inv'][$armorId] ?? 0) < 1 || ($items[$armorId]['type'] ?? null) !== 'armor') {
-            $armorId = null;
-            $bestRed = 0.0;
-            foreach ($state['inv'] ?? [] as $itemId => $qty) {
-                if ($qty > 0 && ($items[$itemId]['type'] ?? null) === 'armor' && (float) ($items[$itemId]['red'] ?? 0) > $bestRed) {
-                    $armorId = (string) $itemId;
-                    $bestRed = (float) $items[$itemId]['red'];
-                }
-            }
-        }
+        if (!is_string($armorId) || ($state['inv'][$armorId] ?? 0) < 1 || ($items[$armorId]['type'] ?? null) !== 'armor') $armorId = null;
+        $weaponMultiplier = $weaponId === null ? 1.0 : max(1.0, (float) ($items[$weaponId]['mult'] ?? 1));
+        $armorReduction = $armorId === null ? 0.0 : min(0.95, max(0.0, (float) ($items[$armorId]['red'] ?? 0)));
         return ['weaponId' => $weaponId, 'armorId' => $armorId,
-            'weaponMultiplier' => $weaponId === null ? 1.0 : max(1.0, (float) ($items[$weaponId]['mult'] ?? 1)),
-            'armorReduction' => $armorId === null ? 0.0 : min(0.95, max(0.0, (float) ($items[$armorId]['red'] ?? 0)))];
+            'weaponMultiplier' => $weaponMultiplier,
+            'armorReduction' => $armorReduction,
+            'weaponBonusPct' => (int) round(($weaponMultiplier - 1.0) * 100),
+            'armorMitigationPct' => (int) round($armorReduction * 100)];
     }
 
     public static function removeMissing(array &$state, string $id): void
@@ -55,5 +50,11 @@ final class LoadoutService
         if (($state['inv'][$id] ?? 0) > 0) return;
         if (($state['equip'] ?? null) === $id) $state['equip'] = null;
         if (($state['armorEquip'] ?? null) === $id) $state['armorEquip'] = null;
+    }
+
+    public static function equippedSlotCount(array $state, array $items): int
+    {
+        $resolved = self::resolve($state, $items);
+        return (int) ($resolved['weaponId'] !== null) + (int) ($resolved['armorId'] !== null);
     }
 }

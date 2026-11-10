@@ -75,7 +75,7 @@
       </div>
       <div class="zone-header-actions" style="margin-inline-start:auto;display:flex;align-items:center;gap:14px;font-size:12px">
         <span style="color:var(--mu)">{{ t.tct }} <bdi style="color:var(--accText);font-weight:600">{{ clock }}</bdi></span>
-        <button onClick="{{ toggleTheme }}" title="theme" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
+        <button onClick="{{ toggleTheme }}" title="{{ themeToggleTitle }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 9px;font:inherit;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:6px"><span class="zone-theme-indicator" style="width:12px;height:12px;border-radius:50%;background:{{ themeDot }};box-shadow:0 0 0 2px var(--border3) inset"></span>{{ themeLabel }}</button>
         <button onClick="{{ toggleLang }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:4px 10px;font:inherit;font-size:11px;cursor:pointer" style-hover="background:var(--border);color:#fff">{{ t.otherLang }}</button>
         <a href="{{ adminHref }}" style="background:var(--activebg);border:1px solid var(--acc);color:var(--activefg);border-radius:3px;padding:4px 10px;font-size:11px;font-weight:600">{{ adminLabel }}</a>
       </div>
@@ -612,7 +612,7 @@
               </div>
             </div>
 
-            <!-- Card 9: Torn v6.15.7 Live Harvest Master Codex (62 Files · 237 Endpoints · 726 Schemas · 1,503 Items) -->
+            <!-- Card 9: Syndicate Tactical Master Codex -->
             <div class="zone-dossier-card" data-torn-master-codex="1" style="grid-column:1 / -1;background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
               <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:8px 12px;font-weight:700;color:var(--gold);font-size:12px;border-bottom:1px solid var(--gold);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.05em">
                 <span style="display:inline-flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>{{ omar.codexMasterTitle }}</span>
@@ -1422,6 +1422,7 @@
 const LS = 'zone.v2.save';
 const IS_PREVIEW = Boolean(window.ZonePlatform?.preview) || new URLSearchParams(window.location.search).get('zone-preview') === '1';
 const SAVE_KEY = IS_PREVIEW ? 'zone.v2.preview.save' : LS;
+const IS_DEMO_SHOWCASE = IS_PREVIEW || (typeof window !== 'undefined' && new URLSearchParams(window.location?.search || '').get('zone-demo') === '1');
 const savedPresentation = key => { try { return localStorage.getItem(key); } catch (_) { return null; } };
 const PREVIEW_NOTICE = { en: 'Draft preview. Gameplay actions are read-only. Player resources, equipment and success estimates are illustrative, not your saved character. Navigation, themes and 3D inspection remain available.', ar: 'معاينة مسودة للقراءة فقط. موارد اللاعب وعتاده وتقديرات النجاح توضيحية، وليست بيانات شخصيتك المحفوظة. يمكنك التنقل وتغيير المظهر وفحص العناصر ثلاثية الأبعاد.' };
 const BADGE = {
@@ -1682,7 +1683,7 @@ const TERRITORY_BENEFITS = [
   ['defense', 'Defensive position', 'موقع دفاعي', 600, 'basis-points'], ['recruitment', 'Recruitment reach', 'نطاق التجنيد', 5, 'members'],
 ];
 function zoneTerritoryPoint(column, row) {
-  const isLiveBrowser = typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '');
+  const isLiveBrowser = false;
   const x = column / 12 * 2 - 1, y = 1 - row / 10 * 2, widthScale = isLiveBrowser ? (.92 + .08 * (1 - Math.abs(y))) : (.68 + .32 * (1 - Math.abs(y)));
   const crossJitter=column>0&&column<12?Math.sin(column*1.91+row*.73)*(isLiveBrowser?18:105):0,longJitter=row>0&&row<10?Math.sin(row*1.47+column*.61)*(isLiveBrowser?20:135):0;
   const cross = x * (isLiveBrowser ? 1350 : 2850) * widthScale + crossJitter, along = y * (isLiveBrowser ? 860 : 5900) + longJitter, bearing = (isLiveBrowser ? -5 : 29) * Math.PI / 180;
@@ -1751,7 +1752,7 @@ class Component extends DCLogic {
   state = { screen: 'home', lang: 'en', theme: 'dark', mapMode: 'live', cityQuery: '', gymStation: 'str', combatMode: 'npc', marketMode: 'merchants', toast: null, fight: null, sel: 'revolver', itemTab: 'all', cat: 'search', tut: false, navOpen: false, casino: { card: 7, bet: 1000, msg: 'start' }, tick: 0 };
   constructor(p) {
     super(p);
-    const isLiveBrowserBoot = typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '');
+    const isLiveBrowserBoot = IS_DEMO_SHOWCASE && typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined';
     this.territoryMap = isLiveBrowserBoot ? this.enrichLiveBrowserMapSnapshot(null) : buildTerritoryFallback();
     if (isLiveBrowserBoot) {
       this.territoryMap.revision = 'live-city-v118';
@@ -1799,10 +1800,12 @@ class Component extends DCLogic {
   get scale() { return (this.props.timers ?? 'accelerated') === 'accelerated' ? 10 : 1; }
   componentDidMount() {
     document.documentElement.lang = this.state.lang; document.documentElement.dir = this.state.lang === 'ar' ? 'rtl' : 'ltr'; document.documentElement.dataset.theme = this.state.theme;
+    document.title = this.state.lang === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO';
+    if (/GEMINI|TORN|wenimo|4506953|AI FUNCTION|Google Search/i.test(String(this.state.aiFixerTrace || '') + String(this.state.geminiTrace || ''))) { this.state.aiFixerTrace = ''; this.state.geminiTrace = ''; }
     this.onRuntime = event => {
       const detail = event.detail || {};
       this.runtimeConnection = detail.connection || window.ZonePlatform?.status?.() || 'connecting';
-      if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && this.runtimeConnection !== 'connected') this.runtimeConnection = 'connected';
+      if (IS_DEMO_SHOWCASE && this.runtimeConnection !== 'connected') this.runtimeConnection = 'connected';
       if (detail.changed !== false) {
         updatePlatform(detail.release || window.ZonePlatform?.active(), detail.content || window.ZonePlatform?.data());
         const catalogs = (detail.content || window.ZonePlatform?.data())?.gameplayCatalog;
@@ -1855,7 +1858,7 @@ class Component extends DCLogic {
     this.onRuntime({ detail: {} });
     this.onPopState = event => {
       const params = new URLSearchParams(window.location.search), lang = params.get('lang');
-      if (lang === 'en' || lang === 'ar') { this.state.lang = lang; document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; }
+      if (lang === 'en' || lang === 'ar') { this.state.lang = lang; document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr'; document.title = lang === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO'; }
       this.go(params.get('screen') || 'home', false, event?.state?.zoneView);
     };
     window.addEventListener('popstate', this.onPopState);
@@ -1887,11 +1890,15 @@ class Component extends DCLogic {
       if (!fromMap) return;
       if (d.type === 'ZONE_CONVOY_INTERCEPT') {
         this.playTacticalSfx('rack');
+        const ar = this.state.lang === 'ar';
         this.p.cash = Number(this.p.cash || 0) + 18500;
         this.p.fac.respect = Number(this.p.fac.respect || 0) + 35;
         this.save();
-        const resp = '[AI FUNCTION CALL: interceptArmoredConvoy({ route: "Central Bank -> Pier", weapon: "Bullpup L85" })]\n> Fixer Audio: "Armored convoy intercepted on 3D City Grid! Extracted +$18,500 Syndicate Cash and +35 Sand Vipers Respect."';
-        this.result('cash', 'Armored Convoy Intercepted', 'Central Bank → Pier 3D Grid · +35 Respect', '+$18,500');
+        if (!IS_PREVIEW && this.serverPlayer) this.syncOmarAction('tactical.convoy', 'pier');
+        const resp = ar
+          ? 'تم اعتراض القافلة المصفحة على شبكة المدينة ثلاثية الأبعاد (البنك المركزي ← الرصيف) · غنيمة +$18,500 نقداً و +35 احترام للعائلة.'
+          : 'Armored Bank Convoy intercepted on 3D City Grid (Central Bank -> Pier) · Extracted +$18,500 cash and +35 Faction Respect.';
+        this.result('cash', ar ? 'تم اعتراض القافلة المصفحة' : 'Armored Convoy Intercepted', ar ? 'البنك المركزي ← الرصيف · +35 احترام' : 'Central Bank → Pier 3D Grid · +35 Respect', '+$18,500');
         this.setState({ aiFixerTrace: resp, geminiTrace: resp });
         return;
       }
@@ -2087,7 +2094,7 @@ class Component extends DCLogic {
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: 'FOCUS_FAMILY' }, window.location.origin);
   }
   enrichLiveBrowserMapSnapshot(snapshot) {
-    if (typeof window === 'undefined' || !/Mozilla/i.test(window.navigator?.userAgent || '')) return snapshot;
+    if (typeof window === 'undefined' || !IS_DEMO_SHOWCASE) return snapshot;
     const base = snapshot && Array.isArray(snapshot.blocks) && snapshot.blocks.length >= 120 ? snapshot : buildTerritoryFallback();
     if (!base.playerFactionId) {
       base.playerFactionId = 'vipers';
@@ -2214,7 +2221,7 @@ class Component extends DCLogic {
     } catch (error) {
       console.warn('[ZONE territory map] using bundled 120-block snapshot:', error && error.message ? error.message : error);
       if ((this._territoryRevision || 0) !== revision) return;
-      if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+      if (IS_DEMO_SHOWCASE) {
         this.territoryMap = this.enrichLiveBrowserMapSnapshot(null);
         this.territoryMap.revision = 'live-city-v118';
         this._territoryAuthoritative = true;
@@ -2236,7 +2243,7 @@ class Component extends DCLogic {
         if (!response.ok || !Array.isArray(snapshot.rows)) throw new Error('Standings unavailable.');
         if (screenEngineAvailable('hof')) this.leaderboard = snapshot;
       } catch (error) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+        if (IS_DEMO_SHOWCASE) {
           this.leaderboard = { rows: [
             { rank: 1, username: 'ShadowViper', level: 7, score: 173500 },
             { rank: 2, username: 'BigSal', level: 18, score: 154200 },
@@ -2299,7 +2306,7 @@ class Component extends DCLogic {
       });
       const result = await response.json().catch(()=>({}));
       if (!response.ok) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && response.status === 404) {
+        if (IS_DEMO_SHOWCASE && response.status === 404) {
           const vipers = TERRITORY_FACTIONS[0];
           if (action === 'claim' || action === 'assault') {
             block.ownerFactionId = 'vipers';
@@ -2325,7 +2332,7 @@ class Component extends DCLogic {
           this.territoryMap.revision = 'live-city-v' + Date.now();
           this.spend('energy', 15);
           this.p.fac.respect = Number(this.p.fac.respect || 0) + 25;
-          this.log((ar ? 'السيطرة على القطاع ' : 'Sector operation ') + blockId + ' (+25 Respect)', 'good');
+          this.log((ar ? 'السيطرة على القطاع ' : 'Sector operation ') + blockId + ' (+25 Respect)', null, 'good');
           this.save();
           this._mapSig = '';
           this.pushMap();
@@ -2471,7 +2478,7 @@ class Component extends DCLogic {
     if (IS_PREVIEW || this.worldBusy || (!force && Date.now() - (this.worldLoadedAt || 0) < 30000)) return;
     this.worldBusy = true;
     try { const response = await fetch('/api/v1/world', { headers: { Accept: 'application/json' }, cache: 'no-store' }); const data = await response.json(); if (!response.ok) throw new Error(data.error || 'City dispatch unavailable.'); this.worldState = data; this.worldError = ''; }
-    catch (error) { if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) { this.worldState ||= { finds: [], events: [] }; this.worldError = ''; } else this.worldError = this.serverError(error); }
+    catch (error) { if (IS_DEMO_SHOWCASE) { this.worldState ||= { finds: [], events: [] }; this.worldError = ''; } else this.worldError = this.serverError(error); }
     finally { this.worldLoadedAt = Date.now(); this.worldBusy = false; this.forceUpdate(); }
   }
   async claimStreetFind(id) {
@@ -2627,7 +2634,8 @@ class Component extends DCLogic {
   gameplayDisabled() { return IS_PREVIEW || !this.gameplayReady || this.runtimeConnection === 'offline' || !!this.gameplayError || !!this.moduleBusy || this.p.travel?.status === 'traveling'; }
   maxOf(k) { const p = this.p, u = p.fac.ups; if (this.serverPlayer && Number.isFinite(p.serverMax?.[k])) return p.serverMax[k]; if (k === 'happy') return PROPS.find(x => x.id === p.prop).happy; return BARS[k].max + (k === 'nerve' && u.nerveMax ? 5 : 0) + (k === 'energy' && u.energyMax ? 10 : 0) + (k === 'life' && p.eduDone.bio ? 50 : 0); }
   barClock(k) { return this.serverPlayer ? { rate: 1, ivl: { energy: 180, nerve: 300, happy: 180, life: 60 }[k] * 1000 } : { rate: BARS[k].rate, ivl: BARS[k].ivl * 1000 / this.scale }; }
-  cur(k) { if (!IS_PREVIEW && !this.serverPlayer) return 0; const b = this.p.bars[k], c = this.barClock(k); const ticks = Math.max(0, Math.floor((Date.now() - b.at) / c.ivl)); return Math.min(this.maxOf(k), b.v + ticks * c.rate); }
+  cur(k) { if (!IS_PREVIEW && !this.serverPlayer) return 0; const b = this.p.bars[k], c = this.barClock(k), cap = this.maxOf(k); if (b.v > cap) return b.v; const ticks = Math.max(0, Math.floor((Date.now() - b.at) / c.ivl)); return Math.min(cap, b.v + ticks * c.rate); }
+  setBarValue(k, val) { if (this.p?.bars?.[k]) this.p.bars[k] = { v: Math.max(0, Math.round(val)), at: Date.now() }; }
   nextIn(k) { const b = this.p.bars[k], ivl = this.barClock(k).ivl; return ivl - (Math.max(0, Date.now() - b.at) % ivl); }
   spend(k, n) { const b = this.p.bars[k], ivl = this.barClock(k).ivl; const ticks = Math.max(0, Math.floor((Date.now() - b.at) / ivl)); const cur = this.cur(k); b.v = Math.max(0, Math.min(this.maxOf(k), cur - n)); b.at = cur >= this.maxOf(k) ? Date.now() : b.at + ticks * ivl; }
   gain(k, n) { this.spend(k, -n); }
@@ -2939,7 +2947,7 @@ class Component extends DCLogic {
         if (!response.ok) throw new Error(snapshot.error || 'Connection unavailable.');
         if (kind === 'opponents' ? !Array.isArray(snapshot.players) : kind === 'market' ? !Array.isArray(snapshot.listings) || !Number.isInteger(snapshot.inventoryVersion) : !Array.isArray(snapshot.operations) || !Array.isArray(snapshot.definitions)) throw new Error('Invalid server response.');
         if ((resource.revision || 0) !== revision) return;
-        if (kind === 'family' && typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && !snapshot.family) {
+        if (kind === 'family' && IS_DEMO_SHOWCASE && !snapshot.family) {
           snapshot.family = { id: 'vipers', name: { en: 'Sand Vipers', ar: 'أفاعي الرمل' }, role: 'leader' };
           snapshot.permissions = { create: true, ...(snapshot.permissions || {}) };
           if (snapshot.competition && !snapshot.competition.ownFactionId) snapshot.competition.ownFactionId = 'vipers';
@@ -2948,7 +2956,7 @@ class Component extends DCLogic {
         const cooldownSeconds = kind === 'opponents' ? Number(snapshot.attackCooldownSeconds) : 0;
         resource.nextAt = Date.now() + (Number.isFinite(cooldownSeconds) && cooldownSeconds > 0 ? Math.min(30000, Math.max(1000, cooldownSeconds * 1000)) : 30000);
       } catch (error) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && !resource.snapshot) {
+        if (IS_DEMO_SHOWCASE && !resource.snapshot) {
           resource.snapshot = kind === 'opponents'
             ? { players: [{ id: 'p-1', username: 'BigSal', level: 18, status: 'available', eligible: true, life: 1800, max_life: 1800, strength: 620, defense: 540, speed: 580, dexterity: 510, factionId: 'kings' }, { id: 'p-2', username: 'NadiaQuick', level: 15, status: 'available', eligible: true, life: 1500, max_life: 1500, strength: 480, defense: 430, speed: 590, dexterity: 520, factionId: 'night' }, { id: 'p-3', username: 'Duke_X', level: 14, status: 'available', eligible: true, life: 1400, max_life: 1400, strength: 450, defense: 460, speed: 440, dexterity: 430, factionId: 'oldguard' }], attackCooldownSeconds: 0 }
             : kind === 'market'
@@ -3014,7 +3022,7 @@ class Component extends DCLogic {
         if ((this._playerRevision || 0) !== playerRevision) snapshot.player = null;
         this.applyCombat(snapshot); this.combatError = '';
       } catch (error) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+        if (IS_DEMO_SHOWCASE) {
           this.combatVersion = this.combatVersion || 1;
           this.combatError = '';
         } else {
@@ -3131,7 +3139,7 @@ class Component extends DCLogic {
         if (!response.ok || !Number.isInteger(card) || card < 2 || card > 14 || !Number.isInteger(version) || version < 1) throw new Error(data.error || 'High-low unavailable.');
         this.casinoReady = true; this.setState({ casino: { ...this.state.casino, card, version } });
       } catch (error) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+        if (IS_DEMO_SHOWCASE) {
           this.casinoReady = true;
           this.setState({ casino: { ...this.state.casino, card: this.state.casino?.card || 8, version: this.state.casino?.version || 1 } });
         } else if (this.state.screen === 'casino') {
@@ -3165,7 +3173,7 @@ class Component extends DCLogic {
     if (Array.isArray(state.inmates)) this.inmates = state.inmates;
     if (Array.isArray(state.patients)) this.patients = state.patients;
     if (snapshot.catalogs && Object.keys(snapshot.catalogs).length) { this.p.catalogs = snapshot.catalogs; this.applyCatalogs(snapshot.catalogs); }
-    if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && Number(this.p.level) <= 1 && !(Number(this.p.bankBalance) > 0) && (!this.p.equip || this.p.equip === 'fists') && !this.p.armorEquip && !(Number(this.p.ctr?.crimes) > 0) && !(Number(this.p.ctr?.trains) > 0)) {
+    if (IS_DEMO_SHOWCASE && Number(this.p.level) <= 1 && !(Number(this.p.bankBalance) > 0) && (!this.p.equip || this.p.equip === 'fists') && !this.p.armorEquip && !(Number(this.p.ctr?.crimes) > 0) && !(Number(this.p.ctr?.trains) > 0)) {
       this._liveBrowserSeeded = true;
       this.ensureLiveBrowserPlayer(true);
     }
@@ -3213,7 +3221,7 @@ class Component extends DCLogic {
     }
   }
   ensureLiveBrowserPlayer(forceUpgrade = false) {
-    if (typeof window === 'undefined' || !/Mozilla/i.test(window.navigator?.userAgent || '')) return false;
+    if (typeof window === 'undefined' || !IS_DEMO_SHOWCASE) return false;
     if (!this.serverPlayer || forceUpgrade) {
       this.serverPlayer = true;
       this.p.playerId = this.p.playerId || 'live-operative-1';
@@ -3300,9 +3308,9 @@ class Component extends DCLogic {
       return snapshot;
     } finally { this.gameplayBusy = false; this.forceUpdate(); }
   }
-  async syncOmarAction(action, id = '', expectedPrice) {
-    if (IS_PREVIEW || typeof fetch !== 'function') return null;
-    try {
+  syncOmarAction(action, id = '', expectedPrice) {
+    if (IS_PREVIEW || typeof fetch !== 'function') return Promise.resolve(null);
+    const execOnce = async () => {
       const request = { action, id: String(id), expectedVersion: this.gameplayVersion || 1 };
       if (expectedPrice !== undefined) request.expectedPrice = expectedPrice;
       const response = await fetch('/api/v1/gameplay/action', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(request) });
@@ -3311,8 +3319,21 @@ class Component extends DCLogic {
         this.applyGameplay(snapshot);
         return snapshot;
       }
-    } catch (_) {}
-    return null;
+      if (response.status === 409) {
+        await this.loadGameplay();
+        const retryReq = { action, id: String(id), expectedVersion: this.gameplayVersion || 1 };
+        if (expectedPrice !== undefined) retryReq.expectedPrice = expectedPrice;
+        const retryRes = await fetch('/api/v1/gameplay/action', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(retryReq) });
+        const retrySnap = await retryRes.json().catch(() => ({}));
+        if (retryRes.ok && retrySnap && retrySnap.state) {
+          this.applyGameplay(retrySnap);
+          return retrySnap;
+        }
+      }
+      return null;
+    };
+    this._omarChain = (this._omarChain || Promise.resolve()).catch(() => null).then(() => execOnce().catch(() => null));
+    return this._omarChain;
   }
   gameplayName(action, id) {
     const t = T[this.state.lang], kind = action.split('.')[0];
@@ -3360,7 +3381,7 @@ class Component extends DCLogic {
       if (pl[remote] != null && Number.isFinite(Number(pl[remote]))) this.p.stats[local] = Number(pl[remote]);
     }
     if (pl.city != null) this.p.city = String(pl.city);
-    if (this._liveBrowserSeeded && typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '') && Number(pl.level) <= 1 && !(Number(pl.bank_balance) > 0)) {
+    if (this._liveBrowserSeeded && IS_DEMO_SHOWCASE && Number(pl.level) <= 1 && !(Number(pl.bank_balance) > 0)) {
       this.ensureLiveBrowserPlayer(true);
     }
   }
@@ -3433,7 +3454,7 @@ class Component extends DCLogic {
         if (!response.ok || !Number.isFinite(Number(quote.cost))) throw new Error(quote.error || 'Hospital unavailable.');
         if ((this._playerRevision || 0) === playerRevision) { this.hospitalQuote = quote; this.forceUpdate(); }
       } catch (error) {
-        if (typeof window !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || '')) {
+        if (IS_DEMO_SHOWCASE) {
           this.hospitalQuote = { cost: 0, reason: 'healthy' };
         } else if (this.state.screen === 'hospital') {
           this.toast(this.serverError(error), true);
@@ -3533,7 +3554,7 @@ class Component extends DCLogic {
     const is = {}; BASE_SCREENS.forEach(s => { is[s] = s === screen; }); is.custom = !!customPage;
     const family = (this.territoryMap.factions || []).find(f => f.id === this.territoryMap.playerFactionId);
     const facName = family?.name?.[lang] || family?.name?.en || (lang === 'ar' ? 'لا توجد عائلة' : 'No family yet'), enemy = t.teams[2];
-    const d = new Date(), h24 = d.getUTCHours(), h12 = String(h24 % 12 || 12).padStart(2, '0'), ampm = h24 >= 12 ? (lang === 'ar' ? 'PM م' : 'PM') : (lang === 'ar' ? 'AM ص' : 'AM'), clock = [h12, String(d.getUTCMinutes()).padStart(2, '0'), String(d.getUTCSeconds()).padStart(2, '0')].join(':') + ' ' + ampm;
+    const d = new Date(), h24 = d.getUTCHours(), h12 = String(h24 % 12 || 12).padStart(2, '0'), ampm = h24 >= 12 ? (lang === 'ar' ? 'م' : 'PM') : (lang === 'ar' ? 'ص' : 'AM'), clock = [h12, String(d.getUTCMinutes()).padStart(2, '0'), String(d.getUTCSeconds()).padStart(2, '0')].join(':') + ' ' + ampm;
     const bailSelf = Math.max(1000, Math.ceil((p.jailUntil - now) / 60000) * 1000);
     const quote = this.hospitalQuote, hospitalCare = { label: (lang === 'ar' ? 'ادفع للعلاج' : 'Pay to heal') + (quote ? ' · ' + money(quote.cost) : ' · ...'), description: !quote ? (lang === 'ar' ? 'جارٍ تحميل سعر العلاج...' : 'Loading treatment price...') : quote.available ? (lang === 'ar' ? 'استعد صحتك وغادر المستشفى.' : 'Restore your life and leave hospital.') : (lang === 'ar' ? 'لا تحتاج إلى علاج حالياً.' : 'No treatment needed right now.'), disabled: !quote?.available || p.cash < Number(quote?.cost || 0) || this.playerMutationPending() || this.gameplayDisabled(), heal: () => { if (this.playerMutationPending() || this.gameplayDisabled()) return Promise.resolve(); return this.healSelf(t).catch(error => this.toast(this.serverError(error), true)); } };
     const status = jailed ? { title: t.jail, body: t.jailBody, left: mmss(p.jailUntil - now), actLabel: fmt(t.bailSelf, { c: money(bailSelf) }), act: () => this.gameplayAction('jail.bailSelf').catch(error => this.toast(this.serverError(error), true)) }
@@ -3544,7 +3565,7 @@ class Component extends DCLogic {
     const logArgs = a => { if (!a) return a; const o = {};
       for (const k in a) o[k] = LK[k] ? LK[k](a[k]) : a[k];
       return o; };
-    const logMap = (l, i) => ({ time: l.time, text: l.k === 'playerFight' ? this.playerFightReceipt(l.a) : l.k === 'peerAction' ? (l.a.labels?.[lang === 'ar' ? 1 : 0] || '') : l.k === 'gameplay' ? this.gameplayEvent(l.a) : fmt(t.log[l.k], logArgs(l.a)), color: l.kind === 'bad' ? 'var(--bad)' : l.kind === 'good' ? 'var(--good)' : 'var(--t3)', bg: i % 2 ? 'var(--z1)' : 'var(--z2)' });
+    const logMap = (l, i) => ({ time: l.time, text: l.k === 'playerFight' ? this.playerFightReceipt(l.a) : l.k === 'peerAction' ? (l.a.labels?.[lang === 'ar' ? 1 : 0] || '') : l.k === 'gameplay' ? this.gameplayEvent(l.a) : fmt(t.log[l.k] || l.k, logArgs(l.a)), color: l.kind === 'bad' ? 'var(--bad)' : l.kind === 'good' ? 'var(--good)' : 'var(--t3)', bg: i % 2 ? 'var(--z1)' : 'var(--z2)' });
     const totalStats = ['str', 'def', 'spd', 'dex'].reduce((a, k) => a + (Number(p.stats?.[k]) || 0), 0);
     const chainActive = p.fac.chain > 0 && now - p.fac.chainAt < 300000, chain = chainActive ? p.fac.chain : 0;
     const ms = [10, 25, 50, 100, 250, 500].find(m => m > chain) || 1000, prevMs = [0, 10, 25, 50, 100, 250].filter(m => m <= chain).pop() || 0;
@@ -3612,8 +3633,9 @@ class Component extends DCLogic {
       customBlocks: (customPage?.blocks || []).map((block, index) => ({ type: block.type, label: String(block.type || 'block').toUpperCase(), text: block.content?.[lang] || block.content?.en || '', bg: block.type === 'hero' ? 'linear-gradient(135deg,var(--activebg),var(--panel))' : block.type === 'callout' ? 'var(--selbg)' : 'var(--panel)', edge: block.type === 'hero' || block.type === 'callout' ? 'var(--acc)' : 'var(--border)', pad: block.type === 'hero' ? '28px' : '16px', size: block.type === 'hero' ? 'clamp(22px,4vw,42px)' : block.type === 'text' ? '14px' : '16px', weight: block.type === 'hero' ? '700' : block.type === 'callout' ? '600' : '400', order: index })),
       topLinks: t.topLinks.map((label, i) => ({ label, go: () => i === 3 ? this.toast(t.toast.community) : this.go(['education', 'newspaper', 'faction', null, 'hof'][i]) })),
       ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
+      themeToggleTitle: lang === 'ar' ? 'تبديل المظهر' : 'Toggle theme',
       toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => this.save()); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
-      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; this.setState({ lang: l, toast: null, result: null }, () => { this.save(); this.syncRoute(this.state.screen, true); }); },
+      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; document.title = l === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO'; this.setState({ lang: l, toast: null, result: null }, () => { this.save(); this.syncRoute(this.state.screen, true); }); },
       cash: money(p.cash), cashIcon: LU('cash'), chainIcon: LU('cuffs'), level: p.level, levelTitle, points: num(p.points), merits: p.merits, chainText: fmt(t.hits, { n: chain }),
       title: t.nav[screen] || customPage?.title?.[lang] || customPage?.title?.en || screen, subtitle: customPage ? (PLATFORM_MANIFEST.branding?.tagline?.[lang] || PLATFORM_MANIFEST.branding?.tagline?.en || '') : fmt(t.sub[screen], { fac: facName, lvl: p.level, title: levelTitle }), goCity: () => this.go('city'), cityNavigationDisabled: !SCREENS.includes('city'), tut: this.state.tut, toggleTut: () => this.setState(s => ({ tut: !s.tut })), tutText: t.tut[tutKey],
       outfits: ['street', 'suit', 'tactical'].map(k => ({ name: t.outfits[k], selected: (this.state.outfit || 'suit') === k,
@@ -3725,7 +3747,7 @@ class Component extends DCLogic {
       news: t.news.map(n => ({ h: n[0], meta: n[1] })),
       inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = i.npc === false ? Math.max(1000, Math.ceil(left / 60000) * 1000) : Math.ceil(left / 60000) * 100 * i.lvl; return { id: i.id, name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, bustRiskTier: odds >= 75 ? (lang === 'ar' ? 'فرصة عالية' : 'High odds') : odds >= 45 ? (lang === 'ar' ? 'فرصة متوسطة' : 'Moderate odds') : (lang === 'ar' ? 'فرصة منخفضة' : 'Low odds'), nerveCost: 5, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(() => this.gameplayAction('jail.bust', i.id || i.name)), bail: () => this.act(() => this.gameplayAction('jail.bail', i.id || i.name)) }; }),
       patients: this.patients.filter(i => i.until > now).map(i => ({ name: i.name, lvl: i.lvl, left: mmss(i.until - now), reason: fmt(t.hreasons[i.reason], { who: i.who }), energyCost: 75, reviveReady: energyNow >= 75, disabled: energyNow < 75, revive: () => this.act(() => this.gameplayAction('hospital.revive', i.id || i.name)) })),
-      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0, dailyYield = money(Math.max(250, Math.round(bal * 0.0185))), mugExposure = money(Math.round(cash * 0.15)); const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); const runLocalOrServerBank = (dir, amount) => { if (amount <= 0) return this.toast(lang === 'ar' ? 'لا يوجد رصيد كافٍ لهذا التحويل.' : 'Insufficient balance for transfer.', true); if (this.gameplayReady && !this.gameplayDisabled()) return this.act(tt => this.bankMove(dir, amount, tt)); if (dir === 'deposit') { const move = Math.min(cash, amount); this.p.cash = Math.max(0, cash - move); this.p.bankBalance = bal + move; this.log((lang === 'ar' ? 'إيداع في الخزنة: ' : 'Vault deposit: ') + money(move), 'good'); } else { const move = Math.min(bal, amount); this.p.bankBalance = Math.max(0, bal - move); this.p.cash = cash + move; this.log((lang === 'ar' ? 'سحب من الخزنة: ' : 'Vault withdrawal: ') + money(move), 'good'); } this.playTacticalSfx('cash'); this.save(); this.forceUpdate(); }; return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, dailyYield, mugExposure, vaultHeaderTitle: lang === 'ar' ? 'خزينة النقابة المركزية والتحويلات المحمية' : 'Syndicate Private Vault & Capital Command', vaultHeaderSub: lang === 'ar' ? 'الأموال المودعة في الخزنة محمية بالكامل من النشل في مواجهات الشارع وتدر عائداً يومياً.' : 'Capital locked inside the biometric titanium vault is 100% immune to street muggings and accrues daily syndicate yield.', apyBadge: lang === 'ar' ? 'عائد يومي 1.85% · نشط' : '1.85% DAILY YIELD · ACTIVE', quickLockAll: () => runLocalOrServerBank('deposit', cash), quickCombatFloat: () => runLocalOrServerBank('withdraw', Math.min(bal || 10000, 10000)), openMarket: () => this.go('market'), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ حفظ التحويل...' : 'Saving transfer...') : (lang === 'ar' ? 'التحويلات تُحفظ على الخادم. رصيدك لا يتغير إلا بعد تأكيد التحويل.' : 'Transfers are saved on the server. Your balance changes only after confirmation.') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
+      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0, dailyYield = money(Math.max(250, Math.round(bal * 0.0185))), mugExposure = money(Math.round(cash * 0.15)); const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); const runLocalOrServerBank = (dir, amount) => { if (amount <= 0) return this.toast(lang === 'ar' ? 'لا يوجد رصيد كافٍ لهذا التحويل.' : 'Insufficient balance for transfer.', true); if (this.gameplayReady && !this.gameplayDisabled()) return this.act(tt => this.bankMove(dir, amount, tt)); if (dir === 'deposit') { const move = Math.min(cash, amount); this.p.cash = Math.max(0, cash - move); this.p.bankBalance = bal + move; this.log((lang === 'ar' ? 'إيداع في الخزنة: ' : 'Vault deposit: ') + money(move), null, 'good'); } else { const move = Math.min(bal, amount); this.p.bankBalance = Math.max(0, bal - move); this.p.cash = cash + move; this.log((lang === 'ar' ? 'سحب من الخزنة: ' : 'Vault withdrawal: ') + money(move), null, 'good'); } this.playTacticalSfx('cash'); this.save(); this.forceUpdate(); }; return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, dailyYield, mugExposure, vaultHeaderTitle: lang === 'ar' ? 'خزينة النقابة المركزية والتحويلات المحمية' : 'Syndicate Private Vault & Capital Command', vaultHeaderSub: lang === 'ar' ? 'الأموال المودعة في الخزنة محمية بالكامل من النشل في مواجهات الشارع وتدر عائداً يومياً.' : 'Capital locked inside the biometric titanium vault is 100% immune to street muggings and accrues daily syndicate yield.', apyBadge: lang === 'ar' ? 'عائد يومي 1.85% · نشط' : '1.85% DAILY YIELD · ACTIVE', quickLockAll: () => runLocalOrServerBank('deposit', cash), quickCombatFloat: () => runLocalOrServerBank('withdraw', Math.min(bal || 10000, 10000)), openMarket: () => this.go('market'), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ حفظ التحويل...' : 'Saving transfer...') : (lang === 'ar' ? 'التحويلات تُحفظ على الخادم. رصيدك لا يتغير إلا بعد تأكيد التحويل.' : 'Transfers are saved on the server. Your balance changes only after confirmation.') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
       casino: { spriteX: casino.card === 14 ? -2 : -2 - 73 * (Math.max(2, Math.min(13, casino.card)) - 1), cardLabel: (lang === 'ar' ? 'الورقة الحالية: ' : 'Current card: ') + (casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card), card: casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card, cardColor: casino.card % 2 ? '#c0281a' : 'var(--onAcc)', higherOddsPct: Math.round(Math.max(0, 14 - casino.card) / 12 * 100), lowerOddsPct: Math.round(Math.max(0, casino.card - 2) / 12 * 100), bets: [1000, 5000, 25000].map(b => ({ label: money(b), bg: casino.bet === b ? 'var(--activebg)' : 'var(--btn)', fg: casino.bet === b ? 'var(--activefg)' : 'var(--t3)', pick: () => this.setState({ casino: { ...casino, bet: b } }) })), higher: () => this.act(tt => this.casinoGuess(true, tt)), lower: () => this.act(tt => this.casinoGuess(false, tt)), disabled: !this.casinoReady || !!this.casinoBusy || p.cash < casino.bet, msg: fmt(t.casinoMsg[casino.msg], { c: money(casino.resultBet ?? casino.bet) }) + (p.casinoNet ? ' · ' + (lang === 'ar' ? 'الصافي' : 'Net') + ' ' + (p.casinoNet > 0 ? '+' : '-') + money(Math.abs(p.casinoNet)) : '') },
       casinoGames: t.cgames.map((g, i) => ({ name: g[0], status: lang === 'ar' ? 'معاينة فقط' : 'Preview only', img: 'art/c_' + ['slots', 'roulette', 'blackjack', 'poker', 'lottery', 'russian'][i] + '.jpg', imgOpacity: .65, filter: 'none', nameColor: 'var(--t4)' })),
       hof: (() => { const rows = t.hofNames.slice(0, 10).map((n, i) => ({ name: n, lvl: [58, 52, 31, 44, 39, 16, 27, 9, 13, 15][i] || 15, stats: [98000, 84000, 12000, 41000, 36000, 7300, 15800, 3000, 5000, 6100][i] || 5000, nw: [48e6, 31e6, 9.2e6, 22e6, 12e6, 1.1e6, 4.4e6, 380e3, 720e3, 950e3][i] || 500000, fac: [t.teams[7], t.teams[0], '—', t.teams[4], t.teams[3], t.teams[2], t.teams[5], t.teams[2], t.teams[0], t.teams[1]][i] || '—' })); const safeStats = Number.isFinite(Number(totalStats)) && totalStats > 0 ? Number(totalStats) : 1600; const safeNw = Number.isFinite(Number(this.netWorth())) ? Number(this.netWorth()) : 0; rows.push({ name: p.username || t.player, lvl: Number(p.level) || 1, stats: safeStats, nw: safeNw, fac: facName, me: true }); rows.sort((a, b) => b.stats - a.stats); return rows.map((r, i) => ({ rank: i + 1, name: r.name, lvl: r.lvl, stats: num(r.stats), powerTier: r.stats >= 50000 ? (lang === 'ar' ? 'أسطوري' : 'Apex') : r.stats >= 15000 ? (lang === 'ar' ? 'نخبة' : 'Elite') : r.stats >= 5000 ? (lang === 'ar' ? 'مخضرم' : 'Veteran') : (lang === 'ar' ? 'صاعد' : 'Rising'), nw: money(r.nw), fac: r.fac, color: r.me ? 'var(--activefg)' : 'var(--link)', bg: r.me ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)' })); })(),
@@ -3981,10 +4003,10 @@ class Component extends DCLogic {
     const holodeckCatalog = [
       { id: '', label: lang === 'ar' ? 'المجهز' : 'Equipped' },
       { id: 'bullpup_1', label: lang === 'ar' ? 'بولباب L85' : 'Bullpup L85' },
-      { id: 'assaultrifle_3', label: 'M4A1 PBR' },
-      { id: 'assaultrifle_2', label: 'G3A3 7.62' },
-      { id: 'assaultrifle2_1', label: 'AK-47' },
-      { id: 'sniperrifle_2', label: 'Dragunov' }
+      { id: 'assaultrifle_3', label: lang === 'ar' ? 'بندقية M4A1' : 'M4A1 Carbine' },
+      { id: 'assaultrifle_2', label: lang === 'ar' ? 'بندقية G3A3' : 'G3A3 7.62' },
+      { id: 'assaultrifle2_1', label: lang === 'ar' ? 'كلاشنكوف AK-47' : 'AK-47' },
+      { id: 'sniperrifle_2', label: lang === 'ar' ? 'قناصة دراغونوف' : 'Dragunov' }
     ];
     const currentHolodeck = this.state.holodeckWeapon || '';
     const currentThinking = this.state.geminiThinking || 'HIGH';
@@ -4001,7 +4023,9 @@ class Component extends DCLogic {
         const next = !this.state.xrayMode;
         this.setState({
           xrayMode: next,
-          geminiTrace: `[3D ANATOMICAL X-RAY & CARDIAC SCANNER · ${next ? 'ACTIVE' : 'STANDBY'}]\n> Translucent Skeletal/Thoracic Overlay: Cardiac Hotspot (${baseArmorRed}% Kevlar Mitigation) · Cranial 2.2x Crit · 19-Bone Right-Hand Grip`
+          geminiTrace: lang === 'ar'
+            ? `[المسح التشريحي ثلاثي الأبعاد · ${next ? 'نشط' : 'استعداد'}]\n• تراكب الهيكل والقلب: حماية الصدر بالكيفلر (${baseArmorRed}%) · إصابة الرأس ×2.2 حرج · 19 عظمة قبضة`
+            : `[3D ANATOMICAL X-RAY & CARDIAC SCANNER · ${next ? 'ACTIVE' : 'STANDBY'}]\n> Translucent Skeletal/Thoracic Overlay: Cardiac Hotspot (${baseArmorRed}% Kevlar Mitigation) · Cranial 2.2x Crit · 19-Bone Right-Hand Grip`
         });
       },
       anatomyTitle: lang === 'ar' ? 'مصفوفة التشريح والدروع ثلاثية الأبعاد (ملابس كاملة)' : '3D Clothed Anatomical Hitbox & Armor Matrix',
@@ -4052,7 +4076,9 @@ class Component extends DCLogic {
             this.setState({
               holodeckWeapon: this.state.holodeckWeapon || 'bullpup_1',
               weaponMods: nextMods,
-              geminiTrace: `[BULLPUP TAR-21 / L85 MODULAR RAIL SYSTEM]\n> Attachment "${m.label}" ${!active ? 'MOUNTED' : 'DETACHED'} · Effective Multiplier ×${(3.5 + activeCount * 0.16).toFixed(2)}`
+              geminiTrace: lang === 'ar'
+                ? `[منظومة سكك التسليح المعيارية بولباب L85]\n• الملحق "${m.label}" ${!active ? 'تم تركيبه' : 'تم فكه'} · المضاعف الفعلي ×${(3.5 + activeCount * 0.16).toFixed(2)}`
+                : `[BULLPUP TAR-21 / L85 MODULAR RAIL SYSTEM]\n> Attachment "${m.label}" ${!active ? 'MOUNTED' : 'DETACHED'} · Effective Multiplier ×${(3.5 + activeCount * 0.16).toFixed(2)}`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: true } });
@@ -4105,12 +4131,12 @@ class Component extends DCLogic {
       ],
       armoryDeckTitle: lang === 'ar' ? '🔫 هولوديك الترسانة ثلاثي الأبعاد (معاينة وتبديل فوري)' : '🔫 3D ARMORY HOLODECK & WEAPON INSPECTOR (1-CLICK 3D WEBGL)',
       armoryQuickWeapons: [
-        { id: 'bullpup_1', label: 'Bullpup L85 (×3.5)' },
-        { id: 'assaultrifle_3', label: 'M4A1 PBR (×3.4)' },
-        { id: 'assaultrifle_2', label: 'G3A3 7.62 (×3.3)' },
-        { id: 'assaultrifle2_1', label: 'AK-47 (×3.1)' },
-        { id: 'sniperrifle_2', label: 'Dragunov SVD (×3.8)' },
-        { id: 'bat', label: 'Baseball Bat (×1.25)' }
+        { id: 'bullpup_1', label: lang === 'ar' ? 'بولباب L85 (×3.5)' : 'Bullpup L85 (×3.5)' },
+        { id: 'assaultrifle_3', label: lang === 'ar' ? 'بندقية M4A1 (×3.4)' : 'M4A1 Carbine (×3.4)' },
+        { id: 'assaultrifle_2', label: lang === 'ar' ? 'بندقية G3A3 (×3.3)' : 'G3A3 7.62 (×3.3)' },
+        { id: 'assaultrifle2_1', label: lang === 'ar' ? 'كلاشنكوف AK-47 (×3.1)' : 'AK-47 (×3.1)' },
+        { id: 'sniperrifle_2', label: lang === 'ar' ? 'قناصة دراغونوف (×3.8)' : 'Dragunov SVD (×3.8)' },
+        { id: 'bat', label: lang === 'ar' ? 'مضرب بيسبول (×1.25)' : 'Baseball Bat (×1.25)' }
       ].map(w => ({
         id: w.id,
         label: w.label,
@@ -4134,7 +4160,7 @@ class Component extends DCLogic {
           run: () => {
             this.playTacticalSfx('rack');
             this.charMsg({ combat: { side: 'you', hit: true } });
-            this.setState({ geminiTrace: `[3D RIG KINEMATICS · 24 CLIPS]\n> Triggered Combat Attack & Recoil Impulse on ${activeOutfitKey === 'tactical' ? 'Swat.glb' : activeOutfitKey === 'street' ? 'Casual_Hoodie.glb' : 'Suit.glb'} (${(holodeckCatalog.find(w => w.id === currentHolodeck) || holodeckCatalog[0]).label})` });
+            this.setState({ geminiTrace: lang === 'ar' ? `[حركيات المجسم ثلاثي الأبعاد · 24 حركة]\n• تنفيذ هجوم وارتداد على ${activeOutfitKey === 'tactical' ? 'بدلة الاقتحام التكتيكية' : activeOutfitKey === 'street' ? 'عتاد الشوارع' : 'البدلة التنفيذية'} (${(holodeckCatalog.find(w => w.id === currentHolodeck) || holodeckCatalog[0]).label})` : `[3D RIG KINEMATICS · 24 CLIPS]\n> Triggered Combat Attack & Recoil Impulse on ${activeOutfitKey === 'tactical' ? 'Tactical SWAT Rig' : activeOutfitKey === 'street' ? 'Street Enforcer Rig' : 'Executive Suit Rig'} (${(holodeckCatalog.find(w => w.id === currentHolodeck) || holodeckCatalog[0]).label})` });
           }
         },
         {
@@ -4153,7 +4179,7 @@ class Component extends DCLogic {
           run: () => {
             this.playTacticalSfx('gym');
             this.charMsg({ combat: { side: 'opp', hit: true } });
-            this.setState({ geminiTrace: `[3D ANATOMICAL HITBOX TEST · KEVLAR MITIGATION ${baseArmorRed}%]\n> Simulated incoming ballistic impact on Thorax Kevlar plate (${baseArmorRed}% absorbed)` });
+            this.setState({ geminiTrace: lang === 'ar' ? `[اختبار صد الدروع التشريحي · كيفلر ${baseArmorRed}%]\n• محاكاة إصابة بالستية على درع الصدر (امتصاص ${baseArmorRed}%)` : `[3D ANATOMICAL HITBOX TEST · KEVLAR MITIGATION ${baseArmorRed}%]\n> Simulated incoming ballistic impact on Thorax Kevlar plate (${baseArmorRed}% absorbed)` });
           }
         }
       ],
@@ -4165,7 +4191,7 @@ class Component extends DCLogic {
               '📡 بث النقابة المباشر: استيلاء عائلة فايبرز على قطاع ZC-042 (+4% عائد جرائم)',
               '📡 بث النقابة المباشر: صفقة سلاح بولباب L85 في سوق الضمان مقابل $148,000',
               '📡 بث النقابة المباشر: عملية سطو مستودع الميناء مكتملة · +$3,000 لكل عضو',
-              '📡 بث النقابة المباشر: مواجهة شارع حية · إسقاط خصم بدرع تكتيكي Swat.glb'
+              '📡 بث النقابة المباشر: مواجهة شارع حية · إسقاط خصم بدرع اقتحام تكتيكي'
             ]
           : [
               '📡 LIVE SYNDICATE WIRE: Block ZC-042 fortified (+4% Crime EV bonus active)',
@@ -4188,7 +4214,7 @@ class Component extends DCLogic {
             if (blocked) { this.toast(blocked, true); return; }
             this.setState({
               crimeRequestError: null,
-              geminiTrace: `[SYNDICATE STREET DISPATCH · /api/v1/crimes/${rawBest.id}/attempt]\n> Committing "${this.crimeName(rawBest, t)}" directly from Home Command Deck...`
+              geminiTrace: lang === 'ar' ? `[توجيه الجرائم الفوري]\n• تنفيذ جريمة "${this.crimeName(rawBest, t)}" مباشرة من لوحة القيادة...` : `[SYNDICATE STREET DISPATCH]\n> Committing "${this.crimeName(rawBest, t)}" directly from Home Command Deck...`
             });
             return this.resolve('cr' + rawBest.id, 320, async tt => {
               await this.commit(rawBest, tt);
@@ -4208,7 +4234,7 @@ class Component extends DCLogic {
             if (this.cur('energy') < this.gymEnergyCost()) return this.toast(t.toast.noEnergy, true);
             this.setState({
               gymStation: weakest,
-              geminiTrace: `[SYNDICATE CONDITIONING · /api/v1/gym/train]\n> Training weakest stat "${weakest.toUpperCase()}" (${view.gymStudio.happyMultiplier} Happy Boost)...`
+              geminiTrace: lang === 'ar' ? `[التأهيل البدني للنقابة]\n• تدريب أضعف صفة قتالية "${weakest.toUpperCase()}" (مضاعف المعنويات ${view.gymStudio.happyMultiplier})...` : `[SYNDICATE CONDITIONING]\n> Training weakest stat "${weakest.toUpperCase()}" (${view.gymStudio.happyMultiplier} Happy Boost)...`
             });
             return this.resolve('tr' + weakest, 320, async tt => {
               await this.train(weakest, tt);
@@ -4223,7 +4249,7 @@ class Component extends DCLogic {
             this.playTacticalSfx('crime');
             if (this.cur('energy') < this.jobEnergyCost()) return this.toast(t.toast.noEnergy, true);
             this.setState({
-              geminiTrace: `[SYNDICATE SHIFT PAYROLL · /api/v1/jobs/work]\n> Executing shift for "${t.jobNames[p.job]}" (+${this.jobPayRange()})...`
+              geminiTrace: lang === 'ar' ? `[مناوبة عمل النقابة]\n• تنفيذ وردية عمل "${t.jobNames[p.job]}" (+${this.jobPayRange()})...` : `[SYNDICATE SHIFT PAYROLL]\n> Executing shift for "${t.jobNames[p.job]}" (+${this.jobPayRange()})...`
             });
             return this.resolve('work', 320, tt => this.work(tt));
           }
@@ -4237,7 +4263,7 @@ class Component extends DCLogic {
             const bestOwned = ownedWeapons[0];
             this.setState({
               holodeckWeapon: 'bullpup_1',
-              geminiTrace: `[3D ARMORY HOLODECK + LOADOUT SYNC]\n> 3D Stage armed with Bullpup L85 (l85-detail111.glb)${bestOwned ? ' · Syncing owned weapon: ' + (t.items[bestOwned] || bestOwned) : ''}`
+              geminiTrace: lang === 'ar' ? `[هولوديك الترسانة ثلاثي الأبعاد]\n• تجهيز المنصة ببندقية بولباب L85${bestOwned ? ' · مزامنة السلاح المملوك: ' + (t.items[bestOwned] || bestOwned) : ''}` : `[3D ARMORY HOLODECK + LOADOUT SYNC]\n> 3D Stage armed with Bullpup L85 Tactical Rifle${bestOwned ? ' · Syncing owned weapon: ' + (t.items[bestOwned] || bestOwned) : ''}`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: true } });
@@ -4249,7 +4275,7 @@ class Component extends DCLogic {
         },
         {
           label: lang === 'ar' ? '🎬 عملية سطو الخزينة الكبرى (برولوغ)' : '🎬 1-Click Vault Heist Blitz',
-          sub: lang === 'ar' ? 'بدلة Swat + بندقية L85 + ضربة خزينة' : 'Tactical Swat + L85 + Live Heist Run',
+          sub: lang === 'ar' ? 'بدلة اقتحام + بندقية L85 + ضربة خزينة' : 'Tactical Breacher + L85 + Live Heist Run',
           run: () => {
             this.playTacticalSfx('rack');
             const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
@@ -4258,7 +4284,7 @@ class Component extends DCLogic {
               outfit: 'tactical',
               holodeckWeapon: 'bullpup_1',
               crimeRequestError: null,
-              geminiTrace: `[SYNDICATE VAULT BREACH · TACTICAL COMMAND]\n> Equipped Swat.glb Tactical Rig (35% Kevlar) + Bullpup L85 Rifle\n> Breaching syndicate target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
+              geminiTrace: lang === 'ar' ? `[اقتحام الخزينة الكبرى · القيادة التكتيكية]\n• تجهيز درع الاقتحام التكتيكي (كيفلر 35%) + بندقية بولباب L85\n• اقتحام الهدف: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...` : `[SYNDICATE VAULT BREACH · TACTICAL COMMAND]\n> Equipped Tactical Breacher Rig (35% Kevlar) + Bullpup L85 Rifle\n> Breaching syndicate target: "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: true } });
@@ -4289,7 +4315,7 @@ class Component extends DCLogic {
               holodeckWeapon: 'bullpup_1',
               xrayMode: true,
               weaponMods: { optic: true, suppressor: true, laser: true, mag: true },
-              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 1/3 COMPLETE]\n> Armed Tactical Breacher Kevlar Rig + Modded Bullpup L85 (×4.14) · 3D Cardiac X-Ray Active`
+              geminiTrace: lang === 'ar' ? `[برولوغ سطو الخزينة · المرحلة 1/3 مكتملة]\n• تجهيز درع الكيفلر + بندقية بولباب L85 المعدلة (×4.14) · المسح التشريحي نشط` : `[VAULT HEIST PROLOGUE · STAGE 1/3 COMPLETE]\n> Armed Tactical Breacher Kevlar Rig + Modded Bullpup L85 (×4.14) · 3D Cardiac X-Ray Active`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: false } });
@@ -4308,7 +4334,7 @@ class Component extends DCLogic {
               heistStage: 3,
               outfit: 'tactical',
               holodeckWeapon: 'bullpup_1',
-              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 2/3 COMPLETE]\n> Vault Guard Suppression Firefight Executed · 3D Recoil & Kevlar Thorax Absorption Verified`
+              geminiTrace: lang === 'ar' ? `[برولوغ سطو الخزينة · المرحلة 2/3 مكتملة]\n• تثبيت حراس الخزينة · التحقق من الارتداد ثلاثي الأبعاد وامتصاص الكيفلر` : `[VAULT HEIST PROLOGUE · STAGE 2/3 COMPLETE]\n> Vault Guard Suppression Firefight Executed · 3D Recoil & Kevlar Thorax Absorption Verified`
             }, () => {
               this.pushChar();
               this.charMsg({ combat: { side: 'you', hit: true } });
@@ -4328,7 +4354,7 @@ class Component extends DCLogic {
             this.setState({
               heistStage: 1,
               crimeRequestError: null,
-              geminiTrace: `[VAULT HEIST PROLOGUE · STAGE 3/3 COMPLETE]\n> Executing live server extraction on "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
+              geminiTrace: lang === 'ar' ? `[برولوغ سطو الخزينة · المرحلة 3/3 مكتملة]\n• استخلاص العائد من الخادم لعملية "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...` : `[VAULT HEIST PROLOGUE · STAGE 3/3 COMPLETE]\n> Executing live server extraction on "${rawBest ? this.crimeName(rawBest, t) : bestCrimeCandidate.name}"...`
             }, () => {
               this.charMsg({ combat: { side: 'you', hit: true } });
             });
@@ -4367,7 +4393,7 @@ class Component extends DCLogic {
             window.speechSynthesis.speak(u);
           }
         } catch (_) {}
-        this.setState({ geminiTrace: `[SYNDICATE VOICE DISPATCH · ${lang === 'ar' ? 'ar-SA' : 'en-US'}]\n• Spoken Briefing: "${speechText}"` });
+        this.setState({ geminiTrace: lang === 'ar' ? `[الإيجاز الصوتي للنقابة · ar-SA]\n• التقرير المنطوق: "${speechText}"` : `[SYNDICATE VOICE DISPATCH · en-US]\n• Spoken Briefing: "${speechText}"` });
       },
       hubTitle: lang === 'ar' ? 'مركز الاستخبارات التكتيكية والتسليح الميداني للنقابة' : 'SYNDICATE TACTICAL INTELLIGENCE · BALLISTICS LAB · 3D CITY RECON',
       stackSubtitle: lang === 'ar' ? 'توجيه الجرائم الفوري · موازنة التدريب القتالي · مسح الأحياء ثلاثي الأبعاد · قياس البالستيات' : 'Direct Crime EV Dispatch · Combat Stat Optimizer · 3D District Recon · Live Ballistics Telemetry',
@@ -4378,7 +4404,7 @@ class Component extends DCLogic {
             const best = view.crimes.find(c => !c.disabled) || view.crimes[0];
             if (best?.select) best.select();
             this.setState({
-              geminiTrace: `[SYNDICATE CRIME DISPATCH · depth=${currentThinking}]\n> call: optimize_crime_selection({ nerveAvailable: ${this.cur('nerve')}, crimeXp: ${p.crimeXp} })\n< result: Selected "${bestCrimeCandidate.name}" · EV ${bestCrimeCandidate.evPerNerve || '$0/nerve'} · Heat: ${bestCrimeCandidate.heatTier || 'Low'}`
+              geminiTrace: lang === 'ar' ? `[توجيه الجرائم التكتيكي · العمق: ${currentThinking}]\n• تم اختيار أفضل جريمة: "${bestCrimeCandidate.name}" · العائد ${bestCrimeCandidate.evPerNerve || '$0/جرأة'}` : `[SYNDICATE CRIME DISPATCH · depth=${currentThinking}]\n• Selected optimal crime: "${bestCrimeCandidate.name}" · EV ${bestCrimeCandidate.evPerNerve || '$0/nerve'} · Heat: ${bestCrimeCandidate.heatTier || 'Low'}`
             });
             this.go('crimes');
           }
@@ -4390,7 +4416,7 @@ class Component extends DCLogic {
             const weakest = statEntries[0][0];
             this.setState({
               gymStation: weakest,
-              geminiTrace: `[SYNDICATE GYM OPTIMIZER · depth=${currentThinking}]\n> call: allocate_gym_session({ str: ${p.stats.str}, def: ${p.stats.def}, spd: ${p.stats.spd}, dex: ${p.stats.dex}, happyBoost: "${view.gymStudio.happyMultiplier}" })\n< result: Focused weakest stat "${weakest.toUpperCase()}" (${this.gymGainRange(weakest)} est. gain/session)`
+              geminiTrace: lang === 'ar' ? `[موازنة تدريب النادي · العمق: ${currentThinking}]\n• تركيز التدريب على أضعف صفة "${weakest.toUpperCase()}" (${this.gymGainRange(weakest)} لكل جلسة)` : `[SYNDICATE GYM OPTIMIZER · depth=${currentThinking}]\n• Focused weakest stat "${weakest.toUpperCase()}" (${this.gymGainRange(weakest)} est. gain/session)`
             });
             this.go('gym');
           }
@@ -4399,7 +4425,7 @@ class Component extends DCLogic {
           label: lang === 'ar' ? '🎯 فحص البالستيات والقتال' : '🎯 Ballistics & Combat Scanner',
           run: () => {
             this.setState({
-              geminiTrace: `[SYNDICATE BALLISTICS LAB · depth=${currentThinking}]\n> call: simulate_combat_ballistics({ totalStats: ${totalStats}, weapon: "${view.loadout.weapon.name}", thoraxMitigation: "${baseArmorRed}%" })\n< result: Combat tier "${combatPowerTier}" · Recommended engagement: Street NPC / Peer Roster`
+              geminiTrace: lang === 'ar' ? `[مختبر البالستيات والقتال · العمق: ${currentThinking}]\n• تصنيف القوة: "${combatPowerTier}" · السلاح: "${view.loadout.weapon.name}" · حماية الصدر: ${baseArmorRed}%` : `[SYNDICATE BALLISTICS LAB · depth=${currentThinking}]\n• Combat tier "${combatPowerTier}" · Weapon: "${view.loadout.weapon.name}" · Thorax mitigation: ${baseArmorRed}%`
             });
             this.go('attack');
           }
@@ -4409,7 +4435,7 @@ class Component extends DCLogic {
           run: () => {
             const findCount = Array.isArray(view.world?.finds) ? view.world.finds.length : 0;
             this.setState({
-              geminiTrace: `[3D CITY & TERRITORY RECON · depth=${currentThinking}]\n> call: scan_city_territories({ blocks: ${this.territoryBlockCount() || 120}, activeStreetFinds: ${findCount}, family: "${view.fac.name}" })\n< result: 120 city blocks & 17 native roofs indexed · ${findCount} street finds ready for claim`
+              geminiTrace: lang === 'ar' ? `[استطلاع الأحياء ثلاثي الأبعاد · العمق: ${currentThinking}]\n• مسح 120 قطاعاً في المدينة · العائلة: "${view.fac.name}" · ${findCount} غنائم شارع جاهزة` : `[3D CITY & TERRITORY RECON · depth=${currentThinking}]\n• 120 city blocks & 17 district roofs indexed · ${findCount} street finds ready for claim`
             });
             this.go('city');
           }
@@ -4454,14 +4480,18 @@ class Component extends DCLogic {
         if (/vault|bank|lock|deposit|خزين|بنك/.test(q)) {
           const moved = Number(this.p.cash || 0);
           if (moved > 0) {
-            this.p.bankBalance = Number(this.p.bankBalance || 0) + moved;
-            this.p.cash = 0;
-            this.save();
+            if (!IS_PREVIEW && this.gameplayReady && !this.gameplayDisabled()) {
+              this.act(tt => this.bankMove('deposit', moved, tt));
+            } else {
+              this.p.bankBalance = Number(this.p.bankBalance || 0) + moved;
+              this.p.cash = 0;
+              this.save();
+            }
           }
           const resp = lang === 'ar'
-            ? `تم تأكيد التحويل إلى الخزينة المصفحة · تأمين ${money(moved || 48500)} بعائد 1.85% أسبوعياً. نسبة التعرض للنشل في الشارع 0%.`
-            : `Titanium Vault Transfer Confirmed · Locked ${money(moved || 48500)} at 1.85% weekly yield. Street mug exposure reduced to 0%.`;
-          speak(lang === 'ar' ? `تم تأمين المبلغ في الخزينة المصفحة بنجاح.` : `Done boss. Locked ${moved || 48500} dollars inside the biometric titanium vault.`);
+            ? (moved > 0 ? `تم تأكيد التحويل إلى الخزينة المصفحة · تأمين ${money(moved)} بعائد 1.85% يومياً. نسبة التعرض للنشل في الشارع 0%.` : 'جميع السيولة النقدية مؤمنة بالفعل داخل الخزينة المصفحة (0$ نقد معرض للنشل).')
+            : (moved > 0 ? `Titanium Vault Transfer Confirmed · Locked ${money(moved)} at 1.85% daily yield. Street mug exposure reduced to 0%.` : 'All street cash is already secured inside the Titanium Vault ($0 exposed to mugging).');
+          speak(lang === 'ar' ? 'تم تأمين المبلغ في الخزينة المصفحة بنجاح.' : `Vault transfer confirmed. ${moved} dollars secured.`);
           this.setState({ aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' });
           return;
         }
@@ -4469,6 +4499,7 @@ class Component extends DCLogic {
           this.p.cash = Number(this.p.cash || 0) + 18500;
           this.p.fac.respect = Number(this.p.fac.respect || 0) + 35;
           this.save();
+          if (!IS_PREVIEW && this.serverPlayer) this.syncOmarAction('tactical.convoy', 'pier');
           const resp = lang === 'ar'
             ? `تم اعتراض القافلة المصفحة (البنك المركزي ← الرصيف) · غنيمة +$18,500 نقداً و +35 احترام للعائلة.`
             : `Armored Convoy Intercepted (Central Bank -> Pier) · Extracted +$18,500 cash and +35 Faction Respect.`;
@@ -4481,6 +4512,7 @@ class Component extends DCLogic {
           this.p.cash = Number(this.p.cash || 0) + 14200;
           this.p.ctr.wins = Number(this.p.ctr?.wins || 0) + 1;
           this.save();
+          if (!IS_PREVIEW && this.serverPlayer) this.syncOmarAction('tactical.ambush', 'victor');
           const resp = lang === 'ar'
             ? `تم نصب كمين للخصم فيكتور (قطاع ZC-055) · إدخال الهدف للمستشفى وتحصيل مكافأة العقد +$14,200.`
             : `Rival Enforcer Victor Ambushed (Sector ZC-055) · Target hospitalized and +$14,200 contract bounty collected.`;
@@ -4489,11 +4521,10 @@ class Component extends DCLogic {
           this.setState({ outfit: 'tactical', holodeckWeapon: 'bullpup_1', aiFixerTrace: resp, geminiTrace: resp, aiPrompt: '' }, () => { this.pushChar(); this.charMsg({ combat: { side: 'you', hit: true } }); });
           return;
         }
-        const rawCrimes = CRIMES[this.state.cat] || CRIMES.search || [];
-        const rawBest = rawCrimes.find(c => !this.crimeReason(c)) || rawCrimes[0];
         this.p.cash = Number(this.p.cash || 0) + 9500;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 25;
         this.save();
+        if (!IS_PREVIEW && this.serverPlayer) this.syncOmarAction('tactical.sweep', 'district');
         const resp = lang === 'ar'
           ? `اكتمل المسح التكتيكي للقطاع · تأمين +$9,500 نقداً و +25 خبرة جرائم.`
           : `District Tactical Sweep Complete · Bullpup L85 & Kevlar Rig verified · +$9,500 payout and +25 Crime XP secured.`;
@@ -4902,7 +4933,7 @@ class Component extends DCLogic {
       enhancerPrefix: lang === 'ar' ? 'المعزز' : 'Enhancer',
       weaponModsSectionLabel: lang === 'ar' ? '30 ملحق أسلحة وتغطية الدروع التشريحية:' : '30 WEAPON MODS & PER-PART ARMOR COVERAGE:',
       kitPrefix: lang === 'ar' ? 'الأداة' : 'Kit',
-      oc2CatalogSectionTitle: lang === 'ar' ? '34 سيناريو سطو منظم (نطاق العملية ومتطلبات الأدوار) + 9 أشجار احترام للعائلة (49 فرعاً):' : '34 HARVESTED OC 2.0 SCENARIOS (SCOPE & ROLE ITEM REQUIREMENTS) + 9 FACTION RESPECT TREES (49 SUB-BRANCHES):',
+      oc2CatalogSectionTitle: lang === 'ar' ? '34 سيناريو سطو منظم (نطاق العملية ومتطلبات الأدوار) + 9 أشجار احترام للعائلة (49 فرعاً):' : '34 ORGANIZED CRIME 2.0 SCENARIOS (SCOPE & ROLE ITEM REQUIREMENTS) + 9 FACTION RESPECT TREES (49 SUB-BRANCHES):',
       scopePrefix: lang === 'ar' ? 'النطاق' : 'Scope',
       reqPrefix: lang === 'ar' ? 'المتطلب' : 'Req',
       accountEmail,
@@ -4926,7 +4957,7 @@ class Component extends DCLogic {
       closeProfile: () => this.setState({ omarProfileOpen: false }),
       switchProfileLabel: lang === 'ar' ? 'معاينة بروفايل' : 'Inspect Player',
       identityRuleBanner: lang === 'ar'
-        ? '🔒 نظام الهوية (مطابق لتورن): تسجيل الدخول يتم عبر الإيميل الخاص · يمكن لأي لاعب اختيار أي اسم عرض (حتى لو تكرر مثل Mohammed) · رقم الحساب الرقمي [#ID] هو المعرف الفريد الدائم.'
+        ? '🔒 نظام الهوية الموحد: تسجيل الدخول يتم عبر الإيميل الخاص · يمكن لأي لاعب اختيار أي اسم عرض (حتى لو تكرر مثل Mohammed) · رقم الحساب الرقمي [#ID] هو المعرف الفريد الدائم.'
         : '🔒 Identity Architecture: Account login is strictly via Email · Players can choose any Display Name (even duplicates like two "Mohammed" accounts) · Numeric Player ID [#ID] is the permanent unique key.',
       profileDirectory: samplePlayers.map(sp => ({
         label: `${sp.name} [#${sp.id}]`,
@@ -5322,8 +5353,8 @@ class Component extends DCLogic {
       happyJumpBtnLabel: lang === 'ar' ? 'تنفيذ بروتوكول قفزة المعنويات (+2,500 معنويات · مضاعفة 2x · +250 طاقة)' : 'Execute Happy-Stack Protocol (+2,500 Happy · 2x Peak · +250E)',
       runHappyJump: () => {
         this.playTacticalSfx('gym');
-        this.p.happy = Math.min(99999, Number(this.p.happy || 500) * 2 + 2500);
-        this.p.energy = Math.min(1000, Number(this.p.energy || 100) + 250);
+        this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) * 2 + 2500));
+        this.setBarValue('energy', Math.min(1000, (this.cur('energy') || 100) + 250));
         this.save();
         this.syncOmarAction('torn.happyJump', 'stack');
         this.setState({
@@ -5380,7 +5411,7 @@ class Component extends DCLogic {
           this.result('cash', sm.loc, `${sm.state} (${sm.pct} Yield)`, '+' + money(sm.gain));
         }
       })),
-      skimmerBtnLabel: lang === 'ar' ? 'سحب بيانات ناسخ الصراف (+$18,500)' : 'Harvest ATM Skimmer Dump (+247 Cards · +$18,500)',
+      skimmerBtnLabel: lang === 'ar' ? 'سحب بيانات ناسخ الصراف (+$18,500)' : 'Extract ATM Skimmer Dump (+247 Cards · +$18,500)',
       crackBtnLabel: lang === 'ar' ? 'تشغيل منصة كسر التشفير (740 MIPS · +$14,200)' : 'Run 740 MIPS Cipher Cracking Rig (+$14,200)',
       collectSkimmerDump: () => {
         this.playTacticalSfx('crime');
@@ -5388,7 +5419,7 @@ class Component extends DCLogic {
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 18;
         this.save();
         this.syncOmarAction('torn.skimmer', 'harvest');
-        this.result('cash', lang === 'ar' ? 'تم سحب بيانات الصراف بنجاح' : 'ATM Skimmer Dump Harvested', lang === 'ar' ? '247 بطاقة مستنسخة من محطة المترو · +18 خبرة جرائم' : '247 cloned cards from Subway Terminal · +18 Crime XP', '+$18,500');
+        this.result('cash', lang === 'ar' ? 'تم سحب بيانات الصراف بنجاح' : 'ATM Skimmer Dump Extracted', lang === 'ar' ? '247 بطاقة مستنسخة من محطة المترو · +18 خبرة جرائم' : '247 cloned cards from Subway Terminal · +18 Crime XP', '+$18,500');
       },
       runCrackingRig: () => {
         this.playTacticalSfx('crime');
@@ -5489,7 +5520,7 @@ class Component extends DCLogic {
       rehabBtnLabel: lang === 'ar' ? 'جلسة تأهيل طبي (استعادة 100% كفاءة التدريب)' : 'Clinical Rehab Session (Reset Tolerance · 100% Gym Efficiency)',
       runRehabSession: () => {
         this.playTacticalSfx('gym');
-        this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 500);
+        this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) + 500));
         this.save();
         this.syncOmarAction('torn.rehab', 'reset');
         this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', '100% Gym Eff');
@@ -5633,8 +5664,8 @@ class Component extends DCLogic {
           this.playTacticalSfx('gym');
           if (Number(this.p.jobPts || 0) < cs.jpCost) return this.toast(lang === 'ar' ? `تحتاج ${cs.jpCost} نقاط عمل لتفعيل الامتياز.` : `Requires ${cs.jpCost} Job Points (JP) to redeem.`, true);
           this.p.jobPts = Math.max(0, Number(this.p.jobPts || 0) - cs.jpCost);
-          if (cs.rewardType === 'happy') this.p.happy = Math.min(99999, Number(this.p.happy || 500) + cs.val);
-          else if (cs.rewardType === 'energy') this.p.energy = Math.min(1000, Number(this.p.energy || 100) + cs.val);
+          if (cs.rewardType === 'happy') this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) + cs.val));
+          else if (cs.rewardType === 'energy') this.setBarValue('energy', Math.min(1000, (this.cur('energy') || 100) + cs.val));
           else this.p.cash = Number(this.p.cash || 0) + cs.val;
           this.save();
           this.syncOmarAction('torn.companySpecial', cs.id);
@@ -5681,7 +5712,7 @@ class Component extends DCLogic {
         btn: lang === 'ar' ? 'تفعيل الطاقم' : 'Retain Staff',
         hire: () => {
           this.playTacticalSfx('gym');
-          this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 250);
+          this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) + 250));
           this.save();
           this.syncOmarAction('torn.islandStaff', st.id);
           this.result('good', st.role, st.effect, '+250 Happy');
@@ -5708,7 +5739,7 @@ class Component extends DCLogic {
         collect: () => {
           this.playTacticalSfx('crime');
           this.p.cash = Number(this.p.cash || 0) + sb.cashVal;
-          if (sb.ticker === 'MCS') this.p.energy = Math.min(1000, Number(this.p.energy || 100) + 300);
+          if (sb.ticker === 'MCS') this.setBarValue('energy', Math.min(1000, (this.cur('energy') || 100) + 300));
           this.save();
           this.syncOmarAction('torn.stockDividend', sb.ticker);
           this.result('cash', `${sb.ticker} · ${sb.name}`, sb.div, '+' + money(sb.cashVal));
@@ -5725,7 +5756,7 @@ class Component extends DCLogic {
         use: () => {
           this.playTacticalSfx('gym');
           this.p.hospUntil = 0;
-          this.p.hp = this.p.maxHp || 500;
+          this.setBarValue('life', this.maxOf('life') || 500);
           this.save();
           this.syncOmarAction('torn.bloodBag', bb.id);
           this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', '100% HP');
@@ -5761,7 +5792,7 @@ class Component extends DCLogic {
         { banner: lang === 'ar' ? 'سيد التأهيل البدني الفائق' : 'HIGH-VOLTAGE CONDITIONING MASTER', req: lang === 'ar' ? 'تنفيذ بروتوكول قفزة المعنويات الكامل مع التأهيل الطبي' : 'Execute Full Happy-Stack Protocol + Clinical Rehab', rarity: lang === 'ar' ? 'نادر · 6.8%' : 'Rare · 6.8%' },
         { banner: lang === 'ar' ? 'أمين النوادر · إمبراطور التهريب' : 'ANTIQUITIES CURATOR · SMUGGLER KINGPIN', req: lang === 'ar' ? 'استبدال المجموعة الإقليمية الكاملة في المتحف' : 'Exchange Full Regional Collection at the Museum', rarity: lang === 'ar' ? 'غير شائع · 11.4%' : 'Uncommon · 11.4%' }
       ],
-      all13CrimesTitle: lang === 'ar' ? 'منظومة الجرائم المنظمة 2.0 الكاملة (13 تخصصاً · 34 معززاً · 222 نتيجة فريدة)' : 'All 13 Harvested Torn Crimes 2.0 Archetypes (34 Enhancers · 222 Unique Outcomes)',
+      all13CrimesTitle: lang === 'ar' ? 'منظومة الجرائم المنظمة 2.0 الكاملة (13 تخصصاً · 34 معززاً · 222 نتيجة فريدة)' : 'All 13 Syndicate Crimes 2.0 Archetypes (34 Enhancers · 222 Unique Outcomes)',
       all13Crimes2: [
         { id: '1', name: lang === 'ar' ? 'البحث عن النقد' : 'Search for Cash', enhancer: lang === 'ar' ? 'نظارات مكبرة (#564) +5% خبرة' : 'Glasses (#564) +5% XP', uniques: lang === 'ar' ? '34 نتيجة فريدة · 6 مناطق' : '34 Uniques · 6 Subcrimes', payout: lang === 'ar' ? '+$4,200 · 2 جرأة' : '+$4,200 · 2N', nerve: 2, cash: 4200, xp: 6 },
         { id: '2', name: lang === 'ar' ? 'قرصنة الأقراص' : 'Bootlegging', enhancer: lang === 'ar' ? 'ناسخ فائق السرعة (#565)' : 'High-Speed Drive (#565)', uniques: lang === 'ar' ? '4 نتائج فريدة · متجر إلكتروني' : '4 Uniques · Online Store', payout: lang === 'ar' ? '+$6,800 · 3 جرأة' : '+$6,800 · 3N', nerve: 3, cash: 6800, xp: 8 },
@@ -5861,66 +5892,66 @@ class Component extends DCLogic {
         const ar = lang === 'ar';
         const datasets = {
           crimes: [
-            { title: ar ? '#1 البحث عن النقد ← #4 سرقة المتاجر' : '#1 Search for Cash -> #4 Shoplifting', badge: ar ? '94 نتيجة فريدة' : '94 UNIQUES', meta: ar ? 'المعززات: نظارات مكبرة (#564) ودراجة جبلية (#566)' : 'Enhancers: Glasses (#564) & Mountain Bike (#566)', detail: ar ? '6 مناطق تفتيش (النافورة، القمامة، الخردة، المترو، الشاطئ، المقبرة) + 8 متاجر بحالة كاميرات وحراسة حية.' : '6 Search zones (Fountain, Trash, Junkyard, Subway, Beach, Cemetery) + 8 Shoplift stores with live camera/guard status.', color: 'var(--acc)', btn: ar ? 'تنفيذ سرقة متجر' : 'Run Shoplift', act: () => this.syncOmarAction('torn.crime2Execute', '4') || this.result('cash', ar ? 'سرقة المتاجر (#4)' : 'Shoplifting (#4)', ar ? 'معزز الدراجة الجبلية (+5% خبرة)' : 'Mountain Bike Enhancer (+5% XP)', '+$8,900') },
-            { title: ar ? '#2 قرصنة الأقراص و #3 طلاء الجدران' : '#2 Bootlegging & #3 Graffiti', badge: ar ? '45 نتيجة فريدة' : '45 UNIQUES', meta: ar ? 'المعززات: ناسخ فائق السرعة (#565) وقناع طلاء' : 'Enhancers: High-Speed Drive (#565) & Paint Mask', detail: ar ? 'نسخ الأقراص وإدارة متجر إلكتروني، وطلاء جدران 7 أحياء لرفع سمعة العصابة.' : 'Copy DVDs across genres & run online store; tag 7 city districts for street crew reputation.', color: 'var(--gold)', btn: ar ? 'تشغيل الناسخ' : 'Run Bootleg', act: () => this.syncOmarAction('torn.crime2Execute', '2') || this.result('cash', ar ? 'قرصنة الأقراص (#2)' : 'Bootlegging (#2)', ar ? 'مصفوفة النسخ السريع نشطة' : 'High-Speed DVD Array Active', '+$6,800') },
-            { title: ar ? '#5 النشل الميداني و #7 السطو على العقارات' : '#5 Pickpocketing & #7 Burglary', badge: ar ? '56 نتيجة فريدة' : '56 UNIQUES', meta: ar ? 'المعززات: موس حلاقة (#567) وكشاف يدوي' : 'Enhancers: Cut-Throat Razor (#567) & Flashlight', detail: ar ? '20 فئة أهداف متجولة + 32 عقاراً سكنياً وتجارياً وصناعياً (استطلاع ← رصد ← اقتحام).' : '20 pedestrian mark classes (gait/build cues) + 32 Residential/Commercial/Industrial properties (Scout -> Case -> Break-In).', color: 'var(--acc)', btn: ar ? 'اقتحام عقار' : 'Run Burglary', act: () => this.syncOmarAction('torn.crime2Execute', '7') || this.result('cash', ar ? 'السطو على العقارات (#7)' : 'Burglary (#7)', ar ? 'تم استطلاع واقتحام هدف تجاري' : 'Commercial Target Cased & Breached', '+$22,000') },
-            { title: ar ? '#6 نسخ الصرافات و #10 كسر التشفير' : '#6 Card Skimming & #10 Cracking', badge: ar ? 'منصات مستمرة' : 'PASSIVE RIGS', meta: ar ? 'المعززات: شريط لاصق ومنصة معالجات MIPS' : 'Enhancers: Duct Tape & Office Chair (MIPS Rig)', detail: ar ? 'زرع أجهزة نسخ في صرافات المترو والوقود، وبناء منصات تبريد لكسر الشيفرات متعددة الطبقات.' : 'Plant skimmers on Subway/Gas/Bus ATMs to accumulate card dumps; build multi-fan CPU rigs to crack layered hashes.', color: 'var(--gold)', btn: ar ? 'كسر الشيفرة' : 'Crack Cipher', act: () => this.syncOmarAction('torn.crime2Execute', '10') || this.result('cash', ar ? 'كسر التشفير (#10)' : 'Cracking (#10)', ar ? 'منصة 740 MIPS فكت التشفير' : '740 MIPS Rig Decrypted Layer', '+$29,500') },
-            { title: ar ? '#8 خداع الجمهور و #9 إتلاف الأدلة' : '#8 Hustling & #9 Disposal', badge: ar ? '11 نتيجة فريدة' : '11 UNIQUES', meta: ar ? 'المعززات: مكبر صوت وقفازات لاتكس' : 'Enhancers: Megaphone & Latex Gloves', detail: ar ? 'إدارة حماس الجمهور والرهانات، والتخلص من الجثث والمركبات وأدوات الجريمة عبر الإذابة أو الحرق.' : 'Manage crowd hype (Gather/Demo/Lose/Win) + dispose of Bodies, Vehicles, Murder Weapons & Firearms via Acid/Burn/Sink.', color: 'var(--acc)', btn: ar ? 'إتلاف الأدلة' : 'Run Disposal', act: () => this.syncOmarAction('torn.crime2Execute', '9') || this.result('cash', ar ? 'إتلاف الأدلة (#9)' : 'Disposal (#9)', ar ? 'تمت إذابة الأدلة الجنائية بالكامل' : 'Dissolved Evidence in Acid (Unique Outcome)', '+$26,000') },
-            { title: ar ? '#11 التزوير، #12 الاحتيال، و #13 الحرق الجنائي' : '#11 Forgery, #12 Scamming & #13 Arson', badge: ar ? '16 نتيجة فريدة' : '16 UNIQUES', meta: ar ? 'عدسة مكبرة · لوحة مفاتيح · ولاعة مقاومة للرياح (#544)' : 'Magnifying Glass · Ergonomic Keyboard · Windproof Lighter (#544)', detail: ar ? 'تصنيع 14 وثيقة رسمية، إدارة موجات التصيد، وتنفيذ عقود الحرق الجنائي عالية العائد.' : 'Craft 14 documents (Passports/Badges), run Phishing persuasion waves, and execute high-tier Arson contracts.', color: '#ff6a55', btn: ar ? 'إشعال الهدف' : 'Ignite Arson', act: () => this.syncOmarAction('torn.crime2Execute', '13') || this.result('cash', ar ? 'الحرق الجنائي (#13)' : 'Arson (#13)', ar ? 'إشعال المستودع بولاعة (#544)' : 'Windproof Lighter (#544) Warehouse Ignition', '+$48,000') }
+            { title: ar ? '#1 البحث عن النقد ← #4 سرقة المتاجر' : '#1 Search for Cash -> #4 Shoplifting', badge: ar ? '94 نتيجة فريدة' : '94 UNIQUES', meta: ar ? 'المعززات: نظارات مكبرة (#564) ودراجة جبلية (#566)' : 'Enhancers: Glasses (#564) & Mountain Bike (#566)', detail: ar ? '6 مناطق تفتيش (النافورة، القمامة، الخردة، المترو، الشاطئ، المقبرة) + 8 متاجر بحالة كاميرات وحراسة حية.' : '6 Search zones (Fountain, Trash, Junkyard, Subway, Beach, Cemetery) + 8 Shoplift stores with live camera/guard status.', color: 'var(--acc)', btn: ar ? 'تنفيذ سرقة متجر' : 'Run Shoplift', act: () => { this.syncOmarAction('torn.crime2Execute', '4'); this.result('cash', ar ? 'سرقة المتاجر (#4)' : 'Shoplifting (#4)', ar ? 'معزز الدراجة الجبلية (+5% خبرة)' : 'Mountain Bike Enhancer (+5% XP)', '+$8,900'); } },
+            { title: ar ? '#2 قرصنة الأقراص و #3 طلاء الجدران' : '#2 Bootlegging & #3 Graffiti', badge: ar ? '45 نتيجة فريدة' : '45 UNIQUES', meta: ar ? 'المعززات: ناسخ فائق السرعة (#565) وقناع طلاء' : 'Enhancers: High-Speed Drive (#565) & Paint Mask', detail: ar ? 'نسخ الأقراص وإدارة متجر إلكتروني، وطلاء جدران 7 أحياء لرفع سمعة العصابة.' : 'Copy DVDs across genres & run online store; tag 7 city districts for street crew reputation.', color: 'var(--gold)', btn: ar ? 'تشغيل الناسخ' : 'Run Bootleg', act: () => { this.syncOmarAction('torn.crime2Execute', '2'); this.result('cash', ar ? 'قرصنة الأقراص (#2)' : 'Bootlegging (#2)', ar ? 'مصفوفة النسخ السريع نشطة' : 'High-Speed DVD Array Active', '+$6,800'); } },
+            { title: ar ? '#5 النشل الميداني و #7 السطو على العقارات' : '#5 Pickpocketing & #7 Burglary', badge: ar ? '56 نتيجة فريدة' : '56 UNIQUES', meta: ar ? 'المعززات: موس حلاقة (#567) وكشاف يدوي' : 'Enhancers: Cut-Throat Razor (#567) & Flashlight', detail: ar ? '20 فئة أهداف متجولة + 32 عقاراً سكنياً وتجارياً وصناعياً (استطلاع ← رصد ← اقتحام).' : '20 pedestrian mark classes (gait/build cues) + 32 Residential/Commercial/Industrial properties (Scout -> Case -> Break-In).', color: 'var(--acc)', btn: ar ? 'اقتحام عقار' : 'Run Burglary', act: () => { this.syncOmarAction('torn.crime2Execute', '7'); this.result('cash', ar ? 'السطو على العقارات (#7)' : 'Burglary (#7)', ar ? 'تم استطلاع واقتحام هدف تجاري' : 'Commercial Target Cased & Breached', '+$22,000'); } },
+            { title: ar ? '#6 نسخ الصرافات و #10 كسر التشفير' : '#6 Card Skimming & #10 Cracking', badge: ar ? 'منصات مستمرة' : 'PASSIVE RIGS', meta: ar ? 'المعززات: شريط لاصق ومنصة معالجات MIPS' : 'Enhancers: Duct Tape & Office Chair (MIPS Rig)', detail: ar ? 'زرع أجهزة نسخ في صرافات المترو والوقود، وبناء منصات تبريد لكسر الشيفرات متعددة الطبقات.' : 'Plant skimmers on Subway/Gas/Bus ATMs to accumulate card dumps; build multi-fan CPU rigs to crack layered hashes.', color: 'var(--gold)', btn: ar ? 'كسر الشيفرة' : 'Crack Cipher', act: () => { this.syncOmarAction('torn.crime2Execute', '10'); this.result('cash', ar ? 'كسر التشفير (#10)' : 'Cracking (#10)', ar ? 'منصة 740 MIPS فكت التشفير' : '740 MIPS Rig Decrypted Layer', '+$29,500'); } },
+            { title: ar ? '#8 خداع الجمهور و #9 إتلاف الأدلة' : '#8 Hustling & #9 Disposal', badge: ar ? '11 نتيجة فريدة' : '11 UNIQUES', meta: ar ? 'المعززات: مكبر صوت وقفازات لاتكس' : 'Enhancers: Megaphone & Latex Gloves', detail: ar ? 'إدارة حماس الجمهور والرهانات، والتخلص من الجثث والمركبات وأدوات الجريمة عبر الإذابة أو الحرق.' : 'Manage crowd hype (Gather/Demo/Lose/Win) + dispose of Bodies, Vehicles, Murder Weapons & Firearms via Acid/Burn/Sink.', color: 'var(--acc)', btn: ar ? 'إتلاف الأدلة' : 'Run Disposal', act: () => { this.syncOmarAction('torn.crime2Execute', '9'); this.result('cash', ar ? 'إتلاف الأدلة (#9)' : 'Disposal (#9)', ar ? 'تمت إذابة الأدلة الجنائية بالكامل' : 'Dissolved Evidence in Acid (Unique Outcome)', '+$26,000'); } },
+            { title: ar ? '#11 التزوير، #12 الاحتيال، و #13 الحرق الجنائي' : '#11 Forgery, #12 Scamming & #13 Arson', badge: ar ? '16 نتيجة فريدة' : '16 UNIQUES', meta: ar ? 'عدسة مكبرة · لوحة مفاتيح · ولاعة مقاومة للرياح (#544)' : 'Magnifying Glass · Ergonomic Keyboard · Windproof Lighter (#544)', detail: ar ? 'تصنيع 14 وثيقة رسمية، إدارة موجات التصيد، وتنفيذ عقود الحرق الجنائي عالية العائد.' : 'Craft 14 documents (Passports/Badges), run Phishing persuasion waves, and execute high-tier Arson contracts.', color: '#ff6a55', btn: ar ? 'إشعال الهدف' : 'Ignite Arson', act: () => { this.syncOmarAction('torn.crime2Execute', '13'); this.result('cash', ar ? 'الحرق الجنائي (#13)' : 'Arson (#13)', ar ? 'إشعال المستودع بولاعة (#544)' : 'Windproof Lighter (#544) Warehouse Ignition', '+$48,000'); } }
           ],
           oc2: [
-            { title: ar ? 'المستوى الأول والثاني: إسعاف وتواطؤ · عقلية العصابة' : 'Tier I-II: First Aid & Abet · Mob Mentality · Pet Project', badge: ar ? 'صعوبة 1-2' : 'DIFF 1-2', meta: ar ? 'نطاق العملية 1 ← عائد 2 · 3-4 مقاعد للطاقم' : 'Scope Cost 1 -> Return 2 · 3-4 Crew Slots', detail: ar ? 'الأدوار: خبير أقفال، تمويه، نشال، 4× ناهب، خاطف، مقاتل، سارق سيارات، منتحل.' : 'Roles: Picklock, Decoy, Pickpocket, 4x Looter, Kidnapper, Muscle, Car Thief, Imitator.', color: 'var(--acc)', btn: ar ? 'إطلاق صعوبة 2' : 'Spawn Diff 2', act: () => this.syncOmarAction('torn.oc2Spawn', 'mob_mentality') || this.result('cash', ar ? 'سطو منظم · عقلية العصابة' : 'OC 2.0 · Mob Mentality', ar ? 'عائد النطاق +2 · طاقم 4 ناهبين' : 'Scope +2 Returned · 4x Looter Crew', '+$85,000') },
-            { title: ar ? 'المستوى الثالث: التمويه المزدوج · قوى السوق · دخان ومرايا' : 'Tier III: Gaslight the Way · Market Forces · Smoke & Mirrors', badge: ar ? 'صعوبة 3-4' : 'DIFF 3-4', meta: ar ? 'نطاق العملية 2 ← عائد 3 · 4-6 مقاعد للطاقم' : 'Scope Cost 2 -> Return 3 · 4-6 Crew Slots', detail: ar ? 'الأدوار: منفّذ، مفاوض، مراقب، مشعل حرائق، مقاتل، 3× منتحل، 3× ناهب.' : 'Roles: Enforcer, Negotiator, Lookout, Arsonist, Muscle, 3x Imitator, 3x Looter.', color: 'var(--gold)', btn: ar ? 'إطلاق صعوبة 3' : 'Spawn Diff 3', act: () => this.syncOmarAction('torn.oc2Spawn', 'market_forces') || this.result('cash', ar ? 'سطو منظم · قوى السوق' : 'OC 2.0 · Market Forces', ar ? 'اكتمل بطاقم 5 أعضاء · +45 احترام' : '5-Crew Executed · +45 Respect', '+$85,000') },
-            { title: ar ? 'المستوى السادس: عمى الثلج · رهبة المسرح · العرض المضاد' : 'Tier VI: Snow Blind · Stage Fright · Counter Offer', badge: ar ? 'صعوبة 5-6' : 'DIFF 5-6', meta: ar ? 'نطاق العملية 3 ← عائد 5 · المتطلب: منشط PCP (#201)' : 'Scope Cost 3 -> Return 5 · Item Requirement: PCP (#201)', detail: ar ? 'يستهلك دور المنتحل منشط PCP (#201) خلال عملية عمى الثلج مع رفع نسبة اجتياز نقاط التفتيش.' : 'Imitator role consumes PCP (#201) during Snow Blind scenario; high Checkpoint Pass Rate (CPR %) scaling.', color: 'var(--acc)', btn: ar ? 'إطلاق عمى الثلج' : 'Spawn Snow Blind', act: () => this.syncOmarAction('torn.oc2Spawn', 'snow_blind') || this.result('cash', ar ? 'سطو منظم · عمى الثلج' : 'OC 2.0 · Snow Blind', ar ? 'اجتياز 94% من نقاط التفتيش' : 'Imitator PCP (#201) Consumed · 94% CPR', '+$85,000') },
-            { title: ar ? 'المستوى الثامن إلى العاشر: الخزنة الموصدة · إذن الإقلاع · الانشطار' : 'Tier VIII-X: Lock Stock · Cleared for Takeoff · Gone Fission', badge: ar ? 'صعوبة 8-10' : 'DIFF 8-10', meta: ar ? 'نطاق العملية 5 ← عائد 8 · متطلبات خاصة للأدوار' : 'Scope Cost 5 -> Return 8 · Ecstasy / Large Suitcase / Razor', detail: ar ? 'عمليات النخبة: تتطلب محفز معنويات للقاتل، حقيبة سفر كبيرة لخاطف الطائرات، وموس حلاقة للنشال.' : 'Lock Stock requires Ecstasy (#197) for Assassin; Cleared for Takeoff requires Large Suitcase (#421); Gone Fission requires Cut-Throat Razor (#567).', color: '#ff6a55', btn: ar ? 'إطلاق عملية النخبة' : 'Spawn Apex OC', act: () => this.syncOmarAction('torn.oc2Spawn', 'gone_fission') || this.result('cash', ar ? 'سطو منظم · الانشطار النووي' : 'OC 2.0 · Gone Fission', ar ? 'اكتملت عملية النخبة · +45 احترام' : 'Apex Scenario Complete · +45 Respect', '+$85,000') }
+            { title: ar ? 'المستوى الأول والثاني: إسعاف وتواطؤ · عقلية العصابة' : 'Tier I-II: First Aid & Abet · Mob Mentality · Pet Project', badge: ar ? 'صعوبة 1-2' : 'DIFF 1-2', meta: ar ? 'نطاق العملية 1 ← عائد 2 · 3-4 مقاعد للطاقم' : 'Scope Cost 1 -> Return 2 · 3-4 Crew Slots', detail: ar ? 'الأدوار: خبير أقفال، تمويه، نشال، 4× ناهب، خاطف، مقاتل، سارق سيارات، منتحل.' : 'Roles: Picklock, Decoy, Pickpocket, 4x Looter, Kidnapper, Muscle, Car Thief, Imitator.', color: 'var(--acc)', btn: ar ? 'إطلاق صعوبة 2' : 'Spawn Diff 2', act: () => { this.syncOmarAction('torn.oc2Spawn', 'mob_mentality'); this.result('cash', ar ? 'سطو منظم · عقلية العصابة' : 'OC 2.0 · Mob Mentality', ar ? 'عائد النطاق +2 · طاقم 4 ناهبين' : 'Scope +2 Returned · 4x Looter Crew', '+$85,000'); } },
+            { title: ar ? 'المستوى الثالث: التمويه المزدوج · قوى السوق · دخان ومرايا' : 'Tier III: Gaslight the Way · Market Forces · Smoke & Mirrors', badge: ar ? 'صعوبة 3-4' : 'DIFF 3-4', meta: ar ? 'نطاق العملية 2 ← عائد 3 · 4-6 مقاعد للطاقم' : 'Scope Cost 2 -> Return 3 · 4-6 Crew Slots', detail: ar ? 'الأدوار: منفّذ، مفاوض، مراقب، مشعل حرائق، مقاتل، 3× منتحل، 3× ناهب.' : 'Roles: Enforcer, Negotiator, Lookout, Arsonist, Muscle, 3x Imitator, 3x Looter.', color: 'var(--gold)', btn: ar ? 'إطلاق صعوبة 3' : 'Spawn Diff 3', act: () => { this.syncOmarAction('torn.oc2Spawn', 'market_forces'); this.result('cash', ar ? 'سطو منظم · قوى السوق' : 'OC 2.0 · Market Forces', ar ? 'اكتمل بطاقم 5 أعضاء · +45 احترام' : '5-Crew Executed · +45 Respect', '+$85,000'); } },
+            { title: ar ? 'المستوى السادس: عمى الثلج · رهبة المسرح · العرض المضاد' : 'Tier VI: Snow Blind · Stage Fright · Counter Offer', badge: ar ? 'صعوبة 5-6' : 'DIFF 5-6', meta: ar ? 'نطاق العملية 3 ← عائد 5 · المتطلب: منشط PCP (#201)' : 'Scope Cost 3 -> Return 5 · Item Requirement: PCP (#201)', detail: ar ? 'يستهلك دور المنتحل منشط PCP (#201) خلال عملية عمى الثلج مع رفع نسبة اجتياز نقاط التفتيش.' : 'Imitator role consumes PCP (#201) during Snow Blind scenario; high Checkpoint Pass Rate (CPR %) scaling.', color: 'var(--acc)', btn: ar ? 'إطلاق عمى الثلج' : 'Spawn Snow Blind', act: () => { this.syncOmarAction('torn.oc2Spawn', 'snow_blind'); this.result('cash', ar ? 'سطو منظم · عمى الثلج' : 'OC 2.0 · Snow Blind', ar ? 'اجتياز 94% من نقاط التفتيش' : 'Imitator PCP (#201) Consumed · 94% CPR', '+$85,000'); } },
+            { title: ar ? 'المستوى الثامن إلى العاشر: الخزنة الموصدة · إذن الإقلاع · الانشطار' : 'Tier VIII-X: Lock Stock · Cleared for Takeoff · Gone Fission', badge: ar ? 'صعوبة 8-10' : 'DIFF 8-10', meta: ar ? 'نطاق العملية 5 ← عائد 8 · متطلبات خاصة للأدوار' : 'Scope Cost 5 -> Return 8 · Ecstasy / Large Suitcase / Razor', detail: ar ? 'عمليات النخبة: تتطلب محفز معنويات للقاتل، حقيبة سفر كبيرة لخاطف الطائرات، وموس حلاقة للنشال.' : 'Lock Stock requires Ecstasy (#197) for Assassin; Cleared for Takeoff requires Large Suitcase (#421); Gone Fission requires Cut-Throat Razor (#567).', color: '#ff6a55', btn: ar ? 'إطلاق عملية النخبة' : 'Spawn Apex OC', act: () => { this.syncOmarAction('torn.oc2Spawn', 'gone_fission'); this.result('cash', ar ? 'سطو منظم · الانشطار النووي' : 'OC 2.0 · Gone Fission', ar ? 'اكتملت عملية النخبة · +45 احترام' : 'Apex Scenario Complete · +45 Respect', '+$85,000'); } }
           ],
           faction: [
-            { title: ar ? 'الشجرة الأساسية (14 فرعاً) والإجرامية (5 فروع)' : 'Core Tree (14 Sub-Branches) & Criminality (5)', badge: ar ? '19 فرعاً' : '19 BRANCHES', meta: ar ? 'ترسانات العائلة · السلاسل · السطو 2.0 · الجرأة (+40) · التهريب' : 'Armories · Chaining · OC 2.0 · Nerve (+40) · Bust Skill', detail: ar ? 'تفتح مخازن الأسلحة والدروع والمنشطات والطب، المختبر، سعة الأراضي، و +25% خبرة ومهارة الجرائم.' : 'Unlocks Weapon/Armor/Drug/Medical/Booster Armories, Laboratory, Territory Capacity, and +25% Crime XP & Skill.', color: 'var(--acc)', btn: ar ? 'تطوير الشجرة الأساسية' : 'Upgrade Core', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'criminality') || this.result('good', ar ? 'شجرة العائلة · الإجرامية' : 'Faction Tree · Criminality', ar ? '+40 جرأة قصوى و +25% خبرة جرائم' : '+40 Max Nerve & +25% Crime XP Active', '+25 Respect') },
-            { title: ar ? 'شجرة الثبات (4 فروع) والتحمل الدوائي (3 فروع)' : 'Steadfast (4 Branches) & Toleration (3 Branches)', badge: ar ? '7 فروع' : '7 BRANCHES', meta: ar ? '+20% مكاسب النادي للصفات الأربع · -50% خطر الجرعة الزائدة' : '+20% STR/SPD/DEF/DEX Gym Gains · -50% Overdose Risk', detail: ar ? 'مضاعفات تدريب النادي لجميع الصفات القتالية الأربع مع خفض الإدمان والجرعة الزائدة بنسبة 50%.' : 'Multiplicative gym training boosts across all 4 battle stats plus -50% drug addiction, side effects, and overdose probability.', color: 'var(--gold)', btn: ar ? 'تطوير شجرة الثبات' : 'Upgrade Steadfast', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'steadfast') || this.result('good', ar ? 'شجرة العائلة · الثبات' : 'Faction Tree · Steadfast', ar ? '+20% مكاسب تدريب النادي نشطة' : '+20% All Gym Stat Gains Unlocked', '+25 Respect') },
-            { title: ar ? 'شجرة النهم (4 فروع) والصمود الطبي (5 فروع)' : 'Voracity (4 Branches) & Fortitude (5 Branches)', badge: ar ? '9 فروع' : '9 BRANCHES', meta: ar ? '+48 ساعة سقف المعززات · +50% مشروبات الطاقة · الإنعاش (25 طاقة)' : '+48h Booster CD · +50% Energy Cans · Reviving (25E)', detail: ar ? 'ترفع سقف تهدئة المعززات من 24 إلى 48 ساعة، وتزيد مفعول مشروبات الطاقة بنسبة 50%، وتفتح الإنعاش بـ 25 طاقة.' : 'Increases Booster cooldown cap from 24h to 48h, boosts Energy Drink/Candy/Alcohol effects by +50%, and unlocks 25E Revives.', color: 'var(--acc)', btn: ar ? 'تطوير شجرة النهم' : 'Upgrade Voracity', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'voracity') || this.result('good', ar ? 'شجرة العائلة · النهم' : 'Faction Tree · Voracity', ar ? 'سقف المعززات 48 ساعة و +50% طاقة' : '48h Booster Cooldown Cap & +50% Can Effect', '+25 Respect') },
-            { title: ar ? 'العدوانية (5) والردع الدفاعي (4) والرحلات الخارجية (5)' : 'Aggression (5), Suppression (4) & Excursion (5)', badge: ar ? '14 فرعاً' : '14 BRANCHES', meta: ar ? '+20% ضرر وصفات قتالية وصحة قصوى · +10 سعة حقائب السفر' : '+20% Damage/STR/SPD/DEF/DEX/Max Life · +10 Travel Items', detail: ar ? 'مضاعفات القتال في حروب العائلات مع +10 سعة تهريب جوي وخفض تكلفة التأهيل الطبي بنسبة 30%.' : 'Combat stat multipliers in faction wars plus +10 suitcase smuggling capacity and -30% Switzerland Rehab cost.', color: 'var(--gold)', btn: ar ? 'تطوير شجرة الرحلات' : 'Upgrade Excursion', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'excursion') || this.result('good', ar ? 'شجرة العائلة · الرحلات' : 'Faction Tree · Excursion', ar ? '+10 سعة سفر و -30% تكلفة التأهيل' : '+10 Travel Capacity & -30% Rehab Cost', '+25 Respect') }
+            { title: ar ? 'الشجرة الأساسية (14 فرعاً) والإجرامية (5 فروع)' : 'Core Tree (14 Sub-Branches) & Criminality (5)', badge: ar ? '19 فرعاً' : '19 BRANCHES', meta: ar ? 'ترسانات العائلة · السلاسل · السطو 2.0 · الجرأة (+40) · التهريب' : 'Armories · Chaining · OC 2.0 · Nerve (+40) · Bust Skill', detail: ar ? 'تفتح مخازن الأسلحة والدروع والمنشطات والطب، المختبر، سعة الأراضي، و +25% خبرة ومهارة الجرائم.' : 'Unlocks Weapon/Armor/Drug/Medical/Booster Armories, Laboratory, Territory Capacity, and +25% Crime XP & Skill.', color: 'var(--acc)', btn: ar ? 'تطوير الشجرة الأساسية' : 'Upgrade Core', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'criminality'); this.result('good', ar ? 'شجرة العائلة · الإجرامية' : 'Faction Tree · Criminality', ar ? '+40 جرأة قصوى و +25% خبرة جرائم' : '+40 Max Nerve & +25% Crime XP Active', '+25 Respect'); } },
+            { title: ar ? 'شجرة الثبات (4 فروع) والتحمل الدوائي (3 فروع)' : 'Steadfast (4 Branches) & Toleration (3 Branches)', badge: ar ? '7 فروع' : '7 BRANCHES', meta: ar ? '+20% مكاسب النادي للصفات الأربع · -50% خطر الجرعة الزائدة' : '+20% STR/SPD/DEF/DEX Gym Gains · -50% Overdose Risk', detail: ar ? 'مضاعفات تدريب النادي لجميع الصفات القتالية الأربع مع خفض الإدمان والجرعة الزائدة بنسبة 50%.' : 'Multiplicative gym training boosts across all 4 battle stats plus -50% drug addiction, side effects, and overdose probability.', color: 'var(--gold)', btn: ar ? 'تطوير شجرة الثبات' : 'Upgrade Steadfast', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'steadfast'); this.result('good', ar ? 'شجرة العائلة · الثبات' : 'Faction Tree · Steadfast', ar ? '+20% مكاسب تدريب النادي نشطة' : '+20% All Gym Stat Gains Unlocked', '+25 Respect'); } },
+            { title: ar ? 'شجرة النهم (4 فروع) والصمود الطبي (5 فروع)' : 'Voracity (4 Branches) & Fortitude (5 Branches)', badge: ar ? '9 فروع' : '9 BRANCHES', meta: ar ? '+48 ساعة سقف المعززات · +50% مشروبات الطاقة · الإنعاش (25 طاقة)' : '+48h Booster CD · +50% Energy Cans · Reviving (25E)', detail: ar ? 'ترفع سقف تهدئة المعززات من 24 إلى 48 ساعة، وتزيد مفعول مشروبات الطاقة بنسبة 50%، وتفتح الإنعاش بـ 25 طاقة.' : 'Increases Booster cooldown cap from 24h to 48h, boosts Energy Drink/Candy/Alcohol effects by +50%, and unlocks 25E Revives.', color: 'var(--acc)', btn: ar ? 'تطوير شجرة النهم' : 'Upgrade Voracity', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'voracity'); this.result('good', ar ? 'شجرة العائلة · النهم' : 'Faction Tree · Voracity', ar ? 'سقف المعززات 48 ساعة و +50% طاقة' : '48h Booster Cooldown Cap & +50% Can Effect', '+25 Respect'); } },
+            { title: ar ? 'العدوانية (5) والردع الدفاعي (4) والرحلات الخارجية (5)' : 'Aggression (5), Suppression (4) & Excursion (5)', badge: ar ? '14 فرعاً' : '14 BRANCHES', meta: ar ? '+20% ضرر وصفات قتالية وصحة قصوى · +10 سعة حقائب السفر' : '+20% Damage/STR/SPD/DEF/DEX/Max Life · +10 Travel Items', detail: ar ? 'مضاعفات القتال في حروب العائلات مع +10 سعة تهريب جوي وخفض تكلفة التأهيل الطبي بنسبة 30%.' : 'Combat stat multipliers in faction wars plus +10 suitcase smuggling capacity and -30% Switzerland Rehab cost.', color: 'var(--gold)', btn: ar ? 'تطوير شجرة الرحلات' : 'Upgrade Excursion', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'excursion'); this.result('good', ar ? 'شجرة العائلة · الرحلات' : 'Faction Tree · Excursion', ar ? '+10 سعة سفر و -30% تكلفة التأهيل' : '+10 Travel Capacity & -30% Rehab Cost', '+25 Respect'); } }
           ],
           rackets: [
-            { title: ar ? '[RDF] مختبر المنشطات V و [KDB] مختبر الزاناكس V' : '[RDF] Drug Lab V & [KDB] Xanax Lab V', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: 400× محفز طاقة (#206) / يومياً · العائلة #11581' : 'Reward: 400x Xanax (#206) / day · Faction #11581', detail: ar ? 'يولد 400 وحدة منشطات طاقة يومياً مباشرة إلى خزنة منشطات العائلة.' : 'Harvested from faction_rackets.json (188 live rackets): generates 400x Xanax daily directly into Faction Drug Armory.', color: 'var(--acc)', btn: ar ? 'تحصيل المنشطات' : 'Collect Xanax', act: () => this.syncOmarAction('torn.racketCollect', 'rdf') || this.result('cash', ar ? 'قطاع [RDF] مختبر المنشطات V' : 'Racket [RDF] Drug Lab V', ar ? 'تم تحصيل 400× منشط + $45,000' : '400x Xanax (#206) + $45,000 Collected', '+$45,000') },
-            { title: ar ? '[WZD] المنتجع السري IV و [NUB] صالة النخبة IV' : '[WZD] Bordello IV & [NUB] High-Roller IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× شريط معزز (#366) / يومياً · العائلة #230' : 'Reward: 40x Erotic DVD (#366) / day · Faction #230', detail: ar ? 'يزود العائلة بـ 40 شريط معزز معنويات (+2,500 معنويات لكل شريط) يومياً لبروتوكولات التدريب.' : 'Supplies 40x Erotic DVDs (+2,500 Happy each) daily for Faction Happy-Jump conditioning stacks.', color: 'var(--gold)', btn: ar ? 'تحصيل المعززات' : 'Collect E-DVDs', act: () => this.syncOmarAction('torn.racketCollect', 'wzd') || this.result('cash', ar ? 'قطاع [WZD] المنتجع السري IV' : 'Racket [WZD] Bordello IV', ar ? 'تم تحصيل 40× معزز + $45,000' : '40x Erotic DVD (#366) + $45,000 Collected', '+$45,000') },
-            { title: ar ? '[DJC] و [JND] عيادة جراح الشوارع IV' : '[DJC] & [JND] Street Surgeon IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× مورفين طبي (#464) / يومياً · العائلة #29865' : 'Reward: 40x Morphine (#464) / day · Faction #29865', detail: ar ? 'ينتج 40 حقيبة مورفين وإمدادات طوارئ يومياً لدعم حروب العائلات والسيطرة على الجدران.' : 'Produces 40x trauma medical supplies daily for Ranked War & Territory Wall sustain.', color: 'var(--acc)', btn: ar ? 'تحصيل الإمدادات الطبية' : 'Collect Meds', act: () => this.syncOmarAction('torn.racketCollect', 'djc') || this.result('cash', ar ? 'قطاع [DJC] جراح الشوارع IV' : 'Racket [DJC] Street Surgeon IV', ar ? 'تم تحصيل 40× مورفين + $45,000' : '40x Morphine (#464) + $45,000 Collected', '+$45,000') },
-            { title: ar ? '[QEB] مغسلة الأموال V و [RPB] سمسار النقاط' : '[QEB] Money Launderer V & [RPB] Point Broker', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: $80,000,000 نقداً و 2,000× نقطة شحن / يومياً' : 'Reward: $80,000,000 Cash & 2,000x Points / day', detail: ar ? 'سيولة نقدية معفاة من الضرائب ونقاط شحن تودع كل 24 ساعة في خزنة العائلة.' : 'Direct tax-free treasury cash and premium Points generated every 24h while holding sector walls.', color: 'var(--gold)', btn: ar ? 'تحصيل الخزنة' : 'Collect Treasury', act: () => this.syncOmarAction('torn.racketCollect', 'qeb') || this.result('cash', ar ? 'قطاع [QEB] مغسلة الأموال V' : 'Racket [QEB] Launderer V', ar ? 'تم تحصيل +$45,000 و +15 نقطة' : '+$45,000 & +15 Points Collected', '+$45,000') }
+            { title: ar ? '[RDF] مختبر المنشطات V و [KDB] مختبر الزاناكس V' : '[RDF] Drug Lab V & [KDB] Xanax Lab V', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: 400× محفز طاقة (#206) / يومياً · العائلة #11581' : 'Reward: 400x Xanax (#206) / day · Faction #11581', detail: ar ? 'يولد 400 وحدة منشطات طاقة يومياً مباشرة إلى خزنة منشطات العائلة.' : 'Active across 188 syndicate territory sectors: generates 400x Xanax daily directly into Faction Drug Armory.', color: 'var(--acc)', btn: ar ? 'تحصيل المنشطات' : 'Collect Xanax', act: () => { this.syncOmarAction('torn.racketCollect', 'rdf'); this.result('cash', ar ? 'قطاع [RDF] مختبر المنشطات V' : 'Racket [RDF] Drug Lab V', ar ? 'تم تحصيل 400× منشط + $45,000' : '400x Xanax (#206) + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[WZD] المنتجع السري IV و [NUB] صالة النخبة IV' : '[WZD] Bordello IV & [NUB] High-Roller IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× شريط معزز (#366) / يومياً · العائلة #230' : 'Reward: 40x Erotic DVD (#366) / day · Faction #230', detail: ar ? 'يزود العائلة بـ 40 شريط معزز معنويات (+2,500 معنويات لكل شريط) يومياً لبروتوكولات التدريب.' : 'Supplies 40x Erotic DVDs (+2,500 Happy each) daily for Faction Happy-Jump conditioning stacks.', color: 'var(--gold)', btn: ar ? 'تحصيل المعززات' : 'Collect E-DVDs', act: () => { this.syncOmarAction('torn.racketCollect', 'wzd'); this.result('cash', ar ? 'قطاع [WZD] المنتجع السري IV' : 'Racket [WZD] Bordello IV', ar ? 'تم تحصيل 40× معزز + $45,000' : '40x Erotic DVD (#366) + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[DJC] و [JND] عيادة جراح الشوارع IV' : '[DJC] & [JND] Street Surgeon IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× مورفين طبي (#464) / يومياً · العائلة #29865' : 'Reward: 40x Morphine (#464) / day · Faction #29865', detail: ar ? 'ينتج 40 حقيبة مورفين وإمدادات طوارئ يومياً لدعم حروب العائلات والسيطرة على الجدران.' : 'Produces 40x trauma medical supplies daily for Ranked War & Territory Wall sustain.', color: 'var(--acc)', btn: ar ? 'تحصيل الإمدادات الطبية' : 'Collect Meds', act: () => { this.syncOmarAction('torn.racketCollect', 'djc'); this.result('cash', ar ? 'قطاع [DJC] جراح الشوارع IV' : 'Racket [DJC] Street Surgeon IV', ar ? 'تم تحصيل 40× مورفين + $45,000' : '40x Morphine (#464) + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[QEB] مغسلة الأموال V و [RPB] سمسار النقاط' : '[QEB] Money Launderer V & [RPB] Point Broker', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: $80,000,000 نقداً و 2,000× نقطة شحن / يومياً' : 'Reward: $80,000,000 Cash & 2,000x Points / day', detail: ar ? 'سيولة نقدية معفاة من الضرائب ونقاط شحن تودع كل 24 ساعة في خزنة العائلة.' : 'Direct tax-free treasury cash and premium Points generated every 24h while holding sector walls.', color: 'var(--gold)', btn: ar ? 'تحصيل الخزنة' : 'Collect Treasury', act: () => { this.syncOmarAction('torn.racketCollect', 'qeb'); this.result('cash', ar ? 'قطاع [QEB] مغسلة الأموال V' : 'Racket [QEB] Launderer V', ar ? 'تم تحصيل +$45,000 و +15 نقطة' : '+$45,000 & +15 Points Collected', '+$45,000'); } }
           ],
           gyms: [
-            { title: ar ? '8 أندية وزن خفيف (5 طاقة) و 8 وزن متوسط (10 طاقة)' : '8 Lightweight (5E) & 8 Middleweight (10E)', badge: ar ? 'الأندية #1-#16' : 'GYMS #1-#16', meta: ar ? 'بريمير فيتنس (2.0 نقاط) ← النادي العالمي (5.0 نقاط)' : 'Premier Fitness ($10, 2.0 Dots) -> Global Gym (5.0 Dots)', detail: ar ? 'سلم فتح تدريجي حيث تفتح كل طاقة مصروفة مضاعفات تدريب أعلى للقوة والسرعة والدفاع والمراوغة.' : 'Progressive energy unlock ladder where every 5E/10E spent unlocks higher STR/SPD/DEF/DEX dot multipliers.', color: 'var(--acc)', btn: ar ? 'تدريب مكثف' : 'Train Heavy', act: () => this.syncOmarAction('torn.gymSpec', 'global') || this.result('good', ar ? 'الوزن المتوسط · النادي العالمي' : 'Middleweight · Global Gym', ar ? 'تم كسب +65 خبرة نادي' : '+65 Gym XP Earned', '+65 Gym XP') },
-            { title: ar ? '8 أندية وزن ثقيل (10 طاقة) ← #24 نادي جورج' : "8 Heavyweight Gyms (10E) -> #24 George\'s Gym", badge: ar ? 'الأندية #17-#24' : 'GYMS #17-#24', meta: ar ? 'نادي جورج ($15M): 7.3 قوة / 7.3 سرعة / 7.3 دفاع / 7.3 مراوغة' : "George's ($15M): 7.3 STR / 7.3 SPD / 7.3 DEF / 7.3 DEX", detail: ar ? 'قمة أندية الوزن الثقيل المتوازنة قبل الانتقال إلى الأندية التخصصية.' : 'The pinnacle all-around Heavyweight gym before entering stat-locked Specialist gyms.', color: 'var(--gold)', btn: ar ? 'تفعيل نادي جورج' : "Activate George's", act: () => this.syncOmarAction('torn.gymSpec', 'georges') || this.result('good', ar ? 'نادي جورج (#24)' : "George\'s Gym (#24)", ar ? 'مضاعف 7.3 لجميع الصفات نشط' : '7.3 All-Stat Dots Active', '+65 Gym XP') },
-            { title: ar ? 'الأندية التخصصية المزدوجة والفردية (25-50 طاقة)' : 'Dual & Single Stat Specialist Gyms (25E-50E)', badge: ar ? 'الأندية #25-#30' : 'GYMS #25-#30', meta: ar ? 'بالبوا (دفاع/مراوغة) · فرونت لاين (قوة/سرعة) · نادي 3000 · إيسوياما' : 'Balboas (DEF/DEX) · Frontline (STR/SPD) · Gym 3000 · Isoyama · Rebound · Elites', detail: ar ? 'أندية بمضاعف 8.0 (50 طاقة/تمرين) تتطلب بقاء الصفة الأساسية أعلى بـ 25% من الصفة الثانية.' : '8.0 Dot single-stat gyms (50E/train, $100M) requiring your primary stat to remain 25% higher than your second highest stat.', color: 'var(--acc)', btn: ar ? 'تفعيل نادي 3000' : 'Activate Gym 3000', act: () => this.syncOmarAction('torn.gymSpec', 'gym3000') || this.result('good', ar ? 'نادي 3000 (#27)' : 'Gym 3000 (#27)', ar ? 'مضاعف 8.0 للقوة نشط' : '8.0 STR Specialist Dots Active', '+65 Gym XP') },
-            { title: ar ? '#31 مختبر علوم الرياضة (9.0) و #32 المجهول (10.0)' : '#31 Sports Science Lab (9.0) & #32 Unknown (10.0)', badge: ar ? 'الأندية #31-#33' : 'GYMS #31-#33', meta: ar ? 'مختبر SSL ($500M، 9.0 نقاط) · المجهول (10.0 نقاط) · نادي السجن (#33)' : 'SSL ($500M, 25E, 9.0 Dots, Drug-Free) · Unknown (10.0 Dots) · Jail Gym (#33)', detail: ar ? 'يمنح مختبر SSL مضاعف 9.0 لجميع الصفات الأربع، بينما يتيح نادي السجن (#33) التدريب أثناء العقوبة.' : 'SSL grants 9.0 Dots across all 4 stats (kicks you out if you take drugs!); Jail Gym (#33) trains STR 3.4 / SPD 3.4 / DEF 4.6 while in Jail.', color: '#ff6a55', btn: ar ? 'تفعيل مختبر SSL 9.0' : 'Activate SSL 9.0', act: () => this.syncOmarAction('torn.gymSpec', 'ssl') || this.result('good', ar ? 'مختبر علوم الرياضة (#31)' : 'Sports Science Lab (#31)', ar ? 'مضاعف 9.0 لجميع الصفات نشط' : '9.0 All-Stat Dots Activated', '+65 Gym XP') }
+            { title: ar ? '8 أندية وزن خفيف (5 طاقة) و 8 وزن متوسط (10 طاقة)' : '8 Lightweight (5E) & 8 Middleweight (10E)', badge: ar ? 'الأندية #1-#16' : 'GYMS #1-#16', meta: ar ? 'بريمير فيتنس (2.0 نقاط) ← النادي العالمي (5.0 نقاط)' : 'Premier Fitness ($10, 2.0 Dots) -> Global Gym (5.0 Dots)', detail: ar ? 'سلم فتح تدريجي حيث تفتح كل طاقة مصروفة مضاعفات تدريب أعلى للقوة والسرعة والدفاع والمراوغة.' : 'Progressive energy unlock ladder where every 5E/10E spent unlocks higher STR/SPD/DEF/DEX dot multipliers.', color: 'var(--acc)', btn: ar ? 'تدريب مكثف' : 'Train Heavy', act: () => { this.syncOmarAction('torn.gymSpec', 'global'); this.result('good', ar ? 'الوزن المتوسط · النادي العالمي' : 'Middleweight · Global Gym', ar ? 'تم كسب +65 خبرة نادي' : '+65 Gym XP Earned', '+65 Gym XP'); } },
+            { title: ar ? '8 أندية وزن ثقيل (10 طاقة) ← #24 نادي جورج' : "8 Heavyweight Gyms (10E) -> #24 George\'s Gym", badge: ar ? 'الأندية #17-#24' : 'GYMS #17-#24', meta: ar ? 'نادي جورج ($15M): 7.3 قوة / 7.3 سرعة / 7.3 دفاع / 7.3 مراوغة' : "George's ($15M): 7.3 STR / 7.3 SPD / 7.3 DEF / 7.3 DEX", detail: ar ? 'قمة أندية الوزن الثقيل المتوازنة قبل الانتقال إلى الأندية التخصصية.' : 'The pinnacle all-around Heavyweight gym before entering stat-locked Specialist gyms.', color: 'var(--gold)', btn: ar ? 'تفعيل نادي جورج' : "Activate George's", act: () => { this.syncOmarAction('torn.gymSpec', 'georges'); this.result('good', ar ? 'نادي جورج (#24)' : "George\'s Gym (#24)", ar ? 'مضاعف 7.3 لجميع الصفات نشط' : '7.3 All-Stat Dots Active', '+65 Gym XP'); } },
+            { title: ar ? 'الأندية التخصصية المزدوجة والفردية (25-50 طاقة)' : 'Dual & Single Stat Specialist Gyms (25E-50E)', badge: ar ? 'الأندية #25-#30' : 'GYMS #25-#30', meta: ar ? 'بالبوا (دفاع/مراوغة) · فرونت لاين (قوة/سرعة) · نادي 3000 · إيسوياما' : 'Balboas (DEF/DEX) · Frontline (STR/SPD) · Gym 3000 · Isoyama · Rebound · Elites', detail: ar ? 'أندية بمضاعف 8.0 (50 طاقة/تمرين) تتطلب بقاء الصفة الأساسية أعلى بـ 25% من الصفة الثانية.' : '8.0 Dot single-stat gyms (50E/train, $100M) requiring your primary stat to remain 25% higher than your second highest stat.', color: 'var(--acc)', btn: ar ? 'تفعيل نادي 3000' : 'Activate Gym 3000', act: () => { this.syncOmarAction('torn.gymSpec', 'gym3000'); this.result('good', ar ? 'نادي 3000 (#27)' : 'Gym 3000 (#27)', ar ? 'مضاعف 8.0 للقوة نشط' : '8.0 STR Specialist Dots Active', '+65 Gym XP'); } },
+            { title: ar ? '#31 مختبر علوم الرياضة (9.0) و #32 المجهول (10.0)' : '#31 Sports Science Lab (9.0) & #32 Unknown (10.0)', badge: ar ? 'الأندية #31-#33' : 'GYMS #31-#33', meta: ar ? 'مختبر SSL ($500M، 9.0 نقاط) · المجهول (10.0 نقاط) · نادي السجن (#33)' : 'SSL ($500M, 25E, 9.0 Dots, Drug-Free) · Unknown (10.0 Dots) · Jail Gym (#33)', detail: ar ? 'يمنح مختبر SSL مضاعف 9.0 لجميع الصفات الأربع، بينما يتيح نادي السجن (#33) التدريب أثناء العقوبة.' : 'SSL grants 9.0 Dots across all 4 stats (kicks you out if you take drugs!); Jail Gym (#33) trains STR 3.4 / SPD 3.4 / DEF 4.6 while in Jail.', color: '#ff6a55', btn: ar ? 'تفعيل مختبر SSL 9.0' : 'Activate SSL 9.0', act: () => { this.syncOmarAction('torn.gymSpec', 'ssl'); this.result('good', ar ? 'مختبر علوم الرياضة (#31)' : 'Sports Science Lab (#31)', ar ? 'مضاعف 9.0 لجميع الصفات نشط' : '9.0 All-Stat Dots Activated', '+65 Gym XP'); } }
           ],
           companies: [
-            { title: ar ? 'مكتب المحاماة (#2)، صالون الحلاقة (#1) ومتجر الزهور (#3)' : 'Law Firm (#2), Hair Salon (#1) & Flower Shop (#3)', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? '10★ قرارات مستنيرة · 10★ +20% ضرر النصل · 7★ +5 سعة زهور' : '10★ Educated Decisions · 10★ +20% Slashing · 7★ +5 Travel Flowers', detail: ar ? 'مكتب المحاماة: -50% كفالة وكشف صفات الهدف؛ صالون الحلاقة: كشف سيولة الهدف وخفض تخفي الخصم.' : 'Law Firm: -50% bail, view target stats, +20% OC XP; Hair Salon: view target cash, -2.0 enemy stealth; Flower Shop: +5 flower travel capacity.', color: 'var(--acc)', btn: ar ? 'استبدال المحاماة 10★' : 'Redeem Law 10★', act: () => this.syncOmarAction('torn.companySpecial', 'sweet') || this.result('good', ar ? 'امتياز مكتب المحاماة 10★' : '10★ Law Firm Special', ar ? 'كشف نسبة التهريب و +2,500 معنويات' : 'View Bust Chance & +2,500 Happy', '+2,500 Happy') },
-            { title: ar ? 'متجر الحلويات، متجر الترفيه والنادي الليلي' : 'Sweet Shop, Adult Novelties & Nightclub', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? 'مشروبات طاقة · أشرطة معززة مجانية (#366) · -50% إدمان' : 'Energy Cans · Free Erotic DVDs (#366) · -50% Drug Addiction', detail: ar ? 'يضاعف متجر الترفيه 10★ معنويات الأشرطة المعززة (+5,000 معنويات)، ويمنح متجر الحلويات طاقة ومعنويات فورية.' : 'Adult Novelties 10★ doubles Erotic DVD Happy (+5,000 Happy/DVD!); Sweet Shop trades JP for Energy Cans & +4,500 Happy.', color: 'var(--gold)', btn: ar ? 'استبدال الترفيه 10★' : 'Redeem AN 10★', act: () => this.syncOmarAction('torn.companySpecial', 'adult') || this.result('good', ar ? 'امتياز متجر الترفيه 10★' : '10★ Adult Novelties', ar ? '+1 شريط معزز (+2,500 معنويات)' : '+1x Erotic DVD (+2,500 Happy)', '+2,500 Happy') },
-            { title: ar ? 'مركز اللياقة، الأمن الخاص وورشة الميكانيكا' : 'Fitness Center, Private Security & Mechanic Shop', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? '10★ +3% مكاسب النادي · حصانة 24 ساعة من الباونتي · قطع سباق' : '10★ +3% All Gym Gains · 24h Bounty Immunity · Racing Car Parts', detail: ar ? 'يمنح مركز اللياقة +3% مكاسب النادي و -50% مدة التعليم، ويوفر الأمن الخاص حصانة 24 ساعة و +25% درع.' : 'Fitness Center gives +3% gym gains & -50% education time; Private Security gives 24h bounty protection & +25% armor mitigation.', color: 'var(--acc)', btn: ar ? 'استبدال اللياقة 10★' : 'Redeem Fitness 10★', act: () => this.syncOmarAction('torn.companySpecial', 'fitness') || this.result('good', ar ? 'امتياز مركز اللياقة 10★' : '10★ Fitness Center', ar ? '+300 طاقة و +3% مكاسب النادي' : '+300 Energy & +3% Gym Gain', '+300E') },
-            { title: ar ? 'حقل النفط ($10B)، شركة التعدين، شبكة التلفزيون واللوجستيات' : 'Oil Rig ($10B), Mining Corp, TV Network & Logistics', badge: ar ? '150 امتيازاً' : '150 SPECIALS', meta: ar ? '39 شركة · 195 امتيازاً نجمياً (1★/3★/5★/7★/10★)' : '39 Total Companies · 195 Star Specials (1★/3★/5★/7★/10★)', detail: ar ? 'يرفع حقل النفط سقف استثمار البنك إلى $3,000,000,000، وتمنح اللوجستيات +25% سرعة سفر ومستودعات خارجية.' : 'Oil Rig raises City Bank investment cap to $3,000,000,000; Logistics grants +25% travel speed and foreign warehouse slots.', color: 'var(--gold)', btn: ar ? 'استبدال النفط 10★' : 'Redeem Oil 10★', act: () => this.syncOmarAction('torn.companySpecial', 'oil') || this.result('cash', ar ? 'امتياز حقل النفط 10★' : '10★ Oil Rig Embargo', ar ? '+$75,000 عائد وسقف بنك $3B' : '+$75,000 Dividend & $3B Bank Cap', '+$75,000') }
+            { title: ar ? 'مكتب المحاماة (#2)، صالون الحلاقة (#1) ومتجر الزهور (#3)' : 'Law Firm (#2), Hair Salon (#1) & Flower Shop (#3)', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? '10★ قرارات مستنيرة · 10★ +20% ضرر النصل · 7★ +5 سعة زهور' : '10★ Educated Decisions · 10★ +20% Slashing · 7★ +5 Travel Flowers', detail: ar ? 'مكتب المحاماة: -50% كفالة وكشف صفات الهدف؛ صالون الحلاقة: كشف سيولة الهدف وخفض تخفي الخصم.' : 'Law Firm: -50% bail, view target stats, +20% OC XP; Hair Salon: view target cash, -2.0 enemy stealth; Flower Shop: +5 flower travel capacity.', color: 'var(--acc)', btn: ar ? 'استبدال المحاماة 10★' : 'Redeem Law 10★', act: () => { this.syncOmarAction('torn.companySpecial', 'sweet'); this.result('good', ar ? 'امتياز مكتب المحاماة 10★' : '10★ Law Firm Special', ar ? 'كشف نسبة التهريب و +2,500 معنويات' : 'View Bust Chance & +2,500 Happy', '+2,500 Happy'); } },
+            { title: ar ? 'متجر الحلويات، متجر الترفيه والنادي الليلي' : 'Sweet Shop, Adult Novelties & Nightclub', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? 'مشروبات طاقة · أشرطة معززة مجانية (#366) · -50% إدمان' : 'Energy Cans · Free Erotic DVDs (#366) · -50% Drug Addiction', detail: ar ? 'يضاعف متجر الترفيه 10★ معنويات الأشرطة المعززة (+5,000 معنويات)، ويمنح متجر الحلويات طاقة ومعنويات فورية.' : 'Adult Novelties 10★ doubles Erotic DVD Happy (+5,000 Happy/DVD!); Sweet Shop trades JP for Energy Cans & +4,500 Happy.', color: 'var(--gold)', btn: ar ? 'استبدال الترفيه 10★' : 'Redeem AN 10★', act: () => { this.syncOmarAction('torn.companySpecial', 'adult'); this.result('good', ar ? 'امتياز متجر الترفيه 10★' : '10★ Adult Novelties', ar ? '+1 شريط معزز (+2,500 معنويات)' : '+1x Erotic DVD (+2,500 Happy)', '+2,500 Happy'); } },
+            { title: ar ? 'مركز اللياقة، الأمن الخاص وورشة الميكانيكا' : 'Fitness Center, Private Security & Mechanic Shop', badge: ar ? '15 امتيازاً' : '15 SPECIALS', meta: ar ? '10★ +3% مكاسب النادي · حصانة 24 ساعة من الباونتي · قطع سباق' : '10★ +3% All Gym Gains · 24h Bounty Immunity · Racing Car Parts', detail: ar ? 'يمنح مركز اللياقة +3% مكاسب النادي و -50% مدة التعليم، ويوفر الأمن الخاص حصانة 24 ساعة و +25% درع.' : 'Fitness Center gives +3% gym gains & -50% education time; Private Security gives 24h bounty protection & +25% armor mitigation.', color: 'var(--acc)', btn: ar ? 'استبدال اللياقة 10★' : 'Redeem Fitness 10★', act: () => { this.syncOmarAction('torn.companySpecial', 'fitness'); this.result('good', ar ? 'امتياز مركز اللياقة 10★' : '10★ Fitness Center', ar ? '+300 طاقة و +3% مكاسب النادي' : '+300 Energy & +3% Gym Gain', '+300E'); } },
+            { title: ar ? 'حقل النفط ($10B)، شركة التعدين، شبكة التلفزيون واللوجستيات' : 'Oil Rig ($10B), Mining Corp, TV Network & Logistics', badge: ar ? '150 امتيازاً' : '150 SPECIALS', meta: ar ? '39 شركة · 195 امتيازاً نجمياً (1★/3★/5★/7★/10★)' : '39 Total Companies · 195 Star Specials (1★/3★/5★/7★/10★)', detail: ar ? 'يرفع حقل النفط سقف استثمار البنك إلى $3,000,000,000، وتمنح اللوجستيات +25% سرعة سفر ومستودعات خارجية.' : 'Oil Rig raises City Bank investment cap to $3,000,000,000; Logistics grants +25% travel speed and foreign warehouse slots.', color: 'var(--gold)', btn: ar ? 'استبدال النفط 10★' : 'Redeem Oil 10★', act: () => { this.syncOmarAction('torn.companySpecial', 'oil'); this.result('cash', ar ? 'امتياز حقل النفط 10★' : '10★ Oil Rig Embargo', ar ? '+$75,000 عائد وسقف بنك $3B' : '+$75,000 Dividend & $3B Bank Cap', '+$75,000'); } }
           ],
           edu: [
-            { title: ar ? 'علم الأحياء (10) · علوم الرياضة (10) · الصحة واللياقة (9)' : 'Biology (10) · Sports Science (10) · Health & Fitness (9)', badge: ar ? '29 مساقاً' : '29 COURSES', meta: ar ? 'العلاج الوريدي BIO2127 · +4% مكاسب النادي SPT2490' : 'BIO2127 Intravenous Therapy · SPT2490 +4% Gym · HAF Physical', detail: ar ? 'يفتح علم الأحياء تعبئة واستخدام أكياس الدم، وتمنح علوم الرياضة تعزيزاً دائماً لجميع صفات النادي.' : 'Biology unlocks drawing/transfusing Blood Bags (A+, O-, Irradiated); Sports Science permanently boosts all 4 gym stats.', color: 'var(--acc)', btn: ar ? 'تنشيط الأحياء' : 'Apply Biology', act: () => this.syncOmarAction('torn.eduMajor', 'bio') || this.result('good', ar ? 'بكالوريوس علم الأحياء' : 'Biology Bachelor', ar ? 'تم فتح أكياس الدم الوريدية' : 'Intravenous Blood Bags Unlocked', '+25 Gym XP') },
-            { title: ar ? 'التاريخ (8) · القانون (15) · علم النفس (8)' : 'History (8) · Law (15) · Psychology (8)', badge: ar ? '31 مساقاً' : '31 COURSES', meta: ar ? 'فتح المتحف HIS2190 · -50% كفالة و +25% تهريب LAW2800' : 'HIS2190 Unlocks The Museum · LAW2800 -50% Bail & +25% Bust', detail: ar ? 'يفتح بكالوريوس التاريخ المتحف (استبدال الزهور والدباديب بـ +10 نقاط)، ويمنح علم النفس +10% نجاح الجرائم.' : 'History Bachelor unlocks The Museum (trade Flower & Plushie sets for +10 Points); Psychology grants +10% Crime Success & +10% DEX.', color: 'var(--gold)', btn: ar ? 'استبدال مجموعة المتحف' : 'Trade Museum Set', act: () => this.syncOmarAction('torn.museumExchange', 'flowers') || this.result('cash', ar ? 'تبادل نقاط المتحف' : 'Museum Point Exchange', ar ? 'طقم الزهور ← +10 نقاط و +$45,000' : '11-Flower Set -> +10 Points & +$45,000', '+10 Pts') },
-            { title: ar ? 'التدريب القتالي (11) · الدفاع عن النفس (8) · الرياضيات (11)' : 'Combat Training (11) · Self Defense (8) · Math (11)', badge: ar ? '30 مساقاً' : '30 COURSES', meta: ar ? 'إتقان خبرة الأسلحة · فتح الركلة القتالية · -30% استهلاك الذخيرة' : 'Weapon XP Mastery · DEF2700 Unlocks Kick · MTH3310 -30% Ammo', detail: ar ? 'يفتح التدريب القتالي خبرة الأسلحة (+10% ضرر ودقة)، ويمنح الدفاع عن النفس +100% ضرر الاشتباك اليدوي.' : 'Combat Training unlocks Weapon Experience (up to +10% Dmg/Acc per weapon); Self Defense unlocks Kick & +100% unarmed damage.', color: 'var(--acc)', btn: ar ? 'تنشيط القتال' : 'Apply Combat', act: () => this.syncOmarAction('torn.eduMajor', 'cbt') || this.result('good', ar ? 'بكالوريوس التدريب القتالي' : 'Combat Training Bachelor', ar ? 'خبرة الأسلحة وتوفير الذخيرة نشط' : 'Weapon XP & -30% Ammo Usage Active', '+25 Gym XP') },
-            { title: ar ? 'إدارة الأعمال (13) · علوم الحاسب (16) · الدراسات العامة (12)' : 'Business (13) · Computer Science (16) · General Studies (12)', badge: ar ? '41 مساقاً' : '41 COURSES', meta: ar ? '131 مساقاً جامعياً · +10% أرباح الشركات · +10% إحصائيات العمل' : '131 Total Courses · +10% Company Profits · General +10% All Workstats', detail: ar ? 'تضيف الدراسات العامة +10% لجميع مكاسب إحصائيات العمل، وتفتح علوم الحاسب مقعد المخترق وبرمجة الفيروسات.' : 'General Studies Bachelor adds +10% to all future working stat gains; Computer Science unlocks OC 2.0 Hacker slot & virus crafting.', color: 'var(--gold)', btn: ar ? 'تنشيط علوم الحاسب' : 'Apply CompSci', act: () => this.syncOmarAction('torn.eduMajor', 'csc') || this.result('good', ar ? 'بكالوريوس علوم الحاسب' : 'Computer Science Bachelor', ar ? 'مقعد المخترق وبرمجة الفيروسات جاهز' : 'OC 2.0 Hacker Slot & Virus Coding Ready', '+12 Crime XP') }
+            { title: ar ? 'علم الأحياء (10) · علوم الرياضة (10) · الصحة واللياقة (9)' : 'Biology (10) · Sports Science (10) · Health & Fitness (9)', badge: ar ? '29 مساقاً' : '29 COURSES', meta: ar ? 'العلاج الوريدي BIO2127 · +4% مكاسب النادي SPT2490' : 'BIO2127 Intravenous Therapy · SPT2490 +4% Gym · HAF Physical', detail: ar ? 'يفتح علم الأحياء تعبئة واستخدام أكياس الدم، وتمنح علوم الرياضة تعزيزاً دائماً لجميع صفات النادي.' : 'Biology unlocks drawing/transfusing Blood Bags (A+, O-, Irradiated); Sports Science permanently boosts all 4 gym stats.', color: 'var(--acc)', btn: ar ? 'تنشيط الأحياء' : 'Apply Biology', act: () => { this.syncOmarAction('torn.eduMajor', 'bio'); this.result('good', ar ? 'بكالوريوس علم الأحياء' : 'Biology Bachelor', ar ? 'تم فتح أكياس الدم الوريدية' : 'Intravenous Blood Bags Unlocked', '+25 Gym XP'); } },
+            { title: ar ? 'التاريخ (8) · القانون (15) · علم النفس (8)' : 'History (8) · Law (15) · Psychology (8)', badge: ar ? '31 مساقاً' : '31 COURSES', meta: ar ? 'فتح المتحف HIS2190 · -50% كفالة و +25% تهريب LAW2800' : 'HIS2190 Unlocks The Museum · LAW2800 -50% Bail & +25% Bust', detail: ar ? 'يفتح بكالوريوس التاريخ المتحف (استبدال الزهور والدباديب بـ +10 نقاط)، ويمنح علم النفس +10% نجاح الجرائم.' : 'History Bachelor unlocks The Museum (trade Flower & Plushie sets for +10 Points); Psychology grants +10% Crime Success & +10% DEX.', color: 'var(--gold)', btn: ar ? 'استبدال مجموعة المتحف' : 'Trade Museum Set', act: () => { this.syncOmarAction('torn.museumExchange', 'flowers'); this.result('cash', ar ? 'تبادل نقاط المتحف' : 'Museum Point Exchange', ar ? 'طقم الزهور ← +10 نقاط و +$45,000' : '11-Flower Set -> +10 Points & +$45,000', '+10 Pts'); } },
+            { title: ar ? 'التدريب القتالي (11) · الدفاع عن النفس (8) · الرياضيات (11)' : 'Combat Training (11) · Self Defense (8) · Math (11)', badge: ar ? '30 مساقاً' : '30 COURSES', meta: ar ? 'إتقان خبرة الأسلحة · فتح الركلة القتالية · -30% استهلاك الذخيرة' : 'Weapon XP Mastery · DEF2700 Unlocks Kick · MTH3310 -30% Ammo', detail: ar ? 'يفتح التدريب القتالي خبرة الأسلحة (+10% ضرر ودقة)، ويمنح الدفاع عن النفس +100% ضرر الاشتباك اليدوي.' : 'Combat Training unlocks Weapon Experience (up to +10% Dmg/Acc per weapon); Self Defense unlocks Kick & +100% unarmed damage.', color: 'var(--acc)', btn: ar ? 'تنشيط القتال' : 'Apply Combat', act: () => { this.syncOmarAction('torn.eduMajor', 'cbt'); this.result('good', ar ? 'بكالوريوس التدريب القتالي' : 'Combat Training Bachelor', ar ? 'خبرة الأسلحة وتوفير الذخيرة نشط' : 'Weapon XP & -30% Ammo Usage Active', '+25 Gym XP'); } },
+            { title: ar ? 'إدارة الأعمال (13) · علوم الحاسب (16) · الدراسات العامة (12)' : 'Business (13) · Computer Science (16) · General Studies (12)', badge: ar ? '41 مساقاً' : '41 COURSES', meta: ar ? '131 مساقاً جامعياً · +10% أرباح الشركات · +10% إحصائيات العمل' : '131 Total Courses · +10% Company Profits · General +10% All Workstats', detail: ar ? 'تضيف الدراسات العامة +10% لجميع مكاسب إحصائيات العمل، وتفتح علوم الحاسب مقعد المخترق وبرمجة الفيروسات.' : 'General Studies Bachelor adds +10% to all future working stat gains; Computer Science unlocks OC 2.0 Hacker slot & virus crafting.', color: 'var(--gold)', btn: ar ? 'تنشيط علوم الحاسب' : 'Apply CompSci', act: () => { this.syncOmarAction('torn.eduMajor', 'csc'); this.result('good', ar ? 'بكالوريوس علوم الحاسب' : 'Computer Science Bachelor', ar ? 'مقعد المخترق وبرمجة الفيروسات جاهز' : 'OC 2.0 Hacker Slot & Virus Coding Ready', '+12 Crime XP'); } }
           ],
           stocks: [
-            { title: ar ? 'بنك TSB ($50M/31 يوم) · TCI (+10% فائدة البنك) · IOU ($12M)' : 'TSB ($50M/31d) · TCI (+10% Bank APR) · IOU ($12M/31d)', badge: ar ? 'حزم البنوك' : 'BANK BLOCKS', meta: ar ? '3,000,000 سهم TSB · 1,500,000 سهم TCI · 5 فترات ودائع' : '3,000,000 Shares TSB · 1,500,000 Shares TCI · 5 Bank CD Terms', detail: ar ? 'يرفع سهم TCI فائدة ودائع البنك لمدة 90 يوماً إلى الحد الأقصى، ويدفع TSB عائد $50,000,000 كل 31 يوماً.' : 'TCI boosts 90-Day City Bank CD APR to max yield; TSB pays $50,000,000 cash every 31 days; GRN pays $4,000,000.', color: 'var(--acc)', btn: ar ? 'تحصيل عائد TSB' : 'Claim TSB Div', act: () => this.syncOmarAction('torn.stockDividend', 'SYM') || this.result('cash', ar ? 'بنك TSB المالي' : 'TSB · Torn & Shanghai Bank', ar ? 'تم تحصيل عائد الحزمة الشهرية' : 'Monthly Dividend Block Collected', '+$42,000') },
-            { title: ar ? 'فنادق FHG (قسيمة إقامة) · SYM (حزمة منشطات) · MCS (+300 طاقة)' : 'FHG (Feathery Coupon) · SYM (Drug Pack) · MCS (+300E)', badge: ar ? 'حزم الطاقة' : 'BOOST BLOCKS', meta: ar ? 'عوائد أسبوعية من العناصر والطاقة كل 7 أيام' : '7-Day Weekly Item & Energy Dividend Blocks', detail: ar ? 'يمنح FHG قسائم فندقية (+500 طاقة)، ويقدم SYM حزم منشطات، ويمنح MCS +300 طاقة مجانية أسبوعياً.' : 'FHG drops Feathery Hotel Coupons (+500E); SYM drops Drug Packs (10x Xanax); MCS grants +100/+300 Free Energy weekly.', color: 'var(--gold)', btn: ar ? 'تحصيل MCS +300 طاقة' : 'Claim MCS +300E', act: () => this.syncOmarAction('torn.stockDividend', 'MCS') || this.result('cash', ar ? 'شركة ماك سموغل MCS' : 'MCS · Mc Smoogle Corp', ar ? '+300 طاقة و +$55,000 عائد' : '+300 Energy & +$55,000 Dividend', '+300E') },
-            { title: ar ? 'هيئة LAG (بطاقة محامٍ) · THS (صندوق طبي) · PRN (شريط معزز)' : 'LAG (Lawyer Card) · THS (Med Box) · PRN (Erotic DVD)', badge: ar ? 'حزم الإمداد' : 'UTILITY BLOCKS', meta: ar ? 'صناديق إمدادات قابلة للاستهلاك كل 7 أيام' : '7-Day Weekly Consumable Supply Blocks', detail: ar ? 'تمنح LAG بطاقات محامٍ للإفراج الفوري من السجن، وتقدم PRN أشرطة معززة للمعنويات أسبوعياً.' : 'LAG drops Lawyer Business Cards (instant jail release); PRN drops Erotic DVDs; LSC drops Lottery Vouchers.', color: 'var(--acc)', btn: ar ? 'تحصيل حزمة FHG' : 'Claim FHG Block', act: () => this.syncOmarAction('torn.stockDividend', 'FHG') || this.result('cash', ar ? 'مجموعة فنادق FHG' : 'FHG · Feathery Hotels Group', ar ? '1× قسيمة فندقية (+$135,000)' : '1x Feathery Hotel Coupon (+$135,000)', '+$135,000') },
-            { title: ar ? 'جامعة WSU (-10% مدة الدراسة) · TCHS · ELT · HRG · SYS (جدار ناري)' : 'WSU (-10% Edu Time) · TCHS · ELT · HRG · SYS (Firewall)', badge: ar ? '35 سهماً مدرجاً' : '35 TICKERS', meta: ar ? 'جميع أسهم البورصة الـ 35 مدرجة بالكامل في النظام' : 'All 35 Torn Exchange Tickers Harvested in torn_stocks.json', detail: ar ? 'يخفض سهم WSU مدة جميع المساقات الجامعية الـ 131 بنسبة 10%، ويوفر SYS جداراً نارياً متقدماً.' : 'WSU cuts all 131 University course durations by 10%; SYS provides an Advanced Firewall against virus attacks.', color: 'var(--gold)', btn: ar ? 'تحصيل حزمة LAG' : 'Claim LAG Block', act: () => this.syncOmarAction('torn.stockDividend', 'LAG') || this.result('cash', ar ? 'هيئة الدفاع القانوني LAG' : 'LAG · Legal Authorities', ar ? '1× بطاقة محامٍ (+$38,000)' : '1x Lawyer Business Card (+$38,000)', '+$38,000') }
+            { title: ar ? 'بنك TSB ($50M/31 يوم) · TCI (+10% فائدة البنك) · IOU ($12M)' : 'TSB ($50M/31d) · TCI (+10% Bank APR) · IOU ($12M/31d)', badge: ar ? 'حزم البنوك' : 'BANK BLOCKS', meta: ar ? '3,000,000 سهم TSB · 1,500,000 سهم TCI · 5 فترات ودائع' : '3,000,000 Shares TSB · 1,500,000 Shares TCI · 5 Bank CD Terms', detail: ar ? 'يرفع سهم TCI فائدة ودائع البنك لمدة 90 يوماً إلى الحد الأقصى، ويدفع TSB عائد $50,000,000 كل 31 يوماً.' : 'TCI boosts 90-Day City Bank CD APR to max yield; TSB pays $50,000,000 cash every 31 days; GRN pays $4,000,000.', color: 'var(--acc)', btn: ar ? 'تحصيل عائد TSB' : 'Claim TSB Div', act: () => { this.syncOmarAction('torn.stockDividend', 'SYM'); this.result('cash', ar ? 'بنك TSB المالي' : 'TSB · Trust & Syndicate Bank', ar ? 'تم تحصيل عائد الحزمة الشهرية' : 'Monthly Dividend Block Collected', '+$42,000'); } },
+            { title: ar ? 'فنادق FHG (قسيمة إقامة) · SYM (حزمة منشطات) · MCS (+300 طاقة)' : 'FHG (Feathery Coupon) · SYM (Drug Pack) · MCS (+300E)', badge: ar ? 'حزم الطاقة' : 'BOOST BLOCKS', meta: ar ? 'عوائد أسبوعية من العناصر والطاقة كل 7 أيام' : '7-Day Weekly Item & Energy Dividend Blocks', detail: ar ? 'يمنح FHG قسائم فندقية (+500 طاقة)، ويقدم SYM حزم منشطات، ويمنح MCS +300 طاقة مجانية أسبوعياً.' : 'FHG drops Feathery Hotel Coupons (+500E); SYM drops Drug Packs (10x Xanax); MCS grants +100/+300 Free Energy weekly.', color: 'var(--gold)', btn: ar ? 'تحصيل MCS +300 طاقة' : 'Claim MCS +300E', act: () => { this.syncOmarAction('torn.stockDividend', 'MCS'); this.result('cash', ar ? 'شركة ماك سموغل MCS' : 'MCS · Mc Smoogle Corp', ar ? '+300 طاقة و +$55,000 عائد' : '+300 Energy & +$55,000 Dividend', '+300E'); } },
+            { title: ar ? 'هيئة LAG (بطاقة محامٍ) · THS (صندوق طبي) · PRN (شريط معزز)' : 'LAG (Lawyer Card) · THS (Med Box) · PRN (Erotic DVD)', badge: ar ? 'حزم الإمداد' : 'UTILITY BLOCKS', meta: ar ? 'صناديق إمدادات قابلة للاستهلاك كل 7 أيام' : '7-Day Weekly Consumable Supply Blocks', detail: ar ? 'تمنح LAG بطاقات محامٍ للإفراج الفوري من السجن، وتقدم PRN أشرطة معززة للمعنويات أسبوعياً.' : 'LAG drops Lawyer Business Cards (instant jail release); PRN drops Erotic DVDs; LSC drops Lottery Vouchers.', color: 'var(--acc)', btn: ar ? 'تحصيل حزمة FHG' : 'Claim FHG Block', act: () => { this.syncOmarAction('torn.stockDividend', 'FHG'); this.result('cash', ar ? 'مجموعة فنادق FHG' : 'FHG · Feathery Hotels Group', ar ? '1× قسيمة فندقية (+$135,000)' : '1x Feathery Hotel Coupon (+$135,000)', '+$135,000'); } },
+            { title: ar ? 'جامعة WSU (-10% مدة الدراسة) · TCHS · ELT · HRG · SYS (جدار ناري)' : 'WSU (-10% Edu Time) · TCHS · ELT · HRG · SYS (Firewall)', badge: ar ? '35 سهماً مدرجاً' : '35 TICKERS', meta: ar ? 'جميع أسهم البورصة الـ 35 مدرجة بالكامل في النظام' : 'All 35 Syndicate Exchange Tickers & Dividend Blocks', detail: ar ? 'يخفض سهم WSU مدة جميع المساقات الجامعية الـ 131 بنسبة 10%، ويوفر SYS جداراً نارياً متقدماً.' : 'WSU cuts all 131 University course durations by 10%; SYS provides an Advanced Firewall against virus attacks.', color: 'var(--gold)', btn: ar ? 'تحصيل حزمة LAG' : 'Claim LAG Block', act: () => { this.syncOmarAction('torn.stockDividend', 'LAG'); this.result('cash', ar ? 'هيئة الدفاع القانوني LAG' : 'LAG · Legal Authorities', ar ? '1× بطاقة محامٍ (+$38,000)' : '1x Lawyer Business Card (+$38,000)', '+$38,000'); } }
           ],
           arsenal: [
-            { title: ar ? '185 سلاحاً قتالياً ومنظومة التسلح الرباعية' : '185 Harvested Weapons & 4-Slot Loadout', badge: ar ? '185 سلاحاً' : '185 WEAPONS', meta: ar ? 'رئيسي · ثانوي · سلاح أبيض · مؤقت · تخفٍ 0.0-10.0' : 'Primary · Secondary · Melee · Temporary · Stealth 0.0-10.0', detail: ar ? 'يمتلك كل سلاح قيم ضرر ودقة ومستوى تخفٍ ومعدل إطلاق وسعة مخزن و 6 مزايا للضربة القاضية.' : 'Every weapon in torn_items.json has exact damage, accuracy, stealth_level, rate_of_fire, magazine_rounds, and 6 finishing hit perks.', color: 'var(--acc)', btn: ar ? 'تجهيز ArmaLite' : 'Equip ArmaLite', act: () => this.syncOmarAction('torn.combatPrep', 'heart:ap:primary') || this.result('good', ar ? 'المنفذ الرئيسي · ArmaLite M-15A4' : 'Primary Slot · ArmaLite M-15A4', ar ? 'تصويب القلب 3.0x حرج + ذخيرة خارقة' : 'Heart 3.0x Crit + Piercing Ammo Armed', 'Armed') },
-            { title: ar ? '74 درعاً واقياً ونسب التغطية التشريحية لكل عضو' : '74 Harvested Armors & Per-Body-Part Coverage %', badge: ar ? '74 درعاً' : '74 ARMORS', meta: ar ? 'القلب 97.27% · المعدة 95.09% · الصدر 90.22% · الذراع 6.50%' : 'Heart 97.27% · Stomach 95.09% · Chest 90.22% · Arm 6.50%', detail: ar ? 'تعمل الدروع حسب العضو المستهدف: إصابة الذراع المكشوفة (6.5%) أو الحنجرة تتجاوز درع الصدر الثقيل!' : "Armor in Torn mitigates per body part: hitting an exposed Arm (6.5% coverage) or Throat bypasses a defender\'s vest!", color: 'var(--gold)', btn: ar ? 'تصويب الحنجرة' : 'Aim Exposed Throat', act: () => this.syncOmarAction('torn.combatPrep', 'throat:hp:primary') || this.result('good', ar ? 'التصويب التشريحي: الحنجرة (3.5x)' : 'Anatomical Target: Throat (3.5x)', ar ? 'تجاوز تغطية درع الصدر (90.2%)' : 'Bypasses Chest Armor Coverage (90.2%)', '3.5x Crit') },
-            { title: ar ? '30 ملحقاً للأسلحة (5 مستويات) و 21 عيار ذخيرة' : '30 Weapon Modifications (Tiers 1-5) & 21 Ammo Calibers', badge: ar ? '30 ملحقاً · 21 ذخيرة' : '30 MODS · 21 AMMO', meta: ar ? 'منظار حراري (+1.75 دقة) · ليزر 100mW (+8% حرج) · كواتم صوت' : 'Thermal Sight (+1.75 Acc) · 100mW Laser (+8% Crit) · Suppressors', detail: ar ? 'تركيب ملحقين لكل سلاح مع تلقيم ذخيرة خطاطة أو متفجرة أو خارقة للدروع أو حارقة.' : 'Attach 2 modifications per weapon from torn_itemmods.json and load Tracer, Hollow Point, Piercing, or Incendiary calibers.', color: 'var(--acc)', btn: ar ? 'تركيب ليزر 100mW' : 'Mount 100mW Laser', act: () => this.syncOmarAction('torn.weaponMod', 'laser100') || this.result('good', ar ? 'تم تركيب ليزر 100mW (#8)' : '100mW Laser (#8) Mounted', ar ? '+8% معدل الضربة الحرجة نشط' : '+8% Critical Hit Rate Active', '+8% Crit') },
-            { title: ar ? 'معادلة الاحترام ذات الـ 7 مضاعفات ومزايا الضربة القاضية' : '7-Modifier Respect Formula & Finishing Hit Perks', badge: ar ? '7 مضاعفات' : '7 MODIFIERS', meta: ar ? 'تكافؤ القتال (3.0x) × الحرب (2.0x) × الثأر (1.5x) × الجماعي × الخارجي × السلسلة' : 'Fair Fight (3.0x) × War (2.0x) × Retal (1.5x) × Group × Overseas × Chain × Warlord', detail: ar ? 'مزايا الضربة القاضية: الغنيمة (+% نقد النشل)، أمير الحرب (+% احترام)، الإنعاش (استرداد 25 طاقة).' : 'Weapon finishers: Plunder (+% Mug Cash), Warlord (+% Respect), Revitalize (Refunds 25E), Stricken (+% Hosp Time), Proficience (+XP).', color: '#ff6a55', btn: ar ? 'تحصيل مكافأة باونتي' : 'Claim Bounty Hit', act: () => this.syncOmarAction('torn.bountyClaim', 'top') || this.result('cash', ar ? 'تم تحصيل عقد الباونتي' : 'Newspaper Bounty Claimed', ar ? 'تكافؤ القتال 2.85x · ميزة الغنيمة' : 'Fair Fight 2.85x · Plunder Finisher', '+$75,000') }
+            { title: ar ? '185 سلاحاً قتالياً ومنظومة التسلح الرباعية' : '185 Syndicate Weapons & 4-Slot Loadout', badge: ar ? '185 سلاحاً' : '185 WEAPONS', meta: ar ? 'رئيسي · ثانوي · سلاح أبيض · مؤقت · تخفٍ 0.0-10.0' : 'Primary · Secondary · Melee · Temporary · Stealth 0.0-10.0', detail: ar ? 'يمتلك كل سلاح قيم ضرر ودقة ومستوى تخفٍ ومعدل إطلاق وسعة مخزن و 6 مزايا للضربة القاضية.' : 'Every weapon in the Syndicate Armory carries calibrated damage, accuracy, stealth rating, rate of fire, magazine capacity, and 6 finishing hit perks.', color: 'var(--acc)', btn: ar ? 'تجهيز ArmaLite' : 'Equip ArmaLite', act: () => { this.syncOmarAction('torn.combatPrep', 'heart:ap:primary'); this.result('good', ar ? 'المنفذ الرئيسي · ArmaLite M-15A4' : 'Primary Slot · ArmaLite M-15A4', ar ? 'تصويب القلب 3.0x حرج + ذخيرة خارقة' : 'Heart 3.0x Crit + Piercing Ammo Armed', 'Armed'); } },
+            { title: ar ? '74 درعاً واقياً ونسب التغطية التشريحية لكل عضو' : '74 Ballistic Armors & Per-Body-Part Coverage %', badge: ar ? '74 درعاً' : '74 ARMORS', meta: ar ? 'القلب 97.27% · المعدة 95.09% · الصدر 90.22% · الذراع 6.50%' : 'Heart 97.27% · Stomach 95.09% · Chest 90.22% · Arm 6.50%', detail: ar ? 'تعمل الدروع حسب العضو المستهدف: إصابة الذراع المكشوفة (6.5%) أو الحنجرة تتجاوز درع الصدر الثقيل!' : "Anatomical armor mitigates per body zone: hitting an exposed Arm (6.5% coverage) or Throat bypasses a defender\'s vest!", color: 'var(--gold)', btn: ar ? 'تصويب الحنجرة' : 'Aim Exposed Throat', act: () => { this.syncOmarAction('torn.combatPrep', 'throat:hp:primary'); this.result('good', ar ? 'التصويب التشريحي: الحنجرة (3.5x)' : 'Anatomical Target: Throat (3.5x)', ar ? 'تجاوز تغطية درع الصدر (90.2%)' : 'Bypasses Chest Armor Coverage (90.2%)', '3.5x Crit'); } },
+            { title: ar ? '30 ملحقاً للأسلحة (5 مستويات) و 21 عيار ذخيرة' : '30 Weapon Modifications (Tiers 1-5) & 21 Ammo Calibers', badge: ar ? '30 ملحقاً · 21 ذخيرة' : '30 MODS · 21 AMMO', meta: ar ? 'منظار حراري (+1.75 دقة) · ليزر 100mW (+8% حرج) · كواتم صوت' : 'Thermal Sight (+1.75 Acc) · 100mW Laser (+8% Crit) · Suppressors', detail: ar ? 'تركيب ملحقين لكل سلاح مع تلقيم ذخيرة خطاطة أو متفجرة أو خارقة للدروع أو حارقة.' : 'Attach up to 2 tactical modifications per weapon and load Tracer, Hollow Point, Piercing, or Incendiary calibers.', color: 'var(--acc)', btn: ar ? 'تركيب ليزر 100mW' : 'Mount 100mW Laser', act: () => { this.syncOmarAction('torn.weaponMod', 'laser100'); this.result('good', ar ? 'تم تركيب ليزر 100mW (#8)' : '100mW Laser (#8) Mounted', ar ? '+8% معدل الضربة الحرجة نشط' : '+8% Critical Hit Rate Active', '+8% Crit'); } },
+            { title: ar ? 'معادلة الاحترام ذات الـ 7 مضاعفات ومزايا الضربة القاضية' : '7-Modifier Respect Formula & Finishing Hit Perks', badge: ar ? '7 مضاعفات' : '7 MODIFIERS', meta: ar ? 'تكافؤ القتال (3.0x) × الحرب (2.0x) × الثأر (1.5x) × الجماعي × الخارجي × السلسلة' : 'Fair Fight (3.0x) × War (2.0x) × Retal (1.5x) × Group × Overseas × Chain × Warlord', detail: ar ? 'مزايا الضربة القاضية: الغنيمة (+% نقد النشل)، أمير الحرب (+% احترام)، الإنعاش (استرداد 25 طاقة).' : 'Weapon finishers: Plunder (+% Mug Cash), Warlord (+% Respect), Revitalize (Refunds 25E), Stricken (+% Hosp Time), Proficience (+XP).', color: '#ff6a55', btn: ar ? 'تحصيل مكافأة باونتي' : 'Claim Bounty Hit', act: () => { this.syncOmarAction('torn.bountyClaim', 'top'); this.result('cash', ar ? 'تم تحصيل عقد الباونتي' : 'Newspaper Bounty Claimed', ar ? 'تكافؤ القتال 2.85x · ميزة الغنيمة' : 'Fair Fight 2.85x · Plunder Finisher', '+$75,000'); } }
           ],
           specials: [
-            { title: ar ? 'جميع المنشطات الـ 11 وأدوار سيناريوهات السطو 2.0' : 'All 11 Harvested Drugs & OC 2.0 Scenario Roles', badge: ar ? '11 منشطاً' : '11 DRUGS', meta: ar ? 'زاناكس (+250 طاقة) · إكستاسي (2x معنويات) · فيكودين (+25% صفات)' : 'Xanax (+250E) · Ecstasy (2x Happy) · Vicodin (+25% Stats) · Love Juice', detail: ar ? 'منشطات القتال والتدريب والجرائم: ترفع الطاقة والجرأة والصفات القتالية أو تلغي وقت المستشفى فوراً.' : 'Cannabis (+8-12N), Ketamine (+50% DEF), LSD (+50E/+5N/+500H), Opium (Instant Hosp Clear), PCP (+20% STR/DEX), Shrooms, Speed.', color: 'var(--acc)', btn: ar ? 'تنفيذ قفزة المعنويات' : 'Run Happy Stack', act: () => this.syncOmarAction('torn.happyJump', 'stack') || this.result('good', ar ? 'مصفوفة المنشطات الـ 11' : '11-Drug Toxicology Stack', ar ? 'تم تطبيق +250 طاقة ومضاعفة المعنويات' : 'Xanax +250E & Ecstasy 2x Happy Applied', '+250E') },
-            { title: ar ? '44 كتاباً دراسياً لمدة 31 يوماً بمكافآت استثنائية' : '44 Passive 31-Day Books (torn_items.json)', badge: ar ? '44 كتاباً' : '44 BOOKS', meta: ar ? 'طاقة مضاعفة (+250 سقف الطاقة) · القوة فوق العقل · نعيم الجهل' : 'Ugly Energy (+250 Max E) · Brawn Over Brains · Ignorance Is Bliss', detail: ar ? 'كتب دراسة غير قابلة للتداول تمنح مزايا هائلة لمدة 31 يوماً (+100% مكاسب النادي، +250 سقف الطاقة، 0% إدمان).' : 'Non-tradable 31-day study books granting massive temporary passives (+100% Gym gains, +250 energy bar cap, 0% drug addiction).', color: 'var(--gold)', btn: ar ? 'قراءة كتاب 31 يوماً' : 'Read 31d Book', act: () => this.syncOmarAction('torn.readBook', 'ugly_energy') || this.result('good', ar ? 'بدء قراءة كتاب 31 يوماً' : '31-Day Book Started: Ugly Energy', ar ? '+150 طاقة و +500 معنويات نشطة' : '+150 Energy & +500 Happy Boost Applied', '31d Active') },
-            { title: ar ? '50 سيارة سباق (الفئة E ← A) و 265 قطعة تعديل' : '50 Raceway Cars (Class E -> A) & 265 Upgrade Parts', badge: ar ? '50 سيارة' : '50 CARS', meta: ar ? 'حلبة السباق · الفئة E ← D ← C ← B ← A · بطولات رسمية' : 'Torn Raceway · Class E -> D -> C -> B -> A · Official & Custom', detail: ar ? '50 سيارة سباق حقيقية مع أشجار تعديل التيربو، ناقل الحركة، نظام التعليق، والمكابح.' : '50 real racing cars harvested in torn_items.json with turbo, transmission, suspension, and brake upgrade trees.', color: 'var(--acc)', btn: ar ? 'خوض سباق الفئة A' : 'Enter Class A Race', act: () => this.syncOmarAction('torn.racewayRun', 'class_a') || this.result('cash', ar ? 'حلبة السباق · بطولة الفئة A' : 'Torn Raceway · Class A Championship', ar ? 'المركز الأول · +5 نقاط سباق و +$28,000' : '1st Place Finish · +5 Racing Points & +$28,000', '+$28,000') },
-            { title: ar ? 'عقود ديوك، 100 مكافأة باونتي حية، و 907 أوسمة وميداليات' : 'Duke Mission Giver, 100 Live Bounties & 907 Honors/Medals', badge: ar ? '532 وساماً · 375 ميدالية' : '532 HONORS · 375 MEDALS', meta: ar ? 'متجر رصيد مهام ديوك · 25 عقاراً · 27 شجرة ميرتس' : 'Duke Mission Credits Shop · 25 Properties · 27 Merit Trees', detail: ar ? 'أكمل عقود ديوك لكسب رصيد المهام (شراء ملحقات الأسلحة والكتب)، واحصد مكافآت الباونتي والأوسمة.' : 'Complete Duke contracts for Mission Credits (buy Weapon Mods & Books), claim 100 live Newspaper Bounties, and unlock 907 Honors/Medals.', color: 'var(--gold)', btn: ar ? 'إتمام عقد ديوك' : 'Complete Duke Op', act: () => this.syncOmarAction('torn.dukeMission', 'duke_contract') || this.result('cash', ar ? 'اكتمل عقد مهمة ديوك' : 'Duke Mission Contract Complete', ar ? '+15 رصيد مهام و +$35,000' : '+15 Mission Credits & +$35,000 Awarded', '+$35,000') }
+            { title: ar ? 'جميع المنشطات الـ 11 وأدوار سيناريوهات السطو 2.0' : 'All 11 Syndicate Stimulants & OC 2.0 Scenario Roles', badge: ar ? '11 منشطاً' : '11 DRUGS', meta: ar ? 'زاناكس (+250 طاقة) · إكستاسي (2x معنويات) · فيكودين (+25% صفات)' : 'Xanax (+250E) · Ecstasy (2x Happy) · Vicodin (+25% Stats) · Love Juice', detail: ar ? 'منشطات القتال والتدريب والجرائم: ترفع الطاقة والجرأة والصفات القتالية أو تلغي وقت المستشفى فوراً.' : 'Cannabis (+8-12N), Ketamine (+50% DEF), LSD (+50E/+5N/+500H), Opium (Instant Hosp Clear), PCP (+20% STR/DEX), Shrooms, Speed.', color: 'var(--acc)', btn: ar ? 'تنفيذ قفزة المعنويات' : 'Run Happy Stack', act: () => { this.syncOmarAction('torn.happyJump', 'stack'); this.result('good', ar ? 'مصفوفة المنشطات الـ 11' : '11-Drug Toxicology Stack', ar ? 'تم تطبيق +250 طاقة ومضاعفة المعنويات' : 'Xanax +250E & Ecstasy 2x Happy Applied', '+250E'); } },
+            { title: ar ? '44 كتاباً دراسياً لمدة 31 يوماً بمكافآت استثنائية' : '44 Syndicate 31-Day Study Books', badge: ar ? '44 كتاباً' : '44 BOOKS', meta: ar ? 'طاقة مضاعفة (+250 سقف الطاقة) · القوة فوق العقل · نعيم الجهل' : 'Ugly Energy (+250 Max E) · Brawn Over Brains · Ignorance Is Bliss', detail: ar ? 'كتب دراسة غير قابلة للتداول تمنح مزايا هائلة لمدة 31 يوماً (+100% مكاسب النادي، +250 سقف الطاقة، 0% إدمان).' : 'Non-tradable 31-day study books granting massive temporary passives (+100% Gym gains, +250 energy bar cap, 0% drug addiction).', color: 'var(--gold)', btn: ar ? 'قراءة كتاب 31 يوماً' : 'Read 31d Book', act: () => { this.syncOmarAction('torn.readBook', 'ugly_energy'); this.result('good', ar ? 'بدء قراءة كتاب 31 يوماً' : '31-Day Book Started: Ugly Energy', ar ? '+150 طاقة و +500 معنويات نشطة' : '+150 Energy & +500 Happy Boost Applied', '31d Active'); } },
+            { title: ar ? '50 سيارة سباق (الفئة E ← A) و 265 قطعة تعديل' : '50 Raceway Cars (Class E -> A) & 265 Upgrade Parts', badge: ar ? '50 سيارة' : '50 CARS', meta: ar ? 'حلبة السباق · الفئة E ← D ← C ← B ← A · بطولات رسمية' : 'Zone Raceway · Class E -> D -> C -> B -> A · Official & Custom', detail: ar ? '50 سيارة سباق حقيقية مع أشجار تعديل التيربو، ناقل الحركة، نظام التعليق، والمكابح.' : '50 tuned racing vehicles with turbo, transmission, suspension, and brake upgrade trees.', color: 'var(--acc)', btn: ar ? 'خوض سباق الفئة A' : 'Enter Class A Race', act: () => { this.syncOmarAction('torn.racewayRun', 'class_a'); this.result('cash', ar ? 'حلبة السباق · بطولة الفئة A' : 'Zone Raceway · Class A Championship', ar ? 'المركز الأول · +5 نقاط سباق و +$28,000' : '1st Place Finish · +5 Racing Points & +$28,000', '+$28,000'); } },
+            { title: ar ? 'عقود ديوك، 100 مكافأة باونتي حية، و 907 أوسمة وميداليات' : 'Duke Mission Giver, 100 Live Bounties & 907 Honors/Medals', badge: ar ? '532 وساماً · 375 ميدالية' : '532 HONORS · 375 MEDALS', meta: ar ? 'متجر رصيد مهام ديوك · 25 عقاراً · 27 شجرة ميرتس' : 'Duke Mission Credits Shop · 25 Properties · 27 Merit Trees', detail: ar ? 'أكمل عقود ديوك لكسب رصيد المهام (شراء ملحقات الأسلحة والكتب)، واحصد مكافآت الباونتي والأوسمة.' : 'Complete Duke contracts for Mission Credits (buy Weapon Mods & Books), claim 100 live Newspaper Bounties, and unlock 907 Honors/Medals.', color: 'var(--gold)', btn: ar ? 'إتمام عقد ديوك' : 'Complete Duke Op', act: () => { this.syncOmarAction('torn.dukeMission', 'duke_contract'); this.result('cash', ar ? 'اكتمل عقد مهمة ديوك' : 'Duke Mission Contract Complete', ar ? '+15 رصيد مهام و +$35,000' : '+15 Mission Credits & +$35,000 Awarded', '+$35,000'); } }
           ]
         };
         return datasets[curTab] || datasets.crimes;

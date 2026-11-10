@@ -37,7 +37,7 @@ final class ProgressionService
             $state = $this->load($playerId);
             $this->syncSharedBenefits($playerId, $state);
             if ($this->completeEducation($playerId, $state)) $this->save($playerId, $state);
-            if (getenv('VERCEL') === '1') $this->emitLedgerCookie($playerId, $state);
+            if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') $this->emitLedgerCookie($playerId, $state);
             return $this->response($playerId, $state);
         });
     }
@@ -222,20 +222,16 @@ final class ProgressionService
             $this->resources->regenerate($playerId);
             $state = $this->load($playerId);
             if ($state['version'] !== $expectedVersion) {
-                if (getenv('VERCEL') === '1') {
+                if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') {
                     $state['version'] = max(1, $expectedVersion);
                 } else {
                     throw new RuntimeException('Progression state changed. Refresh and try again.');
                 }
             }
             $this->completeEducation($playerId, $state);
-            if (!in_array($action, ['jail.bailSelf', 'item.use'], true)) $this->assertAvailable($playerId);
+            if (!in_array($action, ['jail.bailSelf', 'item.use', 'torn.lawyerCard', 'torn.bloodBag'], true)) $this->assertAvailable($playerId);
             $player = $this->player($playerId);
-            if (getenv('VERCEL') === '1') {
-                if ((int) ($state['version'] ?? 1) <= 1 && (int) ($player['cash'] ?? 0) <= 2500) {
-                    $this->database->execute('UPDATE players SET cash = 85000, bank_balance = CASE WHEN bank_balance < 125000 THEN 125000 ELSE bank_balance END WHERE id = :id', ['id' => $playerId]);
-                    $player = $this->player($playerId);
-                }
+            if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') {
                 if ((int) ($state['merits'] ?? 0) === 0 && empty($state['meritTree'])) $state['merits'] = 6;
             }
             $correlationId = bin2hex(random_bytes(16));
@@ -463,7 +459,9 @@ final class ProgressionService
                     $daysLeft = !empty($cfg['extend']) ? ((int) ($curLease['daysLeft'] ?? 33) + (int) $cfg['days']) : (int) $cfg['days'];
                     $totalDays = !empty($cfg['extend']) ? ((int) ($curLease['totalDays'] ?? 100) + (int) $cfg['days']) : (int) $cfg['days'];
                     $state['prop'] = $cfg['id'];
+                    $state['ownedProperties'][$cfg['id']] = 1;
                     $state['propertyLease'] = ['id' => $cfg['id'], 'nameEn' => $cfg['nameEn'], 'nameAr' => $cfg['nameAr'], 'daysLeft' => $daysLeft, 'totalDays' => $totalDays, 'happy' => (int) $cfg['happy']];
+                    $this->database->execute('UPDATE players SET max_happy = MAX(max_happy, :happy) WHERE id = :id', ['happy' => (int) $cfg['happy'], 'id' => $playerId]);
                     $result['cashDelta'] = -(int) $cfg['cost'];
                     break;
                 case 'city.spawnClaim':
@@ -493,9 +491,15 @@ final class ProgressionService
                     $result['cashDelta'] = -$cost;
                     break;
                 case 'museum.exchange':
+                    $plushKeys = ['plush_camel', 'plush_bear', 'plush_moose', 'plush_pharaoh', 'plush_falcon', 'plush_lion'];
                     $state['plushies'] = is_array($state['plushies'] ?? null) ? $state['plushies'] : ['plush_camel' => 1, 'plush_bear' => 1, 'plush_moose' => 1, 'plush_pharaoh' => 1, 'plush_falcon' => 1, 'plush_lion' => 1];
-                    foreach (['plush_camel', 'plush_bear', 'plush_moose', 'plush_pharaoh', 'plush_falcon', 'plush_lion'] as $pk) {
-                        $state['plushies'][$pk] = max(0, (int) ($state['plushies'][$pk] ?? 1) - 1);
+                    foreach ($plushKeys as $pk) {
+                        if ((int) ($state['plushies'][$pk] ?? 0) < 1) {
+                            throw new RuntimeException('Complete a full plushie set before exchanging.');
+                        }
+                    }
+                    foreach ($plushKeys as $pk) {
+                        $state['plushies'][$pk] = (int) $state['plushies'][$pk] - 1;
                     }
                     $state['points'] = (int) ($state['points'] ?? 0) + 10;
                     break;
@@ -517,6 +521,7 @@ final class ProgressionService
                         $state['plushies'][$id] = (int) ($state['plushies'][$id] ?? 0) + 1;
                     } else {
                         $state['inv'][$id] = (int) ($state['inv'][$id] ?? 0) + 1;
+                        $this->ledger->record($playerId, 'item:' . $id, 1, (int) $state['inv'][$id], 'social.bazaarBuy', $correlationId);
                     }
                     $result['cashDelta'] = -$cost;
                     break;
@@ -584,7 +589,7 @@ final class ProgressionService
                     $result['cashDelta'] = $cfg['cash'];
                     break;
                 case 'torn.searchCash':
-                    $locs = ['fountain' => 3600, 'trash' => 4100, 'junkyard' => 5400, 'cemetery' => 6800];
+                    $locs = ['fountain' => 3600, 'trash' => 4100, 'junkyard' => 5400, 'cemetery' => 6800, 'subway' => 9500];
                     $gain = $locs[$id] ?? 3600;
                     if ((int) ($player['nerve'] ?? 0) < 2) throw new RuntimeException('Not enough nerve to search district.');
                     $this->database->execute('UPDATE players SET nerve = nerve - 2 WHERE id = :id', ['id' => $playerId]);
@@ -625,6 +630,7 @@ final class ProgressionService
                 case 'torn.oc2Heist':
                 case 'torn.ocExecute':
                     $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + 35;
+                    $state['crimeXp'] = (int) ($state['crimeXp'] ?? 120) + 35;
                     $this->cash($playerId, 65000, 'torn.oc2Heist:' . $id, $correlationId);
                     $result['cashDelta'] = 65000;
                     break;
@@ -651,9 +657,10 @@ final class ProgressionService
                     $result['cashDelta'] = $gain;
                     break;
                 case 'torn.gymSpec':
+                    $specBonuses = ['georges' => 50, 'balboas' => 80, 'frontline' => 80];
                     $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
                     $state['tornState']['gymSpec'] = $id;
-                    $state['gymXp'] = (int) ($state['gymXp'] ?? 350) + 65;
+                    $state['gymXp'] = (int) ($state['gymXp'] ?? 0) + ($specBonuses[$id] ?? 65);
                     break;
                 case 'torn.rehab':
                     $state['cooldowns'] = is_array($state['cooldowns'] ?? null) ? $state['cooldowns'] : ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
@@ -661,8 +668,12 @@ final class ProgressionService
                     $this->database->execute('UPDATE players SET happy = MIN(99999, happy + 500) WHERE id = :id', ['id' => $playerId]);
                     break;
                 case 'torn.sectorWall':
+                    $wallOps = ['assault' => [25, 8], 'reinforce' => [15, 5], 'truce' => [10, 3]];
+                    [$respGain, $wallDelta] = $wallOps[$id] ?? [20, 5];
                     $state['points'] = (int) ($state['points'] ?? 45) + 2;
-                    $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + 20;
+                    $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + $respGain;
+                    $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
+                    $state['tornState']['wallPct'] = min(100, (int) ($state['tornState']['wallPct'] ?? 64) + $wallDelta);
                     break;
                 case 'torn.smuggle':
                     $hubs = ['jnb' => 42000, 'dxb' => 38500, 'pek' => 34000, 'hnd' => 31500, 'lcy' => 24000, 'gcm' => 14500];
@@ -671,7 +682,7 @@ final class ProgressionService
                     $result['cashDelta'] = $gain;
                     break;
                 case 'torn.companySpecial':
-                    $jpCosts = ['sweet' => 5, 'adult' => 5, 'oil' => 10, 'fitness' => 8];
+                    $jpCosts = ['sweet' => 10, 'adult' => 8, 'oil' => 10, 'fitness' => 10];
                     $jpCost = $jpCosts[$id] ?? 5;
                     $state['jobPts'] = max(0, (int) ($state['jobPts'] ?? 25) - $jpCost);
                     if ($id === 'oil') {
@@ -680,7 +691,8 @@ final class ProgressionService
                     } elseif ($id === 'fitness') {
                         $this->database->execute('UPDATE players SET energy = MIN(1000, energy + 300) WHERE id = :id', ['id' => $playerId]);
                     } else {
-                        $this->database->execute('UPDATE players SET happy = MIN(99999, happy + 2500) WHERE id = :id', ['id' => $playerId]);
+                        $happyGain = $id === 'sweet' ? 4500 : 2500;
+                        $this->database->execute('UPDATE players SET happy = MIN(99999, happy + :h) WHERE id = :id', ['h' => $happyGain, 'id' => $playerId]);
                     }
                     break;
                 case 'torn.bazaarShield':
@@ -690,6 +702,8 @@ final class ProgressionService
                 case 'torn.eduMajor':
                     $state['eduDone'] = is_array($state['eduDone'] ?? null) ? $state['eduDone'] : [];
                     $state['eduDone'][$id] = 1;
+                    $state['gymXp'] = (int) ($state['gymXp'] ?? 0) + 25;
+                    $state['crimeXp'] = (int) ($state['crimeXp'] ?? 0) + 12;
                     break;
                 case 'torn.islandStaff':
                     $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
@@ -701,11 +715,29 @@ final class ProgressionService
                     $state['jailUntil'] = 0;
                     break;
                 case 'torn.bloodBag':
-                    $state['hospUntil'] = 0;
-                    $this->database->execute('UPDATE players SET life = max_life WHERE id = :id', ['id' => $playerId]);
+                    if ($id === 'draw') {
+                        $lifeLoss = max(1, (int) round(((int) ($player['max_life'] ?? 250)) * 0.15));
+                        $newLife = max(1, (int) ($player['life'] ?? 250) - $lifeLoss);
+                        $this->database->execute('UPDATE players SET life = :life WHERE id = :id', ['life' => $newLife, 'id' => $playerId]);
+                        $state['inv']['smallkit'] = (int) ($state['inv']['smallkit'] ?? 0) + 1;
+                        $this->ledger->record($playerId, 'item:smallkit', 1, (int) $state['inv']['smallkit'], 'torn.bloodBag:draw', $correlationId);
+                    } elseif ($id === 'revive') {
+                        $state['hospUntil'] = 0;
+                        $this->database->execute('UPDATE players SET life = max_life, energy = MAX(0, energy - 25) WHERE id = :id', ['id' => $playerId]);
+                    } else {
+                        $state['hospUntil'] = 0;
+                        $state['cooldowns'] = is_array($state['cooldowns'] ?? null) ? $state['cooldowns'] : ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
+                        $state['cooldowns']['medicalUntil'] = max((int) ($state['cooldowns']['medicalUntil'] ?? 0), $this->now()) + 900000;
+                        $this->database->execute('UPDATE players SET life = max_life WHERE id = :id', ['id' => $playerId]);
+                    }
                     break;
                 case 'torn.casinoPlay':
-                    $games = ['wheel' => 65000, 'roulette' => 50000, 'sportsbook' => 48000, 'slots' => 35000];
+                    if ($id === 'rr_shot') {
+                        $state['hospUntil'] = $this->now() + 900000;
+                        $result['cashDelta'] = 0;
+                        break;
+                    }
+                    $games = ['wheel' => 65000, 'rr' => 50000, 'roulette' => 50000, 'bookie' => 48000, 'sportsbook' => 48000, 'slots' => 35000];
                     $win = $games[$id] ?? 35000;
                     $this->cash($playerId, $win, 'torn.casinoPlay:' . $id, $correlationId);
                     $result['cashDelta'] = $win;
@@ -779,6 +811,21 @@ final class ProgressionService
                     $state['points'] = (int) ($state['points'] ?? 45) + 5;
                     $this->cash($playerId, 28000, 'torn.racewayRun:' . $id, $correlationId);
                     $result['cashDelta'] = 28000;
+                    break;
+                case 'tactical.convoy':
+                    $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + 35;
+                    $this->cash($playerId, 18500, 'tactical.convoy', $correlationId);
+                    $result['cashDelta'] = 18500;
+                    break;
+                case 'tactical.ambush':
+                    $state['ctr']['wins'] = (int) ($state['ctr']['wins'] ?? 0) + 1;
+                    $this->cash($playerId, 14200, 'tactical.ambush', $correlationId);
+                    $result['cashDelta'] = 14200;
+                    break;
+                case 'tactical.sweep':
+                    $state['crimeXp'] = (int) ($state['crimeXp'] ?? 120) + 25;
+                    $this->cash($playerId, 9500, 'tactical.sweep', $correlationId);
+                    $result['cashDelta'] = 9500;
                     break;
                 default:
                     throw new InvalidArgumentException('Unknown gameplay action.');
@@ -880,7 +927,7 @@ final class ProgressionService
                 $this->database->execute('UPDATE players SET max_happy = :maximum, happy = :happy WHERE id = :id', ['maximum' => $capacity, 'happy' => min($player['happy'], $capacity), 'id' => $playerId]);
                 $this->save($playerId, $state);
             }
-            if (getenv('VERCEL') === '1') {
+            if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') {
                 $this->hydrateVercelLedgerCookie($playerId, $state, (int) ($row['version'] ?? 1));
             }
             return $state;
@@ -898,7 +945,7 @@ final class ProgressionService
         // Existing founder data is preserved. New beta accounts begin at level
         // one without fictitious wealth, faction history or unlocked progression.
         if ($playerId !== 'founder-player') {
-            $isVercel = getenv('VERCEL') === '1';
+            $isVercel = getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1';
             $state = array_replace($state, [
                 'inv' => $isVercel ? ['bullpup_1' => 1, 'assaultrifle_3' => 1, 'vest' => 1, 'medkit' => 4, 'smallkit' => 3, 'drink' => 4, 'pills' => 2] : ['smallkit' => 1],
                 'equip' => $isVercel ? 'bullpup_1' : 'fists',
@@ -909,13 +956,10 @@ final class ProgressionService
                 'gym' => $isVercel ? 1 : 0,
                 'gymXp' => $isVercel ? 350 : 0,
                 'prop' => 'shack',
-                'ownedProperties' => ['shack' => 1, 'apt' => 1],
+                'ownedProperties' => $isVercel ? ['shack' => 1, 'apt' => 1] : ['shack' => 1],
                 'crimeXp' => $isVercel ? 120 : 0,
                 'fac' => ['respect' => $isVercel ? 1480 : 0, 'chain' => $isVercel ? 12 : 0, 'best' => $isVercel ? 25 : 0, 'chainAt' => 0, 'ups' => [], 'warEnd' => 0],
             ]);
-            if ($isVercel) {
-                $this->database->execute('UPDATE players SET cash = CASE WHEN cash < 85000 THEN 85000 ELSE cash END, bank_balance = CASE WHEN bank_balance < 125000 THEN 125000 ELSE bank_balance END, level = CASE WHEN level < 7 THEN 7 ELSE level END WHERE id = :id', ['id' => $playerId]);
-            }
         }
         foreach ($this->catalog['market'] as $listing) {
             $price = $this->catalog['items'][$listing['item']]['price'];
@@ -937,7 +981,7 @@ final class ProgressionService
                 $this->ledger->record($playerId, 'item:' . $itemId, (int) $quantity, (int) $quantity, 'beta.starting-inventory', $correlationId);
             }
         }
-        if (getenv('VERCEL') === '1') {
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') {
             $this->hydrateVercelLedgerCookie($playerId, $state, 0);
         }
         return $state;
@@ -945,10 +989,13 @@ final class ProgressionService
 
     private function hydrateVercelLedgerCookie(string $playerId, array &$state, int $dbVersion): void
     {
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') !== '1') return;
+        $secret = \Zone\Engine\Core\Security\RequestGuard::ledgerSecret();
+        if ($secret === '') return;
         $raw = (string) ($_COOKIE['zone_player_ledger'] ?? \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, 'zone_player_ledger'));
         if ($raw === '' || !str_contains($raw, '.')) return;
         [$payload, $sig] = explode('.', $raw, 2);
-        if (!hash_equals(hash_hmac('sha256', $payload, 'zone-vercel-ledger-v126'), $sig)) return;
+        if (!hash_equals(hash_hmac('sha256', $payload, $secret), $sig)) return;
         $b64 = strtr($payload, '-_', '+/');
         $pad = strlen($b64) % 4;
         if ($pad > 0) $b64 .= str_repeat('=', 4 - $pad);
@@ -963,6 +1010,23 @@ final class ProgressionService
         $state['version'] = max((int) ($state['version'] ?? 1), $snapVersion);
         if (isset($snap['pts'])) $state['points'] = (int) $snap['pts'];
         if (isset($snap['m'])) $state['merits'] = (int) $snap['m'];
+        if (!empty($snap['inv']) && is_array($snap['inv'])) $state['inv'] = $snap['inv'];
+        if (array_key_exists('eq', $snap)) $state['equip'] = $snap['eq'];
+        if (array_key_exists('aeq', $snap)) $state['armorEquip'] = $snap['aeq'];
+        if (isset($snap['gym'])) $state['gym'] = (int) $snap['gym'];
+        if (isset($snap['gxp'])) $state['gymXp'] = (int) $snap['gxp'];
+        if (isset($snap['job']) && is_string($snap['job'])) $state['job'] = $snap['job'];
+        if (isset($snap['jp'])) $state['jobPts'] = (int) $snap['jp'];
+        if (!empty($snap['ed']) && is_array($snap['ed'])) $state['eduDone'] = $snap['ed'];
+        if (isset($snap['prop']) && is_string($snap['prop'])) $state['prop'] = $snap['prop'];
+        if (!empty($snap['op']) && is_array($snap['op'])) $state['ownedProperties'] = $snap['op'];
+        if (isset($snap['cxp'])) $state['crimeXp'] = (int) $snap['cxp'];
+        if (!empty($snap['fac']) && is_array($snap['fac'])) $state['fac'] = array_replace($state['fac'] ?? [], $snap['fac']);
+        if (!empty($snap['tc']) && is_array($snap['tc'])) $state['tornCombat'] = $snap['tc'];
+        if (!empty($snap['ts']) && is_array($snap['ts'])) $state['tornState'] = $snap['ts'];
+        if (!empty($snap['cd']) && is_array($snap['cd'])) $state['cooldowns'] = $snap['cd'];
+        if (isset($snap['ju'])) $state['jailUntil'] = (int) $snap['ju'];
+        if (isset($snap['hu'])) $state['hospUntil'] = (int) $snap['hu'];
         if (!empty($snap['mt']) && is_array($snap['mt'])) $state['meritTree'] = $snap['mt'];
         if (!empty($snap['pl']) && is_array($snap['pl'])) {
             $state['propertyLease'] = $snap['pl'];
@@ -989,7 +1053,9 @@ final class ProgressionService
 
     private function emitLedgerCookie(string $playerId, array $state): void
     {
-        if (getenv('VERCEL') !== '1') return;
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') !== '1') return;
+        $secret = \Zone\Engine\Core\Security\RequestGuard::ledgerSecret();
+        if ($secret === '') return;
         $p = $this->player($playerId);
         $snap = [
             'p' => $playerId,
@@ -999,6 +1065,23 @@ final class ProgressionService
             'v' => (int) ($state['version'] ?? 1),
             'pts' => (int) ($state['points'] ?? 45),
             'm' => (int) ($state['merits'] ?? 6),
+            'inv' => $state['inv'] ?? [],
+            'eq' => $state['equip'] ?? null,
+            'aeq' => $state['armorEquip'] ?? null,
+            'gym' => (int) ($state['gym'] ?? 1),
+            'gxp' => (int) ($state['gymXp'] ?? 0),
+            'job' => (string) ($state['job'] ?? 'grocer'),
+            'jp' => (int) ($state['jobPts'] ?? 0),
+            'ed' => $state['eduDone'] ?? [],
+            'prop' => (string) ($state['prop'] ?? 'shack'),
+            'op' => $state['ownedProperties'] ?? ['shack' => 1],
+            'cxp' => (int) ($state['crimeXp'] ?? 0),
+            'fac' => $state['fac'] ?? [],
+            'tc' => $state['tornCombat'] ?? [],
+            'ts' => $state['tornState'] ?? [],
+            'cd' => $state['cooldowns'] ?? [],
+            'ju' => (int) ($state['jailUntil'] ?? 0),
+            'hu' => (int) ($state['hospUntil'] ?? 0),
             'mt' => $state['meritTree'] ?? [],
             'pl' => $state['propertyLease'] ?? [],
             'plu' => $state['plushies'] ?? [],
@@ -1006,13 +1089,16 @@ final class ProgressionService
             'cs' => $state['claimedCitySpawns'] ?? [],
             'fl' => $state['friendsList'] ?? [],
             'tl' => $state['targetsList'] ?? [],
-            'pn' => substr((string) ($state['personalNotes'] ?? ''), 0, 350),
+            'pn' => substr((string) ($state['personalNotes'] ?? ''), 0, 280),
         ];
         $deflated = gzdeflate((string) json_encode($snap, JSON_UNESCAPED_UNICODE), 6);
         if ($deflated === false) return;
         $payload = rtrim(strtr(base64_encode($deflated), '+/', '-_'), '=');
-        $sig = hash_hmac('sha256', $payload, 'zone-vercel-ledger-v126');
-        $GLOBALS['__zone_ledger_cookie'] = $payload . '.' . $sig;
+        $sig = hash_hmac('sha256', $payload, $secret);
+        $cookie = $payload . '.' . $sig;
+        if (strlen($cookie) <= 3800) {
+            $GLOBALS['__zone_ledger_cookie'] = $cookie;
+        }
     }
 
     private function save(string $playerId, array &$state): void
@@ -1020,7 +1106,7 @@ final class ProgressionService
         $this->syncOnboarding($state);
         $state['version']++;
         $this->database->execute('UPDATE player_progression SET state_json = :state, version = :version, updated_at = :updated WHERE player_id = :id', ['state' => json_encode($state, JSON_THROW_ON_ERROR), 'version' => $state['version'], 'updated' => gmdate('c'), 'id' => $playerId]);
-        if (getenv('VERCEL') === '1') $this->emitLedgerCookie($playerId, $state);
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') === '1') $this->emitLedgerCookie($playerId, $state);
     }
 
     private function response(string $playerId, array $state): array
@@ -1056,6 +1142,8 @@ final class ProgressionService
             'id' => $property['id'], 'owned' => !empty($state['ownedProperties'][$property['id']]),
             'active' => $state['prop'] === $property['id'],
             'enterable' => !empty($state['ownedProperties'][$property['id']]), 'previewable' => true,
+            'happy' => (int) $property['happy'], 'price' => (int) $property['price'],
+            'trainingBoostPct' => round(log(1 + (int) $property['happy'] / 500) * 35, 1),
             'mediaAsset' => $property['mediaAsset'] ?? null,
         ], $this->catalog['properties']);
         $cds = $state['cooldowns'] ?? ['drugUntil' => 0, 'medicalUntil' => 0, 'boosterUntil' => 0, 'overdoseCount' => 0];
@@ -1131,10 +1219,10 @@ final class ProgressionService
             if ($definition === null) continue;
             $claimed = !empty($state['claimed'][$id]);
             if (!$claimed && $current === null) $current = $id;
-            $progress = (int) $state['ctr'][$definition['ctr']]; $ready = $progress >= $definition['n'];
-            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => (int) $definition['n'], 'progress' => $progress, 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
+            $progress = (int) $state['ctr'][$definition['ctr']]; $target = (int) $definition['n']; $ready = $progress >= $target;
+            $steps[] = ['missionId' => $id, 'counter' => $definition['ctr'], 'target' => $target, 'progress' => $progress, 'remaining' => max(0, $target - $progress), 'progressPct' => (int) min(100, round($progress / max(1, $target) * 100)), 'claimed' => $claimed, 'current' => $current === $id, 'claimable' => !$claimed && $ready && !$blocked && !$traveling, 'reason' => $claimed ? 'claimed' : ($traveling ? 'travel_required' : ($blocked ? 'recovery_required' : ($ready ? null : 'objective_incomplete'))), 'cash' => (int) $definition['cash'], 'points' => (int) $definition['pts']];
         }
-        return ['currentMissionId' => $current, 'completed' => $current === null, 'steps' => $steps];
+        return ['currentMissionId' => $current, 'completed' => $current === null, 'completedCount' => count(array_filter($steps, static fn (array $s): bool => $s['claimed'])), 'totalCount' => count($steps), 'steps' => $steps];
     }
 
     private function marketDiscount(string $playerId): int
@@ -1147,5 +1235,19 @@ final class ProgressionService
     private function marketPrice(int $base, int $discount): int
     {
         return max(1, (int) ceil($base * (10000 - $discount) / 10000));
+    }
+
+    public function catalogRevision(): string
+    {
+        return $this->catalogRevision;
+    }
+
+    public function ownedItemCount(string $playerId): int
+    {
+        $state = $this->load($playerId);
+        return count(array_filter(
+            is_array($state['inv'] ?? null) ? $state['inv'] : [],
+            static fn (mixed $qty): bool => (int) $qty > 0,
+        ));
     }
 }

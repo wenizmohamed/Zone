@@ -544,3 +544,9 @@ html[dir="rtl"] .studio-task-arrow { transform: scaleX(-1); }
   .nav-button.active, .studio-content-type[aria-selected="true"], .button.primary { border-color: Highlight; }
   .studio-save-indicator, .studio-workflow-status::before { background: CanvasText; }
 }
+
+@media (max-width: 760px) {
+  [data-open-engine-3d-holodeck="1"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}

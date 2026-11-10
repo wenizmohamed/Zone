@@ -246,8 +246,10 @@ function zone_env(string $name): ?string
 function require_admin_mutation(): string
 {
     global $zoneGatewayRequest;
-    if (!zone_admin_access()['authenticated']) throw new RuntimeException('Admin authentication required.');
+    $access = zone_admin_access();
+    if (!$access['authenticated']) throw new RuntimeException('Admin authentication required.');
     if (empty($_SERVER['HTTP_X_ZONE_ADMIN_TOKEN'])) \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
+    if (!empty($access['betaTesting'])) return 'beta-owner';
     if ($zoneGatewayRequest && ($_SERVER['HTTP_X_ZONE_GATEWAY_OWNER'] ?? '') === '1') return 'admin-session';
     if (zone_admin_secret() === '') return 'local-admin';
     return \Zone\Engine\Core\Security\RequestGuard::authorizeAdmin($_SERVER, zone_admin_secret(), getenv('VERCEL') === '1');
@@ -263,13 +265,10 @@ function current_player_id(): string
     global $engine;
     if (zone_sessions_enabled()) {
         $token = \Zone\Engine\Core\Security\RequestGuard::cookie($_SERVER, \Zone\Engine\Core\Security\BrowserSessions::COOKIE);
-        if ($token === '' && getenv('VERCEL') === '1') {
-            $token = hash('sha256', 'zone-vercel-ip:' . zone_client_address());
-        }
         if ($token !== '') {
             $id = $engine->browserSessions()->resolve($token);
             $claimed = trim((string) ($_SERVER['HTTP_X_ZONE_PLAYER_ID'] ?? ''));
-            if ($claimed !== '' && $claimed !== $id && getenv('VERCEL') !== '1') throw new RuntimeException('Player authentication failed.');
+            if ($claimed !== '' && $claimed !== $id) throw new RuntimeException('Player authentication failed.');
             $verb = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
             if (!in_array($verb, ['GET', 'HEAD', 'OPTIONS'], true)) \Zone\Engine\Core\Security\RequestGuard::assertSameOrigin($_SERVER, true, getenv('VERCEL') === '1');
             return $id;
@@ -374,6 +373,7 @@ try {
         if ($path === '/api/v1/auth/logout') {
             $engine->browserSessions()->revoke($token);
             zone_cookie(\Zone\Engine\Core\Security\BrowserSessions::COOKIE, '', time() - 3600);
+            zone_cookie('zone_player_ledger', '', time() - 3600);
             json_response(['authenticated' => false]);
         }
         $body = request_json();
@@ -429,23 +429,35 @@ try {
     if ($method === 'POST' && $path === '/api/v1/player-combat/action') {
         $body=request_json();
         foreach (['action','opponentId','approach'] as $field) if (isset($body[$field]) && !is_string($body[$field])) throw new InvalidArgumentException('Combat fields must be text.');
-        json_response($engine->playerCombatAction($body['action']??'', $body['opponentId']??'', $body['approach']??'', \Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
+        $pid=current_player_id();
+        $res=$engine->playerCombatAction($body['action']??'', $body['opponentId']??'', $body['approach']??'', \Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),$pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'GET' && $path === '/api/v1/player-market') json_response($engine->playerMarket(current_player_id()));
     if ($method === 'POST' && $path === '/api/v1/player-market/action') {
         $body=request_json();
         foreach (['action','id'] as $field) if (!is_string($body[$field]??null)) throw new InvalidArgumentException('Market action and ID must be text.');
-        json_response($engine->playerMarketAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'quantity'),isset($body['unitPrice'])?\Zone\Engine\Core\Security\RequestGuard::nonNegativeInt($body,'unitPrice'):0,\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
+        $pid=current_player_id();
+        $res=$engine->playerMarketAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'quantity'),isset($body['unitPrice'])?\Zone\Engine\Core\Security\RequestGuard::nonNegativeInt($body,'unitPrice'):0,\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),$pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'GET' && $path === '/api/v1/family-activities') json_response($engine->familyActivities(current_player_id()));
     if ($method === 'POST' && $path === '/api/v1/family-activities/action') {
         $body=request_json();
         foreach (['action','id'] as $field) if (!is_string($body[$field]??null)) throw new InvalidArgumentException('Family action and ID must be text.');
-        json_response($engine->familyActivityAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),current_player_id()));
+        $pid=current_player_id();
+        $res=$engine->familyActivityAction($body['action'],$body['id'],\Zone\Engine\Core\Security\RequestGuard::positiveInt($body,'expectedVersion'),$pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/combat/action') {
         $body = request_json();
-        json_response($engine->combatAction((string) ($body['action'] ?? ''), (string) ($body['opponentId'] ?? ''), (string) ($body['approach'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->combatAction((string) ($body['action'] ?? ''), (string) ($body['opponentId'] ?? ''), (string) ($body['approach'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/gameplay/action') {
         $body = request_json();
@@ -470,7 +482,10 @@ try {
     if ($method === 'POST' && $path === '/api/v1/factions/join') {
         $body = request_json();
         if (array_diff(array_keys($body), ['factionId']) || !is_string($body['factionId'] ?? null)) throw new InvalidArgumentException('Only a faction ID may be submitted.');
-        json_response($engine->joinFaction($body['factionId'], current_player_id()), 201);
+        $pid = current_player_id();
+        $res = $engine->joinFaction($body['factionId'], $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res, 201);
     }
     if ($method === 'GET' && $path === '/api/v1/architecture') {
         json_response([
@@ -549,12 +564,18 @@ try {
     }
     if ($method === 'POST' && preg_match('#^/api/v1/crimes/([a-z0-9-]+)/attempt$#', $path, $matches)) {
         request_json();
-        json_response($engine->attemptCrime($matches[1], current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->attemptCrime($matches[1], $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/territories/(ZC-[0-9]{3})/action$#', $path, $matches)) {
         $body = request_json();
         $expectedVersion = \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion');
-        json_response($engine->actTerritory($matches[1], (string) ($body['action'] ?? ''), $expectedVersion, current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->actTerritory($matches[1], (string) ($body['action'] ?? ''), $expectedVersion, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && preg_match('#^/api/v1/admin/modules/([a-z0-9-]+)/(install|uninstall|enable|disable)$#', $path, $matches)) {
         require_admin_mutation();
@@ -570,33 +591,45 @@ try {
     if ($method === 'POST' && $path === '/api/v1/gym/train') {
         $body = request_json();
         $sessions = \Zone\Engine\Core\Security\RequestGuard::boundedInt($body, 'sessions', 1, 10, 1);
-        json_response($engine->trainGym((string) ($body['stat'] ?? ''), $sessions, current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->trainGym((string) ($body['stat'] ?? ''), $sessions, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/bank/deposit') {
         $body = request_json();
         $pid = current_player_id();
         $res = $engine->bankDeposit(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), $pid);
-        if (getenv('VERCEL') === '1') $engine->gameplay($pid);
+        $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/bank/withdraw') {
         $body = request_json();
         $pid = current_player_id();
         $res = $engine->bankWithdraw(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'amount'), $pid);
-        if (getenv('VERCEL') === '1') $engine->gameplay($pid);
+        $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/hospital/heal') {
         request_json();
-        json_response($engine->hospitalHeal(current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->hospitalHeal($pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/travel') {
         $body = request_json();
-        json_response($engine->travel((string) ($body['city'] ?? ''), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->travel((string) ($body['city'] ?? ''), $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/casino/blackjack') {
         $body = request_json();
-        json_response($engine->playBlackjack(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->playBlackjack(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'GET' && $path === '/api/v1/casino/high-low') {
         json_response($engine->highLowState(current_player_id()));
@@ -609,15 +642,24 @@ try {
     }
     if ($method === 'POST' && $path === '/api/v1/casino/high-low') {
         $body = request_json();
-        json_response($engine->playHighLow(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), (string) ($body['direction'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->playHighLow(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), (string) ($body['direction'] ?? ''), \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'expectedVersion'), $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/jobs/work') {
         request_json();
-        json_response($engine->workShift(current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->workShift($pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/attack') {
         request_json();
-        json_response($engine->attackNpc(current_player_id()));
+        $pid = current_player_id();
+        $res = $engine->attackNpc($pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
     }
     if ($method === 'POST' && $path === '/api/v1/daily/login') {
         request_json();

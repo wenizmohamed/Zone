@@ -33,7 +33,11 @@ final class Database
             $pdo = new PDO('sqlite:' . $path);
             $pdo->exec('PRAGMA foreign_keys = ON');
             $pdo->exec('PRAGMA busy_timeout = 5000');
-            $pdo->exec('PRAGMA journal_mode = WAL');
+            try {
+                $pdo->exec('PRAGMA journal_mode = WAL');
+            } catch (Throwable) {
+                $pdo->exec('PRAGMA journal_mode = DELETE');
+            }
             return new self($pdo, 'sqlite');
         }
 
@@ -123,6 +127,58 @@ final class Database
             $this->pdo->exec($sql);
             $this->seedFoundationContent();
             $this->execute("UPDATE engine_metadata SET value = :value WHERE name = 'schema-fingerprint'", ['value' => $fingerprint]);
+        });
+    }
+
+    public function seedEphemeralVercelWorld(): void
+    {
+        try {
+            $seeded = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'vercel-ephemeral-seed-v1'");
+            if (($seeded['value'] ?? null) === '1') {
+                return;
+            }
+        } catch (\PDOException) {
+            return;
+        }
+        $this->transaction(function (): void {
+            $now = gmdate('c');
+            $today = gmdate('Y-m-d');
+            $rivals = [
+                ['npc-harbor-king', 'Rayan_Black', 9, 2840, 64000, 120, 45, 1450, 450, 120, 45, 1450, 500, $now, 195, 175, 185, 170, 90000, 'Zone City', 3, $today, 'kings', 'leader'],
+                ['npc-night-broker', 'NadiaQuick', 8, 2190, 52000, 110, 45, 1200, 400, 110, 45, 1200, 500, $now, 165, 150, 210, 195, 75000, 'Zone City', 2, $today, 'night', 'leader'],
+                ['npc-oldguard-don', 'BigSal', 11, 4120, 91000, 140, 50, 2100, 500, 140, 50, 2100, 500, $now, 230, 220, 160, 155, 150000, 'Zone City', 5, $today, 'oldguard', 'leader'],
+                ['npc-viper-lieutenant', 'Omar_Z', 6, 1340, 34000, 100, 45, 950, 350, 100, 45, 950, 500, $now, 130, 120, 135, 125, 40000, 'Zone City', 2, $today, 'vipers', 'officer'],
+            ];
+            foreach ($rivals as $rival) {
+                $factionId = $rival[22];
+                $role = $rival[23];
+                $this->insertIgnore(
+                    'players',
+                    ['id', 'username', 'level', 'xp', 'cash', 'energy', 'nerve', 'life', 'happy', 'max_energy', 'max_nerve', 'max_life', 'max_happy', 'resources_updated_at', 'strength', 'defense', 'speed', 'dexterity', 'bank_balance', 'city', 'login_streak', 'last_login_day'],
+                    array_slice($rival, 0, 22),
+                );
+                $this->insertIgnore('faction_members', ['player_id', 'faction_id', 'role', 'joined_at'], [$rival[0], $factionId, $role, $now]);
+            }
+            foreach ([
+                ['vipers', 18500, ['gymBoost' => 1, 'crimeBoost' => 1]],
+                ['kings', 14200, ['crimeBoost' => 1]],
+                ['night', 11900, ['marketDiscount' => 1]],
+                ['oldguard', 16400, ['gymBoost' => 1]],
+            ] as [$fid, $respect, $ups]) {
+                $this->insertIgnore('family_progression', ['faction_id', 'respect', 'upgrades_json', 'version', 'updated_at'], [$fid, $respect, json_encode($ups, JSON_THROW_ON_ERROR), 1, $now]);
+            }
+            foreach ([
+                ['seed-mkt-medkit', 'npc-night-broker', 'medkit', ['id' => 'medkit', 'name' => 'First Aid Kit', 'type' => 'medical', 'price' => 4500, 'life' => 120], 4, 4200],
+                ['seed-mkt-drink', 'npc-harbor-king', 'drink', ['id' => 'drink', 'name' => 'Energy Drink', 'type' => 'booster', 'price' => 3200, 'energy' => 25], 6, 2900],
+                ['seed-mkt-vest', 'npc-oldguard-don', 'vest', ['id' => 'vest', 'name' => 'Light Kevlar Vest', 'type' => 'armor', 'price' => 16000], 2, 14800],
+            ] as [$lid, $sellerId, $itemId, $itemMeta, $qty, $unitPrice]) {
+                $this->insertIgnore(
+                    'player_market_listings',
+                    ['id', 'seller_id', 'item_id', 'item_json', 'quantity', 'unit_price', 'state', 'version', 'created_at', 'updated_at'],
+                    [$lid, $sellerId, $itemId, json_encode($itemMeta, JSON_THROW_ON_ERROR), $qty, $unitPrice, 'active', 1, $now, $now],
+                );
+            }
+            $this->execute("INSERT INTO engine_metadata (name, value) VALUES ('vercel-ephemeral-seed-v1', '1') ON CONFLICT (name) DO UPDATE SET value = '1'");
         });
     }
 

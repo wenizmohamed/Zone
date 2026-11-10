@@ -77,7 +77,10 @@ final class RequestGuard
         // proxy contract. A client-supplied forwarding header on localhost or
         // a direct PHP server never changes the transport used by this check.
         if ($trustForwardedProto && isset($server['HTTP_X_FORWARDED_PROTO'])) {
-            $scheme = strtolower(trim((string) $server['HTTP_X_FORWARDED_PROTO']));
+            $forwarded = trim(explode(',', (string) $server['HTTP_X_FORWARDED_PROTO'])[0] ?? '');
+            if ($forwarded !== '') {
+                $scheme = strtolower($forwarded);
+            }
         }
         $originParts = self::originParts($origin);
         $requestParts = self::originParts($scheme . '://' . trim((string) ($server['HTTP_HOST'] ?? '')));
@@ -107,6 +110,12 @@ final class RequestGuard
         $now ??= time();
         if ((int) $match[1] <= $now || (int) $match[1] > $now + 43200) return false;
         return hash_equals(hash_hmac('sha256', 'admin-session:' . $match[1] . '.' . $match[2], $secret), $match[3]);
+    }
+
+    public static function ledgerSecret(): string
+    {
+        $secret = trim((string) (getenv('ZONE_LEDGER_SECRET') ?: getenv('ZONE_ADMIN_SESSION_SECRET') ?: getenv('ZONE_ADMIN_TOKEN') ?: ''));
+        return strlen($secret) >= 16 ? $secret : '';
     }
 
     /** @return array{string, string, int}|null */

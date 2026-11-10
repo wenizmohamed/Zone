@@ -1,10 +1,10 @@
 {
-  "version": "Torn API v2 (v6.15.7 Live Harvest)",
+  "version": "ZONE Syndicate Master Archive v2.0",
   "account": {
-    "id": 4506953,
-    "name": "wenimo",
-    "faction_id": 56798,
-    "faction_name": "Fody's Shack"
+    "id": 1042,
+    "name": "Vincenzo",
+    "faction_id": 101,
+    "faction_name": "Sand Vipers"
   },
   "counts": {
     "harvested_files": 62,
@@ -724,7 +724,7 @@
       ]
     },
     {
-      "name": "Guardian \u00c1ngels",
+      "name": "Guardian Ángels",
       "difficulty": 5,
       "scope_cost": 3,
       "scope_return": 4,
@@ -5311,7 +5311,7 @@
     {
       "id": 1,
       "acronym": "TSB",
-      "name": "Torn & Shanghai Banking",
+      "name": "Trust & Syndicate Banking",
       "price": 1167.36,
       "requirement": 3000000,
       "frequency": 31,
@@ -5320,7 +5320,7 @@
     {
       "id": 2,
       "acronym": "TCI",
-      "name": "Torn City Investments",
+      "name": "Zone City Investments",
       "price": 1150.2,
       "requirement": 1500000,
       "frequency": 7,
@@ -5365,7 +5365,7 @@
     {
       "id": 7,
       "acronym": "THS",
-      "name": "Torn City Health Service",
+      "name": "Zone City Health Service",
       "price": 384.54,
       "requirement": 150000,
       "frequency": 7,
@@ -5383,7 +5383,7 @@
     {
       "id": 9,
       "acronym": "TCT",
-      "name": "The Torn City Times",
+      "name": "The Zone City Chronicle",
       "price": 319.57,
       "requirement": 100000,
       "frequency": 31,
@@ -5482,7 +5482,7 @@
     {
       "id": 20,
       "acronym": "TCM",
-      "name": "Torn City Motors",
+      "name": "Zone City Motors",
       "price": 307.29,
       "requirement": 1000000,
       "frequency": 7,
@@ -5581,7 +5581,7 @@
     {
       "id": 31,
       "acronym": "TCC",
-      "name": "Torn City Clothing",
+      "name": "Zone City Clothing",
       "price": 510.85,
       "requirement": 7500000,
       "frequency": 31,
@@ -9086,7 +9086,7 @@
     },
     {
       "id": 90,
-      "name": "Edomondo Local\u00e9",
+      "name": "Edomondo Localé",
       "market_price": 138828
     },
     {
@@ -9136,12 +9136,12 @@
     },
     {
       "id": 498,
-      "name": "\u00c7agoutte 10-6",
+      "name": "Çagoutte 10-6",
       "market_price": 56556
     },
     {
       "id": 499,
-      "name": "Papani Col\u00e9",
+      "name": "Papani Colé",
       "market_price": 11732
     },
     {
@@ -9151,7 +9151,7 @@
     },
     {
       "id": 501,
-      "name": "St\u00e5lh\u00f6g 860",
+      "name": "Stålhög 860",
       "market_price": 4833053
     },
     {
@@ -10301,7 +10301,7 @@
         },
         {
           "id": 498,
-          "name": "\u00c7agoutte 10-6",
+          "name": "Çagoutte 10-6",
           "price": 8000,
           "stock": {
             "current": 0,
@@ -10373,7 +10373,7 @@
         },
         {
           "id": 499,
-          "name": "Papani Col\u00e9",
+          "name": "Papani Colé",
           "price": 11000,
           "stock": {
             "current": 95,
@@ -11989,7 +11989,7 @@
     {
       "id": 30,
       "name": "Novice Buster",
-      "description": "Bust 250 people from the Torn City jail",
+      "description": "Bust 250 people from the Zone City detention",
       "type": {
         "id": "OTR",
         "title": "miscellaneous"
@@ -12000,7 +12000,7 @@
     {
       "id": 31,
       "name": "Intermediate Buster",
-      "description": "Bust 500 people from the Torn City jail",
+      "description": "Bust 500 people from the Zone City detention",
       "type": {
         "id": "OTR",
         "title": "miscellaneous"
@@ -12011,7 +12011,7 @@
     {
       "id": 32,
       "name": "Advanced Buster",
-      "description": "Bust 1,000 people from the Torn City jail",
+      "description": "Bust 1,000 people from the Zone City detention",
       "type": {
         "id": "OTR",
         "title": "miscellaneous"
@@ -12022,7 +12022,7 @@
     {
       "id": 33,
       "name": "Professional Buster",
-      "description": "Bust 2,000 people from the Torn City jail",
+      "description": "Bust 2,000 people from the Zone City detention",
       "type": {
         "id": "OTR",
         "title": "miscellaneous"
@@ -12196,13 +12196,13 @@
       "name": "LadyVoldemort",
       "level": 85,
       "faction": {
-        "id": 56798,
-        "name": "Fody's Shack"
+        "id": 101,
+        "name": "Sand Vipers"
       }
     },
     "defender": {
-      "id": 4506953,
-      "name": "wenimo",
+      "id": 1042,
+      "name": "Vincenzo",
       "level": 2,
       "faction": null
     },

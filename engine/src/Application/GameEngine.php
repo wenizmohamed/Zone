@@ -542,6 +542,14 @@ final class GameEngine
         return [...(new ProgressionService($this->database, $this->events))->snapshot($playerId), 'travel' => $travel, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
     }
 
+    public function syncEphemeralLedger(string $playerId): void
+    {
+        if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') !== '1' || \Zone\Engine\Core\Security\RequestGuard::ledgerSecret() === '') {
+            return;
+        }
+        (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+    }
+
     /** Server-clock expiries survive reloads and reflect the configured action durations. */
     public function actionCooldowns(string $playerId): array
     {

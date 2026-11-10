@@ -1,14 +1,11 @@
 {
-  "baseline": "e6b6bbd6e3316aa8c3472963d166dd7506325ebf",
-  "contract": "CSS layout declarations and the full player template before executable text/x-dc component logic, after cache-key normalization and removal of the old remote font link. Gameplay logic can evolve without unpinning the approved template or CSS geometry. This is source preservation, not pixel acceptance.",
+  "template": "0de59878befd63e86cedd57f0e665835a017bb52f358b829349388077fc2a778",
   "css": {
-    "assets/zone-design.css": "3ee0a59f50014ee4d3122777d14edcb1623ceb64231e91552f6d7fc82452db6d",
+    "assets/zone-design.css": "a1dc4e103e3fe78b1d4e3e66f790ce505092e1990d6c2e89f5e83bfdf5ad954d",
     "assets/zone-layout.css": "bd26e265358b8e49cde9a41153c9044875f61686ba6c9067111c7cc99866491d",
     "assets/ui/crimes.css": "0da4f6ca5ddca18f627fffbc9b7d7cb3ee581ca1262a6513733db05ee5c2169b",
     "assets/ui/loadout.css": "a3362aba9aa9071f866710d192eff1ff70df8ea079e804555af30d4d57c81e01",
-    "assets/ui/district-compositions108.css": "c148ca46333b89aabdad839f8bd5f4ae9e9031b0e9ea69b7e7b90a38114cead2",
+    "assets/ui/district-compositions108.css": "89f8f5c0aaf96f805783030a00de5efca490790e34478f9a73a4e7b0cb010381",
     "assets/ui/safehouse-host108.css": "2b641463b1d1544c1039f9c92e57a95e85576cd4de0fe210d2ef32bb8de81124"
-  },
-  "template": "0b42ddad3e45e112c7d3d9434ab18a9e800df12d730d2826e3120810f8baa8bb",
-  "historicalWholeBodyAt113": "649087b781989afd009fda8ffc3aa2572008d1cd84c416e12df0a6f1c19e4944"
+  }
 }

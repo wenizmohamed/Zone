@@ -32,6 +32,7 @@
   const message = (key, error = false) => { messageKey = key; messageError = error; element('message').textContent = copy[lang][key]; element('message').dataset.error = String(error); };
   const translate = () => {
     document.documentElement.lang = lang; document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.title = lang === 'ar' ? 'زون | حساب اللاعب' : 'ZONE | Player account';
     document.querySelectorAll('[data-i18n]').forEach(node => { node.textContent = copy[lang][node.dataset.i18n]; });
     element('languageToggle').textContent = lang === 'ar' ? 'English' : 'العربية';
     element('languageToggle').lang = lang === 'ar' ? 'en' : 'ar';

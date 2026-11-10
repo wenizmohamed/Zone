@@ -193,7 +193,14 @@ export async function mountCombatPresentation({ document: doc = document, window
   const originalWeaponLoader = weapons.createWeaponAssetLoader({ THREE: T, GLTFLoader, OBJLoader, MTLLoader, catalog: win.ZONE_WEAPONS || {}, materials: win.ZONE_WEAPON_MATS || {}, pack: win.ZONE_WEAPON_PACK || {}, baseURL: new URL('../assets/weapons/', import.meta.url) });
   const weaponLoader = uploaded.createUploadedWeaponLoader(originalWeaponLoader, { publish: publishUploaded });
   const actors = {}, sources = new Set(), audioSources = new Set(), buffers = new Map();
-  let packet = null, lang = 'en', frame = null, disposed = false, visible = true, inView = true, lastFrame = 0, elapsed = 0, lastMetrics = 0, audio = null, audioEnabled = false, loadSequence = 0, requestedSignature = null, lastFeedback = null;
+  const initialLang = (() => {
+    const q = new URLSearchParams(win.location?.search || '').get('lang');
+    if (q === 'ar' || q === 'en') return q;
+    if (doc.documentElement?.lang === 'ar' || doc.documentElement?.dir === 'rtl') return 'ar';
+    try { if (win.parent && win.parent !== win && (win.parent.document?.documentElement?.lang === 'ar' || win.parent.document?.documentElement?.dir === 'rtl')) return 'ar'; } catch {}
+    return 'en';
+  })();
+  let packet = null, lang = initialLang, frame = null, disposed = false, visible = true, inView = true, lastFrame = 0, elapsed = 0, lastMetrics = 0, audio = null, audioEnabled = false, loadSequence = 0, requestedSignature = null, lastFeedback = null;
   const reduced = win.matchMedia('(prefers-reduced-motion: reduce)');
   const names = () => ({ player: packet?.player?.name || (lang === 'ar' ? 'أنت' : 'You'), opponent: packet?.opponentName || (lang === 'ar' ? 'الخصم' : 'Opponent') });
   let armorSource = null;
@@ -287,6 +294,11 @@ export async function mountCombatPresentation({ document: doc = document, window
     $('combat-replay').textContent = lang === 'ar' ? 'إعادة عرض السجل' : 'Replay recorded exchanges';
     $('combat-replay').disabled = !packet?.encounter || packet.encounter.phase === 'fighting' || !packet.encounter.log?.length;
     canvas.setAttribute('aria-label', lang === 'ar' ? 'تصوير المواجهة. الصحة والضرر مصدرهما الخادم.' : 'Encounter presentation. Health and damage come from the server.');
+  }
+  labels();
+  if (lang === 'ar') {
+    $('combat-state').textContent = 'بانتظار المواجهة';
+    status('جارٍ تجهيز عرض المواجهة...');
   }
   async function receive(data) {
     if (disposed || !data || !['en','ar'].includes(data.lang)) return;

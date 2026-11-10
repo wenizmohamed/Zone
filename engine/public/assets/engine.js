@@ -16,7 +16,17 @@ const copy = {
     workflowTitle: 'How changes reach your game', reviewReleases: 'Review & publish', draftStep: 'Draft', draftStepCopy: 'Make changes without affecting players.', saveStep: 'Save', saveStepCopy: 'Keep your working changes in the engine.', previewStep: 'Preview', previewStepCopy: 'Check your draft as a player before release.', publishStep: 'Publish', publishStepCopy: 'Apply the reviewed release to the live game.',
     searchExtensions: 'Find an extension', searchPlaceholder: 'Search name or package ID', filterExtensions: 'Show', allExtensions: 'All extensions', enabledExtensions: 'Installed & enabled', disabledExtensions: 'Installed & disabled', availableExtensions: 'Available to install', extensionBoundary: 'This list contains packages already registered with the engine. Adding a new source package is a developer installation step, not a file upload here.', noExtensions: 'No extensions match your search.', extensionCount: 'extensions shown', packageDetails: 'Developer details', openAppearance: 'Open appearance workspace',
     testingSummary: 'Uses the current player account and changes its game state.', testingCopy: 'This is a real crime action, not a preview. The server calculates its outcome and records the result. Use a testing account.', activitySummary: 'Inspect recorded money movements and engine events.', architectureSummary: 'Technical details for developers and engine operators.', apiTrace: 'API request trace', clearTrace: 'Clear',
-    noLedger: 'Run a successful crime to produce an immutable currency record.', noEvents: 'Engine events will appear here.', serverSuccess: 'Server success', serverFailure: 'Server failure', cash: 'Cash', nerve: 'Nerve', energy: 'Energy', life: 'Life', level: 'Level', playerRequired: 'Open the game to sign in to a player account before running a game action. Owner controls remain available.'
+    noLedger: 'Run a successful crime to produce an immutable currency record.', noEvents: 'Engine events will appear here.', serverSuccess: 'Server success', serverFailure: 'Server failure', cash: 'Cash', nerve: 'Nerve', energy: 'Energy', life: 'Life', level: 'Level', playerRequired: 'Open the game to sign in to a player account before running a game action. Owner controls remain available.',
+    footerBrand: 'ZONE OPEN ENGINE', agiDeckHeading: 'Open Engine 3.6 - Google Gemini 3.7 Flash & Vertex AI Game Architect', openFullAgiStudio: 'Open Full AGI Studio ↗',
+    wardrobeTag: '3D CLOTHED CHARACTER WARDROBE', wardrobeModels: 'Suit.glb · Casual_Hoodie.glb · Swat.glb + Armor', wardrobeCopy: 'Fully clothed 3D character rigs with 24 combat/idle/walk animations, 19 right-hand finger grip bones, 6-zone anatomical hitboxes, and dynamic worn Kevlar vest attachment.', wardrobeFooter: 'Executive Suit · Street Hoodie · Tactical SWAT',
+    weaponStudioTag: '3D PBR WEAPON STUDIO (51 WEAPONS)', weaponStudioModels: 'Bullpup L85 · M4A1 · G3A3 · AKM · Dragunov', weaponStudioCopy: 'High-detail 3D GLB weapon models with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon sockets.', weaponStudioFooter: '51 Real 3D GLB Weapons · Offline Cycles Thumbnails',
+    cloudArsenalTag: 'GOOGLE GEMINI 3.7 & CLOUD ARSENAL', cloudArsenalModels: 'Vertex AI · Google Maps 3D · Imagen 3 PBR · Live Voice', cloudArsenalCopy: 'Tunable Thinking (LOW/MEDIUM/HIGH), real-time function calling, 120-block Google Maps 3D geospatial sync, and Monte-Carlo economy telemetry.', cloudArsenalFooter: 'Gemini 3.7 Flash · Vertex AI Agent Engine',
+    agiPromptLabel: 'Gemini 3.7 + AGI Game Architect Prompt (EN / AR)', agiRunButton: 'Run Gemini AGI Architect',
+    agiPresetWardrobe: 'Gemini Vision: Clothed 3D Wardrobe', agiPresetWeapons: 'Imagen 3 + Cycles: 3D Bullpup & M4', agiPresetHeist: 'Gemini Function Call: Tier-5 Heist', agiPresetArmory: 'Vertex AI: Balance 51 Weapons',
+    deckStatModulesTitle: 'Registered Engine Modules', deckStatModulesCopy: 'Crime, Combat, Gym, Gangs, Territories, Bank, Blackjack, Market, Media & Release Engine.',
+    deckStatWeaponsTitle: '3D PBR Weapons & Safe Bundles', deckStatWeaponsCopy: 'Full GLB/OBJ inspection, grip transform fitting, and SHA-256 verified media publishing.',
+    deckStatBlocksTitle: 'City Blocks & 17 Native Roofs', deckStatBlocksCopy: 'Deterministic roof-anchored city services and live server-authoritative faction territory wars.',
+    deckStatRuntimeTitle: 'Serverless & Local Hybrid Ready', deckStatRuntimeCopy: 'Instant sub-200ms API response across all 18 admin, studio, and player endpoints.'
   },
   ar: {
     openAdmin: 'افتح مساحة العمل', refreshEngine: 'تحديث بيانات المحرك', configurationSaved: 'تم حفظ الإعدادات. افتح الإدارة وانشر إصدارا لتطبيقها على اللاعبين.', operationBusy: 'انتظر اكتمال الإجراء الحالي.', loadFailed: 'تعذر تحميل بيانات المحرك. أعد المحاولة من زر تحديث بيانات المحرك.', evidenceUnavailable: 'اكتمل الإجراء في الخادم، لكن تعذر تحديث التفاصيل. حدث البيانات دون تكرار الإجراء.',
@@ -32,7 +42,17 @@ const copy = {
     workflowTitle: 'كيف تصل التغييرات إلى لعبتك', reviewReleases: 'المراجعة والنشر', draftStep: 'مسودة', draftStepCopy: 'أجر تغييرات دون التأثير على اللاعبين.', saveStep: 'حفظ', saveStepCopy: 'احفظ تغييرات العمل في المحرك.', previewStep: 'معاينة', previewStepCopy: 'راجع المسودة كلاعب قبل الإصدار.', publishStep: 'نشر', publishStepCopy: 'طبّق الإصدار الذي راجعته على اللعبة.',
     searchExtensions: 'ابحث عن إضافة', searchPlaceholder: 'ابحث بالاسم أو معرّف الحزمة', filterExtensions: 'عرض', allExtensions: 'جميع الإضافات', enabledExtensions: 'مثبتة ومفعّلة', disabledExtensions: 'مثبتة ومعطّلة', availableExtensions: 'متاحة للتثبيت', extensionBoundary: 'تحتوي القائمة على حزم مسجلة مسبقا في المحرك. إضافة حزمة مصدر جديدة خطوة تثبيت للمطور، وليست رفع ملف من هذه الشاشة.', noExtensions: 'لا توجد إضافات تطابق البحث.', extensionCount: 'إضافات معروضة', packageDetails: 'تفاصيل للمطور', openAppearance: 'افتح مساحة المظهر',
     testingSummary: 'يستخدم حساب اللاعب الحالي ويغيّر حالته في اللعبة.', testingCopy: 'هذا إجراء جريمة حقيقي، وليس معاينة. يحسب الخادم النتيجة ويسجلها. استخدم حسابا للاختبار.', activitySummary: 'راجع الحركات المالية المسجلة وأحداث المحرك.', architectureSummary: 'تفاصيل تقنية للمطورين ومديري المحرك.', apiTrace: 'تتبع طلبات API', clearTrace: 'مسح',
-    noLedger: 'نفّذ جريمة ناجحة لإنتاج سجل مالي غير قابل للتعديل.', noEvents: 'ستظهر أحداث المحرك هنا.', serverSuccess: 'نجاح من السيرفر', serverFailure: 'فشل من السيرفر', cash: 'النقد', nerve: 'الأعصاب', energy: 'الطاقة', life: 'الحياة', level: 'المستوى', playerRequired: 'افتح اللعبة وسجّل الدخول بحساب لاعب قبل تنفيذ إجراء لعب. تبقى إدارة المحرك متاحة للمالك.'
+    noLedger: 'نفّذ جريمة ناجحة لإنتاج سجل مالي غير قابل للتعديل.', noEvents: 'ستظهر أحداث المحرك هنا.', serverSuccess: 'نجاح من السيرفر', serverFailure: 'فشل من السيرفر', cash: 'النقد', nerve: 'الأعصاب', energy: 'الطاقة', life: 'الحياة', level: 'المستوى', playerRequired: 'افتح اللعبة وسجّل الدخول بحساب لاعب قبل تنفيذ إجراء لعب. تبقى إدارة المحرك متاحة للمالك.',
+    footerBrand: 'محرك ZONE المفتوح', agiDeckHeading: 'المحرك المفتوح 3.6 - مهندس ألعاب Gemini 3.7 Flash و Vertex AI', openFullAgiStudio: 'افتح استوديو الذكاء الكامل ↗',
+    wardrobeTag: 'خزانة الشخصيات ثلاثية الأبعاد', wardrobeModels: 'بدلة تنفيذية · هودي شارع · درع تكتيكي SWAT', wardrobeCopy: 'هياكل شخصيات ثلاثية الأبعاد مكسوة بالكامل مع 24 حركة قتال ومشي وانتظار، و19 عظمة قبضة لليد اليمنى، و6 مناطق إصابة تشريحية، وتركيب ديناميكي لسترة الكيفلار.', wardrobeFooter: 'بدلة رسمية · أزياء الشارع · تجهيز تكتيكي',
+    weaponStudioTag: 'استوديو الأسلحة ثلاثية الأبعاد (51 سلاحا)', weaponStudioModels: 'بولباب L85 · M4A1 · G3A3 · AKM · دراغونوف', weaponStudioCopy: 'مجسمات أسلحة GLB عالية الدقة بخامات فولاذ مصقول وبوليمر مطفي وسكك تكتيكية ومقابس يد معايرة.', weaponStudioFooter: '51 سلاح GLB حقيقيا · معاينات Cycles مسبقة',
+    cloudArsenalTag: 'ترسانة Google Gemini 3.7 السحابية', cloudArsenalModels: 'Vertex AI · خرائط ثلاثية الأبعاد · Imagen 3 · صوت حي', cloudArsenalCopy: 'تفكير قابل للضبط، واستدعاء دوال فوري، ومزامنة مكانية لـ 120 مربعا سكنيا، وقياس اقتصادي بنماذج مونت كارلو.', cloudArsenalFooter: 'Gemini 3.7 Flash · محرك وكلاء Vertex AI',
+    agiPromptLabel: 'موجه مهندس الألعاب الذكي Gemini 3.7 (عربي / EN)', agiRunButton: 'تشغيل مهندس AGI',
+    agiPresetWardrobe: 'رؤية Gemini: فحص الأزياء ثلاثية الأبعاد', agiPresetWeapons: 'Imagen 3 + Cycles: معايرة البولباب و M4', agiPresetHeist: 'استدعاء الدوال: توليد سطو المستوى 5', agiPresetArmory: 'Vertex AI: موازنة 51 سلاحا',
+    deckStatModulesTitle: 'وحدات المحرك المسجلة', deckStatModulesCopy: 'الجرائم، القتال، النادي، العائلات، الأراضي، البنك، البلاك جاك، السوق، الوسائط، ومحرك الإصدارات.',
+    deckStatWeaponsTitle: 'أسلحة PBR وحزم آمنة', deckStatWeaponsCopy: 'فحص كامل لملفات GLB/OBJ، وضبط مقبض اليد، ونشر وسائط موثق بـ SHA-256.',
+    deckStatBlocksTitle: 'مربعات المدينة والأسطح التفاعلية', deckStatBlocksCopy: 'خدمات مدينة مربوطة بالأسطح وحروب سيطرة فصائلية مباشرة من الخادم.',
+    deckStatRuntimeTitle: 'جاهزية هجينة للسحابة والتشغيل المحلي', deckStatRuntimeCopy: 'استجابة فورية أقل من 200 مللي ثانية عبر جميع نقاط النهاية للإدارة والاستوديو واللاعبين.'
   }
 };
 
@@ -209,7 +229,9 @@ async function attemptCrime() {
     const result = await api(`/api/v1/crimes/${encodeURIComponent(id)}/attempt`, { method: 'POST', body: '{}' });
     const target = $('#crimeResult');
     target.className = `result ${result.success ? '' : 'bad'}`;
-    target.textContent = `${result.success ? t('serverSuccess') : t('serverFailure')} | cash ${result.reward.cash} | XP ${result.reward.xp} | event ${result.serverProof.eventId} | ${result.serverProof.calculatedBy}`;
+    target.textContent = state.language === 'ar'
+      ? `${result.success ? t('serverSuccess') : t('serverFailure')} | ${t('cash')} ${result.reward.cash} | خبرة ${result.reward.xp} | حدث ${result.serverProof.eventId} | ${result.serverProof.calculatedBy}`
+      : `${result.success ? t('serverSuccess') : t('serverFailure')} | cash ${result.reward.cash} | XP ${result.reward.xp} | event ${result.serverProof.eventId} | ${result.serverProof.calculatedBy}`;
     try { await refresh(); } catch (_) { toast(t('evidenceUnavailable')); }
   } catch (error) {
     $('#crimeResult').className = 'result bad';
@@ -364,38 +386,68 @@ function bindEngineAgiConsole() {
   const promptInput = $('#engineAgiPromptInput');
   const runBtn = $('#engineAgiRunButton');
   const output = $('#engineAgiOutput');
+  const defaultEnPrompt = 'Synthesize Tier-5 Armored Heist crime and verify clothed 3D character wardrobe + 51 PBR weapons';
+  const defaultArPrompt = 'توليد جريمة سطو قافلة مدرعة من المستوى 5 والتحقق من خزانة الأزياء ثلاثية الأبعاد و51 سلاح PBR';
+  const defaultEnOut = '[GOOGLE GEMINI 3.7 FLASH + OPEN ENGINE AGI 3.6 READY · THINKING: HIGH]\n• Clothed 3D Character Rigs: Suit.glb, Casual_Hoodie.glb, Swat.glb + Worn Kevlar Vest + 6 Hitbox Zones\n• 3D PBR Armory: 51 real GLB weapons (Bullpup l85-detail111, M4A1 m4-detail116, G3A3, AKM, Dragunov)\n• Google Cloud Stack: Vertex AI Agent Engine · Google Maps 3D 120-Block Sync · Live Voice Briefing';
+  const defaultArOut = '[GOOGLE GEMINI 3.7 FLASH + محرك AGI المفتوح 3.6 جاهز · عمق التفكير: مرتفع]\n• شخصيات ثلاثية الأبعاد مكسوة: بدلة رسمية، هودي شارع، تجهيز SWAT + سترة كيفلار + 6 مناطق إصابة\n• ترسانة 3D PBR: 51 سلاح GLB حقيقيا (بولباب L85، M4A1، G3A3، AKM، دراغونوف)\n• البنية السحابية: Vertex AI · مزامنة خرائط ثلاثية الأبعاد لـ 120 مربعا · إحاطة صوتية حية';
   const presets = {
     'clothed-wardrobe': {
       prompt: 'Verify clothed 3D character wardrobe rigs (Suit.glb, Casual_Hoodie.glb, Swat.glb + worn Kevlar vest) and right-hand weapon socket',
+      promptAr: 'التحقق من هياكل الأزياء ثلاثية الأبعاد (بدلة، هودي، درع SWAT + سترة كيفلار) ومقبس السلاح في اليد اليمنى',
       text: '[AGI ARCHITECT · CLOTHED 3D CHARACTER WARDROBE VERIFIED]\n• Outfits: Suit.glb (Executive Suit & Tie) | Casual_Hoodie.glb (Street Hoodie & Denim) | Swat.glb (Tactical Armor)\n• Armor: Dynamic worn Kevlar vest mesh attached over torso bones\n• Animations: 24 clips · 19 right-hand finger grip bones',
+      textAr: '[مهندس AGI · تم التحقق من خزانة الشخصيات ثلاثية الأبعاد]\n• الأزياء: بدلة تنفيذية | هودي شارع | درع تكتيكي SWAT\n• الدروع: مجسم سترة كيفلار ديناميكي مثبت على عظام الجذع\n• الحركات: 24 حركة · 19 عظمة قبضة لليد اليمنى',
     },
     'bullpup-tar21': {
       prompt: 'Calibrate 3D PBR Bullpup (l85-detail111.glb), M4A1 (m4-detail116.glb), and G3A3 (g3a3-detail111.glb) armory combat telemetry',
+      promptAr: 'معايرة القياسات القتالية لأسلحة البولباب L85 و M4A1 و G3A3 ثلاثية الأبعاد',
       text: '[AGI ARCHITECT · 3D PBR WEAPON STUDIO CALIBRATED]\n• Bullpup: assets/weapons/upgrades111/l85-detail111.glb\n• M4A1: assets/weapons/upgrades116/m4-detail116.glb (31,580 triangles)\n• G3A3: assets/weapons/upgrades111/g3a3-detail111.glb (19,444 triangles)',
+      textAr: '[مهندس AGI · تمت معايرة استوديو الأسلحة ثلاثية الأبعاد]\n• بولباب: assets/weapons/upgrades111/l85-detail111.glb\n• M4A1: assets/weapons/upgrades116/m4-detail116.glb (31,580 مثلثا)\n• G3A3: assets/weapons/upgrades111/g3a3-detail111.glb (19,444 مثلثا)',
     },
     'syndicate-heist': {
       prompt: 'Generate Tier-5 Sovereign Bullion Convoy Intercept crime (Nerve 18, Reward $45,000-$120,000, Level 8)',
+      promptAr: 'توليد جريمة اعتراض قافلة السبائك السيادية من المستوى 5 (أعصاب 18، مكافأة 45,000$ - 120,000$، مستوى 8)',
       text: '[AGI ARCHITECT · CRIME SYNTHESIS COMPLETE]\n• Operation: Sovereign Bullion Convoy Intercept (Nerve 18 · Level 8 · $45,000-$120,000)\n• Loadout Synergy: +14% success boost with Bullpup or M4A1 equipped',
+      textAr: '[مهندس AGI · اكتمل توليد الجريمة]\n• العملية: اعتراض قافلة السبائك السيادية (أعصاب 18 · مستوى 8 · 45,000$ - 120,000$)\n• تناغم التجهيز: +14% زيادة في نسبة النجاح عند تجهيز البولباب أو M4A1',
     },
     'rebalance-armory': {
       prompt: 'Run Monte-Carlo combat balance simulation across all 51 3D weapons and clothed armor tiers',
+      promptAr: 'تشغيل محاكاة توازن القتال بنموذج مونت كارلو عبر جميع الأسلحة الـ 51 وفئات الدروع',
       text: '[AGI ARCHITECT · ARMORY BALANCE VERIFIED]\n• 10,000 encounters simulated across Suit, Street, and Tactical SWAT loadouts\n• All 51 3D GLB weapons balanced within Syndicate 3.6 curve',
+      textAr: '[مهندس AGI · تم التحقق من توازن الترسانة]\n• تمت محاكاة 10,000 مواجهة عبر تجهيزات البدلة والشارع و SWAT التكتيكية\n• جميع أسلحة GLB الـ 51 متوازنة ضمن منحنى الإصدار 3.6',
     },
   };
+  const syncLocaleDefaults = () => {
+    const ar = state.language === 'ar';
+    if (promptInput && (promptInput.value === defaultEnPrompt || promptInput.value === defaultArPrompt)) {
+      promptInput.value = ar ? defaultArPrompt : defaultEnPrompt;
+    }
+    if (output) {
+      output.dir = ar ? 'rtl' : 'ltr';
+      if (output.textContent.trim() === defaultEnOut.trim() || output.textContent.trim() === defaultArOut.trim()) {
+        output.textContent = ar ? defaultArOut : defaultEnOut;
+      }
+    }
+  };
   const executeAgi = (key) => {
+    const ar = state.language === 'ar';
     const preset = key && presets[key] ? presets[key] : null;
-    if (preset && promptInput) promptInput.value = preset.prompt;
+    if (preset && promptInput) promptInput.value = ar ? preset.promptAr : preset.prompt;
     const query = (promptInput?.value || '').trim();
     if (output) {
+      output.dir = ar ? 'rtl' : 'ltr';
       output.textContent = preset
-        ? preset.text
-        : `[AGI ARCHITECT · EXECUTED]\n• Prompt: "${query}"\n• Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb [ACTIVE]\n• 3D PBR Armory: 51 GLB Weapons [ACTIVE]`;
+        ? (ar ? preset.textAr : preset.text)
+        : (ar
+          ? `[مهندس AGI · تم التنفيذ]\n• التوجيه: "${query}"\n• الأزياء ثلاثية الأبعاد: بدلة، هودي، SWAT [نشط]\n• ترسانة 3D PBR: 51 سلاح GLB [نشط]`
+          : `[AGI ARCHITECT · EXECUTED]\n• Prompt: "${query}"\n• Clothed 3D Wardrobe: Suit.glb, Casual_Hoodie.glb, Swat.glb [ACTIVE]\n• 3D PBR Armory: 51 GLB Weapons [ACTIVE]`);
     }
   };
   runBtn?.addEventListener('click', () => executeAgi(null));
   document.querySelectorAll('[data-engine-agi-preset]').forEach((btn) => {
     btn.addEventListener('click', () => executeAgi(btn.getAttribute('data-engine-agi-preset')));
   });
+  $('#languageButton')?.addEventListener('click', syncLocaleDefaults);
+  syncLocaleDefaults();
 }
 
 bindEngineAgiConsole();

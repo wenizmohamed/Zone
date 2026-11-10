@@ -431,12 +431,42 @@
 <script>
 function initializeMapLocale(){
   var language=new URLSearchParams(location.search).get('lang');
-  if(language!=='ar'&&language!=='en'){try{language=parent.document.documentElement.lang;}catch(_){}}
+  if(language!=='ar'&&language!=='en'){try{if(typeof parent!=='undefined'&&parent&&(typeof window==='undefined'||parent!==window)){var pDoc=parent.document&&parent.document.documentElement;if(pDoc&&(pDoc.lang==='ar'||pDoc.dir==='rtl'))language='ar';else if(pDoc&&pDoc.lang==='en')language='en';}}catch(_){}}
   language=language==='ar'?'ar':'en';document.documentElement.lang=language;document.documentElement.dir=language==='ar'?'rtl':'ltr';
-  document.getElementById('familyEyebrow').textContent=language==='ar'?'للقراءة فقط':'READ-ONLY PREVIEW';
-  document.getElementById('familyName').textContent=language==='ar'?'خريطة توضيحية':'Illustrative map';
-  document.getElementById('mapPreviewNotice').textContent=language==='ar'?'خريطة توضيحية فقط. ملكية العائلات أمثلة وليست أراضي حسابك؛ إجراءات الأراضي غير متاحة.':'Illustrative map only. Faction ownership is sample data, not your holdings. Territory actions are unavailable.';
-  document.getElementById('familyBrowse').textContent=language==='ar'?'تصفح الأراضي والمواقع':'Browse holdings & locations';
+  var ar=language==='ar',qs=function(s){return typeof document.querySelector==='function'?document.querySelector(s):null;},byId=function(id){return document.getElementById(id);},setTxt=function(id,v){var n=byId(id);if(n)n.textContent=v;},setAttr=function(n,k,v){if(!n)return;if(typeof n.setAttribute==='function')n.setAttribute(k,v);else n[k]=v;};
+  setTxt('familyEyebrow',ar?'للقراءة فقط':'READ-ONLY PREVIEW');
+  setTxt('familyName',ar?'خريطة توضيحية':'Illustrative map');
+  setTxt('mapPreviewNotice',ar?'خريطة توضيحية فقط. ملكية العائلات أمثلة وليست أراضي حسابك؛ إجراءات الأراضي غير متاحة.':'Illustrative map only. Faction ownership is sample data, not your holdings. Territory actions are unavailable.');
+  setTxt('familyBrowse',ar?'تصفح الأراضي والمواقع':'Browse holdings & locations');
+  setTxt('factionSelectLabel',ar?'عرض العائلة':'Focus family');
+  setAttr(byId('factionSelect'),'aria-label',ar?'عرض العائلة':'Focus family');
+  setTxt('sTitle',ar?'المواقع':'Locations');
+  setAttr(byId('sideClose'),'aria-label',ar?'أغلق أدوات الخريطة':'Close map controls');
+  if(byId('sideClose'))byId('sideClose').title=ar?'أغلق أدوات الخريطة':'Close map controls';
+  var modeTabs=qs('.modeTabs');setAttr(modeTabs,'aria-label',ar?'وضع الخريطة':'Map mode');
+  var mt=qs('#modeTerritories span');if(mt)mt.textContent=ar?'الأراضي':'Territories';
+  var mp=qs('#modePlaces span');if(mp)mp.textContent=ar?'المواقع':'Locations';
+  var search=byId('search');if(search){search.placeholder=ar?'ابحث في القطاعات...':'Search...';setAttr(search,'aria-label',ar?'ابحث في القطاعات':'Search places');}
+  setAttr(byId('sClear'),'aria-label',ar?'مسح البحث':'Clear search');
+  setTxt('fHideT',ar?'إخفاء الموجود':'Hide found');
+  setTxt('zempty',ar?'لا نتائج مطابقة':'No places match');
+  setAttr(byId('sideToggle'),'aria-label',ar?'افتح أدوات الخريطة':'Open map controls');
+  setTxt('sideToggleText',ar?'خيارات':'Territories');
+  setTxt('cityReset',ar?'المدينة كاملة':'Full city');
+  setAttr(byId('cityReset'),'aria-label',ar?'المدينة كاملة':'Show full city');
+  setAttr(byId('mapExpand'),'aria-label',ar?'توسيع الخريطة':'Expand map');
+  if(byId('mapExpand'))byId('mapExpand').title=ar?'توسيع الخريطة':'Expand map';
+  setTxt('streetView',ar?'ميل':'Tilt');
+  setAttr(byId('streetView'),'aria-label',ar?'إمالة الخريطة':'Tilt city map');
+  setAttr(byId('cityOverview'),'aria-label',ar?'دليل أراضي المدينة':'City holdings directory');
+  setTxt('atlasHeading',ar?'أطلس المدينة':'CITY ATLAS');
+  setTxt('atlasHint',ar?'اختر قطاعاً لعرض السيطرة':'Select a block to inspect control');
+  setTxt('familyHome',ar?'كل الأراضي':'My family');
+  setAttr(byId('panel'),'aria-label',ar?'تفاصيل الموقع':'Location details');
+  setAttr(byId('panelX'),'aria-label',ar?'إغلاق التفاصيل':'Close details');
+  var xLabel=qs('#panelX .xLabel');if(xLabel)xLabel.textContent=ar?'إغلاق':'Close';
+  setTxt('pRib',ar?'تم':'FOUND');
+  setTxt('districtSurfaceRetry111',ar?'إعادة عرض التفاصيل':'Retry detail');
   return language;
 }
 initializeMapLocale();
@@ -601,7 +631,7 @@ initializeMapLocale();
   var COPY_EN={places:'Locations',territories:'Territories',searchPlaces:'Search locations...',searchTerritories:'Search blocks...',cityControl:'City control',owner:'Owner',control:'Control',blocks:'Blocks',block:'Block',district:'District',sector:'Sector',size:'Size',density:'Density',slots:'Wall slots',dailyRespect:'Daily respect',neighbors:'Adjacent blocks',actionReason:'Action status',respect:'Respect',income:'Income / hour',heat:'Heat',benefit:'Block benefit',value:'Value',neutral:'Neutral',contested:'Contested',controlled:'Controlled',eligible:'Eligible',adjacent:'Adjacent',current:'Your territory',claim:'Claim block',capture:'Capture block',assault:'Assault block',attack:'Contest block',reinforce:'Reinforce block',unavailable:'Unavailable',showPlaces:'Show district locations',versus:'vs',fullCity:'Full city',streetView:'3D city',streetViewLabel:'Explore 3D city',viewBlock3D:'View block in 3D'},
       COPY_AR={places:'المواقع',territories:'الأراضي',searchPlaces:'ابحث في المواقع...',searchTerritories:'ابحث في القطاعات...',cityControl:'السيطرة على المدينة',owner:'المالك',control:'السيطرة',blocks:'القطاعات',block:'القطاع',district:'المنطقة',sector:'الحلقة',size:'الحجم',density:'الكثافة',slots:'مواقع الجدار',dailyRespect:'الاحترام اليومي',neighbors:'القطاعات المجاورة',actionReason:'حالة الإجراء',respect:'الاحترام',income:'الدخل / ساعة',heat:'الخطورة',benefit:'ميزة القطاع',value:'القيمة',neutral:'محايد',contested:'متنازع عليه',controlled:'تحت السيطرة',eligible:'متاح',adjacent:'مجاور',current:'منطقتك الحالية',claim:'استحوذ على القطاع',capture:'السيطرة على القطاع',assault:'هاجم القطاع',attack:'مهاجمة القطاع',reinforce:'تعزيز القطاع',unavailable:'غير متاح',showPlaces:'مواقع المنطقة',versus:'ضد',fullCity:'المدينة كاملة',streetView:'المدينة ثلاثية الأبعاد',streetViewLabel:'استكشف المدينة ثلاثية الأبعاد',viewBlock3D:'استكشف القطاع ثلاثي الأبعاد'};
   COPY_EN.zoneArea='Full city';COPY_AR.zoneArea='المدينة كاملة';
-  var copy=Object.assign({},COPY_EN);
+  var copy=Object.assign({},lang==='ar'?COPY_AR:COPY_EN);
   function C(k){return copy[k]||(lang==='ar'?COPY_AR:COPY_EN)[k]||k;}
   function refreshAtlasReadout(t){
     var heading=document.getElementById('atlasHeading'),hint=document.getElementById('atlasHint');if(!heading||!hint)return;
@@ -1639,6 +1669,7 @@ initializeMapLocale();
     ['.mapboxgl-ctrl-zoom-in','.mapboxgl-ctrl-zoom-out','.mapboxgl-ctrl-compass','.mapboxgl-ctrl-attrib-button'].forEach(function(selector,i){var button=map.getContainer().querySelector(selector);if(!button)return;button.setAttribute('aria-label',labels[i]);button.title=labels[i];if(button.firstElementChild)button.firstElementChild.setAttribute('title',labels[i]);});
     map.getCanvas().setAttribute('aria-label',lang==='ar'?'خريطة مدينة العائلة التفاعلية':'Interactive family city map');
   }
+  localizeMapControls();
   function render(data){
     var selectedPinId=selected&&selected.id,panelWasOpen=el.panel.classList.contains('on'),wasIllustrative=mapIsIllustrative(lastData);lastData=data;clearAll();
     var pins=Array.isArray(data.zonePins)?data.zonePins:[],legend=data.legend||[],catLabel={},catColor={};

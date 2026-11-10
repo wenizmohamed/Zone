@@ -156,6 +156,7 @@ html[dir=rtl] #zone-main[data-zone-screen=city] .zone-street-dispatch h2{font-fa
 
 html[dir=rtl] :is(.zone-crime-neighborhood h2,.zone-crime-plan h2,#zone-main[data-zone-screen=gym] .zone-gym-floor-scene h2,#zone-main[data-zone-screen=properties] .zone-current-property h2){font-family:var(--zone-arabic);letter-spacing:0;line-height:1.55;text-transform:none}
 html[dir=rtl] .zone-crime-choice[aria-pressed=true]{box-shadow:inset -3px 0 var(--gold)}
+html[dir=rtl] #zone-main[data-zone-screen=market] .zone-table-row{background:linear-gradient(270deg,var(--panel),transparent)}
 @media(max-width:1000px){#zone-main[data-zone-screen=gym] .zone-gym-workspace{grid-template-columns:minmax(0,1fr) 290px}#zone-main[data-zone-screen=gym] .zone-gym-session{margin-inline-end:11px;padding:16px}#zone-main[data-zone-screen=gym] .zone-gym-floor-readout{max-width:calc(100% - 307px);grid-template-columns:1fr;gap:8px}.zone-crime-operation{grid-template-columns:minmax(0,1.25fr) minmax(235px,1fr)}.zone-crime-neighborhood{padding-inline-end:15px}}
 @media(max-width:760px){.zone-city-directory{padding:10px!important}.zone-city-destinations{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}.zone-city-destinations button{padding:8px!important;min-height:54px!important}.zone-crime-neighborhood h2{font-size:27px}}
 @media(max-width:650px){
