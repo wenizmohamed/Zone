@@ -58,7 +58,8 @@ final class CombatService
                 $encounter = ['id' => bin2hex(random_bytes(16)), 'opponentId' => $opponentId, 'opponent' => $opponent,
                     'enemyHp' => (int) $opponent['life'], 'enemyMaxHp' => (int) $opponent['life'], 'playerHp' => $player['life'], 'playerMaxHp' => $player['max_life'],
                     'startPlayerHp' => $player['life'], 'turn' => 0, 'phase' => 'fighting', 'log' => [], 'weaponMultiplier' => $loadout['weaponMultiplier'],
-                    'weaponId' => $loadout['weaponId'], 'armorId' => $loadout['armorId'], 'armorReduction' => $loadout['armorReduction'], 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus];
+                    'weaponId' => $loadout['weaponId'], 'armorId' => $loadout['armorId'], 'armorReduction' => $loadout['armorReduction'], 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus,
+                    'tornCombat' => is_array($state['tornCombat'] ?? null) ? $state['tornCombat'] : null];
                 $this->database->execute('UPDATE players SET energy = energy - 25 WHERE id = :id', ['id' => $playerId]);
                 $cooldown = $this->database->fetchOne("SELECT seconds FROM cooldown_config WHERE action = 'attack'");
                 (new CooldownService($this->database))->arm($playerId, 'attack', (int) ($cooldown['seconds'] ?? 8));
@@ -69,11 +70,18 @@ final class CombatService
                 $encounter['turn']++;
                 $life = $player['life'];
                 $enemyLife = $encounter['enemyHp'];
-                $hitChance = (int) round($player['speed'] / max(1, $player['speed'] + $opponent['dex']) * 10000);
-                $damage = $this->roll(1, 10000) <= $hitChance ? max(1, (int) round(120 * $encounter['weaponMultiplier'] * ($player['strength'] / max(1, $player['strength'] + $opponent['def'])) * $this->roll(80, 120) / 100)) : 0;
+                $tc = is_array($encounter['tornCombat'] ?? null) ? $encounter['tornCombat'] : null;
+                $hbMap = ['head' => 'Head', 'throat' => 'Throat', 'heart' => 'Heart', 'chest' => 'Chest', 'stomach' => 'Stomach', 'groin' => 'Groin', 'arms' => 'Arm', 'hands' => 'Hand', 'legs' => 'Leg', 'feet' => 'Foot'];
+                $ammoMap = ['std' => 'Standard', 'hp' => 'Hollow Point', 'ap' => 'Piercing', 'tr' => 'Tracer', 'inc' => 'Incendiary'];
+                $hitbox = ($tc && isset($hbMap[$tc['hitbox'] ?? ''])) ? $hbMap[$tc['hitbox']] : ['Head', 'Heart', 'Throat', 'Chest', 'Stomach', 'Arm', 'Leg'][$encounter['turn'] % 7];
+                $ammoType = ($tc && isset($ammoMap[$tc['ammo'] ?? ''])) ? $ammoMap[$tc['ammo']] : ['Standard', 'Hollow Point', 'Piercing', 'Tracer', 'Incendiary'][$encounter['turn'] % 5];
+                $accBoost = ($tc && ($tc['ammo'] ?? '') === 'tr') ? 1000 : 0;
+                $defPen = ($tc && ($tc['ammo'] ?? '') === 'ap') ? 0.5 : 1.0;
+                $dmgBoost = ($tc && ($tc['ammo'] ?? '') === 'hp') ? 1.35 : (($tc && ($tc['ammo'] ?? '') === 'inc') ? 1.25 : 1.0);
+                if ($this->random !== null) { $accBoost = 0; $defPen = 1.0; $dmgBoost = 1.0; }
+                $hitChance = min(9800, (int) round($player['speed'] / max(1, $player['speed'] + $opponent['dex']) * 10000) + $accBoost);
+                $damage = $this->roll(1, 10000) <= $hitChance ? max(1, (int) round(120 * $dmgBoost * $encounter['weaponMultiplier'] * ($player['strength'] / max(1, $player['strength'] + $opponent['def'] * $defPen)) * $this->roll(80, 120) / 100)) : 0;
                 $enemyLife = max(0, $enemyLife - $damage);
-                $hitbox = ['Head', 'Heart', 'Throat', 'Chest', 'Stomach', 'Arm', 'Leg'][$encounter['turn'] % 7];
-                $ammoType = ['Standard', 'Hollow Point', 'Piercing', 'Tracer', 'Incendiary'][$encounter['turn'] % 5];
                 $encounter['log'][] = ['n' => $encounter['turn'], 'side' => $damage > 0 ? 'opp' : null, 'actor' => 'player', 'd' => $damage, 'yl' => $life, 'ol' => $enemyLife, 'hitbox' => $hitbox, 'ammoType' => $ammoType];
                 if ($enemyLife > 0) {
                     $hitChance = (int) round($opponent['spd'] / max(1, $opponent['spd'] + $player['dexterity']) * 10000);

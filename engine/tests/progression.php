@@ -128,6 +128,14 @@ try {
     $cashDelta = array_sum(array_map(fn ($row) => $row['asset'] === 'cash' ? (int) $row['amount'] : 0, $ledger));
     proof($service->snapshot('founder-player')['player']['cash'] === $initial['player']['cash'] + $cashDelta, 'all cash changes reconcile exactly with economy ledger');
     rejects(fn () => action('item.buy', '../../secret'), 'Unknown item', 'unknown item identifiers rejected');
+    $hj = action('torn.happyJump', 'stack');
+    proof($hj['result']['type'] === 'torn.happyJump' && $hj['state']['cooldowns']['drugUntil'] > 0, 'server-authoritative torn.happyJump stacks happy/energy and arms drug cooldown');
+    $shop = action('torn.shoplift', 'sallys');
+    proof($shop['result']['cashDelta'] === 3800 && $shop['state']['skill']['shoplift'] >= 1, 'server-authoritative torn.shoplift spends nerve, awards loot, and increments shoplift skill');
+    $prep = action('torn.combatPrep', 'heart:ap:secondary');
+    proof($prep['state']['tornCombat']['hitbox'] === 'heart' && $prep['state']['tornCombat']['ammo'] === 'ap', 'server-authoritative torn.combatPrep persists hitbox and special ammo for CombatService');
+    $cd = action('torn.bankCd', '30d');
+    proof($cd['state']['tornState']['activeCd']['term'] === '30d' && $cd['result']['bankDelta'] === 25400, 'server-authoritative torn.bankCd locks certificate and credits vault yield');
 } catch (Throwable $e) {
     proof(false, 'unexpected exception: ' . $e->getMessage());
     fwrite(STDERR, $e->getTraceAsString() . "\n");

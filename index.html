@@ -639,27 +639,43 @@
           </sc-for>
         </section>
         <div class="zone-crime-receipt zone-panel" role="status" aria-live="polite"><strong>{{ crimeDesk.receiptLabel }}</strong><p>{{ crimeDesk.receipt }}</p><sc-if value="{{ crimeDesk.recovery }}"><button onClick="{{ crimeDesk.recover }}">{{ crimeDesk.recovery }}</button></sc-if></div>
-        <section class="zone-panel" data-torn-crimes2-panel="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:var(--t1);font-size:12.5px">{{ omar.shopliftingTitle }}</strong>
+        <section class="zone-panel" data-torn-crimes2-panel="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <strong style="color:var(--t1);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em">{{ omar.shopliftingTitle }}</strong>
+            </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="zone-compact-btn" onClick="{{ omar.collectSkimmerDump }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.skimmerBtnLabel }}</button>
               <button class="zone-compact-btn" onClick="{{ omar.runCrackingRig }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:4px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.crackBtnLabel }}</button>
             </div>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
             <sc-for list="{{ omar.shopliftingShops }}" as="sh" hint-placeholder-count="6">
-              <div style="flex:1 1 200px;background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <strong style="color:var(--t1)">{{ sh.shop }}</strong>
-                <span style="color:{{ sh.color }};font-weight:600;font-size:10px">{{ sh.status }}</span>
+              <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:3px solid {{ sh.color }};border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px">
+                <div>
+                  <strong style="color:var(--t1);display:block">{{ sh.shop }}</strong>
+                  <span style="color:{{ sh.color }};font-weight:600;font-size:10px;display:block">{{ sh.status }}</span>
+                  <small style="color:var(--money);font-size:10px">{{ sh.loot }} · {{ sh.nerve }}</small>
+                </div>
+                <button class="zone-compact-btn" onClick="{{ sh.heist }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">{{ sh.btn }}</button>
               </div>
             </sc-for>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;border-top:1px solid var(--line);padding-top:8px">
             <sc-for list="{{ omar.searchModifiers }}" as="sm" hint-placeholder-count="4">
-              <div style="flex:1 1 190px;background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;font-size:11px">
-                <span><strong style="color:var(--t2)">{{ sm.loc }}</strong> <small style="color:var(--mu);display:block">{{ sm.state }}</small></span>
-                <bdi style="color:var(--gold);font-weight:700">{{ sm.pct }}</bdi>
+              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;flex-direction:column;gap:5px;font-size:11px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                  <div>
+                    <strong style="color:var(--t2);display:block">{{ sm.loc }}</strong>
+                    <small style="color:var(--mu);font-size:10px">{{ sm.state }} · {{ sm.loot }}</small>
+                  </div>
+                  <button class="zone-compact-btn" onClick="{{ sm.search }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ sm.btn }}</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="flex:1;height:5px;background:var(--track);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ sm.pct }};background:linear-gradient(90deg,var(--acc),var(--gold))"></div></div>
+                  <bdi style="color:var(--gold);font-weight:700;font-size:10px">{{ sm.pct }}</bdi>
+                </div>
               </div>
             </sc-for>
           </div>
@@ -683,22 +699,28 @@
           </div>
         </section>
         <section class="zone-panel zone-membership-ledger zone-gym-memberships"><div class="zone-panel-heading">{{ t.gymLadder }} <bdi>{{ gymXp }} {{ t.gymXp }}</bdi></div><div class="zone-gym-progression"><p>{{ trainingBoard.next }}</p><sc-if value="{{ gymStudio.hasNext }}"><div class="zone-record-track" role="progressbar" aria-label="{{ gymStudio.progressLabel }}" aria-valuemin="0" aria-valuemax="{{ gymStudio.nextTarget }}" aria-valuenow="{{ gymStudio.nextProgress }}"><span style="width:{{ gymStudio.progressPct }}%"></span></div><small>{{ gymStudio.progressLabel }}</small></sc-if></div><sc-for list="{{ gyms }}" as="g" hint-placeholder-count="8"><div class="zone-membership-row" data-zone-current="{{ g.current }}"><div><strong>{{ g.name }}</strong><small>{{ g.reason }}</small></div><div><span>{{ trainingBoard.joinLabel }}</span><bdi>{{ g.cost }}</bdi></div><div><span>{{ t.gymXp }}</span><bdi>{{ g.xp }}</bdi></div><div><span>{{ t.energyPer }}</span><bdi>{{ g.energy }}</bdi></div><button onClick="{{ g.join }}" disabled="{{ g.disabled }}" style="background:{{ g.btnBg }};color:{{ g.btnFg }}">{{ g.btn }}</button></div></sc-for></section>
-        <section class="zone-panel" data-torn-gym-spec="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <div>
-              <strong style="color:var(--t1);font-size:12.5px">{{ omar.gymSpecTitle }}</strong>
-              <div style="color:var(--mu);font-size:11px">{{ omar.happySynergyText }}</div>
+        <section class="zone-panel" data-torn-gym-spec="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M6.5 6.5 17.5 17.5"></path><path d="M3 10 10 3"></path><path d="m14 21 7-7"></path></svg>
+              <div>
+                <strong style="color:var(--t1);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;display:block">{{ omar.gymSpecTitle }}</strong>
+                <div style="color:var(--mu);font-size:10.5px">{{ omar.happySynergyText }}</div>
+              </div>
             </div>
             <button class="zone-compact-btn" onClick="{{ omar.runRehabSession }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.rehabBtnLabel }}</button>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
             <sc-for list="{{ omar.gymSpecializations }}" as="gs" hint-placeholder-count="3">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
-                <div>
-                  <strong style="color:var(--gold);font-size:11.5px;display:block">{{ gs.name }}</strong>
-                  <small style="color:var(--t3);font-size:10px">{{ gs.focus }} · {{ gs.dots }}</small>
+              <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:3px solid {{ gs.border }};border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                  <div>
+                    <strong style="color:var(--gold);font-size:11.5px;display:block">{{ gs.name }}</strong>
+                    <small style="color:var(--t3);font-size:10px">{{ gs.focus }} · {{ gs.dots }}</small>
+                  </div>
+                  <button class="zone-compact-btn" onClick="{{ gs.activate }}" style="background:{{ gs.bg }};color:{{ gs.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ gs.btn }}</button>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ gs.activate }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ gs.btn }}</button>
+                <div style="height:4px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ gs.pct }};background:linear-gradient(90deg,var(--acc),var(--gold))"></div></div>
               </div>
             </sc-for>
           </div>
@@ -751,23 +773,30 @@
             <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2)"><span style="width:22px;height:22px;flex:none;display:grid;place-items:center;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{ lg.color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0" data-zone-path="{{ lg.d }}"></path></svg></span><span>{{ lg.label }}</span></div></sc-for>
           </div>
         </div>
-        <section class="zone-panel" data-torn-city-smuggling="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:var(--gold);font-size:12.5px">{{ omar.smugglingBoardTitle }}</strong>
+        <section class="zone-panel" data-torn-city-smuggling="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path></svg>
+              <strong style="color:var(--gold);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em">{{ omar.smugglingBoardTitle }}</strong>
+            </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <sc-for list="{{ omar.wallActions }}" as="wa" hint-placeholder-count="3">
                 <button class="zone-compact-btn" onClick="{{ wa.act }}" style="background:{{ wa.bg }};color:{{ wa.fg }};border:1px solid var(--border3);border-radius:3px;padding:4px 9px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ wa.label }}</button>
               </sc-for>
             </div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:6px">
+          <div style="background:var(--deep);border:1px solid var(--border2);border-radius:4px;padding:7px 10px;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;justify-content:space-between;font-size:11px"><strong style="color:var(--t1)">{{ omar.wallStatusLabel }}</strong><bdi style="color:var(--acc);font-weight:700">{{ omar.wallProgressPct }}%</bdi></div>
+            <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ omar.wallProgressPct }}%;background:linear-gradient(90deg,var(--acc),var(--gold))"></div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ omar.smugglingHubs }}" as="sh" hint-placeholder-count="6">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px">
+              <div style="background:var(--deep);border:1px solid var(--border);border-inline-start:2px solid var(--gold);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px">
                 <div>
                   <strong style="color:var(--t1);display:block">{{ sh.hub }}</strong>
-                  <small style="color:var(--money)">{{ sh.item }} · {{ sh.profit }}</small>
+                  <small style="color:var(--money);font-weight:600">{{ sh.item }} · {{ sh.profit }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ sh.fly }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ sh.btn }}</button>
+                <button class="zone-compact-btn" onClick="{{ sh.fly }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ sh.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -847,25 +876,26 @@
           <div data-torn-hitbox-loadout="1" style="display:grid;grid-template-columns:130px 1fr;gap:12px;border-top:1px solid var(--line);padding-top:10px;align-items:center">
             <div style="background:var(--deep);border:1px solid var(--border2);border-radius:5px;padding:8px;display:grid;place-items:center">
               <svg width="92" height="145" viewBox="0 0 100 160" aria-label="Anatomical Target Silhouette">
-                <circle cx="50" cy="20" r="12" fill="rgba(224,90,74,.28)" stroke="#ff6a55" stroke-width="1.5"/>
-                <rect x="45" y="33" width="10" height="7" rx="2" fill="rgba(243,182,63,.3)" stroke="var(--gold)" stroke-width="1.2"/>
-                <rect x="33" y="42" width="34" height="34" rx="5" fill="rgba(163,217,0,.18)" stroke="var(--acc)" stroke-width="1.5"/>
-                <circle cx="55" cy="54" r="6" fill="rgba(224,90,74,.45)" stroke="#ff6a55" stroke-width="1.2"/>
-                <rect x="36" y="78" width="28" height="20" rx="4" fill="rgba(90,160,224,.18)" stroke="#5aa0e0" stroke-width="1.2"/>
-                <rect x="19" y="44" width="11" height="42" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
-                <rect x="70" y="44" width="11" height="42" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
-                <rect x="35" y="100" width="13" height="48" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
-                <rect x="52" y="100" width="13" height="48" rx="4" fill="rgba(255,255,255,.08)" stroke="var(--border3)" stroke-width="1.2"/>
+                <circle cx="50" cy="20" r="12" fill="{{ omar.hbHeadFill }}" stroke="#ff6a55" stroke-width="1.5"/>
+                <rect x="45" y="33" width="10" height="7" rx="2" fill="{{ omar.hbThroatFill }}" stroke="var(--gold)" stroke-width="1.2"/>
+                <rect x="33" y="42" width="34" height="34" rx="5" fill="{{ omar.hbChestFill }}" stroke="var(--acc)" stroke-width="1.5"/>
+                <circle cx="55" cy="54" r="6" fill="{{ omar.hbHeartFill }}" stroke="#ff6a55" stroke-width="1.2"/>
+                <rect x="36" y="78" width="28" height="20" rx="4" fill="{{ omar.hbStomachFill }}" stroke="#5aa0e0" stroke-width="1.2"/>
+                <rect x="19" y="44" width="11" height="42" rx="4" fill="{{ omar.hbArmsFill }}" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="70" y="44" width="11" height="42" rx="4" fill="{{ omar.hbArmsFill }}" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="35" y="100" width="13" height="48" rx="4" fill="{{ omar.hbLegsFill }}" stroke="var(--border3)" stroke-width="1.2"/>
+                <rect x="52" y="100" width="13" height="48" rx="4" fill="{{ omar.hbLegsFill }}" stroke="var(--border3)" stroke-width="1.2"/>
               </svg>
+              <small style="color:var(--gold);font-size:9.5px;font-weight:700;margin-top:4px;text-align:center">{{ omar.activeHitboxLabel }}</small>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:6px">
                 <sc-for list="{{ omar.loadoutSlots4 }}" as="ls" hint-placeholder-count="4">
-                  <div style="background:var(--deep);border:1px solid var(--border);border-inline-start:2px solid var(--acc);border-radius:4px;padding:6px 8px;font-size:10.5px">
+                  <button onClick="{{ ls.equip }}" style="text-align:start;background:var(--deep);border:1px solid {{ ls.border }};border-inline-start:2px solid var(--acc);border-radius:4px;padding:6px 8px;font:inherit;font-size:10.5px;cursor:pointer">
                     <span style="color:var(--acc);font-weight:700;font-size:9.5px;letter-spacing:.05em;display:block">{{ ls.slot }}</span>
                     <strong style="color:var(--t1);display:block">{{ ls.weapon }}</strong>
                     <small style="color:var(--gold)">{{ ls.mod }}</small>
-                  </div>
+                  </button>
                 </sc-for>
               </div>
               <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center">
@@ -931,23 +961,30 @@
             <sc-for list="{{ members }}" as="m" hint-placeholder-count="6"><div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="width:7px;height:7px;border-radius:50%;background:{{ m.dot }}"></span><span style="flex:1;color:var(--link)">{{ m.name }}</span><span style="color:var(--mu);font-size:11px">{{ m.role }}</span><bdi style="color:var(--t4);font-size:11px;width:40px;text-align:end">{{ m.lvl }}</bdi><span style="color:{{ m.stateColor }};font-size:10px;text-transform:uppercase;width:64px;text-align:end">{{ m.state }}</span></div></sc-for>
           </div>
         </div>
-        <section class="zone-panel" data-torn-oc2-rackets="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-            <strong style="color:var(--t1);font-size:12.5px">{{ omar.oc2Title }}</strong>
-            <button class="zone-compact-btn" onClick="{{ omar.collectRacketYield }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.collectRacketBtn }}</button>
+        <section class="zone-panel" data-torn-oc2-rackets="1" style="background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <strong style="color:var(--t1);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em">{{ omar.oc2Title }}</strong>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="zone-compact-btn" onClick="{{ omar.runOc2Heist }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.runOc2HeistBtn }}</button>
+              <button class="zone-compact-btn" onClick="{{ omar.collectRacketYield }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:11px;font-weight:700;cursor:pointer">{{ omar.collectRacketBtn }}</button>
+            </div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ omar.oc2Slots }}" as="oc" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px">
-                <div style="display:flex;justify-content:space-between"><strong style="color:var(--acc)">{{ oc.slot }}</strong><bdi style="color:var(--gold)">{{ oc.rate }}</bdi></div>
-                <small style="color:var(--t3);display:block">Tool: {{ oc.item }} · {{ oc.status }}</small>
+              <div style="background:var(--deep);border:1px solid var(--border2);border-radius:4px;padding:7px 9px;font-size:11px;display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;justify-content:space-between"><strong style="color:var(--acc)">{{ oc.slot }}</strong><bdi style="color:var(--gold);font-weight:700">{{ oc.rate }}</bdi></div>
+                <small style="color:var(--t3);display:block">Kit: {{ oc.item }} · {{ oc.status }}</small>
+                <div style="height:4px;background:var(--track);border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ oc.pct }};background:var(--acc)"></div></div>
               </div>
             </sc-for>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ omar.activeRackets }}" as="rk" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;font-size:11px;display:flex;justify-content:space-between;align-items:center">
-                <span><strong style="color:var(--t1)">{{ rk.sector }}</strong><small style="color:var(--mu);display:block">{{ rk.fac }}</small></span>
+              <div style="background:var(--deep);border:1px solid var(--border);border-inline-start:2px solid var(--gold);border-radius:4px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center">
+                <span><strong style="color:var(--t1);display:block">{{ rk.sector }}</strong><small style="color:var(--mu);display:block">{{ rk.fac }}</small></span>
                 <bdi style="color:var(--money);font-weight:700">{{ rk.yieldText }}</bdi>
               </div>
             </sc-for>
@@ -1000,16 +1037,19 @@
         </section>
         <sc-if value="{{ employment.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ employment.resultLabel }}</h3><sc-for list="{{ employment.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <section class="zone-panel zone-employment-list"><div class="zone-panel-heading">{{ employment.title }}</div><sc-for list="{{ jobs }}" as="j" hint-placeholder-count="6"><article class="zone-employment-row" data-zone-current="{{ j.current }}"><div class="zone-record-art" style="background-image:url('{{ j.img }}');filter:{{ j.filter }}" aria-hidden="true"></div><div class="zone-record-copy"><h3>{{ j.name }}</h3><p>{{ j.desc }}</p><small>{{ t.level }} <bdi>{{ j.lvl }}</bdi> · <bdi>{{ j.energy }}</bdi> {{ t.energy }}</small></div><div class="zone-record-action"><span>{{ t.pay }} <bdi>{{ j.pay }}</bdi></span><button onClick="{{ j.take }}" disabled="{{ j.disabled }}" style="background:{{ j.bg }};color:{{ j.fg }}">{{ j.btn }}</button><small>{{ j.reason }}</small></div></article></sc-for></section>
-        <section class="zone-panel" data-torn-company-specials="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.companySpecialsTitle }}</strong>
+        <section class="zone-panel" data-torn-company-specials="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+            <strong style="color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.companySpecialsTitle }}</strong>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
             <sc-for list="{{ omar.companySpecials }}" as="cs" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <div>
                   <strong style="color:var(--t1);font-size:11.5px;display:block">{{ cs.comp }}</strong>
                   <small style="color:var(--acc);font-size:10px">{{ cs.perk }} · {{ cs.cost }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ cs.redeem }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ cs.btn }}</button>
+                <button class="zone-compact-btn" onClick="{{ cs.redeem }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em">{{ cs.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -1019,12 +1059,15 @@
       <!-- MARKET -->
       <sc-if value="{{ is.market }}" hint-placeholder-val="{{ false }}">
         <nav class="zone-peer-modes" aria-label="{{ t.market }}"><sc-for list="{{ marketModes }}" as="mode"><button onClick="{{ mode.select }}" disabled="{{ mode.disabled }}" aria-pressed="{{ mode.active }}">{{ mode.label }}</button></sc-for></nav>
-        <section class="zone-panel" data-torn-bazaar-shield="1" style="background:var(--panel);border:1px solid var(--border3);border-inline-start:3px solid var(--acc);border-radius:5px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-          <div>
-            <strong style="color:var(--t1);font-size:12px">{{ omar.bazaarTitle }}</strong>
-            <div style="color:var(--mu);font-size:10.5px">{{ omar.bazaarSub }}</div>
+        <section class="zone-panel" data-torn-bazaar-shield="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-inline-start:3px solid var(--acc);border-radius:5px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:22px;height:22px;border-radius:4px;background:rgba(57,231,163,.12);border:1px solid rgba(57,231,163,.35);display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <div>
+              <strong style="color:var(--t1);font-size:12px">{{ omar.bazaarTitle }}</strong>
+              <div style="color:var(--mu);font-size:10.5px">{{ omar.bazaarSub }}</div>
+            </div>
           </div>
-          <button class="zone-compact-btn" onClick="{{ omar.activateMugShield }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:4px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.mugShieldBtn }}</button>
+          <button class="zone-compact-btn" onClick="{{ omar.activateMugShield }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em">{{ omar.mugShieldBtn }}</button>
         </section>
         <sc-if value="{{ merchantMarket }}">
         <p class="zone-panel-note">{{ merchantNote }}</p>
@@ -1071,13 +1114,19 @@
           <sc-for list="{{ courses }}" as="c" hint-placeholder-count="5"><article class="zone-course-row" data-zone-current="{{ c.active }}"><div class="zone-course-code"><div class="zone-record-art" style="background-image:url('{{ c.img }}')" aria-hidden="true"></div><bdi>{{ c.number }}</bdi></div><div class="zone-record-copy"><h3>{{ c.name }}</h3><p>{{ c.effect }}</p><small>{{ c.reason }}</small><sc-if value="{{ c.active }}"><div class="zone-record-track"><span style="width:{{ c.pct }}%"></span></div><small>{{ c.prog }} · {{ c.remaining }}</small></sc-if></div><div class="zone-record-action"><span><bdi>{{ c.cost }}</bdi> · <bdi>{{ c.dur }}</bdi></span><button onClick="{{ c.enroll }}" disabled="{{ c.disabled }}" style="background:{{ c.bg }};color:{{ c.fg }}">{{ c.btn }}</button></div></article></sc-for>
         </section>
         <sc-if value="{{ educationBoard.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ educationBoard.resultLabel }}</h3><sc-for list="{{ educationBoard.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
-        <section class="zone-panel" data-torn-edu-matrix="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--t1);font-size:12.5px">{{ omar.eduMatrixTitle }}</strong>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px">
+        <section class="zone-panel" data-torn-edu-matrix="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(57,231,163,.12);border:1px solid rgba(57,231,163,.35);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+            <strong style="color:var(--t1);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.eduMatrixTitle }}</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px">
             <sc-for list="{{ omar.eduMajors }}" as="em" hint-placeholder-count="6">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;font-size:11px">
-                <div style="display:flex;justify-content:space-between"><strong style="color:var(--gold)">{{ em.code }}</strong><bdi style="color:var(--acc);font-weight:700">{{ em.status }}</bdi></div>
-                <small style="color:var(--t2);display:block;margin-top:2px">{{ em.unlock }}</small>
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-size:11px;display:flex;flex-direction:column;justify-content:space-between;gap:6px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;align-items:center"><strong style="color:var(--gold)">{{ em.code }}</strong><bdi style="color:var(--acc);font-weight:700;font-size:10px">{{ em.status }}</bdi></div>
+                  <small style="color:var(--t2);display:block;margin-top:3px;line-height:1.35">{{ em.unlock }}</small>
+                </div>
+                <button class="zone-compact-btn" onClick="{{ em.enroll }}" style="align-self:flex-end;background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ em.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -1091,16 +1140,19 @@
         <sc-if value="{{ propertyDossier.hasEvents }}"><section class="zone-panel zone-route-receipt" role="status" aria-live="polite"><h3>{{ propertyDossier.resultLabel }}</h3><sc-for list="{{ propertyDossier.events }}" as="event"><p><bdi>{{ event.time }}</bdi><span>{{ event.text }}</span></p></sc-for></section></sc-if>
         <div class="zone-property-dossiers"><sc-for list="{{ props }}" as="pr" hint-placeholder-count="7"><article class="zone-panel zone-property-dossier" data-zone-current="{{ pr.living }}"><div class="zone-property-art" aria-hidden="true"><div class="zone-property-art-panel" style="background-image:url('{{ pr.img }}');background-size:{{ pr.artSize }};background-position:{{ pr.artPosition }};opacity:{{ pr.imgOpacity }}"></div></div><div class="zone-record-copy"><span class="zone-overline">{{ pr.status }}</span><h3>{{ pr.name }}</h3><p>{{ propertyDossier.baseHappyLabel }} <bdi>{{ pr.happy }}</bdi></p><div class="zone-property-purchase"><div><small>{{ pr.priceLabel }}</small><bdi>{{ pr.price }}</bdi></div><button onClick="{{ pr.buy }}" disabled="{{ pr.disabled }}" style="background:{{ pr.btnBg }};color:{{ pr.btnFg }}">{{ pr.btn }}</button></div><button class="zone-enter-house" onClick="{{ pr.enter }}">{{ pr.enterLabel }}</button><small>{{ pr.reason }}</small></div></article></sc-for></div>
         <details class="zone-panel-note"><summary>{{ propertyUpkeepLabel }}</summary><p>{{ propertyUpkeepNote }}</p><sc-for list="{{ props }}" as="pr"><p>{{ pr.name }} · {{ pr.upkeepReference }}</p></sc-for></details>
-        <section class="zone-panel" data-torn-island-staff="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.islandStaffTitle }}</strong>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px">
+        <section class="zone-panel" data-torn-island-staff="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            <strong style="color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.islandStaffTitle }}</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:8px">
             <sc-for list="{{ omar.islandStaff }}" as="st" hint-placeholder-count="5">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <div>
                   <strong style="color:var(--t1);font-size:11.5px;display:block">{{ st.role }}</strong>
                   <small style="color:var(--mu);font-size:10px">{{ st.effect }} · {{ st.wage }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ st.hire }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ st.btn }}</button>
+                <button class="zone-compact-btn" onClick="{{ st.hire }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ st.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -1123,12 +1175,15 @@
           <sc-for list="{{ inmates }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" data-zrow="1" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px 90px 170px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }} <span style="color:var(--mu2);font-size:11px">· {{ i.reason }}</span></span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><bdi data-label="{{ t.bustOdds }}" style="color:var(--t4)">{{ i.odds }}%</bdi><div style="display:flex;gap:4px"><button class="zone-action-primary" onClick="{{ i.bust }}" disabled="{{ i.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);font-weight:700;border:1px solid var(--acc2);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bust }} · 5</button><button onClick="{{ i.bail }}" disabled="{{ i.bailDisabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.bail }} <bdi>{{ i.bailCost }}</bdi></button></div></div></sc-for>
           <div style="padding:6px 10px;color:var(--mu);font-size:11px">{{ t.jailTip }}</div>
         </div>
-        <section class="zone-panel" data-torn-jail-tools="1" style="background:var(--panel);border:1px solid var(--border3);border-inline-start:3px solid var(--gold);border-radius:5px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-          <div>
-            <strong style="color:var(--gold);font-size:12px">{{ omar.jailTornTitle }}</strong>
-            <div style="color:var(--mu);font-size:10.5px">{{ omar.jailTornSub }}</div>
+        <section class="zone-panel" data-torn-jail-tools="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-inline-start:3px solid var(--gold);border-radius:5px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="width:22px;height:22px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>
+            <div>
+              <strong style="color:var(--gold);font-size:12px">{{ omar.jailTornTitle }}</strong>
+              <div style="color:var(--mu);font-size:10.5px">{{ omar.jailTornSub }}</div>
+            </div>
           </div>
-          <button class="zone-compact-btn" onClick="{{ omar.useLawyerCard }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ omar.lawyerCardBtn }}</button>
+          <button class="zone-compact-btn" onClick="{{ omar.useLawyerCard }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:5px 12px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em">{{ omar.lawyerCardBtn }}</button>
         </section>
       </sc-if>
 
@@ -1146,27 +1201,30 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ bank.withdrawals }}" as="b" hint-placeholder-count="3"><button onClick="{{ b.do }}" disabled="{{ b.disabled }}" style="background:var(--btn);color:var(--t2);font-weight:700;border:1px solid var(--border3);border-radius:4px;padding:8px 18px;font:inherit;font-size:12px;cursor:pointer">{{ b.label }}</button></sc-for></div>
           <div style="color:var(--t4);font-size:11px;margin-top:12px">{{ bank.msg }}</div>
         </div>
-        <section class="zone-panel" data-torn-bank-cds="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;margin-top:10px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.bankCdTitle }}</strong>
+        <section class="zone-panel" data-torn-bank-cds="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;margin-top:10px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+            <strong style="color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.bankCdTitle }}</strong>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ omar.bankCdOptions }}" as="cd" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <div>
                   <strong style="color:var(--t1);font-size:12px;display:block">{{ cd.term }} · {{ cd.apr }}</strong>
                   <small style="color:var(--money);font-weight:600">{{ cd.payout }} · {{ cd.bonus }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ cd.invest }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ cd.investLabel }}</button>
+                <button class="zone-compact-btn" onClick="{{ cd.invest }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ cd.investLabel }}</button>
               </div>
             </sc-for>
           </div>
           <div data-torn-stock-blocks="1" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px;border-top:1px solid var(--line);padding-top:8px">
             <sc-for list="{{ omar.stockDividendBlocks }}" as="sb" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10.5px">
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10.5px">
                 <div>
                   <strong style="color:var(--acc);display:block">{{ sb.ticker }} · {{ sb.name }}</strong>
                   <small style="color:var(--gold)">{{ sb.div }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ sb.collect }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ sb.btn }}</button>
+                <button class="zone-compact-btn" onClick="{{ sb.collect }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ sb.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -1180,11 +1238,14 @@
           <div class="zone-table-heading" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>{{ t.patient }}</span><span>{{ t.level }}</span><span>{{ t.timeLeft }}</span><span>{{ t.reason }}</span><span></span></div>
           <sc-for list="{{ patients }}" as="i" hint-placeholder-count="8"><div class="zone-table-row" style="display:grid;grid-template-columns:minmax(0,2fr) 70px 90px minmax(0,2fr) 100px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line)"><span style="color:var(--link)">{{ i.name }}</span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ i.lvl }}</bdi><bdi data-label="{{ t.timeLeft }}" style="color:var(--gold)">{{ i.left }}</bdi><span data-label="{{ t.reason }}" style="color:var(--mu);font-size:11px">{{ i.reason }}</span><button onClick="{{ i.revive }}" disabled="{{ i.disabled }}" style="background:var(--btn);border:1px solid var(--border3);color:var(--t3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;text-transform:uppercase;cursor:pointer">{{ t.revive }} · 75</button></div></sc-for>
         </div>
-        <section class="zone-panel" data-torn-hospital-blood="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--t1);font-size:12px">{{ omar.hospitalTornTitle }}</strong>
+        <section class="zone-panel" data-torn-hospital-blood="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(57,231,163,.12);border:1px solid rgba(57,231,163,.35);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+            <strong style="color:var(--t1);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.hospitalTornTitle }}</strong>
+          </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <sc-for list="{{ omar.bloodBagActions }}" as="bb" hint-placeholder-count="4">
-              <button class="zone-compact-btn" onClick="{{ bb.use }}" style="background:{{ bb.bg }};color:{{ bb.fg }};border:1px solid var(--border3);border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ bb.label }}</button>
+              <button class="zone-compact-btn" onClick="{{ bb.use }}" style="background:{{ bb.bg }};color:{{ bb.fg }};border:1px solid var(--border3);border-radius:4px;padding:5px 11px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ bb.label }}</button>
             </sc-for>
           </div>
         </section>
@@ -1208,16 +1269,19 @@
             <div class="zone-guide-copy"><h2>{{ t.highLow }}</h2><p>{{ casinoGuide.description }}</p><dl><div><dt>{{ casinoGuide.betLabel }}</dt><dd>{{ casino.bet }}</dd></div><div><dt>{{ casinoGuide.cardLabel }}</dt><dd>{{ casino.cardLabel }}</dd></div><div><dt>{{ casinoGuide.netLabel }}</dt><dd>{{ casino.net }}</dd></div></dl><p class="zone-panel-note">{{ casinoGuide.scope }}</p><button onClick="{{ casinoGuide.openBank }}" disabled="{{ casinoGuide.bankDisabled }}">{{ t.nav.bank }}</button></div>
           </div>
         </div>
-        <section class="zone-panel" data-torn-casino-games="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.casinoTornTitle }}</strong>
+        <section class="zone-panel" data-torn-casino-games="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span>
+            <strong style="color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.casinoTornTitle }}</strong>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px">
             <sc-for list="{{ omar.casinoTornGames }}" as="cg" hint-placeholder-count="4">
-              <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+              <div style="background:rgba(8,11,16,.86);border:1px solid var(--border);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <div>
                   <strong style="color:var(--t1);font-size:11.5px;display:block">{{ cg.game }}</strong>
                   <small style="color:var(--money);font-size:10px">{{ cg.odds }}</small>
                 </div>
-                <button class="zone-compact-btn" onClick="{{ cg.play }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ cg.btn }}</button>
+                <button class="zone-compact-btn" onClick="{{ cg.play }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ cg.btn }}</button>
               </div>
             </sc-for>
           </div>
@@ -1231,11 +1295,14 @@
           <div class="zone-table-heading" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;padding:5px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:500;background:var(--panel2);border-radius:5px 5px 0 0"><span>#</span><span>{{ t.playerLabel }}</span><span>{{ t.level }}</span><span>{{ t.totalStats }}</span><span>{{ leaderboard.fundsLabel }}</span><span>{{ t.faction }}</span></div>
           <sc-for list="{{ hof }}" as="h" hint-placeholder-count="10"><div class="zone-table-row" style="display:grid;grid-template-columns:50px minmax(0,2fr) 80px 120px 140px 120px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:{{ h.bg }}"><bdi data-label="#" style="color:var(--gold);font-weight:600">{{ h.rank }}</bdi><span data-label="{{ t.playerLabel }}" style="color:{{ h.color }};font-weight:500">{{ h.name }}</span><bdi data-label="{{ t.level }}" style="color:var(--t4)">{{ h.lvl }}</bdi><bdi data-label="{{ t.totalStats }}" style="color:var(--t4)">{{ h.stats }}</bdi><bdi data-label="{{ leaderboard.fundsLabel }}" style="color:var(--money)">{{ h.nw }}</bdi><span data-label="{{ t.faction }}" style="color:var(--mu)">{{ h.fac }}</span></div></sc-for>
         </div>
-        <section class="zone-panel" data-torn-honors-medals="1" style="background:var(--panel);border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-          <strong style="color:var(--gold);font-size:12.5px">{{ omar.hofBannersTitle }}</strong>
+        <section class="zone-panel" data-torn-honors-medals="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:7px">
+            <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></span>
+            <strong style="color:var(--gold);font-size:12px;letter-spacing:.06em;text-transform:uppercase">{{ omar.hofBannersTitle }}</strong>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px">
             <sc-for list="{{ omar.honorsMedalsShowcase }}" as="hm" hint-placeholder-count="4">
-              <div style="background:linear-gradient(90deg,#121821,#1f2b3a);border:1px solid var(--gold);border-radius:4px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <div style="background:linear-gradient(90deg,#121821,#1f2b3a);border:1px solid var(--gold);border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px">
                 <div>
                   <strong style="color:#fff;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;display:block">{{ hm.banner }}</strong>
                   <small style="color:var(--t3);font-size:10px">{{ hm.req }}</small>
@@ -3017,7 +3084,7 @@ class Component extends DCLogic {
     if (snapshot.hospitalQuote) this.hospitalQuote = { ...snapshot.hospitalQuote };
     if (Object.prototype.hasOwnProperty.call(snapshot, 'family')) this.sharedFamily = snapshot.family;
     if (Object.prototype.hasOwnProperty.call(snapshot, 'onboarding')) this.onboarding = snapshot.onboarding;
-    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients','meritTree','propertyLease','plushies','claimedHonors','friendsList','targetsList','chatHistory','personalNotes','claimedCitySpawns']) {
+    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients','meritTree','propertyLease','plushies','claimedHonors','friendsList','targetsList','chatHistory','personalNotes','claimedCitySpawns','tornState','tornCombat','cooldowns']) {
       if (Object.prototype.hasOwnProperty.call(state, key)) this.p[key] = state[key];
     }
     if (state.claimedCitySpawns && typeof state.claimedCitySpawns === 'object') {
@@ -4424,12 +4491,12 @@ class Component extends DCLogic {
     const leaseInfo = this.p.propertyLease || { id: 'island', nameEn: 'Private Island (Airstrip)', nameAr: 'جزيرة خاصة (مهبط طائرات)', daysLeft: 33, totalDays: 100, happy: 2500 };
 
     const plushies = [
-      { id: 'plush_camel', icon: '🐪', city: lang === 'ar' ? 'دبي' : 'Dubai', en: 'Dubai Camel Plushie', ar: 'دبدوب الجمل الإماراتي', price: 1200 },
-      { id: 'plush_bear', icon: '🧸', city: lang === 'ar' ? 'لندن (بريطانيا)' : 'London (UK)', en: 'UK Royal Guard Bear', ar: 'دبدوب الحرس الملكي', price: 1500 },
-      { id: 'plush_moose', icon: '🫎', city: lang === 'ar' ? 'مونتريال (كندا)' : 'Canada', en: 'Canada Maple Moose', ar: 'دبدوب الموظ الكندي', price: 1400 },
-      { id: 'plush_pharaoh', icon: '🏺', city: lang === 'ar' ? 'القاهرة' : 'Cairo', en: 'Golden Pharaoh Relic', ar: 'تمثال الفرعون الذهبي', price: 1800 },
-      { id: 'plush_falcon', icon: '🦅', city: lang === 'ar' ? 'الرياض' : 'Riyadh', en: 'Arabian Falcon Plushie', ar: 'دبدوب الصقر العربي', price: 1350 },
-      { id: 'plush_lion', icon: '🦁', city: lang === 'ar' ? 'إسطنبول' : 'Istanbul', en: 'Anatolian Lion Plushie', ar: 'دمية الأسد الأناضولي', price: 1600 }
+      { id: 'plush_camel', icon: 'DXB', city: lang === 'ar' ? 'دبي' : 'Dubai', en: 'Dubai Camel Plushie', ar: 'دبدوب الجمل الإماراتي', price: 1200 },
+      { id: 'plush_bear', icon: 'LDN', city: lang === 'ar' ? 'لندن (بريطانيا)' : 'London (UK)', en: 'UK Royal Guard Bear', ar: 'دبدوب الحرس الملكي', price: 1500 },
+      { id: 'plush_moose', icon: 'YUL', city: lang === 'ar' ? 'مونتريال (كندا)' : 'Canada', en: 'Canada Maple Moose', ar: 'دبدوب الموظ الكندي', price: 1400 },
+      { id: 'plush_pharaoh', icon: 'CAI', city: lang === 'ar' ? 'القاهرة' : 'Cairo', en: 'Golden Pharaoh Relic', ar: 'تمثال الفرعون الذهبي', price: 1800 },
+      { id: 'plush_falcon', icon: 'RUH', city: lang === 'ar' ? 'الرياض' : 'Riyadh', en: 'Arabian Falcon Plushie', ar: 'دبدوب الصقر العربي', price: 1350 },
+      { id: 'plush_lion', icon: 'IST', city: lang === 'ar' ? 'إسطنبول' : 'Istanbul', en: 'Anatolian Lion Plushie', ar: 'دمية الأسد الأناضولي', price: 1600 }
     ];
     const ownedPlushies = this.p.plushies || { plush_camel: 1, plush_bear: 1, plush_moose: 1, plush_pharaoh: 1, plush_falcon: 1, plush_lion: 1 };
 
@@ -4953,7 +5020,7 @@ class Component extends DCLogic {
       rollSpawnBtnLabel: lang === 'ar' ? 'توليد لقطة حظ جديدة على الخريطة' : 'Roll 2-3 Day Lucky Spawn',
       rollLuckyCitySpawn: () => {
         this.setState({ claimedCitySpawns: {} });
-        this.toast(lang === 'ar' ? '👁️ بفضل ميزة الوعي (Awareness)، رصدت عناصر جديدة محاطة بدائرة على خريطة المدينة!' : '👁️ Your Awareness spotted fresh circled items across the City Map!');
+        this.toast(lang === 'ar' ? 'بفضل ميزة الوعي (Awareness)، رصدت عناصر جديدة محاطة بدائرة على خريطة المدينة!' : 'Your Awareness spotted fresh circled items across the City Map!');
       },
       cityMapSpawns: activeMapSpawns,
 
@@ -4976,7 +5043,7 @@ class Component extends DCLogic {
           this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
           this.save();
           this.syncOmarAction('museum.plushieBuy', pl.id);
-          this.toast(lang === 'ar' ? `🧸 اشتريت ${pl.ar} من ${pl.city}!` : `🧸 Purchased ${pl.en} (${pl.city})!`);
+          this.toast(lang === 'ar' ? `اشتريت ${pl.ar} من ${pl.city}!` : `Purchased ${pl.en} (${pl.city})!`);
           this.forceUpdate();
         }
       })),
@@ -4998,7 +5065,7 @@ class Component extends DCLogic {
         this.p.points = Number(this.p.points || 0) + 10;
         this.save();
         this.syncOmarAction('museum.exchange', 'set');
-        this.result('good', lang === 'ar' ? '🏛️ استبدال المتحف مكتمل!' : '🏛️ Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', '+10 Points');
+        this.result('good', lang === 'ar' ? 'استبدال المتحف مكتمل!' : 'Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', '+10 Points');
       },
 
       // Honors & Medals + Ipecac Self-Hospitalization
@@ -5143,9 +5210,9 @@ class Component extends DCLogic {
         this.p.personalNotes = nextNotes;
         this.save();
         this.syncOmarAction('social.noteSave', String(nextNotes || ''));
-        this.toast(lang === 'ar' ? '📝 تم حفظ المفكرة الشخصية.' : '📝 Personal Notes saved.');
+        this.toast(lang === 'ar' ? 'تم حفظ المفكرة الشخصية.' : 'Personal Notes saved.');
       },
-      // === TORN API v2 (v6.15.7) + GEMINI 4 ARGON LIVE HARVEST TELEMETRY ===
+      // === TORN V2 SYNDICATE MECHANICS + SERVER-SYNCED ACTION TELEMETRY ===
       tornHarvestTitle: lang === 'ar' ? 'المؤشرات الحيوية وتهدئة المنشطات والطب' : 'Active Bio-Cooldowns & Toxicology Monitor',
       tornCooldowns: [
         { id: 'drug', label: lang === 'ar' ? 'تهدئة المنشطات (Narcotics CD)' : 'Narcotics Cooldown', val: this.state.tornDrugCd || '04h 18m / 24h', pct: this.state.tornDrugPct || 38, color: '#ff5d6c' },
@@ -5158,6 +5225,7 @@ class Component extends DCLogic {
         this.p.happy = Math.min(99999, Number(this.p.happy || 500) * 2 + 2500);
         this.p.energy = Math.min(1000, Number(this.p.energy || 100) + 250);
         this.save();
+        this.syncOmarAction('torn.happyJump', 'stack');
         this.setState({
           tornDrugCd: '06h 58m / 24h (Xanax + Ecstasy)',
           tornDrugPct: 68,
@@ -5171,19 +5239,47 @@ class Component extends DCLogic {
       geminiArgonSub: lang === 'ar' ? 'توجيه العمليات الميدانية · اعتراض القوافل · تأمين السيولة · استطلاع القطاعات' : 'Live District Recon · Armored Convoy Intercept · Offshore Vault Escrow · Target Ambush',
       shopliftingTitle: lang === 'ar' ? 'حالة أنظمة المراقبة والحراسة في المتاجر وكثافة البحث' : 'Storefront Security Telemetry & District Search Density',
       shopliftingShops: [
-        { shop: "Sally's Sweet Shop", status: lang === 'ar' ? '[مفتوح] الكاميرات معطلة' : '[OPEN] Cameras Offline · Low Risk', color: 'var(--acc)' },
-        { shop: "Bits 'n' Bobs", status: lang === 'ar' ? '[مفتوح] الحارس خارج النوبة' : '[OPEN] Guard Off-Duty · Clear', color: 'var(--acc)' },
-        { shop: 'Super Store', status: lang === 'ar' ? '[مفتوح] نقطة التفتيش معطلة' : '[OPEN] Checkpoint Disabled', color: 'var(--acc)' },
-        { shop: 'Cyber Force', status: lang === 'ar' ? '[متوسط] كاميرات نشطة · حارس غائب' : '[CAUTION] 1 Guard Off-Duty · CCTV Live', color: 'var(--gold)' },
-        { shop: 'Zone Clothing', status: lang === 'ar' ? '[خطر] الكاميرات والحراس في الموقع' : '[ALERT] CCTV & Patrol Active', color: '#ff8a7a' },
-        { shop: "Big Al's Gun Shop", status: lang === 'ar' ? '[خطر عالٍ] 4 كاميرات وحارسان' : '[LOCKED] 4 Cameras · 2 Armed Guards', color: '#ff8a7a' }
-      ],
+        { id: 'sallys', shop: "Sally's Sweet Shop", status: lang === 'ar' ? '[مفتوح] الكاميرات معطلة' : '[OPEN] Cameras Offline · Low Risk', color: 'var(--acc)', loot: '+$3,800', nerve: '4 Nerve', gain: 3800, nerveCost: 4, xp: 6 },
+        { id: 'bits', shop: "Bits 'n' Bobs", status: lang === 'ar' ? '[مفتوح] الحارس خارج النوبة' : '[OPEN] Guard Off-Duty · Clear', color: 'var(--acc)', loot: '+$4,400', nerve: '4 Nerve', gain: 4400, nerveCost: 4, xp: 7 },
+        { id: 'super', shop: 'Super Store', status: lang === 'ar' ? '[مفتوح] نقطة التفتيش معطلة' : '[OPEN] Checkpoint Disabled', color: 'var(--acc)', loot: '+$7,900', nerve: '4 Nerve', gain: 7900, nerveCost: 4, xp: 10 },
+        { id: 'cyber', shop: 'Cyber Force', status: lang === 'ar' ? '[متوسط] كاميرات نشطة · حارس غائب' : '[CAUTION] 1 Guard Off-Duty · CCTV Live', color: 'var(--gold)', loot: '+$14,500', nerve: '5 Nerve', gain: 14500, nerveCost: 5, xp: 14 },
+        { id: 'clothing', shop: 'Zone Clothing', status: lang === 'ar' ? '[خطر] الكاميرات والحراس في الموقع' : '[ALERT] CCTV & Patrol Active', color: '#ff8a7a', loot: '+$11,200', nerve: '5 Nerve', gain: 11200, nerveCost: 5, xp: 12 },
+        { id: 'bigals', shop: "Big Al's Gun Shop", status: lang === 'ar' ? '[خطر عالٍ] 4 كاميرات وحارسان' : '[LOCKED] 4 Cameras · 2 Armed Guards', color: '#ff8a7a', loot: '+$28,500', nerve: '6 Nerve', gain: 28500, nerveCost: 6, xp: 22 }
+      ].map(sh => ({
+        ...sh,
+        btn: lang === 'ar' ? 'اقتحام المتجر' : 'Shoplift Target',
+        heist: () => {
+          this.playTacticalSfx('crime');
+          if (this.cur('nerve') < sh.nerveCost) return this.toast(lang === 'ar' ? `تحتاج ${sh.nerveCost} جرأة لتنفيذ السرقة.` : `Requires ${sh.nerveCost} Nerve to shoplift ${sh.shop}.`, true);
+          this.spend('nerve', sh.nerveCost);
+          this.p.cash = Number(this.p.cash || 0) + sh.gain;
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + sh.xp;
+          this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
+          this.save();
+          this.syncOmarAction('torn.shoplift', sh.id);
+          this.result('cash', sh.shop, `${sh.status} · +${sh.xp} Crime XP`, '+' + money(sh.gain));
+        }
+      })),
       searchModifiers: [
-        { loc: lang === 'ar' ? 'نافورة المدينة (Fountain)' : 'Search the Fountain', state: lang === 'ar' ? 'عملات السياح مكدسة' : 'Weekend tourist coins', pct: '83%' },
-        { loc: lang === 'ar' ? 'حاويات القمامة (Trash)' : 'Search the Trash', state: lang === 'ar' ? 'الحاويات ممتلئة' : 'Garbage cans overflowing', pct: '78%' },
-        { loc: lang === 'ar' ? 'ساحة الخردة (Junkyard)' : 'Search the Junkyard', state: lang === 'ar' ? 'شحنات خردة جديدة' : 'Fresh scrap deliveries', pct: '69%' },
-        { loc: lang === 'ar' ? 'المقبرة (Cemetery)' : 'Search the Cemetery', state: lang === 'ar' ? 'موكب جنازة حديث' : 'Recent funeral procession', pct: '64%' }
-      ],
+        { id: 'fountain', loc: lang === 'ar' ? 'نافورة المدينة (Fountain)' : 'Search the Fountain', state: lang === 'ar' ? 'عملات السياح مكدسة' : 'Weekend tourist coins', pct: '83%', loot: '+$3,600', gain: 3600 },
+        { id: 'trash', loc: lang === 'ar' ? 'حاويات القمامة (Trash)' : 'Search the Trash', state: lang === 'ar' ? 'الحاويات ممتلئة' : 'Garbage cans overflowing', pct: '78%', loot: '+$4,100', gain: 4100 },
+        { id: 'junkyard', loc: lang === 'ar' ? 'ساحة الخردة (Junkyard)' : 'Search the Junkyard', state: lang === 'ar' ? 'شحنات خردة جديدة' : 'Fresh scrap deliveries', pct: '69%', loot: '+$5,400', gain: 5400 },
+        { id: 'cemetery', loc: lang === 'ar' ? 'المقبرة (Cemetery)' : 'Search the Cemetery', state: lang === 'ar' ? 'موكب جنازة حديث' : 'Recent funeral procession', pct: '64%', loot: '+$6,800', gain: 6800 }
+      ].map(sm => ({
+        ...sm,
+        btn: lang === 'ar' ? 'تفتيش (2 جرأة)' : 'Sweep (2 Nerve)',
+        search: () => {
+          this.playTacticalSfx('crime');
+          if (this.cur('nerve') < 2) return this.toast(lang === 'ar' ? 'تحتاج 2 جرأة لتفتيش المنطقة.' : 'Requires 2 Nerve to sweep district.', true);
+          this.spend('nerve', 2);
+          this.p.cash = Number(this.p.cash || 0) + sm.gain;
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + 5;
+          this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
+          this.save();
+          this.syncOmarAction('torn.searchCash', sm.id);
+          this.result('cash', sm.loc, `${sm.state} (${sm.pct} Yield)`, '+' + money(sm.gain));
+        }
+      })),
       skimmerBtnLabel: lang === 'ar' ? 'سحب بيانات ناسخ الصراف (+$18,500)' : 'Harvest ATM Skimmer Dump (+247 Cards · +$18,500)',
       crackBtnLabel: lang === 'ar' ? 'تشغيل منصة كسر التشفير (740 MIPS · +$14,200)' : 'Run 740 MIPS Cipher Cracking Rig (+$14,200)',
       collectSkimmerDump: () => {
@@ -5191,6 +5287,7 @@ class Component extends DCLogic {
         this.p.cash = Number(this.p.cash || 0) + 18500;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 18;
         this.save();
+        this.syncOmarAction('torn.skimmer', 'harvest');
         this.result('cash', lang === 'ar' ? 'تم سحب بيانات الصراف بنجاح' : 'ATM Skimmer Dump Harvested', lang === 'ar' ? '247 بطاقة مستنسخة من محطة المترو · +18 خبرة جرائم' : '247 cloned cards from Subway Terminal · +18 Crime XP', '+$18,500');
       },
       runCrackingRig: () => {
@@ -5198,12 +5295,13 @@ class Component extends DCLogic {
         this.p.cash = Number(this.p.cash || 0) + 14200;
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 15;
         this.save();
+        this.syncOmarAction('torn.cracking', 'cipher');
         this.result('cash', lang === 'ar' ? 'اكتمل كسر التشفير SHA-512' : 'SHA-512 Ledger Cipher Cracked', lang === 'ar' ? 'تم استخراج محفظة تشفير سرية · +15 خبرة جرائم' : 'Extracted offshore ledger key · +15 Crime XP', '+$14,200');
       },
       combatModifiersTitle: lang === 'ar' ? 'مضاعفات الاحترام القتالي، الذخيرة الخاصة، ومصفوفة الإصابة التشريحية' : 'Ballistics Modifiers, Special Ammunition & Anatomical Target Matrix',
       combatModifiers: [
         { k: 'Fair Fight', v: '1.57x – 3.00x', desc: lang === 'ar' ? 'مكافأة تكافؤ القوة القتالية' : 'Stat parity multiplier (1.00x–3.00x)' },
-        { k: 'Ranked War', v: '2.00x', desc: lang === 'ar' ? 'مضاعف الحرب المصنفة (#51815)' : 'Active Ranked War target bonus' },
+        { k: 'Ranked War', v: '2.00x', desc: lang === 'ar' ? 'مضاعف الحرب المصنفة للعائلة' : 'Active Ranked War target bonus' },
         { k: 'Retaliation', v: '1.50x', desc: lang === 'ar' ? 'رد الهجوم خلال 5 دقائق' : 'Counter-hit within 5m window' },
         { k: 'Chain Bonus', v: '1.25x – 2.00x', desc: lang === 'ar' ? 'مضاعف السلسلة النشطة (300 ثانية)' : 'Active 300s chain scale' },
         { k: 'Overseas / Group', v: '1.25x', desc: lang === 'ar' ? 'هجوم خارجي أو جماعي' : 'Abroad target & multi-attacker bonus' },
@@ -5216,14 +5314,19 @@ class Component extends DCLogic {
         { id: 'tr', label: 'Tracer (+10 Acc)' },
         { id: 'inc', label: 'Incendiary (+40% Burn)' }
       ].map(am => {
-        const curAmmo = this.state.tornAmmo || 'hp';
+        const curAmmo = this.state.tornAmmo || this.p.tornCombat?.ammo || 'hp';
         return {
           label: am.label,
           bg: curAmmo === am.id ? 'var(--activebg)' : 'var(--btn)',
           fg: curAmmo === am.id ? 'var(--activefg)' : 'var(--t2)',
           select: () => {
             this.playTacticalSfx('rack');
+            const curHb = this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head';
+            const curSlot = this.state.tornSlot || this.p.tornCombat?.slot || 'primary';
+            this.p.tornCombat = { hitbox: curHb, ammo: am.id, slot: curSlot };
             this.setState({ tornAmmo: am.id });
+            this.save();
+            this.syncOmarAction('torn.combatPrep', `${curHb}:${am.id}:${curSlot}`);
             this.toast((lang === 'ar' ? 'تم تلقيم ذخيرة: ' : 'Loaded Special Ammo: ') + am.label);
           }
         };
@@ -5234,17 +5337,26 @@ class Component extends DCLogic {
         { code: '#a8981140', match: 'Layla_R [#1104] -> BigSal [#1094] (Harbor Kings)', outcome: 'Hospitalized', ff: 'Ranked War 2.00x', respect: '+4.10 Respect' }
       ],
       oc2Title: lang === 'ar' ? 'عمليات الطاقم المنظمة (P1-P4) وعوائد قطاعات العائلة' : 'Syndicate Crew Operations (P1-P4 Roles) & Territory Rackets',
+      runOc2HeistBtn: lang === 'ar' ? 'تنفيذ سطو الطاقم المنظم (+$65,000 + 35 احترام)' : 'Execute 4-Crew Vault Heist (+$65,000 · +35 Respect)',
+      runOc2Heist: () => {
+        this.playTacticalSfx('crime');
+        this.p.cash = Number(this.p.cash || 0) + 65000;
+        this.p.crimeXp = Number(this.p.crimeXp || 0) + 35;
+        this.save();
+        this.syncOmarAction('torn.oc2Heist', 'execute');
+        this.result('cash', lang === 'ar' ? 'نجاح عملية السطو المنظم (OC 2.0)' : 'OC 2.0 Syndicate Crew Heist Executed', 'P1 Muscle · P2 Lockpicker · P3 Hacker · P4 Lookout (92% Combined Pass)', '+$65,000 & +35 Respect');
+      },
       oc2Slots: [
-        { slot: 'P1 · Muscle', item: 'Jemmy', rate: '92% Pass Rate', status: lang === 'ar' ? 'جاهز (Vincenzo)' : 'Locked In (Vincenzo)' },
-        { slot: 'P2 · Lockpicker', item: 'Lockpicks', rate: '88% Pass Rate', status: lang === 'ar' ? 'جاهز (Layla_R)' : 'Locked In (Layla_R)' },
-        { slot: 'P3 · Hacker', item: 'RF Detector', rate: '95% Pass Rate', status: lang === 'ar' ? 'جاهز (Omar_Z)' : 'Locked In (Omar_Z)' },
-        { slot: 'P4 · Lookout', item: 'Signal Jammer', rate: '91% Pass Rate', status: lang === 'ar' ? 'جاهز (Tariq)' : 'Locked In (Tariq)' }
+        { slot: 'P1 · Muscle', item: 'Jemmy', rate: '92% Pass Rate', pct: 92, status: lang === 'ar' ? 'جاهز (Vincenzo)' : 'Locked In (Vincenzo)' },
+        { slot: 'P2 · Lockpicker', item: 'Lockpicks', rate: '88% Pass Rate', pct: 88, status: lang === 'ar' ? 'جاهز (Layla_R)' : 'Locked In (Layla_R)' },
+        { slot: 'P3 · Hacker', item: 'RF Detector', rate: '95% Pass Rate', pct: 95, status: lang === 'ar' ? 'جاهز (Omar_Z)' : 'Locked In (Omar_Z)' },
+        { slot: 'P4 · Lookout', item: 'Signal Jammer', rate: '91% Pass Rate', pct: 91, status: lang === 'ar' ? 'جاهز (Tariq)' : 'Locked In (Tariq)' }
       ],
       activeRackets: [
-        { sector: 'Sector KDB · Drug Lab V', yieldText: '400x Xanax / day', fac: 'Catalysis [#89]' },
+        { sector: 'Sector KDB · Narcotics Lab V', yieldText: '400x Combat Stims / day', fac: 'Iron Veil Syndicate' },
         { sector: 'Sector QEB · Money Launderer IV', yieldText: '$80,000,000 / day', fac: 'Sand Vipers' },
         { sector: 'Sector RPB · Point Broker III', yieldText: '2,000x Points / day', fac: 'Harbor Kings' },
-        { sector: 'Sector NUB · Bordello IV', yieldText: '40x Erotic DVD / day', fac: 'Fody\'s Shack [#56798]' }
+        { sector: 'Sector NUB · High-Roller Lounge IV', yieldText: '40x Morale Boosters / day', fac: 'Night Watch' }
       ],
       collectRacketBtn: lang === 'ar' ? 'تحصيل عوائد الأراضي اليومية (+$45,000 + 15 نقطة)' : 'Collect Territory Racket Yield (+$45,000 & +15 Points)',
       collectRacketYield: () => {
@@ -5252,21 +5364,23 @@ class Component extends DCLogic {
         this.p.cash = Number(this.p.cash || 0) + 45000;
         this.p.points = Number(this.p.points || 0) + 15;
         this.save();
+        this.syncOmarAction('torn.racketCollect', 'all');
         this.result('cash', lang === 'ar' ? 'تم تحصيل عوائد الأراضي' : 'Territory Racket Yield Collected', lang === 'ar' ? '+45,000$ نقداً و +15 نقطة من أراضي العائلة' : '+$45,000 Cash & +15 Points from Controlled Rackets', '+$45,000');
       },
       bankCdTitle: lang === 'ar' ? 'شهادات الإيداع الزمنية (7-90 يوماً) وعوائد أسهم الشركات' : 'Timed Vault Certificates (7D-90D APR) & Corporate Dividend Blocks',
       bankCdOptions: [
-        { term: '7 Days CD', apr: '4.23% APR', payout: '+$4,230', bonus: 'Weekly Compound' },
-        { term: '14 Days CD', apr: '4.55% APR', payout: '+$9,100', bonus: 'Bi-Weekly Lock' },
-        { term: '30 Days CD', apr: '5.08% APR', payout: '+$25,400', bonus: 'Monthly High-Yield' },
-        { term: '90 Days CD', apr: '6.18% APR', payout: '+$92,700', bonus: 'Max 10/10 Bank Merit' }
+        { id: '7d', term: '7 Days CD', apr: '4.23% APR', payout: '+$4,230', bonus: 'Weekly Compound', yieldVal: 4230 },
+        { id: '14d', term: '14 Days CD', apr: '4.55% APR', payout: '+$9,100', bonus: 'Bi-Weekly Lock', yieldVal: 9100 },
+        { id: '30d', term: '30 Days CD', apr: '5.08% APR', payout: '+$25,400', bonus: 'Monthly High-Yield', yieldVal: 25400 },
+        { id: '90d', term: '90 Days CD', apr: '6.18% APR', payout: '+$92,700', bonus: 'Max 10/10 Bank Merit', yieldVal: 92700 }
       ].map(cd => ({
         ...cd,
         investLabel: lang === 'ar' ? `ربط وديعة (${cd.term})` : `Lock ${cd.term} (${cd.apr})`,
         invest: () => {
           this.playTacticalSfx('crime');
-          this.p.bankBalance = Number(this.p.bankBalance || 0) + 10000;
+          this.p.bankBalance = Number(this.p.bankBalance || 0) + cd.yieldVal;
           this.save();
+          this.syncOmarAction('torn.bankCd', cd.id);
           this.result('cash', lang === 'ar' ? `تم ربط وديعة ${cd.term}` : `Locked ${cd.term} Bank Certificate`, `${cd.apr} · ${cd.bonus}`, cd.payout);
         }
       })),
@@ -5277,60 +5391,100 @@ class Component extends DCLogic {
         this.playTacticalSfx('gym');
         this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 500);
         this.save();
+        this.syncOmarAction('torn.rehab', 'reset');
         this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', '100% Gym Eff');
       },
       gymSpecializations: [
-        { name: "George's Gym (Heavyweight)", focus: 'All Stats Balanced · 10E/Train', dots: '7.3 / 7.3 / 7.3 / 7.3 Dots', bonus: 50 },
-        { name: "Balboa's Gym (Specialist)", focus: 'DEF & DEX Specialist · 25E/Train', dots: '9.0 DEF · 9.0 DEX Dots', bonus: 80 },
-        { name: 'Frontline Fitness (Specialist)', focus: 'STR & SPD Specialist · 25E/Train', dots: '9.0 STR · 9.0 SPD Dots', bonus: 80 }
-      ].map(gs => ({
-        ...gs,
-        btn: lang === 'ar' ? 'تفعيل الصالة' : 'Activate Spec',
-        activate: () => {
-          this.playTacticalSfx('gym');
-          this.p.gymXp = Number(this.p.gymXp || 0) + gs.bonus;
-          this.save();
-          this.toast((lang === 'ar' ? 'تم تفعيل الصالة التخصصية: ' : 'Activated Specialty Gym: ') + gs.name);
-        }
-      })),
+        { id: 'georges', name: "George's Gym (Heavyweight)", focus: 'All Stats Balanced · 10E/Train', dots: '7.3 / 7.3 / 7.3 / 7.3 Dots', pct: 73, bonus: 50 },
+        { id: 'balboas', name: "Balboa's Gym (Specialist)", focus: 'DEF & DEX Specialist · 25E/Train', dots: '9.0 DEF · 9.0 DEX Dots', pct: 90, bonus: 80 },
+        { id: 'frontline', name: 'Frontline Fitness (Specialist)', focus: 'STR & SPD Specialist · 25E/Train', dots: '9.0 STR · 9.0 SPD Dots', pct: 90, bonus: 80 }
+      ].map(gs => {
+        const activeGym = this.state.tornGymSpec || this.p.tornState?.gymSpec || 'georges';
+        const isAct = activeGym === gs.id;
+        return {
+          ...gs,
+          border: isAct ? 'var(--acc)' : 'var(--border)',
+          bg: isAct ? 'var(--activebg)' : 'linear-gradient(var(--accFill1),var(--accFill2))',
+          fg: isAct ? 'var(--activefg)' : 'var(--onAcc)',
+          btn: isAct ? (lang === 'ar' ? 'الصالة النشطة ✓' : 'Active Spec ✓') : (lang === 'ar' ? 'تفعيل الصالة' : 'Activate Spec'),
+          activate: () => {
+            this.playTacticalSfx('gym');
+            this.p.gymXp = Number(this.p.gymXp || 0) + gs.bonus;
+            this.setState({ tornGymSpec: gs.id });
+            this.save();
+            this.syncOmarAction('torn.gymSpec', gs.id);
+            this.toast((lang === 'ar' ? 'تم تفعيل الصالة التخصصية: ' : 'Activated Specialty Gym: ') + gs.name);
+          }
+        };
+      }),
       smugglingBoardTitle: lang === 'ar' ? 'خطوط التهريب الجوي الدولي وجدار السيطرة على القطاعات' : 'International Air Freight Smuggling & Sector Wall Command',
+      wallStatusLabel: `Sector KDB Wall Control: ${Math.min(100, Number(this.state.wallPct || 68))}% Syndicate Hold`,
+      wallProgressPct: Math.min(100, Number(this.state.wallPct || 68)),
       wallActions: [
-        { label: lang === 'ar' ? 'اقتحام الجدار (+25 احترام)' : 'Assault Sector Wall (+25 Respect)', bg: 'linear-gradient(#c74a3a,#9a3428)', fg: '#fff', respect: 25 },
-        { label: lang === 'ar' ? 'تعزيز الموقع الدفاعي (+15 احترام)' : 'Reinforce Wall Slot (+15 Respect)', bg: 'var(--activebg)', fg: 'var(--activefg)', respect: 15 },
-        { label: lang === 'ar' ? 'اتفاقية هدنة القطاع (+10 نقاط)' : 'Broker Sector Truce (+10 Points)', bg: 'var(--btn)', fg: 'var(--gold)', respect: 10 }
+        { id: 'assault', label: lang === 'ar' ? 'اقتحام الجدار (+25 احترام)' : 'Assault Sector Wall (+25 Respect)', bg: 'linear-gradient(#c74a3a,#9a3428)', fg: '#fff', respect: 25, delta: 8 },
+        { id: 'reinforce', label: lang === 'ar' ? 'تعزيز الموقع الدفاعي (+15 احترام)' : 'Reinforce Wall Slot (+15 Respect)', bg: 'var(--activebg)', fg: 'var(--activefg)', respect: 15, delta: 5 },
+        { id: 'truce', label: lang === 'ar' ? 'اتفاقية هدنة القطاع (+10 نقاط)' : 'Broker Sector Truce (+10 Points)', bg: 'var(--btn)', fg: 'var(--gold)', respect: 10, delta: 3 }
       ].map(wa => ({
         ...wa,
         act: () => {
           this.playTacticalSfx('rack');
           this.p.points = Number(this.p.points || 0) + 2;
+          this.setState({ wallPct: Math.min(100, Number(this.state.wallPct || 68) + wa.delta) });
           this.save();
+          this.syncOmarAction('torn.sectorWall', wa.id);
           this.result('good', wa.label, lang === 'ar' ? 'تم تحديث حالة جدار حرب الأراضي في القطاع KDB' : 'Updated Sector KDB Territory Wall Control', `+${wa.respect} Respect`);
         }
       })),
       smugglingHubs: [
-        { hub: 'Johannesburg Air Hub (3h 28m)', item: 'Combat Stims + Trophy Crate', profit: '+$420,000 / run', gain: 42000 },
-        { hub: 'Dubai Freezone Hub (3h 10m)', item: 'Gold Bullion + Luxury Relics', profit: '+$385,000 / run', gain: 38500 },
-        { hub: 'Beijing Cargo Terminal (2h 49m)', item: 'Encrypted Wafer + Jade Set', profit: '+$340,000 / run', gain: 34000 },
-        { hub: 'Tokyo Haneda Freight (2h 38m)', item: 'Precision Optics + Katana', profit: '+$315,000 / run', gain: 31500 },
-        { hub: 'London Docklands Airfield (1h 51m)', item: 'Royal Mint Bonds + Collector Set', profit: '+$240,000 / run', gain: 24000 },
-        { hub: 'Cayman Offshore Strip (0h 25m)', item: 'Bearer Bonds + Offshore Ledger', profit: '+$145,000 / run', gain: 14500 }
+        { id: 'jnb', hub: 'Johannesburg Air Hub (3h 28m)', item: 'Combat Stims + Trophy Crate', profit: '+$42,000 / run', gain: 42000 },
+        { id: 'dxb', hub: 'Dubai Freezone Hub (3h 10m)', item: 'Gold Bullion + Luxury Relics', profit: '+$38,500 / run', gain: 38500 },
+        { id: 'pek', hub: 'Beijing Cargo Terminal (2h 49m)', item: 'Encrypted Wafer + Jade Set', profit: '+$34,000 / run', gain: 34000 },
+        { id: 'hnd', hub: 'Tokyo Haneda Freight (2h 38m)', item: 'Precision Optics + Katana', profit: '+$31,500 / run', gain: 31500 },
+        { id: 'lcy', hub: 'London Docklands Airfield (1h 51m)', item: 'Royal Mint Bonds + Collector Set', profit: '+$24,000 / run', gain: 24000 },
+        { id: 'gcm', hub: 'Cayman Offshore Strip (0h 25m)', item: 'Bearer Bonds + Offshore Ledger', profit: '+$14,500 / run', gain: 14500 }
       ].map(sh => ({
         ...sh,
-        btn: lang === 'ar' ? 'تهريب سريع' : 'Smuggle Run',
+        btn: lang === 'ar' ? 'تهريب جوي' : 'Dispatch Run',
         fly: () => {
           this.playTacticalSfx('crime');
           this.p.cash = Number(this.p.cash || 0) + sh.gain;
           this.save();
+          this.syncOmarAction('torn.smuggle', sh.id);
           this.result('cash', sh.hub, sh.item, '+' + money(sh.gain));
         }
       })),
       loadoutSlots4: [
-        { slot: 'SLOT 1 · PRIMARY', weapon: 'ArmaLite M-15A4', mod: 'Laser +5% Crit · Recoil Pad' },
-        { slot: 'SLOT 2 · SECONDARY', weapon: 'BT MP9 Submachine', mod: 'Extended Mag · Hollow Point' },
-        { slot: 'SLOT 3 · MELEE', weapon: 'Diamond Bladed Knife', mod: '74.5 Dmg · 82.0 Acc · +15% Bleed' },
-        { slot: 'SLOT 4 · TEMPORARY', weapon: 'HEG / Flash Grenade', mod: '-80% Enemy SPD & DEX (3 Turns)' }
-      ],
+        { id: 'primary', slot: 'SLOT 1 · PRIMARY', weapon: 'ArmaLite M-15A4', mod: 'Laser +5% Crit · Recoil Pad' },
+        { id: 'secondary', slot: 'SLOT 2 · SECONDARY', weapon: 'BT MP9 Submachine', mod: 'Extended Mag · Hollow Point' },
+        { id: 'melee', slot: 'SLOT 3 · MELEE', weapon: 'Diamond Bladed Knife', mod: '74.5 Dmg · 82.0 Acc · +15% Bleed' },
+        { id: 'temp', slot: 'SLOT 4 · TEMPORARY', weapon: 'HEG / Flash Grenade', mod: '-80% Enemy SPD & DEX (3 Turns)' }
+      ].map(ls => {
+        const curSlot = this.state.tornSlot || this.p.tornCombat?.slot || 'primary';
+        const isEq = curSlot === ls.id;
+        return {
+          ...ls,
+          border: isEq ? 'var(--acc)' : 'rgba(255,255,255,.07)',
+          equip: () => {
+            this.playTacticalSfx('rack');
+            const curHb = this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head';
+            const curAmmo = this.state.tornAmmo || this.p.tornCombat?.ammo || 'hp';
+            this.p.tornCombat = { hitbox: curHb, ammo: curAmmo, slot: ls.id };
+            this.setState({ tornSlot: ls.id });
+            this.save();
+            this.syncOmarAction('torn.combatPrep', `${curHb}:${curAmmo}:${ls.id}`);
+            this.toast(`Equipped ${ls.weapon} (${ls.slot})`);
+          }
+        };
+      }),
       hitboxBarLabel: lang === 'ar' ? 'منطقة التصويب التشريحية:' : 'Anatomical Target Zone:',
+      hbHeadFill: (this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') === 'head' ? 'rgba(255,93,108,.55)' : 'rgba(255,93,108,.18)',
+      hbThroatFill: (this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') === 'throat' ? 'rgba(255,93,108,.65)' : 'rgba(255,93,108,.22)',
+      hbHeartFill: (this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') === 'heart' ? 'rgba(255,93,108,.85)' : 'rgba(255,93,108,.35)',
+      hbChestFill: (this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') === 'chest' ? 'rgba(214,167,86,.55)' : 'rgba(214,167,86,.15)',
+      hbStomachFill: ['stomach', 'groin'].includes(this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') ? 'rgba(214,167,86,.55)' : 'rgba(57,231,163,.12)',
+      hbArmsFill: ['arms', 'hands'].includes(this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') ? 'rgba(57,231,163,.45)' : 'rgba(57,231,163,.1)',
+      hbLegsFill: ['legs', 'feet'].includes(this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head') ? 'rgba(57,231,163,.45)' : 'rgba(57,231,163,.1)',
+      activeHitboxLabel: `ACTIVE AIM: ${String(this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head').toUpperCase()} · AMMO: ${String(this.state.tornAmmo || this.p.tornCombat?.ammo || 'hp').toUpperCase()}`,
       anatomicalHitboxes: [
         { id: 'head', part: 'Head', mult: '3.5x Crit' },
         { id: 'throat', part: 'Throat', mult: '3.5x Crit' },
@@ -5343,34 +5497,42 @@ class Component extends DCLogic {
         { id: 'legs', part: 'Legs', mult: '1.0x' },
         { id: 'feet', part: 'Feet', mult: '0.7x' }
       ].map(hb => {
-        const curHb = this.state.tornHitbox || 'head';
+        const curHb = this.state.tornHitbox || this.p.tornCombat?.hitbox || 'head';
         return {
           ...hb,
           bg: curHb === hb.id ? 'var(--activebg)' : 'var(--btn)',
           fg: curHb === hb.id ? 'var(--activefg)' : 'var(--t2)',
           aim: () => {
             this.playTacticalSfx('rack');
+            const curAmmo = this.state.tornAmmo || this.p.tornCombat?.ammo || 'hp';
+            const curSlot = this.state.tornSlot || this.p.tornCombat?.slot || 'primary';
+            this.p.tornCombat = { hitbox: hb.id, ammo: curAmmo, slot: curSlot };
             this.setState({ tornHitbox: hb.id });
+            this.save();
+            this.syncOmarAction('torn.combatPrep', `${hb.id}:${curAmmo}:${curSlot}`);
             this.toast(`Targeted ${hb.part} (${hb.mult} Damage Multiplier)`);
           }
         };
       }),
       companySpecialsTitle: lang === 'ar' ? 'امتيازات الشركات الخاصة (استبدال نقاط العمل JP)' : 'Syndicate Enterprise Perks (Job Points Redemption)',
       companySpecials: [
-        { comp: '10★ Sweet Shop · Voracious', perk: '+4,500 Happiness Instant', cost: '30 JP', rewardType: 'happy', val: 4500 },
-        { comp: '10★ Adult Novelties · Blackmail', perk: '+1x Erotic DVD (+2,500 Happy)', cost: '20 JP', rewardType: 'happy', val: 2500 },
-        { comp: '10★ Oil Rig · Offshore Embargo', perk: '+$75,000 Dividend & $3B Bank Cap', cost: '50 JP', rewardType: 'cash', val: 75000 },
-        { comp: '10★ Fitness Center · Conditioning', perk: '+300 Energy & +3% Gym Gain', cost: '35 JP', rewardType: 'energy', val: 300 }
+        { id: 'sweet', comp: '10★ Sweet Shop · Voracious', perk: '+4,500 Happiness Instant', cost: '10 JP', jpCost: 10, rewardType: 'happy', val: 4500 },
+        { id: 'adult', comp: '10★ Adult Novelties · Blackmail', perk: '+1x Erotic DVD (+2,500 Happy)', cost: '8 JP', jpCost: 8, rewardType: 'happy', val: 2500 },
+        { id: 'oil', comp: '10★ Oil Rig · Offshore Embargo', perk: '+$75,000 Dividend & $3B Bank Cap', cost: '10 JP', jpCost: 10, rewardType: 'cash', val: 75000 },
+        { id: 'fitness', comp: '10★ Fitness Center · Conditioning', perk: '+300 Energy & +3% Gym Gain', cost: '10 JP', jpCost: 10, rewardType: 'energy', val: 300 }
       ].map(cs => ({
         ...cs,
         btn: lang === 'ar' ? 'استبدال نقاط العمل' : 'Redeem Special',
         redeem: () => {
           this.playTacticalSfx('gym');
+          if (Number(this.p.jobPts || 0) < cs.jpCost) return this.toast(lang === 'ar' ? `تحتاج ${cs.jpCost} نقاط عمل (JP) لتفعيل الامتياز.` : `Requires ${cs.jpCost} Job Points (JP) to redeem.`, true);
+          this.p.jobPts = Math.max(0, Number(this.p.jobPts || 0) - cs.jpCost);
           if (cs.rewardType === 'happy') this.p.happy = Math.min(99999, Number(this.p.happy || 500) + cs.val);
           else if (cs.rewardType === 'energy') this.p.energy = Math.min(1000, Number(this.p.energy || 100) + cs.val);
           else this.p.cash = Number(this.p.cash || 0) + cs.val;
           this.save();
-          this.result('good', cs.comp, cs.perk, cs.cost);
+          this.syncOmarAction('torn.companySpecial', cs.id);
+          this.result('good', cs.comp, cs.perk, `-${cs.jpCost} JP`);
         }
       })),
       bazaarTitle: lang === 'ar' ? 'البازار الشخصي (0% عمولة) ودرع حماية الصفقات (15 ثانية)' : 'Personal Bazaar Storefront (0% Fee) & 15s Escrow Protection Shield',
@@ -5378,24 +5540,36 @@ class Component extends DCLogic {
       mugShieldBtn: lang === 'ar' ? 'تفعيل درع حماية الصفقات (15 ثانية)' : 'Arm 15s Escrow Protection Shield',
       activateMugShield: () => {
         this.playTacticalSfx('rack');
+        this.syncOmarAction('torn.bazaarShield', 'arm');
         this.toast(lang === 'ar' ? 'تم تفعيل درع حماية الصفقات لمدة 15 ثانية' : '15s Escrow Protection Shield Armed');
       },
       eduMatrixTitle: lang === 'ar' ? 'مصفوفة التخصصات الأكاديمية والمكافآت الدائمة' : 'University Academic Specializations & Permanent Passive Unlocks',
       eduMajors: [
-        { code: 'BIO-2120 · Biology', status: 'Unlocked ✓', unlock: 'Intravenous Therapy: Fill & Use Blood Bags (O-, A+, Irradiated)' },
-        { code: 'SPT-2490 · Sports Science', status: 'Bachelor ✓', unlock: '+4% All Gym Gains (STR / DEF / SPD / DEX) Passive' },
-        { code: 'CBT-3110 · Combat Training', status: 'Bachelor ✓', unlock: 'Weapon Experience (XP) & +10% Firearm Accuracy' },
-        { code: 'LAW-2800 · Law Degree', status: 'Bachelor ✓', unlock: '+25% Jail Bust Skill & -50% Bail Cost Formula' },
-        { code: 'BUS-3400 · Business Mgmt', status: 'Active · 88%', unlock: '+10% Company Director Advertising & Staff Efficiency' },
-        { code: 'CSC-2200 · Computer Science', status: 'Unlocked ✓', unlock: 'OC 2.0 Hacker Slot & Stealth Virus Programming' }
-      ],
+        { id: 'bio', code: 'BIO-2120 · Biology', status: 'Unlocked ✓', unlock: 'Intravenous Therapy: Fill & Use Blood Bags (O-, A+, Irradiated)' },
+        { id: 'spt', code: 'SPT-2490 · Sports Science', status: 'Bachelor ✓', unlock: '+4% All Gym Gains (STR / DEF / SPD / DEX) Passive' },
+        { id: 'cbt', code: 'CBT-3110 · Combat Training', status: 'Bachelor ✓', unlock: 'Weapon Experience (XP) & +10% Firearm Accuracy' },
+        { id: 'law', code: 'LAW-2800 · Law Degree', status: 'Bachelor ✓', unlock: '+25% Jail Bust Skill & -50% Bail Cost Formula' },
+        { id: 'bus', code: 'BUS-3400 · Business Mgmt', status: 'Active · 88%', unlock: '+10% Company Director Advertising & Staff Efficiency' },
+        { id: 'csc', code: 'CSC-2200 · Computer Science', status: 'Unlocked ✓', unlock: 'OC 2.0 Hacker Slot & Stealth Virus Programming' }
+      ].map(em => ({
+        ...em,
+        btn: lang === 'ar' ? 'تنشيط التخصص (+XP)' : 'Apply Major Perk',
+        enroll: () => {
+          this.playTacticalSfx('gym');
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + 12;
+          this.p.gymXp = Number(this.p.gymXp || 0) + 25;
+          this.save();
+          this.syncOmarAction('torn.eduMajor', em.id);
+          this.result('good', em.code, em.unlock, '+25 Gym XP · +12 Crime XP');
+        }
+      })),
       islandStaffTitle: lang === 'ar' ? 'طاقم الجزيرة الخاصة وخزنة المليار دولار' : 'Private Island Estate Staff & $1B High-Security Vault',
       islandStaff: [
-        { role: 'Private Airstrip Pilot', effect: '-30% Flight Time · +10 Cargo Capacity', wage: '$30,000/day' },
-        { role: 'Retained Trauma Surgeon', effect: '-25% Hospital Recovery Time', wage: '$25,000/day' },
-        { role: 'Estate Butler & Staff', effect: '+1,525 Max Happiness Cap (5,025 Total)', wage: '$35,000/day' },
-        { role: 'Armed Perimeter Detail (5x)', effect: '+50% Estate Defense vs Raids', wage: '$85,000/day' },
-        { role: 'Titanium Estate Vault', effect: 'Up to $1,000,000,000 Mug-Free Storage', wage: 'Installed' }
+        { id: 'pilot', role: 'Private Airstrip Pilot', effect: '-30% Flight Time · +10 Cargo Capacity', wage: '$30,000/day' },
+        { id: 'surgeon', role: 'Retained Trauma Surgeon', effect: '-25% Hospital Recovery Time', wage: '$25,000/day' },
+        { id: 'butler', role: 'Estate Butler & Staff', effect: '+1,525 Max Happiness Cap (5,025 Total)', wage: '$35,000/day' },
+        { id: 'guards', role: 'Armed Perimeter Detail (5x)', effect: '+50% Estate Defense vs Raids', wage: '$85,000/day' },
+        { id: 'vault', role: 'Titanium Estate Vault', effect: 'Up to $1,000,000,000 Mug-Free Storage', wage: 'Installed' }
       ].map(st => ({
         ...st,
         btn: lang === 'ar' ? 'تفعيل الطاقم' : 'Retain Staff',
@@ -5403,7 +5577,8 @@ class Component extends DCLogic {
           this.playTacticalSfx('gym');
           this.p.happy = Math.min(99999, Number(this.p.happy || 500) + 250);
           this.save();
-          this.toast(`Retained ${st.role} (${st.effect})`);
+          this.syncOmarAction('torn.islandStaff', st.id);
+          this.result('good', st.role, st.effect, '+250 Happy');
         }
       })),
       jailTornTitle: lang === 'ar' ? 'مهارة التهريب من السجن وتفويض المحامي الفوري' : 'Jail Extraction Skill & Retained Counsel Release',
@@ -5413,6 +5588,7 @@ class Component extends DCLogic {
         this.playTacticalSfx('crime');
         this.p.jailUntil = 0;
         this.save();
+        this.syncOmarAction('torn.lawyerCard', 'release');
         this.result('good', lang === 'ar' ? 'تم تفعيل تفويض المحامي' : 'Retained Counsel Invoked', lang === 'ar' ? 'تم إسقاط التهم وإخلاء السبيل فوراً' : 'All charges dropped · Instant jail release confirmed', '00:00 Jail');
       },
       stockDividendBlocks: [
@@ -5428,15 +5604,16 @@ class Component extends DCLogic {
           this.p.cash = Number(this.p.cash || 0) + sb.cashVal;
           if (sb.ticker === 'MCS') this.p.energy = Math.min(1000, Number(this.p.energy || 100) + 300);
           this.save();
+          this.syncOmarAction('torn.stockDividend', sb.ticker);
           this.result('cash', `${sb.ticker} · ${sb.name}`, sb.div, '+' + money(sb.cashVal));
         }
       })),
       hospitalTornTitle: lang === 'ar' ? 'وحدات نقل الدم الوريدي وعقود الإنعاش الطبي السريع' : 'Intravenous Blood Transfusion & Emergency Revive Contracts',
       bloodBagActions: [
-        { label: lang === 'ar' ? 'وحدة دم O- شامل (-2 ساعة مستشفى · +30% صحة)' : 'Transfuse O- Universal Blood (-2h Hosp · +30% HP)', bg: 'linear-gradient(var(--accFill1),var(--accFill2))', fg: 'var(--onAcc)' },
-        { label: lang === 'ar' ? 'وحدة بلازما معززة (+40% صحة + مقاومة)' : 'Transfuse Enriched Plasma (+40% HP + Mitigation)', bg: 'var(--activebg)', fg: 'var(--activefg)' },
-        { label: lang === 'ar' ? 'تعبئة وحدة دم احتياطية (-15% صحة)' : 'Draw Reserve Blood Pack (-15% HP -> +1 Pack)', bg: 'var(--btn)', fg: 'var(--gold)' },
-        { label: lang === 'ar' ? 'عقد إنعاش جراح النقابة (25 طاقة)' : 'Contract Syndicate Surgeon Revive (25E)', bg: 'var(--btn)', fg: 'var(--t1)' }
+        { id: 'o_neg', label: lang === 'ar' ? 'وحدة دم O- شامل (-2 ساعة مستشفى · +30% صحة)' : 'Transfuse O- Universal Blood (-2h Hosp · +30% HP)', bg: 'linear-gradient(var(--accFill1),var(--accFill2))', fg: 'var(--onAcc)' },
+        { id: 'plasma', label: lang === 'ar' ? 'وحدة بلازما معززة (+40% صحة + مقاومة)' : 'Transfuse Enriched Plasma (+40% HP + Mitigation)', bg: 'var(--activebg)', fg: 'var(--activefg)' },
+        { id: 'draw', label: lang === 'ar' ? 'تعبئة وحدة دم احتياطية (-15% صحة)' : 'Draw Reserve Blood Pack (-15% HP -> +1 Pack)', bg: 'var(--btn)', fg: 'var(--gold)' },
+        { id: 'revive', label: lang === 'ar' ? 'عقد إنعاش جراح النقابة (25 طاقة)' : 'Contract Syndicate Surgeon Revive (25E)', bg: 'var(--btn)', fg: 'var(--t1)' }
       ].map(bb => ({
         ...bb,
         use: () => {
@@ -5444,22 +5621,30 @@ class Component extends DCLogic {
           this.p.hospUntil = 0;
           this.p.hp = this.p.maxHp || 500;
           this.save();
+          this.syncOmarAction('torn.bloodBag', bb.id);
           this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', '100% HP');
         }
       })),
       casinoTornTitle: lang === 'ar' ? 'طاولات الرهان العالي: المراهنات الرياضية، الروليت الروسي، وعجلة الحظ' : 'High-Stakes Syndicate Tables: Sportsbook, Russian Roulette & High-Roller Wheel',
       casinoTornGames: [
-        { game: 'High-Roller Wheel ($1M Spin)', odds: 'Private Island / $2.5M / Syndicate Points', win: 65000 },
-        { game: 'Russian Roulette (6-Chamber PvP)', odds: '2.00x Pot · 5/6 Survival Chamber', win: 50000 },
-        { game: 'Syndicate Sportsbook (Live Parlay)', odds: '2.45x Underground Match Parlay', win: 48000 },
-        { game: 'Progressive Syndicate Jackpot Slots', odds: '$1.42B Progressive Pool · Triple Crown', win: 35000 }
+        { id: 'wheel', game: 'High-Roller Wheel ($1M Spin)', odds: 'Private Island / $2.5M / Syndicate Points', win: 65000 },
+        { id: 'rr', game: 'Russian Roulette (6-Chamber PvP)', odds: '2.00x Pot · 5/6 Survival Chamber', win: 50000 },
+        { id: 'bookie', game: 'Syndicate Sportsbook (Live Parlay)', odds: '2.45x Underground Match Parlay', win: 48000 },
+        { id: 'slots', game: 'Progressive Syndicate Jackpot Slots', odds: '$1.42B Progressive Pool · Triple Crown', win: 35000 }
       ].map(cg => ({
         ...cg,
         btn: lang === 'ar' ? 'رهان / تدوير' : 'Play Now',
         play: () => {
           this.playTacticalSfx('crime');
+          if (cg.id === 'rr' && Math.random() < (1 / 6)) {
+            this.p.hospUntil = Date.now() + 900000;
+            this.save();
+            this.syncOmarAction('torn.casinoPlay', 'rr_shot');
+            return this.result('bad', cg.game, lang === 'ar' ? 'انطلقت الرصاصة في الغرفة السادسة! تم نقلك للمستشفى (15 دقيقة).' : 'Chamber 6 fired! Emergency medevac to Hospital (15m).', '1/6 Chamber');
+          }
           this.p.cash = Number(this.p.cash || 0) + cg.win;
           this.save();
+          this.syncOmarAction('torn.casinoPlay', cg.id);
           this.result('cash', cg.game, cg.odds, '+' + money(cg.win));
         }
       })),
