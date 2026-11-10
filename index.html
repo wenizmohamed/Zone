@@ -611,6 +611,36 @@
                 </div>
               </div>
             </div>
+
+            <!-- Card 9: Torn v6.15.7 Live Harvest Master Codex (62 Files · 237 Endpoints · 726 Schemas · 1,503 Items) -->
+            <div class="zone-dossier-card" data-torn-master-codex="1" style="grid-column:1 / -1;background:linear-gradient(180deg,var(--panel),var(--deep));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;overflow:hidden;display:flex;flex-direction:column">
+              <div class="zone-dossier-card-head" style="background:linear-gradient(var(--tb1),var(--tb2));padding:8px 12px;font-weight:700;color:var(--gold);font-size:12px;border-bottom:1px solid var(--gold);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;text-transform:uppercase;letter-spacing:.05em">
+                <span style="display:inline-flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>{{ omar.codexMasterTitle }}</span>
+                <span style="font-size:10px;color:var(--acc);padding:2px 8px;border-radius:3px;background:rgba(57,231,163,.1);border:1px solid rgba(57,231,163,.3)">{{ omar.codexMasterBadge }}</span>
+              </div>
+              <div class="zone-dossier-card-body" style="padding:10px 12px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;flex-wrap:wrap;gap:5px">
+                  <sc-for list="{{ omar.codexTabs }}" as="ct" hint-placeholder-count="10">
+                    <button class="zone-compact-btn" onClick="{{ ct.select }}" style="background:{{ ct.bg }};color:{{ ct.fg }};border:1px solid {{ ct.border }};border-radius:4px;padding:5px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ ct.label }} <bdi style="opacity:.85">({{ ct.count }})</bdi></button>
+                  </sc-for>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:8px">
+                  <sc-for list="{{ omar.activeCodexRows }}" as="cr" hint-placeholder-count="8">
+                    <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:3px solid {{ cr.color }};border-radius:4px;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;gap:6px;font-size:11px">
+                      <div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                          <strong style="color:var(--t1);font-size:11.5px">{{ cr.title }}</strong>
+                          <bdi style="color:var(--gold);font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;background:rgba(214,167,86,.12)">{{ cr.badge }}</bdi>
+                        </div>
+                        <span style="color:var(--acc);font-weight:600;font-size:10px;display:block;margin-top:2px">{{ cr.meta }}</span>
+                        <small style="color:var(--t3);font-size:10px;display:block;margin-top:2px;line-height:1.35">{{ cr.detail }}</small>
+                      </div>
+                      <button class="zone-compact-btn" onClick="{{ cr.act }}" style="align-self:flex-end;background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:3px 9px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ cr.btn }}</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </sc-if>
@@ -661,6 +691,24 @@
                 <button class="zone-compact-btn" onClick="{{ sh.heist }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">{{ sh.btn }}</button>
               </div>
             </sc-for>
+          </div>
+          <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <strong style="color:var(--gold);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ omar.all13CrimesTitle }}</strong>
+              <span style="color:var(--acc);font-size:10px;font-weight:700">4-TIER OUTCOMES: SUCCESS · UNIQUE STASH (222) · FAIL · CRITICAL FAIL</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px">
+              <sc-for list="{{ omar.all13Crimes2 }}" as="c2" hint-placeholder-count="13">
+                <div style="flex:1 1 215px;background:var(--deep);border:1px solid var(--border2);border-inline-start:3px solid var(--gold);border-radius:4px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10.5px">
+                  <div>
+                    <strong style="color:var(--t1);display:block">#{{ c2.id }} {{ c2.name }}</strong>
+                    <span style="color:var(--acc);font-size:9.5px;display:block">Enhancer: {{ c2.enhancer }}</span>
+                    <small style="color:var(--gold);font-size:9.5px">{{ c2.uniques }} · {{ c2.payout }}</small>
+                  </div>
+                  <button class="zone-compact-btn" onClick="{{ c2.exec }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">{{ c2.btn }}</button>
+                </div>
+              </sc-for>
+            </div>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:8px">
             <sc-for list="{{ omar.searchModifiers }}" as="sm" hint-placeholder-count="4">
@@ -904,6 +952,12 @@
                   <button class="zone-compact-btn" onClick="{{ hb.aim }}" style="background:{{ hb.bg }};color:{{ hb.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:600;cursor:pointer">{{ hb.part }} ({{ hb.mult }})</button>
                 </sc-for>
               </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding-top:6px">
+                <span style="font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase">30 WEAPON MODS & PER-PART ARMOR COVERAGE:</span>
+                <sc-for list="{{ omar.weaponAttachmentMods }}" as="wm" hint-placeholder-count="6">
+                  <button class="zone-compact-btn" onClick="{{ wm.attach }}" style="background:{{ wm.bg }};color:{{ wm.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 7px;font:inherit;font-size:9.5px;font-weight:600;cursor:pointer">{{ wm.name }} ({{ wm.effect }})</button>
+                </sc-for>
+              </div>
               <div style="display:grid;gap:4px">
                 <sc-for list="{{ omar.liveTornAttacks }}" as="atk" hint-placeholder-count="3">
                   <div style="background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:5px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px">
@@ -988,6 +1042,21 @@
                 <bdi style="color:var(--money);font-weight:700">{{ rk.yieldText }}</bdi>
               </div>
             </sc-for>
+          </div>
+          <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px">
+            <strong style="color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.04em">34 HARVESTED OC 2.0 SCENARIOS (SCOPE & ROLE ITEM REQUIREMENTS) + 9 FACTION RESPECT TREES (49 SUB-BRANCHES):</strong>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px">
+              <sc-for list="{{ omar.oc2ScenariosCatalog }}" as="ocs" hint-placeholder-count="6">
+                <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:2px solid var(--acc);border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10.5px">
+                  <div>
+                    <strong style="color:var(--t1);display:block">{{ ocs.name }} (Diff {{ ocs.diff }})</strong>
+                    <small style="color:var(--gold);display:block">Scope: {{ ocs.scope }} · {{ ocs.roles }}</small>
+                    <small style="color:var(--mu);display:block">Req: {{ ocs.req }}</small>
+                  </div>
+                  <button class="zone-compact-btn" onClick="{{ ocs.spawn }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:3px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ ocs.btn }}</button>
+                </div>
+              </sc-for>
+            </div>
           </div>
         </section>
       </sc-if>
@@ -5395,7 +5464,7 @@ class Component extends DCLogic {
         this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', '100% Gym Eff');
       },
       gymSpecializations: [
-        { id: 'georges', name: "George's Gym (Heavyweight)", focus: 'All Stats Balanced · 10E/Train', dots: '7.3 / 7.3 / 7.3 / 7.3 Dots', pct: 73, bonus: 50 },
+        { id: 'georges', name: "George\'s Gym (Heavyweight)", focus: 'All Stats Balanced · 10E/Train', dots: '7.3 / 7.3 / 7.3 / 7.3 Dots', pct: 73, bonus: 50 },
         { id: 'balboas', name: "Balboa's Gym (Specialist)", focus: 'DEF & DEX Specialist · 25E/Train', dots: '9.0 DEF · 9.0 DEX Dots', pct: 90, bonus: 80 },
         { id: 'frontline', name: 'Frontline Fitness (Specialist)', focus: 'STR & SPD Specialist · 25E/Train', dots: '9.0 STR · 9.0 SPD Dots', pct: 90, bonus: 80 }
       ].map(gs => {
@@ -5654,7 +5723,169 @@ class Component extends DCLogic {
         { banner: 'CHAIN EXECUTIONER · 100K RESPECT', req: 'Complete a 1,000-Hit Ranked War Chain', rarity: 'Very Rare · 2.1%' },
         { banner: 'HIGH-VOLTAGE CONDITIONING MASTER', req: 'Execute Full Happy-Stack Protocol + Clinical Rehab', rarity: 'Rare · 6.8%' },
         { banner: 'ANTIQUITIES CURATOR · SMUGGLER KINGPIN', req: 'Exchange Full Regional Collection at the Museum', rarity: 'Uncommon · 11.4%' }
-      ]
+      ],
+      all13CrimesTitle: lang === 'ar' ? 'منظومة جرائم تورن 2.0 الكاملة (13 تخصصاً · 34 معززاً · 222 نتيجة فريدة)' : 'All 13 Harvested Torn Crimes 2.0 Archetypes (34 Enhancers · 222 Unique Outcomes)',
+      all13Crimes2: [
+        { id: '1', name: 'Search for Cash', enhancer: 'Glasses (#564) +5% XP', uniques: '34 Uniques · 6 Subcrimes', payout: '+$4,200 · 2N', nerve: 2, cash: 4200, xp: 6 },
+        { id: '2', name: 'Bootlegging', enhancer: 'High-Speed Drive (#565)', uniques: '4 Uniques · Online Store', payout: '+$6,800 · 3N', nerve: 3, cash: 6800, xp: 8 },
+        { id: '3', name: 'Graffiti', enhancer: 'Paint Mask (#550)', uniques: '41 Uniques · 7 Districts', payout: '+$5,400 · 3N', nerve: 3, cash: 5400, xp: 9 },
+        { id: '4', name: 'Shoplifting', enhancer: 'Mountain Bike (#566)', uniques: '60 Uniques · 8 Stores', payout: '+$8,900 · 4N', nerve: 4, cash: 8900, xp: 11 },
+        { id: '5', name: 'Pickpocketing', enhancer: 'Cut-Throat Razor (#567)', uniques: '22 Uniques · 20 Marks', payout: '+$12,400 · 5N', nerve: 5, cash: 12400, xp: 14 },
+        { id: '6', name: 'Card Skimming', enhancer: 'Duct Tape · Passive ATMs', uniques: '4 Terminals · Card Dump', payout: '+$18,500 · 6N', nerve: 6, cash: 18500, xp: 18 },
+        { id: '7', name: 'Burglary', enhancer: 'Flashlight · Scout/Case', uniques: '34 Uniques · 32 Targets', payout: '+$22,000 · 6N', nerve: 6, cash: 22000, xp: 20 },
+        { id: '8', name: 'Hustling', enhancer: 'Megaphone · Crowd Hype', uniques: 'Gather/Demo/Lose/Win', payout: '+$14,500 · 4N', nerve: 4, cash: 14500, xp: 15 },
+        { id: '9', name: 'Disposal', enhancer: 'Latex Gloves · Acid/Burn', uniques: '11 Uniques · 12 Contracts', payout: '+$26,000 · 6N', nerve: 6, cash: 26000, xp: 22 },
+        { id: '10', name: 'Cracking', enhancer: 'Office Chair · MIPS Rig', uniques: 'Brute-Force Layer Decrypt', payout: '+$29,500 · 7N', nerve: 7, cash: 29500, xp: 25 },
+        { id: '11', name: 'Forgery', enhancer: 'Magnifying Glass', uniques: '14 Docs (Passport/Badge)', payout: '+$24,000 · 5N', nerve: 5, cash: 24000, xp: 21 },
+        { id: '12', name: 'Scamming', enhancer: 'Ergonomic Keyboard', uniques: 'Phishing & Persuasion Wave', payout: '+$34,000 · 7N', nerve: 7, cash: 34000, xp: 28 },
+        { id: '13', name: 'Arson', enhancer: 'Windproof Lighter (#544)', uniques: '16 Uniques · Ignition Ops', payout: '+$48,000 · 9N', nerve: 9, cash: 48000, xp: 36 }
+      ].map(c2 => ({
+        ...c2,
+        btn: lang === 'ar' ? `تنفيذ (${c2.nerve}N)` : `Run (${c2.nerve}N)`,
+        exec: () => {
+          this.playTacticalSfx('crime');
+          this.p.cash = Number(this.p.cash || 0) + c2.cash;
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + c2.xp;
+          this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
+          this.save();
+          this.syncOmarAction('torn.crime2Execute', c2.id);
+          this.result('cash', `Crimes 2.0 · #${c2.id} ${c2.name}`, `UNIQUE OUTCOME · Enhancer: ${c2.enhancer} · +${c2.xp} Crime XP`, '+' + money(c2.cash));
+        }
+      })),
+      weaponAttachmentMods: [
+        { id: 'thermal', name: 'Thermal Sight (#4)', effect: '+1.75 Acc · Reveal Stealth' },
+        { id: 'laser100', name: '100mW Laser (#8)', effect: '+8% Critical Hit Rate' },
+        { id: 'suppressor', name: 'Large Suppressor (#14)', effect: '+2.5 Stealth · Hidden Hit' },
+        { id: 'extmag', name: 'High-Cap Drum Mag (#19)', effect: '+100% Magazine Rounds' },
+        { id: 'trigger', name: 'Adjustable Trigger (#24)', effect: '+15% First-Turn Accuracy' },
+        { id: 'armor_cov', name: 'Assault Body Coverage', effect: 'Heart 97.3% · Chest 90.2% · Arm 6.5%' }
+      ].map(wm => {
+        const curMod = this.state.tornWeaponMod || this.p.tornCombat?.mod || 'laser100';
+        return {
+          ...wm,
+          bg: curMod === wm.id ? 'var(--activebg)' : 'var(--btn)',
+          fg: curMod === wm.id ? 'var(--activefg)' : 'var(--t2)',
+          attach: () => {
+            this.playTacticalSfx('rack');
+            this.p.tornCombat = { ...(this.p.tornCombat || {}), mod: wm.id };
+            this.setState({ tornWeaponMod: wm.id });
+            this.save();
+            this.syncOmarAction('torn.weaponMod', wm.id);
+            this.toast(`Attached ${wm.name} (${wm.effect})`);
+          }
+        };
+      }),
+      oc2ScenariosCatalog: [
+        { id: 'snow_blind', name: 'Snow Blind', diff: '6/10', scope: 'Cost 3 -> Ret 5', roles: 'Imitator · Muscle · Looter · Driver', req: 'PCP (#201) for Imitator' },
+        { id: 'lock_stock', name: 'Lock Stock', diff: '8/10', scope: 'Cost 4 -> Ret 6', roles: 'Assassin · Techie · Picklock · Enforcer', req: 'Ecstasy (#197) for Assassin' },
+        { id: 'cleared_takeoff', name: 'Cleared for Takeoff', diff: '9/10', scope: 'Cost 5 -> Ret 8', roles: 'Imitator · Hijacker · Hacker · Sniper', req: 'Large Suitcase (#421)' },
+        { id: 'gone_fission', name: 'Gone Fission', diff: '9/10', scope: 'Cost 5 -> Ret 8', roles: 'Pickpocket · Cat Burglar · Cleaner · Techie', req: 'Cut-Throat Razor (#567)' },
+        { id: 'market_forces', name: 'Market Forces', diff: '3/10', scope: 'Cost 2 -> Ret 3', roles: 'Enforcer · Negotiator · Lookout · Arsonist · Muscle', req: 'Windproof Lighter (#544)' },
+        { id: 'gaslight_way', name: 'Gaslight the Way', diff: '3/10', scope: 'Cost 2 -> Ret 3', roles: '3x Imitator · 3x Looter (6-Crew)', req: 'Police Badge / ID Kit' }
+      ].map(ocs => ({
+        ...ocs,
+        btn: lang === 'ar' ? 'إطلاق العملية' : 'Spawn OC 2.0',
+        spawn: () => {
+          this.playTacticalSfx('crime');
+          this.p.cash = Number(this.p.cash || 0) + 85000;
+          this.p.fac = { ...(this.p.fac || {}), respect: Number(this.p.fac?.respect || 1480) + 45 };
+          this.save();
+          this.syncOmarAction('torn.oc2Spawn', ocs.id);
+          this.result('cash', `OC 2.0 · ${ocs.name} (Diff ${ocs.diff})`, `${ocs.roles} · ${ocs.req}`, '+$85,000 & +45 Respect');
+        }
+      })),
+      codexMasterTitle: lang === 'ar' ? 'موسوعة بيانات تورن الحية (62 ملفاً · 237 مسار API · 726 مخططاً · 1,503 عنصراً)' : 'TORN v6.15.7 LIVE HARVEST MASTER CODEX (62 FILES · 237 ENDPOINTS · 726 SCHEMAS · 1,503 ITEMS)',
+      codexMasterBadge: 'KEY hWLTo3ZaDmCMHrGy · 100% HARVESTED',
+      codexTabs: [
+        { id: 'crimes', label: 'Crimes 2.0', count: '13 · 222 Uniques' },
+        { id: 'oc2', label: 'OC 2.0 Scenarios', count: '34 · 24 Roles' },
+        { id: 'faction', label: 'Faction Trees', count: '9 Trees · 49 Branches' },
+        { id: 'rackets', label: 'Live Rackets', count: '188 Sectors' },
+        { id: 'gyms', label: 'Gyms', count: '33 Gyms' },
+        { id: 'companies', label: 'Companies', count: '39 · 195 Specials' },
+        { id: 'edu', label: 'University', count: '12 Majors · 131 Courses' },
+        { id: 'stocks', label: 'Stocks', count: '35 Tickers' },
+        { id: 'arsenal', label: 'Arsenal & Mods', count: '185 Wpn · 74 Arm · 30 Mods' },
+        { id: 'specials', label: 'Drugs · Books · Cars · Duke', count: '11 Drg · 44 Bk · 50 Car · 100 Bty' }
+      ].map(ct => {
+        const curTab = this.state.tornCodexTab || 'crimes';
+        const isAct = curTab === ct.id;
+        return {
+          ...ct,
+          bg: isAct ? 'var(--activebg)' : 'var(--btn)',
+          fg: isAct ? 'var(--activefg)' : 'var(--t2)',
+          border: isAct ? 'var(--acc)' : 'var(--border3)',
+          select: () => this.setState({ tornCodexTab: ct.id })
+        };
+      }),
+      activeCodexRows: (() => {
+        const curTab = this.state.tornCodexTab || 'crimes';
+        const datasets = {
+          crimes: [
+            { title: '#1 Search for Cash -> #4 Shoplifting', badge: '94 UNIQUES', meta: 'Enhancers: Glasses (#564) & Mountain Bike (#566)', detail: '6 Search zones (Fountain, Trash, Junkyard, Subway, Beach, Cemetery) + 8 Shoplift stores with live camera/guard status.', color: 'var(--acc)', btn: 'Run Shoplift', act: () => this.syncOmarAction('torn.crime2Execute', '4') || this.result('cash', 'Shoplifting (#4)', 'Mountain Bike Enhancer (+5% XP)', '+$8,900') },
+            { title: '#2 Bootlegging & #3 Graffiti', badge: '45 UNIQUES', meta: 'Enhancers: High-Speed Drive (#565) & Paint Mask', detail: 'Copy DVDs across genres & run online store; tag 7 city districts for street crew reputation.', color: 'var(--gold)', btn: 'Run Bootleg', act: () => this.syncOmarAction('torn.crime2Execute', '2') || this.result('cash', 'Bootlegging (#2)', 'High-Speed DVD Array Active', '+$6,800') },
+            { title: '#5 Pickpocketing & #7 Burglary', badge: '56 UNIQUES', meta: 'Enhancers: Cut-Throat Razor (#567) & Flashlight', detail: '20 pedestrian mark classes (gait/build cues) + 32 Residential/Commercial/Industrial properties (Scout -> Case -> Break-In).', color: 'var(--acc)', btn: 'Run Burglary', act: () => this.syncOmarAction('torn.crime2Execute', '7') || this.result('cash', 'Burglary (#7)', 'Commercial Target Cased & Breached', '+$22,000') },
+            { title: '#6 Card Skimming & #10 Cracking', badge: 'PASSIVE RIGS', meta: 'Enhancers: Duct Tape & Office Chair (MIPS Rig)', detail: 'Plant skimmers on Subway/Gas/Bus ATMs to accumulate card dumps; build multi-fan CPU rigs to crack layered hashes.', color: 'var(--gold)', btn: 'Crack Cipher', act: () => this.syncOmarAction('torn.crime2Execute', '10') || this.result('cash', 'Cracking (#10)', '740 MIPS Rig Decrypted Layer', '+$29,500') },
+            { title: '#8 Hustling & #9 Disposal', badge: '11 UNIQUES', meta: 'Enhancers: Megaphone & Latex Gloves', detail: 'Manage crowd hype (Gather/Demo/Lose/Win) + dispose of Bodies, Vehicles, Murder Weapons & Firearms via Acid/Burn/Sink.', color: 'var(--acc)', btn: 'Run Disposal', act: () => this.syncOmarAction('torn.crime2Execute', '9') || this.result('cash', 'Disposal (#9)', 'Dissolved Evidence in Acid (Unique Outcome)', '+$26,000') },
+            { title: '#11 Forgery, #12 Scamming & #13 Arson', badge: '16 UNIQUES', meta: 'Magnifying Glass · Ergonomic Keyboard · Windproof Lighter (#544)', detail: 'Craft 14 documents (Passports/Badges), run Phishing persuasion waves, and execute high-tier Arson contracts.', color: '#ff6a55', btn: 'Ignite Arson', act: () => this.syncOmarAction('torn.crime2Execute', '13') || this.result('cash', 'Arson (#13)', 'Windproof Lighter (#544) Warehouse Ignition', '+$48,000') }
+          ],
+          oc2: [
+            { title: 'Tier I-II: First Aid & Abet · Mob Mentality · Pet Project', badge: 'DIFF 1-2', meta: 'Scope Cost 1 -> Return 2 · 3-4 Crew Slots', detail: 'Roles: Picklock, Decoy, Pickpocket, 4x Looter, Kidnapper, Muscle, Car Thief, Imitator.', color: 'var(--acc)', btn: 'Spawn Diff 2', act: () => this.syncOmarAction('torn.oc2Spawn', 'mob_mentality') || this.result('cash', 'OC 2.0 · Mob Mentality', 'Scope +2 Returned · 4x Looter Crew', '+$85,000') },
+            { title: 'Tier III: Gaslight the Way · Market Forces · Smoke & Mirrors', badge: 'DIFF 3-4', meta: 'Scope Cost 2 -> Return 3 · 4-6 Crew Slots', detail: 'Roles: Enforcer, Negotiator, Lookout, Arsonist, Muscle, 3x Imitator, 3x Looter.', color: 'var(--gold)', btn: 'Spawn Diff 3', act: () => this.syncOmarAction('torn.oc2Spawn', 'market_forces') || this.result('cash', 'OC 2.0 · Market Forces', '5-Crew Executed · +45 Respect', '+$85,000') },
+            { title: 'Tier VI: Snow Blind · Stage Fright · Counter Offer', badge: 'DIFF 5-6', meta: 'Scope Cost 3 -> Return 5 · Item Requirement: PCP (#201)', detail: 'Imitator role consumes PCP (#201) during Snow Blind scenario; high Checkpoint Pass Rate (CPR %) scaling.', color: 'var(--acc)', btn: 'Spawn Snow Blind', act: () => this.syncOmarAction('torn.oc2Spawn', 'snow_blind') || this.result('cash', 'OC 2.0 · Snow Blind', 'Imitator PCP (#201) Consumed · 94% CPR', '+$85,000') },
+            { title: 'Tier VIII-X: Lock Stock · Cleared for Takeoff · Gone Fission', badge: 'DIFF 8-10', meta: 'Scope Cost 5 -> Return 8 · Ecstasy / Large Suitcase / Razor', detail: 'Lock Stock requires Ecstasy (#197) for Assassin; Cleared for Takeoff requires Large Suitcase (#421); Gone Fission requires Cut-Throat Razor (#567).', color: '#ff6a55', btn: 'Spawn Apex OC', act: () => this.syncOmarAction('torn.oc2Spawn', 'gone_fission') || this.result('cash', 'OC 2.0 · Gone Fission', 'Apex Scenario Complete · +45 Respect', '+$85,000') }
+          ],
+          faction: [
+            { title: 'Core Tree (14 Sub-Branches) & Criminality (5)', badge: '19 BRANCHES', meta: 'Armories · Chaining · OC 2.0 · Nerve (+40) · Bust Skill', detail: 'Unlocks Weapon/Armor/Drug/Medical/Booster Armories, Laboratory, Territory Capacity, and +25% Crime XP & Skill.', color: 'var(--acc)', btn: 'Upgrade Core', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'criminality') || this.result('good', 'Faction Tree · Criminality', '+40 Max Nerve & +25% Crime XP Active', '+25 Respect') },
+            { title: 'Steadfast (4 Branches) & Toleration (3 Branches)', badge: '7 BRANCHES', meta: '+20% STR/SPD/DEF/DEX Gym Gains · -50% Overdose Risk', detail: 'Multiplicative gym training boosts across all 4 battle stats plus -50% drug addiction, side effects, and overdose probability.', color: 'var(--gold)', btn: 'Upgrade Steadfast', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'steadfast') || this.result('good', 'Faction Tree · Steadfast', '+20% All Gym Stat Gains Unlocked', '+25 Respect') },
+            { title: 'Voracity (4 Branches) & Fortitude (5 Branches)', badge: '9 BRANCHES', meta: '+48h Booster CD · +50% Energy Cans · Reviving (25E)', detail: 'Increases Booster cooldown cap from 24h to 48h, boosts Energy Drink/Candy/Alcohol effects by +50%, and unlocks 25E Revives.', color: 'var(--acc)', btn: 'Upgrade Voracity', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'voracity') || this.result('good', 'Faction Tree · Voracity', '48h Booster Cooldown Cap & +50% Can Effect', '+25 Respect') },
+            { title: 'Aggression (5), Suppression (4) & Excursion (5)', badge: '14 BRANCHES', meta: '+20% Damage/STR/SPD/DEF/DEX/Max Life · +10 Travel Items', detail: 'Combat stat multipliers in faction wars plus +10 suitcase smuggling capacity and -30% Switzerland Rehab cost.', color: 'var(--gold)', btn: 'Upgrade Excursion', act: () => this.syncOmarAction('torn.factionTreeUpgrade', 'excursion') || this.result('good', 'Faction Tree · Excursion', '+10 Travel Capacity & -30% Rehab Cost', '+25 Respect') }
+          ],
+          rackets: [
+            { title: '[RDF] Drug Lab V & [KDB] Xanax Lab V', badge: 'LVL 5 RACKET', meta: 'Reward: 400x Xanax (#206) / day · Faction #11581', detail: 'Harvested from faction_rackets.json (188 live rackets): generates 400x Xanax daily directly into Faction Drug Armory.', color: 'var(--acc)', btn: 'Collect Xanax', act: () => this.syncOmarAction('torn.racketCollect', 'rdf') || this.result('cash', 'Racket [RDF] Drug Lab V', '400x Xanax (#206) + $45,000 Collected', '+$45,000') },
+            { title: '[WZD] Bordello IV & [NUB] High-Roller IV', badge: 'LVL 4 RACKET', meta: 'Reward: 40x Erotic DVD (#366) / day · Faction #230', detail: 'Supplies 40x Erotic DVDs (+2,500 Happy each) daily for Faction Happy-Jump conditioning stacks.', color: 'var(--gold)', btn: 'Collect E-DVDs', act: () => this.syncOmarAction('torn.racketCollect', 'wzd') || this.result('cash', 'Racket [WZD] Bordello IV', '40x Erotic DVD (#366) + $45,000 Collected', '+$45,000') },
+            { title: '[DJC] & [JND] Street Surgeon IV', badge: 'LVL 4 RACKET', meta: 'Reward: 40x Morphine (#464) / day · Faction #29865', detail: 'Produces 40x trauma medical supplies daily for Ranked War & Territory Wall sustain.', color: 'var(--acc)', btn: 'Collect Meds', act: () => this.syncOmarAction('torn.racketCollect', 'djc') || this.result('cash', 'Racket [DJC] Street Surgeon IV', '40x Morphine (#464) + $45,000 Collected', '+$45,000') },
+            { title: '[QEB] Money Launderer V & [RPB] Point Broker', badge: 'LVL 5 RACKET', meta: 'Reward: $80,000,000 Cash & 2,000x Points / day', detail: 'Direct tax-free treasury cash and premium Points generated every 24h while holding sector walls.', color: 'var(--gold)', btn: 'Collect Treasury', act: () => this.syncOmarAction('torn.racketCollect', 'qeb') || this.result('cash', 'Racket [QEB] Launderer V', '+$45,000 & +15 Points Collected', '+$45,000') }
+          ],
+          gyms: [
+            { title: '8 Lightweight (5E) & 8 Middleweight (10E)', badge: 'GYMS #1-#16', meta: 'Premier Fitness ($10, 2.0 Dots) -> Global Gym (5.0 Dots)', detail: 'Progressive energy unlock ladder where every 5E/10E spent unlocks higher STR/SPD/DEF/DEX dot multipliers.', color: 'var(--acc)', btn: 'Train Heavy', act: () => this.syncOmarAction('torn.gymSpec', 'global') || this.result('good', 'Middleweight · Global Gym', '+65 Gym XP Earned', '+65 Gym XP') },
+            { title: '8 Heavyweight Gyms (10E) -> #24 George\'s Gym', badge: 'GYMS #17-#24', meta: "George's ($15M): 7.3 STR / 7.3 SPD / 7.3 DEF / 7.3 DEX", detail: 'The pinnacle all-around Heavyweight gym before entering stat-locked Specialist gyms.', color: 'var(--gold)', btn: "Activate George's", act: () => this.syncOmarAction('torn.gymSpec', 'georges') || this.result('good', "George\'s Gym (#24)", '7.3 All-Stat Dots Active', '+65 Gym XP') },
+            { title: 'Dual & Single Stat Specialist Gyms (25E-50E)', badge: 'GYMS #25-#30', meta: 'Balboas (DEF/DEX) · Frontline (STR/SPD) · Gym 3000 · Isoyama · Rebound · Elites', detail: '8.0 Dot single-stat gyms (50E/train, $100M) requiring your primary stat to remain 25% higher than your second highest stat.', color: 'var(--acc)', btn: 'Activate Gym 3000', act: () => this.syncOmarAction('torn.gymSpec', 'gym3000') || this.result('good', 'Gym 3000 (#27)', '8.0 STR Specialist Dots Active', '+65 Gym XP') },
+            { title: '#31 Sports Science Lab (9.0) & #32 Unknown (10.0)', badge: 'GYMS #31-#33', meta: 'SSL ($500M, 25E, 9.0 Dots, Drug-Free) · Unknown (10.0 Dots) · Jail Gym (#33)', detail: 'SSL grants 9.0 Dots across all 4 stats (kicks you out if you take drugs!); Jail Gym (#33) trains STR 3.4 / SPD 3.4 / DEF 4.6 while in Jail.', color: '#ff6a55', btn: 'Activate SSL 9.0', act: () => this.syncOmarAction('torn.gymSpec', 'ssl') || this.result('good', 'Sports Science Lab (#31)', '9.0 All-Stat Dots Activated', '+65 Gym XP') }
+          ],
+          companies: [
+            { title: 'Law Firm (#2), Hair Salon (#1) & Flower Shop (#3)', badge: '15 SPECIALS', meta: '10★ Educated Decisions · 10★ +20% Slashing · 7★ +5 Travel Flowers', detail: 'Law Firm: -50% bail, view target stats, +20% OC XP; Hair Salon: view target cash, -2.0 enemy stealth; Flower Shop: +5 flower travel capacity.', color: 'var(--acc)', btn: 'Redeem Law 10★', act: () => this.syncOmarAction('torn.companySpecial', 'sweet') || this.result('good', '10★ Law Firm Special', 'View Bust Chance & +2,500 Happy', '+2,500 Happy') },
+            { title: 'Sweet Shop, Adult Novelties & Nightclub', badge: '15 SPECIALS', meta: 'Energy Cans · Free Erotic DVDs (#366) · -50% Drug Addiction', detail: 'Adult Novelties 10★ doubles Erotic DVD Happy (+5,000 Happy/DVD!); Sweet Shop trades JP for Energy Cans & +4,500 Happy.', color: 'var(--gold)', btn: 'Redeem AN 10★', act: () => this.syncOmarAction('torn.companySpecial', 'adult') || this.result('good', '10★ Adult Novelties', '+1x Erotic DVD (+2,500 Happy)', '+2,500 Happy') },
+            { title: 'Fitness Center, Private Security & Mechanic Shop', badge: '15 SPECIALS', meta: '10★ +3% All Gym Gains · 24h Bounty Immunity · Racing Car Parts', detail: 'Fitness Center gives +3% gym gains & -50% education time; Private Security gives 24h bounty protection & +25% armor mitigation.', color: 'var(--acc)', btn: 'Redeem Fitness 10★', act: () => this.syncOmarAction('torn.companySpecial', 'fitness') || this.result('good', '10★ Fitness Center', '+300 Energy & +3% Gym Gain', '+300E') },
+            { title: 'Oil Rig ($10B), Mining Corp, TV Network & Logistics', badge: '150 SPECIALS', meta: '39 Total Companies · 195 Star Specials (1★/3★/5★/7★/10★)', detail: 'Oil Rig raises City Bank investment cap to $3,000,000,000; Logistics grants +25% travel speed and foreign warehouse slots.', color: 'var(--gold)', btn: 'Redeem Oil 10★', act: () => this.syncOmarAction('torn.companySpecial', 'oil') || this.result('cash', '10★ Oil Rig Embargo', '+$75,000 Dividend & $3B Bank Cap', '+$75,000') }
+          ],
+          edu: [
+            { title: 'Biology (10) · Sports Science (10) · Health & Fitness (9)', badge: '29 COURSES', meta: 'BIO2127 Intravenous Therapy · SPT2490 +4% Gym · HAF Physical', detail: 'Biology unlocks drawing/transfusing Blood Bags (A+, O-, Irradiated); Sports Science permanently boosts all 4 gym stats.', color: 'var(--acc)', btn: 'Apply Biology', act: () => this.syncOmarAction('torn.eduMajor', 'bio') || this.result('good', 'Biology Bachelor', 'Intravenous Blood Bags Unlocked', '+25 Gym XP') },
+            { title: 'History (8) · Law (15) · Psychology (8)', badge: '31 COURSES', meta: 'HIS2190 Unlocks The Museum · LAW2800 -50% Bail & +25% Bust', detail: 'History Bachelor unlocks The Museum (trade Flower & Plushie sets for +10 Points); Psychology grants +10% Crime Success & +10% DEX.', color: 'var(--gold)', btn: 'Trade Museum Set', act: () => this.syncOmarAction('torn.museumExchange', 'flowers') || this.result('cash', 'Museum Point Exchange', '11-Flower Set -> +10 Points & +$45,000', '+10 Pts') },
+            { title: 'Combat Training (11) · Self Defense (8) · Math (11)', badge: '30 COURSES', meta: 'Weapon XP Mastery · DEF2700 Unlocks Kick · MTH3310 -30% Ammo', detail: 'Combat Training unlocks Weapon Experience (up to +10% Dmg/Acc per weapon); Self Defense unlocks Kick & +100% unarmed damage.', color: 'var(--acc)', btn: 'Apply Combat', act: () => this.syncOmarAction('torn.eduMajor', 'cbt') || this.result('good', 'Combat Training Bachelor', 'Weapon XP & -30% Ammo Usage Active', '+25 Gym XP') },
+            { title: 'Business (13) · Computer Science (16) · General Studies (12)', badge: '41 COURSES', meta: '131 Total Courses · +10% Company Profits · General +10% All Workstats', detail: 'General Studies Bachelor adds +10% to all future working stat gains; Computer Science unlocks OC 2.0 Hacker slot & virus crafting.', color: 'var(--gold)', btn: 'Apply CompSci', act: () => this.syncOmarAction('torn.eduMajor', 'csc') || this.result('good', 'Computer Science Bachelor', 'OC 2.0 Hacker Slot & Virus Coding Ready', '+12 Crime XP') }
+          ],
+          stocks: [
+            { title: 'TSB ($50M/31d) · TCI (+10% Bank APR) · IOU ($12M/31d)', badge: 'BANK BLOCKS', meta: '3,000,000 Shares TSB · 1,500,000 Shares TCI · 5 Bank CD Terms', detail: 'TCI boosts 90-Day City Bank CD APR to max yield; TSB pays $50,000,000 cash every 31 days; GRN pays $4,000,000.', color: 'var(--acc)', btn: 'Claim TSB Div', act: () => this.syncOmarAction('torn.stockDividend', 'SYM') || this.result('cash', 'TSB · Torn & Shanghai Bank', 'Monthly Dividend Block Collected', '+$42,000') },
+            { title: 'FHG (Feathery Coupon) · SYM (Drug Pack) · MCS (+300E)', badge: 'BOOST BLOCKS', meta: '7-Day Weekly Item & Energy Dividend Blocks', detail: 'FHG drops Feathery Hotel Coupons (+500E); SYM drops Drug Packs (10x Xanax); MCS grants +100/+300 Free Energy weekly.', color: 'var(--gold)', btn: 'Claim MCS +300E', act: () => this.syncOmarAction('torn.stockDividend', 'MCS') || this.result('cash', 'MCS · Mc Smoogle Corp', '+300 Energy & +$55,000 Dividend', '+300E') },
+            { title: 'LAG (Lawyer Card) · THS (Med Box) · PRN (Erotic DVD)', badge: 'UTILITY BLOCKS', meta: '7-Day Weekly Consumable Supply Blocks', detail: 'LAG drops Lawyer Business Cards (instant jail release); PRN drops Erotic DVDs; LSC drops Lottery Vouchers.', color: 'var(--acc)', btn: 'Claim FHG Block', act: () => this.syncOmarAction('torn.stockDividend', 'FHG') || this.result('cash', 'FHG · Feathery Hotels Group', '1x Feathery Hotel Coupon (+$135,000)', '+$135,000') },
+            { title: 'WSU (-10% Edu Time) · TCHS · ELT · HRG · SYS (Firewall)', badge: '35 TICKERS', meta: 'All 35 Torn Exchange Tickers Harvested in torn_stocks.json', detail: 'WSU cuts all 131 University course durations by 10%; SYS provides an Advanced Firewall against virus attacks.', color: 'var(--gold)', btn: 'Claim LAG Block', act: () => this.syncOmarAction('torn.stockDividend', 'LAG') || this.result('cash', 'LAG · Legal Authorities', '1x Lawyer Business Card (+$38,000)', '+$38,000') }
+          ],
+          arsenal: [
+            { title: '185 Harvested Weapons & 4-Slot Loadout', badge: '185 WEAPONS', meta: 'Primary · Secondary · Melee · Temporary · Stealth 0.0-10.0', detail: 'Every weapon in torn_items.json has exact damage, accuracy, stealth_level, rate_of_fire, magazine_rounds, and 6 finishing hit perks.', color: 'var(--acc)', btn: 'Equip ArmaLite', act: () => this.syncOmarAction('torn.combatPrep', 'heart:ap:primary') || this.result('good', 'Primary Slot · ArmaLite M-15A4', 'Heart 3.0x Crit + Piercing Ammo Armed', 'Armed') },
+            { title: '74 Harvested Armors & Per-Body-Part Coverage %', badge: '74 ARMORS', meta: 'Heart 97.27% · Stomach 95.09% · Chest 90.22% · Arm 6.50%', detail: "Armor in Torn mitigates per body part: hitting an exposed Arm (6.5% coverage) or Throat bypasses a defender\'s vest!", color: 'var(--gold)', btn: 'Aim Exposed Throat', act: () => this.syncOmarAction('torn.combatPrep', 'throat:hp:primary') || this.result('good', 'Anatomical Target: Throat (3.5x)', 'Bypasses Chest Armor Coverage (90.2%)', '3.5x Crit') },
+            { title: '30 Weapon Modifications (Tiers 1-5) & 21 Ammo Calibers', badge: '30 MODS · 21 AMMO', meta: 'Thermal Sight (+1.75 Acc) · 100mW Laser (+8% Crit) · Suppressors', detail: 'Attach 2 modifications per weapon from torn_itemmods.json and load Tracer, Hollow Point, Piercing, or Incendiary calibers.', color: 'var(--acc)', btn: 'Mount 100mW Laser', act: () => this.syncOmarAction('torn.weaponMod', 'laser100') || this.result('good', '100mW Laser (#8) Mounted', '+8% Critical Hit Rate Active', '+8% Crit') },
+            { title: '7-Modifier Respect Formula & Finishing Hit Perks', badge: '7 MODIFIERS', meta: 'Fair Fight (3.0x) × War (2.0x) × Retal (1.5x) × Group × Overseas × Chain × Warlord', detail: 'Weapon finishers: Plunder (+% Mug Cash), Warlord (+% Respect), Revitalize (Refunds 25E), Stricken (+% Hosp Time), Proficience (+XP).', color: '#ff6a55', btn: 'Claim Bounty Hit', act: () => this.syncOmarAction('torn.bountyClaim', 'top') || this.result('cash', 'Newspaper Bounty Claimed', 'Fair Fight 2.85x · Plunder Finisher', '+$75,000') }
+          ],
+          specials: [
+            { title: 'All 11 Harvested Drugs & OC 2.0 Scenario Roles', badge: '11 DRUGS', meta: 'Xanax (+250E) · Ecstasy (2x Happy) · Vicodin (+25% Stats) · Love Juice', detail: 'Cannabis (+8-12N), Ketamine (+50% DEF), LSD (+50E/+5N/+500H), Opium (Instant Hosp Clear), PCP (+20% STR/DEX), Shrooms, Speed.', color: 'var(--acc)', btn: 'Run Happy Stack', act: () => this.syncOmarAction('torn.happyJump', 'stack') || this.result('good', '11-Drug Toxicology Stack', 'Xanax +250E & Ecstasy 2x Happy Applied', '+250E') },
+            { title: '44 Passive 31-Day Books (torn_items.json)', badge: '44 BOOKS', meta: 'Ugly Energy (+250 Max E) · Brawn Over Brains · Ignorance Is Bliss', detail: 'Non-tradable 31-day study books granting massive temporary passives (+100% Gym gains, +250 energy bar cap, 0% drug addiction).', color: 'var(--gold)', btn: 'Read 31d Book', act: () => this.syncOmarAction('torn.readBook', 'ugly_energy') || this.result('good', '31-Day Book Started: Ugly Energy', '+150 Energy & +500 Happy Boost Applied', '31d Active') },
+            { title: '50 Raceway Cars (Class E -> A) & 265 Upgrade Parts', badge: '50 CARS', meta: 'Torn Raceway · Class E -> D -> C -> B -> A · Official & Custom', detail: '50 real racing cars harvested in torn_items.json with turbo, transmission, suspension, and brake upgrade trees.', color: 'var(--acc)', btn: 'Enter Class A Race', act: () => this.syncOmarAction('torn.racewayRun', 'class_a') || this.result('cash', 'Torn Raceway · Class A Championship', '1st Place Finish · +5 Racing Points & +$28,000', '+$28,000') },
+            { title: 'Duke Mission Giver, 100 Live Bounties & 907 Honors/Medals', badge: '532 HONORS · 375 MEDALS', meta: 'Duke Mission Credits Shop · 25 Properties · 27 Merit Trees', detail: 'Complete Duke contracts for Mission Credits (buy Weapon Mods & Books), claim 100 live Newspaper Bounties, and unlock 907 Honors/Medals.', color: 'var(--gold)', btn: 'Complete Duke Op', act: () => this.syncOmarAction('torn.dukeMission', 'duke_contract') || this.result('cash', 'Duke Mission Contract Complete', '+15 Mission Credits & +$35,000 Awarded', '+$35,000') }
+          ]
+        };
+        return datasets[curTab] || datasets.crimes;
+      })()
     };
 
     if (screen === 'attack') view.subtitle = lang === 'ar' ? 'خصوم المدينة ولاعبون حقيقيون. البداية تكلف 25 طاقة؛ النتائج محفوظة على الخادم.' : 'City opponents and real players. Starting costs 25 energy; outcomes are saved on the server.';

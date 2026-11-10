@@ -710,6 +710,76 @@ final class ProgressionService
                     $this->cash($playerId, $win, 'torn.casinoPlay:' . $id, $correlationId);
                     $result['cashDelta'] = $win;
                     break;
+                case 'torn.crime2Execute':
+                    $crimeMap = [
+                        '1' => ['name' => 'Search for Cash', 'nerve' => 2, 'cash' => 4200, 'xp' => 6, 'enhancer' => 'Glasses (#564)'],
+                        '2' => ['name' => 'Bootlegging', 'nerve' => 3, 'cash' => 6800, 'xp' => 8, 'enhancer' => 'High-Speed Drive (#565)'],
+                        '3' => ['name' => 'Graffiti', 'nerve' => 3, 'cash' => 5400, 'xp' => 9, 'enhancer' => 'Paint Mask (#550)'],
+                        '4' => ['name' => 'Shoplifting', 'nerve' => 4, 'cash' => 8900, 'xp' => 11, 'enhancer' => 'Mountain Bike (#566)'],
+                        '5' => ['name' => 'Pickpocketing', 'nerve' => 5, 'cash' => 12400, 'xp' => 14, 'enhancer' => 'Cut-Throat Razor (#567)'],
+                        '6' => ['name' => 'Card Skimming', 'nerve' => 6, 'cash' => 18500, 'xp' => 18, 'enhancer' => 'Duct Tape (#571)'],
+                        '7' => ['name' => 'Burglary', 'nerve' => 6, 'cash' => 22000, 'xp' => 20, 'enhancer' => 'Flashlight (#572)'],
+                        '8' => ['name' => 'Hustling', 'nerve' => 4, 'cash' => 14500, 'xp' => 15, 'enhancer' => 'Megaphone (#573)'],
+                        '9' => ['name' => 'Disposal', 'nerve' => 6, 'cash' => 26000, 'xp' => 22, 'enhancer' => 'Latex Gloves (#574)'],
+                        '10' => ['name' => 'Cracking', 'nerve' => 7, 'cash' => 29500, 'xp' => 25, 'enhancer' => 'Office Chair (#575)'],
+                        '11' => ['name' => 'Forgery', 'nerve' => 5, 'cash' => 24000, 'xp' => 21, 'enhancer' => 'Magnifying Glass (#576)'],
+                        '12' => ['name' => 'Scamming', 'nerve' => 7, 'cash' => 34000, 'xp' => 28, 'enhancer' => 'Ergonomic Keyboard (#577)'],
+                        '13' => ['name' => 'Arson', 'nerve' => 9, 'cash' => 48000, 'xp' => 36, 'enhancer' => 'Windproof Lighter (#544)'],
+                    ];
+                    $cfg = $crimeMap[$id] ?? $crimeMap['1'];
+                    $nerveCost = min((int) ($player['nerve'] ?? 10), $cfg['nerve']);
+                    if ($nerveCost > 0) {
+                        $this->database->execute('UPDATE players SET nerve = MAX(0, nerve - :n) WHERE id = :id', ['n' => $nerveCost, 'id' => $playerId]);
+                    }
+                    $state['crimeXp'] = (int) ($state['crimeXp'] ?? 120) + $cfg['xp'];
+                    $state['ctr']['crimes'] = (int) ($state['ctr']['crimes'] ?? 0) + 1;
+                    $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
+                    $state['tornState']['lastCrime2'] = ['id' => $id, 'name' => $cfg['name'], 'tier' => 'UNIQUE OUTCOME', 'enhancer' => $cfg['enhancer']];
+                    $this->cash($playerId, $cfg['cash'], 'torn.crime2Execute:' . $id, $correlationId);
+                    $result['cashDelta'] = $cfg['cash'];
+                    $result['crimeTier'] = 'UNIQUE OUTCOME';
+                    break;
+                case 'torn.oc2Spawn':
+                    $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + 45;
+                    $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
+                    $state['tornState']['activeOc2'] = $id;
+                    $this->cash($playerId, 85000, 'torn.oc2Spawn:' . $id, $correlationId);
+                    $result['cashDelta'] = 85000;
+                    break;
+                case 'torn.factionTreeUpgrade':
+                    $state['fac']['respect'] = max(0, (int) ($state['fac']['respect'] ?? 1480) + 25);
+                    $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
+                    $state['tornState']['factionBranch'] = $id;
+                    break;
+                case 'torn.museumExchange':
+                    $state['points'] = (int) ($state['points'] ?? 45) + 10;
+                    $this->cash($playerId, 45000, 'torn.museumExchange:' . $id, $correlationId);
+                    $result['cashDelta'] = 45000;
+                    break;
+                case 'torn.dukeMission':
+                    $state['points'] = (int) ($state['points'] ?? 45) + 15;
+                    $this->cash($playerId, 35000, 'torn.dukeMission:' . $id, $correlationId);
+                    $result['cashDelta'] = 35000;
+                    break;
+                case 'torn.bountyClaim':
+                    $state['fac']['respect'] = (int) ($state['fac']['respect'] ?? 1480) + 18;
+                    $this->cash($playerId, 75000, 'torn.bountyClaim:' . $id, $correlationId);
+                    $result['cashDelta'] = 75000;
+                    break;
+                case 'torn.weaponMod':
+                    $state['tornCombat'] = is_array($state['tornCombat'] ?? null) ? $state['tornCombat'] : ['hitbox' => 'head', 'ammo' => 'hp', 'slot' => 'primary'];
+                    $state['tornCombat']['mod'] = $id;
+                    break;
+                case 'torn.readBook':
+                    $state['tornState'] = is_array($state['tornState'] ?? null) ? $state['tornState'] : [];
+                    $state['tornState']['activeBook'] = $id;
+                    $this->database->execute('UPDATE players SET energy = MIN(1000, energy + 150), happy = MIN(99999, happy + 500) WHERE id = :id', ['id' => $playerId]);
+                    break;
+                case 'torn.racewayRun':
+                    $state['points'] = (int) ($state['points'] ?? 45) + 5;
+                    $this->cash($playerId, 28000, 'torn.racewayRun:' . $id, $correlationId);
+                    $result['cashDelta'] = 28000;
+                    break;
                 default:
                     throw new InvalidArgumentException('Unknown gameplay action.');
             }

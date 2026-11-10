@@ -136,6 +136,12 @@ try {
     proof($prep['state']['tornCombat']['hitbox'] === 'heart' && $prep['state']['tornCombat']['ammo'] === 'ap', 'server-authoritative torn.combatPrep persists hitbox and special ammo for CombatService');
     $cd = action('torn.bankCd', '30d');
     proof($cd['state']['tornState']['activeCd']['term'] === '30d' && $cd['result']['bankDelta'] === 25400, 'server-authoritative torn.bankCd locks certificate and credits vault yield');
+    $c2 = action('torn.crime2Execute', '2');
+    proof($c2['result']['cashDelta'] === 6800 && ($c2['state']['tornState']['lastCrime2']['name'] ?? '') === 'Bootlegging', 'server-authoritative torn.crime2Execute executes all 13 harvested Crimes 2.0 archetypes');
+    $oc2 = action('torn.oc2Spawn', 'cracking_the_vault');
+    proof($oc2['result']['cashDelta'] === 85000 && ($oc2['state']['tornState']['activeOc2'] ?? '') === 'cracking_the_vault', 'server-authoritative torn.oc2Spawn spawns harvested OC 2.0 scenario with Scope & Role requirements');
+    $mod = action('torn.weaponMod', 'laser');
+    proof(($mod['state']['tornCombat']['mod'] ?? '') === 'laser', 'server-authoritative torn.weaponMod equips harvested Torn weapon attachment');
 } catch (Throwable $e) {
     proof(false, 'unexpected exception: ' . $e->getMessage());
     fwrite(STDERR, $e->getTraceAsString() . "\n");
