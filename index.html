@@ -4295,8 +4295,8 @@ class Component extends DCLogic {
       onAiPromptInput: e => this.setState({ aiPrompt: e.target.value }),
       aiExecuteLabel: lang === 'ar' ? 'تنفيذ الأمر الميداني' : 'Execute Tactical Directive',
       aiLastResponse: this.state.aiFixerTrace || (lang === 'ar'
-        ? `العمليات الميدانية جاهزة · العميل: ${view.t.player} [#${String(this.p.numericId || '1042')}] · التسليح: Bullpup L85 (×3.82) · رصيد الخزينة المؤمن: ${money(p.bankBalance)} · خطوط الاتصال التكتيكية نشطة.`
-        : `Syndicate Wire Active · Operative: ${view.t.player} [#${String(this.p.numericId || '1042')}] · Primary Rig: Bullpup L85 (×3.82) · Vault Balance: ${money(p.bankBalance)} · Encrypted District Telemetry Online.`),
+        ? `العمليات الميدانية جاهزة · العميل: ${view.t.player} [#${String(this.p.numericId || '1042')}] · التسليح: Bullpup L85 (×3.82) · رصيد الخزينة المؤمن: ${money(p.bankBalance || 0)} · خطوط الاتصال التكتيكية نشطة.`
+        : `Syndicate Wire Active · Operative: ${view.t.player} [#${String(this.p.numericId || '1042')}] · Primary Rig: Bullpup L85 (×3.82) · Vault Balance: ${money(p.bankBalance || 0)} · Encrypted District Telemetry Online.`),
       runAiOrder: () => {
         this.playTacticalSfx('rack');
         const q = String(this.state.aiPrompt || '').trim().toLowerCase();
@@ -5210,7 +5210,7 @@ class Component extends DCLogic {
         { k: 'Warlord Weapon', v: '1.25x', desc: lang === 'ar' ? 'تأثير الضربة القاضية للسلاح' : 'Finishing hit weapon perk (+25%)' }
       ],
       ammoTypes: [
-        { id: 'std', label: 'StandardFMJ' },
+        { id: 'std', label: 'Standard FMJ' },
         { id: 'hp', label: 'Hollow Point (+50% Dmg)' },
         { id: 'ap', label: 'Armor Piercing (-50% Armor)' },
         { id: 'tr', label: 'Tracer (+10 Acc)' },
