@@ -1610,7 +1610,7 @@ test('live activities present actual events and honest availability instead of s
   for (const lang of ['en', 'ar']) {
     instance.state.lang = lang; let view = instance.renderVals();
     assert.equal(view.ticker.length, 1); assert.equal(view.ticker[0], view.bulletin.empty);
-    assert.match(view.competition.reason, lang === 'en' ? /actual season standings/ : /ترتيب الموسم الحقيقي/);
+    assert.match(view.competition.reason, lang === 'en' ? /live season standings/i : /ترتيب الموسم الحي/);
     assert.match(view.casinoGuide.description, lang === 'en' ? /tie returns/ : /التعادل يعيد/);
     instance.state.screen = 'elimination'; view = instance.renderVals(); assert.match(view.subtitle, lang === 'en' ? /Weekly family/ : /الأسبوعي للعائلات/);
   }
@@ -2341,7 +2341,7 @@ test('combat instructions follow actual encounter phase and settlement in both l
   const {instance,calls}=game();
   for(const lang of ['en','ar']){
     instance.state.lang=lang;instance.combatEncounter=null;instance.combatReceipt=null;assert.match(instance.combatInstruction(),lang==='en'?/Choose a target/:/اختر خصماً/);
-    for(const [phase,en,ar] of [['fighting',/Active encounter/,/مواجهة نشطة/],['won',/Victory recorded.*Mug.*Hospitalize.*Leave/,/انتصار مسجل/],['lost',/Defeat recorded.*Leave.*unlock target/,/هزيمة مسجلة/],['stalemate',/Stalemate recorded.*Leave/,/تعادل مسجل/]]){
+    for(const [phase,en,ar] of [['fighting',/Live street brawl/,/اشتباك حي/],['won',/Victory recorded.*Mug.*Hospitalize.*Leave/,/انتصار مسجل/],['lost',/Defeat recorded.*Leave.*unlock target/,/هزيمة مسجلة/],['stalemate',/Stalemate recorded.*Leave/,/تعادل مسجل/]]){
       instance.combatEncounter={phase};assert.match(instance.combatInstruction(),lang==='en'?en:ar);if(phase!=='fighting')assert.doesNotMatch(instance.combatInstruction(),/Choose a target to start|اختر خصماً لبدء/);
     }
     instance.combatEncounter=null;instance.combatReceipt={outcome:'lost'};assert.match(instance.combatInstruction(),lang==='en'?/Encounter settled/:/تمت تسوية/);

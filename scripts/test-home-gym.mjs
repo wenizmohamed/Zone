@@ -102,7 +102,7 @@ test('four native gym stations select a focused session without spending money, 
       station.select(); const view = instance.renderVals();
       assert.equal(view.gymSession.id, station.id); assert.equal(view.gymSession.label, T[lang][station.id]);
       assert.equal(view.gymSession.value, station.value); assert.equal(view.stats.filter(stat => stat.selected).length, 1);
-      assert.match(view.gymStudio.estimateNote, lang === 'en' ? /server.*actual gain/ : /الخادم.*الفعلي/);
+      assert.match(view.gymStudio.estimateNote, lang === 'en' ? /morale.*rep/i : /المعنويات.*تمرين/);
     }
     assert.equal(JSON.stringify(instance.p), before); assert.equal(calls.length, 0);
     instance.state.gymStation = 'cash'; assert.equal(instance.renderVals().gymSession.id, 'str');
