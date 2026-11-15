@@ -160,18 +160,18 @@
       icon: "☀️",
       label: { en: "Day", ar: "النهار" },
       fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [1.8, 15], "star-intensity": 0 },
-      ambient: { color: "#ffffff", intensity: 0.88 },
-      sun: { color: "#fffdf6", intensity: 0.96, direction: [155, 58] },
-      land: "#efe9db",
-      landInd: "#e2dac8",
+      ambient: { color: "#eef4fa", intensity: 0.58 },
+      sun: { color: "#fff6e0", intensity: 0.86, direction: [148, 52] },
+      land: "#ebe4d4",
+      landInd: "#dfd6c3",
       water: "#3ba3cc",
       park: "#77b970",
       roadMain: "#ffffff",
       road: "#cfc6b4",
       roadCase: "#9e9481",
-      bldg: ["#d8d0bf", "#e5dfd2", "#f7f3ea"],
+      bldg: ["#b8c2cf", "#cfd6df", "#e6e2d8"],
       lockFill: "#b45309",
-      lockOpacity: 0.13,
+      lockOpacity: 0.14,
       isLightUi: true
     },
     afternoon: {
@@ -179,18 +179,18 @@
       icon: "🌤️",
       label: { en: "Afternoon", ar: "العصر" },
       fog: { color: "#f3dec0", "high-color": "#74a6d4", "space-color": "#437ab0", "horizon-blend": 0.12, range: [1.6, 14.5], "star-intensity": 0 },
-      ambient: { color: "#fff3db", intensity: 0.82 },
-      sun: { color: "#ffd284", intensity: 0.94, direction: [232, 38] },
-      land: "#e6d8c3",
-      landInd: "#d8c8b0",
+      ambient: { color: "#f8e8ce", intensity: 0.56 },
+      sun: { color: "#ffc978", intensity: 0.88, direction: [232, 38] },
+      land: "#e4d5be",
+      landInd: "#d6c5ab",
       water: "#3289ab",
       park: "#6ca664",
       roadMain: "#fbf1df",
       road: "#bfb19a",
       roadCase: "#8d806b",
-      bldg: ["#cbbba2", "#dfd1ba", "#f2e5cf"],
+      bldg: ["#b9a790", "#d1bfa7", "#e6d5be"],
       lockFill: "#b45309",
-      lockOpacity: 0.15,
+      lockOpacity: 0.16,
       isLightUi: true
     },
     dusk: {
@@ -449,7 +449,8 @@
       var style = document.createElement("style");
       style.id = "zone-map-expansion-css";
       style.textContent = [
-        ".zmx-chrono-bar{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;background:rgba(10,15,26,0.92);border:1px solid rgba(235,184,88,0.48);box-shadow:0 8px 24px rgba(0,0,0,0.55);backdrop-filter:blur(10px);color:#f8fafc;font:600 11px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 110px);flex-wrap:wrap;justify-content:center}",
+        ".zmx-chrono-bar{position:absolute;top:8px;right:48px;left:auto;transform:none;z-index:18;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:7px;background:rgba(10,15,26,0.92);border:1px solid rgba(235,184,88,0.48);box-shadow:0 8px 24px rgba(0,0,0,0.55);backdrop-filter:blur(10px);color:#f8fafc;font:600 10.5px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 355px);flex-wrap:wrap;justify-content:flex-end}",
+        "[dir='rtl'] .zmx-chrono-bar{right:auto;left:10px;justify-content:flex-start}",
         "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(253,251,246,0.96);border-color:#b4781e;color:#0f172a;box-shadow:0 6px 20px rgba(15,23,42,0.16)}",
         "body[data-zmx-light='1'] .mgrade{background:radial-gradient(ellipse 75% 60% at 50% 35%,rgba(255,248,220,0.16) 0%,rgba(255,248,220,0) 68%)!important}",
         ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,0.07);border:1px solid rgba(148,163,184,0.25);font-variant-numeric:tabular-nums}",
@@ -493,7 +494,7 @@
         ".zmx-cta:disabled{opacity:0.45;cursor:not-allowed}",
         ".zmx-cta-sec{background:rgba(56,189,248,0.16);color:#7dd3fc;border:1px solid rgba(56,189,248,0.45);border-radius:4px;padding:6px 10px;font:800 11px/1.1 inherit;cursor:pointer}",
         "body[data-zmx-light='1'] .zmx-cta-sec{background:#e0f2fe;color:#075985;border-color:#0284c7}",
-        "@media (max-width:760px){.zmx-chrono-bar{top:46px;max-width:calc(100% - 16px);padding:4px 6px;gap:4px}.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}"
+        "@media (max-width:960px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:54px;left:8px;right:48px;max-width:none;justify-content:center}.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}"
       ].join("\n");
       document.head.appendChild(style);
     }
@@ -1055,19 +1056,22 @@
 
     function ensureInitialMetroFraming() {
       if (state.didMetroFrame || !map) return;
+      if (!document.body.classList.contains("cityOverviewMode")) return;
       var container = map.getContainer && map.getContainer();
       if (!container || container.clientWidth < 120 || container.clientHeight < 120) return;
       state.didMetroFrame = true;
-      widenMetroBounds();
-      try {
-        var mobile = container.clientWidth <= 760;
-        map.jumpTo({
-          center: CENTER,
-          zoom: mobile ? 13.78 : 14.32,
-          pitch: 50,
-          bearing: -16
-        });
-      } catch (_) {}
+      setTimeout(function () {
+        widenMetroBounds();
+        try {
+          var mobile = container.clientWidth <= 760;
+          map.jumpTo({
+            center: CENTER,
+            zoom: mobile ? 13.82 : 14.36,
+            pitch: 50,
+            bearing: -16
+          });
+        } catch (_) {}
+      }, 90);
     }
 
     function syncGateMarkers() {
@@ -1405,6 +1409,16 @@
 
       setPaint("sector-lock-fill", "fill-color", cfg.lockFill);
       setPaint("sector-lock-fill", "fill-opacity", cfg.lockOpacity);
+
+      /* Toggle Three.js dark noir window custom layers off in sunlit Day/Afternoon/Dawn so 3D walls are sunlit, and on in Dusk/Night */
+      try {
+        var allLayers = (map.getStyle && map.getStyle() && map.getStyle().layers) || [];
+        allLayers.forEach(function (ly) {
+          if (ly && ly.type === "custom" && map.setLayoutProperty) {
+            try { map.setLayoutProperty(ly.id, "visibility", cfg.isLightUi ? "none" : "visible"); } catch (_) {}
+          }
+        });
+      } catch (_) {}
 
       var textCol = cfg.isLightUi ? "#0f172a" : "#f8fafc";
       var haloCol = cfg.isLightUi ? "rgba(255,255,255,0.96)" : "rgba(4,8,15,0.96)";
