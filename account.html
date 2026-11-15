@@ -37,9 +37,10 @@
     <section id="claimPanel" hidden>
       <h2 data-i18n="claimTitle">Claim this character</h2>
       <form id="claimForm">
-        <label><span data-i18n="username">Username</span><input name="username" autocomplete="username" pattern="[A-Za-z][A-Za-z0-9_]{2,23}" minlength="3" maxlength="24" required dir="ltr"><small data-i18n="usernameHelp">3-24 Latin letters, digits or underscores. Start with a letter.</small></label>
-        <label><span data-i18n="password">Password</span><input name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required dir="ltr"><small data-i18n="passwordHelp">15-128 characters. A long, unique passphrase works well.</small></label>
-        <label><span data-i18n="confirm">Confirm password</span><input name="confirmation" type="password" autocomplete="new-password" minlength="15" maxlength="128" required dir="ltr"></label>
+        <label><span data-i18n="username">Username</span><input id="claimUsername" name="username" autocomplete="username" pattern="[A-Za-z][A-Za-z0-9_]{2,23}" minlength="3" maxlength="24" required dir="ltr"><small data-i18n="usernameHelp">3-24 Latin letters, digits or underscores. Start with a letter.</small></label>
+        <label><span data-i18n="password">Password</span><input id="claimPassword" name="password" type="password" autocomplete="new-password" minlength="15" maxlength="128" required dir="ltr"><small data-i18n="passwordHelp">15-128 characters. A long, unique passphrase works well.</small></label>
+        <div class="actions"><button id="generatePassphrase" type="button" data-i18n="generatePassphrase">Generate strong passphrase</button><button id="togglePasswordView" type="button" data-i18n="showPasswords">Show / hide</button><small id="passphraseMeter" dir="ltr"></small></div>
+        <label><span data-i18n="confirm">Confirm password</span><input id="claimConfirm" name="confirmation" type="password" autocomplete="new-password" minlength="15" maxlength="128" required dir="ltr"></label>
         <button type="submit" data-i18n="claim">Save my character</button>
       </form>
     </section>
@@ -47,6 +48,7 @@
       <h2 data-i18n="backupTitle">Save your recovery code now</h2>
       <p data-i18n="backupHelp">This code is shown only now. Keep it privately offline. It can reset your password, and using it generates a replacement. Never send it to another player.</p>
       <code id="recoveryCode" dir="ltr"></code>
+      <div class="actions"><button id="copyRecoveryCode" type="button" data-i18n="copyRecovery">Copy recovery code</button></div>
       <label class="check"><input id="backupSaved" type="checkbox"><span data-i18n="backupSaved">I saved this code somewhere safe.</span></label>
     </section>
     <details id="loginPanel" hidden>

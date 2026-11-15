@@ -547,12 +547,33 @@ final class ProgressionService
                     break;
                 case 'social.chat':
                     $parts = explode(':', $id, 2);
-                    $chan = $parts[0] ?: 'global';
+                    $chan = in_array($parts[0] ?: 'global', ['global', 'faction', 'trade', 'private'], true) ? ($parts[0] ?: 'global') : 'global';
                     $txt = trim($parts[1] ?? '');
                     if ($txt !== '') {
+                        $chars = preg_split('//u', $txt, -1, PREG_SPLIT_NO_EMPTY);
+                        $cleanTxt = is_array($chars) ? implode('', array_slice($chars, 0, 280)) : substr($txt, 0, 280);
                         $state['chatHistory'] = is_array($state['chatHistory'] ?? null) ? $state['chatHistory'] : [];
                         $state['chatHistory'][$chan] = is_array($state['chatHistory'][$chan] ?? null) ? $state['chatHistory'][$chan] : [];
-                        $state['chatHistory'][$chan][] = ['time' => gmdate('h:i A'), 'sender' => (string) ($player['username'] ?? 'Vincenzo'), 'senderId' => '1042', 'text' => mb_substr($txt, 0, 280)];
+                        $state['chatHistory'][$chan][] = ['time' => gmdate('h:i A'), 'sender' => (string) ($player['username'] ?? 'Vincenzo'), 'senderId' => $playerId, 'text' => $cleanTxt];
+                        $this->database->execute(
+                            'INSERT INTO event_log (id, event_name, payload_json, occurred_at) VALUES (:id, :name, :payload, :occurred_at)',
+                            [
+                                'id' => bin2hex(random_bytes(16)),
+                                'name' => 'syndicate.chat.' . $chan,
+                                'payload' => json_encode([
+                                    'channel' => $chan,
+                                    'senderId' => $playerId,
+                                    'sender' => (string) ($player['username'] ?? 'Vincenzo'),
+                                    'senderLevel' => (int) ($player['level'] ?? 1),
+                                    'factionId' => null,
+                                    'recipientId' => null,
+                                    'recipientName' => null,
+                                    'text' => $cleanTxt,
+                                    'sentAt' => gmdate('c'),
+                                ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
+                                'occurred_at' => gmdate('c'),
+                            ],
+                        );
                     }
                     break;
                 case 'social.noteSave':

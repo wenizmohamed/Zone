@@ -624,10 +624,55 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'GET' && $path === '/api/v1/casino/blackjack') {
+        json_response($engine->blackjackState(current_player_id()));
+    }
     if ($method === 'POST' && $path === '/api/v1/casino/blackjack') {
         $body = request_json();
         $pid = current_player_id();
-        $res = $engine->playBlackjack(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), $pid);
+        $bjAction = isset($body['action']) && is_string($body['action']) ? trim($body['action']) : null;
+        $bjBet = ($bjAction === null || $bjAction === '' || $bjAction === 'instant' || $bjAction === 'deal')
+            ? \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet')
+            : \Zone\Engine\Core\Security\RequestGuard::boundedInt($body, 'bet', 100, 10000000, 1000);
+        $res = $engine->playBlackjack($bjBet, $pid, $bjAction);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/casino/roulette') {
+        json_response($engine->rouletteState(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/casino/roulette') {
+        $body = request_json();
+        $pid = current_player_id();
+        $pocketNumber = array_key_exists('number', $body) && $body['number'] !== null && $body['number'] !== ''
+            ? \Zone\Engine\Core\Security\RequestGuard::nonNegativeInt($body, 'number')
+            : null;
+        $res = $engine->playRoulette(
+            \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'),
+            (string) ($body['betType'] ?? ''),
+            $pocketNumber,
+            $pid,
+        );
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/casino/slots') {
+        json_response($engine->slotsState(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/casino/slots') {
+        $body = request_json();
+        $pid = current_player_id();
+        $res = $engine->playSlots(\Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'), $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/social') {
+        json_response($engine->socialSnapshot(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/social/action') {
+        $body = request_json();
+        $pid = current_player_id();
+        $res = $engine->socialAction($body, $pid);
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }

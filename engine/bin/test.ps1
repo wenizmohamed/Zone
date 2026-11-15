@@ -46,7 +46,7 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\rookie-combat.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-foreach ($suite in @('player-market.php', 'player-combat.php', 'family-activities.php', 'beta-multiplayer-integration.php')) {
+foreach ($suite in @('player-market.php', 'player-combat.php', 'family-activities.php', 'beta-multiplayer-integration.php', 'casino-and-social.php')) {
     & $php (Join-Path $repositoryRoot "engine\tests\$suite")
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     if ($depthUrl) {

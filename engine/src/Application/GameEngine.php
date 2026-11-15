@@ -23,8 +23,10 @@ use Zone\Engine\Core\Game\PlayerCombatService;
 use Zone\Engine\Core\Game\PlayerMarketService;
 use Zone\Engine\Core\Game\FamilyActivityService;
 use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
+use Zone\Engine\Core\Game\SyndicateSocialService;
 use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Game\WorldDirector;
+use Zone\Engine\Core\Security\RequestGuard;
 use Zone\Engine\Core\Media\AssetLibrary;
 use Zone\Engine\Core\Modules\ModuleRegistry;
 use Zone\Engine\Core\Persistence\Database;
@@ -864,42 +866,652 @@ final class GameEngine
         });
     }
 
-    public function playBlackjack(int $bet, string $playerId = 'founder-player'): array
+    public function blackjackState(string $playerId = 'founder-player'): array
     {
         $this->requireModule('blackjack');
-        if ($bet <= 0) {
-            throw new RuntimeException('Bet must be positive.');
+        $player = $this->requirePlayer($playerId);
+        $saved = $this->loadEngineMetaJson($this->blackjackMetaKey($playerId));
+        if ($saved === null) {
+            return [
+                'status' => 'idle',
+                'bet' => 1000,
+                'playerCards' => [],
+                'dealerCards' => [],
+                'playerHand' => 0,
+                'dealerHand' => 0,
+                'canHit' => false,
+                'canStand' => false,
+                'canDouble' => false,
+                'player' => $this->resources->normalize($player),
+            ];
         }
+        $playing = ($saved['status'] ?? '') === 'playing';
+        $pCards = is_array($saved['playerCards'] ?? null) ? $saved['playerCards'] : [];
+        $dCards = is_array($saved['dealerCards'] ?? null) ? $saved['dealerCards'] : [];
+        $visibleDealer = $playing && count($dCards) >= 2
+            ? [$dCards[0], ['rank' => '?', 'suit' => 'hidden', 'hidden' => true]]
+            : $dCards;
+
+        return [
+            'status' => $playing ? 'playing' : 'settled',
+            'result' => $saved['result'] ?? null,
+            'bet' => (int) ($saved['bet'] ?? 1000),
+            'delta' => (int) ($saved['delta'] ?? 0),
+            'playerCards' => $pCards,
+            'dealerCards' => $visibleDealer,
+            'playerHand' => $this->blackjackHandTotal($pCards),
+            'dealerHand' => $this->blackjackHandTotal($playing && isset($dCards[0]) ? [$dCards[0]] : $dCards),
+            'canHit' => $playing,
+            'canStand' => $playing,
+            'canDouble' => $playing && count($pCards) === 2 && (int) $player['cash'] >= (int) ($saved['bet'] ?? 0),
+            'player' => $this->resources->normalize($player),
+        ];
+    }
+
+    public function playBlackjack(int $bet, string $playerId = 'founder-player', ?string $action = null): array
+    {
+        $this->requireModule('blackjack');
+        $mode = $action !== null ? strtolower(trim($action)) : '';
+        if ($mode === '' || $mode === 'instant') {
+            if ($bet <= 0) {
+                throw new RuntimeException('Bet must be positive.');
+            }
+            $this->recordActionAttempt($playerId);
+            return $this->database->playerTransaction($playerId, function () use ($bet, $playerId): array {
+                $this->guardAction($playerId, 'blackjack');
+                $player = $this->requirePlayer($playerId);
+                if ((int) $player['cash'] < $bet) {
+                    throw new RuntimeException('Not enough cash for that bet.');
+                }
+                $correlationId = bin2hex(random_bytes(16));
+                $shoe = $this->freshBlackjackShoe();
+                $pCards = [array_pop($shoe), array_pop($shoe)];
+                $dCards = [array_pop($shoe), array_pop($shoe)];
+                while ($this->blackjackHandTotal($pCards) < 17 && $shoe !== []) {
+                    $pCards[] = array_pop($shoe);
+                }
+                $playerHand = $this->blackjackHandTotal($pCards);
+                if ($playerHand <= 21) {
+                    while ($this->blackjackHandTotal($dCards) < 17 && $shoe !== []) {
+                        $dCards[] = array_pop($shoe);
+                    }
+                }
+                $dealerHand = $this->blackjackHandTotal($dCards);
+                $playerBust = $playerHand > 21;
+                $dealerBust = $dealerHand > 21;
+                $push = !$playerBust && !$dealerBust && $playerHand === $dealerHand;
+                $won = !$playerBust && ($dealerBust || $playerHand > $dealerHand);
+                $delta = $push ? 0 : ($won ? $bet : -$bet);
+                $newCash = (int) $player['cash'] + $delta;
+                $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $newCash]);
+                if ($delta !== 0) {
+                    $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.blackjack', $correlationId);
+                }
+                $this->armCooldown($playerId, 'blackjack');
+                $event = new DomainEvent('BlackjackPlayed', ['playerId' => $playerId, 'bet' => $bet, 'delta' => $delta, 'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'result' => $push ? 'push' : ($won ? 'win' : 'lose'), 'correlationId' => $correlationId]);
+                $this->events->publish($event);
+                return [
+                    'status' => 'settled',
+                    'result' => $push ? 'push' : ($won ? 'win' : 'lose'),
+                    'bet' => $bet,
+                    'netRoiPct' => $push ? 0 : ($won ? 100 : -100),
+                    'playerCards' => $pCards,
+                    'dealerCards' => $dCards,
+                    'playerHand' => $playerHand,
+                    'dealerHand' => $dealerHand,
+                    'delta' => $delta,
+                    'canHit' => false,
+                    'canStand' => false,
+                    'canDouble' => false,
+                    'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                    'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+                ];
+            });
+        }
+
+        if (!in_array($mode, ['deal', 'hit', 'stand', 'double'], true)) {
+            throw new \InvalidArgumentException('Unsupported Blackjack action.');
+        }
+
         $this->recordActionAttempt($playerId);
-        return $this->database->playerTransaction($playerId, function () use ($bet, $playerId): array {
-            $this->guardAction($playerId, 'blackjack');
+        return $this->database->playerTransaction($playerId, function () use ($bet, $playerId, $mode): array {
+            (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, 'blackjack');
+            $metaKey = $this->blackjackMetaKey($playerId);
+            $saved = $this->loadEngineMetaJson($metaKey);
+
+            if ($mode === 'deal') {
+                if ($saved !== null && ($saved['status'] ?? '') === 'playing') {
+                    return [...$this->blackjackState($playerId), 'resumed' => true];
+                }
+                if ($bet < 100 || $bet > 10000000) {
+                    throw new \InvalidArgumentException('Bet must be between $100 and $10,000,000.');
+                }
+                $this->cooldowns->assertReady($playerId, 'blackjack');
+                $player = $this->requirePlayer($playerId);
+                if ((int) $player['cash'] < $bet) {
+                    throw new RuntimeException('Not enough cash for that bet.');
+                }
+                $correlationId = bin2hex(random_bytes(16));
+                $afterAnte = (int) $player['cash'] - $bet;
+                $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $afterAnte]);
+                $this->ledger->record($playerId, 'cash', -$bet, $afterAnte, 'casino.blackjack.ante', $correlationId);
+
+                $shoe = $this->freshBlackjackShoe();
+                $pCards = [array_pop($shoe), array_pop($shoe)];
+                $dCards = [array_pop($shoe), array_pop($shoe)];
+                $pTotal = $this->blackjackHandTotal($pCards);
+                $dTotal = $this->blackjackHandTotal($dCards);
+
+                if ($pTotal === 21 || $dTotal === 21) {
+                    return $this->settleInteractiveBlackjack($playerId, $metaKey, $bet, $pCards, $dCards, $correlationId, true);
+                }
+
+                $handState = [
+                    'status' => 'playing',
+                    'bet' => $bet,
+                    'shoe' => $shoe,
+                    'playerCards' => $pCards,
+                    'dealerCards' => $dCards,
+                    'correlationId' => $correlationId,
+                    'updatedAt' => gmdate('c'),
+                ];
+                $this->saveEngineMetaJson($metaKey, $handState);
+                $freshPlayer = $this->requirePlayer($playerId);
+
+                return [
+                    'status' => 'playing',
+                    'result' => null,
+                    'bet' => $bet,
+                    'delta' => 0,
+                    'playerCards' => $pCards,
+                    'dealerCards' => [$dCards[0], ['rank' => '?', 'suit' => 'hidden', 'hidden' => true]],
+                    'playerHand' => $pTotal,
+                    'dealerHand' => $this->blackjackHandTotal([$dCards[0]]),
+                    'canHit' => true,
+                    'canStand' => true,
+                    'canDouble' => (int) $freshPlayer['cash'] >= $bet,
+                    'serverProof' => ['correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                    'player' => $this->resources->normalize($freshPlayer),
+                ];
+            }
+
+            if ($saved === null || ($saved['status'] ?? '') !== 'playing') {
+                throw new \InvalidArgumentException('No active Blackjack hand. Deal a new hand first.');
+            }
+
+            $handBet = (int) ($saved['bet'] ?? 1000);
+            $shoe = is_array($saved['shoe'] ?? null) && $saved['shoe'] !== [] ? $saved['shoe'] : $this->freshBlackjackShoe();
+            $pCards = is_array($saved['playerCards'] ?? null) ? $saved['playerCards'] : [];
+            $dCards = is_array($saved['dealerCards'] ?? null) ? $saved['dealerCards'] : [];
+            $correlationId = (string) ($saved['correlationId'] ?? bin2hex(random_bytes(16)));
+
+            if ($mode === 'double') {
+                if (count($pCards) !== 2) {
+                    throw new \InvalidArgumentException('Double Down is only available on your initial two cards.');
+                }
+                $player = $this->requirePlayer($playerId);
+                if ((int) $player['cash'] < $handBet) {
+                    throw new RuntimeException('Not enough cash on hand to Double Down.');
+                }
+                $afterDouble = (int) $player['cash'] - $handBet;
+                $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $afterDouble]);
+                $this->ledger->record($playerId, 'cash', -$handBet, $afterDouble, 'casino.blackjack.double', $correlationId);
+                $handBet *= 2;
+                $pCards[] = array_pop($shoe);
+                if ($this->blackjackHandTotal($pCards) <= 21) {
+                    while ($this->blackjackHandTotal($dCards) < 17 && $shoe !== []) {
+                        $dCards[] = array_pop($shoe);
+                    }
+                }
+                return $this->settleInteractiveBlackjack($playerId, $metaKey, $handBet, $pCards, $dCards, $correlationId, false);
+            }
+
+            if ($mode === 'hit') {
+                $pCards[] = array_pop($shoe);
+                $pTotal = $this->blackjackHandTotal($pCards);
+                if ($pTotal > 21) {
+                    return $this->settleInteractiveBlackjack($playerId, $metaKey, $handBet, $pCards, $dCards, $correlationId, false);
+                }
+                if ($pTotal === 21) {
+                    while ($this->blackjackHandTotal($dCards) < 17 && $shoe !== []) {
+                        $dCards[] = array_pop($shoe);
+                    }
+                    return $this->settleInteractiveBlackjack($playerId, $metaKey, $handBet, $pCards, $dCards, $correlationId, false);
+                }
+                $saved['shoe'] = $shoe;
+                $saved['playerCards'] = $pCards;
+                $saved['updatedAt'] = gmdate('c');
+                $this->saveEngineMetaJson($metaKey, $saved);
+                $freshPlayer = $this->requirePlayer($playerId);
+
+                return [
+                    'status' => 'playing',
+                    'result' => null,
+                    'bet' => $handBet,
+                    'delta' => 0,
+                    'playerCards' => $pCards,
+                    'dealerCards' => [$dCards[0], ['rank' => '?', 'suit' => 'hidden', 'hidden' => true]],
+                    'playerHand' => $pTotal,
+                    'dealerHand' => $this->blackjackHandTotal([$dCards[0]]),
+                    'canHit' => true,
+                    'canStand' => true,
+                    'canDouble' => false,
+                    'serverProof' => ['correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                    'player' => $this->resources->normalize($freshPlayer),
+                ];
+            }
+
+            while ($this->blackjackHandTotal($dCards) < 17 && $shoe !== []) {
+                $dCards[] = array_pop($shoe);
+            }
+            return $this->settleInteractiveBlackjack($playerId, $metaKey, $handBet, $pCards, $dCards, $correlationId, false);
+        });
+    }
+
+    public function rouletteState(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        $player = $this->requirePlayer($playerId);
+        $history = $this->loadEngineMetaJson('casino-roulette-history-v1') ?? [];
+        return [
+            'recentSpins' => array_slice(array_values(array_filter($history, 'is_array')), 0, 12),
+            'player' => $this->resources->normalize($player),
+        ];
+    }
+
+    public function playRoulette(int $bet, string $betType, ?int $number = null, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        $cleanType = strtolower(trim($betType));
+        $validTypes = ['red', 'black', 'even', 'odd', 'low', 'high', 'dozen1', 'dozen2', 'dozen3', 'straight'];
+        if ($bet < 100 || $bet > 10000000 || !in_array($cleanType, $validTypes, true)) {
+            throw new \InvalidArgumentException('Choose a valid Roulette bet and wager between $100 and $10,000,000.');
+        }
+        if ($cleanType === 'straight' && ($number === null || $number < 0 || $number > 36)) {
+            throw new \InvalidArgumentException('Straight-up Roulette bets require a pocket from 0 to 36.');
+        }
+
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($bet, $cleanType, $number, $playerId): array {
+            (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, 'blackjack');
             $player = $this->requirePlayer($playerId);
             if ((int) $player['cash'] < $bet) {
-                throw new RuntimeException('Not enough cash for that bet.');
+                throw new RuntimeException('Not enough cash for that Roulette wager.');
             }
-            $correlationId = bin2hex(random_bytes(16));
-            $playerHand = random_int(16, 21);
-            $dealerHand = random_int(16, 21);
-            $won = $playerHand > $dealerHand;
-            $push = $playerHand === $dealerHand;
-            $delta = $push ? 0 : ($won ? $bet : -$bet);
+
+            $pocket = random_int(0, 36);
+            $reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+            $color = $pocket === 0 ? 'green' : (in_array($pocket, $reds, true) ? 'red' : 'black');
+
+            [$won, $profitMultiplier] = match ($cleanType) {
+                'red' => [$color === 'red', 1],
+                'black' => [$color === 'black', 1],
+                'even' => [$pocket > 0 && $pocket % 2 === 0, 1],
+                'odd' => [$pocket > 0 && $pocket % 2 === 1, 1],
+                'low' => [$pocket >= 1 && $pocket <= 18, 1],
+                'high' => [$pocket >= 19 && $pocket <= 36, 1],
+                'dozen1' => [$pocket >= 1 && $pocket <= 12, 2],
+                'dozen2' => [$pocket >= 13 && $pocket <= 24, 2],
+                'dozen3' => [$pocket >= 25 && $pocket <= 36, 2],
+                'straight' => [$pocket === $number, 35],
+            };
+
+            $delta = $won ? ($bet * $profitMultiplier) : -$bet;
+            $payout = $won ? ($bet + $bet * $profitMultiplier) : 0;
             $newCash = (int) $player['cash'] + $delta;
-            $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $newCash]);
-            if ($delta !== 0) {
-                $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.blackjack', $correlationId);
-            }
-            $this->armCooldown($playerId, 'blackjack');
-            $event = new DomainEvent('BlackjackPlayed', ['playerId' => $playerId, 'bet' => $bet, 'delta' => $delta, 'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'correlationId' => $correlationId]);
-            $this->events->publish($event);
-            return [
-                'result' => $push ? 'push' : ($won ? 'win' : 'lose'),
+            $correlationId = bin2hex(random_bytes(16));
+
+            $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['cash' => $newCash, 'id' => $playerId]);
+            $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.roulette', $correlationId);
+
+            $history = $this->loadEngineMetaJson('casino-roulette-history-v1') ?? [];
+            array_unshift($history, ['pocket' => $pocket, 'color' => $color, 'at' => gmdate('H:i:s')]);
+            $history = array_slice(array_values(array_filter($history, 'is_array')), 0, 12);
+            $this->saveEngineMetaJson('casino-roulette-history-v1', $history);
+
+            $event = new DomainEvent('RouletteSpun', [
+                'playerId' => $playerId,
                 'bet' => $bet,
-                'netRoiPct' => $push ? 0 : ($won ? 100 : -100),
-                'playerHand' => $playerHand, 'dealerHand' => $dealerHand, 'delta' => $delta,
+                'betType' => $cleanType,
+                'targetNumber' => $number,
+                'pocket' => $pocket,
+                'color' => $color,
+                'result' => $won ? 'win' : 'lose',
+                'delta' => $delta,
+                'payout' => $payout,
+                'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+
+            return [
+                'pocket' => $pocket,
+                'color' => $color,
+                'bet' => $bet,
+                'betType' => $cleanType,
+                'targetNumber' => $number,
+                'result' => $won ? 'win' : 'lose',
+                'profitMultiplier' => $won ? $profitMultiplier : 0,
+                'payout' => $payout,
+                'delta' => $delta,
+                'recentSpins' => $history,
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
         });
+    }
+
+    public function slotsState(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        $player = $this->requirePlayer($playerId);
+        $poolData = $this->loadEngineMetaJson('casino-slots-jackpot-v1');
+        $jackpotPool = max(1250000, (int) ($poolData['pool'] ?? 1425000));
+        return [
+            'jackpotPool' => $jackpotPool,
+            'lastWinner' => $poolData['lastWinner'] ?? null,
+            'player' => $this->resources->normalize($player),
+        ];
+    }
+
+    public function playSlots(int $bet, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('blackjack');
+        if ($bet < 100 || $bet > 5000000) {
+            throw new \InvalidArgumentException('Slots spin wager must be between $100 and $5,000,000.');
+        }
+
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($bet, $playerId): array {
+            (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, 'blackjack');
+            $player = $this->requirePlayer($playerId);
+            if ((int) $player['cash'] < $bet) {
+                throw new RuntimeException('Not enough cash for that Slots spin.');
+            }
+
+            $poolData = $this->loadEngineMetaJson('casino-slots-jackpot-v1') ?? ['pool' => 1425000, 'lastWinner' => null];
+            $jackpotPool = max(1250000, (int) ($poolData['pool'] ?? 1425000)) + max(50, (int) round($bet * 0.12));
+
+            $strip = [
+                'CHERRY', 'CHERRY', 'CHERRY', 'CHERRY', 'CHERRY',
+                'CHIP', 'CHIP', 'CHIP', 'CHIP',
+                'CROWN', 'CROWN', 'CROWN',
+                'GOLD_BAR', 'GOLD_BAR',
+                'SEVEN', 'SEVEN',
+                'DIAMOND',
+            ];
+            $reels = [
+                $strip[random_int(0, count($strip) - 1)],
+                $strip[random_int(0, count($strip) - 1)],
+                $strip[random_int(0, count($strip) - 1)],
+            ];
+
+            $hitJackpot = false;
+            $multiplier = 0;
+            if ($reels[0] === $reels[1] && $reels[1] === $reels[2]) {
+                if ($reels[0] === 'DIAMOND') {
+                    $hitJackpot = true;
+                } else {
+                    $multiplier = match ($reels[0]) {
+                        'SEVEN' => 25,
+                        'GOLD_BAR' => 12,
+                        'CROWN' => 8,
+                        'CHIP' => 5,
+                        default => 3,
+                    };
+                }
+            } elseif ($reels[0] === $reels[1] || $reels[1] === $reels[2] || ($reels[0] === $reels[2] && in_array($reels[0], ['DIAMOND', 'SEVEN', 'GOLD_BAR'], true))) {
+                $pairSym = $reels[0] === $reels[1] ? $reels[0] : ($reels[1] === $reels[2] ? $reels[1] : $reels[0]);
+                if (in_array($pairSym, ['DIAMOND', 'SEVEN', 'GOLD_BAR', 'CROWN'], true)) {
+                    $multiplier = 2;
+                } elseif ($reels[0] === $reels[1]) {
+                    $multiplier = 1;
+                }
+            }
+
+            if ($hitJackpot) {
+                $profit = max($jackpotPool, $bet * 50);
+                $payout = $bet + $profit;
+                $delta = $profit;
+                $jackpotPool = 1250000;
+                $poolData['lastWinner'] = ['username' => (string) $player['username'], 'amount' => $payout, 'at' => gmdate('c')];
+            } elseif ($multiplier > 0) {
+                $profit = $bet * $multiplier;
+                $payout = $bet + $profit;
+                $delta = $profit;
+            } else {
+                $payout = 0;
+                $delta = -$bet;
+            }
+
+            $poolData['pool'] = $jackpotPool;
+            $this->saveEngineMetaJson('casino-slots-jackpot-v1', $poolData);
+
+            $newCash = (int) $player['cash'] + $delta;
+            $correlationId = bin2hex(random_bytes(16));
+            $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['cash' => $newCash, 'id' => $playerId]);
+            $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.slots', $correlationId);
+
+            $event = new DomainEvent('SlotsSpun', [
+                'playerId' => $playerId,
+                'bet' => $bet,
+                'reels' => $reels,
+                'result' => $delta > 0 ? 'win' : 'lose',
+                'multiplier' => $multiplier,
+                'hitJackpot' => $hitJackpot,
+                'payout' => $payout,
+                'delta' => $delta,
+                'jackpotPool' => $jackpotPool,
+                'correlationId' => $correlationId,
+            ]);
+            $this->events->publish($event);
+
+            return [
+                'reels' => $reels,
+                'bet' => $bet,
+                'result' => $delta > 0 ? 'win' : 'lose',
+                'multiplier' => $hitJackpot ? 50 : $multiplier,
+                'hitJackpot' => $hitJackpot,
+                'payout' => $payout,
+                'delta' => $delta,
+                'jackpotPool' => $jackpotPool,
+                'lastWinner' => $poolData['lastWinner'],
+                'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    public function socialSnapshot(string $playerId = 'founder-player'): array
+    {
+        return (new SyndicateSocialService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function socialAction(array $payload, string $playerId = 'founder-player'): array
+    {
+        $this->recordActionAttempt($playerId);
+        $service = new SyndicateSocialService($this->database, $this->events);
+        $action = strtolower(trim((string) ($payload['action'] ?? '')));
+
+        return match ($action) {
+            'chat.send' => [
+                'social' => $service->sendChat(
+                    $playerId,
+                    (string) ($payload['channel'] ?? 'global'),
+                    (string) ($payload['message'] ?? ''),
+                    isset($payload['recipient']) ? (string) $payload['recipient'] : null,
+                ),
+                'player' => $this->player($playerId),
+            ],
+            'mail.send' => $service->sendMail(
+                $playerId,
+                (string) ($payload['recipient'] ?? ''),
+                (string) ($payload['subject'] ?? ''),
+                (string) ($payload['body'] ?? ''),
+            ),
+            'mail.read' => [
+                'social' => $service->markMailRead($playerId, (string) ($payload['mailId'] ?? '')),
+            ],
+            'bounty.place' => $service->placeBounty(
+                $playerId,
+                (string) ($payload['target'] ?? ''),
+                RequestGuard::positiveInt($payload, 'rewardCash'),
+                (string) ($payload['reason'] ?? ''),
+            ),
+            'bounty.claim' => $service->claimBounty(
+                $playerId,
+                (string) ($payload['bountyId'] ?? ''),
+            ),
+            default => throw new \InvalidArgumentException('Unsupported syndicate social action: ' . $action),
+        };
+    }
+
+    private function blackjackMetaKey(string $playerId): string
+    {
+        return 'bj:' . substr(hash('sha256', $playerId), 0, 48);
+    }
+
+    /** @return list<array{rank: string, suit: string}> */
+    private function freshBlackjackShoe(): array
+    {
+        $suits = ['spades', 'hearts', 'diamonds', 'clubs'];
+        $ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        $deck = [];
+        foreach ($suits as $suit) {
+            foreach ($ranks as $rank) {
+                $deck[] = ['rank' => $rank, 'suit' => $suit];
+            }
+        }
+        for ($i = count($deck) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$deck[$i], $deck[$j]] = [$deck[$j], $deck[$i]];
+        }
+        return $deck;
+    }
+
+    /** @param list<array<string, mixed>> $cards */
+    private function blackjackHandTotal(array $cards): int
+    {
+        $total = 0;
+        $aces = 0;
+        foreach ($cards as $card) {
+            if (!empty($card['hidden'])) {
+                continue;
+            }
+            $rank = (string) ($card['rank'] ?? '');
+            if ($rank === 'A') {
+                $total += 11;
+                $aces++;
+            } elseif (in_array($rank, ['K', 'Q', 'J', '10'], true)) {
+                $total += 10;
+            } else {
+                $total += max(0, (int) $rank);
+            }
+        }
+        while ($total > 21 && $aces > 0) {
+            $total -= 10;
+            $aces--;
+        }
+        return $total;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $pCards
+     * @param list<array<string, mixed>> $dCards
+     */
+    private function settleInteractiveBlackjack(
+        string $playerId,
+        string $metaKey,
+        int $handBet,
+        array $pCards,
+        array $dCards,
+        string $correlationId,
+        bool $naturalCheck,
+    ): array {
+        $pTotal = $this->blackjackHandTotal($pCards);
+        $dTotal = $this->blackjackHandTotal($dCards);
+        $playerBust = $pTotal > 21;
+        $dealerBust = $dTotal > 21;
+        $push = !$playerBust && !$dealerBust && $pTotal === $dTotal;
+        $won = !$playerBust && ($dealerBust || $pTotal > $dTotal);
+        $isNaturalWin = $won && $naturalCheck && $pTotal === 21 && count($pCards) === 2;
+
+        $profit = $isNaturalWin ? (int) round($handBet * 1.5) : $handBet;
+        $returnToPlayer = $push ? $handBet : ($won ? ($handBet + $profit) : 0);
+        $netDelta = $push ? 0 : ($won ? $profit : -$handBet);
+
+        $player = $this->requirePlayer($playerId);
+        $newCash = (int) $player['cash'] + $returnToPlayer;
+        if ($returnToPlayer > 0) {
+            $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['id' => $playerId, 'cash' => $newCash]);
+            $this->ledger->record($playerId, 'cash', $returnToPlayer, $newCash, $push ? 'casino.blackjack.push' : 'casino.blackjack.win', $correlationId);
+        }
+
+        $result = $push ? 'push' : ($won ? 'win' : 'lose');
+        $this->armCooldown($playerId, 'blackjack');
+
+        $settledState = [
+            'status' => 'settled',
+            'result' => $result,
+            'naturalBlackjack' => $isNaturalWin,
+            'bet' => $handBet,
+            'delta' => $netDelta,
+            'playerCards' => $pCards,
+            'dealerCards' => $dCards,
+            'updatedAt' => gmdate('c'),
+        ];
+        $this->saveEngineMetaJson($metaKey, $settledState);
+
+        $event = new DomainEvent('BlackjackPlayed', [
+            'playerId' => $playerId,
+            'bet' => $handBet,
+            'delta' => $netDelta,
+            'result' => $result,
+            'naturalBlackjack' => $isNaturalWin,
+            'playerHand' => $pTotal,
+            'dealerHand' => $dTotal,
+            'correlationId' => $correlationId,
+        ]);
+        $this->events->publish($event);
+
+        return [
+            'status' => 'settled',
+            'result' => $result,
+            'naturalBlackjack' => $isNaturalWin,
+            'bet' => $handBet,
+            'netRoiPct' => $handBet > 0 ? (int) round($netDelta / $handBet * 100) : 0,
+            'playerCards' => $pCards,
+            'dealerCards' => $dCards,
+            'playerHand' => $pTotal,
+            'dealerHand' => $dTotal,
+            'delta' => $netDelta,
+            'canHit' => false,
+            'canStand' => false,
+            'canDouble' => false,
+            'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+            'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+        ];
+    }
+
+    private function loadEngineMetaJson(string $name): ?array
+    {
+        $row = $this->database->fetchOne('SELECT value FROM engine_metadata WHERE name = :name', ['name' => $name]);
+        if ($row === null || !isset($row['value'])) {
+            return null;
+        }
+        $decoded = json_decode((string) $row['value'], true);
+        return is_array($decoded) ? $decoded : null;
+    }
+
+    private function saveEngineMetaJson(string $name, array $payload): void
+    {
+        $encoded = json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $this->database->execute(
+            'INSERT INTO engine_metadata (name, value) VALUES (:name, :value) ON CONFLICT (name) DO UPDATE SET value = :updated',
+            ['name' => $name, 'value' => $encoded, 'updated' => $encoded],
+        );
     }
 
     public function highLowState(string $playerId = 'founder-player'): array

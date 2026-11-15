@@ -11,7 +11,8 @@
       back: 'Back to game', logout: 'Sign out', guest: 'Guest character. Claim it before clearing browser data.', claimed: 'Permanent character. Sign in with your username and password on another device.',
       anonymous: 'No active character in this browser. Sign in below, or return to the game to create a guest.', mismatch: 'Passwords do not match.', switched: 'Claim this guest first, or confirm the account switch.', busy: 'Saving securely...',
       saved: 'Account saved. Keep the recovery code before returning to the game.', signedIn: 'Signed in. Your saved character is ready.', signedOut: 'Signed out. Your claimed character is still saved on the server.', failed: 'Connection unavailable. Reload to retry.',
-      invalid: 'Invalid username, password or recovery code.', limited: 'Too many account attempts. Try again in 15 minutes.', unavailable: 'This username is unavailable, or this character is already claimed.', invalidFields: 'Check your account details: username 3-24 Latin characters; password 15-128 characters.', missingSession: 'Guest access expired. Sign in or return to the game.', saveFirst: 'Save the recovery code before leaving.'
+      invalid: 'Invalid username, password or recovery code.', limited: 'Too many account attempts. Try again in 15 minutes.', unavailable: 'This username is unavailable, or this character is already claimed.', invalidFields: 'Check your account details: username 3-24 Latin characters; password 15-128 characters.', missingSession: 'Guest access expired. Sign in or return to the game.', saveFirst: 'Save the recovery code before leaving.',
+      generatePassphrase: 'Generate strong passphrase', showPasswords: 'Show / hide', copyRecovery: 'Copy recovery code', generated: 'Strong passphrase generated. Copy it safely before saving.', copied: 'Recovery code copied to clipboard.'
     },
     ar: {
       title: 'احفظ شخصيتك', intro: 'اربط هذه الشخصية باسم مستخدم وكلمة مرور. تبقى أموالك وأغراضك وتدريبك وعائلتك محفوظة على الخادم.',
@@ -23,7 +24,8 @@
       back: 'العودة إلى اللعبة', logout: 'تسجيل الخروج', guest: 'شخصية ضيف. ثبّت حسابها قبل مسح بيانات المتصفح.', claimed: 'شخصية محفوظة. يمكنك الدخول باسم المستخدم وكلمة المرور من جهاز آخر.',
       anonymous: 'لا توجد شخصية نشطة في هذا المتصفح. سجّل الدخول أدناه أو عد إلى اللعبة لإنشاء شخصية ضيف.', mismatch: 'كلمتا المرور غير متطابقتين.', switched: 'ثبّت حساب الضيف أولاً أو وافق على تبديل الحساب.', busy: 'جارٍ الحفظ بأمان...',
       saved: 'تم حفظ الحساب. احتفظ برمز الاسترداد قبل العودة إلى اللعبة.', signedIn: 'تم تسجيل الدخول. شخصيتك المحفوظة جاهزة.', signedOut: 'تم تسجيل الخروج. تبقى شخصيتك المثبتة محفوظة على الخادم.', failed: 'الاتصال غير متاح. أعد تحميل الصفحة للمحاولة.',
-      invalid: 'اسم المستخدم أو كلمة المرور أو رمز الاسترداد غير صحيح.', limited: 'محاولات كثيرة. أعد المحاولة بعد 15 دقيقة.', unavailable: 'اسم المستخدم غير متاح أو الحساب مثبت مسبقاً.', invalidFields: 'تحقق من البيانات: اسم لاتيني من 3 إلى 24 محرفاً وكلمة مرور من 15 إلى 128 محرفاً.', missingSession: 'انتهى وصول الضيف. سجّل الدخول أو عد إلى اللعبة.', saveFirst: 'احفظ رمز الاسترداد قبل المغادرة.'
+      invalid: 'اسم المستخدم أو كلمة المرور أو رمز الاسترداد غير صحيح.', limited: 'محاولات كثيرة. أعد المحاولة بعد 15 دقيقة.', unavailable: 'اسم المستخدم غير متاح أو الحساب مثبت مسبقاً.', invalidFields: 'تحقق من البيانات: اسم لاتيني من 3 إلى 24 محرفاً وكلمة مرور من 15 إلى 128 محرفاً.', missingSession: 'انتهى وصول الضيف. سجّل الدخول أو عد إلى اللعبة.', saveFirst: 'احفظ رمز الاسترداد قبل المغادرة.',
+      generatePassphrase: 'توليد عبارة مرور قوية', showPasswords: 'إظهار / إخفاء', copyRecovery: 'نسخ رمز الاسترداد', generated: 'تم توليد عبارة مرور قوية. احتفظ بنسخة منها قبل الحفظ.', copied: 'تم نسخ رمز الاسترداد إلى الحافظة.'
     }
   };
   let lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en';
@@ -87,6 +89,42 @@
     } catch (error) { message(copy[lang][error.message] ? error.message : 'failed', true); }
     finally { busy = false; paint(); }
   };
+  const randomWord = list => {
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      return list[buf[0] % list.length];
+    }
+    return list[Math.floor(Math.random() * list.length)];
+  };
+  const updateMeter = () => {
+    const val = String(element('claimPassword').value || '');
+    element('passphraseMeter').textContent = val ? (val.length >= 15 ? '✓ ' + val.length + '/15+' : val.length + '/15') : '';
+  };
+  element('claimPassword').addEventListener('input', updateMeter);
+  element('generatePassphrase').addEventListener('click', () => {
+    const words = ['velvet', 'harbor', 'cipher', 'obsidian', 'falcon', 'syndicate', 'amber', 'shadow', 'viper', 'platinum', 'midnight', 'monarch', 'cobalt', 'sector', 'dagger', 'crown'];
+    const digits = String(1000 + (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function' ? (crypto.getRandomValues(new Uint32Array(1))[0] % 9000) : Math.floor(Math.random() * 9000)));
+    const generated = [randomWord(words), randomWord(words), randomWord(words), randomWord(words), digits].join('-');
+    element('claimPassword').value = generated;
+    element('claimConfirm').value = generated;
+    element('claimPassword').type = 'text';
+    element('claimConfirm').type = 'text';
+    updateMeter();
+    message('generated');
+  });
+  element('togglePasswordView').addEventListener('click', () => {
+    const nextType = element('claimPassword').type === 'text' ? 'password' : 'text';
+    element('claimPassword').type = nextType;
+    element('claimConfirm').type = nextType;
+  });
+  element('copyRecoveryCode').addEventListener('click', () => {
+    const code = String(element('recoveryCode').textContent || '').trim();
+    if (!code) return;
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(code).then(() => message('copied')).catch(() => {});
+    }
+  });
   for (const action of ['claim', 'login', 'recover']) element(action + 'Form').addEventListener('submit', event => { event.preventDefault(); submit(action, Object.fromEntries(new FormData(event.currentTarget))); });
   element('logout').addEventListener('click', () => submit('logout', {}));
   element('backupSaved').addEventListener('change', paint);

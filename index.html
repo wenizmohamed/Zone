@@ -102,6 +102,10 @@
             <div style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.money }}</span><bdi id="zone-cash" data-zfig="1" style="color:var(--money);font-weight:600;font-size:13.5px;display:inline-block">{{ cash }}</bdi></div>
           </div>
           <a class="zone-profile-account" href="{{ accountHref }}" style="color:var(--link);display:flex;align-items:center;justify-content:space-between;padding:10px 0;min-height:44px;font-size:11.5px;border-bottom:1px solid var(--line)">{{ accountLabel }}</a>
+          <a data-zone-account-sync="1" href="{{ accountHref }}" style="text-decoration:none;background:{{ accountSync.bg }};border:1px solid {{ accountSync.border }};border-radius:4px;padding:5px 8px;margin:2px 0 4px;display:flex;flex-direction:column;gap:2px">
+            <span style="color:{{ accountSync.fg }};font-size:10.5px;font-weight:700;letter-spacing:.03em">{{ accountSync.badge }}</span>
+            <span style="color:var(--mu);font-size:9.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ accountSync.sub }}</span>
+          </a>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.level }}</span><bdi style="color:var(--t1)">{{ level }} <span style="color:var(--mu);font-size:10px">{{ levelTitle }}</span></bdi></div>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.points }}</span><bdi style="color:var(--t1)">{{ points }}</bdi></div>
           <div class="zone-profile-desktop" style="display:flex;justify-content:space-between"><span style="color:var(--mu)">{{ t.merits }}</span><bdi style="color:var(--t1)">{{ merits }}</bdi></div>
@@ -1235,6 +1239,106 @@
           <section class="zone-panel"><div class="zone-panel-heading">{{ bulletin.title }}</div><sc-for list="{{ log }}" as="l"><div class="zone-bulletin-entry"><bdi>{{ l.time }}</bdi><p style="color:{{ l.color }}">{{ l.text }}</p></div></sc-for><sc-if value="{{ logEmpty }}"><div class="zone-empty-state"><img src="assets/ui/icons/newspaper.svg" width="42" height="42" alt=""><p>{{ bulletin.empty }}</p><button onClick="{{ fieldGuide.open }}">{{ fieldGuide.action }}</button></div></sc-if></section>
           <section class="zone-panel"><div class="zone-panel-heading">{{ t.movers }}</div><sc-for list="{{ market }}" as="m"><div class="zone-stock-entry"><span>{{ m.name }}</span><bdi>{{ m.price }}</bdi></div></sc-for><div class="zone-panel-note">{{ bulletin.marketNote }}</div><button class="zone-panel-link" onClick="{{ bulletin.openMarket }}" disabled="{{ bulletin.marketDisabled }}">{{ t.nav.market }}</button></section>
         </div>
+        <section class="zone-panel" data-zone-syndicate-hub="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px">
+            <div>
+              <strong style="color:var(--t1);font-size:13px;letter-spacing:.05em;text-transform:uppercase;display:block">{{ syndicateHub.title }}</strong>
+              <span style="color:var(--mu);font-size:11px">{{ syndicateHub.subtitle }}</span>
+            </div>
+            <button class="zone-compact-btn" onClick="{{ syndicateHub.refresh }}" disabled="{{ syndicateHub.busy }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 11px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ syndicateHub.refreshLabel }}</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:10px">
+            <div data-syndicate-panel="chronicle" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <strong style="color:var(--gold);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.chronicleTitle }}</strong>
+                <span style="color:var(--acc);font-size:10px;font-weight:700">{{ syndicateHub.chronicleBadge }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;max-height:290px;overflow-y:auto">
+                <sc-for list="{{ syndicateHub.chronicle }}" as="ch" hint-placeholder-count="5">
+                  <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:2px solid {{ ch.accent }};border-radius:4px;padding:6px 8px;display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:9.5px">
+                      <span style="color:{{ ch.accent }};font-weight:700;letter-spacing:.04em">{{ ch.category }}</span>
+                      <bdi style="color:var(--mu)">{{ ch.time }}</bdi>
+                    </div>
+                    <div style="color:var(--t2);font-size:11px;line-height:1.45">{{ ch.headline }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div data-syndicate-panel="bounties" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <strong style="color:#ff8a7a;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.bountyTitle }}</strong>
+                <bdi style="color:var(--money);font-size:10.5px;font-weight:700">{{ syndicateHub.totalEscrowText }}</bdi>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;max-height:190px;overflow-y:auto">
+                <sc-for list="{{ syndicateHub.bounties }}" as="b" hint-placeholder-count="3">
+                  <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:2px solid #ff8a7a;border-radius:4px;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <div style="min-width:0;flex:1">
+                      <div style="color:var(--t1);font-size:11.5px;font-weight:700">{{ b.targetName }} <bdi style="color:var(--mu);font-weight:500;font-size:10px">{{ b.levelBadge }}</bdi></div>
+                      <div style="color:var(--t3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.reason }}</div>
+                      <div style="color:var(--mu);font-size:9.5px"><bdi style="color:var(--money);font-weight:700">{{ b.rewardText }}</bdi> · {{ b.placedByLabel }}</div>
+                    </div>
+                    <button class="zone-compact-btn" data-bounty-claim="{{ b.id }}" onClick="{{ b.claim }}" disabled="{{ b.claimDisabled }}" style="background:linear-gradient(#c74a3a,#9a3428);color:#fff;border:1px solid #6a2018;border-radius:3px;padding:4px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap">{{ b.claimLabel }}</button>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ syndicateHub.bountiesEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="color:var(--mu);font-size:11px;padding:8px;text-align:center">{{ syndicateHub.bountiesEmptyLabel }}</div>
+                </sc-if>
+              </div>
+              <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px">
+                <div style="color:var(--t3);font-size:10.5px;font-weight:700">{{ syndicateHub.postBountyHeading }}</div>
+                <input type="text" data-bounty-target-input="1" sc-camel-value="{{ syndicateHub.bountyTarget }}" onInput="{{ syndicateHub.onBountyTarget }}" placeholder="{{ syndicateHub.bountyTargetPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <div style="display:flex;gap:5px;flex-wrap:wrap">
+                  <sc-for list="{{ syndicateHub.bountyStakes }}" as="bs" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ bs.pick }}" style="background:{{ bs.bg }};color:{{ bs.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer"><bdi>{{ bs.label }}</bdi></button>
+                  </sc-for>
+                </div>
+                <input type="text" data-bounty-reason-input="1" sc-camel-value="{{ syndicateHub.bountyReason }}" onInput="{{ syndicateHub.onBountyReason }}" placeholder="{{ syndicateHub.bountyReasonPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <button type="button" data-bounty-post-btn="1" class="zone-action-primary" onClick="{{ syndicateHub.postBounty }}" disabled="{{ syndicateHub.postBountyDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ syndicateHub.postBountyLabel }}</button>
+              </div>
+            </div>
+            <div data-syndicate-panel="mail" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <strong style="color:var(--link);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.mailTitle }}</strong>
+                <bdi style="color:var(--gold);font-size:10.5px;font-weight:700">{{ syndicateHub.unreadBadge }}</bdi>
+              </div>
+              <div style="display:flex;gap:6px">
+                <button type="button" onClick="{{ syndicateHub.openInbox }}" style="flex:1;background:{{ syndicateHub.inboxTabBg }};color:{{ syndicateHub.inboxTabFg }};border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ syndicateHub.inboxTabLabel }}</button>
+                <button type="button" onClick="{{ syndicateHub.openSent }}" style="flex:1;background:{{ syndicateHub.sentTabBg }};color:{{ syndicateHub.sentTabFg }};border:1px solid var(--border3);border-radius:3px;padding:4px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer">{{ syndicateHub.sentTabLabel }}</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;max-height:150px;overflow-y:auto">
+                <sc-for list="{{ syndicateHub.mailRows }}" as="m" hint-placeholder-count="2">
+                  <div style="background:var(--deep);border:1px solid {{ m.border }};border-radius:4px;padding:6px 8px;display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+                      <strong style="color:var(--t1)">{{ m.fromOrTo }}</strong>
+                      <bdi style="color:var(--mu)">{{ m.timeLabel }}</bdi>
+                    </div>
+                    <div style="color:var(--gold);font-size:10.5px;font-weight:600">{{ m.subject }}</div>
+                    <div style="color:var(--t3);font-size:10.5px;line-height:1.4">{{ m.body }}</div>
+                    <div style="display:flex;justify-content:flex-end">
+                      <button type="button" onClick="{{ m.action }}" style="background:var(--btn);color:var(--acc);border:1px solid var(--border3);border-radius:3px;padding:2px 7px;font:inherit;font-size:9.5px;font-weight:700;cursor:pointer">{{ m.actionLabel }}</button>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ syndicateHub.mailEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="color:var(--mu);font-size:11px;padding:8px;text-align:center">{{ syndicateHub.mailEmptyLabel }}</div>
+                </sc-if>
+              </div>
+              <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:5px">
+                <div style="color:var(--t3);font-size:10.5px;font-weight:700">{{ syndicateHub.composeHeading }}</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap">
+                  <sc-for list="{{ syndicateHub.quickRecipients }}" as="qr" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ qr.pick }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;cursor:pointer">{{ qr.label }}</button>
+                  </sc-for>
+                </div>
+                <input type="text" data-mail-recipient-input="1" sc-camel-value="{{ syndicateHub.mailRecipient }}" onInput="{{ syndicateHub.onMailRecipient }}" placeholder="{{ syndicateHub.mailRecipientPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-mail-subject-input="1" sc-camel-value="{{ syndicateHub.mailSubject }}" onInput="{{ syndicateHub.onMailSubject }}" placeholder="{{ syndicateHub.mailSubjectPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-mail-body-input="1" sc-camel-value="{{ syndicateHub.mailBody }}" onInput="{{ syndicateHub.onMailBody }}" placeholder="{{ syndicateHub.mailBodyPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <button type="button" data-mail-send-btn="1" class="zone-action-primary" onClick="{{ syndicateHub.sendMail }}" disabled="{{ syndicateHub.sendMailDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ syndicateHub.sendMailLabel }}</button>
+              </div>
+            </div>
+          </div>
+        </section>
       </sc-if>
 
       <!-- JAIL -->
@@ -1338,6 +1442,103 @@
             <div class="zone-guide-copy"><h2>{{ t.highLow }}</h2><p>{{ casinoGuide.description }}</p><dl><div><dt>{{ casinoGuide.betLabel }}</dt><dd>{{ casino.bet }}</dd></div><div><dt>{{ casinoGuide.cardLabel }}</dt><dd>{{ casino.cardLabel }}</dd></div><div><dt>{{ casinoGuide.netLabel }}</dt><dd>{{ casino.net }}</dd></div></dl><p class="zone-panel-note">{{ casinoGuide.scope }}</p><button onClick="{{ casinoGuide.openBank }}" disabled="{{ casinoGuide.bankDisabled }}">{{ t.nav.bank }}</button></div>
           </div>
         </div>
+        <section class="zone-panel" data-zone-casino-pit="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--acc);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px">
+            <div>
+              <strong style="color:var(--t1);font-size:13px;letter-spacing:.05em;text-transform:uppercase;display:block">{{ casinoPit.title }}</strong>
+              <span style="color:var(--mu);font-size:11px">{{ casinoPit.subtitle }}</span>
+            </div>
+            <button type="button" class="zone-compact-btn" onClick="{{ casinoPit.refresh }}" disabled="{{ casinoPit.busy }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 11px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ casinoPit.refreshLabel }}</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:10px">
+            <div data-casino-table="blackjack" style="background:rgba(8,11,16,.9);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <strong style="color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.05em">{{ casinoPit.bj.title }}</strong>
+                <span style="color:var(--gold);font-size:10px;font-weight:700">{{ casinoPit.bj.payoutBadge }}</span>
+              </div>
+              <div style="background:rgba(14,34,26,.65);border:1px solid rgba(57,231,163,.25);border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3)"><span>{{ casinoPit.bj.dealerLabel }}</span><bdi style="color:var(--gold);font-weight:700">{{ casinoPit.bj.dealerTotalLabel }}</bdi></div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;min-height:36px">
+                  <sc-for list="{{ casinoPit.bj.dealerCards }}" as="dc" hint-placeholder-count="2">
+                    <span style="min-width:34px;padding:5px 7px;border-radius:4px;background:{{ dc.bg }};border:1px solid {{ dc.border }};color:{{ dc.fg }};font-weight:800;font-size:12px;text-align:center"><bdi>{{ dc.label }}</bdi></span>
+                  </sc-for>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3);border-top:1px solid rgba(255,255,255,.07);padding-top:5px"><span>{{ casinoPit.bj.playerLabel }}</span><bdi style="color:var(--acc);font-weight:700">{{ casinoPit.bj.playerTotalLabel }}</bdi></div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;min-height:36px">
+                  <sc-for list="{{ casinoPit.bj.playerCards }}" as="pc" hint-placeholder-count="2">
+                    <span style="min-width:34px;padding:5px 7px;border-radius:4px;background:{{ pc.bg }};border:1px solid {{ pc.border }};color:{{ pc.fg }};font-weight:800;font-size:12px;text-align:center"><bdi>{{ pc.label }}</bdi></span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <sc-for list="{{ casinoPit.bj.stakes }}" as="bs" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ bs.pick }}" style="background:{{ bs.bg }};color:{{ bs.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer"><bdi>{{ bs.label }}</bdi></button>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px">
+                <button type="button" data-bj-action="deal" onClick="{{ casinoPit.bj.deal }}" disabled="{{ casinoPit.bj.dealDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:3px;padding:6px 4px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ casinoPit.bj.dealLabel }}</button>
+                <button type="button" data-bj-action="hit" onClick="{{ casinoPit.bj.hit }}" disabled="{{ casinoPit.bj.hitDisabled }}" style="background:var(--activebg);color:var(--activefg);border:1px solid var(--acc);border-radius:3px;padding:6px 4px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ casinoPit.bj.hitLabel }}</button>
+                <button type="button" data-bj-action="stand" onClick="{{ casinoPit.bj.stand }}" disabled="{{ casinoPit.bj.standDisabled }}" style="background:var(--btn);color:var(--gold);border:1px solid var(--border3);border-radius:3px;padding:6px 4px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ casinoPit.bj.standLabel }}</button>
+                <button type="button" data-bj-action="double" onClick="{{ casinoPit.bj.double }}" disabled="{{ casinoPit.bj.doubleDisabled }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:3px;padding:6px 4px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ casinoPit.bj.doubleLabel }}</button>
+              </div>
+              <div data-bj-status="1" style="color:var(--t3);font-size:10.5px;min-height:16px">{{ casinoPit.bj.statusMsg }}</div>
+            </div>
+            <div data-casino-table="roulette" style="background:rgba(8,11,16,.9);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <strong style="color:var(--gold);font-size:12px;text-transform:uppercase;letter-spacing:.05em">{{ casinoPit.roulette.title }}</strong>
+                <span style="color:var(--mu);font-size:10px;font-weight:700">0 - 36 · 35:1</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;background:var(--deep);border:1px solid var(--border2);border-radius:4px;padding:8px">
+                <div data-roulette-pocket="1" style="width:44px;height:44px;border-radius:50%;background:{{ casinoPit.roulette.pocketBg }};border:2px solid var(--gold);display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none"><bdi>{{ casinoPit.roulette.pocketLabel }}</bdi></div>
+                <div style="flex:1;min-width:0">
+                  <div style="color:var(--mu);font-size:10px;margin-bottom:4px">{{ casinoPit.roulette.recentLabel }}</div>
+                  <div style="display:flex;gap:4px;flex-wrap:wrap">
+                    <sc-for list="{{ casinoPit.roulette.history }}" as="rh" hint-placeholder-count="6">
+                      <bdi style="padding:2px 6px;border-radius:3px;background:{{ rh.bg }};color:#fff;font-size:10px;font-weight:700">{{ rh.pocket }}</bdi>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <sc-for list="{{ casinoPit.roulette.stakes }}" as="rs" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ rs.pick }}" style="background:{{ rs.bg }};color:{{ rs.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer"><bdi>{{ rs.label }}</bdi></button>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px">
+                <sc-for list="{{ casinoPit.roulette.boardBets }}" as="rb" hint-placeholder-count="9">
+                  <button type="button" data-roulette-bet="{{ rb.id }}" onClick="{{ rb.spin }}" disabled="{{ rb.disabled }}" style="background:{{ rb.bg }};color:{{ rb.fg }};border:1px solid var(--border3);border-radius:3px;padding:5px 4px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ rb.label }}</button>
+                </sc-for>
+              </div>
+              <div data-roulette-status="1" style="color:var(--t3);font-size:10.5px;min-height:16px">{{ casinoPit.roulette.statusMsg }}</div>
+            </div>
+            <div data-casino-table="slots" style="background:rgba(8,11,16,.9);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <strong style="color:#f5c451;font-size:12px;text-transform:uppercase;letter-spacing:.05em">{{ casinoPit.slots.title }}</strong>
+                <span style="color:var(--acc);font-size:10px;font-weight:700">{{ casinoPit.slots.paytableHint }}</span>
+              </div>
+              <div style="background:linear-gradient(90deg,rgba(45,32,12,.75),rgba(20,15,8,.9));border:1px solid rgba(214,167,86,.45);border-radius:4px;padding:7px 10px;display:flex;flex-direction:column;gap:2px">
+                <span style="color:var(--gold);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">{{ casinoPit.slots.jackpotLabel }}</span>
+                <bdi data-slots-jackpot="1" style="color:var(--money);font-size:18px;font-weight:800">{{ casinoPit.slots.jackpotText }}</bdi>
+                <small style="color:var(--mu);font-size:9.5px">{{ casinoPit.slots.lastWinnerLabel }}</small>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px">
+                <sc-for list="{{ casinoPit.slots.reels }}" as="rl" hint-placeholder-count="3">
+                  <div data-slots-reel="1" style="background:var(--deep);border:1px solid var(--gold);border-radius:4px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:3px">
+                    <span style="font-size:18px;line-height:1">{{ rl.glyph }}</span>
+                    <small style="color:var(--t2);font-size:9.5px;font-weight:700">{{ rl.name }}</small>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <sc-for list="{{ casinoPit.slots.stakes }}" as="ss" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ ss.pick }}" style="background:{{ ss.bg }};color:{{ ss.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer"><bdi>{{ ss.label }}</bdi></button>
+                </sc-for>
+              </div>
+              <button type="button" data-slots-spin="1" class="zone-action-primary" onClick="{{ casinoPit.slots.spin }}" disabled="{{ casinoPit.slots.disabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:7px 12px;font:inherit;font-size:11px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:.04em">{{ casinoPit.slots.spinLabel }}</button>
+              <div data-slots-status="1" style="color:var(--t3);font-size:10.5px;min-height:16px">{{ casinoPit.slots.statusMsg }}</div>
+            </div>
+          </div>
+        </section>
         <section class="zone-panel" data-torn-casino-games="1" style="background:linear-gradient(180deg,rgba(16,21,29,.97),rgba(10,14,20,.99));border:1px solid var(--border3);border-top:2px solid var(--gold);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:10px">
           <div style="display:flex;align-items:center;gap:7px">
             <span style="width:20px;height:20px;border-radius:4px;background:rgba(214,167,86,.14);border:1px solid rgba(214,167,86,.4);display:grid;place-items:center"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span>
@@ -1925,8 +2126,15 @@ class Component extends DCLogic {
     this.loadTerritories();
     if (window.zoneOwnerPlaytest?.active()) {
       Promise.resolve().then(() => window.zoneOwnerPlaytest.probe()).then(() => this.loadGameplay()).catch(error => { this.gameplayError = error.message || String(error); this.forceUpdate(); });
-    } else this.loadGameplay().then(() => window.zoneOwnerPlaytest?.probe()).catch(() => {});
+    } else this.loadGameplay().then(() => {
+      window.zoneOwnerPlaytest?.probe();
+      if (window.navigator?.userAgent && !IS_PREVIEW && !window.zoneOwnerPlaytest?.active?.()) {
+        this.loadAccountStatus();
+        this.loadSocial(true);
+      }
+    }).catch(() => {});
     if (this.state.screen === 'casino') this.loadCasino();
+    if (this.state.screen === 'newspaper' && window.navigator?.userAgent && !IS_PREVIEW && !window.zoneOwnerPlaytest?.active?.()) this.loadSocial(true);
     if (this.state.screen === 'home') this.loadPlayerActivity();
     if (this.state.screen === 'attack') this.loadCombat();
     if (this.state.screen === 'hof') this.loadLeaderboards();
@@ -1941,6 +2149,7 @@ class Component extends DCLogic {
       if (visible && !IS_PREVIEW && this.state.tick % 60 === 0 && ['city', 'faction'].includes(this.state.screen)) this.loadTerritories();
       if (visible && !IS_PREVIEW && this.state.tick % 60 === 0 && this.state.screen === 'hof') this.loadLeaderboards();
       if (visible && !IS_PREVIEW && this.state.tick % 120 === 0 && this.state.screen === 'home') this.loadPlayerActivity();
+      if (visible && !IS_PREVIEW && window.navigator?.userAgent && !window.zoneOwnerPlaytest?.active?.() && this.state.tick % 20 === 0) this.loadSocial();
       if (visible && !IS_PREVIEW && this.p.travel?.status === 'traveling' && this.travelRemaining() <= 0 && this.state.tick % 15 === 0) this.loadTravel();
       this.setState(s => ({ tick: s.tick + 1 }));
     }, 1000);
@@ -2695,7 +2904,7 @@ class Component extends DCLogic {
     if (SCREEN_DISTRICT[s]) { this.p.lastDistrict = SCREEN_DISTRICT[s]; this.save(); }
     if (s !== 'attack') { this._combatRunning = false; clearTimeout(this.ct); } else this.loadCombat();
     this.loadVisiblePeerResources(true);
-    this.loadGameplay(); if (s === 'home') this.loadPlayerActivity(); if (s === 'bank') this.syncPlayer(); if (s === 'casino') this.loadCasino(); if (s === 'hof') this.loadLeaderboards(); if (['city', 'faction'].includes(s)) this.loadTerritories(); if (s === 'hospital') this.loadHospitalQuote(); }
+    this.loadGameplay(); if (s === 'home') this.loadPlayerActivity(); if (s === 'bank') this.syncPlayer(); if (s === 'casino') this.loadCasino(); if (s === 'newspaper' && window.navigator?.userAgent && !IS_PREVIEW && !window.zoneOwnerPlaytest?.active?.()) this.loadSocial(true); if (s === 'hof') this.loadLeaderboards(); if (['city', 'faction'].includes(s)) this.loadTerritories(); if (s === 'hospital') this.loadHospitalQuote(); }
   pct(c) {
     // Mirror GameEngine::attemptCrime in basis points, including published gates.
     // This is a current-state estimate; the action's server receipt is authoritative.
@@ -3140,6 +3349,7 @@ class Component extends DCLogic {
   async loadCasino() {
     if (!screenEngineAvailable('casino')) return;
     if (IS_PREVIEW) return;
+    if (window.navigator?.userAgent && !window.zoneOwnerPlaytest?.active?.()) this.loadCasinoTables();
     if (this.casinoBusy || this._casinoLoad) return this._casinoLoad;
     const modeEpoch = this._modeEpoch || 0;
     this.casinoReady = false; this.forceUpdate();
@@ -3163,6 +3373,215 @@ class Component extends DCLogic {
       finally { this._casinoLoad = null; this.forceUpdate(); }
     })();
     return this._casinoLoad;
+  }
+  async loadAccountStatus() {
+    if (IS_PREVIEW || window.zoneOwnerPlaytest?.active?.()) return null;
+    if (this._accountLoad) return this._accountLoad;
+    this._accountLoad = (async () => {
+      try {
+        const response = await fetch('/api/v1/auth/account', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        const data = await response.json().catch(() => null);
+        if (response.ok && data && typeof data === 'object') {
+          this.accountStatus = { playerId: String(data.playerId || ''), username: String(data.username || ''), claimed: Boolean(data.claimed) };
+        }
+      } catch (_) {
+        // Non-blocking sync badge query.
+      } finally {
+        this._accountLoad = null;
+        this.forceUpdate();
+      }
+    })();
+    return this._accountLoad;
+  }
+  async loadCasinoTables() {
+    if (!screenEngineAvailable('casino') || IS_PREVIEW) return null;
+    if (this._casinoTablesLoad) return this._casinoTablesLoad;
+    this.casinoTablesBusy = true;
+    this.forceUpdate();
+    this._casinoTablesLoad = (async () => {
+      try {
+        const opts = { headers: { Accept: 'application/json' }, cache: 'no-store' };
+        const [bjRes, rlRes, slRes] = await Promise.allSettled([
+          fetch('/api/v1/casino/blackjack', opts).then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) })),
+          fetch('/api/v1/casino/roulette', opts).then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) })),
+          fetch('/api/v1/casino/slots', opts).then(async r => ({ ok: r.ok, data: await r.json().catch(() => ({})) }))
+        ]);
+        if (bjRes.status === 'fulfilled' && bjRes.value.ok) this.blackjackTable = bjRes.value.data;
+        if (rlRes.status === 'fulfilled' && rlRes.value.ok) this.rouletteTable = rlRes.value.data;
+        if (slRes.status === 'fulfilled' && slRes.value.ok) this.slotsTable = slRes.value.data;
+      } finally {
+        this.casinoTablesBusy = false;
+        this._casinoTablesLoad = null;
+        this.forceUpdate();
+      }
+    })();
+    return this._casinoTablesLoad;
+  }
+  async playBlackjackAction(action) {
+    if (!this.allowScreen('casino') || !this.allowGameplay()) return;
+    const t = T[this.state.lang], ar = this.state.lang === 'ar';
+    if (this.blocked()) return this.toast(t.toast.blocked, true);
+    if (this.bjBusy) return;
+    const bet = Number(this.state.bjStake || 1000);
+    if (action === 'deal' && Number(this.p.cash || 0) < bet) return this.toast(t.toast.noCash, true);
+    this.bjBusy = true;
+    this.forceUpdate();
+    try {
+      const response = await fetch('/api/v1/casino/blackjack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ action, bet })
+      });
+      const data = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+      if (!response.ok) throw new Error(data.error || ('Blackjack API ' + response.status));
+      this.blackjackTable = data;
+      if (data.player) this.applyServerPlayer(data.player);
+      if (data.status === 'settled') {
+        const delta = Number(data.delta || 0);
+        this.p.casinoNet = (this.p.casinoNet || 0) + delta;
+        this.save();
+        if (data.result === 'win') {
+          this.playTacticalSfx('cash');
+          this.log('casinoWin', { cash: money(Math.abs(delta)) }, 'good');
+          this.toast(ar ? `بلاك جاك: فوز! +${money(Math.abs(delta))}` : `Blackjack 21: Won +${money(Math.abs(delta))}!`);
+        } else if (data.result === 'lose') {
+          this.log('casinoLose', { cash: money(Math.abs(delta)) }, 'bad');
+          this.toast(ar ? `بلاك جاك: خسارة ${money(Math.abs(delta))}` : `Blackjack 21: Lost ${money(Math.abs(delta))}.`, true);
+        } else {
+          this.toast(ar ? 'بلاك جاك: تعادل، تم إرجاع الرهان.' : 'Blackjack 21: Push, stake returned.');
+        }
+      }
+    } catch (error) {
+      this.toast(this.serverError(error), true);
+    } finally {
+      this.bjBusy = false;
+      this.forceUpdate();
+    }
+  }
+  async spinRoulette(betType, number = null) {
+    if (!this.allowScreen('casino') || !this.allowGameplay()) return;
+    const t = T[this.state.lang], ar = this.state.lang === 'ar';
+    if (this.blocked()) return this.toast(t.toast.blocked, true);
+    if (this.rouletteBusy) return;
+    const bet = Number(this.state.rouletteStake || 1000);
+    if (Number(this.p.cash || 0) < bet) return this.toast(t.toast.noCash, true);
+    this.rouletteBusy = true;
+    this.forceUpdate();
+    try {
+      const payload = { bet, betType };
+      if (number !== null && number !== undefined) payload.number = Number(number);
+      const response = await fetch('/api/v1/casino/roulette', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+      if (!response.ok) throw new Error(data.error || ('Roulette API ' + response.status));
+      this.rouletteTable = data;
+      if (data.player) this.applyServerPlayer(data.player);
+      const delta = Number(data.delta || 0);
+      this.p.casinoNet = (this.p.casinoNet || 0) + delta;
+      this.save();
+      const pocketText = `${data.pocket} (${String(data.color || '').toUpperCase()})`;
+      if (data.result === 'win') {
+        this.playTacticalSfx('cash');
+        this.log('casinoWin', { cash: money(Math.abs(delta)) }, 'good');
+        this.toast(ar ? `الروليت الأوروبي: استقرت الكرة على ${pocketText} · ربحت +${money(Math.abs(delta))}!` : `Roulette landed ${pocketText} · Won +${money(Math.abs(delta))}!`);
+      } else {
+        this.log('casinoLose', { cash: money(Math.abs(delta)) }, 'bad');
+        this.toast(ar ? `الروليت الأوروبي: استقرت الكرة على ${pocketText} · خسرت ${money(Math.abs(delta))}.` : `Roulette landed ${pocketText} · Lost ${money(Math.abs(delta))}.`, true);
+      }
+    } catch (error) {
+      this.toast(this.serverError(error), true);
+    } finally {
+      this.rouletteBusy = false;
+      this.forceUpdate();
+    }
+  }
+  async spinSlots(overrideBet = null) {
+    if (!this.allowScreen('casino') || !this.allowGameplay()) return;
+    const t = T[this.state.lang], ar = this.state.lang === 'ar';
+    if (this.blocked()) return this.toast(t.toast.blocked, true);
+    if (this.slotsBusy) return;
+    const bet = Number(overrideBet || this.state.slotsStake || 1000);
+    if (Number(this.p.cash || 0) < bet) return this.toast(t.toast.noCash, true);
+    this.slotsBusy = true;
+    this.forceUpdate();
+    try {
+      const response = await fetch('/api/v1/casino/slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ bet })
+      });
+      const data = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+      if (!response.ok) throw new Error(data.error || ('Slots API ' + response.status));
+      this.slotsTable = data;
+      if (data.player) this.applyServerPlayer(data.player);
+      const delta = Number(data.delta || 0);
+      this.p.casinoNet = (this.p.casinoNet || 0) + delta;
+      this.save();
+      if (data.result === 'win') {
+        this.playTacticalSfx('cash');
+        this.log('casinoWin', { cash: money(Math.abs(delta)) }, 'good');
+        this.toast(ar ? `ماكينات الجائزة الكبرى: تطابق ×${data.multiplier}! ربحت +${money(Math.abs(delta))}` : `Syndicate Slots: ${data.multiplier}x match! Won +${money(Math.abs(delta))}!`);
+      } else {
+        this.log('casinoLose', { cash: money(Math.abs(delta)) }, 'bad');
+        this.toast(ar ? `ماكينات الحظ: لا تطابق · أضيف جزء من الرهان للجائزة الكبرى.` : `Syndicate Slots: No match · Progressive pool increased.`, true);
+      }
+    } catch (error) {
+      this.toast(this.serverError(error), true);
+    } finally {
+      this.slotsBusy = false;
+      this.forceUpdate();
+    }
+  }
+  async loadSocial(force = false) {
+    if (IS_PREVIEW || window.zoneOwnerPlaytest?.active?.()) return null;
+    if (!force && this._socialLoad) return this._socialLoad;
+    this.socialBusy = true;
+    this.forceUpdate();
+    this._socialLoad = (async () => {
+      try {
+        const response = await fetch('/api/v1/social', { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        const data = await response.json().catch(() => null);
+        if (response.ok && data && typeof data === 'object') {
+          this.socialState = data;
+          this.socialError = null;
+        }
+      } catch (error) {
+        this.socialError = error?.message || String(error);
+      } finally {
+        this.socialBusy = false;
+        this._socialLoad = null;
+        this.forceUpdate();
+      }
+    })();
+    return this._socialLoad;
+  }
+  async runSocialAction(payload) {
+    if (!this.allowGameplay()) return null;
+    if (this.socialActionBusy) return null;
+    this.socialActionBusy = true;
+    this.forceUpdate();
+    try {
+      const response = await fetch('/api/v1/social/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload || {})
+      });
+      const data = await response.json().catch(() => ({ error: 'Invalid server response.' }));
+      if (!response.ok) throw new Error(data.error || ('Social API ' + response.status));
+      if (data.player) this.applyServerPlayer(data.player);
+      if (data.social) this.socialState = data.social;
+      this.save();
+      return data;
+    } catch (error) {
+      this.toast(this.serverError(error), true);
+      return null;
+    } finally {
+      this.socialActionBusy = false;
+      this.forceUpdate();
+    }
   }
   applyGameplay(snapshot) {
     if (!snapshot?.state || !Number.isInteger(Number(snapshot.state.version))) throw new Error('Invalid gameplay snapshot.');
@@ -4817,6 +5236,17 @@ class Component extends DCLogic {
         sub: lang === 'ar' ? 'بريد خاص إلى صندوق اللاعب' : 'Send direct inbox dispatch',
         bg: 'var(--btn)', fg: 'var(--t1)', border: 'var(--border3)',
         run: () => {
+          if (this.gameplayReady && !this.gameplayDisabled()) {
+            this.runSocialAction({
+              action: 'mail.send',
+              recipient: activeProf.name || String(activeProf.id),
+              subject: lang === 'ar' ? 'برقية ميدانية مباشرة' : 'Direct Syndicate Dispatch',
+              body: lang === 'ar' ? `رسالة مباشرة إلى ${activeProf.name} [#${activeProf.id}] من غرفة العمليات.` : `Direct syndicate wire to ${activeProf.name} [#${activeProf.id}].`
+            }).then(res => {
+              if (res) this.setState({ omarProfileFeedback: lang === 'ar' ? `✉️ تم إرسال برقية مشفرة إلى صندوق ${activeProf.name} [#${activeProf.id}].` : `✉️ Encrypted dispatch delivered to ${activeProf.name} [#${activeProf.id}].` });
+            });
+            return;
+          }
           this.setState({ omarProfileFeedback: lang === 'ar' ? `✉️ تم إرسال رسالة خاصة إلى ${activeProf.name} [#${activeProf.id}] بنجاح.` : `✉️ Direct message dispatched to ${activeProf.name} [#${activeProf.id}].` });
         }
       },
@@ -4854,6 +5284,17 @@ class Component extends DCLogic {
         bg: 'var(--btn)', fg: '#ff9b8a', border: 'var(--border3)',
         run: () => {
           if (Number(this.p.cash || 0) < 25000) return this.toast(lang === 'ar' ? 'تحتاج 25,000$ لوضع باونتي.' : 'Need $25,000 cash to post a bounty.', true);
+          if (this.gameplayReady && !this.gameplayDisabled()) {
+            this.runSocialAction({
+              action: 'bounty.place',
+              target: activeProf.name || String(activeProf.id),
+              rewardCash: 25000,
+              reason: lang === 'ar' ? 'عقد مطاردة مباشر من الملف الشخصي' : 'Direct profile hitlist contract'
+            }).then(res => {
+              if (res) this.setState({ omarProfileFeedback: lang === 'ar' ? `🎯 تم إيداع عقد باونتي حي بقيمة 25,000$ على ${activeProf.name} [#${activeProf.id}] في لوحة مطاردي المدينة!` : `🎯 Live $25,000 Bounty escrowed on ${activeProf.name} [#${activeProf.id}] on the City Hitlist!` });
+            });
+            return;
+          }
           this.p.cash -= 25000;
           this.save();
           this.syncOmarAction('social.bounty', activeProf.id, 25000);
@@ -5338,10 +5779,28 @@ class Component extends DCLogic {
         select: () => this.setState({ omarChatTab: ch.id })
       })),
       isNotesTab: chatTab === 'notes',
-      activeChatMessages: (chatHistory[chatTab] || chatHistory.global || []).map(cm => ({
-        ...cm,
-        openSender: () => this.setState({ omarProfileOpen: true, omarProfileId: cm.senderId || '1048' })
-      })),
+      activeChatMessages: (() => {
+        const serverChan = ['global', 'faction', 'private', 'trade'].includes(chatTab) ? chatTab : 'global';
+        const serverRows = Array.isArray(this.socialState?.chat?.[serverChan]) ? this.socialState.chat[serverChan] : [];
+        const baseRows = chatHistory[chatTab] || chatHistory.global || [];
+        const merged = serverRows.length ? [...baseRows.slice(-4), ...serverRows.map(sr => ({
+          id: sr.id,
+          time: sr.time || clock,
+          sender: sr.sender || 'Operative',
+          senderId: String(sr.senderId || '1048').slice(0, 8),
+          text: sr.text || ''
+        }))] : baseRows;
+        const seen = new Set();
+        return merged.filter(cm => {
+          const sig = `${cm.sender}:${cm.text}:${cm.time}`;
+          if (seen.has(sig)) return false;
+          seen.add(sig);
+          return true;
+        }).slice(-24).map(cm => ({
+          ...cm,
+          openSender: () => this.setState({ omarProfileOpen: true, omarProfileId: cm.senderId || '1048' })
+        }));
+      })(),
       chatDraft: this.state.omarChatDraft || '',
       chatPlaceholder: lang === 'ar' ? 'اكتب رسالة في القناة الحالية...' : 'Type message in active channel...',
       sendChatLabel: lang === 'ar' ? 'إرسال' : 'Send',
@@ -5350,10 +5809,15 @@ class Component extends DCLogic {
         const txt = String(this.state.omarChatDraft || '').trim();
         if (!txt) return;
         const chan = chatTab === 'notes' ? 'global' : chatTab;
+        const serverChan = ['global', 'faction', 'private', 'trade'].includes(chan) ? chan : 'global';
         this.p.chatHistory = { ...chatHistory, [chan]: [...(chatHistory[chan] || []), { time: clock, sender: view.t.player, senderId: playerNumericId, text: txt }] };
         this.setState({ omarChatDraft: '' });
         this.save();
-        this.syncOmarAction('social.chat', `${chan}:${txt}`);
+        if (this.gameplayReady && !this.gameplayDisabled()) {
+          this.runSocialAction({ action: 'chat.send', channel: serverChan, message: txt });
+        } else {
+          this.syncOmarAction('social.chat', `${chan}:${txt}`);
+        }
       },
       notesText: this.state.omarNotesDraft !== undefined ? this.state.omarNotesDraft : (this.p.personalNotes || (lang === 'ar' ? '• أهداف الباونتي والنشل: Mohammed [#1048]، Duke_X [#1337]\n• تذكير: جمع دبدوب الجمل من دبي + دبدوب الحرس من لندن لاستبدالها بـ +10 بوينت في المتحف.' : '• Target List: Mohammed [#1048], Duke_X [#1337]\n• Reminder: Collect Dubai Camel Plushie + UK Bear to trade full set at Museum for +10 Points.')),
       notesPlaceholder: lang === 'ar' ? 'اكتب ملاحظاتك، أرقام أهدافك #ID، أو مؤقتات المستشفى...' : 'Write target #IDs, hospital timers, or trade notes...',
@@ -5786,27 +6250,21 @@ class Component extends DCLogic {
           this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', lang === 'ar' ? '100% صحة' : '100% HP');
         }
       })),
-      casinoTornTitle: lang === 'ar' ? 'طاولات الرهان العالي: المراهنات الرياضية، الروليت الروسي، وعجلة الحظ' : 'High-Stakes Syndicate Tables: Sportsbook, Russian Roulette & High-Roller Wheel',
+      casinoTornTitle: lang === 'ar' ? 'طاولات الرهان السريع المعتمدة على الخادم: الجائزة الكبرى، الروليت، والرهان العالي' : 'Quick-Launch Server-Settled Action: High-Roller Spin, Roulette & Bookie Stakes',
       casinoTornGames: [
-        { id: 'wheel', game: lang === 'ar' ? 'عجلة كبار المقامرين ($1M للدورة)' : 'High-Roller Wheel ($1M Spin)', odds: lang === 'ar' ? 'جزيرة خاصة / $2.5M / نقاط شحن' : 'Private Island / $2.5M / Syndicate Points', win: 65000 },
-        { id: 'rr', game: lang === 'ar' ? 'الروليت الروسي (6 غرف وجهاً لوجه)' : 'Russian Roulette (6-Chamber PvP)', odds: lang === 'ar' ? 'مضاعف 2.00x · نجاة 5/6 غرف' : '2.00x Pot · 5/6 Survival Chamber', win: 50000 },
-        { id: 'bookie', game: lang === 'ar' ? 'مكتب المراهنات الرياضية للنقابة' : 'Syndicate Sportsbook (Live Parlay)', odds: lang === 'ar' ? 'عائد 2.45x للرهان المركب' : '2.45x Underground Match Parlay', win: 48000 },
-        { id: 'slots', game: lang === 'ar' ? 'ماكينات الجائزة الكبرى التراكمية' : 'Progressive Syndicate Jackpot Slots', odds: lang === 'ar' ? 'جائزة كبرى $1.42B · التاج الثلاثي' : '$1.42B Progressive Pool · Triple Crown', win: 35000 }
+        { id: 'wheel', game: lang === 'ar' ? 'دورة كبار المقامرين ($25,000 على الخادم)' : 'High-Roller Jackpot Spin ($25,000)', odds: lang === 'ar' ? 'تسوية فورية على الخادم · الجائزة التراكمية' : 'Live Server Settlement · Progressive Pool' },
+        { id: 'rr', game: lang === 'ar' ? 'رهان الدزينة الأولى العالي (2:1)' : 'First-Dozen High Risk Wager (2:1)', odds: lang === 'ar' ? 'عائد 2:1 على عجلة الروليت المعتمدة' : '2:1 Payout · Server Roulette Wheel' },
+        { id: 'bookie', game: lang === 'ar' ? 'رهان اللون الأحمر السريع (1:1)' : 'Syndicate Red-Line Quick Bet (1:1)', odds: lang === 'ar' ? 'تسوية نقدية فورية من رصيدك المحفوظ' : '1:1 Live Cash Settlement on Server' },
+        { id: 'slots', game: lang === 'ar' ? 'ماكينات الجائزة الكبرى ($5,000)' : 'Progressive Syndicate Slots ($5,000)', odds: lang === 'ar' ? 'مضاعف حتى ×50 + وعاء الجائزة الكبرى' : 'Up to 50x + Live Progressive Jackpot' }
       ].map(cg => ({
         ...cg,
-        btn: lang === 'ar' ? 'رهان / تدوير' : 'Play Now',
+        btn: lang === 'ar' ? 'رهان حي' : 'Spin Live',
         play: () => {
           this.playTacticalSfx('crime');
-          if (cg.id === 'rr' && Math.random() < (1 / 6)) {
-            this.p.hospUntil = Date.now() + 900000;
-            this.save();
-            this.syncOmarAction('torn.casinoPlay', 'rr_shot');
-            return this.result('bad', cg.game, lang === 'ar' ? 'انطلقت الرصاصة في الغرفة السادسة! تم نقلك للمستشفى (15 دقيقة).' : 'Chamber 6 fired! Emergency medevac to Hospital (15m).', lang === 'ar' ? 'غرفة 1/6' : '1/6 Chamber');
-          }
-          this.p.cash = Number(this.p.cash || 0) + cg.win;
-          this.save();
-          this.syncOmarAction('torn.casinoPlay', cg.id);
-          this.result('cash', cg.game, cg.odds, '+' + money(cg.win));
+          if (cg.id === 'wheel') return this.spinSlots(25000);
+          if (cg.id === 'rr') { this.setState({ rouletteStake: 5000 }, () => this.spinRoulette('dozen1')); return; }
+          if (cg.id === 'bookie') { this.setState({ rouletteStake: 1000 }, () => this.spinRoulette('red')); return; }
+          return this.spinSlots(5000);
         }
       })),
       hofBannersTitle: lang === 'ar' ? 'الأوسمة المنقوشة وميداليات الشرف للنقابة' : 'Engraved Syndicate Honor Bars & Service Commendations',
@@ -6046,6 +6504,329 @@ class Component extends DCLogic {
     if (screen === 'elimination') view.subtitle = lang === 'ar' ? 'الموسم الأسبوعي للعائلات. ترتيب حقيقي من الأنشطة المسجلة.' : 'Weekly family season. Real standings from recorded activities.';
     view.topLinks = ['education', 'newspaper', 'faction', 'account', 'hof'].filter(destination => destination === 'account' || SCREENS.includes(destination)).map(destination => ({ label: destination === 'account' ? (lang === 'ar' ? 'الحساب' : 'Account') : destination === 'newspaper' ? view.bulletin.title : t.nav[destination], go: () => destination === 'account' ? window.location.href = view.accountHref : this.go(destination) }));
     if (screen === 'crimes') view.tutText = lang === 'ar' ? 'كل نجاح يزيد مهارة الجريمة. الجرأة هي التكلفة. بعض حالات الفشل تسبب السجن أو المستشفى؛ وتفتح خبرة الجريمة فئات أصعب.' : 'Each success increases that crime\'s skill. Nerve is the cost. Some failures cause jail or hospitalization; crime experience unlocks harder categories.';
+    const acctClaimed = Boolean(this.accountStatus?.claimed);
+    view.accountSync = {
+      claimed: acctClaimed,
+      bg: acctClaimed ? 'rgba(57,231,163,.1)' : 'rgba(214,167,86,.1)',
+      border: acctClaimed ? 'rgba(57,231,163,.4)' : 'rgba(214,167,86,.4)',
+      fg: acctClaimed ? 'var(--acc)' : 'var(--gold)',
+      badge: acctClaimed
+        ? (lang === 'ar' ? '✓ متزامن عبر الأجهزة' : '✓ Cross-Device Synced')
+        : (lang === 'ar' ? '⚡ جلسة ضيف · احفظ حسابك' : '⚡ Guest Session · Claim Account'),
+      sub: acctClaimed
+        ? ((this.accountStatus?.username || view.t.player) + (lang === 'ar' ? ' · محمي بكلمة مرور' : ' · Passphrase protected'))
+        : (lang === 'ar' ? 'اضغط لتوليد رمز استرداد والمزامنة' : 'Tap to generate recovery key & sync')
+    };
+    const casinoLocked = this.gameplayDisabled() || this.blocked() || !screenEngineAvailable('casino');
+    const suitSymbols = { S: '♠', H: '♥', D: '♦', C: '♣' };
+    const formatBjCard = card => {
+      if (!card || card.hidden) return { label: '🂠', bg: '#182230', border: 'var(--border3)', fg: 'var(--gold)' };
+      const isRed = card.suit === 'H' || card.suit === 'D';
+      return {
+        label: String(card.rank || '?') + (suitSymbols[card.suit] || ''),
+        bg: '#f7f4eb',
+        border: isRed ? '#c74a3a' : '#2a3442',
+        fg: isRed ? '#b82518' : '#11161d'
+      };
+    };
+    const bjState = this.blackjackTable || {};
+    const bjPlaying = bjState.status === 'playing';
+    const bjStake = Number(this.state.bjStake || 1000);
+    const bjDealerCards = Array.isArray(bjState.dealerCards) && bjState.dealerCards.length
+      ? bjState.dealerCards.map(formatBjCard)
+      : [formatBjCard({ hidden: true }), formatBjCard({ hidden: true })];
+    const bjPlayerCards = Array.isArray(bjState.playerCards) && bjState.playerCards.length
+      ? bjState.playerCards.map(formatBjCard)
+      : [formatBjCard({ rank: 'A', suit: 'S' }), formatBjCard({ rank: 'K', suit: 'D' })];
+    const rouletteState = this.rouletteTable || {};
+    const rouletteStake = Number(this.state.rouletteStake || 1000);
+    const pocketColorBg = color => color === 'green' ? '#1b8a4b' : color === 'red' ? '#b83227' : '#1e2633';
+    const rouletteHistory = (Array.isArray(rouletteState.recentSpins) && rouletteState.recentSpins.length
+      ? rouletteState.recentSpins
+      : [{ pocket: 17, color: 'black' }, { pocket: 7, color: 'red' }, { pocket: 0, color: 'green' }, { pocket: 24, color: 'black' }]
+    ).slice(0, 8).map(sp => ({ pocket: sp.pocket, bg: pocketColorBg(sp.color) }));
+    const slotsState = this.slotsTable || {};
+    const slotsStake = Number(this.state.slotsStake || 1000);
+    const slotMeta = {
+      DIAMOND: { glyph: '💎', en: 'Diamond', ar: 'ألماس' },
+      SEVEN: { glyph: '7️⃣', en: 'Lucky 7', ar: 'سبعة' },
+      GOLD_BAR: { glyph: '🪙', en: 'Gold Bar', ar: 'سبيكة' },
+      CROWN: { glyph: '👑', en: 'Crown', ar: 'تاج' },
+      CHIP: { glyph: '🎰', en: 'Chip', ar: 'فيشة' },
+      CHERRY: { glyph: '🍒', en: 'Cherry', ar: 'كرز' }
+    };
+    const slotReelsRaw = Array.isArray(slotsState.reels) && slotsState.reels.length === 3 ? slotsState.reels : ['SEVEN', 'CROWN', 'DIAMOND'];
+    view.casinoPit = {
+      title: lang === 'ar' ? 'صالة طاولات الكازينو التفاعلية المعتمدة على الخادم' : 'Live Server-Settled Syndicate Casino Pit',
+      subtitle: lang === 'ar' ? 'بلاك جاك 21 متعددة الخطوات · الروليت الأوروبي 0-36 · ماكينات الجائزة الكبرى التراكمية' : 'Multi-step 52-card Blackjack 21 · European Roulette 0-36 · Progressive Jackpot Slots',
+      refreshLabel: lang === 'ar' ? 'مزامنة الطاولات' : 'Sync Tables',
+      busy: Boolean(this.casinoTablesBusy || this.bjBusy || this.rouletteBusy || this.slotsBusy) || IS_PREVIEW,
+      refresh: () => this.loadCasinoTables(),
+      bj: {
+        title: lang === 'ar' ? 'بلاك جاك 21 (حذاء 52 ورقة)' : 'Blackjack 21 (52-Card Shoe)',
+        payoutBadge: lang === 'ar' ? 'بلاك جاك 3:2 · الموزع يقف عند 17' : 'Natural 3:2 · Dealer stands 17',
+        dealerLabel: lang === 'ar' ? 'يد الموزع' : 'Dealer Hand',
+        playerLabel: lang === 'ar' ? 'يدك الحالية' : 'Your Hand',
+        dealerTotalLabel: bjState.status ? (bjPlaying ? '??' : String(bjState.dealerHand?.total ?? '-')) : '-',
+        playerTotalLabel: bjState.status ? String(bjState.playerHand?.total ?? '-') : '-',
+        dealerCards: bjDealerCards,
+        playerCards: bjPlayerCards,
+        stakes: [1000, 5000, 25000].map(amt => ({
+          label: money(amt),
+          bg: bjStake === amt ? 'var(--activebg)' : 'var(--btn)',
+          fg: bjStake === amt ? 'var(--activefg)' : 'var(--t3)',
+          pick: () => this.setState({ bjStake: amt })
+        })),
+        dealLabel: lang === 'ar' ? 'توزيع' : 'Deal',
+        hitLabel: lang === 'ar' ? 'سحب' : 'Hit',
+        standLabel: lang === 'ar' ? 'وقوف' : 'Stand',
+        doubleLabel: lang === 'ar' ? 'مضاعفة' : 'Double',
+        dealDisabled: casinoLocked || !!this.bjBusy || bjPlaying || Number(p.cash || 0) < bjStake,
+        hitDisabled: casinoLocked || !!this.bjBusy || !bjPlaying || !bjState.canHit,
+        standDisabled: casinoLocked || !!this.bjBusy || !bjPlaying || !bjState.canStand,
+        doubleDisabled: casinoLocked || !!this.bjBusy || !bjPlaying || !bjState.canDouble || Number(p.cash || 0) < Number(bjState.bet || bjStake),
+        deal: () => this.playBlackjackAction('deal'),
+        hit: () => this.playBlackjackAction('hit'),
+        stand: () => this.playBlackjackAction('stand'),
+        double: () => this.playBlackjackAction('double'),
+        statusMsg: this.bjBusy
+          ? (lang === 'ar' ? 'جارٍ توزيع الأوراق على الخادم...' : 'Settling hand on server...')
+          : bjPlaying
+            ? (lang === 'ar' ? `اليد جارية برهان ${money(bjState.bet || bjStake)} · اختر سحب أو وقوف أو مضاعفة.` : `Hand active (${money(bjState.bet || bjStake)}) · Choose Hit, Stand, or Double.`)
+            : bjState.status === 'settled'
+              ? (bjState.result === 'win'
+                ? (lang === 'ar' ? `فوز معتمد! صافي الربح +${money(Math.abs(Number(bjState.delta || 0)))}` : `Verified win! Net +${money(Math.abs(Number(bjState.delta || 0)))}`)
+                : bjState.result === 'lose'
+                  ? (lang === 'ar' ? `خسرت اليد (${money(Math.abs(Number(bjState.delta || 0)))}).` : `Dealer won (${money(Math.abs(Number(bjState.delta || 0)))}).`)
+                  : (lang === 'ar' ? 'تعادل · تم إرجاع الرهان بالكامل.' : 'Push · Full stake returned.'))
+              : (lang === 'ar' ? 'اختر قيمة الرهان واضغط توزيع لبدء جولة حقيقية.' : 'Select a stake and press Deal to start a live hand.')
+      },
+      roulette: {
+        title: lang === 'ar' ? 'الروليت الأوروبي (صفر مفرد)' : 'European Roulette (Single Zero)',
+        pocketLabel: rouletteState.pocket !== undefined && rouletteState.pocket !== null ? String(rouletteState.pocket) : '0',
+        pocketBg: pocketColorBg(rouletteState.color || 'green'),
+        recentLabel: lang === 'ar' ? 'آخر النتائج على الطاولة' : 'Recent Wheel Spins',
+        history: rouletteHistory,
+        stakes: [1000, 5000, 25000].map(amt => ({
+          label: money(amt),
+          bg: rouletteStake === amt ? 'var(--activebg)' : 'var(--btn)',
+          fg: rouletteStake === amt ? 'var(--activefg)' : 'var(--t3)',
+          pick: () => this.setState({ rouletteStake: amt })
+        })),
+        boardBets: [
+          { id: 'red', type: 'red', num: null, label: lang === 'ar' ? 'أحمر 1:1' : 'Red 1:1', bg: '#7a221b', fg: '#fff' },
+          { id: 'black', type: 'black', num: null, label: lang === 'ar' ? 'أسود 1:1' : 'Black 1:1', bg: '#1a222d', fg: '#fff' },
+          { id: 'zero', type: 'straight', num: 0, label: lang === 'ar' ? 'صفر 35:1' : '0 (35:1)', bg: '#16653a', fg: '#fff' },
+          { id: 'even', type: 'even', num: null, label: lang === 'ar' ? 'زوجي 1:1' : 'Even 1:1', bg: 'var(--btn)', fg: 'var(--t1)' },
+          { id: 'odd', type: 'odd', num: null, label: lang === 'ar' ? 'فردي 1:1' : 'Odd 1:1', bg: 'var(--btn)', fg: 'var(--t1)' },
+          { id: 'n7', type: 'straight', num: 7, label: '#7 (35:1)', bg: 'var(--btn)', fg: 'var(--gold)' },
+          { id: 'low', type: 'low', num: null, label: '1-18 (1:1)', bg: 'var(--btn)', fg: 'var(--t2)' },
+          { id: 'high', type: 'high', num: null, label: '19-36 (1:1)', bg: 'var(--btn)', fg: 'var(--t2)' },
+          { id: 'n17', type: 'straight', num: 17, label: '#17 (35:1)', bg: 'var(--btn)', fg: 'var(--gold)' },
+          { id: 'dozen1', type: 'dozen1', num: null, label: lang === 'ar' ? 'دزينة 1 (2:1)' : '1st 12 (2:1)', bg: 'var(--btn)', fg: 'var(--acc)' },
+          { id: 'dozen2', type: 'dozen2', num: null, label: lang === 'ar' ? 'دزينة 2 (2:1)' : '2nd 12 (2:1)', bg: 'var(--btn)', fg: 'var(--acc)' },
+          { id: 'dozen3', type: 'dozen3', num: null, label: lang === 'ar' ? 'دزينة 3 (2:1)' : '3rd 12 (2:1)', bg: 'var(--btn)', fg: 'var(--acc)' }
+        ].map(b => ({
+          ...b,
+          disabled: casinoLocked || !!this.rouletteBusy || Number(p.cash || 0) < rouletteStake,
+          spin: () => this.spinRoulette(b.type, b.num)
+        })),
+        statusMsg: this.rouletteBusy
+          ? (lang === 'ar' ? 'العجلة تدور على الخادم...' : 'Spinning wheel on server...')
+          : rouletteState.result
+            ? (rouletteState.result === 'win'
+              ? (lang === 'ar' ? `الخانة ${rouletteState.pocket} · فوز +${money(Math.abs(Number(rouletteState.delta || 0)))}!` : `Pocket ${rouletteState.pocket} · Won +${money(Math.abs(Number(rouletteState.delta || 0)))}!`)
+              : (lang === 'ar' ? `الخانة ${rouletteState.pocket} · لم يحالفك الحظ (${money(Math.abs(Number(rouletteState.delta || 0)))}).` : `Pocket ${rouletteState.pocket} · Missed (${money(Math.abs(Number(rouletteState.delta || 0)))}).`))
+            : (lang === 'ar' ? 'اختر قيمة الرهان واضغط على أي خانة لتدوير العجلة فوراً.' : 'Pick your stake and click any board wager to spin.')
+      },
+      slots: {
+        title: lang === 'ar' ? 'ماكينات الجائزة الكبرى' : 'Syndicate Jackpot Slots',
+        paytableHint: lang === 'ar' ? '3 ألماسات = الجائزة الكبرى' : '3x Diamond = Jackpot',
+        jackpotLabel: lang === 'ar' ? 'وعاء الجائزة الكبرى التراكمي المشترك' : 'Shared Progressive Jackpot Pool',
+        jackpotText: money(Number(slotsState.jackpotPool || 250000)),
+        lastWinnerLabel: slotsState.lastWinner?.username
+          ? (lang === 'ar' ? `آخر فائز بالجائزة: ${slotsState.lastWinner.username} (${money(slotsState.lastWinner.payout || 0)})` : `Last jackpot: ${slotsState.lastWinner.username} (${money(slotsState.lastWinner.payout || 0)})`)
+          : (lang === 'ar' ? 'تزداد الجائزة الكبرى بنسبة 12% من كل دورة على الخادم' : 'Pool grows +12% on every spin across Zone City'),
+        reels: slotReelsRaw.map(sym => {
+          const m = slotMeta[sym] || slotMeta.CHIP;
+          return { glyph: m.glyph, name: lang === 'ar' ? m.ar : m.en };
+        }),
+        stakes: [500, 1000, 5000, 25000].map(amt => ({
+          label: money(amt),
+          bg: slotsStake === amt ? 'var(--activebg)' : 'var(--btn)',
+          fg: slotsStake === amt ? 'var(--activefg)' : 'var(--t3)',
+          pick: () => this.setState({ slotsStake: amt })
+        })),
+        spinLabel: this.slotsBusy
+          ? (lang === 'ar' ? 'جارٍ التدوير...' : 'Spinning...')
+          : (lang === 'ar' ? `تدوير البكرات · ${money(slotsStake)}` : `Spin Reels · ${money(slotsStake)}`),
+        disabled: casinoLocked || !!this.slotsBusy || Number(p.cash || 0) < slotsStake,
+        spin: () => this.spinSlots(),
+        statusMsg: slotsState.result
+          ? (slotsState.result === 'win'
+            ? (lang === 'ar' ? `تطابق فائز ×${slotsState.multiplier}! العائد +${money(Math.abs(Number(slotsState.delta || 0)))}` : `Winning ${slotsState.multiplier}x line! Net +${money(Math.abs(Number(slotsState.delta || 0)))}`)
+            : (lang === 'ar' ? 'لا تطابق في هذه الدورة · ارتفع رصيد الجائزة الكبرى.' : 'No line match · Progressive jackpot pool grew.'))
+          : (lang === 'ar' ? 'ثلاث سبعات ×25 · ثلاثة تيجان ×12 · أي زوج متطابق ×2' : '3x Seven = 25x · 3x Crown = 12x · Any pair = 2x')
+      }
+    };
+    const soc = this.socialState || {};
+    const socialLocked = this.gameplayDisabled() || !!this.socialActionBusy;
+    const categoryColors = { BOUNTY: '#ff8a7a', HITLIST: '#ff5d6c', COMBAT: 'var(--gold)', CRIME: 'var(--acc)', CASINO: '#f5c451', TRAVEL: 'var(--link)', CITY: 'var(--t3)' };
+    const chronicleRows = Array.isArray(soc.chronicle) && soc.chronicle.length
+      ? soc.chronicle.slice(0, 14).map(row => ({
+          category: row.category || 'CITY',
+          accent: categoryColors[row.category] || 'var(--acc)',
+          time: row.time || clock,
+          headline: lang === 'ar' ? (row.headlineAr || row.headlineEn || '') : (row.headlineEn || row.headlineAr || '')
+        }))
+      : view.news.map(n => ({ category: 'CITY', accent: 'var(--gold)', time: n.meta, headline: n.h }));
+    const activeBounties = Array.isArray(soc.bounties?.active) ? soc.bounties.active : [];
+    const bountyStake = Number(this.state.bountyStake || 15000);
+    const bountyTargetDraft = String(this.state.bountyTargetDraft || '');
+    const bountyReasonDraft = String(this.state.bountyReasonDraft || '');
+    const mailFolder = this.state.mailFolder === 'sent' ? 'sent' : 'inbox';
+    const rawMailRows = Array.isArray(soc.mail?.[mailFolder]) ? soc.mail[mailFolder] : [];
+    const mailRecipientDraft = String(this.state.mailRecipientDraft || '');
+    const mailSubjectDraft = String(this.state.mailSubjectDraft || '');
+    const mailBodyDraft = String(this.state.mailBodyDraft || '');
+    const candidateNames = [];
+    for (const row of [...(this.leaderboard?.rows || []), ...activeBounties.map(b => ({ username: b.targetName })), ...(soc.chat?.global || []).map(c => ({ username: c.sender }))]) {
+      const uname = String(row?.username || '').trim();
+      if (uname && uname !== p.username && !candidateNames.includes(uname)) candidateNames.push(uname);
+      if (candidateNames.length >= 4) break;
+    }
+    view.syndicateHub = {
+      title: lang === 'ar' ? 'مركز استخبارات المدينة ولوحة العقود والبريد المشفر' : 'Zone City Live Chronicle, Shared Hitlist & Direct Mail',
+      subtitle: lang === 'ar' ? 'أحداث اللاعبين الحية من قاعدة البيانات · عقود باونتي بضمان نقدي حقيقي · رسائل خاصة بين اللاعبين' : 'Real-time cross-player chronicle · Escrowed PvP hitlist bounties · Encrypted player-to-player dispatches',
+      refreshLabel: lang === 'ar' ? 'تحديث مباشر' : 'Live Refresh',
+      busy: Boolean(this.socialBusy || this.socialActionBusy) || IS_PREVIEW,
+      refresh: () => this.loadSocial(true),
+      chronicleTitle: lang === 'ar' ? 'وقائع مدينة زون المباشرة' : 'Live City Chronicle',
+      chronicleBadge: lang === 'ar' ? 'مباشر من الخادم' : 'LIVE FEED',
+      chronicle: chronicleRows,
+      bountyTitle: lang === 'ar' ? 'لوحة مطاردي الجوائز (Hitlist)' : 'Shared City Hitlist',
+      totalEscrowText: (lang === 'ar' ? 'الضمان المحجوز: ' : 'Escrow: ') + money(Number(soc.bounties?.totalEscrowCash || 0)),
+      bounties: activeBounties.map(b => ({
+        id: b.id,
+        targetName: b.targetName,
+        levelBadge: (lang === 'ar' ? 'مستوى ' : 'Lv.') + Number(b.targetLevel || 1),
+        reason: lang === 'ar' ? (b.reasonAr || b.reasonEn || '') : (b.reasonEn || b.reasonAr || ''),
+        rewardText: money(Number(b.rewardCash || 0)),
+        placedByLabel: (lang === 'ar' ? 'بواسطة ' : 'By ') + (b.placedByName || 'Syndicate'),
+        claimLabel: lang === 'ar' ? 'مطاردة (15 طاقة)' : 'Hunt (15E)',
+        claimDisabled: socialLocked || this.blocked() || energyNow < 15 || b.canClaim === false,
+        claim: () => {
+          this.runSocialAction({ action: 'bounty.claim', bountyId: b.id }).then(res => {
+            if (!res) return;
+            if (res.won) {
+              this.playTacticalSfx('cash');
+              this.toast(lang === 'ar' ? `🎯 تم تحصيل عقد الباونتي ضد ${b.targetName}! استلمت +${money(res.rewardCash || 0)}.` : `🎯 Bounty claimed on ${b.targetName}! Collected +${money(res.rewardCash || 0)}!`);
+            } else {
+              this.toast(lang === 'ar' ? `صدّ ${b.targetName} محاولة الاغتيال (-${res.lifeLost || 0} صحة). العقد لا يزال مفتوحاً!` : `${b.targetName} repelled your hit (-${res.lifeLost || 0} HP). Contract stays live!`, true);
+            }
+          });
+        }
+      })),
+      bountiesEmpty: activeBounties.length === 0,
+      bountiesEmptyLabel: lang === 'ar' ? 'لا توجد عقود مطاردة مفتوحة حالياً. ضع أول عقد باونتي بالأسفل.' : 'No active hit contracts on the board. Escrow the first bounty below.',
+      postBountyHeading: lang === 'ar' ? 'إصدار عقد مطاردة جديد (يُحجز المبلغ فوراً)' : 'Post Escrowed Hit Contract',
+      bountyTarget: bountyTargetDraft,
+      bountyTargetPlaceholder: lang === 'ar' ? 'اسم اللاعب الهدف أو معرفه...' : 'Target username or ID...',
+      onBountyTarget: e => this.setState({ bountyTargetDraft: e.target.value }),
+      bountyStakes: [5000, 15000, 25000].map(amt => ({
+        label: money(amt),
+        bg: bountyStake === amt ? 'var(--activebg)' : 'var(--btn)',
+        fg: bountyStake === amt ? 'var(--activefg)' : 'var(--t3)',
+        pick: () => this.setState({ bountyStake: amt })
+      })),
+      bountyReason: bountyReasonDraft,
+      bountyReasonPlaceholder: lang === 'ar' ? 'سبب الاستهداف (اختياري)...' : 'Contract reason (optional)...',
+      onBountyReason: e => this.setState({ bountyReasonDraft: e.target.value }),
+      postBountyLabel: lang === 'ar' ? `رصد باونتي · ${money(bountyStake)}` : `Place Bounty · ${money(bountyStake)}`,
+      postBountyDisabled: socialLocked || this.blocked() || !bountyTargetDraft.trim() || Number(p.cash || 0) < bountyStake,
+      postBounty: () => {
+        const target = bountyTargetDraft.trim();
+        if (!target) return;
+        this.runSocialAction({
+          action: 'bounty.place',
+          target,
+          rewardCash: bountyStake,
+          reason: bountyReasonDraft.trim() || (lang === 'ar' ? 'تصفية حسابات النقابة' : 'Unpaid syndicate debt')
+        }).then(res => {
+          if (res) {
+            this.setState({ bountyTargetDraft: '', bountyReasonDraft: '' });
+            this.toast(lang === 'ar' ? `تم رصد مكافأة ${money(bountyStake)} على لوحة المدينة!` : `Escrowed ${money(bountyStake)} bounty on the City Hitlist!`);
+          }
+        });
+      },
+      mailTitle: lang === 'ar' ? 'البريد السري المشفر' : 'Encrypted Direct Mail',
+      unreadBadge: (lang === 'ar' ? 'غير مقروء: ' : 'Unread: ') + Number(soc.mail?.unreadCount || 0),
+      inboxTabLabel: (lang === 'ar' ? 'الوارد' : 'Inbox') + ` (${(soc.mail?.inbox || []).length})`,
+      sentTabLabel: (lang === 'ar' ? 'الصادر' : 'Sent') + ` (${(soc.mail?.sent || []).length})`,
+      inboxTabBg: mailFolder === 'inbox' ? 'var(--activebg)' : 'var(--btn)',
+      inboxTabFg: mailFolder === 'inbox' ? 'var(--activefg)' : 'var(--t3)',
+      sentTabBg: mailFolder === 'sent' ? 'var(--activebg)' : 'var(--btn)',
+      sentTabFg: mailFolder === 'sent' ? 'var(--activefg)' : 'var(--t3)',
+      openInbox: () => this.setState({ mailFolder: 'inbox' }),
+      openSent: () => this.setState({ mailFolder: 'sent' }),
+      mailRows: rawMailRows.map(m => ({
+        id: m.id,
+        border: !m.read && mailFolder === 'inbox' ? 'var(--acc)' : 'var(--border2)',
+        fromOrTo: mailFolder === 'inbox'
+          ? ((lang === 'ar' ? 'من: ' : 'From: ') + (m.senderName || 'Operative'))
+          : ((lang === 'ar' ? 'إلى: ' : 'To: ') + (m.recipientName || 'Operative')),
+        timeLabel: m.timeLabel || clock,
+        subject: m.subject || '',
+        body: m.body || '',
+        actionLabel: mailFolder === 'inbox' && !m.read
+          ? (lang === 'ar' ? 'تحديد كمقروء' : 'Mark Read')
+          : (lang === 'ar' ? 'رد سريع' : 'Reply'),
+        action: () => {
+          if (mailFolder === 'inbox' && !m.read) {
+            this.runSocialAction({ action: 'mail.read', mailId: m.id });
+          } else {
+            const replyTo = mailFolder === 'inbox' ? m.senderName : m.recipientName;
+            this.setState({ mailRecipientDraft: replyTo || '', mailSubjectDraft: 'Re: ' + String(m.subject || '').slice(0, 45) });
+          }
+        }
+      })),
+      mailEmpty: rawMailRows.length === 0,
+      mailEmptyLabel: mailFolder === 'inbox'
+        ? (lang === 'ar' ? 'صندوق الوارد فارغ حالياً.' : 'No encrypted dispatches in your inbox.')
+        : (lang === 'ar' ? 'لم ترسل أي برقيات بعد.' : 'No sent dispatches yet.'),
+      composeHeading: lang === 'ar' ? 'إرسال برقية خاصة للاعب آخر' : 'Send Direct Dispatch to Player',
+      quickRecipients: candidateNames.map(name => ({
+        label: '@' + name,
+        pick: () => this.setState({ mailRecipientDraft: name })
+      })),
+      mailRecipient: mailRecipientDraft,
+      mailRecipientPlaceholder: lang === 'ar' ? 'اسم اللاعب المستلم...' : 'Recipient username...',
+      onMailRecipient: e => this.setState({ mailRecipientDraft: e.target.value }),
+      mailSubject: mailSubjectDraft,
+      mailSubjectPlaceholder: lang === 'ar' ? 'عنوان الرسالة...' : 'Dispatch subject...',
+      onMailSubject: e => this.setState({ mailSubjectDraft: e.target.value }),
+      mailBody: mailBodyDraft,
+      mailBodyPlaceholder: lang === 'ar' ? 'اكتب نص البرقية المشفرة...' : 'Write message to operative...',
+      onMailBody: e => this.setState({ mailBodyDraft: e.target.value }),
+      sendMailLabel: lang === 'ar' ? 'إرسال البرقية' : 'Send Dispatch',
+      sendMailDisabled: socialLocked || !mailRecipientDraft.trim() || !mailBodyDraft.trim(),
+      sendMail: () => {
+        const recipient = mailRecipientDraft.trim();
+        const body = mailBodyDraft.trim();
+        if (!recipient || !body) return;
+        this.runSocialAction({
+          action: 'mail.send',
+          recipient,
+          subject: mailSubjectDraft.trim() || (lang === 'ar' ? 'برقية نقابة خاصة' : 'Syndicate Wire'),
+          body
+        }).then(res => {
+          if (res) {
+            this.setState({ mailSubjectDraft: '', mailBodyDraft: '' });
+            this.toast(lang === 'ar' ? `✉️ تم تسليم البرقية إلى ${res.recipient || recipient}.` : `✉️ Dispatch delivered to ${res.recipient || recipient}.`);
+          }
+        });
+      }
+    };
     view.characterFrameKey = 'character:' + (this.state.characterFrameEpoch || 0);
     return view;
   }

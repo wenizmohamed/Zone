@@ -27,7 +27,7 @@
       } });
     } catch (error) { clearTimeout(timer); throw error; }
   };
-  const playerPath = /^\/api\/v1\/(?:player|player-combat|player-market|family-activities|world|gameplay|combat|achievements|leaderboards|city\/map|territories|factions|crimes\/[^/]+\/attempt|gym|bank|hospital|travel|casino|jobs|attack|daily|notifications)(?:\/|$)/;
+  const playerPath = /^\/api\/v1\/(?:player|player-combat|player-market|family-activities|world|gameplay|combat|achievements|leaderboards|city\/map|territories|factions|crimes\/[^/]+\/attempt|gym|bank|hospital|travel|casino|social|jobs|attack|daily|notifications)(?:\/|$)/;
   const sessionExpired = () => {
     if (expired || (identity?.expiresAt && identity.expiresAt * 1000 <= Date.now())) {
       expired = true; document.documentElement.dataset.zonePlayerAccess = 'expired';
