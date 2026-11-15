@@ -1,0 +1,1557 @@
+/* ==========================================================================
+   ZONE — AAA CRIME SYNDICATE RPG SCREEN SURFACES (v125)
+   File: assets/ui/aaa-game-surfaces.css
+   Scope: Strictly #zone-main (all inner screens, cards, tables, CTAs, inputs,
+          and modals). Topbar & Sidebar remain owned by @carbon-hud-chrome.
+   Loaded AFTER: zone-design.css, zone-layout.css, district-compositions108.css,
+                 gym116.css, and noir-game-hud.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. SURFACE TOKENS (SCOPED TO #zone-main FOR DUAL-THEME PRECISION)
+   -------------------------------------------------------------------------- */
+html:not([data-theme="light"]) body #zone-main {
+  --ags-surface-1: #121a29;
+  --ags-surface-2: #0c121e;
+  --ags-surface-3: #080d16;
+  --ags-surface-elev: linear-gradient(180deg, rgba(20, 29, 45, 0.97) 0%, rgba(11, 16, 26, 0.99) 100%);
+  --ags-head-bg: linear-gradient(90deg, #19253a 0%, #101827 65%, #0d1421 100%);
+  --ags-border: rgba(110, 142, 192, 0.26);
+  --ags-border-strong: rgba(132, 166, 218, 0.4);
+  --ags-gold: #ebb858;
+  --ags-gold-soft: rgba(235, 184, 88, 0.34);
+  --ags-emerald: #39e7a3;
+  --ags-emerald-soft: rgba(57, 231, 163, 0.28);
+  --ags-crimson: #e05241;
+  --ags-ink-1: #f4f7fc;
+  --ags-ink-2: #d5dfee;
+  --ags-ink-3: #95a6c2;
+  --ags-row-bg: linear-gradient(90deg, rgba(16, 23, 36, 0.94) 0%, rgba(12, 17, 28, 0.94) 100%);
+  --ags-row-hover: linear-gradient(90deg, rgba(28, 42, 64, 0.97) 0%, rgba(17, 26, 41, 0.97) 100%);
+  --ags-panel-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 28px rgba(0, 0, 0, 0.44);
+}
+
+html[data-theme="light"] body #zone-main {
+  --ags-surface-1: #ffffff;
+  --ags-surface-2: #f6f0e4;
+  --ags-surface-3: #ece3d1;
+  --ags-surface-elev: linear-gradient(180deg, #ffffff 0%, #f7f1e5 100%);
+  --ags-head-bg: linear-gradient(90deg, #ede3d0 0%, #e4d7be 100%);
+  --ags-border: #cbb99b;
+  --ags-border-strong: #b39c76;
+  --ags-gold: #9e6710;
+  --ags-gold-soft: rgba(180, 120, 30, 0.32);
+  --ags-emerald: #0b7d4b;
+  --ags-emerald-soft: rgba(11, 125, 75, 0.24);
+  --ags-crimson: #b92b1d;
+  --ags-ink-1: #0f172a;
+  --ags-ink-2: #1e293b;
+  --ags-ink-3: #475569;
+  --ags-row-bg: linear-gradient(90deg, #ffffff 0%, #faf6ed 100%);
+  --ags-row-hover: linear-gradient(90deg, #f4ecdc 0%, #fcf9f2 100%);
+  --ags-panel-shadow: inset 0 1px 0 #ffffff, 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+html body #zone-main bdi,
+html body #zone-main [data-zfig] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   1. DEFEAT FLAT BUTTONS INSIDE #zone-main (3D TACTICAL GAME CTAs)
+      Defeats zone-layout.css:7,85,99,147 & district-compositions108.css:49,65,76,94,116
+   -------------------------------------------------------------------------- */
+html body #zone-main button {
+  font-weight: 700 !important;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Standard Tactile Action Buttons (excludes structural card/pin/row/chip buttons) */
+html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.035em !important;
+  border-radius: 5px !important;
+  clip-path: none !important;
+  transition:
+    transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease,
+    filter 160ms ease !important;
+}
+
+/* Dark Mode Secondary / Neutral Tactile Bevel */
+html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+  background: linear-gradient(180deg, #223049 0%, #121b2b 100%) !important;
+  border: 1px solid rgba(124, 156, 206, 0.36) !important;
+  color: #edf3fc !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -2px 0 rgba(4, 7, 14, 0.72),
+    0 3px 9px rgba(0, 0, 0, 0.42) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
+  background: linear-gradient(180deg, #2b3d5c 0%, #172338 100%) !important;
+  border-color: rgba(235, 184, 88, 0.62) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -2px 0 rgba(4, 7, 14, 0.75),
+    0 6px 14px rgba(0, 0, 0, 0.5),
+    0 0 12px rgba(235, 184, 88, 0.16) !important;
+}
+
+/* Day Mode Secondary / Neutral Tactile Bevel */
+html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+  background: linear-gradient(180deg, #ffffff 0%, #eae0cd 100%) !important;
+  border: 1px solid #b49f7b !important;
+  color: #0f172a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -2px 0 rgba(124, 99, 58, 0.26),
+    0 2px 6px rgba(15, 23, 42, 0.1) !important;
+}
+
+html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f5ebd8 100%) !important;
+  border-color: #9e6710 !important;
+  color: #0f172a !important;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -2px 0 rgba(158, 103, 16, 0.3),
+    0 5px 12px rgba(15, 23, 42, 0.14) !important;
+}
+
+/* Active / Selected Toggle Pill State ([aria-pressed="true"] or inline activebg) */
+html:not([data-theme="light"]) body #zone-main button:not(.zone-crime-choice):not(.zone-gym-station):not(.zone-crime-activity-nav button):not(.zone-mobile-tabbar *):is([aria-pressed="true"], [style*="activebg"]) {
+  background: linear-gradient(180deg, #1b4637 0%, #0f2920 100%) !important;
+  border: 1px solid #39e7a3 !important;
+  color: #7dffce !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(3, 24, 16, 0.75),
+    0 0 14px rgba(57, 231, 163, 0.24) !important;
+}
+
+html[data-theme="light"] body #zone-main button:not(.zone-crime-choice):not(.zone-gym-station):not(.zone-crime-activity-nav button):not(.zone-mobile-tabbar *):is([aria-pressed="true"], [style*="activebg"]) {
+  background: linear-gradient(180deg, #e3f8ef 0%, #c4eedb 100%) !important;
+  border: 1px solid #0c8551 !important;
+  color: #064e30 !important;
+  text-shadow: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 0 rgba(12, 133, 81, 0.22),
+    0 2px 8px rgba(12, 133, 81, 0.16) !important;
+}
+
+/* SIGNATURE SYNDICATE EMERALD/GOLD STRIKE CTA (.zone-action-primary) */
+html:not([data-theme="light"]) body #zone-main button.zone-action-primary,
+html:not([data-theme="light"]) body #zone-main button[style*="accFill1"] {
+  background: linear-gradient(180deg, #52f7b8 0%, #22bd7f 52%, #138a59 100%) !important;
+  border: 1px solid #85ffd0 !important;
+  border-radius: 5px !important;
+  color: #03170e !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 0 rgba(4, 48, 29, 0.75),
+    0 4px 14px rgba(34, 189, 127, 0.34) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main button.zone-action-primary:not(:disabled):hover,
+html:not([data-theme="light"]) body #zone-main button[style*="accFill1"]:not(:disabled):hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.06);
+  border-color: #f3ca74 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 -2px 0 rgba(4, 48, 29, 0.78),
+    0 7px 20px rgba(57, 231, 163, 0.48),
+    0 0 0 1px rgba(235, 184, 88, 0.38) !important;
+}
+
+html[data-theme="light"] body #zone-main button.zone-action-primary,
+html[data-theme="light"] body #zone-main button[style*="accFill1"] {
+  background: linear-gradient(180deg, #139a61 0%, #0b7346 58%, #075835 100%) !important;
+  border: 1px solid #064c2d !important;
+  border-radius: 5px !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.42) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -2px 0 rgba(2, 36, 21, 0.68),
+    0 4px 12px rgba(11, 115, 70, 0.28) !important;
+}
+
+html[data-theme="light"] body #zone-main button.zone-action-primary:not(:disabled):hover,
+html[data-theme="light"] body #zone-main button[style*="accFill1"]:not(:disabled):hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.07);
+  border-color: #b4781e !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 0 rgba(2, 36, 21, 0.72),
+    0 6px 16px rgba(11, 115, 70, 0.36),
+    0 0 0 1px rgba(180, 120, 30, 0.35) !important;
+}
+
+/* SIGNATURE CRIMSON HITMAN CTA (.zone-action-danger & attack red buttons) */
+html body #zone-main button.zone-action-danger,
+html body #zone-main button[style*="#c74a3a"]:not([data-roulette-bet]) {
+  background: linear-gradient(180deg, #ed5a48 0%, #c13022 55%, #8f1e13 100%) !important;
+  border: 1px solid #ff8b7d !important;
+  border-radius: 5px !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.58) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    inset 0 -2px 0 rgba(62, 9, 5, 0.8),
+    0 4px 14px rgba(208, 48, 34, 0.36) !important;
+}
+
+html body #zone-main button.zone-action-danger:not(:disabled):hover,
+html body #zone-main button[style*="#c74a3a"]:not([data-roulette-bet]):not(:disabled):hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.08);
+  border-color: #ffd0c9 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    inset 0 -2px 0 rgba(62, 9, 5, 0.82),
+    0 7px 20px rgba(237, 90, 72, 0.5) !important;
+}
+
+/* Tactile Active Press & Disabled Polish */
+html body #zone-main button:not(.zone-map-pin-btn):not(.zone-mobile-tabbar *):not(:disabled):active {
+  transform: translateY(1px) !important;
+}
+
+html body #zone-main button:disabled {
+  opacity: 0.46 !important;
+  cursor: not-allowed !important;
+  filter: saturate(0.45);
+  transform: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. CINEMATIC DISTRICT CHAPTER BANNER (.zone-page-heading)
+   -------------------------------------------------------------------------- */
+html body #zone-main .zone-page-heading {
+  min-height: 76px !important;
+  padding: 14px 18px !important;
+  border-radius: 8px !important;
+  position: relative;
+  overflow: hidden;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+html body #zone-main .zone-page-heading::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: 180px;
+  height: 2px;
+  background: linear-gradient(90deg, #ebb858 0%, #39e7a3 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-page-heading {
+  background-color: #0b101b !important;
+  background-image:
+    radial-gradient(circle at 14% 22%, rgba(235, 184, 88, 0.24) 0%, transparent 46%),
+    radial-gradient(circle at 88% 82%, rgba(57, 231, 163, 0.15) 0%, transparent 48%),
+    linear-gradient(96deg, rgba(7, 11, 19, 0.95) 0%, rgba(12, 19, 31, 0.85) 50%, rgba(8, 13, 22, 0.66) 100%),
+    var(--screen-art, none) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1px solid rgba(235, 184, 88, 0.34) !important;
+  border-inline-start: 4px solid #ebb858 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 14px 32px rgba(0, 0, 0, 0.56) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-page-heading {
+  background-color: #f8f3e7 !important;
+  background-image:
+    radial-gradient(circle at 12% 20%, rgba(209, 146, 32, 0.2) 0%, transparent 46%),
+    radial-gradient(circle at 88% 80%, rgba(14, 138, 84, 0.1) 0%, transparent 46%),
+    linear-gradient(96deg, rgba(253, 250, 243, 0.96) 0%, rgba(246, 239, 224, 0.91) 54%, rgba(236, 226, 204, 0.82) 100%),
+    var(--screen-art, none) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1px solid #c3a673 !important;
+  border-inline-start: 4px solid #b4781e !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 8px 22px rgba(15, 23, 42, 0.1) !important;
+}
+
+html body #zone-main .zone-page-heading h1 {
+  font: 800 26px/1.1 var(--zone-display) !important;
+  letter-spacing: 0.045em !important;
+  text-transform: uppercase !important;
+  position: relative;
+  z-index: 1;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-page-heading h1 {
+  color: #f8fafc !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.88), 0 0 24px rgba(235, 184, 88, 0.16) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-page-heading h1 {
+  color: #0f172a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+html body #zone-main .zone-page-heading > span {
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  position: relative;
+  z-index: 1;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-page-heading > span {
+  color: #cbd5e1 !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.82);
+}
+
+html[data-theme="light"] body #zone-main .zone-page-heading > span {
+  color: #334155 !important;
+}
+
+/* District Banner Tactical Action Pills (City / Tutorial) */
+html body #zone-main .zone-page-heading > div {
+  position: relative;
+  z-index: 1;
+  gap: 8px !important;
+}
+
+html body #zone-main .zone-page-heading > div > button {
+  min-height: 32px !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.055em !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-page-heading > div > button {
+  background: linear-gradient(180deg, rgba(28, 40, 62, 0.92) 0%, rgba(14, 21, 34, 0.96) 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.44) !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-page-heading > div > button {
+  background: linear-gradient(180deg, #ffffff 0%, #ede3cf 100%) !important;
+  border: 1px solid #b49a6d !important;
+  color: #0f172a !important;
+}
+
+html body #zone-main .zone-page-rule {
+  height: 2px !important;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--ags-gold) 0%, var(--ags-emerald) 36%, rgba(57, 231, 163, 0.14) 76%, transparent 100%) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. RPG MODULE PANELS, HEADINGS & HOME COMMAND DECK POLISH
+   -------------------------------------------------------------------------- */
+html body #zone-main .zone-panel {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 7px !important;
+  box-shadow: var(--ags-panel-shadow) !important;
+}
+
+/* Preserve flush seam when .zone-panel sits directly beneath a standalone .zone-panel-heading */
+html body #zone-main .zone-panel-heading + .zone-panel {
+  border-top: 0 !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+}
+
+/* Defeat zone-layout.css flat panel headings */
+html body #zone-main .zone-panel-heading,
+html body #zone-main [data-zhead] {
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+html body #zone-main .zone-panel-heading {
+  background: var(--ags-head-bg) !important;
+  color: var(--ags-ink-1) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-bottom: 2px solid var(--ags-emerald) !important;
+  border-radius: 7px 7px 0 0 !important;
+  padding: 9px 13px !important;
+  font-size: 11.5px !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+html body #zone-main .zone-panel > .zone-panel-heading {
+  border-top: 0 !important;
+  border-inline: 0 !important;
+}
+
+html body #zone-main .zone-overline {
+  font-weight: 800 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.11em !important;
+  text-transform: uppercase !important;
+  color: var(--ags-gold) !important;
+}
+
+/* Home Brief & Hideout Banner */
+html body #zone-main .zone-home-brief {
+  overflow: hidden;
+  border-color: var(--ags-border-strong) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-hideout-scene {
+  border-bottom: 1px solid rgba(235, 184, 88, 0.25);
+  box-shadow: inset 0 -36px 48px rgba(7, 11, 18, 0.82);
+}
+
+html[data-theme="light"] body #zone-main .zone-hideout-scene > div {
+  background: linear-gradient(90deg, rgba(253, 250, 243, 0.94) 0%, rgba(246, 239, 224, 0.84) 68%, rgba(246, 239, 224, 0.4) 100%) !important;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+html[data-theme="light"] body #zone-main .zone-hideout-scene strong {
+  color: #0f172a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-hideout-scene span:not(.zone-overline) {
+  color: #334155 !important;
+  text-shadow: none !important;
+}
+
+/* Home Vitals Resource Strip */
+html body #zone-main .zone-home-resource-strip button {
+  border-radius: 6px !important;
+  border: 1px solid var(--ags-border) !important;
+  background: var(--ags-row-bg) !important;
+  color: var(--ags-ink-1) !important;
+  padding: 8px 10px !important;
+  transition: transform 140ms ease, border-color 150ms ease, box-shadow 150ms ease !important;
+}
+
+html body #zone-main .zone-home-resource-strip button:not(:disabled):hover {
+  transform: translateY(-1px);
+  border-color: var(--ags-gold) !important;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.22);
+}
+
+/* TACTICAL QUICK-DEPLOY GAME TILES (.zone-quick-actions > button) */
+html body #zone-main .zone-quick-actions {
+  gap: 10px !important;
+}
+
+html body #zone-main .zone-quick-actions > button {
+  min-height: 64px !important;
+  padding: 10px 13px !important;
+  border-radius: 8px !important;
+  position: relative;
+  overflow: hidden;
+  font-weight: 800 !important;
+  transition:
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease !important;
+}
+
+/* Subtle tactical corner notch accent */
+html body #zone-main .zone-quick-actions > button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(225deg, rgba(235, 184, 88, 0.42) 0%, rgba(235, 184, 88, 0.42) 32%, transparent 34%);
+  pointer-events: none;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(57, 231, 163, 0.12) 0%, transparent 58%),
+    linear-gradient(180deg, #19253a 0%, #0e1624 100%) !important;
+  border: 1px solid rgba(124, 156, 206, 0.34) !important;
+  color: #f4f7fc !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -2px 0 rgba(4, 7, 14, 0.72),
+    0 8px 20px rgba(0, 0, 0, 0.42) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button:hover {
+  transform: translateY(-2px) !important;
+  border-color: #ebb858 !important;
+  background:
+    radial-gradient(circle at 0% 50%, rgba(235, 184, 88, 0.18) 0%, transparent 62%),
+    linear-gradient(180deg, #21314d 0%, #121c2e 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 12px 24px rgba(0, 0, 0, 0.52),
+    0 0 16px rgba(235, 184, 88, 0.2) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-quick-actions > button {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(11, 125, 75, 0.09) 0%, transparent 58%),
+    linear-gradient(180deg, #ffffff 0%, #efe6d5 100%) !important;
+  border: 1px solid #bfa983 !important;
+  color: #0f172a !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -2px 0 rgba(138, 114, 76, 0.22),
+    0 5px 14px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-quick-actions > button:hover {
+  transform: translateY(-2px) !important;
+  border-color: #b4781e !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 9px 20px rgba(15, 23, 42, 0.14),
+    0 0 0 1px rgba(180, 120, 30, 0.22) !important;
+}
+
+html body #zone-main .zone-quick-actions > button .zone-nav-icon {
+  width: 40px !important;
+  height: 40px !important;
+  flex: 0 0 40px !important;
+  border-radius: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid var(--ags-gold-soft) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 3px 10px rgba(0, 0, 0, 0.28);
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button .zone-nav-icon {
+  background: radial-gradient(circle at 50% 35%, rgba(57, 231, 163, 0.18), rgba(9, 14, 24, 0.95)) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-quick-actions > button .zone-nav-icon {
+  background: radial-gradient(circle at 50% 35%, rgba(214, 167, 86, 0.22), #faf5ea) !important;
+}
+
+html body #zone-main .zone-quick-actions > button > span:last-child > span:first-child {
+  font-weight: 800 !important;
+  font-size: 13px !important;
+  color: var(--ags-ink-1) !important;
+}
+
+/* Home Modules: Daily Objective, Next Move, Streak, Active Missions & Loadout Stats */
+html body #zone-main .zone-daily-objective,
+html body #zone-main .zone-next-move,
+html body #zone-main .zone-login-reward {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-inline-start: 3px solid var(--ags-gold) !important;
+  border-radius: 6px !important;
+  padding: 10px 12px !important;
+  margin: 8px 10px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+html body #zone-main .zone-objective-identity strong,
+html body #zone-main .zone-next-move strong {
+  color: var(--ags-ink-1) !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+}
+
+html body #zone-main .zone-objective-identity > bdi {
+  font-weight: 800 !important;
+  color: var(--ags-gold) !important;
+  font-size: 12.5px !important;
+}
+
+html body #zone-main .zone-objective-progress,
+html body #zone-main .zone-record-track {
+  height: 8px !important;
+  border-radius: 999px !important;
+  overflow: hidden;
+  border: 1px solid var(--ags-border);
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-objective-progress,
+html:not([data-theme="light"]) body #zone-main .zone-record-track {
+  background: #070b12 !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-objective-progress,
+html[data-theme="light"] body #zone-main .zone-record-track {
+  background: #e5dccb !important;
+}
+
+html body #zone-main .zone-objective-progress > span,
+html body #zone-main .zone-record-track > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #19b374 0%, #42f2ad 65%, #ebb858 100%) !important;
+  box-shadow: 0 0 10px rgba(57, 231, 163, 0.38);
+}
+
+html body #zone-main .zone-home-mission {
+  background: var(--ags-row-bg);
+  padding: 9px 12px !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  transition: background 140ms ease;
+}
+
+html body #zone-main .zone-home-mission:hover {
+  background: var(--ags-row-hover) !important;
+}
+
+/* Character Stage Overlay Pills (stay readable over dark 3D canvas in Day Mode) */
+html body #zone-main .zone-character-stage span[style*="rgba(10,12,15"] {
+  background: rgba(8, 12, 20, 0.78) !important;
+  border: 1px solid rgba(235, 184, 88, 0.34);
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(4px);
+}
+
+html body #zone-main .zone-equipped-summary {
+  margin: 8px 10px !important;
+  padding: 9px 11px !important;
+  border-radius: 6px !important;
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+}
+
+html body #zone-main .zone-loadout-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px !important;
+  padding: 0 10px 10px !important;
+}
+
+html body #zone-main .zone-loadout-stats > div {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-top: 2px solid var(--ags-gold-soft) !important;
+  border-radius: 6px !important;
+  padding: 7px 6px !important;
+  text-align: center;
+}
+
+html body #zone-main .zone-loadout-stats > div > span {
+  display: block;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ags-ink-3) !important;
+}
+
+html body #zone-main .zone-loadout-stats > div > bdi {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: var(--ags-ink-1) !important;
+}
+
+html body #zone-main .zone-territory-summary {
+  padding: 8px 10px !important;
+  border-radius: 6px !important;
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border) !important;
+}
+
+/* Instant Games Arcade Deck (.zig-arcade-deck & .zig-game-card) */
+html:not([data-theme="light"]) body #zone-main .zig-arcade-deck {
+  border: 1px solid rgba(235, 184, 88, 0.32) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 32px rgba(0, 0, 0, 0.48) !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-arcade-deck {
+  background: linear-gradient(180deg, #fcfaf4 0%, #efe6d4 100%) !important;
+  border: 1px solid #c3a673 !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+}
+
+html body #zone-main .zig-game-card {
+  border-radius: 8px !important;
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 160ms ease, box-shadow 160ms ease !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-game-card {
+  border: 1px solid rgba(124, 156, 206, 0.32) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 20px rgba(0, 0, 0, 0.42) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-game-card:hover {
+  transform: translateY(-2px);
+  border-color: #ebb858 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 12px 26px rgba(0, 0, 0, 0.54), 0 0 16px rgba(235, 184, 88, 0.2) !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-game-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f3ebdc 100%) !important;
+  border: 1px solid #bfa983 !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-game-card:hover {
+  transform: translateY(-2px);
+  border-color: #b4781e !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 8px 18px rgba(15, 23, 42, 0.14) !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. SCREEN-SPECIFIC AAA GAME IMMERSION
+   -------------------------------------------------------------------------- */
+
+/* --- 4A. CRIMES: Archetype Nav, Heist Plan Dossier & Danger-Coded Rows --- */
+html body #zone-main .zone-crime-activity-nav {
+  gap: 6px !important;
+  padding-bottom: 10px !important;
+}
+
+html body #zone-main .zone-crime-activity-nav button {
+  border-radius: 7px !important;
+  border: 1px solid var(--ags-border) !important;
+  background: var(--ags-row-bg) !important;
+  color: var(--ags-ink-2) !important;
+  font-weight: 700 !important;
+  transition: transform 140ms ease, border-color 150ms ease, box-shadow 150ms ease !important;
+}
+
+html body #zone-main .zone-crime-activity-nav button:hover {
+  transform: translateY(-1px);
+  border-color: var(--ags-gold) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-crime-activity-nav button[aria-pressed="true"] {
+  background: linear-gradient(180deg, #243552 0%, #131d30 100%) !important;
+  border-color: #ebb858 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 0 14px rgba(235, 184, 88, 0.24) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-crime-activity-nav button[aria-pressed="true"] {
+  background: linear-gradient(180deg, #fffaf0 0%, #efe1c4 100%) !important;
+  border-color: #b4781e !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 4px 12px rgba(180, 120, 30, 0.18) !important;
+}
+
+html body #zone-main .zone-crime-operation {
+  gap: 14px !important;
+}
+
+html body #zone-main .zone-crime-neighborhood {
+  padding: 14px 16px !important;
+}
+
+html body #zone-main .zone-crime-resources {
+  margin: 10px 0 0 !important;
+  max-width: 100% !important;
+  border-radius: 7px !important;
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+}
+
+html body #zone-main .zone-crime-resources > span {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 6px !important;
+  padding: 8px 10px !important;
+}
+
+html body #zone-main .zone-crime-plan {
+  margin-block-start: 0 !important;
+  border-top: 3px solid var(--ags-gold) !important;
+}
+
+html body #zone-main .zone-crime-plan dl {
+  gap: 6px !important;
+}
+
+html body #zone-main .zone-crime-plan dl > div {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 6px !important;
+  padding: 7px 10px !important;
+}
+
+html body #zone-main .zone-crime-opportunities {
+  margin-top: 12px !important;
+  overflow: hidden;
+}
+
+html body #zone-main .zone-crime-opportunities > .zone-panel-heading {
+  background: var(--ags-head-bg) !important;
+  border-bottom: 2px solid var(--ags-emerald) !important;
+  padding: 9px 14px !important;
+}
+
+html body #zone-main .zone-crime-choice {
+  background: var(--ags-row-bg) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  border-inline-start: 4px solid var(--ags-gold) !important;
+  padding: 11px 14px !important;
+  color: var(--ags-ink-1) !important;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease !important;
+}
+
+html body #zone-main .zone-crime-choice:nth-of-type(3n + 2) {
+  border-inline-start-color: var(--ags-emerald) !important;
+}
+
+html body #zone-main .zone-crime-choice:nth-of-type(3n) {
+  border-inline-start-color: #eb5746 !important;
+}
+
+html body #zone-main .zone-crime-choice:hover {
+  background: var(--ags-row-hover) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-crime-choice[aria-pressed="true"] {
+  background: linear-gradient(90deg, rgba(25, 62, 49, 0.88) 0%, rgba(15, 25, 39, 0.95) 100%) !important;
+  border-inline-start-color: #42f2ad !important;
+  box-shadow: inset 0 0 0 1px rgba(57, 231, 163, 0.35) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-crime-choice[aria-pressed="true"] {
+  background: linear-gradient(90deg, #e5f7ef 0%, #faf6ed 100%) !important;
+  border-inline-start-color: #0b7d4b !important;
+  box-shadow: inset 0 0 0 1px rgba(11, 125, 75, 0.28) !important;
+}
+
+html body #zone-main .zone-crime-choice > span:first-child > strong {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: var(--ags-ink-1) !important;
+}
+
+html body #zone-main .zone-crime-choice > span:last-child > bdi:first-child {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(235, 184, 88, 0.16);
+  border: 1px solid var(--ags-gold-soft);
+  color: var(--ags-gold) !important;
+  font-weight: 800 !important;
+}
+
+/* --- 4B. GYM: Clean Non-Colliding Grid, Metallic Stat Plates & Heavy Train CTA --- */
+@media (min-width: 651px) {
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-workspace {
+    grid-template-columns: minmax(0, 1fr) 320px !important;
+    gap: 14px !important;
+    padding: 14px !important;
+    align-items: start !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-floor {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+    min-height: 290px !important;
+    border-radius: 8px !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene header {
+    max-width: 72% !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-readout {
+    max-width: 100% !important;
+    margin: 10px 0 0 !important;
+    border-radius: 7px !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-session {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-self: stretch !important;
+    margin: 0 !important;
+  }
+
+  html body #zone-main[data-zone-screen="gym"] .zone-gym-stations {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    margin-block-start: 2px !important;
+    gap: 10px !important;
+    border: 0 !important;
+  }
+}
+
+/* Keep Gym Floor Scene Header light in BOTH themes because it sits over dark gym photo scrim */
+html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene .zone-overline {
+  color: #ebb858 !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene h2 {
+  color: #f8fafc !important;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9) !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene p {
+  color: #e2e8f0 !important;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85) !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-readout {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station {
+  border-radius: 8px !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-top-width: 3px !important;
+  background: var(--ags-surface-elev) !important;
+  color: var(--ags-ink-1) !important;
+  box-shadow: var(--ags-panel-shadow) !important;
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 160ms ease, box-shadow 160ms ease !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station[data-gym-station="str"] {
+  border-top-color: #eb5746 !important;
+}
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station[data-gym-station="def"] {
+  border-top-color: #4da6ff !important;
+}
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station[data-gym-station="spd"] {
+  border-top-color: #39e7a3 !important;
+}
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station[data-gym-station="dex"] {
+  border-top-color: #ebb858 !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station:hover {
+  transform: translateY(-2px);
+}
+
+html:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym-station[aria-pressed="true"] {
+  background: linear-gradient(180deg, #1d2f49 0%, #101929 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(57, 231, 163, 0.45) !important;
+}
+
+html[data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-station[aria-pressed="true"] {
+  background: linear-gradient(180deg, #ffffff 0%, #e7f6ef 100%) !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 8px 18px rgba(11, 125, 75, 0.14),
+    0 0 0 1px #0b7d4b !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station bdi {
+  font-weight: 800 !important;
+  font-size: 16px !important;
+  color: var(--ags-ink-1) !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-session {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-top: 3px solid var(--ags-gold) !important;
+  border-radius: 8px !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-session-metrics {
+  gap: 6px !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] .zone-gym-session-metrics > div {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 6px !important;
+  padding: 8px 10px !important;
+}
+
+html body #zone-main[data-zone-screen="gym"] button.zone-gym-train {
+  min-height: 46px !important;
+  border-radius: 6px !important;
+  clip-path: none !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+}
+
+html body #zone-main .zone-membership-row {
+  background: var(--ags-row-bg) !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  transition: background 140ms ease;
+}
+
+html body #zone-main .zone-membership-row[data-zone-current="true"] {
+  border-inline-start: 4px solid var(--ags-emerald) !important;
+}
+
+html body #zone-main .zone-membership-row:hover {
+  background: var(--ags-row-hover) !important;
+}
+
+/* --- 4C. ITEMS & LOADOUT: Gunmetal / Museum-Ivory Weapon Pedestal Slots --- */
+html body #zone-main .zone-loadout-slots > div {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-inline-start: 3px solid var(--ags-gold) !important;
+  border-radius: 7px !important;
+  padding: 10px 12px !important;
+}
+
+html body #zone-main [data-ztabs] {
+  gap: 4px !important;
+}
+
+html body #zone-main [data-ztabs] button {
+  border-radius: 6px 6px 0 0 !important;
+  padding: 7px 13px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--ags-border) !important;
+  border-bottom: 0 !important;
+  background: var(--ags-surface-2) !important;
+  color: var(--ags-ink-2) !important;
+  transition: background 140ms ease, color 140ms ease !important;
+}
+
+html:not([data-theme="light"]) body #zone-main [data-ztabs] button[style*="activebg"] {
+  background: linear-gradient(180deg, #21324e 0%, #121b2b 100%) !important;
+  border-color: #ebb858 !important;
+  color: #ffffff !important;
+  box-shadow: inset 0 2px 0 #ebb858 !important;
+}
+
+html[data-theme="light"] body #zone-main [data-ztabs] button[style*="activebg"] {
+  background: #ffffff !important;
+  border-color: #b4781e !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 2px 0 #b4781e !important;
+}
+
+html body #zone-main .zone-inventory-row {
+  padding: 9px 12px !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  transition: background 140ms ease, box-shadow 140ms ease;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-inventory-row:hover {
+  background: rgba(31, 46, 70, 0.55) !important;
+  box-shadow: inset 3px 0 0 #ebb858;
+}
+
+html[data-theme="light"] body #zone-main .zone-inventory-row:hover {
+  background: #f5ecdc !important;
+  box-shadow: inset 3px 0 0 #b4781e;
+}
+
+/* Weapon / Gear Showcase Pedestal Slot */
+html body #zone-main .zone-item-thumbnail {
+  width: 82px;
+  min-height: 52px;
+  border-radius: 6px !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 82px;
+  position: relative;
+  overflow: hidden;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-item-thumbnail {
+  background:
+    radial-gradient(circle at 50% 56%, rgba(57, 231, 163, 0.2) 0%, rgba(235, 184, 88, 0.08) 40%, rgba(8, 12, 20, 0.96) 78%) !important;
+  border: 1px solid rgba(132, 166, 218, 0.34) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.65) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-item-thumbnail {
+  background:
+    radial-gradient(circle at 50% 56%, rgba(214, 167, 86, 0.22) 0%, #ffffff 56%, #ebe1ce 100%) !important;
+  border: 1px solid #bfa983 !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 -4px 10px rgba(138, 114, 76, 0.16) !important;
+}
+
+html body #zone-main .zone-item-thumbnail img {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+  transition: transform 160ms ease;
+}
+
+html body #zone-main .zone-inventory-row:hover .zone-item-thumbnail img {
+  transform: scale(1.05);
+}
+
+html body #zone-main .zone-viewer-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: var(--ags-emerald-soft);
+  color: var(--ags-emerald);
+  border: 1px solid var(--ags-emerald);
+}
+
+/* --- 4D. TACTICAL DOSSIER STRIPS & TABLES (Attack, Market, Jail, Hospital, HOF, Missions, Faction) --- */
+html body #zone-main .zone-table-heading {
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  padding: 9px 12px !important;
+  border-bottom: 1px solid var(--ags-border-strong) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-table-heading {
+  background: linear-gradient(90deg, #162236 0%, #0f1726 100%) !important;
+  color: #a6b8d4 !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-table-heading {
+  background: linear-gradient(90deg, #ece2cf 0%, #e3d6be 100%) !important;
+  color: #334155 !important;
+}
+
+html body #zone-main .zone-table-row,
+html body #zone-main .zone-mission-row,
+html body #zone-main .zone-competition-rank:not(.zone-table-heading) {
+  background: var(--ags-row-bg) !important;
+  padding-block: 9px !important;
+  padding-inline: 12px !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  transition: background 140ms ease, box-shadow 140ms ease;
+}
+
+html body #zone-main .zone-table-row:hover,
+html body #zone-main .zone-mission-row:hover,
+html body #zone-main .zone-competition-rank:not(.zone-table-heading):hover {
+  background: var(--ags-row-hover) !important;
+  box-shadow: inset 3px 0 0 var(--ags-gold);
+}
+
+/* Hall of Fame Podium Accents (#1 Gold, #2 Silver, #3 Bronze) */
+html body #zone-main[data-zone-screen="hof"] [data-zscroll] > .zone-table-row:nth-of-type(2) {
+  box-shadow: inset 4px 0 0 #f5c451;
+}
+html body #zone-main[data-zone-screen="hof"] [data-zscroll] > .zone-table-row:nth-of-type(3) {
+  box-shadow: inset 4px 0 0 #cbd5e1;
+}
+html body #zone-main[data-zone-screen="hof"] [data-zscroll] > .zone-table-row:nth-of-type(4) {
+  box-shadow: inset 4px 0 0 #d97742;
+}
+
+/* Attack Combat HUD, Turn Dock, Market Listings & Faction Operations */
+html body #zone-main .zone-combat-hud,
+html body #zone-main .zone-combat-turn-dock,
+html body #zone-main .zone-market-listing,
+html body #zone-main .zone-operation,
+html body #zone-main .zone-operation-definitions > article,
+html body #zone-main .zone-shared-upgrades > div {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-radius: 7px !important;
+}
+
+/* --- 4E. BANK: Armored Syndicate Bullion Vault --- */
+html body #zone-main[data-zone-screen="bank"] .zone-bank-summary {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-top: 3px solid var(--ags-gold) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--ags-panel-shadow) !important;
+  gap: 10px !important;
+}
+
+html body #zone-main[data-zone-screen="bank"] .zone-bank-summary > .zone-panel {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 7px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  padding: 14px 18px !important;
+}
+
+html body #zone-main[data-zone-screen="bank"] .zone-bank-summary > .zone-panel:nth-child(1) {
+  border-inline-start: 3px solid var(--ags-gold) !important;
+}
+html body #zone-main[data-zone-screen="bank"] .zone-bank-summary > .zone-panel:nth-child(2) {
+  border-inline-start: 4px solid var(--ags-emerald) !important;
+}
+html body #zone-main[data-zone-screen="bank"] .zone-bank-summary > .zone-panel:nth-child(3) {
+  border-inline-start: 3px solid #60a5fa !important;
+}
+
+html body #zone-main[data-zone-screen="bank"] .zone-bank-actions {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border-strong) !important;
+  border-radius: 8px !important;
+  padding: 18px 20px !important;
+  box-shadow: var(--ags-panel-shadow) !important;
+}
+
+/* --- 4F. JOBS, EDUCATION, PROPERTIES, CITY DIRECTORY & NEWSPAPER --- */
+html body #zone-main .zone-employment-row,
+html body #zone-main .zone-course-row {
+  background: var(--ags-row-bg) !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+  transition: background 140ms ease;
+}
+
+html body #zone-main .zone-employment-row:hover,
+html body #zone-main .zone-course-row:hover {
+  background: var(--ags-row-hover) !important;
+}
+
+html body #zone-main .zone-employment-row[data-zone-current="true"],
+html body #zone-main .zone-course-row[data-zone-current="true"],
+html body #zone-main[data-zone-screen="properties"] .zone-property-dossier[data-zone-current="true"] {
+  border-inline-start: 4px solid var(--ags-emerald) !important;
+}
+
+html body #zone-main[data-zone-screen="properties"] .zone-property-dossiers {
+  gap: 10px !important;
+  border-top: 0 !important;
+}
+
+html body #zone-main[data-zone-screen="properties"] .zone-property-dossier {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--ags-panel-shadow) !important;
+  overflow: hidden;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+html body #zone-main[data-zone-screen="properties"] .zone-property-dossier:hover {
+  transform: translateY(-2px);
+  border-color: var(--ags-gold) !important;
+}
+
+/* City Directory Search & Destination Cards (Fixes Day Mode smudge in zone-design.css:328) */
+html:not([data-theme="light"]) body #zone-main .zone-city-search {
+  background: #0a101c !important;
+  border: 1px solid rgba(118, 150, 201, 0.28) !important;
+  border-radius: 7px !important;
+  padding: 8px 10px !important;
+  color: #dbe6f6 !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-city-search {
+  background: #f5efe2 !important;
+  border: 1px solid #cbb99b !important;
+  border-radius: 7px !important;
+  padding: 8px 10px !important;
+  color: #0f172a !important;
+}
+
+html body #zone-main .zone-city-destinations button {
+  border-radius: 7px !important;
+  border: 1px solid var(--ags-border) !important;
+  background: var(--ags-row-bg) !important;
+  color: var(--ags-ink-1) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14) !important;
+  transition: transform 130ms ease, border-color 140ms ease, background 140ms ease !important;
+}
+
+html body #zone-main .zone-city-destinations button:hover {
+  transform: translateY(-1px);
+  background: var(--ags-row-hover) !important;
+  border-color: var(--ags-gold) !important;
+}
+
+html body #zone-main .zone-bulletin-entry,
+html body #zone-main .zone-stock-entry {
+  padding: 8px 12px !important;
+  border-bottom: 1px solid var(--ags-border) !important;
+}
+
+/* --- 4G. CASINO: High-Low Pedestal & Coherent Felt Contrast --- */
+html body #zone-main .zone-playing-card-stage {
+  padding: 14px 22px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 50% 35%, #1c6b45 0%, #0d3924 100%);
+  border: 2px solid #d6a756;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.55), 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+html body #zone-main .zone-guide-copy dl > div {
+  background: var(--ags-row-bg);
+  border: 1px solid var(--ags-border);
+  border-radius: 6px;
+  padding: 6px 9px;
+}
+
+/* --- 4H. TERMINAL INPUTS, SELECTS, TEXTAREAS & MODALS INSIDE #zone-main --- */
+html body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body #zone-main select,
+html body #zone-main textarea {
+  border-radius: 5px !important;
+  font-weight: 500;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease !important;
+}
+
+html:not([data-theme="light"]) body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html:not([data-theme="light"]) body #zone-main select,
+html:not([data-theme="light"]) body #zone-main textarea {
+  background: #080d16 !important;
+  border: 1px solid rgba(118, 150, 201, 0.36) !important;
+  color: #f1f5f9 !important;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.58) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main input::placeholder,
+html:not([data-theme="light"]) body #zone-main textarea::placeholder {
+  color: #7c8ea9 !important;
+}
+
+html[data-theme="light"] body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html[data-theme="light"] body #zone-main select,
+html[data-theme="light"] body #zone-main textarea {
+  background: #ffffff !important;
+  border: 1px solid #b5a07c !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.06) !important;
+}
+
+html[data-theme="light"] body #zone-main input::placeholder,
+html[data-theme="light"] body #zone-main textarea::placeholder {
+  color: #64748b !important;
+}
+
+html body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+html body #zone-main select:focus,
+html body #zone-main textarea:focus {
+  outline: none !important;
+  border-color: var(--ags-emerald) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 0 3px var(--ags-emerald-soft) !important;
+}
+
+html body #zone-main .zone-modal-card {
+  background: var(--ags-surface-elev) !important;
+  border: 1px solid var(--ags-gold) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. 100% DAY MODE CONTRAST GUARANTEES, MOBILE DOCK & ARABIC RTL EXCELLENCE
+   -------------------------------------------------------------------------- */
+html[data-theme="light"] body #zone-main [data-zone-syndicate-hub="1"],
+html[data-theme="light"] body #zone-main [data-zone-casino-pit="1"],
+html[data-theme="light"] body #zone-main [data-torn-company-specials="1"],
+html[data-theme="light"] body #zone-main [data-torn-bazaar-shield="1"],
+html[data-theme="light"] body #zone-main [data-torn-edu-matrix="1"],
+html[data-theme="light"] body #zone-main [data-torn-island-staff="1"],
+html[data-theme="light"] body #zone-main [data-torn-jail-tools="1"],
+html[data-theme="light"] body #zone-main [data-torn-bank-cds="1"],
+html[data-theme="light"] body #zone-main [data-torn-hospital-blood="1"],
+html[data-theme="light"] body #zone-main [data-torn-casino-games="1"],
+html[data-theme="light"] body #zone-main [data-torn-honors-medals="1"] {
+  background: linear-gradient(180deg, #fcfaf4 0%, #f1e9d8 100%) !important;
+  border-color: rgba(15, 23, 42, 0.16) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body #zone-main [data-syndicate-panel],
+html[data-theme="light"] body #zone-main [data-torn-company-specials="1"] div[style*="rgba(8,11,16"],
+html[data-theme="light"] body #zone-main [data-torn-edu-matrix="1"] div[style*="rgba(8,11,16"],
+html[data-theme="light"] body #zone-main [data-torn-island-staff="1"] div[style*="rgba(8,11,16"],
+html[data-theme="light"] body #zone-main [data-torn-bank-cds="1"] div[style*="rgba(8,11,16"],
+html[data-theme="light"] body #zone-main [data-torn-casino-games="1"] div[style*="rgba(8,11,16"] {
+  background: #fbf9f3 !important;
+  border-color: rgba(15, 23, 42, 0.14) !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body #zone-main [data-syndicate-panel="bounties"] > div:first-child > strong {
+  color: #b91c1c !important;
+}
+
+html[data-theme="light"] body #zone-main [data-syndicate-panel="chat"] > div:first-child > strong {
+  color: #0b7d4b !important;
+}
+
+/* Coherent Casino Felt Contrast in Day Mode (emerald felt + ivory/gold felt wells) */
+html[data-theme="light"] body #zone-main [data-casino-table] > div:first-child > strong {
+  color: #fef3c7 !important;
+}
+
+html[data-theme="light"] body #zone-main [data-casino-table] > div:first-child > span,
+html[data-theme="light"] body #zone-main [data-bj-status="1"],
+html[data-theme="light"] body #zone-main [data-roulette-status="1"],
+html[data-theme="light"] body #zone-main [data-slots-status="1"],
+html[data-theme="light"] body #zone-main [data-casino-table="blackjack"] > div:nth-of-type(2) > div {
+  color: #ecfdf5 !important;
+}
+
+html[data-theme="light"] body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) {
+  background: rgba(6, 26, 17, 0.68) !important;
+  border-color: rgba(235, 184, 88, 0.42) !important;
+}
+
+html[data-theme="light"] body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) > div > div:first-child {
+  color: #d1fae5 !important;
+}
+
+html[data-theme="light"] body #zone-main [data-slots-reel="1"] {
+  background: linear-gradient(180deg, #fffdf8 0%, #eee2c8 100%) !important;
+  border: 2px solid #d6a756 !important;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 4px 10px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme="light"] body #zone-main [data-slots-reel="1"] small {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] body #zone-main [data-casino-table="slots"] > div:nth-of-type(2) small {
+  color: #fef3c7 !important;
+}
+
+/* Lockdown / Hospitalized / Jailed Alert Banner legibility in Day Mode */
+html[data-theme="light"] body #zone-main > div[style*="#3a2626"] {
+  background: linear-gradient(90deg, #fef2f2 0%, #fee2e2 100%) !important;
+  border: 1px solid #ef4444 !important;
+}
+
+html[data-theme="light"] body #zone-main > div[style*="#3a2626"] strong {
+  color: #991b1b !important;
+}
+
+html[data-theme="light"] body #zone-main > div[style*="#3a2626"] span {
+  color: #1e293b !important;
+}
+
+html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
+  color: #b91c1c !important;
+}
+
+/* Responsive Mobile Refinement & Noir Obsidian Bottom Tabbar (<= 760px) */
+@media (max-width: 760px) {
+  html body #zone-main {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #zone-main .zone-page-heading {
+    min-height: 58px !important;
+    padding: 10px 14px !important;
+  }
+
+  html body #zone-main .zone-page-heading h1 {
+    font-size: 20px !important;
+  }
+
+  html body #zone-main .zone-quick-actions > button {
+    min-height: 56px !important;
+    padding: 8px 10px !important;
+  }
+
+  html body #zone-main .zone-loadout-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar {
+    background: linear-gradient(180deg, rgba(12, 18, 30, 0.98) 0%, rgba(7, 10, 17, 0.99) 100%) !important;
+    border-top: 1px solid rgba(235, 184, 88, 0.38) !important;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.82) !important;
+    backdrop-filter: blur(10px);
+  }
+
+  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button {
+    background: linear-gradient(180deg, #172338 0%, #0e1624 100%) !important;
+    border: 1px solid rgba(118, 150, 201, 0.25) !important;
+    border-radius: 6px !important;
+    color: #b8c7de !important;
+    font-weight: 700 !important;
+  }
+
+  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button[aria-current="page"],
+  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button[aria-expanded="true"] {
+    background: linear-gradient(180deg, #243756 0%, #132036 100%) !important;
+    border-color: #ebb858 !important;
+    color: #f8fafc !important;
+    box-shadow: inset 0 2px 0 #ebb858, 0 0 12px rgba(235, 184, 88, 0.22) !important;
+  }
+
+  html[data-theme="light"] body #zone-main .zone-mobile-tabbar {
+    background: linear-gradient(180deg, rgba(253, 250, 243, 0.98) 0%, rgba(240, 232, 214, 0.99) 100%) !important;
+    border-top: 1px solid #c3a673 !important;
+    box-shadow: 0 -6px 18px rgba(15, 23, 42, 0.12) !important;
+  }
+
+  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button {
+    background: #ffffff !important;
+    border: 1px solid #cbb99b !important;
+    border-radius: 6px !important;
+    color: #334155 !important;
+    font-weight: 700 !important;
+  }
+
+  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button[aria-current="page"],
+  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button[aria-expanded="true"] {
+    background: #f7efe0 !important;
+    border-color: #b4781e !important;
+    color: #0f172a !important;
+    box-shadow: inset 0 2px 0 #b4781e !important;
+  }
+}
+
+/* 100% Arabic RTL Zero Letter-Spacing & Directional Mirroring */
+html[dir="rtl"] #zone-main,
+html[dir="rtl"] #zone-main *,
+html[dir="rtl"] #zone-main *::before,
+html[dir="rtl"] #zone-main *::after {
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] body #zone-main .zone-page-heading::before,
+html[dir="rtl"] body #zone-main .zone-page-rule {
+  background: linear-gradient(270deg, var(--ags-gold) 0%, var(--ags-emerald) 45%, transparent 100%) !important;
+}
+
+html[dir="rtl"] body #zone-main .zone-table-row:hover,
+html[dir="rtl"] body #zone-main .zone-mission-row:hover,
+html[dir="rtl"] body #zone-main .zone-inventory-row:hover,
+html[dir="rtl"] body #zone-main .zone-competition-rank:not(.zone-table-heading):hover {
+  box-shadow: inset -3px 0 0 var(--ags-gold) !important;
+}

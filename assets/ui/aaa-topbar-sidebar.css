@@ -1,0 +1,1224 @@
+/* ==========================================================================
+ * ZONE — AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v125)
+ * Exclusive Ownership: carbon-hud-chrome
+ * Scope: .zone-topbar, [data-zheaderbar], .zone-bulletin, aside.zone-sidebar
+ * ========================================================================== */
+
+:root,
+html:not([data-theme="light"]) {
+  --zaaa-topbar-bg:
+    radial-gradient(ellipse 420px 96px at 8% 0%, rgba(235, 184, 88, 0.14), transparent 72%),
+    radial-gradient(ellipse 460px 96px at 88% 0%, rgba(57, 231, 163, 0.08), transparent 74%),
+    linear-gradient(180deg, #151e30 0%, #0d1320 56%, #080c14 100%);
+  --zaaa-topbar-border: rgba(214, 167, 86, 0.62);
+  --zaaa-topbar-topline: rgba(255, 255, 255, 0.08);
+  --zaaa-topbar-shadow: 0 12px 30px rgba(0, 0, 0, 0.62);
+
+  --zaaa-brand-bg: linear-gradient(145deg, rgba(31, 43, 66, 0.96) 0%, rgba(13, 19, 32, 0.98) 100%);
+  --zaaa-brand-border: rgba(235, 184, 88, 0.54);
+  --zaaa-brand-border-hover: rgba(251, 191, 36, 0.88);
+  --zaaa-brand-shadow: 0 4px 16px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --zaaa-brand-word-c1: #fffdf7;
+  --zaaa-brand-word-c2: #f5d487;
+  --zaaa-brand-word-c3: #c58f36;
+  --zaaa-brand-sub: #ebb858;
+
+  --zaaa-dock-bg: rgba(6, 10, 18, 0.72);
+  --zaaa-dock-border: rgba(148, 168, 204, 0.2);
+  --zaaa-dock-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.62), 0 1px 0 rgba(255, 255, 255, 0.04);
+  --zaaa-tab-fg: #cbd5e1;
+  --zaaa-tab-fg-hover: #ffffff;
+  --zaaa-tab-fg-active: #fef3c7;
+  --zaaa-tab-icon: #94a3b8;
+  --zaaa-tab-icon-active: #fbbf24;
+  --zaaa-tab-hover-bg: rgba(235, 184, 88, 0.1);
+  --zaaa-tab-active-bg: linear-gradient(180deg, rgba(235, 184, 88, 0.2) 0%, rgba(235, 184, 88, 0.05) 100%);
+  --zaaa-tab-active-bar: #fbbf24;
+
+  --zaaa-pill-bg: linear-gradient(180deg, rgba(18, 26, 42, 0.92) 0%, rgba(10, 15, 26, 0.96) 100%);
+  --zaaa-pill-border: rgba(148, 168, 204, 0.24);
+  --zaaa-pill-border-hover: rgba(235, 184, 88, 0.58);
+  --zaaa-pill-fg: #f1f5f9;
+  --zaaa-pill-muted: #94a3b8;
+  --zaaa-pill-cash: #39e7a3;
+  --zaaa-pill-city: #fde68a;
+
+  --zaaa-ctrl-bg: linear-gradient(180deg, #1d283d 0%, #111827 100%);
+  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #263550 0%, #172135 100%);
+  --zaaa-ctrl-border: rgba(148, 168, 204, 0.28);
+  --zaaa-ctrl-fg: #e2e8f0;
+  --zaaa-chrono-bg: linear-gradient(180deg, rgba(7, 12, 22, 0.9) 0%, rgba(12, 19, 32, 0.94) 100%);
+  --zaaa-chrono-border: rgba(57, 231, 163, 0.32);
+  --zaaa-chrono-clock: #39e7a3;
+  --zaaa-admin-bg: linear-gradient(180deg, rgba(214, 167, 86, 0.26) 0%, rgba(161, 108, 30, 0.18) 100%);
+  --zaaa-admin-border: rgba(235, 184, 88, 0.62);
+  --zaaa-admin-fg: #fde68a;
+
+  --zaaa-wire-bg: linear-gradient(90deg, #080c15 0%, #0e1626 50%, #080c15 100%);
+  --zaaa-wire-border-top: rgba(214, 167, 86, 0.34);
+  --zaaa-wire-border-btm: rgba(214, 167, 86, 0.56);
+  --zaaa-wire-badge-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.24) 0%, rgba(214, 167, 86, 0.09) 100%);
+  --zaaa-wire-badge-fg: #fbbf24;
+  --zaaa-wire-text: #cbd5e1;
+
+  --zaaa-side-head-bg: linear-gradient(180deg, #1c273c 0%, #111828 100%);
+  --zaaa-side-panel-bg: linear-gradient(180deg, #121929 0%, #0c111d 100%);
+  --zaaa-side-border: rgba(148, 168, 204, 0.2);
+  --zaaa-side-gold: #ebb858;
+  --zaaa-side-fg: #f8fafc;
+  --zaaa-side-sub: #cbd5e1;
+  --zaaa-side-muted: #94a3b8;
+  --zaaa-crest-bg:
+    radial-gradient(circle at 16% 24%, rgba(235, 184, 88, 0.18), transparent 62%),
+    linear-gradient(145deg, rgba(24, 34, 54, 0.95) 0%, rgba(11, 16, 28, 0.98) 100%);
+  --zaaa-crest-border: rgba(214, 167, 86, 0.4);
+  --zaaa-track-bg: rgba(5, 8, 15, 0.88);
+  --zaaa-track-border: rgba(148, 168, 204, 0.24);
+
+  --zaaa-nav-group-fg: #ebb858;
+  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.1) 0%, transparent 92%);
+  --zaaa-nav-fg: #cbd5e1;
+  --zaaa-nav-fg-hover: #ffffff;
+  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.12) 0%, rgba(30, 41, 64, 0.35) 60%, transparent 100%);
+  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.24) 0%, rgba(16, 185, 129, 0.1) 62%, rgba(15, 23, 42, 0.2) 100%);
+  --zaaa-nav-active-fg: #fffbeb;
+  --zaaa-nav-plate-bg: linear-gradient(145deg, #1b2538 0%, #0f1624 100%);
+  --zaaa-nav-plate-border: rgba(148, 168, 204, 0.25);
+}
+
+html[data-theme="light"] {
+  --zaaa-topbar-bg:
+    radial-gradient(ellipse 420px 96px at 8% 0%, rgba(180, 120, 30, 0.12), transparent 72%),
+    linear-gradient(180deg, #fdfbf7 0%, #f5efe2 58%, #ece3d0 100%);
+  --zaaa-topbar-border: #b4781e;
+  --zaaa-topbar-topline: rgba(255, 255, 255, 0.9);
+  --zaaa-topbar-shadow: 0 8px 22px rgba(15, 23, 42, 0.1);
+
+  /* Obsidian-brass luxury crest on warm ivory topbar */
+  --zaaa-brand-bg: linear-gradient(145deg, #1c2638 0%, #0f172a 100%);
+  --zaaa-brand-border: #c48829;
+  --zaaa-brand-border-hover: #d97706;
+  --zaaa-brand-shadow: 0 3px 10px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --zaaa-brand-word-c1: #ffffff;
+  --zaaa-brand-word-c2: #fde68a;
+  --zaaa-brand-word-c3: #d99b38;
+  --zaaa-brand-sub: #fbbf24;
+
+  --zaaa-dock-bg: rgba(221, 210, 188, 0.62);
+  --zaaa-dock-border: rgba(120, 94, 52, 0.3);
+  --zaaa-dock-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12), 0 1px 0 rgba(255, 255, 255, 0.75);
+  --zaaa-tab-fg: #1e293b;
+  --zaaa-tab-fg-hover: #0f172a;
+  --zaaa-tab-fg-active: #0f172a;
+  --zaaa-tab-icon: #64748b;
+  --zaaa-tab-icon-active: #b45309;
+  --zaaa-tab-hover-bg: rgba(255, 253, 248, 0.72);
+  --zaaa-tab-active-bg: linear-gradient(180deg, #ffffff 0%, #fbf5e8 100%);
+  --zaaa-tab-active-bar: #b4781e;
+
+  --zaaa-pill-bg: linear-gradient(180deg, #ffffff 0%, #f8f3e8 100%);
+  --zaaa-pill-border: rgba(120, 94, 52, 0.32);
+  --zaaa-pill-border-hover: #b4781e;
+  --zaaa-pill-fg: #0f172a;
+  --zaaa-pill-muted: #475569;
+  --zaaa-pill-cash: #047857;
+  --zaaa-pill-city: #92400e;
+
+  --zaaa-ctrl-bg: linear-gradient(180deg, #ffffff 0%, #f3ece0 100%);
+  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #ffffff 0%, #ebe0cd 100%);
+  --zaaa-ctrl-border: rgba(100, 82, 52, 0.34);
+  --zaaa-ctrl-fg: #0f172a;
+  --zaaa-chrono-bg: linear-gradient(180deg, #ffffff 0%, #f5efe2 100%);
+  --zaaa-chrono-border: rgba(4, 120, 87, 0.38);
+  --zaaa-chrono-clock: #047857;
+  --zaaa-admin-bg: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+  --zaaa-admin-border: #b4781e;
+  --zaaa-admin-fg: #78350f;
+
+  --zaaa-wire-bg: linear-gradient(90deg, #ebe2cf 0%, #f7f2e7 50%, #ebe2cf 100%);
+  --zaaa-wire-border-top: rgba(180, 120, 30, 0.42);
+  --zaaa-wire-border-btm: #b4781e;
+  --zaaa-wire-badge-bg: linear-gradient(90deg, #1c2638 0%, #0f172a 100%);
+  --zaaa-wire-badge-fg: #fbbf24;
+  --zaaa-wire-text: #0f172a;
+
+  --zaaa-side-head-bg: linear-gradient(180deg, #1c2638 0%, #0f172a 100%);
+  --zaaa-side-panel-bg: linear-gradient(180deg, #fffdf9 0%, #f6f0e4 100%);
+  --zaaa-side-border: rgba(120, 94, 52, 0.28);
+  --zaaa-side-gold: #9a6312;
+  --zaaa-side-fg: #0f172a;
+  --zaaa-side-sub: #1e293b;
+  --zaaa-side-muted: #475569;
+  --zaaa-crest-bg:
+    radial-gradient(circle at 16% 24%, rgba(180, 120, 30, 0.14), transparent 64%),
+    linear-gradient(145deg, #ffffff 0%, #f3ebd9 100%);
+  --zaaa-crest-border: rgba(180, 120, 30, 0.45);
+  --zaaa-track-bg: #dfd6c3;
+  --zaaa-track-border: rgba(100, 82, 52, 0.34);
+
+  --zaaa-nav-group-fg: #854d0e;
+  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, transparent 92%);
+  --zaaa-nav-fg: #1e293b;
+  --zaaa-nav-fg-hover: #0f172a;
+  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, rgba(226, 216, 195, 0.45) 65%, transparent 100%);
+  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.22) 0%, rgba(4, 120, 87, 0.08) 65%, transparent 100%);
+  --zaaa-nav-active-fg: #0f172a;
+  --zaaa-nav-plate-bg: linear-gradient(145deg, #ffffff 0%, #eae1cf 100%);
+  --zaaa-nav-plate-border: rgba(100, 82, 52, 0.32);
+}
+
+/* ==========================================================================
+ * 1. AAA SYNDICATE COMMAND TOPBAR (.zone-topbar & [data-zheaderbar])
+ * ========================================================================== */
+
+html body .zone-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 60 !important;
+  width: 100% !important;
+  background: var(--zaaa-topbar-bg) !important;
+  border-bottom: 2px solid var(--zaaa-topbar-border) !important;
+  box-shadow: inset 0 1px 0 var(--zaaa-topbar-topline), var(--zaaa-topbar-shadow) !important;
+  backdrop-filter: blur(14px) saturate(1.25) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(1.25) !important;
+}
+
+html body .zone-topbar [data-zheaderbar] {
+  max-width: 1680px !important;
+  width: 100% !important;
+  min-height: 58px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  padding: 7px 18px !important;
+  gap: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  box-sizing: border-box !important;
+}
+
+/* Flex ordering keeps React's static children at their exact DOM indices */
+html body .zone-topbar .zone-brand {
+  order: 1 !important;
+}
+
+html body .zone-topbar .zone-header-links {
+  order: 2 !important;
+}
+
+html body .zone-topbar #zone-topbar-hud {
+  order: 3 !important;
+  margin-inline-start: auto !important;
+}
+
+html body .zone-topbar .zone-header-actions {
+  order: 4 !important;
+  margin-inline-start: 0 !important;
+}
+
+/* --- 1A. Brand Emblem (.zone-brand) — Zero Clipping + Syndicate Crest --- */
+html body .zone-topbar .zone-brand {
+  min-width: auto !important;
+  width: auto !important;
+  padding: 6px 15px 6px 12px !important;
+  display: inline-grid !important;
+  grid-template-columns: auto auto !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  column-gap: 10px !important;
+  row-gap: 1px !important;
+  background: var(--zaaa-brand-bg) !important;
+  border: 1px solid var(--zaaa-brand-border) !important;
+  border-radius: 5px !important;
+  box-shadow: var(--zaaa-brand-shadow) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  overflow: visible !important;
+  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+html[dir="rtl"] body .zone-topbar .zone-brand {
+  padding: 6px 12px 6px 15px !important;
+}
+
+html body .zone-topbar .zone-brand::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 5px;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(251, 191, 36, 0.55) 0 6px, transparent 6px),
+    linear-gradient(315deg, rgba(251, 191, 36, 0.45) 0 6px, transparent 6px);
+  opacity: 0.7;
+}
+
+html body .zone-topbar .zone-brand:hover {
+  border-color: var(--zaaa-brand-border-hover) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.52), 0 0 16px rgba(235, 184, 88, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+html body .zone-topbar .zone-brand:active {
+  transform: translateY(0);
+}
+
+html body .zone-topbar .zone-brand:focus-visible {
+  outline: 2px solid #fbbf24 !important;
+  outline-offset: 2px !important;
+}
+
+html body .zone-topbar .zone-brand .zaaa-brand-crest {
+  grid-column: 1 !important;
+  grid-row: 1 / span 2 !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 28px !important;
+  filter: drop-shadow(0 2px 6px rgba(235, 184, 88, 0.35));
+}
+
+html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
+  width: 28px !important;
+  height: 28px !important;
+  display: block !important;
+}
+
+html body .zone-topbar .zone-brand > span[data-zfig="1"],
+html body .zone-topbar .zone-brand > span:first-of-type:not(.zaaa-brand-crest):not(.zaaa-brand-meta) {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
+  font-size: 21px !important;
+  font-weight: 800 !important;
+  line-height: 1.12 !important;
+  letter-spacing: 0.14em !important;
+  padding-inline-end: 1px !important;
+  color: var(--zaaa-brand-word-c2) !important;
+  background: linear-gradient(180deg, var(--zaaa-brand-word-c1) 0%, var(--zaaa-brand-word-c2) 55%, var(--zaaa-brand-word-c3) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+  white-space: nowrap !important;
+}
+
+html[dir="rtl"] body .zone-topbar .zone-brand > span[data-zfig="1"] {
+  line-height: 1.28 !important;
+  padding-block: 1px !important;
+}
+
+html body .zone-topbar .zone-brand .zaaa-brand-meta {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  font-family: var(--zone-font, system-ui, sans-serif) !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--zaaa-brand-sub) !important;
+  opacity: 0.92 !important;
+  white-space: nowrap !important;
+}
+
+/* Fallback if JS has not yet mounted .zaaa-brand-crest */
+html body .zone-topbar .zone-brand:not([data-zaaa-ready="1"]) {
+  display: inline-flex !important;
+  gap: 10px !important;
+}
+
+/* --- 1B. Integrated Game Command Dock (.zone-header-links) --- */
+html body .zone-topbar .zone-header-links {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  padding: 3px !important;
+  background: var(--zaaa-dock-bg) !important;
+  border: 1px solid var(--zaaa-dock-border) !important;
+  border-radius: 5px !important;
+  box-shadow: var(--zaaa-dock-shadow) !important;
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link {
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 0 9px !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  color: var(--zaaa-tab-fg) !important;
+  font-family: var(--zone-font, system-ui, sans-serif) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.015em !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon {
+  order: -1 !important;
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 14px !important;
+  color: var(--zaaa-tab-icon) !important;
+  transition: color 0.15s ease, transform 0.15s ease !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: block !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link:hover {
+  color: var(--zaaa-tab-fg-hover) !important;
+  background: var(--zaaa-tab-hover-bg) !important;
+  border-color: rgba(235, 184, 88, 0.24) !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link:hover .zaaa-link-icon {
+  color: var(--zaaa-tab-icon-active) !important;
+  transform: translateY(-0.5px);
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] {
+  color: var(--zaaa-tab-fg-active) !important;
+  background: var(--zaaa-tab-active-bg) !important;
+  border-color: rgba(235, 184, 88, 0.36) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] .zaaa-link-icon {
+  color: var(--zaaa-tab-icon-active) !important;
+}
+
+html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 6px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--zaaa-tab-active-bar);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.72);
+}
+
+/* --- 1C. Center-Right Live Syndicate HUD Strip (#zone-topbar-hud) --- */
+html body .zone-topbar #zone-topbar-hud {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 0 0 auto !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
+  min-height: 34px !important;
+  height: 34px !important;
+  padding: 0 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--zaaa-pill-bg) !important;
+  border: 1px solid var(--zaaa-pill-border) !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.16) !important;
+  color: var(--zaaa-pill-fg) !important;
+  font-family: var(--zone-font, system-ui, sans-serif) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  font-variant-numeric: tabular-nums !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: border-color 0.15s ease, transform 0.14s ease, box-shadow 0.15s ease !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:hover {
+  border-color: var(--zaaa-pill-border-hover) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28), 0 0 10px rgba(235, 184, 88, 0.16) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:active {
+  transform: translateY(0);
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico {
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 14px !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: block !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-val {
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: 0.01em !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash {
+  border-color: rgba(57, 231, 163, 0.34) !important;
+}
+
+html[data-theme="light"] body .zone-topbar #zone-topbar-hud .zaaa-hud-cash {
+  border-color: rgba(4, 120, 87, 0.38) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash .zaaa-hud-ico,
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash .zaaa-hud-val {
+  color: var(--zaaa-pill-cash) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy .zaaa-hud-ico {
+  color: #10b981 !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve .zaaa-hud-ico {
+  color: #f59e0b !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-ico {
+  color: var(--zaaa-pill-city) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-city-code {
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  padding: 2px 4px !important;
+  border-radius: 2px !important;
+  background: rgba(235, 184, 88, 0.16) !important;
+  color: var(--zaaa-pill-city) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail {
+  position: absolute !important;
+  inset-inline: 0 !important;
+  bottom: 0 !important;
+  height: 3px !important;
+  background: rgba(148, 168, 204, 0.18) !important;
+  pointer-events: none !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail > i {
+  display: block !important;
+  height: 100% !important;
+  width: var(--zaaa-pct, 100%) !important;
+  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy .zaaa-hud-rail > i {
+  background: linear-gradient(90deg, #059669, #39e7a3) !important;
+  box-shadow: 0 0 8px rgba(57, 231, 163, 0.65) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve .zaaa-hud-rail > i {
+  background: linear-gradient(90deg, #d97706, #fbbf24) !important;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.65) !important;
+}
+
+/* Responsive graceful collapse for #zone-topbar-hud */
+@media (max-width: 1340px) {
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-val {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1120px) {
+  html body .zone-topbar #zone-topbar-hud {
+    display: none !important;
+  }
+  html body .zone-topbar .zone-header-actions {
+    margin-inline-start: auto !important;
+  }
+}
+
+/* --- 1D. Right Tactical Controls (.zone-header-actions) --- */
+html body .zone-topbar .zone-header-actions {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 0 0 auto !important;
+}
+
+/* Digital Tactical Chrono Badge (Zone City Time) */
+@media (min-width: 761px) {
+  html body .zone-topbar .zone-header-actions > span:first-child {
+    height: 34px !important;
+    min-height: 34px !important;
+    margin: 0 !important;
+    padding: 0 10px 0 28px !important;
+    display: inline-flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    gap: 1px !important;
+    background: var(--zaaa-chrono-bg) !important;
+    border: 1px solid var(--zaaa-chrono-border) !important;
+    border-radius: 4px !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.22) !important;
+    color: var(--zaaa-pill-muted) !important;
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    position: relative !important;
+  }
+
+  html[dir="rtl"] body .zone-topbar .zone-header-actions > span:first-child {
+    padding: 0 28px 0 10px !important;
+    align-items: flex-start !important;
+  }
+
+  html body .zone-topbar .zone-header-actions > span:first-child::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background-color: var(--zaaa-chrono-clock);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 9v4l2.5 2'/%3E%3Cpath d='M9 2h6'/%3E%3Cpath d='M12 2v3'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 9v4l2.5 2'/%3E%3Cpath d='M9 2h6'/%3E%3Cpath d='M12 2v3'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0.95;
+  }
+
+  html body .zone-topbar .zone-header-actions > span:first-child bdi {
+    color: var(--zaaa-chrono-clock) !important;
+    font-family: var(--zone-display, "Rajdhani", "Rubik", monospace) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.04em !important;
+    font-variant-numeric: tabular-nums !important;
+  }
+}
+
+/* Uniform 34px Tactical Buttons for Theme, Lang, Admin */
+html body .zone-topbar .zone-header-actions > button,
+html body .zone-topbar .zone-header-actions > a {
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: var(--zaaa-ctrl-bg) !important;
+  border: 1px solid var(--zaaa-ctrl-border) !important;
+  border-radius: 4px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+  color: var(--zaaa-ctrl-fg) !important;
+  font-family: var(--zone-font, system-ui, sans-serif) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.14s ease !important;
+}
+
+html body .zone-topbar .zone-header-actions > button:hover,
+html body .zone-topbar .zone-header-actions > a:hover {
+  background: var(--zaaa-ctrl-bg-hover) !important;
+  border-color: var(--zaaa-brand-border-hover) !important;
+  transform: translateY(-1px);
+}
+
+html body .zone-topbar .zone-header-actions > a {
+  background: var(--zaaa-admin-bg) !important;
+  border-color: var(--zaaa-admin-border) !important;
+  color: var(--zaaa-admin-fg) !important;
+  font-weight: 800 !important;
+}
+
+/* Luminous Theme Indicator (Replaces #111 Black Dot!) */
+html body .zone-topbar .zone-header-actions .zone-theme-indicator {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  border-radius: 4px !important;
+  background: rgba(251, 191, 36, 0.24) !important;
+  background-color: rgba(251, 191, 36, 0.24) !important;
+  border: 1px solid rgba(251, 191, 36, 0.62) !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3) !important;
+  color: #fbbf24 !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  position: relative !important;
+}
+
+html[data-theme="light"] body .zone-topbar .zone-header-actions .zone-theme-indicator {
+  background: rgba(245, 158, 11, 0.22) !important;
+  background-color: rgba(245, 158, 11, 0.22) !important;
+  border: 1px solid rgba(217, 119, 6, 0.58) !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.24) !important;
+  color: #d97706 !important;
+}
+
+html body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-theme-svg {
+  width: 12px !important;
+  height: 12px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+}
+
+html body .zone-topbar .zone-header-actions .zone-theme-indicator svg {
+  width: 12px !important;
+  height: 12px !important;
+  display: block !important;
+}
+
+html:not([data-theme="light"]) body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-sun-svg {
+  display: none !important;
+}
+
+html[data-theme="light"] body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-moon-svg {
+  display: none !important;
+}
+
+/* Pure-CSS fallback luminous crescent/sun if JS has not yet mounted SVG */
+html body .zone-topbar .zone-header-actions .zone-theme-indicator:empty::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
+}
+
+/* --- 1E. Full-Bleed Syndicate Wire Ticker (.zone-bulletin) --- */
+@media (min-width: 761px) {
+  html body .zone-topbar .zone-bulletin {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 18px 0 0 !important;
+    height: 28px !important;
+    min-height: 28px !important;
+    background: var(--zaaa-wire-bg) !important;
+    border-top: 1px solid var(--zaaa-wire-border-top) !important;
+    border-bottom: 1px solid var(--zaaa-wire-border-btm) !important;
+    border-inline: 0 !important;
+    color: var(--zaaa-wire-text) !important;
+    font-size: 11px !important;
+    box-sizing: border-box !important;
+  }
+
+  html[dir="rtl"] body .zone-topbar .zone-bulletin {
+    padding: 0 0 0 18px !important;
+  }
+
+  html body .zone-topbar .zone-bulletin > span:first-child {
+    height: 100% !important;
+    padding: 0 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    background: var(--zaaa-wire-badge-bg) !important;
+    border-inline-end: 1px solid var(--zaaa-wire-border-btm) !important;
+    color: var(--zaaa-wire-badge-fg) !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.09em !important;
+    text-transform: uppercase !important;
+  }
+
+  html body .zone-topbar .zone-bulletin > span:first-child::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #39e7a3;
+    box-shadow: 0 0 8px #39e7a3;
+    animation: zaaaWirePulse 1.8s ease-in-out infinite;
+    flex: 0 0 6px;
+  }
+
+  html body .zone-topbar .zone-bulletin [data-zticker="1"] span {
+    color: var(--zaaa-wire-text) !important;
+    font-weight: 500 !important;
+  }
+
+  html body .zone-topbar .zone-bulletin [data-zticker="1"]:has(> span:only-child) {
+    animation: none !important;
+    transform: none !important;
+    padding-inline-start: 14px !important;
+  }
+}
+
+@keyframes zaaaWirePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+/* ==========================================================================
+ * 2. AAA OPERATIVE SIDEBAR (aside.zone-sidebar)
+ * ========================================================================== */
+
+html body aside.zone-sidebar .zone-panel-heading[data-zhead] {
+  background: var(--zaaa-side-head-bg) !important;
+  border: 1px solid rgba(214, 167, 86, 0.36) !important;
+  border-bottom: 2px solid #d6a756 !important;
+  color: #fef3c7 !important;
+  font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  padding: 7px 12px !important;
+  min-height: 32px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+}
+
+html body aside.zone-sidebar .zone-profile-body,
+html body aside.zone-sidebar #zone-area-navigation {
+  background: var(--zaaa-side-panel-bg) !important;
+  border: 1px solid var(--zaaa-side-border) !important;
+  border-top: 0 !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26) !important;
+}
+
+/* --- 2A. Operative Syndicate Dossier Header (#zone-operative-crest) --- */
+html body aside.zone-sidebar #zone-operative-crest {
+  order: -10 !important;
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 9px !important;
+  padding: 9px 10px !important;
+  margin-bottom: 4px !important;
+  background: var(--zaaa-crest-bg) !important;
+  border: 1px solid var(--zaaa-crest-border) !important;
+  border-radius: 5px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: border-color 0.16s ease, transform 0.14s ease !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest:hover {
+  border-color: #fbbf24 !important;
+  transform: translateY(-1px);
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 6px !important;
+  background: linear-gradient(145deg, #1b2538 0%, #0b101b 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.58) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(235, 184, 88, 0.14) !important;
+  display: grid !important;
+  place-items: center !important;
+  position: relative !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar svg {
+  width: 28px !important;
+  height: 28px !important;
+  display: block !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-lvl {
+  position: absolute !important;
+  bottom: -5px !important;
+  inset-inline-end: -5px !important;
+  padding: 1px 5px !important;
+  border-radius: 3px !important;
+  background: linear-gradient(180deg, #fbbf24 0%, #c58f36 100%) !important;
+  border: 1px solid #0b101b !important;
+  color: #090d16 !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  font-variant-numeric: tabular-nums !important;
+  letter-spacing: 0.03em !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45) !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-info {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-top {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 4px !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank {
+  color: var(--zaaa-side-gold) !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-id {
+  color: var(--zaaa-side-muted) !important;
+  font-size: 9.5px !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+  flex: none !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-meta {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: var(--zaaa-side-muted) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-track {
+  height: 5px !important;
+  width: 100% !important;
+  border-radius: 3px !important;
+  background: var(--zaaa-track-bg) !important;
+  border: 1px solid var(--zaaa-track-border) !important;
+  overflow: hidden !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-fill {
+  height: 100% !important;
+  width: var(--zaaa-xp-pct, 42%) !important;
+  background: linear-gradient(90deg, #d97706 0%, #fbbf24 55%, #39e7a3 100%) !important;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.55) !important;
+  transition: width 0.4s ease !important;
+}
+
+/* Profile Identity & Stat Rows Crisp Contrast */
+html body aside.zone-sidebar .zone-profile-identity > div:first-child > span:last-child {
+  color: var(--zaaa-side-fg) !important;
+  font-weight: 800 !important;
+}
+
+html body aside.zone-sidebar #zone-cash {
+  color: var(--zaaa-pill-cash) !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+html body aside.zone-sidebar .zone-profile-desktop {
+  font-size: 11.5px !important;
+  padding-block: 1px !important;
+}
+
+html body aside.zone-sidebar .zone-profile-desktop > span:first-child {
+  color: var(--zaaa-side-muted) !important;
+  font-weight: 600 !important;
+}
+
+html body aside.zone-sidebar .zone-profile-desktop > bdi {
+  color: var(--zaaa-side-fg) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* --- 2B. Glass-Bevel RPG Vital Bars (.zone-resource-track) --- */
+html body aside.zone-sidebar .zone-resource [data-zhead] {
+  color: var(--zaaa-side-sub) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+html body aside.zone-sidebar .zone-resource [data-zfig] {
+  color: var(--zaaa-side-fg) !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+@media (min-width: 761px) {
+  html body aside.zone-sidebar .zone-resource-track {
+    height: 12px !important;
+    min-height: 12px !important;
+    background: var(--zaaa-track-bg) !important;
+    border: 1px solid var(--zaaa-track-border) !important;
+    border-radius: 3px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.42), 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Subtle 10-pip RPG gauge segmentation + top glass bevel highlight */
+html body aside.zone-sidebar .zone-resource-track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(10% - 1px),
+    rgba(0, 0, 0, 0.24) calc(10% - 1px),
+    rgba(0, 0, 0, 0.24) 10%
+  );
+}
+
+html body aside.zone-sidebar .zone-resource-track::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 52% 0;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.02));
+}
+
+/* Distinct Luminous RPG Gradients in BOTH Dark & Day Modes */
+html body aside.zone-sidebar .zone-resource[data-zone-resource="energy"] .zone-resource-track > div {
+  background: linear-gradient(90deg, #059669 0%, #10b981 55%, #39e7a3 100%) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.55) !important;
+}
+
+html body aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] .zone-resource-track > div {
+  background: linear-gradient(90deg, #b45309 0%, #f59e0b 55%, #fbbf24 100%) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.55) !important;
+}
+
+html body aside.zone-sidebar .zone-resource[data-zone-resource="happy"] .zone-resource-track > div {
+  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 55%, #c084fc 100%) !important;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.52) !important;
+}
+
+html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track > div {
+  background: linear-gradient(90deg, #be123c 0%, #ef4444 55%, #fb7185 100%) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.52) !important;
+}
+
+/* --- 2C. Area Navigation (#zone-area-navigation / [data-znav]) --- */
+@media (min-width: 761px) {
+  html body aside.zone-sidebar #zone-area-navigation {
+    padding: 4px 0 6px !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation .zone-nav-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 10px 4px !important;
+    margin-top: 2px !important;
+    background: var(--zaaa-nav-group-bg) !important;
+    border-top: 1px solid var(--zaaa-side-border) !important;
+    color: var(--zaaa-nav-group-fg) !important;
+    font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation .zone-nav-group:first-child {
+    border-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation .zone-nav-group::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    transform: rotate(45deg);
+    background: var(--zaaa-nav-group-fg);
+    box-shadow: 0 0 6px rgba(235, 184, 88, 0.5);
+    flex: 0 0 5px;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button {
+    min-height: 33px !important;
+    padding: 4px 10px !important;
+    gap: 9px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-inline-start: 3px solid transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: var(--zaaa-nav-fg) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    position: relative !important;
+    transition: background 0.15s ease, color 0.15s ease, padding-inline-start 0.15s ease, border-color 0.15s ease !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button:hover {
+    background: var(--zaaa-nav-hover-bg) !important;
+    color: var(--zaaa-nav-fg-hover) !important;
+    border-inline-start-color: rgba(235, 184, 88, 0.55) !important;
+    padding-inline-start: 13px !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] {
+    background: var(--zaaa-nav-active-bg) !important;
+    color: var(--zaaa-nav-active-fg) !important;
+    border-inline-start: 3px solid #fbbf24 !important;
+    font-weight: 800 !important;
+    padding-inline-start: 12px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.16) !important;
+  }
+
+  html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] {
+    border-inline-start-color: #b4781e !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
+    flex: 0 0 26px !important;
+    width: 26px !important;
+    height: 26px !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    border-radius: 5px !important;
+    background: var(--zaaa-nav-plate-bg) !important;
+    border: 1px solid var(--zaaa-nav-plate-border) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button:hover .zone-nav-icon {
+    border-color: rgba(235, 184, 88, 0.58) !important;
+    box-shadow: 0 0 10px rgba(235, 184, 88, 0.24) !important;
+    transform: scale(1.04);
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.36), inset 0 0 8px rgba(251, 191, 36, 0.2) !important;
+  }
+
+  html body aside.zone-sidebar #zone-area-navigation button bdi {
+    background: rgba(235, 184, 88, 0.16) !important;
+    border: 1px solid rgba(235, 184, 88, 0.38) !important;
+    color: var(--zaaa-side-gold) !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    font-variant-numeric: tabular-nums !important;
+    padding: 1px 6px !important;
+    border-radius: 999px !important;
+  }
+}
+
+/* ==========================================================================
+ * 3. MOBILE SAFETY (<=760px) — Zero Overflow, Clean Compact Bar
+ * ========================================================================== */
+
+@media (max-width: 760px) {
+  html body .zone-topbar [data-zheaderbar] {
+    min-height: 46px !important;
+    padding: 5px 10px !important;
+    gap: 6px !important;
+  }
+
+  html body .zone-topbar .zone-brand {
+    padding: 4px 10px !important;
+    column-gap: 7px !important;
+    grid-template-rows: auto !important;
+  }
+
+  html body .zone-topbar .zone-brand .zaaa-brand-crest,
+  html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
+    width: 22px !important;
+    height: 22px !important;
+    flex-basis: 22px !important;
+    grid-row: 1 !important;
+  }
+
+  html body .zone-topbar .zone-brand > span[data-zfig="1"] {
+    font-size: 18px !important;
+  }
+
+  html body .zone-topbar .zone-brand .zaaa-brand-meta {
+    display: none !important;
+  }
+
+  html body .zone-topbar .zone-header-links,
+  html body .zone-topbar .zone-header-actions > span:first-child {
+    display: none !important;
+  }
+
+  html body .zone-topbar .zone-header-actions {
+    margin-inline-start: auto !important;
+    gap: 4px !important;
+  }
+
+  html body .zone-topbar .zone-header-actions > button,
+  html body .zone-topbar .zone-header-actions > a {
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 11px !important;
+  }
+
+  html body .zone-topbar .zone-header-actions .zone-theme-indicator {
+    width: 15px !important;
+    height: 15px !important;
+    flex: 0 0 15px !important;
+  }
+
+  html body aside.zone-sidebar #zone-operative-crest {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+ * 4. RTL ARABIC TYPOGRAPHY DISCIPLINE (Zero Letter-Spacing on Arabic)
+ * ========================================================================== */
+
+html[dir="rtl"] body .zone-topbar .zone-brand,
+html[dir="rtl"] body .zone-topbar .zone-brand > span,
+html[dir="rtl"] body .zone-topbar .zone-brand > span[data-zfig="1"],
+html[dir="rtl"] body .zone-topbar .zone-brand > span:first-of-type:not(.zaaa-brand-crest):not(.zaaa-brand-meta),
+html[dir="rtl"] body .zone-topbar .zone-brand .zaaa-brand-meta,
+html[dir="rtl"] body .zone-topbar .zone-header-links .zone-header-link,
+html[dir="rtl"] body .zone-topbar .zone-header-actions > span:first-child,
+html[dir="rtl"] body .zone-topbar .zone-header-actions > button,
+html[dir="rtl"] body .zone-topbar .zone-header-actions > a,
+html[dir="rtl"] body .zone-topbar .zone-bulletin > span:first-child,
+html[dir="rtl"] body aside.zone-sidebar .zone-panel-heading[data-zhead],
+html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank,
+html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation .zone-nav-group,
+html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
