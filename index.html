@@ -1247,8 +1247,8 @@
             </div>
             <button class="zone-compact-btn" onClick="{{ syndicateHub.refresh }}" disabled="{{ syndicateHub.busy }}" style="background:var(--btn);color:var(--t1);border:1px solid var(--border3);border-radius:4px;padding:5px 11px;font:inherit;font-size:11px;font-weight:600;cursor:pointer">{{ syndicateHub.refreshLabel }}</button>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:10px">
-            <div data-syndicate-panel="chronicle" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,255px),1fr));gap:10px">
+            <div data-syndicate-panel="chronicle" style="min-width:0;background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <strong style="color:var(--gold);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.chronicleTitle }}</strong>
                 <span style="color:var(--acc);font-size:10px;font-weight:700">{{ syndicateHub.chronicleBadge }}</span>
@@ -1265,7 +1265,7 @@
                 </sc-for>
               </div>
             </div>
-            <div data-syndicate-panel="bounties" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+            <div data-syndicate-panel="bounties" style="min-width:0;background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <strong style="color:#ff8a7a;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.bountyTitle }}</strong>
                 <bdi style="color:var(--money);font-size:10.5px;font-weight:700">{{ syndicateHub.totalEscrowText }}</bdi>
@@ -1285,19 +1285,19 @@
                   <div style="color:var(--mu);font-size:11px;padding:8px;text-align:center">{{ syndicateHub.bountiesEmptyLabel }}</div>
                 </sc-if>
               </div>
-              <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div style="border-top:1px solid var(--line);padding-top:8px;margin-top:auto;display:flex;flex-direction:column;gap:6px">
                 <div style="color:var(--t3);font-size:10.5px;font-weight:700">{{ syndicateHub.postBountyHeading }}</div>
-                <input type="text" data-bounty-target-input="1" sc-camel-value="{{ syndicateHub.bountyTarget }}" onInput="{{ syndicateHub.onBountyTarget }}" placeholder="{{ syndicateHub.bountyTargetPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-bounty-target-input="1" sc-camel-value="{{ syndicateHub.bountyTarget }}" onInput="{{ syndicateHub.onBountyTarget }}" placeholder="{{ syndicateHub.bountyTargetPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
                 <div style="display:flex;gap:5px;flex-wrap:wrap">
                   <sc-for list="{{ syndicateHub.bountyStakes }}" as="bs" hint-placeholder-count="3">
                     <button type="button" onClick="{{ bs.pick }}" style="background:{{ bs.bg }};color:{{ bs.fg }};border:1px solid var(--border3);border-radius:3px;padding:3px 8px;font:inherit;font-size:10px;font-weight:700;cursor:pointer"><bdi>{{ bs.label }}</bdi></button>
                   </sc-for>
                 </div>
-                <input type="text" data-bounty-reason-input="1" sc-camel-value="{{ syndicateHub.bountyReason }}" onInput="{{ syndicateHub.onBountyReason }}" placeholder="{{ syndicateHub.bountyReasonPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-bounty-reason-input="1" sc-camel-value="{{ syndicateHub.bountyReason }}" onInput="{{ syndicateHub.onBountyReason }}" placeholder="{{ syndicateHub.bountyReasonPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
                 <button type="button" data-bounty-post-btn="1" class="zone-action-primary" onClick="{{ syndicateHub.postBounty }}" disabled="{{ syndicateHub.postBountyDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ syndicateHub.postBountyLabel }}</button>
               </div>
             </div>
-            <div data-syndicate-panel="mail" style="background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+            <div data-syndicate-panel="mail" style="min-width:0;background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
                 <strong style="color:var(--link);font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.mailTitle }}</strong>
                 <bdi style="color:var(--gold);font-size:10.5px;font-weight:700">{{ syndicateHub.unreadBadge }}</bdi>
@@ -1324,17 +1324,46 @@
                   <div style="color:var(--mu);font-size:11px;padding:8px;text-align:center">{{ syndicateHub.mailEmptyLabel }}</div>
                 </sc-if>
               </div>
-              <div style="border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="border-top:1px solid var(--line);padding-top:8px;margin-top:auto;display:flex;flex-direction:column;gap:5px">
                 <div style="color:var(--t3);font-size:10.5px;font-weight:700">{{ syndicateHub.composeHeading }}</div>
                 <div style="display:flex;gap:4px;flex-wrap:wrap">
                   <sc-for list="{{ syndicateHub.quickRecipients }}" as="qr" hint-placeholder-count="3">
                     <button type="button" onClick="{{ qr.pick }}" style="background:var(--btn);color:var(--t2);border:1px solid var(--border3);border-radius:3px;padding:2px 6px;font:inherit;font-size:9.5px;cursor:pointer">{{ qr.label }}</button>
                   </sc-for>
                 </div>
-                <input type="text" data-mail-recipient-input="1" sc-camel-value="{{ syndicateHub.mailRecipient }}" onInput="{{ syndicateHub.onMailRecipient }}" placeholder="{{ syndicateHub.mailRecipientPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
-                <input type="text" data-mail-subject-input="1" sc-camel-value="{{ syndicateHub.mailSubject }}" onInput="{{ syndicateHub.onMailSubject }}" placeholder="{{ syndicateHub.mailSubjectPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
-                <input type="text" data-mail-body-input="1" sc-camel-value="{{ syndicateHub.mailBody }}" onInput="{{ syndicateHub.onMailBody }}" placeholder="{{ syndicateHub.mailBodyPlaceholder }}" style="background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-mail-recipient-input="1" sc-camel-value="{{ syndicateHub.mailRecipient }}" onInput="{{ syndicateHub.onMailRecipient }}" placeholder="{{ syndicateHub.mailRecipientPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-mail-subject-input="1" sc-camel-value="{{ syndicateHub.mailSubject }}" onInput="{{ syndicateHub.onMailSubject }}" placeholder="{{ syndicateHub.mailSubjectPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <input type="text" data-mail-body-input="1" sc-camel-value="{{ syndicateHub.mailBody }}" onInput="{{ syndicateHub.onMailBody }}" placeholder="{{ syndicateHub.mailBodyPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
                 <button type="button" data-mail-send-btn="1" class="zone-action-primary" onClick="{{ syndicateHub.sendMail }}" disabled="{{ syndicateHub.sendMailDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ syndicateHub.sendMailLabel }}</button>
+              </div>
+            </div>
+            <div data-syndicate-panel="chat" style="min-width:0;background:rgba(8,11,16,.88);border:1px solid var(--border);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+                <strong style="color:#39e7a3;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em">{{ syndicateHub.chatTitle }}</strong>
+                <bdi style="color:var(--acc);font-size:10px;font-weight:700">{{ syndicateHub.chatBadge }}</bdi>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap">
+                <sc-for list="{{ syndicateHub.chatChannels }}" as="cc" hint-placeholder-count="3">
+                  <button type="button" data-chat-channel="{{ cc.id }}" onClick="{{ cc.select }}" style="flex:1;min-width:62px;background:{{ cc.bg }};color:{{ cc.fg }};border:1px solid {{ cc.border }};border-radius:3px;padding:4px 6px;font:inherit;font-size:10px;font-weight:700;cursor:pointer">{{ cc.label }}</button>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;max-height:185px;overflow-y:auto">
+                <sc-for list="{{ syndicateHub.chatMessages }}" as="cm" hint-placeholder-count="4">
+                  <div style="background:var(--deep);border:1px solid var(--border2);border-inline-start:2px solid {{ cm.accent }};border-radius:4px;padding:6px 8px;display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:10px">
+                      <strong style="color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><bdi>{{ cm.sender }}</bdi> <span style="color:var(--mu);font-weight:500;font-size:9.5px">{{ cm.levelBadge }}</span></strong>
+                      <bdi style="color:var(--mu);font-size:9.5px">{{ cm.time }}</bdi>
+                    </div>
+                    <div style="color:var(--t2);font-size:10.5px;line-height:1.4;word-break:break-word"><bdi>{{ cm.text }}</bdi></div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ syndicateHub.chatEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="color:var(--mu);font-size:11px;padding:8px;text-align:center">{{ syndicateHub.chatEmptyLabel }}</div>
+                </sc-if>
+              </div>
+              <div style="border-top:1px solid var(--line);padding-top:8px;margin-top:auto;display:flex;flex-direction:column;gap:6px">
+                <input type="text" data-syndicate-chat-input="1" sc-camel-value="{{ syndicateHub.chatDraft }}" onInput="{{ syndicateHub.onChatInput }}" placeholder="{{ syndicateHub.chatPlaceholder }}" style="width:100%;box-sizing:border-box;min-width:0;background:var(--deep);border:1px solid var(--border3);border-radius:3px;padding:5px 8px;color:var(--t1);font:inherit;font-size:11px">
+                <button type="button" data-syndicate-chat-send="1" class="zone-action-primary" onClick="{{ syndicateHub.sendChat }}" disabled="{{ syndicateHub.sendChatDisabled }}" style="background:linear-gradient(var(--accFill1),var(--accFill2));color:var(--onAcc);border:1px solid var(--acc2);border-radius:4px;padding:6px 10px;font:inherit;font-size:10.5px;font-weight:700;cursor:pointer;text-transform:uppercase">{{ syndicateHub.sendChatLabel }}</button>
               </div>
             </div>
           </div>
@@ -6695,9 +6724,18 @@ class Component extends DCLogic {
       if (uname && uname !== p.username && !candidateNames.includes(uname)) candidateNames.push(uname);
       if (candidateNames.length >= 4) break;
     }
+    const activeChatChan = ['global', 'faction', 'trade'].includes(this.state.syndicateChatChan) ? this.state.syndicateChatChan : 'global';
+    const rawSyndicateChatRows = Array.isArray(soc.chat?.[activeChatChan]) ? soc.chat[activeChatChan] : [];
+    const syndicateChatDraft = String(this.state.syndicateChatDraft || '');
+    const chatChannelDefs = [
+      { id: 'global', label: lang === 'ar' ? 'العام' : 'Global', accent: '#39e7a3' },
+      { id: 'faction', label: lang === 'ar' ? 'العائلة' : 'Faction', accent: 'var(--gold)' },
+      { id: 'trade', label: lang === 'ar' ? 'التجارة' : 'Trade', accent: 'var(--link)' }
+    ];
+    const activeChatAccent = chatChannelDefs.find(c => c.id === activeChatChan)?.accent || '#39e7a3';
     view.syndicateHub = {
-      title: lang === 'ar' ? 'مركز استخبارات المدينة ولوحة العقود والبريد المشفر' : 'Zone City Live Chronicle, Shared Hitlist & Direct Mail',
-      subtitle: lang === 'ar' ? 'أحداث اللاعبين الحية من قاعدة البيانات · عقود باونتي بضمان نقدي حقيقي · رسائل خاصة بين اللاعبين' : 'Real-time cross-player chronicle · Escrowed PvP hitlist bounties · Encrypted player-to-player dispatches',
+      title: lang === 'ar' ? 'مركز استخبارات المدينة ولوحة العقود والبريد والدردشة الحية' : 'Zone City Live Chronicle, Shared Hitlist, Encrypted Mail & Live Comms',
+      subtitle: lang === 'ar' ? 'أحداث اللاعبين الحية · عقود باونتي بضمان نقدي · بريد خاص مشفر · قنوات تواصل فورية بين اللاعبين' : 'Real-time cross-player chronicle · Escrowed PvP hitlist bounties · Encrypted player mail · Live syndicate comms',
       refreshLabel: lang === 'ar' ? 'تحديث مباشر' : 'Live Refresh',
       busy: Boolean(this.socialBusy || this.socialActionBusy) || IS_PREVIEW,
       refresh: () => this.loadSocial(true),
@@ -6823,6 +6861,48 @@ class Component extends DCLogic {
           if (res) {
             this.setState({ mailSubjectDraft: '', mailBodyDraft: '' });
             this.toast(lang === 'ar' ? `✉️ تم تسليم البرقية إلى ${res.recipient || recipient}.` : `✉️ Dispatch delivered to ${res.recipient || recipient}.`);
+          }
+        });
+      },
+      chatTitle: lang === 'ar' ? 'قنوات النقابة المباشرة' : 'Live Syndicate Comms',
+      chatBadge: (lang === 'ar' ? 'رسائل حية: ' : 'LIVE: ') + rawSyndicateChatRows.length,
+      chatChannels: chatChannelDefs.map(ch => ({
+        id: ch.id,
+        label: ch.label + ` (${Array.isArray(soc.chat?.[ch.id]) ? soc.chat[ch.id].length : 0})`,
+        bg: activeChatChan === ch.id ? 'var(--activebg)' : 'var(--btn)',
+        fg: activeChatChan === ch.id ? 'var(--activefg)' : 'var(--t3)',
+        border: activeChatChan === ch.id ? 'var(--acc)' : 'var(--border3)',
+        select: () => this.setState({ syndicateChatChan: ch.id })
+      })),
+      chatMessages: [...rawSyndicateChatRows].reverse().slice(0, 18).map(cm => ({
+        id: cm.id,
+        sender: cm.sender || 'Operative',
+        levelBadge: (lang === 'ar' ? 'مستوى ' : 'Lv.') + Number(cm.senderLevel || 1),
+        time: cm.time || clock,
+        text: cm.text || '',
+        accent: cm.sender === p.username ? 'var(--acc)' : activeChatAccent
+      })),
+      chatEmpty: rawSyndicateChatRows.length === 0,
+      chatEmptyLabel: lang === 'ar' ? 'لا توجد رسائل في هذه القناة بعد. ابدأ المحادثة الآن.' : 'No messages on this wire yet. Transmit the first signal.',
+      chatDraft: syndicateChatDraft,
+      chatPlaceholder: lang === 'ar' ? 'اكتب رسالة حية للاعبين في القناة...' : 'Transmit live message to channel...',
+      onChatInput: e => this.setState({ syndicateChatDraft: e.target.value }),
+      sendChatLabel: this.socialActionBusy
+        ? (lang === 'ar' ? 'جارٍ الإرسال...' : 'Sending...')
+        : (lang === 'ar' ? 'إرسال للقناة' : 'Send to Channel'),
+      sendChatDisabled: socialLocked || !syndicateChatDraft.trim(),
+      sendChat: () => {
+        const message = syndicateChatDraft.trim();
+        if (!message) return;
+        this.runSocialAction({
+          action: 'chat.send',
+          channel: activeChatChan,
+          message
+        }).then(res => {
+          if (res) {
+            this.setState({ syndicateChatDraft: '' });
+            const chanName = chatChannelDefs.find(c => c.id === activeChatChan)?.label || activeChatChan;
+            this.toast(lang === 'ar' ? `📡 تم بث رسالتك في قناة ${chanName}.` : `📡 Broadcast delivered to ${chanName} channel.`);
           }
         });
       }
