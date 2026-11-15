@@ -727,16 +727,34 @@
       if (kind === 'getaway') {
         /* Mini Neon Highway Preview */
         var rw = w * 0.56, rx = (w - rw) * 0.5;
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = '#090f1d';
+        ctx.fillRect(0, 0, w, h);
+
+        /* Passing shoulder streetlamp glow */
+        for (var sl = 0; sl < 3; sl++) {
+          var ly = ((now * 0.14 + sl * 42) % (h + 36)) - 18;
+          ctx.fillStyle = 'rgba(235,184,88,0.16)';
+          ctx.beginPath(); ctx.arc(rx - 8, ly, 12, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(rx + rw + 8, ly, 12, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#fde68a';
+          ctx.fillRect(rx - 9, ly - 1, 3, 3);
+          ctx.fillRect(rx + rw + 6, ly - 1, 3, 3);
+        }
+
+        var roadGrad = ctx.createLinearGradient(rx, 0, rx + rw, 0);
+        roadGrad.addColorStop(0, '#0d1526');
+        roadGrad.addColorStop(0.5, '#131e35');
+        roadGrad.addColorStop(1, '#0d1526');
+        ctx.fillStyle = roadGrad;
         ctx.fillRect(rx, 0, rw, h);
-        ctx.strokeStyle = 'rgba(235,184,88,0.5)';
+        ctx.strokeStyle = 'rgba(235,184,88,0.65)';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(rx, 0); ctx.lineTo(rx, h);
         ctx.moveTo(rx + rw, 0); ctx.lineTo(rx + rw, h);
         ctx.stroke();
 
-        ctx.strokeStyle = 'rgba(148,163,184,0.35)';
+        ctx.strokeStyle = 'rgba(148,163,184,0.38)';
         ctx.setLineDash([10, 10]);
         ctx.lineDashOffset = -(now * 0.14) % 20;
         for (var ln = 1; ln <= 2; ln++) {
@@ -747,23 +765,41 @@
         }
         ctx.setLineDash([]);
 
-        /* Police car */
-        var py = ((now * 0.08) % (h + 36)) - 18;
+        /* Police Interceptor with Siren Halo */
+        var py = ((now * 0.085) % (h + 36)) - 18;
         var px = rx + rw * 0.24;
-        ctx.fillStyle = '#1e293b';
+        var sRed = (Math.floor(now / 120) % 2) === 0;
+        ctx.fillStyle = sRed ? 'rgba(239,68,68,0.22)' : 'rgba(59,130,246,0.22)';
+        ctx.beginPath(); ctx.arc(px, py, 16, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#0f172a';
         ctx.fillRect(px - 8, py - 13, 16, 26);
-        ctx.fillStyle = (Math.floor(now / 120) % 2) ? '#ef4444' : '#3b82f6';
-        ctx.fillRect(px - 7, py - 2, 14, 4);
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(px - 7, py - 5, 14, 10);
+        ctx.fillStyle = sRed ? '#ef4444' : '#3b82f6';
+        ctx.fillRect(px - 7, py - 2, 7, 4);
+        ctx.fillStyle = sRed ? '#3b82f6' : '#ef4444';
+        ctx.fillRect(px, py - 2, 7, 4);
 
-        /* Player Noir GT car */
-        var carX = rx + rw * (0.5 + Math.sin(now * 0.0032) * 0.26);
+        /* Player Noir GT Coupe + Headlight Beams */
+        var carX = rx + rw * (0.52 + Math.sin(now * 0.0032) * 0.25);
+        ctx.fillStyle = 'rgba(254,240,138,0.16)';
+        ctx.beginPath();
+        ctx.moveTo(carX - 6, h - 32); ctx.lineTo(carX - 13, h - 56); ctx.lineTo(carX - 1, h - 56);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(carX + 6, h - 32); ctx.lineTo(carX + 1, h - 56); ctx.lineTo(carX + 13, h - 56);
+        ctx.closePath(); ctx.fill();
         ctx.fillStyle = '#39e7a3';
         ctx.shadowColor = '#39e7a3';
         ctx.shadowBlur = 10;
-        ctx.fillRect(carX - 8, h - 32, 16, 24);
+        ctx.fillRect(carX - 8, h - 32, 16, 25);
         ctx.shadowBlur = 0;
+        ctx.fillStyle = '#ebb858';
+        ctx.fillRect(carX - 1.5, h - 32, 3, 25);
         ctx.fillStyle = '#06120c';
-        ctx.fillRect(carX - 6, h - 26, 12, 8);
+        ctx.fillRect(carX - 6, h - 25, 12, 9);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(carX - 7, h - 9, 14, 2);
       } else if (kind === 'heist') {
         /* Mini Brass Safe Dial */
         var cx = w * 0.5, cy = h * 0.5, rad = 33;
@@ -913,12 +949,66 @@
     }
 
     /* Draw City Shoulders + Neon Highway */
-    ctx.fillStyle = '#05080f';
+    var shoulderGrad = ctx.createLinearGradient(0, 0, 0, h);
+    shoulderGrad.addColorStop(0, '#070b16');
+    shoulderGrad.addColorStop(1, '#04060c');
+    ctx.fillStyle = shoulderGrad;
     ctx.fillRect(0, 0, w, h);
 
-    ctx.fillStyle = '#0d1422';
+    /* Procedural Noir City Blocks & Lit Windows on Left/Right Shoulders */
+    var scrollPx = (now * (gw.running && !gw.gameOver ? gw.speed * 0.65 : 95) * 0.001) * 60;
+    if (roadLeft > 24) {
+      for (var sb = -1; sb < 5; sb++) {
+        var by = ((sb * 68 + scrollPx * 2.2) % (h + 80)) - 68;
+        var bwL = Math.max(16, roadLeft - 22);
+        ctx.fillStyle = '#0a101d';
+        ctx.strokeStyle = 'rgba(56,189,248,0.12)';
+        ctx.lineWidth = 1;
+        ctx.fillRect(6, by, bwL, 56);
+        ctx.strokeRect(6, by, bwL, 56);
+        ctx.fillRect(roadLeft + roadW + 16, by + 18, bwL, 52);
+        ctx.strokeRect(roadLeft + roadW + 16, by + 18, bwL, 52);
+        /* Lit penthouse windows */
+        ctx.fillStyle = (sb % 2 === 0) ? 'rgba(235,184,88,0.28)' : 'rgba(57,231,163,0.22)';
+        for (var wx = 12; wx < bwL - 8; wx += 14) {
+          ctx.fillRect(wx, by + 10, 6, 8);
+          ctx.fillRect(wx, by + 28, 6, 8);
+          ctx.fillRect(roadLeft + roadW + 14 + wx, by + 28, 6, 8);
+        }
+      }
+    }
+
+    /* Wet Asphalt Highway Deck */
+    var asphalt = ctx.createLinearGradient(roadLeft, 0, roadLeft + roadW, 0);
+    asphalt.addColorStop(0, '#0b1220');
+    asphalt.addColorStop(0.22, '#111b2f');
+    asphalt.addColorStop(0.5, '#15223b');
+    asphalt.addColorStop(0.78, '#111b2f');
+    asphalt.addColorStop(1, '#0b1220');
+    ctx.fillStyle = asphalt;
     ctx.fillRect(roadLeft, 0, roadW, h);
 
+    /* Passing Golden Streetlamps Casting Light Pools onto Curbs */
+    for (var lp = -1; lp < 5; lp++) {
+      var lampY = ((lp * 74 + scrollPx * 4.4) % (h + 74)) - 37;
+      var lPoolL = ctx.createRadialGradient(roadLeft - 6, lampY, 2, roadLeft - 6, lampY, 34);
+      lPoolL.addColorStop(0, 'rgba(235,184,88,0.32)');
+      lPoolL.addColorStop(1, 'rgba(235,184,88,0)');
+      ctx.fillStyle = lPoolL;
+      ctx.beginPath(); ctx.arc(roadLeft - 6, lampY, 34, 0, Math.PI * 2); ctx.fill();
+
+      var lPoolR = ctx.createRadialGradient(roadLeft + roadW + 6, lampY, 2, roadLeft + roadW + 6, lampY, 34);
+      lPoolR.addColorStop(0, 'rgba(235,184,88,0.32)');
+      lPoolR.addColorStop(1, 'rgba(235,184,88,0)');
+      ctx.fillStyle = lPoolR;
+      ctx.beginPath(); ctx.arc(roadLeft + roadW + 6, lampY, 34, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(roadLeft - 9, lampY - 2, 4, 4);
+      ctx.fillRect(roadLeft + roadW + 5, lampY - 2, 4, 4);
+    }
+
+    /* Curb Rumble Strips + Brass Guardrails */
     ctx.strokeStyle = '#ebb858';
     ctx.lineWidth = 3;
     ctx.beginPath();
@@ -926,10 +1016,20 @@
     ctx.moveTo(roadLeft + roadW, 0); ctx.lineTo(roadLeft + roadW, h);
     ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(148,163,184,0.34)';
+    ctx.strokeStyle = 'rgba(224,78,58,0.55)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([12, 12]);
+    ctx.lineDashOffset = -(scrollPx * 4.4) % 24;
+    ctx.beginPath();
+    ctx.moveTo(roadLeft + 3, 0); ctx.lineTo(roadLeft + 3, h);
+    ctx.moveTo(roadLeft + roadW - 3, 0); ctx.lineTo(roadLeft + roadW - 3, h);
+    ctx.stroke();
+
+    /* Lane Markers */
+    ctx.strokeStyle = 'rgba(148,163,184,0.38)';
     ctx.lineWidth = 2;
     ctx.setLineDash([16, 16]);
-    ctx.lineDashOffset = -(now * 0.35) % 32;
+    ctx.lineDashOffset = -(scrollPx * 4.4) % 32;
     for (var l = 1; l <= 3; l++) {
       ctx.beginPath();
       ctx.moveTo(roadLeft + laneW * l, 0);
@@ -938,48 +1038,126 @@
     }
     ctx.setLineDash([]);
 
-    /* Entities */
+    /* Entities: Cash Briefcases & Police Interceptors */
     gw.entities.forEach(function (ent) {
       var ex = roadLeft + (ent.lane + 0.5) * laneW;
       if (ent.kind === 'cash') {
-        ctx.fillStyle = '#14532d';
-        ctx.strokeStyle = '#49f0a1';
+        var glow = ctx.createRadialGradient(ex, ent.y, 2, ex, ent.y, 22);
+        glow.addColorStop(0, 'rgba(73,240,161,0.36)');
+        glow.addColorStop(1, 'rgba(73,240,161,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath(); ctx.arc(ex, ent.y, 22, 0, Math.PI * 2); ctx.fill();
+
+        /* Brass Briefcase Handle + Emerald Case */
+        ctx.strokeStyle = '#ebb858';
         ctx.lineWidth = 2;
-        ctx.fillRect(ex - 13, ent.y - 11, 26, 22);
-        ctx.strokeRect(ex - 13, ent.y - 11, 26, 22);
+        ctx.strokeRect(ex - 5, ent.y - 14, 10, 4);
+        ctx.fillStyle = '#0f3d26';
+        ctx.strokeStyle = '#49f0a1';
+        ctx.fillRect(ex - 14, ent.y - 10, 28, 20);
+        ctx.strokeRect(ex - 14, ent.y - 10, 28, 20);
         ctx.fillStyle = '#49f0a1';
-        ctx.font = fontStack(800, 12);
+        ctx.font = fontStack(900, 12);
         ctx.textAlign = 'center';
         ctx.fillText('$', ex, ent.y + 4);
       } else {
-        /* Police interceptor */
-        ctx.fillStyle = '#111827';
+        /* Police Interceptor + Sweeping Siren Halo */
+        var flashRed = Math.floor(now / 110) % 2 === 0;
+        var siren = ctx.createRadialGradient(ex, ent.y, 4, ex, ent.y, 34);
+        siren.addColorStop(0, flashRed ? 'rgba(239,68,68,0.32)' : 'rgba(59,130,246,0.32)');
+        siren.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = siren;
+        ctx.beginPath(); ctx.arc(ex, ent.y, 34, 0, Math.PI * 2); ctx.fill();
+
+        /* Headlight cones facing downward */
+        ctx.fillStyle = 'rgba(226,232,240,0.16)';
+        ctx.beginPath();
+        ctx.moveTo(ex - 10, ent.y + 20); ctx.lineTo(ex - 18, ent.y + 44); ctx.lineTo(ex - 2, ent.y + 44);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(ex + 10, ent.y + 20); ctx.lineTo(ex + 2, ent.y + 44); ctx.lineTo(ex + 18, ent.y + 44);
+        ctx.closePath(); ctx.fill();
+
+        /* Cruiser Chassis */
+        ctx.fillStyle = '#0f172a';
         ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 1.5;
-        ctx.fillRect(ex - 13, ent.y - 20, 26, 40);
-        ctx.strokeRect(ex - 13, ent.y - 20, 26, 40);
-        var flashRed = Math.floor(now / 110) % 2 === 0;
+        ctx.fillRect(ex - 14, ent.y - 21, 28, 42);
+        ctx.strokeRect(ex - 14, ent.y - 21, 28, 42);
+        /* White Interceptor Doors + Dark Glass */
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(ex - 12, ent.y - 8, 24, 16);
+        ctx.fillStyle = '#090d16';
+        ctx.fillRect(ex - 10, ent.y + 6, 20, 8);
+        ctx.fillRect(ex - 10, ent.y - 15, 20, 6);
+        /* Roof Lightbar */
         ctx.fillStyle = flashRed ? '#ef4444' : '#3b82f6';
-        ctx.fillRect(ex - 11, ent.y - 4, 11, 5);
+        ctx.fillRect(ex - 11, ent.y - 3, 11, 5);
         ctx.fillStyle = flashRed ? '#3b82f6' : '#ef4444';
-        ctx.fillRect(ex, ent.y - 4, 11, 5);
+        ctx.fillRect(ex, ent.y - 3, 11, 5);
       }
     });
 
-    /* Player Getaway Coupe */
+    /* Player Noir GT Sports Coupe */
     var px = roadLeft + (gw.lane + 0.5) * laneW;
-    var py = h - 42;
+    var py = h - 44;
+    var tilt = (gw.targetLane - gw.lane) * 0.14;
     ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(tilt);
+
+    /* Xenon Headlight Cones on Wet Asphalt */
+    var beamL = ctx.createLinearGradient(0, -22, 0, -82);
+    beamL.addColorStop(0, 'rgba(254,240,138,0.32)');
+    beamL.addColorStop(1, 'rgba(254,240,138,0)');
+    ctx.fillStyle = beamL;
+    ctx.beginPath();
+    ctx.moveTo(-11, -22); ctx.lineTo(-24, -82); ctx.lineTo(-2, -82);
+    ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(11, -22); ctx.lineTo(2, -82); ctx.lineTo(24, -82);
+    ctx.closePath(); ctx.fill();
+
+    /* Twin Nitro Exhaust Flames */
+    var flameLen = (gw.boosting && gw.nitro > 0) ? (16 + Math.sin(now * 0.05) * 6) : (7 + Math.sin(now * 0.03) * 2.5);
+    ctx.fillStyle = (gw.boosting && gw.nitro > 0) ? '#38bdf8' : '#ebb858';
+    ctx.beginPath();
+    ctx.moveTo(-9, 22); ctx.lineTo(-6, 22 + flameLen); ctx.lineTo(-3, 22);
+    ctx.moveTo(3, 22); ctx.lineTo(6, 22 + flameLen); ctx.lineTo(9, 22);
+    ctx.fill();
+
+    /* GT Metallic Body + Gold Syndicate Stripe */
     ctx.shadowColor = '#39e7a3';
-    ctx.shadowBlur = gw.boosting ? 18 : 10;
-    ctx.fillStyle = '#39e7a3';
-    ctx.fillRect(px - 13, py - 21, 26, 42);
+    ctx.shadowBlur = gw.boosting ? 20 : 10;
+    var carGrad = ctx.createLinearGradient(-14, -22, 14, 22);
+    carGrad.addColorStop(0, '#10b981');
+    carGrad.addColorStop(0.5, '#39e7a3');
+    carGrad.addColorStop(1, '#059669');
+    ctx.fillStyle = carGrad;
+    ctx.fillRect(-14, -22, 28, 44);
     ctx.shadowBlur = 0;
-    ctx.fillStyle = '#07140e';
-    ctx.fillRect(px - 10, py - 12, 20, 14);
+
+    /* Wheels */
+    ctx.fillStyle = '#05070c';
+    ctx.fillRect(-16, -16, 3, 10);
+    ctx.fillRect(13, -16, 3, 10);
+    ctx.fillRect(-16, 8, 3, 10);
+    ctx.fillRect(13, 8, 3, 10);
+
+    /* Gold Center Racing Stripe + Carbon Cockpit */
+    ctx.fillStyle = '#ebb858';
+    ctx.fillRect(-2, -22, 4, 44);
+    ctx.fillStyle = '#06110c';
+    ctx.fillRect(-10, -10, 20, 16);
+    ctx.fillStyle = 'rgba(124,196,255,0.22)';
+    ctx.fillRect(-9, -9, 18, 5);
+
+    /* Xenon Lamps + Crimson LED Tailbar */
     ctx.fillStyle = '#fef08a';
-    ctx.fillRect(px - 11, py - 21, 6, 3);
-    ctx.fillRect(px + 5, py - 21, 6, 3);
+    ctx.fillRect(-12, -22, 7, 3);
+    ctx.fillRect(5, -22, 7, 3);
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(-12, 19, 24, 3);
     ctx.restore();
 
     /* Particles */
@@ -995,17 +1173,34 @@
       ctx.globalAlpha = 1;
     }
 
-    /* Arcade HUD Overlay */
-    ctx.fillStyle = 'rgba(7,10,16,0.82)';
-    ctx.fillRect(10, 10, 172, 54);
-    ctx.strokeStyle = 'rgba(235,184,88,0.45)';
-    ctx.strokeRect(10, 10, 172, 54);
+    /* Arcade HUD Overlays (Left: Score/Loot · Right: Speed/Nitro) */
+    ctx.fillStyle = 'rgba(7,10,16,0.84)';
+    ctx.fillRect(10, 10, 174, 54);
+    ctx.strokeStyle = 'rgba(235,184,88,0.48)';
+    ctx.strokeRect(10, 10, 174, 54);
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ebb858';
     ctx.font = fontStack(800, 11);
     ctx.fillText((ar ? 'النقاط: ' : 'SCORE: ') + gw.score, 18, 28);
     ctx.fillStyle = '#49f0a1';
     ctx.fillText((ar ? 'حقائب: ' : 'LOOT BAGS: ') + gw.bags + '  (x' + gw.combo + ')', 18, 46);
+
+    if (w > 360) {
+      var mph = Math.round((gw.running && !gw.gameOver ? gw.speed : 0) * (gw.boosting ? 0.62 : 0.44));
+      ctx.fillStyle = 'rgba(7,10,16,0.84)';
+      ctx.fillRect(w - 146, 10, 136, 54);
+      ctx.strokeStyle = 'rgba(57,231,163,0.42)';
+      ctx.strokeRect(w - 146, 10, 136, 54);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = fontStack(900, 12);
+      ctx.fillText(mph + (ar ? ' كم/س' : ' MPH'), w - 18, 28);
+      /* Nitro Mini Bar */
+      ctx.fillStyle = '#141e30';
+      ctx.fillRect(w - 136, 38, 118, 8);
+      ctx.fillStyle = gw.boosting ? '#38bdf8' : '#39e7a3';
+      ctx.fillRect(w - 136, 38, Math.round(1.18 * gw.nitro), 8);
+    }
 
     if (gw.gameOver || !gw.running) {
       ctx.fillStyle = 'rgba(5,8,14,0.78)';

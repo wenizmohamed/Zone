@@ -1,4 +1,4 @@
-/* ZONE v120 - Noir Crime Syndicate Game HUD & Gemini-4 Instant Games */
+/* ZONE v121 - Noir Crime Syndicate Game HUD & Gemini-4 Instant Games */
 
 html:not([data-theme="light"]) {
   --bg: #070a10;
@@ -66,7 +66,7 @@ body:not(.zone-codex-open) [data-torn-island-staff="1"] {
 [data-zone-account-sync="1"],
 [data-zone-connection="1"],
 [data-zplayercard] .zone-profile-identity > div:first-child bdi,
-.zone-character-stage > div[style*="position:absolute"],
+.zone-character-stage > div,
 .zone-crime-scene > div[style] {
   display: none !important;
 }
@@ -75,8 +75,11 @@ body:not(.zone-codex-open) [data-torn-island-staff="1"] {
 .zone-viewer-badge,
 .zone-street-count,
 [style*="border-radius:9px"],
+[style*="border-radius: 9px"],
 [style*="border-radius:10px"],
-[style*="border-radius:999px"] {
+[style*="border-radius: 10px"],
+[style*="border-radius:999px"],
+[style*="border-radius: 999px"] {
   border-radius: 3px !important;
 }
 
@@ -441,6 +444,19 @@ html:not([data-theme="light"]) .zone-quick-actions > button:hover {
 }
 
 /* 7. Velvet Underground Casino Overhaul */
+#zone-main[data-zone-screen="casino"] > .zone-page-heading {
+  order: -4 !important;
+}
+
+#zone-main[data-zone-screen="casino"] > .zone-page-rule {
+  order: -3 !important;
+}
+
+#zone-main[data-zone-screen="casino"] > #zone-tutorial-panel,
+#zone-main[data-zone-screen="casino"] > #zone-result {
+  order: -2 !important;
+}
+
 #zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"] {
   order: -1;
   background:
