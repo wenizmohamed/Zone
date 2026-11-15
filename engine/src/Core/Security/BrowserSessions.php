@@ -17,7 +17,7 @@ final readonly class BrowserSessions
 
     private function vercelHandle(string $id): string
     {
-        $callsigns = ['Vincenzo', 'Corleone', 'Viper', 'Luciano', 'Castellano', 'Valenti', 'Moretti', 'Bellini'];
+        $callsigns = ['Vincenzo', 'Corleone', 'Viper', 'Luciano', 'Castellano', 'Valenti', 'Moretti', 'Bellini', 'Santoro', 'Marconi', 'Conti', 'Rizzo', 'Ferraro', 'DeLuca', 'Caruso', 'Falcone'];
         return $callsigns[hexdec(substr($id, -2)) % count($callsigns)] . '_' . strtoupper(substr($id, -4));
     }
 
@@ -114,7 +114,7 @@ final readonly class BrowserSessions
                 $this->database->insertIgnore('faction_members', ['player_id', 'faction_id', 'role', 'joined_at'], [$id, 'vipers', 'leader', gmdate('c', $now)]);
             } else {
                 $id = 'player-' . bin2hex(random_bytes(12));
-                $handle = 'Player_' . strtoupper(substr($id, -6));
+                $handle = $this->vercelHandle($id);
                 $this->database->execute('INSERT INTO players (id, username, cash, happy, max_happy, resources_updated_at) VALUES (:id, :name, :cash, :happy, :happy2, :at)',
                     ['id' => $id, 'name' => $handle, 'cash' => 2500, 'happy' => 100, 'happy2' => 100, 'at' => gmdate('c', $now)]);
                 (new Ledger($this->database))->record($id, 'cash', 2500, 2500, 'beta.starting-grant', bin2hex(random_bytes(16)));

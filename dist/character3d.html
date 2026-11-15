@@ -117,10 +117,12 @@ window.ZoneMediaBoot = installMediaFallback();
   <div id="__bundler_loading">Loading preview...</div>
 
   <script>
-    
+(function() { try { var q = new URLSearchParams(location.search).get('lang'); var ar = q === 'ar' || (q !== 'en' && parent.document.documentElement.lang === 'ar'); var el = document.getElementById('__bundler_loading'); if (el && ar) { el.dir = 'rtl'; el.textContent = 'جارٍ تجهيز الشخصية ثلاثية الأبعاد...'; } } catch (_) {} })();
 document.addEventListener('DOMContentLoaded', async function() {
   const loading = document.getElementById('__bundler_loading');
-  function setStatus(msg) { if (loading) loading.textContent = msg; }
+  let isArBoot = false;
+  try { const ql = new URLSearchParams(location.search).get('lang'); isArBoot = ql === 'ar' || (ql !== 'en' && parent.document.documentElement.lang === 'ar'); if (loading && isArBoot) { loading.dir = 'rtl'; loading.textContent = 'جارٍ تجهيز الشخصية ثلاثية الأبعاد...'; } } catch (_) {}
+  function setStatus(msg) { if (!loading) return; if (isArBoot) { loading.dir = 'rtl'; loading.textContent = /^Unpacking/i.test(msg) ? 'جارٍ فك حزمة العرض ثلاثي الأبعاد...' : /^Rendering/i.test(msg) ? 'جارٍ عرض المشهد...' : /^Error/i.test(msg) ? 'تعذر تجهيز المعاينة' : msg; } else loading.textContent = msg; }
 
   let characterRecoveryState = 'idle', characterModuleActivation = null;
   function requestCharacterRecovery(error) {

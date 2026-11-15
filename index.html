@@ -1453,7 +1453,7 @@ const T = {
     quick: { crimes: '{n} nerve · Crimes', gym: '{n} energy · Gym', attack: 'Attack a rival', missions: '{n} missions ready' },
     crimeXp: 'Crime XP', mastered: 'mastered', crime: 'Crime', skill: 'Skill', success: 'Success', commit: 'Commit', crimeLog: 'Crime log', catReq: '{n}',
     cats: { search: 'Search for Cash', boot: 'Bootlegging', graf: 'Graffiti', shop: 'Shoplifting', pick: 'Pickpocketing', skim: 'Card Skimming', hustle: 'Hustling', disp: 'Disposal', crack: 'Cracking', forge: 'Forgery', scam: 'Scamming', counter: 'Counterfeiting', burg: 'Burglary', arson: 'Arson' },
-    catDesc: { search: 'Rummage the city for loose cash and dropped items.', graf: 'Tag districts to build reputation. Higher districts unlock with skill.', shop: 'Lift goods from shops. Cameras and guards raise the risk.', pick: 'Lift wallets from passers-by. Timing is everything.', boot: 'Copy and sell media. Unlocks at 150 crime XP.', locked: 'This category unlocks with more crime experience.' },
+    catDesc: { search: 'Rummage the city for loose cash and dropped items.', graf: 'Tag districts to build reputation. Higher districts unlock with skill.', shop: 'Lift goods from shops. Cameras and guards raise the risk.', pick: 'Lift wallets from passers-by. Timing is everything.', boot: 'Copy and sell counterfeit media across underground stalls.', skim: 'Plant magnetic skimmers on city ATMs and fuel terminals to harvest card dumps.', hustle: 'Work street crowds with fast-hand games and staged wagers.', disp: 'Clean syndicate scenes and dissolve incriminating evidence under contract.', crack: 'Decrypt layered corporate hashes and vault keypads with custom rigs.', forge: 'Craft high-grade passports, permits, and syndicate credentials.', scam: 'Run targeted social-engineering and wire-diversion operations.', counter: 'Press polymer plates and circulate washed notes through shadow exchanges.', burg: 'Scout, case, and breach residential, commercial, and dockside targets.', arson: 'Execute high-heat syndicate ignition contracts across industrial targets.', locked: 'This category unlocks with more crime experience.' },
     cr: { trash: ['Search the Trash', 'Bins behind the market'], subway: ['Search the Subway', 'Turnstiles and platforms'], junk: ['Search the Junkyard', 'Scrap and lost parts'], beach: ['Search the Beach', 'Under the boardwalk'], cem: ['Search the Cemetery', 'Offerings left behind'],
       east: ['East Side', 'Low heat'], west: ['West Side', 'Low heat'], north: ['North Side', 'Patrols nearby'], res: ['Residential District', 'Neighbors watching'], red: ['Red-Light District', 'Crowded, quick escape'], fin: ['Financial District', 'CCTV everywhere'], center: ['City Center', 'Reputation required'],
       candy: ['Candy Kiosk', '1 camera'], corner: ['Corner Store', '2 cameras'], cloth: ['Zone Clothing', '1 camera · checkpoint'], superst: ['Super Store', '2 cameras · checkpoint'], pharm: ['Pharmacy', '3 cameras · checkpoint'], cyber: ['Cyber Shop', '2 cameras · 1 guard'], jewel: ['Jewelry Store', '3 cameras · 1 guard'], gun: ['Gun Shop', '4 cameras · 2 guards'],
@@ -1488,7 +1488,7 @@ const T = {
     highLow: 'High-Low', higher: 'Higher', lower: 'Lower', casinoGames: 'Games', cgames: [['Slots', 'Open'], ['Roulette', 'Open'], ['Blackjack', 'Open'], ['Poker', 'Table full'], ['Lottery', 'Draw in 3h'], ['Russian Roulette', 'Level 25']], casinoMsg: { start: 'Pick a bet and guess.', win: 'Correct! You won {c}.', lose: 'Wrong. You lost {c}.', push: 'Same card — push.' },
     networth: 'Networth', faction: 'Faction', hofNames: ['Duke_X', 'Marrow', 'BigSal', 'Lady_Vega', 'K1ng', 'NadiaQuick', 'Silas', 'Rayan_Black', 'Kaya_V', 'Tariq'],
     yourTeam: 'Your team', roundEnds: 'Round ends in', team: 'Team', score: 'Score', membersShort: 'Members', lives: 'Lives', teams: ['Night Market', 'Sand Vipers', 'Harbor Kings', 'Steel Rats', 'Red Lanterns', 'North Wolves', 'Dockers', 'Old Guard'],
-    footer: 'ZONE · Playable demo · Your progress is saved',
+    footer: 'ZONE · Noir Syndicate MMO · Your progress is saved',
     jail: 'You are in jail', jailBody: 'You were caught. Wait it out or pay bail.', bailSelf: 'Bail {c}', hospital: 'You are in hospital', hospBody: 'Rest up or use a medical item.', useKit: 'Use small first aid kit',
     log: { travel: 'Travelled {m} m across the city. −{e} energy.', crimeOk: '{crime}: +{cash}, +{xp} crime XP.', crimeItem: 'Found a {item} while searching.', crimeFail: '{crime} failed. No cash reward.', crimeJail: '{crime} failed. Jailed {m} min.', crimeHosp: '{crime} went wrong. {m} min in hospital.', train: 'Trained {stat}: +{n}.', win: 'Defeated {who} in {r} rounds.', mug: 'Mugged {who} for {cash}.', hosp: 'Hospitalized {who}. Chain {n}.', lose: '{who} hospitalized you for {m} min.', work: 'Worked a shift as {job}: +{cash}.', buy: 'Bought {item} for {cash}.', use: 'Used {item}.', equip: 'Equipped {item}.', levelUp: 'Level up! Now level {n}.', upgrade: 'Faction bought {name}.', bail: 'Paid {cash} bail.', milestone: 'Chain milestone {n}! +{r} respect.', job: 'Took a job as {job}.', gymJoin: 'Joined {gym} for {cash}.', mission: 'Mission complete: {name}. +{cash}, +{pts} points.', enroll: 'Enrolled in {name}.', edudone: 'Completed {name}.', prop: 'Moved into {prop}.', bustOk: 'Busted {who} out of jail. +{xp} XP.', bustFail: 'Bust failed. Jailed {m} min.', bailOther: 'Bailed {who} for {cash}.', casinoWin: 'Won {cash} at High-Low.', casinoLose: 'Lost {cash} at High-Low.', sell: 'Sold {item} for {cash}.', revive: 'Revived {who}.' },
     toast: { noNerve: 'Not enough nerve.', noEnergy: 'Not enough energy.', noCash: 'Not enough cash.', blocked: 'You cannot do that right now.', busy: 'Already studying a course.', community: 'The community link has not been configured yet.' },
@@ -1497,12 +1497,12 @@ const T = {
     topLinks: ['الويكي', 'القوانين', 'المنتدى', 'ديسكورد', 'الإدارة'],
     nav: { home: 'الرئيسية', items: 'العتاد', city: 'المدينة', jobs: 'الوظيفة', bank: 'البنك', gym: 'النادي', properties: 'العقارات', education: 'التعليم', crimes: 'الجرائم', missions: 'المهام', newspaper: 'الصحيفة', jail: 'السجن', hospital: 'المستشفى', casino: 'الكازينو', hof: 'قاعة المشاهير', faction: 'عائلتي', elimination: 'التصفيات', attack: 'الهجوم', market: 'سوق العتاد' },
     sub: { home: 'المستوى {lvl} {title} · {fac}', items: 'مخزونك. جهّز، استخدم، بِع، وشاهد بثلاثية الأبعاد.', city: 'كل مناطق مدينة زون. اضغط مكاناً للانتقال.', jobs: 'اشتغل ورديات مقابل راتب ونقاط وظيفة.', bank: 'أودع نقودك لتحفظها، واسحبها وقت ما تحتاج.', gym: 'اصرف طاقة لتدريب صفاتك القتالية. المعنويات تزيد المكسب.', properties: 'مكان سكنك يحدد أقصى معنوياتك.', education: 'الدورات تأخذ وقتاً وتعطي مزايا دائمة.', crimes: 'اصرف جرأة. الفئات تنفتح بخبرة الجريمة.', missions: 'أهداف بمكافآت نقود ونقاط.', newspaper: 'أخبار المدينة وتحركات السوق.', jail: 'سجناء ينتظرون الإفراج. هرّبهم بالجرأة أو ادفع الكفالة.', hospital: 'مرضى يتعافون من القتال والجرائم.', casino: 'قامر بنقودك.', hof: 'ترتيب المدينة حسب مجموع الصفات.', faction: 'الاحترام يشتري ترقيات، والسلاسل تضاعفه.', elimination: 'منافسة فرق — أدخل الخصوم المستشفى لتسجّل.', attack: '25 طاقة لكل هجوم. 25 جولة كحد أقصى.', market: 'اشترِ المخزون المتاح بالسعر المعروض.' },
-    tut: { home: 'أشرطتك الأربعة تتجدد مع الوقت حتى وأنت غايب. الطاقة للتدريب والهجوم؛ الجرأة للجرائم؛ المعنويات تضاعف مكاسب النادي؛ الصحة هي دمك في القتال.', crimes: 'كل جريمة لها مهارة تنمو بالمحاولات. الجرأة هي التكلفة؛ الفشل يوديك السجن (أو المستشفى للجرائم العنيفة). خبرة الجريمة تفتح فئات أصعب.', gym: 'المكسب = الطاقة المصروفة × مضاعف النادي × عامل المعنويات × تناقص عند الصفات العالية. الأندية الأفضل تكلّف نقوداً وتحتاج خبرة نادي.', attack: 'فرصة الإصابة سرعتك مقابل رشاقته. الضرر قوتك مقابل دفاعه × مضاعف السلاح. اكسب وانشل أو أدخله المستشفى أو امشِ.', default: 'هذي الشاشة جزء من نموذج زون القابل للّعب. كل الأرقام محاكاة محلياً.' },
+    tut: { home: 'أشرطتك الأربعة تتجدد مع الوقت حتى وأنت غايب. الطاقة للتدريب والهجوم؛ الجرأة للجرائم؛ المعنويات تضاعف مكاسب النادي؛ الصحة هي دمك في القتال.', crimes: 'كل جريمة لها مهارة تنمو بالمحاولات. الجرأة هي التكلفة؛ الفشل يوديك السجن (أو المستشفى للجرائم العنيفة). خبرة الجريمة تفتح فئات أصعب.', gym: 'المكسب = الطاقة المصروفة × مضاعف النادي × عامل المعنويات × تناقص عند الصفات العالية. الأندية الأفضل تكلّف نقوداً وتحتاج خبرة نادي.', attack: 'فرصة الإصابة سرعتك مقابل رشاقته. الضرر قوتك مقابل دفاعه × مضاعف السلاح. اكسب وانشل أو أدخله المستشفى أو امشِ.', default: 'هذه الشاشة جزء من عالم مدينة زون التفاعلي. كل إجراءاتك ومكاسبك محفوظة على الخادم.' },
     events: 'الأحداث', clear: 'مسح', noEvents: 'ما فيه شيء بعد — نفّذ جريمة أو تدرّب.', missionsActive: 'المهام النشطة', yourStatus: 'حالتك', war: 'حرب مصنّفة', live: 'مباشر', endsIn: 'تنتهي خلال', joinWar: 'ادخل الحرب', status: 'الحالة', okay: 'بخير', battleScore: 'مجموع الصفات', respectK: 'الاحترام', xp: 'خبرة للمستوى التالي', property: 'العقار', job: 'الوظيفة', crimeXpLbl: 'خبرة الجريمة',
     quick: { crimes: '{n} جرأة · الجرائم', gym: '{n} طاقة · النادي', attack: 'هاجم خصماً', missions: '{n} مهام جاهزة' },
     crimeXp: 'خبرة الجريمة', mastered: 'متقنة', crime: 'الجريمة', skill: 'المهارة', success: 'النجاح', commit: 'نفّذ', crimeLog: 'سجل الجرائم', catReq: '{n}',
     cats: { search: 'البحث عن نقود', boot: 'التهريب', graf: 'الجرافيتي', shop: 'سرقة المتاجر', pick: 'النشل', skim: 'نسخ البطاقات', hustle: 'الاحتيال الشعبي', disp: 'التخلص', crack: 'الاختراق', forge: 'التزوير', scam: 'النصب', counter: 'التزييف', burg: 'السطو', arson: 'الحرق' },
-    catDesc: { search: 'فتّش المدينة عن نقود ضايعة وأغراض مرمية.', graf: 'ارسم على المناطق لبناء سمعتك. المناطق الأعلى تنفتح بالمهارة.', shop: 'اسرق بضائع من المتاجر. الكاميرات والحرس يزيدون الخطر.', pick: 'اسحب محافظ العابرين. التوقيت هو كل شيء.', boot: 'انسخ وبِع الوسائط. ينفتح عند 150 خبرة.', locked: 'هذي الفئة تنفتح بخبرة جريمة أكثر.' },
+    catDesc: { search: 'فتّش المدينة عن نقود ضايعة وأغراض مرمية.', graf: 'ارسم على المناطق لبناء سمعتك. المناطق الأعلى تنفتح بالمهارة.', shop: 'اسرق بضائع من المتاجر. الكاميرات والحرس يزيدون الخطر.', pick: 'اسحب محافظ العابرين. التوقيت هو كل شيء.', boot: 'انسخ وروّج الأقراص والوسائط عبر منافذ التوزيع الخفية.', skim: 'ازرع شرائح نسخ ممغنطة في الصرافات ومحطات الوقود لسحب بيانات البطاقات.', hustle: 'استدرج حشود الشوارع بألعاب الخفة والرهانات الميدانية السريعة.', disp: 'نظّف مسارح العمليات وأتلف الأدلة الجنائية بعقود سرية.', crack: 'فكّ الشيفرات متعددة الطبقات وأقفال الخزائن بمنصات اختراق مخصصة.', forge: 'اصنع وثائق وجوازات وتصاريح عبور متقنة.', scam: 'أدِر حملات الهندسة الاجتماعية وتحويل الحوالات المالية.', counter: 'اطبع الأوراق النقدية بقوالب دقيقة وصرّفها عبر القنوات الخفية.', burg: 'راقب واستطلع واقتحم العقارات والمستودعات عالية الحراسة.', arson: 'نفّذ عقود إحراق جنائي عالية الخطورة والعائد.', locked: 'هذي الفئة تنفتح بخبرة جريمة أكثر.' },
     cr: { trash: ['فتّش القمامة', 'حاويات خلف السوق'], subway: ['فتّش المترو', 'البوابات والأرصفة'], junk: ['فتّش الخردة', 'قطع وأجزاء ضايعة'], beach: ['فتّش الشاطئ', 'تحت الممشى'], cem: ['فتّش المقبرة', 'قرابين متروكة'],
       east: ['الحي الشرقي', 'خطر قليل'], west: ['الحي الغربي', 'خطر قليل'], north: ['الحي الشمالي', 'دوريات قريبة'], res: ['المنطقة السكنية', 'الجيران يراقبون'], red: ['الحي الأحمر', 'مزدحم، هروب سريع'], fin: ['الحي المالي', 'كاميرات في كل مكان'], center: ['وسط المدينة', 'يحتاج سمعة'],
       candy: ['كشك الحلوى', 'كاميرا 1'], corner: ['بقالة الزاوية', 'كاميرتان'], cloth: ['ملابس زون', 'كاميرا · نقطة تفتيش'], superst: ['المتجر الكبير', 'كاميرتان · تفتيش'], pharm: ['الصيدلية', '3 كاميرات · تفتيش'], cyber: ['متجر الإلكترونيات', 'كاميرتان · حارس'], jewel: ['متجر المجوهرات', '3 كاميرات · حارس'], gun: ['متجر الأسلحة', '4 كاميرات · حارسان'],
@@ -1537,7 +1537,7 @@ const T = {
     highLow: 'أعلى-أدنى', higher: 'أعلى', lower: 'أدنى', casinoGames: 'الألعاب', cgames: [['سلوتس', 'مفتوح'], ['روليت', 'مفتوح'], ['بلاك جاك', 'مفتوح'], ['بوكر', 'الطاولة ممتلئة'], ['اليانصيب', 'السحب خلال 3 س'], ['الروليت الروسي', 'المستوى 25']], casinoMsg: { start: 'اختر رهاناً وخمّن.', win: 'صح! كسبت {c}.', lose: 'خطأ. خسرت {c}.', push: 'نفس الورقة — تعادل.' },
     networth: 'الثروة', faction: 'العائلة', hofNames: ['ديوك', 'مارو', 'سال الكبير', 'ليدي فيغا', 'كينغ', 'نادية السريعة', 'سايلس', 'ريّان الأسود', 'كايا', 'طارق'],
     yourTeam: 'فريقك', roundEnds: 'الجولة تنتهي خلال', team: 'الفريق', score: 'النقاط', membersShort: 'الأعضاء', lives: 'الأرواح', teams: ['سوق الليل', 'أفاعي الرمال', 'ملوك المرفأ', 'جرذان الفولاذ', 'الفوانيس الحمراء', 'ذئاب الشمال', 'عمّال الميناء', 'الحرس القديم'],
-    footer: 'زون · نسخة تجريبية قابلة للعب · تقدمك محفوظ',
+    footer: 'زون · عالم نقابة الجريمة · تقدمك محفوظ على الخادم',
     jail: 'أنت في السجن', jailBody: 'انقبض عليك. انتظر أو ادفع كفالة.', bailSelf: 'كفالة {c}', hospital: 'أنت في المستشفى', hospBody: 'ارتاح أو استخدم إسعافاً.', useKit: 'استخدم إسعاف صغيرة',
     log: { travel: 'قطعت {m} متراً في المدينة. −{e} طاقة.', crimeOk: '{crime}: +{cash}، +{xp} خبرة جريمة.', crimeItem: 'لقيت {item} أثناء البحث.', crimeFail: 'فشلت {crime}. لا مكافأة نقدية.', crimeJail: 'فشلت {crime}. سُجنت {m} دقيقة.', crimeHosp: '{crime} خربت. {m} دقيقة في المستشفى.', train: 'تدرّبت {stat}: +{n}.', win: 'هزمت {who} في {r} جولات.', mug: 'نشلت {who} بـ{cash}.', hosp: 'أدخلت {who} المستشفى. السلسلة {n}.', lose: '{who} أدخلك المستشفى {m} دقيقة.', work: 'اشتغلت وردية كـ{job}: +{cash}.', buy: 'اشتريت {item} بـ{cash}.', use: 'استخدمت {item}.', equip: 'جهّزت {item}.', levelUp: 'ارتفع مستواك! صرت {n}.', upgrade: 'العائلة اشترت {name}.', bail: 'دفعت كفالة {cash}.', milestone: 'إنجاز سلسلة {n}! +{r} احترام.', job: 'أخذت وظيفة {job}.', gymJoin: 'اشتركت في {gym} بـ{cash}.', mission: 'مهمة مكتملة: {name}. +{cash}، +{pts} نقاط.', enroll: 'سجّلت في {name}.', edudone: 'أكملت {name}.', prop: 'انتقلت إلى {prop}.', bustOk: 'هرّبت {who} من السجن. +{xp} خبرة.', bustFail: 'فشل التهريب. سُجنت {m} دقيقة.', bailOther: 'كفلت {who} بـ{cash}.', casinoWin: 'كسبت {cash} في أعلى-أدنى.', casinoLose: 'خسرت {cash} في أعلى-أدنى.', sell: 'بعت {item} بـ{cash}.', revive: 'أنعشت {who}.' },
     toast: { noNerve: 'الجرأة ما تكفي.', noEnergy: 'الطاقة ما تكفي.', noCash: 'النقود ما تكفي.', blocked: 'ما تقدر تسوي هذا الآن.', busy: 'أنت تدرس دورة حالياً.', community: 'رابط المجتمع غير مضبوط حالياً.' },
@@ -1570,7 +1570,7 @@ function applyPublishedCrimes(data) {
     fail: crime.failure ?? 'none', mins: Number(crime.penalty_minutes) || 0, serverManaged: true,
     name: { en: String(crime.name_en || crime.id), ar: String(crime.name_ar || crime.name_en || crime.id) },
     category: crime.category || BASE_CRIME_CATEGORIES[crime.id] || 'search',
-    description: { en: crime.description_en || T.en.cr[crime.id]?.[1] || 'Choose your opportunity.', ar: crime.description_ar || T.ar.cr[crime.id]?.[1] || 'اختر فرصتك.' },
+    description: { en: crime.description?.en || crime.description_en || T.en.cr[crime.id]?.[1] || 'Choose your opportunity.', ar: crime.description?.ar || crime.description_ar || T.ar.cr[crime.id]?.[1] || 'اختر فرصتك.' },
   }));
   for (const crime of managed) {
     const category = CATS.some(item => item.id === crime.category) ? crime.category : 'search';
@@ -1801,6 +1801,7 @@ class Component extends DCLogic {
   componentDidMount() {
     document.documentElement.lang = this.state.lang; document.documentElement.dir = this.state.lang === 'ar' ? 'rtl' : 'ltr'; document.documentElement.dataset.theme = this.state.theme;
     document.title = this.state.lang === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO';
+    if (typeof window !== 'undefined' && typeof window.Image === 'function') { const atlasImg = new window.Image(); atlasImg.decoding = 'async'; atlasImg.src = 'art/zone-property-atlas-v1.png'; }
     if (/GEMINI|TORN|wenimo|4506953|AI FUNCTION|Google Search/i.test(String(this.state.aiFixerTrace || '') + String(this.state.geminiTrace || ''))) { this.state.aiFixerTrace = ''; this.state.geminiTrace = ''; }
     this.onRuntime = event => {
       const detail = event.detail || {};
@@ -2496,12 +2497,24 @@ class Component extends DCLogic {
       this._audioCtx ||= new Ctx();
       if (this._audioCtx.state === 'suspended') this._audioCtx.resume().catch(() => {});
       const ctx = this._audioCtx, now = ctx.currentTime;
-      const osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      if (kind === 'rack') { osc.type = 'triangle'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(420, now + 0.08); gain.gain.setValueAtTime(0.08, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09); osc.start(now); osc.stop(now + 0.095); }
-      else if (kind === 'crime') { osc.type = 'sine'; osc.frequency.setValueAtTime(520, now); osc.frequency.exponentialRampToValueAtTime(880, now + 0.14); gain.gain.setValueAtTime(0.09, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16); osc.start(now); osc.stop(now + 0.17); }
-      else if (kind === 'gym') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, now); osc.frequency.exponentialRampToValueAtTime(360, now + 0.12); gain.gain.setValueAtTime(0.06, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13); osc.start(now); osc.stop(now + 0.14); }
-      else { osc.type = 'sine'; osc.frequency.setValueAtTime(340, now); osc.frequency.exponentialRampToValueAtTime(540, now + 0.07); gain.gain.setValueAtTime(0.06, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08); osc.start(now); osc.stop(now + 0.085); }
+      const tone = (type, f0, f1, dur, vol, delay = 0) => {
+        const osc = ctx.createOscillator(), gain = ctx.createGain();
+        osc.type = type; osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(f0, now + delay);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, f1), now + delay + dur);
+        gain.gain.setValueAtTime(vol, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur + 0.015);
+        osc.start(now + delay); osc.stop(now + delay + dur + 0.02);
+      };
+      if (kind === 'rack') { tone('triangle', 150, 440, 0.075, 0.075); tone('sine', 620, 310, 0.045, 0.035, 0.035); }
+      else if (kind === 'crime') { tone('sine', 480, 860, 0.12, 0.075); tone('triangle', 720, 1080, 0.09, 0.045, 0.05); }
+      else if (kind === 'cash') { tone('triangle', 587, 880, 0.09, 0.07); tone('sine', 880, 1318, 0.14, 0.065, 0.065); }
+      else if (kind === 'good') { tone('sine', 440, 660, 0.09, 0.065); tone('triangle', 660, 990, 0.12, 0.05, 0.06); }
+      else if (kind === 'up') { tone('triangle', 440, 660, 0.08, 0.07); tone('triangle', 660, 880, 0.09, 0.07, 0.07); tone('sine', 880, 1320, 0.16, 0.075, 0.14); }
+      else if (kind === 'bad') { tone('sawtooth', 240, 130, 0.15, 0.065); tone('triangle', 180, 95, 0.18, 0.05, 0.05); }
+      else if (kind === 'gym') { tone('sawtooth', 190, 340, 0.11, 0.055); tone('triangle', 340, 510, 0.08, 0.04, 0.05); }
+      else if (kind === 'nav') { tone('sine', 280, 420, 0.045, 0.032); }
+      else { tone('sine', 340, 540, 0.065, 0.05); }
     } catch (_) {}
   }
   pushCombatScene() {
@@ -2675,7 +2688,7 @@ class Component extends DCLogic {
     const url = new URL(window.location.href); url.searchParams.set('screen', screen); url.searchParams.set('lang', this.state.lang);
     if (url.href !== window.location.href) window.history[replace ? 'replaceState' : 'pushState'](replace ? (window.history.state || {}) : {}, '', url.href);
   }
-  go(s, updateHistory = true, routeView = null) { s = resolveLocationScreen(s); if (!SCREENS.includes(s)) return this.toast(this.state.lang === 'ar' ? 'هذه الخدمة غير متاحة حالياً.' : 'This service is currently unavailable.'); if (updateHistory && s !== this.state.screen) window.ZoneRouteNavigation?.remember?.(this.state.screen); if (this.state.screen === 'city' && s !== 'city') this.mapVisibility(false);
+  go(s, updateHistory = true, routeView = null) { s = resolveLocationScreen(s); if (!SCREENS.includes(s)) return this.toast(this.state.lang === 'ar' ? 'هذه الخدمة غير متاحة حالياً.' : 'This service is currently unavailable.'); if (updateHistory && s !== this.state.screen) { window.ZoneRouteNavigation?.remember?.(this.state.screen); this.playTacticalSfx('nav'); } if (this.state.screen === 'city' && s !== 'city') this.mapVisibility(false);
     this.setState({ screen: s, navOpen: false, fight: null, result: null,
       lastScreen: s === 'city' ? this.state.lastScreen : s },
     () => { if (typeof document !== 'undefined' && document.activeElement?.classList?.contains('zone-skip-link')) document.activeElement.blur(); if (updateHistory) this.syncRoute(s); window.ZoneRouteNavigation?.enter?.(s, routeView); this.bump('zone-main', 'zin .34s ease-out'); if (s === 'city') { this.pushMap(); this.mapVisibility(true); } });
@@ -2766,6 +2779,7 @@ class Component extends DCLogic {
     this.bt = setTimeout(async () => { try { await this.act(fn); } finally { this.setState({ busy: null }); } }, ms);
   }
   result(kind, title, body, big) {
+    this.playTacticalSfx(kind || 'click');
     const P = {
       good: { accent: 'var(--acc)', border: '#4d7a0c', wash: 'rgba(163,217,0,.14)', d: 'M20 6L9 17l-5-5' },
       cash: { accent: 'var(--money)', border: '#4d7a0c', wash: 'rgba(143,212,0,.14)', d: 'M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' },
@@ -3824,13 +3838,13 @@ class Component extends DCLogic {
       holdings: lang === 'ar' ? 'أمثلة توضيحية وليست ممتلكات لاعب' : 'Illustrative state, not player holdings'
     });
     view.bulletin = { title: lang === 'ar' ? 'سجل شخصيتك' : 'Your character record', description: lang === 'ar' ? 'الأحداث المعروضة تخص شخصيتك. أسعار التجار من مخزون السوق الحالي.' : 'These events belong to your character. Merchant prices come from the current market stock.', empty: lang === 'ar' ? 'لا توجد أحداث بعد. ابدأ نشاطاً لتسجّل أول نتيجة.' : 'No events yet. Start an activity to record your first outcome.', marketNote: lang === 'ar' ? 'متجر تجار داخل اللعبة. السعر والمخزون يُفحصان عند الشراء.' : 'In-game merchant shop. Price and stock are checked when you buy.', openMarket: () => this.go('market') };
-    view.casinoGuide = { title: lang === 'ar' ? 'قواعد الطاولة' : 'Table rules', description: lang === 'ar' ? 'اختر الرهان ثم توقّع إن كانت الورقة التالية أعلى أو أقل. التعادل يعيد الرهان، والآس أعلى ورقة.' : 'Choose your stake, then predict whether the next card is higher or lower. A tie returns the stake; ace is high.', betLabel: lang === 'ar' ? 'الرهان المختار' : 'Selected stake', cardLabel: lang === 'ar' ? 'الورقة على الطاولة' : 'Card on the table', netLabel: lang === 'ar' ? 'صافي الربح' : 'Net winnings', scope: (lang === 'ar' ? 'هذه طاولة أعلى / أقل المتاحة. لا توجد طاولات بوكر جماعية أو سلوتس مفتوحة في هذه النسخة.' : 'High-low is the available table here. Multiplayer poker and slots are not open in this release.') + ' · ' + (lang === 'ar' ? 'أعلى: ' : 'Higher: ') + view.casino.higherOddsPct + '% | ' + (lang === 'ar' ? 'أدنى: ' : 'Lower: ') + view.casino.lowerOddsPct + '%', openBank: () => this.go('bank') };
+    view.casinoGuide = { title: lang === 'ar' ? 'قواعد الطاولة' : 'Table rules', description: lang === 'ar' ? 'اختر الرهان ثم توقّع إن كانت الورقة التالية أعلى أو أقل. التعادل يعيد الرهان، والآس أعلى ورقة.' : 'Choose your stake, then predict whether the next card is higher or lower. A tie returns the stake; ace is high.', betLabel: lang === 'ar' ? 'الرهان المختار' : 'Selected stake', cardLabel: lang === 'ar' ? 'الورقة على الطاولة' : 'Card on the table', netLabel: lang === 'ar' ? 'صافي الربح' : 'Net winnings', scope: (lang === 'ar' ? 'طاولة الصالون المعتمدة بنسب فوز فورية على الخادم' : 'Main Salon High-Low table settled live on the server') + ' · ' + (lang === 'ar' ? 'أعلى: ' : 'Higher: ') + view.casino.higherOddsPct + '% | ' + (lang === 'ar' ? 'أدنى: ' : 'Lower: ') + view.casino.lowerOddsPct + '%', openBank: () => this.go('bank') };
     view.casino.bet = money(casino.bet); view.casino.net = money(p.casinoNet || 0);
-    view.competition = { status: lang === 'ar' ? 'لا توجد جولة نشطة' : 'No active round', title: lang === 'ar' ? 'المنافسة تبدأ من المدينة' : 'Competition starts on the streets', description: lang === 'ar' ? 'التصفيات الجماعية غير مفتوحة بعد. يمكنك الآن المساهمة في أراضي عائلتك أو مواجهة خصوم المدينة.' : 'Team elimination is not open yet. You can contribute to your family territory or face city opponents now.', combat: lang === 'ar' ? 'واجه خصماً' : 'Face an opponent', openCombat: () => this.go('attack'), join: lang === 'ar' ? 'التسجيل مغلق' : 'Registration closed', reason: lang === 'ar' ? 'لا توجد جولة أو نقاط فرق أو مكافآت تصفيات تُسجّل حالياً.' : 'No elimination round, team score, or competition reward is currently being recorded.' };
+    view.competition = { status: lang === 'ar' ? 'الموسم الأسبوعي' : 'Weekly season', title: lang === 'ar' ? 'منافسة العائلات الأسبوعية' : 'Weekly family competition', description: lang === 'ar' ? 'اجمع نقاط الموسم لعائلتك عبر العمليات المشتركة والسيطرة على القطاعات ومواجهات الشوارع.' : 'Earn weekly season points for your family through operations, territory control, and street combat.', combat: lang === 'ar' ? 'واجه خصماً' : 'Face an opponent', openCombat: () => this.go('attack'), join: lang === 'ar' ? 'مفتوح للعائلات' : 'Active for families', reason: lang === 'ar' ? 'تُسجّل النقاط تلقائياً من عمليات العائلة وهجمات الأراضي وإدخال الخصوم للمستشفى.' : 'Points record automatically from family operations, territory assaults, and rival hospitalizations.' };
     view.competition.explain = () => this.toast(view.competition.reason);
     view.ticker = view.log.length ? view.log.slice(0, 5).map(event => event.text) : [view.bulletin.empty];
     view.demoBulletin = lang === 'ar' ? 'سجل المدينة' : 'City record';
-    view.t = { ...view.t, footer: lang === 'ar' ? 'ZONE · نسخة تجريبية · التقدم محفوظ عند الاتصال' : 'ZONE · Beta · Progress saved when connected' };
+    view.t = { ...view.t, footer: lang === 'ar' ? 'زون · عالم نقابة الجريمة · التقدم محفوظ عند الاتصال' : 'ZONE · Noir Syndicate MMO · Progress saved when connected' };
     const shared = this.sharedFamily, unavailable = this.gameplayDisabled() || this.blocked() || !!this.gameplayBusy;
     const sharedReasons = { en: { owned: 'Active for every family member', leader_required: 'Leader or officer required', respect_required: 'More shared respect required' }, ar: { owned: 'فعّالة لجميع أعضاء العائلة', leader_required: 'متاحة للزعيم أو المسؤول', respect_required: 'تحتاج احتراماً مشتركاً إضافياً' } };
     const familyVersion = Number(shared?.version);
@@ -3925,7 +3939,7 @@ class Component extends DCLogic {
       progressLabel: nextGym < 0 ? (lang === 'ar' ? 'كل متطلبات الصالات مكتملة' : 'All gym requirements reached') : num(Math.max(0, nextThreshold - p.gymXp)) + (lang === 'ar' ? ' خبرة نادي إضافية تفتح ' : ' more gym XP unlocks ') + t.gyms[nextGym]
     };
     if (shared) view.demoFaction = lang === 'ar' ? 'العضوية والأراضي والاحترام المشترك محفوظة على الخادم. السلسلة والترقيات الفردية تخص شخصيتك.' : 'Membership, territory and shared respect are saved on the server. Chain and personal upgrades belong to your character.';
-    const routeScopes = { en: { newspaper: 'Your character record and current merchant prices.', elimination: 'Team elimination is closed. Explore the active family and combat systems.', faction: shared ? 'Contribute respect, unlock shared upgrades, and control territory together.' : 'Join a family to share upgrades and contest territory.', attack: 'City NPC opponents. 25 energy to start; 25 rounds maximum.', market: 'Merchant stock. Inspect an item, check the price, then buy.', jail: 'Your release status and city NPC inmates. Bust or pay bail.', hospital: 'Your recovery status and city NPC patients.' }, ar: { newspaper: 'سجل شخصيتك وأسعار التجار الحالية.', elimination: 'التصفيات الجماعية مغلقة. استكشف العائلات والقتال المتاحين.', faction: shared ? 'ساهم بالاحترام وافتح ترقيات مشتركة وسيطر على الأراضي مع عائلتك.' : 'انضم إلى عائلة للمشاركة في الترقيات والسيطرة على الأراضي.', attack: 'خصوم المدينة من شخصيات اللعبة. البداية تكلف 25 طاقة؛ 25 جولة كحد أقصى.', market: 'مخزون التجار. افحص العنصر وتحقق من السعر ثم اشترِ.', jail: 'حالة إطلاق سراحك وسجناء المدينة من شخصيات اللعبة. هرّب أو ادفع الكفالة.', hospital: 'حالة تعافيك ومرضى المدينة من شخصيات اللعبة.' } };
+    const routeScopes = { en: { newspaper: 'Your character record and current merchant prices.', elimination: 'Weekly family season. Earn points through family operations, territory assaults, and street combat.', faction: shared ? 'Contribute respect, unlock shared upgrades, and control territory together.' : 'Join a family to share upgrades and contest territory.', attack: 'City NPC opponents. 25 energy to start; 25 rounds maximum.', market: 'Merchant stock. Inspect an item, check the price, then buy.', jail: 'Your release status and city NPC inmates. Bust or pay bail.', hospital: 'Your recovery status and city NPC patients.' }, ar: { newspaper: 'سجل شخصيتك وأسعار التجار الحالية.', elimination: 'موسم العائلات الأسبوعي. اجمع النقاط عبر عمليات العائلة وهجمات الأراضي ومواجهات الشوارع.', faction: shared ? 'ساهم بالاحترام وافتح ترقيات مشتركة وسيطر على الأراضي مع عائلتك.' : 'انضم إلى عائلة للمشاركة في الترقيات والسيطرة على الأراضي.', attack: 'خصوم المدينة من شخصيات اللعبة. البداية تكلف 25 طاقة؛ 25 جولة كحد أقصى.', market: 'مخزون التجار. افحص العنصر وتحقق من السعر ثم اشترِ.', jail: 'حالة إطلاق سراحك وسجناء المدينة من شخصيات اللعبة. هرّب أو ادفع الكفالة.', hospital: 'حالة تعافيك ومرضى المدينة من شخصيات اللعبة.' } };
     if (routeScopes[lang][screen]) view.subtitle = routeScopes[lang][screen];
     const peers = this.peerResources?.opponents;
     view.combatModes = ['npc', 'players'].map(mode => ({ label: mode === 'npc' ? (lang === 'ar' ? 'خصوم المدينة' : 'City opponents') : (lang === 'ar' ? 'لاعبون حقيقيون' : 'Real players'), active: this.state.combatMode === mode, disabled: !!this.combatBusy || !!this.combatEncounter, select: () => this.setCombatMode(mode) }));
@@ -4590,7 +4604,7 @@ class Component extends DCLogic {
           this.p.meritTree = { ...meritTree, [md.id]: lvl + 1 };
           this.save();
           this.syncOmarAction('merit.upgrade', md.id);
-          this.result('good', lang === 'ar' ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${lang === 'ar' ? md.ar : md.en} → Lv.${lvl + 1}`, `-${nextCost} Merit`);
+          this.result('good', lang === 'ar' ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${lang === 'ar' ? md.ar : md.en} → Lv.${lvl + 1}`, lang === 'ar' ? `-${nextCost} ميرت` : `-${nextCost} Merit`);
           this.forceUpdate();
         }
       };
@@ -4601,7 +4615,15 @@ class Component extends DCLogic {
     const empLvl = Number(meritTree?.emp || 1);
     const playerNumericId = String(this.p.numericId || '1042');
     const accountEmail = this.p.email || 'vincenzo@zone.city';
-    const leaseInfo = this.p.propertyLease || { id: 'island', nameEn: 'Private Island (Airstrip)', nameAr: 'جزيرة خاصة (مهبط طائرات)', daysLeft: 33, totalDays: 100, happy: 2500 };
+    const activePropId = this.p.propertyLease?.id || this.p.prop || 'shack';
+    const hasActiveLease = Boolean(this.p.propertyLease && Number(this.p.propertyLease.daysLeft) > 0);
+    const activePropNameEn = this.p.propertyLease?.nameEn || T.en.props[activePropId] || 'Shack';
+    const activePropNameAr = this.p.propertyLease?.nameAr || T.ar.props[activePropId] || 'كوخ';
+    const activePropHappy = hasActiveLease ? Math.max(this.maxOf('happy'), Number(this.p.propertyLease.happy || 2500)) : this.maxOf('happy');
+    const ownedDeedsList = Array.from(new Set(['shack', ...(Array.isArray(this.p.ownedProps) ? this.p.ownedProps : []), this.p.prop || 'shack'])).filter(Boolean);
+    const ownedDeedsLabel = ownedDeedsList.map(id => (lang === 'ar' ? T.ar.props[id] : T.en.props[id]) || id).join(lang === 'ar' ? '، ' : ', ');
+    const hasIslandPerks = activePropId === 'island';
+    const leaseInfo = hasActiveLease ? this.p.propertyLease : { id: activePropId, nameEn: activePropNameEn, nameAr: activePropNameAr, daysLeft: 0, totalDays: 0, happy: activePropHappy };
 
     const plushies = [
       { id: 'plush_camel', icon: 'DXB', city: lang === 'ar' ? 'دبي' : 'Dubai', en: 'Dubai Camel Plushie', ar: 'دبدوب الجمل الإماراتي', price: 1200 },
@@ -4646,9 +4668,9 @@ class Component extends DCLogic {
         level: p.level,
         ageDays: 71,
         gender: lang === 'ar' ? 'ذكر' : 'Male',
-        spouse: lang === 'ar' ? 'متزوج من Layla_R [#1104]' : 'Married to Layla_R [#1104]',
+        spouse: lang === 'ar' ? 'متزوج من ليلى [#1104]' : 'Married to Layla_R [#1104]',
         faction: facName,
-        property: `${lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn} (${leaseInfo.daysLeft}/${leaseInfo.totalDays}${lang === 'ar' ? ' يوم' : 'd'})`,
+        property: hasActiveLease ? `${lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn} (${leaseInfo.daysLeft}/${leaseInfo.totalDays}${lang === 'ar' ? ' يوم' : 'd'})` : `${lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn} (${lang === 'ar' ? 'ملك شخصي' : 'Owned'})`,
         statusKey: hosp ? 'hosp' : jailed ? 'jail' : 'ok',
         statusText: hosp ? (lang === 'ar' ? 'في المستشفى' : 'In Hospital') : jailed ? (lang === 'ar' ? 'في السجن' : 'In Jail') : (lang === 'ar' ? 'متصل · سليم' : 'Online · Okay'),
         statusColor: hosp || jailed ? '#e05a4a' : 'var(--acc)',
@@ -5087,7 +5109,7 @@ class Component extends DCLogic {
         { k: lang === 'ar' ? 'العمر في المدينة' : 'Age', v: lang === 'ar' ? '71 يوم' : '71 days old', color: 'var(--t2)' },
         { k: lang === 'ar' ? 'النقد في اليد' : 'Money on Hand', v: money(p.cash), color: 'var(--money)' },
         { k: lang === 'ar' ? 'رصيد خزينة البنك' : 'Bank Vault', v: money(p.bankBalance || 0), color: 'var(--acc)' },
-        { k: lang === 'ar' ? 'صافي الثروة الكلي' : 'Total Net Worth', v: money(totalNetWorthVal), color: 'var(--gold)' },
+        { k: lang === 'ar' ? 'صافي الثروة (نقد + بنك + عتاد)' : 'Total Net Worth (Cash + Bank + Gear)', v: money(totalNetWorthVal), color: 'var(--gold)' },
         { k: lang === 'ar' ? 'العائلة / الفاكشن' : 'Faction', v: `${facName} (${view.fac.rank})`, color: 'var(--t2)' },
         { k: lang === 'ar' ? 'النقاط والميرتس' : 'Points / Merits', v: lang === 'ar' ? `${num(p.points)} نقطة · ${num(p.merits)} ميرت` : `${num(p.points)} Pts · ${num(p.merits)} Merits`, color: 'var(--gold)' }
       ],
@@ -5107,41 +5129,43 @@ class Component extends DCLogic {
         { k: lang === 'ar' ? 'الأجر ونقاط العمل' : 'Wage & Job Points', v: `${this.jobPayRange()} · ${num(p.jobPts)} ${lang === 'ar' ? 'نقطة عمل' : 'JP'}`, color: 'var(--money)' }
       ],
       personalPerks: [
-        { source: lang === 'ar' ? 'العقار' : 'Property', effect: lang === 'ar' ? '+2% مكاسب نادي · +2% ضرر · مهبط طائرات خاص' : '+2% Gym Gains · +2% Damage · Private Airstrip Access' },
+        { source: lang === 'ar' ? 'العقار' : 'Property', effect: hasIslandPerks ? (lang === 'ar' ? '+2% مكاسب نادي · +2% ضرر · مهبط طائرات خاص' : '+2% Gym Gains · +2% Damage · Private Airstrip Access') : (lang === 'ar' ? `سكن نشط: ${leaseInfo.nameAr} (حد المعنويات ${num(activePropHappy)})` : `Active Residence: ${leaseInfo.nameEn} (${num(activePropHappy)} Happy Cap)`) },
         { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${(critLvl * 0.5).toFixed(1)}% معدل ضربة حرجة` : `+${(critLvl * 0.5).toFixed(1)}% Critical Hit Rate (Tier ${critLvl})` },
         { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${awarenessLvl * 15}% وعي ميداني لظهور عناصر خريطة المدينة` : `+${awarenessLvl * 15}% City Awareness (Lucky Map Item Spawns)` },
         { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${empLvl * 2} كفاءة الموظف في العمل` : `+${empLvl * 2} Employee Effectiveness` },
         { source: lang === 'ar' ? 'الفاكشن' : 'Faction', effect: lang === 'ar' ? `${view.fac.chainBonusPct} مضاعف احترام السلسلة` : `${view.fac.chainBonusPct} Chain Respect Multiplier` },
         { source: lang === 'ar' ? 'التعليم' : 'Education', effect: view.employment.payBonusText }
       ],
-      rentIslandBtnLabel: lang === 'ar' ? 'تمديد إيجار الجزيرة (+30 يوم)' : 'Extend Island Lease (+30d)',
+      rentIslandBtnLabel: hasActiveLease && leaseInfo.id === 'island' ? (lang === 'ar' ? 'تمديد إيجار الجزيرة (+30 يوم)' : 'Extend Island Lease (+30d)') : (lang === 'ar' ? 'استئجار جزيرة خاصة (30 يوم · $15,000)' : 'Lease Private Island (30d · $15,000)'),
       rentPrivateIslandQuick: () => {
         const rentCost = 15000;
-        if (Number(this.p.cash || 0) < rentCost) return this.toast(lang === 'ar' ? 'تحتاج 15,000$ لتمديد عقد الإيجار.' : 'Need $15,000 cash to extend Private Island lease.', true);
+        if (Number(this.p.cash || 0) < rentCost) return this.toast(lang === 'ar' ? 'تحتاج 15,000$ لاستئجار الجزيرة الخاصة.' : 'Need $15,000 cash to lease Private Island.', true);
         this.p.cash -= rentCost;
+        const baseDays = hasActiveLease && leaseInfo.id === 'island' ? Number(leaseInfo.daysLeft || 0) : 0;
+        const baseTotal = hasActiveLease && leaseInfo.id === 'island' ? Number(leaseInfo.totalDays || 0) : 0;
         this.p.propertyLease = {
           id: 'island',
           nameEn: 'Private Island (Airstrip)',
           nameAr: 'جزيرة خاصة (مهبط طائرات)',
-          daysLeft: Number(leaseInfo.daysLeft || 33) + 30,
-          totalDays: Number(leaseInfo.totalDays || 100) + 30,
+          daysLeft: baseDays + 30,
+          totalDays: baseTotal + 30,
           happy: 2500
         };
         this.save();
         this.syncOmarAction('property.lease', 'island_ext');
-        this.result('good', lang === 'ar' ? 'تمديد عقد إيجار العقار' : 'Property Lease Extended', `${lang === 'ar' ? 'جزيرة خاصة' : 'Private Island'} (${this.p.propertyLease.daysLeft}/${this.p.propertyLease.totalDays}d)`, '-' + money(rentCost));
+        this.result('good', lang === 'ar' ? 'تفعيل عقد إيجار الجزيرة الخاصة' : 'Private Island Lease Active', `${lang === 'ar' ? 'جزيرة خاصة' : 'Private Island'} (${this.p.propertyLease.daysLeft}/${this.p.propertyLease.totalDays}${lang === 'ar' ? ' يوم' : 'd'})`, '-' + money(rentCost));
       },
       propertyInfo: {
-        leaseText: lang === 'ar'
-          ? `${leaseInfo.nameAr} — مستأجر (${leaseInfo.daysLeft} يوم متبقي من ${leaseInfo.totalDays} يوم)`
-          : `${leaseInfo.nameEn} — Rented (${leaseInfo.daysLeft} days of ${leaseInfo.totalDays} days remaining)`
+        leaseText: hasActiveLease
+          ? (lang === 'ar' ? `${leaseInfo.nameAr} — مستأجر (${leaseInfo.daysLeft} يوم متبقي من ${leaseInfo.totalDays} يوم)` : `${leaseInfo.nameEn} — Rented (${leaseInfo.daysLeft} days of ${leaseInfo.totalDays} days remaining)`)
+          : (lang === 'ar' ? `${leaseInfo.nameAr} — سكن مملوك (بدون عقد إيجار نشط)` : `${leaseInfo.nameEn} — Owned Residence (No active lease)`)
       },
       propertyCardRows: [
         { k: lang === 'ar' ? 'السكن الفعلي الحالي' : 'Active Residence', v: lang === 'ar' ? leaseInfo.nameAr : leaseInfo.nameEn, color: 'var(--acc)' },
-        { k: lang === 'ar' ? 'حالة الإيجار' : 'Rental Status', v: lang === 'ar' ? `${leaseInfo.daysLeft} من ${leaseInfo.totalDays} يوم متبقية` : `${leaseInfo.daysLeft} of ${leaseInfo.totalDays} days remaining`, color: 'var(--gold)' },
-        { k: lang === 'ar' ? 'حد السعادة الأقصى' : 'Max Happiness Cap', v: `${num(Math.max(this.maxOf('happy'), leaseInfo.happy || 2500))} ${lang === 'ar' ? 'معنويات' : 'Happy'}`, color: 'var(--t1)' },
-        { k: lang === 'ar' ? 'العقارات المملوكة' : 'Owned Properties', v: lang === 'ar' ? 'كوخ، مقطورة، شقة سكنية' : 'Shack, Trailer, Apartment', color: 'var(--t2)' },
-        { k: lang === 'ar' ? 'مزايا العقار' : 'Property Perks', v: lang === 'ar' ? '+2% مكسب نادي · مهبط طائرات خاص' : '+2% Gym Gains · Private Airstrip', color: 'var(--acc)' }
+        { k: lang === 'ar' ? 'حالة الإيجار' : 'Rental Status', v: hasActiveLease ? (lang === 'ar' ? `${leaseInfo.daysLeft} من ${leaseInfo.totalDays} يوم متبقية` : `${leaseInfo.daysLeft} of ${leaseInfo.totalDays} days remaining`) : (lang === 'ar' ? 'ملك شخصي (بدون عقد إيجار نشط)' : 'Deed Owned (No active lease)'), color: 'var(--gold)' },
+        { k: lang === 'ar' ? 'حد السعادة الأقصى' : 'Max Happiness Cap', v: `${num(activePropHappy)} ${lang === 'ar' ? 'معنويات' : 'Happy'}`, color: 'var(--t1)' },
+        { k: lang === 'ar' ? 'العقارات المملوكة' : 'Owned Properties', v: ownedDeedsLabel, color: 'var(--t2)' },
+        { k: lang === 'ar' ? 'مزايا العقار' : 'Property Perks', v: hasIslandPerks ? (lang === 'ar' ? '+2% مكسب نادي · مهبط طائرات خاص' : '+2% Gym Gains · Private Airstrip') : (lang === 'ar' ? 'سقف معنويات أساسي · قابل للترقية أو الاستئجار' : 'Base morale cap · Upgrade or lease luxury estate'), color: 'var(--acc)' }
       ],
       meritBranches,
 
@@ -5186,7 +5210,7 @@ class Component extends DCLogic {
         for (const pl of plushies) this.p.plushies[pl.id] = Number(this.p.plushies[pl.id] || 0) + 1;
         this.save();
         this.syncOmarAction('museum.plushieBuy', 'all_set');
-        this.result('good', lang === 'ar' ? 'اكتمال مجموعة دباديب المدن' : 'Full 6-City Plushie Set Collected', lang === 'ar' ? 'جاهز للاستبدال في المتحف مقابل +10 بوينت' : 'Ready to exchange at The Museum for +10 Points', '6/6 Set');
+        this.result('good', lang === 'ar' ? 'اكتمال مجموعة دباديب المدن' : 'Full 6-City Plushie Set Collected', lang === 'ar' ? 'جاهز للاستبدال في المتحف مقابل +10 بوينت' : 'Ready to exchange at The Museum for +10 Points', lang === 'ar' ? 'طقم 6/6' : '6/6 Set');
       },
       exchangeMuseumSetForPoints: () => {
         const hasAll = plushies.every(pl => Number(ownedPlushies?.[pl.id] || 0) >= 1);
@@ -5196,7 +5220,7 @@ class Component extends DCLogic {
         this.p.points = Number(this.p.points || 0) + 10;
         this.save();
         this.syncOmarAction('museum.exchange', 'set');
-        this.result('good', lang === 'ar' ? 'استبدال المتحف مكتمل!' : 'Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', '+10 Points');
+        this.result('good', lang === 'ar' ? 'استبدال المتحف مكتمل!' : 'Museum Collection Exchanged!', lang === 'ar' ? 'تم تسليم طقم الدباديب واستلام +10 بوينت' : 'Traded 6-City Plushie Set for +10 Premium Points', lang === 'ar' ? '+10 نقاط' : '+10 Points');
       },
 
       // Honors & Medals + Ipecac Self-Hospitalization
@@ -5212,7 +5236,7 @@ class Component extends DCLogic {
         }
         this.save();
         this.syncOmarAction('honor.claim', 'h_ipecac');
-        this.result('good', lang === 'ar' ? 'وسام شراب Ipecac / كيس الدم الخاطئ!' : 'Ipecac / Wrong Blood Bag Honor Unlocked!', lang === 'ar' ? 'دخلت المستشفى لمدة ساعة وحصلت على +1 نقطة ميرت!' : 'Self-hospitalized for 1 hour · Earned +1 Merit Point!', '+1 Merit');
+        this.result('good', lang === 'ar' ? 'وسام شراب الإيبيكاك / كيس الدم الخاطئ!' : 'Ipecac / Wrong Blood Bag Honor Unlocked!', lang === 'ar' ? 'دخلت المستشفى لمدة ساعة وحصلت على +1 نقطة ميرت!' : 'Self-hospitalized for 1 hour · Earned +1 Merit Point!', lang === 'ar' ? '+1 ميرت' : '+1 Merit');
       },
       honorsList: honorsDefs.map(hd => {
         const claimed = !!claimedHonors?.[hd.id];
@@ -5228,7 +5252,7 @@ class Component extends DCLogic {
             this.p.merits = Number(this.p.merits || 0) + 1;
             this.save();
             this.syncOmarAction('honor.claim', hd.id);
-            this.result('good', lang === 'ar' ? 'وسام جديد مكتسب!' : 'Honor Medal Unlocked!', lang === 'ar' ? hd.titleAr : hd.titleEn, '+1 Merit');
+            this.result('good', lang === 'ar' ? 'وسام جديد مكتسب!' : 'Honor Medal Unlocked!', lang === 'ar' ? hd.titleAr : hd.titleEn, lang === 'ar' ? '+1 ميرت' : '+1 Merit');
             this.forceUpdate();
           }
         };
@@ -5464,8 +5488,8 @@ class Component extends DCLogic {
       }),
       liveTornAttacks: [
         { code: '#7535bd39', match: lang === 'ar' ? `${view.t.player} [#1042] ← ريان بلاك [#1088]` : 'Vincenzo [#1042] -> Rayan_Black [#1088]', outcome: lang === 'ar' ? 'إدخال للمستشفى' : 'Hospitalized', ff: lang === 'ar' ? 'تكافؤ القتال 2.45x' : 'Fair Fight 2.45x', respect: lang === 'ar' ? '+3.82 احترام' : '+3.82 Respect' },
-        { code: '#3c6496fd', match: lang === 'ar' ? `${view.t.player} [#1042] ← Duke_X [#1337] (الحرس القديم)` : 'Vincenzo [#1042] -> Duke_X [#1337] (Old Guard)', outcome: lang === 'ar' ? 'نشل ($42,500)' : 'Mugged ($42,500)', ff: lang === 'ar' ? 'تكافؤ القتال 1.88x' : 'Fair Fight 1.88x', respect: lang === 'ar' ? '+2.64 احترام' : '+2.64 Respect' },
-        { code: '#a8981140', match: lang === 'ar' ? 'Layla_R [#1104] ← بيغ سال [#1094] (ملوك المرفأ)' : 'Layla_R [#1104] -> BigSal [#1094] (Harbor Kings)', outcome: lang === 'ar' ? 'إدخال للمستشفى' : 'Hospitalized', ff: lang === 'ar' ? 'حرب مصنفة 2.00x' : 'Ranked War 2.00x', respect: lang === 'ar' ? '+4.10 احترام' : '+4.10 Respect' }
+        { code: '#3c6496fd', match: lang === 'ar' ? `${view.t.player} [#1042] ← ديوك [#1337] (الحرس القديم)` : 'Vincenzo [#1042] -> Duke_X [#1337] (Old Guard)', outcome: lang === 'ar' ? 'نشل ($42,500)' : 'Mugged ($42,500)', ff: lang === 'ar' ? 'تكافؤ القتال 1.88x' : 'Fair Fight 1.88x', respect: lang === 'ar' ? '+2.64 احترام' : '+2.64 Respect' },
+        { code: '#a8981140', match: lang === 'ar' ? 'ليلى [#1104] ← سال الكبير [#1094] (ملوك المرفأ)' : 'Layla_R [#1104] -> BigSal [#1094] (Harbor Kings)', outcome: lang === 'ar' ? 'إدخال للمستشفى' : 'Hospitalized', ff: lang === 'ar' ? 'حرب مصنفة 2.00x' : 'Ranked War 2.00x', respect: lang === 'ar' ? '+4.10 احترام' : '+4.10 Respect' }
       ],
       oc2Title: lang === 'ar' ? 'عمليات الطاقم المنظمة (P1-P4) وعوائد قطاعات العائلة' : 'Syndicate Crew Operations (P1-P4 Roles) & Territory Rackets',
       runOc2HeistBtn: lang === 'ar' ? 'تنفيذ سطو الطاقم المنظم (+$65,000 + 35 احترام)' : 'Execute 4-Crew Vault Heist (+$65,000 · +35 Respect)',
@@ -5475,13 +5499,13 @@ class Component extends DCLogic {
         this.p.crimeXp = Number(this.p.crimeXp || 0) + 35;
         this.save();
         this.syncOmarAction('torn.oc2Heist', 'execute');
-        this.result('cash', lang === 'ar' ? 'نجاح عملية السطو المنظم' : 'OC 2.0 Syndicate Crew Heist Executed', lang === 'ar' ? 'الطاقم الأول إلى الرابع · نسبة اجتياز 92%' : 'P1 Muscle · P2 Lockpicker · P3 Hacker · P4 Lookout (92% Combined Pass)', '+$65,000 & +35 Respect');
+        this.result('cash', lang === 'ar' ? 'نجاح عملية السطو المنظم' : 'OC 2.0 Syndicate Crew Heist Executed', lang === 'ar' ? 'الطاقم الأول إلى الرابع · نسبة اجتياز 92%' : 'P1 Muscle · P2 Lockpicker · P3 Hacker · P4 Lookout (92% Combined Pass)', lang === 'ar' ? '+$65,000 و +35 احترام' : '+$65,000 & +35 Respect');
       },
       oc2Slots: [
         { slot: lang === 'ar' ? 'عضو 1 · اقتحام مسلح' : 'P1 · Muscle', item: lang === 'ar' ? 'عتلة فولاذية' : 'Jemmy', rate: lang === 'ar' ? 'نسبة النجاح 92%' : '92% Pass Rate', pct: 92, status: lang === 'ar' ? `جاهز (${view.t.player})` : 'Locked In (Vincenzo)' },
-        { slot: lang === 'ar' ? 'عضو 2 · خبير أقفال' : 'P2 · Lockpicker', item: lang === 'ar' ? 'طقم فتح أقفال' : 'Lockpicks', rate: lang === 'ar' ? 'نسبة النجاح 88%' : '88% Pass Rate', pct: 88, status: lang === 'ar' ? 'جاهز (Layla_R)' : 'Locked In (Layla_R)' },
-        { slot: lang === 'ar' ? 'عضو 3 · مخترق أنظمة' : 'P3 · Hacker', item: lang === 'ar' ? 'كاشف ترددات لاسلكية' : 'RF Detector', rate: lang === 'ar' ? 'نسبة النجاح 95%' : '95% Pass Rate', pct: 95, status: lang === 'ar' ? 'جاهز (Omar_Z)' : 'Locked In (Omar_Z)' },
-        { slot: lang === 'ar' ? 'عضو 4 · رصد ومراقبة' : 'P4 · Lookout', item: lang === 'ar' ? 'مشوش إشارات' : 'Signal Jammer', rate: lang === 'ar' ? 'نسبة النجاح 91%' : '91% Pass Rate', pct: 91, status: lang === 'ar' ? 'جاهز (Tariq)' : 'Locked In (Tariq)' }
+        { slot: lang === 'ar' ? 'عضو 2 · خبير أقفال' : 'P2 · Lockpicker', item: lang === 'ar' ? 'طقم فتح أقفال' : 'Lockpicks', rate: lang === 'ar' ? 'نسبة النجاح 88%' : '88% Pass Rate', pct: 88, status: lang === 'ar' ? 'جاهز (ليلى)' : 'Locked In (Layla_R)' },
+        { slot: lang === 'ar' ? 'عضو 3 · مخترق أنظمة' : 'P3 · Hacker', item: lang === 'ar' ? 'كاشف ترددات لاسلكية' : 'RF Detector', rate: lang === 'ar' ? 'نسبة النجاح 95%' : '95% Pass Rate', pct: 95, status: lang === 'ar' ? 'جاهز (عمر)' : 'Locked In (Omar_Z)' },
+        { slot: lang === 'ar' ? 'عضو 4 · رصد ومراقبة' : 'P4 · Lookout', item: lang === 'ar' ? 'مشوش إشارات' : 'Signal Jammer', rate: lang === 'ar' ? 'نسبة النجاح 91%' : '91% Pass Rate', pct: 91, status: lang === 'ar' ? 'جاهز (طارق)' : 'Locked In (Tariq)' }
       ],
       activeRackets: [
         { sector: lang === 'ar' ? 'القطاع KDB · مختبر المنشطات V' : 'Sector KDB · Narcotics Lab V', yieldText: lang === 'ar' ? '400× محفز قتالي / يومياً' : '400x Combat Stims / day', fac: lang === 'ar' ? 'نقابة الحجاب الحديدي' : 'Iron Veil Syndicate' },
@@ -5523,7 +5547,7 @@ class Component extends DCLogic {
         this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) + 500));
         this.save();
         this.syncOmarAction('torn.rehab', 'reset');
-        this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', '100% Gym Eff');
+        this.result('good', lang === 'ar' ? 'اكتملت جلسة التأهيل الطبي' : 'Clinical Rehabilitation Complete', lang === 'ar' ? 'تمت إزالة التدهور واستعادة 100% من مكاسب النادي' : 'Tolerance decay reset to 0% · +500 Happy restored', lang === 'ar' ? '100% كفاءة' : '100% Gym Eff');
       },
       gymSpecializations: [
         { id: 'georges', name: lang === 'ar' ? 'نادي جورج للوزن الثقيل' : "George\'s Gym (Heavyweight)", focus: lang === 'ar' ? 'جميع الصفات متوازنة · 10 طاقة/تمرين' : 'All Stats Balanced · 10E/Train', dots: lang === 'ar' ? '7.3 نقاط لكل صفة قتالية' : '7.3 / 7.3 / 7.3 / 7.3 Dots', pct: 73, bonus: 50 },
@@ -5563,7 +5587,7 @@ class Component extends DCLogic {
           this.setState({ wallPct: Math.min(100, Number(this.state.wallPct || 68) + wa.delta) });
           this.save();
           this.syncOmarAction('torn.sectorWall', wa.id);
-          this.result('good', wa.label, lang === 'ar' ? 'تم تحديث حالة جدار حرب الأراضي في القطاع KDB' : 'Updated Sector KDB Territory Wall Control', `+${wa.respect} Respect`);
+          this.result('good', wa.label, lang === 'ar' ? 'تم تحديث حالة جدار حرب الأراضي في القطاع KDB' : 'Updated Sector KDB Territory Wall Control', lang === 'ar' ? `+${wa.respect} احترام` : `+${wa.respect} Respect`);
         }
       })),
       smugglingHubs: [
@@ -5669,7 +5693,7 @@ class Component extends DCLogic {
           else this.p.cash = Number(this.p.cash || 0) + cs.val;
           this.save();
           this.syncOmarAction('torn.companySpecial', cs.id);
-          this.result('good', cs.comp, cs.perk, `-${cs.jpCost} JP`);
+          this.result('good', cs.comp, cs.perk, lang === 'ar' ? `-${cs.jpCost} نقطة عمل` : `-${cs.jpCost} JP`);
         }
       })),
       bazaarTitle: lang === 'ar' ? 'البازار الشخصي (0% عمولة) ودرع حماية الصفقات (15 ثانية)' : 'Personal Bazaar Storefront (0% Fee) & 15s Escrow Protection Shield',
@@ -5697,7 +5721,7 @@ class Component extends DCLogic {
           this.p.gymXp = Number(this.p.gymXp || 0) + 25;
           this.save();
           this.syncOmarAction('torn.eduMajor', em.id);
-          this.result('good', em.code, em.unlock, '+25 Gym XP · +12 Crime XP');
+          this.result('good', em.code, em.unlock, lang === 'ar' ? '+25 خبرة نادي · +12 خبرة جريمة' : '+25 Gym XP · +12 Crime XP');
         }
       })),
       islandStaffTitle: lang === 'ar' ? 'طاقم الجزيرة الخاصة وخزنة المليار دولار' : 'Private Island Estate Staff & $1B High-Security Vault',
@@ -5715,7 +5739,7 @@ class Component extends DCLogic {
           this.setBarValue('happy', Math.min(99999, (this.cur('happy') || 500) + 250));
           this.save();
           this.syncOmarAction('torn.islandStaff', st.id);
-          this.result('good', st.role, st.effect, '+250 Happy');
+          this.result('good', st.role, st.effect, lang === 'ar' ? '+250 معنويات' : '+250 Happy');
         }
       })),
       jailTornTitle: lang === 'ar' ? 'مهارة التهريب من السجن وتفويض المحامي الفوري' : 'Jail Extraction Skill & Retained Counsel Release',
@@ -5726,7 +5750,7 @@ class Component extends DCLogic {
         this.p.jailUntil = 0;
         this.save();
         this.syncOmarAction('torn.lawyerCard', 'release');
-        this.result('good', lang === 'ar' ? 'تم تفعيل تفويض المحامي' : 'Retained Counsel Invoked', lang === 'ar' ? 'تم إسقاط التهم وإخلاء السبيل فوراً' : 'All charges dropped · Instant jail release confirmed', '00:00 Jail');
+        this.result('good', lang === 'ar' ? 'تم تفعيل تفويض المحامي' : 'Retained Counsel Invoked', lang === 'ar' ? 'تم إسقاط التهم وإخلاء السبيل فوراً' : 'All charges dropped · Instant jail release confirmed', lang === 'ar' ? 'إفراج فوري' : '00:00 Jail');
       },
       stockDividendBlocks: [
         { ticker: 'SYM', name: lang === 'ar' ? 'مجموعة سيمبيوتيك الطبية' : 'Symbiotic Ltd.', div: lang === 'ar' ? '1× حزمة منشطات طبية / 7 أيام' : '1x Drug Pack / 7 Days', cashVal: 42000 },
@@ -5759,7 +5783,7 @@ class Component extends DCLogic {
           this.setBarValue('life', this.maxOf('life') || 500);
           this.save();
           this.syncOmarAction('torn.bloodBag', bb.id);
-          this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', '100% HP');
+          this.result('good', bb.label, lang === 'ar' ? 'تمت استعادة الصحة الكاملة والخروج من المستشفى' : 'Full Life restored & discharged from Hospital', lang === 'ar' ? '100% صحة' : '100% HP');
         }
       })),
       casinoTornTitle: lang === 'ar' ? 'طاولات الرهان العالي: المراهنات الرياضية، الروليت الروسي، وعجلة الحظ' : 'High-Stakes Syndicate Tables: Sportsbook, Russian Roulette & High-Roller Wheel',
@@ -5777,7 +5801,7 @@ class Component extends DCLogic {
             this.p.hospUntil = Date.now() + 900000;
             this.save();
             this.syncOmarAction('torn.casinoPlay', 'rr_shot');
-            return this.result('bad', cg.game, lang === 'ar' ? 'انطلقت الرصاصة في الغرفة السادسة! تم نقلك للمستشفى (15 دقيقة).' : 'Chamber 6 fired! Emergency medevac to Hospital (15m).', '1/6 Chamber');
+            return this.result('bad', cg.game, lang === 'ar' ? 'انطلقت الرصاصة في الغرفة السادسة! تم نقلك للمستشفى (15 دقيقة).' : 'Chamber 6 fired! Emergency medevac to Hospital (15m).', lang === 'ar' ? 'غرفة 1/6' : '1/6 Chamber');
           }
           this.p.cash = Number(this.p.cash || 0) + cg.win;
           this.save();
@@ -5792,21 +5816,22 @@ class Component extends DCLogic {
         { banner: lang === 'ar' ? 'سيد التأهيل البدني الفائق' : 'HIGH-VOLTAGE CONDITIONING MASTER', req: lang === 'ar' ? 'تنفيذ بروتوكول قفزة المعنويات الكامل مع التأهيل الطبي' : 'Execute Full Happy-Stack Protocol + Clinical Rehab', rarity: lang === 'ar' ? 'نادر · 6.8%' : 'Rare · 6.8%' },
         { banner: lang === 'ar' ? 'أمين النوادر · إمبراطور التهريب' : 'ANTIQUITIES CURATOR · SMUGGLER KINGPIN', req: lang === 'ar' ? 'استبدال المجموعة الإقليمية الكاملة في المتحف' : 'Exchange Full Regional Collection at the Museum', rarity: lang === 'ar' ? 'غير شائع · 11.4%' : 'Uncommon · 11.4%' }
       ],
-      all13CrimesTitle: lang === 'ar' ? 'منظومة الجرائم المنظمة 2.0 الكاملة (13 تخصصاً · 34 معززاً · 222 نتيجة فريدة)' : 'All 13 Syndicate Crimes 2.0 Archetypes (34 Enhancers · 222 Unique Outcomes)',
+      all13CrimesTitle: lang === 'ar' ? 'منظومة الجرائم المنظمة 2.0 الكاملة (14 تخصصاً · 89 عملية ميدانية · عوائد حية)' : 'All 14 Syndicate Crimes 2.0 Archetypes (89 Street Operations · Live Payouts)',
       all13Crimes2: [
-        { id: '1', name: lang === 'ar' ? 'البحث عن النقد' : 'Search for Cash', enhancer: lang === 'ar' ? 'نظارات مكبرة (#564) +5% خبرة' : 'Glasses (#564) +5% XP', uniques: lang === 'ar' ? '34 نتيجة فريدة · 6 مناطق' : '34 Uniques · 6 Subcrimes', payout: lang === 'ar' ? '+$4,200 · 2 جرأة' : '+$4,200 · 2N', nerve: 2, cash: 4200, xp: 6 },
-        { id: '2', name: lang === 'ar' ? 'قرصنة الأقراص' : 'Bootlegging', enhancer: lang === 'ar' ? 'ناسخ فائق السرعة (#565)' : 'High-Speed Drive (#565)', uniques: lang === 'ar' ? '4 نتائج فريدة · متجر إلكتروني' : '4 Uniques · Online Store', payout: lang === 'ar' ? '+$6,800 · 3 جرأة' : '+$6,800 · 3N', nerve: 3, cash: 6800, xp: 8 },
-        { id: '3', name: lang === 'ar' ? 'طلاء الجدران' : 'Graffiti', enhancer: lang === 'ar' ? 'قناع طلاء واقٍ (#550)' : 'Paint Mask (#550)', uniques: lang === 'ar' ? '41 نتيجة فريدة · 7 أحياء' : '41 Uniques · 7 Districts', payout: lang === 'ar' ? '+$5,400 · 3 جرأة' : '+$5,400 · 3N', nerve: 3, cash: 5400, xp: 9 },
-        { id: '4', name: lang === 'ar' ? 'سرقة المتاجر' : 'Shoplifting', enhancer: lang === 'ar' ? 'دراجة جبلية (#566)' : 'Mountain Bike (#566)', uniques: lang === 'ar' ? '60 نتيجة فريدة · 8 متاجر' : '60 Uniques · 8 Stores', payout: lang === 'ar' ? '+$8,900 · 4 جرأة' : '+$8,900 · 4N', nerve: 4, cash: 8900, xp: 11 },
-        { id: '5', name: lang === 'ar' ? 'النشل الميداني' : 'Pickpocketing', enhancer: lang === 'ar' ? 'موس حلاقة حاد (#567)' : 'Cut-Throat Razor (#567)', uniques: lang === 'ar' ? '22 نتيجة فريدة · 20 هدفاً' : '22 Uniques · 20 Marks', payout: lang === 'ar' ? '+$12,400 · 5 جرأة' : '+$12,400 · 5N', nerve: 5, cash: 12400, xp: 14 },
-        { id: '6', name: lang === 'ar' ? 'نسخ بطاقات الصراف' : 'Card Skimming', enhancer: lang === 'ar' ? 'شريط لاصق · أجهزة صراف' : 'Duct Tape · Passive ATMs', uniques: lang === 'ar' ? '4 محطات · سحب البيانات' : '4 Terminals · Card Dump', payout: lang === 'ar' ? '+$18,500 · 6 جرأة' : '+$18,500 · 6N', nerve: 6, cash: 18500, xp: 18 },
-        { id: '7', name: lang === 'ar' ? 'السطو على العقارات' : 'Burglary', enhancer: lang === 'ar' ? 'كشاف يدوي · رصد واقتحام' : 'Flashlight · Scout/Case', uniques: lang === 'ar' ? '34 نتيجة فريدة · 32 عقاراً' : '34 Uniques · 32 Targets', payout: lang === 'ar' ? '+$22,000 · 6 جرأة' : '+$22,000 · 6N', nerve: 6, cash: 22000, xp: 20 },
-        { id: '8', name: lang === 'ar' ? 'خداع الجمهور' : 'Hustling', enhancer: lang === 'ar' ? 'مكبر صوت · جذب الحشود' : 'Megaphone · Crowd Hype', uniques: lang === 'ar' ? 'جمع الجمهور والرهان' : 'Gather/Demo/Lose/Win', payout: lang === 'ar' ? '+$14,500 · 4 جرأة' : '+$14,500 · 4N', nerve: 4, cash: 14500, xp: 15 },
-        { id: '9', name: lang === 'ar' ? 'إتلاف الأدلة' : 'Disposal', enhancer: lang === 'ar' ? 'قفازات طبية · إذابة وحرق' : 'Latex Gloves · Acid/Burn', uniques: lang === 'ar' ? '11 نتيجة فريدة · 12 عقداً' : '11 Uniques · 12 Contracts', payout: lang === 'ar' ? '+$26,000 · 6 جرأة' : '+$26,000 · 6N', nerve: 6, cash: 26000, xp: 22 },
-        { id: '10', name: lang === 'ar' ? 'كسر التشفير' : 'Cracking', enhancer: lang === 'ar' ? 'منصة معالجات فائقة' : 'Office Chair · MIPS Rig', uniques: lang === 'ar' ? 'فك شيفرات متعددة الطبقات' : 'Brute-Force Layer Decrypt', payout: lang === 'ar' ? '+$29,500 · 7 جرأة' : '+$29,500 · 7N', nerve: 7, cash: 29500, xp: 25 },
-        { id: '11', name: lang === 'ar' ? 'تزوير الوثائق' : 'Forgery', enhancer: lang === 'ar' ? 'عدسة مكبرة دقيقة' : 'Magnifying Glass', uniques: lang === 'ar' ? '14 وثيقة (جوازات وشارات)' : '14 Docs (Passport/Badge)', payout: lang === 'ar' ? '+$24,000 · 5 جرأة' : '+$24,000 · 5N', nerve: 5, cash: 24000, xp: 21 },
-        { id: '12', name: lang === 'ar' ? 'الاحتيال السيبراني' : 'Scamming', enhancer: lang === 'ar' ? 'لوحة مفاتيح احترافية' : 'Ergonomic Keyboard', uniques: lang === 'ar' ? 'حملات تصيد وإقناع' : 'Phishing & Persuasion Wave', payout: lang === 'ar' ? '+$34,000 · 7 جرأة' : '+$34,000 · 7N', nerve: 7, cash: 34000, xp: 28 },
-        { id: '13', name: lang === 'ar' ? 'الحرق الجنائي' : 'Arson', enhancer: lang === 'ar' ? 'ولاعة مقاومة للرياح (#544)' : 'Windproof Lighter (#544)', uniques: lang === 'ar' ? '16 نتيجة فريدة · عقود إحراق' : '16 Uniques · Ignition Ops', payout: lang === 'ar' ? '+$48,000 · 9 جرأة' : '+$48,000 · 9N', nerve: 9, cash: 48000, xp: 36 }
+        { id: '1', name: lang === 'ar' ? 'البحث عن النقد' : 'Search for Cash', enhancer: lang === 'ar' ? 'نظارات مكبرة +5% خبرة' : 'Magnifier Glasses +5% XP', uniques: lang === 'ar' ? '6 مناطق تفتيش ميدانية' : '6 Urban Search Zones', payout: lang === 'ar' ? '+$4,200 · 2 جرأة' : '+$4,200 · 2N', nerve: 2, cash: 4200, xp: 6 },
+        { id: '2', name: lang === 'ar' ? 'قرصنة الأقراص' : 'Bootlegging', enhancer: lang === 'ar' ? 'مصفوفة نسخ فائقة السرعة' : 'High-Speed Duplicator Array', uniques: lang === 'ar' ? '6 قنوات توزيع سرية' : '6 Underground Channels', payout: lang === 'ar' ? '+$6,800 · 3 جرأة' : '+$6,800 · 3N', nerve: 3, cash: 6800, xp: 8 },
+        { id: '3', name: lang === 'ar' ? 'طلاء الجدران' : 'Graffiti', enhancer: lang === 'ar' ? 'قناع تنفس احترافي' : 'Respirator Paint Mask', uniques: lang === 'ar' ? '8 أحياء سيطرة' : '8 City Districts', payout: lang === 'ar' ? '+$5,400 · 3 جرأة' : '+$5,400 · 3N', nerve: 3, cash: 5400, xp: 9 },
+        { id: '4', name: lang === 'ar' ? 'سرقة المتاجر' : 'Shoplifting', enhancer: lang === 'ar' ? 'حقيبة عزل مغناطيسي' : 'Shielded Booster Bag', uniques: lang === 'ar' ? '9 متاجر مراقبة' : '9 Guarded Stores', payout: lang === 'ar' ? '+$8,900 · 4 جرأة' : '+$8,900 · 4N', nerve: 4, cash: 8900, xp: 11 },
+        { id: '5', name: lang === 'ar' ? 'النشل الميداني' : 'Pickpocketing', enhancer: lang === 'ar' ? 'شفرة جيب دقيقة' : 'Concealed Pocket Blade', uniques: lang === 'ar' ? '6 أهداف عالية القيمة' : '6 High-Value Marks', payout: lang === 'ar' ? '+$12,400 · 5 جرأة' : '+$12,400 · 5N', nerve: 5, cash: 12400, xp: 14 },
+        { id: '6', name: lang === 'ar' ? 'نسخ بطاقات الصراف' : 'Card Skimming', enhancer: lang === 'ar' ? 'شريحة قراءة ممغنطة' : 'Deep-Insert ATM Skimmer', uniques: lang === 'ar' ? '6 محطات سحب نشطة' : '6 Live ATM Terminals', payout: lang === 'ar' ? '+$18,500 · 6 جرأة' : '+$18,500 · 6N', nerve: 6, cash: 18500, xp: 18 },
+        { id: '7', name: lang === 'ar' ? 'السطو على العقارات' : 'Burglary', enhancer: lang === 'ar' ? 'كشاف تكتيكي وطقم أقفال' : 'Tactical Torch & Lockpicks', uniques: lang === 'ar' ? '6 عقارات ومستودعات' : '6 Cased Estates & Vaults', payout: lang === 'ar' ? '+$22,000 · 6 جرأة' : '+$22,000 · 6N', nerve: 6, cash: 22000, xp: 20 },
+        { id: '8', name: lang === 'ar' ? 'خداع الجمهور' : 'Hustling', enhancer: lang === 'ar' ? 'مكبر صوت وطاولة متنقلة' : 'Street Rig & Decoy Shill', uniques: lang === 'ar' ? '6 حلقات رهان ميدانية' : '6 Crowd Rings', payout: lang === 'ar' ? '+$14,500 · 4 جرأة' : '+$14,500 · 4N', nerve: 4, cash: 14500, xp: 15 },
+        { id: '9', name: lang === 'ar' ? 'إتلاف الأدلة' : 'Disposal', enhancer: lang === 'ar' ? 'قفازات معزولة ومذيب كيميائي' : 'Chemical Drum & Gloves', uniques: lang === 'ar' ? '6 عقود تنظيف سرية' : '6 Syndicate Cleanups', payout: lang === 'ar' ? '+$26,000 · 6 جرأة' : '+$26,000 · 6N', nerve: 6, cash: 26000, xp: 22 },
+        { id: '10', name: lang === 'ar' ? 'كسر التشفير' : 'Cracking', enhancer: lang === 'ar' ? 'منصة فك تشفير متوازية' : 'Multi-GPU Hash Rig', uniques: lang === 'ar' ? '6 خوادم وخزائن مشفرة' : '6 Layered Cipher Nodes', payout: lang === 'ar' ? '+$29,500 · 7 جرأة' : '+$29,500 · 7N', nerve: 7, cash: 29500, xp: 25 },
+        { id: '11', name: lang === 'ar' ? 'تزوير الوثائق' : 'Forgery', enhancer: lang === 'ar' ? 'عدسة دقيقة وحبر أمني' : 'UV Loupe & Intaglio Ink', uniques: lang === 'ar' ? '6 وثائق وجوازات دبلوماسية' : '6 Diplomatic & Port Docs', payout: lang === 'ar' ? '+$24,000 · 5 جرأة' : '+$24,000 · 5N', nerve: 5, cash: 24000, xp: 21 },
+        { id: '12', name: lang === 'ar' ? 'الاحتيال السيبراني' : 'Scamming', enhancer: lang === 'ar' ? 'مقسم اتصال مشفر' : 'Spoofed SIP Relay', uniques: lang === 'ar' ? '6 حملات تحويل مالي' : '6 Wire-Diversion Waves', payout: lang === 'ar' ? '+$34,000 · 7 جرأة' : '+$34,000 · 7N', nerve: 7, cash: 34000, xp: 28 },
+        { id: '13', name: lang === 'ar' ? 'تزييف العملة' : 'Counterfeiting', enhancer: lang === 'ar' ? 'قوالب بوليمر محفورة' : 'Engraved Polymer Plates', uniques: lang === 'ar' ? '6 خطوط طباعة وتصريف' : '6 Minting & Wash Runs', payout: lang === 'ar' ? '+$41,000 · 8 جرأة' : '+$41,000 · 8N', nerve: 8, cash: 41000, xp: 32 },
+        { id: '14', name: lang === 'ar' ? 'الحرق الجنائي' : 'Arson', enhancer: lang === 'ar' ? 'مشعل حراري مقاوم للرياح' : 'Stormproof Torch Igniter', uniques: lang === 'ar' ? '6 عقود إحراق صناعي' : '6 Industrial Ignition Ops', payout: lang === 'ar' ? '+$48,000 · 9 جرأة' : '+$48,000 · 9N', nerve: 9, cash: 48000, xp: 36 }
       ].map(c2 => ({
         ...c2,
         btn: lang === 'ar' ? `تنفيذ (${c2.nerve} جرأة)` : `Run (${c2.nerve}N)`,
@@ -5817,15 +5842,15 @@ class Component extends DCLogic {
           this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
           this.save();
           this.syncOmarAction('torn.crime2Execute', c2.id);
-          this.result('cash', `#${c2.id} ${c2.name}`, `${c2.enhancer} · +${c2.xp} XP`, '+' + money(c2.cash));
+          this.result('cash', `#${c2.id} ${c2.name}`, `${c2.enhancer} · +${c2.xp} ${lang === 'ar' ? 'خبرة' : 'XP'}`, '+' + money(c2.cash));
         }
       })),
       weaponAttachmentMods: [
-        { id: 'thermal', name: lang === 'ar' ? 'منظار حراري (#4)' : 'Thermal Sight (#4)', effect: lang === 'ar' ? '+1.75 دقة · كشف التخفي' : '+1.75 Acc · Reveal Stealth' },
-        { id: 'laser100', name: lang === 'ar' ? 'ليزر تكتيكي 100mW (#8)' : '100mW Laser (#8)', effect: lang === 'ar' ? '+8% معدل الضربة الحرجة' : '+8% Critical Hit Rate' },
-        { id: 'suppressor', name: lang === 'ar' ? 'كاتم صوت ثقيل (#14)' : 'Large Suppressor (#14)', effect: lang === 'ar' ? '+2.5 تخفٍ · هجوم صامت' : '+2.5 Stealth · Hidden Hit' },
-        { id: 'extmag', name: lang === 'ar' ? 'مخزن أسطواني مضاعف (#19)' : 'High-Cap Drum Mag (#19)', effect: lang === 'ar' ? '+100% سعة الذخيرة' : '+100% Magazine Rounds' },
-        { id: 'trigger', name: lang === 'ar' ? 'زناد حساس قابل للضبط (#24)' : 'Adjustable Trigger (#24)', effect: lang === 'ar' ? '+15% دقة الطلقة الأولى' : '+15% First-Turn Accuracy' },
+        { id: 'thermal', name: lang === 'ar' ? 'منظار حراري تكتيكي' : 'Thermal Optic Sight', effect: lang === 'ar' ? '+1.75 دقة · كشف التخفي' : '+1.75 Acc · Reveal Stealth' },
+        { id: 'laser100', name: lang === 'ar' ? 'ليزر تكتيكي 100mW' : '100mW Target Laser', effect: lang === 'ar' ? '+8% معدل الضربة الحرجة' : '+8% Critical Hit Rate' },
+        { id: 'suppressor', name: lang === 'ar' ? 'كاتم صوت ثقيل' : 'Heavy Suppressor', effect: lang === 'ar' ? '+2.5 تخفٍ · هجوم صامت' : '+2.5 Stealth · Hidden Hit' },
+        { id: 'extmag', name: lang === 'ar' ? 'مخزن أسطواني مضاعف' : 'High-Cap Drum Mag', effect: lang === 'ar' ? '+100% سعة الذخيرة' : '+100% Magazine Rounds' },
+        { id: 'trigger', name: lang === 'ar' ? 'زناد حساس قابل للضبط' : 'Match-Grade Trigger', effect: lang === 'ar' ? '+15% دقة الطلقة الأولى' : '+15% First-Turn Accuracy' },
         { id: 'armor_cov', name: lang === 'ar' ? 'تغطية الدرع الهجومي' : 'Assault Body Coverage', effect: lang === 'ar' ? 'القلب 97.3% · الصدر 90.2% · الذراع 6.5%' : 'Heart 97.3% · Chest 90.2% · Arm 6.5%' }
       ].map(wm => {
         const curMod = this.state.tornWeaponMod || this.p.tornCombat?.mod || 'laser100';
@@ -5844,12 +5869,12 @@ class Component extends DCLogic {
         };
       }),
       oc2ScenariosCatalog: [
-        { id: 'snow_blind', name: lang === 'ar' ? 'عمى الثلج' : 'Snow Blind', diff: '6/10', scope: lang === 'ar' ? 'التكلفة 3 ← العائد 5' : 'Cost 3 -> Ret 5', roles: lang === 'ar' ? 'منتحل · مقاتل · ناهب · سائق' : 'Imitator · Muscle · Looter · Driver', req: lang === 'ar' ? 'منشط PCP (#201) للمنتحل' : 'PCP (#201) for Imitator' },
-        { id: 'lock_stock', name: lang === 'ar' ? 'الخزنة الموصدة' : 'Lock Stock', diff: '8/10', scope: lang === 'ar' ? 'التكلفة 4 ← العائد 6' : 'Cost 4 -> Ret 6', roles: lang === 'ar' ? 'قاتل مأجور · تقني · خبير أقفال · منفّذ' : 'Assassin · Techie · Picklock · Enforcer', req: lang === 'ar' ? 'محفز معنويات (#197) للقاتل' : 'Ecstasy (#197) for Assassin' },
-        { id: 'cleared_takeoff', name: lang === 'ar' ? 'إذن الإقلاع' : 'Cleared for Takeoff', diff: '9/10', scope: lang === 'ar' ? 'التكلفة 5 ← العائد 8' : 'Cost 5 -> Ret 8', roles: lang === 'ar' ? 'منتحل · خاطف طائرات · مخترق · قناص' : 'Imitator · Hijacker · Hacker · Sniper', req: lang === 'ar' ? 'حقيبة سفر كبيرة (#421)' : 'Large Suitcase (#421)' },
-        { id: 'gone_fission', name: lang === 'ar' ? 'الانشطار النووي' : 'Gone Fission', diff: '9/10', scope: lang === 'ar' ? 'التكلفة 5 ← العائد 8' : 'Cost 5 -> Ret 8', roles: lang === 'ar' ? 'نشال · لص متسلق · منظف · تقني' : 'Pickpocket · Cat Burglar · Cleaner · Techie', req: lang === 'ar' ? 'موس حلاقة حاد (#567)' : 'Cut-Throat Razor (#567)' },
-        { id: 'market_forces', name: lang === 'ar' ? 'قوى السوق' : 'Market Forces', diff: '3/10', scope: lang === 'ar' ? 'التكلفة 2 ← العائد 3' : 'Cost 2 -> Ret 3', roles: lang === 'ar' ? 'منفّذ · مفاوض · مراقب · مشعل حرائق · مقاتل' : 'Enforcer · Negotiator · Lookout · Arsonist · Muscle', req: lang === 'ar' ? 'ولاعة مقاومة للرياح (#544)' : 'Windproof Lighter (#544)' },
-        { id: 'gaslight_way', name: lang === 'ar' ? 'التمويه المزدوج' : 'Gaslight the Way', diff: '3/10', scope: lang === 'ar' ? 'التكلفة 2 ← العائد 3' : 'Cost 2 -> Ret 3', roles: lang === 'ar' ? '3× منتحل · 3× ناهب (طاقم 6)' : '3x Imitator · 3x Looter (6-Crew)', req: lang === 'ar' ? 'شارة شرطة وهوية مزورة' : 'Police Badge / ID Kit' }
+        { id: 'snow_blind', name: lang === 'ar' ? 'عمى الثلج' : 'Snow Blind', diff: '6/10', scope: lang === 'ar' ? 'التكلفة 3 ← العائد 5' : 'Cost 3 -> Ret 5', roles: lang === 'ar' ? 'منتحل · مقاتل · ناهب · سائق' : 'Imitator · Muscle · Looter · Driver', req: lang === 'ar' ? 'محفز قتالي لدور المنتحل' : 'Combat Stimulant for Imitator' },
+        { id: 'lock_stock', name: lang === 'ar' ? 'الخزنة الموصدة' : 'Lock Stock', diff: '8/10', scope: lang === 'ar' ? 'التكلفة 4 ← العائد 6' : 'Cost 4 -> Ret 6', roles: lang === 'ar' ? 'قاتل مأجور · تقني · خبير أقفال · منفّذ' : 'Assassin · Techie · Picklock · Enforcer', req: lang === 'ar' ? 'معزز تركيز لدور المنفّذ' : 'Focus Booster for Assassin' },
+        { id: 'cleared_takeoff', name: lang === 'ar' ? 'إذن الإقلاع' : 'Cleared for Takeoff', diff: '9/10', scope: lang === 'ar' ? 'التكلفة 5 ← العائد 8' : 'Cost 5 -> Ret 8', roles: lang === 'ar' ? 'منتحل · خاطف طائرات · مخترق · قناص' : 'Imitator · Hijacker · Hacker · Sniper', req: lang === 'ar' ? 'حقيبة شحن دبلوماسية' : 'Reinforced Diplomatic Case' },
+        { id: 'gone_fission', name: lang === 'ar' ? 'الانشطار النووي' : 'Gone Fission', diff: '9/10', scope: lang === 'ar' ? 'التكلفة 5 ← العائد 8' : 'Cost 5 -> Ret 8', roles: lang === 'ar' ? 'نشال · لص متسلق · منظف · تقني' : 'Pickpocket · Cat Burglar · Cleaner · Techie', req: lang === 'ar' ? 'شفرة دقيقة لدور النشال' : 'Precision Blade for Pickpocket' },
+        { id: 'market_forces', name: lang === 'ar' ? 'قوى السوق' : 'Market Forces', diff: '3/10', scope: lang === 'ar' ? 'التكلفة 2 ← العائد 3' : 'Cost 2 -> Ret 3', roles: lang === 'ar' ? 'منفّذ · مفاوض · مراقب · مشعل حرائق · مقاتل' : 'Enforcer · Negotiator · Lookout · Arsonist · Muscle', req: lang === 'ar' ? 'مشعل حراري لدور الإحراق' : 'Stormproof Igniter for Arsonist' },
+        { id: 'gaslight_way', name: lang === 'ar' ? 'التمويه المزدوج' : 'Gaslight the Way', diff: '3/10', scope: lang === 'ar' ? 'التكلفة 2 ← العائد 3' : 'Cost 2 -> Ret 3', roles: lang === 'ar' ? '3× منتحل · 3× ناهب (طاقم 6)' : '3x Imitator · 3x Looter (6-Crew)', req: lang === 'ar' ? 'شارة أمنية وهوية مزورة' : 'Forged Security Badge & ID Kit' }
       ].map(ocs => ({
         ...ocs,
         titleLabel: lang === 'ar' ? `${ocs.name} (الصعوبة ${ocs.diff})` : `${ocs.name} (Diff ${ocs.diff})`,
@@ -5860,13 +5885,13 @@ class Component extends DCLogic {
           this.p.fac = { ...(this.p.fac || {}), respect: Number(this.p.fac?.respect || 1480) + 45 };
           this.save();
           this.syncOmarAction('torn.oc2Spawn', ocs.id);
-          this.result('cash', `${ocs.name} (${ocs.diff})`, `${ocs.roles} · ${ocs.req}`, '+$85,000 & +45 Respect');
+          this.result('cash', `${ocs.name} (${ocs.diff})`, `${ocs.roles} · ${ocs.req}`, lang === 'ar' ? '+$85,000 و +45 احترام' : '+$85,000 & +45 Respect');
         }
       })),
-      codexMasterTitle: lang === 'ar' ? 'الأرشيف التكتيكي الشامل للنقابة (13 جريمة · 34 عملية سطو · 9 أشجار عائلة · 1,503 عناصر)' : 'SYNDICATE TACTICAL MASTER CODEX (13 CRIMES · 34 OC SCENARIOS · 9 FACTION TREES · 1,503 ITEMS)',
+      codexMasterTitle: lang === 'ar' ? 'الأرشيف التكتيكي الشامل للنقابة (14 فئة جرائم · 34 عملية سطو · 9 أشجار عائلة · 1,503 عناصر)' : 'SYNDICATE TACTICAL MASTER CODEX (14 CRIME ARCHETYPES · 34 OC SCENARIOS · 9 FACTION TREES · 1,503 ITEMS)',
       codexMasterBadge: lang === 'ar' ? 'الأرشيف التكتيكي الموحد · جاهز 100%' : 'SYNDICATE MASTER ARCHIVE · 100% SYNCED',
       codexTabs: [
-        { id: 'crimes', label: lang === 'ar' ? 'الجرائم 2.0' : 'Crimes 2.0', count: lang === 'ar' ? '13 · 222 نتيجة' : '13 · 222 Uniques' },
+        { id: 'crimes', label: lang === 'ar' ? 'الجرائم 2.0' : 'Crimes 2.0', count: lang === 'ar' ? '14 فئة · 89 عملية' : '14 Cats · 89 Ops' },
         { id: 'oc2', label: lang === 'ar' ? 'عمليات السطو 2.0' : 'OC 2.0 Scenarios', count: lang === 'ar' ? '34 · 24 دوراً' : '34 · 24 Roles' },
         { id: 'faction', label: lang === 'ar' ? 'أشجار العائلة' : 'Faction Trees', count: lang === 'ar' ? '9 أشجار · 49 فرعاً' : '9 Trees · 49 Branches' },
         { id: 'rackets', label: lang === 'ar' ? 'عوائد القطاعات' : 'Live Rackets', count: lang === 'ar' ? '188 قطاعاً' : '188 Sectors' },
@@ -5892,18 +5917,18 @@ class Component extends DCLogic {
         const ar = lang === 'ar';
         const datasets = {
           crimes: [
-            { title: ar ? '#1 البحث عن النقد ← #4 سرقة المتاجر' : '#1 Search for Cash -> #4 Shoplifting', badge: ar ? '94 نتيجة فريدة' : '94 UNIQUES', meta: ar ? 'المعززات: نظارات مكبرة (#564) ودراجة جبلية (#566)' : 'Enhancers: Glasses (#564) & Mountain Bike (#566)', detail: ar ? '6 مناطق تفتيش (النافورة، القمامة، الخردة، المترو، الشاطئ، المقبرة) + 8 متاجر بحالة كاميرات وحراسة حية.' : '6 Search zones (Fountain, Trash, Junkyard, Subway, Beach, Cemetery) + 8 Shoplift stores with live camera/guard status.', color: 'var(--acc)', btn: ar ? 'تنفيذ سرقة متجر' : 'Run Shoplift', act: () => { this.syncOmarAction('torn.crime2Execute', '4'); this.result('cash', ar ? 'سرقة المتاجر (#4)' : 'Shoplifting (#4)', ar ? 'معزز الدراجة الجبلية (+5% خبرة)' : 'Mountain Bike Enhancer (+5% XP)', '+$8,900'); } },
-            { title: ar ? '#2 قرصنة الأقراص و #3 طلاء الجدران' : '#2 Bootlegging & #3 Graffiti', badge: ar ? '45 نتيجة فريدة' : '45 UNIQUES', meta: ar ? 'المعززات: ناسخ فائق السرعة (#565) وقناع طلاء' : 'Enhancers: High-Speed Drive (#565) & Paint Mask', detail: ar ? 'نسخ الأقراص وإدارة متجر إلكتروني، وطلاء جدران 7 أحياء لرفع سمعة العصابة.' : 'Copy DVDs across genres & run online store; tag 7 city districts for street crew reputation.', color: 'var(--gold)', btn: ar ? 'تشغيل الناسخ' : 'Run Bootleg', act: () => { this.syncOmarAction('torn.crime2Execute', '2'); this.result('cash', ar ? 'قرصنة الأقراص (#2)' : 'Bootlegging (#2)', ar ? 'مصفوفة النسخ السريع نشطة' : 'High-Speed DVD Array Active', '+$6,800'); } },
-            { title: ar ? '#5 النشل الميداني و #7 السطو على العقارات' : '#5 Pickpocketing & #7 Burglary', badge: ar ? '56 نتيجة فريدة' : '56 UNIQUES', meta: ar ? 'المعززات: موس حلاقة (#567) وكشاف يدوي' : 'Enhancers: Cut-Throat Razor (#567) & Flashlight', detail: ar ? '20 فئة أهداف متجولة + 32 عقاراً سكنياً وتجارياً وصناعياً (استطلاع ← رصد ← اقتحام).' : '20 pedestrian mark classes (gait/build cues) + 32 Residential/Commercial/Industrial properties (Scout -> Case -> Break-In).', color: 'var(--acc)', btn: ar ? 'اقتحام عقار' : 'Run Burglary', act: () => { this.syncOmarAction('torn.crime2Execute', '7'); this.result('cash', ar ? 'السطو على العقارات (#7)' : 'Burglary (#7)', ar ? 'تم استطلاع واقتحام هدف تجاري' : 'Commercial Target Cased & Breached', '+$22,000'); } },
-            { title: ar ? '#6 نسخ الصرافات و #10 كسر التشفير' : '#6 Card Skimming & #10 Cracking', badge: ar ? 'منصات مستمرة' : 'PASSIVE RIGS', meta: ar ? 'المعززات: شريط لاصق ومنصة معالجات MIPS' : 'Enhancers: Duct Tape & Office Chair (MIPS Rig)', detail: ar ? 'زرع أجهزة نسخ في صرافات المترو والوقود، وبناء منصات تبريد لكسر الشيفرات متعددة الطبقات.' : 'Plant skimmers on Subway/Gas/Bus ATMs to accumulate card dumps; build multi-fan CPU rigs to crack layered hashes.', color: 'var(--gold)', btn: ar ? 'كسر الشيفرة' : 'Crack Cipher', act: () => { this.syncOmarAction('torn.crime2Execute', '10'); this.result('cash', ar ? 'كسر التشفير (#10)' : 'Cracking (#10)', ar ? 'منصة 740 MIPS فكت التشفير' : '740 MIPS Rig Decrypted Layer', '+$29,500'); } },
-            { title: ar ? '#8 خداع الجمهور و #9 إتلاف الأدلة' : '#8 Hustling & #9 Disposal', badge: ar ? '11 نتيجة فريدة' : '11 UNIQUES', meta: ar ? 'المعززات: مكبر صوت وقفازات لاتكس' : 'Enhancers: Megaphone & Latex Gloves', detail: ar ? 'إدارة حماس الجمهور والرهانات، والتخلص من الجثث والمركبات وأدوات الجريمة عبر الإذابة أو الحرق.' : 'Manage crowd hype (Gather/Demo/Lose/Win) + dispose of Bodies, Vehicles, Murder Weapons & Firearms via Acid/Burn/Sink.', color: 'var(--acc)', btn: ar ? 'إتلاف الأدلة' : 'Run Disposal', act: () => { this.syncOmarAction('torn.crime2Execute', '9'); this.result('cash', ar ? 'إتلاف الأدلة (#9)' : 'Disposal (#9)', ar ? 'تمت إذابة الأدلة الجنائية بالكامل' : 'Dissolved Evidence in Acid (Unique Outcome)', '+$26,000'); } },
-            { title: ar ? '#11 التزوير، #12 الاحتيال، و #13 الحرق الجنائي' : '#11 Forgery, #12 Scamming & #13 Arson', badge: ar ? '16 نتيجة فريدة' : '16 UNIQUES', meta: ar ? 'عدسة مكبرة · لوحة مفاتيح · ولاعة مقاومة للرياح (#544)' : 'Magnifying Glass · Ergonomic Keyboard · Windproof Lighter (#544)', detail: ar ? 'تصنيع 14 وثيقة رسمية، إدارة موجات التصيد، وتنفيذ عقود الحرق الجنائي عالية العائد.' : 'Craft 14 documents (Passports/Badges), run Phishing persuasion waves, and execute high-tier Arson contracts.', color: '#ff6a55', btn: ar ? 'إشعال الهدف' : 'Ignite Arson', act: () => { this.syncOmarAction('torn.crime2Execute', '13'); this.result('cash', ar ? 'الحرق الجنائي (#13)' : 'Arson (#13)', ar ? 'إشعال المستودع بولاعة (#544)' : 'Windproof Lighter (#544) Warehouse Ignition', '+$48,000'); } }
+            { title: ar ? '#1 البحث عن النقد ← #4 سرقة المتاجر' : '#1 Search for Cash -> #4 Shoplifting', badge: ar ? '15 عملية نشطة' : '15 LIVE OPS', meta: ar ? 'المعززات: نظارات مكبرة وحقيبة عزل مغناطيسي' : 'Enhancers: Magnifier Glasses & Shielded Booster Bag', detail: ar ? '6 مناطق تفتيش ميدانية + 9 متاجر بحالة كاميرات وحراسة حية على الخادم.' : '6 urban search zones + 9 guarded retail targets with server-settled risk and loot.', color: 'var(--acc)', btn: ar ? 'تنفيذ سرقة متجر' : 'Run Shoplift', act: () => { this.syncOmarAction('torn.crime2Execute', '4'); this.result('cash', ar ? 'سرقة المتاجر (#4)' : 'Shoplifting (#4)', ar ? 'تجاوز الحراسة بنجاح (+5% خبرة)' : 'Bypassed Store Security (+5% XP)', '+$8,900'); } },
+            { title: ar ? '#2 قرصنة الأقراص و #3 طلاء الجدران' : '#2 Bootlegging & #3 Graffiti', badge: ar ? '14 عملية نشطة' : '14 LIVE OPS', meta: ar ? 'المعززات: مصفوفة نسخ سريعة وقناع تنفس' : 'Enhancers: High-Speed Duplicator & Respirator Mask', detail: ar ? 'نسخ الوسائط وتوزيعها عبر السوق الخفي، وطلاء جدران 8 أحياء لرفع سمعة العائلة.' : 'Press underground media runs and tag 8 city districts to expand street reputation.', color: 'var(--gold)', btn: ar ? 'تشغيل الناسخ' : 'Run Bootleg', act: () => { this.syncOmarAction('torn.crime2Execute', '2'); this.result('cash', ar ? 'قرصنة الأقراص (#2)' : 'Bootlegging (#2)', ar ? 'مصفوفة النسخ السريع نشطة' : 'High-Speed Duplicator Array Active', '+$6,800'); } },
+            { title: ar ? '#5 النشل الميداني و #7 السطو على العقارات' : '#5 Pickpocketing & #7 Burglary', badge: ar ? '12 عملية نشطة' : '12 LIVE OPS', meta: ar ? 'المعززات: شفرة جيب دقيقة وطقم أقفال تكتيكي' : 'Enhancers: Concealed Blade & Tactical Lockpicks', detail: ar ? 'استهداف المارة ذوي السيولة العالية واقتحام 6 عقارات ومستودعات محصنة.' : 'Intercept high-value district marks and breach 6 cased estates and harbor warehouses.', color: 'var(--acc)', btn: ar ? 'اقتحام عقار' : 'Run Burglary', act: () => { this.syncOmarAction('torn.crime2Execute', '7'); this.result('cash', ar ? 'السطو على العقارات (#7)' : 'Burglary (#7)', ar ? 'تم استطلاع واقتحام هدف تجاري' : 'Commercial Target Cased & Breached', '+$22,000'); } },
+            { title: ar ? '#6 نسخ الصرافات و #10 كسر التشفير' : '#6 Card Skimming & #10 Cracking', badge: ar ? '12 عملية نشطة' : '12 LIVE OPS', meta: ar ? 'المعززات: شريحة قراءة ممغنطة ومنصة معالجات متوازية' : 'Enhancers: Deep-Insert Skimmer & Multi-GPU Rig', detail: ar ? 'زرع شرائح النسخ في الصرافات الحيوية وفك تشفير الخوادم والخزائن متعددة الطبقات.' : 'Plant skimmers on transit/financial ATMs and crack multi-layer vault hashes.', color: 'var(--gold)', btn: ar ? 'كسر الشيفرة' : 'Crack Cipher', act: () => { this.syncOmarAction('torn.crime2Execute', '10'); this.result('cash', ar ? 'كسر التشفير (#10)' : 'Cracking (#10)', ar ? 'تم فك طبقة التشفير بنجاح' : 'Multi-GPU Rig Decrypted Layer', '+$29,500'); } },
+            { title: ar ? '#8 خداع الجمهور و #9 إتلاف الأدلة' : '#8 Hustling & #9 Disposal', badge: ar ? '12 عملية نشطة' : '12 LIVE OPS', meta: ar ? 'المعززات: طاولة رهان متنقلة ومذيب كيميائي' : 'Enhancers: Street Decoy Rig & Chemical Drum', detail: ar ? 'إدارة حلقات الرهان السريع في الأزقة وتنفيذ عقود تنظيف مسارح العمليات.' : 'Work high-stakes alley crowd rings and execute discreet syndicate scene cleanups.', color: 'var(--acc)', btn: ar ? 'إتلاف الأدلة' : 'Run Disposal', act: () => { this.syncOmarAction('torn.crime2Execute', '9'); this.result('cash', ar ? 'إتلاف الأدلة (#9)' : 'Disposal (#9)', ar ? 'تمت إذابة الأدلة الجنائية بالكامل' : 'Dissolved Scene Evidence Completely', '+$26,000'); } },
+            { title: ar ? '#11 التزوير، #12 الاحتيال، #13 التزييف، و #14 الحرق' : '#11 Forgery, #12 Scamming, #13 Counterfeiting & #14 Arson', badge: ar ? '24 عملية نخبة' : '24 APEX OPS', meta: ar ? 'حبر أمني · مقسم مشفر · قوالب بوليمر · مشعل حراري' : 'UV Intaglio Ink · SIP Relay · Polymer Plates · Storm Igniter', detail: ar ? 'تصنيع الوثائق الدبلوماسية، تحويل الحوالات، طباعة العملة، وتنفيذ عقود الإحراق الصناعي.' : 'Forge diplomatic papers, divert corporate wires, press polymer notes, and ignite industrial targets.', color: '#ff6a55', btn: ar ? 'إشعال الهدف' : 'Ignite Arson', act: () => { this.syncOmarAction('torn.crime2Execute', '14'); this.result('cash', ar ? 'الحرق الجنائي (#14)' : 'Arson (#14)', ar ? 'إشعال المستودع بالمشعل الحراري' : 'Stormproof Igniter Warehouse Contract', '+$48,000'); } }
           ],
           oc2: [
             { title: ar ? 'المستوى الأول والثاني: إسعاف وتواطؤ · عقلية العصابة' : 'Tier I-II: First Aid & Abet · Mob Mentality · Pet Project', badge: ar ? 'صعوبة 1-2' : 'DIFF 1-2', meta: ar ? 'نطاق العملية 1 ← عائد 2 · 3-4 مقاعد للطاقم' : 'Scope Cost 1 -> Return 2 · 3-4 Crew Slots', detail: ar ? 'الأدوار: خبير أقفال، تمويه، نشال، 4× ناهب، خاطف، مقاتل، سارق سيارات، منتحل.' : 'Roles: Picklock, Decoy, Pickpocket, 4x Looter, Kidnapper, Muscle, Car Thief, Imitator.', color: 'var(--acc)', btn: ar ? 'إطلاق صعوبة 2' : 'Spawn Diff 2', act: () => { this.syncOmarAction('torn.oc2Spawn', 'mob_mentality'); this.result('cash', ar ? 'سطو منظم · عقلية العصابة' : 'OC 2.0 · Mob Mentality', ar ? 'عائد النطاق +2 · طاقم 4 ناهبين' : 'Scope +2 Returned · 4x Looter Crew', '+$85,000'); } },
             { title: ar ? 'المستوى الثالث: التمويه المزدوج · قوى السوق · دخان ومرايا' : 'Tier III: Gaslight the Way · Market Forces · Smoke & Mirrors', badge: ar ? 'صعوبة 3-4' : 'DIFF 3-4', meta: ar ? 'نطاق العملية 2 ← عائد 3 · 4-6 مقاعد للطاقم' : 'Scope Cost 2 -> Return 3 · 4-6 Crew Slots', detail: ar ? 'الأدوار: منفّذ، مفاوض، مراقب، مشعل حرائق، مقاتل، 3× منتحل، 3× ناهب.' : 'Roles: Enforcer, Negotiator, Lookout, Arsonist, Muscle, 3x Imitator, 3x Looter.', color: 'var(--gold)', btn: ar ? 'إطلاق صعوبة 3' : 'Spawn Diff 3', act: () => { this.syncOmarAction('torn.oc2Spawn', 'market_forces'); this.result('cash', ar ? 'سطو منظم · قوى السوق' : 'OC 2.0 · Market Forces', ar ? 'اكتمل بطاقم 5 أعضاء · +45 احترام' : '5-Crew Executed · +45 Respect', '+$85,000'); } },
-            { title: ar ? 'المستوى السادس: عمى الثلج · رهبة المسرح · العرض المضاد' : 'Tier VI: Snow Blind · Stage Fright · Counter Offer', badge: ar ? 'صعوبة 5-6' : 'DIFF 5-6', meta: ar ? 'نطاق العملية 3 ← عائد 5 · المتطلب: منشط PCP (#201)' : 'Scope Cost 3 -> Return 5 · Item Requirement: PCP (#201)', detail: ar ? 'يستهلك دور المنتحل منشط PCP (#201) خلال عملية عمى الثلج مع رفع نسبة اجتياز نقاط التفتيش.' : 'Imitator role consumes PCP (#201) during Snow Blind scenario; high Checkpoint Pass Rate (CPR %) scaling.', color: 'var(--acc)', btn: ar ? 'إطلاق عمى الثلج' : 'Spawn Snow Blind', act: () => { this.syncOmarAction('torn.oc2Spawn', 'snow_blind'); this.result('cash', ar ? 'سطو منظم · عمى الثلج' : 'OC 2.0 · Snow Blind', ar ? 'اجتياز 94% من نقاط التفتيش' : 'Imitator PCP (#201) Consumed · 94% CPR', '+$85,000'); } },
-            { title: ar ? 'المستوى الثامن إلى العاشر: الخزنة الموصدة · إذن الإقلاع · الانشطار' : 'Tier VIII-X: Lock Stock · Cleared for Takeoff · Gone Fission', badge: ar ? 'صعوبة 8-10' : 'DIFF 8-10', meta: ar ? 'نطاق العملية 5 ← عائد 8 · متطلبات خاصة للأدوار' : 'Scope Cost 5 -> Return 8 · Ecstasy / Large Suitcase / Razor', detail: ar ? 'عمليات النخبة: تتطلب محفز معنويات للقاتل، حقيبة سفر كبيرة لخاطف الطائرات، وموس حلاقة للنشال.' : 'Lock Stock requires Ecstasy (#197) for Assassin; Cleared for Takeoff requires Large Suitcase (#421); Gone Fission requires Cut-Throat Razor (#567).', color: '#ff6a55', btn: ar ? 'إطلاق عملية النخبة' : 'Spawn Apex OC', act: () => { this.syncOmarAction('torn.oc2Spawn', 'gone_fission'); this.result('cash', ar ? 'سطو منظم · الانشطار النووي' : 'OC 2.0 · Gone Fission', ar ? 'اكتملت عملية النخبة · +45 احترام' : 'Apex Scenario Complete · +45 Respect', '+$85,000'); } }
+            { title: ar ? 'المستوى السادس: عمى الثلج · رهبة المسرح · العرض المضاد' : 'Tier VI: Snow Blind · Stage Fright · Counter Offer', badge: ar ? 'صعوبة 5-6' : 'DIFF 5-6', meta: ar ? 'نطاق العملية 3 ← عائد 5 · المتطلب: محفز قتالي' : 'Scope Cost 3 -> Return 5 · Item Requirement: Combat Stim', detail: ar ? 'يستهلك دور المنتحل محفز قتالي خلال عملية عمى الثلج مع رفع نسبة اجتياز نقاط التفتيش.' : 'Imitator role consumes Combat Stim during Snow Blind scenario; high Checkpoint Pass Rate (CPR %) scaling.', color: 'var(--acc)', btn: ar ? 'إطلاق عمى الثلج' : 'Spawn Snow Blind', act: () => { this.syncOmarAction('torn.oc2Spawn', 'snow_blind'); this.result('cash', ar ? 'سطو منظم · عمى الثلج' : 'OC 2.0 · Snow Blind', ar ? 'اجتياز 94% من نقاط التفتيش' : 'Imitator Combat Stim Consumed · 94% CPR', '+$85,000'); } },
+            { title: ar ? 'المستوى الثامن إلى العاشر: الخزنة الموصدة · إذن الإقلاع · الانشطار' : 'Tier VIII-X: Lock Stock · Cleared for Takeoff · Gone Fission', badge: ar ? 'صعوبة 8-10' : 'DIFF 8-10', meta: ar ? 'نطاق العملية 5 ← عائد 8 · متطلبات خاصة للأدوار' : 'Scope Cost 5 -> Return 8 · Ecstasy / Large Suitcase / Razor', detail: ar ? 'عمليات النخبة: تتطلب محفز معنويات للقاتل، حقيبة سفر كبيرة لخاطف الطائرات، وموس حلاقة للنشال.' : 'Lock Stock requires Focus Booster for Assassin; Cleared for Takeoff requires Diplomatic Case; Gone Fission requires Precision Blade.', color: '#ff6a55', btn: ar ? 'إطلاق عملية النخبة' : 'Spawn Apex OC', act: () => { this.syncOmarAction('torn.oc2Spawn', 'gone_fission'); this.result('cash', ar ? 'سطو منظم · الانشطار النووي' : 'OC 2.0 · Gone Fission', ar ? 'اكتملت عملية النخبة · +45 احترام' : 'Apex Scenario Complete · +45 Respect', '+$85,000'); } }
           ],
           faction: [
             { title: ar ? 'الشجرة الأساسية (14 فرعاً) والإجرامية (5 فروع)' : 'Core Tree (14 Sub-Branches) & Criminality (5)', badge: ar ? '19 فرعاً' : '19 BRANCHES', meta: ar ? 'ترسانات العائلة · السلاسل · السطو 2.0 · الجرأة (+40) · التهريب' : 'Armories · Chaining · OC 2.0 · Nerve (+40) · Bust Skill', detail: ar ? 'تفتح مخازن الأسلحة والدروع والمنشطات والطب، المختبر، سعة الأراضي، و +25% خبرة ومهارة الجرائم.' : 'Unlocks Weapon/Armor/Drug/Medical/Booster Armories, Laboratory, Territory Capacity, and +25% Crime XP & Skill.', color: 'var(--acc)', btn: ar ? 'تطوير الشجرة الأساسية' : 'Upgrade Core', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'criminality'); this.result('good', ar ? 'شجرة العائلة · الإجرامية' : 'Faction Tree · Criminality', ar ? '+40 جرأة قصوى و +25% خبرة جرائم' : '+40 Max Nerve & +25% Crime XP Active', '+25 Respect'); } },
@@ -5912,9 +5937,9 @@ class Component extends DCLogic {
             { title: ar ? 'العدوانية (5) والردع الدفاعي (4) والرحلات الخارجية (5)' : 'Aggression (5), Suppression (4) & Excursion (5)', badge: ar ? '14 فرعاً' : '14 BRANCHES', meta: ar ? '+20% ضرر وصفات قتالية وصحة قصوى · +10 سعة حقائب السفر' : '+20% Damage/STR/SPD/DEF/DEX/Max Life · +10 Travel Items', detail: ar ? 'مضاعفات القتال في حروب العائلات مع +10 سعة تهريب جوي وخفض تكلفة التأهيل الطبي بنسبة 30%.' : 'Combat stat multipliers in faction wars plus +10 suitcase smuggling capacity and -30% Switzerland Rehab cost.', color: 'var(--gold)', btn: ar ? 'تطوير شجرة الرحلات' : 'Upgrade Excursion', act: () => { this.syncOmarAction('torn.factionTreeUpgrade', 'excursion'); this.result('good', ar ? 'شجرة العائلة · الرحلات' : 'Faction Tree · Excursion', ar ? '+10 سعة سفر و -30% تكلفة التأهيل' : '+10 Travel Capacity & -30% Rehab Cost', '+25 Respect'); } }
           ],
           rackets: [
-            { title: ar ? '[RDF] مختبر المنشطات V و [KDB] مختبر الزاناكس V' : '[RDF] Drug Lab V & [KDB] Xanax Lab V', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: 400× محفز طاقة (#206) / يومياً · العائلة #11581' : 'Reward: 400x Xanax (#206) / day · Faction #11581', detail: ar ? 'يولد 400 وحدة منشطات طاقة يومياً مباشرة إلى خزنة منشطات العائلة.' : 'Active across 188 syndicate territory sectors: generates 400x Xanax daily directly into Faction Drug Armory.', color: 'var(--acc)', btn: ar ? 'تحصيل المنشطات' : 'Collect Xanax', act: () => { this.syncOmarAction('torn.racketCollect', 'rdf'); this.result('cash', ar ? 'قطاع [RDF] مختبر المنشطات V' : 'Racket [RDF] Drug Lab V', ar ? 'تم تحصيل 400× منشط + $45,000' : '400x Xanax (#206) + $45,000 Collected', '+$45,000'); } },
-            { title: ar ? '[WZD] المنتجع السري IV و [NUB] صالة النخبة IV' : '[WZD] Bordello IV & [NUB] High-Roller IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× شريط معزز (#366) / يومياً · العائلة #230' : 'Reward: 40x Erotic DVD (#366) / day · Faction #230', detail: ar ? 'يزود العائلة بـ 40 شريط معزز معنويات (+2,500 معنويات لكل شريط) يومياً لبروتوكولات التدريب.' : 'Supplies 40x Erotic DVDs (+2,500 Happy each) daily for Faction Happy-Jump conditioning stacks.', color: 'var(--gold)', btn: ar ? 'تحصيل المعززات' : 'Collect E-DVDs', act: () => { this.syncOmarAction('torn.racketCollect', 'wzd'); this.result('cash', ar ? 'قطاع [WZD] المنتجع السري IV' : 'Racket [WZD] Bordello IV', ar ? 'تم تحصيل 40× معزز + $45,000' : '40x Erotic DVD (#366) + $45,000 Collected', '+$45,000'); } },
-            { title: ar ? '[DJC] و [JND] عيادة جراح الشوارع IV' : '[DJC] & [JND] Street Surgeon IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× مورفين طبي (#464) / يومياً · العائلة #29865' : 'Reward: 40x Morphine (#464) / day · Faction #29865', detail: ar ? 'ينتج 40 حقيبة مورفين وإمدادات طوارئ يومياً لدعم حروب العائلات والسيطرة على الجدران.' : 'Produces 40x trauma medical supplies daily for Ranked War & Territory Wall sustain.', color: 'var(--acc)', btn: ar ? 'تحصيل الإمدادات الطبية' : 'Collect Meds', act: () => { this.syncOmarAction('torn.racketCollect', 'djc'); this.result('cash', ar ? 'قطاع [DJC] جراح الشوارع IV' : 'Racket [DJC] Street Surgeon IV', ar ? 'تم تحصيل 40× مورفين + $45,000' : '40x Morphine (#464) + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[RDF] مختبر المنشطات V و [KDB] مختبر الزاناكس V' : '[RDF] Drug Lab V & [KDB] Xanax Lab V', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: 400× محفز طاقة / يومياً · العائلة #11581' : 'Reward: 400x Combat Stims / day · Faction #11581', detail: ar ? 'يولد 400 وحدة منشطات طاقة يومياً مباشرة إلى خزنة منشطات العائلة.' : 'Active across 188 syndicate territory sectors: generates 400x Xanax daily directly into Faction Drug Armory.', color: 'var(--acc)', btn: ar ? 'تحصيل المنشطات' : 'Collect Xanax', act: () => { this.syncOmarAction('torn.racketCollect', 'rdf'); this.result('cash', ar ? 'قطاع [RDF] مختبر المنشطات V' : 'Racket [RDF] Drug Lab V', ar ? 'تم تحصيل 400× منشط + $45,000' : '400x Combat Stims + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[WZD] المنتجع السري IV و [NUB] صالة النخبة IV' : '[WZD] Bordello IV & [NUB] High-Roller IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× شريط معزز / يومياً · العائلة #230' : 'Reward: 40x Morale Booster / day · Faction #230', detail: ar ? 'يزود العائلة بـ 40 شريط معزز معنويات (+2,500 معنويات لكل شريط) يومياً لبروتوكولات التدريب.' : 'Supplies 40x Erotic DVDs (+2,500 Happy each) daily for Faction Happy-Jump conditioning stacks.', color: 'var(--gold)', btn: ar ? 'تحصيل المعززات' : 'Collect E-DVDs', act: () => { this.syncOmarAction('torn.racketCollect', 'wzd'); this.result('cash', ar ? 'قطاع [WZD] المنتجع السري IV' : 'Racket [WZD] Bordello IV', ar ? 'تم تحصيل 40× معزز + $45,000' : '40x Morale Booster + $45,000 Collected', '+$45,000'); } },
+            { title: ar ? '[DJC] و [JND] عيادة جراح الشوارع IV' : '[DJC] & [JND] Street Surgeon IV', badge: ar ? 'قطاع مستوى 4' : 'LVL 4 RACKET', meta: ar ? 'العائد: 40× مورفين طبي / يومياً · العائلة #29865' : 'Reward: 40x Trauma Morphine / day · Faction #29865', detail: ar ? 'ينتج 40 حقيبة مورفين وإمدادات طوارئ يومياً لدعم حروب العائلات والسيطرة على الجدران.' : 'Produces 40x trauma medical supplies daily for Ranked War & Territory Wall sustain.', color: 'var(--acc)', btn: ar ? 'تحصيل الإمدادات الطبية' : 'Collect Meds', act: () => { this.syncOmarAction('torn.racketCollect', 'djc'); this.result('cash', ar ? 'قطاع [DJC] جراح الشوارع IV' : 'Racket [DJC] Street Surgeon IV', ar ? 'تم تحصيل 40× مورفين + $45,000' : '40x Trauma Morphine + $45,000 Collected', '+$45,000'); } },
             { title: ar ? '[QEB] مغسلة الأموال V و [RPB] سمسار النقاط' : '[QEB] Money Launderer V & [RPB] Point Broker', badge: ar ? 'قطاع مستوى 5' : 'LVL 5 RACKET', meta: ar ? 'العائد: $80,000,000 نقداً و 2,000× نقطة شحن / يومياً' : 'Reward: $80,000,000 Cash & 2,000x Points / day', detail: ar ? 'سيولة نقدية معفاة من الضرائب ونقاط شحن تودع كل 24 ساعة في خزنة العائلة.' : 'Direct tax-free treasury cash and premium Points generated every 24h while holding sector walls.', color: 'var(--gold)', btn: ar ? 'تحصيل الخزنة' : 'Collect Treasury', act: () => { this.syncOmarAction('torn.racketCollect', 'qeb'); this.result('cash', ar ? 'قطاع [QEB] مغسلة الأموال V' : 'Racket [QEB] Launderer V', ar ? 'تم تحصيل +$45,000 و +15 نقطة' : '+$45,000 & +15 Points Collected', '+$45,000'); } }
           ],
           gyms: [
@@ -5944,7 +5969,7 @@ class Component extends DCLogic {
           arsenal: [
             { title: ar ? '185 سلاحاً قتالياً ومنظومة التسلح الرباعية' : '185 Syndicate Weapons & 4-Slot Loadout', badge: ar ? '185 سلاحاً' : '185 WEAPONS', meta: ar ? 'رئيسي · ثانوي · سلاح أبيض · مؤقت · تخفٍ 0.0-10.0' : 'Primary · Secondary · Melee · Temporary · Stealth 0.0-10.0', detail: ar ? 'يمتلك كل سلاح قيم ضرر ودقة ومستوى تخفٍ ومعدل إطلاق وسعة مخزن و 6 مزايا للضربة القاضية.' : 'Every weapon in the Syndicate Armory carries calibrated damage, accuracy, stealth rating, rate of fire, magazine capacity, and 6 finishing hit perks.', color: 'var(--acc)', btn: ar ? 'تجهيز ArmaLite' : 'Equip ArmaLite', act: () => { this.syncOmarAction('torn.combatPrep', 'heart:ap:primary'); this.result('good', ar ? 'المنفذ الرئيسي · ArmaLite M-15A4' : 'Primary Slot · ArmaLite M-15A4', ar ? 'تصويب القلب 3.0x حرج + ذخيرة خارقة' : 'Heart 3.0x Crit + Piercing Ammo Armed', 'Armed'); } },
             { title: ar ? '74 درعاً واقياً ونسب التغطية التشريحية لكل عضو' : '74 Ballistic Armors & Per-Body-Part Coverage %', badge: ar ? '74 درعاً' : '74 ARMORS', meta: ar ? 'القلب 97.27% · المعدة 95.09% · الصدر 90.22% · الذراع 6.50%' : 'Heart 97.27% · Stomach 95.09% · Chest 90.22% · Arm 6.50%', detail: ar ? 'تعمل الدروع حسب العضو المستهدف: إصابة الذراع المكشوفة (6.5%) أو الحنجرة تتجاوز درع الصدر الثقيل!' : "Anatomical armor mitigates per body zone: hitting an exposed Arm (6.5% coverage) or Throat bypasses a defender\'s vest!", color: 'var(--gold)', btn: ar ? 'تصويب الحنجرة' : 'Aim Exposed Throat', act: () => { this.syncOmarAction('torn.combatPrep', 'throat:hp:primary'); this.result('good', ar ? 'التصويب التشريحي: الحنجرة (3.5x)' : 'Anatomical Target: Throat (3.5x)', ar ? 'تجاوز تغطية درع الصدر (90.2%)' : 'Bypasses Chest Armor Coverage (90.2%)', '3.5x Crit'); } },
-            { title: ar ? '30 ملحقاً للأسلحة (5 مستويات) و 21 عيار ذخيرة' : '30 Weapon Modifications (Tiers 1-5) & 21 Ammo Calibers', badge: ar ? '30 ملحقاً · 21 ذخيرة' : '30 MODS · 21 AMMO', meta: ar ? 'منظار حراري (+1.75 دقة) · ليزر 100mW (+8% حرج) · كواتم صوت' : 'Thermal Sight (+1.75 Acc) · 100mW Laser (+8% Crit) · Suppressors', detail: ar ? 'تركيب ملحقين لكل سلاح مع تلقيم ذخيرة خطاطة أو متفجرة أو خارقة للدروع أو حارقة.' : 'Attach up to 2 tactical modifications per weapon and load Tracer, Hollow Point, Piercing, or Incendiary calibers.', color: 'var(--acc)', btn: ar ? 'تركيب ليزر 100mW' : 'Mount 100mW Laser', act: () => { this.syncOmarAction('torn.weaponMod', 'laser100'); this.result('good', ar ? 'تم تركيب ليزر 100mW (#8)' : '100mW Laser (#8) Mounted', ar ? '+8% معدل الضربة الحرجة نشط' : '+8% Critical Hit Rate Active', '+8% Crit'); } },
+            { title: ar ? '30 ملحقاً للأسلحة (5 مستويات) و 21 عيار ذخيرة' : '30 Weapon Modifications (Tiers 1-5) & 21 Ammo Calibers', badge: ar ? '30 ملحقاً · 21 ذخيرة' : '30 MODS · 21 AMMO', meta: ar ? 'منظار حراري (+1.75 دقة) · ليزر 100mW (+8% حرج) · كواتم صوت' : 'Thermal Sight (+1.75 Acc) · 100mW Laser (+8% Crit) · Suppressors', detail: ar ? 'تركيب ملحقين لكل سلاح مع تلقيم ذخيرة خطاطة أو متفجرة أو خارقة للدروع أو حارقة.' : 'Attach up to 2 tactical modifications per weapon and load Tracer, Hollow Point, Piercing, or Incendiary calibers.', color: 'var(--acc)', btn: ar ? 'تركيب ليزر 100mW' : 'Mount 100mW Laser', act: () => { this.syncOmarAction('torn.weaponMod', 'laser100'); this.result('good', ar ? 'تم تركيب ليزر تكتيكي 100mW' : '100mW Target Laser Mounted', ar ? '+8% معدل الضربة الحرجة نشط' : '+8% Critical Hit Rate Active', '+8% Crit'); } },
             { title: ar ? 'معادلة الاحترام ذات الـ 7 مضاعفات ومزايا الضربة القاضية' : '7-Modifier Respect Formula & Finishing Hit Perks', badge: ar ? '7 مضاعفات' : '7 MODIFIERS', meta: ar ? 'تكافؤ القتال (3.0x) × الحرب (2.0x) × الثأر (1.5x) × الجماعي × الخارجي × السلسلة' : 'Fair Fight (3.0x) × War (2.0x) × Retal (1.5x) × Group × Overseas × Chain × Warlord', detail: ar ? 'مزايا الضربة القاضية: الغنيمة (+% نقد النشل)، أمير الحرب (+% احترام)، الإنعاش (استرداد 25 طاقة).' : 'Weapon finishers: Plunder (+% Mug Cash), Warlord (+% Respect), Revitalize (Refunds 25E), Stricken (+% Hosp Time), Proficience (+XP).', color: '#ff6a55', btn: ar ? 'تحصيل مكافأة باونتي' : 'Claim Bounty Hit', act: () => { this.syncOmarAction('torn.bountyClaim', 'top'); this.result('cash', ar ? 'تم تحصيل عقد الباونتي' : 'Newspaper Bounty Claimed', ar ? 'تكافؤ القتال 2.85x · ميزة الغنيمة' : 'Fair Fight 2.85x · Plunder Finisher', '+$75,000'); } }
           ],
           specials: [

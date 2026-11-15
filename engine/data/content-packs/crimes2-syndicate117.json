@@ -1,0 +1,1693 @@
+{
+  "id": "crimes2-syndicate117",
+  "version": 1,
+  "status": "published-live-pack",
+  "title": {
+    "en": "Syndicate Crimes 2.0 Complete Roster",
+    "ar": "منظومة جرائم النقابة 2.0 الكاملة"
+  },
+  "crimes": {
+    "tourist-ferry": {
+      "name_en": "Harbor Ferry Commuter",
+      "name_ar": "مسافر عبّارة المرفأ",
+      "nerve_cost": 4,
+      "success_basis_points": 6800,
+      "cash_min": 420,
+      "cash_max": 1180,
+      "xp_reward": 14,
+      "level_required": 4,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1200,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "boot-action-discs": {
+      "name_en": "Burn Action Blockbusters",
+      "name_ar": "نسخ أفلام الأكشن",
+      "nerve_cost": 3,
+      "success_basis_points": 8400,
+      "cash_min": 220,
+      "cash_max": 560,
+      "xp_reward": 11,
+      "level_required": 2,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 50,
+      "critical_failure_basis_points": 900,
+      "jail_seconds": 120,
+      "hospital_seconds": 0
+    },
+    "boot-noir-cinema": {
+      "name_en": "Press Banned Cinema Reels",
+      "name_ar": "توزيع أفلام ممنوعة",
+      "nerve_cost": 4,
+      "success_basis_points": 7900,
+      "cash_min": 340,
+      "cash_max": 820,
+      "xp_reward": 14,
+      "level_required": 3,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 55,
+      "critical_failure_basis_points": 1000,
+      "jail_seconds": 150,
+      "hospital_seconds": 0
+    },
+    "boot-arcade-roms": {
+      "name_en": "Flash Modified Arcade Carts",
+      "name_ar": "برمجة شرائح الألعاب",
+      "nerve_cost": 5,
+      "success_basis_points": 7400,
+      "cash_min": 520,
+      "cash_max": 1240,
+      "xp_reward": 18,
+      "level_required": 4,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1100,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "boot-concert-tapes": {
+      "name_en": "Smuggle Velvet Lounge Masters",
+      "name_ar": "تسجيلات صالة فيلفيت السرية",
+      "nerve_cost": 6,
+      "success_basis_points": 6800,
+      "cash_min": 780,
+      "cash_max": 1750,
+      "xp_reward": 22,
+      "level_required": 6,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 65,
+      "critical_failure_basis_points": 1300,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "boot-vip-storefront": {
+      "name_en": "Run Encrypted Media Storefront",
+      "name_ar": "إدارة متجر وسائط مشفر",
+      "nerve_cost": 7,
+      "success_basis_points": 6200,
+      "cash_min": 1150,
+      "cash_max": 2600,
+      "xp_reward": 28,
+      "level_required": 8,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1500,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "skim-metro-kiosk": {
+      "name_en": "Rig Central Subway Ticket Kiosk",
+      "name_ar": "زرع ناسخ في كشك المترو",
+      "nerve_cost": 5,
+      "success_basis_points": 7600,
+      "cash_min": 680,
+      "cash_max": 1550,
+      "xp_reward": 20,
+      "level_required": 5,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 55,
+      "critical_failure_basis_points": 1100,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "skim-gas-pump": {
+      "name_en": "Tap Highway Fuel Pump",
+      "name_ar": "تفخيخ مضخة وقود الطريق السريع",
+      "nerve_cost": 6,
+      "success_basis_points": 7100,
+      "cash_min": 920,
+      "cash_max": 2100,
+      "xp_reward": 24,
+      "level_required": 7,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1250,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "skim-hotel-lobby": {
+      "name_en": "Clone Harbor Condo Concierge Pad",
+      "name_ar": "نسخ جهاز استقبال شقق المرفأ",
+      "nerve_cost": 7,
+      "success_basis_points": 6600,
+      "cash_min": 1250,
+      "cash_max": 2850,
+      "xp_reward": 29,
+      "level_required": 9,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 70,
+      "critical_failure_basis_points": 1400,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "skim-casino-atm": {
+      "name_en": "Splice Velvet Casino Cash Dispenser",
+      "name_ar": "اختراق صراف الكازينو الخارجي",
+      "nerve_cost": 8,
+      "success_basis_points": 5900,
+      "cash_min": 1750,
+      "cash_max": 3900,
+      "xp_reward": 35,
+      "level_required": 11,
+      "enabled": true,
+      "required_item": "knife",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 80,
+      "critical_failure_basis_points": 1600,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "skim-harbor-toll": {
+      "name_en": "Dump Financial District ATM Batch",
+      "name_ar": "تفريغ حصيلة صرافات الحي المالي",
+      "nerve_cost": 9,
+      "success_basis_points": 5400,
+      "cash_min": 2300,
+      "cash_max": 5100,
+      "xp_reward": 42,
+      "level_required": 13,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 90,
+      "critical_failure_basis_points": 1800,
+      "jail_seconds": 420,
+      "hospital_seconds": 0
+    },
+    "hustle-three-card": {
+      "name_en": "Deal Three-Card Monte on Pier",
+      "name_ar": "طاولة الورق الثلاثي على الرصيف",
+      "nerve_cost": 4,
+      "success_basis_points": 8000,
+      "cash_min": 520,
+      "cash_max": 1280,
+      "xp_reward": 17,
+      "level_required": 4,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 55,
+      "critical_failure_basis_points": 1000,
+      "jail_seconds": 150,
+      "hospital_seconds": 0
+    },
+    "hustle-shell-cup": {
+      "name_en": "Run Transit Hub Shell Game",
+      "name_ar": "لعبة الأكواب في محطة النقل",
+      "nerve_cost": 5,
+      "success_basis_points": 7500,
+      "cash_min": 760,
+      "cash_max": 1820,
+      "xp_reward": 21,
+      "level_required": 6,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1150,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "hustle-pool-hall": {
+      "name_en": "Sandbag Dive Bar Billiards Table",
+      "name_ar": "كمين طاولة البلياردو في الحانة",
+      "nerve_cost": 6,
+      "success_basis_points": 6900,
+      "cash_min": 1120,
+      "cash_max": 2550,
+      "xp_reward": 26,
+      "level_required": 8,
+      "enabled": true,
+      "required_item": "bat",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 70,
+      "critical_failure_basis_points": 1350,
+      "jail_seconds": 0,
+      "hospital_seconds": 180
+    },
+    "hustle-dice-alley": {
+      "name_en": "Load Back-Alley Craps Dice",
+      "name_ar": "نرد الرصيف المثقّل",
+      "nerve_cost": 7,
+      "success_basis_points": 6400,
+      "cash_min": 1580,
+      "cash_max": 3450,
+      "xp_reward": 32,
+      "level_required": 10,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1500,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "hustle-high-stakes-ring": {
+      "name_en": "Rig Underground Fight Tote",
+      "name_ar": "التلاعب برهانات القتال السري",
+      "nerve_cost": 8,
+      "success_basis_points": 5800,
+      "cash_min": 2200,
+      "cash_max": 4800,
+      "xp_reward": 38,
+      "level_required": 12,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 85,
+      "critical_failure_basis_points": 1700,
+      "jail_seconds": 0,
+      "hospital_seconds": 240
+    },
+    "disp-burner-phones": {
+      "name_en": "Crush Syndicate Burner Phones",
+      "name_ar": "إتلاف هواتف العمليات المؤقتة",
+      "nerve_cost": 5,
+      "success_basis_points": 8100,
+      "cash_min": 780,
+      "cash_max": 1760,
+      "xp_reward": 20,
+      "level_required": 5,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 55,
+      "critical_failure_basis_points": 1000,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "disp-ledger-ash": {
+      "name_en": "Incinerate Seized Paper Ledgers",
+      "name_ar": "حرق دفاتر الحسابات السرية",
+      "nerve_cost": 6,
+      "success_basis_points": 7600,
+      "cash_min": 1100,
+      "cash_max": 2450,
+      "xp_reward": 25,
+      "level_required": 7,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1150,
+      "jail_seconds": 210,
+      "hospital_seconds": 0
+    },
+    "disp-stolen-sedan": {
+      "name_en": "Strip Getaway Sedan at Chop Shop",
+      "name_ar": "تفكيك سيارة الهروب في الورشة",
+      "nerve_cost": 7,
+      "success_basis_points": 7000,
+      "cash_min": 1550,
+      "cash_max": 3350,
+      "xp_reward": 30,
+      "level_required": 9,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 70,
+      "critical_failure_basis_points": 1300,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "disp-hot-firearms": {
+      "name_en": "Melt Ballistic Evidence Barrels",
+      "name_ar": "صهر سبطانات الأسلحة المطلوبة",
+      "nerve_cost": 8,
+      "success_basis_points": 6500,
+      "cash_min": 2050,
+      "cash_max": 4400,
+      "xp_reward": 36,
+      "level_required": 11,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1500,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "disp-chemical-drums": {
+      "name_en": "Neutralize Lab Chemical Drums",
+      "name_ar": "تحييد براميل المختبر الكيميائية",
+      "nerve_cost": 9,
+      "success_basis_points": 5900,
+      "cash_min": 2650,
+      "cash_max": 5600,
+      "xp_reward": 43,
+      "level_required": 13,
+      "enabled": true,
+      "required_item": "sand",
+      "required_quantity": 1,
+      "consume_tool": true,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 85,
+      "critical_failure_basis_points": 1700,
+      "jail_seconds": 0,
+      "hospital_seconds": 240
+    },
+    "disp-harbor-sink": {
+      "name_en": "Sink Weighted Trunk Beyond Breakwater",
+      "name_ar": "إغراق الصندوق المصفح خلف الكاسر",
+      "nerve_cost": 10,
+      "success_basis_points": 5300,
+      "cash_min": 3400,
+      "cash_max": 7200,
+      "xp_reward": 50,
+      "level_required": 15,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 95,
+      "critical_failure_basis_points": 1900,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "crack-keypad-lock": {
+      "name_en": "Brute-Force Service Alley Keypad",
+      "name_ar": "فك شيفرة بوابة الخدمة",
+      "nerve_cost": 6,
+      "success_basis_points": 7800,
+      "cash_min": 1150,
+      "cash_max": 2550,
+      "xp_reward": 24,
+      "level_required": 6,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1100,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "crack-hotel-safe": {
+      "name_en": "Decode Penthouse Wall Safe",
+      "name_ar": "اختراق خزنة الجدار الفندقية",
+      "nerve_cost": 7,
+      "success_basis_points": 7200,
+      "cash_min": 1620,
+      "cash_max": 3550,
+      "xp_reward": 30,
+      "level_required": 8,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 65,
+      "critical_failure_basis_points": 1250,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "crack-payroll-hash": {
+      "name_en": "Crack Corporate Payroll Hashes",
+      "name_ar": "كسر تشفير رواتب البرج التجاري",
+      "nerve_cost": 8,
+      "success_basis_points": 6700,
+      "cash_min": 2200,
+      "cash_max": 4750,
+      "xp_reward": 36,
+      "level_required": 10,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1400,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "crack-broker-server": {
+      "name_en": "Breach Stock Broker Archive",
+      "name_ar": "اختراق أرشيف وسطاء البورصة",
+      "nerve_cost": 9,
+      "success_basis_points": 6100,
+      "cash_min": 2900,
+      "cash_max": 6200,
+      "xp_reward": 44,
+      "level_required": 12,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 80,
+      "critical_failure_basis_points": 1600,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "crack-customs-node": {
+      "name_en": "Override Dockside Customs Terminal",
+      "name_ar": "تجاوز عقدة الجمارك البحرية",
+      "nerve_cost": 10,
+      "success_basis_points": 5600,
+      "cash_min": 3700,
+      "cash_max": 7900,
+      "xp_reward": 52,
+      "level_required": 14,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 90,
+      "critical_failure_basis_points": 1750,
+      "jail_seconds": 420,
+      "hospital_seconds": 0
+    },
+    "crack-vault-cipher": {
+      "name_en": "Decrypt Central Clearing Cipher",
+      "name_ar": "كسر شيفرة المقاصة المركزية",
+      "nerve_cost": 11,
+      "success_basis_points": 5000,
+      "cash_min": 4600,
+      "cash_max": 9800,
+      "xp_reward": 60,
+      "level_required": 16,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 100,
+      "critical_failure_basis_points": 1950,
+      "jail_seconds": 480,
+      "hospital_seconds": 0
+    },
+    "forge-parking-permit": {
+      "name_en": "Print Municipal Fleet Permits",
+      "name_ar": "طباعة تصاريح أسطول البلدية",
+      "nerve_cost": 6,
+      "success_basis_points": 8000,
+      "cash_min": 1300,
+      "cash_max": 2800,
+      "xp_reward": 26,
+      "level_required": 7,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1050,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "forge-clinic-script": {
+      "name_en": "Forge West Clinic Prescriptions",
+      "name_ar": "تزوير وصفات عيادة الغرب",
+      "nerve_cost": 7,
+      "success_basis_points": 7400,
+      "cash_min": 1800,
+      "cash_max": 3900,
+      "xp_reward": 32,
+      "level_required": 9,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 65,
+      "critical_failure_basis_points": 1200,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "forge-press-badge": {
+      "name_en": "Laminate Courthouse Press Credentials",
+      "name_ar": "تصنيع بطاقات صحافة المحكمة",
+      "nerve_cost": 8,
+      "success_basis_points": 6800,
+      "cash_min": 2450,
+      "cash_max": 5200,
+      "xp_reward": 39,
+      "level_required": 11,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1400,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "forge-harbor-manifest": {
+      "name_en": "Alter Bonded Cargo Manifests",
+      "name_ar": "تعديل بوالص الشحن الجمركي",
+      "nerve_cost": 9,
+      "success_basis_points": 6200,
+      "cash_min": 3200,
+      "cash_max": 6800,
+      "xp_reward": 46,
+      "level_required": 13,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 85,
+      "critical_failure_basis_points": 1550,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "forge-diplomatic-pass": {
+      "name_en": "Engrave Diplomatic Travel Folio",
+      "name_ar": "نقش جواز مرور دبلوماسي",
+      "nerve_cost": 10,
+      "success_basis_points": 5600,
+      "cash_min": 4100,
+      "cash_max": 8600,
+      "xp_reward": 54,
+      "level_required": 15,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 95,
+      "critical_failure_basis_points": 1750,
+      "jail_seconds": 420,
+      "hospital_seconds": 0
+    },
+    "forge-property-deed": {
+      "name_en": "Backdate Waterfront Land Title",
+      "name_ar": "تزوير صك ملكية الواجهة البحرية",
+      "nerve_cost": 11,
+      "success_basis_points": 5100,
+      "cash_min": 5200,
+      "cash_max": 10800,
+      "xp_reward": 62,
+      "level_required": 17,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 105,
+      "critical_failure_basis_points": 1900,
+      "jail_seconds": 480,
+      "hospital_seconds": 0
+    },
+    "scam-courier-fee": {
+      "name_en": "Blast Customs Fee SMS Wave",
+      "name_ar": "حملة رسائل رسوم الشحن",
+      "nerve_cost": 6,
+      "success_basis_points": 7700,
+      "cash_min": 1500,
+      "cash_max": 3200,
+      "xp_reward": 28,
+      "level_required": 8,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 60,
+      "critical_failure_basis_points": 1150,
+      "jail_seconds": 180,
+      "hospital_seconds": 0
+    },
+    "scam-charity-ring": {
+      "name_en": "Stage Gala Fundraiser Telethon",
+      "name_ar": "حفل تبرعات وهمي للنخبة",
+      "nerve_cost": 7,
+      "success_basis_points": 7100,
+      "cash_min": 2100,
+      "cash_max": 4500,
+      "xp_reward": 35,
+      "level_required": 10,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 70,
+      "critical_failure_basis_points": 1300,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "scam-romance-wire": {
+      "name_en": "Social-Engineer VIP Lounge Patron",
+      "name_ar": "استدراج رواد صالة النخبة",
+      "nerve_cost": 8,
+      "success_basis_points": 6500,
+      "cash_min": 2850,
+      "cash_max": 6100,
+      "xp_reward": 42,
+      "level_required": 12,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 80,
+      "critical_failure_basis_points": 1500,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "scam-invoice-redirect": {
+      "name_en": "Hijack Harbor Vendor Wire IBAN",
+      "name_ar": "تحويل مسار فواتير الموردين",
+      "nerve_cost": 9,
+      "success_basis_points": 5900,
+      "cash_min": 3800,
+      "cash_max": 8100,
+      "xp_reward": 50,
+      "level_required": 14,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 90,
+      "critical_failure_basis_points": 1700,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "scam-executive-spoof": {
+      "name_en": "Clone CFO Voice Authorization",
+      "name_ar": "انتحال تفويض المدير المالي",
+      "nerve_cost": 11,
+      "success_basis_points": 5200,
+      "cash_min": 5100,
+      "cash_max": 11200,
+      "xp_reward": 64,
+      "level_required": 16,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 105,
+      "critical_failure_basis_points": 1950,
+      "jail_seconds": 480,
+      "hospital_seconds": 0
+    },
+    "counter-casino-tokens": {
+      "name_en": "Mint Weighted Casino Chips",
+      "name_ar": "سك فيشات كازينو مقلدة",
+      "nerve_cost": 7,
+      "success_basis_points": 7600,
+      "cash_min": 1900,
+      "cash_max": 4100,
+      "xp_reward": 34,
+      "level_required": 9,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 65,
+      "critical_failure_basis_points": 1200,
+      "jail_seconds": 240,
+      "hospital_seconds": 0
+    },
+    "counter-transit-vouchers": {
+      "name_en": "Lithograph Bearer Fuel Vouchers",
+      "name_ar": "طباعة قسائم وقود لحامله",
+      "nerve_cost": 8,
+      "success_basis_points": 7000,
+      "cash_min": 2600,
+      "cash_max": 5600,
+      "xp_reward": 41,
+      "level_required": 11,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1350,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "counter-tax-stamps": {
+      "name_en": "Press UV Excise Tax Bands",
+      "name_ar": "كبس طوابع الضرائب الفلورية",
+      "nerve_cost": 9,
+      "success_basis_points": 6400,
+      "cash_min": 3500,
+      "cash_max": 7400,
+      "xp_reward": 49,
+      "level_required": 13,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 85,
+      "critical_failure_basis_points": 1550,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "counter-polymer-plates": {
+      "name_en": "Etch Intaglio Currency Plates",
+      "name_ar": "حفر قوالب العملة المعدنية",
+      "nerve_cost": 10,
+      "success_basis_points": 5800,
+      "cash_min": 4600,
+      "cash_max": 9600,
+      "xp_reward": 58,
+      "level_required": 15,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 95,
+      "critical_failure_basis_points": 1750,
+      "jail_seconds": 420,
+      "hospital_seconds": 0
+    },
+    "counter-hundred-bills": {
+      "name_en": "Wash & Reprint Crisp Hundreds",
+      "name_ar": "غسل وإعادة طباعة فئة المئة",
+      "nerve_cost": 11,
+      "success_basis_points": 5300,
+      "cash_min": 5900,
+      "cash_max": 12400,
+      "xp_reward": 66,
+      "level_required": 17,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 105,
+      "critical_failure_basis_points": 1900,
+      "jail_seconds": 480,
+      "hospital_seconds": 0
+    },
+    "counter-bearer-bonds": {
+      "name_en": "Issue Syndicate Treasury Bonds",
+      "name_ar": "إصدار سندات خزينة مزيفة",
+      "nerve_cost": 12,
+      "success_basis_points": 4700,
+      "cash_min": 7400,
+      "cash_max": 15500,
+      "xp_reward": 76,
+      "level_required": 19,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 115,
+      "critical_failure_basis_points": 2100,
+      "jail_seconds": 540,
+      "hospital_seconds": 0
+    },
+    "burg-suburban-duplex": {
+      "name_en": "Case & Enter Residential Duplex",
+      "name_ar": "اقتحام منزل مزدوج بعد الرصد",
+      "nerve_cost": 8,
+      "success_basis_points": 6800,
+      "cash_min": 2200,
+      "cash_max": 4800,
+      "xp_reward": 38,
+      "level_required": 12,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 70,
+      "critical_failure_basis_points": 1400,
+      "jail_seconds": 300,
+      "hospital_seconds": 0
+    },
+    "burg-pawn-backroom": {
+      "name_en": "Breach Pawn Shop Storage Cage",
+      "name_ar": "كسر قفص تخزين متجر الرهن",
+      "nerve_cost": 9,
+      "success_basis_points": 6100,
+      "cash_min": 3100,
+      "cash_max": 6700,
+      "xp_reward": 46,
+      "level_required": 14,
+      "enabled": true,
+      "required_item": "knife",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 80,
+      "critical_failure_basis_points": 1600,
+      "jail_seconds": 360,
+      "hospital_seconds": 0
+    },
+    "burg-jeweler-loft": {
+      "name_en": "Rappel Diamond District Skylight",
+      "name_ar": "التسلل عبر منور حي الألماس",
+      "nerve_cost": 11,
+      "success_basis_points": 5200,
+      "cash_min": 4800,
+      "cash_max": 10400,
+      "xp_reward": 60,
+      "level_required": 17,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 95,
+      "critical_failure_basis_points": 1850,
+      "jail_seconds": 0,
+      "hospital_seconds": 360
+    },
+    "burg-penthouse-vault": {
+      "name_en": "Clean Out Skyline Penthouse Safe",
+      "name_ar": "تفريغ خزنة بنتهاوس الأفق",
+      "nerve_cost": 12,
+      "success_basis_points": 4600,
+      "cash_min": 6500,
+      "cash_max": 14200,
+      "xp_reward": 72,
+      "level_required": 19,
+      "enabled": true,
+      "required_item": "pistol",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 110,
+      "critical_failure_basis_points": 2100,
+      "jail_seconds": 0,
+      "hospital_seconds": 420
+    },
+    "arson-impound-lot": {
+      "name_en": "Torch Seized Impound Tow Yard",
+      "name_ar": "إحراق ساحة حجز المركبات",
+      "nerve_cost": 9,
+      "success_basis_points": 6900,
+      "cash_min": 3200,
+      "cash_max": 6800,
+      "xp_reward": 48,
+      "level_required": 14,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 2,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 75,
+      "critical_failure_basis_points": 1500,
+      "jail_seconds": 0,
+      "hospital_seconds": 300
+    },
+    "arson-rival-tavern": {
+      "name_en": "Firebomb Rival Dockside Tavern",
+      "name_ar": "إضرام النار في حانة الخصوم",
+      "nerve_cost": 10,
+      "success_basis_points": 6300,
+      "cash_min": 4300,
+      "cash_max": 9200,
+      "xp_reward": 56,
+      "level_required": 16,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 85,
+      "critical_failure_basis_points": 1700,
+      "jail_seconds": 0,
+      "hospital_seconds": 360
+    },
+    "arson-textile-depot": {
+      "name_en": "Collect Insurance on Textile Depot",
+      "name_ar": "حرق مستودع الأقمشة للتأمين",
+      "nerve_cost": 11,
+      "success_basis_points": 5700,
+      "cash_min": 5600,
+      "cash_max": 11900,
+      "xp_reward": 65,
+      "level_required": 18,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 95,
+      "critical_failure_basis_points": 1850,
+      "jail_seconds": 0,
+      "hospital_seconds": 420
+    },
+    "arson-archive-wing": {
+      "name_en": "Gut Prosecutor Evidence Annex",
+      "name_ar": "إحراق ملحق أرشيف النيابة",
+      "nerve_cost": 12,
+      "success_basis_points": 5100,
+      "cash_min": 7200,
+      "cash_max": 15200,
+      "xp_reward": 74,
+      "level_required": 19,
+      "enabled": true,
+      "required_item": null,
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 105,
+      "critical_failure_basis_points": 2000,
+      "jail_seconds": 480,
+      "hospital_seconds": 0
+    },
+    "arson-fuel-barge": {
+      "name_en": "Ignite Smuggler Fuel Barge",
+      "name_ar": "تفجير صندل الوقود المهرب",
+      "nerve_cost": 13,
+      "success_basis_points": 4500,
+      "cash_min": 9100,
+      "cash_max": 19200,
+      "xp_reward": 84,
+      "level_required": 21,
+      "enabled": true,
+      "required_item": "revolver",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 115,
+      "critical_failure_basis_points": 2200,
+      "jail_seconds": 0,
+      "hospital_seconds": 480
+    },
+    "arson-syndicate-estate": {
+      "name_en": "Raze Rival Don's Waterfront Villa",
+      "name_ar": "تسوية فيلا زعيم الخصوم بالأرض",
+      "nerve_cost": 15,
+      "success_basis_points": 4000,
+      "cash_min": 11800,
+      "cash_max": 24800,
+      "xp_reward": 96,
+      "level_required": 22,
+      "enabled": true,
+      "required_item": "pistol",
+      "required_quantity": 1,
+      "consume_tool": false,
+      "mastery_per_success": 3,
+      "chain_window_seconds": 300,
+      "chain_bonus_basis_points": 125,
+      "critical_failure_basis_points": 2400,
+      "jail_seconds": 0,
+      "hospital_seconds": 540
+    }
+  },
+  "variants": {
+    "dockside-collection": {
+      "category": "hustle",
+      "crime_xp_required": 0,
+      "failure": "jail",
+      "penalty_minutes": 1,
+      "description": {
+        "en": "Shake down late freight brokers at Pier 4 with a bat in hand.",
+        "ar": "حصّل إتاوة وسطاء الشحن المتأخرين على الرصيف الرابع."
+      }
+    },
+    "canal-crate": {
+      "category": "burg",
+      "crime_xp_required": 0,
+      "failure": "hosp",
+      "penalty_minutes": 2,
+      "description": {
+        "en": "Pry open a sealed contraband crate moored in the canal.",
+        "ar": "افتح صندوق البضائع المختوم الراسي في القناة المائية."
+      }
+    },
+    "freight-decoy": {
+      "category": "scam",
+      "crime_xp_required": 0,
+      "failure": "jail",
+      "penalty_minutes": 1,
+      "description": {
+        "en": "Swap ballast sand for bonded cargo manifests at the depot.",
+        "ar": "استبدل الحمولة المضمونة بأكياس رمل موزونة في المستودع."
+      }
+    },
+    "tourist-ferry": {
+      "category": "pick",
+      "crime_xp_required": 120,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Crowded boarding ramp with distracted tourists.",
+        "ar": "ممر صعود مزدحم بالسياح والشنط المفتوحة."
+      }
+    },
+    "boot-action-discs": {
+      "category": "boot",
+      "crime_xp_required": 150,
+      "failure": "jail",
+      "penalty_minutes": 2,
+      "description": {
+        "en": "Duplicate boxed DVDs for back-alley stalls.",
+        "ar": "انسخ أقراص الأفلام الرائجة لأكشاك الأزقة."
+      }
+    },
+    "boot-noir-cinema": {
+      "category": "boot",
+      "crime_xp_required": 150,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "High-margincollector cuts sold under the counter.",
+        "ar": "نسخ نادرة تُباع سراً لهواة الجمع بسعر مرتفع."
+      }
+    },
+    "boot-arcade-roms": {
+      "category": "boot",
+      "crime_xp_required": 150,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Load cracked arcade boards for Neon Arcade cabinets.",
+        "ar": "شحن لوحات ألعاب مهكرة لصالات النيون."
+      }
+    },
+    "boot-concert-tapes": {
+      "category": "boot",
+      "crime_xp_required": 150,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Bootleg live recordings from VIP syndicate sets.",
+        "ar": "بيع تسجيلات حصرية مسربة من سهرات كبار الشخصيات."
+      }
+    },
+    "boot-vip-storefront": {
+      "category": "boot",
+      "crime_xp_required": 150,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Automated digital storefront shipping region-free media.",
+        "ar": "واجهة رقمية مشفرة لشحن الأقراص والبرمجيات المهربة."
+      }
+    },
+    "skim-metro-kiosk": {
+      "category": "skim",
+      "crime_xp_required": 300,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Slip a slim magnetic reader onto commuter terminals.",
+        "ar": "تركيب قارئ مغناطيسي مخفي في بوابات التذاكر."
+      }
+    },
+    "skim-gas-pump": {
+      "category": "skim",
+      "crime_xp_required": 300,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Harvest fleet fuel cards overnight before inspection.",
+        "ar": "سحب بيانات بطاقات الشاحنات ليلاً قبل التفتيش."
+      }
+    },
+    "skim-hotel-lobby": {
+      "category": "skim",
+      "crime_xp_required": 300,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Capture high-limit corporate cards at check-in.",
+        "ar": "التقاط بطاقات رجال الأعمال عالية السقف عند التسجيل."
+      }
+    },
+    "skim-casino-atm": {
+      "category": "skim",
+      "crime_xp_required": 300,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Pry the bezel plate and plant a Bluetooth skimmer.",
+        "ar": "فك الغطاء المعدني بالسكين وزرع شريحة نسخ لاسلكية."
+      }
+    },
+    "skim-harbor-toll": {
+      "category": "skim",
+      "crime_xp_required": 300,
+      "failure": "jail",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Extract a full week of encrypted PIN dumps.",
+        "ar": "استخراج حصيلة أسبوع كامل من الأرقام السرية المشفرة."
+      }
+    },
+    "hustle-three-card": {
+      "category": "hustle",
+      "crime_xp_required": 450,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Work a lookout and bait tourists into doubling down.",
+        "ar": "استدرج المارة بمقامر وهمي لمضاعفة الرهان."
+      }
+    },
+    "hustle-shell-cup": {
+      "category": "hustle",
+      "crime_xp_required": 450,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Palm the brass pea before transit police sweep the hall.",
+        "ar": "أخفِ الكرة النحاسية بخفة يد قبل مرور الدورية."
+      }
+    },
+    "hustle-pool-hall": {
+      "category": "hustle",
+      "crime_xp_required": 450,
+      "failure": "hosp",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Lose two cheap frames, then clear the table for thousands.",
+        "ar": "اخسر جولتين عمداً ثم ارفع الرهان واكتسح الطاولة."
+      }
+    },
+    "hustle-dice-alley": {
+      "category": "hustle",
+      "crime_xp_required": 450,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Swap weighted ivory dice mid-roll against dockhands.",
+        "ar": "بدّل النرد العاجي المثقّل وسط حماس عمال الميناء."
+      }
+    },
+    "hustle-high-stakes-ring": {
+      "category": "hustle",
+      "crime_xp_required": 450,
+      "failure": "hosp",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Work the ringside crowd odds before the bell rings.",
+        "ar": "تحكم بنسب الرهانات الجانبية حول الحلبة قبل الجرس."
+      }
+    },
+    "disp-burner-phones": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Shatter SIM arrays and dump electronics into the smelter.",
+        "ar": "تحطيم الشرائح وصهر الأجهزة في محرقة الخردة."
+      }
+    },
+    "disp-ledger-ash": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Burn paper trail boxes behind the warehouse furnace.",
+        "ar": "إحراق صناديق الفواتير خلف فرن المستودع قبل التفتيش."
+      }
+    },
+    "disp-stolen-sedan": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Grind chassis serials and part out the panels before dawn.",
+        "ar": "مسح أرقام الهيكل وتقطيع المركبة قبل الفجر."
+      }
+    },
+    "disp-hot-firearms": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Dissolve rifled barrels so forensics cannot match casings.",
+        "ar": "إذابة القطع المعدنية لمنع مطابقة البصمات الباليستية."
+      }
+    },
+    "disp-chemical-drums": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "hosp",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Pack absorbent sand around leaking drums and seal them deep.",
+        "ar": "استخدم الرمل لعزل البراميل المتسربة ودفنها بأمان."
+      }
+    },
+    "disp-harbor-sink": {
+      "category": "disp",
+      "crime_xp_required": 600,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Drop sealed syndicate cargo into the deep shipping trench.",
+        "ar": "إلقاء الحمولة المختومة في خندق الملاحة العميق ليلاً."
+      }
+    },
+    "crack-keypad-lock": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Run a pocket pin-cycler on a four-digit storage lock.",
+        "ar": "تشغيل كاسر الأرقام السرية على قفل المخزن الخلفي."
+      }
+    },
+    "crack-hotel-safe": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Read voltage spikes on the solenoid board to pop the bolt.",
+        "ar": "قراءة نبضات الدائرة الإلكترونية لفتح المزلاج بصمت."
+      }
+    },
+    "crack-payroll-hash": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Deploy a GPU rig against salted employee credentials.",
+        "ar": "تسليط منصة المعالجة لفك كلمات مرور الحسابات المالية."
+      }
+    },
+    "crack-broker-server": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Decrypt insider margin ledgers before market open.",
+        "ar": "فك تشفير سجلات التداول السرية قبل افتتاح الجلسة."
+      }
+    },
+    "crack-customs-node": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Clear flagged shipping containers on the port intranet.",
+        "ar": "تعديل حالة الحاويات المحتجزة على شبكة الميناء الداخلية."
+      }
+    },
+    "crack-vault-cipher": {
+      "category": "crack",
+      "crime_xp_required": 800,
+      "failure": "jail",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Crack multi-layer banking keys for an untraceable siphon.",
+        "ar": "تفكيك مفاتيح التشفير متعددة الطبقات لتحويل فوري."
+      }
+    },
+    "forge-parking-permit": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Foil-stamp loading zone passes for smuggler vans.",
+        "ar": "ختم تصاريح العبور الحرارية لشاحنات التهريب."
+      }
+    },
+    "forge-clinic-script": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Reproduce watermarked pads with valid physician codes.",
+        "ar": "محاكاة دفاتر الوصفات المدموغة بأختام طبية مطابقة."
+      }
+    },
+    "forge-press-badge": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Create holographic IDs granting restricted courtroom access.",
+        "ar": "إصدار هويات هولوغرام تفتح قاعات المحكمة المغلقة."
+      }
+    },
+    "forge-harbor-manifest": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Reclassify contraband crates as agricultural machinery.",
+        "ar": "إعادة تصنيف صناديق الممنوعات كمعدات زراعية رسمية."
+      }
+    },
+    "forge-diplomatic-pass": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Embed chipped biometric plates into stitched leather covers.",
+        "ar": "دمج شريحة بيومترية مبرمجة داخل غلاف دبلوماسي مذهب."
+      }
+    },
+    "forge-property-deed": {
+      "category": "forge",
+      "crime_xp_required": 1000,
+      "failure": "jail",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Seal notarized registry deeds to flip shell real estate.",
+        "ar": "ختم سندات التسجيل العقاري لتمرير صفقة واجهة بحرية."
+      }
+    },
+    "scam-courier-fee": {
+      "category": "scam",
+      "crime_xp_required": 1300,
+      "failure": "jail",
+      "penalty_minutes": 3,
+      "description": {
+        "en": "Spoof parcel tracking links for instant micro-wires.",
+        "ar": "إرسال روابط تتبع طرود مزيفة لتحصيل رسوم تخليص فورية."
+      }
+    },
+    "scam-charity-ring": {
+      "category": "scam",
+      "crime_xp_required": 1300,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Work corporate donors from a rented call room.",
+        "ar": "استقطاب تبرعات الشركات الكبرى عبر غرفة اتصال مستأجرة."
+      }
+    },
+    "scam-romance-wire": {
+      "category": "scam",
+      "crime_xp_required": 1300,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Build weeks of trust before pitching an emergency bridge wire.",
+        "ar": "بناء ثقة محكمة تنتهي بتحويل مالي طارئ عالي القيمة."
+      }
+    },
+    "scam-invoice-redirect": {
+      "category": "scam",
+      "crime_xp_required": 1300,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Intercept supplier invoices and swap the settlement account.",
+        "ar": "اعتراض فواتير الميناء واستبدال رقم الحساب البنكي."
+      }
+    },
+    "scam-executive-spoof": {
+      "category": "scam",
+      "crime_xp_required": 1300,
+      "failure": "jail",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Trigger an urgent offshore escrow release before audit.",
+        "ar": "تمرير أمر صرف خارجي عاجل قبل مراجعة التدقيق الداخلي."
+      }
+    },
+    "counter-casino-tokens": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 4,
+      "description": {
+        "en": "Mold brass-core $500 chips and cash them in small stacks.",
+        "ar": "تشكيل فيشات مطابقة بالوزن وصرفها على دفعات هادئة."
+      }
+    },
+    "counter-transit-vouchers": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Sell discounted fleet booklets to independent haulers.",
+        "ar": "بيع دفاتر قسائم مطبوعة بدقة لسائقي النقل المستقلين."
+      }
+    },
+    "counter-tax-stamps": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Foil-stamp UV security ribbons for smuggled crates.",
+        "ar": "تجهيز أشرطة ضريبية تفاعلية مع الأشعة فوق البنفسجية."
+      }
+    },
+    "counter-polymer-plates": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Cut micro-lettered copper plates for crisp banknote runs.",
+        "ar": "نقش ألواح نحاسية مجهرية لطباعة أوراق نقدية متقنة."
+      }
+    },
+    "counter-hundred-bills": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Bleach low-denomination cotton paper to pass pen checks.",
+        "ar": "تبييض ورق القطن الأصلي لتجاوز أقلام الفحص البنكية."
+      }
+    },
+    "counter-bearer-bonds": {
+      "category": "counter",
+      "crime_xp_required": 1700,
+      "failure": "jail",
+      "penalty_minutes": 9,
+      "description": {
+        "en": "Clear embossed corporate bearer certificates via offshore desks.",
+        "ar": "تسييل شهادات لحامله بارزة الختم عبر مكاتب خارجية."
+      }
+    },
+    "burg-suburban-duplex": {
+      "category": "burg",
+      "crime_xp_required": 2200,
+      "failure": "jail",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Slip the patio latch while the owners are at work.",
+        "ar": "فتح مزلاج الشرفة الخلفية بصمت أثناء غياب السكان."
+      }
+    },
+    "burg-pawn-backroom": {
+      "category": "burg",
+      "crime_xp_required": 2200,
+      "failure": "jail",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Bypass motion sensors and bag pledged watches and gold.",
+        "ar": "تعطيل حساس الحركة وجمع الساعات المرهونة والسبائك."
+      }
+    },
+    "burg-jeweler-loft": {
+      "category": "burg",
+      "crime_xp_required": 2200,
+      "failure": "hosp",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Cut the roof glass above the jeweler workbenches.",
+        "ar": "قص الزجاج العلوي والهبوط مباشرة فوق طاولات الصياغة."
+      }
+    },
+    "burg-penthouse-vault": {
+      "category": "burg",
+      "crime_xp_required": 2200,
+      "failure": "hosp",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Slip past private security and lift uncut stones and cash.",
+        "ar": "تجاوز الحراسة الخاصة وسحب الأحجار الكريمة والسيولة."
+      }
+    },
+    "arson-impound-lot": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "hosp",
+      "penalty_minutes": 5,
+      "description": {
+        "en": "Destroy impounded syndicate sedans before forensics arrive.",
+        "ar": "إتلاف سيارات العائلة المحتجزة قبل وصول خبراء الأدلة."
+      }
+    },
+    "arson-rival-tavern": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "hosp",
+      "penalty_minutes": 6,
+      "description": {
+        "en": "Send an unmistakable message to encroaching street crews.",
+        "ar": "توجيه رسالة نارية حاسمة للعصابات المتسللة للرصيف."
+      }
+    },
+    "arson-textile-depot": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "hosp",
+      "penalty_minutes": 7,
+      "description": {
+        "en": "Stage an electrical short for a clean insurance payout.",
+        "ar": "افتعال تماس كهربائي متقن لتحصيل تعويض التأمين كاملاً."
+      }
+    },
+    "arson-archive-wing": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "jail",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Wipe sealed indictment folders before grand jury review.",
+        "ar": "محو ملفات الاتهام المختومة قبل جلسة المحكمة الكبرى."
+      }
+    },
+    "arson-fuel-barge": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "hosp",
+      "penalty_minutes": 8,
+      "description": {
+        "en": "Cripple rival harbor logistics in a midnight blaze.",
+        "ar": "شل خطوط إمداد الخصوم في الميناء بضربة ليلية خاطفة."
+      }
+    },
+    "arson-syndicate-estate": {
+      "category": "arson",
+      "crime_xp_required": 2800,
+      "failure": "hosp",
+      "penalty_minutes": 9,
+      "description": {
+        "en": "High-heat contract operation against an enemy stronghold.",
+        "ar": "عقد إحراق عالي الخطورة لمعقل قيادة العائلة المعادية."
+      }
+    }
+  }
+}

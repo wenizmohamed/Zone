@@ -1188,6 +1188,15 @@ final class GameEngine
         foreach (['searchforcash' => ['search', 0], 'bootlegging' => ['boot', 150], 'graffiti' => ['graf', 30], 'shoplifting' => ['shop', 80], 'pickpocketing' => ['pick', 120], 'cardskimming' => ['skim', 300], 'burglary' => ['burg', 2200]] as $id => [$category, $requiredXp]) {
             $variants[$id] = ['category' => $category, 'crime_xp_required' => $requiredXp];
         }
+        $packPath = ZONE_ENGINE_ROOT . '/data/content-packs/crimes2-syndicate117.json';
+        if (is_file($packPath)) {
+            $pack = json_decode((string) file_get_contents($packPath), true, 64, JSON_THROW_ON_ERROR);
+            foreach (($pack['variants'] ?? []) as $id => $meta) {
+                if (!isset($variants[$id]) && is_array($meta)) {
+                    $variants[$id] = $meta;
+                }
+            }
+        }
         return array_map(static fn (array $crime): array => [...($variants[$crime['id']] ?? []), ...$crime], $this->content->crimes(true));
     }
 

@@ -144,10 +144,18 @@ final class Database
             $now = gmdate('c');
             $today = gmdate('Y-m-d');
             $rivals = [
-                ['npc-harbor-king', 'Rayan_Black', 9, 2840, 64000, 120, 45, 1450, 450, 120, 45, 1450, 500, $now, 195, 175, 185, 170, 90000, 'Zone City', 3, $today, 'kings', 'leader'],
-                ['npc-night-broker', 'NadiaQuick', 8, 2190, 52000, 110, 45, 1200, 400, 110, 45, 1200, 500, $now, 165, 150, 210, 195, 75000, 'Zone City', 2, $today, 'night', 'leader'],
-                ['npc-oldguard-don', 'BigSal', 11, 4120, 91000, 140, 50, 2100, 500, 140, 50, 2100, 500, $now, 230, 220, 160, 155, 150000, 'Zone City', 5, $today, 'oldguard', 'leader'],
-                ['npc-viper-lieutenant', 'Omar_Z', 6, 1340, 34000, 100, 45, 950, 350, 100, 45, 950, 500, $now, 130, 120, 135, 125, 40000, 'Zone City', 2, $today, 'vipers', 'officer'],
+                ['npc-syndicate-apex', 'Duke_X', 34, 28400, 420000, 150, 55, 3600, 2500, 150, 55, 3600, 2500, $now, 6400, 5800, 6100, 5500, 2850000, 'Zone City', 14, $today, 'oldguard', 'officer'],
+                ['npc-iron-enforcer', 'Marrow', 29, 21900, 310000, 150, 50, 3200, 1500, 150, 50, 3200, 1500, $now, 5100, 4900, 4400, 4200, 1920000, 'Zone City', 11, $today, 'kings', 'officer'],
+                ['npc-oldguard-don', 'BigSal', 26, 17400, 245000, 140, 50, 2900, 1500, 140, 50, 2900, 1500, $now, 4200, 3800, 3100, 2950, 1450000, 'Zone City', 9, $today, 'oldguard', 'leader'],
+                ['npc-velvet-queen', 'Lady_Vega', 23, 14200, 198000, 140, 50, 2600, 1000, 140, 50, 2600, 1000, $now, 3100, 2900, 3650, 3400, 1120000, 'Zone City', 8, $today, 'night', 'officer'],
+                ['npc-crown-capo', 'K1ng', 20, 11300, 164000, 130, 45, 2350, 1000, 130, 45, 2350, 1000, $now, 2650, 2400, 2550, 2300, 840000, 'Zone City', 7, $today, 'vipers', 'officer'],
+                ['npc-night-broker', 'NadiaQuick', 17, 8650, 128000, 120, 45, 2050, 750, 120, 45, 2050, 1000, $now, 1850, 1650, 2400, 2150, 620000, 'Zone City', 6, $today, 'night', 'leader'],
+                ['npc-dock-ghost', 'Silas', 15, 6900, 96000, 120, 45, 1850, 500, 120, 45, 1850, 500, $now, 1540, 1480, 1620, 1590, 410000, 'Zone City', 5, $today, 'kings', 'member'],
+                ['npc-harbor-king', 'Rayan_Black', 13, 5240, 78000, 120, 45, 1650, 450, 120, 45, 1650, 500, $now, 1280, 1140, 1220, 1090, 290000, 'Zone City', 4, $today, 'kings', 'leader'],
+                ['npc-shadow-fixer', 'Kaya_V', 11, 3980, 62000, 110, 45, 1450, 450, 110, 45, 1450, 500, $now, 940, 880, 1050, 980, 185000, 'Zone City', 4, $today, 'night', 'member'],
+                ['npc-viper-lieutenant', 'Omar_Z', 9, 2850, 48000, 110, 45, 1250, 350, 110, 45, 1250, 500, $now, 680, 640, 710, 660, 115000, 'Zone City', 3, $today, 'vipers', 'officer'],
+                ['npc-north-enforcer', 'Tariq', 7, 1820, 34000, 100, 40, 1050, 350, 100, 40, 1050, 350, $now, 430, 410, 450, 390, 68000, 'Zone City', 2, $today, 'vipers', 'member'],
+                ['npc-alley-medic', 'Noor', 5, 980, 21000, 100, 35, 850, 250, 100, 35, 850, 250, $now, 240, 260, 255, 270, 35000, 'Zone City', 2, $today, 'oldguard', 'member'],
             ];
             foreach ($rivals as $rival) {
                 $factionId = $rival[22];
@@ -177,6 +185,10 @@ final class Database
                     ['id', 'seller_id', 'item_id', 'item_json', 'quantity', 'unit_price', 'state', 'version', 'created_at', 'updated_at'],
                     [$lid, $sellerId, $itemId, json_encode($itemMeta, JSON_THROW_ON_ERROR), $qty, $unitPrice, 'active', 1, $now, $now],
                 );
+            }
+            $seasonId = (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->modify('monday this week')->setTime(0, 0)->format('o-\WW');
+            foreach ([['vipers', 485], ['kings', 440], ['oldguard', 395], ['night', 360]] as [$fid, $score]) {
+                $this->insertIgnore('family_competition_scores', ['season_id', 'faction_id', 'score', 'version', 'updated_at'], [$seasonId, $fid, $score, 1, $now]);
             }
             $this->execute("INSERT INTO engine_metadata (name, value) VALUES ('vercel-ephemeral-seed-v1', '1') ON CONFLICT (name) DO UPDATE SET value = '1'");
         });
