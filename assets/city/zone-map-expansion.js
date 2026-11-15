@@ -135,10 +135,25 @@
     }
   ];
 
+  var ZMX_SVGS = {
+    dawn: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17H20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M7 17A5 5 0 0 1 17 17" fill="rgba(251,191,36,0.32)" stroke="currentColor" stroke-width="1.8"/><path d="M12 6V9M6.3 9.3L8.2 11.2M17.7 9.3L15.8 11.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    day: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="rgba(250,204,21,0.35)" stroke="currentColor" stroke-width="1.85"/><path d="M12 3V5.5M12 18.5V21M3 12H5.5M18.5 12H21M5.6 5.6L7.4 7.4M16.6 16.6L18.4 18.4M18.4 5.6L16.6 7.4M7.4 16.6L5.6 18.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    afternoon: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="4" fill="rgba(245,158,11,0.34)" stroke="currentColor" stroke-width="1.8"/><path d="M9 18H18.5A3.5 3.5 0 0 0 18.5 11C18.2 11 17.9 11.05 17.6 11.12A4.5 4.5 0 0 0 9.2 12.5A3 3 0 0 0 9 18Z" fill="rgba(148,163,184,0.28)" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>',
+    dusk: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 18H21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M6 18V9L11 6V18M11 11H17V18" fill="rgba(249,115,22,0.28)" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><circle cx="17.5" cy="6.5" r="2.2" fill="rgba(251,146,60,0.45)" stroke="currentColor" stroke-width="1.6"/></svg>',
+    night: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5A7.5 7.5 0 1 0 19.5 14.5Z" fill="rgba(96,165,250,0.32)" stroke="currentColor" stroke-width="1.85" stroke-linejoin="round"/></svg>',
+    plane: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5L14.2 9L21.5 11.2V13.1L14.2 12L13.5 18.2L16.2 20V21.5L12 20.4L7.8 21.5V20L10.5 18.2L9.8 12L2.5 13.1V11.2L9.8 9L12 2.5Z" fill="rgba(56,189,248,0.28)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
+    lock: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.85"/><path d="M8 11V7.8C8 5.6 9.8 3.8 12 3.8C14.2 3.8 16 5.6 16 7.8V11" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"/></svg>',
+    unlock: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(57,231,163,0.26)" stroke="currentColor" stroke-width="1.85"/><path d="M8 11V7.6C8 5.4 9.8 3.6 12 3.6C13.8 3.6 15.3 4.8 15.8 6.4" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"/></svg>',
+    recon: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="rgba(56,189,248,0.22)" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    bolt: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2.5L5.5 13H11.5L10.5 21.5L18.5 10.8H12.5L13 2.5Z" fill="rgba(235,184,88,0.32)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    check: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="rgba(57,231,163,0.24)" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.3L10.8 15L16.2 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    alert: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5L21 19.5H3L12 3.5Z" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.5V13.8M12 16.8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+  };
+
   var TIME_PHASES = {
     dawn: {
       id: "dawn",
-      icon: "🌅",
+      icon: ZMX_SVGS.dawn,
       label: { en: "Dawn", ar: "الفجر" },
       fog: { color: "#e5bfd1", "high-color": "#5876a8", "space-color": "#263659", "horizon-blend": 0.12, range: [1.5, 14], "star-intensity": 0.05 },
       ambient: { color: "#eeddf6", intensity: 0.72 },
@@ -157,7 +172,7 @@
     },
     day: {
       id: "day",
-      icon: "☀️",
+      icon: ZMX_SVGS.day,
       label: { en: "Day", ar: "النهار" },
       fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [1.8, 15], "star-intensity": 0 },
       ambient: { color: "#eef4fa", intensity: 0.58 },
@@ -176,7 +191,7 @@
     },
     afternoon: {
       id: "afternoon",
-      icon: "🌤️",
+      icon: ZMX_SVGS.afternoon,
       label: { en: "Afternoon", ar: "العصر" },
       fog: { color: "#f3dec0", "high-color": "#74a6d4", "space-color": "#437ab0", "horizon-blend": 0.12, range: [1.6, 14.5], "star-intensity": 0 },
       ambient: { color: "#f8e8ce", intensity: 0.56 },
@@ -195,7 +210,7 @@
     },
     dusk: {
       id: "dusk",
-      icon: "🌇",
+      icon: ZMX_SVGS.dusk,
       label: { en: "Dusk", ar: "الغسق" },
       fog: { color: "#683c5d", "high-color": "#233056", "space-color": "#0e152b", "horizon-blend": 0.11, range: [1.4, 13.5], "star-intensity": 0.25 },
       ambient: { color: "#9ba9d6", intensity: 0.58 },
@@ -214,7 +229,7 @@
     },
     night: {
       id: "night",
-      icon: "🌙",
+      icon: ZMX_SVGS.night,
       label: { en: "Night", ar: "الليل" },
       fog: { color: "#0e182c", "high-color": "#080e1d", "space-color": "#040710", "horizon-blend": 0.08, range: [1.4, 13.5], "star-intensity": 0.55 },
       ambient: { color: "#a5c0e5", intensity: 0.58 },
@@ -449,34 +464,26 @@
       var style = document.createElement("style");
       style.id = "zone-map-expansion-css";
       style.textContent = [
-        ".zmx-chrono-bar{position:absolute;top:8px;right:48px;left:auto;transform:none;z-index:18;display:flex;align-items:center;gap:5px;padding:4px 8px;border-radius:7px;background:rgba(10,15,26,0.92);border:1px solid rgba(235,184,88,0.48);box-shadow:0 8px 24px rgba(0,0,0,0.55);backdrop-filter:blur(10px);color:#f8fafc;font:600 10.5px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 355px);flex-wrap:wrap;justify-content:flex-end}",
+        ".zmx-chrono-bar{position:absolute;top:10px;right:50px;left:auto;width:fit-content;transform:none;z-index:18;display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:8px;background:rgba(9,13,22,0.88);border:1px solid rgba(235,184,88,0.44);box-shadow:0 10px 26px rgba(0,0,0,0.52),inset 0 1px 0 rgba(255,255,255,0.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#f8fafc;font:600 10px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 260px);flex-wrap:nowrap;white-space:nowrap;justify-content:flex-end}",
         "[dir='rtl'] .zmx-chrono-bar{right:auto;left:10px;justify-content:flex-start}",
-        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(253,251,246,0.96);border-color:#b4781e;color:#0f172a;box-shadow:0 6px 20px rgba(15,23,42,0.16)}",
+        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(11,16,27,0.88);border-color:rgba(235,184,88,0.52);color:#f8fafc;box-shadow:0 10px 26px rgba(15,23,42,0.34),inset 0 1px 0 rgba(255,255,255,0.10)}",
         "body[data-zmx-light='1'] .mgrade{background:radial-gradient(ellipse 75% 60% at 50% 35%,rgba(255,248,220,0.16) 0%,rgba(255,248,220,0) 68%)!important}",
-        ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,0.07);border:1px solid rgba(148,163,184,0.25);font-variant-numeric:tabular-nums}",
-        "body[data-zmx-light='1'] .zmx-clock-box{background:#f1eadb;border-color:#cbbda2;color:#0f172a}",
+        ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:5px;background:rgba(255,255,255,0.07);border:1px solid rgba(148,163,184,0.24);font-variant-numeric:tabular-nums}",
         ".zmx-city-tag{font-weight:900;color:#ebb858;letter-spacing:0.06em;font-size:10.5px}",
-        "body[data-zmx-light='1'] .zmx-city-tag{color:#8a4b08}",
-        ".zmx-clock-digits{font-weight:900;font-size:12px;color:#49f0a1;letter-spacing:0.04em}",
-        "body[data-zmx-light='1'] .zmx-clock-digits{color:#08663b}",
-        ".zmx-phase-badge{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:10.5px;padding:3px 7px;border-radius:4px;background:rgba(235,184,88,0.15);color:#fde68a;border:1px solid rgba(235,184,88,0.35)}",
-        "body[data-zmx-light='1'] .zmx-phase-badge{background:#fff6e0;color:#7c3f00;border-color:#d49a35}",
+        ".zmx-clock-digits{font-weight:900;font-size:11.5px;color:#49f0a1;letter-spacing:0.04em}",
+        ".zmx-phase-badge{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:10px;padding:3px 7px;border-radius:5px;background:rgba(235,184,88,0.15);color:#fde68a;border:1px solid rgba(235,184,88,0.35)}",
         ".zmx-pills{display:inline-flex;align-items:center;gap:3px}",
-        ".zmx-pill{background:transparent;border:1px solid rgba(148,163,184,0.26);color:#cbd5e1;border-radius:4px;padding:3px 6px;font:700 10px/1.1 inherit;cursor:pointer;transition:all .14s ease}",
+        ".zmx-pill{background:transparent;border:1px solid rgba(148,163,184,0.26);color:#cbd5e1;border-radius:5px;padding:3px 6px;font:700 10px/1.1 inherit;cursor:pointer;transition:all .14s ease}",
         ".zmx-pill:hover{border-color:#ebb858;color:#fff}",
         ".zmx-pill.active{background:#ebb858;border-color:#ebb858;color:#090d16;font-weight:900}",
-        "body[data-zmx-light='1'] .zmx-pill{color:#334155;border-color:#c4b69c}",
-        "body[data-zmx-light='1'] .zmx-pill:hover{color:#7c3f00;border-color:#b4781e}",
-        "body[data-zmx-light='1'] .zmx-pill.active{background:#1e293b;border-color:#1e293b;color:#ffffff}",
-        ".zmx-world-btn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(180deg,#38bdf8,#0284c7);color:#04131d;border:1px solid #7dd3fc;border-radius:4px;padding:4px 9px;font:900 10.5px/1.1 inherit;letter-spacing:0.03em;cursor:pointer;box-shadow:0 2px 10px rgba(56,189,248,0.32)}",
+        ".zmx-world-btn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(180deg,#38bdf8,#0284c7);color:#04131d;border:1px solid #7dd3fc;border-radius:5px;padding:4px 9px;font:900 10px/1.1 inherit;letter-spacing:0.03em;cursor:pointer;box-shadow:0 2px 10px rgba(56,189,248,0.32)}",
         ".zmx-world-btn:hover{filter:brightness(1.08)}",
-        ".zmx-lv-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:4px;background:rgba(57,231,163,0.14);border:1px solid rgba(57,231,163,0.45);color:#6ef7c0;font-weight:900;font-size:10px}",
-        "body[data-zmx-light='1'] .zmx-lv-pill{background:#e6f7ef;border-color:#0d7a49;color:#064e30}",
-        ".zmx-gate-marker{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:5px;font:800 10px/1.1 Rubik,system-ui,sans-serif;letter-spacing:0.04em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.6);border:1.5px solid #f59e0b;background:rgba(12,16,26,0.92);color:#fef3c7;white-space:nowrap;transition:transform .15s ease}",
-        ".zmx-gate-marker:hover{transform:scale(1.07)}",
-        ".zmx-gate-marker.unlocked{border-color:#39e7a3;color:#a7f3d0;background:rgba(8,26,20,0.9)}",
-        "body[data-zmx-light='1'] .zmx-gate-marker{background:rgba(255,251,240,0.96);color:#7c2d12;border-color:#d97706;box-shadow:0 5px 14px rgba(15,23,42,0.18)}",
-        "body[data-zmx-light='1'] .zmx-gate-marker.unlocked{background:rgba(236,253,245,0.96);color:#065f46;border-color:#059669}",
+        ".zmx-lv-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:5px;background:rgba(57,231,163,0.15);border:1px solid rgba(57,231,163,0.45);color:#6ef7c0;font-weight:900;font-size:10px}",
+        ".zmx-gate-marker{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;font:800 9.5px/1.1 Rubik,system-ui,sans-serif;letter-spacing:0.03em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.62);border:1px solid rgba(245,158,11,0.78);background:rgba(9,13,22,0.9);backdrop-filter:blur(6px);color:#fef3c7;white-space:nowrap;transition:transform .15s ease,border-color .15s ease}",
+        ".zmx-gate-marker:hover{transform:scale(1.06);border-color:#fbbf24}",
+        ".zmx-gate-marker.unlocked{border-color:rgba(57,231,163,0.75);color:#a7f3d0;background:rgba(8,26,20,0.88)}",
+        ".zmx-poi-hover{position:absolute;z-index:22;pointer-events:none;padding:4px 9px;border-radius:6px;background:rgba(8,12,20,0.94);border:1px solid rgba(235,184,88,0.55);box-shadow:0 8px 20px rgba(0,0,0,0.65);color:#f8fafc;font:700 11px/1.2 Rubik,system-ui,sans-serif;white-space:nowrap;transform:translate(-50%,14px);transition:opacity .12s ease}",
+        ".zmx-poi-hover[hidden]{display:none!important}",
         ".zmx-modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,7,14,0.76);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:14px}",
         ".zmx-modal-backdrop[hidden]{display:none!important}",
         ".zmx-modal{width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;background:linear-gradient(180deg,#11192a 0%,#090e18 100%);border:1px solid rgba(235,184,88,0.52);box-shadow:0 24px 60px rgba(0,0,0,0.78);color:#f8fafc;padding:16px;font:500 12.5px/1.45 Rubik,system-ui,sans-serif}",
@@ -494,13 +501,18 @@
         ".zmx-cta:disabled{opacity:0.45;cursor:not-allowed}",
         ".zmx-cta-sec{background:rgba(56,189,248,0.16);color:#7dd3fc;border:1px solid rgba(56,189,248,0.45);border-radius:4px;padding:6px 10px;font:800 11px/1.1 inherit;cursor:pointer}",
         "body[data-zmx-light='1'] .zmx-cta-sec{background:#e0f2fe;color:#075985;border-color:#0284c7}",
-        "@media (max-width:960px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:54px;left:8px;right:48px;max-width:none;justify-content:center}.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}"
+        ".zmx-svg-ico{display:inline-block;width:12.5px;height:12.5px;flex:none;vertical-align:-2px}",
+        ".zmx-cta,.zmx-cta-sec{display:inline-flex;align-items:center;justify-content:center;gap:5px}",
+        "[dir='rtl'] .zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar *,[dir='rtl'] .zmx-gate-marker,.zmx-modal[dir='rtl'],.zmx-modal[dir='rtl'] *{letter-spacing:0!important}",
+        "@media (max-width:1120px){.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}",
+        "@media (max-width:780px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:50px;left:10px;right:auto;width:fit-content;max-width:calc(100% - 56px);justify-content:flex-start}}"
       ].join("\n");
       document.head.appendChild(style);
     }
 
     var chronoEl = null;
     var modalBackdrop = null;
+    var hoverTipEl = null;
 
     function buildChronoHud() {
       if (chronoEl) return;
@@ -509,6 +521,11 @@
       chronoEl.className = "zmx-chrono-bar";
       chronoEl.id = "zoneMapChronoHud";
       host.appendChild(chronoEl);
+
+      hoverTipEl = document.createElement("div");
+      hoverTipEl.className = "zmx-poi-hover";
+      hoverTipEl.hidden = true;
+      host.appendChild(hoverTipEl);
 
       modalBackdrop = document.createElement("div");
       modalBackdrop.className = "zmx-modal-backdrop";
@@ -569,7 +586,7 @@
           }).join("") +
         '</div>' +
         '<button type="button" class="zmx-world-btn" id="zmxWorldBtn">' +
-          '<span>✈️</span><span>' + (ar ? "مدن العالم" : "World Cities") + '</span>' +
+          ZMX_SVGS.plane + '<span>' + (ar ? "مدن العالم" : "World Cities") + '</span>' +
         '</button>';
 
       Array.from(chronoEl.querySelectorAll(".zmx-pill")).forEach(function (btn) {
@@ -833,7 +850,7 @@
               iconImage: coinImg,
               color: p.color,
               strokeColor: locked ? "#f59e0b" : p.color,
-              label: (locked ? "Lv." + p.minLevel + " · " : "") + title
+              label: (locked ? "Lv." + p.minLevel + " | " : "") + title
             },
             geometry: {
               type: "Point",
@@ -1003,10 +1020,11 @@
           "text-max-width": 11,
           "text-optional": true,
           "text-allow-overlap": false,
-          "text-padding": 3
+          "text-padding": 10
         },
         paint: {
           "icon-opacity": 1,
+          "text-opacity": ["interpolate", ["linear"], ["zoom"], 14.55, 0, 14.95, 1],
           "text-color": "#f8fafc",
           "text-halo-color": "rgba(4, 8, 15, 0.96)",
           "text-halo-width": 1.6
@@ -1023,10 +1041,24 @@
           var sec = SECTORS.find(function (s) { return s.id === secId; });
           if (sec) openSectorModal(sec);
         });
-        map.on("mouseenter", "metro-poi-icon", function () { map.getCanvas().style.cursor = "pointer"; });
-        map.on("mouseleave", "metro-poi-icon", function () { map.getCanvas().style.cursor = ""; });
-        map.on("mouseenter", "metro-poi-halo", function () { map.getCanvas().style.cursor = "pointer"; });
-        map.on("mouseleave", "metro-poi-halo", function () { map.getCanvas().style.cursor = ""; });
+        var showPoiHover = function (ev) {
+          map.getCanvas().style.cursor = "pointer";
+          if (!hoverTipEl || !ev || !ev.features || !ev.features[0] || !ev.point) return;
+          var lbl = ev.features[0].properties && ev.features[0].properties.label;
+          if (!lbl) return;
+          hoverTipEl.textContent = lbl;
+          hoverTipEl.style.left = Math.round(ev.point.x) + "px";
+          hoverTipEl.style.top = Math.round(ev.point.y) + "px";
+          hoverTipEl.hidden = false;
+        };
+        var hidePoiHover = function () {
+          map.getCanvas().style.cursor = "";
+          if (hoverTipEl) hoverTipEl.hidden = true;
+        };
+        map.on("mousemove", "metro-poi-icon", showPoiHover);
+        map.on("mouseleave", "metro-poi-icon", hidePoiHover);
+        map.on("mousemove", "metro-poi-halo", showPoiHover);
+        map.on("mouseleave", "metro-poi-halo", hidePoiHover);
       }
 
       widenMetroBounds();
@@ -1079,13 +1111,21 @@
       state.gateMarkers = [];
       if (!window.mapboxgl) return;
       var ar = state.lang === "ar";
+      var shortSectorNames = {
+        "sector-neon": { en: "West Neon", ar: "شارع النيون" },
+        "sector-harbor": { en: "Smuggler Docks", ar: "مرافئ التهريب" },
+        "sector-citadel": { en: "East Citadel", ar: "القلعة المالية" },
+        "sector-airport": { en: "Airport & Marina", ar: "المطار والمرسى" }
+      };
       SECTORS.forEach(function (s) {
+        if (s.minLevel <= 1) return;
         var unlocked = state.playerLevel >= s.minLevel;
         var el = document.createElement("button");
         el.type = "button";
         el.className = "zmx-gate-marker" + (unlocked ? " unlocked" : "");
-        var title = s.name[ar ? "ar" : "en"];
-        el.innerHTML = (unlocked ? "🔓 " : "🔒 ") + (ar ? "مستوى " : "LV.") + s.minLevel + " · " + title;
+        var shortPair = shortSectorNames[s.id] || s.name;
+        var title = shortPair[ar ? "ar" : "en"];
+        el.innerHTML = (unlocked ? ZMX_SVGS.unlock : ZMX_SVGS.lock) + '<span>' + (ar ? "م." : "LV.") + s.minLevel + " · " + title + '</span>';
         el.addEventListener("click", function (ev) {
           ev.stopPropagation();
           openSectorModal(s);
@@ -1133,8 +1173,8 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:' + (unlocked ? "#39e7a3" : "#d97706") + '">' +
-                (unlocked ? (ar ? "🔓 قطاع مفتوح للعمليات" : "🔓 SECTOR CLEARANCE GRANTED") : (ar ? "🔒 قطاع مقفل بالمستوى" : "🔒 RESTRICTED SYNDICATE SECTOR")) +
+              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:' + (unlocked ? "#39e7a3" : "#d97706") + '">' +
+                (unlocked ? ZMX_SVGS.unlock + '<span>' + (ar ? "قطاع مفتوح للعمليات" : "SECTOR CLEARANCE GRANTED") + '</span>' : ZMX_SVGS.lock + '<span>' + (ar ? "قطاع مقفل بالمستوى" : "RESTRICTED SYNDICATE SECTOR") + '</span>') +
               '</div>' +
               '<h3 class="zmx-modal-title">' + sector.name[ar ? "ar" : "en"] + '</h3>' +
             '</div>' +
@@ -1160,9 +1200,9 @@
             '</ul>' +
           '</div>' +
           '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-            '<button type="button" class="zmx-cta-sec" id="zmxReconBtn">' + (ar ? "🎥 استطلاع ثلاثي الأبعاد" : "🎥 3D Recon Flyover") + '</button>' +
+            '<button type="button" class="zmx-cta-sec" id="zmxReconBtn">' + ZMX_SVGS.recon + '<span>' + (ar ? "استطلاع ثلاثي الأبعاد" : "3D Recon Flyover") + '</span></button>' +
             (!unlocked
-              ? '<button type="button" class="zmx-cta" data-go="crimes">' + (ar ? "اكسب خبرة من الجرائم ⚡" : "Earn XP in Crimes ⚡") + '</button>' +
+              ? '<button type="button" class="zmx-cta" data-go="crimes">' + ZMX_SVGS.bolt + '<span>' + (ar ? "اكسب خبرة من الجرائم" : "Earn XP in Crimes") + '</span></button>' +
                 '<button type="button" class="zmx-cta-sec" data-go="missions">' + (ar ? "لوحة المهمات" : "Missions Board") + '</button>'
               : '<button type="button" class="zmx-cta" id="zmxExploreUnlocked">' + (ar ? "استكشف القطاع الآن" : "Explore Sector Now") + '</button>') +
           '</div>' +
@@ -1220,11 +1260,11 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:#0284c7">' +
-                (ar ? "✈️ شبكة الطيران الدولية للنقابة" : "✈️ GLOBAL SYNDICATE FLIGHT NETWORK") +
+              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:#0284c7">' +
+                ZMX_SVGS.plane + '<span>' + (ar ? "شبكة الطيران الدولية للنقابة" : "GLOBAL SYNDICATE FLIGHT NETWORK") + '</span>' +
               '</div>' +
               '<h3 class="zmx-modal-title">' +
-                (ar ? "السفر من مدينة إلى مدينة · موقعك: " : "City-to-City World Transit · Current: ") + curCity.name[ar ? "ar" : "en"] +
+                (ar ? "السفر من مدينة إلى مدينة | موقعك: " : "City-to-City World Transit | Current: ") + curCity.name[ar ? "ar" : "en"] +
               '</h3>' +
             '</div>' +
             '<button type="button" class="zmx-close" id="zmxWorldClose">' + (ar ? "إغلاق ✕" : "Close ✕") + '</button>' +
@@ -1248,8 +1288,8 @@
                 '<div class="zmx-city-card' + (isHere ? " active" : "") + (!unlocked ? " locked" : "") + '">' +
                   '<div style="display:flex;justify-content:space-between;align-items:center">' +
                     '<strong style="font-size:13.5px">' + c.name[ar ? "ar" : "en"] + " (" + c.code + ')</strong>' +
-                    '<span style="font-size:10.5px;font-weight:800;color:' + (unlocked ? "#059669" : "#d97706") + '">' +
-                      (unlocked ? cPhase.icon + " " + formatClock(cDate).slice(0, 5) : "🔒 Lv." + c.minLevel) +
+                    '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:' + (unlocked ? "#059669" : "#d97706") + '">' +
+                      (unlocked ? cPhase.icon + '<span>' + formatClock(cDate).slice(0, 5) + '</span>' : ZMX_SVGS.lock + '<span>Lv.' + c.minLevel + '</span>') +
                     '</span>' +
                   '</div>' +
                   '<div style="font-size:11px;opacity:0.84">' + c.region[ar ? "ar" : "en"] + '</div>' +
@@ -1262,7 +1302,7 @@
                       : !unlocked
                         ? '<span style="font-size:10.5px;font-weight:800;color:#d97706">' + (ar ? "يتطلب المستوى " : "Requires Level ") + c.minLevel + '</span>'
                         : '<span style="font-size:11px;font-weight:800">' + (c.fare ? "$" + c.fare.toLocaleString("en-US") : (ar ? "مجاناً" : "Free")) + '</span>' +
-                          '<button type="button" class="zmx-cta-sec" data-fly="' + c.id + '">' + (ar ? "✈️ سافر الآن" : "✈️ Fly Now") + '</button>') +
+                          '<button type="button" class="zmx-cta-sec" data-fly="' + c.id + '">' + ZMX_SVGS.plane + '<span>' + (ar ? "سافر الآن" : "Fly Now") + '</span></button>') +
                   '</div>' +
                 '</div>'
               );
@@ -1301,8 +1341,9 @@
           var banner = modalBackdrop.querySelector("#zmxTransitStatus");
           if (banner) {
             banner.hidden = false;
-            banner.textContent = (state.lang === "ar" ? "✅ تمت العملية بنجاح: +$" : "✅ Syndicate Op Complete: +$") +
-              c.contract.cash.toLocaleString("en-US") + " & +" + c.contract.xp + " XP!";
+            banner.innerHTML = ZMX_SVGS.check + " <span>" +
+              (state.lang === "ar" ? "تمت العملية بنجاح: +$" : "Syndicate Op Complete: +$") +
+              c.contract.cash.toLocaleString("en-US") + " & +" + c.contract.xp + " XP!</span>";
           }
         };
       });
@@ -1317,7 +1358,8 @@
       if (state.playerCash < dest.fare) {
         if (statusEl) {
           statusEl.hidden = false;
-          statusEl.textContent = ar ? "⚠️ رصيدك النقدي غير كافٍ لتذكرة الطيران." : "⚠️ Insufficient cash for charter flight fare.";
+          statusEl.innerHTML = ZMX_SVGS.alert + " <span>" +
+            (ar ? "رصيدك النقدي غير كافٍ لتذكرة الطيران." : "Insufficient cash for charter flight fare.") + "</span>";
         }
         return;
       }
@@ -1325,7 +1367,8 @@
       state.transitBusy = true;
       if (statusEl) {
         statusEl.hidden = false;
-        statusEl.textContent = (ar ? "✈️ الطائرة الخاصة في الجو نحو " : "✈️ Syndicate Jet in transit to ") + dest.name[ar ? "ar" : "en"] + " (" + dest.code + ")...";
+        statusEl.innerHTML = ZMX_SVGS.plane + " <span>" +
+          (ar ? "الطائرة الخاصة في الجو نحو " : "Syndicate Jet in transit to ") + dest.name[ar ? "ar" : "en"] + " (" + dest.code + ")...</span>";
       }
 
       setTimeout(function () {

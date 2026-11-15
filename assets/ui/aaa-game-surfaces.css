@@ -1,8 +1,10 @@
 /* ==========================================================================
-   ZONE — AAA CRIME SYNDICATE RPG SCREEN SURFACES (v125)
+   ZONE - AAA CRIME SYNDICATE RPG SCREEN SURFACES (v126)
+   MotionSites (/assets, /icons, /sections) Human Studio Surface Architecture
    File: assets/ui/aaa-game-surfaces.css
-   Scope: Strictly #zone-main (all inner screens, cards, tables, CTAs, inputs,
-          and modals). Topbar & Sidebar remain owned by @carbon-hud-chrome.
+   Scope: Strictly #zone-main (all inner screens, hero stages, poster cards,
+          tables, CTAs, inputs, and modals). Topbar & Sidebar remain owned by
+          @carbon-hud-chrome.
    Loaded AFTER: zone-design.css, zone-layout.css, district-compositions108.css,
                  gym116.css, and noir-game-hud.css.
    ========================================================================== */
@@ -10,6 +12,11 @@
 /* --------------------------------------------------------------------------
    0. SURFACE TOKENS (SCOPED TO #zone-main FOR DUAL-THEME PRECISION)
    -------------------------------------------------------------------------- */
+html body #zone-main {
+  --spot-x: 50%;
+  --spot-y: 35%;
+}
+
 html:not([data-theme="light"]) body #zone-main {
   --ags-surface-1: #121a29;
   --ags-surface-2: #0c121e;
@@ -67,8 +74,8 @@ html body #zone-main button {
   font-variant-numeric: tabular-nums;
 }
 
-/* Standard Tactile Action Buttons (excludes structural card/pin/row/chip buttons) */
-html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+/* Standard Tactile Action Buttons (excludes structural card/pin/row/chip/arcade-pill buttons) */
+html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
   font-size: 11.5px !important;
   font-weight: 700 !important;
   letter-spacing: 0.035em !important;
@@ -83,7 +90,7 @@ html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zone-ma
 }
 
 /* Dark Mode Secondary / Neutral Tactile Bevel */
-html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
   background: linear-gradient(180deg, #223049 0%, #121b2b 100%) !important;
   border: 1px solid rgba(124, 156, 206, 0.36) !important;
   color: #edf3fc !important;
@@ -94,7 +101,7 @@ html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):
     0 3px 9px rgba(0, 0, 0, 0.42) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
+html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
   background: linear-gradient(180deg, #2b3d5c 0%, #172338 100%) !important;
   border-color: rgba(235, 184, 88, 0.62) !important;
   color: #ffffff !important;
@@ -107,7 +114,7 @@ html:not([data-theme="light"]) body #zone-main button:not(.zone-action-primary):
 }
 
 /* Day Mode Secondary / Neutral Tactile Bevel */
-html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
+html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
   background: linear-gradient(180deg, #ffffff 0%, #eae0cd 100%) !important;
   border: 1px solid #b49f7b !important;
   color: #0f172a !important;
@@ -118,7 +125,7 @@ html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.z
     0 2px 6px rgba(15, 23, 42, 0.1) !important;
 }
 
-html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
+html[data-theme="light"] body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
   background: linear-gradient(180deg, #ffffff 0%, #f5ebd8 100%) !important;
   border-color: #9e6710 !important;
   color: #0f172a !important;
@@ -249,124 +256,225 @@ html body #zone-main button:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   2. CINEMATIC DISTRICT CHAPTER BANNER (.zone-page-heading)
+   2. PHOTOREALISTIC UE5 HERO STAGES (.zone-page-heading) & --screen-art BINDING
+      Defeats inline style="--screen-art:url(...)" on .zone-page-heading (index.html:155)
+      and zone-design.css:147
    -------------------------------------------------------------------------- */
-html body #zone-main .zone-page-heading {
-  min-height: 76px !important;
-  padding: 14px 18px !important;
-  border-radius: 8px !important;
-  position: relative;
-  overflow: hidden;
-  align-items: center !important;
-  gap: 12px !important;
+
+/* Default Syndicate Turf Hero Stage + District Screen Bindings */
+html body #zone-main,
+html body #zone-main .zone-page-heading,
+html body #zone-main[data-zone-screen="home"],
+html body #zone-main[data-zone-screen="home"] .zone-page-heading,
+html body #zone-main[data-zone-screen="city"],
+html body #zone-main[data-zone-screen="city"] .zone-page-heading,
+html body #zone-main[data-zone-screen="faction"],
+html body #zone-main[data-zone-screen="faction"] .zone-page-heading,
+html body #zone-main[data-zone-screen="bank"],
+html body #zone-main[data-zone-screen="bank"] .zone-page-heading,
+html body #zone-main[data-zone-screen="properties"],
+html body #zone-main[data-zone-screen="properties"] .zone-page-heading,
+html body #zone-main[data-zone-screen="hof"],
+html body #zone-main[data-zone-screen="hof"] .zone-page-heading,
+html body #zone-main[data-zone-screen="job"],
+html body #zone-main[data-zone-screen="job"] .zone-page-heading,
+html body #zone-main[data-zone-screen="jobs"],
+html body #zone-main[data-zone-screen="jobs"] .zone-page-heading,
+html body #zone-main[data-zone-screen="education"],
+html body #zone-main[data-zone-screen="education"] .zone-page-heading,
+html body #zone-main[data-zone-screen="newspaper"],
+html body #zone-main[data-zone-screen="newspaper"] .zone-page-heading {
+  --screen-art: url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
 }
 
+/* Rain-Slicked Street Crimes & Underworld Operations Hero Stage */
+html body #zone-main[data-zone-screen="crimes"],
+html body #zone-main[data-zone-screen="crimes"] .zone-page-heading,
+html body #zone-main[data-zone-screen="attack"],
+html body #zone-main[data-zone-screen="attack"] .zone-page-heading,
+html body #zone-main[data-zone-screen="jail"],
+html body #zone-main[data-zone-screen="jail"] .zone-page-heading,
+html body #zone-main[data-zone-screen="hospital"],
+html body #zone-main[data-zone-screen="hospital"] .zone-page-heading,
+html body #zone-main[data-zone-screen="missions"],
+html body #zone-main[data-zone-screen="missions"] .zone-page-heading,
+html body #zone-main[data-zone-screen="market"],
+html body #zone-main[data-zone-screen="market"] .zone-page-heading,
+html body #zone-main[data-zone-screen="items"],
+html body #zone-main[data-zone-screen="items"] .zone-page-heading,
+html body #zone-main[data-zone-screen="elimination"],
+html body #zone-main[data-zone-screen="elimination"] .zone-page-heading {
+  --screen-art: url('/assets/ui/motion-art/hero-street-crimes.webp') !important;
+}
+
+/* Dedicated Gym & Velvet Casino Hero Stages */
+html body #zone-main[data-zone-screen="gym"],
+html body #zone-main[data-zone-screen="gym"] .zone-page-heading {
+  --screen-art: url('/art/zone-gym-interior-v105.webp') !important;
+}
+
+html body #zone-main[data-zone-screen="casino"],
+html body #zone-main[data-zone-screen="casino"] .zone-page-heading {
+  --screen-art: url('/assets/ui/motion-art/arcade-casino.webp') !important;
+}
+
+html body #zone-main .zone-page-heading {
+  min-height: 98px !important;
+  padding: 18px 22px !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+/* Specular brass-emerald top rim accent */
 html body #zone-main .zone-page-heading::before {
   content: "";
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
-  width: 180px;
+  width: 240px;
   height: 2px;
-  background: linear-gradient(90deg, #ebb858 0%, #39e7a3 60%, transparent 100%);
+  background: linear-gradient(90deg, #ebb858 0%, #39e7a3 58%, transparent 100%);
   pointer-events: none;
-  z-index: 2;
+  z-index: 3;
 }
 
+/* Atmospheric particle canvas mounted by aaa-game-fx.js inside grid .zone-page-heading */
+html body #zone-main .zone-page-heading > canvas,
+html body #zone-main .zone-page-heading .zaaa-hero-atmosphere {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* Dark Mode Hero Stage: Feathered Left Noir Scrim -> Crisp UE5 Artwork on Right 60% */
 html:not([data-theme="light"]) body #zone-main .zone-page-heading {
-  background-color: #0b101b !important;
+  background-color: #090e18 !important;
   background-image:
-    radial-gradient(circle at 14% 22%, rgba(235, 184, 88, 0.24) 0%, transparent 46%),
-    radial-gradient(circle at 88% 82%, rgba(57, 231, 163, 0.15) 0%, transparent 48%),
-    linear-gradient(96deg, rgba(7, 11, 19, 0.95) 0%, rgba(12, 19, 31, 0.85) 50%, rgba(8, 13, 22, 0.66) 100%),
-    var(--screen-art, none) !important;
+    radial-gradient(320px circle at 12% 20%, rgba(235, 184, 88, 0.22) 0%, transparent 68%),
+    linear-gradient(
+      96deg,
+      rgba(6, 10, 18, 0.96) 0%,
+      rgba(9, 15, 26, 0.89) 36%,
+      rgba(10, 16, 28, 0.48) 68%,
+      rgba(7, 11, 19, 0.26) 100%
+    ),
+    var(--screen-art) !important;
   background-size: cover !important;
-  background-position: center !important;
-  border: 1px solid rgba(235, 184, 88, 0.34) !important;
+  background-position: center 42% !important;
+  background-repeat: no-repeat !important;
+  border: 1px solid rgba(235, 184, 88, 0.38) !important;
   border-inline-start: 4px solid #ebb858 !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 14px 32px rgba(0, 0, 0, 0.56) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -24px 36px rgba(5, 8, 15, 0.42),
+    0 16px 36px rgba(0, 0, 0, 0.58) !important;
 }
 
+/* Day Mode Hero Stage: Warm Ivory Left (13:1+ #0f172a Title) -> Visible UE5 Photo Right */
 html[data-theme="light"] body #zone-main .zone-page-heading {
-  background-color: #f8f3e7 !important;
+  background-color: #f6efe0 !important;
   background-image:
-    radial-gradient(circle at 12% 20%, rgba(209, 146, 32, 0.2) 0%, transparent 46%),
-    radial-gradient(circle at 88% 80%, rgba(14, 138, 84, 0.1) 0%, transparent 46%),
-    linear-gradient(96deg, rgba(253, 250, 243, 0.96) 0%, rgba(246, 239, 224, 0.91) 54%, rgba(236, 226, 204, 0.82) 100%),
-    var(--screen-art, none) !important;
+    radial-gradient(300px circle at 10% 18%, rgba(209, 146, 32, 0.18) 0%, transparent 66%),
+    linear-gradient(
+      96deg,
+      rgba(253, 250, 243, 0.97) 0%,
+      rgba(248, 242, 229, 0.93) 36%,
+      rgba(238, 228, 208, 0.48) 70%,
+      rgba(226, 214, 190, 0.28) 100%
+    ),
+    var(--screen-art) !important;
   background-size: cover !important;
-  background-position: center !important;
+  background-position: center 42% !important;
+  background-repeat: no-repeat !important;
   border: 1px solid #c3a673 !important;
   border-inline-start: 4px solid #b4781e !important;
   box-shadow:
     inset 0 1px 0 #ffffff,
-    0 8px 22px rgba(15, 23, 42, 0.1) !important;
+    0 10px 26px rgba(15, 23, 42, 0.11) !important;
 }
 
 html body #zone-main .zone-page-heading h1 {
   font: 800 26px/1.1 var(--zone-display) !important;
   letter-spacing: 0.045em !important;
   text-transform: uppercase !important;
-  position: relative;
-  z-index: 1;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-page-heading h1 {
   color: #f8fafc !important;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.88), 0 0 24px rgba(235, 184, 88, 0.16) !important;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.92), 0 0 24px rgba(235, 184, 88, 0.16) !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-page-heading h1 {
   color: #0f172a !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
 }
 
-html body #zone-main .zone-page-heading > span {
+html body #zone-main .zone-page-heading > span,
+html body #zone-main .zone-page-heading > p,
+html body #zone-main .zone-page-heading > small {
   font-size: 12.5px !important;
-  font-weight: 500 !important;
-  line-height: 1.35 !important;
-  position: relative;
-  z-index: 1;
+  font-weight: 600 !important;
+  line-height: 1.38 !important;
+  position: relative !important;
+  z-index: 2 !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zone-page-heading > span {
-  color: #cbd5e1 !important;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.82);
+html:not([data-theme="light"]) body #zone-main .zone-page-heading > span,
+html:not([data-theme="light"]) body #zone-main .zone-page-heading > p,
+html:not([data-theme="light"]) body #zone-main .zone-page-heading > small {
+  color: #dbe6f5 !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
 }
 
-html[data-theme="light"] body #zone-main .zone-page-heading > span {
-  color: #334155 !important;
+html[data-theme="light"] body #zone-main .zone-page-heading > span,
+html[data-theme="light"] body #zone-main .zone-page-heading > p,
+html[data-theme="light"] body #zone-main .zone-page-heading > small {
+  color: #1e293b !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
 /* District Banner Tactical Action Pills (City / Tutorial) */
 html body #zone-main .zone-page-heading > div {
-  position: relative;
-  z-index: 1;
+  position: relative !important;
+  z-index: 2 !important;
   gap: 8px !important;
 }
 
 html body #zone-main .zone-page-heading > div > button {
-  min-height: 32px !important;
-  padding: 5px 14px !important;
+  min-height: 33px !important;
+  padding: 6px 15px !important;
   border-radius: 999px !important;
   font-size: 11px !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.055em !important;
+  backdrop-filter: blur(10px) saturate(135%);
+  -webkit-backdrop-filter: blur(10px) saturate(135%);
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-page-heading > div > button {
-  background: linear-gradient(180deg, rgba(28, 40, 62, 0.92) 0%, rgba(14, 21, 34, 0.96) 100%) !important;
-  border: 1px solid rgba(235, 184, 88, 0.44) !important;
+  background: linear-gradient(180deg, rgba(22, 33, 52, 0.9) 0%, rgba(11, 17, 29, 0.95) 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.5) !important;
   color: #f8fafc !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 6px 16px rgba(0, 0, 0, 0.5) !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-page-heading > div > button {
-  background: linear-gradient(180deg, #ffffff 0%, #ede3cf 100%) !important;
-  border: 1px solid #b49a6d !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 231, 212, 0.96) 100%) !important;
+  border: 1px solid #a88753 !important;
   color: #0f172a !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 4px 12px rgba(15, 23, 42, 0.18) !important;
 }
 
 html body #zone-main .zone-page-rule {
@@ -376,13 +484,37 @@ html body #zone-main .zone-page-rule {
 }
 
 /* --------------------------------------------------------------------------
-   3. RPG MODULE PANELS, HEADINGS & HOME COMMAND DECK POLISH
+   3. MOTIONSITES PANELS, CURSOR-SPOTLIGHT, JEWEL ICONS & POSTER ARCADE DECK
    -------------------------------------------------------------------------- */
 html body #zone-main .zone-panel {
   background: var(--ags-surface-elev) !important;
   border: 1px solid var(--ags-border) !important;
-  border-radius: 7px !important;
+  border-radius: 8px !important;
   box-shadow: var(--ags-panel-shadow) !important;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+/* MotionSites Cursor-Spotlight Radial Sheen on .zone-panel (--spot-x, --spot-y) */
+html:not([data-theme="light"]) body #zone-main .zone-panel:hover {
+  background:
+    radial-gradient(
+      440px circle at var(--spot-x, 50%) var(--spot-y, 28%),
+      rgba(235, 184, 88, 0.075) 0%,
+      rgba(57, 231, 163, 0.03) 42%,
+      transparent 72%
+    ),
+    var(--ags-surface-elev) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-panel:hover {
+  background:
+    radial-gradient(
+      440px circle at var(--spot-x, 50%) var(--spot-y, 28%),
+      rgba(212, 162, 76, 0.12) 0%,
+      rgba(11, 125, 75, 0.035) 45%,
+      transparent 72%
+    ),
+    var(--ags-surface-elev) !important;
 }
 
 /* Preserve flush seam when .zone-panel sits directly beneath a standalone .zone-panel-heading */
@@ -405,7 +537,7 @@ html body #zone-main .zone-panel-heading {
   color: var(--ags-ink-1) !important;
   border: 1px solid var(--ags-border) !important;
   border-bottom: 2px solid var(--ags-emerald) !important;
-  border-radius: 7px 7px 0 0 !important;
+  border-radius: 8px 8px 0 0 !important;
   padding: 9px 13px !important;
   font-size: 11.5px !important;
   display: flex;
@@ -427,31 +559,48 @@ html body #zone-main .zone-overline {
   color: var(--ags-gold) !important;
 }
 
-/* Home Brief & Hideout Banner */
+/* Home Brief & Hideout Banner (with UE5 Turf Backdrop in BOTH Dark & Day Modes) */
 html body #zone-main .zone-home-brief {
   overflow: hidden;
   border-color: var(--ags-border-strong) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zone-hideout-scene {
-  border-bottom: 1px solid rgba(235, 184, 88, 0.25);
-  box-shadow: inset 0 -36px 48px rgba(7, 11, 18, 0.82);
+html:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-scene {
+  background-image:
+    linear-gradient(94deg, rgba(8, 12, 21, 0.93) 0%, rgba(11, 17, 29, 0.78) 46%, rgba(8, 12, 20, 0.34) 100%),
+    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+  background-size: cover !important;
+  background-position: center 48% !important;
+  border-bottom: 1px solid rgba(235, 184, 88, 0.28) !important;
+  box-shadow: inset 0 -32px 44px rgba(7, 11, 18, 0.78) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
+  background-color: #f6efe0 !important;
+  background-image:
+    linear-gradient(94deg, rgba(253, 250, 243, 0.96) 0%, rgba(247, 240, 226, 0.89) 46%, rgba(236, 225, 203, 0.36) 100%),
+    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+  background-size: cover !important;
+  background-position: center 48% !important;
+  border: 0 !important;
+  border-bottom: 1px solid #cbb99b !important;
+  box-shadow: inset 0 1px 0 #ffffff !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-hideout-scene > div {
-  background: linear-gradient(90deg, rgba(253, 250, 243, 0.94) 0%, rgba(246, 239, 224, 0.84) 68%, rgba(246, 239, 224, 0.4) 100%) !important;
+  background: linear-gradient(90deg, rgba(253, 250, 243, 0.92) 0%, rgba(246, 239, 224, 0.78) 68%, rgba(246, 239, 224, 0.15) 100%) !important;
   border-radius: 6px;
   padding: 10px 14px;
 }
 
 html[data-theme="light"] body #zone-main .zone-hideout-scene strong {
   color: #0f172a !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.88) !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-hideout-scene span:not(.zone-overline) {
-  color: #334155 !important;
-  text-shadow: none !important;
+  color: #1e293b !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
 }
 
 /* Home Vitals Resource Strip */
@@ -476,17 +625,39 @@ html body #zone-main .zone-quick-actions {
 }
 
 html body #zone-main .zone-quick-actions > button {
-  min-height: 64px !important;
-  padding: 10px 13px !important;
-  border-radius: 8px !important;
-  position: relative;
-  overflow: hidden;
+  min-height: 66px !important;
+  padding: 11px 14px !important;
+  border-radius: 10px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate;
   font-weight: 800 !important;
   transition:
-    transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    background 160ms ease !important;
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease !important;
+}
+
+/* MotionSites Cursor-Spotlight Sheen on Quick-Deploy Tiles */
+html body #zone-main .zone-quick-actions > button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    220px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(235, 184, 88, 0.2) 0%,
+    rgba(57, 231, 163, 0.08) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+html body #zone-main .zone-quick-actions > button:hover::before {
+  opacity: 1;
 }
 
 /* Subtle tactical corner notch accent */
@@ -497,8 +668,14 @@ html body #zone-main .zone-quick-actions > button::after {
   inset-inline-end: 0;
   width: 16px;
   height: 16px;
-  background: linear-gradient(225deg, rgba(235, 184, 88, 0.42) 0%, rgba(235, 184, 88, 0.42) 32%, transparent 34%);
+  background: linear-gradient(225deg, rgba(235, 184, 88, 0.44) 0%, rgba(235, 184, 88, 0.44) 32%, transparent 34%);
   pointer-events: none;
+  z-index: 2;
+}
+
+html body #zone-main .zone-quick-actions > button > span {
+  position: relative;
+  z-index: 2;
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button {
@@ -527,7 +704,7 @@ html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button:hove
 
 html[data-theme="light"] body #zone-main .zone-quick-actions > button {
   background:
-    radial-gradient(circle at 0% 50%, rgba(11, 125, 75, 0.09) 0%, transparent 58%),
+    radial-gradient(circle at 0% 50%, rgba(11, 125, 75, 0.08) 0%, transparent 58%),
     linear-gradient(180deg, #ffffff 0%, #efe6d5 100%) !important;
   border: 1px solid #bfa983 !important;
   color: #0f172a !important;
@@ -546,29 +723,91 @@ html[data-theme="light"] body #zone-main .zone-quick-actions > button:hover {
     0 0 0 1px rgba(180, 120, 30, 0.22) !important;
 }
 
+/* Sculpted Dark Obsidian-Gold Jewel Squircles for Quick-Action Icons (Dark & Day Parity) */
 html body #zone-main .zone-quick-actions > button .zone-nav-icon {
-  width: 40px !important;
-  height: 40px !important;
-  flex: 0 0 40px !important;
-  border-radius: 8px !important;
+  width: 42px !important;
+  height: 42px !important;
+  flex: 0 0 42px !important;
+  border-radius: 10px !important;
   display: grid !important;
   place-items: center !important;
-  border: 1px solid var(--ags-gold-soft) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 3px 10px rgba(0, 0, 0, 0.28);
+  color: #f8fafc !important;
+  position: relative !important;
+  z-index: 2 !important;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 180ms ease,
+    box-shadow 180ms ease !important;
+}
+
+/* Defeat legacy raster mask & gold solid-fill SVG crushers in zone-design.css:136-137,206 */
+html body #zone-main .zone-quick-actions > button .zone-nav-icon::before {
+  content: none !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  -webkit-mask: none !important;
+  mask: none !important;
+}
+
+html body #zone-main .zone-quick-actions > button .zone-nav-icon svg:first-child:not(:only-child) {
+  display: none !important;
+}
+
+html body #zone-main .zone-quick-actions > button .zone-nav-icon svg:last-child {
+  display: block !important;
+  visibility: visible !important;
+  width: 22px !important;
+  height: 22px !important;
+}
+
+html body #zone-main .zone-quick-actions > button .zone-nav-icon svg:not([viewBox="0 0 512 512"]) {
+  fill: none !important;
+  color: #f8fafc !important;
+}
+
+html body #zone-main .zone-quick-actions > button .zone-nav-icon svg[viewBox="0 0 512 512"] {
+  fill: #ebb858 !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-quick-actions > button .zone-nav-icon {
-  background: radial-gradient(circle at 50% 35%, rgba(57, 231, 163, 0.18), rgba(9, 14, 24, 0.95)) !important;
+  background-color: #0b1220 !important;
+  background-image:
+    radial-gradient(circle at 50% 22%, rgba(57, 231, 163, 0.22) 0%, transparent 66%),
+    linear-gradient(145deg, #18263c 0%, #0b1220 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 4px 12px rgba(0, 0, 0, 0.44) !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-quick-actions > button .zone-nav-icon {
-  background: radial-gradient(circle at 50% 35%, rgba(214, 167, 86, 0.22), #faf5ea) !important;
+  background-color: #0d1524 !important;
+  background-image:
+    radial-gradient(circle at 50% 22%, rgba(235, 184, 88, 0.2) 0%, transparent 66%),
+    linear-gradient(145deg, #162235 0%, #0d1524 100%) !important;
+  border: 1px solid rgba(212, 162, 76, 0.58) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 4px 10px rgba(15, 23, 42, 0.2) !important;
+}
+
+html body #zone-main .zone-quick-actions > button:hover .zone-nav-icon {
+  transform: scale(1.08);
+  border-color: #ebb858 !important;
 }
 
 html body #zone-main .zone-quick-actions > button > span:last-child > span:first-child {
   font-weight: 800 !important;
   font-size: 13px !important;
   color: var(--ags-ink-1) !important;
+}
+
+html body #zone-main .zone-quick-actions > button > span:last-child > span:last-child {
+  font-weight: 600 !important;
+  color: var(--ags-ink-3) !important;
 }
 
 /* Home Modules: Daily Objective, Next Move, Streak, Active Missions & Loadout Stats */
@@ -634,13 +873,35 @@ html body #zone-main .zone-home-mission:hover {
   background: var(--ags-row-hover) !important;
 }
 
-/* Character Stage Overlay Pills (stay readable over dark 3D canvas in Day Mode) */
+/* Studio Architectural 3D Character Stage (YOUR CHARACTER - Dark & Day Mode Framing) */
+html:not([data-theme="light"]) body #zone-main .zone-character-stage {
+  background: radial-gradient(circle at 50% 36%, #1b2940 0%, #0d1524 68%, #070b13 100%) !important;
+  border-radius: 8px !important;
+  margin: 8px 10px 4px !important;
+  border: 1px solid rgba(124, 156, 206, 0.32) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -18px 28px rgba(0, 0, 0, 0.55) !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-character-stage {
+  background: radial-gradient(circle at 50% 36%, #1e293b 0%, #0f172a 68%, #090d16 100%) !important;
+  border-radius: 8px !important;
+  margin: 8px 10px 4px !important;
+  border: 1px solid rgba(212, 162, 76, 0.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 6px 16px rgba(15, 23, 42, 0.16) !important;
+  overflow: hidden !important;
+}
+
 html body #zone-main .zone-character-stage span[style*="rgba(10,12,15"] {
   background: rgba(8, 12, 20, 0.78) !important;
-  border: 1px solid rgba(235, 184, 88, 0.34);
+  border: 1px solid rgba(235, 184, 88, 0.38);
   color: #f8fafc !important;
   font-weight: 700 !important;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
 
 html body #zone-main .zone-equipped-summary {
@@ -691,10 +952,29 @@ html body #zone-main .zone-territory-summary {
   border: 1px solid var(--ags-border) !important;
 }
 
-/* Instant Games Arcade Deck (.zig-arcade-deck & .zig-game-card) */
+html body #zone-main .zone-dossier-card {
+  background: var(--ags-row-bg) !important;
+  border: 1px solid var(--ags-border) !important;
+  border-radius: 7px !important;
+}
+
+html body #zone-main .zone-dossier-card-head {
+  background: var(--ags-head-bg) !important;
+  color: var(--ags-ink-1) !important;
+  border-bottom: 1px solid var(--ags-emerald) !important;
+}
+
+/* --------------------------------------------------------------------------
+   SYNDICATE ARCADE & CINEMATIC POSTER CARDS (.zig-arcade-deck & .zig-game-card)
+   -------------------------------------------------------------------------- */
+html body #zone-main .zig-arcade-deck {
+  border-radius: 10px !important;
+  padding: 14px !important;
+}
+
 html:not([data-theme="light"]) body #zone-main .zig-arcade-deck {
-  border: 1px solid rgba(235, 184, 88, 0.32) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 32px rgba(0, 0, 0, 0.48) !important;
+  border: 1px solid rgba(235, 184, 88, 0.34) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 32px rgba(0, 0, 0, 0.5) !important;
 }
 
 html[data-theme="light"] body #zone-main .zig-arcade-deck {
@@ -703,33 +983,329 @@ html[data-theme="light"] body #zone-main .zig-arcade-deck {
   box-shadow: inset 0 1px 0 #ffffff, 0 8px 22px rgba(15, 23, 42, 0.09) !important;
 }
 
+html body #zone-main .zig-arcade-emblem {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 9px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  background: linear-gradient(145deg, #162235 0%, #0b1220 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.5) !important;
+  color: #ebb858 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+html body #zone-main .zig-arcade-emblem svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+}
+
+html body #zone-main .zig-arcade-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Pure-CSS Pill Radius to avoid noir-game-hud.css:81 inline style crusher */
+html body #zone-main .zig-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px !important;
+  border-radius: 999px !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-live-pill {
+  background: rgba(16, 62, 46, 0.85);
+  border: 1px solid rgba(57, 231, 163, 0.52);
+  color: #6ee7b7;
+  box-shadow: 0 0 12px rgba(57, 231, 163, 0.2);
+}
+
+html[data-theme="light"] body #zone-main .zig-live-pill {
+  background: #dcfce7;
+  border: 1px solid #0d945b;
+  color: #065f3b;
+}
+
+html body #zone-main .zig-sound-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border-radius: 999px !important;
+  padding: 6px 13px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  transition: transform 150ms ease, border-color 160ms ease, box-shadow 160ms ease !important;
+}
+
+html body #zone-main .zig-sound-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-sound-btn {
+  background: linear-gradient(180deg, #1b2840 0%, #101827 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.44) !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-sound-btn {
+  background: linear-gradient(180deg, #ffffff 0%, #ede3d0 100%) !important;
+  border: 1px solid #b49a6d !important;
+  color: #0f172a !important;
+}
+
+html body #zone-main .zig-sound-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--ags-gold) !important;
+}
+
+/* Poster Card Shell & MotionSites Cursor-Spotlight */
 html body #zone-main .zig-game-card {
-  border-radius: 8px !important;
-  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 160ms ease, box-shadow 160ms ease !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  isolation: isolate;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms ease,
+    box-shadow 220ms ease !important;
+}
+
+html body #zone-main .zig-game-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    260px circle at var(--spot-x, 50%) var(--spot-y, 35%),
+    rgba(235, 184, 88, 0.18) 0%,
+    rgba(57, 231, 163, 0.06) 45%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity 240ms ease;
+  pointer-events: none;
+  z-index: 4;
+}
+
+html body #zone-main .zig-game-card:hover::before {
+  opacity: 1;
 }
 
 html:not([data-theme="light"]) body #zone-main .zig-game-card {
+  background: linear-gradient(180deg, #111a2b 0%, #090e19 100%) !important;
   border: 1px solid rgba(124, 156, 206, 0.32) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 20px rgba(0, 0, 0, 0.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.46) !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zig-game-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) !important;
   border-color: #ebb858 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 12px 26px rgba(0, 0, 0, 0.54), 0 0 16px rgba(235, 184, 88, 0.2) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 16px 32px rgba(0, 0, 0, 0.58),
+    0 0 20px rgba(235, 184, 88, 0.22) !important;
 }
 
 html[data-theme="light"] body #zone-main .zig-game-card {
   background: linear-gradient(180deg, #ffffff 0%, #f3ebdc 100%) !important;
   border: 1px solid #bfa983 !important;
   color: #0f172a !important;
-  box-shadow: inset 0 1px 0 #ffffff, 0 4px 12px rgba(15, 23, 42, 0.08) !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 5px 14px rgba(15, 23, 42, 0.09) !important;
 }
 
 html[data-theme="light"] body #zone-main .zig-game-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px) !important;
   border-color: #b4781e !important;
-  box-shadow: inset 0 1px 0 #ffffff, 0 8px 18px rgba(15, 23, 42, 0.14) !important;
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 12px 24px rgba(15, 23, 42, 0.15),
+    0 0 0 1px rgba(180, 120, 30, 0.22) !important;
+}
+
+/* 16:10 Photorealistic UE5 Key-Art Media Stage + Transparent Shader Canvas */
+html body #zone-main .zig-card-media {
+  position: relative !important;
+  aspect-ratio: 16 / 10 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  background: #070b13 !important;
+  flex-shrink: 0;
+}
+
+html body #zone-main .zig-card-art {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  transform: scale(1.001);
+  transition:
+    transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 320ms ease !important;
+}
+
+html body #zone-main .zig-game-card:hover .zig-card-art {
+  transform: scale(1.07) !important;
+  filter: brightness(1.08) saturate(1.05) !important;
+}
+
+/* Override noir-game-hud.css:276-281,625 opaque #06090f 98px canvas rule */
+html body #zone-main .zig-game-card canvas.zig-card-shader,
+html body #zone-main .zig-card-media > canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  display: block !important;
+}
+
+/* Bottom feathered vignette blending poster media into card body */
+html body #zone-main .zig-card-media::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(7, 11, 19, 0) 0%, rgba(9, 14, 24, 0.78) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-theme="light"] body #zone-main .zig-card-media::after {
+  height: 36%;
+  background: linear-gradient(180deg, rgba(7, 11, 19, 0) 0%, rgba(9, 14, 24, 0.45) 100%);
+}
+
+/* Frosted Liquid-Glass Pill Badge Over Poster Art (Pure CSS border-radius: 999px) */
+html body #zone-main .zig-card-badge {
+  position: absolute !important;
+  top: 10px !important;
+  inset-inline-start: 10px !important;
+  z-index: 3 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  backdrop-filter: blur(8px) saturate(140%);
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+  background: rgba(8, 13, 23, 0.74) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #f8fafc !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.42);
+}
+
+html body #zone-main .zig-game-card-body {
+  padding: 11px 12px 12px !important;
+  gap: 5px !important;
+  position: relative;
+  z-index: 3;
+}
+
+html body #zone-main .zig-game-card-cta {
+  margin-top: auto !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-game-card-cta {
+  background: rgba(16, 48, 37, 0.52);
+  border: 1px solid rgba(57, 231, 163, 0.3);
+  color: #49f0a8 !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-game-card:hover .zig-game-card-cta {
+  background: linear-gradient(90deg, rgba(24, 78, 58, 0.85) 0%, rgba(18, 42, 36, 0.92) 100%);
+  border-color: #ebb858;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(57, 231, 163, 0.25);
+}
+
+html[data-theme="light"] body #zone-main .zig-game-card-cta {
+  background: linear-gradient(180deg, #ecf9f2 0%, #d8f2e5 100%);
+  border: 1px solid rgba(11, 125, 75, 0.34);
+  color: #075e38 !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-game-card:hover .zig-game-card-cta {
+  background: linear-gradient(180deg, #139a61 0%, #0b7346 100%);
+  border-color: #064c2d;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(11, 115, 70, 0.28);
+}
+
+html body #zone-main .zig-game-card-cta svg {
+  width: 13px !important;
+  height: 13px !important;
+  flex-shrink: 0;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html body #zone-main .zig-game-card:hover .zig-game-card-cta svg {
+  transform: translateX(2px);
+}
+
+html body #zone-main .zig-btn {
+  background: linear-gradient(180deg, #f3ca74 0%, #cc912b 100%) !important;
+  color: #090d16 !important;
+  border: 1px solid #fbe0a1 !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 12px rgba(204, 145, 43, 0.3) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zig-btn-secondary {
+  background: linear-gradient(180deg, #1e2b44 0%, #111a2b 100%) !important;
+  color: #edf3fc !important;
+  border: 1px solid rgba(124, 156, 206, 0.38) !important;
+  border-radius: 6px !important;
+  padding: 6px 11px !important;
+  font-size: 11px !important;
+}
+
+html[data-theme="light"] body #zone-main .zig-btn-secondary {
+  background: linear-gradient(180deg, #ffffff 0%, #eae0cd 100%) !important;
+  color: #0f172a !important;
+  border: 1px solid #b49f7b !important;
+  border-radius: 6px !important;
+  padding: 6px 11px !important;
+  font-size: 11px !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -796,6 +1372,14 @@ html body #zone-main .zone-crime-resources > span {
 html body #zone-main .zone-crime-plan {
   margin-block-start: 0 !important;
   border-top: 3px solid var(--ags-gold) !important;
+  position: relative;
+}
+
+/* Kill rotated top-right pseudo tape artifact from district-compositions108.css:22 */
+html body #zone-main .zone-crime-plan::before,
+html body #zone-main .zone-crime-plan::after {
+  content: none !important;
+  display: none !important;
 }
 
 html body #zone-main .zone-crime-plan dl {
@@ -984,11 +1568,31 @@ html body #zone-main[data-zone-screen="gym"] .zone-gym-station bdi {
   color: var(--ags-ink-1) !important;
 }
 
-html body #zone-main[data-zone-screen="gym"] .zone-gym-session {
+html body #zone-main[data-zone-screen="gym"] .zone-gym-session,
+html body #zone-main .zone-gym-session {
   background: var(--ags-row-bg) !important;
   border: 1px solid var(--ags-border-strong) !important;
   border-top: 3px solid var(--ags-gold) !important;
   border-radius: 8px !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+html body #zone-main .zig-gym-wrap,
+html body #zone-main .zig-heist-wrap {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box !important;
+}
+
+html body #zone-main .zig-gym-wrap canvas,
+html body #zone-main .zig-heist-wrap canvas {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: block !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-session-metrics {
@@ -1264,6 +1868,48 @@ html body #zone-main[data-zone-screen="properties"] .zone-property-dossier:hover
   border-color: var(--ags-gold) !important;
 }
 
+/* City 3D Map Shell Bezel Containment (prevents internal top-right HUD strip border collision) */
+html body #zone-main .zone-city-map-shell {
+  margin-top: 0 !important;
+  padding: 5px !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+html:not([data-theme="light"]) body #zone-main .zone-city-map-shell {
+  background: #080d16 !important;
+  border: 1px solid rgba(235, 184, 88, 0.4) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 28px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="light"] body #zone-main .zone-city-map-shell {
+  background: #0d1524 !important;
+  border: 1px solid #b49a6d !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.15) !important;
+}
+
+html body #zone-main .zone-city-map-shell > iframe,
+html body #zone-main #zone-city-map {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+}
+
+/* Global Syndicate Flight Network Bar SVG & Chip Polish */
+html body #zone-main .zig-world-flight-title svg,
+html body #zone-main .zig-world-flight-meta svg,
+html body #zone-main .zig-city-chip svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  vertical-align: -2px;
+}
+
 /* City Directory Search & Destination Cards (Fixes Day Mode smudge in zone-design.css:328) */
 html:not([data-theme="light"]) body #zone-main .zone-city-search {
   background: #0a101c !important;
@@ -1282,19 +1928,32 @@ html[data-theme="light"] body #zone-main .zone-city-search {
 }
 
 html body #zone-main .zone-city-destinations button {
-  border-radius: 7px !important;
+  border-radius: 8px !important;
   border: 1px solid var(--ags-border) !important;
   background: var(--ags-row-bg) !important;
   color: var(--ags-ink-1) !important;
   font-weight: 700 !important;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14) !important;
-  transition: transform 130ms ease, border-color 140ms ease, background 140ms ease !important;
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), border-color 150ms ease, background 150ms ease !important;
 }
 
 html body #zone-main .zone-city-destinations button:hover {
   transform: translateY(-1px);
   background: var(--ags-row-hover) !important;
   border-color: var(--ags-gold) !important;
+}
+
+/* Sculpted Dark Jewel Squircles for City Place Icons (Dark & Day Parity) */
+html body #zone-main .zone-city-destinations .zone-city-place-icon {
+  width: 34px !important;
+  height: 34px !important;
+  flex: 0 0 34px !important;
+  border-radius: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: linear-gradient(145deg, #162235 0%, #0c1422 100%) !important;
+  border: 1px solid rgba(212, 162, 76, 0.46) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 3px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
 html body #zone-main .zone-bulletin-entry,
@@ -1469,12 +2128,14 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 @media (max-width: 760px) {
   html body #zone-main {
     max-width: 100% !important;
+    overflow-x: hidden !important;
     box-sizing: border-box !important;
   }
 
   html body #zone-main .zone-page-heading {
-    min-height: 58px !important;
-    padding: 10px 14px !important;
+    min-height: 68px !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
   }
 
   html body #zone-main .zone-page-heading h1 {
@@ -1482,8 +2143,31 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main .zone-quick-actions > button {
-    min-height: 56px !important;
+    min-height: 58px !important;
     padding: 8px 10px !important;
+  }
+
+  html body #zone-main .zone-quick-actions > button .zone-nav-icon {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+  }
+
+  html body #zone-main .zig-arcade-deck {
+    padding: 10px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #zone-main .zig-card-badge {
+    top: 7px !important;
+    inset-inline-start: 7px !important;
+    padding: 2px 7px !important;
+    font-size: 8.5px !important;
+  }
+
+  html body #zone-main .zig-game-card-body {
+    padding: 8px 9px 9px !important;
   }
 
   html body #zone-main .zone-loadout-stats {
@@ -1536,17 +2220,69 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 }
 
-/* 100% Arabic RTL Zero Letter-Spacing & Directional Mirroring */
-html[dir="rtl"] #zone-main,
-html[dir="rtl"] #zone-main *,
-html[dir="rtl"] #zone-main *::before,
-html[dir="rtl"] #zone-main *::after {
-  letter-spacing: 0 !important;
+/* 100% Arabic RTL Zero Letter-Spacing & Directional Scrim Mirroring */
+html[dir="rtl"] body #zone-main#zone-main,
+html[dir="rtl"] body #zone-main#zone-main *,
+html[dir="rtl"] body #zone-main#zone-main *::before,
+html[dir="rtl"] body #zone-main#zone-main *::after,
+html[dir="rtl"] body #zone-main#zone-main button,
+html[lang="ar"] body #zone-main#zone-main,
+html[lang="ar"] body #zone-main#zone-main *,
+html[lang="ar"] body #zone-main#zone-main *::before,
+html[lang="ar"] body #zone-main#zone-main *::after,
+html[lang="ar"] body #zone-main#zone-main button {
+  letter-spacing: 0px !important;
+}
+
+html[dir="rtl"]:not([data-theme="light"]) body #zone-main .zone-page-heading {
+  background-image:
+    radial-gradient(320px circle at 88% 20%, rgba(235, 184, 88, 0.22) 0%, transparent 68%),
+    linear-gradient(
+      264deg,
+      rgba(6, 10, 18, 0.96) 0%,
+      rgba(9, 15, 26, 0.89) 36%,
+      rgba(10, 16, 28, 0.48) 68%,
+      rgba(7, 11, 19, 0.26) 100%
+    ),
+    var(--screen-art) !important;
+}
+
+html[dir="rtl"][data-theme="light"] body #zone-main .zone-page-heading {
+  background-image:
+    radial-gradient(300px circle at 90% 18%, rgba(209, 146, 32, 0.18) 0%, transparent 66%),
+    linear-gradient(
+      264deg,
+      rgba(253, 250, 243, 0.97) 0%,
+      rgba(248, 242, 229, 0.93) 36%,
+      rgba(238, 228, 208, 0.48) 70%,
+      rgba(226, 214, 190, 0.28) 100%
+    ),
+    var(--screen-art) !important;
+}
+
+html[dir="rtl"]:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-scene {
+  background-image:
+    linear-gradient(266deg, rgba(8, 12, 21, 0.93) 0%, rgba(11, 17, 29, 0.78) 46%, rgba(8, 12, 20, 0.34) 100%),
+    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+}
+
+html[dir="rtl"][data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
+  background-image:
+    linear-gradient(266deg, rgba(253, 250, 243, 0.96) 0%, rgba(247, 240, 226, 0.89) 46%, rgba(236, 225, 203, 0.36) 100%),
+    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
 }
 
 html[dir="rtl"] body #zone-main .zone-page-heading::before,
 html[dir="rtl"] body #zone-main .zone-page-rule {
   background: linear-gradient(270deg, var(--ags-gold) 0%, var(--ags-emerald) 45%, transparent 100%) !important;
+}
+
+html[dir="rtl"] body #zone-main .zig-game-card:hover .zig-game-card-cta svg {
+  transform: translateX(-2px) scaleX(-1);
+}
+
+html[dir="rtl"] body #zone-main .zig-game-card-cta svg {
+  transform: scaleX(-1);
 }
 
 html[dir="rtl"] body #zone-main .zone-table-row:hover,

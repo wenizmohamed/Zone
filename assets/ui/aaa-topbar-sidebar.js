@@ -1,5 +1,6 @@
 /* ==========================================================================
- * ZONE — AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR RUNTIME (v125)
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR RUNTIME (v126)
+ * MotionSites (/icons & /sections/header) Human Studio Craft Edition
  * Exclusive Ownership: carbon-hud-chrome
  * Scope: .zone-topbar, [data-zheaderbar], .zone-theme-indicator, aside.zone-sidebar
  * Guardrails: Idempotent, React-18/<x-dc> fiber-safe (append-only + CSS order),
@@ -15,8 +16,23 @@
   var isSyncing = false;
 
   /* ------------------------------------------------------------------------
-   * INLINE VECTOR ASSETS (Crisp Tactical Syndicate Iconography)
+   * MOTIONSITES TRANSLUCENT DUOTONE VECTOR PACK (/icons)
+   * 2-plane construction:
+   *   1) Tinted translucent back-plane (.zaaa-duo-back, fill-opacity 0.32-0.36)
+   *      matched to district domain (#39e7a3 emerald, #ebb858 gold,
+   *      #f43f5e crimson, #60a5fa ice)
+   *   2) Crisp foreground stroke (.zaaa-duo-stroke, stroke="currentColor",
+   *      stroke-width="1.85", round caps & joins)
    * ------------------------------------------------------------------------ */
+  function duotoneSvg(backMarkup, strokeMarkup) {
+    return (
+      '<svg class="zaaa-duotone-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        backMarkup +
+        strokeMarkup +
+      '</svg>'
+    );
+  }
+
   var BRAND_CREST_SVG =
     '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       '<defs>' +
@@ -27,92 +43,149 @@
         '</linearGradient>' +
       '</defs>' +
       '<polygon points="16,2 30,16 16,30 2,16" fill="#0B101B" stroke="url(#zaaaGoldGrad)" stroke-width="1.8"/>' +
-      '<polygon points="16,6.2 25.8,16 16,25.8 6.2,16" fill="rgba(235,184,88,0.12)" stroke="url(#zaaaGoldGrad)" stroke-width="1" stroke-opacity="0.72"/>' +
-      '<line x1="16" y1="2" x2="16" y2="9" stroke="#FBBF24" stroke-width="1.3" stroke-linecap="round"/>' +
-      '<line x1="16" y1="23" x2="16" y2="30" stroke="#FBBF24" stroke-width="1.3" stroke-linecap="round"/>' +
-      '<line x1="2" y1="16" x2="9" y2="16" stroke="#FBBF24" stroke-width="1.3" stroke-linecap="round"/>' +
-      '<line x1="23" y1="16" x2="30" y2="16" stroke="#FBBF24" stroke-width="1.3" stroke-linecap="round"/>' +
+      '<polygon points="16,6.2 25.8,16 16,25.8 6.2,16" fill="#EBB858" fill-opacity="0.22" stroke="url(#zaaaGoldGrad)" stroke-width="1" stroke-opacity="0.76"/>' +
+      '<line x1="16" y1="2" x2="16" y2="9" stroke="#FBBF24" stroke-width="1.35" stroke-linecap="round"/>' +
+      '<line x1="16" y1="23" x2="16" y2="30" stroke="#FBBF24" stroke-width="1.35" stroke-linecap="round"/>' +
+      '<line x1="2" y1="16" x2="9" y2="16" stroke="#FBBF24" stroke-width="1.35" stroke-linecap="round"/>' +
+      '<line x1="23" y1="16" x2="30" y2="16" stroke="#FBBF24" stroke-width="1.35" stroke-linecap="round"/>' +
       '<polygon points="16,11.2 20.8,16 16,20.8 11.2,16" fill="url(#zaaaGoldGrad)"/>' +
       '<circle cx="16" cy="16" r="1.8" fill="#090D16"/>' +
     '</svg>';
 
+  /* Header Command Dock Duotone Icons (.zone-header-links) */
   var LINK_ICONS = {
-    education:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M22 10 12 5 2 10l10 5 10-5z"/>' +
-        '<path d="M6 12.5v4.5c0 1.7 2.7 3 6 3s6-1.3 6-3v-4.5"/>' +
-        '<path d="M22 10v5"/>' +
-      '</svg>',
-    newspaper:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
-        '<path d="M14 2v6h6"/>' +
-        '<path d="M8 13h8"/>' +
-        '<path d="M8 17h5"/>' +
-      '</svg>',
-    faction:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' +
-        '<path d="m9 12 2 2 4-4"/>' +
-      '</svg>',
-    account:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<rect x="3" y="5" width="18" height="14" rx="2"/>' +
-        '<circle cx="9" cy="11" r="2"/>' +
-        '<path d="M15 10h3"/>' +
-        '<path d="M15 14h3"/>' +
-        '<path d="M6.5 16c.6-1.2 1.5-1.8 2.5-1.8s1.9.6 2.5 1.8"/>' +
-      '</svg>',
-    hof:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>' +
-        '<path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>' +
-        '<path d="M4 22h16"/>' +
-        '<path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>' +
-        '<path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>' +
-        '<path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>' +
-      '</svg>'
+    education: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M12 5L21 9.5L12 14L3 9.5L12 5ZM6.5 12.2V16.5C6.5 18.2 9 19.5 12 19.5C15 19.5 17.5 18.2 17.5 16.5V12.2L12 15L6.5 12.2Z" fill="#60a5fa" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M21.5 9.5L12 4.8L2.5 9.5L12 14.2L21.5 9.5ZM6.5 12V16.5C6.5 18.2 9 19.5 12 19.5C15 19.5 17.5 18.2 17.5 16.5V12M21.5 9.5V14.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    newspaper: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M5 5.5C5 4.67 5.67 4 6.5 4H14.5L19.5 9V18.5C19.5 19.33 18.83 20 18 20H6.5C5.67 20 5 19.33 5 18.5V5.5Z" fill="#60a5fa" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M14.5 4H6.5C5.67 4 5 4.67 5 5.5V18.5C5 19.33 5.67 20 6.5 20H18C18.83 20 19.5 19.33 19.5 18.5V9L14.5 4ZM14.5 4V9H19.5M8.5 13H16M8.5 16.5H13" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    faction: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M12 3.5L19.5 6.5V12.2C19.5 16.8 16.2 19.8 12 21.2C7.8 19.8 4.5 16.8 4.5 12.2V6.5L12 3.5Z" fill="#ebb858" fill-opacity="0.35"/>',
+      '<path class="zaaa-duo-stroke" d="M12 3.5L19.5 6.5V12.2C19.5 16.8 16.2 19.8 12 21.2C7.8 19.8 4.5 16.8 4.5 12.2V6.5L12 3.5ZM9.2 12.2L11.2 14.2L15.2 10.2" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    account: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="3" y="5" width="18" height="14" rx="2.2" fill="#60a5fa" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M5.2 5H18.8C20 5 21 6 21 7.2V16.8C21 18 20 19 18.8 19H5.2C4 19 3 18 3 16.8V7.2C3 6 4 5 5.2 5ZM9 11.2A2 2 0 1 0 9 7.2A2 2 0 0 0 9 11.2ZM6.3 15.8C6.9 14.5 7.8 13.8 9 13.8C10.2 13.8 11.1 14.5 11.7 15.8M14.8 9.8H18M14.8 13.5H18" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    hof: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M7 4H17V9.5C17 12.26 14.76 14.5 12 14.5C9.24 14.5 7 12.26 7 9.5V4Z" fill="#ebb858" fill-opacity="0.36"/>',
+      '<path class="zaaa-duo-stroke" d="M7 4H17V9.5C17 12.26 14.76 14.5 12 14.5C9.24 14.5 7 12.26 7 9.5V4ZM7 6H4.8C3.8 6 3 6.8 3 7.8C3 9.2 4.1 10.3 5.5 10.3H7M17 6H19.2C20.2 6 21 6.8 21 7.8C21 9.2 19.9 10.3 18.5 10.3H17M12 14.5V18.5M8 20.5H16" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
   };
 
+  /* Live Topbar Telemetry Duotone Icons (#zone-topbar-hud) */
   var HUD_ICONS = {
-    cash:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
-        '<rect x="2" y="6" width="20" height="12" rx="2"/>' +
-        '<circle cx="12" cy="12" r="2.5"/>' +
-        '<path d="M6 12h.01M18 12h.01"/>' +
-      '</svg>',
-    energy:
-      '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none">' +
-        '<path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/>' +
-      '</svg>',
-    nerve:
-      '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none">' +
-        '<path d="M12.5 2.2c.6 3.3 4.5 5.4 4.5 10.3a5.5 5.5 0 0 1-11 0c0-2.6 1.5-4.4 2.7-5.7-.2 1.8.8 2.9 1.9 3.4-.3-2.5-.6-5.1 1.9-8z"/>' +
-      '</svg>',
-    city:
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-        '<path d="M3 21h18"/>' +
-        '<path d="M5 21V8l6-4v17"/>' +
-        '<path d="M11 10h8v11"/>' +
-        '<path d="M8 10v.01M8 14v.01M15 14v.01M15 17v.01"/>' +
-      '</svg>'
+    cash: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="2.5" y="6" width="19" height="12" rx="2.2" fill="#39e7a3" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M4.7 6H19.3C20.5 6 21.5 7 21.5 8.2V15.8C21.5 17 20.5 18 19.3 18H4.7C3.5 18 2.5 17 2.5 15.8V8.2C2.5 7 3.5 6 4.7 6ZM14.5 12A2.5 2.5 0 1 1 9.5 12A2.5 2.5 0 0 1 14.5 12ZM6 12H6.01M18 12H18.01" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    energy: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M13.2 2.8L4.8 13.6H11L9.8 21.2L19.2 10.4H13L13.2 2.8Z" fill="#39e7a3" fill-opacity="0.36"/>',
+      '<path class="zaaa-duo-stroke" d="M13.2 2.8L4.8 13.6H11L9.8 21.2L19.2 10.4H13L13.2 2.8Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    nerve: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M12.4 2.8C13.2 6 17.5 8.1 17.5 13A5.5 5.5 0 0 1 6.5 13C6.5 10.3 8 8.4 9.3 7.1C9.1 8.9 10.1 10 11.2 10.5C10.9 8 10.4 5.5 12.4 2.8Z" fill="#f43f5e" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M12.4 2.8C13.2 6 17.5 8.1 17.5 13A5.5 5.5 0 0 1 6.5 13C6.5 10.3 8 8.4 9.3 7.1C9.1 8.9 10.1 10 11.2 10.5C10.9 8 10.4 5.5 12.4 2.8Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    city: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M4.5 20V8L11.5 4V20H4.5ZM11.5 10.5H19.5V20H11.5V10.5Z" fill="#ebb858" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M3 20H21M4.5 20V8L11.5 4V20M11.5 10.5H19.5V20M8 10V10.01M8 14V14.01M15.5 14V14.01M15.5 17V17.01" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
+  };
+
+  /* Sidebar District Navigation Duotone Icons (all 19+ screens) */
+  var JOB_DUOTONE = duotoneSvg(
+    '<rect class="zaaa-duo-back" x="3.5" y="7.5" width="17" height="12.5" rx="2" fill="#ebb858" fill-opacity="0.34"/>',
+    '<path class="zaaa-duo-stroke" d="M9 7.5V5.5C9 4.67 9.67 4 10.5 4H13.5C14.33 4 15 4.67 15 5.5V7.5M3.5 13C7.2 14.6 16.8 14.6 20.5 13M5.5 7.5H18.5C19.6 7.5 20.5 8.4 20.5 9.5V18C20.5 19.1 19.6 20 18.5 20H5.5C4.4 20 3.5 19.1 3.5 18V9.5C3.5 8.4 4.4 7.5 5.5 7.5Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+  );
+
+  var NAV_DUOTONE_ICONS = {
+    home: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M5 10.5L12 4.5L19 10.5V19.5C19 20.05 18.55 20.5 18 20.5H6C5.45 20.5 5 20.05 5 19.5V10.5Z" fill="#ebb858" fill-opacity="0.35"/>',
+      '<path class="zaaa-duo-stroke" d="M3 11L12 3.5L21 11M5.5 9.8V19.5C5.5 20.05 5.95 20.5 6.5 20.5H17.5C18.05 20.5 18.5 20.05 18.5 19.5V9.8M9.75 20.5V14.5H14.25V20.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    items: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="3.5" y="7.5" width="17" height="12" rx="2.2" fill="#60a5fa" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M8.5 7.5V5.8C8.5 4.8 9.3 4 10.3 4H13.7C14.7 4 15.5 4.8 15.5 5.8V7.5M3.5 12.5H20.5M12 10.8V14.2M5.5 7.5H18.5C19.6 7.5 20.5 8.4 20.5 9.5V17.5C20.5 18.6 19.6 19.5 18.5 19.5H5.5C4.4 19.5 3.5 18.6 3.5 17.5V9.5C3.5 8.4 4.4 7.5 5.5 7.5Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    city: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M4.5 20V8L11.5 4V20H4.5ZM11.5 10.5H19.5V20H11.5V10.5Z" fill="#60a5fa" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M3 20H21M4.5 20V8L11.5 4V20M11.5 10.5H19.5V20M7.8 10V10.01M7.8 13.5V13.51M7.8 17V17.01M15.5 13.5V13.51M15.5 17V17.01" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    job: JOB_DUOTONE,
+    jobs: JOB_DUOTONE,
+    bank: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M4 9.5L12 4L20 9.5H4ZM5.5 9.5H18.5V18H5.5V9.5Z" fill="#39e7a3" fill-opacity="0.33"/>',
+      '<path class="zaaa-duo-stroke" d="M3.5 9.5L12 3.8L20.5 9.5H3.5ZM4 20H20M6.5 9.5V17M10.2 9.5V17M13.8 9.5V17M17.5 9.5V17M4.5 17H19.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    gym: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M5 7.5H8V16.5H5V7.5ZM16 7.5H19V16.5H16V7.5Z" fill="#39e7a3" fill-opacity="0.36"/>',
+      '<path class="zaaa-duo-stroke" d="M2.5 12H5M19 12H21.5M8 12H16M5 7.5H8V16.5H5V7.5ZM16 7.5H19V16.5H16V7.5ZM3 9.5V14.5M21 9.5V14.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    crimes: duotoneSvg(
+      '<circle class="zaaa-duo-back" cx="12" cy="13" r="7.5" fill="#f43f5e" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M8.5 6.3V4.8C8.5 3.8 9.3 3 10.3 3H13.7C14.7 3 15.5 3.8 15.5 4.8V6.3M19.5 13A7.5 7.5 0 1 1 4.5 13A7.5 7.5 0 0 1 19.5 13ZM12 13L15.2 9.8M12 13V16.2" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    missions: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="5" y="4.5" width="14" height="16" rx="2" fill="#ebb858" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M9 4.5H7C5.9 4.5 5 5.4 5 6.5V18.5C5 19.6 5.9 20.5 7 20.5H17C18.1 20.5 19 19.6 19 18.5V6.5C19 5.4 18.1 4.5 17 4.5H15M9 3.5H15V6H9V3.5ZM8.5 11.5L10.8 13.8L15.5 9.2M8.5 16.8H15.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    attack: duotoneSvg(
+      '<circle class="zaaa-duo-back" cx="12" cy="12" r="7.2" fill="#f43f5e" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M19.2 12A7.2 7.2 0 1 1 4.8 12A7.2 7.2 0 0 1 19.2 12ZM12 2.5V6.2M12 17.8V21.5M2.5 12H6.2M17.8 12H21.5M13.8 12A1.8 1.8 0 1 1 10.2 12A1.8 1.8 0 0 1 13.8 12Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    elimination: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M12 3.5L19.5 6.5V12C19.5 16.5 16.2 19.6 12 21C7.8 19.6 4.5 16.5 4.5 12V6.5L12 3.5Z" fill="#f43f5e" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M12 3.5L19.5 6.5V12C19.5 16.5 16.2 19.6 12 21C7.8 19.6 4.5 16.5 4.5 12V6.5L12 3.5ZM9 9.5L15 15.5M15 9.5L9 15.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    properties: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M5 20V5.5C5 4.67 5.67 4 6.5 4H14.5C15.33 4 16 4.67 16 5.5V20H5Z" fill="#ebb858" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M3 20H21M5 20V5.5C5 4.67 5.67 4 6.5 4H14.5C15.33 4 16 4.67 16 5.5V20M16 11H19.5C20.05 11 20.5 11.45 20.5 12V20M8.5 8H12.5M8.5 11.5H12.5M9.5 20V15.5H11.5V20" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    education: LINK_ICONS.education,
+    hospital: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="3.5" y="6.5" width="17" height="13" rx="2.4" fill="#f43f5e" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M8.5 6.5V5C8.5 4.17 9.17 3.5 10 3.5H14C14.83 3.5 15.5 4.17 15.5 5V6.5M12 10V16M9 13H15M5.9 6.5H18.1C19.4 6.5 20.5 7.6 20.5 8.9V17.1C20.5 18.4 19.4 19.5 18.1 19.5H5.9C4.6 19.5 3.5 18.4 3.5 17.1V8.9C3.5 7.6 4.6 6.5 5.9 6.5Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    jail: duotoneSvg(
+      '<rect class="zaaa-duo-back" x="4" y="4" width="16" height="16" rx="2" fill="#ebb858" fill-opacity="0.32"/>',
+      '<path class="zaaa-duo-stroke" d="M4 4H20V20H4V4ZM8 4V20M12 4V9.5M12 14.5V20M16 4V20M9.8 10H14.2V14.2H9.8V10Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    casino: duotoneSvg(
+      '<circle class="zaaa-duo-back" cx="12" cy="12" r="8.2" fill="#ebb858" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M20.2 12A8.2 8.2 0 1 1 3.8 12A8.2 8.2 0 0 1 20.2 12ZM12 8.2L15.8 12L12 15.8L8.2 12L12 8.2ZM12 3.8V6M12 18V20.2M3.8 12H6M18 12H20.2" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    market: duotoneSvg(
+      '<path class="zaaa-duo-back" d="M4.5 9.5L6 5H18L19.5 9.5V19C19.5 19.83 18.83 20.5 18 20.5H6C5.17 20.5 4.5 19.83 4.5 19V9.5Z" fill="#39e7a3" fill-opacity="0.34"/>',
+      '<path class="zaaa-duo-stroke" d="M4 9.5L5.8 4.5H18.2L20 9.5M4 9.5C4 11 5.1 12 6.5 12C7.9 12 9 11 9 9.5C9 11 10.3 12 12 12C13.7 12 15 11 15 9.5C15 11 16.1 12 17.5 12C18.9 12 20 11 20 9.5M5 11.5V19C5 19.83 5.67 20.5 6.5 20.5H17.5C18.33 20.5 19 19.83 19 19V11.5M9.5 20.5V15.5H14.5V20.5" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    faction: LINK_ICONS.faction,
+    newspaper: LINK_ICONS.newspaper,
+    hof: LINK_ICONS.hof,
+    account: LINK_ICONS.account
   };
 
   var THEME_SVGS =
-    '<svg class="zaaa-moon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">' +
-      '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>' +
+    '<svg class="zaaa-moon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="#fbbf24" fill-opacity="0.34" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>' +
     '</svg>' +
-    '<svg class="zaaa-sun-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="4.2" fill="currentColor"/>' +
-      '<path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7"/>' +
+    '<svg class="zaaa-sun-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="4.4" fill="#f59e0b" fill-opacity="0.36" stroke="currentColor" stroke-width="1.85"/>' +
+      '<path d="M12 2v2.4M12 19.6V22M4.93 4.93l1.7 1.7M17.37 17.37l1.7 1.7M2 12h2.4M19.6 12H22M4.93 19.07l1.7-1.7M17.37 6.63l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
     '</svg>';
 
   var OPERATIVE_AVATAR_SVG =
-    '<svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<circle cx="18" cy="18" r="15" stroke="rgba(235,184,88,0.32)" stroke-width="1.2" stroke-dasharray="3 2"/>' +
-      '<path d="M8 31c1.2-5.4 5-8.2 10-8.2s8.8 2.8 10 8.2" fill="rgba(235,184,88,0.2)" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round"/>' +
-      '<path d="M12.2 15.2c0-3.6 2.5-6.4 5.8-6.4s5.8 2.8 5.8 6.4c0 3.1-2.4 5.6-5.8 5.6s-5.8-2.5-5.8-5.6z" fill="#0F172A" stroke="#FBBF24" stroke-width="1.5"/>' +
-      '<path d="M14.5 14.8h7" stroke="#39E7A3" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<svg class="zaaa-duotone-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<circle class="zaaa-duo-back" cx="18" cy="18" r="14.5" fill="#ebb858" fill-opacity="0.14"/>' +
+      '<path class="zaaa-duo-back" d="M8.2 30.8C9.5 25.4 13.1 22.8 18 22.8C22.9 22.8 26.5 25.4 27.8 30.8H8.2Z" fill="#ebb858" fill-opacity="0.34"/>' +
+      '<path class="zaaa-duo-back" d="M12.3 15.1C12.3 11.5 14.8 8.8 18 8.8C21.2 8.8 23.7 11.5 23.7 15.1C23.7 18.2 21.3 20.6 18 20.6C14.7 20.6 12.3 18.2 12.3 15.1Z" fill="#60a5fa" fill-opacity="0.28"/>' +
+      '<circle cx="18" cy="18" r="15" stroke="rgba(235,184,88,0.42)" stroke-width="1.25" stroke-dasharray="3 2.2"/>' +
+      '<path class="zaaa-duo-stroke" d="M8.2 30.8C9.5 25.4 13.1 22.8 18 22.8C22.9 22.8 26.5 25.4 27.8 30.8" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path class="zaaa-duo-stroke" d="M12.3 15.1C12.3 11.5 14.8 8.8 18 8.8C21.2 8.8 23.7 11.5 23.7 15.1C23.7 18.2 21.3 20.6 18 20.6C14.7 20.6 12.3 18.2 12.3 15.1Z" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M14.5 14.8H21.5" stroke="#39E7A3" stroke-width="2" stroke-linecap="round"/>' +
     '</svg>';
 
   var CITY_CATALOG = {
@@ -136,6 +209,8 @@
   var EN_TITLES = ['Rookie', 'Petty Thief', 'Hustler', 'Enforcer', 'Capo', 'Underboss', 'Boss'];
   var AR_TITLES = ['مستجد', 'نشّال مبتدئ', 'محتال شوارع', 'منفّذ ميداني', 'كابو', 'نائب الزعيم', 'زعيم النقابة'];
 
+  var svgParserHost = null;
+
   /* ------------------------------------------------------------------------
    * HELPERS
    * ------------------------------------------------------------------------ */
@@ -152,6 +227,14 @@
   function formatInt(n) {
     var val = Math.max(0, Math.round(Number(n) || 0));
     return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+
+  function parseSvgElement(svgMarkup) {
+    if (!svgParserHost) {
+      svgParserHost = document.createElement('div');
+    }
+    svgParserHost.innerHTML = svgMarkup;
+    return svgParserHost.firstElementChild || svgParserHost.firstChild;
   }
 
   function navigateToScreen(screenId) {
@@ -480,33 +563,33 @@
     var cashPill = hud.querySelector('[data-hud="cash"]');
     if (cashPill) {
       setTextIfChanged(cashPill.querySelector('.zaaa-hud-val'), cashStr);
-      cashPill.title = ar ? 'النقد المتاح · افتح الخزنة' : 'Liquid Cash · Open Bank Vault';
+      cashPill.title = ar ? 'النقد المتاح - افتح الخزنة' : 'Liquid Cash - Open Bank Vault';
     }
 
     var energyPill = hud.querySelector('[data-hud="energy"]');
     if (energyPill) {
       setTextIfChanged(energyPill.querySelector('.zaaa-hud-val'), energy.cur + '/' + energy.max);
       energyPill.style.setProperty('--zaaa-pct', energy.pct + '%');
-      energyPill.title = ar ? 'الطاقة القتالية · افتح النادي' : 'Energy · Open Gym';
+      energyPill.title = ar ? 'الطاقة القتالية - افتح النادي' : 'Energy - Open Gym';
     }
 
     var nervePill = hud.querySelector('[data-hud="nerve"]');
     if (nervePill) {
       setTextIfChanged(nervePill.querySelector('.zaaa-hud-val'), nerve.cur + '/' + nerve.max);
       nervePill.style.setProperty('--zaaa-pct', nerve.pct + '%');
-      nervePill.title = ar ? 'الجرأة الميدانية · افتح الجرائم' : 'Nerve · Open Street Crimes';
+      nervePill.title = ar ? 'الجرأة الميدانية - افتح الجرائم' : 'Nerve - Open Street Crimes';
     }
 
     var cityPill = hud.querySelector('[data-hud="city"]');
     if (cityPill) {
       setTextIfChanged(cityPill.querySelector('.zaaa-hud-city-code'), city.code);
       setTextIfChanged(cityPill.querySelector('.zaaa-hud-val'), city.name);
-      cityPill.title = ar ? 'الموقع الحالي · انتقل إلى خريطة المدينة' : 'Active Sector · Open City Map';
+      cityPill.title = ar ? 'الموقع الحالي - انتقل إلى خريطة المدينة' : 'Active Sector - Open City Map';
     }
   }
 
   /* ------------------------------------------------------------------------
-   * 4. THEME INDICATOR (.zone-theme-indicator) — Moon / Sunburst SVG
+   * 4. THEME INDICATOR (.zone-theme-indicator) - Duotone Moon / Sunburst SVG
    * ------------------------------------------------------------------------ */
   function syncThemeIndicator() {
     var ind = document.querySelector('.zone-topbar .zone-header-actions .zone-theme-indicator');
@@ -641,10 +724,86 @@
   }
 
   /* ------------------------------------------------------------------------
+   * 6. SIDEBAR VITALS TIMER SYNC (Eliminates Overlapping "FULL" Collision)
+   * ------------------------------------------------------------------------ */
+  function syncSidebarVitals() {
+    var timers = document.querySelectorAll('aside.zone-sidebar .zone-resource .zone-resource-timer');
+    for (var i = 0; i < timers.length; i++) {
+      var timerEl = timers[i];
+      var raw = String(timerEl.textContent || '').trim();
+      var isFullOrEmpty = !raw || /^(full|ممتلئ|كامل)$/i.test(raw);
+      if (isFullOrEmpty) {
+        if (timerEl.hasAttribute('data-zaaa-timer')) {
+          timerEl.removeAttribute('data-zaaa-timer');
+        }
+      } else if (timerEl.getAttribute('data-zaaa-timer') !== 'countdown') {
+        timerEl.setAttribute('data-zaaa-timer', 'countdown');
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+   * 7. SIDEBAR DISTRICT DUOTONE ICONS (#zone-area-navigation .zone-nav-icon)
+   *    React-18 Fiber safe: keeps React's original svg:first-child intact
+   *    (hidden via CSS) and appends svg.zaaa-duotone-svg at the end.
+   * ------------------------------------------------------------------------ */
+  function resolveNavIconKey(screenId) {
+    var key = String(screenId || '').trim().toLowerCase();
+    if (NAV_DUOTONE_ICONS[key]) return key;
+    if (key.indexOf('job') === 0) return 'jobs';
+    if (key.indexOf('crime') === 0) return 'crimes';
+    if (key.indexOf('item') === 0) return 'items';
+    if (key.indexOf('prop') === 0) return 'properties';
+    if (key.indexOf('edu') === 0) return 'education';
+    if (key.indexOf('hosp') === 0) return 'hospital';
+    if (key.indexOf('fact') === 0) return 'faction';
+    if (key.indexOf('news') === 0) return 'newspaper';
+    if (key.indexOf('elim') === 0) return 'elimination';
+    if (key.indexOf('miss') === 0) return 'missions';
+    if (key.indexOf('mark') === 0 || key.indexOf('bazaar') >= 0) return 'market';
+    return 'home';
+  }
+
+  function syncSidebarNavIcons() {
+    var buttons = document.querySelectorAll(
+      'aside.zone-sidebar #zone-area-navigation button[data-zone-screen]'
+    );
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      var iconBox = btn.querySelector('.zone-nav-icon');
+      if (!iconBox) continue;
+
+      var key = resolveNavIconKey(btn.getAttribute('data-zone-screen'));
+      var markup = NAV_DUOTONE_ICONS[key] || NAV_DUOTONE_ICONS.home;
+      var existing = iconBox.querySelector('svg.zaaa-duotone-svg');
+
+      if (!existing) {
+        var svgEl = parseSvgElement(markup);
+        if (svgEl) {
+          svgEl.setAttribute('data-ico', key);
+          iconBox.appendChild(svgEl);
+        }
+      } else if (existing.getAttribute('data-ico') !== key) {
+        var nextSvg = parseSvgElement(markup);
+        if (nextSvg) {
+          existing.setAttribute('data-ico', key);
+          existing.innerHTML = nextSvg.innerHTML;
+        }
+      }
+
+      if (iconBox.getAttribute('data-zaaa-duotone') !== '1') {
+        iconBox.setAttribute('data-zaaa-duotone', '1');
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------------
    * MASTER SYNC ORCHESTRATION (zone:render + html attr observer + 600ms poll)
    * ------------------------------------------------------------------------ */
   function syncAll() {
     if (isSyncing) return;
+    // Never mutate raw <x-dc> template DOM before dc-runtime parses dc.innerHTML
+    if (document.querySelector('x-dc')) return;
     isSyncing = true;
     try {
       syncBrand();
@@ -652,6 +811,8 @@
       syncTopbarHud();
       syncThemeIndicator();
       syncOperativeCrest();
+      syncSidebarVitals();
+      syncSidebarNavIcons();
     } catch (_) {
       // Never emit console errors
     } finally {
@@ -661,6 +822,9 @@
 
   function boot() {
     syncAll();
+    window.setTimeout(syncAll, 160);
+    window.setTimeout(syncAll, 380);
+    window.setTimeout(syncAll, 820);
 
     window.addEventListener('zone:render', syncAll);
 

@@ -1,10 +1,12 @@
-/* ZONE v120 - Gemini-4 HTML5 Canvas Instant Games & Noir Arcade HUD Engine */
+/* ZONE v126 - MotionSites Photorealistic Key-Art Posters, Atmospheric Shaders & Instant Arcade Engine */
 (function () {
   'use strict';
 
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
   if (window.__zoneInstantGamesLoaded) return;
   window.__zoneInstantGamesLoaded = true;
+
+  var MOTION_STYLE_ID = 'zig-v126-motion-styles';
 
   var EU_WHEEL = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -15,16 +17,142 @@
     19: 1, 21: 1, 23: 1, 25: 1, 27: 1, 30: 1, 32: 1, 34: 1, 36: 1
   };
   var SLOT_SYMS = [
-    { id: 'DIAMOND', glyph: '💎', color: '#6ee7ff', labelEn: 'DIAMOND', labelAr: 'ألماس' },
-    { id: 'SEVEN', glyph: '777', color: '#ff5d6c', labelEn: 'LUCKY 7', labelAr: 'سبعة' },
-    { id: 'CROWN', glyph: '👑', color: '#ebb858', labelEn: 'CROWN', labelAr: 'تاج' },
-    { id: 'GOLD_BAR', glyph: '🪙', color: '#fbbf24', labelEn: 'GOLD', labelAr: 'سبيكة' },
-    { id: 'CHIP', glyph: '♠', color: '#39e7a3', labelEn: 'SPADE', labelAr: 'سبيد' },
-    { id: 'CHERRY', glyph: '🍒', color: '#f43f5e', labelEn: 'CHERRY', labelAr: 'كرز' }
+    { id: 'DIAMOND', kind: 'diamond', color: '#38bdf8', labelEn: 'DIAMOND', labelAr: 'ألماس' },
+    { id: 'SEVEN', kind: 'seven', color: '#f43f5e', labelEn: 'LUCKY 7', labelAr: 'سبعة' },
+    { id: 'CROWN', kind: 'crown', color: '#ebb858', labelEn: 'CROWN', labelAr: 'تاج' },
+    { id: 'GOLD_BAR', kind: 'bullion', color: '#fbbf24', labelEn: 'GOLD', labelAr: 'سبيكة' },
+    { id: 'CHIP', kind: 'spade', color: '#39e7a3', labelEn: 'SPADE', labelAr: 'سبيد' },
+    { id: 'CHERRY', kind: 'ruby', color: '#fb7185', labelEn: 'RUBY', labelAr: 'ياقوت' }
   ];
 
+  /* ---------------- Inline Vector Icons (Zero Raw Emojis) ---------------- */
+  var SVG_ARCADE_CREST =
+    '<svg class="zig-emblem-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<path d="M12 2.5L20.5 7.2V16.8L12 21.5L3.5 16.8V7.2L12 2.5Z" fill="rgba(235,184,88,0.28)"/>' +
+      '<path d="M12 2.5L20.5 7.2V16.8L12 21.5L3.5 16.8V7.2L12 2.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>' +
+      '<path d="M9.5 8.5L15.8 12L9.5 15.5V8.5Z" fill="rgba(57,231,163,0.38)" stroke="#39e7a3" stroke-width="1.65" stroke-linejoin="round"/>' +
+    '</svg>';
+
+  var SVG_SPEAKER_ON =
+    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<path d="M11 5L6.5 8.8H3.5V15.2H6.5L11 19V5Z" fill="rgba(57,231,163,0.26)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
+      '<path d="M15.2 8.8C16.5 9.9 17.2 11.4 17.2 12C17.2 12.6 16.5 14.1 15.2 15.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+      '<path d="M18.2 6.2C20.2 7.8 21.2 9.8 21.2 12C21.2 14.2 20.2 16.2 18.2 17.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var SVG_SPEAKER_OFF =
+    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<path d="M11 5L6.5 8.8H3.5V15.2H6.5L11 19V5Z" fill="rgba(148,163,184,0.22)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
+      '<path d="M16 9.5L21 14.5M21 9.5L16 14.5" stroke="#fb7185" stroke-width="1.9" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var SVG_CTA_CHEVRON =
+    '<svg class="zig-cta-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+      '<path d="M6 3.5L10.5 8L6 12.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '</svg>';
+
+  var SVG_WHEEL_STEER =
+    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="8.5" fill="rgba(235,184,88,0.22)" stroke="currentColor" stroke-width="1.8"/>' +
+      '<circle cx="12" cy="12" r="2.3" stroke="currentColor" stroke-width="1.7"/>' +
+      '<path d="M4.2 10.5H9.8M14.2 10.5H19.8M12 14.3V20.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var SVG_PLANE =
+    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<path d="M12 2.5L14.2 9L21.5 11.2V13.1L14.2 12L13.5 18.2L16.2 20V21.5L12 20.4L7.8 21.5V20L10.5 18.2L9.8 12L2.5 13.1V11.2L9.8 9L12 2.5Z" fill="rgba(56,189,248,0.28)" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/>' +
+    '</svg>';
+
+  var SVG_LOCK =
+    '<svg class="zig-inline-svg zig-lock-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.8"/>' +
+      '<path d="M8 11V7.8C8 5.6 9.8 3.8 12 3.8C14.2 3.8 16 5.6 16 7.8V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+    '</svg>';
+
+  /* ---------------- Preloaded Key-Art Plates ---------------- */
+  var artImages = {
+    heavybag: null,
+    heist: null
+  };
+
+  function preloadKeyArt() {
+    try {
+      if (typeof Image === 'function') {
+        var bagImg = new Image();
+        bagImg.decoding = 'async';
+        bagImg.src = '/assets/ui/motion-art/arcade-heavybag.webp';
+        artImages.heavybag = bagImg;
+
+        var heistImg = new Image();
+        heistImg.decoding = 'async';
+        heistImg.src = '/assets/ui/motion-art/arcade-heist.webp';
+        artImages.heist = heistImg;
+      }
+    } catch (_) {}
+  }
+
+  preloadKeyArt();
+
+  function drawCoverArt(ctx, img, w, h, offsetX, offsetY, zoom) {
+    if (!img || !img.complete || !(img.naturalWidth > 0) || !(img.naturalHeight > 0)) return false;
+    try {
+      var iw = img.naturalWidth;
+      var ih = img.naturalHeight;
+      var scale = Math.max(w / iw, h / ih) * (zoom || 1);
+      var dw = iw * scale;
+      var dh = ih * scale;
+      var dx = (w - dw) * 0.5 + (offsetX || 0);
+      var dy = (h - dh) * 0.5 + (offsetY || 0);
+      ctx.drawImage(img, dx, dy, dw, dh);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function ensureMotionStyles() {
+    try {
+      if (document.getElementById(MOTION_STYLE_ID)) return;
+      var style = document.createElement('style');
+      style.id = MOTION_STYLE_ID;
+      style.textContent = [
+        '.zig-arcade-title{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}',
+        '.zig-live-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px !important;font-size:9.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(57,231,163,0.14);border:1px solid rgba(57,231,163,0.48);color:#39e7a3;line-height:1.3;}',
+        '.zig-live-pill::before{content:"";width:5px;height:5px;border-radius:50%;background:#39e7a3;box-shadow:0 0 6px #39e7a3;}',
+        'html[data-theme="light"] .zig-live-pill{background:rgba(13,122,73,0.12);border-color:rgba(13,122,73,0.42);color:#065f46;}',
+        'html[data-theme="light"] .zig-live-pill::before{background:#059669;box-shadow:none;}',
+        '.zig-arcade-emblem{display:inline-grid;place-items:center;}',
+        '.zig-emblem-svg{width:20px;height:20px;display:block;color:#ebb858;}',
+        '.zig-sound-btn{display:inline-flex;align-items:center;gap:6px;}',
+        '.zig-inline-svg{width:14px;height:14px;display:inline-block;flex:none;vertical-align:-2px;}',
+        '.zig-lock-svg{width:11.5px;height:11.5px;margin-inline-end:2px;}',
+        '.zig-card-media{position:relative;aspect-ratio:16 / 10;min-height:110px;width:100%;overflow:hidden;background:#070b13;}',
+        '.zig-card-art{width:100%;height:100%;object-fit:cover;display:block;transition:transform 520ms cubic-bezier(0.22,1,0.36,1),filter 320ms ease;}',
+        '.zig-game-card:hover .zig-card-art{transform:scale(1.07);filter:brightness(1.08);}',
+        '.zig-card-shader{position:absolute;inset:0;width:100% !important;height:100% !important;pointer-events:none;z-index:2;display:block;background:transparent !important;border:0 !important;}',
+        '.zig-card-badge{position:absolute;top:10px;inset-inline-start:10px;z-index:3;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,13,23,0.74);border:1px solid rgba(255,255,255,0.18);color:#f8fafc;font-size:10px;font-weight:700;letter-spacing:0.04em;padding:3px 9px;border-radius:999px !important;line-height:1.25;}',
+        '.zig-game-card-cta{display:inline-flex;align-items:center;gap:6px;}',
+        '.zig-cta-chevron{width:13px;height:13px;flex:none;transition:transform 200ms cubic-bezier(0.22,1,0.36,1);}',
+        '.zig-game-card:hover .zig-cta-chevron{transform:translateX(2px);}',
+        'html[dir="rtl"] .zig-cta-chevron,[dir="rtl"] .zig-cta-chevron{transform:scaleX(-1);}',
+        'html[dir="rtl"] .zig-game-card:hover .zig-cta-chevron,[dir="rtl"] .zig-game-card:hover .zig-cta-chevron{transform:scaleX(-1) translateX(2px);}',
+        '.zig-getaway-heading{display:inline-flex;align-items:center;gap:7px;color:#ebb858;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;}',
+        '.zig-here-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#39e7a3;box-shadow:0 0 6px rgba(57,231,163,0.8);}',
+        '.zig-chip-status{display:inline-flex;align-items:center;gap:3px;}',
+        '.zig-gym-wrap,.zig-heist-wrap,.zig-casino-canvas-box,.zig-getaway-canvas-wrap{width:100% !important;max-width:100% !important;min-width:0 !important;overflow:hidden !important;box-sizing:border-box !important;}',
+        '#zig-gym-canvas,#zig-heist-canvas,#zig-roulette-canvas,#zig-slots-canvas,#zig-getaway-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;}',
+        'html[lang="ar"] .zig-arcade-deck *,html[dir="rtl"] .zig-arcade-deck *,[dir="rtl"] .zig-arcade-deck *,html[lang="ar"] .zig-world-flight-bar *,html[dir="rtl"] .zig-world-flight-bar *,[dir="rtl"] .zig-world-flight-bar *{letter-spacing:0 !important;}'
+      ].join('');
+      (document.head || document.documentElement).appendChild(style);
+    } catch (_) {}
+  }
+
   function isAr() {
-    return (document.documentElement.lang || '').toLowerCase().indexOf('ar') === 0;
+    var html = document.documentElement;
+    if (!html) return false;
+    var lang = (html.lang || '').toLowerCase();
+    var dir = (html.dir || '').toLowerCase();
+    return lang.indexOf('ar') === 0 || dir === 'rtl';
   }
 
   function fontStack(weight, px) {
@@ -34,8 +162,22 @@
   /* ---------------- WebAudio Procedural Arcade Synth ---------------- */
   var audioCtx = null;
   var soundEnabled = true;
+  try {
+    soundEnabled = localStorage.getItem('zig_muted') !== '1';
+  } catch (_) {}
+
+  function setSoundEnabled(flag) {
+    soundEnabled = Boolean(flag);
+    try {
+      localStorage.setItem('zig_muted', soundEnabled ? '0' : '1');
+    } catch (_) {}
+    window.__zoneMuted = !soundEnabled;
+  }
 
   function ensureAudio() {
+    try {
+      if (localStorage.getItem('zig_muted') === '1') soundEnabled = false;
+    } catch (_) {}
     if (!soundEnabled) return null;
     try {
       if (!audioCtx) {
@@ -100,12 +242,14 @@
     }
   };
 
-  /* ---------------- Sizing Helper ---------------- */
+  /* ---------------- Sizing Helper (Zero Overflow Safe) ---------------- */
   function syncCanvas(canvas, cssHeight) {
     if (!canvas) return null;
+    var parentW = (canvas.parentElement && canvas.parentElement.clientWidth) ? canvas.parentElement.clientWidth : 0;
     var rect = canvas.getBoundingClientRect();
-    var w = Math.max(220, Math.round(rect.width || canvas.parentElement?.clientWidth || 320));
-    var h = cssHeight || Math.max(80, Math.round(rect.height || 180));
+    var rawW = parentW > 0 ? parentW : (rect.width || 280);
+    var w = Math.max(150, Math.round(rawW));
+    var h = cssHeight || Math.max(80, Math.round(rect.height || 160));
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     var pw = Math.round(w * dpr);
     var ph = Math.round(h * dpr);
@@ -139,6 +283,14 @@
     t: 0,
     lastCash: null,
     lastLang: '',
+    /* Atmospheric Preview Motes */
+    previewFX: {
+      rain: [],
+      embers: [],
+      motes: [],
+      bokeh: [],
+      chalk: []
+    },
     /* Nitro Getaway (Home Instant Game) */
     getaway: {
       open: false,
@@ -217,6 +369,15 @@
   for (var ri = 0; ri < 38; ri++) {
     state.heist.rain.push({ x: Math.random(), y: Math.random(), len: 8 + Math.random() * 14, spd: 0.5 + Math.random() * 0.7 });
   }
+  for (var pri = 0; pri < 22; pri++) {
+    state.previewFX.rain.push({ x: Math.random(), y: Math.random(), len: 10 + Math.random() * 14, spd: 0.65 + Math.random() * 0.75 });
+  }
+  for (var pei = 0; pei < 12; pei++) {
+    state.previewFX.embers.push({ x: Math.random(), y: Math.random(), r: 1.1 + Math.random() * 1.6, spd: 0.22 + Math.random() * 0.32, drift: (Math.random() - 0.5) * 0.25 });
+    state.previewFX.motes.push({ x: Math.random(), y: Math.random(), r: 1.0 + Math.random() * 1.5, spd: 0.08 + Math.random() * 0.14, phase: Math.random() * Math.PI * 2 });
+    state.previewFX.bokeh.push({ x: Math.random(), y: Math.random(), r: 2.5 + Math.random() * 5.5, spd: 0.06 + Math.random() * 0.12, phase: Math.random() * Math.PI * 2 });
+    state.previewFX.chalk.push({ x: Math.random(), y: Math.random(), r: 0.9 + Math.random() * 1.6, spd: 0.09 + Math.random() * 0.16, drift: (Math.random() - 0.5) * 0.18 });
+  }
 
   function goScreen(id) {
     var g = window.__zoneGame;
@@ -228,7 +389,14 @@
     if (btn) btn.click();
   }
 
-  /* ---------------- 1. HOME: Arcade Portal + Playable Nitro Getaway ---------------- */
+  function renderSoundBtnInner(ar) {
+    var label = soundEnabled
+      ? (ar ? 'الصوت: مفعل' : 'SFX: ON')
+      : (ar ? 'الصوت: صامت' : 'SFX: OFF');
+    return (soundEnabled ? SVG_SPEAKER_ON : SVG_SPEAKER_OFF) + '<span>' + label + '</span>';
+  }
+
+  /* ---------------- 1. HOME: Poster Arcade Deck + Playable Nitro Getaway ---------------- */
   function startGetawayRun() {
     var gw = state.getaway;
     gw.open = true;
@@ -251,6 +419,7 @@
   }
 
   function mountHomeArcade() {
+    ensureMotionStyles();
     var main = document.getElementById('zone-main');
     if (!main || main.getAttribute('data-zone-screen') !== 'home') {
       var stale = document.getElementById('zig-home-arcade');
@@ -272,57 +441,75 @@
     var cards = [
       {
         id: 'getaway',
-        kicker: ar ? 'لعبة فورية · العب هنا' : 'INSTANT GAME · PLAY NOW',
+        art: '/assets/ui/motion-art/arcade-getaway.webp',
+        alt: ar ? 'مطاردة النيون الليلية' : 'Nitro Syndicate Getaway',
+        badge: ar ? 'جولة فورية' : 'Instant Run',
         name: ar ? 'مطاردة النيون الليلية' : 'Nitro Syndicate Getaway',
-        desc: ar ? 'راوغ دوريات الشرطة واجمع حقائب الغنائم في شوارع زون.' : 'Dodge police cruisers & grab cash drops at 160 MPH.',
-        cta: ar ? 'تشغيل فوري ▶' : 'Launch Run ▶'
+        desc: ar ? 'راوغ دوريات المطاردة واجمع حقائب الغنائم في شوارع زون.' : 'Thread pursuit cruisers and secure cash drops at 160 MPH.',
+        cta: ar ? 'ابدأ الجولة' : 'Launch Run'
       },
       {
         id: 'heist',
-        kicker: ar ? 'مهارة وتوقيت' : 'REFLEX LOCKPICK',
-        name: ar ? 'كسر الخزنة المصفحة' : 'Safe-Crack Heist',
-        desc: ar ? 'اضرب القفل في النقطة الذهبية لتنفيذ عملياتك.' : 'Hit the brass tumbler sweet-spot to breach vaults.',
-        cta: ar ? 'ادخل الجرائم ▶' : 'Crack Vaults ▶'
+        art: '/assets/ui/motion-art/arcade-heist.webp',
+        alt: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
+        badge: ar ? 'توقيت دقيق' : 'Precision Lock',
+        name: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
+        desc: ar ? 'اضرب القفل في النقطة الذهبية لاختراق الخزائن وتنفيذ العمليات.' : 'Strike the brass tumbler sweet-spot to breach reinforced vaults.',
+        cta: ar ? 'افتح الخزائن' : 'Crack Vaults'
       },
       {
         id: 'casino',
-        kicker: ar ? 'عجلة حية وسلوتس' : '3D FELT & REELS',
+        art: '/assets/ui/motion-art/arcade-casino.webp',
+        alt: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
+        badge: ar ? 'طاولات النخبة' : 'High-Limit Salon',
         name: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
-        desc: ar ? 'عجلة روليت دوارة وماكينات جائزة كبرى وبلاك جاك.' : 'Spinning 37-pocket wheel, neon reels & 21 shoe.',
-        cta: ar ? 'افتح الطاولات ▶' : 'Spin Wheel ▶'
+        desc: ar ? 'عجلة روليت أوروبية دوارة وماكينات الجائزة الكبرى.' : '37-pocket European wheel, jackpot reels, and private shoe.',
+        cta: ar ? 'ادخل الصالون' : 'Enter Salon'
       },
       {
         id: 'gym',
-        kicker: ar ? 'عداد القوة' : 'POWER METER',
+        art: '/assets/ui/motion-art/arcade-heavybag.webp',
+        alt: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',
+        badge: ar ? 'عداد القوة' : 'Reflex Meter',
         name: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',
-        desc: ar ? 'سدّد اللكمة في ذروة العداد لمضاعفة زخم التمرين.' : 'Time heavy-bag strikes in the red zone to train.',
-        cta: ar ? 'ادخل الحلبة ▶' : 'Hit The Bag ▶'
+        desc: ar ? 'سدّد اللكمة في المنطقة الذهبية لمضاعفة زخم التمرين.' : 'Time heavy-bag strikes inside the gold zone to boost training.',
+        cta: ar ? 'ادخل الحلبة' : 'Enter Ring'
       }
     ];
 
     sec.innerHTML =
       '<div class="zig-arcade-header">' +
         '<div class="zig-arcade-title-wrap">' +
-          '<div class="zig-arcade-emblem">⚡</div>' +
+          '<div class="zig-arcade-emblem">' + SVG_ARCADE_CREST + '</div>' +
           '<div>' +
-            '<h2 class="zig-arcade-title">' + (ar ? 'ألعاب زون الفورية · اللعب المباشر' : 'ZONE INSTANT ARCADE · LIVE PLAY') + '</h2>' +
-            '<p class="zig-arcade-sub">' + (ar ? 'اختر وضعاً تفاعلياً للعب فوراً بدلاً من القوائم التقليدية' : 'Jump straight into interactive arcade action tied to your operative') + '</p>' +
+            '<h2 class="zig-arcade-title">' +
+              '<span>' + (ar ? 'أركيد النقابة المباشر' : 'Syndicate Arcade') + '</span>' +
+              '<span class="zig-live-pill">' + (ar ? 'مباشر' : 'LIVE') + '</span>' +
+            '</h2>' +
+            '<p class="zig-arcade-sub">' +
+              (ar
+                ? 'تحديات تفاعلية مباشرة مرتبطة بعميلك ورصيدك الفعلي'
+                : 'Live interactive runs, vault lockpicking, high-limit tables, and reflex drills') +
+            '</p>' +
           '</div>' +
         '</div>' +
-        '<button type="button" class="zig-sound-btn" id="zig-sound-toggle">' +
-          (soundEnabled ? (ar ? '🔊 المؤثرات: مفعلة' : '🔊 SFX: ON') : (ar ? '🔇 المؤثرات: صامت' : '🔇 SFX: OFF')) +
+        '<button type="button" class="zig-sound-btn" id="zig-sound-toggle" data-zig-muted="' + (soundEnabled ? '0' : '1') + '">' +
+          renderSoundBtnInner(ar) +
         '</button>' +
       '</div>' +
       '<div class="zig-arcade-grid">' +
         cards.map(function (c) {
           return (
             '<button type="button" class="zig-game-card" data-zig-launch="' + c.id + '">' +
-              '<canvas data-zig-preview="' + c.id + '"></canvas>' +
+              '<div class="zig-card-media">' +
+                '<img class="zig-card-art" src="' + c.art + '" alt="' + c.alt + '" loading="eager" decoding="async">' +
+                '<canvas class="zig-card-shader" data-zig-preview="' + c.id + '"></canvas>' +
+                '<span class="zig-card-badge">' + c.badge + '</span>' +
+              '</div>' +
               '<div class="zig-game-card-body">' +
-                '<span class="zig-game-card-kicker">' + c.kicker + '</span>' +
                 '<strong class="zig-game-card-name">' + c.name + '</strong>' +
                 '<span class="zig-game-card-desc">' + c.desc + '</span>' +
-                '<span class="zig-game-card-cta"><span>' + c.cta + '</span><span>→</span></span>' +
+                '<span class="zig-game-card-cta"><span>' + c.cta + '</span>' + SVG_CTA_CHEVRON + '</span>' +
               '</div>' +
             '</button>'
           );
@@ -330,15 +517,16 @@
       '</div>' +
       '<div class="zig-getaway-stage" id="zig-getaway-stage"' + (state.getaway.open ? '' : ' hidden') + '>' +
         '<div class="zig-getaway-bar">' +
-          '<div>' +
-            '<strong style="color:#ebb858;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em">' +
-              (ar ? '🏎️ مطاردة النيون الليلية · الأسهم أو اللمس للمراوغة' : '🏎️ NITRO SYNDICATE GETAWAY · ARROWS / TAP LANES TO DODGE') +
-            '</strong>' +
+          '<div class="zig-getaway-heading">' +
+            SVG_WHEEL_STEER +
+            '<span>' +
+              (ar ? 'مطاردة النيون الليلية: الأسهم أو اللمس للمراوغة' : 'NITRO SYNDICATE GETAWAY: ARROWS OR TAP LANES TO DODGE') +
+            '</span>' +
           '</div>' +
           '<div class="zig-stage-controls">' +
             '<button type="button" class="zig-btn" id="zig-getaway-restart">' + (ar ? 'جولة جديدة' : 'New Run') + '</button>' +
             '<button type="button" class="zig-btn-secondary" id="zig-getaway-fence">' + (ar ? 'تصريف الغنيمة (عملية شارع)' : 'Fence Loot (Run Street Op)') + '</button>' +
-            '<button type="button" class="zig-btn-secondary" id="zig-getaway-close">✕</button>' +
+            '<button type="button" class="zig-btn-secondary" id="zig-getaway-close" aria-label="Close">✕</button>' +
           '</div>' +
         '</div>' +
         '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas"></canvas></div>' +
@@ -349,9 +537,10 @@
     var sndBtn = sec.querySelector('#zig-sound-toggle');
     if (sndBtn) {
       sndBtn.addEventListener('click', function () {
-        soundEnabled = !soundEnabled;
+        setSoundEnabled(!soundEnabled);
+        sndBtn.setAttribute('data-zig-muted', soundEnabled ? '0' : '1');
         if (soundEnabled) sfx.pickup();
-        sndBtn.textContent = soundEnabled ? (isAr() ? '🔊 المؤثرات: مفعلة' : '🔊 SFX: ON') : (isAr() ? '🔇 المؤثرات: صامت' : '🔇 SFX: OFF');
+        sndBtn.innerHTML = renderSoundBtnInner(isAr());
       });
     }
 
@@ -395,7 +584,7 @@
         var readyCrime = v && Array.isArray(v.crimes) ? v.crimes.find(function (c) { return !c.disabled; }) : null;
         if (readyCrime && typeof readyCrime.commit === 'function') {
           readyCrime.commit();
-          spawnFloatingReward(isAr() ? '⚡ جارٍ تصريف الغنيمة!' : '⚡ FENCING LOOT!', '#ebb858');
+          spawnFloatingReward(isAr() ? 'جارٍ تصريف الغنيمة' : 'FENCING LOOT', '#ebb858');
         } else {
           goScreen('crimes');
         }
@@ -436,8 +625,8 @@
       var perfect = absDiff <= halfArc * 0.38;
       h.streak += 1;
       h.banner = perfect
-        ? (ar ? '🔥 اختراق ذهبي متقن! سلسلة ×' + h.streak : '🔥 PERFECT BREACH! STREAK x' + h.streak)
-        : (ar ? '✓ تم فتح القفل! سلسلة ×' + h.streak : '✓ TUMBLER CRACKED! STREAK x' + h.streak);
+        ? (ar ? 'اختراق ذهبي متقن! سلسلة ×' + h.streak : 'PERFECT BREACH! STREAK x' + h.streak)
+        : (ar ? 'تم فتح القفل! سلسلة ×' + h.streak : 'TUMBLER CRACKED! STREAK x' + h.streak);
       h.bannerColor = perfect ? '#ebb858' : '#39e7a3';
       h.bannerUntil = performance.now() + 2000;
       sfx.breachWin();
@@ -468,7 +657,7 @@
       h.streak = 0;
       h.speed = 2.45;
       h.sirenUntil = performance.now() + 950;
-      h.banner = ar ? '🚨 انزلق القفل! اضغط داخل القوس الذهبي' : '🚨 TUMBLER SLIPPED! HIT THE GOLD ARC';
+      h.banner = ar ? 'انزلق القفل! اضغط داخل القوس الذهبي' : 'TUMBLER SLIPPED: HIT THE GOLD ARC';
       h.bannerColor = '#ff6a55';
       h.bannerUntil = performance.now() + 1500;
       sfx.sirenBuzz();
@@ -486,6 +675,7 @@
   }
 
   function mountCrimesGame() {
+    ensureMotionStyles();
     var scene = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-scene');
     if (!scene) return;
     if (scene.querySelector('#zig-heist-canvas')) return;
@@ -511,8 +701,8 @@
     gm.bagVel = -(overdrive ? 6.8 : 4.1);
     gm.combo = overdrive ? gm.combo + 1 : 1;
     gm.banner = overdrive
-      ? (ar ? '💥 ضربة قاضية في الذروة! ×' + gm.combo : '💥 OVERDRIVE SWEET-SPOT! x' + gm.combo)
-      : (ar ? '🥊 ضربة مباشرة! استمر' : '🥊 SOLID BAG HIT!');
+      ? (ar ? 'ضربة قاضية في الذروة ×' + gm.combo : 'OVERDRIVE SWEET-SPOT x' + gm.combo)
+      : (ar ? 'ضربة مباشرة، استمر' : 'SOLID BAG STRIKE');
     gm.bannerColor = overdrive ? '#ebb858' : '#39e7a3';
     gm.bannerUntil = performance.now() + 1600;
     sfx.punch(overdrive);
@@ -540,6 +730,7 @@
   }
 
   function mountGymGame() {
+    ensureMotionStyles();
     var sessionBox = document.querySelector('#zone-main[data-zone-screen="gym"] .zone-gym-session');
     if (!sessionBox) return;
     if (sessionBox.querySelector('#zig-gym-canvas')) return;
@@ -579,6 +770,7 @@
   }
 
   function mountCasinoGames() {
+    ensureMotionStyles();
     var main = document.getElementById('zone-main');
     if (!main || main.getAttribute('data-zone-screen') !== 'casino') return;
 
@@ -659,7 +851,7 @@
     var oppName = f ? f.name : (v && v.opps && v.opps[0] ? v.opps[0].name : (ar ? 'خصم الشارع' : 'Street Rival'));
     var youPct = f ? f.youPct : 100;
     var oppPct = f ? f.oppPct : 100;
-    var statusTxt = f ? f.verdict + ' · ' + f.progress : (ar ? 'اختر خصماً لبدء القتال' : 'SELECT RIVAL BELOW TO ENGAGE');
+    var statusTxt = f ? f.verdict + ' | ' + f.progress : (ar ? 'اختر خصماً لبدء القتال' : 'SELECT RIVAL BELOW TO ENGAGE');
 
     banner.innerHTML =
       '<div class="zig-brawl-side">' +
@@ -707,162 +899,153 @@
     if (e.key === ' ') state.getaway.boosting = false;
   });
 
-  /* ---------------- Renderers (60fps Canvas Loop) ---------------- */
+  /* ---------------- Transparent Atmospheric Shader Previews (Over Key-Art) ---------------- */
   function renderHomePreviews(dt, now) {
     var previews = document.querySelectorAll('canvas[data-zig-preview]');
     if (!previews.length) return;
+    var pfx = state.previewFX;
+
+    /* Advance shared preview particle pools once per frame */
+    for (var i = 0; i < pfx.rain.length; i++) {
+      var rn = pfx.rain[i];
+      rn.y += rn.spd * dt * 1.45;
+      rn.x -= rn.spd * dt * 0.28;
+      if (rn.y > 1.08) { rn.y = -0.08; rn.x = Math.random() * 1.15; }
+    }
+    for (var j = 0; j < pfx.embers.length; j++) {
+      var em = pfx.embers[j];
+      em.y -= em.spd * dt;
+      em.x += em.drift * dt;
+      if (em.y < -0.06) { em.y = 1.06; em.x = 0.15 + Math.random() * 0.7; }
+      var mt = pfx.motes[j];
+      mt.y -= mt.spd * dt;
+      if (mt.y < -0.05) { mt.y = 1.05; mt.x = Math.random(); }
+      var bk = pfx.bokeh[j];
+      bk.y -= bk.spd * dt;
+      if (bk.y < -0.08) { bk.y = 1.08; bk.x = Math.random(); }
+      var ck = pfx.chalk[j];
+      ck.y -= ck.spd * dt;
+      ck.x += ck.drift * dt;
+      if (ck.y < -0.06) { ck.y = 1.06; ck.x = 0.15 + Math.random() * 0.7; }
+    }
+
     previews.forEach(function (cv) {
       var kind = cv.getAttribute('data-zig-preview');
-      var s = syncCanvas(cv, 98);
+      var rect = cv.getBoundingClientRect();
+      var targetH = Math.max(96, Math.round(rect.height || 132));
+      var s = syncCanvas(cv, targetH);
       if (!s) return;
       var ctx = s.ctx, w = s.w, h = s.h;
+
+      /* Transparent canvas: real UE5 WebP key-art shines underneath! */
       ctx.clearRect(0, 0, w, h);
 
-      var bg = ctx.createLinearGradient(0, 0, 0, h);
-      bg.addColorStop(0, '#0b1220');
-      bg.addColorStop(1, '#05080f');
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
       if (kind === 'getaway') {
-        /* Mini Neon Highway Preview */
-        var rw = w * 0.56, rx = (w - rw) * 0.5;
-        ctx.fillStyle = '#090f1d';
-        ctx.fillRect(0, 0, w, h);
-
-        /* Passing shoulder streetlamp glow */
-        for (var sl = 0; sl < 3; sl++) {
-          var ly = ((now * 0.14 + sl * 42) % (h + 36)) - 18;
-          ctx.fillStyle = 'rgba(235,184,88,0.16)';
-          ctx.beginPath(); ctx.arc(rx - 8, ly, 12, 0, Math.PI * 2); ctx.fill();
-          ctx.beginPath(); ctx.arc(rx + rw + 8, ly, 12, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = '#fde68a';
-          ctx.fillRect(rx - 9, ly - 1, 3, 3);
-          ctx.fillRect(rx + rw + 6, ly - 1, 3, 3);
+        /* 1. Pulsing Red/Blue Pursuit Rim Reflection Glow */
+        var sirenPhase = Math.sin(now * 0.0085);
+        var redAlpha = Math.max(0, sirenPhase) * 0.22;
+        var blueAlpha = Math.max(0, -sirenPhase) * 0.22;
+        if (redAlpha > 0.01) {
+          var rg = ctx.createRadialGradient(w * 0.18, h * 0.78, 4, w * 0.18, h * 0.78, w * 0.52);
+          rg.addColorStop(0, 'rgba(239, 68, 68, ' + redAlpha.toFixed(3) + ')');
+          rg.addColorStop(1, 'rgba(239, 68, 68, 0)');
+          ctx.fillStyle = rg;
+          ctx.fillRect(0, 0, w, h);
+        }
+        if (blueAlpha > 0.01) {
+          var bg = ctx.createRadialGradient(w * 0.82, h * 0.76, 4, w * 0.82, h * 0.76, w * 0.52);
+          bg.addColorStop(0, 'rgba(59, 130, 246, ' + blueAlpha.toFixed(3) + ')');
+          bg.addColorStop(1, 'rgba(59, 130, 246, 0)');
+          ctx.fillStyle = bg;
+          ctx.fillRect(0, 0, w, h);
         }
 
-        var roadGrad = ctx.createLinearGradient(rx, 0, rx + rw, 0);
-        roadGrad.addColorStop(0, '#0d1526');
-        roadGrad.addColorStop(0.5, '#131e35');
-        roadGrad.addColorStop(1, '#0d1526');
-        ctx.fillStyle = roadGrad;
-        ctx.fillRect(rx, 0, rw, h);
-        ctx.strokeStyle = 'rgba(235,184,88,0.65)';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(rx, 0); ctx.lineTo(rx, h);
-        ctx.moveTo(rx + rw, 0); ctx.lineTo(rx + rw, h);
-        ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(148,163,184,0.38)';
-        ctx.setLineDash([10, 10]);
-        ctx.lineDashOffset = -(now * 0.14) % 20;
-        for (var ln = 1; ln <= 2; ln++) {
+        /* 2. Diagonal Rain Streaks */
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
+        ctx.lineWidth = 1;
+        for (var rIdx = 0; rIdx < pfx.rain.length; rIdx++) {
+          var rDrop = pfx.rain[rIdx];
+          var rx = rDrop.x * w, ry = rDrop.y * h;
           ctx.beginPath();
-          ctx.moveTo(rx + (rw / 3) * ln, 0);
-          ctx.lineTo(rx + (rw / 3) * ln, h);
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx - 4.5, ry + rDrop.len);
           ctx.stroke();
         }
-        ctx.setLineDash([]);
 
-        /* Police Interceptor with Siren Halo */
-        var py = ((now * 0.085) % (h + 36)) - 18;
-        var px = rx + rw * 0.24;
-        var sRed = (Math.floor(now / 120) % 2) === 0;
-        ctx.fillStyle = sRed ? 'rgba(239,68,68,0.22)' : 'rgba(59,130,246,0.22)';
-        ctx.beginPath(); ctx.arc(px, py, 16, 0, Math.PI * 2); ctx.fill();
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(px - 8, py - 13, 16, 26);
-        ctx.fillStyle = '#e2e8f0';
-        ctx.fillRect(px - 7, py - 5, 14, 10);
-        ctx.fillStyle = sRed ? '#ef4444' : '#3b82f6';
-        ctx.fillRect(px - 7, py - 2, 7, 4);
-        ctx.fillStyle = sRed ? '#3b82f6' : '#ef4444';
-        ctx.fillRect(px, py - 2, 7, 4);
-
-        /* Player Noir GT Coupe + Headlight Beams */
-        var carX = rx + rw * (0.52 + Math.sin(now * 0.0032) * 0.25);
-        ctx.fillStyle = 'rgba(254,240,138,0.16)';
-        ctx.beginPath();
-        ctx.moveTo(carX - 6, h - 32); ctx.lineTo(carX - 13, h - 56); ctx.lineTo(carX - 1, h - 56);
-        ctx.closePath(); ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(carX + 6, h - 32); ctx.lineTo(carX + 1, h - 56); ctx.lineTo(carX + 13, h - 56);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#39e7a3';
-        ctx.shadowColor = '#39e7a3';
-        ctx.shadowBlur = 10;
-        ctx.fillRect(carX - 8, h - 32, 16, 25);
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = '#ebb858';
-        ctx.fillRect(carX - 1.5, h - 32, 3, 25);
-        ctx.fillStyle = '#06120c';
-        ctx.fillRect(carX - 6, h - 25, 12, 9);
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(carX - 7, h - 9, 14, 2);
-      } else if (kind === 'heist') {
-        /* Mini Brass Safe Dial */
-        var cx = w * 0.5, cy = h * 0.5, rad = 33;
-        ctx.strokeStyle = 'rgba(235,184,88,0.28)';
-        ctx.lineWidth = 7;
-        ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.stroke();
-
-        ctx.strokeStyle = '#ebb858';
-        ctx.shadowColor = '#ebb858';
-        ctx.shadowBlur = 10;
-        ctx.beginPath(); ctx.arc(cx, cy, rad, -0.7, 0.25); ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        var a = now * 0.0036;
-        ctx.strokeStyle = '#39e7a3';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(a) * (rad + 4), cy + Math.sin(a) * (rad + 4));
-        ctx.stroke();
-
-        ctx.fillStyle = '#ebb858';
-        ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
-      } else if (kind === 'casino') {
-        /* Mini Spinning Roulette Wheel */
-        var rcx = w * 0.5, rcy = h * 0.5, rr = 36;
-        var baseA = now * 0.0018;
-        for (var i = 0; i < 18; i++) {
-          var a0 = baseA + (i / 18) * Math.PI * 2;
-          var a1 = baseA + ((i + 1) / 18) * Math.PI * 2;
+        /* 3. Rising Emerald Nitro Embers */
+        for (var eIdx = 0; eIdx < pfx.embers.length; eIdx++) {
+          var emb = pfx.embers[eIdx];
+          ctx.fillStyle = (eIdx % 3 === 0) ? 'rgba(235, 184, 88, 0.72)' : 'rgba(57, 231, 163, 0.76)';
           ctx.beginPath();
-          ctx.moveTo(rcx, rcy);
-          ctx.arc(rcx, rcy, rr, a0, a1);
-          ctx.closePath();
-          ctx.fillStyle = i === 0 ? '#158046' : (i % 2 ? '#b82921' : '#141b29');
+          ctx.arc(emb.x * w, emb.y * h, emb.r, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.strokeStyle = '#ebb858';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath(); ctx.arc(rcx, rcy, rr, 0, Math.PI * 2); ctx.stroke();
-        var ba = -now * 0.0042;
-        ctx.fillStyle = '#ffffff';
+      } else if (kind === 'heist') {
+        /* 1. Sweeping Emerald Security Laser Beam */
+        var scanY = (0.18 + (Math.sin(now * 0.0022) * 0.5 + 0.5) * 0.64) * h;
+        var laserGrad = ctx.createLinearGradient(0, scanY - 12, 0, scanY + 12);
+        laserGrad.addColorStop(0, 'rgba(57, 231, 163, 0)');
+        laserGrad.addColorStop(0.5, 'rgba(57, 231, 163, 0.22)');
+        laserGrad.addColorStop(1, 'rgba(57, 231, 163, 0)');
+        ctx.fillStyle = laserGrad;
+        ctx.fillRect(0, scanY - 12, w, 24);
+
+        ctx.strokeStyle = 'rgba(73, 240, 161, 0.58)';
+        ctx.lineWidth = 1.15;
         ctx.beginPath();
-        ctx.arc(rcx + Math.cos(ba) * (rr - 6), rcy + Math.sin(ba) * (rr - 6), 3.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.moveTo(0, scanY);
+        ctx.lineTo(w, scanY);
+        ctx.stroke();
+
+        /* 2. Floating Golden Vault Dust Motes */
+        for (var mIdx = 0; mIdx < pfx.motes.length; mIdx++) {
+          var mt2 = pfx.motes[mIdx];
+          var tw = 0.32 + 0.45 * (0.5 + 0.5 * Math.sin(now * 0.003 + mt2.phase));
+          ctx.fillStyle = 'rgba(235, 184, 88, ' + tw.toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.arc((mt2.x + Math.sin(now * 0.0012 + mt2.phase) * 0.03) * w, mt2.y * h, mt2.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if (kind === 'casino') {
+        /* 1. Subtle Sweeping Champagne Specular Arc */
+        var sweepX = ((now * 0.00028) % 1.6 - 0.3) * w;
+        var sheen = ctx.createLinearGradient(sweepX - 42, 0, sweepX + 42, h);
+        sheen.addColorStop(0, 'rgba(235, 184, 88, 0)');
+        sheen.addColorStop(0.5, 'rgba(253, 230, 138, 0.14)');
+        sheen.addColorStop(1, 'rgba(235, 184, 88, 0)');
+        ctx.fillStyle = sheen;
+        ctx.fillRect(0, 0, w, h);
+
+        /* 2. Warm Golden Bokeh Glints */
+        for (var bIdx = 0; bIdx < pfx.bokeh.length; bIdx++) {
+          var bk2 = pfx.bokeh[bIdx];
+          var alphaB = 0.12 + 0.22 * (0.5 + 0.5 * Math.sin(now * 0.0026 + bk2.phase));
+          var bx = bk2.x * w, by = bk2.y * h;
+          var bGrad = ctx.createRadialGradient(bx, by, 0.5, bx, by, bk2.r);
+          bGrad.addColorStop(0, 'rgba(254, 240, 138, ' + (alphaB * 1.4).toFixed(3) + ')');
+          bGrad.addColorStop(1, 'rgba(235, 184, 88, 0)');
+          ctx.fillStyle = bGrad;
+          ctx.beginPath();
+          ctx.arc(bx, by, bk2.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
       } else if (kind === 'gym') {
-        /* Mini Swinging Heavy Bag */
-        var gx = w * 0.5, swing = Math.sin(now * 0.0045) * 0.28;
-        ctx.save();
-        ctx.translate(gx, 4);
-        ctx.rotate(swing);
-        ctx.strokeStyle = '#94a3b8';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 18); ctx.stroke();
-        var bagGrad = ctx.createLinearGradient(-14, 18, 14, 18);
-        bagGrad.addColorStop(0, '#7f1d1d');
-        bagGrad.addColorStop(0.5, '#dc2626');
-        bagGrad.addColorStop(1, '#450a0a');
-        ctx.fillStyle = bagGrad;
-        ctx.fillRect(-13, 18, 26, 56);
-        ctx.fillStyle = '#ebb858';
-        ctx.fillRect(-13, 38, 26, 5);
-        ctx.restore();
+        /* 1. Soft Overhead Ring Spotlight Pulse */
+        var spotPulse = 0.14 + 0.08 * Math.sin(now * 0.0024);
+        var spot = ctx.createRadialGradient(w * 0.5, -8, 6, w * 0.5, h * 0.25, w * 0.65);
+        spot.addColorStop(0, 'rgba(255, 248, 220, ' + spotPulse.toFixed(3) + ')');
+        spot.addColorStop(1, 'rgba(255, 248, 220, 0)');
+        ctx.fillStyle = spot;
+        ctx.fillRect(0, 0, w, h);
+
+        /* 2. Drifting Chalk Dust Motes */
+        for (var cIdx = 0; cIdx < pfx.chalk.length; cIdx++) {
+          var ck2 = pfx.chalk[cIdx];
+          ctx.fillStyle = (cIdx % 4 === 0) ? 'rgba(235, 184, 88, 0.42)' : 'rgba(241, 245, 249, 0.36)';
+          ctx.beginPath();
+          ctx.arc(ck2.x * w, ck2.y * h, ck2.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     });
   }
@@ -955,7 +1138,6 @@
     ctx.fillStyle = shoulderGrad;
     ctx.fillRect(0, 0, w, h);
 
-    /* Procedural Noir City Blocks & Lit Windows on Left/Right Shoulders */
     var scrollPx = (now * (gw.running && !gw.gameOver ? gw.speed * 0.65 : 95) * 0.001) * 60;
     if (roadLeft > 24) {
       for (var sb = -1; sb < 5; sb++) {
@@ -968,7 +1150,6 @@
         ctx.strokeRect(6, by, bwL, 56);
         ctx.fillRect(roadLeft + roadW + 16, by + 18, bwL, 52);
         ctx.strokeRect(roadLeft + roadW + 16, by + 18, bwL, 52);
-        /* Lit penthouse windows */
         ctx.fillStyle = (sb % 2 === 0) ? 'rgba(235,184,88,0.28)' : 'rgba(57,231,163,0.22)';
         for (var wx = 12; wx < bwL - 8; wx += 14) {
           ctx.fillRect(wx, by + 10, 6, 8);
@@ -988,7 +1169,7 @@
     ctx.fillStyle = asphalt;
     ctx.fillRect(roadLeft, 0, roadW, h);
 
-    /* Passing Golden Streetlamps Casting Light Pools onto Curbs */
+    /* Passing Golden Streetlamps */
     for (var lp = -1; lp < 5; lp++) {
       var lampY = ((lp * 74 + scrollPx * 4.4) % (h + 74)) - 37;
       var lPoolL = ctx.createRadialGradient(roadLeft - 6, lampY, 2, roadLeft - 6, lampY, 34);
@@ -1048,7 +1229,6 @@
         ctx.fillStyle = glow;
         ctx.beginPath(); ctx.arc(ex, ent.y, 22, 0, Math.PI * 2); ctx.fill();
 
-        /* Brass Briefcase Handle + Emerald Case */
         ctx.strokeStyle = '#ebb858';
         ctx.lineWidth = 2;
         ctx.strokeRect(ex - 5, ent.y - 14, 10, 4);
@@ -1061,7 +1241,6 @@
         ctx.textAlign = 'center';
         ctx.fillText('$', ex, ent.y + 4);
       } else {
-        /* Police Interceptor + Sweeping Siren Halo */
         var flashRed = Math.floor(now / 110) % 2 === 0;
         var siren = ctx.createRadialGradient(ex, ent.y, 4, ex, ent.y, 34);
         siren.addColorStop(0, flashRed ? 'rgba(239,68,68,0.32)' : 'rgba(59,130,246,0.32)');
@@ -1069,7 +1248,6 @@
         ctx.fillStyle = siren;
         ctx.beginPath(); ctx.arc(ex, ent.y, 34, 0, Math.PI * 2); ctx.fill();
 
-        /* Headlight cones facing downward */
         ctx.fillStyle = 'rgba(226,232,240,0.16)';
         ctx.beginPath();
         ctx.moveTo(ex - 10, ent.y + 20); ctx.lineTo(ex - 18, ent.y + 44); ctx.lineTo(ex - 2, ent.y + 44);
@@ -1078,19 +1256,16 @@
         ctx.moveTo(ex + 10, ent.y + 20); ctx.lineTo(ex + 2, ent.y + 44); ctx.lineTo(ex + 18, ent.y + 44);
         ctx.closePath(); ctx.fill();
 
-        /* Cruiser Chassis */
         ctx.fillStyle = '#0f172a';
         ctx.strokeStyle = '#94a3b8';
         ctx.lineWidth = 1.5;
         ctx.fillRect(ex - 14, ent.y - 21, 28, 42);
         ctx.strokeRect(ex - 14, ent.y - 21, 28, 42);
-        /* White Interceptor Doors + Dark Glass */
         ctx.fillStyle = '#e2e8f0';
         ctx.fillRect(ex - 12, ent.y - 8, 24, 16);
         ctx.fillStyle = '#090d16';
         ctx.fillRect(ex - 10, ent.y + 6, 20, 8);
         ctx.fillRect(ex - 10, ent.y - 15, 20, 6);
-        /* Roof Lightbar */
         ctx.fillStyle = flashRed ? '#ef4444' : '#3b82f6';
         ctx.fillRect(ex - 11, ent.y - 3, 11, 5);
         ctx.fillStyle = flashRed ? '#3b82f6' : '#ef4444';
@@ -1106,7 +1281,6 @@
     ctx.translate(px, py);
     ctx.rotate(tilt);
 
-    /* Xenon Headlight Cones on Wet Asphalt */
     var beamL = ctx.createLinearGradient(0, -22, 0, -82);
     beamL.addColorStop(0, 'rgba(254,240,138,0.32)');
     beamL.addColorStop(1, 'rgba(254,240,138,0)');
@@ -1118,7 +1292,6 @@
     ctx.moveTo(11, -22); ctx.lineTo(2, -82); ctx.lineTo(24, -82);
     ctx.closePath(); ctx.fill();
 
-    /* Twin Nitro Exhaust Flames */
     var flameLen = (gw.boosting && gw.nitro > 0) ? (16 + Math.sin(now * 0.05) * 6) : (7 + Math.sin(now * 0.03) * 2.5);
     ctx.fillStyle = (gw.boosting && gw.nitro > 0) ? '#38bdf8' : '#ebb858';
     ctx.beginPath();
@@ -1126,7 +1299,6 @@
     ctx.moveTo(3, 22); ctx.lineTo(6, 22 + flameLen); ctx.lineTo(9, 22);
     ctx.fill();
 
-    /* GT Metallic Body + Gold Syndicate Stripe */
     ctx.shadowColor = '#39e7a3';
     ctx.shadowBlur = gw.boosting ? 20 : 10;
     var carGrad = ctx.createLinearGradient(-14, -22, 14, 22);
@@ -1137,14 +1309,12 @@
     ctx.fillRect(-14, -22, 28, 44);
     ctx.shadowBlur = 0;
 
-    /* Wheels */
     ctx.fillStyle = '#05070c';
     ctx.fillRect(-16, -16, 3, 10);
     ctx.fillRect(13, -16, 3, 10);
     ctx.fillRect(-16, 8, 3, 10);
     ctx.fillRect(13, 8, 3, 10);
 
-    /* Gold Center Racing Stripe + Carbon Cockpit */
     ctx.fillStyle = '#ebb858';
     ctx.fillRect(-2, -22, 4, 44);
     ctx.fillStyle = '#06110c';
@@ -1152,7 +1322,6 @@
     ctx.fillStyle = 'rgba(124,196,255,0.22)';
     ctx.fillRect(-9, -9, 18, 5);
 
-    /* Xenon Lamps + Crimson LED Tailbar */
     ctx.fillStyle = '#fef08a';
     ctx.fillRect(-12, -22, 7, 3);
     ctx.fillRect(5, -22, 7, 3);
@@ -1173,7 +1342,7 @@
       ctx.globalAlpha = 1;
     }
 
-    /* Arcade HUD Overlays (Left: Score/Loot · Right: Speed/Nitro) */
+    /* Arcade HUD Overlays */
     ctx.fillStyle = 'rgba(7,10,16,0.84)';
     ctx.fillRect(10, 10, 174, 54);
     ctx.strokeStyle = 'rgba(235,184,88,0.48)';
@@ -1195,7 +1364,6 @@
       ctx.fillStyle = '#e2e8f0';
       ctx.font = fontStack(900, 12);
       ctx.fillText(mph + (ar ? ' كم/س' : ' MPH'), w - 18, 28);
-      /* Nitro Mini Bar */
       ctx.fillStyle = '#141e30';
       ctx.fillRect(w - 136, 38, 118, 8);
       ctx.fillStyle = gw.boosting ? '#38bdf8' : '#39e7a3';
@@ -1207,24 +1375,46 @@
       ctx.fillRect(0, 0, w, h);
       ctx.textAlign = 'center';
       ctx.fillStyle = gw.gameOver ? '#ff6a55' : '#ebb858';
-      ctx.font = fontStack(900, 20);
+      ctx.font = fontStack(900, 19);
       ctx.fillText(
         gw.gameOver
-          ? (ar ? '🚨 طوّقتك الدوريات!' : '🚨 ROADBLOCK IMPACT!')
-          : (ar ? '🏎️ مطاردة النيون الليلية' : '🏎️ NITRO SYNDICATE GETAWAY'),
+          ? (ar ? 'طوّقتك الدوريات' : 'ROADBLOCK IMPACT')
+          : (ar ? 'مطاردة النيون الليلية' : 'NITRO SYNDICATE GETAWAY'),
         w * 0.5,
-        h * 0.43
+        h * 0.43,
+        Math.max(160, w - 28)
       );
       ctx.fillStyle = '#e2e8f0';
-      ctx.font = fontStack(700, 12.5);
+      ctx.font = fontStack(700, 12);
       ctx.fillText(
         gw.gameOver
-          ? (ar ? 'النتيجة: ' + gw.score + ' · حقائب: ' + gw.bags + ' · اضغط للانطلاق مجدداً' : 'Score: ' + gw.score + ' · Bags: ' + gw.bags + ' · Tap Canvas to Ride Again')
+          ? (ar ? 'النتيجة: ' + gw.score + ' | حقائب: ' + gw.bags + ' | اضغط للانطلاق مجدداً' : 'Score: ' + gw.score + ' | Bags: ' + gw.bags + ' | Tap Canvas to Ride Again')
           : (ar ? 'اضغط على أي مسار للانطلاق ومراوغة الشرطة' : 'Tap any lane or press Arrow Keys to launch'),
         w * 0.5,
-        h * 0.58
+        h * 0.58,
+        Math.max(160, w - 28)
       );
     }
+  }
+
+  function drawVectorReticle(ctx, cx, cy, r, color) {
+    ctx.save();
+    ctx.strokeStyle = color || '#ebb858';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - r - 2.5, cy); ctx.lineTo(cx - r * 0.45, cy);
+    ctx.moveTo(cx + r * 0.45, cy); ctx.lineTo(cx + r + 2.5, cy);
+    ctx.moveTo(cx, cy - r - 2.5); ctx.lineTo(cx, cy - r * 0.45);
+    ctx.moveTo(cx, cy + r * 0.45); ctx.lineTo(cx, cy + r + 2.5);
+    ctx.stroke();
+    ctx.fillStyle = '#39e7a3';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 
   function renderCrimesGame(dt, now) {
@@ -1238,10 +1428,18 @@
 
     hs.angle = (hs.angle + hs.speed * hs.dir * dt) % (Math.PI * 2);
 
-    /* Noir Alley Rain Backdrop */
-    var grad = ctx.createRadialGradient(w * 0.5, h * 0.5, 16, w * 0.5, h * 0.5, w * 0.65);
-    grad.addColorStop(0, '#131d2e');
-    grad.addColorStop(1, '#060910');
+    /* Deep Noir Vault Base + Darkened UE5 Safe-Crack Key-Art (0.28 alpha) */
+    ctx.fillStyle = '#060910';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.globalAlpha = 0.28;
+    var drewHeistArt = drawCoverArt(ctx, artImages.heist, w, h, 0, 0, 1.04);
+    ctx.restore();
+
+    var grad = ctx.createRadialGradient(w * 0.5, h * 0.52, 18, w * 0.5, h * 0.52, w * 0.68);
+    grad.addColorStop(0, drewHeistArt ? 'rgba(13, 20, 34, 0.38)' : '#131d2e');
+    grad.addColorStop(1, 'rgba(6, 9, 16, 0.88)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
@@ -1267,7 +1465,7 @@
     var cx = w * 0.5, cy = h * 0.52, radius = Math.min(72, h * 0.34);
 
     /* Outer brass bezel */
-    ctx.strokeStyle = 'rgba(235,184,88,0.32)';
+    ctx.strokeStyle = 'rgba(235,184,88,0.34)';
     ctx.lineWidth = 13;
     ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.stroke();
 
@@ -1275,7 +1473,7 @@
     for (var ti = 0; ti < 36; ti++) {
       var ta = (ti / 36) * Math.PI * 2;
       var inner = radius - (ti % 3 === 0 ? 15 : 11);
-      ctx.strokeStyle = ti % 3 === 0 ? 'rgba(235,184,88,0.65)' : 'rgba(148,163,184,0.28)';
+      ctx.strokeStyle = ti % 3 === 0 ? 'rgba(235,184,88,0.68)' : 'rgba(148,163,184,0.30)';
       ctx.lineWidth = ti % 3 === 0 ? 2 : 1;
       ctx.beginPath();
       ctx.moveTo(cx + Math.cos(ta) * inner, cy + Math.sin(ta) * inner);
@@ -1337,32 +1535,36 @@
       ctx.globalAlpha = 1;
     }
 
-    /* Selected Crime Title + Prompt HUD */
+    /* Selected Crime Title + Vector Reticle (Zero Emoji) */
     var sel = window.__zoneLastView && window.__zoneLastView.crimeDesk && window.__zoneLastView.crimeDesk.selected;
     var targetName = sel ? sel.name : (ar ? 'خزنة الهدف' : 'TARGET VAULT');
+    drawVectorReticle(ctx, 18, 16, 5.2, '#ebb858');
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ebb858';
     ctx.font = fontStack(800, 11);
-    ctx.fillText((ar ? '🎯 الهدف: ' : '🎯 TARGET: ') + targetName, 12, 20);
+    ctx.fillText((ar ? 'الهدف: ' : 'TARGET: ') + targetName, 30, 20, Math.max(90, w * 0.52));
 
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = fontStack(700, 10.5);
-    ctx.fillText(ar ? 'اضغط أو [Space] في القوس الذهبي' : 'CLICK OR [SPACE] IN GOLD ARC', w - 12, 20);
+    if (w > 340) {
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = fontStack(700, 10.5);
+      ctx.fillText(ar ? 'اضغط أو [Space] في القوس الذهبي' : 'CLICK OR [SPACE] IN GOLD ARC', w - 12, 20, w * 0.44);
+    }
 
     if (now < hs.bannerUntil && hs.banner) {
       ctx.textAlign = 'center';
       ctx.fillStyle = hs.bannerColor;
-      ctx.font = fontStack(800, 13);
-      ctx.fillText(hs.banner, cx, h - 10);
+      ctx.font = fontStack(800, 12.5);
+      ctx.fillText(hs.banner, cx, h - 10, Math.max(140, w - 24));
     } else {
       ctx.textAlign = 'center';
       ctx.fillStyle = '#cbd5e1';
       ctx.font = fontStack(700, 11.5);
       ctx.fillText(
-        ar ? 'اضرب القفل في اللحظة الذهبية لتنفيذ الجريمة المختارة فوراً' : 'Strike the lock in the golden zone to breach & execute crime',
+        ar ? 'اضرب القفل في القوس الذهبي لتنفيذ العملية' : 'Strike inside the golden arc to breach vault',
         cx,
-        h - 10
+        h - 10,
+        Math.max(140, w - 24)
       );
     }
   }
@@ -1376,7 +1578,7 @@
     var gm = state.gym;
     var ar = isAr();
 
-    /* Pendulum spring physics for Heavy Bag */
+    /* Pendulum spring physics for Heavy Bag recoil */
     var spring = -26 * gm.bagAngle - 4.2 * gm.bagVel;
     gm.bagVel += spring * dt;
     gm.bagAngle += gm.bagVel * dt;
@@ -1386,44 +1588,43 @@
     if (gm.gaugePos >= 1) { gm.gaugePos = 1; gm.gaugeDir = -1; }
     if (gm.gaugePos <= 0) { gm.gaugePos = 0; gm.gaugeDir = 1; }
 
-    var bg = ctx.createRadialGradient(w * 0.5, 20, 10, w * 0.5, h * 0.6, w * 0.65);
-    bg.addColorStop(0, '#1c2538');
-    bg.addColorStop(1, '#070b12');
-    ctx.fillStyle = bg;
+    ctx.fillStyle = '#070b12';
     ctx.fillRect(0, 0, w, h);
 
-    var pivotX = w * 0.5, pivotY = 6;
+    /* Photorealistic UE5 Heavy-Bag Plate with Physical Impact Recoil/Sway */
+    var swayX = Math.sin(gm.bagAngle) * 20;
+    var swayY = -Math.abs(Math.sin(gm.bagAngle)) * 4;
+    var drewBagArt = drawCoverArt(ctx, artImages.heavybag, w, h, swayX, swayY, 1.10);
+
+    if (!drewBagArt) {
+      var bg = ctx.createRadialGradient(w * 0.5, 24, 10, w * 0.5, h * 0.55, w * 0.65);
+      bg.addColorStop(0, '#1c2538');
+      bg.addColorStop(1, '#070b12');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    /* Studio Rim + Bottom Legibility Scrim for Power Gauge */
+    var scrim = ctx.createLinearGradient(0, 0, 0, h);
+    scrim.addColorStop(0, 'rgba(6, 9, 15, 0.24)');
+    scrim.addColorStop(0.54, 'rgba(6, 9, 15, 0.18)');
+    scrim.addColorStop(0.78, 'rgba(6, 9, 15, 0.78)');
+    scrim.addColorStop(1, 'rgba(5, 8, 14, 0.95)');
+    ctx.fillStyle = scrim;
+    ctx.fillRect(0, 0, w, h);
+
+    /* Subtle Golden Target Strike Crosshair on Bag Center */
+    var impactX = w * 0.5 + swayX;
+    var impactY = h * 0.42 + swayY;
     ctx.save();
-    ctx.translate(pivotX, pivotY);
-    ctx.rotate(gm.bagAngle);
-
-    /* Steel chains */
-    ctx.strokeStyle = '#94a3b8';
-    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(235, 184, 88, 0.42)';
+    ctx.lineWidth = 1.4;
     ctx.beginPath();
-    ctx.moveTo(-10, 0); ctx.lineTo(-14, 24);
-    ctx.moveTo(10, 0); ctx.lineTo(14, 24);
+    ctx.arc(impactX, impactY, 15, 0, Math.PI * 2);
     ctx.stroke();
-
-    /* Leather Heavy Bag */
-    var bagGrad = ctx.createLinearGradient(-24, 24, 24, 24);
-    bagGrad.addColorStop(0, '#5c1414');
-    bagGrad.addColorStop(0.42, '#dc2626');
-    bagGrad.addColorStop(1, '#3b0a0a');
-    ctx.fillStyle = bagGrad;
-    ctx.fillRect(-23, 24, 46, 96);
-    ctx.strokeStyle = 'rgba(235,184,88,0.55)';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(-23, 24, 46, 96);
-
-    /* Strike Zone Tape */
-    ctx.fillStyle = '#ebb858';
-    ctx.fillRect(-23, 58, 46, 10);
     ctx.restore();
 
     /* Shockwave Rings */
-    var impactX = pivotX + Math.sin(gm.bagAngle) * 72;
-    var impactY = pivotY + Math.cos(gm.bagAngle) * 72;
     for (var ri = gm.rings.length - 1; ri >= 0; ri--) {
       var rg = gm.rings[ri];
       rg.r += dt * 150;
@@ -1450,36 +1651,40 @@
     }
 
     /* Power Sweet-Spot Gauge Bar */
-    var barW = Math.min(320, w - 36);
+    var barW = Math.min(300, Math.max(120, w - 32));
     var barX = (w - barW) * 0.5;
-    var barY = h - 34;
-    ctx.fillStyle = '#0d1320';
-    ctx.fillRect(barX, barY, barW, 13);
-    ctx.strokeStyle = '#33435e';
-    ctx.strokeRect(barX, barY, barW, 13);
+    var barY = h - 35;
+    ctx.fillStyle = 'rgba(11, 17, 29, 0.92)';
+    ctx.fillRect(barX, barY, barW, 12);
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.42)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX, barY, barW, 12);
 
     /* Center Overdrive Sweet-Spot */
-    ctx.fillStyle = 'rgba(235,184,88,0.88)';
-    ctx.fillRect(barX + barW * 0.36, barY + 1, barW * 0.28, 11);
+    ctx.fillStyle = 'rgba(235, 184, 88, 0.88)';
+    ctx.fillRect(barX + barW * 0.36, barY + 1, barW * 0.28, 10);
     ctx.fillStyle = '#39e7a3';
-    ctx.fillRect(barX + barW * 0.45, barY + 1, barW * 0.10, 11);
+    ctx.fillRect(barX + barW * 0.45, barY + 1, barW * 0.10, 10);
 
     /* Moving Cursor */
     var curX = barX + gm.gaugePos * barW;
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(curX - 2.5, barY - 3, 5, 19);
+    ctx.fillRect(curX - 2, barY - 3, 4, 18);
 
+    /* Concise Clamped Prompt (Never Overflows Narrow 300px Gym Column) */
+    var maxTxtW = Math.max(110, w - 24);
     ctx.textAlign = 'center';
-    ctx.font = fontStack(800, 11.5);
+    ctx.font = fontStack(700, 11);
     if (now < gm.bannerUntil && gm.banner) {
       ctx.fillStyle = gm.bannerColor;
-      ctx.fillText(gm.banner, w * 0.5, h - 6);
+      ctx.fillText(gm.banner, w * 0.5, h - 7, maxTxtW);
     } else {
-      ctx.fillStyle = '#cbd5e1';
+      ctx.fillStyle = '#e2e8f0';
       ctx.fillText(
-        ar ? 'اضغط على الكيس عند مرور المؤشر في المنطقة الذهبية للتدريب' : 'Tap bag when power needle hits center gold zone to train',
+        ar ? 'اضغط عند المنطقة الذهبية' : 'Tap when needle hits gold zone',
         w * 0.5,
-        h - 6
+        h - 7,
+        maxTxtW
       );
     }
   }
@@ -1596,6 +1801,68 @@
     ctx.restore();
   }
 
+  function drawSlotSymbol(ctx, sym, cx, cy) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    if (sym.kind === 'diamond') {
+      ctx.fillStyle = '#0284c7';
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-8, -9); ctx.lineTo(8, -9); ctx.lineTo(12, -3); ctx.lineTo(0, 11); ctx.lineTo(-12, -3);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#bae6fd';
+      ctx.beginPath(); ctx.moveTo(-11, -3); ctx.lineTo(11, -3); ctx.stroke();
+    } else if (sym.kind === 'seven') {
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#dc2626';
+      ctx.font = fontStack(900, 18);
+      ctx.fillText('777', 0, 6);
+    } else if (sym.kind === 'crown') {
+      ctx.fillStyle = '#d97706';
+      ctx.strokeStyle = '#78350f';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-11, 7); ctx.lineTo(-12, -6); ctx.lineTo(-5, 0); ctx.lineTo(0, -9); ctx.lineTo(5, 0); ctx.lineTo(12, -6); ctx.lineTo(11, 7);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    } else if (sym.kind === 'bullion') {
+      ctx.fillStyle = '#eab308';
+      ctx.strokeStyle = '#713f12';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(-9, -6); ctx.lineTo(9, -6); ctx.lineTo(12, 6); ctx.lineTo(-12, 6);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(-6, -3, 12, 3);
+    } else if (sym.kind === 'spade') {
+      ctx.fillStyle = '#059669';
+      ctx.beginPath();
+      ctx.moveTo(0, -10);
+      ctx.bezierCurveTo(10, -2, 11, 5, 4, 6);
+      ctx.lineTo(2, 6); ctx.lineTo(4, 10); ctx.lineTo(-4, 10); ctx.lineTo(-2, 6); ctx.lineTo(-4, 6);
+      ctx.bezierCurveTo(-11, 5, -10, -2, 0, -10);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = '#e11d48';
+      ctx.strokeStyle = '#881337';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(-4.5, 3, 5, 0, Math.PI * 2);
+      ctx.arc(4.5, 4, 5, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = '#15803d';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(-4, -2); ctx.quadraticCurveTo(0, -10, 3, -9);
+      ctx.moveTo(4, -1); ctx.quadraticCurveTo(2, -8, 3, -9);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   function renderSlotsCanvas(dt, now) {
     var cv = document.getElementById('zig-slots-canvas');
     if (!cv) return;
@@ -1687,10 +1954,7 @@
         var symIdx = (baseIdx + row + SLOT_SYMS.length) % SLOT_SYMS.length;
         var sym = SLOT_SYMS[symIdx];
         var sy = ry + reelH * 0.5 + (row - frac) * 44;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = sym.color === '#6ee7ff' ? '#0f172a' : sym.color;
-        ctx.font = fontStack(900, sym.glyph === '777' ? 19 : 24);
-        ctx.fillText(sym.glyph, rx + reelW * 0.5, sy + 8);
+        drawSlotSymbol(ctx, sym, rx + reelW * 0.5, sy);
       }
       ctx.restore();
 
@@ -1733,15 +1997,15 @@
     }
   }
 
-  /* ---------------- Global Syndicate Flight Bar & Map Bridge ---------------- */
+  /* ---------------- Global Syndicate Flight Bar & Map Bridge (Zero Emojis) ---------------- */
   var WORLD_FLIGHT_CITIES = [
-    { id: 'zone', code: 'ZCT', minLevel: 1, fare: 0, en: 'Zone City', ar: 'مدينة الزون', subEn: 'Home Turf · 5 Sectors', subAr: 'المركز الرئيسي · 5 قطاعات' },
-    { id: 'riyadh', code: 'RUH', minLevel: 1, fare: 1200, en: 'Riyadh', ar: 'الرياض', subEn: 'Bullion · $1,200', subAr: 'سبائك الذهب · $1,200' },
-    { id: 'cairo', code: 'CAI', minLevel: 1, fare: 950, en: 'Cairo', ar: 'القاهرة', subEn: 'Shadow Bazaar · $950', subAr: 'بازار النيل · $950' },
-    { id: 'dubai', code: 'DXB', minLevel: 3, fare: 2400, en: 'Dubai', ar: 'دبي', subEn: 'Sky-Vaults · Lv.3', subAr: 'خزائن المارينا · مستوى 3' },
-    { id: 'istanbul', code: 'IST', minLevel: 6, fare: 3500, en: 'Istanbul', ar: 'إسطنبول', subEn: 'Bosphorus · Lv.6', subAr: 'مضيق البسفور · مستوى 6' },
-    { id: 'tokyo', code: 'TYO', minLevel: 10, fare: 6800, en: 'Neo-Tokyo', ar: 'نيو طوكيو', subEn: 'Cyber-Syndicate · Lv.10', subAr: 'شيبويا · مستوى 10' },
-    { id: 'montecarlo', code: 'MCO', minLevel: 15, fare: 12500, en: 'Monte Carlo', ar: 'مونت كارلو', subEn: 'High Salon · Lv.15', subAr: 'صالون النخبة · مستوى 15' }
+    { id: 'zone', code: 'ZCT', minLevel: 1, fare: 0, en: 'Zone City', ar: 'مدينة الزون', subEn: 'Home Turf, 5 Sectors', subAr: 'المركز الرئيسي، 5 قطاعات' },
+    { id: 'riyadh', code: 'RUH', minLevel: 1, fare: 1200, en: 'Riyadh', ar: 'الرياض', subEn: 'Bullion Desk, $1,200', subAr: 'مكتب السبائك، $1,200' },
+    { id: 'cairo', code: 'CAI', minLevel: 1, fare: 950, en: 'Cairo', ar: 'القاهرة', subEn: 'Shadow Bazaar, $950', subAr: 'بازار النيل، $950' },
+    { id: 'dubai', code: 'DXB', minLevel: 3, fare: 2400, en: 'Dubai', ar: 'دبي', subEn: 'Sky-Vaults, Lv.3', subAr: 'خزائن المارينا، مستوى 3' },
+    { id: 'istanbul', code: 'IST', minLevel: 6, fare: 3500, en: 'Istanbul', ar: 'إسطنبول', subEn: 'Bosphorus Hub, Lv.6', subAr: 'مضيق البسفور، مستوى 6' },
+    { id: 'tokyo', code: 'TYO', minLevel: 10, fare: 6800, en: 'Neo-Tokyo', ar: 'نيو طوكيو', subEn: 'Cyber District, Lv.10', subAr: 'حي شيبويا، مستوى 10' },
+    { id: 'montecarlo', code: 'MCO', minLevel: 15, fare: 12500, en: 'Monte Carlo', ar: 'مونت كارلو', subEn: 'Sovereign Salon, Lv.15', subAr: 'صالون النخبة، مستوى 15' }
   ];
 
   function getStoredWorldCity() {
@@ -1751,12 +2015,13 @@
   }
 
   function mountCityWorldFlightBar() {
+    ensureMotionStyles();
     var main = document.getElementById('zone-main');
     if (!main || main.getAttribute('data-zone-screen') !== 'city') return;
     var mapShell = main.querySelector('.zone-city-map-shell');
     if (!mapShell || !mapShell.parentElement) return;
 
-    var ar = document.documentElement.lang === 'ar';
+    var ar = isAr();
     var g = window.__zoneGame;
     var lv = (g && g.p && Number(g.p.level)) ? Math.max(1, Math.floor(Number(g.p.level))) : 1;
     var activeCityId = getStoredWorldCity();
@@ -1782,8 +2047,8 @@
     bar.innerHTML =
       '<div class="zig-world-flight-top">' +
         '<div class="zig-world-flight-title">' +
-          '<span>✈️</span>' +
-          '<span>' + (ar ? 'شبكة السفر بين المدن العالمية · موقعك: ' : 'City-to-City World Transit · Current: ') + (ar ? curObj.ar : curObj.en) + ' (' + curObj.code + ')</span>' +
+          SVG_PLANE +
+          '<span>' + (ar ? 'شبكة الطيران العالمي | موقعك: ' : 'World Charter Network | Current: ') + (ar ? curObj.ar : curObj.en) + ' (' + curObj.code + ')</span>' +
         '</div>' +
         '<div class="zig-world-flight-meta">' +
           '<span>' + (ar ? 'مستوى التصريح: ' : 'Clearance: ') + 'Lv.' + lv + '</span>' +
@@ -1794,11 +2059,16 @@
         WORLD_FLIGHT_CITIES.map(function (c) {
           var isHere = c.id === activeCityId;
           var locked = lv < c.minLevel;
+          var rightBadge = isHere
+            ? '<span class="zig-here-dot" aria-hidden="true"></span>'
+            : locked
+              ? ('<span class="zig-chip-status">' + SVG_LOCK + '<span>Lv.' + c.minLevel + '</span></span>')
+              : '<span>' + c.code + '</span>';
           return (
             '<button type="button" class="zig-city-chip' + (isHere ? ' is-active' : '') + (locked ? ' is-locked' : '') + '" data-world-city="' + c.id + '">' +
               '<div class="zig-city-chip-top">' +
                 '<span>' + (ar ? c.ar : c.en) + '</span>' +
-                '<span>' + (isHere ? '●' : locked ? ('🔒' + c.minLevel) : c.code) + '</span>' +
+                rightBadge +
               '</div>' +
               '<div class="zig-city-chip-sub">' + (ar ? c.subAr : c.subEn) + '</div>' +
             '</button>'
@@ -1843,7 +2113,7 @@
           if (g.save) g.save();
           g._mapSig = '';
           if (g.pushMap) g.pushMap();
-          if (g.toast) g.toast((ar ? 'وصلت إلى ' : 'Landed in ') + (ar ? target.ar : target.en) + ' (' + target.code + ') · +35 XP');
+          if (g.toast) g.toast((ar ? 'وصلت إلى ' : 'Landed in ') + (ar ? target.ar : target.en) + ' (' + target.code + ') | +35 XP');
           if (g.forceUpdate) g.forceUpdate();
         } else {
           try { localStorage.setItem('zone_world_city', target.id); } catch (_) {}
@@ -1861,7 +2131,7 @@
     if (ev.origin !== window.location.origin || !ev.data || ev.data.type !== 'ZONE_WORLD_TRAVEL') return;
     var d = ev.data;
     var g = window.__zoneGame;
-    var ar = document.documentElement.lang === 'ar';
+    var ar = isAr();
     if (d.action === 'fly' && d.cityId) {
       try { localStorage.setItem('zone_world_city', d.cityId); } catch (_) {}
       if (g && g.p) {
@@ -1874,7 +2144,7 @@
         if (g.save) g.save();
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
-        if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' · +' + Number(d.xpDelta || 35) + ' XP');
+        if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' | +' + Number(d.xpDelta || 35) + ' XP');
         if (g.forceUpdate) g.forceUpdate();
       }
       var bar = document.getElementById('zig-world-flight-bar');
@@ -1889,14 +2159,28 @@
         if (g.save) g.save();
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
-        if (g.toast) g.toast((d.contractLabel || 'Regional Op') + ' · +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' · +' + Number(d.xpDelta || 0) + ' XP');
+        if (g.toast) g.toast((d.contractLabel || 'Regional Op') + ' | +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' & +' + Number(d.xpDelta || 0) + ' XP');
         if (g.forceUpdate) g.forceUpdate();
       }
     }
   });
 
+  window.addEventListener('zone:mute-change', function (ev) {
+    try {
+      var muted = ev && ev.detail ? Boolean(ev.detail.muted) : (localStorage.getItem('zig_muted') === '1');
+      soundEnabled = !muted;
+      var sndBtn = document.getElementById('zig-sound-toggle');
+      if (sndBtn) {
+        sndBtn.setAttribute('data-zig-muted', soundEnabled ? '0' : '1');
+        sndBtn.innerHTML = renderSoundBtnInner(isAr());
+      }
+    } catch (_) {}
+  });
+
   /* ---------------- Sync Hook & Unified 60fps Loop ---------------- */
   function syncMounts() {
+    ensureMotionStyles();
+    if (document.querySelector('x-dc')) return;
     mountHomeArcade();
     mountCrimesGame();
     mountGymGame();
@@ -1931,8 +2215,9 @@
 
   function boot() {
     syncMounts();
-    var root = document.getElementById('zone-main') || document.body;
-    if (root) observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen'] });
+    if (document.body) {
+      observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen'] });
+    }
   }
 
   if (document.readyState === 'loading') {

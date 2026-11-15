@@ -1,57 +1,64 @@
 /* ==========================================================================
- * ZONE — AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v125)
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v126)
+ * MotionSites (/icons & /sections/header) Human Studio Craft Edition
  * Exclusive Ownership: carbon-hud-chrome
  * Scope: .zone-topbar, [data-zheaderbar], .zone-bulletin, aside.zone-sidebar
  * ========================================================================== */
 
 :root,
 html:not([data-theme="light"]) {
-  --zaaa-topbar-bg:
-    radial-gradient(ellipse 420px 96px at 8% 0%, rgba(235, 184, 88, 0.14), transparent 72%),
-    radial-gradient(ellipse 460px 96px at 88% 0%, rgba(57, 231, 163, 0.08), transparent 74%),
-    linear-gradient(180deg, #151e30 0%, #0d1320 56%, #080c14 100%);
-  --zaaa-topbar-border: rgba(214, 167, 86, 0.62);
-  --zaaa-topbar-topline: rgba(255, 255, 255, 0.08);
-  --zaaa-topbar-shadow: 0 12px 30px rgba(0, 0, 0, 0.62);
+  --zaaa-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --zaaa-brand-bg: linear-gradient(145deg, rgba(31, 43, 66, 0.96) 0%, rgba(13, 19, 32, 0.98) 100%);
-  --zaaa-brand-border: rgba(235, 184, 88, 0.54);
-  --zaaa-brand-border-hover: rgba(251, 191, 36, 0.88);
-  --zaaa-brand-shadow: 0 4px 16px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --zaaa-topbar-bg:
+    radial-gradient(ellipse 460px 104px at 8% 0%, rgba(235, 184, 88, 0.16), transparent 72%),
+    radial-gradient(ellipse 480px 104px at 88% 0%, rgba(57, 231, 163, 0.09), transparent 74%),
+    linear-gradient(180deg, rgba(20, 29, 47, 0.88) 0%, rgba(12, 18, 31, 0.92) 56%, rgba(7, 11, 19, 0.96) 100%);
+  --zaaa-topbar-border: rgba(214, 167, 86, 0.64);
+  --zaaa-topbar-topline: rgba(255, 255, 255, 0.11);
+  --zaaa-topbar-btmline: rgba(255, 236, 179, 0.14);
+  --zaaa-topbar-shadow: 0 14px 34px rgba(0, 0, 0, 0.64);
+
+  --zaaa-brand-bg: linear-gradient(145deg, rgba(31, 43, 66, 0.96) 0%, rgba(12, 18, 31, 0.98) 100%);
+  --zaaa-brand-border: rgba(235, 184, 88, 0.56);
+  --zaaa-brand-border-hover: rgba(251, 191, 36, 0.9);
+  --zaaa-brand-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   --zaaa-brand-word-c1: #fffdf7;
   --zaaa-brand-word-c2: #f5d487;
   --zaaa-brand-word-c3: #c58f36;
   --zaaa-brand-sub: #ebb858;
 
-  --zaaa-dock-bg: rgba(6, 10, 18, 0.72);
-  --zaaa-dock-border: rgba(148, 168, 204, 0.2);
-  --zaaa-dock-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.62), 0 1px 0 rgba(255, 255, 255, 0.04);
+  --zaaa-dock-bg: linear-gradient(180deg, rgba(10, 16, 29, 0.72) 0%, rgba(5, 9, 17, 0.82) 100%);
+  --zaaa-dock-border: rgba(148, 168, 204, 0.24);
+  --zaaa-dock-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(235, 184, 88, 0.14),
+    0 4px 14px rgba(0, 0, 0, 0.36);
   --zaaa-tab-fg: #cbd5e1;
   --zaaa-tab-fg-hover: #ffffff;
   --zaaa-tab-fg-active: #fef3c7;
-  --zaaa-tab-icon: #94a3b8;
+  --zaaa-tab-icon: #cbd5e1;
   --zaaa-tab-icon-active: #fbbf24;
-  --zaaa-tab-hover-bg: rgba(235, 184, 88, 0.1);
-  --zaaa-tab-active-bg: linear-gradient(180deg, rgba(235, 184, 88, 0.2) 0%, rgba(235, 184, 88, 0.05) 100%);
+  --zaaa-tab-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(235, 184, 88, 0.09) 100%);
+  --zaaa-tab-active-bg: linear-gradient(180deg, rgba(235, 184, 88, 0.22) 0%, rgba(235, 184, 88, 0.06) 100%);
   --zaaa-tab-active-bar: #fbbf24;
 
-  --zaaa-pill-bg: linear-gradient(180deg, rgba(18, 26, 42, 0.92) 0%, rgba(10, 15, 26, 0.96) 100%);
-  --zaaa-pill-border: rgba(148, 168, 204, 0.24);
-  --zaaa-pill-border-hover: rgba(235, 184, 88, 0.58);
+  --zaaa-pill-bg: linear-gradient(180deg, rgba(19, 28, 45, 0.88) 0%, rgba(10, 15, 26, 0.94) 100%);
+  --zaaa-pill-border: rgba(148, 168, 204, 0.25);
+  --zaaa-pill-border-hover: rgba(235, 184, 88, 0.62);
   --zaaa-pill-fg: #f1f5f9;
   --zaaa-pill-muted: #94a3b8;
   --zaaa-pill-cash: #39e7a3;
   --zaaa-pill-city: #fde68a;
 
-  --zaaa-ctrl-bg: linear-gradient(180deg, #1d283d 0%, #111827 100%);
-  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #263550 0%, #172135 100%);
-  --zaaa-ctrl-border: rgba(148, 168, 204, 0.28);
+  --zaaa-ctrl-bg: linear-gradient(180deg, rgba(30, 41, 63, 0.92) 0%, rgba(16, 23, 38, 0.96) 100%);
+  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #273754 0%, #172135 100%);
+  --zaaa-ctrl-border: rgba(148, 168, 204, 0.3);
   --zaaa-ctrl-fg: #e2e8f0;
-  --zaaa-chrono-bg: linear-gradient(180deg, rgba(7, 12, 22, 0.9) 0%, rgba(12, 19, 32, 0.94) 100%);
-  --zaaa-chrono-border: rgba(57, 231, 163, 0.32);
+  --zaaa-chrono-bg: linear-gradient(180deg, rgba(7, 12, 22, 0.88) 0%, rgba(12, 19, 32, 0.94) 100%);
+  --zaaa-chrono-border: rgba(57, 231, 163, 0.34);
   --zaaa-chrono-clock: #39e7a3;
-  --zaaa-admin-bg: linear-gradient(180deg, rgba(214, 167, 86, 0.26) 0%, rgba(161, 108, 30, 0.18) 100%);
-  --zaaa-admin-border: rgba(235, 184, 88, 0.62);
+  --zaaa-admin-bg: linear-gradient(180deg, rgba(214, 167, 86, 0.28) 0%, rgba(161, 108, 30, 0.18) 100%);
+  --zaaa-admin-border: rgba(235, 184, 88, 0.64);
   --zaaa-admin-fg: #fde68a;
 
   --zaaa-wire-bg: linear-gradient(90deg, #080c15 0%, #0e1626 50%, #080c15 100%);
@@ -71,28 +78,29 @@ html:not([data-theme="light"]) {
   --zaaa-crest-bg:
     radial-gradient(circle at 16% 24%, rgba(235, 184, 88, 0.18), transparent 62%),
     linear-gradient(145deg, rgba(24, 34, 54, 0.95) 0%, rgba(11, 16, 28, 0.98) 100%);
-  --zaaa-crest-border: rgba(214, 167, 86, 0.4);
-  --zaaa-track-bg: rgba(5, 8, 15, 0.88);
-  --zaaa-track-border: rgba(148, 168, 204, 0.24);
+  --zaaa-crest-border: rgba(214, 167, 86, 0.42);
+  --zaaa-track-bg: rgba(5, 8, 15, 0.9);
+  --zaaa-track-border: rgba(148, 168, 204, 0.26);
 
   --zaaa-nav-group-fg: #ebb858;
-  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.1) 0%, transparent 92%);
+  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.11) 0%, transparent 92%);
   --zaaa-nav-fg: #cbd5e1;
   --zaaa-nav-fg-hover: #ffffff;
-  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.12) 0%, rgba(30, 41, 64, 0.35) 60%, transparent 100%);
+  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.13) 0%, rgba(30, 41, 64, 0.36) 60%, transparent 100%);
   --zaaa-nav-active-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.24) 0%, rgba(16, 185, 129, 0.1) 62%, rgba(15, 23, 42, 0.2) 100%);
   --zaaa-nav-active-fg: #fffbeb;
-  --zaaa-nav-plate-bg: linear-gradient(145deg, #1b2538 0%, #0f1624 100%);
-  --zaaa-nav-plate-border: rgba(148, 168, 204, 0.25);
 }
 
 html[data-theme="light"] {
+  --zaaa-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
   --zaaa-topbar-bg:
-    radial-gradient(ellipse 420px 96px at 8% 0%, rgba(180, 120, 30, 0.12), transparent 72%),
-    linear-gradient(180deg, #fdfbf7 0%, #f5efe2 58%, #ece3d0 100%);
+    radial-gradient(ellipse 460px 104px at 8% 0%, rgba(180, 120, 30, 0.14), transparent 72%),
+    linear-gradient(180deg, rgba(253, 251, 247, 0.9) 0%, rgba(245, 239, 226, 0.92) 58%, rgba(236, 227, 208, 0.95) 100%);
   --zaaa-topbar-border: #b4781e;
-  --zaaa-topbar-topline: rgba(255, 255, 255, 0.9);
-  --zaaa-topbar-shadow: 0 8px 22px rgba(15, 23, 42, 0.1);
+  --zaaa-topbar-topline: rgba(255, 255, 255, 0.94);
+  --zaaa-topbar-btmline: rgba(180, 120, 30, 0.18);
+  --zaaa-topbar-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
 
   /* Obsidian-brass luxury crest on warm ivory topbar */
   --zaaa-brand-bg: linear-gradient(145deg, #1c2638 0%, #0f172a 100%);
@@ -104,20 +112,23 @@ html[data-theme="light"] {
   --zaaa-brand-word-c3: #d99b38;
   --zaaa-brand-sub: #fbbf24;
 
-  --zaaa-dock-bg: rgba(221, 210, 188, 0.62);
-  --zaaa-dock-border: rgba(120, 94, 52, 0.3);
-  --zaaa-dock-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.12), 0 1px 0 rgba(255, 255, 255, 0.75);
+  --zaaa-dock-bg: linear-gradient(180deg, rgba(235, 226, 207, 0.7) 0%, rgba(223, 212, 189, 0.8) 100%);
+  --zaaa-dock-border: rgba(120, 94, 52, 0.32);
+  --zaaa-dock-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    inset 0 -1px 0 rgba(180, 120, 30, 0.16),
+    0 3px 10px rgba(15, 23, 42, 0.08);
   --zaaa-tab-fg: #1e293b;
   --zaaa-tab-fg-hover: #0f172a;
   --zaaa-tab-fg-active: #0f172a;
-  --zaaa-tab-icon: #64748b;
-  --zaaa-tab-icon-active: #b45309;
-  --zaaa-tab-hover-bg: rgba(255, 253, 248, 0.72);
+  --zaaa-tab-icon: #334155;
+  --zaaa-tab-icon-active: #9a5209;
+  --zaaa-tab-hover-bg: rgba(255, 253, 248, 0.78);
   --zaaa-tab-active-bg: linear-gradient(180deg, #ffffff 0%, #fbf5e8 100%);
   --zaaa-tab-active-bar: #b4781e;
 
-  --zaaa-pill-bg: linear-gradient(180deg, #ffffff 0%, #f8f3e8 100%);
-  --zaaa-pill-border: rgba(120, 94, 52, 0.32);
+  --zaaa-pill-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 243, 232, 0.96) 100%);
+  --zaaa-pill-border: rgba(120, 94, 52, 0.34);
   --zaaa-pill-border-hover: #b4781e;
   --zaaa-pill-fg: #0f172a;
   --zaaa-pill-muted: #475569;
@@ -153,8 +164,8 @@ html[data-theme="light"] {
     radial-gradient(circle at 16% 24%, rgba(180, 120, 30, 0.14), transparent 64%),
     linear-gradient(145deg, #ffffff 0%, #f3ebd9 100%);
   --zaaa-crest-border: rgba(180, 120, 30, 0.45);
-  --zaaa-track-bg: #dfd6c3;
-  --zaaa-track-border: rgba(100, 82, 52, 0.34);
+  --zaaa-track-bg: #dad0bc;
+  --zaaa-track-border: rgba(100, 82, 52, 0.36);
 
   --zaaa-nav-group-fg: #854d0e;
   --zaaa-nav-group-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, transparent 92%);
@@ -163,12 +174,10 @@ html[data-theme="light"] {
   --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, rgba(226, 216, 195, 0.45) 65%, transparent 100%);
   --zaaa-nav-active-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.22) 0%, rgba(4, 120, 87, 0.08) 65%, transparent 100%);
   --zaaa-nav-active-fg: #0f172a;
-  --zaaa-nav-plate-bg: linear-gradient(145deg, #ffffff 0%, #eae1cf 100%);
-  --zaaa-nav-plate-border: rgba(100, 82, 52, 0.32);
 }
 
 /* ==========================================================================
- * 1. AAA SYNDICATE COMMAND TOPBAR (.zone-topbar & [data-zheaderbar])
+ * 1. MOTIONSITES LIQUID-GLASS COMMAND TOPBAR (/sections/header)
  * ========================================================================== */
 
 html body .zone-topbar {
@@ -178,9 +187,12 @@ html body .zone-topbar {
   width: 100% !important;
   background: var(--zaaa-topbar-bg) !important;
   border-bottom: 2px solid var(--zaaa-topbar-border) !important;
-  box-shadow: inset 0 1px 0 var(--zaaa-topbar-topline), var(--zaaa-topbar-shadow) !important;
-  backdrop-filter: blur(14px) saturate(1.25) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(1.25) !important;
+  box-shadow:
+    inset 0 1px 0 var(--zaaa-topbar-topline),
+    inset 0 -1px 0 var(--zaaa-topbar-btmline),
+    var(--zaaa-topbar-shadow) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
 }
 
 html body .zone-topbar [data-zheaderbar] {
@@ -216,7 +228,7 @@ html body .zone-topbar .zone-header-actions {
   margin-inline-start: 0 !important;
 }
 
-/* --- 1A. Brand Emblem (.zone-brand) — Zero Clipping + Syndicate Crest --- */
+/* --- 1A. Brand Emblem (.zone-brand) - Zero Clipping + Syndicate Crest --- */
 html body .zone-topbar .zone-brand {
   min-width: auto !important;
   width: auto !important;
@@ -229,14 +241,17 @@ html body .zone-topbar .zone-brand {
   row-gap: 1px !important;
   background: var(--zaaa-brand-bg) !important;
   border: 1px solid var(--zaaa-brand-border) !important;
-  border-radius: 5px !important;
+  border-radius: 6px !important;
   box-shadow: var(--zaaa-brand-shadow) !important;
   cursor: pointer !important;
   user-select: none !important;
   position: relative !important;
   flex: 0 0 auto !important;
   overflow: visible !important;
-  transition: transform 0.16s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+  transition:
+    transform 240ms var(--zaaa-ease),
+    border-color 200ms var(--zaaa-ease),
+    box-shadow 240ms var(--zaaa-ease) !important;
 }
 
 html[dir="rtl"] body .zone-topbar .zone-brand {
@@ -247,12 +262,12 @@ html body .zone-topbar .zone-brand::before {
   content: "";
   position: absolute;
   inset: -1px;
-  border-radius: 5px;
+  border-radius: 6px;
   pointer-events: none;
   background:
     linear-gradient(135deg, rgba(251, 191, 36, 0.55) 0 6px, transparent 6px),
     linear-gradient(315deg, rgba(251, 191, 36, 0.45) 0 6px, transparent 6px);
-  opacity: 0.7;
+  opacity: 0.72;
 }
 
 html body .zone-topbar .zone-brand:hover {
@@ -279,6 +294,11 @@ html body .zone-topbar .zone-brand .zaaa-brand-crest {
   place-items: center !important;
   flex: 0 0 28px !important;
   filter: drop-shadow(0 2px 6px rgba(235, 184, 88, 0.35));
+  transition: transform 260ms var(--zaaa-ease) !important;
+}
+
+html body .zone-topbar .zone-brand:hover .zaaa-brand-crest {
+  transform: scale(1.06);
 }
 
 html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
@@ -331,7 +351,7 @@ html body .zone-topbar .zone-brand:not([data-zaaa-ready="1"]) {
   gap: 10px !important;
 }
 
-/* --- 1B. Integrated Game Command Dock (.zone-header-links) --- */
+/* --- 1B. MotionSites Liquid-Glass Command Dock (.zone-header-links) --- */
 html body .zone-topbar .zone-header-links {
   display: inline-flex !important;
   align-items: center !important;
@@ -339,8 +359,10 @@ html body .zone-topbar .zone-header-links {
   padding: 3px !important;
   background: var(--zaaa-dock-bg) !important;
   border: 1px solid var(--zaaa-dock-border) !important;
-  border-radius: 5px !important;
+  border-radius: 7px !important;
   box-shadow: var(--zaaa-dock-shadow) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
   flex: 0 1 auto !important;
   min-width: 0 !important;
 }
@@ -356,7 +378,7 @@ html body .zone-topbar .zone-header-links .zone-header-link {
   gap: 6px !important;
   background: transparent !important;
   border: 1px solid transparent !important;
-  border-radius: 3px !important;
+  border-radius: 5px !important;
   box-shadow: none !important;
   color: var(--zaaa-tab-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
@@ -367,42 +389,51 @@ html body .zone-topbar .zone-header-links .zone-header-link {
   white-space: nowrap !important;
   cursor: pointer !important;
   position: relative !important;
-  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+  transition:
+    color 200ms var(--zaaa-ease),
+    background 220ms var(--zaaa-ease),
+    border-color 220ms var(--zaaa-ease),
+    transform 220ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon {
   order: -1 !important;
-  width: 14px !important;
-  height: 14px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: inline-grid !important;
   place-items: center !important;
-  flex: 0 0 14px !important;
+  flex: 0 0 15px !important;
   color: var(--zaaa-tab-icon) !important;
-  transition: color 0.15s ease, transform 0.15s ease !important;
+  transform-origin: center !important;
+  transition:
+    transform 260ms var(--zaaa-ease),
+    color 200ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon svg {
-  width: 14px !important;
-  height: 14px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: block !important;
+  fill: none !important;
+  overflow: visible !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link:hover {
   color: var(--zaaa-tab-fg-hover) !important;
   background: var(--zaaa-tab-hover-bg) !important;
-  border-color: rgba(235, 184, 88, 0.24) !important;
+  border-color: rgba(235, 184, 88, 0.26) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link:hover .zaaa-link-icon {
   color: var(--zaaa-tab-icon-active) !important;
-  transform: translateY(-0.5px);
+  transform: scale(1.08) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] {
   color: var(--zaaa-tab-fg-active) !important;
   background: var(--zaaa-tab-active-bg) !important;
-  border-color: rgba(235, 184, 88, 0.36) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(235, 184, 88, 0.38) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 2px 8px rgba(0, 0, 0, 0.18) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] .zaaa-link-icon {
@@ -437,8 +468,10 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
   gap: 6px !important;
   background: var(--zaaa-pill-bg) !important;
   border: 1px solid var(--zaaa-pill-border) !important;
-  border-radius: 4px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 6px rgba(0, 0, 0, 0.16) !important;
+  border-radius: 5px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.16) !important;
+  backdrop-filter: blur(12px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
   color: var(--zaaa-pill-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 11px !important;
@@ -449,7 +482,10 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
   cursor: pointer !important;
   position: relative !important;
   overflow: hidden !important;
-  transition: border-color 0.15s ease, transform 0.14s ease, box-shadow 0.15s ease !important;
+  transition:
+    border-color 220ms var(--zaaa-ease),
+    transform 220ms var(--zaaa-ease),
+    box-shadow 220ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:hover {
@@ -463,17 +499,24 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:active {
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico {
-  width: 14px !important;
-  height: 14px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: inline-grid !important;
   place-items: center !important;
-  flex: 0 0 14px !important;
+  flex: 0 0 15px !important;
+  transition: transform 240ms var(--zaaa-ease) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:hover .zaaa-hud-ico {
+  transform: scale(1.08);
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico svg {
-  width: 14px !important;
-  height: 14px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: block !important;
+  fill: none !important;
+  overflow: visible !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-val {
@@ -513,7 +556,7 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-city-code {
   font-weight: 800 !important;
   letter-spacing: 0.08em !important;
   padding: 2px 4px !important;
-  border-radius: 2px !important;
+  border-radius: 3px !important;
   background: rgba(235, 184, 88, 0.16) !important;
   color: var(--zaaa-pill-city) !important;
 }
@@ -531,7 +574,7 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail > i {
   display: block !important;
   height: 100% !important;
   width: var(--zaaa-pct, 100%) !important;
-  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  transition: width 0.35s var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy .zaaa-hud-rail > i {
@@ -582,8 +625,8 @@ html body .zone-topbar .zone-header-actions {
     gap: 1px !important;
     background: var(--zaaa-chrono-bg) !important;
     border: 1px solid var(--zaaa-chrono-border) !important;
-    border-radius: 4px !important;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.22) !important;
+    border-radius: 5px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.2) !important;
     color: var(--zaaa-pill-muted) !important;
     font-size: 8px !important;
     font-weight: 700 !important;
@@ -636,8 +679,8 @@ html body .zone-topbar .zone-header-actions > a {
   gap: 6px !important;
   background: var(--zaaa-ctrl-bg) !important;
   border: 1px solid var(--zaaa-ctrl-border) !important;
-  border-radius: 4px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+  border-radius: 5px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
   color: var(--zaaa-ctrl-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 11.5px !important;
@@ -646,7 +689,10 @@ html body .zone-topbar .zone-header-actions > a {
   text-decoration: none !important;
   white-space: nowrap !important;
   cursor: pointer !important;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.14s ease !important;
+  transition:
+    background 200ms var(--zaaa-ease),
+    border-color 200ms var(--zaaa-ease),
+    transform 200ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-actions > button:hover,
@@ -663,12 +709,12 @@ html body .zone-topbar .zone-header-actions > a {
   font-weight: 800 !important;
 }
 
-/* Luminous Theme Indicator (Replaces #111 Black Dot!) */
+/* Luminous Duotone Theme Indicator (Replaces #111 Black Dot!) */
 html body .zone-topbar .zone-header-actions .zone-theme-indicator {
   width: 18px !important;
   height: 18px !important;
   flex: 0 0 18px !important;
-  border-radius: 4px !important;
+  border-radius: 5px !important;
   background: rgba(251, 191, 36, 0.24) !important;
   background-color: rgba(251, 191, 36, 0.24) !important;
   border: 1px solid rgba(251, 191, 36, 0.62) !important;
@@ -698,6 +744,7 @@ html body .zone-topbar .zone-header-actions .zone-theme-indicator svg {
   width: 12px !important;
   height: 12px !important;
   display: block !important;
+  overflow: visible !important;
 }
 
 html:not([data-theme="light"]) body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-sun-svg {
@@ -789,7 +836,7 @@ html body .zone-topbar .zone-header-actions .zone-theme-indicator:empty::before 
 
 html body aside.zone-sidebar .zone-panel-heading[data-zhead] {
   background: var(--zaaa-side-head-bg) !important;
-  border: 1px solid rgba(214, 167, 86, 0.36) !important;
+  border: 1px solid rgba(214, 167, 86, 0.38) !important;
   border-bottom: 2px solid #d6a756 !important;
   color: #fef3c7 !important;
   font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
@@ -807,7 +854,7 @@ html body aside.zone-sidebar #zone-area-navigation {
   background: var(--zaaa-side-panel-bg) !important;
   border: 1px solid var(--zaaa-side-border) !important;
   border-top: 0 !important;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
 }
 
 /* --- 2A. Operative Syndicate Dossier Header (#zone-operative-crest) --- */
@@ -821,34 +868,46 @@ html body aside.zone-sidebar #zone-operative-crest {
   margin-bottom: 4px !important;
   background: var(--zaaa-crest-bg) !important;
   border: 1px solid var(--zaaa-crest-border) !important;
-  border-radius: 5px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 7px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 3px 10px rgba(0, 0, 0, 0.2) !important;
   cursor: pointer !important;
   position: relative !important;
-  transition: border-color 0.16s ease, transform 0.14s ease !important;
+  transition:
+    border-color 220ms var(--zaaa-ease),
+    transform 220ms var(--zaaa-ease),
+    box-shadow 220ms var(--zaaa-ease) !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest:hover {
   border-color: #fbbf24 !important;
   transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(0, 0, 0, 0.26) !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
   width: 42px !important;
   height: 42px !important;
-  border-radius: 6px !important;
-  background: linear-gradient(145deg, #1b2538 0%, #0b101b 100%) !important;
+  border-radius: 9px !important;
+  background-color: #0c1320 !important;
+  background-image: linear-gradient(145deg, #162235 0%, #0c1320 100%) !important;
   border: 1px solid rgba(235, 184, 88, 0.58) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(235, 184, 88, 0.14) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
   display: grid !important;
   place-items: center !important;
   position: relative !important;
+  transition: transform 260ms var(--zaaa-ease) !important;
+}
+
+html body aside.zone-sidebar #zone-operative-crest:hover .zaaa-op-avatar {
+  transform: scale(1.06);
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar svg {
   width: 28px !important;
   height: 28px !important;
   display: block !important;
+  fill: none !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-lvl {
@@ -856,7 +915,7 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-lvl {
   bottom: -5px !important;
   inset-inline-end: -5px !important;
   padding: 1px 5px !important;
-  border-radius: 3px !important;
+  border-radius: 4px !important;
   background: linear-gradient(180deg, #fbbf24 0%, #c58f36 100%) !important;
   border: 1px solid #0b101b !important;
   color: #090d16 !important;
@@ -914,7 +973,7 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-meta {
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-track {
   height: 5px !important;
   width: 100% !important;
-  border-radius: 3px !important;
+  border-radius: 999px !important;
   background: var(--zaaa-track-bg) !important;
   border: 1px solid var(--zaaa-track-border) !important;
   overflow: hidden !important;
@@ -925,7 +984,7 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-fill {
   width: var(--zaaa-xp-pct, 42%) !important;
   background: linear-gradient(90deg, #d97706 0%, #fbbf24 55%, #39e7a3 100%) !important;
   box-shadow: 0 0 8px rgba(251, 191, 36, 0.55) !important;
-  transition: width 0.4s ease !important;
+  transition: width 0.4s var(--zaaa-ease) !important;
 }
 
 /* Profile Identity & Stat Rows Crisp Contrast */
@@ -956,7 +1015,11 @@ html body aside.zone-sidebar .zone-profile-desktop > bdi {
   font-variant-numeric: tabular-nums !important;
 }
 
-/* --- 2B. Glass-Bevel RPG Vital Bars (.zone-resource-track) --- */
+/* --- 2B. Sculpted Glass-Tube RPG Vital Bars (.zone-resource-track) --- */
+html body aside.zone-sidebar .zone-resource {
+  position: relative !important;
+}
+
 html body aside.zone-sidebar .zone-resource [data-zhead] {
   color: var(--zaaa-side-sub) !important;
   font-size: 11px !important;
@@ -970,20 +1033,56 @@ html body aside.zone-sidebar .zone-resource [data-zfig] {
   font-variant-numeric: tabular-nums !important;
 }
 
+/* Eliminate ALL inner text & sibling "FULL" overlap over .zone-resource-track */
+html body aside.zone-sidebar .zone-resource-track {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+html body aside.zone-sidebar .zone-resource .zone-resource-timer {
+  position: static !important;
+  inset: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  display: none !important;
+}
+
+html body aside.zone-sidebar .zone-resource .zone-resource-timer[data-zaaa-timer="countdown"] {
+  display: block !important;
+  margin-top: 2px !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: end !important;
+  color: var(--zaaa-side-muted) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
 @media (min-width: 761px) {
   html body aside.zone-sidebar .zone-resource-track {
     height: 12px !important;
     min-height: 12px !important;
     background: var(--zaaa-track-bg) !important;
     border: 1px solid var(--zaaa-track-border) !important;
-    border-radius: 3px !important;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.42), 0 1px 0 rgba(255, 255, 255, 0.06) !important;
-    position: relative !important;
-    overflow: hidden !important;
+    border-radius: 5px !important;
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.46),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+      0 1px 0 rgba(255, 255, 255, 0.08) !important;
   }
 }
 
-/* Subtle 10-pip RPG gauge segmentation + top glass bevel highlight */
+html body aside.zone-sidebar .zone-resource-track > div {
+  border-radius: 4px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Subtle 10-pip RPG gauge segmentation */
 html body aside.zone-sidebar .zone-resource-track::before {
   content: "";
   position: absolute;
@@ -994,42 +1093,131 @@ html body aside.zone-sidebar .zone-resource-track::before {
     90deg,
     transparent 0,
     transparent calc(10% - 1px),
-    rgba(0, 0, 0, 0.24) calc(10% - 1px),
-    rgba(0, 0, 0, 0.24) 10%
+    rgba(0, 0, 0, 0.22) calc(10% - 1px),
+    rgba(0, 0, 0, 0.22) 10%
   );
 }
 
+/* Sculpted glass-tube top specular highlight */
 html body aside.zone-sidebar .zone-resource-track::after {
   content: "";
   position: absolute;
-  inset: 0 0 52% 0;
+  inset: 0 0 50% 0;
   z-index: 3;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.42) 0%,
+    rgba(255, 255, 255, 0.14) 42%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 /* Distinct Luminous RPG Gradients in BOTH Dark & Day Modes */
 html body aside.zone-sidebar .zone-resource[data-zone-resource="energy"] .zone-resource-track > div {
   background: linear-gradient(90deg, #059669 0%, #10b981 55%, #39e7a3 100%) !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.55) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.52) !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] .zone-resource-track > div {
   background: linear-gradient(90deg, #b45309 0%, #f59e0b 55%, #fbbf24 100%) !important;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.55) !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.52) !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="happy"] .zone-resource-track > div {
   background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 55%, #c084fc 100%) !important;
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.52) !important;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5) !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track > div {
   background: linear-gradient(90deg, #be123c 0%, #ef4444 55%, #fb7185 100%) !important;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.52) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important;
 }
 
-/* --- 2C. Area Navigation (#zone-area-navigation / [data-znav]) --- */
+/* --- 2C. Area Navigation & MotionSites Jewel Squircle Duotone Icons --- */
+
+/* Sculpted Dark Obsidian-Glass Jewel Squircle in BOTH Dark & Day Modes */
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon,
+html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
+  flex: 0 0 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  border-radius: 9px !important;
+  background-color: #0c1320 !important;
+  background-image: linear-gradient(145deg, #18253a 0%, #0c1320 100%) !important;
+  border: 1px solid rgba(212, 162, 76, 0.36) !important;
+  color: #f8fafc !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 3px 8px rgba(0, 0, 0, 0.34) !important;
+  transform-origin: center !important;
+  transition:
+    transform 260ms var(--zaaa-ease),
+    border-color 200ms var(--zaaa-ease),
+    box-shadow 220ms var(--zaaa-ease),
+    color 200ms var(--zaaa-ease) !important;
+}
+
+html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation .zone-nav-icon,
+html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
+  background-color: #0c1320 !important;
+  background-image: linear-gradient(145deg, #162235 0%, #0c1320 100%) !important;
+  border: 1px solid rgba(212, 162, 76, 0.48) !important;
+  color: #f8fafc !important;
+  border-radius: 9px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 3px 8px rgba(15, 23, 42, 0.16) !important;
+}
+
+/* Defeat zone-design.css:136-141 mask ::before, hidden-svg, & solid-fill crushers */
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-zaaa-duotone="1"]::before,
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-has-image="true"][data-zaaa-duotone="1"]::before {
+  content: none !important;
+  display: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  background: none !important;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-zaaa-duotone="1"] > svg:not(.zaaa-duotone-svg) {
+  display: none !important;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon svg.zaaa-duotone-svg {
+  display: block !important;
+  width: 16px !important;
+  height: 16px !important;
+  fill: none !important;
+  overflow: visible !important;
+}
+
+html body svg.zaaa-duotone-svg .zaaa-duo-stroke {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button:hover .zone-nav-icon {
+  border-color: rgba(251, 191, 36, 0.78) !important;
+  color: #ffffff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 4px 12px rgba(15, 23, 42, 0.28),
+    0 0 12px rgba(235, 184, 88, 0.26) !important;
+  transform: scale(1.08) !important;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon {
+  border-color: #fbbf24 !important;
+  color: #fef3c7 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    0 0 14px rgba(251, 191, 36, 0.34),
+    0 3px 8px rgba(15, 23, 42, 0.24) !important;
+}
+
 @media (min-width: 761px) {
   html body aside.zone-sidebar #zone-area-navigation {
     padding: 4px 0 6px !important;
@@ -1067,7 +1255,7 @@ html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-res
   }
 
   html body aside.zone-sidebar #zone-area-navigation button {
-    min-height: 33px !important;
+    min-height: 35px !important;
     padding: 4px 10px !important;
     gap: 9px !important;
     background: transparent !important;
@@ -1080,13 +1268,17 @@ html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-res
     font-weight: 600 !important;
     line-height: 1.3 !important;
     position: relative !important;
-    transition: background 0.15s ease, color 0.15s ease, padding-inline-start 0.15s ease, border-color 0.15s ease !important;
+    transition:
+      background 220ms var(--zaaa-ease),
+      color 200ms var(--zaaa-ease),
+      padding-inline-start 220ms var(--zaaa-ease),
+      border-color 200ms var(--zaaa-ease) !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button:hover {
     background: var(--zaaa-nav-hover-bg) !important;
     color: var(--zaaa-nav-fg-hover) !important;
-    border-inline-start-color: rgba(235, 184, 88, 0.55) !important;
+    border-inline-start-color: rgba(235, 184, 88, 0.6) !important;
     padding-inline-start: 13px !important;
   }
 
@@ -1096,35 +1288,11 @@ html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-res
     border-inline-start: 3px solid #fbbf24 !important;
     font-weight: 800 !important;
     padding-inline-start: 12px !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.16) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.14) !important;
   }
 
   html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] {
     border-inline-start-color: #b4781e !important;
-  }
-
-  html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
-    flex: 0 0 26px !important;
-    width: 26px !important;
-    height: 26px !important;
-    display: inline-grid !important;
-    place-items: center !important;
-    border-radius: 5px !important;
-    background: var(--zaaa-nav-plate-bg) !important;
-    border: 1px solid var(--zaaa-nav-plate-border) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease !important;
-  }
-
-  html body aside.zone-sidebar #zone-area-navigation button:hover .zone-nav-icon {
-    border-color: rgba(235, 184, 88, 0.58) !important;
-    box-shadow: 0 0 10px rgba(235, 184, 88, 0.24) !important;
-    transform: scale(1.04);
-  }
-
-  html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon {
-    border-color: #fbbf24 !important;
-    box-shadow: 0 0 12px rgba(251, 191, 36, 0.36), inset 0 0 8px rgba(251, 191, 36, 0.2) !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button bdi {
@@ -1140,7 +1308,7 @@ html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-res
 }
 
 /* ==========================================================================
- * 3. MOBILE SAFETY (<=760px) — Zero Overflow, Clean Compact Bar
+ * 3. MOBILE SAFETY (<=760px) - Zero Overflow, Clean Compact Bar
  * ========================================================================== */
 
 @media (max-width: 760px) {
@@ -1217,8 +1385,8 @@ html[dir="rtl"] body .zone-topbar .zone-header-actions > a,
 html[dir="rtl"] body .zone-topbar .zone-bulletin > span:first-child,
 html[dir="rtl"] body aside.zone-sidebar .zone-panel-heading[data-zhead],
 html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank,
+html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-lbl,
 html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation .zone-nav-group,
 html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button {
   letter-spacing: 0 !important;
-  text-transform: none !important;
 }
