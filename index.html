@@ -53,8 +53,8 @@
 <link rel="stylesheet" href="./assets/ui/district-compositions108.css?v=113">
 <link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=113">
 <link rel="stylesheet" href="./assets/ui/gym116.css?v=117">
-<link rel="stylesheet" href="./assets/ui/noir-game-hud.css?v=121">
-<script defer src="./assets/ui/zone-instant-games.js?v=121"></script>
+<link rel="stylesheet" href="./assets/ui/noir-game-hud.css?v=122">
+<script defer src="./assets/ui/zone-instant-games.js?v=122"></script>
 </head>
 <body>
 <x-dc>
@@ -2151,6 +2151,7 @@ class Component extends DCLogic {
       }
     };
     window.addEventListener('message', this.onMsg);
+    if (typeof window !== 'undefined') window.__zoneGame = this;
     this.pushChar();
     this.pushCombatScene();
     this.mapVisibility(this.state.screen === 'city');
@@ -2324,7 +2325,7 @@ class Component extends DCLogic {
     const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
     if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
-      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v132') : rawSrc);
+      frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v145') : rawSrc);
     }
     if (frame?.contentWindow) frame.contentWindow.postMessage({ type: visible ? 'ON_SHOW' : 'ON_HIDE' }, window.location.origin);
   }
@@ -2605,7 +2606,7 @@ class Component extends DCLogic {
     const territoryMap = this.territoryMap || buildTerritoryFallback();
     const territoryAuthoritative = !IS_PREVIEW && this._territoryAuthoritative === true;
     const energy = this.cur('energy'), unavailable = this.gameplayDisabled() || this.blocked() || !!this._territoryUnavailable || !screenEngineAvailable('city');
-    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict + '|' + territoryMap.revision + '|' + Boolean(this.gameplayReady) + '|' + (this.p.travel?.status || '') + '|' + energy + '|' + unavailable + '|' + JSON.stringify(window.ZonePlatform?.manifest?.()?.mediaBindings || []);
+    const sig = lang + '|' + this.state.theme + '|' + (this.state.lastScreen || 'home') + '|' + this.p.lastDistrict + '|' + territoryMap.revision + '|' + Boolean(this.gameplayReady) + '|' + (this.p.travel?.status || '') + '|' + (this.p.level || 1) + '|' + (this.p.worldCityId || 'zone') + '|' + energy + '|' + unavailable + '|' + JSON.stringify(window.ZonePlatform?.manifest?.()?.mediaBindings || []);
     if (sig === this._mapSig) return;
     const factions = (territoryMap.factions || TERRITORY_FACTIONS).map(faction=>({id:faction.id,name:(faction.name&&faction.name[lang])||faction.id,color:faction.color}));
     const blockById = Object.fromEntries((territoryMap.blocks || []).map(block=>[block.id,block]));
@@ -2628,7 +2629,7 @@ class Component extends DCLogic {
        here:hp&&hp.blockId===block.id
     }; });
     const legend = Object.keys(PINCOLOR).map(k => ({ cat: k, color: PINCOLOR[k], colorLite: LIGHTEN(PINCOLOR[k], .42), label: t.legend[k] }));
-    f.contentWindow.postMessage({type:'ZONE_MAP_DATA',presentation:{showLocations:true,compact:true},territoryDataSource:territoryAuthoritative?'server':'bundled',territoryAuthoritative,revision:territoryMap.revision,zonePins:pins,blocks,factions,playerFactionId:territoryMap.playerFactionId,summary:territoryMap.summary,legend,copy,legendTitle:t.keyOfSymbols,here:hp?{x:hp.x,y:hp.y,lng:hp.lng,lat:hp.lat,territory:hp.blockId}:null,hereLabel:t.youAreHere,lang,dir:lang==='ar'?'rtl':'ltr',dark,bg:dark?'#0e1116':'#e7e4d6'},window.location.origin);
+    f.contentWindow.postMessage({type:'ZONE_MAP_DATA',presentation:{showLocations:true,compact:true},territoryDataSource:territoryAuthoritative?'server':'bundled',territoryAuthoritative,revision:territoryMap.revision,zonePins:pins,blocks,factions,playerFactionId:territoryMap.playerFactionId,summary:territoryMap.summary,legend,copy,legendTitle:t.keyOfSymbols,here:hp?{x:hp.x,y:hp.y,lng:hp.lng,lat:hp.lat,territory:hp.blockId}:null,hereLabel:t.youAreHere,playerLevel:Number(this.p?.level)||1,playerXp:Number(this.p?.xp)||0,playerCash:Number(this.p?.cash)||0,currentCityId:this.p?.worldCityId||'zone',lang,dir:lang==='ar'?'rtl':'ltr',dark,bg:dark?'#0e1116':'#e7e4d6'},window.location.origin);
     this._mapSig = sig;
   }
   recoverCharacterFrame(reason, manual = false) {

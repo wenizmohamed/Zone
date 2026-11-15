@@ -457,7 +457,7 @@ html:not([data-theme="light"]) .zone-quick-actions > button:hover {
   order: -2 !important;
 }
 
-#zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"] {
+html:not([data-theme="light"]) #zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"] {
   order: -1;
   background:
     radial-gradient(700px 260px at 50% 0%, rgba(21, 128, 70, 0.22), transparent 72%),
@@ -467,7 +467,11 @@ html:not([data-theme="light"]) .zone-quick-actions > button:hover {
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.62);
 }
 
-#zone-main[data-zone-screen="casino"] [data-casino-table] {
+#zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"] {
+  order: -1;
+}
+
+html:not([data-theme="light"]) #zone-main[data-zone-screen="casino"] [data-casino-table] {
   background:
     radial-gradient(circle at 50% 24%, rgba(20, 83, 52, 0.52), rgba(7, 16, 14, 0.96) 82%) !important;
   border: 1px solid rgba(235, 184, 88, 0.34) !important;
@@ -635,5 +639,570 @@ html:not([data-theme="light"]) .zone-quick-actions > button:hover {
   }
   .zig-getaway-canvas-wrap canvas {
     height: 200px;
+  }
+}
+
+
+/* ==========================================================================
+   9. v122 Topbar Header & Bulletin Ultra-Contrast (Dark Mode + Day Mode)
+   ========================================================================== */
+
+/* Dark Mode Topbar: Crisp High-Contrast Ivory/Gold/Emerald on Obsidian */
+html:not([data-theme="light"]) .zone-topbar {
+  background: linear-gradient(180deg, #151e30 0%, #0a0f1a 100%) !important;
+  border-bottom: 2px solid rgba(235, 184, 88, 0.55) !important;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.65), 0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+}
+
+html:not([data-theme="light"]) .zone-brand {
+  background: linear-gradient(180deg, #1f2b44 0%, #101726 100%) !important;
+  border: 1px solid rgba(235, 184, 88, 0.6) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, 0.08) inset !important;
+}
+
+html:not([data-theme="light"]) .zone-brand > span {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 2px 10px rgba(235, 184, 88, 0.38) !important;
+}
+
+html:not([data-theme="light"]) .zone-header-links {
+  gap: 6px !important;
+}
+
+html:not([data-theme="light"]) .zone-header-link {
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  border-radius: 4px !important;
+  padding: 5px 9px !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+html:not([data-theme="light"]) .zone-header-link:hover {
+  color: #ebb858 !important;
+  background: rgba(235, 184, 88, 0.15) !important;
+  border-color: rgba(235, 184, 88, 0.6) !important;
+}
+
+html:not([data-theme="light"]) .zone-header-actions > span {
+  color: #e2e8f0 !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-theme="light"]) .zone-header-actions > span bdi {
+  color: #49f0a1 !important;
+  font-weight: 800 !important;
+}
+
+html:not([data-theme="light"]) .zone-header-actions button {
+  background: linear-gradient(180deg, #1e2a40 0%, #121a29 100%) !important;
+  border: 1px solid rgba(148, 163, 184, 0.36) !important;
+  color: #f8fafc !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-theme="light"]) .zone-header-actions button:hover {
+  border-color: #ebb858 !important;
+  color: #ebb858 !important;
+}
+
+html:not([data-theme="light"]) .zone-header-actions a {
+  background: rgba(57, 231, 163, 0.16) !important;
+  border: 1px solid #39e7a3 !important;
+  color: #6ef7c0 !important;
+  font-weight: 800 !important;
+}
+
+html:not([data-theme="light"]) .zone-bulletin {
+  background: linear-gradient(90deg, #0d1422 0%, #131d31 50%, #0d1422 100%) !important;
+  border-top: 1px solid rgba(235, 184, 88, 0.22) !important;
+  color: #e2e8f0 !important;
+}
+
+html:not([data-theme="light"]) .zone-bulletin > span {
+  background: #141f35 !important;
+  color: #ebb858 !important;
+  font-weight: 800 !important;
+  border-inline-end: 1px solid rgba(235, 184, 88, 0.35) !important;
+}
+
+html:not([data-theme="light"]) .zone-bulletin [data-zticker="1"] span {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+/* Day Mode Topbar: Sunlit Warm Sandstone & Obsidian-Gold Syndicate Crest (>13:1 Contrast) */
+html[data-theme="light"] .zone-topbar {
+  background: linear-gradient(180deg, #fdfbf6 0%, #ede5d4 100%) !important;
+  border-bottom: 2px solid #b4781e !important;
+  box-shadow: 0 4px 16px rgba(20, 27, 38, 0.12), 0 1px 0 #ffffff inset !important;
+}
+
+html[data-theme="light"] .zone-brand {
+  background: linear-gradient(180deg, #1b2434 0%, #0f1623 100%) !important;
+  border: 1.5px solid #c98a27 !important;
+  box-shadow: 0 2px 8px rgba(15, 22, 35, 0.22) !important;
+}
+
+html[data-theme="light"] .zone-brand > span {
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-shadow: 0 1px 6px rgba(235, 184, 88, 0.45) !important;
+}
+
+html[data-theme="light"] .zone-header-links {
+  gap: 6px !important;
+}
+
+html[data-theme="light"] .zone-header-link {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  border: 1px solid #c7ba9f !important;
+  border-radius: 4px !important;
+  padding: 5px 10px !important;
+  text-shadow: none !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06) !important;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+html[data-theme="light"] .zone-header-link:hover {
+  color: #7c3f00 !important;
+  background: linear-gradient(180deg, #fffaf0 0%, #f5e5c2 100%) !important;
+  border-color: #b4781e !important;
+}
+
+html[data-theme="light"] .zone-header-actions > span {
+  color: #1e293b !important;
+  font-weight: 800 !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid #cfc3ab !important;
+  border-radius: 4px !important;
+  padding: 3px 8px !important;
+}
+
+html[data-theme="light"] .zone-header-actions > span bdi {
+  color: #095c37 !important;
+  font-weight: 900 !important;
+}
+
+html[data-theme="light"] .zone-header-actions button {
+  background: linear-gradient(180deg, #ffffff 0%, #eee6d5 100%) !important;
+  border: 1px solid #b9ac92 !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
+}
+
+html[data-theme="light"] .zone-header-actions button:hover {
+  background: #fff9ec !important;
+  border-color: #b4781e !important;
+  color: #7c3f00 !important;
+}
+
+html[data-theme="light"] .zone-header-actions a {
+  background: linear-gradient(180deg, #e7f8ef 0%, #d0f0df 100%) !important;
+  border: 1px solid #0e7c4d !important;
+  color: #064e30 !important;
+  font-weight: 800 !important;
+}
+
+html[data-theme="light"] .zone-bulletin {
+  background: linear-gradient(90deg, #e6decb 0%, #efe8d8 50%, #e6decb 100%) !important;
+  border-top: 1px solid #cbbda2 !important;
+  border-bottom: 1px solid #c4b598 !important;
+  color: #141c27 !important;
+}
+
+html[data-theme="light"] .zone-bulletin > span {
+  background: #dfd4bd !important;
+  color: #7c3f00 !important;
+  font-weight: 900 !important;
+  border-inline-end: 1px solid #bfa980 !important;
+}
+
+html[data-theme="light"] .zone-bulletin [data-zticker="1"] span {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   10. Full Sunlit Day Mode Game Overhaul (html[data-theme="light"])
+   ========================================================================== */
+
+html[data-theme="light"] {
+  --bg: #f3eee3;
+  --bg2: #eae2d2;
+  --panel: #fbf9f3;
+  --panel2: #f3ede0;
+  --deep: #ede6d6;
+  --z1: #faf7f0;
+  --z2: #f1eadb;
+  --btn: #ebe3d2;
+  --tb1: #f7f2e7;
+  --tb2: #e8dfc9;
+  --border: #cfc3ab;
+  --border2: #DFD5C0;
+  --border3: #b8aa8e;
+  --t1: #0f172a;
+  --t2: #1e293b;
+  --t3: #283548;
+  --t4: #334155;
+  --mu: #475569;
+  --gold: #9a5b08;
+  --money: #09693e;
+  --link: #0b4f8a;
+  --acc: #0d7a49;
+  --acc2: #095c37;
+  --accText: #085834;
+  --activebg: rgba(13, 122, 73, 0.12);
+  --activefg: #064e30;
+}
+
+html[data-theme="light"] body {
+  background-color: #f3eee3 !important;
+  background-image:
+    radial-gradient(920px 460px at 88% -6%, rgba(180, 120, 30, 0.10), transparent 62%),
+    radial-gradient(860px 500px at 8% 18%, rgba(13, 122, 73, 0.07), transparent 60%),
+    linear-gradient(180deg, #f6f2e8 0%, #ece5d5 100%) !important;
+  background-attachment: fixed;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .zone-app {
+  background: transparent !important;
+}
+
+html[data-theme="light"] .zone-panel {
+  background: #fbf9f3 !important;
+  border-color: #cfc3ab !important;
+  box-shadow: 0 6px 18px rgba(20, 27, 38, 0.07), 0 1px 0 #ffffff inset !important;
+}
+
+html[data-theme="light"] [data-zplayercard="1"] .zone-panel-heading,
+html[data-theme="light"] .zone-nav-section .zone-panel-heading {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  border-color: #0f172a !important;
+  border-bottom: 2px solid #d99726 !important;
+  color: #ffffff !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+html[data-theme="light"] #zone-cash {
+  color: #08663b !important;
+  text-shadow: none !important;
+}
+
+html[data-theme="light"] #zone-area-navigation button[data-zone-screen] {
+  color: #1e293b !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="light"] #zone-area-navigation button[aria-current="page"] {
+  background: linear-gradient(90deg, rgba(180, 120, 30, 0.18), rgba(13, 122, 73, 0.08) 85%, transparent) !important;
+  border-inline-start-color: #b4781e !important;
+  color: #0f172a !important;
+  font-weight: 900 !important;
+}
+
+html[data-theme="light"] .zone-page-heading {
+  position: relative;
+  padding: 14px 16px;
+  border-radius: 6px;
+  border: 1px solid #c7b99c !important;
+  border-inline-start: 4px solid #b4781e !important;
+  background:
+    linear-gradient(95deg, rgba(253, 251, 246, 0.96) 20%, rgba(241, 233, 216, 0.90) 70%, rgba(235, 225, 203, 0.94) 100%),
+    var(--screen-art) center / cover no-repeat !important;
+  box-shadow: 0 6px 20px rgba(20, 27, 38, 0.08) !important;
+}
+
+html[data-theme="light"] .zone-page-heading h1 {
+  color: #0f172a !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  letter-spacing: 0.04em !important;
+  font-weight: 900 !important;
+}
+
+html[data-theme="light"] .zone-page-heading p,
+html[data-theme="light"] .zone-page-heading span,
+html[data-theme="light"] .zone-page-heading small {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+html[data-theme="light"] .zone-quick-actions > button {
+  background: linear-gradient(180deg, #ffffff 0%, #f1eadb 100%) !important;
+  border: 1px solid #c7b99c !important;
+  border-radius: 6px !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(20, 27, 38, 0.07) !important;
+}
+
+html[data-theme="light"] .zone-quick-actions > button:hover {
+  transform: translateY(-2px);
+  border-color: #b4781e !important;
+  background: linear-gradient(180deg, #fffdf8 0%, #f6ebd4 100%) !important;
+  box-shadow: 0 8px 18px rgba(180, 120, 30, 0.16) !important;
+}
+
+html[data-theme="light"] .zone-home-brief .zone-hideout-scene {
+  background: linear-gradient(165deg, #fcfaf5 0%, #ebe3d1 100%) !important;
+  border: 1px solid #c7b99c !important;
+  color: #0f172a !important;
+  box-shadow: 0 8px 20px rgba(20, 27, 38, 0.08) !important;
+}
+
+html[data-theme="light"] .zig-arcade-deck {
+  background:
+    radial-gradient(560px 220px at 15% 0%, rgba(180, 120, 30, 0.12), transparent 70%),
+    radial-gradient(520px 220px at 88% 100%, rgba(13, 122, 73, 0.09), transparent 70%),
+    linear-gradient(180deg, #fdfbf6 0%, #efe7d6 100%) !important;
+  border: 1px solid #c4a673 !important;
+  box-shadow: 0 10px 26px rgba(20, 27, 38, 0.09), 0 1px 0 #ffffff inset !important;
+}
+
+html[data-theme="light"] .zig-arcade-title {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .zig-arcade-sub {
+  color: #334155 !important;
+  font-weight: 600;
+}
+
+html[data-theme="light"] .zig-sound-btn {
+  background: #ffffff !important;
+  color: #7c3f00 !important;
+  border: 1px solid #c4a673 !important;
+}
+
+html[data-theme="light"] .zig-game-card {
+  background: #ffffff !important;
+  border: 1px solid #cfc3ab !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(20, 27, 38, 0.07);
+}
+
+html[data-theme="light"] .zig-game-card:hover {
+  border-color: #b4781e !important;
+  box-shadow: 0 10px 22px rgba(180, 120, 30, 0.18) !important;
+}
+
+html[data-theme="light"] .zig-game-card-kicker {
+  color: #9a5b08 !important;
+}
+
+html[data-theme="light"] .zig-game-card-name {
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .zig-game-card-desc {
+  color: #334155 !important;
+}
+
+html[data-theme="light"] .zig-game-card-cta {
+  color: #09693e !important;
+}
+
+html[data-theme="light"] .zig-getaway-stage {
+  background: #f9f5eb !important;
+  border: 1px solid #0d7a49 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .zig-btn-secondary {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #b8aa8e !important;
+}
+
+html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"] {
+  background:
+    radial-gradient(700px 260px at 50% 0%, rgba(13, 122, 73, 0.12), transparent 72%),
+    linear-gradient(180deg, #fcfaf4 0%, #eee5d3 100%) !important;
+  border: 1px solid #c4a673 !important;
+  border-top: 3px solid #b4781e !important;
+  box-shadow: 0 12px 28px rgba(20, 27, 38, 0.10) !important;
+}
+
+html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-casino-table] {
+  background:
+    radial-gradient(circle at 50% 24%, rgba(21, 101, 63, 0.92), rgba(10, 48, 31, 0.98) 86%) !important;
+  border: 2px solid #c98a27 !important;
+  border-radius: 7px !important;
+  padding: 12px !important;
+  color: #f8fafc !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18) !important;
+}
+
+html[data-theme="light"] #zone-main[data-zone-screen="attack"] [data-zrow="1"] {
+  background: linear-gradient(90deg, #ffffff 0%, #f5efe2 100%) !important;
+  border: 1px solid #d5c9b1 !important;
+  border-inline-start: 3px solid #c93b2b !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="light"] .zig-brawl-banner {
+  background: linear-gradient(90deg, #eef4ff 0%, #fcfaf5 50%, #fff0ee 100%) !important;
+  border: 1px solid #d4a373 !important;
+  color: #0f172a !important;
+  box-shadow: 0 6px 18px rgba(20, 27, 38, 0.08) !important;
+}
+
+html[data-theme="light"] .zig-brawl-vs {
+  color: #9a5b08 !important;
+  text-shadow: none !important;
+}
+
+/* ==========================================================================
+   11. Global Syndicate Flight Network Bar (City Screen)
+   ========================================================================== */
+
+.zig-world-flight-bar {
+  border-radius: 7px;
+  border: 1px solid rgba(235, 184, 88, 0.42);
+  background:
+    radial-gradient(480px 180px at 90% 0%, rgba(56, 189, 248, 0.14), transparent 70%),
+    linear-gradient(180deg, #101827 0%, #090e18 100%);
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.44);
+}
+
+html[data-theme="light"] .zig-world-flight-bar {
+  background:
+    radial-gradient(480px 180px at 90% 0%, rgba(14, 116, 144, 0.10), transparent 70%),
+    linear-gradient(180deg, #fdfbf6 0%, #eee6d5 100%);
+  border: 1px solid #c4a673;
+  box-shadow: 0 6px 18px rgba(20, 27, 38, 0.08);
+}
+
+.zig-world-flight-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.zig-world-flight-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f8fafc;
+}
+
+html[data-theme="light"] .zig-world-flight-title {
+  color: #0f172a;
+}
+
+.zig-world-flight-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+html[data-theme="light"] .zig-world-flight-meta {
+  color: #334155;
+}
+
+.zig-world-cities-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.zig-city-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 8px;
+  border-radius: 5px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.85);
+  color: #f1f5f9;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.zig-city-chip:hover {
+  transform: translateY(-2px);
+  border-color: #ebb858;
+}
+
+.zig-city-chip.is-active {
+  border-color: #39e7a3;
+  background: linear-gradient(180deg, rgba(16, 56, 43, 0.92), rgba(9, 28, 22, 0.95));
+  box-shadow: 0 0 0 1px rgba(57, 231, 163, 0.28);
+}
+
+.zig-city-chip.is-locked {
+  opacity: 0.72;
+  border-style: dashed;
+}
+
+html[data-theme="light"] .zig-city-chip {
+  background: #ffffff;
+  border: 1px solid #cfc3ab;
+  color: #0f172a;
+}
+
+html[data-theme="light"] .zig-city-chip:hover {
+  border-color: #b4781e;
+  background: #fffaf0;
+}
+
+html[data-theme="light"] .zig-city-chip.is-active {
+  border-color: #0d7a49;
+  background: linear-gradient(180deg, #ecfdf5 0%, #d8f5e6 100%);
+}
+
+.zig-city-chip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.zig-city-chip-sub {
+  font-size: 9.5px;
+  color: #94a3b8;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html[data-theme="light"] .zig-city-chip-sub {
+  color: #475569;
+}
+
+@media (max-width: 980px) {
+  .zig-world-cities-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .zig-world-cities-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

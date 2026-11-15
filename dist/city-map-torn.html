@@ -476,6 +476,7 @@ initializeMapLocale();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
@@ -1315,7 +1316,7 @@ initializeMapLocale();
   function pinInScope(p){return !territoryFilter||p.territory===territoryFilter||p.districtId===territoryFilter;}
   function pinVisible(p){return !(lastData&&lastData.presentation&&lastData.presentation.showLocations===false)&&activeCats[p.cat]!==false&&pinInScope(p)&&(!hideFound||!found.has(p.id));}
   var OVERVIEW_POIS=['bank','gym','alley','hospital','market','hq','home','missions'];
-  function overviewPoi(p){if(typeof WebGLRenderingContext!=='undefined'){if(typeof window!=='undefined'&&window.innerWidth<=760)return['bank','alley','hospital','home','missions'].indexOf(p.id)!==-1;return['bank','gym','alley','hospital','market','home','missions','jobs'].indexOf(p.id)!==-1;}return OVERVIEW_POIS.indexOf(p.id)!==-1;}
+  function overviewPoi(p){if(typeof WebGLRenderingContext!=='undefined'){if(typeof window!=='undefined'&&window.innerWidth<=760)return['bank','alley','hospital','home','missions','gym','casino','market','hq','jail'].indexOf(p.id)!==-1;return['bank','gym','alley','hospital','market','home','missions','jobs','casino','hq','arena','school','jail','news','shop','pier','hof'].indexOf(p.id)!==-1;}return OVERVIEW_POIS.indexOf(p.id)!==-1;}
   function pinDisplayed(p){return pinVisible(p)&&(overviewPoi(p)||(locationPriority(p)<100&&map.getZoom()>=15.8)||map.getZoom()>=16.8||(selected&&selected.id===p.id));}
   function locationPriority(p){
     var primary=['bank','jobs','gym','school','hospital','jail','market','home','casino','alley','hq','missions','arena','news','shop','pier','hof'].indexOf(p&&p.id);
@@ -1750,7 +1751,7 @@ initializeMapLocale();
     setMode(mapMode,territoryFilter);
     requestInitialOverview(data);
     scheduleResize();
-    if(typeof WebGLRenderingContext!=='undefined'){settleInitialOverview();recoverMapLayers();}
+    if(typeof WebGLRenderingContext!=='undefined'){settleInitialOverview();recoverMapLayers();if(window.ZoneMapExpansion)window.ZoneMapExpansion.onRender(data);}
     /* U4.21 - fade the boot overlay once pins exist */
     if(el.zboot&&(pins.length||territoryData.length||typeof WebGLRenderingContext!=='undefined')) el.zboot.classList.add('gone');
   }
@@ -1896,6 +1897,7 @@ initializeMapLocale();
     setTimeout(function(){ if(el.zboot) el.zboot.classList.add('gone'); },4000);
   });
 
+  if(typeof WebGLRenderingContext!=='undefined'&&window.ZoneMapExpansion)window.ZoneMapExpansion.init({map:map,CENTER:CENTER,ICON_PATHS:ICON_PATHS,ensurePoiImage:ensurePoiImage});
   var announced=false,mapInstanceId=Math.random().toString(36).slice(2);
   function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},location.origin);}catch(_){} }
   if(typeof WebGLRenderingContext!=='undefined'||map.loaded()) announce(); else map.once('load',announce);

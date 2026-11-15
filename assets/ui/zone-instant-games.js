@@ -1733,6 +1733,163 @@
     }
   }
 
+  /* ---------------- Global Syndicate Flight Bar & Map Bridge ---------------- */
+  var WORLD_FLIGHT_CITIES = [
+    { id: 'zone', code: 'ZCT', minLevel: 1, fare: 0, en: 'Zone City', ar: 'مدينة الزون', subEn: 'Home Turf · 5 Sectors', subAr: 'المركز الرئيسي · 5 قطاعات' },
+    { id: 'riyadh', code: 'RUH', minLevel: 1, fare: 1200, en: 'Riyadh', ar: 'الرياض', subEn: 'Bullion · $1,200', subAr: 'سبائك الذهب · $1,200' },
+    { id: 'cairo', code: 'CAI', minLevel: 1, fare: 950, en: 'Cairo', ar: 'القاهرة', subEn: 'Shadow Bazaar · $950', subAr: 'بازار النيل · $950' },
+    { id: 'dubai', code: 'DXB', minLevel: 3, fare: 2400, en: 'Dubai', ar: 'دبي', subEn: 'Sky-Vaults · Lv.3', subAr: 'خزائن المارينا · مستوى 3' },
+    { id: 'istanbul', code: 'IST', minLevel: 6, fare: 3500, en: 'Istanbul', ar: 'إسطنبول', subEn: 'Bosphorus · Lv.6', subAr: 'مضيق البسفور · مستوى 6' },
+    { id: 'tokyo', code: 'TYO', minLevel: 10, fare: 6800, en: 'Neo-Tokyo', ar: 'نيو طوكيو', subEn: 'Cyber-Syndicate · Lv.10', subAr: 'شيبويا · مستوى 10' },
+    { id: 'montecarlo', code: 'MCO', minLevel: 15, fare: 12500, en: 'Monte Carlo', ar: 'مونت كارلو', subEn: 'High Salon · Lv.15', subAr: 'صالون النخبة · مستوى 15' }
+  ];
+
+  function getStoredWorldCity() {
+    var g = window.__zoneGame;
+    if (g && g.p && g.p.worldCityId) return g.p.worldCityId;
+    try { return localStorage.getItem('zone_world_city') || 'zone'; } catch (_) { return 'zone'; }
+  }
+
+  function mountCityWorldFlightBar() {
+    var main = document.getElementById('zone-main');
+    if (!main || main.getAttribute('data-zone-screen') !== 'city') return;
+    var mapShell = main.querySelector('.zone-city-map-shell');
+    if (!mapShell || !mapShell.parentElement) return;
+
+    var ar = document.documentElement.lang === 'ar';
+    var g = window.__zoneGame;
+    var lv = (g && g.p && Number(g.p.level)) ? Math.max(1, Math.floor(Number(g.p.level))) : 1;
+    var activeCityId = getStoredWorldCity();
+    var sig = (ar ? 'ar' : 'en') + '|' + lv + '|' + activeCityId;
+
+    var bar = document.getElementById('zig-world-flight-bar');
+    if (!bar) {
+      bar = document.createElement('section');
+      bar.id = 'zig-world-flight-bar';
+      bar.className = 'zig-world-flight-bar';
+      mapShell.parentElement.insertBefore(bar, mapShell);
+    }
+    if (bar.getAttribute('data-sig') === sig) return;
+    bar.setAttribute('data-sig', sig);
+
+    var curObj = WORLD_FLIGHT_CITIES.find(function (c) { return c.id === activeCityId; }) || WORLD_FLIGHT_CITIES[0];
+
+    bar.innerHTML =
+      '<div class="zig-world-flight-top">' +
+        '<div class="zig-world-flight-title">' +
+          '<span>✈️</span>' +
+          '<span>' + (ar ? 'شبكة السفر بين المدن العالمية · موقعك: ' : 'City-to-City World Transit · Current: ') + (ar ? curObj.ar : curObj.en) + ' (' + curObj.code + ')</span>' +
+        '</div>' +
+        '<div class="zig-world-flight-meta">' +
+          '<span>' + (ar ? 'مستوى التصريح: ' : 'Clearance: ') + 'Lv.' + lv + '</span>' +
+          '<button type="button" class="zig-btn" id="zigOpenRadarBtn">' + (ar ? 'رادار الرحلات العالمي' : 'Open Flight Radar') + '</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="zig-world-cities-row">' +
+        WORLD_FLIGHT_CITIES.map(function (c) {
+          var isHere = c.id === activeCityId;
+          var locked = lv < c.minLevel;
+          return (
+            '<button type="button" class="zig-city-chip' + (isHere ? ' is-active' : '') + (locked ? ' is-locked' : '') + '" data-world-city="' + c.id + '">' +
+              '<div class="zig-city-chip-top">' +
+                '<span>' + (ar ? c.ar : c.en) + '</span>' +
+                '<span>' + (isHere ? '●' : locked ? ('🔒' + c.minLevel) : c.code) + '</span>' +
+              '</div>' +
+              '<div class="zig-city-chip-sub">' + (ar ? c.subAr : c.subEn) + '</div>' +
+            '</button>'
+          );
+        }).join('') +
+      '</div>';
+
+    var radarBtn = bar.querySelector('#zigOpenRadarBtn');
+    if (radarBtn) {
+      radarBtn.onclick = function () {
+        var frame = document.getElementById('zone-city-map');
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'ZONE_OPEN_WORLD_CITIES' }, window.location.origin);
+        }
+      };
+    }
+
+    Array.from(bar.querySelectorAll('[data-world-city]')).forEach(function (chip) {
+      chip.onclick = function () {
+        var cid = chip.getAttribute('data-world-city');
+        var target = WORLD_FLIGHT_CITIES.find(function (c) { return c.id === cid; });
+        if (!target) return;
+        var frame = document.getElementById('zone-city-map');
+        if (lv < target.minLevel || cid === activeCityId) {
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({ type: 'ZONE_OPEN_WORLD_CITIES' }, window.location.origin);
+          }
+          return;
+        }
+        if (g && g.p) {
+          if (Number(g.p.cash || 0) < target.fare) {
+            if (g.toast) g.toast(ar ? 'رصيدك غير كافٍ لتذكرة السفر.' : 'Not enough cash for charter ticket.', true);
+            return;
+          }
+          g.p.cash = Math.max(0, Number(g.p.cash || 0) - target.fare);
+          g.p.xp = Number(g.p.xp || 0) + 35;
+          if (g.p.xp >= Number(g.p.level || 1) * 250) g.p.level = Number(g.p.level || 1) + 1;
+          g.p.worldCityId = target.id;
+          g.p.city = ar ? target.ar : target.en;
+          try { localStorage.setItem('zone_world_city', target.id); } catch (_) {}
+          if (g.playTacticalSfx) g.playTacticalSfx('good');
+          if (g.save) g.save();
+          g._mapSig = '';
+          if (g.pushMap) g.pushMap();
+          if (g.toast) g.toast((ar ? 'وصلت إلى ' : 'Landed in ') + (ar ? target.ar : target.en) + ' (' + target.code + ') · +35 XP');
+          if (g.forceUpdate) g.forceUpdate();
+        } else {
+          try { localStorage.setItem('zone_world_city', target.id); } catch (_) {}
+        }
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: 'ZONE_SYNC_WORLD_CITY', cityId: target.id }, window.location.origin);
+        }
+        bar.removeAttribute('data-sig');
+        mountCityWorldFlightBar();
+      };
+    });
+  }
+
+  window.addEventListener('message', function (ev) {
+    if (ev.origin !== window.location.origin || !ev.data || ev.data.type !== 'ZONE_WORLD_TRAVEL') return;
+    var d = ev.data;
+    var g = window.__zoneGame;
+    var ar = document.documentElement.lang === 'ar';
+    if (d.action === 'fly' && d.cityId) {
+      try { localStorage.setItem('zone_world_city', d.cityId); } catch (_) {}
+      if (g && g.p) {
+        g.p.cash = Math.max(0, Number(g.p.cash || 0) - Number(d.fare || 0));
+        g.p.xp = Number(g.p.xp || 0) + Number(d.xpDelta || 35);
+        if (g.p.xp >= Number(g.p.level || 1) * 250) g.p.level = Number(g.p.level || 1) + 1;
+        g.p.worldCityId = d.cityId;
+        g.p.city = d.cityName || d.cityId;
+        if (g.playTacticalSfx) g.playTacticalSfx('good');
+        if (g.save) g.save();
+        g._mapSig = '';
+        if (g.pushMap) g.pushMap();
+        if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' · +' + Number(d.xpDelta || 35) + ' XP');
+        if (g.forceUpdate) g.forceUpdate();
+      }
+      var bar = document.getElementById('zig-world-flight-bar');
+      if (bar) bar.removeAttribute('data-sig');
+      mountCityWorldFlightBar();
+    } else if (d.action === 'contract') {
+      if (g && g.p) {
+        g.p.cash = Number(g.p.cash || 0) + Number(d.cashDelta || 0);
+        g.p.xp = Number(g.p.xp || 0) + Number(d.xpDelta || 0);
+        if (g.p.xp >= Number(g.p.level || 1) * 250) g.p.level = Number(g.p.level || 1) + 1;
+        if (g.playTacticalSfx) g.playTacticalSfx('cash');
+        if (g.save) g.save();
+        g._mapSig = '';
+        if (g.pushMap) g.pushMap();
+        if (g.toast) g.toast((d.contractLabel || 'Regional Op') + ' · +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' · +' + Number(d.xpDelta || 0) + ' XP');
+        if (g.forceUpdate) g.forceUpdate();
+      }
+    }
+  });
+
   /* ---------------- Sync Hook & Unified 60fps Loop ---------------- */
   function syncMounts() {
     mountHomeArcade();
@@ -1740,6 +1897,7 @@
     mountGymGame();
     mountCasinoGames();
     mountAttackBanner();
+    mountCityWorldFlightBar();
 
     /* Detect cash reward deltas for arcade floating popups */
     var g = window.__zoneGame;
