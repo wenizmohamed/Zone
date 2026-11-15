@@ -1762,12 +1762,17 @@
     var activeCityId = getStoredWorldCity();
     var sig = (ar ? 'ar' : 'en') + '|' + lv + '|' + activeCityId;
 
+    var workspace = mapShell.closest('.zone-city-workspace') || mapShell;
+    if (!workspace.parentElement) return;
+
     var bar = document.getElementById('zig-world-flight-bar');
     if (!bar) {
       bar = document.createElement('section');
       bar.id = 'zig-world-flight-bar';
       bar.className = 'zig-world-flight-bar';
-      mapShell.parentElement.insertBefore(bar, mapShell);
+      workspace.parentElement.insertBefore(bar, workspace);
+    } else if (bar.parentElement !== workspace.parentElement) {
+      workspace.parentElement.insertBefore(bar, workspace);
     }
     if (bar.getAttribute('data-sig') === sig) return;
     bar.setAttribute('data-sig', sig);

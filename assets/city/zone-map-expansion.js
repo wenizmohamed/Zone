@@ -1,5 +1,5 @@
-/* ZONE v122 - Expanded 3D Metropolis, Dynamic Time-of-Day & Live Clock,
-   Level-Locked Progression Sectors, 40+ Semantic Location Icons & Global World Cities */
+/* ZONE v123 - Expanded 3D Metropolis, Dynamic Time-of-Day & Live Clock,
+   Level-Locked Progression Sectors, 47 Semantic Location Icons & Global World Cities */
 (function (root) {
   "use strict";
 
@@ -140,87 +140,102 @@
       id: "dawn",
       icon: "🌅",
       label: { en: "Dawn", ar: "الفجر" },
-      fog: { color: "#d8b4c8", "high-color": "#466394", "space-color": "#1e2c4a", "horizon-blend": 0.12, range: [1.5, 14], "star-intensity": 0.08 },
-      ambient: { color: "#d8c8e8", intensity: 0.62 },
-      sun: { color: "#ffb38a", intensity: 0.78, direction: [96, 25] },
-      land: "#cfc7d2",
-      water: "#3f6a8a",
-      park: "#5f8569",
-      road: "#7f7b8a",
-      roadCase: "#5d5968",
-      bldg: ["#9da3b4", "#8991a4", "#b4b9c8"],
-      beaconOpacity: 0.45,
+      fog: { color: "#e5bfd1", "high-color": "#5876a8", "space-color": "#263659", "horizon-blend": 0.12, range: [1.5, 14], "star-intensity": 0.05 },
+      ambient: { color: "#eeddf6", intensity: 0.72 },
+      sun: { color: "#ffb88c", intensity: 0.85, direction: [96, 28] },
+      land: "#dcd2dd",
+      landInd: "#cec3d0",
+      water: "#467fa3",
+      park: "#6c9c78",
+      roadMain: "#f5edf7",
+      road: "#b0a4b5",
+      roadCase: "#7c7282",
+      bldg: ["#b9b2c4", "#cbc4d6", "#e4dce9"],
+      lockFill: "#7c2d12",
+      lockOpacity: 0.14,
       isLightUi: true
     },
     day: {
       id: "day",
       icon: "☀️",
       label: { en: "Day", ar: "النهار" },
-      fog: { color: "#dceaf7", "high-color": "#78b3eb", "space-color": "#498cd1", "horizon-blend": 0.1, range: [1.8, 14.5], "star-intensity": 0 },
-      ambient: { color: "#ffffff", intensity: 0.76 },
-      sun: { color: "#fffdf5", intensity: 0.9, direction: [155, 58] },
-      land: "#e7e1d3",
-      water: "#489ec4",
-      park: "#78b071",
-      road: "#aba598",
-      roadCase: "#868073",
-      bldg: ["#ded7c8", "#c8d2de", "#f0ebe0"],
-      beaconOpacity: 0.18,
+      fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [1.8, 15], "star-intensity": 0 },
+      ambient: { color: "#ffffff", intensity: 0.88 },
+      sun: { color: "#fffdf6", intensity: 0.96, direction: [155, 58] },
+      land: "#efe9db",
+      landInd: "#e2dac8",
+      water: "#3ba3cc",
+      park: "#77b970",
+      roadMain: "#ffffff",
+      road: "#cfc6b4",
+      roadCase: "#9e9481",
+      bldg: ["#d8d0bf", "#e5dfd2", "#f7f3ea"],
+      lockFill: "#b45309",
+      lockOpacity: 0.13,
       isLightUi: true
     },
     afternoon: {
       id: "afternoon",
       icon: "🌤️",
       label: { en: "Afternoon", ar: "العصر" },
-      fog: { color: "#edd7b7", "high-color": "#6c9bc9", "space-color": "#3d6fa3", "horizon-blend": 0.12, range: [1.6, 14], "star-intensity": 0 },
-      ambient: { color: "#fff1d6", intensity: 0.7 },
-      sun: { color: "#ffd082", intensity: 0.88, direction: [232, 36] },
-      land: "#dfd2be",
-      water: "#37809e",
-      park: "#6a9963",
-      road: "#988e7e",
-      roadCase: "#746b5c",
-      bldg: ["#d7c8b2", "#bfb29c", "#eadbc3"],
-      beaconOpacity: 0.28,
+      fog: { color: "#f3dec0", "high-color": "#74a6d4", "space-color": "#437ab0", "horizon-blend": 0.12, range: [1.6, 14.5], "star-intensity": 0 },
+      ambient: { color: "#fff3db", intensity: 0.82 },
+      sun: { color: "#ffd284", intensity: 0.94, direction: [232, 38] },
+      land: "#e6d8c3",
+      landInd: "#d8c8b0",
+      water: "#3289ab",
+      park: "#6ca664",
+      roadMain: "#fbf1df",
+      road: "#bfb19a",
+      roadCase: "#8d806b",
+      bldg: ["#cbbba2", "#dfd1ba", "#f2e5cf"],
+      lockFill: "#b45309",
+      lockOpacity: 0.15,
       isLightUi: true
     },
     dusk: {
       id: "dusk",
       icon: "🌇",
       label: { en: "Dusk", ar: "الغسق" },
-      fog: { color: "#5e3754", "high-color": "#202b4d", "space-color": "#0d1326", "horizon-blend": 0.11, range: [1.4, 13.5], "star-intensity": 0.25 },
-      ambient: { color: "#8e9cc8", intensity: 0.52 },
-      sun: { color: "#ff8854", intensity: 0.82, direction: [268, 19] },
-      land: "#25293a",
-      water: "#19354f",
-      park: "#263b34",
-      road: "#393f54",
+      fog: { color: "#683c5d", "high-color": "#233056", "space-color": "#0e152b", "horizon-blend": 0.11, range: [1.4, 13.5], "star-intensity": 0.25 },
+      ambient: { color: "#9ba9d6", intensity: 0.58 },
+      sun: { color: "#ff8c59", intensity: 0.86, direction: [268, 21] },
+      land: "#25293b",
+      landInd: "#1e2233",
+      water: "#1a3956",
+      park: "#263e37",
+      roadMain: "#636b87",
+      road: "#3f465e",
       roadCase: "#202536",
-      bldg: ["#3b455c", "#4d5975", "#616f8f"],
-      beaconOpacity: 0.78,
+      bldg: ["#3b455e", "#4f5c7a", "#687799"],
+      lockFill: "#090d16",
+      lockOpacity: 0.34,
       isLightUi: false
     },
     night: {
       id: "night",
       icon: "🌙",
       label: { en: "Night", ar: "الليل" },
-      fog: { color: "#0d1628", "high-color": "#070c18", "space-color": "#04070f", "horizon-blend": 0.08, range: [1.4, 13.5], "star-intensity": 0.55 },
-      ambient: { color: "#9db8dc", intensity: 0.54 },
-      sun: { color: "#ffe3b8", intensity: 0.68, direction: [210, 38] },
-      land: "#101622",
-      water: "#0a1c2e",
-      park: "#122420",
-      road: "#232d3f",
-      roadCase: "#131926",
-      bldg: ["#1e2a3f", "#293954", "#354a6b"],
-      beaconOpacity: 0.95,
+      fog: { color: "#0e182c", "high-color": "#080e1d", "space-color": "#040710", "horizon-blend": 0.08, range: [1.4, 13.5], "star-intensity": 0.55 },
+      ambient: { color: "#a5c0e5", intensity: 0.58 },
+      sun: { color: "#ffe5bd", intensity: 0.72, direction: [210, 38] },
+      land: "#0f1522",
+      landInd: "#0c111c",
+      water: "#081b2e",
+      park: "#122621",
+      roadMain: "#384963",
+      road: "#243044",
+      roadCase: "#111724",
+      bldg: ["#1c283d", "#283956", "#364d73"],
+      lockFill: "#060a12",
+      lockOpacity: 0.38,
       isLightUi: false
     }
   };
 
   function createExpansionController(ctx) {
     var map = ctx.map;
-    var CENTER = ctx.CENTER || [-73.9855, 40.758];
+    var CENTER = ctx.CENTER || [-73.9865, 40.698];
     var ICON_PATHS = ctx.ICON_PATHS || {};
     var ensurePoiImage = ctx.ensurePoiImage;
 
@@ -233,7 +248,7 @@
       dark: true,
       timeMode: "auto",
       lastThemeDark: null,
-      activePhase: "afternoon",
+      activePhase: "",
       playerLevel: 1,
       playerXp: 0,
       playerCash: 2500,
@@ -243,7 +258,8 @@
       gateMarkers: [],
       clockTimer: null,
       metroInstalled: false,
-      didMetroFrame: false
+      didMetroFrame: false,
+      styleReadyLatch: false
     };
 
     try {
@@ -256,6 +272,23 @@
         state.timeMode = savedTimeMode;
       }
     } catch (_) {}
+
+    function isMapStyleReady() {
+      if (!map) return false;
+      if (state.styleReadyLatch) return true;
+      try {
+        if (map.isStyleLoaded && map.isStyleLoaded()) {
+          state.styleReadyLatch = true;
+          return true;
+        }
+        var st = map.getStyle && map.getStyle();
+        if (st && Array.isArray(st.layers) && st.layers.length > 0 && map.getLayer && map.getLayer("background")) {
+          state.styleReadyLatch = true;
+          return true;
+        }
+      } catch (_) {}
+      return false;
+    }
 
     function pt(dx, dy) {
       return [+(CENTER[0] + dx).toFixed(6), +(CENTER[1] + dy).toFixed(6)];
@@ -277,7 +310,7 @@
         minLevel: 1,
         color: "#39e7a3",
         anchor: pt(0.0002, 0.0002),
-        gatePos: pt(-0.0002, 0.0029),
+        gatePos: pt(-0.0002, 0.0031),
         bounds: [-0.0044, -0.0031, 0.0044, 0.0031],
         name: { en: "Central Starter Turf", ar: "القطاع المركزي الأساسي" },
         desc: { en: "Downtown core, Safehouse, Ironworks Gym, Hospital, Missions & Charter Heliport.", ar: "قلب المدينة، المخبأ، النادي، المستشفى، المهمات، ومهبط الطيران." },
@@ -288,7 +321,7 @@
         minLevel: 3,
         color: "#c084fc",
         anchor: pt(-0.0079, 0.0012),
-        gatePos: pt(-0.0078, 0.0014),
+        gatePos: pt(-0.0078, 0.0029),
         bounds: [-0.0114, -0.0022, -0.0047, 0.0052],
         name: { en: "West Neon & Casino Strip", ar: "شارع النيون والكازينو الغربي" },
         desc: { en: "High-roller Velvet Casino, Nightclubs, Cyber Arcade, Underground Fight Pit & Biotech Campus.", ar: "كازينو النخبة، الملاهي الليلية، صالة الأركيد، حلبة القتال السرية والجامعة." },
@@ -311,7 +344,7 @@
         minLevel: 10,
         color: "#eab308",
         anchor: pt(0.0080, 0.0018),
-        gatePos: pt(0.0079, 0.0018),
+        gatePos: pt(0.0079, 0.0028),
         bounds: [0.0047, -0.0018, 0.0115, 0.0066],
         name: { en: "East Sovereign Financial Citadel", ar: "القلعة المالية السيادية الشرقية" },
         desc: { en: "Skyscraper banking district, Global Stock & FX Exchange, Crypto Dark-Pool, Diamond Bourse & Courthouse.", ar: "حي الأبراج المصرفية، البورصة العالمية، خزنة الكريبتو، بورصة الألماس والمحكمة." },
@@ -337,16 +370,16 @@
       { id: "pawn_central", sector: "sector-core", minLevel: 1, icon: "pawnshop", color: "#ebb858", dx: 0.0019, dy: -0.0018, screen: "market", name: { en: "Gold & Pawn Brokers", ar: "متجر الرهن والذهب" }, cat: { en: "Trade", ar: "التجارة" } },
       { id: "street_pharmacy", sector: "sector-core", minLevel: 1, icon: "pharmacy", color: "#fb7185", dx: -0.0011, dy: 0.0018, screen: "items", name: { en: "Night Owl Med-Supply", ar: "صيدلية الإمداد الليلي" }, cat: { en: "Medical", ar: "إمدادات طبية" } },
       { id: "precinct_one", sector: "sector-core", minLevel: 1, icon: "police", color: "#f87171", dx: 0.0033, dy: -0.0007, screen: "jail", name: { en: "Central Police Precinct", ar: "مديرية الشرطة المركزية" }, cat: { en: "Law & Custody", ar: "الأمن والاحتجاز" } },
-      { id: "gun_armory", sector: "sector-core", minLevel: 1, icon: "shop", color: "#f59e0b", dx: -0.0033, dy: -0.0020, screen: "items", name: { en: "Big Al's Tactical Armory", ar: "ترسانة السلاح التكتيكي" }, cat: { en: "Armory", ar: "التسليح" } },
+      { id: "gun_armory", sector: "sector-core", minLevel: 1, icon: "chopshop", color: "#f59e0b", dx: -0.0033, dy: -0.0020, screen: "items", name: { en: "Big Al's Tactical Armory", ar: "ترسانة السلاح التكتيكي" }, cat: { en: "Armory", ar: "التسليح" } },
 
       /* Sector 2: West Neon & Casino Strip (Lv.3) */
       { id: "velvet_vip", sector: "sector-neon", minLevel: 3, icon: "velvet", color: "#ebb858", dx: -0.0064, dy: 0.0006, screen: "casino", name: { en: "Velvet Underground VIP", ar: "كازينو المخمل لكبار الشخصيات" }, cat: { en: "High Stakes", ar: "رهانات كبرى" } },
-      { id: "neon_mirage", sector: "sector-neon", minLevel: 3, icon: "nightclub", color: "#e879f9", dx: -0.0086, dy: 0.0024, screen: "casino", name: { en: "Club Mirage Lounge", ar: "نادي السراب الليلي" }, cat: { en: "Nightlife", ar: "الحياة الليلية" } },
+      { id: "neon_mirage", sector: "sector-neon", minLevel: 3, icon: "nightclub", color: "#e879f9", dx: -0.0086, dy: 0.0020, screen: "casino", name: { en: "Club Mirage Lounge", ar: "نادي السراب الليلي" }, cat: { en: "Nightlife", ar: "الحياة الليلية" } },
       { id: "pit_fightclub", sector: "sector-neon", minLevel: 3, icon: "fightclub", color: "#ef4444", dx: -0.0098, dy: -0.0006, screen: "attack", name: { en: "Bloodsport Fight Pit", ar: "حلبة القتال السرية" }, cat: { en: "Combat Pit", ar: "قتال الشوارع" } },
-      { id: "cyber_arcade", sector: "sector-neon", minLevel: 3, icon: "arcade", color: "#39e7a3", dx: -0.0062, dy: 0.0036, screen: "home", name: { en: "Neon Pulse Arcade", ar: "صالة أركيد النيون" }, cat: { en: "Instant Games", ar: "ألعاب فورية" } },
-      { id: "noir_cinema", sector: "sector-neon", minLevel: 3, icon: "cinema", color: "#c084fc", dx: -0.0082, dy: -0.0014, screen: "newspaper", name: { en: "Grand Noir Theater", ar: "مسرح وسينما نوار" }, cat: { en: "Entertainment", ar: "ترفيه" } },
-      { id: "pro_boxing", sector: "sector-neon", minLevel: 3, icon: "boxinggym", color: "#38bdf8", dx: -0.0103, dy: 0.0016, screen: "gym", name: { en: " Kronk Championship Gym", ar: "نادي أبطال الملاكمة" }, cat: { en: "Training", ar: "تدريب القوة" } },
-      { id: "biotech_uni", sector: "sector-neon", minLevel: 3, icon: "university", color: "#60a5fa", dx: -0.0094, dy: 0.0041, screen: "education", name: { en: "Zone Biotech University", ar: "جامعة الزون للتقنية الحيوية" }, cat: { en: "Academy", ar: "التعليم الأكاديمي" } },
+      { id: "cyber_arcade", sector: "sector-neon", minLevel: 3, icon: "arcade", color: "#39e7a3", dx: -0.0060, dy: 0.0038, screen: "home", name: { en: "Neon Pulse Arcade", ar: "صالة أركيد النيون" }, cat: { en: "Instant Games", ar: "ألعاب فورية" } },
+      { id: "noir_cinema", sector: "sector-neon", minLevel: 3, icon: "cinema", color: "#c084fc", dx: -0.0080, dy: -0.0015, screen: "newspaper", name: { en: "Grand Noir Theater", ar: "مسرح وسينما نوار" }, cat: { en: "Entertainment", ar: "ترفيه" } },
+      { id: "pro_boxing", sector: "sector-neon", minLevel: 3, icon: "boxinggym", color: "#38bdf8", dx: -0.0104, dy: 0.0015, screen: "gym", name: { en: "Kronk Championship Gym", ar: "نادي أبطال الملاكمة" }, cat: { en: "Training", ar: "تدريب القوة" } },
+      { id: "biotech_uni", sector: "sector-neon", minLevel: 3, icon: "university", color: "#60a5fa", dx: -0.0095, dy: 0.0042, screen: "education", name: { en: "Zone Biotech University", ar: "جامعة الزون للتقنية الحيوية" }, cat: { en: "Academy", ar: "التعليم الأكاديمي" } },
 
       /* Sector 3: Smuggler Docks & North Speedway (Lv.5) */
       { id: "nitro_speedway", sector: "sector-harbor", minLevel: 5, icon: "racetrack", color: "#f97316", dx: -0.0016, dy: 0.0058, screen: "home", name: { en: "Nitro Motor Speedway", ar: "حلبة نيترو لسباقات السرعة" }, cat: { en: "Street Racing", ar: "سباقات الشوارع" } },
@@ -354,21 +387,21 @@
       { id: "pirate_radio", sector: "sector-harbor", minLevel: 5, icon: "radio", color: "#38bdf8", dx: -0.0038, dy: 0.0046, screen: "newspaper", name: { en: "Signal Syndicate Tower", ar: "برج إذاعة النقابة" }, cat: { en: "Intel", ar: "استخبارات" } },
       { id: "custom_chopshop", sector: "sector-harbor", minLevel: 5, icon: "chopshop", color: "#fb923c", dx: -0.0095, dy: -0.0044, screen: "crimes", name: { en: "Redline Chop Shop", ar: "ورشة تفكيك وتعديل السيارات" }, cat: { en: "Black Market", ar: "سوق سوداء" } },
       { id: "container_docks", sector: "sector-harbor", minLevel: 5, icon: "docks", color: "#38bdf8", dx: -0.0082, dy: -0.0068, screen: "crimes", name: { en: "Deepwater Container Port", ar: "ميناء الحاويات العميقة" }, cat: { en: "Cargo Heists", ar: "عمليات الميناء" } },
-      { id: "smuggler_berth", sector: "sector-harbor", minLevel: 5, icon: "smuggler", color: "#f43f5e", dx: -0.0045, dy: -0.0066, screen: "market", name: { en: "Smuggler's Cove Pier 9", ar: "رصيف المهربين رقم 9" }, cat: { en: "Contraband", ar: "تهريب البضائع" } },
-      { id: "harbor_trauma", sector: "sector-harbor", minLevel: 5, icon: "clinic", color: "#ef4444", dx: -0.0012, dy: -0.0048, screen: "hospital", name: { en: "Back-Alley Trauma Dock", ar: "عيادة جراحة الميناء" }, cat: { en: "Underground Med", ar: "طب سري" } },
+      { id: "smuggler_berth", sector: "sector-harbor", minLevel: 5, icon: "smuggler", color: "#f43f5e", dx: -0.0044, dy: -0.0066, screen: "market", name: { en: "Smuggler's Cove Pier 9", ar: "رصيف المهربين رقم 9" }, cat: { en: "Contraband", ar: "تهريب البضائع" } },
+      { id: "harbor_trauma", sector: "sector-harbor", minLevel: 5, icon: "clinic", color: "#ef4444", dx: -0.0012, dy: -0.0046, screen: "hospital", name: { en: "Back-Alley Trauma Dock", ar: "عيادة جراحة الميناء" }, cat: { en: "Underground Med", ar: "طب سري" } },
 
       /* Sector 4: East Sovereign Financial Citadel (Lv.10) */
-      { id: "sovereign_exchange", sector: "sector-citadel", minLevel: 10, icon: "exchange", color: "#eab308", dx: 0.0066, dy: 0.0028, screen: "bank", name: { en: "Sovereign Stock & FX Bourse", ar: "بورصة الأسهم والعملات" }, cat: { en: "High Finance", ar: "المال والأعمال" } },
-      { id: "crypto_vault", sector: "sector-citadel", minLevel: 10, icon: "crypto", color: "#39e7a3", dx: 0.0096, dy: 0.0038, screen: "bank", name: { en: "Zero-Knowledge Crypto Vault", ar: "خزنة العملات المشفرة" }, cat: { en: "Dark Pool", ar: "خزائن رقمية" } },
-      { id: "diamond_bourse", sector: "sector-citadel", minLevel: 10, icon: "jeweler", color: "#67e8f9", dx: 0.0068, dy: 0.0002, screen: "market", name: { en: "Imperial Diamond Exchange", ar: "بورصة الألماس الإمبراطورية" }, cat: { en: "Luxury Jewels", ar: "مجوهرات فاخرة" } },
-      { id: "syndicate_auction", sector: "sector-citadel", minLevel: 10, icon: "auction", color: "#f59e0b", dx: 0.0098, dy: 0.0010, screen: "market", name: { en: "Black-Tie Auction House", ar: "دار مزادات النخبة" }, cat: { en: "Rare Assets", ar: "مقتنيات نادرة" } },
+      { id: "sovereign_exchange", sector: "sector-citadel", minLevel: 10, icon: "exchange", color: "#eab308", dx: 0.0064, dy: 0.0016, screen: "bank", name: { en: "Sovereign Stock & FX Bourse", ar: "بورصة الأسهم والعملات" }, cat: { en: "High Finance", ar: "المال والأعمال" } },
+      { id: "crypto_vault", sector: "sector-citadel", minLevel: 10, icon: "crypto", color: "#39e7a3", dx: 0.0098, dy: 0.0038, screen: "bank", name: { en: "Zero-Knowledge Crypto Vault", ar: "خزنة العملات المشفرة" }, cat: { en: "Dark Pool", ar: "خزائن رقمية" } },
+      { id: "diamond_bourse", sector: "sector-citadel", minLevel: 10, icon: "jeweler", color: "#67e8f9", dx: 0.0068, dy: -0.0006, screen: "market", name: { en: "Imperial Diamond Exchange", ar: "بورصة الألماس الإمبراطورية" }, cat: { en: "Luxury Jewels", ar: "مجوهرات فاخرة" } },
+      { id: "syndicate_auction", sector: "sector-citadel", minLevel: 10, icon: "auction", color: "#f59e0b", dx: 0.0101, dy: 0.0008, screen: "market", name: { en: "Black-Tie Auction House", ar: "دار مزادات النخبة" }, cat: { en: "Rare Assets", ar: "مقتنيات نادرة" } },
       { id: "supreme_court", sector: "sector-citadel", minLevel: 10, icon: "courthouse", color: "#cbd5e1", dx: 0.0062, dy: 0.0052, screen: "jail", name: { en: "Federal High Courthouse", ar: "المحكمة العليا الفيدرالية" }, cat: { en: "Tribunal", ar: "القضاء" } },
       { id: "corp_citadel", sector: "sector-citadel", minLevel: 10, icon: "corptower", color: "#818cf8", dx: 0.0102, dy: 0.0054, screen: "jobs", name: { en: "Apex Conglomerate Tower", ar: "برج الشركات السيادي" }, cat: { en: "Executive Ops", ar: "إدارة الشركات" } },
 
       /* Sector 5: Zone Int'l Airport & VIP Marina Island (Lv.15) */
-      { id: "intl_airport", sector: "sector-airport", minLevel: 15, icon: "airport", color: "#38bdf8", dx: 0.0088, dy: -0.0058, screen: "__world_travel__", name: { en: "Zone International Airport", ar: "مطار الزون الدولي" }, cat: { en: "Global Flights", ar: "الرحلات الدولية" } },
+      { id: "intl_airport", sector: "sector-airport", minLevel: 15, icon: "airport", color: "#38bdf8", dx: 0.0091, dy: -0.0061, screen: "__world_travel__", name: { en: "Zone International Airport", ar: "مطار الزون الدولي" }, cat: { en: "Global Flights", ar: "الرحلات الدولية" } },
       { id: "vip_marina", sector: "sector-airport", minLevel: 15, icon: "marina", color: "#39e7a3", dx: 0.0042, dy: -0.0064, screen: "properties", name: { en: "Emerald Superyacht Marina", ar: "مرسى اليخوت الزمردي" }, cat: { en: "VIP Fleet", ar: "أسطول اليخوت" } },
-      { id: "island_penthouse", sector: "sector-airport", minLevel: 15, icon: "penthouse", color: "#facc15", dx: 0.0056, dy: -0.0036, screen: "properties", name: { en: "Sovereign Sky Penthouses", ar: "أبراج البنتهاوس الملكية" }, cat: { en: "Estates", ar: "عقارات فاخرة" } },
+      { id: "island_penthouse", sector: "sector-airport", minLevel: 15, icon: "penthouse", color: "#facc15", dx: 0.0055, dy: -0.0036, screen: "properties", name: { en: "Sovereign Sky Penthouses", ar: "أبراج البنتهاوس الملكية" }, cat: { en: "Estates", ar: "عقارات فاخرة" } },
       { id: "exec_jet_pad", sector: "sector-airport", minLevel: 15, icon: "heliport", color: "#f472b6", dx: 0.0108, dy: -0.0034, screen: "__world_travel__", name: { en: "Diplomatic Jet Hangar", ar: "حظيرة الطائرات الدبلوماسية" }, cat: { en: "Private Charter", ar: "طيران خاص" } }
     ];
 
@@ -417,7 +450,8 @@
       style.id = "zone-map-expansion-css";
       style.textContent = [
         ".zmx-chrono-bar{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:18;display:flex;align-items:center;gap:6px;padding:5px 9px;border-radius:7px;background:rgba(10,15,26,0.92);border:1px solid rgba(235,184,88,0.48);box-shadow:0 8px 24px rgba(0,0,0,0.55);backdrop-filter:blur(10px);color:#f8fafc;font:600 11px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 110px);flex-wrap:wrap;justify-content:center}",
-        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(253,251,246,0.95);border-color:#b4781e;color:#0f172a;box-shadow:0 6px 20px rgba(15,23,42,0.16)}",
+        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(253,251,246,0.96);border-color:#b4781e;color:#0f172a;box-shadow:0 6px 20px rgba(15,23,42,0.16)}",
+        "body[data-zmx-light='1'] .mgrade{background:radial-gradient(ellipse 75% 60% at 50% 35%,rgba(255,248,220,0.16) 0%,rgba(255,248,220,0) 68%)!important}",
         ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:4px;background:rgba(255,255,255,0.07);border:1px solid rgba(148,163,184,0.25);font-variant-numeric:tabular-nums}",
         "body[data-zmx-light='1'] .zmx-clock-box{background:#f1eadb;border-color:#cbbda2;color:#0f172a}",
         ".zmx-city-tag{font-weight:900;color:#ebb858;letter-spacing:0.06em;font-size:10.5px}",
@@ -439,7 +473,9 @@
         "body[data-zmx-light='1'] .zmx-lv-pill{background:#e6f7ef;border-color:#0d7a49;color:#064e30}",
         ".zmx-gate-marker{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:5px;font:800 10px/1.1 Rubik,system-ui,sans-serif;letter-spacing:0.04em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.6);border:1.5px solid #f59e0b;background:rgba(12,16,26,0.92);color:#fef3c7;white-space:nowrap;transition:transform .15s ease}",
         ".zmx-gate-marker:hover{transform:scale(1.07)}",
-        ".zmx-gate-marker.unlocked{border-color:#39e7a3;color:#a7f3d0;background:rgba(8,26,20,0.88)}",
+        ".zmx-gate-marker.unlocked{border-color:#39e7a3;color:#a7f3d0;background:rgba(8,26,20,0.9)}",
+        "body[data-zmx-light='1'] .zmx-gate-marker{background:rgba(255,251,240,0.96);color:#7c2d12;border-color:#d97706;box-shadow:0 5px 14px rgba(15,23,42,0.18)}",
+        "body[data-zmx-light='1'] .zmx-gate-marker.unlocked{background:rgba(236,253,245,0.96);color:#065f46;border-color:#059669}",
         ".zmx-modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,7,14,0.76);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:14px}",
         ".zmx-modal-backdrop[hidden]{display:none!important}",
         ".zmx-modal{width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;background:linear-gradient(180deg,#11192a 0%,#090e18 100%);border:1px solid rgba(235,184,88,0.52);box-shadow:0 24px 60px rgba(0,0,0,0.78);color:#f8fafc;padding:16px;font:500 12.5px/1.45 Rubik,system-ui,sans-serif}",
@@ -482,6 +518,19 @@
         }
       });
       document.body.appendChild(modalBackdrop);
+
+      var resetBtn = document.getElementById("cityReset");
+      if (resetBtn && !resetBtn.dataset.zmxBound) {
+        resetBtn.dataset.zmxBound = "1";
+        resetBtn.addEventListener("click", function () {
+          setTimeout(function () {
+            widenMetroBounds();
+            try {
+              map.easeTo({ center: CENTER, zoom: 14.32, pitch: 50, bearing: -16, duration: 280, essential: true });
+            } catch (_) {}
+          }, 40);
+        });
+      }
 
       renderChronoHud();
     }
@@ -546,9 +595,67 @@
       if (clockNode) clockNode.textContent = formatClock(d);
       var desired = computeDesiredPhase();
       if (desired !== state.activePhase) {
-        applyAtmosphere(false);
+        applyAtmosphere(true);
         renderChronoHud();
       }
+    }
+
+    function ensureMetroCoinImage(poi, locked) {
+      var imgId = "zmx-coin-" + poi.id + (locked ? "-lock" : "-open");
+      if (!map || !map.hasImage || map.hasImage(imgId)) return imgId;
+      try {
+        var canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        var c = canvas.getContext("2d");
+        c.clearRect(0, 0, 64, 64);
+
+        c.save();
+        c.scale(64 / 24, 64 / 24);
+
+        var grad = c.createRadialGradient(12, 9, 1, 12, 12, 12);
+        grad.addColorStop(0, "#1c283d");
+        grad.addColorStop(1, "#090f1b");
+        c.beginPath();
+        c.arc(12, 12, 11.2, 0, Math.PI * 2);
+        c.fillStyle = grad;
+        c.fill();
+
+        c.strokeStyle = poi.color || "#38bdf8";
+        c.lineWidth = 2.0;
+        c.stroke();
+
+        c.strokeStyle = "#ffffff";
+        c.lineWidth = 2.15;
+        c.lineCap = "round";
+        c.lineJoin = "round";
+        var pathStr = ICON_PATHS[poi.icon] || EXTRA_ICONS[poi.icon] || ICON_PATHS.missions || "";
+        if (pathStr) c.stroke(new Path2D(pathStr));
+
+        if (locked) {
+          c.beginPath();
+          c.arc(18.6, 5.4, 3.8, 0, Math.PI * 2);
+          c.fillStyle = "#f59e0b";
+          c.fill();
+          c.strokeStyle = "#090f1b";
+          c.lineWidth = 1.1;
+          c.stroke();
+
+          c.beginPath();
+          c.rect(17.1, 5.2, 3.0, 2.2);
+          c.fillStyle = "#090f1b";
+          c.fill();
+          c.beginPath();
+          c.arc(18.6, 5.1, 1.0, Math.PI, 0);
+          c.strokeStyle = "#090f1b";
+          c.lineWidth = 0.9;
+          c.stroke();
+        }
+
+        c.restore();
+        map.addImage(imgId, c.getImageData(0, 0, 64, 64), { pixelRatio: 2, sdf: false });
+      } catch (_) {}
+      return imgId;
     }
 
     function buildOuterSkylineGeo() {
@@ -567,64 +674,61 @@
       /* West Neon & Casino Strip (Lv.3) */
       for (var ny = -0.0018; ny <= 0.0046; ny += 0.0011) {
         for (var nx = -0.0108; nx <= -0.0052; nx += 0.0012) {
-          var hNeon = 34 + ((Math.abs(Math.round(nx * 10000)) * 13 + Math.abs(Math.round(ny * 10000)) * 7) % 68);
+          var hNeon = 38 + ((Math.abs(Math.round(nx * 10000)) * 13 + Math.abs(Math.round(ny * 10000)) * 7) % 72);
           pushBox(nx, ny, 0.00072, 0.00062, 0, hNeon, (idSeq % 3));
         }
       }
-      /* Velvet Casino Resort Tower */
-      pushBox(-0.0064, 0.0006, 0.0011, 0.0009, 0, 132, 2);
-      pushBox(-0.0064, 0.0006, 0.0006, 0.0005, 132, 168, 0);
+      pushBox(-0.0064, 0.0006, 0.0011, 0.0009, 0, 138, 2);
+      pushBox(-0.0064, 0.0006, 0.0006, 0.0005, 138, 174, 0);
 
       /* East Sovereign Financial Citadel (Lv.10) - Supertall Skyscraper Cluster */
       for (var ey = -0.0014; ey <= 0.0060; ey += 0.0011) {
         for (var ex = 0.0052; ex <= 0.0109; ex += 0.0012) {
-          var hFin = 68 + ((Math.round(ex * 10000) * 19 + Math.round((ey + 0.02) * 10000) * 11) % 135);
+          var hFin = 72 + ((Math.round(ex * 10000) * 19 + Math.round((ey + 0.02) * 10000) * 11) % 140);
           pushBox(ex, ey, 0.00074, 0.00064, 0, hFin, (idSeq % 3));
         }
       }
-      /* Sovereign Apex Supertall Spire */
-      pushBox(0.0081, 0.0024, 0.0011, 0.00095, 0, 215, 2);
-      pushBox(0.0081, 0.0024, 0.00058, 0.0005, 215, 265, 0);
+      pushBox(0.0081, 0.0024, 0.0011, 0.00095, 0, 220, 2);
+      pushBox(0.0081, 0.0024, 0.00058, 0.0005, 220, 270, 0);
 
       /* North Motor Speedway & Grand Coliseum Stadium (Lv.5) */
       for (var sx = -0.0038; sx <= 0.0040; sx += 0.0013) {
-        pushBox(sx, 0.0042, 0.0008, 0.0006, 0, 38 + (idSeq % 4) * 12, 1);
-        pushBox(sx, 0.0068, 0.00085, 0.0006, 0, 32 + (idSeq % 3) * 14, 0);
+        pushBox(sx, 0.0042, 0.0008, 0.0006, 0, 40 + (idSeq % 4) * 12, 1);
+        pushBox(sx, 0.0068, 0.00085, 0.0006, 0, 34 + (idSeq % 3) * 14, 0);
       }
-      /* Stadium Bowl Massing */
-      pushBox(0.0024, 0.0056, 0.0018, 0.0013, 0, 46, 2);
-      /* Speedway Grandstands */
-      pushBox(-0.0016, 0.0062, 0.0022, 0.00042, 0, 28, 1);
-      pushBox(-0.0016, 0.0051, 0.0022, 0.00036, 0, 22, 2);
+      pushBox(0.0024, 0.0056, 0.0018, 0.0013, 0, 50, 2);
+      pushBox(-0.0016, 0.0062, 0.0022, 0.00042, 0, 30, 1);
+      pushBox(-0.0016, 0.0051, 0.0022, 0.00036, 0, 24, 2);
 
       /* South-West Deepwater Port, Cranes & Warehouses (Lv.5) */
       for (var wx = -0.0106; wx <= -0.0014; wx += 0.0014) {
-        pushBox(wx, -0.0043, 0.00095, 0.00058, 0, 24 + (idSeq % 3) * 10, 0);
-        pushBox(wx, -0.0059, 0.00105, 0.00052, 0, 18 + (idSeq % 4) * 9, 1);
+        pushBox(wx, -0.0043, 0.00095, 0.00058, 0, 26 + (idSeq % 3) * 10, 0);
+        pushBox(wx, -0.0059, 0.00105, 0.00052, 0, 20 + (idSeq % 4) * 9, 1);
       }
 
       /* South-East Zone International Airport Terminal, Control Tower & VIP Marina Penthouses (Lv.15) */
-      pushBox(0.0084, -0.0044, 0.0026, 0.00072, 0, 34, 2);
-      pushBox(0.0098, -0.0040, 0.00038, 0.00038, 0, 96, 0);
-      pushBox(0.0055, -0.0037, 0.00088, 0.00074, 0, 128, 2);
-      pushBox(0.0042, -0.0046, 0.00078, 0.00068, 0, 98, 1);
-      pushBox(0.0066, -0.0046, 0.00076, 0.00064, 0, 112, 0);
+      pushBox(0.0084, -0.0044, 0.0026, 0.00072, 0, 38, 2);
+      pushBox(0.0098, -0.0040, 0.00038, 0.00038, 0, 104, 0);
+      pushBox(0.0055, -0.0037, 0.00088, 0.00074, 0, 134, 2);
+      pushBox(0.0042, -0.0046, 0.00078, 0.00068, 0, 102, 1);
+      pushBox(0.0066, -0.0046, 0.00076, 0.00064, 0, 116, 0);
 
       return { type: "FeatureCollection", features: features };
     }
 
     function buildMetroLandAndRoadsGeo() {
-      var landFeatures = SECTORS.filter(function (s) { return s.id !== "sector-core"; }).map(function (s) {
+      var landFeatures = SECTORS.filter(function (s) { return s.id !== "sector-core"; }).map(function (s, idx) {
         var b = s.bounds;
         return {
           type: "Feature",
+          id: 7100 + idx,
           properties: { id: s.id, color: s.color },
           geometry: { type: "Polygon", coordinates: rectPoly(b[0], b[1], b[2], b[3]) }
         };
       });
-      /* North Stadium Annex */
       landFeatures.push({
         type: "Feature",
+        id: 7199,
         properties: { id: "sector-harbor-north", color: "#f97316" },
         geometry: { type: "Polygon", coordinates: rectPoly(-0.0044, 0.0033, 0.0046, 0.0078) }
       });
@@ -632,8 +736,8 @@
       var bayWater = {
         type: "FeatureCollection",
         features: [
-          { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: rectPoly(-0.0128, -0.0096, 0.0132, -0.0063) } },
-          { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: rectPoly(0.0113, -0.0096, 0.0135, 0.0082) } }
+          { type: "Feature", id: 7201, properties: {}, geometry: { type: "Polygon", coordinates: rectPoly(-0.0132, -0.0102, 0.0136, -0.0065) } },
+          { type: "Feature", id: 7202, properties: {}, geometry: { type: "Polygon", coordinates: rectPoly(0.0115, -0.0102, 0.0140, 0.0084) } }
         ]
       };
 
@@ -648,8 +752,8 @@
         [pt(0.0045, -0.0074), pt(0.0045, 0.0074)],
         [pt(-0.0082, -0.0070), pt(-0.0082, 0.0050)],
         [pt(0.0082, -0.0070), pt(0.0082, 0.0064)]
-      ].map(function (line) {
-        return { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: line } };
+      ].map(function (line, rIdx) {
+        return { type: "Feature", id: 7300 + rIdx, properties: {}, geometry: { type: "LineString", coordinates: line } };
       });
 
       var runway = {
@@ -657,8 +761,9 @@
         features: [
           {
             type: "Feature",
+            id: 7401,
             properties: { kind: "strip" },
-            geometry: { type: "Polygon", coordinates: rectPoly(0.0062, -0.0062, 0.0116, -0.0054) }
+            geometry: { type: "Polygon", coordinates: rectPoly(0.0062, -0.0063, 0.0116, -0.0054) }
           }
         ]
       };
@@ -668,8 +773,9 @@
         features: [
           {
             type: "Feature",
+            id: 7402,
             properties: {},
-            geometry: { type: "LineString", coordinates: [pt(0.0064, -0.0058), pt(0.0114, -0.0058)] }
+            geometry: { type: "LineString", coordinates: [pt(0.0064, -0.00585), pt(0.0114, -0.00585)] }
           }
         ]
       };
@@ -685,17 +791,20 @@
 
     function buildSectorLocksGeo() {
       var features = [];
+      var seq = 1;
       SECTORS.forEach(function (s) {
         var locked = state.playerLevel < s.minLevel;
         if (!locked) return;
         features.push({
           type: "Feature",
+          id: 7500 + (seq++),
           properties: { id: s.id, minLevel: s.minLevel, color: s.color },
           geometry: { type: "Polygon", coordinates: rectPoly(s.bounds[0], s.bounds[1], s.bounds[2], s.bounds[3]) }
         });
         if (s.northBounds) {
           features.push({
             type: "Feature",
+            id: 7500 + (seq++),
             properties: { id: s.id, minLevel: s.minLevel, color: s.color },
             geometry: { type: "Polygon", coordinates: rectPoly(s.northBounds[0], s.northBounds[1], s.northBounds[2], s.northBounds[3]) }
           });
@@ -708,21 +817,22 @@
       var ar = state.lang === "ar";
       return {
         type: "FeatureCollection",
-        features: METRO_POIS.map(function (p) {
+        features: METRO_POIS.map(function (p, idx) {
           var locked = state.playerLevel < p.minLevel;
           var title = p.name[ar ? "ar" : "en"];
+          var coinImg = ensureMetroCoinImage(p, locked);
           return {
             type: "Feature",
-            id: p.id,
+            id: 5000 + idx,
             properties: {
               id: p.id,
               sector: p.sector,
               minLevel: p.minLevel,
               locked: locked,
-              iconImage: "zone-poi-" + (ICON_PATHS[p.icon] ? p.icon : "missions"),
-              color: locked ? "#f59e0b" : p.color,
-              strokeColor: locked ? "#ef4444" : p.color,
-              label: (locked ? "🔒 Lv." + p.minLevel + " · " : "") + title
+              iconImage: coinImg,
+              color: p.color,
+              strokeColor: locked ? "#f59e0b" : p.color,
+              label: (locked ? "Lv." + p.minLevel + " · " : "") + title
             },
             geometry: {
               type: "Point",
@@ -733,199 +843,230 @@
       };
     }
 
-    function installMetroLayers() {
-      if (!map || !map.isStyleLoaded()) return;
+    function safeAddSource(id, spec) {
       try {
-        Object.keys(EXTRA_ICONS).forEach(function (iconKey) {
+        if (!map.getSource(id)) map.addSource(id, spec);
+      } catch (_) {}
+    }
+
+    function safeAddLayer(spec, beforeId) {
+      try {
+        if (!map.getLayer(spec.id)) {
+          if (beforeId && map.getLayer(beforeId)) map.addLayer(spec, beforeId);
+          else map.addLayer(spec);
+        }
+      } catch (err) {
+        try { document.body.dataset.zmxLayerErr = spec.id + ":" + String((err && err.message) || err); } catch (_) {}
+      }
+    }
+
+    function installMetroLayers() {
+      if (!isMapStyleReady()) return;
+
+      Object.keys(EXTRA_ICONS).forEach(function (iconKey) {
+        try {
           if (typeof ensurePoiImage === "function") ensurePoiImage(iconKey);
+        } catch (_) {}
+      });
+
+      /* Make core district service & detail POIs visible at city overview zooms too */
+      ["zone-poi-icon-service", "zone-poi-service-reservations", "zone-poi-icon-detail", "zone-poi-halo-detail", "zone-poi-hitbox-detail"].forEach(function (lid) {
+        if (map.getLayer(lid)) {
+          try { map.setLayerZoomRange(lid, 12.8, 20); } catch (_) {}
+        }
+      });
+
+      var base = buildMetroLandAndRoadsGeo();
+      var beforeGround = map.getLayer("district-buildings") ? "district-buildings" : (map.getLayer("zone-blocks-fill") ? "zone-blocks-fill" : undefined);
+      var beforeCoins = map.getLayer("zone-poi-underglow") ? "zone-poi-underglow" : undefined;
+
+      safeAddSource("metro-water-src", { type: "geojson", data: base.water });
+      safeAddLayer({
+        id: "metro-bay-water",
+        type: "fill",
+        source: "metro-water-src",
+        paint: { "fill-color": "#0a1c2e", "fill-opacity": 0.92 }
+      }, beforeGround);
+
+      safeAddSource("metro-land-src", { type: "geojson", data: base.land });
+      safeAddLayer({
+        id: "metro-land-sectors",
+        type: "fill",
+        source: "metro-land-src",
+        paint: { "fill-color": ["get", "color"], "fill-opacity": 0.1 }
+      }, beforeGround);
+
+      safeAddSource("metro-roads-src", { type: "geojson", data: base.roads });
+      safeAddLayer({
+        id: "metro-arterials-casing",
+        type: "line",
+        source: "metro-roads-src",
+        paint: { "line-color": "#131926", "line-width": ["interpolate", ["linear"], ["zoom"], 13, 3.5, 16, 8], "line-opacity": 0.9 }
+      }, beforeGround);
+      safeAddLayer({
+        id: "metro-arterials",
+        type: "line",
+        source: "metro-roads-src",
+        paint: { "line-color": "#2b384e", "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1.8, 16, 4.5], "line-opacity": 0.92 }
+      }, beforeGround);
+
+      safeAddSource("metro-runway-src", { type: "geojson", data: base.runway });
+      safeAddLayer({
+        id: "metro-runway",
+        type: "fill",
+        source: "metro-runway-src",
+        paint: { "fill-color": "#1e293b", "fill-outline-color": "#38bdf8", "fill-opacity": 0.95 }
+      }, beforeGround);
+
+      safeAddSource("metro-runway-line-src", { type: "geojson", data: base.runwayCenter });
+      safeAddLayer({
+        id: "metro-runway-marks",
+        type: "line",
+        source: "metro-runway-line-src",
+        paint: { "line-color": "#f8fafc", "line-width": 2, "line-dasharray": [3, 3], "line-opacity": 0.92 }
+      }, beforeGround);
+
+      safeAddSource("metro-skyline-src", { type: "geojson", data: buildOuterSkylineGeo() });
+      safeAddLayer({
+        id: "metro-outer-skyline-3d",
+        type: "fill-extrusion",
+        source: "metro-skyline-src",
+        paint: {
+          "fill-extrusion-color": ["match", ["to-number", ["get", "tone"], 1], 0, "#1e2a3f", 1, "#293954", "#354a6b"],
+          "fill-extrusion-height": ["get", "height"],
+          "fill-extrusion-base": ["get", "min_height"],
+          "fill-extrusion-opacity": 0.94,
+          "fill-extrusion-vertical-gradient": true
+        }
+      }, beforeCoins);
+
+      safeAddSource("sector-locks-src", { type: "geojson", data: buildSectorLocksGeo() });
+      safeAddLayer({
+        id: "sector-lock-fill",
+        type: "fill",
+        source: "sector-locks-src",
+        paint: { "fill-color": "#090d16", "fill-opacity": 0.34 }
+      }, beforeCoins);
+      safeAddLayer({
+        id: "sector-lock-border",
+        type: "line",
+        source: "sector-locks-src",
+        paint: { "line-color": "#f59e0b", "line-width": 2.4, "line-dasharray": [3, 2], "line-opacity": 0.92 }
+      }, beforeCoins);
+
+      safeAddSource("metro-pois-src", { type: "geojson", data: buildMetroPoiGeo() });
+      safeAddLayer({
+        id: "metro-poi-underglow",
+        type: "circle",
+        source: "metro-pois-src",
+        paint: {
+          "circle-pitch-alignment": "viewport",
+          "circle-pitch-scale": "viewport",
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 14, 15.5, 19, 18, 25],
+          "circle-color": ["get", "color"],
+          "circle-blur": 0.85,
+          "circle-opacity": 0.32
+        }
+      });
+      safeAddLayer({
+        id: "metro-poi-halo",
+        type: "circle",
+        source: "metro-pois-src",
+        paint: {
+          "circle-pitch-alignment": "viewport",
+          "circle-pitch-scale": "viewport",
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 9.5, 15.5, 13, 18, 17],
+          "circle-color": "rgba(8, 13, 23, 0.92)",
+          "circle-stroke-color": ["get", "strokeColor"],
+          "circle-stroke-width": 2.2,
+          "circle-opacity": 0.96
+        }
+      });
+      safeAddLayer({
+        id: "metro-poi-icon",
+        type: "symbol",
+        source: "metro-pois-src",
+        layout: {
+          "icon-image": ["get", "iconImage"],
+          "icon-size": ["interpolate", ["linear"], ["zoom"], 13, 0.52, 15.2, 0.64, 17, 0.8],
+          "icon-allow-overlap": true,
+          "icon-ignore-placement": true,
+          "icon-pitch-alignment": "viewport",
+          "icon-rotation-alignment": "viewport",
+          "symbol-z-elevate": true,
+          "text-field": ["get", "label"],
+          "text-size": ["interpolate", ["linear"], ["zoom"], 13, 10.2, 15.5, 11.5],
+          "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+          "text-offset": [0, 1.85],
+          "text-anchor": "top",
+          "text-max-width": 11,
+          "text-optional": true,
+          "text-allow-overlap": false,
+          "text-padding": 3
+        },
+        paint: {
+          "icon-opacity": 1,
+          "text-color": "#f8fafc",
+          "text-halo-color": "rgba(4, 8, 15, 0.96)",
+          "text-halo-width": 1.6
+        }
+      });
+
+      if (!state.metroInstalled && map.getLayer("metro-poi-icon")) {
+        state.metroInstalled = true;
+        map.on("click", "metro-poi-icon", handleMetroPoiClick);
+        map.on("click", "metro-poi-halo", handleMetroPoiClick);
+        map.on("click", "sector-lock-fill", function (ev) {
+          var feat = ev && ev.features && ev.features[0];
+          var secId = feat && feat.properties && feat.properties.id;
+          var sec = SECTORS.find(function (s) { return s.id === secId; });
+          if (sec) openSectorModal(sec);
         });
+        map.on("mouseenter", "metro-poi-icon", function () { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "metro-poi-icon", function () { map.getCanvas().style.cursor = ""; });
+        map.on("mouseenter", "metro-poi-halo", function () { map.getCanvas().style.cursor = "pointer"; });
+        map.on("mouseleave", "metro-poi-halo", function () { map.getCanvas().style.cursor = ""; });
+      }
 
-        /* Make core district service & detail POIs visible at city overview zooms too */
-        ["zone-poi-icon-service", "zone-poi-service-reservations", "zone-poi-icon-detail", "zone-poi-halo-detail", "zone-poi-hitbox-detail"].forEach(function (lid) {
-          if (map.getLayer(lid)) {
-            try { map.setLayerZoomRange(lid, 13.0, 20); } catch (_) {}
-          }
+      widenMetroBounds();
+      syncGateMarkers();
+      applyAtmosphere(true);
+
+      try {
+        document.body.dataset.zmxReady = JSON.stringify({
+          metroIconLayer: !!map.getLayer("metro-poi-icon"),
+          skylineLayer: !!map.getLayer("metro-outer-skyline-3d"),
+          poiCount: METRO_POIS.length,
+          phase: state.activePhase
         });
-
-        var base = buildMetroLandAndRoadsGeo();
-        var beforeLayer = map.getLayer("zone-blocks-fill") ? "zone-blocks-fill" : undefined;
-
-        if (!map.getSource("metro-water-src")) map.addSource("metro-water-src", { type: "geojson", data: base.water });
-        if (!map.getLayer("metro-bay-water")) {
-          map.addLayer({
-            id: "metro-bay-water",
-            type: "fill",
-            source: "metro-water-src",
-            paint: { "fill-color": "#0a1c2e", "fill-opacity": 0.92 }
-          }, beforeLayer);
-        }
-
-        if (!map.getSource("metro-land-src")) map.addSource("metro-land-src", { type: "geojson", data: base.land });
-        if (!map.getLayer("metro-land-sectors")) {
-          map.addLayer({
-            id: "metro-land-sectors",
-            type: "fill",
-            source: "metro-land-src",
-            paint: { "fill-color": ["get", "color"], "fill-opacity": 0.08 }
-          }, beforeLayer);
-        }
-
-        if (!map.getSource("metro-roads-src")) map.addSource("metro-roads-src", { type: "geojson", data: base.roads });
-        if (!map.getLayer("metro-arterials-casing")) {
-          map.addLayer({
-            id: "metro-arterials-casing",
-            type: "line",
-            source: "metro-roads-src",
-            paint: { "line-color": "#131926", "line-width": ["interpolate", ["linear"], ["zoom"], 13, 3.5, 16, 8], "line-opacity": 0.9 }
-          }, beforeLayer);
-        }
-        if (!map.getLayer("metro-arterials")) {
-          map.addLayer({
-            id: "metro-arterials",
-            type: "line",
-            source: "metro-roads-src",
-            paint: { "line-color": "#2b384e", "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1.8, 16, 4.5], "line-opacity": 0.92 }
-          }, beforeLayer);
-        }
-
-        if (!map.getSource("metro-runway-src")) map.addSource("metro-runway-src", { type: "geojson", data: base.runway });
-        if (!map.getLayer("metro-runway")) {
-          map.addLayer({
-            id: "metro-runway",
-            type: "fill",
-            source: "metro-runway-src",
-            paint: { "fill-color": "#1e293b", "fill-outline-color": "#38bdf8", "fill-opacity": 0.95 }
-          }, beforeLayer);
-        }
-
-        if (!map.getSource("metro-runway-line-src")) map.addSource("metro-runway-line-src", { type: "geojson", data: base.runwayCenter });
-        if (!map.getLayer("metro-runway-marks")) {
-          map.addLayer({
-            id: "metro-runway-marks",
-            type: "line",
-            source: "metro-runway-line-src",
-            paint: { "line-color": "#f8fafc", "line-width": 2, "line-dasharray": [3, 3], "line-opacity": 0.9 }
-          }, beforeLayer);
-        }
-
-        if (!map.getSource("metro-skyline-src")) map.addSource("metro-skyline-src", { type: "geojson", data: buildOuterSkylineGeo() });
-        if (!map.getLayer("metro-outer-skyline-3d")) {
-          map.addLayer({
-            id: "metro-outer-skyline-3d",
-            type: "fill-extrusion",
-            source: "metro-skyline-src",
-            paint: {
-              "fill-extrusion-color": ["match", ["get", "tone"], 0, "#1e2a3f", 1, "#293954", "#354a6b"],
-              "fill-extrusion-height": ["get", "height"],
-              "fill-extrusion-base": ["get", "min_height"],
-              "fill-extrusion-opacity": 0.9,
-              "fill-extrusion-vertical-gradient": true
-            }
-          });
-        }
-
-        if (!map.getSource("sector-locks-src")) map.addSource("sector-locks-src", { type: "geojson", data: buildSectorLocksGeo() });
-        if (!map.getLayer("sector-lock-fill")) {
-          map.addLayer({
-            id: "sector-lock-fill",
-            type: "fill",
-            source: "sector-locks-src",
-            paint: { "fill-color": "#090d16", "fill-opacity": 0.42 }
-          });
-        }
-        if (!map.getLayer("sector-lock-border")) {
-          map.addLayer({
-            id: "sector-lock-border",
-            type: "line",
-            source: "sector-locks-src",
-            paint: { "line-color": "#f59e0b", "line-width": 2.2, "line-dasharray": [3, 2], "line-opacity": 0.88 }
-          });
-        }
-
-        if (!map.getSource("metro-pois-src")) map.addSource("metro-pois-src", { type: "geojson", data: buildMetroPoiGeo() });
-        if (!map.getLayer("metro-poi-halo")) {
-          map.addLayer({
-            id: "metro-poi-halo",
-            type: "circle",
-            source: "metro-pois-src",
-            paint: {
-              "circle-pitch-alignment": "viewport",
-              "circle-pitch-scale": "viewport",
-              "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 9, 15.5, 13, 18, 17],
-              "circle-color": "rgba(8, 13, 23, 0.92)",
-              "circle-stroke-color": ["get", "strokeColor"],
-              "circle-stroke-width": 2.2,
-              "circle-opacity": 0.96
-            }
-          });
-        }
-        if (!map.getLayer("metro-poi-icon")) {
-          map.addLayer({
-            id: "metro-poi-icon",
-            type: "symbol",
-            source: "metro-pois-src",
-            layout: {
-              "icon-image": ["get", "iconImage"],
-              "icon-size": ["interpolate", ["linear"], ["zoom"], 13, 0.44, 15.2, 0.58, 17, 0.74],
-              "icon-allow-overlap": true,
-              "icon-ignore-placement": false,
-              "icon-pitch-alignment": "viewport",
-              "icon-rotation-alignment": "viewport",
-              "text-field": ["get", "label"],
-              "text-size": 11,
-              "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-              "text-offset": [0, 1.95],
-              "text-anchor": "top",
-              "text-max-width": 11,
-              "text-optional": true,
-              "text-allow-overlap": false
-            },
-            paint: {
-              "icon-opacity": ["case", ["boolean", ["get", "locked"], false], 0.8, 1],
-              "text-color": "#f8fafc",
-              "text-halo-color": "rgba(4, 8, 15, 0.95)",
-              "text-halo-width": 1.5
-            }
-          });
-        }
-
-        if (!state.metroInstalled) {
-          state.metroInstalled = true;
-          map.on("click", "metro-poi-icon", handleMetroPoiClick);
-          map.on("click", "metro-poi-halo", handleMetroPoiClick);
-          map.on("click", "sector-lock-fill", function (ev) {
-            var feat = ev && ev.features && ev.features[0];
-            var secId = feat && feat.properties && feat.properties.id;
-            var sec = SECTORS.find(function (s) { return s.id === secId; });
-            if (sec) openSectorModal(sec);
-          });
-          map.on("mouseenter", "metro-poi-icon", function () { map.getCanvas().style.cursor = "pointer"; });
-          map.on("mouseleave", "metro-poi-icon", function () { map.getCanvas().style.cursor = ""; });
-          map.on("resize", widenMetroBounds);
-        }
-
-        widenMetroBounds();
-        if (!state.didMetroFrame) {
-          state.didMetroFrame = true;
-          setTimeout(function () {
-            try {
-              widenMetroBounds();
-              map.jumpTo({ center: CENTER, zoom: 14.28, pitch: 48, bearing: -16 });
-            } catch (_) {}
-          }, 120);
-        }
-        syncGateMarkers();
-        applyAtmosphere(true);
       } catch (_) {}
     }
 
     function widenMetroBounds() {
+      if (!map) return;
       try {
-        map.setMinZoom(13.05);
+        map.setMinZoom(13.0);
         map.setMaxBounds([
-          [CENTER[0] - 0.022, CENTER[1] - 0.016],
-          [CENTER[0] + 0.022, CENTER[1] + 0.016]
+          [CENTER[0] - 0.026, CENTER[1] - 0.019],
+          [CENTER[0] + 0.026, CENTER[1] + 0.019]
         ]);
+      } catch (_) {}
+    }
+
+    function ensureInitialMetroFraming() {
+      if (state.didMetroFrame || !map) return;
+      var container = map.getContainer && map.getContainer();
+      if (!container || container.clientWidth < 120 || container.clientHeight < 120) return;
+      state.didMetroFrame = true;
+      widenMetroBounds();
+      try {
+        var mobile = container.clientWidth <= 760;
+        map.jumpTo({
+          center: CENTER,
+          zoom: mobile ? 13.78 : 14.32,
+          pitch: 50,
+          bearing: -16
+        });
       } catch (_) {}
     }
 
@@ -988,7 +1129,7 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:' + (unlocked ? "#39e7a3" : "#f59e0b") + '">' +
+              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:' + (unlocked ? "#39e7a3" : "#d97706") + '">' +
                 (unlocked ? (ar ? "🔓 قطاع مفتوح للعمليات" : "🔓 SECTOR CLEARANCE GRANTED") : (ar ? "🔒 قطاع مقفل بالمستوى" : "🔒 RESTRICTED SYNDICATE SECTOR")) +
               '</div>' +
               '<h3 class="zmx-modal-title">' + sector.name[ar ? "ar" : "en"] + '</h3>' +
@@ -997,12 +1138,12 @@
           '</div>' +
           poiLine +
           '<p style="margin:0 0 12px;opacity:0.9">' + sector.desc[ar ? "ar" : "en"] + '</p>' +
-          '<div style="padding:10px 12px;border-radius:6px;background:rgba(15,23,42,0.55);border:1px solid rgba(148,163,184,0.24);margin-bottom:12px">' +
+          '<div style="padding:10px 12px;border-radius:6px;background:rgba(15,23,42,0.12);border:1px solid rgba(148,163,184,0.32);margin-bottom:12px">' +
             '<div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:6px">' +
               '<span>' + (ar ? "المستوى المطلوب: " : "Required Level: ") + "Lv." + sector.minLevel + '</span>' +
               '<span>' + (ar ? "مستواك الحالي: " : "Your Level: ") + "Lv." + state.playerLevel + '</span>' +
             '</div>' +
-            '<div style="height:9px;border-radius:4px;background:rgba(0,0,0,0.45);overflow:hidden">' +
+            '<div style="height:9px;border-radius:4px;background:rgba(0,0,0,0.28);overflow:hidden">' +
               '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#f59e0b,#39e7a3)"></div>' +
             '</div>' +
           '</div>' +
@@ -1027,13 +1168,15 @@
       modalBackdrop.querySelector("#zmxModalClose").onclick = function () { modalBackdrop.hidden = true; };
       modalBackdrop.querySelector("#zmxReconBtn").onclick = function () {
         modalBackdrop.hidden = true;
-        map.flyTo({ center: sector.anchor, zoom: 15.35, pitch: 54, bearing: -22, duration: 900, essential: true });
+        widenMetroBounds();
+        map.flyTo({ center: sector.anchor, zoom: 15.35, pitch: 54, bearing: -22, duration: 850, essential: true });
       };
       var expBtn = modalBackdrop.querySelector("#zmxExploreUnlocked");
       if (expBtn) {
         expBtn.onclick = function () {
           modalBackdrop.hidden = true;
-          map.flyTo({ center: sector.anchor, zoom: 15.6, pitch: 50, bearing: -16, duration: 750, essential: true });
+          widenMetroBounds();
+          map.flyTo({ center: sector.anchor, zoom: 15.6, pitch: 50, bearing: -16, duration: 700, essential: true });
         };
       }
       Array.from(modalBackdrop.querySelectorAll("[data-go]")).forEach(function (b) {
@@ -1055,7 +1198,7 @@
         var unlocked = state.playerLevel >= c.minLevel;
         var midX = (curCity.mapX + c.mapX) / 2;
         var midY = Math.min(curCity.mapY, c.mapY) - 34;
-        return '<path d="M' + curCity.mapX + ' ' + curCity.mapY + ' Q ' + midX + ' ' + midY + ' ' + c.mapX + ' ' + c.mapY + '" fill="none" stroke="' + (unlocked ? c.accent : "#64748b") + '" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.8"/>';
+        return '<path d="M' + curCity.mapX + ' ' + curCity.mapY + ' Q ' + midX + ' ' + midY + ' ' + c.mapX + ' ' + c.mapY + '" fill="none" stroke="' + (unlocked ? c.accent : "#64748b") + '" stroke-width="1.6" stroke-dasharray="4 3" opacity="0.82"/>';
       }).join("");
 
       var nodesSvg = WORLD_CITIES.map(function (c) {
@@ -1073,7 +1216,7 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:#38bdf8">' +
+              '<div style="font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:#0284c7">' +
                 (ar ? "✈️ شبكة الطيران الدولية للنقابة" : "✈️ GLOBAL SYNDICATE FLIGHT NETWORK") +
               '</div>' +
               '<h3 class="zmx-modal-title">' +
@@ -1101,19 +1244,19 @@
                 '<div class="zmx-city-card' + (isHere ? " active" : "") + (!unlocked ? " locked" : "") + '">' +
                   '<div style="display:flex;justify-content:space-between;align-items:center">' +
                     '<strong style="font-size:13.5px">' + c.name[ar ? "ar" : "en"] + " (" + c.code + ')</strong>' +
-                    '<span style="font-size:10.5px;font-weight:800;color:' + (unlocked ? "#39e7a3" : "#f59e0b") + '">' +
+                    '<span style="font-size:10.5px;font-weight:800;color:' + (unlocked ? "#059669" : "#d97706") + '">' +
                       (unlocked ? cPhase.icon + " " + formatClock(cDate).slice(0, 5) : "🔒 Lv." + c.minLevel) +
                     '</span>' +
                   '</div>' +
-                  '<div style="font-size:11px;opacity:0.82">' + c.region[ar ? "ar" : "en"] + '</div>' +
-                  '<div style="font-size:10.5px;color:#ebb858;font-weight:700">' + c.perk[ar ? "ar" : "en"] + '</div>' +
+                  '<div style="font-size:11px;opacity:0.84">' + c.region[ar ? "ar" : "en"] + '</div>' +
+                  '<div style="font-size:10.5px;color:#b4781e;font-weight:800">' + c.perk[ar ? "ar" : "en"] + '</div>' +
                   '<div style="margin-top:auto;padding-top:6px;display:flex;gap:6px;align-items:center;justify-content:space-between">' +
                     (isHere
                       ? '<button type="button" class="zmx-cta" data-contract="' + c.id + '" style="width:100%">' +
-                          (ar ? "تنفيذ عملية محلية (+" : "Run Regional Op (+$") + c.contract.cash.toLocaleString("en-US") + (ar ? ")" : ")") +
+                          (ar ? "تنفيذ عملية محلية (+$" : "Run Regional Op (+$") + c.contract.cash.toLocaleString("en-US") + ")" +
                         '</button>'
                       : !unlocked
-                        ? '<span style="font-size:10.5px;font-weight:800;color:#f59e0b">' + (ar ? "يتطلب المستوى " : "Requires Level ") + c.minLevel + '</span>'
+                        ? '<span style="font-size:10.5px;font-weight:800;color:#d97706">' + (ar ? "يتطلب المستوى " : "Requires Level ") + c.minLevel + '</span>'
                         : '<span style="font-size:11px;font-weight:800">' + (c.fare ? "$" + c.fare.toLocaleString("en-US") : (ar ? "مجاناً" : "Free")) + '</span>' +
                           '<button type="button" class="zmx-cta-sec" data-fly="' + c.id + '">' + (ar ? "✈️ سافر الآن" : "✈️ Fly Now") + '</button>') +
                   '</div>' +
@@ -1154,7 +1297,7 @@
           var banner = modalBackdrop.querySelector("#zmxTransitStatus");
           if (banner) {
             banner.hidden = false;
-            banner.textContent = (state.lang === "ar" ? "✅ تمت العملية بنجاح: +" : "✅ Syndicate Op Complete: +$") +
+            banner.textContent = (state.lang === "ar" ? "✅ تمت العملية بنجاح: +$" : "✅ Syndicate Op Complete: +$") +
               c.contract.cash.toLocaleString("en-US") + " & +" + c.contract.xp + " XP!";
           }
         };
@@ -1202,18 +1345,19 @@
         applyAtmosphere(true);
         renderChronoHud();
         openWorldCitiesModal();
-      }, 1100);
+      }, 1050);
     }
 
     function applyAtmosphere(force) {
-      if (!map || !map.isStyleLoaded()) return;
       var phaseKey = computeDesiredPhase();
-      if (!force && phaseKey === state.activePhase) return;
-      state.activePhase = phaseKey;
       var cfg = TIME_PHASES[phaseKey] || TIME_PHASES.day;
 
       document.body.dataset.timePhase = phaseKey;
       document.body.dataset.zmxLight = cfg.isLightUi ? "1" : "0";
+
+      if (!isMapStyleReady()) return;
+      if (!force && phaseKey === state.activePhase) return;
+      state.activePhase = phaseKey;
 
       try { map.setFog(cfg.fog); } catch (_) {}
       try {
@@ -1233,25 +1377,49 @@
         }
       };
 
-      setPaint("district-land", "background-color", cfg.land);
+      setPaint("background", "background-color", cfg.land);
+      setPaint("district-land", "fill-color", ["match", ["get", "class"], "park", cfg.park, "pitch", cfg.park, "industrial", cfg.landInd, cfg.land]);
+      setPaint("district-land", "fill-opacity", 0.92);
       setPaint("district-water", "fill-color", cfg.water);
       setPaint("metro-bay-water", "fill-color", cfg.water);
-      setPaint("district-parks", "fill-color", cfg.park);
-      setPaint("district-roads", "line-color", cfg.road);
-      setPaint("metro-arterials", "line-color", cfg.road);
-      setPaint("metro-arterials-casing", "line-color", cfg.roadCase);
+      setPaint("district-waterway", "line-color", cfg.water);
 
-      var bldgExpr = ["match", ["get", "tone"], 0, cfg.bldg[0], 1, cfg.bldg[1], cfg.bldg[2]];
-      setPaint("metro-outer-skyline-3d", "fill-extrusion-color", bldgExpr);
-      setPaint("district-skyline-3d", "fill-extrusion-color", bldgExpr);
-      setPaint("district-buildings-3d", "fill-extrusion-color", cfg.bldg[1]);
+      setPaint("district-road-casing", "line-color", cfg.roadCase);
+      setPaint("district-roads", "line-color", ["match", ["get", "class"], ["motorway", "trunk"], cfg.roadMain, ["primary", "secondary"], cfg.road, cfg.road]);
+      setPaint("metro-arterials-casing", "line-color", cfg.roadCase);
+      setPaint("metro-arterials", "line-color", cfg.roadMain);
+
+      setPaint("district-buildings", "fill-color", cfg.bldg[0]);
+      setPaint("district-buildings", "fill-outline-color", cfg.roadCase);
+
+      var hExpr = ["max", 0, ["to-number", ["get", "height"], 0]];
+      var heightGrad = ["interpolate", ["linear"], hExpr, 0, cfg.bldg[0], 24, cfg.bldg[1], 75, cfg.bldg[2]];
+      setPaint("district-buildings-3d", "fill-extrusion-color", heightGrad);
+      setPaint("district-complete-volumes", "fill-extrusion-color", heightGrad);
+      if (map.getLayer("district-buildings-3d") && map.setLayoutProperty) {
+        try { map.setLayoutProperty("district-buildings-3d", "visibility", "visible"); } catch (_) {}
+      }
+
+      setPaint("district-skyline-3d", "fill-extrusion-color", ["match", ["to-string", ["get", "tone"]], "#162234", cfg.bldg[0], "#1c2b42", cfg.bldg[1], cfg.bldg[2]]);
+      setPaint("metro-outer-skyline-3d", "fill-extrusion-color", ["match", ["to-number", ["get", "tone"], 1], 0, cfg.bldg[0], 1, cfg.bldg[1], cfg.bldg[2]]);
+
+      setPaint("sector-lock-fill", "fill-color", cfg.lockFill);
+      setPaint("sector-lock-fill", "fill-opacity", cfg.lockOpacity);
 
       var textCol = cfg.isLightUi ? "#0f172a" : "#f8fafc";
       var haloCol = cfg.isLightUi ? "rgba(255,255,255,0.96)" : "rgba(4,8,15,0.96)";
-      ["zone-poi-icon", "zone-poi-icon-service", "zone-poi-icon-detail", "metro-poi-icon"].forEach(function (lid) {
+      ["zone-poi-icon", "zone-poi-icon-service", "zone-poi-icon-detail", "metro-poi-icon", "district-road-labels"].forEach(function (lid) {
         setPaint(lid, "text-color", textCol);
         setPaint(lid, "text-halo-color", haloCol);
       });
+    }
+
+    function onMapReadyPass() {
+      state.styleReadyLatch = true;
+      installMetroLayers();
+      widenMetroBounds();
+      ensureInitialMetroFraming();
+      applyAtmosphere(true);
     }
 
     function onRender(data) {
@@ -1289,8 +1457,20 @@
 
     injectStyles();
     buildChronoHud();
-    if (map.isStyleLoaded()) installMetroLayers();
-    map.on("load", installMetroLayers);
+    if (isMapStyleReady()) onMapReadyPass();
+    map.on("style.load", onMapReadyPass);
+    map.on("load", onMapReadyPass);
+    map.on("idle", function () {
+      if (!map.getLayer("metro-poi-icon") || !map.getLayer("metro-outer-skyline-3d")) {
+        installMetroLayers();
+      }
+      widenMetroBounds();
+      ensureInitialMetroFraming();
+      applyAtmosphere(false);
+    });
+    map.on("resize", function () {
+      setTimeout(widenMetroBounds, 30);
+    });
 
     window.addEventListener("message", function (ev) {
       if (ev.origin !== window.location.origin || !ev.data || typeof ev.data !== "object") return;
