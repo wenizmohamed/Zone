@@ -1,183 +1,264 @@
 /* ==========================================================================
- * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v126)
- * MotionSites (/icons & /sections/header) Human Studio Craft Edition
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v127)
+ * MotionSites (/icons & /sections/header) 3D Frosted Jewel & Borderless Edition
  * Exclusive Ownership: carbon-hud-chrome
- * Scope: .zone-topbar, [data-zheaderbar], .zone-bulletin, aside.zone-sidebar
+ * Scope: .zone-topbar, [data-zheaderbar], .zone-bulletin, aside.zone-sidebar,
+ *        .zone-mobile-tabbar
  * ========================================================================== */
 
 :root,
 html:not([data-theme="light"]) {
   --zaaa-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zaaa-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
+  /* Seamless Unified MotionSites Liquid-Glass Topbar */
   --zaaa-topbar-bg:
-    radial-gradient(ellipse 460px 104px at 8% 0%, rgba(235, 184, 88, 0.16), transparent 72%),
-    radial-gradient(ellipse 480px 104px at 88% 0%, rgba(57, 231, 163, 0.09), transparent 74%),
-    linear-gradient(180deg, rgba(20, 29, 47, 0.88) 0%, rgba(12, 18, 31, 0.92) 56%, rgba(7, 11, 19, 0.96) 100%);
-  --zaaa-topbar-border: rgba(214, 167, 86, 0.64);
-  --zaaa-topbar-topline: rgba(255, 255, 255, 0.11);
-  --zaaa-topbar-btmline: rgba(255, 236, 179, 0.14);
-  --zaaa-topbar-shadow: 0 14px 34px rgba(0, 0, 0, 0.64);
+    radial-gradient(ellipse 520px 88px at 10% 0%, rgba(251, 191, 36, 0.075), transparent 72%),
+    radial-gradient(ellipse 520px 88px at 88% 0%, rgba(56, 189, 248, 0.065), transparent 74%),
+    rgba(9, 13, 23, 0.88);
+  --zaaa-topbar-hairline: rgba(255, 255, 255, 0.055);
+  --zaaa-topbar-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.62);
 
-  --zaaa-brand-bg: linear-gradient(145deg, rgba(31, 43, 66, 0.96) 0%, rgba(12, 18, 31, 0.98) 100%);
-  --zaaa-brand-border: rgba(235, 184, 88, 0.56);
-  --zaaa-brand-border-hover: rgba(251, 191, 36, 0.9);
-  --zaaa-brand-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  --zaaa-brand-word-c1: #fffdf7;
-  --zaaa-brand-word-c2: #f5d487;
-  --zaaa-brand-word-c3: #c58f36;
-  --zaaa-brand-sub: #ebb858;
+  /* Borderless Brand Wordmark */
+  --zaaa-brand-hover-bg: rgba(255, 255, 255, 0.045);
+  --zaaa-brand-word-c1: #ffffff;
+  --zaaa-brand-word-c2: #fde68a;
+  --zaaa-brand-word-c3: #f59e0b;
+  --zaaa-brand-sub: #fbbf24;
 
-  --zaaa-dock-bg: linear-gradient(180deg, rgba(10, 16, 29, 0.72) 0%, rgba(5, 9, 17, 0.82) 100%);
-  --zaaa-dock-border: rgba(148, 168, 204, 0.24);
-  --zaaa-dock-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(235, 184, 88, 0.14),
-    0 4px 14px rgba(0, 0, 0, 0.36);
+  /* Borderless Ghost Nav Tabs */
   --zaaa-tab-fg: #cbd5e1;
   --zaaa-tab-fg-hover: #ffffff;
-  --zaaa-tab-fg-active: #fef3c7;
-  --zaaa-tab-icon: #cbd5e1;
-  --zaaa-tab-icon-active: #fbbf24;
-  --zaaa-tab-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(235, 184, 88, 0.09) 100%);
-  --zaaa-tab-active-bg: linear-gradient(180deg, rgba(235, 184, 88, 0.22) 0%, rgba(235, 184, 88, 0.06) 100%);
-  --zaaa-tab-active-bar: #fbbf24;
+  --zaaa-tab-fg-active: #ffffff;
+  --zaaa-tab-hover-bg: rgba(255, 255, 255, 0.06);
+  --zaaa-tab-active-bg: rgba(255, 255, 255, 0.085);
+  --zaaa-tab-active-bar: linear-gradient(90deg, #fde047 0%, #f59e0b 100%);
 
-  --zaaa-pill-bg: linear-gradient(180deg, rgba(19, 28, 45, 0.88) 0%, rgba(10, 15, 26, 0.94) 100%);
-  --zaaa-pill-border: rgba(148, 168, 204, 0.25);
-  --zaaa-pill-border-hover: rgba(235, 184, 88, 0.62);
+  /* Unified Single-Capsule Live Telemetry HUD */
+  --zaaa-hud-capsule-bg: rgba(255, 255, 255, 0.035);
+  --zaaa-hud-capsule-border: rgba(255, 255, 255, 0.055);
+  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.045);
+  --zaaa-hud-divider: rgba(255, 255, 255, 0.06);
+  --zaaa-hud-hover-bg: rgba(255, 255, 255, 0.055);
   --zaaa-pill-fg: #f1f5f9;
   --zaaa-pill-muted: #94a3b8;
-  --zaaa-pill-cash: #39e7a3;
+  --zaaa-pill-cash: #34d399;
   --zaaa-pill-city: #fde68a;
+  --zaaa-pill-city-bg: rgba(251, 191, 36, 0.14);
 
-  --zaaa-ctrl-bg: linear-gradient(180deg, rgba(30, 41, 63, 0.92) 0%, rgba(16, 23, 38, 0.96) 100%);
-  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #273754 0%, #172135 100%);
-  --zaaa-ctrl-border: rgba(148, 168, 204, 0.3);
+  /* Borderless Ghost Right Controls + Studio Jewel Admin */
+  --zaaa-ctrl-bg: rgba(255, 255, 255, 0.04);
+  --zaaa-ctrl-bg-hover: rgba(255, 255, 255, 0.085);
   --zaaa-ctrl-fg: #e2e8f0;
-  --zaaa-chrono-bg: linear-gradient(180deg, rgba(7, 12, 22, 0.88) 0%, rgba(12, 19, 32, 0.94) 100%);
-  --zaaa-chrono-border: rgba(57, 231, 163, 0.34);
-  --zaaa-chrono-clock: #39e7a3;
-  --zaaa-admin-bg: linear-gradient(180deg, rgba(214, 167, 86, 0.28) 0%, rgba(161, 108, 30, 0.18) 100%);
-  --zaaa-admin-border: rgba(235, 184, 88, 0.64);
-  --zaaa-admin-fg: #fde68a;
+  --zaaa-chrono-clock: #6ee7b7;
+  --zaaa-theme-halo: rgba(251, 191, 36, 0.14);
+  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.24) 0%, rgba(168, 85, 247, 0.22) 52%, rgba(245, 158, 11, 0.25) 100%);
+  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.34) 0%, rgba(168, 85, 247, 0.3) 52%, rgba(245, 158, 11, 0.34) 100%);
+  --zaaa-admin-fg: #fef3c7;
 
-  --zaaa-wire-bg: linear-gradient(90deg, #080c15 0%, #0e1626 50%, #080c15 100%);
-  --zaaa-wire-border-top: rgba(214, 167, 86, 0.34);
-  --zaaa-wire-border-btm: rgba(214, 167, 86, 0.56);
-  --zaaa-wire-badge-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.24) 0%, rgba(214, 167, 86, 0.09) 100%);
-  --zaaa-wire-badge-fg: #fbbf24;
-  --zaaa-wire-text: #cbd5e1;
+  /* Seamless Bulletin Wire */
+  --zaaa-wire-bg: rgba(255, 255, 255, 0.018);
+  --zaaa-wire-badge-bg: rgba(251, 191, 36, 0.12);
+  --zaaa-wire-badge-fg: #fde047;
+  --zaaa-wire-text: #94a3b8;
 
-  --zaaa-side-head-bg: linear-gradient(180deg, #1c273c 0%, #111828 100%);
-  --zaaa-side-panel-bg: linear-gradient(180deg, #121929 0%, #0c111d 100%);
-  --zaaa-side-border: rgba(148, 168, 204, 0.2);
-  --zaaa-side-gold: #ebb858;
+  /* Tonal Elevation Sidebar (#0b0f19 card + #121929 operative surface) */
+  --zaaa-side-card-bg: #0b0f19;
+  --zaaa-side-card-border: rgba(255, 255, 255, 0.045);
+  --zaaa-side-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 18px 40px -14px rgba(0, 0, 0, 0.6);
+  --zaaa-side-gold: #fbbf24;
   --zaaa-side-fg: #f8fafc;
   --zaaa-side-sub: #cbd5e1;
-  --zaaa-side-muted: #94a3b8;
-  --zaaa-crest-bg:
-    radial-gradient(circle at 16% 24%, rgba(235, 184, 88, 0.18), transparent 62%),
-    linear-gradient(145deg, rgba(24, 34, 54, 0.95) 0%, rgba(11, 16, 28, 0.98) 100%);
-  --zaaa-crest-border: rgba(214, 167, 86, 0.42);
-  --zaaa-track-bg: rgba(5, 8, 15, 0.9);
-  --zaaa-track-border: rgba(148, 168, 204, 0.26);
+  --zaaa-side-muted: #64748b;
+  --zaaa-side-label: #94a3b8;
+  --zaaa-crest-bg: #121929;
+  --zaaa-crest-inset: rgba(255, 255, 255, 0.055);
+  --zaaa-sync-bg: rgba(255, 255, 255, 0.035);
+  --zaaa-divider-soft: rgba(255, 255, 255, 0.045);
+  --zaaa-track-bg: rgba(255, 255, 255, 0.065);
+  --zaaa-track-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.45);
 
-  --zaaa-nav-group-fg: #ebb858;
-  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(214, 167, 86, 0.11) 0%, transparent 92%);
+  /* Borderless Rounded-Pill Sidebar Items */
+  --zaaa-nav-group-fg: #64748b;
   --zaaa-nav-fg: #cbd5e1;
   --zaaa-nav-fg-hover: #ffffff;
-  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.13) 0%, rgba(30, 41, 64, 0.36) 60%, transparent 100%);
-  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(235, 184, 88, 0.24) 0%, rgba(16, 185, 129, 0.1) 62%, rgba(15, 23, 42, 0.2) 100%);
-  --zaaa-nav-active-fg: #fffbeb;
+  --zaaa-nav-hover-bg: rgba(255, 255, 255, 0.055);
+  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.095) 0%, rgba(255, 255, 255, 0.045) 100%);
+  --zaaa-nav-active-fg: #ffffff;
+  --zaaa-nav-ico-bg: rgba(255, 255, 255, 0.045);
+  --zaaa-nav-ico-hover-bg: rgba(255, 255, 255, 0.085);
+  --zaaa-nav-ico-active-bg: rgba(255, 255, 255, 0.11);
 }
 
 html[data-theme="light"] {
   --zaaa-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --zaaa-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
+  /* Crisp Warm Frosted Glass Topbar (>13:1 ink contrast) */
   --zaaa-topbar-bg:
-    radial-gradient(ellipse 460px 104px at 8% 0%, rgba(180, 120, 30, 0.14), transparent 72%),
-    linear-gradient(180deg, rgba(253, 251, 247, 0.9) 0%, rgba(245, 239, 226, 0.92) 58%, rgba(236, 227, 208, 0.95) 100%);
-  --zaaa-topbar-border: #b4781e;
-  --zaaa-topbar-topline: rgba(255, 255, 255, 0.94);
-  --zaaa-topbar-btmline: rgba(180, 120, 30, 0.18);
-  --zaaa-topbar-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
+    radial-gradient(ellipse 520px 88px at 10% 0%, rgba(245, 158, 11, 0.07), transparent 72%),
+    radial-gradient(ellipse 520px 88px at 88% 0%, rgba(59, 130, 246, 0.05), transparent 74%),
+    rgba(252, 252, 254, 0.92);
+  --zaaa-topbar-hairline: rgba(15, 23, 42, 0.07);
+  --zaaa-topbar-shadow: 0 12px 30px -14px rgba(15, 23, 42, 0.09);
 
-  /* Obsidian-brass luxury crest on warm ivory topbar */
-  --zaaa-brand-bg: linear-gradient(145deg, #1c2638 0%, #0f172a 100%);
-  --zaaa-brand-border: #c48829;
-  --zaaa-brand-border-hover: #d97706;
-  --zaaa-brand-shadow: 0 3px 10px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  --zaaa-brand-word-c1: #ffffff;
-  --zaaa-brand-word-c2: #fde68a;
-  --zaaa-brand-word-c3: #d99b38;
-  --zaaa-brand-sub: #fbbf24;
+  --zaaa-brand-hover-bg: rgba(15, 23, 42, 0.045);
+  --zaaa-brand-word-c1: #0f172a;
+  --zaaa-brand-word-c2: #1e293b;
+  --zaaa-brand-word-c3: #334155;
+  --zaaa-brand-sub: #b45309;
 
-  --zaaa-dock-bg: linear-gradient(180deg, rgba(235, 226, 207, 0.7) 0%, rgba(223, 212, 189, 0.8) 100%);
-  --zaaa-dock-border: rgba(120, 94, 52, 0.32);
-  --zaaa-dock-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.88),
-    inset 0 -1px 0 rgba(180, 120, 30, 0.16),
-    0 3px 10px rgba(15, 23, 42, 0.08);
-  --zaaa-tab-fg: #1e293b;
+  --zaaa-tab-fg: #334155;
   --zaaa-tab-fg-hover: #0f172a;
   --zaaa-tab-fg-active: #0f172a;
-  --zaaa-tab-icon: #334155;
-  --zaaa-tab-icon-active: #9a5209;
-  --zaaa-tab-hover-bg: rgba(255, 253, 248, 0.78);
-  --zaaa-tab-active-bg: linear-gradient(180deg, #ffffff 0%, #fbf5e8 100%);
-  --zaaa-tab-active-bar: #b4781e;
+  --zaaa-tab-hover-bg: rgba(15, 23, 42, 0.055);
+  --zaaa-tab-active-bg: rgba(15, 23, 42, 0.075);
+  --zaaa-tab-active-bar: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
 
-  --zaaa-pill-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 243, 232, 0.96) 100%);
-  --zaaa-pill-border: rgba(120, 94, 52, 0.34);
-  --zaaa-pill-border-hover: #b4781e;
+  --zaaa-hud-capsule-bg: rgba(15, 23, 42, 0.038);
+  --zaaa-hud-capsule-border: rgba(15, 23, 42, 0.065);
+  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.8);
+  --zaaa-hud-divider: rgba(15, 23, 42, 0.075);
+  --zaaa-hud-hover-bg: rgba(15, 23, 42, 0.05);
   --zaaa-pill-fg: #0f172a;
   --zaaa-pill-muted: #475569;
   --zaaa-pill-cash: #047857;
   --zaaa-pill-city: #92400e;
+  --zaaa-pill-city-bg: rgba(245, 158, 11, 0.16);
 
-  --zaaa-ctrl-bg: linear-gradient(180deg, #ffffff 0%, #f3ece0 100%);
-  --zaaa-ctrl-bg-hover: linear-gradient(180deg, #ffffff 0%, #ebe0cd 100%);
-  --zaaa-ctrl-border: rgba(100, 82, 52, 0.34);
+  --zaaa-ctrl-bg: rgba(15, 23, 42, 0.045);
+  --zaaa-ctrl-bg-hover: rgba(15, 23, 42, 0.085);
   --zaaa-ctrl-fg: #0f172a;
-  --zaaa-chrono-bg: linear-gradient(180deg, #ffffff 0%, #f5efe2 100%);
-  --zaaa-chrono-border: rgba(4, 120, 87, 0.38);
   --zaaa-chrono-clock: #047857;
-  --zaaa-admin-bg: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
-  --zaaa-admin-border: #b4781e;
-  --zaaa-admin-fg: #78350f;
+  --zaaa-theme-halo: rgba(245, 158, 11, 0.15);
+  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.13) 0%, rgba(168, 85, 247, 0.12) 52%, rgba(245, 158, 11, 0.18) 100%);
+  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.18) 52%, rgba(245, 158, 11, 0.25) 100%);
+  --zaaa-admin-fg: #1e1b4b;
 
-  --zaaa-wire-bg: linear-gradient(90deg, #ebe2cf 0%, #f7f2e7 50%, #ebe2cf 100%);
-  --zaaa-wire-border-top: rgba(180, 120, 30, 0.42);
-  --zaaa-wire-border-btm: #b4781e;
-  --zaaa-wire-badge-bg: linear-gradient(90deg, #1c2638 0%, #0f172a 100%);
-  --zaaa-wire-badge-fg: #fbbf24;
-  --zaaa-wire-text: #0f172a;
+  --zaaa-wire-bg: rgba(15, 23, 42, 0.024);
+  --zaaa-wire-badge-bg: rgba(245, 158, 11, 0.16);
+  --zaaa-wire-badge-fg: #92400e;
+  --zaaa-wire-text: #334155;
 
-  --zaaa-side-head-bg: linear-gradient(180deg, #1c2638 0%, #0f172a 100%);
-  --zaaa-side-panel-bg: linear-gradient(180deg, #fffdf9 0%, #f6f0e4 100%);
-  --zaaa-side-border: rgba(120, 94, 52, 0.28);
-  --zaaa-side-gold: #9a6312;
+  --zaaa-side-card-bg: #ffffff;
+  --zaaa-side-card-border: rgba(15, 23, 42, 0.06);
+  --zaaa-side-card-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 16px 36px -14px rgba(15, 23, 42, 0.09);
+  --zaaa-side-gold: #b45309;
   --zaaa-side-fg: #0f172a;
   --zaaa-side-sub: #1e293b;
-  --zaaa-side-muted: #475569;
-  --zaaa-crest-bg:
-    radial-gradient(circle at 16% 24%, rgba(180, 120, 30, 0.14), transparent 64%),
-    linear-gradient(145deg, #ffffff 0%, #f3ebd9 100%);
-  --zaaa-crest-border: rgba(180, 120, 30, 0.45);
-  --zaaa-track-bg: #dad0bc;
-  --zaaa-track-border: rgba(100, 82, 52, 0.36);
+  --zaaa-side-muted: #64748b;
+  --zaaa-side-label: #475569;
+  --zaaa-crest-bg: #f3f6fb;
+  --zaaa-crest-inset: rgba(255, 255, 255, 0.9);
+  --zaaa-sync-bg: rgba(15, 23, 42, 0.04);
+  --zaaa-divider-soft: rgba(15, 23, 42, 0.06);
+  --zaaa-track-bg: rgba(15, 23, 42, 0.085);
+  --zaaa-track-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.12);
 
-  --zaaa-nav-group-fg: #854d0e;
-  --zaaa-nav-group-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, transparent 92%);
+  --zaaa-nav-group-fg: #64748b;
   --zaaa-nav-fg: #1e293b;
   --zaaa-nav-fg-hover: #0f172a;
-  --zaaa-nav-hover-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.14) 0%, rgba(226, 216, 195, 0.45) 65%, transparent 100%);
-  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(180, 120, 30, 0.22) 0%, rgba(4, 120, 87, 0.08) 65%, transparent 100%);
+  --zaaa-nav-hover-bg: rgba(15, 23, 42, 0.05);
+  --zaaa-nav-active-bg: rgba(15, 23, 42, 0.075);
   --zaaa-nav-active-fg: #0f172a;
+  --zaaa-nav-ico-bg: #0f172a;
+  --zaaa-nav-ico-hover-bg: #1e293b;
+  --zaaa-nav-ico-active-bg: #1e293b;
 }
 
 /* ==========================================================================
- * 1. MOTIONSITES LIQUID-GLASS COMMAND TOPBAR (/sections/header)
+ * 0. SVG VIVID FILL PROTECTION & GPU-ONLY KINETIC MICRO-ANIMATIONS
+ *    Zero filter animations; strictly transform & opacity on GPU layers.
+ * ========================================================================== */
+
+html body svg.zaaa-vivid-svg {
+  display: block !important;
+  fill: none !important;
+  overflow: visible !important;
+  transform-origin: center !important;
+  transition: transform 280ms var(--zaaa-spring) !important;
+}
+
+html body svg.zaaa-vivid-svg .zaaa-stroke-only {
+  fill: none !important;
+}
+
+html body svg.zaaa-vivid-svg .zaaa-ico-kinetic {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 300ms var(--zaaa-spring),
+    opacity 220ms var(--zaaa-ease);
+}
+
+/* Ambient GPU life on HUD vitals & active district icon */
+@keyframes zaaaBoltPulse {
+  0%, 100% { transform: scale(1); opacity: 0.92; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes zaaaFlameFlicker {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.94; }
+  50% { transform: translateY(-0.7px) scale(1.08, 1.12); opacity: 1; }
+}
+
+@keyframes zaaaActiveFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-1.2px) scale(1.05); }
+}
+
+@keyframes zaaaWirePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.42; transform: scale(0.82); }
+}
+
+html body .zone-topbar #zone-topbar-hud [data-hud="energy"] .zaaa-ico-kinetic {
+  animation: zaaaBoltPulse 2.8s ease-in-out infinite;
+}
+
+html body .zone-topbar #zone-topbar-hud [data-hud="nerve"] .zaaa-ico-kinetic {
+  animation: zaaaFlameFlicker 2.4s ease-in-out infinite;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon svg.zaaa-vivid-svg {
+  animation: zaaaActiveFloat 3.2s ease-in-out infinite;
+}
+
+/* Crisp Spring Kinetic Recoil / Tilt on :hover & :focus-visible */
+html body .zone-topbar .zone-brand:is(:hover, :focus-visible) .zaaa-brand-crest svg.zaaa-vivid-svg,
+html body .zone-topbar .zone-header-links .zone-header-link:is(:hover, :focus-visible) .zaaa-link-icon svg.zaaa-vivid-svg,
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:is(:hover, :focus-visible) .zaaa-hud-ico svg.zaaa-vivid-svg,
+html body .zone-topbar .zone-header-actions > button:is(:hover, :focus-visible) .zone-theme-indicator svg.zaaa-vivid-svg,
+html body .zone-topbar .zone-header-actions > a:is(:hover, :focus-visible) .zaaa-admin-ico svg.zaaa-vivid-svg,
+html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zone-nav-icon svg.zaaa-vivid-svg,
+html body .zone-mobile-tabbar button:is(:hover, :focus-visible) .zaaa-mob-ico svg.zaaa-vivid-svg {
+  transform: translateY(-1px) scale(1.15) !important;
+}
+
+html body .zone-topbar .zone-brand:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-topbar .zone-header-links .zone-header-link:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-topbar .zone-header-actions > button:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-topbar .zone-header-actions > a:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body aside.zone-sidebar #zone-operative-crest:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-mobile-tabbar button:is(:hover, :focus-visible) .zaaa-ico-kinetic {
+  transform: rotate(-7deg) scale(1.08) !important;
+}
+
+html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen="attack"]:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen="casino"]:is(:hover, :focus-visible) .zaaa-ico-kinetic,
+html body .zone-mobile-tabbar button[data-zaaa-mob="attack"]:is(:hover, :focus-visible) .zaaa-ico-kinetic {
+  transform: rotate(22deg) scale(1.1) !important;
+}
+
+/* ==========================================================================
+ * 1. SEAMLESS UNIFIED MOTIONSITES COMMAND TOPBAR (/sections/header)
+ *    Replaces 10 boxed rectangles + 3 stacked gold borders with ONE bar.
  * ========================================================================== */
 
 html body .zone-topbar {
@@ -186,30 +267,28 @@ html body .zone-topbar {
   z-index: 60 !important;
   width: 100% !important;
   background: var(--zaaa-topbar-bg) !important;
-  border-bottom: 2px solid var(--zaaa-topbar-border) !important;
-  box-shadow:
-    inset 0 1px 0 var(--zaaa-topbar-topline),
-    inset 0 -1px 0 var(--zaaa-topbar-btmline),
-    var(--zaaa-topbar-shadow) !important;
-  backdrop-filter: blur(16px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--zaaa-topbar-hairline) !important;
+  box-shadow: var(--zaaa-topbar-shadow) !important;
+  backdrop-filter: blur(16px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
 }
 
 html body .zone-topbar [data-zheaderbar] {
   max-width: 1680px !important;
   width: 100% !important;
-  min-height: 58px !important;
+  min-height: 54px !important;
   height: auto !important;
   margin: 0 auto !important;
-  padding: 7px 18px !important;
-  gap: 10px !important;
+  padding: 6px 16px !important;
+  gap: 8px !important;
   display: flex !important;
   align-items: center !important;
   flex-wrap: nowrap !important;
   box-sizing: border-box !important;
 }
 
-/* Flex ordering keeps React's static children at their exact DOM indices */
+/* Flex ordering preserves React's static DOM child indices */
 html body .zone-topbar .zone-brand {
   order: 1 !important;
 }
@@ -228,56 +307,45 @@ html body .zone-topbar .zone-header-actions {
   margin-inline-start: 0 !important;
 }
 
-/* --- 1A. Brand Emblem (.zone-brand) - Zero Clipping + Syndicate Crest --- */
+/* --- 1A. Borderless Brand Emblem (.zone-brand) - Zero Clipping --- */
 html body .zone-topbar .zone-brand {
   min-width: auto !important;
   width: auto !important;
-  padding: 6px 15px 6px 12px !important;
+  padding: 5px 10px 5px 8px !important;
   display: inline-grid !important;
   grid-template-columns: auto auto !important;
   grid-template-rows: auto auto !important;
   align-items: center !important;
-  column-gap: 10px !important;
+  column-gap: 9px !important;
   row-gap: 1px !important;
-  background: var(--zaaa-brand-bg) !important;
-  border: 1px solid var(--zaaa-brand-border) !important;
-  border-radius: 6px !important;
-  box-shadow: var(--zaaa-brand-shadow) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
   cursor: pointer !important;
   user-select: none !important;
   position: relative !important;
   flex: 0 0 auto !important;
   overflow: visible !important;
   transition:
-    transform 240ms var(--zaaa-ease),
-    border-color 200ms var(--zaaa-ease),
-    box-shadow 240ms var(--zaaa-ease) !important;
+    background 200ms var(--zaaa-ease),
+    transform 220ms var(--zaaa-ease) !important;
 }
 
 html[dir="rtl"] body .zone-topbar .zone-brand {
-  padding: 6px 12px 6px 15px !important;
+  padding: 5px 8px 5px 10px !important;
 }
 
-html body .zone-topbar .zone-brand::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 6px;
-  pointer-events: none;
-  background:
-    linear-gradient(135deg, rgba(251, 191, 36, 0.55) 0 6px, transparent 6px),
-    linear-gradient(315deg, rgba(251, 191, 36, 0.45) 0 6px, transparent 6px);
-  opacity: 0.72;
+html body .zone-topbar .zone-brand::before,
+html body .zone-topbar .zone-brand::after {
+  content: none !important;
+  display: none !important;
 }
 
 html body .zone-topbar .zone-brand:hover {
-  border-color: var(--zaaa-brand-border-hover) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.52), 0 0 16px rgba(235, 184, 88, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
-  transform: translateY(-1px);
-}
-
-html body .zone-topbar .zone-brand:active {
-  transform: translateY(0);
+  background: var(--zaaa-brand-hover-bg) !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 html body .zone-topbar .zone-brand:focus-visible {
@@ -288,22 +356,16 @@ html body .zone-topbar .zone-brand:focus-visible {
 html body .zone-topbar .zone-brand .zaaa-brand-crest {
   grid-column: 1 !important;
   grid-row: 1 / span 2 !important;
-  width: 28px !important;
-  height: 28px !important;
+  width: 30px !important;
+  height: 30px !important;
   display: inline-grid !important;
   place-items: center !important;
-  flex: 0 0 28px !important;
-  filter: drop-shadow(0 2px 6px rgba(235, 184, 88, 0.35));
-  transition: transform 260ms var(--zaaa-ease) !important;
-}
-
-html body .zone-topbar .zone-brand:hover .zaaa-brand-crest {
-  transform: scale(1.06);
+  flex: 0 0 30px !important;
 }
 
 html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
-  width: 28px !important;
-  height: 28px !important;
+  width: 30px !important;
+  height: 30px !important;
   display: block !important;
 }
 
@@ -314,8 +376,8 @@ html body .zone-topbar .zone-brand > span:first-of-type:not(.zaaa-brand-crest):n
   font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
   font-size: 21px !important;
   font-weight: 800 !important;
-  line-height: 1.12 !important;
-  letter-spacing: 0.14em !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0.13em !important;
   padding-inline-end: 1px !important;
   color: var(--zaaa-brand-word-c2) !important;
   background: linear-gradient(180deg, var(--zaaa-brand-word-c1) 0%, var(--zaaa-brand-word-c2) 55%, var(--zaaa-brand-word-c3) 100%) !important;
@@ -327,7 +389,7 @@ html body .zone-topbar .zone-brand > span:first-of-type:not(.zaaa-brand-crest):n
 }
 
 html[dir="rtl"] body .zone-topbar .zone-brand > span[data-zfig="1"] {
-  line-height: 1.28 !important;
+  line-height: 1.24 !important;
   padding-block: 1px !important;
 }
 
@@ -336,40 +398,39 @@ html body .zone-topbar .zone-brand .zaaa-brand-meta {
   grid-row: 2 !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 8px !important;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   line-height: 1.1 !important;
-  letter-spacing: 0.14em !important;
+  letter-spacing: 0.12em !important;
   text-transform: uppercase !important;
   color: var(--zaaa-brand-sub) !important;
-  opacity: 0.92 !important;
+  opacity: 0.9 !important;
   white-space: nowrap !important;
 }
 
-/* Fallback if JS has not yet mounted .zaaa-brand-crest */
 html body .zone-topbar .zone-brand:not([data-zaaa-ready="1"]) {
   display: inline-flex !important;
-  gap: 10px !important;
+  gap: 9px !important;
 }
 
-/* --- 1B. MotionSites Liquid-Glass Command Dock (.zone-header-links) --- */
+/* --- 1B. Borderless Ghost Command Nav (.zone-header-links) --- */
 html body .zone-topbar .zone-header-links {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 3px !important;
-  padding: 3px !important;
-  background: var(--zaaa-dock-bg) !important;
-  border: 1px solid var(--zaaa-dock-border) !important;
-  border-radius: 7px !important;
-  box-shadow: var(--zaaa-dock-shadow) !important;
-  backdrop-filter: blur(16px) saturate(140%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+  gap: 2px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   flex: 0 1 auto !important;
   min-width: 0 !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link {
-  min-height: 32px !important;
-  height: 32px !important;
+  min-height: 34px !important;
+  height: 34px !important;
   padding: 0 9px !important;
   margin: 0 !important;
   display: inline-flex !important;
@@ -377,101 +438,89 @@ html body .zone-topbar .zone-header-links .zone-header-link {
   justify-content: center !important;
   gap: 6px !important;
   background: transparent !important;
-  border: 1px solid transparent !important;
-  border-radius: 5px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
   box-shadow: none !important;
   color: var(--zaaa-tab-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 11.5px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
   line-height: 1 !important;
-  letter-spacing: 0.015em !important;
+  letter-spacing: 0.01em !important;
   white-space: nowrap !important;
   cursor: pointer !important;
   position: relative !important;
   transition:
-    color 200ms var(--zaaa-ease),
-    background 220ms var(--zaaa-ease),
-    border-color 220ms var(--zaaa-ease),
-    transform 220ms var(--zaaa-ease) !important;
+    color 180ms var(--zaaa-ease),
+    background 200ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon {
   order: -1 !important;
-  width: 15px !important;
-  height: 15px !important;
+  width: 17px !important;
+  height: 17px !important;
   display: inline-grid !important;
   place-items: center !important;
-  flex: 0 0 15px !important;
-  color: var(--zaaa-tab-icon) !important;
-  transform-origin: center !important;
-  transition:
-    transform 260ms var(--zaaa-ease),
-    color 200ms var(--zaaa-ease) !important;
+  flex: 0 0 17px !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon svg {
-  width: 15px !important;
-  height: 15px !important;
-  display: block !important;
-  fill: none !important;
-  overflow: visible !important;
+  width: 17px !important;
+  height: 17px !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link:hover {
   color: var(--zaaa-tab-fg-hover) !important;
   background: var(--zaaa-tab-hover-bg) !important;
-  border-color: rgba(235, 184, 88, 0.26) !important;
-}
-
-html body .zone-topbar .zone-header-links .zone-header-link:hover .zaaa-link-icon {
-  color: var(--zaaa-tab-icon-active) !important;
-  transform: scale(1.08) !important;
+  border: 0 !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] {
   color: var(--zaaa-tab-fg-active) !important;
   background: var(--zaaa-tab-active-bg) !important;
-  border-color: rgba(235, 184, 88, 0.38) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 2px 8px rgba(0, 0, 0, 0.18) !important;
-}
-
-html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"] .zaaa-link-icon {
-  color: var(--zaaa-tab-icon-active) !important;
+  border: 0 !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link[data-zaaa-active="true"]::after {
   content: "";
   position: absolute;
-  inset-inline: 6px;
-  bottom: -1px;
+  inset-inline: 10px;
+  bottom: 2px;
   height: 2px;
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--zaaa-tab-active-bar);
-  box-shadow: 0 0 10px rgba(251, 191, 36, 0.72);
 }
 
-/* --- 1C. Center-Right Live Syndicate HUD Strip (#zone-topbar-hud) --- */
+/* --- 1C. ONE Unified Frosted Telemetry Capsule (#zone-topbar-hud) --- */
 html body .zone-topbar #zone-topbar-hud {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: 0 !important;
+  padding: 3px 5px !important;
+  background: var(--zaaa-hud-capsule-bg) !important;
+  border: 1px solid var(--zaaa-hud-capsule-border) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 var(--zaaa-hud-capsule-inset) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   flex: 0 0 auto !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
-  min-height: 34px !important;
-  height: 34px !important;
+  min-height: 28px !important;
+  height: 28px !important;
   padding: 0 9px !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  background: var(--zaaa-pill-bg) !important;
-  border: 1px solid var(--zaaa-pill-border) !important;
-  border-radius: 5px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.16) !important;
-  backdrop-filter: blur(12px) saturate(135%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   color: var(--zaaa-pill-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 11px !important;
@@ -481,120 +530,75 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
   white-space: nowrap !important;
   cursor: pointer !important;
   position: relative !important;
-  overflow: hidden !important;
-  transition:
-    border-color 220ms var(--zaaa-ease),
-    transform 220ms var(--zaaa-ease),
-    box-shadow 220ms var(--zaaa-ease) !important;
+  overflow: visible !important;
+  transition: background 180ms var(--zaaa-ease) !important;
+}
+
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 14px;
+  background: var(--zaaa-hud-divider);
+  pointer-events: none;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:hover {
-  border-color: var(--zaaa-pill-border-hover) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28), 0 0 10px rgba(235, 184, 88, 0.16) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:active {
-  transform: translateY(0);
+  background: var(--zaaa-hud-hover-bg) !important;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico {
-  width: 15px !important;
-  height: 15px !important;
+  width: 16px !important;
+  height: 16px !important;
   display: inline-grid !important;
   place-items: center !important;
-  flex: 0 0 15px !important;
-  transition: transform 240ms var(--zaaa-ease) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:hover .zaaa-hud-ico {
-  transform: scale(1.08);
+  flex: 0 0 16px !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico svg {
-  width: 15px !important;
-  height: 15px !important;
-  display: block !important;
-  fill: none !important;
-  overflow: visible !important;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-val {
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   font-size: 11.5px !important;
   font-variant-numeric: tabular-nums !important;
   letter-spacing: 0.01em !important;
 }
 
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash {
-  border-color: rgba(57, 231, 163, 0.34) !important;
-}
-
-html[data-theme="light"] body .zone-topbar #zone-topbar-hud .zaaa-hud-cash {
-  border-color: rgba(4, 120, 87, 0.38) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash .zaaa-hud-ico,
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-cash .zaaa-hud-val {
   color: var(--zaaa-pill-cash) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy .zaaa-hud-ico {
-  color: #10b981 !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve .zaaa-hud-ico {
-  color: #f59e0b !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-ico {
-  color: var(--zaaa-pill-city) !important;
+  font-weight: 800 !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-city-code {
   font-size: 9.5px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  padding: 2px 4px !important;
-  border-radius: 3px !important;
-  background: rgba(235, 184, 88, 0.16) !important;
+  letter-spacing: 0.06em !important;
+  padding: 2px 5px !important;
+  border-radius: 5px !important;
+  background: var(--zaaa-pill-city-bg) !important;
   color: var(--zaaa-pill-city) !important;
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail {
-  position: absolute !important;
-  inset-inline: 0 !important;
-  bottom: 0 !important;
-  height: 3px !important;
-  background: rgba(148, 168, 204, 0.18) !important;
-  pointer-events: none !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail > i {
-  display: block !important;
-  height: 100% !important;
-  width: var(--zaaa-pct, 100%) !important;
-  transition: width 0.35s var(--zaaa-ease) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy .zaaa-hud-rail > i {
-  background: linear-gradient(90deg, #059669, #39e7a3) !important;
-  box-shadow: 0 0 8px rgba(57, 231, 163, 0.65) !important;
-}
-
-html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve .zaaa-hud-rail > i {
-  background: linear-gradient(90deg, #d97706, #fbbf24) !important;
-  box-shadow: 0 0 8px rgba(251, 191, 36, 0.65) !important;
+  display: none !important;
 }
 
 /* Responsive graceful collapse for #zone-topbar-hud */
-@media (max-width: 1340px) {
+@media (max-width: 1360px) {
   html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-val {
     display: none !important;
   }
 }
 
-@media (max-width: 1120px) {
+@media (max-width: 1160px) {
   html body .zone-topbar #zone-topbar-hud {
     display: none !important;
   }
@@ -603,7 +607,7 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve .zaaa-hud-rail > i {
   }
 }
 
-/* --- 1D. Right Tactical Controls (.zone-header-actions) --- */
+/* --- 1D. Borderless Ghost Right Controls + Studio Admin (.zone-header-actions) --- */
 html body .zone-topbar .zone-header-actions {
   display: inline-flex !important;
   align-items: center !important;
@@ -611,49 +615,56 @@ html body .zone-topbar .zone-header-actions {
   flex: 0 0 auto !important;
 }
 
-/* Digital Tactical Chrono Badge (Zone City Time) */
 @media (min-width: 761px) {
   html body .zone-topbar .zone-header-actions > span:first-child {
     height: 34px !important;
     min-height: 34px !important;
     margin: 0 !important;
-    padding: 0 10px 0 28px !important;
+    padding-block: 0 !important;
+    padding-inline-start: 29px !important;
+    padding-inline-end: 10px !important;
     display: inline-flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: flex-end !important;
     gap: 1px !important;
-    background: var(--zaaa-chrono-bg) !important;
-    border: 1px solid var(--zaaa-chrono-border) !important;
-    border-radius: 5px !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 2px rgba(0, 0, 0, 0.2) !important;
+    background: var(--zaaa-ctrl-bg) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
     color: var(--zaaa-pill-muted) !important;
     font-size: 8px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     line-height: 1 !important;
-    letter-spacing: 0.06em !important;
-    text-transform: uppercase !important;
+    letter-spacing: 0.03em !important;
     white-space: nowrap !important;
     position: relative !important;
   }
 
   html[dir="rtl"] body .zone-topbar .zone-header-actions > span:first-child {
-    padding: 0 28px 0 10px !important;
     align-items: flex-start !important;
   }
 
   html body .zone-topbar .zone-header-actions > span:first-child::before {
-    content: "";
-    position: absolute;
-    inset-inline-start: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
-    background-color: var(--zaaa-chrono-clock);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 9v4l2.5 2'/%3E%3Cpath d='M9 2h6'/%3E%3Cpath d='M12 2v3'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 9v4l2.5 2'/%3E%3Cpath d='M9 2h6'/%3E%3Cpath d='M12 2v3'/%3E%3C/svg%3E") center / contain no-repeat;
-    opacity: 0.95;
+    content: none !important;
+    display: none !important;
+  }
+
+  html body .zone-topbar .zone-header-actions > span:first-child .zaaa-chrono-ico {
+    position: absolute !important;
+    inset-inline-start: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 16px !important;
+    height: 16px !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    pointer-events: none !important;
+  }
+
+  html body .zone-topbar .zone-header-actions > span:first-child .zaaa-chrono-ico svg {
+    width: 16px !important;
+    height: 16px !important;
   }
 
   html body .zone-topbar .zone-header-actions > span:first-child bdi {
@@ -661,13 +672,13 @@ html body .zone-topbar .zone-header-actions {
     font-family: var(--zone-display, "Rajdhani", "Rubik", monospace) !important;
     font-size: 12px !important;
     font-weight: 800 !important;
-    line-height: 1.1 !important;
-    letter-spacing: 0.04em !important;
+    line-height: 1.08 !important;
+    letter-spacing: 0.03em !important;
     font-variant-numeric: tabular-nums !important;
   }
 }
 
-/* Uniform 34px Tactical Buttons for Theme, Lang, Admin */
+/* Uniform 34px Borderless Ghost Pills for Theme & Lang */
 html body .zone-topbar .zone-header-actions > button,
 html body .zone-topbar .zone-header-actions > a {
   height: 34px !important;
@@ -678,9 +689,9 @@ html body .zone-topbar .zone-header-actions > a {
   justify-content: center !important;
   gap: 6px !important;
   background: var(--zaaa-ctrl-bg) !important;
-  border: 1px solid var(--zaaa-ctrl-border) !important;
-  border-radius: 5px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
   color: var(--zaaa-ctrl-fg) !important;
   font-family: var(--zone-font, system-ui, sans-serif) !important;
   font-size: 11.5px !important;
@@ -690,59 +701,70 @@ html body .zone-topbar .zone-header-actions > a {
   white-space: nowrap !important;
   cursor: pointer !important;
   transition:
-    background 200ms var(--zaaa-ease),
-    border-color 200ms var(--zaaa-ease),
+    background 180ms var(--zaaa-ease),
     transform 200ms var(--zaaa-ease) !important;
 }
 
-html body .zone-topbar .zone-header-actions > button:hover,
-html body .zone-topbar .zone-header-actions > a:hover {
+html body .zone-topbar .zone-header-actions > button:hover {
   background: var(--zaaa-ctrl-bg-hover) !important;
-  border-color: var(--zaaa-brand-border-hover) !important;
+  border: 0 !important;
+}
+
+/* Sleek Jewel-Gradient Borderless Studio Pill for Admin */
+html body .zone-topbar .zone-header-actions > a {
+  background: var(--zaaa-admin-bg) !important;
+  border: 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  color: var(--zaaa-admin-fg) !important;
+  font-weight: 800 !important;
+  padding: 0 12px !important;
+}
+
+html body .zone-topbar .zone-header-actions > a:hover {
+  background: var(--zaaa-admin-bg-hover) !important;
+  border: 0 !important;
   transform: translateY(-1px);
 }
 
-html body .zone-topbar .zone-header-actions > a {
-  background: var(--zaaa-admin-bg) !important;
-  border-color: var(--zaaa-admin-border) !important;
-  color: var(--zaaa-admin-fg) !important;
-  font-weight: 800 !important;
+html body .zone-topbar .zone-header-actions > a .zaaa-admin-ico {
+  order: -1 !important;
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  flex: 0 0 16px !important;
 }
 
-/* Luminous Duotone Theme Indicator (Replaces #111 Black Dot!) */
+html body .zone-topbar .zone-header-actions > a .zaaa-admin-ico svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Borderless 3D Sun / Moon Theme Indicator */
 html body .zone-topbar .zone-header-actions .zone-theme-indicator {
   width: 18px !important;
   height: 18px !important;
   flex: 0 0 18px !important;
-  border-radius: 5px !important;
-  background: rgba(251, 191, 36, 0.24) !important;
-  background-color: rgba(251, 191, 36, 0.24) !important;
-  border: 1px solid rgba(251, 191, 36, 0.62) !important;
-  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3) !important;
-  color: #fbbf24 !important;
+  border-radius: 6px !important;
+  background: var(--zaaa-theme-halo) !important;
+  background-color: var(--zaaa-theme-halo) !important;
+  border: 0 !important;
+  box-shadow: none !important;
   display: inline-grid !important;
   place-items: center !important;
   position: relative !important;
 }
 
-html[data-theme="light"] body .zone-topbar .zone-header-actions .zone-theme-indicator {
-  background: rgba(245, 158, 11, 0.22) !important;
-  background-color: rgba(245, 158, 11, 0.22) !important;
-  border: 1px solid rgba(217, 119, 6, 0.58) !important;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.24) !important;
-  color: #d97706 !important;
-}
-
 html body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-theme-svg {
-  width: 12px !important;
-  height: 12px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: inline-grid !important;
   place-items: center !important;
 }
 
 html body .zone-topbar .zone-header-actions .zone-theme-indicator svg {
-  width: 12px !important;
-  height: 12px !important;
+  width: 15px !important;
+  height: 15px !important;
   display: block !important;
   overflow: visible !important;
 }
@@ -755,62 +777,64 @@ html[data-theme="light"] body .zone-topbar .zone-header-actions .zone-theme-indi
   display: none !important;
 }
 
-/* Pure-CSS fallback luminous crescent/sun if JS has not yet mounted SVG */
 html body .zone-topbar .zone-header-actions .zone-theme-indicator:empty::before {
   content: "";
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: #fbbf24;
-  box-shadow: 0 0 6px #fbbf24;
 }
 
-/* --- 1E. Full-Bleed Syndicate Wire Ticker (.zone-bulletin) --- */
+/* --- 1E. Seamless Full-Bleed Wire Ticker (.zone-bulletin) - Zero Extra Borders --- */
+html body .zone-topbar .zone-bulletin [data-zticker="1"] {
+  will-change: transform !important;
+}
+
+html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
+  animation-play-state: paused !important;
+}
+
 @media (min-width: 761px) {
   html body .zone-topbar .zone-bulletin {
     max-width: none !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0 18px 0 0 !important;
-    height: 28px !important;
-    min-height: 28px !important;
+    padding: 0 16px !important;
+    height: 26px !important;
+    min-height: 26px !important;
     background: var(--zaaa-wire-bg) !important;
-    border-top: 1px solid var(--zaaa-wire-border-top) !important;
-    border-bottom: 1px solid var(--zaaa-wire-border-btm) !important;
-    border-inline: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
     color: var(--zaaa-wire-text) !important;
     font-size: 11px !important;
     box-sizing: border-box !important;
   }
 
-  html[dir="rtl"] body .zone-topbar .zone-bulletin {
-    padding: 0 0 0 18px !important;
-  }
-
   html body .zone-topbar .zone-bulletin > span:first-child {
-    height: 100% !important;
-    padding: 0 14px !important;
+    height: 19px !important;
+    padding: 0 9px !important;
+    margin-inline-end: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 7px !important;
+    gap: 6px !important;
     background: var(--zaaa-wire-badge-bg) !important;
-    border-inline-end: 1px solid var(--zaaa-wire-border-btm) !important;
+    border: 0 !important;
+    border-radius: 6px !important;
     color: var(--zaaa-wire-badge-fg) !important;
-    font-size: 10px !important;
+    font-size: 9.5px !important;
     font-weight: 800 !important;
-    letter-spacing: 0.09em !important;
+    letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
   }
 
   html body .zone-topbar .zone-bulletin > span:first-child::before {
     content: "";
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
-    background: #39e7a3;
-    box-shadow: 0 0 8px #39e7a3;
+    background: #10b981;
     animation: zaaaWirePulse 1.8s ease-in-out infinite;
-    flex: 0 0 6px;
+    flex: 0 0 5px;
   }
 
   html body .zone-topbar .zone-bulletin [data-zticker="1"] span {
@@ -821,110 +845,136 @@ html body .zone-topbar .zone-header-actions .zone-theme-indicator:empty::before 
   html body .zone-topbar .zone-bulletin [data-zticker="1"]:has(> span:only-child) {
     animation: none !important;
     transform: none !important;
-    padding-inline-start: 14px !important;
+    padding-inline-start: 10px !important;
   }
 }
 
-@keyframes zaaaWirePulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.45; transform: scale(0.82); }
-}
-
 /* ==========================================================================
- * 2. AAA OPERATIVE SIDEBAR (aside.zone-sidebar)
+ * 2. MOTIONSITES BORDERLESS TONAL ELEVATION SIDEBAR (aside.zone-sidebar)
+ *    Clean #0b0f19 tonal cards, #121929 operative surface, 999px vitals,
+ *    natural Title Case group labels, and 10px rounded-pill items.
  * ========================================================================== */
 
-html body aside.zone-sidebar .zone-panel-heading[data-zhead] {
-  background: var(--zaaa-side-head-bg) !important;
-  border: 1px solid rgba(214, 167, 86, 0.38) !important;
-  border-bottom: 2px solid #d6a756 !important;
-  color: #fef3c7 !important;
-  font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
-  font-size: 12.5px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.09em !important;
-  text-transform: uppercase !important;
-  padding: 7px 12px !important;
-  min-height: 32px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.22) !important;
+@media (min-width: 761px) {
+  html body aside.zone-sidebar {
+    gap: 12px !important;
+  }
+
+  html body aside.zone-sidebar [data-zplayercard="1"],
+  html body aside.zone-sidebar .zone-nav-section {
+    background: var(--zaaa-side-card-bg) !important;
+    border: 1px solid var(--zaaa-side-card-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--zaaa-side-card-shadow) !important;
+    overflow: hidden !important;
+    contain: layout style;
+  }
+}
+
+/* Defeat hard panel borders & 2px gold heading underlines in noir-game-hud & inline styles */
+html body aside.zone-sidebar [data-zplayercard="1"] .zone-panel-heading[data-zhead],
+html body aside.zone-sidebar .zone-nav-section .zone-panel-heading[data-zhead],
+html:not([data-theme="light"]) body aside.zone-sidebar [data-zplayercard="1"] .zone-panel-heading,
+html:not([data-theme="light"]) body aside.zone-sidebar .zone-nav-section .zone-panel-heading,
+html[data-theme="light"] body aside.zone-sidebar [data-zplayercard="1"] .zone-panel-heading,
+html[data-theme="light"] body aside.zone-sidebar .zone-nav-section .zone-panel-heading {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--zaaa-side-label) !important;
+  font-family: var(--zone-font, system-ui, sans-serif) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: capitalize !important;
+  padding: 12px 12px 4px !important;
+  min-height: 0 !important;
 }
 
 html body aside.zone-sidebar .zone-profile-body,
 html body aside.zone-sidebar #zone-area-navigation {
-  background: var(--zaaa-side-panel-bg) !important;
-  border: 1px solid var(--zaaa-side-border) !important;
-  border-top: 0 !important;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.24) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
-/* --- 2A. Operative Syndicate Dossier Header (#zone-operative-crest) --- */
+@media (max-width: 760px) {
+  html body aside.zone-sidebar .zone-profile-body,
+  html body aside.zone-sidebar #zone-area-navigation {
+    background: var(--zaaa-side-card-bg) !important;
+    border: 1px solid var(--zaaa-side-card-border) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--zaaa-side-card-shadow) !important;
+  }
+}
+
+html body aside.zone-sidebar .zone-profile-body {
+  padding: 6px 10px 12px !important;
+  gap: 5px !important;
+}
+
+/* --- 2A. Borderless Tonal Operative Card (#zone-operative-crest) --- */
 html body aside.zone-sidebar #zone-operative-crest {
   order: -10 !important;
   display: grid !important;
   grid-template-columns: 42px minmax(0, 1fr) !important;
   align-items: center !important;
-  gap: 9px !important;
-  padding: 9px 10px !important;
+  gap: 10px !important;
+  padding: 10px !important;
   margin-bottom: 4px !important;
   background: var(--zaaa-crest-bg) !important;
-  border: 1px solid var(--zaaa-crest-border) !important;
-  border-radius: 7px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 var(--zaaa-crest-inset) !important;
   cursor: pointer !important;
   position: relative !important;
   transition:
-    border-color 220ms var(--zaaa-ease),
-    transform 220ms var(--zaaa-ease),
-    box-shadow 220ms var(--zaaa-ease) !important;
+    transform 200ms var(--zaaa-ease),
+    background 200ms var(--zaaa-ease) !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest:hover {
-  border-color: #fbbf24 !important;
   transform: translateY(-1px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 6px 16px rgba(0, 0, 0, 0.26) !important;
+  border: 0 !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
   width: 42px !important;
   height: 42px !important;
-  border-radius: 9px !important;
-  background-color: #0c1320 !important;
-  background-image: linear-gradient(145deg, #162235 0%, #0c1320 100%) !important;
-  border: 1px solid rgba(235, 184, 88, 0.58) !important;
+  border-radius: 11px !important;
+  background-color: #0d1322 !important;
+  background-image: linear-gradient(145deg, #1b2842 0%, #0d1322 100%) !important;
+  border: 0 !important;
   color: #f8fafc !important;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 10px rgba(0, 0, 0, 0.28) !important;
   display: grid !important;
   place-items: center !important;
   position: relative !important;
-  transition: transform 260ms var(--zaaa-ease) !important;
-}
-
-html body aside.zone-sidebar #zone-operative-crest:hover .zaaa-op-avatar {
-  transform: scale(1.06);
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar svg {
-  width: 28px !important;
-  height: 28px !important;
+  width: 29px !important;
+  height: 29px !important;
   display: block !important;
-  fill: none !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-lvl {
   position: absolute !important;
-  bottom: -5px !important;
-  inset-inline-end: -5px !important;
+  bottom: -4px !important;
+  inset-inline-end: -4px !important;
   padding: 1px 5px !important;
-  border-radius: 4px !important;
-  background: linear-gradient(180deg, #fbbf24 0%, #c58f36 100%) !important;
-  border: 1px solid #0b101b !important;
-  color: #090d16 !important;
+  border-radius: 6px !important;
+  background: linear-gradient(180deg, #fde047 0%, #f59e0b 100%) !important;
+  border: 0 !important;
+  color: #0f172a !important;
   font-size: 9px !important;
   font-weight: 900 !important;
-  line-height: 1.2 !important;
+  line-height: 1.25 !important;
   font-variant-numeric: tabular-nums !important;
-  letter-spacing: 0.03em !important;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35) !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-info {
@@ -942,11 +992,11 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-top {
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank {
-  color: var(--zaaa-side-gold) !important;
-  font-size: 10.5px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.05em !important;
-  text-transform: uppercase !important;
+  color: var(--zaaa-side-fg) !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -954,7 +1004,7 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank {
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-id {
   color: var(--zaaa-side-muted) !important;
-  font-size: 9.5px !important;
+  font-size: 10px !important;
   font-weight: 700 !important;
   font-variant-numeric: tabular-nums !important;
   flex: none !important;
@@ -964,8 +1014,8 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-meta {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
-  font-size: 9px !important;
-  font-weight: 700 !important;
+  font-size: 9.5px !important;
+  font-weight: 600 !important;
   color: var(--zaaa-side-muted) !important;
   font-variant-numeric: tabular-nums !important;
 }
@@ -975,22 +1025,41 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-track {
   width: 100% !important;
   border-radius: 999px !important;
   background: var(--zaaa-track-bg) !important;
-  border: 1px solid var(--zaaa-track-border) !important;
+  border: 0 !important;
   overflow: hidden !important;
 }
 
 html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-fill {
   height: 100% !important;
   width: var(--zaaa-xp-pct, 42%) !important;
-  background: linear-gradient(90deg, #d97706 0%, #fbbf24 55%, #39e7a3 100%) !important;
-  box-shadow: 0 0 8px rgba(251, 191, 36, 0.55) !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #f59e0b 0%, #fde047 52%, #10b981 100%) !important;
   transition: width 0.4s var(--zaaa-ease) !important;
 }
 
-/* Profile Identity & Stat Rows Crisp Contrast */
+/* Soften inner identity & sync boxes inside .zone-profile-body (zero hard lines) */
+html body aside.zone-sidebar .zone-profile-account {
+  border: 0 !important;
+  padding: 4px 0 !important;
+  min-height: 26px !important;
+}
+
+html body aside.zone-sidebar [data-zone-account-sync="1"] {
+  background: var(--zaaa-sync-bg) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  padding: 6px 9px !important;
+}
+
+html body aside.zone-sidebar .zone-profile-body > div.zone-profile-desktop[style*="height:1px"],
+html body aside.zone-sidebar .zone-profile-body > div.zone-profile-desktop[style*="height: 1px"] {
+  background: var(--zaaa-divider-soft) !important;
+  margin: 4px 0 !important;
+}
+
 html body aside.zone-sidebar .zone-profile-identity > div:first-child > span:last-child {
   color: var(--zaaa-side-fg) !important;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
 }
 
 html body aside.zone-sidebar #zone-cash {
@@ -1006,7 +1075,7 @@ html body aside.zone-sidebar .zone-profile-desktop {
 
 html body aside.zone-sidebar .zone-profile-desktop > span:first-child {
   color: var(--zaaa-side-muted) !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
 }
 
 html body aside.zone-sidebar .zone-profile-desktop > bdi {
@@ -1015,31 +1084,38 @@ html body aside.zone-sidebar .zone-profile-desktop > bdi {
   font-variant-numeric: tabular-nums !important;
 }
 
-/* --- 2B. Sculpted Glass-Tube RPG Vital Bars (.zone-resource-track) --- */
+/* --- 2B. Rounded 999px Borderless RPG Vital Bars (.zone-resource-track) --- */
 html body aside.zone-sidebar .zone-resource {
   position: relative !important;
+  margin-bottom: 7px !important;
 }
 
 html body aside.zone-sidebar .zone-resource [data-zhead] {
   color: var(--zaaa-side-sub) !important;
   font-size: 11px !important;
-  font-weight: 700 !important;
+  font-weight: 600 !important;
 }
 
 html body aside.zone-sidebar .zone-resource [data-zfig] {
   color: var(--zaaa-side-fg) !important;
   font-size: 11.5px !important;
-  font-weight: 800 !important;
+  font-weight: 700 !important;
   font-variant-numeric: tabular-nums !important;
 }
 
-/* Eliminate ALL inner text & sibling "FULL" overlap over .zone-resource-track */
+/* Suppress overlapping "FULL" text inside & below .zone-resource-track */
 html body aside.zone-sidebar .zone-resource-track {
   font-size: 0 !important;
   line-height: 0 !important;
   color: transparent !important;
   position: relative !important;
   overflow: hidden !important;
+  height: 9px !important;
+  min-height: 9px !important;
+  background: var(--zaaa-track-bg) !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  box-shadow: var(--zaaa-track-shadow) !important;
 }
 
 html body aside.zone-sidebar .zone-resource .zone-resource-timer {
@@ -1062,81 +1138,48 @@ html body aside.zone-sidebar .zone-resource .zone-resource-timer[data-zaaa-timer
   font-variant-numeric: tabular-nums !important;
 }
 
-@media (min-width: 761px) {
-  html body aside.zone-sidebar .zone-resource-track {
-    height: 12px !important;
-    min-height: 12px !important;
-    background: var(--zaaa-track-bg) !important;
-    border: 1px solid var(--zaaa-track-border) !important;
-    border-radius: 5px !important;
-    box-shadow:
-      inset 0 2px 4px rgba(0, 0, 0, 0.46),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-      0 1px 0 rgba(255, 255, 255, 0.08) !important;
-  }
-}
-
 html body aside.zone-sidebar .zone-resource-track > div {
-  border-radius: 4px !important;
+  border-radius: 999px !important;
   position: relative !important;
   z-index: 1 !important;
 }
 
-/* Subtle 10-pip RPG gauge segmentation */
 html body aside.zone-sidebar .zone-resource-track::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0,
-    transparent calc(10% - 1px),
-    rgba(0, 0, 0, 0.22) calc(10% - 1px),
-    rgba(0, 0, 0, 0.22) 10%
-  );
+  content: none !important;
+  display: none !important;
 }
 
-/* Sculpted glass-tube top specular highlight */
 html body aside.zone-sidebar .zone-resource-track::after {
   content: "";
   position: absolute;
-  inset: 0 0 50% 0;
-  z-index: 3;
+  inset: 0 0 52% 0;
+  z-index: 2;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.14) 42%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-/* Distinct Luminous RPG Gradients in BOTH Dark & Day Modes */
 html body aside.zone-sidebar .zone-resource[data-zone-resource="energy"] .zone-resource-track > div {
-  background: linear-gradient(90deg, #059669 0%, #10b981 55%, #39e7a3 100%) !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.52) !important;
+  background: linear-gradient(90deg, #059669 0%, #10b981 52%, #6ee7b7 100%) !important;
+  box-shadow: none !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] .zone-resource-track > div {
-  background: linear-gradient(90deg, #b45309 0%, #f59e0b 55%, #fbbf24 100%) !important;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.52) !important;
+  background: linear-gradient(90deg, #e11d48 0%, #f43f5e 52%, #fda4af 100%) !important;
+  box-shadow: none !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="happy"] .zone-resource-track > div {
-  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 55%, #c084fc 100%) !important;
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5) !important;
+  background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 52%, #f0abfc 100%) !important;
+  box-shadow: none !important;
 }
 
 html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track > div {
-  background: linear-gradient(90deg, #be123c 0%, #ef4444 55%, #fb7185 100%) !important;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5) !important;
+  background: linear-gradient(90deg, #be123c 0%, #ef4444 52%, #fca5a5 100%) !important;
+  box-shadow: none !important;
 }
 
-/* --- 2C. Area Navigation & MotionSites Jewel Squircle Duotone Icons --- */
-
-/* Sculpted Dark Obsidian-Glass Jewel Squircle in BOTH Dark & Day Modes */
+/* --- 2C. Area Navigation: Title Case Groups & Borderless 10px Pill Items --- */
 html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon,
 html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
   flex: 0 0 28px !important;
@@ -1144,32 +1187,20 @@ html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation but
   height: 28px !important;
   display: inline-grid !important;
   place-items: center !important;
-  border-radius: 9px !important;
-  background-color: #0c1320 !important;
-  background-image: linear-gradient(145deg, #18253a 0%, #0c1320 100%) !important;
-  border: 1px solid rgba(212, 162, 76, 0.36) !important;
-  color: #f8fafc !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 3px 8px rgba(0, 0, 0, 0.34) !important;
-  transform-origin: center !important;
-  transition:
-    transform 260ms var(--zaaa-ease),
-    border-color 200ms var(--zaaa-ease),
-    box-shadow 220ms var(--zaaa-ease),
-    color 200ms var(--zaaa-ease) !important;
+  border-radius: 8px !important;
+  background: var(--zaaa-nav-ico-bg) !important;
+  border: 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  transition: background 180ms var(--zaaa-ease) !important;
 }
 
 html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation .zone-nav-icon,
 html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
-  background-color: #0c1320 !important;
-  background-image: linear-gradient(145deg, #162235 0%, #0c1320 100%) !important;
-  border: 1px solid rgba(212, 162, 76, 0.48) !important;
-  color: #f8fafc !important;
-  border-radius: 9px !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 3px 8px rgba(15, 23, 42, 0.16) !important;
+  background-color: #0f172a !important;
+  background-image: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.14) !important;
 }
 
 /* Defeat zone-design.css:136-141 mask ::before, hidden-svg, & solid-fill crushers */
@@ -1182,133 +1213,109 @@ html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-ha
   background: none !important;
 }
 
-html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-zaaa-duotone="1"] > svg:not(.zaaa-duotone-svg) {
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon[data-zaaa-duotone="1"] > svg:not(.zaaa-vivid-svg) {
   display: none !important;
 }
 
-html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon svg.zaaa-duotone-svg {
+html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon svg.zaaa-vivid-svg {
   display: block !important;
-  width: 16px !important;
-  height: 16px !important;
+  width: 18px !important;
+  height: 18px !important;
   fill: none !important;
   overflow: visible !important;
 }
 
-html body svg.zaaa-duotone-svg .zaaa-duo-stroke {
-  fill: none !important;
-  stroke: currentColor !important;
+html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation button:hover .zone-nav-icon {
+  background: var(--zaaa-nav-ico-hover-bg) !important;
 }
 
-html body aside.zone-sidebar #zone-area-navigation button:hover .zone-nav-icon {
-  border-color: rgba(251, 191, 36, 0.78) !important;
-  color: #ffffff !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 4px 12px rgba(15, 23, 42, 0.28),
-    0 0 12px rgba(235, 184, 88, 0.26) !important;
-  transform: scale(1.08) !important;
-}
-
-html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon {
-  border-color: #fbbf24 !important;
-  color: #fef3c7 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 0 14px rgba(251, 191, 36, 0.34),
-    0 3px 8px rgba(15, 23, 42, 0.24) !important;
+html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon {
+  background: var(--zaaa-nav-ico-active-bg) !important;
 }
 
 @media (min-width: 761px) {
   html body aside.zone-sidebar #zone-area-navigation {
-    padding: 4px 0 6px !important;
+    padding: 2px 0 8px !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation .zone-nav-group {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding: 8px 10px 4px !important;
-    margin-top: 2px !important;
-    background: var(--zaaa-nav-group-bg) !important;
-    border-top: 1px solid var(--zaaa-side-border) !important;
+    display: block !important;
+    padding: 12px 12px 4px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
     color: var(--zaaa-nav-group-fg) !important;
-    font-family: var(--zone-display, "Rajdhani", "Rubik", system-ui, sans-serif) !important;
-    font-size: 10.5px !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.1em !important;
-    text-transform: uppercase !important;
+    font-family: var(--zone-font, system-ui, sans-serif) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em !important;
+    text-transform: capitalize !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation .zone-nav-group:first-child {
-    border-top: 0 !important;
-    margin-top: 0 !important;
+    padding-top: 6px !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation .zone-nav-group::before {
-    content: "";
-    width: 5px;
-    height: 5px;
-    transform: rotate(45deg);
-    background: var(--zaaa-nav-group-fg);
-    box-shadow: 0 0 6px rgba(235, 184, 88, 0.5);
-    flex: 0 0 5px;
+    content: none !important;
+    display: none !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button {
-    min-height: 35px !important;
-    padding: 4px 10px !important;
-    gap: 9px !important;
+    margin: 1px 6px !important;
+    width: calc(100% - 12px) !important;
+    min-height: 36px !important;
+    padding: 4px 8px !important;
+    gap: 10px !important;
     background: transparent !important;
     border: 0 !important;
-    border-inline-start: 3px solid transparent !important;
-    border-radius: 0 !important;
+    border-inline-start: 0 !important;
+    border-radius: 10px !important;
     box-shadow: none !important;
     color: var(--zaaa-nav-fg) !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
     line-height: 1.3 !important;
+    box-sizing: border-box !important;
     position: relative !important;
     transition:
-      background 220ms var(--zaaa-ease),
-      color 200ms var(--zaaa-ease),
-      padding-inline-start 220ms var(--zaaa-ease),
-      border-color 200ms var(--zaaa-ease) !important;
+      background 180ms var(--zaaa-ease),
+      color 180ms var(--zaaa-ease) !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button:hover {
     background: var(--zaaa-nav-hover-bg) !important;
     color: var(--zaaa-nav-fg-hover) !important;
-    border-inline-start-color: rgba(235, 184, 88, 0.6) !important;
-    padding-inline-start: 13px !important;
+    border: 0 !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] {
     background: var(--zaaa-nav-active-bg) !important;
     color: var(--zaaa-nav-active-fg) !important;
-    border-inline-start: 3px solid #fbbf24 !important;
-    font-weight: 800 !important;
-    padding-inline-start: 12px !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 -1px 0 rgba(0, 0, 0, 0.14) !important;
+    border: 0 !important;
+    font-weight: 700 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
   }
 
   html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] {
-    border-inline-start-color: #b4781e !important;
+    box-shadow: none !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button bdi {
-    background: rgba(235, 184, 88, 0.16) !important;
-    border: 1px solid rgba(235, 184, 88, 0.38) !important;
+    background: rgba(251, 191, 36, 0.14) !important;
+    border: 0 !important;
     color: var(--zaaa-side-gold) !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     font-variant-numeric: tabular-nums !important;
-    padding: 1px 6px !important;
+    padding: 2px 6px !important;
     border-radius: 999px !important;
   }
 }
 
 /* ==========================================================================
- * 3. MOBILE SAFETY (<=760px) - Zero Overflow, Clean Compact Bar
+ * 3. MOBILE SAFETY & 3D FROSTED BOTTOM DOCK (<=760px, 390x844 Parity)
+ *    Replaces plain ◆ ◈ ▲ ■ ✕ ☰ characters with borderless 3D frosted icons.
  * ========================================================================== */
 
 @media (max-width: 760px) {
@@ -1319,16 +1326,16 @@ html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .
   }
 
   html body .zone-topbar .zone-brand {
-    padding: 4px 10px !important;
+    padding: 3px 6px !important;
     column-gap: 7px !important;
     grid-template-rows: auto !important;
   }
 
   html body .zone-topbar .zone-brand .zaaa-brand-crest,
   html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
-    width: 22px !important;
-    height: 22px !important;
-    flex-basis: 22px !important;
+    width: 24px !important;
+    height: 24px !important;
+    flex-basis: 24px !important;
     grid-row: 1 !important;
   }
 
@@ -1356,21 +1363,104 @@ html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .
     min-height: 32px !important;
     padding: 0 8px !important;
     font-size: 11px !important;
+    border-radius: 9px !important;
   }
 
   html body .zone-topbar .zone-header-actions .zone-theme-indicator {
-    width: 15px !important;
-    height: 15px !important;
-    flex: 0 0 15px !important;
+    width: 16px !important;
+    height: 16px !important;
+    flex: 0 0 16px !important;
   }
 
   html body aside.zone-sidebar #zone-operative-crest {
     display: none !important;
   }
+
+  /* Borderless Frosted Glass Mobile Tabbar with 3D Multi-Color Icons */
+  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
+    background: rgba(11, 15, 25, 0.92) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(16px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+    gap: 3px !important;
+    padding: 5px 6px calc(5px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
+    background: rgba(252, 252, 254, 0.94) !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.075) !important;
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.1) !important;
+    backdrop-filter: blur(16px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+    gap: 3px !important;
+    padding: 5px 6px calc(5px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    box-shadow: none !important;
+    color: #94a3b8 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    gap: 3px !important;
+    padding: 4px 2px !important;
+  }
+
+  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    box-shadow: none !important;
+    color: #475569 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    gap: 3px !important;
+    padding: 4px 2px !important;
+  }
+
+  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-current="page"],
+  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.085) !important;
+    border: 0 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-current="page"],
+  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-expanded="true"] {
+    background: rgba(15, 23, 42, 0.075) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+  }
+
+  /* Hide plain text symbol (◆ ◈ ▲ ■ ✕ ☰) while preserving React child index 0 */
+  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > span:first-child:not(.zaaa-mob-ico) {
+    display: none !important;
+  }
+
+  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > .zaaa-mob-ico {
+    order: -1 !important;
+    width: 20px !important;
+    height: 20px !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 20px !important;
+  }
+
+  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > .zaaa-mob-ico svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
 }
 
 /* ==========================================================================
- * 4. RTL ARABIC TYPOGRAPHY DISCIPLINE (Zero Letter-Spacing on Arabic)
+ * 4. RTL ARABIC TYPOGRAPHY DISCIPLINE & REDUCED MOTION RESPECT
  * ========================================================================== */
 
 html[dir="rtl"] body .zone-topbar .zone-brand,
@@ -1389,4 +1479,18 @@ html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-lbl,
 html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation .zone-nav-group,
 html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button {
   letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html body svg.zaaa-vivid-svg,
+  html body svg.zaaa-vivid-svg .zaaa-ico-kinetic,
+  html body .zone-topbar #zone-topbar-hud [data-hud="energy"] .zaaa-ico-kinetic,
+  html body .zone-topbar #zone-topbar-hud [data-hud="nerve"] .zaaa-ico-kinetic,
+  html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon svg.zaaa-vivid-svg,
+  html body .zone-topbar .zone-bulletin > span:first-child::before,
+  html body .zone-topbar .zone-bulletin [data-zticker="1"] {
+    animation: none !important;
+    transition: none !important;
+  }
 }

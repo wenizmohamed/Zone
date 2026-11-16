@@ -1,5 +1,5 @@
-/* ZONE v123 - Expanded 3D Metropolis, Dynamic Time-of-Day & Live Clock,
-   Level-Locked Progression Sectors, 47 Semantic Location Icons & Global World Cities */
+/* ZONE v127 - Expanded 3D Metropolis, Demand-Throttled Live Clock,
+   Atmospheric Hairline Sectors, Torn-Style Color Jewel Pins & Global World Flights */
 (function (root) {
   "use strict";
 
@@ -44,9 +44,9 @@
       mapX: 255,
       mapY: 108,
       accent: "#39e7a3",
-      name: { en: "Zone City", ar: "مدينة الزون" },
+      name: { en: "Zone City", ar: "مدينة زون" },
       region: { en: "Atlantic Syndicate Hub", ar: "المركز الرئيسي للعصابات" },
-      perk: { en: "Home Turf - All 5 Sectors & Territory Wars", ar: "أرضك الأساسية - 5 قطاعات وحروب العائلات" },
+      perk: { en: "Home Turf · All 5 Sectors & Territory Wars", ar: "أرضك الأساسية · 5 قطاعات وحروب العائلات" },
       contract: { en: "Collect Downtown Protection Cut", ar: "تحصيل حصة الحماية المحلية", cash: 1850, xp: 30 }
     },
     {
@@ -136,18 +136,89 @@
   ];
 
   var ZMX_SVGS = {
-    dawn: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 17H20" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M7 17A5 5 0 0 1 17 17" fill="rgba(251,191,36,0.32)" stroke="currentColor" stroke-width="1.8"/><path d="M12 6V9M6.3 9.3L8.2 11.2M17.7 9.3L15.8 11.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    day: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="rgba(250,204,21,0.35)" stroke="currentColor" stroke-width="1.85"/><path d="M12 3V5.5M12 18.5V21M3 12H5.5M18.5 12H21M5.6 5.6L7.4 7.4M16.6 16.6L18.4 18.4M18.4 5.6L16.6 7.4M7.4 16.6L5.6 18.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    afternoon: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="4" fill="rgba(245,158,11,0.34)" stroke="currentColor" stroke-width="1.8"/><path d="M9 18H18.5A3.5 3.5 0 0 0 18.5 11C18.2 11 17.9 11.05 17.6 11.12A4.5 4.5 0 0 0 9.2 12.5A3 3 0 0 0 9 18Z" fill="rgba(148,163,184,0.28)" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/></svg>',
-    dusk: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 18H21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M6 18V9L11 6V18M11 11H17V18" fill="rgba(249,115,22,0.28)" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/><circle cx="17.5" cy="6.5" r="2.2" fill="rgba(251,146,60,0.45)" stroke="currentColor" stroke-width="1.6"/></svg>',
-    night: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19.5 14.5A7.5 7.5 0 0 1 9.5 4.5A7.5 7.5 0 1 0 19.5 14.5Z" fill="rgba(96,165,250,0.32)" stroke="currentColor" stroke-width="1.85" stroke-linejoin="round"/></svg>',
-    plane: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5L14.2 9L21.5 11.2V13.1L14.2 12L13.5 18.2L16.2 20V21.5L12 20.4L7.8 21.5V20L10.5 18.2L9.8 12L2.5 13.1V11.2L9.8 9L12 2.5Z" fill="rgba(56,189,248,0.28)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-    lock: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.85"/><path d="M8 11V7.8C8 5.6 9.8 3.8 12 3.8C14.2 3.8 16 5.6 16 7.8V11" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"/></svg>',
-    unlock: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(57,231,163,0.26)" stroke="currentColor" stroke-width="1.85"/><path d="M8 11V7.6C8 5.4 9.8 3.6 12 3.6C13.8 3.6 15.3 4.8 15.8 6.4" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"/></svg>',
-    recon: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="rgba(56,189,248,0.22)" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    bolt: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2.5L5.5 13H11.5L10.5 21.5L18.5 10.8H12.5L13 2.5Z" fill="rgba(235,184,88,0.32)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
-    check: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="rgba(57,231,163,0.24)" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.3L10.8 15L16.2 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    alert: '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5L21 19.5H3L12 3.5Z" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.5V13.8M12 16.8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+    dawn:
+      '<svg class="zmx-svg-ico zmx-ico-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-dawn" x1="6" y1="7" x2="18" y2="18" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fda4af"/><stop offset="55%" stop-color="#fb923c"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient></defs>' +
+        '<path class="zmx-sun-rays" d="M12 4.8V8M5.8 8.8L8 11M18.2 8.8L16 11" stroke="#fde047" stroke-width="1.9" stroke-linecap="round"/>' +
+        '<path d="M6.2 17A5.8 5.8 0 0 1 17.8 17H6.2Z" fill="url(#zmx-g-dawn)"/>' +
+        '<path d="M3.5 17.5H20.5" stroke="#ffffff" stroke-opacity="0.85" stroke-width="1.8" stroke-linecap="round"/>' +
+      '</svg>',
+    day:
+      '<svg class="zmx-svg-ico zmx-ico-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-day" x1="6" y1="6" x2="18" y2="18" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>' +
+        '<g class="zmx-sun-rays" stroke="#fde047" stroke-width="1.9" stroke-linecap="round">' +
+          '<path d="M12 2.5V5.2M12 18.8V21.5M2.5 12H5.2M18.8 12H21.5M5.3 5.3L7.2 7.2M16.8 16.8L18.7 18.7M18.7 5.3L16.8 7.2M7.2 16.8L5.3 18.7"/>' +
+        '</g>' +
+        '<circle cx="12" cy="12" r="5.1" fill="url(#zmx-g-day)"/>' +
+        '<circle cx="10.6" cy="10.6" r="1.4" fill="#ffffff" fill-opacity="0.72"/>' +
+      '</svg>',
+    afternoon:
+      '<svg class="zmx-svg-ico zmx-ico-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs>' +
+          '<linearGradient id="zmx-g-aft-sun" x1="5" y1="5" x2="15" y2="15" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#f97316"/></linearGradient>' +
+          '<linearGradient id="zmx-g-aft-cld" x1="8" y1="10" x2="20" y2="19" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#bae6fd"/></linearGradient>' +
+        '</defs>' +
+        '<circle cx="9.6" cy="9.6" r="4.4" fill="url(#zmx-g-aft-sun)"/>' +
+        '<path d="M8.8 18.4H18.4A3.4 3.4 0 0 0 18.4 11.6C18.1 11.6 17.8 11.65 17.5 11.72A4.4 4.4 0 0 0 9.1 13A2.8 2.8 0 0 0 8.8 18.4Z" fill="url(#zmx-g-aft-cld)" fill-opacity="0.95"/>' +
+      '</svg>',
+    dusk:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-dusk" x1="5" y1="6" x2="19" y2="19" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs>' +
+        '<circle cx="17.2" cy="6.8" r="2.8" fill="#fde047"/>' +
+        '<path d="M5.5 18.5V9.2L11.2 6V18.5H5.5ZM11.2 11.2H17.8V18.5H11.2V11.2Z" fill="url(#zmx-g-dusk)"/>' +
+        '<path d="M3 18.5H21" stroke="#ffffff" stroke-opacity="0.82" stroke-width="1.8" stroke-linecap="round"/>' +
+      '</svg>',
+    night:
+      '<svg class="zmx-svg-ico zmx-ico-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-night" x1="5" y1="4" x2="19" y2="20" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="55%" stop-color="#818cf8"/><stop offset="100%" stop-color="#c084fc"/></linearGradient></defs>' +
+        '<path d="M19.6 14.6A7.6 7.6 0 0 1 9.4 4.4A7.6 7.6 0 1 0 19.6 14.6Z" fill="url(#zmx-g-night)"/>' +
+        '<circle cx="16.8" cy="6.4" r="1.25" fill="#ffffff"/>' +
+        '<circle cx="19.4" cy="9.4" r="0.85" fill="#bae6fd"/>' +
+      '</svg>',
+    plane:
+      '<svg class="zmx-svg-ico zmx-ico-jet" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-jet" x1="3" y1="2.5" x2="21" y2="21.5" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs>' +
+        '<path d="M12 2.2L14.4 8.8L21.6 11.2V13.2L14.4 12.1L13.6 18.1L16.4 19.9V21.6L12 20.4L7.6 21.6V19.9L10.4 18.1L9.6 12.1L2.4 13.2V11.2L9.6 8.8L12 2.2Z" fill="url(#zmx-g-jet)"/>' +
+        '<path d="M12 3.8L13.1 9.6L12 18.6L10.9 9.6L12 3.8Z" fill="#ffffff" fill-opacity="0.9"/>' +
+      '</svg>',
+    lock:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-lock" x1="5" y1="10" x2="19" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#d97706"/></linearGradient></defs>' +
+        '<path d="M8.2 11V7.7C8.2 5.6 9.9 3.9 12 3.9C14.1 3.9 15.8 5.6 15.8 7.7V11" stroke="#fde68a" stroke-width="2" stroke-linecap="round"/>' +
+        '<rect x="5" y="10.6" width="14" height="10.4" rx="2.8" fill="url(#zmx-g-lock)"/>' +
+        '<circle cx="12" cy="15.4" r="1.45" fill="#ffffff"/>' +
+      '</svg>',
+    unlock:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-unlock" x1="5" y1="10" x2="19" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs>' +
+        '<path d="M8.2 11V7.5C8.2 5.4 9.9 3.7 12 3.7C13.8 3.7 15.2 4.8 15.7 6.4" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round"/>' +
+        '<rect x="5" y="10.6" width="14" height="10.4" rx="2.8" fill="url(#zmx-g-unlock)"/>' +
+        '<circle cx="12" cy="15.4" r="1.45" fill="#ffffff"/>' +
+      '</svg>',
+    recon:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-recon" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>' +
+        '<circle cx="12" cy="12" r="8.8" fill="url(#zmx-g-recon)"/>' +
+        '<circle cx="12" cy="12" r="4.4" stroke="#ffffff" stroke-width="1.5"/>' +
+        '<circle cx="12" cy="12" r="1.8" fill="#ffffff"/>' +
+      '</svg>',
+    bolt:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-bolt" x1="5" y1="2.5" x2="19" y2="21.5" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>' +
+        '<path d="M13.2 2.2L5.2 13.2H11.4L10.4 21.8L18.8 10.8H12.6L13.2 2.2Z" fill="url(#zmx-g-bolt)"/>' +
+      '</svg>',
+    check:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-check" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs>' +
+        '<circle cx="12" cy="12" r="9.2" fill="url(#zmx-g-check)"/>' +
+        '<path d="M8 12.3L10.8 15.1L16.3 9.5" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</svg>',
+    alert:
+      '<svg class="zmx-svg-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="zmx-g-alert" x1="3" y1="3.5" x2="21" y2="19.5" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f43f5e"/></linearGradient></defs>' +
+        '<path d="M12 3.2L21.2 19.6H2.8L12 3.2Z" fill="url(#zmx-g-alert)"/>' +
+        '<path d="M12 9.4V13.8M12 16.8H12.01" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round"/>' +
+      '</svg>'
   };
 
   var TIME_PHASES = {
@@ -166,8 +237,8 @@
       road: "#b0a4b5",
       roadCase: "#7c7282",
       bldg: ["#b9b2c4", "#cbc4d6", "#e4dce9"],
-      lockFill: "#7c2d12",
-      lockOpacity: 0.14,
+      lockFill: "#0f172a",
+      lockOpacity: 0.10,
       isLightUi: true
     },
     day: {
@@ -185,8 +256,8 @@
       road: "#cfc6b4",
       roadCase: "#9e9481",
       bldg: ["#b8c2cf", "#cfd6df", "#e6e2d8"],
-      lockFill: "#b45309",
-      lockOpacity: 0.14,
+      lockFill: "#0f172a",
+      lockOpacity: 0.10,
       isLightUi: true
     },
     afternoon: {
@@ -204,8 +275,8 @@
       road: "#bfb19a",
       roadCase: "#8d806b",
       bldg: ["#b9a790", "#d1bfa7", "#e6d5be"],
-      lockFill: "#b45309",
-      lockOpacity: 0.16,
+      lockFill: "#0f172a",
+      lockOpacity: 0.10,
       isLightUi: true
     },
     dusk: {
@@ -224,7 +295,7 @@
       roadCase: "#202536",
       bldg: ["#3b455e", "#4f5c7a", "#687799"],
       lockFill: "#090d16",
-      lockOpacity: 0.34,
+      lockOpacity: 0.12,
       isLightUi: false
     },
     night: {
@@ -243,7 +314,7 @@
       roadCase: "#111724",
       bldg: ["#1c283d", "#283956", "#364d73"],
       lockFill: "#060a12",
-      lockOpacity: 0.38,
+      lockOpacity: 0.12,
       isLightUi: false
     }
   };
@@ -274,7 +345,8 @@
       clockTimer: null,
       metroInstalled: false,
       didMetroFrame: false,
-      styleReadyLatch: false
+      styleReadyLatch: false,
+      hostPaused: false
     };
 
     try {
@@ -464,45 +536,55 @@
       var style = document.createElement("style");
       style.id = "zone-map-expansion-css";
       style.textContent = [
-        ".zmx-chrono-bar{position:absolute;top:10px;right:50px;left:auto;width:fit-content;transform:none;z-index:18;display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:8px;background:rgba(9,13,22,0.88);border:1px solid rgba(235,184,88,0.44);box-shadow:0 10px 26px rgba(0,0,0,0.52),inset 0 1px 0 rgba(255,255,255,0.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#f8fafc;font:600 10px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 260px);flex-wrap:nowrap;white-space:nowrap;justify-content:flex-end}",
+        ".zmx-chrono-bar{position:absolute;top:10px;right:50px;left:auto;width:fit-content;transform:none;z-index:18;display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:rgba(9,13,22,0.84);border:1px solid rgba(255,255,255,0.08);box-shadow:0 12px 32px rgba(0,0,0,0.55),inset 0 1px 0 rgba(255,255,255,0.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#f8fafc;font:600 10px/1.2 Rubik,system-ui,sans-serif;max-width:calc(100% - 260px);flex-wrap:nowrap;white-space:nowrap;justify-content:flex-end}",
         "[dir='rtl'] .zmx-chrono-bar{right:auto;left:10px;justify-content:flex-start}",
-        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(11,16,27,0.88);border-color:rgba(235,184,88,0.52);color:#f8fafc;box-shadow:0 10px 26px rgba(15,23,42,0.34),inset 0 1px 0 rgba(255,255,255,0.10)}",
+        "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(11,16,27,0.86);border-color:rgba(255,255,255,0.12);color:#f8fafc;box-shadow:0 12px 32px rgba(15,23,42,0.34),inset 0 1px 0 rgba(255,255,255,0.10)}",
         "body[data-zmx-light='1'] .mgrade{background:radial-gradient(ellipse 75% 60% at 50% 35%,rgba(255,248,220,0.16) 0%,rgba(255,248,220,0) 68%)!important}",
-        ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:5px;background:rgba(255,255,255,0.07);border:1px solid rgba(148,163,184,0.24);font-variant-numeric:tabular-nums}",
-        ".zmx-city-tag{font-weight:900;color:#ebb858;letter-spacing:0.06em;font-size:10.5px}",
-        ".zmx-clock-digits{font-weight:900;font-size:11.5px;color:#49f0a1;letter-spacing:0.04em}",
-        ".zmx-phase-badge{display:inline-flex;align-items:center;gap:4px;font-weight:800;font-size:10px;padding:3px 7px;border-radius:5px;background:rgba(235,184,88,0.15);color:#fde68a;border:1px solid rgba(235,184,88,0.35)}",
-        ".zmx-pills{display:inline-flex;align-items:center;gap:3px}",
-        ".zmx-pill{background:transparent;border:1px solid rgba(148,163,184,0.26);color:#cbd5e1;border-radius:5px;padding:3px 6px;font:700 10px/1.1 inherit;cursor:pointer;transition:all .14s ease}",
-        ".zmx-pill:hover{border-color:#ebb858;color:#fff}",
-        ".zmx-pill.active{background:#ebb858;border-color:#ebb858;color:#090d16;font-weight:900}",
-        ".zmx-world-btn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(180deg,#38bdf8,#0284c7);color:#04131d;border:1px solid #7dd3fc;border-radius:5px;padding:4px 9px;font:900 10px/1.1 inherit;letter-spacing:0.03em;cursor:pointer;box-shadow:0 2px 10px rgba(56,189,248,0.32)}",
-        ".zmx-world-btn:hover{filter:brightness(1.08)}",
-        ".zmx-lv-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:5px;background:rgba(57,231,163,0.15);border:1px solid rgba(57,231,163,0.45);color:#6ef7c0;font-weight:900;font-size:10px}",
-        ".zmx-gate-marker{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;font:800 9.5px/1.1 Rubik,system-ui,sans-serif;letter-spacing:0.03em;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.62);border:1px solid rgba(245,158,11,0.78);background:rgba(9,13,22,0.9);backdrop-filter:blur(6px);color:#fef3c7;white-space:nowrap;transition:transform .15s ease,border-color .15s ease}",
-        ".zmx-gate-marker:hover{transform:scale(1.06);border-color:#fbbf24}",
-        ".zmx-gate-marker.unlocked{border-color:rgba(57,231,163,0.75);color:#a7f3d0;background:rgba(8,26,20,0.88)}",
-        ".zmx-poi-hover{position:absolute;z-index:22;pointer-events:none;padding:4px 9px;border-radius:6px;background:rgba(8,12,20,0.94);border:1px solid rgba(235,184,88,0.55);box-shadow:0 8px 20px rgba(0,0,0,0.65);color:#f8fafc;font:700 11px/1.2 Rubik,system-ui,sans-serif;white-space:nowrap;transform:translate(-50%,14px);transition:opacity .12s ease}",
+        ".zmx-clock-box{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,0.06);border:0;font-variant-numeric:tabular-nums}",
+        ".zmx-city-tag{font-weight:800;color:#38bdf8;letter-spacing:0.04em;font-size:10.5px}",
+        ".zmx-clock-digits{font-weight:800;font-size:11.5px;color:#49f0a1;letter-spacing:0.03em}",
+        ".zmx-phase-badge{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,0.06);color:#f1f5f9;border:0}",
+        ".zmx-sun-rays{transform-origin:12px 12px;transition:transform .24s cubic-bezier(.22,1,.36,1)}",
+        ".zmx-phase-badge:hover .zmx-sun-rays{transform:rotate(24deg)}",
+        ".zmx-ico-jet{transition:transform .2s cubic-bezier(.22,1,.36,1)}",
+        ".zmx-pills{display:inline-flex;align-items:center;gap:2px;padding:2px;border-radius:999px;background:rgba(255,255,255,0.04)}",
+        ".zmx-pill{background:transparent;border:0;color:#cbd5e1;border-radius:999px;padding:3px 7px;font:700 10px/1.1 inherit;cursor:pointer;transition:background-color .16s ease,color .16s ease,transform .16s ease}",
+        ".zmx-pill:hover{background:rgba(255,255,255,0.08);color:#fff}",
+        ".zmx-pill.active{background:linear-gradient(180deg,#38bdf8,#0284c7);color:#04131d;font-weight:800}",
+        ".zmx-world-btn{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(180deg,#10b981,#059669);color:#04131d;border:0;border-radius:999px;padding:4px 10px;font:800 10px/1.1 inherit;letter-spacing:0.01em;cursor:pointer;box-shadow:0 4px 12px rgba(16,185,129,0.28);transition:transform .16s ease,opacity .16s ease}",
+        ".zmx-world-btn:hover{transform:translateY(-1px)}",
+        ".zmx-world-btn:hover .zmx-ico-jet{transform:translate(1.5px,-1.5px) scale(1.08)}",
+        ".zmx-lv-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:999px;background:rgba(57,231,163,0.14);border:0;color:#6ef7c0;font-weight:800;font-size:10px}",
+        ".zmx-gate-marker{display:inline-flex;align-items:center;gap:4px;padding:3.5px 8px;border-radius:999px;font:700 9.5px/1.1 Rubik,system-ui,sans-serif;letter-spacing:0.01em;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.58);border:1px solid rgba(255,255,255,0.14);background:rgba(9,13,22,0.88);backdrop-filter:blur(6px);color:#e2e8f0;white-space:nowrap;transition:transform .16s ease,background-color .16s ease}",
+        ".zmx-gate-marker:hover{transform:scale(1.05);background:rgba(15,23,42,0.95)}",
+        ".zmx-gate-marker.unlocked{border-color:rgba(56,189,248,0.42);color:#bae6fd;background:rgba(8,20,32,0.88)}",
+        ".zmx-poi-hover{position:absolute;z-index:22;pointer-events:none;padding:5px 10px;border-radius:8px;background:rgba(8,12,20,0.92);border:1px solid rgba(255,255,255,0.12);box-shadow:0 10px 24px rgba(0,0,0,0.62);color:#f8fafc;font:700 11px/1.2 Rubik,system-ui,sans-serif;white-space:nowrap;transform:translate(-50%,14px);transition:opacity .12s ease}",
         ".zmx-poi-hover[hidden]{display:none!important}",
         ".zmx-modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(4,7,14,0.76);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:14px}",
         ".zmx-modal-backdrop[hidden]{display:none!important}",
-        ".zmx-modal{width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:9px;background:linear-gradient(180deg,#11192a 0%,#090e18 100%);border:1px solid rgba(235,184,88,0.52);box-shadow:0 24px 60px rgba(0,0,0,0.78);color:#f8fafc;padding:16px;font:500 12.5px/1.45 Rubik,system-ui,sans-serif}",
-        "body[data-zmx-light='1'] .zmx-modal{background:linear-gradient(180deg,#fdfbf6 0%,#eee6d4 100%);border-color:#b4781e;color:#0f172a}",
-        ".zmx-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(148,163,184,0.2)}",
-        ".zmx-modal-title{margin:0;font-size:17px;font-weight:900;letter-spacing:0.03em}",
-        ".zmx-close{background:rgba(255,255,255,0.08);border:1px solid rgba(148,163,184,0.3);color:inherit;border-radius:5px;padding:5px 10px;font:800 11px/1 inherit;cursor:pointer}",
-        ".zmx-world-svg{width:100%;height:168px;border-radius:7px;background:radial-gradient(circle at 50% 45%,#13253e 0%,#08111e 85%);border:1px solid rgba(56,189,248,0.32);margin-bottom:12px;display:block}",
+        ".zmx-modal{width:min(760px,100%);max-height:90vh;overflow:auto;border-radius:16px;background:linear-gradient(180deg,#0f172a 0%,#090e18 100%);border:1px solid rgba(255,255,255,0.08);box-shadow:0 28px 64px rgba(0,0,0,0.78);color:#f8fafc;padding:18px;font:500 12.5px/1.45 Rubik,system-ui,sans-serif}",
+        "body[data-zmx-light='1'] .zmx-modal{background:linear-gradient(180deg,#ffffff 0%,#f1f5f9 100%);border-color:rgba(15,23,42,0.08);color:#0f172a}",
+        ".zmx-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(148,163,184,0.16)}",
+        ".zmx-modal-title{margin:2px 0 0;font-size:17px;font-weight:800;letter-spacing:-0.01em}",
+        ".zmx-close{background:rgba(255,255,255,0.07);border:0;color:inherit;border-radius:8px;padding:6px 11px;font:700 11px/1 inherit;cursor:pointer}",
+        ".zmx-world-svg{width:100%;height:168px;border-radius:12px;background:radial-gradient(circle at 50% 45%,#13253e 0%,#08111e 85%);border:1px solid rgba(56,189,248,0.22);margin-bottom:12px;display:block}",
         ".zmx-city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px}",
-        ".zmx-city-card{border-radius:6px;border:1px solid rgba(148,163,184,0.25);background:rgba(15,23,42,0.75);padding:10px;display:flex;flex-direction:column;gap:6px}",
-        "body[data-zmx-light='1'] .zmx-city-card{background:#ffffff;border-color:#cfc3ab}",
-        ".zmx-city-card.active{border-color:#39e7a3;box-shadow:0 0 0 1px rgba(57,231,163,0.35)}",
-        ".zmx-city-card.locked{opacity:0.78;border-style:dashed}",
-        ".zmx-cta{background:linear-gradient(180deg,#ebb858,#c58622);color:#090d16;border:1px solid #f7d486;border-radius:4px;padding:6px 10px;font:900 11px/1.1 inherit;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em}",
+        ".zmx-city-card{border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:rgba(15,23,42,0.78);padding:11px;display:flex;flex-direction:column;gap:6px}",
+        "body[data-zmx-light='1'] .zmx-city-card{background:#ffffff;border-color:rgba(15,23,42,0.08)}",
+        ".zmx-city-card.active{border-color:rgba(57,231,163,0.5);box-shadow:0 0 0 1px rgba(57,231,163,0.25)}",
+        ".zmx-city-card.locked{opacity:0.78}",
+        ".zmx-cta{background:linear-gradient(180deg,#10b981,#059669);color:#04131d;border:0;border-radius:8px;padding:7px 11px;font:800 11px/1.1 inherit;cursor:pointer;letter-spacing:0.01em}",
         ".zmx-cta:disabled{opacity:0.45;cursor:not-allowed}",
-        ".zmx-cta-sec{background:rgba(56,189,248,0.16);color:#7dd3fc;border:1px solid rgba(56,189,248,0.45);border-radius:4px;padding:6px 10px;font:800 11px/1.1 inherit;cursor:pointer}",
-        "body[data-zmx-light='1'] .zmx-cta-sec{background:#e0f2fe;color:#075985;border-color:#0284c7}",
-        ".zmx-svg-ico{display:inline-block;width:12.5px;height:12.5px;flex:none;vertical-align:-2px}",
+        ".zmx-cta-sec{background:rgba(56,189,248,0.14);color:#7dd3fc;border:0;border-radius:8px;padding:7px 11px;font:700 11px/1.1 inherit;cursor:pointer}",
+        "body[data-zmx-light='1'] .zmx-cta-sec{background:#e0f2fe;color:#075985}",
+        ".zmx-svg-ico{display:inline-block;width:13px;height:13px;flex:none;vertical-align:-2px}",
         ".zmx-cta,.zmx-cta-sec{display:inline-flex;align-items:center;justify-content:center;gap:5px}",
+        ".familyRail{border-bottom:1px solid rgba(255,255,255,0.07)!important;background:rgba(9,13,22,0.94)!important}",
+        ".familyRail button.familyStat{min-height:32px!important;padding:3px 10px!important;border-radius:10px!important;border:1px solid rgba(234,179,8,0.22)!important;background:rgba(234,179,8,0.10)!important;display:inline-flex!important;flex-direction:column!important;justify-content:center!important;transition:background-color .16s ease,transform .16s ease}",
+        ".familyRail button.familyStat:not(:disabled):hover{background:rgba(234,179,8,0.16)!important;border-color:rgba(234,179,8,0.34)!important;transform:translateY(-1px)}",
+        ".familyRail .factionSelectLabel select{min-height:32px!important;padding:4px 10px!important;border-radius:8px!important;border:1px solid rgba(255,255,255,0.08)!important;background:rgba(15,23,42,0.84)!important}",
+        ".sideToggle,.cityReset,.mapExpand,.streetView{border-radius:10px!important;border:1px solid rgba(255,255,255,0.10)!important;background:rgba(9,13,22,0.86)!important}",
+        "@media (prefers-reduced-motion:reduce){.zmx-sun-rays,.zmx-ico-jet,.zmx-pill,.zmx-world-btn,.zmx-gate-marker,.familyRail button.familyStat{transition:none!important}}",
         "[dir='rtl'] .zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar *,[dir='rtl'] .zmx-gate-marker,.zmx-modal[dir='rtl'],.zmx-modal[dir='rtl'] *{letter-spacing:0!important}",
         "@media (max-width:1120px){.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}",
         "@media (max-width:780px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:50px;left:10px;right:auto;width:fit-content;max-width:calc(100% - 56px);justify-content:flex-start}}"
@@ -564,7 +646,7 @@
       chronoEl.innerHTML =
         '<span class="zmx-clock-box" title="' + (ar ? "توقيت المدينة المباشر" : "Live City Clock") + '">' +
           '<span class="zmx-city-tag">' + city.code + '</span>' +
-          '<span class="zmx-clock-digits" id="zmxClockText">' + formatClock(cityDate) + '</span>' +
+          '<bdi class="zmx-clock-digits" id="zmxClockText">' + formatClock(cityDate) + '</bdi>' +
         '</span>' +
         '<span class="zmx-phase-badge" id="zmxPhaseBadge">' +
           '<span>' + phaseObj.icon + '</span>' +
@@ -607,15 +689,41 @@
     }
 
     function tickClock() {
+      if (document.hidden || state.hostPaused) return;
       var city = getActiveCity();
       var d = getCityDate(city);
+      var nextClock = formatClock(d);
       var clockNode = document.getElementById("zmxClockText");
-      if (clockNode) clockNode.textContent = formatClock(d);
+      if (clockNode) {
+        if (clockNode.firstChild && clockNode.firstChild.nodeType === 3) {
+          if (clockNode.firstChild.nodeValue !== nextClock) {
+            clockNode.firstChild.nodeValue = nextClock;
+          }
+        } else {
+          clockNode.textContent = nextClock;
+        }
+      }
       var desired = computeDesiredPhase();
       if (desired !== state.activePhase) {
         applyAtmosphere(true);
         renderChronoHud();
       }
+    }
+
+    function parseHexRgb(hex) {
+      var raw = String(hex || "#38bdf8").replace("#", "").trim();
+      if (raw.length === 3) raw = raw[0] + raw[0] + raw[1] + raw[1] + raw[2] + raw[2];
+      var num = parseInt(raw, 16);
+      if (!Number.isFinite(num)) return [56, 189, 248];
+      return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+    }
+
+    function mixRgbCss(rgbA, rgbB, weightB) {
+      var wA = 1 - weightB;
+      return "rgb(" +
+        Math.round(rgbA[0] * wA + rgbB[0] * weightB) + "," +
+        Math.round(rgbA[1] * wA + rgbB[1] * weightB) + "," +
+        Math.round(rgbA[2] * wA + rgbB[2] * weightB) + ")";
     }
 
     function ensureMetroCoinImage(poi, locked) {
@@ -631,41 +739,60 @@
         c.save();
         c.scale(64 / 24, 64 / 24);
 
-        var grad = c.createRadialGradient(12, 9, 1, 12, 12, 12);
-        grad.addColorStop(0, "#1c283d");
-        grad.addColorStop(1, "#090f1b");
+        var baseRgb = parseHexRgb(poi.color || "#38bdf8");
+        var topStop = locked ? mixRgbCss(baseRgb, [148, 163, 184], 0.36) : mixRgbCss(baseRgb, [255, 255, 255], 0.3);
+        var midStop = locked ? mixRgbCss(baseRgb, [30, 41, 59], 0.38) : mixRgbCss(baseRgb, [15, 23, 42], 0.12);
+        var deepStop = locked ? mixRgbCss(baseRgb, [8, 13, 24], 0.68) : mixRgbCss(baseRgb, [6, 10, 20], 0.52);
+
+        var grad = c.createRadialGradient(10.5, 8.2, 1.2, 12, 12, 11.4);
+        grad.addColorStop(0, topStop);
+        grad.addColorStop(0.56, midStop);
+        grad.addColorStop(1, deepStop);
         c.beginPath();
-        c.arc(12, 12, 11.2, 0, Math.PI * 2);
+        c.arc(12, 12, 11.1, 0, Math.PI * 2);
         c.fillStyle = grad;
         c.fill();
 
-        c.strokeStyle = poi.color || "#38bdf8";
-        c.lineWidth = 2.0;
+        /* Subtle inner contrast core so white vector glyphs pop cleanly on bright gold/cyan jewels */
+        c.beginPath();
+        c.arc(12, 12, 8.4, 0, Math.PI * 2);
+        c.fillStyle = locked ? "rgba(8, 13, 24, 0.34)" : "rgba(6, 10, 20, 0.24)";
+        c.fill();
+
+        /* Crisp frosted jewel rim */
+        c.beginPath();
+        c.arc(12, 12, 11.0, 0, Math.PI * 2);
+        c.strokeStyle = locked ? "rgba(226, 232, 240, 0.38)" : "rgba(255, 255, 255, 0.78)";
+        c.lineWidth = 1.65;
         c.stroke();
 
-        c.strokeStyle = "#ffffff";
-        c.lineWidth = 2.15;
+        c.save();
+        c.shadowColor = "rgba(4, 8, 16, 0.58)";
+        c.shadowBlur = 2.2;
+        c.strokeStyle = locked ? "rgba(248, 250, 252, 0.86)" : "#ffffff";
+        c.lineWidth = 2.25;
         c.lineCap = "round";
         c.lineJoin = "round";
         var pathStr = ICON_PATHS[poi.icon] || EXTRA_ICONS[poi.icon] || ICON_PATHS.missions || "";
         if (pathStr) c.stroke(new Path2D(pathStr));
+        c.restore();
 
         if (locked) {
           c.beginPath();
           c.arc(18.6, 5.4, 3.8, 0, Math.PI * 2);
-          c.fillStyle = "#f59e0b";
+          c.fillStyle = "#0f172a";
           c.fill();
-          c.strokeStyle = "#090f1b";
-          c.lineWidth = 1.1;
+          c.strokeStyle = "rgba(226, 232, 240, 0.62)";
+          c.lineWidth = 1.05;
           c.stroke();
 
           c.beginPath();
-          c.rect(17.1, 5.2, 3.0, 2.2);
-          c.fillStyle = "#090f1b";
+          c.rect(17.1, 5.3, 3.0, 2.2);
+          c.fillStyle = "#e2e8f0";
           c.fill();
           c.beginPath();
-          c.arc(18.6, 5.1, 1.0, Math.PI, 0);
-          c.strokeStyle = "#090f1b";
+          c.arc(18.6, 5.2, 1.0, Math.PI, 0);
+          c.strokeStyle = "#e2e8f0";
           c.lineWidth = 0.9;
           c.stroke();
         }
@@ -849,8 +976,8 @@
               locked: locked,
               iconImage: coinImg,
               color: p.color,
-              strokeColor: locked ? "#f59e0b" : p.color,
-              label: (locked ? "Lv." + p.minLevel + " | " : "") + title
+              strokeColor: locked ? "rgba(148, 163, 184, 0.38)" : "#38bdf8",
+              label: (locked ? "Lv." + p.minLevel + " · " : "") + title
             },
             geometry: {
               type: "Point",
@@ -963,13 +1090,13 @@
         id: "sector-lock-fill",
         type: "fill",
         source: "sector-locks-src",
-        paint: { "fill-color": "#090d16", "fill-opacity": 0.34 }
+        paint: { "fill-color": "#090d16", "fill-opacity": 0.12 }
       }, beforeCoins);
       safeAddLayer({
         id: "sector-lock-border",
         type: "line",
         source: "sector-locks-src",
-        paint: { "line-color": "#f59e0b", "line-width": 2.4, "line-dasharray": [3, 2], "line-opacity": 0.92 }
+        paint: { "line-color": "#94a3b8", "line-width": 1.2, "line-dasharray": [4, 3], "line-opacity": 0.32 }
       }, beforeCoins);
 
       safeAddSource("metro-pois-src", { type: "geojson", data: buildMetroPoiGeo() });
@@ -981,9 +1108,9 @@
           "circle-pitch-alignment": "viewport",
           "circle-pitch-scale": "viewport",
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 14, 15.5, 19, 18, 25],
-          "circle-color": ["get", "color"],
+          "circle-color": ["case", ["boolean", ["get", "locked"], false], ["get", "color"], "#38bdf8"],
           "circle-blur": 0.85,
-          "circle-opacity": 0.32
+          "circle-opacity": ["case", ["boolean", ["get", "locked"], false], 0.14, 0.38]
         }
       });
       safeAddLayer({
@@ -994,9 +1121,9 @@
           "circle-pitch-alignment": "viewport",
           "circle-pitch-scale": "viewport",
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 9.5, 15.5, 13, 18, 17],
-          "circle-color": "rgba(8, 13, 23, 0.92)",
+          "circle-color": "rgba(8, 13, 23, 0.88)",
           "circle-stroke-color": ["get", "strokeColor"],
-          "circle-stroke-width": 2.2,
+          "circle-stroke-width": ["case", ["boolean", ["get", "locked"], false], 1.2, 2.1],
           "circle-opacity": 0.96
         }
       });
@@ -1173,12 +1300,12 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:' + (unlocked ? "#39e7a3" : "#d97706") + '">' +
-                (unlocked ? ZMX_SVGS.unlock + '<span>' + (ar ? "قطاع مفتوح للعمليات" : "SECTOR CLEARANCE GRANTED") + '</span>' : ZMX_SVGS.lock + '<span>' + (ar ? "قطاع مقفل بالمستوى" : "RESTRICTED SYNDICATE SECTOR") + '</span>') +
+              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:' + (unlocked ? "#39e7a3" : "#fbbf24") + '">' +
+                (unlocked ? ZMX_SVGS.unlock + '<span>' + (ar ? "قطاع مفتوح للعمليات" : "Sector Clearance Active") + '</span>' : ZMX_SVGS.lock + '<span>' + (ar ? "قطاع مقفل بالمستوى" : "Restricted District") + '</span>') +
               '</div>' +
               '<h3 class="zmx-modal-title">' + sector.name[ar ? "ar" : "en"] + '</h3>' +
             '</div>' +
-            '<button type="button" class="zmx-close" id="zmxModalClose">' + (ar ? "إغلاق ✕" : "Close ✕") + '</button>' +
+            '<button type="button" class="zmx-close" id="zmxModalClose">' + (ar ? "إغلاق" : "Close") + '</button>' +
           '</div>' +
           poiLine +
           '<p style="margin:0 0 12px;opacity:0.9">' + sector.desc[ar ? "ar" : "en"] + '</p>' +
@@ -1260,14 +1387,14 @@
         '<div class="zmx-modal" dir="' + (ar ? "rtl" : "ltr") + '">' +
           '<div class="zmx-modal-head">' +
             '<div>' +
-              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:900;letter-spacing:0.08em;color:#0284c7">' +
-                ZMX_SVGS.plane + '<span>' + (ar ? "شبكة الطيران الدولية للنقابة" : "GLOBAL SYNDICATE FLIGHT NETWORK") + '</span>' +
+              '<div style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#38bdf8">' +
+                ZMX_SVGS.plane + '<span>' + (ar ? "شبكة الطيران العالمية" : "Global Flight Network") + '</span>' +
               '</div>' +
               '<h3 class="zmx-modal-title">' +
-                (ar ? "السفر من مدينة إلى مدينة | موقعك: " : "City-to-City World Transit | Current: ") + curCity.name[ar ? "ar" : "en"] +
+                (ar ? "الرحلات العالمية · " : "World Flights · ") + curCity.name[ar ? "ar" : "en"] +
               '</h3>' +
             '</div>' +
-            '<button type="button" class="zmx-close" id="zmxWorldClose">' + (ar ? "إغلاق ✕" : "Close ✕") + '</button>' +
+            '<button type="button" class="zmx-close" id="zmxWorldClose">' + (ar ? "إغلاق" : "Close") + '</button>' +
           '</div>' +
           '<svg class="zmx-world-svg" viewBox="0 0 820 200" aria-label="World Flight Radar">' +
             '<g fill="rgba(148,163,184,0.16)" stroke="rgba(148,163,184,0.28)" stroke-width="0.8">' +
@@ -1452,6 +1579,8 @@
 
       setPaint("sector-lock-fill", "fill-color", cfg.lockFill);
       setPaint("sector-lock-fill", "fill-opacity", cfg.lockOpacity);
+      setPaint("sector-lock-border", "line-color", cfg.isLightUi ? "#475569" : "#94a3b8");
+      setPaint("sector-lock-border", "line-opacity", 0.32);
 
       /* Toggle Three.js dark noir window custom layers off in sunlit Day/Afternoon/Dawn so 3D walls are sunlit, and on in Dusk/Night */
       try {
@@ -1531,6 +1660,11 @@
 
     window.addEventListener("message", function (ev) {
       if (ev.origin !== window.location.origin || !ev.data || typeof ev.data !== "object") return;
+      if (ev.data.type === "ZONE_RENDER_PAUSE" || ev.data.zonePauseRender !== undefined) {
+        state.hostPaused = Boolean(ev.data.zonePauseRender);
+        if (!state.hostPaused) tickClock();
+        return;
+      }
       if (ev.data.type === "ZONE_OPEN_WORLD_CITIES") {
         openWorldCitiesModal();
       } else if (ev.data.type === "ZONE_SYNC_WORLD_CITY" && ev.data.cityId) {
@@ -1539,6 +1673,10 @@
         applyAtmosphere(true);
         renderChronoHud();
       }
+    });
+
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && !state.hostPaused) tickClock();
     });
 
     state.clockTimer = setInterval(tickClock, 1000);

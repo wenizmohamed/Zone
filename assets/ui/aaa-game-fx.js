@@ -1,4 +1,4 @@
-/* ZONE v126 - MotionSites Duotone Icons, Cursor-Spotlight, Hero Atmosphere & HUD Telemetry Engine */
+/* ZONE v127 - 60fps Demand-Driven FX Engine, Vibrant Multi-Color MotionSites Icons & WebGL Iframe Throttling */
 (function () {
   'use strict';
 
@@ -10,92 +10,309 @@
   var LAYER_ID = 'zone-fx-layer';
   var MAX_FX_NODES = 28;
 
-  /* ---------------- Inline Duotone Telemetry Chip Icons (Zero Raw Emojis) ---------------- */
+  /* ---------------- Vibrant Multi-Color 3D Telemetry Chip Icons (Zero Raw Emojis) ---------------- */
   var DELTA_SVGS = {
     cashGain:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<circle cx="8" cy="8" r="6.5" fill="rgba(73,240,161,0.25)" stroke="currentColor" stroke-width="1.5"/>' +
-        '<path d="M8 4.2V11.8M10 6C10 5.1 9.1 4.6 8 4.6C6.9 4.6 6 5.1 6 5.9C6 7.5 10 6.9 10 8.9C10 9.8 9.1 10.4 8 10.4C6.8 10.4 6 9.8 5.9 9" stroke="currentColor" stroke-width="1.45" stroke-linecap="round"/>' +
+        '<defs><linearGradient id="zfx-dg-cashgain" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs>' +
+        '<circle cx="8" cy="8" r="6.8" fill="url(#zfx-dg-cashgain)"/>' +
+        '<path d="M8 4V12M9.9 5.9C9.9 5.1 9.1 4.6 8 4.6C6.9 4.6 6.1 5.1 6.1 5.9C6.1 7.4 9.9 6.9 9.9 8.9C9.9 9.8 9.1 10.4 8 10.4C6.8 10.4 6 9.8 5.9 9" stroke="#ffffff" stroke-width="1.45" stroke-linecap="round"/>' +
       '</svg>',
     cashSpend:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<circle cx="8" cy="8" r="6.5" fill="rgba(251,113,133,0.24)" stroke="currentColor" stroke-width="1.5"/>' +
-        '<path d="M5.2 8H10.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<defs><linearGradient id="zfx-dg-cashspend" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#e11d48"/></linearGradient></defs>' +
+        '<circle cx="8" cy="8" r="6.8" fill="url(#zfx-dg-cashspend)"/>' +
+        '<path d="M5.1 8H10.9" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round"/>' +
       '</svg>',
     energy:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8.8 1.8L3.6 8.8H7.7L7.1 14.2L12.4 7.2H8.3L8.8 1.8Z" fill="rgba(110,231,183,0.28)" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '<defs><linearGradient id="zfx-dg-energy" x1="3" y1="1.5" x2="13" y2="14.5" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#a3e635"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>' +
+        '<path d="M8.9 1.5L3.4 8.8H7.6L7.0 14.5L12.6 7.2H8.4L8.9 1.5Z" fill="url(#zfx-dg-energy)"/>' +
+        '<path d="M8.5 3.6L5.2 8.2H7.9L7.6 11.8L10.8 7.6H8.1L8.5 3.6Z" fill="#ffffff" fill-opacity="0.55"/>' +
       '</svg>',
     nerve:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8.3 2C9.8 4.3 12.2 5.9 12.2 9.1C12.2 11.7 10.3 13.8 8 13.8C5.7 13.8 3.8 11.7 3.8 9.1C3.8 7 5 5.3 6.2 4.3C6.1 5.6 6.8 6.4 7.5 6.8C7.1 4.9 7.5 3.2 8.3 2Z" fill="rgba(251,191,36,0.28)" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '<defs><linearGradient id="zfx-dg-nerve" x1="4" y1="2" x2="12" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="55%" stop-color="#fb923c"/><stop offset="100%" stop-color="#ef4444"/></linearGradient></defs>' +
+        '<path d="M8.3 1.8C9.9 4.2 12.4 5.9 12.4 9.1C12.4 11.9 10.4 14 8 14C5.6 14 3.6 11.9 3.6 9.1C3.6 6.9 4.9 5.2 6.2 4.1C6.1 5.5 6.8 6.3 7.5 6.7C7.1 4.8 7.5 3.1 8.3 1.8Z" fill="url(#zfx-dg-nerve)"/>' +
+        '<circle cx="8" cy="10.4" r="1.7" fill="#ffffff" fill-opacity="0.88"/>' +
       '</svg>',
     happy:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8 2L9.7 6.3L14 8L9.7 9.7L8 14L6.3 9.7L2 8L6.3 6.3L8 2Z" fill="rgba(165,180,252,0.28)" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '<defs><linearGradient id="zfx-dg-happy" x1="2" y1="2" x2="14" y2="14" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#c084fc"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>' +
+        '<path d="M8 1.6L9.9 6.1L14.4 8L9.9 9.9L8 14.4L6.1 9.9L1.6 8L6.1 6.1L8 1.6Z" fill="url(#zfx-dg-happy)"/>' +
+        '<circle cx="8" cy="8" r="1.6" fill="#ffffff"/>' +
       '</svg>',
     life:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8 13.4C8 13.4 2.5 10.1 2.5 5.9C2.5 4.1 3.9 2.8 5.5 2.8C6.6 2.8 7.5 3.4 8 4.3C8.5 3.4 9.4 2.8 10.5 2.8C12.1 2.8 13.5 4.1 13.5 5.9C13.5 10.1 8 13.4 8 13.4Z" fill="rgba(251,113,133,0.28)" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '<defs><linearGradient id="zfx-dg-life" x1="2.5" y1="2.8" x2="13.5" y2="13.6" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb7185"/><stop offset="100%" stop-color="#e11d48"/></linearGradient></defs>' +
+        '<path d="M8 13.6C8 13.6 2.3 10.2 2.3 5.9C2.3 4 3.8 2.6 5.5 2.6C6.6 2.6 7.5 3.2 8 4.2C8.5 3.2 9.4 2.6 10.5 2.6C12.2 2.6 13.7 4 13.7 5.9C13.7 10.2 8 13.6 8 13.6Z" fill="url(#zfx-dg-life)"/>' +
+        '<path d="M8 5.7V9.7M6 7.7H10" stroke="#ffffff" stroke-width="1.45" stroke-linecap="round"/>' +
       '</svg>',
     stat:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M2.2 6V10M4.2 4.5V11.5M11.8 4.5V11.5M13.8 6V10M4.2 8H11.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<defs><linearGradient id="zfx-dg-stat" x1="2" y1="4" x2="14" y2="12" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>' +
+        '<rect x="2" y="4.5" width="2.8" height="7" rx="1" fill="url(#zfx-dg-stat)"/>' +
+        '<rect x="11.2" y="4.5" width="2.8" height="7" rx="1" fill="url(#zfx-dg-stat)"/>' +
+        '<path d="M4.8 8H11.2" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>' +
       '</svg>',
     xp:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8 1.8L13.2 5V11L8 14.2L2.8 11V5L8 1.8Z" fill="rgba(235,184,88,0.28)" stroke="currentColor" stroke-width="1.45" stroke-linejoin="round"/>' +
-        '<circle cx="8" cy="8" r="1.8" fill="currentColor"/>' +
+        '<defs><linearGradient id="zfx-dg-xp" x1="2.5" y1="1.8" x2="13.5" y2="14.2" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#d97706"/></linearGradient></defs>' +
+        '<path d="M8 1.6L13.4 4.8V11.2L8 14.4L2.6 11.2V4.8L8 1.6Z" fill="url(#zfx-dg-xp)"/>' +
+        '<circle cx="8" cy="8" r="2.1" fill="#ffffff"/>' +
       '</svg>',
     levelup:
       '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
-        '<path d="M8 1.8L9.9 5.7L14.2 6.3L11.1 9.3L11.8 13.6L8 11.6L4.2 13.6L4.9 9.3L1.8 6.3L6.1 5.7L8 1.8Z" fill="rgba(250,204,21,0.34)" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+        '<defs><linearGradient id="zfx-dg-lvl" x1="2" y1="1.8" x2="14" y2="13.8" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fef08a"/><stop offset="55%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>' +
+        '<path d="M8 1.5L10 5.6L14.5 6.2L11.2 9.4L12 13.9L8 11.8L4 13.9L4.8 9.4L1.5 6.2L6 5.6L8 1.5Z" fill="url(#zfx-dg-lvl)"/>' +
+        '<circle cx="8" cy="8.2" r="1.5" fill="#ffffff"/>' +
       '</svg>'
   };
 
-  /* ---------------- MotionSites 2-Plane Duotone Quick-Action SVGs ---------------- */
+  /* ---------------- Vibrant Multi-Color 3D MotionSites Quick-Action SVGs ---------------- */
   var QUICK_ACTION_DUOTONES = {
     crimes: {
-      tone: 'rgba(235, 184, 88, 0.34)',
+      glow: 'rgba(255, 59, 92, 0.28)',
       svg:
-        '<svg class="zfx-duotone-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-          '<circle class="zfx-duo-tone" cx="12" cy="12" r="8.5"/>' +
-          '<circle class="zfx-duo-stroke" cx="12" cy="12" r="8.2"/>' +
-          '<circle class="zfx-duo-stroke" cx="12" cy="12" r="3.1"/>' +
-          '<path class="zfx-duo-stroke" d="M12 2.2V5.2M12 18.8V21.8M2.2 12H5.2M18.8 12H21.8"/>' +
+        '<svg class="zfx-duotone-svg zfx-qa-crimes" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="zfx-grad-qa-crimes" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+              '<stop offset="0%" stop-color="#ff3b5c"/>' +
+              '<stop offset="100%" stop-color="#fb923c"/>' +
+            '</linearGradient>' +
+            '<linearGradient id="zfx-grad-qa-crimes-sweep" x1="12" y1="3" x2="20" y2="12" gradientUnits="userSpaceOnUse">' +
+              '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.72"/>' +
+              '<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<circle cx="12" cy="12" r="9.2" fill="url(#zfx-grad-qa-crimes)" fill-opacity="0.96"/>' +
+          '<path class="zfx-qa-radar-sweep" d="M12 12L12 3.1A8.9 8.9 0 0 1 20.1 8.4L12 12Z" fill="url(#zfx-grad-qa-crimes-sweep)"/>' +
+          '<circle cx="12" cy="12" r="5.6" stroke="#ffffff" stroke-opacity="0.78" stroke-width="1.4"/>' +
+          '<path d="M12 2.4V5.2M12 18.8V21.6M2.4 12H5.2M18.8 12H21.6" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round"/>' +
+          '<circle cx="12" cy="12" r="2.1" fill="#ffffff"/>' +
         '</svg>'
     },
     gym: {
-      tone: 'rgba(57, 231, 163, 0.34)',
+      glow: 'rgba(16, 185, 129, 0.28)',
       svg:
-        '<svg class="zfx-duotone-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-          '<path class="zfx-duo-tone" d="M5 7C5 5.9 5.9 5 7 5H8.5V19H7C5.9 19 5 18.1 5 17V7ZM15.5 5H17C18.1 5 19 5.9 19 7V17C19 18.1 18.1 19 17 19H15.5V5Z"/>' +
-          '<path class="zfx-duo-stroke" d="M6.5 6V18M17.5 6V18"/>' +
-          '<path class="zfx-duo-stroke" d="M3.2 8.5V15.5M20.8 8.5V15.5"/>' +
-          '<path class="zfx-duo-stroke" d="M6.5 12H17.5"/>' +
+        '<svg class="zfx-duotone-svg zfx-qa-gym" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="zfx-grad-qa-gym" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse">' +
+              '<stop offset="0%" stop-color="#10b981"/>' +
+              '<stop offset="100%" stop-color="#a3e635"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<g class="zfx-qa-barbell">' +
+            '<rect x="8.2" y="10.7" width="7.6" height="2.6" rx="1.1" fill="#ffffff"/>' +
+            '<rect x="4.6" y="5.2" width="3.8" height="13.6" rx="1.6" fill="url(#zfx-grad-qa-gym)"/>' +
+            '<rect x="15.6" y="5.2" width="3.8" height="13.6" rx="1.6" fill="url(#zfx-grad-qa-gym)"/>' +
+            '<rect x="2.1" y="7.6" width="2.2" height="8.8" rx="1" fill="#34d399"/>' +
+            '<rect x="19.7" y="7.6" width="2.2" height="8.8" rx="1" fill="#a3e635"/>' +
+            '<path d="M5.7 6.8V11.2M16.7 6.8V11.2" stroke="#ffffff" stroke-opacity="0.82" stroke-width="1.2" stroke-linecap="round"/>' +
+          '</g>' +
         '</svg>'
     },
     attack: {
-      tone: 'rgba(244, 63, 94, 0.35)',
+      glow: 'rgba(244, 63, 94, 0.30)',
       svg:
-        '<svg class="zfx-duotone-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-          '<path class="zfx-duo-tone" d="M12 3.2L20.8 12L12 20.8L3.2 12L12 3.2Z"/>' +
-          '<path class="zfx-duo-stroke" d="M14.5 6.5L19.5 4.5L17.5 9.5L9.2 17.8L6.2 14.8L14.5 6.5Z"/>' +
-          '<path class="zfx-duo-stroke" d="M5 19L7.7 16.3M4.8 13.8L10.2 19.2"/>' +
-          '<path class="zfx-duo-stroke" d="M9.5 6.5L4.5 4.5L6.5 9.5"/>' +
+        '<svg class="zfx-duotone-svg zfx-qa-attack" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="zfx-grad-qa-attack" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+              '<stop offset="0%" stop-color="#f43f5e"/>' +
+              '<stop offset="100%" stop-color="#fbbf24"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<path d="M12 2.4L21.2 12L12 21.6L2.8 12L12 2.4Z" fill="url(#zfx-grad-qa-attack)" fill-opacity="0.95"/>' +
+          '<g class="zfx-qa-blades">' +
+            '<path d="M7.2 16.8L16.8 7.2M14.2 6.8H17.2V9.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<path d="M16.8 16.8L7.2 7.2M9.8 6.8H6.8V9.8" stroke="#ffffff" stroke-opacity="0.88" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<circle cx="12" cy="12" r="1.8" fill="#fef08a"/>' +
+          '</g>' +
         '</svg>'
     },
     missions: {
-      tone: 'rgba(96, 165, 250, 0.35)',
+      glow: 'rgba(139, 92, 246, 0.28)',
       svg:
-        '<svg class="zfx-duotone-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-          '<rect class="zfx-duo-tone" x="5" y="4.5" width="14" height="16.5" rx="2.5"/>' +
-          '<path class="zfx-duo-stroke" d="M9 4.5H7C5.9 4.5 5 5.4 5 6.5V19C5 20.1 5.9 21 7 21H17C18.1 21 19 20.1 19 19V6.5C19 5.4 18.1 4.5 17 4.5H15"/>' +
-          '<rect class="zfx-duo-stroke" x="9" y="2.8" width="6" height="3.4" rx="1.2"/>' +
-          '<path class="zfx-duo-stroke" d="M8.5 11.5L10.6 13.6L15.5 8.8M8.5 16.8H15.5"/>' +
+        '<svg class="zfx-duotone-svg zfx-qa-missions" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+          '<defs>' +
+            '<linearGradient id="zfx-grad-qa-missions" x1="4" y1="3.5" x2="20" y2="21" gradientUnits="userSpaceOnUse">' +
+              '<stop offset="0%" stop-color="#fbbf24"/>' +
+              '<stop offset="100%" stop-color="#8b5cf6"/>' +
+            '</linearGradient>' +
+          '</defs>' +
+          '<rect x="4.6" y="4.4" width="14.8" height="16.8" rx="3.2" fill="url(#zfx-grad-qa-missions)" fill-opacity="0.96"/>' +
+          '<rect x="8.6" y="2.6" width="6.8" height="3.4" rx="1.4" fill="#ffffff"/>' +
+          '<circle cx="12" cy="12.6" r="4.3" fill="#10b981"/>' +
+          '<path class="zfx-qa-check" d="M9.9 12.6L11.4 14.1L14.3 11.1" stroke="#ffffff" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<path d="M8.4 18.2H15.6" stroke="#ffffff" stroke-opacity="0.78" stroke-width="1.5" stroke-linecap="round"/>' +
         '</svg>'
     }
   };
+
+  /* ---------------- Vibrant Multi-Color 3D City Destinations Directory Icons ---------------- */
+  function buildCityIconSvg(gradId, c1, c2, innerMarkup) {
+    return (
+      '<svg class="zfx-city-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs>' +
+          '<linearGradient id="' + gradId + '" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+            '<stop offset="0%" stop-color="' + c1 + '"/>' +
+            '<stop offset="100%" stop-color="' + c2 + '"/>' +
+          '</linearGradient>' +
+        '</defs>' +
+        innerMarkup +
+      '</svg>'
+    );
+  }
+
+  var CITY_DESTINATION_SVGS = {
+    bank: buildCityIconSvg(
+      'zfx-grad-city-bank', '#fde047', '#d97706',
+      '<path d="M12 2.6L21 7.6V9.8H3V7.6L12 2.6Z" fill="url(#zfx-grad-city-bank)"/>' +
+      '<rect x="3.5" y="18.2" width="17" height="2.8" rx="1.1" fill="url(#zfx-grad-city-bank)"/>' +
+      '<path d="M6.2 10.2V17.8M10.1 10.2V17.8M13.9 10.2V17.8M17.8 10.2V17.8" stroke="#ffffff" stroke-width="2.05" stroke-linecap="round"/>' +
+      '<circle cx="12" cy="6.8" r="1.25" fill="#ffffff"/>'
+    ),
+    job: buildCityIconSvg(
+      'zfx-grad-city-job', '#38bdf8', '#2563eb',
+      '<path d="M9 6.5V4.8C9 3.9 9.7 3.2 10.6 3.2H13.4C14.3 3.2 15 3.9 15 4.8V6.5" stroke="#7dd3fc" stroke-width="1.9" stroke-linecap="round"/>' +
+      '<rect x="3.2" y="6.4" width="17.6" height="13.6" rx="3" fill="url(#zfx-grad-city-job)"/>' +
+      '<path d="M3.6 12.2H20.4" stroke="#ffffff" stroke-opacity="0.55" stroke-width="1.4"/>' +
+      '<rect x="10.2" y="10.6" width="3.6" height="3.2" rx="0.9" fill="#ffffff"/>'
+    ),
+    gym: buildCityIconSvg(
+      'zfx-grad-city-gym', '#10b981', '#a3e635',
+      '<rect x="8" y="10.8" width="8" height="2.4" rx="1" fill="#ffffff"/>' +
+      '<rect x="4.5" y="5.5" width="3.7" height="13" rx="1.5" fill="url(#zfx-grad-city-gym)"/>' +
+      '<rect x="15.8" y="5.5" width="3.7" height="13" rx="1.5" fill="url(#zfx-grad-city-gym)"/>' +
+      '<rect x="2.2" y="8" width="2" height="8" rx="0.9" fill="#34d399"/>' +
+      '<rect x="19.8" y="8" width="2" height="8" rx="0.9" fill="#a3e635"/>'
+    ),
+    education: buildCityIconSvg(
+      'zfx-grad-city-edu', '#6366f1', '#22d3ee',
+      '<path d="M12 3.4L21.6 8.2L12 13L2.4 8.2L12 3.4Z" fill="url(#zfx-grad-city-edu)"/>' +
+      '<path d="M6.2 10.8V15.8C6.2 17.8 8.8 19.4 12 19.4C15.2 19.4 17.8 17.8 17.8 15.8V10.8L12 13.8L6.2 10.8Z" fill="url(#zfx-grad-city-edu)" fill-opacity="0.82"/>' +
+      '<path d="M20.2 8.9V14.8" stroke="#fde047" stroke-width="1.9" stroke-linecap="round"/>' +
+      '<circle cx="20.2" cy="15.5" r="1.3" fill="#fde047"/>' +
+      '<circle cx="12" cy="8.2" r="1.4" fill="#ffffff"/>'
+    ),
+    hospital: buildCityIconSvg(
+      'zfx-grad-city-hosp', '#ff3b5c', '#fb7185',
+      '<rect x="3.6" y="3.6" width="16.8" height="16.8" rx="4.4" fill="url(#zfx-grad-city-hosp)"/>' +
+      '<path d="M12 7.4V16.6M7.4 12H16.6" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>'
+    ),
+    jail: buildCityIconSvg(
+      'zfx-grad-city-jail', '#fbbf24', '#ea580c',
+      '<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="3.4" fill="url(#zfx-grad-city-jail)"/>' +
+      '<path d="M8.2 6.4V17.6M12 6.4V17.6M15.8 6.4V17.6M6 10.2H18" stroke="#ffffff" stroke-width="1.85" stroke-linecap="round"/>'
+    ),
+    casino: buildCityIconSvg(
+      'zfx-grad-city-casino', '#a855f7', '#fbbf24',
+      '<circle cx="12" cy="12" r="9.2" fill="url(#zfx-grad-city-casino)"/>' +
+      '<circle cx="12" cy="12" r="6.3" stroke="#ffffff" stroke-opacity="0.72" stroke-width="1.3" stroke-dasharray="2.4 2"/>' +
+      '<path d="M12 7.5L15.6 12L12 16.5L8.4 12L12 7.5Z" fill="#ffffff"/>'
+    ),
+    market: buildCityIconSvg(
+      'zfx-grad-city-market', '#10b981', '#2dd4bf',
+      '<path d="M5.4 7.6H18.6L19.8 19.2C19.9 20.1 19.2 20.8 18.3 20.8H5.7C4.8 20.8 4.1 20.1 4.2 19.2L5.4 7.6Z" fill="url(#zfx-grad-city-market)"/>' +
+      '<path d="M8.8 7.6V6C8.8 4.2 10.2 2.8 12 2.8C13.8 2.8 15.2 4.2 15.2 6V7.6" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round"/>' +
+      '<path d="M9.2 13.8L11.2 15.8L15 11.8" stroke="#ffffff" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    properties: buildCityIconSvg(
+      'zfx-grad-city-prop', '#facc15', '#10b981',
+      '<path d="M4 20.4V9.8L12 3.4L20 9.8V20.4H4Z" fill="url(#zfx-grad-city-prop)"/>' +
+      '<rect x="9.8" y="13.6" width="4.4" height="6.8" rx="1" fill="#ffffff"/>' +
+      '<circle cx="12" cy="9.4" r="1.6" fill="#ffffff"/>'
+    ),
+    faction: buildCityIconSvg(
+      'zfx-grad-city-fac', '#fbbf24', '#e11d48',
+      '<path d="M12 2.5L19.6 5.6V11.8C19.6 16.5 16.3 19.9 12 21.5C7.7 19.9 4.4 16.5 4.4 11.8V5.6L12 2.5Z" fill="url(#zfx-grad-city-fac)"/>' +
+      '<path d="M12 7.1L13.4 10.1L16.6 10.5L14.2 12.8L14.8 16L12 14.4L9.2 16L9.8 12.8L7.4 10.5L10.6 10.1L12 7.1Z" fill="#ffffff"/>'
+    ),
+    crimes: buildCityIconSvg(
+      'zfx-grad-city-crimes', '#ff3b5c', '#fb923c',
+      '<circle cx="12" cy="12" r="9" fill="url(#zfx-grad-city-crimes)"/>' +
+      '<circle cx="12" cy="12" r="4.8" stroke="#ffffff" stroke-width="1.6"/>' +
+      '<circle cx="12" cy="12" r="1.8" fill="#ffffff"/>'
+    ),
+    missions: buildCityIconSvg(
+      'zfx-grad-city-miss', '#fbbf24', '#8b5cf6',
+      '<rect x="4.8" y="4.2" width="14.4" height="16.6" rx="3" fill="url(#zfx-grad-city-miss)"/>' +
+      '<path d="M9.2 12.4L11.2 14.4L15.2 10.2" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    newspaper: buildCityIconSvg(
+      'zfx-grad-city-news', '#38bdf8', '#6366f1',
+      '<rect x="3.8" y="4.2" width="16.4" height="15.6" rx="3" fill="url(#zfx-grad-city-news)"/>' +
+      '<path d="M7.5 8.8H16.5M7.5 12.4H16.5M7.5 15.8H13" stroke="#ffffff" stroke-width="1.85" stroke-linecap="round"/>'
+    ),
+    hof: buildCityIconSvg(
+      'zfx-grad-city-hof', '#fde047', '#f59e0b',
+      '<path d="M7 4.2H17V10.2C17 13 14.8 15.2 12 15.2C9.2 15.2 7 13 7 10.2V4.2Z" fill="url(#zfx-grad-city-hof)"/>' +
+      '<path d="M12 15.2V18.8M8.5 19.4H15.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>' +
+      '<circle cx="12" cy="9.2" r="1.8" fill="#ffffff"/>'
+    ),
+    items: buildCityIconSvg(
+      'zfx-grad-city-items', '#06b6d4', '#10b981',
+      '<path d="M12 2.8L20.2 7.3V16.7L12 21.2L3.8 16.7V7.3L12 2.8Z" fill="url(#zfx-grad-city-items)"/>' +
+      '<path d="M4.4 7.7L12 12L19.6 7.7M12 12V20.6" stroke="#ffffff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    attack: buildCityIconSvg(
+      'zfx-grad-city-atk', '#f43f5e', '#fbbf24',
+      '<path d="M12 2.8L20.8 12L12 21.2L3.2 12L12 2.8Z" fill="url(#zfx-grad-city-atk)"/>' +
+      '<path d="M8 16L16 8M13.2 8H16V10.8M16 16L8 8" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>'
+    ),
+    defaultPin: buildCityIconSvg(
+      'zfx-grad-city-def', '#38bdf8', '#8b5cf6',
+      '<path d="M12 2.6C7.9 2.6 4.6 5.9 4.6 10C4.6 15.2 12 21.4 12 21.4C12 21.4 19.4 15.2 19.4 10C19.4 5.9 16.1 2.6 12 2.6Z" fill="url(#zfx-grad-city-def)"/>' +
+      '<circle cx="12" cy="10" r="3" fill="#ffffff"/>'
+    )
+  };
+  CITY_DESTINATION_SVGS.jobs = CITY_DESTINATION_SVGS.job;
+  CITY_DESTINATION_SVGS.elimination = CITY_DESTINATION_SVGS.attack;
+
+  /* ---------------- Vibrant Multi-Color Crime Category Icons (.zone-crime-activity-nav) ---------------- */
+  var CRIME_CAT_PALETTES = [
+    ['#ff3b5c', '#fb923c'],
+    ['#fbbf24', '#f97316'],
+    ['#22d3ee', '#3b82f6'],
+    ['#a855f7', '#ec4899'],
+    ['#10b981', '#14b8a6'],
+    ['#f43f5e', '#eab308']
+  ];
+
+  function buildCrimeCategorySvg(idx) {
+    var pair = CRIME_CAT_PALETTES[idx % CRIME_CAT_PALETTES.length];
+    var gid = 'zfx-grad-cc-' + (idx % CRIME_CAT_PALETTES.length);
+    var shapeIdx = idx % 4;
+    var glyph = '';
+    if (shapeIdx === 0) {
+      glyph =
+        '<circle cx="12" cy="12" r="8.8" fill="url(#' + gid + ')"/>' +
+        '<circle cx="12" cy="12" r="4.2" stroke="#ffffff" stroke-width="1.6"/>' +
+        '<circle cx="12" cy="12" r="1.6" fill="#ffffff"/>';
+    } else if (shapeIdx === 1) {
+      glyph =
+        '<rect x="4.5" y="9.5" width="15" height="10.5" rx="2.8" fill="url(#' + gid + ')"/>' +
+        '<path d="M8.5 9.5V6.8C8.5 4.9 10.1 3.4 12 3.4C13.9 3.4 15.5 4.9 15.5 6.8V9.5" stroke="' + pair[0] + '" stroke-width="2" stroke-linecap="round"/>' +
+        '<circle cx="12" cy="14.6" r="1.7" fill="#ffffff"/>';
+    } else if (shapeIdx === 2) {
+      glyph =
+        '<path d="M12 2.6L20.4 7.4V16.6L12 21.4L3.6 16.6V7.4L12 2.6Z" fill="url(#' + gid + ')"/>' +
+        '<path d="M9 12.2L11.2 14.4L15.4 9.8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    } else {
+      glyph =
+        '<path d="M12 2.6L21 12L12 21.4L3 12L12 2.6Z" fill="url(#' + gid + ')"/>' +
+        '<path d="M12.6 6.8L8.8 12.4H12.2L11.4 17.2L15.2 11.6H11.8L12.6 6.8Z" fill="#ffffff"/>';
+    }
+    return (
+      '<svg class="zfx-crime-cat-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs><linearGradient id="' + gid + '" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="' + pair[0] + '"/>' +
+          '<stop offset="100%" stop-color="' + pair[1] + '"/>' +
+        '</linearGradient></defs>' +
+        glyph +
+      '</svg>'
+    );
+  }
 
   /* ---------------- Meaningful District Tags for City Directory ---------------- */
   var CITY_DISTRICT_TAGS = {
@@ -155,33 +372,48 @@
     mainEl: null,
     mainAttrObserver: null,
     mainPolishObserver: null,
+    subListObserver: null,
+    subListEl: null,
     polishPending: false,
     hudObserver: null,
+    hudCashNode: null,
+    hudBarsNode: null,
     rootObserver: null,
     syncPending: false,
-    /* Spotlight tracking */
+    /* Spotlight tracking (strictly gated to interactive spotlight cards) */
     spotRaf: 0,
     spotEvent: null,
-    /* Hero atmosphere particles */
+    /* Demand-driven 24fps Hero Atmosphere (0 rAF ticks when idle!) */
     heroDrops: [],
     heroMotes: [],
-    heroPrevAt: 0
+    heroPrevAt: 0,
+    heroLastPaintAt: 0,
+    heroRaf: 0,
+    heroTicks: 0,
+    heroVisible: true,
+    heroHovered: false,
+    heroIo: null,
+    heroBoundHeading: null,
+    /* Offscreen WebGL iframe throttling */
+    iframeIo: null,
+    iframeIntersecting: { char3d: true, cityMap: true },
+    iframePaused: { char3d: false, cityMap: false }
   };
 
-  for (var hi = 0; hi < 20; hi++) {
+  for (var hi = 0; hi < 18; hi++) {
     state.heroDrops.push({
-      x: 0.22 + Math.random() * 0.82,
+      x: 0.22 + Math.random() * 0.76,
       y: Math.random(),
-      len: 10 + Math.random() * 14,
-      spd: 0.45 + Math.random() * 0.55
+      len: 10 + Math.random() * 13,
+      spd: 0.45 + Math.random() * 0.50
     });
   }
-  for (var mi = 0; mi < 14; mi++) {
+  for (var mi = 0; mi < 12; mi++) {
     state.heroMotes.push({
-      x: 0.18 + Math.random() * 0.80,
+      x: 0.18 + Math.random() * 0.78,
       y: Math.random(),
       r: 0.9 + Math.random() * 1.5,
-      spd: 0.06 + Math.random() * 0.11,
+      spd: 0.06 + Math.random() * 0.10,
       phase: Math.random() * Math.PI * 2
     });
   }
@@ -201,7 +433,7 @@
 
   function isLightTheme() {
     try {
-      return document.documentElement && document.documentElement.getAttribute('data-theme') === 'light';
+      return Boolean(document.documentElement && document.documentElement.getAttribute('data-theme') === 'light');
     } catch (_) {
       return false;
     }
@@ -272,33 +504,33 @@
         '#' + LAYER_ID + ' *{pointer-events:none !important;box-sizing:border-box;}' +
         '.zfx-delta-chip{' +
           'position:fixed;left:0;top:0;z-index:9995;' +
-          'display:inline-flex;align-items:center;gap:5px;' +
-          'padding:4px 9px;border-radius:4px;' +
+          'display:inline-flex;align-items:center;gap:6px;' +
+          'padding:4px 10px;border-radius:999px;' +
           'font:800 12.5px/1.2 "Rubik","Noto Sans Arabic",system-ui,sans-serif;' +
           'font-variant-numeric:tabular-nums;white-space:nowrap;' +
-          'letter-spacing:0.03em;' +
-          'background:linear-gradient(180deg,rgba(14,21,35,0.95) 0%,rgba(7,11,19,0.97) 100%);' +
-          'border:1px solid var(--zfx-border,rgba(235,184,88,0.55));' +
+          'letter-spacing:0.02em;' +
+          'background:linear-gradient(180deg,rgba(14,21,35,0.96) 0%,rgba(7,11,19,0.98) 100%);' +
+          'border:1px solid var(--zfx-border,rgba(255,255,255,0.14));' +
           'color:var(--zfx-fg,#49f0a1);' +
-          'box-shadow:0 8px 20px rgba(0,0,0,0.58),0 0 14px var(--zfx-glow,rgba(73,240,161,0.22)),inset 0 1px 0 rgba(255,255,255,0.09);' +
+          'box-shadow:0 8px 22px rgba(0,0,0,0.55),0 0 14px var(--zfx-glow,rgba(73,240,161,0.22)),inset 0 1px 0 rgba(255,255,255,0.10);' +
           'transform:translate3d(-50%,0,0);will-change:transform,opacity;' +
           'animation:zfxDeltaFloat 1120ms cubic-bezier(0.16,1,0.3,1) var(--zfx-delay,0ms) both;' +
         '}' +
         'html[dir="rtl"] .zfx-delta-chip,html[lang="ar"] .zfx-delta-chip{letter-spacing:0 !important;}' +
         'html[data-theme="light"] .zfx-delta-chip{' +
           'background:linear-gradient(180deg,rgba(19,27,42,0.96) 0%,rgba(11,17,28,0.98) 100%);' +
-          'box-shadow:0 8px 18px rgba(15,23,42,0.26),0 0 0 1px rgba(255,255,255,0.22),inset 0 1px 0 rgba(255,255,255,0.14);' +
+          'box-shadow:0 8px 18px rgba(15,23,42,0.24),0 0 0 1px rgba(255,255,255,0.22),inset 0 1px 0 rgba(255,255,255,0.14);' +
         '}' +
         '.zfx-delta-chip.is-levelup{' +
-          'padding:6px 13px;font-size:14px;border-width:1.5px;' +
+          'padding:6px 14px;font-size:14px;border-width:1.5px;' +
           'background:linear-gradient(180deg,rgba(44,31,10,0.97) 0%,rgba(18,13,6,0.98) 100%);' +
         '}' +
-        '.zfx-delta-icon{display:inline-grid;place-items:center;font-size:11.5px;line-height:1;opacity:0.96;}' +
-        '.zfx-delta-icon svg{width:13px;height:13px;display:block;}' +
+        '.zfx-delta-icon{display:inline-grid;place-items:center;font-size:11.5px;line-height:1;}' +
+        '.zfx-delta-icon svg{width:14px;height:14px;display:block;}' +
         '.zfx-delta-num{unicode-bidi:isolate;direction:ltr;display:inline-block;}' +
         '.zfx-click-pulse{' +
-          'position:fixed;overflow:hidden;border-radius:4px;z-index:9993;' +
-          'border:1px solid var(--zfx-rim,rgba(235,184,88,0.62));' +
+          'position:fixed;overflow:hidden;border-radius:8px;z-index:9993;' +
+          'border:1px solid var(--zfx-rim,rgba(235,184,88,0.55));' +
           'animation:zfxButtonRim 320ms cubic-bezier(0.16,1,0.3,1) forwards;' +
         '}' +
         '.zfx-click-pulse::after{' +
@@ -310,22 +542,22 @@
           'animation:zfxSpecularWave 340ms cubic-bezier(0.16,1,0.3,1) forwards;' +
         '}' +
         '.zfx-bar-halo{' +
-          'position:fixed;border-radius:4px;z-index:9993;' +
+          'position:fixed;border-radius:6px;z-index:9993;' +
           'border:1px solid var(--zfx-halo,rgba(73,240,161,0.65));' +
           'box-shadow:0 0 14px var(--zfx-halo,rgba(73,240,161,0.45)),inset 0 0 8px var(--zfx-halo,rgba(73,240,161,0.25));' +
           'animation:zfxBarHalo 520ms cubic-bezier(0.16,1,0.3,1) forwards;' +
         '}' +
         '.zfx-screen-sweep{' +
           'position:fixed;height:2px;z-index:9994;border-radius:2px;' +
-          'background:linear-gradient(90deg,transparent 0%,#39e7a3 35%,#ebb858 70%,transparent 100%);' +
-          'box-shadow:0 0 12px rgba(235,184,88,0.55);' +
+          'background:linear-gradient(90deg,transparent 0%,#39e7a3 35%,#38bdf8 70%,transparent 100%);' +
+          'box-shadow:0 0 12px rgba(56,189,248,0.45);' +
           'transform-origin:left center;' +
           'animation:zfxSweepLine 200ms cubic-bezier(0.22,1,0.36,1) forwards;' +
         '}' +
         'html[dir="rtl"] .zfx-screen-sweep{transform-origin:right center;}' +
         'html[data-theme="light"] .zfx-screen-sweep{' +
-          'background:linear-gradient(90deg,transparent 0%,#0d7a49 35%,#b4781e 70%,transparent 100%);' +
-          'box-shadow:0 0 8px rgba(180,120,30,0.35);' +
+          'background:linear-gradient(90deg,transparent 0%,#0d7a49 35%,#0284c7 70%,transparent 100%);' +
+          'box-shadow:0 0 8px rgba(2,132,199,0.30);' +
         '}' +
         '#zone-main.zfx-screen-entering{' +
           'animation:zfxScreenReveal 180ms cubic-bezier(0.22,1,0.36,1) none;' +
@@ -337,26 +569,29 @@
           'position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;' +
           'pointer-events:none !important;z-index:1 !important;display:block;border-radius:inherit;' +
         '}' +
-        /* MotionSites Quick-Action Duotone Jewel Squircle (Dark & Day Mode) */
+        /* Borderless Frosted Squircles for Quick-Actions (Zero Gold Box Outlines!) */
         'html body #zone-main .zone-quick-actions > button .zone-nav-icon{' +
-          'position:relative;width:42px !important;height:42px !important;min-width:42px !important;' +
+          'position:relative;width:44px !important;height:44px !important;min-width:44px !important;' +
           'display:inline-grid !important;place-items:center !important;flex:none !important;' +
-          'background-color:#0b1220 !important;' +
-          'background-image:linear-gradient(145deg,#18263c 0%,#0b1220 100%) !important;' +
-          'border:1px solid rgba(235,184,88,0.46) !important;' +
-          'color:#f8fafc !important;border-radius:10px !important;' +
-          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.14),0 4px 10px rgba(0,0,0,0.32) !important;' +
-          'transition:transform 220ms cubic-bezier(0.22,1,0.36,1),border-color 220ms ease !important;' +
+          'background:rgba(255,255,255,0.052) !important;' +
+          'border:0 !important;' +
+          'border-radius:12px !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 6px 16px rgba(0,0,0,0.26) !important;' +
+          'transition:transform 240ms cubic-bezier(0.22,1,0.36,1),background-color 220ms ease,box-shadow 220ms ease !important;' +
         '}' +
         'html[data-theme="light"] body #zone-main .zone-quick-actions > button .zone-nav-icon{' +
-          'background-color:#0d1524 !important;' +
-          'background-image:linear-gradient(145deg,#162235 0%,#0d1524 100%) !important;' +
-          'border:1px solid rgba(212,162,76,0.55) !important;' +
-          'color:#f8fafc !important;border-radius:10px !important;' +
-          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.16),0 3px 9px rgba(15,23,42,0.18) !important;' +
+          'background:rgba(15,23,42,0.058) !important;' +
+          'border:0 !important;' +
+          'border-radius:12px !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.82),0 4px 12px rgba(15,23,42,0.08) !important;' +
         '}' +
         'html body #zone-main .zone-quick-actions > button:hover .zone-nav-icon{' +
-          'transform:scale(1.07);border-color:rgba(235,184,88,0.78) !important;' +
+          'transform:translateY(-1px) scale(1.07);' +
+          'background:rgba(255,255,255,0.085) !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.18),0 8px 20px var(--zfx-qa-glow,rgba(56,189,248,0.24)) !important;' +
+        '}' +
+        'html[data-theme="light"] body #zone-main .zone-quick-actions > button:hover .zone-nav-icon{' +
+          'background:rgba(15,23,42,0.09) !important;' +
         '}' +
         'html body #zone-main .zone-quick-actions > button .zone-nav-icon[data-zfx-duotone]::before{' +
           'content:none !important;display:none !important;width:0 !important;height:0 !important;' +
@@ -367,15 +602,55 @@
         '}' +
         'html body #zone-main .zone-quick-actions > button .zone-nav-icon[data-zfx-duotone] > svg.zfx-duotone-svg{' +
           'display:block !important;visibility:visible !important;' +
-          'width:22px !important;height:22px !important;' +
-          'fill:none !important;color:#f8fafc !important;overflow:visible;' +
+          'width:24px !important;height:24px !important;' +
+          'overflow:visible;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.28));' +
         '}' +
-        'html body #zone-main .zone-quick-actions > button .zone-nav-icon[data-zfx-duotone] > svg.zfx-duotone-svg .zfx-duo-tone{' +
-          'fill:var(--zfx-tone,rgba(235,184,88,0.34)) !important;stroke:none !important;' +
+        /* Quick-Action Kinetic Hover Micro-Animations (GPU transform only) */
+        '.zfx-qa-radar-sweep{transform-origin:12px 12px;transition:transform 520ms cubic-bezier(0.22,1,0.36,1);}' +
+        '#zone-main .zone-quick-actions > button:hover .zfx-qa-radar-sweep{transform:rotate(140deg);}' +
+        '.zfx-qa-barbell{transform-origin:12px 12px;transition:transform 240ms cubic-bezier(0.22,1,0.36,1);}' +
+        '#zone-main .zone-quick-actions > button:hover .zfx-qa-barbell{transform:translateY(-1.8px) scale(1.06);}' +
+        '.zfx-qa-blades{transform-origin:12px 12px;transition:transform 220ms cubic-bezier(0.22,1,0.36,1);}' +
+        '#zone-main .zone-quick-actions > button:hover .zfx-qa-blades{transform:scale(1.1) rotate(-8deg);}' +
+        '.zfx-qa-check{transform-origin:12px 12.6px;transition:transform 220ms cubic-bezier(0.22,1,0.36,1);}' +
+        '#zone-main .zone-quick-actions > button:hover .zfx-qa-check{transform:scale(1.14);}' +
+        /* City Destinations Directory Vibrant Icons (.zone-city-place-icon & .zone-nav-icon) */
+        'html body #zone-main .zone-city-destinations button .zone-city-place-icon,' +
+        'html body #zone-main .zone-city-destinations button .zone-nav-icon{' +
+          'position:relative;width:36px !important;height:36px !important;min-width:36px !important;' +
+          'display:inline-grid !important;place-items:center !important;flex:none !important;' +
+          'background:rgba(255,255,255,0.048) !important;' +
+          'border:0 !important;border-radius:11px !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 4px 10px rgba(0,0,0,0.22) !important;' +
+          'transition:transform 200ms cubic-bezier(0.22,1,0.36,1),background-color 200ms ease !important;' +
         '}' +
-        'html body #zone-main .zone-quick-actions > button .zone-nav-icon[data-zfx-duotone] > svg.zfx-duotone-svg .zfx-duo-stroke{' +
-          'fill:none !important;stroke:currentColor !important;stroke-width:1.85 !important;' +
-          'stroke-linecap:round !important;stroke-linejoin:round !important;' +
+        'html[data-theme="light"] body #zone-main .zone-city-destinations button .zone-city-place-icon,' +
+        'html[data-theme="light"] body #zone-main .zone-city-destinations button .zone-nav-icon{' +
+          'background:rgba(15,23,42,0.055) !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.82),0 3px 8px rgba(15,23,42,0.07) !important;' +
+        '}' +
+        'html body #zone-main .zone-city-destinations button:hover .zone-city-place-icon,' +
+        'html body #zone-main .zone-city-destinations button:hover .zone-nav-icon{' +
+          'transform:scale(1.08) translateY(-1px);background:rgba(255,255,255,0.085) !important;' +
+        '}' +
+        'html body #zone-main .zone-city-destinations button [data-zfx-city-icon] > svg:not(.zfx-city-svg){' +
+          'display:none !important;' +
+        '}' +
+        'html body #zone-main .zone-city-destinations button [data-zfx-city-icon] > svg.zfx-city-svg{' +
+          'display:block !important;visibility:visible !important;width:20px !important;height:20px !important;' +
+          'filter:drop-shadow(0 2px 4px rgba(0,0,0,0.24));' +
+        '}' +
+        /* Crimes Category Activity Nav Vibrant Icons (Fiber-safe append + order: -1) */
+        'html body #zone-main .zone-crime-activity-nav button[data-zfx-crime-cat] > svg:not(.zfx-crime-cat-svg){' +
+          'display:none !important;' +
+        '}' +
+        'html body #zone-main .zone-crime-activity-nav button[data-zfx-crime-cat] > svg.zfx-crime-cat-svg{' +
+          'display:block !important;width:20px !important;height:20px !important;flex:none !important;' +
+          'order:-1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));' +
+          'transition:transform 200ms cubic-bezier(0.22,1,0.36,1);' +
+        '}' +
+        'html body #zone-main .zone-crime-activity-nav button[data-zfx-crime-cat]:hover > svg.zfx-crime-cat-svg{' +
+          'transform:scale(1.1) rotate(-4deg);' +
         '}' +
         '@keyframes zfxDeltaFloat{' +
           '0%{opacity:0;transform:translate3d(-50%,8px,0) scale(0.84);}' +
@@ -587,11 +862,11 @@
       } else if (isPrimary) {
         pulse.style.setProperty('--zfx-rim', light ? 'rgba(13, 122, 73, 0.72)' : 'rgba(73, 240, 161, 0.78)');
         pulse.style.setProperty('--zfx-spot', light ? 'rgba(255, 255, 255, 0.65)' : 'rgba(209, 250, 229, 0.5)');
-        pulse.style.setProperty('--zfx-spot2', light ? 'rgba(180, 120, 30, 0.24)' : 'rgba(57, 231, 163, 0.26)');
+        pulse.style.setProperty('--zfx-spot2', light ? 'rgba(2, 132, 199, 0.22)' : 'rgba(57, 231, 163, 0.26)');
       } else {
-        pulse.style.setProperty('--zfx-rim', light ? 'rgba(180, 120, 30, 0.62)' : 'rgba(235, 184, 88, 0.62)');
-        pulse.style.setProperty('--zfx-spot', light ? 'rgba(180, 120, 30, 0.30)' : 'rgba(255, 255, 255, 0.38)');
-        pulse.style.setProperty('--zfx-spot2', 'rgba(235, 184, 88, 0.18)');
+        pulse.style.setProperty('--zfx-rim', light ? 'rgba(15, 23, 42, 0.25)' : 'rgba(148, 163, 184, 0.45)');
+        pulse.style.setProperty('--zfx-spot', light ? 'rgba(15, 23, 42, 0.16)' : 'rgba(255, 255, 255, 0.36)');
+        pulse.style.setProperty('--zfx-spot2', 'rgba(56, 189, 248, 0.18)');
       }
 
       appendFxNode(pulse, 380);
@@ -696,7 +971,7 @@
     } catch (_) {}
   }
 
-  /* ---------------- Snapshot Extraction & Delta Telemetry ---------------- */
+  /* ---------------- Snapshot Extraction & Delta Telemetry (Zero Polling!) ---------------- */
   function readResourceValue(key, g) {
     try {
       var resEl = document.querySelector('.zone-resource[data-zone-resource="' + key + '"]');
@@ -745,7 +1020,7 @@
 
     return {
       playerId: p ? String(p.playerId || '') : '',
-      gameplayReady: Boolean(g && (g.gameplayReady || g.state && g.state.gameplayReady)),
+      gameplayReady: Boolean(g && (g.gameplayReady || (g.state && g.state.gameplayReady))),
       cash: cashVal,
       cashEl: cashEl,
       bars: {
@@ -809,7 +1084,6 @@
       state.baseline = snap;
       if (!prev) return;
 
-      /* Suppress cold-boot 0 -> initial vitals jump if server session finished after timeout */
       if (
         prev.bars &&
         prev.bars.life &&
@@ -827,7 +1101,6 @@
       var recentClickAnchor = (performance.now() - state.lastActionAnchor.at) < 2800;
       var queue = [];
 
-      /* 1. Cash Delta (+$1,250 / -$950) */
       if (Number.isFinite(snap.cash) && Number.isFinite(prev.cash) && snap.cash !== prev.cash) {
         var dCash = Math.round(snap.cash - prev.cash);
         if (Math.abs(dCash) >= 1 && Math.abs(dCash) < 500000000) {
@@ -840,8 +1113,8 @@
               numText: (isGain ? '+$' : '-$') + formatInt(dCash),
               label: '',
               fg: isGain ? '#49f0a1' : '#fb7185',
-              border: isGain ? 'rgba(73, 240, 161, 0.62)' : 'rgba(251, 113, 133, 0.62)',
-              glow: isGain ? 'rgba(73, 240, 161, 0.28)' : 'rgba(244, 63, 94, 0.28)',
+              border: isGain ? 'rgba(73, 240, 161, 0.55)' : 'rgba(251, 113, 133, 0.55)',
+              glow: isGain ? 'rgba(73, 240, 161, 0.26)' : 'rgba(244, 63, 94, 0.26)',
               anchorEl: snap.cashEl
             });
           }
@@ -851,7 +1124,6 @@
         }
       }
 
-      /* 2. Resource Bars (Energy, Nerve, Happy, Life) */
       var keys = ['energy', 'nerve', 'happy', 'life'];
       for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
@@ -883,7 +1155,6 @@
         if (curB.el) spawnBarHalo(curB.el, meta.glow);
       }
 
-      /* 3. Gym Battle Stat Gains (+2.45 STR/DEF/SPD/DEX) */
       if (snap.stats && prev.stats && recentUserAct) {
         var sKeys = ['str', 'def', 'spd', 'dex'];
         for (var si = 0; si < sKeys.length; si++) {
@@ -896,7 +1167,7 @@
               numText: '+' + (dStat >= 10 ? Math.round(dStat).toLocaleString('en-US') : dStat.toFixed(2)),
               label: ar ? sm.ar : sm.en,
               fg: '#38bdf8',
-              border: 'rgba(56, 189, 248, 0.58)',
+              border: 'rgba(56, 189, 248, 0.55)',
               glow: 'rgba(56, 189, 248, 0.28)',
               anchorEl: snap.bars.energy.el
             });
@@ -904,7 +1175,6 @@
         }
       }
 
-      /* 4. Unified XP Delta (+35 XP) */
       if (Number.isFinite(snap.totalXp) && Number.isFinite(prev.totalXp) && snap.totalXp > prev.totalXp) {
         var dXp = Math.round(snap.totalXp - prev.totalXp);
         if (dXp >= 1 && dXp < 1000000) {
@@ -913,15 +1183,14 @@
             iconSvg: DELTA_SVGS.xp,
             numText: '+' + formatInt(dXp),
             label: ar ? 'خبرة' : 'XP',
-            fg: '#ebb858',
-            border: 'rgba(235, 184, 88, 0.68)',
-            glow: 'rgba(235, 184, 88, 0.30)',
+            fg: '#fbbf24',
+            border: 'rgba(251, 191, 36, 0.60)',
+            glow: 'rgba(251, 191, 36, 0.28)',
             anchorEl: snap.cashEl
           });
         }
       }
 
-      /* 5. Level-Up Milestone */
       if (Number.isFinite(snap.level) && Number.isFinite(prev.level) && snap.level > prev.level && (snap.level - prev.level) <= 20) {
         playCue('levelup');
         queue.push({
@@ -953,7 +1222,27 @@
     }, 36);
   }
 
-  /* ---------------- v126: Duotone Quick-Actions, Subtitles & City Directory Polish ---------------- */
+  /* ---------------- Fiber-Safe Text Mutation & Surface Icon Enhancement ---------------- */
+  function mutateTextNodeSafely(el, nextValue) {
+    if (!el || typeof nextValue !== 'string') return;
+    if (el.childNodes.length === 0) {
+      el.textContent = nextValue;
+      return;
+    }
+    var primaryText = null;
+    for (var i = 0; i < el.childNodes.length; i++) {
+      var child = el.childNodes[i];
+      if (child && child.nodeType === 3) {
+        if (!primaryText) {
+          primaryText = child;
+          if (child.nodeValue !== nextValue) child.nodeValue = nextValue;
+        } else if (child.nodeValue !== '') {
+          child.nodeValue = '';
+        }
+      }
+    }
+  }
+
   function detectQuickActionKey(btn, index) {
     var styleStr = (btn.getAttribute('style') || '').toLowerCase();
     if (styleStr.indexOf('crime') >= 0) return 'crimes';
@@ -975,8 +1264,7 @@
     var raw = String(rawText || '').trim();
     if (!raw) return raw;
 
-    /* Already humanized on this render pass */
-    if (/Ready$|Active$|Open$|جاهزة$|نشطة$/i.test(raw) && raw.indexOf('·') < 0) {
+    if (/Ready$|Active$|Open$|جاهزة$|نشطة$/i.test(raw) && raw.indexOf('·') < 0 && !/^0\s+/i.test(raw)) {
       return raw;
     }
 
@@ -986,8 +1274,12 @@
     var mEnergyEn = raw.match(/^(\d[\d,]*)\s*energy(?:\s*[·•|-]\s*.*)?$/i);
     if (mEnergyEn) return mEnergyEn[1] + ' Energy Ready';
 
-    var mOpenEn = raw.match(/^(\d[\d,]*)\s*(?:open|active|available|contracts?|missions?)(?:\s*[·•|-]\s*.*)?$/i);
-    if (mOpenEn) return mOpenEn[1] + ' Contracts Ready';
+    var mOpenEn = raw.match(/^(\d[\d,]*)\s*(?:open|active|available|contracts?|missions?)(?:\s*(?:ready|open|active))?(?:\s*[·•|-]\s*.*)?$/i);
+    if (mOpenEn) {
+      var nOpen = Number(String(mOpenEn[1]).replace(/,/g, ''));
+      if (nOpen === 0) return ar ? 'عقود نشطة' : 'Contracts Active';
+      return mOpenEn[1] + ' Contracts Ready';
+    }
 
     var mNerveAr = raw.match(/^([\d,٠-٩]+)\s*جرأة(?:\s*[·•|-]\s*.*)?$/);
     if (mNerveAr) return mNerveAr[1] + ' جرأة جاهزة';
@@ -1017,17 +1309,6 @@
     return raw;
   }
 
-  function mutateTextNodeSafely(el, nextValue) {
-    if (!el || typeof nextValue !== 'string') return;
-    if (el.childNodes.length === 1 && el.firstChild && el.firstChild.nodeType === 3) {
-      if (el.firstChild.nodeValue !== nextValue) {
-        el.firstChild.nodeValue = nextValue;
-      }
-    } else if (el.childNodes.length === 0) {
-      el.textContent = nextValue;
-    }
-  }
-
   function enhanceQuickActions() {
     try {
       var btns = document.querySelectorAll('#zone-main .zone-quick-actions > button');
@@ -1041,7 +1322,7 @@
         var iconEl = btn.querySelector('.zone-nav-icon');
 
         if (iconEl) {
-          iconEl.style.setProperty('--zfx-tone', spec.tone);
+          iconEl.style.setProperty('--zfx-qa-glow', spec.glow);
           var existingCustom = iconEl.querySelector('svg.zfx-duotone-svg');
           if (!existingCustom) {
             iconEl.setAttribute('data-zfx-duotone', key);
@@ -1072,6 +1353,29 @@
     } catch (_) {}
   }
 
+  function resolveCityIconKey(loc, dest, strongTxt) {
+    if (loc && CITY_DESTINATION_SVGS[loc]) return loc;
+    if (dest && CITY_DESTINATION_SVGS[dest]) return dest;
+    var probe = (loc + ' ' + dest + ' ' + strongTxt).toLowerCase();
+    if (probe.indexOf('bank') >= 0 || probe.indexOf('بنك') >= 0 || probe.indexOf('مصرف') >= 0) return 'bank';
+    if (probe.indexOf('job') >= 0 || probe.indexOf('وظائ') >= 0 || probe.indexOf('عمل') >= 0) return 'job';
+    if (probe.indexOf('gym') >= 0 || probe.indexOf('نادي') >= 0) return 'gym';
+    if (probe.indexOf('educat') >= 0 || probe.indexOf('univer') >= 0 || probe.indexOf('تعليم') >= 0 || probe.indexOf('أكاديم') >= 0) return 'education';
+    if (probe.indexOf('hosp') >= 0 || probe.indexOf('med') >= 0 || probe.indexOf('مستشف') >= 0) return 'hospital';
+    if (probe.indexOf('jail') >= 0 || probe.indexOf('prison') >= 0 || probe.indexOf('سجن') >= 0) return 'jail';
+    if (probe.indexOf('casin') >= 0 || probe.indexOf('كازينو') >= 0) return 'casino';
+    if (probe.indexOf('market') >= 0 || probe.indexOf('bazaar') >= 0 || probe.indexOf('سوق') >= 0) return 'market';
+    if (probe.indexOf('propert') >= 0 || probe.indexOf('estate') >= 0 || probe.indexOf('عقار') >= 0) return 'properties';
+    if (probe.indexOf('faction') >= 0 || probe.indexOf('عائل') >= 0 || probe.indexOf('فصيل') >= 0) return 'faction';
+    if (probe.indexOf('crime') >= 0 || probe.indexOf('جرائ') >= 0) return 'crimes';
+    if (probe.indexOf('mission') >= 0 || probe.indexOf('مهم') >= 0) return 'missions';
+    if (probe.indexOf('news') >= 0 || probe.indexOf('صحيف') >= 0) return 'newspaper';
+    if (probe.indexOf('hall') >= 0 || probe.indexOf('hof') >= 0 || probe.indexOf('مشاهير') >= 0) return 'hof';
+    if (probe.indexOf('item') >= 0 || probe.indexOf('armor') >= 0 || probe.indexOf('عتاد') >= 0) return 'items';
+    if (probe.indexOf('attack') >= 0 || probe.indexOf('قتال') >= 0) return 'attack';
+    return 'defaultPin';
+  }
+
   function enhanceCityDestinations() {
     try {
       var rows = document.querySelectorAll('#zone-main .zone-city-destinations button');
@@ -1082,13 +1386,32 @@
         var btn = rows[i];
         var strong = btn.querySelector('strong');
         var small = btn.querySelector('small');
-        if (!small) continue;
-
         var dest = (btn.getAttribute('data-zone-destination') || '').toLowerCase().trim();
         var loc = (btn.getAttribute('data-zone-location') || '').toLowerCase().trim();
         var strongTxt = strong ? (strong.textContent || '').trim() : '';
-        var smallTxt = (small.textContent || '').trim();
 
+        var iconWrap = btn.querySelector('.zone-city-place-icon, .zone-nav-icon');
+        if (iconWrap) {
+          var iconKey = resolveCityIconKey(loc, dest, strongTxt);
+          var svgMarkup = CITY_DESTINATION_SVGS[iconKey] || CITY_DESTINATION_SVGS.defaultPin;
+          var curSvg = iconWrap.querySelector('svg.zfx-city-svg');
+          if (!curSvg) {
+            iconWrap.setAttribute('data-zfx-city-icon', iconKey);
+            var holder = document.createElement('div');
+            holder.innerHTML = svgMarkup;
+            if (holder.firstElementChild) iconWrap.appendChild(holder.firstElementChild);
+          } else if (iconWrap.getAttribute('data-zfx-city-icon') !== iconKey) {
+            iconWrap.setAttribute('data-zfx-city-icon', iconKey);
+            var holderNext = document.createElement('div');
+            holderNext.innerHTML = svgMarkup;
+            if (holderNext.firstElementChild) {
+              curSvg.innerHTML = holderNext.firstElementChild.innerHTML;
+            }
+          }
+        }
+
+        if (!small) continue;
+        var smallTxt = (small.textContent || '').trim();
         var tagObj = CITY_DISTRICT_TAGS[loc] || CITY_DISTRICT_TAGS[dest] || null;
         if (!tagObj && strongTxt) {
           var normStrong = strongTxt.toLowerCase();
@@ -1099,7 +1422,6 @@
         var desired = ar ? tagObj.ar : tagObj.en;
         if (!desired || smallTxt === desired) continue;
 
-        /* Replace duplicate subtitles ("Gym" under "Gym") or generic raw screen names */
         var isDuplicate = strongTxt && smallTxt.toLowerCase() === strongTxt.toLowerCase();
         var isRawSlug = Boolean(CITY_DISTRICT_TAGS[smallTxt.toLowerCase()]) ||
           smallTxt.toLowerCase() === 'hall of fame' ||
@@ -1112,31 +1434,41 @@
     } catch (_) {}
   }
 
-  /* ---------------- v126: Hero Atmosphere Canvas (.zaaa-hero-atmosphere) ---------------- */
-  function ensureHeroAtmosphereCanvas() {
-    if (prefersReducedMotion()) return;
+  function enhanceCrimeCategoryNav() {
     try {
-      var heading = document.querySelector('#zone-main .zone-page-heading');
-      if (!heading) return;
-      if (heading.querySelector('canvas.zaaa-hero-atmosphere')) return;
-
-      var cv = document.createElement('canvas');
-      cv.className = 'zaaa-hero-atmosphere';
-      cv.setAttribute('aria-hidden', 'true');
-      heading.appendChild(cv);
+      var catBtns = document.querySelectorAll('#zone-main .zone-crime-activity-nav button[data-crime-category]');
+      if (!catBtns.length) return;
+      for (var i = 0; i < catBtns.length; i++) {
+        var btn = catBtns[i];
+        if (!btn.querySelector('svg.zfx-crime-cat-svg')) {
+          btn.setAttribute('data-zfx-crime-cat', String(i));
+          var wrap = document.createElement('div');
+          wrap.innerHTML = buildCrimeCategorySvg(i);
+          if (wrap.firstElementChild) {
+            btn.appendChild(wrap.firstElementChild);
+          }
+        }
+      }
     } catch (_) {}
   }
 
-  function renderHeroAtmosphere(now) {
-    if (prefersReducedMotion() || document.hidden) return;
+  /* ---------------- Demand-Driven Hero Atmosphere (.zaaa-hero-atmosphere: 1 Static Frame at Rest, 24fps on Hover Only!) ---------------- */
+  function shouldRunHeroLoop() {
+    return Boolean(!prefersReducedMotion() && !document.hidden && state.heroVisible && state.heroHovered);
+  }
+
+  function renderHeroAtmosphereFrame(now, isStaticPass) {
+    if (prefersReducedMotion()) return;
     var cv = document.querySelector('#zone-main .zone-page-heading canvas.zaaa-hero-atmosphere');
     if (!cv) return;
     try {
       var rect = cv.getBoundingClientRect();
-      if (!rect || rect.width < 80 || rect.height < 36 || rect.bottom < 0 || rect.top > window.innerHeight) return;
+      if (!rect || rect.width < 80 || rect.height < 36) return;
 
-      var dt = state.heroPrevAt ? Math.min(0.05, Math.max(0.004, (now - state.heroPrevAt) / 1000)) : 0.016;
-      state.heroPrevAt = now;
+      var dt = isStaticPass
+        ? 0
+        : (state.heroPrevAt ? Math.min(0.08, Math.max(0.016, (now - state.heroPrevAt) / 1000)) : 0.041);
+      if (!isStaticPass) state.heroPrevAt = now;
 
       var w = Math.round(rect.width);
       var h = Math.round(rect.height);
@@ -1154,43 +1486,214 @@
       ctx.clearRect(0, 0, w, h);
 
       var light = isLightTheme();
-      var rainAlpha = light ? 0.09 : 0.18;
+      var rainAlpha = light ? 0.08 : 0.16;
       ctx.strokeStyle = 'rgba(186, 230, 253, ' + rainAlpha + ')';
       ctx.lineWidth = 1;
 
       for (var i = 0; i < state.heroDrops.length; i++) {
         var d = state.heroDrops[i];
-        d.y += d.spd * dt * 1.35;
-        d.x -= d.spd * dt * 0.14;
-        if (d.y > 1.12) {
-          d.y = -0.12;
-          d.x = 0.24 + Math.random() * 0.78;
+        if (!isStaticPass) {
+          d.y += d.spd * dt * 1.25;
+          d.x -= d.spd * dt * 0.12;
+          if (d.y > 1.12) {
+            d.y = -0.12;
+            d.x = 0.24 + Math.random() * 0.74;
+          }
         }
         var rx = d.x * w;
         var ry = d.y * h;
         ctx.beginPath();
         ctx.moveTo(rx, ry);
-        ctx.lineTo(rx - 3.5, ry + d.len);
+        ctx.lineTo(rx - 3.2, ry + d.len);
         ctx.stroke();
       }
 
       for (var j = 0; j < state.heroMotes.length; j++) {
         var m = state.heroMotes[j];
-        m.y -= m.spd * dt;
-        if (m.y < -0.08) {
-          m.y = 1.08;
-          m.x = 0.20 + Math.random() * 0.76;
+        if (!isStaticPass) {
+          m.y -= m.spd * dt;
+          if (m.y < -0.08) {
+            m.y = 1.08;
+            m.x = 0.20 + Math.random() * 0.76;
+          }
         }
-        var pulse = 0.5 + 0.5 * Math.sin(now * 0.0024 + m.phase);
-        var moteAlpha = (light ? 0.12 : 0.28) + pulse * (light ? 0.12 : 0.26);
-        var mx = (m.x + Math.sin(now * 0.001 + m.phase) * 0.015) * w;
+        var pulse = 0.5 + 0.5 * Math.sin(now * 0.0022 + m.phase);
+        var moteAlpha = (light ? 0.10 : 0.24) + pulse * (light ? 0.10 : 0.22);
+        var mx = (m.x + Math.sin(now * 0.001 + m.phase) * 0.014) * w;
         var my = m.y * h;
-        ctx.fillStyle = (j % 4 === 0)
-          ? 'rgba(57, 231, 163, ' + (moteAlpha * 0.85).toFixed(3) + ')'
-          : 'rgba(235, 184, 88, ' + moteAlpha.toFixed(3) + ')';
+        ctx.fillStyle = (j % 3 === 0)
+          ? 'rgba(56, 189, 248, ' + (moteAlpha * 0.85).toFixed(3) + ')'
+          : (j % 2 === 0)
+            ? 'rgba(57, 231, 163, ' + (moteAlpha * 0.85).toFixed(3) + ')'
+            : 'rgba(251, 191, 36, ' + moteAlpha.toFixed(3) + ')';
         ctx.beginPath();
         ctx.arc(mx, my, m.r, 0, Math.PI * 2);
         ctx.fill();
+      }
+    } catch (_) {}
+  }
+
+  function heroLoopStep(now) {
+    state.heroRaf = 0;
+    if (!shouldRunHeroLoop()) {
+      state.heroPrevAt = 0;
+      return;
+    }
+    /* Cap hero hover atmosphere at ~24fps (41ms) for whisper-quiet GPU load */
+    if (!state.heroLastPaintAt || (now - state.heroLastPaintAt) >= 41) {
+      state.heroLastPaintAt = now;
+      state.heroTicks += 1;
+      renderHeroAtmosphereFrame(now, false);
+    }
+    if (shouldRunHeroLoop()) {
+      state.heroRaf = requestAnimationFrame(heroLoopStep);
+    }
+  }
+
+  function syncHeroLoop() {
+    if (shouldRunHeroLoop()) {
+      if (!state.heroRaf) {
+        state.heroPrevAt = 0;
+        state.heroRaf = requestAnimationFrame(heroLoopStep);
+      }
+    } else if (state.heroRaf) {
+      cancelAnimationFrame(state.heroRaf);
+      state.heroRaf = 0;
+      state.heroPrevAt = 0;
+    }
+  }
+
+  function ensureHeroAtmosphereCanvas() {
+    if (prefersReducedMotion()) return;
+    try {
+      var heading = document.querySelector('#zone-main .zone-page-heading');
+      if (!heading) {
+        state.heroHovered = false;
+        syncHeroLoop();
+        return;
+      }
+
+      if (heading !== state.heroBoundHeading) {
+        state.heroBoundHeading = heading;
+        state.heroHovered = false;
+        heading.addEventListener('pointerenter', function () {
+          state.heroHovered = true;
+          syncHeroLoop();
+        }, { passive: true });
+        heading.addEventListener('pointerleave', function () {
+          state.heroHovered = false;
+          syncHeroLoop();
+        }, { passive: true });
+      }
+
+      var cv = heading.querySelector('canvas.zaaa-hero-atmosphere');
+      var created = false;
+      if (!cv) {
+        cv = document.createElement('canvas');
+        cv.className = 'zaaa-hero-atmosphere';
+        cv.setAttribute('aria-hidden', 'true');
+        heading.appendChild(cv);
+        created = true;
+        if (!state.heroIo && typeof IntersectionObserver === 'function') {
+          state.heroIo = new IntersectionObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+              state.heroVisible = Boolean(entries[i].isIntersecting);
+            }
+            syncHeroLoop();
+          }, { threshold: 0.01 });
+        }
+        if (state.heroIo) {
+          try {
+            state.heroIo.disconnect();
+            state.heroIo.observe(cv);
+          } catch (_) {}
+        }
+      }
+
+      /* Draw 1 crisp static atmospheric frame at rest (0 continuous rAF loops!) */
+      if (created || !state.heroRaf) {
+        renderHeroAtmosphereFrame(1480, true);
+      }
+    } catch (_) {}
+  }
+
+  /* ---------------- Offscreen WebGL Iframe Throttling (#zone-char-3d & #zone-city-map) ---------------- */
+  function setIframePauseState(frame, key, shouldPause) {
+    if (!frame) return;
+    var nextPause = Boolean(shouldPause);
+    var prevPause = state.iframePaused[key];
+    frame.style.contentVisibility = nextPause ? 'hidden' : 'visible';
+    frame.setAttribute('data-zfx-throttled', nextPause ? '1' : '0');
+    if (prevPause !== nextPause) {
+      state.iframePaused[key] = nextPause;
+      try {
+        if (frame.contentWindow) {
+          frame.contentWindow.postMessage(
+            { type: 'ZONE_RENDER_PAUSE', zonePauseRender: nextPause },
+            window.location.origin
+          );
+        }
+      } catch (_) {}
+    }
+  }
+
+  function syncWebglIframeThrottle() {
+    try {
+      var main = document.getElementById('zone-main');
+      var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
+      var hiddenDoc = Boolean(document.hidden);
+
+      var charFrame = document.getElementById('zone-char-3d');
+      var mapFrame = document.getElementById('zone-city-map');
+
+      if (!state.iframeIo && typeof IntersectionObserver === 'function') {
+        state.iframeIo = new IntersectionObserver(function (entries) {
+          for (var i = 0; i < entries.length; i++) {
+            var ent = entries[i];
+            if (!ent.target) continue;
+            if (ent.target.id === 'zone-char-3d') {
+              state.iframeIntersecting.char3d = Boolean(ent.isIntersecting);
+            } else if (ent.target.id === 'zone-city-map') {
+              state.iframeIntersecting.cityMap = Boolean(ent.isIntersecting);
+            }
+          }
+          syncWebglIframeThrottle();
+        }, { threshold: 0.01 });
+      }
+
+      if (charFrame) {
+        if (state.iframeIo && !charFrame.hasAttribute('data-zfx-io')) {
+          charFrame.setAttribute('data-zfx-io', '1');
+          try { state.iframeIo.observe(charFrame); } catch (_) {}
+        }
+        var pauseChar = hiddenDoc || scr !== 'home' || state.iframeIntersecting.char3d === false;
+        setIframePauseState(charFrame, 'char3d', pauseChar);
+      }
+
+      if (mapFrame) {
+        if (state.iframeIo && !mapFrame.hasAttribute('data-zfx-io')) {
+          mapFrame.setAttribute('data-zfx-io', '1');
+          try { state.iframeIo.observe(mapFrame); } catch (_) {}
+        }
+        var pauseMap = hiddenDoc || scr !== 'city' || state.iframeIntersecting.cityMap === false;
+        setIframePauseState(mapFrame, 'cityMap', pauseMap);
+      }
+    } catch (_) {}
+  }
+
+  function bindDynamicSubListObserver() {
+    try {
+      var target = document.querySelector('#zone-main .zone-city-destinations, #zone-main .zone-crime-activity-nav');
+      if (target === state.subListEl) return;
+      state.subListEl = target || null;
+      if (state.subListObserver) {
+        try { state.subListObserver.disconnect(); } catch (_) {}
+      }
+      if (target && typeof MutationObserver === 'function') {
+        state.subListObserver = new MutationObserver(function () {
+          scheduleSurfacePolish();
+        });
+        state.subListObserver.observe(target, { childList: true, subtree: false });
       }
     } catch (_) {}
   }
@@ -1200,7 +1703,10 @@
     if (document.querySelector('x-dc')) return;
     enhanceQuickActions();
     enhanceCityDestinations();
+    enhanceCrimeCategoryNav();
     ensureHeroAtmosphereCanvas();
+    syncWebglIframeThrottle();
+    bindDynamicSubListObserver();
   }
 
   function scheduleSurfacePolish() {
@@ -1212,7 +1718,7 @@
     }, 24);
   }
 
-  /* ---------------- v126: rAF-Throttled MotionSites Cursor-Spotlight ---------------- */
+  /* ---------------- Strictly Gated rAF Cursor-Spotlight ---------------- */
   function applySpotlightCoords(el, clientX, clientY) {
     if (!el) return;
     var r = el.getBoundingClientRect();
@@ -1227,15 +1733,12 @@
     state.spotRaf = 0;
     var ev = state.spotEvent;
     state.spotEvent = null;
-    if (!ev) return;
+    if (!ev || !(ev.target instanceof Element)) return;
     try {
-      var t = ev.target;
-      if (!(t instanceof Element)) return;
-      var cardOrQuick = t.closest('.zig-game-card, .zone-quick-actions > button');
-      if (cardOrQuick) {
-        applySpotlightCoords(cardOrQuick, ev.clientX, ev.clientY);
-      }
-      var panel = t.closest('.zone-panel');
+      var cardOrQuick = ev.target.closest('.zig-game-card, .zone-quick-actions > button');
+      if (!cardOrQuick) return;
+      applySpotlightCoords(cardOrQuick, ev.clientX, ev.clientY);
+      var panel = cardOrQuick.closest('.zone-panel');
       if (panel && panel !== cardOrQuick) {
         applySpotlightCoords(panel, ev.clientX, ev.clientY);
       }
@@ -1303,9 +1806,11 @@
             if (next && state.lastScreen !== null && next !== state.lastScreen) {
               state.lastScreen = next;
               triggerScreenReveal(main);
+              syncWebglIframeThrottle();
               scheduleSurfacePolish();
             } else if (next) {
               state.lastScreen = next;
+              syncWebglIframeThrottle();
             }
           }
         }
@@ -1318,22 +1823,29 @@
       state.mainPolishObserver = new MutationObserver(function () {
         scheduleSurfacePolish();
       });
-      state.mainPolishObserver.observe(main, { childList: true, subtree: true });
+      /* Observe direct children swaps of #zone-main only (subtree: false avoids 1-sec clock mutations!) */
+      state.mainPolishObserver.observe(main, { childList: true, subtree: false });
     } catch (_) {}
   }
 
   function bindHudObserver() {
     try {
+      var cashEl = document.getElementById('zone-cash');
+      var cashHost = cashEl && cashEl.parentNode ? cashEl.parentNode : null;
+      var barsWrap = document.querySelector('.zone-profile-bars');
+      if (cashHost === state.hudCashNode && barsWrap === state.hudBarsNode && state.hudObserver) {
+        return;
+      }
+      state.hudCashNode = cashHost;
+      state.hudBarsNode = barsWrap;
       if (state.hudObserver) {
         try { state.hudObserver.disconnect(); } catch (_) {}
       }
       state.hudObserver = new MutationObserver(function () {
         scheduleTelemetryCheck();
       });
-      var cashEl = document.getElementById('zone-cash');
-      var barsWrap = document.querySelector('.zone-profile-bars');
-      if (cashEl && cashEl.parentNode) {
-        state.hudObserver.observe(cashEl.parentNode, { childList: true, characterData: true, subtree: true });
+      if (cashHost) {
+        state.hudObserver.observe(cashHost, { childList: true, characterData: true, subtree: true });
       }
       if (barsWrap) {
         state.hudObserver.observe(barsWrap, {
@@ -1350,9 +1862,10 @@
   /* ---------------- Delegated Input Listeners ---------------- */
   function setupInputListeners() {
     try {
-      /* 0. Cursor-Spotlight rAF Pointer Tracking */
+      /* 0. Strictly Gated Cursor-Spotlight rAF Pointer Tracking */
       document.addEventListener('pointermove', function (ev) {
         if (ev.pointerType === 'touch') return;
+        if (!(ev.target instanceof Element) || !ev.target.closest('.zig-game-card, .zone-quick-actions > button')) return;
         state.spotEvent = { target: ev.target, clientX: ev.clientX, clientY: ev.clientY };
         if (!state.spotRaf) {
           state.spotRaf = requestAnimationFrame(flushSpotlightMove);
@@ -1469,10 +1982,15 @@
           state.lastUserGestureAt = Date.now();
         }
       }, { passive: true });
+
+      document.addEventListener('visibilitychange', function () {
+        syncHeroLoop();
+        syncWebglIframeThrottle();
+      });
     } catch (_) {}
   }
 
-  /* ---------------- Lifecycle & Boot ---------------- */
+  /* ---------------- Lifecycle & Boot (Zero setInterval Polling, Zero Idle rAF!) ---------------- */
   function boot() {
     try {
       ensureLayer();
@@ -1483,6 +2001,7 @@
 
       window.addEventListener('zone:render', function () {
         bindMainScreenObserver();
+        bindHudObserver();
         runSurfacePolish();
         scheduleTelemetryCheck();
       });
@@ -1495,23 +2014,12 @@
             rebindTimer = null;
             if (!document.getElementById(LAYER_ID)) ensureLayer();
             if (!state.mainEl || !state.mainEl.isConnected) bindMainScreenObserver();
+            bindHudObserver();
             runSurfacePolish();
-          }, 180);
+          }, 120);
         });
-        state.rootObserver.observe(document.body, { childList: true });
+        state.rootObserver.observe(document.body, { childList: true, subtree: false });
       }
-
-      setInterval(function () {
-        if (document.hidden) return;
-        if (!state.mainEl || !state.mainEl.isConnected) bindMainScreenObserver();
-        scheduleTelemetryCheck();
-      }, 900);
-
-      function heroLoop(now) {
-        renderHeroAtmosphere(now);
-        requestAnimationFrame(heroLoop);
-      }
-      requestAnimationFrame(heroLoop);
     } catch (_) {}
   }
 
@@ -1524,12 +2032,20 @@
   }
 
   window.ZoneGameFX = {
-    version: '126.0',
+    version: '127.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,
     triggerScreenReveal: triggerScreenReveal,
     playCue: playCue,
-    runSurfacePolish: runSurfacePolish
+    runSurfacePolish: runSurfacePolish,
+    syncWebglIframeThrottle: syncWebglIframeThrottle,
+    getPerfStats: function () {
+      return {
+        heroLoopRunning: Boolean(state.heroRaf),
+        heroTicks: state.heroTicks,
+        iframePaused: { char3d: state.iframePaused.char3d, cityMap: state.iframePaused.cityMap }
+      };
+    }
   };
 })();

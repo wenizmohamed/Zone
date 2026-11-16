@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/assets/ui/fonts113.css?v=113">
   <link rel="stylesheet" href="/admin.css?v=97">
   <link rel="stylesheet" href="/assets/ui/studio-media.css?v=108">
+  <link rel="stylesheet" href="/assets/ui/aaa-engine-studio.css?v=127">
 </head>
 <body>
   <dialog id="adminSessionDialog" class="admin-session-dialog" aria-labelledby="adminSessionTitle">
@@ -26,15 +27,15 @@
   <a class="skip-link" href="#studioWorkspace" data-studio-copy="skipToWorkspace">Skip to workspace</a>
   <header class="topbar" data-admin-shell>
     <button class="button ghost studio-menu-button" id="studioMenuButton" type="button" aria-controls="studioSidebar" aria-expanded="false">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><defs><linearGradient id="aesMenuGrad" x1="3" y1="5" x2="21" y2="19" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#10b981"></stop><stop offset="100%" stop-color="#22d3ee"></stop></linearGradient></defs><path d="M4 6h16M4 12h16M4 18h16" stroke="url(#aesMenuGrad)" stroke-width="1.9" stroke-linecap="round"></path></svg>
       <span data-studio-copy="menu">Menu</span>
     </button>
     <a class="brand" href="/admin" aria-label="ZONE admin home">
-      <span class="brand-mark">Z</span>
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none"><defs><linearGradient id="aesBrandShell" x1="3" y1="3" x2="37" y2="37" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#10b981"></stop><stop offset="50%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#8b5cf6"></stop></linearGradient><linearGradient id="aesBrandCore" x1="8" y1="8" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#ffffff"></stop><stop offset="100%" stop-color="#cbd5e1"></stop></linearGradient></defs><rect x="3" y="3" width="34" height="34" rx="11" fill="url(#aesBrandShell)" fill-opacity="0.24" stroke="url(#aesBrandShell)" stroke-width="1.6"></rect><rect x="5.2" y="5.2" width="29.6" height="29.6" rx="9" stroke="#ffffff" stroke-opacity="0.24" stroke-width="0.8"></rect><path d="M13 13.2h14l-14 13.6h14" stroke="url(#aesBrandCore)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="28.2" cy="11.8" r="2.1" fill="#fbbf24"></circle></svg></span>
       <span><strong>ZONE</strong><small data-copy="controlPlane">ADMIN CONTROL PLANE</small></span>
     </a>
     <button class="studio-search-button" id="studioSearchButton" type="button" aria-haspopup="dialog" aria-controls="studioCommandDialog">
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesSearchGrad" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#8b5cf6"></stop></linearGradient></defs><circle cx="10.5" cy="10.5" r="6.5" stroke="url(#aesSearchGrad)" stroke-width="1.8"></circle><path d="m16 16 4 4" stroke="#f8fafc" stroke-width="1.8" stroke-linecap="round"></path></svg>
       <span data-studio-copy="search">Find a page or action</span><kbd aria-hidden="true">Ctrl K</kbd>
     </button>
     <div class="top-actions">
@@ -49,7 +50,7 @@
   <div class="app-shell" data-admin-shell>
     <aside class="sidebar" id="studioSidebar">
       <button id="studioMenuClose" class="button ghost" type="button" data-studio-copy="closeNavigation" hidden>Close workspace menu</button>
-      <div class="workspace-label"><span data-copy="zonePlatform">ZONE PLATFORM</span><strong data-copy="engineVersion">ENGINE 3.6 LIVE</strong></div>
+      <div class="workspace-label"><span data-copy="zonePlatform">ZONE PLATFORM</span><strong data-copy="engineVersion">ENGINE 3.8 LIVE (v127)</strong></div>
       <nav id="adminNav" aria-label="Admin sections"></nav>
       <div class="mobile-admin-links">
         <a class="button ghost" href="/engine" data-copy="engine">Engine</a>
@@ -88,132 +89,207 @@
           <div><span class="eyebrow" data-copy="controlCenter">CONTROL CENTER</span><h1 data-copy="overview">Platform overview</h1><p data-copy="overviewSub">One control plane for the engine, modules, content, releases, and the live game.</p></div>
           <button class="button secondary" type="button" data-go="releases" data-copy="releaseHistory">Release history</button>
         </div>
-        <article class="panel" data-open-engine-telemetry="1" data-open-engine-agi-studio="1" style="margin-bottom:16px;border-top:2px solid #a3d900">
+        <article class="panel aes-agi-panel" data-open-engine-telemetry="1" data-open-engine-agi-studio="1">
           <div class="panel-head">
-            <div><strong id="agiBannerTitle">OPEN ENGINE 3.6 - SYNDICATE GAME ARCHITECT &amp; 3D HOLODECK</strong><p id="agiBannerSub" style="margin:4px 0 0;opacity:.82;font-size:13px">Live Content Synthesis · Monte-Carlo Combat Simulation · 120-Block 3D City Grid · Clothed 3D Wardrobe &amp; 51 Weapons · EN/AR</p></div>
-            <span class="status good" id="agiBannerStatus">OPEN ENGINE 3.6 ONLINE</span>
+            <div><strong id="agiBannerTitle">OPEN ENGINE 3.8 LIVE (v127) - SYNDICATE GAME ARCHITECT &amp; 3D HOLODECK</strong><p id="agiBannerSub" style="margin:4px 0 0;opacity:.86;font-size:13px">Live Content Synthesis · Monte-Carlo Combat Simulation · 5-Sector 120-Block 3D Metropolis · 7-City Charter · 4 Instant Arcades · 51 Weapons · EN/AR</p></div>
+            <span class="status good" id="agiBannerStatus">ENGINE 3.8 LIVE (v127)</span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:12px">
-            <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
-              <div style="flex:1;min-width:0">
-                <span class="eyebrow" style="color:#a3d900">3D CLOTHED CHARACTER WARDROBE &amp; ARMOR RIG</span>
-                <h3 style="margin:4px 0;font-size:15px">Rigged 3D Syndicate Wardrobe (24 Clips · 19 Hand Grip Bones)</h3>
-                <p style="margin:0 0 8px;font-size:12px;opacity:.82">Full clothed 3D character rigs: Executive Suit (tailored jacket, shirt, faction tie), Street Enforcer Hoodie &amp; Denim, and Tactical Breacher Uniform + Kevlar Vest overlay.</p>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
-                  <span class="badge">Executive Suit Rig</span>
-                  <span class="badge">Street Enforcer Rig</span>
-                  <span class="badge">Tactical SWAT + Kevlar Vest</span>
-                  <span class="badge">6-Zone Anatomical Hitboxes</span>
+          <div class="aes-agi-body">
+            <div class="aes-agi-grid">
+              <div class="aes-pillar-card">
+                <span class="aes-ms-icon aes-pillar-icon" aria-hidden="true"><svg viewBox="0 0 44 44" width="44" height="44" fill="none"><defs><linearGradient id="aesWardrobeGrad" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fbbf24"></stop><stop offset="55%" stop-color="#f59e0b"></stop><stop offset="100%" stop-color="#f43f5e"></stop></linearGradient></defs><rect x="3" y="3" width="38" height="38" rx="12" fill="url(#aesWardrobeGrad)" fill-opacity="0.22" stroke="url(#aesWardrobeGrad)" stroke-width="1.5"></rect><path d="M16 12 22 16.5 28 12l5.5 4.2-2.5 7.3h-3v10.5H16V23.5h-3l-2.5-7.3L16 12Z" fill="url(#aesWardrobeGrad)" fill-opacity="0.45" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"></path><path d="M22 16.5V27" stroke="#fde68a" stroke-width="1.5" stroke-linecap="round"></path></svg></span>
+                <div class="aes-pillar-copy">
+                  <span class="eyebrow aes-eyebrow-gold" data-aes-en="3D CLOTHED CHARACTER WARDROBE &amp; ARMOR RIG" data-aes-ar="خزانة الشخصيات ثلاثية الأبعاد والدروع">3D CLOTHED CHARACTER WARDROBE &amp; ARMOR RIG</span>
+                  <h3 data-aes-en="Rigged 3D Syndicate Wardrobe (24 Clips · 19 Hand Grip Bones)" data-aes-ar="هيكل أزياء النقابة ثلاثي الأبعاد (24 حركة · 19 عظمة قبضة)">Rigged 3D Syndicate Wardrobe (24 Clips · 19 Hand Grip Bones)</h3>
+                  <p data-aes-en="Full clothed 3D character rigs: Executive Suit (tailored jacket, shirt, faction tie), Street Enforcer Hoodie &amp; Denim, and Tactical Breacher Uniform + Kevlar Vest overlay." data-aes-ar="شخصيات ثلاثية الأبعاد بكامل الأزياء: بدلة تنفيذية رسمية، سترة الشارع الميدانية، وزي الاقتحام التكتيكي مع سترة كيفلر واقية.">Full clothed 3D character rigs: Executive Suit (tailored jacket, shirt, faction tie), Street Enforcer Hoodie &amp; Denim, and Tactical Breacher Uniform + Kevlar Vest overlay.</p>
+                  <div class="aes-badge-row">
+                    <span class="badge" data-aes-en="Executive Suit Rig" data-aes-ar="بدلة تنفيذية">Executive Suit Rig</span>
+                    <span class="badge" data-aes-en="Street Enforcer Rig" data-aes-ar="زي الشارع">Street Enforcer Rig</span>
+                    <span class="badge" data-aes-en="Tactical SWAT + Kevlar Vest" data-aes-ar="درع تكتيكي + كيفلر">Tactical SWAT + Kevlar Vest</span>
+                    <span class="badge" data-aes-en="6-Zone Anatomical Hitboxes" data-aes-ar="6 مناطق إصابة تشريحية">6-Zone Anatomical Hitboxes</span>
+                  </div>
+                </div>
+              </div>
+              <div class="aes-pillar-card">
+                <div class="aes-thumb-frame">
+                  <img src="/assets/weapons/upgrades111/l85-thumbnail.png" alt="3D PBR Tactical Bullpup Rifle" loading="lazy" decoding="async">
+                </div>
+                <div class="aes-pillar-copy">
+                  <span class="eyebrow aes-eyebrow-cyan" data-aes-en="3D PBR WEAPON STUDIO (51 WEAPONS)" data-aes-ar="استوديو الأسلحة الفيزيائية ثلاثية الأبعاد (51 سلاحاً)">3D PBR WEAPON STUDIO (51 WEAPONS)</span>
+                  <h3 data-aes-en="High-Detail 3D Bullpup L85, M4A1, G3A3, AKM &amp; Dragunov" data-aes-ar="ترسانة ثلاثية الأبعاد عالية الدقة L85 و M4A1 و G3A3 و AKM و Dragunov">High-Detail 3D Bullpup L85, M4A1, G3A3, AKM &amp; Dragunov</h3>
+                  <p data-aes-en="Physically based 3D meshes with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon grip sockets." data-aes-ar="مجسمات فيزيائية بمعدن مصقول وبوليمر تكتيكي وسكك تذخير ومقابس قبضة يد معايرة بدقة.">Physically based 3D meshes with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon grip sockets.</p>
+                  <div class="aes-badge-row">
+                    <span class="badge">Bullpup L85 Rifle</span>
+                    <span class="badge">M4A1 Carbine (31,580 tris)</span>
+                    <span class="badge">G3A3 Rifle (19,444 tris)</span>
+                    <span class="badge">Glock 18 &amp; Dragunov</span>
+                  </div>
+                </div>
+              </div>
+              <div class="aes-pillar-card">
+                <span class="aes-ms-icon aes-pillar-icon" aria-hidden="true"><svg viewBox="0 0 44 44" width="44" height="44" fill="none"><defs><linearGradient id="aesTelemetryGrad" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#10b981"></stop><stop offset="55%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#8b5cf6"></stop></linearGradient></defs><rect x="3" y="3" width="38" height="38" rx="12" fill="url(#aesTelemetryGrad)" fill-opacity="0.22" stroke="url(#aesTelemetryGrad)" stroke-width="1.5"></rect><circle cx="22" cy="22" r="9.5" fill="url(#aesTelemetryGrad)" fill-opacity="0.36" stroke="#ffffff" stroke-width="1.6"></circle><path d="M12 22h4.2l2.6-5.2 4.2 10.4 2.8-5.2H32" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+                <div class="aes-pillar-copy">
+                  <span class="eyebrow aes-eyebrow-emerald" data-aes-en="SYNDICATE SIMULATION &amp; TELEMETRY ENGINE" data-aes-ar="محرك محاكاة النقابة والقياس الفوري">SYNDICATE SIMULATION &amp; TELEMETRY ENGINE</span>
+                  <h3 data-aes-en="Monte-Carlo Combat Balance · 120-Block 3D Grid · Audio Dispatch" data-aes-ar="توازن مونت كارلو القتالي · شبكة 120 مربعاً · إيجاز صوتي">Monte-Carlo Combat Balance · 120-Block 3D Grid · Audio Dispatch</h3>
+                  <p data-aes-en="Authoritative crime/economy draft synthesis, tunable simulation depth, 120-block 3D territory synchronization, and bilingual voice dispatch." data-aes-ar="توليد مسودات الجرائم والاقتصاد، عمق محاكاة قابل للضبط، مزامنة أراضي المدينة ثلاثية الأبعاد، وإيجاز صوتي ثنائي اللغة.">Authoritative crime/economy draft synthesis, tunable simulation depth, 120-block 3D territory synchronization, and bilingual voice dispatch.</p>
+                  <div class="aes-badge-row">
+                    <span class="badge" data-aes-en="Draft Content Synthesis" data-aes-ar="توليد المسودات">Draft Content Synthesis</span>
+                    <span class="badge" data-aes-en="10K Monte-Carlo Balance" data-aes-ar="10 آلاف جولة محاكاة">10K Monte-Carlo Balance</span>
+                    <span class="badge" data-aes-en="120-Block 3D City Sync" data-aes-ar="مزامنة 120 مربعاً">120-Block 3D City Sync</span>
+                    <span class="badge" data-aes-en="PBR Ballistics Inspector" data-aes-ar="فاحص المقذوفات">PBR Ballistics Inspector</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
-              <div style="width:148px;height:96px;background:#14181d;border:1px solid #2b3137;border-radius:4px;display:flex;align-items:center;justify-content:center;flex:none;padding:4px;overflow:hidden">
-                <img src="/assets/weapons/upgrades111/l85-thumbnail.png" alt="3D PBR Tactical Bullpup Rifle" style="width:100%;height:100%;object-fit:contain;display:block">
-              </div>
-              <div style="flex:1;min-width:0">
-                <span class="eyebrow" style="color:#a3d900">3D PBR WEAPON STUDIO (51 WEAPONS)</span>
-                <h3 style="margin:4px 0;font-size:15px">High-Detail 3D Bullpup L85, M4A1, G3A3, AKM &amp; Dragunov</h3>
-                <p style="margin:0 0 8px;font-size:12px;opacity:.82">Physically based 3D meshes with blued steel, matte polymer, Picatinny rails, and calibrated right-hand weapon grip sockets.</p>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
-                  <span class="badge">Bullpup L85 Rifle</span>
-                  <span class="badge">M4A1 Carbine (31,580 tris)</span>
-                  <span class="badge">G3A3 Rifle (19,444 tris)</span>
-                  <span class="badge">Glock 18 &amp; Dragunov</span>
+            <div class="aes-directive-box">
+              <div class="aes-directive-bar">
+                <label for="agiPromptInput"><strong id="agiPromptLabel">Open Engine 3.8 Architect Directive (Populates Engine Drafts in EN / AR)</strong></label>
+                <div class="aes-directive-controls">
+                  <label for="agiThinkingDepth" id="agiDepthLabel" style="font-size:12px;opacity:.88">Simulation Depth:</label>
+                  <select id="agiThinkingDepth">
+                    <option value="HIGH" selected>HIGH (Deep Monte-Carlo)</option>
+                    <option value="MEDIUM">MEDIUM (Balanced)</option>
+                    <option value="LOW">LOW (Fast Sub-50ms)</option>
+                  </select>
+                  <button class="button secondary" id="agiVoiceButton" type="button"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesVoiceGrad" x1="2" y1="3" x2="22" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#10b981"></stop><stop offset="55%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#3b82f6"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesVoiceGrad)" fill-opacity="0.22" stroke="url(#aesVoiceGrad)" stroke-width="1.4"></rect><path d="M7 10.5v3M10.3 8v8M13.7 6.5v11M17 9.5v5" stroke="#f8fafc" stroke-width="1.8" stroke-linecap="round"></path></svg><span class="aes-btn-label" data-aes-en="Audio Dispatch" data-aes-ar="إيجاز صوتي">Audio Dispatch</span></button>
                 </div>
               </div>
-            </div>
-            <div style="background:#080a0d;border:1px solid #252b33;border-radius:6px;padding:12px;display:flex;gap:12px;align-items:center">
-              <div style="flex:1;min-width:0">
-                <span class="eyebrow" style="color:#a3d900">SYNDICATE SIMULATION &amp; TELEMETRY ENGINE</span>
-                <h3 style="margin:4px 0;font-size:15px">Monte-Carlo Combat Balance · 120-Block 3D Grid · Audio Dispatch</h3>
-                <p style="margin:0 0 8px;font-size:12px;opacity:.82">Authoritative crime/economy draft synthesis, tunable simulation depth, 120-block 3D territory synchronization, and bilingual voice dispatch.</p>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
-                  <span class="badge">Draft Content Synthesis</span>
-                  <span class="badge">10K Monte-Carlo Balance</span>
-                  <span class="badge">120-Block 3D City Sync</span>
-                  <span class="badge">PBR Ballistics Inspector</span>
+              <div class="aes-prompt-row">
+                <input id="agiPromptInput" type="text" value="Create a high-stakes Tier-5 Central Vault Armored Heist crime (Nerve 16, Payout $35,000-$95,000) and calibrate Bullpup &amp; M4A1 armory tier" placeholder="Specify crime, weapon, economy rule, module, or screen draft to synthesize...">
+                <button class="button primary" id="agiExecuteButton" type="button">Synthesize Engine Draft</button>
+              </div>
+              <div class="aes-preset-row">
+                <button class="button secondary" type="button" data-agi-preset="syndicate-heist" data-aes-en="Draft Synthesis: Build Tier-5 Heist" data-aes-ar="توليد مسودة: عملية سطو الفئة 5">Draft Synthesis: Build Tier-5 Heist</button>
+                <button class="button secondary" type="button" data-agi-preset="bullpup-tar21" data-aes-en="PBR Armory: Calibrate 3D Bullpup &amp; M4" data-aes-ar="ترسانة PBR: معايرة Bullpup و M4">PBR Armory: Calibrate 3D Bullpup &amp; M4</button>
+                <button class="button secondary" type="button" data-agi-preset="clothed-wardrobe" data-aes-en="3D Rig Audit: Verify Wardrobe &amp; Hitboxes" data-aes-ar="فحص الهيكل: الأزياء ومناطق الإصابة">3D Rig Audit: Verify Wardrobe &amp; Hitboxes</button>
+                <button class="button secondary" type="button" data-agi-preset="rebalance-armory" data-aes-en="Monte-Carlo: Run 51-Weapon Balance Audit" data-aes-ar="مونت كارلو: موازنة 51 سلاحاً">Monte-Carlo: Run 51-Weapon Balance Audit</button>
+              </div>
+              <div class="aes-holodeck-shell" data-open-engine-3d-holodeck="1">
+                <div class="aes-holodeck-viewport">
+                  <iframe id="agiCharacterHolodeckFrame" data-character-src="/dist/character3d.html?v=116" title="Open Engine 3D Character &amp; Weapon Holodeck"></iframe>
+                  <div id="agiHolodeckXrayOverlay" data-open-engine-xray-overlay="1" style="display:none;position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,rgba(224,60,50,.24),rgba(5,7,10,.65) 70%);align-items:center;justify-content:center">
+                    <svg viewBox="0 0 220 340" width="160" height="220" style="opacity:.92;filter:drop-shadow(0 0 8px rgba(255,90,75,.42))">
+                      <defs>
+                        <radialGradient id="agiCardiacGlow" cx="52%" cy="34%" r="28%">
+                          <stop offset="0%" stop-color="#ff3b2f" stop-opacity="0.92"></stop>
+                          <stop offset="55%" stop-color="#ff6b5b" stop-opacity="0.42"></stop>
+                          <stop offset="100%" stop-color="#ff3b2f" stop-opacity="0"></stop>
+                        </radialGradient>
+                      </defs>
+                      <ellipse cx="110" cy="40" rx="19" ry="24" fill="rgba(235,215,215,.22)" stroke="#ff9d92" stroke-width="1.3"></ellipse>
+                      <line x1="110" y1="64" x2="110" y2="178" stroke="rgba(245,230,230,.58)" stroke-width="4" stroke-dasharray="4 2"></line>
+                      <path d="M74 82 Q110 72 146 82 L140 154 Q110 164 80 154 Z" fill="rgba(240,210,210,.16)" stroke="rgba(255,150,140,.55)" stroke-width="1.2"></path>
+                      <circle cx="115" cy="112" r="34" fill="url(#agiCardiacGlow)"></circle>
+                      <circle cx="115" cy="112" r="8" fill="#ff3b2f" stroke="#ffd2ce" stroke-width="1.4"></circle>
+                      <line x1="74" y1="84" x2="46" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                      <line x1="146" y1="84" x2="174" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
+                      <line x1="94" y1="204" x2="86" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
+                      <line x1="126" y1="204" x2="134" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
+                    </svg>
+                  </div>
+                </div>
+                <div class="aes-holodeck-controls">
+                  <div>
+                    <span class="eyebrow aes-eyebrow-emerald" data-aes-en="LIVE OPEN ENGINE 3D WARDROBE &amp; WEAPON HOLODECK" data-aes-ar="هولوديك الأزياء والأسلحة ثلاثي الأبعاد المباشر">LIVE OPEN ENGINE 3D WARDROBE &amp; WEAPON HOLODECK</span>
+                    <h4 data-aes-en="Interactive Clothed 3D Character + 51-Weapon Grip Socket Inspector" data-aes-ar="فاحص تفاعلي للشخصيات ثلاثية الأبعاد ومقابس 51 سلاحاً">Interactive Clothed 3D Character + 51-Weapon Grip Socket Inspector</h4>
+                    <p data-aes-en="Inspect clothed 3D character rigs (Executive Suit, Street Hoodie, Tactical SWAT + Kevlar Vest), translucent Anatomical Cardiac X-Ray hitboxes, and Bullpup TAR-21 / L85 sockets directly inside Open Engine." data-aes-ar="افحص هياكل الشخصيات ثلاثية الأبعاد (البدلة التنفيذية، سترة الشارع، الدرع التكتيكي)، والأشعة التشريحية لمناطق الإصابة، ومقابس بنادق L85 مباشرة داخل المحرك.">Inspect clothed 3D character rigs (Executive Suit, Street Hoodie, Tactical SWAT + Kevlar Vest), translucent Anatomical Cardiac X-Ray hitboxes, and Bullpup TAR-21 / L85 sockets directly inside Open Engine.</p>
+                  </div>
+                  <div class="aes-holodeck-buttons">
+                    <button class="button secondary" type="button" data-agi-holodeck="suit:bullpup_1"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesSuitGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fbbf24"></stop><stop offset="100%" stop-color="#f59e0b"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesSuitGrad)" fill-opacity="0.22" stroke="url(#aesSuitGrad)" stroke-width="1.4"></rect><path d="M8.5 6.5 12 10l3.5-3.5L18 9v8.5h-12V9l2.5-2.5Z" fill="url(#aesSuitGrad)" fill-opacity="0.45" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"></path><path d="M12 10v6.5" stroke="#fde68a" stroke-width="1.5" stroke-linecap="round"></path></svg><span class="aes-btn-label" data-aes-en="Executive Suit + Bullpup L85" data-aes-ar="بدلة تنفيذية + L85">Executive Suit + Bullpup L85</span></button>
+                    <button class="button secondary" type="button" data-agi-holodeck="tactical:bullpup_1"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesShieldGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#10b981"></stop><stop offset="100%" stop-color="#6ee7b7"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesShieldGrad)" fill-opacity="0.22" stroke="url(#aesShieldGrad)" stroke-width="1.4"></rect><path d="M12 5.8 17.5 8v4.2c0 3.4-2.3 5.7-5.5 6.8-3.2-1.1-5.5-3.4-5.5-6.8V8L12 5.8Z" fill="url(#aesShieldGrad)" fill-opacity="0.45" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"></path></svg><span class="aes-btn-label" data-aes-en="Tactical Kevlar + Bullpup L85" data-aes-ar="درع كيفلر + L85">Tactical Kevlar + Bullpup L85</span></button>
+                    <button class="button secondary" type="button" data-agi-holodeck="tactical:m4_1"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesCarbineGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#3b82f6"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesCarbineGrad)" fill-opacity="0.22" stroke="url(#aesCarbineGrad)" stroke-width="1.4"></rect><path d="M5.5 11.2h13M7 11.2v3.6M11.5 11.2l-1.2 4.4M15.5 9.2h2.8" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="aes-btn-label" data-aes-en="Tactical Kevlar + M4A1" data-aes-ar="درع كيفلر + M4A1">Tactical Kevlar + M4A1</span></button>
+                    <button class="button secondary" type="button" data-agi-holodeck="street:ak"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesStreetGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#8b5cf6"></stop><stop offset="100%" stop-color="#c084fc"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesStreetGrad)" fill-opacity="0.24" stroke="url(#aesStreetGrad)" stroke-width="1.4"></rect><path d="M9 7.2a3 3 0 0 1 6 0l2.8 2.4v7.9H6.2V9.6L9 7.2Z" fill="url(#aesStreetGrad)" fill-opacity="0.45" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"></path></svg><span class="aes-btn-label" data-aes-en="Street Hoodie + AKM" data-aes-ar="سترة الشارع + AKM">Street Hoodie + AKM</span></button>
+                    <button class="button secondary" type="button" data-agi-holodeck="tactical:sniper"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesSniperGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#f43f5e"></stop><stop offset="100%" stop-color="#fb7185"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesSniperGrad)" fill-opacity="0.22" stroke="url(#aesSniperGrad)" stroke-width="1.4"></rect><circle cx="12" cy="12" r="5.2" stroke="#ffffff" stroke-width="1.5"></circle><circle cx="12" cy="12" r="1.6" fill="#fb7185"></circle><path d="M12 5v2.2M12 16.8V19M5 12h2.2M16.8 12H19" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="aes-btn-label" data-aes-en="Tactical Rig + Dragunov" data-aes-ar="تجهيز تكتيكي + Dragunov">Tactical Rig + Dragunov</span></button>
+                    <button class="button secondary" type="button" id="agiHolodeckXrayButton"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesXrayGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22d3ee"></stop><stop offset="100%" stop-color="#8b5cf6"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesXrayGrad)" fill-opacity="0.24" stroke="url(#aesXrayGrad)" stroke-width="1.4"></rect><path d="M8 8.5h8M9.5 12h5M10.5 15.5h3M12 6.5v11" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round"></path></svg><span class="aes-btn-label" data-aes-en="Toggle 3D Cardiac X-Ray" data-aes-ar="تبديل الأشعة التشريحية">Toggle 3D Cardiac X-Ray</span></button>
+                    <button class="button primary" type="button" id="agiHolodeckFireButton"><svg class="aes-btn-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true"><defs><linearGradient id="aesFireGrad" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fbbf24"></stop><stop offset="100%" stop-color="#f43f5e"></stop></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#aesFireGrad)" fill-opacity="0.32" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1.2"></rect><path d="M13.2 5.5 7.8 13h4l-1 5.5L16.2 11h-4l1-5.5Z" fill="#ffffff"></path></svg><span class="aes-btn-label" data-aes-en="Fire 3D Recoil &amp; Ballistics Test" data-aes-ar="اختبار الإطلاق والارتداد ثلاثي الأبعاد">Fire 3D Recoil &amp; Ballistics Test</span></button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div style="margin-top:12px;padding:12px;background:#0b0e12;border:1px solid #252b33;border-radius:6px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
-              <label for="agiPromptInput"><strong id="agiPromptLabel">Open Engine Game Architect Directive (Populates Engine Drafts in EN / AR)</strong></label>
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-                <label for="agiThinkingDepth" id="agiDepthLabel" style="font-size:12px;opacity:.85">Simulation Depth:</label>
-                <select id="agiThinkingDepth" style="padding:4px 8px;background:#080a0d;color:#a3d900;border:1px solid #2b3137;border-radius:4px">
-                  <option value="HIGH" selected>HIGH (Deep Monte-Carlo)</option>
-                  <option value="MEDIUM">MEDIUM (Balanced)</option>
-                  <option value="LOW">LOW (Fast Sub-50ms)</option>
-                </select>
-                <button class="button secondary" id="agiVoiceButton" type="button">🔊 Audio Dispatch</button>
-              </div>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <input id="agiPromptInput" type="text" value="Create a high-stakes Tier-5 Central Vault Armored Heist crime (Nerve 16, Payout $35,000-$95,000) and calibrate Bullpup &amp; M4A1 armory tier" placeholder="Specify crime, weapon, economy rule, module, or screen draft to synthesize..." style="flex:1;min-width:240px">
-              <button class="button primary" id="agiExecuteButton" type="button">Synthesize Engine Draft</button>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <button class="button secondary" type="button" data-agi-preset="syndicate-heist">Draft Synthesis: Build Tier-5 Heist</button>
-              <button class="button secondary" type="button" data-agi-preset="bullpup-tar21">PBR Armory: Calibrate 3D Bullpup &amp; M4</button>
-              <button class="button secondary" type="button" data-agi-preset="clothed-wardrobe">3D Rig Audit: Verify Wardrobe &amp; Hitboxes</button>
-              <button class="button secondary" type="button" data-agi-preset="rebalance-armory">Monte-Carlo: Run 51-Weapon Balance Audit</button>
-            </div>
-            <div data-open-engine-3d-holodeck="1" style="margin-top:12px;padding:10px;background:#080a0d;border:1px solid #252b33;border-radius:6px;display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:12px;align-items:stretch">
-              <div style="position:relative;min-height:240px;background:#050709;border:1px solid #1e242c;border-radius:5px;overflow:hidden">
-                <iframe id="agiCharacterHolodeckFrame" data-character-src="/dist/character3d.html?v=116" title="Open Engine 3D Character &amp; Weapon Holodeck" style="width:100%;height:240px;border:0;display:block"></iframe>
-                <div id="agiHolodeckXrayOverlay" data-open-engine-xray-overlay="1" style="display:none;position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 36%,rgba(224,60,50,.24),rgba(5,7,10,.65) 70%);align-items:center;justify-content:center">
-                  <svg viewBox="0 0 220 340" width="160" height="220" style="opacity:.92;filter:drop-shadow(0 0 8px rgba(255,90,75,.42))">
-                    <defs>
-                      <radialGradient id="agiCardiacGlow" cx="52%" cy="34%" r="28%">
-                        <stop offset="0%" stop-color="#ff3b2f" stop-opacity="0.92"></stop>
-                        <stop offset="55%" stop-color="#ff6b5b" stop-opacity="0.42"></stop>
-                        <stop offset="100%" stop-color="#ff3b2f" stop-opacity="0"></stop>
-                      </radialGradient>
-                    </defs>
-                    <ellipse cx="110" cy="40" rx="19" ry="24" fill="rgba(235,215,215,.22)" stroke="#ff9d92" stroke-width="1.3"></ellipse>
-                    <line x1="110" y1="64" x2="110" y2="178" stroke="rgba(245,230,230,.58)" stroke-width="4" stroke-dasharray="4 2"></line>
-                    <path d="M74 82 Q110 72 146 82 L140 154 Q110 164 80 154 Z" fill="rgba(240,210,210,.16)" stroke="rgba(255,150,140,.55)" stroke-width="1.2"></path>
-                    <circle cx="115" cy="112" r="34" fill="url(#agiCardiacGlow)"></circle>
-                    <circle cx="115" cy="112" r="8" fill="#ff3b2f" stroke="#ffd2ce" stroke-width="1.4"></circle>
-                    <line x1="74" y1="84" x2="46" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
-                    <line x1="146" y1="84" x2="174" y2="152" stroke="rgba(240,225,225,.48)" stroke-width="5" stroke-linecap="round"></line>
-                    <line x1="94" y1="204" x2="86" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
-                    <line x1="126" y1="204" x2="134" y2="310" stroke="rgba(240,225,225,.52)" stroke-width="5.5" stroke-linecap="round"></line>
-                  </svg>
-                </div>
-              </div>
-              <div style="display:flex;flex-direction:column;justify-content:space-between;gap:8px">
-                <div>
-                  <span class="eyebrow" style="color:#a3d900">LIVE OPEN ENGINE 3D WARDROBE &amp; WEAPON HOLODECK</span>
-                  <h4 style="margin:4px 0;font-size:14px">Interactive Clothed 3D Character + 51-Weapon Grip Socket Inspector</h4>
-                  <p style="margin:0;font-size:12px;opacity:.82">Inspect clothed 3D character rigs (Executive Suit, Street Hoodie, Tactical SWAT + Kevlar Vest), translucent Anatomical Cardiac X-Ray hitboxes, and Bullpup TAR-21 / L85 sockets directly inside Open Engine.</p>
-                </div>
-                <div style="display:flex;gap:6px;flex-wrap:wrap">
-                  <button class="button secondary" type="button" data-agi-holodeck="suit:bullpup_1">👔 Executive Suit + Bullpup L85</button>
-                  <button class="button secondary" type="button" data-agi-holodeck="tactical:bullpup_1">🛡️ Tactical Kevlar + Bullpup L85</button>
-                  <button class="button secondary" type="button" data-agi-holodeck="tactical:m4_1">🔫 Tactical Kevlar + M4A1</button>
-                  <button class="button secondary" type="button" data-agi-holodeck="street:ak">🧥 Street Hoodie + AKM</button>
-                  <button class="button secondary" type="button" data-agi-holodeck="tactical:sniper">🎯 Tactical Rig + Dragunov</button>
-                  <button class="button secondary" type="button" id="agiHolodeckXrayButton">🔬 Toggle 3D Cardiac X-Ray</button>
-                  <button class="button primary" type="button" id="agiHolodeckFireButton">⚡ Fire 3D Recoil &amp; Ballistics Test</button>
-                </div>
-              </div>
-            </div>
-            <pre id="agiStudioOutput" dir="ltr" style="margin:10px 0 0;padding:10px;background:#06080b;border:1px solid #1e242c;border-radius:4px;font-size:12px;color:#a3d900;white-space:pre-wrap">[OPEN ENGINE 3.6 ARCHITECT + 3D HOLODECK READY · SIMULATION: HIGH]
+              <pre id="agiStudioOutput" dir="ltr">[OPEN ENGINE 3.8 LIVE (v127) ARCHITECT + 3D HOLODECK READY · SIMULATION: HIGH]
 • Clothed 3D Wardrobe: Executive Suit, Street Enforcer Hoodie, Tactical SWAT + Worn Kevlar Vest (24 animations, 19 right-hand grip bones, 6-zone anatomical hitboxes)
 • 3D PBR Armory: 51 calibrated 3D weapons including Bullpup L85, M4A1 Carbine, G3A3, AKM, Dragunov &amp; Glock 18
-• Syndicate Telemetry: Live Draft Synthesis · 10,000-Rollout Monte-Carlo Balance · 120-Block 3D City Sync · Audio Dispatch</pre>
+• Syndicate Telemetry: Live Draft Synthesis · 10,000-Rollout Monte-Carlo Balance · 5-Sector 120-Block 3D Metropolis · 7-City Charter · 4 Instant Arcades</pre>
+            </div>
           </div>
-          <div class="head-actions" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
-            <button class="button secondary" type="button" data-go="content">Content &amp; Economy Studio</button>
-            <button class="button secondary" type="button" data-go="builder">Visual Page Builder</button>
-            <button class="button secondary" type="button" data-go="media">3D Media &amp; Asset Inspector</button>
-            <button class="button secondary" type="button" data-go="territories">120-Block Territory Control</button>
-            <a class="button ghost" href="/engine">Open Engine Console ↗</a>
+          <div class="head-actions aes-agi-footer">
+            <button class="button secondary" type="button" data-go="content" data-aes-en="Content &amp; Economy Studio" data-aes-ar="استوديو المحتوى والاقتصاد">Content &amp; Economy Studio</button>
+            <button class="button secondary" type="button" data-go="builder" data-aes-en="Visual Page Builder" data-aes-ar="منشئ الصفحات المرئي">Visual Page Builder</button>
+            <button class="button secondary" type="button" data-go="media" data-aes-en="3D Media &amp; Asset Inspector" data-aes-ar="فاحص الوسائط ثلاثية الأبعاد">3D Media &amp; Asset Inspector</button>
+            <button class="button secondary" type="button" data-go="territories" data-aes-en="120-Block Territory Control" data-aes-ar="إدارة 120 مربعاً في المدينة">120-Block Territory Control</button>
+            <a class="button ghost" href="/engine" data-aes-en="Open Engine Console ↗" data-aes-ar="وحدة تحكم المحرك ↗">Open Engine Console ↗</a>
           </div>
         </article>
+        <section class="panel aes-v127-showcase" data-v127-world-registry="1" aria-labelledby="aesRegistryTitle">
+          <div class="panel-head">
+            <div>
+              <span class="aes-ms-icon" aria-hidden="true"><svg viewBox="0 0 28 28" width="28" height="28" fill="none"><defs><linearGradient id="aesWorldRegGrad" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22d3ee"></stop><stop offset="50%" stop-color="#10b981"></stop><stop offset="100%" stop-color="#fbbf24"></stop></linearGradient></defs><rect x="2" y="2" width="24" height="24" rx="7.5" fill="url(#aesWorldRegGrad)" fill-opacity="0.24" stroke="url(#aesWorldRegGrad)" stroke-width="1.4"></rect><circle cx="14" cy="14" r="6.8" stroke="#ffffff" stroke-width="1.5"></circle><path d="M7.5 14h13M14 7.2c2.1 2 2.1 11.6 0 13.6M14 7.2c-2.1 2-2.1 11.6 0 13.6" stroke="#ffffff" stroke-width="1.25"></path></svg></span>
+              <h2 id="aesRegistryTitle" data-aes-en="Live v127 MotionSites Visual &amp; World Registry" data-aes-ar="سجل العالم والواجهات الحية للإصدار v127">Live v127 MotionSites Visual &amp; World Registry</h2>
+            </div>
+            <span class="status active" data-aes-en="5 SECTORS · 7 CITIES · 4 ARCADES" data-aes-ar="5 قطاعات · 7 مدن · 4 ألعاب فورية">5 SECTORS · 7 CITIES · 4 ARCADES</span>
+          </div>
+          <div class="aes-v127-body">
+            <div class="aes-v127-pills">
+              <span class="aes-arch-pill"><i class="aes-arch-dot aes-dot-emerald" aria-hidden="true"></i><span data-aes-en="5-Sector Level-Gated 3D Metropolis (120 Blocks)" data-aes-ar="مدينة ثلاثية الأبعاد من 5 قطاعات متدرجة المستوى (120 مربعاً)">5-Sector Level-Gated 3D Metropolis (120 Blocks)</span></span>
+              <span class="aes-arch-pill"><i class="aes-arch-dot aes-dot-cyan" aria-hidden="true"></i><span data-aes-en="7-City World Charter Flight Network" data-aes-ar="شبكة طيران عالمية عبر 7 مدن دولية">7-City World Charter Flight Network</span></span>
+              <span class="aes-arch-pill"><i class="aes-arch-dot aes-dot-gold" aria-hidden="true"></i><span data-aes-en="4 Instant Arcade Action Modules (60fps)" data-aes-ar="4 وحدات ألعاب أركيد فورية بسرعة 60 إطاراً">4 Instant Arcade Action Modules (60fps)</span></span>
+              <span class="aes-arch-pill"><i class="aes-arch-dot aes-dot-violet" aria-hidden="true"></i><span data-aes-en="3D Clothed Wardrobe (3 Outfits · 24 Clips)" data-aes-ar="أزياء ثلاثية الأبعاد كاملة (3 أطقم · 24 حركة)">3D Clothed Wardrobe (3 Outfits · 24 Clips)</span></span>
+              <span class="aes-arch-pill"><i class="aes-arch-dot aes-dot-crimson" aria-hidden="true"></i><span data-aes-en="51-Weapon PBR Ballistics Holodeck" data-aes-ar="هولوديك 51 سلاحاً فيزيائياً معايراً">51-Weapon PBR Ballistics Holodeck</span></span>
+            </div>
+            <div class="aes-v127-grid">
+              <article class="aes-world-card aes-world-card-hero">
+                <img class="aes-world-card-media" src="/assets/ui/motion-art/hero-syndicate-turf.webp" alt="5-Sector 3D Syndicate Metropolis and 7-City World Charter Network" loading="lazy" decoding="async">
+                <div class="aes-world-card-scrim" aria-hidden="true"></div>
+                <div class="aes-world-card-content">
+                  <span class="aes-world-card-kicker" data-aes-en="WORLD ARCHITECTURE · v127 LIVE" data-aes-ar="بنية العالم · v127 مباشر">WORLD ARCHITECTURE · v127 LIVE</span>
+                  <h3 data-aes-en="5-Sector Level-Gated 3D Metropolis &amp; 7-City Charter Network" data-aes-ar="مدينة ثلاثية الأبعاد من 5 قطاعات وشبكة طيران 7 مدن عالمية">5-Sector Level-Gated 3D Metropolis &amp; 7-City Charter Network</h3>
+                  <p data-aes-en="Authoritative 120-block syndicate turf across Harbor, Industrial, Downtown, Financial, and Sovereign Citadel sectors connected to 7 international smuggling &amp; charter hubs." data-aes-ar="سيطرة نقابية خادمية عبر 120 مربعاً في 5 قطاعات حضرية متدرجة المستوى ومربوطة بـ 7 عواصم سفر وتهريب دولية.">Authoritative 120-block syndicate turf across Harbor, Industrial, Downtown, Financial, and Sovereign Citadel sectors connected to 7 international smuggling &amp; charter hubs.</p>
+                  <div class="aes-world-card-actions">
+                    <button class="button primary" type="button" data-go="territories" data-aes-en="Inspect 5-Sector Turf" data-aes-ar="افحص قطاعات المدينة">Inspect 5-Sector Turf</button>
+                    <button class="button secondary" type="button" data-go="assets" data-aes-en="3D World Assets" data-aes-ar="أصول العالم ثلاثية الأبعاد">3D World Assets</button>
+                  </div>
+                </div>
+              </article>
+              <div class="aes-v127-arcade-grid">
+                <article class="aes-world-card">
+                  <img class="aes-world-card-media" src="/assets/ui/motion-art/arcade-getaway.webp" alt="Instant Arcade Getaway Pursuit" loading="lazy" decoding="async">
+                  <div class="aes-world-card-scrim" aria-hidden="true"></div>
+                  <div class="aes-world-card-content">
+                    <span class="aes-world-card-kicker" data-aes-en="ARCADE 01 · PURSUIT" data-aes-ar="أركيد 01 · مطاردة">ARCADE 01 · PURSUIT</span>
+                    <h3 data-aes-en="Neon Getaway Interceptor" data-aes-ar="مطاردة الهروب الليلية">Neon Getaway Interceptor</h3>
+                    <p data-aes-en="High-speed lane evasion, police roadblock weaving, and instant syndicate cash extraction." data-aes-ar="مناورة سريعة بين الحواجز الأمنية واستخلاص غنائم النقابة الفورية.">High-speed lane evasion, police roadblock weaving, and instant syndicate cash extraction.</p>
+                  </div>
+                </article>
+                <article class="aes-world-card">
+                  <img class="aes-world-card-media" src="/assets/ui/motion-art/arcade-heist.webp" alt="Instant Arcade Sovereign Vault Breach" loading="lazy" decoding="async">
+                  <div class="aes-world-card-scrim" aria-hidden="true"></div>
+                  <div class="aes-world-card-content">
+                    <span class="aes-world-card-kicker" data-aes-en="ARCADE 02 · BREACH" data-aes-ar="أركيد 02 · اختراق">ARCADE 02 · BREACH</span>
+                    <h3 data-aes-en="Sovereign Vault Cipher Heist" data-aes-ar="اختراق الخزينة السيادية">Sovereign Vault Cipher Heist</h3>
+                    <p data-aes-en="Precision laser-grid timing and multi-lock thermal breach tied to Tier-5 crime progression." data-aes-ar="توقيت دقيق لتجاوز شبكة الليزر وفتح الأقفال الحرارية عالية المخاطر.">Precision laser-grid timing and multi-lock thermal breach tied to Tier-5 crime progression.</p>
+                  </div>
+                </article>
+                <article class="aes-world-card">
+                  <img class="aes-world-card-media" src="/assets/ui/motion-art/arcade-casino.webp" alt="Instant Arcade Syndicate High-Roller Casino" loading="lazy" decoding="async">
+                  <div class="aes-world-card-scrim" aria-hidden="true"></div>
+                  <div class="aes-world-card-content">
+                    <span class="aes-world-card-kicker" data-aes-en="ARCADE 03 · VELVET TABLE" data-aes-ar="أركيد 03 · طاولة النخبة">ARCADE 03 · VELVET TABLE</span>
+                    <h3 data-aes-en="Syndicate Velvet High-Roller" data-aes-ar="كازينو النخبة السيادي">Syndicate Velvet High-Roller</h3>
+                    <p data-aes-en="Auditable ledger-backed risk multipliers, rapid card/wheel rounds, and VIP vault stakes." data-aes-ar="جولات رهان فورية موثقة في سجل الاقتصاد مع مضاعفات طاولة كبار الشخصيات.">Auditable ledger-backed risk multipliers, rapid card/wheel rounds, and VIP vault stakes.</p>
+                  </div>
+                </article>
+                <article class="aes-world-card">
+                  <img class="aes-world-card-media" src="/assets/ui/motion-art/arcade-heavybag.webp" alt="Instant Arcade Kinetic Heavybag Gym" loading="lazy" decoding="async">
+                  <div class="aes-world-card-scrim" aria-hidden="true"></div>
+                  <div class="aes-world-card-content">
+                    <span class="aes-world-card-kicker" data-aes-en="ARCADE 04 · CONDITIONING" data-aes-ar="أركيد 04 · تدريب القوة">ARCADE 04 · CONDITIONING</span>
+                    <h3 data-aes-en="Kinetic Heavybag Strike Lab" data-aes-ar="مختبر الضربات القتالية">Kinetic Heavybag Strike Lab</h3>
+                    <p data-aes-en="Rhythm impact combos, stamina cadence tuning, and live combat stat conditioning." data-aes-ar="سلاسل ضربات إيقاعية وضبط اللياقة القتالية المباشرة لصالات التدريب.">Rhythm impact combos, stamina cadence tuning, and live combat stat conditioning.</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
         <section class="studio-start" aria-labelledby="studioStartTitle">
           <div class="studio-section-heading"><h2 id="studioStartTitle" data-studio-copy="startCreating">What would you like to create?</h2><p data-studio-copy="startCreatingHelp">Choose a task. Your changes stay in a draft until you publish them.</p></div>
           <div id="studioTasks" class="studio-tasks"></div>
@@ -436,5 +512,6 @@
   <script src="/admin.js?v=118" defer></script>
   <script src="/admin-studio.js?v=110" defer></script>
   <script src="/admin-assets.js?v=110" defer></script>
+  <script src="/assets/ui/aaa-engine-studio.js?v=127" defer></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* ZONE v126 - MotionSites Photorealistic Key-Art Posters, Atmospheric Shaders & Instant Arcade Engine */
+/* ZONE v127 - 60fps Demand-Driven Arcade Engine, Vibrant Multi-Color MotionSites Icons & Tonal Surfaces */
 (function () {
   'use strict';
 
@@ -6,7 +6,7 @@
   if (window.__zoneInstantGamesLoaded) return;
   window.__zoneInstantGamesLoaded = true;
 
-  var MOTION_STYLE_ID = 'zig-v126-motion-styles';
+  var MOTION_STYLE_ID = 'zig-v127-motion-styles';
 
   var EU_WHEEL = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -25,25 +25,49 @@
     { id: 'CHERRY', kind: 'ruby', color: '#fb7185', labelEn: 'RUBY', labelAr: 'ياقوت' }
   ];
 
-  /* ---------------- Inline Vector Icons (Zero Raw Emojis) ---------------- */
+  /* ---------------- Vibrant Multi-Color 3D Frosted-Glass SVGs (Zero Raw Emojis) ---------------- */
   var SVG_ARCADE_CREST =
     '<svg class="zig-emblem-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M12 2.5L20.5 7.2V16.8L12 21.5L3.5 16.8V7.2L12 2.5Z" fill="rgba(235,184,88,0.28)"/>' +
-      '<path d="M12 2.5L20.5 7.2V16.8L12 21.5L3.5 16.8V7.2L12 2.5Z" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>' +
-      '<path d="M9.5 8.5L15.8 12L9.5 15.5V8.5Z" fill="rgba(57,231,163,0.38)" stroke="#39e7a3" stroke-width="1.65" stroke-linejoin="round"/>' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-crest" x1="3" y1="2.5" x2="21" y2="21.5" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#a855f7"/>' +
+          '<stop offset="52%" stop-color="#22d3ee"/>' +
+          '<stop offset="100%" stop-color="#fbbf24"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="zig-grad-crest-core" x1="8" y1="7" x2="17" y2="17" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#ffffff"/>' +
+          '<stop offset="100%" stop-color="#bae6fd"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path d="M12 2.2L20.6 7.1V16.9L12 21.8L3.4 16.9V7.1L12 2.2Z" fill="url(#zig-grad-crest)" fill-opacity="0.96"/>' +
+      '<path d="M12 3.4L19.4 7.7V16.3L12 20.6L4.6 16.3V7.7L12 3.4Z" stroke="rgba(255,255,255,0.46)" stroke-width="1.05" stroke-linejoin="round"/>' +
+      '<path class="zig-emblem-play" d="M9.7 8.4L16.2 12L9.7 15.6V8.4Z" fill="url(#zig-grad-crest-core)"/>' +
     '</svg>';
 
   var SVG_SPEAKER_ON =
-    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M11 5L6.5 8.8H3.5V15.2H6.5L11 19V5Z" fill="rgba(57,231,163,0.26)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-      '<path d="M15.2 8.8C16.5 9.9 17.2 11.4 17.2 12C17.2 12.6 16.5 14.1 15.2 15.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
-      '<path d="M18.2 6.2C20.2 7.8 21.2 9.8 21.2 12C21.2 14.2 20.2 16.2 18.2 17.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+    '<svg class="zig-inline-svg zig-speaker-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-spk-on" x1="3" y1="5" x2="13" y2="19" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#34d399"/>' +
+          '<stop offset="100%" stop-color="#059669"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path d="M11.2 4.8L6.4 8.7H3.4C2.9 8.7 2.5 9.1 2.5 9.6V14.4C2.5 14.9 2.9 15.3 3.4 15.3H6.4L11.2 19.2C11.8 19.7 12.6 19.2 12.6 18.5V5.5C12.6 4.8 11.8 4.3 11.2 4.8Z" fill="url(#zig-grad-spk-on)"/>' +
+      '<path d="M6.6 9.2H4.2V14.8H6.6L11 18.1V5.9L6.6 9.2Z" fill="#ffffff" fill-opacity="0.24"/>' +
+      '<path class="zig-sound-wave-1" d="M15.4 8.8C16.7 9.9 17.4 11.2 17.4 12C17.4 12.8 16.7 14.1 15.4 15.2" stroke="#34d399" stroke-width="2" stroke-linecap="round"/>' +
+      '<path class="zig-sound-wave-2" d="M18.4 6.2C20.4 7.8 21.4 9.8 21.4 12C21.4 14.2 20.4 16.2 18.4 17.8" stroke="#22d3ee" stroke-width="2" stroke-linecap="round"/>' +
     '</svg>';
 
   var SVG_SPEAKER_OFF =
-    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M11 5L6.5 8.8H3.5V15.2H6.5L11 19V5Z" fill="rgba(148,163,184,0.22)" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>' +
-      '<path d="M16 9.5L21 14.5M21 9.5L16 14.5" stroke="#fb7185" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<svg class="zig-inline-svg zig-speaker-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-spk-off" x1="3" y1="5" x2="13" y2="19" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#fb7185"/>' +
+          '<stop offset="100%" stop-color="#e11d48"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path d="M11.2 4.8L6.4 8.7H3.4C2.9 8.7 2.5 9.1 2.5 9.6V14.4C2.5 14.9 2.9 15.3 3.4 15.3H6.4L11.2 19.2C11.8 19.7 12.6 19.2 12.6 18.5V5.5C12.6 4.8 11.8 4.3 11.2 4.8Z" fill="url(#zig-grad-spk-off)" fill-opacity="0.92"/>' +
+      '<path d="M15.8 9.4L20.8 14.4M20.8 9.4L15.8 14.4" stroke="#fda4af" stroke-width="2.1" stroke-linecap="round"/>' +
     '</svg>';
 
   var SVG_CTA_CHEVRON =
@@ -53,20 +77,42 @@
 
   var SVG_WHEEL_STEER =
     '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="8.5" fill="rgba(235,184,88,0.22)" stroke="currentColor" stroke-width="1.8"/>' +
-      '<circle cx="12" cy="12" r="2.3" stroke="currentColor" stroke-width="1.7"/>' +
-      '<path d="M4.2 10.5H9.8M14.2 10.5H19.8M12 14.3V20.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-steer" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#fde047"/>' +
+          '<stop offset="100%" stop-color="#f97316"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<circle cx="12" cy="12" r="9" fill="url(#zig-grad-steer)" fill-opacity="0.95"/>' +
+      '<circle cx="12" cy="12" r="6.2" fill="#090d16" fill-opacity="0.72"/>' +
+      '<circle cx="12" cy="12" r="2.3" fill="#ffffff"/>' +
+      '<path d="M5.4 10.8H9.8M14.2 10.8H18.6M12 14.2V18.8" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>' +
     '</svg>';
 
   var SVG_PLANE =
-    '<svg class="zig-inline-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M12 2.5L14.2 9L21.5 11.2V13.1L14.2 12L13.5 18.2L16.2 20V21.5L12 20.4L7.8 21.5V20L10.5 18.2L9.8 12L2.5 13.1V11.2L9.8 9L12 2.5Z" fill="rgba(56,189,248,0.28)" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round"/>' +
+    '<svg class="zig-inline-svg zig-jet-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-jet" x1="3" y1="2.5" x2="21" y2="21.5" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#38bdf8"/>' +
+          '<stop offset="55%" stop-color="#0ea5e9"/>' +
+          '<stop offset="100%" stop-color="#2563eb"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path d="M12 2.2L14.4 8.8L21.6 11.2V13.2L14.4 12.1L13.6 18.1L16.4 19.9V21.6L12 20.4L7.6 21.6V19.9L10.4 18.1L9.6 12.1L2.4 13.2V11.2L9.6 8.8L12 2.2Z" fill="url(#zig-grad-jet)"/>' +
+      '<path d="M12 3.8L13.1 9.6L12 18.6L10.9 9.6L12 3.8Z" fill="#ffffff" fill-opacity="0.88"/>' +
     '</svg>';
 
   var SVG_LOCK =
     '<svg class="zig-inline-svg zig-lock-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<rect x="5" y="11" width="14" height="10" rx="2" fill="rgba(245,158,11,0.26)" stroke="currentColor" stroke-width="1.8"/>' +
-      '<path d="M8 11V7.8C8 5.6 9.8 3.8 12 3.8C14.2 3.8 16 5.6 16 7.8V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+      '<defs>' +
+        '<linearGradient id="zig-grad-lock" x1="5" y1="10" x2="19" y2="21" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#fde047"/>' +
+          '<stop offset="100%" stop-color="#d97706"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<path d="M8.2 11V7.7C8.2 5.6 9.9 3.9 12 3.9C14.1 3.9 15.8 5.6 15.8 7.7V11" stroke="#fde68a" stroke-width="2.1" stroke-linecap="round"/>' +
+      '<rect x="5" y="10.6" width="14" height="10.4" rx="2.8" fill="url(#zig-grad-lock)"/>' +
+      '<circle cx="12" cy="15.4" r="1.4" fill="#ffffff"/>' +
     '</svg>';
 
   /* ---------------- Preloaded Key-Art Plates ---------------- */
@@ -112,31 +158,56 @@
 
   function ensureMotionStyles() {
     try {
+      var oldStyle = document.getElementById('zig-v126-motion-styles');
+      if (oldStyle) oldStyle.remove();
       if (document.getElementById(MOTION_STYLE_ID)) return;
       var style = document.createElement('style');
       style.id = MOTION_STYLE_ID;
       style.textContent = [
-        '.zig-arcade-title{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;}',
-        '.zig-live-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px !important;font-size:9.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(57,231,163,0.14);border:1px solid rgba(57,231,163,0.48);color:#39e7a3;line-height:1.3;}',
+        '.zig-arcade-title{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;text-transform:none !important;letter-spacing:-0.015em !important;font-weight:700 !important;}',
+        '.zig-live-pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px !important;font-size:9.5px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;background:rgba(57,231,163,0.14);border:0 !important;color:#39e7a3;line-height:1.3;}',
         '.zig-live-pill::before{content:"";width:5px;height:5px;border-radius:50%;background:#39e7a3;box-shadow:0 0 6px #39e7a3;}',
-        'html[data-theme="light"] .zig-live-pill{background:rgba(13,122,73,0.12);border-color:rgba(13,122,73,0.42);color:#065f46;}',
+        'html[data-theme="light"] .zig-live-pill{background:rgba(13,122,73,0.12);color:#065f46;}',
         'html[data-theme="light"] .zig-live-pill::before{background:#059669;box-shadow:none;}',
-        '.zig-arcade-emblem{display:inline-grid;place-items:center;}',
-        '.zig-emblem-svg{width:20px;height:20px;display:block;color:#ebb858;}',
-        '.zig-sound-btn{display:inline-flex;align-items:center;gap:6px;}',
-        '.zig-inline-svg{width:14px;height:14px;display:inline-block;flex:none;vertical-align:-2px;}',
-        '.zig-lock-svg{width:11.5px;height:11.5px;margin-inline-end:2px;}',
+        '.zig-arcade-emblem{display:inline-grid;place-items:center;width:38px !important;height:38px !important;border:0 !important;border-radius:12px !important;background:rgba(255,255,255,0.048) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.10) !important;}',
+        'html[data-theme="light"] .zig-arcade-emblem{background:rgba(15,23,42,0.055) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,0.7) !important;}',
+        '.zig-emblem-svg{width:22px;height:22px;display:block;filter:drop-shadow(0 2px 6px rgba(34,211,238,0.28));transition:transform 240ms cubic-bezier(0.22,1,0.36,1);}',
+        '.zig-arcade-deck:hover .zig-emblem-svg{transform:scale(1.07) rotate(-4deg);}',
+        '.zig-sound-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,0.07) !important;border-radius:10px !important;background:rgba(255,255,255,0.045) !important;}',
+        'html[data-theme="light"] .zig-sound-btn{background:rgba(15,23,42,0.05) !important;border-color:rgba(15,23,42,0.08) !important;}',
+        '.zig-inline-svg{width:15px;height:15px;display:inline-block;flex:none;vertical-align:-2px;}',
+        '.zig-sound-wave-1,.zig-sound-wave-2{transform-origin:12px 12px;transition:opacity 200ms ease,transform 200ms ease;}',
+        '.zig-sound-btn:hover .zig-sound-wave-1{transform:scale(1.08);}',
+        '.zig-sound-btn:hover .zig-sound-wave-2{transform:scale(1.12);}',
+        '.zig-jet-svg{width:16px;height:16px;filter:drop-shadow(0 2px 5px rgba(56,189,248,0.32));transition:transform 220ms cubic-bezier(0.22,1,0.36,1);}',
+        '#zig-world-flight-bar:hover .zig-jet-svg,.zig-city-chip:hover .zig-jet-svg{transform:translate(2px,-1px) rotate(-8deg);}',
+        '.zig-lock-svg{width:12.5px;height:12.5px;margin-inline-end:2px;}',
         '.zig-card-media{position:relative;aspect-ratio:16 / 10;min-height:110px;width:100%;overflow:hidden;background:#070b13;}',
-        '.zig-card-art{width:100%;height:100%;object-fit:cover;display:block;transition:transform 520ms cubic-bezier(0.22,1,0.36,1),filter 320ms ease;}',
-        '.zig-game-card:hover .zig-card-art{transform:scale(1.07);filter:brightness(1.08);}',
+        '.zig-card-art{width:100%;height:100%;object-fit:cover;display:block;transition:transform 460ms cubic-bezier(0.22,1,0.36,1),filter 280ms ease;}',
+        '.zig-game-card:hover .zig-card-art{transform:scale(1.06);filter:brightness(1.07);}',
         '.zig-card-shader{position:absolute;inset:0;width:100% !important;height:100% !important;pointer-events:none;z-index:2;display:block;background:transparent !important;border:0 !important;}',
-        '.zig-card-badge{position:absolute;top:10px;inset-inline-start:10px;z-index:3;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:rgba(8,13,23,0.74);border:1px solid rgba(255,255,255,0.18);color:#f8fafc;font-size:10px;font-weight:700;letter-spacing:0.04em;padding:3px 9px;border-radius:999px !important;line-height:1.25;}',
-        '.zig-game-card-cta{display:inline-flex;align-items:center;gap:6px;}',
+        '.zig-card-badge{position:absolute;top:10px;inset-inline-start:10px;z-index:3;background:rgba(8,13,23,0.88);border:1px solid rgba(255,255,255,0.12);color:#f8fafc;font-size:10px;font-weight:700;letter-spacing:0.03em;padding:3px 9px;border-radius:999px !important;line-height:1.25;}',
+        '.zig-game-card-cta{display:inline-flex;align-items:center;gap:6px;text-transform:none !important;letter-spacing:0.01em !important;}',
         '.zig-cta-chevron{width:13px;height:13px;flex:none;transition:transform 200ms cubic-bezier(0.22,1,0.36,1);}',
         '.zig-game-card:hover .zig-cta-chevron{transform:translateX(2px);}',
         'html[dir="rtl"] .zig-cta-chevron,[dir="rtl"] .zig-cta-chevron{transform:scaleX(-1);}',
         'html[dir="rtl"] .zig-game-card:hover .zig-cta-chevron,[dir="rtl"] .zig-game-card:hover .zig-cta-chevron{transform:scaleX(-1) translateX(2px);}',
-        '.zig-getaway-heading{display:inline-flex;align-items:center;gap:7px;color:#ebb858;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;}',
+        '.zig-getaway-heading{display:inline-flex;align-items:center;gap:7px;color:#ebb858;font-size:12px;font-weight:800;letter-spacing:0.02em;}',
+        /* Borderless Tonal World Flights Bar & Cards */
+        '#zig-world-flight-bar{background:#0d1320 !important;border:1px solid rgba(255,255,255,0.05) !important;border-radius:14px !important;box-shadow:0 10px 28px rgba(0,0,0,0.26) !important;padding:12px 14px !important;}',
+        'html[data-theme="light"] #zig-world-flight-bar{background:#ffffff !important;border:1px solid rgba(15,23,42,0.06) !important;box-shadow:0 8px 24px rgba(15,23,42,0.06) !important;}',
+        '.zig-world-flight-title{display:inline-flex;align-items:center;gap:8px;text-transform:none !important;letter-spacing:-0.01em !important;font-size:13.5px !important;font-weight:700 !important;color:#f8fafc;}',
+        'html[data-theme="light"] .zig-world-flight-title{color:#0f172a !important;}',
+        '.zig-world-origin-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(56,189,248,0.12);color:#7dd3fc;border:0;}',
+        'html[data-theme="light"] .zig-world-origin-pill{background:rgba(2,132,199,0.10);color:#0369a1;}',
+        '.zig-world-lv-pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:rgba(255,255,255,0.05);color:#cbd5e1;}',
+        'html[data-theme="light"] .zig-world-lv-pill{background:rgba(15,23,42,0.06);color:#334155;}',
+        '#zig-world-flight-bar .zig-city-chip,.zig-flight-card{background:rgba(255,255,255,0.035) !important;border:1px solid rgba(255,255,255,0.045) !important;border-radius:11px !important;box-shadow:none !important;transition:transform 180ms cubic-bezier(0.22,1,0.36,1),background-color 180ms ease !important;}',
+        '#zig-world-flight-bar .zig-city-chip:hover{background:rgba(255,255,255,0.065) !important;transform:translateY(-1px);}',
+        '#zig-world-flight-bar .zig-city-chip.is-active{background:rgba(57,231,163,0.10) !important;border-color:rgba(57,231,163,0.28) !important;}',
+        'html[data-theme="light"] #zig-world-flight-bar .zig-city-chip{background:#f8fafc !important;border:1px solid rgba(15,23,42,0.06) !important;}',
+        'html[data-theme="light"] #zig-world-flight-bar .zig-city-chip:hover{background:#f1f5f9 !important;}',
+        'html[data-theme="light"] #zig-world-flight-bar .zig-city-chip.is-active{background:rgba(16,185,129,0.10) !important;border-color:rgba(16,185,129,0.30) !important;}',
         '.zig-here-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#39e7a3;box-shadow:0 0 6px rgba(57,231,163,0.8);}',
         '.zig-chip-status{display:inline-flex;align-items:center;gap:3px;}',
         '.zig-gym-wrap,.zig-heist-wrap,.zig-casino-canvas-box,.zig-getaway-canvas-wrap{width:100% !important;max-width:100% !important;min-width:0 !important;overflow:hidden !important;box-sizing:border-box !important;}',
@@ -283,6 +354,10 @@
     t: 0,
     lastCash: null,
     lastLang: '',
+    hoveredPreviewId: null,
+    rafId: 0,
+    rafTicks: 0,
+    canvasVisibility: {},
     /* Atmospheric Preview Motes */
     previewFX: {
       rain: [],
@@ -416,12 +491,16 @@
     sfx.pickup();
     var stage = document.getElementById('zig-getaway-stage');
     if (stage) stage.hidden = false;
+    var gCv = document.getElementById('zig-getaway-canvas');
+    if (gCv) observeInteractiveCanvas(gCv);
+    ensureLoopRunning();
   }
 
   function mountHomeArcade() {
     ensureMotionStyles();
     var main = document.getElementById('zone-main');
     if (!main || main.getAttribute('data-zone-screen') !== 'home') {
+      state.hoveredPreviewId = null;
       var stale = document.getElementById('zig-home-arcade');
       if (stale) stale.remove();
       return;
@@ -432,6 +511,7 @@
     var existing = document.getElementById('zig-home-arcade');
     if (existing && existing.getAttribute('data-lang') === (ar ? 'ar' : 'en')) return;
     if (existing) existing.remove();
+    state.hoveredPreviewId = null;
 
     var sec = document.createElement('section');
     sec.id = 'zig-home-arcade';
@@ -455,7 +535,7 @@
         badge: ar ? 'توقيت دقيق' : 'Precision Lock',
         name: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
         desc: ar ? 'اضرب القفل في النقطة الذهبية لاختراق الخزائن وتنفيذ العمليات.' : 'Strike the brass tumbler sweet-spot to breach reinforced vaults.',
-        cta: ar ? 'افتح الخزائن' : 'Crack Vaults'
+        cta: ar ? 'اخترق الخزنة' : 'Crack Vault'
       },
       {
         id: 'casino',
@@ -483,13 +563,13 @@
           '<div class="zig-arcade-emblem">' + SVG_ARCADE_CREST + '</div>' +
           '<div>' +
             '<h2 class="zig-arcade-title">' +
-              '<span>' + (ar ? 'أركيد النقابة المباشر' : 'Syndicate Arcade') + '</span>' +
-              '<span class="zig-live-pill">' + (ar ? 'مباشر' : 'LIVE') + '</span>' +
+              '<span>' + (ar ? 'أركيد النقابة' : 'Syndicate Arcade') + '</span>' +
+              '<span class="zig-live-pill">' + (ar ? 'مباشر' : 'Live') + '</span>' +
             '</h2>' +
             '<p class="zig-arcade-sub">' +
               (ar
                 ? 'تحديات تفاعلية مباشرة مرتبطة بعميلك ورصيدك الفعلي'
-                : 'Live interactive runs, vault lockpicking, high-limit tables, and reflex drills') +
+                : 'Interactive runs, vault lockpicking, high-limit tables, and reflex drills') +
             '</p>' +
           '</div>' +
         '</div>' +
@@ -520,13 +600,13 @@
           '<div class="zig-getaway-heading">' +
             SVG_WHEEL_STEER +
             '<span>' +
-              (ar ? 'مطاردة النيون الليلية: الأسهم أو اللمس للمراوغة' : 'NITRO SYNDICATE GETAWAY: ARROWS OR TAP LANES TO DODGE') +
+              (ar ? 'مطاردة النيون الليلية: الأسهم أو اللمس للمراوغة' : 'Nitro Syndicate Getaway: Arrows or Tap Lanes to Dodge') +
             '</span>' +
           '</div>' +
           '<div class="zig-stage-controls">' +
             '<button type="button" class="zig-btn" id="zig-getaway-restart">' + (ar ? 'جولة جديدة' : 'New Run') + '</button>' +
             '<button type="button" class="zig-btn-secondary" id="zig-getaway-fence">' + (ar ? 'تصريف الغنيمة (عملية شارع)' : 'Fence Loot (Run Street Op)') + '</button>' +
-            '<button type="button" class="zig-btn-secondary" id="zig-getaway-close" aria-label="Close">✕</button>' +
+            '<button type="button" class="zig-btn-secondary" id="zig-getaway-close">' + (ar ? 'إغلاق' : 'Close') + '</button>' +
           '</div>' +
         '</div>' +
         '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas"></canvas></div>' +
@@ -545,6 +625,17 @@
     }
 
     sec.querySelectorAll('[data-zig-launch]').forEach(function (btn) {
+      var cardId = btn.getAttribute('data-zig-launch');
+      btn.addEventListener('pointerenter', function () {
+        state.hoveredPreviewId = cardId;
+        ensureLoopRunning();
+      });
+      btn.addEventListener('pointerleave', function () {
+        if (state.hoveredPreviewId === cardId) {
+          state.hoveredPreviewId = null;
+          ensureLoopRunning();
+        }
+      });
       btn.addEventListener('click', function () {
         var id = btn.getAttribute('data-zig-launch');
         ensureAudio();
@@ -573,6 +664,7 @@
         state.getaway.running = false;
         var st = document.getElementById('zig-getaway-stage');
         if (st) st.hidden = true;
+        ensureLoopRunning();
       });
     }
 
@@ -593,6 +685,7 @@
 
     var gCanvas = sec.querySelector('#zig-getaway-canvas');
     if (gCanvas) {
+      observeInteractiveCanvas(gCanvas);
       var steerFromEvent = function (e) {
         ensureAudio();
         if (state.getaway.gameOver || !state.getaway.running) {
@@ -610,6 +703,9 @@
       };
       gCanvas.addEventListener('pointerdown', steerFromEvent);
     }
+
+    /* Render 1 crisp static atmospheric frame on all 4 cards at rest (0 continuous rAF loops!) */
+    renderStaticHomePreviews();
   }
 
   /* ---------------- 2. CRIMES: Safe-Crack Reflex Canvas ---------------- */
@@ -678,16 +774,22 @@
     ensureMotionStyles();
     var scene = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-scene');
     if (!scene) return;
-    if (scene.querySelector('#zig-heist-canvas')) return;
+    var existingCv = scene.querySelector('#zig-heist-canvas');
+    if (existingCv) {
+      observeInteractiveCanvas(existingCv);
+      return;
+    }
     var wrap = document.createElement('div');
     wrap.className = 'zig-heist-wrap';
     wrap.innerHTML = '<canvas id="zig-heist-canvas" aria-label="Safe-Crack Heist Mini-Game"></canvas>';
     scene.appendChild(wrap);
     var c = wrap.querySelector('canvas');
+    observeInteractiveCanvas(c);
     c.addEventListener('pointerdown', function (e) {
       e.preventDefault();
       triggerHeistStrike();
     });
+    ensureLoopRunning();
   }
 
   /* ---------------- 3. GYM: Heavy-Bag Overdrive Canvas ---------------- */
@@ -733,7 +835,11 @@
     ensureMotionStyles();
     var sessionBox = document.querySelector('#zone-main[data-zone-screen="gym"] .zone-gym-session');
     if (!sessionBox) return;
-    if (sessionBox.querySelector('#zig-gym-canvas')) return;
+    var existingCv = sessionBox.querySelector('#zig-gym-canvas');
+    if (existingCv) {
+      observeInteractiveCanvas(existingCv);
+      return;
+    }
     var trainBtn = sessionBox.querySelector('button[data-gym-train]');
     var wrap = document.createElement('div');
     wrap.className = 'zig-gym-wrap';
@@ -743,10 +849,13 @@
     } else {
       sessionBox.appendChild(wrap);
     }
-    wrap.querySelector('canvas').addEventListener('pointerdown', function (e) {
+    var c = wrap.querySelector('canvas');
+    observeInteractiveCanvas(c);
+    c.addEventListener('pointerdown', function (e) {
       e.preventDefault();
       triggerGymStrike();
     });
+    ensureLoopRunning();
   }
 
   /* ---------------- 4. CASINO: Roulette Wheel + 3-Reel Neon Slots ---------------- */
@@ -757,6 +866,7 @@
     rl.wheelSpeed = 2.6;
     rl.ballSpeed = -9.4;
     rl.ballRadiusFrac = 0.88;
+    ensureLoopRunning();
   }
 
   function startSlotsAnimation() {
@@ -767,6 +877,7 @@
     sl.speeds = [22, 25, 28];
     sl.leverPull = 1;
     sfx.lockClick();
+    ensureLoopRunning();
   }
 
   function mountCasinoGames() {
@@ -784,7 +895,9 @@
       if (rHeader) rHeader.insertAdjacentElement('afterend', rBox);
       else rTable.prepend(rBox);
 
-      rBox.querySelector('canvas').addEventListener('pointerdown', function () {
+      var rCv = rBox.querySelector('canvas');
+      observeInteractiveCanvas(rCv);
+      rCv.addEventListener('pointerdown', function () {
         ensureAudio();
         var redBtn = rTable.querySelector('[data-roulette-bet="red"]:not([disabled])');
         startRouletteAnimation();
@@ -798,6 +911,8 @@
           startRouletteAnimation();
         }
       });
+    } else if (rTable) {
+      observeInteractiveCanvas(rTable.querySelector('#zig-roulette-canvas'));
     }
 
     /* 3-Reel Jackpot Slots Canvas */
@@ -820,7 +935,9 @@
         }
       };
 
-      sBox.querySelector('canvas').addEventListener('pointerdown', triggerSpin);
+      var sCv = sBox.querySelector('canvas');
+      observeInteractiveCanvas(sCv);
+      sCv.addEventListener('pointerdown', triggerSpin);
       sTable.addEventListener('click', function (ev) {
         var btn = ev.target && ev.target.closest ? ev.target.closest('button') : null;
         if (btn && btn.classList.contains('zone-action-primary') && !btn.disabled) {
@@ -828,7 +945,10 @@
           startSlotsAnimation();
         }
       });
+    } else if (sTable) {
+      observeInteractiveCanvas(sTable.querySelector('#zig-slots-canvas'));
     }
+    ensureLoopRunning();
   }
 
   /* ---------------- 5. ATTACK: Street Brawl Versus Banner ---------------- */
@@ -851,7 +971,7 @@
     var oppName = f ? f.name : (v && v.opps && v.opps[0] ? v.opps[0].name : (ar ? 'خصم الشارع' : 'Street Rival'));
     var youPct = f ? f.youPct : 100;
     var oppPct = f ? f.oppPct : 100;
-    var statusTxt = f ? f.verdict + ' | ' + f.progress : (ar ? 'اختر خصماً لبدء القتال' : 'SELECT RIVAL BELOW TO ENGAGE');
+    var statusTxt = f ? (f.verdict + ' · ' + f.progress) : (ar ? 'اختر خصماً لبدء القتال' : 'Select a rival below to engage');
 
     banner.innerHTML =
       '<div class="zig-brawl-side">' +
@@ -899,13 +1019,9 @@
     if (e.key === ' ') state.getaway.boosting = false;
   });
 
-  /* ---------------- Transparent Atmospheric Shader Previews (Over Key-Art) ---------------- */
-  function renderHomePreviews(dt, now) {
-    var previews = document.querySelectorAll('canvas[data-zig-preview]');
-    if (!previews.length) return;
+  /* ---------------- Transparent Atmospheric Shader Previews (1 Static Frame at Rest, Animate Hovered Card Only!) ---------------- */
+  function advancePreviewParticles(dt) {
     var pfx = state.previewFX;
-
-    /* Advance shared preview particle pools once per frame */
     for (var i = 0; i < pfx.rain.length; i++) {
       var rn = pfx.rain[i];
       rn.y += rn.spd * dt * 1.45;
@@ -928,126 +1044,136 @@
       ck.x += ck.drift * dt;
       if (ck.y < -0.06) { ck.y = 1.06; ck.x = 0.15 + Math.random() * 0.7; }
     }
+  }
 
-    previews.forEach(function (cv) {
-      var kind = cv.getAttribute('data-zig-preview');
-      var rect = cv.getBoundingClientRect();
-      var targetH = Math.max(96, Math.round(rect.height || 132));
-      var s = syncCanvas(cv, targetH);
-      if (!s) return;
-      var ctx = s.ctx, w = s.w, h = s.h;
+  function paintSinglePreviewCanvas(cv, now) {
+    if (!cv) return;
+    var pfx = state.previewFX;
+    var kind = cv.getAttribute('data-zig-preview');
+    var rect = cv.getBoundingClientRect();
+    var targetH = Math.max(96, Math.round(rect.height || 132));
+    var s = syncCanvas(cv, targetH);
+    if (!s) return;
+    var ctx = s.ctx, w = s.w, h = s.h;
 
-      /* Transparent canvas: real UE5 WebP key-art shines underneath! */
-      ctx.clearRect(0, 0, w, h);
+    /* Transparent canvas: real UE5 WebP key-art shines underneath! */
+    ctx.clearRect(0, 0, w, h);
 
-      if (kind === 'getaway') {
-        /* 1. Pulsing Red/Blue Pursuit Rim Reflection Glow */
-        var sirenPhase = Math.sin(now * 0.0085);
-        var redAlpha = Math.max(0, sirenPhase) * 0.22;
-        var blueAlpha = Math.max(0, -sirenPhase) * 0.22;
-        if (redAlpha > 0.01) {
-          var rg = ctx.createRadialGradient(w * 0.18, h * 0.78, 4, w * 0.18, h * 0.78, w * 0.52);
-          rg.addColorStop(0, 'rgba(239, 68, 68, ' + redAlpha.toFixed(3) + ')');
-          rg.addColorStop(1, 'rgba(239, 68, 68, 0)');
-          ctx.fillStyle = rg;
-          ctx.fillRect(0, 0, w, h);
-        }
-        if (blueAlpha > 0.01) {
-          var bg = ctx.createRadialGradient(w * 0.82, h * 0.76, 4, w * 0.82, h * 0.76, w * 0.52);
-          bg.addColorStop(0, 'rgba(59, 130, 246, ' + blueAlpha.toFixed(3) + ')');
-          bg.addColorStop(1, 'rgba(59, 130, 246, 0)');
-          ctx.fillStyle = bg;
-          ctx.fillRect(0, 0, w, h);
-        }
+    if (kind === 'getaway') {
+      var sirenPhase = Math.sin(now * 0.0085);
+      var redAlpha = Math.max(0.06, sirenPhase * 0.22);
+      var blueAlpha = Math.max(0.06, -sirenPhase * 0.22);
+      var rg = ctx.createRadialGradient(w * 0.18, h * 0.78, 4, w * 0.18, h * 0.78, w * 0.52);
+      rg.addColorStop(0, 'rgba(239, 68, 68, ' + redAlpha.toFixed(3) + ')');
+      rg.addColorStop(1, 'rgba(239, 68, 68, 0)');
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, w, h);
 
-        /* 2. Diagonal Rain Streaks */
-        ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
-        ctx.lineWidth = 1;
-        for (var rIdx = 0; rIdx < pfx.rain.length; rIdx++) {
-          var rDrop = pfx.rain[rIdx];
-          var rx = rDrop.x * w, ry = rDrop.y * h;
-          ctx.beginPath();
-          ctx.moveTo(rx, ry);
-          ctx.lineTo(rx - 4.5, ry + rDrop.len);
-          ctx.stroke();
-        }
+      var bg = ctx.createRadialGradient(w * 0.82, h * 0.76, 4, w * 0.82, h * 0.76, w * 0.52);
+      bg.addColorStop(0, 'rgba(59, 130, 246, ' + blueAlpha.toFixed(3) + ')');
+      bg.addColorStop(1, 'rgba(59, 130, 246, 0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
 
-        /* 3. Rising Emerald Nitro Embers */
-        for (var eIdx = 0; eIdx < pfx.embers.length; eIdx++) {
-          var emb = pfx.embers[eIdx];
-          ctx.fillStyle = (eIdx % 3 === 0) ? 'rgba(235, 184, 88, 0.72)' : 'rgba(57, 231, 163, 0.76)';
-          ctx.beginPath();
-          ctx.arc(emb.x * w, emb.y * h, emb.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (kind === 'heist') {
-        /* 1. Sweeping Emerald Security Laser Beam */
-        var scanY = (0.18 + (Math.sin(now * 0.0022) * 0.5 + 0.5) * 0.64) * h;
-        var laserGrad = ctx.createLinearGradient(0, scanY - 12, 0, scanY + 12);
-        laserGrad.addColorStop(0, 'rgba(57, 231, 163, 0)');
-        laserGrad.addColorStop(0.5, 'rgba(57, 231, 163, 0.22)');
-        laserGrad.addColorStop(1, 'rgba(57, 231, 163, 0)');
-        ctx.fillStyle = laserGrad;
-        ctx.fillRect(0, scanY - 12, w, 24);
-
-        ctx.strokeStyle = 'rgba(73, 240, 161, 0.58)';
-        ctx.lineWidth = 1.15;
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.28)';
+      ctx.lineWidth = 1;
+      for (var rIdx = 0; rIdx < pfx.rain.length; rIdx++) {
+        var rDrop = pfx.rain[rIdx];
+        var rx = rDrop.x * w, ry = rDrop.y * h;
         ctx.beginPath();
-        ctx.moveTo(0, scanY);
-        ctx.lineTo(w, scanY);
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx - 4.5, ry + rDrop.len);
         ctx.stroke();
-
-        /* 2. Floating Golden Vault Dust Motes */
-        for (var mIdx = 0; mIdx < pfx.motes.length; mIdx++) {
-          var mt2 = pfx.motes[mIdx];
-          var tw = 0.32 + 0.45 * (0.5 + 0.5 * Math.sin(now * 0.003 + mt2.phase));
-          ctx.fillStyle = 'rgba(235, 184, 88, ' + tw.toFixed(3) + ')';
-          ctx.beginPath();
-          ctx.arc((mt2.x + Math.sin(now * 0.0012 + mt2.phase) * 0.03) * w, mt2.y * h, mt2.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (kind === 'casino') {
-        /* 1. Subtle Sweeping Champagne Specular Arc */
-        var sweepX = ((now * 0.00028) % 1.6 - 0.3) * w;
-        var sheen = ctx.createLinearGradient(sweepX - 42, 0, sweepX + 42, h);
-        sheen.addColorStop(0, 'rgba(235, 184, 88, 0)');
-        sheen.addColorStop(0.5, 'rgba(253, 230, 138, 0.14)');
-        sheen.addColorStop(1, 'rgba(235, 184, 88, 0)');
-        ctx.fillStyle = sheen;
-        ctx.fillRect(0, 0, w, h);
-
-        /* 2. Warm Golden Bokeh Glints */
-        for (var bIdx = 0; bIdx < pfx.bokeh.length; bIdx++) {
-          var bk2 = pfx.bokeh[bIdx];
-          var alphaB = 0.12 + 0.22 * (0.5 + 0.5 * Math.sin(now * 0.0026 + bk2.phase));
-          var bx = bk2.x * w, by = bk2.y * h;
-          var bGrad = ctx.createRadialGradient(bx, by, 0.5, bx, by, bk2.r);
-          bGrad.addColorStop(0, 'rgba(254, 240, 138, ' + (alphaB * 1.4).toFixed(3) + ')');
-          bGrad.addColorStop(1, 'rgba(235, 184, 88, 0)');
-          ctx.fillStyle = bGrad;
-          ctx.beginPath();
-          ctx.arc(bx, by, bk2.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      } else if (kind === 'gym') {
-        /* 1. Soft Overhead Ring Spotlight Pulse */
-        var spotPulse = 0.14 + 0.08 * Math.sin(now * 0.0024);
-        var spot = ctx.createRadialGradient(w * 0.5, -8, 6, w * 0.5, h * 0.25, w * 0.65);
-        spot.addColorStop(0, 'rgba(255, 248, 220, ' + spotPulse.toFixed(3) + ')');
-        spot.addColorStop(1, 'rgba(255, 248, 220, 0)');
-        ctx.fillStyle = spot;
-        ctx.fillRect(0, 0, w, h);
-
-        /* 2. Drifting Chalk Dust Motes */
-        for (var cIdx = 0; cIdx < pfx.chalk.length; cIdx++) {
-          var ck2 = pfx.chalk[cIdx];
-          ctx.fillStyle = (cIdx % 4 === 0) ? 'rgba(235, 184, 88, 0.42)' : 'rgba(241, 245, 249, 0.36)';
-          ctx.beginPath();
-          ctx.arc(ck2.x * w, ck2.y * h, ck2.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
       }
+
+      for (var eIdx = 0; eIdx < pfx.embers.length; eIdx++) {
+        var emb = pfx.embers[eIdx];
+        ctx.fillStyle = (eIdx % 3 === 0) ? 'rgba(235, 184, 88, 0.72)' : 'rgba(57, 231, 163, 0.76)';
+        ctx.beginPath();
+        ctx.arc(emb.x * w, emb.y * h, emb.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (kind === 'heist') {
+      var scanY = (0.18 + (Math.sin(now * 0.0022) * 0.5 + 0.5) * 0.64) * h;
+      var laserGrad = ctx.createLinearGradient(0, scanY - 12, 0, scanY + 12);
+      laserGrad.addColorStop(0, 'rgba(57, 231, 163, 0)');
+      laserGrad.addColorStop(0.5, 'rgba(57, 231, 163, 0.22)');
+      laserGrad.addColorStop(1, 'rgba(57, 231, 163, 0)');
+      ctx.fillStyle = laserGrad;
+      ctx.fillRect(0, scanY - 12, w, 24);
+
+      ctx.strokeStyle = 'rgba(73, 240, 161, 0.58)';
+      ctx.lineWidth = 1.15;
+      ctx.beginPath();
+      ctx.moveTo(0, scanY);
+      ctx.lineTo(w, scanY);
+      ctx.stroke();
+
+      for (var mIdx = 0; mIdx < pfx.motes.length; mIdx++) {
+        var mt2 = pfx.motes[mIdx];
+        var tw = 0.32 + 0.45 * (0.5 + 0.5 * Math.sin(now * 0.003 + mt2.phase));
+        ctx.fillStyle = 'rgba(235, 184, 88, ' + tw.toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc((mt2.x + Math.sin(now * 0.0012 + mt2.phase) * 0.03) * w, mt2.y * h, mt2.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (kind === 'casino') {
+      var sweepX = ((now * 0.00028) % 1.6 - 0.3) * w;
+      var sheen = ctx.createLinearGradient(sweepX - 42, 0, sweepX + 42, h);
+      sheen.addColorStop(0, 'rgba(235, 184, 88, 0)');
+      sheen.addColorStop(0.5, 'rgba(253, 230, 138, 0.14)');
+      sheen.addColorStop(1, 'rgba(235, 184, 88, 0)');
+      ctx.fillStyle = sheen;
+      ctx.fillRect(0, 0, w, h);
+
+      for (var bIdx = 0; bIdx < pfx.bokeh.length; bIdx++) {
+        var bk2 = pfx.bokeh[bIdx];
+        var alphaB = 0.12 + 0.22 * (0.5 + 0.5 * Math.sin(now * 0.0026 + bk2.phase));
+        var bx = bk2.x * w, by = bk2.y * h;
+        var bGrad = ctx.createRadialGradient(bx, by, 0.5, bx, by, bk2.r);
+        bGrad.addColorStop(0, 'rgba(254, 240, 138, ' + (alphaB * 1.4).toFixed(3) + ')');
+        bGrad.addColorStop(1, 'rgba(235, 184, 88, 0)');
+        ctx.fillStyle = bGrad;
+        ctx.beginPath();
+        ctx.arc(bx, by, bk2.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (kind === 'gym') {
+      var spotPulse = 0.14 + 0.08 * Math.sin(now * 0.0024);
+      var spot = ctx.createRadialGradient(w * 0.5, -8, 6, w * 0.5, h * 0.25, w * 0.65);
+      spot.addColorStop(0, 'rgba(255, 248, 220, ' + spotPulse.toFixed(3) + ')');
+      spot.addColorStop(1, 'rgba(255, 248, 220, 0)');
+      ctx.fillStyle = spot;
+      ctx.fillRect(0, 0, w, h);
+
+      for (var cIdx = 0; cIdx < pfx.chalk.length; cIdx++) {
+        var ck2 = pfx.chalk[cIdx];
+        ctx.fillStyle = (cIdx % 4 === 0) ? 'rgba(235, 184, 88, 0.42)' : 'rgba(241, 245, 249, 0.36)';
+        ctx.beginPath();
+        ctx.arc(ck2.x * w, ck2.y * h, ck2.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function renderStaticHomePreviews() {
+    var previews = document.querySelectorAll('canvas[data-zig-preview]');
+    if (!previews.length) return;
+    var snapNow = 1480;
+    previews.forEach(function (cv) {
+      paintSinglePreviewCanvas(cv, snapNow);
     });
+  }
+
+  function renderHoveredHomePreview(dt, now) {
+    if (!state.hoveredPreviewId) return;
+    var activeCv = document.querySelector('canvas[data-zig-preview="' + state.hoveredPreviewId + '"]');
+    if (!activeCv) {
+      state.hoveredPreviewId = null;
+      return;
+    }
+    advancePreviewParticles(dt);
+    paintSinglePreviewCanvas(activeCv, now);
   }
 
   function renderGetawayGame(dt, now) {
@@ -1388,7 +1514,7 @@
       ctx.font = fontStack(700, 12);
       ctx.fillText(
         gw.gameOver
-          ? (ar ? 'النتيجة: ' + gw.score + ' | حقائب: ' + gw.bags + ' | اضغط للانطلاق مجدداً' : 'Score: ' + gw.score + ' | Bags: ' + gw.bags + ' | Tap Canvas to Ride Again')
+          ? (ar ? 'النتيجة: ' + gw.score + ' · الحقائب: ' + gw.bags + ' · اضغط للانطلاق مجدداً' : 'Score: ' + gw.score + ' · Bags: ' + gw.bags + ' · Tap canvas to ride again')
           : (ar ? 'اضغط على أي مسار للانطلاق ومراوغة الشرطة' : 'Tap any lane or press Arrow Keys to launch'),
         w * 0.5,
         h * 0.58,
@@ -1999,13 +2125,13 @@
 
   /* ---------------- Global Syndicate Flight Bar & Map Bridge (Zero Emojis) ---------------- */
   var WORLD_FLIGHT_CITIES = [
-    { id: 'zone', code: 'ZCT', minLevel: 1, fare: 0, en: 'Zone City', ar: 'مدينة الزون', subEn: 'Home Turf, 5 Sectors', subAr: 'المركز الرئيسي، 5 قطاعات' },
-    { id: 'riyadh', code: 'RUH', minLevel: 1, fare: 1200, en: 'Riyadh', ar: 'الرياض', subEn: 'Bullion Desk, $1,200', subAr: 'مكتب السبائك، $1,200' },
-    { id: 'cairo', code: 'CAI', minLevel: 1, fare: 950, en: 'Cairo', ar: 'القاهرة', subEn: 'Shadow Bazaar, $950', subAr: 'بازار النيل، $950' },
-    { id: 'dubai', code: 'DXB', minLevel: 3, fare: 2400, en: 'Dubai', ar: 'دبي', subEn: 'Sky-Vaults, Lv.3', subAr: 'خزائن المارينا، مستوى 3' },
-    { id: 'istanbul', code: 'IST', minLevel: 6, fare: 3500, en: 'Istanbul', ar: 'إسطنبول', subEn: 'Bosphorus Hub, Lv.6', subAr: 'مضيق البسفور، مستوى 6' },
-    { id: 'tokyo', code: 'TYO', minLevel: 10, fare: 6800, en: 'Neo-Tokyo', ar: 'نيو طوكيو', subEn: 'Cyber District, Lv.10', subAr: 'حي شيبويا، مستوى 10' },
-    { id: 'montecarlo', code: 'MCO', minLevel: 15, fare: 12500, en: 'Monte Carlo', ar: 'مونت كارلو', subEn: 'Sovereign Salon, Lv.15', subAr: 'صالون النخبة، مستوى 15' }
+    { id: 'zone', code: 'ZCT', minLevel: 1, fare: 0, en: 'Zone City', ar: 'مدينة زون', subEn: 'Home Turf · 5 Sectors', subAr: 'المركز الرئيسي · 5 قطاعات' },
+    { id: 'riyadh', code: 'RUH', minLevel: 1, fare: 1200, en: 'Riyadh', ar: 'الرياض', subEn: 'Bullion Desk · $1,200', subAr: 'مكتب السبائك · $1,200' },
+    { id: 'cairo', code: 'CAI', minLevel: 1, fare: 950, en: 'Cairo', ar: 'القاهرة', subEn: 'Shadow Bazaar · $950', subAr: 'بازار النيل · $950' },
+    { id: 'dubai', code: 'DXB', minLevel: 3, fare: 2400, en: 'Dubai', ar: 'دبي', subEn: 'Sky-Vaults · Lv.3', subAr: 'خزائن المارينا · مستوى 3' },
+    { id: 'istanbul', code: 'IST', minLevel: 6, fare: 3500, en: 'Istanbul', ar: 'إسطنبول', subEn: 'Bosphorus Hub · Lv.6', subAr: 'مضيق البسفور · مستوى 6' },
+    { id: 'tokyo', code: 'TYO', minLevel: 10, fare: 6800, en: 'Neo-Tokyo', ar: 'نيو طوكيو', subEn: 'Cyber District · Lv.10', subAr: 'حي شيبويا · مستوى 10' },
+    { id: 'montecarlo', code: 'MCO', minLevel: 15, fare: 12500, en: 'Monte Carlo', ar: 'مونت كارلو', subEn: 'Sovereign Salon · Lv.15', subAr: 'صالون النخبة · مستوى 15' }
   ];
 
   function getStoredWorldCity() {
@@ -2025,7 +2151,7 @@
     var g = window.__zoneGame;
     var lv = (g && g.p && Number(g.p.level)) ? Math.max(1, Math.floor(Number(g.p.level))) : 1;
     var activeCityId = getStoredWorldCity();
-    var sig = (ar ? 'ar' : 'en') + '|' + lv + '|' + activeCityId;
+    var sig = (ar ? 'ar' : 'en') + ':' + lv + ':' + activeCityId;
 
     var workspace = mapShell.closest('.zone-city-workspace') || mapShell;
     if (!workspace.parentElement) return;
@@ -2048,11 +2174,12 @@
       '<div class="zig-world-flight-top">' +
         '<div class="zig-world-flight-title">' +
           SVG_PLANE +
-          '<span>' + (ar ? 'شبكة الطيران العالمي | موقعك: ' : 'World Charter Network | Current: ') + (ar ? curObj.ar : curObj.en) + ' (' + curObj.code + ')</span>' +
+          '<span>' + (ar ? 'الرحلات العالمية' : 'World Flights') + '</span>' +
+          '<span class="zig-world-origin-pill">' + (ar ? curObj.ar : curObj.en) + '</span>' +
         '</div>' +
         '<div class="zig-world-flight-meta">' +
-          '<span>' + (ar ? 'مستوى التصريح: ' : 'Clearance: ') + 'Lv.' + lv + '</span>' +
-          '<button type="button" class="zig-btn" id="zigOpenRadarBtn">' + (ar ? 'رادار الرحلات العالمي' : 'Open Flight Radar') + '</button>' +
+          '<span class="zig-world-lv-pill">' + (ar ? 'مستوى ' : 'Lv.') + lv + '</span>' +
+          '<button type="button" class="zig-btn" id="zigOpenRadarBtn">' + (ar ? 'رادار الرحلات' : 'Flight Radar') + '</button>' +
         '</div>' +
       '</div>' +
       '<div class="zig-world-cities-row">' +
@@ -2065,7 +2192,7 @@
               ? ('<span class="zig-chip-status">' + SVG_LOCK + '<span>Lv.' + c.minLevel + '</span></span>')
               : '<span>' + c.code + '</span>';
           return (
-            '<button type="button" class="zig-city-chip' + (isHere ? ' is-active' : '') + (locked ? ' is-locked' : '') + '" data-world-city="' + c.id + '">' +
+            '<button type="button" class="zig-city-chip zig-flight-card' + (isHere ? ' is-active' : '') + (locked ? ' is-locked' : '') + '" data-world-city="' + c.id + '">' +
               '<div class="zig-city-chip-top">' +
                 '<span>' + (ar ? c.ar : c.en) + '</span>' +
                 rightBadge +
@@ -2113,7 +2240,7 @@
           if (g.save) g.save();
           g._mapSig = '';
           if (g.pushMap) g.pushMap();
-          if (g.toast) g.toast((ar ? 'وصلت إلى ' : 'Landed in ') + (ar ? target.ar : target.en) + ' (' + target.code + ') | +35 XP');
+          if (g.toast) g.toast((ar ? 'وصلت إلى ' : 'Landed in ') + (ar ? target.ar : target.en) + ' (' + target.code + ') · +35 XP');
           if (g.forceUpdate) g.forceUpdate();
         } else {
           try { localStorage.setItem('zone_world_city', target.id); } catch (_) {}
@@ -2144,7 +2271,7 @@
         if (g.save) g.save();
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
-        if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' | +' + Number(d.xpDelta || 35) + ' XP');
+        if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' · +' + Number(d.xpDelta || 35) + ' XP');
         if (g.forceUpdate) g.forceUpdate();
       }
       var bar = document.getElementById('zig-world-flight-bar');
@@ -2159,7 +2286,7 @@
         if (g.save) g.save();
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
-        if (g.toast) g.toast((d.contractLabel || 'Regional Op') + ' | +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' & +' + Number(d.xpDelta || 0) + ' XP');
+        if (g.toast) g.toast((d.contractLabel || 'Regional Op') + ' · +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' & +' + Number(d.xpDelta || 0) + ' XP');
         if (g.forceUpdate) g.forceUpdate();
       }
     }
@@ -2177,16 +2304,168 @@
     } catch (_) {}
   });
 
-  /* ---------------- Sync Hook & Unified 60fps Loop ---------------- */
+  /* ---------------- Demand-Driven 60fps Loop & Scoped #zone-main Observer ---------------- */
+  var canvasIo = null;
+  var observedCanvases = typeof WeakSet === 'function' ? new WeakSet() : null;
+
+  function ensureCanvasIntersectionObserver() {
+    if (canvasIo || typeof IntersectionObserver !== 'function') return canvasIo;
+    try {
+      canvasIo = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          var ent = entries[i];
+          var id = ent.target && ent.target.id;
+          if (id) {
+            state.canvasVisibility[id] = Boolean(ent.isIntersecting);
+          }
+        }
+        ensureLoopRunning();
+      }, { threshold: 0.01 });
+    } catch (_) {
+      canvasIo = null;
+    }
+    return canvasIo;
+  }
+
+  function observeInteractiveCanvas(cv) {
+    if (!cv || !cv.id) return;
+    if (!Object.prototype.hasOwnProperty.call(state.canvasVisibility, cv.id)) {
+      state.canvasVisibility[cv.id] = !cv.closest('[hidden]');
+    }
+    if (observedCanvases && observedCanvases.has(cv)) return;
+    if (observedCanvases) observedCanvases.add(cv);
+    var io = ensureCanvasIntersectionObserver();
+    if (io) {
+      try { io.observe(cv); } catch (_) {}
+    }
+  }
+
+  function isCanvasVisible(id) {
+    var el = document.getElementById(id);
+    if (!el || !el.isConnected) return false;
+    if (el.closest('[hidden]')) return false;
+    if (Object.prototype.hasOwnProperty.call(state.canvasVisibility, id)) {
+      return Boolean(state.canvasVisibility[id]);
+    }
+    return true;
+  }
+
+  function shouldRunLoop() {
+    if (document.hidden) return false;
+    var main = document.getElementById('zone-main');
+    if (!main) return false;
+    var scr = main.getAttribute('data-zone-screen') || 'home';
+    if (scr === 'home') {
+      if (state.hoveredPreviewId) return true;
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) return true;
+      return false;
+    }
+    if (scr === 'crimes') {
+      return isCanvasVisible('zig-heist-canvas') || isCanvasVisible('zig-crimes-canvas');
+    }
+    if (scr === 'gym') {
+      return isCanvasVisible('zig-gym-canvas');
+    }
+    if (scr === 'casino') {
+      return isCanvasVisible('zig-roulette-canvas') || isCanvasVisible('zig-slots-canvas');
+    }
+    return false;
+  }
+
+  var prevTime = 0;
+  function frame(now) {
+    state.rafId = 0;
+    if (!shouldRunLoop()) {
+      prevTime = 0;
+      return;
+    }
+    var dt = prevTime ? Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000)) : 0.016;
+    prevTime = now;
+    state.rafTicks += 1;
+
+    var main = document.getElementById('zone-main');
+    var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
+
+    if (scr === 'home') {
+      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderGetawayGame(dt, now);
+    } else if (scr === 'crimes') {
+      renderCrimesGame(dt, now);
+    } else if (scr === 'gym') {
+      renderGymGame(dt, now);
+    } else if (scr === 'casino') {
+      if (isCanvasVisible('zig-roulette-canvas')) renderRouletteCanvas(dt, now);
+      if (isCanvasVisible('zig-slots-canvas')) renderSlotsCanvas(dt, now);
+    }
+
+    if (shouldRunLoop()) {
+      state.rafId = requestAnimationFrame(frame);
+    } else {
+      prevTime = 0;
+    }
+  }
+
+  function ensureLoopRunning() {
+    if (shouldRunLoop()) {
+      if (!state.rafId) {
+        prevTime = 0;
+        state.rafId = requestAnimationFrame(frame);
+      }
+    } else if (state.rafId) {
+      cancelAnimationFrame(state.rafId);
+      state.rafId = 0;
+      prevTime = 0;
+    }
+  }
+
+  var observedMainEl = null;
+  var mainObserver = null;
+  var bootObserver = null;
+  var obsTimer = null;
+
+  function scheduleSyncMounts() {
+    if (obsTimer) return;
+    obsTimer = setTimeout(function () {
+      obsTimer = null;
+      syncMounts();
+    }, 36);
+  }
+
+  function bindScopedMainObserver() {
+    if (document.querySelector('x-dc')) return false;
+    var main = document.getElementById('zone-main');
+    if (!main) return false;
+    if (main !== observedMainEl) {
+      observedMainEl = main;
+      if (mainObserver) {
+        try { mainObserver.disconnect(); } catch (_) {}
+      }
+      mainObserver = new MutationObserver(scheduleSyncMounts);
+      mainObserver.observe(main, {
+        childList: true,
+        subtree: false,
+        attributes: true,
+        attributeFilter: ['data-zone-screen']
+      });
+    }
+    if (bootObserver) {
+      try { bootObserver.disconnect(); } catch (_) {}
+      bootObserver = null;
+    }
+    return true;
+  }
+
   function syncMounts() {
     ensureMotionStyles();
     if (document.querySelector('x-dc')) return;
+    bindScopedMainObserver();
     mountHomeArcade();
     mountCrimesGame();
     mountGymGame();
     mountCasinoGames();
     mountAttackBanner();
     mountCityWorldFlightBar();
+    ensureLoopRunning();
 
     /* Detect cash reward deltas for arcade floating popups */
     var g = window.__zoneGame;
@@ -2203,42 +2482,29 @@
   }
 
   window.addEventListener('zone:render', syncMounts);
-
-  var obsTimer = null;
-  var observer = new MutationObserver(function () {
-    if (obsTimer) return;
-    obsTimer = setTimeout(function () {
-      obsTimer = null;
-      syncMounts();
-    }, 60);
-  });
+  document.addEventListener('visibilitychange', ensureLoopRunning);
 
   function boot() {
     syncMounts();
-    if (document.body) {
-      observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen'] });
+    if (!bindScopedMainObserver() && document.body && typeof MutationObserver === 'function') {
+      bootObserver = new MutationObserver(function () {
+        if (bindScopedMainObserver()) {
+          syncMounts();
+        }
+      });
+      bootObserver.observe(document.body, { childList: true, subtree: false });
     }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot);
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
     boot();
   }
 
-  var prevTime = performance.now();
-  function frame(now) {
-    var dt = Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000));
-    prevTime = now;
-    if (!document.hidden) {
-      renderHomePreviews(dt, now);
-      renderGetawayGame(dt, now);
-      renderCrimesGame(dt, now);
-      renderGymGame(dt, now);
-      renderRouletteCanvas(dt, now);
-      renderSlotsCanvas(dt, now);
-    }
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
+  window.__zoneInstantGamesStats = {
+    isLoopRunning: function () { return Boolean(state.rafId); },
+    getTicks: function () { return state.rafTicks; },
+    getHoveredPreviewId: function () { return state.hoveredPreviewId; }
+  };
 })();
