@@ -1089,3 +1089,304 @@ html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) .panel-head {
 html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) .panel-head * {
   color: #f7f1e3 !important;
 }
+
+/* --------------------------------------------------------------------------
+ * 8. HIGH-SPECIFICITY (#dc-root) 1:1 REFERENCE MOCKUP LOCK & CASCADE OVERRIDES
+ * Beats runtime-injected <style> sheets (zig-v127-motion-styles, aaa-topbar-sidebar,
+ * zone-aaa-game-fx-styles, and <x-dc> styled-components) cleanly across EN & AR RTL.
+ * -------------------------------------------------------------------------- */
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading h1 {
+  scroll-margin-top: 96px !important;
+}
+
+/* Topbar Layout & RTL Non-Overlap Guarantee */
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar [data-zheaderbar="1"] {
+  max-width: 1340px !important;
+  padding: 4px 18px !important;
+  gap: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links {
+  display: flex !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links::-webkit-scrollbar {
+  display: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links button.zone-header-link {
+  position: static !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 3px 8px !important;
+  min-height: 32px !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 600 !important;
+  color: #1e1b18 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar #zone-topbar-hud {
+  flex: 0 0 auto !important;
+  padding: 2px 9px !important;
+  gap: 6px !important;
+}
+
+/* Charcoal Crosshatch "Current Mission:" Strip Aligned to Shell Container */
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin {
+  background: var(--zwc-crosshatch-bg) !important;
+  border-top: 2px solid #171512 !important;
+  border-bottom: 2px solid #171512 !important;
+  padding-block: 4px !important;
+  padding-inline: max(18px, calc((100% - 1340px) / 2 + 18px)) !important;
+  min-height: 31px !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label] > .sc-interp {
+  display: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label]::after {
+  content: attr(data-zwc-mission-label);
+  color: #faf5e8 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+}
+
+/* Classic Torn Ruled Paper Sidebar Ledger: Charcoal Section Bars & Open Watercolor Icons */
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label] > .sc-interp {
+  display: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label]::after {
+  content: attr(data-zwc-info-label);
+  color: #f7f1e3 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-panel-heading,
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group {
+  background: var(--zwc-crosshatch-bg) !important;
+  color: #f7f1e3 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
+  padding: 3px 9px !important;
+  margin: 2px 0 0 !important;
+  min-height: 26px !important;
+  border: 0 !important;
+  border-top: 1.5px solid #181613 !important;
+  border-bottom: 1.5px solid #181613 !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group * {
+  color: #f7f1e3 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon,
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-vivid="1"],
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-duotone="1"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::before,
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::after,
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg:not([data-zwc-ink]) {
+  display: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg[data-zwc-ink] {
+  display: block !important;
+  width: 19px !important;
+  height: 19px !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 901px) {
+  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
+    min-height: 26px !important;
+    padding: 2.5px 8px !important;
+    gap: 8px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(34, 30, 25, 0.15) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #1e1b18 !important;
+    font-family: var(--zwc-font-hand) !important;
+    font-size: 15px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
+    background: linear-gradient(90deg, rgba(154, 176, 116, 0.52) 0%, rgba(154, 176, 116, 0.22) 100%) !important;
+    border-inline-start: 3px solid #4d7332 !important;
+    font-weight: 700 !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-operative-crest {
+    padding: 4px 8px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-profile-body {
+    padding: 4px 8px 6px !important;
+    gap: 2px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-resource {
+    padding: 2px 0 !important;
+  }
+}
+
+/* Strip Dark Photo Hero Overlays & Duplicate Subtitle Spans on .zone-page-heading */
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 2px 0 6px !important;
+  min-height: 0 !important;
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading::before,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading::after,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading[data-zwc-enhanced="1"] > span,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading[data-zwc-enhanced="1"] > p,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-page-heading > div {
+  display: none !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading h1 {
+  font-family: var(--zwc-font-brush) !important;
+  font-size: 42px !important;
+  font-weight: 400 !important;
+  line-height: 1.04 !important;
+  color: #1a1714 !important;
+  margin: 0 !important;
+  text-transform: none !important;
+  text-shadow: 1px 1px 0 rgba(255, 252, 245, 0.85) !important;
+}
+
+/* City Screen 1:1 Mockup Stack: City -> City Tutorial -> Full-Width Watercolor Panorama -> Key of Symbols */
+@media (min-width: 901px) {
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-caption {
+    display: none !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-workspace {
+    display: contents !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-map-shell {
+    order: -10 !important;
+    width: 100% !important;
+    margin: 0 0 6px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
+    aspect-ratio: 2.15 / 1 !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] > div > :has(.zone-city-legend) {
+    order: -9 !important;
+    width: 100% !important;
+    margin: 0 0 14px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] nav.zone-city-directory {
+    order: -8 !important;
+    width: 100% !important;
+    max-height: none !important;
+    margin: 0 0 14px !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] nav.zone-city-directory .zone-city-destinations {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    max-height: 270px !important;
+    overflow-y: auto !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] #zig-world-flight-bar {
+    order: -7 !important;
+  }
+
+  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-street-dispatch {
+    order: -6 !important;
+  }
+}
+
+/* Harmonize Remaining Modern Emerald Buttons (.zig-btn, Flight Radar, Open map) into Watercolor Sage/Charcoal */
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-btn,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="16, 185, 129"],
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="#10b981"],
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="var(--accFill1)"] {
+  background: linear-gradient(180deg, #7ea75b 0%, #5e863e 100%) !important;
+  color: #fcf9f2 !important;
+  border: 1.6px solid #1e1b18 !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 2px 2px 0 #1e1b18 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
+}
+
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-flight-card.is-current,
+html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-flight-card[aria-current="true"] {
+  background: linear-gradient(180deg, rgba(154, 176, 116, 0.34) 0%, rgba(248, 243, 230, 0.96) 100%) !important;
+  border-color: #3d5f28 !important;
+  box-shadow: 2px 3px 0 #1e1b18 !important;
+}

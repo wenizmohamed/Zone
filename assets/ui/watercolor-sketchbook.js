@@ -101,15 +101,43 @@
     if (navBtn) navBtn.click();
   }
 
-  /* 1. Sync Bulletin -> "Current Mission:" Crosshatch Strip */
+  /* 0. Keep watercolor-sketchbook.css after runtime-injected <style> tags */
+  function ensureStylesheetLast() {
+    var head = document.head;
+    if (!head) return;
+    var link = head.querySelector('link[href*="watercolor-sketchbook.css"]');
+    if (!link) return;
+    var sibling = link.nextElementSibling;
+    while (sibling) {
+      if (sibling.tagName === 'STYLE' || sibling.tagName === 'LINK') {
+        head.appendChild(link);
+        break;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+  }
+
+  /* 1. Sync Bulletin -> "Current Mission:" & Sidebar "Information" Labels (Fiber-safe) */
   function syncMissionBulletin() {
-    if (isNoirMode()) return;
     var badge = document.querySelector('.zone-topbar .zone-bulletin > span:first-child');
-    if (!badge) return;
+    var infoHead = document.querySelector('aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading');
+    if (isNoirMode()) {
+      if (badge) badge.removeAttribute('data-zwc-mission-label');
+      if (infoHead) infoHead.removeAttribute('data-zwc-info-label');
+      return;
+    }
     var ar = isAr();
-    var targetText = ar ? 'المهمة الحالية:' : 'Current Mission:';
-    if (badge.firstChild && badge.firstChild.nodeType === 3) {
-      if (badge.firstChild.nodeValue !== targetText) badge.firstChild.nodeValue = targetText;
+    if (badge) {
+      var targetMission = ar ? 'المهمة الحالية:' : 'Current Mission:';
+      if (badge.getAttribute('data-zwc-mission-label') !== targetMission) {
+        badge.setAttribute('data-zwc-mission-label', targetMission);
+      }
+    }
+    if (infoHead) {
+      var targetInfo = ar ? 'المعلومات' : 'Information';
+      if (infoHead.getAttribute('data-zwc-info-label') !== targetInfo) {
+        infoHead.setAttribute('data-zwc-info-label', targetInfo);
+      }
     }
   }
 
@@ -143,7 +171,7 @@
 
     var screen = main.getAttribute('data-zone-screen') || 'home';
     var ar = isAr();
-    var subP = heading.querySelector('p');
+    var subP = heading.querySelector(':scope > p, :scope > span');
     var fallbackBody = subP ? subP.textContent.trim() : '';
     var spec = TUTORIAL_COPY[screen];
     var title = spec
@@ -370,9 +398,20 @@
     shell.appendChild(stage);
   }
 
+  var lastObservedScreen = '';
+
   function syncAll() {
+    ensureStylesheetLast();
     if (document.querySelector('x-dc')) return;
     try {
+      var main = document.getElementById('zone-main');
+      var curScreen = main ? (main.getAttribute('data-zone-screen') || '') : '';
+      if (curScreen && curScreen !== lastObservedScreen) {
+        lastObservedScreen = curScreen;
+        if (window.scrollY > 0 && window.scrollY < 160) {
+          window.scrollTo(0, 0);
+        }
+      }
       syncMissionBulletin();
       syncTutorialBanner();
       syncSketchIconsAndArt();
@@ -381,6 +420,7 @@
   }
 
   function boot() {
+    ensureStylesheetLast();
     syncAll();
     setTimeout(syncAll, 180);
     setTimeout(syncAll, 520);
@@ -404,6 +444,12 @@
     }, true);
 
     if (typeof MutationObserver === 'function') {
+      if (document.head) {
+        var headObs = new MutationObserver(function () {
+          ensureStylesheetLast();
+        });
+        headObs.observe(document.head, { childList: true });
+      }
       var obs = new MutationObserver(function () {
         syncAll();
       });
