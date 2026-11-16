@@ -1,8 +1,11 @@
 /* ==========================================================================
- * ZONE v130 - HAND-DRAWN FOUNTAIN-PEN INK & WATERCOLOR SKETCHBOOK EDITION
- * Art Direction: Cold-press cream watercolor paper (#f2ebdc), organic margin
- * watercolor washes, charcoal crosshatch ink headers, fountain-pen ruled
- * sidebar ledger, brush-ink titles, and hand-painted watercolor illustrations.
+ * ZONE v133 - HAND-DRAWN FOUNTAIN-PEN INK & WATERCOLOR SKETCHBOOK EDITION
+ * 100% Identical Hand-Drawn Sketchbook UI/UX Across BOTH Light & Dark Modes:
+ *   - Light Mode (html[data-theme="light"]): Cold-press cream paper (#f2ebdc),
+ *     fountain-pen sepia-black ink (#1e1b18), burnt-sienna/sage/cerulean blooms.
+ *   - Dark Mode (html:not([data-theme="light"])): Cold-press midnight charcoal
+ *     artist paper (#141210), warm bone/chalk ink (#f3ecdc), nocturnal gouache
+ *     blooms, chalk-inked wobbly borders, and lantern-lit watercolor illustrations.
  * ========================================================================== */
 
 @font-face {
@@ -22,51 +25,113 @@
 }
 
 /* --------------------------------------------------------------------------
- * 1. ROOT SKETCHBOOK TOKENS & COLD-PRESS WATERCOLOR PAPER CANVAS (DEFAULT)
+ * 1A. SHARED SKETCHBOOK GEOMETRY & TYPOGRAPHY TOKENS (LIGHT + DARK)
  * -------------------------------------------------------------------------- */
-:root,
-html:not([data-sketch-mode="noir"]),
-html[data-theme="light"]:not([data-sketch-mode="noir"]) {
-  --zwc-paper: #f2ebdc;
-  --zwc-paper-elevated: #f8f3e6;
-  --zwc-paper-warm: #ebe2ce;
-  --zwc-paper-tint: #e4dac3;
-  --zwc-ink: #1e1b18;
-  --zwc-ink-soft: #3a342d;
-  --zwc-ink-muted: #5b5246;
-  --zwc-ink-rule: rgba(34, 30, 25, 0.22);
-  --zwc-charcoal: #2c2a27;
-  --zwc-charcoal-deep: #1e1c1a;
-  --zwc-cream-ink: #f7f1e3;
-  --zwc-blue-ink: #27528a;
-  --zwc-green-ink: #27582e;
-  --zwc-sage: #6d9949;
-  --zwc-sage-wash: rgba(145, 173, 108, 0.36);
-  --zwc-terracotta: #bc4b32;
-  --zwc-ochre: #d6a236;
-  --zwc-cerulean: #3d709e;
-  --zwc-plum: #794c9e;
-
+:root {
   --zwc-font-hand: "Patrick Hand", "Rubik", system-ui, sans-serif;
   --zwc-font-brush: "Caveat Brush", "Patrick Hand", "Oswald", sans-serif;
   --zwc-sketch-radius: 255px 12px 225px 12px / 10px 225px 10px 255px;
   --zwc-sketch-radius-sm: 185px 8px 165px 8px / 7px 165px 7px 185px;
+}
 
-  /* Repeating fountain-pen crosshatch SVG pattern for dark charcoal headers */
-  --zwc-crosshatch-bg:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M1 0L0 16M5 0L4 16M9 0L8 16M13 0L12 16M0 3L16 2M0 9L16 8M0 14L16 15' stroke='%23161513' stroke-width='0.85' stroke-opacity='0.52'/%3E%3Cpath d='M3 0L2 16M11 0L10 16' stroke='%2347443e' stroke-width='0.6' stroke-opacity='0.38'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, #363430 0%, #272522 100%);
+html[dir="rtl"] {
+  --zwc-font-hand: "Noto Sans Arabic", "Rubik", sans-serif;
+  --zwc-font-brush: "Noto Sans Arabic", "Rubik", sans-serif;
+}
 
-  /* Pencil diagonal sketch shading for top header strip */
+html[dir="rtl"] body,
+html[dir="rtl"] body * {
+  letter-spacing: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 1B. LIGHT SKETCHBOOK PALETTE (Cold-Press Cream Paper + Fountain-Pen Ink)
+ *     High specificity (2,1,2) defeats aaa-game-surfaces.css #zone-main tokens
+ * -------------------------------------------------------------------------- */
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root,
+html[data-theme="light"] body #dc-root #zone-main {
+  color-scheme: light;
+  --zwc-paper: #f2ebdc;
+  --zwc-paper-elevated: #f8f3e6;
+  --zwc-paper-subcard: #fcf8ee;
+  --zwc-paper-subcard-hover: #f3ecda;
+  --zwc-sidebar-bg: #f7f1e3;
+  --zwc-crest-bg: rgba(226, 215, 192, 0.48);
+  --zwc-well-bg: rgba(232, 221, 198, 0.58);
+  --zwc-input-bg: #fdfaf2;
+  --zwc-btn-bg: #ede4cf;
+  --zwc-btn-hover: #e3d7bd;
+  --zwc-tag-bg: rgba(248, 243, 230, 0.96);
+
+  --zwc-ink: #1e1b18;
+  --zwc-ink-soft: #3a342d;
+  --zwc-ink-muted: #594f43;
+  --zwc-title-ink: #1a1714;
+  --zwc-title-shadow: 1px 1px 0 rgba(255, 252, 245, 0.85);
+  --zwc-cream-ink: #f7f1e3;
+  --zwc-blue-ink: #27528a;
+  --zwc-green-ink: #27582e;
+  --zwc-gold-ink: #9a6519;
+  --zwc-bad-ink: #a93522;
+  --zwc-svg-ink: #221e1a;
+  --zwc-pin-stroke: #1e1b18;
+
+  --zwc-border-strong: #23201c;
+  --zwc-border-panel: #25221e;
+  --zwc-border-sub: #28241f;
+  --zwc-ink-rule: rgba(34, 30, 25, 0.16);
+  --zwc-legend-rule: rgba(35, 32, 28, 0.28);
+  --zwc-shadow-card: 3px 4px 0 rgba(36, 33, 29, 0.15);
+  --zwc-shadow-sub: 2px 3px 0 rgba(36, 33, 29, 0.16);
+  --zwc-shadow-solid: #23201c;
+  --zwc-topbar-shadow: 0 3px 0 rgba(30, 27, 24, 0.1);
+
+  --zwc-row-hover: rgba(154, 176, 116, 0.26);
+  --zwc-row-active: linear-gradient(90deg, rgba(154, 176, 116, 0.52) 0%, rgba(154, 176, 116, 0.22) 100%);
+  --zwc-row-active-bar: #4d7332;
+  --zwc-track-bg: rgba(34, 30, 25, 0.13);
+  --zwc-track-border: rgba(34, 30, 25, 0.28);
+
+  --zwc-paper-grain:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.24 0 0 0 0 0.20 0 0 0 0 0.15 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  --zwc-canvas-bg:
+    var(--zwc-paper-grain),
+    radial-gradient(ellipse 145px 190px at 18px 34%, rgba(201, 132, 76, 0.38) 0%, rgba(201, 132, 76, 0.14) 55%, transparent 76%),
+    radial-gradient(ellipse 135px 175px at 26px 58%, rgba(132, 160, 96, 0.38) 0%, rgba(132, 160, 96, 0.12) 56%, transparent 78%),
+    radial-gradient(ellipse 150px 210px at 22px 82%, rgba(110, 154, 184, 0.38) 0%, rgba(110, 154, 184, 0.12) 58%, transparent 78%),
+    radial-gradient(ellipse 165px 195px at calc(100% - 18px) 38%, rgba(125, 166, 194, 0.32) 0%, transparent 74%),
+    radial-gradient(ellipse 155px 215px at calc(100% - 14px) 74%, rgba(204, 140, 92, 0.32) 0%, transparent 76%),
+    linear-gradient(180deg, #f4eee0 0%, #efe7d5 52%, #f3ecde 100%);
+
+  --zwc-card-bg:
+    var(--zwc-paper-grain),
+    linear-gradient(180deg, #f9f4e8 0%, #f3ebda 100%);
+
+  --zwc-tutorial-body-bg:
+    var(--zwc-paper-grain),
+    linear-gradient(180deg, #faf5e9 0%, #f4ecda 100%);
+
   --zwc-pencil-shade:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M-2 18L18 -2M4 20L20 4M-4 10L10 -4' stroke='%23292520' stroke-width='0.65' stroke-opacity='0.11'/%3E%3C/svg%3E"),
     linear-gradient(180deg, #e9e0cc 0%, #dfd4bc 100%);
 
-  /* Cold-press watercolor paper fiber grain */
-  --zwc-paper-grain:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.24 0 0 0 0 0.20 0 0 0 0 0.15 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  --zwc-crosshatch-bg:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M1 0L0 16M5 0L4 16M9 0L8 16M13 0L12 16M0 3L16 2M0 9L16 8M0 14L16 15' stroke='%23161513' stroke-width='0.85' stroke-opacity='0.52'/%3E%3Cpath d='M3 0L2 16M11 0L10 16' stroke='%2347443e' stroke-width='0.6' stroke-opacity='0.38'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #363430 0%, #272522 100%);
 
-  /* Override shared Zone variables so inline template styles harmonize */
+  --zwc-crosshatch-border: #181613;
+  --zwc-bulletin-cap: #2b2926;
+
+  --zwc-plaque-bg:
+    repeating-linear-gradient(0deg, rgba(30, 27, 24, 0.14) 0px, rgba(30, 27, 24, 0.14) 1px, transparent 1px, transparent 4px),
+    linear-gradient(180deg, #d7ccb6 0%, #c4b89f 100%);
+  --zwc-plaque-border: #1c1916;
+  --zwc-plaque-shadow: inset 0 0 0 1px rgba(255, 252, 244, 0.48), 2px 2px 0 #1c1916;
+
+  /* App & MotionSites variables harmonized to Light Cream Sketchpaper */
   --bg: #f2ebdc !important;
   --bg2: #ebe2ce !important;
   --panel: #f8f3e6 !important;
@@ -74,7 +139,7 @@ html[data-theme="light"]:not([data-sketch-mode="noir"]) {
   --deep: #e7dec8 !important;
   --z1: #f6f0e2 !important;
   --z2: #ede4d0 !important;
-  --btn: #e7dec8 !important;
+  --btn: #ede4cf !important;
   --tb1: #e8dfc9 !important;
   --tb2: #ddd2b9 !important;
   --border: rgba(34, 30, 25, 0.34) !important;
@@ -96,29 +161,178 @@ html[data-theme="light"]:not([data-sketch-mode="noir"]) {
   --onAcc: #fcf9f2 !important;
   --gold: #9a6519 !important;
   --money: #27582e !important;
+  --bad: #a93522 !important;
+  --good: #27582e !important;
   --link: #27528a !important;
   --activebg: rgba(145, 173, 108, 0.36) !important;
   --activefg: #1b1815 !important;
+  --ags-surface-1: #f8f3e6 !important;
+  --ags-surface-2: #fcf8ee !important;
+  --ags-surface-2-hover: #f3ecda !important;
+  --ags-surface-3: rgba(34, 30, 25, 0.05) !important;
+  --ags-border-1: rgba(34, 30, 25, 0.28) !important;
+  --ags-border-2: rgba(34, 30, 25, 0.34) !important;
+  --ags-divider: rgba(34, 30, 25, 0.16) !important;
+  --ags-pill-bg: #ede4cf !important;
+  --ags-pill-hover: #e3d7bd !important;
+  --ags-ink-1: #1e1b18 !important;
+  --ags-ink-2: #3a342d !important;
+  --ags-ink-3: #594f43 !important;
+  --zone-ground: #f2ebdc !important;
+  --zone-surface: #f8f3e6 !important;
+  --zone-raised: #ede4cf !important;
+  --zone-ink: #1e1b18 !important;
+  --zone-muted: #594f43 !important;
+  --zone-line: #24211d !important;
 }
 
-html[dir="rtl"]:not([data-sketch-mode="noir"]) {
-  --zwc-font-hand: "Noto Sans Arabic", "Rubik", sans-serif;
-  --zwc-font-brush: "Noto Sans Arabic", "Rubik", sans-serif;
-}
+/* --------------------------------------------------------------------------
+ * 1C. DARK SKETCHBOOK PALETTE (Midnight Charcoal Artist Paper + Chalk Ink)
+ *     Exact same Sketchbook UI/UX, wobbly borders, Torn ledger & watercolor art
+ * -------------------------------------------------------------------------- */
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body,
+html:not([data-theme="light"]) body #dc-root,
+html:not([data-theme="light"]) body #dc-root #zone-main {
+  color-scheme: dark;
+  --zwc-paper: #141210;
+  --zwc-paper-elevated: #1e1b17;
+  --zwc-paper-subcard: #25211c;
+  --zwc-paper-subcard-hover: #2e2922;
+  --zwc-sidebar-bg: #191613;
+  --zwc-crest-bg: rgba(242, 234, 217, 0.055);
+  --zwc-well-bg: rgba(242, 234, 217, 0.085);
+  --zwc-input-bg: #171411;
+  --zwc-btn-bg: #2a251f;
+  --zwc-btn-hover: #352f27;
+  --zwc-tag-bg: rgba(25, 22, 19, 0.95);
 
-/* Base Paper Canvas + Margin Watercolor Splashes (Burnt Sienna, Sage, Cerulean) */
-html:not([data-sketch-mode="noir"]) body {
-  background-color: var(--zwc-paper) !important;
-  background-image:
+  --zwc-ink: #f3ecdc;
+  --zwc-ink-soft: #d8ccb6;
+  --zwc-ink-muted: #aca08a;
+  --zwc-title-ink: #faf4e6;
+  --zwc-title-shadow: 2px 2px 0 rgba(0, 0, 0, 0.72);
+  --zwc-cream-ink: #f7f1e3;
+  --zwc-blue-ink: #8ab8e8;
+  --zwc-green-ink: #92d17e;
+  --zwc-gold-ink: #f0c465;
+  --zwc-bad-ink: #ef7d68;
+  --zwc-svg-ink: #f3ecdc;
+  --zwc-pin-stroke: #f5efe1;
+
+  --zwc-border-strong: rgba(242, 234, 217, 0.44);
+  --zwc-border-panel: rgba(242, 234, 217, 0.36);
+  --zwc-border-sub: rgba(242, 234, 217, 0.28);
+  --zwc-ink-rule: rgba(242, 234, 217, 0.14);
+  --zwc-legend-rule: rgba(242, 234, 217, 0.22);
+  --zwc-shadow-card: 3px 4px 0 rgba(0, 0, 0, 0.62);
+  --zwc-shadow-sub: 2px 3px 0 rgba(0, 0, 0, 0.56);
+  --zwc-shadow-solid: #090807;
+  --zwc-topbar-shadow: 0 3px 0 rgba(0, 0, 0, 0.5);
+
+  --zwc-row-hover: rgba(142, 178, 102, 0.18);
+  --zwc-row-active: linear-gradient(90deg, rgba(134, 175, 98, 0.34) 0%, rgba(134, 175, 98, 0.12) 100%);
+  --zwc-row-active-bar: #8ec364;
+  --zwc-track-bg: rgba(0, 0, 0, 0.44);
+  --zwc-track-border: rgba(242, 234, 217, 0.28);
+
+  --zwc-paper-grain:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.95 0 0 0 0 0.90 0 0 0 0 0.80 0 0 0 0.032 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* Cold-press charcoal sketchpaper + nocturnal burnt-amber, sage & indigo blooms */
+  --zwc-canvas-bg:
     var(--zwc-paper-grain),
-    /* Left-margin organic watercolor blooms matching reference mockup */
-    radial-gradient(ellipse 145px 190px at 18px 34%, rgba(201, 132, 76, 0.38) 0%, rgba(201, 132, 76, 0.14) 55%, transparent 76%),
-    radial-gradient(ellipse 135px 175px at 26px 58%, rgba(132, 160, 96, 0.38) 0%, rgba(132, 160, 96, 0.12) 56%, transparent 78%),
-    radial-gradient(ellipse 150px 210px at 22px 82%, rgba(110, 154, 184, 0.38) 0%, rgba(110, 154, 184, 0.12) 58%, transparent 78%),
-    /* Right-margin organic watercolor blooms */
-    radial-gradient(ellipse 165px 195px at calc(100% - 18px) 38%, rgba(125, 166, 194, 0.32) 0%, transparent 74%),
-    radial-gradient(ellipse 155px 215px at calc(100% - 14px) 74%, rgba(204, 140, 92, 0.32) 0%, transparent 76%),
-    linear-gradient(180deg, #f4eee0 0%, #efe7d5 52%, #f3ecde 100%) !important;
+    radial-gradient(ellipse 165px 210px at 18px 32%, rgba(196, 114, 58, 0.2) 0%, rgba(196, 114, 58, 0.06) 56%, transparent 78%),
+    radial-gradient(ellipse 150px 190px at 26px 58%, rgba(116, 152, 82, 0.19) 0%, rgba(116, 152, 82, 0.06) 56%, transparent 78%),
+    radial-gradient(ellipse 165px 225px at 22px 84%, rgba(78, 126, 168, 0.2) 0%, rgba(78, 126, 168, 0.06) 58%, transparent 80%),
+    radial-gradient(ellipse 180px 210px at calc(100% - 18px) 36%, rgba(84, 132, 174, 0.17) 0%, transparent 76%),
+    radial-gradient(ellipse 170px 225px at calc(100% - 14px) 74%, rgba(194, 118, 64, 0.17) 0%, transparent 78%),
+    linear-gradient(180deg, #161310 0%, #12100d 52%, #15120f 100%);
+
+  --zwc-card-bg:
+    var(--zwc-paper-grain),
+    linear-gradient(180deg, #201d19 0%, #191613 100%);
+
+  --zwc-tutorial-body-bg:
+    var(--zwc-paper-grain),
+    linear-gradient(180deg, #231f1b 0%, #1b1815 100%);
+
+  --zwc-pencil-shade:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M-2 18L18 -2M4 20L20 4M-4 10L10 -4' stroke='%23f3ecdc' stroke-width='0.65' stroke-opacity='0.07'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #231f1b 0%, #1a1714 100%);
+
+  --zwc-crosshatch-bg:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M1 0L0 16M5 0L4 16M9 0L8 16M13 0L12 16M0 3L16 2M0 9L16 8M0 14L16 15' stroke='%23090807' stroke-width='0.95' stroke-opacity='0.68'/%3E%3Cpath d='M3 0L2 16M11 0L10 16' stroke='%23f3ecdc' stroke-width='0.55' stroke-opacity='0.14'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #302b25 0%, #221e1a 100%);
+
+  --zwc-crosshatch-border: rgba(242, 234, 217, 0.28);
+  --zwc-bulletin-cap: #231f1b;
+
+  --zwc-plaque-bg:
+    repeating-linear-gradient(0deg, rgba(243, 236, 220, 0.08) 0px, rgba(243, 236, 220, 0.08) 1px, transparent 1px, transparent 4px),
+    linear-gradient(180deg, #38322b 0%, #26221d 100%);
+  --zwc-plaque-border: rgba(242, 234, 217, 0.52);
+  --zwc-plaque-shadow: inset 0 0 0 1px rgba(255, 250, 240, 0.14), 2px 2px 0 #090807;
+
+  /* App & MotionSites variables harmonized to Dark Charcoal Sketchpaper (NEVER #0b0f19 navy) */
+  --bg: #141210 !important;
+  --bg2: #191613 !important;
+  --panel: #1e1b17 !important;
+  --panel2: #25211c !important;
+  --deep: #171411 !important;
+  --z1: #221e1a !important;
+  --z2: #28241e !important;
+  --btn: #2a251f !important;
+  --tb1: #2d2822 !important;
+  --tb2: #211d19 !important;
+  --border: rgba(242, 234, 217, 0.28) !important;
+  --border2: rgba(242, 234, 217, 0.2) !important;
+  --border3: rgba(242, 234, 217, 0.38) !important;
+  --edge: rgba(242, 234, 217, 0.42) !important;
+  --track: rgba(242, 234, 217, 0.14) !important;
+  --line: rgba(242, 234, 217, 0.14) !important;
+  --t1: #f3ecdc !important;
+  --t2: #e4dbc8 !important;
+  --t3: #d2c6b0 !important;
+  --t4: #beb19a !important;
+  --mu: #aca08a !important;
+  --mu2: #968a75 !important;
+  --acc: #8ec364 !important;
+  --acc2: #6d9949 !important;
+  --accFill1: #6f9a4b !important;
+  --accFill2: #557b37 !important;
+  --onAcc: #fcf9f2 !important;
+  --gold: #f0c465 !important;
+  --money: #92d17e !important;
+  --bad: #ef7d68 !important;
+  --good: #92d17e !important;
+  --link: #8ab8e8 !important;
+  --activebg: rgba(134, 175, 98, 0.28) !important;
+  --activefg: #faf4e6 !important;
+  --ags-surface-1: #1e1b17 !important;
+  --ags-surface-2: #25211c !important;
+  --ags-surface-2-hover: #2e2922 !important;
+  --ags-surface-3: rgba(242, 234, 217, 0.06) !important;
+  --ags-border-1: rgba(242, 234, 217, 0.26) !important;
+  --ags-border-2: rgba(242, 234, 217, 0.32) !important;
+  --ags-divider: rgba(242, 234, 217, 0.14) !important;
+  --ags-pill-bg: #2a251f !important;
+  --ags-pill-hover: #352f27 !important;
+  --ags-ink-1: #f3ecdc !important;
+  --ags-ink-2: #d8ccb6 !important;
+  --ags-ink-3: #aca08a !important;
+  --zone-ground: #141210 !important;
+  --zone-surface: #1e1b17 !important;
+  --zone-raised: #28241e !important;
+  --zone-ink: #f3ecdc !important;
+  --zone-muted: #aca08a !important;
+  --zone-line: rgba(242, 234, 217, 0.34) !important;
+}
+
+/* Base Cold-Press Paper Canvas (Active in BOTH Light & Dark Modes) */
+html body {
+  background-color: var(--zwc-paper) !important;
+  background-image: var(--zwc-canvas-bg) !important;
   background-attachment: scroll !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
@@ -126,65 +340,69 @@ html:not([data-sketch-mode="noir"]) body {
   letter-spacing: 0.01em !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-app {
+html body .zone-app {
   background: transparent !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
 }
 
-html[dir="rtl"]:not([data-sketch-mode="noir"]) body,
-html[dir="rtl"]:not([data-sketch-mode="noir"]) body * {
-  letter-spacing: 0 !important;
+/* Luminous Gouache Boost for Hand-Inked SVG Washes on Dark Charcoal Paper */
+html:not([data-theme="light"]) svg .zwc-wash-fill {
+  fill-opacity: 0.78 !important;
+}
+
+html svg .zwc-ink-stroke {
+  stroke: var(--zwc-svg-ink) !important;
+}
+
+html svg .zwc-pin-outline {
+  stroke: var(--zwc-pin-stroke) !important;
 }
 
 /* --------------------------------------------------------------------------
- * 2. TOP HEADER & CHARCOAL CROSSHATCH MISSION STRIP (.zone-topbar)
+ * 2. TOP HEADER & CROSSHATCH MISSION STRIP (.zone-topbar)
  * -------------------------------------------------------------------------- */
-html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar {
+html body .zone-app .zone-topbar,
+html body #dc-root .zone-app .zone-topbar {
   background: var(--zwc-pencil-shade) !important;
-  border-bottom: 2px solid var(--zwc-ink) !important;
-  box-shadow: 0 3px 0 rgba(30, 27, 24, 0.1) !important;
+  border-bottom: 2px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-topbar-shadow) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar [data-zheaderbar] {
-  max-width: 1380px !important;
+html body #dc-root .zone-topbar [data-zheaderbar="1"],
+html body .zone-topbar [data-zheaderbar] {
+  max-width: 1440px !important;
   min-height: 46px !important;
-  padding: 4px 16px !important;
-  gap: 12px !important;
+  padding: 4px 14px !important;
+  gap: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
 }
 
-/* Hand-drawn 3D Ink Block Plaque for "ZONE" */
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand {
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(30, 27, 24, 0.14) 0px,
-      rgba(30, 27, 24, 0.14) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    linear-gradient(180deg, #d7ccb6 0%, #c4b89f 100%) !important;
-  border: 2px solid #1c1916 !important;
+/* Hand-Drawn 3D Engraved Block Plaque for "ZONE" */
+html body .zone-topbar .zone-brand,
+html body #dc-root .zone-topbar .zone-brand {
+  background: var(--zwc-plaque-bg) !important;
+  border: 2px solid var(--zwc-plaque-border) !important;
   border-radius: 3px !important;
   padding: 3px 18px 2px !important;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 252, 244, 0.48),
-    2px 2px 0 #1c1916 !important;
+  box-shadow: var(--zwc-plaque-shadow) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand::before,
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand .zaaa-brand-crest,
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand .zaaa-brand-meta {
+html body .zone-topbar .zone-brand::before,
+html body .zone-topbar .zone-brand .zaaa-brand-crest,
+html body .zone-topbar .zone-brand .zaaa-brand-meta {
   display: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand > span[data-zfig="1"],
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand > span:first-of-type {
+html body .zone-topbar .zone-brand > span[data-zfig="1"],
+html body .zone-topbar .zone-brand > span:first-of-type {
   font-family: "Oswald", var(--zwc-font-brush), sans-serif !important;
   font-size: 30px !important;
   font-weight: 800 !important;
@@ -193,133 +411,183 @@ html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-brand > span:first-o
   color: #faf5e8 !important;
   background: none !important;
   -webkit-text-fill-color: #faf5e8 !important;
-  -webkit-text-stroke: 1.6px #181512 !important;
+  -webkit-text-stroke: 1.6px #141210 !important;
   text-shadow:
-    1px 1px 0 #181512,
-    2px 2px 0 #181512,
-    3px 3px 0 #181512,
-    4px 4px 0 rgba(24, 21, 18, 0.45) !important;
+    1px 1px 0 #141210,
+    2px 2px 0 #141210,
+    3px 3px 0 #141210,
+    4px 4px 0 rgba(0, 0, 0, 0.55) !important;
 }
 
-/* Topbar Fountain-Pen Nav Links (News / Forums / Help feel) */
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-links {
+/* Topbar Fountain-Pen / Chalk Nav Links */
+html body #dc-root .zone-topbar .zone-header-links,
+html body .zone-topbar .zone-header-links {
+  display: flex !important;
+  align-items: center !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 2px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  gap: 6px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-links button.zone-header-link {
+html body #dc-root .zone-topbar .zone-header-links::-webkit-scrollbar {
+  display: none !important;
+}
+
+html body #dc-root .zone-topbar .zone-header-links button.zone-header-link,
+html body .zone-topbar .zone-header-links button.zone-header-link {
+  position: static !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  max-width: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 3px 7px !important;
+  min-height: 32px !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--zwc-ink) !important;
   background: transparent !important;
   border: 0 !important;
   border-radius: 4px !important;
-  color: #1e1b18 !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
-  font-weight: 600 !important;
-  padding: 4px 9px !important;
-  min-height: 34px !important;
   box-shadow: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-links button.zone-header-link:hover,
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-links button.zone-header-link[aria-current="page"] {
-  background: rgba(34, 30, 25, 0.08) !important;
+html body #dc-root .zone-topbar .zone-header-links button.zone-header-link:hover,
+html body #dc-root .zone-topbar .zone-header-links button.zone-header-link[aria-current="page"] {
+  background: var(--zwc-row-hover) !important;
+  color: var(--zwc-title-ink) !important;
   text-decoration: underline !important;
   text-decoration-thickness: 2px !important;
   text-underline-offset: 3px !important;
 }
 
-/* Charcoal Ink Capsules on Top-Right (matching [search...] [User's Name / ID] in mockup) */
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud {
+/* Topbar Charcoal Ink HUD Capsule */
+html body #dc-root .zone-topbar #zone-topbar-hud,
+html body .zone-topbar #zone-topbar-hud {
+  flex: 0 0 auto !important;
   background: var(--zwc-crosshatch-bg) !important;
-  border: 1.5px solid #181613 !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  padding: 2px 10px !important;
-  box-shadow: 1px 2px 0 rgba(24, 21, 18, 0.25) !important;
+  padding: 2px 8px !important;
+  gap: 4px !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud .zaaa-hud-seg,
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud bdi,
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud span {
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-seg,
+html body .zone-topbar #zone-topbar-hud bdi,
+html body .zone-topbar #zone-topbar-hud span {
   color: #f6f0e2 !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 14.5px !important;
-  border-color: rgba(247, 241, 227, 0.2) !important;
+  border-color: rgba(247, 241, 227, 0.22) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud [data-hud="cash"] bdi {
+html body .zone-topbar #zone-topbar-hud [data-hud="cash"] bdi {
   color: #a9d984 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar #zone-topbar-hud [data-hud="city"] bdi {
+html body .zone-topbar #zone-topbar-hud [data-hud="city"] bdi {
   color: #f0c96b !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-actions > span {
+html body #dc-root .zone-topbar .zone-header-actions > span,
+html body .zone-topbar .zone-header-actions > span {
   background: transparent !important;
   border: 0 !important;
-  color: #2b2620 !important;
+  color: var(--zwc-ink-soft) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 14.5px !important;
   box-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-actions > span bdi {
-  color: #1e1b18 !important;
+html body #dc-root .zone-topbar .zone-header-actions > span bdi,
+html body .zone-topbar .zone-header-actions > span bdi {
+  color: var(--zwc-ink) !important;
   font-weight: 700 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-actions > button,
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-actions > a {
-  background: #efe7d4 !important;
-  border: 1.5px solid #24201b !important;
+html body #dc-root .zone-topbar .zone-header-actions > button,
+html body #dc-root .zone-topbar .zone-header-actions > a,
+html body .zone-topbar .zone-header-actions > button,
+html body .zone-topbar .zone-header-actions > a {
+  background: var(--zwc-btn-bg) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  color: #1e1b18 !important;
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 14.5px !important;
   font-weight: 600 !important;
   padding: 3px 10px !important;
   min-height: 32px !important;
-  box-shadow: 1.5px 1.5px 0 #24201b !important;
+  box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-topbar .zone-header-actions > a {
+html body #dc-root .zone-topbar .zone-header-actions > button:hover,
+html body .zone-topbar .zone-header-actions > button:hover {
+  background: var(--zwc-btn-hover) !important;
+}
+
+html body #dc-root .zone-topbar .zone-header-actions > a,
+html body .zone-topbar .zone-header-actions > a {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f6f0e2 !important;
 }
 
-/* Charcoal Crosshatch "Current Mission:" Sub-Banner (.zone-bulletin) */
-html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar .zone-bulletin {
+/* Crosshatch "Current Mission:" Sub-Banner (.zone-bulletin) */
+html body #dc-root .zone-topbar .zone-bulletin,
+html body .zone-app .zone-topbar .zone-bulletin {
   background: var(--zwc-crosshatch-bg) !important;
-  border-top: 2px solid #171512 !important;
-  border-bottom: 2px solid #171512 !important;
+  border-top: 2px solid var(--zwc-crosshatch-border) !important;
+  border-bottom: 2px solid var(--zwc-crosshatch-border) !important;
   color: #f6f0e2 !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15.5px !important;
-  padding: 5px 16px !important;
-  min-height: 32px !important;
+  padding-block: 4px !important;
+  padding-inline: max(18px, calc((100% - 1340px) / 2 + 18px)) !important;
+  min-height: 31px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child {
-  background: #2b2926 !important;
-  box-shadow: -18px 0 0 6px #2b2926, 12px 0 12px #2b2926 !important;
-  color: #f7f2e4 !important;
+html body #dc-root .zone-topbar .zone-bulletin > span:first-child,
+html body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+  background: var(--zwc-bulletin-cap) !important;
+  background-image: none !important;
   border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: 8px 0 10px var(--zwc-bulletin-cap), -8px 0 10px var(--zwc-bulletin-cap) !important;
+  padding: 0 10px 0 4px !important;
+  color: #faf5e8 !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15.5px !important;
   font-weight: 700 !important;
   text-transform: none !important;
   letter-spacing: 0.01em !important;
-  padding: 0 10px 0 4px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child::before {
+html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before,
+html body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label] > .sc-interp {
   display: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] span {
-  color: #eab95c !important;
+html body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label]::after {
+  content: attr(data-zwc-mission-label);
+  color: #faf5e8 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+}
+
+html body .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] span {
+  color: #f0c465 !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15.5px !important;
 }
@@ -328,245 +596,369 @@ html:not([data-sketch-mode="noir"]) body .zone-app .zone-topbar .zone-bulletin [
  * 3. LEFT SIDEBAR - TORN CLASSIC HAND-INKED PAPER LEDGER (aside.zone-sidebar)
  * -------------------------------------------------------------------------- */
 @media (min-width: 901px) {
-  html:not([data-sketch-mode="noir"]) body [data-zshell="1"] {
+  html body [data-zshell="1"],
+  html body #dc-root [data-zshell="1"] {
     max-width: 1340px !important;
     gap: 18px !important;
     padding: 12px 18px 44px !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar {
+  html body aside.zone-sidebar,
+  html body #dc-root .zone-app aside.zone-sidebar {
     width: 214px !important;
     min-width: 214px !important;
     max-width: 214px !important;
-    background: #f7f1e3 !important;
-    border: 2px solid #23201c !important;
+    background: var(--zwc-sidebar-bg) !important;
+    border: 2px solid var(--zwc-border-strong) !important;
     border-radius: 3px !important;
     padding: 4px !important;
     gap: 6px !important;
     box-shadow:
-      inset 0 0 0 1.5px rgba(35, 32, 28, 0.25),
-      4px 5px 0 rgba(35, 32, 28, 0.13) !important;
+      inset 0 0 0 1.5px var(--zwc-ink-rule),
+      var(--zwc-shadow-card) !important;
   }
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar [data-zplayercard="1"],
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-nav-section {
-  background: #f7f1e3 !important;
+html body aside.zone-sidebar [data-zplayercard="1"],
+html body aside.zone-sidebar .zone-nav-section,
+html body #dc-root aside.zone-sidebar [data-zplayercard="1"],
+html body #dc-root aside.zone-sidebar .zone-nav-section {
+  background: var(--zwc-sidebar-bg) !important;
   border: 0 !important;
   border-radius: 2px !important;
   box-shadow: none !important;
   padding: 0 !important;
 }
 
-/* Charcoal Crosshatch Section Bars: Information / Missions / Account / Areas */
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-panel-heading,
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-nav-group {
+html body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label] > .sc-interp {
+  display: none !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label]::after {
+  content: attr(data-zwc-info-label);
+  color: #f7f1e3 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 16.5px !important;
+  font-weight: 700 !important;
+}
+
+html body aside.zone-sidebar .zone-panel-heading,
+html body aside.zone-sidebar .zone-nav-group,
+html body #dc-root aside.zone-sidebar .zone-panel-heading,
+html body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16px !important;
+  font-size: 15.5px !important;
   font-weight: 700 !important;
   text-transform: none !important;
-  letter-spacing: 0.02em !important;
-  padding: 4px 10px !important;
+  letter-spacing: 0.01em !important;
+  padding: 3px 9px !important;
   margin: 2px 0 0 !important;
-  border-top: 1.5px solid #181613 !important;
-  border-bottom: 1.5px solid #181613 !important;
+  min-height: 26px !important;
+  border: 0 !important;
+  border-top: 1.5px solid var(--zwc-crosshatch-border) !important;
+  border-bottom: 1.5px solid var(--zwc-crosshatch-border) !important;
   border-radius: 2px !important;
-  min-height: 28px !important;
+  box-shadow: none !important;
   display: flex !important;
   align-items: center !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-nav-group::before {
+html body aside.zone-sidebar .zone-nav-group::before {
   display: none !important;
 }
 
-/* Compact Hand-Inked Operative Information Rows */
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-operative-crest {
-  background: rgba(226, 215, 192, 0.45) !important;
+html body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group * {
+  color: #f7f1e3 !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+}
+
+/* Operative Information Rows & Turf Card inside Sidebar */
+html body #dc-root aside.zone-sidebar #zone-operative-crest,
+html body aside.zone-sidebar #zone-operative-crest {
+  background: var(--zwc-crest-bg) !important;
   border: 0 !important;
   border-bottom: 1px solid var(--zwc-ink-rule) !important;
   border-radius: 0 !important;
-  padding: 6px 8px !important;
+  padding: 4px 8px !important;
   margin: 0 !important;
   box-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-operative-crest * {
-  color: #24201b !important;
+html body #dc-root aside.zone-sidebar #zone-operative-crest *,
+html body aside.zone-sidebar #zone-operative-crest * {
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-profile-body {
-  padding: 6px 8px 8px !important;
+html body #dc-root aside.zone-sidebar .zone-profile-body,
+html body aside.zone-sidebar .zone-profile-body {
+  padding: 4px 8px 6px !important;
+  gap: 2px !important;
   background: transparent !important;
+  color: var(--zwc-ink) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-profile-identity strong,
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar [data-zplayercard="1"] strong {
+html body #dc-root aside.zone-sidebar .zone-profile-body span,
+html body #dc-root aside.zone-sidebar .zone-profile-body bdi {
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body #dc-root aside.zone-sidebar .zone-profile-identity strong,
+html body #dc-root aside.zone-sidebar [data-zplayercard="1"] strong {
   color: var(--zwc-blue-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 16.5px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-cash {
+html body #dc-root aside.zone-sidebar #zone-cash {
   color: var(--zwc-green-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 16.5px !important;
   text-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-profile-account {
+html body #dc-root aside.zone-sidebar .zone-profile-account {
   color: var(--zwc-blue-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15px !important;
+  border-bottom-color: var(--zwc-ink-rule) !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] {
+  background: var(--zwc-crest-bg) !important;
+  border: 1px solid var(--zwc-border-sub) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] > span:first-child {
+  color: var(--zwc-green-ink) !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] > span:last-child {
+  color: var(--zwc-ink-muted) !important;
+}
+
+/* Sidebar City Turf Mini-Widget Harmonization */
+html body #dc-root aside.zone-sidebar [data-zturfcard="1"],
+html body #dc-root aside.zone-sidebar .zaaa-turf-card,
+html body #dc-root aside.zone-sidebar #zaaa-sidebar-turf {
+  background: var(--zwc-sidebar-bg) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--zwc-ink) !important;
+}
+
+html body #dc-root aside.zone-sidebar #zaaa-sidebar-turf * {
+  font-family: var(--zwc-font-hand) !important;
+  color: var(--zwc-ink) !important;
 }
 
 /* Hand-Painted Watercolor Brush-Stroke Vitals Bars */
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource {
-  padding: 3px 0 !important;
-  border-bottom: 1px solid rgba(34, 30, 25, 0.12) !important;
+html body #dc-root aside.zone-sidebar .zone-resource,
+html body aside.zone-sidebar .zone-resource {
+  padding: 2px 0 !important;
+  border-bottom: 1px solid var(--zwc-ink-rule) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource span,
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource bdi {
-  color: #23201c !important;
+html body #dc-root aside.zone-sidebar .zone-resource span,
+html body #dc-root aside.zone-sidebar .zone-resource bdi {
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 14.5px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource-track {
+html body #dc-root aside.zone-sidebar .zone-resource-track {
   height: 6px !important;
-  background: rgba(34, 30, 25, 0.13) !important;
-  border: 1px solid rgba(34, 30, 25, 0.26) !important;
+  background: var(--zwc-track-bg) !important;
+  border: 1px solid var(--zwc-track-border) !important;
   border-radius: 99px 4px 99px 4px !important;
   box-shadow: none !important;
   overflow: hidden !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource[data-zone-resource="energy"] .zone-resource-track > div {
+html body aside.zone-sidebar .zone-resource[data-zone-resource="energy"] .zone-resource-track > div {
   background: linear-gradient(90deg, #5c8e3e 0%, #83b462 100%) !important;
   box-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] .zone-resource-track > div {
+html body aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] .zone-resource-track > div {
   background: linear-gradient(90deg, #b8452d 0%, #d6694e 100%) !important;
   box-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource[data-zone-resource="happy"] .zone-resource-track > div {
+html body aside.zone-sidebar .zone-resource[data-zone-resource="happy"] .zone-resource-track > div {
   background: linear-gradient(90deg, #c89429 0%, #e4b84d 100%) !important;
   box-shadow: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track > div {
+html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track > div {
   background: linear-gradient(90deg, #326491 0%, #598cba 100%) !important;
   box-shadow: none !important;
 }
 
-/* Classic Torn Ruled Ledger Area Navigation Rows */
+/* Open Hand-Inked Watercolor Area Icons in Sidebar */
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon,
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-vivid="1"],
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-duotone="1"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::before,
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::after,
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg:not([data-zwc-ink]) {
+  display: none !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg[data-zwc-ink] {
+  display: block !important;
+  width: 19px !important;
+  height: 19px !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Classic Torn Ruled Ledger Area Navigation Rows (Desktop >= 901px) */
 @media (min-width: 901px) {
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation {
+  html body #dc-root aside.zone-sidebar #zone-area-navigation {
     gap: 0 !important;
     padding: 0 !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
-    min-height: 29px !important;
-    padding: 3px 8px !important;
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
+    min-height: 27px !important;
+    padding: 2.5px 8px !important;
     margin: 0 !important;
+    gap: 8px !important;
     background: transparent !important;
     border: 0 !important;
-    border-bottom: 1px solid rgba(34, 30, 25, 0.16) !important;
+    border-bottom: 1px solid var(--zwc-ink-rule) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    color: #1f1c18 !important;
+    color: var(--zwc-ink) !important;
     font-family: var(--zwc-font-hand) !important;
-    font-size: 15.5px !important;
+    font-size: 15px !important;
     font-weight: 500 !important;
-    gap: 8px !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen]:hover {
-    background: rgba(154, 176, 116, 0.24) !important;
-    color: #141210 !important;
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen] span {
+    color: inherit !important;
+    font-family: var(--zwc-font-hand) !important;
+  }
+
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen]:hover {
+    background: var(--zwc-row-hover) !important;
+    color: var(--zwc-title-ink) !important;
     transform: none !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
-    background: linear-gradient(90deg, rgba(154, 176, 116, 0.48) 0%, rgba(154, 176, 116, 0.24) 100%) !important;
-    color: #141210 !important;
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
+    background: var(--zwc-row-active) !important;
+    color: var(--zwc-title-ink) !important;
+    border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
     font-weight: 700 !important;
-    border-inline-start: 3px solid #4d7332 !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen]::before,
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen]::after {
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen]::before,
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen]::after {
     display: none !important;
   }
 }
 
-html:not([data-sketch-mode="noir"]) body aside.zone-sidebar .zone-nav-icon {
-  width: 20px !important;
-  height: 20px !important;
-  min-width: 20px !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
 /* --------------------------------------------------------------------------
- * 4. MAIN WORKSPACE - BRUSH TITLES, CHARCOAL TUTORIAL BOX & SKETCHBOOK CARDS
+ * 4. MAIN WORKSPACE - BRUSH TITLES, TUTORIAL BOX, SKETCHBOOK CARDS & BUTTONS
+ *    Uses #dc-root #zone-main#zone-main (3,x,x) !important to defeat ALL
+ *    doubled-ID v128/v129 SaaS dark-navy rules in aaa-game-surfaces.css!
  * -------------------------------------------------------------------------- */
-html:not([data-sketch-mode="noir"]) body #zone-main {
+html body #dc-root #zone-main#zone-main {
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  scroll-margin-top: 96px !important;
 }
 
-/* Expressive Hand-Brushed Page Title (City / Home / Crimes / Gym / Attack) */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading {
+/* Strip Dark Photo Hero Overlays & Render Hand-Brushed Page Title */
+html body #dc-root #zone-main#zone-main .zone-page-heading {
   background: transparent !important;
+  background-image: none !important;
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  padding: 0 0 6px !important;
-  min-height: auto !important;
+  padding: 2px 0 6px !important;
+  min-height: 0 !important;
   overflow: visible !important;
-  display: block !important;
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  scroll-margin-top: 96px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading canvas.zaaa-hero-atmosphere {
+html body #dc-root #zone-main#zone-main .zone-page-heading canvas.zaaa-hero-atmosphere,
+html body #dc-root #zone-main#zone-main .zone-page-heading::before,
+html body #dc-root #zone-main#zone-main .zone-page-heading::after,
+html body #dc-root #zone-main#zone-main .zone-page-heading[data-zwc-enhanced="1"] > span,
+html body #dc-root #zone-main#zone-main .zone-page-heading[data-zwc-enhanced="1"] > p,
+html body #dc-root #zone-main#zone-main .zone-page-heading[data-zwc-enhanced="1"] > div:first-child > p,
+html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-page-heading > div {
   display: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading h1 {
+html body #dc-root #zone-main#zone-main .zone-page-heading h1 {
   font-family: var(--zwc-font-brush) !important;
   font-size: 42px !important;
   font-weight: 400 !important;
-  line-height: 1.05 !important;
-  color: #1a1714 !important;
-  text-shadow: 1px 1px 0 rgba(255, 252, 245, 0.8) !important;
-  margin: 0 0 8px !important;
+  line-height: 1.04 !important;
+  color: var(--zwc-title-ink) !important;
+  margin: 0 !important;
   text-transform: none !important;
   letter-spacing: 0.01em !important;
+  text-shadow: var(--zwc-title-shadow) !important;
+  scroll-margin-top: 96px !important;
 }
 
-/* Transform Page Subtitle + Controls into the Charcoal-Header Tutorial Box */
-html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-card {
-  background: #f8f3e6 !important;
-  border: 1.8px solid #24211d !important;
+html body #dc-root #zone-main#zone-main .zone-page-heading > div button {
+  background: var(--zwc-btn-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 14.5px !important;
+  min-height: 32px !important;
+  padding: 3px 12px !important;
+}
+
+/* Charcoal-Crosshatch Tutorial / District Guide Box (.zwc-tutorial-card) */
+html body #dc-root #zone-main#zone-main .zwc-tutorial-card {
+  background: var(--zwc-paper-elevated) !important;
+  border: 1.8px solid var(--zwc-border-panel) !important;
   border-radius: var(--zwc-sketch-radius) !important;
-  box-shadow: 3px 3px 0 rgba(36, 33, 29, 0.14) !important;
+  box-shadow: var(--zwc-shadow-card) !important;
   margin: 0 0 14px !important;
   overflow: hidden !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-head {
+html body #dc-root #zone-main#zone-main .zwc-tutorial-head {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
   padding: 5px 12px !important;
-  border-bottom: 1.6px solid #1a1815 !important;
+  border-bottom: 1.6px solid var(--zwc-crosshatch-border) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
@@ -575,7 +967,7 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-head {
   font-size: 16.5px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-title {
+html body #dc-root #zone-main#zone-main .zwc-tutorial-title {
   display: inline-flex !important;
   align-items: center !important;
   gap: 7px !important;
@@ -583,67 +975,58 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-title {
   font-weight: 600 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zwc-tutorial-body {
+html body #dc-root #zone-main#zone-main .zwc-tutorial-body {
   padding: 10px 14px !important;
-  color: #24201b !important;
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15.5px !important;
-  line-height: 1.42 !important;
-  background:
-    var(--zwc-paper-grain),
-    linear-gradient(180deg, #faf5e9 0%, #f4ecda 100%) !important;
+  line-height: 1.44 !important;
+  background: var(--zwc-tutorial-body-bg) !important;
 }
 
-/* Hide raw duplicate subtitle inside .zone-page-heading when .zwc-tutorial-card is mounted */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading[data-zwc-enhanced="1"] > div:first-child > p {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading > div button {
-  background: #efe6d2 !important;
-  color: #1e1b18 !important;
-  border: 1.5px solid #23201c !important;
-  border-radius: var(--zwc-sketch-radius-sm) !important;
-  box-shadow: 1.5px 2px 0 #23201c !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
-  min-height: 32px !important;
-  padding: 3px 12px !important;
-}
-
-/* Sketchbook Panels, Cards, Arcade Deck & World Flight Strip */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-panel,
-html:not([data-sketch-mode="noir"]) body #zone-main div:has(> .zone-panel-heading + .zone-panel):not(#zone-tutorial-panel),
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-deck,
-html:not([data-sketch-mode="noir"]) body #zone-main #zig-world-flight-bar,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-directory,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-street-dispatch,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-home-brief {
-  background:
-    var(--zwc-paper-grain),
-    linear-gradient(180deg, #f9f4e8 0%, #f3ebda 100%) !important;
-  border: 1.8px solid #25221e !important;
+/* Primary Sketchbook Panels Across All 19 Districts (Light + Dark) */
+html body #dc-root #zone-main#zone-main .zone-panel,
+html body #dc-root #zone-main#zone-main section.zone-panel[style*="border-top:2px"],
+html body #dc-root #zone-main#zone-main div:has(> .zone-panel-heading + .zone-panel):not(#zone-tutorial-panel),
+html body #dc-root #zone-main#zone-main .zig-arcade-deck,
+html body #dc-root #zone-main#zone-main #zig-world-flight-bar,
+html body #dc-root #zone-main#zone-main .zone-city-directory,
+html body #dc-root #zone-main#zone-main .zone-street-dispatch,
+html body #dc-root #zone-main#zone-main .zone-home-brief,
+html body #dc-root #zone-main#zone-main .zone-loadout,
+html body #dc-root #zone-main#zone-main .zone-city-travel-bar,
+html body #dc-root #zone-main#zone-main .zone-dossier-deck,
+html body #dc-root #zone-main#zone-main .zone-hideout-scene,
+html body #dc-root #zone-main#zone-main .zone-character-stage,
+html body #dc-root #zone-main#zone-main [data-zone-casino-pit="1"],
+html body #dc-root #zone-main#zone-main [data-zone-syndicate-hub="1"],
+html body #dc-root #zone-main#zone-main :is(section, div)[style*="rgba(16,21,29"],
+html body #dc-root #zone-main#zone-main :is(section, div)[style*="rgba(16, 21, 29"],
+html body #dc-root #zone-main#zone-main .zone-modal-card,
+html body #dc-root #zone-main#zone-main .zig-modal-card {
+  background: var(--zwc-card-bg) !important;
+  border: 1.8px solid var(--zwc-border-panel) !important;
   border-radius: var(--zwc-sketch-radius) !important;
-  box-shadow: 3px 4px 0 rgba(36, 33, 29, 0.14) !important;
-  color: #1e1b18 !important;
+  box-shadow: var(--zwc-shadow-card) !important;
+  color: var(--zwc-ink) !important;
 }
 
-/* Fused inner panel cleanup so double borders do not appear */
-html:not([data-sketch-mode="noir"]) body #zone-main div:has(> .zone-panel-heading + .zone-panel):not(#zone-tutorial-panel) > .zone-panel {
+/* Fused inner panel cleanup so double borders never render */
+html body #dc-root #zone-main#zone-main div:has(> .zone-panel-heading + .zone-panel):not(#zone-tutorial-panel) > .zone-panel {
   border: 0 !important;
   box-shadow: none !important;
   background: transparent !important;
 }
 
-/* Charcoal Crosshatch Panel Headers Across All Screens */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-panel-heading,
-html:not([data-sketch-mode="noir"]) body #zone-main [data-zhead],
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-header,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-world-flight-head,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-street-dispatch > div:first-child {
+/* Crosshatch Panel Headers Across All Screens */
+html body #dc-root #zone-main#zone-main .zone-panel-heading,
+html body #dc-root #zone-main#zone-main [data-zhead],
+html body #dc-root #zone-main#zone-main .zig-arcade-header,
+html body #dc-root #zone-main#zone-main .zig-world-flight-head,
+html body #dc-root #zone-main#zone-main .zone-street-dispatch > div:first-child {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
-  border-bottom: 1.8px solid #1a1815 !important;
+  border-bottom: 1.8px solid var(--zwc-crosshatch-border) !important;
   border-radius: 6px 6px 0 0 !important;
   padding: 6px 14px !important;
   font-family: var(--zwc-font-hand) !important;
@@ -652,116 +1035,238 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zone-street-dispatch > div:
   text-transform: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-panel-heading *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-header .zig-arcade-title,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-header .zig-arcade-title span:first-child,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-header .zig-arcade-sub,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-world-flight-head *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-street-dispatch > div:first-child h2 {
+html body #dc-root #zone-main#zone-main .zone-panel-heading *,
+html body #dc-root #zone-main#zone-main .zig-arcade-header .zig-arcade-title,
+html body #dc-root #zone-main#zone-main .zig-arcade-header .zig-arcade-title span:first-child,
+html body #dc-root #zone-main#zone-main .zig-arcade-header .zig-arcade-sub,
+html body #dc-root #zone-main#zone-main .zig-world-flight-head *,
+html body #dc-root #zone-main#zone-main .zone-street-dispatch > div:first-child h2 {
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-panel-heading button,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-header button,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-world-flight-head button,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-street-dispatch > div:first-child button {
-  background: #f5efe1 !important;
-  color: #1e1b18 !important;
-  border: 1.5px solid #181613 !important;
+html body #dc-root #zone-main#zone-main .zone-panel-heading button,
+html body #dc-root #zone-main#zone-main .zig-arcade-header button,
+html body #dc-root #zone-main#zone-main .zig-world-flight-head button,
+html body #dc-root #zone-main#zone-main .zone-street-dispatch > div:first-child button {
+  background: var(--zwc-btn-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
   padding: 2px 10px !important;
   min-height: 28px !important;
+  box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-panel-heading button * {
-  color: #1e1b18 !important;
+html body #dc-root #zone-main#zone-main .zone-panel-heading button * {
+  color: var(--zwc-ink) !important;
 }
 
-/* Elevated Sketchbook Sub-Cards (Arcade Cards, Quick Actions, Crime Rows, City Places, Gym) */
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-game-card,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-city-chip,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-flight-card,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-daily-objective,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-crime-choice,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-gym-stations button {
-  background: #fcf8ee !important;
-  border: 1.6px solid #28241f !important;
+/* Elevated Sketchbook Sub-Cards Across All 19 Districts */
+html body #dc-root #zone-main#zone-main .zig-game-card,
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button,
+html body #dc-root #zone-main#zone-main .zig-city-chip,
+html body #dc-root #zone-main#zone-main .zig-flight-card,
+html body #dc-root #zone-main#zone-main .zone-daily-objective,
+html body #dc-root #zone-main#zone-main .zone-crime-choice,
+html body #dc-root #zone-main#zone-main .zone-crime-scene > div,
+html body #dc-root #zone-main#zone-main .zone-gym-stations button,
+html body #dc-root #zone-main#zone-main [data-casino-table],
+html body #dc-root #zone-main#zone-main [data-syndicate-panel],
+html body #dc-root #zone-main#zone-main .zone-combat-armory-strip button,
+html body #dc-root #zone-main#zone-main #zig-brawl-hud,
+html body #dc-root #zone-main#zone-main button.familyStat,
+html body #dc-root #zone-main#zone-main .familyRail .claimMetric,
+html body #dc-root #zone-main#zone-main .zone-guide-copy dl > div,
+html body #dc-root #zone-main#zone-main div[style*="rgba(8,11,16"],
+html body #dc-root #zone-main#zone-main div[style*="rgba(8, 11, 16"],
+html body #dc-root #zone-main#zone-main [data-torn-honors-medals="1"] div[style*="#121821"] {
+  background: var(--zwc-paper-subcard) !important;
+  background-image: none !important;
+  border: 1.6px solid var(--zwc-border-sub) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  box-shadow: 2px 3px 0 rgba(36, 33, 29, 0.16) !important;
-  color: #1e1b18 !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  color: var(--zwc-ink) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-game-card:hover,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button:hover,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button:hover {
-  background: #f4eedc !important;
+html body #dc-root #zone-main#zone-main [data-torn-honors-medals="1"] strong[style*="color:#fff"] {
+  color: var(--zwc-title-ink) !important;
+}
+
+html body #dc-root #zone-main#zone-main .zig-game-card:hover,
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button:hover,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button:hover,
+html body #dc-root #zone-main#zone-main .zig-city-chip:hover,
+html body #dc-root #zone-main#zone-main .zig-flight-card:hover {
+  background: var(--zwc-paper-subcard-hover) !important;
   transform: translateY(-2px) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-game-card *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-city-chip *,
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-flight-card * {
+html body #dc-root #zone-main#zone-main :is(.zig-city-chip, .zig-flight-card).is-active,
+html body #dc-root #zone-main#zone-main .zig-flight-card.is-current,
+html body #dc-root #zone-main#zone-main .zig-flight-card[aria-current="true"] {
+  background: var(--zwc-row-active) !important;
+  border-color: var(--zwc-row-active-bar) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html body #dc-root #zone-main#zone-main .zig-game-card *,
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button *,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button *,
+html body #dc-root #zone-main#zone-main .zig-city-chip *,
+html body #dc-root #zone-main#zone-main .zig-flight-card * {
   font-family: var(--zwc-font-hand) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-title,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button strong,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button strong {
-  color: #1b1815 !important;
+html body #dc-root #zone-main#zone-main .zig-card-title,
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button strong,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button strong {
+  color: var(--zwc-title-ink) !important;
   font-size: 17px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-desc,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button small,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button small {
-  color: #4a4238 !important;
+html body #dc-root #zone-main#zone-main .zig-card-desc,
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button small,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button small {
+  color: var(--zwc-ink-soft) !important;
   font-size: 14px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-badge {
-  background: rgba(248, 243, 230, 0.94) !important;
-  color: #1e1b18 !important;
-  border: 1.4px solid #23201c !important;
-  box-shadow: 1px 1px 0 #23201c !important;
+html body #dc-root #zone-main#zone-main .zig-card-badge {
+  background: var(--zwc-tag-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.4px solid var(--zwc-border-strong) !important;
+  box-shadow: 1px 1px 0 var(--zwc-shadow-solid) !important;
 }
 
-/* Hand-Inked Watercolor Action Buttons (.zig-game-card-cta, Commit, Train, Primary CTAs) */
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-game-card-cta,
-html:not([data-sketch-mode="noir"]) body #zone-main button[data-crime-attempt],
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-gym-train {
-  background: linear-gradient(180deg, #86af62 0%, #689347 100%) !important;
-  color: #fcf9f2 !important;
-  border: 1.6px solid #1e1b18 !important;
+/* Hand-Inked Buttons Inside #zone-main (Replaces v128 Borderless Rounded SaaS Pills) */
+html body #dc-root #zone-main#zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]) {
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  box-shadow: 2px 2px 0 #1e1b18 !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  background-color: var(--zwc-btn-bg) !important;
+  background-image: none !important;
+  color: var(--zwc-ink) !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
+}
+
+html body #dc-root #zone-main#zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]):not(:disabled):hover {
+  background-color: var(--zwc-btn-hover) !important;
+  color: var(--zwc-title-ink) !important;
+}
+
+/* Active Sketchbook Tabs / Filter Buttons */
+html body #dc-root #zone-main#zone-main button:not(.zone-crime-choice):not(.zone-gym-station):not(.zwc-map-pin):not(.zone-mobile-tabbar *):is([aria-pressed="true"], [aria-expanded="true"], [style*="activebg"]) {
+  background: var(--zwc-crosshatch-bg) !important;
+  color: #f7f1e3 !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
+  font-weight: 700 !important;
+}
+
+/* Hand-Painted Gouache Sage Primary CTAs & Terracotta Danger CTAs */
+html body #dc-root #zone-main#zone-main .zig-game-card-cta,
+html body #dc-root #zone-main#zone-main .zig-btn,
+html body #dc-root #zone-main#zone-main button.zone-action-primary,
+html body #dc-root #zone-main#zone-main button[data-crime-attempt],
+html body #dc-root #zone-main#zone-main .zone-gym-train,
+html body #dc-root #zone-main#zone-main button[style*="16, 185, 129"],
+html body #dc-root #zone-main#zone-main button[style*="#10b981"],
+html body #dc-root #zone-main#zone-main button[style*="accFill1"] {
+  background: linear-gradient(180deg, #7da65a 0%, #5b823c 100%) !important;
+  color: #fcf9f2 !important;
+  border: 1.6px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 2px 2px 0 var(--zwc-shadow-solid) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 16px !important;
   font-weight: 700 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-game-card-cta * {
+html body #dc-root #zone-main#zone-main .zig-game-card-cta * {
   color: #fcf9f2 !important;
 }
 
-/* Icon wells inside Quick Actions & City Directory -> clean open watercolor paper */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-quick-actions > button .zone-nav-icon,
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-destinations button :is(.zone-nav-icon, .zone-city-place-icon),
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-arcade-emblem {
-  background: rgba(232, 221, 198, 0.55) !important;
-  border: 1.3px solid rgba(35, 32, 28, 0.42) !important;
+html body #dc-root #zone-main#zone-main button.zone-action-danger,
+html body #dc-root #zone-main#zone-main button[style*="#c74a3a"]:not([data-roulette-bet]) {
+  background: linear-gradient(180deg, #c6533a 0%, #9b3823 100%) !important;
+  color: #fcf9f2 !important;
+  border: 1.6px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 2px 2px 0 var(--zwc-shadow-solid) !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
+}
+
+/* Preserve High-Contrast Playing Card Faces in Casino */
+html body #dc-root #zone-main#zone-main [style*="#f7f4eb"] {
+  background: #f7f4eb !important;
+}
+
+/* Open Watercolor Paper Wells for Quick Actions & City Directory Icons */
+html body #dc-root #zone-main#zone-main .zone-quick-actions > button .zone-nav-icon,
+html body #dc-root #zone-main#zone-main .zone-city-destinations button :is(.zone-nav-icon, .zone-city-place-icon),
+html body #dc-root #zone-main#zone-main .zig-arcade-emblem {
+  background: var(--zwc-well-bg) !important;
+  border: 1.3px solid var(--zwc-border-sub) !important;
   border-radius: 50% 45% 52% 48% / 46% 52% 45% 54% !important;
   box-shadow: none !important;
 }
 
+/* Hand-Inked Paper Inputs, Selects & Textareas Inside #zone-main */
+html body #dc-root #zone-main#zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+html body #dc-root #zone-main#zone-main select,
+html body #dc-root #zone-main#zone-main textarea {
+  background-color: var(--zwc-input-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15.5px !important;
+  box-shadow: none !important;
+}
+
+html body #dc-root #zone-main#zone-main input::placeholder,
+html body #dc-root #zone-main#zone-main textarea::placeholder {
+  color: var(--zwc-ink-muted) !important;
+}
+
+/* Arcade Key-Art Media Frame (Light Cream vs Dark Nocturnal Sketchpaper) */
+html body #dc-root #zone-main#zone-main .zig-card-media {
+  background: var(--zwc-paper) !important;
+  border-bottom: 1.5px solid var(--zwc-border-sub) !important;
+}
+
+html[data-theme="light"] body #dc-root #zone-main#zone-main .zig-card-media::after {
+  background: linear-gradient(180deg, transparent 58%, rgba(248, 243, 230, 0.72) 100%) !important;
+}
+
+html:not([data-theme="light"]) body #dc-root #zone-main#zone-main .zig-card-media::after {
+  background: linear-gradient(180deg, rgba(20, 18, 16, 0.08) 0%, transparent 45%, rgba(37, 33, 28, 0.86) 100%) !important;
+}
+
+html:not([data-theme="light"]) body #dc-root #zone-main#zone-main img.zig-card-art {
+  filter: brightness(0.88) contrast(1.06) saturate(1.05);
+}
+
+html[data-theme="light"] body #dc-root #zone-main#zone-main .zig-card-shader {
+  opacity: 0.22 !important;
+  mix-blend-mode: multiply !important;
+}
+
+html:not([data-theme="light"]) body #dc-root #zone-main#zone-main .zig-card-shader {
+  opacity: 0.14 !important;
+  mix-blend-mode: normal !important;
+}
+
 /* --------------------------------------------------------------------------
- * 5. CITY SCREEN - ILLUSTRATED WATERCOLOR PANORAMA + KEY OF SYMBOLS (1:1 MOCKUP)
+ * 5. CITY SCREEN - ILLUSTRATED WATERCOLOR PANORAMA + KEY OF SYMBOLS (LIGHT + DARK)
  * -------------------------------------------------------------------------- */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell {
+html body #dc-root #zone-main#zone-main .zone-city-map-shell {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -777,10 +1282,6 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell {
   user-select: none;
 }
 
-html[data-sketch-mode="noir"] #zwc-city-panorama-stage {
-  display: none !important;
-}
-
 #zwc-city-panorama-stage .zwc-panorama-art-wrap {
   position: relative;
   width: 100%;
@@ -789,12 +1290,22 @@ html[data-sketch-mode="noir"] #zwc-city-panorama-stage {
   border-radius: 6px;
 }
 
-/* Multiply blend + feathered edge mask melts #F2EBDC art seamlessly into #F2EBDC paper! */
+html:not([data-theme="light"]) #zwc-city-panorama-stage .zwc-panorama-art-wrap {
+  background: #1b1815;
+  border: 1.8px solid var(--zwc-border-panel);
+  border-radius: var(--zwc-sketch-radius);
+  box-shadow: var(--zwc-shadow-card);
+}
+
 #zwc-city-panorama-stage .zwc-panorama-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+/* Light Mode: Multiply melts #f2ebdc panorama edges directly into #f2ebdc cream paper */
+html[data-theme="light"] #zwc-city-panorama-stage .zwc-panorama-img {
   mix-blend-mode: multiply;
   filter: contrast(1.04) saturate(1.06);
   -webkit-mask-image:
@@ -804,6 +1315,20 @@ html[data-sketch-mode="noir"] #zwc-city-panorama-stage {
   mask-image:
     linear-gradient(90deg, transparent 0%, #000 3.5%, #000 96.5%, transparent 100%),
     linear-gradient(180deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* Dark Mode: Warm lantern-lit architectural watercolor illustration framed on charcoal paper */
+html:not([data-theme="light"]) #zwc-city-panorama-stage .zwc-panorama-img {
+  mix-blend-mode: normal !important;
+  filter: brightness(0.84) contrast(1.08) saturate(1.06) sepia(0.08);
+  -webkit-mask-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, #000 3%, #000 97%, rgba(0, 0, 0, 0.45) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, #000 3.5%, #000 96.5%, rgba(0, 0, 0, 0.5) 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, #000 3%, #000 97%, rgba(0, 0, 0, 0.45) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, #000 3.5%, #000 96.5%, rgba(0, 0, 0, 0.5) 100%);
   mask-composite: intersect;
 }
 
@@ -822,12 +1347,13 @@ html[dir="rtl"] #zwc-city-panorama-stage .zwc-map-mode-bar {
   left: 10px;
 }
 
+html body #dc-root #zone-main#zone-main .zwc-mode-btn,
 .zwc-mode-btn {
-  background: rgba(248, 243, 230, 0.94) !important;
-  color: #1e1b18 !important;
-  border: 1.6px solid #1e1b18 !important;
+  background: var(--zwc-tag-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.6px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  box-shadow: 2px 2px 0 #1e1b18 !important;
+  box-shadow: 2px 2px 0 var(--zwc-shadow-solid) !important;
   padding: 4px 11px !important;
   min-height: 30px !important;
   font-family: var(--zwc-font-hand) !important;
@@ -836,44 +1362,49 @@ html[dir="rtl"] #zwc-city-panorama-stage .zwc-map-mode-bar {
   cursor: pointer !important;
 }
 
+html body #dc-root #zone-main#zone-main .zwc-mode-btn[aria-pressed="true"],
 .zwc-mode-btn[aria-pressed="true"] {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
 }
 
-/* Interactive Hand-Drawn Watercolor Teardrop Map Pins on the Illustrated Panorama */
+/* Interactive Hand-Drawn Watercolor Teardrop Map Pins */
+html body #dc-root #zone-main#zone-main .zwc-map-pin,
 .zwc-map-pin {
-  position: absolute;
-  transform: translate(-50%, -100%);
+  position: absolute !important;
+  transform: translate(-50%, -100%) !important;
   background: transparent !important;
   border: 0 !important;
+  box-shadow: none !important;
   padding: 0 !important;
   min-height: 34px !important;
   min-width: 30px !important;
   cursor: pointer !important;
-  z-index: 8;
+  z-index: 8 !important;
   display: inline-flex !important;
   flex-direction: column !important;
   align-items: center !important;
   transition: transform 150ms ease-out !important;
 }
 
+html body #dc-root #zone-main#zone-main .zwc-map-pin:hover,
+html body #dc-root #zone-main#zone-main .zwc-map-pin:focus-visible,
 .zwc-map-pin:hover,
 .zwc-map-pin:focus-visible {
   transform: translate(-50%, -108%) scale(1.14) !important;
-  z-index: 15;
+  z-index: 15 !important;
 }
 
 .zwc-map-pin svg {
   width: 28px;
   height: 34px;
-  filter: drop-shadow(1px 2px 0 rgba(24, 21, 18, 0.38));
+  filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.52));
 }
 
 .zwc-map-pin-tag {
-  background: rgba(248, 243, 230, 0.96);
-  color: #1b1815;
-  border: 1.4px solid #1e1b18;
+  background: var(--zwc-tag-bg);
+  color: var(--zwc-ink);
+  border: 1.4px solid var(--zwc-border-strong);
   border-radius: 4px;
   padding: 1px 6px;
   font-family: var(--zwc-font-hand);
@@ -881,17 +1412,12 @@ html[dir="rtl"] #zwc-city-panorama-stage .zwc-map-mode-bar {
   font-weight: 700;
   line-height: 1.15;
   white-space: nowrap;
-  box-shadow: 1.5px 1.5px 0 #1e1b18;
+  box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid);
   margin-top: -2px;
 }
 
-.zwc-map-pin[data-locked="1"] .zwc-map-pin-tag {
-  background: #2b2926;
-  color: #f3c86b;
-}
-
 /* Toggle between Illustrated Panorama & Live 3D Mapbox Block Grid */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell[data-zwc-view="illustrated"] > iframe#zone-city-map {
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="illustrated"] > iframe#zone-city-map {
   position: absolute !important;
   width: 1px !important;
   height: 1px !important;
@@ -899,19 +1425,18 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell[data-zw
   pointer-events: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
   display: none !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
-  border: 2px solid #23201c !important;
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
+  border: 2px solid var(--zwc-border-panel) !important;
   border-radius: 6px !important;
-  box-shadow: 3px 4px 0 rgba(35, 32, 28, 0.16) !important;
-  filter: sepia(0.32) contrast(0.96) brightness(1.06);
+  box-shadow: var(--zwc-shadow-card) !important;
 }
 
-/* Key of Symbols Box - Exact 3-Column Ruled Parchment Layout from Reference Mockup */
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend {
+/* Key of Symbols Box - 3-Column Ruled Sketchbook Layout */
+html body #dc-root #zone-main#zone-main .zone-city-legend {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 8px 0 !important;
@@ -919,120 +1444,123 @@ html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend {
   background: transparent !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend > div {
+html body #dc-root #zone-main#zone-main .zone-city-legend > div {
   background: transparent !important;
   border: 0 !important;
-  border-inline-end: 1px solid rgba(35, 32, 28, 0.28) !important;
+  border-inline-end: 1px solid var(--zwc-legend-rule) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   padding: 4px 16px !important;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
-  color: #1e1b18 !important;
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 17px !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend > div:nth-child(3n) {
+html body #dc-root #zone-main#zone-main .zone-city-legend > div span {
+  color: var(--zwc-ink) !important;
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-city-legend > div:nth-child(3n) {
   border-inline-end: 0 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend > div:has(.zwc-legend-teardrop) > span:first-child:not(.zwc-legend-teardrop) {
+html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-teardrop) > span:first-child:not(.zwc-legend-teardrop) {
   display: none !important;
 }
 
-/* Clean Paper Controls, Arcade Media Fade, Inputs, Tables & Player Account (/account) */
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-media {
-  background: #f2ebdc !important;
-  border-bottom: 1.5px solid rgba(35, 32, 28, 0.25) !important;
-}
+/* City Screen Vertical Stack: City -> City Tutorial -> Full-Width Panorama -> Key of Symbols */
+@media (min-width: 901px) {
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-caption {
+    display: none !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-media::after {
-  background: linear-gradient(180deg, transparent 58%, rgba(248, 243, 230, 0.72) 100%) !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-workspace {
+    display: contents !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body #zone-main .zig-card-shader {
-  opacity: 0.22 !important;
-  mix-blend-mode: multiply !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-map-shell {
+    order: -10 !important;
+    width: 100% !important;
+    margin: 0 0 6px !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body #zone-main :is(input, select, textarea) {
-  background: #fdfaf2 !important;
-  color: #1e1b18 !important;
-  border: 1.5px solid #2b2722 !important;
-  border-radius: 4px !important;
-  font-family: var(--zwc-font-hand) !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
+    aspect-ratio: 2.15 / 1 !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body.zone-account {
-  background-color: var(--zwc-paper) !important;
-  background-image: var(--zwc-paper-grain), linear-gradient(180deg, #f4eee0 0%, #ede4d1 100%) !important;
-  color: #1e1b18 !important;
-  font-family: var(--zwc-font-hand) !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] > div > :has(.zone-city-legend) {
+    order: -9 !important;
+    width: 100% !important;
+    margin: 0 0 14px !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body.zone-account header {
-  background: var(--zwc-pencil-shade) !important;
-  border-bottom: 2px solid #1e1b18 !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] nav.zone-city-directory {
+    order: -8 !important;
+    width: 100% !important;
+    max-height: none !important;
+    margin: 0 0 14px !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body.zone-account header strong {
-  color: #1e1b18 !important;
-  font-family: "Oswald", var(--zwc-font-brush), sans-serif !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] nav.zone-city-directory .zone-city-destinations {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    max-height: 270px !important;
+    overflow-y: auto !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body.zone-account :is(section, details) {
-  background: #f9f4e8 !important;
-  border: 1.8px solid #24211d !important;
-  border-radius: var(--zwc-sketch-radius) !important;
-  box-shadow: 3px 4px 0 rgba(36, 33, 29, 0.14) !important;
-  color: #1e1b18 !important;
-}
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] #zig-world-flight-bar {
+    order: -7 !important;
+  }
 
-html:not([data-sketch-mode="noir"]) body.zone-account input:not([type="checkbox"]) {
-  background: #fdfaf2 !important;
-  color: #1e1b18 !important;
-  border: 1.5px solid #24211d !important;
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-street-dispatch {
+    order: -6 !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
  * 6. MOBILE PERSISTENT LEFT-SIDE PAPER LEDGER RAIL (<= 900px)
  * -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar {
-    background: #f6f0e2 !important;
-    border: 1.8px solid #23201c !important;
+  html body #dc-root .zone-app aside.zone-sidebar {
+    background: var(--zwc-sidebar-bg) !important;
+    border: 1.8px solid var(--zwc-border-strong) !important;
     border-radius: 4px !important;
-    box-shadow: 2px 3px 0 rgba(35, 32, 28, 0.16) !important;
+    box-shadow: var(--zwc-shadow-sub) !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zaaa-mobile-rail-toggle {
+  html body #dc-root .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle {
     background: var(--zwc-crosshatch-bg) !important;
     color: #f7f1e3 !important;
-    border: 1.4px solid #181613 !important;
+    border: 1.4px solid var(--zwc-crosshatch-border) !important;
     border-radius: 4px !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] {
     background: transparent !important;
     border: 0 !important;
-    border-bottom: 1px solid rgba(35, 32, 28, 0.15) !important;
+    border-bottom: 1px solid var(--zwc-ink-rule) !important;
     border-radius: 0 !important;
-    color: #1e1b18 !important;
+    color: var(--zwc-ink) !important;
     font-family: var(--zwc-font-hand) !important;
+    box-shadow: none !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
-    background: rgba(154, 176, 116, 0.45) !important;
-    border-inline-start: 3px solid #4d7332 !important;
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen][aria-current="page"] {
+    background: var(--zwc-row-active) !important;
+    border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
+    color: var(--zwc-title-ink) !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body #zone-main .zone-page-heading h1 {
+  html body #dc-root #zone-main#zone-main .zone-page-heading h1 {
     font-size: 30px !important;
   }
 
-  html:not([data-sketch-mode="noir"]) body #zone-main .zone-city-legend {
+  html body #dc-root #zone-main#zone-main .zone-city-legend {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 
@@ -1047,356 +1575,209 @@ html:not([data-sketch-mode="noir"]) body.zone-account input:not([type="checkbox"
 }
 
 /* --------------------------------------------------------------------------
- * 7. OPEN ENGINE STUDIO (/admin) HAND-INKED ARCHITECT BLUEPRINT HARMONY
+ * 7. AUXILIARY PAGES: PLAYER ACCOUNT (/account) & STUDIO (/admin) (LIGHT + DARK)
  * -------------------------------------------------------------------------- */
-html:not([data-sketch-mode="noir"]) body[data-zwc-admin="1"],
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) {
+.zwc-aux-theme-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: var(--zwc-btn-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid) !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  padding: 6px 12px !important;
+  min-height: 36px !important;
+  cursor: pointer !important;
+}
+
+.zwc-aux-theme-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1.5px solid var(--zwc-border-strong);
+  display: inline-block;
+  flex: none;
+}
+
+/* /account Sketchbook Styling */
+html body.zone-account {
   background-color: var(--zwc-paper) !important;
-  background-image: var(--zwc-paper-grain), linear-gradient(180deg, #f4eee0 0%, #ede4d1 100%) !important;
-  color: #1e1b18 !important;
+  background-image: var(--zwc-canvas-bg) !important;
+  color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) header.topbar {
+html body.zone-account header {
   background: var(--zwc-pencil-shade) !important;
-  border-bottom: 2px solid #1e1b18 !important;
-  color: #1e1b18 !important;
+  border-bottom: 2px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-topbar-shadow) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) aside.sidebar {
-  background: #f7f1e3 !important;
-  border-inline-end: 2px solid #23201c !important;
-  color: #1e1b18 !important;
+html body.zone-account header strong {
+  color: #faf5e8 !important;
+  font-family: "Oswald", var(--zwc-font-brush), sans-serif !important;
+  background: var(--zwc-plaque-bg) !important;
+  border: 2px solid var(--zwc-plaque-border) !important;
+  border-radius: 3px !important;
+  padding: 2px 14px !important;
+  box-shadow: var(--zwc-plaque-shadow) !important;
+  -webkit-text-stroke: 1.3px #141210 !important;
+  text-shadow: 1px 1px 0 #141210, 2px 2px 0 #141210 !important;
+  margin-inline-end: auto !important;
 }
 
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) .panel {
-  background: #f9f4e8 !important;
-  border: 1.8px solid #24211d !important;
+html body.zone-account h1 {
+  font-family: var(--zwc-font-brush) !important;
+  font-size: 38px !important;
+  font-weight: 400 !important;
+  color: var(--zwc-title-ink) !important;
+  text-shadow: var(--zwc-title-shadow) !important;
+}
+
+html body.zone-account h2 {
+  font-family: var(--zwc-font-hand) !important;
+  color: var(--zwc-title-ink) !important;
+}
+
+html body.zone-account p,
+html body.zone-account small,
+html body.zone-account label {
+  color: var(--zwc-ink-soft) !important;
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body.zone-account a {
+  color: var(--zwc-blue-ink) !important;
+}
+
+html body.zone-account :is(section, details, .zone-account-intro) {
+  background: var(--zwc-card-bg) !important;
+  border: 1.8px solid var(--zwc-border-panel) !important;
   border-radius: var(--zwc-sketch-radius) !important;
-  box-shadow: 3px 4px 0 rgba(36, 33, 29, 0.14) !important;
-  color: #1e1b18 !important;
+  box-shadow: var(--zwc-shadow-card) !important;
+  color: var(--zwc-ink) !important;
 }
 
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) .panel-head {
+html body.zone-account input:not([type="checkbox"]),
+html body.zone-account #recoveryCode {
+  background: var(--zwc-input-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+}
+
+html body.zone-account button {
+  background: var(--zwc-btn-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
+}
+
+html body.zone-account button[type="submit"],
+html body.zone-account #reconnectGuestButton {
+  background: linear-gradient(180deg, #7da65a 0%, #5b823c 100%) !important;
+  color: #fcf9f2 !important;
+}
+
+/* /admin Open Engine Studio Sketchbook Styling */
+html body[data-zwc-admin="1"],
+html body:has(#studioWorkspace) {
+  background-color: var(--zwc-paper) !important;
+  background-image: var(--zwc-canvas-bg) !important;
+  color: var(--zwc-ink) !important;
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body:has(#studioWorkspace) header.topbar {
+  background: var(--zwc-pencil-shade) !important;
+  border-bottom: 2px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-topbar-shadow) !important;
+  color: var(--zwc-ink) !important;
+  backdrop-filter: none !important;
+}
+
+html body:has(#studioWorkspace) header.topbar .brand strong {
+  color: var(--zwc-title-ink) !important;
+  font-family: "Oswald", var(--zwc-font-brush), sans-serif !important;
+}
+
+html body:has(#studioWorkspace) header.topbar .brand small {
+  color: var(--zwc-ink-muted) !important;
+}
+
+html body:has(#studioWorkspace) .studio-search-button,
+html body:has(#studioWorkspace) .button {
+  background: var(--zwc-btn-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body:has(#studioWorkspace) .button.primary {
+  background: linear-gradient(180deg, #7da65a 0%, #5b823c 100%) !important;
+  color: #fcf9f2 !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar {
+  background: var(--zwc-sidebar-bg) !important;
+  border-inline-end: 2px solid var(--zwc-border-strong) !important;
+  color: var(--zwc-ink) !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar * {
+  font-family: var(--zwc-font-hand) !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar button {
+  color: var(--zwc-ink) !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--zwc-ink-rule) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar button[aria-current="page"],
+html body:has(#studioWorkspace) aside.sidebar button.active {
+  background: var(--zwc-row-active) !important;
+  border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
+  color: var(--zwc-title-ink) !important;
+}
+
+html body:has(#studioWorkspace) :is(.panel, .admin-session-dialog) {
+  background: var(--zwc-card-bg) !important;
+  border: 1.8px solid var(--zwc-border-panel) !important;
+  border-radius: var(--zwc-sketch-radius) !important;
+  box-shadow: var(--zwc-shadow-card) !important;
+  color: var(--zwc-ink) !important;
+}
+
+html body:has(#studioWorkspace) .panel-head {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
   padding: 8px 14px !important;
   margin: -16px -16px 12px !important;
-  border-bottom: 1.6px solid #181613 !important;
+  border-bottom: 1.6px solid var(--zwc-crosshatch-border) !important;
   border-radius: 6px 6px 0 0 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body:has(#studioWorkspace) .panel-head * {
-  color: #f7f1e3 !important;
-}
-
-/* --------------------------------------------------------------------------
- * 8. HIGH-SPECIFICITY (#dc-root) 1:1 REFERENCE MOCKUP LOCK & CASCADE OVERRIDES
- * Beats runtime-injected <style> sheets (zig-v127-motion-styles, aaa-topbar-sidebar,
- * zone-aaa-game-fx-styles, and <x-dc> styled-components) cleanly across EN & AR RTL.
- * -------------------------------------------------------------------------- */
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading h1 {
-  scroll-margin-top: 96px !important;
-}
-
-/* Topbar Layout & RTL Non-Overlap Guarantee */
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar [data-zheaderbar="1"] {
-  max-width: 1440px !important;
-  padding: 4px 14px !important;
-  gap: 8px !important;
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: nowrap !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links {
-  display: flex !important;
-  align-items: center !important;
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  gap: 2px !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links::-webkit-scrollbar {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-header-links button.zone-header-link {
-  position: static !important;
-  flex: 0 0 auto !important;
-  width: auto !important;
-  min-width: max-content !important;
-  max-width: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  padding: 3px 6px !important;
-  min-height: 32px !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
-  color: #1e1b18 !important;
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  white-space: nowrap !important;
-  overflow: visible !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar #zone-topbar-hud {
-  flex: 0 0 auto !important;
-  padding: 2px 7px !important;
-  gap: 4px !important;
-}
-
-/* Charcoal Crosshatch "Current Mission:" Strip Aligned to Shell Container */
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin {
-  background: var(--zwc-crosshatch-bg) !important;
-  border-top: 2px solid #171512 !important;
-  border-bottom: 2px solid #171512 !important;
-  padding-block: 4px !important;
-  padding-inline: max(18px, calc((100% - 1340px) / 2 + 18px)) !important;
-  min-height: 31px !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin > span:first-child {
-  background: #2b2926 !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: 8px 0 10px #2b2926, -8px 0 10px #2b2926 !important;
-  padding: 0 10px 0 4px !important;
-  color: #faf5e8 !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label] > .sc-interp {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label]::after {
-  content: attr(data-zwc-mission-label);
-  color: #faf5e8 !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-}
-
-/* Classic Torn Ruled Paper Sidebar Ledger: Charcoal Section Bars & Open Watercolor Icons */
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label] > .sc-interp {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading[data-zwc-info-label]::after {
-  content: attr(data-zwc-info-label);
+html body:has(#studioWorkspace) .panel-head * {
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
-  font-weight: 700 !important;
 }
 
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-panel-heading,
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group {
-  background: var(--zwc-crosshatch-bg) !important;
-  color: #f7f1e3 !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  text-transform: none !important;
-  letter-spacing: 0.01em !important;
-  padding: 3px 9px !important;
-  margin: 2px 0 0 !important;
-  min-height: 26px !important;
-  border: 0 !important;
-  border-top: 1.5px solid #181613 !important;
-  border-bottom: 1.5px solid #181613 !important;
-  border-radius: 2px !important;
-  box-shadow: none !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group * {
-  color: #f7f1e3 !important;
-  font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
-  font-weight: 700 !important;
-  text-transform: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon,
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-vivid="1"],
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon[data-zaaa-duotone="1"] {
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  width: 20px !important;
-  height: 20px !important;
-  min-width: 20px !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::before,
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon::after,
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg:not([data-zwc-ink]) {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg[data-zwc-ink] {
-  display: block !important;
-  width: 19px !important;
-  height: 19px !important;
-  filter: none !important;
-  opacity: 1 !important;
-}
-
-@media (min-width: 901px) {
-  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
-    min-height: 26px !important;
-    padding: 2.5px 8px !important;
-    gap: 8px !important;
-    background: transparent !important;
-    border: 0 !important;
-    border-bottom: 1px solid rgba(34, 30, 25, 0.15) !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    color: #1e1b18 !important;
-    font-family: var(--zwc-font-hand) !important;
-    font-size: 15px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
-    background: linear-gradient(90deg, rgba(154, 176, 116, 0.52) 0%, rgba(154, 176, 116, 0.22) 100%) !important;
-    border-inline-start: 3px solid #4d7332 !important;
-    font-weight: 700 !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar #zone-operative-crest {
-    padding: 4px 8px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-profile-body {
-    padding: 4px 8px 6px !important;
-    gap: 2px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root aside.zone-sidebar .zone-resource {
-    padding: 2px 0 !important;
-  }
-}
-
-/* Strip Dark Photo Hero Overlays & Duplicate Subtitle Spans on .zone-page-heading */
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  padding: 2px 0 6px !important;
-  min-height: 0 !important;
-  display: flex !important;
-  align-items: baseline !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading::before,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading::after,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading[data-zwc-enhanced="1"] > span,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading[data-zwc-enhanced="1"] > p,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-page-heading > div {
-  display: none !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-page-heading h1 {
-  font-family: var(--zwc-font-brush) !important;
-  font-size: 42px !important;
-  font-weight: 400 !important;
-  line-height: 1.04 !important;
-  color: #1a1714 !important;
-  margin: 0 !important;
-  text-transform: none !important;
-  text-shadow: 1px 1px 0 rgba(255, 252, 245, 0.85) !important;
-}
-
-/* City Screen 1:1 Mockup Stack: City -> City Tutorial -> Full-Width Watercolor Panorama -> Key of Symbols */
-@media (min-width: 901px) {
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-caption {
-    display: none !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-workspace {
-    display: contents !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-city-map-shell {
-    order: -10 !important;
-    width: 100% !important;
-    margin: 0 0 6px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
-    aspect-ratio: 2.15 / 1 !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] > div > :has(.zone-city-legend) {
-    order: -9 !important;
-    width: 100% !important;
-    margin: 0 0 14px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] nav.zone-city-directory {
-    order: -8 !important;
-    width: 100% !important;
-    max-height: none !important;
-    margin: 0 0 14px !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] nav.zone-city-directory .zone-city-destinations {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 8px !important;
-    max-height: 270px !important;
-    overflow-y: auto !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] #zig-world-flight-bar {
-    order: -7 !important;
-  }
-
-  html:not([data-sketch-mode="noir"]) body #dc-root #zone-main[data-zone-screen="city"] .zone-street-dispatch {
-    order: -6 !important;
-  }
-}
-
-/* Harmonize Remaining Modern Emerald Buttons (.zig-btn, Flight Radar, Open map) into Watercolor Sage/Charcoal */
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-btn,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="16, 185, 129"],
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="#10b981"],
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zone-panel button[style*="var(--accFill1)"] {
-  background: linear-gradient(180deg, #7ea75b 0%, #5e863e 100%) !important;
-  color: #fcf9f2 !important;
-  border: 1.6px solid #1e1b18 !important;
+html body:has(#studioWorkspace) :is(input:not([type="checkbox"]), select, textarea) {
+  background: var(--zwc-input-bg) !important;
+  color: var(--zwc-ink) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
-  box-shadow: 2px 2px 0 #1e1b18 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-weight: 700 !important;
-}
-
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-flight-card.is-current,
-html:not([data-sketch-mode="noir"]) body #dc-root #zone-main .zig-flight-card[aria-current="true"] {
-  background: linear-gradient(180deg, rgba(154, 176, 116, 0.34) 0%, rgba(248, 243, 230, 0.96) 100%) !important;
-  border-color: #3d5f28 !important;
-  box-shadow: 2px 3px 0 #1e1b18 !important;
 }
