@@ -329,8 +329,9 @@ html:not([data-theme="light"]) body #dc-root #zone-main {
   --zone-line: rgba(242, 234, 217, 0.34) !important;
 }
 
-/* Base Cold-Press Paper Canvas (Active in BOTH Light & Dark Modes) */
-html body {
+/* Base Cold-Press Paper Canvas (Active in BOTH Light & Dark Modes; (0,1,2) beats aaa-game-surfaces.css) */
+html[data-theme="light"] body,
+html:not([data-theme="light"]) body {
   background-color: var(--zwc-paper) !important;
   background-image: var(--zwc-canvas-bg) !important;
   background-attachment: scroll !important;
@@ -559,12 +560,14 @@ html body .zone-app .zone-topbar .zone-bulletin {
 
 html body #dc-root .zone-topbar .zone-bulletin > span:first-child,
 html body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+  position: relative !important;
+  z-index: 3 !important;
   background: var(--zwc-bulletin-cap) !important;
   background-image: none !important;
   border: 0 !important;
   border-radius: 0 !important;
-  box-shadow: 8px 0 10px var(--zwc-bulletin-cap), -8px 0 10px var(--zwc-bulletin-cap) !important;
-  padding: 0 10px 0 4px !important;
+  box-shadow: 12px 0 10px var(--zwc-bulletin-cap) !important;
+  padding: 0 12px 0 4px !important;
   color: #faf5e8 !important;
   font-family: var(--zwc-font-hand) !important;
   font-size: 15.5px !important;
@@ -573,7 +576,19 @@ html body .zone-app .zone-topbar .zone-bulletin > span:first-child {
   letter-spacing: 0.01em !important;
 }
 
-html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before,
+/* Mask scrolling ticker text before Current Mission: badge in both LTR & RTL */
+html body #dc-root .zone-topbar .zone-bulletin > span:first-child::before,
+html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before {
+  display: block !important;
+  content: "" !important;
+  position: absolute !important;
+  inset-block: -8px !important;
+  inset-inline-end: 100% !important;
+  width: 100vw !important;
+  background: var(--zwc-crosshatch-bg) !important;
+  pointer-events: none !important;
+}
+
 html body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label] > .sc-interp {
   display: none !important;
 }
@@ -1141,7 +1156,7 @@ html body #dc-root #zone-main#zone-main .zig-card-badge {
 }
 
 /* Hand-Inked Buttons Inside #zone-main (Replaces v128 Borderless Rounded SaaS Pills) */
-html body #dc-root #zone-main#zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]) {
+html body #dc-root #zone-main#zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([data-crime-attempt]):not(.zone-gym-train):not(.zig-game-card-cta):not(.zig-btn):not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]) {
   font-family: var(--zwc-font-hand) !important;
   font-size: 14.5px !important;
   font-weight: 600 !important;
@@ -1153,7 +1168,7 @@ html body #dc-root #zone-main#zone-main button:not(.zig-game-card):not(.zig-city
   box-shadow: 1.5px 2px 0 var(--zwc-shadow-solid) !important;
 }
 
-html body #dc-root #zone-main#zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]):not(:disabled):hover {
+html body #dc-root #zone-main#zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([data-crime-attempt]):not(.zone-gym-train):not(.zig-game-card-cta):not(.zig-btn):not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]):not(:disabled):hover {
   background-color: var(--zwc-btn-hover) !important;
   color: var(--zwc-title-ink) !important;
 }

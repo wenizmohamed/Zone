@@ -495,6 +495,12 @@
 
   var lastObservedScreen = '';
 
+  function snapRouteTopIfNeeded() {
+    if (window.scrollY > 0 && window.scrollY < 240) {
+      window.scrollTo(0, 0);
+    }
+  }
+
   function syncAll() {
     ensureStylesheetLast();
     if (document.querySelector('x-dc')) return;
@@ -504,9 +510,12 @@
       var curScreen = main ? (main.getAttribute('data-zone-screen') || '') : '';
       if (curScreen && curScreen !== lastObservedScreen) {
         lastObservedScreen = curScreen;
-        if (window.scrollY > 0 && window.scrollY < 160) {
-          window.scrollTo(0, 0);
+        snapRouteTopIfNeeded();
+        if (typeof window.requestAnimationFrame === 'function') {
+          window.requestAnimationFrame(snapRouteTopIfNeeded);
         }
+        setTimeout(snapRouteTopIfNeeded, 50);
+        setTimeout(snapRouteTopIfNeeded, 130);
       }
       syncMissionBulletin();
       syncTutorialBanner();
