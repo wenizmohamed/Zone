@@ -1,4 +1,4 @@
-/* ZONE v128 - 60fps Demand-Driven FX Engine, Vibrant Multi-Color MotionSites Icons, Session Auto-Heal & WebGL Throttling */
+/* ZONE v129 - 60fps Demand-Driven FX Engine, Vibrant Multi-Color MotionSites Icons, Session Auto-Heal, Live Version Sync & WebGL Throttling */
 (function () {
   'use strict';
 
@@ -2245,9 +2245,53 @@
         }
       }, { passive: true });
 
+      var lastVCheck = Date.now();
+      var vCheckInFlight = false;
+      function checkLiveBundleVersion(forceCheck) {
+        try {
+          if (typeof navigator !== 'undefined' && navigator.webdriver) return;
+          if (document.hidden || vCheckInFlight) return;
+          if (!location || (location.protocol !== 'https:' && location.protocol !== 'http:')) return;
+          var now = Date.now();
+          if (!forceCheck && now - lastVCheck <= 60000) return;
+          var curScript = document.querySelector('script[src*="aaa-game-fx.js?v="]');
+          var curSrc = curScript ? curScript.getAttribute('src') || '' : '';
+          var curMatch = curSrc.match(/aaa-game-fx\.js\?v=(\d+)/);
+          if (!curMatch) return;
+          lastVCheck = now;
+          vCheckInFlight = true;
+          fetch('/?__vc=' + now, { cache: 'no-store', credentials: 'same-origin' })
+            .then(function (res) {
+              return res && res.ok ? res.text() : '';
+            })
+            .then(function (html) {
+              vCheckInFlight = false;
+              if (!html) return;
+              var liveMatch = html.match(/aaa-game-fx\.js\?v=(\d+)/);
+              if (liveMatch && liveMatch[1] && liveMatch[1] !== curMatch[1]) {
+                window.location.reload();
+              }
+            })
+            .catch(function () {
+              vCheckInFlight = false;
+            });
+        } catch (_) {
+          vCheckInFlight = false;
+        }
+      }
+
       document.addEventListener('visibilitychange', function () {
         syncHeroLoop();
         syncWebglIframeThrottle();
+        if (!document.hidden) {
+          checkLiveBundleVersion(false);
+        }
+      });
+
+      window.addEventListener('pageshow', function (ev) {
+        if (ev && ev.persisted) {
+          checkLiveBundleVersion(true);
+        }
       });
     } catch (_) {}
   }
@@ -2295,7 +2339,7 @@
   }
 
   window.ZoneGameFX = {
-    version: '128.0',
+    version: '129.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,

@@ -1,5 +1,5 @@
 /* ==========================================================================
- * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v128)
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v129)
  * MotionSites (/icons & /sections/header) 3D Frosted Jewel, Persistent
  * Mobile Left-Side Menu Rail & Seamless Borderless Glass Edition
  * Exclusive Ownership: carbon-hud-chrome
@@ -859,15 +859,18 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
   }
 
   html body .zone-app .zone-topbar .zone-bulletin > span:first-child,
-  html:not([data-theme="light"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child,
-  html[data-theme="light"] body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+  html:not([data-theme="light"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child {
     height: 19px !important;
     padding: 0 9px !important;
     margin-inline-end: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
+    flex: 0 0 auto !important;
     gap: 6px !important;
-    background: var(--zaaa-wire-badge-bg) !important;
+    position: relative !important;
+    z-index: 3 !important;
+    background: #080c15 !important;
+    box-shadow: -20px 0 0 6px #080c15, 10px 0 14px #080c15 !important;
     border: 0 !important;
     border-inline-end: 0 !important;
     border-radius: 6px !important;
@@ -876,6 +879,36 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
     font-weight: 800 !important;
     letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
+  }
+
+  html[data-theme="light"] body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+    height: 19px !important;
+    padding: 0 9px !important;
+    margin-inline-end: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    gap: 6px !important;
+    position: relative !important;
+    z-index: 3 !important;
+    background: #ebe4d4 !important;
+    box-shadow: -20px 0 0 6px #ebe4d4, 10px 0 14px #ebe4d4 !important;
+    border: 0 !important;
+    border-inline-end: 0 !important;
+    border-radius: 6px !important;
+    color: var(--zaaa-wire-badge-fg) !important;
+    font-size: 9.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+  }
+
+  html[dir="rtl"]:not([data-theme="light"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+    box-shadow: 20px 0 0 6px #080c15, -10px 0 14px #080c15 !important;
+  }
+
+  html[dir="rtl"][data-theme="light"] body .zone-app .zone-topbar .zone-bulletin > span:first-child {
+    box-shadow: 20px 0 0 6px #ebe4d4, -10px 0 14px #ebe4d4 !important;
   }
 
   html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before {

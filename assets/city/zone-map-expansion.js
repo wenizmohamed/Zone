@@ -1,8 +1,8 @@
-/* ZONE v128 - Expanded 3D Metropolis, Mobile HUD & 48% Bottom-Sheet,
+/* ZONE v129 - Expanded 3D Metropolis, Mobile HUD & 48% Bottom-Sheet,
    Atmospheric Hairline Sectors, Torn-Style Color Jewel Pins & Global World Flights */
 (function (root) {
   "use strict";
-  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 128) return;
+  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 129) return;
 
   var EXTRA_ICONS = {
     airport: "M12 2l2.2 6.8L22 11v2l-7.8-1.2L13.5 18l2.5 1.8V21l-4-1-4 1v-1.2L10.5 18l-.7-6.2L2 13v-2l7.8-2.2L12 2z",
@@ -1730,7 +1730,7 @@
   }
 
   var expansionApi = {
-    version: "128.0",
+    version: "129.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -1746,7 +1746,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 128;
+  root.__zoneMapExpansionVersion = 129;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

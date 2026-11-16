@@ -1,4 +1,4 @@
-/* ZONE Open Engine Studio v127 - MotionSites Iconography, Bilingual Sync & 60fps WebGL Gate */
+/* ZONE Open Engine Studio v129 - MotionSites Iconography, Bilingual Sync & 60fps WebGL Gate */
 (function () {
   'use strict';
 
@@ -246,10 +246,11 @@
     const out = document.getElementById('agiStudioOutput');
     if (!out) return;
     const text = out.textContent || '';
-    if (text.includes('3.6')) {
+    if (text.includes('3.6') || text.includes('(v127)') || text.includes('(v128)')) {
       out.textContent = text
-        .replace(/OPEN ENGINE 3\.6/g, 'OPEN ENGINE 3.8 LIVE (v127)')
-        .replace(/Syndicate 3\.6/g, 'Syndicate 3.8 (v127)');
+        .replace(/OPEN ENGINE 3\.6/g, 'OPEN ENGINE 3.8 LIVE (v129)')
+        .replace(/Syndicate 3\.6/g, 'Syndicate 3.8 (v129)')
+        .replace(/\(v12[78]\)/g, '(v129)');
     }
   }
 
@@ -257,12 +258,12 @@
     const ar = currentLang() === 'ar';
 
     if (typeof translations === 'object' && translations) {
-      if (translations.en) translations.en.engineVersion = 'ENGINE 3.8 LIVE (v127)';
-      if (translations.ar) translations.ar.engineVersion = 'المحرك 3.8 المباشر (v127)';
+      if (translations.en) translations.en.engineVersion = 'ENGINE 3.8 LIVE (v129)';
+      if (translations.ar) translations.ar.engineVersion = 'المحرك 3.8 المباشر (v129)';
     }
 
     document.querySelectorAll('[data-copy="engineVersion"]').forEach(function (el) {
-      el.textContent = ar ? 'المحرك 3.8 المباشر (v127)' : 'ENGINE 3.8 LIVE (v127)';
+      el.textContent = ar ? 'المحرك 3.8 المباشر (v129)' : 'ENGINE 3.8 LIVE (v129)';
     });
 
     const setById = function (id, enText, arText) {
@@ -272,8 +273,8 @@
 
     setById(
       'agiBannerTitle',
-      'OPEN ENGINE 3.8 LIVE (v127) - SYNDICATE GAME ARCHITECT & 3D HOLODECK',
-      'محرك OPEN ENGINE 3.8 المباشر (v127) - مهندس النقابة والهولوديك ثلاثي الأبعاد'
+      'OPEN ENGINE 3.8 LIVE (v129) - SYNDICATE GAME ARCHITECT & 3D HOLODECK',
+      'محرك OPEN ENGINE 3.8 المباشر (v129) - مهندس النقابة والهولوديك ثلاثي الأبعاد'
     );
     setById(
       'agiBannerSub',
@@ -282,8 +283,8 @@
     );
     setById(
       'agiBannerStatus',
-      'ENGINE 3.8 LIVE (v127)',
-      'المحرك 3.8 متصل (v127)'
+      'ENGINE 3.8 LIVE (v129)',
+      'المحرك 3.8 متصل (v129)'
     );
     setById(
       'agiPromptLabel',
@@ -513,9 +514,9 @@
     const holoController = setupHolodeckPerformanceGate();
     wireDynamicObservers(holoController);
 
-    window.ZoneEngineStudioV127 = {
-      version: '127.0.0',
-      engineLabel: 'ENGINE 3.8 LIVE (v127)',
+    const studioApi = {
+      version: '129.0.0',
+      engineLabel: 'ENGINE 3.8 LIVE (v129)',
       refresh: function () {
         syncStudioV127Copy();
         decorateNav();
@@ -528,6 +529,8 @@
         return holoController ? holoController.isRunning() : false;
       }
     };
+    window.ZoneEngineStudioV127 = studioApi;
+    window.ZoneEngineStudioV129 = studioApi;
   }
 
   initEngineStudioV127();
