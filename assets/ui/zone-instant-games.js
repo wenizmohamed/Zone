@@ -126,12 +126,12 @@
       if (typeof Image === 'function') {
         var bagImg = new Image();
         bagImg.decoding = 'async';
-        bagImg.src = '/assets/ui/motion-art/arcade-heavybag.webp';
+        bagImg.src = '/assets/ui/watercolor-art/arcade-heavybag.webp';
         artImages.heavybag = bagImg;
 
         var heistImg = new Image();
         heistImg.decoding = 'async';
-        heistImg.src = '/assets/ui/motion-art/arcade-heist.webp';
+        heistImg.src = '/assets/ui/watercolor-art/arcade-heist.webp';
         artImages.heist = heistImg;
       }
     } catch (_) {}
@@ -525,7 +525,7 @@
     var cards = [
       {
         id: 'getaway',
-        art: '/assets/ui/motion-art/arcade-getaway.webp',
+        art: '/assets/ui/watercolor-art/arcade-getaway.webp',
         alt: ar ? 'مطاردة النيون الليلية' : 'Nitro Syndicate Getaway',
         badge: ar ? 'جولة فورية' : 'Instant Run',
         name: ar ? 'مطاردة النيون الليلية' : 'Nitro Syndicate Getaway',
@@ -534,7 +534,7 @@
       },
       {
         id: 'heist',
-        art: '/assets/ui/motion-art/arcade-heist.webp',
+        art: '/assets/ui/watercolor-art/arcade-heist.webp',
         alt: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
         badge: ar ? 'توقيت دقيق' : 'Precision Lock',
         name: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
@@ -543,7 +543,7 @@
       },
       {
         id: 'casino',
-        art: '/assets/ui/motion-art/arcade-casino.webp',
+        art: '/assets/ui/watercolor-art/arcade-casino.webp',
         alt: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
         badge: ar ? 'طاولات النخبة' : 'High-Limit Salon',
         name: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
@@ -552,7 +552,7 @@
       },
       {
         id: 'gym',
-        art: '/assets/ui/motion-art/arcade-heavybag.webp',
+        art: '/assets/ui/watercolor-art/arcade-heavybag.webp',
         alt: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',
         badge: ar ? 'عداد القوة' : 'Reflex Meter',
         name: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',

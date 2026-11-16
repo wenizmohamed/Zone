@@ -2339,7 +2339,7 @@
   }
 
   window.ZoneGameFX = {
-    version: '129.0',
+    version: '130.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,
