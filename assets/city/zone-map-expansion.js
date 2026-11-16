@@ -1,7 +1,8 @@
-/* ZONE v127 - Expanded 3D Metropolis, Demand-Throttled Live Clock,
+/* ZONE v128 - Expanded 3D Metropolis, Mobile HUD & 48% Bottom-Sheet,
    Atmospheric Hairline Sectors, Torn-Style Color Jewel Pins & Global World Flights */
 (function (root) {
   "use strict";
+  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 128) return;
 
   var EXTRA_ICONS = {
     airport: "M12 2l2.2 6.8L22 11v2l-7.8-1.2L13.5 18l2.5 1.8V21l-4-1-4 1v-1.2L10.5 18l-.7-6.2L2 13v-2l7.8-2.2L12 2z",
@@ -579,6 +580,8 @@
         "body[data-zmx-light='1'] .zmx-cta-sec{background:#e0f2fe;color:#075985}",
         ".zmx-svg-ico{display:inline-block;width:13px;height:13px;flex:none;vertical-align:-2px}",
         ".zmx-cta,.zmx-cta-sec{display:inline-flex;align-items:center;justify-content:center;gap:5px}",
+        ".zmx-chrono-bar>*{flex:none}",
+        ".zmx-chrono-bar::-webkit-scrollbar{display:none}",
         ".familyRail{border-bottom:1px solid rgba(255,255,255,0.07)!important;background:rgba(9,13,22,0.94)!important}",
         ".familyRail button.familyStat{min-height:32px!important;padding:3px 10px!important;border-radius:10px!important;border:1px solid rgba(234,179,8,0.22)!important;background:rgba(234,179,8,0.10)!important;display:inline-flex!important;flex-direction:column!important;justify-content:center!important;transition:background-color .16s ease,transform .16s ease}",
         ".familyRail button.familyStat:not(:disabled):hover{background:rgba(234,179,8,0.16)!important;border-color:rgba(234,179,8,0.34)!important;transform:translateY(-1px)}",
@@ -587,7 +590,37 @@
         "@media (prefers-reduced-motion:reduce){.zmx-sun-rays,.zmx-ico-jet,.zmx-pill,.zmx-world-btn,.zmx-gate-marker,.familyRail button.familyStat{transition:none!important}}",
         "[dir='rtl'] .zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar *,[dir='rtl'] .zmx-gate-marker,.zmx-modal[dir='rtl'],.zmx-modal[dir='rtl'] *{letter-spacing:0!important}",
         "@media (max-width:1120px){.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}",
-        "@media (max-width:780px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:50px;left:10px;right:auto;width:fit-content;max-width:calc(100% - 56px);justify-content:flex-start}}"
+        "@media (max-width:780px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:44px;left:8px;right:46px;width:auto;max-width:calc(100% - 54px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}}",
+        "@media (max-width:680px){",
+        "  #sideToggle,#cityReset,#mapExpand,#streetView{top:7px!important;height:28px!important;min-height:28px!important;padding:0 7px!important;font-size:10.5px!important;border-radius:8px!important}",
+        "  #sideToggle{left:8px!important;width:30px!important;padding:0!important}",
+        "  #sideToggle b{display:none!important}",
+        "  #cityReset{left:42px!important;width:auto!important}",
+        "  #mapExpand{left:110px!important;width:28px!important;padding:0!important;font-size:13.5px!important}",
+        "  #streetView{left:142px!important;width:auto!important}",
+        "  [dir='rtl'] #sideToggle{left:auto!important;right:8px!important}",
+        "  [dir='rtl'] #cityReset{left:auto!important;right:42px!important}",
+        "  [dir='rtl'] #mapExpand{left:auto!important;right:110px!important}",
+        "  [dir='rtl'] #streetView{left:auto!important;right:142px!important}",
+        "  .mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:7px 6px 0 0!important}",
+        "  [dir='rtl'] .mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:7px 0 0 6px!important}",
+        "  .mapboxgl-ctrl-group button,.mapboxgl-ctrl-group button:disabled{width:30px!important;height:30px!important}",
+        "  .zmx-chrono-bar{top:42px!important;left:8px!important;right:44px!important;transform:none!important;width:auto!important;max-width:calc(100% - 52px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;padding:4px 8px!important;gap:5px!important;font-size:10.5px!important;justify-content:flex-start!important}",
+        "  [dir='rtl'] .zmx-chrono-bar{right:8px!important;left:44px!important;justify-content:flex-start!important}",
+        "  #panel,[dir='rtl'] #panel{top:auto!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:48%!important;overflow-y:auto!important;border-radius:14px 14px 0 0!important;border-left:0!important;border-right:0!important;border-top:1px solid rgba(255,255,255,0.14)!important;z-index:30!important;padding:10px 12px 12px!important;box-shadow:0 -12px 32px rgba(0,0,0,0.72)!important;transform:translate3d(0,105%,0)!important;pointer-events:none!important}",
+        "  #panel.on,[dir='rtl'] #panel.on{transform:translate3d(0,0,0)!important;pointer-events:auto!important}",
+        "  #panel .x{height:30px!important;min-height:30px!important;min-width:56px!important;top:8px!important;font-size:11px!important;padding:0 8px!important}",
+        "  #panel h2{font-size:14.5px!important;margin-bottom:2px!important;padding-inline-end:64px!important}",
+        "  #panel .pcat{font-size:9.5px!important;margin-bottom:4px!important}",
+        "  #panel .pmeta{flex:none!important;overflow:visible!important;margin-bottom:6px!important;font-size:11px!important}",
+        "  #panel .pActions button{min-height:34px!important;padding:6px 10px!important;font-size:11px!important}",
+        "  .mapLegend,.legend{bottom:6px!important;inset-inline-end:6px!important;font-size:9.5px!important;padding:3px 7px!important;gap:6px!important;border-radius:8px!important;max-width:calc(100% - 88px)!important;background:rgba(9,13,22,0.84)!important;border:1px solid rgba(255,255,255,0.08)!important}",
+        "  .familyHome,#familyHome{bottom:6px!important;inset-inline-start:6px!important;min-height:26px!important;height:26px!important;padding:0 8px!important;font-size:9.5px!important;border-radius:8px!important;background:rgba(9,13,22,0.86)!important;border:1px solid rgba(255,255,255,0.10)!important}",
+        "  .detailsOpen .mapLegend,.detailsOpen .legend,.detailsOpen #familyHome{visibility:hidden!important}",
+        "  .zmx-modal{padding:12px!important;border-radius:14px!important;max-height:86vh!important}",
+        "  .zmx-world-svg{height:112px!important}",
+        "  .zmx-city-grid{grid-template-columns:1fr!important}",
+        "}"
       ].join("\n");
       document.head.appendChild(style);
     }
@@ -744,26 +777,33 @@
         var midStop = locked ? mixRgbCss(baseRgb, [30, 41, 59], 0.38) : mixRgbCss(baseRgb, [15, 23, 42], 0.12);
         var deepStop = locked ? mixRgbCss(baseRgb, [8, 13, 24], 0.68) : mixRgbCss(baseRgb, [6, 10, 20], 0.52);
 
-        var grad = c.createRadialGradient(10.5, 8.2, 1.2, 12, 12, 11.4);
+        var grad = c.createRadialGradient(10.5, 8.2, 1.2, 12, 12, 11.2);
         grad.addColorStop(0, topStop);
         grad.addColorStop(0.56, midStop);
         grad.addColorStop(1, deepStop);
         c.beginPath();
-        c.arc(12, 12, 11.1, 0, Math.PI * 2);
+        c.arc(12, 12, 10.5, 0, Math.PI * 2);
         c.fillStyle = grad;
         c.fill();
 
         /* Subtle inner contrast core so white vector glyphs pop cleanly on bright gold/cyan jewels */
         c.beginPath();
-        c.arc(12, 12, 8.4, 0, Math.PI * 2);
+        c.arc(12, 12, 8.1, 0, Math.PI * 2);
         c.fillStyle = locked ? "rgba(8, 13, 24, 0.34)" : "rgba(6, 10, 20, 0.24)";
         c.fill();
 
-        /* Crisp frosted jewel rim */
+        /* Outer roof-coupled halo + crisp frosted jewel rim (travels with symbol-z-elevate!) */
+        if (!locked) {
+          c.beginPath();
+          c.arc(12, 12, 11.25, 0, Math.PI * 2);
+          c.strokeStyle = "rgba(56, 189, 248, 0.55)";
+          c.lineWidth = 1.1;
+          c.stroke();
+        }
         c.beginPath();
-        c.arc(12, 12, 11.0, 0, Math.PI * 2);
-        c.strokeStyle = locked ? "rgba(226, 232, 240, 0.38)" : "rgba(255, 255, 255, 0.78)";
-        c.lineWidth = 1.65;
+        c.arc(12, 12, 10.45, 0, Math.PI * 2);
+        c.strokeStyle = locked ? "rgba(226, 232, 240, 0.42)" : "rgba(255, 255, 255, 0.82)";
+        c.lineWidth = 1.55;
         c.stroke();
 
         c.save();
@@ -1110,7 +1150,7 @@
           "circle-radius": ["interpolate", ["linear"], ["zoom"], 13, 14, 15.5, 19, 18, 25],
           "circle-color": ["case", ["boolean", ["get", "locked"], false], ["get", "color"], "#38bdf8"],
           "circle-blur": 0.85,
-          "circle-opacity": ["case", ["boolean", ["get", "locked"], false], 0.14, 0.38]
+          "circle-opacity": 0
         }
       });
       safeAddLayer({
@@ -1124,7 +1164,8 @@
           "circle-color": "rgba(8, 13, 23, 0.88)",
           "circle-stroke-color": ["get", "strokeColor"],
           "circle-stroke-width": ["case", ["boolean", ["get", "locked"], false], 1.2, 2.1],
-          "circle-opacity": 0.96
+          "circle-opacity": 0,
+          "circle-stroke-opacity": 0
         }
       });
       safeAddLayer({
@@ -1688,7 +1729,8 @@
     };
   }
 
-  root.ZoneMapExpansion = {
+  var expansionApi = {
+    version: "128.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -1704,4 +1746,15 @@
       }
     }
   };
+  root.__zoneMapExpansionVersion = 128;
+  try {
+    Object.defineProperty(root, "ZoneMapExpansion", {
+      value: expansionApi,
+      writable: false,
+      configurable: false,
+      enumerable: true
+    });
+  } catch (_) {
+    root.ZoneMapExpansion = expansionApi;
+  }
 })(typeof window !== "undefined" ? window : globalThis);

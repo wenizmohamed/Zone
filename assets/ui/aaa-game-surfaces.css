@@ -1,6 +1,6 @@
 /* ==========================================================================
-   ZONE - AAA CRIME SYNDICATE RPG SCREEN SURFACES (v127)
-   MotionSites Borderless Tonal Surface Architecture & 60fps CSS Compositing
+   ZONE - AAA CRIME SYNDICATE RPG SCREEN SURFACES (v128)
+   MotionSites Borderless Tonal UI, Mobile Right-Pane Viewport & 60fps CSS
    File: assets/ui/aaa-game-surfaces.css
    Scope: Page body scroll/backdrop fix + strictly #zone-main (all inner
           screens, hero stages, poster cards, tables, CTAs, inputs, modals).
@@ -47,6 +47,7 @@ html:not([data-theme="light"]) body #zone-main {
   --ags-divider: rgba(255, 255, 255, 0.045);
   --ags-shadow-1: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 22px 48px -14px rgba(0, 0, 0, 0.62);
   --ags-shadow-2: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 10px 26px -8px rgba(0, 0, 0, 0.46);
+  --ags-specular-sheen: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.08), transparent 60%);
   --ags-pill-bg: rgba(255, 255, 255, 0.07);
   --ags-pill-hover: rgba(255, 255, 255, 0.12);
   --ags-icon-plate: rgba(255, 255, 255, 0.045);
@@ -87,6 +88,7 @@ html[data-theme="light"] body #zone-main {
   --ags-divider: rgba(15, 23, 42, 0.055);
   --ags-shadow-1: 0 14px 34px -10px rgba(15, 23, 42, 0.07);
   --ags-shadow-2: 0 6px 18px -6px rgba(15, 23, 42, 0.06);
+  --ags-specular-sheen: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0) 60%);
   --ags-pill-bg: rgba(15, 23, 42, 0.06);
   --ags-pill-hover: rgba(15, 23, 42, 0.1);
   --ags-icon-plate: rgba(15, 23, 42, 0.045);
@@ -540,10 +542,81 @@ html body #zone-main [data-zhead],
 html body #zone-main .zig-arcade-title,
 html body #zone-main .zig-world-flight-title,
 html body #zone-main #zig-world-flight-bar .zig-world-flight-title,
-html body #zone-main .zone-dossier-card-head {
+html body #zone-main .zone-dossier-card-head,
+html body #zone-main#zone-main .zone-street-dispatch h2,
+html body #zone-main#zone-main [data-zone-world-dispatch] h2,
+html body #zone-main#zone-main section.zone-panel strong[style*="text-transform:uppercase"] {
   font-weight: 700 !important;
   letter-spacing: -0.01em !important;
   text-transform: none !important;
+}
+
+/* Purge remaining 3px solid yellow / 2px neon top/left AI borders across Word on the Street, Loadout, Reconnect & Inline Sections */
+html body #zone-main#zone-main .zone-street-dispatch,
+html body #zone-main#zone-main [data-zone-world-dispatch],
+html body #zone-main#zone-main .zone-connection-recovery,
+html body #zone-main#zone-main .zone-loadout,
+html body #zone-main#zone-main .zone-city-travel-bar,
+html body #zone-main#zone-main .zone-dossier-deck,
+html body #zone-main#zone-main section.zone-panel[style*="border-top:2px"],
+html body #zone-main#zone-main section.zone-panel[style*="border-inline-start:3px"] {
+  background-color: var(--ags-surface-1) !important;
+  background-image: var(--ags-specular-sheen) !important;
+  border: 1px solid var(--ags-border-1) !important;
+  border-top: 1px solid var(--ags-border-1) !important;
+  border-inline-start: 1px solid var(--ags-border-1) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--ags-shadow-1) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main#zone-main .zone-street-dispatch,
+html:not([data-theme="light"]) body #zone-main#zone-main [data-zone-world-dispatch] {
+  border: 1px solid rgba(255, 255, 255, 0.045) !important;
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.045) !important;
+}
+
+html body #zone-main#zone-main .zone-street-dispatch {
+  overflow: hidden;
+}
+
+html body #zone-main#zone-main .zone-street-dispatch > header {
+  background: transparent !important;
+  border-block-end: 1px solid var(--ags-divider) !important;
+  min-block-size: 54px !important;
+  padding: 12px 16px !important;
+}
+
+html body #zone-main#zone-main .zone-street-dispatch h2 {
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+  color: var(--ags-ink-1) !important;
+}
+
+html body #zone-main#zone-main .zone-street-dispatch button {
+  border-radius: 10px !important;
+  border: 0 !important;
+  min-height: 44px !important;
+}
+
+html body #zone-main#zone-main [data-zone-connection="1"] {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--ags-ink-3) !important;
+  font-size: 11px !important;
+  padding: 2px 4px !important;
+  box-shadow: none !important;
+}
+
+html body #zone-main#zone-main .zone-route-receipt,
+html body #zone-main#zone-main .zone-peer-feedback,
+html body #zone-main#zone-main .zone-crime-receipt {
+  background-color: var(--ags-surface-2) !important;
+  background-image: var(--ags-specular-sheen) !important;
+  border: 1px solid var(--ags-border-2) !important;
+  border-inline-start: 1px solid var(--ags-border-2) !important;
+  border-radius: 14px !important;
+  padding: 12px 15px !important;
+  box-shadow: var(--ags-shadow-2) !important;
 }
 
 html body #zone-main .zone-panel-heading,
@@ -700,7 +773,7 @@ html body #zone-main .zone-quick-actions > button {
   position: relative !important;
   overflow: hidden !important;
   background-color: var(--ags-surface-2) !important;
-  background-image: none !important;
+  background-image: var(--ags-specular-sheen) !important;
   border: 1px solid var(--ags-border-2) !important;
   color: var(--ags-ink-1) !important;
   box-shadow: var(--ags-shadow-2) !important;
@@ -823,7 +896,7 @@ html body #zone-main .zone-daily-objective,
 html body #zone-main .zone-next-move,
 html body #zone-main .zone-login-reward {
   background-color: var(--ags-surface-2) !important;
-  background-image: none !important;
+  background-image: var(--ags-specular-sheen) !important;
   border: 1px solid var(--ags-border-2) !important;
   border-inline-start: 1px solid var(--ags-border-2) !important;
   border-radius: 14px !important;
@@ -994,7 +1067,7 @@ html body #zone-main .zig-arcade-title {
   color: var(--ags-ink-1) !important;
 }
 
-/* Borderless Studio Live Pill */
+/* MotionSites Spark Badge Live Pill */
 html body #zone-main .zig-live-pill {
   display: inline-flex;
   align-items: center;
@@ -1007,15 +1080,18 @@ html body #zone-main .zig-live-pill {
   letter-spacing: 0 !important;
   text-transform: none !important;
   line-height: 1.3;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zig-live-pill {
-  background: rgba(16, 185, 129, 0.16) !important;
+  background-color: rgba(16, 185, 129, 0.16) !important;
+  background-image: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 65%) !important;
   color: #34d399 !important;
 }
 
 html[data-theme="light"] body #zone-main .zig-live-pill {
-  background: rgba(5, 150, 105, 0.12) !important;
+  background-color: rgba(5, 150, 105, 0.12) !important;
+  background-image: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.7), transparent 65%) !important;
   color: #047857 !important;
 }
 
@@ -1050,7 +1126,7 @@ html body #zone-main .zig-sound-btn:hover {
   background-color: var(--ags-pill-hover) !important;
 }
 
-/* Level-2 Poster Card Shell (Borderless Tonal 14px Card, 60fps Compositing) */
+/* Level-2 Poster Card Shell (Borderless Tonal 14px Card + Liquid Glass Sheen, 60fps Compositing) */
 html body #zone-main .zig-game-card {
   position: relative !important;
   display: flex !important;
@@ -1059,7 +1135,7 @@ html body #zone-main .zig-game-card {
   border-radius: 14px !important;
   overflow: hidden !important;
   background-color: var(--ags-surface-2) !important;
-  background-image: none !important;
+  background-image: var(--ags-specular-sheen) !important;
   border: 1px solid var(--ags-border-2) !important;
   color: var(--ags-ink-1) !important;
   box-shadow: var(--ags-shadow-2) !important;
@@ -1417,7 +1493,7 @@ html body #zone-main .zone-crime-choice > span:last-child > bdi:first-child {
 }
 
 /* --- 4B. GYM: Clean Non-Colliding Grid, Level-2 Tonal Stat Cards & Train CTA --- */
-@media (min-width: 651px) {
+@media (min-width: 901px) {
   html body #zone-main[data-zone-screen="gym"] .zone-gym-workspace {
     grid-template-columns: minmax(0, 1fr) 320px !important;
     gap: 16px !important;
@@ -1887,7 +1963,7 @@ html body #zone-main .zig-flight-card {
   border-radius: 14px !important;
   border: 1px solid var(--ags-border-2) !important;
   background-color: var(--ags-surface-2) !important;
-  background-image: none !important;
+  background-image: var(--ags-specular-sheen) !important;
   color: var(--ags-ink-1) !important;
   box-shadow: var(--ags-shadow-2) !important;
   transition:
@@ -1942,7 +2018,7 @@ html body #zone-main .zone-city-destinations button {
   border-inline-start: 1px solid var(--ags-border-2) !important;
   padding: 10px 12px !important;
   background-color: var(--ags-surface-2) !important;
-  background-image: none !important;
+  background-image: var(--ags-specular-sheen) !important;
   color: var(--ags-ink-1) !important;
   font-weight: 600 !important;
   box-shadow: var(--ags-shadow-2) !important;
@@ -2142,22 +2218,108 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   color: #b91c1c !important;
 }
 
-/* Responsive Mobile Refinement & Zero-Blur Bottom Tabbar (<= 760px) */
-@media (max-width: 760px) {
+/* ==========================================================================
+   5. v128 MOBILE RIGHT-PANE GAME VIEWPORT OVERHAUL (<= 900px & <= 640px)
+      Designed for 290px - 350px #zone-main width alongside 66px Left Menu Rail
+   ========================================================================== */
+@media (max-width: 900px) {
   html body #zone-main {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: auto !important;
     max-width: 100% !important;
     overflow-x: hidden !important;
     box-sizing: border-box !important;
+    gap: 8px !important;
+    padding-bottom: 16px !important;
   }
 
+  /* Universal zero-overflow containment across all child grids, cards, tables & iframes */
+  html body #zone-main > *,
+  html body #zone-main .zone-panel,
+  html body #zone-main .zone-content-split,
+  html body #zone-main .zone-auto-grid,
+  html body #zone-main section,
+  html body #zone-main article,
+  html body #zone-main details,
+  html body #zone-main form,
+  html body #zone-main dl,
+  html body #zone-main iframe,
+  html body #zone-main canvas {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Hide legacy bottom tabbar since persistent left menu rail owns navigation */
+  html body #zone-main .zone-mobile-tabbar {
+    display: none !important;
+  }
+
+  /* Collapse multi-column desktop splits cleanly inside narrow right-pane #zone-main */
+  html body #zone-main .zone-content-split,
+  html body #zone-main .zone-home-grid,
+  html body #zone-main .zone-items-grid,
+  html body #zone-main .zone-dossier-grid,
+  html body #zone-main .zone-property-dossiers {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Compact Hero Stage & Base of Operations */
   html body #zone-main .zone-page-heading {
-    min-height: 74px !important;
-    padding: 14px 16px !important;
+    min-height: 76px !important;
+    padding: 12px 14px !important;
     border-radius: 14px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 4px 8px !important;
+    align-items: center !important;
   }
 
   html body #zone-main .zone-page-heading h1 {
-    font-size: 20px !important;
+    font-size: 19px !important;
+    line-height: 1.15 !important;
+  }
+
+  html body #zone-main .zone-page-heading > span {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  html body #zone-main#zone-main .zone-page-heading > div button {
+    min-height: 30px !important;
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+
+  html body #zone-main .zone-home-brief {
+    border-radius: 14px !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+  }
+
+  html body #zone-main .zone-home-brief .zone-hideout-scene {
+    min-height: 48px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+
+  html body #zone-main .zone-hideout-scene > div {
+    gap: 4px 8px !important;
+    align-items: center !important;
+    padding: 2px 0 !important;
+  }
+
+  html body #zone-main .zone-hideout-scene strong {
+    font-size: 14px !important;
+  }
+
+  html body #zone-main .zone-hideout-scene span:not(.zone-overline) {
+    font-size: 10.5px !important;
   }
 
   html body #zone-main .zone-panel,
@@ -2165,89 +2327,768 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main .zig-arcade-deck,
   html body #zone-main .zig-home-arcade,
   html body #zone-main #zig-world-flight-bar,
-  html body #zone-main .zig-world-flight-bar {
+  html body #zone-main .zig-world-flight-bar,
+  html body #zone-main .zone-city-directory {
     border-radius: 14px !important;
   }
 
-  html body #zone-main .zone-quick-actions > button {
-    min-height: 60px !important;
-    padding: 10px 12px !important;
+  html body #zone-main .zone-panel-heading,
+  html body #zone-main .zone-dossier-card-head {
+    padding: 10px 12px 9px !important;
+    font-size: 13px !important;
+  }
+
+  /* Home Quick-Deploy 2x2 Tight Grid (34x34 Frosted Icon Squircles) */
+  html body #zone-main#zone-main .zone-quick-actions,
+  html body #zone-main#zone-main .zone-quick-actions.zone-auto-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main#zone-main .zone-quick-actions > button {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 54px !important;
+    padding: 10px !important;
     border-radius: 12px !important;
   }
 
-  html body #zone-main .zone-quick-actions > button .zone-nav-icon {
-    width: 38px !important;
-    height: 38px !important;
-    flex: 0 0 38px !important;
+  html body #zone-main#zone-main .zone-quick-actions > button .zone-nav-icon {
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px !important;
     border-radius: 10px !important;
   }
 
-  html body #zone-main .zig-arcade-deck,
-  html body #zone-main .zig-home-arcade {
-    padding: 12px !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
+  html body #zone-main#zone-main .zone-quick-actions > button .zone-nav-icon svg:last-child {
+    width: 19px !important;
+    height: 19px !important;
   }
 
-  html body #zone-main .zig-card-badge {
-    top: 7px !important;
-    inset-inline-start: 7px !important;
-    padding: 2px 8px !important;
-    font-size: 9px !important;
+  html body #zone-main#zone-main .zone-quick-actions > button > span:last-child {
+    min-width: 0 !important;
+    flex: 1 1 0% !important;
   }
 
-  html body #zone-main .zig-game-card-body {
-    padding: 10px 11px 11px !important;
+  html body #zone-main#zone-main .zone-quick-actions > button > span:last-child > span:first-child {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html body #zone-main#zone-main .zone-quick-actions > button bdi {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Compact Character 3D Stage & Loadout Stats on Mobile */
+  html body #zone-main#zone-main .zone-character-stage {
+    height: 220px !important;
+    min-height: 220px !important;
+    margin: 8px 10px 4px !important;
+    border-radius: 12px !important;
+  }
+
+  html body #zone-main#zone-main #zone-char-3d {
+    height: 220px !important;
+    width: 100% !important;
+  }
+
+  html body #zone-main .zone-equipped-summary {
+    margin: 6px 10px !important;
+    padding: 9px 11px !important;
   }
 
   html body #zone-main .zone-loadout-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 2px 10px 10px !important;
   }
 
-  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar {
-    background-color: #0b0f19 !important;
-    background-image: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.72) !important;
+  html body #zone-main .zone-daily-objective,
+  html body #zone-main .zone-next-move,
+  html body #zone-main .zone-login-reward {
+    margin: 8px 10px !important;
+    padding: 11px 12px !important;
   }
 
-  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button {
-    background-color: #121826 !important;
-    background-image: none !important;
-    border: 0 !important;
+  /* Syndicate Arcade Deck Compact Header & Tablet 2x2 Grid */
+  html body #zone-main .zig-arcade-deck,
+  html body #zone-main .zig-home-arcade {
+    padding: 10px 11px !important;
+  }
+
+  html body #zone-main .zig-arcade-header {
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  html body #zone-main .zig-arcade-emblem {
+    width: 32px !important;
+    height: 32px !important;
+    flex: 0 0 32px !important;
+    border-radius: 9px !important;
+  }
+
+  html body #zone-main .zig-arcade-title {
+    font-size: 13.5px !important;
+  }
+
+  html body #zone-main .zig-arcade-sub {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  html body #zone-main .zig-sound-btn {
+    padding: 5px 9px !important;
+    font-size: 10.5px !important;
+  }
+
+  html body #zone-main .zig-arcade-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main .zig-getaway-bar {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    padding: 8px 10px !important;
+  }
+
+  html body #zone-main .zig-stage-controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  /* CITY SCREEN: Horizontal-Scroll World Flights + Tall Playable 3D Map + Stacked Directory */
+  html body #zone-main #zig-world-flight-bar,
+  html body #zone-main .zig-world-flight-bar {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main .zig-world-flight-top {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+  }
+
+  html body #zone-main .zig-world-cities-row {
+    display: grid !important;
+    grid-template-columns: none !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: minmax(132px, 148px) !important;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain !important;
+    scrollbar-width: none !important;
+    gap: 8px !important;
+    padding-bottom: 2px !important;
+  }
+
+  html body #zone-main .zig-world-cities-row::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body #zone-main .zone-city-workspace {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  html body #zone-main .zone-city-map-shell:not(.zone-city-map-expanded) {
+    aspect-ratio: auto !important;
+    height: min(58dvh, 430px) !important;
+    min-height: 340px !important;
+    border-radius: 14px !important;
+    padding: 4px !important;
+  }
+
+  html body #zone-main .zone-city-map-shell:not(.zone-city-map-expanded) > iframe,
+  html body #zone-main #zone-city-map {
     border-radius: 10px !important;
-    color: #cbd5e1 !important;
-    font-weight: 600 !important;
   }
 
-  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button[aria-current="page"],
-  html:not([data-theme="light"]) body #zone-main .zone-mobile-tabbar button[aria-expanded="true"] {
-    background-color: #10b981 !important;
-    background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-    color: #ffffff !important;
+  html body #zone-main .zone-city-directory {
+    height: auto !important;
+    max-height: 320px !important;
+    padding: 10px !important;
   }
 
-  html[data-theme="light"] body #zone-main .zone-mobile-tabbar {
-    background-color: #ffffff !important;
-    background-image: none !important;
-    border-top: 1px solid rgba(15, 23, 42, 0.07) !important;
-    box-shadow: 0 -8px 22px rgba(15, 23, 42, 0.08) !important;
+  html body #zone-main .zone-city-destinations {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 8px 4px 4px !important;
+    overflow-y: auto !important;
+    max-height: 230px !important;
   }
 
-  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button {
-    background-color: #f1f5f9 !important;
-    background-image: none !important;
+  html body #zone-main .zone-city-destinations button {
+    min-height: 52px !important;
+    padding: 8px 9px !important;
+    border-radius: 12px !important;
+  }
+
+  html body #zone-main .zone-city-destinations button :is(.zone-nav-icon, .zone-city-place-icon) {
+    width: 30px !important;
+    height: 30px !important;
+    flex: 0 0 30px !important;
+    border-radius: 8px !important;
+  }
+
+  /* ATTACK SCREEN: Stacked Kit, 220px Combat Frame, Graceful VS Bar & 2x2 Stat Opponent Cards */
+  html body #zone-main .zone-loadout {
+    padding: 10px 12px !important;
+  }
+
+  html body #zone-main .zone-loadout header {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  html body #zone-main .zone-loadout-slots {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main .zone-loadout-slots > div {
+    padding: 9px 11px !important;
+    border-radius: 12px !important;
+  }
+
+  html body #zone-main #zone-combat-frame,
+  html body #zone-main .zone-combat-host {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 220px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    border-radius: 12px !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+
+  html body #zone-main .zig-brawl-banner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 6px 8px !important;
+    padding: 8px 10px !important;
+    border-radius: 12px !important;
+    margin-bottom: 6px !important;
+  }
+
+  html body #zone-main .zig-brawl-side {
+    min-width: 0 !important;
+  }
+
+  html body #zone-main .zig-brawl-side > div:first-child {
+    gap: 4px !important;
+    font-size: 10.5px !important;
+  }
+
+  html body #zone-main .zig-brawl-side > div:first-child > span {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body #zone-main .zig-brawl-banner > div:nth-child(2) {
+    max-width: 78px !important;
+    min-width: 0 !important;
+  }
+
+  html body #zone-main .zig-brawl-vs {
+    font-size: 13px !important;
+    padding: 0 2px !important;
+  }
+
+  html body #zone-main .zig-brawl-banner > div:nth-child(2) > div:last-child {
+    font-size: 8.5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html body #zone-main [data-torn-hitbox-loadout="1"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Responsive Card Tables (Attack, Market, Jail, Hospital, HOF) across full <= 900px range */
+  html body #zone-main:is([data-zone-screen="attack"], [data-zone-screen="market"], [data-zone-screen="jail"], [data-zone-screen="hospital"], [data-zone-screen="hof"]) [data-zscroll] {
     border: 0 !important;
-    border-radius: 10px !important;
-    color: #334155 !important;
-    font-weight: 600 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
 
-  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button[aria-current="page"],
-  html[data-theme="light"] body #zone-main .zone-mobile-tabbar button[aria-expanded="true"] {
-    background-color: #059669 !important;
-    background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-    color: #ffffff !important;
+  html body #zone-main:is([data-zone-screen="attack"], [data-zone-screen="market"], [data-zone-screen="jail"], [data-zone-screen="hospital"], [data-zone-screen="hof"]) .zone-table-heading {
+    display: none !important;
+  }
+
+  html body #zone-main:is([data-zone-screen="attack"], [data-zone-screen="market"], [data-zone-screen="jail"], [data-zone-screen="hospital"], [data-zone-screen="hof"]) .zone-table-row {
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 11px 12px !important;
+    margin: 0 0 8px !important;
+    border: 1px solid var(--ags-border-2) !important;
+    border-radius: 14px !important;
+    background-color: var(--ags-surface-2) !important;
+    background-image: var(--ags-specular-sheen) !important;
+    box-shadow: var(--ags-shadow-2) !important;
+  }
+
+  html body #zone-main:is([data-zone-screen="attack"], [data-zone-screen="market"], [data-zone-screen="jail"], [data-zone-screen="hospital"], [data-zone-screen="hof"]) .zone-table-row > :first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body #zone-main [data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--ags-ink-3);
+    font-size: 9.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Attack Opponent Cards: Name header + [Level | Odds] + 2x2 Stat Pills + Full-Width Attack CTA */
+  html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin: 0 0 8px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > div:first-child {
+    grid-column: 1 / -1 !important;
+    padding-bottom: 5px !important;
+    border-bottom: 1px solid var(--ags-divider) !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > bdi {
+    background-color: var(--ags-surface-3) !important;
+    padding: 5px 8px !important;
+    border-radius: 8px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.25 !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > span:nth-last-child(2) {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    align-self: stretch !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: var(--ags-surface-3) !important;
+    padding: 5px 8px !important;
+    border-radius: 8px !important;
+    font-size: 11.5px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > button:last-child {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    margin-top: 2px !important;
+  }
+
+  /* GYM SCREEN: 2x2 Station Selector, 2x2 Session Metrics, Compact Canvas + Train CTA Together */
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-workspace {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor {
+    order: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+    min-height: 108px !important;
+    aspect-ratio: auto !important;
+    padding: 12px 14px !important;
+    border-radius: 12px !important;
+    clip-path: none !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor-scene header {
+    max-width: 100% !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor-scene h2 {
+    font-size: 20px !important;
+    margin-block: 3px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor-readout {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 9px 11px !important;
+    border-radius: 12px !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-stations {
+    order: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-station {
+    min-height: 58px !important;
+    padding: 9px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-station-art {
+    width: 32px !important;
+    height: 36px !important;
+    flex: 0 0 32px !important;
+    border-radius: 8px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-station bdi {
+    font-size: 13px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session {
+    order: 2 !important;
+    margin: 0 !important;
+    padding: 11px !important;
+    gap: 7px !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-identity h3 {
+    font-size: 17px !important;
+    margin: 0 !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-benefit {
+    margin: 0 !important;
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-metrics {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin: 0 !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-metrics > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+    padding: 7px 9px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-metrics dd {
+    text-align: start !important;
+    max-width: 100% !important;
+    font-size: 12px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] .zig-gym-wrap canvas,
+  html body #zone-main#zone-main[data-zone-screen="gym"] #zig-gym-canvas {
+    max-height: 136px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="gym"] button.zone-gym-train {
+    min-height: 42px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* CRIMES SCREEN: Horizontal-Scroll Category Pills, Compact Vault Canvas & Clean Opportunity Rows */
+  html body #zone-main .zone-crime-activity-nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain !important;
+    scrollbar-width: none !important;
+    gap: 7px !important;
+    padding: 2px 2px 8px !important;
+  }
+
+  html body #zone-main .zone-crime-activity-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body #zone-main .zone-crime-activity-nav button {
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+    padding: 7px 11px !important;
+    border-radius: 12px !important;
+  }
+
+  html body #zone-main .zone-crime-operation {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    padding-top: 4px !important;
+  }
+
+  html body #zone-main .zone-crime-neighborhood {
+    padding: 12px !important;
+    margin: 0 !important;
+  }
+
+  html body #zone-main .zone-crime-neighborhood h2 {
+    font-size: 19px !important;
+    text-transform: none !important;
+  }
+
+  html body #zone-main .zone-crime-scene {
+    min-height: 156px !important;
+    aspect-ratio: auto !important;
+    padding: 8px !important;
+    border-radius: 12px !important;
+    clip-path: none !important;
+  }
+
+  html body #zone-main .zig-heist-wrap canvas,
+  html body #zone-main #zig-heist-canvas {
+    max-height: 148px !important;
+  }
+
+  html body #zone-main .zone-crime-resources {
+    margin: 8px 0 0 !important;
+    max-width: 100% !important;
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
+    gap: 10px !important;
+  }
+
+  html body #zone-main .zone-crime-plan {
+    margin: 0 !important;
+    padding: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  html body #zone-main .zone-crime-plan dl {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    margin: 8px 0 !important;
+  }
+
+  html body #zone-main .zone-crime-plan dl > div {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+    padding: 6px 8px !important;
+    border-radius: 8px !important;
+    background-color: var(--ags-surface-3) !important;
+    border: 0 !important;
+  }
+
+  html body #zone-main .zone-crime-plan dd {
+    text-align: start !important;
+  }
+
+  /* ITEMS, BANK, JOBS, EDUCATION & PROPERTIES Mobile Right-Pane Fit */
+  html body #zone-main [data-ztabs] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    gap: 6px !important;
+  }
+
+  html body #zone-main [data-ztabs]::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body #zone-main [data-ztabs] button {
+    flex: 0 0 auto !important;
+  }
+
+  html body #zone-main .zone-inventory-search {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    padding: 10px 12px !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main .zone-inventory-search label,
+  html body #zone-main .zone-inventory-search input {
+    grid-column: 1 / -1 !important;
+  }
+
+  html body #zone-main .zone-item-stage {
+    height: 200px !important;
+    min-height: 180px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="bank"] .zone-bank-summary {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="bank"] .zone-bank-summary > .zone-panel {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    padding: 12px 14px !important;
+  }
+
+  html body #zone-main#zone-main[data-zone-screen="bank"] .zone-bank-actions {
+    padding: 12px 14px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Compact Phone Portrait Width (<= 640px): Horizontal Arcade Stack & Single-Column Cards */
+@media (max-width: 640px) {
+  html body #zone-main .zig-arcade-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  html body #zone-main#zone-main .zig-game-card {
+    display: grid !important;
+    grid-template-columns: 104px minmax(0, 1fr) !important;
+    align-items: center !important;
+    border-radius: 12px !important;
+    min-height: 92px !important;
+  }
+
+  html body #zone-main#zone-main .zig-card-media {
+    width: 104px !important;
+    height: 92px !important;
+    min-height: 92px !important;
+    max-height: 92px !important;
+    aspect-ratio: auto !important;
+  }
+
+  html body #zone-main#zone-main .zig-card-badge {
+    top: 5px !important;
+    inset-inline-start: 5px !important;
+    padding: 2px 6px !important;
+    font-size: 8px !important;
+  }
+
+  html body #zone-main#zone-main .zig-game-card-body {
+    padding: 7px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    min-width: 0 !important;
+  }
+
+  html body #zone-main#zone-main .zig-game-card-name {
+    font-size: 12.5px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html body #zone-main#zone-main .zig-game-card-desc {
+    font-size: 10.5px !important;
+    line-height: 1.25 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  html body #zone-main#zone-main .zig-game-card-cta {
+    margin-top: 3px !important;
+    padding: 5px 10px !important;
+    font-size: 10.5px !important;
+    min-height: 26px !important;
+    width: auto !important;
+    align-self: flex-start !important;
+  }
+
+  html body #zone-main .zone-city-destinations {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body #zone-main .zone-city-legend {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  html.zaaa-rail-open body #zone-main#zone-main .zone-quick-actions,
+  html.zaaa-rail-open body #zone-main#zone-main .zone-quick-actions.zone-auto-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html body #zone-main .zone-crime-choice {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    padding: 10px 12px !important;
+  }
+
+  html body #zone-main .zone-crime-choice > span:last-child {
+    text-align: start !important;
+  }
+
+  html body #zone-main .zone-employment-row,
+  html body #zone-main .zone-course-row,
+  html body #zone-main .zone-membership-row,
+  html body #zone-main[data-zone-screen="properties"] .zone-current-property,
+  html body #zone-main[data-zone-screen="properties"] .zone-property-dossier {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    padding: 12px !important;
+  }
+
+  html body #zone-main[data-zone-screen="properties"] .zone-current-property .zone-property-art-panel,
+  html body #zone-main[data-zone-screen="properties"] .zone-property-dossier .zone-property-art-panel {
+    min-height: 120px !important;
+    max-height: 140px !important;
+    aspect-ratio: 16 / 9 !important;
   }
 }
 

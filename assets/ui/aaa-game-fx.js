@@ -1,4 +1,4 @@
-/* ZONE v127 - 60fps Demand-Driven FX Engine, Vibrant Multi-Color MotionSites Icons & WebGL Iframe Throttling */
+/* ZONE v128 - 60fps Demand-Driven FX Engine, Vibrant Multi-Color MotionSites Icons, Session Auto-Heal & WebGL Throttling */
 (function () {
   'use strict';
 
@@ -314,6 +314,63 @@
     );
   }
 
+  /* ---------------- Vibrant Multi-Color 3D City Key of Symbols Icons (.zone-city-legend) ---------------- */
+  function buildLegendIconSvg(gradId, c1, c2, c3, innerMarkup) {
+    return (
+      '<svg class="zfx-legend-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+        '<defs>' +
+          '<linearGradient id="' + gradId + '" x1="3" y1="2.5" x2="21" y2="21.5" gradientUnits="userSpaceOnUse">' +
+            '<stop offset="0%" stop-color="' + c1 + '"/>' +
+            '<stop offset="52%" stop-color="' + c2 + '"/>' +
+            '<stop offset="100%" stop-color="' + c3 + '"/>' +
+          '</linearGradient>' +
+        '</defs>' +
+        innerMarkup +
+      '</svg>'
+    );
+  }
+
+  var CITY_LEGEND_KEYS = ['fin', 'admin', 'shop', 'leisure', 'estate', 'misc'];
+  var CITY_LEGEND_SVGS = {
+    fin: buildLegendIconSvg(
+      'zfx-grad-leg-fin', '#fef08a', '#f59e0b', '#d97706',
+      '<path d="M12 2.6L21 7.5V9.8H3V7.5L12 2.6Z" fill="url(#zfx-grad-leg-fin)"/>' +
+      '<rect x="3.5" y="18.2" width="17" height="2.8" rx="1.1" fill="url(#zfx-grad-leg-fin)"/>' +
+      '<path d="M6.3 10.2V17.8M10.1 10.2V17.8M13.9 10.2V17.8M17.7 10.2V17.8" stroke="#ffffff" stroke-width="2.05" stroke-linecap="round"/>' +
+      '<circle cx="12" cy="6.8" r="1.3" fill="#ffffff"/>'
+    ),
+    admin: buildLegendIconSvg(
+      'zfx-grad-leg-admin', '#38bdf8', '#3b82f6', '#4f46e5',
+      '<path d="M12 2.5L19.8 5.7V11.8C19.8 16.6 16.4 20.1 12 21.6C7.6 20.1 4.2 16.6 4.2 11.8V5.7L12 2.5Z" fill="url(#zfx-grad-leg-admin)"/>' +
+      '<path d="M12 6.9L13.4 9.8L16.6 10.2L14.2 12.5L14.8 15.7L12 14.1L9.2 15.7L9.8 12.5L7.4 10.2L10.6 9.8L12 6.9Z" fill="#ffffff"/>'
+    ),
+    shop: buildLegendIconSvg(
+      'zfx-grad-leg-shop', '#6ee7b7', '#10b981', '#0d9488',
+      '<path d="M5.3 7.8H18.7L19.9 19.2C20 20.1 19.3 20.8 18.4 20.8H5.6C4.7 20.8 4 20.1 4.1 19.2L5.3 7.8Z" fill="url(#zfx-grad-leg-shop)"/>' +
+      '<path d="M8.8 7.8V6.1C8.8 4.3 10.2 2.9 12 2.9C13.8 2.9 15.2 4.3 15.2 6.1V7.8" stroke="#ffffff" stroke-width="1.95" stroke-linecap="round"/>' +
+      '<circle cx="9.6" cy="11.2" r="1.15" fill="#ffffff"/>' +
+      '<circle cx="14.4" cy="11.2" r="1.15" fill="#ffffff"/>'
+    ),
+    leisure: buildLegendIconSvg(
+      'zfx-grad-leg-leis', '#f5d0fe', '#d946ef', '#7c3aed',
+      '<circle cx="12" cy="12" r="9.2" fill="url(#zfx-grad-leg-leis)"/>' +
+      '<circle cx="12" cy="12" r="6.2" stroke="#ffffff" stroke-opacity="0.74" stroke-width="1.35" stroke-dasharray="2.4 2"/>' +
+      '<path d="M12 7.4L15.6 12L12 16.6L8.4 12L12 7.4Z" fill="#ffffff"/>'
+    ),
+    estate: buildLegendIconSvg(
+      'zfx-grad-leg-est', '#fde047', '#34d399', '#059669',
+      '<path d="M4 20.5V9.6L12 3.2L20 9.6V20.5H4Z" fill="url(#zfx-grad-leg-est)"/>' +
+      '<rect x="9.8" y="13.5" width="4.4" height="7" rx="1" fill="#ffffff"/>' +
+      '<circle cx="12" cy="9.3" r="1.65" fill="#ffffff"/>'
+    ),
+    misc: buildLegendIconSvg(
+      'zfx-grad-leg-misc', '#fda4af', '#fb7185', '#38bdf8',
+      '<circle cx="12" cy="12" r="9.1" fill="url(#zfx-grad-leg-misc)"/>' +
+      '<path d="M15.6 8.4L13.5 13.5L8.4 15.6L10.5 10.5L15.6 8.4Z" fill="#ffffff"/>' +
+      '<circle cx="12" cy="12" r="1.4" fill="#0f172a"/>'
+    )
+  };
+
   /* ---------------- Meaningful District Tags for City Directory ---------------- */
   var CITY_DISTRICT_TAGS = {
     gym:        { en: 'Combat Conditioning', ar: 'التأهيل البدني والقتالي' },
@@ -397,7 +454,10 @@
     /* Offscreen WebGL iframe throttling */
     iframeIo: null,
     iframeIntersecting: { char3d: true, cityMap: true },
-    iframePaused: { char3d: false, cityMap: false }
+    iframePaused: { char3d: false, cityMap: false },
+    /* Instant Session Auto-Heal & Reconnect Rescue */
+    sessionHealing: false,
+    accessObserver: null
   };
 
   for (var hi = 0; hi < 18; hi++) {
@@ -651,6 +711,29 @@
         '}' +
         'html body #zone-main .zone-crime-activity-nav button[data-zfx-crime-cat]:hover > svg.zfx-crime-cat-svg{' +
           'transform:scale(1.1) rotate(-4deg);' +
+        '}' +
+        /* City Key of Symbols Vibrant 3D Frosted Legend Icons (.zone-city-legend) */
+        'html body #zone-main .zone-city-legend > div > span[data-zfx-legend-icon]{' +
+          'position:relative;width:30px !important;height:30px !important;min-width:30px !important;' +
+          'display:inline-grid !important;place-items:center !important;flex:none !important;' +
+          'background:rgba(255,255,255,0.052) !important;' +
+          'border:0 !important;border-radius:9px !important;filter:none !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 4px 10px rgba(0,0,0,0.22) !important;' +
+          'transition:transform 200ms cubic-bezier(0.22,1,0.36,1),background-color 200ms ease !important;' +
+        '}' +
+        'html[data-theme="light"] body #zone-main .zone-city-legend > div > span[data-zfx-legend-icon]{' +
+          'background:rgba(15,23,42,0.055) !important;' +
+          'box-shadow:inset 0 1px 0 rgba(255,255,255,0.84),0 3px 8px rgba(15,23,42,0.07) !important;' +
+        '}' +
+        'html body #zone-main .zone-city-legend > div:hover > span[data-zfx-legend-icon]{' +
+          'transform:scale(1.09) rotate(-3deg);background:rgba(255,255,255,0.088) !important;' +
+        '}' +
+        'html body #zone-main .zone-city-legend [data-zfx-legend-icon] > svg:not(.zfx-legend-svg){' +
+          'display:none !important;' +
+        '}' +
+        'html body #zone-main .zone-city-legend [data-zfx-legend-icon] > svg.zfx-legend-svg{' +
+          'display:block !important;visibility:visible !important;width:18px !important;height:18px !important;' +
+          'filter:drop-shadow(0 2px 4px rgba(0,0,0,0.24));' +
         '}' +
         '@keyframes zfxDeltaFloat{' +
           '0%{opacity:0;transform:translate3d(-50%,8px,0) scale(0.84);}' +
@@ -1434,6 +1517,49 @@
     } catch (_) {}
   }
 
+  function resolveLegendIconKey(labelText, fallbackIndex) {
+    var probe = String(labelText || '').toLowerCase().trim();
+    if (probe.indexOf('financ') >= 0 || probe.indexOf('مالي') >= 0) return 'fin';
+    if (probe.indexOf('admin') >= 0 || probe.indexOf('إدار') >= 0 || probe.indexOf('ادار') >= 0) return 'admin';
+    if (probe.indexOf('shop') >= 0 || probe.indexOf('تسو') >= 0) return 'shop';
+    if (probe.indexOf('leisur') >= 0 || probe.indexOf('ترفي') >= 0) return 'leisure';
+    if (probe.indexOf('estat') >= 0 || probe.indexOf('عقار') >= 0) return 'estate';
+    if (probe.indexOf('misc') >= 0 || probe.indexOf('متنو') >= 0) return 'misc';
+    return CITY_LEGEND_KEYS[fallbackIndex % CITY_LEGEND_KEYS.length] || 'misc';
+  }
+
+  function enhanceCityLegendIcons() {
+    try {
+      var rows = document.querySelectorAll('#zone-main .zone-city-legend > div');
+      if (!rows.length) return;
+      for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var iconSpan = row.firstElementChild;
+        if (!iconSpan || iconSpan.tagName !== 'SPAN') continue;
+        var labelEl = row.children && row.children.length > 1 ? row.children[1] : null;
+        var labelTxt = labelEl ? (labelEl.textContent || '') : (row.textContent || '');
+        var key = resolveLegendIconKey(labelTxt, i);
+        var svgMarkup = CITY_LEGEND_SVGS[key] || CITY_LEGEND_SVGS.misc;
+        var curSvg = iconSpan.querySelector('svg.zfx-legend-svg');
+        if (!curSvg) {
+          iconSpan.setAttribute('data-zfx-legend-icon', key);
+          var holder = document.createElement('div');
+          holder.innerHTML = svgMarkup;
+          if (holder.firstElementChild) {
+            iconSpan.appendChild(holder.firstElementChild);
+          }
+        } else if (iconSpan.getAttribute('data-zfx-legend-icon') !== key) {
+          iconSpan.setAttribute('data-zfx-legend-icon', key);
+          var nextHolder = document.createElement('div');
+          nextHolder.innerHTML = svgMarkup;
+          if (nextHolder.firstElementChild) {
+            curSvg.innerHTML = nextHolder.firstElementChild.innerHTML;
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
   function enhanceCrimeCategoryNav() {
     try {
       var catBtns = document.querySelectorAll('#zone-main .zone-crime-activity-nav button[data-crime-category]');
@@ -1683,7 +1809,7 @@
 
   function bindDynamicSubListObserver() {
     try {
-      var target = document.querySelector('#zone-main .zone-city-destinations, #zone-main .zone-crime-activity-nav');
+      var target = document.querySelector('#zone-main .zone-city-destinations, #zone-main .zone-crime-activity-nav, #zone-main .zone-city-legend');
       if (target === state.subListEl) return;
       state.subListEl = target || null;
       if (state.subListObserver) {
@@ -1698,15 +1824,145 @@
     } catch (_) {}
   }
 
+  /* ---------------- Instant Session Auto-Heal & [Reconnect] Rescue ---------------- */
+  function isRealBrowserRuntime() {
+    try {
+      if (typeof window.fetch !== 'function') return false;
+      if (typeof location !== 'object' || !location) return false;
+      var proto = String(location.protocol || '');
+      if (proto !== 'http:' && proto !== 'https:') return false;
+      if (document.querySelector('x-dc')) return false;
+      if (typeof URLSearchParams === 'function') {
+        var params = new URLSearchParams(location.search || '');
+        if (params.get('zone-preview') === '1') return false;
+      }
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function isReconnectControl(btn) {
+    if (!btn || !(btn instanceof Element)) return false;
+    if (btn.closest('.zone-connection-recovery, [data-zone-connection]')) return true;
+    if (!btn.closest('#zone-main')) return false;
+    var label = String(btn.textContent || '').replace(/\s+/g, ' ').trim();
+    return /^(reconnect|reconnecting\.{0,3}|أعد الاتصال|إعادة الاتصال|جارٍ إعادة الاتصال\.{0,3})$/i.test(label);
+  }
+
+  async function healExpiredPlayerSession(isManualClick) {
+    if (!isRealBrowserRuntime()) return false;
+    if (state.sessionHealing) return false;
+    if (!isManualClick) {
+      try {
+        if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('zaaa_session_healed_v128') === '1') {
+          return false;
+        }
+      } catch (_) {}
+    }
+
+    state.sessionHealing = true;
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('zaaa_session_healed_v128', '1');
+      }
+    } catch (_) {}
+
+    try {
+      var acctRes = await window.fetch('/api/v1/auth/account', {
+        method: 'GET',
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+      var acct = null;
+      try { acct = await acctRes.json(); } catch (_) {}
+
+      /* If the cookie belongs to a valid claimed permanent account, let ZoneSession.recover() restore it without logout */
+      if (acctRes && acctRes.ok && acct && acct.claimed === true && typeof acct.playerId === 'string') {
+        if (window.ZoneSession && typeof window.ZoneSession.recover === 'function') {
+          try { await window.ZoneSession.recover(); } catch (_) {}
+        }
+        return true;
+      }
+
+      /* Dead or unclaimed stale HttpOnly cookie: clear via POST /api/v1/auth/logout, mint fresh session, reload cleanly */
+      try {
+        await window.fetch('/api/v1/auth/logout', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+          body: '{}'
+        });
+      } catch (_) {}
+
+      var sessRes = await window.fetch('/api/v1/auth/session', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: '{}'
+      });
+      var sess = null;
+      try { sess = await sessRes.json(); } catch (_) {}
+
+      if (sessRes && sessRes.ok && sess && typeof sess.playerId === 'string') {
+        try {
+          var prevId = localStorage.getItem('zone.player.id');
+          if (prevId && prevId !== sess.playerId) {
+            localStorage.removeItem('zone.v2.save');
+          }
+          localStorage.setItem('zone.player.id', sess.playerId);
+        } catch (_) {}
+        if (location && typeof location.reload === 'function') {
+          location.reload();
+        }
+        return true;
+      }
+    } catch (_) {
+      return false;
+    } finally {
+      state.sessionHealing = false;
+    }
+    return false;
+  }
+
+  function checkAutoSessionHeal() {
+    try {
+      var rootEl = document.documentElement;
+      if (!rootEl) return;
+      var accessState = (rootEl.dataset && rootEl.dataset.zonePlayerAccess) || rootEl.getAttribute('data-zone-player-access') || '';
+      if (accessState === 'expired') {
+        healExpiredPlayerSession(false);
+      }
+    } catch (_) {}
+  }
+
+  function bindSessionAccessObserver() {
+    try {
+      var rootEl = document.documentElement;
+      if (!rootEl || state.accessObserver || typeof MutationObserver !== 'function') return;
+      state.accessObserver = new MutationObserver(function () {
+        checkAutoSessionHeal();
+      });
+      state.accessObserver.observe(rootEl, {
+        attributes: true,
+        attributeFilter: ['data-zone-player-access']
+      });
+      checkAutoSessionHeal();
+    } catch (_) {}
+  }
+
   function runSurfacePolish() {
     ensureStyles();
     if (document.querySelector('x-dc')) return;
     enhanceQuickActions();
     enhanceCityDestinations();
+    enhanceCityLegendIcons();
     enhanceCrimeCategoryNav();
     ensureHeroAtmosphereCanvas();
     syncWebglIframeThrottle();
     bindDynamicSubListObserver();
+    checkAutoSessionHeal();
   }
 
   function scheduleSurfacePolish() {
@@ -1908,6 +2164,7 @@
           }
           var t = ev.target;
           if (!(t instanceof Element)) return;
+
           var btn = t.closest('button:not(:disabled), a.zone-header-link');
           if (!btn) return;
 
@@ -1953,6 +2210,11 @@
             return;
           }
 
+          var rawBtn = t.closest('button');
+          if (rawBtn && isReconnectControl(rawBtn)) {
+            healExpiredPlayerSession(true);
+          }
+
           var btn = t.closest('button:not(:disabled), a.zone-header-link');
           if (!btn) return;
 
@@ -1994,6 +2256,7 @@
   function boot() {
     try {
       ensureLayer();
+      bindSessionAccessObserver();
       bindMainScreenObserver();
       bindHudObserver();
       runSurfacePolish();
@@ -2032,7 +2295,7 @@
   }
 
   window.ZoneGameFX = {
-    version: '127.0',
+    version: '128.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,
@@ -2040,6 +2303,7 @@
     playCue: playCue,
     runSurfacePolish: runSurfacePolish,
     syncWebglIframeThrottle: syncWebglIframeThrottle,
+    healExpiredPlayerSession: healExpiredPlayerSession,
     getPerfStats: function () {
       return {
         heroLoopRunning: Boolean(state.heroRaf),

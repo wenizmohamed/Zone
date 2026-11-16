@@ -143,47 +143,74 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     if (in_array($path, ['/engine', '/engine/'], true) && $ownerAccess['configured'] && !$ownerAccess['authenticated']) {
         header('Cache-Control: no-store'); header('Location: /admin?lang=' . (($_GET['lang'] ?? '') === 'ar' ? 'ar' : 'en'), true, 302); exit;
     }
-    $headers = ['X-Zone-Relay-Key: ' . $relayKey, 'X-Zone-Client-Host: ' . $host, 'X-Zone-Client-Proto: https', 'X-Zone-Client-IP: ' . $ip];
+    $baseHeaders = ['X-Zone-Relay-Key: ' . $relayKey, 'X-Zone-Client-Host: ' . $host, 'X-Zone-Client-Proto: https', 'X-Zone-Client-IP: ' . $ip];
     foreach (['HTTP_ACCEPT' => 'Accept', 'CONTENT_TYPE' => 'Content-Type', 'HTTP_ORIGIN' => 'Origin', 'HTTP_REFERER' => 'Referer', 'HTTP_USER_AGENT' => 'User-Agent', 'HTTP_X_ZONE_PLAYER_ID' => 'X-Zone-Player-ID', 'HTTP_X_ZONE_PLAYER_TOKEN' => 'X-Zone-Player-Token'] as $input => $name) {
         $value = $_SERVER[$input] ?? '';
-        if (is_string($value) && $value !== '' && !preg_match('/[\r\n\x00]/', $value)) $headers[] = $name . ': ' . $value;
+        if (is_string($value) && $value !== '' && !preg_match('/[\r\n\x00]/', $value)) $baseHeaders[] = $name . ': ' . $value;
     }
     $cookieNames = $ownerMethods === [] ? ['zone_player_session', 'zone_player_ledger'] : ['zone_player_session', 'zone_player_ledger', 'zone_admin_session'];
     $cookies = array_filter(explode(';', (string) ($_SERVER['HTTP_COOKIE'] ?? '')), static fn ($part) => in_array(explode('=', trim($part), 2)[0], $cookieNames, true));
-    if ($cookies !== []) $headers[] = 'Cookie: ' . implode(';', $cookies);
     $query = http_build_query($_GET, '', '&', PHP_QUERY_RFC3986);
     $requestTarget = $path . ($query === '' ? '' : '?' . $query);
     if ($ownerMethods !== [] && $ownerAccess['authenticated']) {
         $timestamp = (string) time();
         $signature = hash_hmac('sha256', "owner-gateway:\n" . $method . "\n" . $requestTarget . "\n" . hash('sha256', $body) . "\n" . $timestamp, $relayKey);
-        $headers[] = 'X-Zone-Owner-Proof: ' . $timestamp . '.' . $signature;
+        $baseHeaders[] = 'X-Zone-Owner-Proof: ' . $timestamp . '.' . $signature;
     }
     $destination = rtrim($relayOrigin, '/') . $requestTarget;
-    $context = stream_context_create(['http' => ['method' => $method, 'header' => implode("\r\n", $headers), 'content' => $body,
-        'timeout' => 22, 'ignore_errors' => true, 'follow_location' => 0, 'max_redirects' => 0, 'protocol_version' => 1.1],
-        'ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed' => false]]);
-    // A single network attempt, including writes. An interrupted response must never replay an action.
-    $stream = @fopen($destination, 'rb', false, $context);
-    if ($stream === false) zone_proxy_error('Local engine is unavailable. Reload saved state before repeating an action.', 503);
-    $raw = stream_get_contents($stream, 4194305); $metadata = stream_get_meta_data($stream); fclose($stream);
-    if ($raw === false || strlen($raw) > 4194304 || ($metadata['timed_out'] ?? false)) zone_proxy_error('Local engine response is unavailable. Reload saved state before repeating an action.', 503);
-    $responseHeaders = $metadata['wrapper_data'] ?? []; $status = null; $responseLength = null;
-    foreach ($responseHeaders as $line) {
-        if (preg_match('~^HTTP/\S+ ([1-5][0-9]{2})\b~', $line, $match)) { $status = (int) $match[1]; $responseLength = null; }
-        elseif (preg_match('~^Content-Length:\s*([0-9]+)\s*$~iD', $line, $match)) $responseLength = (int) $match[1];
+    $healedStaleSession = false;
+    for ($attempt = 0; $attempt < 2; $attempt++) {
+        $attemptCookies = $attempt === 0
+            ? $cookies
+            : array_filter($cookies, static fn ($part) => !in_array(explode('=', trim($part), 2)[0], ['zone_player_session', 'zone_player_ledger'], true));
+        $headers = $baseHeaders;
+        if ($attemptCookies !== []) $headers[] = 'Cookie: ' . implode(';', $attemptCookies);
+        $context = stream_context_create(['http' => ['method' => $method, 'header' => implode("\r\n", $headers), 'content' => $body,
+            'timeout' => 22, 'ignore_errors' => true, 'follow_location' => 0, 'max_redirects' => 0, 'protocol_version' => 1.1],
+            'ssl' => ['verify_peer' => true, 'verify_peer_name' => true, 'allow_self_signed' => false]]);
+        // A single network attempt, including writes. An interrupted response must never replay an action.
+        $stream = @fopen($destination, 'rb', false, $context);
+        if ($stream === false) zone_proxy_error('Local engine is unavailable. Reload saved state before repeating an action.', 503);
+        $raw = stream_get_contents($stream, 4194305); $metadata = stream_get_meta_data($stream); fclose($stream);
+        if ($raw === false || strlen($raw) > 4194304 || ($metadata['timed_out'] ?? false)) zone_proxy_error('Local engine response is unavailable. Reload saved state before repeating an action.', 503);
+        $responseHeaders = $metadata['wrapper_data'] ?? []; $status = null; $responseLength = null;
+        foreach ($responseHeaders as $line) {
+            if (preg_match('~^HTTP/\S+ ([1-5][0-9]{2})\b~', $line, $match)) { $status = (int) $match[1]; $responseLength = null; }
+            elseif (preg_match('~^Content-Length:\s*([0-9]+)\s*$~iD', $line, $match)) $responseLength = (int) $match[1];
+        }
+        if ($status === null) zone_proxy_error('Engine relay response is invalid.', 502);
+        if ($method !== 'HEAD' && $responseLength !== null && strlen($raw) !== $responseLength) zone_proxy_error('Local engine response was interrupted. Reload saved state before repeating an action.', 503);
+        if ($attempt === 0 && $status === 401 && $path === '/api/v1/auth/session' && $method === 'POST' && getenv('VERCEL') === '1' && $attemptCookies !== []) {
+            $healedStaleSession = true;
+            continue;
+        }
+        break;
     }
-    if ($status === null) zone_proxy_error('Engine relay response is invalid.', 502);
-    if ($method !== 'HEAD' && $responseLength !== null && strlen($raw) !== $responseLength) zone_proxy_error('Local engine response was interrupted. Reload saved state before repeating an action.', 503);
+    if ($path === '/api/v1/auth/logout' && $method === 'POST' && $status === 401) {
+        http_response_code(200);
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        header('X-Content-Type-Options: nosniff');
+        header('Set-Cookie: zone_player_session=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);
+        header('Set-Cookie: zone_player_ledger=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);
+        if ($method !== 'HEAD') echo '{"authenticated":false}';
+        exit;
+    }
     http_response_code($status); header('Cache-Control: no-store'); header('X-Content-Type-Options: nosniff');
+    $hasLedgerSetCookie = false;
     foreach ($responseHeaders as $line) {
         $parts = explode(':', $line, 2); if (count($parts) !== 2) continue;
         [$name, $value] = $parts; $name = strtolower(trim($name)); $value = trim($value);
         if (preg_match('/[\r\n\x00]/', $value)) continue;
         if (in_array($name, ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy'], true)) header($name . ': ' . $value);
         elseif ($name === 'set-cookie' && (str_starts_with($value, 'zone_player_session=') || str_starts_with($value, 'zone_player_ledger=') || ($path === '/api/v1/admin/session' && str_starts_with($value, 'zone_admin_session=')))) {
+            if (str_starts_with($value, 'zone_player_ledger=')) $hasLedgerSetCookie = true;
             $parts = array_filter(explode(';', $value), static fn ($part) => !preg_match('/^\s*(?:domain|secure|httponly|samesite)\b/i', $part));
             header('Set-Cookie: ' . implode(';', [...$parts, 'Secure', 'HttpOnly', 'SameSite=Strict']), false);
         } elseif ($name === 'location' && zone_proxy_public_path($value)) header('Location: ' . $value);
+    }
+    if (($healedStaleSession || ($path === '/api/v1/auth/logout' && $method === 'POST' && getenv('VERCEL') === '1' && $status === 200)) && !$hasLedgerSetCookie) {
+        header('Set-Cookie: zone_player_ledger=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);
     }
     if ($method !== 'HEAD') echo $raw;
     exit;

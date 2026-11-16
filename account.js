@@ -12,7 +12,8 @@
       anonymous: 'No active character in this browser. Sign in below, or return to the game to create a guest.', mismatch: 'Passwords do not match.', switched: 'Claim this guest first, or confirm the account switch.', busy: 'Saving securely...',
       saved: 'Account saved. Keep the recovery code before returning to the game.', signedIn: 'Signed in. Your saved character is ready.', signedOut: 'Signed out. Your claimed character is still saved on the server.', failed: 'Connection unavailable. Reload to retry.',
       invalid: 'Invalid username, password or recovery code.', limited: 'Too many account attempts. Try again in 15 minutes.', unavailable: 'This username is unavailable, or this character is already claimed.', invalidFields: 'Check your account details: username 3-24 Latin characters; password 15-128 characters.', missingSession: 'Guest access expired. Sign in or return to the game.', saveFirst: 'Save the recovery code before leaving.',
-      generatePassphrase: 'Generate strong passphrase', showPasswords: 'Show / hide', copyRecovery: 'Copy recovery code', generated: 'Strong passphrase generated. Copy it safely before saving.', copied: 'Recovery code copied to clipboard.'
+      generatePassphrase: 'Generate strong passphrase', showPasswords: 'Show / hide', copyRecovery: 'Copy recovery code', generated: 'Strong passphrase generated. Copy it safely before saving.', copied: 'Recovery code copied to clipboard.',
+      reconnectGuestTitle: 'Quick guest access', reconnectGuestHelp: 'Clear any expired browser session and start or reconnect a guest character right away.', reconnectGuest: 'Start / Reconnect Guest Character', reconnectingGuest: 'Reconnecting guest session...'
     },
     ar: {
       title: 'احفظ شخصيتك', intro: 'اربط هذه الشخصية باسم مستخدم وكلمة مرور. تبقى أموالك وأغراضك وتدريبك وعائلتك محفوظة على الخادم.',
@@ -25,7 +26,8 @@
       anonymous: 'لا توجد شخصية نشطة في هذا المتصفح. سجّل الدخول أدناه أو عد إلى اللعبة لإنشاء شخصية ضيف.', mismatch: 'كلمتا المرور غير متطابقتين.', switched: 'ثبّت حساب الضيف أولاً أو وافق على تبديل الحساب.', busy: 'جارٍ الحفظ بأمان...',
       saved: 'تم حفظ الحساب. احتفظ برمز الاسترداد قبل العودة إلى اللعبة.', signedIn: 'تم تسجيل الدخول. شخصيتك المحفوظة جاهزة.', signedOut: 'تم تسجيل الخروج. تبقى شخصيتك المثبتة محفوظة على الخادم.', failed: 'الاتصال غير متاح. أعد تحميل الصفحة للمحاولة.',
       invalid: 'اسم المستخدم أو كلمة المرور أو رمز الاسترداد غير صحيح.', limited: 'محاولات كثيرة. أعد المحاولة بعد 15 دقيقة.', unavailable: 'اسم المستخدم غير متاح أو الحساب مثبت مسبقاً.', invalidFields: 'تحقق من البيانات: اسم لاتيني من 3 إلى 24 محرفاً وكلمة مرور من 15 إلى 128 محرفاً.', missingSession: 'انتهى وصول الضيف. سجّل الدخول أو عد إلى اللعبة.', saveFirst: 'احفظ رمز الاسترداد قبل المغادرة.',
-      generatePassphrase: 'توليد عبارة مرور قوية', showPasswords: 'إظهار / إخفاء', copyRecovery: 'نسخ رمز الاسترداد', generated: 'تم توليد عبارة مرور قوية. احتفظ بنسخة منها قبل الحفظ.', copied: 'تم نسخ رمز الاسترداد إلى الحافظة.'
+      generatePassphrase: 'توليد عبارة مرور قوية', showPasswords: 'إظهار / إخفاء', copyRecovery: 'نسخ رمز الاسترداد', generated: 'تم توليد عبارة مرور قوية. احتفظ بنسخة منها قبل الحفظ.', copied: 'تم نسخ رمز الاسترداد إلى الحافظة.',
+      reconnectGuestTitle: 'دخول سريع كضيف', reconnectGuestHelp: 'امسح أي جلسة منتهية في هذا المتصفح وابدأ أو أعد ربط شخصية ضيف فوراً.', reconnectGuest: 'بدء / إعادة ربط شخصية ضيف', reconnectingGuest: 'جارٍ استعادة جلسة الضيف...'
     }
   };
   let lang = new URLSearchParams(location.search).get('lang') === 'ar' ? 'ar' : 'en';
@@ -43,7 +45,10 @@
     paint();
   };
   const paint = () => {
-    const active = !!identity?.playerId, claimed = !!identity?.claimed;
+    const active = !!identity?.playerId, claimed = !!identity?.claimed, showGuestReconnect = !active && !backup;
+    element('guestReconnectPanel').hidden = !showGuestReconnect;
+    element('reconnectGuestButton').hidden = !showGuestReconnect;
+    element('reconnectGuestButton').disabled = busy || !ready;
     element('identity').hidden = !active;
     element('identityName').textContent = identity?.username || '';
     element('identityState').textContent = copy[lang][claimed ? 'claimed' : 'guest'];
@@ -125,7 +130,20 @@
       navigator.clipboard.writeText(code).then(() => message('copied')).catch(() => {});
     }
   });
+  const reconnectGuest = async () => {
+    if (busy || !ready || identity?.playerId) return;
+    busy = true; paint(); message('reconnectingGuest');
+    try {
+      try { await request('/api/v1/auth/logout', {}); } catch {}
+      await request('/api/v1/auth/session', {});
+      const target = '/?screen=home&lang=' + lang;
+      if (typeof location.assign === 'function') location.assign(target);
+      else { location.pathname = '/'; location.search = '?screen=home&lang=' + lang; }
+    } catch (error) { message(copy[lang][error.message] ? error.message : 'failed', true); }
+    finally { busy = false; paint(); }
+  };
   for (const action of ['claim', 'login', 'recover']) element(action + 'Form').addEventListener('submit', event => { event.preventDefault(); submit(action, Object.fromEntries(new FormData(event.currentTarget))); });
+  element('reconnectGuestButton').addEventListener('click', reconnectGuest);
   element('logout').addEventListener('click', () => submit('logout', {}));
   element('backupSaved').addEventListener('change', paint);
   element('backToGame').addEventListener('click', event => { if (backup && !element('backupSaved').checked) { event.preventDefault(); message('saveFirst', true); } });
@@ -134,6 +152,7 @@
   // Exposed controller contains no credentials or recovery-code state.
   window.ZoneAccount = {
     submit,
+    reconnectGuest,
     current: () => identity,
     supportedActions: () => ['claim', 'login', 'recover', 'logout'],
     isSupportedAction: action => ['claim', 'login', 'recover', 'logout'].includes(String(action ?? '')),

@@ -1,9 +1,10 @@
 /* ==========================================================================
- * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v127)
- * MotionSites (/icons & /sections/header) 3D Frosted Jewel & Borderless Edition
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR (v128)
+ * MotionSites (/icons & /sections/header) 3D Frosted Jewel, Persistent
+ * Mobile Left-Side Menu Rail & Seamless Borderless Glass Edition
  * Exclusive Ownership: carbon-hud-chrome
  * Scope: .zone-topbar, [data-zheaderbar], .zone-bulletin, aside.zone-sidebar,
- *        .zone-mobile-tabbar
+ *        #zaaa-mobile-rail-toggle, .zone-mobile-tabbar
  * ========================================================================== */
 
 :root,
@@ -15,7 +16,7 @@ html:not([data-theme="light"]) {
   --zaaa-topbar-bg:
     radial-gradient(ellipse 520px 88px at 10% 0%, rgba(251, 191, 36, 0.075), transparent 72%),
     radial-gradient(ellipse 520px 88px at 88% 0%, rgba(56, 189, 248, 0.065), transparent 74%),
-    rgba(9, 13, 23, 0.88);
+    rgba(9, 13, 23, 0.9);
   --zaaa-topbar-hairline: rgba(255, 255, 255, 0.055);
   --zaaa-topbar-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.62);
 
@@ -35,9 +36,11 @@ html:not([data-theme="light"]) {
   --zaaa-tab-active-bar: linear-gradient(90deg, #fde047 0%, #f59e0b 100%);
 
   /* Unified Single-Capsule Live Telemetry HUD */
-  --zaaa-hud-capsule-bg: rgba(255, 255, 255, 0.035);
+  --zaaa-hud-capsule-bg:
+    radial-gradient(120% 75% at 50% 0%, rgba(255, 255, 255, 0.065), transparent 65%),
+    rgba(255, 255, 255, 0.035);
   --zaaa-hud-capsule-border: rgba(255, 255, 255, 0.055);
-  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.045);
+  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.05);
   --zaaa-hud-divider: rgba(255, 255, 255, 0.06);
   --zaaa-hud-hover-bg: rgba(255, 255, 255, 0.055);
   --zaaa-pill-fg: #f1f5f9;
@@ -47,13 +50,13 @@ html:not([data-theme="light"]) {
   --zaaa-pill-city-bg: rgba(251, 191, 36, 0.14);
 
   /* Borderless Ghost Right Controls + Studio Jewel Admin */
-  --zaaa-ctrl-bg: rgba(255, 255, 255, 0.04);
-  --zaaa-ctrl-bg-hover: rgba(255, 255, 255, 0.085);
+  --zaaa-ctrl-bg: rgba(255, 255, 255, 0.045);
+  --zaaa-ctrl-bg-hover: rgba(255, 255, 255, 0.09);
   --zaaa-ctrl-fg: #e2e8f0;
   --zaaa-chrono-clock: #6ee7b7;
   --zaaa-theme-halo: rgba(251, 191, 36, 0.14);
-  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.24) 0%, rgba(168, 85, 247, 0.22) 52%, rgba(245, 158, 11, 0.25) 100%);
-  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.34) 0%, rgba(168, 85, 247, 0.3) 52%, rgba(245, 158, 11, 0.34) 100%);
+  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.23) 52%, rgba(245, 158, 11, 0.26) 100%);
+  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.35) 0%, rgba(168, 85, 247, 0.31) 52%, rgba(245, 158, 11, 0.35) 100%);
   --zaaa-admin-fg: #fef3c7;
 
   /* Seamless Bulletin Wire */
@@ -63,10 +66,12 @@ html:not([data-theme="light"]) {
   --zaaa-wire-text: #94a3b8;
 
   /* Tonal Elevation Sidebar (#0b0f19 card + #121929 operative surface) */
-  --zaaa-side-card-bg: #0b0f19;
+  --zaaa-side-card-bg:
+    radial-gradient(120% 55% at 50% 0%, rgba(255, 255, 255, 0.055), transparent 60%),
+    #0b0f19;
   --zaaa-side-card-border: rgba(255, 255, 255, 0.045);
   --zaaa-side-card-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065),
     0 18px 40px -14px rgba(0, 0, 0, 0.6);
   --zaaa-side-gold: #fbbf24;
   --zaaa-side-fg: #f8fafc;
@@ -74,7 +79,7 @@ html:not([data-theme="light"]) {
   --zaaa-side-muted: #64748b;
   --zaaa-side-label: #94a3b8;
   --zaaa-crest-bg: #121929;
-  --zaaa-crest-inset: rgba(255, 255, 255, 0.055);
+  --zaaa-crest-inset: rgba(255, 255, 255, 0.06);
   --zaaa-sync-bg: rgba(255, 255, 255, 0.035);
   --zaaa-divider-soft: rgba(255, 255, 255, 0.045);
   --zaaa-track-bg: rgba(255, 255, 255, 0.065);
@@ -85,11 +90,17 @@ html:not([data-theme="light"]) {
   --zaaa-nav-fg: #cbd5e1;
   --zaaa-nav-fg-hover: #ffffff;
   --zaaa-nav-hover-bg: rgba(255, 255, 255, 0.055);
-  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.095) 0%, rgba(255, 255, 255, 0.045) 100%);
+  --zaaa-nav-active-bg: linear-gradient(90deg, rgba(255, 255, 255, 0.105) 0%, rgba(255, 255, 255, 0.045) 100%);
   --zaaa-nav-active-fg: #ffffff;
-  --zaaa-nav-ico-bg: rgba(255, 255, 255, 0.045);
-  --zaaa-nav-ico-hover-bg: rgba(255, 255, 255, 0.085);
-  --zaaa-nav-ico-active-bg: rgba(255, 255, 255, 0.11);
+  --zaaa-nav-ico-bg:
+    radial-gradient(120% 75% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 62%),
+    rgba(255, 255, 255, 0.045);
+  --zaaa-nav-ico-hover-bg:
+    radial-gradient(120% 75% at 50% 0%, rgba(255, 255, 255, 0.18), transparent 62%),
+    rgba(255, 255, 255, 0.085);
+  --zaaa-nav-ico-active-bg:
+    radial-gradient(120% 75% at 50% 0%, rgba(255, 255, 255, 0.2), transparent 62%),
+    rgba(255, 255, 255, 0.11);
 }
 
 html[data-theme="light"] {
@@ -100,7 +111,7 @@ html[data-theme="light"] {
   --zaaa-topbar-bg:
     radial-gradient(ellipse 520px 88px at 10% 0%, rgba(245, 158, 11, 0.07), transparent 72%),
     radial-gradient(ellipse 520px 88px at 88% 0%, rgba(59, 130, 246, 0.05), transparent 74%),
-    rgba(252, 252, 254, 0.92);
+    rgba(252, 252, 254, 0.94);
   --zaaa-topbar-hairline: rgba(15, 23, 42, 0.07);
   --zaaa-topbar-shadow: 0 12px 30px -14px rgba(15, 23, 42, 0.09);
 
@@ -119,7 +130,7 @@ html[data-theme="light"] {
 
   --zaaa-hud-capsule-bg: rgba(15, 23, 42, 0.038);
   --zaaa-hud-capsule-border: rgba(15, 23, 42, 0.065);
-  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.8);
+  --zaaa-hud-capsule-inset: rgba(255, 255, 255, 0.85);
   --zaaa-hud-divider: rgba(15, 23, 42, 0.075);
   --zaaa-hud-hover-bg: rgba(15, 23, 42, 0.05);
   --zaaa-pill-fg: #0f172a;
@@ -128,13 +139,13 @@ html[data-theme="light"] {
   --zaaa-pill-city: #92400e;
   --zaaa-pill-city-bg: rgba(245, 158, 11, 0.16);
 
-  --zaaa-ctrl-bg: rgba(15, 23, 42, 0.045);
+  --zaaa-ctrl-bg: rgba(15, 23, 42, 0.048);
   --zaaa-ctrl-bg-hover: rgba(15, 23, 42, 0.085);
   --zaaa-ctrl-fg: #0f172a;
   --zaaa-chrono-clock: #047857;
   --zaaa-theme-halo: rgba(245, 158, 11, 0.15);
-  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.13) 0%, rgba(168, 85, 247, 0.12) 52%, rgba(245, 158, 11, 0.18) 100%);
-  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.18) 52%, rgba(245, 158, 11, 0.25) 100%);
+  --zaaa-admin-bg: linear-gradient(135deg, rgba(99, 102, 241, 0.14) 0%, rgba(168, 85, 247, 0.12) 52%, rgba(245, 158, 11, 0.19) 100%);
+  --zaaa-admin-bg-hover: linear-gradient(135deg, rgba(99, 102, 241, 0.21) 0%, rgba(168, 85, 247, 0.18) 52%, rgba(245, 158, 11, 0.26) 100%);
   --zaaa-admin-fg: #1e1b4b;
 
   --zaaa-wire-bg: rgba(15, 23, 42, 0.024);
@@ -163,7 +174,7 @@ html[data-theme="light"] {
   --zaaa-nav-fg: #1e293b;
   --zaaa-nav-fg-hover: #0f172a;
   --zaaa-nav-hover-bg: rgba(15, 23, 42, 0.05);
-  --zaaa-nav-active-bg: rgba(15, 23, 42, 0.075);
+  --zaaa-nav-active-bg: rgba(15, 23, 42, 0.08);
   --zaaa-nav-active-fg: #0f172a;
   --zaaa-nav-ico-bg: #0f172a;
   --zaaa-nav-ico-hover-bg: #1e293b;
@@ -180,7 +191,7 @@ html body svg.zaaa-vivid-svg {
   fill: none !important;
   overflow: visible !important;
   transform-origin: center !important;
-  transition: transform 280ms var(--zaaa-spring) !important;
+  transition: transform 260ms var(--zaaa-spring) !important;
 }
 
 html body svg.zaaa-vivid-svg .zaaa-stroke-only {
@@ -191,8 +202,8 @@ html body svg.zaaa-vivid-svg .zaaa-ico-kinetic {
   transform-box: fill-box;
   transform-origin: center;
   transition:
-    transform 300ms var(--zaaa-spring),
-    opacity 220ms var(--zaaa-ease);
+    transform 280ms var(--zaaa-spring),
+    opacity 200ms var(--zaaa-ease);
 }
 
 /* Ambient GPU life on HUD vitals & active district icon */
@@ -208,7 +219,7 @@ html body svg.zaaa-vivid-svg .zaaa-ico-kinetic {
 
 @keyframes zaaaActiveFloat {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-1.2px) scale(1.05); }
+  50% { transform: translateY(-1.3px) scale(1.05); }
 }
 
 @keyframes zaaaWirePulse {
@@ -228,15 +239,23 @@ html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .
   animation: zaaaActiveFloat 3.2s ease-in-out infinite;
 }
 
-/* Crisp Spring Kinetic Recoil / Tilt on :hover & :focus-visible */
+/* Crisp MotionSites Spring Float on :hover / :focus-visible & Tactile Sink on :active */
 html body .zone-topbar .zone-brand:is(:hover, :focus-visible) .zaaa-brand-crest svg.zaaa-vivid-svg,
 html body .zone-topbar .zone-header-links .zone-header-link:is(:hover, :focus-visible) .zaaa-link-icon svg.zaaa-vivid-svg,
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:is(:hover, :focus-visible) .zaaa-hud-ico svg.zaaa-vivid-svg,
 html body .zone-topbar .zone-header-actions > button:is(:hover, :focus-visible) .zone-theme-indicator svg.zaaa-vivid-svg,
 html body .zone-topbar .zone-header-actions > a:is(:hover, :focus-visible) .zaaa-admin-ico svg.zaaa-vivid-svg,
-html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zone-nav-icon svg.zaaa-vivid-svg,
-html body .zone-mobile-tabbar button:is(:hover, :focus-visible) .zaaa-mob-ico svg.zaaa-vivid-svg {
-  transform: translateY(-1px) scale(1.15) !important;
+html body aside.zone-sidebar #zaaa-mobile-rail-toggle:is(:hover, :focus-visible) .zaaa-rail-toggle-ico svg.zaaa-vivid-svg,
+html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zone-nav-icon svg.zaaa-vivid-svg {
+  transform: translateY(-1.5px) scale(1.15) !important;
+}
+
+html body .zone-topbar .zone-brand:active .zaaa-brand-crest svg.zaaa-vivid-svg,
+html body .zone-topbar .zone-header-links .zone-header-link:active .zaaa-link-icon svg.zaaa-vivid-svg,
+html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:active .zaaa-hud-ico svg.zaaa-vivid-svg,
+html body aside.zone-sidebar #zaaa-mobile-rail-toggle:active .zaaa-rail-toggle-ico svg.zaaa-vivid-svg,
+html body aside.zone-sidebar #zone-area-navigation button:active .zone-nav-icon svg.zaaa-vivid-svg {
+  transform: translateY(1px) scale(0.94) !important;
 }
 
 html body .zone-topbar .zone-brand:is(:hover, :focus-visible) .zaaa-ico-kinetic,
@@ -245,29 +264,32 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill:is(:hover, :focus-visible
 html body .zone-topbar .zone-header-actions > button:is(:hover, :focus-visible) .zaaa-ico-kinetic,
 html body .zone-topbar .zone-header-actions > a:is(:hover, :focus-visible) .zaaa-ico-kinetic,
 html body aside.zone-sidebar #zone-operative-crest:is(:hover, :focus-visible) .zaaa-ico-kinetic,
-html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zaaa-ico-kinetic,
-html body .zone-mobile-tabbar button:is(:hover, :focus-visible) .zaaa-ico-kinetic {
+html body aside.zone-sidebar #zone-area-navigation button:is(:hover, :focus-visible) .zaaa-ico-kinetic {
   transform: rotate(-7deg) scale(1.08) !important;
 }
 
 html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen="attack"]:is(:hover, :focus-visible) .zaaa-ico-kinetic,
-html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen="casino"]:is(:hover, :focus-visible) .zaaa-ico-kinetic,
-html body .zone-mobile-tabbar button[data-zaaa-mob="attack"]:is(:hover, :focus-visible) .zaaa-ico-kinetic {
+html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen="casino"]:is(:hover, :focus-visible) .zaaa-ico-kinetic {
   transform: rotate(22deg) scale(1.1) !important;
 }
 
 /* ==========================================================================
  * 1. SEAMLESS UNIFIED MOTIONSITES COMMAND TOPBAR (/sections/header)
- *    Replaces 10 boxed rectangles + 3 stacked gold borders with ONE bar.
+ *    High-specificity selectors (0,3,2) defeat noir-game-hud.css:651,718,737,812
+ *    bright gold 2px bottom border & bulletin borders in BOTH Dark & Day modes!
  * ========================================================================== */
 
-html body .zone-topbar {
+html body .zone-app .zone-topbar,
+html:not([data-theme="light"]) body .zone-app .zone-topbar,
+html[data-theme="light"] body .zone-app .zone-topbar {
   position: sticky !important;
   top: 0 !important;
   z-index: 60 !important;
   width: 100% !important;
   background: var(--zaaa-topbar-bg) !important;
   border: 0 !important;
+  border-top: 0 !important;
+  border-inline: 0 !important;
   border-bottom: 1px solid var(--zaaa-topbar-hairline) !important;
   box-shadow: var(--zaaa-topbar-shadow) !important;
   backdrop-filter: blur(16px) saturate(145%) !important;
@@ -308,7 +330,9 @@ html body .zone-topbar .zone-header-actions {
 }
 
 /* --- 1A. Borderless Brand Emblem (.zone-brand) - Zero Clipping --- */
-html body .zone-topbar .zone-brand {
+html body .zone-topbar .zone-brand,
+html:not([data-theme="light"]) body .zone-topbar .zone-brand,
+html[data-theme="light"] body .zone-topbar .zone-brand {
   min-width: auto !important;
   width: auto !important;
   padding: 5px 10px 5px 8px !important;
@@ -329,7 +353,7 @@ html body .zone-topbar .zone-brand {
   overflow: visible !important;
   transition:
     background 200ms var(--zaaa-ease),
-    transform 220ms var(--zaaa-ease) !important;
+    transform 180ms var(--zaaa-ease) !important;
 }
 
 html[dir="rtl"] body .zone-topbar .zone-brand {
@@ -428,7 +452,9 @@ html body .zone-topbar .zone-header-links {
   min-width: 0 !important;
 }
 
-html body .zone-topbar .zone-header-links .zone-header-link {
+html body .zone-topbar .zone-header-links .zone-header-link,
+html:not([data-theme="light"]) body .zone-topbar .zone-header-links .zone-header-link,
+html[data-theme="light"] body .zone-topbar .zone-header-links .zone-header-link {
   min-height: 34px !important;
   height: 34px !important;
   padding: 0 9px !important;
@@ -452,7 +478,8 @@ html body .zone-topbar .zone-header-links .zone-header-link {
   position: relative !important;
   transition:
     color 180ms var(--zaaa-ease),
-    background 200ms var(--zaaa-ease) !important;
+    background 200ms var(--zaaa-ease),
+    transform 120ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-links .zone-header-link .zaaa-link-icon {
@@ -506,6 +533,13 @@ html body .zone-topbar #zone-topbar-hud {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   flex: 0 0 auto !important;
+}
+
+/* On desktop (>900px), Life is already shown in the visible sidebar vitals */
+@media (min-width: 901px) {
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-life {
+    display: none !important;
+  }
 }
 
 html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
@@ -591,14 +625,14 @@ html body .zone-topbar #zone-topbar-hud .zaaa-hud-rail {
   display: none !important;
 }
 
-/* Responsive graceful collapse for #zone-topbar-hud */
-@media (max-width: 1360px) {
+/* Desktop narrow-laptop graceful collapse (901px..1360px) */
+@media (min-width: 901px) and (max-width: 1360px) {
   html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-val {
     display: none !important;
   }
 }
 
-@media (max-width: 1160px) {
+@media (min-width: 901px) and (max-width: 1160px) {
   html body .zone-topbar #zone-topbar-hud {
     display: none !important;
   }
@@ -615,8 +649,10 @@ html body .zone-topbar .zone-header-actions {
   flex: 0 0 auto !important;
 }
 
-@media (min-width: 761px) {
-  html body .zone-topbar .zone-header-actions > span:first-child {
+@media (min-width: 901px) {
+  html body .zone-topbar .zone-header-actions > span:first-child,
+  html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > span:first-child,
+  html[data-theme="light"] body .zone-topbar .zone-header-actions > span:first-child {
     height: 34px !important;
     min-height: 34px !important;
     margin: 0 !important;
@@ -680,7 +716,11 @@ html body .zone-topbar .zone-header-actions {
 
 /* Uniform 34px Borderless Ghost Pills for Theme & Lang */
 html body .zone-topbar .zone-header-actions > button,
-html body .zone-topbar .zone-header-actions > a {
+html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > button,
+html[data-theme="light"] body .zone-topbar .zone-header-actions > button,
+html body .zone-topbar .zone-header-actions > a,
+html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > a,
+html[data-theme="light"] body .zone-topbar .zone-header-actions > a {
   height: 34px !important;
   min-height: 34px !important;
   padding: 0 11px !important;
@@ -702,7 +742,7 @@ html body .zone-topbar .zone-header-actions > a {
   cursor: pointer !important;
   transition:
     background 180ms var(--zaaa-ease),
-    transform 200ms var(--zaaa-ease) !important;
+    transform 160ms var(--zaaa-ease) !important;
 }
 
 html body .zone-topbar .zone-header-actions > button:hover {
@@ -711,7 +751,9 @@ html body .zone-topbar .zone-header-actions > button:hover {
 }
 
 /* Sleek Jewel-Gradient Borderless Studio Pill for Admin */
-html body .zone-topbar .zone-header-actions > a {
+html body .zone-topbar .zone-header-actions > a,
+html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > a,
+html[data-theme="light"] body .zone-topbar .zone-header-actions > a {
   background: var(--zaaa-admin-bg) !important;
   border: 0 !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
@@ -720,7 +762,9 @@ html body .zone-topbar .zone-header-actions > a {
   padding: 0 12px !important;
 }
 
-html body .zone-topbar .zone-header-actions > a:hover {
+html body .zone-topbar .zone-header-actions > a:hover,
+html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > a:hover,
+html[data-theme="light"] body .zone-topbar .zone-header-actions > a:hover {
   background: var(--zaaa-admin-bg-hover) !important;
   border: 0 !important;
   transform: translateY(-1px);
@@ -785,7 +829,7 @@ html body .zone-topbar .zone-header-actions .zone-theme-indicator:empty::before 
   background: #fbbf24;
 }
 
-/* --- 1E. Seamless Full-Bleed Wire Ticker (.zone-bulletin) - Zero Extra Borders --- */
+/* --- 1E. Seamless Full-Bleed Wire Ticker (.zone-bulletin) - ZERO Gold Borders --- */
 html body .zone-topbar .zone-bulletin [data-zticker="1"] {
   will-change: transform !important;
 }
@@ -794,8 +838,10 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
   animation-play-state: paused !important;
 }
 
-@media (min-width: 761px) {
-  html body .zone-topbar .zone-bulletin {
+@media (min-width: 901px) {
+  html body .zone-app .zone-topbar .zone-bulletin,
+  html:not([data-theme="light"]) body .zone-app .zone-topbar .zone-bulletin,
+  html[data-theme="light"] body .zone-app .zone-topbar .zone-bulletin {
     max-width: none !important;
     width: 100% !important;
     margin: 0 !important;
@@ -804,13 +850,17 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
     min-height: 26px !important;
     background: var(--zaaa-wire-bg) !important;
     border: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
     box-shadow: none !important;
     color: var(--zaaa-wire-text) !important;
     font-size: 11px !important;
     box-sizing: border-box !important;
   }
 
-  html body .zone-topbar .zone-bulletin > span:first-child {
+  html body .zone-app .zone-topbar .zone-bulletin > span:first-child,
+  html:not([data-theme="light"]) body .zone-app .zone-topbar .zone-bulletin > span:first-child,
+  html[data-theme="light"] body .zone-app .zone-topbar .zone-bulletin > span:first-child {
     height: 19px !important;
     padding: 0 9px !important;
     margin-inline-end: 8px !important;
@@ -819,6 +869,7 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
     gap: 6px !important;
     background: var(--zaaa-wire-badge-bg) !important;
     border: 0 !important;
+    border-inline-end: 0 !important;
     border-radius: 6px !important;
     color: var(--zaaa-wire-badge-fg) !important;
     font-size: 9.5px !important;
@@ -827,7 +878,7 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
     text-transform: uppercase !important;
   }
 
-  html body .zone-topbar .zone-bulletin > span:first-child::before {
+  html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before {
     content: "";
     width: 5px;
     height: 5px;
@@ -837,12 +888,12 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
     flex: 0 0 5px;
   }
 
-  html body .zone-topbar .zone-bulletin [data-zticker="1"] span {
+  html body .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] span {
     color: var(--zaaa-wire-text) !important;
     font-weight: 500 !important;
   }
 
-  html body .zone-topbar .zone-bulletin [data-zticker="1"]:has(> span:only-child) {
+  html body .zone-app .zone-topbar .zone-bulletin [data-zticker="1"]:has(> span:only-child) {
     animation: none !important;
     transform: none !important;
     padding-inline-start: 10px !important;
@@ -850,12 +901,16 @@ html body .zone-topbar .zone-bulletin:hover [data-zticker="1"] {
 }
 
 /* ==========================================================================
- * 2. MOTIONSITES BORDERLESS TONAL ELEVATION SIDEBAR (aside.zone-sidebar)
+ * 2. MOTIONSITES BORDERLESS TONAL ELEVATION SIDEBAR (Desktop >900px)
  *    Clean #0b0f19 tonal cards, #121929 operative surface, 999px vitals,
  *    natural Title Case group labels, and 10px rounded-pill items.
  * ========================================================================== */
 
-@media (min-width: 761px) {
+@media (min-width: 901px) {
+  html body aside.zone-sidebar #zaaa-mobile-rail-toggle {
+    display: none !important;
+  }
+
   html body aside.zone-sidebar {
     gap: 12px !important;
   }
@@ -899,16 +954,6 @@ html body aside.zone-sidebar #zone-area-navigation {
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-}
-
-@media (max-width: 760px) {
-  html body aside.zone-sidebar .zone-profile-body,
-  html body aside.zone-sidebar #zone-area-navigation {
-    background: var(--zaaa-side-card-bg) !important;
-    border: 1px solid var(--zaaa-side-card-border) !important;
-    border-radius: 14px !important;
-    box-shadow: var(--zaaa-side-card-shadow) !important;
-  }
 }
 
 html body aside.zone-sidebar .zone-profile-body {
@@ -1037,7 +1082,7 @@ html body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-fill {
   transition: width 0.4s var(--zaaa-ease) !important;
 }
 
-/* Soften inner identity & sync boxes inside .zone-profile-body (zero hard lines) */
+/* Soften inner identity & sync boxes inside .zone-profile-body */
 html body aside.zone-sidebar .zone-profile-account {
   border: 0 !important;
   padding: 4px 0 !important;
@@ -1103,7 +1148,6 @@ html body aside.zone-sidebar .zone-resource [data-zfig] {
   font-variant-numeric: tabular-nums !important;
 }
 
-/* Suppress overlapping "FULL" text inside & below .zone-resource-track */
 html body aside.zone-sidebar .zone-resource-track {
   font-size: 0 !important;
   line-height: 0 !important;
@@ -1179,7 +1223,7 @@ html body aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-res
   box-shadow: none !important;
 }
 
-/* --- 2C. Area Navigation: Title Case Groups & Borderless 10px Pill Items --- */
+/* --- 2C. Area Navigation: Frosted Icon Squircles & Desktop 10px Pill Items --- */
 html body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon,
 html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
   flex: 0 0 28px !important;
@@ -1190,14 +1234,16 @@ html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation but
   border-radius: 8px !important;
   background: var(--zaaa-nav-ico-bg) !important;
   border: 0 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
   transition: background 180ms var(--zaaa-ease) !important;
 }
 
 html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation .zone-nav-icon,
 html[data-theme="light"] body aside.zone-sidebar #zone-area-navigation button .zone-nav-icon {
   background-color: #0f172a !important;
-  background-image: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
+  background-image:
+    radial-gradient(120% 75% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 62%),
+    linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
   border: 0 !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.14) !important;
@@ -1233,7 +1279,7 @@ html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation but
   background: var(--zaaa-nav-ico-active-bg) !important;
 }
 
-@media (min-width: 761px) {
+@media (min-width: 901px) {
   html body aside.zone-sidebar #zone-area-navigation {
     padding: 2px 0 8px !important;
   }
@@ -1280,7 +1326,8 @@ html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation but
     position: relative !important;
     transition:
       background 180ms var(--zaaa-ease),
-      color 180ms var(--zaaa-ease) !important;
+      color 180ms var(--zaaa-ease),
+      transform 120ms var(--zaaa-ease) !important;
   }
 
   html body aside.zone-sidebar #zone-area-navigation button:hover {
@@ -1314,148 +1361,468 @@ html:not([data-theme="light"]) body aside.zone-sidebar #zone-area-navigation but
 }
 
 /* ==========================================================================
- * 3. MOBILE SAFETY & 3D FROSTED BOTTOM DOCK (<=760px, 390x844 Parity)
- *    Replaces plain ◆ ◈ ▲ ■ ✕ ☰ characters with borderless 3D frosted icons.
+ * 3. MOBILE & TABLET PERSISTENT LEFT-SIDE MENU RAIL + STICKY 2-ROW TOPBAR
+ *    (@media max-width: 900px) - Built for real 360px-412px Android phones:
+ *    - 2-row sticky glass topbar (~68px) with ALWAYS-VISIBLE vitals strip!
+ *    - Persistent 66px scrollable left menu rail (<-> 164px expanded) showing
+ *      ALL 20 districts side-by-side with live #zone-main game viewport!
+ *    - Bottom .zone-mobile-tabbar completely hidden (zero full-screen trap!).
  * ========================================================================== */
 
-@media (max-width: 760px) {
-  html body .zone-topbar [data-zheaderbar] {
-    min-height: 46px !important;
-    padding: 5px 10px !important;
-    gap: 6px !important;
+@media (max-width: 900px) {
+  /* Hide legacy bottom tabbar completely so game + left rail own 100% of screen */
+  html body .zone-mobile-tabbar,
+  html body #zone-main nav.zone-mobile-tabbar,
+  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"],
+  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
+    display: none !important;
   }
 
-  html body .zone-topbar .zone-brand {
-    padding: 3px 6px !important;
-    column-gap: 7px !important;
+  /* --- 3A. Compact 2-Row Sticky Mobile Topbar + Always-Visible Vitals --- */
+  html body .zone-app .zone-topbar .zone-bulletin,
+  html body .zone-topbar .zone-header-links,
+  html body .zone-topbar .zone-header-actions > span:first-child,
+  html body .zone-topbar .zone-brand .zaaa-brand-meta {
+    display: none !important;
+  }
+
+  html body .zone-topbar [data-zheaderbar] {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 4px 8px 5px !important;
+    row-gap: 4px !important;
+    column-gap: 6px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  /* Row 1 Left: Compact Brand Crest + ZONE */
+  html body .zone-topbar .zone-brand,
+  html:not([data-theme="light"]) body .zone-topbar .zone-brand,
+  html[data-theme="light"] body .zone-topbar .zone-brand {
+    order: 1 !important;
+    padding: 2px 4px !important;
+    column-gap: 6px !important;
     grid-template-rows: auto !important;
   }
 
   html body .zone-topbar .zone-brand .zaaa-brand-crest,
   html body .zone-topbar .zone-brand .zaaa-brand-crest svg {
-    width: 24px !important;
-    height: 24px !important;
-    flex-basis: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
+    flex: 0 0 22px !important;
     grid-row: 1 !important;
   }
 
   html body .zone-topbar .zone-brand > span[data-zfig="1"] {
-    font-size: 18px !important;
+    font-size: 17px !important;
+    letter-spacing: 0.1em !important;
   }
 
-  html body .zone-topbar .zone-brand .zaaa-brand-meta {
-    display: none !important;
-  }
-
-  html body .zone-topbar .zone-header-links,
-  html body .zone-topbar .zone-header-actions > span:first-child {
-    display: none !important;
-  }
-
+  /* Row 1 Right: Compact Theme, Language & Studio Admin Pills */
   html body .zone-topbar .zone-header-actions {
+    order: 2 !important;
     margin-inline-start: auto !important;
     gap: 4px !important;
   }
 
   html body .zone-topbar .zone-header-actions > button,
-  html body .zone-topbar .zone-header-actions > a {
-    height: 32px !important;
-    min-height: 32px !important;
-    padding: 0 8px !important;
-    font-size: 11px !important;
-    border-radius: 9px !important;
+  html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > button,
+  html[data-theme="light"] body .zone-topbar .zone-header-actions > button,
+  html body .zone-topbar .zone-header-actions > a,
+  html:not([data-theme="light"]) body .zone-topbar .zone-header-actions > a,
+  html[data-theme="light"] body .zone-topbar .zone-header-actions > a {
+    height: 28px !important;
+    min-height: 28px !important;
+    min-width: 0 !important;
+    padding: 0 7px !important;
+    font-size: 10.5px !important;
+    border-radius: 8px !important;
+    gap: 4px !important;
   }
 
   html body .zone-topbar .zone-header-actions .zone-theme-indicator {
+    display: inline-grid !important;
+    width: 15px !important;
+    height: 15px !important;
+    flex: 0 0 15px !important;
+  }
+
+  html body .zone-topbar .zone-header-actions .zone-theme-indicator .zaaa-theme-svg,
+  html body .zone-topbar .zone-header-actions .zone-theme-indicator svg,
+  html body .zone-topbar .zone-header-actions > a .zaaa-admin-ico,
+  html body .zone-topbar .zone-header-actions > a .zaaa-admin-ico svg {
+    width: 13px !important;
+    height: 13px !important;
+    flex-basis: 13px !important;
+  }
+
+  /* Row 2 Full-Width: Always-Visible Live Vitals Strip ($Cash, Energy, Nerve, Life, ZCT) */
+  html body .zone-topbar #zone-topbar-hud {
+    order: 3 !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    flex: 1 0 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 2px 3px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 3px !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    border-radius: 7px !important;
+    overflow: hidden !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico,
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-ico svg {
+    width: 13px !important;
+    height: 13px !important;
+    flex: 0 0 13px !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-val {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-city .zaaa-hud-val {
+    display: none !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-city-code {
+    font-size: 9.5px !important;
+    padding: 1px 4px !important;
+  }
+
+  /* Subtle 2px live vital micro-meter along bottom of Energy, Nerve, Life pills */
+  html body .zone-topbar #zone-topbar-hud :is(.zaaa-hud-energy, .zaaa-hud-nerve, .zaaa-hud-life)::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 4px;
+    bottom: 1px;
+    height: 2px;
+    width: calc((100% - 8px) * 1);
+    max-width: calc(var(--zaaa-pct, 100%) - 6px);
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-energy::before {
+    background: linear-gradient(90deg, #10b981, #6ee7b7);
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-nerve::before {
+    background: linear-gradient(90deg, #f43f5e, #fda4af);
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-life::before {
+    background: linear-gradient(90deg, #ef4444, #fca5a5);
+  }
+
+  /* --- 3B. Side-by-Side Shell + Persistent Left-Side Menu Rail --- */
+  html body .zone-app [data-zshell],
+  html body .zone-app [data-zshell="1"] {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    padding: 6px 6px 16px !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: clip !important;
+  }
+
+  html body .zone-app aside.zone-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    position: sticky !important;
+    top: 70px !important;
+    flex: 0 0 66px !important;
+    width: 66px !important;
+    min-width: 66px !important;
+    max-width: 66px !important;
+    height: calc(100dvh - 74px) !important;
+    max-height: calc(100dvh - 74px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    z-index: 45 !important;
+    transition:
+      width 220ms var(--zaaa-ease),
+      min-width 220ms var(--zaaa-ease),
+      max-width 220ms var(--zaaa-ease),
+      flex-basis 220ms var(--zaaa-ease) !important;
+  }
+
+  html body .zone-app aside.zone-sidebar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  /* 1-Tap Expanded Rail Mode (html.zaaa-rail-open -> 164px with full labels) */
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar {
+    flex: 0 0 164px !important;
+    width: 164px !important;
+    min-width: 164px !important;
+    max-width: 164px !important;
+  }
+
+  /* Collapse [data-zplayercard="1"] in rail (vitals live in sticky topbar HUD) */
+  html body .zone-app aside.zone-sidebar [data-zplayercard="1"] {
+    display: none !important;
+  }
+
+  html body .zone-app aside.zone-sidebar .zone-nav-section {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    background: var(--zaaa-side-card-bg) !important;
+    border: 1px solid var(--zaaa-side-card-border) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--zaaa-side-card-shadow) !important;
+    padding: 3px 0 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .zone-app aside.zone-sidebar .zone-nav-section > .zone-panel-heading,
+  html body .zone-app aside.zone-sidebar .zone-nav-section > .zone-nav-toggle {
+    display: none !important;
+  }
+
+  /* 1-Tap Expand / Collapse Button (#zaaa-mobile-rail-toggle) at Top of Rail */
+  html body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle {
+    order: -20 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin: 2px 4px 4px !important;
+    width: calc(100% - 8px) !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 0 4px !important;
+    background: var(--zaaa-ctrl-bg) !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    color: var(--zaaa-side-fg) !important;
+    font-family: var(--zone-font, system-ui, sans-serif) !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle:hover {
+    background: var(--zaaa-ctrl-bg-hover) !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico {
     width: 16px !important;
     height: 16px !important;
-    flex: 0 0 16px !important;
-  }
-
-  html body aside.zone-sidebar #zone-operative-crest {
-    display: none !important;
-  }
-
-  /* Borderless Frosted Glass Mobile Tabbar with 3D Multi-Color Icons */
-  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
-    background: rgba(11, 15, 25, 0.92) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
-    box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.65) !important;
-    backdrop-filter: blur(16px) saturate(145%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
-    gap: 3px !important;
-    padding: 5px 6px calc(5px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
-    background: rgba(252, 252, 254, 0.94) !important;
-    border-top: 1px solid rgba(15, 23, 42, 0.075) !important;
-    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.1) !important;
-    backdrop-filter: blur(16px) saturate(145%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
-    gap: 3px !important;
-    padding: 5px 6px calc(5px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-
-  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button {
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 11px !important;
-    box-shadow: none !important;
-    color: #94a3b8 !important;
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    gap: 3px !important;
-    padding: 4px 2px !important;
-  }
-
-  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button {
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 11px !important;
-    box-shadow: none !important;
-    color: #475569 !important;
-    font-size: 10px !important;
-    font-weight: 600 !important;
-    gap: 3px !important;
-    padding: 4px 2px !important;
-  }
-
-  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-current="page"],
-  html:not([data-theme="light"]) body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-expanded="true"] {
-    background: rgba(255, 255, 255, 0.085) !important;
-    border: 0 !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-  }
-
-  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-current="page"],
-  html[data-theme="light"] body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[aria-expanded="true"] {
-    background: rgba(15, 23, 42, 0.075) !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    color: #0f172a !important;
-    font-weight: 700 !important;
-  }
-
-  /* Hide plain text symbol (◆ ◈ ▲ ■ ✕ ☰) while preserving React child index 0 */
-  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > span:first-child:not(.zaaa-mob-ico) {
-    display: none !important;
-  }
-
-  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > .zaaa-mob-ico {
-    order: -1 !important;
-    width: 20px !important;
-    height: 20px !important;
     display: inline-grid !important;
     place-items: center !important;
-    flex: 0 0 20px !important;
+    flex: 0 0 16px !important;
+    transition: transform 240ms var(--zaaa-spring) !important;
   }
 
-  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob] > .zaaa-mob-ico svg {
-    width: 20px !important;
-    height: 20px !important;
+  html body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  html[dir="rtl"] body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico {
+    transform: scaleX(-1) !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico {
+    transform: rotate(180deg) !important;
+  }
+
+  html.zaaa-rail-open[dir="rtl"] body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico {
+    transform: scaleX(-1) rotate(180deg) !important;
+  }
+
+  html:not(.zaaa-rail-open) body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle .zaaa-rail-toggle-lbl {
+    display: none !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zaaa-mobile-rail-toggle {
+    justify-content: flex-start !important;
+    padding: 0 8px !important;
+  }
+
+  /* Defeat zone-design.css:558-567 [data-znav][data-zone-nav-open="false"] display:none! */
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav],
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="false"],
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="true"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 2px !important;
+    margin: 0 !important;
+    padding: 0 3px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Compact 66px Rail Tiles: ALL 20 District Buttons Visible & 1-Tap Accessible */
+  html:not(.zaaa-rail-open) body .zone-app aside.zone-sidebar #zone-area-navigation .zone-nav-group {
+    display: none !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen],
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="false"] button[data-zone-screen],
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="false"] button:not([data-zone-primary="true"]) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 5px 2px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-inline-start: 0 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    color: var(--zaaa-nav-fg) !important;
+    text-align: center !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] .zone-nav-icon {
+    width: 30px !important;
+    height: 28px !important;
+    flex: 0 0 28px !important;
+    border-radius: 8px !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] .zone-nav-icon svg.zaaa-vivid-svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > span:not(.zone-nav-icon) {
+    flex: none !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 56px !important;
+    font-size: 9.5px !important;
+    font-weight: 600 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.01em !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > bdi:not(:empty) {
+    display: inline-block !important;
+    position: absolute !important;
+    top: 2px !important;
+    inset-inline-end: 2px !important;
+    min-width: 14px !important;
+    padding: 1px 4px !important;
+    border-radius: 999px !important;
+    background: #f59e0b !important;
+    color: #0f172a !important;
+    font-size: 8px !important;
+    font-weight: 900 !important;
+    line-height: 1.15 !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen]:hover {
+    background: var(--zaaa-nav-hover-bg) !important;
+    color: var(--zaaa-nav-fg-hover) !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen][aria-current="page"] {
+    background: var(--zaaa-nav-active-bg) !important;
+    color: var(--zaaa-nav-active-fg) !important;
+    font-weight: 700 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  }
+
+  html body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen][aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 1px;
+    top: 10px;
+    bottom: 10px;
+    width: 2.5px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #fde047, #f59e0b);
+  }
+
+  /* Expanded 164px Rail Overrides (html.zaaa-rail-open) */
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation .zone-nav-group {
+    display: block !important;
+    padding: 8px 8px 3px !important;
+    background: transparent !important;
+    border: 0 !important;
+    color: var(--zaaa-nav-group-fg) !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    text-transform: capitalize !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation .zone-nav-group::before {
+    content: none !important;
+    display: none !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen],
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="false"] button[data-zone-screen],
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav][data-zone-nav-open="false"] button:not([data-zone-primary="true"]) {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    min-height: 36px !important;
+    padding: 4px 7px !important;
+    text-align: start !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] .zone-nav-icon svg.zaaa-vivid-svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > span:not(.zone-nav-icon) {
+    flex: 1 1 auto !important;
+    max-width: none !important;
+    font-size: 11.5px !important;
+    text-align: start !important;
+  }
+
+  html.zaaa-rail-open body .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > bdi:not(:empty) {
+    position: static !important;
+    font-size: 9.5px !important;
   }
 }
 
@@ -1476,8 +1843,10 @@ html[dir="rtl"] body .zone-topbar .zone-bulletin > span:first-child,
 html[dir="rtl"] body aside.zone-sidebar .zone-panel-heading[data-zhead],
 html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-rank,
 html[dir="rtl"] body aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-lbl,
+html[dir="rtl"] body aside.zone-sidebar #zaaa-mobile-rail-toggle,
 html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation .zone-nav-group,
-html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button {
+html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button,
+html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button > span {
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
@@ -1488,8 +1857,9 @@ html[dir="rtl"] body aside.zone-sidebar #zone-area-navigation button {
   html body .zone-topbar #zone-topbar-hud [data-hud="energy"] .zaaa-ico-kinetic,
   html body .zone-topbar #zone-topbar-hud [data-hud="nerve"] .zaaa-ico-kinetic,
   html body aside.zone-sidebar #zone-area-navigation button[aria-current="page"] .zone-nav-icon svg.zaaa-vivid-svg,
-  html body .zone-topbar .zone-bulletin > span:first-child::before,
-  html body .zone-topbar .zone-bulletin [data-zticker="1"] {
+  html body .zone-app .zone-topbar .zone-bulletin > span:first-child::before,
+  html body .zone-topbar .zone-bulletin [data-zticker="1"],
+  html body .zone-app aside.zone-sidebar {
     animation: none !important;
     transition: none !important;
   }

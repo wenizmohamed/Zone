@@ -183,6 +183,7 @@
         '#zig-world-flight-bar:hover .zig-jet-svg,.zig-city-chip:hover .zig-jet-svg{transform:translate(2px,-1px) rotate(-8deg);}',
         '.zig-lock-svg{width:12.5px;height:12.5px;margin-inline-end:2px;}',
         '.zig-card-media{position:relative;aspect-ratio:16 / 10;min-height:110px;width:100%;overflow:hidden;background:#070b13;}',
+        '@media (max-width:640px){.zig-card-media{min-height:84px;aspect-ratio:auto;}.zig-card-badge{top:6px;inset-inline-start:6px;font-size:9px;padding:2px 7px;}}',
         '.zig-card-art{width:100%;height:100%;object-fit:cover;display:block;transition:transform 460ms cubic-bezier(0.22,1,0.36,1),filter 280ms ease;}',
         '.zig-game-card:hover .zig-card-art{transform:scale(1.06);filter:brightness(1.07);}',
         '.zig-card-shader{position:absolute;inset:0;width:100% !important;height:100% !important;pointer-events:none;z-index:2;display:block;background:transparent !important;border:0 !important;}',
@@ -313,14 +314,17 @@
     }
   };
 
-  /* ---------------- Sizing Helper (Zero Overflow Safe) ---------------- */
+  /* ---------------- Sizing Helper (Zero Overflow Safe, Mobile 104x92 Card Ready) ---------------- */
   function syncCanvas(canvas, cssHeight) {
     if (!canvas) return null;
-    var parentW = (canvas.parentElement && canvas.parentElement.clientWidth) ? canvas.parentElement.clientWidth : 0;
+    var isPreview = Boolean(canvas.hasAttribute && canvas.hasAttribute('data-zig-preview'));
+    var cw = canvas.clientWidth || (canvas.parentElement && canvas.parentElement.clientWidth) || 0;
+    var ch = canvas.clientHeight || (canvas.parentElement && canvas.parentElement.clientHeight) || 0;
     var rect = canvas.getBoundingClientRect();
-    var rawW = parentW > 0 ? parentW : (rect.width || 280);
-    var w = Math.max(150, Math.round(rawW));
-    var h = cssHeight || Math.max(80, Math.round(rect.height || 160));
+    var rawW = cw > 0 ? cw : (rect.width || (isPreview ? 104 : 280));
+    var minW = isPreview ? 72 : 150;
+    var w = Math.max(minW, Math.round(rawW));
+    var h = cssHeight || Math.max(isPreview ? 68 : 80, Math.round(ch || rect.height || (isPreview ? 92 : 160)));
     var dpr = Math.min(2, window.devicePixelRatio || 1);
     var pw = Math.round(w * dpr);
     var ph = Math.round(h * dpr);
@@ -1051,7 +1055,8 @@
     var pfx = state.previewFX;
     var kind = cv.getAttribute('data-zig-preview');
     var rect = cv.getBoundingClientRect();
-    var targetH = Math.max(96, Math.round(rect.height || 132));
+    var rawH = cv.clientHeight || (cv.parentElement && cv.parentElement.clientHeight) || rect.height || 92;
+    var targetH = Math.max(68, Math.round(rawH));
     var s = syncCanvas(cv, targetH);
     if (!s) return;
     var ctx = s.ctx, w = s.w, h = s.h;

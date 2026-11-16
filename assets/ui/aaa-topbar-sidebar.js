@@ -1,9 +1,10 @@
 /* ==========================================================================
- * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR RUNTIME (v127)
- * MotionSites (/icons & /sections/header) 3D Frosted Jewel & Borderless Edition
+ * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR RUNTIME (v128)
+ * MotionSites (/icons & /sections/header) 3D Frosted Jewel, Persistent
+ * Mobile Left-Side Menu Rail & Zero-Lag Telemetry Edition
  * Exclusive Ownership: carbon-hud-chrome
  * Scope: .zone-topbar, [data-zheaderbar], .zone-theme-indicator,
- *        aside.zone-sidebar, .zone-mobile-tabbar
+ *        aside.zone-sidebar, #zaaa-mobile-rail-toggle, .zone-mobile-tabbar
  * Guardrails: Idempotent, React-18/<x-dc> fiber-safe (append-only + CSS order),
  *             zero network calls, zero console errors, zero 600ms DOM polling.
  * ========================================================================== */
@@ -20,8 +21,7 @@
   /* ------------------------------------------------------------------------
    * MOTIONSITES 3D FROSTED-GLASS MULTI-COLOR VECTOR ENGINE (/icons)
    * Every mounted SVG receives deterministic, slot-scoped <linearGradient> IDs
-   * (e.g. zaaa-ig-home-a in sidebar, zaaa-ig-top-education-a in topbar,
-   * zaaa-ig-hud-cash-a in HUD, zaaa-ig-mob-home-a in mobile tabbar) so
+   * (body gradient -a, accent rim -b, top-edge glass specular sheen -s) so
    * hidden/responsive containers NEVER collide or blank out url(#id) fills.
    * ------------------------------------------------------------------------ */
   var PALETTES = {
@@ -70,8 +70,8 @@
       },
       kinetic: function () {
         return (
-          '<path d="M9.6 21V14.9C9.6 13.5 10.7 12.4 12 12.4C13.3 12.4 14.4 13.5 14.4 14.9V21H9.6Z" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<polygon points="12,7.1 13.7,8.8 12,10.5 10.3,8.8" fill="#ffffff" fill-opacity="0.95"/>'
+          '<path d="M9.6 21V14.9C9.6 13.5 10.7 12.4 12 12.4C13.3 12.4 14.4 13.5 14.4 14.9V21H9.6Z" fill="#ffffff" fill-opacity="0.96"/>' +
+          '<polygon points="12,7.1 13.7,8.8 12,10.5 10.3,8.8" fill="#ffffff" fill-opacity="0.96"/>'
         );
       }
     },
@@ -276,6 +276,19 @@
         );
       }
     },
+    life: {
+      pal: 'crimson',
+      body: function (a, b) {
+        return (
+          '<path d="M12 20.4C12 20.4 3.4 15.2 3.4 9.2C3.4 6.2 5.7 4 8.5 4C10.2 4 11.5 4.9 12 6C12.5 4.9 13.8 4 15.5 4C18.3 4 20.6 6.2 20.6 9.2C20.6 15.2 12 20.4 12 20.4Z" fill="url(#' + a + ')" stroke="url(#' + b + ')" stroke-width="0.7"/>'
+        );
+      },
+      kinetic: function () {
+        return (
+          '<path class="zaaa-stroke-only" d="M7.6 11.4H10.1L11.3 9.1L12.8 13.6L14 11.4H16.4" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>'
+        );
+      }
+    },
     nerve: {
       pal: 'nerve',
       body: function (a) {
@@ -432,6 +445,7 @@
     var prefix = slotPrefix ? String(slotPrefix) + '-' : '';
     var idA = 'zaaa-ig-' + prefix + safeKey + '-a';
     var idB = 'zaaa-ig-' + prefix + safeKey + '-b';
+    var idS = 'zaaa-ig-' + prefix + safeKey + '-s';
 
     return (
       '<svg class="zaaa-vivid-svg zaaa-duotone-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -445,8 +459,15 @@
             '<stop offset="0%" stop-color="' + pal.b1 + '"/>' +
             '<stop offset="100%" stop-color="' + pal.b2 + '"/>' +
           '</linearGradient>' +
+          '<linearGradient id="' + idS + '" x1="12" y1="2" x2="12" y2="12" gradientUnits="userSpaceOnUse">' +
+            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.62"/>' +
+            '<stop offset="55%" stop-color="#ffffff" stop-opacity="0.14"/>' +
+            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>' +
+          '</linearGradient>' +
         '</defs>' +
+        '<ellipse cx="12" cy="21.4" rx="6" ry="1.05" fill="#000000" fill-opacity="0.22"/>' +
         spec.body(idA, idB) +
+        '<path class="zaaa-stroke-only zaaa-glass-sheen" d="M6.8 5.2C9.4 3.8 14.6 3.8 17.2 5.2" fill="none" stroke="url(#' + idS + ')" stroke-width="1.2" stroke-linecap="round"/>' +
         '<g class="zaaa-ico-kinetic">' + spec.kinetic(idA, idB) + '</g>' +
       '</svg>'
     );
@@ -468,7 +489,7 @@
         '</linearGradient>' +
       '</defs>' +
       '<rect x="6" y="6" width="20" height="20" rx="5.5" transform="rotate(45 16 16)" fill="url(#zaaa-ig-brand-a)"/>' +
-      '<polygon points="16,4.5 27.5,16 16,16" fill="#ffffff" fill-opacity="0.24"/>' +
+      '<polygon points="16,4.5 27.5,16 16,16" fill="#ffffff" fill-opacity="0.28"/>' +
       '<g class="zaaa-ico-kinetic">' +
         '<polygon points="16,8.8 23.2,16 16,23.2 8.8,16" fill="url(#zaaa-ig-brand-b)"/>' +
         '<polygon points="16,11.8 20.2,16 16,20.2 11.8,16" fill="#ffffff" fill-opacity="0.96"/>' +
@@ -493,7 +514,7 @@
       '<rect x="9.2" y="2" width="5.6" height="2.6" rx="1.2" fill="url(#zaaa-ig-chrono-b)"/>' +
       '<circle cx="12" cy="13.2" r="8.2" fill="url(#zaaa-ig-chrono-a)"/>' +
       '<g class="zaaa-ico-kinetic">' +
-        '<circle class="zaaa-stroke-only" cx="12" cy="13.2" r="5.6" fill="none" stroke="#ffffff" stroke-opacity="0.45" stroke-width="1.3"/>' +
+        '<circle class="zaaa-stroke-only" cx="12" cy="13.2" r="5.6" fill="none" stroke="#ffffff" stroke-opacity="0.48" stroke-width="1.3"/>' +
         '<path class="zaaa-stroke-only" d="M12 9.8V13.3L14.6 15" fill="none" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>' +
       '</g>' +
     '</svg>';
@@ -552,6 +573,27 @@
       '</g>' +
     '</svg>';
 
+  /* Bespoke 3D Mobile Left-Rail Expand/Collapse Chevron Jewel */
+  var RAIL_TOGGLE_SVG =
+    '<svg class="zaaa-vivid-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<defs>' +
+        '<linearGradient id="zaaa-ig-rail-a" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#67e8f9"/>' +
+          '<stop offset="52%" stop-color="#3b82f6"/>' +
+          '<stop offset="100%" stop-color="#6366f1"/>' +
+        '</linearGradient>' +
+        '<linearGradient id="zaaa-ig-rail-b" x1="8" y1="5" x2="19" y2="19" gradientUnits="userSpaceOnUse">' +
+          '<stop offset="0%" stop-color="#fef08a"/>' +
+          '<stop offset="100%" stop-color="#f59e0b"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<rect x="2.5" y="3.5" width="19" height="17" rx="4.5" fill="url(#zaaa-ig-rail-a)"/>' +
+      '<g class="zaaa-ico-kinetic">' +
+        '<path class="zaaa-stroke-only" d="M8.2 8.4L12 12L8.2 15.6" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path class="zaaa-stroke-only" d="M13.2 8.4L17 12L13.2 15.6" fill="none" stroke="url(#zaaa-ig-rail-b)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '</g>' +
+    '</svg>';
+
   /* Bespoke 3D Noir Syndicate Operative Avatar (#zone-operative-crest) */
   var OPERATIVE_AVATAR_SVG =
     '<svg class="zaaa-vivid-svg zaaa-duotone-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
@@ -605,11 +647,15 @@
     energyFigEl: null,
     nerveTrackEl: null,
     nerveFigEl: null,
+    lifeTrackEl: null,
+    lifeFigEl: null,
     cashValEl: null,
     energyPillEl: null,
     energyValEl: null,
     nervePillEl: null,
     nerveValEl: null,
+    lifePillEl: null,
+    lifeValEl: null,
     cityCodeEl: null,
     cityValEl: null,
     timerEls: [],
@@ -618,6 +664,8 @@
     lastEnergyPct: -1,
     lastNerve: '',
     lastNervePct: -1,
+    lastLife: '',
+    lastLifePct: -1,
     lastCityCode: '',
     lastCityName: ''
   };
@@ -808,6 +856,8 @@
 
   /* ------------------------------------------------------------------------
    * 3. UNIFIED LIVE SYNDICATE HUD CAPSULE (#zone-topbar-hud)
+   *    Desktop (>900px): Cash, Energy, Nerve, City
+   *    Mobile (<=900px): Sticky Row 2 with Cash, Energy, Nerve, Life, City
    * ------------------------------------------------------------------------ */
   function readBarFromCachedNodes(barId, fallbackMax, trackEl, figEl) {
     try {
@@ -923,6 +973,10 @@
         '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('nerve', 'hud') + '</span>' +
         '<bdi class="zaaa-hud-val">15/15</bdi>' +
       '</button>' +
+      '<button type="button" class="zaaa-hud-pill zaaa-hud-life" data-hud="life">' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('life', 'hud') + '</span>' +
+        '<bdi class="zaaa-hud-val">100/100</bdi>' +
+      '</button>' +
       '<button type="button" class="zaaa-hud-pill zaaa-hud-city" data-hud="city">' +
         '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('city', 'hud') + '</span>' +
         '<span class="zaaa-hud-city-code">ZCT</span>' +
@@ -933,6 +987,7 @@
       cash: 'bank',
       energy: 'gym',
       nerve: 'crimes',
+      life: 'hospital',
       city: 'city'
     };
 
@@ -965,10 +1020,17 @@
     hudCache.nerveFigEl = document.querySelector(
       'aside.zone-sidebar .zone-resource[data-zone-resource="nerve"] [data-zfig]'
     );
+    hudCache.lifeTrackEl = document.querySelector(
+      'aside.zone-sidebar .zone-resource[data-zone-resource="life"] .zone-resource-track'
+    );
+    hudCache.lifeFigEl = document.querySelector(
+      'aside.zone-sidebar .zone-resource[data-zone-resource="life"] [data-zfig]'
+    );
 
     var cashPill = hud.querySelector('[data-hud="cash"]');
     var energyPill = hud.querySelector('[data-hud="energy"]');
     var nervePill = hud.querySelector('[data-hud="nerve"]');
+    var lifePill = hud.querySelector('[data-hud="life"]');
     var cityPill = hud.querySelector('[data-hud="city"]');
 
     hudCache.cashValEl = cashPill ? cashPill.querySelector('.zaaa-hud-val') : null;
@@ -976,6 +1038,8 @@
     hudCache.energyValEl = energyPill ? energyPill.querySelector('.zaaa-hud-val') : null;
     hudCache.nervePillEl = nervePill;
     hudCache.nerveValEl = nervePill ? nervePill.querySelector('.zaaa-hud-val') : null;
+    hudCache.lifePillEl = lifePill;
+    hudCache.lifeValEl = lifePill ? lifePill.querySelector('.zaaa-hud-val') : null;
     hudCache.cityCodeEl = cityPill ? cityPill.querySelector('.zaaa-hud-city-code') : null;
     hudCache.cityValEl = cityPill ? cityPill.querySelector('.zaaa-hud-val') : null;
 
@@ -983,6 +1047,7 @@
     if (cashPill) cashPill.title = ar ? 'النقد المتاح - افتح الخزنة' : 'Liquid Cash - Open Bank Vault';
     if (energyPill) energyPill.title = ar ? 'الطاقة القتالية - افتح النادي' : 'Energy - Open Gym';
     if (nervePill) nervePill.title = ar ? 'الجرأة الميدانية - افتح الجرائم' : 'Nerve - Open Street Crimes';
+    if (lifePill) lifePill.title = ar ? 'الصحة القتالية - افتح المستشفى' : 'Life - Open Hospital';
     if (cityPill) cityPill.title = ar ? 'الموقع الحالي - انتقل إلى خريطة المدينة' : 'Active Sector - Open City Map';
   }
 
@@ -1015,6 +1080,17 @@
     if (nerve.pct !== hudCache.lastNervePct && hudCache.nervePillEl) {
       hudCache.lastNervePct = nerve.pct;
       hudCache.nervePillEl.style.setProperty('--zaaa-pct', nerve.pct + '%');
+    }
+
+    var life = readBarFromCachedNodes('life', 100, hudCache.lifeTrackEl, hudCache.lifeFigEl);
+    var lifeStr = life.cur + '/' + life.max;
+    if (lifeStr !== hudCache.lastLife) {
+      hudCache.lastLife = lifeStr;
+      setTextIfChanged(hudCache.lifeValEl, lifeStr);
+    }
+    if (life.pct !== hudCache.lastLifePct && hudCache.lifePillEl) {
+      hudCache.lastLifePct = life.pct;
+      hudCache.lifePillEl.style.setProperty('--zaaa-pct', life.pct + '%');
     }
 
     var city = readCityTelemetry();
@@ -1216,7 +1292,83 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 7. SIDEBAR DISTRICT 3D FROSTED ICONS (#zone-area-navigation .zone-nav-icon)
+   * 7. MOBILE PERSISTENT LEFT-RAIL TOGGLE (#zaaa-mobile-rail-toggle)
+   *    1-tap toggles html.zaaa-rail-open (66px compact <-> 164px expanded)
+   * ------------------------------------------------------------------------ */
+  function updateRailToggleCopy(toggleBtn) {
+    if (!toggleBtn) return;
+    var ar = isArabic();
+    var expanded = Boolean(
+      document.documentElement.classList &&
+      document.documentElement.classList.contains('zaaa-rail-open')
+    );
+    toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    var lbl = toggleBtn.querySelector('.zaaa-rail-toggle-lbl');
+    setTextIfChanged(lbl, expanded ? (ar ? 'طي القائمة' : 'Collapse') : (ar ? 'القائمة' : 'Menu'));
+    toggleBtn.title = expanded
+      ? (ar ? 'تصغير شريط المناطق' : 'Collapse District Rail')
+      : (ar ? 'توسيع أسماء المناطق' : 'Expand District Labels');
+  }
+
+  function syncMobileRailToggle() {
+    var navSection = document.querySelector('aside.zone-sidebar .zone-nav-section');
+    if (!navSection) return;
+
+    var toggleBtn = document.getElementById('zaaa-mobile-rail-toggle');
+    if (toggleBtn && toggleBtn.parentElement !== navSection) {
+      if (toggleBtn.parentElement) toggleBtn.parentElement.removeChild(toggleBtn);
+      toggleBtn = null;
+    }
+
+    if (!toggleBtn) {
+      toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.id = 'zaaa-mobile-rail-toggle';
+      toggleBtn.className = 'zaaa-mobile-rail-toggle';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.innerHTML =
+        '<span class="zaaa-rail-toggle-ico" aria-hidden="true">' + RAIL_TOGGLE_SVG + '</span>' +
+        '<span class="zaaa-rail-toggle-lbl">Menu</span>';
+
+      toggleBtn.addEventListener('click', function () {
+        var root = document.documentElement;
+        if (root.classList) {
+          root.classList.toggle('zaaa-rail-open');
+        }
+        updateRailToggleCopy(toggleBtn);
+      });
+
+      /* Append at end of .zone-nav-section; CSS order:-20 renders it at top */
+      navSection.appendChild(toggleBtn);
+    }
+
+    var navArea = document.getElementById('zone-area-navigation');
+    if (navArea && navArea.getAttribute('data-zaaa-rail-bound') !== '1') {
+      navArea.setAttribute('data-zaaa-rail-bound', '1');
+      navArea.addEventListener('click', function (ev) {
+        try {
+          var target = ev.target;
+          var btn = target && typeof target.closest === 'function'
+            ? target.closest('button[data-zone-screen]')
+            : null;
+          if (
+            btn &&
+            window.innerWidth <= 640 &&
+            document.documentElement.classList &&
+            document.documentElement.classList.contains('zaaa-rail-open')
+          ) {
+            document.documentElement.classList.remove('zaaa-rail-open');
+            updateRailToggleCopy(toggleBtn);
+          }
+        } catch (_) {}
+      });
+    }
+
+    updateRailToggleCopy(toggleBtn);
+  }
+
+  /* ------------------------------------------------------------------------
+   * 8. SIDEBAR DISTRICT 3D FROSTED ICONS (#zone-area-navigation .zone-nav-icon)
    * ------------------------------------------------------------------------ */
   function resolveNavIconKey(screenId) {
     var key = String(screenId || '').trim().toLowerCase();
@@ -1275,9 +1427,9 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 8. MOBILE BOTTOM-BAR 3D FROSTED ICONS (.zone-mobile-tabbar)
-   *    Replaces plain monochrome text symbols (◆ ◈ ▲ ■ ✕ ☰) with vibrant
-   *    multi-color SVGs while keeping React's 2 <span> children untouched.
+   * 9. MOBILE BOTTOM-BAR FALLBACK ICONS (.zone-mobile-tabbar)
+   *    Hidden via CSS in v128 in favor of the persistent left-side rail,
+   *    while keeping React's children fiber-safe and vivid SVGs populated.
    * ------------------------------------------------------------------------ */
   function classifyMobileTab(btn, index) {
     var spans = btn.children;
@@ -1337,6 +1489,7 @@
       syncHeaderActions();
       syncOperativeCrest();
       syncSidebarVitals();
+      syncMobileRailToggle();
       syncSidebarNavIcons();
       syncMobileTabbarIcons();
     } catch (_) {

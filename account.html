@@ -17,7 +17,7 @@
     section,details{padding:22px;margin:18px 0;background:var(--zone-surface);border:1px solid var(--zone-line);border-radius:var(--zone-radius)}
     form,label{display:grid;gap:8px}form{gap:16px}input:not([type=checkbox]){width:100%;min-height:44px;background:#111315;color:var(--zone-ink);border:1px solid #686b6d;border-radius:3px;padding:10px 12px;font:inherit}
     button,summary{font:inherit;min-height:48px;cursor:pointer}button{background:var(--zone-raised);color:var(--zone-ink);border:1px solid #686b6d;border-radius:3px;padding:10px 16px}
-    button[type=submit]{background:var(--zone-signal);color:#211806;font-weight:700}button:disabled{opacity:.5;cursor:wait}:focus-visible{outline:3px solid var(--zone-blue);outline-offset:3px}
+    button[type=submit],#reconnectGuestButton{background:var(--zone-signal);color:#211806;font-weight:700}button:disabled{opacity:.5;cursor:wait}:focus-visible{outline:3px solid var(--zone-blue);outline-offset:3px}
     .check{display:flex;align-items:flex-start;gap:12px;min-height:44px}.check input{width:20px;height:20px;margin-top:5px;flex:none}small{color:var(--zone-muted)}
     #message{padding:12px 0;min-height:44px;overflow-wrap:anywhere}#message[data-error=true]{color:var(--zone-red)}#recoveryCode{display:block;font:16px/1.7 Consolas,monospace;background:#111315;padding:14px;overflow-wrap:anywhere;user-select:all}
     .actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.actions a{padding:10px 0;min-height:48px}details form{margin-top:16px}
@@ -25,7 +25,7 @@
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
   </style>
   <link rel="stylesheet" href="/assets/ui/account.css?v=84">
-  <script src="/account.js?v=72" defer></script>
+  <script src="/account.js?v=73" defer></script>
 </head>
 <body class="zone-account">
   <header><strong>ZONE</strong><button id="languageToggle" type="button" lang="ar">العربية</button></header>
@@ -33,6 +33,11 @@
     <div class="zone-account-intro"><div class="zone-account-art" aria-hidden="true"></div><div><h1 data-i18n="title">Keep your character</h1>
     <p data-i18n="intro">Claim this character with a username and password. Your money, items, training and family stay on the server.</p></div></div>
     <div id="message" role="status" aria-live="polite" data-i18n="loading">Checking account access...</div>
+    <section id="guestReconnectPanel" hidden>
+      <h2 data-i18n="reconnectGuestTitle">Quick guest access</h2>
+      <p data-i18n="reconnectGuestHelp">Clear any expired browser session and start or reconnect a guest character right away.</p>
+      <div class="actions"><button id="reconnectGuestButton" type="button" data-i18n="reconnectGuest">Start / Reconnect Guest Character</button></div>
+    </section>
     <section id="identity" hidden><h2 id="identityName"></h2><p id="identityState"></p></section>
     <section id="claimPanel" hidden>
       <h2 data-i18n="claimTitle">Claim this character</h2>
