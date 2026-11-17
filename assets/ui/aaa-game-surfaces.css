@@ -1,32 +1,47 @@
 /* ==========================================================================
-   ZONE - AAA CRIME SYNDICATE RPG SCREEN SURFACES (v128)
-   MotionSites Borderless Tonal UI, Mobile Right-Pane Viewport & 60fps CSS
+   ZONE - SKETCHBOOK UNIFIED RPG SCREEN SURFACES (v135)
+   Unified Cold-Press Paper & Ink Tokens, RTL Logical Layout & Mobile Portrait UX
    File: assets/ui/aaa-game-surfaces.css
-   Scope: Page body scroll/backdrop fix + strictly #zone-main (all inner
-          screens, hero stages, poster cards, tables, CTAs, inputs, modals).
-          Topbar & Sidebar remain owned by @carbon-hud-chrome.
+   Scope: Page body scroll/backdrop + strictly #zone-main (all inner screens,
+          hero stages, poster cards, tables, CTAs, inputs, modals, arcade).
    Loaded AFTER: zone-design.css, zone-layout.css, district-compositions108.css,
                  gym116.css, and noir-game-hud.css.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   0. PAGE BACKDROP, 60FPS SCROLL COMPOSITING & MOTIONSITES TONAL TOKENS
-      Overrides noir-game-hud.css background-attachment: fixed scroll jank
+   0. PAGE BACKDROP, 60FPS SCROLL COMPOSITING & UNIFIED --zwc-* SKETCHBOOK TOKENS
+      Eliminates competing #06080e/#0b0f19 Dark-Navy & #ffffff/#f3f4f8 White-SaaS
    -------------------------------------------------------------------------- */
+html:not([data-theme="light"]) {
+  --zwc-surface: var(--zwc-paper-elevated, #1e1b17);
+  --zwc-surface-alt: var(--zwc-paper-subcard, #25211c);
+  --zwc-border: var(--zwc-border-panel, rgba(242, 234, 217, 0.36));
+}
+
+html[data-theme="light"] {
+  --zwc-surface: var(--zwc-paper-elevated, #f8f3e6);
+  --zwc-surface-alt: var(--zwc-paper-subcard, #fcf8ee);
+  --zwc-border: var(--zwc-border-panel, #25221e);
+}
+
 html:not([data-theme="light"]) body {
-  background-color: #06080e !important;
-  background-image:
-    radial-gradient(960px 480px at 85% -8%, rgba(56, 189, 248, 0.055), transparent 62%),
-    radial-gradient(840px 460px at 12% 14%, rgba(16, 185, 129, 0.045), transparent 60%),
-    linear-gradient(180deg, #06080e 0%, #080c15 52%, #06080e 100%) !important;
+  background-color: var(--zwc-paper, #141210) !important;
+  background-image: var(
+    --zwc-canvas-bg,
+    linear-gradient(180deg, #161310 0%, #12100d 52%, #15120f 100%)
+  ) !important;
   background-attachment: scroll !important;
+  color: var(--zwc-ink, #f3ecdc) !important;
 }
 
 html[data-theme="light"] body {
-  background-color: #f3f4f8 !important;
-  background-image: linear-gradient(180deg, #f5f6fa 0%, #edf0f6 100%) !important;
+  background-color: var(--zwc-paper, #f2ebdc) !important;
+  background-image: var(
+    --zwc-canvas-bg,
+    linear-gradient(180deg, #f4eee0 0%, #efe7d5 52%, #f3ecde 100%)
+  ) !important;
   background-attachment: scroll !important;
-  color: #0f172a !important;
+  color: var(--zwc-ink, #1e1b18) !important;
 }
 
 /* Kill expensive Chromium backdrop-filter blur passes on ALL repeating elements inside #zone-main */
@@ -35,93 +50,108 @@ html body #zone-main *:not(.zig-modal-backdrop) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Scoped MotionSites Tonal Tokens + Inline CSS Variable Harmonization inside #zone-main */
+/* Scoped Sketchbook Surface Tokens + Inline Variable Harmonization (Dark Charcoal Paper) */
 html:not([data-theme="light"]) body #zone-main {
-  --ags-surface-1: #0b0f19;
-  --ags-surface-2: #121826;
-  --ags-surface-2-hover: #172033;
-  --ags-surface-3: rgba(255, 255, 255, 0.032);
-  --ags-surface-3-hover: rgba(255, 255, 255, 0.06);
-  --ags-border-1: rgba(255, 255, 255, 0.04);
-  --ags-border-2: rgba(255, 255, 255, 0.05);
-  --ags-divider: rgba(255, 255, 255, 0.045);
-  --ags-shadow-1: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 22px 48px -14px rgba(0, 0, 0, 0.62);
-  --ags-shadow-2: inset 0 1px 0 rgba(255, 255, 255, 0.075), 0 10px 26px -8px rgba(0, 0, 0, 0.46);
-  --ags-specular-sheen: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.08), transparent 60%);
-  --ags-pill-bg: rgba(255, 255, 255, 0.07);
-  --ags-pill-hover: rgba(255, 255, 255, 0.12);
-  --ags-icon-plate: rgba(255, 255, 255, 0.045);
-  --ags-gold: #eab308;
-  --ags-gold-soft: rgba(234, 179, 8, 0.22);
-  --ags-emerald: #10b981;
-  --ags-emerald-soft: rgba(16, 185, 129, 0.2);
-  --ags-crimson: #ef4444;
-  --ags-ink-1: #f8fafc;
-  --ags-ink-2: #cbd5e1;
-  --ags-ink-3: #94a3b8;
+  --zwc-surface: var(--zwc-paper-elevated, #1e1b17);
+  --zwc-surface-alt: var(--zwc-paper-subcard, #25211c);
+  --zwc-border: var(--zwc-border-panel, rgba(242, 234, 217, 0.36));
 
-  /* Harmonize inline template variables inside #zone-main so inline 1px borders vanish into tonal depth */
-  --panel: #0b0f19;
-  --panel2: #121826;
-  --deep: #121826;
-  --z1: #121826;
-  --z2: #151d2e;
-  --btn: rgba(255, 255, 255, 0.07);
-  --tb1: transparent;
-  --tb2: transparent;
-  --border: rgba(255, 255, 255, 0.04);
-  --border2: rgba(255, 255, 255, 0.05);
-  --border3: rgba(255, 255, 255, 0.055);
-  --edge: rgba(255, 255, 255, 0.04);
-  --line: rgba(255, 255, 255, 0.045);
-  --track: rgba(255, 255, 255, 0.065);
+  --ags-surface-1: var(--zwc-surface, #1e1b17);
+  --ags-surface-2: var(--zwc-surface-alt, #25211c);
+  --ags-surface-2-hover: var(--zwc-paper-subcard-hover, #2e2922);
+  --ags-surface-3: var(--zwc-well-bg, rgba(242, 234, 217, 0.085));
+  --ags-surface-3-hover: var(--zwc-row-hover, rgba(142, 178, 102, 0.18));
+  --ags-border-1: var(--zwc-border, rgba(242, 234, 217, 0.36));
+  --ags-border-2: var(--zwc-border-sub, rgba(242, 234, 217, 0.28));
+  --ags-divider: var(--zwc-ink-rule, rgba(242, 234, 217, 0.14));
+  --ags-shadow-1: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.62));
+  --ags-shadow-2: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.56));
+  --ags-specular-sheen: var(--zwc-card-bg, none);
+  --ags-pill-bg: var(--zwc-btn-bg, #2a251f);
+  --ags-pill-hover: var(--zwc-btn-hover, #352f27);
+  --ags-icon-plate: var(--zwc-well-bg, rgba(242, 234, 217, 0.085));
+  --ags-gold: var(--zwc-gold-ink, #f0c465);
+  --ags-gold-soft: rgba(240, 196, 101, 0.18);
+  --ags-emerald: var(--zwc-green-ink, #92d17e);
+  --ags-emerald-soft: rgba(146, 209, 126, 0.18);
+  --ags-crimson: var(--zwc-bad-ink, #ef7d68);
+  --ags-ink-1: var(--zwc-ink, #f3ecdc);
+  --ags-ink-2: var(--zwc-ink-soft, #d8ccb6);
+  --ags-ink-3: var(--zwc-ink-muted, #aca08a);
+
+  /* Harmonize inline template variables inside #zone-main to Charcoal Sketchpaper */
+  --panel: var(--zwc-surface, #1e1b17);
+  --panel2: var(--zwc-surface-alt, #25211c);
+  --deep: var(--zwc-input-bg, #171411);
+  --z1: var(--zwc-surface-alt, #221e1a);
+  --z2: var(--zwc-paper-subcard-hover, #28241e);
+  --btn: var(--zwc-btn-bg, #2a251f);
+  --tb1: var(--zwc-btn-bg, #2d2822);
+  --tb2: var(--zwc-surface, #211d19);
+  --border: var(--zwc-border, rgba(242, 234, 217, 0.28));
+  --border2: var(--zwc-border-sub, rgba(242, 234, 217, 0.2));
+  --border3: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --edge: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --line: var(--zwc-ink-rule, rgba(242, 234, 217, 0.14));
+  --track: var(--zwc-track-bg, rgba(0, 0, 0, 0.44));
+  --t1: var(--zwc-ink, #f3ecdc);
+  --t2: var(--zwc-ink-soft, #d8ccb6);
+  --t3: var(--zwc-ink-soft, #d8ccb6);
+  --t4: var(--zwc-ink-muted, #aca08a);
+  --mu: var(--zwc-ink-muted, #aca08a);
+  --mu2: var(--zwc-ink-muted, #aca08a);
 }
 
+/* Scoped Sketchbook Surface Tokens + Inline Variable Harmonization (Light Cream Paper) */
 html[data-theme="light"] body #zone-main {
-  --ags-surface-1: #ffffff;
-  --ags-surface-2: #f8fafc;
-  --ags-surface-2-hover: #ffffff;
-  --ags-surface-3: rgba(15, 23, 42, 0.032);
-  --ags-surface-3-hover: rgba(15, 23, 42, 0.058);
-  --ags-border-1: rgba(15, 23, 42, 0.055);
-  --ags-border-2: rgba(15, 23, 42, 0.06);
-  --ags-divider: rgba(15, 23, 42, 0.055);
-  --ags-shadow-1: 0 14px 34px -10px rgba(15, 23, 42, 0.07);
-  --ags-shadow-2: 0 6px 18px -6px rgba(15, 23, 42, 0.06);
-  --ags-specular-sheen: radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0) 60%);
-  --ags-pill-bg: rgba(15, 23, 42, 0.06);
-  --ags-pill-hover: rgba(15, 23, 42, 0.1);
-  --ags-icon-plate: rgba(15, 23, 42, 0.045);
-  --ags-gold: #b45309;
-  --ags-gold-soft: rgba(180, 83, 9, 0.18);
-  --ags-emerald: #059669;
-  --ags-emerald-soft: rgba(5, 150, 105, 0.18);
-  --ags-crimson: #dc2626;
-  --ags-ink-1: #0f172a;
-  --ags-ink-2: #1e293b;
-  --ags-ink-3: #475569;
+  --zwc-surface: var(--zwc-paper-elevated, #f8f3e6);
+  --zwc-surface-alt: var(--zwc-paper-subcard, #fcf8ee);
+  --zwc-border: var(--zwc-border-panel, #25221e);
 
-  /* Clean Studio Alabaster/Stone inline variables inside #zone-main */
-  --panel: #ffffff;
-  --panel2: #f8fafc;
-  --deep: #f8fafc;
-  --z1: #f8fafc;
-  --z2: #ffffff;
-  --btn: rgba(15, 23, 42, 0.06);
-  --tb1: transparent;
-  --tb2: transparent;
-  --border: rgba(15, 23, 42, 0.055);
-  --border2: rgba(15, 23, 42, 0.06);
-  --border3: rgba(15, 23, 42, 0.065);
-  --edge: rgba(15, 23, 42, 0.05);
-  --line: rgba(15, 23, 42, 0.055);
-  --track: rgba(15, 23, 42, 0.075);
-  --t1: #0f172a;
-  --t2: #1e293b;
-  --t3: #334155;
-  --t4: #334155;
-  --mu: #64748b;
-  --mu2: #64748b;
+  --ags-surface-1: var(--zwc-surface, #f8f3e6);
+  --ags-surface-2: var(--zwc-surface-alt, #fcf8ee);
+  --ags-surface-2-hover: var(--zwc-paper-subcard-hover, #f3ecda);
+  --ags-surface-3: var(--zwc-well-bg, rgba(232, 221, 198, 0.58));
+  --ags-surface-3-hover: var(--zwc-row-hover, rgba(154, 176, 116, 0.26));
+  --ags-border-1: var(--zwc-border, #25221e);
+  --ags-border-2: var(--zwc-border-sub, #28241f);
+  --ags-divider: var(--zwc-ink-rule, rgba(34, 30, 25, 0.16));
+  --ags-shadow-1: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.15));
+  --ags-shadow-2: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.16));
+  --ags-specular-sheen: var(--zwc-card-bg, none);
+  --ags-pill-bg: var(--zwc-btn-bg, #ede4cf);
+  --ags-pill-hover: var(--zwc-btn-hover, #e3d7bd);
+  --ags-icon-plate: var(--zwc-well-bg, rgba(232, 221, 198, 0.58));
+  --ags-gold: var(--zwc-gold-ink, #7a4e10);
+  --ags-gold-soft: rgba(122, 78, 16, 0.16);
+  --ags-emerald: var(--zwc-green-ink, #1f4f26);
+  --ags-emerald-soft: rgba(31, 79, 38, 0.14);
+  --ags-crimson: var(--zwc-bad-ink, #8f2918);
+  --ags-ink-1: var(--zwc-ink, #1e1b18);
+  --ags-ink-2: var(--zwc-ink-soft, #3a342d);
+  --ags-ink-3: var(--zwc-ink-muted, #594f43);
+
+  /* Harmonize inline template variables inside #zone-main to Cream Sketchpaper */
+  --panel: var(--zwc-surface, #f8f3e6);
+  --panel2: var(--zwc-surface-alt, #fcf8ee);
+  --deep: var(--zwc-input-bg, #fdfaf2);
+  --z1: var(--zwc-surface-alt, #f6f0e2);
+  --z2: var(--zwc-paper-subcard-hover, #ede4d0);
+  --btn: var(--zwc-btn-bg, #ede4cf);
+  --tb1: var(--zwc-btn-bg, #e8dfc9);
+  --tb2: var(--zwc-btn-hover, #ddd2b9);
+  --border: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --border2: var(--zwc-border-sub, rgba(34, 30, 25, 0.24));
+  --border3: var(--zwc-border-strong, #23201c);
+  --edge: var(--zwc-border-strong, #1e1b18);
+  --line: var(--zwc-ink-rule, rgba(34, 30, 25, 0.16));
+  --track: var(--zwc-track-bg, rgba(34, 30, 25, 0.14));
+  --t1: var(--zwc-ink, #1e1b18);
+  --t2: var(--zwc-ink-soft, #2b2620);
+  --t3: var(--zwc-ink-soft, #3b352e);
+  --t4: var(--zwc-ink-muted, #4d453b);
+  --mu: var(--zwc-ink-muted, #594f43);
+  --mu2: var(--zwc-ink-muted, #6b6052);
 }
 
 html body #zone-main bdi,
@@ -129,7 +159,7 @@ html body #zone-main [data-zfig] {
   font-variant-numeric: tabular-nums;
 }
 
-/* Restore modern pill & studio radii crushed by noir-game-hud.css:75-84 inside #zone-main */
+/* Restore pill & Sketchbook radii inside #zone-main */
 html body #zone-main [style*="border-radius:999px"],
 html body #zone-main [style*="border-radius: 999px"] {
   border-radius: 999px !important;
@@ -146,24 +176,24 @@ html body #zone-main [style*="border-radius: 9px"] {
 }
 
 /* --------------------------------------------------------------------------
-   1. BORDERLESS STUDIO PILL BUTTONS & SIGNATURE CTAs INSIDE #zone-main
-      Defeats zone-layout.css:7,85,99,147 & district-compositions108.css
-      Strict 60fps transition: transform, opacity, background-color, color ONLY
+   1. SKETCHBOOK INKED PILL BUTTONS & GOUACHE CTAs INSIDE #zone-main
+      Unified across Light+EN, Dark+EN, Light+AR, Dark+AR
    -------------------------------------------------------------------------- */
 html body #zone-main button {
   font-weight: 600 !important;
   letter-spacing: -0.005em;
   font-variant-numeric: tabular-nums;
+  touch-action: manipulation;
 }
 
-/* Standard Studio Pill Action Buttons (excludes structural card/pin/row/chip/tab buttons) */
+/* Standard Sketchbook Action Buttons */
 html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
   font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: -0.005em !important;
   text-transform: none !important;
-  border-radius: 10px !important;
-  border: 0 !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  border: 1.5px solid var(--zwc-border-strong, var(--ags-border-2)) !important;
   clip-path: none !important;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -172,82 +202,78 @@ html body #zone-main button:not(.zig-game-card):not(.zig-city-chip):not(.zig-fli
     color 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-/* Neutral Borderless Studio Pill (Dark & Day via tokens) */
+/* Neutral Sketchbook Button (Cream/Charcoal via --zwc-* tokens) */
 html body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([aria-expanded="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-page-heading button):not(.familyStat):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button) {
-  background-color: var(--ags-pill-bg) !important;
+  background-color: var(--zwc-btn-bg, var(--ags-pill-bg)) !important;
   background-image: none !important;
-  border: 0 !important;
-  color: var(--ags-ink-1) !important;
+  border: 1.5px solid var(--zwc-border-strong, var(--ags-border-2)) !important;
+  color: var(--zwc-ink, var(--ags-ink-1)) !important;
   text-shadow: none !important;
-  box-shadow: none !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([aria-pressed="true"]):not([aria-expanded="true"]):not([style*="activebg"]):not([style*="accFill1"]):not([style*="#c74a3a"]):not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zig-sound-btn):not(.zig-btn):not(.zig-btn-secondary):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-page-heading button):not(.familyStat):not(.zone-home-resource-strip button):not(.zone-crime-activity-nav button):not(.zone-city-destinations button):not([data-ztabs] button):not([data-roulette-bet]):not([data-casino-table] > div:nth-of-type(2) > button:not([data-bj-action]):not([data-roulette-bet])):not([data-casino-table="slots"] > div:nth-of-type(3) > button):not(:disabled):hover {
-  background-color: var(--ags-pill-hover) !important;
-  color: var(--ags-ink-1) !important;
+  background-color: var(--zwc-btn-hover, var(--ags-pill-hover)) !important;
+  color: var(--zwc-ink, var(--ags-ink-1)) !important;
   transform: translateY(-1px);
 }
 
-/* Active / Selected Studio Pill State ([aria-pressed="true"], [aria-expanded="true"], or inline activebg) */
+/* Active / Selected Sketchbook Sage Wash State */
 html body #zone-main button:not(.zone-crime-choice):not(.zone-gym-station):not(.zone-crime-activity-nav button):not(.zone-mobile-tabbar *):is([aria-pressed="true"], [aria-expanded="true"], [style*="activebg"]) {
-  background-color: #10b981 !important;
-  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  color: #ffffff !important;
+  background-color: #4f7736 !important;
+  background-image: linear-gradient(180deg, #648f45 0%, #466b2e 100%) !important;
+  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
   font-weight: 700 !important;
   text-shadow: none !important;
-  box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.38) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
-/* SIGNATURE STUDIO EMERALD PRIMARY CTA (.zone-action-primary) */
+/* SIGNATURE SKETCHBOOK SAGE GOUACHE PRIMARY CTA (.zone-action-primary) */
 html body #zone-main button.zone-action-primary,
 html body #zone-main button[style*="accFill1"] {
-  background-color: #10b981 !important;
-  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  color: #ffffff !important;
+  background-color: #4f7736 !important;
+  background-image: linear-gradient(180deg, #689448 0%, #496f30 100%) !important;
+  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
   font-weight: 700 !important;
   letter-spacing: -0.005em !important;
   text-transform: none !important;
   text-shadow: none !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 8px 20px -4px rgba(16, 185, 129, 0.38) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #zone-main button.zone-action-primary:not(:disabled):hover,
 html body #zone-main button[style*="accFill1"]:not(:disabled):hover {
   transform: translateY(-1px) !important;
-  background-color: #059669 !important;
-  background-image: linear-gradient(135deg, #34d399 0%, #059669 100%) !important;
-  color: #ffffff !important;
+  background-color: #5b873f !important;
+  background-image: linear-gradient(180deg, #74a253 0%, #527c37 100%) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
 }
 
-/* SIGNATURE STUDIO CRIMSON DANGER CTA (.zone-action-danger & attack red buttons) */
+/* SIGNATURE SKETCHBOOK BURNT-CRIMSON DANGER CTA (.zone-action-danger & attack red buttons) */
 html body #zone-main button.zone-action-danger,
 html body #zone-main button[style*="#c74a3a"]:not([data-roulette-bet]) {
-  background-color: #ef4444 !important;
-  background-image: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  color: #ffffff !important;
+  background-color: #a93522 !important;
+  background-image: linear-gradient(180deg, #c1432e 0%, #942b1a 100%) !important;
+  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
   font-weight: 700 !important;
   letter-spacing: -0.005em !important;
   text-transform: none !important;
   text-shadow: none !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 8px 20px -4px rgba(239, 68, 68, 0.36) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #zone-main button.zone-action-danger:not(:disabled):hover,
 html body #zone-main button[style*="#c74a3a"]:not([data-roulette-bet]):not(:disabled):hover {
   transform: translateY(-1px) !important;
-  background-color: #dc2626 !important;
-  background-image: linear-gradient(135deg, #f87171 0%, #dc2626 100%) !important;
-  color: #ffffff !important;
+  background-color: #b83d28 !important;
+  background-image: linear-gradient(180deg, #cf4f39 0%, #a2321f 100%) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
 }
 
 /* Tactile Active Press & Disabled Polish */
@@ -262,8 +288,7 @@ html body #zone-main button:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   2. PHOTOREALISTIC UE5 HERO STAGES (.zone-page-heading) & --screen-art BINDING
-      Level-1 Tonal Stage (18px radius, hairline border, zero neon AI bars)
+   2. WATERCOLOR SKETCHBOOK HERO STAGES (.zone-page-heading) & --screen-art BINDING
    -------------------------------------------------------------------------- */
 html body #zone-main,
 html body #zone-main .zone-page-heading,
@@ -287,7 +312,7 @@ html body #zone-main[data-zone-screen="education"],
 html body #zone-main[data-zone-screen="education"] .zone-page-heading,
 html body #zone-main[data-zone-screen="newspaper"],
 html body #zone-main[data-zone-screen="newspaper"] .zone-page-heading {
-  --screen-art: url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="crimes"],
@@ -306,23 +331,23 @@ html body #zone-main[data-zone-screen="items"],
 html body #zone-main[data-zone-screen="items"] .zone-page-heading,
 html body #zone-main[data-zone-screen="elimination"],
 html body #zone-main[data-zone-screen="elimination"] .zone-page-heading {
-  --screen-art: url('/assets/ui/motion-art/hero-street-crimes.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/hero-street-crimes.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="gym"],
 html body #zone-main[data-zone-screen="gym"] .zone-page-heading {
-  --screen-art: url('/art/zone-gym-interior-v105.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/gym-interior.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="casino"],
 html body #zone-main[data-zone-screen="casino"] .zone-page-heading {
-  --screen-art: url('/assets/ui/motion-art/arcade-casino.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/arcade-casino.webp') !important;
 }
 
 html body #zone-main .zone-page-heading {
   min-height: 98px !important;
   padding: 20px 24px !important;
-  border-radius: 18px !important;
+  border-radius: var(--zwc-sketch-radius, 18px) !important;
   position: relative !important;
   overflow: hidden !important;
   isolation: isolate;
@@ -360,60 +385,52 @@ html body #zone-main .zone-page-heading .zaaa-hero-atmosphere {
   background: transparent !important;
 }
 
-/* Dark Mode Hero Stage: Tonal #0b0f19 Scrim -> Crisp UE5 Artwork */
+/* Dark Mode Hero Stage: Warm Charcoal Sketchbook Scrim -> Watercolor Artwork */
 html:not([data-theme="light"]) body #zone-main .zone-page-heading {
-  background-color: #0b0f19 !important;
+  background-color: var(--zwc-surface, #1e1b17) !important;
   background-image:
     linear-gradient(
       96deg,
-      rgba(11, 15, 25, 0.96) 0%,
-      rgba(11, 15, 25, 0.88) 38%,
-      rgba(11, 15, 25, 0.46) 70%,
-      rgba(11, 15, 25, 0.24) 100%
+      rgba(24, 21, 18, 0.95) 0%,
+      rgba(28, 24, 20, 0.86) 42%,
+      rgba(24, 21, 18, 0.48) 74%,
+      rgba(24, 21, 18, 0.28) 100%
     ),
     var(--screen-art) !important;
   background-size: cover !important;
   background-position: center 42% !important;
   background-repeat: no-repeat !important;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
-  box-shadow: var(--ags-shadow-1) !important;
+  border: 1.5px solid var(--zwc-border-strong, rgba(242, 234, 217, 0.44)) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
 }
 
-/* Day Mode Hero Stage: Clean Studio Alabaster Scrim -> Crisp UE5 Artwork */
+/* Light Mode Hero Stage: Cold-Press Cream Sketchpaper Scrim -> Watercolor Artwork */
 html[data-theme="light"] body #zone-main .zone-page-heading {
-  background-color: #ffffff !important;
+  background-color: var(--zwc-surface, #f8f3e6) !important;
   background-image:
     linear-gradient(
       96deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(248, 250, 252, 0.94) 42%,
-      rgba(241, 245, 249, 0.68) 74%,
-      rgba(241, 245, 249, 0.48) 100%
+      rgba(248, 243, 230, 0.97) 0%,
+      rgba(244, 237, 221, 0.92) 44%,
+      rgba(242, 235, 220, 0.64) 76%,
+      rgba(242, 235, 220, 0.42) 100%
     ),
     var(--screen-art) !important;
   background-size: cover !important;
   background-position: center 42% !important;
   background-repeat: no-repeat !important;
-  border: 1px solid rgba(15, 23, 42, 0.055) !important;
-  box-shadow: var(--ags-shadow-1) !important;
+  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
 }
 
 html body #zone-main .zone-page-heading h1 {
   font: 800 26px/1.1 var(--zone-display) !important;
-  letter-spacing: -0.02em !important;
+  letter-spacing: -0.015em !important;
   text-transform: none !important;
   position: relative !important;
   z-index: 2 !important;
-}
-
-html:not([data-theme="light"]) body #zone-main .zone-page-heading h1 {
-  color: #f8fafc !important;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85) !important;
-}
-
-html[data-theme="light"] body #zone-main .zone-page-heading h1 {
-  color: #0f172a !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+  color: var(--zwc-title-ink, var(--zwc-ink)) !important;
+  text-shadow: var(--zwc-title-shadow, none) !important;
 }
 
 html body #zone-main .zone-page-heading > span,
@@ -424,23 +441,22 @@ html body #zone-main .zone-page-heading > small {
   line-height: 1.42 !important;
   position: relative !important;
   z-index: 2 !important;
+  color: var(--zwc-ink-soft) !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-page-heading > span,
 html:not([data-theme="light"]) body #zone-main .zone-page-heading > p,
 html:not([data-theme="light"]) body #zone-main .zone-page-heading > small {
-  color: #cbd5e1 !important;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.78);
 }
 
 html[data-theme="light"] body #zone-main .zone-page-heading > span,
 html[data-theme="light"] body #zone-main .zone-page-heading > p,
 html[data-theme="light"] body #zone-main .zone-page-heading > small {
-  color: #334155 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 0 rgba(255, 252, 245, 0.85);
 }
 
-/* Hero Action Studio Pills (City / Tutorial) - double ID beats global :not(...) chains */
+/* Hero Action Sketchbook Pills (City / Tutorial) */
 html body #zone-main .zone-page-heading > div {
   position: relative !important;
   z-index: 2 !important;
@@ -448,15 +464,16 @@ html body #zone-main .zone-page-heading > div {
 }
 
 html body #zone-main#zone-main .zone-page-heading > div button {
-  min-height: 34px !important;
+  min-height: 36px !important;
   padding: 7px 14px !important;
-  border-radius: 10px !important;
-  border: 0 !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   text-transform: none !important;
   letter-spacing: -0.005em !important;
   text-shadow: none !important;
+  touch-action: manipulation;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -464,37 +481,24 @@ html body #zone-main#zone-main .zone-page-heading > div button {
     color 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]) {
-  background-color: rgba(15, 23, 42, 0.78) !important;
+html body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]) {
+  background-color: var(--zwc-surface-alt, var(--ags-surface-2)) !important;
   background-image: none !important;
-  color: #f8fafc !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.36) !important;
+  color: var(--zwc-ink) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]):not(:disabled):hover {
-  background-color: rgba(30, 41, 59, 0.92) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px);
-}
-
-html[data-theme="light"] body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]) {
-  background-color: rgba(255, 255, 255, 0.92) !important;
-  background-image: none !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18) !important;
-}
-
-html[data-theme="light"] body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]):not(:disabled):hover {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
+html body #zone-main#zone-main .zone-page-heading > div button:not([aria-expanded="true"]):not(:disabled):hover {
+  background-color: var(--zwc-btn-hover, var(--ags-pill-hover)) !important;
+  color: var(--zwc-ink) !important;
   transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------
-   3. MOTIONSITES LEVEL-1 CONTAINERS, CLEAN HEADERS, QUICK TILES & ARCADE
+   3. SKETCHBOOK LEVEL-1 CONTAINERS, CLEAN HEADERS, QUICK TILES & ARCADE
    -------------------------------------------------------------------------- */
 
-/* Level-1 Tonal Containers (#0b0f19 Dark / #ffffff Day, 18px radius, 0.04 hairline) */
+/* Level-1 Sketchpaper Containers (--zwc-surface + --zwc-border + --zwc-shadow-card) */
 html body #zone-main .zone-panel,
 html body #zone-main div:has(> .zone-panel-heading + .zone-panel):not(#zone-tutorial-panel),
 html body #zone-main .zig-arcade-deck,
@@ -502,11 +506,12 @@ html body #zone-main .zig-home-arcade,
 html body #zone-main #zig-world-flight-bar,
 html body #zone-main .zig-world-flight-bar,
 html body #zone-main .zone-city-directory {
-  background-color: var(--ags-surface-1) !important;
-  background-image: none !important;
-  border: 1px solid var(--ags-border-1) !important;
-  border-radius: 18px !important;
-  box-shadow: var(--ags-shadow-1) !important;
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-card-bg, none) !important;
+  border: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-radius: var(--zwc-sketch-radius, 16px) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
+  color: var(--zwc-ink) !important;
   contain: layout style;
 }
 
@@ -560,19 +565,13 @@ html body #zone-main#zone-main .zone-city-travel-bar,
 html body #zone-main#zone-main .zone-dossier-deck,
 html body #zone-main#zone-main section.zone-panel[style*="border-top:2px"],
 html body #zone-main#zone-main section.zone-panel[style*="border-inline-start:3px"] {
-  background-color: var(--ags-surface-1) !important;
-  background-image: var(--ags-specular-sheen) !important;
-  border: 1px solid var(--ags-border-1) !important;
-  border-top: 1px solid var(--ags-border-1) !important;
-  border-inline-start: 1px solid var(--ags-border-1) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--ags-shadow-1) !important;
-}
-
-html:not([data-theme="light"]) body #zone-main#zone-main .zone-street-dispatch,
-html:not([data-theme="light"]) body #zone-main#zone-main [data-zone-world-dispatch] {
-  border: 1px solid rgba(255, 255, 255, 0.045) !important;
-  border-inline-start: 1px solid rgba(255, 255, 255, 0.045) !important;
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-card-bg, none) !important;
+  border: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-block-start: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-inline-start: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-radius: var(--zwc-sketch-radius, 16px) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
 }
 
 html body #zone-main#zone-main .zone-street-dispatch {
@@ -669,46 +668,38 @@ html body #zone-main .zone-overline {
   color: var(--ags-gold) !important;
 }
 
-/* YOUR BASE OF OPERATIONS Strip (.zone-home-brief): Borderless 14px Tonal Strip */
+/* YOUR BASE OF OPERATIONS Strip (.zone-home-brief): Unified Sketchbook Paper Strip */
 html body #zone-main .zone-home-brief {
-  border: 0 !important;
-  border-radius: 14px !important;
+  border: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-radius: var(--zwc-sketch-radius, 14px) !important;
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-card-bg, none) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
+  color: var(--zwc-ink) !important;
   overflow: hidden !important;
-}
-
-html:not([data-theme="light"]) body #zone-main .zone-home-brief {
-  background: linear-gradient(90deg, rgba(17, 24, 39, 0.78), rgba(11, 15, 25, 0.62)) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 18px 40px -14px rgba(0, 0, 0, 0.55) !important;
-}
-
-html[data-theme="light"] body #zone-main .zone-home-brief {
-  background: linear-gradient(90deg, #ffffff 0%, #f8fafc 100%) !important;
-  box-shadow: var(--ags-shadow-1) !important;
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-scene {
   background-color: transparent !important;
   background-image:
-    linear-gradient(92deg, rgba(11, 15, 25, 0.9) 0%, rgba(17, 24, 39, 0.74) 48%, rgba(11, 15, 25, 0.34) 100%),
-    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+    linear-gradient(92deg, rgba(24, 21, 18, 0.92) 0%, rgba(30, 27, 23, 0.78) 52%, rgba(24, 21, 18, 0.42) 100%),
+    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
   background-size: cover !important;
   background-position: center 48% !important;
   border: 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.045) !important;
+  border-block-end: 1px solid var(--zwc-ink-rule, var(--ags-divider)) !important;
   box-shadow: none !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
   background-color: transparent !important;
   background-image:
-    linear-gradient(92deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.92) 52%, rgba(241, 245, 249, 0.78) 100%),
-    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+    linear-gradient(92deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.90) 54%, rgba(242, 235, 220, 0.70) 100%),
+    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
   background-size: cover !important;
   background-position: center 48% !important;
   border: 0 !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.055) !important;
+  border-block-end: 1px solid var(--zwc-ink-rule, var(--ags-divider)) !important;
   box-shadow: none !important;
 }
 
@@ -719,19 +710,20 @@ html body #zone-main .zone-hideout-scene > div {
   padding: 6px 2px;
 }
 
-html[data-theme="light"] body #zone-main .zone-hideout-scene strong {
-  color: #0f172a !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.88) !important;
+html body #zone-main .zone-hideout-scene strong {
+  color: var(--zwc-title-ink, var(--zwc-ink)) !important;
+  text-shadow: var(--zwc-title-shadow, none) !important;
 }
 
-html[data-theme="light"] body #zone-main .zone-hideout-scene span:not(.zone-overline) {
-  color: #0f172a !important;
-  background-color: rgba(255, 255, 255, 0.92) !important;
+html body #zone-main .zone-hideout-scene span:not(.zone-overline) {
+  color: var(--zwc-ink) !important;
+  background-color: var(--zwc-tag-bg, var(--zwc-surface-alt)) !important;
+  border: 1px solid var(--zwc-border) !important;
   padding: 4px 10px !important;
   border-radius: 999px !important;
   font-weight: 600 !important;
   text-shadow: none !important;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.14) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 /* Home Vitals Resource Strip: Borderless Tonal Cells */
@@ -760,7 +752,7 @@ html body #zone-main .zone-home-resource-strip button:not(:disabled):hover {
 }
 
 /* --------------------------------------------------------------------------
-   LEVEL-2 INTERACTIVE TONAL CARDS (#121826 -> #172033 Dark / #f8fafc -> #fff Day)
+   LEVEL-2 INTERACTIVE SKETCHBOOK SUB-CARDS (Unified Light Cream & Dark Charcoal)
    -------------------------------------------------------------------------- */
 html body #zone-main .zone-quick-actions {
   gap: 12px !important;
@@ -951,31 +943,31 @@ html body #zone-main .zone-home-mission:hover {
   background-color: var(--ags-surface-3) !important;
 }
 
-/* Studio Architectural 3D Character Stage (YOUR CHARACTER) */
+/* Sketchbook Architectural 3D Character Stage (YOUR CHARACTER) */
 html:not([data-theme="light"]) body #zone-main .zone-character-stage {
-  background: radial-gradient(circle at 50% 36%, #182338 0%, #0d1422 70%, #080c15 100%) !important;
-  border-radius: 14px !important;
+  background: radial-gradient(circle at 50% 38%, #2e2922 0%, #1e1b17 68%, #141210 100%) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
   margin: 12px 12px 6px !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  border: 1.5px solid var(--zwc-border-strong, rgba(242, 234, 217, 0.44)) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
   overflow: hidden !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-character-stage {
-  background: radial-gradient(circle at 50% 36%, #1e293b 0%, #0f172a 72%, #090d16 100%) !important;
-  border-radius: 14px !important;
+  background: radial-gradient(circle at 50% 38%, #efe6d2 0%, #e1d5bc 68%, #d2c3a5 100%) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
   margin: 12px 12px 6px !important;
-  border: 1px solid rgba(15, 23, 42, 0.08) !important;
-  box-shadow: 0 8px 20px -6px rgba(15, 23, 42, 0.14) !important;
+  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
   overflow: hidden !important;
 }
 
 html body #zone-main .zone-character-stage span[style*="rgba(10,12,15"] {
-  background: rgba(11, 15, 25, 0.84) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: var(--zwc-tag-bg, var(--zwc-surface)) !important;
+  border: 1px solid var(--zwc-border-strong) !important;
   border-radius: 999px !important;
-  color: #f8fafc !important;
-  font-weight: 600 !important;
+  color: var(--zwc-ink) !important;
+  font-weight: 700 !important;
 }
 
 html body #zone-main .zone-equipped-summary {
@@ -1064,51 +1056,61 @@ html body #zone-main .zig-arcade-title {
   gap: 8px;
   flex-wrap: wrap;
   font-size: 15px !important;
-  color: var(--ags-ink-1) !important;
+  color: #f7f1e3 !important;
 }
 
-/* MotionSites Spark Badge Live Pill */
+html body #zone-main .zig-arcade-header .zig-arcade-title > span:first-child,
+html body #zone-main .zig-arcade-header .zig-arcade-sub,
+html body #zone-main .zig-world-flight-head,
+html body #zone-main .zig-world-flight-head *:not(button):not(.zig-live-pill) {
+  color: #f7f1e3 !important;
+}
+
+/* Sketchbook Live Pill (>= 11:1 WCAG AAA on Dark Crosshatch Header in BOTH Light & Dark Modes) */
+html body #dc-root #zone-main#zone-main .zig-live-pill,
 html body #zone-main .zig-live-pill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 3px 10px !important;
   border-radius: 999px !important;
-  border: 0 !important;
+  border: 1.4px solid rgba(196, 240, 175, 0.72) !important;
   font-size: 10.5px !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   line-height: 1.3;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+  background-color: #243b20 !important;
+  background-image: none !important;
+  color: #e2f9d6 !important;
+  box-shadow: 1px 1.5px 0 rgba(0, 0, 0, 0.45) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zig-live-pill {
-  background-color: rgba(16, 185, 129, 0.16) !important;
-  background-image: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 65%) !important;
-  color: #34d399 !important;
+html body #dc-root #zone-main#zone-main .zig-live-pill::before,
+html body #zone-main .zig-live-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #9ef08a !important;
+  flex: 0 0 6px;
 }
 
-html[data-theme="light"] body #zone-main .zig-live-pill {
-  background-color: rgba(5, 150, 105, 0.12) !important;
-  background-image: radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.7), transparent 65%) !important;
-  color: #047857 !important;
-}
-
-/* Sound Toggle Studio Pill */
+/* Sound Toggle Sketchbook Pill */
 html body #zone-main .zig-sound-btn {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
-  border: 0 !important;
-  border-radius: 10px !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
   padding: 7px 13px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  background-color: var(--ags-pill-bg) !important;
+  background-color: var(--zwc-btn-bg, var(--ags-pill-bg)) !important;
   background-image: none !important;
-  color: var(--ags-ink-1) !important;
-  box-shadow: none !important;
+  color: var(--zwc-ink, var(--ags-ink-1)) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  touch-action: manipulation;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -1157,13 +1159,14 @@ html body #zone-main .zig-game-card:hover {
   background-color: var(--ags-surface-2-hover) !important;
 }
 
-/* 16:10 Photorealistic UE5 Key-Art Media Stage + Transparent Shader Canvas */
+/* 16:10 Watercolor Key-Art Media Stage + Transparent Shader Canvas */
 html body #zone-main .zig-card-media {
   position: relative !important;
   aspect-ratio: 16 / 10 !important;
   width: 100% !important;
   overflow: hidden !important;
-  background: #080c14 !important;
+  background: var(--zwc-surface-alt, #25211c) !important;
+  border-block-end: 1.5px solid var(--zwc-border) !important;
   flex-shrink: 0;
 }
 
@@ -1180,7 +1183,7 @@ html body #zone-main .zig-game-card:hover .zig-card-art {
   transform: scale(1.055) !important;
 }
 
-/* Override noir-game-hud.css:276-281,625 opaque #06090f 98px canvas rule */
+/* Override noir-game-hud.css:276-281,625 opaque canvas rule */
 html body #zone-main .zig-game-card canvas.zig-card-shader,
 html body #zone-main .zig-card-media > canvas {
   position: absolute !important;
@@ -1193,24 +1196,24 @@ html body #zone-main .zig-card-media > canvas {
   display: block !important;
 }
 
-/* Soft bottom gradient blending poster art into tonal card body */
+/* Soft bottom gradient blending watercolor poster art into Sketchpaper card body */
 html body #zone-main .zig-card-media::after {
   content: "";
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  height: 46%;
-  background: linear-gradient(180deg, rgba(18, 24, 38, 0) 0%, rgba(18, 24, 38, 0.82) 100%);
+  height: 40%;
+  background: linear-gradient(180deg, rgba(24, 21, 18, 0) 0%, rgba(24, 21, 18, 0.68) 100%);
   pointer-events: none;
   z-index: 2;
 }
 
 html[data-theme="light"] body #zone-main .zig-card-media::after {
-  height: 32%;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.36) 100%);
+  height: 30%;
+  background: linear-gradient(180deg, rgba(248, 243, 230, 0) 0%, rgba(248, 243, 230, 0.42) 100%);
 }
 
-/* Crisp High-Contrast Studio Pill Badge Over Poster Art (Zero backdrop-filter lag!) */
+/* Inked Sketchbook Tag Badge Over Poster Art */
 html body #zone-main .zig-card-badge {
   position: absolute !important;
   top: 10px !important;
@@ -1219,16 +1222,16 @@ html body #zone-main .zig-card-badge {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  background: rgba(11, 15, 25, 0.86) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  color: #f8fafc !important;
+  background: var(--zwc-tag-bg, var(--zwc-surface)) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  color: var(--zwc-ink) !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-  padding: 4px 10px !important;
+  padding: 3px 9px !important;
   border-radius: 999px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.38);
+  box-shadow: var(--zwc-shadow-sub);
 }
 
 html body #zone-main .zig-game-card-body {
@@ -1244,12 +1247,12 @@ html body #zone-main .zig-game-card-kicker {
   font-weight: 600 !important;
 }
 
-/* Borderless Studio Pill CTA inside .zig-game-card (Kills hollow 1px green box-in-box!) */
+/* Sketchbook Pill CTA inside .zig-game-card */
 html body #zone-main .zig-game-card-cta {
   margin-top: auto !important;
   padding: 9px 14px !important;
-  border: 0 !important;
-  border-radius: 10px !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
   display: inline-flex !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1260,30 +1263,21 @@ html body #zone-main .zig-game-card-cta {
   font-weight: 700 !important;
   letter-spacing: -0.005em !important;
   text-transform: none !important;
-  box-shadow: none !important;
+  background-color: var(--zwc-btn-bg, var(--ags-pill-bg)) !important;
+  background-image: none !important;
+  color: var(--zwc-ink) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
     color 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zig-game-card-cta {
-  background-color: rgba(255, 255, 255, 0.065) !important;
-  background-image: none !important;
-  color: #f1f5f9 !important;
-}
-
-html[data-theme="light"] body #zone-main .zig-game-card-cta {
-  background-color: rgba(15, 23, 42, 0.055) !important;
-  background-image: none !important;
-  color: #0f172a !important;
-}
-
 html body #zone-main .zig-game-card:hover .zig-game-card-cta {
-  background-color: #10b981 !important;
-  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.42) !important;
+  background-color: #4f7736 !important;
+  background-image: linear-gradient(180deg, #689448 0%, #496f30 100%) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #zone-main .zig-game-card-cta svg {
@@ -1298,31 +1292,33 @@ html body #zone-main .zig-game-card:hover .zig-game-card-cta svg {
 }
 
 html body #zone-main .zig-btn {
-  background-color: #10b981 !important;
-  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  padding: 7px 14px !important;
+  background-color: #4f7736 !important;
+  background-image: linear-gradient(180deg, #689448 0%, #496f30 100%) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  padding: 8px 14px !important;
   font-size: 12px !important;
   font-weight: 700 !important;
-  box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.35) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  touch-action: manipulation;
 }
 
 html body #zone-main .zig-btn-secondary {
-  background-color: var(--ags-pill-bg) !important;
+  background-color: var(--zwc-btn-bg, var(--ags-pill-bg)) !important;
   background-image: none !important;
-  color: var(--ags-ink-1) !important;
-  border: 0 !important;
-  border-radius: 10px !important;
-  padding: 7px 13px !important;
+  color: var(--zwc-ink, var(--ags-ink-1)) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
+  padding: 8px 13px !important;
   font-size: 12px !important;
   font-weight: 600 !important;
-  box-shadow: none !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  touch-action: manipulation;
 }
 
 html body #zone-main .zig-btn-secondary:hover {
-  background-color: var(--ags-pill-hover) !important;
+  background-color: var(--zwc-btn-hover, var(--ags-pill-hover)) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1355,18 +1351,11 @@ html body #zone-main .zone-crime-activity-nav button:hover {
   color: var(--ags-ink-1) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zone-crime-activity-nav button[aria-pressed="true"] {
-  background-color: #172033 !important;
-  background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(23, 32, 51, 0.96) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.36) !important;
-  color: #ffffff !important;
-}
-
-html[data-theme="light"] body #zone-main .zone-crime-activity-nav button[aria-pressed="true"] {
-  background-color: #ecfdf5 !important;
-  background-image: none !important;
-  border-color: rgba(5, 150, 105, 0.3) !important;
-  color: #065f46 !important;
+html body #zone-main .zone-crime-activity-nav button[aria-pressed="true"] {
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-row-active, none) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  color: var(--zwc-ink) !important;
 }
 
 html body #zone-main .zone-crime-operation {
@@ -1463,16 +1452,10 @@ html body #zone-main .zone-crime-choice:hover {
   background-color: var(--ags-surface-2-hover) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main .zone-crime-choice[aria-pressed="true"] {
-  background-color: #172033 !important;
-  background-image: linear-gradient(90deg, rgba(16, 185, 129, 0.16) 0%, rgba(23, 32, 51, 0.96) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.38) !important;
-}
-
-html[data-theme="light"] body #zone-main .zone-crime-choice[aria-pressed="true"] {
-  background-color: #ecfdf5 !important;
-  background-image: none !important;
-  border-color: rgba(5, 150, 105, 0.32) !important;
+html body #zone-main .zone-crime-choice[aria-pressed="true"] {
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-row-active, none) !important;
+  border-color: var(--zwc-border-strong) !important;
 }
 
 html body #zone-main .zone-crime-choice > span:first-child > strong {
@@ -1537,19 +1520,53 @@ html body #zone-main .zone-crime-choice > span:last-child > bdi:first-child {
   }
 }
 
-/* Keep Gym Floor Scene Header light in BOTH themes because it sits over dark gym photo scrim */
+/* Unified Sketchbook Gym Floor Scene Scrim & Ink Contrast Across Light + Dark + RTL */
+html:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+  background-color: var(--zwc-surface, #1e1b17) !important;
+  background-image:
+    linear-gradient(96deg, rgba(24, 21, 18, 0.94) 0%, rgba(30, 27, 23, 0.82) 52%, rgba(24, 21, 18, 0.44) 100%),
+    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html[data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+  background-color: var(--zwc-surface, #f8f3e6) !important;
+  background-image:
+    linear-gradient(96deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.88) 54%, rgba(242, 235, 220, 0.56) 100%),
+    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html[dir="rtl"]:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+  background-image:
+    linear-gradient(264deg, rgba(24, 21, 18, 0.94) 0%, rgba(30, 27, 23, 0.82) 52%, rgba(24, 21, 18, 0.44) 100%),
+    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+}
+
+html[dir="rtl"][data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
+  background-image:
+    linear-gradient(264deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.88) 54%, rgba(242, 235, 220, 0.56) 100%),
+    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+}
+
 html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene .zone-overline {
-  color: #facc15 !important;
+  color: var(--zwc-gold-ink) !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene h2 {
-  color: #f8fafc !important;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9) !important;
+  color: var(--zwc-title-ink, var(--zwc-ink)) !important;
+  text-shadow: var(--zwc-title-shadow, none) !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene p {
-  color: #e2e8f0 !important;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85) !important;
+  color: var(--zwc-ink-soft) !important;
+  text-shadow: none !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-readout {
@@ -1577,16 +1594,10 @@ html body #zone-main[data-zone-screen="gym"] .zone-gym-station:hover {
   background-color: var(--ags-surface-2-hover) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym-station[aria-pressed="true"] {
-  background-color: #172033 !important;
-  background-image: linear-gradient(180deg, rgba(16, 185, 129, 0.16) 0%, rgba(23, 32, 51, 0.98) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.38) !important;
-}
-
-html[data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-station[aria-pressed="true"] {
-  background-color: #ecfdf5 !important;
-  background-image: none !important;
-  border-color: rgba(5, 150, 105, 0.34) !important;
+html body #zone-main[data-zone-screen="gym"] .zone-gym-station[aria-pressed="true"] {
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-row-active, none) !important;
+  border-color: var(--zwc-border-strong) !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-station bdi {
@@ -1696,14 +1707,15 @@ html body #zone-main [data-ztabs] button:hover {
 }
 
 html body #zone-main [data-ztabs] button[style*="activebg"] {
-  background-color: #10b981 !important;
-  background-image: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-  color: #ffffff !important;
-  box-shadow: 0 6px 16px -4px rgba(16, 185, 129, 0.35) !important;
+  background-color: #4f7736 !important;
+  background-image: linear-gradient(180deg, #689448 0%, #496f30 100%) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #zone-main [data-ztabs] button[style*="activebg"] bdi {
-  color: rgba(255, 255, 255, 0.88) !important;
+  color: var(--zwc-cream-ink, #fcf9f2) !important;
 }
 
 html body #zone-main .zone-inventory-search {
@@ -1742,11 +1754,11 @@ html body #zone-main .zone-item-thumbnail {
 }
 
 html:not([data-theme="light"]) body #zone-main .zone-item-thumbnail {
-  background: radial-gradient(circle at 50% 54%, rgba(16, 185, 129, 0.16) 0%, #121826 74%) !important;
+  background: radial-gradient(circle at 50% 54%, rgba(146, 209, 126, 0.14) 0%, var(--zwc-surface-alt, #25211c) 76%) !important;
 }
 
 html[data-theme="light"] body #zone-main .zone-item-thumbnail {
-  background: radial-gradient(circle at 50% 54%, rgba(5, 150, 105, 0.1) 0%, #f8fafc 76%) !important;
+  background: radial-gradient(circle at 50% 54%, rgba(79, 119, 54, 0.12) 0%, var(--zwc-surface-alt, #fcf8ee) 76%) !important;
 }
 
 html body #zone-main .zone-item-thumbnail img {
@@ -1978,16 +1990,10 @@ html body #zone-main .zig-flight-card:hover {
   background-color: var(--ags-surface-2-hover) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main :is(.zig-city-chip, .zig-flight-card).is-active {
-  background-color: #172033 !important;
-  background-image: linear-gradient(180deg, rgba(16, 185, 129, 0.18) 0%, rgba(23, 32, 51, 0.96) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.38) !important;
-}
-
-html[data-theme="light"] body #zone-main :is(.zig-city-chip, .zig-flight-card).is-active {
-  background-color: #ecfdf5 !important;
-  background-image: none !important;
-  border-color: rgba(5, 150, 105, 0.34) !important;
+html body #zone-main :is(.zig-city-chip, .zig-flight-card).is-active {
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-row-active, none) !important;
+  border-color: var(--zwc-border-strong) !important;
 }
 
 html body #zone-main :is(.zig-city-chip, .zig-flight-card).is-locked {
@@ -2040,198 +2046,230 @@ html body #zone-main .zone-stock-entry {
   border-bottom: 1px solid var(--ags-divider) !important;
 }
 
-/* --- 4G. CASINO: High-Low Pedestal & Coherent Felt Contrast --- */
+/* --- 4G. CASINO: High-Low Pedestal & Sketchbook Table Contrast --- */
 html body #zone-main .zone-playing-card-stage {
   padding: 16px 24px;
-  border-radius: 16px;
-  background: radial-gradient(circle at 50% 35%, #1c6b45 0%, #0d3924 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 14px 30px -8px rgba(0, 0, 0, 0.45);
+  border-radius: var(--zwc-sketch-radius-sm, 16px);
+  background: var(--zwc-surface-alt, var(--ags-surface-2));
+  border: 1.5px solid var(--zwc-border-strong);
+  box-shadow: var(--zwc-shadow-sub);
 }
 
 html body #zone-main .zone-guide-copy dl > div {
-  background-color: var(--ags-surface-2);
-  border: 1px solid var(--ags-border-2);
-  border-radius: 12px;
+  background-color: var(--zwc-surface-alt, var(--ags-surface-2));
+  border: 1px solid var(--zwc-border, var(--ags-border-2));
+  border-radius: var(--zwc-sketch-radius-sm, 12px);
   padding: 8px 11px;
 }
 
-/* --- 4H. RECESSED STUDIO INPUTS, SELECTS, TEXTAREAS & MODALS INSIDE #zone-main --- */
+/* --- 4H. SKETCHBOOK RECESSED INPUTS, SELECTS, TEXTAREAS & MODALS INSIDE #zone-main --- */
 html body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 html body #zone-main select,
 html body #zone-main textarea {
-  border-radius: 10px !important;
+  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
   font-weight: 500;
+  background-color: var(--zwc-input-bg, var(--zwc-surface-alt)) !important;
+  border: 1.5px solid var(--zwc-border-strong, var(--zwc-border)) !important;
+  color: var(--zwc-ink) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08) !important;
+  box-sizing: border-box !important;
   transition:
     background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
     color 180ms cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-html:not([data-theme="light"]) body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-html:not([data-theme="light"]) body #zone-main select,
-html:not([data-theme="light"]) body #zone-main textarea {
-  background-color: #121826 !important;
-  border: 1px solid rgba(255, 255, 255, 0.07) !important;
-  color: #f8fafc !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35) !important;
-}
-
-html:not([data-theme="light"]) body #zone-main input::placeholder,
-html:not([data-theme="light"]) body #zone-main textarea::placeholder {
-  color: #64748b !important;
-}
-
-html[data-theme="light"] body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-html[data-theme="light"] body #zone-main select,
-html[data-theme="light"] body #zone-main textarea {
-  background-color: #f8fafc !important;
-  border: 1px solid rgba(15, 23, 42, 0.08) !important;
-  color: #0f172a !important;
-  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04) !important;
-}
-
-html[data-theme="light"] body #zone-main input::placeholder,
-html[data-theme="light"] body #zone-main textarea::placeholder {
-  color: #64748b !important;
+html body #zone-main input::placeholder,
+html body #zone-main textarea::placeholder {
+  color: var(--zwc-ink-muted, #6b6052) !important;
 }
 
 html body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
 html body #zone-main select:focus,
 html body #zone-main textarea:focus {
   outline: none !important;
-  border-color: var(--ags-emerald) !important;
+  border-color: var(--zwc-green-ink, #4f7736) !important;
   box-shadow: 0 0 0 3px var(--ags-emerald-soft) !important;
 }
 
 html body #zone-main .zone-modal-card {
-  background-color: var(--ags-surface-1) !important;
-  background-image: none !important;
-  border: 1px solid var(--ags-border-2) !important;
-  border-radius: 18px !important;
-  box-shadow: var(--ags-shadow-1) !important;
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-card-bg, none) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius, 18px) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
+  color: var(--zwc-ink) !important;
 }
 
 /* --------------------------------------------------------------------------
-   5. 100% DAY MODE ALABASTER CONTRAST, MOBILE DOCK & ARABIC RTL EXCELLENCE
+   5. UNIFIED 4-WAY SKETCHBOOK SURFACES ([data-torn-*], CASINO, BRAWL & ALERTS)
+      Identical Paper + Ink Aesthetics Across Light+EN, Dark+EN, Light+AR, Dark+AR
    -------------------------------------------------------------------------- */
-html[data-theme="light"] body #zone-main [data-zone-syndicate-hub="1"],
-html[data-theme="light"] body #zone-main [data-zone-casino-pit="1"],
-html[data-theme="light"] body #zone-main [data-torn-company-specials="1"],
-html[data-theme="light"] body #zone-main [data-torn-bazaar-shield="1"],
-html[data-theme="light"] body #zone-main [data-torn-edu-matrix="1"],
-html[data-theme="light"] body #zone-main [data-torn-island-staff="1"],
-html[data-theme="light"] body #zone-main [data-torn-jail-tools="1"],
-html[data-theme="light"] body #zone-main [data-torn-bank-cds="1"],
-html[data-theme="light"] body #zone-main [data-torn-hospital-blood="1"],
-html[data-theme="light"] body #zone-main [data-torn-casino-games="1"],
-html[data-theme="light"] body #zone-main [data-torn-honors-medals="1"] {
-  background-color: #ffffff !important;
+html body #zone-main [data-zone-syndicate-hub="1"],
+html body #zone-main [data-zone-casino-pit="1"],
+html body #zone-main [data-torn-company-specials="1"],
+html body #zone-main [data-torn-bazaar-shield="1"],
+html body #zone-main [data-torn-edu-matrix="1"],
+html body #zone-main [data-torn-island-staff="1"],
+html body #zone-main [data-torn-jail-tools="1"],
+html body #zone-main [data-torn-bank-cds="1"],
+html body #zone-main [data-torn-hospital-blood="1"],
+html body #zone-main [data-torn-casino-games="1"],
+html body #zone-main [data-torn-honors-medals="1"] {
+  background-color: var(--zwc-surface, var(--ags-surface-1)) !important;
+  background-image: var(--zwc-card-bg, none) !important;
+  border: 1.5px solid var(--zwc-border, var(--ags-border-1)) !important;
+  border-radius: var(--zwc-sketch-radius, 16px) !important;
+  box-shadow: var(--zwc-shadow-card, var(--ags-shadow-1)) !important;
+  color: var(--zwc-ink) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+html body #zone-main [data-syndicate-panel],
+html body #zone-main [data-casino-table],
+html body #zone-main [data-torn-company-specials="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-edu-matrix="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-island-staff="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-bank-cds="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-casino-games="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-bazaar-shield="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-jail-tools="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-hospital-blood="1"] div[style*="rgba(8,11,16"],
+html body #zone-main [data-torn-honors-medals="1"] div[style*="rgba(8,11,16"] {
+  background-color: var(--zwc-surface-alt, var(--ags-surface-2)) !important;
   background-image: none !important;
-  border: 1px solid rgba(15, 23, 42, 0.055) !important;
-  color: #0f172a !important;
+  border: 1.5px solid var(--zwc-border-sub, var(--zwc-border)) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  color: var(--zwc-ink) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
-html[data-theme="light"] body #zone-main [data-syndicate-panel],
-html[data-theme="light"] body #zone-main [data-torn-company-specials="1"] div[style*="rgba(8,11,16"],
-html[data-theme="light"] body #zone-main [data-torn-edu-matrix="1"] div[style*="rgba(8,11,16"],
-html[data-theme="light"] body #zone-main [data-torn-island-staff="1"] div[style*="rgba(8,11,16"],
-html[data-theme="light"] body #zone-main [data-torn-bank-cds="1"] div[style*="rgba(8,11,16"],
-html[data-theme="light"] body #zone-main [data-torn-casino-games="1"] div[style*="rgba(8,11,16"] {
-  background-color: #f8fafc !important;
-  border: 1px solid rgba(15, 23, 42, 0.06) !important;
-  color: #0f172a !important;
+html body #zone-main [data-syndicate-panel="bounties"] > div:first-child > strong {
+  color: var(--zwc-bad-ink, #a93522) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-syndicate-panel="bounties"] > div:first-child > strong {
-  color: #b91c1c !important;
+html body #zone-main [data-syndicate-panel="chat"] > div:first-child > strong {
+  color: var(--zwc-green-ink, #27582e) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-syndicate-panel="chat"] > div:first-child > strong {
-  color: #059669 !important;
-}
-
-/* Override noir-game-hud.css:1048 Day Mode attack row heavy border */
-html[data-theme="light"] body #zone-main[data-zone-screen="attack"] [data-zrow="1"] {
+/* Attack row Sketchbook rule in both Light & Dark */
+html body #zone-main[data-zone-screen="attack"] [data-zrow="1"] {
   background-color: transparent !important;
   background-image: none !important;
   border: 0 !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.055) !important;
-  color: #0f172a !important;
+  border-block-end: 1px solid var(--zwc-ink-rule, var(--ags-divider)) !important;
+  color: var(--zwc-ink) !important;
 }
 
-/* Coherent Casino Felt Contrast in Day Mode */
-html[data-theme="light"] body #zone-main [data-casino-table] > div:first-child > strong {
-  color: #fef3c7 !important;
+/* Unified Sketchbook Casino Table Contrast (>= 7:1 in both Light & Dark!) */
+html body #zone-main [data-casino-table] > div:first-child > strong {
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-casino-table] > div:first-child > span,
-html[data-theme="light"] body #zone-main [data-bj-status="1"],
-html[data-theme="light"] body #zone-main [data-roulette-status="1"],
-html[data-theme="light"] body #zone-main [data-slots-status="1"],
-html[data-theme="light"] body #zone-main [data-casino-table="blackjack"] > div:nth-of-type(2) > div {
-  color: #ecfdf5 !important;
+html body #zone-main [data-casino-table] > div:first-child > span,
+html body #zone-main [data-bj-status="1"],
+html body #zone-main [data-roulette-status="1"],
+html body #zone-main [data-slots-status="1"],
+html body #zone-main [data-casino-table="blackjack"] > div:nth-of-type(2) > div {
+  color: var(--zwc-ink-soft) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) {
-  background: rgba(6, 26, 17, 0.68) !important;
-  border-color: rgba(255, 255, 255, 0.16) !important;
+html body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) {
+  background: var(--zwc-well-bg, var(--zwc-surface)) !important;
+  border: 1px solid var(--zwc-border) !important;
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) > div > div:first-child {
-  color: #d1fae5 !important;
+html body #zone-main [data-casino-table="roulette"] > div:nth-of-type(2) > div > div:first-child {
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-slots-reel="1"] {
-  background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
-  border: 1px solid rgba(234, 179, 8, 0.45) !important;
-  box-shadow: inset 0 1px 0 #ffffff, 0 4px 10px rgba(0, 0, 0, 0.22) !important;
+html body #zone-main [data-slots-reel="1"] {
+  background: var(--zwc-surface, var(--zwc-paper-elevated)) !important;
+  border: 1.5px solid var(--zwc-border-strong) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-slots-reel="1"] small {
-  color: #0f172a !important;
+html body #zone-main [data-slots-reel="1"] small {
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main [data-casino-table="slots"] > div:nth-of-type(2) small {
-  color: #fef3c7 !important;
+html body #zone-main [data-casino-table="slots"] > div:nth-of-type(2) small {
+  color: var(--zwc-gold-ink) !important;
 }
 
-/* Lockdown / Hospitalized / Jailed Alert Banner legibility */
+/* Arcade Stages & Brawl HUD Sketchbook Surfaces */
+html body #zone-main .zig-brawl-banner,
+html body #zone-main #zig-brawl-hud,
+html body #zone-main .zig-getaway-stage,
+html body #zone-main .zig-casino-canvas-box,
+html body #zone-main .zig-heist-wrap,
+html body #zone-main .zig-gym-wrap {
+  background-color: var(--zwc-surface-alt, var(--ags-surface-2)) !important;
+  background-image: none !important;
+  border: 1.5px solid var(--zwc-border-strong, var(--zwc-border)) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  color: var(--zwc-ink) !important;
+  box-sizing: border-box !important;
+}
+
+html body #zone-main .zig-brawl-bar {
+  height: 9px !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: var(--zwc-track-bg) !important;
+  border: 1px solid var(--zwc-track-border, var(--zwc-border)) !important;
+}
+
+/* Lockdown / Hospitalized / Jailed Alert Banner legibility across Light & Dark */
 html body #zone-main > div[style*="#3a2626"] {
-  border-radius: 14px !important;
-  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+  background: rgba(169, 53, 34, 0.12) !important;
+  border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
+  border: 1.5px solid var(--zwc-bad-ink, #a93522) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  color: var(--zwc-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main > div[style*="#3a2626"] {
-  background: #fef2f2 !important;
-  border: 1px solid rgba(239, 68, 68, 0.28) !important;
+html body #zone-main > div[style*="#3a2626"] strong,
+html body #zone-main > div[style*="#3a2626"] bdi {
+  color: var(--zwc-bad-ink) !important;
 }
 
-html[data-theme="light"] body #zone-main > div[style*="#3a2626"] strong {
-  color: #991b1b !important;
-}
-
-html[data-theme="light"] body #zone-main > div[style*="#3a2626"] span {
-  color: #1e293b !important;
-}
-
-html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
-  color: #b91c1c !important;
+html body #zone-main > div[style*="#3a2626"] span {
+  color: var(--zwc-ink-soft) !important;
 }
 
 /* ==========================================================================
-   5. v128 MOBILE RIGHT-PANE GAME VIEWPORT OVERHAUL (<= 900px & <= 640px)
-      Designed for 290px - 350px #zone-main width alongside 66px Left Menu Rail
+   6. MOBILE PORTRAIT & TABLET RESPONSIVE FOUNDATION (<= 900px / <= 760px / <= 640px / <= 480px)
+      Full-width Sketchbook Viewport + Safe-Area Bottom Tabbar Clearance + >= 44px Touch Targets
    ========================================================================== */
 @media (max-width: 900px) {
+  html body [data-zshell] {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    contain: none !important;
+    filter: none !important;
+  }
+
   html body #zone-main {
     flex: 1 1 0% !important;
     min-width: 0 !important;
-    width: auto !important;
+    width: 100% !important;
     max-width: 100% !important;
     overflow-x: hidden !important;
     box-sizing: border-box !important;
-    gap: 8px !important;
-    padding-bottom: 16px !important;
+    gap: 10px !important;
+    padding-block-end: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    transform: none !important;
+    contain: none !important;
+    filter: none !important;
   }
 
   /* Universal zero-overflow containment across all child grids, cards, tables & iframes */
@@ -2251,12 +2289,31 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     box-sizing: border-box !important;
   }
 
-  /* Hide legacy bottom tabbar since persistent left menu rail owns navigation */
-  html body #zone-main .zone-mobile-tabbar {
-    display: none !important;
+  /* Universal >= 44px Mobile Touch Targets & 16px Zero-Zoom Inputs */
+  html body #dc-root #zone-main#zone-main#zone-main button:not(.zone-map-pin-btn):not(.zwc-map-pin),
+  html body #zone-main#zone-main button:not(.zone-map-pin-btn):not(.zwc-map-pin) {
+    min-height: 44px !important;
+    touch-action: manipulation !important;
   }
 
-  /* Collapse multi-column desktop splits cleanly inside narrow right-pane #zone-main */
+  html body #dc-root #zone-main#zone-main#zone-main .zwc-map-pin,
+  html body #zone-main#zone-main .zwc-map-pin {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    justify-content: flex-end !important;
+    touch-action: manipulation !important;
+  }
+
+  html body #zone-main input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  html body #zone-main select,
+  html body #zone-main textarea {
+    font-size: 16px !important;
+    min-height: 44px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Collapse multi-column desktop splits cleanly inside mobile #zone-main */
   html body #zone-main .zone-content-split,
   html body #zone-main .zone-home-grid,
   html body #zone-main .zone-items-grid,
@@ -2269,9 +2326,9 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   /* Compact Hero Stage & Base of Operations */
   html body #zone-main .zone-page-heading {
-    min-height: 76px !important;
+    min-height: 78px !important;
     padding: 12px 14px !important;
-    border-radius: 14px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) auto !important;
     gap: 4px 8px !important;
@@ -2286,18 +2343,19 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main .zone-page-heading > span {
     grid-column: 1 / -1 !important;
     grid-row: 2 !important;
-    font-size: 11.5px !important;
-    line-height: 1.35 !important;
+    font-size: 12px !important;
+    line-height: 1.38 !important;
   }
 
   html body #zone-main#zone-main .zone-page-heading > div button {
-    min-height: 30px !important;
-    padding: 5px 10px !important;
-    font-size: 11px !important;
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 8px 12px !important;
+    font-size: 12px !important;
   }
 
   html body #zone-main .zone-home-brief {
-    border-radius: 14px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
     padding: 0 !important;
     font-size: 12px !important;
   }
@@ -2329,16 +2387,17 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main #zig-world-flight-bar,
   html body #zone-main .zig-world-flight-bar,
   html body #zone-main .zone-city-directory {
-    border-radius: 14px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
   }
 
   html body #zone-main .zone-panel-heading,
   html body #zone-main .zone-dossier-card-head {
     padding: 10px 12px 9px !important;
     font-size: 13px !important;
+    flex-wrap: wrap !important;
   }
 
-  /* Home Quick-Deploy 2x2 Tight Grid (34x34 Frosted Icon Squircles) */
+  /* Home Quick-Deploy 2x2 Tight Grid */
   html body #zone-main#zone-main .zone-quick-actions,
   html body #zone-main#zone-main .zone-quick-actions.zone-auto-grid {
     display: grid !important;
@@ -2353,7 +2412,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     gap: 8px !important;
     min-height: 54px !important;
     padding: 10px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
   }
 
   html body #zone-main#zone-main .zone-quick-actions > button .zone-nav-icon {
@@ -2396,7 +2455,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     height: 220px !important;
     min-height: 220px !important;
     margin: 8px 10px 4px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
   }
 
   html body #zone-main#zone-main #zone-char-3d {
@@ -2425,34 +2484,36 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   /* Syndicate Arcade Deck Compact Header & Tablet 2x2 Grid */
   html body #zone-main .zig-arcade-deck,
   html body #zone-main .zig-home-arcade {
-    padding: 10px 11px !important;
+    padding: 11px 12px !important;
   }
 
   html body #zone-main .zig-arcade-header {
     gap: 8px !important;
-    margin-bottom: 8px !important;
+    margin-block-end: 8px !important;
     flex-wrap: wrap !important;
   }
 
   html body #zone-main .zig-arcade-emblem {
-    width: 32px !important;
-    height: 32px !important;
-    flex: 0 0 32px !important;
+    width: 34px !important;
+    height: 34px !important;
+    flex: 0 0 34px !important;
     border-radius: 9px !important;
   }
 
   html body #zone-main .zig-arcade-title {
-    font-size: 13.5px !important;
+    font-size: 14px !important;
   }
 
   html body #zone-main .zig-arcade-sub {
-    font-size: 11px !important;
-    line-height: 1.3 !important;
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
   }
 
   html body #zone-main .zig-sound-btn {
-    padding: 5px 9px !important;
-    font-size: 10.5px !important;
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 8px 12px !important;
+    font-size: 11.5px !important;
   }
 
   html body #zone-main .zig-arcade-grid {
@@ -2463,7 +2524,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main .zig-getaway-bar {
     flex-wrap: wrap !important;
-    gap: 6px !important;
+    gap: 8px !important;
     padding: 8px 10px !important;
   }
 
@@ -2474,7 +2535,12 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     width: 100% !important;
   }
 
-  /* CITY SCREEN: Horizontal-Scroll World Flights + Tall Playable 3D Map + Stacked Directory */
+  html body #zone-main .zig-stage-controls > button {
+    flex: 1 1 auto !important;
+    min-height: 44px !important;
+  }
+
+  /* CITY SCREEN: Horizontal-Scroll World Flights + Playable 3D Map + Stacked Directory */
   html body #zone-main #zig-world-flight-bar,
   html body #zone-main .zig-world-flight-bar {
     padding: 10px 12px !important;
@@ -2493,12 +2559,12 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     display: grid !important;
     grid-template-columns: none !important;
     grid-auto-flow: column !important;
-    grid-auto-columns: minmax(132px, 148px) !important;
+    grid-auto-columns: minmax(136px, 152px) !important;
     overflow-x: auto !important;
     overscroll-behavior-x: contain !important;
     scrollbar-width: none !important;
     gap: 8px !important;
-    padding-bottom: 2px !important;
+    padding-block-end: 2px !important;
   }
 
   html body #zone-main .zig-world-cities-row::-webkit-scrollbar {
@@ -2513,9 +2579,9 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main .zone-city-map-shell:not(.zone-city-map-expanded) {
     aspect-ratio: auto !important;
-    height: min(58dvh, 430px) !important;
-    min-height: 340px !important;
-    border-radius: 14px !important;
+    height: min(54dvh, 410px) !important;
+    min-height: 310px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
     padding: 4px !important;
   }
 
@@ -2542,7 +2608,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main .zone-city-destinations button {
     min-height: 52px !important;
     padding: 8px 9px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
   }
 
   html body #zone-main .zone-city-destinations button :is(.zone-nav-icon, .zone-city-place-icon) {
@@ -2552,7 +2618,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     border-radius: 8px !important;
   }
 
-  /* ATTACK SCREEN: Stacked Kit, 220px Combat Frame, Graceful VS Bar & 2x2 Stat Opponent Cards */
+  /* ATTACK SCREEN: Stacked Kit, 210px Combat Frame, Graceful VS Bar & 2x2 Stat Opponent Cards */
   html body #zone-main .zone-loadout {
     padding: 10px 12px !important;
   }
@@ -2570,17 +2636,17 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main .zone-loadout-slots > div {
     padding: 9px 11px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
   }
 
   html body #zone-main #zone-combat-frame,
   html body #zone-main .zone-combat-host {
     width: 100% !important;
     max-width: 100% !important;
-    height: 220px !important;
-    min-height: 220px !important;
-    max-height: 220px !important;
-    border-radius: 12px !important;
+    height: 210px !important;
+    min-height: 210px !important;
+    max-height: 210px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
     display: block !important;
     overflow: hidden !important;
   }
@@ -2591,8 +2657,8 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     align-items: center !important;
     gap: 6px 8px !important;
     padding: 8px 10px !important;
-    border-radius: 12px !important;
-    margin-bottom: 6px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
+    margin-block-end: 6px !important;
   }
 
   html body #zone-main .zig-brawl-side {
@@ -2601,7 +2667,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main .zig-brawl-side > div:first-child {
     gap: 4px !important;
-    font-size: 10.5px !important;
+    font-size: 11px !important;
   }
 
   html body #zone-main .zig-brawl-side > div:first-child > span {
@@ -2612,17 +2678,17 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main .zig-brawl-banner > div:nth-child(2) {
-    max-width: 78px !important;
+    max-width: 84px !important;
     min-width: 0 !important;
   }
 
   html body #zone-main .zig-brawl-vs {
     font-size: 13px !important;
-    padding: 0 2px !important;
+    padding-inline: 2px !important;
   }
 
   html body #zone-main .zig-brawl-banner > div:nth-child(2) > div:last-child {
-    font-size: 8.5px !important;
+    font-size: 9px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -2652,11 +2718,11 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     gap: 6px !important;
     padding: 11px 12px !important;
     margin: 0 0 8px !important;
-    border: 1px solid var(--ags-border-2) !important;
-    border-radius: 14px !important;
-    background-color: var(--ags-surface-2) !important;
-    background-image: var(--ags-specular-sheen) !important;
-    box-shadow: var(--ags-shadow-2) !important;
+    border: 1.5px solid var(--zwc-border-sub, var(--ags-border-2)) !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
+    background-color: var(--zwc-surface-alt, var(--ags-surface-2)) !important;
+    background-image: none !important;
+    box-shadow: var(--zwc-shadow-sub, var(--ags-shadow-2)) !important;
   }
 
   html body #zone-main:is([data-zone-screen="attack"], [data-zone-screen="market"], [data-zone-screen="jail"], [data-zone-screen="hospital"], [data-zone-screen="hof"]) .zone-table-row > :first-child {
@@ -2666,13 +2732,13 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main [data-label]::before {
     content: attr(data-label);
     display: block;
-    color: var(--ags-ink-3);
+    color: var(--zwc-ink-muted, var(--ags-ink-3));
     font-size: 9.5px;
     font-weight: 600;
     line-height: 1.3;
   }
 
-  /* Attack Opponent Cards: Name header + [Level | Odds] + 2x2 Stat Pills + Full-Width Attack CTA */
+  /* Attack Opponent Cards: Name header + [Level | Odds] + 2x2 Stat Pills + Full-Width >= 44px Attack CTA */
   html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 6px !important;
@@ -2681,12 +2747,12 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > div:first-child {
     grid-column: 1 / -1 !important;
-    padding-bottom: 5px !important;
-    border-bottom: 1px solid var(--ags-divider) !important;
+    padding-block-end: 5px !important;
+    border-block-end: 1px solid var(--zwc-ink-rule, var(--ags-divider)) !important;
   }
 
   html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > bdi {
-    background-color: var(--ags-surface-3) !important;
+    background-color: var(--zwc-well-bg, var(--ags-surface-3)) !important;
     padding: 5px 8px !important;
     border-radius: 8px !important;
     font-size: 11.5px !important;
@@ -2701,7 +2767,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    background-color: var(--ags-surface-3) !important;
+    background-color: var(--zwc-well-bg, var(--ags-surface-3)) !important;
     padding: 5px 8px !important;
     border-radius: 8px !important;
     font-size: 11.5px !important;
@@ -2710,11 +2776,11 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main#zone-main[data-zone-screen="attack"] .zone-table-row > button:last-child {
     grid-column: 1 / -1 !important;
     width: 100% !important;
-    min-height: 38px !important;
-    margin-top: 2px !important;
+    min-height: 44px !important;
+    margin-block-start: 2px !important;
   }
 
-  /* GYM SCREEN: 2x2 Station Selector, 2x2 Session Metrics, Compact Canvas + Train CTA Together */
+  /* GYM SCREEN: 2x2 Station Selector, 2x2 Session Metrics, Compact Canvas + >= 46px Train CTA Together */
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-workspace {
     display: flex !important;
     flex-direction: column !important;
@@ -2730,10 +2796,10 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
-    min-height: 108px !important;
+    min-height: 104px !important;
     aspect-ratio: auto !important;
     padding: 12px 14px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
     clip-path: none !important;
   }
 
@@ -2751,7 +2817,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     width: 100% !important;
     margin: 0 !important;
     padding: 9px 11px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 6px !important;
@@ -2768,18 +2834,18 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-station {
-    min-height: 58px !important;
+    min-height: 62px !important;
     padding: 9px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
     display: flex !important;
     align-items: center !important;
     gap: 7px !important;
   }
 
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-station-art {
-    width: 32px !important;
-    height: 36px !important;
-    flex: 0 0 32px !important;
+    width: 34px !important;
+    height: 38px !important;
+    flex: 0 0 34px !important;
     border-radius: 8px !important;
   }
 
@@ -2805,7 +2871,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-benefit {
     margin: 0 !important;
     font-size: 11.5px !important;
-    line-height: 1.35 !important;
+    line-height: 1.38 !important;
   }
 
   html body #zone-main#zone-main[data-zone-screen="gym"] .zone-gym-session-metrics {
@@ -2831,11 +2897,11 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main#zone-main[data-zone-screen="gym"] .zig-gym-wrap canvas,
   html body #zone-main#zone-main[data-zone-screen="gym"] #zig-gym-canvas {
-    max-height: 136px !important;
+    max-height: 132px !important;
   }
 
   html body #zone-main#zone-main[data-zone-screen="gym"] button.zone-gym-train {
-    min-height: 42px !important;
+    min-height: 46px !important;
     width: 100% !important;
     margin: 0 !important;
   }
@@ -2859,14 +2925,14 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     flex: 0 0 auto !important;
     min-height: 44px !important;
     padding: 7px 11px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
   }
 
   html body #zone-main .zone-crime-operation {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) !important;
     gap: 10px !important;
-    padding-top: 4px !important;
+    padding-block-start: 4px !important;
   }
 
   html body #zone-main .zone-crime-neighborhood {
@@ -2880,10 +2946,10 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main .zone-crime-scene {
-    min-height: 156px !important;
+    min-height: 152px !important;
     aspect-ratio: auto !important;
     padding: 8px !important;
-    border-radius: 12px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
     clip-path: none !important;
   }
 
@@ -2897,13 +2963,14 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     max-width: 100% !important;
     padding: 8px 10px !important;
     border-radius: 10px !important;
-    gap: 10px !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
   }
 
   html body #zone-main .zone-crime-plan {
     margin: 0 !important;
     padding: 12px !important;
-    border-radius: 14px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 14px) !important;
   }
 
   html body #zone-main .zone-crime-plan dl {
@@ -2920,7 +2987,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     gap: 2px !important;
     padding: 6px 8px !important;
     border-radius: 8px !important;
-    background-color: var(--ags-surface-3) !important;
+    background-color: var(--zwc-well-bg, var(--ags-surface-3)) !important;
     border: 0 !important;
   }
 
@@ -2928,7 +2995,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     text-align: start !important;
   }
 
-  /* ITEMS, BANK, JOBS, EDUCATION & PROPERTIES Mobile Right-Pane Fit */
+  /* ITEMS, BANK, JOBS, EDUCATION, CASINO & [data-torn-*] Mobile Fit */
   html body #zone-main [data-ztabs] {
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
@@ -2942,6 +3009,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
 
   html body #zone-main [data-ztabs] button {
     flex: 0 0 auto !important;
+    min-height: 44px !important;
   }
 
   html body #zone-main .zone-inventory-search {
@@ -2977,6 +3045,33 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     padding: 12px 14px !important;
     margin: 0 !important;
   }
+
+  /* Collapse Syndicate Hub, Casino Pit & Torn Expansion Grids cleanly on Mobile */
+  html body #zone-main [data-zone-syndicate-hub="1"] > div[style*="grid-template-columns"],
+  html body #zone-main [data-zone-casino-pit="1"] > div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-company-specials="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-bazaar-shield="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-edu-matrix="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-island-staff="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-jail-tools="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-bank-cds="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-hospital-blood="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-casino-games="1"] div[style*="grid-template-columns"],
+  html body #zone-main [data-torn-honors-medals="1"] div[style*="grid-template-columns"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Tablet-to-Phone Transition (<= 760px): CollapseSpawn/Plushie Multi-Column Grids */
+@media (max-width: 760px) {
+  html body #zone-main .zone-city-spawn-grid,
+  html body #zone-main .zone-city-plushie-grid,
+  html body #zone-main .zone-shared-upgrades,
+  html body #zone-main .zone-operation-definitions {
+    grid-template-columns: minmax(0, 1fr) !important;
+    min-width: 0 !important;
+  }
 }
 
 /* Compact Phone Portrait Width (<= 640px): Horizontal Arcade Stack & Single-Column Cards */
@@ -2991,23 +3086,25 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
     display: grid !important;
     grid-template-columns: 104px minmax(0, 1fr) !important;
     align-items: center !important;
-    border-radius: 12px !important;
-    min-height: 92px !important;
+    border-radius: var(--zwc-sketch-radius-sm, 12px) !important;
+    min-height: 96px !important;
   }
 
   html body #zone-main#zone-main .zig-card-media {
     width: 104px !important;
-    height: 92px !important;
-    min-height: 92px !important;
-    max-height: 92px !important;
+    height: 96px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
     aspect-ratio: auto !important;
+    border-block-end: 0 !important;
+    border-inline-end: 1.5px solid var(--zwc-border) !important;
   }
 
   html body #zone-main#zone-main .zig-card-badge {
     top: 5px !important;
     inset-inline-start: 5px !important;
     padding: 2px 6px !important;
-    font-size: 8px !important;
+    font-size: 8.5px !important;
   }
 
   html body #zone-main#zone-main .zig-game-card-body {
@@ -3020,7 +3117,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main#zone-main .zig-game-card-name {
-    font-size: 12.5px !important;
+    font-size: 13px !important;
     line-height: 1.2 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
@@ -3028,7 +3125,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main#zone-main .zig-game-card-desc {
-    font-size: 10.5px !important;
+    font-size: 11px !important;
     line-height: 1.25 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 1 !important;
@@ -3037,10 +3134,10 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 
   html body #zone-main#zone-main .zig-game-card-cta {
-    margin-top: 3px !important;
+    margin-block-start: 3px !important;
     padding: 5px 10px !important;
-    font-size: 10.5px !important;
-    min-height: 26px !important;
+    font-size: 11px !important;
+    min-height: 30px !important;
     width: auto !important;
     align-self: flex-start !important;
   }
@@ -3092,6 +3189,33 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 }
 
+/* Narrow Portrait Handsets (320px - 480px): Zero-Overflow Form & Action Wrapping */
+@media (max-width: 480px) {
+  html body #zone-main .zone-page-heading {
+    grid-template-columns: minmax(0, 1fr) !important;
+    padding: 11px 12px !important;
+  }
+
+  html body #zone-main .zone-page-heading > div {
+    grid-column: 1 / -1 !important;
+    grid-row: 3 !important;
+    margin-inline-start: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  html body #zone-main .zone-inventory-row {
+    flex-wrap: wrap !important;
+    padding: 10px 12px !important;
+  }
+
+  html body #zone-main .zone-inventory-row > div:last-child {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+}
+
 /* Reduced Motion Respect (60fps Accessibility & Low-Power Mode) */
 @media (prefers-reduced-motion: reduce) {
   html body #zone-main *,
@@ -3108,7 +3232,7 @@ html[data-theme="light"] body #zone-main > div[style*="#3a2626"] bdi {
   }
 }
 
-/* 100% Arabic RTL Zero Letter-Spacing & Directional Scrim Mirroring */
+/* 100% Arabic RTL Zero Letter-Spacing & Sketchbook Directional Scrim Mirroring */
 html[dir="rtl"] body #zone-main#zone-main,
 html[dir="rtl"] body #zone-main#zone-main *,
 html[dir="rtl"] body #zone-main#zone-main *::before,
@@ -3126,10 +3250,10 @@ html[dir="rtl"]:not([data-theme="light"]) body #zone-main .zone-page-heading {
   background-image:
     linear-gradient(
       264deg,
-      rgba(11, 15, 25, 0.96) 0%,
-      rgba(11, 15, 25, 0.88) 38%,
-      rgba(11, 15, 25, 0.46) 70%,
-      rgba(11, 15, 25, 0.24) 100%
+      rgba(24, 21, 18, 0.95) 0%,
+      rgba(28, 24, 20, 0.86) 42%,
+      rgba(24, 21, 18, 0.48) 74%,
+      rgba(24, 21, 18, 0.28) 100%
     ),
     var(--screen-art) !important;
 }
@@ -3138,24 +3262,24 @@ html[dir="rtl"][data-theme="light"] body #zone-main .zone-page-heading {
   background-image:
     linear-gradient(
       264deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(248, 250, 252, 0.94) 42%,
-      rgba(241, 245, 249, 0.68) 74%,
-      rgba(241, 245, 249, 0.48) 100%
+      rgba(248, 243, 230, 0.97) 0%,
+      rgba(244, 237, 221, 0.92) 44%,
+      rgba(242, 235, 220, 0.64) 76%,
+      rgba(242, 235, 220, 0.42) 100%
     ),
     var(--screen-art) !important;
 }
 
 html[dir="rtl"]:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-scene {
   background-image:
-    linear-gradient(268deg, rgba(11, 15, 25, 0.9) 0%, rgba(17, 24, 39, 0.74) 48%, rgba(11, 15, 25, 0.34) 100%),
-    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+    linear-gradient(268deg, rgba(24, 21, 18, 0.92) 0%, rgba(30, 27, 23, 0.78) 52%, rgba(24, 21, 18, 0.42) 100%),
+    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
 }
 
 html[dir="rtl"][data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
   background-image:
-    linear-gradient(268deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 252, 0.92) 52%, rgba(241, 245, 249, 0.78) 100%),
-    url('/assets/ui/motion-art/hero-syndicate-turf.webp') !important;
+    linear-gradient(268deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.90) 54%, rgba(242, 235, 220, 0.70) 100%),
+    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
 }
 
 html[dir="rtl"] body #zone-main .zig-game-card:hover .zig-game-card-cta svg {

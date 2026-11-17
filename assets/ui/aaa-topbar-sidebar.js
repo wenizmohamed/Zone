@@ -1,12 +1,13 @@
 /* ==========================================================================
- * ZONE - AAA SYNDICATE COMMAND TOPBAR & OPERATIVE SIDEBAR RUNTIME (v128)
- * MotionSites (/icons & /sections/header) 3D Frosted Jewel, Persistent
- * Mobile Left-Side Menu Rail & Zero-Lag Telemetry Edition
- * Exclusive Ownership: carbon-hud-chrome
- * Scope: .zone-topbar, [data-zheaderbar], .zone-theme-indicator,
- *        aside.zone-sidebar, #zaaa-mobile-rail-toggle, .zone-mobile-tabbar
+ * ZONE v135 - HAND-DRAWN SKETCHBOOK TOPBAR, DRAWER & MOBILE SHELL RUNTIME
+ * 100% 4-Way Parity: Light+EN, Dark+EN, Light+AR (RTL), Dark+AR (RTL)
+ * Exclusive Ownership: mobile-shell (aaa-topbar-sidebar.css / .js)
+ * Scope: .zone-topbar, [data-zheaderbar], #zone-topbar-hud,
+ *        #zaaa-mobile-rail-toggle, #zaaa-drawer-backdrop, #zaaa-drawer-header,
+ *        aside.zone-sidebar, #zone-operative-crest, .zone-mobile-tabbar
  * Guardrails: Idempotent, React-18/<x-dc> fiber-safe (append-only + CSS order),
- *             zero network calls, zero console errors, zero 600ms DOM polling.
+ *             respects [data-zwc-icon="1"] / [data-zwc-ink] from watercolor-sketchbook.js,
+ *             rAF-coalesced observers, zero network calls, zero console errors.
  * ========================================================================== */
 (function () {
   'use strict';
@@ -16,606 +17,173 @@
   window.__zoneAaaTopbarSidebarLoaded = true;
 
   var isSyncing = false;
+  var rafPending = false;
   var svgParserHost = null;
+  var lastObservedNavOpen = 'false';
 
   /* ------------------------------------------------------------------------
-   * MOTIONSITES 3D FROSTED-GLASS MULTI-COLOR VECTOR ENGINE (/icons)
-   * Every mounted SVG receives deterministic, slot-scoped <linearGradient> IDs
-   * (body gradient -a, accent rim -b, top-edge glass specular sheen -s) so
-   * hidden/responsive containers NEVER collide or blank out url(#id) fills.
+   * 1. HAND-INKED FOUNTAIN-PEN & WATERCOLOR WASH ICON CATALOG
+   *    Matches watercolor-sketchbook.js 100%: monochrome var(--zwc-svg-ink, currentColor)
+   *    fountain-pen/chalk stroke + soft watercolor wash (.zwc-wash-fill).
+   *    ZERO 3D neon gradients, ZERO dark-navy fills.
    * ------------------------------------------------------------------------ */
-  var PALETTES = {
-    gold: {
-      a1: '#fef08a', a2: '#f59e0b', a3: '#d97706',
-      b1: '#ffffff', b2: '#fbbf24'
-    },
-    emerald: {
-      a1: '#6ee7b7', a2: '#10b981', a3: '#059669',
-      b1: '#d1fae5', b2: '#34d399'
-    },
-    crimson: {
-      a1: '#fda4af', a2: '#f43f5e', a3: '#e11d48',
-      b1: '#ffe4e6', b2: '#fb7185'
-    },
-    nerve: {
-      a1: '#fda4af', a2: '#f43f5e', a3: '#e11d48',
-      b1: '#ffffff', b2: '#fde047'
-    },
-    cyan: {
-      a1: '#67e8f9', a2: '#3b82f6', a3: '#6366f1',
-      b1: '#cffafe', b2: '#38bdf8'
-    },
-    casino: {
-      a1: '#f0abfc', a2: '#8b5cf6', a3: '#6d28d9',
-      b1: '#fef08a', b2: '#fbbf24'
-    },
-    copper: {
-      a1: '#fcd34d', a2: '#f97316', a3: '#ea580c',
-      b1: '#fef3c7', b2: '#fbbf24'
-    },
-    studio: {
-      a1: '#67e8f9', a2: '#8b5cf6', a3: '#ec4899',
-      b1: '#fef08a', b2: '#f59e0b'
-    }
+  var WASH = {
+    sage: '#9bb67a',
+    ochre: '#dba858',
+    sienna: '#d98c5f',
+    coral: '#dc7a6b',
+    cerulean: '#7faec9',
+    plum: '#b594c4'
   };
 
-  var ICON_SPECS = {
+  var SKETCH_ICONS = {
     home: {
-      pal: 'gold',
-      body: function (a, b) {
-        return (
-          '<path d="M4.5 10.8L12 4.2L19.5 10.8V19.2C19.5 20.2 18.7 21 17.7 21H6.3C5.3 21 4.5 20.2 4.5 19.2V10.8Z" fill="url(#' + a + ')"/>' +
-          '<path class="zaaa-stroke-only" d="M2.7 11.4L12 3.2L21.3 11.4" fill="none" stroke="url(#' + b + ')" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M9.6 21V14.9C9.6 13.5 10.7 12.4 12 12.4C13.3 12.4 14.4 13.5 14.4 14.9V21H9.6Z" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<polygon points="12,7.1 13.7,8.8 12,10.5 10.3,8.8" fill="#ffffff" fill-opacity="0.96"/>'
-        );
-      }
-    },
-    properties: {
-      pal: 'gold',
-      body: function (a, b) {
-        return (
-          '<rect x="12.6" y="9.4" width="7.4" height="11.6" rx="2" fill="url(#' + b + ')" fill-opacity="0.92"/>' +
-          '<rect x="4" y="3.4" width="10.6" height="17.6" rx="2.4" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="6.6" y="6.6" width="5.4" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<rect x="6.6" y="10.1" width="5.4" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.92"/>' +
-          '<rect x="6.6" y="13.6" width="3.4" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<rect x="15.2" y="12.6" width="2.6" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.92"/>' +
-          '<rect x="15.2" y="15.8" width="2.6" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.92"/>'
-        );
-      }
-    },
-    hof: {
-      pal: 'gold',
-      body: function (a, b) {
-        return (
-          '<path class="zaaa-stroke-only" d="M6.6 6H4.7C3.7 6 3 6.8 3 7.8C3 9.4 4.2 10.6 5.8 10.6H6.8M17.4 6H19.3C20.3 6 21 6.8 21 7.8C21 9.4 19.8 10.6 18.2 10.6H17.2" fill="none" stroke="url(#' + b + ')" stroke-width="1.95" stroke-linecap="round"/>' +
-          '<path d="M6.4 3.6H17.6V9.4C17.6 12.5 15.1 15 12 15C8.9 15 6.4 12.5 6.4 9.4V3.6Z" fill="url(#' + a + ')"/>' +
-          '<rect x="10.8" y="14.4" width="2.4" height="4" rx="0.8" fill="url(#' + b + ')"/>' +
-          '<rect x="7.8" y="18" width="8.4" height="2.8" rx="1.3" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M12 5.9L12.95 8.1L15.15 9.05L12.95 10L12 12.2L11.05 10L8.85 9.05L11.05 8.1L12 5.9Z" fill="#ffffff" fill-opacity="0.97"/>'
-        );
-      }
-    },
-    missions: {
-      pal: 'gold',
-      body: function (a) {
-        return '<rect x="4.4" y="4.4" width="15.2" height="16.6" rx="3" fill="url(#' + a + ')"/>';
-      },
-      kinetic: function () {
-        return (
-          '<rect x="8.5" y="2.6" width="7" height="3.5" rx="1.4" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<path class="zaaa-stroke-only" d="M8.4 12.3L10.8 14.7L15.6 9.9" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<rect x="8.4" y="16.8" width="7.2" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.9"/>'
-        );
-      }
-    },
-    faction: {
-      pal: 'gold',
-      body: function (a, b) {
-        return (
-          '<path d="M12 2.7L20 5.9V11.8C20 16.8 16.5 20.1 12 21.6C7.5 20.1 4 16.8 4 11.8V5.9L12 2.7Z" fill="url(#' + a + ')" stroke="url(#' + b + ')" stroke-width="0.9"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M8.1 13.6L9.3 8.8L12 11.2L14.7 8.8L15.9 13.6H8.1Z" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<rect x="8.5" y="14.9" width="7" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.92"/>'
-        );
-      }
-    },
-    cash: {
-      pal: 'emerald',
-      body: function (a, b) {
-        return (
-          '<rect x="3.6" y="4.6" width="17.2" height="11.2" rx="2.6" transform="rotate(-5 12 10)" fill="url(#' + b + ')" fill-opacity="0.62"/>' +
-          '<rect x="2.4" y="6.6" width="19.2" height="12.2" rx="2.8" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<circle cx="12" cy="12.7" r="3.1" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<circle cx="6" cy="12.7" r="1.15" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<circle cx="18" cy="12.7" r="1.15" fill="#ffffff" fill-opacity="0.88"/>'
-        );
-      }
-    },
-    bank: {
-      pal: 'emerald',
-      body: function (a, b) {
-        return (
-          '<rect x="5" y="9.4" width="14" height="8.2" rx="1" fill="url(#' + b + ')" fill-opacity="0.38"/>' +
-          '<path d="M3 9.6L12 3.4L21 9.6H3Z" fill="url(#' + a + ')"/>' +
-          '<rect x="3.4" y="17.4" width="17.2" height="3.2" rx="1.3" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="6.1" y="10.3" width="2.2" height="6.4" rx="0.8" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<rect x="10.9" y="10.3" width="2.2" height="6.4" rx="0.8" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<rect x="15.7" y="10.3" width="2.2" height="6.4" rx="0.8" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<circle cx="12" cy="7.1" r="1.15" fill="#ffffff" fill-opacity="0.96"/>'
-        );
-      }
-    },
-    gym: {
-      pal: 'emerald',
-      body: function (a, b) {
-        return (
-          '<rect x="1.9" y="8.6" width="2.3" height="6.8" rx="1.1" fill="url(#' + b + ')"/>' +
-          '<rect x="19.8" y="8.6" width="2.3" height="6.8" rx="1.1" fill="url(#' + b + ')"/>' +
-          '<rect x="4.2" y="6" width="4.3" height="12" rx="1.7" fill="url(#' + a + ')"/>' +
-          '<rect x="15.5" y="6" width="4.3" height="12" rx="1.7" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="8.1" y="10.5" width="7.8" height="3" rx="1.1" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<rect x="5.7" y="7.8" width="1.15" height="4.2" rx="0.55" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<rect x="17.15" y="7.8" width="1.15" height="4.2" rx="0.55" fill="#ffffff" fill-opacity="0.88"/>'
-        );
-      }
-    },
-    energy: {
-      pal: 'emerald',
-      body: function (a, b) {
-        return (
-          '<circle cx="12" cy="12" r="8.8" fill="url(#' + b + ')" fill-opacity="0.22"/>' +
-          '<path d="M13.6 2.3L4.5 13.4H11.1L9.7 21.7L19.5 10.6H12.9L13.6 2.3Z" fill="url(#' + a + ')" stroke="url(#' + b + ')" stroke-width="0.7" stroke-linejoin="round"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M12.9 6.3L7.9 12.4H11.6L10.9 17.4L16.1 11.4H12.4L12.9 6.3Z" fill="#ffffff" fill-opacity="0.95"/>'
-        );
-      }
-    },
-    market: {
-      pal: 'emerald',
-      body: function (a, b) {
-        return (
-          '<rect x="4.8" y="10" width="14.4" height="10.6" rx="2.3" fill="url(#' + a + ')"/>' +
-          '<path d="M3.4 9.6L5.3 4.1H18.7L20.6 9.6C19.3 11.3 16.9 11.3 15.6 9.6C14.4 11.3 12.6 11.3 12 9.6C11.4 11.3 9.6 11.3 8.4 9.6C7.1 11.3 4.7 11.3 3.4 9.6Z" fill="url(#' + b + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="9.6" y="14" width="4.8" height="6.6" rx="1.2" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<path class="zaaa-stroke-only" d="M9.1 4.6L8.4 9.1M14.9 4.6L15.6 9.1" fill="none" stroke="#064e3b" stroke-opacity="0.45" stroke-width="1.5" stroke-linecap="round"/>'
-        );
-      }
-    },
-    crimes: {
-      pal: 'crimson',
-      body: function (a, b) {
-        return (
-          '<rect x="9" y="2.6" width="6" height="3.1" rx="1.3" fill="url(#' + b + ')"/>' +
-          '<circle cx="12" cy="13" r="8" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<circle class="zaaa-stroke-only" cx="12" cy="13" r="4.6" fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="1.5"/>' +
-          '<path class="zaaa-stroke-only" d="M12 9.9V13.2L14.5 14.8" fill="none" stroke="#ffffff" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<circle cx="16.9" cy="4.2" r="1.25" fill="#fde047"/>'
-        );
-      }
-    },
-    attack: {
-      pal: 'crimson',
-      body: function (a, b) {
-        return (
-          '<circle cx="12" cy="12" r="8.2" fill="url(#' + a + ')"/>' +
-          '<path class="zaaa-stroke-only" d="M12 2.2V5.4M12 18.6V21.8M2.2 12H5.4M18.6 12H21.8" fill="none" stroke="url(#' + b + ')" stroke-width="2" stroke-linecap="round"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<circle class="zaaa-stroke-only" cx="12" cy="12" r="4.4" fill="none" stroke="#ffffff" stroke-opacity="0.92" stroke-width="1.75"/>' +
-          '<polygon points="12,9.7 14.3,12 12,14.3 9.7,12" fill="#ffffff"/>'
-        );
-      }
-    },
-    elimination: {
-      pal: 'crimson',
-      body: function (a, b) {
-        return (
-          '<path d="M12 2.7L20 5.9V11.8C20 16.7 16.5 20.1 12 21.6C7.5 20.1 4 16.7 4 11.8V5.9L12 2.7Z" fill="url(#' + a + ')" stroke="url(#' + b + ')" stroke-width="0.9"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path class="zaaa-stroke-only" d="M8.8 8.9L15.2 15.3M15.2 8.9L8.8 15.3" fill="none" stroke="#ffffff" stroke-width="2.35" stroke-linecap="round"/>' +
-          '<circle cx="12" cy="6.1" r="1.1" fill="#fde047"/>'
-        );
-      }
-    },
-    hospital: {
-      pal: 'crimson',
-      body: function (a, b) {
-        return (
-          '<path class="zaaa-stroke-only" d="M8.8 6.4V4.7C8.8 3.8 9.5 3.1 10.4 3.1H13.6C14.5 3.1 15.2 3.8 15.2 4.7V6.4" fill="none" stroke="url(#' + b + ')" stroke-width="2.1" stroke-linecap="round"/>' +
-          '<rect x="3.2" y="6.2" width="17.6" height="14" rx="3.2" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M10.6 9.6H13.4V11.8H15.6V14.6H13.4V16.8H10.6V14.6H8.4V11.8H10.6V9.6Z" fill="#ffffff" fill-opacity="0.97"/>'
-        );
-      }
-    },
-    life: {
-      pal: 'crimson',
-      body: function (a, b) {
-        return (
-          '<path d="M12 20.4C12 20.4 3.4 15.2 3.4 9.2C3.4 6.2 5.7 4 8.5 4C10.2 4 11.5 4.9 12 6C12.5 4.9 13.8 4 15.5 4C18.3 4 20.6 6.2 20.6 9.2C20.6 15.2 12 20.4 12 20.4Z" fill="url(#' + a + ')" stroke="url(#' + b + ')" stroke-width="0.7"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path class="zaaa-stroke-only" d="M7.6 11.4H10.1L11.3 9.1L12.8 13.6L14 11.4H16.4" fill="none" stroke="#ffffff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>'
-        );
-      }
-    },
-    nerve: {
-      pal: 'nerve',
-      body: function (a) {
-        return (
-          '<path d="M12.6 2.2C13.7 5.9 18.5 8.2 18.5 13.5C18.5 17.5 15.6 21 12 21C8.4 21 5.5 17.6 5.5 13.7C5.5 10.6 7.2 8.4 8.9 6.9C8.7 8.9 9.7 10.1 10.9 10.6C10.5 7.7 10.3 5 12.6 2.2Z" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function (a, b) {
-        return (
-          '<path d="M12.2 10.3C12.9 12.1 14.9 13.2 14.9 15.7C14.9 17.4 13.6 18.8 12 18.8C10.4 18.8 9.2 17.4 9.2 15.7C9.2 14 10.5 12.6 12.2 10.3Z" fill="url(#' + b + ')"/>'
-        );
-      }
-    },
-    city: {
-      pal: 'cyan',
-      body: function (a, b) {
-        return (
-          '<path d="M12.4 20.6V10H18.4C19.6 10 20.5 10.9 20.5 12.1V20.6H12.4Z" fill="url(#' + b + ')" fill-opacity="0.9"/>' +
-          '<path d="M3.8 20.6V6.1C3.8 4.9 4.7 4 5.9 4H11.5C12.7 4 13.6 4.9 13.6 6.1V20.6H3.8Z" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="6.4" y="6.9" width="4.6" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<rect x="6.4" y="10.4" width="4.6" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.92"/>' +
-          '<rect x="6.4" y="13.9" width="2.6" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<rect x="15.2" y="13" width="2.8" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.94"/>' +
-          '<rect x="15.2" y="16.2" width="2.8" height="1.6" rx="0.8" fill="#ffffff" fill-opacity="0.94"/>'
-        );
-      }
+      wash: '<path class="zwc-wash-fill" d="M5 11.2L12 5L19 11.2V19.5H5V11.2Z" fill="' + WASH.ochre + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M3.2 11.6L12 3.8L20.8 11.6M5.2 10.2V19.8H18.8V10.2M9.8 19.8V13.8H14.2V19.8"/>'
     },
     items: {
-      pal: 'cyan',
-      body: function (a, b) {
-        return (
-          '<path class="zaaa-stroke-only" d="M8.8 7.2V5.3C8.8 4.4 9.5 3.7 10.4 3.7H13.6C14.5 3.7 15.2 4.4 15.2 5.3V7.2" fill="none" stroke="url(#' + b + ')" stroke-width="2" stroke-linecap="round"/>' +
-          '<rect x="3.2" y="7" width="17.6" height="13.2" rx="3" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<rect x="3.2" y="12.2" width="17.6" height="1.5" fill="#ffffff" fill-opacity="0.46"/>' +
-          '<rect x="9.8" y="10.6" width="4.4" height="4.6" rx="1.3" fill="#ffffff" fill-opacity="0.96"/>'
-        );
-      }
+      wash: '<rect class="zwc-wash-fill" x="4.5" y="7.5" width="15" height="12" rx="2" fill="' + WASH.sienna + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4" y="7.2" width="16" height="12.4" rx="2"/><path class="zwc-ink-stroke" d="M9 7.2V5.2C9 4.4 9.6 3.8 10.4 3.8H13.6C14.4 3.8 15 4.4 15 5.2V7.2M4 12.2H20M12 10.8V13.8"/>'
     },
-    education: {
-      pal: 'cyan',
-      body: function (a, b) {
-        return (
-          '<path d="M6.2 11.7V16.6C6.2 18.5 8.8 20 12 20C15.2 20 17.8 18.5 17.8 16.6V11.7L12 14.8L6.2 11.7Z" fill="url(#' + b + ')" fill-opacity="0.9"/>' +
-          '<path d="M12 4.1L21.8 9.1L12 14.1L2.2 9.1L12 4.1Z" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<circle cx="12" cy="9.1" r="1.45" fill="#ffffff"/>' +
-          '<path class="zaaa-stroke-only" d="M12 9.1L19.7 11.1V15.7" fill="none" stroke="#fde047" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-          '<circle cx="19.7" cy="16.4" r="1.2" fill="#fde047"/>'
-        );
-      }
-    },
-    newspaper: {
-      pal: 'cyan',
-      body: function (a) {
-        return (
-          '<path d="M5 5.6C5 4.4 6 3.4 7.2 3.4H14.3L19.6 8.7V18.4C19.6 19.6 18.6 20.6 17.4 20.6H7.2C6 20.6 5 19.6 5 18.4V5.6Z" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path d="M14.1 3.4V7.5C14.1 8.2 14.7 8.8 15.4 8.8H19.6L14.1 3.4Z" fill="#ffffff" fill-opacity="0.93"/>' +
-          '<rect x="8" y="11.6" width="8.2" height="1.8" rx="0.9" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<rect x="8" y="15.2" width="5.6" height="1.8" rx="0.9" fill="#ffffff" fill-opacity="0.88"/>'
-        );
-      }
-    },
-    account: {
-      pal: 'cyan',
-      body: function (a) {
-        return '<rect x="2.6" y="4.8" width="18.8" height="14.4" rx="3.2" fill="url(#' + a + ')"/>';
-      },
-      kinetic: function () {
-        return (
-          '<circle cx="8.8" cy="10.2" r="2.2" fill="#ffffff" fill-opacity="0.96"/>' +
-          '<path d="M5.6 16.2C6.2 14.4 7.3 13.5 8.8 13.5C10.3 13.5 11.4 14.4 12 16.2H5.6Z" fill="#ffffff" fill-opacity="0.95"/>' +
-          '<rect x="14" y="8.8" width="4.4" height="2.8" rx="0.8" fill="#fde047"/>' +
-          '<rect x="14" y="13.6" width="4.4" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.9"/>'
-        );
-      }
-    },
-    casino: {
-      pal: 'casino',
-      body: function (a, b) {
-        return (
-          '<circle cx="12" cy="12" r="8.8" fill="url(#' + a + ')"/>' +
-          '<circle class="zaaa-stroke-only" cx="12" cy="12" r="7" fill="none" stroke="url(#' + b + ')" stroke-width="1.75" stroke-dasharray="2.5 2.5"/>'
-        );
-      },
-      kinetic: function () {
-        return '<polygon points="12,7.5 16.2,12 12,16.5 7.8,12" fill="#ffffff" fill-opacity="0.97"/>';
-      }
+    city: {
+      wash: '<path class="zwc-wash-fill" d="M4.5 19.5V8.5L9.5 6.5V19.5H4.5ZM9.5 19.5V4.5L15 6.5V19.5H9.5ZM15 19.5V10L19.5 11.5V19.5H15Z" fill="' + WASH.cerulean + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M3.2 19.8H20.8M4.5 19.8V8.4L9.5 6.4V19.8M9.5 4.4L15 6.2V19.8M15 10.2L19.5 11.6V19.8M7 10.5H7.2M12 9.2H12.2M12 12.8H12.2M17 14.2H17.2"/>'
     },
     jobs: {
-      pal: 'copper',
-      body: function (a, b) {
-        return (
-          '<path class="zaaa-stroke-only" d="M9 7.3V5.3C9 4.4 9.7 3.7 10.6 3.7H13.4C14.3 3.7 15 4.4 15 5.3V7.3" fill="none" stroke="url(#' + b + ')" stroke-width="2" stroke-linecap="round"/>' +
-          '<rect x="3.2" y="7.1" width="17.6" height="12.9" rx="2.9" fill="url(#' + a + ')"/>'
-        );
-      },
-      kinetic: function () {
-        return (
-          '<path class="zaaa-stroke-only" d="M3.5 12.2C7.6 14 16.4 14 20.5 12.2" fill="none" stroke="#ffffff" stroke-opacity="0.68" stroke-width="1.55" stroke-linecap="round"/>' +
-          '<rect x="10.2" y="10.8" width="3.6" height="3.6" rx="1" fill="#ffffff" fill-opacity="0.97"/>'
-        );
-      }
+      wash: '<rect class="zwc-wash-fill" x="4" y="8" width="16" height="11.5" rx="2" fill="' + WASH.ochre + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="3.8" y="7.8" width="16.4" height="12" rx="2"/><path class="zwc-ink-stroke" d="M8.8 7.8V5.6C8.8 4.7 9.5 4 10.4 4H13.6C14.5 4 15.2 4.7 15.2 5.6V7.8M3.8 12.6H20.2"/>'
+    },
+    gym: {
+      wash: '<rect class="zwc-wash-fill" x="4.2" y="8.2" width="3.6" height="7.6" rx="1" fill="' + WASH.coral + '"/><rect class="zwc-wash-fill" x="16.2" y="8.2" width="3.6" height="7.6" rx="1" fill="' + WASH.coral + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M2.2 12H4.2M19.8 12H21.8M7.8 12H16.2"/><rect class="zwc-ink-stroke" x="4.2" y="7.6" width="3.6" height="8.8" rx="1"/><rect class="zwc-ink-stroke" x="16.2" y="7.6" width="3.6" height="8.8" rx="1"/>'
+    },
+    properties: {
+      wash: '<rect class="zwc-wash-fill" x="4.5" y="4.5" width="9.5" height="15.3" rx="1.2" fill="' + WASH.ochre + '"/><rect class="zwc-wash-fill" x="14" y="10" width="5.5" height="9.8" rx="1" fill="' + WASH.sage + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M3 19.8H21M4.5 19.8V4.4H14V19.8M14 10H19.5V19.8M7.5 8H11M7.5 11.5H11M7.5 15H11M16.2 13.5H17.5"/>'
+    },
+    education: {
+      wash: '<path class="zwc-wash-fill" d="M3.5 9.5L12 5.2L20.5 9.5L12 13.8L3.5 9.5Z" fill="' + WASH.cerulean + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M2.8 9.5L12 4.8L21.2 9.5L12 14.2L2.8 9.5ZM6.5 11.6V16.4C6.5 18 9 19.4 12 19.4C15 19.4 17.5 18 17.5 16.4V11.6M20.2 9.8V15.5"/>'
+    },
+    crimes: {
+      wash: '<path class="zwc-wash-fill" d="M4.5 12.2C6.4 8.6 17.6 8.6 19.5 12.2C17.8 15.8 14.8 17 12 17C9.2 17 6.2 15.8 4.5 12.2Z" fill="' + WASH.coral + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M3.8 12.2C6 8 18 8 20.2 12.2C18.2 16.2 15 17.4 12 17.4C9 17.4 5.8 16.2 3.8 12.2ZM7.6 12.2L10.2 11.4L9.2 13.6Z"/><path class="zwc-ink-stroke" d="M16.4 12.2L13.8 11.4L14.8 13.6Z"/>'
+    },
+    missions: {
+      wash: '<rect class="zwc-wash-fill" x="5.2" y="4.8" width="13.6" height="15.2" rx="1.8" fill="' + WASH.ochre + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="5" y="4.6" width="14" height="15.4" rx="1.8"/><path class="zwc-ink-stroke" d="M9 3.4H15V6H9V3.4ZM8.5 11.8L10.8 14L15.6 9.4M8.5 16.6H15.5"/>'
+    },
+    newspaper: {
+      wash: '<rect class="zwc-wash-fill" x="4.2" y="5" width="15.6" height="14.5" rx="1.6" fill="' + WASH.ochre + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4" y="4.8" width="16" height="14.8" rx="1.6"/><path class="zwc-ink-stroke" d="M7.2 8.4H16.8M7.2 12H12.2M7.2 15.4H16.8"/>'
     },
     jail: {
-      pal: 'copper',
-      body: function (a) {
-        return '<rect x="3.8" y="3.8" width="16.4" height="16.4" rx="3.2" fill="url(#' + a + ')"/>';
-      },
-      kinetic: function () {
-        return (
-          '<rect x="7.3" y="5.8" width="1.7" height="12.4" rx="0.85" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<rect x="15" y="5.8" width="1.7" height="12.4" rx="0.85" fill="#ffffff" fill-opacity="0.88"/>' +
-          '<rect x="9.6" y="9.4" width="4.8" height="5.2" rx="1.2" fill="#ffffff" fill-opacity="0.97"/>' +
-          '<circle cx="12" cy="12" r="1" fill="#ea580c"/>'
-        );
-      }
+      wash: '<rect class="zwc-wash-fill" x="4.5" y="4.5" width="15" height="15" rx="1.6" fill="' + WASH.sienna + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4.2" y="4.2" width="15.6" height="15.6" rx="1.6"/><path class="zwc-ink-stroke" d="M8.5 4.2V19.8M12 4.2V19.8M15.5 4.2V19.8M4.2 11.5H19.8"/>'
+    },
+    hospital: {
+      wash: '<rect class="zwc-wash-fill" x="4.5" y="5.5" width="15" height="14" rx="2.2" fill="' + WASH.sage + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4.2" y="5.2" width="15.6" height="14.4" rx="2.2"/><path class="zwc-ink-stroke" d="M12 8.8V16M8.4 12.4H15.6"/>'
+    },
+    casino: {
+      wash: '<rect class="zwc-wash-fill" x="4.8" y="4.8" width="14.4" height="14.4" rx="2.6" fill="' + WASH.plum + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4.5" y="4.5" width="15" height="15" rx="2.6"/><circle class="zwc-ink-stroke" cx="8.6" cy="8.6" r="1"/><circle class="zwc-ink-stroke" cx="12" cy="12" r="1"/><circle class="zwc-ink-stroke" cx="15.4" cy="15.4" r="1"/><circle class="zwc-ink-stroke" cx="15.4" cy="8.6" r="1"/><circle class="zwc-ink-stroke" cx="8.6" cy="15.4" r="1"/>'
+    },
+    hof: {
+      wash: '<path class="zwc-wash-fill" d="M7 4.5H17V9.5C17 12.5 14.8 14.8 12 14.8C9.2 14.8 7 12.5 7 9.5V4.5Z" fill="' + WASH.ochre + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M6.8 4.2H17.2V9.4C17.2 12.4 14.9 14.8 12 14.8C9.1 14.8 6.8 12.4 6.8 9.4V4.2ZM6.8 6.2H4.4C4.4 9 5.5 10.4 6.8 10.6M17.2 6.2H19.6C19.6 9 18.5 10.4 17.2 10.6M12 14.8V18.6M8.2 19.2H15.8"/>'
+    },
+    faction: {
+      wash: '<path class="zwc-wash-fill" d="M12 3.6L19.2 6.5V11.8C19.2 16.2 16 19.2 12 20.6C8 19.2 4.8 16.2 4.8 11.8V6.5L12 3.6Z" fill="' + WASH.ochre + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M12 3.2L19.5 6.2V11.8C19.5 16.4 16.2 19.5 12 21C7.8 19.5 4.5 16.4 4.5 11.8V6.2L12 3.2ZM8.6 13.6L9.6 9.4L12 11.6L14.4 9.4L15.4 13.6H8.6Z"/>'
+    },
+    elimination: {
+      wash: '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.2" fill="' + WASH.coral + '"/>',
+      ink: '<circle class="zwc-ink-stroke" cx="12" cy="12" r="7.5"/><circle class="zwc-ink-stroke" cx="12" cy="12" r="3"/><path class="zwc-ink-stroke" d="M12 2.4V5.4M12 18.6V21.6M2.4 12H5.4M18.6 12H21.6"/>'
+    },
+    bank: {
+      wash: '<path class="zwc-wash-fill" d="M4 9.5L12 4.2L20 9.5H4Z" fill="' + WASH.sage + '"/><rect class="zwc-wash-fill" x="4.5" y="17.2" width="15" height="2.6" fill="' + WASH.sage + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M3.4 9.6L12 3.8L20.6 9.6H3.4ZM6.5 9.6V17.2M10.2 9.6V17.2M13.8 9.6V17.2M17.5 9.6V17.2M3.6 17.2H20.4V19.8H3.6V17.2Z"/>'
+    },
+    market: {
+      wash: '<path class="zwc-wash-fill" d="M4.2 5.2H19.8L21 10.4H3L4.2 5.2Z" fill="' + WASH.sienna + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M4.2 4.8H19.8L21.2 10.4H2.8L4.2 4.8ZM5.2 10.4V19.6H18.8V10.4M9.8 19.6V14H14.2V19.6"/>'
+    },
+    attack: {
+      wash: '<circle class="zwc-wash-fill" cx="12" cy="12" r="6.8" fill="' + WASH.coral + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M4.8 19.2L18.8 5.2M14.5 4.8H19.2V9.5M19.2 19.2L5.2 5.2M9.5 4.8H4.8V9.5"/>'
+    },
+    cash: {
+      wash: '<rect class="zwc-wash-fill" x="3.2" y="6.6" width="17.6" height="10.8" rx="2" fill="' + WASH.sage + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="3" y="6.4" width="18" height="11.2" rx="2"/><circle class="zwc-ink-stroke" cx="12" cy="12" r="2.6"/><path class="zwc-ink-stroke" d="M6.2 9.5H6.4M17.6 14.5H17.8"/>'
+    },
+    energy: {
+      wash: '<path class="zwc-wash-fill" d="M13.2 3.2L5.8 13H11.6L10.6 20.8L18.2 10.8H12.4L13.2 3.2Z" fill="' + WASH.sage + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M13.2 3L5.6 13.2H11.5L10.5 21L18.4 10.6H12.5L13.2 3Z"/>'
+    },
+    nerve: {
+      wash: '<path class="zwc-wash-fill" d="M12 3.8C15.5 7.4 18 10.4 18 14C18 17.4 15.3 20 12 20C8.7 20 6 17.4 6 14C6 11.2 7.8 8.6 9.8 6.4L10.8 9.4L12 3.8Z" fill="' + WASH.coral + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M12 3.5C15.6 7.2 18.2 10.3 18.2 14C18.2 17.5 15.4 20.2 12 20.2C8.6 20.2 5.8 17.5 5.8 14C5.8 11 7.7 8.4 9.8 6.2L10.8 9.4L12 3.5Z"/>'
+    },
+    life: {
+      wash: '<path class="zwc-wash-fill" d="M12 19.8C7 16.2 4 12.8 4 9.2C4 6.6 6 4.8 8.4 4.8C10 4.8 11.3 5.6 12 6.8C12.7 5.6 14 4.8 15.6 4.8C18 4.8 20 6.6 20 9.2C20 12.8 17 16.2 12 19.8Z" fill="' + WASH.ochre + '"/>',
+      ink: '<path class="zwc-ink-stroke" d="M12 20C6.8 16.3 3.8 12.8 3.8 9.2C3.8 6.5 5.9 4.6 8.4 4.6C10 4.6 11.3 5.4 12 6.7C12.7 5.4 14 4.6 15.6 4.6C18.1 4.6 20.2 6.5 20.2 9.2C20.2 12.8 17.2 16.3 12 20ZM7.5 12H10L11.2 9.8L12.8 14.2L14 12H16.5"/>'
+    },
+    account: {
+      wash: '<circle class="zwc-wash-fill" cx="12" cy="8.4" r="3.6" fill="' + WASH.cerulean + '"/><path class="zwc-wash-fill" d="M5.5 19.5C6.6 15.6 9 14 12 14C15 14 17.4 15.6 18.5 19.5H5.5Z" fill="' + WASH.ochre + '"/>',
+      ink: '<circle class="zwc-ink-stroke" cx="12" cy="8.4" r="3.6"/><path class="zwc-ink-stroke" d="M5.2 19.6C6.4 15.6 8.9 14 12 14C15.1 14 17.6 15.6 18.8 19.6"/>'
+    },
+    admin: {
+      wash: '<rect class="zwc-wash-fill" x="4.2" y="5" width="15.6" height="14" rx="2.4" fill="' + WASH.plum + '"/>',
+      ink: '<rect class="zwc-ink-stroke" x="4" y="4.8" width="16" height="14.4" rx="2.4"/><path class="zwc-ink-stroke" d="M7.2 9.4H16.8M7.2 14.6H16.8"/><circle class="zwc-ink-stroke" cx="10.2" cy="9.4" r="1.6"/><circle class="zwc-ink-stroke" cx="14.2" cy="14.6" r="1.6"/>'
     },
     menu: {
-      pal: 'studio',
-      body: function (a, b) {
-        return (
-          '<rect x="3.6" y="3.6" width="7.2" height="7.2" rx="2.2" fill="url(#' + a + ')"/>' +
-          '<rect x="13.2" y="3.6" width="7.2" height="7.2" rx="2.2" fill="url(#' + b + ')"/>' +
-          '<rect x="3.6" y="13.2" width="7.2" height="7.2" rx="2.2" fill="url(#' + a + ')" fill-opacity="0.88"/>'
-        );
-      },
-      kinetic: function () {
-        return '<rect x="13.2" y="13.2" width="7.2" height="7.2" rx="2.2" fill="#ffffff" fill-opacity="0.96"/>';
-      }
+      wash: '<rect class="zwc-wash-fill" x="4" y="5.5" width="16" height="13" rx="2" fill="' + WASH.ochre + '" fill-opacity="0.32"/>',
+      ink: '<path class="zwc-ink-stroke" d="M4.2 7.2H19.8M4.2 12H19.8M4.2 16.8H19.8"/>'
+    },
+    close: {
+      wash: '',
+      ink: '<path class="zwc-ink-stroke" d="M6 6L18 18M18 6L6 18"/>'
+    },
+    chrono: {
+      wash: '<circle class="zwc-wash-fill" cx="12" cy="13" r="7.4" fill="' + WASH.cerulean + '"/>',
+      ink: '<circle class="zwc-ink-stroke" cx="12" cy="13" r="7.6"/><path class="zwc-ink-stroke" d="M9.5 3.2H14.5M12 3.2V5.4M12 9.2V13.2L14.8 14.8"/>'
     }
   };
-  ICON_SPECS.job = ICON_SPECS.jobs;
 
-  function renderVividIcon(iconKey, slotPrefix) {
-    var specKey = ICON_SPECS[iconKey] ? iconKey : 'home';
-    var spec = ICON_SPECS[specKey];
-    var pal = PALETTES[spec.pal] || PALETTES.gold;
-    var safeKey = String(iconKey || specKey).replace(/[^a-z0-9_-]/gi, '');
-    var prefix = slotPrefix ? String(slotPrefix) + '-' : '';
-    var idA = 'zaaa-ig-' + prefix + safeKey + '-a';
-    var idB = 'zaaa-ig-' + prefix + safeKey + '-b';
-    var idS = 'zaaa-ig-' + prefix + safeKey + '-s';
-
+  function renderSketchIcon(iconKey, extraClass) {
+    var key = SKETCH_ICONS[iconKey] ? iconKey : 'home';
+    var spec = SKETCH_ICONS[key];
+    var cls = 'zaaa-vivid-svg zaaa-duotone-svg zwc-sketch-ico' + (extraClass ? ' ' + extraClass : '');
     return (
-      '<svg class="zaaa-vivid-svg zaaa-duotone-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-        '<defs>' +
-          '<linearGradient id="' + idA + '" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
-            '<stop offset="0%" stop-color="' + pal.a1 + '"/>' +
-            '<stop offset="52%" stop-color="' + pal.a2 + '"/>' +
-            '<stop offset="100%" stop-color="' + pal.a3 + '"/>' +
-          '</linearGradient>' +
-          '<linearGradient id="' + idB + '" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">' +
-            '<stop offset="0%" stop-color="' + pal.b1 + '"/>' +
-            '<stop offset="100%" stop-color="' + pal.b2 + '"/>' +
-          '</linearGradient>' +
-          '<linearGradient id="' + idS + '" x1="12" y1="2" x2="12" y2="12" gradientUnits="userSpaceOnUse">' +
-            '<stop offset="0%" stop-color="#ffffff" stop-opacity="0.62"/>' +
-            '<stop offset="55%" stop-color="#ffffff" stop-opacity="0.14"/>' +
-            '<stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>' +
-          '</linearGradient>' +
-        '</defs>' +
-        '<ellipse cx="12" cy="21.4" rx="6" ry="1.05" fill="#000000" fill-opacity="0.22"/>' +
-        spec.body(idA, idB) +
-        '<path class="zaaa-stroke-only zaaa-glass-sheen" d="M6.8 5.2C9.4 3.8 14.6 3.8 17.2 5.2" fill="none" stroke="url(#' + idS + ')" stroke-width="1.2" stroke-linecap="round"/>' +
-        '<g class="zaaa-ico-kinetic">' + spec.kinetic(idA, idB) + '</g>' +
+      '<svg class="' + cls + '" data-zwc-ink="' + key + '" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="var(--zwc-svg-ink, currentColor)" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" ' +
+      'xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        (spec.wash || '') +
+        spec.ink +
       '</svg>'
     );
   }
 
-  /* Bespoke Multi-Color 3D Brand Prism Crest */
-  var BRAND_CREST_SVG =
-    '<svg class="zaaa-vivid-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-brand-a" x1="3" y1="2" x2="29" y2="30" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="48%" stop-color="#f59e0b"/>' +
-          '<stop offset="100%" stop-color="#d97706"/>' +
-        '</linearGradient>' +
-        '<linearGradient id="zaaa-ig-brand-b" x1="8" y1="7" x2="24" y2="25" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#6ee7b7"/>' +
-          '<stop offset="55%" stop-color="#10b981"/>' +
-          '<stop offset="100%" stop-color="#047857"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<rect x="6" y="6" width="20" height="20" rx="5.5" transform="rotate(45 16 16)" fill="url(#zaaa-ig-brand-a)"/>' +
-      '<polygon points="16,4.5 27.5,16 16,16" fill="#ffffff" fill-opacity="0.28"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<polygon points="16,8.8 23.2,16 16,23.2 8.8,16" fill="url(#zaaa-ig-brand-b)"/>' +
-        '<polygon points="16,11.8 20.2,16 16,20.2 11.8,16" fill="#ffffff" fill-opacity="0.96"/>' +
-        '<circle cx="16" cy="16" r="1.65" fill="#0f172a"/>' +
-      '</g>' +
-    '</svg>';
-
-  /* Bespoke 3D Cyan-Emerald Chronometer Icon (Zone City Time) */
-  var CHRONO_SVG =
-    '<svg class="zaaa-vivid-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-chrono-a" x1="4" y1="4" x2="20" y2="21" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#67e8f9"/>' +
-          '<stop offset="52%" stop-color="#10b981"/>' +
-          '<stop offset="100%" stop-color="#2563eb"/>' +
-        '</linearGradient>' +
-        '<linearGradient id="zaaa-ig-chrono-b" x1="8" y1="2" x2="16" y2="6" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="100%" stop-color="#f59e0b"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<rect x="9.2" y="2" width="5.6" height="2.6" rx="1.2" fill="url(#zaaa-ig-chrono-b)"/>' +
-      '<circle cx="12" cy="13.2" r="8.2" fill="url(#zaaa-ig-chrono-a)"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<circle class="zaaa-stroke-only" cx="12" cy="13.2" r="5.6" fill="none" stroke="#ffffff" stroke-opacity="0.48" stroke-width="1.3"/>' +
-        '<path class="zaaa-stroke-only" d="M12 9.8V13.3L14.6 15" fill="none" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</g>' +
-    '</svg>';
-
-  /* Bespoke 3D Sunburst & Royal Crescent Moon Theme Icons */
+  /* Hand-Inked Sun & Crescent Moon Theme Icons */
   var THEME_SVGS =
-    '<svg class="zaaa-vivid-svg zaaa-moon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-moon-a" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="55%" stop-color="#fbbf24"/>' +
-          '<stop offset="100%" stop-color="#d97706"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<path d="M20.6 13.4A8.6 8.6 0 1 1 10.6 3.4A6.7 6.7 0 0 0 20.6 13.4Z" fill="url(#zaaa-ig-moon-a)"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<path d="M17.5 4.2L18.1 5.7L19.6 6.3L18.1 6.9L17.5 8.4L16.9 6.9L15.4 6.3L16.9 5.7L17.5 4.2Z" fill="#67e8f9"/>' +
-        '<circle cx="14.2" cy="9.2" r="1.05" fill="#ffffff"/>' +
-      '</g>' +
+    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-moon-svg" viewBox="0 0 24 24" fill="none" stroke="var(--zwc-svg-ink, currentColor)" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<path class="zwc-wash-fill" d="M19.8 13.6A7.8 7.8 0 1 1 10.4 4.2A6.2 6.2 0 0 0 19.8 13.6Z" fill="' + WASH.ochre + '"/>' +
+      '<path class="zwc-ink-stroke" d="M19.8 13.6A7.8 7.8 0 1 1 10.4 4.2A6.2 6.2 0 0 0 19.8 13.6Z"/>' +
     '</svg>' +
-    '<svg class="zaaa-vivid-svg zaaa-sun-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-sun-a" x1="6" y1="6" x2="18" y2="18" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="55%" stop-color="#f59e0b"/>' +
-          '<stop offset="100%" stop-color="#ea580c"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<circle cx="12" cy="12" r="5.2" fill="url(#zaaa-ig-sun-a)"/>' +
-      '<circle cx="10.6" cy="10.5" r="1.6" fill="#ffffff" fill-opacity="0.65"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<path class="zaaa-stroke-only" d="M12 2.2V4.6M12 19.4V21.8M4.9 4.9L6.6 6.6M17.4 17.4L19.1 19.1M2.2 12H4.6M19.4 12H21.8M4.9 19.1L6.6 17.4M17.4 6.6L19.1 4.9" fill="none" stroke="#f59e0b" stroke-width="2.1" stroke-linecap="round"/>' +
-      '</g>' +
+    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-sun-svg" viewBox="0 0 24 24" fill="none" stroke="var(--zwc-svg-ink, currentColor)" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<circle class="zwc-wash-fill" cx="12" cy="12" r="4.6" fill="' + WASH.ochre + '"/>' +
+      '<circle class="zwc-ink-stroke" cx="12" cy="12" r="4.6"/>' +
+      '<path class="zwc-ink-stroke" d="M12 2.8V5M12 19V21.2M5.5 5.5L7.1 7.1M16.9 16.9L18.5 18.5M2.8 12H5M19 12H21.2M5.5 18.5L7.1 16.9M16.9 7.1L18.5 5.5"/>' +
     '</svg>';
 
-  /* Bespoke 3D Engine Studio Sliders & Spark Icon (Admin Pill) */
-  var ADMIN_STUDIO_SVG =
-    '<svg class="zaaa-vivid-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-admin-a" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#67e8f9"/>' +
-          '<stop offset="50%" stop-color="#8b5cf6"/>' +
-          '<stop offset="100%" stop-color="#ec4899"/>' +
-        '</linearGradient>' +
-        '<linearGradient id="zaaa-ig-admin-b" x1="12" y1="2" x2="22" y2="12" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="100%" stop-color="#f59e0b"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<rect x="3" y="4" width="18" height="16" rx="4" fill="url(#zaaa-ig-admin-a)"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<rect x="6.5" y="8.4" width="11" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.72"/>' +
-        '<rect x="6.5" y="13.9" width="11" height="1.7" rx="0.85" fill="#ffffff" fill-opacity="0.72"/>' +
-        '<circle cx="10.2" cy="9.25" r="2.1" fill="#ffffff"/>' +
-        '<circle cx="14.2" cy="14.75" r="2.1" fill="url(#zaaa-ig-admin-b)"/>' +
-      '</g>' +
-    '</svg>';
-
-  /* Bespoke 3D Mobile Left-Rail Expand/Collapse Chevron Jewel */
-  var RAIL_TOGGLE_SVG =
-    '<svg class="zaaa-vivid-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-rail-a" x1="3" y1="3" x2="21" y2="21" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#67e8f9"/>' +
-          '<stop offset="52%" stop-color="#3b82f6"/>' +
-          '<stop offset="100%" stop-color="#6366f1"/>' +
-        '</linearGradient>' +
-        '<linearGradient id="zaaa-ig-rail-b" x1="8" y1="5" x2="19" y2="19" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fef08a"/>' +
-          '<stop offset="100%" stop-color="#f59e0b"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<rect x="2.5" y="3.5" width="19" height="17" rx="4.5" fill="url(#zaaa-ig-rail-a)"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<path class="zaaa-stroke-only" d="M8.2 8.4L12 12L8.2 15.6" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path class="zaaa-stroke-only" d="M13.2 8.4L17 12L13.2 15.6" fill="none" stroke="url(#zaaa-ig-rail-b)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</g>' +
-    '</svg>';
-
-  /* Bespoke 3D Noir Syndicate Operative Avatar (#zone-operative-crest) */
+  /* Hand-Inked Operative Portrait Avatar (#zone-operative-crest) */
   var OPERATIVE_AVATAR_SVG =
-    '<svg class="zaaa-vivid-svg zaaa-duotone-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<defs>' +
-        '<linearGradient id="zaaa-ig-avatar-a" x1="6" y1="6" x2="30" y2="32" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#fde047"/>' +
-          '<stop offset="52%" stop-color="#f59e0b"/>' +
-          '<stop offset="100%" stop-color="#d97706"/>' +
-        '</linearGradient>' +
-        '<linearGradient id="zaaa-ig-avatar-b" x1="11" y1="8" x2="25" y2="21" gradientUnits="userSpaceOnUse">' +
-          '<stop offset="0%" stop-color="#67e8f9"/>' +
-          '<stop offset="100%" stop-color="#3b82f6"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<circle cx="18" cy="18" r="15" fill="url(#zaaa-ig-avatar-b)" fill-opacity="0.16"/>' +
-      '<path d="M7.6 31C9.1 25.1 12.9 22.4 18 22.4C23.1 22.4 26.9 25.1 28.4 31H7.6Z" fill="url(#zaaa-ig-avatar-a)"/>' +
-      '<path d="M15.6 22.6L18 27.8L20.4 22.6H15.6Z" fill="#ffffff" fill-opacity="0.92"/>' +
-      '<g class="zaaa-ico-kinetic">' +
-        '<circle cx="18" cy="14.4" r="5.8" fill="url(#zaaa-ig-avatar-b)"/>' +
-        '<rect x="13.6" y="13" width="8.8" height="2.6" rx="1.3" fill="#ffffff" fill-opacity="0.96"/>' +
-        '<rect x="14.8" y="13.6" width="6.4" height="1.4" rx="0.7" fill="#10b981"/>' +
-      '</g>' +
+    '<svg class="zaaa-vivid-svg zaaa-duotone-svg zwc-sketch-ico" viewBox="0 0 36 36" fill="none" stroke="var(--zwc-svg-ink, currentColor)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      '<circle class="zwc-wash-fill" cx="18" cy="13.2" r="5.6" fill="' + WASH.ochre + '"/>' +
+      '<path class="zwc-wash-fill" d="M7.8 30.2C9.4 24.4 13.1 21.8 18 21.8C22.9 21.8 26.6 24.4 28.2 30.2H7.8Z" fill="' + WASH.sage + '"/>' +
+      '<circle class="zwc-ink-stroke" cx="18" cy="13.2" r="5.6"/>' +
+      '<path class="zwc-ink-stroke" d="M7.8 30.2C9.4 24.4 13.1 21.8 18 21.8C22.9 21.8 26.6 24.4 28.2 30.2"/>' +
     '</svg>';
 
   var CITY_CATALOG = {
@@ -639,7 +207,6 @@
   var EN_TITLES = ['Rookie', 'Petty Thief', 'Hustler', 'Enforcer', 'Capo', 'Underboss', 'Boss'];
   var AR_TITLES = ['مستجد', 'نشّال مبتدئ', 'محتال شوارع', 'منفّذ ميداني', 'كابو', 'نائب الزعيم', 'زعيم النقابة'];
 
-  /* Cached DOM references for zero-querySelectorAll 2000ms telemetry diff */
   var hudCache = {
     hudEl: null,
     cashSrcEl: null,
@@ -678,8 +245,17 @@
     return html.lang === 'ar' || html.dir === 'rtl';
   }
 
-  function formatMoney(n) {
+  function isMobileViewport() {
+    return (window.innerWidth || document.documentElement.clientWidth || 1024) <= 900;
+  }
+
+  function formatMoney(n, compact) {
     var val = Math.max(0, Math.round(Number(n) || 0));
+    if (compact) {
+      if (val >= 1000000000) return '$' + (val / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+      if (val >= 1000000) return '$' + (val / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+      if (val >= 100000) return '$' + Math.round(val / 1000) + 'K';
+    }
     return '$' + String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
@@ -696,7 +272,36 @@
     return svgParserHost.firstElementChild || svgParserHost.firstChild;
   }
 
+  function isDrawerOpen() {
+    var root = document.documentElement;
+    return Boolean(root && root.classList && root.classList.contains('zaaa-rail-open'));
+  }
+
+  function setMobileDrawerOpen(nextOpen) {
+    var root = document.documentElement;
+    if (!root || !root.classList) return;
+    var open = Boolean(nextOpen) && isMobileViewport();
+    if (open) {
+      root.classList.add('zaaa-rail-open');
+    } else {
+      root.classList.remove('zaaa-rail-open');
+      /* Keep React navOpen state clean if it had been toggled externally */
+      var navArea = document.getElementById('zone-area-navigation');
+      if (navArea && navArea.getAttribute('data-zone-nav-open') === 'true') {
+        var nativeToggle = document.querySelector('.zone-topbar .zone-nav-toggle');
+        if (nativeToggle && typeof nativeToggle.click === 'function') {
+          lastObservedNavOpen = 'false';
+          try { nativeToggle.click(); } catch (_) {}
+        }
+      }
+    }
+    updateDrawerTriggerAttributes();
+  }
+
   function navigateToScreen(screenId) {
+    if (isDrawerOpen()) {
+      setMobileDrawerOpen(false);
+    }
     try {
       if (window.__zoneGame && typeof window.__zoneGame.go === 'function') {
         window.__zoneGame.go(screenId);
@@ -727,24 +332,6 @@
     var brand = document.querySelector('.zone-topbar .zone-brand');
     if (!brand) return;
 
-    var crest = brand.querySelector('.zaaa-brand-crest');
-    if (!crest) {
-      crest = document.createElement('span');
-      crest.className = 'zaaa-brand-crest';
-      crest.setAttribute('aria-hidden', 'true');
-      crest.innerHTML = BRAND_CREST_SVG;
-      brand.appendChild(crest);
-    }
-
-    var meta = brand.querySelector('.zaaa-brand-meta');
-    if (!meta) {
-      meta = document.createElement('span');
-      meta.className = 'zaaa-brand-meta';
-      meta.setAttribute('aria-hidden', 'true');
-      brand.appendChild(meta);
-    }
-    setTextIfChanged(meta, isArabic() ? 'نقابة الجريمة' : 'SYNDICATE MMO');
-
     if (brand.getAttribute('data-zaaa-ready') !== '1') {
       brand.setAttribute('data-zaaa-ready', '1');
       brand.setAttribute('role', 'button');
@@ -767,7 +354,7 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 2. INTEGRATED GAME COMMAND DOCK (.zone-header-links)
+   * 2. DESKTOP HEADER LINKS (.zone-header-links)
    * ------------------------------------------------------------------------ */
   function classifyHeaderLink(rawText, index) {
     var lower = String(rawText || '').trim().toLowerCase();
@@ -829,17 +416,15 @@
       }
 
       var meta = classifyHeaderLink(rawLabel, i);
-      var slotId = 'top-' + i;
-
       var iconEl = btn.querySelector('.zaaa-link-icon');
       if (!iconEl) {
         iconEl = document.createElement('span');
         iconEl.className = 'zaaa-link-icon';
         iconEl.setAttribute('aria-hidden', 'true');
-        iconEl.innerHTML = renderVividIcon(meta.key, slotId);
+        iconEl.innerHTML = renderSketchIcon(meta.key);
         btn.appendChild(iconEl);
       } else if (iconEl.getAttribute('data-ico') !== meta.key) {
-        iconEl.innerHTML = renderVividIcon(meta.key, slotId);
+        iconEl.innerHTML = renderSketchIcon(meta.key);
       }
       iconEl.setAttribute('data-ico', meta.key);
 
@@ -855,9 +440,9 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 3. UNIFIED LIVE SYNDICATE HUD CAPSULE (#zone-topbar-hud)
+   * 3. UNIFIED LIVE SKETCHBOOK HUD CAPSULE (#zone-topbar-hud)
    *    Desktop (>900px): Cash, Energy, Nerve, City
-   *    Mobile (<=900px): Sticky Row 2 with Cash, Energy, Nerve, Life, City
+   *    Mobile (<=900px): Compact 44px-tall Cash, Energy, Nerve (+ City >720px)
    * ------------------------------------------------------------------------ */
   function readBarFromCachedNodes(barId, fallbackMax, trackEl, figEl) {
     try {
@@ -902,13 +487,20 @@
   }
 
   function readCashFromCachedNode(cashEl) {
+    var compact = (window.innerWidth || 1024) <= 520;
     try {
       if (window.__zoneGame && window.__zoneGame.p && Number.isFinite(Number(window.__zoneGame.p.cash))) {
-        return formatMoney(window.__zoneGame.p.cash);
+        return formatMoney(window.__zoneGame.p.cash, compact);
       }
     } catch (_) {}
     if (cashEl && cashEl.textContent && cashEl.textContent.trim()) {
       var raw = cashEl.textContent.trim();
+      if (compact) {
+        var digits = Number(raw.replace(/[^0-9.-]/g, ''));
+        if (Number.isFinite(digits) && digits >= 0) {
+          return formatMoney(digits, true);
+        }
+      }
       return raw.indexOf('$') >= 0 ? raw : '$' + raw;
     }
     return '$0';
@@ -958,27 +550,27 @@
     hud = document.createElement('div');
     hud.id = 'zone-topbar-hud';
     hud.setAttribute('role', 'region');
-    hud.setAttribute('aria-label', 'Syndicate Live Telemetry');
+    hud.setAttribute('aria-label', isArabic() ? 'مؤشرات النقابة المباشرة' : 'Syndicate Live Telemetry');
 
     hud.innerHTML =
       '<button type="button" class="zaaa-hud-pill zaaa-hud-cash" data-hud="cash">' +
-        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('cash', 'hud') + '</span>' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderSketchIcon('cash') + '</span>' +
         '<bdi class="zaaa-hud-val">$0</bdi>' +
       '</button>' +
       '<button type="button" class="zaaa-hud-pill zaaa-hud-energy" data-hud="energy">' +
-        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('energy', 'hud') + '</span>' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderSketchIcon('energy') + '</span>' +
         '<bdi class="zaaa-hud-val">100/100</bdi>' +
       '</button>' +
       '<button type="button" class="zaaa-hud-pill zaaa-hud-nerve" data-hud="nerve">' +
-        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('nerve', 'hud') + '</span>' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderSketchIcon('nerve') + '</span>' +
         '<bdi class="zaaa-hud-val">15/15</bdi>' +
       '</button>' +
       '<button type="button" class="zaaa-hud-pill zaaa-hud-life" data-hud="life">' +
-        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('life', 'hud') + '</span>' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderSketchIcon('life') + '</span>' +
         '<bdi class="zaaa-hud-val">100/100</bdi>' +
       '</button>' +
       '<button type="button" class="zaaa-hud-pill zaaa-hud-city" data-hud="city">' +
-        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderVividIcon('city', 'hud') + '</span>' +
+        '<span class="zaaa-hud-ico" aria-hidden="true">' + renderSketchIcon('city') + '</span>' +
         '<span class="zaaa-hud-city-code">ZCT</span>' +
         '<span class="zaaa-hud-val">Zone City</span>' +
       '</button>';
@@ -1001,6 +593,7 @@
       })(pills[i]);
     }
 
+    /* Append at end of [data-zheaderbar]; CSS order positions cleanly */
     headerBar.appendChild(hud);
     return hud;
   }
@@ -1044,11 +637,15 @@
     hudCache.cityValEl = cityPill ? cityPill.querySelector('.zaaa-hud-val') : null;
 
     var ar = isArabic();
-    if (cashPill) cashPill.title = ar ? 'النقد المتاح - افتح الخزنة' : 'Liquid Cash - Open Bank Vault';
-    if (energyPill) energyPill.title = ar ? 'الطاقة القتالية - افتح النادي' : 'Energy - Open Gym';
-    if (nervePill) nervePill.title = ar ? 'الجرأة الميدانية - افتح الجرائم' : 'Nerve - Open Street Crimes';
-    if (lifePill) lifePill.title = ar ? 'الصحة القتالية - افتح المستشفى' : 'Life - Open Hospital';
-    if (cityPill) cityPill.title = ar ? 'الموقع الحالي - انتقل إلى خريطة المدينة' : 'Active Sector - Open City Map';
+    var regionLabel = ar ? 'مؤشرات النقابة المباشرة' : 'Syndicate Live Telemetry';
+    if (hud.getAttribute('aria-label') !== regionLabel) {
+      hud.setAttribute('aria-label', regionLabel);
+    }
+    if (cashPill) cashPill.title = ar ? 'النقد المتاح - افتح البنك' : 'Liquid Cash - Open Bank';
+    if (energyPill) energyPill.title = ar ? 'الطاقة - افتح النادي' : 'Energy - Open Gym';
+    if (nervePill) nervePill.title = ar ? 'الجرأة - افتح الجرائم' : 'Nerve - Open Crimes';
+    if (lifePill) lifePill.title = ar ? 'الصحة - افتح المستشفى' : 'Life - Open Hospital';
+    if (cityPill) cityPill.title = ar ? 'الموقع الحالي - خريطة المدينة' : 'Active Sector - City Map';
   }
 
   function applyCachedHudValues() {
@@ -1069,6 +666,7 @@
     if (energy.pct !== hudCache.lastEnergyPct && hudCache.energyPillEl) {
       hudCache.lastEnergyPct = energy.pct;
       hudCache.energyPillEl.style.setProperty('--zaaa-pct', energy.pct + '%');
+      hudCache.energyPillEl.style.setProperty('--zaaa-pct-num', String(energy.pct / 100));
     }
 
     var nerve = readBarFromCachedNodes('nerve', 15, hudCache.nerveTrackEl, hudCache.nerveFigEl);
@@ -1080,6 +678,7 @@
     if (nerve.pct !== hudCache.lastNervePct && hudCache.nervePillEl) {
       hudCache.lastNervePct = nerve.pct;
       hudCache.nervePillEl.style.setProperty('--zaaa-pct', nerve.pct + '%');
+      hudCache.nervePillEl.style.setProperty('--zaaa-pct-num', String(nerve.pct / 100));
     }
 
     var life = readBarFromCachedNodes('life', 100, hudCache.lifeTrackEl, hudCache.lifeFigEl);
@@ -1091,6 +690,7 @@
     if (life.pct !== hudCache.lastLifePct && hudCache.lifePillEl) {
       hudCache.lastLifePct = life.pct;
       hudCache.lifePillEl.style.setProperty('--zaaa-pct', life.pct + '%');
+      hudCache.lifePillEl.style.setProperty('--zaaa-pct-num', String(life.pct / 100));
     }
 
     var city = readCityTelemetry();
@@ -1118,12 +718,13 @@
     var actions = document.querySelector('.zone-topbar .zone-header-actions');
     if (!actions) return;
 
+    var ar = isArabic();
     var clockSpan = actions.querySelector(':scope > span:first-child');
     if (clockSpan && !clockSpan.querySelector('.zaaa-chrono-ico')) {
       var chronoWrap = document.createElement('span');
       chronoWrap.className = 'zaaa-chrono-ico';
       chronoWrap.setAttribute('aria-hidden', 'true');
-      chronoWrap.innerHTML = CHRONO_SVG;
+      chronoWrap.innerHTML = renderSketchIcon('chrono');
       clockSpan.appendChild(chronoWrap);
     }
 
@@ -1136,12 +737,24 @@
       ind.appendChild(themeWrap);
     }
 
+    var themeBtn = actions.querySelector(':scope > button:first-of-type');
+    if (themeBtn) {
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      var themeAria = ar
+        ? (isLight ? 'التبديل إلى الوضع الداكن' : 'التبديل إلى الوضع الفاتح')
+        : (isLight ? 'Switch to Dark Sketchbook' : 'Switch to Light Sketchbook');
+      if (themeBtn.getAttribute('aria-label') !== themeAria) {
+        themeBtn.setAttribute('aria-label', themeAria);
+      }
+      themeBtn.title = themeAria;
+    }
+
     var adminLink = actions.querySelector(':scope > a');
     if (adminLink && !adminLink.querySelector('.zaaa-admin-ico')) {
       var adminWrap = document.createElement('span');
       adminWrap.className = 'zaaa-admin-ico';
       adminWrap.setAttribute('aria-hidden', 'true');
-      adminWrap.innerHTML = ADMIN_STUDIO_SVG;
+      adminWrap.innerHTML = renderSketchIcon('admin');
       adminLink.appendChild(adminWrap);
     }
   }
@@ -1226,6 +839,7 @@
         '</div>';
 
       var openDossier = function () {
+        if (isDrawerOpen()) setMobileDrawerOpen(false);
         try {
           if (
             window.__zoneLastView &&
@@ -1292,30 +906,122 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 7. MOBILE PERSISTENT LEFT-RAIL TOGGLE (#zaaa-mobile-rail-toggle)
-   *    1-tap toggles html.zaaa-rail-open (66px compact <-> 164px expanded)
+   * 7. DOCKED TOPBAR MENU TRIGGER (#zaaa-mobile-rail-toggle) & MOBILE DRAWER
+   *    Dock trigger cleanly inside [data-zheaderbar] (order: 0 on <=900px),
+   *    mount #zaaa-drawer-backdrop + #zaaa-drawer-header, and sync with Menu tab.
    * ------------------------------------------------------------------------ */
-  function updateRailToggleCopy(toggleBtn) {
-    if (!toggleBtn) return;
+  function updateDrawerTriggerAttributes() {
     var ar = isArabic();
-    var expanded = Boolean(
-      document.documentElement.classList &&
-      document.documentElement.classList.contains('zaaa-rail-open')
-    );
-    toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    var lbl = toggleBtn.querySelector('.zaaa-rail-toggle-lbl');
-    setTextIfChanged(lbl, expanded ? (ar ? 'طي القائمة' : 'Collapse') : (ar ? 'القائمة' : 'Menu'));
-    toggleBtn.title = expanded
-      ? (ar ? 'تصغير شريط المناطق' : 'Collapse District Rail')
-      : (ar ? 'توسيع أسماء المناطق' : 'Expand District Labels');
+    var open = isDrawerOpen();
+
+    var toggleBtn = document.getElementById('zaaa-mobile-rail-toggle');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var lblText = open ? (ar ? 'إغلاق القائمة' : 'Close Menu') : (ar ? 'القائمة' : 'Menu');
+      setTextIfChanged(toggleBtn.querySelector('.zaaa-rail-toggle-lbl'), lblText);
+      toggleBtn.setAttribute('aria-label', lblText);
+      toggleBtn.title = lblText;
+    }
+
+    var menuTabBtn = document.querySelector('.zone-mobile-tabbar button[data-zaaa-mob="menu"]');
+    if (menuTabBtn) {
+      menuTabBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+  }
+
+  function ensureDrawerBackdrop() {
+    if (!document.body) return;
+    var backdrop = document.getElementById('zaaa-drawer-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('button');
+      backdrop.type = 'button';
+      backdrop.id = 'zaaa-drawer-backdrop';
+      backdrop.setAttribute('tabindex', '-1');
+      backdrop.setAttribute('aria-hidden', 'true');
+      backdrop.addEventListener('click', function () {
+        setMobileDrawerOpen(false);
+      });
+      document.body.appendChild(backdrop);
+    }
+  }
+
+  function syncMobileDrawerHeader() {
+    var sidebar = document.querySelector('aside.zone-sidebar');
+    if (!sidebar) return;
+
+    var header = document.getElementById('zaaa-drawer-header');
+    if (header && header.parentElement !== sidebar) {
+      if (header.parentElement) header.parentElement.removeChild(header);
+      header = null;
+    }
+
+    if (!header) {
+      header = document.createElement('div');
+      header.id = 'zaaa-drawer-header';
+      header.innerHTML =
+        '<div class="zaaa-drawer-toprow">' +
+          '<span class="zaaa-drawer-title">District Ledger</span>' +
+          '<button type="button" class="zaaa-drawer-close" aria-label="Close Menu">' +
+            renderSketchIcon('close') +
+          '</button>' +
+        '</div>' +
+        '<div class="zaaa-drawer-quicklinks">' +
+          '<a class="zaaa-drawer-qlink zaaa-drawer-account" href="/account">' +
+            renderSketchIcon('account') +
+            '<span class="zaaa-drawer-qlink-lbl">Account</span>' +
+          '</a>' +
+          '<a class="zaaa-drawer-qlink zaaa-drawer-admin" href="/admin">' +
+            renderSketchIcon('admin') +
+            '<span class="zaaa-drawer-qlink-lbl">Admin</span>' +
+          '</a>' +
+        '</div>';
+
+      var closeBtn = header.querySelector('.zaaa-drawer-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          setMobileDrawerOpen(false);
+        });
+      }
+
+      /* Append at end of aside.zone-sidebar; CSS order:-30 renders at top of drawer */
+      sidebar.appendChild(header);
+    }
+
+    var ar = isArabic();
+    var langParam = ar ? '?lang=ar' : '?lang=en';
+    setTextIfChanged(header.querySelector('.zaaa-drawer-title'), ar ? 'دفتر المناطق' : 'District Ledger');
+
+    var closeEl = header.querySelector('.zaaa-drawer-close');
+    if (closeEl) {
+      var closeLabel = ar ? 'إغلاق القائمة' : 'Close Menu';
+      closeEl.setAttribute('aria-label', closeLabel);
+      closeEl.title = closeLabel;
+    }
+
+    var accLink = header.querySelector('.zaaa-drawer-account');
+    if (accLink) {
+      var liveAcc = sidebar.querySelector('.zone-profile-account[href]');
+      accLink.setAttribute('href', (liveAcc && liveAcc.getAttribute('href')) || ('/account' + langParam));
+      setTextIfChanged(accLink.querySelector('.zaaa-drawer-qlink-lbl'), ar ? 'الحساب' : 'Account');
+    }
+
+    var admLink = header.querySelector('.zaaa-drawer-admin');
+    if (admLink) {
+      var liveAdm = document.querySelector('.zone-topbar .zone-header-actions > a[href]');
+      admLink.setAttribute('href', (liveAdm && liveAdm.getAttribute('href')) || ('/admin' + langParam));
+      setTextIfChanged(admLink.querySelector('.zaaa-drawer-qlink-lbl'), ar ? 'الإدارة' : 'Admin');
+    }
   }
 
   function syncMobileRailToggle() {
-    var navSection = document.querySelector('aside.zone-sidebar .zone-nav-section');
-    if (!navSection) return;
+    var headerBar = document.querySelector('.zone-topbar [data-zheaderbar]');
+    if (!headerBar) return;
+
+    ensureDrawerBackdrop();
+    syncMobileDrawerHeader();
 
     var toggleBtn = document.getElementById('zaaa-mobile-rail-toggle');
-    if (toggleBtn && toggleBtn.parentElement !== navSection) {
+    if (toggleBtn && toggleBtn.parentElement !== headerBar) {
       if (toggleBtn.parentElement) toggleBtn.parentElement.removeChild(toggleBtn);
       toggleBtn = null;
     }
@@ -1325,54 +1031,57 @@
       toggleBtn.type = 'button';
       toggleBtn.id = 'zaaa-mobile-rail-toggle';
       toggleBtn.className = 'zaaa-mobile-rail-toggle';
+      toggleBtn.setAttribute('aria-controls', 'zone-area-navigation');
       toggleBtn.setAttribute('aria-expanded', 'false');
       toggleBtn.innerHTML =
-        '<span class="zaaa-rail-toggle-ico" aria-hidden="true">' + RAIL_TOGGLE_SVG + '</span>' +
+        '<span class="zaaa-rail-toggle-ico zaaa-ico-burger" aria-hidden="true">' + renderSketchIcon('menu') + '</span>' +
+        '<span class="zaaa-rail-toggle-ico zaaa-ico-close" aria-hidden="true">' + renderSketchIcon('close') + '</span>' +
         '<span class="zaaa-rail-toggle-lbl">Menu</span>';
 
       toggleBtn.addEventListener('click', function () {
-        var root = document.documentElement;
-        if (root.classList) {
-          root.classList.toggle('zaaa-rail-open');
-        }
-        updateRailToggleCopy(toggleBtn);
+        setMobileDrawerOpen(!isDrawerOpen());
       });
 
-      /* Append at end of .zone-nav-section; CSS order:-20 renders it at top */
-      navSection.appendChild(toggleBtn);
+      /* Append at end of [data-zheaderbar]; CSS order:0 docks it first on <=900px */
+      headerBar.appendChild(toggleBtn);
     }
 
     var navArea = document.getElementById('zone-area-navigation');
-    if (navArea && navArea.getAttribute('data-zaaa-rail-bound') !== '1') {
-      navArea.setAttribute('data-zaaa-rail-bound', '1');
-      navArea.addEventListener('click', function (ev) {
-        try {
-          var target = ev.target;
-          var btn = target && typeof target.closest === 'function'
-            ? target.closest('button[data-zone-screen]')
-            : null;
-          if (
-            btn &&
-            window.innerWidth <= 640 &&
-            document.documentElement.classList &&
-            document.documentElement.classList.contains('zaaa-rail-open')
-          ) {
-            document.documentElement.classList.remove('zaaa-rail-open');
-            updateRailToggleCopy(toggleBtn);
-          }
-        } catch (_) {}
-      });
+    if (navArea) {
+      var navOpenAttr = navArea.getAttribute('data-zone-nav-open') || 'false';
+      if (navOpenAttr !== lastObservedNavOpen) {
+        lastObservedNavOpen = navOpenAttr;
+        if (navOpenAttr === 'true' && isMobileViewport() && !isDrawerOpen()) {
+          setMobileDrawerOpen(true);
+        }
+      }
+
+      if (navArea.getAttribute('data-zaaa-rail-bound') !== '1') {
+        navArea.setAttribute('data-zaaa-rail-bound', '1');
+        navArea.addEventListener('click', function (ev) {
+          try {
+            var target = ev.target;
+            var btn = target && typeof target.closest === 'function'
+              ? target.closest('button[data-zone-screen]')
+              : null;
+            if (btn && isMobileViewport()) {
+              setMobileDrawerOpen(false);
+            }
+          } catch (_) {}
+        });
+      }
     }
 
-    updateRailToggleCopy(toggleBtn);
+    updateDrawerTriggerAttributes();
   }
 
   /* ------------------------------------------------------------------------
-   * 8. SIDEBAR DISTRICT 3D FROSTED ICONS (#zone-area-navigation .zone-nav-icon)
+   * 8. SIDEBAR DISTRICT HAND-INKED ICONS (#zone-area-navigation .zone-nav-icon)
+   *    Respects [data-zwc-icon="1"] and [data-zwc-ink] injected by watercolor-sketchbook.js!
    * ------------------------------------------------------------------------ */
   function resolveNavIconKey(screenId) {
     var key = String(screenId || '').trim().toLowerCase();
-    if (ICON_SPECS[key]) return key;
+    if (SKETCH_ICONS[key]) return key;
     if (key.indexOf('job') === 0) return 'jobs';
     if (key.indexOf('crime') === 0) return 'crimes';
     if (key.indexOf('item') === 0) return 'items';
@@ -1391,7 +1100,6 @@
     var buttons = document.querySelectorAll(
       'aside.zone-sidebar #zone-area-navigation button[data-zone-screen]'
     );
-    var seenKeys = {};
 
     for (var i = 0; i < buttons.length; i++) {
       var btn = buttons[i];
@@ -1399,37 +1107,34 @@
       if (!iconBox) continue;
 
       var key = resolveNavIconKey(btn.getAttribute('data-zone-screen'));
-      var slotPrefix = seenKeys[key] ? 'nav' + i : '';
-      seenKeys[key] = true;
 
-      var existing = iconBox.querySelector('svg.zaaa-vivid-svg');
+      /* Respect watercolor-sketchbook.js icons: never overwrite [data-zwc-icon="1"] or matching [data-zwc-ink] */
+      var zwcIcon = iconBox.querySelector('[data-zwc-icon="1"], svg[data-zwc-ink]');
+      if (zwcIcon && (zwcIcon.getAttribute('data-zwc-icon') === '1' || zwcIcon.getAttribute('data-zwc-ink') === key)) {
+        continue;
+      }
+
+      var existing = iconBox.querySelector('svg.zaaa-vivid-svg, svg.zwc-sketch-ico');
       if (!existing) {
-        var svgEl = parseSvgElement(renderVividIcon(key, slotPrefix));
+        var svgEl = parseSvgElement(renderSketchIcon(key));
         if (svgEl) {
           svgEl.setAttribute('data-ico', key);
           iconBox.appendChild(svgEl);
         }
-      } else if (existing.getAttribute('data-ico') !== key) {
-        var nextSvg = parseSvgElement(renderVividIcon(key, slotPrefix));
+      } else if (existing.getAttribute('data-ico') !== key && existing.getAttribute('data-zwc-ink') !== key) {
+        var nextSvg = parseSvgElement(renderSketchIcon(key));
         if (nextSvg) {
           existing.setAttribute('data-ico', key);
+          existing.setAttribute('data-zwc-ink', key);
           existing.innerHTML = nextSvg.innerHTML;
         }
-      }
-
-      if (iconBox.getAttribute('data-zaaa-duotone') !== '1') {
-        iconBox.setAttribute('data-zaaa-duotone', '1');
-      }
-      if (iconBox.getAttribute('data-zaaa-vivid') !== '1') {
-        iconBox.setAttribute('data-zaaa-vivid', '1');
       }
     }
   }
 
   /* ------------------------------------------------------------------------
-   * 9. MOBILE BOTTOM-BAR FALLBACK ICONS (.zone-mobile-tabbar)
-   *    Hidden via CSS in v128 in favor of the persistent left-side rail,
-   *    while keeping React's children fiber-safe and vivid SVGs populated.
+   * 9. THUMB-ZONE 5-TAB SKETCHBOOK BOTTOM BAR (.zone-mobile-tabbar)
+   *    Tabs: Home, City, Crimes, Gym, Menu (6th "attack" hidden cleanly via CSS)
    * ------------------------------------------------------------------------ */
   function classifyMobileTab(btn, index) {
     var spans = btn.children;
@@ -1449,6 +1154,32 @@
     var tabbar = document.querySelector('.zone-mobile-tabbar');
     if (!tabbar) return;
 
+    var ar = isArabic();
+    if (tabbar.getAttribute('aria-label') !== (ar ? 'التنقل السريع' : 'Primary Navigation')) {
+      tabbar.setAttribute('aria-label', ar ? 'التنقل السريع' : 'Primary Navigation');
+    }
+
+    if (tabbar.getAttribute('data-zaaa-tabbar-bound') !== '1') {
+      tabbar.setAttribute('data-zaaa-tabbar-bound', '1');
+      tabbar.addEventListener('click', function (ev) {
+        try {
+          var target = ev.target;
+          var btn = target && typeof target.closest === 'function'
+            ? target.closest('button[data-zaaa-mob]')
+            : null;
+          if (!btn) return;
+          var tabKey = btn.getAttribute('data-zaaa-mob');
+          if (tabKey === 'menu') {
+            ev.preventDefault();
+            ev.stopPropagation();
+            setMobileDrawerOpen(!isDrawerOpen());
+          } else if (isDrawerOpen()) {
+            setMobileDrawerOpen(false);
+          }
+        } catch (_) {}
+      }, true);
+    }
+
     var buttons = tabbar.querySelectorAll('button');
     for (var i = 0; i < buttons.length; i++) {
       var btn = buttons[i];
@@ -1460,29 +1191,61 @@
         mobIco.className = 'zaaa-mob-ico';
         mobIco.setAttribute('aria-hidden', 'true');
         mobIco.setAttribute('data-ico', key);
-        mobIco.innerHTML = renderVividIcon(key, 'mob-' + i);
+        mobIco.innerHTML = renderSketchIcon(key);
         btn.appendChild(mobIco);
       } else if (mobIco.getAttribute('data-ico') !== key) {
         mobIco.setAttribute('data-ico', key);
-        mobIco.innerHTML = renderVividIcon(key, 'mob-' + i);
+        mobIco.innerHTML = renderSketchIcon(key);
       }
 
       if (btn.getAttribute('data-zaaa-mob') !== key) {
         btn.setAttribute('data-zaaa-mob', key);
       }
     }
+
+    updateDrawerTriggerAttributes();
   }
 
   /* ------------------------------------------------------------------------
-   * MASTER SYNC ORCHESTRATION
-   * Zero 600ms full-DOM polling! Runs syncAll() ONLY on boot, zone:render,
-   * and html lang/dir/data-theme changes, plus a 2000ms cached-node text diff.
+   * MASTER SYNC ORCHESTRATION (rAF-Coalesced for 60fps Mobile Performance)
    * ------------------------------------------------------------------------ */
+  /* Prevent Web Animations API (`el.animate` with `transform`) on `#zone-main` from
+     creating a fixed-positioning containing block that traps `nav.zone-mobile-tabbar` on mobile */
+  if (typeof Element !== 'undefined' && Element.prototype && typeof Element.prototype.animate === 'function' && !Element.prototype.__zaaaZoneMainGuarded) {
+    var origElemAnimate = Element.prototype.animate;
+    Element.prototype.__zaaaZoneMainGuarded = true;
+    Element.prototype.animate = function (keyframes, options) {
+      if (this && this.id === 'zone-main' && isMobileViewport()) {
+        return {
+          cancel: function () {},
+          finish: function () {},
+          play: function () {},
+          pause: function () {},
+          finished: typeof Promise !== 'undefined' ? Promise.resolve() : null
+        };
+      }
+      return origElemAnimate.apply(this, arguments);
+    };
+  }
+
+  function guardMainFixedContainingBlock() {
+    if (!isMobileViewport()) return;
+    var main = document.getElementById('zone-main');
+    if (!main || typeof main.getAnimations !== 'function') return;
+    try {
+      var anims = main.getAnimations();
+      for (var i = 0; i < anims.length; i++) {
+        anims[i].cancel();
+      }
+    } catch (_) {}
+  }
+
   function syncAll() {
     if (isSyncing) return;
     if (document.querySelector('x-dc')) return;
     isSyncing = true;
     try {
+      guardMainFixedContainingBlock();
       syncBrand();
       syncHeaderLinks();
       syncTopbarHud();
@@ -1499,11 +1262,21 @@
     }
   }
 
+  function scheduleSync() {
+    if (rafPending) return;
+    rafPending = true;
+    var runner = window.requestAnimationFrame || function (fn) { return window.setTimeout(fn, 16); };
+    runner(function () {
+      rafPending = false;
+      syncAll();
+    });
+  }
+
   function syncCachedHudDiff() {
     if (document.hidden || isSyncing) return;
     try {
       if (!hudCache.hudEl || !hudCache.hudEl.isConnected) {
-        syncAll();
+        scheduleSync();
         return;
       }
       applyCachedHudValues();
@@ -1513,16 +1286,38 @@
     } catch (_) {}
   }
 
+  function armHydratedRewardPopups() {
+    try {
+      document.documentElement.setAttribute('data-zaaa-hydrated', '1');
+    } catch (_) {}
+  }
+
   function boot() {
     syncAll();
-    window.setTimeout(syncAll, 180);
-    window.setTimeout(syncAll, 650);
+    window.setTimeout(scheduleSync, 180);
+    window.setTimeout(scheduleSync, 650);
 
-    window.addEventListener('zone:render', syncAll);
+    document.addEventListener('pointerdown', armHydratedRewardPopups, { capture: true, once: true, passive: true });
+    document.addEventListener('keydown', armHydratedRewardPopups, { capture: true, once: true, passive: true });
+
+    window.addEventListener('zone:render', scheduleSync, { passive: true });
+
+    window.addEventListener('resize', function () {
+      if (!isMobileViewport() && isDrawerOpen()) {
+        setMobileDrawerOpen(false);
+      }
+      scheduleSync();
+    }, { passive: true });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && isDrawerOpen()) {
+        setMobileDrawerOpen(false);
+      }
+    });
 
     try {
       var htmlObs = new MutationObserver(function () {
-        syncAll();
+        scheduleSync();
       });
       htmlObs.observe(document.documentElement, {
         attributes: true,

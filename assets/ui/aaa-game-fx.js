@@ -569,21 +569,23 @@
           'font:800 12.5px/1.2 "Rubik","Noto Sans Arabic",system-ui,sans-serif;' +
           'font-variant-numeric:tabular-nums;white-space:nowrap;' +
           'letter-spacing:0.02em;' +
-          'background:linear-gradient(180deg,rgba(14,21,35,0.96) 0%,rgba(7,11,19,0.98) 100%);' +
-          'border:1px solid var(--zfx-border,rgba(255,255,255,0.14));' +
-          'color:var(--zfx-fg,#49f0a1);' +
-          'box-shadow:0 8px 22px rgba(0,0,0,0.55),0 0 14px var(--zfx-glow,rgba(73,240,161,0.22)),inset 0 1px 0 rgba(255,255,255,0.10);' +
+          'background:var(--zwc-surface,#fbf7ee);' +
+          'border:2px solid var(--zwc-border-strong,#1e1b18);' +
+          'color:var(--zwc-ink,#1e1b18);' +
+          'box-shadow:2px 2px 0 var(--zwc-border-strong,#1e1b18);' +
           'transform:translate3d(-50%,0,0);will-change:transform,opacity;' +
           'animation:zfxDeltaFloat 1120ms cubic-bezier(0.16,1,0.3,1) var(--zfx-delay,0ms) both;' +
         '}' +
         'html[dir="rtl"] .zfx-delta-chip,html[lang="ar"] .zfx-delta-chip{letter-spacing:0 !important;}' +
         'html[data-theme="light"] .zfx-delta-chip{' +
-          'background:linear-gradient(180deg,rgba(19,27,42,0.96) 0%,rgba(11,17,28,0.98) 100%);' +
-          'box-shadow:0 8px 18px rgba(15,23,42,0.24),0 0 0 1px rgba(255,255,255,0.22),inset 0 1px 0 rgba(255,255,255,0.14);' +
+          'background:var(--zwc-surface,#fbf7ee);' +
+          'border:2px solid var(--zwc-border-strong,#1e1b18);' +
+          'color:var(--zwc-ink,#1e1b18);' +
+          'box-shadow:2px 2px 0 var(--zwc-border-strong,#1e1b18);' +
         '}' +
         '.zfx-delta-chip.is-levelup{' +
-          'padding:6px 14px;font-size:14px;border-width:1.5px;' +
-          'background:linear-gradient(180deg,rgba(44,31,10,0.97) 0%,rgba(18,13,6,0.98) 100%);' +
+          'padding:6px 14px;font-size:14px;border-width:2px;' +
+          'background:var(--zwc-surface,#fbf7ee);' +
         '}' +
         '.zfx-delta-icon{display:inline-grid;place-items:center;font-size:11.5px;line-height:1;}' +
         '.zfx-delta-icon svg{width:14px;height:14px;display:block;}' +
@@ -759,8 +761,8 @@
           '100%{opacity:0;transform:scaleX(1);}' +
         '}' +
         '@keyframes zfxScreenReveal{' +
-          '0%{opacity:0.74;transform:translate3d(0,4px,0);}' +
-          '100%{opacity:1;transform:translate3d(0,0,0);}' +
+          '0%{opacity:0.82;}' +
+          '100%{opacity:1;}' +
         '}' +
         '@media (prefers-reduced-motion: reduce){' +
           '.zfx-delta-chip{animation-duration:450ms !important;}' +
@@ -988,7 +990,7 @@
       if (preferredEl) {
         try {
           var r = preferredEl.getBoundingClientRect();
-          if (r && r.width > 0 && r.height > 0 && r.bottom > 8 && r.top < vh - 8) {
+          if (r && r.width > 0 && r.height > 0 && r.right > 12 && r.left >= 4 && r.left < vw - 12 && r.bottom > 8 && r.top < vh - 8) {
             x = r.left + r.width * 0.5;
             y = Math.max(52, r.top - 4);
             placed = true;
@@ -1184,7 +1186,8 @@
       var recentClickAnchor = (performance.now() - state.lastActionAnchor.at) < 2800;
       var queue = [];
 
-      if (Number.isFinite(snap.cash) && Number.isFinite(prev.cash) && snap.cash !== prev.cash) {
+      var allowCashDelta = recentUserAct || (prev.cash > 0 && (now - state.bootAt) > 3500);
+      if (allowCashDelta && Number.isFinite(snap.cash) && Number.isFinite(prev.cash) && snap.cash !== prev.cash) {
         var dCash = Math.round(snap.cash - prev.cash);
         if (Math.abs(dCash) >= 1 && Math.abs(dCash) < 500000000) {
           var isGain = dCash > 0;
@@ -2024,8 +2027,8 @@
       if (typeof el.animate === 'function') {
         state.screenAnim = el.animate(
           [
-            { opacity: 0.74, transform: 'translate3d(0, 4px, 0)' },
-            { opacity: 1, transform: 'translate3d(0, 0, 0)' }
+            { opacity: 0.82 },
+            { opacity: 1 }
           ],
           {
             duration: 180,

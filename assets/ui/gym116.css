@@ -1,46 +1,108 @@
-/* Only the Gym's station cues and phone action order change in beta116.
- * The accepted shell, room artwork, desktop composition and other routes stay intact. */
-#zone-main[data-zone-screen=gym] .zone-gym-floor {grid-row:1;}
+/* Gym station cues, Sketchbook surface tokens, RTL alignment & phone action order (beta116+).
+ * Scoped strictly inside Gym so global shell, room artwork & other routes stay intact. */
+#zone-main[data-zone-screen=gym] {
+  --zwc-surface: var(--zwc-paper-elevated, #f8f3e6);
+  --zwc-surface-alt: var(--zwc-paper-subcard, #fcf8ee);
+  --zwc-border: var(--zwc-border-panel, #25221e);
+}
+#zone-main[data-zone-screen=gym] .zone-gym-floor {grid-row:1;min-width:0;box-sizing:border-box;}
+#zone-main[data-zone-screen=gym] .zone-gym-floor-readout {
+  background:var(--zwc-surface-alt,var(--zwc-paper-subcard));
+  color:var(--zwc-ink);
+  border:1.5px solid var(--zwc-border,var(--zwc-border-sub));
+  box-shadow:var(--zwc-shadow-sub);
+  box-sizing:border-box;
+}
+#zone-main[data-zone-screen=gym] .zone-gym-station {
+  background:var(--zwc-surface-alt,var(--zwc-paper-subcard));
+  color:var(--zwc-ink);
+  border:1.5px solid var(--zwc-border,var(--zwc-border-sub));
+  box-shadow:var(--zwc-shadow-sub);
+  box-sizing:border-box;
+  min-width:0;
+  touch-action:manipulation;
+}
+#zone-main[data-zone-screen=gym] .zone-gym-station[aria-pressed="true"] {
+  background:var(--zwc-row-active,var(--zwc-surface));
+  border-color:var(--zwc-border-strong);
+  box-shadow:var(--zwc-shadow-card);
+}
 #zone-main[data-zone-screen=gym] .zone-gym-station-icon {
   width:64px;height:72px;position:relative;overflow:hidden;
   background-size:cover;background-position:center;background-repeat:no-repeat;
-  border:1px solid var(--border3);background-color:var(--deep);
+  border:1.5px solid var(--zwc-border-strong,var(--border3));
+  background-color:var(--zwc-surface-alt,var(--deep));
+  border-radius:var(--zwc-sketch-radius-sm,8px);
+  box-shadow:var(--zwc-shadow-sub,none);
 }
 #zone-main[data-zone-screen=gym] .zone-gym-station-icon svg {
   position:absolute;inset-inline-end:3px;inset-block-end:3px;
-  width:20px;height:20px;padding:3px;background:var(--deep);color:var(--gold);
+  width:20px;height:20px;padding:3px;
+  background:var(--zwc-surface,var(--deep));
+  color:var(--zwc-gold-ink,var(--gold));
+  border:1px solid var(--zwc-border,transparent);
+  border-radius:4px;
+}
+#zone-main[data-zone-screen=gym] .zone-gym-session {
+  background:var(--zwc-surface,var(--zwc-paper-elevated));
+  color:var(--zwc-ink);
+  border:1.5px solid var(--zwc-border,var(--zwc-border-panel));
+  box-shadow:var(--zwc-shadow-card);
+  min-width:0;
+  box-sizing:border-box;
+}
+#zone-main[data-zone-screen=gym] .zig-gym-wrap {
+  background:var(--zwc-surface-alt,var(--zwc-paper-subcard));
+  color:var(--zwc-ink);
+  border:1.5px solid var(--zwc-border-strong,var(--zwc-border));
+  border-radius:var(--zwc-sketch-radius-sm,10px);
+  box-shadow:var(--zwc-shadow-sub);
+  overflow:hidden;
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
 }
 #zone-main[data-zone-screen=gym] .zone-gym-session-identity>div {min-width:0;}
 #zone-main[data-zone-screen=gym] .zone-gym-session-benefit {
-  margin:0;padding-block:0 8px;color:var(--t2);font-size:12px;line-height:1.65;
+  margin:0;padding-block:0 8px;color:var(--zwc-ink-soft,var(--t2));font-size:12.5px;line-height:1.65;
   overflow-wrap:anywhere;
 }
 #zone-main[data-zone-screen=gym] .zone-gym-station-art {
   background-size:cover;background-position:center;background-repeat:no-repeat;
+  background-color:var(--zwc-surface-alt,var(--deep));
+  border:1px solid var(--zwc-border,transparent);
   filter:none;
 }
 #zone-main[data-zone-screen=gym] .zone-gym-station:focus-visible {
-  outline:2px solid var(--gold);outline-offset:-3px;z-index:1;
+  outline:2px solid var(--zwc-gold-ink,var(--gold));outline-offset:-3px;z-index:1;
+}
+#zone-main[data-zone-screen=gym] .zone-gym-train {
+  min-height:46px;
+  touch-action:manipulation;
 }
 #zone-main[data-zone-screen=gym] .zone-gym-train:focus-visible {
-  outline:2px solid var(--gold);outline-offset:3px;
+  outline:2px solid var(--zwc-gold-ink,var(--gold));outline-offset:3px;
 }
 html[dir=rtl] #zone-main[data-zone-screen=gym] .zone-gym-session-benefit {
-  font-family:var(--zone-arabic);line-height:1.8;
+  font-family:var(--zone-arabic);line-height:1.8;text-align:start;
+}
+html[dir=rtl] #zone-main[data-zone-screen=gym] .zone-gym-station,
+html[dir=rtl] #zone-main[data-zone-screen=gym] .zone-gym-session {
+  text-align:start;
 }
 @media(max-width:650px){
-  #zone-main[data-zone-screen=gym] .zone-gym-floor {grid-column:1;grid-row:1;}
+  #zone-main[data-zone-screen=gym] .zone-gym-floor {grid-column:1;grid-row:1;min-width:0;}
   #zone-main[data-zone-screen=gym] .zone-gym-stations {
     grid-column:1;grid-row:2;grid-template-columns:repeat(2,minmax(0,1fr));
-    margin-block-start:14px;
+    margin-block-start:12px;min-width:0;
   }
-  #zone-main[data-zone-screen=gym] .zone-gym-session {grid-column:1;grid-row:3;}
+  #zone-main[data-zone-screen=gym] .zone-gym-session {grid-column:1;grid-row:3;min-width:0;}
   #zone-main[data-zone-screen=gym] .zone-gym-station {
-    min-height:88px!important;padding:9px;gap:9px;align-items:center;
+    min-height:74px!important;padding-block:9px;padding-inline:9px;gap:9px;align-items:center;
   }
-  #zone-main[data-zone-screen=gym] .zone-gym-station-art {width:48px;height:62px;}
-  #zone-main[data-zone-screen=gym] .zone-gym-station strong {font-size:12px;}
-  #zone-main[data-zone-screen=gym] .zone-gym-station small {font-size:10px;line-height:1.5;overflow-wrap:anywhere;}
+  #zone-main[data-zone-screen=gym] .zone-gym-station-art {width:44px;height:54px;}
+  #zone-main[data-zone-screen=gym] .zone-gym-station strong {font-size:12px;color:var(--zwc-ink);}
+  #zone-main[data-zone-screen=gym] .zone-gym-station small {font-size:10.5px;line-height:1.45;color:var(--zwc-ink-soft);overflow-wrap:anywhere;}
   #zone-main[data-zone-screen=gym] .zone-gym-station-selection {inset-inline-end:4px;inset-block-start:3px;}
 }
 @media(prefers-reduced-motion:reduce){

@@ -248,20 +248,134 @@
     }
   }
 
-  /* 2. Sync Charcoal-Header "City Tutorial" / District Guide Card */
+  /* 2. Sync Charcoal-Header "City Tutorial" / District Guide Card (All 19 Screens Bilingual) */
   var TUTORIAL_COPY = {
-    city: {
-      titleEn: 'City Tutorial',
-      titleAr: 'دليل المدينة',
-      bodyEn: 'Here you can view all of the locations available to you in Zone City. Click any painted district pin on the illustrated city map below or open the 3D Tactical Grid to inspect block control. As you go up levels, you will unlock new sectors and global flights.',
-      bodyAr: 'هنا يمكنك استعراض جميع مواقع مدينة زون. اضغط على أي دبوس مرسوم على خريطة المدينة المائية أدناه للانتقال فوراً، أو افتح الشبكة ثلاثية الأبعاد لفحص سيطرة العائلات. كلما ارتفع مستواك ستفتح قطاعات ورحلات جديدة.'
-    },
     home: {
       titleEn: 'Operative Sketchbook',
       titleAr: 'دفتر العميل',
       bodyEn: 'Your safehouse ledger, live Syndicate Arcade tables, and daily street contracts. Keep your Energy and Nerve bars active and claim your daily objective.',
       bodyAr: 'سجل مخبئك، وطاولات الأركيد المباشرة، وعقود الشارع اليومية. استثمر الطاقة والجرأة وأنجز هدفك اليومي.'
+    },
+    items: {
+      titleEn: 'Items & Armory Guide',
+      titleAr: 'دليل العتاد والترسانة',
+      bodyEn: 'Inspect your weapons, body armor, medical kits, and boosters. Equip combat gear to raise battle multipliers or inspect 3D models.',
+      bodyAr: 'افحص أسلحتك ودروعك وحقائب الإسعاف والمنشطات. جهّز عتاد القتال لرفع قوة الضرر أو استعرض النماذج ثلاثية الأبعاد.'
+    },
+    city: {
+      titleEn: 'City Tutorial',
+      titleAr: 'دليل المدينة',
+      bodyEn: 'Here you can view all of the locations available to you in Zone City. Tap or pan across the illustrated city map below or open the 3D Tactical Grid to inspect block control.',
+      bodyAr: 'هنا يمكنك استعراض جميع مواقع مدينة زون. اسحب أو اضغط على أي دبوس مرسوم على خريطة المدينة المائية أدناه للانتقال فوراً، أو افتح الشبكة ثلاثية الأبعاد لفحص سيطرة العائلات.'
+    },
+    jobs: {
+      titleEn: 'Employment Guide',
+      titleAr: 'دليل الوظائف',
+      bodyEn: 'Work shifts to earn steady cash and job points. Higher levels unlock better-paying city careers and company specials.',
+      bodyAr: 'اشتغل ورديات لكسب راتب ثابت ونقاط وظيفة. المستويات الأعلى تفتح وظائف أفضل ومزايا الشركات الخاصة.'
+    },
+    bank: {
+      titleEn: 'Central Bank Guide',
+      titleAr: 'دليل البنك المركزي',
+      bodyEn: 'Protect your street cash from muggers by depositing into your vault, locking term CDs, or collecting stock block dividends.',
+      bodyAr: 'احمِ أموالك من النشل عبر إيداعها في خزنة البنك، أو استثمارها في شهادات الإيداع وعوائد الأسهم.'
+    },
+    gym: {
+      titleEn: 'Gym Training Guide',
+      titleAr: 'دليل النادي الرياضي',
+      bodyEn: 'Spend Energy to train Strength, Defense, Speed, and Dexterity. Higher Happiness boosts every rep and unlocks elite gyms.',
+      bodyAr: 'اصرف الطاقة لتدريب القوة والدفاع والسرعة والرشاقة. المعنويات المرتفعة تضاعف مكاسب كل تمرين وتفتح أندية النخبة.'
+    },
+    properties: {
+      titleEn: 'Properties & Estates Guide',
+      titleAr: 'دليل العقارات والمساكن',
+      bodyEn: 'Upgrade your residence to raise maximum Happiness, boost gym training efficiency, and hire estate staff.',
+      bodyAr: 'طوّر مسكنك لرفع الحد الأقصى للمعنويات، وزيادة كفاءة التدريب في النادي، وتوظيف طاقم العقار.'
+    },
+    education: {
+      titleEn: 'Education & Courses Guide',
+      titleAr: 'دليل التعليم والدورات',
+      bodyEn: 'Enroll in academic courses to unlock permanent passive bonuses across combat, medical care, crime, and income.',
+      bodyAr: 'سجّل في الدورات الأكاديمية لفتح مزايا دائمة في القتال والإسعاف والجرائم ومضاعفة الدخل.'
+    },
+    crimes: {
+      titleEn: 'Street Crimes Guide',
+      titleAr: 'دليل جرائم الشوارع',
+      bodyEn: 'Spend Nerve to run street operations. Successful hits build cash and Crime XP to unlock higher-stakes syndicate rackets.',
+      bodyAr: 'اصرف الجرأة لتنفيذ عمليات الشارع. النجاح يمنحك النقود وخبرة الجريمة لفتح فئات أعلى خطورة وعائداً.'
+    },
+    missions: {
+      titleEn: 'Missions & Contracts Guide',
+      titleAr: 'دليل المهام والعقود',
+      bodyEn: 'Complete street milestones across crimes, gym sessions, shifts, and combat to claim cash and points.',
+      bodyAr: 'أنجز العقود الميدانية في الجرائم والتدريب والورديات والقتال لاستلام مكافآت النقد والنقاط.'
+    },
+    newspaper: {
+      titleEn: 'City Newspaper Guide',
+      titleAr: 'دليل صحيفة المدينة',
+      bodyEn: 'Track live syndicate headlines, market movers, active bounties, encrypted mail, and street channels.',
+      bodyAr: 'تابع عناوين المدينة المباشرة، وتحركات الأسعار، والمكافآت المرصودة، والرسائل، وقنوات المحادثة.'
+    },
+    jail: {
+      titleEn: 'City Jail Guide',
+      titleAr: 'دليل سجن المدينة',
+      bodyEn: 'Spend Nerve to bust fellow operatives out of custody for XP, or pay cash bail for immediate release.',
+      bodyAr: 'اصرف الجرأة لتهريب السجناء وكسب الخبرة، أو ادفع الكفالة النقدية للإفراج الفوري.'
+    },
+    hospital: {
+      titleEn: 'Hospital Ward Guide',
+      titleAr: 'دليل المستشفى',
+      bodyEn: 'Recover Life after heavy firefights or failed heists using medical kits, blood bags, or ward care.',
+      bodyAr: 'استعد صحتك بعد المعارك أو العمليات الفاشلة باستخدام حقائب الإسعاف أو أكياس الدم أو الرعاية الطبية.'
+    },
+    casino: {
+      titleEn: 'Grand Casino Guide',
+      titleAr: 'دليل الكازينو الكبير',
+      bodyEn: 'Wager cash at High-Low, Blackjack 21, European Roulette, and progressive Jackpot Slots.',
+      bodyAr: 'راهن بنقودك على طاولات أعلى-أدنى، وبلاك جاك 21، والروليت الأوروبي، وماكينات الجائزة الكبرى.'
+    },
+    hof: {
+      titleEn: 'Hall of Fame Guide',
+      titleAr: 'دليل قاعة المشاهير',
+      bodyEn: 'Compare top Zone City operatives ranked by level, total battle stats, networth, and syndicate honors.',
+      bodyAr: 'استعرض نخبة عملاء مدينة زون مرتّبين حسب المستوى ومجموع الصفات القتالية والثروة والأوسمة.'
+    },
+    faction: {
+      titleEn: 'My Faction Guide',
+      titleAr: 'دليل العائلة',
+      bodyEn: 'Coordinate organized crimes, extend attack chains, claim territory rackets, and unlock shared family perks.',
+      bodyAr: 'نسّق الجرائم المنظمة، ومدّد سلاسل الهجوم، وسيطر على عوائد الأراضي لفتح ترقيات العائلة المشتركة.'
+    },
+    elimination: {
+      titleEn: 'Elimination Turf War Guide',
+      titleAr: 'دليل حرب التصفيات',
+      bodyEn: 'Hospitalize rival syndicate operatives to score points for your crew before the elimination round closes.',
+      bodyAr: 'أدخل خصوم العائلات المنافسة إلى المستشفى لتسجيل النقاط لصالح فريقك قبل انتهاء الجولة.'
+    },
+    attack: {
+      titleEn: 'Combat & Attack Guide',
+      titleAr: 'دليل القتال والهجوم',
+      bodyEn: 'Spend 25 Energy per fight. Tune ammo, weapon mods, and anatomical hitboxes to defeat rivals, mug cash, or build chain hits.',
+      bodyAr: 'يستهلك كل هجوم 25 طاقة. اضبط الذخيرة وتعديلات السلاح ومناطق التصويب لهزيمة الخصوم أو النشل أو بناء السلسلة.'
+    },
+    market: {
+      titleEn: 'Item Market Guide',
+      titleAr: 'دليل سوق العتاد',
+      bodyEn: 'Trade weapons, armor, medical supplies, and boosters across live street listings and player bazaars.',
+      bodyAr: 'تاجر بالأسلحة والدروع والإمدادات الطبية والمنشطات عبر عروض السوق المباشرة وبازارات اللاعبين.'
     }
+  };
+
+  var SCREEN_TITLE_FALLBACK_EN = {
+    hof: 'Hall of Fame Guide',
+    items: 'Items & Armory Guide',
+    jobs: 'Employment Guide',
+    properties: 'Properties Guide',
+    crimes: 'Crimes Guide',
+    missions: 'Missions Guide',
+    newspaper: 'Newspaper Guide',
+    elimination: 'Elimination Guide',
+    market: 'Item Market Guide'
   };
 
   function syncTutorialBanner() {
@@ -275,9 +389,12 @@
     var subP = heading.querySelector(':scope > p, :scope > span');
     var fallbackBody = subP ? subP.textContent.trim() : '';
     var spec = TUTORIAL_COPY[screen];
+    var fallbackTitleEn =
+      SCREEN_TITLE_FALLBACK_EN[screen] ||
+      (screen.charAt(0).toUpperCase() + screen.slice(1).replace(/[-_]+/g, ' ') + ' Guide');
     var title = spec
       ? (ar ? spec.titleAr : spec.titleEn)
-      : (ar ? 'دليل المنطقة' : (screen.charAt(0).toUpperCase() + screen.slice(1) + ' Guide'));
+      : (ar ? 'دليل المنطقة' : fallbackTitleEn);
     var body = spec ? (ar ? spec.bodyAr : spec.bodyEn) : fallbackBody;
     if (!body) return;
 
@@ -315,14 +432,16 @@
     for (var i = 0; i < navBtns.length; i++) {
       var iconBox = navBtns[i].querySelector('.zone-nav-icon');
       if (!iconBox) continue;
+      iconBox.setAttribute('data-zwc-icon', '1');
       var key = resolveScreenKey(navBtns[i].getAttribute('data-zone-screen'));
-      var existing = iconBox.querySelector('svg.zaaa-vivid-svg, svg.zaaa-duotone-svg');
+      var existing = iconBox.querySelector('svg.zaaa-vivid-svg, svg.zaaa-duotone-svg, svg.zwc-sketch-ico');
       if (existing && existing.getAttribute('data-zwc-ink') !== key) {
         var tmp = document.createElement('div');
         tmp.innerHTML = SKETCH_AREA_ICONS[key] || SKETCH_AREA_ICONS.home;
         var nextSvg = tmp.firstElementChild;
         if (nextSvg) {
           existing.setAttribute('data-zwc-ink', key);
+          existing.setAttribute('data-zwc-icon', '1');
           existing.setAttribute('viewBox', '0 0 24 24');
           existing.innerHTML = nextSvg.innerHTML;
         }
@@ -335,6 +454,7 @@
     );
     for (var si = 0; si < surfaceIcons.length; si++) {
       var sBox = surfaceIcons[si];
+      sBox.setAttribute('data-zwc-icon', '1');
       var hostBtn = sBox.closest('button');
       var rawKey =
         sBox.getAttribute('data-zfx-duotone') ||
@@ -343,12 +463,13 @@
         (hostBtn && hostBtn.querySelector('strong') && hostBtn.querySelector('strong').textContent) ||
         'home';
       var sKey = resolveScreenKey(rawKey);
-      var sSvg = sBox.querySelector('svg.zfx-duotone-svg, svg.zfx-city-svg');
+      var sSvg = sBox.querySelector('svg.zfx-duotone-svg, svg.zfx-city-svg, svg.zwc-sketch-ico');
       if (sSvg && sSvg.getAttribute('data-zwc-ink') !== sKey) {
         var sTmp = document.createElement('div');
         sTmp.innerHTML = SKETCH_AREA_ICONS[sKey] || SKETCH_AREA_ICONS.city;
         if (sTmp.firstElementChild) {
           sSvg.setAttribute('data-zwc-ink', sKey);
+          sSvg.setAttribute('data-zwc-icon', '1');
           sSvg.setAttribute('viewBox', '0 0 24 24');
           sSvg.innerHTML = sTmp.firstElementChild.innerHTML;
         }
@@ -460,9 +581,11 @@
           (ar ? 'خريطة 3D' : '3D Block Map') +
         '</button>' +
       '</div>' +
-      '<div class="zwc-panorama-art-wrap">' +
-        '<img class="zwc-panorama-img" src="/assets/ui/watercolor-art/city-panorama.webp" alt="' + (ar ? 'خريطة مدينة زون المرسومة' : 'Hand-drawn watercolor map of Zone City') + '" loading="eager" decoding="async">' +
-        pinsHtml +
+      '<div class="zwc-panorama-viewport" dir="ltr">' +
+        '<div class="zwc-panorama-art-wrap">' +
+          '<img class="zwc-panorama-img" src="/assets/ui/watercolor-art/city-panorama.webp" alt="' + (ar ? 'خريطة مدينة زون المرسومة' : 'Hand-drawn watercolor map of Zone City') + '" loading="eager" decoding="async">' +
+          pinsHtml +
+        '</div>' +
       '</div>';
 
     stage.addEventListener('click', function (ev) {
@@ -491,9 +614,18 @@
     });
 
     shell.appendChild(stage);
+
+    /* Center panorama scroll smoothly on mobile portrait viewports */
+    if (window.innerWidth <= 640) {
+      var vp = stage.querySelector('.zwc-panorama-viewport');
+      if (vp && vp.scrollWidth > vp.clientWidth) {
+        vp.scrollLeft = Math.round((vp.scrollWidth - vp.clientWidth) * 0.42);
+      }
+    }
   }
 
   var lastObservedScreen = '';
+  var rafScheduled = false;
 
   function snapRouteTopIfNeeded() {
     if (window.scrollY > 0 && window.scrollY < 240) {
@@ -502,6 +634,7 @@
   }
 
   function syncAll() {
+    rafScheduled = false;
     ensureStylesheetLast();
     if (document.querySelector('x-dc')) return;
     try {
@@ -524,13 +657,23 @@
     } catch (_) {}
   }
 
+  function scheduleSync() {
+    if (rafScheduled) return;
+    rafScheduled = true;
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(syncAll);
+    } else {
+      setTimeout(syncAll, 16);
+    }
+  }
+
   function boot() {
     ensureStylesheetLast();
     syncAll();
     setTimeout(syncAll, 180);
     setTimeout(syncAll, 520);
 
-    window.addEventListener('zone:render', syncAll);
+    window.addEventListener('zone:render', scheduleSync);
     window.addEventListener('storage', function (ev) {
       if (!ev || ev.key === THEME_STORAGE_KEY) {
         var next = safeGetStoredTheme();
@@ -563,7 +706,7 @@
         if (main && !main.__zwcObserved) {
           main.__zwcObserved = true;
           var mObs = new MutationObserver(function () {
-            syncAll();
+            scheduleSync();
           });
           mObs.observe(main, { childList: true, attributes: true, attributeFilter: ['data-zone-screen'] });
         }
