@@ -9,9 +9,12 @@ const modules = [
 
 test('viewer ES modules load without implicit module-format detection warnings', () => {
   const source = modules.map(name => `await import(${JSON.stringify(new URL(`../dist/${name}`, import.meta.url).href)});`).join('\n');
+  const env = { ...process.env, NODE_OPTIONS: '' };
+  delete env.NODE_NO_WARNINGS;
+  delete env.NODE_REDIRECT_WARNINGS;
   const result = spawnSync(process.execPath, ['--input-type=module', '--eval', source], {
     encoding: 'utf8',
-    env: { ...process.env, NODE_OPTIONS: '' }
+    env
   });
   assert.equal(result.status, 0, result.stderr);
   assert.doesNotMatch(result.stderr, /MODULE_TYPELESS_PACKAGE_JSON/);
