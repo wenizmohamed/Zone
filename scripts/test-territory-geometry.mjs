@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import geometry from '../dist/territory-geometry.js';
+import { loadLegacyScript } from './load-legacy-script.mjs';
+const geometry = loadLegacyScript(new URL('../dist/territory-geometry.js', import.meta.url));
 
 const cell = (id, x, y, owner = 'family', points) => ({ type: 'Feature', id, properties: { ownerId: owner, ownerName: owner || 'Neutral', renderColor: '#aabbcc', neutral: !owner, player: owner === 'family', contested: false }, geometry: { type: 'Polygon', coordinates: [points || [[x,y],[x+1,y],[x+1,y+1],[x,y+1],[x,y]]] } });
 const collection = features => ({ type: 'FeatureCollection', features });
