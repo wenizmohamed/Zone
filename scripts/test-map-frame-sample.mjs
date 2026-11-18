@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import sampler from '../dist/map-frame-sample.js';
+import { loadLegacyScript } from './load-legacy-script.mjs';
+const sampler = loadLegacyScript(new URL('../dist/map-frame-sample.js', import.meta.url));
 function harness(){
   let id=0,visible=true;const frames=new Map(),results=[];
   const sample=sampler.create({frames:120,request:fn=>{frames.set(++id,fn);return id;},cancel:key=>frames.delete(key),visible:()=>visible,publish:r=>results.push(r)});

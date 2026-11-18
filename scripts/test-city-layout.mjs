@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, isSupportedLayoutModel, maxPlacementWidthMeters, cullingBudgets, supportedLayoutModelCount, buildingLayoutModels, propLayoutModels, isBuildingLayoutModel, layoutSedanWidthMeters, layoutBushWidthMeters, layoutStreetlightWidthMeters, layoutMaxMercatorLatitude, layoutCandidatesPerCellCount } = require('../dist/city-layout.js');
+import { loadLegacyScript } from './load-legacy-script.mjs';
+const { createPlacements, insidePolygon, createStreets, selectVisiblePlacements, summarizePlacements, summarizeStreets, supportedLayoutModels, isSupportedLayoutModel, maxPlacementWidthMeters, cullingBudgets, supportedLayoutModelCount, buildingLayoutModels, propLayoutModels, isBuildingLayoutModel, layoutSedanWidthMeters, layoutBushWidthMeters, layoutStreetlightWidthMeters, layoutMaxMercatorLatitude, layoutCandidatesPerCellCount } = loadLegacyScript(new URL('../dist/city-layout.js', import.meta.url));
 const cell = (id, x=0) => ({type:'Feature',id,properties:{ownerId:'vipers'},geometry:{type:'Polygon',coordinates:[[[x,0],[x+1,0],[x+1,1],[x,1],[x,0]]]}});
 
 test('placements are deterministic and remain within their authoritative blocks',()=>{

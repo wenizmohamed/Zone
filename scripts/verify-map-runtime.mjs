@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
-import ZoneTerritoryGeometry from '../dist/territory-geometry.js';
+import { loadLegacyScript } from './load-legacy-script.mjs';
 import ZoneCompactDistrict from '../assets/city/compact-district.js';
+
+const ZoneTerritoryGeometry = loadLegacyScript(new URL('../dist/territory-geometry.js', import.meta.url));
 
 // Execute the shipped iframe functions with a small Mapbox/DOM adapter. These
 // checks cover data and lifecycle behavior; a real browser still verifies WebGL.

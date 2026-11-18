@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
-const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js'),geometry=require('../dist/territory-geometry.js');
+import {loadLegacyScript} from './load-legacy-script.mjs';
+const require=createRequire(import.meta.url),district=require('../assets/city/compact-district.js'),geometry=loadLegacyScript(new URL('../dist/territory-geometry.js',import.meta.url));
 const html=readFileSync(new URL('../dist/city-map-torn.html',import.meta.url),'utf8');
 // Same immutable geographic catalog intersections as Database::territoryPoint.
 function originalPoint(c,r){const x=c/12*2-1,y=1-r/10*2,w=.68+.32*(1-Math.abs(y)),cross=x*2850*w+(c>0&&c<12?Math.sin(c*1.91+r*.73)*105:0),long=y*5900+(r>0&&r<10?Math.sin(r*1.47+c*.61)*135:0),b=29*Math.PI/180;return[-73.9812+(cross*Math.cos(b)+long*Math.sin(b))/(111320*Math.cos(40.7562*Math.PI/180)),40.7562+(-cross*Math.sin(b)+long*Math.cos(b))/111320];}
