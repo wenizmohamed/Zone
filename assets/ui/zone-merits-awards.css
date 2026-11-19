@@ -1,0 +1,1750 @@
+/* ==========================================================================
+ * ZONE v145 - TORN-STYLE AWARDS & MERITS HUB (HAND-DRAWN SKETCHBOOK EDITION)
+ * Authentic Torn page.php?sid=awards&tab=merits x Fountain-Pen Ink & Watercolor
+ * 100% 4-Way Parity: Light+EN, Dark+EN, Light+AR (RTL), Dark+AR (RTL)
+ * Exclusive Ownership: merits-ui (assets/ui/zone-merits-awards.css / .js)
+ * Zero Horizontal Overflow at 390px mobile, live sidebar visible on desktop.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. SEMANTIC SKETCHBOOK PALETTE TOKENS (LIGHT + DARK)
+ * -------------------------------------------------------------------------- */
+:root,
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body {
+  --zma-paper: var(--zwc-paper, #141210);
+  --zma-surface: var(--zwc-surface, #1e1b17);
+  --zma-surface-alt: var(--zwc-surface-alt, #25211c);
+  --zma-subcard: var(--zwc-paper-subcard, #26221d);
+  --zma-subcard-hover: var(--zwc-paper-subcard-hover, #302b24);
+  --zma-btn-bg: var(--zwc-btn-bg, #2a251f);
+  --zma-btn-hover: var(--zwc-btn-hover, #363028);
+
+  --zma-ink: var(--zwc-ink, #f3ecdc);
+  --zma-ink-soft: var(--zwc-ink-soft, #dfd4be);
+  --zma-ink-muted: var(--zwc-ink-muted, #b8ac95);
+  --zma-title-ink: var(--zwc-title-ink, #faf4e6);
+
+  --zma-border: var(--zwc-border, rgba(242, 234, 217, 0.3));
+  --zma-border-strong: var(--zwc-border-strong, rgba(242, 234, 217, 0.48));
+  --zma-ink-rule: var(--zwc-ink-rule, rgba(242, 234, 217, 0.16));
+  --zma-shadow-solid: var(--zwc-shadow-solid, #090807);
+  --zma-shadow-card: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.62));
+  --zma-shadow-btn: var(--zwc-shadow-btn, 1.5px 2px 0 #090807);
+
+  --zma-sage: #7cc052;
+  --zma-sage-fill-1: #5a9639;
+  --zma-sage-fill-2: #3f7225;
+  --zma-sage-ink: #c2ef9e;
+  --zma-sage-wash: rgba(124, 192, 82, 0.22);
+
+  --zma-gold: #f0c465;
+  --zma-gold-fill-1: #d49f35;
+  --zma-gold-fill-2: #a87619;
+  --zma-gold-ink: #f9dc94;
+  --zma-gold-wash: rgba(240, 196, 101, 0.2);
+
+  --zma-crimson: #ef7d68;
+  --zma-crimson-fill-1: #b8422d;
+  --zma-crimson-fill-2: #8c2c1c;
+  --zma-crimson-ink: #ffb5a7;
+  --zma-crimson-wash: rgba(239, 125, 104, 0.2);
+
+  --zma-blue: #8ab8e8;
+  --zma-blue-wash: rgba(138, 184, 232, 0.2);
+
+  --zma-pip-empty: #171411;
+  --zma-pip-empty-ink: #9c917d;
+  --zma-pip-next-bg: rgba(240, 196, 101, 0.16);
+  --zma-pip-next-border: #f0c465;
+  --zma-pip-filled-1: #7cc052;
+  --zma-pip-filled-2: #4e882e;
+  --zma-pip-max-1: #f4cf78;
+  --zma-pip-max-2: #c99227;
+
+  --zma-bronze: #cd8846;
+  --zma-silver: #b8c4d0;
+  --zma-medal-gold: #edc252;
+  --zma-platinum: #7cc9e8;
+
+  --zma-font-ui: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  --zma-font-brush: var(--zwc-font-brush, "Caveat Brush", "Rubik", sans-serif);
+  --zma-radius: var(--zwc-radius-sketch, 255px 12px 225px 12px / 10px 225px 10px 255px);
+  --zma-radius-sm: var(--zwc-radius-sketch-sm, 185px 8px 165px 8px / 7px 165px 7px 185px);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  --zma-paper: var(--zwc-paper, #f2ebdc);
+  --zma-surface: var(--zwc-surface, #fbf7ee);
+  --zma-surface-alt: var(--zwc-surface-alt, #f4ecdb);
+  --zma-subcard: var(--zwc-paper-subcard, #f4ecdb);
+  --zma-subcard-hover: var(--zwc-paper-subcard-hover, #ece1c9);
+  --zma-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zma-btn-hover: var(--zwc-btn-hover, #e2d5b8);
+
+  --zma-ink: var(--zwc-ink, #1e1b18);
+  --zma-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zma-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zma-title-ink: var(--zwc-title-ink, #1a1714);
+
+  --zma-border: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --zma-border-strong: var(--zwc-border-strong, #23201c);
+  --zma-ink-rule: var(--zwc-ink-rule, rgba(34, 30, 25, 0.16));
+  --zma-shadow-solid: var(--zwc-shadow-solid, #23201c);
+  --zma-shadow-card: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zma-shadow-btn: var(--zwc-shadow-btn, 1.5px 2px 0 #23201c);
+
+  --zma-sage: #386b21;
+  --zma-sage-fill-1: #4c8231;
+  --zma-sage-fill-2: #335c1e;
+  --zma-sage-ink: #1b4d23;
+  --zma-sage-wash: rgba(109, 153, 73, 0.24);
+
+  --zma-gold: #8c5a0b;
+  --zma-gold-fill-1: #d9a434;
+  --zma-gold-fill-2: #ad7916;
+  --zma-gold-ink: #663f06;
+  --zma-gold-wash: rgba(218, 168, 59, 0.24);
+
+  --zma-crimson: #9a2917;
+  --zma-crimson-fill-1: #b8422d;
+  --zma-crimson-fill-2: #8c2818;
+  --zma-crimson-ink: #7d1d0e;
+  --zma-crimson-wash: rgba(198, 83, 58, 0.2);
+
+  --zma-blue: #1a4375;
+  --zma-blue-wash: rgba(62, 111, 176, 0.2);
+
+  --zma-pip-empty: #e8dec8;
+  --zma-pip-empty-ink: #5f5547;
+  --zma-pip-next-bg: rgba(218, 168, 59, 0.26);
+  --zma-pip-next-border: #8f5c09;
+  --zma-pip-filled-1: #639c40;
+  --zma-pip-filled-2: #3f6e25;
+  --zma-pip-max-1: #e5b340;
+  --zma-pip-max-2: #b88218;
+
+  --zma-bronze: #a05f22;
+  --zma-silver: #5e6b78;
+  --zma-medal-gold: #a87512;
+  --zma-platinum: #1e7396;
+}
+
+html[dir="rtl"],
+html:lang(ar) {
+  --zma-font-ui: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  --zma-font-brush: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. IN-PAGE HUB TAKEOVER INSIDE #zone-main (100% REACT/FIBER-SAFE)
+ *    Hides sibling game screen nodes cleanly while keeping aside.zone-sidebar
+ *    live on desktop and nav.zone-mobile-tabbar accessible on mobile.
+ * -------------------------------------------------------------------------- */
+html body #dc-root #zone-main#zone-main[data-zma-open="1"] > :not(#zone-merits-hub):not(nav.zone-mobile-tabbar) {
+  display: none !important;
+}
+
+html body #dc-root #zone-main#zone-main #zone-merits-hub[hidden] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 3. SIDEBAR MERITS ENTRY ROW, OPERATIVE CREST HONOR BAR & QUICK BUTTONS
+ * -------------------------------------------------------------------------- */
+html body #dc-root aside.zone-sidebar [data-zma-merits-trigger="1"],
+html body aside.zone-sidebar [data-zma-merits-trigger="1"] {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  padding: 4px 6px !important;
+  margin-inline: -6px !important;
+  border-radius: var(--zma-radius-sm) !important;
+  border: 1px solid transparent !important;
+  cursor: pointer !important;
+  transition: background-color 0.14s ease, border-color 0.14s ease !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zma-merits-trigger="1"]:hover,
+html body aside.zone-sidebar [data-zma-merits-trigger="1"]:hover,
+html body #dc-root aside.zone-sidebar [data-zma-merits-trigger="1"][data-zma-active="1"],
+html body aside.zone-sidebar [data-zma-merits-trigger="1"][data-zma-active="1"] {
+  background: var(--zma-gold-wash) !important;
+  border-color: var(--zma-border-strong) !important;
+}
+
+html body #dc-root aside.zone-sidebar [data-zma-merits-trigger="1"] > span:first-child,
+html body aside.zone-sidebar [data-zma-merits-trigger="1"] > span:first-child {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-inline-end: auto !important;
+  color: var(--zma-gold-ink) !important;
+  font-weight: 700 !important;
+}
+
+html body #dc-root aside.zone-sidebar .zma-sidebar-star,
+html body aside.zone-sidebar .zma-sidebar-star {
+  width: 14px !important;
+  height: 14px !important;
+  flex: 0 0 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html body #dc-root aside.zone-sidebar .zma-sidebar-badge,
+html body aside.zone-sidebar .zma-sidebar-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-inline-start: 0 !important;
+  padding: 1px 6px !important;
+  min-height: 18px !important;
+  border-radius: 999px !important;
+  border: 1.2px solid var(--zma-border-strong) !important;
+  background: linear-gradient(180deg, var(--zma-gold-fill-1), var(--zma-gold-fill-2)) !important;
+  color: #fffaf0 !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  white-space: nowrap !important;
+  box-shadow: 1px 1px 0 var(--zma-shadow-solid) !important;
+}
+
+html body #dc-root aside.zone-sidebar .zma-sidebar-badge[data-zma-ready="1"],
+html body aside.zone-sidebar .zma-sidebar-badge[data-zma-ready="1"] {
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  color: #fcf9f2 !important;
+  animation: zmaPulseBadge 2.2s ease-in-out infinite !important;
+}
+
+html body #dc-root aside.zone-sidebar .zma-sidebar-badge[hidden],
+html body aside.zone-sidebar .zma-sidebar-badge[hidden] {
+  display: none !important;
+}
+
+@keyframes zmaPulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+/* Mobile details Merits row clickable styling */
+html body #dc-root aside.zone-sidebar .zone-profile-mobile-details [data-zma-merits-trigger="1"] {
+  margin-inline: 0 !important;
+  padding: 5px 8px !important;
+  background: var(--zma-gold-wash) !important;
+  border: 1px solid var(--zma-border) !important;
+}
+
+/* Equipped Honor Bar inside Sidebar Operative Crest (#zone-operative-crest) */
+html body #dc-root aside.zone-sidebar #zone-operative-crest[data-zma-has-honor="1"],
+html body aside.zone-sidebar #zone-operative-crest[data-zma-has-honor="1"] {
+  flex-wrap: wrap !important;
+}
+
+html body #dc-root#dc-root aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar,
+html body aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar {
+  flex: 1 0 100% !important;
+  width: 100% !important;
+  margin-top: 5px !important;
+  padding: 4px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border-radius: 5px 9px 5px 8px / 6px 5px 8px 5px !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(110deg, var(--h-bg1, #355c7d) 0%, var(--h-bg2, #6c5b7b) 100%) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 252, 245, 0.25), 1.5px 2px 0 var(--zma-shadow-solid) !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+html body #dc-root#dc-root aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar .zma-crest-honor-ico {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  border-radius: 50% !important;
+  background: rgba(16, 14, 11, 0.42) !important;
+  border: 1px solid rgba(255, 250, 235, 0.65) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fffaf0 !important;
+}
+
+html body #dc-root#dc-root aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar .zma-crest-honor-ico svg {
+  width: 12px !important;
+  height: 12px !important;
+  display: block !important;
+}
+
+html body #dc-root#dc-root aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar .zma-crest-honor-title {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  color: #fffcf5 !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.01em !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 1px 1px 0 rgba(0, 0, 0, 0.72) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+html body #dc-root#dc-root aside.zone-sidebar #zone-operative-crest #zma-crest-honor-bar .zma-crest-honor-tag {
+  flex: 0 0 auto !important;
+  padding: 1px 5px !important;
+  border-radius: 999px !important;
+  background: rgba(16, 14, 11, 0.48) !important;
+  border: 1px solid rgba(255, 245, 210, 0.55) !important;
+  color: #ffe394 !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+/* Quick "Awards" Button injected into Page Heading action group */
+html body #dc-root #zone-main#zone-main .zone-page-heading #zma-quick-awards-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  min-height: 30px !important;
+  padding: 3px 10px !important;
+  background: var(--zma-gold-wash) !important;
+  background-image: none !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-title-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, background-color 0.14s ease !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-page-heading #zma-quick-awards-btn:hover {
+  background: var(--zma-btn-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-page-heading #zma-quick-awards-btn .zma-qa-ico {
+  width: 15px !important;
+  height: 15px !important;
+  flex: 0 0 15px !important;
+  display: inline-flex !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-page-heading #zma-quick-awards-btn .zma-qa-pill {
+  padding: 0 5px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  color: #fcf9f2 !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-page-heading #zma-quick-awards-btn .zma-qa-pill[hidden] {
+  display: none !important;
+}
+
+/* Sidebar Areas Navigation Row for Awards & Merits (desktop + mobile drawer) */
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn {
+  width: 100% !important;
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-block-start: 1px dashed var(--zma-ink-rule) !important;
+  border-inline-start: 3px solid transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--zma-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-align: start !important;
+  cursor: pointer !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn:hover {
+  background: var(--zma-gold-wash) !important;
+  color: var(--zma-title-ink) !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn[aria-current="page"] {
+  background: var(--zma-gold-wash) !important;
+  border-inline-start: 3.5px solid var(--zma-gold) !important;
+  color: var(--zma-title-ink) !important;
+  font-weight: 800 !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-ico {
+  width: 20px !important;
+  height: 20px !important;
+  flex: 0 0 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-lbl {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  color: inherit !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-badge {
+  padding: 1px 6px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  color: #fcf9f2 !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+
+html body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-badge[hidden] {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 4. AWARDS & MERITS HUB MAIN CONTAINER (#zone-merits-hub)
+ * -------------------------------------------------------------------------- */
+html body #dc-root #zone-main#zone-main #zone-merits-hub {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  font-family: var(--zma-font-ui) !important;
+  color: var(--zma-ink) !important;
+  padding-bottom: 24px !important;
+}
+
+#zone-merits-hub *,
+#zone-merits-hub *::before,
+#zone-merits-hub *::after {
+  box-sizing: border-box;
+}
+
+#zone-merits-hub bdi,
+#zone-merits-hub .zma-num {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Hub Header Bar ---- */
+.zma-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--zma-border-strong);
+}
+
+.zma-header-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  min-width: 0;
+}
+
+.zma-back-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  padding: 5px 12px !important;
+  background: var(--zma-btn-bg) !important;
+  background-image: none !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-title-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, background-color 0.14s ease !important;
+}
+
+.zma-back-btn:hover {
+  background: var(--zma-btn-hover) !important;
+  transform: translateY(-1px) !important;
+}
+
+.zma-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+html body #dc-root #zone-main#zone-main #zone-merits-hub .zma-title {
+  margin: 0 !important;
+  font-family: var(--zma-font-brush) !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+  color: var(--zma-title-ink) !important;
+  -webkit-text-stroke: var(--zwc-title-stroke, 0.35px currentColor) !important;
+  text-shadow: var(--zwc-title-shadow, none) !important;
+  text-transform: none !important;
+}
+
+html[dir="rtl"] #zone-merits-hub .zma-title,
+html:lang(ar) #zone-merits-hub .zma-title {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+.zma-subtitle {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--zma-ink-muted);
+}
+
+.zma-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Primary Emerald Claim All CTA */
+.zma-btn-claim-all {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  padding: 6px 14px !important;
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: #fcf9f2 !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, filter 0.14s ease !important;
+}
+
+.zma-btn-claim-all:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px) !important;
+}
+
+/* Reset Merits Button */
+.zma-btn-reset {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  background: var(--zma-crimson-wash) !important;
+  background-image: none !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-crimson-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, background-color 0.14s ease !important;
+}
+
+.zma-btn-reset:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  background: var(--zma-crimson-fill-1) !important;
+  color: #fffaf5 !important;
+}
+
+.zma-btn-reset:disabled {
+  opacity: 0.52 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Safe Inline 2-Step Reset Confirmation Strip */
+.zma-reset-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--zma-crimson-wash);
+  border: 2px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+}
+
+.zma-reset-confirm[hidden] {
+  display: none !important;
+}
+
+.zma-reset-confirm-msg {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--zma-title-ink);
+  line-height: 1.4;
+}
+
+.zma-reset-confirm-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.zma-btn-danger-solid {
+  min-height: 34px !important;
+  padding: 5px 14px !important;
+  background: linear-gradient(180deg, var(--zma-crimson-fill-1), var(--zma-crimson-fill-2)) !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: #fffaf5 !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+}
+
+.zma-btn-cancel {
+  min-height: 34px !important;
+  padding: 5px 12px !important;
+  background: var(--zma-btn-bg) !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+/* ---- Torn Charcoal Crosshatched Overview / Tutorial Strip ---- */
+.zma-overview-card {
+  border: 2px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  overflow: hidden;
+  box-shadow: var(--zma-shadow-card);
+  background: var(--zwc-tutorial-body-bg, var(--zma-surface));
+}
+
+.zma-overview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--zwc-crosshatch-bg, #272522);
+  border-bottom: 1.5px solid var(--zwc-crosshatch-border, #181613);
+  color: #fcf9f2;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.zma-overview-head-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f4cf78;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zma-overview-body {
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--zma-ink-soft);
+}
+
+/* ---- Live Feedback Banner ---- */
+.zma-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--zma-radius-sm);
+  border: 1.5px solid var(--zma-border-strong);
+  background: var(--zma-sage-wash);
+  color: var(--zma-title-ink);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--zma-shadow-btn);
+}
+
+.zma-feedback[data-tone="warn"] {
+  background: var(--zma-crimson-wash);
+  color: var(--zma-crimson-ink);
+}
+
+.zma-feedback[data-tone="gold"] {
+  background: var(--zma-gold-wash);
+  color: var(--zma-gold-ink);
+}
+
+.zma-feedback[hidden] {
+  display: none !important;
+}
+
+.zma-feedback-close {
+  border: 0 !important;
+  background: transparent !important;
+  color: inherit !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  padding: 2px 6px !important;
+}
+
+/* ---- 4 Compact KPI Summary Counters ---- */
+.zma-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zma-kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  background: var(--zwc-card-bg, var(--zma-surface));
+  border: 1.8px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+  min-width: 0;
+}
+
+.zma-kpi-card[data-kpi="available"] {
+  border-inline-start: 4px solid var(--zma-sage);
+}
+
+.zma-kpi-card[data-kpi="spent"] {
+  border-inline-start: 4px solid var(--zma-gold);
+}
+
+.zma-kpi-card[data-kpi="honors"] {
+  border-inline-start: 4px solid var(--zma-blue);
+}
+
+.zma-kpi-card[data-kpi="medals"] {
+  border-inline-start: 4px solid var(--zma-crimson);
+}
+
+.zma-kpi-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--zma-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zma-kpi-val {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--zma-title-ink);
+}
+
+.zma-kpi-card[data-kpi="available"] .zma-kpi-val {
+  color: var(--zma-sage-ink);
+}
+
+.zma-kpi-card[data-kpi="spent"] .zma-kpi-val {
+  color: var(--zma-gold-ink);
+}
+
+.zma-kpi-sub {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--zma-ink-muted);
+}
+
+/* ---- Torn 3-Tab Switcher (Merits | Honors | Medals) ---- */
+.zma-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  background: var(--zma-subcard);
+  border: 2px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.zma-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.zma-tab-btn {
+  flex: 1 1 0;
+  min-width: 110px;
+  min-height: 38px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 6px 12px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 1.5px solid transparent !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: none !important;
+  color: var(--zma-ink-soft) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background-color 0.14s ease, border-color 0.14s ease !important;
+}
+
+.zma-tab-btn:hover {
+  background: var(--zma-btn-hover) !important;
+  color: var(--zma-title-ink) !important;
+}
+
+.zma-tab-btn[aria-selected="true"] {
+  background: var(--zma-surface) !important;
+  background-image: var(--zwc-row-active, none) !important;
+  border-color: var(--zma-border-strong) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-title-ink) !important;
+  font-weight: 800 !important;
+}
+
+.zma-tab-ico {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zma-tab-count {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--zma-btn-bg);
+  border: 1px solid var(--zma-border);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--zma-ink);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zma-tab-count.is-ready {
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2));
+  border-color: var(--zma-border-strong);
+  color: #fcf9f2;
+}
+
+/* ---- Category Filter Chips ---- */
+.zma-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.zma-filter-chip {
+  min-height: 30px !important;
+  padding: 4px 11px !important;
+  background: var(--zma-btn-bg) !important;
+  background-image: none !important;
+  border: 1.4px solid var(--zma-border) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  color: var(--zma-ink-soft) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background-color 0.12s ease, border-color 0.12s ease !important;
+}
+
+.zma-filter-chip:hover {
+  background: var(--zma-btn-hover) !important;
+  color: var(--zma-title-ink) !important;
+}
+
+.zma-filter-chip[aria-pressed="true"] {
+  background: var(--zma-gold-wash) !important;
+  border-color: var(--zma-border-strong) !important;
+  color: var(--zma-title-ink) !important;
+  box-shadow: 1px 1.5px 0 var(--zma-shadow-solid) !important;
+  font-weight: 800 !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 5. TAB 1: MERITS - AUTHENTIC TORN 10-SEGMENT PIP UPGRADE LEDGER
+ * -------------------------------------------------------------------------- */
+.zma-merit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zma-merit-row {
+  display: grid;
+  grid-template-columns: minmax(210px, 1.2fr) minmax(240px, 1.35fr) auto;
+  align-items: center;
+  gap: 12px 14px;
+  padding: 10px 12px;
+  background: var(--zwc-card-bg, var(--zma-surface));
+  border: 1.8px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.zma-merit-row:hover {
+  background: var(--zma-subcard-hover);
+}
+
+.zma-merit-row[data-maxed="1"] {
+  border-inline-start: 4px solid var(--zma-gold);
+}
+
+.zma-merit-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.zma-merit-ico {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 10px 8px 11px 8px / 8px 11px 8px 10px;
+  border: 1.5px solid var(--zma-border-strong);
+  background: var(--zma-subcard);
+  box-shadow: 1.5px 2px 0 var(--zma-shadow-solid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+
+.zma-merit-ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.zma-merit-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.zma-merit-name-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.zma-merit-name {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--zma-title-ink);
+  line-height: 1.2;
+}
+
+.zma-merit-rank-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--zma-btn-bg);
+  border: 1px solid var(--zma-border);
+  color: var(--zma-ink-soft);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zma-merit-bonus-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--zma-sage-wash);
+  border: 1px solid var(--zma-border);
+  color: var(--zma-sage-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.zma-merit-bonus-pill.is-zero {
+  background: var(--zma-btn-bg);
+  color: var(--zma-ink-muted);
+}
+
+.zma-merit-desc {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--zma-ink-muted);
+  line-height: 1.3;
+}
+
+/* Torn 10-Segment Pip Bar */
+.zma-pip-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.zma-pip-bar {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  direction: ltr;
+}
+
+.zma-pip {
+  position: relative;
+  height: 22px;
+  border-radius: 4px 3px 5px 3px;
+  border: 1.5px solid var(--zma-border-strong);
+  background: var(--zma-pip-empty);
+  color: var(--zma-pip-empty-ink);
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: transform 0.14s ease, background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.zma-pip.is-filled {
+  background: linear-gradient(180deg, var(--zma-pip-filled-1), var(--zma-pip-filled-2));
+  color: #fcf9f2;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 1px 0 var(--zma-shadow-solid);
+}
+
+.zma-pip.is-maxed {
+  background: linear-gradient(180deg, var(--zma-pip-max-1), var(--zma-pip-max-2));
+  color: #1c160b;
+  box-shadow: inset 0 1px 0 rgba(255, 252, 240, 0.45), 0 1px 0 var(--zma-shadow-solid);
+}
+
+.zma-pip.is-next {
+  background: var(--zma-pip-next-bg);
+  border-color: var(--zma-pip-next-border);
+  border-style: dashed;
+  color: var(--zma-gold-ink);
+}
+
+.zma-pip.is-next.is-affordable {
+  border-style: solid;
+  box-shadow: 0 0 0 1.5px var(--zma-gold-wash);
+  animation: zmaPipPulse 1.9s ease-in-out infinite;
+}
+
+@keyframes zmaPipPulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+
+.zma-pip-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--zma-ink-muted);
+}
+
+/* Right-side Upgrade CTA / MAX Stamp */
+.zma-merit-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 122px;
+}
+
+.zma-upgrade-btn {
+  width: 100%;
+  min-height: 36px !important;
+  padding: 6px 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  border-radius: var(--zma-radius-sm) !important;
+  border: 1.6px solid var(--zma-border-strong) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: transform 0.12s ease, filter 0.14s ease !important;
+}
+
+.zma-upgrade-btn.is-affordable {
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  color: #fcf9f2 !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+}
+
+.zma-upgrade-btn.is-affordable:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px) !important;
+}
+
+.zma-upgrade-btn.is-locked {
+  background: var(--zma-btn-bg) !important;
+  background-image: none !important;
+  color: var(--zma-ink-muted) !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+.zma-max-badge {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: var(--zma-radius-sm);
+  border: 1.6px solid var(--zma-border-strong);
+  background: linear-gradient(180deg, var(--zma-gold-fill-1), var(--zma-gold-fill-2));
+  color: #1c160b;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255, 252, 240, 0.45), var(--zma-shadow-btn);
+}
+
+/* --------------------------------------------------------------------------
+ * 6. TAB 2: HONORS - AUTHENTIC TORN COLLECTIBLE HONOR BARS
+ * -------------------------------------------------------------------------- */
+.zma-honors-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zma-honor-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: var(--zwc-card-bg, var(--zma-surface));
+  border: 1.8px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+  min-width: 0;
+}
+
+.zma-honor-card[data-status="ready"] {
+  border-color: var(--zma-sage);
+  box-shadow: 0 0 0 1.5px var(--zma-sage-wash), var(--zma-shadow-card);
+}
+
+.zma-honor-card[data-equipped="1"] {
+  border-color: var(--zma-gold);
+  box-shadow: 0 0 0 1.5px var(--zma-gold-wash), var(--zma-shadow-card);
+}
+
+/* Torn-Style Wide Illustrated Watercolor Honor Bar Banner */
+.zma-honor-banner {
+  position: relative;
+  min-height: 54px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px 12px 7px 10px / 9px 6px 10px 7px;
+  border: 2px solid var(--zma-border-strong);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.08) 0px,
+      rgba(255, 255, 255, 0.08) 2px,
+      transparent 2px,
+      transparent 7px
+    ),
+    radial-gradient(ellipse 68% 120% at 15% 20%, rgba(255, 255, 255, 0.24) 0%, transparent 65%),
+    linear-gradient(112deg, var(--h-bg1, #2e5370) 0%, var(--h-bg2, #5b3e68) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 252, 245, 0.28), 2px 2.5px 0 var(--zma-shadow-solid);
+  overflow: hidden;
+}
+
+.zma-honor-card[data-status="locked"] .zma-honor-banner {
+  filter: saturate(0.45) brightness(0.86);
+}
+
+.zma-honor-emblem {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border-radius: 50%;
+  background: rgba(16, 14, 11, 0.44);
+  border: 1.6px solid rgba(255, 250, 236, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fffcf4;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.zma-honor-emblem svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.zma-honor-banner-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zma-honor-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fffcf5;
+  line-height: 1.15;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 1px 1px 0 rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zma-honor-cat-pill {
+  display: inline-block;
+  width: fit-content;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(15, 13, 10, 0.46);
+  border: 1px solid rgba(255, 250, 235, 0.35);
+  color: #fce7b2;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.zma-honor-merit-stamp {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(15, 13, 10, 0.56);
+  border: 1.4px solid rgba(255, 235, 175, 0.75);
+  color: #ffe49c;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zma-honor-desc {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--zma-ink-soft);
+  line-height: 1.38;
+}
+
+.zma-honor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.zma-prog-block {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zma-prog-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--zma-ink-muted);
+}
+
+.zma-prog-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--zwc-track-bg, rgba(128, 120, 105, 0.2));
+  border: 1.2px solid var(--zwc-track-border, var(--zma-border));
+  overflow: hidden;
+}
+
+.zma-prog-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--zma-sage-fill-2), var(--zma-sage-fill-1));
+  transition: width 0.3s ease;
+}
+
+.zma-prog-fill.is-gold {
+  background: linear-gradient(90deg, var(--zma-gold-fill-2), var(--zma-gold-fill-1));
+}
+
+/* Honor & Medal Action Buttons */
+.zma-claim-btn {
+  min-height: 34px !important;
+  padding: 5px 12px !important;
+  background: linear-gradient(180deg, var(--zma-sage-fill-1), var(--zma-sage-fill-2)) !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: #fcf9f2 !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, filter 0.14s ease !important;
+}
+
+.zma-claim-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px) !important;
+}
+
+.zma-equip-btn {
+  min-height: 34px !important;
+  padding: 5px 12px !important;
+  background: var(--zma-btn-bg) !important;
+  background-image: none !important;
+  border: 1.5px solid var(--zma-border-strong) !important;
+  border-radius: var(--zma-radius-sm) !important;
+  box-shadow: var(--zma-shadow-btn) !important;
+  color: var(--zma-title-ink) !important;
+  font-family: var(--zma-font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.zma-equip-btn:hover {
+  background: var(--zma-btn-hover) !important;
+}
+
+.zma-equip-btn.is-equipped {
+  background: linear-gradient(180deg, var(--zma-gold-fill-1), var(--zma-gold-fill-2)) !important;
+  color: #1c160b !important;
+  font-weight: 900 !important;
+}
+
+.zma-locked-pill {
+  min-height: 30px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--zma-radius-sm);
+  border: 1.2px dashed var(--zma-border);
+  background: var(--zma-subcard);
+  color: var(--zma-ink-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. TAB 3: MEDALS - PROGRESSIVE BRONZE / SILVER / GOLD / PLATINUM CRESTS
+ * -------------------------------------------------------------------------- */
+.zma-medals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zma-medal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--zwc-card-bg, var(--zma-surface));
+  border: 1.8px solid var(--zma-border-strong);
+  border-radius: var(--zma-radius-sm);
+  box-shadow: var(--zma-shadow-card);
+  min-width: 0;
+}
+
+.zma-medal-card[data-ready="1"] {
+  border-color: var(--zma-sage);
+  box-shadow: 0 0 0 1.5px var(--zma-sage-wash), var(--zma-shadow-card);
+}
+
+.zma-medal-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.zma-medal-crest {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zma-medal-crest svg {
+  width: 56px;
+  height: 56px;
+  display: block;
+}
+
+.zma-medal-head {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zma-medal-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.zma-medal-name {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--zma-title-ink);
+  line-height: 1.2;
+}
+
+.zma-medal-tier-pill {
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1.2px solid var(--zma-border-strong);
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--zma-title-ink);
+  background: var(--zma-btn-bg);
+}
+
+.zma-medal-tier-pill[data-tier="bronze"] { background: rgba(184, 115, 51, 0.24); color: var(--zma-bronze); }
+.zma-medal-tier-pill[data-tier="silver"] { background: rgba(154, 165, 177, 0.24); color: var(--zma-silver); }
+.zma-medal-tier-pill[data-tier="gold"] { background: rgba(212, 162, 56, 0.26); color: var(--zma-medal-gold); }
+.zma-medal-tier-pill[data-tier="platinum"] { background: rgba(104, 181, 212, 0.26); color: var(--zma-platinum); }
+
+.zma-medal-desc {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--zma-ink-muted);
+  line-height: 1.35;
+}
+
+/* 4-Tier Milestone Step Indicator (I · II · III · IV) */
+.zma-tier-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zma-tier-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1.4px solid var(--zma-border);
+  background: var(--zma-subcard);
+  text-align: center;
+  min-width: 0;
+}
+
+.zma-tier-step.is-claimed {
+  border-color: var(--zma-border-strong);
+  box-shadow: 1px 1.5px 0 var(--zma-shadow-solid);
+}
+
+.zma-tier-step.is-claimed[data-metal="bronze"] { background: rgba(184, 115, 51, 0.22); }
+.zma-tier-step.is-claimed[data-metal="silver"] { background: rgba(154, 165, 177, 0.24); }
+.zma-tier-step.is-claimed[data-metal="gold"] { background: rgba(212, 162, 56, 0.26); }
+.zma-tier-step.is-claimed[data-metal="platinum"] { background: rgba(104, 181, 212, 0.28); }
+
+.zma-tier-step.is-ready {
+  border-color: var(--zma-sage);
+  background: var(--zma-sage-wash);
+  box-shadow: 0 0 0 1px var(--zma-sage-wash);
+}
+
+.zma-tier-roman {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--zma-title-ink);
+}
+
+.zma-tier-metal {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--zma-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.zma-tier-target {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--zma-ink-soft);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zma-medal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+}
+
+/* Focus-Visible Accessibility Ring */
+#zone-merits-hub button:focus-visible,
+[data-zma-merits-trigger="1"]:focus-visible,
+#zma-quick-awards-btn:focus-visible,
+#zma-nav-awards-btn:focus-visible {
+  outline: 2.5px solid var(--zma-gold) !important;
+  outline-offset: 2px !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 8. RESPONSIVE BREAKPOINTS (TABLET & MOBILE 390px ZERO OVERFLOW)
+ * -------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .zma-merit-row {
+    grid-template-columns: minmax(190px, 1fr) minmax(210px, 1.2fr) auto;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 820px) {
+  .zma-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zma-merit-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "meta action"
+      "pips pips";
+  }
+
+  .zma-merit-meta {
+    grid-area: meta;
+  }
+
+  .zma-merit-action {
+    grid-area: action;
+    min-width: 112px;
+  }
+
+  .zma-pip-wrap {
+    grid-area: pips;
+  }
+
+  .zma-honors-grid,
+  .zma-medals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  html body #dc-root #zone-main#zone-main #zone-merits-hub {
+    gap: 10px !important;
+    padding-bottom: 84px !important;
+  }
+
+  .zma-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .zma-header-left {
+    justify-content: flex-start;
+  }
+
+  html body #dc-root #zone-main#zone-main #zone-merits-hub .zma-title {
+    font-size: 24px !important;
+  }
+
+  .zma-header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px;
+  }
+
+  .zma-btn-claim-all,
+  .zma-btn-reset,
+  .zma-back-btn {
+    min-height: 40px !important;
+    font-size: 12.5px !important;
+  }
+
+  .zma-tabs {
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .zma-tab-btn {
+    min-width: 0;
+    padding: 6px 6px !important;
+    font-size: 12.5px !important;
+    gap: 4px !important;
+    min-height: 40px !important;
+  }
+
+  .zma-tab-ico {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 14px;
+  }
+
+  .zma-kpi-card {
+    padding: 8px 10px;
+  }
+
+  .zma-kpi-val {
+    font-size: 19px;
+  }
+
+  .zma-merit-row {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "meta"
+      "pips"
+      "action";
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .zma-merit-action {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .zma-upgrade-btn,
+  .zma-max-badge {
+    min-height: 40px !important;
+  }
+
+  .zma-pip {
+    height: 24px;
+    font-size: 9.5px;
+  }
+
+  .zma-pip-bar {
+    gap: 3px;
+  }
+
+  .zma-honor-footer,
+  .zma-medal-footer {
+    flex-wrap: wrap;
+  }
+
+  .zma-claim-btn,
+  .zma-equip-btn {
+    min-height: 40px !important;
+  }
+
+  .zma-tier-steps {
+    gap: 4px;
+  }
+
+  .zma-tier-step {
+    padding: 5px 3px;
+  }
+}

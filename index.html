@@ -54,15 +54,18 @@
 <link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=113">
 <link rel="stylesheet" href="./assets/ui/gym116.css?v=117">
 <link rel="stylesheet" href="./assets/ui/noir-game-hud.css?v=130">
-<link rel="stylesheet" href="./assets/ui/aaa-topbar-sidebar.css?v=144">
-<link rel="stylesheet" href="./assets/ui/aaa-game-surfaces.css?v=144">
-<link rel="stylesheet" href="./assets/ui/watercolor-sketchbook.css?v=144">
-<link rel="stylesheet" href="./assets/ui/zone-mayor-widget.css?v=144">
-<script defer src="./assets/ui/zone-instant-games.js?v=144"></script>
-<script defer src="./assets/ui/aaa-topbar-sidebar.js?v=144"></script>
-<script defer src="./assets/ui/aaa-game-fx.js?v=144"></script>
-<script defer src="./assets/ui/watercolor-sketchbook.js?v=144"></script>
-<script defer src="./assets/ui/zone-mayor-widget.js?v=144"></script>
+<link rel="stylesheet" href="./assets/ui/aaa-topbar-sidebar.css?v=145">
+<link rel="stylesheet" href="./assets/ui/aaa-game-surfaces.css?v=145">
+<link rel="stylesheet" href="./assets/ui/watercolor-sketchbook.css?v=145">
+<link rel="stylesheet" href="./assets/ui/zone-mayor-widget.css?v=145">
+<link rel="stylesheet" href="./assets/ui/zone-merits-awards.css?v=145">
+<script defer src="./assets/ui/zone-instant-games.js?v=145"></script>
+<script defer src="./assets/ui/aaa-topbar-sidebar.js?v=145"></script>
+<script defer src="./assets/ui/aaa-game-fx.js?v=145"></script>
+<script defer src="./assets/ui/watercolor-sketchbook.js?v=145"></script>
+<script defer src="./assets/ui/zone-mayor-widget.js?v=145"></script>
+<script defer src="./assets/ui/zone-merits-data.js?v=145"></script>
+<script defer src="./assets/ui/zone-merits-awards.js?v=145"></script>
 </head>
 <body>
 <x-dc>
@@ -2159,7 +2162,12 @@ class Component extends DCLogic {
       }
     };
     window.addEventListener('message', this.onMsg);
-    if (typeof window !== 'undefined') window.__zoneGame = this;
+    if (typeof window !== 'undefined') {
+      window.__zoneGame = this;
+      this.applyLocalMeritsOverlay();
+      window.ZoneMeritsBridge = this.createMeritsBridge();
+      this.emitMeritsUpdate();
+    }
     this.pushChar();
     this.pushCombatScene();
     this.mapVisibility(this.state.screen === 'city');
@@ -2894,7 +2902,57 @@ class Component extends DCLogic {
     return true;
   }
   gameplayDisabled() { return IS_PREVIEW || !this.gameplayReady || this.runtimeConnection === 'offline' || !!this.gameplayError || !!this.moduleBusy || this.p.travel?.status === 'traveling'; }
-  maxOf(k) { const p = this.p, u = p.fac.ups; if (this.serverPlayer && Number.isFinite(p.serverMax?.[k])) return p.serverMax[k]; if (k === 'happy') return PROPS.find(x => x.id === p.prop).happy; return BARS[k].max + (k === 'nerve' && u.nerveMax ? 5 : 0) + (k === 'energy' && u.energyMax ? 10 : 0) + (k === 'life' && p.eduDone.bio ? 50 : 0); }
+  meritBonuses() {
+    const zmd = globalThis.ZoneMeritsData;
+    if (!zmd || typeof zmd.computeBonuses !== 'function') {
+      return { nerveBonus: 0, lifePct: 0, critPct: 0, crimePct: 0, awarenessPct: 0, brawnPct: 0, protectionPct: 0, sharpnessPct: 0, evasionPct: 0, bankInterestPct: 0, eduReductionPct: 0, empEff: 0, empPayPct: 0, mugPct: 0, hospPct: 0, stealthBonus: 0, gymPct: 0, riflePct: 0, smgPct: 0, pistolPct: 0, meleePct: 0 };
+    }
+    return zmd.computeBonuses(this.p?.meritTree);
+  }
+  weaponMasteryPct(weaponId = this.p?.equip) {
+    const mb = this.meritBonuses();
+    const id = String(weaponId || 'fists').toLowerCase();
+    if (!id || id === 'fists' || /knife|bat|blade|sword|axe|hammer|crowbar|katana|club|machete|dagger|melee/.test(id)) return mb.meleePct || 0;
+    if (/pistol|revolver|magnum|glock|deagle|beretta|sidearm/.test(id)) return mb.pistolPct || 0;
+    if (/smg|submachine|shotgun|sawedoff|mp5|mp9|uzi|mac10|p90/.test(id)) return mb.smgPct || 0;
+    return mb.riflePct || 0;
+  }
+  effectiveBattleStats() {
+    const s = this.p?.stats || {}, mb = this.meritBonuses();
+    return {
+      str: Math.round(Number(s.str || 0) * (1 + (mb.brawnPct || 0) / 100) * 100) / 100,
+      def: Math.round(Number(s.def || 0) * (1 + (mb.protectionPct || 0) / 100) * 100) / 100,
+      spd: Math.round(Number(s.spd || 0) * (1 + (mb.sharpnessPct || 0) / 100) * 100) / 100,
+      dex: Math.round(Number(s.dex || 0) * (1 + (mb.evasionPct || 0) / 100) * 100) / 100
+    };
+  }
+  combatMeritModifiers() {
+    const mb = this.meritBonuses();
+    const eff = this.effectiveBattleStats();
+    const masteryPct = this.weaponMasteryPct();
+    return {
+      effectiveStats: eff,
+      effectiveTotal: Math.round((eff.str + eff.def + eff.spd + eff.dex) * 100) / 100,
+      critPct: mb.critPct || 0,
+      mugPct: mb.mugPct || 0,
+      hospPct: mb.hospPct || 0,
+      stealthBonus: mb.stealthBonus || 0,
+      weaponMasteryPct: masteryPct,
+      damageMultiplier: Number((1 + masteryPct / 100).toFixed(4)),
+      mugMultiplier: Number((1 + (mb.mugPct || 0) / 100).toFixed(4)),
+      hospMultiplier: Number((1 + (mb.hospPct || 0) / 100).toFixed(4))
+    };
+  }
+  maxOf(k) {
+    const p = this.p, u = p.fac.ups, mb = this.meritBonuses();
+    let base;
+    if (this.serverPlayer && Number.isFinite(p.serverMax?.[k])) base = p.serverMax[k];
+    else if (k === 'happy') base = PROPS.find(x => x.id === p.prop).happy;
+    else base = BARS[k].max + (k === 'nerve' && u.nerveMax ? 5 : 0) + (k === 'energy' && u.energyMax ? 10 : 0) + (k === 'life' && p.eduDone.bio ? 50 : 0);
+    if (k === 'nerve' && mb.nerveBonus > 0) return Math.round(base + mb.nerveBonus);
+    if (k === 'life' && mb.lifePct > 0) return Math.round(base * (1 + mb.lifePct / 100));
+    return base;
+  }
   barClock(k) { return this.serverPlayer ? { rate: 1, ivl: { energy: 180, nerve: 300, happy: 180, life: 60 }[k] * 1000 } : { rate: BARS[k].rate, ivl: BARS[k].ivl * 1000 / this.scale }; }
   cur(k) { if (!IS_PREVIEW && !this.serverPlayer) return 0; const b = this.p.bars[k], c = this.barClock(k), cap = this.maxOf(k); if (b.v > cap) return b.v; const ticks = Math.max(0, Math.floor((Date.now() - b.at) / c.ivl)); return Math.min(cap, b.v + ticks * c.rate); }
   setBarValue(k, val) { if (this.p?.bars?.[k]) this.p.bars[k] = { v: Math.max(0, Math.round(val)), at: Date.now() }; }
@@ -2951,7 +3009,8 @@ class Component extends DCLogic {
     const map = this.territoryMap || {}, territoryModule = PLATFORM_ENGINE_MODULES.find(module => module.id === 'territories');
     const territoryEnabled = PLATFORM_MANIFEST.modules?.city !== false && (!territoryModule || (territoryModule.installed && territoryModule.enabled));
     const bonus = territoryEnabled && map.playerFactionId ? (map.blocks || []).filter(block => block.ownerFactionId === map.playerFactionId && block.state === 'owned').reduce((sum, block) => sum + (block.benefits || []).filter(benefit => benefit.key === 'crime_bonus').reduce((n, benefit) => n + Number(benefit.value || 0), 0), 0) : 0;
-    let threshold = Math.min(10000, Math.trunc(c.successBasisPoints ?? Number(c.base) * 100) + Math.min(1500, Math.max(0, Math.trunc(bonus))));
+    const mb = this.meritBonuses();
+    let threshold = Math.min(10000, Math.trunc(c.successBasisPoints ?? Number(c.base) * 100) + Math.min(1500, Math.max(0, Math.trunc(bonus))) + Math.round((mb.crimePct || 0) * 100));
     if (c.hasFailureRule ?? (c.failure != null || c.fail != null)) threshold = Math.min(9700, threshold + Math.round((Math.trunc(this.p.level || 1) - 1) * 40 + (this.p.skill?.[c.id] || 0) * 15));
     return threshold / 100;
   }
@@ -3005,10 +3064,10 @@ class Component extends DCLogic {
       this.toast(fmt(t.log[message], { crime: name, m: minutes }), true);
     }
   }
-  expGain(k) { const happy = this.cur('happy') / 5000; const dots = 1 + this.p.gym * 0.3; const stat = this.p.stats[k]; const e = GYMS[this.p.gym].e; return e * 1.2 * dots * (1 + Math.log1p(happy * 10) * 0.35) * (this.p.fac.ups.gymBoost ? 1.1 : 1) * (this.p.eduDone.fit ? 1.05 : 1) * Math.max(0.35, 1 - stat / 60000); }
+  expGain(k) { const happy = this.cur('happy') / 5000; const dots = 1 + this.p.gym * 0.3; const stat = this.p.stats[k]; const e = GYMS[this.p.gym].e; const mb = this.meritBonuses(); return e * 1.2 * dots * (1 + Math.log1p(happy * 10) * 0.35) * (this.p.fac.ups.gymBoost ? 1.1 : 1) * (this.p.eduDone.fit ? 1.05 : 1) * (1 + (mb.gymPct || 0) / 100) * Math.max(0.35, 1 - stat / 60000); }
   gymEnergyCost() { return Number(GYMS[this.p.gym]?.e || 5); }
   jobEnergyCost() { return Number(JOBS.find(job => job.id === this.p.job)?.energy || 15); }
-  jobPayRange(job = JOBS.find(item => item.id === this.p.job)) { return money(Math.round(Number(job?.pay || 0) * (this.p.eduDone.biz ? 1.1 : 1))); }
+  jobPayRange(job = JOBS.find(item => item.id === this.p.job)) { const mb = this.meritBonuses(); return money(Math.round(Number(job?.pay || 0) * (this.p.eduDone.biz ? 1.1 : 1) * (1 + (mb.empPayPct || 0) / 100))); }
   gymGainRange(stat) {
     const base = this.expGain(stat);
     const map = this.territoryMap || {}, faction = map.playerFactionId;
@@ -3634,9 +3693,10 @@ class Component extends DCLogic {
     if (snapshot.hospitalQuote) this.hospitalQuote = { ...snapshot.hospitalQuote };
     if (Object.prototype.hasOwnProperty.call(snapshot, 'family')) this.sharedFamily = snapshot.family;
     if (Object.prototype.hasOwnProperty.call(snapshot, 'onboarding')) this.onboarding = snapshot.onboarding;
-    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients','meritTree','propertyLease','plushies','claimedHonors','friendsList','targetsList','chatHistory','personalNotes','claimedCitySpawns','tornState','tornCombat','cooldowns']) {
+    for (const key of ['inv','equip','armorEquip','points','merits','job','jobPts','gym','gymXp','prop','ownedProperties','edu','eduDone','fac','ctr','claimed','jailUntil','hospUntil','skill','crimeXp','crimeChains','market','inmates','patients','meritTree','propertyLease','plushies','claimedHonors','claimedMedals','equippedHonor','meritResets','friendsList','targetsList','chatHistory','personalNotes','claimedCitySpawns','tornState','tornCombat','cooldowns']) {
       if (Object.prototype.hasOwnProperty.call(state, key)) this.p[key] = state[key];
     }
+    this.applyLocalMeritsOverlay();
     if (state.claimedCitySpawns && typeof state.claimedCitySpawns === 'object') {
       this.state.claimedCitySpawns = { ...(this.state.claimedCitySpawns || {}), ...state.claimedCitySpawns };
     }
@@ -4045,7 +4105,9 @@ class Component extends DCLogic {
     const energyNow = this.cur('energy'), nerveNow = this.cur('nerve');
     const sel = CAT[this.state.sel] ? this.state.sel : Object.keys(CAT)[0], sc = CAT[sel] || { type: 'material', price: 0 };
     const selRows = []; if (sc.mult) { const eqMult = (p.equip && p.inv[p.equip] > 0 && CAT[p.equip]?.type === 'weapon' && !CAT[p.equip].retired) ? Number(CAT[p.equip].mult || 1) : 1; const diff = Math.round((Number(sc.mult) - eqMult) * 100) / 100; selRows.push({ k: t.dmgMult, v: '×' + sc.mult }, { k: lang === 'ar' ? 'مقارنة بسلاحك المجهز' : 'Vs equipped weapon', v: diff > 0 ? '+' + diff.toFixed(2) + '× (' + (lang === 'ar' ? 'أقوى' : 'upgrade') + ')' : diff < 0 ? diff.toFixed(2) + '× (' + (lang === 'ar' ? 'أضعف' : 'lower') + ')' : (lang === 'ar' ? 'مساوٍ للمجهز' : 'Matches equipped') }); } if (sc.red) { const eqRed = Number(CAT[this.equippedArmor()]?.red || 0); const diffPct = Math.round((Number(sc.red) - eqRed) * 100); selRows.push({ k: t.dmgReduce, v: sc.red * 100 + '%' }, { k: lang === 'ar' ? 'مقارنة بدرعك المجهز' : 'Vs equipped armor', v: diffPct > 0 ? '+' + diffPct + '% (' + (lang === 'ar' ? 'حماية أعلى' : 'upgrade') + ')' : diffPct < 0 ? diffPct + '% (' + (lang === 'ar' ? 'حماية أقل' : 'lower') + ')' : (lang === 'ar' ? 'مساوٍ للمجهز' : 'Matches equipped') }); } for (const key of ['life','nerve','energy','happy']) if (sc[key]) selRows.push({ k: t.restores + ' ' + t[key], v: num(sc[key]) }); if (Number(sc.hospitalSeconds) > 0) selRows.push({ k: lang === 'ar' ? 'تقليل وقت المستشفى' : 'Hospital time removed', v: num(sc.hospitalSeconds) + (lang === 'ar' ? ' ثانية' : 's') }); selRows.push({ k: lang === 'ar' ? 'القيمة المرجعية في الكتالوج' : 'Catalog reference value', v: money(sc.price) }, { k: lang === 'ar' ? 'الكمية التي تملكها' : 'Quantity you own', v: num(p.inv[sel] || 0) });
-    const job = JOBS.find(j => j.id === p.job); const payMul = p.eduDone.biz ? 1.1 : 1;
+    const meritBonusesNow = this.meritBonuses();
+    const combatMeritMods = this.combatMeritModifiers();
+    const job = JOBS.find(j => j.id === p.job); const payMul = (p.eduDone.biz ? 1.1 : 1) * (1 + (meritBonusesNow.empPayPct || 0) / 100);
     const recordBlocked = this.gameplayDisabled() || this.blocked() || !!this.gameplayBusy || !!this.state.busy;
     const recordReason = IS_PREVIEW ? (lang === 'ar' ? 'معاينة مسودة للقراءة فقط. لا تُنفذ إجراءات اللعب هنا.' : 'Read-only draft preview. Gameplay actions are not committed here.') : this.blocked() ? (lang === 'ar' ? 'متاح بعد انتهاء السجن أو التعافي' : 'Available after release or recovery') : p.travel?.status === 'traveling' ? (lang === 'ar' ? 'متاح عند انتهاء السفر' : 'Available after travel') : this.gameplayError || this.runtimeConnection === 'offline' ? (lang === 'ar' ? 'أعد الاتصال لتنفيذ النشاط' : 'Reconnect to act') : !this.gameplayReady ? (lang === 'ar' ? 'انتظر تحميل شخصيتك المحفوظة' : 'Awaiting your saved character') : this.gameplayBusy || this.state.busy || this.moduleBusy ? (lang === 'ar' ? 'جارٍ حفظ النشاط الحالي' : 'Current action is pending') : '';
     const trainingEvents = p.log.filter(entry => entry.k === 'train' || entry.k === 'gameplay' && entry.a.action === 'gym.join').slice(0, 2).map(logMap);
@@ -4107,8 +4169,8 @@ class Component extends DCLogic {
       topLinks: t.topLinks.map((label, i) => ({ label, go: () => i === 3 ? this.toast(t.toast.community) : this.go(['education', 'newspaper', 'faction', null, 'hof'][i]) })),
       ticker: [...t.news.map(n => n[0]), ...t.news.map(n => n[0])],
       themeToggleTitle: lang === 'ar' ? 'تبديل المظهر' : 'Toggle theme',
-      toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => this.save()); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
-      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; document.title = l === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO'; this.setState({ lang: l, toast: null, result: null }, () => { this.save(); this.syncRoute(this.state.screen, true); }); },
+      toggleTheme: () => { const th = this.state.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = th; this.setState({ theme: th }, () => { this.save(); this.emitMeritsUpdate(); }); }, themeDot: this.state.theme === 'dark' ? '#111' : '#fff', themeLabel: this.state.theme === 'dark' ? (lang === 'ar' ? 'داكن' : 'Dark') : (lang === 'ar' ? 'فاتح' : 'Light'),
+      toggleLang: () => { const l = lang === 'en' ? 'ar' : 'en'; document.documentElement.lang = l; document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr'; document.title = l === 'ar' ? 'زون | لعبة نقابة الجريمة المتصفحة' : 'ZONE | Browser Crime MMO'; this.setState({ lang: l, toast: null, result: null }, () => { this.save(); this.syncRoute(this.state.screen, true); this.emitMeritsUpdate(); }); },
       cash: money(p.cash), cashIcon: LU('cash'), chainIcon: LU('cuffs'), level: p.level, levelTitle, points: num(p.points), merits: p.merits, chainText: fmt(t.hits, { n: chain }),
       title: t.nav[screen] || customPage?.title?.[lang] || customPage?.title?.en || screen, subtitle: customPage ? (PLATFORM_MANIFEST.branding?.tagline?.[lang] || PLATFORM_MANIFEST.branding?.tagline?.en || '') : fmt(t.sub[screen], { fac: facName, lvl: p.level, title: levelTitle }), goCity: () => this.go('city'), cityNavigationDisabled: !SCREENS.includes('city'), tut: this.state.tut, toggleTut: () => this.setState(s => ({ tut: !s.tut })), tutText: t.tut[tutKey],
       outfits: ['street', 'suit', 'tactical'].map(k => ({ name: t.outfits[k], selected: (this.state.outfit || 'suit') === k,
@@ -4156,7 +4218,7 @@ class Component extends DCLogic {
       legend: Object.keys(PINCOLOR).map(k => ({ color: PINCOLOR[k], colorLite: LIGHTEN(PINCOLOR[k], .42), label: t.legend[k], d: MICON[{ fin: 'cash', admin: 'hof', shop: 'market', leisure: 'casino', estate: 'properties', misc: 'crimes' }[k]] })),      travelLabel: (lang === 'ar' ? 'السفر · ٢٬٥٠٠$ · حتى ٣٠ دقيقة' : 'Travel · $2,500 · Up to 30 min'),
       travelDests: ['Zone City', 'Riyadh', 'Dubai', 'Cairo', 'Beirut', 'Istanbul'].map(city => { const here = (p.city || 'Zone City') === city; return { id: city, name: this.cityName(city), here, cost: money(2500), canAfford: p.cash >= 2500, disabled: here || p.travel?.status === 'traveling' || !!this.travelBusy, bg: here ? 'var(--activebg)' : 'var(--btn)', fg: here ? 'var(--activefg)' : 'var(--t3)', go: () => this.act(() => this.travel(city)) }; }),
       districts: DISTRICTS.map(dd => ({ ...dd, name: t.districts[dd.id], here: p.lastDistrict === dd.id, places: dd.places.map(([pl, s]) => ({ label: t.places[pl], go: () => this.go(s) })) })),
-      opps: [...OPPS].sort((a, b) => a.lvl - b.lvl).map(o => { const ratio = totalStats / (o.str + o.def + o.spd + o.dex); const odds = ratio > 1.3 ? 'easy' : ratio > 0.8 ? 'fair' : 'hard'; return { name: t.opp[o.id] || o.id, factionName: t.oppFac[o.id] || t.oppFac.sal, status: t.oppStatus.ok, lvl: o.lvl, str: num(o.str), def: num(o.def), spd: num(o.spd), dex: num(o.dex), oppTotal: num(o.str + o.def + o.spd + o.dex), powerRatio: Math.round(ratio * 100) + '%', odds: t.oddsN[odds], oddsColor: odds === 'easy' ? 'var(--acc)' : odds === 'fair' ? 'var(--gold)' : '#e05a4a', disabled: energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }; }),
+      opps: [...OPPS].sort((a, b) => a.lvl - b.lvl).map(o => { const effPower = (combatMeritMods.effectiveTotal || totalStats) * (combatMeritMods.damageMultiplier || 1); const ratio = effPower / Math.max(1, o.str + o.def + o.spd + o.dex); const odds = ratio > 1.3 ? 'easy' : ratio > 0.8 ? 'fair' : 'hard'; return { name: t.opp[o.id] || o.id, factionName: t.oppFac[o.id] || t.oppFac.sal, status: t.oppStatus.ok, lvl: o.lvl, str: num(o.str), def: num(o.def), spd: num(o.spd), dex: num(o.dex), oppTotal: num(o.str + o.def + o.spd + o.dex), powerRatio: Math.round(ratio * 100) + '%', odds: t.oddsN[odds], oddsColor: odds === 'easy' ? 'var(--acc)' : odds === 'fair' ? 'var(--gold)' : '#e05a4a', disabled: energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }; }),
       fight: (() => {
         const f = this.state.fight; if (!f) return null;
         const shown = f.shown ?? f.rounds.length;
@@ -4213,14 +4275,14 @@ class Component extends DCLogic {
       market: this.market.map(m => { const quotedPrice = Number(m.price), chg = -Number(m.discountBasisPoints || 0) / 100, item = CAT[m.item], available = !!item && !item.retired, name = t.items[m.item] || item?.name?.[lang] || item?.name?.en || String(m.item || ''), vsCatalogPct = item?.price > 0 && Number.isFinite(quotedPrice) ? Math.round((quotedPrice - item.price) / item.price * 100) : 0, dealTier = vsCatalogPct < 0 ? (lang === 'ar' ? 'أقل من الكتالوج' : 'Below catalog') : vsCatalogPct > 0 ? (lang === 'ar' ? 'أعلى من الكتالوج' : 'Above catalog') : (lang === 'ar' ? 'سعر الكتالوج' : 'Catalog price'); return { name, type: available ? t.itemType[item.type] : (lang === 'ar' ? 'غير متاح في هذا الإصدار' : 'Unavailable in this release'), d: LU(m.item) || LU(item?.type === 'weapon' ? 'knife' : 'items'), abbr: name.slice(0, 2).toUpperCase(), qty: m.qty, seller: m.seller, price: Number.isFinite(quotedPrice) ? money(quotedPrice) : (lang === 'ar' ? 'السعر غير متاح' : 'Price unavailable'), vsCatalogPct, dealTier, chg: (chg >= 0 ? '+' : '') + chg.toFixed(1) + '%', chgColor: chg >= 0 ? 'var(--acc)' : '#e05a4a', inspectLabel: lang === 'ar' ? 'افحص' : 'Inspect', inspect: () => this.inspectMerchantItem(m), disabled: !available || !Number.isFinite(quotedPrice) || quotedPrice < 0 || m.qty <= 0 || p.cash < quotedPrice, buy: () => { if (!CAT[m.item] || CAT[m.item].retired || !Number.isFinite(quotedPrice) || quotedPrice < 0) return; return this.act(() => this.gameplayAction('market.buy', m.id || m.item, quotedPrice)); } }; }),
       missions: MISSIONS.map(m => { const done = !!p.claimed[m.id], prog = Math.min(m.n, p.ctr[m.ctr]), ready = !done && prog >= m.n; return { id: m.id, claimed: done, name: t.ms[m.id][0], desc: t.ms[m.id][1], reward: money(m.cash) + ' + ' + m.pts + ' ' + t.points, cashReward: money(m.cash), pointsReward: m.pts, remaining: Math.max(0, m.n - prog), pct: Math.round(prog / m.n * 100), barColor: done ? 'var(--mu2)' : ready ? 'var(--acc)' : 'var(--link)', prog: prog + '/' + m.n, btn: done ? t.claimed : ready ? t.claim : t.inProgress, bg: ready ? GREEN : GREY, fg: ready ? 'var(--onAcc)' : 'var(--mu)', disabled: !ready, claim: () => this.act(() => this.gameplayAction('mission.claim', m.id)) }; }),
       edu: p.edu ? { active: true, name: t.courses[p.edu.id]?.[0] || p.edu.id, pct: Math.max(0, Math.min(100, Math.round((1 - (p.edu.until - now) / p.edu.total) * 100))), left: mmss(p.edu.until - now) } : { active: false },
-      courses: COURSES.map((c, index) => { const done = !!p.eduDone[c.id], active = !!p.edu && p.edu.id === c.id; const pct = done ? 100 : active ? Math.max(0, Math.min(100, Math.round((1 - (p.edu.until - now) / p.edu.total) * 100))) : 0; return { id: c.id, number: String(index + 1).padStart(2, '0'), done, active, reason: recordReason || (done ? (lang === 'ar' ? 'الميزة الدائمة مكتسبة' : 'Permanent benefit earned') : active ? (lang === 'ar' ? 'الميزة تُمنح عند إكمال الدورة' : 'Benefit awarded on completion') : p.edu ? (lang === 'ar' ? 'أكمل الدورة الحالية أولاً' : 'Finish your current course first') : p.cash < c.cost ? (lang === 'ar' ? 'النقد الناقص: ' : 'Cash shortfall: ') + money(c.cost - p.cash) : (lang === 'ar' ? 'متاح للتسجيل' : 'Enrollment available')), remaining: active ? mmss(Math.max(0, p.edu.until - now)) : '', img: contentArt(c, 'courses', '', 'art/bio.jpg'), imgOpacity: done ? .55 : 1, filter: done ? 'grayscale(.6)' : 'none', pct, prog: pct + '%', barColor: done ? 'var(--mu2)' : active ? 'var(--acc)' : 'var(--border3)', name: t.courses[c.id][0], effect: t.courses[c.id][1], cost: money(c.cost), dur: c.mins + (lang === 'ar' ? ' دقيقة' : ' min'), hoursLabel: (c.mins / 60).toFixed(1) + (lang === 'ar' ? ' س' : 'h'), btn: done ? t.done : active ? t.studying : t.enroll, bg: done || active || !!p.edu ? GREY : GREEN, fg: done || active || !!p.edu ? 'var(--mu)' : 'var(--onAcc)', disabled: recordBlocked || done || active || !!p.edu || p.cash < c.cost, enroll: () => this.act(() => this.gameplayAction('course.enroll', c.id)) }; }),
+      courses: COURSES.map((c, index) => { const done = !!p.eduDone[c.id], active = !!p.edu && p.edu.id === c.id; const effMins = Math.max(1, Math.round(c.mins * (1 - (meritBonusesNow.eduReductionPct || 0) / 100))); const pct = done ? 100 : active ? Math.max(0, Math.min(100, Math.round((1 - (p.edu.until - now) / p.edu.total) * 100))) : 0; return { id: c.id, number: String(index + 1).padStart(2, '0'), done, active, reason: recordReason || (done ? (lang === 'ar' ? 'الميزة الدائمة مكتسبة' : 'Permanent benefit earned') : active ? (lang === 'ar' ? 'الميزة تُمنح عند إكمال الدورة' : 'Benefit awarded on completion') : p.edu ? (lang === 'ar' ? 'أكمل الدورة الحالية أولاً' : 'Finish your current course first') : p.cash < c.cost ? (lang === 'ar' ? 'النقد الناقص: ' : 'Cash shortfall: ') + money(c.cost - p.cash) : (lang === 'ar' ? 'متاح للتسجيل' : 'Enrollment available')), remaining: active ? mmss(Math.max(0, p.edu.until - now)) : '', img: contentArt(c, 'courses', '', 'art/bio.jpg'), imgOpacity: done ? .55 : 1, filter: done ? 'grayscale(.6)' : 'none', pct, prog: pct + '%', barColor: done ? 'var(--mu2)' : active ? 'var(--acc)' : 'var(--border3)', name: t.courses[c.id][0], effect: t.courses[c.id][1], cost: money(c.cost), dur: effMins + (lang === 'ar' ? ' دقيقة' : ' min'), hoursLabel: (effMins / 60).toFixed(1) + (lang === 'ar' ? ' س' : 'h'), btn: done ? t.done : active ? t.studying : t.enroll, bg: done || active || !!p.edu ? GREY : GREEN, fg: done || active || !!p.edu ? 'var(--mu)' : 'var(--onAcc)', disabled: recordBlocked || done || active || !!p.edu || p.cash < c.cost, enroll: () => this.act(() => this.gameplayAction('course.enroll', c.id)) }; }),
       props: PROPS.map((pr, i) => { const cur = pr.id === p.prop, owned = Array.isArray(p.ownedProperties) ? p.ownedProperties.includes(pr.id) : !!p.ownedProperties?.[pr.id], price = owned ? 0 : pr.price; return { id: pr.id, owned, status: cur ? t.living : owned ? (lang === 'ar' ? 'ضمن ممتلكاتك' : 'Owned property') : (lang === 'ar' ? 'معروض للشراء' : 'For purchase'), reason: recordReason || (cur ? (lang === 'ar' ? 'سكنك الحالي' : 'Your current residence') : p.cash < price ? (lang === 'ar' ? 'النقد الناقص: ' : 'Cash shortfall: ') + money(price - p.cash) : owned ? (lang === 'ar' ? 'الانتقال مجاني، تملك هذا العقار' : 'Free move. You already own this property.') : (lang === 'ar' ? 'شراء وانتقال لمرة واحدة' : 'One-time purchase and move')), priceLabel: owned ? (lang === 'ar' ? 'تكلفة الانتقال' : 'Move-in cost') : (lang === 'ar' ? 'سعر الشراء' : 'Purchase price'), name: t.props[pr.id], happy: num(pr.happy), happyDelta: pr.happy - (currentProperty?.happy || 100), trainingBoost: '×' + (1 + Math.log1p(pr.happy / 500) * .35).toFixed(2), upkeep: money(pr.upkeep), upkeepReference: (lang === 'ar' ? 'صيانة يومية مخطط لها: ' : 'Planned upkeep / day: ') + money(pr.upkeep) + (lang === 'ar' ? ' · لا تُخصم' : ' · not charged'), price: money(price), living: cur,
         ...propertyArt(pr), imgOpacity: p.cash < price && !cur ? .6 : 1,
         edge: cur ? 'var(--acc)' : 'var(--border3)', shadow: cur ? '0 0 0 1px var(--acc), 0 6px 18px rgba(0,0,0,.4)' : '0 2px 8px rgba(0,0,0,.25)', btn: cur ? t.living : owned ? (lang === 'ar' ? 'انتقل' : 'Move in') : t.move, btnBg: cur ? 'var(--activebg)' : GREEN, btnFg: cur ? 'var(--activefg)' : 'var(--onAcc)', disabled: recordBlocked || cur || p.cash < price, buy: () => this.act(() => this.gameplayAction('property.buy', pr.id)) }; }),
       news: t.news.map(n => ({ h: n[0], meta: n[1] })),
       inmates: this.inmates.filter(i => !i.out && i.until > now).map(i => { const odds = Math.max(15, Math.min(90, Math.round(55 + (p.level - i.lvl) * 2 + (p.skill.bust || 0)))); const left = i.until - now; const bailCost = i.npc === false ? Math.max(1000, Math.ceil(left / 60000) * 1000) : Math.ceil(left / 60000) * 100 * i.lvl; return { id: i.id, name: i.name, lvl: i.lvl, reason: t.reasons[i.reason], left: mmss(left), odds, bustRiskTier: odds >= 75 ? (lang === 'ar' ? 'فرصة عالية' : 'High odds') : odds >= 45 ? (lang === 'ar' ? 'فرصة متوسطة' : 'Moderate odds') : (lang === 'ar' ? 'فرصة منخفضة' : 'Low odds'), nerveCost: 5, disabled: nerveNow < 5, bailDisabled: p.cash < bailCost, bailCost: money(bailCost), bust: () => this.act(() => this.gameplayAction('jail.bust', i.id || i.name)), bail: () => this.act(() => this.gameplayAction('jail.bail', i.id || i.name)) }; }),
       patients: this.patients.filter(i => i.until > now).map(i => ({ name: i.name, lvl: i.lvl, left: mmss(i.until - now), reason: fmt(t.hreasons[i.reason], { who: i.who }), energyCost: 75, reviveReady: energyNow >= 75, disabled: energyNow < 75, revive: () => this.act(() => this.gameplayAction('hospital.revive', i.id || i.name)) })),
-      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0, dailyYield = money(Math.max(250, Math.round(bal * 0.0185))), mugExposure = money(Math.round(cash * 0.15)); const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); const runLocalOrServerBank = (dir, amount) => { if (amount <= 0) return this.toast(lang === 'ar' ? 'لا يوجد رصيد كافٍ لهذا التحويل.' : 'Insufficient balance for transfer.', true); if (this.gameplayReady && !this.gameplayDisabled()) return this.act(tt => this.bankMove(dir, amount, tt)); if (dir === 'deposit') { const move = Math.min(cash, amount); this.p.cash = Math.max(0, cash - move); this.p.bankBalance = bal + move; this.log((lang === 'ar' ? 'إيداع في الخزنة: ' : 'Vault deposit: ') + money(move), null, 'good'); } else { const move = Math.min(bal, amount); this.p.bankBalance = Math.max(0, bal - move); this.p.cash = cash + move; this.log((lang === 'ar' ? 'سحب من الخزنة: ' : 'Vault withdrawal: ') + money(move), null, 'good'); } this.playTacticalSfx('cash'); this.save(); this.forceUpdate(); }; return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, dailyYield, mugExposure, vaultHeaderTitle: lang === 'ar' ? 'خزينة النقابة المركزية والتحويلات المحمية' : 'Syndicate Private Vault & Capital Command', vaultHeaderSub: lang === 'ar' ? 'الأموال المودعة في الخزنة محمية بالكامل من النشل في مواجهات الشارع وتدر عائداً يومياً.' : 'Capital locked inside the biometric titanium vault is 100% immune to street muggings and accrues daily syndicate yield.', apyBadge: lang === 'ar' ? 'عائد يومي 1.85% · نشط' : '1.85% DAILY YIELD · ACTIVE', quickLockAll: () => runLocalOrServerBank('deposit', cash), quickCombatFloat: () => runLocalOrServerBank('withdraw', Math.min(bal || 10000, 10000)), openMarket: () => this.go('market'), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ تأمين التحويل...' : 'Locking vault transfer...') : (lang === 'ar' ? 'خزنة التيتانيوم نشطة ومحمية من النشل' : 'Biometric titanium vault active & mug-proof') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
+      bank: (() => { const cash = Number(p.cash) || 0, bal = Number(p.bankBalance) || 0, vaultSharePct = (cash + bal) > 0 ? Math.round(bal / (cash + bal) * 100) : 0, effDailyRate = 0.0185 * (1 + (meritBonusesNow.bankInterestPct || 0) / 100), dailyRateLabel = (effDailyRate * 100).toFixed(2) + '%', dailyYield = money(Math.max(250, Math.round(bal * effDailyRate))), mugExposure = money(Math.round(cash * 0.15)); const mk = (dir, amt) => ({ label: amt === 'all' ? t.bankUi.all : money(amt), disabled: !!this.bankBusy || recordBlocked || !screenEngineAvailable('bank') || (dir === 'deposit' ? (amt === 'all' ? cash <= 0 : cash < amt) : (amt === 'all' ? bal <= 0 : bal < amt)), do: () => this.act(tt => this.bankMove(dir, amt === 'all' ? (dir === 'deposit' ? cash : bal) : amt, tt)) }); const runLocalOrServerBank = (dir, amount) => { if (amount <= 0) return this.toast(lang === 'ar' ? 'لا يوجد رصيد كافٍ لهذا التحويل.' : 'Insufficient balance for transfer.', true); if (this.gameplayReady && !this.gameplayDisabled()) return this.act(tt => this.bankMove(dir, amount, tt)); if (dir === 'deposit') { const move = Math.min(cash, amount); this.p.cash = Math.max(0, cash - move); this.p.bankBalance = bal + move; this.log((lang === 'ar' ? 'إيداع في الخزنة: ' : 'Vault deposit: ') + money(move), null, 'good'); } else { const move = Math.min(bal, amount); this.p.bankBalance = Math.max(0, bal - move); this.p.cash = cash + move; this.log((lang === 'ar' ? 'سحب من الخزنة: ' : 'Vault withdrawal: ') + money(move), null, 'good'); } this.playTacticalSfx('cash'); this.save(); this.forceUpdate(); }; return { cash: money(cash), balance: money(bal), total: money(cash + bal), vaultSharePct, dailyYield, mugExposure, vaultHeaderTitle: lang === 'ar' ? 'خزينة النقابة المركزية والتحويلات المحمية' : 'Syndicate Private Vault & Capital Command', vaultHeaderSub: lang === 'ar' ? 'الأموال المودعة في الخزنة محمية بالكامل من النشل في مواجهات الشارع وتدر عائداً يومياً.' : 'Capital locked inside the biometric titanium vault is 100% immune to street muggings and accrues daily syndicate yield.', apyBadge: lang === 'ar' ? `عائد يومي ${dailyRateLabel} · نشط` : `${dailyRateLabel} DAILY YIELD · ACTIVE`, quickLockAll: () => runLocalOrServerBank('deposit', cash), quickCombatFloat: () => runLocalOrServerBank('withdraw', Math.min(bal || 10000, 10000)), openMarket: () => this.go('market'), onHandLabel: t.bankUi.onHand, inBankLabel: t.bankUi.inBank, totalLabel: t.bankUi.total, depositLabel: t.bankUi.deposit, withdrawLabel: t.bankUi.withdraw, deposits: [100, 1000, 10000, 'all'].map(a => mk('deposit', a)), withdrawals: [100, 1000, 10000, 'all'].map(a => mk('withdraw', a)), msg: this.bankBusy ? (lang === 'ar' ? 'جارٍ تأمين التحويل...' : 'Locking vault transfer...') : (lang === 'ar' ? 'خزنة التيتانيوم نشطة ومحمية من النشل' : 'Biometric titanium vault active & mug-proof') + ' · ' + (lang === 'ar' ? 'المحمي في الخزنة: ' : 'Protected in vault: ') + vaultSharePct + '%' }; })(),
       casino: { spriteX: casino.card === 14 ? -2 : -2 - 73 * (Math.max(2, Math.min(13, casino.card)) - 1), cardLabel: (lang === 'ar' ? 'الورقة الحالية: ' : 'Current card: ') + (casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card), card: casino.card === 14 ? 'A' : casino.card === 13 ? 'K' : casino.card === 12 ? 'Q' : casino.card === 11 ? 'J' : casino.card, cardColor: casino.card % 2 ? '#c0281a' : 'var(--onAcc)', higherOddsPct: Math.round(Math.max(0, 14 - casino.card) / 12 * 100), lowerOddsPct: Math.round(Math.max(0, casino.card - 2) / 12 * 100), bets: [1000, 5000, 25000].map(b => ({ label: money(b), bg: casino.bet === b ? 'var(--activebg)' : 'var(--btn)', fg: casino.bet === b ? 'var(--activefg)' : 'var(--t3)', pick: () => this.setState({ casino: { ...casino, bet: b } }) })), higher: () => this.act(tt => this.casinoGuess(true, tt)), lower: () => this.act(tt => this.casinoGuess(false, tt)), disabled: !this.casinoReady || !!this.casinoBusy || p.cash < casino.bet, msg: fmt(t.casinoMsg[casino.msg], { c: money(casino.resultBet ?? casino.bet) }) + (p.casinoNet ? ' · ' + (lang === 'ar' ? 'الصافي' : 'Net') + ' ' + (p.casinoNet > 0 ? '+' : '-') + money(Math.abs(p.casinoNet)) : '') },
       casinoGames: t.cgames.map((g, i) => ({ name: g[0], status: lang === 'ar' ? 'معاينة فقط' : 'Preview only', img: 'art/c_' + ['slots', 'roulette', 'blackjack', 'poker', 'lottery', 'russian'][i] + '.jpg', imgOpacity: .65, filter: 'none', nameColor: 'var(--t4)' })),
       hof: (() => { const rows = t.hofNames.slice(0, 10).map((n, i) => ({ name: n, lvl: [58, 52, 31, 44, 39, 16, 27, 9, 13, 15][i] || 15, stats: [98000, 84000, 12000, 41000, 36000, 7300, 15800, 3000, 5000, 6100][i] || 5000, nw: [48e6, 31e6, 9.2e6, 22e6, 12e6, 1.1e6, 4.4e6, 380e3, 720e3, 950e3][i] || 500000, fac: [t.teams[7], t.teams[0], '—', t.teams[4], t.teams[3], t.teams[2], t.teams[5], t.teams[2], t.teams[0], t.teams[1]][i] || '—' })); const safeStats = Number.isFinite(Number(totalStats)) && totalStats > 0 ? Number(totalStats) : 1600; const safeNw = Number.isFinite(Number(this.netWorth())) ? Number(this.netWorth()) : 0; rows.push({ name: p.username || t.player, lvl: Number(p.level) || 1, stats: safeStats, nw: safeNw, fac: facName, me: true }); rows.sort((a, b) => b.stats - a.stats); return rows.map((r, i) => ({ rank: i + 1, name: r.name, lvl: r.lvl, stats: num(r.stats), powerTier: r.stats >= 50000 ? (lang === 'ar' ? 'أسطوري' : 'Apex') : r.stats >= 15000 ? (lang === 'ar' ? 'نخبة' : 'Elite') : r.stats >= 5000 ? (lang === 'ar' ? 'مخضرم' : 'Veteran') : (lang === 'ar' ? 'صاعد' : 'Rising'), nw: money(r.nw), fac: r.fac, color: r.me ? 'var(--activefg)' : 'var(--link)', bg: r.me ? 'var(--selbg)' : i % 2 ? 'var(--z1)' : 'var(--z2)' })); })(),
@@ -4403,7 +4465,7 @@ class Component extends DCLogic {
     const peers = this.peerResources?.opponents;
     view.combatModes = ['npc', 'players'].map(mode => ({ label: mode === 'npc' ? (lang === 'ar' ? 'خصوم المدينة' : 'City opponents') : (lang === 'ar' ? 'لاعبون حقيقيون' : 'Real players'), active: this.state.combatMode === mode, disabled: !!this.combatBusy || !!this.combatEncounter, select: () => this.setCombatMode(mode) }));
     view.peerCombat = { visible: this.state.combatMode === 'players', loading: !!peers?.loading, message: peers?.error || this.combatError ? (lang === 'ar' ? 'تعذر تحديث اللاعبين. أعد الاتصال قبل الهجوم.' : 'Players could not refresh. Reconnect before attacking.') : this.combatIncoming ? (lang === 'ar' ? 'أنت في مواجهة مع ' : 'You are in an encounter with ') + this.combatIncoming.attackerName + (lang === 'ar' ? '. انتظر انتهاء المواجهة أو حد الحجز.' : '. Wait for settlement or reservation expiry.') : peers?.loading ? (lang === 'ar' ? 'جارٍ تحديث اللاعبين...' : 'Refreshing players...') : peers?.snapshot?.players?.length ? '' : (lang === 'ar' ? 'لا يوجد لاعبون آخرون بعد. يمكنك مواجهة خصوم المدينة.' : 'No other players yet. City opponents remain available.'), refreshLabel: lang === 'ar' ? 'تحديث اللاعبين' : 'Refresh players', refresh: () => Promise.all([this.loadPeerResource('opponents', true), this.loadCombat()]) };
-    if (view.peerCombat.visible) view.opps = (peers?.snapshot?.players || []).filter(o => o.id !== peers.snapshot.selfId).map(o => { const oppScore = Number(o.strength || 0) + Number(o.defense || 0) + Number(o.speed || 0) + Number(o.dexterity || 0), r = totalStats / Math.max(1, oppScore); return { name: o.username, factionName: (this.territoryMap.factions || []).find(family => family.id === o.factionId)?.name?.[lang] || o.factionName?.[lang] || o.factionName || (lang === 'ar' ? 'بلا عائلة' : 'No family'), status: o.eligible ? num(o.life) + '/' + num(o.max_life) : this.peerReason(o.reason, this.remainingAttackCooldown(peers)), lvl: o.level, str: num(o.strength), def: num(o.defense), spd: num(o.speed), dex: num(o.dexterity), oppTotal: num(oppScore), powerRatio: Math.round(r * 100) + '%', threatTier: r > 1.3 ? t.oddsN.easy : r > 0.8 ? t.oddsN.fair : t.oddsN.hard, odds: lang === 'ar' ? 'لاعب' : 'Player', oddsColor: 'var(--gold)', disabled: unavailable || !!peers.error || !!peers.loading || !!this.combatError || !!this.combatIncoming || !this.combatVersion || !o.eligible || energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }; });
+    if (view.peerCombat.visible) view.opps = (peers?.snapshot?.players || []).filter(o => o.id !== peers.snapshot.selfId).map(o => { const oppScore = Number(o.strength || 0) + Number(o.defense || 0) + Number(o.speed || 0) + Number(o.dexterity || 0), effPower = (combatMeritMods.effectiveTotal || totalStats) * (combatMeritMods.damageMultiplier || 1), r = effPower / Math.max(1, oppScore); return { name: o.username, factionName: (this.territoryMap.factions || []).find(family => family.id === o.factionId)?.name?.[lang] || o.factionName?.[lang] || o.factionName || (lang === 'ar' ? 'بلا عائلة' : 'No family'), status: o.eligible ? num(o.life) + '/' + num(o.max_life) : this.peerReason(o.reason, this.remainingAttackCooldown(peers)), lvl: o.level, str: num(o.strength), def: num(o.defense), spd: num(o.speed), dex: num(o.dexterity), oppTotal: num(oppScore), powerRatio: Math.round(r * 100) + '%', threatTier: r > 1.3 ? t.oddsN.easy : r > 0.8 ? t.oddsN.fair : t.oddsN.hard, odds: lang === 'ar' ? 'لاعب' : 'Player', oddsColor: 'var(--gold)', disabled: unavailable || !!peers.error || !!peers.loading || !!this.combatError || !!this.combatIncoming || !this.combatVersion || !o.eligible || energyNow < 25 || !!this.combatEncounter || !!this.combatBusy, attack: () => this.act(tt => this.fight(o, tt)) }; });
     view.peerCombat.consequences = lang === 'ar' ? 'بعد الفوز: النشل ينقل جزءاً من رصيد الخصم وتعافيه الأساسي 5 دقائق؛ إدخاله المستشفى 10 دقائق؛ تركه دقيقتان (2). الخسارة تعني تعافيك 10 دقائق. هذه مدد أساسية؛ الترقيات قد تقصّر التعافي.' : 'After a win: Mug transfers part of the opponent’s existing wallet and gives 5 min recovery; Hospitalize gives 10 min; Leave gives 2 min. Losing gives you 10 min recovery. These are base durations; upgrades can shorten recovery.';
     view.combatScene = {
       showRoster: !view.fight,
@@ -5034,44 +5096,36 @@ class Component extends DCLogic {
       trace: this.state.geminiTrace || defaultGeminiTrace
     };
     // === OMAR FEEDBACK COMPLETE CONTROLLER & VIEW-MODEL ===
-    const meritDefs = [
-      { id: 'crit', en: 'Critical Hit Rate', ar: 'معدل الضربة الحرجة', stepEn: '+0.5% Crit / lvl', stepAr: '+0.5% حرج / مستوى' },
-      { id: 'awareness', en: 'City Awareness', ar: 'الوعي في خريطة المدينة', stepEn: '+15% City Item Spawn / lvl', stepAr: '+15% ظهور لقى المدينة / مستوى' },
-      { id: 'emp', en: 'Employee Effectiveness', ar: 'كفاءة الموظف والعمل', stepEn: '+2 Effectiveness / lvl', stepAr: '+2 كفاءة عمل / مستوى' },
-      { id: 'life', en: 'Max Life Points', ar: 'نقاط الحياة القصوى', stepEn: '+2% Max Life / lvl', stepAr: '+2% صحة قصوى / مستوى' },
-      { id: 'gym', en: 'Gym Stat Gains', ar: 'مكاسب تدريب النادي', stepEn: '+1.5% Gym Gain / lvl', stepAr: '+1.5% مكسب نادي / مستوى' },
-      { id: 'stealth', en: 'Stealth & Mugging', ar: 'التخفي وعائد النشل', stepEn: '+3% Mug & Stealth / lvl', stepAr: '+3% تخفي ونشل / مستوى' }
-    ];
-    const meritTree = this.p.meritTree || { crit: 2, awareness: 2, emp: 1, life: 1, gym: 1, stealth: 1 };
+    const zmd = globalThis.ZoneMeritsData;
+    const meritTree = zmd && typeof zmd.normalizeMeritTree === 'function'
+      ? zmd.normalizeMeritTree(this.p.meritTree)
+      : { nerve: 0, crit: 0, life: 0, crime: 0, awareness: 0, brawn: 0, protection: 0, sharpness: 0, evasion: 0, bank: 0, edu: 0, emp: 0, looting: 0, hosp: 0, stealth: 0, gym: 0, rifle: 0, smg: 0, pistol: 0, melee: 0, ...(this.p.meritTree || {}) };
+    const homeMeritIds = zmd?.HOME_UPGRADE_IDS || ['nerve', 'life', 'crit', 'gym', 'awareness', 'emp'];
+    const meritDefs = homeMeritIds.map(id => {
+      const def = zmd?.UPGRADE_MAP?.[id];
+      if (def) return def;
+      return { id, en: id, ar: id, stepEn: '+1 / rank', stepAr: '+1 / رتبة' };
+    });
     const meritBranches = meritDefs.map(md => {
       const lvl = Number(meritTree?.[md.id] || 0);
-      const nextCost = lvl + 1;
-      const canBuy = Number(p.merits || 0) >= nextCost && lvl < 10;
+      const nextCost = zmd && typeof zmd.upgradeCost === 'function' ? zmd.upgradeCost(lvl) : (lvl >= 10 ? null : lvl + 1);
+      const canBuy = nextCost !== null && Number(p.merits || 0) >= nextCost && lvl < 10;
       return {
         id: md.id,
         name: lang === 'ar' ? md.ar : md.en,
         level: lvl,
         levelLabel: lang === 'ar' ? ('المستوى ' + lvl + '/10') : ('Lv.' + lvl + '/10'),
-        bonusText: lang === 'ar' ? md.stepAr : md.stepEn,
+        bonusText: typeof md.formatBonus === 'function' && lvl > 0 ? md.formatBonus(lvl, lang) : (lang === 'ar' ? md.stepAr : md.stepEn),
         btnLabel: lvl >= 10 ? (lang === 'ar' ? 'الحد الأقصى' : 'MAX') : (lang === 'ar' ? `تطوير (${nextCost} ميرت)` : `Upgrade (${nextCost} pt)`),
         btnBg: canBuy ? 'linear-gradient(var(--accFill1),var(--accFill2))' : 'var(--btn)',
         btnFg: canBuy ? 'var(--onAcc)' : 'var(--t3)',
-        upgrade: () => {
-          if (lvl >= 10) return this.toast(lang === 'ar' ? 'وصلت للحد الأقصى لهذه المهارة.' : 'Skill already at max tier.');
-          if (Number(this.p.merits || 0) < nextCost) return this.toast(lang === 'ar' ? `تحتاج ${nextCost} نقاط ميرت للترقية.` : `Requires ${nextCost} Merit points for Tier ${lvl + 1}.`, true);
-          this.p.merits = Number(this.p.merits || 0) - nextCost;
-          this.p.meritTree = { ...meritTree, [md.id]: lvl + 1 };
-          this.save();
-          this.syncOmarAction('merit.upgrade', md.id);
-          this.result('good', lang === 'ar' ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${lang === 'ar' ? md.ar : md.en} → Lv.${lvl + 1}`, lang === 'ar' ? `-${nextCost} ميرت` : `-${nextCost} Merit`);
-          this.forceUpdate();
-        }
+        upgrade: () => this.meritUpgradeAction(md.id)
       };
     });
 
-    const awarenessLvl = Number(meritTree?.awareness || 2);
-    const critLvl = Number(meritTree?.crit || 2);
-    const empLvl = Number(meritTree?.emp || 1);
+    const awarenessLvl = Number(meritTree?.awareness || 0);
+    const critLvl = Number(meritTree?.crit || 0);
+    const empLvl = Number(meritTree?.emp || 0);
     const playerNumericId = String(this.p.numericId || '1042');
     const accountEmail = this.p.email || 'vincenzo@zone.city';
     const activePropId = this.p.propertyLease?.id || this.p.prop || 'shack';
@@ -5580,7 +5634,7 @@ class Component extends DCLogic {
       personalPerksTitle: lang === 'ar' ? 'المزايا الشخصية النشطة' : 'Personal Perks & Active Bonuses',
       propertyCardTitle: lang === 'ar' ? 'معلومات العقار والإيجار' : 'Property & Rental Information',
       meritsTreeTitle: lang === 'ar' ? 'شجرة الميرتس والمهارات' : 'Merits & Skill Upgrades',
-      openMeritsScreen: () => this.go('missions'),
+      openMeritsScreen: () => (window.ZoneMeritsUI && typeof window.ZoneMeritsUI.open === 'function') ? window.ZoneMeritsUI.open('merits') : this.go('missions'),
       openPropertiesScreen: () => this.go('properties'),
       openGymScreen: () => this.go('gym'),
       openJobsScreen: () => this.go('jobs'),
@@ -5605,15 +5659,15 @@ class Component extends DCLogic {
         { k: lang === 'ar' ? 'العمل اليدوي' : 'Manual Labor', v: num(340 + p.level * 28), color: 'var(--t1)' },
         { k: lang === 'ar' ? 'الذكاء' : 'Intelligence', v: num(410 + p.level * 32), color: 'var(--t1)' },
         { k: lang === 'ar' ? 'التحمل' : 'Endurance', v: num(385 + p.level * 30), color: 'var(--t1)' },
-        { k: lang === 'ar' ? 'كفاءة الموظف' : 'Employee Effectiveness', v: `+${empLvl * 2} (${lang === 'ar' ? 'ميرت' : 'Merits'})`, color: 'var(--acc)' },
+        { k: lang === 'ar' ? 'كفاءة الموظف' : 'Employee Effectiveness', v: `+${meritBonusesNow.empEff || 0} / +${meritBonusesNow.empPayPct || 0}% (${lang === 'ar' ? 'ميرت' : 'Merits'})`, color: 'var(--acc)' },
         { k: lang === 'ar' ? 'الوظيفة الحالية' : 'Current Job', v: t.jobNames[p.job], color: 'var(--gold)' },
         { k: lang === 'ar' ? 'الأجر ونقاط العمل' : 'Wage & Job Points', v: `${this.jobPayRange()} · ${num(p.jobPts)} ${lang === 'ar' ? 'نقطة عمل' : 'JP'}`, color: 'var(--money)' }
       ],
       personalPerks: [
         { source: lang === 'ar' ? 'العقار' : 'Property', effect: hasIslandPerks ? (lang === 'ar' ? '+2% مكاسب نادي · +2% ضرر · مهبط طائرات خاص' : '+2% Gym Gains · +2% Damage · Private Airstrip Access') : (lang === 'ar' ? `سكن نشط: ${leaseInfo.nameAr} (حد المعنويات ${num(activePropHappy)})` : `Active Residence: ${leaseInfo.nameEn} (${num(activePropHappy)} Happy Cap)`) },
-        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${(critLvl * 0.5).toFixed(1)}% معدل ضربة حرجة` : `+${(critLvl * 0.5).toFixed(1)}% Critical Hit Rate (Tier ${critLvl})` },
-        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${awarenessLvl * 15}% وعي ميداني لظهور عناصر خريطة المدينة` : `+${awarenessLvl * 15}% City Awareness (Lucky Map Item Spawns)` },
-        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${empLvl * 2} كفاءة الموظف في العمل` : `+${empLvl * 2} Employee Effectiveness` },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${meritBonusesNow.nerveBonus || 0} جرأة قصوى · +${meritBonusesNow.lifePct || 0}% صحة قصوى` : `+${meritBonusesNow.nerveBonus || 0} Max Nerve · +${meritBonusesNow.lifePct || 0}% Max Life` },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${(meritBonusesNow.critPct || 0).toFixed(1)}% معدل ضربة حرجة · +${meritBonusesNow.gymPct || 0}% مكاسب النادي` : `+${(meritBonusesNow.critPct || 0).toFixed(1)}% Critical Hit Rate · +${meritBonusesNow.gymPct || 0}% Gym Gains` },
+        { source: lang === 'ar' ? 'الميرتس' : 'Merits', effect: lang === 'ar' ? `+${meritBonusesNow.awarenessPct || 0}% وعي ميداني · +${meritBonusesNow.empPayPct || 0}% أجر العمل` : `+${meritBonusesNow.awarenessPct || 0}% City Awareness · +${meritBonusesNow.empPayPct || 0}% Job Pay` },
         { source: lang === 'ar' ? 'الفاكشن' : 'Faction', effect: lang === 'ar' ? `${view.fac.chainBonusPct} مضاعف احترام السلسلة` : `${view.fac.chainBonusPct} Chain Respect Multiplier` },
         { source: lang === 'ar' ? 'التعليم' : 'Education', effect: view.employment.payBonusText }
       ],
@@ -5651,7 +5705,7 @@ class Component extends DCLogic {
       meritBranches,
 
       // City Map Random Spawns & Awareness
-      awarenessCityTitle: lang === 'ar' ? `لقى خريطة المدينة العشوائية (ميزة الوعي الميداني · المستوى ${awarenessLvl})` : `City Map Lucky Item Spawns (Awareness Lv.${awarenessLvl} · +${awarenessLvl * 15}% Chance)`, 
+      awarenessCityTitle: lang === 'ar' ? `لقى خريطة المدينة العشوائية (ميزة الوعي الميداني · المستوى ${awarenessLvl})` : `City Map Lucky Item Spawns (Awareness Lv.${awarenessLvl} · +${meritBonusesNow.awarenessPct || 0}% Chance)`, 
       awarenessCitySub: lang === 'ar' ? 'تظهر عناصر محاطة بدائرة على خريطة المدينة كل 2-3 أيام بالحظ (تصل إلى 5,000,000$). اضغط على أي عنصر لالتقاطه فوراً!' : 'Circled ground items spawn across the City Map every 2-3 days by luck (including rare $5,000,000 jackpots). Click any spotted item to claim!',
       rollSpawnBtnLabel: lang === 'ar' ? 'توليد لقطة حظ جديدة على الخريطة' : 'Roll 2-3 Day Lucky Spawn',
       rollLuckyCitySpawn: () => {
@@ -5715,9 +5769,11 @@ class Component extends DCLogic {
           this.p.claimedHonors.h_ipecac = true;
           this.p.merits = Number(this.p.merits || 0) + 1;
         }
+        this.saveLocalMeritsState();
         this.save();
         this.syncOmarAction('honor.claim', 'h_ipecac');
         this.result('good', lang === 'ar' ? 'وسام شراب الإيبيكاك / كيس الدم الخاطئ!' : 'Ipecac / Wrong Blood Bag Honor Unlocked!', lang === 'ar' ? 'دخلت المستشفى لمدة ساعة وحصلت على +1 نقطة ميرت!' : 'Self-hospitalized for 1 hour · Earned +1 Merit Point!', lang === 'ar' ? '+1 ميرت' : '+1 Merit');
+        this.emitMeritsUpdate();
       },
       honorsList: honorsDefs.map(hd => {
         const claimed = !!claimedHonors?.[hd.id];
@@ -5731,10 +5787,12 @@ class Component extends DCLogic {
             if (claimed) return this.toast(lang === 'ar' ? 'تم استلام هذا الوسام مسبقاً.' : 'Honor already claimed.');
             this.p.claimedHonors = { ...claimedHonors, [hd.id]: true };
             this.p.merits = Number(this.p.merits || 0) + 1;
+            this.saveLocalMeritsState();
             this.save();
             this.syncOmarAction('honor.claim', hd.id);
             this.result('good', lang === 'ar' ? 'وسام جديد مكتسب!' : 'Honor Medal Unlocked!', lang === 'ar' ? hd.titleAr : hd.titleEn, lang === 'ar' ? '+1 ميرت' : '+1 Merit');
             this.forceUpdate();
+            this.emitMeritsUpdate();
           }
         };
       }),
@@ -5912,11 +5970,12 @@ class Component extends DCLogic {
           if (this.cur('nerve') < sh.nerveCost) return this.toast(lang === 'ar' ? `تحتاج ${sh.nerveCost} جرأة لتنفيذ السرقة.` : `Requires ${sh.nerveCost} Nerve to shoplift ${sh.shop}.`, true);
           this.spend('nerve', sh.nerveCost);
           this.p.cash = Number(this.p.cash || 0) + sh.gain;
-          this.p.crimeXp = Number(this.p.crimeXp || 0) + sh.xp;
+          const boostedXp = Math.max(1, Math.round(sh.xp * (1 + (meritBonusesNow.crimePct || 0) / 100)));
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + boostedXp;
           this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
           this.save();
           this.syncOmarAction('torn.shoplift', sh.id);
-          this.result('cash', sh.shop, `${sh.status} · +${sh.xp} Crime XP`, '+' + money(sh.gain));
+          this.result('cash', sh.shop, `${sh.status} · +${boostedXp} Crime XP`, '+' + money(sh.gain));
         }
       })),
       searchModifiers: [
@@ -5932,7 +5991,8 @@ class Component extends DCLogic {
           if (this.cur('nerve') < 2) return this.toast(lang === 'ar' ? 'تحتاج 2 جرأة لتفتيش المنطقة.' : 'Requires 2 Nerve to sweep district.', true);
           this.spend('nerve', 2);
           this.p.cash = Number(this.p.cash || 0) + sm.gain;
-          this.p.crimeXp = Number(this.p.crimeXp || 0) + 5;
+          const boostedSearchXp = Math.max(1, Math.round(5 * (1 + (meritBonusesNow.crimePct || 0) / 100)));
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + boostedSearchXp;
           this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
           this.save();
           this.syncOmarAction('torn.searchCash', sm.id);
@@ -6032,17 +6092,22 @@ class Component extends DCLogic {
         { id: '14d', term: lang === 'ar' ? 'وديعة 14 يوماً' : '14 Days CD', apr: lang === 'ar' ? 'فائدة سنوية 4.55%' : '4.55% APR', payout: '+$9,100', bonus: lang === 'ar' ? 'ربط نصف شهري' : 'Bi-Weekly Lock', yieldVal: 9100 },
         { id: '30d', term: lang === 'ar' ? 'وديعة 30 يوماً' : '30 Days CD', apr: lang === 'ar' ? 'فائدة سنوية 5.08%' : '5.08% APR', payout: '+$25,400', bonus: lang === 'ar' ? 'عائد شهري مرتفع' : 'Monthly High-Yield', yieldVal: 25400 },
         { id: '90d', term: lang === 'ar' ? 'وديعة 90 يوماً' : '90 Days CD', apr: lang === 'ar' ? 'فائدة سنوية 6.18%' : '6.18% APR', payout: '+$92,700', bonus: lang === 'ar' ? 'أقصى عائد مع ميرت البنك 10/10' : 'Max 10/10 Bank Merit', yieldVal: 92700 }
-      ].map(cd => ({
-        ...cd,
-        investLabel: lang === 'ar' ? `ربط (${cd.term})` : `Lock ${cd.term} (${cd.apr})`,
-        invest: () => {
-          this.playTacticalSfx('crime');
-          this.p.bankBalance = Number(this.p.bankBalance || 0) + cd.yieldVal;
-          this.save();
-          this.syncOmarAction('torn.bankCd', cd.id);
-          this.result('cash', lang === 'ar' ? `تم ربط ${cd.term}` : `Locked ${cd.term} Bank Certificate`, `${cd.apr} · ${cd.bonus}`, cd.payout);
-        }
-      })),
+      ].map(cd => {
+        const boostedYield = Math.round(cd.yieldVal * (1 + (meritBonusesNow.bankInterestPct || 0) / 100));
+        return {
+          ...cd,
+          yieldVal: boostedYield,
+          payout: '+' + money(boostedYield),
+          investLabel: lang === 'ar' ? `ربط (${cd.term})` : `Lock ${cd.term} (${cd.apr})`,
+          invest: () => {
+            this.playTacticalSfx('crime');
+            this.p.bankBalance = Number(this.p.bankBalance || 0) + boostedYield;
+            this.save();
+            this.syncOmarAction('torn.bankCd', cd.id);
+            this.result('cash', lang === 'ar' ? `تم ربط ${cd.term}` : `Locked ${cd.term} Bank Certificate`, `${cd.apr} · ${cd.bonus}`, '+' + money(boostedYield));
+          }
+        };
+      }),
       gymSpecTitle: lang === 'ar' ? 'الأندية الرياضية التخصصية وعيادة التأهيل العصبي' : 'Elite Athletic Specialization & Neuro-Rehab Clinic',
       happySynergyText: lang === 'ar' ? 'تآزر السعادة مع التدريب: 1 + 0.07 × لوغاريتم(1 + المعنويات/250) · الإدمان الحالي: 0.0% (كفاءة 100%)' : 'Happy Synergy Formula: 1 + 0.07 × ln(1 + Happy/250) · Drug Brain-Decay: 0.0% (100% Efficiency)',
       rehabBtnLabel: lang === 'ar' ? 'جلسة تأهيل طبي (استعادة 100% كفاءة التدريب)' : 'Clinical Rehab Session (Reset Tolerance · 100% Gym Efficiency)',
@@ -6336,11 +6401,12 @@ class Component extends DCLogic {
         exec: () => {
           this.playTacticalSfx('crime');
           this.p.cash = Number(this.p.cash || 0) + c2.cash;
-          this.p.crimeXp = Number(this.p.crimeXp || 0) + c2.xp;
+          const boostedC2Xp = Math.max(1, Math.round(c2.xp * (1 + (meritBonusesNow.crimePct || 0) / 100)));
+          this.p.crimeXp = Number(this.p.crimeXp || 0) + boostedC2Xp;
           this.p.ctr = { ...(this.p.ctr || {}), crimes: Number(this.p.ctr?.crimes || 0) + 1 };
           this.save();
           this.syncOmarAction('torn.crime2Execute', c2.id);
-          this.result('cash', `#${c2.id} ${c2.name}`, `${c2.enhancer} · +${c2.xp} ${lang === 'ar' ? 'خبرة' : 'XP'}`, '+' + money(c2.cash));
+          this.result('cash', `#${c2.id} ${c2.name}`, `${c2.enhancer} · +${boostedC2Xp} ${lang === 'ar' ? 'خبرة' : 'XP'}`, '+' + money(c2.cash));
         }
       })),
       weaponAttachmentMods: [
@@ -7146,6 +7212,346 @@ class Component extends DCLogic {
 
   playerJobPoints() {
     return Number(this.p?.jobPoints || 0);
+  }
+
+  meritsStorageKey() {
+    return 'zone.v145.merits.' + String(this.p?.playerId || 'default');
+  }
+
+  meritPlayerSnapshot() {
+    const zmd = globalThis.ZoneMeritsData;
+    const base = this.p || {};
+    return {
+      ...base,
+      netWorth: this.netWorth(),
+      playerFactionId: this.territoryMap?.playerFactionId || this.sharedFamily?.id || null,
+      sharedFamily: this.sharedFamily || null,
+      meritTree: zmd && typeof zmd.normalizeMeritTree === 'function' ? zmd.normalizeMeritTree(base.meritTree) : { ...(base.meritTree || {}) }
+    };
+  }
+
+  saveLocalMeritsState() {
+    if (IS_PREVIEW || String(this.p?.playerId || '').startsWith('owner-playtest-') || this.ownerPlaytest?.active || window.zoneOwnerPlaytest?.active?.()) return;
+    const zmd = globalThis.ZoneMeritsData;
+    const payload = {
+      playerId: String(this.p?.playerId || 'default'),
+      merits: Math.max(0, Math.floor(Number(this.p?.merits) || 0)),
+      meritTree: zmd && typeof zmd.normalizeMeritTree === 'function' ? zmd.normalizeMeritTree(this.p?.meritTree) : { ...(this.p?.meritTree || {}) },
+      claimedHonors: { ...(this.p?.claimedHonors || {}) },
+      claimedMedals: { ...(this.p?.claimedMedals || {}) },
+      equippedHonor: this.p?.equippedHonor || null,
+      meritResets: Math.max(0, Math.floor(Number(this.p?.meritResets) || 0)),
+      updatedAt: Date.now()
+    };
+    this._meritsLocalState = payload;
+    try { localStorage.setItem(this.meritsStorageKey(), JSON.stringify(payload)); } catch (_) {}
+  }
+
+  applyLocalMeritsOverlay() {
+    if (IS_PREVIEW || String(this.p?.playerId || '').startsWith('owner-playtest-') || this.ownerPlaytest?.active || window.zoneOwnerPlaytest?.active?.()) return false;
+    const currentId = String(this.p?.playerId || 'default');
+    let saved = this._meritsLocalState && this._meritsLocalState.playerId === currentId ? this._meritsLocalState : null;
+    if (!saved) {
+      try {
+        const raw = localStorage.getItem(this.meritsStorageKey());
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object' && (!parsed.playerId || parsed.playerId === currentId || currentId === 'default')) {
+            saved = parsed;
+            this._meritsLocalState = { ...parsed, playerId: currentId };
+          }
+        }
+      } catch (_) {}
+    }
+    if (!saved) return false;
+    const zmd = globalThis.ZoneMeritsData;
+    this.p.merits = Math.max(0, Math.floor(Number(saved.merits) || 0));
+    this.p.meritTree = zmd && typeof zmd.normalizeMeritTree === 'function' ? zmd.normalizeMeritTree(saved.meritTree) : { ...(saved.meritTree || {}) };
+    this.p.claimedHonors = { ...(this.p.claimedHonors || {}), ...(saved.claimedHonors || {}) };
+    this.p.claimedMedals = { ...(this.p.claimedMedals || {}), ...(saved.claimedMedals || {}) };
+    this.p.equippedHonor = saved.equippedHonor || null;
+    this.p.meritResets = Math.max(0, Math.floor(Number(saved.meritResets) || 0));
+    return true;
+  }
+
+  emitMeritsUpdate() {
+    if (typeof window === 'undefined' || typeof window.dispatchEvent !== 'function') return;
+    try {
+      const detail = this.getMeritsState();
+      if (typeof CustomEvent === 'function') window.dispatchEvent(new CustomEvent('zone:merits-updated', { detail }));
+    } catch (_) {}
+  }
+
+  getMeritsState() {
+    const zmd = globalThis.ZoneMeritsData;
+    const lang = this.state?.lang || 'en';
+    const theme = this.state?.theme || 'dark';
+    const p = this.p || {};
+    const snap = this.meritPlayerSnapshot();
+    const meritTree = snap.meritTree;
+    const claimedHonors = { ...(p.claimedHonors || {}) };
+    const claimedMedals = { ...(p.claimedMedals || {}) };
+    const bonuses = this.meritBonuses();
+    const honors = zmd && typeof zmd.evaluateHonors === 'function' ? zmd.evaluateHonors(snap, claimedHonors) : [];
+    const medals = zmd && typeof zmd.evaluateMedals === 'function' ? zmd.evaluateMedals(snap, claimedMedals) : [];
+    const spentMerits = zmd && typeof zmd.totalSpent === 'function' ? zmd.totalSpent(meritTree) : 0;
+    const meritResets = Math.max(0, Math.floor(Number(p.meritResets) || 0));
+    const resetCostVal = zmd && typeof zmd.resetCost === 'function' ? zmd.resetCost(meritResets) : (meritResets <= 0 ? 0 : 25000);
+    const equippedHonor = p.equippedHonor && claimedHonors[p.equippedHonor] && zmd?.HONOR_MAP?.[p.equippedHonor] ? p.equippedHonor : null;
+    const equippedHonorObj = equippedHonor ? zmd.HONOR_MAP[equippedHonor] : null;
+    const summary = zmd && typeof zmd.getSummary === 'function'
+      ? zmd.getSummary(snap, meritTree, claimedHonors, claimedMedals)
+      : { availableMerits: Math.max(0, Math.floor(Number(p.merits) || 0)), spentMerits, totalMeritsPool: Math.max(0, Math.floor(Number(p.merits) || 0)) + spentMerits, honorsUnlocked: 0, honorsClaimed: 0, honorsTotal: 24, medalsUnlocked: 0, medalsClaimed: 0, medalsTotal: 32, readyHonorsCount: 0, readyMedalsCount: 0, totalReadyCount: 0, resetCost: resetCostVal };
+    return {
+      lang,
+      theme,
+      dir: lang === 'ar' ? 'rtl' : 'ltr',
+      playerName: p.username || T[lang]?.player || 'Vincenzo',
+      playerId: String(p.numericId || p.playerId || '1042'),
+      cash: Number(p.cash || 0),
+      merits: Math.max(0, Math.floor(Number(p.merits) || 0)),
+      meritResets,
+      resetCost: resetCostVal,
+      meritTree,
+      spentMerits,
+      bonuses,
+      honors,
+      medals,
+      claimedHonors,
+      claimedMedals,
+      equippedHonor,
+      equippedHonorObj,
+      summary,
+      bars: {
+        nerve: { cur: this.cur('nerve'), max: this.maxOf('nerve') },
+        life: { cur: this.cur('life'), max: this.maxOf('life') },
+        energy: { cur: this.cur('energy'), max: this.maxOf('energy') },
+        happy: { cur: this.cur('happy'), max: this.maxOf('happy') }
+      },
+      readonly: IS_PREVIEW
+    };
+  }
+
+  meritUpgradeAction(id) {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    const def = zmd?.UPGRADE_MAP?.[id];
+    if (!def) return { ok: false, error: ar ? 'ترقية غير صالحة.' : 'Unknown merit upgrade.' };
+    const tree = zmd.normalizeMeritTree(this.p.meritTree);
+    const lvl = tree[id] || 0;
+    const cost = zmd.upgradeCost(lvl);
+    if (cost === null || lvl >= 10) {
+      const msg = ar ? 'وصلت للحد الأقصى لهذه المهارة (10/10).' : 'Upgrade already at maximum rank (10/10).';
+      this.toast(msg);
+      return { ok: false, error: msg };
+    }
+    const avail = Math.max(0, Math.floor(Number(this.p.merits) || 0));
+    if (avail < cost) {
+      const msg = ar ? `تحتاج ${cost} نقاط ميرت للترقية إلى الرتبة ${lvl + 1}.` : `Requires ${cost} Merit points for Rank ${lvl + 1}.`;
+      this.toast(msg, true);
+      return { ok: false, error: msg };
+    }
+    this.p.merits = avail - cost;
+    this.p.meritTree = { ...tree, [id]: lvl + 1 };
+    this.saveLocalMeritsState();
+    this.save();
+    this.playTacticalSfx('up');
+    this.result('good', ar ? 'ترقية ميرت مكتملة' : 'Merit Upgrade Unlocked', `${ar ? def.ar : def.en} → ${lvl + 1}/10`, ar ? `-${cost} ميرت` : `-${cost} Merit`);
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, id, rank: lvl + 1, cost, merits: this.p.merits, state: this.getMeritsState() };
+  }
+
+  meritResetAction() {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    const tree = zmd ? zmd.normalizeMeritTree(this.p.meritTree) : {};
+    const spent = zmd ? zmd.totalSpent(tree) : 0;
+    if (spent <= 0) {
+      const msg = ar ? 'لا توجد نقاط ميرت مصروفة لإعادة ضبطها.' : 'No spent merits to refund.';
+      this.toast(msg);
+      return { ok: false, error: msg };
+    }
+    const resets = Math.max(0, Math.floor(Number(this.p.meritResets) || 0));
+    const fee = zmd ? zmd.resetCost(resets) : (resets <= 0 ? 0 : 25000);
+    if (fee > 0 && Number(this.p.cash || 0) < fee) {
+      const msg = ar ? `تحتاج ${money(fee)} نقداً لإعادة توزيع الميرتس.` : `Requires ${money(fee)} cash to reset merits.`;
+      this.toast(msg, true);
+      return { ok: false, error: msg };
+    }
+    if (fee > 0) this.p.cash = Math.max(0, Number(this.p.cash || 0) - fee);
+    this.p.merits = Math.max(0, Math.floor(Number(this.p.merits) || 0)) + spent;
+    this.p.meritTree = zmd ? zmd.normalizeMeritTree({}) : {};
+    this.p.meritResets = resets + 1;
+    this.saveLocalMeritsState();
+    this.save();
+    this.playTacticalSfx('good');
+    this.result('good', ar ? 'تمت إعادة توزيع الميرتس' : 'Merits Reset Complete', ar ? `تم استرداد +${spent} نقطة ميرت` : `Refunded +${spent} Merit points` + (fee > 0 ? ` (-${money(fee)})` : (ar ? ' (إعادة مجانية)' : ' (Free 1st Reset)')), ar ? `+${spent} ميرت` : `+${spent} Merits`);
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, refunded: spent, fee, merits: this.p.merits, state: this.getMeritsState() };
+  }
+
+  meritClaimHonorAction(id) {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    if (!zmd || !zmd.HONOR_MAP?.[id]) return { ok: false, error: ar ? 'وسام غير معروف.' : 'Unknown honor.' };
+    const evaluated = zmd.evaluateHonors(this.meritPlayerSnapshot(), this.p.claimedHonors);
+    const honor = evaluated.find(h => h.id === id);
+    if (!honor) return { ok: false, error: 'Honor not found.' };
+    if (honor.claimed) {
+      const msg = ar ? 'تم استلام هذا الوسام مسبقاً.' : 'Honor already claimed.';
+      this.toast(msg);
+      return { ok: false, error: msg };
+    }
+    if (!honor.unlocked) {
+      const msg = ar ? 'لم تستوفِ شروط هذا الوسام بعد.' : 'Honor requirements not met yet.';
+      this.toast(msg, true);
+      return { ok: false, error: msg };
+    }
+    const reward = honor.merits || 1;
+    this.p.claimedHonors = { ...(this.p.claimedHonors || {}), [id]: true };
+    this.p.merits = Math.max(0, Math.floor(Number(this.p.merits) || 0)) + reward;
+    this.saveLocalMeritsState();
+    this.save();
+    this.syncOmarAction('honor.claim', id);
+    this.playTacticalSfx('up');
+    this.result('good', ar ? 'وسام جديد مكتسب!' : 'Honor Bar Unlocked!', ar ? honor.ar : honor.en, ar ? `+${reward} ميرت` : `+${reward} Merit`);
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, id, meritsEarned: reward, merits: this.p.merits, state: this.getMeritsState() };
+  }
+
+  meritClaimMedalTierAction(medalId, tierIndex) {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    if (!zmd || !zmd.MEDAL_MAP?.[medalId]) return { ok: false, error: ar ? 'ميدالية غير معروفة.' : 'Unknown medal.' };
+    const evaluated = zmd.evaluateMedals(this.meritPlayerSnapshot(), this.p.claimedMedals);
+    const medal = evaluated.find(m => m.id === medalId);
+    const tIdx = Number(tierIndex);
+    const tier = medal?.tiers?.[tIdx];
+    if (!tier) return { ok: false, error: ar ? 'رتبة ميدالية غير صالحة.' : 'Invalid medal tier.' };
+    if (tier.claimed) {
+      const msg = ar ? 'تم استلام هذه الرتبة مسبقاً.' : 'Medal tier already claimed.';
+      this.toast(msg);
+      return { ok: false, error: msg };
+    }
+    if (!tier.unlocked) {
+      const msg = ar ? 'لم تصل إلى متطلب هذه الرتبة بعد.' : 'Medal tier threshold not reached yet.';
+      this.toast(msg, true);
+      return { ok: false, error: msg };
+    }
+    const reward = tier.merits || 1;
+    this.p.claimedMedals = { ...(this.p.claimedMedals || {}), [tier.key]: true };
+    this.p.merits = Math.max(0, Math.floor(Number(this.p.merits) || 0)) + reward;
+    this.saveLocalMeritsState();
+    this.save();
+    this.playTacticalSfx('up');
+    this.result('good', ar ? 'ميدالية جديدة مكتسبة!' : 'Medal Tier Unlocked!', `${ar ? medal.ar : medal.en} · ${ar ? tier.nameAr : tier.nameEn}`, ar ? `+${reward} ميرت` : `+${reward} Merit`);
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, medalId, tierIndex: tier.index, key: tier.key, meritsEarned: reward, merits: this.p.merits, state: this.getMeritsState() };
+  }
+
+  meritClaimAllReadyAction() {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, claimedHonors: 0, claimedMedals: 0, meritsEarned: 0, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    if (!zmd) return { ok: false, claimedHonors: 0, claimedMedals: 0, meritsEarned: 0, error: 'Merits data unavailable.' };
+    const snap = this.meritPlayerSnapshot();
+    const honors = zmd.evaluateHonors(snap, this.p.claimedHonors);
+    const medals = zmd.evaluateMedals(snap, this.p.claimedMedals);
+    const nextHonors = { ...(this.p.claimedHonors || {}) };
+    const nextMedals = { ...(this.p.claimedMedals || {}) };
+    let hCount = 0, mCount = 0, earned = 0;
+    const newlyClaimedHonorIds = [];
+    for (const h of honors) {
+      if (h.ready) {
+        nextHonors[h.id] = true;
+        newlyClaimedHonorIds.push(h.id);
+        hCount++;
+        earned += (h.merits || 1);
+      }
+    }
+    for (const m of medals) {
+      for (const tier of m.tiers) {
+        if (tier.ready) {
+          nextMedals[tier.key] = true;
+          mCount++;
+          earned += (tier.merits || 1);
+        }
+      }
+    }
+    if (earned <= 0) {
+      const msg = ar ? 'لا توجد أوسمة أو ميداليات جاهزة للاستلام حالياً.' : 'No ready honors or medals to claim right now.';
+      this.toast(msg);
+      return { ok: false, claimedHonors: 0, claimedMedals: 0, meritsEarned: 0, error: msg };
+    }
+    this.p.claimedHonors = nextHonors;
+    this.p.claimedMedals = nextMedals;
+    this.p.merits = Math.max(0, Math.floor(Number(this.p.merits) || 0)) + earned;
+    this.saveLocalMeritsState();
+    this.save();
+    for (const hid of newlyClaimedHonorIds) this.syncOmarAction('honor.claim', hid);
+    this.playTacticalSfx('up');
+    this.result('good', ar ? 'تم استلام جميع الأوسمة الجاهزة!' : 'All Ready Awards Claimed!', ar ? `${hCount} وسام · ${mCount} ميدالية` : `${hCount} Honors · ${mCount} Medal Tiers`, ar ? `+${earned} ميرت` : `+${earned} Merits`);
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, claimedHonors: hCount, claimedMedals: mCount, meritsEarned: earned, merits: this.p.merits, state: this.getMeritsState() };
+  }
+
+  meritEquipHonorAction(id) {
+    const lang = this.state?.lang || 'en', ar = lang === 'ar';
+    if (IS_PREVIEW) { this.toast(PREVIEW_NOTICE[lang]); return { ok: false, error: 'preview' }; }
+    const zmd = globalThis.ZoneMeritsData;
+    if (!id || this.p.equippedHonor === id) {
+      this.p.equippedHonor = null;
+      this.saveLocalMeritsState();
+      this.save();
+      this.toast(ar ? 'تمت إزالة شارة الوسام من ملفك.' : 'Honor bar unequipped.');
+      this.forceUpdate();
+      this.emitMeritsUpdate();
+      return { ok: true, equippedHonor: null, equippedHonorObj: null, state: this.getMeritsState() };
+    }
+    const def = zmd?.HONOR_MAP?.[id];
+    if (!def || !this.p.claimedHonors?.[id]) {
+      const msg = ar ? 'يجب فتح واستلام هذا الوسام قبل تجهيزه.' : 'Unlock and claim this Honor before equipping it.';
+      this.toast(msg, true);
+      return { ok: false, error: msg };
+    }
+    this.p.equippedHonor = id;
+    this.saveLocalMeritsState();
+    this.save();
+    this.playTacticalSfx('good');
+    this.toast((ar ? 'تم تجهيز شارة الوسام: ' : 'Equipped Honor Bar: ') + (ar ? def.ar : def.en));
+    this.forceUpdate();
+    this.emitMeritsUpdate();
+    return { ok: true, equippedHonor: id, equippedHonorObj: def, state: this.getMeritsState() };
+  }
+
+  createMeritsBridge() {
+    return {
+      _owner: this,
+      getState: () => this.getMeritsState(),
+      upgradeMerit: id => this.meritUpgradeAction(id),
+      resetMerits: () => this.meritResetAction(),
+      claimHonor: id => this.meritClaimHonorAction(id),
+      claimMedalTier: (medalId, tierIndex) => this.meritClaimMedalTierAction(medalId, tierIndex),
+      claimAllReady: () => this.meritClaimAllReadyAction(),
+      equipHonor: id => this.meritEquipHonorAction(id),
+      openHub: (tab = 'merits') => {
+        if (window.ZoneMeritsUI && typeof window.ZoneMeritsUI.open === 'function') {
+          window.ZoneMeritsUI.open(tab);
+          return true;
+        }
+        this.go('missions');
+        return false;
+      }
+    };
   }
 
   diagnostics() {
