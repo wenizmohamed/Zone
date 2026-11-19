@@ -2900,7 +2900,9 @@ html body:has(#studioWorkspace) header.topbar .brand small {
 }
 
 html body:has(#studioWorkspace) .studio-search-button,
-html body:has(#studioWorkspace) .button {
+html body:has(#studioWorkspace) .button,
+html body:has(#studioWorkspace) .viewport-button,
+html body:has(#studioWorkspace) .preview-collapse {
   background: var(--zwc-btn-bg) !important;
   color: var(--zwc-ink) !important;
   border: 1.5px solid var(--zwc-border-strong) !important;
@@ -2908,36 +2910,64 @@ html body:has(#studioWorkspace) .button {
   box-shadow: var(--zwc-shadow-btn) !important;
   font-family: var(--zwc-font-hand) !important;
   font-weight: 700 !important;
+  transition: none !important;
 }
 
 html body:has(#studioWorkspace) .button.primary {
   background: linear-gradient(180deg, #7da65a 0%, #5b823c 100%) !important;
   color: #fcf9f2 !important;
+  transition: none !important;
 }
 
 html body:has(#studioWorkspace) aside.sidebar {
   background: var(--zwc-sidebar-bg) !important;
   border-inline-end: 2px solid var(--zwc-border-strong) !important;
   color: var(--zwc-ink) !important;
+  transition: none !important;
 }
 
 html body:has(#studioWorkspace) aside.sidebar * {
   font-family: var(--zwc-font-hand) !important;
 }
 
-html body:has(#studioWorkspace) aside.sidebar button {
+html body:has(#studioWorkspace) aside.sidebar button,
+html body:has(#studioWorkspace) aside.sidebar button.nav-button {
   color: var(--zwc-ink) !important;
   border-radius: 0 !important;
   border-bottom: 1px solid var(--zwc-ink-rule) !important;
   background: transparent !important;
   box-shadow: none !important;
+  font-weight: 700 !important;
+  transition: none !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar button.nav-button :is(b, span, strong) {
+  color: var(--zwc-ink) !important;
+  font-weight: 700 !important;
+  transition: none !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar button.nav-button:hover {
+  background: var(--zwc-row-hover) !important;
+  color: var(--zwc-title-ink) !important;
+  transform: none !important;
 }
 
 html body:has(#studioWorkspace) aside.sidebar button[aria-current="page"],
-html body:has(#studioWorkspace) aside.sidebar button.active {
+html body:has(#studioWorkspace) aside.sidebar button.active,
+html body:has(#studioWorkspace) aside.sidebar button.nav-button.active {
   background: var(--zwc-row-active) !important;
   border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
   color: var(--zwc-title-ink) !important;
+  font-weight: 800 !important;
+  transition: none !important;
+}
+
+html body:has(#studioWorkspace) aside.sidebar button[aria-current="page"] :is(b, span, strong),
+html body:has(#studioWorkspace) aside.sidebar button.active :is(b, span, strong),
+html body:has(#studioWorkspace) aside.sidebar button.nav-button.active :is(b, span, strong) {
+  color: var(--zwc-title-ink) !important;
+  font-weight: 800 !important;
 }
 
 html body:has(#studioWorkspace) :is(.panel, .admin-session-dialog, .studio-dialog, .command-palette, .studio-save-bar, .toast) {
@@ -3079,6 +3109,39 @@ html[data-theme="light"] body:has(#studioWorkspace) .studio-search-button svg pa
 
 html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar .nav-button svg {
   filter: contrast(1.25) saturate(1.18) drop-shadow(0 0.5px 0 rgba(20, 18, 16, 0.35));
+}
+
+/* Explicit Light-Mode /admin Ink & Button Locks (Zero transition-lag white-on-cream flash) */
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button,
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button,
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button :is(b, span, strong) {
+  color: #1e1b18 !important;
+  font-weight: 700 !important;
+  transition: none !important;
+}
+
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button.active,
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button[aria-current="page"],
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button.active :is(b, span, strong),
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar button.nav-button[aria-current="page"] :is(b, span, strong) {
+  color: #1a1714 !important;
+  font-weight: 800 !important;
+  transition: none !important;
+}
+
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar .studio-nav-group-label,
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar .studio-nav-group > h2,
+html[data-theme="light"] body:has(#studioWorkspace) aside.sidebar .sidebar-foot :is(a, button, span) {
+  color: #3a342d !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="light"] body:has(#studioWorkspace) header.topbar .button:not(.primary),
+html[data-theme="light"] body:has(#studioWorkspace) .button:not(.primary),
+html[data-theme="light"] body:has(#studioWorkspace) .studio-search-button {
+  background: #ede4cf !important;
+  color: #1e1b18 !important;
+  transition: none !important;
 }
 
 @media (max-width: 900px) {

@@ -258,6 +258,8 @@
         document.documentElement.setAttribute('data-theme', next);
         safeStoreTheme(next);
         syncThemePersistenceAndAuxToggle();
+        /* Force atomic style flush so 0ms paints/snapshots never see stale dark-mode transitions */
+        void document.documentElement.offsetHeight;
       });
       if (accountLangBtn) {
         host.insertBefore(btn, accountLangBtn);
@@ -792,7 +794,7 @@
     var origFocus = HTMLElement.prototype.focus;
     HTMLElement.prototype.__zwcFocusGuarded = true;
     HTMLElement.prototype.focus = function (opts) {
-      if (this && this.id === 'zone-main') {
+      if (this && (this.id === 'zone-main' || (this.tagName === 'H1' && typeof this.closest === 'function' && this.closest('#zone-main')))) {
         try {
           return origFocus.call(this, Object.assign({}, opts || {}, { preventScroll: true }));
         } catch (_) {
@@ -803,17 +805,65 @@
     };
   }
 
+  /* Neutralize route-navigation.js:43 top = mainRect.top - 12 (87px desktop / 50px mobile) scroll jump
+     that tucks #zone-main H1 behind sticky .zone-topbar on route changes, async re-renders & theme toggles */
+  var origWindowScrollTo = typeof window.scrollTo === 'function' ? window.scrollTo.bind(window) : null;
+  if (origWindowScrollTo && !window.__zwcScrollToGuarded) {
+    window.__zwcScrollToGuarded = true;
+    var guardedScrollTo = function () {
+      var main = document.getElementById('zone-main');
+      if (main && arguments.length > 0) {
+        var first = arguments[0];
+        var routeTop = Math.max(0, (window.scrollY || 0) + main.getBoundingClientRect().top - 12);
+        if (first && typeof first === 'object' && typeof first.top === 'number') {
+          if (first.top > 0 && first.top <= 150 && Math.abs(first.top - routeTop) <= 32) {
+            return origWindowScrollTo(Object.assign({}, first, { top: 0 }));
+          }
+        } else if (typeof first === 'number' && typeof arguments[1] === 'number') {
+          var targetY = arguments[1];
+          if (targetY > 0 && targetY <= 150 && Math.abs(targetY - routeTop) <= 32) {
+            return origWindowScrollTo(first, 0);
+          }
+        }
+      }
+      return origWindowScrollTo.apply(window, arguments);
+    };
+    window.scrollTo = guardedScrollTo;
+    if (typeof window.scroll === 'function') {
+      window.scroll = guardedScrollTo;
+    }
+  }
+
+  /* Guard Element.prototype.scrollIntoView on #zone-main / .zone-page-heading so H1 never slips behind .zone-topbar */
+  if (typeof Element !== 'undefined' && Element.prototype && typeof Element.prototype.scrollIntoView === 'function' && !Element.prototype.__zwcScrollIntoViewGuarded) {
+    var origScrollIntoView = Element.prototype.scrollIntoView;
+    Element.prototype.__zwcScrollIntoViewGuarded = true;
+    Element.prototype.scrollIntoView = function () {
+      if (this && (this.id === 'zone-main' || (typeof this.closest === 'function' && (this.closest('.zone-page-heading') || (this.tagName === 'H1' && this.closest('#zone-main')))))) {
+        if (origWindowScrollTo) {
+          try {
+            origWindowScrollTo({ top: 0, left: 0, behavior: 'instant' });
+          } catch (_) {
+            origWindowScrollTo(0, 0);
+          }
+        }
+        return;
+      }
+      return origScrollIntoView.apply(this, arguments);
+    };
+  }
+
   var lastObservedScreen = '';
   var rafScheduled = false;
   var userScrolledSinceRoute = false;
 
   function instantScrollTop() {
     if (userScrolledSinceRoute) return;
-    if (window.scrollY > 0) {
+    if (window.scrollY > 0 && window.scrollY <= 180) {
       try {
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        (origWindowScrollTo || window.scrollTo)({ top: 0, left: 0, behavior: 'instant' });
       } catch (_) {
-        window.scrollTo(0, 0);
+        (origWindowScrollTo || window.scrollTo)(0, 0);
       }
     }
   }
@@ -889,6 +939,14 @@
         headObs.observe(document.head, { childList: true });
       }
       var obs = new MutationObserver(function () {
+        if (!userScrolledSinceRoute) {
+          instantScrollTop();
+          if (typeof window.requestAnimationFrame === 'function') {
+            window.requestAnimationFrame(instantScrollTop);
+          }
+          setTimeout(instantScrollTop, 60);
+          setTimeout(instantScrollTop, 180);
+        }
         syncAll();
       });
       obs.observe(document.documentElement, {
