@@ -942,6 +942,15 @@ html body #dc-root aside.zone-sidebar #zone-operative-crest .zaaa-op-xp-meta {
   gap: 4px !important;
 }
 
+html body #dc-root aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
+  background: rgba(245, 184, 46, 0.14) !important;
+  border-color: var(--zwc-border-strong) !important;
+}
+
+html:not([data-theme="light"]) body #dc-root aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
+  background: rgba(245, 184, 46, 0.16) !important;
+}
+
 html body #dc-root aside.zone-sidebar #zone-operative-crest .zaaa-op-rank {
   font-size: 12.5px !important;
   white-space: nowrap !important;
@@ -1250,8 +1259,14 @@ html body #dc-root #zone-main#zone-main .zone-page-heading > div button {
   padding: 3px 12px !important;
 }
 
-/* Charcoal-Crosshatch Tutorial / District Guide Box (.zwc-tutorial-card) */
+/* Charcoal-Crosshatch Tutorial / District Guide Box (.zwc-tutorial-card)
+   Always locked immediately below .zone-page-heading across ALL 19 screens (including Casino) */
+html body #dc-root #zone-main#zone-main .zone-page-heading {
+  order: -20 !important;
+}
+
 html body #dc-root #zone-main#zone-main .zwc-tutorial-card {
+  order: -15 !important;
   background: var(--zwc-paper-elevated) !important;
   border: 1.8px solid var(--zwc-border-panel) !important;
   border-radius: var(--zwc-sketch-radius) !important;
@@ -1738,7 +1753,11 @@ html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*
 
 html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#9a6519"],
 html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#fbbf24"],
-html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#f59e0b"] {
+html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#f59e0b"],
+html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#f5c451"],
+html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="245, 196, 81"],
+html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="#f5c451"] *,
+html[data-theme="light"] body #dc-root :is(span, strong, bdi, small, div)[style*="245, 196, 81"] * {
   color: #663f06 !important;
 }
 
@@ -2789,8 +2808,14 @@ html body:has(#studioWorkspace) :is(.aes-pillar-card h3, .aes-world-card h3, .ae
   text-shadow: none !important;
 }
 
-html body:has(#studioWorkspace) :is(.aes-pillar-card p, .aes-world-card p, .aes-directive-box p, .panel p, .muted) {
+html body:has(#studioWorkspace) :is(.aes-pillar-card p, .aes-world-card p, .aes-directive-box p, .panel > p, .muted) {
   color: var(--zwc-ink-soft) !important;
+}
+
+html body:has(#studioWorkspace) .panel .panel-head,
+html body:has(#studioWorkspace) .panel .panel-head :is(p, strong, span, h2, h3, small, #agiBannerTitle, #agiBannerSub) {
+  color: #f7f1e3 !important;
+  opacity: 1 !important;
 }
 
 html body:has(#studioWorkspace) .eyebrow.aes-eyebrow-gold {

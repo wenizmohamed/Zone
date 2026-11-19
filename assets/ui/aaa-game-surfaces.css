@@ -312,7 +312,7 @@ html body #zone-main[data-zone-screen="education"],
 html body #zone-main[data-zone-screen="education"] .zone-page-heading,
 html body #zone-main[data-zone-screen="newspaper"],
 html body #zone-main[data-zone-screen="newspaper"] .zone-page-heading {
-  --screen-art: url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/city-panorama.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="crimes"],
@@ -331,12 +331,12 @@ html body #zone-main[data-zone-screen="items"],
 html body #zone-main[data-zone-screen="items"] .zone-page-heading,
 html body #zone-main[data-zone-screen="elimination"],
 html body #zone-main[data-zone-screen="elimination"] .zone-page-heading {
-  --screen-art: url('/assets/ui/watercolor-art/hero-street-crimes.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/arcade-heist.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="gym"],
 html body #zone-main[data-zone-screen="gym"] .zone-page-heading {
-  --screen-art: url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+  --screen-art: url('/assets/ui/watercolor-art/arcade-heavybag.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="casino"],
@@ -683,7 +683,7 @@ html:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-sc
   background-color: transparent !important;
   background-image:
     linear-gradient(92deg, rgba(24, 21, 18, 0.92) 0%, rgba(30, 27, 23, 0.78) 52%, rgba(24, 21, 18, 0.42) 100%),
-    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
+    url('/assets/ui/watercolor-art/city-panorama.webp') !important;
   background-size: cover !important;
   background-position: center 48% !important;
   border: 0 !important;
@@ -695,7 +695,7 @@ html[data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
   background-color: transparent !important;
   background-image:
     linear-gradient(92deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.90) 54%, rgba(242, 235, 220, 0.70) 100%),
-    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
+    url('/assets/ui/watercolor-art/city-panorama.webp') !important;
   background-size: cover !important;
   background-position: center 48% !important;
   border: 0 !important;
@@ -1525,7 +1525,7 @@ html:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym
   background-color: var(--zwc-surface, #1e1b17) !important;
   background-image:
     linear-gradient(96deg, rgba(24, 21, 18, 0.94) 0%, rgba(30, 27, 23, 0.82) 52%, rgba(24, 21, 18, 0.44) 100%),
-    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+    url('/assets/ui/watercolor-art/arcade-heavybag.webp') !important;
   background-size: cover !important;
   background-position: center !important;
   border: 1.5px solid var(--zwc-border-strong) !important;
@@ -1536,7 +1536,7 @@ html[data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-floor
   background-color: var(--zwc-surface, #f8f3e6) !important;
   background-image:
     linear-gradient(96deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.88) 54%, rgba(242, 235, 220, 0.56) 100%),
-    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+    url('/assets/ui/watercolor-art/arcade-heavybag.webp') !important;
   background-size: cover !important;
   background-position: center !important;
   border: 1.5px solid var(--zwc-border-strong) !important;
@@ -1546,13 +1546,13 @@ html[data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-floor
 html[dir="rtl"]:not([data-theme="light"]) body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
   background-image:
     linear-gradient(264deg, rgba(24, 21, 18, 0.94) 0%, rgba(30, 27, 23, 0.82) 52%, rgba(24, 21, 18, 0.44) 100%),
-    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+    url('/assets/ui/watercolor-art/arcade-heavybag.webp') !important;
 }
 
 html[dir="rtl"][data-theme="light"] body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene {
   background-image:
     linear-gradient(264deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.88) 54%, rgba(242, 235, 220, 0.56) 100%),
-    url('/assets/ui/watercolor-art/gym-interior.webp') !important;
+    url('/assets/ui/watercolor-art/arcade-heavybag.webp') !important;
 }
 
 html body #zone-main[data-zone-screen="gym"] .zone-gym-floor-scene .zone-overline {
@@ -3273,13 +3273,13 @@ html[dir="rtl"][data-theme="light"] body #zone-main .zone-page-heading {
 html[dir="rtl"]:not([data-theme="light"]) body #zone-main .zone-home-brief .zone-hideout-scene {
   background-image:
     linear-gradient(268deg, rgba(24, 21, 18, 0.92) 0%, rgba(30, 27, 23, 0.78) 52%, rgba(24, 21, 18, 0.42) 100%),
-    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
+    url('/assets/ui/watercolor-art/city-panorama.webp') !important;
 }
 
 html[dir="rtl"][data-theme="light"] body #zone-main .zone-home-brief .zone-hideout-scene {
   background-image:
     linear-gradient(268deg, rgba(248, 243, 230, 0.96) 0%, rgba(244, 237, 221, 0.90) 54%, rgba(242, 235, 220, 0.70) 100%),
-    url('/assets/ui/watercolor-art/hero-syndicate-turf.webp') !important;
+    url('/assets/ui/watercolor-art/city-panorama.webp') !important;
 }
 
 html[dir="rtl"] body #zone-main .zig-game-card:hover .zig-game-card-cta svg {

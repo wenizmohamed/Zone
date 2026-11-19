@@ -1158,8 +1158,8 @@
       pushOct(-0.0102, 0.0008, 0.00054, 0.00044, 92, 134, 2, "neon", "", 12);
       pushOct(-0.0102, 0.0008, 0.00040, 0.00032, 134, 152, 2, "neon", "#dba83b", 12, false);
       pushOct(-0.0102, 0.0008, 0.00022, 0.00018, 152, 168, 2, "neon", "#f4ca5c", 12, false);
-      pushBox(-0.01105, 0.0008, 0.00020, 0.00020, 34, 156, 2, "neon", "#c084fc", false);
-      pushBox(-0.00935, 0.0008, 0.00020, 0.00020, 34, 156, 2, "neon", "#c084fc", false);
+      pushBox(-0.01105, 0.0008, 0.00020, 0.00020, 34, 156, 2, "neon", "#d6b46c", false);
+      pushBox(-0.00935, 0.0008, 0.00020, 0.00020, 34, 156, 2, "neon", "#d6b46c", false);
       /* Fountain Terrace Bowl on east arrival plaza */
       pushOct(-0.0087, 0.0008, 0.00026, 0.00022, 0, 4, 2, "neon", "#7dd3fc", 12, false);
 
@@ -2535,7 +2535,7 @@
     function syncZmxReadyDataset() {
       try {
         document.body.dataset.zmxReady = JSON.stringify({
-          version: 139,
+          version: 141,
           oceanMaskLayer: !!map.getLayer("metro-ocean-mask"),
           metroIconLayer: !!map.getLayer("metro-poi-icon"),
           skylineLayer: !!map.getLayer("metro-outer-skyline-3d"),
@@ -2969,10 +2969,11 @@
       } catch (_) {}
 
       var textCol = cfg.isLightUi ? "#1e1b18" : "#f8fafc";
-      var haloCol = cfg.isLightUi ? "rgba(250,244,230,0.96)" : "rgba(4,8,15,0.96)";
-      ["zone-poi-icon", "zone-poi-icon-service", "zone-poi-icon-detail", "metro-poi-icon", "district-road-labels"].forEach(function (lid) {
+      var haloCol = cfg.isLightUi ? "rgba(252,248,238,0.98)" : "rgba(4,8,15,0.98)";
+      ["zone-poi-icon", "zone-poi-label", "zone-poi-icon-service", "zone-poi-icon-detail", "zone-poi-label-detail", "metro-poi-icon", "district-road-labels"].forEach(function (lid) {
         setPaint(lid, "text-color", textCol);
         setPaint(lid, "text-halo-color", haloCol);
+        setPaint(lid, "text-halo-width", 2.2);
       });
       syncZmxReadyDataset();
     }
@@ -3082,7 +3083,7 @@
   }
 
   var expansionApi = {
-    version: "139.0",
+    version: "141.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -3098,7 +3099,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 139;
+  root.__zoneMapExpansionVersion = 141;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

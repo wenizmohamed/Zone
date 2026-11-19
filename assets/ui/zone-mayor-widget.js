@@ -389,24 +389,24 @@
   }
 
   var state = {
-    open: true,
+    open: false,
     tab: 'smart', /* 'smart' | 'district' | 'rumor' */
     lineIdx: 0,
     rumorIdx: 0,
     lastScreen: '',
-    hasUnread: false,
+    hasUnread: true,
     userClosed: false
   };
 
   try {
     var savedMin = window.localStorage.getItem(STORAGE_MIN_KEY);
-    if (savedMin === '1') {
+    if (savedMin === '0' && typeof window.innerWidth === 'number' && window.innerWidth > 860) {
+      state.open = true;
+      state.hasUnread = false;
+    } else if (savedMin === '1') {
       state.open = false;
       state.userClosed = true;
-    } else if (savedMin === null && typeof window.innerWidth === 'number' && window.innerWidth <= 860) {
-      /* On narrow screens, start neatly docked as medallion with unread badge so map controls stay 100% clear */
-      state.open = false;
-      state.hasUnread = true;
+      state.hasUnread = false;
     }
   } catch (_) {}
 
