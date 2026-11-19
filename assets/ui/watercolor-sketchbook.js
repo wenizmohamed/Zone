@@ -685,6 +685,58 @@
 
   var preferredCityView = 'illustrated';
 
+  function upsertThemeParam(rawUrl, theme) {
+    if (!rawUrl) return rawUrl;
+    var clean = String(rawUrl);
+    if (/([?&])theme=[^&#]*/i.test(clean)) {
+      return clean.replace(/([?&])theme=[^&#]*/i, '$1theme=' + encodeURIComponent(theme));
+    }
+    var hashIdx = clean.indexOf('#');
+    var base = hashIdx >= 0 ? clean.slice(0, hashIdx) : clean;
+    var hash = hashIdx >= 0 ? clean.slice(hashIdx) : '';
+    var sep = base.indexOf('?') >= 0 ? '&' : '?';
+    return base + sep + 'theme=' + encodeURIComponent(theme) + hash;
+  }
+
+  function postThemeToMapIframe(mapFrame, theme) {
+    if (!mapFrame || !mapFrame.contentWindow) return;
+    try {
+      mapFrame.contentWindow.postMessage({ type: 'ZONE_THEME_SYNC', theme: theme }, '*');
+    } catch (_) {}
+  }
+
+  function syncMapIframeTheme(forceTheme) {
+    var theme = (forceTheme === 'light' || forceTheme === 'dark') ? forceTheme : currentTheme();
+    var mapFrame = document.getElementById('zone-city-map');
+    if (!mapFrame) return;
+
+    var dataSrc = mapFrame.getAttribute('data-map-src');
+    if (dataSrc) {
+      var nextDataSrc = upsertThemeParam(dataSrc, theme);
+      if (nextDataSrc !== dataSrc) {
+        mapFrame.setAttribute('data-map-src', nextDataSrc);
+      }
+    }
+
+    var curSrc = mapFrame.getAttribute('src') || '';
+    if (curSrc && curSrc !== 'about:blank' && !/([?&])theme=/i.test(curSrc) && mapFrame.getAttribute('data-zwc-loaded') !== '1') {
+      mapFrame.setAttribute('src', upsertThemeParam(curSrc, theme));
+    }
+
+    if (!mapFrame.__zwcThemeLoadBound) {
+      mapFrame.__zwcThemeLoadBound = true;
+      mapFrame.addEventListener('load', function () {
+        mapFrame.setAttribute('data-zwc-loaded', '1');
+        var liveTheme = currentTheme();
+        postThemeToMapIframe(mapFrame, liveTheme);
+        setTimeout(function () { postThemeToMapIframe(mapFrame, currentTheme()); }, 140);
+        setTimeout(function () { postThemeToMapIframe(mapFrame, currentTheme()); }, 480);
+      });
+    }
+
+    postThemeToMapIframe(mapFrame, theme);
+  }
+
   function syncModeBarState(stage, view) {
     if (!stage) return;
     var active = view === '3d' ? '3d' : 'illustrated';
@@ -698,6 +750,7 @@
   function syncCityPanoramaStage() {
     var shell = document.querySelector('#zone-main .zone-city-map-shell');
     if (!shell) return;
+    syncMapIframeTheme();
 
     var ar = isAr();
     var activeView = shell.getAttribute('data-zwc-view');
@@ -755,12 +808,14 @@
         shell.setAttribute('data-zwc-view', preferredCityView);
         syncModeBarState(stage, preferredCityView);
         if (preferredCityView === '3d') {
+          syncMapIframeTheme();
           if (window.ZoneGameFX && typeof window.ZoneGameFX.syncWebglIframeThrottle === 'function') {
             window.ZoneGameFX.syncWebglIframeThrottle();
           }
           window.dispatchEvent(new Event('resize'));
           setTimeout(function () {
             try {
+              syncMapIframeTheme();
               window.dispatchEvent(new Event('resize'));
               var mapFrame = shell.querySelector('iframe#zone-city-map');
               if (mapFrame && mapFrame.contentWindow) {
@@ -768,6 +823,7 @@
               }
             } catch (_) {}
           }, 90);
+          setTimeout(function () { syncMapIframeTheme(); }, 350);
         }
         return;
       }
@@ -947,6 +1003,7 @@
           setTimeout(instantScrollTop, 60);
           setTimeout(instantScrollTop, 180);
         }
+        syncMapIframeTheme();
         syncAll();
       });
       obs.observe(document.documentElement, {

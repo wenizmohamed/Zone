@@ -2150,31 +2150,39 @@ html body #dc-root #zone-main#zone-main .zone-gym-station[aria-pressed="true"] {
  * 5. CITY SCREEN - EXPANSIVE MAP VIEWPORT, ILLUSTRATED ATLAS & KEY OF SYMBOLS
  * -------------------------------------------------------------------------- */
 html body #dc-root #zone-main#zone-main .zone-city-map-shell {
+  display: flex !important;
+  flex-direction: column !important;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   overflow: visible !important;
   position: relative !important;
+  aspect-ratio: auto !important;
 }
 
 #zwc-city-panorama-stage {
-  position: relative;
+  position: static !important;
+  inset: auto !important;
+  order: -1 !important;
+  flex: 0 0 auto !important;
   width: 100%;
   max-width: 100%;
-  height: 100%;
+  height: auto !important;
   display: flex;
   flex-direction: column;
   border-radius: var(--zwc-radius-sketch);
   overflow: visible;
+  pointer-events: auto !important;
+  z-index: 12 !important;
   user-select: none;
 }
 
 #zwc-city-panorama-stage .zwc-panorama-viewport {
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: 520px;
   width: 100%;
   max-width: 100%;
-  height: 100%;
+  height: 600px;
   background: var(--zwc-paper);
   border: 1.8px solid var(--zwc-border-panel);
   border-radius: var(--zwc-radius-sketch);
@@ -2226,15 +2234,36 @@ html:not([data-theme="light"]) #zwc-city-panorama-stage .zwc-panorama-img {
   mask-composite: intersect;
 }
 
+/* Docked Sketchbook Segmented Switcher Bar Cleanly ABOVE Map Viewport (Desktop & Mobile, Both Views) */
+html body #dc-root #zone-main#zone-main .zone-city-map-shell #zwc-city-panorama-stage .zwc-map-mode-bar,
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-map-mode-bar,
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="illustrated"] #zwc-city-panorama-stage .zwc-map-mode-bar,
 #zwc-city-panorama-stage .zwc-map-mode-bar {
-  position: absolute;
-  inset-block-start: 10px;
-  inset-inline-end: 12px;
-  z-index: 26;
-  display: inline-flex;
-  gap: 6px;
-  align-items: center;
-  pointer-events: auto;
+  position: static !important;
+  inset: auto !important;
+  inset-block-start: auto !important;
+  inset-block-end: auto !important;
+  inset-inline-start: auto !important;
+  inset-inline-end: auto !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+  z-index: 16 !important;
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 0 0 10px !important;
+  padding: 5px 6px !important;
+  background: var(--zwc-surface-alt) !important;
+  border: 1.6px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-radius-sketch-sm) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+  pointer-events: auto !important;
+  box-sizing: border-box !important;
 }
 
 html body #dc-root #zone-main#zone-main .zwc-mode-btn,
@@ -2257,6 +2286,13 @@ html body #dc-root #zone-main#zone-main .zwc-mode-btn[aria-pressed="true"],
 .zwc-mode-btn[aria-pressed="true"] {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
+}
+
+html:not([data-theme="light"]) body #dc-root #zone-main#zone-main .zwc-mode-btn[aria-pressed="true"],
+html:not([data-theme="light"]) .zwc-mode-btn[aria-pressed="true"] {
+  background: linear-gradient(180deg, #6e944d 0%, #4e7032 100%) !important;
+  color: #fcf9f2 !important;
+  border-color: rgba(169, 217, 132, 0.72) !important;
 }
 
 /* Interactive Hand-Drawn Watercolor Teardrop Map Pins (6 Primary Always-Labeled + 12 Sleek Hover-Labeled) */
@@ -2357,12 +2393,14 @@ html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="illu
 }
 
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage {
-  position: absolute !important;
-  inset: 0 !important;
+  position: static !important;
+  inset: auto !important;
+  order: -1 !important;
+  flex: 0 0 auto !important;
   width: 100% !important;
-  height: 100% !important;
-  pointer-events: none !important;
-  z-index: 25 !important;
+  height: auto !important;
+  pointer-events: auto !important;
+  z-index: 16 !important;
 }
 
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-panorama-viewport,
@@ -2370,35 +2408,25 @@ html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"]
   display: none !important;
 }
 
-/* Keep Mode Bar Visible & Clickable Floating Cleanly at Bottom-Center in 3D View (Zero Mapbox Control Overlap) */
-html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-map-mode-bar {
-  position: absolute !important;
-  inset-block-start: auto !important;
-  inset-block-end: 14px !important;
-  inset-inline-end: auto !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  pointer-events: auto !important;
-  z-index: 30 !important;
-  padding: 4px 6px !important;
-  background: var(--zwc-tag-bg) !important;
-  border: 1.8px solid var(--zwc-border-strong) !important;
-  border-radius: var(--zwc-radius-sketch-sm) !important;
-  box-shadow: var(--zwc-shadow-card), 0 6px 18px rgba(0, 0, 0, 0.36) !important;
-}
-
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
   position: relative !important;
+  flex: 0 0 auto !important;
   width: 100% !important;
-  height: 100% !important;
-  min-height: 100% !important;
+  height: 620px !important;
+  min-height: 580px !important;
   display: block !important;
   opacity: 1 !important;
   pointer-events: auto !important;
   border: 2px solid var(--zwc-border-panel) !important;
   border-radius: 6px !important;
   box-shadow: var(--zwc-shadow-card) !important;
+}
+
+html body #dc-root #zone-main#zone-main .zone-city-map-shell.zone-city-map-expanded[data-zwc-view="3d"] > iframe#zone-city-map,
+html body #dc-root #zone-main#zone-main .zone-city-map-shell:fullscreen[data-zwc-view="3d"] > iframe#zone-city-map {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
 }
 
 /* Key of Symbols Box - 3-Column Ruled Sketchbook Layout */
@@ -2443,8 +2471,18 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
 /* City Screen Vertical Stack & Expansive Desktop Viewport (> 900px) */
 @media (min-width: 901px) {
   html body #dc-root #zone-main#zone-main .zone-city-map-shell:not(.zone-city-map-expanded):not(:fullscreen) {
-    min-height: 620px !important;
-    height: 640px !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell:not(.zone-city-map-expanded):not(:fullscreen) #zwc-city-panorama-stage .zwc-panorama-viewport {
+    height: 600px !important;
+    min-height: 560px !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"]:not(.zone-city-map-expanded):not(:fullscreen) > iframe#zone-city-map {
+    height: 620px !important;
+    min-height: 580px !important;
   }
 
   html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-caption {

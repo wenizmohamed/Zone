@@ -6,8 +6,8 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
   const CENTER=[-73.9865,40.698],EARTH=6378137,CIRCUMFERENCE=2*Math.PI*EARTH,perspectiveStates=new WeakMap(),badgeStates=new WeakMap(),buildingStates=new WeakMap(),poiPerspectiveStates=new WeakMap(),cameraLimitStates=new WeakMap(),coinRoofStates=new WeakMap();
-  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v142',location.href):null);
-  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v142')?'&cb=v142':'')):'';
+  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v143',location.href):null);
+  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v143')?'&cb=v143':'')):'';
   const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptSearch,scriptUrl).href:null;
   const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptSearch,scriptUrl).href:null;
   const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptSearch,scriptUrl).href:null;
@@ -412,5 +412,20 @@
       dispose(){if(disposed)return;disposed=true;surfaceGeneration++;landmarkGeneration++;map.off?.('style.load',resetSurfacesForStyle);map.off?.('style.load',resetLandmarksForStyle);waits.forEach(cancel=>cancel());landmarks?.dispose();mapMedia?.dispose();surfaces?.dispose();buildings?.dispose();buildingStates.delete(map);}
     };
   }
-  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,familyReservationLayerId,familyReservationImageId,familyTouchReservationSizePx,districtWaitTimeoutMs,coinRoofCacheTtlMs,earthRadiusMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,styleLayerCount,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
+  function focusLandmark(map,pin,options){
+    if(!map||!pin||!Array.isArray(pin._lngLat)||pin._lngLat.length<2)return false;
+    const lng=Number(pin._lngLat[0]),lat=Number(pin._lngLat[1]);
+    if(!Number.isFinite(lng)||!Number.isFinite(lat))return false;
+    const opts=options||{},reduced=!!opts.reducedMotion;
+    const curZoom=typeof map.getZoom==='function'?map.getZoom():14;
+    const curPitch=typeof map.getPitch==='function'?map.getPitch():48;
+    const targetZoom=Math.min(18.2,Math.max(curZoom,16.5));
+    const targetPitch=Math.max(curPitch,48);
+    const pose={center:[lng,lat],zoom:targetZoom,pitch:targetPitch,bearing:typeof opts.bearing==='number'?opts.bearing:(typeof map.getBearing==='function'?map.getBearing():-18),duration:reduced?0:(Number.isFinite(opts.duration)?opts.duration:480),essential:true};
+    if(typeof map.flyTo==='function'){map.flyTo(pose,{zoneCameraAction:'poi-focus'});return true;}
+    if(typeof map.easeTo==='function'){map.easeTo(pose,{zoneCameraAction:'poi-focus'});return true;}
+    if(typeof map.jumpTo==='function'){map.jumpTo({center:pose.center,zoom:pose.zoom,pitch:pose.pitch,bearing:pose.bearing});return true;}
+    return false;
+  }
+  return {CENTER,defaultCenter,defaultNeighborhoodMeters,maxNeighborhoodMeters,familyReservationLayerId,familyReservationImageId,familyTouchReservationSizePx,districtWaitTimeoutMs,coinRoofCacheTtlMs,earthRadiusMeters,mercator,geographic,createProjection,createStyle,summarizeStyle,styleLayerIds,styleLayerCount,isStyleLayerId,setPerspective,syncPoiPerspective,syncPerspectiveCameraLimit,perspectiveZoomLimit,collidesWithSymbols,syncBadgeReservations,prioritizeBadgeReservations,focusLandmark,controller,renderedDiagnostics,CIRCUMFERENCE,isModuleFetchFailure,createModuleRetry};
 });
