@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ZONE</string>
+    <string name="title_activity_main">ZONE</string>
+    <string name="package_name">com.zonecity.syndicate</string>
+    <string name="custom_url_scheme">com.zonecity.syndicate</string>
+</resources>

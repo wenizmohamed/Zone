@@ -21,3 +21,5 @@ assets/weapons/sources/v99/
 .env.local
 .env.production
 .env.production.local
+android/
+ios/

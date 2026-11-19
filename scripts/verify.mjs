@@ -133,7 +133,7 @@ const walk = (directory) => readdirSync(directory, { withFileTypes: true }).flat
   return entry.isDirectory() ? walk(fullPath) : [fullPath];
 });
 const files = walk(target).filter((file) => !relative(target, file).startsWith('.git'));
-const ignoredRuntimeRoots = new Set(['.git', '.tools', '.vercel', 'node_modules', 'docs']);
+const ignoredRuntimeRoots = new Set(['.git', '.tools', '.vercel', 'node_modules', 'docs', 'android', 'ios']);
 const runtimeFiles = files.filter((file) => {
   const pathFromTarget = relative(target, file);
   const root = pathFromTarget.split(/[\\/]/)[0];

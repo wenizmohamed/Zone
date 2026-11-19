@@ -4,18 +4,28 @@
   "webDir": "public",
   "backgroundColor": "#141210",
   "server": {
+    "url": "https://zone-torn-style-game-mockup-6cf978c.vercel.app",
+    "cleartext": false,
     "androidScheme": "https",
-    "cleartext": false
+    "errorPath": "offline.html",
+    "allowNavigation": [
+      "zone-torn-style-game-mockup-6cf978c.vercel.app",
+      "zone-final-team-auraa.vercel.app",
+      "*.mapbox.com",
+      "api.mapbox.com",
+      "events.mapbox.com"
+    ]
   },
   "ios": {
     "contentInset": "automatic",
     "backgroundColor": "#141210",
+    "preferredContentMode": "mobile",
     "allowsLinkPreview": false,
     "scrollEnabled": true
   },
   "android": {
-    "backgroundColor": "#141210",
     "allowMixedContent": false,
+    "backgroundColor": "#141210",
     "captureInput": true,
     "webContentsDebuggingEnabled": false
   },
@@ -26,9 +36,9 @@
       "overlaysWebView": false
     },
     "SplashScreen": {
-      "launchShowDuration": 1400,
-      "launchAutoHide": true,
       "backgroundColor": "#141210",
+      "launchShowDuration": 1200,
+      "launchAutoHide": true,
       "androidScaleType": "CENTER_CROP",
       "showSpinner": false,
       "splashFullScreen": true,

@@ -12,3 +12,14 @@ engine/var/*.log
 .env
 .env.*
 !.env.example
+
+node_modules/
+android/app/build/
+android/.gradle/
+android/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/build/
+ios/App/Pods/
+ios/App/build/
+*.apk
+*.aab

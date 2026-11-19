@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#141210</color>
+    <color name="colorPrimaryDark">#141210</color>
+    <color name="colorAccent">#C89B54</color>
+    <color name="zone_nocturnal_bg">#141210</color>
+</resources>
