@@ -1962,6 +1962,82 @@ html:not([data-theme="light"]) body #dc-root :is(span, strong, bdi, small, div)[
   color: #ff8577 !important;
 }
 
+/* Post-Action Feedback Toast & Blocked Status Banners (WCAG AAA Chalk-Cream Ink on Forest/Burgundy in Light & Dark) */
+html body #dc-root#dc-root #zone-main#zone-main div:is(
+  [style*="#26331c"],
+  [style*="38, 51, 28"],
+  [style*="#4a6a2a"],
+  [style*="74, 106, 42"]
+) {
+  background: linear-gradient(180deg, #2b4420 0%, #1e3216 100%) !important;
+  color: #f7f1e3 !important;
+  border: 1.6px solid #182712 !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html body #dc-root#dc-root #zone-main#zone-main div:is(
+  [style*="#3a2626"],
+  [style*="58, 38, 38"],
+  [style*="#6a3a3a"],
+  [style*="106, 58, 58"]
+) {
+  background: linear-gradient(180deg, #68251c 0%, #4b1913 100%) !important;
+  color: #f7f1e3 !important;
+  border: 1.6px solid #2b0f0b !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html body #dc-root#dc-root #zone-main#zone-main div:is(
+  [style*="#26331c"],
+  [style*="38, 51, 28"],
+  [style*="#4a6a2a"],
+  [style*="74, 106, 42"],
+  [style*="#3a2626"],
+  [style*="58, 38, 38"],
+  [style*="#6a3a3a"],
+  [style*="106, 58, 58"]
+) :is(span, strong, bdi, p) {
+  color: #f7f1e3 !important;
+  font-weight: 700 !important;
+}
+
+html body #dc-root#dc-root #zone-main#zone-main div:is(
+  [style*="#26331c"],
+  [style*="38, 51, 28"],
+  [style*="#4a6a2a"],
+  [style*="74, 106, 42"],
+  [style*="#3a2626"],
+  [style*="58, 38, 38"],
+  [style*="#6a3a3a"],
+  [style*="106, 58, 58"]
+) > button:not(.zone-action-primary):not(.zone-action-danger) {
+  background: rgba(247, 241, 227, 0.14) !important;
+  color: #f7f1e3 !important;
+  border: 1.2px solid rgba(247, 241, 227, 0.42) !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  box-shadow: none !important;
+  font-weight: 800 !important;
+}
+
+html body #dc-root#dc-root #zone-main#zone-main div:is(
+  [style*="#26331c"],
+  [style*="38, 51, 28"],
+  [style*="#4a6a2a"],
+  [style*="74, 106, 42"],
+  [style*="#3a2626"],
+  [style*="58, 38, 38"],
+  [style*="#6a3a3a"],
+  [style*="106, 58, 58"]
+) > button:not(.zone-action-primary):not(.zone-action-danger):hover {
+  background: rgba(247, 241, 227, 0.26) !important;
+  color: #ffffff !important;
+}
+
 /* (b) Attack (#zig-brawl-hud, .zig-brawl-bar, combat log & target cards) */
 html body #dc-root #zone-main#zone-main #zig-brawl-hud,
 html body #dc-root #zone-main#zone-main .zig-brawl-banner,
