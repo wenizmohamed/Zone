@@ -725,10 +725,17 @@
         ".zmx-chrono-bar>*{flex:none}",
         ".zmx-chrono-bar::-webkit-scrollbar{display:none}",
         /* Harmonize Family Rail & Floating Controls cleanly across Dark charcoal & Light Sketchbook */
-        "body:not([data-zmx-light='1']) .familyRail{border-bottom:1px solid rgba(244,236,220,0.09)!important;background:rgba(18,20,26,0.94)!important}",
-        "body[data-zmx-light='1'] .familyRail{border-bottom:1.5px solid #1e1b18!important;background:rgba(250,244,230,0.96)!important;color:#1e1b18!important}",
+        "body:not([data-zmx-light='1']) .familyRail{overflow:hidden!important;border-bottom:1px solid rgba(244,236,220,0.09)!important;background:rgba(18,20,26,0.94)!important}",
+        "body[data-zmx-light='1'] .familyRail{overflow:hidden!important;border-bottom:1.5px solid #1e1b18!important;background:rgba(250,244,230,0.96)!important;color:#1e1b18!important}",
         "body[data-zmx-light='1'] .familyRail *{color:#1e1b18}",
-        ".familyRail button.familyStat{min-height:28px!important;padding:2px 8px!important;border-radius:9px!important;border:1px solid rgba(234,179,8,0.28)!important;background:rgba(234,179,8,0.12)!important;display:inline-flex!important;flex-direction:column!important;justify-content:center!important;transition:background-color .16s ease,transform .16s ease}",
+        ".familyRail button.familyStat{height:26px!important;min-height:26px!important;padding:2px 9px!important;border-radius:9px!important;border:1px solid rgba(234,179,8,0.42)!important;background:rgba(234,179,8,0.16)!important;display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important;transition:background-color .16s ease,transform .16s ease}",
+        ".familyRail button.familyStat:disabled{opacity:0.92!important;border-color:rgba(148,163,184,0.38)!important;background:rgba(30,36,46,0.84)!important}",
+        ".familyRail button.familyStat:disabled b{color:#f3d285!important;font-size:13px!important}",
+        ".familyRail button.familyStat:disabled span{color:#e2e8f0!important;font-size:10px!important;margin-top:0!important}",
+        "body[data-zmx-light='1'] .familyRail button.familyStat{background:#efe5ce!important;border:1.4px solid rgba(46,37,26,0.38)!important;color:#1e1b18!important}",
+        "body[data-zmx-light='1'] .familyRail button.familyStat:disabled{opacity:0.94!important;background:#e6dbc2!important;border-color:rgba(46,37,26,0.34)!important}",
+        "body[data-zmx-light='1'] .familyRail button.familyStat:disabled b{color:#7c4d12!important}",
+        "body[data-zmx-light='1'] .familyRail button.familyStat:disabled span{color:#2e261d!important;font-weight:700!important}",
         ".familyRail button.familyStat:not(:disabled):hover{background:rgba(234,179,8,0.20)!important;border-color:rgba(234,179,8,0.42)!important;transform:translateY(-1px)}",
         "body:not([data-zmx-light='1']) .familyRail .factionSelectLabel select{min-height:28px!important;padding:3px 8px!important;border-radius:8px!important;border:1px solid rgba(244,236,220,0.14)!important;background:rgba(24,27,36,0.90)!important}",
         "body[data-zmx-light='1'] .familyRail .factionSelectLabel select{min-height:28px!important;padding:3px 8px!important;border-radius:8px!important;border:1.5px solid #1e1b18!important;background:#fffbf2!important;color:#1e1b18!important}",
@@ -2194,12 +2201,23 @@
         } catch (_) {}
       });
 
-      /* Keep secondary service & detail POIs tucked until zoomed into Central Core so overview stays clean */
+      /* Keep secondary service & detail POIs tucked until zoomed into Central Core so overview stays clean,
+         scale core POI coins proportionally at overview zoom, and hide raw Brooklyn street names */
       ["zone-poi-icon-service", "zone-poi-service-reservations", "zone-poi-icon-detail", "zone-poi-halo-detail", "zone-poi-hitbox-detail"].forEach(function (lid) {
         if (map.getLayer(lid)) {
           try { map.setLayerZoomRange(lid, 15.15, 20); } catch (_) {}
         }
       });
+      if (map.getLayer("zone-poi-icon")) {
+        try {
+          map.setLayoutProperty("zone-poi-icon", "icon-size", ["interpolate", ["linear"], ["zoom"], 12.6, 0.36, 14.6, 0.54, 16.5, 0.78]);
+          map.setLayoutProperty("zone-poi-icon", "icon-allow-overlap", false);
+          map.setLayoutProperty("zone-poi-icon", "icon-padding", 2);
+        } catch (_) {}
+      }
+      if (map.getLayer("district-road-labels")) {
+        try { map.setLayoutProperty("district-road-labels", "visibility", "none"); } catch (_) {}
+      }
 
       var base = buildMetroLandAndRoadsGeo();
       /* Place our opaque Ocean Mask + Sculpted Archipelago Islands ABOVE district-road-labels / district-roads /
@@ -2219,13 +2237,13 @@
         paint: { "fill-color": "#071a2d", "fill-opacity": 1 }
       }, beforeOverlay);
 
-      /* 2. Turquoise Shallow Coastal Shelf hugging sculpted island coastlines */
+      /* 2. Subtle Coastal Shallow Reef Shimmer hugging sculpted island coastlines */
       safeAddSource("metro-shallows-src", { type: "geojson", data: base.shallows });
       safeAddLayer({
         id: "metro-shallows",
         type: "fill",
         source: "metro-shallows-src",
-        paint: { "fill-color": "#5bc8cf", "fill-opacity": 0.48 }
+        paint: { "fill-color": "#5bc8cf", "fill-opacity": 0.20 }
       }, beforeOverlay);
 
       /* 3. Opaque Sculpted Archipelago Islands & Mainland Connectors + Subtle Sector Tint + Seawall Rim */
@@ -2517,7 +2535,7 @@
     function syncZmxReadyDataset() {
       try {
         document.body.dataset.zmxReady = JSON.stringify({
-          version: 138,
+          version: 139,
           oceanMaskLayer: !!map.getLayer("metro-ocean-mask"),
           metroIconLayer: !!map.getLayer("metro-poi-icon"),
           skylineLayer: !!map.getLayer("metro-outer-skyline-3d"),
@@ -2888,7 +2906,7 @@
       setPaint("metro-coastline-rim", "line-color", cfg.isLightUi ? "#8e7f67" : "#385572");
       setPaint("metro-bay-water", "fill-color", cfg.water);
       setPaint("metro-shallows", "fill-color", cfg.shallows);
-      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.56 : 0.38);
+      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.22 : 0.16);
       setPaint("metro-beaches", "fill-color", cfg.beach);
       setPaint("metro-parks", "fill-color", ["case", ["==", ["get", "kind"], "pitch"], cfg.pitch, cfg.park]);
       setPaint("district-waterway", "line-color", cfg.water);
@@ -3064,7 +3082,7 @@
   }
 
   var expansionApi = {
-    version: "138.0",
+    version: "139.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -3080,7 +3098,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 138;
+  root.__zoneMapExpansionVersion = 139;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

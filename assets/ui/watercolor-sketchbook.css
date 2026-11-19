@@ -606,15 +606,38 @@ html body .zone-topbar .zone-brand > span:first-of-type {
   }
 }
 
-/* Keep all 5 desktop nav links unclipped at 1024px-1480px by hiding verbose city suffix next to ZCT code */
+/* Keep all 5 desktop nav links 100% unclipped at 1024px-1480px by matching #dc-root#dc-root specificity */
+@media (min-width: 901px) {
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-links button.zone-header-link {
+    padding: 3px 5px !important;
+    font-size: 12.5px !important;
+    gap: 4px !important;
+  }
+
+  html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud .zaaa-hud-pill {
+    padding-inline: 6px !important;
+    font-size: 12.5px !important;
+    gap: 4px !important;
+  }
+
+  html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span) {
+    font-size: 12.5px !important;
+  }
+
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > a {
+    padding-inline: 8px !important;
+    font-size: 12.5px !important;
+    min-height: 32px !important;
+  }
+}
+
 @media (max-width: 1480px) and (min-width: 901px) {
   html body .zone-topbar #zone-topbar-hud [data-hud="city"] .zaaa-hud-val,
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud [data-hud="city"] .zaaa-hud-val {
     display: none !important;
   }
-}
 
-@media (max-width: 1320px) and (min-width: 901px) {
   html body .zone-topbar .zone-header-actions > span:first-child,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > span:first-child {
     display: none !important;

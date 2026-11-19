@@ -86,15 +86,15 @@ function* facadeBands(facades){
     yield{kind:'floor',value:{...f.record,color:f.color%3,points:quad(f.a,f.b,sill-.48,sill-.38,f.normal,.11)}};
   }
 }
-function* facadeWalls(facades){
-  for(const f of facades)yield{...f.record,color:hash('masonry|'+f.record.providerId)%PALETTE.walls.length,points:quad(f.a,f.b,f.record.base,f.record.top,f.normal,.018)};
+function* facadeWalls(facades,wallOffset=.018){
+  for(const f of facades)yield{...f.record,color:hash('masonry|'+f.record.providerId)%PALETTE.walls.length,points:quad(f.a,f.b,f.record.base,f.record.top,f.normal,wallOffset)};
 }
 function balanced(streams,limit,append){
   let count=0,active=streams;
   while(active.length&&count<limit){const next=[];for(const stream of active){const item=stream.next();if(item.done)continue;append(item.value);count++;next.push(stream);if(count===limit)break;}active=next;}
 }
 
-export function planDistrictSurfaces(features,{center=[-73.9865,40.698],maxWindows=12000,maxRoofDetails=600,maxWallPanels=12000}={}){
+export function planDistrictSurfaces(features,{center=[-73.9865,40.698],maxWindows=12000,maxRoofDetails=600,maxWallPanels=12000,wallOffset=.018}={}){
   if(!Array.isArray(center)||center.length!==2||center.some(n=>!Number.isFinite(n))||Math.abs(center[0])>180||Math.abs(center[1])>=85)throw new Error('Finite geographic surface origin required.');
   if(!Array.isArray(features)||features.length>LIMITS.maxFeatures)throw new Error('Provider feature budget exceeded.');
   const coordinates=countCoordinates(features); // Reject before JSON keys or local-geometry allocation.
@@ -146,7 +146,7 @@ export function planDistrictSurfaces(features,{center=[-73.9865,40.698],maxWindo
   }
   balanced(groups.map(facadeWindows),windowLimit,value=>plan.windows.push(value));
   balanced(groups.map(facadeBands),LIMITS.maxBands,entry=>(entry.kind==='cornice'?plan.cornices:plan.floorLines).push(entry.value));
-  balanced(groups.map(facadeWalls),wallLimit,value=>plan.wallPanels.push(value));
+  balanced(groups.map(f=>facadeWalls(f,wallOffset)),wallLimit,value=>plan.wallPanels.push(value));
   const wallPanelCandidates=groups.reduce((count,facades)=>count+facades.length,0),wallPanelFeatures=new Set(plan.wallPanels.map(panel=>panel.providerId+'|'+panel.providerTile+'|'+panel.featureId)).size;
   Object.assign(plan.diagnostics,{wallPanels:plan.wallPanels.length,wallPanelFeatures,wallPanelCandidates,wallPanelCoverageComplete:plan.wallPanels.length===wallPanelCandidates,windows:plan.windows.length,floorLines:plan.floorLines.length,cornices:plan.cornices.length,roofDetails:plan.roofDetails.length,triangles:2*(plan.wallPanels.length+plan.windows.length+plan.floorLines.length+plan.cornices.length)+12*plan.roofDetails.length});
   return plan;
@@ -387,7 +387,7 @@ export function createDistrictSurfaces(map,features,options={}){
   const extraCore=isBrowserRuntime&&Array.isArray(globalThis.__zoneArchitecturalFeatures)?globalThis.__zoneArchitecturalFeatures:[];
   const extraOuter=isBrowserRuntime&&Array.isArray(globalThis.__zoneOuterArchitecturalFeatures)?globalThis.__zoneOuterArchitecturalFeatures:[];
   const activeFeatures=isBrowserRuntime&&((extraCore.length+extraOuter.length)>0)?[...extraOuter,...extraCore,...features].slice(0,LIMITS.maxFeatures):features;
-  const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?320:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
+  const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?320:options.maxRoofDetails,maxWallPanels:options.maxWallPanels,wallOffset:isBrowserRuntime?.095:.018});
   let disposed=false,visible=true,prepared=false,renderer,scene,camera,shaderFailure=null,cancelPreparation=null,preparing=Promise.resolve();
   const daylightUniform={value:0.0};
   let hemiLight=null,keyLight=null,corniceMat=null,roofMat=null;

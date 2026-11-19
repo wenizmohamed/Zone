@@ -6,8 +6,8 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
   const CENTER=[-73.9865,40.698],EARTH=6378137,CIRCUMFERENCE=2*Math.PI*EARTH,perspectiveStates=new WeakMap(),badgeStates=new WeakMap(),buildingStates=new WeakMap(),poiPerspectiveStates=new WeakMap(),cameraLimitStates=new WeakMap(),coinRoofStates=new WeakMap();
-  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v138',location.href):null);
-  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v138')?'&cb=v138':'')):'';
+  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v139',location.href):null);
+  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v139')?'&cb=v139':'')):'';
   const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptSearch,scriptUrl).href:null;
   const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptSearch,scriptUrl).href:null;
   const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptSearch,scriptUrl).href:null;
