@@ -282,9 +282,23 @@ html body #zone-main button:not(.zone-map-pin-btn):not(.zone-mobile-tabbar *):no
 }
 
 html body #zone-main button:disabled {
-  opacity: 0.44 !important;
+  opacity: 1 !important;
   cursor: not-allowed !important;
   transform: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+html[data-theme="light"] body #zone-main button:disabled {
+  background-color: #dfd6c2 !important;
+  color: #4a4237 !important;
+  border-color: rgba(35, 32, 28, 0.38) !important;
+}
+
+html:not([data-theme="light"]) body #zone-main button:disabled {
+  background-color: #26221d !important;
+  color: #9e937f !important;
+  border-color: rgba(242, 234, 217, 0.24) !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -707,23 +721,54 @@ html body #zone-main .zone-hideout-scene > div {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  padding: 6px 2px;
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px 12px !important;
+  padding: 6px 2px !important;
 }
 
-html body #zone-main .zone-hideout-scene strong {
+html body #zone-main .zone-hideout-scene > div > .zone-overline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  color: var(--zwc-ink-muted) !important;
+}
+
+html body #zone-main .zone-hideout-scene > div > strong {
   color: var(--zwc-title-ink, var(--zwc-ink)) !important;
   text-shadow: var(--zwc-title-shadow, none) !important;
+  font-size: 19px !important;
+  font-weight: 800 !important;
+  margin-inline-end: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
-html body #zone-main .zone-hideout-scene span:not(.zone-overline) {
+html body #zone-main .zone-hideout-scene > div > span:not(.zone-overline) {
   color: var(--zwc-ink) !important;
   background-color: var(--zwc-tag-bg, var(--zwc-surface-alt)) !important;
-  border: 1px solid var(--zwc-border) !important;
-  padding: 4px 10px !important;
+  border: 1.5px solid var(--zwc-border-strong, var(--zwc-border)) !important;
+  padding: 4px 12px !important;
   border-radius: 999px !important;
-  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
   text-shadow: none !important;
   box-shadow: var(--zwc-shadow-sub) !important;
+}
+
+html body #zone-main .zone-hideout-scene > div > span:not(.zone-overline) > span {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
 /* Home Vitals Resource Strip: Borderless Tonal Cells */
@@ -1329,6 +1374,16 @@ html body #zone-main .zig-btn-secondary:hover {
 html body #zone-main .zone-crime-activity-nav {
   gap: 8px !important;
   padding-bottom: 12px !important;
+  padding-inline-end: 36px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--zwc-border-strong, var(--ags-border-2)) transparent !important;
+  -webkit-mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 36px), transparent 100%) !important;
+  mask-image: linear-gradient(to right, #000 0%, #000 calc(100% - 36px), transparent 100%) !important;
+}
+
+html[dir="rtl"] body #zone-main .zone-crime-activity-nav {
+  -webkit-mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 36px), transparent 100%) !important;
+  mask-image: linear-gradient(to left, #000 0%, #000 calc(100% - 36px), transparent 100%) !important;
 }
 
 html body #zone-main .zone-crime-activity-nav button {
@@ -1910,6 +1965,15 @@ html body #zone-main[data-zone-screen="properties"] .zone-property-dossier {
 html body #zone-main[data-zone-screen="properties"] .zone-property-dossier:hover {
   transform: translateY(-2px);
   background-color: var(--ags-surface-2-hover) !important;
+}
+
+html body #zone-main[data-zone-screen="properties"] .zone-property-purchase {
+  max-width: none !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
 }
 
 /* City 3D Map Shell Bezel Containment & Family Claim Tonal Badge */

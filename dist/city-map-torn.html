@@ -282,11 +282,11 @@
   .holdingPin{display:flex;align-items:center;gap:6px;min-height:36px;max-width:135px;padding:6px 9px;background:#222a29;border:1px solid #78847b;border-radius:5px;box-shadow:0 3px 8px #0006;color:#f1f1e8;font:inherit;font-size:10px;cursor:pointer;text-align:start;pointer-events:auto}
   .holdingPin svg{width:15px;height:15px;flex:none;color:#d1c0a0}.holdingPin span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holdingPin small{display:block;font-size:8px;color:#b1bcb4;line-height:1.4}.holdingPin.nearby{background:#343730;border-color:#a9a28d}.holdingPin.selected{border:2px solid #ebdfc5;background:#424a41}.holdingPin:focus-visible{outline:2px solid #f0d59d;outline-offset:3px}
   .holdingPin.placePin{background:#e4dfcf;border-color:#a9b4a5;color:#27312c}.holdingPin.placePin svg{color:#516957}.holdingPin.placePin small{color:#526056}
-  .mapLegend{position:absolute;bottom:34px;inset-inline-end:12px;z-index:3;display:flex;gap:10px;color:#d5d9d3;background:#1a211edf;border:1px solid #434c44;border-radius:4px;padding:7px 9px;font-size:9px;pointer-events:none}
+  .mapLegend{position:absolute;bottom:32px;inset-inline-start:114px;inset-inline-end:auto;z-index:3;display:flex;gap:10px;color:#d5d9d3;background:#1a211edf;border:1px solid #434c44;border-radius:4px;padding:7px 9px;font-size:9px;pointer-events:none}
   .mapLegend i{display:inline-block;width:6px;height:6px;background:#b8c8af;border-radius:50%;margin-inline-end:4px}.mapLegend span:last-child i{background:#cbbd9b}
   .mgrade,.mapcol.focus .mgrade{background:none!important}
   .side{background:#191e20}.sideToggle,.cityReset,.mapExpand,.streetView{background:#202625;color:#e1e3dc;border:1px solid #616b62;border-radius:5px;box-shadow:0 2px 6px #0004;backdrop-filter:none;font-size:10px;letter-spacing:0}
-  .sideToggle{left:10px;padding:0 10px}.cityReset{left:120px;width:82px;padding:0 7px}.mapExpand{left:205px}.streetView{top:12px;left:255px;width:44px;padding:0 7px}
+  .sideToggle{left:10px;padding:0 10px}.cityReset{left:120px;min-width:86px;width:auto;padding:0 9px;white-space:nowrap}.mapExpand{left:216px}.streetView{top:12px;left:266px;width:44px;padding:0 7px}
   .streetView[aria-pressed="true"]{background:#d1c0a0;border-color:#d1c0a0;color:#202322}
   .familyRail{width:220px;background:#101416;border-color:#303a3d;gap:6px;padding:10px 12px}.familyRail h1{color:#edf0e8;font-size:16px}.familyStats{padding:6px 0}.familyStat b{color:#c7ec79;font-size:17px}.familyStat span,.familyEyebrow,.familyListHeading{color:#aeb9b3}.familyScopes button[aria-pressed="true"],.streetView[aria-pressed="true"]{background:#c7ec79;border-color:#c7ec79;color:#182017}
   .factionSelectLabel{font-size:10px;color:#aeb9b3;display:flex;flex-direction:column;gap:5px}.factionSelectLabel>span{display:none}.factionSelectLabel select{min-height:40px;width:100%;background:#1b2225;color:#edf0e8;border:1px solid #46524f;border-radius:5px;padding:6px 9px;font:inherit;font-size:12px;color-scheme:dark}.factionSelectLabel select:focus-visible{outline:2px solid #c7ec79;outline-offset:2px}
@@ -295,8 +295,8 @@
   .regionPin.overview,.regionPin.overview:not(.active){width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;box-sizing:border-box}
   .regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview .factionEmblem{width:28px;height:28px}
   .factionEmblem{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;flex:none;border-radius:50%;background:#101416;border:2px solid var(--faction,#87918c);overflow:hidden;color:#edf0e8;font-size:10px;font-weight:700}.factionEmblem img{width:100%;height:100%;object-fit:contain;padding:3px}.holdingPin{min-height:44px;background:#1b2225;color:#edf0e8;border-color:#73827a;font-size:11px}.holdingPin small{font-size:9px}.holdingPin .factionEmblem{width:23px;height:23px}.holdingPin.selected{border-color:#edf0e8}.holdingPin.contested{border-color:#e4b96b}.holdingPin.contested small{color:#e4b96b}.familyRow small{font-size:10px}.familyRow span:nth-child(2){font-size:12px}.familyLocate{min-height:40px}.mapLegend{background:#101416ed;border-color:#46524f;color:#edf0e8;font-size:10px;gap:12px}.mapLegend i{background:#c7ec79}.mapLegend span:nth-child(2) i{background:#b28cdb}.mapLegend span:nth-child(3) i{background:#87918c}.mapLegend span:nth-child(4) i{background:#e4b96b}
-  [dir="rtl"] .sideToggle{right:10px}[dir="rtl"] .cityReset{right:120px}[dir="rtl"] .mapExpand{right:205px}[dir="rtl"] .streetView{right:255px}
-  .panel{width:276px;padding:14px;background:#1b2021;box-shadow:-4px 0 14px #0004}.panel .pico{height:28px;width:28px;margin:0 0 10px}.panel .pico svg{height:23px;width:23px}.panel .x{height:36px;min-width:64px;top:8px;right:10px;border-radius:4px}.panel h2{font-size:16px;margin-bottom:5px}.panel .pribbon{display:none!important}.panel .pmeta{flex:1;min-height:0;overflow:auto}.panel .go{border-radius:4px;background:#c9b992;color:#242820;box-shadow:none;min-height:42px;padding:10px;font-size:11px}.panel .view,.panel .mark{border-radius:4px;min-height:36px;padding:7px;background:#2b3330;color:#d9dfd5;border-color:#536054;text-transform:none;letter-spacing:0}.panel .view{margin-top:5px}.panel .mark{margin-top:5px}
+  [dir="rtl"] .sideToggle{right:10px}[dir="rtl"] .cityReset{right:120px}[dir="rtl"] .mapExpand{right:216px}[dir="rtl"] .streetView{right:266px}
+  .panel{width:276px;top:54px;border-top-left-radius:12px;border-top:1px solid rgba(255,255,255,.12);padding:14px;background:#1b2021;box-shadow:-4px 0 14px #0004}[dir="rtl"] .panel{border-top-left-radius:0;border-top-right-radius:12px}.panel .pico{height:28px;width:28px;margin:0 0 10px}.panel .pico svg{height:23px;width:23px}.panel .x{height:36px;min-width:64px;top:8px;right:10px;border-radius:4px}.panel h2{font-size:16px;margin-bottom:5px}.panel .pribbon{display:none!important}.panel .pmeta{flex:1;min-height:0;overflow:auto}.panel .go{border-radius:4px;background:#c9b992;color:#242820;box-shadow:none;min-height:42px;padding:10px;font-size:11px}.panel .view,.panel .mark{border-radius:4px;min-height:36px;padding:7px;background:#2b3330;color:#d9dfd5;border-color:#536054;text-transform:none;letter-spacing:0}.panel .view{margin-top:5px}.panel .mark{margin-top:5px}
   .tControlBar i,.terrBar i{box-shadow:none}.terr.adjacent::after{display:none}.terr{border-left:0;border-radius:4px}.terrState{border:0}.tStat span,.neighborCard span,.reasonCard span{font-size:9px}.tStat b,.neighborCard b,.reasonCard p{font-size:11px}.benefitCard{background:#242c29;border:1px solid #445047;border-radius:4px}.benefitCard strong{font-size:11px}.benefitCard b{font-size:11px}.blockState.good,.blockState.info{color:#c5d2ba;border-color:#65755e;background:#283326}.tControlBar{height:4px}.tStats{gap:5px}.tStat{padding:6px}.familyRail button:focus-visible{outline-color:#d1c0a0}
   .mapboxgl-ctrl-logo,.mapboxgl-ctrl-attrib{opacity:.75}
   .pActions{display:grid;gap:5px;flex:none;margin-top:5px}.panel .pActions button{margin:0}.panel .pmeta{color-scheme:dark;scrollbar-width:thin;scrollbar-color:#536158 #1b2021}.panel .pmeta::-webkit-scrollbar{width:5px}.panel .pmeta::-webkit-scrollbar-thumb{background:#536158;border-radius:5px}.panel .pmeta::-webkit-scrollbar-button{display:none}.benefitCard.planned{border-style:dashed}.benefitCard strong{padding-inline:0}.benefitCard b{position:static;display:block;margin-top:4px;text-align:start}.benefitCard .benefitStatus{color:#c7b98b}
@@ -325,7 +325,7 @@
   @media(max-width:760px){.atlasReadout{top:59px;inset-inline-start:8px;max-width:calc(100% - 58px);padding:5px 8px;font-size:10px}.atlasReadout strong{font-size:9px}.atlasReadout small{font-size:10px}.mapLegend{font-size:10px;gap:7px;bottom:7px;inset-inline-end:8px;padding:5px 7px;max-width:calc(100% - 16px);flex-wrap:wrap}.regionPin:not(.active){max-width:132px;font-size:10px}.regionPin.active{max-width:164px}.familyHome{bottom:40px}.detailsOpen .atlasReadout,.detailsOpen .mapLegend,.detailsOpen .familyHome{visibility:hidden}.mapboxgl-ctrl-group button{width:44px;height:44px}.mapboxgl-ctrl-bottom-right{bottom:35px}[dir="rtl"] .mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:8px 0 0 8px;float:left}}
   .familyScopes button,.side .familyScopes button,.familyHome,.fchip,.loc{min-height:44px}.sSearch input{min-height:44px;padding-inline-end:52px}.sClear{width:44px;height:44px;top:10px}.side,.panel,.sideBd{transition-duration:.16s}
   .cityOverview{display:none;position:absolute;inset-inline-end:14px;top:72px;bottom:56px;width:236px;padding:16px;background:#191e21;border:1px solid #555554;border-radius:5px;z-index:3;overflow:auto;color:#eee7d8}.cityOverview h2{font-size:15px;margin:0 0 5px}.cityOverview p{font-size:11px;line-height:1.45;color:#bdb9ae;margin:0 0 12px}.cityOverview button{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:8px 0;border:0;border-top:1px solid #424849;background:transparent;color:inherit;text-align:start;font:inherit;cursor:pointer}.cityOverview button:hover{color:#e7bd73}.cityOverview .factionEmblem{flex:none;width:28px;height:28px}.cityOverview button span:last-child{display:flex;flex-direction:column;gap:3px}.cityOverview small{font-size:11px;color:#c0beb4}.cityOverview button:focus-visible{outline:2px solid #c99a45;outline-offset:2px}
-  .cityOverviewMode .cityOverview{display:none}.cityOverviewMode #map{inset-inline-end:0}.cityOverviewMode .mapLegend{inset-inline-end:12px}
+  .cityOverviewMode .cityOverview{display:none}.cityOverviewMode #map{inset-inline-end:0}.cityOverviewMode .mapLegend{inset-inline-start:114px;inset-inline-end:auto}
   /* The city owns the viewport. Family identity stays in one compact bar;
      territory lists and search are opened explicitly in the existing drawer. */
   .wrap{flex-direction:column}
@@ -338,7 +338,7 @@
   .side{top:36px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
   .sideToggle,.cityReset,.mapExpand,.streetView{background:rgba(12,17,24,0.92);border:1px solid rgba(201,154,69,0.34);border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.65);backdrop-filter:blur(8px);font-weight:800;letter-spacing:0.02em}
   .sideToggle:hover,.cityReset:hover,.mapExpand:hover,.streetView:hover{background:rgba(22,30,42,0.96);border-color:#c99a45}
-  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:96px;max-width:158px;min-height:26px;padding:2px 8px 2px 3px;justify-content:flex-start;gap:4px;background:rgba(9,13,20,0.95);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 12px color-mix(in srgb,var(--faction) 64%,transparent),0 3px 10px rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:19px;height:19px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9.5px;font-weight:800;color:#f5f7fa;letter-spacing:0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}.regionPin.overview.turfBanner small{display:block;font-size:8px;color:var(--faction);font-weight:800;white-space:nowrap}
+  .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:82px;max-width:132px;min-height:24px;padding:2px 7px 2px 3px;justify-content:flex-start;gap:4px;background:rgba(9,13,20,0.95);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 10px color-mix(in srgb,var(--faction) 56%,transparent),0 3px 10px rgba(0,0,0,0.84);backdrop-filter:blur(6px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:18px;height:18px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9px;font-weight:800;color:#f5f7fa;letter-spacing:0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:98px}.regionPin.overview.turfBanner small{display:block;font-size:7.5px;color:var(--faction);font-weight:800;white-space:nowrap}
   .mapPreviewNotice{flex:none;min-height:30px;padding:7px 12px;background:#3a3020;color:#f2d28b;font-size:11px;line-height:1.4;border-bottom:1px solid #6b5733}
   .mapPreviewNotice[hidden]{display:none}.illustrativeMap .side{top:94px}
   .districtDetailStatus{display:none!important;position:absolute;inset-inline-start:12px;bottom:84px;z-index:3;max-width:calc(100% - 88px);padding:7px 10px;border:1px solid #626155;border-radius:5px;background:#20272cf2;color:#eee7d8;font-size:11px;line-height:1.4;pointer-events:none}.districtDetailStatus[hidden]{display:none}.districtDetailStatus[data-state="degraded"]{border-color:#ab894d;color:#f2d28b}
@@ -372,6 +372,57 @@
   body[data-zmx-light="1"] .mapboxgl-ctrl-group button:not(:disabled):hover{background:#efe5cf}
   body[data-zmx-light="1"] .regionPin.overview.turfBanner{background:rgba(248,243,231,0.95);box-shadow:0 2px 10px rgba(42,32,20,0.22)}
   body[data-zmx-light="1"] .regionPin.overview.turfBanner b{color:#1f1810}
+  body[data-zmx-light="1"] .regionPin{background:rgba(250,245,233,0.96);border-color:rgba(46,37,26,0.34);color:#1f1810;box-shadow:0 3px 10px rgba(42,32,20,0.18)}
+  body[data-zmx-light="1"] .regionPin small{color:#5c4d3c}
+  body[data-zmx-light="1"] .holdingPin{background:rgba(250,245,233,0.96);border-color:rgba(46,37,26,0.42);color:#1f1810;box-shadow:0 3px 10px rgba(42,32,20,0.18)}
+  body[data-zmx-light="1"] .holdingPin small{color:#5c4d3c}
+  body[data-zmx-light="1"] .holdingPin.selected{border-color:#8a5a18;background:#fffbf0}
+  body[data-zmx-light="1"] .etaHud{background:rgba(250,245,233,0.96);border-color:rgba(46,37,26,0.36);color:#2c241b;box-shadow:0 4px 16px rgba(42,32,20,0.18)}
+  body[data-zmx-light="1"] .etaHud b{color:#0f766e}
+  body[data-zmx-light="1"] .mapPreviewNotice{background:#f5e9cd;color:#5c3a0e;border-bottom-color:rgba(138,90,24,0.35)}
+  body[data-zmx-light="1"] .side{background:rgba(250,245,233,0.98);border-color:rgba(46,37,26,0.28);color:#1f1810;box-shadow:8px 0 26px rgba(42,32,20,0.18)}
+  body[data-zmx-light="1"] .sHead{border-bottom-color:rgba(46,37,26,0.16)}
+  body[data-zmx-light="1"] .sHead .t{color:#5c4d3c}
+  body[data-zmx-light="1"] .scount,body[data-zmx-light="1"] .fres,body[data-zmx-light="1"] .terrCode,body[data-zmx-light="1"] .terrOwner{color:#665847}
+  body[data-zmx-light="1"] .ring .rbg{stroke:rgba(46,37,26,0.14)}
+  body[data-zmx-light="1"] .ring .rpct{fill:#1f1810}
+  body[data-zmx-light="1"] .sideClose{background:#efe5ce;border-color:rgba(46,37,26,0.32);color:#1f1810}
+  body[data-zmx-light="1"] .modeTab{background:rgba(46,37,26,0.06);border-color:rgba(46,37,26,0.2);color:#4f4335}
+  body[data-zmx-light="1"] .modeTab[aria-selected="true"]{background:#1f1810;border-color:#1f1810;color:#faf4e6}
+  body[data-zmx-light="1"] .sSearch input{background:#fffdf7;border-color:rgba(46,37,26,0.28);color:#1f1810}
+  body[data-zmx-light="1"] .sClear{background:rgba(46,37,26,0.1);color:#1f1810}
+  body[data-zmx-light="1"] .fchip{background:rgba(46,37,26,0.06);border-color:rgba(46,37,26,0.22);color:#3f3529}
+  body[data-zmx-light="1"] .fchip[aria-pressed="true"]{background:#0f766e;border-color:#0f766e;color:#faf4e6}
+  body[data-zmx-light="1"] .terr{border-color:rgba(46,37,26,0.18);background:linear-gradient(110deg,color-mix(in srgb,var(--tc) 14%,transparent),rgba(255,252,244,0.85))}
+  body[data-zmx-light="1"] .terrName,body[data-zmx-light="1"] .catHead .cname,body[data-zmx-light="1"] .loc{color:#1f1810}
+  body[data-zmx-light="1"] .loc:hover,body[data-zmx-light="1"] .catHead:hover{background:rgba(15,118,110,0.1);color:#0f172a}
+  body[data-zmx-light="1"] .catHead .ccount{background:rgba(46,37,26,0.09);color:#4f4335}
+  body[data-zmx-light="1"] .loc .chk{border-color:rgba(46,37,26,0.36)}
+  body[data-zmx-light="1"] .panel{background:rgba(250,245,233,0.985);border-color:rgba(46,37,26,0.28);color:#1f1810;box-shadow:-6px 0 24px rgba(42,32,20,0.18)}
+  body[data-zmx-light="1"] .panel h2{color:#1a140d}
+  body[data-zmx-light="1"] .panel .x{background:#efe5ce;border-color:rgba(46,37,26,0.34);color:#1f1810}
+  body[data-zmx-light="1"] .panel .x:hover{background:#e3d4b4;border-color:#8a5a18}
+  body[data-zmx-light="1"] .panel .pmeta{color:#4b4033;color-scheme:light;scrollbar-color:#a5957a #f5eee0}
+  body[data-zmx-light="1"] .tOwner,body[data-zmx-light="1"] .tControl{color:#5a4d3d}
+  body[data-zmx-light="1"] .tOwner b,body[data-zmx-light="1"] .tControl b{color:#1a140d}
+  body[data-zmx-light="1"] .tControlBar{background:rgba(46,37,26,0.14)}
+  body[data-zmx-light="1"] .tStat,body[data-zmx-light="1"] .neighborCard,body[data-zmx-light="1"] .reasonCard{background:rgba(255,252,244,0.9);border-color:rgba(46,37,26,0.18)}
+  body[data-zmx-light="1"] .tStat span,body[data-zmx-light="1"] .neighborCard span,body[data-zmx-light="1"] .reasonCard span{color:#6a5c4a}
+  body[data-zmx-light="1"] .tStat b{color:#1f1810}
+  body[data-zmx-light="1"] .neighborCard b{color:#0f766e}
+  body[data-zmx-light="1"] .reasonCard p{color:#3f3529}
+  body[data-zmx-light="1"] .benefitCard{background:#f3ebda;border-color:rgba(138,90,24,0.38)}
+  body[data-zmx-light="1"] .benefitCard strong{color:#1f1810}
+  body[data-zmx-light="1"] .benefitCard em{color:#4b4033}
+  body[data-zmx-light="1"] .warCard{background:#f7e8d8;border-color:rgba(180,83,9,0.42);color:#2d1c0c}
+  body[data-zmx-light="1"] .warSide span,body[data-zmx-light="1"] .warRule{color:#5c3d22}
+  body[data-zmx-light="1"] .warSide b,body[data-zmx-light="1"] .warClock{color:#7c2d12}
+  body[data-zmx-light="1"] .blockState{background:rgba(46,37,26,0.07);border-color:rgba(46,37,26,0.22);color:#4f4335}
+  body[data-zmx-light="1"] .blockState.good,body[data-zmx-light="1"] .blockState.info{background:rgba(15,118,110,0.12);border-color:rgba(15,118,110,0.42);color:#0f5132}
+  body[data-zmx-light="1"] .blockState.bad{background:rgba(220,38,38,0.1);border-color:rgba(220,38,38,0.42);color:#991b1b}
+  body[data-zmx-light="1"] .panel .go{background:#1f1810;color:#faf4e6}
+  body[data-zmx-light="1"] .panel .view,body[data-zmx-light="1"] .panel .mark{background:#efe5ce;border-color:rgba(46,37,26,0.34);color:#1f1810}
+  body[data-zmx-light="1"] .panel .view:hover,body[data-zmx-light="1"] .panel .mark:hover{background:#e4d6b8;border-color:#8a5a18}
   @media(max-width:760px){
     .familyRail{height:36px;min-height:36px;display:flex;gap:6px;padding:2px 8px}
     .familyRail>div:first-child{display:flex;gap:6px;align-items:center;min-width:0}.familyRail h1{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyEyebrow{display:none}
@@ -499,14 +550,14 @@ initializeMapLocale();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
-<script src="../assets/city/zone-map-expansion.js?v=118&cb=v141"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118&cb=v142"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v141',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
-    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v141',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v142',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v142',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -610,6 +661,7 @@ initializeMapLocale();
     // Use every server-authored block, including distant holdings. Restrict the
     // camera, not the gameplay data, and never refit on an ownership refresh.
     map.setMaxBounds(bounds);cityBoundsSignature=signature;
+    if(typeof WebGLRenderingContext!=='undefined'&&window.__zoneMapExpansionInstance&&typeof window.__zoneMapExpansionInstance.widenBounds==='function')window.__zoneMapExpansionInstance.widenBounds();
     document.body.dataset.zoneMapBounds=JSON.stringify(bounds);
     document.body.dataset.zoneZoomLimits=JSON.stringify({minimumZoom:minimumZoom,maximumZoom:map.getMaxZoom?map.getMaxZoom():20,viewportWidth:canvas&&canvas.clientWidth||height*aspect,viewportHeight:height,boundsMinimumZoom:Math.log2(ZoneCompactDistrict.CIRCUMFERENCE*Math.max((canvas&&canvas.clientWidth||height*aspect)/requiredWidth,height/requiredHeight)/512),allServerParcelsIncluded:true});
   }
@@ -845,7 +897,7 @@ initializeMapLocale();
     if(mapMode!=='territories'){ZoneCompactDistrict.syncBadgeReservations(map,holdingMarkers);return;}
     var representedFamilies=new Set();
     ownershipData.features.filter(function(f){return !f.properties.neutral;}).sort(function(a,b){return Number(b.properties.ownerId===focusedFactionId())-Number(a.properties.ownerId===focusedFactionId())||b.properties.blockCount-a.properties.blockCount;}).filter(function(f){if(representedFamilies.has(f.properties.ownerId))return false;representedFamilies.add(f.properties.ownerId);return true;}).slice(0,4).forEach(function(region){
-      var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId,isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'')+' overview'+(isTurf?' turfBanner':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?(isTurf?' · ⚔'+p.contestedCount+' · ★RACKET':' · '+esc(C('contested'))):(isTurf?' · ★RACKET':''))+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
+      var p=region.properties,button=document.createElement('button'),name=p.ownerName||p.ownerId,isTurf=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator&&window.navigator.userAgent||'');button.type='button';button.className='regionPin'+(p.ownerId===focusedFactionId()?' active':'')+' overview'+(isTurf?' turfBanner':'');button.style.setProperty('--faction',p.renderColor);button.setAttribute('aria-label',name+' · '+p.blockCount+' '+F('holdings'));button.innerHTML=factionEmblem(p.ownerId,name,p.renderColor)+'<span><b>'+esc(name)+'</b><small>'+p.blockCount+' '+esc(F('holdings'))+(p.contestedCount?(isTurf?' · ⚔'+p.contestedCount:' · '+esc(C('contested'))):'')+'</small></span>';button.onclick=function(event){event.stopPropagation();setFactionFocus(p.ownerId,false);};
       button.title=name+' · '+p.blockCount+' '+F('holdings');
       var anchor=regionMarkerAnchor(region,isTurf?(innerWidth<=760?66:68):22),marker=new mapboxgl.Marker({element:button,anchor:'center'}).setLngLat(anchor).addTo(map);
       // Marker initialization assigns role=img even to native buttons.

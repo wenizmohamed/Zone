@@ -1,9 +1,9 @@
-/* ZONE v137 - Expansive 3.2km Coastal Island & Peninsula Metropolis, Organic Waterways,
+/* ZONE v142 - Expansive 3.2km Coastal Island & Peninsula Metropolis, Organic Waterways,
    Turquoise Shallows, Cove Beaches, Parks & 3D Tree Canopy, 3 Real 3D Bridges,
    Sculpted Unique Architecture, Living Traffic/Boats/Beacons & Sketchbook HUD */
 (function (root) {
   "use strict";
-  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 137) return;
+  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 142) return;
 
   var EXTRA_ICONS = {
     airport: "M12 2l2.2 6.8L22 11v2l-7.8-1.2L13.5 18l2.5 1.8V21l-4-1-4 1v-1.2L10.5 18l-.7-6.2L2 13v-2l7.8-2.2L12 2z",
@@ -257,12 +257,12 @@
       fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [2.0, 17], "star-intensity": 0 },
       ambient: { color: "#eef4fa", intensity: 0.60 },
       sun: { color: "#fff6e0", intensity: 0.88, direction: [148, 52] },
-      land: "#efe6d4",
+      land: "#f0e7d6",
       landInd: "#e2d7c0",
-      water: "#3681a8",
-      shallows: "#5bc8cf",
+      water: "#2d7ca8",
+      shallows: "#56ccd4",
       beach: "#ecd9ae",
-      park: "#74a55b",
+      park: "#6ca354",
       pitch: "#46b859",
       tree: ["#3e7340", "#558f4e", "#6ea85c"],
       roadMain: "#fcf7ec",
@@ -337,14 +337,14 @@
       sun: { color: "#ffe5bd", intensity: 0.72, direction: [210, 38] },
       land: "#0f1522",
       landInd: "#0c111c",
-      water: "#071a2d",
-      shallows: "#0d3047",
+      water: "#081e36",
+      shallows: "#113954",
       beach: "#242c3b",
       park: "#122a22",
       pitch: "#184f34",
       tree: ["#0e251e", "#16382b", "#1f4b38"],
-      roadMain: "#384963",
-      road: "#243044",
+      roadMain: "#435775",
+      road: "#2b3952",
       roadCase: "#111724",
       roadCenter: "#eab308",
       pier: "#1d2738",
@@ -389,6 +389,8 @@
       livingTick: 0,
       metroInstalled: false,
       didMetroFrame: false,
+      userTouchedCamera: false,
+      startupGuardUntil: 0,
       styleReadyLatch: false,
       hostPaused: false,
       reducedMotion: prefersReducedMotion
@@ -661,8 +663,9 @@
       style.id = "zone-map-expansion-css";
       style.textContent = [
         /* Compact floating Chrono HUD: charcoal artist paper (Dark) + warm Sketchbook parchment (Light) */
-        ".zmx-chrono-bar{position:absolute;top:8px;right:48px;left:auto;width:fit-content;transform:none;z-index:18;display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:rgba(20,22,28,0.92);border:1px solid rgba(244,236,220,0.16);box-shadow:0 8px 22px rgba(0,0,0,0.46),inset 0 1px 0 rgba(255,255,255,0.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f5efe2;font:600 9.5px/1.15 Rubik,system-ui,sans-serif;max-width:calc(100% - 240px);flex-wrap:nowrap;white-space:nowrap;justify-content:flex-end}",
-        "[dir='rtl'] .zmx-chrono-bar{right:auto;left:8px;justify-content:flex-start}",
+        ".zmx-chrono-bar{position:absolute;top:8px;right:64px;left:auto;width:fit-content;transform:none;z-index:24;display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:rgba(20,22,28,0.92);border:1px solid rgba(244,236,220,0.16);box-shadow:0 8px 22px rgba(0,0,0,0.46),inset 0 1px 0 rgba(255,255,255,0.06);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#f5efe2;font:600 9.5px/1.15 Rubik,system-ui,sans-serif;max-width:calc(100% - 384px);flex-wrap:nowrap;white-space:nowrap;justify-content:flex-end;overflow-x:auto;scrollbar-width:none}",
+        "[dir='rtl'] .zmx-chrono-bar{right:auto;left:64px;justify-content:flex-start}",
+        "body.detailsOpen .zmx-chrono-bar{z-index:34}",
         "body[data-zmx-light='1'] .zmx-chrono-bar{background:rgba(250,244,230,0.94);border:1.5px solid #1e1b18;color:#1e1b18;box-shadow:0 4px 14px rgba(30,27,24,0.14),2px 2px 0 rgba(30,27,24,0.18)}",
         "body[data-zmx-light='1'] .mgrade{background:radial-gradient(ellipse 75% 60% at 50% 35%,rgba(255,248,220,0.14) 0%,rgba(255,248,220,0) 68%)!important}",
         ".zmx-clock-box{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:999px;background:rgba(255,255,255,0.07);border:0;font-variant-numeric:tabular-nums}",
@@ -727,7 +730,7 @@
         /* Harmonize Family Rail & Floating Controls cleanly across Dark charcoal & Light Sketchbook */
         "body:not([data-zmx-light='1']) .familyRail{overflow:hidden!important;border-bottom:1px solid rgba(244,236,220,0.09)!important;background:rgba(18,20,26,0.94)!important}",
         "body[data-zmx-light='1'] .familyRail{overflow:hidden!important;border-bottom:1.5px solid #1e1b18!important;background:rgba(250,244,230,0.96)!important;color:#1e1b18!important}",
-        "body[data-zmx-light='1'] .familyRail *{color:#1e1b18}",
+        "body[data-zmx-light='1'] .familyRail h1,body[data-zmx-light='1'] .familyRail .familyStat span{color:#1e1b18}",
         ".familyRail button.familyStat{height:26px!important;min-height:26px!important;padding:2px 9px!important;border-radius:9px!important;border:1px solid rgba(234,179,8,0.42)!important;background:rgba(234,179,8,0.16)!important;display:inline-flex!important;flex-direction:row!important;align-items:baseline!important;justify-content:center!important;gap:5px!important;white-space:nowrap!important;transition:background-color .16s ease,transform .16s ease}",
         ".familyRail button.familyStat:disabled{opacity:0.92!important;border-color:rgba(148,163,184,0.38)!important;background:rgba(30,36,46,0.84)!important}",
         ".familyRail button.familyStat:disabled b{color:#f3d285!important;font-size:13px!important}",
@@ -743,23 +746,25 @@
         "@media (prefers-reduced-motion:reduce){.zmx-sun-rays,.zmx-ico-jet,.zmx-pill,.zmx-world-btn,.zmx-gate-marker,.familyRail button.familyStat{transition:none!important}}",
         "[dir='rtl'] .zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar *,[dir='rtl'] .zmx-gate-marker,.zmx-modal[dir='rtl'],.zmx-modal[dir='rtl'] *{letter-spacing:0!important}",
         "@media (max-width:1120px){.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}",
-        "@media (max-width:780px){.zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar{top:42px;left:8px;right:44px;width:auto;max-width:calc(100% - 52px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}}",
+        "@media (max-width:1020px){.zmx-chrono-bar{top:60px;left:10px;right:60px;width:auto;max-width:calc(100% - 70px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}[dir='rtl'] .zmx-chrono-bar{left:60px;right:10px;justify-content:flex-start}}",
+        "@media (max-width:760px){.zmx-chrono-bar{top:44px;left:8px;right:48px;width:auto;max-width:calc(100% - 56px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}[dir='rtl'] .zmx-chrono-bar{left:48px;right:8px;justify-content:flex-start}}",
         "@media (max-width:680px){",
         "  #sideToggle,#cityReset,#mapExpand,#streetView{top:6px!important;height:27px!important;min-height:27px!important;padding:0 7px!important;font-size:10px!important;border-radius:8px!important}",
         "  #sideToggle{left:8px!important;width:28px!important;padding:0!important}",
         "  #sideToggle b{display:none!important}",
-        "  #cityReset{left:40px!important;width:auto!important}",
-        "  #mapExpand{left:106px!important;width:27px!important;padding:0!important;font-size:13px!important}",
-        "  #streetView{left:137px!important;width:auto!important}",
+        "  #cityReset{left:40px!important;width:auto!important;min-width:64px!important;max-width:80px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}",
+        "  #mapExpand{left:124px!important;width:27px!important;padding:0!important;font-size:13px!important}",
+        "  #streetView{left:155px!important;width:auto!important}",
         "  [dir='rtl'] #sideToggle{left:auto!important;right:8px!important}",
         "  [dir='rtl'] #cityReset{left:auto!important;right:40px!important}",
-        "  [dir='rtl'] #mapExpand{left:auto!important;right:106px!important}",
-        "  [dir='rtl'] #streetView{left:auto!important;right:137px!important}",
+        "  [dir='rtl'] #mapExpand{left:auto!important;right:124px!important}",
+        "  [dir='rtl'] #streetView{left:auto!important;right:155px!important}",
         "  .mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:6px 6px 0 0!important}",
         "  [dir='rtl'] .mapboxgl-ctrl-top-right .mapboxgl-ctrl{margin:6px 0 0 6px!important}",
         "  .mapboxgl-ctrl-group button,.mapboxgl-ctrl-group button:disabled{width:29px!important;height:29px!important}",
-        "  .zmx-chrono-bar{top:39px!important;left:8px!important;right:42px!important;transform:none!important;width:auto!important;max-width:calc(100% - 50px)!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:none!important;padding:3px 7px!important;gap:4px!important;font-size:9.5px!important;justify-content:flex-start!important}",
-        "  [dir='rtl'] .zmx-chrono-bar{right:8px!important;left:42px!important;justify-content:flex-start!important}",
+        "  .zmx-chrono-bar{top:38px!important;left:8px!important;right:44px!important;transform:none!important;width:auto!important;max-width:calc(100% - 52px)!important;overflow:visible!important;flex-wrap:wrap!important;white-space:normal!important;border-radius:12px!important;padding:4px 6px!important;row-gap:3px!important;column-gap:4px!important;font-size:9.5px!important;justify-content:flex-start!important}",
+        "  [dir='rtl'] .zmx-chrono-bar{right:8px!important;left:44px!important;justify-content:flex-start!important}",
+        "  .zmx-chrono-bar .zmx-pills{flex-wrap:nowrap!important}",
         "  #panel,[dir='rtl'] #panel{top:auto!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:48%!important;overflow-y:auto!important;border-radius:14px 14px 0 0!important;border-left:0!important;border-right:0!important;border-top:1px solid rgba(255,255,255,0.14)!important;z-index:30!important;padding:10px 12px 12px!important;box-shadow:0 -12px 32px rgba(0,0,0,0.72)!important;transform:translate3d(0,105%,0)!important;pointer-events:none!important}",
         "  #panel.on,[dir='rtl'] #panel.on{transform:translate3d(0,0,0)!important;pointer-events:auto!important}",
         "  #panel .x{height:30px!important;min-height:30px!important;min-width:56px!important;top:8px!important;font-size:11px!important;padding:0 8px!important}",
@@ -767,7 +772,7 @@
         "  #panel .pcat{font-size:9.5px!important;margin-bottom:4px!important}",
         "  #panel .pmeta{flex:none!important;overflow:visible!important;margin-bottom:6px!important;font-size:11px!important}",
         "  #panel .pActions button{min-height:34px!important;padding:6px 10px!important;font-size:11px!important}",
-        "  .mapLegend,.legend{bottom:6px!important;inset-inline-end:6px!important;font-size:9.5px!important;padding:3px 7px!important;gap:6px!important;border-radius:8px!important;max-width:calc(100% - 88px)!important}",
+        "  .mapLegend,.legend{bottom:36px!important;inset-inline-start:6px!important;inset-inline-end:auto!important;font-size:9.5px!important;padding:3px 7px!important;gap:6px!important;border-radius:8px!important;max-width:calc(100% - 116px)!important}",
         "  .familyHome,#familyHome{bottom:6px!important;inset-inline-start:6px!important;min-height:26px!important;height:26px!important;padding:0 8px!important;font-size:9.5px!important;border-radius:8px!important}",
         "  .detailsOpen .mapLegend,.detailsOpen .legend,.detailsOpen #familyHome{visibility:hidden!important}",
         "  .zmx-modal{padding:12px!important;border-radius:14px!important;max-height:86vh!important}",
@@ -810,19 +815,7 @@
         resetBtn.dataset.zmxBound = "1";
         resetBtn.addEventListener("click", function () {
           setTimeout(function () {
-            widenMetroBounds();
-            try {
-              var container = map.getContainer && map.getContainer();
-              var mobile = !!(container && container.clientWidth <= 760);
-              map.easeTo({
-                center: CENTER,
-                zoom: mobile ? 13.05 : 13.55,
-                pitch: 52,
-                bearing: -22,
-                duration: 320,
-                essential: true
-              });
-            } catch (_) {}
+            frameArchipelago(true);
           }, 40);
         });
       }
@@ -2218,6 +2211,26 @@
       if (map.getLayer("district-road-labels")) {
         try { map.setLayoutProperty("district-road-labels", "visibility", "none"); } catch (_) {}
       }
+      /* Clip native Streets v8 3D buildings strictly to the Central Core cutout so ZERO Brooklyn/Manhattan
+         extrusions ever bleed into Zone City's Ocean, Grand Canal, Stadium, Speedway, Runways, or Islands! */
+      if (map.getLayer("district-buildings-3d") && map.setFilter) {
+        try {
+          var coreCutoutPoly = {
+            type: "Polygon",
+            coordinates: [[
+              pt(-0.00475, -0.00345), pt(0.00475, -0.00345),
+              pt(0.00475, 0.00345), pt(-0.00475, 0.00345),
+              pt(-0.00475, -0.00345)
+            ]]
+          };
+          map.setFilter("district-buildings-3d", [
+            "all",
+            ["==", ["get", "extrude"], "true"],
+            ["!=", ["get", "underground"], "true"],
+            ["within", coreCutoutPoly]
+          ]);
+        } catch (_) {}
+      }
 
       var base = buildMetroLandAndRoadsGeo();
       /* Place our opaque Ocean Mask + Sculpted Archipelago Islands ABOVE district-road-labels / district-roads /
@@ -2489,10 +2502,10 @@
         },
         paint: {
           "icon-opacity": 1,
-          "text-opacity": ["interpolate", ["linear"], ["zoom"], 14.35, 0, 14.85, 1],
+          "text-opacity": ["interpolate", ["linear"], ["zoom"], 14.05, 0, 14.55, 1],
           "text-color": "#f8fafc",
           "text-halo-color": "rgba(4, 8, 15, 0.96)",
-          "text-halo-width": 1.6
+          "text-halo-width": 1.8
         }
       });
 
@@ -2512,8 +2525,13 @@
           var lbl = ev.features[0].properties && ev.features[0].properties.label;
           if (!lbl) return;
           hoverTipEl.textContent = lbl;
-          hoverTipEl.style.left = Math.round(ev.point.x) + "px";
-          hoverTipEl.style.top = Math.round(ev.point.y) + "px";
+          var host = hoverTipEl.parentElement;
+          var maxW = host ? host.clientWidth : 800;
+          var maxH = host ? host.clientHeight : 600;
+          var clampedX = Math.max(90, Math.min(maxW - 90, Math.round(ev.point.x)));
+          var clampedY = Math.max(52, Math.min(maxH - 48, Math.round(ev.point.y)));
+          hoverTipEl.style.left = clampedX + "px";
+          hoverTipEl.style.top = clampedY + "px";
           hoverTipEl.hidden = false;
         };
         var hidePoiHover = function () {
@@ -2534,16 +2552,24 @@
 
     function syncZmxReadyDataset() {
       try {
-        document.body.dataset.zmxReady = JSON.stringify({
-          version: 141,
-          oceanMaskLayer: !!map.getLayer("metro-ocean-mask"),
-          metroIconLayer: !!map.getLayer("metro-poi-icon"),
-          skylineLayer: !!map.getLayer("metro-outer-skyline-3d"),
-          treesLayer: !!map.getLayer("metro-trees-3d"),
-          livingLayer: !!map.getLayer("metro-living-dots"),
+        var readyPayload = {
+          version: 142,
+          ready: isMapStyleReady(),
+          oceanMaskLayer: !!(map && map.getLayer && map.getLayer("metro-ocean-mask")),
+          metroIconLayer: !!(map && map.getLayer && map.getLayer("metro-poi-icon")),
+          skylineLayer: !!(map && map.getLayer && map.getLayer("metro-outer-skyline-3d")),
+          treesLayer: !!(map && map.getLayer && map.getLayer("metro-trees-3d")),
+          livingLayer: !!(map && map.getLayer && map.getLayer("metro-living-dots")),
           poiCount: METRO_POIS.length,
+          outerFeatureCount: (typeof window !== "undefined" && Array.isArray(window.__zoneOuterArchitecturalFeatures)) ? window.__zoneOuterArchitecturalFeatures.length : 0,
           phase: state.activePhase || computeDesiredPhase()
-        });
+        };
+        if (typeof window !== "undefined") {
+          window.__zoneMapExpansionReady = readyPayload;
+        }
+        if (document.body && document.body.dataset) {
+          document.body.dataset.zmxReady = JSON.stringify(readyPayload);
+        }
       } catch (_) {}
     }
 
@@ -2558,24 +2584,50 @@
       } catch (_) {}
     }
 
-    function ensureInitialMetroFraming() {
-      if (state.didMetroFrame || !map) return;
-      if (!document.body.classList.contains("cityOverviewMode")) return;
+    function frameArchipelago(animate) {
+      if (!map) return;
       var container = map.getContainer && map.getContainer();
       if (!container || container.clientWidth < 120 || container.clientHeight < 120) return;
-      state.didMetroFrame = true;
+      widenMetroBounds();
+      try {
+        var mobile = container.clientWidth <= 760;
+        var pose = {
+          center: CENTER,
+          zoom: mobile ? 13.05 : 13.45,
+          pitch: 52,
+          bearing: -22
+        };
+        if (animate) {
+          pose.duration = 320;
+          pose.essential = true;
+          map.easeTo(pose);
+        } else {
+          map.jumpTo(pose);
+        }
+      } catch (_) {}
+    }
+
+    function ensureInitialMetroFraming(forceCheck) {
+      if (!map || state.userTouchedCamera) return;
+      var container = map.getContainer && map.getContainer();
+      if (!container || container.clientWidth < 120 || container.clientHeight < 120) return;
+      var mobile = container.clientWidth <= 760;
+      var curZoom = typeof map.getZoom === "function" ? map.getZoom() : 16;
+      var tooTight = curZoom > (mobile ? 13.8 : 14.2);
+      if (state.didMetroFrame && !tooTight && !forceCheck) return;
+      if (state.didMetroFrame && Date.now() > state.startupGuardUntil) return;
+      if (!state.didMetroFrame) {
+        state.didMetroFrame = true;
+        state.startupGuardUntil = Date.now() + 2800;
+      }
+      frameArchipelago(false);
       setTimeout(function () {
-        widenMetroBounds();
-        try {
-          var mobile = container.clientWidth <= 760;
-          map.jumpTo({
-            center: CENTER,
-            zoom: mobile ? 13.05 : 13.55,
-            pitch: 52,
-            bearing: -22
-          });
-        } catch (_) {}
-      }, 90);
+        if (state.userTouchedCamera) return;
+        var zNow = typeof map.getZoom === "function" ? map.getZoom() : 16;
+        if (zNow > (mobile ? 13.8 : 14.2)) {
+          frameArchipelago(false);
+        }
+      }, 120);
     }
 
     function syncGateMarkers() {
@@ -2903,10 +2955,10 @@
       setPaint("metro-ocean-mask", "fill-color", cfg.water);
       setPaint("metro-land-sectors", "fill-color", cfg.land);
       setPaint("metro-land-tint", "fill-opacity", cfg.isLightUi ? 0.06 : 0.10);
-      setPaint("metro-coastline-rim", "line-color", cfg.isLightUi ? "#8e7f67" : "#385572");
+      setPaint("metro-coastline-rim", "line-color", cfg.isLightUi ? "#8a7a60" : "#3f698c");
       setPaint("metro-bay-water", "fill-color", cfg.water);
       setPaint("metro-shallows", "fill-color", cfg.shallows);
-      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.22 : 0.16);
+      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.30 : 0.22);
       setPaint("metro-beaches", "fill-color", cfg.beach);
       setPaint("metro-parks", "fill-color", ["case", ["==", ["get", "kind"], "pitch"], cfg.pitch, cfg.park]);
       setPaint("district-waterway", "line-color", cfg.water);
@@ -2926,14 +2978,52 @@
       setPaint("district-buildings", "fill-outline-color", cfg.roadCase);
 
       var hExpr = ["max", 0, ["to-number", ["get", "height"], 0]];
-      var heightGrad = ["interpolate", ["linear"], hExpr, 0, cfg.bldg[0], 24, cfg.bldg[1], 75, cfg.bldg[2]];
+      var heightGrad = cfg.isLightUi
+        ? ["interpolate", ["linear"], hExpr, 0, "#dcd0ba", 24, "#ece3d2", 58, "#d4b596", 88, "#a6c1d1"]
+        : ["interpolate", ["linear"], hExpr, 0, cfg.bldg[0], 24, cfg.bldg[1], 75, cfg.bldg[2]];
       setPaint("district-buildings-3d", "fill-extrusion-color", heightGrad);
       setPaint("district-complete-volumes", "fill-extrusion-color", heightGrad);
       if (map.getLayer("district-buildings-3d") && map.setLayoutProperty) {
         try { map.setLayoutProperty("district-buildings-3d", "visibility", "visible"); } catch (_) {}
       }
 
-      setPaint("district-skyline-3d", "fill-extrusion-color", ["match", ["to-string", ["get", "tone"]], "#162234", cfg.bldg[0], "#1c2b42", cfg.bldg[1], cfg.bldg[2]]);
+      setPaint("district-skyline-3d", "fill-extrusion-color", cfg.isLightUi
+        ? [
+            "match", ["to-string", ["get", "tone"]],
+            "#16212f", "#dcd1bd",
+            "#1e2c3e", "#e8dfd0",
+            "#273950", "#b6cad7",
+            "#3b526e", "#9eb8c9",
+            "#a58d5e", "#d6b56d",
+            "#122420", "#cad8ce",
+            "#1a332d", "#dbe6de",
+            "#24453d", "#8db5a4",
+            "#346358", "#6f9f8d",
+            "#4ea884", "#55b58d",
+            "#122232", "#c8d6e2",
+            "#193148", "#d7e3ec",
+            "#224463", "#8cb0cc",
+            "#32608a", "#719bc0",
+            "#5594c9", "#5c9ed6",
+            "#241d14", "#dfd0b8",
+            "#342a1d", "#ece0cc",
+            "#473927", "#d9b98c",
+            "#634f36", "#c8a36c",
+            "#c29d52", "#d9b15c",
+            "#25151e", "#dfcbc8",
+            "#351e2b", "#ecdcd8",
+            "#49293b", "#d6a498",
+            "#663952", "#c48a7e",
+            "#b0547c", "#cc7488",
+            "#e7decb"
+          ]
+        : [
+            "match", ["to-string", ["get", "tone"]],
+            "#162234", cfg.bldg[0],
+            "#1c2b42", cfg.bldg[1],
+            ["coalesce", ["get", "tone"], cfg.bldg[1]]
+          ]
+      );
       setPaint("metro-outer-skyline-3d", "fill-extrusion-color", [
         "case",
         ["!=", ["coalesce", ["get", "accent"], ""], ""],
@@ -2975,6 +3065,7 @@
         setPaint(lid, "text-halo-color", haloCol);
         setPaint(lid, "text-halo-width", 2.2);
       });
+      setPaint("zone-poi-icon", "text-opacity", ["interpolate", ["linear"], ["zoom"], 14.15, 0, 14.65, 1]);
       syncZmxReadyDataset();
     }
 
@@ -2982,7 +3073,7 @@
       state.styleReadyLatch = true;
       installMetroLayers();
       widenMetroBounds();
-      ensureInitialMetroFraming();
+      ensureInitialMetroFraming(true);
       applyAtmosphere(true);
     }
 
@@ -3006,6 +3097,7 @@
 
       installMetroLayers();
       widenMetroBounds();
+      ensureInitialMetroFraming(true);
 
       try {
         var lockSrc = map.getSource("sector-locks-src");
@@ -3019,19 +3111,34 @@
       renderChronoHud();
     }
 
+    var markUserCameraTouch = function (ev) {
+      if (ev && ev.isTrusted) {
+        state.userTouchedCamera = true;
+      }
+    };
+    document.addEventListener("pointerdown", markUserCameraTouch, { capture: true, passive: true });
+    document.addEventListener("wheel", markUserCameraTouch, { capture: true, passive: true });
+    document.addEventListener("keydown", markUserCameraTouch, true);
+
     injectStyles();
     buildChronoHud();
     /* Pre-seed sculpted outer architectural polygons immediately so district-surfaces111 wraps ALL 5 sectors on its very first pass */
     try { buildOuterSkylineGeo(); } catch (_) {}
+    syncZmxReadyDataset();
     if (isMapStyleReady()) onMapReadyPass();
     map.on("style.load", onMapReadyPass);
     map.on("load", onMapReadyPass);
+    map.on("moveend", function () {
+      if (!state.userTouchedCamera && Date.now() <= state.startupGuardUntil) {
+        ensureInitialMetroFraming(false);
+      }
+    });
     map.on("idle", function () {
       if (!map.getLayer("metro-poi-icon") || !map.getLayer("metro-outer-skyline-3d")) {
         installMetroLayers();
       }
       widenMetroBounds();
-      ensureInitialMetroFraming();
+      ensureInitialMetroFraming(false);
       applyAtmosphere(false);
     });
     map.on("resize", function () {
@@ -3078,12 +3185,13 @@
     return {
       onRender: onRender,
       openWorldCitiesModal: openWorldCitiesModal,
-      applyAtmosphere: applyAtmosphere
+      applyAtmosphere: applyAtmosphere,
+      widenBounds: widenMetroBounds
     };
   }
 
   var expansionApi = {
-    version: "141.0",
+    version: "142.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -3099,7 +3207,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 141;
+  root.__zoneMapExpansionVersion = 142;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

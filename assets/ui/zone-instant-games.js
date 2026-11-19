@@ -152,8 +152,8 @@
         '.zig-game-card-cta{display:inline-flex;align-items:center;gap:6px;text-transform:none !important;letter-spacing:0.01em !important;}',
         '.zig-cta-chevron{width:13px;height:13px;flex:none;transition:transform 200ms cubic-bezier(0.22,1,0.36,1);}',
         '.zig-game-card:hover .zig-cta-chevron{transform:translateX(2px);}',
-        'html[dir="rtl"] .zig-cta-chevron,[dir="rtl"] .zig-cta-chevron{transform:scaleX(-1);}',
-        'html[dir="rtl"] .zig-game-card:hover .zig-cta-chevron,[dir="rtl"] .zig-game-card:hover .zig-cta-chevron{transform:scaleX(-1) translateX(2px);}',
+        'html[dir="rtl"] body #zone-main .zig-game-card-cta .zig-cta-chevron,html[dir="rtl"] .zig-cta-chevron,[dir="rtl"] .zig-cta-chevron{transform:scaleX(-1) !important;}',
+        'html[dir="rtl"] body #zone-main .zig-game-card:hover .zig-game-card-cta .zig-cta-chevron,html[dir="rtl"] .zig-game-card:hover .zig-cta-chevron,[dir="rtl"] .zig-game-card:hover .zig-cta-chevron{transform:scaleX(-1) translateX(2px) !important;}',
         '.zig-getaway-stage{background:var(--zwc-surface-alt,var(--zwc-paper-subcard,#fcf8ee)) !important;border:1.5px solid var(--zwc-border-strong,#23201c) !important;border-radius:var(--zwc-sketch-radius-sm,12px) !important;box-shadow:var(--zwc-shadow-sub) !important;padding:10px !important;margin-block-start:10px !important;color:var(--zwc-ink,#1e1b18) !important;}',
         '.zig-getaway-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-block-end:8px;}',
         '.zig-getaway-heading{display:inline-flex;align-items:center;gap:7px;color:var(--zwc-gold-ink,#9a6519);font-size:12.5px;font-weight:800;letter-spacing:0.01em;}',
@@ -640,7 +640,12 @@
     gw.spawnTimer = 0.35;
     sfx.pickup();
     var stage = document.getElementById('zig-getaway-stage');
-    if (stage) stage.hidden = false;
+    if (stage) {
+      stage.hidden = false;
+      if (typeof stage.scrollIntoView === 'function') {
+        try { stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
+      }
+    }
     var gCv = document.getElementById('zig-getaway-canvas');
     if (gCv) observeInteractiveCanvas(gCv);
     renderGetawayGame(0, performance.now());
@@ -822,13 +827,15 @@
     var fenceBtn = sec.querySelector('#zig-getaway-fence');
     if (fenceBtn) {
       fenceBtn.addEventListener('click', function () {
-        sfx.breachWin();
         var v = window.__zoneLastView;
-        var readyCrime = v && Array.isArray(v.crimes) ? v.crimes.find(function (c) { return !c.disabled; }) : null;
+        var selectedCrime = v && v.crimeDesk && v.crimeDesk.selected && !v.crimeDesk.selected.disabled ? v.crimeDesk.selected : null;
+        var readyCrime = selectedCrime || (v && Array.isArray(v.crimes) ? v.crimes.find(function (c) { return !c.disabled && typeof c.commit === 'function'; }) : null);
         if (readyCrime && typeof readyCrime.commit === 'function') {
+          sfx.breachWin();
           readyCrime.commit();
           spawnFloatingReward(isAr() ? 'جارٍ تصريف الغنيمة' : 'FENCING LOOT', 'gold');
         } else {
+          sfx.lockClick();
           goScreen('crimes');
         }
       });
@@ -1063,9 +1070,10 @@
       observeInteractiveCanvas(rCv);
       rCv.addEventListener('pointerdown', function () {
         ensureAudio();
-        var redBtn = rTable.querySelector('[data-roulette-bet="red"]:not([disabled])');
+        var betBtn = rTable.querySelector('[data-roulette-bet="red"]:not([disabled])') || rTable.querySelector('[data-roulette-bet]:not([disabled])');
+        if (!betBtn) return;
         startRouletteAnimation();
-        if (redBtn) redBtn.click();
+        betBtn.click();
       });
 
       rTable.addEventListener('click', function (ev) {
@@ -1097,9 +1105,15 @@
 
       var triggerSpin = function () {
         ensureAudio();
-        startSlotsAnimation();
+        var spinBtn = sTable.querySelector('[data-slots-spin]:not([disabled])');
+        if (spinBtn) {
+          startSlotsAnimation();
+          spinBtn.click();
+          return;
+        }
         var g = window.__zoneGame;
-        if (g && typeof g.spinSlots === 'function' && !g.slotsBusy) {
+        if (g && typeof g.spinSlots === 'function' && !g.slotsBusy && !(typeof g.gameplayDisabled === 'function' && g.gameplayDisabled())) {
+          startSlotsAnimation();
           g.spinSlots();
         }
       };
@@ -1123,6 +1137,12 @@
       }
     }
     ensureLoopRunning();
+  }
+
+  function escapeHtml(val) {
+    return String(val == null ? '' : val).replace(/[&<>"']/g, function (ch) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] || ch;
+    });
   }
 
   /* ---------------- 5. ATTACK: Street Brawl Versus Banner ---------------- */
@@ -1150,26 +1170,58 @@
 
     banner.innerHTML =
       '<div class="zig-brawl-side">' +
-        '<div class="zig-brawl-row"><span>' + youName + '</span><bdi class="zig-brawl-you-pct">' + youPct + '%</bdi></div>' +
+        '<div class="zig-brawl-row"><span>' + escapeHtml(youName) + '</span><bdi class="zig-brawl-you-pct">' + youPct + '%</bdi></div>' +
         '<div class="zig-brawl-bar"><div class="zig-brawl-fill-you" style="width:' + youPct + '%"></div></div>' +
       '</div>' +
       '<div class="zig-brawl-center">' +
         '<div class="zig-brawl-vs">' + (ar ? 'ضد' : 'VS') + '</div>' +
-        '<div class="zig-brawl-status">' + statusTxt + '</div>' +
+        '<div class="zig-brawl-status">' + escapeHtml(statusTxt) + '</div>' +
       '</div>' +
       '<div class="zig-brawl-side">' +
-        '<div class="zig-brawl-row"><span>' + oppName + '</span><bdi class="zig-brawl-opp-pct">' + oppPct + '%</bdi></div>' +
+        '<div class="zig-brawl-row"><span>' + escapeHtml(oppName) + '</span><bdi class="zig-brawl-opp-pct">' + oppPct + '%</bdi></div>' +
         '<div class="zig-brawl-bar"><div class="zig-brawl-fill-opp" style="width:' + oppPct + '%"></div></div>' +
       '</div>';
+
+    /* Keep #zone-combat-frame nameplate synchronized with live catalog opponent (prevents stale Rayan_Black fallback) */
+    var applyCombatDomName = function (expectedName) {
+      try {
+        var doc = frame.contentDocument;
+        if (doc && expectedName) {
+          var opEl = doc.getElementById('combat-opponent-name');
+          if (opEl && opEl.textContent !== expectedName) {
+            opEl.textContent = expectedName;
+          }
+        }
+      } catch (_) {}
+    };
+    try {
+      var g = window.__zoneGame;
+      var sig = (f ? 'fight:' : 'idle:') + oppName + '|' + (ar ? 'ar' : 'en');
+      if (!f && g && typeof g.pushCombatScene === 'function' && g._zigCombatOppSig !== sig) {
+        g._zigCombatOppSig = sig;
+        g._combatSceneSig = '';
+        g.pushCombatScene();
+        setTimeout(function () { applyCombatDomName(oppName); }, 60);
+      }
+      applyCombatDomName(oppName);
+    } catch (_) {}
+    if (!frame.__zigOppLoadBound) {
+      frame.__zigOppLoadBound = true;
+      frame.addEventListener('load', function () {
+        setTimeout(mountAttackBanner, 80);
+        setTimeout(mountAttackBanner, 360);
+      });
+    }
   }
 
   /* ---------------- Keyboard Controls ---------------- */
   window.addEventListener('keydown', function (e) {
     var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-    if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return;
 
     var main = document.getElementById('zone-main');
     var scr = main ? main.getAttribute('data-zone-screen') : '';
+    var interactiveFocus = e.target && e.target.closest ? Boolean(e.target.closest('button, a, [role="button"]')) : false;
 
     if (scr === 'home' && state.getaway.open && state.getaway.running) {
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
@@ -1178,14 +1230,19 @@
       } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
         e.preventDefault();
         state.getaway.targetLane = Math.min(3, Math.round(state.getaway.targetLane) + 1);
-      } else if (e.key === ' ') {
+      } else if (e.key === ' ' && !interactiveFocus) {
         e.preventDefault();
         state.getaway.boosting = true;
       }
-    } else if (scr === 'crimes' && e.key === ' ') {
+    } else if (scr === 'crimes' && e.key === ' ' && !interactiveFocus) {
       if (document.getElementById('zig-heist-canvas')) {
         e.preventDefault();
         triggerHeistStrike();
+      }
+    } else if (scr === 'gym' && e.key === ' ' && !interactiveFocus) {
+      if (document.getElementById('zig-gym-canvas')) {
+        e.preventDefault();
+        triggerGymStrike();
       }
     }
   });
@@ -2430,14 +2487,29 @@
         }).join('') +
       '</div>';
 
-    var radarBtn = bar.querySelector('#zigOpenRadarBtn');
-    if (radarBtn) {
-      radarBtn.onclick = function () {
+    function openWorldRadarIn3D() {
+      var shell = document.querySelector('#zone-main .zone-city-map-shell');
+      var needsSwitch = Boolean(shell && shell.getAttribute('data-zwc-view') !== '3d');
+      if (needsSwitch) {
+        var mode3d = document.querySelector('#zwc-city-panorama-stage [data-zwc-mode="3d"]');
+        if (mode3d) mode3d.click();
+      }
+      var postOpen = function () {
         var frame = document.getElementById('zone-city-map');
         if (frame && frame.contentWindow) {
           frame.contentWindow.postMessage({ type: 'ZONE_OPEN_WORLD_CITIES' }, window.location.origin);
         }
       };
+      if (needsSwitch) {
+        setTimeout(postOpen, 160);
+      } else {
+        postOpen();
+      }
+    }
+
+    var radarBtn = bar.querySelector('#zigOpenRadarBtn');
+    if (radarBtn) {
+      radarBtn.onclick = openWorldRadarIn3D;
     }
 
     Array.from(bar.querySelectorAll('[data-world-city]')).forEach(function (chip) {
@@ -2447,9 +2519,7 @@
         if (!target) return;
         var frame = document.getElementById('zone-city-map');
         if (lv < target.minLevel || cid === activeCityId) {
-          if (frame && frame.contentWindow) {
-            frame.contentWindow.postMessage({ type: 'ZONE_OPEN_WORLD_CITIES' }, window.location.origin);
-          }
+          openWorldRadarIn3D();
           return;
         }
         if (g && g.p) {
@@ -2720,6 +2790,45 @@
     return true;
   }
 
+  var hofHydrateState = { attempts: 0, lastTry: 0, timer: null };
+
+  function syncHallOfFame() {
+    var main = document.getElementById('zone-main');
+    var scr = main ? main.getAttribute('data-zone-screen') : '';
+    if (scr !== 'hof') {
+      hofHydrateState.attempts = 0;
+      if (hofHydrateState.timer) {
+        clearTimeout(hofHydrateState.timer);
+        hofHydrateState.timer = null;
+      }
+      return;
+    }
+    var g = window.__zoneGame;
+    if (!g || typeof g.loadLeaderboards !== 'function') return;
+    if (g.leaderboard || g.leaderboardBusy || g.leaderboardError) {
+      hofHydrateState.attempts = 0;
+      if (hofHydrateState.timer) {
+        clearTimeout(hofHydrateState.timer);
+        hofHydrateState.timer = null;
+      }
+      return;
+    }
+    var now = Date.now();
+    if (hofHydrateState.attempts >= 6 || (now - hofHydrateState.lastTry) < 850) return;
+    hofHydrateState.attempts++;
+    hofHydrateState.lastTry = now;
+    try {
+      g.loadLeaderboards();
+    } catch (_) {}
+    /* If loadLeaderboards returned early before ZonePlatform/session finished booting, retry shortly */
+    if (!g.leaderboardBusy && !g.leaderboard && !hofHydrateState.timer && hofHydrateState.attempts < 6) {
+      hofHydrateState.timer = setTimeout(function () {
+        hofHydrateState.timer = null;
+        syncHallOfFame();
+      }, 950);
+    }
+  }
+
   function syncMounts() {
     ensureMotionStyles();
     if (document.querySelector('x-dc')) return;
@@ -2731,6 +2840,7 @@
     mountCasinoGames();
     mountAttackBanner();
     mountCityWorldFlightBar();
+    syncHallOfFame();
     ensureLoopRunning();
 
     /* Detect cash reward deltas for arcade floating popups (ignore initial boot hydration 0 -> $2,500) */

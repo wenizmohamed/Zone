@@ -96,10 +96,9 @@
     },
     crimes: {
       wash:
-        '<path class="zwc-wash-fill" d="M3.8 12.2C6 8 18 8 20.2 12.2C18.2 16.2 15 17.4 12 17.4C9 17.4 5.8 16.2 3.8 12.2Z" fill="' + WASH.crimson + '"/>' +
-        '<path class="zwc-accent-fill" d="M7.6 12.2L10.2 11.4L9.2 13.6Z" fill="' + WASH.gold + '"/>' +
-        '<path class="zwc-accent-fill" d="M16.4 12.2L13.8 11.4L14.8 13.6Z" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M3.8 12.2C6 8 18 8 20.2 12.2C18.2 16.2 15 17.4 12 17.4C9 17.4 5.8 16.2 3.8 12.2ZM7.6 12.2L10.2 11.4L9.2 13.6Z"/><path class="zwc-ink-stroke" d="M16.4 12.2L13.8 11.4L14.8 13.6Z"/>'
+        '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.2" fill="' + WASH.crimson + '"/>' +
+        '<circle class="zwc-accent-fill" cx="12" cy="12" r="3" fill="' + WASH.gold + '"/>',
+      ink: '<circle class="zwc-ink-stroke" cx="12" cy="12" r="7.2"/><path class="zwc-ink-stroke" d="M12 2.8V6.4M12 17.6V21.2M2.8 12H6.4M17.6 12H21.2M12 12H12.02"/>'
     },
     missions: {
       wash:

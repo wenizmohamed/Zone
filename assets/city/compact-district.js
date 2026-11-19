@@ -6,8 +6,8 @@
 })(typeof globalThis==='object'?globalThis:this,function(){
   'use strict';
   const CENTER=[-73.9865,40.698],EARTH=6378137,CIRCUMFERENCE=2*Math.PI*EARTH,perspectiveStates=new WeakMap(),badgeStates=new WeakMap(),buildingStates=new WeakMap(),poiPerspectiveStates=new WeakMap(),cameraLimitStates=new WeakMap(),coinRoofStates=new WeakMap();
-  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v141',location.href):null);
-  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v141')?'&cb=v141':'')):'';
+  const scriptUrl=typeof document==='object'&&document.currentScript&&document.currentScript.src?new URL(document.currentScript.src):(typeof location==='object'&&location.href&&typeof WebGLRenderingContext!=='undefined'?new URL('../assets/city/compact-district.js?v=118&cb=v142',location.href):null);
+  const scriptSearch=scriptUrl?(scriptUrl.search+(typeof WebGLRenderingContext!=='undefined'&&!scriptUrl.search.includes('cb=v142')?'&cb=v142':'')):'';
   const landmarksUrl=scriptUrl?new URL('../../dist/district-landmarks.js'+scriptSearch,scriptUrl).href:null;
   const mapMediaUrl=scriptUrl?new URL('../../dist/map-media108.mjs'+scriptSearch,scriptUrl).href:null;
   const buildingsUrl=scriptUrl?new URL('./district-buildings.js'+scriptSearch,scriptUrl).href:null;
@@ -189,7 +189,7 @@
       // Native buttons supply the licensed emblem and keyboard action. This
       // matching, imperceptible symbol reserves their 44px touch area inside
       // Mapbox's shared placement index so shaped service text yields to it.
-      map.addLayer({id,type:'symbol',source:id,layout:{'icon-image':image,'icon-size':1,'icon-padding':6,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false},paint:{'icon-opacity':.001}});
+      map.addLayer({id,type:'symbol',source:id,layout:{'icon-image':image,'icon-size':1,'icon-padding':typeof WebGLRenderingContext!=='undefined'?24:6,'icon-pitch-alignment':'viewport','icon-rotation-alignment':'viewport','icon-allow-overlap':true,'icon-ignore-placement':false},paint:{'icon-opacity':.001}});
       // Placement walks symbol layers from top to bottom: core/detail icons
       // precede native emblems, which precede optional location text.
     }

@@ -265,7 +265,7 @@ html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-links button.zone
   color: var(--zaaa-text-1) !important;
   font-family: var(--zaaa-font-ui) !important;
   font-size: 15px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   line-height: 1.1 !important;
   white-space: nowrap !important;
   cursor: pointer !important;
@@ -614,7 +614,7 @@ html body .zwc-mission-strip * {
 html body .zone-topbar .zone-bulletin > span:first-child,
 html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin > span:first-child {
   position: relative !important;
-  z-index: 3 !important;
+  z-index: 4 !important;
   flex: 0 0 auto !important;
   padding-block: 1px !important;
   padding-inline: 8px !important;
@@ -622,23 +622,54 @@ html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin > span:first-ch
   background-image: none !important;
   border: 1px solid rgba(252, 249, 242, 0.28) !important;
   border-radius: 4px !important;
-  box-shadow: none !important;
+  box-shadow: calc(var(--zwc-dir-sign, 1) * 8px) 0 8px var(--zwc-bulletin-cap, #1c1916) !important;
   color: #fcf9f2 !important;
   font-weight: 700 !important;
 }
 
+html body .zone-topbar .zone-bulletin > span:first-child::before,
 html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin > span:first-child::before {
-  display: none !important;
+  display: block !important;
+  content: "" !important;
+  position: absolute !important;
+  inset-block: -8px !important;
+  inset-inline-end: 100% !important;
+  width: 100vw !important;
+  background-color: var(--zwc-bulletin-cap, #1c1916) !important;
+  background-image: var(--zwc-crosshatch-bg, none) !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
 }
 
 html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin > span:first-child[data-zwc-mission-label]::after {
   color: #fcf9f2 !important;
 }
 
+html body .zone-topbar .zone-bulletin [data-zticker="1"],
+html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] {
+  position: relative !important;
+  z-index: 1 !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 28px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  padding-inline-start: 10px !important;
+  animation: none !important;
+  transform: none !important;
+}
+
 html body .zone-topbar .zone-bulletin [data-zticker="1"] span,
 html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] span {
   color: #fcf9f2 !important;
   font-family: var(--zaaa-font-ui) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  max-width: 100% !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -648,6 +679,9 @@ html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin [data-zticker="
 @media (min-width: 901px) {
   html body aside.zone-sidebar,
   html body #dc-root#dc-root .zone-app aside.zone-sidebar {
+    position: sticky !important;
+    top: 92px !important;
+    max-height: calc(100svh - 104px) !important;
     width: 220px !important;
     min-width: 220px !important;
     max-width: 220px !important;
@@ -809,13 +843,22 @@ html body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest {
   border-radius: 999px;
 }
 
-/* Sidebar Vitals Timers - Prevent "FULL" Overlap */
+/* Sidebar Vitals Timers - Clean Vertical Flow Below Track (Zero Bar Collision) */
 aside.zone-sidebar .zone-resource .zone-resource-timer:not([data-zaaa-timer="countdown"]) {
   display: none !important;
 }
 
-aside.zone-sidebar .zone-resource .zone-resource-timer[data-zaaa-timer="countdown"] {
-  font-size: 12px !important;
+html body aside.zone-sidebar .zone-resource .zone-resource-timer[data-zaaa-timer="countdown"],
+html body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource .zone-resource-timer[data-zaaa-timer="countdown"] {
+  position: static !important;
+  inset: auto !important;
+  bottom: auto !important;
+  display: block !important;
+  margin-top: 2px !important;
+  text-align: end !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
   color: var(--zaaa-text-2) !important;
   direction: ltr !important;
   unicode-bidi: isolate !important;
@@ -973,8 +1016,8 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     min-height: 52px !important;
     padding-block-start: max(4px, env(safe-area-inset-top, 0px)) !important;
     padding-block-end: 4px !important;
-    padding-inline: 6px !important;
-    gap: 4px !important;
+    padding-inline: 5px !important;
+    gap: 3px !important;
     flex-wrap: nowrap !important;
     align-items: center !important;
   }
@@ -1056,11 +1099,11 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
   html body .zone-topbar .zone-brand,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand {
     order: 1 !important;
-    min-width: 46px !important;
+    min-width: 44px !important;
     min-height: 44px !important;
     height: 44px !important;
     padding-block: 0 !important;
-    padding-inline: 6px !important;
+    padding-inline: 5px !important;
     box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
   }
 
@@ -1068,18 +1111,18 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
   html body .zone-topbar .zone-brand > span:first-of-type,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span[data-zfig="1"],
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span:first-of-type {
-    font-size: 17px !important;
-    letter-spacing: 0.04em !important;
+    font-size: 15.5px !important;
+    letter-spacing: 0.03em !important;
   }
 
-  /* Compact Essential Live Stats Capsule (Cash / Energy / Nerve, each >=44x44px) */
+  /* Compact Essential Live Stats Capsule (Cash / Energy / Nerve, each >=44x44px, zero truncation at 390px) */
   html body .zone-topbar #zone-topbar-hud,
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud {
     order: 2 !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(44px, 1fr)) !important;
+    grid-template-columns: minmax(48px, 1fr) minmax(56px, 1.18fr) minmax(46px, 0.92fr) !important;
     gap: 3px !important;
     min-height: 44px !important;
     padding: 0 !important;
@@ -1119,7 +1162,7 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     min-height: 44px !important;
     height: 44px !important;
     padding-block: 2px 4px !important;
-    padding-inline: 2px !important;
+    padding-inline: 1px !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1140,8 +1183,9 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
 
   html body .zone-topbar #zone-topbar-hud :is(bdi, span),
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span) {
-    font-size: 11.5px !important;
+    font-size: 10.5px !important;
     font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
     line-height: 1.05 !important;
     max-width: 100% !important;
     overflow: hidden !important;

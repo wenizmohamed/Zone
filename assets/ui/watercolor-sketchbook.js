@@ -113,20 +113,71 @@
     account: sketchAreaSvg('#2da4e8', '<circle class="zwc-wash-fill" cx="12" cy="8.6" r="3.6" fill="__WASH__"/><path class="zwc-accent-fill" d="M5.5 19.5C6.4 16.2 8.8 14.6 12 14.6C15.2 14.6 17.6 16.2 18.5 19.5H5.5Z" fill="#f59e0b"/>', 'M12 12.2A3.6 3.6 0 1 0 12 5A3.6 3.6 0 0 0 12 12.2ZM5.5 19.5C6.4 16.2 8.8 14.6 12 14.6C15.2 14.6 17.6 16.2 18.5 19.5')
   };
 
+  /* Vibrant Hand-Inked Gouache Icons for Market Items, Item Inspector Stage, Education & Jobs */
+  var SKETCH_ITEM_ICONS = {
+    rifle: sketchAreaSvg('#ea7234', '<path class="zwc-wash-fill" d="M3 10.5H15.5L17.5 13H13.5L12.5 16.5H10L10.5 13H6.5L4.5 16H2.5L3 10.5Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="15" y="10.2" width="6.2" height="2" rx="0.6" fill="#3b82f6"/><rect class="zwc-accent-fill" x="8" y="8" width="4.8" height="2" rx="0.6" fill="#f5b82e"/>', 'M2.8 10.6H21.2M15.4 10.6L17.2 13H13.4L12.4 17H9.8L10.4 13H6.4L4.4 16.2H2.5L3 10.6M8.2 8.2H12.8V10.6H8.2V8.2Z'),
+    shotgun: sketchAreaSvg('#b85233', '<path class="zwc-wash-fill" d="M2.6 11.4H16.4V13.8H11.2L9.2 16.4H5.2L6.8 13.8H2.6V11.4Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="15.8" y="10.4" width="5.6" height="2.2" rx="0.6" fill="#688cb8"/><rect class="zwc-accent-fill" x="10.2" y="13.4" width="5" height="1.8" rx="0.6" fill="#f5b82e"/>', 'M2.6 11.2H21.4M16 10.2H21.4V12.6H16M2.6 11.2V13.8H7L5 16.6H9.2L11.2 13.8H16.4V11.2M10.4 13.8H15.2'),
+    pistol: sketchAreaSvg('#3b82f6', '<path class="zwc-wash-fill" d="M4.2 8.4H19.4V12.4H11.6L10.2 18.2H6.4L8.2 12.4H4.2V8.4Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="5.8" y="8.8" width="12.2" height="2.4" fill="#f5b82e"/>', 'M4.2 8.4H19.6V12.4H11.6L10.2 18.2H6.4L8.2 12.4H4.2V8.4ZM11.6 12.4C11.6 14.2 13.2 14.6 14 13.4'),
+    melee: sketchAreaSvg('#e63946', '<path class="zwc-wash-fill" d="M18.6 4.4L19.6 5.4L10.8 14.2L8.4 11.8L18.6 4.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M7.6 11.2L12.8 16.4L11.4 17.8L9.6 16L6.2 19.4L4.6 17.8L8 14.4L6.2 12.6L7.6 11.2Z" fill="#f5b82e"/>', 'M19.4 4.6L10.6 13.8M19.4 4.6L14.2 5.4L8.4 11.6M7.4 11L13 16.6M8.8 14.6L5 18.4L6.2 19.6L10 15.8'),
+    medical: sketchAreaSvg('#2da4e8', '<rect class="zwc-wash-fill" x="3.8" y="6.8" width="16.4" height="12.6" rx="2.4" fill="__WASH__"/><path class="zwc-accent-fill" d="M10.4 9.2H13.6V11.6H16V14.8H13.6V17.2H10.4V14.8H8V11.6H10.4V9.2Z" fill="#e63946"/>', 'M9 6.8V5C9 4.2 9.6 3.6 10.4 3.6H13.6C14.4 3.6 15 4.2 15 5V6.8M3.8 6.8H20.2V19.4H3.8V6.8ZM12 9.6V16.8M8.4 13.2H15.6'),
+    armor: sketchAreaSvg('#3b82f6', '<path class="zwc-wash-fill" d="M12 3.4L19.4 6.4V12C19.4 16.4 16.2 19.5 12 20.8C7.8 19.5 4.6 16.4 4.6 12V6.4L12 3.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M12 6.4L16.4 8.2V11.8C16.4 14.5 14.5 16.5 12 17.5C9.5 16.5 7.6 14.5 7.6 11.8V8.2L12 6.4Z" fill="#f5b82e"/>', 'M12 3.4L19.4 6.4V12C19.4 16.4 16.2 19.5 12 20.8C7.8 19.5 4.6 16.4 4.6 12V6.4L12 3.4ZM12 7.5V16.5M8.5 11.5H15.5'),
+    booster: sketchAreaSvg('#22b56b', '<path class="zwc-wash-fill" d="M9.4 4.4H14.6V8.4L18.2 15.6C18.8 17 17.8 19.4 16 19.4H8C6.2 19.4 5.2 17 5.8 15.6L9.4 8.4V4.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M7.2 14.2H16.8L17.8 16.6C18 17.8 17.1 19 15.8 19H8.2C6.9 19 6 17.8 6.2 16.6L7.2 14.2Z" fill="#f5b82e"/>', 'M8.5 4.2H15.5M9.6 4.2V8.6L5.8 15.8C5.2 17.2 6.2 19.4 8 19.4H16C17.8 19.4 18.8 17.2 18.2 15.8L14.4 8.6V4.2M7.6 14H16.4'),
+    biology: sketchAreaSvg('#22b56b', '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.4" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="3" fill="#e63946"/>', 'M12 4.6A7.4 7.4 0 1 0 12 19.4A7.4 7.4 0 1 0 12 4.6ZM12 8.8A3.2 3.2 0 1 0 12 15.2A3.2 3.2 0 1 0 12 8.8ZM6.5 7.5L9.5 10M17.5 16.5L14.5 14M17.5 7.5L14.5 10M6.5 16.5L9.5 14'),
+    sports: sketchAreaSvg('#ef4c4c', '<rect class="zwc-accent-fill" x="7.8" y="10.8" width="8.4" height="2.4" rx="0.8" fill="#2da4e8"/><rect class="zwc-wash-fill" x="4.2" y="7.4" width="3.8" height="9.2" rx="1" fill="__WASH__"/><rect class="zwc-wash-fill" x="16" y="7.4" width="3.8" height="9.2" rx="1" fill="__WASH__"/>', 'M2.2 12H4.2M19.8 12H21.8M8 12H16M4.2 7.4H8V16.6H4.2V7.4ZM16 7.4H19.8V16.6H16V7.4Z'),
+    law: sketchAreaSvg('#f5b82e', '<rect class="zwc-wash-fill" x="9.6" y="4.2" width="7.2" height="4.4" rx="1" transform="rotate(35 13.2 6.4)" fill="__WASH__"/><rect class="zwc-accent-fill" x="4.2" y="17.2" width="11.6" height="2.8" rx="0.8" fill="#ea7234"/>', 'M10.4 4.2L17.4 9.2L15 12.6L8 7.6L10.4 4.2ZM11.8 10.6L6.4 17.2M4.2 17.4H16V20H4.2V17.4Z'),
+    business: sketchAreaSvg('#2da4e8', '<rect class="zwc-wash-fill" x="4.5" y="13" width="3.6" height="6.6" rx="0.7" fill="#22b56b"/><rect class="zwc-wash-fill" x="10.2" y="9.4" width="3.6" height="10.2" rx="0.7" fill="__WASH__"/><rect class="zwc-accent-fill" x="15.9" y="5.6" width="3.6" height="14" rx="0.7" fill="#f5b82e"/>', 'M3.2 19.6H20.8M4.5 13H8.1V19.6H4.5V13ZM10.2 9.4H13.8V19.6H10.2V9.4ZM15.9 5.6H19.5V19.6H15.9V5.6ZM4.8 10.2L10.4 6.6L16.2 4.2'),
+    tech: sketchAreaSvg('#5c7cfa', '<rect class="zwc-wash-fill" x="5.4" y="5.4" width="13.2" height="13.2" rx="2" fill="__WASH__"/><rect class="zwc-accent-fill" x="9" y="9" width="6" height="6" rx="1" fill="#f5b82e"/>', 'M5.4 5.4H18.6V18.6H5.4V5.4ZM9 9H15V15H9V9ZM9 2.6V5.4M15 2.6V5.4M9 18.6V21.4M15 18.6V21.4M2.6 9H5.4M2.6 15H5.4M18.6 9H21.4M18.6 15H21.4'),
+    grocer: sketchAreaSvg('#22b56b', '<rect class="zwc-wash-fill" x="4.6" y="10" width="14.8" height="9.6" rx="1.2" fill="#f5b82e"/><path class="zwc-accent-fill" d="M3.6 5H20.4L21.4 10H2.6L3.6 5Z" fill="#e63946"/><rect class="zwc-accent-fill" x="9.6" y="14" width="4.8" height="5.6" fill="__WASH__"/>', 'M3.6 5H20.4L21.4 10H2.6L3.6 5ZM4.6 10V19.6H19.4V10M9.6 19.6V14H14.4V19.6'),
+    army: sketchAreaSvg('#6c8c3c', '<path class="zwc-wash-fill" d="M12 3.8L14.4 8.8L19.8 9.6L15.8 13.4L16.8 18.8L12 16.2L7.2 18.8L8.2 13.4L4.2 9.6L9.6 8.8L12 3.8Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="2.4" fill="#f5b82e"/>', 'M12 3.8L14.4 8.8L19.8 9.6L15.8 13.4L16.8 18.8L12 16.2L7.2 18.8L8.2 13.4L4.2 9.6L9.6 8.8L12 3.8Z')
+  };
+
+  function resolveItemIconKey(nameText, typeText) {
+    var s = String((nameText || '') + ' ' + (typeText || '')).toLowerCase();
+    if (/painkiller|first aid|med|blood|morphine|bandage|إسعاف|دواء|طبي|مسكن/.test(s)) return 'medical';
+    if (/armor|vest|kevlar|helmet|shield|درع|سترة|خوذة/.test(s)) return 'armor';
+    if (/booster|energy|candy|xanax|ecstasy|drink|serum|منشط|طاقة|مشروب/.test(s)) return 'booster';
+    if (/shotgun|pump|بندقية رش|شوزن/.test(s)) return 'shotgun';
+    if (/pistol|magnum|glock|revolver|handgun|مسدس|ماغنوم/.test(s)) return 'pistol';
+    if (/knife|blade|bat|crowbar|katana|melee|سكين|سيف|عصا|مضرب/.test(s)) return 'melee';
+    if (/ak|rifle|m4|g3|l85|sniper|smg|weapon|gun|سلاح|رشاش|بندقية/.test(s)) return 'rifle';
+    return 'armor';
+  }
+
+  function resolveRecordIconKey(titleText) {
+    var s = String(titleText || '').toLowerCase();
+    if (/bio|med|health|doctor|nurse|أحياء|طب|صح/.test(s)) return 'biology';
+    if (/sport|gym|fitness|combat|fight|رياض|لياق|قتال/.test(s)) return 'sports';
+    if (/law|legal|crim|judge|قانون|جنائ|محام/.test(s)) return 'law';
+    if (/busi|econ|finan|bank|market|تجار|أعمال|اقتصاد|مال/.test(s)) return 'business';
+    if (/comp|tech|cyber|hack|code|science|حاسوب|تقني|برمج/.test(s)) return 'tech';
+    if (/grocer|shop|store|clerk|بقال|متجر/.test(s)) return 'grocer';
+    if (/casino|dealer|card|كازينو|موزع/.test(s)) return 'casino';
+    if (/army|military|guard|secur|جيش|عسكر|أمن/.test(s)) return 'army';
+    if (/edu|teach|univ|school|تعليم|أكاديم/.test(s)) return 'education';
+    return 'jobs';
+  }
+
   function resolveScreenKey(raw) {
     var k = String(raw || '').trim().toLowerCase();
     if (SKETCH_AREA_ICONS[k]) return k;
-    if (k.indexOf('job') === 0) return 'jobs';
-    if (k.indexOf('crime') === 0) return 'crimes';
-    if (k.indexOf('item') === 0) return 'items';
-    if (k.indexOf('prop') === 0) return 'properties';
-    if (k.indexOf('edu') === 0) return 'education';
-    if (k.indexOf('hosp') === 0) return 'hospital';
-    if (k.indexOf('fact') === 0) return 'faction';
-    if (k.indexOf('news') === 0) return 'newspaper';
-    if (k.indexOf('elim') === 0) return 'elimination';
-    if (k.indexOf('miss') === 0) return 'missions';
-    if (k.indexOf('mark') === 0 || k.indexOf('bazaar') >= 0) return 'market';
+    if (k.indexOf('job') === 0 || /وظيف|عمل/.test(k)) return 'jobs';
+    if (k.indexOf('crime') === 0 || /جرائم|جريم/.test(k)) return 'crimes';
+    if (k.indexOf('item') === 0 || /عتاد|ترسان/.test(k)) return 'items';
+    if (k.indexOf('prop') === 0 || /عقار|مسكن/.test(k)) return 'properties';
+    if (k.indexOf('edu') === 0 || /تعليم|جامع/.test(k)) return 'education';
+    if (k.indexOf('hosp') === 0 || /مستشف/.test(k)) return 'hospital';
+    if (k.indexOf('fact') === 0 || /عائل|نقاب/.test(k)) return 'faction';
+    if (k.indexOf('news') === 0 || /صحيف/.test(k)) return 'newspaper';
+    if (k.indexOf('elim') === 0 || /تصفي/.test(k)) return 'elimination';
+    if (k.indexOf('miss') === 0 || /مهام|عقود/.test(k)) return 'missions';
+    if (k.indexOf('mark') === 0 || k.indexOf('bazaar') >= 0 || /سوق|بازار/.test(k)) return 'market';
+    if (/بنك/.test(k)) return 'bank';
+    if (/نادي|تمرين/.test(k)) return 'gym';
+    if (/سجن/.test(k)) return 'jail';
+    if (/كازينو/.test(k)) return 'casino';
+    if (/هجوم|قتال/.test(k)) return 'attack';
+    if (/مشاهير/.test(k)) return 'hof';
+    if (/مدين/.test(k)) return 'city';
     return 'home';
   }
 
@@ -468,10 +519,85 @@
         var sTmp = document.createElement('div');
         sTmp.innerHTML = SKETCH_AREA_ICONS[sKey] || SKETCH_AREA_ICONS.city;
         if (sTmp.firstElementChild) {
+          sSvg.classList.add('zwc-sketch-ico');
           sSvg.setAttribute('data-zwc-ink', sKey);
           sSvg.setAttribute('data-zwc-icon', '1');
           sSvg.setAttribute('viewBox', '0 0 24 24');
           sSvg.innerHTML = sTmp.firstElementChild.innerHTML;
+        }
+      }
+    }
+
+    /* Item Market Hand-Inked Gouache Item Icons (replaces tiny monochrome 1px outlines) */
+    var marketRows = document.querySelectorAll('#zone-main[data-zone-screen="market"] .zone-table-row');
+    for (var mi = 0; mi < marketRows.length; mi++) {
+      var mRow = marketRows[mi];
+      var mIconSpan = mRow.querySelector(':scope > div:first-child > span:first-child');
+      if (!mIconSpan) continue;
+      var mTextWrap = mIconSpan.nextElementSibling;
+      var mName = mTextWrap && mTextWrap.children[0] ? mTextWrap.children[0].textContent : '';
+      var mType = mTextWrap && mTextWrap.children[1] ? mTextWrap.children[1].textContent : '';
+      var mKey = resolveItemIconKey(mName, mType);
+      var mExisting = mIconSpan.querySelector('svg.zwc-sketch-ico');
+      if (!mExisting || mExisting.getAttribute('data-zwc-market-ico') !== mKey) {
+        if (mExisting) mExisting.remove();
+        var mTmp = document.createElement('div');
+        mTmp.innerHTML = SKETCH_ITEM_ICONS[mKey] || SKETCH_ITEM_ICONS.rifle;
+        var mSvg = mTmp.firstElementChild;
+        if (mSvg) {
+          mSvg.setAttribute('data-zwc-market-ico', mKey);
+          mSvg.setAttribute('data-zwc-ink', mKey);
+          mIconSpan.setAttribute('data-zwc-enhanced', '1');
+          mIconSpan.appendChild(mSvg);
+        }
+      }
+    }
+
+    /* Items Inspector Category Artwork Stage (replaces harsh solid-black pixel cross on Light paper) */
+    var stageImgs = document.querySelectorAll('#zone-main .zone-item-stage img[src*="assets/ui/icons/"]');
+    for (var st = 0; st < stageImgs.length; st++) {
+      var stImg = stageImgs[st];
+      var stHost = stImg.parentElement;
+      if (!stHost) continue;
+      var inspector = stHost.closest('.zone-item-inspector');
+      var selHeading = inspector ? inspector.querySelector('.zone-panel-heading') : null;
+      var stKey = resolveItemIconKey(
+        (selHeading ? selHeading.textContent : '') + ' ' + (stImg.getAttribute('src') || ''),
+        stImg.getAttribute('alt') || ''
+      );
+      stImg.style.display = 'none';
+      var emblem = stHost.querySelector('.zwc-stage-emblem');
+      if (!emblem || emblem.getAttribute('data-zwc-stage-ico') !== stKey) {
+        if (emblem) emblem.remove();
+        emblem = document.createElement('span');
+        emblem.className = 'zwc-stage-emblem';
+        emblem.setAttribute('data-zwc-stage-ico', stKey);
+        emblem.setAttribute('aria-hidden', 'true');
+        emblem.innerHTML = SKETCH_ITEM_ICONS[stKey] || SKETCH_ITEM_ICONS.medical;
+        stHost.insertBefore(emblem, stImg);
+      }
+    }
+
+    /* Education & Jobs Hand-Inked Medallions (replaces harsh dark-mode black squares on Light cream) */
+    var recordArts = document.querySelectorAll(
+      '#zone-main[data-zone-screen="education"] .zone-record-art, #zone-main[data-zone-screen="jobs"] .zone-record-art, #zone-main[data-zone-screen="job"] .zone-record-art'
+    );
+    for (var ri = 0; ri < recordArts.length; ri++) {
+      var rArt = recordArts[ri];
+      var rRow = rArt.closest('article, .zone-current-record, header');
+      var rTitleEl = rRow ? rRow.querySelector('h2, h3') : null;
+      var rKey = resolveRecordIconKey(rTitleEl ? rTitleEl.textContent : '');
+      var rSvg = rArt.querySelector('svg.zwc-sketch-ico');
+      if (!rSvg || rSvg.getAttribute('data-zwc-rec-ico') !== rKey) {
+        if (rSvg) rSvg.remove();
+        var rTmp = document.createElement('div');
+        rTmp.innerHTML = SKETCH_ITEM_ICONS[rKey] || SKETCH_AREA_ICONS[rKey] || SKETCH_AREA_ICONS.jobs;
+        var nextRecSvg = rTmp.firstElementChild;
+        if (nextRecSvg) {
+          nextRecSvg.setAttribute('data-zwc-rec-ico', rKey);
+          nextRecSvg.setAttribute('data-zwc-ink', rKey);
+          rArt.setAttribute('data-zwc-enhanced', '1');
+          rArt.appendChild(nextRecSvg);
         }
       }
     }
@@ -535,12 +661,12 @@
   };
 
   var CITY_PINS = [
-    { id: 'bank', screen: 'bank', x: 47, y: 39, color: '#3e6fb0', en: 'Central Bank', ar: 'البنك المركزي', minLv: 1 },
-    { id: 'gym', screen: 'gym', x: 37, y: 49, color: '#6c8c3c', en: 'Ironworks Gym', ar: 'النادي الرياضي', minLv: 1 },
-    { id: 'crimes', screen: 'crimes', x: 20, y: 66, color: '#b85233', en: 'Harbor Docks', ar: 'مرافئ العمليات', minLv: 1 },
-    { id: 'hospital', screen: 'hospital', x: 56, y: 45, color: '#b85233', en: 'City Hospital', ar: 'المستشفى', minLv: 1 },
-    { id: 'market', screen: 'market', x: 70, y: 61, color: '#dba83b', en: 'Old Town Market', ar: 'سوق البلدة القديمة', minLv: 1 },
-    { id: 'properties', screen: 'properties', x: 86, y: 43, color: '#2f8b7b', en: 'Citadel Estates', ar: 'عقارات القلعة', minLv: 1 },
+    { id: 'bank', screen: 'bank', x: 45, y: 34, color: '#3e6fb0', en: 'Central Bank', ar: 'البنك المركزي', minLv: 1 },
+    { id: 'gym', screen: 'gym', x: 28, y: 50, color: '#6c8c3c', en: 'Ironworks Gym', ar: 'النادي الرياضي', minLv: 1 },
+    { id: 'crimes', screen: 'crimes', x: 17, y: 70, color: '#b85233', en: 'Harbor Docks', ar: 'مرافئ العمليات', minLv: 1 },
+    { id: 'hospital', screen: 'hospital', x: 64, y: 43, color: '#b85233', en: 'City Hospital', ar: 'المستشفى', minLv: 1 },
+    { id: 'market', screen: 'market', x: 71, y: 67, color: '#dba83b', en: 'Old Town Market', ar: 'سوق البلدة القديمة', minLv: 1 },
+    { id: 'properties', screen: 'properties', x: 86, y: 35, color: '#2f8b7b', en: 'Citadel Estates', ar: 'عقارات القلعة', minLv: 1 },
     { id: 'casino', screen: 'casino', x: 42, y: 27, color: '#7b4ca0', en: 'Grand Casino', ar: 'الكازينو الكبير', minLv: 1 },
     { id: 'education', screen: 'education', x: 64, y: 17, color: '#3e6fb0', en: 'University Hill', ar: 'تلة الجامعة', minLv: 1 },
     { id: 'jail', screen: 'jail', x: 26, y: 18, color: '#b85233', en: 'Fortress Bastion', ar: 'سجن الحصن', minLv: 1 },
@@ -661,13 +787,46 @@
     }
   }
 
+  /* Prevent programmatic focus on #zone-main from scrolling H1/sidebar under sticky .zone-topbar */
+  if (typeof HTMLElement !== 'undefined' && HTMLElement.prototype && typeof HTMLElement.prototype.focus === 'function' && !HTMLElement.prototype.__zwcFocusGuarded) {
+    var origFocus = HTMLElement.prototype.focus;
+    HTMLElement.prototype.__zwcFocusGuarded = true;
+    HTMLElement.prototype.focus = function (opts) {
+      if (this && this.id === 'zone-main') {
+        try {
+          return origFocus.call(this, Object.assign({}, opts || {}, { preventScroll: true }));
+        } catch (_) {
+          return origFocus.call(this);
+        }
+      }
+      return arguments.length > 0 ? origFocus.call(this, opts) : origFocus.call(this);
+    };
+  }
+
   var lastObservedScreen = '';
   var rafScheduled = false;
+  var userScrolledSinceRoute = false;
 
-  function snapRouteTopIfNeeded() {
-    if (window.scrollY > 0 && window.scrollY < 240) {
-      window.scrollTo(0, 0);
+  function instantScrollTop() {
+    if (userScrolledSinceRoute) return;
+    if (window.scrollY > 0) {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } catch (_) {
+        window.scrollTo(0, 0);
+      }
     }
+  }
+
+  function scheduleRouteTopSnap() {
+    userScrolledSinceRoute = false;
+    instantScrollTop();
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(instantScrollTop);
+    }
+    setTimeout(instantScrollTop, 50);
+    setTimeout(instantScrollTop, 160);
+    setTimeout(instantScrollTop, 380);
   }
 
   function syncAll() {
@@ -680,12 +839,7 @@
       var curScreen = main ? (main.getAttribute('data-zone-screen') || '') : '';
       if (curScreen && curScreen !== lastObservedScreen) {
         lastObservedScreen = curScreen;
-        snapRouteTopIfNeeded();
-        if (typeof window.requestAnimationFrame === 'function') {
-          window.requestAnimationFrame(snapRouteTopIfNeeded);
-        }
-        setTimeout(snapRouteTopIfNeeded, 50);
-        setTimeout(snapRouteTopIfNeeded, 130);
+        scheduleRouteTopSnap();
       }
       syncMissionBulletin();
       syncTutorialBanner();
@@ -706,6 +860,9 @@
 
   function boot() {
     ensureStylesheetLast();
+    window.addEventListener('wheel', function () { userScrolledSinceRoute = true; }, { passive: true });
+    window.addEventListener('touchmove', function () { userScrolledSinceRoute = true; }, { passive: true });
+    scheduleRouteTopSnap();
     syncAll();
     setTimeout(syncAll, 180);
     setTimeout(syncAll, 520);

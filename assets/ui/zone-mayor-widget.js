@@ -340,6 +340,7 @@
 
   function parseCash() {
     var g = window.__zoneGame;
+    if (g && g.p && Number.isFinite(Number(g.p.cash))) return Number(g.p.cash);
     if (g && g.state && typeof g.state.cash === 'number') return g.state.cash;
     var el = document.getElementById('zone-cash');
     if (!el) return 0;
@@ -348,6 +349,16 @@
   }
 
   function parseVital(id) {
+    var g = window.__zoneGame;
+    if (g && typeof g.cur === 'function') {
+      try {
+        var curVal = Number(g.cur(id));
+        var maxVal = typeof g.maxOf === 'function' ? Number(g.maxOf(id)) : 0;
+        if (Number.isFinite(curVal) && Number.isFinite(maxVal) && maxVal > 0) {
+          return { val: curVal, max: maxVal };
+        }
+      } catch (_) {}
+    }
     var box = document.querySelector('.zone-resource[data-zone-resource="' + id + '"] .zone-resource-track');
     if (!box) return { val: 0, max: 100 };
     return {
@@ -358,9 +369,17 @@
 
   function isBlockedStatus() {
     var g = window.__zoneGame;
-    if (g && g.state) {
-      if (g.state.hospitalUntil && g.state.hospitalUntil > Date.now()) return 'hospital';
-      if (g.state.jailUntil && g.state.jailUntil > Date.now()) return 'jail';
+    if (g) {
+      if (typeof g.isInHospital === 'function' && g.isInHospital()) return 'hospital';
+      if (typeof g.isInJail === 'function' && g.isInJail()) return 'jail';
+      if (g.p) {
+        if (Number(g.p.hospUntil || 0) > Date.now()) return 'hospital';
+        if (Number(g.p.jailUntil || 0) > Date.now()) return 'jail';
+      }
+      if (g.state) {
+        if (g.state.hospitalUntil && g.state.hospitalUntil > Date.now()) return 'hospital';
+        if (g.state.jailUntil && g.state.jailUntil > Date.now()) return 'jail';
+      }
     }
     return '';
   }
@@ -382,10 +401,19 @@
       return;
     }
     goToScreen('city');
-    setTimeout(function () {
+    var attempts = 0;
+    var tryClick = function () {
+      attempts++;
       var btn = document.querySelector('#zwc-city-panorama-stage [data-zwc-mode="3d"]');
-      if (btn) btn.click();
-    }, 220);
+      if (btn) {
+        btn.click();
+        return;
+      }
+      if (attempts < 8) {
+        setTimeout(tryClick, 100);
+      }
+    };
+    setTimeout(tryClick, 120);
   }
 
   var state = {
@@ -519,15 +547,52 @@
     };
   }
 
+  var hostEl = null;
   var rootEl = null;
   var bubbleEl = null;
   var avatarBtn = null;
+  var DOCK_STYLE_ID = 'zmw-v142-dock-styles';
+
+  function ensureDockStyles() {
+    try {
+      if (document.getElementById(DOCK_STYLE_ID)) return;
+      var style = document.createElement('style');
+      style.id = DOCK_STYLE_ID;
+      style.textContent = [
+        '#zone-mayor-widget{position:fixed !important;bottom:10px !important;inset-inline-end:0 !important;z-index:940 !important;display:flex !important;flex-direction:column !important;align-items:flex-end !important;pointer-events:none !important;}',
+        '#zone-mayor-widget[data-zmw-open="1"]{bottom:14px !important;inset-inline-end:12px !important;}',
+        'body.zone-map-expanded #zone-mayor-widget,body.zone-map-expanded #zmw-root{display:none !important;}',
+        '#zone-mayor-widget #zmw-root{position:static !important;bottom:auto !important;inset-inline-end:auto !important;z-index:auto !important;margin:0 !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] .zmw-launcher-wrap{gap:0 !important;align-items:flex-end !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] .zmw-avatar-tag{display:none !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] #zmw-avatar-btn{width:36px !important;height:42px !important;min-width:36px !important;min-height:42px !important;padding:3px 2px 3px 5px !important;border-radius:14px 0 0 14px !important;border-inline-end:0 !important;box-shadow:-2px 2px 0 var(--zmw-ink,#1e1b18),0 4px 12px var(--zmw-shadow,rgba(0,0,0,0.22)) !important;transition:width 180ms cubic-bezier(0.22,1,0.36,1),transform 180ms ease !important;}',
+        'html[dir="rtl"] #zone-mayor-widget[data-zmw-open="0"] #zmw-avatar-btn{padding:3px 5px 3px 2px !important;border-radius:0 14px 14px 0 !important;border-inline-end:0 !important;box-shadow:2px 2px 0 var(--zmw-ink,#1e1b18),0 4px 12px var(--zmw-shadow,rgba(0,0,0,0.22)) !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] #zmw-avatar-btn:hover,#zone-mayor-widget[data-zmw-open="0"] #zmw-avatar-btn:focus-visible{width:44px !important;transform:none !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] .zmw-avatar-frame{width:28px !important;height:28px !important;margin:0 auto !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] .zmw-unread-pip{top:-4px !important;inset-inline-start:-4px !important;inset-inline-end:auto !important;width:14px !important;height:14px !important;font-size:9px !important;}',
+        '@media (max-width:900px){',
+        '#zone-mayor-widget[data-zmw-open="0"]{bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important;inset-inline-end:0 !important;}',
+        '#zone-mayor-widget[data-zmw-open="1"]{bottom:calc(74px + env(safe-area-inset-bottom,0px)) !important;inset-inline-end:10px !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] #zmw-avatar-btn{width:32px !important;height:38px !important;min-width:32px !important;min-height:38px !important;}',
+        '#zone-mayor-widget[data-zmw-open="0"] .zmw-avatar-frame{width:24px !important;height:24px !important;}',
+        '}'
+      ].join('');
+      (document.head || document.documentElement).appendChild(style);
+    } catch (_) {}
+  }
 
   function ensureDom() {
-    if (rootEl && document.body && rootEl.parentElement === document.body) return;
+    ensureDockStyles();
+    if (hostEl && rootEl && document.body && hostEl.parentElement === document.body) return;
     if (!document.body) return;
+    var existingHost = document.getElementById('zone-mayor-widget');
+    if (existingHost) existingHost.remove();
     var existing = document.getElementById('zmw-root');
     if (existing) existing.remove();
+
+    hostEl = document.createElement('div');
+    hostEl.id = 'zone-mayor-widget';
+    hostEl.setAttribute('data-zmw-open', state.open ? '1' : '0');
 
     rootEl = document.createElement('aside');
     rootEl.id = 'zmw-root';
@@ -557,7 +622,8 @@
     launcherWrap.appendChild(tag);
     rootEl.appendChild(bubbleEl);
     rootEl.appendChild(launcherWrap);
-    document.body.appendChild(rootEl);
+    hostEl.appendChild(rootEl);
+    document.body.appendChild(hostEl);
 
     avatarBtn.addEventListener('click', function () {
       state.open = !state.open;
@@ -568,7 +634,9 @@
     });
 
     bubbleEl.addEventListener('click', function (ev) {
-      var closeBtn = ev.target.closest('[data-zmw-close]');
+      var target = ev.target && ev.target.closest ? ev.target : null;
+      if (!target) return;
+      var closeBtn = target.closest('[data-zmw-close]');
       if (closeBtn) {
         state.open = false;
         state.userClosed = true;
@@ -576,7 +644,7 @@
         render();
         return;
       }
-      var nextBtn = ev.target.closest('[data-zmw-next]');
+      var nextBtn = target.closest('[data-zmw-next]');
       if (nextBtn) {
         if (state.tab === 'rumor') state.rumorIdx++;
         else {
@@ -586,7 +654,7 @@
         render();
         return;
       }
-      var tabBtn = ev.target.closest('[data-zmw-tab]');
+      var tabBtn = target.closest('[data-zmw-tab]');
       if (tabBtn) {
         var nextTab = tabBtn.getAttribute('data-zmw-tab');
         if (nextTab === state.tab) {
@@ -598,7 +666,7 @@
         render();
         return;
       }
-      var actBtn = ev.target.closest('[data-zmw-action], [data-zmw-screen]');
+      var actBtn = target.closest('[data-zmw-action], [data-zmw-screen]');
       if (actBtn) {
         var act = actBtn.getAttribute('data-zmw-action');
         var scr = actBtn.getAttribute('data-zmw-screen');
@@ -635,7 +703,9 @@
       tagEl.textContent = meta.shortTag;
     }
     avatarBtn.setAttribute('aria-label', meta.openLabel);
+    avatarBtn.setAttribute('title', meta.name);
     avatarBtn.setAttribute('aria-expanded', state.open ? 'true' : 'false');
+    if (hostEl) hostEl.setAttribute('data-zmw-open', state.open ? '1' : '0');
 
     var pip = document.getElementById('zmw-unread-pip');
     if (pip) {
@@ -680,8 +750,21 @@
       '</div>';
   }
 
+  function attachMainObserver() {
+    if (typeof MutationObserver !== 'function') return;
+    var m = document.getElementById('zone-main');
+    if (m && !m.__zmwObserved) {
+      m.__zmwObserved = true;
+      var mObs = new MutationObserver(function () {
+        onStateUpdate();
+      });
+      mObs.observe(m, { attributes: true, attributeFilter: ['data-zone-screen'] });
+    }
+  }
+
   function onStateUpdate() {
     if (document.querySelector('x-dc')) return;
+    attachMainObserver();
     var scr = currentScreen();
     if (scr && scr !== state.lastScreen) {
       var firstBoot = state.lastScreen === '';
@@ -717,6 +800,15 @@
       setTimeout(onStateUpdate, 40);
     });
 
+    window.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && state.open) {
+        state.open = false;
+        state.userClosed = true;
+        try { window.localStorage.setItem(STORAGE_MIN_KEY, '1'); } catch (_) {}
+        render();
+      }
+    });
+
     if (typeof MutationObserver === 'function') {
       var docObs = new MutationObserver(function () {
         onStateUpdate();
@@ -725,18 +817,8 @@
         attributes: true,
         attributeFilter: ['lang', 'dir', 'data-theme']
       });
-      var attachMain = function () {
-        var m = document.getElementById('zone-main');
-        if (m && !m.__zmwObserved) {
-          m.__zmwObserved = true;
-          var mObs = new MutationObserver(function () {
-            onStateUpdate();
-          });
-          mObs.observe(m, { attributes: true, attributeFilter: ['data-zone-screen'] });
-        }
-      };
-      setTimeout(attachMain, 500);
-      setTimeout(attachMain, 1400);
+      setTimeout(attachMainObserver, 500);
+      setTimeout(attachMainObserver, 1400);
     }
 
     window.ZoneMayorWidget = {
