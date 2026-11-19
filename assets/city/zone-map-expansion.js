@@ -1,8 +1,8 @@
-/* ZONE v129 - Expanded 3D Metropolis, Mobile HUD & 48% Bottom-Sheet,
-   Atmospheric Hairline Sectors, Torn-Style Color Jewel Pins & Global World Flights */
+/* ZONE v136 - Sculpted 3D Architectural Metropolis, Daylight+Night Facade Shaders,
+   Mobile HUD & 48% Bottom-Sheet, Atmospheric Hairline Sectors & Global World Flights */
 (function (root) {
   "use strict";
-  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 129) return;
+  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 136) return;
 
   var EXTRA_ICONS = {
     airport: "M12 2l2.2 6.8L22 11v2l-7.8-1.2L13.5 18l2.5 1.8V21l-4-1-4 1v-1.2L10.5 18l-.7-6.2L2 13v-2l7.8-2.2L12 2z",
@@ -249,14 +249,14 @@
       fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [1.8, 15], "star-intensity": 0 },
       ambient: { color: "#eef4fa", intensity: 0.58 },
       sun: { color: "#fff6e0", intensity: 0.86, direction: [148, 52] },
-      land: "#ebe4d4",
-      landInd: "#dfd6c3",
-      water: "#3ba3cc",
-      park: "#77b970",
-      roadMain: "#ffffff",
-      road: "#cfc6b4",
-      roadCase: "#9e9481",
-      bldg: ["#b8c2cf", "#cfd6df", "#e6e2d8"],
+      land: "#efe6d4",
+      landInd: "#e2d7c0",
+      water: "#4389ad",
+      park: "#7ca262",
+      roadMain: "#fcf7ec",
+      road: "#d4c8b0",
+      roadCase: "#9e927c",
+      bldg: ["#c9bea9", "#dcd2bf", "#efe6d6"],
       lockFill: "#0f172a",
       lockOpacity: 0.10,
       isLightUi: true
@@ -845,58 +845,234 @@
 
     function buildOuterSkylineGeo() {
       var features = [];
+      var facadeFeatures = [];
       var idSeq = 1;
 
-      function pushBox(dx, dy, w, h, minZ, maxZ, tone) {
-        features.push({
+      function polyRing(dx, dy, w, h) {
+        return rectPoly(dx - w / 2, dy - h / 2, dx + w / 2, dy + h / 2);
+      }
+
+      function octagonRing(dx, dy, rx, ry, sides) {
+        var n = sides || 8;
+        var ring = [];
+        for (var i = 0; i < n; i++) {
+          var a = (i / n) * Math.PI * 2 + Math.PI / n;
+          ring.push(pt(dx + Math.cos(a) * rx, dy + Math.sin(a) * ry));
+        }
+        ring.push(ring[0].slice());
+        return [ring];
+      }
+
+      function pushPoly(coords, minZ, maxZ, tone, districtTag, accentColor, withFacade) {
+        var fid = 9000 + (idSeq++);
+        var pid = "outer-" + (districtTag || "metro") + "-" + fid;
+        var feat = {
           type: "Feature",
-          id: 9000 + (idSeq++),
-          properties: { height: maxZ, min_height: minZ || 0, tone: tone || 1 },
-          geometry: { type: "Polygon", coordinates: rectPoly(dx - w / 2, dy - h / 2, dx + w / 2, dy + h / 2) }
-        });
+          id: fid,
+          properties: {
+            providerId: pid,
+            providerTile: "outer/" + (districtTag || "metro"),
+            extrude: "true",
+            height: maxZ,
+            min_height: minZ || 0,
+            tone: tone !== undefined ? tone : 1,
+            accent: accentColor || ""
+          },
+          geometry: { type: "Polygon", coordinates: coords }
+        };
+        features.push(feat);
+        if (withFacade !== false) facadeFeatures.push(feat);
       }
 
-      /* West Neon & Casino Strip (Lv.3) */
-      for (var ny = -0.0018; ny <= 0.0046; ny += 0.0011) {
-        for (var nx = -0.0108; nx <= -0.0052; nx += 0.0012) {
-          var hNeon = 38 + ((Math.abs(Math.round(nx * 10000)) * 13 + Math.abs(Math.round(ny * 10000)) * 7) % 72);
-          pushBox(nx, ny, 0.00072, 0.00062, 0, hNeon, (idSeq % 3));
+      function pushBox(dx, dy, w, h, minZ, maxZ, tone, districtTag, accentColor, withFacade) {
+        pushPoly(polyRing(dx, dy, w, h), minZ, maxZ, tone, districtTag, accentColor, withFacade);
+      }
+
+      function pushOct(dx, dy, rx, ry, minZ, maxZ, tone, districtTag, accentColor, sides, withFacade) {
+        pushPoly(octagonRing(dx, dy, rx, ry, sides || 8), minZ, maxZ, tone, districtTag, accentColor, withFacade);
+      }
+
+      /* Sculpted multi-tier architectural building generator (never a bare single cube) */
+      function pushSculptedBlock(dx, dy, w, h, totalH, seed, districtTag) {
+        var style = seed % 5;
+        var podH = Math.max(10, Math.round(totalH * 0.28));
+        if (style === 0) {
+          /* Art-Deco 3-tier setback skyscraper + crown */
+          pushBox(dx, dy, w, h, 0, podH, 0, districtTag);
+          pushBox(dx, dy, w * 0.78, h * 0.78, podH, Math.round(totalH * 0.84), 1, districtTag);
+          pushBox(dx, dy, w * 0.50, h * 0.50, Math.round(totalH * 0.84), totalH, 2, districtTag);
+          if (totalH >= 85) pushOct(dx, dy, w * 0.14, h * 0.14, totalH, totalH + 14, 2, districtTag, "", 8, false);
+        } else if (style === 1) {
+          /* L-shaped podium + offset high-rise tower + penthouse */
+          pushBox(dx, dy - h * 0.16, w, h * 0.66, 0, podH, 0, districtTag);
+          pushBox(dx - w * 0.18, dy + h * 0.18, w * 0.62, h * 0.56, 0, Math.round(totalH * 0.62), 1, districtTag);
+          pushBox(dx + w * 0.16, dy - h * 0.12, w * 0.54, h * 0.54, podH, totalH, 2, districtTag);
+        } else if (style === 2) {
+          /* Twin courtyard wings + sky-connector */
+          pushBox(dx - w * 0.27, dy, w * 0.42, h * 0.92, 0, Math.round(totalH * 0.88), 1, districtTag);
+          pushBox(dx + w * 0.27, dy, w * 0.42, h * 0.92, 0, totalH, 2, districtTag);
+          pushBox(dx, dy, w * 0.36, h * 0.34, Math.round(totalH * 0.45), Math.round(totalH * 0.58), 0, districtTag);
+        } else if (style === 3) {
+          /* Stepped octagonal mid/high tower on square colonnade base */
+          pushBox(dx, dy, w * 0.95, h * 0.95, 0, podH, 0, districtTag);
+          pushOct(dx, dy, w * 0.42, h * 0.42, podH, Math.round(totalH * 0.88), 1, districtTag, "", 8);
+          pushOct(dx, dy, w * 0.26, h * 0.26, Math.round(totalH * 0.88), totalH + 6, 2, districtTag, "", 8, false);
+        } else {
+          /* Terraced waterfront / heritage block with recessed penthouse */
+          pushBox(dx, dy, w, h * 0.94, 0, Math.round(totalH * 0.56), 0, districtTag);
+          pushBox(dx, dy + h * 0.08, w * 0.72, h * 0.66, Math.round(totalH * 0.56), Math.round(totalH * 0.9), 1, districtTag);
+          pushBox(dx - w * 0.1, dy + h * 0.08, w * 0.38, h * 0.36, Math.round(totalH * 0.9), totalH, 2, districtTag);
         }
       }
-      pushBox(-0.0064, 0.0006, 0.0011, 0.0009, 0, 138, 2);
-      pushBox(-0.0064, 0.0006, 0.0006, 0.0005, 138, 174, 0);
 
-      /* East Sovereign Financial Citadel (Lv.10) - Supertall Skyscraper Cluster */
-      for (var ey = -0.0014; ey <= 0.0060; ey += 0.0011) {
-        for (var ex = 0.0052; ex <= 0.0109; ex += 0.0012) {
-          var hFin = 72 + ((Math.round(ex * 10000) * 19 + Math.round((ey + 0.02) * 10000) * 11) % 140);
-          pushBox(ex, ey, 0.00074, 0.00064, 0, hFin, (idSeq % 3));
+      /* ---- SECTOR 2: WEST NEON & CASINO STRIP (Lv.3) ---- */
+      for (var ny = -0.0017; ny <= 0.0045; ny += 0.00125) {
+        for (var nx = -0.0108; nx <= -0.0052; nx += 0.00135) {
+          /* Skip hero landmark footprints so heroes stand unobstructed */
+          if (Math.hypot(nx + 0.0064, ny - 0.0006) < 0.0012) continue;
+          if (Math.hypot(nx + 0.0095, ny - 0.0042) < 0.0012) continue;
+          if (Math.hypot(nx + 0.0098, ny + 0.0006) < 0.0011) continue;
+          var seedN = Math.abs(Math.round(nx * 10000)) * 13 + Math.abs(Math.round(ny * 10000)) * 7;
+          var hNeon = 38 + (seedN % 66);
+          pushSculptedBlock(nx, ny, 0.00084, 0.00072, hNeon, seedN, "neon");
         }
       }
-      pushBox(0.0081, 0.0024, 0.0011, 0.00095, 0, 220, 2);
-      pushBox(0.0081, 0.0024, 0.00058, 0.0005, 220, 270, 0);
+      /* Hero: Grand Velvet VIP Casino (Colonnade Plinth + Stepped Octagonal Rotunda Dome + Twin Pylons) */
+      pushBox(-0.0064, 0.0006, 0.00145, 0.00115, 0, 26, 0, "neon");
+      pushBox(-0.0064, 0.0006, 0.00112, 0.00088, 26, 86, 1, "neon");
+      pushOct(-0.0064, 0.0006, 0.00046, 0.00038, 86, 128, 2, "neon", "", 12);
+      pushOct(-0.0064, 0.0006, 0.00034, 0.00028, 128, 146, 2, "neon", "#dba83b", 12, false);
+      pushOct(-0.0064, 0.0006, 0.00018, 0.00015, 146, 162, 2, "neon", "#dba83b", 12, false);
+      pushBox(-0.00705, 0.0006, 0.00018, 0.00018, 26, 148, 2, "neon", "#c084fc", false);
+      pushBox(-0.00575, 0.0006, 0.00018, 0.00018, 26, 148, 2, "neon", "#c084fc", false);
+      /* Hero: Zone Biotech University Quad (4-Wing Courtyard + Observatory Dome) */
+      pushBox(-0.0095, 0.0046, 0.00135, 0.00028, 0, 34, 1, "neon");
+      pushBox(-0.0095, 0.0038, 0.00135, 0.00028, 0, 34, 1, "neon");
+      pushBox(-0.0101, 0.0042, 0.00028, 0.00082, 0, 32, 0, "neon");
+      pushBox(-0.0089, 0.0042, 0.00028, 0.00082, 0, 32, 0, "neon");
+      pushOct(-0.0095, 0.0042, 0.00024, 0.00020, 0, 56, 2, "neon", "#3e6fb0", 12);
+      /* Hero: Bloodsport Fight Pit (Stepped Octagonal Arena) */
+      pushOct(-0.0098, -0.0006, 0.00062, 0.00050, 0, 28, 0, "neon", "", 10);
+      pushOct(-0.0098, -0.0006, 0.00046, 0.00037, 28, 42, 2, "neon", "#b85233", 10, false);
 
-      /* North Motor Speedway & Grand Coliseum Stadium (Lv.5) */
-      for (var sx = -0.0038; sx <= 0.0040; sx += 0.0013) {
-        pushBox(sx, 0.0042, 0.0008, 0.0006, 0, 40 + (idSeq % 4) * 12, 1);
-        pushBox(sx, 0.0068, 0.00085, 0.0006, 0, 34 + (idSeq % 3) * 14, 0);
+      /* ---- SECTOR 4: EAST SOVEREIGN FINANCIAL CITADEL (Lv.10) ---- */
+      for (var ey = -0.0013; ey <= 0.0058; ey += 0.0013) {
+        for (var ex = 0.0053; ex <= 0.0108; ex += 0.00135) {
+          if (Math.hypot(ex - 0.0081, ey - 0.0024) < 0.0014) continue;
+          if (Math.hypot(ex - 0.0064, ey - 0.0016) < 0.0012) continue;
+          if (Math.hypot(ex - 0.0062, ey - 0.0052) < 0.0012) continue;
+          var seedE = Math.round(ex * 10000) * 19 + Math.round((ey + 0.02) * 10000) * 11;
+          var hFin = 78 + (seedE % 128);
+          pushSculptedBlock(ex, ey, 0.00086, 0.00074, hFin, seedE, "citadel");
+        }
       }
-      pushBox(0.0024, 0.0056, 0.0018, 0.0013, 0, 50, 2);
-      pushBox(-0.0016, 0.0062, 0.0022, 0.00042, 0, 30, 1);
-      pushBox(-0.0016, 0.0051, 0.0022, 0.00036, 0, 24, 2);
+      /* Hero: Sovereign Pinnacle Spire (6-Tier Tapered Icon + Needle Mast, 285m) */
+      pushBox(0.0081, 0.0024, 0.00148, 0.00122, 0, 36, 0, "citadel");
+      pushOct(0.0081, 0.0024, 0.00062, 0.00052, 36, 128, 1, "citadel", "", 8);
+      pushOct(0.0081, 0.0024, 0.00048, 0.00040, 128, 196, 2, "citadel", "", 8);
+      pushOct(0.0081, 0.0024, 0.00034, 0.00028, 196, 240, 2, "citadel", "", 8);
+      pushOct(0.0081, 0.0024, 0.00018, 0.00015, 240, 266, 2, "citadel", "#dba83b", 8, false);
+      pushOct(0.0081, 0.0024, 0.00006, 0.00005, 266, 288, 2, "citadel", "#dba83b", 6, false);
+      /* Hero: Sovereign Stock & FX Bourse Twin Towers + Elevated Sky-Bridge */
+      pushBox(0.0060, 0.0016, 0.00062, 0.00064, 0, 168, 1, "citadel");
+      pushBox(0.0068, 0.0016, 0.00062, 0.00064, 0, 168, 1, "citadel");
+      pushBox(0.0060, 0.0016, 0.00042, 0.00044, 168, 194, 2, "citadel");
+      pushBox(0.0068, 0.0016, 0.00042, 0.00044, 168, 194, 2, "citadel");
+      pushBox(0.0064, 0.0016, 0.00072, 0.00026, 98, 114, 2, "citadel", "#dba83b", false);
+      /* Hero: Federal High Courthouse (Neoclassical Stepped Plinth + Colonnade Wings + Dome) */
+      pushBox(0.0062, 0.0052, 0.00142, 0.00094, 0, 14, 0, "citadel");
+      pushBox(0.0062, 0.0052, 0.00120, 0.00072, 14, 48, 1, "citadel");
+      pushOct(0.0062, 0.0052, 0.00034, 0.00028, 48, 72, 2, "citadel", "#dfd5c2", 12, false);
+      pushOct(0.0062, 0.0052, 0.00020, 0.00017, 72, 84, 2, "citadel", "#dba83b", 12, false);
 
-      /* South-West Deepwater Port, Cranes & Warehouses (Lv.5) */
-      for (var wx = -0.0106; wx <= -0.0014; wx += 0.0014) {
-        pushBox(wx, -0.0043, 0.00095, 0.00058, 0, 26 + (idSeq % 3) * 10, 0);
-        pushBox(wx, -0.0059, 0.00105, 0.00052, 0, 20 + (idSeq % 4) * 9, 1);
+      /* ---- SECTOR 3 NORTH: GRAND COLISEUM ARENA, NITRO SPEEDWAY & RADIO TOWER (Lv.5) ---- */
+      for (var sx = -0.0036; sx <= 0.0040; sx += 0.00145) {
+        if (Math.abs(sx - 0.0024) > 0.0013 && Math.abs(sx + 0.0016) > 0.0014) {
+          pushSculptedBlock(sx, 0.0041, 0.00084, 0.00062, 42 + (idSeq % 4) * 11, idSeq, "harbor");
+        }
+        if (Math.abs(sx - 0.0024) > 0.0013) {
+          pushSculptedBlock(sx, 0.0070, 0.00088, 0.00062, 36 + (idSeq % 3) * 12, idSeq + 3, "harbor");
+        }
       }
+      /* Hero: Zone Coliseum Arena (16-sided Tiered Stadium Bowl + 4 Floodlight Pylons) */
+      pushOct(0.0024, 0.0056, 0.00112, 0.00084, 0, 26, 0, "harbor", "", 16);
+      pushOct(0.0024, 0.0056, 0.00096, 0.00070, 26, 46, 1, "harbor", "", 16);
+      pushOct(0.0024, 0.0056, 0.00078, 0.00056, 46, 54, 2, "harbor", "#dba83b", 16, false);
+      pushBox(0.0014, 0.0049, 0.00012, 0.00012, 0, 74, 2, "harbor", "#dba83b", false);
+      pushBox(0.0034, 0.0049, 0.00012, 0.00012, 0, 74, 2, "harbor", "#dba83b", false);
+      pushBox(0.0014, 0.0063, 0.00012, 0.00012, 0, 74, 2, "harbor", "#dba83b", false);
+      pushBox(0.0034, 0.0063, 0.00012, 0.00012, 0, 74, 2, "harbor", "#dba83b", false);
+      /* Hero: Nitro Motor Speedway (Twin Tiered Grandstands + Start/Finish Bridge Gantry + Pit Paddocks) */
+      pushBox(-0.0016, 0.0063, 0.0024, 0.00038, 0, 18, 0, "harbor");
+      pushBox(-0.0016, 0.0064, 0.0022, 0.00024, 18, 32, 2, "harbor", "#b85233", false);
+      pushBox(-0.0016, 0.0050, 0.0024, 0.00032, 0, 14, 1, "harbor");
+      pushBox(-0.0016, 0.0049, 0.0021, 0.00020, 14, 25, 2, "harbor");
+      pushBox(-0.0016, 0.00565, 0.00024, 0.0012, 14, 21, 2, "harbor", "#dba83b", false);
+      /* Hero: Signal Syndicate Broadcast Tower (Stepped Broadcast Base + Observation Pod + 158m Mast) */
+      pushBox(-0.0038, 0.0046, 0.00062, 0.00054, 0, 28, 0, "harbor");
+      pushOct(-0.0038, 0.0046, 0.00024, 0.00020, 28, 92, 1, "harbor", "", 8);
+      pushOct(-0.0038, 0.0046, 0.00034, 0.00028, 92, 108, 2, "harbor", "#3e6fb0", 12, false);
+      pushOct(-0.0038, 0.0046, 0.00008, 0.00007, 108, 158, 2, "harbor", "#b85233", 6, false);
 
-      /* South-East Zone International Airport Terminal, Control Tower & VIP Marina Penthouses (Lv.15) */
-      pushBox(0.0084, -0.0044, 0.0026, 0.00072, 0, 38, 2);
-      pushBox(0.0098, -0.0040, 0.00038, 0.00038, 0, 104, 0);
-      pushBox(0.0055, -0.0037, 0.00088, 0.00074, 0, 134, 2);
-      pushBox(0.0042, -0.0046, 0.00078, 0.00068, 0, 102, 1);
-      pushBox(0.0066, -0.0046, 0.00076, 0.00064, 0, 116, 0);
+      /* ---- SECTOR 3 SOUTH-WEST: DEEPWATER CONTAINER PORT, GANTRY CRANES & CARGO SHIPS (Lv.5) ---- */
+      var containerColors = ["#b85233", "#3e6fb0", "#dba83b", "#6c8c3c"];
+      for (var wx = -0.0104; wx <= -0.0018; wx += 0.0016) {
+        /* Stepped pitched harbor warehouse + skylight ridge */
+        pushBox(wx, -0.0043, 0.00112, 0.00056, 0, 18, 0, "harbor");
+        pushBox(wx, -0.0043, 0.00088, 0.00032, 18, 25, 1, "harbor");
+        /* Container stacks in watercolor freight colors */
+        var cCol = containerColors[Math.abs(Math.round(wx * 1000)) % containerColors.length];
+        pushBox(wx - 0.00025, -0.0056, 0.00046, 0.00022, 0, 11, 2, "harbor", cCol, false);
+        pushBox(wx + 0.00028, -0.0056, 0.00042, 0.00022, 0, 16, 2, "harbor", containerColors[(idSeq + 1) % 4], false);
+      }
+      /* Cylindrical Industrial Fuel Silos */
+      pushOct(-0.0106, -0.0057, 0.00026, 0.00022, 0, 28, 1, "harbor", "#dfd5c2", 12, false);
+      pushOct(-0.0099, -0.0057, 0.00026, 0.00022, 0, 28, 1, "harbor", "#dfd5c2", 12, false);
+      /* 4 Port Gantry Cranes overhanging the docks */
+      [-0.0090, -0.0072, -0.0054, -0.0036].forEach(function (cx) {
+        pushBox(cx - 0.00018, -0.0063, 0.00010, 0.00012, 0, 40, 2, "harbor", "#b85233", false);
+        pushBox(cx + 0.00018, -0.0063, 0.00010, 0.00012, 0, 40, 2, "harbor", "#b85233", false);
+        pushBox(cx, -0.00655, 0.00046, 0.00086, 36, 41, 2, "harbor", "#b85233", false);
+      });
+      /* 2 Docked Deepwater Cargo Ships in the Bay */
+      [-0.0080, -0.0044].forEach(function (shipX, sIdx) {
+        pushBox(shipX, -0.00725, 0.0021, 0.00038, 0, 9, 0, "harbor", "#344656", false);
+        pushBox(shipX - 0.00072, -0.00725, 0.00036, 0.00032, 9, 26, 2, "harbor", "#f3ead8", false);
+        pushBox(shipX + 0.00015, -0.00725, 0.0011, 0.00028, 9, 17, 2, "harbor", containerColors[sIdx % 4], false);
+        pushBox(shipX + 0.00025, -0.00725, 0.00068, 0.00022, 17, 22, 2, "harbor", containerColors[(sIdx + 2) % 4], false);
+      });
+
+      /* ---- SECTOR 5 SOUTH-EAST: ZONE INT'L AIRPORT, ATC TOWER, PRIVATE JETS & VIP MARINA (Lv.15) ---- */
+      /* Winged International Airport Terminal + Twin Concourse Piers */
+      pushBox(0.0084, -0.0044, 0.0026, 0.00066, 0, 22, 1, "airport");
+      pushBox(0.0084, -0.0044, 0.0020, 0.00044, 22, 34, 2, "airport", "#dfd5c2", false);
+      pushBox(0.0072, -0.0049, 0.00028, 0.00066, 0, 15, 0, "airport");
+      pushBox(0.0095, -0.0049, 0.00028, 0.00066, 0, 15, 0, "airport");
+      /* Flared Air Traffic Control Tower (Shaft + Wide Observation Cab + Radar Dome) */
+      pushOct(0.0099, -0.0038, 0.00018, 0.00016, 0, 86, 1, "airport", "", 8);
+      pushOct(0.0099, -0.0038, 0.00032, 0.00028, 86, 102, 2, "airport", "#3e6fb0", 10, false);
+      pushOct(0.0099, -0.0038, 0.00018, 0.00016, 102, 114, 2, "airport", "#f3ead8", 10, false);
+      /* 3 Parked Executive Jets on the Apron */
+      [0.0069, 0.0082, 0.0096].forEach(function (jx) {
+        pushBox(jx, -0.00515, 0.00042, 0.00009, 2, 7, 2, "airport", "#f3ead8", false);
+        pushBox(jx, -0.00515, 0.00010, 0.00034, 2, 6, 2, "airport", "#f3ead8", false);
+      });
+      /* Emerald Superyacht Marina Yacht Club + Docked Superyachts */
+      pushOct(0.0042, -0.0058, 0.00048, 0.00036, 0, 24, 1, "airport", "#dfd5c2", 10);
+      [0.0034, 0.0044, 0.0053].forEach(function (yx) {
+        pushBox(yx, -0.0070, 0.00016, 0.00064, 0, 6, 2, "airport", "#f3ead8", false);
+        pushBox(yx, -0.0070, 0.00011, 0.00032, 6, 12, 2, "airport", "#3e6fb0", false);
+      });
+      /* Sovereign Sky Penthouse Towers (Terraced Waterfront Luxury) */
+      pushSculptedBlock(0.0055, -0.0036, 0.00092, 0.00076, 142, 10, "airport");
+      pushSculptedBlock(0.0042, -0.0045, 0.00084, 0.00070, 110, 12, "airport");
+      pushSculptedBlock(0.0067, -0.0043, 0.00082, 0.00068, 122, 14, "airport");
+      pushSculptedBlock(0.0108, -0.0034, 0.00088, 0.00064, 62, 16, "airport");
+
+      /* Expose outer architectural polygons to district-surfaces111.mjs so EVERY building gets real windows & roofs! */
+      if (typeof window !== "undefined") {
+        window.__zoneOuterArchitecturalFeatures = facadeFeatures;
+      }
 
       return { type: "FeatureCollection", features: features };
     }
@@ -1117,13 +1293,21 @@
         type: "fill-extrusion",
         source: "metro-skyline-src",
         paint: {
-          "fill-extrusion-color": ["match", ["to-number", ["get", "tone"], 1], 0, "#1e2a3f", 1, "#293954", "#354a6b"],
+          "fill-extrusion-color": [
+            "case",
+            ["!=", ["coalesce", ["get", "accent"], ""], ""],
+            ["get", "accent"],
+            ["match", ["to-number", ["get", "tone"], 1], 0, "#1e2a3f", 1, "#293954", "#354a6b"]
+          ],
           "fill-extrusion-height": ["get", "height"],
           "fill-extrusion-base": ["get", "min_height"],
-          "fill-extrusion-opacity": 0.94,
+          "fill-extrusion-opacity": 0.96,
           "fill-extrusion-vertical-gradient": true
         }
       }, beforeCoins);
+      if (typeof ctx.onOuterBuildingsReady === "function") {
+        try { ctx.onOuterBuildingsReady(); } catch (_) {}
+      }
 
       safeAddSource("sector-locks-src", { type: "geojson", data: buildSectorLocksGeo() });
       safeAddLayer({
@@ -1616,21 +1800,32 @@
       }
 
       setPaint("district-skyline-3d", "fill-extrusion-color", ["match", ["to-string", ["get", "tone"]], "#162234", cfg.bldg[0], "#1c2b42", cfg.bldg[1], cfg.bldg[2]]);
-      setPaint("metro-outer-skyline-3d", "fill-extrusion-color", ["match", ["to-number", ["get", "tone"], 1], 0, cfg.bldg[0], 1, cfg.bldg[1], cfg.bldg[2]]);
+      setPaint("metro-outer-skyline-3d", "fill-extrusion-color", [
+        "case",
+        ["!=", ["coalesce", ["get", "accent"], ""], ""],
+        ["get", "accent"],
+        ["match", ["to-number", ["get", "tone"], 1], 0, cfg.bldg[0], 1, cfg.bldg[1], cfg.bldg[2]]
+      ]);
 
       setPaint("sector-lock-fill", "fill-color", cfg.lockFill);
       setPaint("sector-lock-fill", "fill-opacity", cfg.lockOpacity);
       setPaint("sector-lock-border", "line-color", cfg.isLightUi ? "#475569" : "#94a3b8");
       setPaint("sector-lock-border", "line-opacity", 0.32);
 
-      /* Toggle Three.js dark noir window custom layers off in sunlit Day/Afternoon/Dawn so 3D walls are sunlit, and on in Dusk/Night */
+      /* Keep Three.js architectural window/roof custom layers VISIBLE in BOTH Day and Night,
+         feeding the live daylight blend factor so buildings always show real windows, mullions & crowns! */
+      var daylightFactor = phaseKey === "day" || phaseKey === "afternoon" ? 1.0 : phaseKey === "dawn" ? 0.78 : phaseKey === "dusk" ? 0.25 : 0.0;
+      if (typeof window !== "undefined") {
+        window.__zoneMapAtmosphere = { phase: phaseKey, isLightUi: !!cfg.isLightUi, daylight: daylightFactor };
+      }
       try {
         var allLayers = (map.getStyle && map.getStyle() && map.getStyle().layers) || [];
         allLayers.forEach(function (ly) {
           if (ly && ly.type === "custom" && map.setLayoutProperty) {
-            try { map.setLayoutProperty(ly.id, "visibility", cfg.isLightUi ? "none" : "visible"); } catch (_) {}
+            try { map.setLayoutProperty(ly.id, "visibility", "visible"); } catch (_) {}
           }
         });
+        if (map.triggerRepaint) map.triggerRepaint();
       } catch (_) {}
 
       var textCol = cfg.isLightUi ? "#0f172a" : "#f8fafc";
@@ -1684,6 +1879,8 @@
 
     injectStyles();
     buildChronoHud();
+    /* Pre-seed sculpted outer architectural polygons immediately so district-surfaces111 wraps ALL 5 sectors on its very first pass */
+    try { buildOuterSkylineGeo(); } catch (_) {}
     if (isMapStyleReady()) onMapReadyPass();
     map.on("style.load", onMapReadyPass);
     map.on("load", onMapReadyPass);
@@ -1730,7 +1927,7 @@
   }
 
   var expansionApi = {
-    version: "129.0",
+    version: "136.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -1746,7 +1943,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 129;
+  root.__zoneMapExpansionVersion = 136;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

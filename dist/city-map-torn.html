@@ -476,14 +476,14 @@ initializeMapLocale();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
-<script src="../assets/city/zone-map-expansion.js?v=118&cb=v129"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118&cb=v136"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v135',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
-    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v129',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v136',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v136',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -1898,7 +1898,7 @@ initializeMapLocale();
     setTimeout(function(){ if(el.zboot) el.zboot.classList.add('gone'); },4000);
   });
 
-  if(typeof WebGLRenderingContext!=='undefined'&&window.ZoneMapExpansion)window.ZoneMapExpansion.init({map:map,CENTER:CENTER,ICON_PATHS:ICON_PATHS,ensurePoiImage:ensurePoiImage});
+  if(typeof WebGLRenderingContext!=='undefined'&&window.ZoneMapExpansion)window.ZoneMapExpansion.init({map:map,CENTER:CENTER,ICON_PATHS:ICON_PATHS,ensurePoiImage:ensurePoiImage,onOuterBuildingsReady:function(){if(landmarkController&&typeof landmarkController.retrySurfaces==='function')landmarkController.retrySurfaces();}});
   var announced=false,mapInstanceId=Math.random().toString(36).slice(2);
   function announce(){if(announced)return;announced=true;try{parent.postMessage({zoneMapReady:1,mapInstanceId:mapInstanceId,v:1},location.origin);}catch(_){} }
   if(typeof WebGLRenderingContext!=='undefined'||map.loaded()) announce(); else map.once('load',announce);

@@ -170,15 +170,17 @@ export function facadeCell(u,v,width=3.1){
   const height=3.2,x=((u%width)+width)%width/width,y=((v%height)+height)%height/height;
   return {column:Math.floor(u/width),floor:Math.floor(v/height),glass:Math.abs(x-.5)<=.64/width&&y>=1/height&&y<=2.5/height,frame:Math.abs(x-.5)<=.77/width&&y>=.87/height&&y<=2.63/height};
 }
-function installFacadeShader(material){
+function installFacadeShader(material,daylightUniform=null){
   // Full walls carry meter-scaled detail even when the separate raised-pane
   // budget is exhausted. No extra textures, tiles, geometry or draw calls.
   material.customProgramCacheKey=()=> 'zone-meter-facade111-v1';
   material.onBeforeCompile=shader=>{
     const required=[['vertexShader','#include <common>'],['vertexShader','#include <begin_vertex>'],['fragmentShader','#include <common>'],['fragmentShader','#include <color_fragment>'],['fragmentShader','#include <roughnessmap_fragment>']];
     if(required.some(([stage,anchor])=>!shader[stage].includes(anchor)))throw new Error('Facade shader contract differs from the vendored Three runtime.');
+    if(daylightUniform&&shader.uniforms)shader.uniforms.uZoneDaylight=daylightUniform;
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nattribute vec4 zoneFacade;\nvarying vec4 vZoneFacade;').replace('#include <begin_vertex>','#include <begin_vertex>\nvZoneFacade = zoneFacade;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
+uniform float uZoneDaylight;
 varying vec4 vZoneFacade;
 float zoneFacadeHash(vec2 cell, float seed) { return fract(sin(dot(cell, vec2(12.9898,78.233)) + seed * 1.714) * 43758.5453); }
 vec2 zoneFacadeMasks() {
@@ -193,6 +195,7 @@ vec2 zoneFacadeMasks() {
 }`);
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
 if (vZoneFacade.z > .5) {
+  float dayMix = clamp(uZoneDaylight, 0.0, 1.0);
   vec2 masks = zoneFacadeMasks();
   vec2 cell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
   float variation = zoneFacadeHash(cell,vZoneFacade.w);
@@ -200,21 +203,30 @@ if (vZoneFacade.z > .5) {
   float suiteSeed = zoneFacadeHash(vec2(floor(cell.x * 0.34), cell.y), vZoneFacade.w + 5.0);
   float floorActive = step(0.42, zoneFacadeHash(vec2(cell.y, 3.0), vZoneFacade.w + 13.0));
   float isLit = step(0.62, litSeed) * step(0.45, suiteSeed) * floorActive;
-  float heightGrad = clamp(vZoneFacade.y / 52.0, 0.0, 1.0);
+  float heightGrad = clamp(vZoneFacade.y / 64.0, 0.0, 1.0);
   float stoneVariation = .94 + .08 * zoneFacadeHash(floor(vZoneFacade.xy * 1.5),vZoneFacade.w);
   float floorBand = smoothstep(0.0, 0.08, fract(vZoneFacade.y / 3.2)) * (1.0 - smoothstep(0.90, 0.98, fract(vZoneFacade.y / 3.2)));
   float pierBand = smoothstep(0.04, 0.12, fract(vZoneFacade.x / max(vZoneFacade.z, .001))) * (1.0 - smoothstep(0.88, 0.96, fract(vZoneFacade.x / max(vZoneFacade.z, .001))));
-  diffuseColor.rgb *= stoneVariation * mix(0.72, 1.08, heightGrad) * mix(0.82, 1.02, floorBand * pierBand);
-  vec3 frameColor = mix(vec3(.07,.10,.16), vec3(.38,.31,.20), isLit);
-  vec3 paneColor = mix(vec3(.025,.045,.075),vec3(.085,.135,.205),variation * (0.5 + 0.5 * heightGrad));
+  vec3 nightWall = diffuseColor.rgb * stoneVariation * mix(0.72, 1.08, heightGrad) * mix(0.82, 1.02, floorBand * pierBand);
+  vec3 dayStone = mix(vec3(.76,.71,.63), vec3(.91,.87,.79), heightGrad * .75 + variation * .25);
+  vec3 dayTint = mix(dayStone, dayStone * (.78 + .42 * normalize(max(diffuseColor.rgb, vec3(.08)))), .22);
+  vec3 dayWall = dayTint * stoneVariation * mix(.76, 1.03, floorBand * pierBand);
+  diffuseColor.rgb = mix(nightWall, dayWall, dayMix);
+  vec3 nightFrame = mix(vec3(.07,.10,.16), vec3(.38,.31,.20), isLit);
+  vec3 dayFrame = vec3(.22,.19,.16);
+  vec3 frameColor = mix(nightFrame, dayFrame, dayMix);
+  vec3 nightPane = mix(vec3(.025,.045,.075),vec3(.085,.135,.205),variation * (0.5 + 0.5 * heightGrad));
+  vec3 dayPane = mix(vec3(.24,.40,.54), vec3(.54,.72,.84), variation * .6 + heightGrad * .4);
+  vec3 paneColor = mix(nightPane, dayPane, dayMix);
   vec3 warmInterior = mix(vec3(.98,.74,.30), vec3(1.0,.88,.55), variation);
   vec3 coolInterior = mix(vec3(.20,.82,.98), vec3(.44,.94,.84), variation);
-  vec3 activePane = mix(paneColor, mix(warmInterior, coolInterior, step(0.82, litSeed)), isLit * 0.96);
+  vec3 activePane = mix(paneColor, mix(warmInterior, coolInterior, step(0.82, litSeed)), isLit * 0.96 * (1.0 - dayMix * 0.85));
   diffuseColor.rgb = mix(diffuseColor.rgb,frameColor,masks.y);
   diffuseColor.rgb = mix(diffuseColor.rgb,paneColor,masks.x);
   diffuseColor.rgb = mix(diffuseColor.rgb,activePane,masks.x * isLit);
 }`).replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
 if (vZoneFacade.z > .5) {
+  float dayMixE = clamp(uZoneDaylight, 0.0, 1.0);
   vec2 eMasks = zoneFacadeMasks();
   vec2 eCell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
   float eSeed = zoneFacadeHash(eCell + vec2(17.0, 31.0), vZoneFacade.w + 9.0);
@@ -224,7 +236,7 @@ if (vZoneFacade.z > .5) {
   float eLit = step(0.62, eSeed) * step(0.45, eSuite) * eFloor;
   vec3 eWarm = mix(vec3(.98,.72,.26), vec3(1.0,.88,.52), eVar);
   vec3 eCool = mix(vec3(.20,.82,.98), vec3(.42,.92,.80), eVar);
-  totalEmissiveRadiance += mix(eWarm, eCool, step(0.82, eSeed)) * eMasks.x * eLit * 1.32;
+  totalEmissiveRadiance += mix(eWarm, eCool, step(0.82, eSeed)) * eMasks.x * eLit * (1.32 * (1.0 - dayMixE * 0.92));
 }`);
     shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor,.31,zoneFacadeMasks().x);');
   };
@@ -255,9 +267,13 @@ export function createDistrictSurfaces(map,features,options={}){
   const prepareTimeoutMs=options.prepareTimeoutMs??12000;
   if(!Number.isSafeInteger(prepareTimeoutMs)||prepareTimeoutMs<1||prepareTimeoutMs>30000)throw new Error('Facade preparation timeout must be 1..30000 milliseconds.');
   const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
-  const activeFeatures=isBrowserRuntime&&Array.isArray(globalThis.__zoneArchitecturalFeatures)?[...features,...globalThis.__zoneArchitecturalFeatures].slice(0,LIMITS.maxFeatures):features;
-  const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?0:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
+  const extraCore=isBrowserRuntime&&Array.isArray(globalThis.__zoneArchitecturalFeatures)?globalThis.__zoneArchitecturalFeatures:[];
+  const extraOuter=isBrowserRuntime&&Array.isArray(globalThis.__zoneOuterArchitecturalFeatures)?globalThis.__zoneOuterArchitecturalFeatures:[];
+  const activeFeatures=isBrowserRuntime&&((extraCore.length+extraOuter.length)>0)?[...extraOuter,...extraCore,...features].slice(0,LIMITS.maxFeatures):features;
+  const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?320:options.maxRoofDetails,maxWallPanels:options.maxWallPanels});
   let disposed=false,visible=true,prepared=false,renderer,scene,camera,shaderFailure=null,cancelPreparation=null,preparing=Promise.resolve();
+  const daylightUniform={value:0.0};
+  let hemiLight=null,keyLight=null,corniceMat=null,roofMat=null;
   const geometries=[],materials=[],diagnostics={...plan.diagnostics,status:'preparing',renderer:'provider-footprint-surface-detail',source:'same-native-provider-footprints',origin:plan.center.slice(),geometryVertices:0,geometryTriangles:0,calls:0,triangles:0,textures:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
   const publish=()=>{
     if(SURFACE_OWNERS.has(map)&&SURFACE_OWNERS.get(map)!==control)return;
@@ -306,7 +322,9 @@ export function createDistrictSurfaces(map,features,options={}){
   const layer={id:LAYER,type:'custom',renderingMode:'3d',onAdd(_map,gl){
     const isBrowserRuntime=typeof WebGLRenderingContext!=='undefined'&&typeof window!=='undefined'&&/Mozilla/i.test(window.navigator?.userAgent||'');
     scene=new THREE.Scene();camera=new THREE.Camera();
-    scene.add(new THREE.HemisphereLight(isBrowserRuntime?'#7ea6d4':'#d6e1e5',isBrowserRuntime?'#121d2d':'#61686c',isBrowserRuntime?1.25:1.45));const key=new THREE.DirectionalLight(isBrowserRuntime?'#bdd6f2':'#e3e8ed',isBrowserRuntime?1.45:1.8);key.position.set(-90,180,70);scene.add(key);
+    hemiLight=new THREE.HemisphereLight(isBrowserRuntime?'#7ea6d4':'#d6e1e5',isBrowserRuntime?'#121d2d':'#61686c',isBrowserRuntime?1.25:1.45);
+    scene.add(hemiLight);
+    keyLight=new THREE.DirectionalLight(isBrowserRuntime?'#bdd6f2':'#e3e8ed',isBrowserRuntime?1.45:1.8);keyLight.position.set(-90,180,70);scene.add(keyLight);
     const batches=Array.from({length:4},()=>({positions:[],colors:[],facades:[]}));
     if(!isBrowserRuntime){
       for(const window of plan.windows)appendQuad(batches[0],window.points,PALETTE.glass[window.color]);
@@ -321,19 +339,26 @@ export function createDistrictSurfaces(map,features,options={}){
         vipers:['#0a1a17','#0d221e','#112b26','#081513'],
         kings:['#0a1824','#0d2030','#11283c','#08131d'],
         oldguard:['#1b150d','#231c11','#2b2316','#14100a'],
-        night:['#1b0e15','#24121b','#2d1722','#140a10']
+        night:['#1b0e15','#24121b','#2d1722','#140a10'],
+        neon:['#1b1228','#231836','#2d1e45','#160e21'],
+        citadel:['#191c26','#222736','#2a3040','#151923'],
+        harbor:['#1b1613','#241d18','#2e241d','#16120f'],
+        airport:['#111c26','#172634','#1e3142','#0d1720']
       };
-      const factionCornices={vipers:'#23594a',kings:'#225278',oldguard:'#594522',night:'#5c2840'};
-      const factionOf=rec=>{const id=String(rec?.providerId||'');const m=/^arch-(vipers|kings|oldguard|night)-/.exec(id);return m?m[1]:null;};
+      const factionCornices={vipers:'#23594a',kings:'#225278',oldguard:'#594522',night:'#5c2840',neon:'#69438f',citadel:'#9a7b3b',harbor:'#874f32',airport:'#2f7a9e'};
+      const factionOf=rec=>{const id=String(rec?.providerId||'');const m=/^(?:arch|outer)-(vipers|kings|oldguard|night|neon|citadel|harbor|airport)-/.exec(id);return m?m[1]:null;};
       for(const wall of plan.wallPanels){const f=factionOf(wall),pal=f?factionWallPalettes[f]:noirWalls;appendQuad(batches[1],wall.points,pal[wall.color%pal.length],wall);}
       for(const line of plan.floorLines)appendQuad(batches[1],line.points,'#17253a');
       for(const cornice of plan.cornices){const f=factionOf(cornice);appendQuad(batches[2],cornice.points,f?factionCornices[f]:noirCornices[cornice.color%noirCornices.length]);}
+      for(const detail of plan.roofDetails)appendBox(batches[3],detail,true);
     }
     batches.forEach((batch,index)=>{
       if(!batch.positions.length)return;
       const geometry=new THREE.BufferGeometry();geometries.push(geometry);geometry.setAttribute('position',new THREE.Float32BufferAttribute(batch.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(batch.colors,3));geometry.setAttribute('zoneFacade',new THREE.Float32BufferAttribute(batch.facades,4));geometry.computeVertexNormals();geometry.computeBoundingSphere();
       const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.88,metalness:index===0?.18:index===3?.28:.03,emissive:isBrowserRuntime&&index>=2?new THREE.Color(index===2?'#28415c':'#1e3246'):new THREE.Color(0x000000),emissiveIntensity:isBrowserRuntime?(index===2?.48:index===3?.35:0):0,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});materials.push(material);
-      if(index===1)installFacadeShader(material);
+      if(index===1)installFacadeShader(material,daylightUniform);
+      if(index===2)corniceMat=material;
+      if(index===3)roofMat=material;
       const mesh=new THREE.Mesh(geometry,material);mesh.name=['measured-facade-glass','measured-stone-floorlines','measured-roof-cornices','interior-roof-metal'][index];
       // Explicit order beats opaque-material sorting: full walls write depth
       // first. Glass has a physical .122m gap outside it, not coplanar decals.
@@ -353,6 +378,17 @@ export function createDistrictSurfaces(map,features,options={}){
   },render(_gl,input){
     if(disposed||!prepared||!visible||!isActive()||map.getPitch()<=1)return;
     const projection=input?.defaultProjectionData?.mainMatrix??input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
+    if(isBrowserRuntime){
+      const atmo=globalThis.__zoneMapAtmosphere;
+      const dayVal=atmo&&Number.isFinite(atmo.daylight)?atmo.daylight:(doc?.body?.dataset?.zmxLight==='1'?1.0:0.0);
+      if(Math.abs(daylightUniform.value-dayVal)>0.001){
+        daylightUniform.value=dayVal;
+        if(hemiLight){hemiLight.color.set(dayVal>0.5?'#fff4e0':'#7ea6d4');hemiLight.groundColor.set(dayVal>0.5?'#7a6f5f':'#121d2d');hemiLight.intensity=dayVal>0.5?1.55:1.25;}
+        if(keyLight){keyLight.color.set(dayVal>0.5?'#fff2d6':'#bdd6f2');keyLight.intensity=dayVal>0.5?1.75:1.45;}
+        if(corniceMat){corniceMat.emissiveIntensity=dayVal>0.5?0.06:0.48;}
+        if(roofMat){roofMat.emissiveIntensity=dayVal>0.5?0.08:0.35;}
+      }
+    }
     camera.projectionMatrix.fromArray(projection).multiply(local);
     let frameFailure=null;
     try{

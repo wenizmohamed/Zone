@@ -524,18 +524,26 @@
     }
   }
 
-  /* 4. Mount Interactive Hand-Painted Watercolor Panorama Stage on City Screen */
+  /* 4. Mount Interactive Hand-Painted Watercolor Panorama Stage on City Screen (ALL 18 Districts) */
   var CITY_PINS = [
-    { id: 'bank', screen: 'bank', x: 46, y: 42, color: '#3e6fb0', en: 'Central Bank', ar: 'البنك المركزي', minLv: 1 },
-    { id: 'gym', screen: 'gym', x: 37, y: 50, color: '#6c8c3c', en: 'Gym', ar: 'النادي الرياضي', minLv: 1 },
-    { id: 'crimes', screen: 'crimes', x: 24, y: 63, color: '#b85233', en: 'Harbor Docks', ar: 'مرافئ العمليات', minLv: 1 },
-    { id: 'hospital', screen: 'hospital', x: 54, y: 47, color: '#b85233', en: 'Hospital', ar: 'المستشفى', minLv: 1 },
-    { id: 'market', screen: 'market', x: 70, y: 58, color: '#dba83b', en: 'Old Town Market', ar: 'سوق البلدة القديمة', minLv: 1 },
-    { id: 'properties', screen: 'properties', x: 83, y: 44, color: '#2f8b7b', en: 'Citadel Estates', ar: 'عقارات القلعة', minLv: 1 },
-    { id: 'casino', screen: 'casino', x: 43, y: 31, color: '#7b4ca0', en: 'Grand Casino', ar: 'الكازينو الكبير', minLv: 1 },
-    { id: 'education', screen: 'education', x: 61, y: 24, color: '#3e6fb0', en: 'University Hill', ar: 'تلة الجامعة', minLv: 1 },
-    { id: 'jail', screen: 'jail', x: 28, y: 26, color: '#b85233', en: 'Fortress Bastion', ar: 'سجن الحصن', minLv: 1 },
-    { id: 'jobs', screen: 'jobs', x: 50, y: 61, color: '#dba83b', en: 'River Exchange', ar: 'بورصة الأعمال', minLv: 1 }
+    { id: 'bank', screen: 'bank', x: 47, y: 39, color: '#3e6fb0', en: 'Central Bank', ar: 'البنك المركزي', minLv: 1 },
+    { id: 'gym', screen: 'gym', x: 37, y: 49, color: '#6c8c3c', en: 'Ironworks Gym', ar: 'النادي الرياضي', minLv: 1 },
+    { id: 'crimes', screen: 'crimes', x: 20, y: 66, color: '#b85233', en: 'Harbor Docks', ar: 'مرافئ العمليات', minLv: 1 },
+    { id: 'hospital', screen: 'hospital', x: 56, y: 45, color: '#b85233', en: 'City Hospital', ar: 'المستشفى', minLv: 1 },
+    { id: 'market', screen: 'market', x: 70, y: 61, color: '#dba83b', en: 'Old Town Market', ar: 'سوق البلدة القديمة', minLv: 1 },
+    { id: 'properties', screen: 'properties', x: 86, y: 43, color: '#2f8b7b', en: 'Citadel Estates', ar: 'عقارات القلعة', minLv: 1 },
+    { id: 'casino', screen: 'casino', x: 42, y: 27, color: '#7b4ca0', en: 'Grand Casino', ar: 'الكازينو الكبير', minLv: 1 },
+    { id: 'education', screen: 'education', x: 64, y: 17, color: '#3e6fb0', en: 'University Hill', ar: 'تلة الجامعة', minLv: 1 },
+    { id: 'jail', screen: 'jail', x: 26, y: 18, color: '#b85233', en: 'Fortress Bastion', ar: 'سجن الحصن', minLv: 1 },
+    { id: 'jobs', screen: 'jobs', x: 52, y: 61, color: '#dba83b', en: 'River Exchange', ar: 'بورصة الأعمال', minLv: 1 },
+    { id: 'home', screen: 'home', x: 76, y: 50, color: '#2f8b7b', en: 'Safehouse', ar: 'المخبأ الآمن', minLv: 1 },
+    { id: 'items', screen: 'items', x: 16, y: 47, color: '#dba83b', en: 'Armory Depot', ar: 'مخزن الترسانة', minLv: 1 },
+    { id: 'missions', screen: 'missions', x: 33, y: 36, color: '#7b4ca0', en: 'Fixer Contracts', ar: 'عقود العمدة', minLv: 1 },
+    { id: 'newspaper', screen: 'newspaper', x: 62, y: 34, color: '#7b4ca0', en: 'City Gazette', ar: 'صحيفة المدينة', minLv: 1 },
+    { id: 'faction', screen: 'faction', x: 82, y: 66, color: '#3e6fb0', en: 'Syndicate Hall', ar: 'مقر العائلة', minLv: 1 },
+    { id: 'attack', screen: 'attack', x: 31, y: 74, color: '#b85233', en: 'Combat Wharf', ar: 'رصيف القتال', minLv: 1 },
+    { id: 'hof', screen: 'hof', x: 54, y: 12, color: '#dba83b', en: 'Hall of Fame', ar: 'قاعة المشاهير', minLv: 1 },
+    { id: 'elimination', screen: 'elimination', x: 13, y: 32, color: '#6c8c3c', en: 'Turf Arena', ar: 'ساحة التصفيات', minLv: 1 }
   ];
 
   var preferredCityView = 'illustrated';
