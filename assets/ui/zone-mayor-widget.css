@@ -1,7 +1,8 @@
 /* ==========================================================================
- * ZONE v136 - MAYOR TARIQ "THE OWL" MANSOUR FLOATING CHARACTER WIDGET
+ * ZONE v137 - MAYOR TARIQ "THE OWL" MANSOUR FLOATING CHARACTER WIDGET
  * Hand-Drawn Fountain-Pen Ink & Watercolor Sketchbook Speech Bubble + Avatar
  * 100% 4-Way Parity: Light+EN, Dark+EN, Light+AR (RTL), Dark+AR (RTL)
+ * Bold Rubik (600/700) in EN & Cairo/Noto Sans Arabic (700/800) in AR.
  * Mobile-safe: sits cleanly above the 5-tab thumb bar on <= 900px screens.
  * ========================================================================== */
 
@@ -9,7 +10,7 @@
   --zmw-paper: #faf4e6;
   --zmw-paper-alt: #f0e6d2;
   --zmw-ink: #1e1b18;
-  --zmw-ink-muted: #524a41;
+  --zmw-ink-muted: #4a4239;
   --zmw-head-bg: #26221e;
   --zmw-head-fg: #f7f1e3;
   --zmw-accent-ochre: #dba83b;
@@ -28,7 +29,8 @@
   align-items: flex-end;
   gap: 10px;
   pointer-events: none;
-  font-family: "Patrick Hand", "Noto Sans Arabic", system-ui, sans-serif;
+  font-family: "Rubik", "Patrick Hand", "Noto Sans Arabic", system-ui, sans-serif;
+  font-weight: 600;
 }
 
 html:not([data-theme="light"]) #zmw-root {
@@ -45,8 +47,10 @@ html:not([data-theme="light"]) #zmw-root {
   --zmw-shadow: rgba(0, 0, 0, 0.58);
 }
 
-html[dir="rtl"] #zmw-root {
-  font-family: "Noto Sans Arabic", "Patrick Hand", system-ui, sans-serif;
+html[dir="rtl"] #zmw-root,
+html:lang(ar) #zmw-root {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  font-weight: 700;
 }
 
 body.zone-map-expanded #zmw-root {
@@ -134,20 +138,26 @@ html[dir="rtl"] #zmw-bubble {
 }
 
 .zmw-name {
-  font-family: "Caveat Brush", "Noto Sans Arabic", cursive, sans-serif;
-  font-size: 16.5px;
-  line-height: 1.05;
-  letter-spacing: 0.01em;
+  font-family: "Caveat Brush", "Rubik", "Noto Sans Arabic", cursive, sans-serif;
+  font-size: 17.5px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.015em;
   color: #f7f1e3;
+  -webkit-text-stroke: 0.35px rgba(247, 241, 227, 0.65);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-html[dir="rtl"] .zmw-name {
-  font-family: "Noto Sans Arabic", system-ui, sans-serif;
+html[dir="rtl"] .zmw-name,
+html:lang(ar) .zmw-name {
+  font-family: "Cairo", "Noto Sans Arabic", system-ui, sans-serif;
   font-weight: 800;
-  font-size: 13.5px;
+  font-size: 14.5px;
+  -webkit-text-stroke: 0;
+  letter-spacing: 0;
 }
 
 .zmw-mood-pill {
@@ -245,28 +255,34 @@ html[dir="rtl"] .zmw-name {
 }
 
 .zmw-kicker {
-  font-size: 10.5px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.045em;
   color: var(--zmw-accent-terra);
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
-html[dir="rtl"] .zmw-kicker {
+html[dir="rtl"] .zmw-kicker,
+html:lang(ar) .zmw-kicker {
+  font-weight: 800;
   letter-spacing: 0;
+  text-transform: none;
 }
 
 .zmw-line {
   margin: 0;
-  font-size: 14.5px;
-  line-height: 1.4;
+  font-size: 13.8px;
+  font-weight: 600;
+  line-height: 1.44;
   color: var(--zmw-ink);
 }
 
-html[dir="rtl"] .zmw-line {
-  font-size: 13px;
-  line-height: 1.55;
+html[dir="rtl"] .zmw-line,
+html:lang(ar) .zmw-line {
+  font-size: 13.2px;
+  font-weight: 700;
+  line-height: 1.56;
 }
 
 /* Action Chips */
@@ -297,6 +313,11 @@ html[dir="rtl"] .zmw-line {
   cursor: pointer;
   box-shadow: 2px 2px 0 var(--zmw-ink);
   transition: transform 0.12s ease, background-color 0.14s ease;
+}
+
+html[dir="rtl"] .zmw-action-btn,
+html:lang(ar) .zmw-action-btn {
+  font-weight: 800;
 }
 
 .zmw-action-btn.primary {
@@ -350,8 +371,18 @@ html[dir="rtl"] .zmw-line {
 .zmw-tab-btn[aria-selected="true"] {
   background: var(--zmw-paper);
   color: var(--zmw-ink);
-  font-weight: 800;
+  font-weight: 700;
   box-shadow: inset 0 -2.5px 0 var(--zmw-accent-ochre);
+}
+
+html[dir="rtl"] .zmw-tab-btn,
+html:lang(ar) .zmw-tab-btn {
+  font-weight: 700;
+}
+
+html[dir="rtl"] .zmw-tab-btn[aria-selected="true"],
+html:lang(ar) .zmw-tab-btn[aria-selected="true"] {
+  font-weight: 800;
 }
 
 .zmw-tab-btn:hover {
@@ -450,22 +481,24 @@ html:not([data-theme="light"]) #zmw-root #zmw-avatar-btn {
 }
 
 .zmw-avatar-tag {
-  padding: 1px 8px;
+  padding: 2px 8px;
   border-radius: 999px;
   background: var(--zmw-head-bg);
   color: #f7f1e3;
   border: 1.5px solid var(--zmw-ink);
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   line-height: 1.3;
   box-shadow: 2px 2px 0 var(--zmw-ink);
   white-space: nowrap;
 }
 
-html[dir="rtl"] .zmw-avatar-tag {
+html[dir="rtl"] .zmw-avatar-tag,
+html:lang(ar) .zmw-avatar-tag {
   letter-spacing: 0;
-  font-size: 10px;
+  font-size: 10.5px;
+  font-weight: 800;
 }
 
 /* ---- Mobile Responsive Safe Clearance Above 5-Tab Bottom Bar ---- */
@@ -484,12 +517,21 @@ html[dir="rtl"] .zmw-avatar-tag {
   }
 
   .zmw-avatar-tag {
-    font-size: 9.5px;
-    padding: 1px 6px;
+    font-size: 10px;
+    padding: 1px 7px;
   }
 
   #zmw-bubble {
-    width: min(312px, calc(100vw - 24px));
+    width: min(326px, calc(100vw - 24px));
+  }
+
+  .zmw-name {
+    font-size: 14.5px;
+  }
+
+  .zmw-mood-pill {
+    font-size: 9px;
+    padding: 2px 5px;
   }
 
   .zmw-mini-portrait {
@@ -498,11 +540,14 @@ html[dir="rtl"] .zmw-avatar-tag {
   }
 
   .zmw-line {
-    font-size: 13.5px;
+    font-size: 13.2px;
+    font-weight: 600;
   }
 
-  html[dir="rtl"] .zmw-line {
-    font-size: 12.5px;
+  html[dir="rtl"] .zmw-line,
+  html:lang(ar) .zmw-line {
+    font-size: 12.8px;
+    font-weight: 700;
   }
 }
 

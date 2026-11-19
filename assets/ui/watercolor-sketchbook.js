@@ -1,11 +1,11 @@
 /* ==========================================================================
- * ZONE v133 - HAND-DRAWN INK & WATERCOLOR SKETCHBOOK RUNTIME (LIGHT + DARK)
+ * ZONE v137 - HAND-DRAWN INK & WATERCOLOR SKETCHBOOK RUNTIME (LIGHT + DARK)
  * Keeps 100% identical Hand-Drawn Sketchbook UI/UX in BOTH Light & Dark modes:
  *   1) Hand-inked + offset watercolor/gouache wash SVG icons (Areas, Quick, Legend)
  *      with automatic CSS-variable stroke adaptation (dark ink <-> warm chalk ink)
  *   2) Crosshatched "Current Mission:" strip & "City Tutorial" / District Guide box
- *   3) Interactive Hand-Painted Watercolor Zone City Panorama + Teardrop Pins
- *      with 1-click toggle to the Live 3D Tactical Block Map
+ *   3) Interactive Hand-Painted Watercolor Zone City Panorama + Decluttered
+ *      6 Primary / 12 Hover Teardrop Pins + Persistent 1-click 3D Block Map Bar
  *   4) Exact 6 Hand-Painted Watercolor Teardrop Pins in "Key of Symbols"
  *   5) Swaps Arcade cards to cohesive pen-and-ink watercolor illustrations
  *   6) Syncs Light/Dark Sketchbook theme across /, /account, and /admin
@@ -525,6 +525,15 @@
   }
 
   /* 4. Mount Interactive Hand-Painted Watercolor Panorama Stage on City Screen (ALL 18 Districts) */
+  var PRIMARY_CITY_PINS = {
+    bank: true,
+    gym: true,
+    crimes: true,
+    hospital: true,
+    market: true,
+    properties: true
+  };
+
   var CITY_PINS = [
     { id: 'bank', screen: 'bank', x: 47, y: 39, color: '#3e6fb0', en: 'Central Bank', ar: 'البنك المركزي', minLv: 1 },
     { id: 'gym', screen: 'gym', x: 37, y: 49, color: '#6c8c3c', en: 'Ironworks Gym', ar: 'النادي الرياضي', minLv: 1 },
@@ -548,18 +557,31 @@
 
   var preferredCityView = 'illustrated';
 
+  function syncModeBarState(stage, view) {
+    if (!stage) return;
+    var active = view === '3d' ? '3d' : 'illustrated';
+    var btns = stage.querySelectorAll('[data-zwc-mode]');
+    for (var b = 0; b < btns.length; b++) {
+      var mode = btns[b].getAttribute('data-zwc-mode');
+      btns[b].setAttribute('aria-pressed', mode === active ? 'true' : 'false');
+    }
+  }
+
   function syncCityPanoramaStage() {
     var shell = document.querySelector('#zone-main .zone-city-map-shell');
     if (!shell) return;
 
     var ar = isAr();
-    if (!shell.getAttribute('data-zwc-view')) {
-      shell.setAttribute('data-zwc-view', preferredCityView);
+    var activeView = shell.getAttribute('data-zwc-view');
+    if (activeView !== 'illustrated' && activeView !== '3d') {
+      activeView = preferredCityView;
+      shell.setAttribute('data-zwc-view', activeView);
     }
 
     var existing = document.getElementById('zwc-city-panorama-stage');
     var langKey = ar ? 'ar' : 'en';
     if (existing && existing.getAttribute('data-lang') === langKey && existing.parentElement === shell) {
+      syncModeBarState(existing, activeView);
       return;
     }
     if (existing) existing.remove();
@@ -572,16 +594,17 @@
     for (var i = 0; i < CITY_PINS.length; i++) {
       var p = CITY_PINS[i];
       var label = ar ? p.ar : p.en;
+      var primaryAttr = PRIMARY_CITY_PINS[p.id] ? ' data-zwc-primary="1"' : '';
       pinsHtml +=
-        '<button type="button" class="zwc-map-pin" data-zwc-go="' + p.screen + '" style="left:' + p.x + '%;top:' + p.y + '%" title="' + label + '">' +
+        '<button type="button" class="zwc-map-pin" data-zwc-go="' + p.screen + '"' + primaryAttr + ' style="left:' + p.x + '%;top:' + p.y + '%" title="' + label + '" aria-label="' + label + '">' +
           teardropPinSvg(p.color, '') +
           '<span class="zwc-map-pin-tag">' + label + '</span>' +
         '</button>';
     }
 
-    var isIll = shell.getAttribute('data-zwc-view') !== '3d';
+    var isIll = activeView !== '3d';
     stage.innerHTML =
-      '<div class="zwc-map-mode-bar">' +
+      '<div class="zwc-map-mode-bar" role="group" aria-label="' + (ar ? 'وضع الخريطة' : 'Map view mode') + '">' +
         '<button type="button" class="zwc-mode-btn" data-zwc-mode="illustrated" aria-pressed="' + (isIll ? 'true' : 'false') + '">' +
           (ar ? 'خريطة مرسومة' : 'Illustrated Atlas') +
         '</button>' +
@@ -600,17 +623,23 @@
       var modeBtn = ev.target.closest('[data-zwc-mode]');
       if (modeBtn) {
         ev.preventDefault();
-        preferredCityView = modeBtn.getAttribute('data-zwc-mode') || 'illustrated';
+        preferredCityView = modeBtn.getAttribute('data-zwc-mode') === '3d' ? '3d' : 'illustrated';
         shell.setAttribute('data-zwc-view', preferredCityView);
-        var btns = stage.querySelectorAll('[data-zwc-mode]');
-        for (var b = 0; b < btns.length; b++) {
-          btns[b].setAttribute('aria-pressed', btns[b] === modeBtn ? 'true' : 'false');
-        }
+        syncModeBarState(stage, preferredCityView);
         if (preferredCityView === '3d') {
           if (window.ZoneGameFX && typeof window.ZoneGameFX.syncWebglIframeThrottle === 'function') {
             window.ZoneGameFX.syncWebglIframeThrottle();
           }
           window.dispatchEvent(new Event('resize'));
+          setTimeout(function () {
+            try {
+              window.dispatchEvent(new Event('resize'));
+              var mapFrame = shell.querySelector('iframe#zone-city-map');
+              if (mapFrame && mapFrame.contentWindow) {
+                mapFrame.contentWindow.dispatchEvent(new Event('resize'));
+              }
+            } catch (_) {}
+          }, 90);
         }
         return;
       }

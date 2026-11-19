@@ -1,11 +1,14 @@
 /* ==========================================================================
- * ZONE v133 - HAND-DRAWN FOUNTAIN-PEN INK & WATERCOLOR SKETCHBOOK EDITION
+ * ZONE v137 - HAND-DRAWN FOUNTAIN-PEN INK & WATERCOLOR SKETCHBOOK EDITION
  * 100% Identical Hand-Drawn Sketchbook UI/UX Across BOTH Light & Dark Modes:
  *   - Light Mode (html[data-theme="light"]): Cold-press cream paper (#f2ebdc),
  *     fountain-pen sepia-black ink (#1e1b18), burnt-sienna/sage/cerulean blooms.
  *   - Dark Mode (html:not([data-theme="light"])): Cold-press midnight charcoal
  *     artist paper (#141210), warm bone/chalk ink (#f3ecdc), nocturnal gouache
  *     blooms, chalk-inked wobbly borders, and lantern-lit watercolor illustrations.
+ *   - v137: Bold authoritative Rubik/Cairo/Noto Sans Arabic typography across
+ *     all 4 modes, expansive 640px/500px City Map viewport, persistent 3D/Atlas
+ *     mode bar, and decluttered 6-primary + 12-hover panorama pins.
  * ========================================================================== */
 
 @font-face {
@@ -29,8 +32,8 @@
  * -------------------------------------------------------------------------- */
 :root {
   --zwc-dir-sign: 1;
-  --zwc-font-hand: "Patrick Hand", "Rubik", system-ui, sans-serif;
-  --zwc-font-brush: "Caveat Brush", "Patrick Hand", "Oswald", sans-serif;
+  --zwc-font-hand: "Rubik", "Patrick Hand", system-ui, sans-serif;
+  --zwc-font-brush: "Caveat Brush", "Rubik", "Oswald", sans-serif;
   --zwc-radius-sketch: 255px 12px 225px 12px / 10px 225px 10px 255px;
   --zwc-radius-sketch-sm: 185px 8px 165px 8px / 7px 165px 7px 185px;
   --zwc-radius-pill: 999px;
@@ -55,11 +58,12 @@ html:lang(ar) body * {
 html[dir="rtl"] body,
 html:lang(ar) body {
   line-height: 1.55 !important;
+  font-weight: 700 !important;
 }
 
-html[dir="rtl"] :is(h1, h2, h3, h4, button, .zone-panel-heading, .zwc-tutorial-title, .zone-nav-group, .badge),
-html:lang(ar) :is(h1, h2, h3, h4, button, .zone-panel-heading, .zwc-tutorial-title, .zone-nav-group, .badge) {
-  font-weight: 700 !important;
+html[dir="rtl"] :is(h1, h2, h3, h4, button, strong, b, bdi, .zone-panel-heading, .zwc-tutorial-title, .zone-nav-group, .badge, .zig-card-title, .zone-table-heading, .zone-table-row, [data-zrow], [data-ztabs] button),
+html:lang(ar) :is(h1, h2, h3, h4, button, strong, b, bdi, .zone-panel-heading, .zwc-tutorial-title, .zone-nav-group, .badge, .zig-card-title, .zone-table-heading, .zone-table-row, [data-zrow], [data-ztabs] button) {
+  font-weight: 800 !important;
   line-height: 1.45 !important;
   text-transform: none !important;
 }
@@ -91,7 +95,8 @@ html[data-theme="light"] body #dc-root #zone-main {
   --zwc-ink-soft: #3a342d;
   --zwc-ink-muted: #554b3f;
   --zwc-title-ink: #1a1714;
-  --zwc-title-shadow: calc(var(--zwc-dir-sign, 1) * 1px) 1px 0 rgba(255, 252, 245, 0.85);
+  --zwc-title-stroke: 0.45px rgba(26, 23, 20, 0.72);
+  --zwc-title-shadow: calc(var(--zwc-dir-sign, 1) * 1.5px) 1.5px 0 rgba(255, 252, 245, 0.92), calc(var(--zwc-dir-sign, 1) * 0.7px) 0.7px 0 rgba(26, 23, 20, 0.28);
   --zwc-cream-ink: #f7f1e3;
   --zwc-blue-ink: #1a4375;
   --zwc-green-ink: #1b4d23;
@@ -251,7 +256,8 @@ html:not([data-theme="light"]) body #dc-root #zone-main {
   --zwc-ink-soft: #dfd4be;
   --zwc-ink-muted: #b8ac95;
   --zwc-title-ink: #faf4e6;
-  --zwc-title-shadow: calc(var(--zwc-dir-sign, 1) * 2px) 2px 0 rgba(0, 0, 0, 0.72);
+  --zwc-title-stroke: 0.4px rgba(250, 244, 230, 0.65);
+  --zwc-title-shadow: calc(var(--zwc-dir-sign, 1) * 2px) 2px 0 rgba(0, 0, 0, 0.86), 0 0 1px rgba(250, 244, 230, 0.35);
   --zwc-cream-ink: #f7f1e3;
   --zwc-blue-ink: #9cc4ef;
   --zwc-green-ink: #9fd88c;
@@ -392,14 +398,20 @@ html:not([data-theme="light"]) body {
   background-attachment: scroll !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16px !important;
-  letter-spacing: 0.01em !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.005em !important;
 }
 
 html body .zone-app {
   background: transparent !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
+}
+
+html body .zone-app :is(strong, b, bdi, [data-zfig]) {
+  font-weight: 700 !important;
 }
 
 /* Luminous Gouache Boost for Hand-Inked SVG Washes on Dark Charcoal Paper */
@@ -506,12 +518,12 @@ html body .zone-topbar .zone-brand > span:first-of-type {
     max-width: none !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
-    padding: 3px 7px !important;
+    gap: 3px !important;
+    padding: 3px 5px !important;
     min-height: 32px !important;
     font-family: var(--zwc-font-hand) !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
     color: var(--zwc-ink) !important;
     background: transparent !important;
     border: 0 !important;
@@ -531,15 +543,30 @@ html body .zone-topbar .zone-brand > span:first-of-type {
   }
 
   /* Topbar Charcoal Ink HUD Capsule (Desktop >= 901px) */
+  html body #dc-root .zone-topbar .zone-brand,
+  html body .zone-topbar .zone-brand {
+    padding: 3px 10px !important;
+  }
+
+  html body #dc-root .zone-topbar .zone-header-actions,
+  html body .zone-topbar .zone-header-actions {
+    gap: 5px !important;
+  }
+
   html body #dc-root .zone-topbar #zone-topbar-hud,
   html body .zone-topbar #zone-topbar-hud {
     flex: 0 0 auto !important;
     background: var(--zwc-crosshatch-bg) !important;
     border: 1.5px solid var(--zwc-border-strong) !important;
     border-radius: var(--zwc-radius-sketch-sm) !important;
-    padding: 2px 8px !important;
-    gap: 4px !important;
+    padding: 2px 5px !important;
+    gap: 2px !important;
     box-shadow: var(--zwc-shadow-btn) !important;
+  }
+
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-seg {
+    padding: 0 5px !important;
+    gap: 3px !important;
   }
 
   html body .zone-topbar #zone-topbar-hud .zaaa-hud-seg,
@@ -547,7 +574,8 @@ html body .zone-topbar .zone-brand > span:first-of-type {
   html body .zone-topbar #zone-topbar-hud span {
     color: #f6f0e2 !important;
     font-family: var(--zwc-font-hand) !important;
-    font-size: 14.5px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
     border-color: rgba(247, 241, 227, 0.22) !important;
   }
 
@@ -560,13 +588,21 @@ html body .zone-topbar .zone-brand > span:first-of-type {
   }
 }
 
+/* Topbar Vitals Pills & Mobile HUD Pills Always Bold */
+html body #dc-root .zone-topbar :is(#zone-topbar-hud, .zaaa-hud-seg, [data-hud], [data-hud] bdi, [data-hud] span),
+html body .zone-topbar :is(#zone-topbar-hud, .zaaa-hud-seg, [data-hud], [data-hud] bdi, [data-hud] span) {
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
+}
+
 html body #dc-root .zone-topbar .zone-header-actions > span,
 html body .zone-topbar .zone-header-actions > span {
   background: transparent !important;
   border: 0 !important;
   color: var(--zwc-ink-soft) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
 }
 
@@ -585,10 +621,10 @@ html body .zone-topbar .zone-header-actions > a {
   border-radius: var(--zwc-radius-sketch-sm) !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
-  padding: 3px 10px !important;
-  min-height: 32px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  padding: 3px 8px !important;
+  min-height: 30px !important;
   box-shadow: var(--zwc-shadow-btn) !important;
 }
 
@@ -627,7 +663,8 @@ html body .zwc-mission-strip {
   border-bottom: 2px solid var(--zwc-crosshatch-border) !important;
   color: #fcf9f2 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
   padding-block: 4px !important;
   padding-inline: max(18px, calc((100% - 1340px) / 2 + 18px)) !important;
   min-height: 31px !important;
@@ -638,6 +675,7 @@ html body .zone-app .zone-topbar .zone-bulletin *,
 html body .zwc-mission-strip * {
   color: #fcf9f2 !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root .zone-topbar .zone-bulletin > span:first-child,
@@ -653,7 +691,7 @@ html body .zone-app .zone-topbar .zone-bulletin > span:first-child {
   padding-inline: 4px 12px !important;
   color: #faf5e8 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
   text-transform: none !important;
   letter-spacing: 0.01em !important;
@@ -680,14 +718,15 @@ html body #dc-root .zone-topbar .zone-bulletin > span:first-child[data-zwc-missi
   content: attr(data-zwc-mission-label);
   color: #faf5e8 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
 }
 
 html body .zone-app .zone-topbar .zone-bulletin [data-zticker="1"] span {
   color: #f0c465 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -736,7 +775,7 @@ html body #dc-root aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-headi
   content: attr(data-zwc-info-label);
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
 }
 
@@ -747,7 +786,7 @@ html body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group {
   background: var(--zwc-crosshatch-bg) !important;
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14.5px !important;
   font-weight: 700 !important;
   text-transform: none !important;
   letter-spacing: 0.01em !important;
@@ -770,7 +809,7 @@ html body aside.zone-sidebar .zone-nav-group::before {
 html body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group * {
   color: #f7f1e3 !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14.5px !important;
   font-weight: 700 !important;
   text-transform: none !important;
 }
@@ -791,6 +830,7 @@ html body #dc-root aside.zone-sidebar #zone-operative-crest *,
 html body aside.zone-sidebar #zone-operative-crest * {
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root aside.zone-sidebar .zone-profile-body,
@@ -799,31 +839,40 @@ html body aside.zone-sidebar .zone-profile-body {
   gap: 2px !important;
   background: transparent !important;
   color: var(--zwc-ink) !important;
+  font-weight: 600 !important;
 }
 
-html body #dc-root aside.zone-sidebar .zone-profile-body span,
+html body #dc-root aside.zone-sidebar .zone-profile-body span {
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
+}
+
 html body #dc-root aside.zone-sidebar .zone-profile-body bdi {
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root aside.zone-sidebar .zone-profile-identity strong,
 html body #dc-root aside.zone-sidebar [data-zplayercard="1"] strong {
   color: var(--zwc-blue-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root aside.zone-sidebar #zone-cash {
   color: var(--zwc-green-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
   text-shadow: none !important;
 }
 
 html body #dc-root aside.zone-sidebar .zone-profile-account {
   color: var(--zwc-blue-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   border-bottom-color: var(--zwc-ink-rule) !important;
 }
 
@@ -835,10 +884,12 @@ html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] {
 
 html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] > span:first-child {
   color: var(--zwc-green-ink) !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root aside.zone-sidebar [data-zone-account-sync="1"] > span:last-child {
   color: var(--zwc-ink-muted) !important;
+  font-weight: 600 !important;
 }
 
 /* Sidebar City Turf Mini-Widget Harmonization */
@@ -854,6 +905,11 @@ html body #dc-root aside.zone-sidebar #zaaa-sidebar-turf {
 html body #dc-root aside.zone-sidebar #zaaa-sidebar-turf * {
   font-family: var(--zwc-font-hand) !important;
   color: var(--zwc-ink) !important;
+  font-weight: 600 !important;
+}
+
+html body #dc-root aside.zone-sidebar #zaaa-sidebar-turf :is(strong, bdi) {
+  font-weight: 700 !important;
 }
 
 /* Hand-Painted Watercolor Brush-Stroke Vitals Bars */
@@ -864,10 +920,13 @@ html body aside.zone-sidebar .zone-resource {
 }
 
 html body #dc-root aside.zone-sidebar .zone-resource span,
-html body #dc-root aside.zone-sidebar .zone-resource bdi {
+html body #dc-root aside.zone-sidebar .zone-resource bdi,
+html body #dc-root aside.zone-sidebar .zone-resource [data-zhead],
+html body #dc-root aside.zone-sidebar .zone-resource [data-zfig] {
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root aside.zone-sidebar .zone-resource-track {
@@ -951,13 +1010,18 @@ html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-scr
     box-shadow: none !important;
     color: var(--zwc-ink) !important;
     font-family: var(--zwc-font-hand) !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
   }
 
   html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen] span {
     color: inherit !important;
     font-family: var(--zwc-font-hand) !important;
+    font-weight: inherit !important;
+  }
+
+  html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen] bdi {
+    font-weight: 700 !important;
   }
 
   html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen]:hover {
@@ -971,6 +1035,16 @@ html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-scr
     color: var(--zwc-title-ink) !important;
     border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
     font-weight: 700 !important;
+  }
+
+  html[dir="rtl"] body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen],
+  html:lang(ar) body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen] {
+    font-weight: 700 !important;
+  }
+
+  html[dir="rtl"] body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"],
+  html:lang(ar) body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen][aria-current="page"] {
+    font-weight: 800 !important;
   }
 
   html body #dc-root .zone-app aside.zone-sidebar #zone-area-navigation button[data-zone-screen]::before,
@@ -987,6 +1061,7 @@ html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-scr
 html body #dc-root #zone-main#zone-main {
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
   scroll-margin-top: 96px !important;
 }
 
@@ -1023,10 +1098,11 @@ html body #dc-root #zone-main#zone-main .zone-page-heading h1 {
   font-weight: 400 !important;
   line-height: 1.08 !important;
   color: var(--zwc-title-ink) !important;
+  -webkit-text-stroke: var(--zwc-title-stroke) !important;
   margin: 0 !important;
   text-align: start !important;
   text-transform: none !important;
-  letter-spacing: 0.01em !important;
+  letter-spacing: 0.012em !important;
   text-shadow: var(--zwc-title-shadow) !important;
   scroll-margin-top: 96px !important;
 }
@@ -1035,6 +1111,7 @@ html[dir="rtl"] body #dc-root #zone-main#zone-main .zone-page-heading h1,
 html:lang(ar) body #dc-root #zone-main#zone-main .zone-page-heading h1 {
   font-size: 36px !important;
   font-weight: 800 !important;
+  -webkit-text-stroke: 0 !important;
   line-height: 1.3 !important;
   letter-spacing: 0 !important;
 }
@@ -1046,7 +1123,8 @@ html body #dc-root #zone-main#zone-main .zone-page-heading > div button {
   border-radius: var(--zwc-radius-sketch-sm) !important;
   box-shadow: var(--zwc-shadow-btn) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   min-height: 32px !important;
   padding: 3px 12px !important;
 }
@@ -1071,7 +1149,8 @@ html body #dc-root #zone-main#zone-main .zwc-tutorial-head {
   justify-content: space-between !important;
   gap: 10px !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 16.5px !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root #zone-main#zone-main .zwc-tutorial-title {
@@ -1079,16 +1158,25 @@ html body #dc-root #zone-main#zone-main .zwc-tutorial-title {
   align-items: center !important;
   gap: 7px !important;
   color: #f7f1e3 !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
 
-html body #dc-root #zone-main#zone-main .zwc-tutorial-body {
+html body #dc-root #zone-main#zone-main .zwc-tutorial-body,
+html body #dc-root #zone-main#zone-main #zone-tutorial-panel .zone-panel {
   padding: 10px 14px !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
-  line-height: 1.44 !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
   background: var(--zwc-tutorial-body-bg) !important;
+}
+
+html[dir="rtl"] body #dc-root #zone-main#zone-main .zwc-tutorial-body,
+html:lang(ar) body #dc-root #zone-main#zone-main .zwc-tutorial-body,
+html[dir="rtl"] body #dc-root #zone-main#zone-main #zone-tutorial-panel .zone-panel,
+html:lang(ar) body #dc-root #zone-main#zone-main #zone-tutorial-panel .zone-panel {
+  font-weight: 700 !important;
 }
 
 /* Primary Sketchbook Panels Across All 19 Districts (Light + Dark) */
@@ -1228,30 +1316,54 @@ html body #dc-root #zone-main#zone-main .zig-flight-card * {
 
 html body #dc-root #zone-main#zone-main .zig-card-title,
 html body #dc-root #zone-main#zone-main .zone-quick-actions > button strong,
-html body #dc-root #zone-main#zone-main .zone-city-destinations button strong {
+html body #dc-root #zone-main#zone-main .zone-city-destinations button strong,
+html body #dc-root #zone-main#zone-main .zone-panel :is(h2, h3, h4) {
   color: var(--zwc-title-ink) !important;
-  font-size: 17px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root #zone-main#zone-main .zig-card-desc,
 html body #dc-root #zone-main#zone-main .zone-quick-actions > button small,
 html body #dc-root #zone-main#zone-main .zone-city-destinations button small {
   color: var(--zwc-ink-soft) !important;
-  font-size: 14px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
 }
 
-html body #dc-root #zone-main#zone-main .zig-card-badge {
+html body #dc-root #zone-main#zone-main .zig-card-badge,
+html body #dc-root #zone-main#zone-main .badge {
   background: var(--zwc-tag-bg) !important;
   color: var(--zwc-ink) !important;
   border: 1.4px solid var(--zwc-border-strong) !important;
   box-shadow: 1px 1px 0 var(--zwc-shadow-solid) !important;
+  font-weight: 700 !important;
+}
+
+/* Bold Authoritative Table Rows, Headers & Tabs Across All 19 Screens */
+html body #dc-root #zone-main#zone-main :is(
+  .zone-table-heading,
+  .zone-table-row,
+  [data-zrow],
+  .zone-inventory-row,
+  .zone-crime-row,
+  .zone-mission-row,
+  .zone-home-mission,
+  table th,
+  table td,
+  [data-ztabs] button,
+  .zone-peer-modes button,
+  .zone-inventory-modes button
+) {
+  font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 /* Hand-Inked Buttons Inside #zone-main (Replaces v128 Borderless Rounded SaaS Pills) */
 html body #dc-root #zone-main#zone-main button:not(.zone-action-primary):not(.zone-action-danger):not([data-crime-attempt]):not(.zone-gym-train):not(.zig-game-card-cta):not(.zig-btn):not(.zig-game-card):not(.zig-city-chip):not(.zig-flight-card):not(.zwc-map-pin):not(.zwc-mode-btn):not(.zone-map-pin-btn):not(.zone-crime-choice):not(.zone-gym-station):not(.zone-mobile-tabbar *):not([style*="background:none"]):not(.zone-tutorial-close):not(.zone-chat-sender-btn):not(.zone-inventory-row > button:first-child):not(.zone-quick-actions > button):not(.zone-city-destinations button):not([data-roulette-bet]) {
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14.5px !important;
-  font-weight: 600 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
   border: 1.5px solid var(--zwc-border-strong) !important;
   background-color: var(--zwc-btn-bg) !important;
@@ -1333,7 +1445,8 @@ html body #dc-root #zone-main#zone-main textarea {
   border: 1.5px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-sketch-radius-sm) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15.5px !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
   box-shadow: none !important;
 }
 
@@ -1623,7 +1736,7 @@ html body #dc-root #zone-main#zone-main .zone-gym-station[aria-pressed="true"] {
 }
 
 /* --------------------------------------------------------------------------
- * 5. CITY SCREEN - ILLUSTRATED WATERCOLOR PANORAMA + KEY OF SYMBOLS (LIGHT + DARK)
+ * 5. CITY SCREEN - EXPANSIVE MAP VIEWPORT, ILLUSTRATED ATLAS & KEY OF SYMBOLS
  * -------------------------------------------------------------------------- */
 html body #dc-root #zone-main#zone-main .zone-city-map-shell {
   background: transparent !important;
@@ -1637,14 +1750,20 @@ html body #dc-root #zone-main#zone-main .zone-city-map-shell {
   position: relative;
   width: 100%;
   max-width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--zwc-radius-sketch);
   overflow: visible;
   user-select: none;
 }
 
 #zwc-city-panorama-stage .zwc-panorama-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   max-width: 100%;
+  height: 100%;
   background: var(--zwc-paper);
   border: 1.8px solid var(--zwc-border-panel);
   border-radius: var(--zwc-radius-sketch);
@@ -1655,7 +1774,8 @@ html body #dc-root #zone-main#zone-main .zone-city-map-shell {
 #zwc-city-panorama-stage .zwc-panorama-art-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
+  min-height: 100%;
   overflow: hidden;
   border-radius: 6px;
 }
@@ -1697,12 +1817,13 @@ html:not([data-theme="light"]) #zwc-city-panorama-stage .zwc-panorama-img {
 
 #zwc-city-panorama-stage .zwc-map-mode-bar {
   position: absolute;
-  inset-block-start: 8px;
-  inset-inline-end: 10px;
-  z-index: 12;
+  inset-block-start: 10px;
+  inset-inline-end: 12px;
+  z-index: 26;
   display: inline-flex;
   gap: 6px;
   align-items: center;
+  pointer-events: auto;
 }
 
 html body #dc-root #zone-main#zone-main .zwc-mode-btn,
@@ -1712,11 +1833,12 @@ html body #dc-root #zone-main#zone-main .zwc-mode-btn,
   border: 1.6px solid var(--zwc-border-strong) !important;
   border-radius: var(--zwc-radius-sketch-sm) !important;
   box-shadow: var(--zwc-shadow-btn) !important;
-  padding: 4px 11px !important;
-  min-height: 30px !important;
+  padding: 4px 12px !important;
+  min-height: 32px !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 14px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
+  white-space: nowrap !important;
   cursor: pointer !important;
 }
 
@@ -1726,7 +1848,7 @@ html body #dc-root #zone-main#zone-main .zwc-mode-btn[aria-pressed="true"],
   color: #f7f1e3 !important;
 }
 
-/* Interactive Hand-Drawn Watercolor Teardrop Map Pins */
+/* Interactive Hand-Drawn Watercolor Teardrop Map Pins (6 Primary Always-Labeled + 12 Sleek Hover-Labeled) */
 html body #dc-root #zone-main#zone-main .zwc-map-pin,
 .zwc-map-pin {
   position: absolute !important;
@@ -1735,8 +1857,8 @@ html body #dc-root #zone-main#zone-main .zwc-map-pin,
   border: 0 !important;
   box-shadow: none !important;
   padding: 0 !important;
-  min-height: 34px !important;
-  min-width: 30px !important;
+  min-height: 30px !important;
+  min-width: 26px !important;
   cursor: pointer !important;
   z-index: 8 !important;
   display: inline-flex !important;
@@ -1745,33 +1867,73 @@ html body #dc-root #zone-main#zone-main .zwc-map-pin,
   transition: transform 150ms ease-out !important;
 }
 
+html body #dc-root #zone-main#zone-main .zwc-map-pin[data-zwc-primary="1"],
+.zwc-map-pin[data-zwc-primary="1"] {
+  min-height: 36px !important;
+  min-width: 32px !important;
+  z-index: 10 !important;
+}
+
 html body #dc-root #zone-main#zone-main .zwc-map-pin:hover,
 html body #dc-root #zone-main#zone-main .zwc-map-pin:focus-visible,
 .zwc-map-pin:hover,
 .zwc-map-pin:focus-visible {
-  transform: translate(-50%, -108%) scale(1.14) !important;
-  z-index: 15 !important;
+  transform: translate(-50%, -108%) scale(1.12) !important;
+  z-index: 22 !important;
 }
 
 .zwc-map-pin svg {
   width: 28px;
-  height: 34px;
+  height: 35px;
   filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.52));
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+
+/* Secondary 12 Pins: Sleek Compact Teardrops so the Hand-Painted Panorama Breathes */
+.zwc-map-pin:not([data-zwc-primary="1"]) svg {
+  width: 22px;
+  height: 27px;
+  opacity: 0.94;
+}
+
+.zwc-map-pin:not([data-zwc-primary="1"]):hover svg,
+.zwc-map-pin:not([data-zwc-primary="1"]):focus-visible svg {
+  opacity: 1;
 }
 
 .zwc-map-pin-tag {
   background: var(--zwc-tag-bg);
   color: var(--zwc-ink);
-  border: 1.4px solid var(--zwc-border-strong);
-  border-radius: 4px;
-  padding: 1px 6px;
+  border: 1.5px solid var(--zwc-border-strong);
+  border-radius: 5px;
+  padding: 2px 7px;
   font-family: var(--zwc-font-hand);
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   white-space: nowrap;
   box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid);
   margin-top: -2px;
+}
+
+/* Secondary 12 Pin Tags Reveal Cleanly on Hover / Keyboard Focus Without Shifting Anchor Tip */
+.zwc-map-pin:not([data-zwc-primary="1"]) .zwc-map-pin-tag {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 50%;
+  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 4px) scale(0.94);
+  transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+}
+
+.zwc-map-pin:not([data-zwc-primary="1"]):hover .zwc-map-pin-tag,
+.zwc-map-pin:not([data-zwc-primary="1"]):focus-visible .zwc-map-pin-tag {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) scale(1);
 }
 
 /* Toggle between Illustrated Panorama & Live 3D Mapbox Block Grid */
@@ -1783,12 +1945,46 @@ html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="illu
   pointer-events: none !important;
 }
 
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 25 !important;
+}
+
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-panorama-viewport,
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
   display: none !important;
 }
 
+/* Keep Mode Bar Visible & Clickable Floating Cleanly at Bottom-Center in 3D View (Zero Mapbox Control Overlap) */
+html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage .zwc-map-mode-bar {
+  position: absolute !important;
+  inset-block-start: auto !important;
+  inset-block-end: 14px !important;
+  inset-inline-end: auto !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  pointer-events: auto !important;
+  z-index: 30 !important;
+  padding: 4px 6px !important;
+  background: var(--zwc-tag-bg) !important;
+  border: 1.8px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-radius-sketch-sm) !important;
+  box-shadow: var(--zwc-shadow-card), 0 6px 18px rgba(0, 0, 0, 0.36) !important;
+}
+
 html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
   border: 2px solid var(--zwc-border-panel) !important;
   border-radius: 6px !important;
   box-shadow: var(--zwc-shadow-card) !important;
@@ -1815,12 +2011,14 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div {
   gap: 10px !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 17px !important;
+  font-size: 15.5px !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root #zone-main#zone-main .zone-city-legend > div span {
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 html body #dc-root #zone-main#zone-main .zone-city-legend > div:nth-child(3n) {
@@ -1831,8 +2029,13 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
   display: none !important;
 }
 
-/* City Screen Vertical Stack: City -> City Tutorial -> Full-Width Panorama -> Key of Symbols */
+/* City Screen Vertical Stack & Expansive Desktop Viewport (> 900px) */
 @media (min-width: 901px) {
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell:not(.zone-city-map-expanded):not(:fullscreen) {
+    min-height: 620px !important;
+    height: 640px !important;
+  }
+
   html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-caption {
     display: none !important;
   }
@@ -1844,11 +2047,13 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
   html body #dc-root #zone-main#zone-main[data-zone-screen="city"] .zone-city-map-shell {
     order: -10 !important;
     width: 100% !important;
-    margin: 0 0 6px !important;
+    margin: 0 0 8px !important;
   }
 
   html body #dc-root #zone-main#zone-main[data-zone-screen="city"] #zwc-city-panorama-stage .zwc-panorama-art-wrap {
-    aspect-ratio: 2.15 / 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
   }
 
   html body #dc-root #zone-main#zone-main[data-zone-screen="city"] > div > :has(.zone-city-legend) {
@@ -1932,6 +2137,12 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
     contain: none !important;
   }
 
+  /* Expansive Mobile City Map Viewport (<= 900px) */
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell:not(.zone-city-map-expanded):not(:fullscreen) {
+    min-height: 460px !important;
+    height: 500px !important;
+  }
+
   /* Harmonize open slide-over mobile drawer without disturbing @mobile-shell closed state */
   html.zaaa-rail-open body #dc-root .zone-app aside.zone-sidebar {
     background: var(--zwc-sidebar-bg) !important;
@@ -1947,6 +2158,7 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
     border-radius: 0 !important;
     color: var(--zwc-ink) !important;
     font-family: var(--zwc-font-hand) !important;
+    font-weight: 600 !important;
     min-height: 44px !important;
     touch-action: manipulation !important;
     box-shadow: none !important;
@@ -1956,6 +2168,7 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
     background: var(--zwc-row-active) !important;
     border-inline-start: 3px solid var(--zwc-row-active-bar) !important;
     color: var(--zwc-title-ink) !important;
+    font-weight: 700 !important;
   }
 
   /* Restore .zone-page-heading on Mobile as a compact, crisp Sketchbook header */
@@ -2079,14 +2292,44 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
     min-width: 0 !important;
   }
 
-  /* City Map Panorama & Mode Switcher on Narrow Portrait Screens (320px - 768px) */
+  /* City Map Panorama & Persistent Mode Switcher on Narrow Portrait Screens (320px - 768px) */
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell:not(.zone-city-map-expanded):not(:fullscreen) {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] #zwc-city-panorama-stage {
+    position: static !important;
+    inset: auto !important;
+    height: auto !important;
+    order: -1 !important;
+    flex: 0 0 auto !important;
+    pointer-events: auto !important;
+    z-index: 12 !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-city-map-shell #zwc-city-panorama-stage .zwc-map-mode-bar,
   #zwc-city-panorama-stage .zwc-map-mode-bar {
     position: static !important;
+    inset: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
     width: 100% !important;
     margin-bottom: 8px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
   }
 
   #zwc-city-panorama-stage .zwc-mode-btn {
@@ -2106,25 +2349,26 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
 
 @media (max-width: 640px) {
   #zwc-city-panorama-stage .zwc-panorama-art-wrap {
-    min-width: 540px !important;
-    aspect-ratio: 16 / 10 !important;
+    min-width: 560px !important;
+    height: 100% !important;
+    aspect-ratio: auto !important;
   }
 
   .zwc-map-pin-tag {
     font-size: 11px;
-    padding: 2px 5px;
+    padding: 2px 6px;
   }
 
   html body #dc-root #zone-main#zone-main .zwc-tutorial-head,
   html body #dc-root #zone-main#zone-main .zone-panel-heading {
     flex-wrap: wrap !important;
     padding: 6px 10px !important;
-    font-size: 15.5px !important;
+    font-size: 14.5px !important;
   }
 
   html body #dc-root #zone-main#zone-main .zwc-tutorial-body {
     padding: 8px 11px !important;
-    font-size: 14.5px !important;
+    font-size: 14px !important;
   }
 }
 
@@ -2151,8 +2395,8 @@ html body #dc-root #zone-main#zone-main .zone-city-legend > div:has(.zwc-legend-
   border-radius: var(--zwc-sketch-radius-sm) !important;
   box-shadow: 1.5px 1.5px 0 var(--zwc-shadow-solid) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
   padding: 6px 12px !important;
   min-height: 36px !important;
   cursor: pointer !important;
@@ -2173,6 +2417,7 @@ html body.zone-account {
   background-image: var(--zwc-canvas-bg) !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
 }
 
 html body.zone-account header {
@@ -2199,11 +2444,19 @@ html body.zone-account h1 {
   font-size: 38px !important;
   font-weight: 400 !important;
   color: var(--zwc-title-ink) !important;
+  -webkit-text-stroke: var(--zwc-title-stroke) !important;
   text-shadow: var(--zwc-title-shadow) !important;
+}
+
+html[dir="rtl"] body.zone-account h1,
+html:lang(ar) body.zone-account h1 {
+  font-weight: 800 !important;
+  -webkit-text-stroke: 0 !important;
 }
 
 html body.zone-account h2 {
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
   color: var(--zwc-title-ink) !important;
 }
 
@@ -2212,6 +2465,7 @@ html body.zone-account small,
 html body.zone-account label {
   color: var(--zwc-ink-soft) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
 }
 
 html body.zone-account a {
@@ -2258,7 +2512,7 @@ html body.zone-account button {
   border-radius: var(--zwc-radius-sketch-sm) !important;
   box-shadow: var(--zwc-shadow-btn) !important;
   font-family: var(--zwc-font-hand) !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
 
 html body.zone-account button[type="submit"],
@@ -2274,6 +2528,7 @@ html body:has(#studioWorkspace) {
   background-image: var(--zwc-canvas-bg) !important;
   color: var(--zwc-ink) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 600 !important;
   overflow-x: hidden !important;
 }
 
@@ -2302,6 +2557,7 @@ html body:has(#studioWorkspace) .button {
   border-radius: var(--zwc-radius-sketch-sm) !important;
   box-shadow: var(--zwc-shadow-btn) !important;
   font-family: var(--zwc-font-hand) !important;
+  font-weight: 700 !important;
 }
 
 html body:has(#studioWorkspace) .button.primary {

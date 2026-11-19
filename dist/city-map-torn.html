@@ -329,12 +329,12 @@
   /* The city owns the viewport. Family identity stays in one compact bar;
      territory lists and search are opened explicitly in the existing drawer. */
   .wrap{flex-direction:column}
-  .familyRail{width:100%;height:44px;min-height:44px;flex:none;display:flex;flex-direction:row;align-items:center;gap:12px;padding:4px 12px;border-inline-end:0;border-bottom:1px solid rgba(201,154,69,0.28);background:linear-gradient(180deg,rgba(14,19,27,0.98),rgba(10,14,20,0.96))}
-  .familyRail>div:first-child{min-width:120px}.familyRail h1{font-size:14px;font-weight:800;letter-spacing:0.01em}.familyEyebrow{font-size:8px;color:#c99a45}
-  .familyRail .factionSelectLabel{width:210px;flex:none}.familyRail .familyStats{margin-inline-start:auto;display:flex;gap:18px;align-items:center;padding:0;border:0}
-  .familyRail .familyStat{min-width:58px}.familyRail .familyStat b{font-size:16px}.familyRail .familyStat span{font-size:9px}
+  .familyRail{width:100%;height:36px;min-height:36px;flex:none;display:flex;flex-direction:row;align-items:center;gap:10px;padding:2px 10px;border-inline-end:0;border-bottom:1px solid rgba(201,154,69,0.28);background:linear-gradient(180deg,rgba(14,19,27,0.96),rgba(10,14,20,0.94))}
+  .familyRail>div:first-child{min-width:116px;display:flex;align-items:baseline;gap:8px}.familyRail h1{font-size:13px;font-weight:800;letter-spacing:0.01em;margin-top:0}.familyEyebrow{font-size:8px;color:#c99a45}
+  .familyRail .factionSelectLabel{width:196px;flex:none}.familyRail .factionSelectLabel select{min-height:28px;padding:2px 8px;font-size:11px}.familyRail .familyStats{margin-inline-start:auto;display:flex;gap:16px;align-items:center;padding:0;border:0}
+  .familyRail .familyStat{min-width:52px;display:flex;align-items:baseline;gap:5px}.familyRail .familyStat b{font-size:14px}.familyRail .familyStat span{font-size:8.5px;margin-top:0}
   .familyRail .familyScopes,.familyRail .familyListHeading,.familyRail .familyList,.familyRail .familyBrowse{display:none}
-  .side{top:44px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
+  .side{top:36px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
   .sideToggle,.cityReset,.mapExpand,.streetView{background:rgba(12,17,24,0.92);border:1px solid rgba(201,154,69,0.34);border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.65);backdrop-filter:blur(8px);font-weight:800;letter-spacing:0.02em}
   .sideToggle:hover,.cityReset:hover,.mapExpand:hover,.streetView:hover{background:rgba(22,30,42,0.96);border-color:#c99a45}
   .regionPin.overview{width:44px;min-width:44px;max-width:44px;min-height:44px;padding:5px;justify-content:center;gap:0;background:#172028ed;border-color:var(--faction);box-shadow:0 1px 3px #0005}.regionPin.overview small{display:none}.regionPin.overview .factionEmblem{width:28px;height:28px;border-width:2px}.regionPin.overview>span:not(.factionEmblem){display:none}.regionPin.overview.turfBanner{width:auto;min-width:96px;max-width:158px;min-height:26px;padding:2px 8px 2px 3px;justify-content:flex-start;gap:4px;background:rgba(9,13,20,0.95);border:1.5px solid var(--faction);border-radius:999px;box-shadow:0 0 12px color-mix(in srgb,var(--faction) 64%,transparent),0 3px 10px rgba(0,0,0,0.88);backdrop-filter:blur(6px);z-index:2}.regionPin.overview.turfBanner .factionEmblem{width:19px;height:19px;border-width:2px}.regionPin.overview.turfBanner>span:not(.factionEmblem){display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;text-align:start;min-width:0;overflow:hidden}.regionPin.overview.turfBanner b{font-size:9.5px;font-weight:800;color:#f5f7fa;letter-spacing:0.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:118px}.regionPin.overview.turfBanner small{display:block;font-size:8px;color:var(--faction);font-weight:800;white-space:nowrap}
@@ -349,12 +349,30 @@
   .mapboxgl-ctrl-group button:focus-visible{outline:2px solid #c99a45;outline-offset:-3px}
   .mapboxgl-ctrl-group button:disabled .mapboxgl-ctrl-icon{opacity:.4}
   .sideToggle:focus-visible,.cityReset:focus-visible,.mapExpand:focus-visible,.streetView:focus-visible{outline:2px solid #c99a45;outline-offset:2px}
+  /* Watercolor Sketchbook light-mode HUD harmonization */
+  body[data-zmx-light="1"]{background:#ebe4d3;color:#241d15}
+  body[data-zmx-light="1"] .familyRail{background:linear-gradient(180deg,rgba(249,244,232,0.97),rgba(239,231,213,0.96));border-bottom:1.5px solid rgba(46,37,26,0.28);color:#241d15;box-shadow:0 1px 4px rgba(42,32,20,0.08)}
+  body[data-zmx-light="1"] .familyRail h1{color:#1f1810}
+  body[data-zmx-light="1"] .familyEyebrow{color:#8a5a18}
+  body[data-zmx-light="1"] .familyRail .familyStat b{color:#7c4d12}
+  body[data-zmx-light="1"] .familyRail .familyStat span{color:#5e5243}
+  body[data-zmx-light="1"] .familyRail .factionSelectLabel select{background:#fdfaf2;color:#1f1810;border-color:rgba(46,37,26,0.34);color-scheme:light}
+  body[data-zmx-light="1"] .sideToggle,body[data-zmx-light="1"] .cityReset,body[data-zmx-light="1"] .mapExpand,body[data-zmx-light="1"] .streetView,body[data-zmx-light="1"] .familyHome,body[data-zmx-light="1"] .mapLegend{background:rgba(248,243,231,0.94);color:#211a12;border:1.5px solid rgba(46,37,26,0.38);box-shadow:0 3px 10px rgba(42,32,20,0.16);backdrop-filter:blur(6px)}
+  body[data-zmx-light="1"] .sideToggle:hover,body[data-zmx-light="1"] .cityReset:hover,body[data-zmx-light="1"] .mapExpand:hover,body[data-zmx-light="1"] .streetView:hover,body[data-zmx-light="1"] .familyHome:hover{background:#fffdf7;border-color:#8a5a18;color:#16100a}
+  body[data-zmx-light="1"] .streetView[aria-pressed="true"]{background:#292118;border-color:#292118;color:#f8f2e4}
+  body[data-zmx-light="1"] .mapboxgl-ctrl-group{background:rgba(248,243,231,0.94);border:1.5px solid rgba(46,37,26,0.36);box-shadow:0 3px 10px rgba(42,32,20,0.16)}
+  body[data-zmx-light="1"] .mapboxgl-ctrl-group button,body[data-zmx-light="1"] .mapboxgl-ctrl-group button:disabled{background:rgba(248,243,231,0.94);color:#211a12}
+  body[data-zmx-light="1"] .mapboxgl-ctrl-group button+button{border-top:1px solid rgba(46,37,26,0.22)}
+  body[data-zmx-light="1"] .mapboxgl-ctrl-group button .mapboxgl-ctrl-icon{filter:none}
+  body[data-zmx-light="1"] .mapboxgl-ctrl-group button:not(:disabled):hover{background:#efe5cf}
+  body[data-zmx-light="1"] .regionPin.overview.turfBanner{background:rgba(248,243,231,0.95);box-shadow:0 2px 10px rgba(42,32,20,0.22)}
+  body[data-zmx-light="1"] .regionPin.overview.turfBanner b{color:#1f1810}
   @media(max-width:760px){
-    .familyRail{height:38px;min-height:38px;display:flex;gap:6px;padding:2px 8px}
+    .familyRail{height:36px;min-height:36px;display:flex;gap:6px;padding:2px 8px}
     .familyRail>div:first-child{display:flex;gap:6px;align-items:center;min-width:0}.familyRail h1{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.familyEyebrow{display:none}
-    .familyRail .factionSelectLabel{width:128px;margin-inline-start:auto}.familyRail .factionSelectLabel select{min-height:30px;padding:2px 6px;font-size:11px}.familyRail .familyStats{display:none}
+    .familyRail .factionSelectLabel{width:128px;margin-inline-start:auto}.familyRail .factionSelectLabel select{min-height:28px;padding:2px 6px;font-size:11px}.familyRail .familyStats{display:none}
     .familyRail .familyStats{grid-column:2;grid-row:1;gap:10px;margin:0}.familyRail .familyStat{min-width:0;display:flex;align-items:center;gap:4px}.familyRail .familyStat b{font-size:13px}.familyRail .familyStat span{font-size:8px}.familyRail .familyStat:nth-child(2){display:none}.familyRail .claimMetric{min-height:22px;padding:0;background:none;border:0}
-    .familyRail .claimMetric{display:none}.side{top:38px}.detailsOpen .side{top:0}.detailsOpen .familyRail{display:none}
+    .familyRail .claimMetric{display:none}.side{top:36px}.detailsOpen .side{top:0}.detailsOpen .familyRail{display:none}
     .sideToggle,.cityReset,.mapExpand,.streetView{min-height:34px;height:34px;font-size:9.5px}
     .sideToggle{top:6px;left:6px;width:36px}.cityReset{top:6px;left:46px;width:72px;padding:0 5px}.mapExpand{top:6px;left:122px;width:36px;padding:0}.streetView{top:6px;left:162px;width:38px;padding:0 4px}
     [dir="rtl"] .sideToggle{right:6px}[dir="rtl"] .cityReset{right:46px}[dir="rtl"] .mapExpand{right:122px}[dir="rtl"] .streetView{right:162px}
@@ -476,14 +494,14 @@ initializeMapLocale();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
-<script src="../assets/city/zone-map-expansion.js?v=118&cb=v136"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118&cb=v137"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v136',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
-    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v136',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v137',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v137',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -1161,45 +1179,76 @@ initializeMapLocale();
           geometry:{type:'Polygon',coordinates:[quad(u0,u1,v0,v1)]}
         });
       }
+      function addCrown(u0,u1,v0,v1,topH,tone,spireTone){
+        var du=(u1-u0)*0.22,dv=(v1-v0)*0.22,capH=Math.max(4,Math.round(topH*0.11));
+        addMass(u0+du,u1-du,v0+dv,v1-dv,topH,topH+capH,tone);
+        if(topH>=68){
+          var su=(u1-u0)*0.36,sv=(v1-v0)*0.36;
+          addMass(u0+su,u1-su,v0+sv,v1-sv,topH+capH,topH+capH+Math.round(capH*0.85),spireTone||tone);
+        }
+      }
       var col=idx%12,row=Math.floor(idx/12);
       var dx=(col-5.5)/5.5,dy=(row-4.5)/4.5,dist=Math.hypot(dx,dy);
-      var seed=((col+1)*41+(row+1)*79+idx*17)%37;
-      var archetype=(col*7+row*13+seed)%6;
-      var hCore=dist<0.42?(76+(seed%48)):dist<0.78?(42+(seed%32)):(24+(seed%22));
-      var slateLow='#101824',slateMid='#162234',slateHigh='#1e2f47',slateCrown='#283f5e';
-      if(t.ownerId==='vipers'){slateLow='#0c1a17';slateMid='#122823';slateHigh='#1a3b34';slateCrown='#27594d';}
-      else if(t.ownerId==='kings'){slateLow='#0b1824';slateMid='#112538';slateHigh='#193752';slateCrown='#245278';}
-      else if(t.ownerId==='oldguard'){slateLow='#1a150e';slateMid='#282014';slateHigh='#3b2f1c';slateCrown='#574427';}
-      else if(t.ownerId==='night'){slateLow='#1b0f15';slateMid='#291620';slateHigh='#3d202f';slateCrown='#592d43';}
+      var seed=((col+1)*41+(row+1)*79+idx*17)%43;
+      var archetype=(col*7+row*13+seed)%8;
+      var hCore=dist<0.36?(82+(seed%52)):dist<0.68?(46+(seed%34)):(22+(seed%24));
+      var slateLow='#16212f',slateMid='#1e2c3e',slateHigh='#273950',slateCrown='#3b526e',spireTrim='#a58d5e';
+      if(t.ownerId==='vipers'){slateLow='#122420';slateMid='#1a332d';slateHigh='#24453d';slateCrown='#346358';spireTrim='#4ea884';}
+      else if(t.ownerId==='kings'){slateLow='#122232';slateMid='#193148';slateHigh='#224463';slateCrown='#32608a';spireTrim='#5594c9';}
+      else if(t.ownerId==='oldguard'){slateLow='#241d14';slateMid='#342a1d';slateHigh='#473927';slateCrown='#634f36';spireTrim='#c29d52';}
+      else if(t.ownerId==='night'){slateLow='#25151e';slateMid='#351e2b';slateHigh='#49293b';slateCrown='#663952';spireTrim='#b0547c';}
       if(archetype===0){
-        var podH=Math.max(14,Math.round(hCore*0.32));
-        addMass(0.08,0.58,0.10,0.62,0,podH,slateLow);
-        addMass(0.14,0.52,0.16,0.56,podH,hCore,slateHigh);
-        if(hCore>=52)addMass(0.21,0.45,0.23,0.49,hCore,hCore+16,slateCrown);
-        addMass(0.64,0.90,0.14,0.86,0,Math.max(18,Math.round(hCore*0.58)),slateMid);
+        // Tiered Art-Deco setback tower + flanking gallery wing
+        var podH=Math.max(14,Math.round(hCore*0.30)),midH=Math.round(hCore*0.72);
+        addMass(0.08,0.60,0.10,0.64,0,podH,slateLow);
+        addMass(0.13,0.55,0.15,0.59,podH,midH,slateMid);
+        addMass(0.19,0.49,0.21,0.53,midH,hCore,slateHigh);
+        if(hCore>=48)addCrown(0.19,0.49,0.21,0.53,hCore,slateCrown,spireTrim);
+        addMass(0.66,0.92,0.16,0.84,0,Math.max(18,Math.round(hCore*0.52)),slateMid);
       }else if(archetype===1){
-        addMass(0.08,0.44,0.08,0.48,0,hCore+8,slateHigh);
-        if(hCore>=48)addMass(0.14,0.38,0.14,0.42,hCore+8,hCore+20,slateCrown);
-        addMass(0.54,0.90,0.10,0.52,0,Math.max(22,Math.round(hCore*0.82)),slateMid);
-        addMass(0.10,0.88,0.60,0.90,0,Math.max(15,Math.round(hCore*0.44)),slateLow);
+        // Twin offset setback towers with low courtyard podium
+        addMass(0.08,0.44,0.08,0.48,0,hCore+10,slateHigh);
+        if(hCore>=46)addCrown(0.08,0.44,0.08,0.48,hCore+10,slateCrown,spireTrim);
+        addMass(0.54,0.90,0.10,0.50,0,Math.max(24,Math.round(hCore*0.78)),slateMid);
+        if(hCore>=56)addMass(0.62,0.82,0.18,0.42,Math.round(hCore*0.78),Math.round(hCore*0.78)+10,slateCrown);
+        addMass(0.12,0.86,0.60,0.88,0,Math.max(14,Math.round(hCore*0.38)),slateLow);
       }else if(archetype===2){
-        addMass(0.46,0.90,0.42,0.90,0,hCore+10,slateHigh);
-        if(hCore>=46)addMass(0.54,0.82,0.50,0.82,hCore+10,hCore+22,slateCrown);
-        addMass(0.08,0.88,0.08,0.34,0,Math.max(18,Math.round(hCore*0.54)),slateMid);
-        addMass(0.08,0.36,0.34,0.88,0,Math.max(16,Math.round(hCore*0.48)),slateLow);
+        // Corner landmark tower + L-shaped heritage perimeter block
+        addMass(0.48,0.90,0.44,0.90,0,hCore+14,slateHigh);
+        if(hCore>=44)addCrown(0.48,0.90,0.44,0.90,hCore+14,slateCrown,spireTrim);
+        addMass(0.08,0.86,0.08,0.32,0,Math.max(18,Math.round(hCore*0.50)),slateMid);
+        addMass(0.08,0.34,0.32,0.86,0,Math.max(16,Math.round(hCore*0.44)),slateLow);
       }else if(archetype===3){
-        addMass(0.22,0.76,0.20,0.74,0,hCore+14,slateHigh);
-        if(hCore>=44)addMass(0.30,0.68,0.28,0.66,hCore+14,hCore+28,slateCrown);
-        addMass(0.06,0.18,0.12,0.86,0,Math.max(14,Math.round(hCore*0.40)),slateLow);
+        // Central civic/commercial pavilion with stepped lantern crown & open forecourt
+        var cPod=Math.max(16,Math.round(hCore*0.34));
+        addMass(0.16,0.82,0.18,0.80,0,cPod,slateLow);
+        addMass(0.24,0.74,0.24,0.72,cPod,hCore+12,slateHigh);
+        if(hCore>=42)addCrown(0.24,0.74,0.24,0.72,hCore+12,slateCrown,spireTrim);
       }else if(archetype===4){
-        addMass(0.08,0.46,0.08,0.46,0,Math.max(20,Math.round(hCore*0.72)),slateMid);
-        addMass(0.54,0.90,0.08,0.48,0,hCore,slateHigh);
-        addMass(0.08,0.48,0.54,0.90,0,Math.max(22,Math.round(hCore*0.86)),slateHigh);
-        addMass(0.54,0.90,0.54,0.90,0,Math.max(16,Math.round(hCore*0.54)),slateLow);
+        // U-shaped Mediterranean courtyard block with pocket plaza opening
+        addMass(0.08,0.90,0.08,0.34,0,Math.max(22,Math.round(hCore*0.66)),slateHigh);
+        addMass(0.08,0.34,0.34,0.88,0,Math.max(18,Math.round(hCore*0.56)),slateMid);
+        addMass(0.66,0.90,0.34,0.88,0,Math.max(20,Math.round(hCore*0.62)),slateMid);
+        if(hCore>=50)addMass(0.24,0.74,0.12,0.30,Math.round(hCore*0.66),Math.round(hCore*0.66)+12,slateCrown);
+      }else if(archetype===5){
+        // Diagonal twin-slab mid-rise with rooftop terrace penthouse
+        addMass(0.08,0.52,0.08,0.48,0,hCore+4,slateHigh);
+        if(hCore>=46)addCrown(0.08,0.52,0.08,0.48,hCore+4,slateCrown,spireTrim);
+        addMass(0.46,0.92,0.50,0.90,0,Math.max(20,Math.round(hCore*0.74)),slateMid);
+        addMass(0.10,0.36,0.62,0.88,0,Math.max(14,Math.round(hCore*0.38)),slateLow);
+      }else if(archetype===6){
+        // Stepped ziggurat commercial tower with recessed street arcade
+        var z1=Math.max(16,Math.round(hCore*0.36)),z2=Math.round(hCore*0.76);
+        addMass(0.10,0.88,0.10,0.88,0,z1,slateLow);
+        addMass(0.20,0.78,0.18,0.76,z1,z2,slateMid);
+        addMass(0.30,0.68,0.28,0.66,z2,hCore+16,slateHigh);
+        if(hCore>=44)addCrown(0.30,0.68,0.28,0.66,hCore+16,slateCrown,spireTrim);
       }else{
-        addMass(0.14,0.68,0.08,0.52,0,hCore+6,slateHigh);
-        addMass(0.08,0.56,0.58,0.90,0,Math.max(18,Math.round(hCore*0.62)),slateMid);
-        addMass(0.62,0.90,0.56,0.90,0,Math.max(14,Math.round(hCore*0.46)),slateLow);
+        // Breathing pocket-park corner + sculpted boutique mid-rise
+        addMass(0.12,0.64,0.10,0.54,0,hCore+6,slateHigh);
+        if(hCore>=48)addCrown(0.12,0.64,0.10,0.54,hCore+6,slateCrown,spireTrim);
+        addMass(0.58,0.90,0.48,0.90,0,Math.max(18,Math.round(hCore*0.58)),slateMid);
+        addMass(0.12,0.46,0.62,0.88,0,Math.max(13,Math.round(hCore*0.36)),slateLow);
       }
     });
     if(typeof window!=='undefined')window.__zoneArchitecturalFeatures=features;
