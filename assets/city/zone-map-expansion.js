@@ -1,9 +1,9 @@
-/* ZONE v143 - AAA 3.2km Coastal Archipelago Metropolis: Custom Three.js GLSL Outer
-   Architecture (Glass Curtain Walls, Stadium Arches, Night Suites & Floodlights),
-   3x Denser Urban Fabric, Multi-Band Coastal Bathymetry, Dark->Night Sync & Sketchbook 2D Pins */
+/* ZONE v144 - AAA 3.2km Coastal Archipelago Metropolis: Band-Limited Anti-Aliased
+   Three.js GLSL Architecture (Smooth 48-Seg Coliseum, Sleek Glass/Steel Crowns),
+   Locked 4-Phase Day/Afternoon/Dusk/Night Engine + Central Core Phase Broadcast */
 (function (root) {
   "use strict";
-  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 143) return;
+  if (root && root.__zoneMapExpansionVersion && root.__zoneMapExpansionVersion >= 144) return;
 
   var EXTRA_ICONS = {
     airport: "M12 2l2.2 6.8L22 11v2l-7.8-1.2L13.5 18l2.5 1.8V21l-4-1-4 1v-1.2L10.5 18l-.7-6.2L2 13v-2l7.8-2.2L12 2z",
@@ -250,99 +250,106 @@
       bldg: ["#b9b2c4", "#cbc4d6", "#e4dce9"],
       lockFill: "#0f172a",
       lockOpacity: 0.09,
-      isLightUi: true
+      isLightUi: true,
+      shader: { phaseId: 0, daylight: 0.78, nightGlow: 0.14, sunTint: [1.0, 0.78, 0.62], skyTop: [0.42, 0.56, 0.78], skyHorizon: [0.95, 0.76, 0.76], ambient: [0.58, 0.56, 0.66] }
     },
     day: {
       id: "day",
       icon: ZMX_SVGS.day,
       label: { en: "Day", ar: "النهار" },
       fog: { color: "#e6f2fc", "high-color": "#7ec0f6", "space-color": "#4ea1e8", "horizon-blend": 0.1, range: [2.0, 17], "star-intensity": 0 },
-      ambient: { color: "#eef4fa", intensity: 0.60 },
-      sun: { color: "#fff6e0", intensity: 0.88, direction: [148, 52] },
-      land: "#f0e7d6",
-      landInd: "#e2d7c0",
-      water: "#1c5e85",
-      shelfMid: "#29749e",
-      shallows: "#52c4cc",
-      horizonLand: "#ddd4c2",
-      beach: "#ecd9ae",
-      park: "#6ca354",
-      pitch: "#46b859",
+      ambient: { color: "#f2f7fc", intensity: 0.66 },
+      sun: { color: "#fff8e8", intensity: 0.94, direction: [148, 52] },
+      land: "#f2ead9",
+      landInd: "#e4d9c3",
+      water: "#1b6791",
+      shelfMid: "#297da8",
+      shallows: "#52c9d2",
+      horizonLand: "#93bcc7",
+      beach: "#eedbb0",
+      park: "#6ea856",
+      pitch: "#43ba59",
+      pitchStripe: "#38a34d",
       tree: ["#3e7340", "#558f4e", "#6ea85c"],
-      roadMain: "#fcf7ec",
-      road: "#d6cab2",
+      roadMain: "#fcf8ee",
+      road: "#d8ccb5",
       roadCase: "#9d9079",
       roadCenter: "#e0b354",
-      pier: "#dcd2be",
+      pier: "#ded4c0",
       asphalt: "#343b45",
-      bldg: ["#c9bea9", "#dcd2bf", "#efe6d6"],
+      bldg: ["#cfc4af", "#e0d6c3", "#f1e8d9"],
       lockFill: "#0f172a",
-      lockOpacity: 0.09,
-      isLightUi: true
+      lockOpacity: 0.08,
+      isLightUi: true,
+      shader: { phaseId: 1, daylight: 1.0, nightGlow: 0.0, sunTint: [1.0, 0.98, 0.92], skyTop: [0.36, 0.66, 0.92], skyHorizon: [0.82, 0.92, 0.99], ambient: [0.64, 0.70, 0.78] }
     },
     afternoon: {
       id: "afternoon",
       icon: ZMX_SVGS.afternoon,
       label: { en: "Afternoon", ar: "العصر" },
-      fog: { color: "#f3dec0", "high-color": "#74a6d4", "space-color": "#437ab0", "horizon-blend": 0.12, range: [1.8, 16.5], "star-intensity": 0 },
-      ambient: { color: "#f8e8ce", intensity: 0.58 },
-      sun: { color: "#ffc978", intensity: 0.88, direction: [232, 38] },
-      land: "#e6d8c0",
-      landInd: "#d8c7ad",
-      water: "#1d5d80",
-      shelfMid: "#2b7396",
-      shallows: "#4db8be",
-      horizonLand: "#d5c6ad",
-      beach: "#e5cb98",
-      park: "#689f5c",
-      pitch: "#43a852",
-      tree: ["#3a6b3b", "#4e8546", "#669c52"],
-      roadMain: "#fbf1df",
-      road: "#c4b59d",
-      roadCase: "#8d806b",
-      roadCenter: "#d9a043",
-      pier: "#d2c3aa",
-      asphalt: "#333842",
-      bldg: ["#b9a790", "#d1bfa7", "#e6d5be"],
+      fog: { color: "#f6d4a4", "high-color": "#6898c8", "space-color": "#376599", "horizon-blend": 0.14, range: [1.8, 16.5], "star-intensity": 0 },
+      ambient: { color: "#fae0b8", intensity: 0.62 },
+      sun: { color: "#ffb252", intensity: 0.96, direction: [248, 28] },
+      land: "#e8d2b0",
+      landInd: "#d9bf9b",
+      water: "#17527a",
+      shelfMid: "#24678f",
+      shallows: "#44abb3",
+      horizonLand: "#b5a694",
+      beach: "#e8c486",
+      park: "#679950",
+      pitch: "#42a44c",
+      pitchStripe: "#368d40",
+      tree: ["#3b6836", "#508242", "#67984e"],
+      roadMain: "#fcedd3",
+      road: "#c7b293",
+      roadCase: "#8d7b63",
+      roadCenter: "#e09d38",
+      pier: "#d4c0a0",
+      asphalt: "#353840",
+      bldg: ["#c2aa8c", "#d6be9e", "#ebd3b3"],
       lockFill: "#0f172a",
       lockOpacity: 0.09,
-      isLightUi: true
+      isLightUi: true,
+      shader: { phaseId: 2, daylight: 0.86, nightGlow: 0.08, sunTint: [1.0, 0.76, 0.44], skyTop: [0.34, 0.56, 0.82], skyHorizon: [0.98, 0.80, 0.54], ambient: [0.70, 0.58, 0.48] }
     },
     dusk: {
       id: "dusk",
       icon: ZMX_SVGS.dusk,
       label: { en: "Dusk", ar: "الغسق" },
-      fog: { color: "#683c5d", "high-color": "#233056", "space-color": "#0e152b", "horizon-blend": 0.11, range: [1.6, 15.5], "star-intensity": 0.25 },
-      ambient: { color: "#9ba9d6", intensity: 0.58 },
-      sun: { color: "#ff8c59", intensity: 0.86, direction: [268, 21] },
-      land: "#25293b",
-      landInd: "#1e2233",
-      water: "#102840",
-      shelfMid: "#183956",
-      shallows: "#235c78",
-      horizonLand: "#1e2336",
-      beach: "#54474e",
-      park: "#254038",
+      fog: { color: "#783f62", "high-color": "#263360", "space-color": "#101730", "horizon-blend": 0.14, range: [1.6, 15.5], "star-intensity": 0.28 },
+      ambient: { color: "#9da8dc", intensity: 0.58 },
+      sun: { color: "#ff7a48", intensity: 0.90, direction: [272, 18] },
+      land: "#2a2b42",
+      landInd: "#222438",
+      water: "#112345",
+      shelfMid: "#1b345c",
+      shallows: "#28587a",
+      horizonLand: "#252640",
+      beach: "#5e4852",
+      park: "#26423a",
       pitch: "#246644",
+      pitchStripe: "#1c5437",
       tree: ["#1b3a30", "#264e3e", "#32624c"],
-      roadMain: "#636b87",
-      road: "#3f465e",
-      roadCase: "#202536",
-      roadCenter: "#d98b4e",
-      pier: "#343b4f",
-      asphalt: "#1e2330",
-      bldg: ["#3b455e", "#4f5c7a", "#687799"],
+      roadMain: "#6d7094",
+      road: "#444868",
+      roadCase: "#22253b",
+      roadCenter: "#e5924c",
+      pier: "#383d57",
+      asphalt: "#1f2334",
+      bldg: ["#404868", "#555f85", "#707ba6"],
       lockFill: "#090d16",
       lockOpacity: 0.11,
-      isLightUi: false
+      isLightUi: false,
+      shader: { phaseId: 3, daylight: 0.34, nightGlow: 0.52, sunTint: [1.0, 0.52, 0.36], skyTop: [0.16, 0.22, 0.42], skyHorizon: [0.76, 0.42, 0.52], ambient: [0.36, 0.34, 0.50] }
     },
     night: {
       id: "night",
       icon: ZMX_SVGS.night,
       label: { en: "Night", ar: "الليل" },
-      fog: { color: "#0e182c", "high-color": "#080e1d", "space-color": "#040710", "horizon-blend": 0.08, range: [1.6, 15.5], "star-intensity": 0.55 },
-      ambient: { color: "#a5c0e5", intensity: 0.58 },
-      sun: { color: "#ffe5bd", intensity: 0.72, direction: [210, 38] },
+      fog: { color: "#0d182d", "high-color": "#070d1c", "space-color": "#03060f", "horizon-blend": 0.08, range: [1.6, 15.5], "star-intensity": 0.58 },
+      ambient: { color: "#9ebce5", intensity: 0.58 },
+      sun: { color: "#d8e7ff", intensity: 0.68, direction: [210, 38] },
       land: "#0f1522",
       landInd: "#0c111c",
       water: "#051426",
@@ -352,6 +359,7 @@
       beach: "#242c3b",
       park: "#122a22",
       pitch: "#184f34",
+      pitchStripe: "#13402a",
       tree: ["#0e251e", "#16382b", "#1f4b38"],
       roadMain: "#435775",
       road: "#2b3952",
@@ -362,7 +370,8 @@
       bldg: ["#1c283d", "#283956", "#364d73"],
       lockFill: "#060a12",
       lockOpacity: 0.11,
-      isLightUi: false
+      isLightUi: false,
+      shader: { phaseId: 4, daylight: 0.0, nightGlow: 1.0, sunTint: [0.68, 0.80, 1.0], skyTop: [0.05, 0.09, 0.18], skyHorizon: [0.12, 0.22, 0.36], ambient: [0.22, 0.28, 0.40] }
     }
   };
 
@@ -413,6 +422,7 @@
       lang: document.documentElement.lang === "ar" ? "ar" : "en",
       dark: initialDark,
       timeMode: "auto",
+      manualPhase: null,
       lastThemeDark: initialDark,
       activePhase: "",
       playerLevel: 1,
@@ -445,8 +455,9 @@
         state.activeCityId = savedCity;
       }
       var savedTimeMode = sessionStorage.getItem("zone_map_time_mode");
-      if (savedTimeMode && (savedTimeMode === "auto" || TIME_PHASES[savedTimeMode])) {
+      if (savedTimeMode && savedTimeMode !== "auto" && TIME_PHASES[savedTimeMode]) {
         state.timeMode = savedTimeMode;
+        state.manualPhase = savedTimeMode;
       }
     } catch (_) {}
 
@@ -688,6 +699,9 @@
     }
 
     function computeDesiredPhase() {
+      if (state.manualPhase && TIME_PHASES[state.manualPhase]) {
+        return state.manualPhase;
+      }
       if (state.timeMode !== "auto" && TIME_PHASES[state.timeMode]) {
         return state.timeMode;
       }
@@ -784,7 +798,7 @@
         "body:not([data-zmx-light='1']) .sideToggle,body:not([data-zmx-light='1']) .cityReset,body:not([data-zmx-light='1']) .mapExpand,body:not([data-zmx-light='1']) .streetView,body:not([data-zmx-light='1']) .familyHome,body:not([data-zmx-light='1']) .mapLegend{border-radius:9px!important;border:1px solid rgba(243,236,220,0.18)!important;background:rgba(24,21,18,0.92)!important;color:#f3ecdc!important}",
         "@media (prefers-reduced-motion:reduce){.zmx-sun-rays,.zmx-ico-jet,.zmx-pill,.zmx-world-btn,.zmx-gate-marker,.familyRail button.familyStat{transition:none!important}}",
         "[dir='rtl'] .zmx-chrono-bar,[dir='rtl'] .zmx-chrono-bar *,[dir='rtl'] .zmx-gate-marker,.zmx-modal[dir='rtl'],.zmx-modal[dir='rtl'] *{letter-spacing:0!important}",
-        "@media (max-width:1120px){.zmx-pills .zmx-pill[data-phase='dawn'],.zmx-pills .zmx-pill[data-phase='dusk']{display:none}}",
+        "@media (max-width:1120px){.zmx-pills .zmx-pill{padding:2.5px 5px;font-size:9px}}",
         "@media (max-width:1020px){.zmx-chrono-bar{top:60px;left:10px;right:60px;width:auto;max-width:calc(100% - 70px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}[dir='rtl'] .zmx-chrono-bar{left:60px;right:10px;justify-content:flex-start}}",
         "@media (max-width:760px){.zmx-chrono-bar{top:44px;left:8px;right:48px;width:auto;max-width:calc(100% - 56px);justify-content:flex-start;overflow-x:auto;scrollbar-width:none}[dir='rtl'] .zmx-chrono-bar{left:48px;right:8px;justify-content:flex-start}}",
         "@media (max-width:680px){",
@@ -804,6 +818,7 @@
         "  .zmx-chrono-bar{top:38px!important;left:8px!important;right:44px!important;transform:none!important;width:auto!important;max-width:calc(100% - 52px)!important;overflow:visible!important;flex-wrap:wrap!important;white-space:normal!important;border-radius:12px!important;padding:4px 6px!important;row-gap:3px!important;column-gap:4px!important;font-size:9.5px!important;justify-content:flex-start!important}",
         "  [dir='rtl'] .zmx-chrono-bar{right:8px!important;left:44px!important;justify-content:flex-start!important}",
         "  .zmx-chrono-bar .zmx-pills{flex-wrap:nowrap!important}",
+        "  .zmx-chrono-bar .zmx-pill{padding:2px 4.5px!important;font-size:8.5px!important}",
         "  #panel,[dir='rtl'] #panel{top:auto!important;bottom:0!important;left:0!important;right:0!important;width:100%!important;max-width:100%!important;height:auto!important;max-height:48%!important;overflow-y:auto!important;border-radius:14px 14px 0 0!important;border-left:0!important;border-right:0!important;border-top:1px solid rgba(255,255,255,0.14)!important;z-index:30!important;padding:10px 12px 12px!important;box-shadow:0 -12px 32px rgba(0,0,0,0.72)!important;transform:translate3d(0,105%,0)!important;pointer-events:none!important}",
         "  #panel.on,[dir='rtl'] #panel.on{transform:translate3d(0,0,0)!important;pointer-events:auto!important}",
         "  #panel .x{height:30px!important;min-height:30px!important;min-width:56px!important;top:8px!important;font-size:11px!important;padding:0 8px!important}",
@@ -832,6 +847,33 @@
       chronoEl = document.createElement("div");
       chronoEl.className = "zmx-chrono-bar";
       chronoEl.id = "zoneMapChronoHud";
+      /* Single delegated click handler so Mapbox pointer capture or re-renders can never drop a phase click */
+      chronoEl.addEventListener("pointerdown", function (ev) {
+        ev.stopPropagation();
+      });
+      chronoEl.addEventListener("click", function (ev) {
+        var pill = ev.target && ev.target.closest ? ev.target.closest(".zmx-pill") : null;
+        if (pill) {
+          ev.stopPropagation();
+          var chosen = pill.getAttribute("data-phase") || "auto";
+          if (chosen === "auto") {
+            state.manualPhase = null;
+            state.timeMode = "auto";
+          } else if (TIME_PHASES[chosen]) {
+            state.manualPhase = chosen;
+            state.timeMode = chosen;
+          }
+          try { sessionStorage.setItem("zone_map_time_mode", state.timeMode); } catch (_) {}
+          applyAtmosphere(true);
+          renderChronoHud();
+          return;
+        }
+        var wBtn = ev.target && ev.target.closest ? ev.target.closest("#zmxWorldBtn") : null;
+        if (wBtn) {
+          ev.stopPropagation();
+          openWorldCitiesModal();
+        }
+      });
       host.appendChild(chronoEl);
 
       hoverTipEl = document.createElement("div");
@@ -869,6 +911,7 @@
       var cityDate = getCityDate(city);
       var phaseKey = computeDesiredPhase();
       var phaseObj = TIME_PHASES[phaseKey] || TIME_PHASES.day;
+      var activePillKey = state.manualPhase || "auto";
 
       chronoEl.innerHTML =
         '<span class="zmx-clock-box" title="' + (ar ? "توقيت المدينة المباشر" : "Live City Clock") + '">' +
@@ -890,29 +933,13 @@
             ["dusk", ar ? "غسق" : "Dusk"],
             ["night", ar ? "ليل" : "Night"]
           ].map(function (pair) {
-            var active = state.timeMode === pair[0] ? " active" : "";
-            return '<button type="button" class="zmx-pill' + active + '" data-phase="' + pair[0] + '">' + pair[1] + '</button>';
+            var active = activePillKey === pair[0] ? " active" : "";
+            return '<button type="button" class="zmx-pill' + active + '" data-phase="' + pair[0] + '" aria-pressed="' + (active ? "true" : "false") + '">' + pair[1] + '</button>';
           }).join("") +
         '</div>' +
         '<button type="button" class="zmx-world-btn" id="zmxWorldBtn">' +
           ZMX_SVGS.plane + '<span>' + (ar ? "مدن العالم" : "World Cities") + '</span>' +
         '</button>';
-
-      Array.from(chronoEl.querySelectorAll(".zmx-pill")).forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          state.timeMode = btn.getAttribute("data-phase") || "auto";
-          try { sessionStorage.setItem("zone_map_time_mode", state.timeMode); } catch (_) {}
-          applyAtmosphere(true);
-          renderChronoHud();
-        });
-      });
-
-      var worldBtn = chronoEl.querySelector("#zmxWorldBtn");
-      if (worldBtn) {
-        worldBtn.addEventListener("click", function () {
-          openWorldCitiesModal();
-        });
-      }
     }
 
     function tickClock() {
@@ -1130,12 +1157,13 @@
         var topExtra = totalH >= 64 ? { archType: aType, crownColor: crownCol } : { archType: aType };
         var bodyExtra = { archType: aType };
         if (style === 0) {
-          /* Art-Deco / Sovereign 3-tier setback skyscraper + illuminated crown */
+          /* Art-Deco / Sovereign 3-tier setback skyscraper + sleek glass & titanium crown spire */
           pushBox(dx, dy, w, h, 0, podH, 0, districtTag, "", true, bodyExtra);
           pushBox(dx, dy, w * 0.78, h * 0.78, podH, Math.round(totalH * 0.82), 1, districtTag, "", true, bodyExtra);
           pushBox(dx, dy, w * 0.50, h * 0.50, Math.round(totalH * 0.82), totalH, 2, districtTag, "", true, topExtra);
           if (totalH >= 75) {
-            pushOct(dx, dy, w * 0.14, h * 0.14, totalH, totalH + 14, 2, districtTag, "#d6b46c", 8, false, { crownColor: crownCol });
+            pushBox(dx, dy, w * 0.24, h * 0.24, totalH, totalH + 9, 2, districtTag, "", true, { archType: "glass", crownColor: crownCol });
+            pushOct(dx, dy, w * 0.045, h * 0.045, totalH + 9, totalH + 22, 2, districtTag, "#cbd5e1", 12, false);
           }
         } else if (style === 1) {
           /* L-shaped courtyard podium + offset slender glass high-rise */
@@ -1143,15 +1171,15 @@
           pushBox(dx - w * 0.22, dy + h * 0.18, w * 0.54, h * 0.54, 0, Math.round(totalH * 0.62), 1, districtTag, "", true, bodyExtra);
           pushBox(dx + w * 0.18, dy - h * 0.10, w * 0.50, h * 0.52, podH, totalH, 2, districtTag, "", true, topExtra);
         } else if (style === 2) {
-          /* Twin courtyard wings + elevated sky-gallery */
+          /* Twin courtyard wings + glazed sky-gallery bridge */
           pushBox(dx - w * 0.28, dy, w * 0.40, h * 0.90, 0, Math.round(totalH * 0.84), 1, districtTag, "", true, bodyExtra);
           pushBox(dx + w * 0.28, dy, w * 0.40, h * 0.90, 0, totalH, 2, districtTag, "", true, topExtra);
-          pushBox(dx, dy, w * 0.36, h * 0.28, Math.round(totalH * 0.50), Math.round(totalH * 0.62), 0, districtTag, "#d6b46c", false, { emissive: true });
+          pushBox(dx, dy, w * 0.36, h * 0.28, Math.round(totalH * 0.50), Math.round(totalH * 0.62), 2, districtTag, "", true, { archType: "glass", crownColor: crownCol });
         } else if (style === 3) {
-          /* Tapered octagonal glass tower on colonnade plinth */
+          /* Tapered smooth 16-sided glass tower on colonnade plinth */
           pushBox(dx, dy, w * 0.94, h * 0.94, 0, podH, 0, districtTag, "", true, bodyExtra);
-          pushOct(dx, dy, w * 0.42, h * 0.42, podH, Math.round(totalH * 0.86), 1, districtTag, "", 8, true, bodyExtra);
-          pushOct(dx, dy, w * 0.28, h * 0.28, Math.round(totalH * 0.86), totalH + 8, 2, districtTag, "", 8, true, topExtra);
+          pushOct(dx, dy, w * 0.42, h * 0.42, podH, Math.round(totalH * 0.86), 1, districtTag, "", 16, true, bodyExtra);
+          pushOct(dx, dy, w * 0.28, h * 0.28, Math.round(totalH * 0.86), totalH + 8, 2, districtTag, "", 16, true, topExtra);
         } else if (style === 4) {
           /* Terraced Mediterranean / Coastal slab with recessed sky-garden penthouse */
           pushBox(dx, dy, w, h * 0.90, 0, Math.round(totalH * 0.54), 0, districtTag, "", true, bodyExtra);
@@ -1306,30 +1334,42 @@
       /* =====================================================================
          3. SECTOR 4: EAST SOVEREIGN FINANCIAL ISLAND (Dense Manhattan-Class Island Skyline)
          ===================================================================== */
-      /* Hero: 310m Sovereign Pinnacle (0.0134, 0.0032) — 7-Tier Super-Tall Curtain-Wall Landmark */
+      /* Hero: 310m Sovereign Pinnacle (0.0134, 0.0032) — Sleek 16-Sided Glass & Brushed-Steel Super-Tall + Needle Spire */
       pushBox(0.0134, 0.0032, 0.00182, 0.00150, 0, 38, 0, "citadel", "", true, { archType: "glass" });
-      pushOct(0.0134, 0.0032, 0.00076, 0.00064, 38, 138, 1, "citadel", "", 8, true, { archType: "glass", crownColor: "#f4ca5c" });
-      pushOct(0.0134, 0.0032, 0.00058, 0.00049, 138, 212, 2, "citadel", "", 8, true, { archType: "glass", crownColor: "#38bdf8" });
-      pushOct(0.0134, 0.0032, 0.00042, 0.00035, 212, 260, 2, "citadel", "", 8, true, { archType: "glass", crownColor: "#f4ca5c" });
-      pushOct(0.0134, 0.0032, 0.00024, 0.00020, 260, 288, 2, "citadel", "#f4ca5c", 8, false, { emissive: true });
-      pushOct(0.0134, 0.0032, 0.00010, 0.00009, 288, 314, 2, "citadel", "#fef08a", 6, false, { emissive: true });
-      pushLight(0.0134, 0.0032, 317, 5.2, "#ff3b5c", 0.0, true);
+      pushOct(0.0134, 0.0032, 0.00076, 0.00064, 38, 138, 1, "citadel", "", 16, true, { archType: "glass", crownColor: "#f4ca5c" });
+      pushOct(0.0134, 0.0032, 0.00058, 0.00049, 138, 212, 2, "citadel", "", 16, true, { archType: "glass", crownColor: "#38bdf8" });
+      pushOct(0.0134, 0.0032, 0.00040, 0.00034, 212, 256, 2, "citadel", "", 16, true, { archType: "glass", crownColor: "#f4ca5c" });
+      /* Stepped brushed-titanium crown + slender architectural needle spire (zero flat yellow octagon!) */
+      pushOct(0.0134, 0.0032, 0.00024, 0.00020, 256, 276, 2, "citadel", "#9fb1c4", 16, false, { crownColor: "#f4ca5c" });
+      pushBox(0.0134, 0.0032, 0.00044, 0.00005, 256, 282, 2, "citadel", "#cbd5e1", false);
+      pushBox(0.0134, 0.0032, 0.00005, 0.00038, 256, 282, 2, "citadel", "#cbd5e1", false);
+      pushOct(0.0134, 0.0032, 0.00010, 0.00009, 276, 294, 2, "citadel", "#cbd5e1", 12, false);
+      pushOct(0.0134, 0.0032, 0.000042, 0.000038, 294, 322, 2, "citadel", "#e2e8f0", 10, false);
+      pushLight(0.0134, 0.0032, 324, 4.4, "#ff3b5c", 0.0, true);
 
-      /* Hero: Sovereign Crescent Twin Spires (0.0104, 0.0018) + Illuminated Golden Sky-Bridge */
+      /* Hero: Sovereign Crescent Twin Spires (0.0104, 0.0018) — Sleek Stepped Glass/Steel Crowns + Glazed Sky-Gallery */
       pushBox(0.0104, 0.0018, 0.00188, 0.00112, 0, 26, 0, "citadel", "", true, { archType: "glass" });
-      pushOct(0.0098, 0.0018, 0.00046, 0.00042, 26, 188, 1, "citadel", "", 8, true, { archType: "glass", crownColor: "#f4ca5c" });
-      pushOct(0.0098, 0.0018, 0.00028, 0.00026, 188, 218, 2, "citadel", "#f4ca5c", 8, false, { emissive: true });
-      pushOct(0.0110, 0.0018, 0.00046, 0.00042, 26, 174, 1, "citadel", "", 8, true, { archType: "glass", crownColor: "#38bdf8" });
-      pushOct(0.0110, 0.0018, 0.00028, 0.00026, 174, 200, 2, "citadel", "#7dd3fc", 8, false, { emissive: true });
-      pushBox(0.0104, 0.0018, 0.00108, 0.00034, 114, 128, 2, "citadel", "#f4ca5c", false, { emissive: true });
-      pushLight(0.0098, 0.0018, 221, 4.2, "#ff3b5c", 1.1, false);
-      pushLight(0.0110, 0.0018, 203, 4.2, "#ff3b5c", 2.2, false);
+      pushOct(0.0098, 0.0018, 0.00046, 0.00042, 26, 184, 1, "citadel", "", 16, true, { archType: "glass", crownColor: "#f4ca5c" });
+      pushOct(0.0098, 0.0018, 0.00030, 0.00027, 184, 204, 2, "citadel", "", 16, true, { archType: "glass", crownColor: "#f4ca5c" });
+      pushOct(0.0098, 0.0018, 0.00016, 0.00014, 204, 214, 2, "citadel", "#9fb1c4", 12, false);
+      pushOct(0.0098, 0.0018, 0.000038, 0.000035, 214, 232, 2, "citadel", "#cbd5e1", 10, false);
+      pushOct(0.0110, 0.0018, 0.00046, 0.00042, 26, 170, 1, "citadel", "", 16, true, { archType: "glass", crownColor: "#38bdf8" });
+      pushOct(0.0110, 0.0018, 0.00030, 0.00027, 170, 190, 2, "citadel", "", 16, true, { archType: "glass", crownColor: "#38bdf8" });
+      pushOct(0.0110, 0.0018, 0.00016, 0.00014, 190, 199, 2, "citadel", "#9fb1c4", 12, false);
+      pushOct(0.0110, 0.0018, 0.000038, 0.000035, 199, 216, 2, "citadel", "#cbd5e1", 10, false);
+      /* Glazed architectural sky-gallery connecting Twin Spires (zero flat yellow block!) */
+      pushBox(0.0104, 0.0018, 0.00108, 0.00032, 114, 128, 2, "citadel", "", true, { archType: "glass", crownColor: "#f4ca5c" });
+      pushBox(0.0104, 0.0018, 0.00108, 0.00034, 112.5, 114.2, 2, "citadel", "#9fb1c4", false);
+      pushLight(0.0098, 0.0018, 234, 3.8, "#ff3b5c", 1.1, false);
+      pushLight(0.0110, 0.0018, 218, 3.8, "#ff3b5c", 2.2, false);
 
-      /* Hero: Federal High Courthouse (0.0100, 0.0066) — Neoclassical Limestone Colonnade + Gilded Dome */
+      /* Hero: Federal High Courthouse (0.0100, 0.0066) — Neoclassical Limestone Colonnade + Smooth 24-Seg Stepped Bronze Dome */
       pushBox(0.0100, 0.0066, 0.00192, 0.00118, 0, 18, 0, "citadel", "", true, { archType: "stone" });
       pushBox(0.0100, 0.0066, 0.00156, 0.00088, 18, 56, 1, "citadel", "", true, { archType: "stone", crownColor: "#f4ca5c" });
-      pushOct(0.0100, 0.0066, 0.00046, 0.00038, 56, 78, 2, "citadel", "#e7dec9", 12, false);
-      pushOct(0.0100, 0.0066, 0.00024, 0.00020, 78, 92, 2, "citadel", "#f4ca5c", 12, false, { emissive: true });
+      pushOct(0.0100, 0.0066, 0.00046, 0.00038, 56, 74, 2, "citadel", "#e5dcc8", 24, false);
+      pushOct(0.0100, 0.0066, 0.00034, 0.00028, 74, 84, 2, "citadel", "#c4a35a", 24, false);
+      pushOct(0.0100, 0.0066, 0.00018, 0.00015, 84, 91, 2, "citadel", "#d8be7c", 16, false);
+      pushOct(0.0100, 0.0066, 0.00005, 0.000045, 91, 99, 2, "citadel", "#e2e8f0", 10, false);
 
       /* Dense Financial Island Skyscraper District & Waterfront Mid-Rises (34 sculpted towers!) */
       var citadelBlocks = [
@@ -1379,20 +1419,23 @@
       /* =====================================================================
          4. SECTOR 3 NORTH: CLASSICAL ARCHED COLISEUM, NITRO SPEEDWAY & CIVIC DISTRICT
          ===================================================================== */
-      /* Hero: Zone Coliseum Stadium (0.0032, 0.0088) — 16-Sided Tiered Classical Arched Bowl + Open Green Pitch + Glowing Rim + 4 Floodlight Towers */
-      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00215, 0.00168, 0.00106, 0.00078, 16), 0, 4, 0, "harbor", "#e4dac6", false, { roofKind: "ring" });
-      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00190, 0.00146, 0.00108, 0.00080, 16), 4, 28, 0, "harbor", "", true, { archType: "stadium", roofKind: "ring" });
-      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00172, 0.00132, 0.00116, 0.00086, 16), 28, 52, 1, "harbor", "", true, { archType: "stadium", roofKind: "ring", crownColor: "#fde68a" });
-      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00160, 0.00122, 0.00124, 0.00094, 16), 52, 60, 2, "harbor", "#f4ca5c", false, { roofKind: "ring", emissive: true });
-      /* 4 Glowing Stadium Floodlight Towers with structural steel masts & bright warm-white light banks */
+      /* Hero: Zone Coliseum Stadium (0.0032, 0.0088) — Smooth 48-Segment Classical Travertine Arched Bowl + Open Mowed Pitch + Sleek Tapered Floodlight Masts */
+      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00215, 0.00168, 0.00106, 0.00078, 48), 0, 4, 0, "harbor", "#e6ddc9", false, { roofKind: "ring" });
+      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00190, 0.00146, 0.00108, 0.00080, 48), 4, 28, 0, "harbor", "", true, { archType: "stadium", roofKind: "ring" });
+      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00172, 0.00132, 0.00116, 0.00086, 48), 28, 52, 1, "harbor", "", true, { archType: "stadium", roofKind: "ring", crownColor: "#fde68a" });
+      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00162, 0.00124, 0.00124, 0.00094, 48), 52, 57, 2, "harbor", "#e8ddc6", false, { roofKind: "ring", crownColor: "#f4ca5c" });
+      pushPoly(hollowEllipsePoly(0.0032, 0.0088, 0.00158, 0.00120, 0.00146, 0.00110, 48), 57, 59.2, 2, "harbor", "#f4ca5c", false, { roofKind: "ring", emissive: true });
+      /* 4 Sleek Tapered Architectural Floodlight Masts (slender cylindrical pylons + slim LED arrays, no chunky grey T-blocks!) */
       [
-        [0.0014, 0.0075], [0.0050, 0.0075],
-        [0.0014, 0.0101], [0.0050, 0.0101]
+        [0.00145, 0.00755], [0.00495, 0.00755],
+        [0.00145, 0.01005], [0.00495, 0.01005]
       ].forEach(function (fl, fIdx) {
-        pushBox(fl[0], fl[1], 0.00015, 0.00015, 0, 82, 1, "harbor", "#cbd5e1", false);
-        pushBox(fl[0], fl[1], 0.00032, 0.00022, 76, 86, 2, "harbor", "#fffbeb", false, { emissive: true });
-        pushLight(fl[0], fl[1], 88, 7.5, "#fffbeb", -1, true);
-        pushLight(fl[0], fl[1], 74, 4.5, "#fde68a", fIdx * 0.5, false);
+        pushOct(fl[0], fl[1], 0.00010, 0.00009, 0, 12, 0, "harbor", "#d6cfc0", 12, false);
+        pushOct(fl[0], fl[1], 0.000058, 0.000054, 12, 52, 1, "harbor", "#cbd5e1", 12, false);
+        pushOct(fl[0], fl[1], 0.000038, 0.000035, 52, 78, 2, "harbor", "#e2e8f0", 10, false);
+        pushOct(fl[0], fl[1], 0.00011, 0.00007, 76, 80.5, 2, "harbor", "#fffbeb", 12, false, { emissive: true });
+        pushLight(fl[0], fl[1], 82, 5.4, "#fffbeb", -1, false);
+        pushLight(fl[0], fl[1], 74, 3.2, "#fde68a", fIdx * 0.5, false);
       });
 
       /* Hero: Nitro Motor Speedway (-0.0026, 0.0092) — Twin Glazed Grandstands + Start Gantry + Pit Garages */
@@ -1415,12 +1458,13 @@
         pushLight(sl[0], sl[1], 32, 4.6, "#fef08a", -1, false);
       });
 
-      /* Hero: Signal Syndicate Broadcast Tower (-0.0056, 0.0072) — 176m Glass & Steel Spire */
+      /* Hero: Signal Syndicate Broadcast Tower (-0.0056, 0.0072) — Sleek 176m Glass Observation Pod & Steel Needle Spire */
       pushBox(-0.0056, 0.0072, 0.00076, 0.00066, 0, 32, 0, "harbor", "", true, { archType: "glass" });
-      pushOct(-0.0056, 0.0072, 0.00030, 0.00026, 32, 104, 1, "harbor", "", 8, true, { archType: "glass" });
-      pushOct(-0.0056, 0.0072, 0.00044, 0.00038, 104, 122, 2, "harbor", "#38bdf8", 12, false, { emissive: true });
-      pushOct(-0.0056, 0.0072, 0.00010, 0.00009, 122, 176, 2, "harbor", "#f43f5e", 6, false, { emissive: true });
-      pushLight(-0.0056, 0.0072, 179, 4.6, "#ff3b5c", 2.8, true);
+      pushOct(-0.0056, 0.0072, 0.00026, 0.00023, 32, 104, 1, "harbor", "", 16, true, { archType: "glass" });
+      pushOct(-0.0056, 0.0072, 0.00042, 0.00036, 104, 118, 2, "harbor", "", 24, true, { archType: "glass", crownColor: "#38bdf8" });
+      pushOct(-0.0056, 0.0072, 0.00024, 0.00020, 118, 126, 2, "harbor", "#9fb1c4", 16, false);
+      pushOct(-0.0056, 0.0072, 0.000048, 0.000044, 126, 178, 2, "harbor", "#cbd5e1", 10, false);
+      pushLight(-0.0056, 0.0072, 180, 4.0, "#ff3b5c", 2.8, true);
 
       /* North Coliseum Civic Strip, Media Complex, Sports Hotels & Park Pavilions (14 sculpted blocks!) */
       var northBlocks = [
@@ -2017,14 +2061,41 @@
               ], 2)
             }
           },
-          /* Zone Coliseum Stadium Bright Emerald Inner Playing Field */
+          /* Zone Coliseum Stadium Bright Emerald Inner Playing Field (48-seg smooth oval + mowed turf stripes) */
           {
             type: "Feature",
             id: 7268,
             properties: { kind: "pitch" },
             geometry: {
               type: "Polygon",
-              coordinates: ellipsePoly(0.0032, 0.0088, 0.00112, 0.00084, 16, 0)
+              coordinates: ellipsePoly(0.0032, 0.0088, 0.00112, 0.00084, 48, 0)
+            }
+          },
+          {
+            type: "Feature",
+            id: 7270,
+            properties: { kind: "pitch-stripe" },
+            geometry: {
+              type: "Polygon",
+              coordinates: rectPoly(0.00240, 0.00826, 0.00264, 0.00934)
+            }
+          },
+          {
+            type: "Feature",
+            id: 7271,
+            properties: { kind: "pitch-stripe" },
+            geometry: {
+              type: "Polygon",
+              coordinates: rectPoly(0.00296, 0.00814, 0.00320, 0.00946)
+            }
+          },
+          {
+            type: "Feature",
+            id: 7272,
+            properties: { kind: "pitch-stripe" },
+            geometry: {
+              type: "Polygon",
+              coordinates: rectPoly(0.00352, 0.00822, 0.00376, 0.00938)
             }
           },
           /* Nitro Speedway Infield Lawn */
@@ -2034,7 +2105,7 @@
             properties: { kind: "pitch" },
             geometry: {
               type: "Polygon",
-              coordinates: ellipsePoly(-0.0026, 0.0092, 0.00172, 0.00085, 24, 0)
+              coordinates: ellipsePoly(-0.0026, 0.0092, 0.00172, 0.00085, 36, 0)
             }
           }
         ]
@@ -3017,9 +3088,17 @@
         var geomData = buildOuterArchGeometryData();
         if (!geomData) return;
 
-        var uDaylight = { value: (window.__zoneMapAtmosphere && Number.isFinite(window.__zoneMapAtmosphere.daylight)) ? window.__zoneMapAtmosphere.daylight : (state.dark ? 0.0 : 1.0) };
-        var sun0 = computeOuterSunDir(state.activePhase || computeDesiredPhase());
+        var initPhase = state.activePhase || computeDesiredPhase();
+        var initSh = (TIME_PHASES[initPhase] && TIME_PHASES[initPhase].shader) || TIME_PHASES.day.shader;
+        var uPhase = { value: initSh.phaseId };
+        var uDaylight = { value: initSh.daylight };
+        var uNightGlow = { value: initSh.nightGlow };
+        var sun0 = computeOuterSunDir(initPhase);
         var uSunDir = { value: new THREE.Vector3(sun0[0], sun0[1], sun0[2]) };
+        var uSunTint = { value: new THREE.Vector3(initSh.sunTint[0], initSh.sunTint[1], initSh.sunTint[2]) };
+        var uSkyTop = { value: new THREE.Vector3(initSh.skyTop[0], initSh.skyTop[1], initSh.skyTop[2]) };
+        var uSkyHorizon = { value: new THREE.Vector3(initSh.skyHorizon[0], initSh.skyHorizon[1], initSh.skyHorizon[2]) };
+        var uAmbient = { value: new THREE.Vector3(initSh.ambient[0], initSh.ambient[1], initSh.ambient[2]) };
         var uZoom = { value: typeof map.getZoom === "function" ? map.getZoom() : 13.45 };
         var uTime = { value: 0.0 };
         var startMs = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
@@ -3038,29 +3117,46 @@
           "varying vec4 vWall;",
           "varying vec4 vMeta;",
           "varying vec3 vWorldPos;",
+          "varying float vClipW;",
           "void main() {",
           "  vNormal = normal;",
           "  vBaseColor = aColor;",
           "  vWall = aWall;",
           "  vMeta = aMeta;",
           "  vWorldPos = position;",
-          "  gl_Position = projectionMatrix * vec4(position, 1.0);",
+          "  vec4 clipPos = projectionMatrix * vec4(position, 1.0);",
+          "  vClipW = max(0.001, clipPos.w);",
+          "  gl_Position = clipPos;",
           "}"
         ].join("\n");
 
         var wallFragShader = [
+          "uniform float uPhase;",
           "uniform float uDaylight;",
+          "uniform float uNightGlow;",
           "uniform vec3 uSunDir;",
+          "uniform vec3 uSunTint;",
+          "uniform vec3 uSkyTop;",
+          "uniform vec3 uSkyHorizon;",
+          "uniform vec3 uAmbient;",
           "uniform float uZoom;",
           "varying vec3 vNormal;",
           "varying vec3 vBaseColor;",
           "varying vec4 vWall;",
           "varying vec4 vMeta;",
           "varying vec3 vWorldPos;",
+          "varying float vClipW;",
           "float hash21(vec2 p) {",
           "  p = fract(p * vec2(127.1, 311.7));",
           "  p += dot(p, p + 34.53);",
           "  return fract(p.x * p.y);",
+          "}",
+          "/* Analytical band-limited pulse: smoothly converges to exact mean width as fw grows (ZERO moire shimmer!) */",
+          "float aaBand(float t, float lo, float hi, float fw) {",
+          "  float coverage = clamp(hi - lo, 0.0, 1.0);",
+          "  float raw = smoothstep(lo - fw, lo + fw, t) * (1.0 - smoothstep(hi - fw, hi + fw, t));",
+          "  float fade = smoothstep(0.14, 0.42, fw);",
+          "  return mix(raw, coverage, fade);",
           "}",
           "void main() {",
           "  vec3 n = normalize(vNormal);",
@@ -3071,126 +3167,146 @@
           "  float wallW = max(1.0, vWall.z);",
           "  float wallH = max(1.0, vWall.w);",
           "  float day = clamp(uDaylight, 0.0, 1.0);",
-          "  float night = 1.0 - day;",
-          "  float aa = clamp(0.05 + 0.03 * max(0.0, 15.0 - uZoom), 0.04, 0.16);",
+          "  float glow = clamp(uNightGlow, 0.0, 1.0);",
           "",
-          "  /* Architectural floor pitch & bay spacing by building typology */",
-          "  float floorH = (styleId == 1.0) ? 3.5 : (styleId == 4.0) ? 4.8 : (styleId == 5.0) ? 7.6 : (styleId == 3.0) ? 4.4 : 3.7;",
-          "  float bayW   = (styleId == 1.0) ? 3.0 : (styleId == 4.0) ? 4.6 : (styleId == 5.0) ? 6.4 : (styleId == 3.0) ? 5.0 : 3.4;",
+          "  /* True distance-aware filter width: blends fine mullions smoothly at overview, razor-sharp close up */",
+          "  float mpp = clamp(pow(2.0, 16.4 - uZoom) * 0.44, 0.22, 16.0);",
+          "  float fwH = clamp(mpp * 0.055, 0.035, 0.44);",
+          "  float fwV = clamp(mpp * 0.068, 0.035, 0.44);",
+          "",
+          "  /* Sleek, genuinely architectural glazing rhythm (larger bays -> zero TV-snow aliasing) */",
+          "  float floorH = (styleId == 1.0) ? 4.8 : (styleId == 4.0) ? 5.8 : (styleId == 5.0) ? 10.6 : (styleId == 3.0) ? 5.2 : 4.6;",
+          "  float bayW   = (styleId == 1.0) ? 7.2 : (styleId == 4.0) ? 7.6 : (styleId == 5.0) ? 11.4 : (styleId == 3.0) ? 7.0 : 5.6;",
           "  float flIdx = floor(vM / floorH);",
           "  float byIdx = floor(uM / bayW);",
           "  float fu = fract(uM / bayW);",
           "  float fv = fract(vM / floorH);",
           "",
-          "  float corniceBand = step(wallH - 1.35, vM);",
-          "  float groundBand = step(vM, 4.6) * step(9.0, wallH);",
+          "  float corniceBand = smoothstep(wallH - 1.9, wallH - 0.8, vM);",
+          "  float groundBand = (1.0 - smoothstep(4.2, 5.2, vM)) * step(10.0, wallH);",
+          "  float baseAO = smoothstep(0.0, 7.5, vM) * 0.16 + 0.84;",
+          "  float cornerAO = smoothstep(0.0, 1.8, min(uM, wallW - uM)) * 0.10 + 0.90;",
+          "",
           "  float winMask = 0.0;",
           "  float litProb = 0.42;",
-          "  vec3 mullionTint = vec3(0.0);",
+          "  vec3 spandrelTint = vec3(0.0);",
           "",
           "  if (styleId == 5.0) {",
-          "    /* Zone Coliseum: classical multi-tiered rounded Roman/modern travertine arches */",
+          "    /* Smooth 48-sided Zone Coliseum: grand classical travertine colonnade arches (NO black dots!) */",
           "    float cx = (fu - 0.5) * 2.0;",
-          "    float archBase = step(0.14, fv) * (1.0 - step(0.86, fv));",
-          "    float inRect = (1.0 - smoothstep(0.62 - aa, 0.62 + aa, abs(cx))) * step(0.14, fv) * (1.0 - step(0.56, fv));",
-          "    float archDist = length(vec2(cx / 0.62, max(0.0, (fv - 0.56) / 0.30)));",
-          "    float inCurve = (1.0 - smoothstep(0.96 - aa, 1.02 + aa, archDist)) * step(0.54, fv);",
-          "    winMask = clamp(max(inRect, inCurve) * archBase, 0.0, 1.0) * (1.0 - corniceBand);",
-          "    litProb = 0.88;",
+          "    float archFw = clamp(fwH * 1.15, 0.04, 0.34);",
+          "    float vLow = smoothstep(0.14 - archFw, 0.14 + archFw, fv);",
+          "    float vTop = 1.0 - smoothstep(0.84 - archFw, 0.84 + archFw, fv);",
+          "    float rectPart = (1.0 - smoothstep(0.56 - archFw, 0.56 + archFw, abs(cx))) * (1.0 - smoothstep(0.54 - archFw, 0.54 + archFw, fv));",
+          "    float archDist = length(vec2(cx / 0.56, max(0.0, (fv - 0.54) / 0.29)));",
+          "    float curvePart = (1.0 - smoothstep(0.92 - archFw, 1.02 + archFw, archDist)) * smoothstep(0.50 - archFw, 0.54 + archFw, fv);",
+          "    float archRaw = clamp(max(rectPart, curvePart) * vLow * vTop, 0.0, 1.0);",
+          "    winMask = mix(archRaw, 0.34, smoothstep(0.24, 0.44, fwH)) * (1.0 - corniceBand);",
+          "    litProb = 0.92;",
           "  } else if (styleId == 4.0) {",
-          "    /* International Airport Terminal: sweeping glass curtain wall + crisp steel diagrid */",
-          "    float d1 = abs(fract((uM + vM * 0.85) / 6.2) - 0.5);",
-          "    float d2 = abs(fract((uM - vM * 0.85) / 6.2) - 0.5);",
-          "    float truss = max(1.0 - smoothstep(0.04, 0.09 + aa * 0.3, d1), 1.0 - smoothstep(0.04, 0.09 + aa * 0.3, d2));",
-          "    float horiz = 1.0 - smoothstep(0.04, 0.09, min(fv, 1.0 - fv));",
-          "    winMask = (1.0 - clamp(max(truss, horiz), 0.0, 1.0)) * (1.0 - corniceBand);",
+          "    /* International Airport Terminal: sleek sweeping reflective glass + subtle steel diagrid */",
+          "    float d1 = abs(fract((uM + vM * 0.72) / 9.5) - 0.5);",
+          "    float d2 = abs(fract((uM - vM * 0.72) / 9.5) - 0.5);",
+          "    float diagFw = clamp(fwH * 0.7, 0.03, 0.25);",
+          "    float truss = max(1.0 - smoothstep(0.025, 0.065 + diagFw, d1), 1.0 - smoothstep(0.025, 0.065 + diagFw, d2));",
+          "    truss *= (1.0 - smoothstep(0.18, 0.42, fwH));",
+          "    float spandrel = 1.0 - aaBand(fv, 0.10, 0.90, fwV);",
+          "    winMask = clamp(1.0 - max(truss * 0.85, spandrel * 0.75), 0.0, 1.0) * (1.0 - corniceBand);",
           "    litProb = 0.92;",
           "  } else if (styleId == 1.0) {",
-          "    /* Financial Island Glass Curtain Wall + Champagne/Steel Spandrels */",
-          "    float mx = smoothstep(0.07, 0.07 + aa, fu) * (1.0 - smoothstep(0.93 - aa, 0.93, fu));",
-          "    float my = smoothstep(0.18, 0.18 + aa, fv) * (1.0 - smoothstep(0.88 - aa, 0.88, fv));",
-          "    winMask = mx * my * (1.0 - corniceBand);",
+          "    /* Financial Island Curtain-Wall Skyscrapers: continuous sleek ribbon glazing + crisp brushed spandrels */",
+          "    float glassBand = aaBand(fv, 0.22, 0.92, fwV);",
+          "    float mullionGap = aaBand(fu, 0.06, 0.94, fwH);",
+          "    winMask = glassBand * mix(mullionGap, 0.90, smoothstep(0.16, 0.38, fwH)) * (1.0 - corniceBand);",
           "    litProb = 0.56;",
-          "    mullionTint = vec3(0.08, 0.06, 0.02);",
+          "    spandrelTint = vec3(0.06, 0.05, 0.03);",
           "  } else if (styleId == 2.0) {",
-          "    /* West Riviera Art-Deco Fluted Limestone + Recessed Tall Windows */",
-          "    float mx = smoothstep(0.16, 0.16 + aa, fu) * (1.0 - smoothstep(0.84 - aa, 0.84, fu));",
-          "    float my = smoothstep(0.15, 0.15 + aa, fv) * (1.0 - smoothstep(0.84 - aa, 0.84, fv));",
+          "    /* West Riviera Art-Deco Limestone & Boutique Glazing */",
+          "    float mx = aaBand(fu, 0.14, 0.86, fwH);",
+          "    float my = aaBand(fv, 0.18, 0.86, fwV);",
           "    winMask = mx * my * (1.0 - corniceBand);",
-          "    litProb = 0.52;",
+          "    litProb = 0.54;",
           "  } else if (styleId == 3.0) {",
-          "    /* Port Industrial Brick & Dockside Clerestory Bays */",
-          "    float mx = smoothstep(0.14, 0.14 + aa, fu) * (1.0 - smoothstep(0.86 - aa, 0.86, fu));",
-          "    float my = smoothstep(0.32, 0.32 + aa, fv) * (1.0 - smoothstep(0.82 - aa, 0.82, fv));",
+          "    /* Deepwater Port Brick & Clerestory Industrial Bays */",
+          "    float mx = aaBand(fu, 0.14, 0.86, fwH);",
+          "    float my = aaBand(fv, 0.34, 0.84, fwV);",
           "    winMask = mx * my * (1.0 - corniceBand);",
-          "    litProb = 0.38;",
+          "    litProb = 0.36;",
           "  } else if (styleId == 6.0) {",
-          "    /* Marina Luxury Coastal Villas: Wide Panoramic Glazing */",
-          "    float mx = smoothstep(0.09, 0.09 + aa, fu) * (1.0 - smoothstep(0.91 - aa, 0.91, fu));",
-          "    float my = smoothstep(0.14, 0.14 + aa, fv) * (1.0 - smoothstep(0.86 - aa, 0.86, fv));",
+          "    /* Marina Waterfront Villas: Wide Panoramic Terraces */",
+          "    float mx = aaBand(fu, 0.08, 0.92, fwH);",
+          "    float my = aaBand(fv, 0.16, 0.88, fwV);",
           "    winMask = mx * my * (1.0 - corniceBand);",
           "    litProb = 0.62;",
           "  } else {",
           "    /* Heritage Civic / Stone Architecture */",
-          "    float mx = smoothstep(0.18, 0.18 + aa, fu) * (1.0 - smoothstep(0.82 - aa, 0.82, fu));",
-          "    float my = smoothstep(0.20, 0.20 + aa, fv) * (1.0 - smoothstep(0.82 - aa, 0.82, fv));",
+          "    float mx = aaBand(fu, 0.16, 0.84, fwH);",
+          "    float my = aaBand(fv, 0.20, 0.84, fwV);",
           "    winMask = mx * my * (1.0 - corniceBand);",
           "    litProb = 0.44;",
           "  }",
           "",
-          "  /* Ground-floor illuminated storefronts / arcade bays */",
-          "  float storeWin = groundBand * smoothstep(0.10, 0.18, fu) * (1.0 - smoothstep(0.82, 0.90, fu)) * step(0.4, vM) * (1.0 - step(3.9, vM));",
+          "  /* Ground-floor illuminated storefronts / colonnade bays */",
+          "  float storeWin = groundBand * aaBand(fu, 0.10, 0.90, fwH) * smoothstep(0.4, 1.0, vM) * (1.0 - smoothstep(3.8, 4.4, vM));",
           "  winMask = max(winMask, storeWin);",
           "",
-          "  /* Directional sun + cool sky + warm urban bounce */",
-          "  float ndl = max(dot(n, normalize(uSunDir)), 0.0);",
-          "  float ndFill = max(dot(n, normalize(vec3(-uSunDir.x, 0.42, -uSunDir.z))), 0.0);",
-          "  float heightGrad = clamp(0.76 + 0.28 * (vM / max(wallH, 12.0)), 0.72, 1.08);",
-          "  float dayShade = (0.48 + 0.56 * ndl + 0.16 * ndFill) * heightGrad;",
-          "  float nightShade = (0.30 + 0.20 * ndl + 0.16 * ndFill) * (0.78 + 0.26 * (vM / max(wallH, 12.0)));",
+          "  /* Rich 4-Phase Directional Sun + Sky Hemisphere + Ambient Bounce */",
+          "  vec3 sunDirN = normalize(uSunDir);",
+          "  float ndl = max(dot(n, sunDirN), 0.0);",
+          "  float ndFill = max(dot(n, normalize(vec3(-sunDirN.x, 0.46, -sunDirN.z))), 0.0);",
+          "  float elevT = clamp(vM / max(wallH, 16.0), 0.0, 1.0);",
+          "  float heightGrad = mix(0.82, 1.08, elevT);",
           "",
-          "  vec3 wallDayCol = (vBaseColor + mullionTint) * dayShade;",
-          "  vec3 nightTint = (styleId == 1.0) ? vec3(0.42, 0.54, 0.72) : (styleId == 2.0) ? vec3(0.56, 0.46, 0.64) : (styleId == 3.0) ? vec3(0.58, 0.42, 0.36) : vec3(0.46, 0.54, 0.66);",
-          "  vec3 wallNightCol = mix(vBaseColor * 0.55, nightTint, 0.45) * nightShade + vec3(0.05, 0.07, 0.11);",
-          "  /* Cornice architectural highlight */",
-          "  vec3 corniceCol = mix(vec3(0.58, 0.66, 0.78), vec3(0.95, 0.91, 0.82), day) * mix(0.65, 1.02, day);",
-          "  vec3 wallCol = mix(wallNightCol, wallDayCol, day);",
-          "  wallCol = mix(wallCol, corniceCol, corniceBand * 0.72);",
+          "  vec3 wallLit = (vBaseColor + spandrelTint) * (uAmbient * (0.68 + 0.24 * ndFill) + uSunTint * (0.72 * ndl * (0.28 + 0.72 * day)));",
+          "  wallLit *= heightGrad * baseAO * cornerAO;",
+          "  /* Cornice clean architectural bevel */",
+          "  vec3 corniceCol = mix(uAmbient * 1.45, vec3(0.95, 0.92, 0.86) * uSunTint, day);",
+          "  vec3 wallCol = mix(wallLit, corniceCol, corniceBand * 0.68);",
           "",
-          "  /* Glass & Window Interior Shading (Day reflection vs Night glowing suites) */",
-          "  float suiteSeed = hash21(vec2(floor(byIdx * 0.5) + bHash * 43.0, flIdx + bHash * 19.0));",
-          "  float cellSeed  = hash21(vec2(byIdx + bHash * 97.0, flIdx * 1.7 + bHash * 31.0));",
-          "  float isLit = step(1.0 - litProb, mix(suiteSeed, cellSeed, 0.42));",
-          "  if (groundBand > 0.5) isLit = max(isLit, step(0.28, cellSeed));",
+          "  /* Coherent Architectural Office Suites (grouped 2-3 bays wide -> zero 1px noise!) */",
+          "  float suiteGroup = floor(byIdx * 0.5);",
+          "  float suiteSeed = hash21(vec2(suiteGroup + bHash * 41.0, flIdx + bHash * 17.0));",
+          "  float floorSeed = hash21(vec2(floor(flIdx * 0.5) + bHash * 23.0, bHash * 71.0));",
+          "  float suiteScore = mix(suiteSeed, floorSeed, 0.35);",
+          "  float suiteThreshold = mix(1.0 - litProb * 0.62, 1.0 - litProb, glow);",
+          "  float isLit = smoothstep(suiteThreshold - 0.06, suiteThreshold + 0.06, suiteScore);",
+          "  if (groundBand > 0.5) isLit = max(isLit, smoothstep(0.25, 0.38, suiteSeed));",
           "",
-          "  /* Day reflective glazing with sky/horizon sheen */",
-          "  float skyRef = clamp(0.35 + 0.45 * ndl + 0.25 * sin(vWorldPos.x * 0.015 + vWorldPos.z * 0.015 + vM * 0.06), 0.18, 1.0);",
-          "  vec3 dayGlass = (styleId == 1.0 || styleId == 4.0) ? mix(vec3(0.20, 0.36, 0.50), vec3(0.66, 0.84, 0.96), skyRef)",
-          "                : (styleId == 5.0) ? vec3(0.18, 0.16, 0.15)",
-          "                : (styleId == 6.0) ? mix(vec3(0.16, 0.42, 0.48), vec3(0.58, 0.84, 0.88), skyRef)",
-          "                : mix(vec3(0.14, 0.22, 0.30), vec3(0.40, 0.54, 0.66), skyRef);",
+          "  /* Smooth Vertical Sky-Gradient Fresnel Glass Reflection (Day / Afternoon / Dusk) */",
+          "  float skyBand = clamp(0.18 + 0.62 * elevT + 0.20 * ndl + 0.10 * sin(vWorldPos.x * 0.008 + vWorldPos.z * 0.008), 0.0, 1.0);",
+          "  vec3 skyRefl = mix(uSkyHorizon, uSkyTop, skyBand);",
+          "  vec3 glassBase = (styleId == 1.0 || styleId == 4.0) ? mix(vec3(0.16, 0.30, 0.44), skyRefl, 0.74)",
+          "                 : (styleId == 5.0) ? mix(vec3(0.32, 0.27, 0.23), vec3(0.46, 0.39, 0.33), ndl)",
+          "                 : (styleId == 6.0) ? mix(vec3(0.16, 0.40, 0.48), skyRefl, 0.66)",
+          "                 : mix(vec3(0.18, 0.26, 0.35), skyRefl, 0.52);",
+          "  /* Warm golden sun glint on Afternoon / Dusk facing glass */",
+          "  float sunGlint = pow(max(dot(n, normalize(vec3(sunDirN.x, 0.25, sunDirN.z))), 0.0), 3.0) * (0.18 + 0.28 * (1.0 - abs(uPhase - 2.0) * 0.5));",
+          "  vec3 dayGlass = glassBase * (0.76 + 0.32 * ndl) + uSunTint * sunGlint * (styleId == 5.0 ? 0.06 : 0.28);",
           "",
-          "  /* Night multi-palette warm/office/cyan/violet illuminated window suites */",
-          "  vec3 litColor = (cellSeed < 0.48) ? vec3(1.00, 0.82, 0.48)",
-          "                : (cellSeed < 0.74) ? vec3(0.88, 0.94, 1.00)",
-          "                : (cellSeed < 0.89) ? vec3(1.00, 0.62, 0.32)",
-          "                : (styleId == 2.0)  ? vec3(0.92, 0.50, 0.98)",
-          "                : vec3(0.40, 0.82, 1.00);",
-          "  if (styleId == 5.0) litColor = vec3(1.00, 0.80, 0.44);",
-          "  if (styleId == 4.0) litColor = mix(vec3(0.76, 0.94, 1.00), vec3(1.00, 0.88, 0.64), cellSeed);",
-          "  if (groundBand > 0.5) litColor = vec3(1.00, 0.78, 0.44);",
-          "  float interiorGrad = 0.72 + 0.36 * (1.0 - fv);",
-          "  vec3 unlitNightGlass = vec3(0.08, 0.13, 0.20) + vec3(0.03, 0.05, 0.08) * ndFill;",
-          "  vec3 nightWindow = mix(unlitNightGlass, litColor * interiorGrad, isLit);",
-          "  /* Subtle Riviera vertical neon pilasters at night on Art-Deco towers */",
-          "  float decoEdge = (styleId == 2.0 && wallH > 34.0) ? (1.0 - smoothstep(0.0, 0.85, min(uM, wallW - uM))) : 0.0;",
-          "  vec3 decoNeon = mix(vec3(0.90, 0.44, 0.96), vec3(0.98, 0.76, 0.32), step(0.5, bHash));",
+          "  /* Soft Interior Room Lighting Palette for Dusk & Night */",
+          "  vec3 litColor = (suiteSeed < 0.52) ? vec3(1.00, 0.84, 0.54)",
+          "                : (suiteSeed < 0.78) ? vec3(0.86, 0.93, 1.00)",
+          "                : (suiteSeed < 0.90) ? vec3(1.00, 0.68, 0.38)",
+          "                : (styleId == 2.0)   ? vec3(0.92, 0.56, 0.98)",
+          "                : vec3(0.48, 0.84, 1.00);",
+          "  if (styleId == 5.0) litColor = vec3(1.00, 0.80, 0.46);",
+          "  if (styleId == 4.0) litColor = mix(vec3(0.80, 0.94, 1.00), vec3(1.00, 0.88, 0.66), suiteSeed);",
+          "  if (groundBand > 0.5) litColor = vec3(1.00, 0.80, 0.48);",
+          "  float roomGrad = 0.78 + 0.26 * (1.0 - fv);",
+          "  /* Band-limit night window contrast smoothly at far distance so overview glows cleanly without pixel sparkle */",
+          "  float farGlowBlend = smoothstep(0.18, 0.42, fwH);",
+          "  float litSmoothed = mix(isLit, litProb * 0.82, farGlowBlend * 0.55);",
+          "  vec3 unlitDarkGlass = mix(vec3(0.07, 0.12, 0.20), skyRefl * 0.55, 0.45) + uAmbient * 0.14;",
+          "  vec3 nightGlass = mix(unlitDarkGlass, litColor * roomGrad, litSmoothed);",
           "",
-          "  vec3 winFinal = mix(nightWindow, dayGlass, day);",
-          "  /* Dusk warm interior glow peeks through early */",
-          "  winFinal += litColor * isLit * (1.0 - smoothstep(0.0, 0.55, day)) * 0.14;",
+          "  /* Blend cleanly across all 4 phases using uNightGlow (0.0 Day, 0.08 Afternoon, 0.52 Dusk, 1.0 Night) */",
+          "  vec3 winFinal = mix(dayGlass, nightGlass, glow);",
+          "  /* Subtle Riviera Art-Deco vertical neon pilasters in Dusk/Night */",
+          "  float decoEdge = (styleId == 2.0 && wallH > 34.0) ? (1.0 - smoothstep(0.0, 1.1, min(uM, wallW - uM))) : 0.0;",
+          "  vec3 decoNeon = mix(vec3(0.90, 0.46, 0.96), vec3(0.98, 0.76, 0.34), step(0.5, bHash));",
+          "",
           "  vec3 finalCol = mix(wallCol, winFinal, winMask);",
-          "  finalCol += decoNeon * decoEdge * night * 0.58;",
+          "  finalCol += decoNeon * decoEdge * glow * 0.46;",
           "  gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);",
           "}"
         ].join("\n");
@@ -3211,21 +3327,26 @@
 
         var solidFragShader = [
           "uniform float uDaylight;",
+          "uniform float uNightGlow;",
           "uniform vec3 uSunDir;",
+          "uniform vec3 uSunTint;",
+          "uniform vec3 uSkyHorizon;",
+          "uniform vec3 uAmbient;",
           "varying vec3 vNormal;",
           "varying vec3 vColor;",
           "varying float vKind;",
           "void main() {",
           "  vec3 n = normalize(vNormal);",
           "  float day = clamp(uDaylight, 0.0, 1.0);",
-          "  float ndl = max(dot(n, normalize(uSunDir)), 0.0);",
-          "  float ndFill = max(dot(n, normalize(vec3(-uSunDir.x, 0.55, -uSunDir.z))), 0.0);",
-          "  float upBoost = max(n.y, 0.0) * 0.14;",
-          "  float dayLight = 0.52 + 0.48 * ndl + 0.16 * ndFill + upBoost;",
-          "  float nightLight = 0.34 + 0.22 * ndl + 0.18 * ndFill + upBoost * 0.8;",
-          "  vec3 dayCol = vColor * dayLight;",
-          "  vec3 nightCol = mix(vColor * nightLight, vec3(0.24, 0.34, 0.46) * (0.65 + 0.35 * ndl), vKind < 0.5 ? 0.30 : 0.18) + vec3(0.04, 0.06, 0.10);",
-          "  vec3 finalCol = mix(nightCol, dayCol, day);",
+          "  float glow = clamp(uNightGlow, 0.0, 1.0);",
+          "  vec3 sunDirN = normalize(uSunDir);",
+          "  float ndl = max(dot(n, sunDirN), 0.0);",
+          "  float ndFill = max(dot(n, normalize(vec3(-sunDirN.x, 0.55, -sunDirN.z))), 0.0);",
+          "  float upBoost = max(n.y, 0.0) * 0.16;",
+          "  vec3 lit = vColor * (uAmbient * (0.72 + 0.24 * ndFill + upBoost) + uSunTint * (0.68 * ndl * (0.22 + 0.78 * day)));",
+          "  vec3 skyWash = uSkyHorizon * (0.06 + 0.08 * max(n.y, 0.0)) * (1.0 - glow * 0.4);",
+          "  vec3 nightFloor = vec3(0.04, 0.06, 0.10) * glow;",
+          "  vec3 finalCol = lit + skyWash + nightFloor;",
           "  gl_FragColor = vec4(clamp(finalCol, 0.0, 1.0), 1.0);",
           "}"
         ].join("\n");
@@ -3243,19 +3364,19 @@
         ].join("\n");
 
         var emFragShader = [
-          "uniform float uDaylight;",
+          "uniform float uNightGlow;",
           "uniform float uTime;",
           "varying vec3 vColor;",
           "varying vec2 vPulse;",
           "void main() {",
-          "  float day = clamp(uDaylight, 0.0, 1.0);",
+          "  float glow = clamp(uNightGlow, 0.0, 1.0);",
           "  float pulse = 1.0;",
           "  if (vPulse.x >= 0.0) {",
-          "    pulse = 0.45 + 0.55 * (0.5 + 0.5 * sin(uTime * 3.4 + vPulse.x * 6.28318));",
+          "    pulse = 0.50 + 0.50 * (0.5 + 0.5 * sin(uTime * 3.2 + vPulse.x * 6.28318));",
           "  }",
-          "  float vis = mix(1.0, vPulse.y, day);",
+          "  float vis = mix(vPulse.y, 1.0, glow);",
           "  if (vis < 0.09) discard;",
-          "  vec3 col = vColor * mix(1.12, 0.92, day) * pulse;",
+          "  vec3 col = vColor * mix(0.88, 1.12, glow) * pulse;",
           "  gl_FragColor = vec4(clamp(col, 0.0, 1.0), clamp(vis, 0.0, 1.0));",
           "}"
         ].join("\n");
@@ -3264,6 +3385,19 @@
         var geometries = [], materials = [];
         var layerDisposed = false;
         var shaderFailed = false;
+
+        function applyShaderPreset(phaseKey) {
+          var sh = (TIME_PHASES[phaseKey] && TIME_PHASES[phaseKey].shader) || TIME_PHASES.day.shader;
+          uPhase.value = sh.phaseId;
+          uDaylight.value = sh.daylight;
+          uNightGlow.value = sh.nightGlow;
+          var sd = computeOuterSunDir(phaseKey);
+          uSunDir.value.set(sd[0], sd[1], sd[2]);
+          uSunTint.value.set(sh.sunTint[0], sh.sunTint[1], sh.sunTint[2]);
+          uSkyTop.value.set(sh.skyTop[0], sh.skyTop[1], sh.skyTop[2]);
+          uSkyHorizon.value.set(sh.skyHorizon[0], sh.skyHorizon[1], sh.skyHorizon[2]);
+          uAmbient.value.set(sh.ambient[0], sh.ambient[1], sh.ambient[2]);
+        }
 
         function cleanupThree() {
           if (layerDisposed) return;
@@ -3299,7 +3433,17 @@
                 var wMat = new THREE.ShaderMaterial({
                   vertexShader: wallVertShader,
                   fragmentShader: wallFragShader,
-                  uniforms: { uDaylight: uDaylight, uSunDir: uSunDir, uZoom: uZoom },
+                  uniforms: {
+                    uPhase: uPhase,
+                    uDaylight: uDaylight,
+                    uNightGlow: uNightGlow,
+                    uSunDir: uSunDir,
+                    uSunTint: uSunTint,
+                    uSkyTop: uSkyTop,
+                    uSkyHorizon: uSkyHorizon,
+                    uAmbient: uAmbient,
+                    uZoom: uZoom
+                  },
                   side: THREE.DoubleSide,
                   depthTest: true,
                   depthWrite: true
@@ -3321,7 +3465,14 @@
                 var sMat = new THREE.ShaderMaterial({
                   vertexShader: solidVertShader,
                   fragmentShader: solidFragShader,
-                  uniforms: { uDaylight: uDaylight, uSunDir: uSunDir },
+                  uniforms: {
+                    uDaylight: uDaylight,
+                    uNightGlow: uNightGlow,
+                    uSunDir: uSunDir,
+                    uSunTint: uSunTint,
+                    uSkyHorizon: uSkyHorizon,
+                    uAmbient: uAmbient
+                  },
                   side: THREE.DoubleSide,
                   depthTest: true,
                   depthWrite: true
@@ -3342,7 +3493,7 @@
                 var eMat = new THREE.ShaderMaterial({
                   vertexShader: emVertShader,
                   fragmentShader: emFragShader,
-                  uniforms: { uDaylight: uDaylight, uTime: uTime },
+                  uniforms: { uNightGlow: uNightGlow, uTime: uTime },
                   side: THREE.DoubleSide,
                   transparent: true,
                   depthTest: true,
@@ -3370,12 +3521,11 @@
 
               if (!shaderFailed) {
                 state.outerArchReady = true;
+                applyShaderPreset(state.activePhase || computeDesiredPhase());
                 state.outerArchLayer = {
                   cleanup: cleanupThree,
-                  syncUniforms: function (dayVal, phaseKey) {
-                    uDaylight.value = Math.max(0, Math.min(1, dayVal));
-                    var sd = computeOuterSunDir(phaseKey);
-                    uSunDir.value.set(sd[0], sd[1], sd[2]);
+                  syncUniforms: function (_dayVal, phaseKey) {
+                    applyShaderPreset(phaseKey || state.activePhase || computeDesiredPhase());
                   }
                 };
                 syncOuterArchVisibility();
@@ -3395,10 +3545,8 @@
             if (typeof map.getPitch === "function" && map.getPitch() <= 1) return;
             var proj = (input && input.defaultProjectionData && input.defaultProjectionData.mainMatrix) || input;
             if (!proj || proj.length !== 16) return;
-            var atmo = typeof window !== "undefined" ? window.__zoneMapAtmosphere : null;
-            if (atmo && Number.isFinite(atmo.daylight)) {
-              uDaylight.value = Math.max(0, Math.min(1, atmo.daylight));
-            }
+            var curPhase = state.activePhase || computeDesiredPhase();
+            applyShaderPreset(curPhase);
             if (typeof map.getZoom === "function") {
               uZoom.value = map.getZoom();
             }
@@ -3834,7 +3982,7 @@
     function syncZmxReadyDataset() {
       try {
         var readyPayload = {
-          version: 143,
+          version: 144,
           ready: isMapStyleReady(),
           oceanMaskLayer: !!(map && map.getLayer && map.getLayer("metro-ocean-mask")),
           metroIconLayer: !!(map && map.getLayer && map.getLayer("metro-poi-icon")),
@@ -3846,6 +3994,8 @@
           poiCount: METRO_POIS.length,
           outerFeatureCount: state.outerFeatureCount || (state.outerArchSource && state.outerArchSource.items ? state.outerArchSource.items.length : 0),
           phase: state.activePhase || computeDesiredPhase(),
+          timeMode: state.timeMode,
+          manualPhase: state.manualPhase,
           dark: !!state.dark
         };
         if (typeof window !== "undefined") {
@@ -4252,7 +4402,12 @@
       setPaint("metro-shallows", "fill-color", cfg.shallows);
       setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.36 : 0.28);
       setPaint("metro-beaches", "fill-color", cfg.beach);
-      setPaint("metro-parks", "fill-color", ["case", ["==", ["get", "kind"], "pitch"], cfg.pitch, cfg.park]);
+      setPaint("metro-parks", "fill-color", [
+        "match", ["get", "kind"],
+        "pitch", cfg.pitch,
+        "pitch-stripe", cfg.pitchStripe || cfg.pitch,
+        cfg.park
+      ]);
       setPaint("district-waterway", "line-color", cfg.water);
 
       setPaint("metro-runway", "fill-color", ["case", ["==", ["get", "kind"], "pier"], cfg.pier, cfg.asphalt]);
@@ -4334,11 +4489,24 @@
         if (livingSrc) livingSrc.setData(buildLivingGeo(state.livingTick));
       } catch (_) {}
 
-      /* Keep Three.js architectural window/roof custom layers VISIBLE in BOTH Day and Night,
-         feeding the live daylight blend factor so buildings always show real windows, mullions & crowns! */
-      var daylightFactor = phaseKey === "day" || phaseKey === "afternoon" ? 1.0 : phaseKey === "dawn" ? 0.78 : phaseKey === "dusk" ? 0.25 : 0.0;
+      /* Keep Three.js architectural window/roof custom layers VISIBLE across all 4 phases,
+         syncing full 4-phase lighting + broadcasting `zone-phase-change` to Central Core & basemap! */
+      var shCfg = cfg.shader || TIME_PHASES.day.shader;
+      var daylightFactor = shCfg.daylight;
+      var nightGlowFactor = shCfg.nightGlow;
+      var phaseDetail = {
+        phase: phaseKey,
+        mode: state.manualPhase ? "manual" : "auto",
+        isDark: phaseKey === "night" || phaseKey === "dusk",
+        isLightUi: !!cfg.isLightUi,
+        daylight: daylightFactor,
+        nightGlow: nightGlowFactor
+      };
       if (typeof window !== "undefined") {
-        window.__zoneMapAtmosphere = { phase: phaseKey, isLightUi: !!cfg.isLightUi, daylight: daylightFactor };
+        window.__zoneMapAtmosphere = phaseDetail;
+        try {
+          window.dispatchEvent(new CustomEvent("zone-phase-change", { detail: phaseDetail }));
+        } catch (_) {}
       }
       if (state.outerArchLayer && typeof state.outerArchLayer.syncUniforms === "function") {
         try { state.outerArchLayer.syncUniforms(daylightFactor, phaseKey); } catch (_) {}
@@ -4382,7 +4550,6 @@
       if (state.lastThemeDark !== nextDark) {
         state.lastThemeDark = nextDark;
         state.dark = nextDark;
-        state.timeMode = "auto";
       }
       if (Number.isFinite(Number(data.playerLevel)) && Number(data.playerLevel) >= 1) {
         state.playerLevel = Math.floor(Number(data.playerLevel));
@@ -4405,7 +4572,8 @@
       } catch (_) {}
 
       syncGateMarkers();
-      applyAtmosphere(true);
+      /* Respect locked manualPhase: never overwrite user's Day/Afternoon/Dusk/Night click */
+      applyAtmosphere(!state.manualPhase);
       renderChronoHud();
     }
 
@@ -4473,9 +4641,12 @@
           : (ev.data.dark !== false);
         state.dark = nextThemeDark;
         state.lastThemeDark = nextThemeDark;
-        state.timeMode = "auto";
-        applyAtmosphere(true);
-        renderChronoHud();
+        /* Strict manualPhase lock: only sync atmosphere when in Auto mode; never hijack manual Day/Afternoon/Dusk/Night picks! */
+        if (!state.manualPhase) {
+          state.timeMode = "auto";
+          applyAtmosphere(true);
+          renderChronoHud();
+        }
         return;
       }
       if (ev.data.type === "ZONE_OPEN_WORLD_CITIES") {
@@ -4518,7 +4689,7 @@
   }
 
   var expansionApi = {
-    version: "143.0",
+    version: "144.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -4534,7 +4705,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 143;
+  root.__zoneMapExpansionVersion = 144;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

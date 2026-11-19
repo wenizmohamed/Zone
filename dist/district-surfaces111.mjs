@@ -170,35 +170,51 @@ export function facadeCell(u,v,width=3.1){
   const height=3.2,x=((u%width)+width)%width/width,y=((v%height)+height)%height/height;
   return {column:Math.floor(u/width),floor:Math.floor(v/height),glass:Math.abs(x-.5)<=.64/width&&y>=1/height&&y<=2.5/height,frame:Math.abs(x-.5)<=.77/width&&y>=.87/height&&y<=2.63/height};
 }
-function installFacadeShader(material,daylightUniform=null){
+function installFacadeShader(material,atmoUniforms=null){
   // Full walls carry meter-scaled detail even when the separate raised-pane
   // budget is exhausted. No extra textures, tiles, geometry or draw calls.
   material.customProgramCacheKey=()=> 'zone-meter-facade111-v1';
   material.onBeforeCompile=shader=>{
     const required=[['vertexShader','#include <common>'],['vertexShader','#include <begin_vertex>'],['fragmentShader','#include <common>'],['fragmentShader','#include <color_fragment>'],['fragmentShader','#include <roughnessmap_fragment>']];
     if(required.some(([stage,anchor])=>!shader[stage].includes(anchor)))throw new Error('Facade shader contract differs from the vendored Three runtime.');
-    if(daylightUniform&&shader.uniforms)shader.uniforms.uZoneDaylight=daylightUniform;
+    if(atmoUniforms&&shader.uniforms)Object.assign(shader.uniforms,atmoUniforms);
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nattribute vec4 zoneFacade;\nvarying vec4 vZoneFacade;').replace('#include <begin_vertex>','#include <begin_vertex>\nvZoneFacade = zoneFacade;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>',`#include <common>
 uniform float uZoneDaylight;
+uniform float uZoneNightGlow;
+uniform float uZoneSunWarmth;
+uniform float uZoneTwilight;
 varying vec4 vZoneFacade;
 float zoneFacadeHash(vec2 cell, float seed) { return fract(sin(dot(cell, vec2(12.9898,78.233)) + seed * 1.714) * 43758.5453); }
+vec2 zoneFacadeFilterWidth() {
+  float spacing = max(vZoneFacade.z, 0.001);
+  return max(fwidth(vZoneFacade.xy) / vec2(spacing, 3.2), vec2(0.008));
+}
 vec2 zoneFacadeMasks() {
   float spacing = max(vZoneFacade.z,.001);
   vec2 tile = fract(vZoneFacade.xy / vec2(spacing,3.2));
-  vec2 edge = max(fwidth(tile) * .6, vec2(.004));
+  vec2 fw = zoneFacadeFilterWidth();
+  vec2 edge = clamp(fw * 1.35, vec2(0.012), vec2(0.28));
   float styleId = floor(vZoneFacade.w / 2048.0);
-  float glassHalf = mix(.64, mix(.84, .74, step(3.5, styleId)), step(0.5, styleId) * (1.0 - step(1.5, styleId)) + step(3.5, styleId));
+  float glassHalf = mix(.70, mix(.88, .78, step(3.5, styleId)), step(0.5, styleId) * (1.0 - step(1.5, styleId)) + step(3.5, styleId));
   float frameHalf = glassHalf + .13;
-  vec2 glassMin = vec2(.5-glassHalf/spacing,1.0/3.2),glassMax = vec2(.5+glassHalf/spacing,2.5/3.2);
-  vec2 frameMin = vec2(.5-frameHalf/spacing,.87/3.2),frameMax = vec2(.5+frameHalf/spacing,2.63/3.2);
+  vec2 glassMin = vec2(.5-glassHalf/spacing,0.92/3.2),glassMax = vec2(.5+glassHalf/spacing,2.56/3.2);
+  vec2 frameMin = vec2(.5-frameHalf/spacing,.80/3.2),frameMax = vec2(.5+frameHalf/spacing,2.68/3.2);
   vec2 glass = smoothstep(glassMin-edge,glassMin+edge,tile) * (1.0-smoothstep(glassMax-edge,glassMax+edge,tile));
   vec2 frame = smoothstep(frameMin-edge,frameMin+edge,tile) * (1.0-smoothstep(frameMax-edge,frameMax+edge,tile));
-  return vec2(glass.x * glass.y,frame.x * frame.y) * step(.5,vZoneFacade.z);
+  float bayFade = 1.0 - smoothstep(0.28, 0.62, max(fw.x, fw.y));
+  float floorRibbon = smoothstep(0.24 - edge.y, 0.30 + edge.y, tile.y) * (1.0 - smoothstep(0.76 - edge.y, 0.82 + edge.y, tile.y));
+  float glassAvg = clamp(glass.x * glass.y, 0.0, 1.0);
+  float smoothGlass = mix(floorRibbon * 0.68, glassAvg, bayFade);
+  float smoothFrame = frame.x * frame.y * bayFade;
+  return vec2(smoothGlass, smoothFrame) * step(.5,vZoneFacade.z);
 }`);
     shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>',`#include <color_fragment>
 if (vZoneFacade.z > .5) {
   float dayMix = clamp(uZoneDaylight, 0.0, 1.0);
+  float nightGlow = clamp(uZoneNightGlow, 0.0, 1.0);
+  float sunWarmth = clamp(uZoneSunWarmth, 0.0, 1.0);
+  float twilightMix = clamp(uZoneTwilight, 0.0, 1.0);
   float styleId = floor(vZoneFacade.w / 2048.0);
   float fSeed = mod(vZoneFacade.w, 2048.0);
   float isCitadel = step(0.5, styleId) * (1.0 - step(1.5, styleId));
@@ -206,43 +222,51 @@ if (vZoneFacade.z > .5) {
   float isHarbor = step(2.5, styleId) * (1.0 - step(3.5, styleId));
   float isAirport = step(3.5, styleId);
   vec2 masks = zoneFacadeMasks();
+  vec2 fw = zoneFacadeFilterWidth();
+  float maxFw = max(fw.x, fw.y);
+  float bayDetail = 1.0 - smoothstep(0.18, 0.52, maxFw);
+  float microDetail = 1.0 - smoothstep(0.06, 0.20, maxFw);
+  float floorDetail = 1.0 - smoothstep(0.22, 0.58, fw.y);
   vec2 cell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
   vec2 tile = fract(vZoneFacade.xy / vec2(max(vZoneFacade.z,.001), 3.2));
-  float variation = zoneFacadeHash(cell,fSeed);
+  float variation = mix(0.5, zoneFacadeHash(cell,fSeed), bayDetail);
   float bldgTone = zoneFacadeHash(vec2(fSeed * 0.13, 7.0), fSeed);
   float litSeed = zoneFacadeHash(cell + vec2(17.0, 31.0), fSeed + 9.0);
   float suiteSeed = zoneFacadeHash(vec2(floor(cell.x * 0.45), cell.y), fSeed + 5.0);
   float floorActive = step(0.18, zoneFacadeHash(vec2(cell.y, 3.0), fSeed + 13.0));
   float bldgActivity = mix(0.32, 0.58, bldgTone);
-  float isLit = step(1.0 - bldgActivity, mix(litSeed, suiteSeed, 0.48)) * floorActive;
+  float rawLit = step(1.0 - bldgActivity, mix(litSeed, suiteSeed, 0.48)) * floorActive;
+  float farFloorLit = smoothstep(0.35, 0.80, zoneFacadeHash(vec2(floor(cell.y * 0.5), 3.0), fSeed + 13.0)) * 0.55;
+  float isLit = mix(farFloorLit, rawLit, bayDetail);
   float heightGrad = clamp(vZoneFacade.y / 64.0, 0.0, 1.0);
   float heightAO = mix(0.86, 1.04, smoothstep(0.0, 20.0, vZoneFacade.y)) + 0.05 * smoothstep(28.0, 88.0, vZoneFacade.y);
   float plinthBand = 1.0 - smoothstep(2.9, 3.6, vZoneFacade.y);
-  float storeBayX = smoothstep(0.08, 0.14, tile.x) * (1.0 - smoothstep(0.86, 0.92, tile.x));
-  float storeBayY = smoothstep(0.30, 0.46, vZoneFacade.y) * (1.0 - smoothstep(2.85, 3.18, vZoneFacade.y));
-  float storeMask = storeBayX * storeBayY;
-  float storeAwning = smoothstep(3.05, 3.22, vZoneFacade.y) * (1.0 - smoothstep(3.42, 3.60, vZoneFacade.y));
-  float storeLit = step(0.24, zoneFacadeHash(vec2(cell.x, 0.0), fSeed + 41.0));
-  float stoneVariation = .95 + .08 * zoneFacadeHash(floor(vZoneFacade.xy * 1.5),fSeed);
-  float brickCourse = 1.0 - 0.06 * isHarbor * (1.0 - smoothstep(0.0, 0.14, fract(vZoneFacade.y * 2.2)));
+  float storeEdgeX = clamp(fw.x * 1.4, 0.02, 0.18);
+  float storeBayX = smoothstep(0.08 - storeEdgeX, 0.14 + storeEdgeX, tile.x) * (1.0 - smoothstep(0.86 - storeEdgeX, 0.92 + storeEdgeX, tile.x));
+  float storeBayY = smoothstep(0.30, 0.48, vZoneFacade.y) * (1.0 - smoothstep(2.82, 3.20, vZoneFacade.y));
+  float storeMask = storeBayX * storeBayY * mix(0.55, 1.0, bayDetail);
+  float storeAwning = smoothstep(3.05, 3.24, vZoneFacade.y) * (1.0 - smoothstep(3.42, 3.62, vZoneFacade.y)) * floorDetail;
+  float storeLit = mix(0.68, step(0.24, zoneFacadeHash(vec2(cell.x, 0.0), fSeed + 41.0)), bayDetail);
+  float stoneVariation = mix(1.0, .96 + .06 * zoneFacadeHash(floor(vZoneFacade.xy * 1.5),fSeed), microDetail);
+  float brickCourse = mix(1.0, 1.0 - 0.06 * isHarbor * (1.0 - smoothstep(0.0, 0.14 + fw.y, fract(vZoneFacade.y * 2.2))), microDetail);
   float floorFrac = fract(vZoneFacade.y / 3.2);
-  float floorBand = smoothstep(0.0, 0.07, floorFrac) * (1.0 - smoothstep(0.88, 0.97, floorFrac));
-  float corniceShadow = 1.0 - 0.14 * smoothstep(0.88, 0.96, floorFrac) * (1.0 - smoothstep(0.96, 1.0, floorFrac));
-  float corniceHighlight = smoothstep(0.0, 0.05, floorFrac) * (1.0 - smoothstep(0.05, 0.11, floorFrac));
-  float spandrelBand = 1.0 - smoothstep(0.06, 0.20, floorFrac);
-  float pierBand = smoothstep(0.05, 0.13, tile.x) * (1.0 - smoothstep(0.87, 0.95, tile.x));
-  float decoFlute = 1.0 - 0.09 * isNeon * (1.0 - smoothstep(0.18, 0.32, abs(fract(tile.x * 3.0) - 0.5)));
-  float tileFw = max(fwidth(tile.x), fwidth(tile.y));
-  float detailFade = 1.0 - smoothstep(0.12, 0.38, tileFw);
-  float glassRibbon = smoothstep(0.24, 0.32, floorFrac) * (1.0 - smoothstep(0.76, 0.84, floorFrac));
-  float revealShade = mix(1.0, mix(0.76, 1.08, smoothstep(0.32, 0.78, tile.y)), masks.y * (1.0 - masks.x));
-  vec3 nightBase = diffuseColor.rgb * stoneVariation * brickCourse * mix(0.88, 1.24, heightGrad) * mix(0.82, 1.06, floorBand * pierBand) * corniceShadow * decoFlute * revealShade;
+  float fEdge = clamp(fw.y * 1.35, 0.015, 0.22);
+  float pEdge = clamp(fw.x * 1.35, 0.015, 0.22);
+  float floorBand = mix(1.0, smoothstep(0.0, 0.07 + fEdge, floorFrac) * (1.0 - smoothstep(0.88 - fEdge, 0.97, floorFrac)), floorDetail);
+  float corniceShadow = mix(1.0, 1.0 - 0.14 * smoothstep(0.86 - fEdge, 0.95, floorFrac) * (1.0 - smoothstep(0.95, 1.0, floorFrac)), floorDetail);
+  float corniceHighlight = smoothstep(0.0, 0.05 + fEdge, floorFrac) * (1.0 - smoothstep(0.06, 0.13 + fEdge, floorFrac)) * floorDetail;
+  float spandrelBand = (1.0 - smoothstep(0.06, 0.20 + fEdge, floorFrac)) * floorDetail;
+  float pierBand = mix(1.0, smoothstep(0.05, 0.13 + pEdge, tile.x) * (1.0 - smoothstep(0.87 - pEdge, 0.95, tile.x)), bayDetail);
+  float decoFlute = mix(1.0, 1.0 - 0.08 * isNeon * (1.0 - smoothstep(0.18, 0.34, abs(fract(tile.x * 3.0) - 0.5))), microDetail);
+  float glassRibbon = smoothstep(0.22 - fEdge, 0.30 + fEdge, floorFrac) * (1.0 - smoothstep(0.76 - fEdge, 0.84 + fEdge, floorFrac)) * floorDetail;
+  float revealShade = mix(1.0, mix(0.78, 1.08, smoothstep(0.32, 0.78, tile.y)), masks.y * (1.0 - masks.x) * microDetail);
+  vec3 nightBase = diffuseColor.rgb * stoneVariation * brickCourse * mix(0.88, 1.24, heightGrad) * mix(0.84, 1.06, floorBand * pierBand) * corniceShadow * decoFlute * revealShade;
   nightBase += vec3(0.055, 0.068, 0.088) * corniceHighlight;
   vec3 citadelNightSpandrel = vec3(0.54, 0.45, 0.28);
   nightBase = mix(nightBase, citadelNightSpandrel, isCitadel * spandrelBand * 0.55);
   float streetBounce = (1.0 - smoothstep(0.0, 18.0, vZoneFacade.y));
-  vec3 coolSkyBounce = vec3(0.055, 0.082, 0.125) * mix(0.65, 1.25, heightGrad);
-  vec3 warmStreetBounce = vec3(0.22, 0.145, 0.065) * streetBounce;
+  vec3 coolSkyBounce = mix(vec3(0.055, 0.082, 0.125), vec3(0.16, 0.11, 0.20), twilightMix) * mix(0.65, 1.25, heightGrad);
+  vec3 warmStreetBounce = mix(vec3(0.22, 0.145, 0.065), vec3(0.28, 0.15, 0.10), twilightMix) * streetBounce;
   vec3 nightWall = max(nightBase, vec3(0.065, 0.085, 0.115)) + (warmStreetBounce + coolSkyBounce) * (1.0 - dayMix);
   nightWall = mix(nightWall, nightWall * 0.72 + vec3(0.10, 0.08, 0.055), storeAwning);
   float isCoreSand = step(0.18, bldgTone) * (1.0 - step(0.36, bldgTone));
@@ -250,124 +274,143 @@ if (vZoneFacade.z > .5) {
   float isCoreGlass = step(0.50, bldgTone) * (1.0 - step(0.70, bldgTone));
   float isCoreSlate = step(0.70, bldgTone) * (1.0 - step(0.85, bldgTone));
   float isCoreIvory = step(0.85, bldgTone);
-  vec3 coreLime = mix(vec3(.84,.78,.67), vec3(.95,.91,.83), heightGrad * .65 + variation * .20);
-  vec3 coreSand = mix(vec3(.82,.69,.52), vec3(.93,.83,.68), heightGrad * .60 + variation * .22);
-  vec3 coreTerra = mix(vec3(.78,.54,.42), vec3(.89,.68,.55), heightGrad * .60 + variation * .25);
-  vec3 coreGlass = mix(vec3(.48,.66,.78), vec3(.70,.84,.92), heightGrad * .70 + variation * .20);
+  vec3 coreLime = mix(vec3(.84,.78,.67), vec3(.95,.91,.83), heightGrad * .65 + variation * .18);
+  vec3 coreSand = mix(vec3(.82,.69,.52), vec3(.93,.83,.68), heightGrad * .60 + variation * .20);
+  vec3 coreTerra = mix(vec3(.78,.54,.42), vec3(.89,.68,.55), heightGrad * .60 + variation * .22);
+  vec3 coreGlass = mix(vec3(.48,.66,.78), vec3(.70,.84,.92), heightGrad * .70 + variation * .18);
   coreGlass = mix(coreGlass, vec3(.82,.86,.89), spandrelBand * 0.68);
-  vec3 coreSlate = mix(vec3(.56,.64,.67), vec3(.74,.80,.83), heightGrad * .65 + variation * .20);
-  vec3 coreIvory = mix(vec3(.90,.87,.80), vec3(.98,.96,.91), heightGrad * .60 + variation * .20);
+  vec3 coreSlate = mix(vec3(.56,.64,.67), vec3(.74,.80,.83), heightGrad * .65 + variation * .18);
+  vec3 coreIvory = mix(vec3(.90,.87,.80), vec3(.98,.96,.91), heightGrad * .60 + variation * .18);
   vec3 coreDay = coreLime;
   coreDay = mix(coreDay, coreSand, isCoreSand);
   coreDay = mix(coreDay, coreTerra, isCoreTerra);
   coreDay = mix(coreDay, coreGlass, isCoreGlass);
   coreDay = mix(coreDay, coreSlate, isCoreSlate);
   coreDay = mix(coreDay, coreIvory, isCoreIvory);
-  vec3 citadelDay = mix(vec3(.54,.68,.79), vec3(.78,.87,.94), heightGrad * .70 + variation * .25);
+  vec3 citadelDay = mix(vec3(.54,.68,.79), vec3(.78,.87,.94), heightGrad * .70 + variation * .22);
   citadelDay = mix(citadelDay, vec3(.88,.77,.49), spandrelBand * 0.72);
-  vec3 neonDay = mix(vec3(.86,.79,.73), vec3(.96,.91,.86), heightGrad * .60 + variation * .35) * decoFlute;
-  vec3 harborBrick = mix(vec3(.74,.47,.36), vec3(.86,.60,.47), heightGrad * .55 + variation * .40);
-  vec3 harborSlate = mix(vec3(.54,.60,.65), vec3(.70,.75,.79), heightGrad * .55 + variation * .40);
+  vec3 neonDay = mix(vec3(.86,.79,.73), vec3(.96,.91,.86), heightGrad * .60 + variation * .28) * decoFlute;
+  vec3 harborBrick = mix(vec3(.74,.47,.36), vec3(.86,.60,.47), heightGrad * .55 + variation * .32);
+  vec3 harborSlate = mix(vec3(.54,.60,.65), vec3(.70,.75,.79), heightGrad * .55 + variation * .32);
   vec3 harborDay = mix(harborBrick, harborSlate, step(0.56, bldgTone)) * brickCourse;
-  vec3 airportDay = mix(vec3(.89,.92,.94), vec3(.98,.99,.99), heightGrad * .60 + variation * .35);
+  vec3 airportDay = mix(vec3(.89,.92,.94), vec3(.98,.99,.99), heightGrad * .60 + variation * .28);
   vec3 dayStone = coreDay;
   dayStone = mix(dayStone, citadelDay, isCitadel);
   dayStone = mix(dayStone, neonDay, isNeon);
   dayStone = mix(dayStone, harborDay, isHarbor);
   dayStone = mix(dayStone, airportDay, isAirport);
   vec3 dayTint = mix(dayStone, dayStone * (.88 + .24 * normalize(max(diffuseColor.rgb, vec3(.12)))), .14 * (1.0 - isAirport * 0.7));
-  vec3 dayWall = dayTint * stoneVariation * heightAO * corniceShadow * revealShade * mix(1.0, 0.88, plinthBand) * mix(.89, 1.03, floorBand * pierBand);
+  vec3 dayWall = dayTint * stoneVariation * heightAO * corniceShadow * revealShade * mix(1.0, 0.88, plinthBand) * mix(.90, 1.03, floorBand * pierBand);
   dayWall += vec3(0.05, 0.045, 0.035) * corniceHighlight;
   dayWall = mix(dayWall, dayWall * 0.76, storeAwning);
-  diffuseColor.rgb = mix(nightWall, dayWall, dayMix);
-  vec3 nightFrame = mix(vec3(.13,.18,.26), vec3(.48,.38,.24), isLit);
+  dayWall *= mix(vec3(1.0), vec3(1.09, 0.96, 0.82), sunWarmth * 0.72);
+  vec3 twilightWall = mix(nightWall, dayWall, 0.36) * vec3(1.08, 0.84, 1.04) + vec3(0.10, 0.05, 0.09) * heightGrad;
+  vec3 wallFinal = mix(nightWall, dayWall, dayMix);
+  wallFinal = mix(wallFinal, twilightWall, twilightMix * 0.78);
+  diffuseColor.rgb = wallFinal;
+  vec3 nightFrame = mix(vec3(.13,.18,.26), vec3(.48,.38,.24), isLit * nightGlow);
   vec3 dayFrame = mix(vec3(.34,.31,.28), vec3(.28,.40,.50), isCitadel + isCoreGlass * 0.8 + isAirport * 0.7);
   vec3 frameColor = mix(nightFrame, dayFrame, dayMix);
-  vec3 nightPane = mix(vec3(.06,.10,.16),vec3(.14,.22,.33),variation * 0.45 + tile.y * 0.35 + heightGrad * 0.25);
-  vec3 corePane = mix(vec3(.20,.45,.64), vec3(.50,.74,.89), variation * .42 + heightGrad * .58);
-  vec3 citadelPane = mix(vec3(.18,.47,.62), vec3(.48,.76,.89), variation * .42 + heightGrad * .58);
-  vec3 neonPane = mix(vec3(.26,.38,.58), vec3(.52,.65,.82), variation * .42 + heightGrad * .58);
-  vec3 harborPane = mix(vec3(.22,.37,.48), vec3(.46,.61,.71), variation * .42 + heightGrad * .58);
-  vec3 airportPane = mix(vec3(.20,.54,.76), vec3(.52,.80,.95), variation * .42 + heightGrad * .58);
+  vec3 nightPane = mix(vec3(.06,.10,.16),vec3(.14,.22,.33),variation * 0.42 + tile.y * 0.35 + heightGrad * 0.25);
+  vec3 duskPane = mix(vec3(.18,.16,.30), vec3(.48,.30,.40), heightGrad * 0.65 + tile.y * 0.35);
+  nightPane = mix(nightPane, duskPane, twilightMix * 0.85);
+  vec3 corePane = mix(vec3(.20,.45,.64), vec3(.50,.74,.89), variation * .38 + heightGrad * .62);
+  vec3 citadelPane = mix(vec3(.18,.47,.62), vec3(.48,.76,.89), variation * .38 + heightGrad * .62);
+  vec3 neonPane = mix(vec3(.26,.38,.58), vec3(.52,.65,.82), variation * .38 + heightGrad * .62);
+  vec3 harborPane = mix(vec3(.22,.37,.48), vec3(.46,.61,.71), variation * .38 + heightGrad * .62);
+  vec3 airportPane = mix(vec3(.20,.54,.76), vec3(.52,.80,.95), variation * .38 + heightGrad * .62);
   vec3 dayPaneBase = corePane;
   dayPaneBase = mix(dayPaneBase, citadelPane, isCitadel);
   dayPaneBase = mix(dayPaneBase, neonPane, isNeon);
   dayPaneBase = mix(dayPaneBase, harborPane, isHarbor);
   dayPaneBase = mix(dayPaneBase, airportPane, isAirport);
-  float skyGlint = smoothstep(0.32, 0.88, tile.y * 0.72 + tile.x * 0.32);
-  vec3 dayPane = mix(dayPaneBase, min(dayPaneBase + vec3(.20,.22,.24), vec3(.92,.96,.99)), skyGlint * 0.46);
-  vec2 mEdge = max(fwidth(tile) * 0.9, vec2(0.014));
-  float vMullion = 1.0 - smoothstep(0.020, 0.020 + mEdge.x, abs(tile.x - 0.5));
-  float hMullion = 1.0 - smoothstep(0.024, 0.024 + mEdge.y, abs(tile.y - 0.62));
-  float inkMullion = clamp(vMullion + hMullion, 0.0, 1.0) * detailFade;
-  dayPane = mix(dayPane, dayFrame, inkMullion * 0.54);
+  float skyGlint = smoothstep(0.28, 0.88, tile.y * 0.65 + heightGrad * 0.35);
+  vec3 glintCol = mix(vec3(.92,.96,.99), vec3(1.0,.84,.58), sunWarmth * 0.78);
+  vec3 dayPane = mix(dayPaneBase, min(dayPaneBase + vec3(.20,.22,.24), glintCol), skyGlint * (0.44 + 0.16 * sunWarmth));
+  vec2 mEdge = clamp(fw * 1.4, vec2(0.016), vec2(0.14));
+  float vMullion = 1.0 - smoothstep(0.022, 0.022 + mEdge.x, abs(tile.x - 0.5));
+  float hMullion = 1.0 - smoothstep(0.026, 0.026 + mEdge.y, abs(tile.y - 0.62));
+  float inkMullion = clamp(vMullion + hMullion, 0.0, 1.0) * microDetail;
+  dayPane = mix(dayPane, dayFrame, inkMullion * 0.50);
   vec3 paneColor = mix(nightPane, dayPane, dayMix);
-  float interiorDepth = mix(0.72, 1.12, smoothstep(0.34, 0.74, tile.y));
+  float interiorDepth = mix(0.76, 1.12, smoothstep(0.32, 0.74, tile.y));
   vec3 warmInterior = mix(vec3(.98,.72,.28), vec3(1.0,.90,.60), variation) * interiorDepth;
   vec3 coolInterior = mix(vec3(.28,.84,.98), vec3(.58,.94,.88), variation) * interiorDepth;
   vec3 neonViolet = mix(vec3(.82,.44,.98), vec3(1.0,.68,.28), step(0.5, variation)) * interiorDepth;
-  vec3 litColor = mix(warmInterior, coolInterior, step(0.76, litSeed));
+  vec3 litColor = mix(warmInterior, coolInterior, step(0.76, litSeed) * (1.0 - twilightMix * 0.55));
   litColor = mix(litColor, neonViolet, isNeon * step(0.52, litSeed));
   litColor = mix(litColor, mix(vec3(1.0,.68,.26), vec3(1.0,.82,.44), variation) * interiorDepth, isHarbor * 0.82);
   litColor = mix(litColor, mix(vec3(.96,.94,.84), vec3(.34,.86,.98), step(0.45, variation)) * interiorDepth, isAirport * 0.75);
-  litColor = mix(litColor, nightFrame * 0.85, inkMullion * 0.52);
-  vec3 activePane = mix(paneColor, litColor, isLit * 0.96 * (1.0 - dayMix * 0.86));
-  float frameMask = masks.y * mix(1.0, detailFade, dayMix * 0.72);
-  float glassMask = mix(masks.x, mix(glassRibbon * 0.58, masks.x, detailFade), dayMix * (0.45 + 0.45 * (isCoreGlass + isCitadel)));
+  litColor = mix(litColor, nightFrame * 0.85, inkMullion * 0.48);
+  vec3 activePane = mix(paneColor, litColor, isLit * 0.96 * nightGlow);
+  float frameMask = masks.y * mix(0.85, 1.0, bayDetail) * mix(1.0, microDetail, dayMix * 0.55);
+  float glassMask = mix(masks.x, mix(glassRibbon * 0.62, masks.x, bayDetail), dayMix * (0.45 + 0.45 * (isCoreGlass + isCitadel)));
   diffuseColor.rgb = mix(diffuseColor.rgb,frameColor,frameMask);
   diffuseColor.rgb = mix(diffuseColor.rgb,paneColor,masks.x);
   diffuseColor.rgb = mix(diffuseColor.rgb,dayPane,clamp(glassMask - masks.x, 0.0, 1.0) * dayMix * 0.75);
-  diffuseColor.rgb = mix(diffuseColor.rgb,activePane,masks.x * isLit);
-  vec3 storeDayGlass = mix(vec3(.18,.28,.36), vec3(.38,.52,.62), smoothstep(0.35, 2.8, vZoneFacade.y));
-  storeDayGlass = mix(storeDayGlass, dayFrame, inkMullion * 0.45);
-  vec3 storeNightGlass = mix(vec3(.12,.16,.24), mix(vec3(1.0,.76,.36), vec3(1.0,.88,.62), variation), storeLit);
-  storeNightGlass = mix(storeNightGlass, vec3(.14,.12,.10), inkMullion * 0.48);
+  diffuseColor.rgb = mix(diffuseColor.rgb,activePane,masks.x * isLit * nightGlow);
+  vec3 storeDayGlass = mix(vec3(.18,.28,.36), vec3(.40,.54,.64), smoothstep(0.35, 2.8, vZoneFacade.y));
+  storeDayGlass = mix(storeDayGlass, dayFrame, inkMullion * 0.42);
+  vec3 storeNightGlass = mix(vec3(.12,.16,.24), mix(vec3(1.0,.76,.36), vec3(1.0,.88,.62), variation), storeLit * nightGlow);
+  storeNightGlass = mix(storeNightGlass, vec3(.14,.12,.10), inkMullion * 0.45);
   diffuseColor.rgb = mix(diffuseColor.rgb, mix(storeNightGlass, storeDayGlass, dayMix), storeMask);
 }`).replace('#include <emissivemap_fragment>',`#include <emissivemap_fragment>
 if (vZoneFacade.z > .5) {
   float dayMixE = clamp(uZoneDaylight, 0.0, 1.0);
-  float nightStrength = 1.0 - dayMixE;
+  float nightGlowE = clamp(uZoneNightGlow, 0.0, 1.0);
+  float twilightE = clamp(uZoneTwilight, 0.0, 1.0);
+  float nightStrength = clamp(1.0 - dayMixE, 0.0, 1.0);
   float eStyle = floor(vZoneFacade.w / 2048.0);
   float eFSeed = mod(vZoneFacade.w, 2048.0);
   float eIsNeon = step(1.5, eStyle) * (1.0 - step(2.5, eStyle));
   float eIsHarbor = step(2.5, eStyle) * (1.0 - step(3.5, eStyle));
   float eIsAirport = step(3.5, eStyle);
   vec2 eMasks = zoneFacadeMasks();
+  vec2 eFw = zoneFacadeFilterWidth();
+  float eMaxFw = max(eFw.x, eFw.y);
+  float eBayDetail = 1.0 - smoothstep(0.18, 0.52, eMaxFw);
+  float eMicroDetail = 1.0 - smoothstep(0.06, 0.20, eMaxFw);
+  float eFloorDetail = 1.0 - smoothstep(0.22, 0.58, eFw.y);
   vec2 eCell = floor(vZoneFacade.xy / vec2(vZoneFacade.z,3.2));
   vec2 eTile = fract(vZoneFacade.xy / vec2(max(vZoneFacade.z,.001), 3.2));
   float eTone = zoneFacadeHash(vec2(eFSeed * 0.13, 7.0), eFSeed);
   float eSeed = zoneFacadeHash(eCell + vec2(17.0, 31.0), eFSeed + 9.0);
   float eSuite = zoneFacadeHash(vec2(floor(eCell.x * 0.45), eCell.y), eFSeed + 5.0);
   float eFloor = step(0.18, zoneFacadeHash(vec2(eCell.y, 3.0), eFSeed + 13.0));
-  float eVar = zoneFacadeHash(eCell, eFSeed);
+  float eVar = mix(0.5, zoneFacadeHash(eCell, eFSeed), eBayDetail);
   float eAct = mix(0.32, 0.58, eTone);
-  float eLit = step(1.0 - eAct, mix(eSeed, eSuite, 0.48)) * eFloor;
+  float eRawLit = step(1.0 - eAct, mix(eSeed, eSuite, 0.48)) * eFloor;
+  float eFarLit = smoothstep(0.35, 0.80, zoneFacadeHash(vec2(floor(eCell.y * 0.5), 3.0), eFSeed + 13.0)) * 0.52;
+  float eLit = mix(eFarLit, eRawLit, eBayDetail);
   float eHGrad = clamp(vZoneFacade.y / 64.0, 0.0, 1.0);
   float eFloorFrac = fract(vZoneFacade.y / 3.2);
-  float eBand = smoothstep(0.0, 0.08, eFloorFrac) * (1.0 - smoothstep(0.88, 0.98, eFloorFrac));
+  float eFEdge = clamp(eFw.y * 1.35, 0.015, 0.22);
+  float eBand = mix(1.0, smoothstep(0.0, 0.08 + eFEdge, eFloorFrac) * (1.0 - smoothstep(0.88 - eFEdge, 0.98, eFloorFrac)), eFloorDetail);
   float eStreetBounce = 1.0 - smoothstep(0.0, 18.0, vZoneFacade.y);
-  float eStoreX = smoothstep(0.08, 0.14, eTile.x) * (1.0 - smoothstep(0.86, 0.92, eTile.x));
-  float eStoreY = smoothstep(0.30, 0.46, vZoneFacade.y) * (1.0 - smoothstep(2.85, 3.18, vZoneFacade.y));
-  float eStoreMask = eStoreX * eStoreY;
-  float eStoreLit = step(0.24, zoneFacadeHash(vec2(eCell.x, 0.0), eFSeed + 41.0));
-  vec2 eMEdge = max(fwidth(eTile) * 0.9, vec2(0.014));
-  float eVMul = 1.0 - smoothstep(0.020, 0.020 + eMEdge.x, abs(eTile.x - 0.5));
-  float eHMul = 1.0 - smoothstep(0.024, 0.024 + eMEdge.y, abs(eTile.y - 0.62));
-  float eMul = clamp(eVMul + eHMul, 0.0, 1.0) * (1.0 - smoothstep(0.12, 0.38, max(fwidth(eTile.x), fwidth(eTile.y))));
-  float eDepth = mix(0.72, 1.15, smoothstep(0.34, 0.74, eTile.y)) * (1.0 - eMul * 0.55);
+  float eStoreEdgeX = clamp(eFw.x * 1.4, 0.02, 0.18);
+  float eStoreX = smoothstep(0.08 - eStoreEdgeX, 0.14 + eStoreEdgeX, eTile.x) * (1.0 - smoothstep(0.86 - eStoreEdgeX, 0.92 + eStoreEdgeX, eTile.x));
+  float eStoreY = smoothstep(0.30, 0.48, vZoneFacade.y) * (1.0 - smoothstep(2.82, 3.20, vZoneFacade.y));
+  float eStoreMask = eStoreX * eStoreY * mix(0.55, 1.0, eBayDetail);
+  float eStoreLit = mix(0.68, step(0.24, zoneFacadeHash(vec2(eCell.x, 0.0), eFSeed + 41.0)), eBayDetail);
+  vec2 eMEdge = clamp(eFw * 1.4, vec2(0.016), vec2(0.14));
+  float eVMul = 1.0 - smoothstep(0.022, 0.022 + eMEdge.x, abs(eTile.x - 0.5));
+  float eHMul = 1.0 - smoothstep(0.026, 0.026 + eMEdge.y, abs(eTile.y - 0.62));
+  float eMul = clamp(eVMul + eHMul, 0.0, 1.0) * eMicroDetail;
+  float eDepth = mix(0.76, 1.15, smoothstep(0.32, 0.74, eTile.y)) * (1.0 - eMul * 0.50);
   vec3 eWarm = mix(vec3(.98,.72,.28), vec3(1.0,.90,.58), eVar);
   vec3 eCool = mix(vec3(.24,.82,.98), vec3(.52,.94,.86), eVar);
-  vec3 eGlow = mix(eWarm, eCool, step(0.76, eSeed));
+  vec3 eGlow = mix(eWarm, eCool, step(0.76, eSeed) * (1.0 - twilightE * 0.58));
   eGlow = mix(eGlow, mix(vec3(.82,.42,.98), vec3(1.0,.66,.26), step(0.5, eVar)), eIsNeon * step(0.52, eSeed));
   eGlow = mix(eGlow, mix(vec3(1.0,.68,.26), vec3(1.0,.82,.44), eVar), eIsHarbor * 0.82);
   eGlow = mix(eGlow, mix(vec3(.96,.94,.84), vec3(.34,.86,.98), step(0.45, eVar)), eIsAirport * 0.75);
-  vec3 eAmbientWall = (vec3(0.048, 0.068, 0.102) * mix(0.75, 1.30, eHGrad) + vec3(0.115, 0.074, 0.036) * eStreetBounce) * mix(0.80, 1.10, eBand);
-  vec3 eUnlitGlass = vec3(0.038, 0.068, 0.118) * (0.65 + 0.45 * eTile.y);
-  vec3 eStoreGlow = mix(vec3(1.0,.72,.30), vec3(1.0,.86,.56), eVar) * mix(0.70, 1.12, smoothstep(0.35, 2.8, vZoneFacade.y)) * (1.0 - eMul * 0.48);
+  vec3 eSkyBounce = mix(vec3(0.048, 0.068, 0.102), vec3(0.11, 0.065, 0.125), twilightE);
+  vec3 eAmbientWall = (eSkyBounce * mix(0.75, 1.30, eHGrad) + vec3(0.115, 0.074, 0.036) * eStreetBounce) * mix(0.84, 1.10, eBand);
+  vec3 eUnlitGlass = mix(vec3(0.038, 0.068, 0.118), vec3(0.12, 0.075, 0.13), twilightE) * (0.65 + 0.45 * eTile.y);
+  vec3 eStoreGlow = mix(vec3(1.0,.72,.30), vec3(1.0,.86,.56), eVar) * mix(0.74, 1.12, smoothstep(0.35, 2.8, vZoneFacade.y)) * (1.0 - eMul * 0.45);
   totalEmissiveRadiance += eAmbientWall * (1.0 - eMasks.x) * (1.0 - eStoreMask) * nightStrength;
-  totalEmissiveRadiance += eUnlitGlass * eMasks.x * (1.0 - eLit) * nightStrength;
-  totalEmissiveRadiance += eGlow * eDepth * eMasks.x * eLit * (1.42 * (1.0 - dayMixE * 0.93));
-  totalEmissiveRadiance += eStoreGlow * eStoreMask * eStoreLit * (1.22 * (1.0 - dayMixE * 0.94));
+  totalEmissiveRadiance += eUnlitGlass * eMasks.x * (1.0 - eLit * nightGlowE) * nightStrength;
+  totalEmissiveRadiance += eGlow * eDepth * eMasks.x * eLit * (1.42 * nightGlowE);
+  totalEmissiveRadiance += eStoreGlow * eStoreMask * eStoreLit * (1.22 * nightGlowE);
 }`);
     shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = mix(roughnessFactor,mix(.31,.18,step(0.5,floor(vZoneFacade.w/2048.0))*(1.0-step(1.5,floor(vZoneFacade.w/2048.0)))),zoneFacadeMasks().x);');
   };
@@ -457,8 +500,36 @@ export function createDistrictSurfaces(map,features,options={}){
   const activeFeatures=isBrowserRuntime&&((extraCore.length+extraOuter.length)>0)?[...extraOuter,...extraCore,...features].slice(0,LIMITS.maxFeatures):features;
   const plan=planDistrictSurfaces(activeFeatures,{center:options.center??(at?[Number(at.lng),Number(at.lat)]:undefined),maxWindows:isBrowserRuntime?0:options.maxWindows,maxRoofDetails:isBrowserRuntime?320:options.maxRoofDetails,maxWallPanels:options.maxWallPanels,wallOffset:isBrowserRuntime?.045:.018});
   let disposed=false,visible=true,prepared=false,renderer,scene,camera,shaderFailure=null,cancelPreparation=null,preparing=Promise.resolve();
-  const daylightUniform={value:0.0};
-  let hemiLight=null,keyLight=null,fillLight=null,corniceMat=null,roofMat=null;
+  const atmoUniforms={uZoneDaylight:{value:0.0},uZoneNightGlow:{value:1.0},uZoneSunWarmth:{value:0.0},uZoneTwilight:{value:0.0}};
+  let hemiLight=null,keyLight=null,fillLight=null,corniceMat=null,roofMat=null,lastAppliedPhase='',phaseListener=null;
+  const PHASE_SPECS={
+    day:{daylight:1.0,nightGlow:0.0,sunWarmth:0.12,twilight:0.0,hemiSky:'#f4f8ff',hemiGround:'#9c9282',hemiInt:1.70,keyColor:'#fff8ea',keyInt:1.88,keyPos:[-90,180,70],fillColor:'#d4e6f8',fillInt:0.58,corniceEmissive:0.04,roofEmissive:0.05},
+    afternoon:{daylight:0.86,nightGlow:0.05,sunWarmth:0.95,twilight:0.08,hemiSky:'#ffebd2',hemiGround:'#91785c',hemiInt:1.58,keyColor:'#ffc876',keyInt:1.94,keyPos:[-135,125,95],fillColor:'#9ebee0',fillInt:0.62,corniceEmissive:0.07,roofEmissive:0.06},
+    dusk:{daylight:0.28,nightGlow:0.48,sunWarmth:0.78,twilight:0.95,hemiSky:'#9890cc',hemiGround:'#40324c',hemiInt:1.42,keyColor:'#ff8e58',keyInt:1.56,keyPos:[-150,92,80],fillColor:'#6e76b2',fillInt:0.70,corniceEmissive:0.36,roofEmissive:0.24},
+    night:{daylight:0.0,nightGlow:1.0,sunWarmth:0.0,twilight:0.0,hemiSky:'#84acdc',hemiGround:'#243248',hemiInt:1.40,keyColor:'#bdd8f5',keyInt:1.48,keyPos:[-90,180,70],fillColor:'#5e82b0',fillInt:0.72,corniceEmissive:0.52,roofEmissive:0.38}
+  };
+  const resolvePhaseKey=(explicit)=>{
+    const raw=String(explicit||globalThis.__zoneMapAtmosphere?.phase||doc?.body?.dataset?.timePhase||'').toLowerCase();
+    if(raw==='day'||raw==='afternoon'||raw==='dusk'||raw==='night')return raw;
+    if(raw==='dawn')return 'afternoon';
+    const d0=globalThis.__zoneMapAtmosphere?.daylight;
+    if(Number.isFinite(d0))return d0>=0.85?'day':d0>=0.45?'afternoon':d0>=0.15?'dusk':'night';
+    return doc?.body?.dataset?.zmxLight==='1'?'day':'night';
+  };
+  const syncAtmoPhase=(explicit)=>{
+    const key=resolvePhaseKey(explicit);
+    const spec=PHASE_SPECS[key]||PHASE_SPECS.night;
+    lastAppliedPhase=key;
+    atmoUniforms.uZoneDaylight.value=spec.daylight;
+    atmoUniforms.uZoneNightGlow.value=spec.nightGlow;
+    atmoUniforms.uZoneSunWarmth.value=spec.sunWarmth;
+    atmoUniforms.uZoneTwilight.value=spec.twilight;
+    if(hemiLight){hemiLight.color.set(spec.hemiSky);hemiLight.groundColor.set(spec.hemiGround);hemiLight.intensity=spec.hemiInt;}
+    if(keyLight){keyLight.color.set(spec.keyColor);keyLight.intensity=spec.keyInt;keyLight.position.set(spec.keyPos[0],spec.keyPos[1],spec.keyPos[2]);}
+    if(fillLight){fillLight.color.set(spec.fillColor);fillLight.intensity=spec.fillInt;}
+    if(corniceMat){corniceMat.emissiveIntensity=spec.corniceEmissive;}
+    if(roofMat){roofMat.emissiveIntensity=spec.roofEmissive;}
+  };
   const geometries=[],materials=[],diagnostics={...plan.diagnostics,status:'preparing',renderer:'provider-footprint-surface-detail',source:'same-native-provider-footprints',origin:plan.center.slice(),geometryVertices:0,geometryTriangles:0,calls:0,triangles:0,textures:0,shadows:0,postPasses:0,continuousAnimation:false,shaderPrograms:0,shaderLinked:null,firstFrameRendered:false};
   const publish=()=>{
     if(SURFACE_OWNERS.has(map)&&SURFACE_OWNERS.get(map)!==control)return;
@@ -471,7 +542,7 @@ export function createDistrictSurfaces(map,features,options={}){
   };
   const local=new THREE.Matrix4().makeTranslation(plan.origin.x,plan.origin.y,0).scale(new THREE.Vector3(plan.origin.meter,-plan.origin.meter,plan.origin.meter)).multiply(new THREE.Matrix4().makeRotationX(Math.PI/2));
   function release(){for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();geometries.length=0;materials.length=0;renderer?.dispose();}
-  function remove(){if(disposed)return;disposed=true;prepared=false;cancelPreparation?.();cancelPreparation=null;if(SURFACE_OWNERS.get(map)===control)SURFACE_OWNERS.delete(map);release();diagnostics.status='disposed';publish();}
+  function remove(){if(disposed)return;disposed=true;prepared=false;cancelPreparation?.();cancelPreparation=null;if(phaseListener&&typeof window!=='undefined'&&typeof window.removeEventListener==='function'){try{window.removeEventListener('zone-phase-change',phaseListener);}catch(_){}phaseListener=null;}if(SURFACE_OWNERS.get(map)===control)SURFACE_OWNERS.delete(map);release();diagnostics.status='disposed';publish();}
   function fail(error){if(disposed)return;control.dispose();diagnostics.status='error';diagnostics.error=String(error.message||error).slice(0,1800);publish();}
   function shaderLinkFailure(gl,program,vertex,fragment){
     const logs=[gl.getProgramInfoLog?.(program),vertex&&gl.getShaderInfoLog?.(vertex),fragment&&gl.getShaderInfoLog?.(fragment)].filter(Boolean).join('\n').trim().slice(0,1600);
@@ -540,20 +611,11 @@ export function createDistrictSurfaces(map,features,options={}){
       for(const cornice of plan.cornices){const f=factionOf(cornice);appendQuad(batches[2],cornice.points,f?factionCornices[f]:noirCornices[cornice.color%noirCornices.length]);}
       for(const detail of plan.roofDetails)appendBox(batches[3],detail,true);
     }
-    const syncAtmoLights=dayVal=>{
-      const d=Math.max(0,Math.min(1,dayVal));
-      daylightUniform.value=d;
-      if(hemiLight){hemiLight.color.set('#8cb4e0').lerp(new THREE.Color('#fff6e4'),d);hemiLight.groundColor.set('#243248').lerp(new THREE.Color('#8e816c'),d);hemiLight.intensity=1.42+0.28*d;}
-      if(keyLight){keyLight.color.set('#c8def6').lerp(new THREE.Color('#fff3d9'),d);keyLight.intensity=1.52+0.32*d;}
-      if(fillLight){fillLight.color.set('#6284b0').lerp(new THREE.Color('#d8e6f5'),d);fillLight.intensity=0.72-0.14*d;}
-      if(corniceMat){corniceMat.emissiveIntensity=0.52*(1-d)+0.06*d;}
-      if(roofMat){roofMat.emissiveIntensity=0.38*(1-d)+0.06*d;}
-    };
     batches.forEach((batch,index)=>{
       if(!batch.positions.length)return;
       const geometry=new THREE.BufferGeometry();geometries.push(geometry);geometry.setAttribute('position',new THREE.Float32BufferAttribute(batch.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(batch.colors,3));geometry.setAttribute('zoneFacade',new THREE.Float32BufferAttribute(batch.facades,4));geometry.computeVertexNormals();geometry.computeBoundingSphere();
       const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.86,metalness:index===0?.18:index===3?.22:.04,emissive:isBrowserRuntime&&index>=2?new THREE.Color(index===2?'#2c425a':'#203144'):new THREE.Color(0x000000),emissiveIntensity:isBrowserRuntime?(index===2?.46:index===3?.32:0):0,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:isBrowserRuntime&&index===1?-4:-1,polygonOffsetUnits:isBrowserRuntime&&index===1?-4:-1});materials.push(material);
-      if(index===1)installFacadeShader(material,daylightUniform);
+      if(index===1)installFacadeShader(material,atmoUniforms);
       if(index===2)corniceMat=material;
       if(index===3)roofMat=material;
       const mesh=new THREE.Mesh(geometry,material);mesh.name=['measured-facade-glass','measured-stone-floorlines','measured-roof-cornices','interior-roof-metal'][index];
@@ -563,9 +625,11 @@ export function createDistrictSurfaces(map,features,options={}){
       diagnostics.geometryVertices+=geometry.getAttribute('position').count;
     });
     if(isBrowserRuntime){
-      const atmo0=globalThis.__zoneMapAtmosphere;
-      const day0=atmo0&&Number.isFinite(atmo0.daylight)?atmo0.daylight:(doc?.body?.dataset?.zmxLight==='1'?1.0:0.0);
-      syncAtmoLights(day0);
+      syncAtmoPhase();
+      if(typeof window!=='undefined'&&typeof window.addEventListener==='function'){
+        phaseListener=ev=>{if(disposed)return;syncAtmoPhase(ev?.detail?.phase);if(visible&&isActive())map.triggerRepaint?.();};
+        window.addEventListener('zone-phase-change',phaseListener);
+      }
     }
     diagnostics.geometryTriangles=diagnostics.geometryVertices/3;
     renderer=new THREE.WebGLRenderer({canvas:map.getCanvas(),context:gl,antialias:true});renderer.autoClear=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
@@ -581,17 +645,8 @@ export function createDistrictSurfaces(map,features,options={}){
     if(disposed||!prepared||!visible||!isActive()||map.getPitch()<=1)return;
     const projection=input?.defaultProjectionData?.mainMatrix??input;if(!projection||projection.length!==16||!Array.from(projection).every(Number.isFinite))return;
     if(isBrowserRuntime){
-      const atmo=globalThis.__zoneMapAtmosphere;
-      const dayVal=atmo&&Number.isFinite(atmo.daylight)?atmo.daylight:(doc?.body?.dataset?.zmxLight==='1'?1.0:0.0);
-      if(Math.abs(daylightUniform.value-dayVal)>0.001){
-        const d=Math.max(0,Math.min(1,dayVal));
-        daylightUniform.value=d;
-        if(hemiLight){hemiLight.color.set('#8cb4e0').lerp(new THREE.Color('#fff6e4'),d);hemiLight.groundColor.set('#243248').lerp(new THREE.Color('#8e816c'),d);hemiLight.intensity=1.42+0.28*d;}
-        if(keyLight){keyLight.color.set('#c8def6').lerp(new THREE.Color('#fff3d9'),d);keyLight.intensity=1.52+0.32*d;}
-        if(fillLight){fillLight.color.set('#6284b0').lerp(new THREE.Color('#d8e6f5'),d);fillLight.intensity=0.72-0.14*d;}
-        if(corniceMat){corniceMat.emissiveIntensity=0.52*(1-d)+0.06*d;}
-        if(roofMat){roofMat.emissiveIntensity=0.38*(1-d)+0.06*d;}
-      }
+      const nextKey=resolvePhaseKey();
+      if(nextKey!==lastAppliedPhase)syncAtmoPhase(nextKey);
     }
     camera.projectionMatrix.fromArray(projection).multiply(local);
     let frameFailure=null;
