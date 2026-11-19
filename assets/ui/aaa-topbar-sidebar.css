@@ -107,15 +107,23 @@ svg.zwc-sketch-ico {
 }
 
 svg.zwc-sketch-ico .zwc-ink-stroke {
-  stroke: var(--zwc-svg-ink, currentColor);
+  fill: none !important;
+  stroke: var(--zwc-svg-ink, currentColor) !important;
+  stroke-width: 1.55 !important;
 }
 
 svg.zwc-sketch-ico .zwc-wash-fill {
-  fill-opacity: 0.56;
+  fill-opacity: 0.90 !important;
+  stroke: none !important;
+}
+
+svg.zwc-sketch-ico .zwc-accent-fill {
+  fill-opacity: 1 !important;
+  stroke: none !important;
 }
 
 html:not([data-theme="light"]) svg.zwc-sketch-ico .zwc-wash-fill {
-  fill-opacity: 0.74;
+  fill-opacity: 0.95 !important;
 }
 
 /* Directional icons mirror automatically in Arabic RTL */

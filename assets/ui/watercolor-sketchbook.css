@@ -414,13 +414,55 @@ html body .zone-app :is(strong, b, bdi, [data-zfig]) {
   font-weight: 700 !important;
 }
 
-/* Luminous Gouache Boost for Hand-Inked SVG Washes on Dark Charcoal Paper */
+/* Vibrant Multi-Color Gouache & Fountain-Pen Ink Icons (100% Colorful in BOTH Light & Dark Mode)
+   Defeats zone-design.css `[data-znav] button svg { fill: #d0cec8 !important }` and `.zone-quick-actions svg { fill: var(--gold) !important }` */
+html body #dc-root#dc-root :is(
+  [data-znav] button svg[data-zwc-ink],
+  .zone-nav-icon svg[data-zwc-ink],
+  .zone-nav-icon[data-has-image="false"] svg[data-zwc-ink],
+  [data-znav] button[aria-current="page"] .zone-nav-icon svg[data-zwc-ink],
+  .zone-quick-actions svg[data-zwc-ink],
+  .zone-city-destinations svg[data-zwc-ink],
+  .zone-topbar svg.zwc-sketch-ico,
+  .zone-mobile-tabbar svg.zwc-sketch-ico,
+  #zone-operative-crest svg.zwc-sketch-ico,
+  #zaaa-drawer-header svg.zwc-sketch-ico
+),
+html body svg.zwc-sketch-ico {
+  fill: none !important;
+  stroke: none !important;
+  overflow: visible !important;
+}
+
+html[data-theme="light"] svg.zwc-sketch-ico {
+  filter: drop-shadow(0 1px 0 rgba(30, 27, 24, 0.16)) !important;
+}
+
+html:not([data-theme="light"]) svg.zwc-sketch-ico {
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.55)) !important;
+}
+
+html[data-theme="light"] svg .zwc-wash-fill {
+  fill-opacity: 0.90 !important;
+  stroke: none !important;
+}
+
 html:not([data-theme="light"]) svg .zwc-wash-fill {
-  fill-opacity: 0.78 !important;
+  fill-opacity: 0.95 !important;
+  stroke: none !important;
+}
+
+html svg .zwc-accent-fill {
+  fill-opacity: 1 !important;
+  stroke: none !important;
 }
 
 html svg .zwc-ink-stroke {
+  fill: none !important;
   stroke: var(--zwc-svg-ink) !important;
+  stroke-width: 1.55 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
 }
 
 html svg .zwc-pin-outline {
@@ -1064,9 +1106,9 @@ html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-scr
 
 html body #dc-root aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon > svg[data-zwc-ink] {
   display: block !important;
-  width: 19px !important;
-  height: 19px !important;
-  filter: none !important;
+  width: 20px !important;
+  height: 20px !important;
+  fill: none !important;
   opacity: 1 !important;
 }
 
