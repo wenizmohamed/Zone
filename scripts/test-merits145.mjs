@@ -304,11 +304,14 @@ test('ZoneMeritsBridge live gameplay integration: claim -> upgrade Nerve & Life 
   assert.ok(dispatched.some(e => e.type === 'zone:merits-updated'));
 });
 
-test('index.html head loads v145 merits assets and preserves pinned gym116.css?v=117', () => {
+test('index.html head loads v145+ merits assets and preserves pinned gym116.css?v=117', () => {
   const head = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/);
-  assert.match(head, /href="\.\/assets\/ui\/zone-merits-awards\.css\?v=145"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-merits-data\.js\?v=145"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-merits-awards\.js\?v=145"/);
-  assert.ok(head.indexOf('zone-merits-data.js?v=145') < head.indexOf('zone-merits-awards.js?v=145'));
+  const cssMatch = head.match(/href="\.\/assets\/ui\/zone-merits-awards\.css\?v=(\d+)"/);
+  const dataMatch = head.match(/src="\.\/assets\/ui\/zone-merits-data\.js\?v=(\d+)"/);
+  const uiMatch = head.match(/src="\.\/assets\/ui\/zone-merits-awards\.js\?v=(\d+)"/);
+  assert.ok(cssMatch && Number(cssMatch[1]) >= 145, 'zone-merits-awards.css must have cache-buster >= 145');
+  assert.ok(dataMatch && Number(dataMatch[1]) >= 145, 'zone-merits-data.js must have cache-buster >= 145');
+  assert.ok(uiMatch && Number(uiMatch[1]) >= 145, 'zone-merits-awards.js must have cache-buster >= 145');
+  assert.ok(head.indexOf('zone-merits-data.js?v=') < head.indexOf('zone-merits-awards.js?v='));
 });

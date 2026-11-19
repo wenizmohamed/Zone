@@ -113,7 +113,10 @@
 
   /* ---- map column ---- */
   .mapcol{flex:1;position:relative;min-width:0;overflow:hidden}
+  #map,#map .mapboxgl-canvas-container,#map .mapboxgl-canvas{touch-action:none}
   #map{position:absolute;inset:0}
+  .side,#panel,.zmx-chrono-bar{touch-action:manipulation;-webkit-overflow-scrolling:touch}
+  .cats,.territories,.panel .pmeta{-webkit-overflow-scrolling:touch}
   /* Clean light atmosphere. The old stack (62%+80% near-black vignettes, scanlines,
      film grain) blacked the map out on zoom AND read as AI over-processing. Kept a
      whisper of cyan key-light + a faint edge so the map is atmospheric, never dark. */
@@ -475,6 +478,13 @@
     .regionPin.overview.turfBanner{min-width:86px;max-width:140px;min-height:24px;padding:2px 6px 2px 3px;gap:4px}.regionPin.overview.turfBanner .factionEmblem{width:17px;height:17px}.regionPin.overview.turfBanner b{font-size:8.5px;max-width:98px}.regionPin.overview.turfBanner small{font-size:7px}
     .mapPreviewNotice{min-height:42px;padding:6px 10px;font-size:10px}.illustrativeMap .side{top:124px}.illustrativeMap.detailsOpen .side{top:42px}
   }
+  @media(max-width:680px){
+    .side{padding-bottom:env(safe-area-inset-bottom,0px);max-height:100%}
+    .side .cats,.side .territories{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+    body .sideClose{width:44px;height:44px;min-width:44px;min-height:44px}
+    body #panel{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
+    body #panel .x{min-width:44px!important;min-height:44px!important;height:44px!important}
+  }
 </style>
 </head>
 <body class="illustrativeMap">
@@ -608,14 +618,14 @@ initializeMapTheme();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
-<script src="../assets/city/zone-map-expansion.js?v=118&cb=v144"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118&cb=v146"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v144',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
-    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v144',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v146',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v146',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
@@ -646,12 +656,16 @@ initializeMapTheme();
   }
 
   var cityStyle=ZoneCompactDistrict.createStyle();
+  function detectMobileApp(){return typeof window!=='undefined'&&(window.innerWidth<=900||!!(window.matchMedia&&window.matchMedia('(pointer: coarse)').matches));}
+  function desiredMapPixelRatio(){var raw=(typeof window!=='undefined'&&window.devicePixelRatio)||1;return detectMobileApp()?Math.min(raw,1.5):raw;}
+  var isMobileApp=detectMobileApp();
   var map=new mapboxgl.Map({ container:'map', style:cityStyle,
     center:CENTER, zoom:Z, minZoom:13.2, maxZoom:20, pitch:35, bearing:0, maxPitch:60,
     antialias:typeof WebGLRenderingContext!=='undefined',
+    pixelRatio:typeof WebGLRenderingContext!=='undefined'?desiredMapPixelRatio():1,
     interactive:true,pitchWithRotate:true,renderWorldCopies:false,
     attributionControl:false,dragPan:true,scrollZoom:true,boxZoom:true,dragRotate:true,keyboard:true,doubleClickZoom:true,touchZoomRotate:true,touchPitch:true });
-  if(typeof WebGLRenderingContext!=='undefined'){try{var initMobile=(typeof window!=='undefined'&&window.innerWidth<=760);map.setMinZoom(12.4);map.jumpTo({center:CENTER,zoom:initMobile?13.05:13.45,pitch:52,bearing:-22});}catch(_){}}
+  if(typeof WebGLRenderingContext!=='undefined'){try{var dprCap=desiredMapPixelRatio();if(typeof map.setPixelRatio==='function')map.setPixelRatio(dprCap);if(document.body&&document.body.dataset)document.body.dataset.zoneMapDpr=String(dprCap);var initMobile=(typeof window!=='undefined'&&window.innerWidth<=760);map.setMinZoom(12.4);map.jumpTo({center:CENTER,zoom:initMobile?13.05:13.45,pitch:52,bearing:-22});}catch(_){}}
   var mapModuleRetry=ZoneCompactDistrict.createModuleRetry({isActive:function(){return !mapDisposed;},retry:function(){if(mapDisposed||!landmarkController)return Promise.resolve();return Promise.allSettled([Promise.resolve().then(function(){return landmarkController.retrySurfaces();}),Promise.resolve().then(function(){return landmarkController.retryLandmarks();})]);},onState:function(state){document.body.dataset.zoneMapModuleRetry=JSON.stringify(state);}});
   map.addControl(new mapboxgl.NavigationControl({visualizePitch:true}),'top-right');
   map.addControl(new mapboxgl.AttributionControl({compact:true}));
@@ -2023,15 +2037,34 @@ initializeMapTheme();
     if(el.zboot&&(pins.length||territoryData.length||typeof WebGLRenderingContext!=='undefined')) el.zboot.classList.add('gone');
   }
 
+  var appHidden=false,appInView=true;
+  function applyAppVisibility(nextHidden,nextInView){
+    if(typeof nextHidden==='boolean')appHidden=nextHidden;
+    if(typeof nextInView==='boolean')appInView=nextInView;
+    var paused=!!(appHidden||!appInView||document.hidden);
+    mapVisible=!paused;
+    if(document.body&&document.body.dataset)document.body.dataset.zoneAppVisibility=paused?'paused':'active';
+    if(paused){
+      if(frameSample)frameSample.cancel();
+      cameraSample.cancel();stopDash();stopWarClock();syncLandmarkVisibility();
+      try{if(map&&typeof map.stop==='function')map.stop();}catch(_){}
+    }else{
+      scheduleResize();startWarClock();syncLandmarkVisibility();if(routeData)startDash();
+      try{if(map&&typeof map.triggerRepaint==='function')map.triggerRepaint();}catch(_){}
+    }
+    try{window.dispatchEvent(new MessageEvent('message',{origin:location.origin,data:{type:'ZONE_RENDER_PAUSE',zonePauseRender:paused}}));}catch(_){}
+  }
   function resizeMap(){
     if(mapDisposed||!mapVisible||document.hidden)return;
     var container=map.getContainer();if(!container.clientWidth||!container.clientHeight)return;
+    if(typeof WebGLRenderingContext!=='undefined'&&typeof desiredMapPixelRatio==='function'&&typeof map.setPixelRatio==='function'){try{var nextDpr=desiredMapPixelRatio();if(typeof map.getPixelRatio!=='function'||Math.abs(map.getPixelRatio()-nextDpr)>0.01){map.setPixelRatio(nextDpr);if(document.body&&document.body.dataset)document.body.dataset.zoneMapDpr=String(nextDpr);}}catch(_){}}
     map.resize();constrainCity(territoryData);if(!didFit&&territoryData.length)fitCity(territoryData,false);
   }
   var resizeFrame=null;
   function scheduleResize(){if(mapDisposed||resizeFrame!==null)return;resizeFrame=requestAnimationFrame(function(){resizeFrame=null;resizeMap();});}
   function handleMapMessage(e){ var d=e.data;if(mapDisposed||e.source!==parent||e.origin!==location.origin||!d||typeof d!=='object')return;
     if(d.type==='ZONE_THEME_SYNC'&&(d.theme==='dark'||d.theme==='light')){applyParentTheme(d.theme);return;}
+    if(d.type==='ZONE_APP_VISIBILITY'){applyAppVisibility(Boolean(d.hidden),d.inView!==false);return;}
     if(d.type==='ZONE_MAP_EXPANDED'&&typeof d.expanded==='boolean'){var previous=parentExpanded;parentExpanded=d.expanded;syncMapExpandedControl();if(previous&&!parentExpanded)el.mapExpand.focus();return;}
     if(d.type==='ZONE_MAP_ACTION_STATUS'){receiveActionStatus(d);return;}
     if(d.type==='FOCUS_FAMILY'){focusFamily();return;}
@@ -2043,7 +2076,7 @@ initializeMapTheme();
   window.addEventListener('message',handleMapMessage);
   window.addEventListener('resize',scheduleResize);
   if(window.ResizeObserver){var resizeObserver=new ResizeObserver(scheduleResize);resizeObserver.observe(map.getContainer());}
-  function handleMapVisibility(){if(mapDisposed)return;syncLandmarkVisibility();if(document.hidden){cameraSample.cancel();if(frameSample)frameSample.cancel();stopDash();stopWarClock();}else{scheduleResize();startWarClock();if(routeData)startDash();}}
+  function handleMapVisibility(){if(mapDisposed)return;var paused=!!(document.hidden||(typeof appHidden==='boolean'&&appHidden)||(typeof appInView==='boolean'&&!appInView));if(document.body&&document.body.dataset)document.body.dataset.zoneAppVisibility=paused?'paused':'active';syncLandmarkVisibility();if(paused){cameraSample.cancel();if(frameSample)frameSample.cancel();stopDash();stopWarClock();try{if(typeof map==='object'&&map&&typeof map.stop==='function')map.stop();}catch(_){}}else{scheduleResize();startWarClock();if(routeData)startDash();try{if(typeof map==='object'&&map&&typeof map.triggerRepaint==='function')map.triggerRepaint();}catch(_){}}}
   function handleMapPageShow(event){if(mapDisposed)return;if(event&&event.persisted&&mapVisibilityBeforePageHide!==null)mapVisible=mapVisibilityBeforePageHide;mapVisibilityBeforePageHide=null;scheduleResize();syncLandmarkVisibility();if(mapVisible){startWarClock();if(routeData)startDash();}}
   function handleMapPageHide(event){
     if(mapDisposed)return;mapVisibilityBeforePageHide=mapVisible;mapVisible=false;preparedCameraRequest++;if(frameSample)frameSample.cancel();cameraSample.cancel();stopDash();stopWarClock();

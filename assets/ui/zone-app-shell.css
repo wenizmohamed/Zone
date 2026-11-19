@@ -1,0 +1,702 @@
+/* ==========================================================================
+ * ZONE v146 - NATIVE MOBILE APP SHELL & 60FPS WEB ERGONOMICS
+ * iOS Safari, Android Chrome, Installed PWA Standalone & Capacitor WebView
+ * 100% 4-Way Parity: Light+EN, Dark+EN, Light+AR (RTL), Dark+AR (RTL)
+ * Exclusive Ownership: app-shell-ux (assets/ui/zone-app-shell.css / .js)
+ * Design System: Cold-Press Paper & Fountain-Pen/Chalk Ink (--zwc-* tokens)
+ * Zero horizontal overflow at 390px, zero overlap with Tabbar or Mayor dock.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. APP SHELL DESIGN TOKENS (LIGHT & DARK SKETCHBOOK PARITY)
+ * -------------------------------------------------------------------------- */
+:root,
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body {
+  --zas-paper: var(--zwc-paper, #141210);
+  --zas-surface: var(--zwc-surface, #1e1b18);
+  --zas-surface-alt: var(--zwc-surface-alt, #26221d);
+  --zas-btn-bg: var(--zwc-btn-bg, #2a251f);
+  --zas-btn-hover: var(--zwc-btn-hover, #352f27);
+
+  --zas-ink: var(--zwc-ink, #f3ecdc);
+  --zas-ink-soft: var(--zwc-ink-soft, #dfd4be);
+  --zas-ink-muted: var(--zwc-ink-muted, #b8ac95);
+  --zas-title-ink: var(--zwc-title-ink, #faf4e6);
+
+  --zas-border-strong: var(--zwc-border-strong, rgba(242, 234, 217, 0.48));
+  --zas-border-soft: var(--zwc-border, rgba(242, 234, 217, 0.28));
+  --zas-shadow-solid: var(--zwc-shadow-solid, #090807);
+  --zas-shadow-card: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.62));
+  --zas-shadow-btn: var(--zwc-shadow-btn, 1.5px 2px 0 #090807);
+  --zas-scrim: rgba(10, 9, 8, 0.72);
+
+  --zas-accent-1: #6ca644;
+  --zas-accent-2: #4b7d2b;
+  --zas-accent-ink: #fcf9f2;
+  --zas-warn-bg: #3b221a;
+  --zas-warn-border: #e07b63;
+  --zas-warn-ink: #ffd8cf;
+  --zas-ok-bg: #1f331c;
+  --zas-ok-border: #8ec364;
+  --zas-ok-ink: #d9f5c2;
+
+  --zas-font-ui: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  --zas-font-brush: var(--zwc-font-brush, "Caveat Brush", "Rubik", sans-serif);
+  --zas-radius: var(--zwc-radius-sketch, 255px 12px 225px 12px / 10px 225px 10px 255px);
+  --zas-radius-sm: var(--zwc-radius-sketch-sm, 185px 8px 165px 8px / 7px 165px 7px 185px);
+
+  --zas-sat: env(safe-area-inset-top, 0px);
+  --zas-sab: env(safe-area-inset-bottom, 0px);
+  --zas-sal: env(safe-area-inset-left, 0px);
+  --zas-sar: env(safe-area-inset-right, 0px);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  --zas-paper: var(--zwc-paper, #f2ebdc);
+  --zas-surface: var(--zwc-surface, #fbf7ee);
+  --zas-surface-alt: var(--zwc-surface-alt, #f4ecdb);
+  --zas-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zas-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+
+  --zas-ink: var(--zwc-ink, #1e1b18);
+  --zas-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zas-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zas-title-ink: var(--zwc-title-ink, #1a1714);
+
+  --zas-border-strong: var(--zwc-border-strong, #23201c);
+  --zas-border-soft: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --zas-shadow-solid: var(--zwc-shadow-solid, #23201c);
+  --zas-shadow-card: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zas-shadow-btn: var(--zwc-shadow-btn, 1.5px 2px 0 #23201c);
+  --zas-scrim: rgba(24, 21, 18, 0.52);
+
+  --zas-accent-1: #5c853b;
+  --zas-accent-2: #446828;
+  --zas-accent-ink: #fcf9f2;
+  --zas-warn-bg: #faebe6;
+  --zas-warn-border: #9a2917;
+  --zas-warn-ink: #6f1a0d;
+  --zas-ok-bg: #ebf4e2;
+  --zas-ok-border: #32571e;
+  --zas-ok-ink: #1b4d23;
+}
+
+html[dir="rtl"],
+html:lang(ar) {
+  --zas-font-ui: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  --zas-font-brush: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. VIEWPORT, OVERSCROLL & INSTANT TOUCH RESPONSE FOUNDATION
+ * -------------------------------------------------------------------------- */
+html,
+body {
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+html body .zone-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Eliminate 300ms iOS/Android double-tap delay across all interactive elements */
+button,
+a,
+[role="button"],
+input,
+select,
+textarea,
+summary,
+label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Native tactile press feedback (GPU-friendly, respects reduced-motion) */
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: translateY(1px) scale(0.985);
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 3. SAFE-AREA PROTECTION (NOTCH / DYNAMIC ISLAND / HOME INDICATOR)
+ *    Active on Mobile (<= 900px) and Installed Standalone / Capacitor WebView
+ * -------------------------------------------------------------------------- */
+@media (max-width: 900px), (display-mode: standalone) {
+  /* Sticky Topbar notch + horizontal safe-area protection */
+  html body .zone-app .zone-topbar,
+  html body #dc-root#dc-root .zone-app .zone-topbar {
+    padding-top: var(--zas-sat) !important;
+    padding-left: var(--zas-sal) !important;
+    padding-right: var(--zas-sar) !important;
+  }
+
+  /* Avoid double top-padding inside inner header bar when parent handles sat */
+  html body .zone-topbar [data-zheaderbar],
+  html body #dc-root#dc-root .zone-app .zone-topbar [data-zheaderbar="1"] {
+    padding-block-start: 4px !important;
+  }
+
+  /* Auxiliary pages (/account and /admin) safe-area headers & bodies */
+  html body.zone-account > header,
+  html body:has(#studioWorkspace) header.topbar {
+    padding-top: max(10px, var(--zas-sat)) !important;
+    padding-left: max(12px, var(--zas-sal)) !important;
+    padding-right: max(12px, var(--zas-sar)) !important;
+  }
+
+  html body.zone-account > main {
+    padding-bottom: calc(36px + var(--zas-sab)) !important;
+    padding-left: max(16px, var(--zas-sal)) !important;
+    padding-right: max(16px, var(--zas-sar)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Bottom 5-tab bar home-indicator & landscape safe-area clearance */
+  html body nav.zone-mobile-tabbar,
+  html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"],
+  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
+    padding-block-end: max(8px, var(--zas-sab)) !important;
+    padding-left: max(6px, var(--zas-sal)) !important;
+    padding-right: max(6px, var(--zas-sar)) !important;
+  }
+
+  /* Slide-out Sketchbook Sidebar Drawer safe-area insets (LTR + RTL) */
+  html.zaaa-rail-open body aside.zone-sidebar,
+  html.zaaa-rail-open body #dc-root#dc-root .zone-app aside.zone-sidebar {
+    padding-top: max(10px, var(--zas-sat)) !important;
+    padding-bottom: calc(24px + var(--zas-sab)) !important;
+    padding-left: max(10px, var(--zas-sal)) !important;
+    padding-right: max(10px, var(--zas-sar)) !important;
+  }
+
+  /* Awards & Merits Hub bottom tabbar + home-indicator clearance */
+  html body #dc-root #zone-main#zone-main #zone-merits-hub,
+  html body #zone-merits-hub {
+    padding-bottom: calc(92px + var(--zas-sab)) !important;
+    padding-inline-start: max(0px, var(--zas-sal)) !important;
+    padding-inline-end: max(0px, var(--zas-sar)) !important;
+  }
+
+  /* Mayor Tariq Widget (supports both #zone-mayor-widget and #zmw-root) */
+  #zone-mayor-widget,
+  #zmw-root {
+    bottom: calc(74px + var(--zas-sab)) !important;
+    inset-inline-end: max(12px, var(--zas-sar)) !important;
+  }
+
+  html[dir="rtl"] #zone-mayor-widget,
+  html[dir="rtl"] #zmw-root {
+    inset-inline-end: max(12px, var(--zas-sal)) !important;
+  }
+
+  /* Keep Mayor bubble header flexible so 44px close buttons never overflow */
+  #zone-mayor-widget .zmw-head-id,
+  #zmw-root .zmw-head-id {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Prevent iOS Safari auto-zoom on form inputs (font-size >= 16px) */
+  html body input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="hidden"]):not([type="file"]),
+  html body select,
+  html body textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Explicit Standalone PWA & Capacitor WebView shell reinforcements */
+html[data-zone-standalone="1"] body .zone-app .zone-topbar,
+html[data-zone-standalone="1"] body #dc-root#dc-root .zone-app .zone-topbar {
+  padding-top: var(--zas-sat) !important;
+  padding-left: var(--zas-sal) !important;
+  padding-right: var(--zas-sar) !important;
+}
+
+html[data-zone-standalone="1"] body nav.zone-mobile-tabbar,
+html[data-zone-standalone="1"] body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
+  padding-block-end: max(10px, var(--zas-sab)) !important;
+}
+
+html[data-zone-standalone="1"] #zone-mayor-widget,
+html[data-zone-standalone="1"] #zmw-root {
+  bottom: calc(78px + var(--zas-sab)) !important;
+}
+
+html[data-zone-standalone="1"] #zas-install-banner,
+html[data-zone-standalone="1"] #zas-ios-modal {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 4. FITTS'S LAW 44PX TOUCH TARGETS (COARSE POINTER & MOBILE <= 900px)
+ *    Strictly box-sized and max-width bounded -> ZERO horizontal overflow at 390px
+ * -------------------------------------------------------------------------- */
+@media (pointer: coarse), (max-width: 900px) {
+  html body .zone-action-primary,
+  html body .zone-action-danger,
+  html body button[type="submit"],
+  html body #reconnectGuestButton,
+  html body #zone-merits-hub .zma-upgrade-btn,
+  html body #zone-merits-hub .zma-claim-btn,
+  html body #zone-merits-hub .zma-equip-btn,
+  html body #zone-merits-hub .zma-btn-claim-all,
+  html body #zone-merits-hub .zma-btn-reset,
+  html body #zone-merits-hub .zma-back-btn,
+  html body #zone-merits-hub .zma-tab-btn,
+  html body .zone-tutorial-close,
+  html body .zaaa-drawer-close,
+  html body [data-omar-profile-modal="1"] button.zone-compact-btn:last-of-type,
+  html body button.zas-install-cta,
+  html body button.zas-close-btn,
+  html body button.zas-dismiss-btn,
+  html body button.zas-ios-btn {
+    min-height: 44px !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+
+  html body nav.zone-mobile-tabbar > button,
+  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button {
+    min-height: 46px !important;
+    min-width: 44px !important;
+  }
+
+  html body #zmw-root .zmw-icon-btn,
+  html body #zone-mayor-widget .zmw-icon-btn {
+    min-height: 44px !important;
+    min-width: 40px !important;
+    box-sizing: border-box !important;
+  }
+
+  html body #zone-result > div > button:last-of-type {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 5. WEB & MOBILE PAINT PERFORMANCE & LOW-POWER MODE
+ *    Never applied to sticky headers, fixed containers, or active iframes!
+ * -------------------------------------------------------------------------- */
+#zone-merits-hub .zma-honor-card,
+#zone-merits-hub .zma-medal-card,
+#zone-merits-hub .zma-merit-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 138px;
+}
+
+body:has(#studioWorkspace) .catalog-card,
+body:has(#studioWorkspace) .asset-card,
+body:has(#studioWorkspace) .territory-card,
+body:has(#studioWorkspace) .release-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 220px;
+}
+
+/* Automatic Low-Power Mode (Low-RAM <= 4GB, Save-Data, or Reduced-Motion) */
+html[data-zone-low-power="1"] *,
+html[data-zone-low-power="1"] *::before,
+html[data-zone-low-power="1"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html[data-zone-low-power="1"] #zmw-avatar-btn,
+html[data-zone-low-power="1"] .zmw-unread-pip,
+html[data-zone-low-power="1"] .zma-sidebar-badge,
+html[data-zone-low-power="1"] [data-zticker="1"] {
+  animation: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 6. SKETCHBOOK OFFLINE / ONLINE RESILIENCE PILL (#zas-offline-banner)
+ * -------------------------------------------------------------------------- */
+#zas-offline-banner {
+  position: fixed;
+  top: calc(58px + var(--zas-sat));
+  inset-inline: 12px;
+  margin-inline: auto;
+  width: fit-content;
+  max-width: min(460px, calc(100vw - 24px));
+  z-index: 970;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background-color: var(--zas-warn-bg);
+  color: var(--zas-warn-ink);
+  border: 2px solid var(--zas-warn-border);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: 2.5px 3px 0 var(--zas-shadow-solid);
+  font-family: var(--zas-font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+#zas-offline-banner[hidden] {
+  display: none !important;
+}
+
+#zas-offline-banner[data-state="online"] {
+  background-color: var(--zas-ok-bg);
+  color: var(--zas-ok-ink);
+  border-color: var(--zas-ok-border);
+}
+
+#zas-offline-banner .zas-status-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background-color: var(--zas-warn-border);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+}
+
+#zas-offline-banner[data-state="online"] .zas-status-dot {
+  background-color: var(--zas-ok-border);
+}
+
+#zas-offline-banner .zas-status-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. NON-INTRUSIVE SKETCHBOOK INSTALL APP PILL (#zas-install-banner)
+ *    Docked at inline-start opposite Mayor Tariq (inline-end) & above Tabbar
+ * -------------------------------------------------------------------------- */
+#zas-install-banner {
+  position: fixed;
+  bottom: calc(18px + var(--zas-sab));
+  inset-inline-start: max(18px, var(--zas-sal));
+  z-index: 935;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(350px, calc(100vw - 120px));
+  padding: 6px 8px 6px 10px;
+  background-color: var(--zas-surface);
+  color: var(--zas-ink);
+  border: 2px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: var(--zas-shadow-card);
+  font-family: var(--zas-font-ui);
+  box-sizing: border-box;
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.16s ease;
+}
+
+#zas-install-banner[hidden],
+html.zaaa-rail-open #zas-install-banner,
+body.zone-map-expanded #zas-install-banner {
+  display: none !important;
+}
+
+html[dir="rtl"] #zas-install-banner {
+  inset-inline-start: max(18px, var(--zas-sar));
+  padding: 6px 10px 6px 8px;
+}
+
+#zas-install-banner .zas-install-ico {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background-color: var(--zas-surface-alt);
+  border: 1.5px solid var(--zas-border-strong);
+  color: var(--zas-title-ink);
+}
+
+#zas-install-banner .zas-install-ico svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+#zas-install-banner .zas-install-cta {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 5px 12px;
+  background: linear-gradient(180deg, var(--zas-accent-1) 0%, var(--zas-accent-2) 100%);
+  color: var(--zas-accent-ink);
+  border: 1.5px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: var(--zas-shadow-btn);
+  font-family: var(--zas-font-ui);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.15;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#zas-install-banner .zas-install-cta:hover {
+  filter: brightness(1.06);
+}
+
+#zas-install-banner .zas-dismiss-btn {
+  appearance: none;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: var(--zas-btn-bg);
+  color: var(--zas-ink);
+  border: 1.5px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: 1px 1.5px 0 var(--zas-shadow-solid);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#zas-install-banner .zas-dismiss-btn:hover {
+  background-color: var(--zas-btn-hover);
+}
+
+@media (max-width: 900px) {
+  #zas-install-banner {
+    bottom: calc(74px + var(--zas-sab));
+    inset-inline-start: max(10px, var(--zas-sal));
+    max-width: calc(100vw - 88px - var(--zas-sal) - var(--zas-sar));
+    gap: 6px;
+    padding: 5px 6px;
+  }
+
+  html[dir="rtl"] #zas-install-banner {
+    inset-inline-start: max(10px, var(--zas-sar));
+  }
+
+  #zas-install-banner .zas-install-ico {
+    display: none;
+  }
+
+  #zas-install-banner .zas-install-cta {
+    font-size: 12.5px;
+    padding: 6px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #zas-install-banner .zas-dismiss-btn {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 8. iOS "ADD TO HOME SCREEN" 1-TAP GUIDE MODAL (#zas-ios-modal)
+ * -------------------------------------------------------------------------- */
+#zas-ios-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: max(16px, var(--zas-sat)) max(14px, var(--zas-sar)) max(18px, var(--zas-sab)) max(14px, var(--zas-sal));
+  background-color: var(--zas-scrim);
+  box-sizing: border-box;
+}
+
+#zas-ios-modal[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 640px) {
+  #zas-ios-modal {
+    align-items: center;
+  }
+}
+
+#zas-ios-modal .zas-ios-card {
+  width: min(410px, 100%);
+  max-height: calc(100dvh - 36px - var(--zas-sat) - var(--zas-sab));
+  overflow-y: auto;
+  background-color: var(--zas-surface);
+  color: var(--zas-ink);
+  border: 2px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius);
+  box-shadow: 4px 5px 0 var(--zas-shadow-solid), 0 18px 36px rgba(0, 0, 0, 0.42);
+  padding: 16px;
+  font-family: var(--zas-font-ui);
+  box-sizing: border-box;
+}
+
+#zas-ios-modal .zas-ios-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px dashed var(--zas-border-soft);
+}
+
+#zas-ios-modal .zas-ios-title {
+  margin: 0;
+  font-family: var(--zas-font-brush);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--zas-title-ink);
+  line-height: 1.15;
+}
+
+html[dir="rtl"] #zas-ios-modal .zas-ios-title,
+html:lang(ar) #zas-ios-modal .zas-ios-title {
+  font-family: var(--zas-font-ui);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+#zas-ios-modal .zas-close-btn {
+  appearance: none;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background-color: var(--zas-btn-bg);
+  color: var(--zas-ink);
+  border: 1.5px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: var(--zas-shadow-btn);
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#zas-ios-modal .zas-ios-lead {
+  margin: 10px 0 12px;
+  font-size: 13.5px;
+  line-height: 1.48;
+  color: var(--zas-ink-soft);
+}
+
+#zas-ios-modal .zas-ios-steps {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#zas-ios-modal .zas-ios-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background-color: var(--zas-surface-alt);
+  border: 1.5px solid var(--zas-border-soft);
+  border-radius: var(--zas-radius-sm);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--zas-ink);
+}
+
+#zas-ios-modal .zas-step-badge {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--zas-accent-1) 0%, var(--zas-accent-2) 100%);
+  color: var(--zas-accent-ink);
+  border: 1.5px solid var(--zas-border-strong);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+#zas-ios-modal .zas-step-ico {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--zas-title-ink);
+}
+
+#zas-ios-modal .zas-ios-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+#zas-ios-modal .zas-ios-btn {
+  appearance: none;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, var(--zas-accent-1) 0%, var(--zas-accent-2) 100%);
+  color: var(--zas-accent-ink);
+  border: 1.5px solid var(--zas-border-strong);
+  border-radius: var(--zas-radius-sm);
+  box-shadow: var(--zas-shadow-btn);
+  font-family: var(--zas-font-ui);
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#zas-install-banner button:focus-visible,
+#zas-ios-modal button:focus-visible {
+  outline: 2.5px solid var(--zwc-accent, #8ec364);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+ * 9. REDUCED MOTION ACCESSIBILITY OVERRIDE
+ * -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: none !important;
+  }
+
+  #zas-install-banner,
+  #zas-offline-banner,
+  #zas-ios-modal {
+    transition: none !important;
+    animation: none !important;
+  }
+}
