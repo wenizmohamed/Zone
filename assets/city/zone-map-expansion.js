@@ -1534,76 +1534,65 @@
               [0.0102, -0.0126], [0.0064, -0.0114], [0.0045, -0.0084]
             ], 2)
           }
+        },
+        /* Mainland North Civic Connector (seamlessly links Central Core to North Coliseum Parkland) */
+        {
+          type: "Feature",
+          id: 7106,
+          properties: { id: "sector-core-north", color: "#94a3b8" },
+          geometry: {
+            type: "Polygon",
+            coordinates: closedRing([
+              [-0.0048, 0.0033], [0.0048, 0.0033], [0.0052, 0.0056], [-0.0052, 0.0056]
+            ])
+          }
+        },
+        /* Mainland South Waterfront Connector (links Central Core seamlessly to South Port Promenade) */
+        {
+          type: "Feature",
+          id: 7107,
+          properties: { id: "sector-core-south", color: "#94a3b8" },
+          geometry: {
+            type: "Polygon",
+            coordinates: closedRing([
+              [-0.0048, -0.0052], [0.0018, -0.0052], [0.0028, -0.0033], [-0.0048, -0.0033]
+            ])
+          }
         }
       ];
 
-      /* Organic Coastal Bay, Winding Grand Canal, Riviera River Channel & Airport Strait */
+      /* Opaque Full-World Ocean Mask with Exact Central Core Cutout Hole:
+         Completely hides outer Brooklyn/NYC vector streets, East River water & bridges
+         while keeping Central Core's real Streets v8 grid & 120 territory blocks 100% live! */
+      var oceanMask = {
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            id: 7200,
+            properties: { kind: "ocean-mask" },
+            geometry: {
+              type: "Polygon",
+              coordinates: [
+                [
+                  pt(-0.14, -0.10), pt(0.14, -0.10), pt(0.14, 0.10),
+                  pt(-0.14, 0.10), pt(-0.14, -0.10)
+                ],
+                [
+                  pt(-0.00475, -0.00345), pt(-0.00475, 0.00345),
+                  pt(0.00475, 0.00345), pt(0.00475, -0.00345),
+                  pt(-0.00475, -0.00345)
+                ]
+              ]
+            }
+          }
+        ]
+      };
+
+      /* Internal Sheltered Water Basins carved cleanly inside our sculpted islands */
       var bayWater = {
         type: "FeatureCollection",
         features: [
-          /* Southern Open Coastal Bay & Port Water Slips */
-          {
-            type: "Feature",
-            id: 7201,
-            properties: { kind: "bay" },
-            geometry: {
-              type: "Polygon",
-              coordinates: closedRing([
-                [-0.0340, -0.0240], [0.0340, -0.0240], [0.0340, 0.0220],
-                [0.0202, 0.0220], [0.0196, 0.0082], [0.0189, 0.0020],
-                [0.0190, -0.0022], [0.0212, -0.0036], [0.0202, -0.0058],
-                [0.0201, -0.0114], [0.0180, -0.0130], [0.0100, -0.0129],
-                [0.0066, -0.0116], [0.0044, -0.0094], [0.0038, -0.0054],
-                [0.0018, -0.0074], [-0.0022, -0.0082], [-0.0050, -0.0082],
-                [-0.0172, -0.0082], [-0.0184, -0.0054], [-0.0240, -0.0050],
-                [-0.0340, -0.0060]
-              ])
-            }
-          },
-          /* Winding Grand Canal separating Central Mainland & North Park from East Financial Island */
-          {
-            type: "Feature",
-            id: 7202,
-            properties: { kind: "canal" },
-            geometry: {
-              type: "Polygon",
-              coordinates: smoothClosedPoly([
-                [0.0048, -0.0068], [0.0072, -0.0068], [0.0071, -0.0024],
-                [0.0070, 0.0018], [0.0069, 0.0058], [0.0076, 0.0094],
-                [0.0094, 0.0148], [0.0064, 0.0154], [0.0062, 0.0102],
-                [0.0050, 0.0058], [0.0049, 0.0014], [0.0049, -0.0032]
-              ], 2)
-            }
-          },
-          /* South Airport Strait separating Financial Island from Airport Peninsula */
-          {
-            type: "Feature",
-            id: 7203,
-            properties: { kind: "strait" },
-            geometry: {
-              type: "Polygon",
-              coordinates: smoothClosedPoly([
-                [0.0048, -0.0046], [0.0072, -0.0027], [0.0124, -0.0027],
-                [0.0184, -0.0025], [0.0220, -0.0028], [0.0220, -0.0046],
-                [0.0168, -0.0043], [0.0108, -0.0043], [0.0076, -0.0045]
-              ], 2)
-            }
-          },
-          /* West Riviera River Channel separating Central Core from West Neon Peninsula */
-          {
-            type: "Feature",
-            id: 7204,
-            properties: { kind: "river" },
-            geometry: {
-              type: "Polygon",
-              coordinates: smoothClosedPoly([
-                [-0.0068, -0.0054], [-0.0048, -0.0054], [-0.0049, -0.0018],
-                [-0.0048, 0.0018], [-0.0052, 0.0050], [-0.0065, 0.0086],
-                [-0.0078, 0.0132], [-0.0096, 0.0128], [-0.0074, 0.0072],
-                [-0.0066, 0.0034], [-0.0067, -0.0006], [-0.0069, -0.0036]
-              ], 2)
-            }
-          },
           /* Emerald Superyacht Marina Sheltered Basin */
           {
             type: "Feature",
@@ -1956,6 +1945,7 @@
       });
 
       return {
+        oceanMask: oceanMask,
         land: { type: "FeatureCollection", features: landFeatures },
         water: bayWater,
         shallows: shallows,
@@ -2204,43 +2194,70 @@
         } catch (_) {}
       });
 
-      /* Make core district service & detail POIs visible at spacious city overview zooms */
+      /* Keep secondary service & detail POIs tucked until zoomed into Central Core so overview stays clean */
       ["zone-poi-icon-service", "zone-poi-service-reservations", "zone-poi-icon-detail", "zone-poi-halo-detail", "zone-poi-hitbox-detail"].forEach(function (lid) {
         if (map.getLayer(lid)) {
-          try { map.setLayerZoomRange(lid, 12.4, 20); } catch (_) {}
+          try { map.setLayerZoomRange(lid, 15.15, 20); } catch (_) {}
         }
       });
 
       var base = buildMetroLandAndRoadsGeo();
-      var beforeGround = map.getLayer("district-buildings") ? "district-buildings" : (map.getLayer("zone-blocks-fill") ? "zone-blocks-fill" : undefined);
+      /* Place our opaque Ocean Mask + Sculpted Archipelago Islands ABOVE district-road-labels / district-roads /
+         district-buildings so zero Brooklyn grids, East River water, or ferry lines ever bleed into our ocean or islands,
+         while keeping Central Core's cutout hole 100% open to real Streets v8 roads, 120 blocks & 3D buildings! */
+      var beforeOverlay = map.getLayer("district-buildings-3d")
+        ? "district-buildings-3d"
+        : (map.getLayer("zone-blocks-fill") ? "zone-blocks-fill" : undefined);
       var beforeCoins = map.getLayer("zone-poi-underglow") ? "zone-poi-underglow" : undefined;
 
-      /* 1. Deep Coastal Bay, Winding Grand Canal, Riviera River & Airport Strait */
-      safeAddSource("metro-water-src", { type: "geojson", data: base.water });
+      /* 1. Opaque Full-World Ocean Mask (cutout hole exposes ONLY Central Core Streets v8) */
+      safeAddSource("metro-ocean-mask-src", { type: "geojson", data: base.oceanMask });
       safeAddLayer({
-        id: "metro-bay-water",
+        id: "metro-ocean-mask",
         type: "fill",
-        source: "metro-water-src",
-        paint: { "fill-color": "#0a1c2e", "fill-opacity": 0.94 }
-      }, beforeGround);
+        source: "metro-ocean-mask-src",
+        paint: { "fill-color": "#071a2d", "fill-opacity": 1 }
+      }, beforeOverlay);
 
-      /* 2. Turquoise Shallow Coastal Shelf */
+      /* 2. Turquoise Shallow Coastal Shelf hugging sculpted island coastlines */
       safeAddSource("metro-shallows-src", { type: "geojson", data: base.shallows });
       safeAddLayer({
         id: "metro-shallows",
         type: "fill",
         source: "metro-shallows-src",
-        paint: { "fill-color": "#5bc8cf", "fill-opacity": 0.44 }
-      }, beforeGround);
+        paint: { "fill-color": "#5bc8cf", "fill-opacity": 0.48 }
+      }, beforeOverlay);
 
-      /* 3. Sculpted Organic Island & District Landfills */
+      /* 3. Opaque Sculpted Archipelago Islands & Mainland Connectors + Subtle Sector Tint + Seawall Rim */
       safeAddSource("metro-land-src", { type: "geojson", data: base.land });
       safeAddLayer({
         id: "metro-land-sectors",
         type: "fill",
         source: "metro-land-src",
+        paint: { "fill-color": "#0f1522", "fill-opacity": 1 }
+      }, beforeOverlay);
+      safeAddLayer({
+        id: "metro-land-tint",
+        type: "fill",
+        source: "metro-land-src",
         paint: { "fill-color": ["get", "color"], "fill-opacity": 0.08 }
-      }, beforeGround);
+      }, beforeOverlay);
+      safeAddLayer({
+        id: "metro-coastline-rim",
+        type: "line",
+        source: "metro-land-src",
+        layout: { "line-join": "round" },
+        paint: { "line-color": "#334c66", "line-width": ["interpolate", ["linear"], ["zoom"], 12.4, 1.4, 16, 3.0], "line-opacity": 0.82 }
+      }, beforeOverlay);
+
+      /* 3b. Internal Sheltered Water Basins (Emerald Marina & Monument Roundabout Reflecting Pool) */
+      safeAddSource("metro-water-src", { type: "geojson", data: base.water });
+      safeAddLayer({
+        id: "metro-bay-water",
+        type: "fill",
+        source: "metro-water-src",
+        paint: { "fill-color": "#071a2d", "fill-opacity": 0.98 }
+      }, beforeOverlay);
 
       /* 4. Warm Sandy Corniche Cove Beaches */
       safeAddSource("metro-beaches-src", { type: "geojson", data: base.beaches });
@@ -2248,8 +2265,8 @@
         id: "metro-beaches",
         type: "fill",
         source: "metro-beaches-src",
-        paint: { "fill-color": "#ecd9ae", "fill-opacity": 0.94 }
-      }, beforeGround);
+        paint: { "fill-color": "#ecd9ae", "fill-opacity": 0.96 }
+      }, beforeOverlay);
 
       /* 5. Lush Green Urban Parks, Waterfront Promenades & Stadium Pitch */
       safeAddSource("metro-parks-src", { type: "geojson", data: base.parks });
@@ -2259,9 +2276,9 @@
         source: "metro-parks-src",
         paint: {
           "fill-color": ["case", ["==", ["get", "kind"], "pitch"], "#46b859", "#74a55b"],
-          "fill-opacity": 0.92
+          "fill-opacity": 0.95
         }
-      }, beforeGround);
+      }, beforeOverlay);
 
       /* 6. Paved Dual Runways, Speedway Oval Asphalt Track, Concrete Piers & Breakwaters */
       safeAddSource("metro-runway-src", { type: "geojson", data: base.runway });
@@ -2272,17 +2289,17 @@
         paint: {
           "fill-color": ["case", ["==", ["get", "kind"], "pier"], "#dcd2be", "#2c3440"],
           "fill-outline-color": ["case", ["==", ["get", "kind"], "pier"], "#9d9079", "#475569"],
-          "fill-opacity": 0.96
+          "fill-opacity": 0.98
         }
-      }, beforeGround);
+      }, beforeOverlay);
 
       safeAddSource("metro-runway-line-src", { type: "geojson", data: base.runwayCenter });
       safeAddLayer({
         id: "metro-runway-marks",
         type: "line",
         source: "metro-runway-line-src",
-        paint: { "line-color": "#f8fafc", "line-width": 1.9, "line-dasharray": [3, 3], "line-opacity": 0.92 }
-      }, beforeGround);
+        paint: { "line-color": "#f8fafc", "line-width": 1.9, "line-dasharray": [3, 3], "line-opacity": 0.94 }
+      }, beforeOverlay);
 
       /* 7. Wide Dual-Carriageway Grand Boulevards, Curved Corniche Highway & Roundabout */
       safeAddSource("metro-roads-src", { type: "geojson", data: base.roads });
@@ -2294,9 +2311,9 @@
         paint: {
           "line-color": "#131926",
           "line-width": ["interpolate", ["linear"], ["zoom"], 12.4, ["case", ["==", ["get", "major"], 1], 4.8, 3.0], 16, ["case", ["==", ["get", "major"], 1], 11.5, 7.2]],
-          "line-opacity": 0.92
+          "line-opacity": 0.94
         }
-      }, beforeGround);
+      }, beforeOverlay);
       safeAddLayer({
         id: "metro-arterials",
         type: "line",
@@ -2305,9 +2322,9 @@
         paint: {
           "line-color": "#2b384e",
           "line-width": ["interpolate", ["linear"], ["zoom"], 12.4, ["case", ["==", ["get", "major"], 1], 3.0, 1.8], 16, ["case", ["==", ["get", "major"], 1], 8.2, 4.8]],
-          "line-opacity": 0.95
+          "line-opacity": 0.98
         }
-      }, beforeGround);
+      }, beforeOverlay);
       safeAddLayer({
         id: "metro-arterials-center",
         type: "line",
@@ -2318,9 +2335,9 @@
           "line-color": "#e0b354",
           "line-width": ["interpolate", ["linear"], ["zoom"], 12.5, 0.7, 16, 1.5],
           "line-dasharray": [4, 4],
-          "line-opacity": 0.78
+          "line-opacity": 0.82
         }
-      }, beforeGround);
+      }, beforeOverlay);
 
       /* 8. 3D Layered Tree-Canopy Layer (Corniche, Parks, University & Villa Gardens) */
       safeAddSource("metro-trees-src", { type: "geojson", data: buildMetroTreesGeo() });
@@ -2494,16 +2511,20 @@
       widenMetroBounds();
       syncGateMarkers();
       applyAtmosphere(true);
+      syncZmxReadyDataset();
+    }
 
+    function syncZmxReadyDataset() {
       try {
         document.body.dataset.zmxReady = JSON.stringify({
-          version: 137,
+          version: 138,
+          oceanMaskLayer: !!map.getLayer("metro-ocean-mask"),
           metroIconLayer: !!map.getLayer("metro-poi-icon"),
           skylineLayer: !!map.getLayer("metro-outer-skyline-3d"),
           treesLayer: !!map.getLayer("metro-trees-3d"),
           livingLayer: !!map.getLayer("metro-living-dots"),
           poiCount: METRO_POIS.length,
-          phase: state.activePhase
+          phase: state.activePhase || computeDesiredPhase()
         });
       } catch (_) {}
     }
@@ -2861,9 +2882,13 @@
       setPaint("district-land", "fill-color", ["match", ["get", "class"], "park", cfg.park, "pitch", cfg.pitch, "industrial", cfg.landInd, cfg.land]);
       setPaint("district-land", "fill-opacity", 0.92);
       setPaint("district-water", "fill-color", cfg.water);
+      setPaint("metro-ocean-mask", "fill-color", cfg.water);
+      setPaint("metro-land-sectors", "fill-color", cfg.land);
+      setPaint("metro-land-tint", "fill-opacity", cfg.isLightUi ? 0.06 : 0.10);
+      setPaint("metro-coastline-rim", "line-color", cfg.isLightUi ? "#8e7f67" : "#385572");
       setPaint("metro-bay-water", "fill-color", cfg.water);
       setPaint("metro-shallows", "fill-color", cfg.shallows);
-      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.52 : 0.36);
+      setPaint("metro-shallows", "fill-opacity", cfg.isLightUi ? 0.56 : 0.38);
       setPaint("metro-beaches", "fill-color", cfg.beach);
       setPaint("metro-parks", "fill-color", ["case", ["==", ["get", "kind"], "pitch"], cfg.pitch, cfg.park]);
       setPaint("district-waterway", "line-color", cfg.water);
@@ -2931,6 +2956,7 @@
         setPaint(lid, "text-color", textCol);
         setPaint(lid, "text-halo-color", haloCol);
       });
+      syncZmxReadyDataset();
     }
 
     function onMapReadyPass() {
@@ -3038,7 +3064,7 @@
   }
 
   var expansionApi = {
-    version: "137.0",
+    version: "138.0",
     WORLD_CITIES: WORLD_CITIES,
     EXTRA_ICONS: EXTRA_ICONS,
     init: function (ctx) {
@@ -3054,7 +3080,7 @@
       }
     }
   };
-  root.__zoneMapExpansionVersion = 137;
+  root.__zoneMapExpansionVersion = 138;
   try {
     Object.defineProperty(root, "ZoneMapExpansion", {
       value: expansionApi,

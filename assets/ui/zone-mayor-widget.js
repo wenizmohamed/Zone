@@ -399,9 +399,14 @@
   };
 
   try {
-    if (window.localStorage.getItem(STORAGE_MIN_KEY) === '1') {
+    var savedMin = window.localStorage.getItem(STORAGE_MIN_KEY);
+    if (savedMin === '1') {
       state.open = false;
       state.userClosed = true;
+    } else if (savedMin === null && typeof window.innerWidth === 'number' && window.innerWidth <= 860) {
+      /* On narrow screens, start neatly docked as medallion with unread badge so map controls stay 100% clear */
+      state.open = false;
+      state.hasUnread = true;
     }
   } catch (_) {}
 

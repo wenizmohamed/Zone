@@ -249,23 +249,23 @@ if (vZoneFacade.z > .5) {
   vec3 dayFrame = mix(vec3(.17,.14,.12), vec3(.22,.28,.33), isCitadel + isAirport * 0.7);
   vec3 frameColor = mix(nightFrame, dayFrame, dayMix);
   vec3 nightPane = mix(vec3(.025,.045,.075),vec3(.085,.140,.215),variation * (0.5 + 0.5 * heightGrad));
-  vec3 corePane = mix(vec3(.22,.43,.58), vec3(.55,.76,.88), variation * .5 + heightGrad * .5);
-  vec3 citadelPane = mix(vec3(.14,.42,.52), vec3(.44,.75,.84), variation * .45 + heightGrad * .55);
-  vec3 neonPane = mix(vec3(.26,.38,.52), vec3(.58,.68,.80), variation * .5 + heightGrad * .5);
-  vec3 harborPane = mix(vec3(.20,.33,.41), vec3(.46,.60,.68), variation * .5 + heightGrad * .5);
-  vec3 airportPane = mix(vec3(.20,.56,.78), vec3(.56,.85,.96), variation * .45 + heightGrad * .55);
+  vec3 corePane = mix(vec3(.13,.31,.46), vec3(.34,.58,.74), variation * .5 + heightGrad * .5);
+  vec3 citadelPane = mix(vec3(.09,.31,.42), vec3(.28,.60,.72), variation * .45 + heightGrad * .55);
+  vec3 neonPane = mix(vec3(.18,.26,.42), vec3(.40,.50,.66), variation * .5 + heightGrad * .5);
+  vec3 harborPane = mix(vec3(.14,.24,.32), vec3(.32,.46,.55), variation * .5 + heightGrad * .5);
+  vec3 airportPane = mix(vec3(.12,.44,.66), vec3(.38,.72,.88), variation * .45 + heightGrad * .55);
   vec3 dayPaneBase = corePane;
   dayPaneBase = mix(dayPaneBase, citadelPane, isCitadel);
   dayPaneBase = mix(dayPaneBase, neonPane, isNeon);
   dayPaneBase = mix(dayPaneBase, harborPane, isHarbor);
   dayPaneBase = mix(dayPaneBase, airportPane, isAirport);
-  float skyGlint = smoothstep(0.35, 0.85, tile.y * 0.75 + tile.x * 0.35);
-  vec3 dayPane = mix(dayPaneBase, min(dayPaneBase + vec3(.14,.16,.18), vec3(.92,.96,.99)), skyGlint * 0.45);
-  vec2 mEdge = max(fwidth(tile) * 0.9, vec2(0.012));
-  float vMullion = 1.0 - smoothstep(0.015, 0.015 + mEdge.x, abs(tile.x - 0.5));
-  float hMullion = 1.0 - smoothstep(0.018, 0.018 + mEdge.y, abs(tile.y - 0.62));
+  float skyGlint = smoothstep(0.40, 0.88, tile.y * 0.72 + tile.x * 0.32);
+  vec3 dayPane = mix(dayPaneBase, min(dayPaneBase + vec3(.14,.16,.18), vec3(.84,.90,.96)), skyGlint * 0.36);
+  vec2 mEdge = max(fwidth(tile) * 0.9, vec2(0.014));
+  float vMullion = 1.0 - smoothstep(0.018, 0.018 + mEdge.x, abs(tile.x - 0.5));
+  float hMullion = 1.0 - smoothstep(0.022, 0.022 + mEdge.y, abs(tile.y - 0.62));
   float inkMullion = clamp(vMullion + hMullion, 0.0, 1.0);
-  dayPane = mix(dayPane, dayFrame, inkMullion * 0.62);
+  dayPane = mix(dayPane, dayFrame, inkMullion * 0.72);
   vec3 paneColor = mix(nightPane, dayPane, dayMix);
   vec3 warmInterior = mix(vec3(.98,.72,.28), vec3(1.0,.88,.54), variation);
   vec3 coolInterior = mix(vec3(.20,.84,.98), vec3(.46,.94,.86), variation);
@@ -317,7 +317,8 @@ function appendRawBox(batch,position,size,colorHex){
 }
 function appendBox(batch,detail,browserRich=false){
   if(!browserRich){appendRawBox(batch,detail.position,detail.size,PALETTE.metal[detail.color]);return;}
-  const [cx,,cz]=detail.position,[bw,bh,bd]=detail.size,top=detail.top;
+  const [cx,,cz]=detail.position,[rawW,rawH,rawD]=detail.size,top=detail.top;
+  const bw=Math.max(rawW*1.42,2.6),bh=Math.max(rawH*1.32,.72),bd=Math.max(rawD*1.42,2.1);
   const idStr=String(detail.providerId||''),h=hash('roof|'+idStr);
   const isCitadel=/citadel/.test(idStr),isNeon=/neon/.test(idStr),isHarbor=/harbor/.test(idStr),isAirport=/airport/.test(idStr);
   const stoneTone=isCitadel?'#6a7986':isNeon?'#c4b7a2':isHarbor?'#8b604c':isAirport?'#cdd4d9':'#b4a792';
@@ -481,7 +482,7 @@ export function createDistrictSurfaces(map,features,options={}){
     batches.forEach((batch,index)=>{
       if(!batch.positions.length)return;
       const geometry=new THREE.BufferGeometry();geometries.push(geometry);geometry.setAttribute('position',new THREE.Float32BufferAttribute(batch.positions,3));geometry.setAttribute('color',new THREE.Float32BufferAttribute(batch.colors,3));geometry.setAttribute('zoneFacade',new THREE.Float32BufferAttribute(batch.facades,4));geometry.computeVertexNormals();geometry.computeBoundingSphere();
-      const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.86,metalness:index===0?.18:index===3?.22:.04,emissive:isBrowserRuntime&&index>=2?new THREE.Color(index===2?'#2c425a':'#203144'):new THREE.Color(0x000000),emissiveIntensity:isBrowserRuntime?(index===2?.46:index===3?.32:0):0,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1});materials.push(material);
+      const material=new THREE.MeshStandardMaterial({vertexColors:true,side:THREE.DoubleSide,roughness:index===0?.30:.86,metalness:index===0?.18:index===3?.22:.04,emissive:isBrowserRuntime&&index>=2?new THREE.Color(index===2?'#2c425a':'#203144'):new THREE.Color(0x000000),emissiveIntensity:isBrowserRuntime?(index===2?.46:index===3?.32:0):0,depthTest:true,depthWrite:index===1||index===3,polygonOffset:true,polygonOffsetFactor:isBrowserRuntime&&index===1?-4:-1,polygonOffsetUnits:isBrowserRuntime&&index===1?-4:-1});materials.push(material);
       if(index===1)installFacadeShader(material,daylightUniform);
       if(index===2)corniceMat=material;
       if(index===3)roofMat=material;

@@ -332,7 +332,8 @@
   .familyRail{width:100%;height:36px;min-height:36px;flex:none;display:flex;flex-direction:row;align-items:center;gap:10px;padding:2px 10px;border-inline-end:0;border-bottom:1px solid rgba(201,154,69,0.28);background:linear-gradient(180deg,rgba(14,19,27,0.96),rgba(10,14,20,0.94))}
   .familyRail>div:first-child{min-width:116px;display:flex;align-items:baseline;gap:8px}.familyRail h1{font-size:13px;font-weight:800;letter-spacing:0.01em;margin-top:0}.familyEyebrow{font-size:8px;color:#c99a45}
   .familyRail .factionSelectLabel{width:196px;flex:none}.familyRail .factionSelectLabel select{min-height:28px;padding:2px 8px;font-size:11px}.familyRail .familyStats{margin-inline-start:auto;display:flex;gap:16px;align-items:center;padding:0;border:0}
-  .familyRail .familyStat{min-width:52px;display:flex;align-items:baseline;gap:5px}.familyRail .familyStat b{font-size:14px}.familyRail .familyStat span{font-size:8.5px;margin-top:0}
+  .familyRail .familyStat{min-width:52px;display:flex;align-items:baseline;gap:5px;white-space:nowrap}.familyRail .familyStat b{font-size:14px}.familyRail .familyStat span{font-size:9px;margin-top:0;white-space:nowrap}
+  .familyRail button.familyStat{min-height:26px;padding:2px 8px;display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap;border-color:rgba(201,154,69,0.55);background:rgba(48,42,32,0.88)}.familyRail button.familyStat:disabled{opacity:0.86;border-color:rgba(148,163,184,0.34);background:rgba(24,30,38,0.82)}.familyRail button.familyStat:disabled b{color:#e2c689}.familyRail button.familyStat:disabled span{color:#cbd5e1}
   .familyRail .familyScopes,.familyRail .familyListHeading,.familyRail .familyList,.familyRail .familyBrowse{display:none}
   .side{top:36px}.side.open~.mapcol .sideToggle{visibility:hidden}.atlasReadout{display:none}
   .sideToggle,.cityReset,.mapExpand,.streetView{background:rgba(12,17,24,0.92);border:1px solid rgba(201,154,69,0.34);border-radius:7px;box-shadow:0 4px 14px rgba(0,0,0,0.65);backdrop-filter:blur(8px);font-weight:800;letter-spacing:0.02em}
@@ -355,7 +356,11 @@
   body[data-zmx-light="1"] .familyRail h1{color:#1f1810}
   body[data-zmx-light="1"] .familyEyebrow{color:#8a5a18}
   body[data-zmx-light="1"] .familyRail .familyStat b{color:#7c4d12}
-  body[data-zmx-light="1"] .familyRail .familyStat span{color:#5e5243}
+  body[data-zmx-light="1"] .familyRail .familyStat span{color:#4b4033}
+  body[data-zmx-light="1"] .familyRail button.familyStat{background:#efe5ce;border-color:rgba(124,77,18,0.45);color:#241d15}
+  body[data-zmx-light="1"] .familyRail button.familyStat:disabled{opacity:0.9;background:#e8dec6;border-color:rgba(46,37,26,0.28)}
+  body[data-zmx-light="1"] .familyRail button.familyStat:disabled b{color:#6d4512}
+  body[data-zmx-light="1"] .familyRail button.familyStat:disabled span{color:#3f3529}
   body[data-zmx-light="1"] .familyRail .factionSelectLabel select{background:#fdfaf2;color:#1f1810;border-color:rgba(46,37,26,0.34);color-scheme:light}
   body[data-zmx-light="1"] .sideToggle,body[data-zmx-light="1"] .cityReset,body[data-zmx-light="1"] .mapExpand,body[data-zmx-light="1"] .streetView,body[data-zmx-light="1"] .familyHome,body[data-zmx-light="1"] .mapLegend{background:rgba(248,243,231,0.94);color:#211a12;border:1.5px solid rgba(46,37,26,0.38);box-shadow:0 3px 10px rgba(42,32,20,0.16);backdrop-filter:blur(6px)}
   body[data-zmx-light="1"] .sideToggle:hover,body[data-zmx-light="1"] .cityReset:hover,body[data-zmx-light="1"] .mapExpand:hover,body[data-zmx-light="1"] .streetView:hover,body[data-zmx-light="1"] .familyHome:hover{background:#fffdf7;border-color:#8a5a18;color:#16100a}
@@ -494,14 +499,14 @@ initializeMapLocale();
 <script src="../assets/city/service-buildings108.js?v=118"></script>
 <script src="../assets/city/compact-district.js?v=118"></script>
 <script src="map-frame-sample.js?v=118"></script>
-<script src="../assets/city/zone-map-expansion.js?v=118&cb=v137"></script>
+<script src="../assets/city/zone-map-expansion.js?v=118&cb=v138"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.32.0/mapbox-gl.js"></script>
 <script>
 (function(){
   "use strict";
   if(typeof XMLHttpRequest!=='undefined'&&typeof WebGLRenderingContext!=='undefined'){
-    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v137',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
-    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v137',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
+    try{var x=new XMLHttpRequest();x.open('GET','../assets/city/compact-district.js?v=118&cb=v138',false);x.send();if(x.status===200&&x.responseText)(0,eval)(x.responseText);}catch(_){}
+    try{var xz=new XMLHttpRequest();xz.open('GET','../assets/city/zone-map-expansion.js?v=118&cb=v138',false);xz.send();if(xz.status===200&&xz.responseText){window.__zoneMapExpansionInstance=null;(0,eval)(xz.responseText);}}catch(_){}
   }
   var TOKEN="pk.eyJ1Ijoid2VuaW1vaGFtZWQiLCJhIjoiY211YnlhcmtnMDdxYTJ6czVmMThoZTY0YiJ9.3eATNhlNNEJDCJPGNDx-LA";
   if(!window.mapboxgl){ var e0=document.getElementById('err'); e0.textContent='Mapbox GL failed to load'; e0.style.display='block'; return; }
