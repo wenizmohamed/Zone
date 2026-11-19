@@ -18,8 +18,11 @@ android/app/build/
 android/.gradle/
 android/build/
 android/local.properties
+android/keystore.properties
 android/capacitor-cordova-android-plugins/build/
 ios/App/Pods/
 ios/App/build/
 *.apk
 *.aab
+*.jks
+*.keystore

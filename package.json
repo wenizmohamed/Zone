@@ -27,7 +27,8 @@
     "cap:sync": "npm run build && npx cap sync",
     "cap:android": "npx cap open android",
     "cap:ios": "npx cap open ios",
-    "apk:build": "npm run cap:sync && cd android && gradlew.bat assembleDebug"
+    "apk:build": "npm run cap:sync && cd android && gradlew.bat assembleDebug",
+    "aab:build": "npm run cap:sync && cd android && gradlew.bat bundleRelease"
   },
   "engines": {
     "node": "22.x"

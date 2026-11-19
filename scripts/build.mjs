@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const output = resolve(root, 'public');
-const runtimeFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admin-studio.js', 'admin-assets.js', 'account.html', 'account.js', 'platform-runtime.js', 'owner-playtest.js', 'player-session.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js', 'manifest.webmanifest', 'sw.js', 'offline.html'];
+const runtimeFiles = ['index.html', 'admin.html', 'admin.css', 'admin.js', 'admin-studio.js', 'admin-assets.js', 'account.html', 'account.js', 'platform-runtime.js', 'owner-playtest.js', 'player-session.js', 'favicon.svg', 'favicon.ico', 'support.js', 'image-slot.js', 'manifest.webmanifest', 'sw.js', 'offline.html', 'privacy.html'];
 const runtimeDirectories = ['art', 'assets', 'dist', 'lib'];
 // Conversion tools remain in the full owner source checkout and cloud build,
 // but are not browser assets. Raw acquisition archives are private research.

@@ -72,7 +72,7 @@
       ]
     },
     {
-      "source": "/(admin|account)",
+      "source": "/(admin|account|privacy)",
       "headers": [
         {
           "key": "Cache-Control",

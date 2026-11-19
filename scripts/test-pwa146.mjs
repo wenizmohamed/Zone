@@ -231,7 +231,7 @@ test('vercel.json preserves security/rewrites/no-store and adds optimized PWA & 
   assert.equal(globalSec.headers['X-Frame-Options'], 'SAMEORIGIN');
 
   // HTML documents stay no-store
-  for (const src of ['/', '/index.html', '/(admin|account)']) {
+  for (const src of ['/', '/index.html', '/(admin|account|privacy)']) {
     assert.match(bySource.get(src)?.headers['Cache-Control'] || '', /no-store/);
   }
 
@@ -267,9 +267,30 @@ test('vercel.json preserves security/rewrites/no-store and adds optimized PWA & 
   assert.ok(bySource.get('/assets/ui/watercolor-fonts/(.*)').idx > uiRule.idx, 'watercolor-fonts rule must override generic assets/ui rule');
 });
 
-test('scripts/build.mjs packages manifest.webmanifest, sw.js, and offline.html into runtimeFiles', () => {
+test('privacy.html exists with Google Play Privacy Policy, Account Deletion, bilingual EN/AR, and theme toggle', () => {
+  const abs = resolve(root, 'privacy.html');
+  assert.ok(existsSync(abs), 'privacy.html is missing');
+  assert.ok(statSync(abs).size > 2000, 'privacy.html is unexpectedly small');
+  const html = readUtf8('privacy.html');
+  assert.match(html, /<!DOCTYPE html>/i);
+  assert.match(html, /Privacy Policy/i);
+  assert.match(html, /Account &amp; Data Deletion/i);
+  assert.match(html, /com\.zonecity\.syndicate/);
+  assert.match(html, /weni\.mohamed@gmail\.com/);
+  assert.match(html, /https:\/\/zone-torn-style-game-mockup-6cf978c\.vercel\.app\/account/);
+  assert.match(html, /30 days/i);
+  assert.match(html, /18\+/);
+  assert.match(html, /Vercel/);
+  assert.match(html, /Mapbox/);
+  assert.match(html, /سياسة الخصوصية/);
+  assert.match(html, /حذف الحساب/);
+  assert.match(html, /dir="rtl"/);
+  assert.match(html, /data-theme/);
+});
+
+test('scripts/build.mjs packages manifest.webmanifest, sw.js, offline.html, and privacy.html into runtimeFiles', () => {
   const buildSrc = readUtf8('scripts/build.mjs');
-  for (const file of ['manifest.webmanifest', 'sw.js', 'offline.html']) {
+  for (const file of ['manifest.webmanifest', 'sw.js', 'offline.html', 'privacy.html']) {
     assert.ok(buildSrc.includes(`'${file}'`), `scripts/build.mjs missing runtimeFile: ${file}`);
   }
 });
