@@ -1,11 +1,10 @@
 /* ==========================================================================
- * ZONE v149 - STORY CAMPAIGN, LEVELING 2.0, 26-RANK LADDER, 4-BRANCH SKILL TREE,
- *             CITY ACTIVITIES, SYNDICATE ECONOMY & FULL FACTION EMPIRE RUNTIME
+ * ZONE v150 - ROUTE-SCOPED NATIVE TORN RPG, STORY, ACTIVITIES, ECONOMY & EMPIRE
  * Hand-Drawn Watercolor Sketchbook Edition (Light + Dark + EN + AR RTL)
- * Exclusive Ownership: rpg-ui-director (assets/ui/zone-rpg-empire.js)
+ * Exclusive Ownership: ux-rpg-routes149 (assets/ui/zone-rpg-empire.js)
  * Exposes: window.ZoneRpgEmpire
- * Fiber-safe: append-only DOM mounts (.zone-topbar/.zone-bulletin, aside.zone-sidebar,
- *             #zone-main); never removes or mutates <x-dc> / React managed child nodes.
+ * Fiber-safe: append-only DOM mounts (#ztl-hud-story-slot, aside.zone-sidebar,
+ *             #zone-main); never removes or mutates <x-dc> / React child nodes.
  * ========================================================================== */
 (function () {
   'use strict';
@@ -26,7 +25,7 @@
         { id: 'act1_ch2', num: 2, npc: 'layla', en: 'Layla\'s Dead-Drop', ar: 'مخبأ ليلى السري', dlgEn: 'Layla slides you a brass lockpick: "The harbor patrol changes shifts on the quarter-hour. Hit the alleys fast and stash your cut."', dlgAr: 'تمرر لك ليلى أداة فتح أقفال نحاسية: «دورية الميناء تتبدل كل ربع ساعة. اضرب الأزقة بسرعة وخبئ حصتك.»' },
         { id: 'act1_ch3', num: 3, npc: 'duke', en: 'Iron & Vigorish', ar: 'الحديد والفائدة', dlgEn: 'Duke grins through cigar smoke: "Skinny kids get rolled outside the bank. Put in gym reps before my collector tests your jaw."', dlgAr: 'يبتسم ديوك خلف دخان السيجار: «الضعفاء يُسرقون أمام البنك. ارفع قوتك في النادي قبل أن يختبر رجالي فكّك.»' },
         { id: 'act1_ch4', num: 4, npc: 'layla', en: 'Rust & Contraband', ar: 'الصدأ والمهربات', dlgEn: 'Layla points toward Container Row: "Gear up with real steel and body armor. Tonight we audit the dock foreman\'s safe."', dlgAr: 'تشير ليلى نحو صف الحاويات: «تسلّح بالحديد الحقيقي والدرع. الليلة نفتح خزنة مشرف الرصيف.»' },
-        { id: 'act1_ch5', num: 5, npc: 'duke', boss: true, choice: true, en: 'Showdown at Pier 4', ar: 'مواجهة الرصيف الرابع', dlgEn: 'The Pier 4 Enforcer blocks the gangway. Choose whether to hand the harbor manifest to the Outlaw Syndicate or City Hall\'s Directorate—then break him.', dlgAr: 'يغلق منفّذ الرصيف الرابع الممر. اختر تسليم سجلات المرفأ لنقابة الخارجين أو لمديرية البلدية، ثم اسحقه في القتال.' }
+        { id: 'act1_ch5', num: 5, npc: 'duke', boss: true, choice: true, en: 'Showdown at Pier 4', ar: 'مواجهة الرصيف الرابع', dlgEn: 'The Pier 4 Enforcer blocks the gangway. Choose whether to hand the harbor manifest to the Outlaw Syndicate or City Hall\'s Directorate, then break him.', dlgAr: 'يغلق منفّذ الرصيف الرابع الممر. اختر تسليم سجلات المرفأ لنقابة الخارجين أو لمديرية البلدية، ثم اسحقه في القتال.' }
       ]
     },
     {
@@ -37,18 +36,18 @@
         { id: 'act2_ch2', num: 2, npc: 'tariq', en: 'Municipal Forgery', ar: 'تزوير الأختام البلدية', dlgEn: 'Tariq opens a sealed folder: "Stamp these zoning permits and sweep the proceeds into a term vault before Inspector Haddad sniffs the ink."', dlgAr: 'يفتح طارق ملفاً مختوماً: «اختم تصاريح البناء هذه وحوّل العوائد إلى خزنة البنك قبل أن يشم المفتش حداد رائحة الحبر.»' },
         { id: 'act2_ch3', num: 3, npc: 'layla', en: 'Wiretaps on Boulevard', ar: 'تنصت الجادة الكبرى', dlgEn: 'Layla patches into the precinct switchboard: "Haddad\'s squad is raiding the bazaar strip. Move clean inventory and cut their informants."', dlgAr: 'تخترق ليلى مقسم المخفر: «فرقة حداد تداهم شارع البازار. انقل البضاعة النظيفة واقطع خط مخبريهم.»' },
         { id: 'act2_ch4', num: 4, npc: 'tariq', en: 'Vault Immunity', ar: 'حصانة الخزنة', dlgEn: 'Tariq adjusts his cufflinks: "Buy property, study the law, and build a balance sheet that survives an indictment."', dlgAr: 'يعدّل طارق أزرار قميصه: «امتلك عقاراً، وادرس القانون، وابنِ ميزانية تصمد أمام أي لائحة اتهام.»' },
-        { id: 'act2_ch5', num: 5, npc: 'tariq', boss: true, choice: true, en: 'The Haddad Tribunal', ar: 'محكمة المفتش حداد', dlgEn: 'Chief Inspector Haddad corners your convoy under the viaduct. Burn his warrant—or flip his badge onto Tariq\'s payroll.', dlgAr: 'يحاصر المفتش العام حداد موكبك تحت الجسر. احرق مذكرته أو اقلب شارته لصالح خزينة العمدة طارق.' }
+        { id: 'act2_ch5', num: 5, npc: 'tariq', boss: true, choice: true, en: 'The Haddad Tribunal', ar: 'محكمة المفتش حداد', dlgEn: 'Chief Inspector Haddad corners your convoy under the viaduct. Burn his warrant or flip his badge onto Tariq\'s payroll.', dlgAr: 'يحاصر المفتش العام حداد موكبك تحت الجسر. احرق مذكرته أو اقلب شارته لصالح خزينة العمدة طارق.' }
       ]
     },
     {
       act: 3, minLv: 10, npc: 'vega', bossEn: 'Cartel Sicario', bossAr: 'قاتل الكارتل المأجور',
       en: 'Act III: The Cartel Airlift', ar: 'الفصل الثالث: الجسر الجوي للكارتل',
       chapters: [
-        { id: 'act3_ch1', num: 1, npc: 'vega', en: 'Runway Zero', ar: 'المدرج صفر', dlgEn: 'Madame Vega lowers her sunglasses: "Local alleys pay pennies, darling. My charters fly eleven capitals—if you can hold the cargo."', dlgAr: 'تخفض مدام فيغا نظارتها الشمسية: «الأزقة المحلية تدفع الفتات يا عزيزي. طائراتي تعبر إحدى عشرة عاصمة لمن يحمل البضاعة.»' },
+        { id: 'act3_ch1', num: 1, npc: 'vega', en: 'Runway Zero', ar: 'المدرج صفر', dlgEn: 'Madame Vega lowers her sunglasses: "Local alleys pay pennies, darling. My charters fly eleven capitals if you can hold the cargo."', dlgAr: 'تخفض مدام فيغا نظارتها الشمسية: «الأزقة المحلية تدفع الفتات يا عزيزي. طائراتي تعبر إحدى عشرة عاصمة لمن يحمل البضاعة.»' },
         { id: 'act3_ch2', num: 2, npc: 'vega', en: 'Customs Grease', ar: 'رشوة الجمارك', dlgEn: 'Vega taps a diplomatic pouch: "Plushies on top, Johannesburg pharmaceutical bricks underneath. Keep your addiction clean in Zurich."', dlgAr: 'تنقر فيغا على حقيبة دبلوماسية: «الدمى في الأعلى، وشحنات جوهانسبرغ في الأسفل. وحافظ على صفاء دمك في زيورخ.»' },
         { id: 'act3_ch3', num: 3, npc: 'layla', en: 'Chemist Supply Line', ar: 'خط إمداد الكيميائيين', dlgEn: 'Layla checks the cold-chain crates: "Rival hijackers hit our tarmac courier. Intercept them and reclaim the synthesis precursors."', dlgAr: 'تفحص ليلى صناديق التبريد: «قطّاع طرق هاجموا ناقل المدرج. اعترضهم واسترجع المواد الأولية فوراً.»' },
         { id: 'act3_ch4', num: 4, npc: 'vega', en: 'Museum Laundromat', ar: 'مغسلة المتحف', dlgEn: 'Vega smiles: "Curators ask zero questions when complete antiquities sets arrive. Turn foreign runs into untraceable Points."', dlgAr: 'تبتسم فيغا: «أمناء المتحف لا يطرحون الأسئلة حين تكتمل المجموعات النادرة. حوّل رحلاتك الخارجية إلى نقاط صافية.»' },
-        { id: 'act3_ch5', num: 5, npc: 'vega', boss: true, choice: true, en: 'Hangar 9 Ambush', ar: 'كمين الحظيرة التاسعة', dlgEn: 'A Cartel Sicario seizes Hangar 9 to monopolize the air corridor. Decide who controls the skies—and put him down.', dlgAr: 'يستولي قاتل الكارتل على الحظيرة التاسعة لاحتكار الممر الجوي. احسم سيادة السماء وأسقطه أرضاً.' }
+        { id: 'act3_ch5', num: 5, npc: 'vega', boss: true, choice: true, en: 'Hangar 9 Ambush', ar: 'كمين الحظيرة التاسعة', dlgEn: 'A Cartel Sicario seizes Hangar 9 to monopolize the air corridor. Decide who controls the skies and put him down.', dlgAr: 'يستولي قاتل الكارتل على الحظيرة التاسعة لاحتكار الممر الجوي. احسم سيادة السماء وأسقطه أرضاً.' }
       ]
     },
     {
@@ -68,7 +67,7 @@
       chapters: [
         { id: 'act5_ch1', num: 1, npc: 'tariq', en: 'The Broken Seal', ar: 'الختم المكسور', dlgEn: 'Mayor Tariq\'s voice drops to a whisper: "The Underworld Council just put both our names on the liquidation slate."', dlgAr: 'يهمس العمدة طارق بصوت خافت: «مجلس العالم السفلي وضع اسمينا معاً على قائمة التصفية الكبرى.»' },
         { id: 'act5_ch2', num: 2, npc: 'vega', en: 'Offshore Sovereign', ar: 'السيادة العابرة', dlgEn: 'Madame Vega locks the flight deck: "Liquidate weak positions, arm your finest Ranked War cache weapons, and rally your inner circle."', dlgAr: 'تغلق مدام فيغا قمرة القيادة: «صفِّ المراكز الضعيفة، وجهّز أسلحة صناديق الحرب المصنّفة، واجمع نخبتك.»' },
-        { id: 'act5_ch3', num: 3, npc: 'marrow', en: 'Night of Long Knives', ar: 'ليلة الخناجر الطويلة', dlgEn: 'Marrow clears the spire lobby: "Council assassins hold the upper floors. Climb floor by floor—no mercy."', dlgAr: 'يطهّر مارو بهو البرج: «قتلة المجلس يمسكون الطوابق العليا. اصعد طابقاً بعد طابق بلا رحمة.»' },
+        { id: 'act5_ch3', num: 3, npc: 'marrow', en: 'Night of Long Knives', ar: 'ليلة الخناجر الطويلة', dlgEn: 'Marrow clears the spire lobby: "Council assassins hold the upper floors. Climb floor by floor, no mercy."', dlgAr: 'يطهّر مارو بهو البرج: «قتلة المجلس يمسكون الطوابق العليا. اصعد طابقاً بعد طابق بلا رحمة.»' },
         { id: 'act5_ch4', num: 4, npc: 'layla', en: 'The Master Vault Key', ar: 'مفتاح الخزنة السيادية', dlgEn: 'Layla cracks the biometric cipher: "One door left between you and the Sovereign Crown of Zone City."', dlgAr: 'تفك ليلى الشفرة البيومترية: «باب واحد فقط يفصلك عن التاج السيادي لمدينة زون.»' },
         { id: 'act5_ch5', num: 5, npc: 'tariq', boss: true, choice: true, en: 'Coronation in Blood', ar: 'تتويج بالدم', dlgEn: 'The Shadow Regent awaits atop Sovereign Tower. Seal your eternal destiny and claim the Crown of Zone City!', dlgAr: 'ينتظرك الوصي الخفي في قمة البرج السيادي. اختم مصيرك الأبدي وانتزع تاج مدينة زون!' }
       ]
@@ -316,21 +315,87 @@
     { slot: 'feet', group: 'armor', en: 'Combat Boots', ar: 'حذاء قتالي', defaults: ['armor', 'vest'] }
   ];
 
-  var AUTO_SUITE_SCREENS = {
-    missions: 'story',
-    home: 'story',
-    education: 'rpg',
-    hof: 'rpg',
-    gym: 'rpg',
-    city: 'activities',
-    casino: 'activities',
-    jobs: 'economy',
-    market: 'economy',
-    properties: 'economy',
-    faction: 'empire',
-    items: 'empire',
-    elimination: 'empire',
-    attack: 'empire'
+  /* Strict 1-Route-1-Purpose Mapping (ONLY these 10 routes mount a native card below native content) */
+  var ROUTE_DOMAINS = {
+    missions: ['story', 'activities'],
+    education: ['rpg'],
+    home: ['story', 'rpg'],
+    casino: ['activities'],
+    city: ['activities'],
+    market: ['economy'],
+    jobs: ['economy'],
+    properties: ['economy'],
+    items: ['empire'],
+    faction: ['empire']
+  };
+
+  var LEGACY_TAB_TO_ROUTE = {
+    story: 'missions',
+    rpg: 'education',
+    activities: 'casino',
+    economy: 'market',
+    empire: 'faction'
+  };
+
+  var ACTION_HUMAN_LABELS = {
+    'chapter.start': { en: 'Chapter started', ar: 'تم بدء الفصل' },
+    'chapter.choice': { en: 'Alignment updated', ar: 'تم تحديث التحالف' },
+    'chapter.bossFight': { en: 'Boss encounter settled', ar: 'حُسمت مواجهة الزعيم' },
+    'chapter.claim': { en: 'Chapter reward claimed', ar: 'تم استلام مكافأة الفصل' },
+    'agent.accept': { en: 'Contract accepted', ar: 'تم قبول العقد' },
+    'agent.complete': { en: 'Contract completed', ar: 'تم إنجاز العقد' },
+    'agent.refresh': { en: 'Contracts refreshed', ar: 'تم تحديث العقود' },
+    'agent.buyReward': { en: 'Armory reward redeemed', ar: 'تم استبدال مكافأة المتجر' },
+    'level.toggleHold': { en: 'Hold-Level updated', ar: 'تم تحديث تجميد المستوى' },
+    'level.promote': { en: 'Level promoted', ar: 'تمت ترقية المستوى' },
+    'rank.claimPromotion': { en: 'Rank promotion claimed', ar: 'تم استلام ترقية الرتبة' },
+    'skillTree.unlock': { en: 'Skill node unlocked', ar: 'تم فتح المهارة' },
+    'skillTree.respec': { en: 'Skill tree reset', ar: 'تمت إعادة توزيع المهارات' },
+    'workStats.train': { en: 'Working stats trained', ar: 'تم تدريب إحصاءات العمل' },
+    'wheel.spin': { en: 'Wheel spun', ar: 'تم تدوير العجلة' },
+    'dump.search': { en: 'Dump searched', ar: 'تم البحث في المكب' },
+    'dump.toss': { en: 'Item tossed into dump', ar: 'تم رمي الغرض في المكب' },
+    'loan.borrow': { en: 'Loan disbursed', ar: 'تم استلام القرض' },
+    'loan.repay': { en: 'Loan payment recorded', ar: 'تم سداد القرض' },
+    'hunt.expedition': { en: 'Hunting expedition completed', ar: 'اكتملت رحلة الصيد' },
+    'race.buyCar': { en: 'Vehicle acquired', ar: 'تم شراء السيارة' },
+    'race.selectCar': { en: 'Active race car selected', ar: 'تم اختيار سيارة السباق' },
+    'race.upgradeCar': { en: 'Part installed', ar: 'تم تركيب قطعة التعديل' },
+    'race.enterTrack': { en: 'Race completed', ar: 'اكتمل السباق' },
+    'trade.create': { en: 'Safe trade opened', ar: 'تم فتح مقايضة آمنة' },
+    'trade.addCash': { en: 'Cash added to escrow', ar: 'تم إيداع النقد بالضمان' },
+    'trade.addItem': { en: 'Item added to escrow', ar: 'تم إيداع الغرض بالضمان' },
+    'trade.accept': { en: 'Trade accepted', ar: 'تم تأكيد المقايضة' },
+    'trade.cancel': { en: 'Trade cancelled & refunded', ar: 'تم إلغاء المقايضة واسترداد الضمان' },
+    'bazaar.toggle': { en: 'Bazaar status updated', ar: 'تم تحديث حالة البازار' },
+    'bazaar.listItem': { en: 'Item listed at 0% tax', ar: 'تم عرض الغرض بضريبة 0%' },
+    'bazaar.unlistItem': { en: 'Listing removed', ar: 'تم سحب العرض' },
+    'bazaar.buy': { en: 'Bazaar purchase completed', ar: 'تم الشراء من البازار' },
+    'company.found': { en: 'Company founded', ar: 'تم تأسيس الشركة' },
+    'company.join': { en: 'Joined company', ar: 'تم الانضمام للشركة' },
+    'company.leave': { en: 'Left company', ar: 'تمت مغادرة الشركة' },
+    'company.workShift': { en: 'Company shift completed', ar: 'اكتملت وردية الشركة' },
+    'company.manage': { en: 'Company settings saved', ar: 'تم حفظ إعدادات الشركة' },
+    'company.redeemSpecial': { en: 'Company special redeemed', ar: 'تم تفعيل ميزة الشركة' },
+    'marriage.propose': { en: 'Proposal sent', ar: 'تم إرسال طلب الزواج' },
+    'marriage.accept': { en: 'Marriage sealed', ar: 'تم قبول الزواج' },
+    'marriage.divorce': { en: 'Divorce finalized', ar: 'تم إنهاء الزواج' },
+    'faction.create': { en: 'Faction founded', ar: 'تم تأسيس الفاكشن' },
+    'faction.join': { en: 'Joined faction', ar: 'تم الانضمام للفاكشن' },
+    'faction.leave': { en: 'Left faction cleanly', ar: 'تمت مغادرة الفاكشن' },
+    'faction.setRole': { en: 'Member role updated', ar: 'تم تحديث رتبة العضو' },
+    'faction.kick': { en: 'Member removed from faction', ar: 'تم إبعاد العضو من الفاكشن' },
+    'faction.vaultDeposit': { en: 'Deposited into faction vault', ar: 'تم الإيداع في خزنة الفاكشن' },
+    'faction.vaultGrant': { en: 'Vault grant sent', ar: 'تم منح النقد من الخزنة' },
+    'tree.upgrade': { en: 'Respect branch upgraded', ar: 'تمت ترقية شجرة الاحترام' },
+    'oc.create': { en: 'Organized heist planned', ar: 'تم تخطيط العملية المنظمة' },
+    'oc.claimSlot': { en: 'Crew role claimed', ar: 'تم حجز دور الطاقم' },
+    'oc.execute': { en: 'Crew heist executed', ar: 'تم تنفيذ السطو الرباعي' },
+    'war.enlist': { en: 'Enlisted in Ranked War', ar: 'تم التسجيل في الحرب المصنفة' },
+    'war.challenge': { en: 'Ranked War challenge issued', ar: 'تم توجيه تحدي الحرب المصنفة' },
+    'war.scoreHit': { en: 'Ranked War hit scored', ar: 'تم تسجيل ضربة حرب' },
+    'war.claimCache': { en: 'Ranked War cache opened', ar: 'تم فتح صندوق الحرب' },
+    'loadout.equipSlot': { en: 'Loadout slot equipped', ar: 'تم تجهيز خانة العتاد' }
   };
 
   /* ------------------------------------------------------------------------
@@ -394,26 +459,31 @@
    * ------------------------------------------------------------------------ */
   var COPY = {
     en: {
-      rpgPill: 'Story & RPG',
-      empirePill: 'Empire',
+      rankLbl: 'Rank',
       spUnit: 'SP',
       promoteNow: 'Promote Lv',
       holdOn: 'Hold Lv ON',
       holdOff: 'Hold Lv OFF',
-      objectivesLbl: 'Objectives',
-      deckEyebrow: 'V149 FULL STORY CAMPAIGN · 26 RANKS · SKILL TREE · ACTIVITIES & FACTION EMPIRE',
-      deckTitle: 'Syndicate RPG, Story & Empire Command',
-      deckSub: '5-Act Crime Drama, Leveling 2.0 & 26-Rank Matrix, 4-Branch Skill Tree, Spin Wheels, Racing, Safe Trades, 1★-10★ Companies & Faction Wars.',
-      syncBtn: 'Sync RPG',
-      minimizeBtn: 'Minimize',
-      expandBtn: 'Open RPG Suite',
-      tabs: {
-        story: '1 · Story & Agents',
-        rpg: '2 · Ranks & Skill Tree',
-        activities: '3 · Wheels & Racing',
-        economy: '4 · Trades & Companies',
-        empire: '5 · Faction & Loadout'
-      },
+      homeStoryLink: 'Missions',
+      homePerksLink: 'Ranks & Perks',
+      missionsHeading: '5-Act Story Campaign & Fixer Contracts',
+      missionsSub: '25 bilingual chapters across 5 acts, moral alignment choices, 15E Act Boss encounters & Mission Credits Armory.',
+      educationHeading: 'Player Progression, 26-Rank Matrix & 4-Branch Skill Tree',
+      educationSub: 'Hold-Level banking, 1→100 unlock milestones, Torn 26-Rank dual triggers, 24 skill nodes & Working Stats.',
+      casinoHeading: 'Leslie\'s Spin Wheels & Street Racing Garage',
+      casinoSub: '3 daily fortune wheels and 5-class street racing telemetry (Class E → A+).',
+      cityHeading: 'City Underworld Spots',
+      citySub: 'Zone City Dump scavenging, Duke\'s Harbor Loan Shark & Safari Hunting expeditions.',
+      marketHeading: 'Direct Safe Trade Escrow & 0%-Tax Personal Bazaars',
+      marketSub: 'Atomic 2-player escrow trades and mug-shielded 0%-fee player storefronts.',
+      jobsHeading: 'Player-Directed Companies (1★–10★) & Job Specials',
+      jobsSub: 'Found or join player companies, run 15E shifts, manage ad budgets & redeem star specials.',
+      propertiesHeading: 'Marriage & Shared Estate Happiness',
+      propertiesSub: 'Propose marriage, share top residence happiness & manage spouse estate access.',
+      itemsHeading: '9-Slot Tactical Loadout Paperdoll (4 Weapons + 5 Armor)',
+      itemsSub: 'Equip Primary, Secondary, Melee, Temporary & 5 ballistic armor slots.',
+      factionHeading: 'Faction Empire, Respect Tree, 4-Role Crew OCs & Ranked Wars',
+      factionSub: 'Found a $1M faction, upgrade 7 Respect branches, run 4-role heists & fight 48h Ranked Wars.',
       startChap: 'Start Chapter',
       chooseSyndicate: 'Align: Syndicate (Outlaw)',
       chooseDirectorate: 'Align: Directorate (Insider)',
@@ -426,7 +496,6 @@
       armoryShopTitle: 'Mission Credits Armory Shop',
       buyWithCredits: 'Redeem',
       levelHoldTitle: 'Leveling 2.0, Hold-Level Protocol & 1→100 Unlock Roadmap',
-      toggleHoldBtn: 'Toggle Level Hold',
       promoteBtn: 'Promote Banked Levels',
       rankMatrixTitle: 'Torn 26-Rank Dual-Trigger Progression Matrix',
       claimRankBtn: 'Claim Rank Promotion',
@@ -437,17 +506,16 @@
       trainWorkBtn: 'Train (10E)',
       wheelsTitle: '3 Torn Spin Wheels (Leslie\'s Wheelhouse)',
       spinBtn: 'Spin Wheel',
-      dumpTitle: 'Zone City Dump (Search 5E & Toss Items)',
+      dumpTitle: 'Zone City Dump',
       searchDumpBtn: 'Search Dump (5E)',
       tossDumpBtn: 'Toss Item',
-      loanTitle: 'Duke\'s Harbor Loan Shark & Enforcer Heat',
-      borrowBtn: 'Borrow Cash',
-      repayBtn: 'Repay Loan',
-      huntTitle: 'Harbor & Safari Hunting Expeditions',
+      loanTitle: 'Duke\'s Harbor Loan Shark',
+      borrowBtn: 'Borrow',
+      repayBtn: 'Repay',
+      huntTitle: 'Harbor & Safari Hunting',
       huntBtn: 'Launch Hunt',
       racingTitle: 'Garage & 5-Class Street Racing League (Class E → A+)',
       buyCarBtn: 'Buy Car',
-      installPartBtn: 'Upgrade Part',
       raceTrackBtn: 'Enter Race (10E)',
       tradesTitle: 'Direct 2-Player Safe Trade Escrow',
       openTradeBtn: 'Open Safe Trade',
@@ -466,7 +534,6 @@
       leaveCompBtn: 'Leave',
       workShiftBtn: 'Work Shift (15E)',
       manageCompBtn: 'Save Ad/Price',
-      redeemSpecBtn: 'Redeem Special',
       marriageTitle: 'Marriage & Spouse Property Happiness Sharing',
       proposeBtn: 'Propose ($25k Ring)',
       acceptMarriageBtn: 'Accept Proposal',
@@ -480,7 +547,6 @@
       setRoleBtn: 'Set Role',
       kickMemberBtn: 'Kick',
       respectTreeTitle: '7-Branch Faction Respect Skill Tree (28 Upgrades)',
-      upgradeBranchBtn: 'Upgrade',
       ocTitle: '4-Role Crew Organized Crimes 2.0 Lobby',
       createOcBtn: 'Plan Heist',
       claimSlotBtn: 'Claim Slot',
@@ -494,26 +560,31 @@
       equipSlotBtn: 'Equip Slot'
     },
     ar: {
-      rpgPill: 'القصة والمهارات',
-      empirePill: 'الإمبراطورية',
+      rankLbl: 'الرتبة',
       spUnit: 'ن.م',
       promoteNow: 'ترقية المستوى',
       holdOn: 'تجميد المستوى مفعّل',
       holdOff: 'تجميد المستوى متوقف',
-      objectivesLbl: 'أهداف',
-      deckEyebrow: 'النسخة 149 · طور القصة الكامل · 26 رتبة · شجرة المهارات · الأنشطة وإمبراطورية الفاكشن',
-      deckTitle: 'قيادة القصة والرتب وإمبراطورية النقابة',
-      deckSub: 'قصة درامية من 5 فصول، تجميد وترقية المستوى، 26 رتبة تورن، شجرة مهارات بـ4 فروع، عجلات الحظ، السباقات، المقايضة الآمنة، الشركات وحروب الفاكشن.',
-      syncBtn: 'مزامنة مباشرة',
-      minimizeBtn: 'تصغير',
-      expandBtn: 'فتح جناح القصة والإمبراطورية',
-      tabs: {
-        story: '1 · القصة والوكلاء',
-        rpg: '2 · الرتب وشجرة المهارات',
-        activities: '3 · الأنشطة والسباقات',
-        economy: '4 · المقايضة والشركات',
-        empire: '5 · الفاكشن والعتاد'
-      },
+      homeStoryLink: 'المهمات',
+      homePerksLink: 'الرتب والمزايا',
+      missionsHeading: 'طور القصة الدرامي (5 فصول) وعقود الوكلاء',
+      missionsSub: '25 فصلاً ثنائي اللغة، قرارات التحالف، مواجهات الزعماء ومتجر رصيد المهمات.',
+      educationHeading: 'تقدم اللاعب، مصفوفة الـ26 رتبة وشجرة المهارات',
+      educationSub: 'تجميد وترقية المستوى، خارطة المزايا 1←100، شجرة المهارات الرباعية وتدريب العمل.',
+      casinoHeading: 'عجلات الحظ اليومية وكراج سباقات الشوارع',
+      casinoSub: '3 عجلات جوائز يومية ودوري سباقات من 5 فئات (E ← A+).',
+      cityHeading: 'مواقع العالم السفلي في المدينة',
+      citySub: 'البحث في مكب المدينة، قروض ديوك بالمرفأ ورحلات الصيد والسفاري.',
+      marketHeading: 'المقايضة الآمنة والبازارات الشخصية بلا ضريبة (0%)',
+      marketSub: 'ضمان مقايضة مباشر بين لاعبين ومتاجر شخصية معفاة من الضرائب.',
+      jobsHeading: 'شركات اللاعبين (1★–10★) والمزايا المهنية',
+      jobsSub: 'تأسيس أو الانضمام لشركات اللاعبين، ورديات العمل وتفعيل مزايا النجوم.',
+      propertiesHeading: 'الزواج ومشاركة معنويات العقار',
+      propertiesSub: 'طلب الزواج ومشاركة سقف السعادة لأفضل عقار بين الزوجين.',
+      itemsHeading: 'تجهيز العتاد التكتيكي ذو الـ9 خانات (4 أسلحة + 5 دروع)',
+      itemsSub: 'تجهيز السلاح الرئيسي والثانوي والاشتباك والمؤقت وخمس خانات دروع.',
+      factionHeading: 'إمبراطورية الفاكشن، شجرة الاحترام، السطو الرباعي والحروب المصنفة',
+      factionSub: 'تأسيس فاكشن بـ$1M، ترقية 7 فروع احترام، الجرائم المنظمة وحروب الـ48 ساعة.',
       startChap: 'بدء الفصل',
       chooseSyndicate: 'تحالف: النقابة (خارج القانون)',
       chooseDirectorate: 'تحالف: المديرية (نفوذ الدولة)',
@@ -526,7 +597,6 @@
       armoryShopTitle: 'متجر رصيد المهمات الخاص',
       buyWithCredits: 'استبدال',
       levelHoldTitle: 'المستويات 2.0، تجميد المستوى وخارطة فتح المزايا 1←100',
-      toggleHoldBtn: 'تبديل تجميد المستوى',
       promoteBtn: 'ترقية المستويات المحفوظة',
       rankMatrixTitle: 'سلم رتب تورن الـ26 ومصفوفة المحفزات المزدوجة',
       claimRankBtn: 'استلام ترقية الرتبة',
@@ -537,17 +607,16 @@
       trainWorkBtn: 'تدريب (10 طاقة)',
       wheelsTitle: 'عجلات الحظ الثلاث اليومية',
       spinBtn: 'تدوير العجلة',
-      dumpTitle: 'مكب المدينة (بحث بـ5 طاقة ورمي العتاد)',
+      dumpTitle: 'مكب المدينة',
       searchDumpBtn: 'بحث في المكب (5 طاقة)',
       tossDumpBtn: 'رمي في المكب',
-      loanTitle: 'قروض القرش ديوك ومؤشر المطاردة',
-      borrowBtn: 'اقتراض نقد',
-      repayBtn: 'سداد القرض',
+      loanTitle: 'قروض القرش ديوك',
+      borrowBtn: 'اقتراض',
+      repayBtn: 'سداد',
       huntTitle: 'رحلات الصيد البري والسفاري',
       huntBtn: 'انطلاق للصيد',
       racingTitle: 'الكراج ودوري سباقات الشوارع (فئة E ← A+)',
       buyCarBtn: 'شراء السيارة',
-      installPartBtn: 'تركيب قطعة',
       raceTrackBtn: 'دخول السباق (10 طاقة)',
       tradesTitle: 'ضمان المقايضة الآمنة بين لاعبين',
       openTradeBtn: 'فتح مقايضة آمنة',
@@ -566,7 +635,6 @@
       leaveCompBtn: 'مغادرة',
       workShiftBtn: 'عمل وردية (15 طاقة)',
       manageCompBtn: 'حفظ الإعلان والسعر',
-      redeemSpecBtn: 'تفعيل الميزة',
       marriageTitle: 'الزواج ومشاركة معنويات العقار',
       proposeBtn: 'طلب زواج (خاتم $25k)',
       acceptMarriageBtn: 'قبول الزواج',
@@ -580,7 +648,6 @@
       setRoleBtn: 'تعيين رتبة',
       kickMemberBtn: 'طرد',
       respectTreeTitle: 'شجرة احترام الفاكشن السباعية (28 ترقية)',
-      upgradeBranchBtn: 'ترقية الفرع',
       ocTitle: 'غرفة الجرائم المنظمة الرباعية 2.0',
       createOcBtn: 'تخطيط عملية',
       claimSlotBtn: 'حجز الدور',
@@ -598,13 +665,12 @@
   /* ------------------------------------------------------------------------
    * 4. RUNTIME STATE STORE & HELPERS
    * ------------------------------------------------------------------------ */
+  var feedbackTimer = null;
+
   var store = {
-    activeTab: 'story',
+    activeRoute: '',
     selectedAct: 1,
     selectedChapterId: 'act1_ch1',
-    userPinnedTab: false,
-    deckForceOpen: false,
-    deckCollapsed: false,
     lastScreen: '',
     busy: false,
     spinningWheel: '',
@@ -685,6 +751,37 @@
     return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
   }
 
+  function clearFeedbackTimer() {
+    if (feedbackTimer !== null) {
+      window.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+    }
+  }
+
+  function setFeedback(text, tone) {
+    clearFeedbackTimer();
+    if (!text) {
+      store.feedback = null;
+      renderAll();
+      return;
+    }
+    store.feedback = { text: String(text), tone: tone || 'sage' };
+    renderAll();
+    feedbackTimer = window.setTimeout(function () {
+      feedbackTimer = null;
+      if (store.feedback) {
+        store.feedback = null;
+        renderRouteSection();
+      }
+    }, 4000);
+  }
+
+  function humanActionLabel(action) {
+    var entry = ACTION_HUMAN_LABELS[action];
+    if (entry) return isAr() ? entry.ar : entry.en;
+    return String(action || '').replace(/[._]/g, ' ');
+  }
+
   async function ensurePlayerSession() {
     if (window.ZoneSession && typeof window.ZoneSession.ensure === 'function') {
       try { await window.ZoneSession.ensure(); } catch (_) {}
@@ -736,7 +833,7 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 5. LOADERS & MUTATION DISPATCHERS FOR ALL 5 V149 ENDPOINTS
+   * 5. LOADERS & MUTATION DISPATCHERS FOR ALL 5 BACKEND ENDPOINTS
    * ------------------------------------------------------------------------ */
   async function loadStoryCampaign() {
     try {
@@ -778,9 +875,17 @@
     } catch (_) { return null; }
   }
 
-  function setFeedback(text, tone) {
-    store.feedback = text ? { text: String(text), tone: tone || 'sage' } : null;
-    renderAll();
+  function ensureRouteDomainsLoaded(screen) {
+    var domains = ROUTE_DOMAINS[screen];
+    if (!domains) return;
+    for (var i = 0; i < domains.length; i++) {
+      var d = domains[i];
+      if (d === 'story' && !store.storyCampaign) loadStoryCampaign().then(renderAll);
+      else if (d === 'rpg' && !store.playerRpg) loadPlayerRpg().then(renderAll);
+      else if (d === 'activities' && !store.cityActivities) loadCityActivities().then(renderAll);
+      else if (d === 'economy' && !store.syndicateEconomy) loadSyndicateEconomy().then(renderAll);
+      else if (d === 'empire' && !store.factionEmpire) loadFactionEmpire().then(renderAll);
+    }
   }
 
   async function dispatchDomainAction(domain, action, extraPayload) {
@@ -809,7 +914,6 @@
         else if (domain === 'empire') store.factionEmpire = snap;
       }
 
-      /* Refresh domain snapshot cleanly if response only carried a delta result */
       if (domain === 'story') await loadStoryCampaign();
       else if (domain === 'rpg') await loadPlayerRpg();
       else if (domain === 'activities') await loadCityActivities();
@@ -819,9 +923,12 @@
       syncGlobalPlayerSnapshot(res);
 
       var r = (res && res.result) || res || {};
-      var msg = isAr()
-        ? (r.messageAr || r.summaryAr || r.message || r.summary || action)
-        : (r.messageEn || r.message || r.summary || action);
+      var rawMsg = isAr()
+        ? (r.messageAr || r.summaryAr || r.message || r.summary || '')
+        : (r.messageEn || r.message || r.summary || '');
+      if (!rawMsg || rawMsg === action) {
+        rawMsg = humanActionLabel(action);
+      }
       var extras = [];
       if (Number(r.cashDelta)) extras.push((r.cashDelta > 0 ? '+' : '') + fmtMoney(r.cashDelta));
       if (Number(r.cashAwarded)) extras.push('+' + fmtMoney(r.cashAwarded));
@@ -836,7 +943,7 @@
         if (action === 'dump.search') extras.push('Found: ' + (r.foundItem || r.itemId));
       }
       var tone = (r.defeat || r.hospitalized || r.success === false) ? 'bad' : (r.capstone || r.promoted || r.cacheOpened ? 'gold' : 'sage');
-      setFeedback([msg].concat(extras.filter(Boolean)).join(' · '), tone);
+      setFeedback([rawMsg].concat(extras.filter(Boolean)).join(' · '), tone);
       return res;
     } catch (err) {
       setFeedback((err && err.message) || 'Action rejected by server.', 'bad');
@@ -878,6 +985,7 @@
 
     var activeId = String(
       sc.activeChapterId ||
+      (sc.banner && sc.banner.activeChapterId) ||
       (sc.activeChapter && sc.activeChapter.id) ||
       sc.currentChapterId ||
       store.selectedChapterId ||
@@ -897,9 +1005,7 @@
 
     var srvCh = byId[activeId] || (sc.activeChapter && sc.activeChapter.id === activeId ? sc.activeChapter : null) || {};
     var objs = Array.isArray(srvCh.objectives) ? srvCh.objectives : [
-      { id: 'obj_crimes', labelEn: 'Complete street crime operations', labelAr: 'إنجاز عمليات جرائم الشارع', progress: Number(srvCh.objectivesDone || 2), target: 3, done: Boolean(srvCh.completed) },
-      { id: 'obj_gym', labelEn: 'Condition stats at the Gym', labelAr: 'تدريب القوة في النادي الرياضي', progress: 1, target: 1, done: true },
-      { id: 'obj_net', labelEn: 'Build syndicate liquid reserves', labelAr: 'بناء السيولة النقدية للنقابة', progress: 1, target: 1, done: true }
+      { id: 'obj_crimes', labelEn: 'Complete street crime operations', labelAr: 'إنجاز عمليات جرائم الشارع', progress: Number(srvCh.objectivesDone || 1), target: 2, done: Boolean(srvCh.completed) }
     ];
     var doneCount = 0;
     for (var oi = 0; oi < objs.length; oi++) {
@@ -907,7 +1013,7 @@
       if (o.done || o.completed || (Number(o.progress || 0) >= Number(o.target || 1))) doneCount++;
     }
     if (srvCh.objectivesDone != null) doneCount = Number(srvCh.objectivesDone);
-    var totalCount = Number(srvCh.objectivesTotal || objs.length || 3);
+    var totalCount = Number(srvCh.objectivesTotal || objs.length || 2);
 
     var actNum = Number(srvCh.act || fallbackAct.act || 1);
     var chNum = Number(srvCh.chapterNumber || srvCh.number || fallbackCh.num || 1);
@@ -915,19 +1021,24 @@
       ? (srvCh.titleAr || srvCh.nameAr || fallbackCh.ar)
       : (srvCh.titleEn || srvCh.nameEn || srvCh.title || fallbackCh.en);
     var alignment = String(sc.alignment || (sc.story && sc.story.alignment) || 'unaligned');
+    var romanAct = ['I', 'II', 'III', 'IV', 'V'][Math.max(0, Math.min(4, actNum - 1))];
 
     return {
       byId: byId,
       activeId: activeId,
       actNum: actNum,
+      romanAct: romanAct,
       chNum: chNum,
       chTitle: chTitle,
       doneCount: doneCount,
       totalCount: totalCount,
       alignment: alignment,
-      bannerLabel: ar
-        ? ('الفصل ' + actNum + ' · ف' + chNum + ': ' + chTitle + ' — ' + doneCount + '/' + totalCount + ' أهداف')
-        : ('Act ' + ['I', 'II', 'III', 'IV', 'V'][Math.max(0, Math.min(4, actNum - 1))] + ' · Ch.' + chNum + ': ' + chTitle + ' — ' + doneCount + '/' + totalCount + ' Objectives')
+      compactPill: ar
+        ? ('فصل ' + actNum + ' · ف' + chNum + ' (' + doneCount + '/' + totalCount + ')')
+        : ('Act ' + romanAct + ' · Ch.' + chNum + ' (' + doneCount + '/' + totalCount + ')'),
+      fullLabel: ar
+        ? ('الفصل ' + actNum + ' · ف' + chNum + ': ' + chTitle + ' (' + doneCount + '/' + totalCount + ')')
+        : ('Act ' + romanAct + ' · Ch.' + chNum + ': ' + chTitle + ' (' + doneCount + '/' + totalCount + ')')
     };
   }
 
@@ -971,7 +1082,7 @@
     var availableSp = Math.max(0, Number(
       stObj.availableSp != null ? stObj.availableSp :
       r.availableSp != null ? r.availableSp :
-      r.skillPoints != null ? r.skillPoints : 2
+      r.skillPoints != null ? r.skillPoints : 0
     ));
     var spentSp = Math.max(0, Number(stObj.spentSp != null ? stObj.spentSp : (r.spentSp || Object.keys(unlockedMap).length)));
     var respecCount = Math.max(0, Number(stObj.respecCount || r.respecCount || 0));
@@ -1001,170 +1112,148 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 7. TOPBAR MISSION BANNER & SIDEBAR PROGRESSION RENDERERS
+   * 7. COMPACT HUD SLOT (#ztl-hud-story-slot) & SIDEBAR NATIVE STAT ROW
    * ------------------------------------------------------------------------ */
-  function ensureMissionBanner() {
-    if (document.querySelector('x-dc')) return null;
-    var topbar = document.querySelector('.zone-topbar');
-    if (!topbar) return null;
-    var bulletin = topbar.querySelector('.zone-bulletin');
-    var host = bulletin || topbar;
-
-    if (bulletin && bulletin.getAttribute('data-zre-hydrated') !== '1') {
-      bulletin.setAttribute('data-zre-hydrated', '1');
+  function removeLegacyClutter() {
+    var legacyIds = [
+      'zre-mission-banner',
+      'zre-sidebar-rank-card',
+      'zre-sidebar-rpg-btn',
+      'zre-sidebar-empire-btn',
+      'zre-quick-rpg-btn',
+      'zone-rpg-empire-deck'
+    ];
+    for (var i = 0; i < legacyIds.length; i++) {
+      var el = document.getElementById(legacyIds[i]);
+      if (el && el.parentElement) el.parentElement.removeChild(el);
     }
-
-    var banner = document.getElementById('zre-mission-banner');
-    if (banner && banner.parentElement !== host) {
-      if (banner.parentElement) banner.parentElement.removeChild(banner);
-      banner = null;
-    }
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'zre-mission-banner';
-      banner.className = 'zre-scope';
-      banner.setAttribute('role', 'region');
-      banner.setAttribute('aria-label', 'Active Story Mission & Rank Progression');
-      banner.addEventListener('click', handleActionClick);
-      host.appendChild(banner);
-    }
-    return banner;
   }
 
-  function renderMissionBannerAndSidebar() {
-    var banner = ensureMissionBanner();
+  function ensureHudStorySlot() {
+    if (document.querySelector('x-dc')) return null;
+    var slot = document.getElementById('ztl-hud-story-slot');
+    if (slot) {
+      var existingStrip = document.getElementById('zone-torn-hud-strip');
+      if (existingStrip && existingStrip.className && existingStrip.className.indexOf('ztl-scope') >= 0) {
+        existingStrip.removeAttribute('data-zre-fallback-strip');
+      }
+      return slot;
+    }
+
+    var topbar = document.querySelector('.zone-topbar');
+    if (!topbar) return null;
+
+    var strip = document.getElementById('zone-torn-hud-strip');
+    if (!strip) {
+      strip = document.createElement('div');
+      strip.id = 'zone-torn-hud-strip';
+      strip.setAttribute('data-zre-fallback-strip', '1');
+      topbar.appendChild(strip);
+    } else if (strip.className && strip.className.indexOf('ztl-scope') >= 0) {
+      strip.removeAttribute('data-zre-fallback-strip');
+    }
+
+    var inner = strip.querySelector('.ztl-hud-inner') || strip;
+    slot = document.createElement('span');
+    slot.id = 'ztl-hud-story-slot';
+    slot.className = 'zre-scope';
+    if (inner.children && inner.children.length > 0 && typeof inner.insertBefore === 'function') {
+      inner.insertBefore(slot, inner.children[0]);
+    } else {
+      inner.appendChild(slot);
+    }
+    return slot;
+  }
+
+  function renderHudAndSidebar() {
+    removeLegacyClutter();
     var copy = L();
     var st = getStorySummary();
     var rpg = getRpgSummary();
 
-    if (banner) {
-      var rankArrow = isAr() ? '←' : '→';
-      var rankBadgeTxt = '#' + rpg.rankIndex + ' ' + rpg.rankTitle +
-        (rpg.rankIndex < 26 ? (' ' + rankArrow + ' #' + rpg.nextRankIndex + ' ' + rpg.nextRankTitle) : '');
-
-      var alertHtml = '';
-      if (rpg.pendingLevels > 0) {
-        alertHtml =
-          '<button type="button" id="zre-banner-level-alert" class="zre-banner-pill" data-tone="promote" data-zre-act="level-promote">' +
-            '⬆ <span>' + esc(copy.promoteNow) + '</span> <bdi>+' + rpg.pendingLevels + '</bdi>' +
-          '</button>';
-      } else if (rpg.holdLevel) {
-        alertHtml =
-          '<button type="button" id="zre-banner-level-alert" class="zre-banner-pill" data-tone="promote" data-zre-act="open-tab" data-tab="rpg">' +
-            '⏸ <span>' + esc(copy.holdOn) + '</span>' +
-          '</button>';
+    /* 1) Compact HUD Story + Rank Pills inside #ztl-hud-story-slot */
+    var slot = ensureHudStorySlot();
+    if (slot) {
+      var dotHtml = '';
+      if (rpg.availableSp > 0) {
+        dotHtml = '<bdi class="zre-hud-sp-dot">+' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi>';
+      } else if (rpg.pendingLevels > 0) {
+        dotHtml = '<bdi class="zre-hud-sp-dot">+' + rpg.pendingLevels + ' Lv</bdi>';
       } else if (rpg.claimableRank) {
-        alertHtml =
-          '<button type="button" id="zre-banner-level-alert" class="zre-banner-pill" data-tone="promote" data-zre-act="rank-claim">' +
-            '🎖 <span>' + esc(copy.claimRankBtn) + '</span>' +
-          '</button>';
+        dotHtml = '<bdi class="zre-hud-sp-dot">★</bdi>';
       }
 
-      banner.innerHTML =
-        '<button type="button" id="zre-banner-story-btn" class="zre-banner-pill" data-tone="story" data-zre-act="open-tab" data-tab="story">' +
-          '📖 <span>' + esc(st.bannerLabel) + '</span>' +
-        '</button>' +
-        '<button type="button" id="zre-banner-rank-btn" class="zre-banner-pill" data-tone="rank" data-zre-act="open-tab" data-tab="rpg">' +
-          '🎖 <bdi>' + esc(rankBadgeTxt) + '</bdi>' +
-        '</button>' +
-        '<button type="button" id="zre-banner-sp-btn" class="zre-banner-pill" data-tone="sp" data-zre-act="open-tab" data-tab="rpg">' +
-          '✦ <bdi>' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi>' +
-        '</button>' +
-        alertHtml +
-        '<span class="zre-banner-spacer">' +
-          '<button type="button" id="zre-hud-rpg-btn" class="zre-banner-pill" data-tone="story" data-zre-act="open-tab" data-tab="story">' +
-            '📜 <span>' + esc(copy.rpgPill) + '</span>' +
+      var sig = [isAr() ? 'ar' : 'en', st.compactPill, rpg.rankIndex, rpg.rankTitle, rpg.availableSp, rpg.pendingLevels, rpg.claimableRank ? 1 : 0].join('|');
+      if (slot.getAttribute('data-zre-sig') !== sig) {
+        slot.setAttribute('data-zre-sig', sig);
+        slot.innerHTML =
+          '<button type="button" id="zre-hud-story-pill" class="zre-hud-pill" data-tone="story" data-zre-act="go-route" data-route="missions" title="' + esc(st.fullLabel) + '">' +
+            '<span>' + esc(st.compactPill) + '</span>' +
           '</button>' +
-          '<button type="button" id="zre-hud-empire-btn" class="zre-banner-pill" data-tone="empire" data-zre-act="open-tab" data-tab="empire">' +
-            '👑 <span>' + esc(copy.empirePill) + '</span>' +
-          '</button>' +
-        '</span>';
+          '<button type="button" id="zre-hud-rank-pill" class="zre-hud-pill" data-tone="rank" data-zre-act="go-route" data-route="education">' +
+            '<bdi>#' + rpg.rankIndex + ' ' + esc(rpg.rankTitle) + '</bdi>' +
+            dotHtml +
+          '</button>';
+      }
     }
 
-    /* Sidebar Rank/SP Card inside .zone-profile-body */
+    /* 2) Whisper-Clean Native Torn Stat Row inside aside.zone-sidebar .zone-profile-body */
     var profileBody = document.querySelector('aside.zone-sidebar .zone-profile-body');
     if (profileBody) {
-      var rankCard = document.getElementById('zre-sidebar-rank-card');
-      if (!rankCard || rankCard.parentElement !== profileBody) {
-        if (rankCard && rankCard.parentElement) rankCard.parentElement.removeChild(rankCard);
-        rankCard = document.createElement('div');
-        rankCard.id = 'zre-sidebar-rank-card';
-        rankCard.className = 'zre-scope';
-        rankCard.addEventListener('click', handleActionClick);
-        profileBody.appendChild(rankCard);
+      var rankRow = document.getElementById('zre-sidebar-rank-row');
+      if (!rankRow || rankRow.parentElement !== profileBody) {
+        if (rankRow && rankRow.parentElement) rankRow.parentElement.removeChild(rankRow);
+        rankRow = document.createElement('div');
+        rankRow.id = 'zre-sidebar-rank-row';
+        rankRow.className = 'zre-scope';
+        profileBody.appendChild(rankRow);
       }
-      var trigPct = Math.min(100, Math.round((rpg.rankIndex / 26) * 100));
-      rankCard.innerHTML =
-        '<div class="zre-side-row">' +
-          '<span>🎖 #' + rpg.rankIndex + ' ' + esc(rpg.rankTitle) + '</span>' +
-          '<bdi class="zre-chip" data-tone="plum">' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi>' +
-        '</div>' +
-        '<div class="zre-meter-track"><div class="zre-meter-fill" data-tone="gold" style="width:' + trigPct + '%"></div></div>' +
-        '<div class="zre-row-actions">' +
-          '<button type="button" class="zre-btn" data-zre-act="open-tab" data-tab="rpg">' + esc(copy.rpgPill) + '</button>' +
-          (rpg.pendingLevels > 0
-            ? '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="level-promote">+' + rpg.pendingLevels + ' Lv</button>'
-            : '') +
-        '</div>';
-    }
-
-    /* Sidebar Navigation Triggers */
-    var navArea = document.getElementById('zone-area-navigation');
-    if (navArea) {
-      var sideRpg = document.getElementById('zre-sidebar-rpg-btn');
-      if (!sideRpg || sideRpg.parentElement !== navArea) {
-        if (sideRpg && sideRpg.parentElement) sideRpg.parentElement.removeChild(sideRpg);
-        sideRpg = document.createElement('button');
-        sideRpg.type = 'button';
-        sideRpg.id = 'zre-sidebar-rpg-btn';
-        sideRpg.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          document.documentElement.classList.remove('zaaa-rail-open');
-          openSuiteTab('story', true);
-        });
-        navArea.appendChild(sideRpg);
+      var sideSig = [isAr() ? 'ar' : 'en', rpg.rankTitle, rpg.availableSp].join('|');
+      if (rankRow.getAttribute('data-zre-sig') !== sideSig) {
+        rankRow.setAttribute('data-zre-sig', sideSig);
+        rankRow.innerHTML =
+          '<span class="zre-sidebar-stat-lbl">' + esc(copy.rankLbl) + '</span>' +
+          '<button type="button" class="zre-sidebar-stat-link" data-zre-act="go-route" data-route="education">' +
+            '<bdi>' + esc(rpg.rankTitle) + '</bdi> · <bdi class="zre-sidebar-sp">' + esc(copy.spUnit) + ': ' + rpg.availableSp + '</bdi>' +
+          '</button>';
       }
-      sideRpg.innerHTML = '<span>📜 ' + esc(copy.rpgPill) + '</span><bdi>' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi>';
-
-      var sideEmp = document.getElementById('zre-sidebar-empire-btn');
-      if (!sideEmp || sideEmp.parentElement !== navArea) {
-        if (sideEmp && sideEmp.parentElement) sideEmp.parentElement.removeChild(sideEmp);
-        sideEmp = document.createElement('button');
-        sideEmp.type = 'button';
-        sideEmp.id = 'zre-sidebar-empire-btn';
-        sideEmp.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          document.documentElement.classList.remove('zaaa-rail-open');
-          openSuiteTab('empire', true);
-        });
-        navArea.appendChild(sideEmp);
-      }
-      sideEmp.innerHTML = '<span>👑 ' + esc(copy.empirePill) + '</span><bdi>v149</bdi>';
-    }
-
-    /* Page Heading Quick Trigger */
-    var headingActions = document.querySelector('#zone-main .zone-page-heading > div:last-child');
-    if (headingActions) {
-      var qBtn = document.getElementById('zre-quick-rpg-btn');
-      if (!qBtn || qBtn.parentElement !== headingActions) {
-        if (qBtn && qBtn.parentElement) qBtn.parentElement.removeChild(qBtn);
-        qBtn = document.createElement('button');
-        qBtn.type = 'button';
-        qBtn.id = 'zre-quick-rpg-btn';
-        qBtn.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          openSuiteTab(store.activeTab || 'story', true);
-        });
-        headingActions.appendChild(qBtn);
-      }
-      qBtn.textContent = '📜 ' + copy.rpgPill;
     }
   }
 
   /* ------------------------------------------------------------------------
-   * 8. TAB 1 RENDERER: STORY CAMPAIGN (5 ACTS · 25 CHAPTERS) & MISSION AGENTS
+   * 8. ROUTE RENDERERS (STRICTLY 1 NATIVE SECTION PER ROUTE)
    * ------------------------------------------------------------------------ */
-  function renderStoryTab() {
+
+  /* Route: home -> Compact 1-Row Character Rank & Hold-Level Summary Strip */
+  function renderHomeRoute() {
+    var ar = isAr();
+    var copy = L();
+    var st = getStorySummary();
+    var rpg = getRpgSummary();
+    var arrow = ar ? '←' : '→';
+
+    return (
+      '<div class="zre-home-summary-strip" data-zre-feature="home-rank-strip">' +
+        '<div class="zre-home-summary-stats">' +
+          '<span class="zre-chip" data-tone="blue">🎖 <bdi>#' + rpg.rankIndex + ' ' + esc(rpg.rankTitle) + '</bdi>' +
+            (rpg.rankIndex < 26 ? (' ' + arrow + ' <bdi>#' + rpg.nextRankIndex + ' ' + esc(rpg.nextRankTitle) + '</bdi>') : '') +
+          '</span>' +
+          '<span class="zre-chip" data-tone="gold">Lv <bdi>' + rpg.level + '</bdi> · ' + esc(rpg.holdLevel ? copy.holdOn : copy.holdOff) + '</span>' +
+          '<span class="zre-chip" data-tone="plum"><bdi>' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi></span>' +
+          (rpg.pendingLevels > 0
+            ? '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="level-promote">⬆ +' + rpg.pendingLevels + ' Lv</button>'
+            : '') +
+        '</div>' +
+        '<div class="zre-home-summary-links">' +
+          '<button type="button" class="zre-btn" data-zre-act="go-route" data-route="missions">📖 ' + esc(st.compactPill) + ' ' + arrow + '</button>' +
+          '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="go-route" data-route="education">' + esc(copy.homePerksLink) + ' ' + arrow + '</button>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  /* Route: missions -> Story Campaign (Acts I-V · 25 Chapters) + NPC Mission Agents & Armory */
+  function renderMissionsRoute() {
     var ar = isAr();
     var copy = L();
     var st = getStorySummary();
@@ -1182,7 +1271,6 @@
     }
     actRibbon += '</div>';
 
-    /* Ensure selected chapter belongs to selected act unless explicitly chosen */
     var activeChSpec = actSpec.chapters[0];
     for (var c = 0; c < actSpec.chapters.length; c++) {
       if (actSpec.chapters[c].id === store.selectedChapterId) {
@@ -1271,7 +1359,6 @@
         '</div>' +
       '</div>';
 
-    /* NPC Mission Agents & Mission Credits Armory Shop */
     var ca = store.cityActivities || {};
     var ma = ca.missionAgents || ca.agents || {};
     var credits = Math.max(0, Number(ma.missionCredits != null ? ma.missionCredits : (ca.missionCredits || 0)));
@@ -1329,7 +1416,14 @@
     shopHtml += '</div>';
 
     return (
-      '<div class="zre-workspace" data-workspace="story">' +
+      '<div class="zre-workspace" data-zre-feature="story-campaign">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.missionsHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.missionsSub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="gold">' + esc(st.compactPill) + '</span>' +
+        '</header>' +
         '<section class="zre-section">' +
           actRibbon +
           chapStrip +
@@ -1353,10 +1447,8 @@
     );
   }
 
-  /* ------------------------------------------------------------------------
-   * 9. TAB 2 RENDERER: LEVELING 2.0, 26-RANK LADDER & 4-BRANCH SKILL TREE
-   * ------------------------------------------------------------------------ */
-  function renderRpgTab() {
+  /* Route: education -> Skill Tree, 26-Rank Matrix, Hold-Level, Mastery & Working Stats */
+  function renderEducationRoute() {
     var ar = isAr();
     var copy = L();
     var rpg = getRpgSummary();
@@ -1376,7 +1468,6 @@
     }
     roadHtml += '</div>';
 
-    /* 4-Branch Skill Tree Graph */
     var treeHtml = '<div class="zre-skill-branches">';
     for (var bi = 0; bi < SKILL_BRANCHES.length; bi++) {
       var br = SKILL_BRANCHES[bi];
@@ -1409,7 +1500,6 @@
     }
     treeHtml += '</div>';
 
-    /* Mastery Skills & Working Stats */
     var mastHtml = '<div class="zre-grid-3">';
     for (var mi = 0; mi < MASTERY_SKILLS.length; mi++) {
       var ms = MASTERY_SKILLS[mi];
@@ -1443,17 +1533,23 @@
 
     var tb = rpg.triggerBreakdown;
     return (
-      '<div class="zre-workspace" data-workspace="rpg">' +
+      '<div class="zre-workspace" data-zre-feature="skill-tree">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.educationHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.educationSub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="plum"><bdi>' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi></span>' +
+        '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.levelHoldTitle) + '</h3>' +
+            '<h3 class="zre-section-title">' + esc(copy.skillTreeTitle) + '</h3>' +
             '<div class="zre-row-actions">' +
-              '<span class="zre-chip" data-tone="gold">Lv <bdi>' + rpg.level + '</bdi> (Banked: <bdi>+' + rpg.pendingLevels + '</bdi>)</span>' +
-              '<button type="button" class="zre-btn" data-variant="' + (rpg.holdLevel ? 'gold' : '') + '" data-zre-act="level-toggle-hold" data-enabled="' + (rpg.holdLevel ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>⏸ ' + esc(rpg.holdLevel ? copy.holdOn : copy.holdOff) + '</button>' +
-              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="level-promote"' + (rpg.pendingLevels <= 0 || store.busy ? ' disabled' : '') + '>⬆ ' + esc(copy.promoteBtn) + ' (+' + rpg.pendingLevels + ')</button>' +
+              '<span class="zre-chip" data-tone="plum">Available: <bdi>' + rpg.availableSp + ' SP</bdi> · Spent: <bdi>' + rpg.spentSp + ' SP</bdi></span>' +
+              '<button type="button" class="zre-btn" data-zre-act="skill-respec"' + (rpg.spentSp <= 0 || store.busy ? ' disabled' : '') + '>↺ ' + esc(copy.respecTreeBtn) + ' (' + (rpg.respecCount === 0 ? 'FREE' : '100 pts') + ')</button>' +
             '</div>' +
           '</div>' +
-          roadHtml +
+          treeHtml +
         '</section>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
@@ -1475,13 +1571,14 @@
         '</section>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.skillTreeTitle) + '</h3>' +
+            '<h3 class="zre-section-title">' + esc(copy.levelHoldTitle) + '</h3>' +
             '<div class="zre-row-actions">' +
-              '<span class="zre-chip" data-tone="plum">Available: <bdi>' + rpg.availableSp + ' SP</bdi> · Spent: <bdi>' + rpg.spentSp + ' SP</bdi></span>' +
-              '<button type="button" class="zre-btn" data-zre-act="skill-respec"' + (rpg.spentSp <= 0 || store.busy ? ' disabled' : '') + '>↺ ' + esc(copy.respecTreeBtn) + ' (' + (rpg.respecCount === 0 ? 'FREE' : '100 pts') + ')</button>' +
+              '<span class="zre-chip" data-tone="gold">Lv <bdi>' + rpg.level + '</bdi> (Banked: <bdi>+' + rpg.pendingLevels + '</bdi>)</span>' +
+              '<button type="button" class="zre-btn" data-variant="' + (rpg.holdLevel ? 'gold' : '') + '" data-zre-act="level-toggle-hold" data-enabled="' + (rpg.holdLevel ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>⏸ ' + esc(rpg.holdLevel ? copy.holdOn : copy.holdOff) + '</button>' +
+              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="level-promote"' + (rpg.pendingLevels <= 0 || store.busy ? ' disabled' : '') + '>⬆ ' + esc(copy.promoteBtn) + ' (+' + rpg.pendingLevels + ')</button>' +
             '</div>' +
           '</div>' +
-          treeHtml +
+          roadHtml +
         '</section>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.masteryTitle) + '</h3></div>' +
@@ -1492,18 +1589,12 @@
     );
   }
 
-  /* ------------------------------------------------------------------------
-   * 10. TAB 3 RENDERER: SPIN WHEELS, DUMP, LOAN SHARK, HUNTING & 5-CLASS RACING
-   * ------------------------------------------------------------------------ */
-  function renderActivitiesTab() {
+  /* Route: casino -> 3 Daily Spin Wheels & Street Racing Garage */
+  function renderCasinoRoute() {
     var ar = isAr();
     var copy = L();
     var ca = store.cityActivities || {};
-    var inv = getOwnedInventory();
-    var invKeys = Object.keys(inv).filter(function (k) { return Number(inv[k]) > 0; });
-    if (!invKeys.length) invKeys = ['glasses', 'xanax', 'bloodbag', 'pistol'];
 
-    /* 3 Spin Wheels */
     var wheelsHtml = '<div class="zre-grid-3">';
     for (var wi = 0; wi < SPIN_WHEELS.length; wi++) {
       var wh = SPIN_WHEELS[wi];
@@ -1515,7 +1606,7 @@
             '<bdi class="zre-chip" data-tone="' + wh.tone + '">' + fmtMoney(wh.cost) + '</bdi>' +
           '</div>' +
           '<div class="zre-wheel-disc' + (isSpin ? ' is-spinning' : '') + '">' +
-            '<svg width="54" height="54" viewBox="0 0 54 54" aria-hidden="true">' +
+            '<svg width="52" height="52" viewBox="0 0 54 54" aria-hidden="true">' +
               '<circle cx="27" cy="27" r="24" fill="none" stroke="currentColor" stroke-width="2.2"/>' +
               '<path d="M27 3V51M3 27H51M10 10L44 44M44 10L10 44" stroke="currentColor" stroke-width="1.4"/>' +
               '<circle cx="27" cy="27" r="6" fill="#f0c465" stroke="#1e1b18" stroke-width="1.5"/>' +
@@ -1527,38 +1618,6 @@
     }
     wheelsHtml += '</div>';
 
-    /* Dump + Loan Shark */
-    var loan = ca.loanShark || ca.loan || {};
-    var owed = Math.max(0, Number(loan.principal || loan.owed || loan.balance || 0));
-    var maxLoan = Math.max(25000, Number(loan.maxLoan || loan.creditLimit || 250000));
-    var dukeHeat = Boolean(loan.dukeEnforcerHeat || loan.overdue);
-    var dumpPoolCount = Number((ca.dump && ca.dump.poolSize) || ca.dumpCount || 18);
-
-    var invOpts = '';
-    for (var ii = 0; ii < invKeys.length; ii++) {
-      var ik = invKeys[ii];
-      invOpts += '<option value="' + esc(ik) + '"' + (store.drafts.dumpItemId === ik ? ' selected' : '') + '>' + esc(ik) + ' (x' + Number(inv[ik] || 1) + ')</option>';
-    }
-
-    /* Hunting */
-    var rpg = getRpgSummary();
-    var huntSkill = Math.max(0, Math.min(100, Math.round(Number((ca.hunting && ca.hunting.skill) != null ? ca.hunting.skill : (rpg.mastery.hunting || 0)))));
-    var huntCards = '<div class="zre-grid-3">';
-    for (var hi = 0; hi < HUNT_MODES.length; hi++) {
-      var hm = HUNT_MODES[hi];
-      var locked = huntSkill < hm.minSkill;
-      huntCards +=
-        '<div class="zre-card">' +
-          '<div class="zre-card-top">' +
-            '<span class="zre-card-title">' + esc(ar ? hm.ar : hm.en) + '</span>' +
-            '<bdi class="zre-chip" data-tone="sage">' + hm.energy + 'E · ' + fmtMoney(hm.fee) + '</bdi>' +
-          '</div>' +
-          '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="hunt-go" data-mode="' + hm.id + '"' + (locked || store.busy ? ' disabled' : '') + '>🏹 ' + esc(copy.huntBtn) + '</button>' +
-        '</div>';
-    }
-    huntCards += '</div>';
-
-    /* Garage & 5-Class Racing */
     var rc = ca.racing || {};
     var racingPts = Math.max(0, Number(rc.racingPoints != null ? rc.racingPoints : (ca.racingPoints || 0)));
     var ownedCars = rc.ownedCars || rc.cars || {};
@@ -1601,46 +1660,17 @@
     tracksHtml += '</div>';
 
     return (
-      '<div class="zre-workspace" data-workspace="activities">' +
+      '<div class="zre-workspace" data-zre-feature="wheels-racing">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.casinoHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.casinoSub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="plum">RP: <bdi>' + fmtInt(racingPts) + '</bdi></span>' +
+        '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.wheelsTitle) + '</h3></div>' +
           wheelsHtml +
-        '</section>' +
-        '<div class="zre-grid-2">' +
-          '<section class="zre-section">' +
-            '<div class="zre-section-head">' +
-              '<h3 class="zre-section-title">' + esc(copy.dumpTitle) + '</h3>' +
-              '<bdi class="zre-chip" data-tone="gold">Pool: ' + dumpPoolCount + ' items</bdi>' +
-            '</div>' +
-            '<div class="zre-row-actions">' +
-              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="dump-search"' + (store.busy ? ' disabled' : '') + '>🗑 ' + esc(copy.searchDumpBtn) + '</button>' +
-            '</div>' +
-            '<div class="zre-row-actions">' +
-              '<select class="zre-select" data-zre-draft="dumpItemId">' + invOpts + '</select>' +
-              '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="dumpQty" value="' + esc(store.drafts.dumpQty) + '">' +
-              '<button type="button" class="zre-btn" data-zre-act="dump-toss"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.tossDumpBtn) + '</button>' +
-            '</div>' +
-          '</section>' +
-          '<section class="zre-section">' +
-            '<div class="zre-section-head">' +
-              '<h3 class="zre-section-title">' + esc(copy.loanTitle) + '</h3>' +
-              '<span class="zre-chip" data-tone="' + (dukeHeat ? 'crimson' : 'gold') + '">' + (dukeHeat ? '🔥 ENFORCER HEAT!' : ('Owed: ' + fmtMoney(owed))) + '</span>' +
-            '</div>' +
-            '<span class="zre-section-note">Credit Cap: <bdi>' + fmtMoney(maxLoan) + '</bdi> · 5% Vigorish</span>' +
-            '<div class="zre-row-actions">' +
-              '<input type="number" min="1000" step="5000" class="zre-input" data-zre-draft="loanAmount" value="' + esc(store.drafts.loanAmount) + '">' +
-              '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="loan-borrow"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.borrowBtn) + '</button>' +
-              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="loan-repay"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.repayBtn) + '</button>' +
-            '</div>' +
-          '</section>' +
-        '</div>' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.huntTitle) + '</h3>' +
-            '<span class="zre-chip" data-tone="sage">Hunting Mastery: <bdi>' + huntSkill + ' / 100</bdi></span>' +
-          '</div>' +
-          '<div class="zre-meter-track"><div class="zre-meter-fill" style="width:' + huntSkill + '%"></div></div>' +
-          huntCards +
         '</section>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
@@ -1655,11 +1685,89 @@
     );
   }
 
-  /* ------------------------------------------------------------------------
-   * 11. TAB 4 RENDERER: SAFE TRADES, 0% BAZAARS, 1★-10★ COMPANIES & MARRIAGE
-   * ------------------------------------------------------------------------ */
-  function renderEconomyTab() {
+  /* Route: city -> Sleek 3-Card City Underworld Spots BELOW 3D City Map */
+  function renderCityRoute() {
     var ar = isAr();
+    var copy = L();
+    var ca = store.cityActivities || {};
+    var inv = getOwnedInventory();
+    var invKeys = Object.keys(inv).filter(function (k) { return Number(inv[k]) > 0; });
+    if (!invKeys.length) invKeys = ['glasses', 'xanax', 'bloodbag', 'pistol'];
+
+    var loan = ca.loanShark || ca.loan || {};
+    var owed = Math.max(0, Number(loan.totalOwed != null ? loan.totalOwed : (loan.principal || loan.owed || loan.balance || 0)));
+    var maxLoan = Math.max(25000, Number(loan.maxLoan || loan.creditLimit || 250000));
+    var dukeHeat = Boolean(ca.dukeEnforcerHeat || loan.dukeEnforcerHeat || loan.overdue);
+    var dumpPoolCount = Number((ca.dump && ca.dump.poolSize) || ca.dumpCount || 18);
+
+    var invOpts = '';
+    for (var ii = 0; ii < invKeys.length; ii++) {
+      var ik = invKeys[ii];
+      invOpts += '<option value="' + esc(ik) + '"' + (store.drafts.dumpItemId === ik ? ' selected' : '') + '>' + esc(ik) + ' (x' + Number(inv[ik] || 1) + ')</option>';
+    }
+
+    var rpg = getRpgSummary();
+    var huntSkill = Math.max(0, Math.min(100, Math.round(Number((ca.hunting && ca.hunting.skill) != null ? ca.hunting.skill : (rpg.mastery.hunting || 0)))));
+    var huntBtns = '<div class="zre-row-actions">';
+    for (var hi = 0; hi < HUNT_MODES.length; hi++) {
+      var hm = HUNT_MODES[hi];
+      var locked = huntSkill < hm.minSkill;
+      huntBtns +=
+        '<button type="button" class="zre-btn" data-variant="' + (hi === 0 ? 'primary' : '') + '" data-zre-act="hunt-go" data-mode="' + hm.id + '"' + (locked || store.busy ? ' disabled' : '') + '>🏹 ' + esc(ar ? hm.ar : hm.en) + ' (' + hm.energy + 'E)</button>';
+    }
+    huntBtns += '</div>';
+
+    return (
+      '<div class="zre-workspace" data-zre-feature="city-underworld">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.cityHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.citySub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="sage">3 Spots</span>' +
+        '</header>' +
+        '<div class="zre-grid-3">' +
+          '<section class="zre-section">' +
+            '<div class="zre-section-head">' +
+              '<h3 class="zre-section-title">' + esc(copy.dumpTitle) + '</h3>' +
+              '<bdi class="zre-chip" data-tone="gold">Pool: ' + dumpPoolCount + '</bdi>' +
+            '</div>' +
+            '<div class="zre-row-actions">' +
+              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="dump-search"' + (store.busy ? ' disabled' : '') + '>🗑 ' + esc(copy.searchDumpBtn) + '</button>' +
+            '</div>' +
+            '<div class="zre-row-actions">' +
+              '<select class="zre-select" data-zre-draft="dumpItemId">' + invOpts + '</select>' +
+              '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="dumpQty" value="' + esc(store.drafts.dumpQty) + '">' +
+              '<button type="button" class="zre-btn" data-zre-act="dump-toss"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.tossDumpBtn) + '</button>' +
+            '</div>' +
+          '</section>' +
+          '<section class="zre-section">' +
+            '<div class="zre-section-head">' +
+              '<h3 class="zre-section-title">' + esc(copy.loanTitle) + '</h3>' +
+              '<span class="zre-chip" data-tone="' + (dukeHeat ? 'crimson' : 'gold') + '">' + (dukeHeat ? '🔥 HEAT!' : ('Owed: ' + fmtMoney(owed))) + '</span>' +
+            '</div>' +
+            '<span class="zre-section-note">Cap: <bdi>' + fmtMoney(maxLoan) + '</bdi> · 5% Vigorish</span>' +
+            '<div class="zre-row-actions">' +
+              '<input type="number" min="1000" step="5000" class="zre-input zre-input-sm" data-zre-draft="loanAmount" value="' + esc(store.drafts.loanAmount) + '">' +
+              '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="loan-borrow"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.borrowBtn) + '</button>' +
+              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="loan-repay"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.repayBtn) + '</button>' +
+            '</div>' +
+          '</section>' +
+          '<section class="zre-section">' +
+            '<div class="zre-section-head">' +
+              '<h3 class="zre-section-title">' + esc(copy.huntTitle) + '</h3>' +
+              '<span class="zre-chip" data-tone="sage">Skill: <bdi>' + huntSkill + '/100</bdi></span>' +
+            '</div>' +
+            '<div class="zre-meter-track"><div class="zre-meter-fill" style="width:' + huntSkill + '%"></div></div>' +
+            huntBtns +
+          '</section>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  /* Route: market -> Direct 2-Player Safe Trade Escrow & 0%-Tax Personal Bazaars */
+  function renderMarketRoute() {
     var copy = L();
     var se = store.syndicateEconomy || {};
     var inv = getOwnedInventory();
@@ -1672,7 +1780,6 @@
       itemOpts += '<option value="' + esc(ik) + '">' + esc(ik) + ' (x' + Number(inv[ik] || 1) + ')</option>';
     }
 
-    /* Trades */
     var trades = Array.isArray(se.trades) ? se.trades : (se.trades && Array.isArray(se.trades.active) ? se.trades.active : []);
     var tradesListHtml = '';
     for (var tj = 0; tj < trades.length; tj++) {
@@ -1695,7 +1802,6 @@
         '</div>';
     }
 
-    /* Bazaar */
     var bz = se.bazaar || se.myBazaar || {};
     var bzOpen = Boolean(bz.open);
     var listings = Array.isArray(se.bazaarListings)
@@ -1719,9 +1825,52 @@
     }
     listHtml += '</div>';
 
-    /* Player Companies */
+    return (
+      '<div class="zre-workspace" data-zre-feature="bazaars-trades">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.marketHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.marketSub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="' + (bzOpen ? 'sage' : 'gold') + '">' + (bzOpen ? 'Bazaar OPEN' : '0% Tax') + '</span>' +
+        '</header>' +
+        '<section class="zre-section">' +
+          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.tradesTitle) + '</h3></div>' +
+          '<div class="zre-row-actions">' +
+            '<input type="text" class="zre-input" placeholder="Partner ID or username" data-zre-draft="tradePartner" value="' + esc(store.drafts.tradePartner) + '">' +
+            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="trade-create"' + (store.busy ? ' disabled' : '') + '>🤝 ' + esc(copy.openTradeBtn) + '</button>' +
+          '</div>' +
+          tradesListHtml +
+        '</section>' +
+        '<section class="zre-section">' +
+          '<div class="zre-section-head">' +
+            '<h3 class="zre-section-title">' + esc(copy.bazaarTitle) + '</h3>' +
+            '<span class="zre-chip" data-tone="' + (bzOpen ? 'sage' : 'gold') + '">' + (bzOpen ? 'OPEN · 0% Tax' : 'CLOSED') + '</span>' +
+          '</div>' +
+          '<div class="zre-row-actions">' +
+            '<input type="text" class="zre-input" data-zre-draft="bazaarTagline" value="' + esc(store.drafts.bazaarTagline) + '">' +
+            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="bazaar-toggle" data-open="' + (bzOpen ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.toggleBazaarBtn) + '</button>' +
+          '</div>' +
+          '<div class="zre-row-actions">' +
+            '<select class="zre-select" data-zre-draft="bazaarItemId">' + itemOpts + '</select>' +
+            '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="bazaarQty" value="' + esc(store.drafts.bazaarQty) + '">' +
+            '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="bazaarPrice" value="' + esc(store.drafts.bazaarPrice) + '">' +
+            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="bazaar-list"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.listBazaarBtn) + '</button>' +
+          '</div>' +
+          listHtml +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route: jobs -> Player-Directed Companies (1★-10★) */
+  function renderJobsRoute() {
+    var ar = isAr();
+    var copy = L();
+    var se = store.syndicateEconomy || {};
     var comp = se.company || se.myCompany || null;
     var compDir = Array.isArray(se.companies) ? se.companies : [];
+
     var compTypeOpts = '';
     for (var cti = 0; cti < COMPANY_TYPES.length; cti++) {
       var ct = COMPANY_TYPES[cti];
@@ -1750,50 +1899,17 @@
         '</div>';
     }
 
-    /* Marriage */
-    var mar = se.marriage || {};
-    var spouseId = mar.spouseId || mar.spouseName || null;
-    var proposals = Array.isArray(mar.proposals) ? mar.proposals : (Array.isArray(mar.incomingProposals) ? mar.incomingProposals : []);
-    var propHtml = '';
-    for (var pri = 0; pri < proposals.length; pri++) {
-      var pr = proposals[pri];
-      var pid = String(pr.id || pr.proposalId || ('prop_' + pri));
-      propHtml +=
-        '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="marriage-accept" data-proposal="' + esc(pid) + '"' + (store.busy ? ' disabled' : '') + '>💍 ' + esc(copy.acceptMarriageBtn) + ' (' + esc(pr.fromId || pr.proposerId || pid) + ')</button>';
-    }
-
     return (
-      '<div class="zre-workspace" data-workspace="economy">' +
+      '<div class="zre-workspace" data-zre-feature="player-companies">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.jobsHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.jobsSub) + '</p>' +
+          '</div>' +
+          (comp ? '<span class="zre-chip" data-tone="gold">' + esc(comp.name || 'My Company') + ' · ' + Number(comp.stars || 1) + '★ · JP: ' + Number(comp.jobPts || se.jobPts || 0) + '</span>' : '<span class="zre-chip" data-tone="gold">1★–10★</span>') +
+        '</header>' +
         '<section class="zre-section">' +
-          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.tradesTitle) + '</h3></div>' +
-          '<div class="zre-row-actions">' +
-            '<input type="text" class="zre-input" placeholder="Partner ID or username" data-zre-draft="tradePartner" value="' + esc(store.drafts.tradePartner) + '">' +
-            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="trade-create"' + (store.busy ? ' disabled' : '') + '>🤝 ' + esc(copy.openTradeBtn) + '</button>' +
-          '</div>' +
-          tradesListHtml +
-        '</section>' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.bazaarTitle) + '</h3>' +
-            '<span class="zre-chip" data-tone="' + (bzOpen ? 'sage' : 'gold') + '">' + (bzOpen ? 'OPEN · 0% Tax' : 'CLOSED') + '</span>' +
-          '</div>' +
-          '<div class="zre-row-actions">' +
-            '<input type="text" class="zre-input" data-zre-draft="bazaarTagline" value="' + esc(store.drafts.bazaarTagline) + '">' +
-            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="bazaar-toggle" data-open="' + (bzOpen ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.toggleBazaarBtn) + '</button>' +
-          '</div>' +
-          '<div class="zre-row-actions">' +
-            '<select class="zre-select" data-zre-draft="bazaarItemId">' + itemOpts + '</select>' +
-            '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="bazaarQty" value="' + esc(store.drafts.bazaarQty) + '">' +
-            '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="bazaarPrice" value="' + esc(store.drafts.bazaarPrice) + '">' +
-            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="bazaar-list"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.listBazaarBtn) + '</button>' +
-          '</div>' +
-          listHtml +
-        '</section>' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.companyTitle) + '</h3>' +
-            (comp ? '<span class="zre-chip" data-tone="gold">' + esc(comp.name || 'My Company') + ' · ' + Number(comp.stars || 1) + '★ · JP: ' + Number(comp.jobPts || se.jobPts || 0) + '</span>' : '') +
-          '</div>' +
+          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.companyTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +
             '<select class="zre-select" data-zre-draft="companyType">' + compTypeOpts + '</select>' +
             '<input type="text" class="zre-input" data-zre-draft="companyName" value="' + esc(store.drafts.companyName) + '">' +
@@ -1809,11 +1925,36 @@
           specialsHtml +
           (dirCompHtml ? ('<div class="zre-grid-auto">' + dirCompHtml + '</div>') : '') +
         '</section>' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.marriageTitle) + '</h3>' +
-            '<span class="zre-chip" data-tone="plum">' + (spouseId ? ('💍 Spouse: ' + esc(spouseId) + ' · Shared Max Happy ✓') : 'Single Operative') + '</span>' +
+      '</div>'
+    );
+  }
+
+  /* Route: properties -> Marriage & Spouse Property Sharing */
+  function renderPropertiesRoute() {
+    var copy = L();
+    var se = store.syndicateEconomy || {};
+    var mar = se.marriage || {};
+    var spouseId = mar.spouseId || mar.spouseName || null;
+    var proposals = Array.isArray(mar.proposals) ? mar.proposals : (Array.isArray(mar.incomingProposals) ? mar.incomingProposals : []);
+    var propHtml = '';
+    for (var pri = 0; pri < proposals.length; pri++) {
+      var pr = proposals[pri];
+      var pid = String(pr.id || pr.proposalId || ('prop_' + pri));
+      propHtml +=
+        '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="marriage-accept" data-proposal="' + esc(pid) + '"' + (store.busy ? ' disabled' : '') + '>💍 ' + esc(copy.acceptMarriageBtn) + ' (' + esc(pr.fromId || pr.proposerId || pid) + ')</button>';
+    }
+
+    return (
+      '<div class="zre-workspace" data-zre-feature="marriage-sharing">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.propertiesHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.propertiesSub) + '</p>' +
           '</div>' +
+          '<span class="zre-chip" data-tone="plum">' + (spouseId ? ('💍 Spouse: ' + esc(spouseId) + ' · Shared Max Happy ✓') : 'Single Operative') + '</span>' +
+        '</header>' +
+        '<section class="zre-section">' +
+          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.marriageTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +
             '<input type="text" class="zre-input" placeholder="Target player ID" data-zre-draft="spouseTarget" value="' + esc(store.drafts.spouseTarget) + '">' +
             '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="marriage-propose"' + (store.busy ? ' disabled' : '') + '>💍 ' + esc(copy.proposeBtn) + '</button>' +
@@ -1825,17 +1966,79 @@
     );
   }
 
-  /* ------------------------------------------------------------------------
-   * 12. TAB 5 RENDERER: FACTION EMPIRE, 7-BRANCH TREE, 4-ROLE OC, WARS & 9-SLOT LOADOUT
-   * ------------------------------------------------------------------------ */
-  function renderEmpireTab() {
+  /* Route: items -> 9-Slot Tactical Loadout Paperdoll (4 Weapons + 5 Armor) */
+  function renderItemsRoute() {
+    var ar = isAr();
+    var copy = L();
+    var fe = store.factionEmpire || {};
+    var loadout = fe.loadout || {};
+    var slotsMap = loadout.slots || loadout.loadoutSlots || {};
+    var availBySlot = loadout.availableBySlot || {};
+    var inv = getOwnedInventory();
+
+    var paperdollHtml = '<div class="zre-paperdoll-grid">';
+    for (var si = 0; si < LOADOUT_SLOTS_9.length; si++) {
+      var sl = LOADOUT_SLOTS_9[si];
+      var equippedId = String(slotsMap[sl.slot] || '');
+      var cands = [];
+      var srvSlotItems = Array.isArray(availBySlot[sl.slot]) ? availBySlot[sl.slot] : [];
+      for (var svi = 0; svi < srvSlotItems.length; svi++) {
+        if (srvSlotItems[svi] && srvSlotItems[svi].id && cands.indexOf(srvSlotItems[svi].id) < 0) {
+          cands.push(srvSlotItems[svi].id);
+        }
+      }
+      for (var dfi = 0; dfi < sl.defaults.length; dfi++) {
+        if (cands.indexOf(sl.defaults[dfi]) < 0) cands.push(sl.defaults[dfi]);
+      }
+      for (var ik in inv) {
+        if (Number(inv[ik]) > 0 && cands.indexOf(ik) < 0) cands.push(ik);
+      }
+      var chosenDraft = store.drafts.slotItem[sl.slot] || equippedId || cands[0] || sl.defaults[0];
+      var selOpts = '';
+      for (var ci = 0; ci < cands.length; ci++) {
+        var cid = cands[ci];
+        selOpts += '<option value="' + esc(cid) + '"' + (chosenDraft === cid ? ' selected' : '') + '>' + esc(cid) + (inv[cid] ? (' (x' + inv[cid] + ')') : '') + '</option>';
+      }
+      paperdollHtml +=
+        '<div class="zre-card" data-loadout-slot="' + sl.slot + '">' +
+          '<div class="zre-card-top">' +
+            '<span class="zre-card-title">' + esc(ar ? sl.ar : sl.en) + '</span>' +
+            '<span class="zre-chip" data-tone="' + (equippedId ? 'sage' : 'gold') + '">' + esc(equippedId || 'Empty') + '</span>' +
+          '</div>' +
+          '<div class="zre-row-actions">' +
+            '<select class="zre-select" data-zre-draft="slotItem" data-slot="' + sl.slot + '">' + selOpts + '</select>' +
+            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="loadout-equip" data-slot="' + sl.slot + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.equipSlotBtn) + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+    paperdollHtml += '</div>';
+
+    return (
+      '<div class="zre-workspace" data-zre-feature="tactical-loadout">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.itemsHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.itemsSub) + '</p>' +
+          '</div>' +
+          '<span class="zre-chip" data-tone="sage">Armor: <bdi>' + Number(loadout.armorMitigationPct || 25) + '%</bdi> · Mult: <bdi>×' + Number(loadout.weaponMultiplier || 1).toFixed(2) + '</bdi></span>' +
+        '</header>' +
+        '<section class="zre-section">' +
+          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.loadoutTitle) + '</h3></div>' +
+          paperdollHtml +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route: faction -> Found Faction, Directory, Vault, 7-Branch Respect Tree, 4-Role OC & 48h Ranked Wars */
+  function renderFactionRoute() {
     var ar = isAr();
     var copy = L();
     var fe = store.factionEmpire || {};
     var myFac = fe.faction || fe.myFaction || null;
     var directory = Array.isArray(fe.directory) ? fe.directory : (Array.isArray(fe.factions) ? fe.factions : []);
     var roster = (myFac && Array.isArray(myFac.members)) ? myFac.members : (Array.isArray(fe.members) ? fe.members : []);
-    var vaultCash = Number((myFac && myFac.vaultBalance) != null ? myFac.vaultBalance : (fe.vaultBalance || 0));
+    var vaultCash = Number((myFac && (myFac.vaultBalance != null ? myFac.vaultBalance : myFac.vaultCash)) != null ? (myFac.vaultBalance != null ? myFac.vaultBalance : myFac.vaultCash) : (fe.vaultBalance || 0));
     var respectPool = Number((myFac && myFac.respect) != null ? myFac.respect : (fe.respect || 0));
 
     var dirHtml = '<div class="zre-grid-auto">';
@@ -1878,7 +2081,6 @@
       rosterHtml += '</div>';
     }
 
-    /* 7-Branch Respect Skill Tree */
     var treeState = (fe.respectTree && fe.respectTree.upgrades) || fe.respectTree || {};
     var srvBranchesById = {};
     if (fe.respectTree && Array.isArray(fe.respectTree.branches)) {
@@ -1918,7 +2120,6 @@
     }
     respTreeHtml += '</div>';
 
-    /* 4-Role Crew OCs */
     var activeOc = (fe.organizedCrimes && fe.organizedCrimes.activeOc) || fe.organizedCrime || (Array.isArray(fe.organizedCrimes) && fe.organizedCrimes[0]) || { id: 'oc_default', heistId: store.drafts.ocHeistId, slots: {} };
     var ocId = String(activeOc.id || activeOc.ocId || 'oc_1');
     var ocSlots = activeOc.slots || {};
@@ -1943,7 +2144,6 @@
     }
     rolesHtml += '</div>';
 
-    /* 48h Ranked War & Caches */
     var rwRoot = fe.rankedWar || {};
     var war = rwRoot.activeWar || fe.activeWar || rwRoot || {};
     var ourScore = Number(war.ourScore || 0);
@@ -1953,55 +2153,17 @@
     if (ourScore === 0 && theirScore === 0) ourPct = 50;
     var caches = rwRoot.caches || fe.warCaches || fe.caches || { bronze: 0, silver: 0, gold: 0 };
 
-    /* 9-Slot Loadout Paperdoll */
-    var loadout = fe.loadout || {};
-    var slotsMap = loadout.slots || loadout.loadoutSlots || {};
-    var availBySlot = loadout.availableBySlot || {};
-    var inv = getOwnedInventory();
-    var paperdollHtml = '<div class="zre-paperdoll-grid">';
-    for (var si = 0; si < LOADOUT_SLOTS_9.length; si++) {
-      var sl = LOADOUT_SLOTS_9[si];
-      var equippedId = String(slotsMap[sl.slot] || '');
-      var cands = [];
-      var srvSlotItems = Array.isArray(availBySlot[sl.slot]) ? availBySlot[sl.slot] : [];
-      for (var svi = 0; svi < srvSlotItems.length; svi++) {
-        if (srvSlotItems[svi] && srvSlotItems[svi].id && cands.indexOf(srvSlotItems[svi].id) < 0) {
-          cands.push(srvSlotItems[svi].id);
-        }
-      }
-      for (var dfi = 0; dfi < sl.defaults.length; dfi++) {
-        if (cands.indexOf(sl.defaults[dfi]) < 0) cands.push(sl.defaults[dfi]);
-      }
-      for (var ik in inv) {
-        if (Number(inv[ik]) > 0 && cands.indexOf(ik) < 0) cands.push(ik);
-      }
-      var chosenDraft = store.drafts.slotItem[sl.slot] || equippedId || cands[0] || sl.defaults[0];
-      var selOpts = '';
-      for (var ci = 0; ci < cands.length; ci++) {
-        var cid = cands[ci];
-        selOpts += '<option value="' + esc(cid) + '"' + (chosenDraft === cid ? ' selected' : '') + '>' + esc(cid) + (inv[cid] ? (' (x' + inv[cid] + ')') : '') + '</option>';
-      }
-      paperdollHtml +=
-        '<div class="zre-card" data-loadout-slot="' + sl.slot + '">' +
-          '<div class="zre-card-top">' +
-            '<span class="zre-card-title">' + esc(ar ? sl.ar : sl.en) + '</span>' +
-            '<span class="zre-chip" data-tone="' + (equippedId ? 'sage' : 'gold') + '">' + esc(equippedId || 'Empty') + '</span>' +
-          '</div>' +
-          '<div class="zre-row-actions">' +
-            '<select class="zre-select" data-zre-draft="slotItem" data-slot="' + sl.slot + '">' + selOpts + '</select>' +
-            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="loadout-equip" data-slot="' + sl.slot + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.equipSlotBtn) + '</button>' +
-          '</div>' +
-        '</div>';
-    }
-    paperdollHtml += '</div>';
-
     return (
-      '<div class="zre-workspace" data-workspace="empire">' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.factionFoundTitle) + '</h3>' +
-            '<span class="zre-chip" data-tone="gold">Vault: <bdi>' + fmtMoney(vaultCash) + '</bdi> · Respect: <bdi>' + fmtInt(respectPool) + '</bdi></span>' +
+      '<div class="zre-workspace" data-zre-feature="faction-respect-tree">' +
+        '<header class="zre-route-head">' +
+          '<div>' +
+            '<h2 class="zre-route-title">' + esc(copy.factionHeading) + '</h2>' +
+            '<p class="zre-route-sub">' + esc(copy.factionSub) + '</p>' +
           '</div>' +
+          '<span class="zre-chip" data-tone="gold">Vault: <bdi>' + fmtMoney(vaultCash) + '</bdi> · Respect: <bdi>' + fmtInt(respectPool) + '</bdi></span>' +
+        '</header>' +
+        '<section class="zre-section">' +
+          '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.factionFoundTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +
             '<input type="text" class="zre-input" placeholder="Faction Name (EN)" data-zre-draft="facNameEn" value="' + esc(store.drafts.facNameEn) + '">' +
             '<input type="text" class="zre-input" placeholder="اسم الفاكشن (AR)" data-zre-draft="facNameAr" value="' + esc(store.drafts.facNameAr) + '">' +
@@ -2042,88 +2204,81 @@
             '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="war-cache" data-tier="gold"' + (store.busy ? ' disabled' : '') + '>🎁 ' + esc(copy.claimCacheBtn) + ' (Caches: ' + Number(caches.gold || caches.silver || caches.bronze || 0) + ')</button>' +
           '</div>' +
         '</section>' +
-        '<section class="zre-section">' +
-          '<div class="zre-section-head">' +
-            '<h3 class="zre-section-title">' + esc(copy.loadoutTitle) + '</h3>' +
-            '<span class="zre-chip" data-tone="sage">Armor Mitigation: <bdi>' + Number(loadout.armorMitigationPct || 25) + '%</bdi> · Weapon Mult: <bdi>×' + Number(loadout.weaponMultiplier || 1).toFixed(2) + '</bdi></span>' +
-          '</div>' +
-          paperdollHtml +
-        '</section>' +
       '</div>'
     );
   }
 
   /* ------------------------------------------------------------------------
-   * 13. MAIN SUITE CONTAINER MOUNT & EVENT DELEGATION
+   * 9. ROUTE-SCOPED SECTION CONTAINER MOUNT & EVENT DELEGATION
    * ------------------------------------------------------------------------ */
-  function ensureDeck() {
+  var ROUTE_RENDERERS = {
+    home: renderHomeRoute,
+    missions: renderMissionsRoute,
+    education: renderEducationRoute,
+    casino: renderCasinoRoute,
+    city: renderCityRoute,
+    market: renderMarketRoute,
+    jobs: renderJobsRoute,
+    properties: renderPropertiesRoute,
+    items: renderItemsRoute,
+    faction: renderFactionRoute
+  };
+
+  function ensureRouteSection() {
     if (document.querySelector('x-dc')) return null;
     var main = document.getElementById('zone-main');
     if (!main) return null;
 
-    var deck = document.getElementById('zone-rpg-empire-deck');
-    if (deck && deck.parentElement !== main) {
-      if (deck.parentElement) deck.parentElement.removeChild(deck);
-      deck = null;
+    var sec = document.getElementById('zone-rpg-route-section');
+    if (sec && sec.parentElement !== main) {
+      if (sec.parentElement) sec.parentElement.removeChild(sec);
+      sec = null;
     }
-    if (!deck) {
-      deck = document.createElement('section');
-      deck.id = 'zone-rpg-empire-deck';
-      deck.className = 'zre-scope';
-      deck.setAttribute('aria-label', 'Syndicate RPG, Story & Empire Command');
-      deck.addEventListener('click', handleActionClick);
-      deck.addEventListener('input', handleDraftInput);
-      deck.addEventListener('change', handleDraftInput);
-      /* Insert before #zone-torn-ops-deck when present so v149 Story/RPG leads cleanly */
-      var opsDeck = document.getElementById('zone-torn-ops-deck');
-      if (opsDeck && opsDeck.parentElement === main && typeof main.insertBefore === 'function') {
-        try { main.insertBefore(deck, opsDeck); } catch (_) { main.appendChild(deck); }
-      } else {
-        main.appendChild(deck);
-      }
+    if (!sec) {
+      sec = document.createElement('section');
+      sec.id = 'zone-rpg-route-section';
+      sec.className = 'zre-scope';
+      sec.addEventListener('click', handleActionClick);
+      sec.addEventListener('input', handleDraftInput);
+      sec.addEventListener('change', handleDraftInput);
+      main.appendChild(sec);
     }
-    return deck;
+    return sec;
   }
 
-  function renderDeck() {
+  function renderRouteSection() {
     var main = document.getElementById('zone-main');
     if (!main) return;
     var screen = String(main.getAttribute('data-zone-screen') || 'home').toLowerCase();
-    if (screen && screen !== store.lastScreen) {
+
+    if (screen !== store.lastScreen) {
       store.lastScreen = screen;
-      if (AUTO_SUITE_SCREENS[screen] && !store.userPinnedTab) {
-        store.activeTab = AUTO_SUITE_SCREENS[screen];
-      }
-      store.userPinnedTab = false;
+      store.activeRoute = screen;
+      clearFeedbackTimer();
+      store.feedback = null;
+      ensureRouteDomainsLoaded(screen);
     }
 
-    var shouldShow = Boolean(AUTO_SUITE_SCREENS[screen] || store.deckForceOpen);
-    var deck = ensureDeck();
-    if (!deck) return;
-    if (!shouldShow) {
-      deck.hidden = true;
+    var renderer = ROUTE_RENDERERS[screen];
+    if (!renderer) {
+      var existing = document.getElementById('zone-rpg-route-section');
+      if (existing && existing.parentElement) {
+        existing.parentElement.removeChild(existing);
+      }
       return;
     }
-    deck.hidden = false;
+
+    var sec = ensureRouteSection();
+    if (!sec) return;
+
+    sec.setAttribute('data-zre-route', screen);
+    sec.hidden = false;
 
     /* Preserve focused input/select across background timer ticks */
     var activeEl = document.activeElement;
-    if (activeEl && deck.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT') && !store.busy) {
+    if (activeEl && sec.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT') && !store.busy) {
       return;
     }
-
-    var copy = L();
-    var tabOrder = ['story', 'rpg', 'activities', 'economy', 'empire'];
-    var tabsHtml = '<div class="zre-tabs" role="tablist">';
-    for (var i = 0; i < tabOrder.length; i++) {
-      var tk = tabOrder[i];
-      var sel = store.activeTab === tk;
-      tabsHtml +=
-        '<button type="button" role="tab" class="zre-tab-btn" data-zre-act="switch-tab" data-tab="' + tk + '" aria-selected="' + (sel ? 'true' : 'false') + '">' +
-          '<span>' + esc(copy.tabs[tk]) + '</span>' +
-        '</button>';
-    }
-    tabsHtml += '</div>';
 
     var fbHtml = store.feedback
       ? '<div class="zre-feedback" role="status" data-tone="' + esc(store.feedback.tone) + '">' +
@@ -2132,29 +2287,7 @@
         '</div>'
       : '';
 
-    var bodyHtml = '';
-    if (!store.deckCollapsed) {
-      if (store.activeTab === 'rpg') bodyHtml = renderRpgTab();
-      else if (store.activeTab === 'activities') bodyHtml = renderActivitiesTab();
-      else if (store.activeTab === 'economy') bodyHtml = renderEconomyTab();
-      else if (store.activeTab === 'empire') bodyHtml = renderEmpireTab();
-      else bodyHtml = renderStoryTab();
-    }
-
-    deck.innerHTML =
-      '<header class="zre-deck-header">' +
-        '<div class="zre-deck-title-group">' +
-          '<span class="zre-deck-eyebrow">' + esc(copy.deckEyebrow) + '</span>' +
-          '<h2 class="zre-deck-title">' + esc(copy.deckTitle) + '</h2>' +
-          '<p class="zre-deck-sub">' + esc(copy.deckSub) + '</p>' +
-        '</div>' +
-        '<div class="zre-deck-head-actions">' +
-          '<button type="button" class="zre-btn" data-zre-act="refresh-all"' + (store.busy ? ' disabled' : '') + '>↻ ' + esc(copy.syncBtn) + '</button>' +
-          '<button type="button" class="zre-btn" data-zre-act="collapse-deck">' + esc(store.deckCollapsed ? copy.expandBtn : copy.minimizeBtn) + '</button>' +
-        '</div>' +
-      '</header>' +
-      fbHtml +
-      (store.deckCollapsed ? '' : (tabsHtml + bodyHtml));
+    sec.innerHTML = fbHtml + renderer();
   }
 
   function handleDraftInput(ev) {
@@ -2170,26 +2303,24 @@
     }
   }
 
-  function openSuiteTab(tab, scrollIntoView) {
+  function navigateToRoute(routeOrTab) {
+    var targetRoute = LEGACY_TAB_TO_ROUTE[routeOrTab] || routeOrTab || 'missions';
     if (window.ZoneMeritsUI && typeof window.ZoneMeritsUI.isOpen === 'function' && window.ZoneMeritsUI.isOpen()) {
       window.ZoneMeritsUI.close();
     }
-    store.activeTab = tab || 'story';
-    store.userPinnedTab = true;
-    store.deckForceOpen = true;
-    store.deckCollapsed = false;
-    if (tab === 'story') { loadStoryCampaign(); loadCityActivities(); }
-    else if (tab === 'rpg') { loadPlayerRpg(); }
-    else if (tab === 'activities') { loadCityActivities(); }
-    else if (tab === 'economy') { loadSyndicateEconomy(); }
-    else if (tab === 'empire') { loadFactionEmpire(); }
-    renderAll();
-    if (scrollIntoView) {
-      var deck = document.getElementById('zone-rpg-empire-deck');
-      if (deck && typeof deck.scrollIntoView === 'function') {
-        try { deck.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
-      }
+    if (document.documentElement && document.documentElement.classList) {
+      document.documentElement.classList.remove('zaaa-rail-open');
     }
+
+    if (window.__zoneGame && typeof window.__zoneGame.go === 'function') {
+      try { window.__zoneGame.go(targetRoute); } catch (_) {}
+    } else {
+      var main = document.getElementById('zone-main');
+      if (main) main.setAttribute('data-zone-screen', targetRoute);
+    }
+
+    ensureRouteDomainsLoaded(targetRoute);
+    renderAll();
   }
 
   function handleActionClick(ev) {
@@ -2200,26 +2331,24 @@
     ev.preventDefault();
 
     var act = target.getAttribute('data-zre-act');
-    if (act === 'open-tab') {
-      openSuiteTab(target.getAttribute('data-tab') || 'story', true);
-    } else if (act === 'switch-tab') {
-      openSuiteTab(target.getAttribute('data-tab') || 'story', false);
-    } else if (act === 'collapse-deck') {
-      store.deckCollapsed = !store.deckCollapsed;
-      renderDeck();
+    if (act === 'go-route') {
+      navigateToRoute(target.getAttribute('data-route') || 'missions');
+    } else if (act === 'open-tab' || act === 'switch-tab') {
+      navigateToRoute(target.getAttribute('data-tab') || 'missions');
     } else if (act === 'clear-feedback') {
+      clearFeedbackTimer();
       store.feedback = null;
-      renderDeck();
+      renderRouteSection();
     } else if (act === 'refresh-all') {
       refreshAll();
     } else if (act === 'select-act') {
       var nextAct = Math.max(1, Math.min(5, Number(target.getAttribute('data-act') || 1)));
       store.selectedAct = nextAct;
       store.selectedChapterId = STORY_ACTS[nextAct - 1].chapters[0].id;
-      renderDeck();
+      renderRouteSection();
     } else if (act === 'select-chapter') {
       store.selectedChapterId = target.getAttribute('data-chapter') || 'act1_ch1';
-      renderDeck();
+      renderRouteSection();
     } else if (act === 'story-start') {
       var sCh = target.getAttribute('data-chapter');
       dispatchDomainAction('story', 'chapter.start', { chapterId: sCh, id: sCh });
@@ -2425,8 +2554,8 @@
   function renderAll() {
     if (document.querySelector('x-dc')) return;
     try {
-      renderMissionBannerAndSidebar();
-      renderDeck();
+      renderHudAndSidebar();
+      renderRouteSection();
     } catch (_) {}
   }
 
@@ -2442,7 +2571,28 @@
     return store;
   }
 
+  async function refreshBootDomains() {
+    var main = document.getElementById('zone-main');
+    var scr = String((main && main.getAttribute('data-zone-screen')) || 'home').toLowerCase();
+    var tasks = [loadStoryCampaign(), loadPlayerRpg()];
+    var domains = ROUTE_DOMAINS[scr] || [];
+    if (domains.indexOf('activities') >= 0) tasks.push(loadCityActivities());
+    if (domains.indexOf('economy') >= 0) tasks.push(loadSyndicateEconomy());
+    if (domains.indexOf('empire') >= 0) tasks.push(loadFactionEmpire());
+    await Promise.all(tasks);
+    renderAll();
+  }
+
   function boot() {
+    /* Delegated click listener for HUD story slot & sidebar stat row */
+    document.addEventListener('click', function (ev) {
+      var t = ev.target && typeof ev.target.closest === 'function' ? ev.target.closest('[data-zre-act]') : null;
+      if (!t) return;
+      var inRouteSec = typeof t.closest === 'function' ? t.closest('#zone-rpg-route-section') : null;
+      if (inRouteSec) return; /* Handled by section's own listener */
+      handleActionClick(ev);
+    });
+
     var rafScheduled = false;
     var scheduleRender = function () {
       if (rafScheduled) return;
@@ -2466,19 +2616,40 @@
       });
     } catch (_) {}
 
+    /* Re-populate #ztl-hud-story-slot whenever #zone-torn-hud-strip re-renders */
+    try {
+      var topbarObsAttached = false;
+      var tryObserveTopbar = function () {
+        if (topbarObsAttached) return;
+        var tb = document.querySelector('.zone-topbar');
+        if (!tb) return;
+        topbarObsAttached = true;
+        var tbObs = new MutationObserver(function () {
+          var slot = document.getElementById('ztl-hud-story-slot');
+          if (!slot || !slot.getAttribute('data-zre-sig')) {
+            scheduleRender();
+          }
+        });
+        tbObs.observe(tb, { childList: true, subtree: true });
+      };
+      tryObserveTopbar();
+      window.setTimeout(tryObserveTopbar, 400);
+    } catch (_) {}
+
     window.setInterval(function () {
       if (document.visibilityState !== 'hidden' && !store.busy) {
-        refreshAll();
+        refreshBootDomains();
       }
-    }, 25000);
+    }, 30000);
 
     scheduleRender();
-    window.setTimeout(refreshAll, 220);
+    window.setTimeout(refreshBootDomains, 220);
     window.setTimeout(scheduleRender, 850);
   }
 
   window.ZoneRpgEmpire = {
-    openTab: function (tab) { openSuiteTab(tab, true); },
+    navigateTo: navigateToRoute,
+    openTab: navigateToRoute,
     refreshAll: refreshAll,
     renderAll: renderAll,
     dispatchDomainAction: dispatchDomainAction,

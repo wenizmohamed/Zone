@@ -126,7 +126,11 @@ class MiniElement {
     const target = {
       disabled: Boolean(attrs.disabled),
       getAttribute: (k) => (k in attrs ? String(attrs[k]) : null),
-      closest: (sel) => (sel === '[data-zre-act]' && 'data-zre-act' in attrs ? target : null)
+      closest: (sel) => {
+        if (sel === '[data-zre-act]' && 'data-zre-act' in attrs) return target;
+        if (sel === '#zone-rpg-route-section') return this.id === 'zone-rpg-route-section' ? this : null;
+        return null;
+      }
     };
     const ev = { target, preventDefault() {}, stopPropagation() {} };
     for (const fn of this.listeners.get('click') || []) fn(ev);
@@ -135,6 +139,9 @@ class MiniElement {
   querySelector(sel) {
     if (sel === '.zone-bulletin') {
       return this.children.find((c) => c.className === 'zone-bulletin') || null;
+    }
+    if (sel === '.ztl-hud-inner') {
+      return this.children.find((c) => c.className === 'ztl-hud-inner') || null;
     }
     if (sel.startsWith('#')) return this.ownerDocument.getElementById(sel.slice(1));
     return null;
@@ -147,6 +154,8 @@ function createRpgHarness(apiHandler, opts = {}) {
   const docListeners = new Map();
   const winListeners = new Map();
   const localStore = new Map();
+  const timers = [];
+  let nextTimerId = 1;
 
   const doc = {
     readyState: 'complete',
@@ -188,7 +197,17 @@ function createRpgHarness(apiHandler, opts = {}) {
   topbar.className = 'zone-topbar';
   const bulletin = new MiniElement('div', doc);
   bulletin.className = 'zone-bulletin';
+  const hudStrip = new MiniElement('div', doc);
+  hudStrip.id = 'zone-torn-hud-strip';
+  hudStrip.className = 'ztl-scope';
+  const hudInner = new MiniElement('div', doc);
+  hudInner.className = 'ztl-hud-inner';
+  const storySlot = new MiniElement('span', doc);
+  storySlot.id = 'ztl-hud-story-slot';
+  hudInner.appendChild(storySlot);
+  hudStrip.appendChild(hudInner);
   topbar.appendChild(bulletin);
+  topbar.appendChild(hudStrip);
 
   const sidebar = new MiniElement('aside', doc);
   sidebar.className = 'zone-sidebar';
@@ -219,7 +238,7 @@ function createRpgHarness(apiHandler, opts = {}) {
       setItem: (k, v) => localStore.set(k, String(v)),
       removeItem: (k) => localStore.delete(k)
     },
-    ZoneSession: { ensure: async () => ({ playerId: 'p-149', mode: 'guest' }) },
+    ZoneSession: { ensure: async () => ({ playerId: 'p-150', mode: 'guest' }) },
     addEventListener(type, fn) {
       if (!winListeners.has(type)) winListeners.set(type, []);
       winListeners.get(type).push(fn);
@@ -228,8 +247,15 @@ function createRpgHarness(apiHandler, opts = {}) {
       for (const fn of winListeners.get(ev.type) || []) fn(ev);
     },
     requestAnimationFrame: (fn) => { fn(); return 1; },
-    setTimeout: () => 1,
-    clearTimeout() {},
+    setTimeout: (fn, ms) => {
+      const id = nextTimerId++;
+      timers.push({ id, fn, ms, cleared: false });
+      return id;
+    },
+    clearTimeout: (id) => {
+      const t = timers.find((x) => x.id === id);
+      if (t) t.cleared = true;
+    },
     setInterval: () => 1,
     clearInterval() {},
     scrollTo() {},
@@ -265,10 +291,10 @@ function createRpgHarness(apiHandler, opts = {}) {
   win.Event = ctx.Event;
   win.MutationObserver = ctx.MutationObserver;
 
-  return { ctx, win, doc, bulletin, main, profileBody, navArea };
+  return { ctx, win, doc, timers, storySlot, main, profileBody, navArea };
 }
 
-test('index.html <head> & sw.js load v149 RPG Empire assets with 0 SHA-256 lock violations on <body>', () => {
+test('index.html <head> & sw.js load v150 RPG Empire assets with 0 SHA-256 lock violations on <body>', () => {
   const rawHtml = readBytes('index.html');
   const bodyIdx = rawHtml.indexOf(Buffer.from('<body>'));
   assert.ok(bodyIdx > 0, 'index.html must contain <body>');
@@ -279,9 +305,9 @@ test('index.html <head> & sw.js load v149 RPG Empire assets with 0 SHA-256 lock 
   );
 
   const head = rawHtml.subarray(0, bodyIdx).toString('utf8');
-  assert.match(head, /href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=149"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=149"/);
-  assert.doesNotMatch(head, /\?v=148\b/, 'all ?v=148 head references bumped to ?v=149');
+  assert.match(head, /href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=150"/);
+  assert.match(head, /src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=150"/);
+  assert.doesNotMatch(head, /\?v=149\b/, 'all ?v=149 head references bumped to ?v=150');
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'pinned gym116.css?v=117 preserved');
 
   for (const rel of ['assets/ui/zone-rpg-empire.css', 'assets/ui/zone-rpg-empire.js', 'sw.js']) {
@@ -293,12 +319,12 @@ test('index.html <head> & sw.js load v149 RPG Empire assets with 0 SHA-256 lock 
   }
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v149['"]/);
-  assert.match(swSrc, /zone-rpg-empire\.css\?v=149/);
-  assert.match(swSrc, /zone-rpg-empire\.js\?v=149/);
+  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v150['"]/);
+  assert.match(swSrc, /zone-rpg-empire\.css\?v=150/);
+  assert.match(swSrc, /zone-rpg-empire\.js\?v=150/);
 });
 
-test('zone-rpg-empire.css enforces Sketchbook Light & Dark >12:1 contrast, RTL typography, balanced braces, and fiber-safe ticker replacement', () => {
+test('zone-rpg-empire.css enforces Sketchbook Light & Dark >12:1 contrast, RTL typography, balanced braces, bulletin suppression, and compact HUD slot', () => {
   const css = readUtf8('assets/ui/zone-rpg-empire.css');
   const opens = (css.match(/\{/g) || []).length;
   const closes = (css.match(/\}/g) || []).length;
@@ -312,13 +338,16 @@ test('zone-rpg-empire.css enforces Sketchbook Light & Dark >12:1 contrast, RTL t
   assert.match(css, /Caveat Brush/);
   assert.match(css, /Noto Sans Arabic/);
   assert.match(css, /html\[dir="rtl"\]/);
-  assert.match(css, /data-zre-hydrated="1"\]\s*\[data-zticker="1"\]/);
+  assert.match(css, /\.zone-topbar\s+\.zone-bulletin\s*\{\s*display:\s*none\s*!important/s);
+  assert.match(css, /#ztl-hud-story-slot/);
+  assert.match(css, /#zre-sidebar-rank-row/);
+  assert.match(css, /#zone-rpg-route-section/);
 
   assert.ok(contrastRatio('#f3ecdc', '#141210') >= 12, 'Dark mode chalk ink >= 12:1');
   assert.ok(contrastRatio('#1e1b18', '#f2ebdc') >= 12, 'Light mode fountain-pen ink >= 12:1');
 });
 
-test('ZoneRpgEmpire hydrates Current Mission banner, Sidebar Rank card, contextual screens, EN/AR RTL, and all 5 v149 API workspaces', async () => {
+test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates all 10 routes cleanly, dispatches all 26+ actions, and auto-dismisses toasts after 4,000ms', async () => {
   const calls = [];
   const unlockedSkills = { street_instinct: true };
   let holdLevel = true;
@@ -433,11 +462,11 @@ test('ZoneRpgEmpire hydrates Current Mission banner, Sidebar Rank card, contextu
           faction: { id: 'fac-1', nameEn: 'Iron Lotus', tag: 'ILTS', vaultBalance: 450000, respect: 1200, members: [{ playerId: 'p-2', username: 'Viper', role: 'member' }] },
           directory: [{ id: 'fac-2', nameEn: 'Red Fang', nameAr: 'الناب الأحمر', tag: 'FANG', respect: 900 }],
           respectTree: { criminality: { crime_skill: 2 } },
-          organizedCrime: { id: 'oc-77', heistId: 'armored_van', slots: { mastermind: 'p-149' } },
+          organizedCrime: { id: 'oc-77', heistId: 'armored_van', slots: { mastermind: 'p-150' } },
           rankedWar: { ourScore: 14, theirScore: 9, targetLead: 25 },
           warCaches: { gold: 1 },
           loadout: { armorMitigationPct: 38, weaponMultiplier: 3.8, slots: { primary: 'ak', body: 'vest' } },
-          result: { messageEn: `Emp:${body?.action || 'snap'}` }
+          result: { action: body?.action || 'snap' }
         })
       };
     }
@@ -445,106 +474,134 @@ test('ZoneRpgEmpire hydrates Current Mission banner, Sidebar Rank card, contextu
     return { ok: true, status: 200, json: async () => ({}) };
   };
 
-  const { ctx, win, doc, bulletin, main } = createRpgHarness(apiHandler, { screen: 'missions', lang: 'en' });
+  const { ctx, win, doc, timers, storySlot, profileBody } = createRpgHarness(apiHandler, { screen: 'missions', lang: 'en' });
   runInContext(readUtf8('assets/ui/zone-rpg-empire.js'), ctx);
   await win.ZoneRpgEmpire.refreshAll();
 
-  // 1) Topbar Current Mission & Rank Banner hydrated cleanly
-  assert.equal(bulletin.getAttribute('data-zre-hydrated'), '1');
-  const banner = doc.getElementById('zre-mission-banner');
-  assert.ok(banner, '#zre-mission-banner mounted');
-  assert.match(banner.innerHTML, /Act I · Ch\.1: Dockside Blood — 3\/5 Objectives/);
-  assert.match(banner.innerHTML, /#4 Rookie → #5 Novice/);
-  assert.match(banner.innerHTML, /4 SP/);
-  assert.match(banner.innerHTML, /Promote Lv/);
+  // 1) ZERO legacy stacked banner/card/monolith clutter
+  assert.equal(doc.getElementById('zre-mission-banner'), null, '#zre-mission-banner eliminated');
+  assert.equal(doc.getElementById('zre-sidebar-rank-card'), null, '#zre-sidebar-rank-card eliminated');
+  assert.equal(doc.getElementById('zone-rpg-empire-deck'), null, '5-tab monolith eliminated');
+  assert.equal(win.ZoneRpgEmpire.getStore().feedback, null, 'Zero pre-open feedback banner on load');
 
-  // 2) Contextual screen mapping across required screens
-  for (const [scr, expectedTab] of [
-    ['missions', 'story'],
-    ['education', 'rpg'],
-    ['hof', 'rpg'],
-    ['city', 'activities'],
-    ['jobs', 'economy'],
-    ['market', 'economy'],
-    ['properties', 'economy'],
-    ['faction', 'empire'],
-    ['items', 'empire']
-  ]) {
-    main.setAttribute('data-zone-screen', scr);
-    win.ZoneRpgEmpire.renderAll();
-    assert.equal(win.ZoneRpgEmpire.getStore().activeTab, expectedTab, `Screen ${scr} -> tab ${expectedTab}`);
+  // 2) Compact #ztl-hud-story-slot & native sidebar row hydrated cleanly
+  assert.match(storySlot.innerHTML, /Act I · Ch\.1 \(3\/5\)/);
+  assert.match(storySlot.innerHTML, /#4 Rookie/);
+  assert.match(storySlot.innerHTML, /\+4 SP/);
+  const rankRow = doc.getElementById('zre-sidebar-rank-row');
+  assert.ok(rankRow && rankRow.parentElement === profileBody, '#zre-sidebar-rank-row inside .zone-profile-body');
+  assert.match(rankRow.innerHTML, /Rookie/);
+  assert.match(rankRow.innerHTML, /SP: 4/);
+
+  // 3) Non-RPG screens mount ZERO section
+  for (const cleanScr of ['gym', 'crimes', 'bank', 'hospital', 'jail', 'attack', 'hof', 'newspaper']) {
+    win.ZoneRpgEmpire.navigateTo(cleanScr);
+    assert.equal(doc.getElementById('zone-rpg-route-section'), null, `Zero RPG section on ${cleanScr}`);
   }
 
-  const deck = doc.getElementById('zone-rpg-empire-deck');
-
-  // 3) Tab 1: Story & Agents actions
-  win.ZoneRpgEmpire.openTab('story');
-  deck.dispatchClick({ 'data-zre-act': 'story-choice', 'data-chapter': 'act1_ch1', 'data-choice': 'syndicate' });
+  // 4) Route: missions -> Story Campaign & Mission Agents
+  win.ZoneRpgEmpire.navigateTo('missions');
+  let sec = doc.getElementById('zone-rpg-route-section');
+  assert.ok(sec && sec.getAttribute('data-zre-route') === 'missions');
+  assert.doesNotMatch(sec.innerHTML, /role="tablist"/, 'Zero 5-tab bar');
+  assert.doesNotMatch(sec.innerHTML, /Sync RPG|Minimize/, 'Zero Sync/Minimize header buttons');
+  sec.dispatchClick({ 'data-zre-act': 'story-choice', 'data-chapter': 'act1_ch1', 'data-choice': 'syndicate' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'story-boss', 'data-chapter': 'act1_ch1' });
+  sec.dispatchClick({ 'data-zre-act': 'story-boss', 'data-chapter': 'act1_ch1' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'story-claim', 'data-chapter': 'act1_ch1' });
+  sec.dispatchClick({ 'data-zre-act': 'story-claim', 'data-chapter': 'act1_ch1' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'agent-complete', 'data-id': 'c_1' });
+  sec.dispatchClick({ 'data-zre-act': 'agent-complete', 'data-id': 'c_1' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'agent-buy', 'data-id': 'xanax' });
-  await new Promise((r) => setTimeout(r, 10));
-
-  // 4) Tab 2: Leveling 2.0, 26-Rank & 4-Branch Skill Tree actions
-  win.ZoneRpgEmpire.openTab('rpg');
-  assert.match(deck.innerHTML, /Shadow Mastermind/);
-  assert.match(deck.innerHTML, /Warlord Enforcer/);
-  assert.match(deck.innerHTML, /Syndicate Mogul/);
-  assert.match(deck.innerHTML, /Bio-Alchemist/);
-  deck.dispatchClick({ 'data-zre-act': 'skill-unlock', 'data-node': 'silent_footsteps', 'data-branch': 'shadow' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'level-promote' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'rank-claim' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'work-train', 'data-stat': 'int' });
+  sec.dispatchClick({ 'data-zre-act': 'agent-buy', 'data-id': 'xanax' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 5) Tab 3: Spin Wheels, Dump, Loan Shark, Hunting & Racing actions
-  win.ZoneRpgEmpire.openTab('activities');
-  deck.dispatchClick({ 'data-zre-act': 'wheel-spin', 'data-wheel': 'awesome' });
+  // 5) Route: education -> 4-Branch Skill Tree, 26-Rank Matrix, Hold-Level & Working Stats
+  win.ZoneRpgEmpire.navigateTo('education');
+  sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /Shadow Mastermind/);
+  assert.match(sec.innerHTML, /Warlord Enforcer/);
+  assert.match(sec.innerHTML, /Syndicate Mogul/);
+  assert.match(sec.innerHTML, /Bio-Alchemist/);
+  sec.dispatchClick({ 'data-zre-act': 'skill-unlock', 'data-node': 'silent_footsteps', 'data-branch': 'shadow' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'dump-search' });
+  sec.dispatchClick({ 'data-zre-act': 'level-promote' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'loan-borrow' });
+  sec.dispatchClick({ 'data-zre-act': 'rank-claim' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'hunt-go', 'data-mode': 'master' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'race-track', 'data-track': 'zone_gp', 'data-car': 'civic_e' });
-  await new Promise((r) => setTimeout(r, 10));
-
-  // 6) Tab 4: Trades, Bazaars, Companies & Marriage actions
-  win.ZoneRpgEmpire.openTab('economy');
-  deck.dispatchClick({ 'data-zre-act': 'trade-create' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'trade-accept', 'data-trade': 'tr-101' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'bazaar-list' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'company-work' });
-  await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'marriage-propose' });
+  sec.dispatchClick({ 'data-zre-act': 'work-train', 'data-stat': 'int' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 7) Tab 5: Faction Empire, Respect Tree, 4-Role OC, Ranked War & 9-Slot Loadout
-  win.ZoneRpgEmpire.openTab('empire');
-  deck.dispatchClick({ 'data-zre-act': 'faction-create' });
+  // 6) Route: casino -> 3 Spin Wheels & Street Racing
+  win.ZoneRpgEmpire.navigateTo('casino');
+  sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /Wheel of Awesome/);
+  sec.dispatchClick({ 'data-zre-act': 'wheel-spin', 'data-wheel': 'awesome' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'respect-upgrade', 'data-branch': 'criminality', 'data-node': 'crime_skill' });
+  sec.dispatchClick({ 'data-zre-act': 'race-track', 'data-track': 'zone_gp', 'data-car': 'civic_e' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'oc-claim-slot', 'data-oc': 'oc-77', 'data-role': 'hacker' });
+
+  // 7) Route: city -> Dump, Loan Shark & Hunting
+  win.ZoneRpgEmpire.navigateTo('city');
+  sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /Zone City Dump/);
+  sec.dispatchClick({ 'data-zre-act': 'dump-search' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'oc-execute', 'data-oc': 'oc-77' });
+  sec.dispatchClick({ 'data-zre-act': 'loan-borrow' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'war-cache', 'data-tier': 'gold' });
+  sec.dispatchClick({ 'data-zre-act': 'hunt-go', 'data-mode': 'master' });
   await new Promise((r) => setTimeout(r, 10));
-  deck.dispatchClick({ 'data-zre-act': 'loadout-equip', 'data-slot': 'primary' });
+
+  // 8) Route: market -> Safe Trades & 0%-Tax Bazaars
+  win.ZoneRpgEmpire.navigateTo('market');
+  sec = doc.getElementById('zone-rpg-route-section');
+  sec.dispatchClick({ 'data-zre-act': 'trade-create' });
   await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'trade-accept', 'data-trade': 'tr-101' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'bazaar-list' });
+  await new Promise((r) => setTimeout(r, 10));
+
+  // 9) Route: jobs -> Player Companies
+  win.ZoneRpgEmpire.navigateTo('jobs');
+  sec = doc.getElementById('zone-rpg-route-section');
+  sec.dispatchClick({ 'data-zre-act': 'company-work' });
+  await new Promise((r) => setTimeout(r, 10));
+
+  // 10) Route: properties -> Marriage
+  win.ZoneRpgEmpire.navigateTo('properties');
+  sec = doc.getElementById('zone-rpg-route-section');
+  sec.dispatchClick({ 'data-zre-act': 'marriage-propose' });
+  await new Promise((r) => setTimeout(r, 10));
+
+  // 11) Route: items -> 9-Slot Loadout Paperdoll
+  win.ZoneRpgEmpire.navigateTo('items');
+  sec = doc.getElementById('zone-rpg-route-section');
+  sec.dispatchClick({ 'data-zre-act': 'loadout-equip', 'data-slot': 'primary' });
+  await new Promise((r) => setTimeout(r, 10));
+
+  // 12) Route: faction -> Faction Empire, Respect Tree, Crew OC & Ranked Wars + 4000ms auto-dismiss check
+  win.ZoneRpgEmpire.navigateTo('faction');
+  sec = doc.getElementById('zone-rpg-route-section');
+  sec.dispatchClick({ 'data-zre-act': 'faction-create' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'respect-upgrade', 'data-branch': 'criminality', 'data-node': 'crime_skill' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'oc-claim-slot', 'data-oc': 'oc-77', 'data-role': 'hacker' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'oc-execute', 'data-oc': 'oc-77' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'war-cache', 'data-tier': 'gold' });
+  await new Promise((r) => setTimeout(r, 10));
+  sec.dispatchClick({ 'data-zre-act': 'faction-leave' });
+  await new Promise((r) => setTimeout(r, 10));
+
+  assert.doesNotMatch(sec.innerHTML, /faction\.leave/, 'Raw action key "faction.leave" never rendered');
+  assert.ok(win.ZoneRpgEmpire.getStore().feedback, 'Human-readable feedback shown immediately');
+  const dismissTimer = timers.filter((t) => !t.cleared && t.ms === 4000).pop();
+  assert.ok(dismissTimer, '4,000ms auto-dismiss timer scheduled');
+  dismissTimer.fn();
+  assert.equal(win.ZoneRpgEmpire.getStore().feedback, null, 'Toast auto-dismissed after 4,000ms');
 
   const postedActions = calls.filter((c) => c.method === 'POST').map((c) => c.body?.action);
   for (const expectedAction of [
@@ -553,21 +610,21 @@ test('ZoneRpgEmpire hydrates Current Mission banner, Sidebar Rank card, contextu
     'skillTree.unlock', 'level.promote', 'rank.claimPromotion', 'workStats.train',
     'wheel.spin', 'dump.search', 'loan.borrow', 'hunt.expedition', 'race.enterTrack',
     'trade.create', 'trade.accept', 'bazaar.listItem', 'company.workShift', 'marriage.propose',
-    'faction.create', 'tree.upgrade', 'oc.claimSlot', 'oc.execute', 'war.claimCache', 'loadout.equipSlot'
+    'faction.create', 'faction.leave', 'tree.upgrade', 'oc.claimSlot', 'oc.execute', 'war.claimCache', 'loadout.equipSlot'
   ]) {
     assert.ok(postedActions.includes(expectedAction), `Dispatched ${expectedAction}`);
   }
 
-  // 8) Arabic RTL parity check
+  // 13) Arabic RTL parity check
   doc.documentElement.lang = 'ar';
   doc.documentElement.dir = 'rtl';
-  win.ZoneRpgEmpire.openTab('story');
-  assert.match(banner.innerHTML, /دماء الرصيف/);
-  assert.match(banner.innerHTML, /#4 مستجد ← #5 ناشئ/);
-  assert.match(deck.innerHTML, /قيادة القصة والرتب وإمبراطورية النقابة/);
+  win.ZoneRpgEmpire.navigateTo('missions');
+  assert.match(storySlot.innerHTML, /فصل 1 · ف1/);
+  assert.match(storySlot.innerHTML, /#4 مستجد/);
+  assert.match(doc.getElementById('zone-rpg-route-section').innerHTML, /طور القصة الدرامي/);
 });
 
-test('Playwright 4-way responsive & zero-overflow check across all 5 RPG tabs (390x844 mobile & 1440x900 desktop, Light/Dark, EN/AR RTL)', async (t) => {
+test('Playwright 4-way responsive & zero-overflow check across route-scoped RPG cards (390x844 mobile & 1440x900 desktop, Light/Dark, EN/AR RTL)', async (t) => {
   let playwrightMod = null;
   for (const candidate of [
     'playwright',
@@ -616,7 +673,7 @@ test('Playwright 4-way responsive & zero-overflow check across all 5 RPG tabs (3
     const u = new URL(req.url, 'http://127.0.0.1');
     if (u.pathname === '/api/v1/auth/session') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ playerId: 'p-149', mode: 'guest', expiresAt: Math.floor(nowMs / 1000) + 3600 }));
+      res.end(JSON.stringify({ playerId: 'p-150', mode: 'guest', expiresAt: Math.floor(nowMs / 1000) + 3600 }));
       return;
     }
     if (u.pathname.startsWith('/api/v1/story-campaign')) {
@@ -644,10 +701,35 @@ test('Playwright 4-way responsive & zero-overflow check across all 5 RPG tabs (3
       res.end(JSON.stringify({ faction: { id: 'fac-1', nameEn: 'Iron Lotus', tag: 'ILTS', vaultBalance: 250000, respect: 800, members: [] }, directory: [{ id: 'fac-2', nameEn: 'Red Fang', nameAr: 'الناب الأحمر', tag: 'FANG', respect: 500 }], respectTree: {}, organizedCrime: { id: 'oc-1', heistId: 'armored_van', slots: {} }, rankedWar: { ourScore: 10, theirScore: 6 }, warCaches: { gold: 1 }, loadout: { armorMitigationPct: 30, weaponMultiplier: 2.5, slots: { primary: 'ak', body: 'vest' } } }));
       return;
     }
+    if (u.pathname === '/api/v1/game/bootstrap') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        release: {
+          id: 'v150-live',
+          version: 8,
+          active: true,
+          manifest: {
+            schemaVersion: 1,
+            branding: { name: { en: 'ZONE', ar: 'زون' }, tagline: { en: '', ar: '' }, accent: '#a3d900' },
+            announcement: { enabled: false, text: { en: '', ar: '' } },
+            modules: {},
+            navigation: ['home', 'items', 'city', 'jobs', 'bank', 'gym', 'properties', 'education', 'crimes', 'missions', 'newspaper', 'jail', 'hospital', 'casino', 'hof', 'faction', 'elimination', 'attack', 'market'],
+            pages: []
+          }
+        },
+        content: {}
+      }));
+      return;
+    }
+    if (u.pathname === '/engine/theme.css') {
+      res.writeHead(200, { 'Content-Type': 'text/css; charset=utf-8' });
+      res.end('/* published theme */');
+      return;
+    }
     if (u.pathname === '/api/v1/gameplay' || u.pathname === '/api/v1/gameplay/action') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
-        player: { id: 'p-149', username: 'ShadowViper', level: 12, cash: 950000, bank_balance: 250000, energy: 100, max_energy: 150, nerve: 35, max_nerve: 45, happy: 500, max_happy: 2500, life: 500, max_life: 500, city: 'Zone City' },
+        player: { id: 'p-150', username: 'ShadowViper', level: 12, cash: 950000, bank_balance: 250000, energy: 100, max_energy: 150, nerve: 35, max_nerve: 45, happy: 500, max_happy: 2500, life: 500, max_life: 500, city: 'Zone City' },
         state: { version: 2, points: 50, merits: 6, prop: 'island', inv: { xanax: 2, glasses: 1, ak: 1, vest: 1 }, plushies: {}, eduDone: { bio: 1, hist: 1 }, skill: {}, cooldowns: { drugUntil: 0, medicalUntil: 0, boosterUntil: 0, overdoseCount: 0 }, addiction: 0, meritTree: {}, claimedHonors: {}, claimedMedals: {}, fac: { chain: 5, best: 10, respect: 500, ups: {} }, ctr: { crimes: 10, trains: 10, wins: 5, shifts: 2 }, claimed: {}, market: [], inmates: [], patients: [] },
         tornV2: { version: 'ZONE-TORN-148', cooldowns: { drugSeconds: 0, medicalSeconds: 0, boosterSeconds: 0, overdoseCount: 0 }, addiction: 0, vaultBalance: 50000, vaultCap: 1000000000, stocks: [], crimes2CatalogWithSkill: [] }
       }));
@@ -685,31 +767,38 @@ test('Playwright 4-way responsive & zero-overflow check across all 5 RPG tabs (3
       page.on('pageerror', (err) => pageErrors.push(err.message));
 
       await page.goto(`http://127.0.0.1:${port}/?screen=missions&lang=${sc.lang}`, { waitUntil: 'domcontentloaded' });
-      await page.waitForSelector('#zre-mission-banner', { timeout: 10000 });
-      await page.waitForSelector('#zone-rpg-empire-deck', { timeout: 10000 });
+      await page.waitForSelector('#ztl-hud-story-slot #zre-hud-story-pill', { timeout: 10000 });
+      await page.waitForSelector('#zone-rpg-route-section', { timeout: 10000 });
 
-      for (const tab of ['story', 'rpg', 'activities', 'economy', 'empire']) {
+      for (const route of ['missions', 'education', 'casino', 'city', 'market', 'jobs', 'properties', 'items', 'faction', 'home']) {
         await page.evaluate((cfg) => {
           document.documentElement.setAttribute('data-theme', cfg.theme);
-          window.ZoneRpgEmpire.openTab(cfg.tab);
-        }, { theme: sc.theme, tab });
-        await page.waitForTimeout(120);
+          window.ZoneRpgEmpire.navigateTo(cfg.route);
+        }, { theme: sc.theme, route });
+        await page.waitForTimeout(100);
 
         const m = await page.evaluate(() => {
-          const ticker = document.querySelector('.zone-bulletin [data-zticker="1"]');
+          const bulletin = document.querySelector('.zone-topbar .zone-bulletin');
+          const topbarRect = document.querySelector('.zone-topbar')?.getBoundingClientRect();
+          const stripRect = document.getElementById('zone-torn-hud-strip')?.getBoundingClientRect();
+          const combinedHeaderH = topbarRect && stripRect
+            ? Math.max(topbarRect.bottom, stripRect.bottom) - Math.min(topbarRect.top, stripRect.top)
+            : (topbarRect?.height || 0);
           return {
             overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
-            bannerH: document.getElementById('zre-mission-banner')?.offsetHeight || 0,
-            deckH: document.getElementById('zone-rpg-empire-deck')?.offsetHeight || 0,
-            tickerDisplay: ticker ? getComputedStyle(ticker).display : 'none',
+            combinedHeaderH,
+            slotH: document.getElementById('ztl-hud-story-slot')?.offsetHeight || 0,
+            secH: document.getElementById('zone-rpg-route-section')?.offsetHeight || 0,
+            bulletinDisplay: bulletin ? getComputedStyle(bulletin).display : 'none',
             dir: document.documentElement.dir
           };
         });
 
-        assert.equal(m.overflowX, 0, `Zero horizontal overflow at ${sc.width}x${sc.height} (${sc.lang}/${sc.theme}/${tab})`);
-        assert.ok(m.bannerH > 0, `Mission banner visible (${sc.lang}/${sc.theme}/${tab})`);
-        assert.ok(m.deckH > 0, `RPG Empire deck visible (${sc.lang}/${sc.theme}/${tab})`);
-        assert.equal(m.tickerDisplay, 'none', 'Dead "No events yet" ticker replaced cleanly');
+        assert.equal(m.overflowX, 0, `Zero horizontal overflow at ${sc.width}x${sc.height} (${sc.lang}/${sc.theme}/${route})`);
+        assert.ok(m.combinedHeaderH <= 96, `Header height ${m.combinedHeaderH}px <= 96px (${sc.width}x${sc.height})`);
+        assert.ok(m.slotH > 0 && m.slotH <= 28, `Compact HUD story slot visible (${m.slotH}px)`);
+        assert.ok(m.secH > 0, `Route section visible on ${route}`);
+        assert.equal(m.bulletinDisplay, 'none', 'Bulletin ticker hidden cleanly');
         assert.equal(m.dir, sc.lang === 'ar' ? 'rtl' : 'ltr');
       }
 

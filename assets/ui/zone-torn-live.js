@@ -1,7 +1,7 @@
 /* ==========================================================================
- * ZONE v148 - TORN CITY LIVE OPERATIONS, HUD STRIP & DIRECTORY DRAWER RUNTIME
+ * ZONE v150 - WHISPER-CLEAN TORN STATUS BAR, ROUTE-SCOPED SECTIONS & DRAWER
  * Hand-Drawn Watercolor Sketchbook Edition (Light + Dark + EN + AR RTL)
- * Exclusive Ownership: torn-ui-hub (assets/ui/zone-torn-live.js)
+ * Exclusive Ownership: ux-shell-torn148 (assets/ui/zone-torn-live.js)
  * Exposes: window.ZoneTornLive
  * Fiber-safe: append-only DOM mounts (.zone-topbar, #zone-main, document.body);
  *             never mutates or removes <x-dc> / React managed child nodes.
@@ -12,6 +12,8 @@
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
   if (window.__zoneTornLiveLoaded) return;
   window.__zoneTornLiveLoaded = true;
+
+  var FEEDBACK_TTL_MS = 4000;
 
   /* ------------------------------------------------------------------------
    * 1. STATIC TORN CATALOG DEFINITIONS (BILINGUAL EN + AR)
@@ -32,7 +34,8 @@
     { id: '13', slug: 'arson', altKey: 'arson', nerve: 9, enhancerId: 'windproof_lighter', en: 'Arson', ar: 'الحرق الجنائي', enhEn: 'Windproof Lighter', enhAr: 'قداحة مقاومة للرياح' }
   ];
 
-  var PHARMACY_ITEMS = [
+  /* 9 Consumables for `items` route (+ happyJump Conditioning Protocol) */
+  var ITEMS_PHARMACY_CATALOG = [
     { id: 'xanax', kind: 'drug', action: 'drug.use', odPct: '2.5%', cdEn: '7h Drug CD', cdAr: '٧س تهدئة مخدر', effEn: '+250 Energy', effAr: '+250 طاقة', en: 'Xanax', ar: 'زاناكس', price: 840000 },
     { id: 'ecstasy', kind: 'drug', action: 'drug.use', odPct: '4.0%', cdEn: '4h Drug CD', cdAr: '٤س تهدئة مخدر', effEn: '2x Happiness', effAr: 'مضاعفة المعنويات ×2', en: 'Ecstasy', ar: 'إكستاسي', price: 48000 },
     { id: 'vicodin', kind: 'drug', action: 'drug.use', odPct: '1.5%', cdEn: '5h Drug CD', cdAr: '٥س تهدئة مخدر', effEn: '+200 Life', effAr: '+200 صحة', en: 'Vicodin', ar: 'فيكودين', price: 35000 },
@@ -41,9 +44,26 @@
     { id: 'edvd', kind: 'booster', action: 'item.use', odPct: '0%', cdEn: '6h Booster CD', cdAr: '٦س تهدئة معزز', effEn: '+2,500 Happiness', effAr: '+2,500 معنويات', en: 'Erotic DVD', ar: 'قرص معنويات فائق', price: 3200000 },
     { id: 'fhc', kind: 'booster', action: 'item.use', odPct: '0%', cdEn: '6h Booster CD', cdAr: '٦س تهدئة معزز', effEn: '+150E · +500 Happy', effAr: '+150 طاقة · +500 معنويات', en: 'Feathery Hotel Coupon', ar: 'قسيمة فندق فيذري', price: 13500000 },
     { id: 'bloodbag', kind: 'medical', action: 'torn.bloodBag', actionArg: 'use', odPct: '0%', cdEn: '1h Med CD', cdAr: '١س تهدئة طبية', effEn: '+300 Life · -1h Hosp', effAr: '+300 صحة · -١س مستشفى', en: 'Blood Bag', ar: 'كيس دم وريدي', price: 22000 },
-    { id: 'morphine', kind: 'medical', action: 'item.use', odPct: '0%', cdEn: '1.5h Med CD', cdAr: '١.٥س تهدئة طبية', effEn: '+500 Life · -2h Hosp', effAr: '+500 صحة · -٢س مستشفى', en: 'Morphine', ar: 'مورفين طبي', price: 42000 },
-    { id: 'lawyer_card', kind: 'legal', action: 'torn.lawyerCard', actionArg: 'release', odPct: '0%', cdEn: 'Instant Release', cdAr: 'إفراج فوري', effEn: 'Clears Jail Time', effAr: 'إسقاط حكم السجن فوراً', en: 'Lawyer Business Card', ar: 'بطاقة المحامي', price: 95000 }
+    { id: 'morphine', kind: 'medical', action: 'item.use', odPct: '0%', cdEn: '1.5h Med CD', cdAr: '١.٥س تهدئة طبية', effEn: '+500 Life · -2h Hosp', effAr: '+500 صحة · -٢س مستشفى', en: 'Morphine', ar: 'مورفين طبي', price: 42000 }
   ];
+
+  var HOSPITAL_MED_ITEMS = [
+    ITEMS_PHARMACY_CATALOG[7],
+    ITEMS_PHARMACY_CATALOG[8]
+  ];
+
+  var LAWYER_CARD_SPEC = {
+    id: 'lawyer_card',
+    action: 'torn.lawyerCard',
+    actionArg: 'release',
+    cdEn: 'Instant Release',
+    cdAr: 'إفراج فوري',
+    effEn: 'Clears remaining Jail sentence immediately (100% legal immunity)',
+    effAr: 'إسقاط حكم السجن المتبقي فوراً بحصانة قانونية كاملة',
+    en: 'Lawyer Business Card',
+    ar: 'بطاقة المحامي المعتمد',
+    price: 95000
+  };
 
   var STOCK_CATALOG = [
     { ticker: 'SYM', blockShares: 500, basePrice: 680, en: 'Symbiotic Ltd.', ar: 'مجموعة سيمبيوتيك', perkEn: '1x Xanax / Drug Pack (7d)', perkAr: 'حزمة زاناكس طبية / 7 أيام' },
@@ -97,21 +117,38 @@
 
   var CHAIN_MILESTONES = [10, 25, 50, 100, 250, 500, 1000];
 
-  var AUTO_DECK_SCREENS = {
-    home: 'crimes',
+  /* Strict 1-Route-1-Purpose Mounting Table (ONLY these 9 routes mount a Torn card;
+   * home, gym, attack, education, jobs, casino, missions, hof, newspaper, elimination mount ZERO!) */
+  var ROUTE_SECTIONS = {
+    crimes: true,
+    items: true,
+    bank: true,
+    market: true,
+    properties: true,
+    city: true,
+    hospital: true,
+    jail: true,
+    faction: true
+  };
+
+  var LEGACY_TAB_TO_ROUTE = {
     crimes: 'crimes',
-    jail: 'crimes',
-    items: 'pharmacy',
-    bank: 'economy',
-    properties: 'economy',
-    city: 'travel',
-    market: 'travel',
-    faction: 'faction',
-    elimination: 'faction',
-    hospital: 'directory',
-    attack: 'directory',
-    newspaper: 'directory',
-    hof: 'directory'
+    pharmacy: 'items',
+    items: 'items',
+    points: 'market',
+    market: 'market',
+    economy: 'bank',
+    stocks: 'bank',
+    bank: 'bank',
+    vault: 'properties',
+    properties: 'properties',
+    travel: 'city',
+    airport: 'city',
+    museum: 'city',
+    city: 'city',
+    hospital: 'hospital',
+    jail: 'jail',
+    faction: 'faction'
   };
 
   /* ------------------------------------------------------------------------
@@ -119,31 +156,14 @@
    * ------------------------------------------------------------------------ */
   var COPY = {
     en: {
-      opsPill: 'Syndicate Ops',
       drugCd: 'Drug',
       medCd: 'Med',
       boostCd: 'Booster',
       ready: 'Ready',
       addictWarn: 'Addiction',
       chainLbl: 'Chain',
-      flightRem: 'remaining',
-      abroadTag: 'Abroad',
-      searchBtn: 'Directory',
+      playersBtn: 'Players',
       eventsBtn: 'Events',
-      deckEyebrow: 'V148 SERVER-AUTHORITATIVE TORN CORE',
-      deckTitle: 'Syndicate Live Operations Deck',
-      deckSub: 'Real server-settled Crimes 2.0, Pharmacy & Cooldowns, 8-Ticker Stocks, Bank CDs, 11-City Smuggling, Faction Chains & Live Player Profiles.',
-      refreshBtn: 'Sync Live',
-      collapseBtn: 'Minimize',
-      expandBtn: 'Open Deck',
-      tabs: {
-        crimes: 'Crimes 2.0',
-        pharmacy: 'Pharmacy & Points',
-        economy: 'Stocks & Vault',
-        travel: 'Airport & Museum',
-        faction: 'Chain & Wall',
-        directory: 'Players & Events'
-      },
       crimesTitle: 'Crimes 2.0 Live Board (13 Archetypes · Server 4-Tier Rolls)',
       crimesNote: 'Spends real Nerve, scales 0-100 Skill, checks owned Enhancers (+12%), and settles Critical Fail / Fail / Success / Unique Loot.',
       skillLbl: 'Skill',
@@ -159,14 +179,15 @@
       shopliftAct: 'Shoplift',
       searchModTitle: 'Search for Cash Live Street Modifiers',
       searchAct: 'Search (2N)',
-      pharmTitle: 'Pharmacy, Cooldowns, Happy Jump & Rehab',
+      pharmTitle: 'Pharmacy & Medical Consumables',
       pharmNote: 'Enforces server Drug, Medical (6h cap), and Booster (24h cap) cooldowns plus Overdose & Addiction.',
-      addictionMeter: 'Addiction & Overdose Status',
+      addictionMeter: 'Clinical Addiction & Overdose Rehabilitation',
       rehabBtn: 'Clinical Rehab',
       happyJumpTitle: 'Happy Jump Conditioning Protocol',
       happyJumpDesc: 'Consumes owned Xanax + eDVD + Ecstasy (or $120k stack pack) when Drug CD is clear.',
       happyJumpBtn: 'Run Happy Jump',
       pointsTitle: 'Points Building Refills (1 / UTC Day)',
+      pointsNote: 'Instant 25-Point Energy & Nerve refills settled directly on the server.',
       refillEnergyBtn: 'Refill Energy (25 pts)',
       refillNerveBtn: 'Refill Nerve (25 pts)',
       ownedLbl: 'Owned',
@@ -175,7 +196,6 @@
       drawBloodBtn: 'Draw Blood (-15% HP)',
       stocksTitle: 'Zone Stock Exchange (8 Tickers & 7-Day Benefit Blocks)',
       stocksNote: 'Prices update live every 5 minutes. Own the full Benefit Block and wait for maturity to claim dividends.',
-      sharesOwned: 'Owned',
       blockProg: 'Benefit Block',
       buyShares: 'Buy Shares',
       sellShares: 'Sell (-1%)',
@@ -187,18 +207,18 @@
       lockCdBtn: 'Lock Term CD',
       claimCdBtn: 'Claim Matured CD',
       cdActiveLbl: 'Active Term CD',
-      vaultTitle: 'Property Cash Vault (100% PvP Mug-Protected) & Estate Staff',
+      vaultTitle: 'Property Cash Vault (100% PvP Mug-Protected) & Private Island Staff',
+      vaultNote: 'Cash stored in your Property Vault cannot be mugged in PvP combat.',
       depositVault: 'Deposit to Vault',
       withdrawVault: 'Withdraw Cash',
       hireStaff: 'Hire Staff',
       hiredTag: 'Hired ✓',
-      airportTitle: 'Zone International Airport & 11 Smuggling Markets',
+      airportTitle: 'Zone International Airport & 11 Foreign Markets',
       airstripActive: 'Private Airstrip Active (-30% Flight Time · $0 Fare · +10 Cargo)',
       airstripNone: 'Standard Commercial Charter (5 Base Luggage)',
       luggageLbl: 'Luggage Capacity',
       flyBtn: 'Fly',
       flyHomeBtn: 'Fly Home to Zone City',
-      inFlightTitle: 'In-Flight Radar Telemetry',
       foreignShopTitle: 'Foreign City Market Inventory (Global 15m Restock)',
       stockLeft: 'In Stock',
       zurichTitle: 'Zurich Switzerland Addiction Rehabilitation Clinic',
@@ -211,6 +231,13 @@
       histUnlocked: 'History (hist) Course Completed ✓',
       histRequired: 'Requires University History (hist) Course',
       enrollHistBtn: 'Enroll History (hist)',
+      hospWardTitle: 'Live Ward Player Revives (25E Bio / 75E Base)',
+      hospWardEmpty: 'No hospitalized players waiting in the ward right now.',
+      hospMedTitle: 'Blood Bags & Field Medical Supplies',
+      openDirBtn: 'Open Player Directory',
+      jailLegalTitle: 'Lawyer Business Card — Instant Legal Release',
+      jailLegalNote: 'Use an owned Lawyer Business Card to clear active Jail time immediately without Nerve risk.',
+      releaseNowBtn: 'Use Lawyer Card (Release)',
       chainTitle: 'Shared Faction 5-Minute Chain Bar',
       armoryTitle: 'Shared Faction Armory (Deposit & Loan)',
       depositArmory: 'Deposit +1',
@@ -218,12 +245,10 @@
       wallTitle: 'Territory Wall Live Tug-of-War',
       joinWallBtn: 'Join Wall (5E)',
       assaultWallBtn: 'Assault Wall (25E)',
-      openFactionBtn: 'Open Faction Screen',
       dirTitle: 'Player Directory & Searchable Profiles',
       searchPlaceholder: 'Search player name or ID...',
       searchGo: 'Search',
       hospPlayersTitle: 'Hospitalized Operatives (Live Revive)',
-      profileTitle: 'Operative Torn Profile Card',
       attackBtn: 'Attack (25E)',
       reviveBtn: 'Revive',
       bountyBtn: 'Place Bounty',
@@ -240,34 +265,17 @@
       kvAwardsWins: 'Awards / Wins',
       mailPlaceholder: 'Write mail to ',
       noEvents: 'No recent events logged yet.',
-      loadOperativesHint: 'Click Search / Sync Live to load active operatives.'
+      loadOperativesHint: 'Click Search to load active operatives.'
     },
     ar: {
-      opsPill: 'عمليات تورن',
       drugCd: 'مخدر',
       medCd: 'طبي',
       boostCd: 'معزز',
       ready: 'جاهز',
       addictWarn: 'إدمان',
       chainLbl: 'السلسلة',
-      flightRem: 'متبقٍ',
-      abroadTag: 'بالخارج',
-      searchBtn: 'دليل اللاعبين',
+      playersBtn: 'اللاعبون',
       eventsBtn: 'الأحداث',
-      deckEyebrow: 'منظومة تورن الحية المعتمدة على الخادم v148',
-      deckTitle: 'منصة عمليات النقابة المباشرة',
-      deckSub: 'جرائم 2.0 الحقيقية، الصيدلية والتهدئة، بورصة الأسهم، ودائع البنك، السفر لـ 11 مدينة، سلاسل العائلة وملفات اللاعبين.',
-      refreshBtn: 'مزامنة حية',
-      collapseBtn: 'تصغير',
-      expandBtn: 'فتح المنصة',
-      tabs: {
-        crimes: 'الجرائم 2.0',
-        pharmacy: 'الصيدلية والنقاط',
-        economy: 'الأسهم والخزنة',
-        travel: 'المطار والمتحف',
-        faction: 'السلسلة والجدار',
-        directory: 'اللاعبون والأحداث'
-      },
       crimesTitle: 'لوحة الجرائم 2.0 الحية (13 تخصصاً · نتائج خادم رباعية)',
       crimesNote: 'تستهلك الجرأة الفعلية، وترفع المهارة 0-100، وتفحص أداة التعزيز (+12%)، وتحسب الفشل الحرج / النجاح / الغنيمة النادرة.',
       skillLbl: 'المهارة',
@@ -283,14 +291,15 @@
       shopliftAct: 'سرقة متجر',
       searchModTitle: 'مؤشرات البحث عن النقد الميدانية الحية',
       searchAct: 'بحث (2 جرأة)',
-      pharmTitle: 'الصيدلية، التهدئة، قفزة المعنويات والتأهيل',
+      pharmTitle: 'الصيدلية والمستهلكات الطبية والمعززات',
       pharmNote: 'تطبق أوقات تهدئة المخدرات والطب (سقف 6س) والمعززات (سقف 24س) ومخاطر الجرعة الزائدة والإدمان.',
-      addictionMeter: 'مؤشر الإدمان والجرعات الزائدة',
+      addictionMeter: 'عيادة تأهيل الإدمان والجرعات الزائدة',
       rehabBtn: 'علاج الإدمان',
       happyJumpTitle: 'بروتوكول قفزة المعنويات (Happy Jump)',
       happyJumpDesc: 'يستهلك زاناكس + eDVD + إكستاسي (أو حزمة السوق بـ $120k) عند خلو تهدئة المخدرات.',
       happyJumpBtn: 'تنفيذ قفزة المعنويات',
       pointsTitle: 'مبنى النقاط للتعبئة الفورية (مرة يومياً)',
+      pointsNote: 'تعبئة فورية للطاقة والجرأة مقابل 25 نقطة مباشرة عبر الخادم.',
       refillEnergyBtn: 'تعبئة الطاقة (25 نقطة)',
       refillNerveBtn: 'تعبئة الجرأة (25 نقطة)',
       ownedLbl: 'مملوك',
@@ -299,7 +308,6 @@
       drawBloodBtn: 'سحب كيس دم (-15% صحة)',
       stocksTitle: 'بورصة زون الحية (8 أسهم وحزم عوائد أسبوعية)',
       stocksNote: 'تتحدث الأسعار كل 5 دقائق. امتلك الحزمة الكاملة وانتظر الاستحقاق لتحصيل العائد.',
-      sharesOwned: 'الأسهم المملوكة',
       blockProg: 'حزمة العائد',
       buyShares: 'شراء أسهم',
       sellShares: 'بيع (-1%)',
@@ -311,7 +319,8 @@
       lockCdBtn: 'ربط وديعة لأجل',
       claimCdBtn: 'صرف الوديعة المستحقة',
       cdActiveLbl: 'الوديعة النشطة',
-      vaultTitle: 'خزنة العقار المحصنة من النشل وطاقم الجزيرة',
+      vaultTitle: 'خزنة العقار المحصنة من النشل وطاقم الجزيرة الخاصة',
+      vaultNote: 'الأموال المودعة في خزنة العقار محمية بنسبة 100% من النشل.',
       depositVault: 'إيداع في الخزنة',
       withdrawVault: 'سحب من الخزنة',
       hireStaff: 'تعيين الطاقم',
@@ -322,7 +331,6 @@
       luggageLbl: 'سعة الأمتعة',
       flyBtn: 'سفر',
       flyHomeBtn: 'العودة إلى مدينة زون',
-      inFlightTitle: 'رادار الرحلة الجوية المباشر',
       foreignShopTitle: 'مخزون السوق الخارجي (تحديث عالمي كل 15 دقيقة)',
       stockLeft: 'المتوفر',
       zurichTitle: 'عيادة زيورخ السويسرية لعلاج الإدمان',
@@ -335,6 +343,13 @@
       histUnlocked: 'مساق التاريخ (hist) مكتمل ✓',
       histRequired: 'يتطلب إتمام مساق التاريخ (hist) في الجامعة',
       enrollHistBtn: 'التسجيل في مساق التاريخ',
+      hospWardTitle: 'إنعاش مصابي الجناح الطبي المباشر (25 أو 75 طاقة)',
+      hospWardEmpty: 'لا يوجد مصابون في جناح المستشفى حالياً.',
+      hospMedTitle: 'أكياس الدم والإمدادات الطبية الوريدية',
+      openDirBtn: 'فتح دليل اللاعبين',
+      jailLegalTitle: 'بطاقة المحامي المعتمد — إفراج قانوني فوري',
+      jailLegalNote: 'استخدم بطاقة المحامي لإسقاط عقوبة السجن فوراً دون مخاطرة بالجرأة.',
+      releaseNowBtn: 'استخدام بطاقة المحامي (إفراج)',
       chainTitle: 'سلسلة ضربات العائلة المشتركة (عداد 5 دقائق)',
       armoryTitle: 'مخزن أسلحة وإمدادات العائلة المشترك',
       depositArmory: 'إيداع +1',
@@ -342,12 +357,10 @@
       wallTitle: 'جدار حرب القطاع المباشر',
       joinWallBtn: 'التمركز بالجدار (5 طاقة)',
       assaultWallBtn: 'اقتحام الجدار (25 طاقة)',
-      openFactionBtn: 'فتح شاشة العائلة',
       dirTitle: 'دليل اللاعبين والملفات الشخصية التفاعلية',
       searchPlaceholder: 'ابحث باسم اللاعب أو رقمه...',
       searchGo: 'بحث',
       hospPlayersTitle: 'مصابو المستشفى المتاحون للإنعاش',
-      profileTitle: 'بطاقة ملف العميل',
       attackBtn: 'هجوم (25 طاقة)',
       reviveBtn: 'إنعاش طبي',
       bountyBtn: 'رصد مكافأة',
@@ -364,13 +377,14 @@
       kvAwardsWins: 'الأوسمة / الانتصارات',
       mailPlaceholder: 'اكتب برقية إلى ',
       noEvents: 'لا توجد أحداث مسجلة بعد.',
-      loadOperativesHint: 'اضغط بحث أو مزامنة حية لتحميل قائمة العملاء.'
+      loadOperativesHint: 'اضغط بحث لتحميل قائمة العملاء النشطين.'
     }
   };
 
   /* ------------------------------------------------------------------------
    * 3. RUNTIME STORE & DRAFT INPUT PRESERVATION
    * ------------------------------------------------------------------------ */
+  var feedbackTimer = null;
   var store = {
     gameplay: null,
     foreignMarket: null,
@@ -380,12 +394,9 @@
     selectedProfile: null,
     hospitalPatients: [],
     busy: false,
-    feedback: null, // { text, tone }
-    lastCrimeOutcome: null, // { crimeId, tier, text, loot, deltaCash }
-    activeTab: 'crimes',
-    userPinnedTab: false,
-    deckForceOpen: false,
-    deckCollapsed: false,
+    feedback: null, // { text, tone } — strictly null on boot, auto-dismisses after 4000ms
+    feedbackAt: 0,
+    lastCrimeOutcome: null, // { crimeId, tier, text, loot, at }
     drawerOpen: false,
     drawerMode: 'both', // 'events' | 'directory' | 'both'
     lastScreen: '',
@@ -456,6 +467,19 @@
     var pad = function (x) { return x < 10 ? '0' + x : String(x); };
     if (h > 0) return pad(h) + ':' + pad(m) + ':' + pad(r);
     return pad(m) + ':' + pad(r);
+  }
+
+  function getActiveScreen() {
+    var main = document.getElementById('zone-main');
+    if (main) {
+      var attr = main.getAttribute('data-zone-screen');
+      if (attr) return String(attr).toLowerCase();
+    }
+    try {
+      var qp = new URLSearchParams(window.location.search || '').get('screen');
+      if (qp) return String(qp).toLowerCase();
+    } catch (_) {}
+    return 'home';
   }
 
   /* ------------------------------------------------------------------------
@@ -828,11 +852,43 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 6. MUTATION DISPATCHERS (100% SERVER-SETTLED)
+   * 6. MUTATION DISPATCHERS & 4,000MS AUTO-DISMISSING FEEDBACK TOAST
    * ------------------------------------------------------------------------ */
-  function setFeedback(text, tone) {
-    store.feedback = text ? { text: String(text), tone: tone || 'sage' } : null;
+  function dismissFeedback() {
+    if (feedbackTimer) {
+      window.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+    }
+    store.feedback = null;
+    store.feedbackAt = 0;
+    store.lastCrimeOutcome = null;
     renderAll();
+  }
+
+  function setFeedback(text, tone) {
+    if (feedbackTimer) {
+      window.clearTimeout(feedbackTimer);
+      feedbackTimer = null;
+    }
+    if (!text) {
+      store.feedback = null;
+      store.feedbackAt = 0;
+      renderAll();
+      return;
+    }
+    var stampedAt = Date.now();
+    store.feedback = { text: String(text), tone: tone || 'sage' };
+    store.feedbackAt = stampedAt;
+    renderAll();
+
+    feedbackTimer = window.setTimeout(function () {
+      if (store.feedback && store.feedbackAt === stampedAt && (Date.now() - stampedAt >= 3900)) {
+        store.feedback = null;
+        store.feedbackAt = 0;
+        store.lastCrimeOutcome = null;
+        renderAll();
+      }
+    }, FEEDBACK_TTL_MS);
   }
 
   async function execGameplayAction(action, id, expectedPrice) {
@@ -873,7 +929,7 @@
         var summary = rawTier + (delta ? (' · ' + (delta > 0 ? '+' : '') + fmtMoney(delta)) : '') +
           (skDelta !== null ? (' · Skill ' + (skDelta >= 0 ? '+' : '') + skDelta) : '') +
           (loot ? (' · Loot: ' + loot) : '');
-        store.lastCrimeOutcome = { crimeId: String(id), tier: rawTier, text: summary, loot: loot };
+        store.lastCrimeOutcome = { crimeId: String(id), tier: rawTier, text: summary, loot: loot, at: Date.now() };
         var tone = rawTier.indexOf('UNIQUE') >= 0 ? 'unique' : (rawTier.indexOf('CRITICAL') >= 0 ? 'bad' : (rawTier === 'FAIL' ? 'warn' : 'sage'));
         setFeedback(summary, tone);
       } else {
@@ -1040,25 +1096,51 @@
     }
   }
 
+  function navigateToScreen(screen) {
+    var target = String(screen || 'home').toLowerCase();
+    if (window.ZoneMeritsUI && typeof window.ZoneMeritsUI.isOpen === 'function' && window.ZoneMeritsUI.isOpen()) {
+      try { window.ZoneMeritsUI.close(); } catch (_) {}
+    }
+    var g = window.__zoneGame;
+    if (g && typeof g.go === 'function') {
+      try { g.go(target); } catch (_) {}
+    }
+    var main = document.getElementById('zone-main');
+    if (main && (!g || String(main.getAttribute('data-zone-screen') || '').toLowerCase() !== target)) {
+      main.setAttribute('data-zone-screen', target);
+    }
+    if (target === 'city') loadForeignMarketState();
+    else if (target === 'faction') loadFactionChainState();
+    else if (target === 'hospital') loadHospitalPatients();
+    renderAll();
+  }
+
   function execAttackPlayer(profile) {
     if (!profile) return;
     closeDrawer();
     var g = window.__zoneGame;
-    if (g) {
-      if (typeof g.setCombatMode === 'function') {
-        try { g.setCombatMode('players'); } catch (_) {}
-      }
-      if (typeof g.go === 'function') {
-        g.go('attack');
-      }
+    if (g && typeof g.setCombatMode === 'function') {
+      try { g.setCombatMode('players'); } catch (_) {}
     }
+    navigateToScreen('attack');
     setFeedback('Opened PvP Combat Arena targeting ' + (profile.username || profile.id) + '.', 'gold');
   }
 
   /* ------------------------------------------------------------------------
-   * 7. WORKSPACE HTML RENDERERS (6 REAL INTERACTIVE TORN WORKSPACES)
+   * 7. ROUTE-SCOPED NATIVE WATERCOLOR SECTION RENDERERS (9 ROUTES ONLY)
    * ------------------------------------------------------------------------ */
-  function renderCrimesWorkspace() {
+  function renderFeedbackHtml() {
+    if (!store.feedback) return '';
+    return (
+      '<div class="ztl-feedback" role="status" data-tone="' + esc(store.feedback.tone) + '">' +
+        '<span>' + esc(store.feedback.text) + '</span>' +
+        '<button type="button" class="ztl-btn" data-ztl-act="clear-feedback" aria-label="Dismiss">✕</button>' +
+      '</div>'
+    );
+  }
+
+  /* Route 1: `crimes` ONLY -> Crimes 2.0 Board (13 Archetypes, Skill 0-100, Enhancers, Rotating Security) */
+  function renderCrimesSection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
@@ -1134,7 +1216,6 @@
     }
     cardsHtml += '</div>';
 
-    /* Rotating Shoplifting Security */
     var shops = Array.isArray(ctx.tornV2.shopliftingSecurity) && ctx.tornV2.shopliftingSecurity.length
       ? ctx.tornV2.shopliftingSecurity
       : [
@@ -1164,7 +1245,6 @@
     }
     shopsHtml += '</div>';
 
-    /* Search for Cash Live Modifiers */
     var mods = Array.isArray(ctx.tornV2.searchForCashModifiers) && ctx.tornV2.searchForCashModifiers.length
       ? ctx.tornV2.searchForCashModifiers
       : [
@@ -1213,18 +1293,16 @@
     );
   }
 
-  function renderPharmacyWorkspace() {
+  /* Route 2: `items` ONLY -> Pharmacy & Medical Consumables (xanax..morphine + happyJump) */
+  function renderItemsPharmacySection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
     var cds = getLiveCooldowns();
-    var pointsNow = Number(ctx.state.points != null ? ctx.state.points : ctx.player.points || 0);
-    var rehabCost = Math.max(10000, cds.addiction * 15000);
-    var refillsUsed = ctx.tornV2.pointsRefillsUsedToday || {};
 
     var itemsHtml = '<div class="ztl-grid-cards">';
-    for (var i = 0; i < PHARMACY_ITEMS.length; i++) {
-      var it = PHARMACY_ITEMS[i];
+    for (var i = 0; i < ITEMS_PHARMACY_CATALOG.length; i++) {
+      var it = ITEMS_PHARMACY_CATALOG[i];
       var owned = Math.max(0, Number(ctx.inv[it.id] || 0));
       var cdBlocked =
         (it.kind === 'drug' && cds.drugSec > 0) ||
@@ -1253,55 +1331,33 @@
     }
     itemsHtml += '</div>';
 
-    var addPct = Math.min(100, cds.addiction * 5);
     return (
-      '<div class="ztl-workspace" data-workspace="pharmacy">' +
+      '<div class="ztl-workspace" data-workspace="items">' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head">' +
-            '<h3 class="ztl-section-title">' + esc(copy.addictionMeter) + '</h3>' +
+            '<h3 class="ztl-section-title">' + esc(copy.pharmTitle) + '</h3>' +
             '<div class="ztl-row-actions">' +
               '<span class="ztl-chip" data-tone="' + (cds.drugSec > 0 ? 'crimson' : 'sage') + '">' + esc(copy.drugCd) + ': <bdi data-ztl-cd="drug">' + (cds.drugSec > 0 ? fmtClock(cds.drugSec) : copy.ready) + '</bdi></span>' +
               '<span class="ztl-chip" data-tone="' + (cds.medSec > 0 ? 'gold' : 'sage') + '">' + esc(copy.medCd) + ': <bdi data-ztl-cd="med">' + (cds.medSec > 0 ? fmtClock(cds.medSec) : copy.ready) + '</bdi></span>' +
               '<span class="ztl-chip" data-tone="' + (cds.boostSec > 0 ? 'blue' : 'sage') + '">' + esc(copy.boostCd) + ': <bdi data-ztl-cd="boost">' + (cds.boostSec > 0 ? fmtClock(cds.boostSec) : copy.ready) + '</bdi></span>' +
             '</div>' +
           '</div>' +
-          '<div class="ztl-meter">' +
-            '<div class="ztl-meter-row"><span>' + esc(copy.addictWarn) + ': <bdi>' + cds.addiction + '%</bdi> · OD: <bdi>' + cds.odCount + '</bdi></span><bdi>' + fmtMoney(rehabCost) + '</bdi></div>' +
-            '<div class="ztl-meter-track"><div class="ztl-meter-fill" data-tone="crimson" style="width:' + addPct + '%"></div></div>' +
-          '</div>' +
-          '<div class="ztl-row-actions">' +
-            '<button type="button" class="ztl-btn" data-variant="gold" data-ztl-act="rehab"' + ((cds.addiction <= 0 && cds.odCount <= 0) || store.busy ? ' disabled' : '') + '>' +
-              esc(copy.rehabBtn) + ' <bdi>(' + fmtMoney(rehabCost) + ')</bdi>' +
-            '</button>' +
-            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="happy-jump"' + (cds.drugSec > 0 || store.busy ? ' disabled' : '') + '>' +
-              esc(copy.happyJumpBtn) +
-            '</button>' +
-          '</div>' +
-          '<span class="ztl-section-note">' + esc(copy.happyJumpDesc) + '</span>' +
-        '</section>' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head">' +
-            '<h3 class="ztl-section-title">' + esc(copy.pointsTitle) + '</h3>' +
-            '<bdi class="ztl-chip" data-tone="gold">Points: ' + fmtInt(pointsNow) + '</bdi>' +
-          '</div>' +
-          '<div class="ztl-row-actions">' +
-            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="points-energy"' + (pointsNow < 25 || refillsUsed.energy || store.busy ? ' disabled' : '') + '>' +
-              esc(copy.refillEnergyBtn) +
-            '</button>' +
-            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="points-nerve"' + (pointsNow < 25 || refillsUsed.nerve || store.busy ? ' disabled' : '') + '>' +
-              esc(copy.refillNerveBtn) +
-            '</button>' +
-          '</div>' +
-        '</section>' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.pharmTitle) + '</h3><span class="ztl-section-note">' + esc(copy.pharmNote) + '</span></div>' +
+          '<span class="ztl-section-note">' + esc(copy.pharmNote) + '</span>' +
           itemsHtml +
+          '<div class="ztl-card" data-ztl-happy-jump="1">' +
+            '<div class="ztl-card-top">' +
+              '<span class="ztl-card-title">' + esc(copy.happyJumpTitle) + '</span>' +
+              '<button type="button" class="ztl-btn" data-variant="gold" data-ztl-act="happy-jump"' + (cds.drugSec > 0 || store.busy ? ' disabled' : '') + '>' + esc(copy.happyJumpBtn) + '</button>' +
+            '</div>' +
+            '<span class="ztl-card-meta">' + esc(copy.happyJumpDesc) + '</span>' +
+          '</div>' +
         '</section>' +
       '</div>'
     );
   }
 
-  function renderEconomyWorkspace() {
+  /* Route 3: `bank` ONLY -> Zone Stock Exchange (8 Tickers & Benefit Blocks) + Bank Term CDs */
+  function renderBankEconomySection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
@@ -1350,7 +1406,6 @@
     }
     stockRowsHtml += '</div>';
 
-    /* Bank Term CD */
     var activeCd = ctx.tornV2.activeCd || ctx.state.activeCd || (ctx.state.tornState && ctx.state.tornState.activeCd) || null;
     var cdMaturesAt = activeCd ? Number(activeCd.maturesAt || 0) : 0;
     if (cdMaturesAt > 0 && cdMaturesAt < 1e11) cdMaturesAt *= 1000;
@@ -1377,9 +1432,67 @@
       termOpts += '<option value="' + tm + '"' + (store.drafts.cdTerm === tm ? ' selected' : '') + '>' + tm + '</option>';
     }
 
-    /* Property Cash Vault & Island Staff */
+    return (
+      '<div class="ztl-workspace" data-workspace="bank">' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.stocksTitle) + '</h3><span class="ztl-section-note">' + esc(copy.stocksNote) + '</span></div>' +
+          stockRowsHtml +
+        '</section>' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.bankCdTitle) + '</h3></div>' +
+          cdActiveHtml +
+          '<div class="ztl-row-actions">' +
+            '<input type="number" min="5000" step="5000" class="ztl-input" data-ztl-draft="cdPrincipal" value="' + esc(store.drafts.cdPrincipal) + '" placeholder="' + esc(copy.principalLbl) + '" aria-label="CD Principal">' +
+            '<select class="ztl-select" data-ztl-draft="cdTerm" aria-label="CD Term">' + termOpts + '</select>' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="bank-lock-cd"' + (Boolean(activeCd && !cdMatured) || store.busy ? ' disabled' : '') + '>' + esc(copy.lockCdBtn) + '</button>' +
+          '</div>' +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route 4: `market` ONLY -> Points Building Refills (25 pts Energy / Nerve) */
+  function renderMarketPointsSection() {
+    var copy = L();
+    var ctx = getPlayerAndState();
+    var pointsNow = Number(ctx.state.points != null ? ctx.state.points : ctx.player.points || 0);
+    var refillsUsed = ctx.tornV2.pointsRefillsUsedToday || {};
+
+    return (
+      '<div class="ztl-workspace" data-workspace="market">' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head">' +
+            '<h3 class="ztl-section-title">' + esc(copy.pointsTitle) + '</h3>' +
+            '<bdi class="ztl-chip" data-tone="gold">Points: ' + fmtInt(pointsNow) + '</bdi>' +
+          '</div>' +
+          '<span class="ztl-section-note">' + esc(copy.pointsNote) + '</span>' +
+          '<div class="ztl-row-actions">' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="points-energy"' + (pointsNow < 25 || refillsUsed.energy || store.busy ? ' disabled' : '') + '>' +
+              esc(copy.refillEnergyBtn) +
+            '</button>' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="points-nerve"' + (pointsNow < 25 || refillsUsed.nerve || store.busy ? ' disabled' : '') + '>' +
+              esc(copy.refillNerveBtn) +
+            '</button>' +
+          '</div>' +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route 5: `properties` ONLY -> Property Mug-Proof Cash Vault & Private Island Staff */
+  function renderPropertiesVaultSection() {
+    var ar = isAr();
+    var copy = L();
+    var ctx = getPlayerAndState();
     var vaultBal = Math.max(0, Number(ctx.tornV2.vaultBalance != null ? ctx.tornV2.vaultBalance : ctx.state.vaultBalance || 0));
-    var vaultCap = Math.max(0, Number(ctx.tornV2.vaultCap != null ? ctx.tornV2.vaultCap : (ctx.state.prop === 'island' ? 1000000000 : ctx.state.prop === 'villa' ? 100000000 : ctx.state.prop === 'house' ? 25000000 : ctx.state.prop === 'semi' ? 5000000 : ctx.state.prop === 'apt' ? 1000000 : 0)));
+    var vaultCap = Math.max(
+      0,
+      Number(
+        ctx.tornV2.vaultCap != null
+          ? ctx.tornV2.vaultCap
+          : (ctx.state.prop === 'island' ? 1000000000 : ctx.state.prop === 'villa' ? 100000000 : ctx.state.prop === 'house' ? 25000000 : ctx.state.prop === 'semi' ? 5000000 : ctx.state.prop === 'apt' ? 1000000 : 0)
+      )
+    );
     var vaultPct = vaultCap > 0 ? Math.min(100, Math.round((vaultBal / vaultCap) * 100)) : 0;
     var hiredStaff = (ctx.tornV2.islandStaff && ctx.tornV2.islandStaff.hired) || (ctx.state.tornState && ctx.state.tornState.staff) || {};
     var staffCat = (ctx.tornV2.islandStaff && ctx.tornV2.islandStaff.catalog) || {};
@@ -1402,22 +1515,10 @@
     staffHtml += '</div>';
 
     return (
-      '<div class="ztl-workspace" data-workspace="economy">' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.stocksTitle) + '</h3><span class="ztl-section-note">' + esc(copy.stocksNote) + '</span></div>' +
-          stockRowsHtml +
-        '</section>' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.bankCdTitle) + '</h3></div>' +
-          cdActiveHtml +
-          '<div class="ztl-row-actions">' +
-            '<input type="number" min="5000" step="5000" class="ztl-input" data-ztl-draft="cdPrincipal" value="' + esc(store.drafts.cdPrincipal) + '" placeholder="' + esc(copy.principalLbl) + '" aria-label="CD Principal">' +
-            '<select class="ztl-select" data-ztl-draft="cdTerm" aria-label="CD Term">' + termOpts + '</select>' +
-            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="bank-lock-cd"' + (Boolean(activeCd && !cdMatured) || store.busy ? ' disabled' : '') + '>' + esc(copy.lockCdBtn) + '</button>' +
-          '</div>' +
-        '</section>' +
+      '<div class="ztl-workspace" data-workspace="properties">' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.vaultTitle) + '</h3><bdi class="ztl-chip" data-tone="sage">' + fmtMoney(vaultBal) + ' / ' + fmtMoney(vaultCap) + '</bdi></div>' +
+          '<span class="ztl-section-note">' + esc(copy.vaultNote) + '</span>' +
           '<div class="ztl-meter-track"><div class="ztl-meter-fill" style="width:' + vaultPct + '%"></div></div>' +
           '<div class="ztl-row-actions">' +
             '<input type="number" min="100" step="1000" class="ztl-input" data-ztl-draft="vaultAmount" value="' + esc(store.drafts.vaultAmount) + '" aria-label="Vault amount">' +
@@ -1430,7 +1531,8 @@
     );
   }
 
-  function renderTravelWorkspace() {
+  /* Route 6: `city` ONLY -> Airport (11 Foreign Markets) & History Museum (STRICTLY BELOW 3D City Map!) */
+  function renderCityTravelSection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
@@ -1449,7 +1551,6 @@
         '</div>';
     }
 
-    /* Foreign Shop when landed abroad */
     var abroadHtml = '';
     if (fl.isAbroad) {
       var rawInventory = (fm.currentShop && Array.isArray(fm.currentShop.items))
@@ -1496,7 +1597,6 @@
         '</section>';
     }
 
-    /* 11 International Destination Cards */
     var destHtml = '<div class="ztl-grid-cards">';
     for (var di = 0; di < DESTINATIONS_11.length; di++) {
       var d = DESTINATIONS_11[di];
@@ -1518,7 +1618,6 @@
     }
     destHtml += '</div>';
 
-    /* Museum Plushie & Flower Set Exchange */
     var hasHist = Boolean(ctx.eduDone.hist);
     var plushCount = 0;
     var plushChips = '';
@@ -1541,7 +1640,7 @@
     var lugPct = Math.min(100, Math.round((fl.lugUsed / Math.max(1, fl.lugMax)) * 100));
 
     return (
-      '<div class="ztl-workspace" data-workspace="travel">' +
+      '<div class="ztl-workspace" data-workspace="city">' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head">' +
             '<h3 class="ztl-section-title">' + esc(copy.airportTitle) + '</h3>' +
@@ -1583,7 +1682,121 @@
     );
   }
 
-  function renderFactionWorkspace() {
+  /* Route 7: `hospital` ONLY -> Live Ward Player Revives (25E/75E), Blood Bags & Rehab */
+  function renderHospitalWardSection() {
+    var ar = isAr();
+    var copy = L();
+    var ctx = getPlayerAndState();
+    var cds = getLiveCooldowns();
+    var revCost = (ctx.eduDone.bio || ctx.eduDone.med) ? 25 : 75;
+    var rehabCost = Math.max(10000, cds.addiction * 15000);
+    var addPct = Math.min(100, cds.addiction * 5);
+
+    var realPatients = store.hospitalPatients.filter(function (pt) { return pt && pt.npc === false; });
+    var patientsHtml = '';
+    if (realPatients.length === 0) {
+      patientsHtml =
+        '<div class="ztl-row-actions">' +
+          '<span class="ztl-card-meta">' + esc(copy.hospWardEmpty) + '</span>' +
+          '<button type="button" class="ztl-btn" data-ztl-act="open-drawer" data-mode="directory">' + esc(copy.openDirBtn) + '</button>' +
+        '</div>';
+    } else {
+      patientsHtml = '<div class="ztl-grid-compact">';
+      for (var hi = 0; hi < realPatients.length; hi++) {
+        var hp = realPatients[hi];
+        patientsHtml +=
+          '<div class="ztl-card" data-ztl-ward-patient="' + esc(hp.id) + '">' +
+            '<div class="ztl-card-title">' + esc(hp.username || hp.name || hp.id) + ' <bdi>Lv.' + (hp.level || hp.lvl || 1) + '</bdi></div>' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="revive-player" data-id="' + esc(hp.id) + '"' + (store.busy ? ' disabled' : '') + '>' +
+              esc(copy.reviveBtn) + ' <bdi>(' + revCost + 'E)</bdi>' +
+            '</button>' +
+          '</div>';
+      }
+      patientsHtml += '</div>';
+    }
+
+    var medHtml = '<div class="ztl-grid-cards">';
+    for (var mi = 0; mi < HOSPITAL_MED_ITEMS.length; mi++) {
+      var it = HOSPITAL_MED_ITEMS[mi];
+      var owned = Math.max(0, Number(ctx.inv[it.id] || 0));
+      var medBlocked = cds.medSec >= 21600;
+      medHtml +=
+        '<article class="ztl-card" data-ztl-hosp-item="' + it.id + '">' +
+          '<div class="ztl-card-top">' +
+            '<span class="ztl-card-title">' + esc(ar ? it.ar : it.en) + '</span>' +
+            '<bdi class="ztl-chip" data-tone="' + (owned > 0 ? 'sage' : 'gold') + '">' + esc(copy.ownedLbl) + ': ' + owned + '</bdi>' +
+          '</div>' +
+          '<div class="ztl-card-meta">' + esc(ar ? it.effAr : it.effEn) + ' · ' + esc(ar ? it.cdAr : it.cdEn) + '</div>' +
+          '<div class="ztl-row-actions">' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="use-pharm" data-action="' + it.action + '" data-id="' + (it.actionArg || it.id) + '"' + ((owned <= 0 || medBlocked || store.busy) ? ' disabled' : '') + '>' + esc(copy.useBtn) + '</button>' +
+            '<button type="button" class="ztl-btn" data-ztl-act="buy-item" data-id="' + it.id + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.buyMarketBtn) + ' <bdi>(' + fmtMoney(it.price) + ')</bdi></button>' +
+            (it.id === 'bloodbag'
+              ? '<button type="button" class="ztl-btn" data-ztl-act="blood-draw"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.drawBloodBtn) + '</button>'
+              : '') +
+          '</div>' +
+        '</article>';
+    }
+    medHtml += '</div>';
+
+    return (
+      '<div class="ztl-workspace" data-workspace="hospital">' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head">' +
+            '<h3 class="ztl-section-title">' + esc(copy.hospWardTitle) + '</h3>' +
+            '<span class="ztl-chip" data-tone="' + (cds.medSec > 0 ? 'gold' : 'sage') + '">' + esc(copy.medCd) + ': <bdi data-ztl-cd="med">' + (cds.medSec > 0 ? fmtClock(cds.medSec) : copy.ready) + '</bdi></span>' +
+          '</div>' +
+          patientsHtml +
+        '</section>' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.hospMedTitle) + '</h3></div>' +
+          medHtml +
+        '</section>' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.addictionMeter) + '</h3></div>' +
+          '<div class="ztl-meter">' +
+            '<div class="ztl-meter-row"><span>' + esc(copy.addictWarn) + ': <bdi>' + cds.addiction + '%</bdi> · OD: <bdi>' + cds.odCount + '</bdi></span><bdi>' + fmtMoney(rehabCost) + '</bdi></div>' +
+            '<div class="ztl-meter-track"><div class="ztl-meter-fill" data-tone="crimson" style="width:' + addPct + '%"></div></div>' +
+          '</div>' +
+          '<div class="ztl-row-actions">' +
+            '<button type="button" class="ztl-btn" data-variant="gold" data-ztl-act="rehab"' + ((cds.addiction <= 0 && cds.odCount <= 0) || store.busy ? ' disabled' : '') + '>' +
+              esc(copy.rehabBtn) + ' <bdi>(' + fmtMoney(rehabCost) + ')</bdi>' +
+            '</button>' +
+          '</div>' +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route 8: `jail` ONLY -> Lawyer Business Card Release */
+  function renderJailLegalSection() {
+    var ar = isAr();
+    var copy = L();
+    var ctx = getPlayerAndState();
+    var owned = Math.max(0, Number(ctx.inv[LAWYER_CARD_SPEC.id] || 0));
+
+    return (
+      '<div class="ztl-workspace" data-workspace="jail">' +
+        '<section class="ztl-section-box">' +
+          '<div class="ztl-section-head">' +
+            '<h3 class="ztl-section-title">' + esc(copy.jailLegalTitle) + '</h3>' +
+            '<bdi class="ztl-chip" data-tone="' + (owned > 0 ? 'sage' : 'gold') + '">' + esc(copy.ownedLbl) + ': ' + owned + '</bdi>' +
+          '</div>' +
+          '<span class="ztl-section-note">' + esc(ar ? LAWYER_CARD_SPEC.effAr : LAWYER_CARD_SPEC.effEn) + '</span>' +
+          '<div class="ztl-row-actions">' +
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="use-pharm" data-action="torn.lawyerCard" data-id="release"' + (owned <= 0 || store.busy ? ' disabled' : '') + '>' +
+              esc(copy.releaseNowBtn) +
+            '</button>' +
+            '<button type="button" class="ztl-btn" data-ztl-act="buy-item" data-id="lawyer_card"' + (store.busy ? ' disabled' : '') + '>' +
+              esc(copy.buyMarketBtn) + ' <bdi>(' + fmtMoney(LAWYER_CARD_SPEC.price) + ')</bdi>' +
+            '</button>' +
+          '</div>' +
+        '</section>' +
+      '</div>'
+    );
+  }
+
+  /* Route 9: `faction` ONLY -> Shared 5-Minute Faction Chain, Faction Armory & Territory Wall */
+  function renderFactionChainSection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
@@ -1651,9 +1864,6 @@
             '<div class="ztl-meter-track"><div class="ztl-meter-fill" data-tone="gold" style="width:' + chainPct + '%"></div></div>' +
           '</div>' +
           pipsHtml +
-          (!ch.hasFaction
-            ? '<div class="ztl-row-actions"><button type="button" class="ztl-btn" data-ztl-act="go-screen" data-screen="faction">' + esc(copy.openFactionBtn) + '</button></div>'
-            : '') +
         '</section>' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.armoryTitle) + '</h3></div>' +
@@ -1674,6 +1884,7 @@
     );
   }
 
+  /* Slide-Over Drawer Content: Player Directory, Profiles & Chronological Events */
   function renderDirectoryAndEventsHtml(compactMode) {
     var copy = L();
     var ctx = getPlayerAndState();
@@ -1747,7 +1958,6 @@
         '</div>';
     }
 
-    /* Hospitalized Real Players Quick-Revive Strip */
     var realPatients = store.hospitalPatients.filter(function (pt) { return pt && pt.npc === false; });
     var hospStrip = '';
     if (realPatients.length > 0) {
@@ -1763,7 +1973,6 @@
       hospStrip += '</div></div>';
     }
 
-    /* Chronological Events Feed */
     var evHtml = '<div class="ztl-events-list">';
     if (store.eventsFeed.length === 0) {
       evHtml += '<div class="ztl-card-meta">' + esc(copy.noEvents) + '</div>';
@@ -1808,7 +2017,7 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 8. DOM MOUNTS: HUD STRIP, SIDEBAR PILL, LIVE OPS DECK & SLIDE DRAWER
+   * 8. DOM MOUNTS: WHISPER-CLEAN HUD STRIP, ROUTE SECTION, TOAST & DRAWER
    * ------------------------------------------------------------------------ */
   function ensureHudStrip() {
     if (document.querySelector('x-dc')) return null;
@@ -1827,6 +2036,28 @@
       strip.setAttribute('role', 'region');
       strip.setAttribute('aria-label', 'Live Torn Status Strip');
       strip.addEventListener('click', handleActionClick);
+
+      var inner = document.createElement('div');
+      inner.id = 'ztl-hud-inner';
+      inner.className = 'ztl-hud-inner';
+
+      /* Persistent slot for zone-rpg-empire.js (Story & Rank pills) — NEVER overwritten */
+      var storySlot = document.createElement('span');
+      storySlot.id = 'ztl-hud-story-slot';
+      storySlot.className = 'ztl-hud-story-slot';
+
+      var statusGroup = document.createElement('div');
+      statusGroup.id = 'ztl-hud-status-group';
+      statusGroup.className = 'ztl-hud-status-group';
+
+      var rightGroup = document.createElement('div');
+      rightGroup.id = 'ztl-hud-right-group';
+      rightGroup.className = 'ztl-hud-spacer';
+
+      inner.appendChild(storySlot);
+      inner.appendChild(statusGroup);
+      inner.appendChild(rightGroup);
+      strip.appendChild(inner);
       topbar.appendChild(strip);
     }
     return strip;
@@ -1835,195 +2066,152 @@
   function renderHudStrip() {
     var strip = ensureHudStrip();
     if (!strip) return;
+    var statusGroup = document.getElementById('ztl-hud-status-group');
+    var rightGroup = document.getElementById('ztl-hud-right-group');
+    if (!statusGroup || !rightGroup) return;
+
     var copy = L();
     var cds = getLiveCooldowns();
     var ch = getLiveChainInfo();
     var fl = getLiveFlightInfo();
 
     var addHtml = (cds.addiction > 0 || cds.odCount > 0)
-      ? '<button type="button" class="ztl-hud-pill" data-tone="danger" data-ztl-act="open-tab" data-tab="pharmacy">' +
+      ? '<button type="button" class="ztl-hud-pill" data-tone="danger" data-ztl-act="go-screen" data-screen="hospital">' +
           '⚠ <span class="ztl-pill-lbl">' + esc(copy.addictWarn) + '</span> <bdi>' + cds.addiction + '%</bdi>' +
         '</button>'
       : '';
 
-    var flightBannerHtml =
-      '<div class="ztl-flight-banner"' + (fl.status === 'traveling' ? '' : ' hidden') + ' data-ztl-act="open-tab" data-tab="travel" role="button" tabindex="0">' +
-        '<span class="ztl-flight-route"><bdi>' + esc(fl.origin) + ' ✈ ' + esc(fl.destination) + '</bdi></span>' +
-        '<div class="ztl-flight-track"><div class="ztl-flight-fill" data-ztl-flight-fill="1" style="width:' + fl.pct + '%"></div></div>' +
-        '<bdi data-ztl-cd="flight">' + fmtClock(fl.remSec) + '</bdi> <span>' + esc(copy.flightRem) + '</span>' +
-      '</div>';
-
-    var abroadBadgeHtml = fl.isAbroad
-      ? '<button type="button" class="ztl-hud-pill" data-tone="blue" data-ztl-act="open-tab" data-tab="travel">✈ ' + esc(copy.abroadTag) + ': <bdi>' + esc(fl.destination) + '</bdi></button>'
+    var chainTimerPart = ch.remSec > 0
+      ? (' · <span data-ztl-cd="chain">' + fmtClock(ch.remSec) + '</span>')
       : '';
 
-    strip.innerHTML =
-      '<div class="ztl-hud-inner">' +
-        '<button type="button" id="ztl-hud-ops-btn" class="ztl-hud-pill" data-tone="ops" data-ztl-act="toggle-deck">' +
-          '⚡ <span>' + esc(copy.opsPill) + '</span>' +
-        '</button>' +
-        '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.drugSec > 0 ? 'danger' : 'ready') + '" data-ztl-act="open-tab" data-tab="pharmacy">' +
-          '<span class="ztl-pill-lbl">' + esc(copy.drugCd) + '</span> <bdi data-ztl-cd="drug">' + (cds.drugSec > 0 ? fmtClock(cds.drugSec) : copy.ready) + '</bdi>' +
-        '</button>' +
-        '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.medSec > 0 ? 'warn' : 'ready') + '" data-ztl-act="open-tab" data-tab="pharmacy">' +
-          '<span class="ztl-pill-lbl">' + esc(copy.medCd) + '</span> <bdi data-ztl-cd="med">' + (cds.medSec > 0 ? fmtClock(cds.medSec) : copy.ready) + '</bdi>' +
-        '</button>' +
-        '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.boostSec > 0 ? 'blue' : 'ready') + '" data-ztl-act="open-tab" data-tab="pharmacy">' +
-          '<span class="ztl-pill-lbl">' + esc(copy.boostCd) + '</span> <bdi data-ztl-cd="boost">' + (cds.boostSec > 0 ? fmtClock(cds.boostSec) : copy.ready) + '</bdi>' +
-        '</button>' +
-        addHtml +
-        '<button type="button" id="ztl-hud-chain-pill" class="ztl-hud-pill" data-tone="' + (ch.count > 0 ? 'warn' : 'ready') + '" data-ztl-act="open-tab" data-tab="faction">' +
-          '⛓ <span>' + esc(copy.chainLbl) + '</span> <bdi>' + ch.count + '/' + ch.nextMilestone + ' · <span data-ztl-cd="chain">' + fmtClock(ch.remSec) + '</span></bdi>' +
-        '</button>' +
-        abroadBadgeHtml +
-        flightBannerHtml +
-        '<div class="ztl-hud-spacer">' +
-          '<button type="button" id="ztl-hud-search-btn" class="ztl-hud-pill" data-ztl-act="open-drawer" data-mode="directory">' +
-            '🔍 <span>' + esc(copy.searchBtn) + '</span>' +
-          '</button>' +
-          '<button type="button" id="ztl-hud-events-btn" class="ztl-hud-pill" data-ztl-act="open-drawer" data-mode="events">' +
-            '🔔 <span>' + esc(copy.eventsBtn) + '</span>' +
-            '<bdi class="ztl-bell-badge"' + (store.unreadCount > 0 ? '' : ' hidden') + '>' + store.unreadCount + '</bdi>' +
-          '</button>' +
-        '</div>' +
-      '</div>';
+    /* Flight pill ONLY shown when travel.status === 'traveling' */
+    var flightPillHtml = fl.status === 'traveling'
+      ? '<button type="button" id="ztl-hud-flight-pill" class="ztl-hud-pill" data-tone="blue" data-ztl-act="go-screen" data-screen="city">' +
+          '✈ <bdi>' + esc(fl.destination) + ' <span data-ztl-cd="flight">' + fmtClock(fl.remSec) + '</span></bdi>' +
+        '</button>'
+      : '';
+
+    statusGroup.innerHTML =
+      '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.drugSec > 0 ? 'danger' : 'ready') + '" data-ztl-act="go-screen" data-screen="items">' +
+        '<span class="ztl-pill-lbl">' + esc(copy.drugCd) + '</span> <bdi data-ztl-cd="drug">' + (cds.drugSec > 0 ? fmtClock(cds.drugSec) : copy.ready) + '</bdi>' +
+      '</button>' +
+      '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.medSec > 0 ? 'warn' : 'ready') + '" data-ztl-act="go-screen" data-screen="items">' +
+        '<span class="ztl-pill-lbl">' + esc(copy.medCd) + '</span> <bdi data-ztl-cd="med">' + (cds.medSec > 0 ? fmtClock(cds.medSec) : copy.ready) + '</bdi>' +
+      '</button>' +
+      '<button type="button" class="ztl-hud-pill" data-tone="' + (cds.boostSec > 0 ? 'blue' : 'ready') + '" data-ztl-act="go-screen" data-screen="items">' +
+        '<span class="ztl-pill-lbl">' + esc(copy.boostCd) + '</span> <bdi data-ztl-cd="boost">' + (cds.boostSec > 0 ? fmtClock(cds.boostSec) : copy.ready) + '</bdi>' +
+      '</button>' +
+      addHtml +
+      '<button type="button" id="ztl-hud-chain-pill" class="ztl-hud-pill" data-tone="' + (ch.count > 0 ? 'warn' : 'ready') + '" data-ztl-act="go-screen" data-screen="faction">' +
+        '⛓ <span>' + esc(copy.chainLbl) + '</span> <bdi>' + ch.count + '/' + ch.nextMilestone + chainTimerPart + '</bdi>' +
+      '</button>' +
+      flightPillHtml;
+
+    rightGroup.innerHTML =
+      '<button type="button" id="ztl-hud-search-btn" class="ztl-hud-pill" data-ztl-act="open-drawer" data-mode="directory">' +
+        '<span>' + esc(copy.playersBtn) + '</span>' +
+      '</button>' +
+      '<button type="button" id="ztl-hud-events-btn" class="ztl-hud-pill" data-ztl-act="open-drawer" data-mode="events">' +
+        '<span>' + esc(copy.eventsBtn) + '</span>' +
+        '<bdi class="ztl-bell-badge"' + (store.unreadCount > 0 ? '' : ' hidden') + '>' + store.unreadCount + '</bdi>' +
+      '</button>';
   }
 
-  function syncSidebarAndHeadingButtons() {
+  function removeRouteSection() {
+    var existing = document.getElementById('zone-torn-route-section');
+    if (existing && existing.parentElement) {
+      existing.parentElement.removeChild(existing);
+    }
+    var legacy = document.getElementById('zone-torn-ops-deck');
+    if (legacy && legacy.parentElement) {
+      legacy.parentElement.removeChild(legacy);
+    }
+  }
+
+  function ensureRouteSection(main, screen) {
+    var sec = document.getElementById('zone-torn-route-section');
+    if (sec && sec.parentElement !== main) {
+      if (sec.parentElement) sec.parentElement.removeChild(sec);
+      sec = null;
+    }
+    if (!sec) {
+      sec = document.createElement('section');
+      sec.id = 'zone-torn-route-section';
+      sec.className = 'ztl-scope ztl-route-section';
+      sec.addEventListener('click', handleActionClick);
+      sec.addEventListener('input', handleDraftInput);
+      sec.addEventListener('change', handleDraftInput);
+      main.appendChild(sec);
+    } else if (main.children && main.children.length > 0 && main.children[main.children.length - 1] !== sec) {
+      /* Always keep #zone-torn-route-section AFTER newly mounted native screen nodes */
+      main.appendChild(sec);
+    }
+    sec.setAttribute('data-ztl-route', screen);
+    return sec;
+  }
+
+  function renderRouteSection() {
     if (document.querySelector('x-dc')) return;
-    var copy = L();
-
-    var navArea = document.getElementById('zone-area-navigation');
-    if (navArea) {
-      var sideBtn = document.getElementById('ztl-sidebar-ops-btn');
-      if (!sideBtn || sideBtn.parentElement !== navArea) {
-        if (sideBtn && sideBtn.parentElement) sideBtn.parentElement.removeChild(sideBtn);
-        sideBtn = document.createElement('button');
-        sideBtn.type = 'button';
-        sideBtn.id = 'ztl-sidebar-ops-btn';
-        sideBtn.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          var root = document.documentElement;
-          if (root && root.classList) root.classList.remove('zaaa-rail-open');
-          openOpsTab(store.activeTab || 'crimes', true);
-        });
-        navArea.appendChild(sideBtn);
-      }
-      sideBtn.innerHTML = '<span>⚡ ' + esc(copy.opsPill) + '</span><bdi class="ztl-side-tag">LIVE</bdi>';
-    }
-
-    var headingActions = document.querySelector('#zone-main .zone-page-heading > div:last-child');
-    if (headingActions) {
-      var qBtn = document.getElementById('ztl-quick-ops-btn');
-      if (!qBtn || qBtn.parentElement !== headingActions) {
-        if (qBtn && qBtn.parentElement) qBtn.parentElement.removeChild(qBtn);
-        qBtn = document.createElement('button');
-        qBtn.type = 'button';
-        qBtn.id = 'ztl-quick-ops-btn';
-        qBtn.addEventListener('click', function (ev) {
-          ev.preventDefault();
-          openOpsTab(store.activeTab || 'crimes', true);
-        });
-        headingActions.appendChild(qBtn);
-      }
-      qBtn.textContent = '⚡ ' + copy.opsPill;
-    }
-  }
-
-  function ensureOpsDeck() {
-    if (document.querySelector('x-dc')) return null;
-    var main = document.getElementById('zone-main');
-    if (!main) return null;
-
-    var deck = document.getElementById('zone-torn-ops-deck');
-    if (deck && deck.parentElement !== main) {
-      if (deck.parentElement) deck.parentElement.removeChild(deck);
-      deck = null;
-    }
-    if (!deck) {
-      deck = document.createElement('section');
-      deck.id = 'zone-torn-ops-deck';
-      deck.className = 'ztl-scope';
-      deck.setAttribute('aria-label', 'Syndicate Live Operations Deck');
-      deck.addEventListener('click', handleActionClick);
-      deck.addEventListener('input', handleDraftInput);
-      deck.addEventListener('change', handleDraftInput);
-      main.appendChild(deck);
-    }
-    return deck;
-  }
-
-  function renderOpsDeck() {
     var main = document.getElementById('zone-main');
     if (!main) return;
-    var screen = String(main.getAttribute('data-zone-screen') || 'home').toLowerCase();
+
+    var screen = getActiveScreen();
     if (screen && screen !== store.lastScreen) {
       store.lastScreen = screen;
-      if (AUTO_DECK_SCREENS[screen] && !store.userPinnedTab) {
-        store.activeTab = AUTO_DECK_SCREENS[screen];
-      }
-      store.userPinnedTab = false;
+      if (screen === 'hospital') loadHospitalPatients();
+      else if (screen === 'city') loadForeignMarketState();
+      else if (screen === 'faction') loadFactionChainState();
     }
 
-    var shouldShow = Boolean(AUTO_DECK_SCREENS[screen] || store.deckForceOpen);
-    var deck = ensureOpsDeck();
-    if (!deck) return;
-    if (!shouldShow) {
-      deck.hidden = true;
+    if (!ROUTE_SECTIONS[screen]) {
+      removeRouteSection();
       return;
     }
-    deck.hidden = false;
 
-    /* Preserve focused input inside deck across re-renders */
+    var sec = ensureRouteSection(main, screen);
+    if (!sec) return;
+
+    /* Preserve focused input/select inside route section across background ticks */
     var activeEl = document.activeElement;
-    if (activeEl && deck.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT') && !store.busy) {
+    if (activeEl && sec.contains(activeEl) && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT') && !store.busy) {
       return;
     }
-
-    var copy = L();
-    var tabKeys = ['crimes', 'pharmacy', 'economy', 'travel', 'faction', 'directory'];
-    var tabsHtml = '<div class="ztl-tabs" role="tablist">';
-    for (var i = 0; i < tabKeys.length; i++) {
-      var tk = tabKeys[i];
-      var sel = store.activeTab === tk;
-      tabsHtml +=
-        '<button type="button" role="tab" class="ztl-tab-btn" data-ztl-act="switch-tab" data-tab="' + tk + '" aria-selected="' + (sel ? 'true' : 'false') + '">' +
-          '<span>' + esc(copy.tabs[tk]) + '</span>' +
-        '</button>';
-    }
-    tabsHtml += '</div>';
-
-    var fbHtml = store.feedback
-      ? '<div class="ztl-feedback" role="status" data-tone="' + esc(store.feedback.tone) + '">' +
-          '<span>' + esc(store.feedback.text) + '</span>' +
-          '<button type="button" class="ztl-btn" data-ztl-act="clear-feedback" aria-label="Dismiss">✕</button>' +
-        '</div>'
-      : '';
 
     var bodyHtml = '';
-    if (!store.deckCollapsed) {
-      if (store.activeTab === 'pharmacy') bodyHtml = renderPharmacyWorkspace();
-      else if (store.activeTab === 'economy') bodyHtml = renderEconomyWorkspace();
-      else if (store.activeTab === 'travel') bodyHtml = renderTravelWorkspace();
-      else if (store.activeTab === 'faction') bodyHtml = renderFactionWorkspace();
-      else if (store.activeTab === 'directory') bodyHtml = renderDirectoryAndEventsHtml(false);
-      else bodyHtml = renderCrimesWorkspace();
+    if (screen === 'crimes') bodyHtml = renderCrimesSection();
+    else if (screen === 'items') bodyHtml = renderItemsPharmacySection();
+    else if (screen === 'bank') bodyHtml = renderBankEconomySection();
+    else if (screen === 'market') bodyHtml = renderMarketPointsSection();
+    else if (screen === 'properties') bodyHtml = renderPropertiesVaultSection();
+    else if (screen === 'city') bodyHtml = renderCityTravelSection();
+    else if (screen === 'hospital') bodyHtml = renderHospitalWardSection();
+    else if (screen === 'jail') bodyHtml = renderJailLegalSection();
+    else if (screen === 'faction') bodyHtml = renderFactionChainSection();
+
+    sec.innerHTML = renderFeedbackHtml() + bodyHtml;
+  }
+
+  function renderFloatingToast() {
+    if (!document.body || document.querySelector('x-dc')) return;
+    var screen = getActiveScreen();
+    var hasInlineFeedback = Boolean(ROUTE_SECTIONS[screen] || store.drawerOpen);
+    var toast = document.getElementById('zone-torn-toast');
+
+    if (!store.feedback || hasInlineFeedback) {
+      if (toast) toast.hidden = true;
+      return;
     }
 
-    deck.innerHTML =
-      '<header class="ztl-deck-header">' +
-        '<div class="ztl-deck-title-group">' +
-          '<span class="ztl-deck-eyebrow">' + esc(copy.deckEyebrow) + '</span>' +
-          '<h2 class="ztl-deck-title">' + esc(copy.deckTitle) + '</h2>' +
-          '<p class="ztl-deck-sub">' + esc(copy.deckSub) + '</p>' +
-        '</div>' +
-        '<div class="ztl-deck-head-actions">' +
-          '<button type="button" class="ztl-btn" data-ztl-act="refresh-all"' + (store.busy ? ' disabled' : '') + '>↻ ' + esc(copy.refreshBtn) + '</button>' +
-          '<button type="button" class="ztl-btn" data-ztl-act="collapse-deck">' + esc(store.deckCollapsed ? copy.expandBtn : copy.collapseBtn) + '</button>' +
-        '</div>' +
-      '</header>' +
-      fbHtml +
-      (store.deckCollapsed ? '' : (tabsHtml + bodyHtml));
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'zone-torn-toast';
+      toast.className = 'ztl-scope';
+      toast.addEventListener('click', handleActionClick);
+      document.body.appendChild(toast);
+    }
+    toast.hidden = false;
+    toast.innerHTML = renderFeedbackHtml();
   }
 
   function ensureDrawer() {
@@ -2077,6 +2265,7 @@
         '<button type="button" class="ztl-btn" data-ztl-act="close-drawer">' + esc(copy.closeLbl) + ' ✕</button>' +
       '</header>' +
       '<div class="ztl-drawer-body">' +
+        renderFeedbackHtml() +
         renderDirectoryAndEventsHtml(true) +
       '</div>';
   }
@@ -2100,30 +2289,14 @@
     }
   }
 
-  function openOpsTab(tab, scrollIntoView) {
-    if (window.ZoneMeritsUI && typeof window.ZoneMeritsUI.isOpen === 'function' && window.ZoneMeritsUI.isOpen()) {
-      window.ZoneMeritsUI.close();
+  function openLegacyTabOrRoute(tabOrRoute) {
+    var key = String(tabOrRoute || 'crimes').toLowerCase();
+    if (key === 'directory' || key === 'events') {
+      openDrawer(key === 'events' ? 'events' : 'directory');
+      return;
     }
-    store.activeTab = tab || 'crimes';
-    store.userPinnedTab = true;
-    store.deckForceOpen = true;
-    store.deckCollapsed = false;
-    if (tab === 'directory') {
-      loadPlayerDirectory();
-      loadHospitalPatients();
-      loadEventsFeedState();
-    } else if (tab === 'travel') {
-      loadForeignMarketState();
-    } else if (tab === 'faction') {
-      loadFactionChainState();
-    }
-    renderAll();
-    if (scrollIntoView) {
-      var deck = document.getElementById('zone-torn-ops-deck');
-      if (deck && typeof deck.scrollIntoView === 'function') {
-        try { deck.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
-      }
-    }
+    var mappedRoute = LEGACY_TAB_TO_ROUTE[key] || key;
+    navigateToScreen(mappedRoute);
   }
 
   function openDrawer(mode) {
@@ -2150,20 +2323,12 @@
     ev.preventDefault();
 
     var act = target.getAttribute('data-ztl-act');
-    if (act === 'toggle-deck') {
-      openOpsTab(store.activeTab || 'crimes', true);
-    } else if (act === 'open-tab') {
-      openOpsTab(target.getAttribute('data-tab') || 'crimes', true);
-    } else if (act === 'switch-tab') {
-      openOpsTab(target.getAttribute('data-tab') || 'crimes', false);
-    } else if (act === 'collapse-deck') {
-      store.deckCollapsed = !store.deckCollapsed;
-      renderOpsDeck();
+    if (act === 'go-screen') {
+      navigateToScreen(target.getAttribute('data-screen') || 'home');
+    } else if (act === 'open-tab' || act === 'switch-tab') {
+      openLegacyTabOrRoute(target.getAttribute('data-tab') || 'crimes');
     } else if (act === 'clear-feedback') {
-      store.feedback = null;
-      renderOpsDeck();
-    } else if (act === 'refresh-all') {
-      refreshAll();
+      dismissFeedback();
     } else if (act === 'open-drawer') {
       openDrawer(target.getAttribute('data-mode') || 'both');
     } else if (act === 'close-drawer') {
@@ -2246,16 +2411,19 @@
       execSendMail(target.getAttribute('data-target'));
     } else if (act === 'attack-player') {
       execAttackPlayer(store.selectedProfile);
-    } else if (act === 'go-screen') {
-      var scr = target.getAttribute('data-screen') || 'home';
-      if (window.__zoneGame && typeof window.__zoneGame.go === 'function') window.__zoneGame.go(scr);
     }
   }
 
-  /* Focus-safe 1s live countdown updater (never touches innerHTML) */
+  /* Focus-safe 1s live countdown & 4000ms feedback TTL ticker */
   var arrivalPollTriggered = false;
   function tickLiveTimers() {
     if (document.visibilityState === 'hidden') return;
+
+    if (store.feedback && store.feedbackAt > 0 && (Date.now() - store.feedbackAt >= FEEDBACK_TTL_MS)) {
+      dismissFeedback();
+      return;
+    }
+
     var copy = L();
     var cds = getLiveCooldowns();
     var ch = getLiveChainInfo();
@@ -2288,26 +2456,47 @@
     }
   }
 
+  var mainObserved = null;
+  var mainObserver = null;
+  function attachMainObserver(scheduleRender) {
+    var main = document.getElementById('zone-main');
+    if (!main || main === mainObserved || typeof MutationObserver !== 'function') return;
+    mainObserved = main;
+    try {
+      if (mainObserver) mainObserver.disconnect();
+      mainObserver = new MutationObserver(scheduleRender);
+      mainObserver.observe(main, {
+        attributes: true,
+        attributeFilter: ['data-zone-screen', 'data-zma-open']
+      });
+    } catch (_) {}
+  }
+
   function renderAll() {
     if (document.querySelector('x-dc')) return;
     try {
       renderHudStrip();
-      syncSidebarAndHeadingButtons();
-      renderOpsDeck();
+      renderRouteSection();
       renderDrawer();
+      renderFloatingToast();
     } catch (_) {}
   }
 
   async function refreshAll() {
-    await Promise.all([
+    var screen = getActiveScreen();
+    var tasks = [
       loadGameplayState(),
       loadForeignMarketState(),
       loadFactionChainState(),
       loadEventsFeedState()
-    ]);
-    if (store.activeTab === 'directory' || store.drawerOpen) {
-      await Promise.all([loadPlayerDirectory(), loadHospitalPatients()]);
+    ];
+    if (screen === 'hospital' || store.drawerOpen) {
+      tasks.push(loadHospitalPatients());
     }
+    if (store.drawerOpen) {
+      tasks.push(loadPlayerDirectory());
+    }
+    await Promise.all(tasks);
     renderAll();
     return store;
   }
@@ -2322,6 +2511,7 @@
 
     var rafScheduled = false;
     var scheduleRender = function () {
+      attachMainObserver(scheduleRender);
       if (rafScheduled) return;
       rafScheduled = true;
       var raf = window.requestAnimationFrame || function (fn) { return window.setTimeout(fn, 16); };
@@ -2351,6 +2541,7 @@
 
     scheduleRender();
     window.setTimeout(function () {
+      attachMainObserver(scheduleRender);
       refreshAll();
       loadPlayerDirectory();
       loadHospitalPatients();
@@ -2359,9 +2550,11 @@
   }
 
   window.ZoneTornLive = {
-    openTab: function (tab) { openOpsTab(tab, true); },
+    openRoute: navigateToScreen,
+    openTab: openLegacyTabOrRoute,
     openDrawer: openDrawer,
     closeDrawer: closeDrawer,
+    dismissFeedback: dismissFeedback,
     refreshAll: refreshAll,
     renderAll: renderAll,
     execGameplayAction: execGameplayAction,

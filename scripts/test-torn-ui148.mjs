@@ -57,20 +57,38 @@ class MiniElement {
     };
   }
 
+  get outerHTML() {
+    const tag = this.tagName.toLowerCase();
+    const idPart = this.id ? ` id="${this.id}"` : '';
+    const clsPart = this.className ? ` class="${this.className}"` : '';
+    const hidPart = this.hidden ? ' hidden' : '';
+    return `<${tag}${idPart}${clsPart}${hidPart}>${this.innerHTML}</${tag}>`;
+  }
+
   get innerHTML() {
+    if (this.children.length > 0) {
+      return this._innerHTML + this.children.map((c) => c.outerHTML).join('');
+    }
     return this._innerHTML;
   }
 
   set innerHTML(val) {
+    this.children = [];
+    this.childNodes = this.children;
     this._innerHTML = String(val == null ? '' : val);
     this._textContent = this._innerHTML.replace(/<[^>]+>/g, '');
   }
 
   get textContent() {
+    if (this.children.length > 0) {
+      return this._textContent + this.children.map((c) => c.textContent).join('');
+    }
     return this._textContent || this._innerHTML.replace(/<[^>]+>/g, '');
   }
 
   set textContent(val) {
+    this.children = [];
+    this.childNodes = this.children;
     this._textContent = String(val == null ? '' : val);
     this._innerHTML = this._textContent;
   }
@@ -154,6 +172,7 @@ function createHarness(apiHandler, opts = {}) {
   const docListeners = new Map();
   const winListeners = new Map();
   const localStore = new Map();
+  const scheduledTimers = [];
 
   const doc = {
     readyState: 'complete',
@@ -162,8 +181,7 @@ function createHarness(apiHandler, opts = {}) {
     documentElement: new MiniElement('html', null),
     body: new MiniElement('body', null),
     createElement(tag) {
-      const el = new MiniElement(tag, doc);
-      return el;
+      return new MiniElement(tag, doc);
     },
     getElementById(id) {
       for (const el of allTreeElements()) {
@@ -211,7 +229,11 @@ function createHarness(apiHandler, opts = {}) {
   pageHeading.className = 'zone-page-heading';
   const headingActions = new MiniElement('div', doc);
   pageHeading.appendChild(headingActions);
+  const cityView = new MiniElement('div', doc);
+  cityView.id = 'native-city-map-view';
+  cityView.setAttribute('data-zone-city-view', '1');
   main.appendChild(pageHeading);
+  main.appendChild(cityView);
 
   doc.body.appendChild(topbar);
   doc.body.appendChild(sidebar);
@@ -227,6 +249,7 @@ function createHarness(apiHandler, opts = {}) {
     return out;
   }
 
+  let nextTimerId = 1;
   const win = {
     location: new URL(opts.url || 'https://zone.test/?screen=home'),
     localStorage: {
@@ -243,19 +266,35 @@ function createHarness(apiHandler, opts = {}) {
       for (const fn of winListeners.get(ev.type) || []) fn(ev);
     },
     requestAnimationFrame: (fn) => { fn(); return 1; },
-    setTimeout: (fn) => { fn(); return 1; },
-    clearTimeout() {},
+    setTimeout: (fn, ms = 0) => {
+      const id = nextTimerId++;
+      if (Number(ms) < 1000) fn();
+      else scheduledTimers.push({ id, fn, ms: Number(ms), cleared: false });
+      return id;
+    },
+    clearTimeout(id) {
+      for (const t of scheduledTimers) {
+        if (t.id === id) t.cleared = true;
+      }
+    },
     setInterval: () => 1,
     clearInterval() {},
     scrollTo() {},
     fetch: async (url, init = {}) => apiHandler(String(url), init)
   };
 
+  let clockOffsetMs = 0;
+  const FakeDate = class extends Date {
+    static now() {
+      return Date.now() + clockOffsetMs;
+    }
+  };
+
   const ctx = createContext({
     console,
     URL,
     URLSearchParams,
-    Date,
+    Date: FakeDate,
     Math,
     JSON,
     Number,
@@ -280,10 +319,20 @@ function createHarness(apiHandler, opts = {}) {
   win.Event = ctx.Event;
   win.MutationObserver = ctx.MutationObserver;
 
-  return { ctx, win, doc, topbar, main, navArea };
+  const advanceTimers = (ms) => {
+    clockOffsetMs += ms;
+    for (const t of scheduledTimers) {
+      if (!t.cleared && ms >= t.ms) {
+        t.cleared = true;
+        t.fn();
+      }
+    }
+  };
+
+  return { ctx, win, doc, topbar, main, cityView, navArea, advanceTimers };
 }
 
-test('index.html <head> loads v148 Torn Live assets while preserving 100% SHA-256 locked <body> and CSS/JS files', () => {
+test('index.html <head> loads Torn Live assets while preserving 100% SHA-256 locked <body> and CSS/JS files', () => {
   const rawHtml = readBytes('index.html');
   const bodyIdx = rawHtml.indexOf(Buffer.from('<body>'));
   assert.ok(bodyIdx > 0, 'index.html must contain <body>');
@@ -318,7 +367,7 @@ test('index.html <head> loads v148 Torn Live assets while preserving 100% SHA-25
   assert.ok(swJsMatch && Number(swJsMatch[1]) >= 148, 'sw.js precaches zone-torn-live.js?v>=148');
 });
 
-test('zone-torn-live.css enforces Sketchbook Light & Dark AA contrast, RTL fonts, balanced braces, and hides fake Codex stubs', () => {
+test('zone-torn-live.css enforces 34px single-row HUD strip, hides .zone-bulletin & fake Codex stubs, and preserves AA contrast', () => {
   const css = readUtf8('assets/ui/zone-torn-live.css');
   const opens = (css.match(/\{/g) || []).length;
   const closes = (css.match(/\}/g) || []).length;
@@ -332,8 +381,11 @@ test('zone-torn-live.css enforces Sketchbook Light & Dark AA contrast, RTL fonts
   assert.match(css, /Caveat Brush/);
   assert.match(css, /Noto Sans Arabic/);
   assert.match(css, /html\[dir="rtl"\]/);
+  assert.match(css, /\.zone-bulletin[\s\S]*?display:\s*none\s*!important/);
+  assert.match(css, /max-height:\s*36px/);
+  assert.match(css, /flex-wrap:\s*nowrap\s*!important/);
+  assert.match(css, /scrollbar-width:\s*none\s*!important/);
 
-  // Verify high-contrast AA (>= 4.5:1) in both Dark & Light Sketchbook modes
   assert.ok(contrastRatio('#f3ecdc', '#141210') >= 12, 'Dark mode chalk ink on charcoal paper >= 12:1');
   assert.ok(contrastRatio('#1e1b18', '#f2ebdc') >= 12, 'Light mode fountain-pen ink on cream parchment >= 12:1');
   assert.ok(contrastRatio('#fcf9f2', '#33601f') >= 6, 'Primary CTA button ink contrast >= 6:1');
@@ -341,6 +393,7 @@ test('zone-torn-live.css enforces Sketchbook Light & Dark AA contrast, RTL fonts
   for (const legacyStub of [
     'data-torn-master-codex="1"',
     'data-torn-crimes2-panel="1"',
+    'data-torn-city-smuggling="1"',
     'data-torn-island-staff="1"',
     'data-torn-jail-tools="1"',
     'data-torn-bank-cds="1"',
@@ -350,7 +403,7 @@ test('zone-torn-live.css enforces Sketchbook Light & Dark AA contrast, RTL fonts
   }
 });
 
-test('ZoneTornLive HUD Strip + all 6 Torn workspaces wire cleanly to v148 APIs with EN/AR parity and strict Benefit/Museum guards', async () => {
+test('ZoneTornLive whisper-clean HUD Strip + strict 1-route-1-section mounting (ZERO God Deck on home/gym/attack, below map on city, 4s auto-dismiss)', async () => {
   const calls = [];
   const nowMs = Date.now();
   let ownedSym = 400;
@@ -480,50 +533,105 @@ test('ZoneTornLive HUD Strip + all 6 Torn workspaces wire cleanly to v148 APIs w
     return { ok: false, status: 404, json: async () => ({ error: 'not found' }) };
   };
 
-  const { ctx, win, doc } = createHarness(apiHandler, { screen: 'home', lang: 'en' });
+  const { ctx, win, doc, main, cityView, advanceTimers } = createHarness(apiHandler, { screen: 'home', lang: 'en' });
   runInContext(readUtf8('assets/ui/zone-torn-live.js'), ctx);
   await win.ZoneTornLive.refreshAll();
 
+  // 0) Whisper-clean HUD Strip: persistent #ztl-hud-story-slot, NO Syndicate Ops button, NO stale feedback
   const hud = doc.getElementById('zone-torn-hud-strip');
-  const deck = doc.getElementById('zone-torn-ops-deck');
-  assert.ok(hud && hud.innerHTML.includes('Addiction') && hud.innerHTML.includes('6%'), 'HUD renders Addiction warning');
-  assert.ok(hud.innerHTML.includes('27/50'), 'HUD renders live Faction Chain milestone');
-  assert.ok(hud.innerHTML.includes('Zone City ✈ johannesburg'), 'HUD renders In-Flight banner while traveling');
+  const storySlot = doc.getElementById('ztl-hud-story-slot');
+  assert.ok(hud && storySlot, 'HUD strip mounts persistent #ztl-hud-story-slot');
+  storySlot.innerHTML = '<span>Act I · Ch.1</span>';
+  win.ZoneTornLive.renderAll();
+  assert.equal(storySlot.innerHTML, '<span>Act I · Ch.1</span>', '#ztl-hud-story-slot is never clobbered by renderAll()');
+  assert.ok(!hud.innerHTML.includes('Syndicate Ops'), 'NO [Syndicate Ops] button in HUD strip');
+  assert.ok(hud.innerHTML.includes('Drug') && hud.innerHTML.includes('Med') && hud.innerHTML.includes('Booster'));
+  assert.ok(hud.innerHTML.includes('27/50'), 'HUD renders compact Chain milestone');
+  assert.ok(hud.innerHTML.includes('✈') && hud.innerHTML.includes('johannesburg'), 'HUD renders compact flight pill while traveling');
+  assert.ok(hud.innerHTML.includes('Players') && hud.innerHTML.includes('Events'), 'HUD renders right-aligned Players & Events triggers');
+  assert.equal(win.ZoneTornLive.getStore().feedback, null, 'Zero stale feedback toast on initial load');
 
-  // 1) Crimes 2.0 tab: 13 crimes + enhancer badge + UNIQUE OUTCOME
-  assert.ok(deck.innerHTML.includes('Search for Cash') && deck.innerHTML.includes('Arson'), '13 Torn Crimes rendered');
-  assert.ok(deck.innerHTML.includes('42 / 100') && deck.innerHTML.includes('Enhancer Owned (+12%)'));
+  // 1) Zero-clutter routes: `home`, `gym`, `attack`, `education`, `jobs`, `casino`, `missions`, `hof`, `newspaper` mount ZERO Torn deck!
+  for (const cleanRoute of ['home', 'gym', 'attack', 'education', 'jobs', 'casino', 'missions', 'hof', 'newspaper']) {
+    win.ZoneTornLive.openRoute(cleanRoute);
+    assert.equal(doc.getElementById('zone-torn-ops-deck'), null, `ZERO #zone-torn-ops-deck on ${cleanRoute}`);
+    assert.equal(doc.getElementById('zone-torn-route-section'), null, `ZERO #zone-torn-route-section on ${cleanRoute}`);
+  }
+
+  // 2) `crimes` route ONLY -> Crimes 2.0 (13 archetypes, Skill 0-100, Enhancers, Shoplifting, Search for Cash), NO Sync/Minimize buttons
+  win.ZoneTornLive.openRoute('crimes');
+  let sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec && sec.getAttribute('data-ztl-route') === 'crimes');
+  assert.ok(!sec.innerHTML.includes('Sync Live') && !sec.innerHTML.includes('Minimize') && !sec.innerHTML.includes('role="tablist"'));
+  assert.ok(sec.innerHTML.includes('Search for Cash') && sec.innerHTML.includes('Arson'), '13 Torn Crimes rendered on crimes');
+  assert.ok(sec.innerHTML.includes('42 / 100') && sec.innerHTML.includes('Enhancer Owned (+12%)'));
+  assert.ok(!sec.innerHTML.includes('Zone Stock Exchange'), 'No Stocks leaked onto crimes');
   await win.ZoneTornLive.execGameplayAction('torn.crime2Execute', '1');
-  assert.ok(deck.innerHTML.includes('UNIQUE OUTCOME') && deck.innerHTML.includes('plush_camel'));
+  assert.ok(sec.innerHTML.includes('UNIQUE OUTCOME') && sec.innerHTML.includes('plush_camel'));
 
-  // 2) Pharmacy tab: Drug CD locks Xanax Use button while Drug CD > 0
-  win.ZoneTornLive.openTab('pharmacy');
-  assert.match(deck.innerHTML, /data-ztl-pharm-item="xanax"[\s\S]*?data-ztl-act="use-pharm"[^>]*disabled/);
-  assert.ok(deck.innerHTML.includes('Refill Energy (25 pts)'));
+  // Verify 4,000ms auto-dismiss clears action feedback & crime banner automatically
+  assert.ok(win.ZoneTornLive.getStore().feedback !== null);
+  advanceTimers(4100);
+  assert.equal(win.ZoneTornLive.getStore().feedback, null, 'Action toast auto-dismisses after 4000ms');
 
-  // 3) Economy tab: SYM has 400/500 shares -> Collect Benefit MUST be disabled until block bought!
-  win.ZoneTornLive.openTab('economy');
-  assert.ok(deck.innerHTML.includes('400 / 500 sh'));
-  assert.match(deck.innerHTML, /data-ztl-act="stock-div" data-ticker="SYM" disabled/);
+  // 3) `items` route ONLY -> Pharmacy & Medical Consumables + Happy Jump (Drug CD locks Xanax)
+  win.ZoneTornLive.openRoute('items');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.match(sec.innerHTML, /data-ztl-pharm-item="xanax"[\s\S]*?data-ztl-act="use-pharm"[^>]*disabled/);
+  assert.ok(sec.innerHTML.includes('Run Happy Jump') && sec.innerHTML.includes('Morphine'));
+  assert.ok(!sec.innerHTML.includes('Refill Energy (25 pts)'), 'Points refills belong on market, not items');
+
+  // 4) `market` route ONLY -> Points Building Refills (25 pts Energy / Nerve)
+  win.ZoneTornLive.openRoute('market');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('Refill Energy (25 pts)') && sec.innerHTML.includes('Refill Nerve (25 pts)'));
+  assert.ok(!sec.innerHTML.includes('Zone Stock Exchange'));
+
+  // 5) `bank` route ONLY -> Zone Stock Exchange (8 Tickers & Benefit Blocks) + Bank Term CDs
+  win.ZoneTornLive.openRoute('bank');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('400 / 500 sh') && sec.innerHTML.includes('Active Term CD'));
+  assert.match(sec.innerHTML, /data-ztl-act="stock-div" data-ticker="SYM" disabled/);
   await win.ZoneTornLive.execGameplayAction('stock.buy', 'SYM:200');
-  assert.ok(deck.innerHTML.includes('600 / 500 sh'));
-  assert.doesNotMatch(deck.innerHTML, /data-ztl-act="stock-div" data-ticker="SYM" disabled/);
+  assert.ok(sec.innerHTML.includes('600 / 500 sh'));
+  assert.doesNotMatch(sec.innerHTML, /data-ztl-act="stock-div" data-ticker="SYM" disabled/);
+  assert.ok(!sec.innerHTML.includes('Airstrip Pilot'), 'Island staff belongs on properties, not bank');
 
-  // 4) Travel & Museum tab: 11 hubs, depart -> foreign shop, Museum requires History course
-  win.ZoneTornLive.openTab('travel');
-  assert.ok(deck.innerHTML.includes('Johannesburg [Xanax]') && deck.innerHTML.includes('Zurich [Rehab]'));
-  assert.ok(deck.innerHTML.includes('Requires University History (hist) Course'));
-  assert.match(deck.innerHTML, /data-ztl-act="museum-exchange" data-id="plushies" disabled/);
+  // 6) `properties` route ONLY -> Property Mug-Proof Cash Vault & Private Island Staff
+  win.ZoneTornLive.openRoute('properties');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('Deposit to Vault') && sec.innerHTML.includes('Airstrip Pilot'));
+
+  // 7) `city` route ONLY -> Airport (11 Foreign Markets) & History Museum mounted AFTER native 3D map view
+  win.ZoneTornLive.openRoute('city');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(main.children.indexOf(sec) > main.children.indexOf(cityView), 'Airport & Museum mounted strictly AFTER native city map container');
+  assert.ok(sec.innerHTML.includes('Johannesburg [Xanax]') && sec.innerHTML.includes('Zurich [Rehab]'));
+  assert.ok(sec.innerHTML.includes('Requires University History (hist) Course'));
+  assert.match(sec.innerHTML, /data-ztl-act="museum-exchange" data-id="plushies" disabled/);
   await win.ZoneTornLive.execForeignAction({ action: 'depart', destination: 'johannesburg' });
-  assert.ok(deck.innerHTML.includes('data-ztl-abroad-shop="1"') && deck.innerHTML.includes('2 / 19'));
+  assert.ok(sec.innerHTML.includes('data-ztl-abroad-shop="1"') && sec.innerHTML.includes('2 / 19'));
+  assert.equal(doc.getElementById('ztl-hud-flight-pill'), null, 'HUD flight pill hides once travel.status === arrived');
 
-  // 5) Faction Chain, Armory & Wall tab
-  win.ZoneTornLive.openTab('faction');
-  assert.ok(deck.innerHTML.includes('1000') && deck.innerHTML.includes('ZC-046'));
+  // 8) `hospital` & `jail` & `faction` route-scoped sections
+  win.ZoneTornLive.openRoute('hospital');
+  await new Promise((r) => setTimeout(r, 10));
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('Rayan_Black') && sec.innerHTML.includes('Clinical Rehab') && sec.innerHTML.includes('Blood Bag'));
+
+  win.ZoneTornLive.openRoute('jail');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('Use Lawyer Card (Release)'));
+
+  win.ZoneTornLive.openRoute('faction');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('ZC-046') && sec.innerHTML.includes('Shared Faction Armory'));
   await win.ZoneTornLive.execFactionAction({ action: 'wall.assault' });
   assert.ok(calls.some((c) => c.url === '/api/v1/faction-chain/action' && c.body?.action === 'wall.assault'));
 
-  // 6) Directory, Profile, Revive & Events Drawer + Arabic RTL switch
+  // 9) Slide-over `#zone-torn-drawer` opens cleanly even on uncluttered `home` + Arabic RTL switch
+  win.ZoneTornLive.openRoute('home');
+  assert.equal(doc.getElementById('zone-torn-route-section'), null);
   win.ZoneTornLive.openDrawer('events');
   await new Promise((r) => setTimeout(r, 10));
   const drawer = doc.getElementById('zone-torn-drawer');
@@ -532,12 +640,11 @@ test('ZoneTornLive HUD Strip + all 6 Torn workspaces wire cleanly to v148 APIs w
   await win.ZoneTornLive.revivePlayer('p-target');
   assert.ok(calls.some((c) => c.url === '/api/v1/hospital/revive-player' && c.body?.targetPlayerId === 'p-target'));
 
-  // Switch to Arabic RTL and verify localized rendering
   doc.documentElement.lang = 'ar';
   doc.documentElement.dir = 'rtl';
-  win.ZoneTornLive.openTab('crimes');
-  assert.ok(deck.innerHTML.includes('منصة عمليات النقابة المباشرة'));
-  assert.ok(deck.innerHTML.includes('البحث عن النقد') && deck.innerHTML.includes('الحرق الجنائي'));
+  win.ZoneTornLive.openRoute('crimes');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('البحث عن النقد') && sec.innerHTML.includes('الحرق الجنائي'));
 });
 
 test('zone-merits-awards.js syncs merit.upgrade and merit.reset to /api/v1/gameplay/action online and falls back gracefully offline', async () => {
@@ -585,7 +692,6 @@ test('zone-merits-awards.js syncs merit.upgrade and merit.reset to /api/v1/gamep
   assert.ok(posted.some((b) => b.action === 'merit.reset'));
   assert.equal(win.ZoneMeritsUI.getSyncDiagnostics().merits, 12);
 
-  // Offline fallback does not throw and preserves last hydrated state
   online = false;
   const offRes = await win.ZoneMeritsUI.syncActionToServer('merit.upgrade', 'life');
   assert.equal(offRes.ok, false);
@@ -680,34 +786,36 @@ test('v148 live PHP contract regressions: messageEn/messageAr, stealth recentAtt
     return { ok: true, status: 200, json: async () => ({ patients: [], hubs: [] }) };
   };
 
-  const { ctx, win, doc } = createHarness(apiHandler, { screen: 'home', lang: 'en' });
+  const { ctx, win, doc } = createHarness(apiHandler, { screen: 'bank', lang: 'en' });
   runInContext(readUtf8('assets/ui/zone-torn-live.js'), ctx);
   await win.ZoneTornLive.refreshAll();
 
-  const deck = doc.getElementById('zone-torn-ops-deck');
+  // 1) Stock fallback prices on `bank` & Island Staff costs/hired on `properties` match TornSystemsService.php
+  let sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('$12,400/sh'), 'FHG fallback basePrice matches 12400');
+  assert.ok(sec.innerHTML.includes('$2,950/sh'), 'PRN fallback basePrice matches 2950');
 
-  // 1) Stock fallback prices & Island Staff costs/hired match TornSystemsService.php
-  win.ZoneTornLive.openTab('economy');
-  assert.ok(deck.innerHTML.includes('$12,400/sh'), 'FHG fallback basePrice matches 12400');
-  assert.ok(deck.innerHTML.includes('$2,950/sh'), 'PRN fallback basePrice matches 2950');
-  assert.ok(deck.innerHTML.includes('$65,000'), 'Estate Physician cost matches 65000');
-  assert.ok(deck.innerHTML.includes('$95,000'), 'Vault Security Detail cost matches 95000');
-  assert.ok(deck.innerHTML.includes('$35,000'), 'Senior Butler cost matches 35000');
-  assert.ok(deck.innerHTML.includes('Hired ✓'), 'Pilot read from tornV2.islandStaff.hired');
+  win.ZoneTornLive.openRoute('properties');
+  sec = doc.getElementById('zone-torn-route-section');
+  assert.ok(sec.innerHTML.includes('$65,000'), 'Estate Physician cost matches 65000');
+  assert.ok(sec.innerHTML.includes('$95,000'), 'Vault Security Detail cost matches 95000');
+  assert.ok(sec.innerHTML.includes('$35,000'), 'Senior Butler cost matches 35000');
+  assert.ok(sec.innerHTML.includes('Hired ✓'), 'Pilot read from tornV2.islandStaff.hired');
 
-  // 2) events-feed messageEn & recentAttacks attackerName/defenderName/approach in EN
-  win.ZoneTornLive.openTab('directory');
+  // 2) events-feed messageEn & recentAttacks attackerName/defenderName/approach in EN inside #zone-torn-drawer
+  win.ZoneTornLive.openDrawer('directory');
   await new Promise((r) => setTimeout(r, 15));
-  assert.ok(deck.innerHTML.includes('Duke_X placed a $50,000 bounty on your head!'), 'Renders messageEn instead of raw ev.type');
-  assert.ok(deck.innerHTML.includes('Someone → VictimOp (hosp · won)'), 'Renders stealthed Someone + approach + outcome');
-  assert.ok(deck.innerHTML.includes('Layla_R → VictimOp (mug · won)'), 'Renders attackerName -> defenderName');
+  const drawer = doc.getElementById('zone-torn-drawer');
+  assert.ok(drawer.innerHTML.includes('Duke_X placed a $50,000 bounty on your head!'), 'Renders messageEn instead of raw ev.type');
+  assert.ok(drawer.innerHTML.includes('Someone → VictimOp (hosp · won)'), 'Renders stealthed Someone + approach + outcome');
+  assert.ok(drawer.innerHTML.includes('Layla_R → VictimOp (mug · won)'), 'Renders attackerName -> defenderName');
 
   // 3) Arabic RTL renders messageAr & 'مجهول' for stealthed Someone
   doc.documentElement.lang = 'ar';
   doc.documentElement.dir = 'rtl';
   win.ZoneTornLive.renderAll();
-  assert.ok(deck.innerHTML.includes('رصد Duke_X مكافأة بقيمة $50,000 على رأسك!'), 'Renders messageAr in RTL');
-  assert.ok(deck.innerHTML.includes('مجهول → VictimOp (hosp · won)'), 'Renders مجهول for stealthed attacker in RTL');
+  assert.ok(drawer.innerHTML.includes('رصد Duke_X مكافأة بقيمة $50,000 على رأسك!'), 'Renders messageAr in RTL');
+  assert.ok(drawer.innerHTML.includes('مجهول → VictimOp (hosp · won)'), 'Renders مجهول for stealthed attacker in RTL');
 
   // 4) Overdose boolean `overdosed: true` triggers red 'bad' OVERDOSE banner
   doc.documentElement.lang = 'en';
@@ -727,7 +835,7 @@ test('v148 live PHP contract regressions: messageEn/messageAr, stealth recentAtt
   assert.match(win.ZoneTornLive.getStore().feedback.text, /-25 pts/);
 });
 
-test('Playwright 4-way responsive & Sketchbook parity check (390x844 mobile & 1440x900 desktop, Light/Dark, EN/AR RTL, zero overflow)', async (t) => {
+test('Playwright responsive & route-scoped IA parity check (390x844 mobile HUD <= 42px, home/gym uncluttered, city map above Airport/Museum, zero overflow)', async (t) => {
   let playwrightMod = null;
   for (const candidate of [
     'playwright',
@@ -821,32 +929,80 @@ test('Playwright 4-way responsive & Sketchbook parity check (390x844 mobile & 14
 
   try {
     for (const sc of [
-      { width: 1440, height: 900, lang: 'en', theme: 'light', tab: 'crimes' },
-      { width: 390, height: 844, lang: 'ar', theme: 'dark', tab: 'travel' }
+      { width: 1440, height: 900, lang: 'en', theme: 'light' },
+      { width: 390, height: 844, lang: 'ar', theme: 'dark' }
     ]) {
       const context = await browser.newContext({ viewport: { width: sc.width, height: sc.height } });
       const page = await context.newPage();
       const pageErrors = [];
       page.on('pageerror', (err) => pageErrors.push(err.message));
 
+      // 1) Home & Gym: ZERO ops-deck clutter, HUD height <= 42px on 390x844 mobile & 1440x900 desktop
       await page.goto(`http://127.0.0.1:${port}/?screen=home&lang=${sc.lang}`, { waitUntil: 'domcontentloaded' });
       await page.waitForSelector('#zone-torn-hud-strip', { timeout: 10000 });
-      await page.waitForSelector('#zone-torn-ops-deck', { timeout: 10000 });
-      await page.evaluate((cfg) => {
-        document.documentElement.setAttribute('data-theme', cfg.theme);
-        window.ZoneTornLive.openTab(cfg.tab);
-      }, sc);
-      await page.waitForTimeout(200);
+      await page.evaluate((theme) => document.documentElement.setAttribute('data-theme', theme), sc.theme);
+      await page.waitForTimeout(180);
 
-      const m = await page.evaluate(() => ({
+      const homeM = await page.evaluate(() => ({
         overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth),
         hudH: document.getElementById('zone-torn-hud-strip')?.offsetHeight || 0,
-        deckH: document.getElementById('zone-torn-ops-deck')?.offsetHeight || 0,
+        bulletinH: document.querySelector('.zone-bulletin')?.offsetHeight || 0,
+        opsDeck: Boolean(document.getElementById('zone-torn-ops-deck')),
+        routeSec: Boolean(document.getElementById('zone-torn-route-section')),
         dir: document.documentElement.dir
       }));
-      assert.equal(m.overflowX, 0, `Zero horizontal overflow at ${sc.width}x${sc.height} (${sc.lang}/${sc.theme})`);
-      assert.ok(m.hudH > 0 && m.deckH > 0, 'HUD strip and Ops Deck visible');
-      assert.equal(m.dir, sc.lang === 'ar' ? 'rtl' : 'ltr');
+      assert.equal(homeM.overflowX, 0, `Zero horizontal overflow on home (${sc.width}x${sc.height} ${sc.lang})`);
+      assert.ok(homeM.hudH > 0 && homeM.hudH <= 42, `HUD strip height ${homeM.hudH}px <= 42px (${sc.width}x${sc.height})`);
+      assert.equal(homeM.bulletinH, 0, '.zone-bulletin hidden cleanly');
+      assert.equal(homeM.opsDeck, false, 'ZERO #zone-torn-ops-deck on home');
+      assert.equal(homeM.routeSec, false, 'ZERO #zone-torn-route-section on home');
+      assert.equal(homeM.dir, sc.lang === 'ar' ? 'rtl' : 'ltr');
+
+      await page.evaluate(() => window.ZoneTornLive.openRoute('gym'));
+      await page.waitForTimeout(150);
+      const gymSec = await page.evaluate(() => Boolean(document.getElementById('zone-torn-route-section') || document.getElementById('zone-torn-ops-deck')));
+      assert.equal(gymSec, false, 'ZERO Torn ops/route clutter on gym');
+
+      // 2) Crimes & Bank: route-scoped sections mounted below native panels
+      await page.evaluate(() => window.ZoneTornLive.openRoute('crimes'));
+      await page.waitForSelector('#zone-torn-route-section[data-ztl-route="crimes"]', { timeout: 5000 });
+      const crimesOrder = await page.evaluate(() => {
+        const nativeCrime = document.querySelector('.zone-crime-workspace');
+        const tornSec = document.getElementById('zone-torn-route-section');
+        return {
+          nativeTop: nativeCrime ? nativeCrime.getBoundingClientRect().top : 0,
+          secTop: tornSec ? tornSec.getBoundingClientRect().top : 0,
+          overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+        };
+      });
+      assert.ok(crimesOrder.secTop > crimesOrder.nativeTop, 'Crimes 2.0 section mounted BELOW native crimes workspace');
+      assert.equal(crimesOrder.overflowX, 0);
+
+      await page.evaluate(() => window.ZoneTornLive.openRoute('bank'));
+      await page.waitForSelector('#zone-torn-route-section[data-ztl-route="bank"]', { timeout: 5000 });
+      const bankHtml = await page.evaluate(() => document.getElementById('zone-torn-route-section')?.innerHTML || '');
+      assert.ok(bankHtml.includes('SYM') && bankHtml.includes('500'), 'Bank renders Stock Exchange & Benefit Blocks');
+
+      // 3) City: Airport & Museum mounted STRICTLY BELOW the 3D City Map container
+      await page.evaluate(() => window.ZoneTornLive.openRoute('city'));
+      await page.waitForSelector('#zone-torn-route-section[data-ztl-route="city"]', { timeout: 5000 });
+      await page.waitForTimeout(150);
+      const cityGeom = await page.evaluate(() => {
+        const cityView = document.querySelector('[data-zone-city-view="1"]');
+        const mapEl = document.querySelector('#zone-city-map, .zone-city-map-shell, #zwc-city-panorama-stage') || cityView;
+        const sec = document.getElementById('zone-torn-route-section');
+        const mapRect = mapEl ? mapEl.getBoundingClientRect() : { top: 0, bottom: 0 };
+        const secRect = sec ? sec.getBoundingClientRect() : { top: 0 };
+        return {
+          mapTop: mapRect.top,
+          mapBottom: mapRect.bottom,
+          secTop: secRect.top,
+          overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+        };
+      });
+      assert.ok(cityGeom.secTop >= cityGeom.mapBottom - 2, `Airport/Museum (${cityGeom.secTop}px) must sit strictly BELOW City Map (${cityGeom.mapBottom}px)`);
+      assert.equal(cityGeom.overflowX, 0, 'Zero horizontal overflow on city');
+
       assert.equal(pageErrors.length, 0, 'Zero runtime page errors');
       await context.close();
     }

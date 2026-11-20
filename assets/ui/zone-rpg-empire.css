@@ -1,11 +1,10 @@
 /* ==========================================================================
- * ZONE v149 - STORY CAMPAIGN, LEVELING 2.0, 26-RANK LADDER, 4-BRANCH SKILL TREE,
- *             CITY ACTIVITIES, SYNDICATE ECONOMY & FULL FACTION EMPIRE UI
+ * ZONE v150 - ROUTE-SCOPED NATIVE TORN RPG, STORY, ACTIVITIES, ECONOMY & EMPIRE UI
  * Hand-Drawn Fountain-Pen Ink & Gouache Watercolor Sketchbook Edition
  * 100% 4-Way Parity: Light+EN (#f2ebdc / #1e1b18 >14:1), Dark+EN (#141210 / #f3ecdc >15:1),
  *                    Light+AR (RTL), Dark+AR (RTL)
- * Zero Horizontal Overflow at 390x844 Mobile & 1440x900 Desktop
- * Exclusive Ownership: rpg-ui-director (assets/ui/zone-rpg-empire.css)
+ * Zero Topbar/Sidebar Bloat · Strict 1-Route-1-Purpose Native Mounting · Zero Overflow
+ * Exclusive Ownership: ux-rpg-routes149 (assets/ui/zone-rpg-empire.css)
  * ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -151,225 +150,223 @@ html:lang(ar) .zre-scope * {
 }
 
 /* Yield cleanly when Awards & Merits Hub or Fullscreen 3D Map is active */
-html[data-zma-open="1"] body #zone-rpg-empire-deck,
-html body #dc-root #zone-main[data-zma-open="1"] #zone-rpg-empire-deck,
-body.zone-map-expanded #zre-mission-banner,
-body.zone-map-expanded #zone-rpg-empire-deck {
+html[data-zma-open="1"] body #zone-rpg-route-section,
+html body #dc-root #zone-main[data-zma-open="1"] #zone-rpg-route-section,
+body.zone-map-expanded #ztl-hud-story-slot,
+body.zone-map-expanded #zone-rpg-route-section,
+html body #zone-main:not([data-zone-screen="home"]) #zig-home-arcade {
   display: none !important;
 }
 
 /* --------------------------------------------------------------------------
- * 2. UPGRADED CURRENT MISSION & RANK PROGRESSION BANNER (FIBER-SAFE)
- *    Replaces dead "No events yet" ticker visually via CSS while preserving
- *    <x-dc> / React DOM children untouched.
+ * 2. CLEAN BULLETIN SUPPRESSION & COMPACT HUD SLOT (#ztl-hud-story-slot)
+ *    Eliminates duplicate stacked topbar rows; docks two 24px pills inside
+ *    #zone-torn-hud-strip so combined header height stays <= 96px everywhere.
  * -------------------------------------------------------------------------- */
-html body #dc-root#dc-root#dc-root .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"],
-html body #dc-root .zone-topbar .zone-bulletin[data-zre-hydrated="1"],
-html body .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 6px !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  padding-block: 5px !important;
-}
-
-html body #dc-root#dc-root#dc-root .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"],
-html body #dc-root .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"],
-html body .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"] {
+html body #dc-root#dc-root .zone-app .zone-topbar .zone-bulletin,
+html body #dc-root .zone-topbar .zone-bulletin,
+html body .zone-app .zone-topbar .zone-bulletin {
   display: none !important;
 }
 
-html body #zre-mission-banner {
-  flex: 1 1 260px;
-  min-width: 0;
-  max-width: 100%;
+html body .zone-topbar #zone-torn-hud-strip[data-zre-fallback-strip="1"] {
+  width: 100%;
+  height: 34px;
+  max-height: 34px;
   box-sizing: border-box;
+  background: var(--zre-surface);
+  border-top: 1px solid var(--zre-border-strong);
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-family: var(--zre-font-ui);
+  padding: 0 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 }
 
-html body .zone-topbar > #zre-mission-banner {
-  background: var(--zre-surface-alt);
-  border-bottom: 1.5px solid var(--zre-border-strong);
-  padding: 5px 14px;
+html body .zone-topbar #zone-torn-hud-strip[data-zre-fallback-strip="1"]::-webkit-scrollbar {
+  display: none;
 }
 
-html body .zre-banner-pill {
+html body #ztl-hud-story-slot {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  min-height: 28px;
-  max-width: 100%;
-  padding: 2px 9px;
-  border-radius: 999px;
-  border: 1.4px solid var(--zre-border-strong);
-  background: var(--zre-btn-bg);
+  flex: 0 0 auto;
+  min-width: 0;
+  max-height: 26px;
+  white-space: nowrap;
+  font-family: var(--zre-font-ui);
+}
+
+html body #ztl-hud-story-slot .zre-hud-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  padding: 0 8px !important;
+  margin: 0 !important;
+  border-radius: 999px !important;
+  border: 1.2px solid var(--zre-border-strong) !important;
+  background: var(--zre-btn-bg) !important;
   color: var(--zre-ink) !important;
   font-family: var(--zre-font-ui) !important;
-  font-size: 12.5px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
-  line-height: 1.2;
-  cursor: pointer;
-  box-shadow: var(--zre-shadow-btn);
-  box-sizing: border-box;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
   touch-action: manipulation;
-  transition: transform 0.1s ease, background-color 0.14s ease;
 }
 
-html body .zre-banner-pill span,
-html body .zre-banner-pill bdi {
-  color: inherit !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
+html body #ztl-hud-story-slot .zre-hud-pill:hover {
+  background: var(--zre-btn-hover) !important;
 }
 
-html body .zre-banner-pill:hover {
-  background: var(--zre-btn-hover);
-}
-
-html body .zre-banner-pill[data-tone="story"] {
-  background: var(--zre-gold-wash);
+html body #ztl-hud-story-slot .zre-hud-pill[data-tone="story"] {
+  background: var(--zre-gold-wash) !important;
   color: var(--zre-gold-ink) !important;
-  border-color: var(--zre-gold-border);
+  border-color: var(--zre-gold-border) !important;
 }
 
-html body .zre-banner-pill[data-tone="rank"] {
-  background: var(--zre-blue-wash);
+html body #ztl-hud-story-slot .zre-hud-pill[data-tone="rank"] {
+  background: var(--zre-blue-wash) !important;
   color: var(--zre-blue-ink) !important;
-  border-color: var(--zre-blue-border);
+  border-color: var(--zre-blue-border) !important;
 }
 
-html body .zre-banner-pill[data-tone="sp"] {
-  background: var(--zre-plum-wash);
-  color: var(--zre-plum-ink) !important;
-  border-color: var(--zre-plum-border);
-}
-
-html body .zre-banner-pill[data-tone="promote"] {
-  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
-  color: var(--zre-gold-cta-ink) !important;
-  border-color: var(--zre-border-strong);
-}
-
-html body .zre-banner-pill[data-tone="empire"] {
-  background: linear-gradient(180deg, var(--zre-cta-1), var(--zre-cta-2));
-  color: var(--zre-cta-ink) !important;
-  border-color: var(--zre-border-strong);
-}
-
-html body .zre-banner-spacer {
-  margin-inline-start: auto;
+html body #ztl-hud-story-slot .zre-hud-sp-dot {
   display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 5px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: var(--zre-plum-wash);
+  color: var(--zre-plum-ink);
+  border: 1px solid var(--zre-plum-border);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.05;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 /* --------------------------------------------------------------------------
- * 3. SIDEBAR RANK/SP PROGRESSION CARD & NAVIGATION TRIGGERS
+ * 3. WHISPER-CLEAN SIDEBAR NATIVE STAT ROW (#zre-sidebar-rank-row)
+ *    Matches Level / Points / Merits typography inside .zone-profile-body
  * -------------------------------------------------------------------------- */
-html body #zre-sidebar-rank-card {
-  margin-top: 6px;
-  padding: 8px 9px;
-  border-radius: var(--zre-radius-sm);
-  border: 1.5px solid var(--zre-border-strong);
-  background: var(--zre-subcard);
-  color: var(--zre-ink);
-  font-family: var(--zre-font-ui);
-  box-shadow: var(--zre-shadow-sub);
+html body aside.zone-sidebar #zre-sidebar-rank-row {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 2px 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--zre-font-ui);
+  font-size: 12px;
+  line-height: 1.35;
   box-sizing: border-box;
   max-width: 100%;
 }
 
-html body #zre-sidebar-rank-card .zre-side-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 700;
+html body aside.zone-sidebar #zre-sidebar-rank-row .zre-sidebar-stat-lbl {
+  color: var(--zre-ink-muted);
+  font-weight: 600;
 }
 
-html body #zre-sidebar-rpg-btn,
-html body #zre-sidebar-empire-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: calc(100% - 12px);
-  min-height: 36px;
-  margin: 4px 6px 2px;
-  padding: 6px 10px;
-  border-radius: var(--zre-radius-sm);
-  border: 1.5px solid var(--zre-border-strong);
-  font-family: var(--zre-font-ui);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--zre-shadow-btn);
-  box-sizing: border-box;
-  text-align: start;
+html body aside.zone-sidebar #zre-sidebar-rank-row .zre-sidebar-stat-link {
+  display: inline-flex !important;
+  align-items: baseline !important;
+  gap: 4px !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--zre-ink) !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+  cursor: pointer !important;
+  text-align: end !important;
 }
 
-html body #zre-sidebar-rpg-btn {
-  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
-  color: var(--zre-gold-cta-ink);
+html body aside.zone-sidebar #zre-sidebar-rank-row .zre-sidebar-stat-link:hover {
+  color: var(--zre-gold) !important;
+  text-decoration: underline;
 }
 
-html body #zre-sidebar-empire-btn {
-  background: var(--zre-subcard);
-  color: var(--zre-ink);
-}
-
-html body #zre-quick-rpg-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 4px 11px;
-  border-radius: 999px;
-  border: 1.5px solid var(--zre-border-strong);
-  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
-  color: var(--zre-gold-cta-ink);
-  font-family: var(--zre-font-ui);
-  font-size: 12.5px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--zre-shadow-btn);
+html body aside.zone-sidebar #zre-sidebar-rank-row .zre-sidebar-sp {
+  color: var(--zre-plum-ink);
+  font-weight: 800;
 }
 
 /* --------------------------------------------------------------------------
- * 4. MAIN 5-WORKSPACE RPG & EMPIRE COMMAND SUITE (#zone-rpg-empire-deck)
+ * 4. ROUTE-SCOPED NATIVE SECTION (#zone-rpg-route-section)
+ *    Strictly ordered AFTER native screen panels (order: 40) and BEFORE footer (order: 90)
  * -------------------------------------------------------------------------- */
-html body #zone-rpg-empire-deck {
+html body #zone-main > footer.zone-footer {
+  order: 90;
+}
+
+html body #zone-main > #zone-rpg-route-section,
+html body #zone-rpg-route-section {
+  order: 40;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  margin: 8px 0 14px;
-  padding: 14px;
+  margin: 4px 0 8px;
+  padding: 12px 14px;
   border-radius: var(--zre-radius);
-  border: 2px solid var(--zre-border-strong);
+  border: 1.8px solid var(--zre-border-strong);
   background: var(--zre-surface);
   color: var(--zre-ink);
   font-family: var(--zre-font-ui);
   box-shadow: var(--zre-shadow-card);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   overflow-x: clip;
 }
 
-html body #zone-rpg-empire-deck[hidden] {
+html body #zone-rpg-route-section[hidden] {
   display: none !important;
+}
+
+/* Home screen: ultra-compact 1-row summary strip at bottom of Home */
+html body #zone-rpg-route-section[data-zre-route="home"] {
+  padding: 8px 12px;
+  border-radius: var(--zre-radius-sm);
+  gap: 6px;
+}
+
+.zre-home-summary-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.zre-home-summary-stats,
+.zre-home-summary-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .zre-scope,
@@ -378,105 +375,44 @@ html body #zone-rpg-empire-deck[hidden] {
   min-width: 0;
 }
 
-.zre-deck-header {
+.zre-route-head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  padding-bottom: 10px;
-  border-bottom: 1.5px dashed var(--zre-border);
+  padding-bottom: 8px;
+  border-bottom: 1.4px dashed var(--zre-border);
 }
 
-.zre-deck-title-group {
-  flex: 1 1 240px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.zre-deck-eyebrow {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--zre-gold);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.zre-deck-title {
+.zre-route-title {
   margin: 0;
   font-family: var(--zre-font-brush);
-  font-size: 24px;
+  font-size: 21px;
   font-weight: 700;
   line-height: 1.15;
   color: var(--zre-title-ink);
 }
 
-.zre-deck-sub {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.35;
+.zre-route-sub {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.3;
   color: var(--zre-ink-muted);
 }
 
-.zre-deck-head-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-/* 5-Tab Switcher Bar */
-.zre-tabs {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 7px;
-  width: 100%;
-}
-
-.zre-tab-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 40px;
-  padding: 6px 8px;
-  border-radius: var(--zre-radius-sm);
-  border: 1.5px solid var(--zre-border-strong);
-  background: var(--zre-btn-bg);
-  color: var(--zre-ink);
-  font-family: var(--zre-font-ui);
-  font-size: 13.5px;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: var(--zre-shadow-btn);
-  transition: background-color 0.14s ease, transform 0.1s ease;
-}
-
-.zre-tab-btn:hover {
-  background: var(--zre-btn-hover);
-}
-
-.zre-tab-btn[aria-selected="true"] {
-  background: linear-gradient(180deg, var(--zre-cta-1), var(--zre-cta-2));
-  color: var(--zre-cta-ink);
-  border-color: var(--zre-border-strong);
-}
-
-/* Feedback Banner */
+/* Auto-dismissing Action Feedback Toast */
 .zre-feedback {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 7px 11px;
   border-radius: var(--zre-radius-sm);
   border: 1.5px solid var(--zre-sage-border);
   background: var(--zre-sage-wash);
   color: var(--zre-sage-ink);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -503,15 +439,15 @@ html body #zone-rpg-empire-deck[hidden] {
 .zre-workspace {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
 }
 
 .zre-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 12px;
+  gap: 9px;
+  padding: 11px;
   border-radius: var(--zre-radius-sm);
   border: 1.5px solid var(--zre-border);
   background: var(--zre-surface-alt);
@@ -529,15 +465,24 @@ html body #zone-rpg-empire-deck[hidden] {
 .zre-section-title {
   margin: 0;
   font-family: var(--zre-font-brush);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--zre-title-ink);
 }
 
 .zre-section-note {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--zre-ink-muted);
   line-height: 1.35;
+}
+
+.zre-side-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .zre-grid-2 {
@@ -560,7 +505,7 @@ html body #zone-rpg-empire-deck[hidden] {
 
 .zre-grid-auto {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 10px;
 }
 
@@ -597,14 +542,14 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 .zre-card-title {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--zre-title-ink);
   line-height: 1.25;
 }
 
 .zre-card-meta {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--zre-ink-soft);
   line-height: 1.35;
 }
@@ -666,15 +611,15 @@ html body #zone-rpg-empire-deck[hidden] {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  min-height: 34px;
+  min-height: 32px;
   max-width: 100%;
-  padding: 5px 11px;
+  padding: 4px 10px;
   border-radius: var(--zre-radius-sm);
   border: 1.5px solid var(--zre-border-strong);
   background: var(--zre-btn-bg);
   color: var(--zre-ink);
   font-family: var(--zre-font-ui);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
   line-height: 1.2;
   cursor: pointer;
@@ -708,7 +653,7 @@ html body #zone-rpg-empire-deck[hidden] {
 
 .zre-input,
 .zre-select {
-  min-height: 34px;
+  min-height: 32px;
   max-width: 100%;
   padding: 4px 9px;
   border-radius: var(--zre-radius-sm);
@@ -721,7 +666,7 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 .zre-input-sm {
-  width: 105px;
+  width: 102px;
 }
 
 .zre-meter {
@@ -742,7 +687,7 @@ html body #zone-rpg-empire-deck[hidden] {
 
 .zre-meter-track {
   width: 100%;
-  height: 10px;
+  height: 9px;
   border-radius: 999px;
   border: 1px solid var(--zre-border);
   background: var(--zre-track-bg);
@@ -769,7 +714,7 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 /* --------------------------------------------------------------------------
- * 5. TAB 1: STORY CAMPAIGN STAGE, NPC PORTRAITS & TIMELINE
+ * 5. MISSIONS ROUTE: STORY CAMPAIGN STAGE, NPC PORTRAITS & TIMELINE
  * -------------------------------------------------------------------------- */
 .zre-act-ribbon {
   display: grid;
@@ -801,7 +746,7 @@ html body #zone-rpg-empire-deck[hidden] {
 
 .zre-story-stage {
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
   border-radius: var(--zre-radius-sm);
@@ -819,8 +764,8 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 .zre-npc-portrait {
-  width: 92px;
-  height: 92px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   border: 2px solid var(--zre-border-strong);
   background: var(--zre-surface);
@@ -844,7 +789,7 @@ html body #zone-rpg-empire-deck[hidden] {
   border: 1.4px dashed var(--zre-border-strong);
   background: var(--zre-surface);
   color: var(--zre-ink);
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1.45;
 }
 
@@ -852,7 +797,7 @@ html body #zone-rpg-empire-deck[hidden] {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin: 4px 0;
+  margin: 3px 0;
 }
 
 .zre-obj-item {
@@ -881,7 +826,7 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 /* --------------------------------------------------------------------------
- * 6. TAB 2: 4-BRANCH SKILL TREE GRAPH & 26-RANK MATRIX
+ * 6. EDUCATION ROUTE: 4-BRANCH SKILL TREE GRAPH & 26-RANK MATRIX
  * -------------------------------------------------------------------------- */
 .zre-skill-branches {
   display: grid;
@@ -932,7 +877,7 @@ html body #zone-rpg-empire-deck[hidden] {
 
 .zre-node-connector {
   width: 2.5px;
-  height: 11px;
+  height: 10px;
   margin: 0 auto;
   background: var(--zre-border-strong);
 }
@@ -948,7 +893,7 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 /* --------------------------------------------------------------------------
- * 7. TAB 3: SPIN WHEELS & RACING TELEMETRY
+ * 7. CASINO, ITEMS & FACTION ROUTE SPECIALIZED WIDGETS
  * -------------------------------------------------------------------------- */
 @keyframes zreWheelSpin {
   0% { transform: rotate(0deg); }
@@ -956,8 +901,8 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 .zre-wheel-disc {
-  width: 68px;
-  height: 68px;
+  width: 64px;
+  height: 64px;
   margin: 2px auto;
   border-radius: 50%;
   border: 2px solid var(--zre-border-strong);
@@ -970,9 +915,6 @@ html body #zone-rpg-empire-deck[hidden] {
   animation: zreWheelSpin 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* --------------------------------------------------------------------------
- * 8. TAB 5: 7-BRANCH RESPECT TREE, 4-ROLE OC & 9-SLOT PAPERDOLL LOADOUT
- * -------------------------------------------------------------------------- */
 .zre-paperdoll-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -982,7 +924,7 @@ html body #zone-rpg-empire-deck[hidden] {
 .zre-war-bar {
   display: flex;
   width: 100%;
-  height: 16px;
+  height: 14px;
   border-radius: 999px;
   border: 1.5px solid var(--zre-border-strong);
   overflow: hidden;
@@ -996,7 +938,7 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 /* --------------------------------------------------------------------------
- * 9. MOBILE & TABLET ZERO-OVERFLOW BREAKPOINTS (390x844 & <= 980px)
+ * 8. MOBILE & TABLET ZERO-OVERFLOW BREAKPOINTS (390x844 & <= 1120px)
  * -------------------------------------------------------------------------- */
 @media (max-width: 1120px) {
   .zre-skill-branches {
@@ -1008,11 +950,9 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 @media (max-width: 900px) {
-  .zre-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .zre-tabs .zre-tab-btn:last-child {
-    grid-column: 1 / -1;
+  html body #dc-root #zone-main#zone-main[data-zone-screen="city"] [data-zone-city-view="1"] > .zone-city-workspace,
+  html body #zone-main[data-zone-screen="city"] [data-zone-city-view="1"] > .zone-city-workspace {
+    order: -10 !important;
   }
   .zre-act-ribbon,
   .zre-chapter-strip {
@@ -1025,12 +965,13 @@ html body #zone-rpg-empire-deck[hidden] {
 }
 
 @media (max-width: 640px) {
-  html body #zone-rpg-empire-deck {
+  html body #zone-main > #zone-rpg-route-section,
+  html body #zone-rpg-route-section {
     padding: 10px;
-    gap: 10px;
+    gap: 9px;
   }
-  .zre-deck-title {
-    font-size: 20px;
+  .zre-route-title {
+    font-size: 19px;
   }
   .zre-story-stage {
     grid-template-columns: minmax(0, 1fr);
@@ -1042,8 +983,8 @@ html body #zone-rpg-empire-deck[hidden] {
     gap: 10px;
   }
   .zre-npc-portrait {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     flex: none;
   }
   .zre-skill-branches,
@@ -1059,10 +1000,6 @@ html body #zone-rpg-empire-deck[hidden] {
   .zre-input,
   .zre-select,
   .zre-input-sm {
-    width: 100%;
-  }
-  html body .zre-banner-spacer {
-    margin-inline-start: 0;
     width: 100%;
   }
 }

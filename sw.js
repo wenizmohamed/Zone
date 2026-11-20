@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO — Production Service Worker (v149) */
-const SHELL_CACHE_NAME = 'zone-shell-v149';
+/* ZONE Syndicate Crime MMO — Production Service Worker (v150) */
+const SHELL_CACHE_NAME = 'zone-shell-v150';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -8,10 +8,10 @@ const PRECACHE_URLS = [
   './offline.html',
   './manifest.webmanifest',
   './assets/icons/icon-192.png',
-  './assets/ui/zone-torn-live.css?v=149',
-  './assets/ui/zone-torn-live.js?v=149',
-  './assets/ui/zone-rpg-empire.css?v=149',
-  './assets/ui/zone-rpg-empire.js?v=149'
+  './assets/ui/zone-torn-live.css?v=150',
+  './assets/ui/zone-torn-live.js?v=150',
+  './assets/ui/zone-rpg-empire.css?v=150',
+  './assets/ui/zone-rpg-empire.js?v=150'
 ];
 
 const IMMUTABLE_BINARY_RE = /\.(?:woff2|webp|png|jpe?g|glb)$/i;
