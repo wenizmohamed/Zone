@@ -31,6 +31,7 @@ function zone_proxy_public_path(string $path): bool
         'family-activities', 'family-activities/action', 'crimes', 'achievements', 'city/map', 'factions/join', 'releases/active',
         'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
         'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'events-feed',
+        'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
         'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications'], true)
         || preg_match('~^(?:crimes/[a-z0-9-]+/attempt|territories/ZC-[0-9]{3}/action)$~D', $route) === 1;
 }

@@ -762,6 +762,61 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'GET' && $path === '/api/v1/story-campaign') {
+        json_response($engine->storyCampaign(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/story-campaign/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Story campaign action must be text.');
+        $pid = current_player_id();
+        $res = $engine->storyCampaignAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/player-rpg') {
+        json_response($engine->playerRpg(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/player-rpg/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Player RPG action must be text.');
+        $pid = current_player_id();
+        $res = $engine->playerRpgAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/city-activities') {
+        json_response($engine->cityActivities(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/city-activities/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('City activities action must be text.');
+        $pid = current_player_id();
+        $res = $engine->cityActivitiesAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/syndicate-economy') {
+        json_response($engine->syndicateEconomy(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/syndicate-economy/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Syndicate economy action must be text.');
+        $pid = current_player_id();
+        $res = $engine->syndicateEconomyAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/faction-empire') {
+        json_response($engine->factionEmpire(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/faction-empire/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Faction empire action must be text.');
+        $pid = current_player_id();
+        $res = $engine->factionEmpireAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

@@ -24,8 +24,13 @@ use Zone\Engine\Core\Game\PlayerMarketService;
 use Zone\Engine\Core\Game\FamilyActivityService;
 use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
 use Zone\Engine\Core\Game\FactionChainService;
+use Zone\Engine\Core\Game\FactionEmpireService;
 use Zone\Engine\Core\Game\ForeignMarketService;
+use Zone\Engine\Core\Game\CityActivitiesService;
+use Zone\Engine\Core\Game\RankAndSkillTreeService;
+use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
+use Zone\Engine\Core\Game\TradeBazaarCompanyService;
 use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Game\WorldDirector;
 use Zone\Engine\Core\Security\RequestGuard;
@@ -640,8 +645,17 @@ final class GameEngine
             $correlationId = bin2hex(random_bytes(16));
             $happy = (int) $player['happy'];
             $happyMultiplier = 1 + log(1 + $happy / 500) * .35;
+            $steadfastBonuses = (new FactionEmpireService($this->database, $this->events))->activeTreeBonusesForPlayer($playerId);
+            $steadfastKey = match ($stat) {
+                'strength' => 'strGymGainPct',
+                'defense' => 'defGymGainPct',
+                'speed' => 'spdGymGainPct',
+                'dexterity' => 'dexGymGainPct',
+            };
+            $steadfastMult = 1.0 + (((float) ($steadfastBonuses[$steadfastKey] ?? 0)) / 100.0);
             $gainPerSession = $gym['e'] * 1.2 * (1 + $gymIndex * .3) * $happyMultiplier
                 * (!empty($progress['state']['fac']['ups']['gymBoost']) || !empty($progress['family']['upgrades']['gymBoost']) ? 1.1 : 1)
+                * $steadfastMult
                 * (!empty($progress['state']['eduDone']['fit']) ? 1.05 : 1)
                 * max(.35, 1 - (int) $player[$stat] / 60000);
             $baseGain = 0;
@@ -757,7 +771,20 @@ final class GameEngine
     public function playerCombatAction(string $action,string $opponentId,string $approach,int $expectedVersion,string $playerId): array
     {
         $this->requireScreen('attack'); $this->requireModule('kill'); $this->recordActionAttempt($playerId,true);
-        return (new PlayerCombatService($this->database,$this->events))->act($action,$opponentId,$approach,$expectedVersion,$playerId);
+        $res = (new PlayerCombatService($this->database,$this->events))->act($action,$opponentId,$approach,$expectedVersion,$playerId);
+        if ($action === 'finish' && ($res['result']['outcome'] ?? '') === 'won' && !empty($res['result']['defenderId'])) {
+            $warHit = (new FactionEmpireService($this->database, $this->events))->recordPvpWarHit(
+                $playerId,
+                (string) $res['result']['defenderId'],
+                $approach,
+                (float) ($res['result']['modifiers']['fair_fight'] ?? 1.0),
+                (string) ($res['result']['correlationId'] ?? bin2hex(random_bytes(16))),
+            );
+            if ($warHit !== null) {
+                $res['result']['rankedWar'] = $warHit;
+            }
+        }
+        return $res;
     }
 
     public function playerMarket(string $playerId): array
@@ -1433,6 +1460,88 @@ final class GameEngine
         $this->requireModule('gangs');
         $this->recordActionAttempt($playerId);
         return (new FactionChainService($this->database, $this->events))->act($action, $payload, $playerId);
+    }
+
+    public function storyCampaign(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(StoryCampaignService::class)) {
+            throw new RuntimeException('StoryCampaignService is unavailable.');
+        }
+        return (new StoryCampaignService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function storyCampaignAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(StoryCampaignService::class)) {
+            throw new RuntimeException('StoryCampaignService is unavailable.');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new StoryCampaignService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function playerRpg(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(RankAndSkillTreeService::class)) {
+            throw new RuntimeException('RankAndSkillTreeService is unavailable.');
+        }
+        return (new RankAndSkillTreeService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function playerRpgAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(RankAndSkillTreeService::class)) {
+            throw new RuntimeException('RankAndSkillTreeService is unavailable.');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new RankAndSkillTreeService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function cityActivities(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(CityActivitiesService::class)) {
+            throw new RuntimeException('CityActivitiesService is unavailable.');
+        }
+        return (new CityActivitiesService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function cityActivitiesAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(CityActivitiesService::class)) {
+            throw new RuntimeException('CityActivitiesService is unavailable.');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new CityActivitiesService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function syndicateEconomy(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(TradeBazaarCompanyService::class)) {
+            throw new RuntimeException('TradeBazaarCompanyService is unavailable.');
+        }
+        return (new TradeBazaarCompanyService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function syndicateEconomyAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(TradeBazaarCompanyService::class)) {
+            throw new RuntimeException('TradeBazaarCompanyService is unavailable.');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new TradeBazaarCompanyService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function factionEmpire(string $playerId = 'founder-player'): array
+    {
+        return (new FactionEmpireService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function factionEmpireAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!str_starts_with(strtolower(trim($action)), 'loadout.')) {
+            $this->requireModule('gangs');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new FactionEmpireService($this->database, $this->events))->act($playerId, $action, $payload);
     }
 
     private function blackjackMetaKey(string $playerId): string

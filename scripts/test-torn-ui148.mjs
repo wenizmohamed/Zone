@@ -294,9 +294,11 @@ test('index.html <head> loads v148 Torn Live assets while preserving 100% SHA-25
   );
 
   const head = rawHtml.subarray(0, bodyIdx).toString('utf8');
-  assert.match(head, /href="\.\/assets\/ui\/zone-torn-live\.css\?v=148"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-torn-live\.js\?v=148"/);
-  assert.doesNotMatch(head, /\?v=146\b/, 'all ?v=146 head references bumped to ?v=148');
+  const tornCssVer = head.match(/href="\.\/assets\/ui\/zone-torn-live\.css\?v=(\d+)"/);
+  const tornJsVer = head.match(/src="\.\/assets\/ui\/zone-torn-live\.js\?v=(\d+)"/);
+  assert.ok(tornCssVer && Number(tornCssVer[1]) >= 148, 'zone-torn-live.css?v>=148');
+  assert.ok(tornJsVer && Number(tornJsVer[1]) >= 148, 'zone-torn-live.js?v>=148');
+  assert.doesNotMatch(head, /\?v=146\b/, 'all ?v=146 head references bumped to ?v>=148');
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'pinned gym116.css?v=117 preserved');
 
   for (const rel of ['assets/ui/zone-torn-live.css', 'assets/ui/zone-torn-live.js', 'assets/ui/zone-merits-awards.js', 'sw.js']) {
@@ -308,9 +310,12 @@ test('index.html <head> loads v148 Torn Live assets while preserving 100% SHA-25
   }
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v148['"]/);
-  assert.match(swSrc, /zone-torn-live\.css\?v=148/);
-  assert.match(swSrc, /zone-torn-live\.js\?v=148/);
+  const shellMatch = swSrc.match(/SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v(\d+)['"]/);
+  const swCssMatch = swSrc.match(/zone-torn-live\.css\?v=(\d+)/);
+  const swJsMatch = swSrc.match(/zone-torn-live\.js\?v=(\d+)/);
+  assert.ok(shellMatch && Number(shellMatch[1]) >= 148, 'SHELL_CACHE_NAME >= v148');
+  assert.ok(swCssMatch && Number(swCssMatch[1]) >= 148, 'sw.js precaches zone-torn-live.css?v>=148');
+  assert.ok(swJsMatch && Number(swJsMatch[1]) >= 148, 'sw.js precaches zone-torn-live.js?v>=148');
 });
 
 test('zone-torn-live.css enforces Sketchbook Light & Dark AA contrast, RTL fonts, balanced braces, and hides fake Codex stubs', () => {

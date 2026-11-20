@@ -1,0 +1,1068 @@
+/* ==========================================================================
+ * ZONE v149 - STORY CAMPAIGN, LEVELING 2.0, 26-RANK LADDER, 4-BRANCH SKILL TREE,
+ *             CITY ACTIVITIES, SYNDICATE ECONOMY & FULL FACTION EMPIRE UI
+ * Hand-Drawn Fountain-Pen Ink & Gouache Watercolor Sketchbook Edition
+ * 100% 4-Way Parity: Light+EN (#f2ebdc / #1e1b18 >14:1), Dark+EN (#141210 / #f3ecdc >15:1),
+ *                    Light+AR (RTL), Dark+AR (RTL)
+ * Zero Horizontal Overflow at 390x844 Mobile & 1440x900 Desktop
+ * Exclusive Ownership: rpg-ui-director (assets/ui/zone-rpg-empire.css)
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. SEMANTIC SKETCHBOOK TOKENS (DARK CHARCOAL DEFAULT + LIGHT PARCHMENT)
+ * -------------------------------------------------------------------------- */
+:root,
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body {
+  --zre-paper: #141210;
+  --zre-surface: #1e1b17;
+  --zre-surface-alt: #25211c;
+  --zre-subcard: #28231d;
+  --zre-subcard-hover: #322c25;
+  --zre-input-bg: #171411;
+  --zre-btn-bg: #2b2620;
+  --zre-btn-hover: #38322a;
+
+  --zre-ink: #f3ecdc;
+  --zre-ink-soft: #dfd4be;
+  --zre-ink-muted: #c2b69f;
+  --zre-title-ink: #faf4e6;
+
+  --zre-border: rgba(242, 234, 217, 0.32);
+  --zre-border-strong: rgba(242, 234, 217, 0.54);
+  --zre-rule: rgba(242, 234, 217, 0.16);
+  --zre-shadow-solid: #090807;
+  --zre-shadow-card: 3px 4px 0 rgba(0, 0, 0, 0.65);
+  --zre-shadow-sub: 2px 2.5px 0 rgba(0, 0, 0, 0.58);
+  --zre-shadow-btn: 1.5px 2px 0 #090807;
+  --zre-track-bg: rgba(242, 234, 217, 0.13);
+
+  --zre-sage: #7cc052;
+  --zre-sage-ink: #ccf5ae;
+  --zre-sage-wash: rgba(124, 192, 82, 0.20);
+  --zre-sage-border: rgba(124, 192, 82, 0.55);
+  --zre-cta-1: #4d8832;
+  --zre-cta-2: #33601f;
+  --zre-cta-ink: #fcf9f2;
+
+  --zre-gold: #f0c465;
+  --zre-gold-ink: #fae09e;
+  --zre-gold-wash: rgba(240, 196, 101, 0.20);
+  --zre-gold-border: rgba(240, 196, 101, 0.56);
+  --zre-gold-cta-1: #c99227;
+  --zre-gold-cta-2: #966812;
+  --zre-gold-cta-ink: #fffaf0;
+
+  --zre-crimson: #ef7d68;
+  --zre-crimson-ink: #ffc2b6;
+  --zre-crimson-wash: rgba(239, 125, 104, 0.21);
+  --zre-crimson-border: rgba(239, 125, 104, 0.56);
+  --zre-danger-1: #b8422d;
+  --zre-danger-2: #872919;
+  --zre-danger-ink: #fff8f6;
+
+  --zre-blue: #8ab8e8;
+  --zre-blue-ink: #bddbff;
+  --zre-blue-wash: rgba(138, 184, 232, 0.20);
+  --zre-blue-border: rgba(138, 184, 232, 0.54);
+
+  --zre-plum: #c490f5;
+  --zre-plum-ink: #e7ceff;
+  --zre-plum-wash: rgba(196, 144, 245, 0.19);
+  --zre-plum-border: rgba(196, 144, 245, 0.52);
+
+  --zre-font-ui: "Patrick Hand", "Rubik", system-ui, sans-serif;
+  --zre-font-brush: "Caveat Brush", "Patrick Hand", "Rubik", sans-serif;
+  --zre-radius: 255px 12px 225px 12px / 10px 225px 10px 255px;
+  --zre-radius-sm: 185px 8px 165px 8px / 7px 165px 7px 185px;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  --zre-paper: #f2ebdc;
+  --zre-surface: #fbf7ee;
+  --zre-surface-alt: #f4ecdb;
+  --zre-subcard: #f3ead7;
+  --zre-subcard-hover: #e9dec6;
+  --zre-input-bg: #fdfaf2;
+  --zre-btn-bg: #ebe1ca;
+  --zre-btn-hover: #dfd2b4;
+
+  --zre-ink: #1e1b18;
+  --zre-ink-soft: #332d27;
+  --zre-ink-muted: #52483c;
+  --zre-title-ink: #181512;
+
+  --zre-border: rgba(34, 30, 25, 0.36);
+  --zre-border-strong: #23201c;
+  --zre-rule: rgba(34, 30, 25, 0.16);
+  --zre-shadow-solid: #23201c;
+  --zre-shadow-card: 3px 4px 0 rgba(35, 32, 28, 0.18);
+  --zre-shadow-sub: 2px 2.5px 0 rgba(35, 32, 28, 0.16);
+  --zre-shadow-btn: 1.5px 2px 0 #23201c;
+  --zre-track-bg: rgba(34, 30, 25, 0.13);
+
+  --zre-sage: #35681f;
+  --zre-sage-ink: #18471f;
+  --zre-sage-wash: rgba(109, 153, 73, 0.24);
+  --zre-sage-border: #2f5c1b;
+  --zre-cta-1: #467a2c;
+  --zre-cta-2: #2e551b;
+  --zre-cta-ink: #fcf9f2;
+
+  --zre-gold: #8c5a0b;
+  --zre-gold-ink: #593704;
+  --zre-gold-wash: rgba(218, 168, 59, 0.26);
+  --zre-gold-border: #825308;
+  --zre-gold-cta-1: #b88016;
+  --zre-gold-cta-2: #8a5d0b;
+  --zre-gold-cta-ink: #fffdf7;
+
+  --zre-crimson: #9a2917;
+  --zre-crimson-ink: #73190b;
+  --zre-crimson-wash: rgba(198, 83, 58, 0.20);
+  --zre-crimson-border: #8c2514;
+  --zre-danger-1: #ae3925;
+  --zre-danger-2: #822414;
+  --zre-danger-ink: #fff9f7;
+
+  --zre-blue: #1a4375;
+  --zre-blue-ink: #143661;
+  --zre-blue-wash: rgba(62, 111, 176, 0.20);
+  --zre-blue-border: #1e4b82;
+
+  --zre-plum: #65259c;
+  --zre-plum-ink: #491675;
+  --zre-plum-wash: rgba(138, 75, 196, 0.18);
+  --zre-plum-border: #5e2291;
+}
+
+html[dir="rtl"],
+html:lang(ar) {
+  --zre-font-ui: "Noto Sans Arabic", "Cairo", "Rubik", system-ui, sans-serif;
+  --zre-font-brush: "Noto Sans Arabic", "Cairo", "Rubik", system-ui, sans-serif;
+}
+
+html[dir="rtl"] .zre-scope,
+html[dir="rtl"] .zre-scope *,
+html:lang(ar) .zre-scope,
+html:lang(ar) .zre-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Yield cleanly when Awards & Merits Hub or Fullscreen 3D Map is active */
+html[data-zma-open="1"] body #zone-rpg-empire-deck,
+html body #dc-root #zone-main[data-zma-open="1"] #zone-rpg-empire-deck,
+body.zone-map-expanded #zre-mission-banner,
+body.zone-map-expanded #zone-rpg-empire-deck {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. UPGRADED CURRENT MISSION & RANK PROGRESSION BANNER (FIBER-SAFE)
+ *    Replaces dead "No events yet" ticker visually via CSS while preserving
+ *    <x-dc> / React DOM children untouched.
+ * -------------------------------------------------------------------------- */
+html body #dc-root#dc-root#dc-root .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"],
+html body #dc-root .zone-topbar .zone-bulletin[data-zre-hydrated="1"],
+html body .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  padding-block: 5px !important;
+}
+
+html body #dc-root#dc-root#dc-root .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"],
+html body #dc-root .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"],
+html body .zone-app .zone-topbar .zone-bulletin[data-zre-hydrated="1"] [data-zticker="1"] {
+  display: none !important;
+}
+
+html body #zre-mission-banner {
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-family: var(--zre-font-ui);
+}
+
+html body .zone-topbar > #zre-mission-banner {
+  background: var(--zre-surface-alt);
+  border-bottom: 1.5px solid var(--zre-border-strong);
+  padding: 5px 14px;
+}
+
+html body .zre-banner-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  max-width: 100%;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1.4px solid var(--zre-border-strong);
+  background: var(--zre-btn-bg);
+  color: var(--zre-ink) !important;
+  font-family: var(--zre-font-ui) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+  box-sizing: border-box;
+  touch-action: manipulation;
+  transition: transform 0.1s ease, background-color 0.14s ease;
+}
+
+html body .zre-banner-pill span,
+html body .zre-banner-pill bdi {
+  color: inherit !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html body .zre-banner-pill:hover {
+  background: var(--zre-btn-hover);
+}
+
+html body .zre-banner-pill[data-tone="story"] {
+  background: var(--zre-gold-wash);
+  color: var(--zre-gold-ink) !important;
+  border-color: var(--zre-gold-border);
+}
+
+html body .zre-banner-pill[data-tone="rank"] {
+  background: var(--zre-blue-wash);
+  color: var(--zre-blue-ink) !important;
+  border-color: var(--zre-blue-border);
+}
+
+html body .zre-banner-pill[data-tone="sp"] {
+  background: var(--zre-plum-wash);
+  color: var(--zre-plum-ink) !important;
+  border-color: var(--zre-plum-border);
+}
+
+html body .zre-banner-pill[data-tone="promote"] {
+  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
+  color: var(--zre-gold-cta-ink) !important;
+  border-color: var(--zre-border-strong);
+}
+
+html body .zre-banner-pill[data-tone="empire"] {
+  background: linear-gradient(180deg, var(--zre-cta-1), var(--zre-cta-2));
+  color: var(--zre-cta-ink) !important;
+  border-color: var(--zre-border-strong);
+}
+
+html body .zre-banner-spacer {
+  margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+/* --------------------------------------------------------------------------
+ * 3. SIDEBAR RANK/SP PROGRESSION CARD & NAVIGATION TRIGGERS
+ * -------------------------------------------------------------------------- */
+html body #zre-sidebar-rank-card {
+  margin-top: 6px;
+  padding: 8px 9px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border-strong);
+  background: var(--zre-subcard);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  box-shadow: var(--zre-shadow-sub);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+html body #zre-sidebar-rank-card .zre-side-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+html body #zre-sidebar-rpg-btn,
+html body #zre-sidebar-empire-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: calc(100% - 12px);
+  min-height: 36px;
+  margin: 4px 6px 2px;
+  padding: 6px 10px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border-strong);
+  font-family: var(--zre-font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+  box-sizing: border-box;
+  text-align: start;
+}
+
+html body #zre-sidebar-rpg-btn {
+  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
+  color: var(--zre-gold-cta-ink);
+}
+
+html body #zre-sidebar-empire-btn {
+  background: var(--zre-subcard);
+  color: var(--zre-ink);
+}
+
+html body #zre-quick-rpg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 32px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1.5px solid var(--zre-border-strong);
+  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
+  color: var(--zre-gold-cta-ink);
+  font-family: var(--zre-font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+}
+
+/* --------------------------------------------------------------------------
+ * 4. MAIN 5-WORKSPACE RPG & EMPIRE COMMAND SUITE (#zone-rpg-empire-deck)
+ * -------------------------------------------------------------------------- */
+html body #zone-rpg-empire-deck {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 8px 0 14px;
+  padding: 14px;
+  border-radius: var(--zre-radius);
+  border: 2px solid var(--zre-border-strong);
+  background: var(--zre-surface);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  box-shadow: var(--zre-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-x: clip;
+}
+
+html body #zone-rpg-empire-deck[hidden] {
+  display: none !important;
+}
+
+.zre-scope,
+.zre-scope * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.zre-deck-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+  border-bottom: 1.5px dashed var(--zre-border);
+}
+
+.zre-deck-title-group {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zre-deck-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--zre-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.zre-deck-title {
+  margin: 0;
+  font-family: var(--zre-font-brush);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--zre-title-ink);
+}
+
+.zre-deck-sub {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--zre-ink-muted);
+}
+
+.zre-deck-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 5-Tab Switcher Bar */
+.zre-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  width: 100%;
+}
+
+.zre-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border-strong);
+  background: var(--zre-btn-bg);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+  transition: background-color 0.14s ease, transform 0.1s ease;
+}
+
+.zre-tab-btn:hover {
+  background: var(--zre-btn-hover);
+}
+
+.zre-tab-btn[aria-selected="true"] {
+  background: linear-gradient(180deg, var(--zre-cta-1), var(--zre-cta-2));
+  color: var(--zre-cta-ink);
+  border-color: var(--zre-border-strong);
+}
+
+/* Feedback Banner */
+.zre-feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-sage-border);
+  background: var(--zre-sage-wash);
+  color: var(--zre-sage-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.zre-feedback[data-tone="gold"] {
+  border-color: var(--zre-gold-border);
+  background: var(--zre-gold-wash);
+  color: var(--zre-gold-ink);
+}
+
+.zre-feedback[data-tone="bad"],
+.zre-feedback[data-tone="crimson"] {
+  border-color: var(--zre-crimson-border);
+  background: var(--zre-crimson-wash);
+  color: var(--zre-crimson-ink);
+}
+
+.zre-feedback[data-tone="blue"] {
+  border-color: var(--zre-blue-border);
+  background: var(--zre-blue-wash);
+  color: var(--zre-blue-ink);
+}
+
+/* Shared Section, Grid, Card, Chip, Meter, Button & Input Primitives */
+.zre-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.zre-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border);
+  background: var(--zre-surface-alt);
+  box-shadow: var(--zre-shadow-sub);
+}
+
+.zre-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.zre-section-title {
+  margin: 0;
+  font-family: var(--zre-font-brush);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--zre-title-ink);
+}
+
+.zre-section-note {
+  font-size: 12.5px;
+  color: var(--zre-ink-muted);
+  line-height: 1.35;
+}
+
+.zre-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zre-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zre-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zre-grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+  gap: 10px;
+}
+
+.zre-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 11px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border);
+  background: var(--zre-subcard);
+  color: var(--zre-ink);
+  box-shadow: var(--zre-shadow-sub);
+}
+
+.zre-card[data-highlight="gold"] {
+  border-color: var(--zre-gold-border);
+}
+
+.zre-card[data-highlight="sage"] {
+  border-color: var(--zre-sage-border);
+}
+
+.zre-card[data-highlight="crimson"] {
+  border-color: var(--zre-crimson-border);
+}
+
+.zre-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zre-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--zre-title-ink);
+  line-height: 1.25;
+}
+
+.zre-card-meta {
+  font-size: 12.5px;
+  color: var(--zre-ink-soft);
+  line-height: 1.35;
+}
+
+.zre-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zre-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.2px solid var(--zre-border);
+  background: var(--zre-btn-bg);
+  color: var(--zre-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+.zre-chip[data-tone="sage"] {
+  background: var(--zre-sage-wash);
+  color: var(--zre-sage-ink);
+  border-color: var(--zre-sage-border);
+}
+
+.zre-chip[data-tone="gold"] {
+  background: var(--zre-gold-wash);
+  color: var(--zre-gold-ink);
+  border-color: var(--zre-gold-border);
+}
+
+.zre-chip[data-tone="crimson"] {
+  background: var(--zre-crimson-wash);
+  color: var(--zre-crimson-ink);
+  border-color: var(--zre-crimson-border);
+}
+
+.zre-chip[data-tone="blue"] {
+  background: var(--zre-blue-wash);
+  color: var(--zre-blue-ink);
+  border-color: var(--zre-blue-border);
+}
+
+.zre-chip[data-tone="plum"] {
+  background: var(--zre-plum-wash);
+  color: var(--zre-plum-ink);
+  border-color: var(--zre-plum-border);
+}
+
+.zre-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 34px;
+  max-width: 100%;
+  padding: 5px 11px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border-strong);
+  background: var(--zre-btn-bg);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+  touch-action: manipulation;
+}
+
+.zre-btn:hover:not(:disabled) {
+  background: var(--zre-btn-hover);
+}
+
+.zre-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.zre-btn[data-variant="primary"] {
+  background: linear-gradient(180deg, var(--zre-cta-1), var(--zre-cta-2));
+  color: var(--zre-cta-ink);
+}
+
+.zre-btn[data-variant="gold"] {
+  background: linear-gradient(180deg, var(--zre-gold-cta-1), var(--zre-gold-cta-2));
+  color: var(--zre-gold-cta-ink);
+}
+
+.zre-btn[data-variant="danger"] {
+  background: linear-gradient(180deg, var(--zre-danger-1), var(--zre-danger-2));
+  color: var(--zre-danger-ink);
+}
+
+.zre-input,
+.zre-select {
+  min-height: 34px;
+  max-width: 100%;
+  padding: 4px 9px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.4px solid var(--zre-border-strong);
+  background: var(--zre-input-bg);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.zre-input-sm {
+  width: 105px;
+}
+
+.zre-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zre-meter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--zre-ink-soft);
+}
+
+.zre-meter-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid var(--zre-border);
+  background: var(--zre-track-bg);
+  overflow: hidden;
+}
+
+.zre-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--zre-cta-1), var(--zre-sage));
+  transition: width 0.25s ease;
+}
+
+.zre-meter-fill[data-tone="gold"] {
+  background: linear-gradient(90deg, var(--zre-gold-cta-2), var(--zre-gold));
+}
+
+.zre-meter-fill[data-tone="crimson"] {
+  background: linear-gradient(90deg, var(--zre-danger-2), var(--zre-crimson));
+}
+
+.zre-meter-fill[data-tone="blue"] {
+  background: linear-gradient(90deg, #255899, var(--zre-blue));
+}
+
+/* --------------------------------------------------------------------------
+ * 5. TAB 1: STORY CAMPAIGN STAGE, NPC PORTRAITS & TIMELINE
+ * -------------------------------------------------------------------------- */
+.zre-act-ribbon {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zre-act-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 7px 9px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.5px solid var(--zre-border);
+  background: var(--zre-subcard);
+  color: var(--zre-ink);
+  font-family: var(--zre-font-ui);
+  text-align: start;
+  cursor: pointer;
+  box-shadow: var(--zre-shadow-btn);
+}
+
+.zre-act-pill[aria-pressed="true"] {
+  border-color: var(--zre-gold-border);
+  background: var(--zre-gold-wash);
+  color: var(--zre-gold-ink);
+}
+
+.zre-story-stage {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.8px solid var(--zre-border-strong);
+  background: var(--zre-subcard);
+  box-shadow: var(--zre-shadow-sub);
+}
+
+.zre-npc-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+}
+
+.zre-npc-portrait {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  border: 2px solid var(--zre-border-strong);
+  background: var(--zre-surface);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--zre-shadow-btn);
+}
+
+.zre-npc-portrait img,
+.zre-npc-portrait svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.zre-dialogue-bubble {
+  padding: 9px 12px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.4px dashed var(--zre-border-strong);
+  background: var(--zre-surface);
+  color: var(--zre-ink);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.zre-obj-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 4px 0;
+}
+
+.zre-obj-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px solid var(--zre-border);
+  background: var(--zre-surface);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.zre-obj-item[data-done="true"] {
+  border-color: var(--zre-sage-border);
+  background: var(--zre-sage-wash);
+  color: var(--zre-sage-ink);
+}
+
+.zre-chapter-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+/* --------------------------------------------------------------------------
+ * 6. TAB 2: 4-BRANCH SKILL TREE GRAPH & 26-RANK MATRIX
+ * -------------------------------------------------------------------------- */
+.zre-skill-branches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zre-branch-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 10px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.6px solid var(--zre-border-strong);
+  background: var(--zre-subcard);
+}
+
+.zre-branch-head {
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+  border-bottom: 1.4px dashed var(--zre-border);
+}
+
+.zre-skill-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  border: 1.5px solid var(--zre-border);
+  background: var(--zre-surface);
+}
+
+.zre-skill-node[data-state="unlocked"] {
+  border-color: var(--zre-sage-border);
+  background: var(--zre-sage-wash);
+}
+
+.zre-skill-node[data-state="available"] {
+  border-color: var(--zre-gold-border);
+}
+
+.zre-skill-node[data-capstone="true"] {
+  border-width: 2px;
+  box-shadow: var(--zre-shadow-btn);
+}
+
+.zre-node-connector {
+  width: 2.5px;
+  height: 11px;
+  margin: 0 auto;
+  background: var(--zre-border-strong);
+}
+
+.zre-node-connector[data-lit="true"] {
+  background: var(--zre-sage);
+}
+
+.zre-roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 7px;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. TAB 3: SPIN WHEELS & RACING TELEMETRY
+ * -------------------------------------------------------------------------- */
+@keyframes zreWheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(720deg); }
+}
+
+.zre-wheel-disc {
+  width: 68px;
+  height: 68px;
+  margin: 2px auto;
+  border-radius: 50%;
+  border: 2px solid var(--zre-border-strong);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--zre-shadow-btn);
+}
+
+.zre-wheel-disc.is-spinning svg {
+  animation: zreWheelSpin 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+ * 8. TAB 5: 7-BRANCH RESPECT TREE, 4-ROLE OC & 9-SLOT PAPERDOLL LOADOUT
+ * -------------------------------------------------------------------------- */
+.zre-paperdoll-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.zre-war-bar {
+  display: flex;
+  width: 100%;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--zre-border-strong);
+  overflow: hidden;
+  background: var(--zre-crimson-wash);
+}
+
+.zre-war-bar-our {
+  height: 100%;
+  background: linear-gradient(90deg, var(--zre-cta-1), var(--zre-sage));
+  transition: width 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+ * 9. MOBILE & TABLET ZERO-OVERFLOW BREAKPOINTS (390x844 & <= 980px)
+ * -------------------------------------------------------------------------- */
+@media (max-width: 1120px) {
+  .zre-skill-branches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zre-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .zre-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zre-tabs .zre-tab-btn:last-child {
+    grid-column: 1 / -1;
+  }
+  .zre-act-ribbon,
+  .zre-chapter-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zre-grid-3,
+  .zre-paperdoll-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  html body #zone-rpg-empire-deck {
+    padding: 10px;
+    gap: 10px;
+  }
+  .zre-deck-title {
+    font-size: 20px;
+  }
+  .zre-story-stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zre-npc-frame {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: start;
+    gap: 10px;
+  }
+  .zre-npc-portrait {
+    width: 64px;
+    height: 64px;
+    flex: none;
+  }
+  .zre-skill-branches,
+  .zre-grid-2,
+  .zre-grid-3,
+  .zre-grid-4,
+  .zre-grid-auto,
+  .zre-paperdoll-grid,
+  .zre-act-ribbon,
+  .zre-chapter-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zre-input,
+  .zre-select,
+  .zre-input-sm {
+    width: 100%;
+  }
+  html body .zre-banner-spacer {
+    margin-inline-start: 0;
+    width: 100%;
+  }
+}
