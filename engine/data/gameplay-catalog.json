@@ -289,6 +289,540 @@
       "type": "weapon",
       "mult": 2.9,
       "price": 150000
+    },
+    "xanax": {
+      "type": "booster",
+      "price": 840000,
+      "energy": 250,
+      "name": {
+        "en": "Xanax",
+        "ar": "زاناكس"
+      },
+      "description": {
+        "en": "Heavy sedative granting +250 Energy with a 7h drug cooldown and 2.5% overdose risk.",
+        "ar": "مهدئ قوي يمنح +250 طاقة مع تهدئة دوائية 7 ساعات واحتمال جرعة زائدة 2.5%."
+      }
+    },
+    "ecstasy": {
+      "type": "booster",
+      "price": 48000,
+      "happy": 500,
+      "name": {
+        "en": "Ecstasy",
+        "ar": "إكستاسي"
+      },
+      "description": {
+        "en": "Euphoric tablet that doubles current Happiness with a 4h drug cooldown and 4% overdose risk.",
+        "ar": "قرص نشوة يضاعف السعادة الحالية مع تهدئة دوائية 4 ساعات واحتمال جرعة زائدة 4%."
+      }
+    },
+    "vicodin": {
+      "type": "booster",
+      "price": 35000,
+      "life": 200,
+      "name": {
+        "en": "Vicodin",
+        "ar": "فيكودين"
+      },
+      "description": {
+        "en": "Prescription painkiller restoring +200 Life with a 5h drug cooldown.",
+        "ar": "مسكن قوي يستعيد +200 صحة مع تهدئة دوائية 5 ساعات."
+      }
+    },
+    "cannabis": {
+      "type": "booster",
+      "price": 8500,
+      "nerve": 8,
+      "name": {
+        "en": "Cannabis",
+        "ar": "قنب"
+      },
+      "description": {
+        "en": "Calms street nerves for +8 Nerve with a short 1h drug cooldown.",
+        "ar": "يهدئ الأعصاب ليمنح +8 جرأة مع تهدئة دوائية لمدة ساعة."
+      }
+    },
+    "lsd": {
+      "type": "booster",
+      "price": 45000,
+      "energy": 50,
+      "nerve": 5,
+      "happy": 500,
+      "name": {
+        "en": "LSD",
+        "ar": "إل إس دي"
+      },
+      "description": {
+        "en": "Psychedelic blotter granting +50 Energy, +5 Nerve, and +500 Happiness with a 6h drug cooldown.",
+        "ar": "طابع مهلوس يمنح +50 طاقة و+5 جرأة و+500 سعادة مع تهدئة 6 ساعات."
+      }
+    },
+    "edvd": {
+      "type": "booster",
+      "price": 3200000,
+      "happy": 2500,
+      "name": {
+        "en": "Erotic DVD",
+        "ar": "قرص ترفيهي نادر"
+      },
+      "description": {
+        "en": "Happy-jump staple restoring +2,500 Happiness (6h booster cooldown).",
+        "ar": "عنصر أساسي لقفزة السعادة يمنح +2,500 سعادة (تهدئة معزز 6 ساعات)."
+      }
+    },
+    "fhc": {
+      "type": "booster",
+      "price": 13500000,
+      "energy": 150,
+      "happy": 500,
+      "name": {
+        "en": "Feathery Hotel Coupon",
+        "ar": "قسيمة فندق فيذري"
+      },
+      "description": {
+        "en": "Luxury suite voucher granting +150 Energy and +500 Happiness (6h booster cooldown).",
+        "ar": "قسيمة جناح فاخر تمنح +150 طاقة و+500 سعادة (تهدئة معزز 6 ساعات)."
+      }
+    },
+    "energydrink": {
+      "type": "booster",
+      "price": 180000,
+      "energy": 25,
+      "name": {
+        "en": "Taurine Energy Can",
+        "ar": "عبوة طاقة تورين"
+      },
+      "description": {
+        "en": "High-caffeine syndicate energy can adding +25 Energy (2h booster cooldown).",
+        "ar": "عبوة طاقة مركزة تضيف +25 طاقة (تهدئة معزز ساعتين)."
+      }
+    },
+    "lollipop": {
+      "type": "booster",
+      "price": 900,
+      "happy": 25,
+      "name": {
+        "en": "Sweet Lollipop",
+        "ar": "مصاصة حلوة"
+      },
+      "description": {
+        "en": "Street candy adding +25 Happiness (30m booster cooldown).",
+        "ar": "حلوى سريعة تضيف +25 سعادة (تهدئة معزز 30 دقيقة)."
+      }
+    },
+    "bloodbag": {
+      "type": "medical",
+      "price": 22000,
+      "life": 300,
+      "hospitalSeconds": 3600,
+      "name": {
+        "en": "Filled Blood Bag",
+        "ar": "كيس دم مملوء"
+      },
+      "description": {
+        "en": "Universal O-negative blood bag restoring +300 Life and cutting 60m of Hospital time (1h medical cooldown).",
+        "ar": "كيس دم متوافق يستعيد +300 صحة ويقلص 60 دقيقة من المستشفى (تهدئة طبية ساعة)."
+      }
+    },
+    "morphine": {
+      "type": "medical",
+      "price": 42000,
+      "life": 500,
+      "hospitalSeconds": 7200,
+      "name": {
+        "en": "Morphine Syringe",
+        "ar": "حقنة مورفين"
+      },
+      "description": {
+        "en": "Trauma-grade opiate restoring +500 Life and cutting 120m of Hospital time (1.5h medical cooldown).",
+        "ar": "حقنة إسعاف تستعيد +500 صحة وتقلص 120 دقيقة من المستشفى (تهدئة طبية ساعة ونصف)."
+      }
+    },
+    "epinephrine": {
+      "type": "medical",
+      "price": 65000,
+      "life": 250,
+      "hospitalSeconds": 1800,
+      "name": {
+        "en": "Epinephrine Auto-Injector",
+        "ar": "حاقن إبينفرين"
+      },
+      "description": {
+        "en": "Emergency adrenaline shot restoring +250 Life and cutting 30m of Hospital time.",
+        "ar": "جرعة أدرينالين طارئة تستعيد +250 صحة وتقلص 30 دقيقة من المستشفى."
+      }
+    },
+    "lawyer_card": {
+      "type": "material",
+      "price": 95000,
+      "name": {
+        "en": "Lawyer Business Card",
+        "ar": "بطاقة محامي النقابة"
+      },
+      "description": {
+        "en": "Present in Jail to secure an immediate legal release without paying cash bail.",
+        "ar": "تُستخدم في السجن للإفراج القانوني الفوري دون دفع كفالة نقدية."
+      }
+    },
+    "flash_grenade": {
+      "type": "material",
+      "price": 15000,
+      "name": {
+        "en": "Flashbang Grenade",
+        "ar": "قنبلة ضوئية"
+      },
+      "description": {
+        "en": "Tactical blinding charge used to disorient defenders during street combat.",
+        "ar": "قنبلة تكتيكية لإرباك الخصوم وإضعاف دقتهم في القتال."
+      }
+    },
+    "smoke_grenade": {
+      "type": "material",
+      "price": 18000,
+      "name": {
+        "en": "Smoke Grenade",
+        "ar": "قنبلة دخانية"
+      },
+      "description": {
+        "en": "Dense concealment canister that suppresses enemy ranged accuracy.",
+        "ar": "عبوة دخان كثيفة للتغطية وتقليل دقة الأسلحة النارية للخصم."
+      }
+    },
+    "plush_camel": {
+      "type": "material",
+      "price": 14000,
+      "name": {
+        "en": "Camel Plushie",
+        "ar": "دمية الجمل"
+      },
+      "description": {
+        "en": "Imported Gulf souvenir plushie prized by the Zone City Museum.",
+        "ar": "دمية تذكارية مستوردة مطلوبة ضمن مجموعات متحف مدينة زون."
+      }
+    },
+    "plush_bear": {
+      "type": "material",
+      "price": 15000,
+      "name": {
+        "en": "Teddy Bear Plushie",
+        "ar": "دمية الدب"
+      },
+      "description": {
+        "en": "Classic stitched plushie collected for Museum Point exchanges.",
+        "ar": "دمية كلاسيكية تُجمع لاستبدال نقاط المتحف."
+      }
+    },
+    "plush_moose": {
+      "type": "material",
+      "price": 14500,
+      "name": {
+        "en": "Moose Plushie",
+        "ar": "دمية الموظ الكندي"
+      },
+      "description": {
+        "en": "Toronto market collectible plushie needed for the 6-piece Museum set.",
+        "ar": "دمية كندية نادرة لازمة لإكمال طقم المتحف السداسي."
+      }
+    },
+    "plush_pharaoh": {
+      "type": "material",
+      "price": 18500,
+      "name": {
+        "en": "Pharaoh Plushie",
+        "ar": "دمية الفرعون"
+      },
+      "description": {
+        "en": "Cairo bazaar plushie sought by Museum curators.",
+        "ar": "دمية من بازار القاهرة يطلبها أمناء المتحف."
+      }
+    },
+    "plush_falcon": {
+      "type": "material",
+      "price": 22000,
+      "name": {
+        "en": "Falcon Plushie",
+        "ar": "دمية الصقر"
+      },
+      "description": {
+        "en": "Dubai duty-free falcon plushie traded in complete Museum sets.",
+        "ar": "دمية صقر فاخرة من دبي تُستبدل ضمن مجموعات المتحف."
+      }
+    },
+    "plush_lion": {
+      "type": "material",
+      "price": 28000,
+      "name": {
+        "en": "Lion Plushie",
+        "ar": "دمية الأسد"
+      },
+      "description": {
+        "en": "Johannesburg safari plushie completing the Museum Plushie Set.",
+        "ar": "دمية أسد أفريقية تكمل مجموعة دمى المتحف."
+      }
+    },
+    "plush_jaguar": {
+      "type": "material",
+      "price": 12000,
+      "name": {
+        "en": "Jaguar Plushie",
+        "ar": "دمية اليغور"
+      },
+      "description": {
+        "en": "Spotted Mexico border plushie traded by international couriers.",
+        "ar": "دمية يغور مكسيكية يتاجر بها المسافرون الدوليون."
+      }
+    },
+    "bolt_cutters": {
+      "type": "material",
+      "price": 9500,
+      "name": {
+        "en": "Heavy Bolt Cutters",
+        "ar": "مقص أقفال فولاذي"
+      },
+      "description": {
+        "en": "Hardened steel jaws for breaching padlocks and perimeter chains.",
+        "ar": "مقص فولاذي مقوى لكسر الأقفال والسلاسل المعدنية."
+      }
+    },
+    "snow_globe": {
+      "type": "material",
+      "price": 16000,
+      "name": {
+        "en": "Zurich Snow Globe",
+        "ar": "كرة ثلج زيورخ"
+      },
+      "description": {
+        "en": "Alpine glass keepsake acquired near the Zurich rehabilitation clinic.",
+        "ar": "تذكار زجاجي سويسري يُقتنى من سوق زيورخ."
+      }
+    },
+    "flower_orchid": {
+      "type": "material",
+      "price": 16500,
+      "name": {
+        "en": "White Orchid",
+        "ar": "أوركيد أبيض"
+      },
+      "description": {
+        "en": "Rare botanical specimen required for the Museum Exotic Flower Set.",
+        "ar": "زهرة نادرة مطلوبة لإكمال طقم الزهور في المتحف."
+      }
+    },
+    "flower_lotus": {
+      "type": "material",
+      "price": 19000,
+      "name": {
+        "en": "Sacred Lotus",
+        "ar": "زهرة اللوتس"
+      },
+      "description": {
+        "en": "Pacific island lotus blossom prized by Museum botanists.",
+        "ar": "زهرة لوتس استوائية يقدّرها خبراء المتحف."
+      }
+    },
+    "flower_cherry": {
+      "type": "material",
+      "price": 14500,
+      "name": {
+        "en": "Cherry Blossom",
+        "ar": "زهرة الكرز"
+      },
+      "description": {
+        "en": "Preserved spring sakura branch for the Museum Flower exchange.",
+        "ar": "غصن ساكورا محفوظ لاستبدال نقاط المتحف."
+      }
+    },
+    "flower_peony": {
+      "type": "material",
+      "price": 24000,
+      "name": {
+        "en": "Imperial Peony",
+        "ar": "زهرة الفاوانيا"
+      },
+      "description": {
+        "en": "Crimson Beijing peony stem traded in full botanical sets.",
+        "ar": "زهرة فاوانيا إمبراطورية تُتداول ضمن أطقم المتحف."
+      }
+    },
+    "flower_tribulus": {
+      "type": "material",
+      "price": 26500,
+      "name": {
+        "en": "Desert Tribulus",
+        "ar": "زهرة القطب الصحراوية"
+      },
+      "description": {
+        "en": "Golden desert bloom imported from Arabian markets.",
+        "ar": "زهرة صحراوية ذهبية مستوردة من الأسواق العربية."
+      }
+    },
+    "flower_violet": {
+      "type": "material",
+      "price": 17500,
+      "name": {
+        "en": "African Violet",
+        "ar": "بنفسج أفريقي"
+      },
+      "description": {
+        "en": "Velvet-petalled botanical specimen completing the 6-flower Museum set.",
+        "ar": "عينة نباتية مخملية تكمل طقم الزهور السداسي في المتحف."
+      }
+    },
+    "glasses": {
+      "type": "material",
+      "price": 4500,
+      "name": {
+        "en": "Spotter Glasses",
+        "ar": "نظارات رصد"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Search for Cash.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة البحث عن النقد."
+      }
+    },
+    "high_speed_drive": {
+      "type": "material",
+      "price": 12000,
+      "name": {
+        "en": "High-Speed Duplicator Drive",
+        "ar": "محرك نسخ فائق السرعة"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Bootlegging.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة نسخ الأقراص المهربة."
+      }
+    },
+    "paint_mask": {
+      "type": "material",
+      "price": 6500,
+      "name": {
+        "en": "Respirator Paint Mask",
+        "ar": "قناع طلاء واقٍ"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Graffiti.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة الرسم الجداري."
+      }
+    },
+    "mountain_bike": {
+      "type": "material",
+      "price": 18000,
+      "name": {
+        "en": "Getaway Mountain Bike",
+        "ar": "دراجة هروب جبلية"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Shoplifting.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة سرقة المتاجر."
+      }
+    },
+    "cut_throat_razor": {
+      "type": "material",
+      "price": 9500,
+      "name": {
+        "en": "Cut-Throat Pocket Razor",
+        "ar": "شفرة نشل دقيقة"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Pickpocketing.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة النشل."
+      }
+    },
+    "duct_tape": {
+      "type": "material",
+      "price": 3500,
+      "name": {
+        "en": "Matte Black Duct Tape",
+        "ar": "شريط لاصق معتم"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Card Skimming.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة نسخ البطاقات."
+      }
+    },
+    "flashlight": {
+      "type": "material",
+      "price": 7500,
+      "name": {
+        "en": "Low-Lumen Tactical Flashlight",
+        "ar": "مصباح تكتيكي خافت"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Burglary.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة السطو الليلي."
+      }
+    },
+    "megaphone": {
+      "type": "material",
+      "price": 11000,
+      "name": {
+        "en": "Street Crowd Megaphone",
+        "ar": "مكبر صوت للشارع"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Hustling.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة استغلال الحشود."
+      }
+    },
+    "latex_gloves": {
+      "type": "material",
+      "price": 5200,
+      "name": {
+        "en": "Forensic Latex Gloves",
+        "ar": "قفازات لاتكس جنائية"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Disposal.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة التخلص من الأدلة."
+      }
+    },
+    "office_chair": {
+      "type": "material",
+      "price": 24000,
+      "name": {
+        "en": "Operator Rig Chair",
+        "ar": "كرسي اختراق مريح"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Cracking.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة كسر التشفير."
+      }
+    },
+    "magnifying_glass": {
+      "type": "material",
+      "price": 8800,
+      "name": {
+        "en": "Jeweler Magnifying Loupe",
+        "ar": "عدسة تزوير مكبرة"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Forgery.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة التزوير."
+      }
+    },
+    "ergonomic_keyboard": {
+      "type": "material",
+      "price": 32000,
+      "name": {
+        "en": "Ergonomic Mechanical Keyboard",
+        "ar": "لوحة مفاتيح احترافية"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Scamming.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة الاحتيال الرقمي."
+      }
+    },
+    "windproof_lighter": {
+      "type": "material",
+      "price": 45000,
+      "name": {
+        "en": "Windproof Torch Lighter",
+        "ar": "ولاعة لهب مقاومة للرياح"
+      },
+      "description": {
+        "en": "Crimes 2.0 enhancer (+12% odds) for Arson.",
+        "ar": "أداة تعزيز (+12% نجاح) لجريمة الحرق المتعمد."
+      }
     }
   },
   "jobs": [
@@ -327,6 +861,108 @@
       "pay": 9000,
       "energy": 20,
       "lvl": 20
+    },
+    {
+      "id": "law_firm",
+      "pay": 12500,
+      "energy": 20,
+      "lvl": 24,
+      "man": 10,
+      "int": 45,
+      "end": 25,
+      "name": {
+        "en": "Law Firm Associate",
+        "ar": "محامٍ مشارك"
+      },
+      "description": {
+        "en": "Draft defense briefs and build Intelligence + Endurance.",
+        "ar": "صياغة المذكرات القانونية وبناء الذكاء والتحمل."
+      }
+    },
+    {
+      "id": "sweet_shop",
+      "pay": 15000,
+      "energy": 20,
+      "lvl": 28,
+      "man": 25,
+      "int": 20,
+      "end": 35,
+      "name": {
+        "en": "Sweet Shop Supervisor",
+        "ar": "مشرف متجر الحلويات"
+      },
+      "description": {
+        "en": "Manage confectionery stock and earn Job Points for Happy specials.",
+        "ar": "إدارة مخزون الحلويات وكسب نقاط عمل لمكافآت السعادة."
+      }
+    },
+    {
+      "id": "adult_novelties",
+      "pay": 19500,
+      "energy": 25,
+      "lvl": 32,
+      "man": 20,
+      "int": 35,
+      "end": 45,
+      "name": {
+        "en": "Adult Novelties Director",
+        "ar": "مدير متجر الترفيه"
+      },
+      "description": {
+        "en": "High-margin retail management unlocking Erotic DVD company perks.",
+        "ar": "إدارة تجارة عالية الربح تفتح مزايا الشركة الخاصة."
+      }
+    },
+    {
+      "id": "cyber_sec",
+      "pay": 26000,
+      "energy": 25,
+      "lvl": 38,
+      "man": 15,
+      "int": 70,
+      "end": 40,
+      "name": {
+        "en": "Cyber Defense Lead",
+        "ar": "قائد الأمن السيبراني"
+      },
+      "description": {
+        "en": "Audit network vaults and rapidly scale Intelligence working stats.",
+        "ar": "تدقيق الشبكات ومضاعفة نقاط الذكاء المهني بسرعة."
+      }
+    },
+    {
+      "id": "private_sec",
+      "pay": 34000,
+      "energy": 25,
+      "lvl": 45,
+      "man": 65,
+      "int": 35,
+      "end": 60,
+      "name": {
+        "en": "Private Security PMC",
+        "ar": "شركة حراسة أمنية خاصة"
+      },
+      "description": {
+        "en": "Armored VIP escort shifts granting heavy Manual & Endurance gains.",
+        "ar": "حراسة الشخصيات الهامة بمكاسب عالية في القوة اليدوية والتحمل."
+      }
+    },
+    {
+      "id": "oil_rig",
+      "pay": 48000,
+      "energy": 30,
+      "lvl": 55,
+      "man": 85,
+      "int": 55,
+      "end": 80,
+      "name": {
+        "en": "Offshore Oil Conglomerate",
+        "ar": "تكتل منصات النفط البحرية"
+      },
+      "description": {
+        "en": "Top-tier syndicate executive shift with peak cash and working stats.",
+        "ar": "أعلى وظيفة تنفيذية بأجور قياسية ومكاسب عمل قصوى."
+      }
     }
   ],
   "gyms": [
@@ -369,6 +1005,214 @@
       "e": 10,
       "xp": 2000,
       "cost": 10000
+    },
+    {
+      "e": 10,
+      "xp": 3000,
+      "cost": 15000,
+      "name": {
+        "en": "Pioneer Fitness",
+        "ar": "بايونير للياقة"
+      },
+      "description": {
+        "en": "Upper-lightweight compound racks and sprint lanes.",
+        "ar": "أوزان متقدمة ومسارات سرعة للفئة الخفيفة العليا."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 4500,
+      "cost": 25000,
+      "name": {
+        "en": "Anabolic Anomalies",
+        "ar": "مختبر القوة العضلية"
+      },
+      "description": {
+        "en": "Entry middleweight iron pit with reinforced squat cages.",
+        "ar": "بداية الفئة المتوسطة مع أقفاص رفع مقواة."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 6500,
+      "cost": 40000,
+      "name": {
+        "en": "Core Conditioning",
+        "ar": "مركز التكييف البدني"
+      },
+      "description": {
+        "en": "Balanced middleweight resistance and grappling mats.",
+        "ar": "صالة متوازنة للمقاومة وتدريبات الاشتباك."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 9000,
+      "cost": 60000,
+      "name": {
+        "en": "Racing Fitness",
+        "ar": "نادي السرعة والرشاقة"
+      },
+      "description": {
+        "en": "High-tempo reflex drills and reaction sleds.",
+        "ar": "تمارين ردود فعل عالية الوتيرة ومزالج سرعة."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 12000,
+      "cost": 85000,
+      "name": {
+        "en": "Complete Cardio",
+        "ar": "نادي التحمل الشامل"
+      },
+      "description": {
+        "en": "Endurance chambers and weighted stair climbers.",
+        "ar": "غرف تحمل متقدمة وتمارين لياقة مكثفة."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 16000,
+      "cost": 120000,
+      "name": {
+        "en": "Iron Legs & Core",
+        "ar": "صالة الحديد المتقدمة"
+      },
+      "description": {
+        "en": "Heavyweight entry gym for seasoned street enforcers.",
+        "ar": "بوابة الفئة الثقيلة لمنفذي النقابة المحترفين."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 21000,
+      "cost": 175000,
+      "name": {
+        "en": "Deep Burn Athletics",
+        "ar": "ديب بيرن الرياضية"
+      },
+      "description": {
+        "en": "High-volume hypertrophy rigs with chalked olympic bars.",
+        "ar": "منصات أولمبية عالية الكثافة لبناء الكتلة القتالية."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 27000,
+      "cost": 250000,
+      "name": {
+        "en": "Apollo Heavy Gym",
+        "ar": "نادي أبولو الثقيل"
+      },
+      "description": {
+        "en": "Championship sparring rings and calibrated competition plates.",
+        "ar": "حلبات ملاكمة احترافية وأوزان بطولات معايرة."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 34000,
+      "cost": 350000,
+      "name": {
+        "en": "Gun Shop Conditioning",
+        "ar": "تكييف الرماة التكتيكي"
+      },
+      "description": {
+        "en": "Recoil control, ballistic vest drills, and combat footwork.",
+        "ar": "تدريبات التحكم بالارتداد والسترات التكتيكية."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 42000,
+      "cost": 500000,
+      "name": {
+        "en": "Force Training Institute",
+        "ar": "معهد القوة القصوى"
+      },
+      "description": {
+        "en": "Explosive kinetic training for veteran warlords.",
+        "ar": "تدريبات انفجارية لقادة الشوارع المخضرمين."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 52000,
+      "cost": 750000,
+      "name": {
+        "en": "Cha Cha's Boxing Club",
+        "ar": "نادي تشا تشا للملاكمة"
+      },
+      "description": {
+        "en": "Old-school underground boxing sanctuary with elite coaches.",
+        "ar": "مدرسة ملاكمة عريقة بإشراف نخبة المدربين."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 65000,
+      "cost": 1000000,
+      "name": {
+        "en": "Atlas Heavyweight",
+        "ar": "أطلس للوزن الثقيل"
+      },
+      "description": {
+        "en": "Million-dollar strongman compound for top faction hitters.",
+        "ar": "مجمع القوة الخارقة لضاربي الفصائل النخبة."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 80000,
+      "cost": 1500000,
+      "name": {
+        "en": "Last Round Pit",
+        "ar": "حلبة الجولة الأخيرة"
+      },
+      "description": {
+        "en": "Pre-specialist heavyweight crucible with brutal sparring.",
+        "ar": "مرحلة النخبة قبل الصالات التخصصية القصوى."
+      }
+    },
+    {
+      "e": 25,
+      "xp": 100000,
+      "cost": 2500000,
+      "name": {
+        "en": "Balboa's Gym",
+        "ar": "نادي بالبوا التخصصي"
+      },
+      "description": {
+        "en": "Specialist Defense & Dexterity sanctuary (25E sessions).",
+        "ar": "صالة تخصصية عليا للدفاع والرشاقة (25 طاقة للجلسة)."
+      }
+    },
+    {
+      "e": 25,
+      "xp": 120000,
+      "cost": 3000000,
+      "name": {
+        "en": "Frontline Fitness",
+        "ar": "فرونت لاين التخصصي"
+      },
+      "description": {
+        "en": "Specialist Strength & Speed sanctuary (25E sessions).",
+        "ar": "صالة تخصصية عليا للقوة والسرعة (25 طاقة للجلسة)."
+      }
+    },
+    {
+      "e": 10,
+      "xp": 150000,
+      "cost": 5000000,
+      "name": {
+        "en": "George's Elite Gym",
+        "ar": "نادي جورج الأسطوري"
+      },
+      "description": {
+        "en": "Torn's pinnacle all-stat Heavyweight Gym with maximum multipliers.",
+        "ar": "قمة نوادي الوزن الثقيل بأعلى مضاعفات لجميع الصفات."
+      }
     }
   ],
   "missions": [
@@ -433,6 +1277,175 @@
       "id": "comb",
       "cost": 25000,
       "mins": 90
+    },
+    {
+      "id": "hist",
+      "cost": 18000,
+      "mins": 60,
+      "name": {
+        "en": "Ancient & Modern History",
+        "ar": "التاريخ القديم والحديث"
+      },
+      "description": {
+        "en": "Unlocks the City Museum Plushie & Exotic Flower Point Exchange.",
+        "ar": "يفتح قسم استبدال الدمى والزهور بالنقاط في متحف المدينة."
+      }
+    },
+    {
+      "id": "sport",
+      "cost": 22000,
+      "mins": 75,
+      "name": {
+        "en": "Sports Science",
+        "ar": "علوم الرياضة"
+      },
+      "description": {
+        "en": "Grants +5% bonus Gym stat gains through biomechanics.",
+        "ar": "يمنح +5% زيادة إضافية في مكاسب تدريب النادي."
+      }
+    },
+    {
+      "id": "cs",
+      "cost": 20000,
+      "mins": 65,
+      "name": {
+        "en": "Computer Science",
+        "ar": "علوم الحاسوب"
+      },
+      "description": {
+        "en": "Unlocks +10% Card Skimming & Cracking success in Crimes 2.0.",
+        "ar": "يمنح +10% نسبة نجاح في نسخ البطاقات وكسر التشفير."
+      }
+    },
+    {
+      "id": "med",
+      "cost": 28000,
+      "mins": 90,
+      "name": {
+        "en": "Emergency Medicine",
+        "ar": "طب الطوارئ"
+      },
+      "description": {
+        "en": "Unlocks Blood Bag drawing and 25-Energy player Hospital Revives.",
+        "ar": "يفتح سحب أكياس الدم وإنعاش اللاعبين بتكلفة 25 طاقة."
+      }
+    },
+    {
+      "id": "psych",
+      "cost": 16000,
+      "mins": 50,
+      "name": {
+        "en": "Forensic Psychology",
+        "ar": "علم النفس الجنائي"
+      },
+      "description": {
+        "en": "Grants permanent +15 Dexterity and sharper stealth composure.",
+        "ar": "يمنح +15 رشاقة دائمة وهدوءاً أعلى أثناء التخفي."
+      }
+    },
+    {
+      "id": "selfdef",
+      "cost": 17500,
+      "mins": 55,
+      "name": {
+        "en": "Tactical Self Defense",
+        "ar": "الدفاع التكتيكي عن النفس"
+      },
+      "description": {
+        "en": "Grants permanent +15 Defense and counter-grapple awareness.",
+        "ar": "يمنح +15 دفاعاً دائماً ومقاومة أعلى للاشتباك."
+      }
+    },
+    {
+      "id": "math",
+      "cost": 19000,
+      "mins": 60,
+      "name": {
+        "en": "Applied Mathematics",
+        "ar": "الرياضيات التطبيقية"
+      },
+      "description": {
+        "en": "Improves firearm ballistics and ammo conservation.",
+        "ar": "يحسن حسابات المقذوفات وكفاءة استخدام الذخيرة."
+      }
+    },
+    {
+      "id": "gen",
+      "cost": 11000,
+      "mins": 35,
+      "name": {
+        "en": "General Studies",
+        "ar": "الدراسات العامة"
+      },
+      "description": {
+        "en": "Boosts Manual, Intelligence, and Endurance gains on every job shift.",
+        "ar": "يرفع مكاسب الصفات المهنية في جميع ورديات العمل."
+      }
+    },
+    {
+      "id": "chem",
+      "cost": 24000,
+      "mins": 80,
+      "name": {
+        "en": "Organic Pharmacology",
+        "ar": "علم الأدوية العضوي"
+      },
+      "description": {
+        "en": "Reduces Drug Overdose risk by 25% across all compounds.",
+        "ar": "يقلل خطر الجرعة الزائدة للمخدرات بنسبة 25%."
+      }
+    },
+    {
+      "id": "econ",
+      "cost": 26000,
+      "mins": 85,
+      "name": {
+        "en": "Financial Economics",
+        "ar": "الاقتصاد المالي"
+      },
+      "description": {
+        "en": "Increases Bank Term CD interest yields by +5%.",
+        "ar": "يرفع عوائد شهادات الإيداع البنكية بنسبة +5%."
+      }
+    },
+    {
+      "id": "crim",
+      "cost": 21000,
+      "mins": 70,
+      "name": {
+        "en": "Advanced Criminology",
+        "ar": "علم الجريمة المتقدم"
+      },
+      "description": {
+        "en": "Increases Crimes 2.0 Unique Outcome loot odds by +8%.",
+        "ar": "يرفع فرصة النتيجة الفريدة والغنائم في الجرائم بنسبة +8%."
+      }
+    },
+    {
+      "id": "mech",
+      "cost": 23000,
+      "mins": 75,
+      "name": {
+        "en": "Motorsport Engineering",
+        "ar": "هندسة سباقات السيارات"
+      },
+      "description": {
+        "en": "Boosts Raceway cornering speed and podium placement odds.",
+        "ar": "يرفع أداء حلبة السباق وفرص الفوز بالمراكز الثلاثة الأولى."
+      }
+    },
+    {
+      "id": "lead",
+      "cost": 35000,
+      "mins": 120,
+      "name": {
+        "en": "Syndicate Command",
+        "ar": "قيادة النقابة"
+      },
+      "description": {
+        "en": "Enhances Organized Crime heist payouts and Faction Respect.",
+        "ar": "يعزز عوائد الجرائم المنظمة واحترام الفصيل."
+      }
     }
   ],
   "properties": [
@@ -507,7 +1520,10 @@
       "dex": 10,
       "life": 120,
       "cash": 1200,
-      "name": {"en": "Dockside Rookie", "ar": "مبتدئ المرفأ"},
+      "name": {
+        "en": "Dockside Rookie",
+        "ar": "مبتدئ المرفأ"
+      },
       "description": {
         "en": "A novice city opponent with normal combat risk. Build your first win here; defeat still causes hospitalization.",
         "ar": "خصم مبتدئ بمخاطر القتال المعتادة. ابدأ انتصارك الأول هنا؛ الهزيمة تؤدي إلى المستشفى."

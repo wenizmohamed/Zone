@@ -16,7 +16,7 @@ function catalogAction(string $action, string $id): array { global $engine; $sta
 try {
     $before = $engine->gameplay();
     $initial = $engine->adminGameplayCatalog();
-    catalogProof(count($initial['schema']) === 8 && $initial['revision'] === 1 && count($initial['catalogs']['items']) === 58, 'typed catalog exposes eight editable categories and preserved stable entries');
+    catalogProof(count($initial['schema']) === 8 && $initial['revision'] === 1 && count($initial['catalogs']['items']) === 101 && count($initial['catalogs']['gyms']) === 24 && count($initial['catalogs']['courses']) === 18 && count($initial['catalogs']['jobs']) === 12, 'typed catalog exposes eight editable categories and expanded v148 Torn definitions');
     $edited = editCatalog('items', 'drink', ['price' => 123, 'name' => ['en' => 'Cold Drink', 'ar' => 'مشروب بارد']]);
     catalogProof($edited['revision'] === 2 && $edited['catalogs']['items']['drink']['price'] === 123, 'catalog edit persists typed values and increments draft revision');
     catalogProof($engine->gameplay()['catalogs']['items']['drink']['price'] === 990, 'unpublished catalog edit cannot change initial runtime price');

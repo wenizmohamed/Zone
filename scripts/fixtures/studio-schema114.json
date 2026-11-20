@@ -3,8 +3,8 @@
     "generatedBy": "scripts/export-studio-schema114.php",
     "sourceNormalization": "CRLF-to-LF for ordinary source/data only",
     "sourceSha256": {
-        "engine/src/Core/Content/GameplayDefinitionValidator.php": "a7907e5bf0bf42dac690b0a1ac1aa0329806e11937fe5730172696699a554b08",
-        "engine/data/gameplay-catalog.json": "59bdcfd6946438010148fc6864c0c4e6c1e2e491b67f9a90db914450f144f11d",
+        "engine/src/Core/Content/GameplayDefinitionValidator.php": "0ff669e6e83401dfa2ecea4fb6e7b5b471bbeac4f4334e4a45f4a2fb202826dd",
+        "engine/data/gameplay-catalog.json": "03097c18959e3487cbeb84f78fe4639d801767b671d633e19e8be3cbefc6c8e0",
         "scripts/export-studio-schema114.php": "64fed7196243719445d56a5e68d29a3207d6aee84c2731c60eecafd8ae66500c"
     },
     "schema": {
@@ -208,6 +208,24 @@
                     "type": "integer",
                     "min": 1,
                     "max": 100
+                },
+                "man": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000,
+                    "optional": true
+                },
+                "int": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000,
+                    "optional": true
+                },
+                "end": {
+                    "type": "integer",
+                    "min": 0,
+                    "max": 1000,
+                    "optional": true
                 },
                 "name": {
                     "type": "bilingual",

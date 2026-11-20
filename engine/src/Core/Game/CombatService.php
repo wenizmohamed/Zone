@@ -99,6 +99,14 @@ final class CombatService
                 if ($encounter === null || ($encounter['phase'] === 'fighting' && $approach !== 'leave')) throw new RuntimeException('The encounter is not ready to finish.');
                 if ($encounter['phase'] !== 'won' && $approach !== 'leave') throw new RuntimeException('Only a won encounter can award a finish.');
                 $cash = 0; $xp = 0; $respect = 0;
+                $attTotalStats = max(1, (int) $player['strength'] + (int) $player['defense'] + (int) $player['speed'] + (int) $player['dexterity']);
+                $oppStats = $encounter['opponent'];
+                $defTotalStats = max(0, (int) ($oppStats['str'] ?? 10) + (int) ($oppStats['def'] ?? 10) + (int) ($oppStats['spd'] ?? 10) + (int) ($oppStats['dex'] ?? 10));
+                $fairFight = round(min(3.0, max(1.0, 1.0 + (8.0 / 3.0) * ($defTotalStats / $attTotalStats))), 2);
+                $chainService = new FactionChainService($this->database, $this->events);
+                $chainMultiplier = $chainService->liveMultiplierForPlayer($playerId);
+                $overseas = ($player['city'] !== 'Zone City' && strtolower((string) $player['city']) !== 'harbor') ? 1.25 : 1.0;
+                $chainHit = null;
                 if ($encounter['phase'] === 'won') {
                     $opponent = $encounter['opponent'];
                     $cash = $approach === 'mug' ? (int) round($opponent['cash'] * $this->roll(500, 1200) / 10000) : 0;
@@ -106,17 +114,20 @@ final class CombatService
                     $this->database->execute('UPDATE players SET cash = cash + :cash, xp = xp + :xp WHERE id = :id', ['cash' => $cash, 'xp' => $xp, 'id' => $playerId]);
                     if ($cash > 0) $this->ledger->record($playerId, 'cash', $cash, $player['cash'] + $cash, 'combat.mug', $correlationId);
                     $respect = $this->progression->recordCombatWin($playerId, (int) $opponent['lvl'], $approach);
+                    $oppLabel = is_array($opponent['name'] ?? null) ? (string) ($opponent['name']['en'] ?? $opponent['id']) : (string) ($opponent['id'] ?? 'NPC');
+                    $chainHit = $chainService->recordHit($playerId, $approach, $oppLabel, $fairFight);
+                    if ($chainHit !== null) {
+                        $chainMultiplier = (float) $chainHit['multiplier'];
+                    }
                     $leveling = new LevelingService($this->database, $this->ledger, $this->events);
                     $leveling->sync($playerId, $correlationId);
                     (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
                 }
-                $oppLvl = (int) ($encounter['opponent']['lvl'] ?? 1);
-                $fairFight = round(min(3.0, max(1.0, 1.0 + ($oppLvl / max(1, (int) $player['level'])) * 0.85)), 2);
-                $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => 1.0, 'chain' => 1.0, 'warlord' => 1.0];
+                $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => 1.0];
                 $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? 25 : ($approach === 'hosp' ? 30 : 15)]];
                 $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                 $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
-                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'modifiers' => $modifiers, 'finishing_hit_effects' => $finishingHitEffects, 'correlationId' => $correlationId];
+                $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'stealthed' => false, 'chain' => $chainHit, 'modifiers' => $modifiers, 'totalMultiplier' => round($fairFight * $overseas * $chainMultiplier, 2), 'finishing_hit_effects' => $finishingHitEffects, 'correlationId' => $correlationId];
                 $encounter = null;
             }
             $stored = ['version' => $stored['version'] + 1, 'encounter' => $encounter];

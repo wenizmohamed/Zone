@@ -720,6 +720,48 @@ try {
     if ($method === 'GET' && $path === '/api/v1/notifications') {
         json_response(['notifications' => $engine->notifications(current_player_id())]);
     }
+    if ($method === 'GET' && $path === '/api/v1/hospital/patients') {
+        json_response($engine->hospitalPatients(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/hospital/revive-player') {
+        $body = request_json();
+        $targetPlayerId = (string) ($body['targetPlayerId'] ?? $body['playerId'] ?? $body['id'] ?? '');
+        $pid = current_player_id();
+        $res = $engine->hospitalRevivePlayer($targetPlayerId, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/player-profile') {
+        $targetId = isset($_GET['id']) && is_string($_GET['id']) ? $_GET['id'] : null;
+        $query = isset($_GET['q']) && is_string($_GET['q']) ? $_GET['q'] : null;
+        json_response($engine->playerProfile(current_player_id(), $targetId, $query));
+    }
+    if ($method === 'GET' && $path === '/api/v1/events-feed') {
+        $limit = \Zone\Engine\Core\Security\RequestGuard::boundedInt($_GET, 'limit', 1, 40, 40);
+        json_response($engine->eventsFeed(current_player_id(), $limit));
+    }
+    if ($method === 'GET' && $path === '/api/v1/foreign-market') {
+        json_response($engine->foreignMarket(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/foreign-market/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Foreign market action must be text.');
+        $pid = current_player_id();
+        $res = $engine->foreignMarketAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/faction-chain') {
+        json_response($engine->factionChain(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/faction-chain/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Faction chain action must be text.');
+        $pid = current_player_id();
+        $res = $engine->factionChainAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

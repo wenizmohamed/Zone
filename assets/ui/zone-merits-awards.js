@@ -402,8 +402,296 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 3. ENGINE BRIDGE STATE ADAPTER (DEFENSIVE & LIVE)
+   * 3. ENGINE BRIDGE STATE ADAPTER & SERVER-AUTHORITATIVE SYNC (v148)
    * ------------------------------------------------------------------------ */
+  var MERIT_UI_TO_SERVER = {
+    nerve: 'nerve_bar',
+    crit: 'crit_rate',
+    life: 'life_points',
+    crime: 'crime_xp',
+    awareness: 'awareness',
+    brawn: 'brawn',
+    protection: 'protection',
+    sharpness: 'sharpness',
+    evasion: 'evasion',
+    bank: 'bank_interest',
+    edu: 'education_length',
+    emp: 'emp',
+    looting: 'masterful_looting',
+    hosp: 'hospitalizing',
+    stealth: 'stealth',
+    gym: 'gym',
+    rifle: 'rifles',
+    smg: 'sub_machine_guns',
+    pistol: 'pistols',
+    melee: 'clubs'
+  };
+
+  var MERIT_SERVER_TO_UI = {
+    nerve: 'nerve',
+    nerve_bar: 'nerve',
+    crit: 'crit',
+    crit_rate: 'crit',
+    life: 'life',
+    life_points: 'life',
+    crime: 'crime',
+    crime_xp: 'crime',
+    awareness: 'awareness',
+    brawn: 'brawn',
+    protection: 'protection',
+    sharpness: 'sharpness',
+    evasion: 'evasion',
+    bank: 'bank',
+    bank_interest: 'bank',
+    edu: 'edu',
+    education_length: 'edu',
+    emp: 'emp',
+    employee_effectiveness: 'emp',
+    looting: 'looting',
+    masterful_looting: 'looting',
+    hosp: 'hosp',
+    hospitalizing: 'hosp',
+    stealth: 'stealth',
+    gym: 'gym',
+    rifle: 'rifle',
+    rifles: 'rifle',
+    smg: 'smg',
+    sub_machine_guns: 'smg',
+    pistol: 'pistol',
+    pistols: 'pistol',
+    melee: 'melee',
+    clubs: 'melee'
+  };
+
+  var serverMeritSync = {
+    hydrated: false,
+    online: null,
+    version: 0,
+    merits: null,
+    meritTree: null,
+    claimedHonors: null,
+    claimedMedals: null,
+    meritResets: null,
+    equippedHonor: undefined,
+    lastAction: null,
+    lastError: null,
+    inflight: Promise.resolve(null)
+  };
+
+  function isPreviewRuntime() {
+    try {
+      return new URLSearchParams(window.location.search || '').get('zone-preview') === '1';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function normalizeServerMeritTree(rawTree) {
+    var out = {};
+    var uiIds = Object.keys(MERIT_UI_TO_SERVER);
+    for (var i = 0; i < uiIds.length; i++) out[uiIds[i]] = 0;
+    if (!rawTree || typeof rawTree !== 'object') return out;
+    var rawKeys = Object.keys(rawTree);
+    for (var k = 0; k < rawKeys.length; k++) {
+      var rk = rawKeys[k];
+      var uiKey = MERIT_SERVER_TO_UI[rk];
+      if (!uiKey) continue;
+      var val = Math.max(0, Math.min(10, Math.floor(Number(rawTree[rk]) || 0)));
+      if (val > out[uiKey]) out[uiKey] = val;
+    }
+    return out;
+  }
+
+  function syncFromServerSnapshot(snapshot, opts) {
+    if (!snapshot || typeof snapshot !== 'object') return false;
+    var state = snapshot.state && typeof snapshot.state === 'object' ? snapshot.state : null;
+    if (!state) return false;
+    var options = opts || {};
+    var ver = Number(state.version) || 0;
+
+    var hasTree = state.meritTree && typeof state.meritTree === 'object';
+    var normTree = hasTree ? normalizeServerMeritTree(state.meritTree) : null;
+    var srvMerits = state.merits != null ? Math.max(0, Math.floor(Number(state.merits) || 0)) : null;
+    var srvHonors = state.claimedHonors && typeof state.claimedHonors === 'object' ? state.claimedHonors : null;
+    var srvMedals = state.claimedMedals && typeof state.claimedMedals === 'object' ? state.claimedMedals : null;
+    var srvResets = state.meritResets != null ? Math.max(0, Math.floor(Number(state.meritResets) || 0)) : null;
+
+    serverMeritSync.hydrated = true;
+    serverMeritSync.online = true;
+    if (ver > 0) serverMeritSync.version = ver;
+    if (normTree) serverMeritSync.meritTree = normTree;
+    if (srvMerits !== null) serverMeritSync.merits = srvMerits;
+    if (srvHonors) serverMeritSync.claimedHonors = Object.assign({}, serverMeritSync.claimedHonors || {}, srvHonors);
+    if (srvMedals) serverMeritSync.claimedMedals = Object.assign({}, serverMeritSync.claimedMedals || {}, srvMedals);
+    if (srvResets !== null) serverMeritSync.meritResets = srvResets;
+    if (state.equippedHonor !== undefined) serverMeritSync.equippedHonor = state.equippedHonor;
+
+    var game = window.__zoneGame;
+    if (game && game.p) {
+      var localTree = game.p.meritTree || {};
+      var data = window.ZoneMeritsData;
+      var localSpent = data && typeof data.totalSpent === 'function' ? data.totalSpent(localTree) : 0;
+      var serverSpent = normTree && data && typeof data.totalSpent === 'function' ? data.totalSpent(normTree) : 0;
+
+      /* Authoritative post-action response OR server has real merits/upgrades/claims */
+      if (options.authoritative || serverSpent > 0 || localSpent === 0) {
+        if (normTree) game.p.meritTree = Object.assign({}, normTree);
+        if (srvMerits !== null && (options.authoritative || srvMerits > 0 || !(Number(game.p.merits) > 0))) {
+          game.p.merits = srvMerits;
+        }
+      }
+      if (srvHonors) {
+        game.p.claimedHonors = Object.assign({}, game.p.claimedHonors || {}, srvHonors);
+      }
+      if (srvMedals) {
+        game.p.claimedMedals = Object.assign({}, game.p.claimedMedals || {}, srvMedals);
+      }
+      if (srvResets !== null && (options.authoritative || srvResets > Number(game.p.meritResets || 0))) {
+        game.p.meritResets = srvResets;
+      }
+      if (state.equippedHonor !== undefined && state.equippedHonor !== null) {
+        game.p.equippedHonor = state.equippedHonor;
+      }
+      if (snapshot.player && typeof game.applyServerPlayer === 'function') {
+        try { game.applyServerPlayer(snapshot.player); } catch (_) {}
+      }
+      if (ver > 0 && (!game.gameplayVersion || ver >= game.gameplayVersion)) {
+        game.gameplayVersion = ver;
+      }
+      if (typeof game.saveLocalMeritsState === 'function') {
+        try { game.saveLocalMeritsState(); } catch (_) {}
+      }
+      if (typeof game.save === 'function') {
+        try { game.save(); } catch (_) {}
+      }
+      if (typeof game.forceUpdate === 'function') {
+        try { game.forceUpdate(); } catch (_) {}
+      }
+      if (typeof game.emitMeritsUpdate === 'function') {
+        try { game.emitMeritsUpdate(); } catch (_) {}
+      }
+    }
+
+    lastRenderSignature = '';
+    if (hubOpen) renderHub();
+    syncSidebarAndCrest();
+    return true;
+  }
+
+  function hydrateMeritsFromServer() {
+    if (isPreviewRuntime() || typeof window.fetch !== 'function') {
+      return Promise.resolve(false);
+    }
+    var run = async function () {
+      try {
+        if (window.ZoneSession && typeof window.ZoneSession.ensure === 'function') {
+          await window.ZoneSession.ensure();
+        }
+        var res = await window.fetch('/api/v1/gameplay', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        });
+        if (!res || !res.ok) {
+          serverMeritSync.online = false;
+          return false;
+        }
+        var snap = await res.json();
+        return syncFromServerSnapshot(snap, { authoritative: false });
+      } catch (err) {
+        serverMeritSync.online = false;
+        serverMeritSync.lastError = err && err.message ? err.message : 'offline';
+        return false;
+      }
+    };
+    return run();
+  }
+
+  function syncMeritActionToServer(action, uiId) {
+    if (isPreviewRuntime() || typeof window.fetch !== 'function') {
+      return Promise.resolve({ ok: false, offline: true });
+    }
+    var primaryId = action === 'merit.upgrade'
+      ? String(uiId || '')
+      : String(uiId || 'all');
+    var altServerId = action === 'merit.upgrade'
+      ? (MERIT_UI_TO_SERVER[uiId] || String(uiId || ''))
+      : primaryId;
+
+    var task = async function () {
+      try {
+        if (window.ZoneSession && typeof window.ZoneSession.ensure === 'function') {
+          await window.ZoneSession.ensure();
+        }
+        var game = window.__zoneGame;
+        var expectedVersion = (game && Number(game.gameplayVersion)) || serverMeritSync.version || 1;
+        if (!expectedVersion || expectedVersion < 1) {
+          await hydrateMeritsFromServer();
+          expectedVersion = (game && Number(game.gameplayVersion)) || serverMeritSync.version || 1;
+        }
+
+        var postOnce = async function (targetId, ver) {
+          var response = await window.fetch('/api/v1/gameplay/action', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ action: action, id: String(targetId), expectedVersion: ver })
+          });
+          var payload = null;
+          try { payload = await response.json(); } catch (_) { payload = {}; }
+          return { response: response, payload: payload || {} };
+        };
+
+        var attempt = await postOnce(primaryId, expectedVersion);
+
+        /* Version conflict -> refresh gameplay version and retry once */
+        if (attempt.response && attempt.response.status === 409) {
+          await hydrateMeritsFromServer();
+          var nextVer = (window.__zoneGame && Number(window.__zoneGame.gameplayVersion)) || serverMeritSync.version || 1;
+          attempt = await postOnce(primaryId, nextVer);
+        }
+
+        /* Fallback to snake_case key if server validator expects Torn API key */
+        if (
+          action === 'merit.upgrade' &&
+          attempt.response &&
+          !attempt.response.ok &&
+          altServerId !== primaryId &&
+          attempt.response.status >= 400 &&
+          attempt.response.status < 500
+        ) {
+          var fallbackVer = (window.__zoneGame && Number(window.__zoneGame.gameplayVersion)) || serverMeritSync.version || expectedVersion;
+          attempt = await postOnce(altServerId, fallbackVer);
+        }
+
+        if (attempt.response && attempt.response.ok && attempt.payload && attempt.payload.state) {
+          serverMeritSync.lastAction = action + ':' + primaryId;
+          serverMeritSync.lastError = null;
+          syncFromServerSnapshot(attempt.payload, { authoritative: true });
+          try {
+            window.dispatchEvent(new CustomEvent('zone:torn-gameplay-synced', { detail: attempt.payload }));
+          } catch (_) {}
+          return { ok: true, snapshot: attempt.payload };
+        }
+
+        if (attempt.response && attempt.response.status >= 500) {
+          serverMeritSync.online = false;
+        }
+        serverMeritSync.lastError = (attempt.payload && attempt.payload.error) || ('HTTP ' + (attempt.response ? attempt.response.status : 0));
+        return { ok: false, error: serverMeritSync.lastError };
+      } catch (err) {
+        /* Graceful offline fallback: keep local bridge state intact */
+        serverMeritSync.online = false;
+        serverMeritSync.lastError = err && err.message ? err.message : 'offline';
+        return { ok: false, offline: true, error: serverMeritSync.lastError };
+      }
+    };
+
+    serverMeritSync.inflight = serverMeritSync.inflight.catch(function () { return null; }).then(task);
+    return serverMeritSync.inflight;
+  }
+
   function readHubState() {
     var data = window.ZoneMeritsData || null;
     var bridge = window.ZoneMeritsBridge || null;
@@ -427,12 +715,19 @@
       (data && Array.isArray(data.upgrades) && data.upgrades) ||
       [];
 
-    var meritTree = (raw && raw.meritTree) || (player && player.meritTree) || {};
+    var meritTree =
+      (raw && raw.meritTree) ||
+      (player && player.meritTree) ||
+      serverMeritSync.meritTree ||
+      {};
+    meritTree = normalizeServerMeritTree(meritTree);
+
     var availableMerits = Number(
       raw && raw.availableMerits != null ? raw.availableMerits :
       raw && raw.merits != null ? raw.merits :
       raw && raw.available != null ? raw.available :
-      player && player.merits != null ? player.merits : 0
+      player && player.merits != null ? player.merits :
+      serverMeritSync.merits != null ? serverMeritSync.merits : 0
     ) || 0;
 
     var spentMerits = Number(
@@ -443,7 +738,8 @@
 
     var meritResets = Number(
       raw && raw.meritResets != null ? raw.meritResets :
-      player && player.meritResets != null ? player.meritResets : 0
+      player && player.meritResets != null ? player.meritResets :
+      serverMeritSync.meritResets != null ? serverMeritSync.meritResets : 0
     ) || 0;
 
     var resetCost = Number(
@@ -451,9 +747,23 @@
       (meritResets === 0 ? 0 : 25000)
     );
 
-    var claimedHonors = (raw && raw.claimedHonors) || (player && player.claimedHonors) || {};
-    var claimedMedals = (raw && raw.claimedMedals) || (player && player.claimedMedals) || {};
-    var equippedHonor = (raw && raw.equippedHonor !== undefined ? raw.equippedHonor : player && player.equippedHonor) || null;
+    var claimedHonors = Object.assign(
+      {},
+      serverMeritSync.claimedHonors || {},
+      (player && player.claimedHonors) || {},
+      (raw && raw.claimedHonors) || {}
+    );
+    var claimedMedals = Object.assign(
+      {},
+      serverMeritSync.claimedMedals || {},
+      (player && player.claimedMedals) || {},
+      (raw && raw.claimedMedals) || {}
+    );
+    var equippedHonor = (
+      raw && raw.equippedHonor !== undefined ? raw.equippedHonor :
+      player && player.equippedHonor !== undefined ? player.equippedHonor :
+      serverMeritSync.equippedHonor
+    ) || null;
 
     var honorsEval = [];
     if (raw && Array.isArray(raw.honors)) {
@@ -691,10 +1001,9 @@
   }
 
   function handleUpgradeMerit(id) {
-    var bridge = window.ZoneMeritsBridge;
-    if (!bridge || typeof bridge.upgradeMerit !== 'function') return;
     resetConfirmOpen = false;
-    var res = bridge.upgradeMerit(id);
+    var bridge = window.ZoneMeritsBridge;
+    var res = bridge && typeof bridge.upgradeMerit === 'function' ? bridge.upgradeMerit(id) : null;
     var copy = L();
     if (res && res.ok) {
       var st = readHubState();
@@ -708,6 +1017,22 @@
         copy.msgUpgraded.replace('{name}', name).replace('{rank}', String(newRank)),
         'sage'
       );
+      syncMeritActionToServer('merit.upgrade', id);
+    } else if (!bridge) {
+      syncMeritActionToServer('merit.upgrade', id).then(function (srvRes) {
+        if (srvRes && srvRes.ok) {
+          var stAfter = readHubState();
+          var upItem = null;
+          for (var j = 0; j < stAfter.upgrades.length; j++) {
+            if (stAfter.upgrades[j].id === id) { upItem = stAfter.upgrades[j]; break; }
+          }
+          var upName = upItem ? (isArabic() ? upItem.nameAr : upItem.nameEn) : id;
+          setFeedback(copy.msgUpgraded.replace('{name}', upName).replace('{rank}', String(upItem ? upItem.rank : 1)), 'sage');
+        } else if (srvRes && srvRes.error) {
+          setFeedback(String(srvRes.error), 'warn');
+        }
+        notifyLiveSync();
+      });
     } else if (res && (res.error || res.message)) {
       setFeedback(String(res.error || res.message), 'warn');
     }
@@ -716,12 +1041,21 @@
 
   function handleConfirmReset() {
     var bridge = window.ZoneMeritsBridge;
-    if (!bridge || typeof bridge.resetMerits !== 'function') return;
-    var res = bridge.resetMerits();
+    var res = bridge && typeof bridge.resetMerits === 'function' ? bridge.resetMerits() : null;
     resetConfirmOpen = false;
     var copy = L();
     if (res && res.ok) {
       setFeedback(copy.msgReset, 'gold');
+      syncMeritActionToServer('merit.reset', 'all');
+    } else if (!bridge) {
+      syncMeritActionToServer('merit.reset', 'all').then(function (srvRes) {
+        if (srvRes && srvRes.ok) {
+          setFeedback(copy.msgReset, 'gold');
+        } else if (srvRes && srvRes.error) {
+          setFeedback(String(srvRes.error), 'warn');
+        }
+        notifyLiveSync();
+      });
     } else if (res && (res.error || res.message)) {
       setFeedback(String(res.error || res.message), 'warn');
     }
@@ -1683,6 +2017,11 @@
       lastRenderSignature = '';
       scheduleSync();
     }, { passive: true });
+    window.addEventListener('zone:torn-gameplay-synced', function (ev) {
+      if (ev && ev.detail) {
+        syncFromServerSnapshot(ev.detail, { authoritative: false });
+      }
+    });
     window.addEventListener('popstate', function () {
       deepLinkHandled = false;
       scheduleSync();
@@ -1721,13 +2060,31 @@
     close: closeHub,
     refresh: refreshHub,
     isOpen: function () { return hubOpen; },
-    getActiveTab: function () { return activeTab; }
+    getActiveTab: function () { return activeTab; },
+    syncFromServerSnapshot: syncFromServerSnapshot,
+    hydrateFromServer: hydrateMeritsFromServer,
+    syncActionToServer: syncMeritActionToServer,
+    getSyncDiagnostics: function () {
+      return {
+        hydrated: serverMeritSync.hydrated,
+        online: serverMeritSync.online,
+        version: serverMeritSync.version,
+        merits: serverMeritSync.merits,
+        meritTree: serverMeritSync.meritTree ? Object.assign({}, serverMeritSync.meritTree) : null,
+        claimedHonors: serverMeritSync.claimedHonors ? Object.assign({}, serverMeritSync.claimedHonors) : null,
+        lastAction: serverMeritSync.lastAction,
+        lastError: serverMeritSync.lastError
+      };
+    }
   };
 
   function boot() {
     bindGlobalListeners();
     scheduleSync();
-    window.setTimeout(scheduleSync, 180);
+    window.setTimeout(function () {
+      hydrateMeritsFromServer();
+      scheduleSync();
+    }, 220);
     window.setTimeout(scheduleSync, 600);
     window.setTimeout(scheduleSync, 1400);
   }

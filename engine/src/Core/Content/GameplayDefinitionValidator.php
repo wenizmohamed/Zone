@@ -12,9 +12,10 @@ final class GameplayDefinitionValidator
         $int = static fn (int $min, int $max): array => ['type' => 'integer', 'min' => $min, 'max' => $max];
         $money = $int(0, 2_000_000_000);
         $enum = static fn (array $values): array => ['type' => 'enum', 'values' => $values, 'editable' => false];
+        $optStat = ['type' => 'integer', 'min' => 0, 'max' => 1000, 'optional' => true];
         $definitions = [
             'items' => ['key', ['type' => $enum(['weapon', 'armor', 'medical', 'booster', 'material']), 'price' => $money, 'mult' => ['type' => 'number', 'min' => .1, 'max' => 20], 'red' => ['type' => 'number', 'min' => 0, 'max' => .95], 'life' => $int(0, 100000), 'nerve' => $int(0, 1000), 'energy' => $int(0, 1000), 'happy' => $int(0, 100000), 'hospitalSeconds' => $int(0, 86400)], ['type', 'price']],
-            'jobs' => ['id', ['pay' => $money, 'energy' => $int(1, 1000), 'lvl' => $int(1, 100)], ['pay', 'energy', 'lvl']],
+            'jobs' => ['id', ['pay' => $money, 'energy' => $int(1, 1000), 'lvl' => $int(1, 100), 'man' => $optStat, 'int' => $optStat, 'end' => $optStat], ['pay', 'energy', 'lvl']],
             'gyms' => ['index', ['e' => $int(1, 1000), 'xp' => $int(0, 1000000000), 'cost' => $money], ['e', 'xp', 'cost']],
             'courses' => ['id', ['cost' => $money, 'mins' => $int(1, 525600)], ['cost', 'mins']],
             'properties' => ['id', ['price' => $money, 'happy' => $int(1, 100000), 'upkeep' => $money], ['price', 'happy']],

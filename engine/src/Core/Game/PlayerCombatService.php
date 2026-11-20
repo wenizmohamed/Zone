@@ -51,7 +51,8 @@ final class PlayerCombatService
             if ($reason === null && (int) $row['life'] < 1) $reason = 'Opponent needs hospital recovery.';
             if ($reason === null && $row['city'] !== $self['city']) $reason = 'Opponent is in another city.';
             $oppTotalStats = (int) $row['strength'] + (int) $row['defense'] + (int) $row['speed'] + (int) $row['dexterity'];
-            $players[] = ['id' => $row['id'], 'username' => $row['username'], 'level' => (int) $row['level'], 'life' => (int) $row['life'], 'max_life' => (int) $row['max_life'], 'strength' => (int) $row['strength'], 'defense' => (int) $row['defense'], 'speed' => (int) $row['speed'], 'dexterity' => (int) $row['dexterity'], 'totalStats' => $oppTotalStats, 'powerRatioPct' => (int) round($selfTotalStats / max(1, $oppTotalStats) * 100), 'factionId' => $row['faction_id'], 'factionName' => $row['faction_name'], 'eligible' => $reason === null, 'reason' => $reason];
+            $fairFightEst = round(min(3.0, max(1.0, 1.0 + (8.0 / 3.0) * ($oppTotalStats / max(1, $selfTotalStats)))), 2);
+            $players[] = ['id' => $row['id'], 'username' => $row['username'], 'level' => (int) $row['level'], 'life' => (int) $row['life'], 'max_life' => (int) $row['max_life'], 'strength' => (int) $row['strength'], 'defense' => (int) $row['defense'], 'speed' => (int) $row['speed'], 'dexterity' => (int) $row['dexterity'], 'totalStats' => $oppTotalStats, 'powerRatioPct' => (int) round($selfTotalStats / max(1, $oppTotalStats) * 100), 'fairFight' => $fairFightEst, 'city' => $row['city'], 'factionId' => $row['faction_id'], 'factionName' => $row['faction_name'], 'eligible' => $reason === null, 'reason' => $reason];
         }
         return ['players' => $players, 'energyCost' => 25, 'maxRounds' => 25, 'selfId' => $playerId, 'attackCooldownSeconds' => $attackCooldownSeconds];
     }
@@ -113,10 +114,30 @@ final class PlayerCombatService
                 } else {
                     if (!in_array($approach, ['mug', 'hosp', 'leave'], true)) throw new InvalidArgumentException('Invalid combat finish.');
                     if ($encounter['phase'] !== 'won' && $approach !== 'leave') throw new RuntimeException('Only a won encounter can award a finish.');
+                    $player = $this->player($playerId); $defender = $this->player($defenderId);
+                    $attTotalStats = max(1, (int) $player['strength'] + (int) $player['defense'] + (int) $player['speed'] + (int) $player['dexterity']);
+                    $defTotalStats = max(0, (int) $defender['strength'] + (int) $defender['defense'] + (int) $defender['speed'] + (int) $defender['dexterity']);
+                    $fairFight = round(min(3.0, max(1.0, 1.0 + (8.0 / 3.0) * ($defTotalStats / $attTotalStats))), 2);
+                    $chainService = new FactionChainService($this->database, $this->events, $this->clock);
+                    $retaliation = $chainService->hasRetaliationBonus($playerId, $defenderId) ? 1.5 : 1.0;
+                    $overseas = ($player['city'] !== 'Zone City' && strtolower((string) $player['city']) !== 'harbor') ? 1.25 : 1.0;
+                    $chainMultiplier = $chainService->liveMultiplierForPlayer($playerId);
+
+                    $attState = $this->progression->snapshot($playerId)['state'];
+                    $stealthMerit = max(0, min(10, (int) ($attState['meritTree']['stealth'] ?? 0)));
+                    $dexRatio = (int) $player['dexterity'] / max(1, (int) $player['dexterity'] + (int) $defender['speed']);
+                    $stealthChanceBp = min(9500, max(500, (int) round($dexRatio * 6500) + ($stealthMerit * 350)));
+                    $stealthed = false;
+                    $bountiesClaimed = [];
+                    $bountyCashAwarded = 0;
+                    $chainHit = null;
+
                     $cash = 0; $xp = 0; $respect = 0;
                     if ($encounter['phase'] === 'won') {
                         $player = $this->player($playerId); $defender = $this->player($defenderId);
-                        $cash = $approach === 'mug' ? min($defender['cash'], max(0, (int) round($defender['cash'] * $this->roll(500, 1200) / 10000))) : 0;
+                        $lootingBoost = $this->random === null ? (1.0 + 0.05 * max(0, min(10, (int) ($attState['meritTree']['masterful_looting'] ?? 0)))) : 1.0;
+                        $cash = $approach === 'mug' ? min($defender['cash'], max(0, (int) round($defender['cash'] * ($this->roll(500, 1200) * $lootingBoost) / 10000))) : 0;
+                        $stealthed = $this->roll(1, 10000) <= $stealthChanceBp;
                         $xp = $defender['level'] * 3;
                         $this->database->execute('UPDATE players SET cash = cash + :cash, xp = xp + :xp WHERE id = :id', ['cash' => $cash, 'xp' => $xp, 'id' => $playerId]);
                         if ($cash > 0) {
@@ -125,16 +146,73 @@ final class PlayerCombatService
                             $this->ledger->record($playerId, 'cash', $cash, $player['cash'] + $cash, 'player-combat.mug.credit', $correlationId);
                         }
                         $respect = $this->progression->recordCombatWin($playerId, $defender['level'], $approach);
+                        $chainHit = $chainService->recordHit($playerId, $approach, (string) $defender['username'], $fairFight, $defenderId);
+                        if ($chainHit !== null) {
+                            $chainMultiplier = (float) $chainHit['multiplier'];
+                        }
                         $leveling = new LevelingService($this->database, $this->ledger, $this->events);
                         $leveling->sync($playerId, $correlationId);
                         (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
-                        $this->progression->applyPenalty($defenderId, 'hosp', $approach === 'hosp' ? 10 : ($approach === 'mug' ? 5 : 2));
+                        $hospMeritMins = ($approach === 'hosp' && $this->random === null) ? max(0, min(10, (int) ($attState['meritTree']['hospitalizing'] ?? 0))) : 0;
+                        $this->progression->applyPenalty($defenderId, 'hosp', $approach === 'hosp' ? (10 + $hospMeritMins) : ($approach === 'mug' ? 5 : 2));
+
+                        $social = new SyndicateSocialService($this->database, $this->events);
+                        if ($approach === 'hosp') {
+                            $bountySettlement = $social->settleBountiesOnHospitalize($playerId, $defenderId, $correlationId);
+                            $bountiesClaimed = $bountySettlement['bountiesClaimed'];
+                            $bountyCashAwarded = (int) $bountySettlement['bountyCashAwarded'];
+                        }
+
+                        $attackerDisplayEn = $stealthed ? 'Someone' : (string) $player['username'];
+                        $attackerDisplayAr = $stealthed ? 'مجهول' : (string) $player['username'];
+                        $notifType = $approach === 'mug' ? 'mugged' : ($approach === 'hosp' ? 'hospitalized' : 'attacked');
+                        $social->recordNotification($defenderId, $notifType, [
+                            'attackerId' => $stealthed ? null : $playerId,
+                            'attackerName' => $attackerDisplayEn,
+                            'stealthed' => $stealthed,
+                            'approach' => $approach,
+                            'cashLost' => $cash,
+                            'correlationId' => $correlationId,
+                            'message_en' => match ($approach) {
+                                'mug' => sprintf('%s mugged you for $%s and sent you to hospital recovery.', $attackerDisplayEn, number_format($cash)),
+                                'hosp' => sprintf('%s attacked and hospitalized you.', $attackerDisplayEn),
+                                default => sprintf('%s defeated and left you on the street.', $attackerDisplayEn),
+                            },
+                            'message_ar' => match ($approach) {
+                                'mug' => sprintf('سطا عليك %s وسلب $%s.', $attackerDisplayAr, number_format($cash)),
+                                'hosp' => sprintf('هاجمك %s وأرسلك إلى المستشفى.', $attackerDisplayAr),
+                                default => sprintf('هزمك %s وتركك في الشارع.', $attackerDisplayAr),
+                            },
+                        ]);
                     }
-                    $modifiers = ['fair_fight' => 1.57, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => 1.0, 'chain' => 1.0, 'warlord' => 1.0];
+                    $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => $retaliation, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => 1.0];
                     $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? 25 : ($approach === 'hosp' ? 30 : 15)]];
                     $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                     $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
-                    $result = ['playerId' => $playerId, 'defenderId' => $defenderId, 'opponentId' => $defenderId, 'encounterId' => $encounter['id'], 'approach' => $approach, 'outcome' => $encounter['phase'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'modifiers' => $modifiers, 'finishing_hit_effects' => $finishingHitEffects, 'correlationId' => $correlationId];
+                    $result = [
+                        'playerId' => $playerId,
+                        'defenderId' => $defenderId,
+                        'opponentId' => $defenderId,
+                        'encounterId' => $encounter['id'],
+                        'approach' => $approach,
+                        'outcome' => $encounter['phase'],
+                        'totalRounds' => $encounter['turn'],
+                        'damageDealt' => $damageDealt,
+                        'damageTaken' => $damageTaken,
+                        'cashDelta' => $cash,
+                        'respectDelta' => $respect,
+                        'xp' => $xp,
+                        'stealthed' => $stealthed,
+                        'stealthChancePct' => round($stealthChanceBp / 100, 1),
+                        'attackerDisplayName' => $stealthed ? 'Someone' : (string) $player['username'],
+                        'bountiesClaimed' => $bountiesClaimed,
+                        'bountyCashAwarded' => $bountyCashAwarded,
+                        'chain' => $chainHit,
+                        'modifiers' => $modifiers,
+                        'totalMultiplier' => round($fairFight * $retaliation * $overseas * $chainMultiplier, 2),
+                        'finishing_hit_effects' => $finishingHitEffects,
+                        'correlationId' => $correlationId,
+                    ];
                     $this->database->execute('DELETE FROM player_combat_locks WHERE encounter_id = :id', ['id' => $encounter['id']]);
                     $encounter = null;
                 }
@@ -142,7 +220,10 @@ final class PlayerCombatService
             $stored = ['version' => $stored['version'] + 1, 'encounter' => $encounter];
             $this->save($playerId, $stored);
             $this->events->publish(new DomainEvent('PlayerCombatAction', ['playerId' => $playerId, 'action' => $action, 'version' => $stored['version'], 'correlationId' => $correlationId]));
-            if ($result !== null) $this->events->publish(new DomainEvent('PlayerCombatResolved', $result));
+            if ($result !== null) {
+                $this->events->publish(new DomainEvent('PlayerCombatResolved', $result));
+                SyndicateSocialService::refreshEphemeralLedgerCookie($this->database, $this->events, $playerId);
+            }
             return [...$this->response($playerId, $stored), 'result' => $result];
         });
     }

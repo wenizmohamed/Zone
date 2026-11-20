@@ -59,5 +59,16 @@ final class TravelService
             return $this->snapshot($playerId);
         });
     }
+
+    public static function effectiveFlightSeconds(int $baseSeconds, bool $hasAirstrip): int
+    {
+        return $hasAirstrip ? max(30, (int) round($baseSeconds * 0.70)) : max(1, $baseSeconds);
+    }
+
+    public static function maxLuggageCapacity(bool $hasAirstrip, bool $hasSuitcase = false): int
+    {
+        return 5 + ($hasAirstrip ? 10 : 0) + ($hasSuitcase ? 4 : 0);
+    }
+
     private function now(): int { return $this->clock === null ? time() : ($this->clock)(); }
 }

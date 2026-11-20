@@ -1,11 +1,15 @@
-/* ZONE Syndicate Crime MMO — Production Service Worker (v146) */
+/* ZONE Syndicate Crime MMO — Production Service Worker (v148) */
+const SHELL_CACHE_NAME = 'zone-shell-v148';
+const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
 const NAV_TIMEOUT_MS = 3500;
 const PRECACHE_URLS = [
   './offline.html',
   './manifest.webmanifest',
-  './assets/icons/icon-192.png'
+  './assets/icons/icon-192.png',
+  './assets/ui/zone-torn-live.css?v=148',
+  './assets/ui/zone-torn-live.js?v=148'
 ];
 
 const IMMUTABLE_BINARY_RE = /\.(?:woff2|webp|png|jpe?g|glb)$/i;
@@ -85,8 +89,8 @@ async function handleCacheFirstWithRefresh(event, request) {
 }
 
 async function handleStaleWhileRevalidate(event, request) {
-  const cache = await caches.open(CACHE_NAME);
-  // Key strictly by full URL (never ignoreSearch) so ?v=146 vs ?v=147 never collide.
+  const cache = await caches.open(SHELL_CACHE_NAME);
+  // Key strictly by full URL (never ignoreSearch) so ?v=146 vs ?v=148 never collide.
   const cached = await cache.match(request, { ignoreSearch: false });
   const networkPromise = refreshInBackground(cache, request);
   if (cached) {
@@ -100,7 +104,7 @@ async function handleStaleWhileRevalidate(event, request) {
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches.open(SHELL_CACHE_NAME)
       .then((cache) => cache.addAll(PRECACHE_URLS))
       .catch(() => {})
       .then(() => self.skipWaiting())
@@ -112,7 +116,10 @@ self.addEventListener('activate', (event) => {
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+          .filter((key) =>
+            (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) ||
+            (key.startsWith(SHELL_CACHE_PREFIX) && key !== SHELL_CACHE_NAME)
+          )
           .map((key) => caches.delete(key))
       ))
       .then(() => self.clients.claim())

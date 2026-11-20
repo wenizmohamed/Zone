@@ -7,7 +7,8 @@ const publicPaths = new Set(['auth/account', 'auth/claim', 'auth/login', 'auth/r
   'health', 'engine', 'modules', 'themes', 'player', 'leaderboards', 'gameplay', 'gameplay/action', 'combat', 'combat/action',
   'player-combat', 'player-combat/opponents', 'player-combat/action', 'player-market', 'player-market/action',
   'family-activities', 'family-activities/action', 'crimes', 'achievements', 'city/map', 'factions/join', 'releases/active',
-  'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'travel',
+  'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
+  'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'events-feed',
   'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications']);
 export function isPublicPath(path) {
   if (/^\/api\/v1\/assets\/[a-f0-9]{64}(?:\/content)?$/.test(path) || ['/api/v1/world', '/api/v1/world/claim'].includes(path)) return true;

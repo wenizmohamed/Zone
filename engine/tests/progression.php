@@ -37,7 +37,7 @@ function patchState(callable $change): void {
 
 try {
     $initial = $service->snapshot('founder-player');
-    proof(count($initial['catalogs']['items']) === 58, 'all existing item definitions available from server');
+    proof(count($initial['catalogs']['items']) === 101, 'all 101 v148 item definitions available from server');
     proof($initial['state']['inv']['smallkit'] === 3 && $initial['state']['prop'] === 'apt', 'existing founder inventory and property preserved as initial demo seed');
     $bought = action('market.buy', 'drink');
     proof($bought['player']['cash'] === $initial['player']['cash'] - 990 && $bought['state']['inv']['drink'] === 3, 'market purchase debits authoritative cash and persists item');
@@ -128,19 +128,27 @@ try {
     $cashDelta = array_sum(array_map(fn ($row) => $row['asset'] === 'cash' ? (int) $row['amount'] : 0, $ledger));
     proof($service->snapshot('founder-player')['player']['cash'] === $initial['player']['cash'] + $cashDelta, 'all cash changes reconcile exactly with economy ledger');
     rejects(fn () => action('item.buy', '../../secret'), 'Unknown item', 'unknown item identifiers rejected');
-    $hj = action('torn.happyJump', 'stack');
-    proof($hj['result']['type'] === 'torn.happyJump' && $hj['state']['cooldowns']['drugUntil'] > 0, 'server-authoritative torn.happyJump stacks happy/energy and arms drug cooldown');
-    $shop = action('torn.shoplift', 'sallys');
-    proof($shop['result']['cashDelta'] === 3800 && $shop['state']['skill']['shoplift'] >= 1, 'server-authoritative torn.shoplift spends nerve, awards loot, and increments shoplift skill');
-    $prep = action('torn.combatPrep', 'heart:ap:secondary');
+    $db->execute("UPDATE players SET cash = 500000, nerve = 45 WHERE id = 'founder-player'");
+    $detService = new ProgressionService($db, new EventBus($db), null, static fn (int $min, int $max): int => min($max, max($min, 1500)));
+    $detAct = static function (string $type, string $id) use ($detService): array {
+        $snap = $detService->snapshot('founder-player');
+        return $detService->act($type, $id, $snap['state']['version'], 'founder-player');
+    };
+    $hj = $detAct('torn.happyJump', 'stack');
+    proof($hj['result']['type'] === 'torn.happyJump' && $hj['result']['cashDelta'] === -120000 && $hj['state']['cooldowns']['drugUntil'] > 0, 'server-authoritative torn.happyJump charges pack cost, stacks happy/energy, and arms drug cooldown');
+    rejects(fn () => $detAct('torn.happyJump', 'stack'), 'Drug cooldown active', 'active drug cooldown blocks repeated Happy Jump');
+    $shop = $detAct('torn.shoplift', 'sallys');
+    proof($shop['result']['nerveSpent'] === 4 && $shop['result']['cashDelta'] > 0 && $shop['state']['skill']['shoplift'] >= 2, 'server-authoritative torn.shoplift spends nerve, rolls Crimes 2.0 tier, and increments skill');
+    $prep = $detAct('torn.combatPrep', 'heart:ap:secondary');
     proof($prep['state']['tornCombat']['hitbox'] === 'heart' && $prep['state']['tornCombat']['ammo'] === 'ap', 'server-authoritative torn.combatPrep persists hitbox and special ammo for CombatService');
-    $cd = action('torn.bankCd', '30d');
-    proof($cd['state']['tornState']['activeCd']['term'] === '30d' && $cd['result']['bankDelta'] === 25400, 'server-authoritative torn.bankCd locks certificate and credits vault yield');
-    $c2 = action('torn.crime2Execute', '2');
-    proof($c2['result']['cashDelta'] === 6800 && ($c2['state']['tornState']['lastCrime2']['name'] ?? '') === 'Bootlegging', 'server-authoritative torn.crime2Execute executes all 13 harvested Crimes 2.0 archetypes');
-    $oc2 = action('torn.oc2Spawn', 'cracking_the_vault');
-    proof($oc2['result']['cashDelta'] === 85000 && ($oc2['state']['tornState']['activeOc2'] ?? '') === 'cracking_the_vault', 'server-authoritative torn.oc2Spawn spawns harvested OC 2.0 scenario with Scope & Role requirements');
-    $mod = action('torn.weaponMod', 'laser');
+    $cd = $detAct('torn.bankCd', '30d:50000');
+    proof($cd['state']['activeCd']['term'] === '30d' && $cd['result']['cashDelta'] === -50000 && $cd['state']['activeCd']['payout'] > 50000, 'server-authoritative torn.bankCd deducts real principal and locks maturity timer');
+    rejects(fn () => $detAct('bank.claimCd', 'claim'), 'not matured', 'early bank.claimCd before maturity is rejected');
+    $c2 = $detAct('torn.crime2Execute', '2');
+    proof($c2['result']['nerveSpent'] === 3 && ($c2['state']['tornState']['lastCrime2']['name'] ?? '') === 'Bootlegging', 'server-authoritative torn.crime2Execute deducts nerve and executes Crimes 2.0 archetype');
+    $oc2 = $detAct('torn.oc2Spawn', 'cracking_the_vault');
+    proof($oc2['result']['cashDelta'] === 0 && $oc2['result']['nerveSpent'] === 10 && ($oc2['state']['tornState']['activeOc2'] ?? '') === 'cracking_the_vault', 'server-authoritative torn.oc2Spawn spends nerve and starts planning timer without free cash');
+    $mod = $detAct('torn.weaponMod', 'laser');
     proof(($mod['state']['tornCombat']['mod'] ?? '') === 'laser', 'server-authoritative torn.weaponMod equips harvested Torn weapon attachment');
 } catch (Throwable $e) {
     proof(false, 'unexpected exception: ' . $e->getMessage());

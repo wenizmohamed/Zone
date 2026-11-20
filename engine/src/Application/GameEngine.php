@@ -23,6 +23,8 @@ use Zone\Engine\Core\Game\PlayerCombatService;
 use Zone\Engine\Core\Game\PlayerMarketService;
 use Zone\Engine\Core\Game\FamilyActivityService;
 use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
+use Zone\Engine\Core\Game\FactionChainService;
+use Zone\Engine\Core\Game\ForeignMarketService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
 use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Game\WorldDirector;
@@ -541,7 +543,12 @@ final class GameEngine
     public function gameplay(string $playerId = 'founder-player'): array
     {
         $travel = (new TravelService($this->database, $this->events))->snapshot($playerId);
-        return [...(new ProgressionService($this->database, $this->events))->snapshot($playerId), 'travel' => $travel, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
+        $snap = (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+        $chainSnap = (new FactionChainService($this->database, $this->events))->snapshot($playerId)['chain'];
+        if (isset($snap['tornV2']) && is_array($snap['tornV2'])) {
+            $snap['tornV2']['factionChain'] = $chainSnap;
+        }
+        return [...$snap, 'travel' => $travel, 'factionChain' => $chainSnap, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
     }
 
     public function syncEphemeralLedger(string $playerId): void
@@ -549,7 +556,7 @@ final class GameEngine
         if (getenv('ZONE_EPHEMERAL_VERCEL_SQLITE') !== '1' || \Zone\Engine\Core\Security\RequestGuard::ledgerSecret() === '') {
             return;
         }
-        (new ProgressionService($this->database, $this->events))->snapshot($playerId);
+        \Zone\Engine\Core\Game\SyndicateSocialService::refreshEphemeralLedgerCookie($this->database, $this->events, $playerId);
     }
 
     /** Server-clock expiries survive reloads and reflect the configured action durations. */
@@ -1335,37 +1342,97 @@ final class GameEngine
         $service = new SyndicateSocialService($this->database, $this->events);
         $action = strtolower(trim((string) ($payload['action'] ?? '')));
 
+        $rewardKey = array_key_exists('rewardCash', $payload)
+            ? 'rewardCash'
+            : (array_key_exists('amount', $payload) ? 'amount' : 'reward');
+        $bountyTarget = (string) ($payload['target'] ?? $payload['targetId'] ?? $payload['targetPlayerId'] ?? $payload['username'] ?? '');
+
         return match ($action) {
-            'chat.send' => [
+            'chat.send', 'send_chat', 'sendchat' => [
                 'social' => $service->sendChat(
                     $playerId,
                     (string) ($payload['channel'] ?? 'global'),
-                    (string) ($payload['message'] ?? ''),
+                    (string) ($payload['message'] ?? $payload['text'] ?? ''),
                     isset($payload['recipient']) ? (string) $payload['recipient'] : null,
                 ),
                 'player' => $this->player($playerId),
             ],
-            'mail.send' => $service->sendMail(
+            'mail.send', 'send_mail', 'sendmail' => $service->sendMail(
                 $playerId,
-                (string) ($payload['recipient'] ?? ''),
+                (string) ($payload['recipient'] ?? $payload['target'] ?? ''),
                 (string) ($payload['subject'] ?? ''),
-                (string) ($payload['body'] ?? ''),
+                (string) ($payload['body'] ?? $payload['message'] ?? ''),
             ),
-            'mail.read' => [
-                'social' => $service->markMailRead($playerId, (string) ($payload['mailId'] ?? '')),
+            'mail.read', 'read_mail', 'readmail' => [
+                'social' => $service->markMailRead($playerId, (string) ($payload['mailId'] ?? $payload['id'] ?? '')),
             ],
-            'bounty.place' => $service->placeBounty(
+            'bounty.place', 'place_bounty', 'placebounty' => $service->placeBounty(
                 $playerId,
-                (string) ($payload['target'] ?? ''),
-                RequestGuard::positiveInt($payload, 'rewardCash'),
+                $bountyTarget,
+                RequestGuard::positiveInt($payload, $rewardKey),
                 (string) ($payload['reason'] ?? ''),
             ),
-            'bounty.claim' => $service->claimBounty(
+            'bounty.claim', 'claim_bounty', 'claimbounty' => $service->claimBounty(
                 $playerId,
-                (string) ($payload['bountyId'] ?? ''),
+                (string) ($payload['bountyId'] ?? $payload['id'] ?? ''),
+            ),
+            'cash.send', 'send_cash', 'sendcash' => $service->sendCash(
+                $playerId,
+                (string) ($payload['recipient'] ?? $payload['target'] ?? $payload['targetPlayerId'] ?? ''),
+                RequestGuard::positiveInt($payload, array_key_exists('amount', $payload) ? 'amount' : 'cash'),
+                (string) ($payload['note'] ?? $payload['reason'] ?? ''),
             ),
             default => throw new \InvalidArgumentException('Unsupported syndicate social action: ' . $action),
         };
+    }
+
+    public function hospitalPatients(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('hospital');
+        return (new SyndicateSocialService($this->database, $this->events))->hospitalPatients($playerId);
+    }
+
+    public function hospitalRevivePlayer(string $targetPlayerId, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('hospital');
+        $this->recordActionAttempt($playerId);
+        return (new SyndicateSocialService($this->database, $this->events))->revivePlayer($playerId, $targetPlayerId);
+    }
+
+    public function playerProfile(string $playerId = 'founder-player', ?string $targetId = null, ?string $query = null): array
+    {
+        return (new SyndicateSocialService($this->database, $this->events))->playerProfile($playerId, $targetId, $query);
+    }
+
+    public function eventsFeed(string $playerId = 'founder-player', int $limit = 40): array
+    {
+        return (new SyndicateSocialService($this->database, $this->events))->eventsFeed($playerId, $limit);
+    }
+
+    public function foreignMarket(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('travel');
+        return (new ForeignMarketService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function foreignMarketAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('travel');
+        $this->recordActionAttempt($playerId);
+        return (new ForeignMarketService($this->database, $this->events))->act($action, $payload, $playerId);
+    }
+
+    public function factionChain(string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('gangs');
+        return (new FactionChainService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function factionChainAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        $this->requireModule('gangs');
+        $this->recordActionAttempt($playerId);
+        return (new FactionChainService($this->database, $this->events))->act($action, $payload, $playerId);
     }
 
     private function blackjackMetaKey(string $playerId): string
