@@ -1404,10 +1404,12 @@ final class TornSystemsService
         $lifeApplied = max(0, (int) ($state['meritLifeApplied'] ?? 0));
         if ($nerveApplied > 0 || $lifeApplied > 0) {
             $newMaxNerve = max(15, (int) $player['max_nerve'] - $nerveApplied);
+            $newNerve = min((int) $player['nerve'], $newMaxNerve);
             $newMaxLife = max(100, (int) $player['max_life'] - $lifeApplied);
+            $newLife = min((int) $player['life'], $newMaxLife);
             $this->database->execute(
-                'UPDATE players SET max_nerve = :mn, nerve = MIN(nerve, :mn), max_life = :ml, life = MIN(life, :ml) WHERE id = :id',
-                ['mn' => $newMaxNerve, 'ml' => $newMaxLife, 'id' => $playerId],
+                'UPDATE players SET max_nerve = :mn, nerve = :n, max_life = :ml, life = :l WHERE id = :id',
+                ['mn' => $newMaxNerve, 'n' => $newNerve, 'ml' => $newMaxLife, 'l' => $newLife, 'id' => $playerId],
             );
             $state['meritNerveApplied'] = 0;
             $state['meritLifeApplied'] = 0;

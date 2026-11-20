@@ -496,7 +496,8 @@ final class ProgressionService
                     $state['prop'] = $cfg['id'];
                     $state['ownedProperties'][$cfg['id']] = 1;
                     $state['propertyLease'] = ['id' => $cfg['id'], 'nameEn' => $cfg['nameEn'], 'nameAr' => $cfg['nameAr'], 'daysLeft' => $daysLeft, 'totalDays' => $totalDays, 'happy' => (int) $cfg['happy']];
-                    $this->database->execute('UPDATE players SET max_happy = MAX(max_happy, :happy) WHERE id = :id', ['happy' => (int) $cfg['happy'], 'id' => $playerId]);
+                    $newMaxHappy = max((int) $player['max_happy'], (int) $cfg['happy']);
+                    $this->database->execute('UPDATE players SET max_happy = :happy WHERE id = :id', ['happy' => $newMaxHappy, 'id' => $playerId]);
                     $result['cashDelta'] = -(int) $cfg['cost'];
                     break;
                 case 'city.spawnClaim':
@@ -698,10 +699,12 @@ final class ProgressionService
                         $this->cash($playerId, 35000, 'torn.companySpecial:oil', $correlationId);
                         $result['cashDelta'] = 35000;
                     } elseif ($id === 'fitness') {
-                        $this->database->execute('UPDATE players SET energy = MIN(1000, energy + 150) WHERE id = :id', ['id' => $playerId]);
+                        $newEnergy = min(1000, (int) $player['energy'] + 150);
+                        $this->database->execute('UPDATE players SET energy = :e WHERE id = :id', ['e' => $newEnergy, 'id' => $playerId]);
                     } else {
                         $happyGain = $id === 'sweet' ? 1500 : 2500;
-                        $this->database->execute('UPDATE players SET happy = MIN(99999, happy + :h) WHERE id = :id', ['h' => $happyGain, 'id' => $playerId]);
+                        $newHappy = min(99999, (int) $player['happy'] + $happyGain);
+                        $this->database->execute('UPDATE players SET happy = :h WHERE id = :id', ['h' => $newHappy, 'id' => $playerId]);
                     }
                     break;
                 case 'torn.bazaarShield':
