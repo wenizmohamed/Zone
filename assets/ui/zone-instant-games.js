@@ -655,14 +655,16 @@
   function mountHomeArcade() {
     ensureMotionStyles();
     var main = document.getElementById('zone-main');
-    if (!main || main.getAttribute('data-zone-screen') !== 'home') {
+    if (!main || main.getAttribute('data-zone-screen') !== 'casino') {
       state.hoveredPreviewId = null;
+      state.getaway.open = false;
+      state.getaway.running = false;
       var stale = document.getElementById('zig-home-arcade');
       if (stale) stale.remove();
       return;
     }
-    var brief = main.querySelector('.zone-home-brief');
-    if (!brief) return;
+    var casinoAnchor = main.querySelector('[data-zone-casino-pit="1"]') || main.querySelector('.zone-content-split') || main.querySelector('.zone-page-heading');
+    if (!casinoAnchor) return;
     var ar = isAr();
     var existing = document.getElementById('zig-home-arcade');
     if (existing && existing.getAttribute('data-lang') === (ar ? 'ar' : 'en')) return;
@@ -768,7 +770,7 @@
         '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas" aria-label="' + (ar ? 'لعبة مطاردة النيترو التفاعلية' : 'Nitro Getaway Interactive Game') + '"></canvas></div>' +
       '</div>';
 
-    brief.insertAdjacentElement('afterend', sec);
+    casinoAnchor.insertAdjacentElement('afterend', sec);
 
     var sndBtn = sec.querySelector('#zig-sound-toggle');
     if (sndBtn) {
@@ -802,7 +804,12 @@
           goScreen('crimes');
         } else if (id === 'casino') {
           sfx.wheelTick();
-          goScreen('casino');
+          var pitEl = document.querySelector('[data-zone-casino-pit="1"]');
+          if (pitEl && typeof pitEl.scrollIntoView === 'function') {
+            try { pitEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
+          } else {
+            goScreen('casino');
+          }
         } else if (id === 'gym') {
           sfx.punch(true);
           goScreen('gym');
@@ -1223,7 +1230,7 @@
     var scr = main ? main.getAttribute('data-zone-screen') : '';
     var interactiveFocus = e.target && e.target.closest ? Boolean(e.target.closest('button, a, [role="button"]')) : false;
 
-    if (scr === 'home' && state.getaway.open && state.getaway.running) {
+    if (scr === 'casino' && state.getaway.open && state.getaway.running) {
       if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
         e.preventDefault();
         state.getaway.targetLane = Math.max(0, Math.round(state.getaway.targetLane) - 1);
@@ -2569,6 +2576,7 @@
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
         if (g.toast) g.toast((ar ? 'هبطت الطائرة في ' : 'Charter landed in ') + (d.cityName || d.cityId) + ' · +' + Number(d.xpDelta || 35) + (ar ? ' خبرة' : ' XP'));
+        if (typeof window.ZoneSyncHudBars === 'function') window.ZoneSyncHudBars(g.p);
         if (g.forceUpdate) g.forceUpdate();
       }
       var bar = document.getElementById('zig-world-flight-bar');
@@ -2584,6 +2592,7 @@
         g._mapSig = '';
         if (g.pushMap) g.pushMap();
         if (g.toast) g.toast((d.contractLabel || (ar ? 'عملية إقليمية' : 'Regional Op')) + ' · +$' + Number(d.cashDelta || 0).toLocaleString('en-US') + ' & +' + Number(d.xpDelta || 0) + (ar ? ' خبرة' : ' XP'));
+        if (typeof window.ZoneSyncHudBars === 'function') window.ZoneSyncHudBars(g.p);
         if (g.forceUpdate) g.forceUpdate();
       }
     }
@@ -2654,16 +2663,15 @@
     if (!main) return;
     var scr = main.getAttribute('data-zone-screen') || 'home';
     var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-    if (scr === 'home') {
-      renderStaticHomePreviews();
-      if (state.getaway.open && document.getElementById('zig-getaway-canvas')) {
-        renderGetawayGame(0, now);
-      }
-    } else if (scr === 'crimes') {
+    if (scr === 'crimes') {
       if (document.getElementById('zig-heist-canvas')) renderCrimesGame(0, now);
     } else if (scr === 'gym') {
       if (document.getElementById('zig-gym-canvas')) renderGymGame(0, now);
     } else if (scr === 'casino') {
+      renderStaticHomePreviews();
+      if (state.getaway.open && document.getElementById('zig-getaway-canvas')) {
+        renderGetawayGame(0, now);
+      }
       if (document.getElementById('zig-roulette-canvas')) renderRouletteCanvas(0, now);
       if (document.getElementById('zig-slots-canvas')) renderSlotsCanvas(0, now);
     }
@@ -2674,11 +2682,6 @@
     var main = document.getElementById('zone-main');
     if (!main) return false;
     var scr = main.getAttribute('data-zone-screen') || 'home';
-    if (scr === 'home') {
-      if (state.hoveredPreviewId) return true;
-      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) return true;
-      return false;
-    }
     if (scr === 'crimes') {
       return isCanvasVisible('zig-heist-canvas') || isCanvasVisible('zig-crimes-canvas');
     }
@@ -2686,6 +2689,8 @@
       return isCanvasVisible('zig-gym-canvas');
     }
     if (scr === 'casino') {
+      if (state.hoveredPreviewId) return true;
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) return true;
       return isCanvasVisible('zig-roulette-canvas') || isCanvasVisible('zig-slots-canvas');
     }
     return false;
@@ -2705,14 +2710,13 @@
     var main = document.getElementById('zone-main');
     var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
 
-    if (scr === 'home') {
-      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
-      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderGetawayGame(dt, now);
-    } else if (scr === 'crimes') {
+    if (scr === 'crimes') {
       renderCrimesGame(dt, now);
     } else if (scr === 'gym') {
       renderGymGame(dt, now);
     } else if (scr === 'casino') {
+      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderGetawayGame(dt, now);
       if (isCanvasVisible('zig-roulette-canvas')) renderRouletteCanvas(dt, now);
       if (isCanvasVisible('zig-slots-canvas')) renderSlotsCanvas(dt, now);
     }

@@ -503,6 +503,19 @@ test('v149 Live HTTP + Node Relay E2E for /api/v1/faction-empire & /api/v1/facti
     });
     assert.equal(rpgAct.status, 200, `player-rpg/action failed: ${JSON.stringify(rpgAct.json)}`);
 
+    // v151 level gates require Lv 2 for City Dump and Lv 5 for Personal Bazaars
+    execFileSync(
+      php,
+      [
+        '-r',
+        'require $argv[1]; $db = Zone\\Engine\\Core\\Persistence\\Database::connect("sqlite:" . $argv[2]); $db->execute("UPDATE players SET level = 5, xp = 1000 WHERE id = :id", ["id" => $argv[3]]);',
+        join(repo, 'engine/bootstrap.php'),
+        join(fixture, 'http149.sqlite'),
+        sess.json.playerId,
+      ],
+      { cwd: repo, windowsHide: true },
+    );
+
     const cityAct = await httpJson(relayPort, '/api/v1/city-activities/action', {
       method: 'POST',
       headers: authHeaders,

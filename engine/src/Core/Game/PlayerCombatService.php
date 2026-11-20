@@ -124,9 +124,12 @@ final class PlayerCombatService
                     $chainMultiplier = $chainService->liveMultiplierForPlayer($playerId);
 
                     $attState = $this->progression->snapshot($playerId)['state'];
+                    $attMods = $this->random === null ? TornSystemsService::extractLiveModifiers($attState) : null;
+                    $warlordMod = $attMods !== null ? round(1.0 + (((int) $attMods['combatDamagePct']) / 100.0), 2) : 1.0;
+                    $stealthBonusBps = $attMods !== null ? ((int) $attMods['stealthPct'] * 100) : 0;
                     $stealthMerit = max(0, min(10, (int) ($attState['meritTree']['stealth'] ?? 0)));
                     $dexRatio = (int) $player['dexterity'] / max(1, (int) $player['dexterity'] + (int) $defender['speed']);
-                    $stealthChanceBp = min(9500, max(500, (int) round($dexRatio * 6500) + ($stealthMerit * 350)));
+                    $stealthChanceBp = min(9500, max(500, (int) round($dexRatio * 6500) + ($stealthMerit * 350) + $stealthBonusBps));
                     $stealthed = false;
                     $bountiesClaimed = [];
                     $bountyCashAwarded = 0;
@@ -135,7 +138,10 @@ final class PlayerCombatService
                     $cash = 0; $xp = 0; $respect = 0;
                     if ($encounter['phase'] === 'won') {
                         $player = $this->player($playerId); $defender = $this->player($defenderId);
-                        $lootingBoost = $this->random === null ? (1.0 + 0.05 * max(0, min(10, (int) ($attState['meritTree']['masterful_looting'] ?? 0)))) : 1.0;
+                        $warlordMugMult = $attMods !== null ? (1.0 + (((int) $attMods['mugPlunderPct']) / 100.0)) : 1.0;
+                        $lootingBoost = $this->random === null
+                            ? (1.0 + 0.05 * max(0, min(10, (int) ($attState['meritTree']['masterful_looting'] ?? 0)))) * $warlordMugMult
+                            : 1.0;
                         $cash = $approach === 'mug' ? min($defender['cash'], max(0, (int) round($defender['cash'] * ($this->roll(500, 1200) * $lootingBoost) / 10000))) : 0;
                         $stealthed = $this->roll(1, 10000) <= $stealthChanceBp;
                         $xp = $defender['level'] * 3;
@@ -185,8 +191,9 @@ final class PlayerCombatService
                             },
                         ]);
                     }
-                    $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => $retaliation, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => 1.0];
-                    $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? 25 : ($approach === 'hosp' ? 30 : 15)]];
+                    $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => $retaliation, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => $warlordMod];
+                    $mugBonusVal = $attMods !== null ? (int) $attMods['mugPlunderPct'] : 0;
+                    $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? (25 + $mugBonusVal) : ($approach === 'hosp' ? 30 : 15)]];
                     $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                     $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                     $result = [
@@ -279,7 +286,7 @@ final class PlayerCombatService
     {
         if ($this->reservation($id) !== null || $this->npcBusy($id)) return 'Player is already in an encounter.';
         $row = $this->database->fetchOne('SELECT state_json FROM player_progression WHERE player_id = :id', ['id' => $id]);
-        $state = $row === null ? [] : json_decode($row['state_json'], true, 64, JSON_THROW_ON_ERROR);
+        $state = $row === null ? [] : json_decode($row['state_json'], true, 512, JSON_THROW_ON_ERROR);
         if (max((int) ($state['jailUntil'] ?? 0), (int) ($state['hospUntil'] ?? 0)) > $this->now() * 1000) return 'Player is in jail or hospital.';
         $travel = $this->database->fetchOne('SELECT status, arrives_at FROM player_travel WHERE player_id = :id', ['id' => $id]);
         return $travel !== null && $travel['status'] === 'traveling' && strtotime($travel['arrives_at']) > $this->now() ? 'Player is traveling.' : null;
@@ -287,7 +294,7 @@ final class PlayerCombatService
     private function npcBusy(string $id): bool
     {
         $row = $this->database->fetchOne('SELECT state_json FROM combat_encounters WHERE player_id = :id', ['id' => $id]);
-        return $row !== null && in_array(json_decode($row['state_json'], true, 64, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '', ['fighting', 'won'], true);
+        return $row !== null && in_array(json_decode($row['state_json'], true, 512, JSON_THROW_ON_ERROR)['encounter']['phase'] ?? '', ['fighting', 'won'], true);
     }
     private function reservation(string $id): ?array
     {
@@ -298,11 +305,20 @@ final class PlayerCombatService
         $progress = $this->progression->snapshot($id); $state = $progress['state'];
         $loadout = LoadoutService::resolve($state, $rules['items']);
         $territory = $rules['territoriesEnabled'] ? min(2000, (new TerritoryService($this->database, $this->events))->bonusBasisPoints($id, 'defense')) : 0;
-        return ['weapon' => $loadout['weaponMultiplier'], 'armor' => $loadout['armorReduction'], 'defense' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $territory / 10000)];
+        $mods = $this->random === null ? TornSystemsService::extractLiveModifiers($state) : null;
+        $warlordDmgMult = $mods !== null ? (1.0 + (((int) $mods['combatDamagePct']) / 100.0)) : 1.0;
+        $armorMitBonus = $mods !== null ? (float) $mods['armorMitigationBonus'] : 0.0;
+        $accBonusBps = $mods !== null ? (int) $mods['combatAccuracyBps'] : 0;
+        return [
+            'weapon' => $loadout['weaponMultiplier'] * $warlordDmgMult,
+            'armor' => min(0.85, $loadout['armorReduction'] + $armorMitBonus),
+            'defense' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $territory / 10000),
+            'accuracyBps' => $accBonusBps,
+        ];
     }
     private function damage(array $actor, array $target, array $actorGear, array $targetGear): int
     {
-        $chance = (int) round($actor['speed'] / max(1, $actor['speed'] + $target['dexterity']) * 10000);
+        $chance = min(9800, (int) round($actor['speed'] / max(1, $actor['speed'] + $target['dexterity']) * 10000) + (int) ($actorGear['accuracyBps'] ?? 0));
         if ($this->roll(1, 10000) > $chance) return 0;
         return max(1, (int) round(120 * $actorGear['weapon'] * $actor['strength'] / max(1, $actor['strength'] + $target['defense'] * $targetGear['defense']) * (1 - $targetGear['armor']) * $this->roll(80, 120) / 100));
     }

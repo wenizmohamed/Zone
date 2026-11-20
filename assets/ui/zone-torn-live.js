@@ -547,6 +547,9 @@
         g.forceUpdate();
       } catch (_) {}
     }
+    if (typeof window.ZoneSyncHudBars === 'function') {
+      try { window.ZoneSyncHudBars(snap); } catch (_) {}
+    }
     try {
       window.dispatchEvent(new CustomEvent('zone:torn-gameplay-synced', { detail: snap }));
     } catch (_) {}
@@ -926,12 +929,19 @@
         var loot = res.lootItem || res.itemGranted || res.loot || '';
         var delta = Number(res.cashDelta || 0);
         var skDelta = res.skillDelta != null ? Number(res.skillDelta) : null;
+        var xpGain = Number(res.xpAwarded || res.xpDelta || 0);
+        var skimmed = Number(res.nemesisSkimmed || 0);
         var summary = rawTier + (delta ? (' · ' + (delta > 0 ? '+' : '') + fmtMoney(delta)) : '') +
+          (xpGain > 0 ? (' · +' + xpGain + ' XP') : '') +
           (skDelta !== null ? (' · Skill ' + (skDelta >= 0 ? '+' : '') + skDelta) : '') +
+          (skimmed > 0 ? (' · Nemesis Tax -' + fmtMoney(skimmed)) : '') +
           (loot ? (' · Loot: ' + loot) : '');
         store.lastCrimeOutcome = { crimeId: String(id), tier: rawTier, text: summary, loot: loot, at: Date.now() };
         var tone = rawTier.indexOf('UNIQUE') >= 0 ? 'unique' : (rawTier.indexOf('CRITICAL') >= 0 ? 'bad' : (rawTier === 'FAIL' ? 'warn' : 'sage'));
         setFeedback(summary, tone);
+        if (window.ZoneAscension && typeof window.ZoneAscension.refresh === 'function') {
+          try { window.ZoneAscension.refresh(false); } catch (_) {}
+        }
       } else {
         var msgParts = [res.message || res.summary || (action + (id ? ' (' + id + ')' : ''))];
         if (res.overdosed || res.overdose || res.outcome === 'overdose') {
@@ -964,6 +974,9 @@
     try {
       var data = await apiPost('/api/v1/foreign-market/action', payload);
       if (data) {
+        if (typeof window.ZoneSyncHudBars === 'function' && data.player) {
+          try { window.ZoneSyncHudBars(data); } catch (_) {}
+        }
         if (data.market || data.destinations || data.travel || data.status) {
           store.foreignMarket = data.market || data;
         } else {
@@ -995,6 +1008,9 @@
     renderAll();
     try {
       var data = await apiPost('/api/v1/faction-chain/action', payload);
+      if (data && typeof window.ZoneSyncHudBars === 'function' && data.player) {
+        try { window.ZoneSyncHudBars(data); } catch (_) {}
+      }
       if (data && data.chain) store.factionChain = data;
       else await loadFactionChainState();
       await loadGameplayState();
@@ -1139,16 +1155,52 @@
     );
   }
 
-  /* Route 1: `crimes` ONLY -> Crimes 2.0 Board (13 Archetypes, Skill 0-100, Enhancers, Rotating Security) */
+  /* Route 1: `crimes` ONLY -> Unified 13-Tier Crime Progression Ladder (#1..#13 + Nemesis Heat-Tax Warning) */
+  function crimeRequiredLevel(crimeId, srv) {
+    if (srv && Number(srv.requiredLevel || srv.unlockLevel) > 0) {
+      return Number(srv.requiredLevel || srv.unlockLevel);
+    }
+    var n = Number(crimeId) || 1;
+    if (n <= 3) return 1;
+    if (n <= 6) return 3;
+    if (n <= 9) return 6;
+    if (n <= 12) return 10;
+    return 14;
+  }
+
   function renderCrimesSection() {
     var ar = isAr();
     var copy = L();
     var ctx = getPlayerAndState();
+    var playerLv = Math.max(1, Number((ctx.player && ctx.player.level) || (ctx.game && ctx.game.p && ctx.game.p.level) || 1));
     var v2List = Array.isArray(ctx.tornV2.crimes2CatalogWithSkill) ? ctx.tornV2.crimes2CatalogWithSkill : [];
     var v2ById = {};
     for (var vi = 0; vi < v2List.length; vi++) {
       var row = v2List[vi];
       if (row && row.id != null) v2ById[String(row.id)] = row;
+    }
+
+    var ascSnap = (window.ZoneAscension && typeof window.ZoneAscension.getState === 'function')
+      ? window.ZoneAscension.getState()
+      : null;
+    var rawAsc = (ctx.state && ctx.state.ascension) || {};
+    var nem = (ascSnap && ascSnap.nemesis) || rawAsc.nemesis || null;
+    var heatTaxPct = nem && !nem.heatCleared ? Math.max(0, Number(nem.heatTaxPct || 0)) : 0;
+    var nemesisBannerHtml = '';
+    if (heatTaxPct > 0 && nem) {
+      var nemName = ar ? (nem.nameAr || nem.nameEn || 'العدو اللدود') : (nem.nameEn || nem.nameAr || 'Rival Nemesis');
+      var nemDist = ar ? (nem.districtAr || nem.district || nem.districtEn || '') : (nem.districtEn || nem.district || '');
+      nemesisBannerHtml =
+        '<div class="zab-crimes-nemesis-banner" data-zab-crimes-nemesis="1">' +
+          '<span>' +
+            (ar
+              ? ('⚠ إتاوة العدو اللدود: ' + esc(nemName) + (nemDist ? (' (' + esc(nemDist) + ')') : '') + ' يقتطع -' + heatTaxPct + '% من عوائد جرائم الشارع!')
+              : ('⚠ Nemesis Heat Tax: ' + esc(nemName) + (nemDist ? (' (' + esc(nemDist) + ')') : '') + ' is skimming -' + heatTaxPct + '% off your street crimes!')) +
+          '</span>' +
+          '<button type="button" class="ztl-btn" data-ztl-act="go-screen" data-screen="home">' +
+            (ar ? 'تتبّع وواجه الخصم ←' : 'Track & Confront on Home →') +
+          '</button>' +
+        '</div>';
     }
 
     var outcomeHtml = '';
@@ -1169,6 +1221,8 @@
     for (var i = 0; i < CRIMES_2_CATALOG.length; i++) {
       var c = CRIMES_2_CATALOG[i];
       var srv = v2ById[c.id] || {};
+      var reqLv = crimeRequiredLevel(c.id, srv);
+      var isTierOpen = playerLv >= reqLv;
       var skillVal = Math.max(
         0,
         Math.min(
@@ -1188,14 +1242,18 @@
       var nerveCost = Number(srv.nerve || c.nerve);
       var title = ar ? c.ar : c.en;
       var enhLabel = ar ? c.enhAr : c.enhEn;
+      var gateBadge = isTierOpen
+        ? (ar ? ('مفتوح · م ' + reqLv) : ('Tier Lv ' + reqLv))
+        : (ar ? ('مقفل · م ' + reqLv) : ('Unlocks Lv ' + reqLv));
 
       cardsHtml +=
-        '<article class="ztl-card" data-ztl-crime-card="' + c.id + '">' +
+        '<article class="ztl-card" data-ztl-crime-card="' + c.id + '" data-ztl-crime-unlocked="' + (isTierOpen ? '1' : '0') + '">' +
           '<div class="ztl-card-top">' +
             '<span class="ztl-card-title"><bdi>#' + c.id + '</bdi> ' + esc(title) + '</span>' +
             '<bdi class="ztl-chip" data-tone="crimson">' + nerveCost + 'N</bdi>' +
           '</div>' +
           '<div class="ztl-row-actions">' +
+            '<span class="ztl-chip" data-tone="' + (isTierOpen ? 'sage' : 'crimson') + '">' + esc(gateBadge) + '</span>' +
             '<span class="ztl-chip" data-tone="' + (hasEnh ? 'sage' : 'gold') + '">' +
               esc(enhLabel) + ' · ' + esc(hasEnh ? copy.enhOwned : copy.enhMissing) +
             '</span>' +
@@ -1216,78 +1274,13 @@
     }
     cardsHtml += '</div>';
 
-    var shops = Array.isArray(ctx.tornV2.shopliftingSecurity) && ctx.tornV2.shopliftingSecurity.length
-      ? ctx.tornV2.shopliftingSecurity
-      : [
-          { id: 'sallys', shop: "Sally's Sweet Shop", cameraDisabled: true, guardOffDuty: false },
-          { id: 'bits', shop: "Bits 'n' Bobs", cameraDisabled: false, guardOffDuty: true },
-          { id: 'clothing', shop: 'Zone Clothing', cameraDisabled: false, guardOffDuty: false },
-          { id: 'super', shop: 'Super Store', cameraDisabled: true, guardOffDuty: false },
-          { id: 'cyber', shop: 'Cyber Force', cameraDisabled: false, guardOffDuty: true },
-          { id: 'bigals', shop: "Big Al's Gun Shop", cameraDisabled: false, guardOffDuty: false }
-        ];
-    var shopIds = ['sallys', 'bits', 'clothing', 'super', 'cyber', 'bigals'];
-    var shopsHtml = '<div class="ztl-grid-compact">';
-    for (var si = 0; si < shops.length; si++) {
-      var sh = shops[si];
-      var sid = sh.id || shopIds[si] || 'sallys';
-      var camDown = Boolean(sh.cameraDisabled);
-      var guardDown = Boolean(sh.guardOffDuty);
-      shopsHtml +=
-        '<div class="ztl-card">' +
-          '<div class="ztl-card-title">' + esc(sh.shop || sid) + '</div>' +
-          '<div class="ztl-row-actions">' +
-            '<span class="ztl-chip" data-tone="' + (camDown ? 'sage' : 'crimson') + '">' + esc(camDown ? copy.camOff : copy.camOn) + '</span>' +
-            '<span class="ztl-chip" data-tone="' + (guardDown ? 'sage' : 'crimson') + '">' + esc(guardDown ? copy.guardOff : copy.guardOn) + '</span>' +
-          '</div>' +
-          '<button type="button" class="ztl-btn" data-ztl-act="shoplift" data-id="' + esc(sid) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.shopliftAct) + '</button>' +
-        '</div>';
-    }
-    shopsHtml += '</div>';
-
-    var mods = Array.isArray(ctx.tornV2.searchForCashModifiers) && ctx.tornV2.searchForCashModifiers.length
-      ? ctx.tornV2.searchForCashModifiers
-      : [
-          { id: 'trash', subcrime: 'Search the Trash', title: 'Overflowing bins', percentage: 76 },
-          { id: 'subway', subcrime: 'Search the Subway', title: 'Commuter rush', percentage: 61 },
-          { id: 'junkyard', subcrime: 'Search the Junkyard', title: 'Scrap delivery', percentage: 68 },
-          { id: 'beach', subcrime: 'Search the Beach', title: 'Low tide exposed', percentage: 72 },
-          { id: 'cemetery', subcrime: 'Search the Cemetery', title: 'Quiet grounds', percentage: 58 },
-          { id: 'fountain', subcrime: 'Search the Fountain', title: 'Tourist coins', percentage: 82 }
-        ];
-    var modIds = ['trash', 'subway', 'junkyard', 'beach', 'cemetery', 'fountain'];
-    var modsHtml = '<div class="ztl-grid-compact">';
-    for (var mi = 0; mi < mods.length; mi++) {
-      var md = mods[mi];
-      var mid = md.id || modIds[mi] || 'fountain';
-      var mpct = Math.max(0, Math.min(100, Math.round(Number(md.percentage || 50))));
-      modsHtml +=
-        '<div class="ztl-card">' +
-          '<div class="ztl-card-top">' +
-            '<span class="ztl-card-title">' + esc(md.subcrime || mid) + '</span>' +
-            '<bdi class="ztl-chip" data-tone="gold">' + mpct + '%</bdi>' +
-          '</div>' +
-          '<span class="ztl-card-meta">' + esc(md.title || '') + '</span>' +
-          '<div class="ztl-meter-track"><div class="ztl-meter-fill" data-tone="gold" style="width:' + mpct + '%"></div></div>' +
-          '<button type="button" class="ztl-btn" data-ztl-act="search-cash" data-id="' + esc(mid) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.searchAct) + '</button>' +
-        '</div>';
-    }
-    modsHtml += '</div>';
-
     return (
       '<div class="ztl-workspace" data-workspace="crimes">' +
         outcomeHtml +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.crimesTitle) + '</h3><span class="ztl-section-note">' + esc(copy.crimesNote) + '</span></div>' +
+          nemesisBannerHtml +
           cardsHtml +
-        '</section>' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.shopliftSecTitle) + '</h3></div>' +
-          shopsHtml +
-        '</section>' +
-        '<section class="ztl-section-box">' +
-          '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.searchModTitle) + '</h3></div>' +
-          modsHtml +
         '</section>' +
       '</div>'
     );

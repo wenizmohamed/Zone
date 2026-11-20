@@ -1,0 +1,908 @@
+/* ============================================================================
+ * ZONE v151 — Breakthrough Progression, Origin Awakening, 6-Era Empire Spine,
+ *             Luna Encrypted Handler, Living Nemesis, Street Crew & Unification
+ * Aesthetic: Hand-Drawn Ink & Watercolor Sketchbook (Light & Dark + EN/AR RTL)
+ * ============================================================================ */
+
+:root,
+html[data-theme="light"] {
+  --zab-paper: #f6efe0;
+  --zab-paper-alt: #ece2cc;
+  --zab-paper-elev: #fbf7ee;
+  --zab-ink: #1e1b18;
+  --zab-ink-soft: #433c34;
+  --zab-ink-muted: #5c5348;
+  --zab-stroke: rgba(30, 27, 24, 0.34);
+  --zab-stroke-strong: rgba(30, 27, 24, 0.68);
+  --zab-shadow: 2px 3px 0 rgba(30, 27, 24, 0.16);
+  --zab-sage: #265920;
+  --zab-sage-wash: rgba(45, 106, 38, 0.14);
+  --zab-sage-fill: linear-gradient(180deg, #3c7a33 0%, #285722 100%);
+  --zab-ochre: #7a4f0d;
+  --zab-ochre-wash: rgba(196, 136, 34, 0.18);
+  --zab-ochre-fill: linear-gradient(180deg, #c98f27 0%, #9b6912 100%);
+  --zab-crimson: #8f2318;
+  --zab-crimson-wash: rgba(176, 48, 34, 0.14);
+  --zab-crimson-fill: linear-gradient(180deg, #b8382a 0%, #8c2217 100%);
+  --zab-luna: #4d2775;
+  --zab-luna-wash: rgba(98, 52, 148, 0.13);
+  --zab-luna-border: rgba(98, 52, 148, 0.44);
+  --zab-track: rgba(30, 27, 24, 0.13);
+  --zab-on-fill: #fdfaf2;
+  --zab-modal-backdrop: rgba(20, 17, 14, 0.72);
+}
+
+html[data-theme="dark"] {
+  --zab-paper: #191614;
+  --zab-paper-alt: #231f1b;
+  --zab-paper-elev: #2b2621;
+  --zab-ink: #f4ede0;
+  --zab-ink-soft: #d7ccb8;
+  --zab-ink-muted: #b5a892;
+  --zab-stroke: rgba(244, 237, 224, 0.22);
+  --zab-stroke-strong: rgba(244, 237, 224, 0.46);
+  --zab-shadow: 2px 3px 0 rgba(0, 0, 0, 0.48);
+  --zab-sage: #82cf62;
+  --zab-sage-wash: rgba(114, 194, 82, 0.16);
+  --zab-sage-fill: linear-gradient(180deg, #4b8f3f 0%, #316628 100%);
+  --zab-ochre: #f0be59;
+  --zab-ochre-wash: rgba(240, 190, 89, 0.16);
+  --zab-ochre-fill: linear-gradient(180deg, #c9922c 0%, #966816 100%);
+  --zab-crimson: #f2796a;
+  --zab-crimson-wash: rgba(226, 85, 68, 0.18);
+  --zab-crimson-fill: linear-gradient(180deg, #c24233 0%, #91291d 100%);
+  --zab-luna: #d2abff;
+  --zab-luna-wash: rgba(168, 118, 232, 0.16);
+  --zab-luna-border: rgba(196, 152, 250, 0.44);
+  --zab-track: rgba(244, 237, 224, 0.14);
+  --zab-on-fill: #fcf8ef;
+  --zab-modal-backdrop: rgba(8, 7, 6, 0.82);
+}
+
+/* ---------------- 1. Arcade Relocation: Off Home -> Casino Only ---------------- */
+html body #dc-root #zone-main[data-zone-screen="home"] #zig-home-arcade,
+html body #zone-main#zone-main[data-zone-screen="home"] #zig-home-arcade {
+  display: none !important;
+}
+
+html body #dc-root #zone-main[data-zone-screen="casino"] #zig-home-arcade,
+html body #zone-main#zone-main[data-zone-screen="casino"] #zig-home-arcade {
+  display: flex !important;
+  flex-direction: column !important;
+  margin-top: 4px;
+}
+
+/* ---------------- 2. Home Flex Order: Ascension Dossier Right Below Brief ---------------- */
+#zone-main:not([data-zone-screen="home"]) > #zone-ascension-hub,
+#zone-main[data-zone-screen="home"] > #zwc-tutorial-card {
+  display: none !important;
+}
+
+#zone-main[data-zone-screen="home"] > #zone-ascension-hub {
+  order: 1;
+}
+
+#zone-main[data-zone-screen="home"] > .zone-home-brief ~ *:not(#zone-ascension-hub):not(#zone-rpg-route-section):not(.zone-mobile-tabbar):not(.zone-footer) {
+  order: 2;
+}
+
+#zone-main[data-zone-screen="home"] > #zone-rpg-route-section {
+  order: 3;
+}
+
+#zone-main[data-zone-screen="home"] > .zone-mobile-tabbar,
+#zone-main[data-zone-screen="home"] > .zone-footer {
+  order: 4;
+}
+
+/* ---------------- 3. Screen Unification: Crimes & Faction ---------------- */
+/* Crimes: Preserve Safe-Crack Neighborhood HUD at top, collapse legacy duplicate crime pickers/tables */
+#zone-main[data-zone-screen="crimes"] .zone-crime-workspace {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+#zone-main[data-zone-screen="crimes"] .zone-crime-activity-nav,
+#zone-main[data-zone-screen="crimes"] .zone-crime-plan,
+#zone-main[data-zone-screen="crimes"] .zone-crime-opportunities,
+#zone-main[data-zone-screen="crimes"] > section[data-torn-crimes2-panel="1"] {
+  display: none !important;
+}
+
+/* Faction: Hide contradictory "Choose your family — fixed for this beta" card & static fake duplicates */
+#zone-main[data-zone-screen="faction"] > section.zone-panel:not(.zone-peer-panel):not(.zone-shared-family):not([data-torn-oc2-rackets]):not(#zone-rpg-route-section):not(#zone-torn-route-section),
+#zone-main[data-zone-screen="faction"] > [data-zab-hidden-beta="1"],
+#zone-main[data-zone-screen="faction"] > section[data-torn-oc2-rackets="1"],
+#zone-main[data-zone-screen="faction"] > .zone-auto-grid,
+#zone-main[data-zone-screen="faction"] > div[style*="font-size:11px"][style*="var(--mu)"] {
+  display: none !important;
+}
+
+#zone-main[data-zone-screen="faction"] > #zone-torn-route-section {
+  order: 1;
+}
+
+#zone-main[data-zone-screen="faction"] > #zone-rpg-route-section {
+  order: 2;
+}
+
+#zone-main[data-zone-screen="faction"] > .zone-peer-panel,
+#zone-main[data-zone-screen="faction"] > .zone-shared-family,
+#zone-main[data-zone-screen="faction"] > .zone-panel {
+  order: 3;
+}
+
+#zone-main[data-zone-screen="faction"] > .zone-mobile-tabbar,
+#zone-main[data-zone-screen="faction"] > .zone-footer {
+  order: 5;
+}
+
+/* ---------------- 4. Ascension Hub Container & Watercolor Typography ---------------- */
+#zone-ascension-hub {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--zab-ink);
+  font-family: "Patrick Hand", "Noto Sans Arabic", system-ui, sans-serif;
+}
+
+#zone-ascension-hub *,
+#zone-origin-awakening-modal *,
+#zone-levelup-milestone-banner * {
+  box-sizing: border-box;
+}
+
+.zab-card {
+  background:
+    radial-gradient(circle at 14% 12%, var(--zab-ochre-wash), transparent 48%),
+    radial-gradient(circle at 88% 85%, var(--zab-sage-wash), transparent 52%),
+    var(--zab-paper);
+  border: 1.5px solid var(--zab-stroke-strong);
+  border-radius: 9px 5px 10px 6px / 6px 10px 5px 9px;
+  box-shadow: var(--zab-shadow);
+  padding: 13px 15px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.zab-card-luna {
+  background:
+    radial-gradient(circle at 12% 18%, var(--zab-luna-wash), transparent 54%),
+    radial-gradient(circle at 90% 82%, var(--zab-ochre-wash), transparent 50%),
+    var(--zab-paper);
+  border-color: var(--zab-luna-border);
+}
+
+.zab-card-nemesis {
+  background:
+    radial-gradient(circle at 16% 16%, var(--zab-crimson-wash), transparent 54%),
+    radial-gradient(circle at 86% 84%, var(--zab-ochre-wash), transparent 50%),
+    var(--zab-paper);
+  border-color: var(--zab-crimson);
+}
+
+.zab-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--zab-ochre);
+}
+
+.zab-title {
+  margin: 2px 0 0;
+  font-family: "Caveat Brush", "Patrick Hand", "Noto Sans Arabic", cursive, sans-serif;
+  font-size: 20px;
+  line-height: 1.18;
+  font-weight: 700;
+  color: var(--zab-ink);
+}
+
+.zab-sub {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  line-height: 1.42;
+  color: var(--zab-ink-soft);
+}
+
+.zab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  color: var(--zab-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.zab-pill-sage {
+  background: var(--zab-sage-wash);
+  border-color: var(--zab-sage);
+  color: var(--zab-sage);
+}
+
+.zab-pill-ochre {
+  background: var(--zab-ochre-wash);
+  border-color: var(--zab-ochre);
+  color: var(--zab-ochre);
+}
+
+.zab-pill-crimson {
+  background: var(--zab-crimson-wash);
+  border-color: var(--zab-crimson);
+  color: var(--zab-crimson);
+}
+
+.zab-pill-luna {
+  background: var(--zab-luna-wash);
+  border-color: var(--zab-luna-border);
+  color: var(--zab-luna);
+}
+
+/* ---------------- 5. Action Buttons (>= 44px Touch Height on Mobile) ---------------- */
+.zab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 6px 13px;
+  border-radius: 7px 4px 8px 4px;
+  border: 1.5px solid var(--zab-stroke-strong);
+  background: var(--zab-paper-elev);
+  color: var(--zab-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 1px 2px 0 rgba(30, 27, 24, 0.14);
+  transition: transform 0.12s ease, opacity 0.12s ease;
+  text-align: center;
+}
+
+.zab-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.zab-btn:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.zab-btn-primary {
+  background: var(--zab-sage-fill);
+  color: var(--zab-on-fill);
+  border-color: rgba(20, 48, 17, 0.72);
+}
+
+.zab-btn-ochre {
+  background: var(--zab-ochre-fill);
+  color: var(--zab-on-fill);
+  border-color: rgba(94, 62, 10, 0.75);
+}
+
+.zab-btn-crimson {
+  background: var(--zab-crimson-fill);
+  color: var(--zab-on-fill);
+  border-color: rgba(96, 20, 14, 0.78);
+}
+
+[dir="rtl"] .zab-rtl-flip {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+
+/* ---------------- 6. Minute-0 Origin Awakening Banner & Interactive Modal ---------------- */
+.zab-origin-hero {
+  background:
+    radial-gradient(circle at 10% 15%, var(--zab-luna-wash), transparent 46%),
+    radial-gradient(circle at 88% 20%, var(--zab-ochre-wash), transparent 48%),
+    var(--zab-paper);
+  border: 2px solid var(--zab-stroke-strong);
+}
+
+.zab-origin-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.zab-origin-luna-greet {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.zab-luna-avatar {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 60px;
+  border-radius: 50%;
+  border: 2px solid var(--zab-luna-border);
+  background: var(--zab-paper-elev);
+  box-shadow: var(--zab-shadow);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.zab-luna-avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.zab-callsign-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--zab-paper-alt);
+  border: 1px dashed var(--zab-stroke-strong);
+}
+
+.zab-callsign-row label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--zab-ink);
+}
+
+.zab-callsign-input {
+  flex: 1 1 180px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1.5px solid var(--zab-stroke-strong);
+  background: var(--zab-paper-elev);
+  color: var(--zab-ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.zab-origin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.zab-origin-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 11px;
+  border-radius: 8px 4px 8px 5px;
+  border: 1.5px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  min-width: 0;
+  transition: border-color 0.14s ease, transform 0.14s ease;
+}
+
+.zab-origin-card:hover {
+  border-color: var(--zab-ochre);
+  transform: translateY(-1px);
+}
+
+.zab-origin-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.zab-origin-illus {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 8px;
+  border: 1px solid var(--zab-stroke);
+  background: var(--zab-paper-alt);
+  display: grid;
+  place-items: center;
+}
+
+.zab-origin-illus svg {
+  width: 32px;
+  height: 32px;
+}
+
+.zab-origin-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--zab-ink);
+  line-height: 1.2;
+}
+
+.zab-origin-perks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12.5px;
+  color: var(--zab-ink-soft);
+}
+
+.zab-origin-perks li::before {
+  content: "✦ ";
+  color: var(--zab-ochre);
+  font-weight: 800;
+}
+
+/* Interactive Origin Modal */
+#zone-origin-awakening-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  background: var(--zab-modal-backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#zone-origin-awakening-modal[hidden] {
+  display: none !important;
+}
+
+.zab-origin-modal-sheet {
+  width: min(940px, 100%);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: var(--zab-paper);
+  color: var(--zab-ink);
+  border: 2px solid var(--zab-stroke-strong);
+  border-radius: 12px 6px 12px 6px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.48);
+  padding: 16px 18px;
+  font-family: "Patrick Hand", "Noto Sans Arabic", system-ui, sans-serif;
+}
+
+/* ---------------- 7. 6-Era Empire Ascension Spine & Safehouse Stage ---------------- */
+.zab-era-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.zab-era-hero-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(220px, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+  align-items: stretch;
+}
+
+.zab-era-track {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zab-era-step {
+  padding: 7px 6px;
+  border-radius: 6px 3px 6px 3px;
+  border: 1px solid var(--zab-stroke);
+  background: var(--zab-paper-alt);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  opacity: 0.72;
+}
+
+.zab-era-step.is-reached {
+  opacity: 0.94;
+  border-color: var(--zab-sage);
+}
+
+.zab-era-step.is-current {
+  opacity: 1;
+  background: var(--zab-ochre-wash);
+  border: 2px solid var(--zab-ochre);
+  box-shadow: 1px 2px 0 rgba(30, 27, 24, 0.14);
+}
+
+.zab-era-roman {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--zab-ochre);
+}
+
+.zab-era-name {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--zab-ink);
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zab-era-lvl {
+  font-size: 11px;
+  color: var(--zab-ink-muted);
+}
+
+.zab-safehouse-box {
+  padding: 9px 11px;
+  border-radius: 7px;
+  border: 1.5px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.zab-safehouse-art {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+  border-radius: 8px;
+  border: 1px solid var(--zab-stroke);
+  background: var(--zab-paper-alt);
+  display: grid;
+  place-items: center;
+}
+
+.zab-safehouse-art svg {
+  width: 46px;
+  height: 46px;
+}
+
+.zab-progress-stack {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.zab-meter-card {
+  padding: 8px 11px;
+  border-radius: 7px;
+  border: 1px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.zab-meter-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--zab-ink);
+}
+
+.zab-bar-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--zab-track);
+  border: 1px solid var(--zab-stroke);
+  overflow: hidden;
+}
+
+.zab-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--zab-sage-fill);
+  transition: width 0.25s ease;
+}
+
+.zab-bar-fill-ochre {
+  background: var(--zab-ochre-fill);
+}
+
+.zab-bar-fill-crimson {
+  background: var(--zab-crimson-fill);
+}
+
+/* ---------------- 8. Two-Column Tactical Split: Luna Handler + Living Nemesis ---------------- */
+.zab-mid-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+  gap: 12px;
+}
+
+.zab-luna-comms {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.zab-luna-quote {
+  margin: 5px 0 0;
+  padding: 8px 11px;
+  border-radius: 7px;
+  background: var(--zab-paper-elev);
+  border-inline-start: 3px solid var(--zab-luna);
+  color: var(--zab-ink);
+  font-size: 13.5px;
+  line-height: 1.42;
+}
+
+.zab-directive-box {
+  margin-top: 10px;
+  padding: 9px 11px;
+  border-radius: 7px;
+  border: 1.5px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.zab-directive-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.zab-nemesis-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.zab-nemesis-grudge {
+  margin: 8px 0;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: var(--zab-paper-elev);
+  border-inline-start: 3px solid var(--zab-crimson);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--zab-ink);
+}
+
+.zab-nemesis-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ---------------- 9. 5-Slot Street Crew Strip ---------------- */
+.zab-crew-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 9px;
+}
+
+.zab-crew-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.zab-crew-slot {
+  padding: 9px 9px;
+  border-radius: 7px 4px 7px 4px;
+  border: 1.5px solid var(--zab-stroke);
+  background: var(--zab-paper-elev);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.zab-crew-slot.is-recruited {
+  border-color: var(--zab-sage);
+  background:
+    linear-gradient(180deg, var(--zab-sage-wash), transparent 65%),
+    var(--zab-paper-elev);
+}
+
+.zab-crew-slot.is-locked {
+  opacity: 0.76;
+  background: var(--zab-paper-alt);
+}
+
+.zab-crew-role {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--zab-ink);
+  line-height: 1.2;
+}
+
+.zab-crew-bonus {
+  font-size: 12px;
+  color: var(--zab-ink-soft);
+  line-height: 1.3;
+}
+
+/* ---------------- 10. Feedback Toast, Sidebar Lock Pills & 4.5s Milestone Banner ---------------- */
+.zab-feedback-toast {
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: 1.5px solid var(--zab-sage);
+  background: var(--zab-paper-elev);
+  color: var(--zab-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.zab-feedback-toast.is-err {
+  border-color: var(--zab-crimson);
+  color: var(--zab-crimson);
+}
+
+/* Sidebar Progressive Lock Badges & Operative Name */
+#zone-operative-crest .zaaa-op-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--zab-ink);
+  line-height: 1.2;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zab-nav-lock-pill {
+  margin-inline-start: auto;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--zab-ochre);
+  background: var(--zab-ochre-wash);
+  color: var(--zab-ochre);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* 4.5s Level-Up Milestone Celebration Banner */
+#zone-levelup-milestone-banner {
+  position: fixed;
+  top: 72px;
+  inset-inline: 0;
+  margin-inline: auto;
+  width: min(560px, calc(100vw - 24px));
+  z-index: 9500;
+  padding: 12px 16px;
+  border-radius: 10px 5px 10px 5px;
+  border: 2px solid var(--zab-ochre);
+  background:
+    radial-gradient(circle at 18% 20%, var(--zab-ochre-wash), transparent 55%),
+    radial-gradient(circle at 85% 80%, var(--zab-sage-wash), transparent 55%),
+    var(--zab-paper-elev);
+  color: var(--zab-ink);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Patrick Hand", "Noto Sans Arabic", system-ui, sans-serif;
+  animation: zabMilestonePop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+#zone-levelup-milestone-banner[hidden] {
+  display: none !important;
+}
+
+@keyframes zabMilestonePop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Crimes 2.0 Nemesis Heat-Tax Warning Banner */
+.zab-crimes-nemesis-banner {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: 7px;
+  border: 1.5px solid var(--zab-crimson);
+  background: var(--zab-crimson-wash);
+  color: var(--zab-ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* ---------------- 11. Responsive Breakpoints (Tablet & 390x844 Mobile Zero Overflow) ---------------- */
+@media (max-width: 1120px) {
+  .zab-origin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zab-crew-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .zab-era-hero-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .zab-mid-grid,
+  .zab-progress-stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zab-era-track {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .zab-crew-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zab-btn,
+  .zab-callsign-input {
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 520px) {
+  .zab-card {
+    padding: 11px 11px;
+  }
+  .zab-origin-grid,
+  .zab-crew-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zab-era-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zab-luna-comms {
+    flex-direction: column;
+  }
+  .zab-directive-actions .zab-btn,
+  .zab-nemesis-actions .zab-btn {
+    flex: 1 1 140px;
+  }
+}

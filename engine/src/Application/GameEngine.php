@@ -26,10 +26,12 @@ use Zone\Engine\Core\Game\FamilyCompetitionSubscriber;
 use Zone\Engine\Core\Game\FactionChainService;
 use Zone\Engine\Core\Game\FactionEmpireService;
 use Zone\Engine\Core\Game\ForeignMarketService;
+use Zone\Engine\Core\Game\AscensionEngineService;
 use Zone\Engine\Core\Game\CityActivitiesService;
 use Zone\Engine\Core\Game\RankAndSkillTreeService;
 use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
+use Zone\Engine\Core\Game\TornSystemsService;
 use Zone\Engine\Core\Game\TradeBazaarCompanyService;
 use Zone\Engine\Core\Game\TravelService;
 use Zone\Engine\Core\Game\WorldDirector;
@@ -411,15 +413,24 @@ final class GameEngine
 
             $correlationId = bin2hex(random_bytes(16));
             $preparation = $progression->prepareCrime($playerId, $crime, $correlationId);
+            $mods = TornSystemsService::extractLiveModifiers($progress);
             $roll = random_int(1, 10000);
             $territoryBonusBp = min(1500, $this->territoryBonus($playerId, 'crime_bonus'));
-            $successThreshold = min(10000, (int) $crime['success_basis_points'] + $territoryBonusBp);
+            $successThreshold = min(10000, (int) $crime['success_basis_points'] + $territoryBonusBp + (int) $mods['crimeSuccessBps']);
             if (isset($crime['failure'])) {
                 $successThreshold = min(9700, $successThreshold + (int) round(((int) $player['level'] - 1) * 40 + ($progress['skill'][$crimeId] ?? 0) * 15));
             }
             $success = $roll <= $successThreshold;
             $cashReward = $success ? random_int((int) $crime['cash_min'], (int) $crime['cash_max']) : 0;
             if ($cashReward > 0) $cashReward += (int) floor($cashReward * $preparation['chainBonusBasisPoints'] / 10000);
+            if ($cashReward > 0 && (int) $mods['crimeCashPct'] > 0) {
+                $cashReward = (int) round($cashReward * (1.0 + (((int) $mods['crimeCashPct']) / 100.0)));
+            }
+            $nemesisSkimmed = 0;
+            if ($cashReward > 0 && (int) $mods['nemesisHeatTaxPct'] > 0) {
+                $nemesisSkimmed = min($cashReward - 1, max(1, (int) round($cashReward * (((int) $mods['nemesisHeatTaxPct']) / 100.0))));
+                $cashReward = max(1, $cashReward - $nemesisSkimmed);
+            }
             $xpReward = $success ? (int) $crime['xp_reward'] : 0;
             $newCash = (int) $player['cash'] + $cashReward;
             $newXp = (int) $player['xp'] + $xpReward;
@@ -491,7 +502,8 @@ final class GameEngine
                 'outcome' => $outcome, 'narrative' => $narrative,
                 'crime' => ['id' => $crimeId, 'name_en' => $crime['name_en'], 'name_ar' => $crime['name_ar']],
                 'cost' => ['nerve' => $nerveCost],
-                'reward' => ['cash' => $cashReward, 'xp' => $xpReward],
+                'reward' => ['cash' => $cashReward, 'xp' => $xpReward, 'nemesisSkimmed' => $nemesisSkimmed],
+                'nemesisSkimmed' => $nemesisSkimmed,
                 'penalty' => $penalty,
                 'tool' => ['id' => $preparation['tool'], 'consumed' => $preparation['consumed']],
                 'mastery' => $crimeProgress['mastery'], 'chain' => $crimeProgress['chain'],
@@ -550,10 +562,12 @@ final class GameEngine
         $travel = (new TravelService($this->database, $this->events))->snapshot($playerId);
         $snap = (new ProgressionService($this->database, $this->events))->snapshot($playerId);
         $chainSnap = (new FactionChainService($this->database, $this->events))->snapshot($playerId)['chain'];
+        $levelGates = TornSystemsService::buildLevelGates((int) ($snap['player']['level'] ?? 1));
         if (isset($snap['tornV2']) && is_array($snap['tornV2'])) {
             $snap['tornV2']['factionChain'] = $chainSnap;
+            $snap['tornV2']['levelGates'] = $levelGates;
         }
-        return [...$snap, 'travel' => $travel, 'factionChain' => $chainSnap, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
+        return [...$snap, 'levelGates' => $levelGates, 'travel' => $travel, 'factionChain' => $chainSnap, 'hospitalQuote' => $this->hospitalQuote($playerId), 'cooldowns' => $this->actionCooldowns($playerId)];
     }
 
     public function syncEphemeralLedger(string $playerId): void
@@ -1496,6 +1510,23 @@ final class GameEngine
         return (new RankAndSkillTreeService($this->database, $this->events))->act($playerId, $action, $payload);
     }
 
+    public function ascension(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(AscensionEngineService::class)) {
+            throw new RuntimeException('AscensionEngineService is unavailable.');
+        }
+        return (new AscensionEngineService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function ascensionAction(string $action, array $payload, string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(AscensionEngineService::class)) {
+            throw new RuntimeException('AscensionEngineService is unavailable.');
+        }
+        $this->recordActionAttempt($playerId);
+        return (new AscensionEngineService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
     public function cityActivities(string $playerId = 'founder-player'): array
     {
         if (!class_exists(CityActivitiesService::class)) {
@@ -1772,7 +1803,9 @@ final class GameEngine
             }
             $correlationId = bin2hex(random_bytes(16));
             $level = (int) $player['level'];
-            $wage = (int) round($job['pay'] * (!empty($progress['state']['eduDone']['biz']) ? 1.1 : 1));
+            $mods = TornSystemsService::extractLiveModifiers($progress['state']);
+            $mogulJobMult = 1.0 + (((int) $mods['jobPayBonusPct']) / 100.0);
+            $wage = (int) round($job['pay'] * (!empty($progress['state']['eduDone']['biz']) ? 1.1 : 1) * $mogulJobMult);
             $xpReward = 5 + $level;
             $newCash = (int) $player['cash'] + $wage;
             $newXp = (int) $player['xp'] + $xpReward;

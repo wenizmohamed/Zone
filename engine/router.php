@@ -817,6 +817,17 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'GET' && $path === '/api/v1/ascension') {
+        json_response($engine->ascension(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/ascension/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Ascension action must be text.');
+        $pid = current_player_id();
+        $res = $engine->ascensionAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

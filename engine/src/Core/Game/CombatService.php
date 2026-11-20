@@ -53,12 +53,18 @@ final class CombatService
                 if ($player['energy'] < 25 || $player['life'] < 1) throw new RuntimeException('Not enough energy or life to attack.');
                 $state = $progress['state'];
                 $loadout = LoadoutService::resolve($state, $progress['catalogs']['items']);
+                $mods = $this->random === null ? TornSystemsService::extractLiveModifiers($state) : null;
+                $warlordDmgMult = $mods !== null ? round(1.0 + (((int) $mods['combatDamagePct']) / 100.0), 4) : 1.0;
+                $warlordAccBps = $mods !== null ? (int) $mods['combatAccuracyBps'] : 0;
+                $warlordMugMult = $mods !== null ? round(1.0 + (((int) $mods['mugPlunderPct']) / 100.0), 4) : 1.0;
+                $armorMitBonus = $mods !== null ? (float) $mods['armorMitigationBonus'] : 0.0;
                 $defenseBonus = (new PublishedRules($this->database))->moduleEnabled('territories')
                     ? min(2000, (new TerritoryService($this->database, $this->events))->bonusBasisPoints($playerId, 'defense')) : 0;
                 $encounter = ['id' => bin2hex(random_bytes(16)), 'opponentId' => $opponentId, 'opponent' => $opponent,
                     'enemyHp' => (int) $opponent['life'], 'enemyMaxHp' => (int) $opponent['life'], 'playerHp' => $player['life'], 'playerMaxHp' => $player['max_life'],
                     'startPlayerHp' => $player['life'], 'turn' => 0, 'phase' => 'fighting', 'log' => [], 'weaponMultiplier' => $loadout['weaponMultiplier'],
-                    'weaponId' => $loadout['weaponId'], 'armorId' => $loadout['armorId'], 'armorReduction' => $loadout['armorReduction'], 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus,
+                    'weaponId' => $loadout['weaponId'], 'armorId' => $loadout['armorId'], 'armorReduction' => min(0.85, $loadout['armorReduction'] + $armorMitBonus), 'defenseMultiplier' => (!empty($state['eduDone']['comb']) ? 1.03 : 1.0) * (1 + $defenseBonus / 10000), 'territoryDefenseBasisPoints' => $defenseBonus,
+                    'warlordDmgMult' => $warlordDmgMult, 'warlordAccBps' => $warlordAccBps, 'warlordMugMult' => $warlordMugMult,
                     'tornCombat' => is_array($state['tornCombat'] ?? null) ? $state['tornCombat'] : null];
                 $this->database->execute('UPDATE players SET energy = energy - 25 WHERE id = :id', ['id' => $playerId]);
                 $cooldown = $this->database->fetchOne("SELECT seconds FROM cooldown_config WHERE action = 'attack'");
@@ -75,9 +81,9 @@ final class CombatService
                 $ammoMap = ['std' => 'Standard', 'hp' => 'Hollow Point', 'ap' => 'Piercing', 'tr' => 'Tracer', 'inc' => 'Incendiary'];
                 $hitbox = ($tc && isset($hbMap[$tc['hitbox'] ?? ''])) ? $hbMap[$tc['hitbox']] : ['Head', 'Heart', 'Throat', 'Chest', 'Stomach', 'Arm', 'Leg'][$encounter['turn'] % 7];
                 $ammoType = ($tc && isset($ammoMap[$tc['ammo'] ?? ''])) ? $ammoMap[$tc['ammo']] : ['Standard', 'Hollow Point', 'Piercing', 'Tracer', 'Incendiary'][$encounter['turn'] % 5];
-                $accBoost = ($tc && ($tc['ammo'] ?? '') === 'tr') ? 1000 : 0;
+                $accBoost = (($tc && ($tc['ammo'] ?? '') === 'tr') ? 1000 : 0) + (int) ($encounter['warlordAccBps'] ?? 0);
                 $defPen = ($tc && ($tc['ammo'] ?? '') === 'ap') ? 0.5 : 1.0;
-                $dmgBoost = ($tc && ($tc['ammo'] ?? '') === 'hp') ? 1.35 : (($tc && ($tc['ammo'] ?? '') === 'inc') ? 1.25 : 1.0);
+                $dmgBoost = (($tc && ($tc['ammo'] ?? '') === 'hp') ? 1.35 : (($tc && ($tc['ammo'] ?? '') === 'inc') ? 1.25 : 1.0)) * (float) ($encounter['warlordDmgMult'] ?? 1.0);
                 if ($this->random !== null) { $accBoost = 0; $defPen = 1.0; $dmgBoost = 1.0; }
                 $hitChance = min(9800, (int) round($player['speed'] / max(1, $player['speed'] + $opponent['dex']) * 10000) + $accBoost);
                 $damage = $this->roll(1, 10000) <= $hitChance ? max(1, (int) round(120 * $dmgBoost * $encounter['weaponMultiplier'] * ($player['strength'] / max(1, $player['strength'] + $opponent['def'] * $defPen)) * $this->roll(80, 120) / 100)) : 0;
@@ -107,9 +113,11 @@ final class CombatService
                 $chainMultiplier = $chainService->liveMultiplierForPlayer($playerId);
                 $overseas = ($player['city'] !== 'Zone City' && strtolower((string) $player['city']) !== 'harbor') ? 1.25 : 1.0;
                 $chainHit = null;
+                $warlordMod = $this->random === null ? round((float) ($encounter['warlordDmgMult'] ?? 1.0), 2) : 1.0;
+                $warlordMugMult = $this->random === null ? (float) ($encounter['warlordMugMult'] ?? 1.0) : 1.0;
                 if ($encounter['phase'] === 'won') {
                     $opponent = $encounter['opponent'];
-                    $cash = $approach === 'mug' ? (int) round($opponent['cash'] * $this->roll(500, 1200) / 10000) : 0;
+                    $cash = $approach === 'mug' ? (int) round($opponent['cash'] * ($this->roll(500, 1200) * $warlordMugMult) / 10000) : 0;
                     $xp = (int) $opponent['lvl'] * 3;
                     $this->database->execute('UPDATE players SET cash = cash + :cash, xp = xp + :xp WHERE id = :id', ['cash' => $cash, 'xp' => $xp, 'id' => $playerId]);
                     if ($cash > 0) $this->ledger->record($playerId, 'cash', $cash, $player['cash'] + $cash, 'combat.mug', $correlationId);
@@ -123,8 +131,9 @@ final class CombatService
                     $leveling->sync($playerId, $correlationId);
                     (new DailyService($this->database, $this->ledger, $this->events, $leveling))->recordProgress($playerId, 'attack_wins', 1);
                 }
-                $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => 1.0];
-                $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? 25 : ($approach === 'hosp' ? 30 : 15)]];
+                $modifiers = ['fair_fight' => $fairFight, 'war' => 1.0, 'retaliation' => 1.0, 'group' => 1.0, 'overseas' => $overseas, 'chain' => $chainMultiplier, 'warlord' => $warlordMod];
+                $mugBonusVal = $this->random === null ? (int) round(($warlordMugMult - 1.0) * 100) : 0;
+                $finishingHitEffects = [['name' => $approach === 'mug' ? 'plunder' : ($approach === 'hosp' ? 'stricken' : 'proficience'), 'value' => $approach === 'mug' ? (25 + $mugBonusVal) : ($approach === 'hosp' ? 30 : 15)]];
                 $damageDealt = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'player' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                 $damageTaken = array_sum(array_map(static fn (array $e): int => ($e['actor'] ?? '') === 'opponent' ? (int) ($e['d'] ?? 0) : 0, $encounter['log']));
                 $result = ['approach' => $approach, 'outcome' => $encounter['phase'], 'opponentId' => $encounter['opponentId'], 'totalRounds' => $encounter['turn'], 'damageDealt' => $damageDealt, 'damageTaken' => $damageTaken, 'cashDelta' => $cash, 'respectDelta' => $respect, 'xp' => $xp, 'stealthed' => false, 'chain' => $chainHit, 'modifiers' => $modifiers, 'totalMultiplier' => round($fairFight * $overseas * $chainMultiplier, 2), 'finishing_hit_effects' => $finishingHitEffects, 'correlationId' => $correlationId];
@@ -141,7 +150,7 @@ final class CombatService
     {
         $this->database->insertIgnore('combat_encounters', ['player_id', 'state_json', 'version', 'updated_at'], [$playerId, '{"encounter":null}', 1, gmdate('c')]);
         $row = $this->database->fetchOne('SELECT state_json, version FROM combat_encounters WHERE player_id = :id', ['id' => $playerId]);
-        return [...json_decode((string) $row['state_json'], true, 64, JSON_THROW_ON_ERROR), 'version' => (int) $row['version']];
+        return [...json_decode((string) $row['state_json'], true, 512, JSON_THROW_ON_ERROR), 'version' => (int) $row['version']];
     }
 
     private function player(string $playerId): array
@@ -154,7 +163,7 @@ final class CombatService
         if ($stored['encounter'] !== null) {
             $stored['encounter']['version'] = $stored['version'];
             $stored['encounter']['playerHp'] = $this->player($playerId)['life'];
-            unset($stored['encounter']['weaponMultiplier'], $stored['encounter']['armorReduction'], $stored['encounter']['defenseMultiplier']);
+            unset($stored['encounter']['weaponMultiplier'], $stored['encounter']['armorReduction'], $stored['encounter']['defenseMultiplier'], $stored['encounter']['warlordDmgMult'], $stored['encounter']['warlordAccBps'], $stored['encounter']['warlordMugMult']);
         }
         return [...$stored, 'player' => $this->player($playerId)];
     }

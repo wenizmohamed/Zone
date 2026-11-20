@@ -303,6 +303,7 @@ final class TradeBazaarCompanyService
         ], self::COMPANY_ARCHETYPES));
 
         return [
+            'levelGates' => TornSystemsService::buildLevelGates((int) $player['level']),
             'player' => [
                 'id' => (string) $player['id'],
                 'username' => (string) $player['username'],
@@ -373,6 +374,16 @@ final class TradeBazaarCompanyService
         if ($cleanAction === 'company.workShift') {
             (new TravelService($this->database, $this->events, $this->clock))->assertAvailable($playerId);
             (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, $cleanAction);
+        }
+
+        $actingPlayer = $this->requirePlayer($playerId);
+        $actingLevel = (int) $actingPlayer['level'];
+        if (str_starts_with($cleanAction, 'bazaar.')) {
+            TornSystemsService::assertLevelUnlocked($actingLevel, 5, 'Personal Bazaars');
+        } elseif (str_starts_with($cleanAction, 'trade.')) {
+            TornSystemsService::assertLevelUnlocked($actingLevel, 5, '2-Player Direct Trades');
+        } elseif (in_array($cleanAction, ['company.found', 'company.join'], true)) {
+            TornSystemsService::assertLevelUnlocked($actingLevel, 10, 'Player Companies');
         }
 
         $receipt = match ($cleanAction) {
@@ -1121,9 +1132,11 @@ final class TradeBazaarCompanyService
             $priceDelta = abs(110 - (int) ($company['servicePrice'] ?? 100));
             $priceEfficiency = max(0.75, 1.15 - ($priceDelta / 400));
 
+            $mods = TornSystemsService::extractLiveModifiers($state);
+            $mogulJobMult = 1.0 + (((int) $mods['jobPayBonusPct']) / 100.0);
             $starsBefore = max(1, min(10, (int) ($company['stars'] ?? 1)));
             $shiftRevenue = (int) round(((int) $arch['baseRevenue'] + ($starsBefore * 3500) + ($statScore * 12)) * $adFactor * $priceEfficiency);
-            $wagePaid = (int) round(((int) $arch['baseWage'] + ($starsBefore * 1600) + ($statScore * 5)) * (!empty($state['eduDone']['biz']) ? 1.10 : 1.0));
+            $wagePaid = (int) round(((int) $arch['baseWage'] + ($starsBefore * 1600) + ($statScore * 5)) * (!empty($state['eduDone']['biz']) ? 1.10 : 1.0) * $mogulJobMult);
             $companyXpGain = max(45, (int) round(55 * $adFactor * $priceEfficiency + min(45, $statScore / 20)));
 
             $company['revenue'] = (int) ($company['revenue'] ?? 0) + $shiftRevenue;

@@ -830,6 +830,11 @@
         window.__zoneGame.forceUpdate();
       } catch (_) {}
     }
+    if (typeof window.ZoneSyncHudBars === 'function') {
+      try {
+        window.ZoneSyncHudBars((payload.snapshot && payload.snapshot.player ? payload.snapshot : null) || payload);
+      } catch (_) {}
+    }
   }
 
   /* ------------------------------------------------------------------------
@@ -846,7 +851,12 @@
   async function loadPlayerRpg() {
     try {
       var data = await apiGet('/api/v1/player-rpg');
-      if (data) store.playerRpg = data.snapshot || data;
+      if (data) {
+        store.playerRpg = data.snapshot || data;
+        if (typeof window.ZoneSyncHudBars === 'function') {
+          try { window.ZoneSyncHudBars(store.playerRpg); } catch (_) {}
+        }
+      }
       return store.playerRpg;
     } catch (_) { return null; }
   }
@@ -921,6 +931,9 @@
       else if (domain === 'empire') await loadFactionEmpire();
 
       syncGlobalPlayerSnapshot(res);
+      if (window.ZoneAscension && typeof window.ZoneAscension.refresh === 'function') {
+        try { window.ZoneAscension.refresh(false); } catch (_) {}
+      }
 
       var r = (res && res.result) || res || {};
       var rawMsg = isAr()

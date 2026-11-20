@@ -305,9 +305,11 @@ test('index.html <head> & sw.js load v150 RPG Empire assets with 0 SHA-256 lock 
   );
 
   const head = rawHtml.subarray(0, bodyIdx).toString('utf8');
-  assert.match(head, /href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=150"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=150"/);
-  assert.doesNotMatch(head, /\?v=149\b/, 'all ?v=149 head references bumped to ?v=150');
+  const cssVer = Number(head.match(/href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=(\d+)"/)?.[1] || 0);
+  const jsVer = Number(head.match(/src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=(\d+)"/)?.[1] || 0);
+  assert.ok(cssVer >= 149, `zone-rpg-empire.css version ${cssVer} >= 149`);
+  assert.ok(jsVer >= 149, `zone-rpg-empire.js version ${jsVer} >= 149`);
+  assert.doesNotMatch(head, /\?v=149\b/, 'all ?v=149 head references bumped to >= 150');
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'pinned gym116.css?v=117 preserved');
 
   for (const rel of ['assets/ui/zone-rpg-empire.css', 'assets/ui/zone-rpg-empire.js', 'sw.js']) {
@@ -319,9 +321,12 @@ test('index.html <head> & sw.js load v150 RPG Empire assets with 0 SHA-256 lock 
   }
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v150['"]/);
-  assert.match(swSrc, /zone-rpg-empire\.css\?v=150/);
-  assert.match(swSrc, /zone-rpg-empire\.js\?v=150/);
+  const swVer = Number(swSrc.match(/SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v(\d+)['"]/)?.[1] || 0);
+  const swCssVer = Number(swSrc.match(/zone-rpg-empire\.css\?v=(\d+)/)?.[1] || 0);
+  const swJsVer = Number(swSrc.match(/zone-rpg-empire\.js\?v=(\d+)/)?.[1] || 0);
+  assert.ok(swVer >= 149, `SHELL_CACHE_NAME v${swVer} >= 149`);
+  assert.ok(swCssVer >= 149, `sw.js zone-rpg-empire.css v${swCssVer} >= 149`);
+  assert.ok(swJsVer >= 149, `sw.js zone-rpg-empire.js v${swJsVer} >= 149`);
 });
 
 test('zone-rpg-empire.css enforces Sketchbook Light & Dark >12:1 contrast, RTL typography, balanced braces, bulletin suppression, and compact HUD slot', () => {

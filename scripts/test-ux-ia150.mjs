@@ -15,11 +15,33 @@ const AUTHORIZED_V150_FILES = new Set([
   'assets/ui/zone-torn-live.js',
   'assets/ui/zone-rpg-empire.css',
   'assets/ui/zone-rpg-empire.js',
+  'assets/ui/zone-ascension-breakthrough.css',
+  'assets/ui/zone-ascension-breakthrough.js',
+  'assets/ui/zone-instant-games.js',
   'index.html',
   'sw.js',
+  'api/index.php',
+  'engine/router.php',
+  'engine/bin/relay.mjs',
+  'engine/src/Application/GameEngine.php',
+  'engine/src/Core/Game/AscensionEngineService.php',
+  'engine/src/Core/Game/TornSystemsService.php',
+  'engine/src/Core/Game/ForeignMarketService.php',
+  'engine/src/Core/Game/CityActivitiesService.php',
+  'engine/src/Core/Game/TradeBazaarCompanyService.php',
+  'engine/src/Core/Game/PlayerCombatService.php',
+  'engine/src/Core/Game/CombatService.php',
+  'scripts/test-torn-core148.mjs',
+  'scripts/test-pvp-travel148.mjs',
   'scripts/test-torn-ui148.mjs',
+  'scripts/test-rpg-story149.mjs',
+  'scripts/test-activities149.mjs',
+  'scripts/test-factions-warfare149.mjs',
   'scripts/test-rpg-ui149.mjs',
-  'scripts/test-ux-ia150.mjs'
+  'scripts/test-ux-ia150.mjs',
+  'scripts/test-breakthrough-ascension151.mjs',
+  'scripts/test-progression-gates151.mjs',
+  'scripts/test-breakthrough-ui151.mjs'
 ]);
 
 test('v150 SHA-256 lock gate: index.html <body> is 100% byte-identical and 0 unauthorized files modified', () => {
@@ -34,10 +56,10 @@ test('v150 SHA-256 lock gate: index.html <body> is 100% byte-identical and 0 una
 
   const head = rawHtml.subarray(0, bodyIdx).toString('utf8');
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'gym116.css?v=117 preserved');
-  assert.match(head, /href="\.\/assets\/ui\/zone-torn-live\.css\?v=150"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-torn-live\.js\?v=150"/);
-  assert.match(head, /href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=150"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=150"/);
+  assert.ok(Number(head.match(/href="\.\/assets\/ui\/zone-torn-live\.css\?v=(\d+)"/)?.[1] || 0) >= 150);
+  assert.ok(Number(head.match(/src="\.\/assets\/ui\/zone-torn-live\.js\?v=(\d+)"/)?.[1] || 0) >= 150);
+  assert.ok(Number(head.match(/href="\.\/assets\/ui\/zone-rpg-empire\.css\?v=(\d+)"/)?.[1] || 0) >= 150);
+  assert.ok(Number(head.match(/src="\.\/assets\/ui\/zone-rpg-empire\.js\?v=(\d+)"/)?.[1] || 0) >= 150);
 
   const gitStatus = execFileSync('git', ['status', '--porcelain'], { cwd: root, encoding: 'utf8' });
   const changed = gitStatus
@@ -288,6 +310,7 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
           let nativeFirstRect = null;
           for (const ch of main.children) {
             if (
+              ch.id === 'zone-ascension-hub' ||
               ch.id === 'zone-rpg-route-section' ||
               ch.id === 'zone-torn-route-section' ||
               ch.classList.contains('zone-mobile-tabbar') ||

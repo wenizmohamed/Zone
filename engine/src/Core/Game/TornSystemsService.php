@@ -103,19 +103,31 @@ final class TornSystemsService
     ];
 
     public const CRIMES_2 = [
-        '1' => ['key' => 'search_cash', 'name' => 'Search for Cash', 'nerve' => 2, 'cash' => 4200, 'xp' => 6, 'enhancerId' => 'glasses', 'enhancer' => 'Glasses (#564)', 'loot' => 'plush_camel', 'diffBps' => 0, 'penalty' => 'jail'],
-        '2' => ['key' => 'bootlegging', 'name' => 'Bootlegging', 'nerve' => 3, 'cash' => 6800, 'xp' => 8, 'enhancerId' => 'high_speed_drive', 'enhancer' => 'High-Speed Drive (#565)', 'loot' => 'lollipop', 'diffBps' => 200, 'penalty' => 'jail'],
-        '3' => ['key' => 'graffiti', 'name' => 'Graffiti', 'nerve' => 3, 'cash' => 5400, 'xp' => 9, 'enhancerId' => 'paint_mask', 'enhancer' => 'Paint Mask (#550)', 'loot' => 'cannabis', 'diffBps' => 300, 'penalty' => 'jail'],
-        '4' => ['key' => 'shoplifting', 'name' => 'Shoplifting', 'nerve' => 4, 'cash' => 8900, 'xp' => 11, 'enhancerId' => 'mountain_bike', 'enhancer' => 'Mountain Bike (#566)', 'loot' => 'energydrink', 'diffBps' => 500, 'penalty' => 'jail'],
-        '5' => ['key' => 'pickpocketing', 'name' => 'Pickpocketing', 'nerve' => 5, 'cash' => 12400, 'xp' => 14, 'enhancerId' => 'cut_throat_razor', 'enhancer' => 'Cut-Throat Razor (#567)', 'loot' => 'vicodin', 'diffBps' => 700, 'penalty' => 'hosp'],
-        '6' => ['key' => 'card_skimming', 'name' => 'Card Skimming', 'nerve' => 6, 'cash' => 18500, 'xp' => 18, 'enhancerId' => 'duct_tape', 'enhancer' => 'Duct Tape (#571)', 'loot' => 'lsd', 'diffBps' => 900, 'penalty' => 'jail'],
-        '7' => ['key' => 'burglary', 'name' => 'Burglary', 'nerve' => 6, 'cash' => 22000, 'xp' => 20, 'enhancerId' => 'flashlight', 'enhancer' => 'Flashlight (#572)', 'loot' => 'bloodbag', 'diffBps' => 1100, 'penalty' => 'hosp'],
-        '8' => ['key' => 'hustling', 'name' => 'Hustling', 'nerve' => 4, 'cash' => 14500, 'xp' => 15, 'enhancerId' => 'megaphone', 'enhancer' => 'Megaphone (#573)', 'loot' => 'ecstasy', 'diffBps' => 800, 'penalty' => 'jail'],
-        '9' => ['key' => 'disposal', 'name' => 'Disposal', 'nerve' => 6, 'cash' => 26000, 'xp' => 22, 'enhancerId' => 'latex_gloves', 'enhancer' => 'Latex Gloves (#574)', 'loot' => 'morphine', 'diffBps' => 1200, 'penalty' => 'hosp'],
-        '10' => ['key' => 'cracking', 'name' => 'Cracking', 'nerve' => 7, 'cash' => 29500, 'xp' => 25, 'enhancerId' => 'office_chair', 'enhancer' => 'Office Chair (#575)', 'loot' => 'flash_grenade', 'diffBps' => 1400, 'penalty' => 'jail'],
-        '11' => ['key' => 'forgery', 'name' => 'Forgery', 'nerve' => 5, 'cash' => 24000, 'xp' => 21, 'enhancerId' => 'magnifying_glass', 'enhancer' => 'Magnifying Glass (#576)', 'loot' => 'lawyer_card', 'diffBps' => 1250, 'penalty' => 'jail'],
-        '12' => ['key' => 'scamming', 'name' => 'Scamming', 'nerve' => 7, 'cash' => 34000, 'xp' => 28, 'enhancerId' => 'ergonomic_keyboard', 'enhancer' => 'Ergonomic Keyboard (#577)', 'loot' => 'edvd', 'diffBps' => 1550, 'penalty' => 'jail'],
-        '13' => ['key' => 'arson', 'name' => 'Arson', 'nerve' => 9, 'cash' => 48000, 'xp' => 36, 'enhancerId' => 'windproof_lighter', 'enhancer' => 'Windproof Lighter (#544)', 'loot' => 'xanax', 'diffBps' => 1800, 'penalty' => 'hosp'],
+        '1' => ['key' => 'search_cash', 'name' => 'Search for Cash', 'nerve' => 2, 'cash' => 450, 'maxSkillCash' => 2550, 'xp' => 6, 'playerXp' => 18, 'reqLevel' => 1, 'reqCrimeXp' => 0, 'enhancerId' => 'glasses', 'enhancer' => 'Glasses (#564)', 'loot' => 'plush_camel', 'diffBps' => 0, 'penalty' => 'jail'],
+        '2' => ['key' => 'bootlegging', 'name' => 'Bootlegging', 'nerve' => 3, 'cash' => 850, 'maxSkillCash' => 3400, 'xp' => 8, 'playerXp' => 22, 'reqLevel' => 1, 'reqCrimeXp' => 0, 'enhancerId' => 'high_speed_drive', 'enhancer' => 'High-Speed Drive (#565)', 'loot' => 'lollipop', 'diffBps' => 200, 'penalty' => 'jail'],
+        '3' => ['key' => 'graffiti', 'name' => 'Graffiti', 'nerve' => 3, 'cash' => 1050, 'maxSkillCash' => 4100, 'xp' => 9, 'playerXp' => 25, 'reqLevel' => 1, 'reqCrimeXp' => 0, 'enhancerId' => 'paint_mask', 'enhancer' => 'Paint Mask (#550)', 'loot' => 'cannabis', 'diffBps' => 300, 'penalty' => 'jail'],
+        '4' => ['key' => 'shoplifting', 'name' => 'Shoplifting', 'nerve' => 4, 'cash' => 1850, 'maxSkillCash' => 6200, 'xp' => 11, 'playerXp' => 30, 'reqLevel' => 3, 'reqCrimeXp' => 200, 'enhancerId' => 'mountain_bike', 'enhancer' => 'Mountain Bike (#566)', 'loot' => 'energydrink', 'diffBps' => 500, 'penalty' => 'jail'],
+        '5' => ['key' => 'pickpocketing', 'name' => 'Pickpocketing', 'nerve' => 5, 'cash' => 2900, 'maxSkillCash' => 9200, 'xp' => 14, 'playerXp' => 36, 'reqLevel' => 3, 'reqCrimeXp' => 200, 'enhancerId' => 'cut_throat_razor', 'enhancer' => 'Cut-Throat Razor (#567)', 'loot' => 'vicodin', 'diffBps' => 700, 'penalty' => 'hosp'],
+        '6' => ['key' => 'card_skimming', 'name' => 'Card Skimming', 'nerve' => 6, 'cash' => 4600, 'maxSkillCash' => 13500, 'xp' => 18, 'playerXp' => 44, 'reqLevel' => 3, 'reqCrimeXp' => 200, 'enhancerId' => 'duct_tape', 'enhancer' => 'Duct Tape (#571)', 'loot' => 'lsd', 'diffBps' => 900, 'penalty' => 'jail'],
+        '7' => ['key' => 'burglary', 'name' => 'Burglary', 'nerve' => 6, 'cash' => 7200, 'maxSkillCash' => 18500, 'xp' => 20, 'playerXp' => 52, 'reqLevel' => 6, 'reqCrimeXp' => 450, 'enhancerId' => 'flashlight', 'enhancer' => 'Flashlight (#572)', 'loot' => 'bloodbag', 'diffBps' => 1100, 'penalty' => 'hosp'],
+        '8' => ['key' => 'hustling', 'name' => 'Hustling', 'nerve' => 4, 'cash' => 5400, 'maxSkillCash' => 14200, 'xp' => 15, 'playerXp' => 42, 'reqLevel' => 6, 'reqCrimeXp' => 450, 'enhancerId' => 'megaphone', 'enhancer' => 'Megaphone (#573)', 'loot' => 'ecstasy', 'diffBps' => 800, 'penalty' => 'jail'],
+        '9' => ['key' => 'disposal', 'name' => 'Disposal', 'nerve' => 6, 'cash' => 9800, 'maxSkillCash' => 23500, 'xp' => 22, 'playerXp' => 60, 'reqLevel' => 6, 'reqCrimeXp' => 450, 'enhancerId' => 'latex_gloves', 'enhancer' => 'Latex Gloves (#574)', 'loot' => 'morphine', 'diffBps' => 1200, 'penalty' => 'hosp'],
+        '10' => ['key' => 'cracking', 'name' => 'Cracking', 'nerve' => 7, 'cash' => 14500, 'maxSkillCash' => 32000, 'xp' => 25, 'playerXp' => 72, 'reqLevel' => 10, 'reqCrimeXp' => 900, 'enhancerId' => 'office_chair', 'enhancer' => 'Office Chair (#575)', 'loot' => 'flash_grenade', 'diffBps' => 1400, 'penalty' => 'jail'],
+        '11' => ['key' => 'forgery', 'name' => 'Forgery', 'nerve' => 5, 'cash' => 11800, 'maxSkillCash' => 26500, 'xp' => 21, 'playerXp' => 60, 'reqLevel' => 10, 'reqCrimeXp' => 900, 'enhancerId' => 'magnifying_glass', 'enhancer' => 'Magnifying Glass (#576)', 'loot' => 'lawyer_card', 'diffBps' => 1250, 'penalty' => 'jail'],
+        '12' => ['key' => 'scamming', 'name' => 'Scamming', 'nerve' => 7, 'cash' => 19500, 'maxSkillCash' => 40000, 'xp' => 28, 'playerXp' => 85, 'reqLevel' => 10, 'reqCrimeXp' => 900, 'enhancerId' => 'ergonomic_keyboard', 'enhancer' => 'Ergonomic Keyboard (#577)', 'loot' => 'edvd', 'diffBps' => 1550, 'penalty' => 'jail'],
+        '13' => ['key' => 'arson', 'name' => 'Arson', 'nerve' => 9, 'cash' => 30000, 'maxSkillCash' => 52000, 'xp' => 36, 'playerXp' => 115, 'reqLevel' => 14, 'reqCrimeXp' => 1600, 'enhancerId' => 'windproof_lighter', 'enhancer' => 'Windproof Lighter (#544)', 'loot' => 'xanax', 'diffBps' => 1800, 'penalty' => 'hosp'],
+    ];
+
+    public const LEVEL_GATE_SPECS = [
+        'dump' => ['requiredLevel' => 2, 'feature' => 'City Dump', 'featureAr' => 'مكب المدينة', 'route' => 'city'],
+        'spinWheels' => ['requiredLevel' => 3, 'feature' => 'Daily Spin Wheels', 'featureAr' => 'عجلات الحظ اليومية', 'route' => 'casino'],
+        'bazaar' => ['requiredLevel' => 5, 'feature' => 'Personal Bazaars', 'featureAr' => 'البازارات الشخصية', 'route' => 'market'],
+        'trades' => ['requiredLevel' => 5, 'feature' => '2-Player Direct Trades', 'featureAr' => 'التبادل المباشر بين اللاعبين', 'route' => 'market'],
+        'fixerContracts' => ['requiredLevel' => 7, 'feature' => 'NPC Fixer Contracts', 'featureAr' => 'عقود وكلاء المهام', 'route' => 'missions'],
+        'companies' => ['requiredLevel' => 10, 'feature' => 'Player Companies', 'featureAr' => 'شركات اللاعبين', 'route' => 'jobs'],
+        'bankCd' => ['requiredLevel' => 10, 'feature' => 'Bank Term CDs', 'featureAr' => 'شهادات الإيداع البنكية', 'route' => 'bank'],
+        'stockExchange' => ['requiredLevel' => 12, 'feature' => 'Stock Exchange', 'featureAr' => 'بورصة الأسهم', 'route' => 'bank'],
+        'foreignTravel' => ['requiredLevel' => 15, 'feature' => 'International Airport Flights', 'featureAr' => 'رحلات المطار الدولي', 'route' => 'city'],
     ];
 
     public const STOCKS = [
@@ -184,6 +196,297 @@ final class TornSystemsService
             return max($min, min($max, $val));
         }
         return random_int($min, $max);
+    }
+
+    public static function buildLevelGates(int $playerLevel): array
+    {
+        $lvl = max(1, $playerLevel);
+        $gates = [];
+        foreach (self::LEVEL_GATE_SPECS as $key => $spec) {
+            $req = (int) $spec['requiredLevel'];
+            $unlocked = $lvl >= $req;
+            $gates[$key] = [
+                'id' => $key,
+                'requiredLevel' => $req,
+                'currentLevel' => $lvl,
+                'unlocked' => $unlocked,
+                'feature' => $spec['feature'],
+                'featureAr' => $spec['featureAr'],
+                'route' => $spec['route'],
+                'lockMessage' => $unlocked
+                    ? null
+                    : "Locked: Reach Level {$req} to unlock {$spec['feature']} (Current: Lv {$lvl}).",
+            ];
+        }
+        return $gates;
+    }
+
+    public static function assertLevelUnlocked(int $playerLevel, int $requiredLevel, string $feature): void
+    {
+        $lvl = max(1, $playerLevel);
+        if ($lvl < $requiredLevel) {
+            throw new RuntimeException("Locked: Reach Level {$requiredLevel} to unlock {$feature} (Current: Lv {$lvl}).");
+        }
+    }
+
+    public static function isCrime2Unlocked(string $crimeId, int $playerLevel, int $crimeXp): bool
+    {
+        $cfg = self::CRIMES_2[$crimeId] ?? null;
+        if ($cfg === null) {
+            return false;
+        }
+        $reqLevel = (int) ($cfg['reqLevel'] ?? 1);
+        $reqCrimeXp = (int) ($cfg['reqCrimeXp'] ?? 0);
+        if (max(1, $playerLevel) >= $reqLevel) {
+            return true;
+        }
+        return $reqCrimeXp > 0 && $crimeXp >= $reqCrimeXp;
+    }
+
+    public static function assertCrime2Unlocked(string $crimeId, int $playerLevel, int $crimeXp): void
+    {
+        $cfg = self::CRIMES_2[$crimeId] ?? null;
+        if ($cfg === null) {
+            throw new InvalidArgumentException('Unknown Crimes 2.0 archetype.');
+        }
+        if (self::isCrime2Unlocked($crimeId, $playerLevel, $crimeXp)) {
+            return;
+        }
+        $lvl = max(1, $playerLevel);
+        $reqLevel = (int) ($cfg['reqLevel'] ?? 1);
+        $reqCrimeXp = (int) ($cfg['reqCrimeXp'] ?? 0);
+        throw new RuntimeException(
+            "Locked: Reach Level {$reqLevel} (or {$reqCrimeXp} Crime XP) to unlock {$cfg['name']} (Current: Lv {$lvl}, {$crimeXp} Crime XP)."
+        );
+    }
+
+    /**
+     * Unified live formula resolver for all 24 Skill Tree nodes, 4 Origins, 5 Street Crew slots, and Nemesis Heat Tax.
+     *
+     * @return array<string, mixed>
+     */
+    public static function extractLiveModifiers(array $state, int $nowMs = 0): array
+    {
+        $nowSec = $nowMs > 100_000_000_000 ? intdiv($nowMs, 1000) : ($nowMs > 0 ? $nowMs : time());
+
+        $rawNodes = is_array($state['rpg']['unlockedNodes'] ?? null) ? $state['rpg']['unlockedNodes'] : [];
+        $nodes = [];
+        foreach ($rawNodes as $k => $v) {
+            if (is_int($k) && is_string($v) && $v !== '') {
+                $nodes[$v] = true;
+            } elseif (is_string($k) && $k !== '' && $v) {
+                $nodes[$k] = true;
+            }
+        }
+        $has = static fn (string $id): bool => !empty($nodes[$id]);
+
+        $asc = is_array($state['ascension'] ?? null) ? $state['ascension'] : [];
+        $rawOrigin = $asc['origin'] ?? ($asc['originId'] ?? null);
+        if (is_array($rawOrigin)) {
+            $originId = is_string($rawOrigin['id'] ?? null) ? $rawOrigin['id'] : null;
+        } else {
+            $originId = is_string($rawOrigin) && $rawOrigin !== '' ? $rawOrigin : null;
+        }
+
+        $rawCrew = is_array($asc['crew'] ?? null) ? $asc['crew'] : [];
+        $crewRank = static function (string $slot) use ($rawCrew): int {
+            $entry = $rawCrew[$slot] ?? 0;
+            if (is_array($entry)) {
+                return max(0, min(5, (int) ($entry['rank'] ?? $entry['level'] ?? 0)));
+            }
+            return max(0, min(5, (int) $entry));
+        };
+        $lookoutRank = $crewRank('lookout');
+        $wheelmanRank = $crewRank('wheelman');
+        $chemistRank = $crewRank('chemist');
+        $enforcerRank = $crewRank('enforcer');
+        $consigliereRank = $crewRank('consigliere');
+
+        // 1) Shadow Mastermind + harbor_ghost + lookout crew
+        $crimeSuccessPct = ($has('street_instinct') ? 4 : 0)
+            + ($has('wiretapper') ? 4 : 0)
+            + ($has('master_burglar') ? 4 : 0)
+            + ($has('nerve_overclock') ? 2 : 0)
+            + ($has('ghost_protocol') ? 8 : 0)
+            + ($originId === 'harbor_ghost' ? 8 : 0)
+            + ($lookoutRank * 3);
+        $crimeSuccessPct = min(40, $crimeSuccessPct);
+
+        $crimeUniquePct = ($has('street_instinct') ? 2 : 0)
+            + ($has('wiretapper') ? 2 : 0)
+            + ($has('master_burglar') ? 4 : 0)
+            + ($has('ghost_protocol') ? 6 : 0)
+            + ($originId === 'harbor_ghost' ? 4 : 0)
+            + ($lookoutRank * 2);
+        $crimeUniquePct = min(28, $crimeUniquePct);
+
+        $crimeCashPct = ($has('street_instinct') ? 3 : 0)
+            + ($has('master_burglar') ? 4 : 0)
+            + ($has('ghost_protocol') ? 5 : 0)
+            + ($originId === 'harbor_ghost' ? 4 : 0)
+            + ($lookoutRank * 2);
+        $crimeCashPct = min(30, $crimeCashPct);
+
+        $stealthPct = ($has('silent_footsteps') ? 6 : 0)
+            + ($has('master_burglar') ? 6 : 0)
+            + ($has('ghost_protocol') ? 8 : 0)
+            + ($originId === 'harbor_ghost' ? 10 : 0)
+            + ($wheelmanRank * 3);
+
+        // Nemesis Heat Tax (skims 2%..10% of street crime cash when un-cleared)
+        $nem = is_array($asc['nemesis'] ?? null) ? $asc['nemesis'] : [];
+        $rawCleared = max(
+            0,
+            (int) ($nem['heatClearedUntil'] ?? $nem['clearedUntil'] ?? $nem['taxClearedUntil'] ?? $nem['suppressedUntil'] ?? 0),
+        );
+        $clearedSec = $rawCleared > 100_000_000_000 ? intdiv($rawCleared, 1000) : $rawCleared;
+        $isHeatCleared = ($clearedSec > $nowSec) || !empty($nem['cleared']) || !empty($nem['defeated']);
+        if ($isHeatCleared) {
+            $nemesisHeatTaxPct = 0;
+        } else {
+            $explicitHeat = (int) ($nem['heatTaxPct'] ?? 0);
+            if ($explicitHeat === 0 && $clearedSec > 0 && isset($nem['baseHeatTaxPct'])) {
+                $explicitHeat = (int) $nem['baseHeatTaxPct'];
+            }
+            $nemesisHeatTaxPct = max(0, min(10, $explicitHeat));
+        }
+
+        // 2) Syndicate Mogul + disgraced_banker + consigliere crew + wheelman
+        $bankAprBonusPct = ($has('compound_ledger') ? 5 : 0)
+            + ($has('tax_shelter') ? 5 : 0)
+            + ($has('central_banker') ? 10 : 0)
+            + ($originId === 'disgraced_banker' ? 8 : 0)
+            + ($consigliereRank * 4);
+        $bankAprBonusPct = min(45, $bankAprBonusPct);
+
+        $stockFeeReductionPct = ($has('insider_tape') ? 25 : 0)
+            + ($has('tax_shelter') ? 10 : 0)
+            + ($has('central_banker') ? 25 : 0)
+            + ($originId === 'disgraced_banker' ? 20 : 0)
+            + ($consigliereRank * 5);
+        $stockFeeReductionPct = min(50, $stockFeeReductionPct);
+
+        $vaultCapBonusPct = ($has('offshore_vault') ? 10 : 0)
+            + ($has('central_banker') ? 15 : 0)
+            + ($originId === 'disgraced_banker' ? 8 : 0)
+            + ($consigliereRank * 4);
+        $vaultCapBonusPct = min(55, $vaultCapBonusPct);
+
+        $jobPayBonusPct = ($has('offshore_vault') ? 8 : 0)
+            + ($has('central_banker') ? 12 : 0)
+            + ($consigliereRank * 4);
+        $jobPayBonusPct = min(40, $jobPayBonusPct);
+
+        $mogulLuggageBonus = ($has('airstrip_logistics') ? 2 : 0)
+            + ($has('central_banker') ? 3 : 0);
+
+        $flightTimeReductionPct = min(15, $wheelmanRank * 3);
+
+        // 3) Bio-Alchemist + street_chemist + chemist crew
+        $odReductionPct = ($has('micro_dosing') ? 15 : 0)
+            + ($has('pure_synthesis') ? 12 : 0)
+            + ($has('endorphin_lock') ? 5 : 0)
+            + ($has('adrenal_surge') ? 8 : 0)
+            + ($has('bio_synthetic') ? 15 : 0)
+            + ($originId === 'street_chemist' ? 20 : 0)
+            + ($chemistRank * 4);
+        $odReductionPct = min(55, $odReductionPct);
+
+        $addictionReduction = ($has('pure_synthesis') ? 1 : 0)
+            + ($has('bio_synthetic') ? 1 : 0)
+            + ($originId === 'street_chemist' ? 1 : 0)
+            + ($chemistRank >= 2 ? 1 : 0);
+
+        $medHealBonusPct = ($has('field_triage') ? 15 : 0)
+            + ($has('adrenal_surge') ? 5 : 0)
+            + ($has('bio_synthetic') ? 15 : 0)
+            + ($originId === 'street_chemist' ? 10 : 0)
+            + ($chemistRank * 5);
+        $medHealBonusPct = min(55, $medHealBonusPct);
+
+        $reviveEnergyReduction = ($has('field_triage') ? 2 : 0)
+            + ($has('bio_synthetic') ? 3 : 0);
+
+        // 4) Warlord Enforcer + cartel_bruiser + enforcer crew
+        $combatDamagePct = ($has('iron_knuckles') ? 4 : 0)
+            + ($has('arterial_strike') ? 6 : 0)
+            + ($has('blood_frenzy') ? 4 : 0)
+            + ($has('executioner') ? 6 : 0)
+            + ($originId === 'cartel_bruiser' ? 10 : 0)
+            + ($enforcerRank * 4);
+        $combatDamagePct = min(50, $combatDamagePct);
+
+        $combatAccuracyBps = ($has('iron_knuckles') ? 150 : 0)
+            + ($has('hollow_point_drill') ? 150 : 0)
+            + ($has('arterial_strike') ? 250 : 0)
+            + ($has('executioner') ? 250 : 0)
+            + ($originId === 'cartel_bruiser' ? 200 : 0)
+            + ($enforcerRank * 100);
+
+        $armorMitigationBonus = ($has('kevlar_weave') ? 0.06 : 0.0)
+            + ($has('executioner') ? 0.04 : 0.0)
+            + ($originId === 'cartel_bruiser' ? 0.03 : 0.0)
+            + ($enforcerRank * 0.01);
+        $armorMitigationBonus = min(0.18, round($armorMitigationBonus, 4));
+
+        $mugPlunderPct = ($has('hollow_point_drill') ? 4 : 0)
+            + ($has('blood_frenzy') ? 4 : 0)
+            + ($has('executioner') ? 7 : 0)
+            + ($originId === 'cartel_bruiser' ? 5 : 0)
+            + ($enforcerRank * 2);
+        $mugPlunderPct = min(35, $mugPlunderPct);
+
+        return [
+            'unlockedNodeIds' => array_keys($nodes),
+            'originId' => $originId,
+            'crewRanks' => [
+                'lookout' => $lookoutRank,
+                'wheelman' => $wheelmanRank,
+                'chemist' => $chemistRank,
+                'enforcer' => $enforcerRank,
+                'consigliere' => $consigliereRank,
+            ],
+            'crimeSuccessPct' => $crimeSuccessPct,
+            'crimeSuccessBps' => $crimeSuccessPct * 100,
+            'crimeUniquePct' => $crimeUniquePct,
+            'crimeUniqueBps' => $crimeUniquePct * 100,
+            'crimeCashPct' => $crimeCashPct,
+            'stealthPct' => $stealthPct,
+            'nemesisHeatTaxPct' => $nemesisHeatTaxPct,
+            'bankAprBonusPct' => $bankAprBonusPct,
+            'stockFeeReductionPct' => $stockFeeReductionPct,
+            'vaultCapBonusPct' => $vaultCapBonusPct,
+            'jobPayBonusPct' => $jobPayBonusPct,
+            'mogulLuggageBonus' => $mogulLuggageBonus,
+            'flightTimeReductionPct' => $flightTimeReductionPct,
+            'odReductionPct' => $odReductionPct,
+            'addictionReduction' => $addictionReduction,
+            'medHealBonusPct' => $medHealBonusPct,
+            'reviveEnergyReduction' => $reviveEnergyReduction,
+            'combatDamagePct' => $combatDamagePct,
+            'combatAccuracyBps' => $combatAccuracyBps,
+            'armorMitigationBonus' => $armorMitigationBonus,
+            'mugPlunderPct' => $mugPlunderPct,
+        ];
+    }
+
+    private function resolveActingPlayer(?Closure $cashFn, ?array $player = null): ?array
+    {
+        if (is_array($player) && isset($player['level'])) {
+            return $player;
+        }
+        if ($cashFn !== null) {
+            try {
+                $vars = (new \ReflectionFunction($cashFn))->getStaticVariables();
+                $pid = $vars['playerId'] ?? null;
+                if (is_string($pid) && $pid !== '') {
+                    return $this->database->fetchOne('SELECT * FROM players WHERE id = :id', ['id' => $pid]);
+                }
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+        return null;
     }
 
     public static function parsePositiveInt(string $raw, int $min, int $max, string $label): int
@@ -258,7 +561,11 @@ final class TornSystemsService
         $this->ledger->record($playerId, 'item:' . $drugId, -1, (int) $state['inv'][$drugId], 'drug.use', $correlationId);
         $state['cooldowns']['drugUntil'] = $nowMs + $cfg['cdSeconds'] * 1000;
 
-        $odBps = !empty($state['eduDone']['chem']) ? (int) round($cfg['odBps'] * 0.75) : $cfg['odBps'];
+        $mods = self::extractLiveModifiers($state, $nowMs);
+        $baseOdBps = !empty($state['eduDone']['chem']) ? (int) round($cfg['odBps'] * 0.75) : (int) $cfg['odBps'];
+        $odBps = $mods['odReductionPct'] > 0
+            ? max(1, (int) round($baseOdBps * (1.0 - ($mods['odReductionPct'] / 100.0))))
+            : $baseOdBps;
         if ($this->roll(1, 10000) <= $odBps) {
             $hospMult = !empty($state['fac']['ups']['hospTime']) ? 0.8 : 1.0;
             $hospMs = (int) round(1_800_000 * $hospMult);
@@ -269,13 +576,15 @@ final class TornSystemsService
                 ['happy' => $newHappy, 'id' => $playerId],
             );
             $state['cooldowns']['overdoseCount']++;
-            $addiction = min(100, (int) $state['addiction'] + 5);
+            $odAddictGain = $mods['addictionReduction'] > 0 ? max(2, 5 - (int) $mods['addictionReduction']) : 5;
+            $addiction = min(100, (int) $state['addiction'] + $odAddictGain);
             $state['addiction'] = $addiction;
             $state['cooldowns']['addiction'] = $addiction;
             return [
                 'type' => 'drug.use',
                 'drugId' => $drugId,
                 'overdosed' => true,
+                'effectiveOdBps' => $odBps,
                 'hospitalSeconds' => (int) ceil($hospMs / 1000),
                 'addiction' => $addiction,
                 'restored' => [
@@ -287,9 +596,12 @@ final class TornSystemsService
             ];
         }
 
+        $lifeHealAmount = $cfg['life'] > 0
+            ? (int) round($cfg['life'] * (1.0 + ($mods['medHealBonusPct'] / 100.0)))
+            : 0;
         $newEnergy = $cfg['energy'] > 0 ? min(1000, (int) $player['energy'] + $cfg['energy']) : (int) $player['energy'];
         $newNerve = $cfg['nerve'] > 0 ? min((int) $player['max_nerve'] + 50, (int) $player['nerve'] + $cfg['nerve']) : (int) $player['nerve'];
-        $newLife = $cfg['life'] > 0 ? min((int) $player['max_life'] + 200, (int) $player['life'] + $cfg['life']) : (int) $player['life'];
+        $newLife = $lifeHealAmount > 0 ? min((int) $player['max_life'] + 200, (int) $player['life'] + $lifeHealAmount) : (int) $player['life'];
         $newHappy = $cfg['doublesHappy']
             ? min(99999, max((int) $player['happy'] * 2, (int) $player['happy'] + 500))
             : ($cfg['happy'] > 0 ? min(99999, (int) $player['happy'] + $cfg['happy']) : (int) $player['happy']);
@@ -298,7 +610,14 @@ final class TornSystemsService
             'UPDATE players SET energy = :e, nerve = :n, life = :l, happy = :h WHERE id = :id',
             ['e' => $newEnergy, 'n' => $newNerve, 'l' => $newLife, 'h' => $newHappy, 'id' => $playerId],
         );
-        $addiction = min(100, (int) $state['addiction'] + $cfg['addiction']);
+        $baseAddiction = (int) $cfg['addiction'];
+        if ($mods['addictionReduction'] > 0) {
+            $minFloor = $baseAddiction > 1 && (int) $mods['addictionReduction'] < 3 ? 1 : 0;
+            $addictGain = max($minFloor, $baseAddiction - (int) $mods['addictionReduction']);
+        } else {
+            $addictGain = $baseAddiction;
+        }
+        $addiction = min(100, (int) $state['addiction'] + $addictGain);
         $state['addiction'] = $addiction;
         $state['cooldowns']['addiction'] = $addiction;
 
@@ -306,6 +625,7 @@ final class TornSystemsService
             'type' => 'drug.use',
             'drugId' => $drugId,
             'overdosed' => false,
+            'effectiveOdBps' => $odBps,
             'addiction' => $addiction,
             'restored' => [
                 'energy' => $newEnergy - (int) $player['energy'],
@@ -349,7 +669,11 @@ final class TornSystemsService
         $state['cooldowns']['drugUntil'] = $nowMs + 25_200_000; // 7h
         $state['cooldowns']['boosterUntil'] = max($nowMs, (int) $state['cooldowns']['boosterUntil']) + 21_600_000; // 6h
 
-        $odBps = !empty($state['eduDone']['chem']) ? 260 : 350; // 3.5% base OD risk
+        $mods = self::extractLiveModifiers($state, $nowMs);
+        $baseOdBps = !empty($state['eduDone']['chem']) ? 260 : 350; // 3.5% base OD risk
+        $odBps = $mods['odReductionPct'] > 0
+            ? max(1, (int) round($baseOdBps * (1.0 - ($mods['odReductionPct'] / 100.0))))
+            : $baseOdBps;
         if ($this->roll(1, 10000) <= $odBps) {
             $hospMult = !empty($state['fac']['ups']['hospTime']) ? 0.8 : 1.0;
             $hospMs = (int) round(1_800_000 * $hospMult);
@@ -360,13 +684,15 @@ final class TornSystemsService
                 ['happy' => $newHappy, 'id' => $playerId],
             );
             $state['cooldowns']['overdoseCount']++;
-            $addiction = min(100, (int) $state['addiction'] + 5);
+            $odAddictGain = $mods['addictionReduction'] > 0 ? max(2, 5 - (int) $mods['addictionReduction']) : 5;
+            $addiction = min(100, (int) $state['addiction'] + $odAddictGain);
             $state['addiction'] = $addiction;
             $state['cooldowns']['addiction'] = $addiction;
             return [
                 'type' => 'torn.happyJump',
                 'source' => $source,
                 'overdosed' => true,
+                'effectiveOdBps' => $odBps,
                 'cashDelta' => $cashDelta,
                 'hospitalSeconds' => (int) ceil($hospMs / 1000),
                 'addiction' => $addiction,
@@ -383,7 +709,8 @@ final class TornSystemsService
             'UPDATE players SET happy = :happy, energy = :energy WHERE id = :id',
             ['happy' => $newHappy, 'energy' => $newEnergy, 'id' => $playerId],
         );
-        $addiction = min(100, (int) $state['addiction'] + 2);
+        $hjAddictGain = $mods['addictionReduction'] > 0 ? max(1, 2 - (int) $mods['addictionReduction']) : 2;
+        $addiction = min(100, (int) $state['addiction'] + $hjAddictGain);
         $state['addiction'] = $addiction;
         $state['cooldowns']['addiction'] = $addiction;
 
@@ -391,6 +718,7 @@ final class TornSystemsService
             'type' => 'torn.happyJump',
             'source' => $source,
             'overdosed' => false,
+            'effectiveOdBps' => $odBps,
             'cashDelta' => $cashDelta,
             'addiction' => $addiction,
             'restored' => [
@@ -495,16 +823,24 @@ final class TornSystemsService
             $crimeId = '4';
             $legacySkillAlias = 'shoplift';
             $shopMap = [
-                'sallys' => ['nerve' => 4, 'cash' => 5800, 'xp' => 8, 'diffBps' => 200],
-                'bits' => ['nerve' => 4, 'cash' => 6400, 'xp' => 9, 'diffBps' => 250],
-                'super' => ['nerve' => 4, 'cash' => 8900, 'xp' => 11, 'diffBps' => 450],
-                'superstore' => ['nerve' => 4, 'cash' => 8900, 'xp' => 11, 'diffBps' => 450],
-                'clothing' => ['nerve' => 5, 'cash' => 11200, 'xp' => 13, 'diffBps' => 650],
-                'cyber' => ['nerve' => 5, 'cash' => 14500, 'xp' => 15, 'diffBps' => 850],
-                'bigals' => ['nerve' => 6, 'cash' => 24000, 'xp' => 22, 'diffBps' => 1200],
+                'sallys' => ['nerve' => 4, 'cash' => 1650, 'maxSkillCash' => 5600, 'xp' => 9, 'playerXp' => 28, 'diffBps' => 200],
+                'bits' => ['nerve' => 4, 'cash' => 1850, 'maxSkillCash' => 6200, 'xp' => 10, 'playerXp' => 30, 'diffBps' => 250],
+                'super' => ['nerve' => 4, 'cash' => 2200, 'maxSkillCash' => 7200, 'xp' => 11, 'playerXp' => 32, 'diffBps' => 450],
+                'superstore' => ['nerve' => 4, 'cash' => 2200, 'maxSkillCash' => 7200, 'xp' => 11, 'playerXp' => 32, 'diffBps' => 450],
+                'clothing' => ['nerve' => 5, 'cash' => 2600, 'maxSkillCash' => 8400, 'xp' => 13, 'playerXp' => 36, 'diffBps' => 650],
+                'cyber' => ['nerve' => 5, 'cash' => 3200, 'maxSkillCash' => 10200, 'xp' => 15, 'playerXp' => 40, 'diffBps' => 850],
+                'bigals' => ['nerve' => 6, 'cash' => 4500, 'maxSkillCash' => 14500, 'xp' => 20, 'playerXp' => 48, 'diffBps' => 1200],
             ];
             $sub = $shopMap[$id] ?? $shopMap['sallys'];
-            $cfg = [...self::CRIMES_2['4'], 'nerve' => $sub['nerve'], 'cash' => $sub['cash'], 'xp' => $sub['xp'], 'diffBps' => $sub['diffBps']];
+            $cfg = [
+                ...self::CRIMES_2['4'],
+                'nerve' => $sub['nerve'],
+                'cash' => $sub['cash'],
+                'maxSkillCash' => $sub['maxSkillCash'],
+                'xp' => $sub['xp'],
+                'playerXp' => $sub['playerXp'],
+                'diffBps' => $sub['diffBps'],
+            ];
             foreach (self::shopliftingSecurity($unixSec) as $secRow) {
                 if ($secRow['id'] === ($id === 'superstore' ? 'super' : $id)) {
                     if ($secRow['cameraDisabled']) $extraSuccessBps += 800;
@@ -515,8 +851,10 @@ final class TornSystemsService
         } elseif ($action === 'torn.searchCash') {
             $crimeId = '1';
             $legacySkillAlias = 'search';
-            $locCash = ['fountain' => 4200, 'trash' => 4600, 'beach' => 5000, 'junkyard' => 5600, 'cemetery' => 6800, 'subway' => 8200];
-            $base = $locCash[$id] ?? 4200;
+            $locBase = ['fountain' => 420, 'trash' => 450, 'beach' => 490, 'junkyard' => 540, 'cemetery' => 620, 'subway' => 720];
+            $locMax  = ['fountain' => 2400, 'trash' => 2550, 'beach' => 2680, 'junkyard' => 2850, 'cemetery' => 3100, 'subway' => 3450];
+            $base = $locBase[$id] ?? 450;
+            $maxC = $locMax[$id] ?? 2550;
             $modPct = 65;
             foreach (self::searchForCashModifiers($unixSec) as $mRow) {
                 if ($mRow['id'] === $id) {
@@ -525,7 +863,11 @@ final class TornSystemsService
                 }
             }
             $extraSuccessBps += ($modPct - 55) * 25;
-            $cfg = [...self::CRIMES_2['1'], 'cash' => max(1500, (int) round($base * ($modPct / 65.0)))];
+            $cfg = [
+                ...self::CRIMES_2['1'],
+                'cash' => max(300, (int) round($base * ($modPct / 65.0))),
+                'maxSkillCash' => max(1800, (int) round($maxC * ($modPct / 65.0))),
+            ];
         } elseif ($action === 'torn.skimmer' || $action === 'torn.skimmerCollect') {
             $crimeId = '6';
             $cfg = self::CRIMES_2['6']; // 6 Nerve enforced!
@@ -549,6 +891,10 @@ final class TornSystemsService
             $cfg = self::CRIMES_2[$crimeId];
         }
 
+        $playerLevel = max(1, (int) ($player['level'] ?? 1));
+        $currentCrimeXp = max(0, (int) ($state['crimeXp'] ?? 96));
+        self::assertCrime2Unlocked($crimeId, $playerLevel, $currentCrimeXp);
+
         $nerveCost = (int) $cfg['nerve'];
         if ((int) $player['nerve'] < $nerveCost) {
             throw new RuntimeException("Not enough nerve (need {$nerveCost} Nerve).");
@@ -561,6 +907,7 @@ final class TornSystemsService
         $skillKey = 'crime2_' . $cfg['key'];
         $state['skill'] = is_array($state['skill'] ?? null) ? $state['skill'] : [];
         $skill = max(0, min(100, (int) ($state['skill'][$skillKey] ?? 0)));
+        $mods = self::extractLiveModifiers($state, $nowMs);
 
         $enhancerId = $cfg['enhancerId'];
         $hasEnhancer = (int) ($state['inv'][$enhancerId] ?? 0) > 0;
@@ -568,36 +915,54 @@ final class TornSystemsService
         $csBonusBps = (!empty($state['eduDone']['cs']) && in_array($cfg['key'], ['card_skimming', 'cracking'], true)) ? 1000 : 0;
         $crimBonusBps = !empty($state['eduDone']['crim']) ? 800 : 0;
 
-        // Enhancer grants +12% (+1200 bps) success & unique boost
+        // Enhancer grants +12% (+1200 bps) success & unique boost; Shadow/Origin/Lookout boost success & unique odds
         $enhancerBps = $hasEnhancer ? 1200 : 0;
-        $successCap = max(2500, min(9500, 6200 + $skill * 28 + $enhancerBps + $meritCrimeRank * 300 + $csBonusBps + $extraSuccessBps - (int) $cfg['diffBps']));
-        $uniqueCap = max(400, min(3200, 700 + $skill * 12 + ($hasEnhancer ? 1200 : 0) + $crimBonusBps));
+        $shadowSuccessBps = (int) $mods['crimeSuccessBps'];
+        $shadowUniqueBps = (int) $mods['crimeUniqueBps'];
+
+        $successCap = max(
+            2500,
+            min(
+                9600,
+                6200 + $skill * 28 + $enhancerBps + $meritCrimeRank * 300 + $csBonusBps + $extraSuccessBps + $shadowSuccessBps - (int) $cfg['diffBps'],
+            ),
+        );
+        $uniqueCap = max(400, min(3800, 700 + $skill * 12 + ($hasEnhancer ? 1200 : 0) + $crimBonusBps + $shadowUniqueBps));
         $uniqueCap = min($uniqueCap, $successCap - 500);
-        $critChanceBps = max(300, 1200 - $skill * 8 - ($hasEnhancer ? 300 : 0));
-        $failCap = min(9700, max($successCap, 10000 - $critChanceBps));
+        $critChanceBps = max(250, 1200 - $skill * 8 - ($hasEnhancer ? 300 : 0) - intdiv($shadowSuccessBps, 4));
+        $failCap = min(9750, max($successCap, 10000 - $critChanceBps));
+
+        $minBaseCash = (int) $cfg['cash'];
+        $maxSkillCash = max($minBaseCash, (int) ($cfg['maxSkillCash'] ?? ($minBaseCash * 3)));
+        $scaledBaseCash = (int) round($minBaseCash + (($maxSkillCash - $minBaseCash) * ($skill / 100.0)));
+        $crimeCashMult = 1.0 + ($mods['crimeCashPct'] / 100.0);
 
         $roll = $this->roll(1, 10000);
         $cashDelta = 0;
+        $grossCash = 0;
+        $nemesisSkimmed = 0;
         $xpEarned = 0;
+        $playerXpEarned = 0;
+        $levelUp = null;
         $lootGranted = null;
         $penaltyApplied = null;
 
         if ($roll <= $uniqueCap) {
             $tier = 'UNIQUE_OUTCOME';
-            $cashDelta = max(500, (int) round($cfg['cash'] * 2.2 * (1.0 + $skill * 0.004)));
+            $grossCash = max(450, (int) round($scaledBaseCash * 2.2 * $crimeCashMult));
             $xpEarned = (int) $cfg['xp'] * 2;
+            $playerXpEarned = (int) ($cfg['playerXp'] ?? 18) * 2;
             $newSkill = min(100, $skill + 3);
             $lootGranted = $cfg['loot'];
             $state['inv'][$lootGranted] = (int) ($state['inv'][$lootGranted] ?? 0) + 1;
             $this->ledger->record($playerId, 'item:' . $lootGranted, 1, (int) $state['inv'][$lootGranted], 'crime2.unique_loot', $correlationId);
-            $cashFn($cashDelta, $action . ':' . $cfg['key'], $correlationId);
             $state['ctr']['crimes'] = (int) ($state['ctr']['crimes'] ?? 0) + 1;
         } elseif ($roll <= $successCap) {
             $tier = 'SUCCESS';
-            $cashDelta = max(250, (int) round($cfg['cash'] * (0.9 + $skill * 0.004)));
+            $grossCash = max(250, (int) round($scaledBaseCash * $crimeCashMult));
             $xpEarned = (int) $cfg['xp'];
+            $playerXpEarned = (int) ($cfg['playerXp'] ?? 18);
             $newSkill = min(100, $skill + 2);
-            $cashFn($cashDelta, $action . ':' . $cfg['key'], $correlationId);
             $state['ctr']['crimes'] = (int) ($state['ctr']['crimes'] ?? 0) + 1;
         } elseif ($roll <= $failCap) {
             $tier = 'FAIL';
@@ -616,6 +981,38 @@ final class TornSystemsService
             $penaltyApplied = ['type' => $penType, 'seconds' => (int) ceil($penMs / 1000)];
         }
 
+        if ($grossCash > 0) {
+            if ((int) $mods['nemesisHeatTaxPct'] > 0) {
+                $nemesisSkimmed = max(1, (int) round($grossCash * ((int) $mods['nemesisHeatTaxPct'] / 100.0)));
+                $nemesisSkimmed = min($grossCash - 1, $nemesisSkimmed);
+            }
+            $cashDelta = max(1, $grossCash - $nemesisSkimmed);
+            $cashFn($cashDelta, $action . ':' . $cfg['key'], $correlationId);
+        }
+
+        if ($playerXpEarned > 0) {
+            $this->database->execute(
+                'UPDATE players SET xp = xp + :xp WHERE id = :id',
+                ['xp' => $playerXpEarned, 'id' => $playerId],
+            );
+            $levelUp = (new LevelingService($this->database, $this->ledger, $this->events))->sync($playerId, $correlationId);
+            if ($levelUp !== null) {
+                $freshProgRow = $this->database->fetchOne(
+                    'SELECT state_json FROM player_progression WHERE player_id = :id',
+                    ['id' => $playerId],
+                );
+                if ($freshProgRow !== null) {
+                    $freshProgState = json_decode((string) $freshProgRow['state_json'], true, 512, JSON_THROW_ON_ERROR);
+                    if (isset($freshProgState['merits'])) {
+                        $state['merits'] = $freshProgState['merits'];
+                    }
+                    if (isset($freshProgState['rpg'])) {
+                        $state['rpg'] = $freshProgState['rpg'];
+                    }
+                }
+            }
+        }
+
         $state['skill'][$skillKey] = $newSkill;
         if ($legacySkillAlias !== null) {
             $state['skill'][$legacySkillAlias] = $newSkill;
@@ -629,6 +1026,10 @@ final class TornSystemsService
             'tier' => $tier,
             'nerveSpent' => $nerveCost,
             'cashAwarded' => $cashDelta,
+            'grossCash' => $grossCash,
+            'nemesisSkimmed' => $nemesisSkimmed,
+            'nemesisHeatTaxPct' => (int) $mods['nemesisHeatTaxPct'],
+            'playerXpEarned' => $playerXpEarned,
             'skill' => $newSkill,
             'enhancer' => $cfg['enhancer'],
             'enhancerActive' => $hasEnhancer,
@@ -638,8 +1039,13 @@ final class TornSystemsService
 
         return [
             'cashDelta' => $cashDelta,
+            'grossCash' => $grossCash,
+            'nemesisSkimmed' => $nemesisSkimmed,
+            'nemesisHeatTaxPct' => (int) $mods['nemesisHeatTaxPct'],
             'nerveSpent' => $nerveCost,
             'xpEarned' => $xpEarned,
+            'playerXpEarned' => $playerXpEarned,
+            'levelUp' => $levelUp,
             'crimeTier' => $tier,
             'crimeKey' => $cfg['key'],
             'skill' => $newSkill,
@@ -651,6 +1057,8 @@ final class TornSystemsService
 
     public function openBankCd(string $playerId, string $id, array $player, array &$state, int $nowMs, Closure $cashFn, string $correlationId): array
     {
+        self::assertLevelUnlocked((int) ($player['level'] ?? 1), 10, 'Bank Term CDs');
+
         $existing = $state['activeCd'] ?? ($state['tornState']['activeCd'] ?? null);
         if (is_array($existing) && !empty($existing['principal'])) {
             throw new RuntimeException('An active Bank Term CD is already locked. Claim it upon maturity before opening another.');
@@ -681,11 +1089,13 @@ final class TornSystemsService
         // Deduct real principal from player wallet
         $cashFn(-$principal, 'torn.bankCd:' . $term, $correlationId);
 
+        $mods = self::extractLiveModifiers($state, $nowMs);
         $meritBankRank = max((int) ($state['meritTree']['bank_interest'] ?? 0), (int) ($state['meritTree']['bank'] ?? 0));
         $econMult = !empty($state['eduDone']['econ']) ? 1.05 : 1.0;
         $meritMult = 1.0 + 0.05 * $meritBankRank;
-        $effectiveAprBps = (int) round($termCfg['aprBps'] * $meritMult * $econMult);
-        $interest = max(1, (int) round($principal * ($termCfg['yieldBps'] / 10000.0) * $meritMult * $econMult));
+        $mogulAprMult = 1.0 + ($mods['bankAprBonusPct'] / 100.0);
+        $effectiveAprBps = (int) round($termCfg['aprBps'] * $meritMult * $econMult * $mogulAprMult);
+        $interest = max(1, (int) round($principal * ($termCfg['yieldBps'] / 10000.0) * $meritMult * $econMult * $mogulAprMult));
         $payout = $principal + $interest;
 
         $cd = [
@@ -693,6 +1103,7 @@ final class TornSystemsService
             'principal' => $principal,
             'interest' => $interest,
             'aprBps' => $effectiveAprBps,
+            'mogulAprBonusPct' => (int) $mods['bankAprBonusPct'],
             'payout' => $payout,
             'lockedAt' => $nowMs,
             'maturesAt' => $nowMs + $termCfg['durationMs'],
@@ -768,7 +1179,7 @@ final class TornSystemsService
         ];
     }
 
-    public function buyStock(string $id, array &$state, int $nowMs, Closure $cashFn, string $correlationId): array
+    public function buyStock(string $id, array &$state, int $nowMs, Closure $cashFn, string $correlationId, ?array $player = null): array
     {
         $parts = explode(':', $id, 2);
         $ticker = strtoupper(trim($parts[0] ?? ''));
@@ -778,6 +1189,12 @@ final class TornSystemsService
         $quote = self::stockQuote($ticker, intdiv($nowMs, 1000));
         $maxSafeByPrice = max(1, intdiv(min(2_000_000_000, intdiv(PHP_INT_MAX, 2)), max(1, $quote['price'])));
         $shares = self::parsePositiveInt($parts[1], 1, min(10_000_000, $maxSafeByPrice), 'share quantity');
+
+        $actingPlayer = $this->resolveActingPlayer($cashFn, $player);
+        if ($actingPlayer !== null) {
+            self::assertLevelUnlocked((int) ($actingPlayer['level'] ?? 1), 12, 'Stock Exchange');
+        }
+
         $cost = $shares * $quote['price'];
 
         $cashFn(-$cost, 'stock.buy:' . $ticker, $correlationId);
@@ -827,9 +1244,11 @@ final class TornSystemsService
             throw new RuntimeException("You do not own {$shares} shares of {$ticker} to sell.");
         }
 
+        $mods = self::extractLiveModifiers($state, $nowMs);
+        $feeRate = 0.01 * (1.0 - ($mods['stockFeeReductionPct'] / 100.0)); // 1.0% down to 0.5%
         $quote = self::stockQuote($ticker, intdiv($nowMs, 1000));
         $gross = $shares * $quote['price'];
-        $fee = max(1, (int) round($gross * 0.01)); // 1% brokerage fee
+        $fee = max(1, (int) round($gross * $feeRate));
         $proceeds = max(0, $gross - $fee);
 
         $remaining = $owned - $shares;
@@ -851,6 +1270,7 @@ final class TornSystemsService
             'sharesSold' => $shares,
             'pricePerShare' => $quote['price'],
             'fee' => $fee,
+            'feeRateBps' => (int) round($feeRate * 10000),
             'ownedShares' => $remaining,
             'blockReadyAt' => $blockReadyAt,
         ];
@@ -902,10 +1322,15 @@ final class TornSystemsService
         $prop = (string) ($state['prop'] ?? 'shack');
         $base = self::VAULT_CAPS[$prop] ?? 0;
         $hasGuard = !empty($state['tornState']['staff']['vault_guard']);
-        if (!$hasGuard) {
-            return $base;
+        $cap = !$hasGuard ? $base : ($base === 0 ? 500_000 : (int) round($base * 1.25));
+        if ($cap <= 0) {
+            return 0;
         }
-        return $base === 0 ? 500_000 : (int) round($base * 1.25);
+        $mods = self::extractLiveModifiers($state);
+        if ((int) $mods['vaultCapBonusPct'] <= 0) {
+            return $cap;
+        }
+        return (int) round($cap * (1.0 + ((int) $mods['vaultCapBonusPct'] / 100.0)));
     }
 
     public function vaultDeposit(string $playerId, string $id, array &$state, Closure $cashFn, string $correlationId): array
@@ -1150,7 +1575,9 @@ final class TornSystemsService
         $state['inv']['bloodbag'] = (int) $state['inv']['bloodbag'] - 1;
         $this->ledger->record($playerId, 'item:bloodbag', -1, (int) $state['inv']['bloodbag'], 'torn.bloodBag:' . $mode, $correlationId);
 
-        $newLife = min((int) $player['max_life'], (int) $player['life'] + 300);
+        $mods = self::extractLiveModifiers($state, $nowMs);
+        $healAmount = (int) round(300 * (1.0 + ($mods['medHealBonusPct'] / 100.0)));
+        $newLife = min((int) $player['max_life'], (int) $player['life'] + $healAmount);
         $remHosp = max(0, (int) ($state['hospUntil'] ?? 0) - $nowMs);
         $hospReduced = min($remHosp, 3_600_000);
         if ($hospReduced > 0) {
@@ -1160,6 +1587,7 @@ final class TornSystemsService
 
         return [
             'mode' => $mode ?: 'use',
+            'healAmount' => $healAmount,
             'restored' => ['life' => $newLife - (int) $player['life']],
             'hospitalSecondsReduced' => (int) ceil($hospReduced / 1000),
         ];
@@ -1488,17 +1916,34 @@ final class TornSystemsService
             ];
         }
 
+        $playerLevel = max(1, (int) ($player['level'] ?? 1));
+        $crimeXp = max(0, (int) ($state['crimeXp'] ?? 96));
+        $levelGates = self::buildLevelGates($playerLevel);
+        $livePerks = self::extractLiveModifiers($state, $nowMs);
+
         $crimes2Out = [];
         foreach (self::CRIMES_2 as $cid => $cfg) {
+            $cidStr = (string) $cid;
             $sKey = 'crime2_' . $cfg['key'];
             $enhId = $cfg['enhancerId'];
+            $unlocked = self::isCrime2Unlocked($cidStr, $playerLevel, $crimeXp);
+            $reqLevel = (int) ($cfg['reqLevel'] ?? 1);
+            $reqCrimeXp = (int) ($cfg['reqCrimeXp'] ?? 0);
             $crimes2Out[] = [
-                'id' => (string) $cid,
+                'id' => $cidStr,
                 'key' => $cfg['key'],
                 'name' => $cfg['name'],
                 'nerve' => $cfg['nerve'],
                 'baseCash' => $cfg['cash'],
+                'maxSkillCash' => $cfg['maxSkillCash'],
                 'xp' => $cfg['xp'],
+                'playerXp' => $cfg['playerXp'],
+                'requiredLevel' => $reqLevel,
+                'requiredCrimeXp' => $reqCrimeXp,
+                'unlocked' => $unlocked,
+                'lockReason' => $unlocked
+                    ? null
+                    : "Locked: Reach Level {$reqLevel} (or {$reqCrimeXp} Crime XP) to unlock {$cfg['name']} (Current: Lv {$playerLevel}, {$crimeXp} Crime XP).",
                 'skill' => max(0, min(100, (int) ($state['skill'][$sKey] ?? 0))),
                 'enhancerId' => $enhId,
                 'enhancerLabel' => $cfg['enhancer'],
@@ -1545,8 +1990,10 @@ final class TornSystemsService
         }
 
         return [
-            'version' => 'ZONE-TORN-148',
+            'version' => 'ZONE-TORN-151',
             'harvestedEndpoints' => 57,
+            'levelGates' => $levelGates,
+            'livePerks' => $livePerks,
             'cooldowns' => [
                 'drugSeconds' => max(0, (int) ceil(((int) ($cds['drugUntil'] ?? 0) - $nowMs) / 1000)),
                 'medicalSeconds' => max(0, (int) ceil(((int) ($cds['medicalUntil'] ?? 0) - $nowMs) / 1000)),

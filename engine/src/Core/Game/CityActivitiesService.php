@@ -470,6 +470,15 @@ final class CityActivitiesService
             $this->ensureActivityState($playerId, $player, $state);
             $correlationId = bin2hex(random_bytes(16));
 
+            $playerLevel = (int) $player['level'];
+            if (in_array($cleanAction, ['dump.toss', 'dump.search'], true)) {
+                TornSystemsService::assertLevelUnlocked($playerLevel, 2, 'City Dump');
+            } elseif ($cleanAction === 'wheel.spin') {
+                TornSystemsService::assertLevelUnlocked($playerLevel, 3, 'Daily Spin Wheels');
+            } elseif (in_array($cleanAction, ['agent.accept', 'agent.complete', 'agent.claim'], true)) {
+                TornSystemsService::assertLevelUnlocked($playerLevel, 7, 'NPC Fixer Contracts');
+            }
+
             $result = match ($cleanAction) {
                 'agent.accept' => $this->acceptAgentContract($playerId, $state, $payload, $correlationId),
                 'agent.complete', 'agent.claim' => $this->completeAgentContract($playerId, $player, $state, $payload, $correlationId),
@@ -1739,6 +1748,7 @@ final class CityActivitiesService
         ], self::MISSION_ARMORY));
 
         return [
+            'levelGates' => TornSystemsService::buildLevelGates((int) $player['level']),
             'player' => [
                 'id' => (string) $player['id'],
                 'username' => (string) $player['username'],

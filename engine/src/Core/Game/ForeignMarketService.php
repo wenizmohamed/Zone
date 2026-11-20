@@ -288,8 +288,8 @@ final class ForeignMarketService
 
         $hubsList = [];
         foreach (self::HUBS as $hubId => $hub) {
-            $flightSeconds = $perks['hasAirstrip']
-                ? max(30, (int) round((int) $hub['flightSeconds'] * 0.70))
+            $flightSeconds = $perks['flightTimeDiscountPct'] > 0
+                ? max(30, (int) round((int) $hub['flightSeconds'] * (1.0 - ($perks['flightTimeDiscountPct'] / 100.0))))
                 : (int) $hub['flightSeconds'];
             $fare = $perks['hasAirstrip'] ? 0 : (int) $hub['fare'];
             $hubItems = [];
@@ -342,6 +342,7 @@ final class ForeignMarketService
         $nextRestockEpoch = (intdiv($now, self::RESTOCK_WINDOW_SECONDS) + 1) * self::RESTOCK_WINDOW_SECONDS;
 
         return [
+            'levelGates' => TornSystemsService::buildLevelGates((int) $player['level']),
             'player' => $player,
             'currentCity' => $currentCity,
             'isHomeCity' => self::isHomeCity($currentCity) && !$isTraveling,
@@ -364,6 +365,7 @@ final class ForeignMarketService
                 'base' => 5,
                 'islandBonus' => $perks['islandBonus'],
                 'suitcaseBonus' => $perks['suitcaseBonus'],
+                'mogulBonus' => $perks['mogulBonus'],
             ],
             'rehabClinic' => [
                 'availableHere' => $activeHubId === 'zurich',
@@ -410,14 +412,15 @@ final class ForeignMarketService
                 if ($hubId === null) {
                     throw new InvalidArgumentException('Unknown foreign travel destination: ' . $destRaw);
                 }
+                TornSystemsService::assertLevelUnlocked((int) $player['level'], 15, 'International Airport Flights');
                 if (!self::isHomeCity((string) $player['city'])) {
                     throw new RuntimeException('Return to Zone City before boarding a new international flight.');
                 }
 
                 $hub = self::HUBS[$hubId];
                 $fare = $perks['hasAirstrip'] ? 0 : (int) $hub['fare'];
-                $flightSeconds = $perks['hasAirstrip']
-                    ? max(30, (int) round((int) $hub['flightSeconds'] * 0.70))
+                $flightSeconds = $perks['flightTimeDiscountPct'] > 0
+                    ? max(30, (int) round((int) $hub['flightSeconds'] * (1.0 - ($perks['flightTimeDiscountPct'] / 100.0))))
                     : (int) $hub['flightSeconds'];
 
                 if ((int) $player['cash'] < $fare) {
@@ -461,8 +464,8 @@ final class ForeignMarketService
                 }
                 $hubId = self::resolveHubId((string) $player['city']);
                 $baseSec = $hubId !== null ? (int) self::HUBS[$hubId]['flightSeconds'] : 300;
-                $flightSeconds = $perks['hasAirstrip']
-                    ? max(30, (int) round($baseSec * 0.70))
+                $flightSeconds = $perks['flightTimeDiscountPct'] > 0
+                    ? max(30, (int) round($baseSec * (1.0 - ($perks['flightTimeDiscountPct'] / 100.0))))
                     : $baseSec;
 
                 $trip = $this->travel->depart($playerId, (string) $player['city'], 'Zone City', $flightSeconds);
@@ -501,7 +504,7 @@ final class ForeignMarketService
                 if ($itemId === '' || !isset(self::HUBS[$hubId]['items'][$itemId])) {
                     throw new InvalidArgumentException('That item is not sold at the ' . self::HUBS[$hubId]['nameEn'] . ' market.');
                 }
-                $quantity = $this->parseQuantity($payload['quantity'] ?? null, 19);
+                $quantity = $this->parseQuantity($payload['quantity'] ?? null, max(19, (int) $perks['capacity']));
 
                 $travelVersion = (int) ($travelSnap['version'] ?? 0);
                 $tripState = $this->loadTripState($playerId, $travelVersion);
@@ -645,19 +648,26 @@ final class ForeignMarketService
             || ((int) ($progState['inv']['suitcase'] ?? 0) > 0)
             || !empty($family['upgrades']['travel_cap']);
 
+        $mods = TornSystemsService::extractLiveModifiers($progState);
         $islandBonus = $hasAirstrip ? 10 : 0;
         $suitcaseBonus = $hasSuitcase ? 4 : 0;
-        $capacity = 5 + $islandBonus + $suitcaseBonus;
+        $mogulBonus = (int) $mods['mogulLuggageBonus'];
+        $wheelmanDiscount = (int) $mods['flightTimeReductionPct'];
+        $flightDiscountPct = min(45, ($hasAirstrip ? 30 : 0) + $wheelmanDiscount);
+        $capacity = 5 + $islandBonus + $suitcaseBonus + $mogulBonus;
 
         return [
             'hasIsland' => $hasIsland,
             'hasPilot' => $hasPilot,
             'hasAirstrip' => $hasAirstrip,
             'hasSuitcase' => $hasSuitcase,
-            'flightTimeDiscountPct' => $hasAirstrip ? 30 : 0,
+            'flightTimeDiscountPct' => $flightDiscountPct,
+            'wheelmanFlightDiscountPct' => $wheelmanDiscount,
             'freeAirfare' => $hasAirstrip,
             'islandBonus' => $islandBonus,
             'suitcaseBonus' => $suitcaseBonus,
+            'mogulBonus' => $mogulBonus,
+            'mogulLuggageBonus' => $mogulBonus,
             'capacity' => $capacity,
         ];
     }

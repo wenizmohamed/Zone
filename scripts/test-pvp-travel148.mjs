@@ -293,10 +293,10 @@ test('v148 Live HTTP + Relay E2E: Bounty auto-settlement on PvP hosp, Hospital R
     runPhpEval(
       dbPath,
       `
-      $db->execute("UPDATE players SET username = 'FunderA', cash = 200000, energy = 150, life = 500, max_life = 500, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(funder.id)}]);
+      $db->execute("UPDATE players SET username = 'FunderA', level = 15, xp = 10500, cash = 200000, energy = 150, life = 500, max_life = 500, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(funder.id)}]);
       $db->execute("UPDATE players SET username = 'TargetB', cash = 50000, energy = 100, life = 200, max_life = 400, strength = 20, defense = 20, speed = 20, dexterity = 20, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(target.id)}]);
       $db->execute("UPDATE players SET username = 'HunterC', cash = 10000, energy = 150, life = 800, max_life = 800, strength = 25000, defense = 25000, speed = 25000, dexterity = 25000, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(hunter.id)}]);
-      $db->execute("UPDATE players SET username = 'MedicD', cash = 5000000, energy = 150, max_energy = 150, life = 500, max_life = 500, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(medic.id)}]);
+      $db->execute("UPDATE players SET username = 'MedicD', level = 15, xp = 10500, cash = 5000000, energy = 150, max_energy = 150, life = 500, max_life = 500, resources_updated_at = :at WHERE id = :id", ['at' => gmdate('c', time() + 3600), 'id' => ${JSON.stringify(medic.id)}]);
       $engine->gameplay(${JSON.stringify(medic.id)});
       $mRow = $db->fetchOne('SELECT state_json, version FROM player_progression WHERE player_id = :id', ['id' => ${JSON.stringify(medic.id)}]);
       $mState = json_decode($mRow['state_json'], true);
