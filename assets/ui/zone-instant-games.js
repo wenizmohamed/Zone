@@ -1,12 +1,438 @@
-/* ZONE v135 - Unified Sketchbook 60fps Demand-Driven Arcade Engine (4-Way Light/Dark/EN/AR Parity + Mobile Touch) */
+/* ZONE v155 - Unified Sketchbook 60fps Demand-Driven Arcade Engine (80ms Input Buffer, Coyote Grace, Hit-Stop, Trauma^2 Shake, Combo Fever, Graze & 390px Touch Controls) */
 (function () {
   'use strict';
 
+  /* ---------------- Pure Deterministic Game-Feel & Input Engine (v155 Headless-Testable Core) ---------------- */
+  var ARCADE_CONSTANTS = {
+    INPUT_BUFFER_MS: 80,
+    INPUT_BUFFER_SEC: 0.080,
+    COYOTE_GRACE_MS: 55,
+    COYOTE_GRACE_SEC: 0.055,
+    HITSTOP_CRIT_MS: 35,
+    HITSTOP_VAULT_MS: 55,
+    HITSTOP_SLOW_SCALE: 0.05,
+    TRAUMA_DECAY_PER_SEC: 1.85,
+    MAX_SHAKE_OFFSET_X: 9.5,
+    MAX_SHAKE_OFFSET_Y: 6.5,
+    MAX_SHAKE_ROT_RAD: 0.022,
+    GRAZE_LANE_MIN_RATIO: 0.52,
+    GRAZE_LANE_MAX_RATIO: 1.18,
+    GRAZE_DRIFT_Y_BAND: 26,
+    GRAZE_JET_X_BAND: 30,
+    GRAZE_JET_MAX_DIST: 48,
+    TOUCH_SWIPE_MIN_PX: 22
+  };
+
+  var ARCADE_I18N = {
+    en: {
+      overdrive: 'OVERDRIVE',
+      graze: '+GRAZE!',
+      chain2: 'x2 CHAIN',
+      rush4: 'x4 SYNDICATE RUSH',
+      fever8: 'x8 OVERDRIVE',
+      ready1: 'x1 READY',
+      buffered: 'BUFFERED!',
+      clutch: 'CLUTCH!',
+      steerLeft: '\u25C0 Left',
+      steerRight: 'Right \u25B6',
+      nitroBoost: 'NITRO BOOST',
+      climbUp: '\u25B2 Climb',
+      diveDown: 'Dive \u25BC',
+      stabilize: 'TRIM LEVEL',
+      strikeBag: 'STRIKE BAG',
+      crackVault: 'CRACK VAULT',
+      focusBuffer: '80ms FOCUS',
+      feverHit: 'FEVER HIT',
+      hintDrift: 'Swipe lanes or tap thumb zones \u00B7 Hold Nitro',
+      hintJet: 'Swipe Up/Down or tap Climb/Dive thumb zones',
+      hintGym: '80ms Buffer + 55ms Grace \u00B7 Tap Strike or Space',
+      hintHeist: '80ms Buffer + 55ms Grace \u00B7 Tap Crack or Space'
+    },
+    ar: {
+      overdrive: '\u0630\u0631\u0648\u0629 \u0627\u0644\u0623\u0648\u0641\u0631\u062F\u0631\u0627\u064A\u0641',
+      graze: '+\u0645\u0631\u0627\u0648\u063A\u0629 \u0648\u0634\u064A\u0643\u0629!',
+      chain2: '\u0633\u0644\u0633\u0644\u0629 \u00D72',
+      rush4: '\u0627\u0646\u062F\u0641\u0627\u0639 \u0627\u0644\u0646\u0642\u0627\u0628\u0629 \u00D74',
+      fever8: '\u0623\u0648\u0641\u0631\u062F\u0631\u0627\u064A\u0641 \u00D78',
+      ready1: '\u062C\u0627\u0647\u0632 \u00D71',
+      buffered: '\u062A\u0648\u0642\u064A\u062A \u0645\u0633\u0628\u0642!',
+      clutch: '\u0625\u0646\u0642\u0627\u0630 \u062E\u0627\u0637\u0641!',
+      steerLeft: '\u25C0 \u064A\u0633\u0627\u0631',
+      steerRight: '\u064A\u0645\u064A\u0646 \u25B6',
+      nitroBoost: '\u062F\u0641\u0639 \u0646\u064A\u062A\u0631\u0648',
+      climbUp: '\u25B2 \u0635\u0639\u0648\u062F',
+      diveDown: '\u0647\u0628\u0648\u0637 \u25BC',
+      stabilize: '\u062A\u0648\u0627\u0632\u0646 \u062C\u0648\u064A',
+      strikeBag: '\u0633\u062F\u0651\u062F \u0627\u0644\u0644\u0643\u0645\u0629',
+      crackVault: '\u0627\u0643\u0633\u0631 \u0627\u0644\u0642\u0641\u0644',
+      focusBuffer: '\u062A\u0631\u0643\u064A\u0632 80ms',
+      feverHit: '\u0636\u0631\u0628\u0629 \u0627\u0644\u0630\u0631\u0648\u0629',
+      hintDrift: '\u0627\u0633\u062D\u0628 \u0627\u0644\u0645\u0633\u0627\u0631\u0627\u062A \u0623\u0648 \u0627\u0644\u0645\u0633 \u0623\u0632\u0631\u0627\u0631 \u0627\u0644\u0625\u0628\u0647\u0627\u0645 \u00B7 \u0645\u0637\u0648\u0644\u0627\u064B \u0644\u0644\u0646\u064A\u062A\u0631\u0648',
+      hintJet: '\u0627\u0633\u062D\u0628 \u0644\u0644\u0623\u0639\u0644\u0649/\u0627\u0644\u0623\u0633\u0641\u0644 \u0623\u0648 \u0627\u0644\u0645\u0633 \u0635\u0639\u0648\u062F/\u0647\u0628\u0648\u0637',
+      hintGym: '\u0627\u0633\u062A\u062C\u0627\u0628\u0629 \u0630\u0643\u064A\u0629 80ms \u00B7 \u0627\u0644\u0645\u0633 \u0644\u062A\u0633\u062F\u064A\u062F \u0627\u0644\u0644\u0643\u0645\u0629',
+      hintHeist: '\u0627\u0633\u062A\u062C\u0627\u0628\u0629 \u0630\u0643\u064A\u0629 80ms \u00B7 \u0627\u0644\u0645\u0633 \u0644\u0643\u0633\u0631 \u0627\u0644\u0642\u0641\u0644'
+    }
+  };
+
+  function clampNum(v, lo, hi) {
+    return v < lo ? lo : (v > hi ? hi : v);
+  }
+
+  /* camera-systems Pattern 2: Frame-rate-independent exponential smoothing 1 - exp(-rate * dt) */
+  function expSmooth(current, target, rate, dt) {
+    var safeDt = Math.max(0, Number(dt) || 0);
+    var t = 1 - Math.exp(-Math.max(0, Number(rate) || 0) * safeDt);
+    return current + (target - current) * t;
+  }
+
+  /* game-feel Pattern 3: Back-overshoot pop curve for floating popups & HUD badges */
+  function easeOutBack(t) {
+    var x = clampNum(Number(t) || 0, 0, 1);
+    var c1 = 1.70158;
+    var c3 = c1 + 1;
+    return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+  }
+
+  function getFeverTier(comboCount, ar) {
+    var c = Math.max(0, Math.floor(Number(comboCount) || 0));
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
+    if (c >= 8) {
+      return { tier: 3, mult: 8, code: 'OVERDRIVE', label: dict.fever8, labelEn: ARCADE_I18N.en.fever8, labelAr: ARCADE_I18N.ar.fever8, tone: 'gold', rings: 3 };
+    }
+    if (c >= 4) {
+      return { tier: 2, mult: 4, code: 'SYNDICATE_RUSH', label: dict.rush4, labelEn: ARCADE_I18N.en.rush4, labelAr: ARCADE_I18N.ar.rush4, tone: 'gold', rings: 2 };
+    }
+    if (c >= 2) {
+      return { tier: 1, mult: 2, code: 'CHAIN', label: dict.chain2, labelEn: ARCADE_I18N.en.chain2, labelAr: ARCADE_I18N.ar.chain2, tone: 'good', rings: 1 };
+    }
+    return { tier: 0, mult: 1, code: 'BASE', label: dict.ready1, labelEn: ARCADE_I18N.en.ready1, labelAr: ARCADE_I18N.ar.ready1, tone: 'good', rings: 0 };
+  }
+
+  /* input-systems Pattern 3: Game-clock action buffer so early discrete presses within 80ms still fire once */
+  function createActionBuffer(windowSec) {
+    var win = (typeof windowSec === 'number' && windowSec > 0) ? windowSec : ARCADE_CONSTANTS.INPUT_BUFFER_SEC;
+    var store = Object.create(null);
+    return {
+      windowSec: win,
+      press: function (action, clockSec, meta) {
+        if (!action) return;
+        store[action] = { at: Number(clockSec) || 0, meta: meta || null };
+      },
+      has: function (action, clockSec) {
+        var rec = store[action];
+        if (!rec) return false;
+        var age = (Number(clockSec) || 0) - rec.at;
+        return age >= -0.0001 && age <= win + 1e-6;
+      },
+      peek: function (action) {
+        return store[action] || null;
+      },
+      consume: function (action, clockSec) {
+        var rec = store[action];
+        if (!rec) return null;
+        var age = (Number(clockSec) || 0) - rec.at;
+        delete store[action];
+        if (age >= -0.0001 && age <= win + 1e-6) {
+          return { accepted: true, ageMs: Math.max(0, age * 1000), meta: rec.meta };
+        }
+        return null;
+      },
+      popExpired: function (action, clockSec) {
+        var rec = store[action];
+        if (!rec) return null;
+        var age = (Number(clockSec) || 0) - rec.at;
+        if (age > win + 1e-6) {
+          delete store[action];
+          return rec;
+        }
+        return null;
+      },
+      clear: function (action) {
+        if (action) {
+          delete store[action];
+          return;
+        }
+        var keys = Object.keys(store);
+        for (var i = 0; i < keys.length; i++) delete store[keys[i]];
+      }
+    };
+  }
+
+  /* input-handling + platformer grace edge: 55ms Coyote Grace Window after leaving sweet-spot / gold arc */
+  function createCoyoteTracker(graceSec) {
+    var grace = (typeof graceSec === 'number' && graceSec > 0) ? graceSec : ARCADE_CONSTANTS.COYOTE_GRACE_SEC;
+    var stamps = Object.create(null);
+    return {
+      graceSec: grace,
+      markLegal: function (tag, clockSec, meta) {
+        if (!tag) return;
+        stamps[tag] = { at: Number(clockSec) || 0, meta: meta || null };
+      },
+      withinGrace: function (tag, clockSec) {
+        var rec = stamps[tag];
+        if (!rec) return false;
+        var elapsed = (Number(clockSec) || 0) - rec.at;
+        return elapsed >= -0.0001 && elapsed <= grace + 1e-6;
+      },
+      consumeGrace: function (tag, clockSec) {
+        var rec = stamps[tag];
+        if (!rec) return null;
+        var elapsed = (Number(clockSec) || 0) - rec.at;
+        delete stamps[tag];
+        if (elapsed >= -0.0001 && elapsed <= grace + 1e-6) {
+          return { saved: true, elapsedMs: Math.max(0, elapsed * 1000), meta: rec.meta };
+        }
+        return null;
+      },
+      clear: function (tag) {
+        if (tag) {
+          delete stamps[tag];
+          return;
+        }
+        var keys = Object.keys(stamps);
+        for (var i = 0; i < keys.length; i++) delete stamps[keys[i]];
+      }
+    };
+  }
+
+  function evaluateGymWindow(gaugePos, gaugeDir, gaugeSpeed, clockSec, coyote) {
+    var pos = Number(gaugePos) || 0;
+    var dir = Number(gaugeDir) >= 0 ? 1 : -1;
+    var spd = Math.max(0.05, Number(gaugeSpeed) || 1.15);
+    var dist = Math.abs(pos - 0.5);
+    var inSweetSpot = dist <= 0.14;
+    var inBullseye = dist <= 0.05;
+    var coyoteSaved = !inSweetSpot && Boolean(coyote && coyote.withinGrace('gym_sweet', clockSec));
+    var timeToSweetSec = Infinity;
+    if (!inSweetSpot) {
+      if (dir > 0 && pos < 0.36) {
+        timeToSweetSec = (0.36 - pos) / spd;
+      } else if (dir < 0 && pos > 0.64) {
+        timeToSweetSec = (pos - 0.64) / spd;
+      }
+    }
+    var shouldBuffer = !inSweetSpot && !coyoteSaved && timeToSweetSec <= ARCADE_CONSTANTS.INPUT_BUFFER_SEC + 1e-6;
+    return {
+      inSweetSpot: inSweetSpot,
+      inBullseye: inBullseye,
+      coyoteSaved: coyoteSaved,
+      timeToSweetMs: Number.isFinite(timeToSweetSec) ? timeToSweetSec * 1000 : Infinity,
+      shouldBuffer: shouldBuffer
+    };
+  }
+
+  function normalizeAnglePositive(rad) {
+    var twoPi = Math.PI * 2;
+    return ((rad % twoPi) + twoPi) % twoPi;
+  }
+
+  function evaluateHeistWindow(angle, dir, speed, targetCenter, targetArc, clockSec, coyote) {
+    var ang = Number(angle) || 0;
+    var stepDir = Number(dir) >= 0 ? 1 : -1;
+    var spd = Math.max(0.1, Math.abs(Number(speed) || 2.55));
+    var center = Number(targetCenter) || 0;
+    var halfArc = Math.max(0.05, Number(targetArc) || 0.78) * 0.5;
+    var diff = Math.atan2(Math.sin(ang - center), Math.cos(ang - center));
+    var absDiff = Math.abs(diff);
+    var inArc = absDiff <= halfArc;
+    var perfect = absDiff <= halfArc * 0.38;
+    var coyoteSaved = !inArc && Boolean(coyote && coyote.withinGrace('heist_arc', clockSec));
+    var timeToArcSec = Infinity;
+    if (!inArc) {
+      var leadingEdge = stepDir > 0 ? (center - halfArc) : (center + halfArc);
+      var angularDist = stepDir > 0
+        ? normalizeAnglePositive(leadingEdge - ang)
+        : normalizeAnglePositive(ang - leadingEdge);
+      timeToArcSec = angularDist / spd;
+    }
+    var shouldBuffer = !inArc && !coyoteSaved && timeToArcSec <= ARCADE_CONSTANTS.INPUT_BUFFER_SEC + 1e-6;
+    return {
+      inArc: inArc,
+      perfect: perfect,
+      coyoteSaved: coyoteSaved,
+      timeToArcMs: Number.isFinite(timeToArcSec) ? timeToArcSec * 1000 : Infinity,
+      shouldBuffer: shouldBuffer
+    };
+  }
+
+  /* game-feel Patterns 1 & 2: Overlapping-safe unscaled Hit-Stop + Squirrel Eiserloh trauma^2 Camera Kick */
+  function createJuiceRig() {
+    var rig = {
+      trauma: 0,
+      kickX: 0,
+      kickY: 0,
+      offsetX: 0,
+      offsetY: 0,
+      rotation: 0,
+      waveT: 0,
+      timeScale: 1,
+      hitStopId: 0,
+      activeHitStopOwner: 0,
+      hitStopUntilMs: 0,
+      addTrauma: function (amount, dirX, dirY, reducedMotion) {
+        if (reducedMotion) {
+          rig.trauma = 0;
+          rig.kickX = 0;
+          rig.kickY = 0;
+          rig.offsetX = 0;
+          rig.offsetY = 0;
+          rig.rotation = 0;
+          return rig;
+        }
+        var amt = clampNum(Number(amount) || 0, 0, 1);
+        rig.trauma = clampNum(rig.trauma + amt, 0, 1);
+        rig.kickX = clampNum(rig.kickX + (Number(dirX) || 0) * amt * 7.5, -12, 12);
+        rig.kickY = clampNum(rig.kickY + (Number(dirY) || 0) * amt * 5.5, -9, 9);
+        var instantShake = rig.trauma * rig.trauma;
+        rig.offsetX = rig.kickX + ARCADE_CONSTANTS.MAX_SHAKE_OFFSET_X * instantShake * Math.sin(rig.waveT * 1.7 + 0.6);
+        rig.offsetY = rig.kickY + ARCADE_CONSTANTS.MAX_SHAKE_OFFSET_Y * instantShake * Math.sin(rig.waveT * 2.3 + 1.1);
+        rig.rotation = ARCADE_CONSTANTS.MAX_SHAKE_ROT_RAD * instantShake * Math.sin(rig.waveT * 1.1 + 0.4);
+        return rig;
+      },
+      triggerHitStop: function (durationMs, realNowMs, slowScale, reducedMotion) {
+        var dur = Math.max(0, Math.min(150, Number(durationMs) || 0));
+        var now = Number(realNowMs) || 0;
+        rig.hitStopId += 1;
+        var myId = rig.hitStopId;
+        if (reducedMotion || dur <= 0) {
+          rig.timeScale = 1;
+          rig.hitStopUntilMs = now;
+          rig.activeHitStopOwner = myId;
+          return myId;
+        }
+        var targetUntil = now + dur;
+        if (targetUntil >= rig.hitStopUntilMs) {
+          rig.hitStopUntilMs = targetUntil;
+          rig.activeHitStopOwner = myId;
+        }
+        rig.timeScale = clampNum(typeof slowScale === 'number' ? slowScale : ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, 0.01, 1);
+        return myId;
+      },
+      stepReal: function (realDtSec, realNowMs, reducedMotion) {
+        var rDt = clampNum(Number(realDtSec) || 0, 0, 0.1);
+        var now = Number(realNowMs) || 0;
+        if (reducedMotion) {
+          rig.trauma = 0;
+          rig.kickX = 0;
+          rig.kickY = 0;
+          rig.offsetX = 0;
+          rig.offsetY = 0;
+          rig.rotation = 0;
+          rig.timeScale = 1;
+          rig.hitStopUntilMs = now;
+          return { realDt: rDt, scaledDt: rDt, inHitStop: false };
+        }
+        var inStop = now < rig.hitStopUntilMs;
+        if (!inStop && rig.timeScale !== 1) {
+          rig.timeScale = 1;
+        }
+        /* Decay camera trauma in REAL unscaled time so camera never freezes off-center during hit-stop */
+        if (rig.trauma > 0 || Math.abs(rig.kickX) > 0.01 || Math.abs(rig.kickY) > 0.01) {
+          rig.trauma = Math.max(0, rig.trauma - ARCADE_CONSTANTS.TRAUMA_DECAY_PER_SEC * rDt);
+          rig.kickX = expSmooth(rig.kickX, 0, 18, rDt);
+          rig.kickY = expSmooth(rig.kickY, 0, 18, rDt);
+          rig.waveT += rDt * 32;
+          var shake = rig.trauma * rig.trauma;
+          rig.offsetX = rig.kickX + ARCADE_CONSTANTS.MAX_SHAKE_OFFSET_X * shake * Math.sin(rig.waveT * 1.7);
+          rig.offsetY = rig.kickY + ARCADE_CONSTANTS.MAX_SHAKE_OFFSET_Y * shake * Math.sin(rig.waveT * 2.3);
+          rig.rotation = ARCADE_CONSTANTS.MAX_SHAKE_ROT_RAD * shake * Math.sin(rig.waveT * 1.1);
+          if (rig.trauma === 0 && Math.hypot(rig.kickX, rig.kickY) < 0.04) {
+            rig.kickX = 0;
+            rig.kickY = 0;
+            rig.offsetX = 0;
+            rig.offsetY = 0;
+            rig.rotation = 0;
+          }
+        }
+        var scaledDt = rDt * rig.timeScale;
+        return { realDt: rDt, scaledDt: scaledDt, inHitStop: inStop };
+      },
+      isActive: function (realNowMs) {
+        return rig.trauma > 0.001 || Math.abs(rig.kickX) > 0.04 || Math.abs(rig.kickY) > 0.04 || (Number(realNowMs) || 0) < rig.hitStopUntilMs;
+      },
+      reset: function () {
+        rig.trauma = 0;
+        rig.kickX = 0;
+        rig.kickY = 0;
+        rig.offsetX = 0;
+        rig.offsetY = 0;
+        rig.rotation = 0;
+        rig.timeScale = 1;
+        rig.hitStopUntilMs = 0;
+      }
+    };
+    return rig;
+  }
+
+  function checkDriftGraze(ent, roadLeft, laneW, playerX, playerY) {
+    if (!ent || ent.kind !== 'police' || ent.grazed) return null;
+    var ex = roadLeft + (ent.lane + 0.5) * laneW;
+    var dx = Math.abs(ex - playerX);
+    var dy = Math.abs(ent.y - playerY);
+    var collides = dx < laneW * ARCADE_CONSTANTS.GRAZE_LANE_MIN_RATIO && dy < 28;
+    if (collides) return null;
+    if (dy <= ARCADE_CONSTANTS.GRAZE_DRIFT_Y_BAND && dx >= laneW * ARCADE_CONSTANTS.GRAZE_LANE_MIN_RATIO && dx <= laneW * ARCADE_CONSTANTS.GRAZE_LANE_MAX_RATIO) {
+      ent.grazed = true;
+      return { grazed: true, ex: ex, ey: ent.y, dirX: playerX >= ex ? 1 : -1 };
+    }
+    return null;
+  }
+
+  function checkJetGraze(ent, planeX, planeY, canvasH) {
+    if (!ent || ent.kind !== 'radar' || ent.grazed) return null;
+    var ey = ent.yFrac * canvasH;
+    var dx = Math.abs(ent.x - planeX);
+    var dy = Math.abs(ey - planeY);
+    var collides = dx < 26 && dy < 22;
+    if (collides) return null;
+    var dist = Math.hypot(ent.x - planeX, ey - planeY);
+    if (dx <= ARCADE_CONSTANTS.GRAZE_JET_X_BAND && dist <= ARCADE_CONSTANTS.GRAZE_JET_MAX_DIST) {
+      ent.grazed = true;
+      return { grazed: true, ex: ent.x, ey: ey, dirY: planeY >= ey ? 1 : -1 };
+    }
+    return null;
+  }
+
+  /* Enforces CRITICAL HOME INVARIANT: #zig-home-arcade stays #1 right after .zone-home-brief, strictly above #zone-ascension-hub and #zone-char-3d */
+  function ensureHomeArcadePlacement(mainEl, arcadeEl) {
+    if (!mainEl || !arcadeEl) return false;
+    var scr = mainEl.getAttribute ? (mainEl.getAttribute('data-zone-screen') || '') : '';
+    if (scr !== 'home') return false;
+    var anchor = mainEl.querySelector ? (mainEl.querySelector('.zone-home-brief') || mainEl.querySelector('.zone-page-heading')) : null;
+    if (!anchor) return false;
+    if (anchor.nextElementSibling !== arcadeEl) {
+      anchor.insertAdjacentElement('afterend', arcadeEl);
+      return true;
+    }
+    return false;
+  }
+
+  var ArcadeFeelEngine = {
+    CONSTANTS: ARCADE_CONSTANTS,
+    I18N: ARCADE_I18N,
+    expSmooth: expSmooth,
+    easeOutBack: easeOutBack,
+    getFeverTier: getFeverTier,
+    createActionBuffer: createActionBuffer,
+    createCoyoteTracker: createCoyoteTracker,
+    evaluateGymWindow: evaluateGymWindow,
+    evaluateHeistWindow: evaluateHeistWindow,
+    createJuiceRig: createJuiceRig,
+    checkDriftGraze: checkDriftGraze,
+    checkJetGraze: checkJetGraze,
+    ensureHomeArcadePlacement: ensureHomeArcadePlacement
+  };
+
+  if (typeof globalThis !== 'undefined') {
+    globalThis.__ZoneArcadeFeel155 = ArcadeFeelEngine;
+  }
+
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  window.ZoneArcadeFeel = ArcadeFeelEngine;
   if (window.__zoneInstantGamesLoaded) return;
   window.__zoneInstantGamesLoaded = true;
 
-  var MOTION_STYLE_ID = 'zig-v127-motion-styles';
+  var MOTION_STYLE_ID = 'zig-v155-motion-styles';
 
   var EU_WHEEL = [
     0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
@@ -121,6 +547,8 @@
     try {
       var oldStyle = document.getElementById('zig-v126-motion-styles');
       if (oldStyle) oldStyle.remove();
+      var oldStyle127 = document.getElementById('zig-v127-motion-styles');
+      if (oldStyle127) oldStyle127.remove();
       if (document.getElementById(MOTION_STYLE_ID)) return;
       var style = document.createElement('style');
       style.id = MOTION_STYLE_ID;
@@ -191,15 +619,30 @@
         /* Sketchbook Floating Reward Pill */
         '.zig-float-pop{position:fixed;z-index:9999;transform:translate(-50%,0);pointer-events:none;padding:4px 11px;border-radius:999px;background:var(--zwc-surface,var(--zwc-paper-elevated,#f8f3e6));border:1.5px solid var(--zwc-border-strong,#23201c);box-shadow:var(--zwc-shadow-sub);font-family:var(--zwc-font-hand,system-ui,sans-serif);font-size:13.5px;font-weight:800;color:var(--zwc-green-ink,#1b5428);animation:zigFloatUp 1.25s cubic-bezier(0.22,1,0.36,1) forwards;}',
         '.zig-float-pop[data-tone="gold"]{color:var(--zwc-gold-ink,#663f06);}',
+        'html[data-zone-reduced-motion="true"] .zig-float-pop{animation:none !important;opacity:1;}',
         '@keyframes zigFloatUp{0%{opacity:0;transform:translate(-50%,6px) scale(0.94);}18%{opacity:1;transform:translate(-50%,-4px) scale(1);}100%{opacity:0;transform:translate(-50%,-34px) scale(0.98);}}',
-        /* Fluid Canvas & Mobile >= 44px Touch Ergonomics */
+        /* Fluid Canvas & 390px Ergonomic Touch Controls (touch-action: none on active game canvases!) */
         '.zig-gym-wrap,.zig-heist-wrap,.zig-casino-canvas-box,.zig-getaway-canvas-wrap{width:100% !important;max-width:100% !important;min-width:0 !important;overflow:hidden !important;box-sizing:border-box !important;background:var(--zwc-surface-alt,var(--zwc-paper-subcard,#fcf8ee));border:1.5px solid var(--zwc-border-strong,#23201c);border-radius:var(--zwc-sketch-radius-sm,10px);}',
-        '#zig-gym-canvas,#zig-heist-canvas,#zig-roulette-canvas,#zig-slots-canvas,#zig-getaway-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none;}',
+        '#zig-gym-canvas,#zig-heist-canvas,#zig-getaway-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;touch-action:none !important;cursor:pointer;user-select:none;-webkit-user-select:none;}',
+        '#zig-roulette-canvas,#zig-slots-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none;}',
+        '.zig-touch-deck{display:none;flex-direction:column;gap:6px;margin-block-start:8px;width:100%;max-width:100%;box-sizing:border-box;touch-action:none;user-select:none;-webkit-user-select:none;}',
+        '.zig-touch-deck[data-zig-force-touch="1"]{display:flex;}',
+        '@media (max-width:640px),(pointer:coarse){.zig-touch-deck{display:flex;}}',
+        '.zig-touch-zones{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1fr);gap:6px;direction:ltr;width:100%;box-sizing:border-box;}',
+        '.zig-touch-btn{min-height:46px !important;padding:6px 8px !important;border-radius:var(--zwc-sketch-radius-sm,10px) !important;border:1.5px solid var(--zwc-border-strong,#23201c) !important;background:var(--zwc-btn-bg,var(--zwc-surface,#ede4cf)) !important;color:var(--zwc-ink,#1e1b18) !important;font-size:11.5px;font-weight:800;line-height:1.15;display:inline-flex;align-items:center;justify-content:center;text-align:center;box-shadow:var(--zwc-shadow-sub) !important;touch-action:none !important;cursor:pointer;user-select:none;-webkit-user-select:none;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
+        '.zig-touch-btn[data-zig-touch="action"]{background:linear-gradient(180deg,#d99a38 0%,#a86f1a 100%) !important;color:#1e1b18 !important;border-color:#23201c !important;}',
+        '.zig-touch-btn.is-pressed,.zig-touch-btn:active{transform:translateY(1px) scale(0.98);filter:brightness(0.95);}',
+        '.zig-touch-hint{font-size:10.5px;font-weight:700;color:var(--zwc-ink-soft,#3a342d);text-align:center;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
         '@media (max-width:900px){.zig-btn,.zig-btn-secondary,.zig-sound-btn,#zig-world-flight-bar .zig-city-chip,.zig-flight-card{min-height:44px !important;touch-action:manipulation !important;}}',
         'html[lang="ar"] .zig-arcade-deck *,html[dir="rtl"] .zig-arcade-deck *,[dir="rtl"] .zig-arcade-deck *,html[lang="ar"] .zig-world-flight-bar *,html[dir="rtl"] .zig-world-flight-bar *,[dir="rtl"] .zig-world-flight-bar *,html[dir="rtl"] #zig-brawl-hud *{letter-spacing:0 !important;}'
       ].join('');
       (document.head || document.documentElement).appendChild(style);
     } catch (_) {}
+  }
+
+  function isReducedMotion() {
+    var html = document.documentElement;
+    return Boolean(html && html.dataset && html.dataset.zoneReducedMotion === 'true');
   }
 
   function isAr() {
@@ -369,24 +812,35 @@
 
   preloadKeyArt();
 
-  /* ---------------- WebAudio Procedural Arcade Synth ---------------- */
+  /* ---------------- WebAudio Procedural Arcade Synth + ZoneAudioHaptics Bridge ---------------- */
   var audioCtx = null;
   var soundEnabled = true;
   try {
-    soundEnabled = localStorage.getItem('zig_muted') !== '1';
+    soundEnabled = localStorage.getItem('zig_muted') !== '1' && localStorage.getItem('zone_sfx_muted') !== '1';
   } catch (_) {}
 
+  var _dispatchingMuteSync = false;
   function setSoundEnabled(flag) {
-    soundEnabled = Boolean(flag);
+    var next = Boolean(flag);
+    var changed = soundEnabled !== next;
+    soundEnabled = next;
     try {
       localStorage.setItem('zig_muted', soundEnabled ? '0' : '1');
+      localStorage.setItem('zone_sfx_muted', soundEnabled ? '0' : '1');
     } catch (_) {}
     window.__zoneMuted = !soundEnabled;
+    if (changed && !_dispatchingMuteSync) {
+      _dispatchingMuteSync = true;
+      try {
+        window.dispatchEvent(new CustomEvent('zone:mute-change', { detail: { muted: !soundEnabled, source: 'zig' } }));
+      } catch (_) {}
+      _dispatchingMuteSync = false;
+    }
   }
 
   function ensureAudio() {
     try {
-      if (localStorage.getItem('zig_muted') === '1') soundEnabled = false;
+      if (localStorage.getItem('zig_muted') === '1' || localStorage.getItem('zone_sfx_muted') === '1') soundEnabled = false;
     } catch (_) {}
     if (!soundEnabled) return null;
     try {
@@ -447,6 +901,14 @@
       tone(740, 0.07, 'sine', 0.08, 1180, 0);
       tone(1180, 0.12, 'sine', 0.08, 1480, 0.06);
     },
+    graze: function () {
+      tone(980, 0.055, 'triangle', 0.07, 1560, 0);
+    },
+    fever: function (tier) {
+      var base = tier >= 3 ? 659.25 : (tier === 2 ? 587.33 : 523.25);
+      tone(base, 0.08, 'triangle', 0.08, base * 1.25, 0);
+      tone(base * 1.5, 0.13, 'sine', 0.09, base * 1.8, 0.05);
+    },
     crash: function () {
       tone(150, 0.24, 'sawtooth', 0.09, 42, 0);
     }
@@ -498,16 +960,136 @@
     } catch (_) {}
   }
 
+  /* ---------------- Zero-GC Pooled Watercolor Burst Rings & Canvas Floating Popups (pixi-vector-arcade) ---------------- */
+  function createZeroGcFxPool(ringCap, popupCap) {
+    var rings = [];
+    var popups = [];
+    for (var i = 0; i < ringCap; i++) {
+      rings.push({ active: false, x: 0, y: 0, r: 0, maxR: 56, life: 0, maxLife: 0.45, tone: 'gold', lineW: 2.8 });
+    }
+    for (var j = 0; j < popupCap; j++) {
+      popups.push({ active: false, x: 0, y: 0, vy: -42, text: '', life: 0, maxLife: 0.78, tone: 'gold', size: 12 });
+    }
+    return {
+      rings: rings,
+      popups: popups,
+      spawnRing: function (x, y, startR, maxR, toneKey, lineW) {
+        for (var k = 0; k < rings.length; k++) {
+          var rg = rings[k];
+          if (!rg.active) {
+            rg.active = true;
+            rg.x = x;
+            rg.y = y;
+            rg.r = startR || 10;
+            rg.maxR = maxR || 58;
+            rg.maxLife = 0.46;
+            rg.life = rg.maxLife;
+            rg.tone = toneKey || 'gold';
+            rg.lineW = lineW || 2.8;
+            return rg;
+          }
+        }
+        return null;
+      },
+      spawnFeverBurst: function (x, y, feverTierObj) {
+        var count = Math.max(1, (feverTierObj && feverTierObj.rings) || 1);
+        for (var n = 0; n < count; n++) {
+          this.spawnRing(x, y, 10 + n * 8, 48 + n * 18, n === 0 ? 'gold' : (feverTierObj && feverTierObj.tone) || 'good', 3.0 - n * 0.45);
+        }
+      },
+      spawnPopup: function (x, y, text, toneKey, size) {
+        if (!text) return null;
+        for (var k = 0; k < popups.length; k++) {
+          var pp = popups[k];
+          if (!pp.active) {
+            pp.active = true;
+            pp.x = x;
+            pp.y = y;
+            pp.vy = -38;
+            pp.text = text;
+            pp.maxLife = 0.82;
+            pp.life = pp.maxLife;
+            pp.tone = toneKey || 'gold';
+            pp.size = size || 12;
+            return pp;
+          }
+        }
+        return null;
+      },
+      renderAndStep: function (ctx, w, h, dt, pal) {
+        var step = Math.max(0, dt || 0);
+        var reduced = isReducedMotion();
+        for (var r = 0; r < rings.length; r++) {
+          var rg = rings[r];
+          if (!rg.active) continue;
+          rg.life -= step;
+          if (rg.life <= 0) {
+            rg.active = false;
+            continue;
+          }
+          var prog = 1 - (rg.life / rg.maxLife);
+          var curR = rg.r + (rg.maxR - rg.r) * (1 - Math.pow(1 - prog, 2));
+          ctx.save();
+          ctx.strokeStyle = toneColorFromPalette(rg.tone, pal);
+          ctx.globalAlpha = Math.max(0, (1 - prog) * (reduced ? 0.55 : 0.92));
+          ctx.lineWidth = rg.lineW;
+          ctx.beginPath();
+          ctx.arc(rg.x, rg.y, curR, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+        for (var p = 0; p < popups.length; p++) {
+          var pp = popups[p];
+          if (!pp.active) continue;
+          pp.life -= step;
+          if (pp.life <= 0) {
+            pp.active = false;
+            continue;
+          }
+          if (!reduced) pp.y += pp.vy * step;
+          var ageFrac = 1 - (pp.life / pp.maxLife);
+          var popScale = reduced ? 1 : easeOutBack(Math.min(1, ageFrac * 4.2));
+          var fadeAlpha = ageFrac > 0.68 ? Math.max(0, (1 - ageFrac) / 0.32) : 1;
+          var clampedX = clampNum(pp.x, 46, Math.max(46, w - 46));
+          var clampedY = clampNum(pp.y, 18, Math.max(22, h - 14));
+          ctx.save();
+          ctx.translate(clampedX, clampedY);
+          ctx.scale(popScale, popScale);
+          ctx.globalAlpha = fadeAlpha;
+          ctx.font = fontStack(900, pp.size);
+          ctx.textAlign = 'center';
+          ctx.lineWidth = 2.8;
+          ctx.strokeStyle = pal.paper;
+          ctx.strokeText(pp.text, 0, 0);
+          ctx.fillStyle = toneColorFromPalette(pp.tone, pal);
+          ctx.fillText(pp.text, 0, 0);
+          ctx.restore();
+        }
+      },
+      clear: function () {
+        for (var i = 0; i < rings.length; i++) rings[i].active = false;
+        for (var j = 0; j < popups.length; j++) popups[j].active = false;
+      }
+    };
+  }
+
   /* ---------------- Game State Containers ---------------- */
   var state = {
     t: 0,
+    clockSec: 0,
     bootAt: Date.now(),
     lastCash: null,
     lastLang: '',
+    lastDevice: 'pointer',
     hoveredPreviewId: null,
     rafId: 0,
     rafTicks: 0,
     canvasVisibility: {},
+    inputBuffer: ArcadeFeelEngine.createActionBuffer(ARCADE_CONSTANTS.INPUT_BUFFER_SEC),
+    coyote: ArcadeFeelEngine.createCoyoteTracker(ARCADE_CONSTANTS.COYOTE_GRACE_SEC),
+    juice: ArcadeFeelEngine.createJuiceRig(),
+    fxPool: createZeroGcFxPool(24, 24),
+    touchSwipe: { active: false, startX: 0, startY: 0, lastLaneStepX: 0, pointerId: null },
     /* Atmospheric Preview Motes */
     previewFX: {
       rain: [],
@@ -527,7 +1109,9 @@
       score: 0,
       best: 0,
       bags: 0,
+      grazes: 0,
       combo: 1,
+      feverTier: 0,
       nitro: 100,
       boosting: false,
       flash: 0,
@@ -545,7 +1129,9 @@
       speed: 250,
       score: 0,
       crates: 0,
+      grazes: 0,
       combo: 1,
+      feverTier: 0,
       entities: [],
       spawnTimer: 0,
       particles: []
@@ -558,6 +1144,7 @@
       targetCenter: 1.1,
       targetArc: 0.78,
       streak: 0,
+      feverTier: 0,
       banner: '',
       bannerTone: 'gold',
       bannerUntil: 0,
@@ -572,6 +1159,7 @@
       gaugePos: 0.5,
       gaugeDir: 1,
       combo: 0,
+      feverTier: 0,
       banner: '',
       bannerTone: 'good',
       bannerUntil: 0,
@@ -637,11 +1225,88 @@
   }
 
   /* ---------------- 1. HOME & CASINO: Poster Arcade Deck + 4 Playable 60fps Instant Games ---------------- */
+  function emitArcadeBridge(gameKind, cue, comboCount, extra) {
+    var combo = Math.max(1, Math.floor(Number(comboCount) || 1));
+    var fever = getFeverTier(combo, isAr());
+    var detail = Object.assign({
+      cue: cue || 'heavy_bag_impact',
+      game: gameKind || 'arcade',
+      combo: combo,
+      feverTier: fever.tier,
+      feverCode: fever.code
+    }, extra || {});
+
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try {
+        window.ZoneEcs3D.triggerStageAction('safehouse-empire', 'pulse', {
+          game: detail.game,
+          combo: combo,
+          cue: detail.cue,
+          feverCode: fever.code
+        });
+      } catch (_) {}
+    }
+
+    try {
+      window.dispatchEvent(new CustomEvent('zone:audio-cue', { detail: detail }));
+    } catch (_) {}
+
+    if (window.ZoneAudioHaptics && typeof window.ZoneAudioHaptics.play === 'function') {
+      try {
+        window.ZoneAudioHaptics.play(detail.cue, detail);
+      } catch (_) {}
+    }
+  }
+
   function notifySafehouseArcadeWin(gameKind, extra) {
+    var combo = Number(extra && (extra.combo || extra.streak)) || 1;
+    var cueMap = {
+      gym: 'heavy_bag_impact',
+      heist: 'vault_tumbler',
+      getaway: 'cash_payout',
+      'getaway-fence': 'cash_payout',
+      jet: 'cash_payout',
+      roulette: 'roulette_tick',
+      slots: 'jackpot_fanfare'
+    };
+    emitArcadeBridge(gameKind || 'arcade', cueMap[gameKind] || 'cash_payout', combo, extra);
     if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
       try {
         window.ZoneEcs3D.triggerStageAction('safehouse-empire', 'arcade-win', Object.assign({ game: gameKind || 'arcade' }, extra || {}));
       } catch (_) {}
+    }
+  }
+
+  function updateTouchDeckLabels(mode) {
+    var ar = isAr();
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
+    var deck = document.getElementById('zig-touch-controls');
+    if (!deck) return;
+    deck.setAttribute('data-arcade-mode', mode || 'getaway');
+    var leftBtn = deck.querySelector('[data-zig-touch="left"]');
+    var actBtn = deck.querySelector('[data-zig-touch="action"]');
+    var rightBtn = deck.querySelector('[data-zig-touch="right"]');
+    var hintEl = document.getElementById('zig-touch-hint');
+    if (mode === 'heist') {
+      if (leftBtn) leftBtn.textContent = dict.focusBuffer;
+      if (actBtn) actBtn.textContent = dict.crackVault;
+      if (rightBtn) rightBtn.textContent = dict.feverHit;
+      if (hintEl) hintEl.textContent = dict.hintHeist;
+    } else if (mode === 'gym') {
+      if (leftBtn) leftBtn.textContent = dict.focusBuffer;
+      if (actBtn) actBtn.textContent = dict.strikeBag;
+      if (rightBtn) rightBtn.textContent = dict.feverHit;
+      if (hintEl) hintEl.textContent = dict.hintGym;
+    } else if (mode === 'jet') {
+      if (leftBtn) leftBtn.textContent = dict.climbUp;
+      if (actBtn) actBtn.textContent = dict.stabilize;
+      if (rightBtn) rightBtn.textContent = dict.diveDown;
+      if (hintEl) hintEl.textContent = dict.hintJet;
+    } else {
+      if (leftBtn) leftBtn.textContent = dict.steerLeft;
+      if (actBtn) actBtn.textContent = dict.nitroBoost;
+      if (rightBtn) rightBtn.textContent = dict.steerRight;
+      if (hintEl) hintEl.textContent = dict.hintDrift;
     }
   }
 
@@ -679,11 +1344,16 @@
         routeBtn.textContent = ar ? 'تصريف الغنيمة (عملية شارع)' : 'Fence Loot (Run Street Op)';
       }
     }
+    updateTouchDeckLabels(mode);
   }
 
   function startGetawayRun(modeOverride) {
     var mode = (typeof modeOverride === 'string' && modeOverride) ? modeOverride : (state.arcadeMode || 'getaway');
     state.arcadeMode = mode;
+    state.inputBuffer.clear();
+    state.coyote.clear();
+    state.juice.reset();
+    state.fxPool.clear();
     var gw = state.getaway;
     gw.open = true;
 
@@ -695,7 +1365,9 @@
       gw.speed = 275;
       gw.score = 0;
       gw.bags = 0;
+      gw.grazes = 0;
       gw.combo = 1;
+      gw.feverTier = 0;
       gw.nitro = 100;
       gw.boosting = false;
       gw.entities = [];
@@ -711,17 +1383,21 @@
       jt.speed = 255;
       jt.score = 0;
       jt.crates = 0;
+      jt.grazes = 0;
       jt.combo = 1;
+      jt.feverTier = 0;
       jt.entities = [];
       jt.particles = [];
       jt.spawnTimer = 0.35;
       sfx.pickup();
     } else if (mode === 'heist') {
       state.heist.streak = 0;
+      state.heist.feverTier = 0;
       state.heist.speed = 2.55;
       sfx.lockClick();
     } else if (mode === 'gym') {
       state.gym.combo = 0;
+      state.gym.feverTier = 0;
       state.gym.bagVel = -4.8;
       sfx.punch(true);
     }
@@ -737,7 +1413,7 @@
     }
     var gCv = document.getElementById('zig-getaway-canvas');
     if (gCv) observeInteractiveCanvas(gCv);
-    renderActiveArcadeStage(0, performance.now());
+    renderActiveArcadeStage(0, (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(), 0);
     ensureLoopRunning();
   }
 
@@ -762,9 +1438,9 @@
     var langKey = ar ? 'ar' : 'en';
     var existing = document.getElementById('zig-home-arcade');
     if (existing && existing.getAttribute('data-lang') === langKey && existing.getAttribute('data-mounted-screen') === scr && existing.parentElement === main) {
-      /* On Home, guarantee #zig-home-arcade stays right after .zone-home-brief and BEFORE #zone-ascension-hub / .zone-quick-actions */
-      if (scr === 'home' && anchor.nextElementSibling !== existing) {
-        anchor.insertAdjacentElement('afterend', existing);
+      /* On Home, guarantee #zig-home-arcade stays #1 right after .zone-home-brief and BEFORE #zone-ascension-hub & #zone-char-3d */
+      if (scr === 'home') {
+        ensureHomeArcadePlacement(main, existing);
       }
       return;
     }
@@ -832,7 +1508,7 @@
             '</p>' +
           '</div>' +
         '</div>' +
-        '<button type="button" class="zig-sound-btn" id="zig-sound-toggle" data-zig-muted="' + (soundEnabled ? '0' : '1') + '">' +
+        '<button type="button" class="zig-sound-btn" id="zig-sound-toggle" data-zig-muted="' + (soundEnabled ? '0' : '1') + '" data-zig-sfx="' + (soundEnabled ? 'on' : 'off') + '">' +
           renderSoundBtnInner(ar) +
         '</button>' +
       '</div>' +
@@ -869,9 +1545,18 @@
           '</div>' +
         '</div>' +
         '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas" aria-label="' + (ar ? 'منصة ألعاب أركيد النقابة التفاعلية' : 'Syndicate Arcade Interactive Stage') + '"></canvas></div>' +
+        '<div class="zig-touch-deck" id="zig-touch-controls" data-arcade-mode="' + state.arcadeMode + '"' + (isCompactMobile() ? ' data-zig-force-touch="1"' : '') + ' role="group" aria-label="' + (ar ? 'أزرار التحكم باللمس' : 'Arcade Touch Controls') + '">' +
+          '<div class="zig-touch-zones">' +
+            '<button type="button" class="zig-touch-btn" data-zig-touch="left">' + (ar ? ARCADE_I18N.ar.steerLeft : ARCADE_I18N.en.steerLeft) + '</button>' +
+            '<button type="button" class="zig-touch-btn" data-zig-touch="action">' + (ar ? ARCADE_I18N.ar.nitroBoost : ARCADE_I18N.en.nitroBoost) + '</button>' +
+            '<button type="button" class="zig-touch-btn" data-zig-touch="right">' + (ar ? ARCADE_I18N.ar.steerRight : ARCADE_I18N.en.steerRight) + '</button>' +
+          '</div>' +
+          '<div class="zig-touch-hint" id="zig-touch-hint">' + (ar ? ARCADE_I18N.ar.hintDrift : ARCADE_I18N.en.hintDrift) + '</div>' +
+        '</div>' +
       '</div>';
 
     anchor.insertAdjacentElement('afterend', sec);
+    if (scr === 'home') ensureHomeArcadePlacement(main, sec);
     updateArcadeStageBar(state.arcadeMode);
 
     var sndBtn = sec.querySelector('#zig-sound-toggle');
@@ -879,6 +1564,7 @@
       sndBtn.addEventListener('click', function () {
         setSoundEnabled(!soundEnabled);
         sndBtn.setAttribute('data-zig-muted', soundEnabled ? '0' : '1');
+        sndBtn.setAttribute('data-zig-sfx', soundEnabled ? 'on' : 'off');
         if (soundEnabled) sfx.pickup();
         sndBtn.innerHTML = renderSoundBtnInner(isAr());
       });
@@ -929,7 +1615,11 @@
       closeBtn.addEventListener('click', function () {
         state.getaway.open = false;
         state.getaway.running = false;
+        state.getaway.boosting = false;
         state.jet.running = false;
+        state.inputBuffer.clear();
+        state.coyote.clear();
+        state.juice.reset();
         var st = document.getElementById('zig-getaway-stage');
         if (st) st.hidden = true;
         ensureLoopRunning();
@@ -965,22 +1655,100 @@
       });
     }
 
+    var touchDeck = sec.querySelector('#zig-touch-controls');
+    if (touchDeck) {
+      var handleTouchZoneDown = function (zone, ev) {
+        if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+        state.lastDevice = 'touch';
+        ensureAudio();
+        var mode = state.arcadeMode || 'getaway';
+        if (mode === 'heist') {
+          requestHeistAction('touch');
+          return;
+        }
+        if (mode === 'gym') {
+          requestGymAction('touch');
+          return;
+        }
+        if (mode === 'jet') {
+          if (state.jet.gameOver || !state.jet.running) {
+            startGetawayRun('jet');
+            return;
+          }
+          if (zone === 'left') {
+            state.inputBuffer.press('climb_up', state.clockSec, { step: -0.17 });
+            applyBufferedJetControls();
+          } else if (zone === 'right') {
+            state.inputBuffer.press('dive_down', state.clockSec, { step: 0.17 });
+            applyBufferedJetControls();
+          } else {
+            state.jet.targetAlt = 0.5;
+            sfx.lockClick();
+          }
+          emitArcadeBridge('jet', 'ui_nav', state.jet.combo, { zone: zone });
+          return;
+        }
+        if (state.getaway.gameOver || !state.getaway.running) {
+          startGetawayRun('getaway');
+          return;
+        }
+        if (zone === 'left') {
+          state.inputBuffer.press('steer_left', state.clockSec, { delta: -1 });
+          applyBufferedDriftControls();
+          emitArcadeBridge('getaway', 'ui_nav', state.getaway.combo, { zone: 'left' });
+        } else if (zone === 'right') {
+          state.inputBuffer.press('steer_right', state.clockSec, { delta: 1 });
+          applyBufferedDriftControls();
+          emitArcadeBridge('getaway', 'ui_nav', state.getaway.combo, { zone: 'right' });
+        } else if (zone === 'action') {
+          state.getaway.boosting = true;
+          emitArcadeBridge('getaway', 'ui_nav', state.getaway.combo, { zone: 'nitro' });
+        }
+      };
+
+      touchDeck.querySelectorAll('[data-zig-touch]').forEach(function (tBtn) {
+        var zoneName = tBtn.getAttribute('data-zig-touch');
+        tBtn.addEventListener('pointerdown', function (ev) {
+          tBtn.classList.add('is-pressed');
+          handleTouchZoneDown(zoneName, ev);
+        });
+        var releaseTouchZone = function () {
+          tBtn.classList.remove('is-pressed');
+          if (zoneName === 'action') state.getaway.boosting = false;
+        };
+        tBtn.addEventListener('pointerup', releaseTouchZone);
+        tBtn.addEventListener('pointercancel', releaseTouchZone);
+        tBtn.addEventListener('pointerleave', releaseTouchZone);
+      });
+    }
+
     var gCanvas = sec.querySelector('#zig-getaway-canvas');
     if (gCanvas) {
       /* Lock 2D context eagerly so #zig-getaway-canvas never consumes a WebGL slot */
       try { gCanvas.getContext('2d'); } catch (_) {}
       observeInteractiveCanvas(gCanvas);
+      var readEventXY = function (e) {
+        if (e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY, touch: true };
+        if (e.changedTouches && e.changedTouches[0]) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY, touch: true };
+        return { x: Number(e.clientX) || 0, y: Number(e.clientY) || 0, touch: e.pointerType === 'touch' };
+      };
       var interactFromEvent = function (e) {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
         ensureAudio();
+        var pt = readEventXY(e);
+        state.lastDevice = pt.touch ? 'touch' : 'pointer';
+        state.touchSwipe.active = true;
+        state.touchSwipe.startX = pt.x;
+        state.touchSwipe.startY = pt.y;
+        state.touchSwipe.lastLaneStepX = pt.x;
+
         var mode = state.arcadeMode || 'getaway';
         if (mode === 'heist') {
-          e.preventDefault();
-          triggerHeistStrike();
+          requestHeistAction(state.lastDevice);
           return;
         }
         if (mode === 'gym') {
-          e.preventDefault();
-          triggerGymStrike();
+          requestGymAction(state.lastDevice);
           return;
         }
         if (mode === 'jet') {
@@ -989,8 +1757,7 @@
             return;
           }
           var jRect = gCanvas.getBoundingClientRect();
-          var clientY = e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
-          var relY = (clientY - jRect.top) / Math.max(1, jRect.height);
+          var relY = (pt.y - jRect.top) / Math.max(1, jRect.height);
           state.jet.targetAlt = Math.max(0.14, Math.min(0.86, relY));
           sfx.lockClick();
           return;
@@ -1000,42 +1767,156 @@
           return;
         }
         var rect = gCanvas.getBoundingClientRect();
-        var clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
         var roadFrac = isCompactMobile() ? 0.88 : 0.74;
         var roadW = Math.min(rect.width * roadFrac, 380);
         var roadLeft = (rect.width - roadW) * 0.5;
-        var rel = (clientX - rect.left - roadLeft) / roadW;
-        var lane = Math.max(0, Math.min(3, Math.floor(rel * 4)));
-        state.getaway.targetLane = lane;
-        sfx.lockClick();
+        var rel = (pt.x - rect.left - roadLeft) / Math.max(1, roadW);
+        if (rel < 0.02) {
+          state.inputBuffer.press('steer_left', state.clockSec, { delta: -1 });
+          applyBufferedDriftControls();
+        } else if (rel > 0.98) {
+          state.inputBuffer.press('steer_right', state.clockSec, { delta: 1 });
+          applyBufferedDriftControls();
+        } else {
+          var lane = Math.max(0, Math.min(3, Math.floor(rel * 4)));
+          state.getaway.targetLane = lane;
+          sfx.lockClick();
+        }
+      };
+      var moveFromEvent = function (e) {
+        if (!state.touchSwipe.active) return;
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        var pt = readEventXY(e);
+        var mode = state.arcadeMode || 'getaway';
+        if (mode === 'getaway' && state.getaway.running && !state.getaway.gameOver) {
+          var dxStep = pt.x - state.touchSwipe.lastLaneStepX;
+          var dyTotal = pt.y - state.touchSwipe.startY;
+          if (Math.abs(dxStep) >= ARCADE_CONSTANTS.TOUCH_SWIPE_MIN_PX && Math.abs(dxStep) >= Math.abs(dyTotal) * 0.65) {
+            var dir = dxStep > 0 ? 1 : -1;
+            state.touchSwipe.lastLaneStepX = pt.x;
+            state.inputBuffer.press(dir < 0 ? 'steer_left' : 'steer_right', state.clockSec, { delta: dir });
+            applyBufferedDriftControls();
+          } else if (dyTotal <= -28 && state.getaway.nitro > 5) {
+            state.getaway.boosting = true;
+          }
+        } else if (mode === 'jet' && state.jet.running && !state.jet.gameOver) {
+          var jRect = gCanvas.getBoundingClientRect();
+          var relY = (pt.y - jRect.top) / Math.max(1, jRect.height);
+          state.jet.targetAlt = Math.max(0.14, Math.min(0.86, relY));
+        }
+      };
+      var endSwipeEvent = function () {
+        state.touchSwipe.active = false;
+        state.getaway.boosting = false;
       };
       gCanvas.addEventListener('pointerdown', interactFromEvent);
+      gCanvas.addEventListener('pointermove', moveFromEvent);
+      gCanvas.addEventListener('pointerup', endSwipeEvent);
+      gCanvas.addEventListener('pointercancel', endSwipeEvent);
+      gCanvas.addEventListener('touchstart', function (e) {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      }, { passive: false });
+      gCanvas.addEventListener('touchmove', function (e) {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      }, { passive: false });
     }
 
     /* Render 1 crisp static atmospheric frame on all 4 cards at rest (0 continuous rAF loops!) */
     renderStaticHomePreviews();
-    if (state.getaway.open) renderActiveArcadeStage(0, performance.now());
+    if (state.getaway.open) renderActiveArcadeStage(0, (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(), 0);
   }
 
-  /* ---------------- 2. CRIMES: Safe-Crack Reflex Canvas ---------------- */
-  function triggerHeistStrike() {
+  function applyBufferedDriftControls() {
+    var gw = state.getaway;
+    if (!gw.running || gw.gameOver) return false;
+    var leftHit = state.inputBuffer.consume('steer_left', state.clockSec);
+    if (leftHit) {
+      gw.targetLane = Math.max(0, Math.round(gw.targetLane) - 1);
+      sfx.lockClick();
+      return true;
+    }
+    var rightHit = state.inputBuffer.consume('steer_right', state.clockSec);
+    if (rightHit) {
+      gw.targetLane = Math.min(3, Math.round(gw.targetLane) + 1);
+      sfx.lockClick();
+      return true;
+    }
+    return false;
+  }
+
+  function applyBufferedJetControls() {
+    var jt = state.jet;
+    if (!jt.running || jt.gameOver) return false;
+    var upHit = state.inputBuffer.consume('climb_up', state.clockSec);
+    if (upHit) {
+      jt.targetAlt = Math.max(0.14, jt.targetAlt - 0.17);
+      sfx.lockClick();
+      return true;
+    }
+    var downHit = state.inputBuffer.consume('dive_down', state.clockSec);
+    if (downHit) {
+      jt.targetAlt = Math.min(0.86, jt.targetAlt + 0.17);
+      sfx.lockClick();
+      return true;
+    }
+    return false;
+  }
+
+  /* ---------------- 2. CRIMES: Safe-Crack Reflex Canvas (80ms Buffer + 55ms Coyote + 55ms Hit-Stop) ---------------- */
+  function requestHeistAction(sourceDevice) {
     ensureAudio();
+    var h = state.heist;
+    var check = evaluateHeistWindow(h.angle, h.dir, h.speed, h.targetCenter, h.targetArc, state.clockSec, state.coyote);
+    if (check.shouldBuffer) {
+      state.inputBuffer.press('crack_vault', state.clockSec, { source: sourceDevice || state.lastDevice });
+      ensureLoopRunning();
+      return { status: 'buffered', timeToArcMs: check.timeToArcMs };
+    }
+    return triggerHeistStrike({ coyoteSaved: check.coyoteSaved, buffered: false });
+  }
+
+  function triggerHeistStrike(opts) {
+    ensureAudio();
+    var nowMs = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
     var h = state.heist;
     var diff = Math.atan2(Math.sin(h.angle - h.targetCenter), Math.cos(h.angle - h.targetCenter));
     var absDiff = Math.abs(diff);
     var halfArc = h.targetArc * 0.5;
     var ar = isAr();
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
+    var coyoteClaim = (opts && opts.coyoteSaved) ? state.coyote.consumeGrace('heist_arc', state.clockSec) : null;
+    var wasBuffered = Boolean(opts && opts.buffered);
 
-    if (absDiff <= halfArc) {
-      var perfect = absDiff <= halfArc * 0.38;
+    if (absDiff <= halfArc || coyoteClaim) {
+      var perfect = absDiff <= halfArc * 0.38 || Boolean(coyoteClaim && coyoteClaim.meta && coyoteClaim.meta.perfect);
       h.streak += 1;
-      h.banner = perfect
-        ? (ar ? 'اختراق ذهبي متقن! سلسلة ×' + h.streak : 'PERFECT BREACH! STREAK x' + h.streak)
-        : (ar ? 'تم فتح القفل! سلسلة ×' + h.streak : 'TUMBLER CRACKED! STREAK x' + h.streak);
-      h.bannerTone = perfect ? 'gold' : 'good';
-      h.bannerUntil = performance.now() + 2000;
-      sfx.breachWin();
-      for (var i = 0; i < 28; i++) {
+      var fever = getFeverTier(h.streak, ar);
+      var tierUp = fever.tier > h.feverTier;
+      h.feverTier = fever.tier;
+      var tagPrefix = wasBuffered ? (dict.buffered + ' ') : (coyoteClaim ? (dict.clutch + ' ') : '');
+      h.banner = tagPrefix + (perfect
+        ? (ar ? 'اختراق ذهبي متقن! ' + fever.label : 'PERFECT BREACH! ' + fever.label)
+        : (ar ? 'تم فتح القفل! ' + fever.label : 'TUMBLER CRACKED! ' + fever.label));
+      h.bannerTone = (perfect || fever.tier >= 2) ? 'gold' : 'good';
+      h.bannerUntil = nowMs + 2100;
+
+      /* 55ms Unscaled Hit-Stop + Damped trauma^2 Directional Camera Kick */
+      var reduced = isReducedMotion();
+      state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_VAULT_MS, nowMs, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+      state.juice.addTrauma(perfect ? 0.54 : 0.38, Math.cos(h.angle), Math.sin(h.angle), reduced);
+
+      if (tierUp && fever.tier >= 1) sfx.fever(fever.tier);
+      else sfx.breachWin();
+
+      var heistCv = (state.getaway.open && document.getElementById('zig-getaway-canvas')) || document.getElementById('zig-heist-canvas');
+      var hFxX = heistCv ? Math.max(80, (heistCv.clientWidth || 280) * 0.5) : 140;
+      var hFxY = heistCv ? Math.max(54, (heistCv.clientHeight || 168) * 0.52) : 88;
+      state.fxPool.spawnFeverBurst(hFxX, hFxY, fever);
+      state.fxPool.spawnPopup(hFxX, hFxY - 26, fever.tier >= 1 ? fever.label : (wasBuffered ? dict.buffered : '+BREACH'), 'gold', 12);
+
+      var sparkCount = Math.min(28, 16 + fever.tier * 4);
+      for (var i = 0; i < sparkCount; i++) {
+        if (h.sparks.length >= 48) break;
         var a = Math.random() * Math.PI * 2;
         var sp = 60 + Math.random() * 170;
         h.sparks.push({
@@ -1048,8 +1929,9 @@
       }
       h.dir *= -1;
       h.targetCenter = Math.random() * Math.PI * 2;
-      h.speed = Math.min(4.1, 2.4 + h.streak * 0.16);
-      notifySafehouseArcadeWin('heist', { streak: h.streak, perfect: perfect });
+      h.speed = Math.min(4.2, 2.4 + h.streak * 0.16);
+      state.coyote.clear('heist_arc');
+      notifySafehouseArcadeWin('heist', { streak: h.streak, combo: h.streak, perfect: perfect, feverCode: fever.code });
 
       /* Trigger real authoritative crime commit if ready */
       var selected = window.__zoneLastView && window.__zoneLastView.crimeDesk && window.__zoneLastView.crimeDesk.selected;
@@ -1059,15 +1941,21 @@
         var btn = document.querySelector('.zone-crime-plan button[data-crime-attempt]:not([disabled])');
         if (btn) btn.click();
       }
+      ensureLoopRunning();
+      return { status: 'hit', perfect: perfect, streak: h.streak, fever: fever };
     } else {
       h.streak = 0;
+      h.feverTier = 0;
       h.speed = 2.45;
-      h.sirenUntil = performance.now() + 950;
+      h.sirenUntil = nowMs + 950;
       h.banner = ar ? 'انزلق القفل! اضغط داخل القوس الذهبي' : 'TUMBLER SLIPPED: HIT THE GOLD ARC';
       h.bannerTone = 'bad';
-      h.bannerUntil = performance.now() + 1500;
+      h.bannerUntil = nowMs + 1500;
+      state.juice.addTrauma(0.28, 1, 0, isReducedMotion());
       sfx.sirenBuzz();
+      emitArcadeBridge('heist', 'step_fail', 1, { miss: true });
       for (var j = 0; j < 14; j++) {
+        if (h.sparks.length >= 48) break;
         var a2 = Math.random() * Math.PI * 2;
         h.sparks.push({
           x: 0, y: 0,
@@ -1077,6 +1965,8 @@
           tone: 'bad'
         });
       }
+      ensureLoopRunning();
+      return { status: 'miss', streak: 0 };
     }
   }
 
@@ -1099,33 +1989,81 @@
     var c = wrap.querySelector('canvas');
     observeInteractiveCanvas(c);
     c.addEventListener('pointerdown', function (e) {
-      e.preventDefault();
-      triggerHeistStrike();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      requestHeistAction(e && e.pointerType === 'touch' ? 'touch' : 'pointer');
     });
-    renderCrimesGame(0, performance.now());
+    renderCrimesGame(0, (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now());
     ensureLoopRunning();
   }
 
-  /* ---------------- 3. GYM: Heavy-Bag Overdrive Canvas ---------------- */
-  function triggerGymStrike() {
+  /* ---------------- 3. GYM: Heavy-Bag Overdrive Canvas (80ms Buffer + 55ms Coyote + 35ms Hit-Stop) ---------------- */
+  function requestGymAction(sourceDevice) {
     ensureAudio();
     var gm = state.gym;
+    var check = evaluateGymWindow(gm.gaugePos, gm.gaugeDir, 1.15, state.clockSec, state.coyote);
+    if (check.shouldBuffer) {
+      state.inputBuffer.press('strike_bag', state.clockSec, { source: sourceDevice || state.lastDevice });
+      ensureLoopRunning();
+      return { status: 'buffered', timeToSweetMs: check.timeToSweetMs };
+    }
+    return triggerGymStrike({ coyoteSaved: check.coyoteSaved, buffered: false });
+  }
+
+  function triggerGymStrike(opts) {
+    ensureAudio();
+    var nowMs = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    var gm = state.gym;
     var dist = Math.abs(gm.gaugePos - 0.5);
-    var overdrive = dist <= 0.14;
+    var coyoteClaim = (opts && opts.coyoteSaved) ? state.coyote.consumeGrace('gym_sweet', state.clockSec) : null;
+    var wasBuffered = Boolean(opts && opts.buffered);
+    var overdrive = dist <= 0.14 || Boolean(coyoteClaim);
     var ar = isAr();
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
 
     gm.bagVel = -(overdrive ? 6.8 : 4.1);
     gm.combo = overdrive ? gm.combo + 1 : 1;
+    var fever = getFeverTier(overdrive ? gm.combo : 1, ar);
+    var tierUp = overdrive && fever.tier > gm.feverTier;
+    gm.feverTier = overdrive ? fever.tier : 0;
+
+    var prefix = wasBuffered ? (dict.buffered + ' ') : (coyoteClaim ? (dict.clutch + ' ') : '');
     gm.banner = overdrive
-      ? (ar ? 'ضربة قاضية في الذروة ×' + gm.combo : 'OVERDRIVE SWEET-SPOT x' + gm.combo)
+      ? (prefix + (fever.tier >= 2
+          ? fever.label
+          : (ar ? dict.overdrive + ' ×' + gm.combo : dict.overdrive + ' SWEET-SPOT x' + gm.combo)))
       : (ar ? 'ضربة مباشرة، استمر' : 'SOLID BAG STRIKE');
     gm.bannerTone = overdrive ? 'gold' : 'good';
-    gm.bannerUntil = performance.now() + 1600;
-    sfx.punch(overdrive);
-    notifySafehouseArcadeWin('gym', { combo: gm.combo, overdrive: overdrive });
+    gm.bannerUntil = nowMs + 1700;
 
-    gm.rings.push({ r: 14, alpha: 0.9, tone: overdrive ? 'gold' : 'good' });
-    for (var i = 0; i < (overdrive ? 24 : 12); i++) {
+    var reduced = isReducedMotion();
+    if (overdrive) {
+      state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_CRIT_MS, nowMs, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+      state.juice.addTrauma(Math.min(0.68, 0.38 + fever.tier * 0.08), -0.8, -0.45, reduced);
+      state.coyote.clear('gym_sweet');
+      if (tierUp && fever.tier >= 1) sfx.fever(fever.tier);
+      else sfx.punch(true);
+    } else {
+      state.juice.addTrauma(0.16, -0.4, -0.2, reduced);
+      sfx.punch(false);
+    }
+
+    notifySafehouseArcadeWin('gym', { combo: gm.combo, overdrive: overdrive, feverCode: fever.code });
+
+    var ringLoops = overdrive ? Math.max(1, fever.rings) : 1;
+    for (var rk = 0; rk < ringLoops; rk++) {
+      if (gm.rings.length < 18) {
+        gm.rings.push({ r: 13 + rk * 7, alpha: 0.92 - rk * 0.14, tone: overdrive ? 'gold' : 'good' });
+      }
+    }
+    var dmgVal = (overdrive ? 120 : 45) * fever.mult;
+    var gymCv = (state.getaway.open && document.getElementById('zig-getaway-canvas')) || document.getElementById('zig-gym-canvas');
+    var gFxX = gymCv ? Math.max(80, (gymCv.clientWidth || 280) * 0.5) : 140;
+    var gFxY = gymCv ? Math.max(46, (gymCv.clientHeight || 168) * 0.40) : 68;
+    if (overdrive && fever.tier >= 2) state.fxPool.spawnFeverBurst(gFxX, gFxY, fever);
+    state.fxPool.spawnPopup(gFxX, gFxY - 18, '+' + dmgVal + (fever.tier >= 1 ? (' ' + fever.label) : ''), overdrive ? 'gold' : 'good', 11.5);
+
+    for (var i = 0; i < (overdrive ? 22 : 10); i++) {
+      if (gm.sparks.length >= 48) break;
       var ang = -Math.PI * 0.5 + (Math.random() - 0.5) * 2.2;
       var spd = 60 + Math.random() * 140;
       gm.sparks.push({
@@ -1144,6 +2082,8 @@
     } else if (trainBtn) {
       trainBtn.click();
     }
+    ensureLoopRunning();
+    return { status: overdrive ? 'overdrive' : 'solid', combo: gm.combo, fever: fever };
   }
 
   function mountGymGame() {
@@ -1170,10 +2110,10 @@
     var c = wrap.querySelector('canvas');
     observeInteractiveCanvas(c);
     c.addEventListener('pointerdown', function (e) {
-      e.preventDefault();
-      triggerGymStrike();
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      requestGymAction(e && e.pointerType === 'touch' ? 'touch' : 'pointer');
     });
-    renderGymGame(0, performance.now());
+    renderGymGame(0, (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now());
     ensureLoopRunning();
   }
 
@@ -1394,52 +2334,72 @@
     }
   }
 
-  /* ---------------- Keyboard Controls ---------------- */
+  /* ---------------- Keyboard Controls (Named Actions + 80ms Buffer Routing) ---------------- */
   window.addEventListener('keydown', function (e) {
+    if (e.repeat) return;
     var tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
     if (tag === 'input' || tag === 'textarea' || tag === 'select' || (e.target && e.target.isContentEditable)) return;
 
     var main = document.getElementById('zone-main');
     var scr = main ? main.getAttribute('data-zone-screen') : '';
     var interactiveFocus = e.target && e.target.closest ? Boolean(e.target.closest('button, a, [role="button"]')) : false;
+    state.lastDevice = 'keyboard';
 
     if ((scr === 'home' || scr === 'casino') && state.getaway.open) {
       var mode = state.arcadeMode || 'getaway';
-      if (mode === 'getaway' && state.getaway.running) {
+      if (mode === 'getaway') {
+        if (!state.getaway.running || state.getaway.gameOver) {
+          if ((e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !interactiveFocus) {
+            e.preventDefault();
+            startGetawayRun('getaway');
+          }
+          return;
+        }
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
           e.preventDefault();
-          state.getaway.targetLane = Math.max(0, Math.round(state.getaway.targetLane) - 1);
+          state.inputBuffer.press('steer_left', state.clockSec, { delta: -1 });
+          applyBufferedDriftControls();
         } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
           e.preventDefault();
-          state.getaway.targetLane = Math.min(3, Math.round(state.getaway.targetLane) + 1);
+          state.inputBuffer.press('steer_right', state.clockSec, { delta: 1 });
+          applyBufferedDriftControls();
         } else if (e.key === ' ' && !interactiveFocus) {
           e.preventDefault();
           state.getaway.boosting = true;
         }
-      } else if (mode === 'jet' && state.jet.running) {
+      } else if (mode === 'jet') {
+        if (!state.jet.running || state.jet.gameOver) {
+          if ((e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') && !interactiveFocus) {
+            e.preventDefault();
+            startGetawayRun('jet');
+          }
+          return;
+        }
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
           e.preventDefault();
-          state.jet.targetAlt = Math.max(0.14, state.jet.targetAlt - 0.18);
+          state.inputBuffer.press('climb_up', state.clockSec, { step: -0.17 });
+          applyBufferedJetControls();
         } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
           e.preventDefault();
-          state.jet.targetAlt = Math.min(0.86, state.jet.targetAlt + 0.18);
+          state.inputBuffer.press('dive_down', state.clockSec, { step: 0.17 });
+          applyBufferedJetControls();
         }
       } else if (mode === 'heist' && e.key === ' ' && !interactiveFocus) {
         e.preventDefault();
-        triggerHeistStrike();
+        requestHeistAction('keyboard');
       } else if (mode === 'gym' && e.key === ' ' && !interactiveFocus) {
         e.preventDefault();
-        triggerGymStrike();
+        requestGymAction('keyboard');
       }
     } else if (scr === 'crimes' && e.key === ' ' && !interactiveFocus) {
       if (document.getElementById('zig-heist-canvas')) {
         e.preventDefault();
-        triggerHeistStrike();
+        requestHeistAction('keyboard');
       }
     } else if (scr === 'gym' && e.key === ' ' && !interactiveFocus) {
       if (document.getElementById('zig-gym-canvas')) {
         e.preventDefault();
-        triggerGymStrike();
+        requestGymAction('keyboard');
       }
     }
   });
@@ -1635,7 +2595,37 @@
     paintSinglePreviewCanvas(activeCv, now);
   }
 
-  function renderGetawayGame(dt, now) {
+  function pushCameraShakeTransform(ctx, w, h) {
+    ctx.save();
+    if (!isReducedMotion() && (Math.abs(state.juice.offsetX) > 0.01 || Math.abs(state.juice.offsetY) > 0.01 || Math.abs(state.juice.rotation) > 0.0002)) {
+      ctx.translate(w * 0.5 + state.juice.offsetX, h * 0.5 + state.juice.offsetY);
+      ctx.rotate(state.juice.rotation);
+      ctx.translate(-w * 0.5, -h * 0.5);
+    }
+  }
+
+  function drawFeverHudBadge(ctx, x, y, comboCount, ar, pal) {
+    var fever = getFeverTier(comboCount, ar);
+    if (fever.tier <= 0) return;
+    ctx.save();
+    ctx.font = fontStack(900, 10.5);
+    var txt = fever.label;
+    var padX = 8;
+    var bw = Math.min(168, Math.max(66, Math.ceil(ctx.measureText(txt).width) + padX * 2));
+    var bh = 19;
+    var bx = clampNum(x - bw * 0.5, 8, Math.max(8, (ctx.canvas ? (ctx.canvas.clientWidth || 320) : 320) - bw - 8));
+    ctx.fillStyle = fever.tier >= 2 ? pal.goldFill : pal.hudBg;
+    ctx.strokeStyle = '#23201c';
+    ctx.lineWidth = 1.4;
+    ctx.fillRect(bx, y, bw, bh);
+    ctx.strokeRect(bx, y, bw, bh);
+    ctx.fillStyle = fever.tier >= 2 ? '#1e1b18' : pal.sageBright;
+    ctx.textAlign = 'center';
+    ctx.fillText(txt, bx + bw * 0.5, y + 13.5, bw - 6);
+    ctx.restore();
+  }
+
+  function renderGetawayGame(dt, now, realDt) {
     var cv = document.getElementById('zig-getaway-canvas');
     if (!cv || !state.getaway.open) return;
     var compact = isCompactMobile();
@@ -1644,21 +2634,26 @@
     var ctx = s.ctx, w = s.w, h = s.h;
     var gw = state.getaway;
     var ar = isAr();
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
     var pal = getSketchPalette();
+    var reduced = isReducedMotion();
 
     var roadW = Math.min(w * (compact ? 0.88 : 0.74), 380);
     var roadLeft = (w - roadW) * 0.5;
     var laneW = roadW / 4;
 
     if (gw.running && !gw.gameOver) {
+      applyBufferedDriftControls();
       var mult = gw.boosting && gw.nitro > 0 ? 1.55 : 1;
       if (gw.boosting && gw.nitro > 0) gw.nitro = Math.max(0, gw.nitro - dt * 42);
       else gw.nitro = Math.min(100, gw.nitro + dt * 14);
 
+      var fever = getFeverTier(gw.combo, ar);
       var curSpeed = gw.speed * mult;
       gw.speed = Math.min(460, gw.speed + dt * 7.5);
-      gw.score += Math.round(dt * curSpeed * 0.25 * gw.combo);
-      gw.lane += (gw.targetLane - gw.lane) * Math.min(1, dt * 14);
+      gw.score += Math.round(dt * curSpeed * 0.25 * fever.mult);
+      /* Frame-rate-independent exponential smoothing (camera-systems Pattern 2) */
+      gw.lane = expSmooth(gw.lane, gw.targetLane, 14, dt);
 
       gw.spawnTimer -= dt;
       if (gw.spawnTimer <= 0) {
@@ -1669,6 +2664,7 @@
           lane: spawnLane,
           y: -36,
           kind: isLoot ? 'cash' : 'police',
+          grazed: false,
           spd: isLoot ? curSpeed * 0.78 : curSpeed * 0.92
         });
       }
@@ -1684,11 +2680,24 @@
         if (Math.abs(ex - playerX) < laneW * 0.52 && Math.abs(ent.y - playerY) < 28) {
           if (ent.kind === 'cash') {
             gw.bags += 1;
-            gw.combo = Math.min(8, gw.combo + 1);
-            gw.score += 250 * gw.combo;
-            sfx.pickup();
-            notifySafehouseArcadeWin('getaway', { bags: gw.bags, score: gw.score });
-            for (var p = 0; p < 12; p++) {
+            gw.combo = Math.min(12, gw.combo + 1);
+            var pickupFever = getFeverTier(gw.combo, ar);
+            var tierUp = pickupFever.tier > gw.feverTier;
+            gw.feverTier = pickupFever.tier;
+            var bagBonus = 250 * pickupFever.mult;
+            gw.score += bagBonus;
+            if (tierUp && pickupFever.tier >= 1) {
+              sfx.fever(pickupFever.tier);
+              state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_CRIT_MS, now, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+            } else {
+              sfx.pickup();
+            }
+            state.juice.addTrauma(tierUp ? 0.32 : 0.16, 0, -1, reduced);
+            state.fxPool.spawnFeverBurst(ex, ent.y, pickupFever);
+            state.fxPool.spawnPopup(ex, ent.y - 10, '+$' + bagBonus + (tierUp ? (' ' + pickupFever.label) : ''), 'gold', 11.5);
+            notifySafehouseArcadeWin('getaway', { bags: gw.bags, combo: gw.combo, score: gw.score, feverCode: pickupFever.code });
+            for (var p = 0; p < 10; p++) {
+              if (gw.particles.length >= 44) break;
               gw.particles.push({
                 x: ex, y: ent.y,
                 vx: (Math.random() - 0.5) * 160,
@@ -1702,9 +2711,14 @@
           } else {
             gw.gameOver = true;
             gw.running = false;
+            gw.boosting = false;
             gw.best = Math.max(gw.best, gw.score);
+            state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_CRIT_MS, now, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+            state.juice.addTrauma(0.76, playerX >= ex ? 1 : -1, 0.6, reduced);
             sfx.crash();
-            for (var c = 0; c < 22; c++) {
+            emitArcadeBridge('getaway', 'step_fail', 1, { crash: true, score: gw.score });
+            for (var c = 0; c < 20; c++) {
+              if (gw.particles.length >= 52) break;
               gw.particles.push({
                 x: playerX, y: playerY,
                 vx: (Math.random() - 0.5) * 220,
@@ -1714,10 +2728,29 @@
               });
             }
           }
+        } else {
+          /* Near-Miss Graze Bonus (+GRAZE!) passing within tight lane proximity of pursuit cruisers */
+          var grazeHit = checkDriftGraze(ent, roadLeft, laneW, playerX, playerY);
+          if (grazeHit) {
+            gw.grazes += 1;
+            gw.combo = Math.min(12, gw.combo + 1);
+            var gzFever = getFeverTier(gw.combo, ar);
+            gw.feverTier = gzFever.tier;
+            var gzPoints = 120 * gzFever.mult;
+            gw.score += gzPoints;
+            gw.nitro = Math.min(100, gw.nitro + 10);
+            sfx.graze();
+            state.juice.addTrauma(0.20, grazeHit.dirX, 0, reduced);
+            state.fxPool.spawnRing(playerX, playerY, 12, 46, 'gold', 2.4);
+            state.fxPool.spawnPopup(playerX, playerY - 18, dict.graze + ' +' + gzPoints, 'gold', 11.5);
+            emitArcadeBridge('getaway', 'cash_payout', gw.combo, { graze: true, grazes: gw.grazes, score: gw.score });
+          }
         }
         if (ent.y > h + 50) gw.entities.splice(i, 1);
       }
     }
+
+    pushCameraShakeTransform(ctx, w, h);
 
     /* Sketchbook Gouache City Shoulders + Inked Highway */
     var shoulderGrad = ctx.createLinearGradient(0, 0, 0, h);
@@ -1930,6 +2963,10 @@
       ctx.globalAlpha = 1;
     }
 
+    /* Pooled Watercolor Ink Rings & Floating Popups */
+    state.fxPool.renderAndStep(ctx, w, h, realDt != null ? realDt : dt, pal);
+    ctx.restore();
+
     /* Sketchbook Paper-Chip HUD Overlays (Compact Full-Width Strip on <=390px Mobile, Dual Cards on >390px) */
     var mph = Math.round((gw.running && !gw.gameOver ? gw.speed : 0) * (gw.boosting ? 0.62 : 0.44));
     if (w <= 390) {
@@ -1942,7 +2979,7 @@
       ctx.font = fontStack(800, 10.5);
       ctx.textAlign = ar ? 'right' : 'left';
       ctx.fillStyle = pal.gold;
-      var scoreTxt = (ar ? 'النقاط: ' : 'SCORE: ') + gw.score + ' · ' + (ar ? 'حقائب: ' : 'BAGS: ') + gw.bags + ' (x' + gw.combo + ')';
+      var scoreTxt = (ar ? 'النقاط: ' : 'SCORE: ') + gw.score + ' · ' + (ar ? 'حقائب: ' : 'BAGS: ') + gw.bags + ' (' + getFeverTier(gw.combo, ar).label + ')';
       ctx.fillText(scoreTxt, ar ? (w - 14) : 14, 22, Math.max(120, w - 108));
 
       ctx.textAlign = ar ? 'left' : 'right';
@@ -1953,6 +2990,7 @@
       ctx.fillRect(14, 30, w - 28, 6);
       ctx.fillStyle = gw.boosting ? pal.blue : pal.sage;
       ctx.fillRect(14, 30, Math.round((w - 28) * (gw.nitro / 100)), 6);
+      drawFeverHudBadge(ctx, w * 0.5, 45, gw.combo, ar, pal);
     } else {
       ctx.fillStyle = pal.hudBg;
       ctx.fillRect(10, 10, 174, 52);
@@ -1964,7 +3002,7 @@
       ctx.font = fontStack(800, 11);
       ctx.fillText((ar ? 'النقاط: ' : 'SCORE: ') + gw.score, ar ? 176 : 18, 28, 158);
       ctx.fillStyle = pal.sageBright;
-      ctx.fillText((ar ? 'حقائب: ' : 'LOOT BAGS: ') + gw.bags + '  (x' + gw.combo + ')', ar ? 176 : 18, 46, 158);
+      ctx.fillText((ar ? 'حقائب: ' : 'LOOT BAGS: ') + gw.bags + '  (' + getFeverTier(gw.combo, ar).label + ')', ar ? 176 : 18, 46, 158);
 
       ctx.fillStyle = pal.hudBg;
       ctx.fillRect(w - 146, 10, 136, 52);
@@ -1978,6 +3016,7 @@
       ctx.fillRect(w - 136, 38, 118, 8);
       ctx.fillStyle = gw.boosting ? pal.blue : pal.sage;
       ctx.fillRect(w - 136, 38, Math.round(1.18 * gw.nitro), 8);
+      drawFeverHudBadge(ctx, w * 0.5, 12, gw.combo, ar, pal);
     }
 
     if (gw.gameOver || !gw.running) {
@@ -2027,7 +3066,7 @@
     ctx.restore();
   }
 
-  function renderSmugglerJetGame(dt, now, cv) {
+  function renderSmugglerJetGame(dt, now, cv, realDt) {
     var targetCv = cv || document.getElementById('zig-getaway-canvas');
     if (!targetCv) return;
     var compact = isCompactMobile();
@@ -2036,12 +3075,17 @@
     var ctx = s.ctx, w = s.w, h = s.h;
     var jt = state.jet;
     var ar = isAr();
+    var dict = ar ? ARCADE_I18N.ar : ARCADE_I18N.en;
     var pal = getSketchPalette();
+    var reduced = isReducedMotion();
 
     if (jt.running && !jt.gameOver) {
+      applyBufferedJetControls();
+      var fever = getFeverTier(jt.combo, ar);
       jt.speed = Math.min(420, jt.speed + dt * 7);
-      jt.score += Math.round(dt * jt.speed * 0.22 * jt.combo);
-      jt.alt += (jt.targetAlt - jt.alt) * Math.min(1, dt * 11);
+      jt.score += Math.round(dt * jt.speed * 0.22 * fever.mult);
+      /* Frame-rate-independent exponential smoothing (camera-systems Pattern 2) */
+      jt.alt = expSmooth(jt.alt, jt.targetAlt, 11, dt);
       jt.spawnTimer -= dt;
       if (jt.spawnTimer <= 0) {
         jt.spawnTimer = Math.max(0.36, 0.78 - (jt.speed - 250) * 0.0012);
@@ -2050,6 +3094,7 @@
           x: w + 34,
           yFrac: 0.18 + Math.random() * 0.64,
           kind: isCrate ? 'crate' : 'radar',
+          grazed: false,
           spd: jt.speed * (isCrate ? 0.84 : 0.96)
         });
       }
@@ -2063,11 +3108,24 @@
         if (Math.abs(ent.x - planeX) < 26 && Math.abs(ey - planeY) < 22) {
           if (ent.kind === 'crate') {
             jt.crates += 1;
-            jt.combo = Math.min(8, jt.combo + 1);
-            jt.score += 300 * jt.combo;
-            sfx.pickup();
-            notifySafehouseArcadeWin('jet', { crates: jt.crates, score: jt.score });
-            for (var p = 0; p < 12; p++) {
+            jt.combo = Math.min(12, jt.combo + 1);
+            var crateFever = getFeverTier(jt.combo, ar);
+            var tierUp = crateFever.tier > jt.feverTier;
+            jt.feverTier = crateFever.tier;
+            var cratePts = 300 * crateFever.mult;
+            jt.score += cratePts;
+            if (tierUp && crateFever.tier >= 1) {
+              sfx.fever(crateFever.tier);
+              state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_CRIT_MS, now, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+            } else {
+              sfx.pickup();
+            }
+            state.juice.addTrauma(tierUp ? 0.30 : 0.14, 0.6, 0, reduced);
+            state.fxPool.spawnFeverBurst(ent.x, ey, crateFever);
+            state.fxPool.spawnPopup(ent.x, ey - 12, '+' + cratePts + (tierUp ? (' ' + crateFever.label) : ''), 'gold', 11.5);
+            notifySafehouseArcadeWin('jet', { crates: jt.crates, combo: jt.combo, score: jt.score, feverCode: crateFever.code });
+            for (var p = 0; p < 10; p++) {
+              if (jt.particles.length >= 44) break;
               jt.particles.push({
                 x: ent.x, y: ey,
                 vx: (Math.random() - 0.5) * 150,
@@ -2081,8 +3139,12 @@
           } else {
             jt.gameOver = true;
             jt.running = false;
+            state.juice.triggerHitStop(ARCADE_CONSTANTS.HITSTOP_CRIT_MS, now, ARCADE_CONSTANTS.HITSTOP_SLOW_SCALE, reduced);
+            state.juice.addTrauma(0.72, -1, planeY >= ey ? 0.6 : -0.6, reduced);
             sfx.crash();
-            for (var c = 0; c < 20; c++) {
+            emitArcadeBridge('jet', 'stealth_alert', 1, { crash: true, score: jt.score });
+            for (var c = 0; c < 18; c++) {
+              if (jt.particles.length >= 48) break;
               jt.particles.push({
                 x: planeX, y: planeY,
                 vx: (Math.random() - 0.5) * 210,
@@ -2092,10 +3154,28 @@
               });
             }
           }
+        } else {
+          /* Near-Miss Graze Bonus (+GRAZE!) skimming radar rings */
+          var jetGraze = checkJetGraze(ent, planeX, planeY, h);
+          if (jetGraze) {
+            jt.grazes += 1;
+            jt.combo = Math.min(12, jt.combo + 1);
+            var jgFever = getFeverTier(jt.combo, ar);
+            jt.feverTier = jgFever.tier;
+            var jgPts = 150 * jgFever.mult;
+            jt.score += jgPts;
+            sfx.graze();
+            state.juice.addTrauma(0.18, 0, jetGraze.dirY, reduced);
+            state.fxPool.spawnRing(planeX, planeY, 12, 44, 'gold', 2.4);
+            state.fxPool.spawnPopup(planeX + 18, planeY - 16, dict.graze + ' +' + jgPts, 'gold', 11.5);
+            emitArcadeBridge('jet', 'cash_payout', jt.combo, { graze: true, grazes: jt.grazes, score: jt.score });
+          }
         }
         if (ent.x < -44) jt.entities.splice(i, 1);
       }
     }
+
+    pushCameraShakeTransform(ctx, w, h);
 
     var sky = ctx.createLinearGradient(0, 0, 0, h);
     sky.addColorStop(0, pal.shoulderTop);
@@ -2168,15 +3248,20 @@
       ctx.globalAlpha = 1;
     }
 
+    state.fxPool.renderAndStep(ctx, w, h, realDt != null ? realDt : dt, pal);
+    ctx.restore();
+
     ctx.fillStyle = pal.hudBg;
-    ctx.fillRect(10, 8, Math.min(240, w - 20), 28);
+    ctx.fillRect(10, 8, Math.min(256, w - 20), 28);
     ctx.strokeStyle = pal.hudStroke;
     ctx.lineWidth = 1.3;
-    ctx.strokeRect(10, 8, Math.min(240, w - 20), 28);
+    ctx.strokeRect(10, 8, Math.min(256, w - 20), 28);
     ctx.fillStyle = pal.gold;
     ctx.font = fontStack(800, 11);
-    ctx.textAlign = 'left';
-    ctx.fillText((ar ? 'الشحنات: ' : 'AIR DROPS: ') + jt.crates + ' · ' + jt.score, 18, 26);
+    ctx.textAlign = ar ? 'right' : 'left';
+    var jetHudX = ar ? (10 + Math.min(256, w - 20) - 8) : 18;
+    ctx.fillText((ar ? 'الشحنات: ' : 'AIR DROPS: ') + jt.crates + ' · ' + jt.score + ' (' + getFeverTier(jt.combo, ar).label + ')', jetHudX, 26, Math.min(240, w - 34));
+    drawFeverHudBadge(ctx, w - 76, 12, jt.combo, ar, pal);
 
     if (jt.gameOver || !jt.running) {
       ctx.fillStyle = pal.overlayBg;
@@ -2199,22 +3284,22 @@
     }
   }
 
-  function renderActiveArcadeStage(dt, now) {
+  function renderActiveArcadeStage(dt, now, realDt) {
     var gCv = document.getElementById('zig-getaway-canvas');
     if (!gCv || !state.getaway.open) return;
     var mode = state.arcadeMode || 'getaway';
     if (mode === 'heist') {
-      renderCrimesGame(dt, now, gCv);
+      renderCrimesGame(dt, now, gCv, realDt);
     } else if (mode === 'gym') {
-      renderGymGame(dt, now, gCv);
+      renderGymGame(dt, now, gCv, realDt);
     } else if (mode === 'jet') {
-      renderSmugglerJetGame(dt, now, gCv);
+      renderSmugglerJetGame(dt, now, gCv, realDt);
     } else {
-      renderGetawayGame(dt, now);
+      renderGetawayGame(dt, now, realDt);
     }
   }
 
-  function renderCrimesGame(dt, now, cvOverride) {
+  function renderCrimesGame(dt, now, cvOverride, realDt) {
     var cv = cvOverride || document.getElementById('zig-heist-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
@@ -2225,7 +3310,21 @@
     var ar = isAr();
     var pal = getSketchPalette();
 
-    hs.angle = (hs.angle + hs.speed * hs.dir * dt) % (Math.PI * 2);
+    hs.angle = normalizeAnglePositive(hs.angle + hs.speed * hs.dir * dt);
+    var curDiff = Math.atan2(Math.sin(hs.angle - hs.targetCenter), Math.cos(hs.angle - hs.targetCenter));
+    var curAbsDiff = Math.abs(curDiff);
+    var halfArc = hs.targetArc * 0.5;
+    if (curAbsDiff <= halfArc) {
+      state.coyote.markLegal('heist_arc', state.clockSec, { perfect: curAbsDiff <= halfArc * 0.38 });
+      var bufferedCrack = state.inputBuffer.consume('crack_vault', state.clockSec);
+      if (bufferedCrack) {
+        triggerHeistStrike({ buffered: true });
+      }
+    } else if (state.inputBuffer.popExpired('crack_vault', state.clockSec)) {
+      triggerHeistStrike({ buffered: false });
+    }
+
+    pushCameraShakeTransform(ctx, w, h);
 
     /* Sketchbook Cold-Press Vault Base + Gouache Safe-Crack Plate */
     ctx.fillStyle = pal.paper;
@@ -2333,6 +3432,11 @@
       ctx.globalAlpha = 1;
     }
 
+    state.fxPool.renderAndStep(ctx, w, h, realDt != null ? realDt : dt, pal);
+    ctx.restore();
+
+    drawFeverHudBadge(ctx, w * 0.5, 24, hs.streak, ar, pal);
+
     /* Selected Crime Title + Vector Reticle (RTL-Aware & Mobile-Safe) */
     var sel = window.__zoneLastView && window.__zoneLastView.crimeDesk && window.__zoneLastView.crimeDesk.selected;
     var targetName = sel ? sel.name : (ar ? 'خزنة الهدف' : 'TARGET VAULT');
@@ -2380,7 +3484,7 @@
     }
   }
 
-  function renderGymGame(dt, now, cvOverride) {
+  function renderGymGame(dt, now, cvOverride, realDt) {
     var cv = cvOverride || document.getElementById('zig-gym-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
@@ -2396,10 +3500,23 @@
     gm.bagVel += spring * dt;
     gm.bagAngle += gm.bagVel * dt;
 
-    /* Oscillating Power Sweet-Spot Cursor */
+    /* Oscillating Power Sweet-Spot Cursor + 80ms Buffer & 55ms Coyote Grace Resolution */
     gm.gaugePos += gm.gaugeDir * dt * 1.15;
     if (gm.gaugePos >= 1) { gm.gaugePos = 1; gm.gaugeDir = -1; }
     if (gm.gaugePos <= 0) { gm.gaugePos = 0; gm.gaugeDir = 1; }
+
+    var curDist = Math.abs(gm.gaugePos - 0.5);
+    if (curDist <= 0.14) {
+      state.coyote.markLegal('gym_sweet', state.clockSec, { bullseye: curDist <= 0.05 });
+      var bufferedStrike = state.inputBuffer.consume('strike_bag', state.clockSec);
+      if (bufferedStrike) {
+        triggerGymStrike({ buffered: true });
+      }
+    } else if (state.inputBuffer.popExpired('strike_bag', state.clockSec)) {
+      triggerGymStrike({ buffered: false });
+    }
+
+    pushCameraShakeTransform(ctx, w, h);
 
     ctx.fillStyle = pal.paper;
     ctx.fillRect(0, 0, w, h);
@@ -2462,6 +3579,11 @@
       ctx.fillRect(impactX + sp.x - 2, impactY + sp.y - 2, 4, 4);
       ctx.globalAlpha = 1;
     }
+
+    state.fxPool.renderAndStep(ctx, w, h, realDt != null ? realDt : dt, pal);
+    ctx.restore();
+
+    drawFeverHudBadge(ctx, w * 0.5, 8, gm.combo, ar, pal);
 
     /* Power Sweet-Spot Gauge Bar */
     var barW = Math.min(300, Math.max(120, w - 28));
@@ -3006,12 +4128,14 @@
   });
 
   window.addEventListener('zone:mute-change', function (ev) {
+    if (_dispatchingMuteSync) return;
     try {
       var muted = ev && ev.detail ? Boolean(ev.detail.muted) : (localStorage.getItem('zig_muted') === '1');
       soundEnabled = !muted;
       var sndBtn = document.getElementById('zig-sound-toggle');
       if (sndBtn) {
         sndBtn.setAttribute('data-zig-muted', soundEnabled ? '0' : '1');
+        sndBtn.setAttribute('data-zig-sfx', soundEnabled ? 'on' : 'off');
         sndBtn.innerHTML = renderSoundBtnInner(isAr());
       }
     } catch (_) {}
@@ -3093,16 +4217,17 @@
     if (document.hidden) return false;
     var main = document.getElementById('zone-main');
     if (!main) return false;
+    var nowMs = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
     var scr = main.getAttribute('data-zone-screen') || 'home';
     if (scr === 'home') {
       if (state.hoveredPreviewId) return true;
       return Boolean(state.getaway.open && isCanvasVisible('zig-getaway-canvas'));
     }
     if (scr === 'crimes') {
-      return isCanvasVisible('zig-heist-canvas') || isCanvasVisible('zig-crimes-canvas');
+      return isCanvasVisible('zig-heist-canvas') || isCanvasVisible('zig-crimes-canvas') || state.juice.isActive(nowMs);
     }
     if (scr === 'gym') {
-      return isCanvasVisible('zig-gym-canvas');
+      return isCanvasVisible('zig-gym-canvas') || state.juice.isActive(nowMs);
     }
     if (scr === 'casino') {
       if (state.hoveredPreviewId) return true;
@@ -3119,25 +4244,28 @@
       prevTime = 0;
       return;
     }
-    var dt = prevTime ? Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000)) : 0.016;
+    var realDt = prevTime ? Math.min(0.05, Math.max(0.001, (now - prevTime) / 1000)) : 0.016;
     prevTime = now;
+    var step = state.juice.stepReal(realDt, now, isReducedMotion());
+    var dt = step.scaledDt;
+    state.clockSec += dt;
     state.rafTicks += 1;
 
     var main = document.getElementById('zone-main');
     var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
 
     if (scr === 'home') {
-      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
-      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now);
+      if (state.hoveredPreviewId) renderHoveredHomePreview(realDt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now, realDt);
     } else if (scr === 'crimes') {
-      renderCrimesGame(dt, now);
+      renderCrimesGame(dt, now, null, realDt);
     } else if (scr === 'gym') {
-      renderGymGame(dt, now);
+      renderGymGame(dt, now, null, realDt);
     } else if (scr === 'casino') {
-      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
-      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now);
-      if (isCanvasVisible('zig-roulette-canvas')) renderRouletteCanvas(dt, now);
-      if (isCanvasVisible('zig-slots-canvas')) renderSlotsCanvas(dt, now);
+      if (state.hoveredPreviewId) renderHoveredHomePreview(realDt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now, realDt);
+      if (isCanvasVisible('zig-roulette-canvas')) renderRouletteCanvas(realDt, now);
+      if (isCanvasVisible('zig-slots-canvas')) renderSlotsCanvas(realDt, now);
     }
 
     if (shouldRunLoop()) {
@@ -3178,6 +4306,7 @@
   function bindDocAttrObserver() {
     if (docAttrObserver || typeof MutationObserver !== 'function' || !document.documentElement) return;
     docAttrObserver = new MutationObserver(function () {
+      if (isReducedMotion()) state.juice.reset();
       var bar = document.getElementById('zig-world-flight-bar');
       if (bar) bar.removeAttribute('data-sig');
       syncMounts();
@@ -3185,11 +4314,12 @@
     });
     docAttrObserver.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['lang', 'dir', 'data-theme']
+      attributeFilter: ['lang', 'dir', 'data-theme', 'data-zone-reduced-motion']
     });
   }
 
   function bindScopedMainObserver() {
+    if (typeof MutationObserver !== 'function') return false;
     if (document.querySelector('x-dc')) return false;
     var main = document.getElementById('zone-main');
     if (!main) return false;
@@ -3283,7 +4413,7 @@
     syncHallOfFame();
     ensureLoopRunning();
 
-    /* Detect cash reward deltas for arcade floating popups (ignore initial boot hydration 0 -> $2,500) */
+    /* Detect cash reward deltas for arcade floating popups + Live 3D/Audio Bridge (ignore initial boot hydration 0 -> $2,500) */
     var g = window.__zoneGame;
     if (g && g.p && Number.isFinite(Number(g.p.cash))) {
       var curCash = Number(g.p.cash);
@@ -3291,6 +4421,7 @@
         var diff = curCash - state.lastCash;
         if (diff > 0 && diff < 50000000) {
           spawnFloatingReward('+$' + diff.toLocaleString('en-US'), 'good');
+          emitArcadeBridge('payout', 'cash_payout', 1, { cashDelta: diff });
         }
       }
       state.lastCash = curCash;
@@ -3298,6 +4429,11 @@
   }
 
   window.addEventListener('zone:render', syncMounts);
+  window.addEventListener('zone:ascension-updated', function () {
+    var main = document.getElementById('zone-main');
+    var arc = document.getElementById('zig-home-arcade');
+    if (main && arc) ensureHomeArcadePlacement(main, arc);
+  });
   document.addEventListener('visibilitychange', function () {
     ensureLoopRunning();
     if (!document.hidden) paintIdleVisibleCanvases();
@@ -3334,6 +4470,10 @@
   window.__zoneInstantGamesStats = {
     isLoopRunning: function () { return Boolean(state.rafId); },
     getTicks: function () { return state.rafTicks; },
-    getHoveredPreviewId: function () { return state.hoveredPreviewId; }
+    getHoveredPreviewId: function () { return state.hoveredPreviewId; },
+    getArcadeState: function () { return state; },
+    startRun: startGetawayRun,
+    requestGymAction: requestGymAction,
+    requestHeistAction: requestHeistAction
   };
 })();
