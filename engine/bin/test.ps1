@@ -98,6 +98,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\LoadoutSynergyTest.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\PlayerSettingsTest.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\SyndicateChatTest.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\SyndicateCompanionTest.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($env:ZONE_POSTGRES_TEST_URL) {
     & $php -d extension=pdo_pgsql (Join-Path $repositoryRoot 'engine\tests\postgres-beta.php')
     exit $LASTEXITCODE

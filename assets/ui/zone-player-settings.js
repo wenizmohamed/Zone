@@ -971,6 +971,13 @@
       syncMountedChromeButtons();
     }
 
+    function setAttrIfChanged(el, attr, val) {
+      if (!el || typeof el.setAttribute !== 'function') return;
+      var s = String(val);
+      if (typeof el.getAttribute === 'function' && el.getAttribute(attr) === s) return;
+      el.setAttribute(attr, s);
+    }
+
     function syncMountedChromeButtons() {
       if (!doc || typeof doc.getElementById !== 'function') return;
       var copy = t();
@@ -978,30 +985,43 @@
 
       var muteBtn = doc.getElementById('zps-global-mute-btn');
       if (muteBtn) {
-        muteBtn.setAttribute('data-zps-muted', muted ? '1' : '0');
-        muteBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
-        muteBtn.setAttribute('aria-label', muted ? copy.soundAriaMuted : copy.soundAriaOn);
-        muteBtn.title = muted ? copy.soundAriaMuted : copy.soundAriaOn;
-        muteBtn.innerHTML = renderMuteButtonHtml();
+        setAttrIfChanged(muteBtn, 'data-zps-muted', muted ? '1' : '0');
+        setAttrIfChanged(muteBtn, 'aria-pressed', muted ? 'true' : 'false');
+        setAttrIfChanged(muteBtn, 'aria-label', muted ? copy.soundAriaMuted : copy.soundAriaOn);
+        var nextTitle = muted ? copy.soundAriaMuted : copy.soundAriaOn;
+        if (muteBtn.title !== nextTitle) muteBtn.title = nextTitle;
+        var nextMuteHtml = renderMuteButtonHtml();
+        if (muteBtn.__zpsLastHtml !== nextMuteHtml) {
+          muteBtn.__zpsLastHtml = nextMuteHtml;
+          muteBtn.innerHTML = nextMuteHtml;
+        }
       }
 
       var settingsBtn = doc.getElementById('zps-open-settings-btn');
       if (settingsBtn) {
-        settingsBtn.setAttribute('aria-expanded', modalOpen ? 'true' : 'false');
-        settingsBtn.setAttribute('aria-label', copy.settingsAria);
-        settingsBtn.title = copy.settingsAria;
-        settingsBtn.innerHTML = renderSettingsButtonHtml();
+        setAttrIfChanged(settingsBtn, 'aria-expanded', modalOpen ? 'true' : 'false');
+        setAttrIfChanged(settingsBtn, 'aria-label', copy.settingsAria);
+        if (settingsBtn.title !== copy.settingsAria) settingsBtn.title = copy.settingsAria;
+        var nextSettingsHtml = renderSettingsButtonHtml();
+        if (settingsBtn.__zpsLastHtml !== nextSettingsHtml) {
+          settingsBtn.__zpsLastHtml = nextSettingsHtml;
+          settingsBtn.innerHTML = nextSettingsHtml;
+        }
       }
 
       var sidebarBtn = doc.getElementById('zps-sidebar-settings-btn');
       if (sidebarBtn) {
-        sidebarBtn.setAttribute('aria-label', copy.settingsAria);
-        sidebarBtn.innerHTML =
+        setAttrIfChanged(sidebarBtn, 'aria-label', copy.settingsAria);
+        var nextSidebarHtml =
           '<span class="zps-sidebar-btn-main">' +
             '<span class="zps-sidebar-btn-ico" aria-hidden="true">' + SVG_SETTINGS_GEAR + '</span>' +
             '<span class="zps-sidebar-btn-lbl">' + copy.settingsBtn + '</span>' +
           '</span>' +
           '<kbd class="zps-sidebar-btn-kbd">' + (settings.controls.keybinds.settings || ',') + '</kbd>';
+        if (sidebarBtn.__zpsLastHtml !== nextSidebarHtml) {
+          sidebarBtn.__zpsLastHtml = nextSidebarHtml;
+          sidebarBtn.innerHTML = nextSidebarHtml;
+        }
       }
     }
 
@@ -1925,8 +1945,12 @@
       domObserver.observe(doc.body, { childList: true, subtree: true });
     }
 
-    // Attempt initial non-blocking cloud hydration if fetch is provided
-    if (fetchFn && !env.skipInitialFetch) {
+    // Attempt initial non-blocking cloud hydration if fetch is provided (skip on standalone signed-out /account page so zero 401s fire)
+    var isStandaloneAccountPage = Boolean(
+      (doc && doc.body && doc.body.classList && typeof doc.body.classList.contains === 'function' && doc.body.classList.contains('zone-account')) ||
+      (win && win.location && /\/account(?:\.html)?$/i.test(String(win.location.pathname || '')))
+    );
+    if (fetchFn && !env.skipInitialFetch && !isStandaloneAccountPage) {
       fetchFromCloudAsync();
     }
 

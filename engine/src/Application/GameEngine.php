@@ -31,6 +31,9 @@ use Zone\Engine\Core\Game\CityActivitiesService;
 use Zone\Engine\Core\Game\EconomyAntiCheatService;
 use Zone\Engine\Core\Game\FactionTerritoryWarService;
 use Zone\Engine\Core\Game\LoadoutSynergyService;
+use Zone\Engine\Core\Game\PlayerSettingsService;
+use Zone\Engine\Core\Game\SyndicateChatService;
+use Zone\Engine\Core\Game\SyndicateCompanionService;
 use Zone\Engine\Core\Game\RankAndSkillTreeService;
 use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
@@ -1632,6 +1635,66 @@ final class GameEngine
             $this->recordActionAttempt($playerId);
         }
         return (new LoadoutSynergyService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function playerSettings(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(PlayerSettingsService::class)) {
+            throw new RuntimeException('PlayerSettingsService is unavailable.');
+        }
+        return (new PlayerSettingsService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function playerSettingsAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(PlayerSettingsService::class)) {
+            throw new RuntimeException('PlayerSettingsService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['settings.get', 'get', 'state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new PlayerSettingsService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function syndicateChat(string $playerId = 'founder-player', string $channel = 'global', ?int $sinceId = null, string $district = 'center'): array
+    {
+        if (!class_exists(SyndicateChatService::class)) {
+            throw new RuntimeException('SyndicateChatService is unavailable.');
+        }
+        return (new SyndicateChatService($this->database, $this->events))->snapshot($playerId, $channel, $sinceId, $district);
+    }
+
+    public function syndicateChatAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(SyndicateChatService::class)) {
+            throw new RuntimeException('SyndicateChatService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['chat.state', 'state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new SyndicateChatService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function companions(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(SyndicateCompanionService::class)) {
+            throw new RuntimeException('SyndicateCompanionService is unavailable.');
+        }
+        return (new SyndicateCompanionService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function companionsAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(SyndicateCompanionService::class)) {
+            throw new RuntimeException('SyndicateCompanionService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['companion.state', 'state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new SyndicateCompanionService($this->database, $this->events))->act($playerId, $action, $payload);
     }
 
     public function cityActivities(string $playerId = 'founder-player'): array

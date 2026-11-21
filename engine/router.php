@@ -915,6 +915,42 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'GET' && $path === '/api/v1/settings') {
+        json_response($engine->playerSettings(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/settings/action') {
+        $body = request_json();
+        $action = is_string($body['action'] ?? null) && trim($body['action']) !== '' ? trim($body['action']) : 'settings.save';
+        $pid = current_player_id();
+        $res = $engine->playerSettingsAction($action, $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && ($path === '/api/v1/syndicate-chat' || $path === '/api/v1/chat')) {
+        $channel = isset($_GET['channel']) && is_string($_GET['channel']) && trim($_GET['channel']) !== '' ? trim($_GET['channel']) : 'global';
+        $sinceId = isset($_GET['sinceId']) && is_numeric($_GET['sinceId']) ? (int) $_GET['sinceId'] : null;
+        $district = isset($_GET['district']) && is_string($_GET['district']) && trim($_GET['district']) !== '' ? trim($_GET['district']) : 'center';
+        json_response($engine->syndicateChat(current_player_id(), $channel, $sinceId, $district));
+    }
+    if ($method === 'POST' && ($path === '/api/v1/syndicate-chat/action' || $path === '/api/v1/chat/action')) {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Chat action must be text.');
+        $pid = current_player_id();
+        $res = $engine->syndicateChatAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/companions') {
+        json_response($engine->companions(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/companions/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Companion action must be text.');
+        $pid = current_player_id();
+        $res = $engine->companionsAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);
