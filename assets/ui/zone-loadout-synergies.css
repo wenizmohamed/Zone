@@ -1,0 +1,578 @@
+/* ==========================================================================
+ * ZONE v157 - TRACK 10: 9-SLOT SET SYNERGIES, PERK DECK & CHARACTER CARD UI
+ * Exclusive Ownership: @rpg-synergy-kit (assets/ui/zone-loadout-synergies.css)
+ * 4-Way Parity: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL
+ * Mobile Guarantee: 0px horizontal overflow at 390px viewport width
+ * ========================================================================== */
+
+:root,
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body {
+  --zls-card-bg: var(--zwc-surface, #1e1b17);
+  --zls-subcard-bg: var(--zwc-paper-subcard, #25211c);
+  --zls-well-bg: var(--zwc-well-bg, #161310);
+  --zls-ink: var(--zwc-ink, #f3ecdc);
+  --zls-ink-soft: var(--zwc-ink-soft, #d8ccb6);
+  --zls-ink-muted: var(--zwc-ink-muted, #aca08a);
+  --zls-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --zls-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
+  --zls-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
+  --zls-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
+  --zls-sage-bg: rgba(109, 153, 73, 0.22);
+  --zls-sage-ink: #a6f292;
+  --zls-sage-fill: #5c8e3e;
+  --zls-gold-bg: rgba(240, 196, 101, 0.2);
+  --zls-gold-ink: #f4cf78;
+  --zls-gold-fill: #d99a38;
+  --zls-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zls-crimson-ink: #ff9c8a;
+  --zls-crimson-fill: #c44933;
+  --zls-blue-bg: rgba(62, 111, 176, 0.22);
+  --zls-blue-ink: #93c5fd;
+  --zls-blue-fill: #4f85c9;
+  --zls-plum-bg: rgba(168, 85, 247, 0.2);
+  --zls-plum-ink: #e4c4ff;
+  --zls-btn-bg: var(--zwc-btn-bg, #2b2620);
+  --zls-btn-hover: var(--zwc-btn-hover, #38322a);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root #zone-main {
+  --zls-card-bg: var(--zwc-surface, #fbf7ee);
+  --zls-subcard-bg: var(--zwc-paper-subcard, #f4ecdb);
+  --zls-well-bg: var(--zwc-well-bg, rgba(232, 221, 198, 0.62));
+  --zls-ink: var(--zwc-ink, #1e1b18);
+  --zls-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zls-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zls-border: var(--zwc-border-strong, #23201c);
+  --zls-border-sub: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --zls-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zls-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.14));
+  --zls-sage-bg: rgba(109, 153, 73, 0.24);
+  --zls-sage-ink: #1b4d23;
+  --zls-sage-fill: #497230;
+  --zls-gold-bg: rgba(218, 168, 59, 0.26);
+  --zls-gold-ink: #5e3b06;
+  --zls-gold-fill: #b87e1f;
+  --zls-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zls-crimson-ink: #781e0f;
+  --zls-crimson-fill: #a93522;
+  --zls-blue-bg: rgba(62, 111, 176, 0.2);
+  --zls-blue-ink: #193b68;
+  --zls-blue-fill: #3766a3;
+  --zls-plum-bg: rgba(147, 51, 234, 0.18);
+  --zls-plum-ink: #4c1d95;
+  --zls-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zls-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+}
+
+html[data-zone-contrast="high"] .zls-scope {
+  --zls-border: currentColor;
+}
+
+.zls-scope,
+.zls-scope * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.zls-scope {
+  width: 100%;
+  max-width: 100%;
+  margin-block: 12px;
+  padding: 13px 14px;
+  border: 1.7px solid var(--zls-border);
+  border-radius: var(--zwc-radius-sketch, 14px);
+  background: var(--zls-card-bg);
+  color: var(--zls-ink);
+  box-shadow: var(--zls-shadow);
+  font-family: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+html[dir="rtl"] .zls-scope,
+html:lang(ar) .zls-scope {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .zls-scope *,
+html:lang(ar) .zls-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Header & Pills */
+.zls-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 10px;
+}
+
+.zls-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1 1 200px;
+}
+
+.zls-crest-badge {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--zls-border);
+  border-radius: 10px;
+  background: var(--zls-subcard-bg);
+  box-shadow: var(--zls-shadow-sub);
+}
+
+.zls-crest-badge svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.zls-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zls-ink);
+}
+
+.zls-sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--zls-ink-soft);
+}
+
+.zls-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zls-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1.35px solid var(--zls-border);
+  background: var(--zls-subcard-bg);
+  color: var(--zls-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+.zls-pill[data-tone="sage"] { background: var(--zls-sage-bg); color: var(--zls-sage-ink); }
+.zls-pill[data-tone="gold"] { background: var(--zls-gold-bg); color: var(--zls-gold-ink); }
+.zls-pill[data-tone="crimson"] { background: var(--zls-crimson-bg); color: var(--zls-crimson-ink); }
+.zls-pill[data-tone="blue"] { background: var(--zls-blue-bg); color: var(--zls-blue-ink); }
+.zls-pill[data-tone="plum"] { background: var(--zls-plum-bg); color: var(--zls-plum-ink); }
+
+/* Section Dividers */
+.zls-block {
+  margin-block-start: 10px;
+  padding: 10px 11px;
+  border: 1.4px solid var(--zls-border-sub);
+  border-radius: 11px;
+  background: var(--zls-well-bg);
+}
+
+.zls-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 8px;
+}
+
+.zls-block-title {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--zls-ink);
+}
+
+/* 1. Active Set Synergy Meter */
+.zls-sets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.zls-set-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px 10px;
+  border: 1.4px solid var(--zls-border-sub);
+  border-radius: 10px;
+  background: var(--zls-subcard-bg);
+  cursor: pointer;
+  text-align: start;
+  color: inherit;
+  font: inherit;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.zls-set-card:hover {
+  border-color: var(--zls-border);
+  transform: translateY(-1px);
+}
+
+.zls-set-card.is-active {
+  border-color: var(--zls-border);
+  box-shadow: var(--zls-shadow-sub);
+}
+
+.zls-set-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zls-set-name {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--zls-ink);
+}
+
+.zls-meter-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.zls-meter-pip {
+  height: 7px;
+  border-radius: 999px;
+  border: 1px solid var(--zls-border-sub);
+  background: rgba(128, 120, 108, 0.2);
+}
+
+.zls-meter-pip.is-filled[data-tone="sage"] { background: var(--zls-sage-fill); }
+.zls-meter-pip.is-filled[data-tone="crimson"] { background: var(--zls-crimson-fill); }
+.zls-meter-pip.is-filled[data-tone="gold"] { background: var(--zls-gold-fill); }
+.zls-meter-pip.is-filled[data-tone="blue"] { background: var(--zls-blue-fill); }
+
+.zls-set-bonus {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--zls-ink-soft);
+}
+
+.zls-set-bonus.is-unlocked {
+  font-weight: 700;
+  color: var(--zls-ink);
+}
+
+/* 2. 3-Card Tactical Perk Deck Builder */
+.zls-energy-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.zls-energy-pips {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.zls-e-pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1.2px solid var(--zls-border);
+  background: transparent;
+}
+
+.zls-e-pip.is-on {
+  background: var(--zls-gold-fill);
+}
+
+.zls-deck-slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-block-end: 9px;
+}
+
+.zls-slot-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 82px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  border: 1.5px dashed var(--zls-border-sub);
+  background: var(--zls-card-bg);
+}
+
+.zls-slot-box.is-filled {
+  border-style: solid;
+  border-color: var(--zls-border);
+  background: var(--zls-subcard-bg);
+  box-shadow: var(--zls-shadow-sub);
+}
+
+.zls-slot-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--zls-ink-muted);
+  font-weight: 700;
+}
+
+.zls-slot-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--zls-ink);
+}
+
+.zls-slot-meta {
+  font-size: 10.5px;
+  color: var(--zls-ink-soft);
+  line-height: 1.3;
+}
+
+.zls-combos-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block-end: 9px;
+}
+
+.zls-pool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.zls-card-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 9px;
+  border: 1.4px solid var(--zls-border-sub);
+  border-radius: 10px;
+  background: var(--zls-subcard-bg);
+}
+
+.zls-card-tile.is-equipped {
+  border-color: var(--zls-border);
+  box-shadow: var(--zls-shadow-sub);
+}
+
+.zls-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.zls-card-name {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zls-ink);
+}
+
+.zls-card-type {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--zls-ink-muted);
+}
+
+.zls-card-desc {
+  font-size: 10.8px;
+  line-height: 1.35;
+  color: var(--zls-ink-soft);
+}
+
+.zls-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1.4px solid var(--zls-border);
+  background: var(--zls-btn-bg);
+  color: var(--zls-ink);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.zls-btn:hover:not(:disabled) {
+  background: var(--zls-btn-hover);
+}
+
+.zls-btn[data-tone="sage"] {
+  background: var(--zls-sage-bg);
+  color: var(--zls-sage-ink);
+}
+
+.zls-btn[data-tone="crimson"] {
+  background: var(--zls-crimson-bg);
+  color: var(--zls-crimson-ink);
+}
+
+.zls-btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+/* 3. Illustrated Operative Character Card (`character-card` SOP) */
+.zls-op-card {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1.6px solid var(--zls-border);
+  border-radius: 12px;
+  background: var(--zls-subcard-bg);
+  box-shadow: var(--zls-shadow-sub);
+}
+
+.zls-op-portrait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  border: 1.4px solid var(--zls-border);
+  background: var(--zls-well-bg);
+}
+
+.zls-op-portrait svg {
+  width: 60px;
+  height: 60px;
+  display: block;
+}
+
+.zls-op-rarity {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.zls-op-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zls-op-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zls-op-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--zls-ink);
+}
+
+.zls-op-tagline {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--zls-gold-ink);
+}
+
+.zls-op-lore {
+  margin: 0;
+  font-size: 11.2px;
+  line-height: 1.4;
+  color: var(--zls-ink-soft);
+}
+
+.zls-op-assets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.zls-asset-tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--zls-border-sub);
+  background: var(--zls-card-bg);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--zls-ink-muted);
+}
+
+.zls-feedback {
+  margin-block-start: 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1.3px solid var(--zls-border);
+  background: var(--zls-subcard-bg);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.zls-feedback[data-tone="sage"] { background: var(--zls-sage-bg); color: var(--zls-sage-ink); }
+.zls-feedback[data-tone="gold"] { background: var(--zls-gold-bg); color: var(--zls-gold-ink); }
+.zls-feedback[data-tone="crimson"] { background: var(--zls-crimson-bg); color: var(--zls-crimson-ink); }
+
+@media (max-width: 720px) {
+  .zls-pool-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .zls-scope {
+    padding: 10px;
+  }
+  .zls-sets-grid,
+  .zls-deck-slots,
+  .zls-pool-grid,
+  .zls-op-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zls-op-portrait {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zls-set-card {
+    transition: none;
+  }
+}
