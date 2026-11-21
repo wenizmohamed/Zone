@@ -593,15 +593,15 @@
     startObserver();
   }
 
-  // Import articulated rigged operative module FIRST so globalThis.__ZoneRiggedOperative
-  // is registered synchronously before zone-ecs-3d-engine.mjs builds any stages!
+  // Import articulated rigged operative & 3D architectural stage environments FIRST
+  // so globalThis.__ZoneRiggedOperative and globalThis.__Zone3DEnvironments are live before stages build!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=156')
+    return import('./zone-3d-rigged-operative.mjs?v=157')
       .catch(function () {
-        return import('./zone-3d-rigged-operative.mjs?v=155');
+        return import('./zone-3d-rigged-operative.mjs?v=156');
       })
       .catch(function () {
-        return import('./zone-3d-rigged-operative.mjs?v=154');
+        return import('./zone-3d-rigged-operative.mjs?v=155');
       })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs');
@@ -619,8 +619,32 @@
       });
   }
 
+  function loadEnvironmentsModule() {
+    return import('./zone-3d-environments.mjs?v=157')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=156');
+      })
+      .catch(function () {
+        return import('./zone-3d-environments.mjs');
+      })
+      .then(function (envMod) {
+        if (envMod && typeof envMod.dressStageEnvironment3D === 'function' && !globalThis.__Zone3DEnvironments) {
+          globalThis.__Zone3DEnvironments = {
+            dressStageEnvironment3D: envMod.dressStageEnvironment3D,
+          };
+        }
+        return envMod;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=156')
+    return import('./zone-ecs-3d-engine.mjs?v=157')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=156');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=155');
       })
@@ -643,6 +667,7 @@
       return loadEngineModule();
     })
     .then(function (mod) {
+      loadEnvironmentsModule();
       if (!mod || typeof mod.createZoneEcs3DRuntime !== 'function') return;
       runtime = mod.createZoneEcs3DRuntime();
       var queued = pendingCalls.splice(0, pendingCalls.length);

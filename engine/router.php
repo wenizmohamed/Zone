@@ -889,6 +889,32 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'GET' && $path === '/api/v1/faction-war') {
+        $sinceSeq = isset($_GET['sinceSeq']) && is_numeric($_GET['sinceSeq']) ? (int) $_GET['sinceSeq'] : null;
+        $district = isset($_GET['district']) && is_string($_GET['district']) && trim($_GET['district']) !== ''
+            ? trim($_GET['district'])
+            : 'center';
+        json_response($engine->factionWar(current_player_id(), $sinceSeq, $district));
+    }
+    if ($method === 'POST' && $path === '/api/v1/faction-war/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Faction war action must be text.');
+        $pid = current_player_id();
+        $res = $engine->factionWarAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
+    if ($method === 'GET' && $path === '/api/v1/synergies') {
+        json_response($engine->synergies(current_player_id()));
+    }
+    if ($method === 'POST' && $path === '/api/v1/synergies/action') {
+        $body = request_json();
+        if (!is_string($body['action'] ?? null)) throw new InvalidArgumentException('Synergy action must be text.');
+        $pid = current_player_id();
+        $res = $engine->synergiesAction($body['action'], $body, $pid);
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     json_response(['error' => 'Route not found.', 'method' => $method, 'path' => $path], 404);
 } catch (JsonException $exception) {
     json_response(['error' => 'Invalid JSON.', 'detail' => $exception->getMessage()], 400);

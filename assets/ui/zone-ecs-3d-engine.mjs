@@ -27,6 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs';
 
 export {
   THREE,
@@ -2567,6 +2568,21 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   refs.vfx = stageVfx;
   world.registerStageVfx(stageVfx);
 
+  const dressEnvFn = (globalThis.__Zone3DEnvironments && typeof globalThis.__Zone3DEnvironments.dressStageEnvironment3D === 'function')
+    ? globalThis.__Zone3DEnvironments.dressStageEnvironment3D
+    : dressStageEnvironment3D;
+  const stageEnv = typeof dressEnvFn === 'function'
+    ? dressEnvFn(THREE, kind, scene, {
+        viewportWidth: initialState.viewportWidth,
+        era: Number(initialState.era || (initialState.eraProgression && initialState.eraProgression.currentEra) || 1),
+        headless,
+      })
+    : null;
+  if (stageEnv) {
+    refs.env = stageEnv;
+    world.registerStageVfx(stageEnv);
+  }
+
   const playEidRigState = (eid, clipName, fadeSec = 0.18) => {
     if (eid === undefined || eid < 0) return false;
     const rigs = world.riggedCache[eid];
@@ -3253,6 +3269,10 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       triggerAction(explicitActKey, stateObj);
     }
 
+    if (stageEnv && typeof stageEnv.setEra === 'function' && (stateObj.era !== undefined || (stateObj.eraProgression && stateObj.eraProgression.currentEra !== undefined))) {
+      stageEnv.setEra(Number(stateObj.era ?? stateObj.eraProgression.currentEra ?? 1));
+    }
+
     if (kind === 'safehouse-empire') {
       const prevEra = refs.compoundGroup && refs.compoundGroup.userData ? refs.compoundGroup.userData.era : 1;
       const nextEra = Number(
@@ -3330,6 +3350,10 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   function dispose() {
     world.unregisterStageVfx(stageVfx);
     stageVfx.dispose();
+    if (stageEnv) {
+      world.unregisterStageVfx(stageEnv);
+      if (typeof stageEnv.dispose === 'function') stageEnv.dispose();
+    }
     for (let i = 0; i < spawnedEids.length; i++) {
       const rigs = world.riggedCache[spawnedEids[i]];
       if (rigs) {

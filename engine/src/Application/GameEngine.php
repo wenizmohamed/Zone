@@ -29,6 +29,8 @@ use Zone\Engine\Core\Game\ForeignMarketService;
 use Zone\Engine\Core\Game\AscensionEngineService;
 use Zone\Engine\Core\Game\CityActivitiesService;
 use Zone\Engine\Core\Game\EconomyAntiCheatService;
+use Zone\Engine\Core\Game\FactionTerritoryWarService;
+use Zone\Engine\Core\Game\LoadoutSynergyService;
 use Zone\Engine\Core\Game\RankAndSkillTreeService;
 use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
@@ -1590,6 +1592,46 @@ final class GameEngine
             $this->recordActionAttempt($playerId);
         }
         return (new EconomyAntiCheatService($this->database, $this->ledger, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function factionWar(string $playerId = 'founder-player', ?int $sinceSeq = null, string $district = 'center'): array
+    {
+        if (!class_exists(FactionTerritoryWarService::class)) {
+            throw new RuntimeException('FactionTerritoryWarService is unavailable.');
+        }
+        return (new FactionTerritoryWarService($this->database, $this->events))->snapshot($playerId, $sinceSeq, $district);
+    }
+
+    public function factionWarAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(FactionTerritoryWarService::class)) {
+            throw new RuntimeException('FactionTerritoryWarService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['faction_war.state', 'state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new FactionTerritoryWarService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function synergies(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(LoadoutSynergyService::class)) {
+            throw new RuntimeException('LoadoutSynergyService is unavailable.');
+        }
+        return (new LoadoutSynergyService($this->database, $this->events))->snapshot($playerId);
+    }
+
+    public function synergiesAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(LoadoutSynergyService::class)) {
+            throw new RuntimeException('LoadoutSynergyService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['synergy.state', 'state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new LoadoutSynergyService($this->database, $this->events))->act($playerId, $action, $payload);
     }
 
     public function cityActivities(string $playerId = 'founder-player'): array
