@@ -349,15 +349,15 @@ test('2. Persistent Topbar & Sidebar Mute + Settings buttons mount cleanly in EN
   assert.ok(openBtn, '#zps-open-settings-btn mounted in .zone-header-actions');
   assert.ok(sideBtn, '#zps-sidebar-settings-btn mounted in .zone-sidebar');
   assert.equal(muteBtn.getAttribute('aria-pressed'), 'false');
-  assert.ok(muteBtn.innerHTML.includes('🔊 Sound'));
-  assert.ok(openBtn.innerHTML.includes('⚙️ Settings'));
+  assert.ok(muteBtn.innerHTML.includes('Sound'));
+  assert.ok(openBtn.innerHTML.includes('Settings'));
 
   // Switch to Arabic RTL and verify labels update
   engine.updateSettings({ gameplay: { language: 'ar' } });
   assert.equal(env.mockDocument.documentElement.lang, 'ar');
   assert.equal(env.mockDocument.documentElement.dir, 'rtl');
-  assert.ok(muteBtn.innerHTML.includes('🔊 الصوت'), 'Arabic sound label rendered');
-  assert.ok(openBtn.innerHTML.includes('⚙️ الإعدادات'), 'Arabic settings label rendered');
+  assert.ok(muteBtn.innerHTML.includes('الصوت'), 'Arabic sound label rendered');
+  assert.ok(openBtn.innerHTML.includes('الإعدادات'), 'Arabic settings label rendered');
 
   engine.destroy();
 });

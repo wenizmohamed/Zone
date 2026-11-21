@@ -98,11 +98,11 @@
 
   var COPY = {
     en: {
-      soundOn: '🔊 Sound',
-      soundMuted: '🔇 Muted',
+      soundOn: 'Sound',
+      soundMuted: 'Muted',
       soundAriaOn: 'Global game audio active (Press M to mute)',
       soundAriaMuted: 'Global game audio muted (Press M to unmute)',
-      settingsBtn: '⚙️ Settings',
+      settingsBtn: 'Settings',
       settingsAria: 'Open Player Settings Center (Hotkey , or Alt+S)',
       modalTitle: 'Player Settings Center',
       modalSub: 'Hardware-Tight Audio Gate · 3D Quality · Controls · Accessibility · Cloud ProfileStore',
@@ -162,11 +162,11 @@
       activeTxt: 'ACTIVE'
     },
     ar: {
-      soundOn: '🔊 الصوت',
-      soundMuted: '🔇 صامت',
+      soundOn: 'الصوت',
+      soundMuted: 'صامت',
       soundAriaOn: 'صوت اللعبة مفعل (اضغط M لكتم الصوت)',
       soundAriaMuted: 'صوت اللعبة مكتوم بالكامل (اضغط M لإلغاء الكتم)',
-      settingsBtn: '⚙️ الإعدادات',
+      settingsBtn: 'الإعدادات',
       settingsAria: 'فتح مركز إعدادات اللاعب (اختصار , أو Alt+S)',
       modalTitle: 'مركز إعدادات اللاعب الشامل',
       modalSub: 'بوابة كتم الصوت الفورية · الرسومات ثلاثية الأبعاد · التحكم · الوصول · المزامنة السحابية',
@@ -1023,6 +1023,12 @@
           sidebarBtn.innerHTML = nextSidebarHtml;
         }
       }
+
+      var fpsPill = doc.getElementById('zps-fps-pill');
+      var hudInner = doc.getElementById('ztl-hud-inner');
+      if (fpsPill && hudInner && fpsPill.parentElement !== hudInner) {
+        hudInner.appendChild(fpsPill);
+      }
     }
 
     /* ------------------------------------------------------------------------
@@ -1030,6 +1036,7 @@
      * ------------------------------------------------------------------------ */
     function ensureFpsPill() {
       if (!doc || !doc.body || typeof doc.createElement !== 'function') return null;
+      var hudInner = doc.getElementById ? doc.getElementById('ztl-hud-inner') : null;
       var pill = doc.getElementById ? doc.getElementById('zps-fps-pill') : null;
       if (!pill) {
         pill = doc.createElement('div');
@@ -1037,7 +1044,9 @@
         pill.setAttribute('role', 'status');
         pill.setAttribute('aria-live', 'off');
         pill.innerHTML = '<span id="zps-fps-val">60 FPS</span> · <span id="zps-drawcalls-val">18 DC</span>';
-        doc.body.appendChild(pill);
+        (hudInner || doc.body).appendChild(pill);
+      } else if (hudInner && pill.parentElement !== hudInner) {
+        hudInner.appendChild(pill);
       }
       return pill;
     }

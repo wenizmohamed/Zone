@@ -138,6 +138,12 @@ html[data-theme="light"] body .zone-topbar .zone-header-actions #zps-global-mute
   justify-content: center;
 }
 
+.zps-sidebar-btn-ico svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: block !important;
+}
+
 .zps-sidebar-btn-kbd {
   font-size: 10.5px;
   padding: 1px 6px;
@@ -181,15 +187,31 @@ html[data-theme="light"] body .zone-topbar .zone-header-actions #zps-global-mute
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
+  html body .zone-topbar,
+  html body .zone-topbar [data-zheaderbar="1"],
+  html body #dc-root#dc-root .zone-app .zone-topbar,
+  html body #dc-root#dc-root .zone-app .zone-topbar [data-zheaderbar="1"] {
+    flex-wrap: wrap !important;
+    row-gap: 4px !important;
+    height: auto !important;
+    min-height: 50px !important;
+    padding-block: 4px !important;
+  }
+
+  html body .zone-topbar .zone-header-actions,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions {
+    gap: 4px !important;
+  }
+
   html body .zone-topbar .zone-header-actions > button,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button,
   html body .zone-topbar .zone-header-actions .zps-topbar-btn,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions .zps-topbar-btn {
-    min-width: 36px !important;
-    width: 36px !important;
-    min-height: 40px !important;
-    height: 40px !important;
+    min-width: 34px !important;
+    width: 34px !important;
+    min-height: 36px !important;
+    height: 36px !important;
     padding-inline: 2px !important;
   }
 }
@@ -244,6 +266,15 @@ html[data-theme="light"] body .zone-topbar .zone-header-actions #zps-global-mute
   align-items: center;
   gap: 10px;
   min-width: 0;
+}
+
+.zps-modal-title-wrap svg,
+.zps-modal-title-ico,
+.zps-modal-title-ico svg {
+  width: 30px !important;
+  height: 30px !important;
+  flex: 0 0 30px !important;
+  display: block !important;
 }
 
 .zps-modal-title {
@@ -518,4 +549,13 @@ html[data-theme="light"] body .zone-topbar .zone-header-actions #zps-global-mute
 
 #zps-fps-pill[data-zps-visible="1"] {
   display: inline-flex;
+}
+
+#ztl-hud-inner #zps-fps-pill {
+  position: static !important;
+  inset: auto !important;
+  z-index: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  box-shadow: none !important;
 }
