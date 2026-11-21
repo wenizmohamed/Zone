@@ -9,7 +9,7 @@ const publicPaths = new Set(['auth/account', 'auth/claim', 'auth/login', 'auth/r
   'family-activities', 'family-activities/action', 'crimes', 'achievements', 'city/map', 'factions/join', 'releases/active',
   'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
   'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'player-profile/avatar', 'events-feed',
-  'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'ascension', 'ascension/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
+  'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'ascension', 'ascension/action', 'tactical', 'tactical/action', 'economy-security', 'economy-security/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
   'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications']);
 export function isPublicPath(path) {
   if (/^\/api\/v1\/assets\/[a-f0-9]{64}(?:\/content)?$/.test(path) || ['/api/v1/world', '/api/v1/world/claim'].includes(path)) return true;
