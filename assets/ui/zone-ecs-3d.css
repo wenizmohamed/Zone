@@ -1,6 +1,6 @@
 /* ==========================================================================
- * ZONE v152 - WATERCOLOR-SKETCHBOOK 3D VIEWPORT & ITEM SLOT STYLESHEET
- * Exclusive Ownership: @ecs-3d-engine (assets/ui/zone-ecs-3d.css)
+ * ZONE v155 - WATERCOLOR-SKETCHBOOK 3D VIEWPORT, ITEM SLOT & SCREEN-FX CSS
+ * Exclusive Ownership: @vfx-shaders-3d (assets/ui/zone-ecs-3d.css)
  * Modes: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL + 390px
  * ========================================================================== */
 
@@ -391,4 +391,140 @@ html:lang(ar) .z3d-inspect-btn {
   .z3d-inspector-viewport {
     height: 240px;
   }
+}
+
+/* --------------------------------------------------------------------------
+ * 6. SCREEN-SPACE TACTICAL VFX OVERLAYS (crit-flash, low-hp, stealth-alert)
+ *    Strictly pointer-events: none; respects data-zone-reduced-motion="true"
+ * -------------------------------------------------------------------------- */
+.z3d-screen-fx-root {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none !important;
+  z-index: 9965;
+  overflow: hidden;
+}
+
+.z3d-screen-fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none !important;
+  opacity: 0;
+  will-change: opacity;
+}
+
+@keyframes z3dCritFlashAnim {
+  0% {
+    opacity: 0.92;
+  }
+  28% {
+    opacity: 0.64;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes z3dLowHpPulseAnim {
+  0% {
+    opacity: 0.24;
+  }
+  38% {
+    opacity: 0.82;
+  }
+  72% {
+    opacity: 0.56;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes z3dStealthScanAnim {
+  0% {
+    opacity: 0.18;
+    background-position: 0 0, 0 0;
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    background-position: 0 36px, 0 0;
+  }
+}
+
+.z3d-screen-fx-layer--crit-flash {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 251, 235, 0) 48%,
+    rgba(251, 191, 36, 0.38) 82%,
+    rgba(255, 255, 255, 0.72) 100%
+  );
+  box-shadow: inset 0 0 36px rgba(251, 191, 36, 0.52);
+}
+
+.z3d-screen-fx-layer--crit-flash.is-active {
+  animation: z3dCritFlashAnim 0.21s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.z3d-screen-fx-layer--low-hp {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(127, 29, 29, 0) 46%,
+    rgba(185, 28, 28, 0.36) 78%,
+    rgba(239, 68, 68, 0.70) 100%
+  );
+  box-shadow: inset 0 0 54px rgba(220, 38, 38, 0.58);
+}
+
+.z3d-screen-fx-layer--low-hp.is-active {
+  animation: z3dLowHpPulseAnim 0.92s ease-out forwards;
+}
+
+.z3d-screen-fx-layer--stealth-alert {
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(245, 158, 11, 0) 0px,
+      rgba(245, 158, 11, 0) 5px,
+      rgba(245, 158, 11, 0.14) 6px
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(245, 158, 11, 0) 54%,
+      rgba(245, 158, 11, 0.42) 100%
+    );
+  box-shadow: inset 0 0 0 2px rgba(251, 191, 36, 0.55), inset 0 0 38px rgba(245, 158, 11, 0.38);
+}
+
+.z3d-screen-fx-layer--stealth-alert.is-active {
+  animation: z3dStealthScanAnim 0.74s ease-out forwards;
+}
+
+html[data-zone-reduced-motion="true"] .z3d-screen-fx-layer,
+html[data-zone-reduced-motion="true"] .z3d-screen-fx-layer.is-active,
+.z3d-screen-fx-layer.is-reduced-motion {
+  animation: none !important;
+  transition: opacity 0.18s linear !important;
+}
+
+html[data-zone-reduced-motion="true"] .z3d-screen-fx-layer--crit-flash.is-active {
+  opacity: 0 !important;
+}
+
+html[data-zone-reduced-motion="true"] .z3d-screen-fx-layer--low-hp.is-active,
+html[data-zone-reduced-motion="true"] .z3d-screen-fx-layer--stealth-alert.is-active,
+.z3d-screen-fx-layer--low-hp.is-reduced-motion.is-active,
+.z3d-screen-fx-layer--stealth-alert.is-reduced-motion.is-active {
+  opacity: 0.22;
+}
+
+html[data-zone-reduced-motion="true"] .z3d-item-slot,
+html[data-zone-reduced-motion="true"] .z3d-inspect-btn,
+html[data-zone-reduced-motion="true"] button[data-z3d-inspect] {
+  transition: none !important;
+  transform: none !important;
 }

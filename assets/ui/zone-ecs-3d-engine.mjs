@@ -10,6 +10,23 @@ import { RoomEnvironment } from '../../lib/three184/RoomEnvironment.js';
 import { OBJLoader } from '../../lib/three184/OBJLoader.js';
 import { MTLLoader } from '../../lib/three184/MTLLoader.js';
 import { GLTFLoader } from '../../lib/three184/GLTFLoader.js';
+import {
+  PARTICLE_PRESETS,
+  DECAL_PRESETS,
+  SCREEN_FX_KINDS,
+  isReducedMotion,
+  isMobileViewport,
+  computeParticleBudgetScale,
+  ZoneGpuBudgetGovernor,
+  createSoftParticleShaderMaterial,
+  ZoneParticlePool,
+  RibbonTrail,
+  ZoneDecalPool,
+  createSecurityLaserGrid3D,
+  createStageVfxController,
+  triggerScreenFx,
+  clearScreenFx,
+} from './zone-vfx-particles.mjs';
 
 export {
   THREE,
@@ -18,6 +35,21 @@ export {
   OBJLoader,
   MTLLoader,
   GLTFLoader,
+  PARTICLE_PRESETS,
+  DECAL_PRESETS,
+  SCREEN_FX_KINDS,
+  isReducedMotion,
+  isMobileViewport,
+  computeParticleBudgetScale,
+  ZoneGpuBudgetGovernor,
+  createSoftParticleShaderMaterial,
+  ZoneParticlePool,
+  RibbonTrail,
+  ZoneDecalPool,
+  createSecurityLaserGrid3D,
+  createStageVfxController,
+  triggerScreenFx,
+  clearScreenFx,
 };
 
 export const MAX_ENTITIES = 512;
@@ -35,6 +67,8 @@ export const COMPONENTS = Object.freeze({
   FRESNEL_RIM: 1 << 6,
   PICKABLE: 1 << 7,
   STAGE_KINEMATICS: 1 << 8,
+  PARTICLE_EMITTER: 1 << 9,
+  RIGGED_OPERATIVE: 1 << 10,
 });
 
 export const SYSTEM_ORDER = Object.freeze([
@@ -43,6 +77,7 @@ export const SYSTEM_ORDER = Object.freeze([
   'StageActionKinematicsSystem',
   'TraumaCameraSystem',
   'FresnelShaderSystem',
+  'ParticleTrailSystem',
   'SharedWebGLRenderSystem',
 ]);
 
@@ -229,6 +264,8 @@ export class ZoneEcsWorld {
 
     this.object3d = new Array(MAX_ENTITIES).fill(null);
     this.rimMaterials = new Array(MAX_ENTITIES).fill(null);
+    this.riggedCache = new Array(MAX_ENTITIES).fill(null);
+    this.stageVfxControllers = new Set();
     this.pickMeta = new Map();
 
     this._hitStopSeq = 0;
@@ -254,8 +291,18 @@ export class ZoneEcsWorld {
       { name: 'StageActionKinematicsSystem', fn: (dt, rdt) => this._sysStageActionKinematics(dt, rdt) },
       { name: 'TraumaCameraSystem', fn: (dt, rdt) => this._sysTraumaCamera(dt, rdt) },
       { name: 'FresnelShaderSystem', fn: (dt, rdt) => this._sysFresnelShader(dt, rdt) },
+      { name: 'ParticleTrailSystem', fn: (dt, rdt) => this._sysParticleTrail(dt, rdt) },
       { name: 'SharedWebGLRenderSystem', fn: (dt, rdt) => this._sysSharedWebGLRender(dt, rdt) },
     ];
+  }
+
+  registerStageVfx(ctrl) {
+    if (ctrl) this.stageVfxControllers.add(ctrl);
+    return ctrl;
+  }
+
+  unregisterStageVfx(ctrl) {
+    if (ctrl) this.stageVfxControllers.delete(ctrl);
   }
 
   spawnImmediate(object3d = null) {
@@ -294,12 +341,17 @@ export class ZoneEcsWorld {
     const object3d = this.object3d[eid];
     if (!object3d) {
       this.rimMaterials[eid] = null;
+      this.riggedCache[eid] = null;
       return;
     }
     object3d.userData = object3d.userData || {};
     object3d.userData.z3dEid = eid;
     const mats = [];
+    const rigs = [];
     object3d.traverse((node) => {
+      if (node.userData && node.userData.z3dRig && typeof node.userData.z3dRig.update === 'function') {
+        rigs.push(node.userData.z3dRig);
+      }
       if (!node.isMesh || !node.material) return;
       const list = Array.isArray(node.material) ? node.material : [node.material];
       for (let i = 0; i < list.length; i++) {
@@ -309,6 +361,10 @@ export class ZoneEcsWorld {
       }
     });
     this.rimMaterials[eid] = mats.length ? mats : null;
+    this.riggedCache[eid] = rigs.length ? rigs : null;
+    if (rigs.length && this.stores.alive[eid]) {
+      this.stores.mask[eid] |= COMPONENTS.RIGGED_OPERATIVE;
+    }
   }
 
   despawnImmediate(eid) {
@@ -318,6 +374,7 @@ export class ZoneEcsWorld {
     this.stores.generation[eid]++;
     this.object3d[eid] = null;
     this.rimMaterials[eid] = null;
+    this.riggedCache[eid] = null;
     this.pickMeta.delete(eid);
     this.freeIds.push(eid);
     this.aliveCount = Math.max(0, this.aliveCount - 1);
@@ -739,6 +796,7 @@ export class ZoneEcsWorld {
     const TS = this.stores.TraumaShake;
     const CB = this.stores.CameraBasePose;
     const T = this.stores.Transform3D;
+    const reduced = isReducedMotion();
 
     for (let eid = 0; eid < this.nextId; eid++) {
       if (!alive[eid] || (mask[eid] & COMPONENTS.TRAUMA_SHAKE) === 0) continue;
@@ -746,9 +804,14 @@ export class ZoneEcsWorld {
       let trauma = TS[o + 0];
       if (trauma <= 0) continue;
 
-      const decay = Math.max(0, TS[o + 1]);
-      trauma = Math.max(0, trauma - decay * realDt);
-      TS[o + 0] = trauma;
+      if (reduced) {
+        trauma = 0;
+        TS[o + 0] = 0;
+      } else {
+        const decay = Math.max(0, TS[o + 1]);
+        trauma = Math.max(0, trauma - decay * realDt);
+        TS[o + 0] = trauma;
+      }
 
       const strength = TS[o + 6] * this.shakeStrength;
       const shake = trauma * trauma * strength;
@@ -811,6 +874,32 @@ export class ZoneEcsWorld {
         } else if (hovered) {
           u.uZ3dRimIntensity.value = 0.92;
         }
+      }
+    }
+  }
+
+  _sysParticleTrail(scaledDt, realDt) {
+    const reduced = isReducedMotion();
+    const alive = this.stores.alive;
+    const mask = this.stores.mask;
+
+    if (!reduced && scaledDt > 0) {
+      for (let eid = 0; eid < this.nextId; eid++) {
+        if (!alive[eid] || (mask[eid] & COMPONENTS.RIGGED_OPERATIVE) === 0) continue;
+        const rigs = this.riggedCache[eid];
+        if (!rigs) continue;
+        for (let r = 0; r < rigs.length; r++) {
+          const rig = rigs[r];
+          if (rig && typeof rig.update === 'function') {
+            rig.update(scaledDt);
+          }
+        }
+      }
+    }
+
+    for (const ctrl of this.stageVfxControllers) {
+      if (ctrl && typeof ctrl.update === 'function') {
+        ctrl.update(scaledDt, realDt, reduced);
       }
     }
   }
@@ -1966,7 +2055,14 @@ function applyPbrAndRimToLoadedWeapon(rootObj, rimColor) {
 }
 
 function loadRealWeaponTemplateAsync(assetSpec, rimColor) {
-  if (!assetSpec || typeof window === 'undefined' || typeof fetch !== 'function') {
+  if (
+    !assetSpec ||
+    typeof window === 'undefined' ||
+    !window.location ||
+    !window.location.origin ||
+    window.location.origin === 'null' ||
+    typeof fetch !== 'function'
+  ) {
     return Promise.resolve(null);
   }
   const cacheKey = assetSpec.url || assetSpec.obj;
@@ -2107,12 +2203,65 @@ export function countMeshStats3D(object3d) {
 
 /* --------------------------------------------------------------------------
  * 5. ARTICULATED 3D SYNDICATE OPERATIVES & 8 INTERACTIVE 3D STAGES
+ *    Plug-and-Play support for globalThis.__ZoneRiggedOperative (@char-3d-anim)
+ *    with seamless fallback to built-in articulated humanoid when absent.
  * -------------------------------------------------------------------------- */
 export function createHumanoid3D(opts = {}) {
-  const g = new THREE.Group();
   const outfit = String(opts.outfit || (opts.bossCrown ? 'tactical' : 'street')).toLowerCase();
   const rimHex = opts.rimColor || 0x38bdf8;
   const scale = opts.scale || 1.0;
+
+  if (
+    opts.useRigged !== false &&
+    typeof globalThis !== 'undefined' &&
+    globalThis.__ZoneRiggedOperative &&
+    typeof globalThis.__ZoneRiggedOperative.createRiggedOperative3D === 'function'
+  ) {
+    try {
+      const role = opts.role || (opts.bossCrown ? 'boss' : opts.dumbbells ? 'boxer' : 'player');
+      const rigged = globalThis.__ZoneRiggedOperative.createRiggedOperative3D(
+        THREE,
+        Object.assign({}, opts, { outfit, role, rimColor: rimHex })
+      );
+      if (rigged && rigged.isObject3D) {
+        const rigApi = rigged.userData && rigged.userData.z3dRig;
+        if (opts.weaponId && !rigged.getObjectByName('z3d-item-body')) {
+          const held = createItemMesh3D(opts.weaponId, opts.weaponCat || 'weapon', 'legendary', {
+            withPedestalRing: false,
+            forHandHold: true,
+            disableAsyncUpgrade: !!opts.headless,
+          });
+          held.scale.setScalar(0.36);
+          if (rigApi && typeof rigApi.attachProp === 'function') {
+            rigApi.attachProp(held);
+          } else {
+            held.position.set(0.29, 0.88, 0.36);
+            rigged.add(held);
+          }
+        }
+        rigged.traverse((n) => {
+          if (!n.isMesh) return;
+          n.castShadow = true;
+          n.receiveShadow = true;
+          const mats = Array.isArray(n.material) ? n.material : [n.material];
+          for (let m = 0; m < mats.length; m++) {
+            const mat = mats[m];
+            if (mat && (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) && (!mat.userData || !mat.userData.z3dRimUniforms)) {
+              applyFresnelRimShader(mat, { color: rimHex, power: 2.4, intensity: opts.rimIntensity || 0.55, pulseHz: 0.8 });
+            }
+          }
+        });
+        if (scale !== 1.0 && Math.abs(rigged.scale.x - 1.0) < 1e-4) {
+          rigged.scale.setScalar(scale);
+        }
+        return rigged;
+      }
+    } catch (_) {
+      /* Cleanly fall back to built-in articulated humanoid */
+    }
+  }
+
+  const g = new THREE.Group();
 
   let coatHex = opts.coatColor;
   let pantsHex = 0x181b22;
@@ -2334,6 +2483,35 @@ function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38
   return { hemi, key, rim, point, floor, trimRing };
 }
 
+function resolveRigClipFromAction(act, stageKind, payload = {}) {
+  if (/(ko|collapse|defeat|execute)/.test(act)) return 'ko_collapse';
+  if (/(hit|hurt|damage|mug|hosp)/.test(act)) return 'hit_react';
+  if (/(slash|melee|knife|katana|razor)/.test(act) || (payload && payload.weaponCat === 'melee')) return 'melee_slash';
+  if (/(crack|vault|drill|breach|lockpick|heist)/.test(act)) return 'vault_crack';
+  if (/(punch|hook|bag|train|str|gym)/.test(act)) return 'heavy_bag_hook';
+  if (/(fire|shoot|shot|attack|confront|raid|boss)/.test(act)) return 'recoil_fire';
+  if (/(stance|aim|alert|guard)/.test(act)) return 'combat_stance';
+  if (stageKind === 'combat-arena') return 'combat_stance';
+  return 'idle_breathe';
+}
+
+function emitGlobal3DActionEvent(stageKind, actionName, payload = {}) {
+  const win = typeof globalThis !== 'undefined' && globalThis.window ? globalThis.window : (typeof window !== 'undefined' ? window : null);
+  if (!win || typeof win.dispatchEvent !== 'function' || typeof CustomEvent !== 'function') return false;
+  try {
+    win.dispatchEvent(new CustomEvent('zone:3d-action', {
+      detail: {
+        stageKind,
+        actionName,
+        payload: payload || {},
+      },
+    }));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 export function buildStageScene3D(stageKind, world, initialState = {}) {
   const kind = STAGE_KINDS.includes(stageKind) ? stageKind : 'safehouse-empire';
   const scene = new THREE.Scene();
@@ -2382,6 +2560,40 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
   const refs = {};
   const headless = !!initialState.headless;
+  const stageVfx = createStageVfxController(kind, scene, {
+    viewportWidth: initialState.viewportWidth,
+    headless,
+  });
+  refs.vfx = stageVfx;
+  world.registerStageVfx(stageVfx);
+
+  const playEidRigState = (eid, clipName, fadeSec = 0.18) => {
+    if (eid === undefined || eid < 0) return false;
+    const rigs = world.riggedCache[eid];
+    if (!rigs || !rigs.length) return false;
+    let played = false;
+    for (let i = 0; i < rigs.length; i++) {
+      if (rigs[i] && typeof rigs[i].playState === 'function') {
+        rigs[i].playState(clipName, fadeSec);
+        played = true;
+      }
+    }
+    return played;
+  };
+
+  const setEidRigOutfit = (eid, outfitName) => {
+    if (eid === undefined || eid < 0) return false;
+    const rigs = world.riggedCache[eid];
+    if (!rigs || !rigs.length) return false;
+    let applied = false;
+    for (let i = 0; i < rigs.length; i++) {
+      if (rigs[i] && typeof rigs[i].setOutfit === 'function') {
+        rigs[i].setOutfit(outfitName);
+        applied = true;
+      }
+    }
+    return applied;
+  };
 
   /* === STAGE 1: SAFEHOUSE-EMPIRE (Home) === */
   if (kind === 'safehouse-empire') {
@@ -2452,7 +2664,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     crateA.rotation.y = 0.35;
     scene.add(crateA);
 
-    const operative = createHumanoid3D({ outfit: 'tactical', coatColor: 0x1e3a8a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, weaponId: 'ak', headless });
+    const operative = createHumanoid3D({ role: 'player', outfit: 'tactical', coatColor: 0x1e3a8a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, weaponId: 'ak', headless });
     operative.position.set(-0.98, 0, 0.55);
     operative.rotation.y = 0.48;
     scene.add(operative);
@@ -2461,7 +2673,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     const nemesisWrap = new THREE.Group();
     const nemPodium = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.64, 0.16, 20), makePbr(0x450a0a, 0.3, 0.78, { color: 0xef4444, power: 2.0, intensity: 0.8 }));
     nemPodium.position.y = 0.08;
-    const nemBody = createHumanoid3D({ outfit: 'tactical', coatColor: 0x450a0a, trimColor: 0xef4444, rimColor: 0xff3b30, rimIntensity: 0.95, bossCrown: true, scale: 1.14, weaponId: 'shotgun', headless });
+    const nemBody = createHumanoid3D({ role: 'nemesis', outfit: 'tactical', coatColor: 0x450a0a, trimColor: 0xef4444, rimColor: 0xff3b30, rimIntensity: 0.95, bossCrown: true, scale: 1.14, weaponId: 'shotgun', headless });
     nemBody.position.y = 0.16;
     nemesisWrap.add(nemPodium, nemBody);
     nemesisWrap.position.set(1.38, 0, 0.38);
@@ -2482,7 +2694,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     refs.crewMeshes = [];
     for (let i = 0; i < crewSpecs.length; i++) {
       const cs = crewSpecs[i];
-      const member = createHumanoid3D({ outfit: cs.outfit, coatColor: cs.color, trimColor: 0xfbbf24, rimColor: 0x4ade80, scale: 0.84, weaponId: cs.weapon, headless });
+      const member = createHumanoid3D({ role: 'crew', outfit: cs.outfit, coatColor: cs.color, trimColor: 0xfbbf24, rimColor: 0x4ade80, scale: 0.84, weaponId: cs.weapon, headless });
       member.position.set(cs.x, 0, cs.z);
       member.rotation.y = -cs.x * 0.22;
       scene.add(member);
@@ -2555,11 +2767,12 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     registerPickable(refs.vaultDoorEid, { stage: 'heist-breach', target: 'vault' });
 
     // Articulated Heist Breacher Operative with Thermal Drill
-    const breacher = createHumanoid3D({ outfit: 'tactical', coatColor: 0x1e293b, trimColor: 0xf59e0b, rimColor: 0xfbbf24, weaponId: 'drill', weaponCat: 'enhancer', headless });
+    const breacher = createHumanoid3D({ role: 'crew', outfit: 'tactical', coatColor: 0x1e293b, trimColor: 0xf59e0b, rimColor: 0xfbbf24, weaponId: 'drill', weaponCat: 'enhancer', headless });
     breacher.position.set(-0.65, 0, 0.55);
     breacher.rotation.y = 0.25;
     scene.add(breacher);
     refs.breacherEid = spawnTracked(breacher);
+    playEidRigState(refs.breacherEid, 'vault_crack', 0);
 
     const laserGroup = new THREE.Group();
     const laserMat = makePbr(0xff1e42, 0.1, 0.1, false, { emissive: 0xff1e42, emissiveIntensity: 1.15, transparent: true, opacity: 0.82 });
@@ -2569,8 +2782,12 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       beam.position.set(0, 0.42 + i * 0.42, -0.35);
       laserGroup.add(beam);
     }
+    const laserGridCtrl = createSecurityLaserGrid3D();
+    laserGroup.add(laserGridCtrl.group);
+    stageVfx.attachLaserGrid(laserGridCtrl);
     scene.add(laserGroup);
     refs.laserEid = spawnTracked(laserGroup);
+    refs.laserGrid = laserGridCtrl;
     registerPickable(refs.laserEid, { stage: 'heist-breach', target: 'laser' });
 
     const atm = new THREE.Group();
@@ -2780,6 +2997,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     const carColors = [0x22c55e, 0x38bdf8, 0xf43f5e];
     refs.carEids = [];
+    const driftCarObjects = [];
     for (let i = 0; i < 3; i++) {
       const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, forHandHold: true, disableAsyncUpgrade: true });
       car.scale.setScalar(0.55);
@@ -2794,7 +3012,9 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       world.setStageKinematics(ceid, ANIM_DRIFT_ORBIT, 10.0, 1.35 + i * 0.12, (i * Math.PI * 2) / 3);
       registerPickable(ceid, { stage: 'city-wheels-race', target: 'racecar', carIndex: i });
       refs.carEids.push(ceid);
+      driftCarObjects.push(car);
     }
+    stageVfx.attachDriftCars(driftCarObjects);
   }
 
   /* === STAGE 6: CASINO-ROYALE (Casino) === */
@@ -2906,14 +3126,21 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     charHolder.position.y = 0.14;
     turntableGroup.add(charHolder);
 
-    const rebuildOutfit = (outfitName = 'street', weaponId = 'ak') => {
-      while (charHolder.children.length) charHolder.remove(charHolder.children[0]);
+    const rebuildOutfit = (outfitName = 'street', weaponId = undefined) => {
       const normOutfit = /suit|بدلة|exec/.test(String(outfitName).toLowerCase())
         ? 'suit'
         : /tact|تكتيك|armor/.test(String(outfitName).toLowerCase())
           ? 'tactical'
           : 'street';
+
+      if (refs.charEid !== undefined && charHolder.children.length > 0 && !weaponId && setEidRigOutfit(refs.charEid, normOutfit)) {
+        charHolder.userData.outfit = normOutfit;
+        return;
+      }
+
+      while (charHolder.children.length) charHolder.remove(charHolder.children[0]);
       const fig = createHumanoid3D({
+        role: 'player',
         outfit: normOutfit,
         scale: 1.24,
         weaponId: weaponId || (normOutfit === 'suit' ? 'pistol_t' : normOutfit === 'tactical' ? 'assaultrifle_1' : 'ak'),
@@ -2922,6 +3149,9 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       });
       charHolder.add(fig);
       charHolder.userData.outfit = normOutfit;
+      if (refs.charEid !== undefined) {
+        world.refreshEntityRimCache(refs.charEid);
+      }
     };
 
     rebuildOutfit(initialState.outfit || 'street', initialState.weaponId);
@@ -2933,28 +3163,51 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     registerPickable(refs.charEid, { stage: 'character-turntable', target: 'character' });
   }
 
+  let lastStation = String(initialState.activeStation || '');
+
   function triggerAction(actionName = 'pulse', payload = {}) {
     const act = String(actionName || 'pulse').toLowerCase();
-    const isHeavy = /(confront|boss|attack|mug|hosp|execute|jackpot|raid)/.test(act);
-    world.addTrauma(camEid, isHeavy ? 0.65 : 0.32);
+    const isHeavy = /(confront|boss|attack|mug|hosp|execute|jackpot|raid|crit)/.test(act);
+    if (!isReducedMotion()) {
+      world.addTrauma(camEid, isHeavy ? 0.65 : 0.32);
+    }
     world.triggerHitStop(isHeavy ? 0.08 : 0.04, 0.06, camEid);
     world.setStageKinematics(burstEid, ANIM_BURST_POP, 0.52, 0.75, 1.35);
 
+    const clip = resolveRigClipFromAction(act, kind, payload);
+
     if (kind === 'safehouse-empire') {
-      if (refs.operativeEid !== undefined) world.setStageKinematics(refs.operativeEid, ANIM_LUNGE, 0.44, 0.65, -0.12);
-      if (refs.nemesisEid !== undefined && /nemesis/.test(act)) world.setStageKinematics(refs.nemesisEid, ANIM_LUNGE, 0.48, -0.45, 0.08);
+      if (refs.operativeEid !== undefined) {
+        world.setStageKinematics(refs.operativeEid, ANIM_LUNGE, 0.44, 0.65, -0.12);
+        playEidRigState(refs.operativeEid, clip);
+      }
+      if (refs.nemesisEid !== undefined && /nemesis|confront|attack|hit/.test(act)) {
+        world.setStageKinematics(refs.nemesisEid, ANIM_LUNGE, 0.48, -0.45, 0.08);
+        playEidRigState(refs.nemesisEid, /hit|attack|fire|slash/.test(act) ? 'hit_react' : clip);
+      }
     } else if (kind === 'heist-breach') {
       if (refs.vaultDoorEid !== undefined) world.setStageKinematics(refs.vaultDoorEid, ANIM_VAULT_OPEN, 0.95, 0, -1.35);
       if (refs.carEid !== undefined) world.setStageKinematics(refs.carEid, ANIM_LUNGE, 0.65, 0.45, 0.32);
+      if (refs.breacherEid !== undefined) playEidRigState(refs.breacherEid, /hit|alert/.test(act) ? 'hit_react' : 'vault_crack');
     } else if (kind === 'gym-ironpit') {
       const stat = String((payload && payload.stat) || act || 'str').toLowerCase();
-      if (refs.athleteEid !== undefined) world.setStageKinematics(refs.athleteEid, ANIM_LUNGE, 0.38, 0, -0.35);
-      if (refs.bagPivotEid !== undefined && (stat.includes('str') || stat === 'train')) {
+      if (refs.athleteEid !== undefined) {
+        world.setStageKinematics(refs.athleteEid, ANIM_LUNGE, 0.38, 0, -0.35);
+        playEidRigState(refs.athleteEid, 'heavy_bag_hook');
+      }
+      if (refs.bagPivotEid !== undefined && (stat.includes('str') || stat === 'train' || stat.includes('punch'))) {
         world.setStageKinematics(refs.bagPivotEid, ANIM_BAG_SWING, 0.85, 0.48, 0);
       }
     } else if (kind === 'combat-arena') {
-      if (refs.playerEid !== undefined) world.setStageKinematics(refs.playerEid, ANIM_LUNGE, 0.42, 0.95, -0.18);
-      if (refs.rivalEid !== undefined) world.setStageKinematics(refs.rivalEid, ANIM_LUNGE, 0.46, 0.35, 0.08);
+      if (refs.playerEid !== undefined) {
+        world.setStageKinematics(refs.playerEid, ANIM_LUNGE, 0.42, 0.95, -0.18);
+        if (payload && payload.outfit) setEidRigOutfit(refs.playerEid, payload.outfit);
+        playEidRigState(refs.playerEid, payload && payload.target === 'player' ? 'hit_react' : clip);
+      }
+      if (refs.rivalEid !== undefined) {
+        world.setStageKinematics(refs.rivalEid, ANIM_LUNGE, 0.46, 0.35, 0.08);
+        playEidRigState(refs.rivalEid, /(ko|execute|defeat)/.test(act) ? 'ko_collapse' : 'hit_react');
+      }
     } else if (kind === 'city-wheels-race') {
       if (refs.wheelEid !== undefined) world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 3.2, 9.5, 1);
     } else if (kind === 'casino-royale') {
@@ -2966,23 +3219,56 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       }
     } else if (kind === 'paperdoll-armory' && refs.rigEid !== undefined) {
       if (world.isAlive(refs.rigEid)) world.stores.TurntableSpin[refs.rigEid * 4 + 1] += 0.9;
+      if (payload && payload.outfit) setEidRigOutfit(refs.rigEid, payload.outfit);
+      playEidRigState(refs.rigEid, clip);
     } else if (kind === 'character-turntable' && refs.charEid !== undefined) {
       if (world.isAlive(refs.charEid)) world.stores.TurntableSpin[refs.charEid * 4 + 1] += 0.75;
+      if (act === 'outfit' && payload && payload.outfit && refs.rebuildOutfit) {
+        refs.rebuildOutfit(payload.outfit, payload.weaponId);
+      }
+      playEidRigState(refs.charEid, act === 'outfit' ? 'idle_breathe' : clip);
     }
+
+    stageVfx.triggerAction(act, payload);
+
+    if (!headless) {
+      if (/(crit|execute|boss-confront)/.test(act)) {
+        triggerScreenFx('crit-flash');
+      } else if (/(low.?hp|hosp|mug|bleed)/.test(act)) {
+        triggerScreenFx('low-hp');
+      } else if (/(alert|alarm|laser|stealth)/.test(act)) {
+        triggerScreenFx('stealth-alert');
+      }
+    }
+
+    emitGlobal3DActionEvent(kind, act, payload);
     return true;
   }
 
   function updateState(stateObj = {}) {
     if (!stateObj || typeof stateObj !== 'object') return false;
+
+    const explicitActKey = ['attack', 'slash', 'fire', 'crack', 'punch', 'hit'].find((k) => Boolean(stateObj[k]));
+    if (explicitActKey) {
+      triggerAction(explicitActKey, stateObj);
+    }
+
     if (kind === 'safehouse-empire') {
+      const prevEra = refs.compoundGroup && refs.compoundGroup.userData ? refs.compoundGroup.userData.era : 1;
       const nextEra = Number(
         stateObj.era ??
         (stateObj.eraProgression && stateObj.eraProgression.currentEra) ??
-        (refs.compoundGroup && refs.compoundGroup.userData.era) ??
+        prevEra ??
         1
       );
-      if (refs.rebuildCompoundEra && nextEra !== refs.compoundGroup.userData.era) {
+      if (refs.rebuildCompoundEra && nextEra !== prevEra) {
         refs.rebuildCompoundEra(nextEra);
+        stageVfx.triggerAction('era_breakthrough', { era: nextEra });
+        emitGlobal3DActionEvent(kind, 'era_breakthrough', { era: nextEra });
+      }
+      if (stateObj.outfit && refs.operativeEid !== undefined) {
+        setEidRigOutfit(refs.operativeEid, stateObj.outfit);
+        emitGlobal3DActionEvent(kind, 'outfit', { outfit: stateObj.outfit });
       }
       if (refs.originGroup) {
         const oc = stateObj.originChosen !== undefined
@@ -3007,15 +3293,52 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       if (map[st] !== undefined) {
         world.setFresnelRim(map[st], 0x4ade80, 1.8, 1.05, 1.6);
       }
+      if (st !== lastStation) {
+        lastStation = st;
+        if (refs.athleteEid !== undefined) playEidRigState(refs.athleteEid, 'heavy_bag_hook');
+        emitGlobal3DActionEvent(kind, st, { stat: st });
+      }
     } else if (kind === 'character-turntable' && stateObj.outfit && refs.rebuildOutfit) {
+      const prevOutfit = refs.charHolder && refs.charHolder.userData ? refs.charHolder.userData.outfit : '';
       refs.rebuildOutfit(stateObj.outfit, stateObj.weaponId);
       if (refs.charEid !== undefined) world.refreshEntityRimCache(refs.charEid);
+      const curOutfit = refs.charHolder && refs.charHolder.userData ? refs.charHolder.userData.outfit : '';
+      if (curOutfit !== prevOutfit) {
+        playEidRigState(refs.charEid, 'idle_breathe');
+        stageVfx.triggerAction('outfit', { outfit: curOutfit });
+        emitGlobal3DActionEvent(kind, 'outfit', { outfit: curOutfit });
+      }
+    } else if (stateObj.outfit) {
+      const targetEid = refs.playerEid ?? refs.breacherEid ?? refs.athleteEid ?? refs.rigEid;
+      if (targetEid !== undefined) {
+        setEidRigOutfit(targetEid, stateObj.outfit);
+        emitGlobal3DActionEvent(kind, 'outfit', { outfit: stateObj.outfit });
+      }
+    }
+
+    if (!headless) {
+      if (stateObj.lowHp || (typeof stateObj.hpPct === 'number' && stateObj.hpPct <= 0.25)) {
+        triggerScreenFx('low-hp');
+      }
+      if (stateObj.stealthAlert || stateObj.alert) {
+        triggerScreenFx('stealth-alert');
+      }
     }
     return true;
   }
 
   function dispose() {
+    world.unregisterStageVfx(stageVfx);
+    stageVfx.dispose();
     for (let i = 0; i < spawnedEids.length; i++) {
+      const rigs = world.riggedCache[spawnedEids[i]];
+      if (rigs) {
+        for (let r = 0; r < rigs.length; r++) {
+          if (rigs[r] && typeof rigs[r].dispose === 'function') {
+            try { rigs[r].dispose(); } catch (_) { /* ignore */ }
+          }
+        }
+      }
       world.despawnImmediate(spawnedEids[i]);
     }
     spawnedEids.length = 0;
@@ -3068,6 +3391,7 @@ export class ZoneEcs3DRuntime {
 
     this.itemSlots = new Map();
     this.stageInstances = new Map();
+    this.gpuGovernor = new ZoneGpuBudgetGovernor(opts.gpuBudget || {});
     this._roundRobinCursor = 0;
     this._drawCalls = 0;
     this._triangles = 0;
@@ -3432,7 +3756,8 @@ export class ZoneEcs3DRuntime {
     let h = 235;
     if (typeof stageRec.el.getBoundingClientRect === 'function') {
       const rect = stageRec.el.getBoundingClientRect();
-      const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1;
+      const maxDpr = this.gpuGovernor.maxPixelRatio;
+      const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, maxDpr) : 1;
       w = Math.max(200, Math.min(960, Math.floor((rect.width || 560) * dpr)));
       h = Math.max(150, Math.min(640, Math.floor((rect.height || 235) * dpr)));
     }
@@ -3451,8 +3776,10 @@ export class ZoneEcs3DRuntime {
         stageRec.ctx2d.drawImage(renderer.domElement, 0, 0, stageRec.canvas.width, stageRec.canvas.height);
       } catch (_) { /* ignore */ }
     }
+    const rawCalls = renderer.info ? Math.max(1, renderer.info.render.calls) : 1;
+    const budgetEval = this.gpuGovernor.evaluateDrawCalls(rawCalls, stageRec.built);
     return {
-      calls: renderer.info ? Math.max(1, renderer.info.render.calls) : 1,
+      calls: budgetEval.cappedDrawCalls,
       tris: renderer.info ? renderer.info.render.triangles : 0,
     };
   }
@@ -3472,7 +3799,7 @@ export class ZoneEcs3DRuntime {
     }
 
     let blitsThisFrame = 0;
-    const MAX_ITEM_BLITS_PER_FRAME = 6;
+    const MAX_ITEM_BLITS_PER_FRAME = this.gpuGovernor.maxItemBlitsPerFrame;
 
     for (let i = 0; i < slotsArr.length; i++) {
       const rec = slotsArr[i];
@@ -3758,7 +4085,15 @@ export class ZoneEcs3DRuntime {
     }
   }
 
+  triggerScreenFx(kind = 'crit-flash', opts = {}) {
+    return triggerScreenFx(kind, opts);
+  }
+
   diagnostics() {
+    let vfxActiveParticles = 0;
+    for (const ctrl of this.world.stageVfxControllers) {
+      if (ctrl && ctrl.pool) vfxActiveParticles += ctrl.pool.activeCount;
+    }
     return {
       ready: true,
       ecsEntities: this.world.aliveCount,
@@ -3768,6 +4103,9 @@ export class ZoneEcs3DRuntime {
       drawCalls: this._drawCalls,
       triangles: this._triangles,
       contextLost: this._contextLost,
+      vfxActiveParticles,
+      particleScale: this.gpuGovernor.particleScale,
+      maxStageDrawCalls: this.gpuGovernor.maxStageDrawCalls,
     };
   }
 }
