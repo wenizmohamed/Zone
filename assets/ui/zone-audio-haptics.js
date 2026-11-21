@@ -634,10 +634,11 @@
       return src;
     }
 
-    /* ---------------- Tactile Mobile Haptics (Reduced-Motion Guarded) ---------------- */
+    /* ---------------- Tactile Mobile Haptics (Reduced-Motion & User-Activation Guarded) ---------------- */
     function triggerHaptic(kindOrPattern) {
       if (state.destroyed || isReducedMotion()) return false;
       if (!nav || typeof nav.vibrate !== 'function') return false;
+      if (!state.gestureUnlocked && !(nav.userActivation && nav.userActivation.hasBeenActive)) return false;
 
       var pattern = kindOrPattern;
       if (typeof kindOrPattern === 'string') {

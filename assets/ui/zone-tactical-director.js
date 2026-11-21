@@ -775,6 +775,23 @@
     if (el && el.parentElement) el.parentElement.removeChild(el);
   }
 
+  function computeStealthRenderSignature() {
+    var now = nowSecFloat();
+    var cdRem = Math.max(0, Math.ceil(store.stealth.cooldownUntilSec - now));
+    var fb = store.stealth.feedback;
+    return [
+      isAr() ? 'ar' : 'en',
+      store.district,
+      store.approach,
+      store.busy ? '1' : '0',
+      cdRem,
+      store.stealth.noiseLevel,
+      store.stealth.threatTier,
+      store.stealth.cleanStreak,
+      fb ? (fb.tone + '|' + fb.en + '|' + fb.ar) : ''
+    ].join('::');
+  }
+
   function renderActiveScreenMount() {
     if (document.querySelector && document.querySelector('x-dc')) return;
     var main = document.getElementById('zone-main');
@@ -798,7 +815,11 @@
       } else if (!bar.parentElement) {
         main.insertBefore(bar, main.firstChild || null);
       }
-      bar.innerHTML = renderStealthCardHtml();
+      var stealthSig = computeStealthRenderSignature();
+      if (bar.__ztdLastSig !== stealthSig || !bar.firstElementChild) {
+        bar.__ztdLastSig = stealthSig;
+        bar.innerHTML = renderStealthCardHtml();
+      }
       if (!store.rafId && !isReducedMotion() && typeof window.requestAnimationFrame === 'function') {
         store.rafId = window.requestAnimationFrame(tickLiveStealthIndicator);
       }
@@ -817,7 +838,9 @@
         deck.className = 'ztd-scope ztd-combat-card';
         deck.setAttribute('data-ztd-mounted', screen);
       }
-      deck.setAttribute('data-ztd-mounted', screen);
+      if (deck.getAttribute('data-ztd-mounted') !== screen) {
+        deck.setAttribute('data-ztd-mounted', screen);
+      }
       var anchorAfter = combatStage || document.getElementById('ztl-attack-3d-stage');
       if (anchorAfter && anchorAfter.parentElement) {
         if (anchorAfter.nextElementSibling !== deck) {
@@ -831,7 +854,11 @@
           main.appendChild(deck);
         }
       }
-      deck.innerHTML = renderCombatDeckHtml();
+      var nextDeckHtml = renderCombatDeckHtml();
+      if (deck.__ztdLastHtml !== nextDeckHtml) {
+        deck.__ztdLastHtml = nextDeckHtml;
+        deck.innerHTML = nextDeckHtml;
+      }
       return;
     }
 
@@ -890,20 +917,68 @@
     window.addEventListener('zone:render', scheduleSync);
 
     if (typeof MutationObserver === 'function' && document.documentElement) {
-      var obs = new MutationObserver(function (records) {
-        for (var i = 0; i < records.length; i++) {
-          var r = records[i];
-          if (r.target && r.target.closest && r.target.closest('.ztd-scope')) continue;
-          scheduleSync();
-          return;
-        }
+      var rootObs = new MutationObserver(function () {
+        scheduleSync();
       });
-      obs.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
+      rootObs.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ['data-zone-screen', 'data-theme', 'dir', 'lang', 'data-zone-reduced-motion', 'data-zone-contrast']
+        attributeFilter: ['data-theme', 'dir', 'lang', 'data-zone-reduced-motion', 'data-zone-contrast']
       });
+
+      var mainObs = null;
+      var observedMain = null;
+      var attachMainObserver = function () {
+        var m = document.getElementById('zone-main');
+        if (!m || m === observedMain) return;
+        if (mainObs) {
+          try { mainObs.disconnect(); } catch (_) {}
+        }
+        observedMain = m;
+        mainObs = new MutationObserver(function (records) {
+          for (var i = 0; i < records.length; i++) {
+            var rec = records[i];
+            if (rec.type === 'attributes') {
+              scheduleSync();
+              return;
+            }
+            if (rec.type === 'childList' && rec.target === m) {
+              var nodes = rec.addedNodes;
+              for (var n = 0; n < nodes.length; n++) {
+                var nd = nodes[n];
+                if (!nd || nd.nodeType !== 1) continue;
+                if (nd.id === 'ztd-stealth-bar' || nd.id === 'ztd-combat-deck') continue;
+                if (
+                  (nd.getAttribute && (nd.getAttribute('data-z3d-stage') || nd.id === 'ztl-attack-3d-stage')) ||
+                  (nd.querySelector && nd.querySelector('[data-z3d-stage="heist-breach"],[data-z3d-stage="combat-arena"]'))
+                ) {
+                  scheduleSync();
+                  return;
+                }
+              }
+            }
+          }
+        });
+        mainObs.observe(m, {
+          attributes: true,
+          attributeFilter: ['data-zone-screen'],
+          childList: true
+        });
+      };
+
+      attachMainObserver();
+      if (!observedMain) {
+        var bootTries = 0;
+        var bootPoll = setInterval(function () {
+          bootTries += 1;
+          attachMainObserver();
+          if (observedMain || bootTries >= 40) {
+            clearInterval(bootPoll);
+            if (observedMain) scheduleSync();
+          }
+        }, 150);
+      }
+      window.addEventListener('zone:render', attachMainObserver);
+      window.addEventListener('zone:ecs-3d-ready', scheduleSync);
     }
 
     scheduleSync();
