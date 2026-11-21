@@ -967,6 +967,8 @@
 
     var gCanvas = sec.querySelector('#zig-getaway-canvas');
     if (gCanvas) {
+      /* Lock 2D context eagerly so #zig-getaway-canvas never consumes a WebGL slot */
+      try { gCanvas.getContext('2d'); } catch (_) {}
       observeInteractiveCanvas(gCanvas);
       var interactFromEvent = function (e) {
         ensureAudio();
@@ -1473,17 +1475,39 @@
     }
   }
 
+  /* Shared Offscreen Atmospheric Preview Compositor -> Blitted to 2D .zig-card-shader Canvases
+   * Preserves .zig-card-shader class & 60fps hover FX while freeing WebGL contexts for #zone-char-3d & ZoneEcs3D! */
+  var sharedPreviewSurface = null;
+  function ensureSharedPreviewSurface(pw, ph, dpr) {
+    if (!sharedPreviewSurface && typeof document !== 'undefined' && document.createElement) {
+      sharedPreviewSurface = document.createElement('canvas');
+    }
+    if (!sharedPreviewSurface) return null;
+    if (sharedPreviewSurface.width !== pw || sharedPreviewSurface.height !== ph) {
+      sharedPreviewSurface.width = pw;
+      sharedPreviewSurface.height = ph;
+    }
+    var offCtx = sharedPreviewSurface.getContext('2d');
+    if (!offCtx) return null;
+    offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { canvas: sharedPreviewSurface, ctx: offCtx };
+  }
+
   function paintSinglePreviewCanvas(cv, now) {
     if (!cv) return;
+    cv.setAttribute('data-zig-ctx', '2d-shared-blit');
     var pfx = state.previewFX;
     var pal = getSketchPalette();
     var kind = cv.getAttribute('data-zig-preview');
     var rect = cv.getBoundingClientRect();
     var rawH = cv.clientHeight || (cv.parentElement && cv.parentElement.clientHeight) || rect.height || 92;
     var targetH = Math.max(68, Math.round(rawH));
-    var s = syncCanvas(cv, targetH);
-    if (!s) return;
-    var ctx = s.ctx, w = s.w, h = s.h;
+    var dst = syncCanvas(cv, targetH);
+    if (!dst) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var shared = ensureSharedPreviewSurface(cv.width, cv.height, dpr);
+    var ctx = shared ? shared.ctx : dst.ctx;
+    var w = dst.w, h = dst.h;
 
     ctx.clearRect(0, 0, w, h);
 
@@ -1581,6 +1605,13 @@
         ctx.arc(ck2.x * w, ck2.y * h, ck2.r, 0, Math.PI * 2);
         ctx.fill();
       }
+    }
+
+    if (shared && shared.canvas && dst.ctx !== ctx) {
+      dst.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      dst.ctx.clearRect(0, 0, cv.width, cv.height);
+      dst.ctx.drawImage(shared.canvas, 0, 0, cv.width, cv.height);
+      dst.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
   }
 
@@ -3167,7 +3198,24 @@
       if (mainObserver) {
         try { mainObserver.disconnect(); } catch (_) {}
       }
-      mainObserver = new MutationObserver(scheduleSyncMounts);
+      mainObserver = new MutationObserver(function (records) {
+        var screenChanged = false;
+        for (var i = 0; i < records.length; i++) {
+          if (records[i].type === 'attributes' && records[i].attributeName === 'data-zone-screen') {
+            screenChanged = true;
+            break;
+          }
+        }
+        if (screenChanged) {
+          if (obsTimer) {
+            clearTimeout(obsTimer);
+            obsTimer = null;
+          }
+          syncMounts();
+          paintIdleVisibleCanvases();
+        }
+        scheduleSyncMounts();
+      });
       mainObserver.observe(main, {
         childList: true,
         subtree: false,

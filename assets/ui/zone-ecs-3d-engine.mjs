@@ -1,7 +1,7 @@
 /* ==========================================================================
- * ZONE v152 - TRUE DATA-ORIENTED 3D ECS & SHARED WEBGL ENGINE
+ * ZONE v153 - TRUE DATA-ORIENTED 3D ECS & SINGLE-CONTEXT SHARED WEBGL ENGINE
  * Exclusive Ownership: @ecs-3d-engine (assets/ui/zone-ecs-3d-engine.mjs)
- * Local Vendored Three.js r184 ONLY - ZERO External CDN
+ * Local Vendored Three.js r184 ONLY - ZERO External CDN - 1 Shared WebGL Ctx
  * ========================================================================== */
 
 import * as THREE from '../../lib/three184/three.module.js';
@@ -21,6 +21,9 @@ export {
 };
 
 export const MAX_ENTITIES = 512;
+
+export const HERO_ELONGATED_YAW = -Math.PI * 0.36;
+export const HERO_ELONGATED_PITCH = 0.14;
 
 export const COMPONENTS = Object.freeze({
   TRANSFORM: 1 << 0,
@@ -51,6 +54,7 @@ export const STAGE_KINDS = Object.freeze([
   'city-wheels-race',
   'casino-royale',
   'paperdoll-armory',
+  'character-turntable',
 ]);
 
 const ANIM_NONE = 0;
@@ -85,7 +89,7 @@ export function applyFresnelRimShader(material, opts = {}) {
   material.userData = material.userData || {};
   material.userData.z3dRimUniforms = uniforms;
   material.customProgramCacheKey = function z3dRimCacheKey() {
-    return 'z3d-fresnel-rim-v152';
+    return 'z3d-fresnel-rim-v153';
   };
 
   material.onBeforeCompile = function z3dOnBeforeCompile(shader) {
@@ -133,8 +137,6 @@ function makePbr(color, roughness = 0.36, metalness = 0.65, rimOpts = null, extr
 
 /* --------------------------------------------------------------------------
  * 2. DEFERRED ENTITY COMMAND BUFFER (ECB)
- *    Queues structural ECS operations during system execution and replays
- *    them atomically at sync points so contiguous queries never tear.
  * -------------------------------------------------------------------------- */
 export class EntityCommandBuffer {
   constructor() {
@@ -208,59 +210,42 @@ export class ZoneEcsWorld {
     this.timeScale = 1.0;
     this.shakeStrength = typeof opts.shakeStrength === 'number' ? opts.shakeStrength : 1.0;
 
-    // Contiguous TypedArray Component Stores
     this.stores = {
       alive: new Uint8Array(MAX_ENTITIES),
       mask: new Uint32Array(MAX_ENTITIES),
       generation: new Uint32Array(MAX_ENTITIES),
-      // Transform3D: [px, py, pz, rx, ry, rz, sx, sy, sz, dirty] (stride 10)
       Transform3D: new Float32Array(MAX_ENTITIES * 10),
-      // Velocity3D: [vx, vy, vz, avx, avy, avz] (stride 6)
       Velocity3D: new Float32Array(MAX_ENTITIES * 6),
-      // TurntableSpin: [speedY, dragYaw, dragPitch, damping] (stride 4)
       TurntableSpin: new Float32Array(MAX_ENTITIES * 4),
-      // HoverFloat: [baseY, amplitude, frequency, phase] (stride 4)
       HoverFloat: new Float32Array(MAX_ENTITIES * 4),
-      // TraumaShake: [trauma, decay, maxOffX, maxOffY, maxRoll, timeAcc, strength, hasBase] (stride 8)
       TraumaShake: new Float32Array(MAX_ENTITIES * 8),
-      // CameraBasePose: [bx, by, bz, tx, ty, tz] (stride 6)
       CameraBasePose: new Float32Array(MAX_ENTITIES * 6),
-      // HitStopState: [remainingRealSec, slowScale, activeFlag, reserved] (stride 4) + monotonic IDs
       HitStopState: new Float32Array(MAX_ENTITIES * 4),
       HitStopIds: new Uint32Array(MAX_ENTITIES),
-      // FresnelRim: [r, g, b, power, baseIntensity, pulseHz] (stride 6)
       FresnelRim: new Float32Array(MAX_ENTITIES * 6),
-      // InteractivePickable: [layerMask, hovered, clickCount, metaId] (stride 4)
       InteractivePickable: new Uint32Array(MAX_ENTITIES * 4),
-      // StageActionKinematics: [kind, timer, duration, origX, origY, origZ, paramA, paramB] (stride 8)
       StageActionKinematics: new Float32Array(MAX_ENTITIES * 8),
     };
 
-    // Object3D & metadata side-tables indexed by eid (kept out of hot float math)
     this.object3d = new Array(MAX_ENTITIES).fill(null);
     this.rimMaterials = new Array(MAX_ENTITIES).fill(null);
     this.pickMeta = new Map();
 
-    // Global overlapping-safe Hit-Stop resource (mirrors onto entity 0 or active hit-stop entity)
     this._hitStopSeq = 0;
     this._activeHitStopId = 0;
     this._hitStopRemainingReal = 0;
     this._hitStopSlowScale = 1.0;
 
-    // Input raycast queue & render hook
     this._pendingPointerEvents = [];
     this._renderHook = typeof opts.renderHook === 'function' ? opts.renderHook : null;
     this.lastSystemOrder = [];
 
-    // THREE.Timer (r183+ replacement for deprecated Clock)
     this.timer = typeof THREE.Timer === 'function' ? new THREE.Timer() : null;
     this._lastPerfNow = typeof performance !== 'undefined' ? performance.now() : Date.now();
     if (this.timer && typeof document !== 'undefined' && typeof this.timer.connect === 'function') {
       try {
         this.timer.connect(document);
-      } catch (_) {
-        // Headless / mock document safe ignore
-      }
+      } catch (_) { /* ignore */ }
     }
 
     this.schedule = [
@@ -301,24 +286,29 @@ export class ZoneEcsWorld {
     T[tOff + 9] = 1;
 
     this.object3d[eid] = object3d || null;
-    if (object3d) {
-      object3d.userData = object3d.userData || {};
-      object3d.userData.z3dEid = eid;
-      const mats = [];
-      object3d.traverse((node) => {
-        if (!node.isMesh || !node.material) return;
-        const list = Array.isArray(node.material) ? node.material : [node.material];
-        for (let i = 0; i < list.length; i++) {
-          if (list[i] && list[i].userData && list[i].userData.z3dRimUniforms) {
-            mats.push(list[i]);
-          }
-        }
-      });
-      this.rimMaterials[eid] = mats.length ? mats : null;
-    } else {
-      this.rimMaterials[eid] = null;
-    }
+    this.refreshEntityRimCache(eid);
     return eid;
+  }
+
+  refreshEntityRimCache(eid) {
+    const object3d = this.object3d[eid];
+    if (!object3d) {
+      this.rimMaterials[eid] = null;
+      return;
+    }
+    object3d.userData = object3d.userData || {};
+    object3d.userData.z3dEid = eid;
+    const mats = [];
+    object3d.traverse((node) => {
+      if (!node.isMesh || !node.material) return;
+      const list = Array.isArray(node.material) ? node.material : [node.material];
+      for (let i = 0; i < list.length; i++) {
+        if (list[i] && list[i].userData && list[i].userData.z3dRimUniforms) {
+          mats.push(list[i]);
+        }
+      }
+    });
+    this.rimMaterials[eid] = mats.length ? mats : null;
   }
 
   despawnImmediate(eid) {
@@ -405,12 +395,6 @@ export class ZoneEcsWorld {
     return next;
   }
 
-  /**
-   * Overlapping-safe real-time Hit-Stop (`game-feel` Pattern 2).
-   * Increments monotonic `hitStopId`; countdown runs in real unscaled seconds
-   * so timeScale=0 or 0.05 never soft-locks, and an earlier short hit-stop
-   * never prematurely cancels a newer overlapping hit-stop.
-   */
   triggerHitStop(duration = 0.08, slow = 0.05, eid = 0) {
     const clampedDur = Math.max(0, Math.min(duration, 0.35));
     const clampedSlow = Math.max(0.0, Math.min(slow, 1.0));
@@ -474,7 +458,6 @@ export class ZoneEcsWorld {
     const kOff = eid * 8;
     const K = this.stores.StageActionKinematics;
     const T = this.stores.Transform3D;
-    // Preserve rest origin if first time setting kinematics
     if (K[kOff + 0] === ANIM_NONE) {
       K[kOff + 3] = T[tOff + 0];
       K[kOff + 4] = T[tOff + 1];
@@ -509,7 +492,6 @@ export class ZoneEcsWorld {
     const realDt = this._sampleRealDelta(manualRealDt);
     this.realElapsed += realDt;
 
-    // Advance real-time Hit-Stop before scaling gameplay delta
     if (this._activeHitStopId > 0 && this._hitStopRemainingReal > 0) {
       this._hitStopRemainingReal = Math.max(0, this._hitStopRemainingReal - realDt);
       for (let eid = 0; eid < this.nextId; eid++) {
@@ -545,7 +527,6 @@ export class ZoneEcsWorld {
     return { realDt, scaledDt, timeScale: this.timeScale };
   }
 
-  /* --- System 1: InputRaycastSystem --- */
   _sysInputRaycast() {
     if (this._pendingPointerEvents.length === 0) return;
     const events = this._pendingPointerEvents.splice(0, this._pendingPointerEvents.length);
@@ -595,7 +576,6 @@ export class ZoneEcsWorld {
     }
   }
 
-  /* --- System 2: TurntableKinematicsSystem --- */
   _sysTurntableKinematics(scaledDt, realDt) {
     const alive = this.stores.alive;
     const mask = this.stores.mask;
@@ -623,7 +603,6 @@ export class ZoneEcsWorld {
 
       if (m & COMPONENTS.TURNTABLE) {
         const sOff = eid * 4;
-        // Item cards use realDt so dragged cards stay responsive even during stage hit-stop
         T[tOff + 4] += S[sOff + 0] * realDt + S[sOff + 1];
         T[tOff + 3] = Math.max(-0.85, Math.min(0.85, T[tOff + 3] + S[sOff + 2]));
         const damp = Math.exp(-Math.max(1, S[sOff + 3]) * realDt);
@@ -650,7 +629,6 @@ export class ZoneEcsWorld {
     }
   }
 
-  /* --- System 3: StageActionKinematicsSystem --- */
   _sysStageActionKinematics(scaledDt) {
     const alive = this.stores.alive;
     const mask = this.stores.mask;
@@ -675,7 +653,6 @@ export class ZoneEcsWorld {
       const pB = K[kOff + 7];
 
       if (kind === ANIM_LUNGE) {
-        // Eased punch out & spring back to exact rest pose
         const wave = Math.sin(u * Math.PI);
         T[tOff + 0] = ox + pA * wave;
         T[tOff + 2] = oz + pB * wave;
@@ -698,7 +675,6 @@ export class ZoneEcsWorld {
           K[kOff + 0] = ANIM_NONE;
         }
       } else if (kind === ANIM_WHEEL_SPIN) {
-        // Continuous or decelerating prize wheel spin around Z
         const speed = pB > 0 ? pA * Math.max(0.15, 1 - u * 0.85) : pA;
         T[tOff + 5] += speed * scaledDt;
         if (pB > 0 && u >= 1.0) {
@@ -707,7 +683,6 @@ export class ZoneEcsWorld {
           K[kOff + 1] = 0;
         }
       } else if (kind === ANIM_DRIFT_ORBIT) {
-        // Continuous street drift car around oval circuit (pA = speed, pB = phase)
         const ang = this.scaledElapsed * pA + pB;
         const rx = ox || 2.15;
         const rz = oz || 1.25;
@@ -758,7 +733,6 @@ export class ZoneEcsWorld {
     }
   }
 
-  /* --- System 4: TraumaCameraSystem (Squirrel Eiserloh trauma^2 + realDt decay) --- */
   _sysTraumaCamera(_scaledDt, realDt) {
     const alive = this.stores.alive;
     const mask = this.stores.mask;
@@ -781,7 +755,6 @@ export class ZoneEcsWorld {
       TS[o + 5] += realDt * 30.0;
       const t = TS[o + 5];
 
-      // Summed irrational-rate sines: smooth punch, never random per-frame buzz
       const offX = trauma > 0 ? TS[o + 2] * shake * (Math.sin(t * 1.7) * 0.7 + Math.sin(t * 2.9) * 0.3) : 0;
       const offY = trauma > 0 ? TS[o + 3] * shake * (Math.sin(t * 2.3) * 0.7 + Math.sin(t * 3.7) * 0.3) : 0;
       const roll = trauma > 0 ? TS[o + 4] * shake * Math.sin(t * 1.1) : 0;
@@ -796,7 +769,6 @@ export class ZoneEcsWorld {
       const cam = this.object3d[eid];
       if (cam) {
         if (cam.userData && cam.userData.z3dOrbitActive) {
-          // Apply shake offset purely additively around current orbit offset and restore next frame
           const prevOffX = cam.userData.z3dPrevShakeX || 0;
           const prevOffY = cam.userData.z3dPrevShakeY || 0;
           cam.position.x += offX - prevOffX;
@@ -811,7 +783,6 @@ export class ZoneEcsWorld {
     }
   }
 
-  /* --- System 5: FresnelShaderSystem --- */
   _sysFresnelShader() {
     const alive = this.stores.alive;
     const mask = this.stores.mask;
@@ -844,7 +815,6 @@ export class ZoneEcsWorld {
     }
   }
 
-  /* --- System 6: SharedWebGLRenderSystem --- */
   _sysSharedWebGLRender(scaledDt, realDt) {
     if (typeof this._renderHook === 'function') {
       this._renderHook(scaledDt, realDt, this);
@@ -853,12 +823,11 @@ export class ZoneEcsWorld {
 }
 
 /* --------------------------------------------------------------------------
- * 4. 100% 3D ITEM MESH FACTORY & REAL WEAPON ASSET MAPPER
- *    Every item category in ZONE gets a bespoke multi-part PBR + Fresnel 3D
- *    model immediately on frame 0, plus cached async GLB/OBJ+MTL upgrades!
+ * 4. 100% 3D ITEM MESH FACTORY & ALL 13+ UNIQUE CRIME ENHANCERS
+ *    Hero 3/4 side-profile framing (`HERO_ELONGATED_YAW`, `HERO_ELONGATED_PITCH`)
+ *    ensures rifles, melee, vehicles & tools fill ~68% of 3D Orbit Studio!
  * -------------------------------------------------------------------------- */
 export const WEAPON_ASSET_MAP = Object.freeze({
-  // High-detail GLB upgrades
   assaultrifle_1: { type: 'glb', url: '/assets/weapons/upgrades116/m4-detail116.glb', family: 'rifle' },
   assaultrifle_3: { type: 'glb', url: '/assets/weapons/upgrades116/m4-detail116.glb', family: 'rifle' },
   assaultrifle_5: { type: 'glb', url: '/assets/weapons/upgrades116/m4-detail116.glb', family: 'rifle' },
@@ -908,7 +877,6 @@ export const WEAPON_ASSET_MAP = Object.freeze({
   submachinegun_3: { type: 'obj', obj: '/assets/weapons/SubmachineGun_3.obj', mtl: '/assets/weapons/SubmachineGun_3.mtl', family: 'smg' },
   submachinegun_4: { type: 'obj', obj: '/assets/weapons/SubmachineGun_4.obj', mtl: '/assets/weapons/SubmachineGun_4.mtl', family: 'smg' },
   submachinegun_5: { type: 'obj', obj: '/assets/weapons/SubmachineGun_5.obj', mtl: '/assets/weapons/SubmachineGun_5.mtl', family: 'smg' },
-  // Melee real GLBs
   knife: { type: 'glb', url: '/assets/weapons/premium/m9-knife/m9-knife.glb', family: 'knife' },
   bat: { type: 'glb', url: '/assets/weapons/premium/wooden-bat/baseball_bat.glb', family: 'bat' },
   katana: { type: 'glb', url: '/assets/weapons/library/models/the-base-mesh--saber_01.glb', family: 'katana' },
@@ -926,26 +894,84 @@ const RARITY_RIM_COLORS = Object.freeze({
 });
 
 export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
-  const rawId = String(itemId || 'weapon_cache').trim().toLowerCase().replace(/\s+/g, '_');
+  const rawId = String(itemId || 'weapon_cache').trim().toLowerCase().replace(/[\s-]+/g, '_');
   const rawCat = String(category || '').trim().toLowerCase();
   const rimColor = RARITY_RIM_COLORS[String(rarity || 'rare').toLowerCase()] || 0x7dd3fc;
 
   if (Object.hasOwn(WEAPON_ASSET_MAP, rawId)) {
     const entry = WEAPON_ASSET_MAP[rawId];
     const isMelee = ['knife', 'bat', 'katana', 'hammer', 'knuckles'].includes(entry.family);
-    return { id: rawId, category: isMelee ? 'melee' : 'weapon', subtype: entry.family, asset: entry, rimColor };
+    return { id: rawId, category: isMelee ? 'melee' : 'weapon', subtype: entry.family, archetype: entry.family, asset: entry, rimColor };
+  }
+
+  // Specific Crime Enhancers & Syndicate Tools (#1-#13 + bespoke tools — checked BEFORE broad armor/melee rules so zero items collide!)
+  if (/cut_throat_razor|straight_razor|\brazor\b/.test(rawId)) {
+    return { id: rawId, category: 'melee', subtype: 'cut_throat_razor', archetype: 'cut_throat_razor', asset: null, rimColor };
+  }
+  if (/crowbar|prybar|jimmy/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'crowbar', archetype: 'crowbar', asset: null, rimColor };
+  }
+  if (/paint_mask|respirator|spray/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'paint_mask', archetype: 'paint_mask', asset: null, rimColor };
+  }
+  if (/latex_gloves|nitrile|disposal_gloves/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'latex_gloves', archetype: 'latex_gloves', asset: null, rimColor };
+  }
+  if (/mountain_bike|bicycle|\bbike\b/.test(rawId)) {
+    return { id: rawId, category: 'vehicle', subtype: 'mountain_bike', archetype: 'mountain_bike', asset: null, rimColor };
+  }
+  if (/high_speed_drive|nvme|duplicator|usb_drive|ssd/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'high_speed_drive', archetype: 'high_speed_drive', asset: null, rimColor };
+  }
+  if (/skimmer|card_skimmer|magstripe/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'skimmer', archetype: 'skimmer', asset: null, rimColor };
+  }
+  if (/duct_tape|\btape\b/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'duct_tape', archetype: 'duct_tape', asset: null, rimColor };
+  }
+  if (/flashlight|torch/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'flashlight', archetype: 'flashlight', asset: null, rimColor };
+  }
+  if (/megaphone|bullhorn/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'megaphone', archetype: 'megaphone', asset: null, rimColor };
+  }
+  if (/office_chair|swivel_chair|\bchair\b/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'office_chair', archetype: 'office_chair', asset: null, rimColor };
+  }
+  if (/magnifying_glass|loupe|forger_lens/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'magnifying_glass', archetype: 'magnifying_glass', asset: null, rimColor };
+  }
+  if (/ergonomic_keyboard|keyboard/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'ergonomic_keyboard', archetype: 'ergonomic_keyboard', asset: null, rimColor };
+  }
+  if (/hacking_rig|cyberdeck|laptop|black_box|ecu/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'hacking_rig', archetype: 'hacking_rig', asset: null, rimColor };
+  }
+  if (/windproof_lighter|lighter|zippo|blowtorch/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'windproof_lighter', archetype: 'windproof_lighter', asset: null, rimColor };
+  }
+  if (/lockpick|pick_set/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'lockpick', archetype: 'lockpick', asset: null, rimColor };
+  }
+  if (/thermal_drill|\bdrill\b|auger/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'drill', archetype: 'drill', asset: null, rimColor };
+  }
+  if (/keycard|access_card|passcard|rfid/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'keycard', archetype: 'keycard', asset: null, rimColor };
+  }
+  if (/glasses|goggles|nvg|optics/.test(rawId)) {
+    return { id: rawId, category: 'enhancer', subtype: 'glasses', archetype: 'glasses', asset: null, rimColor };
   }
 
   // Melee
-  if (rawCat === 'melee' || /(knife|razor|dagger|blade|katana|sword|bat|club|crowbar|hammer|baton|knuckle|machete)/.test(rawId)) {
+  if (rawCat === 'melee' || /(knife|dagger|blade|katana|sword|bat|club|hammer|baton|knuckle|machete)/.test(rawId)) {
     let subtype = 'knife';
     if (/katana|sword|saber/.test(rawId)) subtype = 'katana';
     else if (/bat|club/.test(rawId)) subtype = 'bat';
-    else if (/crowbar/.test(rawId)) subtype = 'crowbar';
     else if (/hammer|mace/.test(rawId)) subtype = 'hammer';
     else if (/baton|stun|taser/.test(rawId)) subtype = 'stun_baton';
     else if (/knuckle/.test(rawId)) subtype = 'knuckles';
-    return { id: rawId, category: 'melee', subtype, asset: WEAPON_ASSET_MAP[subtype] || null, rimColor };
+    return { id: rawId, category: 'melee', subtype, archetype: subtype, asset: WEAPON_ASSET_MAP[subtype] || null, rimColor };
   }
 
   // Firearms & tactical grenades
@@ -957,12 +983,12 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     else if (/shotgun|sawed/.test(rawId)) subtype = 'shotgun';
     else if (/sniper|dragunov|mosin/.test(rawId)) subtype = 'sniper';
     else if (/smg|submachine/.test(rawId)) subtype = 'smg';
-    return { id: rawId, category: 'weapon', subtype, asset: null, rimColor };
+    return { id: rawId, category: 'weapon', subtype, archetype: subtype, asset: null, rimColor };
   }
 
-  // Drugs & chemical compounds
+  // Drugs
   if (rawCat === 'drug' || /(xanax|vicodin|ecstasy|ketamine|lsd|shroom|opium|pcp|speed|cannabis|weed|epinephrine)/.test(rawId)) {
-    return { id: rawId, category: 'drug', subtype: rawId, asset: null, rimColor };
+    return { id: rawId, category: 'drug', subtype: rawId, archetype: `drug_${rawId}`, asset: null, rimColor };
   }
 
   // Medical
@@ -971,7 +997,7 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     if (/blood/.test(rawId)) subtype = 'bloodbag';
     else if (/morphine|neumune|syringe/.test(rawId)) subtype = 'syringe';
     else if (/small/.test(rawId)) subtype = 'small_medkit';
-    return { id: rawId, category: 'medical', subtype, asset: null, rimColor };
+    return { id: rawId, category: 'medical', subtype, archetype: subtype, asset: null, rimColor };
   }
 
   // Boosters
@@ -981,29 +1007,28 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     else if (/edvd|dvd|disc/.test(rawId)) subtype = 'edvd';
     else if (/candy|choc/.test(rawId)) subtype = 'candy';
     else if (/alcohol|whiskey|beer|wine/.test(rawId)) subtype = 'alcohol';
-    return { id: rawId, category: 'booster', subtype, asset: null, rimColor };
+    return { id: rawId, category: 'booster', subtype, archetype: subtype, asset: null, rimColor };
   }
 
-  // Armor & paperdoll slots
-  if (rawCat === 'armor' || rawCat === 'paperdoll' || /(helmet|head|kevlar|vest|armor|body|chest|gloves|hands|gauntlet|boots|feet|pants|legs|greaves|amulet|ring|paint_mask|mask)/.test(rawId)) {
+  // Armor & paperdoll
+  if (rawCat === 'armor' || rawCat === 'paperdoll' || /(helmet|head|kevlar|vest|armor|body|chest|gloves|hands|gauntlet|boots|feet|pants|legs|greaves|amulet|ring|mask)/.test(rawId)) {
     let subtype = 'kevlar';
-    if (/helmet|head/.test(rawId)) subtype = 'helmet';
-    else if (/mask/.test(rawId)) subtype = 'mask';
-    else if (/glove|hand|latex/.test(rawId)) subtype = 'gloves';
+    if (/helmet|head|mask/.test(rawId)) subtype = 'helmet';
+    else if (/glove|hand/.test(rawId)) subtype = 'gloves';
     else if (/boot|feet|shoe/.test(rawId)) subtype = 'boots';
     else if (/pant|leg|greave/.test(rawId)) subtype = 'pants';
     else if (/amulet|ring|medal|crest/.test(rawId)) subtype = 'ring';
-    return { id: rawId, category: 'armor', subtype, asset: null, rimColor };
+    return { id: rawId, category: 'armor', subtype, archetype: subtype, asset: null, rimColor };
   }
 
   // Vehicles
-  if (rawCat === 'vehicle' || /(car|civic|evo|gtr|gt3|bike|van|truck|racer)/.test(rawId)) {
-    return { id: rawId, category: 'vehicle', subtype: /bike/.test(rawId) ? 'bike' : 'sports_car', asset: null, rimColor };
+  if (rawCat === 'vehicle' || /(car|civic|evo|gtr|gt3|van|truck|racer)/.test(rawId)) {
+    return { id: rawId, category: 'vehicle', subtype: 'sports_car', archetype: 'sports_car', asset: null, rimColor };
   }
 
   // Caches & Crates
   if (rawCat === 'cache' || /(cache|crate|chest|box|safe)/.test(rawId)) {
-    return { id: rawId, category: 'cache', subtype: 'weapon_cache', asset: null, rimColor };
+    return { id: rawId, category: 'cache', subtype: 'weapon_cache', archetype: 'weapon_cache', asset: null, rimColor };
   }
 
   // Contraband / Collectibles
@@ -1011,41 +1036,75 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     let subtype = 'gold_bullion';
     if (/flower|orchid|lotus|cherry|peony|violet|tribulus/.test(rawId)) subtype = 'orchid';
     else if (/plush/.test(rawId)) subtype = 'plushie';
-    return { id: rawId, category: 'contraband', subtype, asset: null, rimColor };
+    return { id: rawId, category: 'contraband', subtype, archetype: subtype, asset: null, rimColor };
   }
 
-  // Crime Enhancers & Tech Tools (default rich 3D tool)
-  let enhSub = 'optics';
-  if (/lockpick/.test(rawId)) enhSub = 'lockpicks';
-  else if (/drive|ecu|keyboard| tape|black_box/.test(rawId)) enhSub = 'cyber_drive';
-  else if (/flash|torch|megaphone/.test(rawId)) enhSub = 'flashlight';
-  else if (/lighter/.test(rawId)) enhSub = 'lighter';
-  return { id: rawId, category: 'enhancer', subtype: enhSub, asset: null, rimColor };
+  return { id: rawId, category: rawCat || 'enhancer', subtype: 'hacking_rig', archetype: 'hacking_rig', asset: null, rimColor };
 }
 
-function normalizeObjectToUnitBounds(obj, targetExtent = 1.55) {
-  const box = new THREE.Box3().setFromObject(obj);
-  if (box.isEmpty()) return obj;
+export function resolveItemArchetype(itemId, category = '') {
+  return resolveItemSpec3D(itemId, category).archetype;
+}
+
+/**
+ * Aligns elongated meshes so their primary horizontal barrel/body length lies
+ * along Z before centering & scaling to `targetExtent = 1.68`. That way,
+ * setting `root.rotation.set(0.14, -Math.PI * 0.36, 0)` presents EVERY GLB,
+ * OBJ, and procedural weapon/melee/vehicle at a dramatic ~91% broadside 3/4
+ * diagonal profile!
+ */
+function normalizeAndAlignModel(obj, targetExtent = 1.68, alignLongToZ = false) {
+  const wrap = new THREE.Group();
+  wrap.add(obj);
+  wrap.updateMatrixWorld(true);
+
+  let box = new THREE.Box3().setFromObject(wrap);
+  if (box.isEmpty()) return wrap;
   const size = new THREE.Vector3();
-  const center = new THREE.Vector3();
   box.getSize(size);
+
+  if (alignLongToZ) {
+    if (size.x > size.z * 1.32 && size.x >= size.y) {
+      obj.rotation.y += Math.PI * 0.5;
+    } else if (size.y > Math.max(size.x, size.z) * 1.45) {
+      // Tall vertical bat / sword / crowbar: tilt into dramatic diagonal along Y-Z
+      obj.rotation.x += Math.PI * 0.34;
+    }
+    wrap.updateMatrixWorld(true);
+    box = new THREE.Box3().setFromObject(wrap);
+    box.getSize(size);
+  }
+
+  const center = new THREE.Vector3();
   box.getCenter(center);
   const maxDim = Math.max(size.x, size.y, size.z, 0.001);
   const scale = targetExtent / maxDim;
-  obj.scale.multiplyScalar(scale);
-  obj.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
-  return obj;
+  wrap.scale.setScalar(scale);
+  wrap.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+
+  const holder = new THREE.Group();
+  holder.add(wrap);
+  return holder;
+}
+
+export function isElongatedItemCategory(spec) {
+  if (!spec) return false;
+  if (spec.category === 'weapon' || spec.category === 'melee' || spec.category === 'vehicle') return true;
+  if (spec.category === 'enhancer') {
+    return ['crowbar', 'flashlight', 'megaphone', 'drill', 'lockpick', 'hacking_rig', 'ergonomic_keyboard', 'skimmer', 'high_speed_drive'].includes(spec.subtype);
+  }
+  return false;
 }
 
 /* --- Procedural Multi-Part 3D Mesh Builders --- */
 function buildFirearmProcedural(subtype, rimColor) {
   const g = new THREE.Group();
-  const gunmetal = makePbr(0x2b3038, 0.28, 0.90, { color: rimColor, power: 2.6, intensity: 0.45 });
-  const steel = makePbr(0x8892a0, 0.22, 0.94, { color: rimColor, power: 2.8, intensity: 0.4 });
-  const polymer = makePbr(0x1b1e24, 0.52, 0.22, { color: rimColor, power: 3.2, intensity: 0.3 });
+  const gunmetal = makePbr(0x2b3038, 0.26, 0.90, { color: rimColor, power: 2.5, intensity: 0.48 });
+  const steel = makePbr(0x8c96a4, 0.20, 0.94, { color: rimColor, power: 2.7, intensity: 0.42 });
+  const polymer = makePbr(0x1b1e24, 0.50, 0.24, { color: rimColor, power: 3.0, intensity: 0.32 });
   const woodOrAccent = subtype === 'ak'
-    ? makePbr(0x8b4c24, 0.54, 0.08, { color: 0xfbbf24, power: 3.0, intensity: 0.28 })
-    : makePbr(0x3b4252, 0.35, 0.68, { color: rimColor, power: 2.8, intensity: 0.35 });
+    ? makePbr(0x8f4e25, 0.52, 0.08, { color: 0xfbbf24, power: 2.8, intensity: 0.34 })
+    : makePbr(0x3b4252, 0.34, 0.68, { color: rimColor, power: 2.8, intensity: 0.35 });
   const opticLens = makePbr(0x0ea5e9, 0.08, 0.2, { color: 0x38bdf8, power: 1.8, intensity: 0.9 }, { emissive: 0x0284c7, emissiveIntensity: 0.75 });
 
   if (subtype === 'grenade') {
@@ -1092,15 +1151,15 @@ function buildFirearmProcedural(subtype, rimColor) {
   const recLen = subtype === 'smg' ? 0.68 : 0.96;
   const receiver = new THREE.Mesh(new THREE.BoxGeometry(recLen, 0.24, 0.16), gunmetal);
   const barrelLen = isLong ? 1.05 : subtype === 'smg' ? 0.45 : 0.78;
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.048, barrelLen, 14), steel);
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.052, barrelLen, 14), steel);
   barrel.rotation.z = Math.PI / 2;
   barrel.position.set(recLen * 0.5 + barrelLen * 0.45, 0.05, 0);
-  const handguard = new THREE.Mesh(new THREE.BoxGeometry(barrelLen * 0.58, 0.16, 0.14), woodOrAccent);
+  const handguard = new THREE.Mesh(new THREE.BoxGeometry(barrelLen * 0.58, 0.17, 0.15), woodOrAccent);
   handguard.position.set(recLen * 0.5 + barrelLen * 0.25, 0.02, 0);
-  const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.062, 0.18, 12), gunmetal);
+  const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.064, 0.18, 12), gunmetal);
   muzzle.rotation.z = Math.PI / 2;
   muzzle.position.set(recLen * 0.5 + barrelLen * 0.9, 0.05, 0);
-  const stock = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.22, 0.13), subtype === 'ak' ? woodOrAccent : polymer);
+  const stock = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.23, 0.13), subtype === 'ak' ? woodOrAccent : polymer);
   stock.position.set(-recLen * 0.5 - 0.25, -0.03, 0);
   const grip = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.4, 0.12), polymer);
   grip.position.set(-0.18, -0.26, 0);
@@ -1108,12 +1167,12 @@ function buildFirearmProcedural(subtype, rimColor) {
   const mag = new THREE.Mesh(new THREE.BoxGeometry(0.18, subtype === 'shotgun' ? 0.14 : 0.48, 0.11), subtype === 'ak' ? woodOrAccent : steel);
   mag.position.set(0.16, -0.28, 0);
   mag.rotation.z = -0.18;
-  const scopeTube = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, subtype === 'sniper' ? 0.58 : 0.3, 14), polymer);
+  const scopeTube = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, subtype === 'sniper' ? 0.58 : 0.32, 14), polymer);
   scopeTube.rotation.z = Math.PI / 2;
   scopeTube.position.set(0.02, 0.21, 0);
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.056, 0.03, 14), opticLens);
+  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.03, 14), opticLens);
   lens.rotation.z = Math.PI / 2;
-  lens.position.set(subtype === 'sniper' ? 0.31 : 0.17, 0.21, 0);
+  lens.position.set(subtype === 'sniper' ? 0.31 : 0.18, 0.21, 0);
 
   g.add(receiver, barrel, handguard, muzzle, stock, grip, mag, scopeTube, lens);
   return g;
@@ -1123,7 +1182,27 @@ function buildMeleeProcedural(subtype, rimColor) {
   const g = new THREE.Group();
   const bladeMat = makePbr(0xdbe4ee, 0.14, 0.96, { color: rimColor, power: 2.2, intensity: 0.55 });
   const darkGrip = makePbr(0x1f242d, 0.62, 0.18, { color: rimColor, power: 3.0, intensity: 0.3 });
-  const brass = makePbr(0xd97706, 0.26, 0.88, { color: 0xfde68a, power: 2.6, intensity: 0.42 });
+  const brass = makePbr(0xd97706, 0.24, 0.90, { color: 0xfde68a, power: 2.5, intensity: 0.45 });
+
+  if (subtype === 'cut_throat_razor') {
+    // Open folding straight razor at 130-degree V silhouette
+    const scaleL = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.16, 0.03), makePbr(0xf8fafc, 0.2, 0.35, { color: rimColor, power: 2.4, intensity: 0.5 }));
+    scaleL.position.set(-0.32, -0.14, 0.045);
+    scaleL.rotation.z = 0.28;
+    const scaleR = scaleL.clone();
+    scaleR.position.z = -0.045;
+    const pivotPin = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.14, 12), brass);
+    pivotPin.rotation.x = Math.PI / 2;
+    pivotPin.position.set(0.08, -0.02, 0);
+    const razorBlade = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.22, 0.022), bladeMat);
+    razorBlade.position.set(0.44, 0.18, 0);
+    razorBlade.rotation.z = 0.42;
+    const spine = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.86, 10), brass);
+    spine.rotation.z = Math.PI / 2 + 0.42;
+    spine.position.set(0.41, 0.27, 0);
+    g.add(scaleL, scaleR, pivotPin, razorBlade, spine);
+    return g;
+  }
 
   if (subtype === 'bat') {
     const batBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.052, 1.65, 16), makePbr(0x9a5b2d, 0.48, 0.08, { color: rimColor, power: 2.8, intensity: 0.35 }));
@@ -1137,11 +1216,10 @@ function buildMeleeProcedural(subtype, rimColor) {
     const band2 = band1.clone();
     band2.position.y = 0.65;
     g.add(batBody, gripTape, pommel, band1, band2);
-    g.rotation.z = -0.72;
     return g;
   }
 
-  if (subtype === 'hammer' || subtype === 'crowbar' || subtype === 'stun_baton' || subtype === 'knuckles') {
+  if (subtype === 'hammer' || subtype === 'stun_baton' || subtype === 'knuckles') {
     const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.06, 1.45, 14), darkGrip);
     const head = subtype === 'stun_baton'
       ? new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.038, 10, 20), makePbr(0x38bdf8, 0.12, 0.5, { color: 0x38bdf8, power: 1.8, intensity: 1.0 }, { emissive: 0x0284c7, emissiveIntensity: 0.9 }))
@@ -1152,11 +1230,9 @@ function buildMeleeProcedural(subtype, rimColor) {
     const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.072, 0.1, 14), brass);
     cap.position.y = -0.72;
     g.add(shaft, head, collar, cap);
-    g.rotation.z = -0.68;
     return g;
   }
 
-  // Knife / Katana / Razor
   const bladeLen = subtype === 'katana' ? 1.38 : 0.88;
   const blade = new THREE.Mesh(new THREE.BoxGeometry(0.14, bladeLen, 0.028), bladeMat);
   blade.position.y = bladeLen * 0.5 + 0.05;
@@ -1170,8 +1246,359 @@ function buildMeleeProcedural(subtype, rimColor) {
   const pommel = new THREE.Mesh(new THREE.OctahedronGeometry(0.075, 0), brass);
   pommel.position.y = -0.45;
   g.add(blade, tip, guard, handle, pommel);
-  g.rotation.z = -0.74;
   return g;
+}
+
+/**
+ * Bespoke Multi-Part 3D Models for ALL 13+ Crime Enhancers & Syndicate Tools
+ * Zero duplicate glasses! Every single tool has an unmistakable 3D silhouette.
+ */
+function buildEnhancerProcedural(subtype, rimColor) {
+  const g = new THREE.Group();
+  const gunmetal = makePbr(0x272d38, 0.34, 0.82, { color: rimColor, power: 2.5, intensity: 0.48 });
+  const steel = makePbr(0xcbd5e1, 0.18, 0.94, { color: rimColor, power: 2.4, intensity: 0.45 });
+  const brass = makePbr(0xd97706, 0.22, 0.92, { color: 0xfef08a, power: 2.3, intensity: 0.62 });
+  const crimson = makePbr(0xdc2626, 0.28, 0.42, { color: 0xfca5a5, power: 2.3, intensity: 0.58 });
+  const cyanGlow = makePbr(0x22d3ee, 0.10, 0.25, { color: 0x67e8f9, power: 1.8, intensity: 0.95 }, { emissive: 0x0891b2, emissiveIntensity: 0.85 });
+  const greenGlow = makePbr(0x22c55e, 0.12, 0.25, { color: 0x86efac, power: 1.8, intensity: 0.95 }, { emissive: 0x15803d, emissiveIntensity: 0.85 });
+  const amberGlow = makePbr(0xf59e0b, 0.12, 0.2, { color: 0xfef08a, power: 1.7, intensity: 1.0 }, { emissive: 0xd97706, emissiveIntensity: 0.95 });
+
+  switch (subtype) {
+    case 'high_speed_drive': {
+      // Finned NVMe RAID Duplicator Chassis + LED array + Gold PCIe edge
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.18, 0.28, 0.58), gunmetal);
+      for (let i = -2; i <= 2; i++) {
+        const fin = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.06, 0.06), steel);
+        fin.position.set(0, 0.17, i * 0.1);
+        g.add(fin);
+      }
+      const pcie = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.42), brass);
+      pcie.position.set(0.64, -0.06, 0);
+      const led1 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), cyanGlow);
+      led1.position.set(-0.46, 0.16, 0.22);
+      const led2 = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), greenGlow);
+      led2.position.set(-0.32, 0.16, 0.22);
+      g.add(body, pcie, led1, led2);
+      return g;
+    }
+
+    case 'paint_mask': {
+      // Graffiti Respirator Mask + Twin Pink/Cyan Filter Cartridges + Spray Can
+      const maskShell = new THREE.Mesh(new THREE.SphereGeometry(0.36, 18, 14), gunmetal);
+      maskShell.scale.set(0.95, 1.05, 0.85);
+      maskShell.position.set(-0.22, 0, 0);
+      const snout = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.24, 16), steel);
+      snout.rotation.x = Math.PI / 2;
+      snout.position.set(-0.22, -0.08, 0.28);
+      const filterMat = makePbr(0xec4899, 0.26, 0.45, { color: 0xf9a8d4, power: 2.2, intensity: 0.7 });
+      const cartL = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.14, 16), filterMat);
+      cartL.rotation.z = 0.6;
+      cartL.position.set(-0.48, -0.1, 0.2);
+      const cartR = cartL.clone();
+      cartR.rotation.z = -0.6;
+      cartR.position.x = 0.04;
+      const sprayCan = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.78, 18), cyanGlow);
+      sprayCan.position.set(0.46, -0.02, 0);
+      const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.12, 12), steel);
+      nozzle.position.set(0.46, 0.43, 0);
+      g.add(maskShell, snout, cartL, cartR, sprayCan, nozzle);
+      return g;
+    }
+
+    case 'skimmer': {
+      // ATM Magstripe Card Skimmer Bezel + Gold EMV Card + Ribbon PCB
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.48, 0.36), makePbr(0x065f46, 0.28, 0.55, { color: 0x34d399, power: 2.2, intensity: 0.75 }));
+      const slotMouth = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.07, 0.40), gunmetal);
+      const card = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.03, 0.78), brass);
+      card.position.set(0, 0, 0.36);
+      const pcb = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.28, 0.06), greenGlow);
+      pcb.position.set(0, 0.28, -0.14);
+      const led = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), cyanGlow);
+      led.position.set(0.28, 0.16, 0.2);
+      g.add(bezel, slotMouth, card, pcb, led);
+      return g;
+    }
+
+    case 'duct_tape': {
+      // Heavy Metallic Silver Industrial Duct Tape Roll + Peeled Tape Strip
+      const outerRoll = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.18, 18, 36), steel);
+      const innerCore = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.34, 24, 1, true), makePbr(0xa16207, 0.72, 0.06, { color: 0xfde68a, power: 2.8, intensity: 0.35 }, { side: THREE.DoubleSide }));
+      innerCore.rotation.x = Math.PI / 2;
+      const sideDiscF = new THREE.Mesh(new THREE.RingGeometry(0.27, 0.58, 32), steel);
+      sideDiscF.position.z = 0.16;
+      const sideDiscB = sideDiscF.clone();
+      sideDiscB.rotation.y = Math.PI;
+      sideDiscB.position.z = -0.16;
+      const tailStrip = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.025, 0.34), steel);
+      tailStrip.position.set(0.56, -0.34, 0);
+      tailStrip.rotation.z = -0.35;
+      g.add(outerRoll, innerCore, sideDiscF, sideDiscB, tailStrip);
+      return g;
+    }
+
+    case 'flashlight': {
+      // Tactical Knurled Flashlight + Glowing Lens + Translucent Volumetric Beam
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.12, 0.92, 18), gunmetal);
+      body.rotation.z = Math.PI / 2;
+      const head = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.14, 0.28, 20), gunmetal);
+      head.rotation.z = Math.PI / 2;
+      head.position.x = 0.54;
+      const bezelRing = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.025, 10, 22), brass);
+      bezelRing.rotation.y = Math.PI / 2;
+      bezelRing.position.x = 0.68;
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.19, 0.19, 0.04, 18), amberGlow);
+      lens.rotation.z = Math.PI / 2;
+      lens.position.x = 0.67;
+      const beamCone = new THREE.Mesh(
+        new THREE.ConeGeometry(0.42, 0.68, 20, 1, true),
+        makePbr(0xfef08a, 0.1, 0.05, false, { transparent: true, opacity: 0.28, emissive: 0xfde047, emissiveIntensity: 0.9, side: THREE.DoubleSide })
+      );
+      beamCone.rotation.z = Math.PI / 2;
+      beamCone.position.x = 1.02;
+      g.add(body, head, bezelRing, lens, beamCone);
+      return g;
+    }
+
+    case 'megaphone': {
+      // Flared Red & White Street Hustler Bullhorn Megaphone
+      const white = makePbr(0xf8fafc, 0.25, 0.2, { color: rimColor, power: 2.6, intensity: 0.4 });
+      const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.14, 0.92, 24), white);
+      cone.rotation.z = -Math.PI / 2;
+      const bellRim = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.045, 12, 28), crimson);
+      bellRim.rotation.y = Math.PI / 2;
+      bellRim.position.x = 0.46;
+      const rearCap = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.22, 18), crimson);
+      rearCap.rotation.z = Math.PI / 2;
+      rearCap.position.x = -0.52;
+      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.12), gunmetal);
+      handle.position.set(-0.22, -0.3, 0);
+      handle.rotation.z = 0.25;
+      const acousticCore = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.28, 16), brass);
+      acousticCore.rotation.z = -Math.PI / 2;
+      acousticCore.position.x = 0.24;
+      g.add(cone, bellRim, rearCap, handle, acousticCore);
+      return g;
+    }
+
+    case 'latex_gloves': {
+      // Pair of Cobalt-Blue Nitrile Disposal Gloves + Bio-Neutralizer Vial
+      const nitrile = makePbr(0x0284c7, 0.35, 0.12, { color: 0x7dd3fc, power: 2.2, intensity: 0.72 });
+      const buildGlove = (xOff, rotZ) => {
+        const gg = new THREE.Group();
+        const palm = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.42, 0.12), nitrile);
+        const cuff = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.035, 10, 18), nitrile);
+        cuff.rotation.x = Math.PI / 2;
+        cuff.position.y = -0.24;
+        gg.add(palm, cuff);
+        for (let f = -1.5; f <= 1.5; f += 1) {
+          const finger = new THREE.Mesh(new THREE.CapsuleGeometry(0.038, 0.22, 6, 10), nitrile);
+          finger.position.set(f * 0.085, 0.34, 0);
+          gg.add(finger);
+        }
+        const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.042, 0.16, 6, 10), nitrile);
+        thumb.position.set(xOff < 0 ? 0.24 : -0.24, 0.06, 0);
+        thumb.rotation.z = xOff < 0 ? -0.6 : 0.6;
+        gg.add(thumb);
+        gg.position.set(xOff, 0, 0);
+        gg.rotation.z = rotZ;
+        return gg;
+      };
+      g.add(buildGlove(-0.32, 0.14), buildGlove(0.32, -0.14));
+      return g;
+    }
+
+    case 'office_chair': {
+      // 5-Star Executive Hacker Command Swivel Chair
+      const leather = makePbr(0x1e293b, 0.42, 0.32, { color: rimColor, power: 2.4, intensity: 0.55 });
+      const seat = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.12, 0.64), leather);
+      seat.position.y = -0.08;
+      const backrest = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.86, 0.12), leather);
+      backrest.position.set(0, 0.4, -0.26);
+      backrest.rotation.x = -0.1;
+      const headrest = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.2, 0.14), crimson);
+      headrest.position.set(0, 0.9, -0.3);
+      const armL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.42), steel);
+      armL.position.set(-0.38, 0.12, -0.04);
+      const armR = armL.clone();
+      armR.position.x = 0.38;
+      const piston = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.38, 12), steel);
+      piston.position.y = -0.32;
+      for (let i = 0; i < 5; i++) {
+        const ang = (i / 5) * Math.PI * 2;
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.05, 0.42), steel);
+        leg.position.set(Math.cos(ang) * 0.2, -0.5, Math.sin(ang) * 0.2);
+        leg.rotation.y = -ang;
+        g.add(leg);
+      }
+      g.add(seat, backrest, headrest, armL, armR, piston);
+      return g;
+    }
+
+    case 'magnifying_glass': {
+      // Forger's Brass Rim Loupe Magnifying Glass + Turned Mahogany Handle
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.055, 14, 32), brass);
+      rim.position.set(0.18, 0.18, 0);
+      const glassLens = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.39, 0.39, 0.06, 28),
+        makePbr(0xe0f2fe, 0.05, 0.1, { color: 0x7dd3fc, power: 1.8, intensity: 0.85 }, { transparent: true, opacity: 0.52, clearcoat: 1.0 })
+      );
+      glassLens.rotation.x = Math.PI / 2;
+      glassLens.position.set(0.18, 0.18, 0);
+      const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.16, 14), brass);
+      collar.rotation.z = -Math.PI / 4;
+      collar.position.set(-0.16, -0.16, 0);
+      const woodHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.085, 0.68, 16), makePbr(0x7c2d12, 0.38, 0.12, { color: 0xfde68a, power: 2.6, intensity: 0.4 }));
+      woodHandle.rotation.z = -Math.PI / 4;
+      woodHandle.position.set(-0.44, -0.44, 0);
+      g.add(rim, glassLens, collar, woodHandle);
+      return g;
+    }
+
+    case 'ergonomic_keyboard': {
+      // Split Backlit RGB Cyber-Scammer Mechanical Keyboard + Coiled Cable
+      const buildHalf = (side) => {
+        const half = new THREE.Group();
+        const deck = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.09, 0.42), gunmetal);
+        const glowStrip = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.11, 0.34), side < 0 ? cyanGlow : makePbr(0xe879f9, 0.15, 0.3, false, { emissive: 0xc026d3, emissiveIntensity: 0.8 }));
+        glowStrip.position.y = 0.02;
+        half.add(deck, glowStrip);
+        half.position.set(side * 0.36, 0, 0);
+        half.rotation.y = side * -0.24;
+        half.rotation.x = 0.22;
+        return half;
+      };
+      const cable = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.025, 10, 22, Math.PI), brass);
+      cable.rotation.x = Math.PI / 2;
+      cable.position.set(0, 0.04, -0.24);
+      g.add(buildHalf(-1), buildHalf(1), cable);
+      return g;
+    }
+
+    case 'hacking_rig': {
+      // Hinged Glowing Cyberdeck Laptop + Antenna + Holographic Screen
+      const baseDeck = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.08, 0.72), gunmetal);
+      baseDeck.position.y = -0.24;
+      const keyMatrix = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.09, 0.42), greenGlow);
+      keyMatrix.position.set(0, -0.22, 0.06);
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.68, 0.06), gunmetal);
+      lid.position.set(0, 0.12, -0.38);
+      lid.rotation.x = -0.22;
+      const holoScreen = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.56, 0.07), cyanGlow);
+      holoScreen.position.set(0, 0.12, -0.37);
+      holoScreen.rotation.x = -0.22;
+      const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.52, 10), brass);
+      antenna.position.set(0.48, 0.38, -0.38);
+      g.add(baseDeck, keyMatrix, lid, holoScreen, antenna);
+      return g;
+    }
+
+    case 'windproof_lighter': {
+      // Open Flip-Top Brass Zippo Arson Lighter + Dual-Layer 3D Flame
+      const caseBody = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.68, 0.24), brass);
+      caseBody.position.y = -0.22;
+      const openLid = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.32, 0.24), brass);
+      openLid.position.set(-0.36, 0.22, 0);
+      openLid.rotation.z = 1.95;
+      const chimney = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.24, 14), steel);
+      chimney.position.set(0.06, 0.22, 0);
+      const sparkWheel = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.2, 14), gunmetal);
+      sparkWheel.rotation.x = Math.PI / 2;
+      sparkWheel.position.set(-0.12, 0.18, 0);
+      const outerFlame = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.48, 16), amberGlow);
+      outerFlame.position.set(0.06, 0.54, 0);
+      const innerFlame = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.28, 12), cyanGlow);
+      innerFlame.position.set(0.06, 0.42, 0);
+      g.add(caseBody, openLid, chimney, sparkWheel, outerFlame, innerFlame);
+      return g;
+    }
+
+    case 'crowbar': {
+      // Forged Crimson & Steel Swan-Neck Pry-Bar
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 1.38, 8), crimson);
+      const hookCurve = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.052, 10, 18, Math.PI * 0.85), steel);
+      hookCurve.position.set(0.16, 0.68, 0);
+      const clawTip = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.12), steel);
+      clawTip.position.set(0.3, 0.58, 0);
+      clawTip.rotation.z = -0.4;
+      const chiselFoot = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.22, 0.12), steel);
+      chiselFoot.position.set(-0.04, -0.74, 0);
+      chiselFoot.rotation.z = 0.25;
+      g.add(shaft, hookCurve, clawTip, chiselFoot);
+      return g;
+    }
+
+    case 'lockpick': {
+      // Fanned Polished Steel Lockpicks + Brass Collar + L-Tension Wrench
+      const pouch = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.46, 16), brass);
+      pouch.position.y = -0.34;
+      for (let i = -1.5; i <= 1.5; i += 1) {
+        const pick = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.82, 0.018), steel);
+        pick.position.set(i * 0.11, 0.18, 0);
+        pick.rotation.z = -i * 0.16;
+        const hook = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.022), cyanGlow);
+        hook.position.set(i * 0.18, 0.58, 0);
+        g.add(pick, hook);
+      }
+      const tension = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.045, 0.03), brass);
+      tension.position.set(0.28, -0.1, 0.08);
+      g.add(pouch, tension);
+      return g;
+    }
+
+    case 'drill': {
+      // Heavy Twin-Handle Thermal Vault Breach Drill + Molten Auger Bit
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.36, 0.32), makePbr(0xd97706, 0.32, 0.65, { color: 0xfef08a, power: 2.4, intensity: 0.55 }));
+      const chuck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 0.24, 16), gunmetal);
+      chuck.rotation.z = -Math.PI / 2;
+      chuck.position.x = 0.48;
+      const auger = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.68, 12), amberGlow);
+      auger.rotation.z = -Math.PI / 2;
+      auger.position.x = 0.92;
+      const gripRear = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.42, 0.14), gunmetal);
+      gripRear.position.set(-0.3, -0.32, 0);
+      const gripTop = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.38, 12), gunmetal);
+      gripTop.rotation.x = Math.PI / 2;
+      gripTop.position.set(0.12, 0.24, 0);
+      g.add(body, chuck, auger, gripRear, gripTop);
+      return g;
+    }
+
+    case 'keycard': {
+      // Obsidian & Gold Encrypted Syndicate RFID Vault Keycard
+      const card = new THREE.Mesh(new THREE.BoxGeometry(1.18, 0.74, 0.05), gunmetal);
+      const border = new THREE.Mesh(new THREE.BoxGeometry(1.22, 0.78, 0.03), brass);
+      const emvChip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.07), brass);
+      emvChip.position.set(-0.34, 0.06, 0);
+      const holoStrip = new THREE.Mesh(new THREE.BoxGeometry(1.14, 0.14, 0.065), cyanGlow);
+      holoStrip.position.set(0, -0.2, 0);
+      const crest = new THREE.Mesh(new THREE.OctahedronGeometry(0.12, 0), greenGlow);
+      crest.position.set(0.34, 0.12, 0.04);
+      g.add(border, card, emvChip, holoStrip, crest);
+      return g;
+    }
+
+    case 'glasses':
+    default: {
+      // Detective Wire-Rim Magnifying Glasses / Night-Vision Specs
+      const lensRingL = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.035, 12, 26), brass);
+      lensRingL.position.set(-0.3, 0, 0.12);
+      const lensRingR = lensRingL.clone();
+      lensRingR.position.x = 0.3;
+      const glassL = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.03, 22), cyanGlow);
+      glassL.rotation.x = Math.PI / 2;
+      glassL.position.set(-0.3, 0, 0.12);
+      const glassR = glassL.clone();
+      glassR.position.x = 0.3;
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.04, 0.04), brass);
+      bridge.position.set(0, 0.06, 0.12);
+      const armL = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.04, 0.68), gunmetal);
+      armL.position.set(-0.54, 0.03, -0.2);
+      const armR = armL.clone();
+      armR.position.x = 0.54;
+      g.add(lensRingL, lensRingR, glassL, glassR, bridge, armL, armR);
+      return g;
+    }
+  }
 }
 
 function buildDrugVialProcedural(subtype) {
@@ -1211,7 +1638,6 @@ function buildDrugVialProcedural(subtype) {
   const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.18, 20), capMat);
   cap.position.y = 0.72;
 
-  // Two-tone 3D capsule pills orbiting next to the vial
   const pill1A = new THREE.Mesh(new THREE.CapsuleGeometry(0.1, 0.16, 8, 14), serum);
   pill1A.position.set(0.54, -0.22, 0.18);
   pill1A.rotation.set(0.4, 0.2, 0.65);
@@ -1260,7 +1686,6 @@ function buildMedicalProcedural(subtype) {
     return g;
   }
 
-  // Trauma Medkit Hardcase + Raised 3D Cross
   const box = new THREE.Mesh(new THREE.BoxGeometry(1.18, 0.84, 0.42), subtype === 'small_medkit' ? crimson : whiteCase);
   const crossMat = subtype === 'small_medkit' ? whiteCase : crimson;
   const cH = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.14, 0.47), crossMat);
@@ -1303,7 +1728,6 @@ function buildBoosterProcedural(subtype) {
     return g;
   }
 
-  // Energy Can / Bottle
   const can = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 1.12, 24), obsidian);
   const topRim = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.35, 0.09, 24), gold);
   topRim.position.y = 0.58;
@@ -1324,7 +1748,7 @@ function buildArmorProcedural(subtype, rimColor) {
   const visorMat = makePbr(0x0ea5e9, 0.08, 0.35, { color: 0x7dd3fc, power: 1.9, intensity: 0.88 }, { transparent: true, opacity: 0.78 });
   const gold = makePbr(0xf59e0b, 0.2, 0.95, { color: 0xfef08a, power: 2.2, intensity: 0.72 });
 
-  if (subtype === 'helmet' || subtype === 'mask') {
+  if (subtype === 'helmet') {
     const dome = new THREE.Mesh(new THREE.SphereGeometry(0.52, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.66), tactical);
     dome.position.y = 0.08;
     const visor = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.28, 20, 1, false, -Math.PI * 0.35, Math.PI * 0.7), visorMat);
@@ -1366,7 +1790,6 @@ function buildArmorProcedural(subtype, rimColor) {
     return g;
   }
 
-  // Segmented Kevlar Tactical Plate Vest
   const torso = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.05, 0.38), tactical);
   const chestPlate = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.52, 0.44), plate);
   chestPlate.position.y = 0.16;
@@ -1383,7 +1806,7 @@ function buildArmorProcedural(subtype, rimColor) {
   return g;
 }
 
-function buildContrabandOrEnhancerProcedural(category, subtype, rimColor) {
+function buildContrabandVehicleCacheProcedural(category, subtype, rimColor) {
   const g = new THREE.Group();
   const gold = makePbr(0xfbbf24, 0.16, 0.96, { color: 0xfef08a, power: 2.0, intensity: 0.78 });
   const steel = makePbr(0x64748b, 0.25, 0.9, { color: rimColor, power: 2.6, intensity: 0.48 });
@@ -1391,6 +1814,34 @@ function buildContrabandOrEnhancerProcedural(category, subtype, rimColor) {
   const neon = makePbr(0x22d3ee, 0.12, 0.3, { color: 0x67e8f9, power: 1.8, intensity: 0.95 }, { emissive: 0x0891b2, emissiveIntensity: 0.8 });
 
   if (category === 'vehicle') {
+    if (subtype === 'mountain_bike') {
+      // Street Getaway Mountain Bike: 2 spoked wheels + diamond tubular frame + handlebars + saddle
+      const frameMat = makePbr(0x16a34a, 0.22, 0.72, { color: 0x86efac, power: 2.2, intensity: 0.65 });
+      const wheelF = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.055, 12, 26), dark);
+      wheelF.position.set(0.54, -0.18, 0);
+      const wheelR = wheelF.clone();
+      wheelR.position.x = -0.54;
+      const topTube = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.82, 10), frameMat);
+      topTube.rotation.z = Math.PI / 2 - 0.1;
+      topTube.position.set(0, 0.16, 0);
+      const downTube = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 0.78, 10), frameMat);
+      downTube.rotation.z = 0.88;
+      downTube.position.set(0.14, -0.02, 0);
+      const seatPost = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.03, 0.62, 10), steel);
+      seatPost.rotation.z = 0.22;
+      seatPost.position.set(-0.28, 0.06, 0);
+      const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.06, 0.14), dark);
+      saddle.position.set(-0.34, 0.36, 0);
+      const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.68, 10), steel);
+      fork.rotation.z = 0.28;
+      fork.position.set(0.44, 0.08, 0);
+      const bars = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.52, 10), steel);
+      bars.rotation.x = Math.PI / 2;
+      bars.position.set(0.36, 0.39, 0);
+      g.add(wheelF, wheelR, topTube, downTube, seatPost, saddle, fork, bars);
+      return g;
+    }
+
     const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.48, 0.28, 0.72), makePbr(0xdc2626, 0.18, 0.78, { color: 0xfca5a5, power: 2.2, intensity: 0.65 }, { clearcoat: 1.0 }));
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.24, 0.6), neon);
     cabin.position.set(-0.05, 0.24, 0);
@@ -1423,71 +1874,56 @@ function buildContrabandOrEnhancerProcedural(category, subtype, rimColor) {
     return g;
   }
 
-  if (category === 'contraband') {
-    if (subtype === 'orchid') {
-      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.24, 0.42, 16), gold);
-      pot.position.y = -0.38;
-      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.72, 10), makePbr(0x16a34a, 0.5, 0.1));
-      const petalMat = makePbr(0xe879f9, 0.22, 0.2, { color: 0xf5d0fe, power: 2.0, intensity: 0.85 }, { emissive: 0xa21caf, emissiveIntensity: 0.45 });
-      for (let i = 0; i < 5; i++) {
-        const ang = (i / 5) * Math.PI * 2;
-        const petal = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 10), petalMat);
-        petal.scale.set(1.2, 0.45, 0.8);
-        petal.position.set(Math.cos(ang) * 0.24, 0.36, Math.sin(ang) * 0.24);
-        g.add(petal);
-      }
-      const center = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), gold);
-      center.position.y = 0.42;
-      g.add(pot, stem, center);
-      return g;
+  if (subtype === 'orchid') {
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.24, 0.42, 16), gold);
+    pot.position.y = -0.38;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.72, 10), makePbr(0x16a34a, 0.5, 0.1));
+    const petalMat = makePbr(0xe879f9, 0.22, 0.2, { color: 0xf5d0fe, power: 2.0, intensity: 0.85 }, { emissive: 0xa21caf, emissiveIntensity: 0.45 });
+    for (let i = 0; i < 5; i++) {
+      const ang = (i / 5) * Math.PI * 2;
+      const petal = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 10), petalMat);
+      petal.scale.set(1.2, 0.45, 0.8);
+      petal.position.set(Math.cos(ang) * 0.24, 0.36, Math.sin(ang) * 0.24);
+      g.add(petal);
     }
-    if (subtype === 'plushie') {
-      const plushMat = makePbr(0xd97706, 0.68, 0.08, { color: 0xfde68a, power: 2.4, intensity: 0.55 });
-      const torso = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 14), plushMat);
-      torso.position.y = -0.18;
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 14), plushMat);
-      head.position.y = 0.34;
-      const earL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), plushMat);
-      earL.position.set(-0.24, 0.58, 0);
-      const earR = earL.clone();
-      earR.position.x = 0.24;
-      const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), neon);
-      eyeL.position.set(-0.11, 0.38, 0.28);
-      const eyeR = eyeL.clone();
-      eyeR.position.x = 0.11;
-      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.1, 20), gold);
-      base.position.y = -0.56;
-      g.add(torso, head, earL, earR, eyeL, eyeR, base);
-      return g;
-    }
-    // Stacked Gold Bullion Bars
-    const barGeo = new THREE.BoxGeometry(0.86, 0.24, 0.42);
-    const b1 = new THREE.Mesh(barGeo, gold);
-    b1.position.set(-0.24, -0.16, 0);
-    const b2 = new THREE.Mesh(barGeo, gold);
-    b2.position.set(0.24, -0.16, 0);
-    const b3 = new THREE.Mesh(barGeo, gold);
-    b3.position.set(0, 0.14, 0);
-    b3.rotation.y = 0.18;
-    const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16), neon);
-    seal.position.set(0, 0.28, 0);
-    g.add(b1, b2, b3, seal);
+    const center = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), gold);
+    center.position.y = 0.42;
+    g.add(pot, stem, center);
     return g;
   }
 
-  // Crime Enhancer / Night-Vision / Lockpicks / Cyber Deck
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.28, 0.34), dark);
-  const tubeL = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.48, 16), steel);
-  tubeL.rotation.x = Math.PI / 2;
-  tubeL.position.set(-0.24, 0, 0.24);
-  const tubeR = tubeL.clone();
-  tubeR.position.x = 0.24;
-  const lensL = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16), neon);
-  lensL.rotation.x = Math.PI / 2;
-  lensL.position.set(-0.24, 0, 0.49);
-  const lensR = lensL.clone();
-  lensR.position.x = 0.24;
-  g.add(frame, tubeL, tubeR, lensL, lensR);
+  if (subtype === 'plushie') {
+    const plushMat = makePbr(0xd97706, 0.68, 0.08, { color: 0xfde68a, power: 2.4, intensity: 0.55 });
+    const torso = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 14), plushMat);
+    torso.position.y = -0.18;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 14), plushMat);
+    head.position.y = 0.34;
+    const earL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), plushMat);
+    earL.position.set(-0.24, 0.58, 0);
+    const earR = earL.clone();
+    earR.position.x = 0.24;
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.05, 10, 8), neon);
+    eyeL.position.set(-0.11, 0.38, 0.28);
+    const eyeR = eyeL.clone();
+    eyeR.position.x = 0.11;
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.46, 0.1, 20), gold);
+    base.position.y = -0.56;
+    g.add(torso, head, earL, earR, eyeL, eyeR, base);
+    return g;
+  }
+
+  // Stacked Gold Bullion Bars
+  const barGeo = new THREE.BoxGeometry(0.86, 0.24, 0.42);
+  const b1 = new THREE.Mesh(barGeo, gold);
+  b1.position.set(-0.24, -0.16, 0);
+  const b2 = new THREE.Mesh(barGeo, gold);
+  b2.position.set(0.24, -0.16, 0);
+  const b3 = new THREE.Mesh(barGeo, gold);
+  b3.position.set(0, 0.14, 0);
+  b3.rotation.y = 0.18;
+  const seal = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16), neon);
+  seal.position.set(0, 0.28, 0);
+  g.add(b1, b2, b3, seal);
   return g;
 }
 
@@ -1544,12 +1980,10 @@ function loadRealWeaponTemplateAsync(assetSpec, rimColor) {
       loader.load(
         assetSpec.url,
         (gltf) => {
-          const root = gltf && gltf.scene ? gltf.scene : null;
-          if (root) {
-            applyPbrAndRimToLoadedWeapon(root, rimColor);
-            normalizeObjectToUnitBounds(root, 1.65);
-          }
-          resolve(root);
+          const raw = gltf && gltf.scene ? gltf.scene : null;
+          if (!raw) return resolve(null);
+          applyPbrAndRimToLoadedWeapon(raw, rimColor);
+          resolve(normalizeAndAlignModel(raw, 1.68, true));
         },
         undefined,
         () => resolve(null)
@@ -1566,8 +2000,7 @@ function loadRealWeaponTemplateAsync(assetSpec, rimColor) {
             assetSpec.obj,
             (obj) => {
               applyPbrAndRimToLoadedWeapon(obj, rimColor);
-              normalizeObjectToUnitBounds(obj, 1.68);
-              resolve(obj);
+              resolve(normalizeAndAlignModel(obj, 1.68, true));
             },
             undefined,
             () => resolve(null)
@@ -1587,40 +2020,48 @@ function loadRealWeaponTemplateAsync(assetSpec, rimColor) {
 
 export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = {}) {
   const spec = resolveItemSpec3D(itemId, category, rarity);
+  const elongated = isElongatedItemCategory(spec);
   const root = new THREE.Group();
   root.name = `z3d-item-${spec.id}`;
   root.userData = {
     z3dItemId: spec.id,
     z3dCategory: spec.category,
     z3dSubtype: spec.subtype,
+    z3dArchetype: spec.archetype,
     z3dRarity: rarity,
+    z3dElongated: elongated,
     z3dAssetUrl: spec.asset ? (spec.asset.url || spec.asset.obj) : null,
   };
 
-  let modelGroup;
-  if (spec.category === 'weapon') modelGroup = buildFirearmProcedural(spec.subtype, spec.rimColor);
-  else if (spec.category === 'melee') modelGroup = buildMeleeProcedural(spec.subtype, spec.rimColor);
-  else if (spec.category === 'drug') modelGroup = buildDrugVialProcedural(spec.subtype);
-  else if (spec.category === 'medical') modelGroup = buildMedicalProcedural(spec.subtype);
-  else if (spec.category === 'booster') modelGroup = buildBoosterProcedural(spec.subtype);
-  else if (spec.category === 'armor') modelGroup = buildArmorProcedural(spec.subtype, spec.rimColor);
-  else modelGroup = buildContrabandOrEnhancerProcedural(spec.category, spec.subtype, spec.rimColor);
+  let rawModel;
+  if (spec.category === 'weapon') rawModel = buildFirearmProcedural(spec.subtype, spec.rimColor);
+  else if (spec.category === 'melee') rawModel = buildMeleeProcedural(spec.subtype, spec.rimColor);
+  else if (spec.category === 'enhancer') rawModel = buildEnhancerProcedural(spec.subtype, spec.rimColor);
+  else if (spec.category === 'drug') rawModel = buildDrugVialProcedural(spec.subtype);
+  else if (spec.category === 'medical') rawModel = buildMedicalProcedural(spec.subtype);
+  else if (spec.category === 'booster') rawModel = buildBoosterProcedural(spec.subtype);
+  else if (spec.category === 'armor') rawModel = buildArmorProcedural(spec.subtype, spec.rimColor);
+  else rawModel = buildContrabandVehicleCacheProcedural(spec.category, spec.subtype, spec.rimColor);
 
-  normalizeObjectToUnitBounds(modelGroup, 1.52);
+  const modelGroup = normalizeAndAlignModel(rawModel, 1.68, elongated);
   modelGroup.name = 'z3d-item-body';
   root.add(modelGroup);
 
-  // Subtle collector halo ring beneath the floating 3D item
+  // Hero 3/4 side-profile initial orientation for elongated weapons/melee/vehicles/tools
+  if (!opts.forHandHold && elongated) {
+    root.rotation.set(HERO_ELONGATED_PITCH, HERO_ELONGATED_YAW, 0);
+  }
+
   if (opts.withPedestalRing !== false) {
     const ringMat = makePbr(spec.rimColor, 0.25, 0.85, false, {
       transparent: true,
-      opacity: 0.36,
+      opacity: 0.34,
       emissive: spec.rimColor,
       emissiveIntensity: 0.35,
     });
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.68, 0.018, 10, 32), ringMat);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.016, 10, 32), ringMat);
     ring.rotation.x = Math.PI / 2;
-    ring.position.y = -0.78;
+    ring.position.y = -0.68;
     ring.name = 'z3d-item-halo';
     root.add(ring);
   }
@@ -1632,7 +2073,6 @@ export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = 
     }
   });
 
-  // Async in-place upgrade to real GLB / OBJ+MTL asset on disk when running in browser
   if (spec.asset && opts.disableAsyncUpgrade !== true) {
     loadRealWeaponTemplateAsync(spec.asset, spec.rimColor).then((template) => {
       if (!template) return;
@@ -1666,60 +2106,179 @@ export function countMeshStats3D(object3d) {
 }
 
 /* --------------------------------------------------------------------------
- * 5. 7 INTERACTIVE 3D ACTION STAGES (`buildStageScene3D`)
+ * 5. ARTICULATED 3D SYNDICATE OPERATIVES & 8 INTERACTIVE 3D STAGES
  * -------------------------------------------------------------------------- */
-function createHumanoid3D(opts = {}) {
+export function createHumanoid3D(opts = {}) {
   const g = new THREE.Group();
-  const coatHex = opts.coatColor || 0x1e293b;
-  const skinHex = opts.skinColor || 0xd6a582;
+  const outfit = String(opts.outfit || (opts.bossCrown ? 'tactical' : 'street')).toLowerCase();
   const rimHex = opts.rimColor || 0x38bdf8;
   const scale = opts.scale || 1.0;
 
-  const coat = makePbr(coatHex, 0.42, 0.45, { color: rimHex, power: 2.2, intensity: opts.rimIntensity || 0.62, pulseHz: 0.8 });
-  const skin = makePbr(skinHex, 0.55, 0.08, { color: rimHex, power: 2.8, intensity: 0.35 });
-  const trim = makePbr(opts.trimColor || 0xfbbf24, 0.25, 0.88, { color: rimHex, power: 2.4, intensity: 0.5 });
-
-  const legL = new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.38, 6, 10), coat);
-  legL.position.set(-0.11, 0.28, 0);
-  const legR = legL.clone();
-  legR.position.x = 0.11;
-
-  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.22), coat);
-  torso.position.y = 0.74;
-
-  const chestVest = new THREE.Mesh(new THREE.BoxGeometry(0.41, 0.3, 0.25), trim);
-  chestVest.position.y = 0.78;
-
-  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.34, 6, 10), coat);
-  armL.position.set(-0.26, 0.74, 0.04);
-  armL.rotation.z = 0.16;
-  const armR = armL.clone();
-  armR.position.set(0.26, 0.74, 0.12);
-  armR.rotation.x = -0.45;
-  armR.rotation.z = -0.16;
-
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 14), skin);
-  head.position.y = 1.16;
-
-  if (opts.bossCrown) {
-    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.07, 0.18), makePbr(0xef4444, 0.12, 0.4, { color: 0xfca5a5, power: 1.6, intensity: 1.0 }, { emissive: 0xdc2626, emissiveIntensity: 0.9 }));
-    visor.position.set(0, 1.17, 0.1);
-    const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 10), trim);
-    shoulderL.position.set(-0.26, 0.96, 0);
-    const shoulderR = shoulderL.clone();
-    shoulderR.position.x = 0.26;
-    g.add(visor, shoulderL, shoulderR);
+  let coatHex = opts.coatColor;
+  let pantsHex = 0x181b22;
+  let trimHex = opts.trimColor || 0xfbbf24;
+  if (!coatHex) {
+    if (outfit === 'suit') { coatHex = 0x1e293b; pantsHex = 0x0f172a; trimHex = 0xf59e0b; }
+    else if (outfit === 'tactical') { coatHex = 0x27303f; pantsHex = 0x1b222c; trimHex = 0x38bdf8; }
+    else { coatHex = 0x3b2314; pantsHex = 0x1e293b; trimHex = 0x4ade80; }
   }
 
-  if (opts.weaponId) {
-    const held = createItemMesh3D(opts.weaponId, opts.weaponCat || 'weapon', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: !!opts.headless });
-    held.scale.setScalar(0.36);
-    held.position.set(0.28, 0.72, 0.34);
-    held.rotation.y = -Math.PI / 2;
+  const coat = makePbr(coatHex, 0.40, 0.42, { color: rimHex, power: 2.2, intensity: opts.rimIntensity || 0.62, pulseHz: 0.8 });
+  const pants = makePbr(pantsHex, 0.55, 0.22, { color: rimHex, power: 2.6, intensity: 0.4 });
+  const bootMat = makePbr(0x111318, 0.42, 0.55, { color: rimHex, power: 2.8, intensity: 0.35 });
+  const skin = makePbr(opts.skinColor || 0xd6a582, 0.52, 0.08, { color: rimHex, power: 2.8, intensity: 0.34 });
+  const trim = makePbr(trimHex, 0.24, 0.88, { color: rimHex, power: 2.3, intensity: 0.52 });
+
+  // Articulated Legs (Boots + Calves + Knees + Thighs)
+  const buildLeg = (side) => {
+    const leg = new THREE.Group();
+    const boot = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.1, 0.2), bootMat);
+    boot.position.set(0, 0.05, 0.03);
+    const calf = new THREE.Mesh(new THREE.CapsuleGeometry(0.062, 0.2, 6, 10), pants);
+    calf.position.set(0, 0.22, 0);
+    const knee = new THREE.Mesh(new THREE.SphereGeometry(0.068, 10, 8), outfit === 'tactical' ? trim : pants);
+    knee.position.set(0, 0.35, 0.01);
+    const thigh = new THREE.Mesh(new THREE.CapsuleGeometry(0.078, 0.22, 6, 10), pants);
+    thigh.position.set(0, 0.5, 0);
+    leg.add(boot, calf, knee, thigh);
+    leg.position.set(side * 0.125, 0, side * 0.02);
+    leg.rotation.z = side * -0.03;
+    return leg;
+  };
+  g.add(buildLeg(-1), buildLeg(1));
+
+  // Pelvis & Utility Belt + Gold Buckle
+  const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.14, 0.21), pants);
+  pelvis.position.y = 0.64;
+  const belt = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.055, 0.23), bootMat);
+  belt.position.y = 0.69;
+  const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.065, 0.245), trim);
+  buckle.position.y = 0.69;
+  g.add(pelvis, belt, buckle);
+
+  // V-Tapered Torso + Outfit Styling (Street Hoodie / Suit Lapels & Tie / Tactical Plate Carrier)
+  const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.21, 0.165, 0.44, 12), coat);
+  torso.scale.set(1.05, 1, 0.72);
+  torso.position.y = 0.92;
+  g.add(torso);
+
+  if (outfit === 'suit') {
+    const shirt = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.34, 0.24), makePbr(0xf8fafc, 0.35, 0.1));
+    shirt.position.set(0, 0.95, 0.04);
+    const tie = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.28, 0.255), makePbr(0xdc2626, 0.3, 0.2));
+    tie.position.set(0, 0.93, 0.045);
+    g.add(shirt, tie);
+  } else if (outfit === 'tactical' || opts.bossCrown) {
+    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.32, 0.27), trim);
+    vest.position.y = 0.93;
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.035, 8, 16), coat);
+    collar.rotation.x = Math.PI / 2;
+    collar.position.y = 1.13;
+    g.add(vest, collar);
+  } else {
+    // Street Bomber Hood & Zip Trim
+    const hood = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.042, 10, 18), trim);
+    hood.rotation.x = Math.PI / 2 + 0.2;
+    hood.position.set(0, 1.13, -0.02);
+    g.add(hood);
+  }
+
+  // Articulated Arms (Shoulders + Upper Arm + Elbow + Forearm + Gloved Hand)
+  const buildArm = (side, aimForward = false) => {
+    const armPivot = new THREE.Group();
+    armPivot.position.set(side * 0.255, 1.08, 0);
+    const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), opts.bossCrown || outfit === 'tactical' ? trim : coat);
+    const upper = new THREE.Mesh(new THREE.CapsuleGeometry(0.058, 0.18, 6, 10), coat);
+    upper.position.set(side * 0.02, -0.14, 0);
+    const forearmGrp = new THREE.Group();
+    forearmGrp.position.set(side * 0.03, -0.26, 0);
+    const forearm = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.17, 6, 10), coat);
+    forearm.position.y = -0.11;
+    const hand = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), outfit === 'tactical' ? bootMat : skin);
+    hand.position.y = -0.24;
+    forearmGrp.add(forearm, hand);
+    if (aimForward) {
+      armPivot.rotation.x = -0.52;
+      forearmGrp.rotation.x = -0.68;
+    } else {
+      armPivot.rotation.z = side * -0.14;
+      forearmGrp.rotation.x = -0.28;
+    }
+    armPivot.add(shoulder, upper, forearmGrp);
+    return { armPivot, hand };
+  };
+
+  const leftArm = buildArm(-1, !!opts.dumbbells);
+  const rightArm = buildArm(1, !!(opts.weaponId || opts.dumbbells));
+  g.add(leftArm.armPivot, rightArm.armPivot);
+
+  // Neck + Sculpted Head + Jaw + Facial/Headgear
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.1, 10), skin);
+  neck.position.y = 1.17;
+  const cranium = new THREE.Mesh(new THREE.SphereGeometry(0.145, 18, 14), skin);
+  cranium.scale.set(0.95, 1.06, 0.98);
+  cranium.position.y = 1.30;
+  const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.16), skin);
+  jaw.position.set(0, 1.23, 0.03);
+  g.add(neck, cranium, jaw);
+
+  if (opts.bossCrown) {
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.065, 0.18), makePbr(0xef4444, 0.1, 0.4, { color: 0xfca5a5, power: 1.6, intensity: 1.0 }, { emissive: 0xdc2626, emissiveIntensity: 0.95 }));
+    visor.position.set(0, 1.31, 0.09);
+    const helm = new THREE.Mesh(new THREE.SphereGeometry(0.158, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.58), bootMat);
+    helm.position.y = 1.31;
+    g.add(visor, helm);
+  } else if (outfit === 'suit') {
+    // Syndicate Fedora Hat
+    const brim = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.025, 22), bootMat);
+    brim.position.set(0, 1.39, 0.01);
+    brim.rotation.x = 0.06;
+    const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.155, 0.14, 18), bootMat);
+    crown.position.set(0, 1.46, 0);
+    const ribbon = new THREE.Mesh(new THREE.CylinderGeometry(0.157, 0.157, 0.03, 18), trim);
+    ribbon.position.set(0, 1.41, 0);
+    g.add(brim, crown, ribbon);
+  } else if (outfit === 'tactical') {
+    const helm = new THREE.Mesh(new THREE.SphereGeometry(0.162, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.6), coat);
+    helm.position.y = 1.31;
+    const goggles = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.06, 0.16), makePbr(0x38bdf8, 0.1, 0.4, false, { emissive: 0x0284c7, emissiveIntensity: 0.85 }));
+    goggles.position.set(0, 1.31, 0.09);
+    g.add(helm, goggles);
+  } else {
+    // Stylized Hair / Street Cap + Sunglasses
+    const cap = new THREE.Mesh(new THREE.SphereGeometry(0.152, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.55), bootMat);
+    cap.position.y = 1.31;
+    const shades = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.14), bootMat);
+    shades.position.set(0, 1.30, 0.09);
+    g.add(cap, shades);
+  }
+
+  if (opts.dumbbells) {
+    const buildDumbbell = (xPos) => {
+      const db = new THREE.Group();
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.28, 10), trim);
+      bar.rotation.z = Math.PI / 2;
+      const wL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.045, 12), bootMat);
+      wL.rotation.z = Math.PI / 2;
+      wL.position.x = -0.11;
+      const wR = wL.clone();
+      wR.position.x = 0.11;
+      db.add(bar, wL, wR);
+      db.position.set(xPos, 0.92, 0.28);
+      return db;
+    };
+    g.add(buildDumbbell(-0.28), buildDumbbell(0.28));
+  } else if (opts.weaponId) {
+    const held = createItemMesh3D(opts.weaponId, opts.weaponCat || 'weapon', 'legendary', {
+      withPedestalRing: false,
+      forHandHold: true,
+      disableAsyncUpgrade: !!opts.headless,
+    });
+    held.scale.setScalar(0.38);
+    held.position.set(0.29, 0.88, 0.36);
     g.add(held);
   }
 
-  g.add(legL, legR, torso, chestVest, armL, armR, head);
   g.scale.setScalar(scale);
   g.traverse((n) => {
     if (n.isMesh) {
@@ -1730,12 +2289,12 @@ function createHumanoid3D(opts = {}) {
   return g;
 }
 
-function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38bdf8) {
+function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38bdf8, floorRadius = 4.4) {
   scene.background = new THREE.Color(0x13110e);
-  const hemi = new THREE.HemisphereLight(0xfef3c7, 0x1c1917, 1.15);
+  const hemi = new THREE.HemisphereLight(0xfef3c7, 0x1c1917, 1.2);
   scene.add(hemi);
 
-  const key = new THREE.DirectionalLight(0xfff7ed, 2.9);
+  const key = new THREE.DirectionalLight(0xfff7ed, 2.95);
   key.position.set(5.5, 8.5, 5.0);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
@@ -1748,7 +2307,7 @@ function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38
   key.shadow.bias = -0.0008;
   scene.add(key);
 
-  const rim = new THREE.DirectionalLight(accentHex, 1.55);
+  const rim = new THREE.DirectionalLight(accentHex, 1.65);
   rim.position.set(-5.0, 4.0, -4.5);
   scene.add(rim);
 
@@ -1757,16 +2316,16 @@ function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38
   scene.add(point);
 
   const floor = new THREE.Mesh(
-    new THREE.CylinderGeometry(4.4, 4.6, 0.22, 40),
+    new THREE.CylinderGeometry(floorRadius, floorRadius + 0.18, 0.2, 40),
     makePbr(floorColor, 0.62, 0.28, false)
   );
-  floor.position.y = -0.11;
+  floor.position.y = -0.10;
   floor.receiveShadow = true;
   scene.add(floor);
 
   const trimRing = new THREE.Mesh(
-    new THREE.TorusGeometry(4.32, 0.045, 10, 56),
-    makePbr(accentHex, 0.22, 0.88, false, { emissive: accentHex, emissiveIntensity: 0.42 })
+    new THREE.TorusGeometry(floorRadius - 0.06, 0.04, 10, 56),
+    makePbr(accentHex, 0.22, 0.88, false, { emissive: accentHex, emissiveIntensity: 0.48 })
   );
   trimRing.rotation.x = Math.PI / 2;
   trimRing.position.y = 0.01;
@@ -1778,9 +2337,9 @@ function addStandardStageLighting(scene, floorColor = 0x181512, accentHex = 0x38
 export function buildStageScene3D(stageKind, world, initialState = {}) {
   const kind = STAGE_KINDS.includes(stageKind) ? stageKind : 'safehouse-empire';
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(44, 16 / 9, 0.1, 80);
-  camera.position.set(0, 2.55, 5.6);
-  camera.lookAt(0, 0.85, 0);
+  const camera = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 80);
+  camera.position.set(0, 2.45, 5.4);
+  camera.lookAt(0, 0.88, 0);
 
   const spawnedEids = [];
   const pickableEids = [];
@@ -1806,7 +2365,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     maxRoll: 0.045,
   });
 
-  // Reusable burst spark group for juicy action feedback
   const burstGroup = new THREE.Group();
   for (let i = 0; i < 6; i++) {
     const ang = (i / 6) * Math.PI * 2;
@@ -1830,7 +2388,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     const lights = addStandardStageLighting(scene, 0x1b1714, 0xf59e0b);
     refs.lights = lights;
 
-    // Evolving 6-Era Compound Group
     const compoundGroup = new THREE.Group();
     scene.add(compoundGroup);
     refs.compoundGroup = compoundGroup;
@@ -1838,8 +2395,8 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     const rebuildCompoundEra = (eraNum) => {
       while (compoundGroup.children.length) compoundGroup.remove(compoundGroup.children[0]);
       const era = Math.max(1, Math.min(6, Number(eraNum) || 1));
-      const baseH = 0.65 + era * 0.28;
-      const baseW = 1.45 + era * 0.14;
+      const baseH = 0.72 + era * 0.28;
+      const baseW = 1.52 + era * 0.14;
       const wallHex = [0x475569, 0x334155, 0xd6c7b2, 0x1e293b, 0x292524, 0x18181b][era - 1];
       const trimHex = [0x94a3b8, 0x38bdf8, 0x22c55e, 0xa855f7, 0xf59e0b, 0xfbbf24][era - 1];
 
@@ -1847,7 +2404,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
         new THREE.BoxGeometry(baseW, baseH, 1.15),
         makePbr(wallHex, 0.36, 0.62, { color: trimHex, power: 2.6, intensity: 0.45 })
       );
-      tower.position.set(0, baseH * 0.5, -1.45);
+      tower.position.set(0, baseH * 0.5, -1.55);
       tower.castShadow = true;
       tower.receiveShadow = true;
       compoundGroup.add(tower);
@@ -1857,20 +2414,19 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
           new THREE.BoxGeometry(baseW * 0.82, 0.08, 1.19),
           makePbr(trimHex, 0.14, 0.3, false, { emissive: trimHex, emissiveIntensity: 0.85 })
         );
-        winStrip.position.set(0, 0.28 + r * 0.26, -1.45);
+        winStrip.position.set(0, 0.28 + r * 0.26, -1.55);
         compoundGroup.add(winStrip);
       }
-
       if (era >= 3) {
         const wingL = new THREE.Mesh(new THREE.BoxGeometry(0.75, baseH * 0.68, 0.9), makePbr(wallHex, 0.4, 0.58));
-        wingL.position.set(-baseW * 0.72, baseH * 0.34, -1.4);
+        wingL.position.set(-baseW * 0.72, baseH * 0.34, -1.48);
         const wingR = wingL.clone();
         wingR.position.x = baseW * 0.72;
         compoundGroup.add(wingL, wingR);
       }
       if (era >= 5) {
         const spire = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.85, 8), makePbr(0xfbbf24, 0.18, 0.94, false, { emissive: 0xd97706, emissiveIntensity: 0.5 }));
-        spire.position.set(0, baseH + 0.42, -1.45);
+        spire.position.set(0, baseH + 0.42, -1.55);
         compoundGroup.add(spire);
       }
       compoundGroup.userData.era = era;
@@ -1878,21 +2434,37 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     rebuildCompoundEra(initialState.era || 1);
     refs.rebuildCompoundEra = rebuildCompoundEra;
 
-    // 3D Player Operative
-    const operative = createHumanoid3D({ coatColor: 0x1e3a8a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, weaponId: 'ak', headless });
-    operative.position.set(-0.95, 0, 0.55);
+    // 3D Tactical Holotable + Contraband Crates in Safehouse Courtyard
+    const holotable = new THREE.Group();
+    const htBase = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.54, 0.44, 18), makePbr(0x1e293b, 0.3, 0.85));
+    htBase.position.y = 0.22;
+    const htScreen = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.04, 22), makePbr(0x38bdf8, 0.1, 0.2, false, { emissive: 0x0284c7, emissiveIntensity: 0.9 }));
+    htScreen.position.y = 0.46;
+    const holoTower = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.34, 0.14), makePbr(0x67e8f9, 0.1, 0.1, false, { transparent: true, opacity: 0.62, emissive: 0x22d3ee, emissiveIntensity: 0.95 }));
+    holoTower.position.y = 0.66;
+    holotable.add(htBase, htScreen, holoTower);
+    holotable.position.set(0.15, 0, 0.48);
+    scene.add(holotable);
+
+    const crateA = createItemMesh3D('weapon_cache', 'cache', 'epic', { withPedestalRing: false, disableAsyncUpgrade: true });
+    crateA.scale.setScalar(0.38);
+    crateA.position.set(-1.95, 0.22, 0.82);
+    crateA.rotation.y = 0.35;
+    scene.add(crateA);
+
+    const operative = createHumanoid3D({ outfit: 'tactical', coatColor: 0x1e3a8a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, weaponId: 'ak', headless });
+    operative.position.set(-0.98, 0, 0.55);
     operative.rotation.y = 0.48;
     scene.add(operative);
     refs.operativeEid = spawnTracked(operative);
 
-    // 3D Living Nemesis Boss (Crimson Fresnel Rim + Raycast Clickable!)
     const nemesisWrap = new THREE.Group();
     const nemPodium = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.64, 0.16, 20), makePbr(0x450a0a, 0.3, 0.78, { color: 0xef4444, power: 2.0, intensity: 0.8 }));
     nemPodium.position.y = 0.08;
-    const nemBody = createHumanoid3D({ coatColor: 0x450a0a, trimColor: 0xef4444, rimColor: 0xff3b30, rimIntensity: 0.95, bossCrown: true, scale: 1.14, weaponId: 'shotgun', headless });
+    const nemBody = createHumanoid3D({ outfit: 'tactical', coatColor: 0x450a0a, trimColor: 0xef4444, rimColor: 0xff3b30, rimIntensity: 0.95, bossCrown: true, scale: 1.14, weaponId: 'shotgun', headless });
     nemBody.position.y = 0.16;
     nemesisWrap.add(nemPodium, nemBody);
-    nemesisWrap.position.set(1.35, 0, 0.38);
+    nemesisWrap.position.set(1.38, 0, 0.38);
     nemesisWrap.rotation.y = -0.52;
     scene.add(nemesisWrap);
     const nemEid = spawnTracked(nemesisWrap);
@@ -1900,28 +2472,26 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     registerPickable(nemEid, { stage: 'safehouse-empire', target: 'nemesis', id: 'nemesis' });
     refs.nemesisEid = nemEid;
 
-    // 5 3D Street Crew Specialists around perimeter
     const crewSpecs = [
-      { id: 'enforcer', x: -2.35, z: -0.25, color: 0xdc2626, weapon: 'shotgun' },
-      { id: 'lookout', x: -1.75, z: -1.05, color: 0x0ea5e9, weapon: 'sniper' },
-      { id: 'street_chemist', x: 0.0, z: -0.42, color: 0x10b981, weapon: 'xanax' },
-      { id: 'wheelman', x: 1.85, z: -1.0, color: 0xf59e0b, weapon: 'smg' },
-      { id: 'consigliere', x: 2.45, z: -0.18, color: 0xa855f7, weapon: 'pistol' },
+      { id: 'enforcer', outfit: 'tactical', x: -2.35, z: -0.25, color: 0xdc2626, weapon: 'shotgun' },
+      { id: 'lookout', outfit: 'street', x: -1.75, z: -1.05, color: 0x0ea5e9, weapon: 'sniper' },
+      { id: 'street_chemist', outfit: 'street', x: 0.0, z: -0.52, color: 0x10b981, weapon: 'xanax' },
+      { id: 'wheelman', outfit: 'street', x: 1.85, z: -1.0, color: 0xf59e0b, weapon: 'smg' },
+      { id: 'consigliere', outfit: 'suit', x: 2.45, z: -0.18, color: 0xa855f7, weapon: 'pistol' },
     ];
     refs.crewMeshes = [];
     for (let i = 0; i < crewSpecs.length; i++) {
       const cs = crewSpecs[i];
-      const member = createHumanoid3D({ coatColor: cs.color, trimColor: 0xfbbf24, rimColor: 0x4ade80, scale: 0.84, weaponId: cs.weapon, headless });
+      const member = createHumanoid3D({ outfit: cs.outfit, coatColor: cs.color, trimColor: 0xfbbf24, rimColor: 0x4ade80, scale: 0.84, weaponId: cs.weapon, headless });
       member.position.set(cs.x, 0, cs.z);
       member.rotation.y = -cs.x * 0.22;
       scene.add(member);
       const ceid = spawnTracked(member);
-      world.setHoverFloat(ceid, 0, 0.03, 0.9, i * 1.1);
+      world.setHoverFloat(ceid, 0, 0.025, 0.9, i * 1.1);
       registerPickable(ceid, { stage: 'safehouse-empire', target: 'crew', crewId: cs.id });
       refs.crewMeshes.push({ id: cs.id, mesh: member, eid: ceid });
     }
 
-    // 4 Rotating 3D Origin Loadout Pedestals (visible when originChosen === false)
     const origins = [
       { originId: 'harbor_ghost', item: 'knife', cat: 'melee', x: -1.65, color: 0x38bdf8 },
       { originId: 'cartel_bruiser', item: 'bat', cat: 'melee', x: -0.55, color: 0xef4444 },
@@ -1964,7 +2534,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     const lights = addStandardStageLighting(scene, 0x16181d, 0xef4444);
     refs.lights = lights;
 
-    // 1. Bank Vault Frame & Spinning Vault Door
     const vaultFrame = new THREE.Mesh(new THREE.BoxGeometry(2.1, 2.0, 0.35), makePbr(0x334155, 0.34, 0.85));
     vaultFrame.position.set(0, 1.0, -1.35);
     scene.add(vaultFrame);
@@ -1985,7 +2554,13 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     refs.vaultDoorEid = spawnTracked(doorPivot);
     registerPickable(refs.vaultDoorEid, { stage: 'heist-breach', target: 'vault' });
 
-    // 2. Laser Security Grid
+    // Articulated Heist Breacher Operative with Thermal Drill
+    const breacher = createHumanoid3D({ outfit: 'tactical', coatColor: 0x1e293b, trimColor: 0xf59e0b, rimColor: 0xfbbf24, weaponId: 'drill', weaponCat: 'enhancer', headless });
+    breacher.position.set(-0.65, 0, 0.55);
+    breacher.rotation.y = 0.25;
+    scene.add(breacher);
+    refs.breacherEid = spawnTracked(breacher);
+
     const laserGroup = new THREE.Group();
     const laserMat = makePbr(0xff1e42, 0.1, 0.1, false, { emissive: 0xff1e42, emissiveIntensity: 1.15, transparent: true, opacity: 0.82 });
     for (let i = 0; i < 3; i++) {
@@ -1998,7 +2573,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     refs.laserEid = spawnTracked(laserGroup);
     registerPickable(refs.laserEid, { stage: 'heist-breach', target: 'laser' });
 
-    // 3. Street ATM Skimmer
     const atm = new THREE.Group();
     const atmBody = new THREE.Mesh(new THREE.BoxGeometry(0.62, 1.28, 0.52), makePbr(0x1e293b, 0.4, 0.65));
     atmBody.position.y = 0.64;
@@ -2010,18 +2584,16 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     scene.add(atm);
     registerPickable(spawnTracked(atm), { stage: 'heist-breach', target: 'atm' });
 
-    // 4. Contraband Floor Safe
     const safe = createItemMesh3D('weapon_cache', 'cache', 'epic', { withPedestalRing: false, disableAsyncUpgrade: true });
-    safe.scale.setScalar(0.56);
-    safe.position.set(-1.15, 0.28, 1.1);
+    safe.scale.setScalar(0.52);
+    safe.position.set(-1.35, 0.26, 1.2);
     scene.add(safe);
     registerPickable(spawnTracked(safe), { stage: 'heist-breach', target: 'safe' });
 
-    // 5. Getaway Sports Car
-    const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+    const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, forHandHold: true, disableAsyncUpgrade: true });
     car.scale.setScalar(0.88);
     car.position.set(1.85, 0.26, 0.95);
-    car.rotation.y = -0.62;
+    car.rotation.y = -0.58;
     scene.add(car);
     refs.carEid = spawnTracked(car);
     registerPickable(refs.carEid, { stage: 'heist-breach', target: 'getaway' });
@@ -2031,17 +2603,46 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   else if (kind === 'gym-ironpit') {
     addStandardStageLighting(scene, 0x1c1917, 0x22c55e);
 
-    // Athlete Operative in center
-    const athlete = createHumanoid3D({ coatColor: 0x14532d, trimColor: 0x4ade80, rimColor: 0x4ade80, headless });
-    athlete.position.set(0, 0, 0.65);
+    // Boxing Ring Corner Posts + 3-Tier Crimson Ring Ropes + Bench Press Prop
+    const ringRopeMat = makePbr(0xdc2626, 0.4, 0.2, false, { emissive: 0x7f1d1d, emissiveIntensity: 0.3 });
+    const postMat = makePbr(0x334155, 0.35, 0.85);
+    const corners = [[-2.9, -1.8], [2.9, -1.8]];
+    for (let c = 0; c < corners.length; c++) {
+      const cPost = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 1.35, 12), postMat);
+      cPost.position.set(corners[c][0], 0.68, corners[c][1]);
+      scene.add(cPost);
+    }
+    for (let tier = 0; tier < 3; tier++) {
+      const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 5.8, 10), ringRopeMat);
+      rope.rotation.z = Math.PI / 2;
+      rope.position.set(0, 0.45 + tier * 0.34, -1.8);
+      scene.add(rope);
+    }
+
+    // Flat Bench Press Prop
+    const bench = new THREE.Group();
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.09, 1.12), makePbr(0x1e293b, 0.5, 0.2));
+    pad.position.y = 0.42;
+    const legF = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.4, 0.08), postMat);
+    legF.position.set(0, 0.2, 0.42);
+    const legB = legF.clone();
+    legB.position.z = -0.42;
+    bench.add(pad, legF, legB);
+    bench.position.set(-1.35, 0, 1.05);
+    bench.rotation.y = 0.35;
+    scene.add(bench);
+
+    // Articulated Athlete Operative with Twin Dumbbells
+    const athlete = createHumanoid3D({ outfit: 'street', coatColor: 0x14532d, trimColor: 0x4ade80, rimColor: 0x4ade80, dumbbells: true, headless });
+    athlete.position.set(0, 0, 0.68);
     scene.add(athlete);
     refs.athleteEid = spawnTracked(athlete);
 
     // 1. Heavy Bag Rig (STR)
     const strGroup = new THREE.Group();
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 2.05, 12), makePbr(0x475569, 0.35, 0.85));
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.07, 2.05, 12), postMat);
     post.position.set(-0.35, 1.02, 0);
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.08, 0.08), makePbr(0x475569, 0.35, 0.85));
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.08, 0.08), postMat);
     arm.position.set(-0.05, 2.0, 0);
     const bagPivot = new THREE.Group();
     bagPivot.position.set(0.18, 1.95, 0);
@@ -2052,12 +2653,11 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     strGroup.position.set(-2.15, 0, -0.35);
     scene.add(strGroup);
     refs.bagPivotEid = spawnTracked(bagPivot);
-    const strEid = spawnTracked(strGroup);
-    registerPickable(strEid, { stage: 'gym-ironpit', target: 'station', stationId: 'str' });
+    registerPickable(spawnTracked(strGroup), { stage: 'gym-ironpit', target: 'station', stationId: 'str' });
 
     // 2. Ballistic Shield Press Rig (DEF)
     const defGroup = new THREE.Group();
-    const rackL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.65, 0.6), makePbr(0x64748b, 0.3, 0.88));
+    const rackL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.65, 0.6), postMat);
     rackL.position.set(-0.42, 0.82, 0);
     const rackR = rackL.clone();
     rackR.position.x = 0.42;
@@ -2070,7 +2670,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     const plateR = plateL.clone();
     plateR.position.x = 0.54;
     defGroup.add(rackL, rackR, bar, plateL, plateR);
-    defGroup.position.set(-0.75, 0, -1.15);
+    defGroup.position.set(-0.75, 0, -1.05);
     scene.add(defGroup);
     refs.defEid = spawnTracked(defGroup);
     registerPickable(refs.defEid, { stage: 'gym-ironpit', target: 'station', stationId: 'def' });
@@ -2081,10 +2681,10 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     deck.position.y = 0.07;
     const strip = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.16, 1.48), makePbr(0x06b6d4, 0.15, 0.3, false, { emissive: 0x0891b2, emissiveIntensity: 0.8 }));
     strip.position.y = 0.075;
-    const consolePost = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.95, 0.14), makePbr(0x334155, 0.35, 0.8));
+    const consolePost = new THREE.Mesh(new THREE.BoxGeometry(0.76, 0.95, 0.14), postMat);
     consolePost.position.set(0, 0.52, -0.72);
     spdGroup.add(deck, strip, consolePost);
-    spdGroup.position.set(0.85, 0, -1.05);
+    spdGroup.position.set(0.85, 0, -0.95);
     scene.add(spdGroup);
     refs.spdEid = spawnTracked(spdGroup);
     registerPickable(refs.spdEid, { stage: 'gym-ironpit', target: 'station', stationId: 'spd' });
@@ -2092,7 +2692,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     // 4. Laser Reflex Targets (DEX)
     const dexGroup = new THREE.Group();
     for (let i = -1; i <= 1; i++) {
-      const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.1 + Math.abs(i) * 0.15, 10), makePbr(0x64748b, 0.3, 0.85));
+      const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.04, 1.1 + Math.abs(i) * 0.15, 10), postMat);
       stand.position.set(i * 0.34, 0.55, Math.abs(i) * 0.18);
       const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.05, 18), makePbr(0xf59e0b, 0.15, 0.4, false, { emissive: 0xd97706, emissiveIntensity: 0.85 }));
       pad.rotation.x = Math.PI / 2;
@@ -2111,34 +2711,49 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   else if (kind === 'combat-arena') {
     addStandardStageLighting(scene, 0x171418, 0xef4444);
 
-    const player = createHumanoid3D({ coatColor: 0x0f172a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, scale: 1.06, weaponId: 'assaultrifle_1', headless });
-    player.position.set(-1.45, 0, 0.28);
+    // Noir Alley Streetlamp + Concrete Jersey Cover + Industrial Dumpster
+    const streetlamp = new THREE.Group();
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.55, 12), makePbr(0x334155, 0.35, 0.85));
+    pole.position.y = 1.27;
+    const lampArm = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.06, 0.06), makePbr(0x334155, 0.35, 0.85));
+    lampArm.position.set(0.28, 2.52, 0);
+    const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12), makePbr(0xfef08a, 0.1, 0.2, false, { emissive: 0xf59e0b, emissiveIntensity: 1.1 }));
+    lantern.position.set(0.55, 2.42, 0);
+    streetlamp.add(pole, lampArm, lantern);
+    streetlamp.position.set(-0.35, 0, -1.65);
+    scene.add(streetlamp);
+
+    const dumpster = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.78, 0.72), makePbr(0x14532d, 0.55, 0.35));
+    dumpster.position.set(2.25, 0.39, -1.35);
+    dumpster.rotation.y = -0.35;
+    scene.add(dumpster);
+
+    for (let i = -1; i <= 1; i += 2) {
+      const barrier = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.56, 0.3), makePbr(0x334155, 0.52, 0.45));
+      barrier.position.set(i * 1.95, 0.28, 0.95);
+      barrier.rotation.y = i * 0.28;
+      scene.add(barrier);
+    }
+
+    const player = createHumanoid3D({ outfit: 'tactical', coatColor: 0x0f172a, trimColor: 0x38bdf8, rimColor: 0x38bdf8, scale: 1.08, weaponId: 'assaultrifle_1', headless });
+    player.position.set(-1.42, 0, 0.25);
     player.rotation.y = Math.PI * 0.44;
     scene.add(player);
     refs.playerEid = spawnTracked(player);
 
-    const rival = createHumanoid3D({ coatColor: 0x450a0a, trimColor: 0xf59e0b, rimColor: 0xff3b30, rimIntensity: 0.92, bossCrown: true, scale: 1.12, weaponId: 'sniper', headless });
-    rival.position.set(1.45, 0, -0.18);
+    const rival = createHumanoid3D({ outfit: 'suit', coatColor: 0x450a0a, trimColor: 0xf59e0b, rimColor: 0xff3b30, rimIntensity: 0.92, bossCrown: true, scale: 1.14, weaponId: 'sniper', headless });
+    rival.position.set(1.42, 0, -0.15);
     rival.rotation.y = -Math.PI * 0.52;
     scene.add(rival);
     refs.rivalEid = spawnTracked(rival);
     world.setFresnelRim(refs.rivalEid, 0xff3b30, 2.0, 0.9, 1.2);
     registerPickable(refs.rivalEid, { stage: 'combat-arena', target: 'opponent' });
-
-    // Rooftop Cover Barriers
-    for (let i = -1; i <= 1; i += 2) {
-      const barrier = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.52, 0.28), makePbr(0x334155, 0.52, 0.45));
-      barrier.position.set(i * 1.95, 0.26, -1.25);
-      barrier.rotation.y = -i * 0.32;
-      scene.add(barrier);
-    }
   }
 
   /* === STAGE 5: CITY-WHEELS-RACE (City Activities) === */
   else if (kind === 'city-wheels-race') {
     addStandardStageLighting(scene, 0x151821, 0x38bdf8);
 
-    // 3D Prize Wheel on Gilded Stand
     const stand = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.75, 0.28), makePbr(0xf59e0b, 0.22, 0.92));
     stand.position.set(0, 0.88, -0.85);
     scene.add(stand);
@@ -2163,11 +2778,10 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 4.0, 1.25, 0);
     registerPickable(refs.wheelEid, { stage: 'city-wheels-race', target: 'wheel' });
 
-    // 3 Neon Street Drift Cars banking around perimeter track
     const carColors = [0x22c55e, 0x38bdf8, 0xf43f5e];
     refs.carEids = [];
     for (let i = 0; i < 3; i++) {
-      const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+      const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, forHandHold: true, disableAsyncUpgrade: true });
       car.scale.setScalar(0.55);
       car.traverse((n) => {
         if (n.isMesh && i > 0 && n.material && n.material.color && n.geometry.type === 'BoxGeometry') {
@@ -2187,7 +2801,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   else if (kind === 'casino-royale') {
     addStandardStageLighting(scene, 0x16241c, 0xfbbf24);
 
-    // 1. European Roulette Wheel + Rolling 3D Ivory Ball
     const bowl = new THREE.Mesh(new THREE.CylinderGeometry(1.22, 1.08, 0.34, 36), makePbr(0x7c2d12, 0.26, 0.35));
     bowl.position.set(-1.35, 0.18, 0.15);
     scene.add(bowl);
@@ -2216,7 +2829,6 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     refs.ballEid = spawnTracked(ball);
     world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 4.5, -5.2, 0);
 
-    // 2. 3D Jackpot Slot Machine with 3 Spinning Reels
     const cabinet = new THREE.Group();
     cabinet.position.set(1.45, 0, -0.1);
     cabinet.rotation.y = -0.35;
@@ -2242,102 +2854,122 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     registerPickable(spawnTracked(cabinet), { stage: 'casino-royale', target: 'slots' });
   }
 
-  /* === STAGE 7: PAPERDOLL-ARMORY (Dossier) === */
+  /* === STAGE 7: PAPERDOLL-ARMORY (Dossier / Items) === */
   else if (kind === 'paperdoll-armory') {
-    addStandardStageLighting(scene, 0x171923, 0x8b5cf6);
+    addStandardStageLighting(scene, 0x171923, 0x8b5cf6, 2.8);
+    camera.position.set(0, 1.65, 3.65);
+    camera.lookAt(0, 0.95, 0);
+    world.setTraumaCamera(camEid, { baseX: 0, baseY: 1.65, baseZ: 3.65 });
 
     const rigGroup = new THREE.Group();
-    const dais = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.28, 0.18, 32), makePbr(0x1e293b, 0.28, 0.88, { color: 0xa855f7, power: 2.2, intensity: 0.7 }));
-    dais.position.y = 0.09;
-    const mannequin = createHumanoid3D({ coatColor: 0x1e293b, trimColor: 0xa855f7, rimColor: 0xc084fc, scale: 1.18, weaponId: initialState.primary || 'assaultrifle_1', headless });
-    mannequin.position.y = 0.18;
-    const helmet = createItemMesh3D(initialState.head || 'helmet', 'armor', 'epic', { withPedestalRing: false, disableAsyncUpgrade: true });
-    helmet.scale.setScalar(0.28);
-    helmet.position.set(0, 1.58, 0);
-    rigGroup.add(dais, mannequin, helmet);
+    const dais = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.18, 0.16, 32), makePbr(0x1e293b, 0.28, 0.88, { color: 0xa855f7, power: 2.2, intensity: 0.7 }));
+    dais.position.y = 0.08;
+    const mannequin = createHumanoid3D({ outfit: 'tactical', coatColor: 0x1e293b, trimColor: 0xa855f7, rimColor: 0xc084fc, scale: 1.16, weaponId: initialState.primary || 'assaultrifle_1', headless });
+    mannequin.position.y = 0.16;
+    rigGroup.add(dais, mannequin);
     scene.add(rigGroup);
 
     refs.rigEid = spawnTracked(rigGroup);
     world.setTurntable(refs.rigEid, 0.72, 5.5);
     registerPickable(refs.rigEid, { stage: 'paperdoll-armory', target: 'loadout' });
 
-    // Flanking Floating Armory Displays
     const leftStand = createItemMesh3D(initialState.secondary || 'magnum', 'weapon', 'legendary', { disableAsyncUpgrade: headless });
-    leftStand.scale.setScalar(0.58);
-    leftStand.position.set(-1.95, 0.92, -0.35);
+    leftStand.scale.setScalar(0.56);
+    leftStand.position.set(-1.68, 0.95, -0.25);
     scene.add(leftStand);
-    const lEid = spawnTracked(leftStand);
-    world.setTurntable(lEid, -0.85, 5.0);
+    world.setTurntable(spawnTracked(leftStand), -0.85, 5.0);
 
     const rightStand = createItemMesh3D(initialState.melee || 'katana', 'melee', 'legendary', { disableAsyncUpgrade: headless });
-    rightStand.scale.setScalar(0.58);
-    rightStand.position.set(1.95, 0.92, -0.35);
+    rightStand.scale.setScalar(0.56);
+    rightStand.position.set(1.68, 0.95, -0.25);
     scene.add(rightStand);
-    const rEid = spawnTracked(rightStand);
-    world.setTurntable(rEid, 0.85, 5.0);
+    world.setTurntable(spawnTracked(rightStand), 0.85, 5.0);
+  }
+
+  /* === STAGE 8: CHARACTER-TURNTABLE (#zone-char-3d Fallback Showcase) === */
+  else if (kind === 'character-turntable') {
+    addStandardStageLighting(scene, 0x15181b, 0x8ec364, 1.55);
+    camera.position.set(0, 1.38, 2.95);
+    camera.lookAt(0, 0.92, 0);
+    world.setTraumaCamera(camEid, { baseX: 0, baseY: 1.38, baseZ: 2.95 });
+
+    const turntableGroup = new THREE.Group();
+    const plinth = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.88, 0.98, 0.14, 36),
+      makePbr(0x1f2428, 0.28, 0.86, { color: 0x8ec364, power: 2.2, intensity: 0.72 })
+    );
+    plinth.position.y = 0.07;
+    turntableGroup.add(plinth);
+    scene.add(turntableGroup);
+
+    const charHolder = new THREE.Group();
+    charHolder.position.y = 0.14;
+    turntableGroup.add(charHolder);
+
+    const rebuildOutfit = (outfitName = 'street', weaponId = 'ak') => {
+      while (charHolder.children.length) charHolder.remove(charHolder.children[0]);
+      const normOutfit = /suit|بدلة|exec/.test(String(outfitName).toLowerCase())
+        ? 'suit'
+        : /tact|تكتيك|armor/.test(String(outfitName).toLowerCase())
+          ? 'tactical'
+          : 'street';
+      const fig = createHumanoid3D({
+        outfit: normOutfit,
+        scale: 1.24,
+        weaponId: weaponId || (normOutfit === 'suit' ? 'pistol_t' : normOutfit === 'tactical' ? 'assaultrifle_1' : 'ak'),
+        rimColor: normOutfit === 'suit' ? 0xfbbf24 : normOutfit === 'tactical' ? 0x38bdf8 : 0x8ec364,
+        headless,
+      });
+      charHolder.add(fig);
+      charHolder.userData.outfit = normOutfit;
+    };
+
+    rebuildOutfit(initialState.outfit || 'street', initialState.weaponId);
+    refs.rebuildOutfit = rebuildOutfit;
+    refs.charHolder = charHolder;
+
+    refs.charEid = spawnTracked(turntableGroup);
+    world.setTurntable(refs.charEid, 0.58, 5.5);
+    registerPickable(refs.charEid, { stage: 'character-turntable', target: 'character' });
   }
 
   function triggerAction(actionName = 'pulse', payload = {}) {
     const act = String(actionName || 'pulse').toLowerCase();
     const isHeavy = /(confront|boss|attack|mug|hosp|execute|jackpot|raid)/.test(act);
-    world.addTrauma(camEid, isHeavy ? 0.65 : 0.36);
-    world.triggerHitStop(isHeavy ? 0.08 : 0.045, 0.06, camEid);
+    world.addTrauma(camEid, isHeavy ? 0.65 : 0.32);
+    world.triggerHitStop(isHeavy ? 0.08 : 0.04, 0.06, camEid);
     world.setStageKinematics(burstEid, ANIM_BURST_POP, 0.52, 0.75, 1.35);
 
     if (kind === 'safehouse-empire') {
-      if (refs.operativeEid !== undefined) {
-        world.setStageKinematics(refs.operativeEid, ANIM_LUNGE, 0.44, 0.65, -0.12);
-      }
-      if (refs.nemesisEid !== undefined && /nemesis/.test(act)) {
-        world.setStageKinematics(refs.nemesisEid, ANIM_LUNGE, 0.48, -0.45, 0.08);
-      }
+      if (refs.operativeEid !== undefined) world.setStageKinematics(refs.operativeEid, ANIM_LUNGE, 0.44, 0.65, -0.12);
+      if (refs.nemesisEid !== undefined && /nemesis/.test(act)) world.setStageKinematics(refs.nemesisEid, ANIM_LUNGE, 0.48, -0.45, 0.08);
     } else if (kind === 'heist-breach') {
-      if (refs.vaultDoorEid !== undefined) {
-        world.setStageKinematics(refs.vaultDoorEid, ANIM_VAULT_OPEN, 0.95, 0, -1.35);
-      }
-      if (refs.carEid !== undefined) {
-        world.setStageKinematics(refs.carEid, ANIM_LUNGE, 0.65, 0.45, 0.32);
-      }
+      if (refs.vaultDoorEid !== undefined) world.setStageKinematics(refs.vaultDoorEid, ANIM_VAULT_OPEN, 0.95, 0, -1.35);
+      if (refs.carEid !== undefined) world.setStageKinematics(refs.carEid, ANIM_LUNGE, 0.65, 0.45, 0.32);
     } else if (kind === 'gym-ironpit') {
       const stat = String((payload && payload.stat) || act || 'str').toLowerCase();
-      if (refs.athleteEid !== undefined) {
-        world.setStageKinematics(refs.athleteEid, ANIM_LUNGE, 0.38, 0, -0.35);
-      }
+      if (refs.athleteEid !== undefined) world.setStageKinematics(refs.athleteEid, ANIM_LUNGE, 0.38, 0, -0.35);
       if (refs.bagPivotEid !== undefined && (stat.includes('str') || stat === 'train')) {
         world.setStageKinematics(refs.bagPivotEid, ANIM_BAG_SWING, 0.85, 0.48, 0);
       }
     } else if (kind === 'combat-arena') {
-      if (refs.playerEid !== undefined) {
-        world.setStageKinematics(refs.playerEid, ANIM_LUNGE, 0.42, 0.95, -0.18);
-      }
-      if (refs.rivalEid !== undefined) {
-        world.setStageKinematics(refs.rivalEid, ANIM_LUNGE, 0.46, 0.35, 0.08);
-      }
+      if (refs.playerEid !== undefined) world.setStageKinematics(refs.playerEid, ANIM_LUNGE, 0.42, 0.95, -0.18);
+      if (refs.rivalEid !== undefined) world.setStageKinematics(refs.rivalEid, ANIM_LUNGE, 0.46, 0.35, 0.08);
     } else if (kind === 'city-wheels-race') {
-      if (refs.wheelEid !== undefined) {
-        world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 3.2, 9.5, 1);
-      }
+      if (refs.wheelEid !== undefined) world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 3.2, 9.5, 1);
     } else if (kind === 'casino-royale') {
-      if (refs.ballEid !== undefined) {
-        world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 3.6, -11.5, 0);
-      }
+      if (refs.ballEid !== undefined) world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 3.6, -11.5, 0);
       if (refs.reelEids) {
         for (let i = 0; i < refs.reelEids.length; i++) {
           world.setStageKinematics(refs.reelEids[i], ANIM_SLOT_REEL, 1.4 + i * 0.35, 16.0, 1);
         }
       }
-    } else if (kind === 'paperdoll-armory') {
-      if (refs.rigEid !== undefined) {
-        thisSpinBoost(world, refs.rigEid, 0.9);
-      }
+    } else if (kind === 'paperdoll-armory' && refs.rigEid !== undefined) {
+      if (world.isAlive(refs.rigEid)) world.stores.TurntableSpin[refs.rigEid * 4 + 1] += 0.9;
+    } else if (kind === 'character-turntable' && refs.charEid !== undefined) {
+      if (world.isAlive(refs.charEid)) world.stores.TurntableSpin[refs.charEid * 4 + 1] += 0.75;
     }
     return true;
-  }
-
-  function thisSpinBoost(w, eid, deltaYaw) {
-    if (w.isAlive(eid) && (w.stores.mask[eid] & COMPONENTS.TURNTABLE)) {
-      w.stores.TurntableSpin[eid * 4 + 1] += deltaYaw;
-    }
   }
 
   function updateState(stateObj = {}) {
@@ -2375,6 +3007,9 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       if (map[st] !== undefined) {
         world.setFresnelRim(map[st], 0x4ade80, 1.8, 1.05, 1.6);
       }
+    } else if (kind === 'character-turntable' && stateObj.outfit && refs.rebuildOutfit) {
+      refs.rebuildOutfit(stateObj.outfit, stateObj.weaponId);
+      if (refs.charEid !== undefined) world.refreshEntityRimCache(refs.charEid);
     }
     return true;
   }
@@ -2402,11 +3037,9 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 }
 
 /* --------------------------------------------------------------------------
- * 6. SHARED WEBGL RUNTIME (`ZoneEcs3DRuntime`)
- *    Strict WebGL Context Cap:
- *      - 1 Offscreen Item Renderer (220x180, blits to all 2D .z3d-item-canvas)
- *      - 1 Live Interactive Stage Renderer (OrbitControls + Raycaster)
- *      - Optional 1 On-Demand Modal Inspector Renderer (released on close)
+ * 6. SINGLE-SHARED-CONTEXT WEBGL RUNTIME (`ZoneEcs3DRuntime`)
+ *    `webglContexts` === 1 across ALL item cards, ALL stages, AND 3D Orbit
+ *    Studio modal! Eliminates WebGL context starvation page-wide!
  * -------------------------------------------------------------------------- */
 export class ZoneEcs3DRuntime {
   constructor(opts = {}) {
@@ -2415,18 +3048,17 @@ export class ZoneEcs3DRuntime {
       renderHook: (scaledDt, realDt) => this._renderFrame(scaledDt, realDt),
     });
 
-    this.itemRenderer = null;
+    this.sharedRenderer = null;
+    this.sharedEnvTexture = null;
+
     this.itemScene = new THREE.Scene();
-    this.itemCamera = new THREE.PerspectiveCamera(36, 220 / 180, 0.1, 30);
-    this.itemCamera.position.set(0, 0.32, 3.35);
-    this.itemCamera.lookAt(0, -0.04, 0);
+    this.itemCamera = new THREE.PerspectiveCamera(38, 220 / 180, 0.1, 30);
+    this.itemCamera.position.set(0, 0.36, 2.22);
+    this.itemCamera.lookAt(0, -0.02, 0);
     this._setupItemStudioLighting();
 
-    this.stageRenderer = null;
-    this.stageControls = null;
-    this.activePrimaryStageEl = null;
-
-    this.inspectorRenderer = null;
+    this.inspectorCanvas = null;
+    this.inspectorCtx = null;
     this.inspectorControls = null;
     this.inspectorScene = null;
     this.inspectorCamera = null;
@@ -2434,8 +3066,8 @@ export class ZoneEcs3DRuntime {
     this.inspectorModalEl = null;
     this.inspectorOpen = false;
 
-    this.itemSlots = new Map();       // Element -> slotRecord
-    this.stageInstances = new Map();  // Element -> stageRecord
+    this.itemSlots = new Map();
+    this.stageInstances = new Map();
     this._roundRobinCursor = 0;
     this._drawCalls = 0;
     this._triangles = 0;
@@ -2446,88 +3078,93 @@ export class ZoneEcs3DRuntime {
 
     this._unsubUpgrade = onWeaponAssetUpgraded((upgradedId) => {
       for (const rec of this.itemSlots.values()) {
-        if (rec.itemId === upgradedId) rec.dirty = true;
+        if (rec.itemId === upgradedId) {
+          this.world.refreshEntityRimCache(rec.eid);
+          rec.dirty = true;
+        }
+      }
+      if (this.inspectorOpen && this.inspectorItemEid >= 0) {
+        this.world.refreshEntityRimCache(this.inspectorItemEid);
       }
     });
   }
 
   _setupItemStudioLighting() {
-    const hemi = new THREE.HemisphereLight(0xfffbeb, 0x1e293b, 1.35);
-    const key = new THREE.DirectionalLight(0xffffff, 2.85);
+    const hemi = new THREE.HemisphereLight(0xfffbeb, 0x1e293b, 1.45);
+    const key = new THREE.DirectionalLight(0xffffff, 2.95);
     key.position.set(3.2, 4.5, 4.0);
-    const fill = new THREE.DirectionalLight(0x38bdf8, 1.25);
+    const fill = new THREE.DirectionalLight(0x38bdf8, 1.35);
     fill.position.set(-3.5, 1.8, 2.2);
-    const rim = new THREE.DirectionalLight(0xfbbf24, 1.55);
+    const rim = new THREE.DirectionalLight(0xfbbf24, 1.65);
     rim.position.set(0.5, -2.2, -3.5);
     this.itemScene.add(hemi, key, fill, rim);
   }
 
-  _applyIBL(renderer, targetScene) {
-    if (!renderer || typeof THREE.PMREMGenerator !== 'function') return;
-    try {
-      const pmrem = new THREE.PMREMGenerator(renderer);
-      const envScene = new RoomEnvironment();
-      const rt = pmrem.fromScene(envScene, 0.04);
-      targetScene.environment = rt.texture;
-      targetScene.environmentIntensity = 0.85;
-      if (typeof envScene.dispose === 'function') envScene.dispose();
-      pmrem.dispose();
-    } catch (_) {
-      // Headless / mock renderer safe fallback
-    }
-  }
-
-  _ensureItemRenderer() {
-    if (this.itemRenderer) return this.itemRenderer;
-    const r = this.createRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+  _ensureSharedRenderer() {
+    if (this.sharedRenderer) return this.sharedRenderer;
+    const r = this.createRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true,
+    });
     r.setPixelRatio(1);
     r.setSize(220, 180, false);
     r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.18;
-    this._wireContextEvents(r);
-    this._applyIBL(r, this.itemScene);
-    this.itemRenderer = r;
-    this._webglContextCount++;
-    return r;
-  }
-
-  _ensureStageRenderer() {
-    if (this.stageRenderer) return this.stageRenderer;
-    const r = this.createRenderer({ alpha: false, antialias: true, powerPreference: 'high-performance' });
-    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1;
-    r.setPixelRatio(dpr);
-    r.setSize(560, 235, false);
-    r.toneMapping = THREE.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.12;
+    r.toneMappingExposure = 1.16;
     if (r.shadowMap) {
       r.shadowMap.enabled = true;
       r.shadowMap.type = THREE.PCFShadowMap;
     }
-    if (r.domElement && r.domElement.classList) {
-      r.domElement.classList.add('z3d-stage-webgl-canvas');
+
+    const el = r.domElement;
+    if (el && typeof el.addEventListener === 'function') {
+      el.addEventListener('webglcontextlost', (e) => {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        this._contextLost = true;
+      });
+      el.addEventListener('webglcontextrestored', () => {
+        this._contextLost = false;
+        for (const rec of this.itemSlots.values()) rec.dirty = true;
+      });
     }
-    this._wireContextEvents(r);
-    this._bindStageCanvasPointerEvents(r.domElement);
-    this.stageRenderer = r;
-    this._webglContextCount++;
+
+    if (typeof THREE.PMREMGenerator === 'function') {
+      try {
+        const pmrem = new THREE.PMREMGenerator(r);
+        const envScene = new RoomEnvironment();
+        const rt = pmrem.fromScene(envScene, 0.04);
+        this.sharedEnvTexture = rt.texture;
+        this.itemScene.environment = this.sharedEnvTexture;
+        this.itemScene.environmentIntensity = 0.88;
+        if (typeof envScene.dispose === 'function') envScene.dispose();
+        pmrem.dispose();
+      } catch (_) { /* headless safe */ }
+    }
+
+    this.sharedRenderer = r;
+    this._webglContextCount = 1;
     return r;
   }
 
-  _wireContextEvents(renderer) {
-    const el = renderer && renderer.domElement;
-    if (!el || typeof el.addEventListener !== 'function') return;
-    el.addEventListener('webglcontextlost', (e) => {
-      if (e && typeof e.preventDefault === 'function') e.preventDefault();
-      this._contextLost = true;
-    });
-    el.addEventListener('webglcontextrestored', () => {
-      this._contextLost = false;
-      for (const rec of this.itemSlots.values()) rec.dirty = true;
-    });
+  _applyIBL(targetScene) {
+    this._ensureSharedRenderer();
+    if (this.sharedEnvTexture) {
+      targetScene.environment = this.sharedEnvTexture;
+      targetScene.environmentIntensity = 0.85;
+    }
   }
 
-  _bindStageCanvasPointerEvents(canvasEl) {
-    if (!canvasEl || typeof canvasEl.addEventListener !== 'function') return;
+  _setRendererSize(renderer, w, h) {
+    const dom = renderer.domElement;
+    if (!dom || dom.width !== w || dom.height !== h) {
+      renderer.setSize(w, h, false);
+    }
+  }
+
+  _bindStageCanvasEvents(canvasEl, stageRec) {
+    if (!canvasEl || typeof canvasEl.addEventListener !== 'function' || canvasEl.__z3dStageBound) return;
+    canvasEl.__z3dStageBound = true;
     let downX = 0;
     let downY = 0;
 
@@ -2547,8 +3184,6 @@ export class ZoneEcs3DRuntime {
     });
 
     canvasEl.addEventListener('pointermove', (ev) => {
-      const stageRec = this.activePrimaryStageEl ? this.stageInstances.get(this.activePrimaryStageEl) : null;
-      if (!stageRec) return;
       const ndc = toNdc(ev);
       this.world.queuePointerRaycast({
         type: 'hover',
@@ -2564,9 +3199,7 @@ export class ZoneEcs3DRuntime {
 
     canvasEl.addEventListener('pointerup', (ev) => {
       const dist = Math.hypot(ev.clientX - downX, ev.clientY - downY);
-      if (dist > 7) return; // Orbit drag, not click
-      const stageRec = this.activePrimaryStageEl ? this.stageInstances.get(this.activePrimaryStageEl) : null;
-      if (!stageRec) return;
+      if (dist > 7) return;
       const ndc = toNdc(ev);
       this.world.queuePointerRaycast({
         type: 'click',
@@ -2620,8 +3253,8 @@ export class ZoneEcs3DRuntime {
 
     const mesh = createItemMesh3D(itemId, category, rarity);
     const eid = this.world.spawnImmediate(mesh);
-    this.world.setTurntable(eid, 0.92, 6.5);
-    this.world.setHoverFloat(eid, 0, 0.055, 1.15, (eid % 11) * 0.55);
+    this.world.setTurntable(eid, 0.88, 6.5);
+    this.world.setHoverFloat(eid, 0, 0.045, 1.15, (eid % 11) * 0.55);
 
     const rec = {
       el: slotEl,
@@ -2681,22 +3314,32 @@ export class ZoneEcs3DRuntime {
     const era = stageEl.getAttribute('data-z3d-era') || '1';
     const originChosen = stageEl.getAttribute('data-z3d-origin-chosen') ?? '1';
     const origin = stageEl.getAttribute('data-z3d-origin') || '';
+    const outfit = stageEl.getAttribute('data-z3d-outfit') || 'street';
 
     const existing = this.stageInstances.get(stageEl);
     if (existing && existing.kind === kind) {
-      existing.built.updateState({ era, originChosen, origin });
+      existing.built.updateState({ era, originChosen, origin, outfit });
       return existing;
     }
     if (existing) {
+      if (existing.controls) existing.controls.dispose();
       existing.built.dispose();
       this.stageInstances.delete(stageEl);
     }
 
-    const renderer = this._ensureStageRenderer();
-    const built = buildStageScene3D(kind, this.world, { era, originChosen, origin });
-    this._applyIBL(renderer, built.scene);
+    this._ensureSharedRenderer();
+    const built = buildStageScene3D(kind, this.world, { era, originChosen, origin, outfit });
+    this._applyIBL(built.scene);
 
-    // Ensure HUD badge inside stage wrapper (append-only, pointer-events safe)
+    let stageCanvas = stageEl.querySelector ? stageEl.querySelector('canvas.z3d-stage-webgl-canvas') : null;
+    if (!stageCanvas && typeof document !== 'undefined' && stageEl.insertBefore) {
+      stageCanvas = document.createElement('canvas');
+      stageCanvas.className = 'z3d-stage-webgl-canvas';
+      stageCanvas.width = 560;
+      stageCanvas.height = 240;
+      stageEl.insertBefore(stageCanvas, stageEl.firstChild || null);
+    }
+
     if (typeof document !== 'undefined' && stageEl.querySelector && !stageEl.querySelector('.z3d-stage-hud')) {
       const hud = document.createElement('div');
       hud.className = 'z3d-stage-hud';
@@ -2708,9 +3351,37 @@ export class ZoneEcs3DRuntime {
       stageEl.appendChild(hud);
     }
 
-    const rec = { el: stageEl, kind, built, proxyCanvas: null };
+    let controls = null;
+    if (stageCanvas && typeof stageCanvas.addEventListener === 'function' && typeof document !== 'undefined') {
+      try {
+        controls = new OrbitControls(built.camera, stageCanvas);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.065;
+        controls.enablePan = false;
+        controls.minDistance = kind === 'character-turntable' ? 1.8 : 2.4;
+        controls.maxDistance = 9.5;
+        controls.minPolarAngle = 0.25;
+        controls.maxPolarAngle = Math.PI * 0.48;
+        controls.target.set(0, kind === 'character-turntable' ? 0.92 : 0.82, 0);
+        built.camera.userData.z3dOrbitActive = true;
+      } catch (_) {
+        controls = null;
+      }
+    }
+
+    const rec = {
+      el: stageEl,
+      kind,
+      built,
+      canvas: stageCanvas,
+      ctx2d: stageCanvas && typeof stageCanvas.getContext === 'function' ? stageCanvas.getContext('2d') : null,
+      controls,
+    };
+    if (stageCanvas) {
+      this._bindStageCanvasEvents(stageCanvas, rec);
+    }
     this.stageInstances.set(stageEl, rec);
-    this._assignPrimaryStageHost();
+    this._blitStageRecord(rec, 0.016);
     return rec;
   }
 
@@ -2726,71 +3397,18 @@ export class ZoneEcs3DRuntime {
     if (typeof el.getBoundingClientRect !== 'function') return true;
     const r = el.getBoundingClientRect();
     if (typeof window !== 'undefined') {
-      if (r.bottom < -80 || r.top > (window.innerHeight || 900) + 80) return false;
+      if (r.bottom < -100 || r.top > (window.innerHeight || 900) + 100) return false;
     }
     return true;
   }
 
-  _assignPrimaryStageHost() {
-    let viewportEl = null;
-    let laidOutEl = null;
-    for (const [el] of this.stageInstances.entries()) {
-      if (!el.isConnected) {
-        const stale = this.stageInstances.get(el);
-        if (stale) stale.built.dispose();
-        this.stageInstances.delete(el);
-        continue;
-      }
-      if (!laidOutEl && this._isElementLaidOut(el)) {
-        laidOutEl = el;
-      }
-      if (!viewportEl && this._isElementVisible(el)) {
-        viewportEl = el;
-      }
-    }
-    const chosenEl = viewportEl || laidOutEl || null;
-
-    if (chosenEl && chosenEl !== this.activePrimaryStageEl && this.stageRenderer) {
-      const stageRec = this.stageInstances.get(chosenEl);
-      if (stageRec.proxyCanvas && stageRec.proxyCanvas.style) {
-        stageRec.proxyCanvas.style.display = 'none';
-      }
-      const canvas = this.stageRenderer.domElement;
-      if (canvas && chosenEl.insertBefore && canvas.parentNode !== chosenEl) {
-        chosenEl.insertBefore(canvas, chosenEl.firstChild || null);
-      } else if (canvas && chosenEl.appendChild && canvas.parentNode !== chosenEl) {
-        chosenEl.appendChild(canvas);
-      }
-      if (this.stageControls) {
-        this.stageControls.dispose();
-        this.stageControls = null;
-      }
-      if (canvas && typeof canvas.addEventListener === 'function' && typeof document !== 'undefined') {
-        try {
-          const ctrls = new OrbitControls(stageRec.built.camera, canvas);
-          ctrls.enableDamping = true;
-          ctrls.dampingFactor = 0.065;
-          ctrls.enablePan = false;
-          ctrls.minDistance = 2.6;
-          ctrls.maxDistance = 9.5;
-          ctrls.minPolarAngle = 0.28;
-          ctrls.maxPolarAngle = Math.PI * 0.47;
-          ctrls.target.set(0, 0.82, 0);
-          stageRec.built.camera.userData.z3dOrbitActive = true;
-          this.stageControls = ctrls;
-        } catch (_) {
-          this.stageControls = null;
-        }
-      }
-      this.activePrimaryStageEl = chosenEl;
-    } else if (!chosenEl) {
-      this.activePrimaryStageEl = null;
-    }
-  }
-
   _blitSingleItemSlot(rec) {
     if (!rec || !rec.ctx2d) return;
-    const renderer = this._ensureItemRenderer();
+    const renderer = this._ensureSharedRenderer();
+    const prevBg = this.itemScene.background;
+    this.itemScene.background = null;
+    if (typeof renderer.setClearColor === 'function') renderer.setClearColor(0x000000, 0);
+    this._setRendererSize(renderer, 220, 180);
     this.itemScene.add(rec.mesh);
     renderer.render(this.itemScene, this.itemCamera);
     const calls = renderer.info ? Math.max(1, renderer.info.render.calls) : 1;
@@ -2798,21 +3416,51 @@ export class ZoneEcs3DRuntime {
     this._drawCalls = Math.max(this._drawCalls, calls);
     this._triangles = Math.max(this._triangles, tris);
     this.itemScene.remove(rec.mesh);
+    this.itemScene.background = prevBg;
     try {
       rec.ctx2d.clearRect(0, 0, rec.canvas2d.width, rec.canvas2d.height);
       rec.ctx2d.drawImage(renderer.domElement, 0, 0, rec.canvas2d.width, rec.canvas2d.height);
       rec.dirty = false;
       rec.renderedFrames++;
-    } catch (_) {
-      // Headless mock canvas ignore
+    } catch (_) { /* ignore */ }
+  }
+
+  _blitStageRecord(stageRec, realDt) {
+    if (!stageRec) return { calls: 0, tris: 0 };
+    const renderer = this._ensureSharedRenderer();
+    let w = 560;
+    let h = 235;
+    if (typeof stageRec.el.getBoundingClientRect === 'function') {
+      const rect = stageRec.el.getBoundingClientRect();
+      const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 1.5) : 1;
+      w = Math.max(200, Math.min(960, Math.floor((rect.width || 560) * dpr)));
+      h = Math.max(150, Math.min(640, Math.floor((rect.height || 235) * dpr)));
     }
+    if (stageRec.canvas && (stageRec.canvas.width !== w || stageRec.canvas.height !== h)) {
+      stageRec.canvas.width = w;
+      stageRec.canvas.height = h;
+    }
+    stageRec.built.camera.aspect = w / Math.max(1, h);
+    stageRec.built.camera.updateProjectionMatrix();
+    if (stageRec.controls) stageRec.controls.update(realDt);
+
+    this._setRendererSize(renderer, w, h);
+    renderer.render(stageRec.built.scene, stageRec.built.camera);
+    if (stageRec.ctx2d && stageRec.canvas) {
+      try {
+        stageRec.ctx2d.drawImage(renderer.domElement, 0, 0, stageRec.canvas.width, stageRec.canvas.height);
+      } catch (_) { /* ignore */ }
+    }
+    return {
+      calls: renderer.info ? Math.max(1, renderer.info.render.calls) : 1,
+      tris: renderer.info ? renderer.info.render.triangles : 0,
+    };
   }
 
   _renderFrame(_scaledDt, realDt) {
     let frameDrawCalls = 0;
     let frameTriangles = 0;
 
-    // 1. Prune disconnected item slots & blit prioritized visible/dirty item cards
     const slotsArr = [];
     for (const [el, rec] of this.itemSlots.entries()) {
       if (el.isConnected === false) {
@@ -2826,95 +3474,62 @@ export class ZoneEcs3DRuntime {
     let blitsThisFrame = 0;
     const MAX_ITEM_BLITS_PER_FRAME = 6;
 
-    // Priority pass: dirty, dragging, or hovered slots always render immediately
     for (let i = 0; i < slotsArr.length; i++) {
       const rec = slotsArr[i];
       if (rec.dirty || rec.dragging || rec.hovered) {
         this._blitSingleItemSlot(rec);
-        frameDrawCalls += this.itemRenderer && this.itemRenderer.info ? Math.max(1, this.itemRenderer.info.render.calls) : 1;
-        frameTriangles += this.itemRenderer && this.itemRenderer.info ? this.itemRenderer.info.render.triangles : 0;
+        frameDrawCalls += this.sharedRenderer && this.sharedRenderer.info ? Math.max(1, this.sharedRenderer.info.render.calls) : 1;
+        frameTriangles += this.sharedRenderer && this.sharedRenderer.info ? this.sharedRenderer.info.render.triangles : 0;
         blitsThisFrame++;
       }
     }
 
-    // Ambient turntable pass: smoothly rotate visible on-screen item slots within budget
     if (slotsArr.length > 0 && blitsThisFrame < MAX_ITEM_BLITS_PER_FRAME) {
       for (let step = 0; step < slotsArr.length && blitsThisFrame < MAX_ITEM_BLITS_PER_FRAME; step++) {
         const idx = (this._roundRobinCursor + step) % slotsArr.length;
         const rec = slotsArr[idx];
         if (!rec.dirty && !rec.dragging && !rec.hovered && this._isElementVisible(rec.el)) {
           this._blitSingleItemSlot(rec);
-          frameDrawCalls += this.itemRenderer && this.itemRenderer.info ? Math.max(1, this.itemRenderer.info.render.calls) : 1;
-          frameTriangles += this.itemRenderer && this.itemRenderer.info ? this.itemRenderer.info.render.triangles : 0;
+          frameDrawCalls += this.sharedRenderer && this.sharedRenderer.info ? Math.max(1, this.sharedRenderer.info.render.calls) : 1;
+          frameTriangles += this.sharedRenderer && this.sharedRenderer.info ? this.sharedRenderer.info.render.triangles : 0;
           blitsThisFrame++;
         }
       }
       this._roundRobinCursor = (this._roundRobinCursor + MAX_ITEM_BLITS_PER_FRAME) % Math.max(1, slotsArr.length);
     }
 
-    // 2. Render Any Secondary Visible Stages via Proxy Canvas, Then Primary Interactive Stage Last
-    this._assignPrimaryStageHost();
-    if (this.stageRenderer) {
-      for (const [el, sRec] of this.stageInstances.entries()) {
-        if (el === this.activePrimaryStageEl || !this._isElementVisible(el)) continue;
-        if (!sRec.proxyCanvas && typeof document !== 'undefined' && el.insertBefore) {
-          const pc = document.createElement('canvas');
-          pc.className = 'z3d-stage-proxy-canvas';
-          pc.width = 480;
-          pc.height = 220;
-          el.insertBefore(pc, el.firstChild || null);
-          sRec.proxyCanvas = pc;
-          sRec.proxyCtx = typeof pc.getContext === 'function' ? pc.getContext('2d') : null;
-        }
-        if (sRec.proxyCanvas && sRec.proxyCtx) {
-          sRec.proxyCanvas.style.display = 'block';
-          sRec.built.camera.aspect = sRec.proxyCanvas.width / sRec.proxyCanvas.height;
-          sRec.built.camera.updateProjectionMatrix();
-          this.stageRenderer.setSize(sRec.proxyCanvas.width, sRec.proxyCanvas.height, false);
-          this.stageRenderer.render(sRec.built.scene, sRec.built.camera);
-          try {
-            sRec.proxyCtx.clearRect(0, 0, sRec.proxyCanvas.width, sRec.proxyCanvas.height);
-            sRec.proxyCtx.drawImage(this.stageRenderer.domElement, 0, 0, sRec.proxyCanvas.width, sRec.proxyCanvas.height);
-          } catch (_) { /* ignore */ }
-        }
+    // Render ALL visible/laid-out stages via the single shared offscreen WebGLRenderer
+    for (const [el, sRec] of this.stageInstances.entries()) {
+      if (el.isConnected === false) {
+        if (sRec.controls) sRec.controls.dispose();
+        sRec.built.dispose();
+        this.stageInstances.delete(el);
+        continue;
       }
-
-      if (this.activePrimaryStageEl) {
-        const stageRec = this.stageInstances.get(this.activePrimaryStageEl);
-        if (stageRec) {
-          if (stageRec.proxyCanvas && stageRec.proxyCanvas.style) {
-            stageRec.proxyCanvas.style.display = 'none';
-          }
-          if (typeof stageRec.el.getBoundingClientRect === 'function') {
-            const rect = stageRec.el.getBoundingClientRect();
-            const w = Math.max(200, Math.floor(rect.width || 560));
-            const h = Math.max(160, Math.floor(rect.height || 235));
-            const canvas = this.stageRenderer.domElement;
-            if (canvas && (canvas.width !== w || canvas.height !== h)) {
-              stageRec.built.camera.aspect = w / h;
-              stageRec.built.camera.updateProjectionMatrix();
-              this.stageRenderer.setSize(w, h, false);
-            }
-          }
-          if (this.stageControls) {
-            this.stageControls.update(realDt);
-          }
-          this.stageRenderer.render(stageRec.built.scene, stageRec.built.camera);
-          if (this.stageRenderer.info) {
-            frameDrawCalls += Math.max(1, this.stageRenderer.info.render.calls);
-            frameTriangles += this.stageRenderer.info.render.triangles;
-          }
-        }
-      }
+      if (!this._isElementVisible(el)) continue;
+      const st = this._blitStageRecord(sRec, realDt);
+      frameDrawCalls += st.calls;
+      frameTriangles += st.tris;
     }
 
-    // 3. Render On-Demand Fullscreen 3D Inspector Modal if open
-    if (this.inspectorOpen && this.inspectorRenderer && this.inspectorScene && this.inspectorCamera) {
+    // Render 3D Orbit Studio Inspector Modal via the SAME single shared offscreen WebGLRenderer!
+    if (this.inspectorOpen && this.inspectorCanvas && this.inspectorScene && this.inspectorCamera) {
+      const renderer = this._ensureSharedRenderer();
       if (this.inspectorControls) this.inspectorControls.update(realDt);
-      this.inspectorRenderer.render(this.inspectorScene, this.inspectorCamera);
-      if (this.inspectorRenderer.info) {
-        frameDrawCalls += Math.max(1, this.inspectorRenderer.info.render.calls);
-        frameTriangles += this.inspectorRenderer.info.render.triangles;
+      const iw = this.inspectorCanvas.width || 520;
+      const ih = this.inspectorCanvas.height || 340;
+      this.inspectorCamera.aspect = iw / Math.max(1, ih);
+      this.inspectorCamera.updateProjectionMatrix();
+      this._setRendererSize(renderer, iw, ih);
+      renderer.render(this.inspectorScene, this.inspectorCamera);
+      if (this.inspectorCtx) {
+        try {
+          this.inspectorCtx.drawImage(renderer.domElement, 0, 0, iw, ih);
+        } catch (_) { /* ignore */ }
+      }
+      if (renderer.info) {
+        frameDrawCalls += Math.max(1, renderer.info.render.calls);
+        frameTriangles += renderer.info.render.triangles;
       }
     }
 
@@ -3011,14 +3626,16 @@ export class ZoneEcs3DRuntime {
           if (this.inspectorControls) this.inspectorControls.autoRotate = !this.inspectorControls.autoRotate;
         } else if (t.closest('[data-z3d-modal-pulse]')) {
           if (this.inspectorItemEid >= 0) {
-            this.world.setStageKinematics(this.inspectorItemEid, ANIM_LUNGE, 0.36, 0, 0.35);
+            this.world.setStageKinematics(this.inspectorItemEid, ANIM_LUNGE, 0.36, 0, 0.25);
           }
         }
       });
 
-      window.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Escape' && this.inspectorOpen) this.closeInspector();
-      });
+      if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+        window.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Escape' && this.inspectorOpen) this.closeInspector();
+        });
+      }
       this.inspectorModalEl = modal;
     }
 
@@ -3034,17 +3651,17 @@ export class ZoneEcs3DRuntime {
     this.inspectorModalEl.querySelector('[data-z3d-modal-pulse]').textContent =
       isAr ? 'نبضة فحص' : 'Recoil Pulse';
 
+    this._ensureSharedRenderer();
     const vp = this.inspectorModalEl.querySelector('.z3d-inspector-viewport');
-    if (!this.inspectorRenderer) {
-      const r = this.createRenderer({ alpha: false, antialias: true, powerPreference: 'high-performance' });
-      r.setPixelRatio(Math.min((typeof window !== 'undefined' && window.devicePixelRatio) || 1, 1.5));
-      r.setSize(520, 340, false);
-      r.toneMapping = THREE.ACESFilmicToneMapping;
-      r.toneMappingExposure = 1.2;
-      this.inspectorRenderer = r;
-      this._webglContextCount++;
+    if (!this.inspectorCanvas) {
+      const c = document.createElement('canvas');
+      c.className = 'z3d-inspector-canvas';
+      c.width = 560;
+      c.height = 340;
       vp.innerHTML = '';
-      vp.appendChild(r.domElement);
+      vp.appendChild(c);
+      this.inspectorCanvas = c;
+      this.inspectorCtx = typeof c.getContext === 'function' ? c.getContext('2d') : null;
     }
 
     if (this.inspectorItemEid >= 0) {
@@ -3052,31 +3669,58 @@ export class ZoneEcs3DRuntime {
       this.inspectorItemEid = -1;
     }
 
+    // Dedicated close-up 3D Orbit Studio scene with compact 0.78-radius glowing Syndicate pedestal ring!
     this.inspectorScene = new THREE.Scene();
-    addStandardStageLighting(this.inspectorScene, 0x171412, spec.rimColor);
-    this._applyIBL(this.inspectorRenderer, this.inspectorScene);
+    this.inspectorScene.background = new THREE.Color(0x14120f);
+    this._applyIBL(this.inspectorScene);
 
-    this.inspectorCamera = new THREE.PerspectiveCamera(40, 520 / 340, 0.1, 40);
-    this.inspectorCamera.position.set(0, 1.05, 3.25);
+    const hemi = new THREE.HemisphereLight(0xfffbeb, 0x1c1917, 1.45);
+    const key = new THREE.DirectionalLight(0xffffff, 3.15);
+    key.position.set(2.8, 3.8, 3.2);
+    const fill = new THREE.DirectionalLight(0x38bdf8, 1.45);
+    fill.position.set(-2.8, 1.5, 2.0);
+    const rim = new THREE.DirectionalLight(spec.rimColor, 1.85);
+    rim.position.set(0.0, 1.8, -2.8);
+    this.inspectorScene.add(hemi, key, fill, rim);
 
-    const mesh = createItemMesh3D(itemId, opts.category || spec.category, opts.rarity || 'legendary');
-    mesh.position.set(0, 0.92, 0);
+    const plinthDisc = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.76, 0.80, 0.06, 40),
+      makePbr(0x1e1b18, 0.35, 0.78, false)
+    );
+    plinthDisc.position.y = -0.18;
+    const pedRing = new THREE.Mesh(
+      new THREE.TorusGeometry(0.78, 0.024, 12, 48),
+      makePbr(spec.rimColor, 0.18, 0.92, false, { emissive: spec.rimColor, emissiveIntensity: 0.72 })
+    );
+    pedRing.rotation.x = Math.PI / 2;
+    pedRing.position.y = -0.15;
+    this.inspectorScene.add(plinthDisc, pedRing);
+
+    this.inspectorCamera = new THREE.PerspectiveCamera(40, 560 / 340, 0.1, 30);
+    this.inspectorCamera.position.set(0, 0.72, 1.95);
+    this.inspectorCamera.lookAt(0, 0.38, 0);
+
+    const mesh = createItemMesh3D(itemId, opts.category || spec.category, opts.rarity || 'legendary', { withPedestalRing: false });
+    mesh.position.set(0, 0.38, 0);
     this.inspectorScene.add(mesh);
     this.inspectorItemEid = this.world.spawnImmediate(mesh);
 
     if (this.inspectorControls) this.inspectorControls.dispose();
     try {
-      this.inspectorControls = new OrbitControls(this.inspectorCamera, this.inspectorRenderer.domElement);
+      this.inspectorControls = new OrbitControls(this.inspectorCamera, this.inspectorCanvas);
       this.inspectorControls.enableDamping = true;
       this.inspectorControls.autoRotate = true;
-      this.inspectorControls.autoRotateSpeed = 2.4;
-      this.inspectorControls.target.set(0, 0.85, 0);
+      this.inspectorControls.autoRotateSpeed = 1.8;
+      this.inspectorControls.minDistance = 1.15;
+      this.inspectorControls.maxDistance = 4.5;
+      this.inspectorControls.target.set(0, 0.38, 0);
     } catch (_) {
       this.inspectorControls = null;
     }
 
     this.inspectorModalEl.classList.add('is-open');
     this.inspectorOpen = true;
+    this._renderFrame(0.016, 0.016);
     return true;
   }
 
@@ -3092,19 +3736,6 @@ export class ZoneEcs3DRuntime {
     if (this.inspectorItemEid >= 0) {
       this.world.despawnImmediate(this.inspectorItemEid);
       this.inspectorItemEid = -1;
-    }
-    if (this.inspectorRenderer) {
-      if (typeof this.inspectorRenderer.forceContextLoss === 'function') {
-        try { this.inspectorRenderer.forceContextLoss(); } catch (_) { /* ignore */ }
-      }
-      if (typeof this.inspectorRenderer.dispose === 'function') {
-        try { this.inspectorRenderer.dispose(); } catch (_) { /* ignore */ }
-      }
-      if (this.inspectorRenderer.domElement && this.inspectorRenderer.domElement.parentNode) {
-        this.inspectorRenderer.domElement.parentNode.removeChild(this.inspectorRenderer.domElement);
-      }
-      this.inspectorRenderer = null;
-      this._webglContextCount = Math.max(0, this._webglContextCount - 1);
     }
   }
 

@@ -1,7 +1,7 @@
 /* ==========================================================================
- * ZONE v152 - SYNCHRONOUS 3D ECS BRIDGE, AUTO-SCANNER & NATIVE UPGRADER
+ * ZONE v153 - SYNCHRONOUS 3D ECS BRIDGE, AUTO-SCANNER & #zone-char-3d GUARD
  * Exclusive Ownership: @ecs-3d-engine (assets/ui/zone-ecs-3d-bridge.js)
- * Exposes: window.ZoneEcs3D synchronously (queues calls until ESM engine ready)
+ * Exposes: window.ZoneEcs3D synchronously (1 Shared WebGL Context Runtime)
  * Fiber-safe: append-only DOM mounts; never mutates or removes <x-dc> nodes.
  * ========================================================================== */
 (function () {
@@ -15,6 +15,8 @@
   var pendingCalls = [];
   var scanScheduled = false;
   var readyResolvers = [];
+  var charWatchTimer = 0;
+  var currentCharOutfit = 'street';
 
   function enqueue(method, args) {
     if (runtime && typeof runtime[method] === 'function') {
@@ -39,6 +41,28 @@
     if (src.indexOf('mosin9130-thumbnail') !== -1) return { id: 'sniperrifle_3', cat: 'weapon' };
 
     var hay = (String(nameText || '') + ' ' + String(metaText || '')).toLowerCase();
+    // Crime Enhancers & Bespoke Syndicate Tools
+    if (/شفرة|razor/.test(hay)) return { id: 'cut_throat_razor', cat: 'melee' };
+    if (/عتلة|crowbar|pry/.test(hay)) return { id: 'crowbar', cat: 'enhancer' };
+    if (/أقفال|lockpick/.test(hay)) return { id: 'lockpick', cat: 'enhancer' };
+    if (/مثقاب|drill/.test(hay)) return { id: 'drill', cat: 'enhancer' };
+    if (/اختراق|cyberdeck|hacking|laptop/.test(hay)) return { id: 'hacking_rig', cat: 'enhancer' };
+    if (/مفتاح|بطاقة دخول|keycard|rfid/.test(hay)) return { id: 'keycard', cat: 'enhancer' };
+    if (/ناسخ بطاقات|skimmer/.test(hay)) return { id: 'skimmer', cat: 'enhancer' };
+    if (/شريط لاصق|duct tape|\btape\b/.test(hay)) return { id: 'duct_tape', cat: 'enhancer' };
+    if (/كشاف|flashlight|torch/.test(hay)) return { id: 'flashlight', cat: 'enhancer' };
+    if (/مكبر صوت|megaphone|bullhorn/.test(hay)) return { id: 'megaphone', cat: 'enhancer' };
+    if (/قناع طلاء|paint mask|respirator/.test(hay)) return { id: 'paint_mask', cat: 'enhancer' };
+    if (/قفازات لاتكس|latex gloves|nitrile/.test(hay)) return { id: 'latex_gloves', cat: 'enhancer' };
+    if (/كرسي|office chair|\bchair\b/.test(hay)) return { id: 'office_chair', cat: 'enhancer' };
+    if (/عدسة|magnifying|loupe/.test(hay)) return { id: 'magnifying_glass', cat: 'enhancer' };
+    if (/لوحة مفاتيح|keyboard/.test(hay)) return { id: 'ergonomic_keyboard', cat: 'enhancer' };
+    if (/قداحة|lighter|zippo/.test(hay)) return { id: 'windproof_lighter', cat: 'enhancer' };
+    if (/محرك نسخ|high-speed drive|nvme/.test(hay)) return { id: 'high_speed_drive', cat: 'enhancer' };
+    if (/دراجة|mountain bike|\bbike\b/.test(hay)) return { id: 'mountain_bike', cat: 'vehicle' };
+    if (/نظارات|glasses|goggles/.test(hay)) return { id: 'glasses', cat: 'enhancer' };
+
+    // Weapons & Melee
     if (/كلاشنكوف|\bak\b/.test(hay)) return { id: 'ak', cat: 'weapon' };
     if (/بولباب|bullpup/.test(hay)) return { id: 'bullpup_2', cat: 'weapon' };
     if (/قنّاص|قناص|sniper/.test(hay)) return { id: 'sniper', cat: 'weapon' };
@@ -48,9 +72,11 @@
     if (/دوّار|دوار|revolver|magnum/.test(hay)) return { id: 'revolver', cat: 'weapon' };
     if (/مسدس|pistol/.test(hay)) return { id: 'pistol', cat: 'weapon' };
     if (/بندقية|rifle/.test(hay)) return { id: 'assaultrifle_1', cat: 'weapon' };
-    if (/سكين|شفرة|knife|blade|dagger/.test(hay)) return { id: 'knife', cat: 'melee' };
+    if (/سكين|knife|blade|dagger/.test(hay)) return { id: 'knife', cat: 'melee' };
     if (/كاتانا|سيف|katana|sword/.test(hay)) return { id: 'katana', cat: 'melee' };
     if (/مضرب|هراوة|bat|club/.test(hay)) return { id: 'bat', cat: 'melee' };
+
+    // Armor, Drugs, Medical, Boosters, Contraband
     if (/خوذة|helmet/.test(hay)) return { id: 'helmet', cat: 'armor' };
     if (/درع|سترة|kevlar|vest|armor/.test(hay)) return { id: 'kevlar', cat: 'armor' };
     if (/زاناكس|xanax/.test(hay)) return { id: 'xanax', cat: 'drug' };
@@ -73,14 +99,131 @@
     return { id: 'weapon_cache', cat: 'cache' };
   }
 
+  function parseOutfitKeyword(raw, fallbackIdx) {
+    var s = String(raw || '').toLowerCase();
+    if (/suit|بدلة|رسمي|exec/.test(s)) return 'suit';
+    if (/tact|تكتيك|درع|قتال|armor/.test(s)) return 'tactical';
+    if (/street|شارع|casual/.test(s)) return 'street';
+    if (fallbackIdx === 1) return 'suit';
+    if (fallbackIdx === 2) return 'tactical';
+    return 'street';
+  }
+
+  function detectActiveOutfit() {
+    var explicit = document.querySelector('[data-outfit][aria-pressed="true"], [data-outfit].is-active, [data-outfit].active');
+    if (explicit) return parseOutfitKeyword(explicit.getAttribute('data-outfit'), 0);
+    var btns = document.querySelectorAll('.zone-home-character .zone-panel-heading button');
+    for (var i = 0; i < btns.length; i++) {
+      if (btns[i].getAttribute('aria-pressed') === 'true') {
+        return parseOutfitKeyword(btns[i].getAttribute('data-outfit') || btns[i].textContent, i);
+      }
+    }
+    return currentCharOutfit || 'street';
+  }
+
+  /**
+   * Inspects `#zone-char-3d` (both `<iframe>` and standalone container modes).
+   * If `.zone-preview-unavailable` / `#zone-media-error` appears OR no healthy
+   * WebGL canvas is ready after `1600ms`, hides the error message and mounts an
+   * interactive `character-turntable` 3D stage synced to `[data-outfit]` clicks!
+   */
+  function evaluateChar3DFallback(allowTimeoutFallback) {
+    var charEl = document.getElementById('zone-char-3d');
+    if (!charEl) return false;
+
+    var hostEl = charEl.tagName === 'IFRAME' ? (charEl.parentElement || charEl) : charEl;
+    var existingFallback = hostEl.querySelector('[data-z3d-stage="character-turntable"]');
+
+    var explicitFail = false;
+    var hasHealthyCanvas = false;
+
+    var outerUnavail = hostEl.querySelector('.zone-preview-unavailable, #zone-media-error');
+    if (outerUnavail) explicitFail = true;
+
+    if (charEl.tagName === 'IFRAME') {
+      try {
+        var doc = charEl.contentDocument;
+        if (doc && doc.body) {
+          var errEl = doc.getElementById('zone-media-error') || doc.querySelector('.zone-preview-unavailable');
+          if (errEl || doc.body.dataset.zoneMediaState === 'error') {
+            explicitFail = true;
+            if (errEl) errEl.style.display = 'none';
+          } else {
+            var stageRoot = doc.getElementById('stage');
+            var c = doc.querySelector('canvas') || (stageRoot && stageRoot.shadowRoot && stageRoot.shadowRoot.querySelector('canvas'));
+            if (c && c.width > 0 && c.height > 0 && doc.body.dataset.zoneMediaState === 'ready') {
+              hasHealthyCanvas = true;
+            }
+          }
+        }
+      } catch (_) {
+        // Cross-origin safety fallback
+      }
+    } else {
+      if (/unavailable|غير متاحة/i.test(charEl.textContent || '')) {
+        explicitFail = true;
+      }
+      var nativeCanvas = charEl.querySelector('canvas:not(.z3d-stage-webgl-canvas)');
+      if (nativeCanvas && nativeCanvas.width > 0 && nativeCanvas.height > 0 && !explicitFail) {
+        hasHealthyCanvas = true;
+      }
+    }
+
+    if (hasHealthyCanvas && !explicitFail) {
+      if (existingFallback) existingFallback.style.display = 'none';
+      if (charEl.tagName === 'IFRAME') {
+        charEl.style.opacity = '';
+        charEl.style.pointerEvents = '';
+      }
+      return false;
+    }
+
+    if (!explicitFail && !allowTimeoutFallback) return false;
+
+    // Hide any "3D preview is unavailable" message without removing Fiber-managed nodes
+    var unavailNodes = hostEl.querySelectorAll('.zone-preview-unavailable, #zone-media-error');
+    for (var u = 0; u < unavailNodes.length; u++) {
+      unavailNodes[u].style.display = 'none';
+    }
+    if (charEl.tagName === 'IFRAME') {
+      charEl.style.opacity = '0';
+      charEl.style.pointerEvents = 'none';
+    }
+
+    currentCharOutfit = detectActiveOutfit();
+    if (!existingFallback) {
+      var stageDiv = document.createElement('div');
+      stageDiv.className = 'z3d-action-stage z3d-char-turntable-stage';
+      stageDiv.setAttribute('data-z3d-stage', 'character-turntable');
+      stageDiv.setAttribute('data-z3d-outfit', currentCharOutfit);
+      hostEl.appendChild(stageDiv);
+      enqueue('scan', [hostEl]);
+    } else {
+      existingFallback.style.display = '';
+      existingFallback.setAttribute('data-z3d-outfit', currentCharOutfit);
+      enqueue('updateStageState', ['character-turntable', { outfit: currentCharOutfit }]);
+    }
+    return true;
+  }
+
+  function armChar3DWatchdog() {
+    var charEl = document.getElementById('zone-char-3d');
+    if (!charEl) return;
+    // Immediate check if error state is already rendered
+    if (evaluateChar3DFallback(false)) return;
+    if (charWatchTimer) clearTimeout(charWatchTimer);
+    charWatchTimer = window.setTimeout(function () {
+      charWatchTimer = 0;
+      evaluateChar3DFallback(true);
+    }, 1600);
+  }
+
   function upgradeNativeScreens(rootEl) {
     var main = document.getElementById('zone-main');
-    if (!main) return;
-    var screen = main.getAttribute('data-zone-screen') || '';
+    var screen = main ? (main.getAttribute('data-zone-screen') || '') : '';
     var isAr = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
 
-    // 1. Auto-upgrade native Items screen rows & inspector (100% Fiber-safe append-only)
-    if (screen === 'items') {
+    if (main && screen === 'items') {
       var rows = main.querySelectorAll('.zone-inventory-row[data-zrow="1"]');
       for (var i = 0; i < rows.length; i++) {
         var row = rows[i];
@@ -125,7 +268,6 @@
         }
       }
 
-      // Also upgrade native right-hand .zone-item-inspector if item lacks iframe #zone-item-3d
       var inspector = main.querySelector('.zone-item-inspector');
       if (inspector && !inspector.querySelector('#zone-item-3d')) {
         var headSpans = inspector.querySelectorAll('.zone-panel-heading span');
@@ -166,8 +308,7 @@
       }
     }
 
-    // 2. Auto-mount interactive 3D Gym Ironpit stage on Gym screen (Fiber-safe append inside .zone-gym-floor)
-    if (screen === 'gym') {
+    if (main && screen === 'gym') {
       var gymFloor = main.querySelector('.zone-gym-floor');
       if (gymFloor && !main.querySelector('[data-z3d-stage="gym-ironpit"]')) {
         var gymHost = document.createElement('div');
@@ -180,7 +321,11 @@
       }
     }
 
-    // Refresh bilingual stage HUD labels when dir/lang flips
+    // Arm `#zone-char-3d` 1600ms watchdog whenever `#zone-char-3d` is in the DOM
+    if (document.getElementById('zone-char-3d')) {
+      armChar3DWatchdog();
+    }
+
     var scope = rootEl || document;
     if (scope.querySelectorAll) {
       var chips = scope.querySelectorAll('.z3d-stage-chip');
@@ -204,7 +349,6 @@
     });
   }
 
-  // Global synchronous API contract
   var api = {
     scan: function (root) {
       return performScan(root || document);
@@ -220,6 +364,9 @@
     },
     updateStageState: function (stageKind, stateObj) {
       return enqueue('updateStageState', [stageKind, stateObj || {}]);
+    },
+    checkCharacterFallback: function (forceTimeout) {
+      return evaluateChar3DFallback(!!forceTimeout);
     },
     diagnostics: function () {
       if (runtime) return runtime.diagnostics();
@@ -244,7 +391,6 @@
 
   window.ZoneEcs3D = api;
 
-  // Delegated click handlers for [data-z3d-inspect] and Gym stations/train buttons
   document.addEventListener('click', function (ev) {
     var target = ev.target;
     if (!target || typeof target.closest !== 'function') return;
@@ -257,6 +403,25 @@
       var cat = inspectBtn.getAttribute('data-z3d-cat') || '';
       var title = inspectBtn.getAttribute('data-z3d-title') || '';
       api.inspectItem(itemId, { category: cat, title: title });
+      return;
+    }
+
+    // Sync [data-outfit] & Home Character outfit switcher clicks to `character-turntable`
+    var outfitBtn = target.closest('[data-outfit]') || target.closest('.zone-home-character .zone-panel-heading button');
+    if (outfitBtn) {
+      var idx = 0;
+      if (outfitBtn.parentElement) {
+        var sibs = outfitBtn.parentElement.querySelectorAll('button');
+        for (var s = 0; s < sibs.length; s++) {
+          if (sibs[s] === outfitBtn) { idx = s; break; }
+        }
+      }
+      currentCharOutfit = parseOutfitKeyword(outfitBtn.getAttribute('data-outfit') || outfitBtn.textContent, idx);
+      var charStage = document.querySelector('[data-z3d-stage="character-turntable"]');
+      if (charStage) charStage.setAttribute('data-z3d-outfit', currentCharOutfit);
+      api.updateStageState('character-turntable', { outfit: currentCharOutfit });
+      api.triggerStageAction('character-turntable', 'outfit', { outfit: currentCharOutfit });
+      armChar3DWatchdog();
       return;
     }
 
@@ -275,7 +440,6 @@
     }
   }, true);
 
-  // Sync 3D Gym Ironpit rig clicks back to native Gym station selector buttons
   window.addEventListener('zone:3d-stage-click', function (ev) {
     var d = ev && ev.detail;
     if (!d || d.stage !== 'gym-ironpit' || !d.stationId) return;
@@ -285,16 +449,18 @@
     }
   });
 
+  window.addEventListener('message', function (ev) {
+    if (ev && ev.data && ev.data.zoneCharacterRecover) {
+      evaluateChar3DFallback(true);
+    }
+  });
+
   function startObserver() {
     if (!document.body) return;
     var observer = new MutationObserver(function (records) {
       for (var i = 0; i < records.length; i++) {
         var r = records[i];
-        if (r.type === 'attributes') {
-          scheduleDebouncedScan();
-          return;
-        }
-        if (r.addedNodes && r.addedNodes.length > 0) {
+        if (r.type === 'attributes' || (r.addedNodes && r.addedNodes.length > 0)) {
           scheduleDebouncedScan();
           return;
         }
@@ -311,6 +477,7 @@
         'data-z3d-era',
         'data-z3d-origin',
         'data-z3d-origin-chosen',
+        'data-z3d-outfit',
         'data-theme',
         'dir',
         'lang',
@@ -325,8 +492,10 @@
     startObserver();
   }
 
-  // Boot ES Module Engine
-  import('./zone-ecs-3d-engine.mjs?v=152')
+  import('./zone-ecs-3d-engine.mjs?v=153')
+    .catch(function () {
+      return import('./zone-ecs-3d-engine.mjs?v=152');
+    })
     .catch(function () {
       return import('./zone-ecs-3d-engine.mjs');
     })
