@@ -177,11 +177,11 @@ button[data-z3d-inspect]:hover {
 }
 
 .z3d-stage-hud {
+  display: none !important;
   position: absolute;
   inset-block-start: 8px;
   inset-inline-start: 10px;
   inset-inline-end: 10px;
-  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;

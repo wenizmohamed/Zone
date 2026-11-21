@@ -936,7 +936,6 @@
           '</div>' +
           '<div class="zcp-turntable-caption">' +
             '<span><bdi>' + esc(activeState.callsign) + '</bdi></span>' +
-            '<span>' + esc(ar ? 'اسحب للتدوير · انقر للمعايرة' : 'Drag 3D · Click to Pet') + '</span>' +
           '</div>' +
         '</div>' +
         '<div class="zcp-telemetry-col">' +

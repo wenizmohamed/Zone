@@ -1269,15 +1269,7 @@
   }
 
   function render3dItemShowcase(itemId, cat, title) {
-    var idStr = String(itemId || 'ak');
-    var resolvedCat = inferZreItemCategory(idStr, cat);
-    var lbl = String(title || idStr);
-    return (
-      '<div class="zre-item-3d-row">' +
-        '<div class="z3d-item-slot" data-z3d-item="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '"></div>' +
-        '<button type="button" class="zre-btn zre-3d-inspect-btn" data-zre-act="inspect-3d" data-z3d-inspect="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '" data-z3d-title="' + esc(lbl) + '" aria-label="3D ' + esc(lbl) + '">3D</button>' +
-      '</div>'
-    );
+    return '';
   }
 
   function renderInlineAvatar(playerId) {
@@ -1486,7 +1478,6 @@
           '</div>' +
           '<span class="zre-chip" data-tone="gold">' + esc(st.compactPill) + '</span>' +
         '</header>' +
-        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena"></div>' +
         '<section class="zre-section">' +
           actRibbon +
           chapStrip +
@@ -1732,7 +1723,6 @@
           '</div>' +
           '<span class="zre-chip" data-tone="plum">RP: <bdi>' + fmtInt(racingPts) + '</bdi></span>' +
         '</header>' +
-        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="casino-royale"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.wheelsTitle) + '</h3></div>' +
           wheelsHtml +
@@ -1791,7 +1781,6 @@
           '</div>' +
           '<span class="zre-chip" data-tone="sage">3 Spots</span>' +
         '</header>' +
-        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="city-wheels-race"></div>' +
         '<div class="zre-grid-3">' +
           '<section class="zre-section">' +
             '<div class="zre-section-head">' +
@@ -2098,7 +2087,6 @@
         '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.loadoutTitle) + '</h3></div>' +
-          '<div class="z3d-action-stage zre-paperdoll-stage" data-z3d-stage="paperdoll-armory"></div>' +
           paperdollHtml +
         '</section>' +
       '</div>'
@@ -2237,7 +2225,6 @@
           '</div>' +
           '<span class="zre-chip" data-tone="gold">Vault: <bdi>' + fmtMoney(vaultCash) + '</bdi> · Respect: <bdi>' + fmtInt(respectPool) + '</bdi></span>' +
         '</header>' +
-        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.factionFoundTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +

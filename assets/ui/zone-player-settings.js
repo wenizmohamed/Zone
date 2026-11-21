@@ -18,8 +18,8 @@
 (function (root) {
   'use strict';
 
-  var STORAGE_SETTINGS_KEY = 'zone.player.settings.v159';
-  var STORAGE_SNAPSHOT_ID_KEY = 'zone.player.settings.snapshotId.v159';
+  var STORAGE_SETTINGS_KEY = 'zone.player.settings.v161';
+  var STORAGE_SNAPSHOT_ID_KEY = 'zone.player.settings.snapshotId.v161';
 
   var DEFAULT_KEYBINDS = {
     mute: 'M',
@@ -39,10 +39,10 @@
         masterMuted: false,
         masterVolume: 75,
         sfxVolume: 85,
-        musicEnabled: true,
+        musicEnabled: false,
         musicVolume: 70,
-        ambienceVolume: 65,
-        uiClicks: true
+        ambienceVolume: 0,
+        uiClicks: false
       },
       graphics: {
         qualityPreset: 'high',

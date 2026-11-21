@@ -2159,21 +2159,9 @@
     var rouletteLabel = ar ? 'عجلة الروليت الأوروبية' : 'European Roulette Wheel';
     var slotsLabel = ar ? 'ماكينة الجائزة الكبرى ثلاثية البكرات' : '3-Reel Jackpot Slot Machine';
 
-    /* Live 3D Casino Royale Interactive Stage */
-    var casinoPit = main.querySelector('[data-zone-casino-pit="1"]') || main.querySelector('[data-casino-table="roulette"]') || main.querySelector('.zone-content-split');
-    if (casinoPit && !document.getElementById('zig-casino-3d-stage')) {
-      var cStage = document.createElement('div');
-      cStage.id = 'zig-casino-3d-stage';
-      cStage.className = 'z3d-action-stage zig-casino-3d-stage';
-      cStage.setAttribute('data-z3d-stage', 'casino-royale');
-      if (casinoPit.hasAttribute && casinoPit.hasAttribute('data-zone-casino-pit')) {
-        casinoPit.insertBefore(cStage, casinoPit.firstChild);
-      } else {
-        casinoPit.insertAdjacentElement('beforebegin', cStage);
-      }
-      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
-        try { window.ZoneEcs3D.scan(main); } catch (_) {}
-      }
+    var staleCasinoStage = document.getElementById('zig-casino-3d-stage');
+    if (staleCasinoStage && staleCasinoStage.parentElement) {
+      staleCasinoStage.parentElement.removeChild(staleCasinoStage);
     }
 
     /* Roulette Wheel Canvas */

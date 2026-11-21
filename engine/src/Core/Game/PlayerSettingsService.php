@@ -44,7 +44,7 @@ use Zone\Engine\Core\Persistence\Database;
  */
 final class PlayerSettingsService
 {
-    public const SCHEMA_VERSION = 1;
+    public const SCHEMA_VERSION = 2;
     public const DEFAULT_SNAPSHOT_ID = 'current-working';
 
     public const VALID_QUALITY_PRESETS = ['low', 'medium', 'high', 'ultra'];
@@ -110,10 +110,10 @@ final class PlayerSettingsService
                 'masterMuted' => false,
                 'masterVolume' => 75,
                 'sfxVolume' => 85,
-                'musicEnabled' => true,
+                'musicEnabled' => false,
                 'musicVolume' => 70,
-                'ambienceVolume' => 65,
-                'uiClicks' => true,
+                'ambienceVolume' => 0,
+                'uiClicks' => false,
             ],
             'graphics' => [
                 'qualityPreset' => 'high',
@@ -653,6 +653,33 @@ final class PlayerSettingsService
         );
 
         if ($row !== null) {
+            if ((int) ($row['schema_version'] ?? 1) < self::SCHEMA_VERSION) {
+                $migrated = $this->decodeSettingsJson((string) ($row['settings_json'] ?? ''));
+                $migrated['audio']['musicEnabled'] = false;
+                $migrated['audio']['ambienceVolume'] = 0;
+                $migrated['audio']['uiClicks'] = false;
+                $encodedMigrated = json_encode($migrated, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+                $nowIso = gmdate('c', $this->nowSec());
+                try {
+                    $this->database->execute(
+                        'UPDATE player_settings
+                         SET settings_json = :sjson,
+                             schema_version = :sver,
+                             updated_at = :updAt
+                         WHERE player_id = :pid',
+                        [
+                            'sjson' => $encodedMigrated,
+                            'sver' => self::SCHEMA_VERSION,
+                            'updAt' => $nowIso,
+                            'pid' => $playerId,
+                        ],
+                    );
+                } catch (Throwable) {
+                }
+                $row['settings_json'] = $encodedMigrated;
+                $row['schema_version'] = self::SCHEMA_VERSION;
+                $row['updated_at'] = $nowIso;
+            }
             return $row;
         }
 

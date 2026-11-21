@@ -307,104 +307,12 @@
 
   function upgradeNativeScreens(rootEl) {
     var main = document.getElementById('zone-main');
-    var screen = main ? (main.getAttribute('data-zone-screen') || '') : '';
-    var isAr = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
-
-    if (main && screen === 'items') {
-      var rows = main.querySelectorAll('.zone-inventory-row[data-zrow="1"]');
-      for (var i = 0; i < rows.length; i++) {
-        var row = rows[i];
-        if (row.querySelector('[data-z3d-item]') && !row.querySelector('.z3d-native-row-addon')) continue;
-        var img = row.querySelector('.zone-item-thumbnail img');
-        var thumbSrc = img ? (img.getAttribute('src') || '') : '';
-        var spans = row.querySelectorAll('button span span');
-        var nameText = spans[0] ? spans[0].textContent.trim() : row.textContent.trim();
-        var metaText = spans[1] ? spans[1].textContent.trim() : '';
-        var spec = inferNativeItemSpec(nameText, metaText, thumbSrc);
-
-        var addon = row.querySelector('.z3d-native-row-addon');
-        if (!addon) {
-          addon = document.createElement('div');
-          addon.className = 'z3d-native-row-addon';
-          var slot = document.createElement('div');
-          slot.className = 'z3d-item-slot z3d-item-slot--compact';
-          slot.setAttribute('data-z3d-item', spec.id);
-          slot.setAttribute('data-z3d-cat', spec.cat);
-          var btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'z3d-inspect-btn';
-          btn.setAttribute('data-z3d-inspect', spec.id);
-          btn.setAttribute('data-z3d-cat', spec.cat);
-          btn.setAttribute('data-z3d-title', nameText);
-          btn.textContent = '3D';
-          addon.appendChild(slot);
-          addon.appendChild(btn);
-          row.appendChild(addon);
-        } else {
-          var existingSlot = addon.querySelector('.z3d-item-slot');
-          var existingBtn = addon.querySelector('.z3d-inspect-btn');
-          if (existingSlot && existingSlot.getAttribute('data-z3d-item') !== spec.id) {
-            existingSlot.setAttribute('data-z3d-item', spec.id);
-            existingSlot.setAttribute('data-z3d-cat', spec.cat);
-          }
-          if (existingBtn) {
-            existingBtn.setAttribute('data-z3d-inspect', spec.id);
-            existingBtn.setAttribute('data-z3d-cat', spec.cat);
-            existingBtn.setAttribute('data-z3d-title', nameText);
-          }
+    if (main && main.querySelectorAll) {
+      var staleClutter = main.querySelectorAll('.z3d-native-row-addon, .z3d-native-inspector-addon, .z3d-gym-stage-wrap');
+      for (var s = 0; s < staleClutter.length; s++) {
+        if (staleClutter[s] && staleClutter[s].parentElement) {
+          staleClutter[s].parentElement.removeChild(staleClutter[s]);
         }
-      }
-
-      var inspector = main.querySelector('.zone-item-inspector');
-      if (inspector && !inspector.querySelector('#zone-item-3d')) {
-        var headSpans = inspector.querySelectorAll('.zone-panel-heading span');
-        var selTitle = headSpans[0] ? headSpans[0].textContent.trim() : '';
-        var selType = headSpans[headSpans.length - 1] ? headSpans[headSpans.length - 1].textContent.trim() : '';
-        var selSpec = inferNativeItemSpec(selTitle, selType, '');
-        var inspAddon = inspector.querySelector('.z3d-native-inspector-addon');
-        if (!inspAddon) {
-          inspAddon = document.createElement('div');
-          inspAddon.className = 'z3d-native-inspector-addon';
-          var iSlot = document.createElement('div');
-          iSlot.className = 'z3d-item-slot';
-          iSlot.setAttribute('data-z3d-item', selSpec.id);
-          iSlot.setAttribute('data-z3d-cat', selSpec.cat);
-          var iBtn = document.createElement('button');
-          iBtn.type = 'button';
-          iBtn.className = 'z3d-inspect-btn';
-          iBtn.setAttribute('data-z3d-inspect', selSpec.id);
-          iBtn.setAttribute('data-z3d-cat', selSpec.cat);
-          iBtn.setAttribute('data-z3d-title', selTitle);
-          iBtn.textContent = isAr ? 'معاينة ٣D كاملة' : '3D Orbit Inspect';
-          inspAddon.appendChild(iSlot);
-          inspAddon.appendChild(iBtn);
-          inspector.appendChild(inspAddon);
-        } else {
-          var sEl = inspAddon.querySelector('.z3d-item-slot');
-          var bEl = inspAddon.querySelector('.z3d-inspect-btn');
-          if (sEl && sEl.getAttribute('data-z3d-item') !== selSpec.id) {
-            sEl.setAttribute('data-z3d-item', selSpec.id);
-            sEl.setAttribute('data-z3d-cat', selSpec.cat);
-          }
-          if (bEl) {
-            bEl.setAttribute('data-z3d-inspect', selSpec.id);
-            bEl.setAttribute('data-z3d-title', selTitle);
-            bEl.textContent = isAr ? 'معاينة ٣D كاملة' : '3D Orbit Inspect';
-          }
-        }
-      }
-    }
-
-    if (main && screen === 'gym') {
-      var gymFloor = main.querySelector('.zone-gym-floor');
-      if (gymFloor && !main.querySelector('[data-z3d-stage="gym-ironpit"]')) {
-        var gymHost = document.createElement('div');
-        gymHost.className = 'z3d-gym-stage-wrap';
-        var stageDiv = document.createElement('div');
-        stageDiv.className = 'z3d-action-stage z3d-gym-stage';
-        stageDiv.setAttribute('data-z3d-stage', 'gym-ironpit');
-        gymHost.appendChild(stageDiv);
-        gymFloor.appendChild(gymHost);
       }
     }
 
@@ -417,7 +325,7 @@
     if (scope.querySelectorAll) {
       var chips = scope.querySelectorAll('.z3d-stage-chip');
       for (var c = 0; c < chips.length; c++) {
-        chips[c].textContent = isAr ? '٣D تفاعلي · اسحب للدوران' : '3D LIVE · DRAG TO ORBIT';
+        chips[c].textContent = '';
       }
     }
   }
@@ -596,9 +504,9 @@
   // Import articulated rigged operative & 3D architectural stage environments FIRST
   // so globalThis.__ZoneRiggedOperative and globalThis.__Zone3DEnvironments are live before stages build!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=160')
+    return import('./zone-3d-rigged-operative.mjs?v=161')
       .catch(function () {
-        return import('./zone-3d-rigged-operative.mjs?v=159');
+        return import('./zone-3d-rigged-operative.mjs?v=160');
       })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs?v=158');
@@ -629,9 +537,9 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=160')
+    return import('./zone-3d-environments.mjs?v=161')
       .catch(function () {
-        return import('./zone-3d-environments.mjs?v=159');
+        return import('./zone-3d-environments.mjs?v=160');
       })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=158');
@@ -659,9 +567,9 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=160')
+    return import('./zone-ecs-3d-engine.mjs?v=161')
       .catch(function () {
-        return import('./zone-ecs-3d-engine.mjs?v=159');
+        return import('./zone-ecs-3d-engine.mjs?v=160');
       })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=158');

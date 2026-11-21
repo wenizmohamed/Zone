@@ -2801,7 +2801,8 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
   const dressEnvFn = (globalThis.__Zone3DEnvironments && typeof globalThis.__Zone3DEnvironments.dressStageEnvironment3D === 'function')
     ? globalThis.__Zone3DEnvironments.dressStageEnvironment3D
     : dressStageEnvironment3D;
-  const stageEnv = typeof dressEnvFn === 'function'
+  const shouldDressEnv = !(kind === 'character-turntable' && !headless && typeof window !== 'undefined');
+  const stageEnv = (shouldDressEnv && typeof dressEnvFn === 'function')
     ? dressEnvFn(THREE, kind, scene, {
         viewportWidth: initialState.viewportWidth,
         era: Number(initialState.era || (initialState.eraProgression && initialState.eraProgression.currentEra) || 1),
@@ -4045,10 +4046,9 @@ export class ZoneEcs3DRuntime {
     if (typeof document !== 'undefined' && stageEl.querySelector && !stageEl.querySelector('.z3d-stage-hud')) {
       const hud = document.createElement('div');
       hud.className = 'z3d-stage-hud';
-      const isAr = document.documentElement.dir === 'rtl' || document.documentElement.lang === 'ar';
       const labelSpan = document.createElement('span');
       labelSpan.className = 'z3d-stage-chip';
-      labelSpan.textContent = isAr ? '٣D تفاعلي · اسحب للدوران' : '3D LIVE · DRAG TO ORBIT';
+      labelSpan.textContent = '';
       hud.appendChild(labelSpan);
       stageEl.appendChild(hud);
     }

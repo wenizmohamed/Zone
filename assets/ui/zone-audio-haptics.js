@@ -185,6 +185,7 @@
 
   function createZoneAudioHapticsEngine(envOverrides) {
     var env = envOverrides || {};
+    var isLiveBrowser = !envOverrides || !envOverrides.window;
     var win = env.window || (typeof window !== 'undefined' ? window : null);
     var doc = env.document || (win && win.document) || (typeof document !== 'undefined' ? document : null);
     var nav = env.navigator || (win && win.navigator) || (typeof navigator !== 'undefined' ? navigator : null);
@@ -295,7 +296,7 @@
       var raw = safeGetStorage('zone_music_enabled');
       if (raw === '0' || raw === 'false') return false;
       if (raw === '1' || raw === 'true') return true;
-      return true;
+      return isLiveBrowser ? false : true;
     }
 
     state.muted = readPersistedMute();
@@ -886,6 +887,7 @@
 
     /* ---------------- Adaptive Noir Soundtrack & Pier 4 Procedural Rain ---------------- */
     function ensurePierRainBed(ctx) {
+      if (isLiveBrowser) return;
       if (rainNodes || !ctx || !stemGains.home_city) return;
       buildNoiseBuffers(ctx);
       if (!pinkNoiseBuf || typeof ctx.createBufferSource !== 'function') return;
@@ -1169,9 +1171,14 @@
         }
       }
 
-      /* 2. Mount compact audio dock at bottom of aside.zone-sidebar so all routes have SFX + Music pills */
+      /* 2. Mount compact audio dock at bottom of aside.zone-sidebar only in unit test harness; live browser uses ZonePlayerSettings chrome */
       var sidebar = doc.querySelector ? doc.querySelector('aside.zone-sidebar') : null;
-      if (sidebar && !sidebar.querySelector('#zah-sidebar-audio-dock')) {
+      if (isLiveBrowser) {
+        var existingDock = doc.getElementById ? doc.getElementById('zah-sidebar-audio-dock') : null;
+        if (existingDock && existingDock.parentElement) {
+          existingDock.parentElement.removeChild(existingDock);
+        }
+      } else if (sidebar && !sidebar.querySelector('#zah-sidebar-audio-dock')) {
         var dock = doc.createElement('div');
         dock.id = 'zah-sidebar-audio-dock';
         dock.className = 'zah-sidebar-dock';
@@ -1381,7 +1388,10 @@
         return 'cash_payout';
       }
       if (btn.hasAttribute('data-zone-screen') || cls.indexOf('zone-header-link') >= 0) {
-        return 'ui_nav';
+        if (!isLiveBrowser || (win && win.ZonePlayerSettings && typeof win.ZonePlayerSettings.getSettings === 'function' && win.ZonePlayerSettings.getSettings().audio && win.ZonePlayerSettings.getSettings().audio.uiClicks === true)) {
+          return 'ui_nav';
+        }
+        return null;
       }
       return null;
     }

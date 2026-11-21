@@ -1326,7 +1326,6 @@
 
     return (
       '<div class="ztl-workspace" data-workspace="crimes">' +
-        '<div class="z3d-action-stage ztl-3d-stage" data-z3d-stage="heist-breach"></div>' +
         outcomeHtml +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.crimesTitle) + '</h3><span class="ztl-section-note">' + esc(copy.crimesNote) + '</span></div>' +
@@ -2265,26 +2264,12 @@
     var screen = getActiveScreen();
     var existing = document.getElementById('ztl-attack-3d-stage');
 
-    if (screen !== 'attack') {
-      if (existing && existing.parentElement) {
-        existing.parentElement.removeChild(existing);
-      }
-      return;
+    if (existing && existing.parentElement) {
+      existing.parentElement.removeChild(existing);
     }
 
-    if (!existing) {
-      existing = document.createElement('div');
-      existing.id = 'ztl-attack-3d-stage';
-      existing.className = 'ztl-scope z3d-action-stage ztl-3d-stage ztl-attack-3d-stage';
-      existing.setAttribute('data-z3d-stage', 'combat-arena');
-      var anchor = document.getElementById('zig-brawl-hud') || document.getElementById('zone-combat-frame');
-      if (anchor && anchor.parentElement === main && typeof main.insertBefore === 'function') {
-        main.insertBefore(existing, anchor);
-      } else if (main.children && main.children.length > 1 && typeof main.insertBefore === 'function') {
-        main.insertBefore(existing, main.children[1]);
-      } else {
-        main.appendChild(existing);
-      }
+    if (screen !== 'attack') {
+      return;
     }
 
     if (main !== attackCombatBound && typeof main.addEventListener === 'function') {
@@ -2301,10 +2286,6 @@
           }
         }
       });
-    }
-
-    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
-      try { window.ZoneEcs3D.scan(existing); } catch (_) {}
     }
   }
 
