@@ -1,0 +1,792 @@
+/* ==========================================================================
+ * ZONE v155 - WATERCOLOR TACTICAL THREAT RADAR HUD, SYNDICATE SINKS & A11Y
+ * Exclusive Ownership: @economy-hud-sec (assets/ui/zone-hud-accessibility.css)
+ *
+ * Guardrails:
+ *   1. ZERO Home Clutter: Fixed corner utility dock outside <x-dc> — takes 0px
+ *      in #zone-main flow, NEVER pushes #zig-home-arcade down on Home!
+ *   2. ZERO Overflow at 390px: Strict logical max-widths, box-sizing: border-box,
+ *      and responsive mobile clearance above the 5-tab thumb bar.
+ *   3. 100% 4-Way Parity: Light+EN, Dark+EN, Light+AR (RTL), Dark+AR (RTL)
+ *      inheriting --zwc-* Cold-Press Paper & Fountain-Pen Ink tokens.
+ *   4. Accessibility Modes: Colorblind SVG filters (Deuteranopia, Protanopia,
+ *      Tritanopia), Reduced Motion & Camera Shake, High-Contrast Ink.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. GLOBAL ACCESSIBILITY MODES (Colorblind Filters, High-Contrast, Motion)
+ * -------------------------------------------------------------------------- */
+#zhud-svg-filters {
+  position: fixed !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+html[data-zone-colorblind="deuteranopia"] body .zone-app,
+html[data-zone-colorblind="deuteranopia"] body #zmw-root {
+  filter: url("#zhud-cb-deuteranopia");
+}
+
+html[data-zone-colorblind="protanopia"] body .zone-app,
+html[data-zone-colorblind="protanopia"] body #zmw-root {
+  filter: url("#zhud-cb-protanopia");
+}
+
+html[data-zone-colorblind="tritanopia"] body .zone-app,
+html[data-zone-colorblind="tritanopia"] body #zmw-root {
+  filter: url("#zhud-cb-tritanopia");
+}
+
+/* Reduced Motion & Camera Shake Override */
+html[data-zone-reduced-motion="true"],
+html[data-zone-reduced-motion="true"] body {
+  scroll-behavior: auto !important;
+}
+
+html[data-zone-reduced-motion="true"] *,
+html[data-zone-reduced-motion="true"] *::before,
+html[data-zone-reduced-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-zone-reduced-motion="true"] [data-zticker="1"] {
+  animation: none !important;
+}
+
+/* High-Contrast Fountain-Pen Ink Mode */
+html[data-zone-contrast="high"][data-theme="light"],
+html[data-zone-contrast="high"][data-theme="light"] body {
+  --zwc-paper: #ffffff !important;
+  --zwc-surface: #ffffff !important;
+  --zwc-surface-alt: #f5f1e6 !important;
+  --zwc-ink: #0a0908 !important;
+  --zwc-ink-soft: #171512 !important;
+  --zwc-ink-muted: #292520 !important;
+  --zwc-title-ink: #000000 !important;
+  --zwc-border: #0a0908 !important;
+  --zwc-border-strong: #000000 !important;
+  --t1: #000000 !important;
+  --t2: #111111 !important;
+  --mu: #26221d !important;
+}
+
+html[data-zone-contrast="high"]:not([data-theme="light"]),
+html[data-zone-contrast="high"]:not([data-theme="light"]) body {
+  --zwc-paper: #090807 !important;
+  --zwc-surface: #11100e !important;
+  --zwc-surface-alt: #1a1814 !important;
+  --zwc-ink: #ffffff !important;
+  --zwc-ink-soft: #f5f0e4 !important;
+  --zwc-ink-muted: #e3dac8 !important;
+  --zwc-title-ink: #ffffff !important;
+  --zwc-border: rgba(255, 250, 238, 0.82) !important;
+  --zwc-border-strong: #fff8ea !important;
+  --t1: #ffffff !important;
+  --t2: #f7f2e7 !important;
+  --mu: #e0d7c5 !important;
+}
+
+html[data-zone-contrast="high"] :focus-visible {
+  outline: 3px solid #f5b82e !important;
+  outline-offset: 2px !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. COMPACT NON-INTRUSIVE CORNER UTILITY DOCK (#zhud-root)
+ *    Mounts on document.body outside <x-dc>; 0px flow push on Home!
+ * -------------------------------------------------------------------------- */
+#zhud-root {
+  --zhud-paper: var(--zwc-surface, #fbf7ee);
+  --zhud-paper-alt: var(--zwc-surface-alt, #f2ead8);
+  --zhud-ink: var(--zwc-ink, #1e1b18);
+  --zhud-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zhud-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zhud-border: var(--zwc-border-strong, #23201c);
+  --zhud-head-bg: #24201c;
+  --zhud-head-fg: #f8f2e4;
+  --zhud-sage: #4c7832;
+  --zhud-ochre: #c88d22;
+  --zhud-crimson: #b53824;
+  --zhud-cobalt: #2d639e;
+  --zhud-shadow: rgba(24, 21, 18, 0.28);
+  --zhud-radius: 15px 10px 14px 11px / 11px 15px 10px 14px;
+
+  position: fixed;
+  bottom: 20px;
+  inset-inline-end: 92px;
+  z-index: 945;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  box-sizing: border-box;
+  font-family: var(--zwc-font-hand, "Rubik", "Noto Sans Arabic", system-ui, sans-serif);
+  color: var(--zhud-ink);
+}
+
+html:not([data-theme="light"]) #zhud-root {
+  --zhud-paper: #1e1b17;
+  --zhud-paper-alt: #27231d;
+  --zhud-ink: #f3ecdc;
+  --zhud-ink-soft: #dfd5c0;
+  --zhud-ink-muted: #bfb39c;
+  --zhud-border: #ebe1cc;
+  --zhud-head-bg: #12100d;
+  --zhud-head-fg: #f8f2e4;
+  --zhud-sage: #7ab354;
+  --zhud-ochre: #e8b548;
+  --zhud-crimson: #e4644e;
+  --zhud-cobalt: #6aa4e8;
+  --zhud-shadow: rgba(0, 0, 0, 0.62);
+}
+
+html[dir="rtl"] #zhud-root,
+html:lang(ar) #zhud-root {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+}
+
+body.zone-map-expanded #zhud-root,
+html.zaaa-rail-open #zhud-root {
+  display: none !important;
+}
+
+#zhud-root *,
+#zhud-root *::before,
+#zhud-root *::after {
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+ * 3. SLEEK WATERCOLOR-INKED "RADAR & A11Y" TRIGGER PILL
+ * -------------------------------------------------------------------------- */
+#zhud-trigger {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 5px 12px 5px 10px;
+  background: var(--zhud-paper);
+  color: var(--zhud-ink);
+  border: 2px solid var(--zhud-border);
+  border-radius: 999px;
+  box-shadow: 2.5px 3px 0 var(--zhud-border), 0 6px 16px var(--zhud-shadow);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+#zhud-trigger:hover {
+  background: var(--zhud-paper-alt);
+  transform: translateY(-2px);
+}
+
+#zhud-trigger[aria-expanded="true"] {
+  background: var(--zhud-head-bg);
+  color: var(--zhud-head-fg);
+}
+
+#zhud-trigger:focus-visible {
+  outline: 2.5px solid var(--zhud-ochre);
+  outline-offset: 2px;
+}
+
+.zhud-trig-ico {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zhud-trig-ico svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.zhud-trig-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+  background: rgba(122, 179, 84, 0.22);
+  color: var(--zhud-sage);
+  border: 1px solid currentColor;
+}
+
+.zhud-trig-badge[data-alert="high"] {
+  background: rgba(228, 100, 78, 0.22);
+  color: var(--zhud-crimson);
+}
+
+/* --------------------------------------------------------------------------
+ * 4. TABBED TACTICAL POPOVER DRAWER (#zhud-popover)
+ * -------------------------------------------------------------------------- */
+#zhud-popover {
+  pointer-events: auto;
+  width: min(378px, calc(100vw - 24px));
+  max-height: min(610px, calc(100dvh - 110px));
+  display: flex;
+  flex-direction: column;
+  background: var(--zhud-paper);
+  color: var(--zhud-ink);
+  border: 2px solid var(--zhud-border);
+  border-radius: var(--zhud-radius);
+  box-shadow: 4px 4px 0 var(--zhud-border), 0 16px 36px var(--zhud-shadow);
+  overflow: hidden;
+  animation: zhudRise 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#zhud-popover[hidden] {
+  display: none !important;
+}
+
+@keyframes zhudRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.zhud-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--zhud-head-bg);
+  color: var(--zhud-head-fg);
+  border-bottom: 2px solid var(--zhud-border);
+}
+
+.zhud-head-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.zhud-head-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zhud-close-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(248, 242, 228, 0.45);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--zhud-head-fg);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.zhud-close-btn:hover {
+  background: rgba(232, 181, 72, 0.28);
+}
+
+/* Tab Strip */
+.zhud-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--zhud-paper-alt);
+  border-bottom: 1.5px solid var(--zhud-border);
+}
+
+.zhud-tab {
+  min-height: 40px;
+  padding: 6px 6px;
+  border: 0;
+  border-inline-end: 1px dashed rgba(128, 116, 98, 0.4);
+  background: transparent;
+  color: var(--zhud-ink-muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  touch-action: manipulation;
+}
+
+.zhud-tab:last-child {
+  border-inline-end: 0;
+}
+
+.zhud-tab[aria-selected="true"] {
+  background: var(--zhud-paper);
+  color: var(--zhud-ink);
+  box-shadow: inset 0 -3px 0 var(--zhud-sage);
+}
+
+.zhud-body {
+  padding: 11px 12px 13px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+ * 5. TAB 1: WATERCOLOR COMPASS THREAT RADAR & WAYPOINT
+ * -------------------------------------------------------------------------- */
+.zhud-radar-grid {
+  display: grid;
+  grid-template-columns: 158px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.zhud-compass-box {
+  position: relative;
+  width: 158px;
+  height: 158px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--zhud-paper-alt) 0%, var(--zhud-paper) 74%);
+  border: 2px solid var(--zhud-border);
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.14), 2px 2px 0 var(--zhud-border);
+  overflow: hidden;
+}
+
+.zhud-compass-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.zhud-radar-sweep {
+  transform-origin: 80px 80px;
+  animation: zhudRadarSpin 6.5s linear infinite;
+}
+
+@keyframes zhudRadarSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.zhud-radar-blip {
+  cursor: pointer;
+}
+
+.zhud-district-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.zhud-dist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 7px;
+  background: var(--zhud-paper-alt);
+  border: 1.4px solid transparent;
+  border-radius: 7px;
+  color: var(--zhud-ink);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: start;
+}
+
+.zhud-dist-row[data-active="true"] {
+  border-color: var(--zhud-border);
+  box-shadow: 1.5px 1.5px 0 var(--zhud-border);
+}
+
+.zhud-dist-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zhud-heat-pill {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+  direction: ltr;
+  unicode-bidi: isolate;
+  border: 1px solid currentColor;
+}
+
+.zhud-heat-pill[data-tier="calm"] { color: var(--zhud-sage); }
+.zhud-heat-pill[data-tier="guarded"] { color: var(--zhud-cobalt); }
+.zhud-heat-pill[data-tier="elevated"] { color: var(--zhud-ochre); }
+.zhud-heat-pill[data-tier="critical"] { color: var(--zhud-crimson); }
+
+/* Next Objective Waypoint Card */
+.zhud-waypoint-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--zhud-paper-alt);
+  border: 1.6px solid var(--zhud-border);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--zhud-border);
+}
+
+.zhud-wp-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.zhud-wp-kicker {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--zhud-ochre);
+}
+
+html[dir="rtl"] .zhud-wp-kicker {
+  text-transform: none;
+}
+
+.zhud-wp-title {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--zhud-ink);
+}
+
+/* --------------------------------------------------------------------------
+ * 6. SYNDICATE SINKS & EQUILIBRIUM BAND (1.08 - 1.15)
+ * -------------------------------------------------------------------------- */
+.zhud-eq-card {
+  padding: 9px 10px;
+  background: var(--zhud-paper-alt);
+  border: 1.6px solid var(--zhud-border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.zhud-eq-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.zhud-eq-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(128, 116, 98, 0.22);
+  border: 1px solid var(--zhud-border);
+  overflow: hidden;
+}
+
+.zhud-eq-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 36%;
+  width: 24%;
+  background: rgba(122, 179, 84, 0.36);
+  border-inline: 1.5px dashed var(--zhud-sage);
+}
+
+.zhud-eq-marker {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 6px;
+  border-radius: 3px;
+  background: var(--zhud-ochre);
+  border: 1px solid var(--zhud-border);
+  transform: translateX(-50%);
+}
+
+.zhud-eq-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--zhud-ink-muted);
+}
+
+.zhud-sink-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.zhud-sink-quick-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zhud-sink-card {
+  padding: 8px 10px;
+  background: var(--zhud-paper-alt);
+  border: 1.5px solid var(--zhud-border);
+  border-radius: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.zhud-sink-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+
+.zhud-sink-desc {
+  font-size: 11.2px;
+  line-height: 1.35;
+  color: var(--zhud-ink-soft);
+  margin: 0;
+}
+
+.zhud-btn {
+  min-height: 36px;
+  padding: 5px 10px;
+  border: 1.6px solid var(--zhud-border);
+  border-radius: 8px;
+  background: var(--zhud-paper);
+  color: var(--zhud-ink);
+  font: inherit;
+  font-size: 11.8px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-shadow: 1.5px 2px 0 var(--zhud-border);
+  touch-action: manipulation;
+}
+
+.zhud-btn.primary {
+  background: var(--zhud-sage);
+  color: #fcf9f2;
+}
+
+.zhud-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. TAB 3: ACCESSIBILITY & HOTKEY REMAPPING
+ * -------------------------------------------------------------------------- */
+.zhud-a11y-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed rgba(128, 116, 98, 0.35);
+}
+
+.zhud-a11y-section:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.zhud-sec-label {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--zhud-ink);
+}
+
+.zhud-cb-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.zhud-chip-btn {
+  min-height: 36px;
+  padding: 5px 8px;
+  border: 1.5px solid var(--zhud-border);
+  border-radius: 8px;
+  background: var(--zhud-paper-alt);
+  color: var(--zhud-ink);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  touch-action: manipulation;
+}
+
+.zhud-chip-btn[aria-pressed="true"] {
+  background: var(--zhud-sage);
+  color: #fcf9f2;
+  font-weight: 800;
+  box-shadow: 1.5px 1.5px 0 var(--zhud-border);
+}
+
+.zhud-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 38px;
+  padding: 5px 8px;
+  background: var(--zhud-paper-alt);
+  border: 1.4px solid var(--zhud-border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.zhud-hotkey-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.zhud-hk-btn {
+  min-height: 36px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  background: var(--zhud-paper-alt);
+  border: 1.4px solid var(--zhud-border);
+  border-radius: 7px;
+  color: var(--zhud-ink);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.zhud-hk-btn[data-listening="true"] {
+  background: var(--zhud-ochre);
+  color: #1a1714;
+}
+
+.zhud-kbd {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--zhud-paper);
+  border: 1px solid var(--zhud-border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 800;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.zhud-status-toast {
+  padding: 6px 9px;
+  border-radius: 7px;
+  background: rgba(122, 179, 84, 0.18);
+  border: 1.4px solid var(--zhud-sage);
+  color: var(--zhud-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.zhud-status-toast[data-tone="error"] {
+  background: rgba(228, 100, 78, 0.18);
+  border-color: var(--zhud-crimson);
+}
+
+/* --------------------------------------------------------------------------
+ * 8. MOBILE <= 900px & 390x844 ZERO-OVERFLOW ERGONOMICS (>= 44px Touch)
+ *    Docks cleanly at bottom-inline-start opposite Mayor Tariq (#zmw-root)!
+ * -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  #zhud-root {
+    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    inset-inline-start: 10px;
+    inset-inline-end: auto;
+    align-items: flex-start;
+    max-width: calc(100vw - 20px);
+  }
+
+  #zhud-trigger {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 6px 11px;
+    font-size: 12px;
+  }
+
+  .zhud-close-btn,
+  .zhud-tab,
+  .zhud-btn,
+  .zhud-chip-btn,
+  .zhud-hk-btn,
+  .zhud-toggle-row {
+    min-height: 44px;
+  }
+
+  #zhud-popover {
+    width: min(366px, calc(100vw - 20px));
+    max-width: calc(100vw - 20px);
+    max-height: min(520px, calc(100dvh - 150px));
+  }
+}
+
+@media (max-width: 420px) {
+  .zhud-radar-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .zhud-district-list {
+    width: 100%;
+  }
+
+  .zhud-trig-label-long {
+    display: none;
+  }
+}
