@@ -18,13 +18,20 @@ const AUTHORIZED_V150_FILES = new Set([
   'assets/ui/zone-ascension-breakthrough.css',
   'assets/ui/zone-ascension-breakthrough.js',
   'assets/ui/zone-instant-games.js',
+  'assets/ui/zone-ecs-3d-engine.mjs',
+  'assets/ui/zone-ecs-3d-bridge.js',
+  'assets/ui/zone-ecs-3d.css',
+  'assets/ui/zone-profile-avatar.css',
+  'assets/ui/zone-profile-avatar.js',
   'index.html',
+  'account.html',
   'sw.js',
   'api/index.php',
   'engine/router.php',
   'engine/bin/relay.mjs',
   'engine/src/Application/GameEngine.php',
   'engine/src/Core/Game/AscensionEngineService.php',
+  'engine/src/Core/Game/PlayerAvatarService.php',
   'engine/src/Core/Game/TornSystemsService.php',
   'engine/src/Core/Game/ForeignMarketService.php',
   'engine/src/Core/Game/CityActivitiesService.php',
@@ -41,7 +48,10 @@ const AUTHORIZED_V150_FILES = new Set([
   'scripts/test-ux-ia150.mjs',
   'scripts/test-breakthrough-ascension151.mjs',
   'scripts/test-progression-gates151.mjs',
-  'scripts/test-breakthrough-ui151.mjs'
+  'scripts/test-breakthrough-ui151.mjs',
+  'scripts/test-ecs-3d-engine152.mjs',
+  'scripts/test-profile-avatar152.mjs',
+  'scripts/test-account.mjs'
 ]);
 
 test('v150 SHA-256 lock gate: index.html <body> is 100% byte-identical and 0 unauthorized files modified', () => {
@@ -113,7 +123,9 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
     '.jpg': 'image/jpeg',
     '.webp': 'image/webp',
     '.woff2': 'font/woff2',
-    '.glb': 'model/gltf-binary'
+    '.glb': 'model/gltf-binary',
+    '.obj': 'text/plain; charset=utf-8',
+    '.mtl': 'text/plain; charset=utf-8'
   };
 
   const nowSec = Math.floor(Date.now() / 1000);
@@ -310,7 +322,9 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
           let nativeFirstRect = null;
           for (const ch of main.children) {
             if (
+              ch.id === 'zig-home-arcade' ||
               ch.id === 'zone-ascension-hub' ||
+              ch.id === 'ztl-attack-3d-stage' ||
               ch.id === 'zone-rpg-route-section' ||
               ch.id === 'zone-torn-route-section' ||
               ch.classList.contains('zone-mobile-tabbar') ||
@@ -327,6 +341,11 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
               break;
             }
           }
+
+          const arcadeEl = document.getElementById('zig-home-arcade');
+          const hubEl = document.getElementById('zone-ascension-hub');
+          const arcadeRect = arcadeEl && getComputedStyle(arcadeEl).display !== 'none' ? arcadeEl.getBoundingClientRect().toJSON() : null;
+          const hubRect = hubEl && getComputedStyle(hubEl).display !== 'none' ? hubEl.getBoundingClientRect().toJSON() : null;
 
           let cityMapRect = null;
           if (activeScr === 'city') {
@@ -348,6 +367,8 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
             stripH: stRect ? stRect.height : 0,
             headingTop,
             nativeFirstRect,
+            arcadeRect,
+            hubRect,
             cityMapRect,
             rpgSecRect: rpgSec ? rpgSec.getBoundingClientRect().toJSON() : null,
             tornSecRect: tornSec ? tornSec.getBoundingClientRect().toJSON() : null,
@@ -387,6 +408,17 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
             metrics.tornSecRect.top >= metrics.nativeFirstRect.bottom - 2,
             `[${cfg.name} / ${scr}] #zone-torn-route-section (${metrics.tornSecRect.top}px) must sit BELOW native screen content (${metrics.nativeFirstRect.bottom}px)`
           );
+        }
+
+        // On home: Syndicate Arcade (#zig-home-arcade) MUST be mounted above #zone-ascension-hub
+        if (scr === 'home') {
+          assert.ok(metrics.arcadeRect && metrics.arcadeRect.height > 80, `[${cfg.name}] #zig-home-arcade visible at top of Home`);
+          if (metrics.hubRect && metrics.hubRect.height > 40) {
+            assert.ok(
+              metrics.arcadeRect.top < metrics.hubRect.top,
+              `[${cfg.name}] #zig-home-arcade (${metrics.arcadeRect.top}px) sits ABOVE #zone-ascension-hub (${metrics.hubRect.top}px)`
+            );
+          }
         }
 
         // On city: 3D Map container/canvas is immediately visible in the top half of the viewport, and Underworld/Airport sit below it
@@ -441,7 +473,9 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
       routeMatrix[r] = await isoPage.evaluate(() => {
         const main = document.getElementById('zone-main');
         const txt = main ? main.textContent : '';
+        const arc = document.getElementById('zig-home-arcade');
         return {
+          arcadeVisible: Boolean(arc && getComputedStyle(arc).display !== 'none' && arc.getBoundingClientRect().height > 80),
           storyCampaign: Boolean(main?.querySelector('[data-zre-feature="story-campaign"]')) || /Act I: Gutter of the Harbor/.test(txt),
           skillTree: Boolean(main?.querySelector('[data-zre-feature="skill-tree"]')) || /4-Branch Player Skill Tree/.test(txt),
           stocks: /Zone Stock Exchange/.test(txt),
@@ -470,6 +504,14 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
     assertExclusiveRoute('wheelsRacing', 'casino', 'Spin Wheels & Street Racing');
     assertExclusiveRoute('bazaarsTrades', 'market', 'Bazaars & Safe Trades');
     assertExclusiveRoute('companies', 'jobs', 'Player-Directed Companies');
+
+    assert.equal(routeMatrix.home.arcadeVisible, true, 'Syndicate Arcade (#zig-home-arcade) MUST be mounted on home');
+    assert.equal(routeMatrix.casino.arcadeVisible, true, 'Syndicate Arcade (#zig-home-arcade) MUST be mounted on casino');
+    for (const r of ALL_CHECK_ROUTES) {
+      if (r !== 'home' && r !== 'casino') {
+        assert.equal(routeMatrix[r].arcadeVisible, false, `Syndicate Arcade MUST NOT appear on '${r}'`);
+      }
+    }
 
     await isoCtx.close();
   } finally {

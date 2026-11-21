@@ -736,6 +736,42 @@ try {
         $query = isset($_GET['q']) && is_string($_GET['q']) ? $_GET['q'] : null;
         json_response($engine->playerProfile(current_player_id(), $targetId, $query));
     }
+    if ($path === '/api/v1/player-profile/avatar') {
+        if (!in_array($method, ['GET', 'HEAD', 'POST'], true)) {
+            json_response(['error' => 'Method not allowed.'], 405);
+        }
+        try {
+            if ($method === 'GET' || $method === 'HEAD') {
+                $requestedId = isset($_GET['id']) && is_string($_GET['id']) ? trim($_GET['id']) : '';
+                $targetPlayerId = $requestedId !== '' ? $requestedId : current_player_id();
+                if (($_GET['raw'] ?? '') === '1') {
+                    $rawAvatar = $engine->playerAvatar()->rawBinary($targetPlayerId);
+                    if ($rawAvatar !== null) {
+                        http_response_code(200);
+                        header('Content-Type: ' . $rawAvatar['mimeType']);
+                        header('Content-Length: ' . strlen($rawAvatar['bytes']));
+                        header('X-Content-Type-Options: nosniff');
+                        header('Cache-Control: public, max-age=3600');
+                        if ($method !== 'HEAD') {
+                            echo $rawAvatar['bytes'];
+                        }
+                        exit;
+                    }
+                }
+                json_response($engine->playerAvatarState($targetPlayerId, $targetPlayerId));
+            }
+            $body = request_json();
+            if (!is_string($body['action'] ?? null)) {
+                throw new InvalidArgumentException('Avatar action must be text.');
+            }
+            $pid = current_player_id();
+            $res = $engine->playerAvatarAction($body['action'], $body, $pid);
+            $engine->syncEphemeralLedger($pid);
+            json_response($res);
+        } catch (InvalidArgumentException $avatarError) {
+            json_response(['ok' => false, 'error' => $avatarError->getMessage(), 'type' => $avatarError::class], 400);
+        }
+    }
     if ($method === 'GET' && $path === '/api/v1/events-feed') {
         $limit = \Zone\Engine\Core\Security\RequestGuard::boundedInt($_GET, 'limit', 1, 40, 40);
         json_response($engine->eventsFeed(current_player_id(), $limit));

@@ -8,7 +8,7 @@ const publicPaths = new Set(['auth/account', 'auth/claim', 'auth/login', 'auth/r
   'player-combat', 'player-combat/opponents', 'player-combat/action', 'player-market', 'player-market/action',
   'family-activities', 'family-activities/action', 'crimes', 'achievements', 'city/map', 'factions/join', 'releases/active',
   'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
-  'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'events-feed',
+  'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'player-profile/avatar', 'events-feed',
   'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'ascension', 'ascension/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
   'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications']);
 export function isPublicPath(path) {
@@ -111,7 +111,8 @@ export function createRelay({ key, publicHosts, upstreamPort = 4301, timeoutMs =
     if (['POST', 'PUT', 'DELETE'].includes(request.method) && origin !== `https://${clientHost}`) return reply(response, 403, 'Cross-origin request rejected.');
     const largeDraft = request.method === 'PUT' && ['/api/v1/admin/draft', '/api/v1/admin/shop-catalog'].includes(path);
     const assetChunk = request.method === 'POST' && /^\/api\/v1\/admin\/assets\/uploads\/[a-f0-9]{32}\/chunks$/.test(path);
-    const requestLimit = largeDraft || assetChunk ? maxDraftBytes : maxRequestBytes;
+    const avatarUpload = request.method === 'POST' && path === '/api/v1/player-profile/avatar';
+    const requestLimit = largeDraft || assetChunk || avatarUpload ? maxDraftBytes : maxRequestBytes;
     if (Number(request.headers['content-length'] ?? 0) > requestLimit) return reply(response, 413, 'Request body is too large.');
     const chunks = []; let bytes = 0;
     try {
@@ -149,6 +150,9 @@ export function createRelay({ key, publicHosts, upstreamPort = 4301, timeoutMs =
       incoming.on('end', () => {
         if (response.headersSent || response.destroyed) return;
         const exposed = { 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
+        if (path === '/api/v1/player-profile/avatar' && incoming.statusCode === 200 && typeof incoming.headers['content-type'] === 'string' && incoming.headers['content-type'].toLowerCase().startsWith('image/') && typeof incoming.headers['cache-control'] === 'string') {
+          exposed['cache-control'] = incoming.headers['cache-control'];
+        }
         for (const name of ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy']) if (incoming.headers[name] !== undefined) exposed[name] = incoming.headers[name];
         if (incoming.headers['set-cookie']) exposed['set-cookie'] = incoming.headers['set-cookie'].filter(value => value.startsWith('zone_player_session=') || (path === '/api/v1/admin/session' && value.startsWith('zone_admin_session='))).map(value => {
           // Authenticated public requests always set a host-only browser cookie.

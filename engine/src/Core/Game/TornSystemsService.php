@@ -2056,4 +2056,125 @@ final class TornSystemsService
             ],
         ];
     }
+
+    /**
+     * Enriches a list of player directory / roster entries with avatarUrl, avatarDataUrl,
+     * hasCustomAvatar, and avatarPresetId via a single batched IN (...) query.
+     *
+     * @param list<array<string, mixed>> $entries
+     * @return list<array<string, mixed>>
+     */
+    public static function enrichPlayerProfileDirectory(Database $database, EventBus $events, array $entries): array
+    {
+        if ($entries === []) {
+            return [];
+        }
+        $ids = [];
+        foreach ($entries as $entry) {
+            if (is_array($entry) && isset($entry['id']) && is_string($entry['id']) && $entry['id'] !== '') {
+                $ids[] = $entry['id'];
+            }
+        }
+        $avatarMap = (new PlayerAvatarService($database, $events))->batchSummaryForPlayers($ids);
+
+        $out = [];
+        foreach ($entries as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $pid = (string) ($entry['id'] ?? '');
+            $meta = $avatarMap[$pid] ?? null;
+            $out[] = [
+                ...$entry,
+                'hasCustomAvatar' => (bool) ($meta['hasCustomAvatar'] ?? false),
+                'avatarPresetId' => (string) ($meta['avatarPresetId'] ?? ''),
+                'avatarUrl' => $meta['avatarUrl'] ?? null,
+                'avatarDataUrl' => $meta['avatarDataUrl'] ?? null,
+            ];
+        }
+        return $out;
+    }
+
+    /**
+     * Enriches the full /api/v1/player-profile payload (profile + directory + players)
+     * in a single batched IN (...) query on player_avatars.
+     *
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    public static function enrichPlayerProfilePayload(Database $database, EventBus $events, array $payload): array
+    {
+        $ids = [];
+        foreach (['directory', 'players'] as $listKey) {
+            if (is_array($payload[$listKey] ?? null)) {
+                foreach ($payload[$listKey] as $entry) {
+                    if (is_array($entry) && !empty($entry['id']) && is_string($entry['id'])) {
+                        $ids[] = $entry['id'];
+                    }
+                }
+            }
+        }
+        if (is_array($payload['profile'] ?? null) && !empty($payload['profile']['id']) && is_string($payload['profile']['id'])) {
+            $ids[] = $payload['profile']['id'];
+        }
+
+        $avatarService = new PlayerAvatarService($database, $events);
+        $avatarMap = $avatarService->batchSummaryForPlayers($ids);
+
+        $applyEntry = static function (array $entry) use ($avatarMap): array {
+            $pid = (string) ($entry['id'] ?? '');
+            $meta = $avatarMap[$pid] ?? null;
+            return [
+                ...$entry,
+                'hasCustomAvatar' => (bool) ($meta['hasCustomAvatar'] ?? false),
+                'avatarPresetId' => (string) ($meta['avatarPresetId'] ?? ''),
+                'avatarUrl' => $meta['avatarUrl'] ?? null,
+                'avatarDataUrl' => $meta['avatarDataUrl'] ?? null,
+            ];
+        };
+
+        if (is_array($payload['directory'] ?? null)) {
+            $payload['directory'] = array_values(array_map(
+                static fn (mixed $item): mixed => is_array($item) ? $applyEntry($item) : $item,
+                $payload['directory'],
+            ));
+        }
+        if (is_array($payload['players'] ?? null)) {
+            $payload['players'] = array_values(array_map(
+                static fn (mixed $item): mixed => is_array($item) ? $applyEntry($item) : $item,
+                $payload['players'],
+            ));
+        }
+        if (is_array($payload['profile'] ?? null)) {
+            $prof = $applyEntry($payload['profile']);
+            $profId = (string) ($prof['id'] ?? '');
+            if ($profId !== '' && !empty($prof['hasCustomAvatar'])) {
+                $fullState = $avatarService->state($profId);
+                if (!empty($fullState['dataUrl'])) {
+                    $prof['avatarDataUrl'] = $fullState['dataUrl'];
+                }
+            }
+            $payload['profile'] = $prof;
+        }
+
+        return $payload;
+    }
+
+    /**
+     * @param list<array<string, mixed>> $entries
+     * @return list<array<string, mixed>>
+     */
+    public function playerProfileDirectory(array $entries): array
+    {
+        return self::enrichPlayerProfileDirectory($this->database, $this->events, $entries);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function playerProfile(string $viewerId, ?string $targetId = null, ?string $query = null): array
+    {
+        $payload = (new SyndicateSocialService($this->database, $this->events))->playerProfile($viewerId, $targetId, $query);
+        return self::enrichPlayerProfilePayload($this->database, $this->events, $payload);
+    }
 }

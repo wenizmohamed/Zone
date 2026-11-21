@@ -516,7 +516,8 @@
       bokeh: [],
       chalk: []
     },
-    /* Nitro Getaway (Home Instant Game) */
+    arcadeMode: 'getaway',
+    /* Nitro Getaway / Street Drift (Home Instant Game #1) */
     getaway: {
       open: false,
       running: false,
@@ -535,7 +536,21 @@
       spawnTimer: 0,
       particles: []
     },
-    /* Safe-Crack Reflex (Crimes) */
+    /* Smuggler Jet Air-Corridor Run (Home Instant Game #4) */
+    jet: {
+      running: false,
+      gameOver: false,
+      alt: 0.5,
+      targetAlt: 0.5,
+      speed: 250,
+      score: 0,
+      crates: 0,
+      combo: 1,
+      entities: [],
+      spawnTimer: 0,
+      particles: []
+    },
+    /* Safe-Crack Reflex (Crimes & Home Instant Game #2) */
     heist: {
       angle: 0,
       speed: 2.55,
@@ -621,97 +636,183 @@
     return (soundEnabled ? SVG_SPEAKER_ON : SVG_SPEAKER_OFF) + '<span>' + label + '</span>';
   }
 
-  /* ---------------- 1. HOME: Poster Arcade Deck + Playable Nitro Getaway ---------------- */
-  function startGetawayRun() {
+  /* ---------------- 1. HOME & CASINO: Poster Arcade Deck + 4 Playable 60fps Instant Games ---------------- */
+  function notifySafehouseArcadeWin(gameKind, extra) {
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try {
+        window.ZoneEcs3D.triggerStageAction('safehouse-empire', 'arcade-win', Object.assign({ game: gameKind || 'arcade' }, extra || {}));
+      } catch (_) {}
+    }
+  }
+
+  function updateArcadeStageBar(mode) {
+    var ar = isAr();
+    var headSpan = document.getElementById('zig-stage-heading-text');
+    var routeBtn = document.getElementById('zig-getaway-fence');
+    if (headSpan) {
+      if (mode === 'heist') {
+        headSpan.textContent = ar
+          ? 'اختراق خزنة الأزقة: المس داخل القوس الذهبي أو اضغط المسافة لكسر القفل'
+          : 'Alley Heist · Safe-Crack: Tap inside the Gold Arc or press Space to breach';
+      } else if (mode === 'gym') {
+        headSpan.textContent = ar
+          ? 'كيس الملاكمة التفاعلي: المس في منتصف عداد الذروة لتسديد ضربة قاضية'
+          : 'Heavy Bag · Overdrive: Strike inside the Gold Sweet-Spot to chain combos';
+      } else if (mode === 'jet') {
+        headSpan.textContent = ar
+          ? 'طائرة التهريب الليلية: المس للأعلى/الأسفل لمراوغة الرادار والتقاط الشحنات'
+          : 'Smuggler Jet · Radar Run: Tap altitude or Up/Down Arrows to dodge radar & grab drops';
+      } else {
+        headSpan.textContent = ar
+          ? 'سباق شوارع النيترو: المس المسارات أو استخدم الأسهم للمراوغة وجمع الحقائب'
+          : 'Street Drift · Nitro Getaway: Tap Lanes or Arrows to dodge cruisers & grab loot';
+      }
+    }
+    if (routeBtn) {
+      if (mode === 'heist') {
+        routeBtn.textContent = ar ? 'لوحة الجرائم 3D ←' : 'Open Crimes 3D →';
+      } else if (mode === 'gym') {
+        routeBtn.textContent = ar ? 'صالة الحديد 3D ←' : 'Open Gym 3D →';
+      } else if (mode === 'jet') {
+        routeBtn.textContent = ar ? 'الرحلات والكازينو ←' : 'Open Casino / Flights →';
+      } else {
+        routeBtn.textContent = ar ? 'تصريف الغنيمة (عملية شارع)' : 'Fence Loot (Run Street Op)';
+      }
+    }
+  }
+
+  function startGetawayRun(modeOverride) {
+    var mode = (typeof modeOverride === 'string' && modeOverride) ? modeOverride : (state.arcadeMode || 'getaway');
+    state.arcadeMode = mode;
     var gw = state.getaway;
     gw.open = true;
-    gw.running = true;
-    gw.gameOver = false;
-    gw.lane = 1.5;
-    gw.targetLane = 1.5;
-    gw.speed = 275;
-    gw.score = 0;
-    gw.bags = 0;
-    gw.combo = 1;
-    gw.nitro = 100;
-    gw.boosting = false;
-    gw.entities = [];
-    gw.particles = [];
-    gw.spawnTimer = 0.35;
-    sfx.pickup();
+
+    if (mode === 'getaway') {
+      gw.running = true;
+      gw.gameOver = false;
+      gw.lane = 1.5;
+      gw.targetLane = 1.5;
+      gw.speed = 275;
+      gw.score = 0;
+      gw.bags = 0;
+      gw.combo = 1;
+      gw.nitro = 100;
+      gw.boosting = false;
+      gw.entities = [];
+      gw.particles = [];
+      gw.spawnTimer = 0.35;
+      sfx.pickup();
+    } else if (mode === 'jet') {
+      var jt = state.jet;
+      jt.running = true;
+      jt.gameOver = false;
+      jt.alt = 0.5;
+      jt.targetAlt = 0.5;
+      jt.speed = 255;
+      jt.score = 0;
+      jt.crates = 0;
+      jt.combo = 1;
+      jt.entities = [];
+      jt.particles = [];
+      jt.spawnTimer = 0.35;
+      sfx.pickup();
+    } else if (mode === 'heist') {
+      state.heist.streak = 0;
+      state.heist.speed = 2.55;
+      sfx.lockClick();
+    } else if (mode === 'gym') {
+      state.gym.combo = 0;
+      state.gym.bagVel = -4.8;
+      sfx.punch(true);
+    }
+
+    updateArcadeStageBar(mode);
     var stage = document.getElementById('zig-getaway-stage');
     if (stage) {
       stage.hidden = false;
+      stage.setAttribute('data-arcade-mode', mode);
       if (typeof stage.scrollIntoView === 'function') {
         try { stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
       }
     }
     var gCv = document.getElementById('zig-getaway-canvas');
     if (gCv) observeInteractiveCanvas(gCv);
-    renderGetawayGame(0, performance.now());
+    renderActiveArcadeStage(0, performance.now());
     ensureLoopRunning();
   }
 
   function mountHomeArcade() {
     ensureMotionStyles();
     var main = document.getElementById('zone-main');
-    if (!main || main.getAttribute('data-zone-screen') !== 'casino') {
+    var scr = main ? (main.getAttribute('data-zone-screen') || '') : '';
+    if (!main || (scr !== 'home' && scr !== 'casino')) {
       state.hoveredPreviewId = null;
       state.getaway.open = false;
       state.getaway.running = false;
+      state.jet.running = false;
       var stale = document.getElementById('zig-home-arcade');
       if (stale) stale.remove();
       return;
     }
-    var casinoAnchor = main.querySelector('[data-zone-casino-pit="1"]') || main.querySelector('.zone-content-split') || main.querySelector('.zone-page-heading');
-    if (!casinoAnchor) return;
+    var anchor = scr === 'home'
+      ? (main.querySelector('.zone-home-brief') || main.querySelector('.zone-page-heading'))
+      : (main.querySelector('[data-zone-casino-pit="1"]') || main.querySelector('.zone-content-split') || main.querySelector('.zone-page-heading'));
+    if (!anchor) return;
     var ar = isAr();
+    var langKey = ar ? 'ar' : 'en';
     var existing = document.getElementById('zig-home-arcade');
-    if (existing && existing.getAttribute('data-lang') === (ar ? 'ar' : 'en')) return;
+    if (existing && existing.getAttribute('data-lang') === langKey && existing.getAttribute('data-mounted-screen') === scr && existing.parentElement === main) {
+      /* On Home, guarantee #zig-home-arcade stays right after .zone-home-brief and BEFORE #zone-ascension-hub / .zone-quick-actions */
+      if (scr === 'home' && anchor.nextElementSibling !== existing) {
+        anchor.insertAdjacentElement('afterend', existing);
+      }
+      return;
+    }
     if (existing) existing.remove();
     state.hoveredPreviewId = null;
 
     var sec = document.createElement('section');
     sec.id = 'zig-home-arcade';
-    sec.className = 'zig-arcade-deck';
-    sec.setAttribute('data-lang', ar ? 'ar' : 'en');
+    sec.className = 'zig-arcade-deck zig-home-arcade';
+    sec.setAttribute('data-lang', langKey);
+    sec.setAttribute('data-mounted-screen', scr);
 
     var cards = [
       {
-        id: 'getaway',
-        art: '/assets/ui/watercolor-art/arcade-getaway.webp',
-        alt: ar ? 'مطاردة النيترو السريعة' : 'Nitro Syndicate Getaway',
-        badge: ar ? 'جولة فورية' : 'Instant Run',
-        name: ar ? 'مطاردة النيترو السريعة' : 'Nitro Syndicate Getaway',
-        desc: ar ? 'راوغ دوريات المطاردة واجمع حقائب الغنائم في شوارع زون.' : 'Thread pursuit cruisers and secure cash drops at 160 MPH.',
-        cta: ar ? 'ابدأ الجولة' : 'Launch Run'
+        id: 'gym',
+        art: '/assets/ui/watercolor-art/arcade-heavybag.webp',
+        alt: ar ? 'كيس الملاكمة التفاعلي' : 'Heavy Bag · Overdrive',
+        badge: ar ? '60 إطاراً · قوة' : '60fps Reflex',
+        name: ar ? 'كيس الملاكمة التفاعلي' : 'Heavy Bag',
+        desc: ar ? 'سدّد اللكمة في النقطة الذهبية لمضاعفة زخم التدريب الفوري.' : 'Strike the gold sweet-spot meter to chain overdrive bag combos.',
+        cta: ar ? 'العب فوراً' : 'Play Heavy Bag'
       },
       {
         id: 'heist',
         art: '/assets/ui/watercolor-art/arcade-heist.webp',
-        alt: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
+        alt: ar ? 'اختراق خزنة الأزقة' : 'Alley Heist · Safe-Crack',
         badge: ar ? 'توقيت دقيق' : 'Precision Lock',
-        name: ar ? 'اختراق الخزنة المصفحة' : 'Safe-Crack Heist',
-        desc: ar ? 'اضرب القفل في النقطة الذهبية لاختراق الخزائن وتنفيذ العمليات.' : 'Strike the brass tumbler sweet-spot to breach reinforced vaults.',
+        name: ar ? 'اختراق خزنة الأزقة' : 'Alley Heist',
+        desc: ar ? 'اضرب القفل النحاسي في القوس الذهبي لاختراق الخزائن المصفحة.' : 'Crack rotating brass tumblers inside the gold arc for instant loot.',
         cta: ar ? 'اخترق الخزنة' : 'Crack Vault'
+      },
+      {
+        id: 'getaway',
+        art: '/assets/ui/watercolor-art/arcade-getaway.webp',
+        alt: ar ? 'سباق شوارع النيترو' : 'Street Drift · Getaway',
+        badge: ar ? 'جولة فورية' : 'Instant Drift',
+        name: ar ? 'سباق شوارع النيترو' : 'Street Drift',
+        desc: ar ? 'راوغ دوريات المطاردة واجمع حقائب الغنائم بسرعة 160 ميلاً.' : 'Thread pursuit cruisers across 4 lanes and grab cash drops at 160 MPH.',
+        cta: ar ? 'ابدأ المطاردة' : 'Launch Drift'
       },
       {
         id: 'casino',
         art: '/assets/ui/watercolor-art/arcade-casino.webp',
-        alt: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
-        badge: ar ? 'طاولات النخبة' : 'High-Limit Salon',
-        name: ar ? 'كازينو المخمل السري' : 'Velvet Roulette & Slots',
-        desc: ar ? 'عجلة روليت أوروبية دوارة وماكينات الجائزة الكبرى.' : '37-pocket European wheel, jackpot reels, and private shoe.',
-        cta: ar ? 'ادخل الصالون' : 'Enter Salon'
-      },
-      {
-        id: 'gym',
-        art: '/assets/ui/watercolor-art/arcade-heavybag.webp',
-        alt: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',
-        badge: ar ? 'عداد القوة' : 'Reflex Meter',
-        name: ar ? 'تحدي كيس الملاكمة' : 'Heavy-Bag Overdrive',
-        desc: ar ? 'سدّد اللكمة في المنطقة الذهبية لمضاعفة زخم التمرين.' : 'Time heavy-bag strikes inside the gold zone to boost training.',
-        cta: ar ? 'ادخل الحلبة' : 'Enter Ring'
+        alt: ar ? 'طائرة التهريب الليلية' : 'Smuggler Jet · Radar Run',
+        badge: ar ? 'ممر جوي سري' : 'Air Corridor',
+        name: ar ? 'طائرة التهريب الليلية' : 'Smuggler Jet',
+        desc: ar ? 'حلّق تحت الرادار، التقط صناديق المهربات وادخل صالون الكازينو.' : 'Fly low under radar rings, snag air-drop crates & hit the VIP salon.',
+        cta: ar ? 'إقلاع فوري' : 'Fly Smuggler Jet'
       }
     ];
 
@@ -722,12 +823,12 @@
           '<div>' +
             '<h2 class="zig-arcade-title">' +
               '<span>' + (ar ? 'أركيد النقابة' : 'Syndicate Arcade') + '</span>' +
-              '<span class="zig-live-pill">' + (ar ? 'مباشر' : 'Live') + '</span>' +
+              '<span class="zig-live-pill">' + (ar ? 'مباشر · 60fps' : 'Live · 60fps') + '</span>' +
             '</h2>' +
             '<p class="zig-arcade-sub">' +
               (ar
-                ? 'تحديات تفاعلية مباشرة مرتبطة بعميلك ورصيدك الفعلي'
-                : 'Interactive runs, vault lockpicking, high-limit tables, and reflex drills') +
+                ? '4 ألعاب فورية قابلة للعب مباشرة هنا ومتصلة بمقرك ثلاثي الأبعاد'
+                : '4 instant 60fps games playable right here — synced live with your 3D Safehouse') +
             '</p>' +
           '</div>' +
         '</div>' +
@@ -753,12 +854,12 @@
           );
         }).join('') +
       '</div>' +
-      '<div class="zig-getaway-stage" id="zig-getaway-stage"' + (state.getaway.open ? '' : ' hidden') + '>' +
+      '<div class="zig-getaway-stage" id="zig-getaway-stage" data-arcade-mode="' + state.arcadeMode + '"' + (state.getaway.open ? '' : ' hidden') + '>' +
         '<div class="zig-getaway-bar">' +
           '<div class="zig-getaway-heading">' +
             SVG_WHEEL_STEER +
-            '<span>' +
-              (ar ? 'مطاردة النيترو السريعة: المس المسارات أو استخدم الأسهم للمراوغة' : 'Nitro Syndicate Getaway: Tap Lanes or Arrows to Dodge') +
+            '<span id="zig-stage-heading-text">' +
+              (ar ? 'سباق شوارع النيترو: المس المسارات أو استخدم الأسهم للمراوغة' : 'Street Drift · Nitro Getaway: Tap Lanes or Arrows to Dodge') +
             '</span>' +
           '</div>' +
           '<div class="zig-stage-controls">' +
@@ -767,10 +868,11 @@
             '<button type="button" class="zig-btn-secondary" id="zig-getaway-close">' + (ar ? 'إغلاق' : 'Close') + '</button>' +
           '</div>' +
         '</div>' +
-        '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas" aria-label="' + (ar ? 'لعبة مطاردة النيترو التفاعلية' : 'Nitro Getaway Interactive Game') + '"></canvas></div>' +
+        '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas" aria-label="' + (ar ? 'منصة ألعاب أركيد النقابة التفاعلية' : 'Syndicate Arcade Interactive Stage') + '"></canvas></div>' +
       '</div>';
 
-    casinoAnchor.insertAdjacentElement('afterend', sec);
+    anchor.insertAdjacentElement('afterend', sec);
+    updateArcadeStageBar(state.arcadeMode);
 
     var sndBtn = sec.querySelector('#zig-sound-toggle');
     if (sndBtn) {
@@ -798,33 +900,36 @@
         var id = btn.getAttribute('data-zig-launch');
         ensureAudio();
         if (id === 'getaway') {
-          startGetawayRun();
+          startGetawayRun('getaway');
         } else if (id === 'heist') {
-          sfx.lockClick();
-          goScreen('crimes');
+          startGetawayRun('heist');
         } else if (id === 'casino') {
-          sfx.wheelTick();
-          var pitEl = document.querySelector('[data-zone-casino-pit="1"]');
-          if (pitEl && typeof pitEl.scrollIntoView === 'function') {
-            try { pitEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
-          } else {
-            goScreen('casino');
+          if (scr === 'casino') {
+            var pitEl = document.querySelector('[data-zone-casino-pit="1"]');
+            if (pitEl && typeof pitEl.scrollIntoView === 'function') {
+              try { pitEl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {}
+            }
           }
+          startGetawayRun('jet');
         } else if (id === 'gym') {
-          sfx.punch(true);
-          goScreen('gym');
+          startGetawayRun('gym');
         }
       });
     });
 
     var restartBtn = sec.querySelector('#zig-getaway-restart');
-    if (restartBtn) restartBtn.addEventListener('click', startGetawayRun);
+    if (restartBtn) {
+      restartBtn.addEventListener('click', function () {
+        startGetawayRun(state.arcadeMode || 'getaway');
+      });
+    }
 
     var closeBtn = sec.querySelector('#zig-getaway-close');
     if (closeBtn) {
       closeBtn.addEventListener('click', function () {
         state.getaway.open = false;
         state.getaway.running = false;
+        state.jet.running = false;
         var st = document.getElementById('zig-getaway-stage');
         if (st) st.hidden = true;
         ensureLoopRunning();
@@ -834,12 +939,24 @@
     var fenceBtn = sec.querySelector('#zig-getaway-fence');
     if (fenceBtn) {
       fenceBtn.addEventListener('click', function () {
+        var mode = state.arcadeMode || 'getaway';
+        if (mode === 'gym') {
+          sfx.punch(true);
+          goScreen('gym');
+          return;
+        }
+        if (mode === 'jet') {
+          sfx.wheelTick();
+          goScreen(scr === 'casino' ? 'city' : 'casino');
+          return;
+        }
         var v = window.__zoneLastView;
         var selectedCrime = v && v.crimeDesk && v.crimeDesk.selected && !v.crimeDesk.selected.disabled ? v.crimeDesk.selected : null;
         var readyCrime = selectedCrime || (v && Array.isArray(v.crimes) ? v.crimes.find(function (c) { return !c.disabled && typeof c.commit === 'function'; }) : null);
-        if (readyCrime && typeof readyCrime.commit === 'function') {
+        if (mode === 'getaway' && readyCrime && typeof readyCrime.commit === 'function') {
           sfx.breachWin();
           readyCrime.commit();
+          notifySafehouseArcadeWin('getaway-fence', {});
           spawnFloatingReward(isAr() ? 'جارٍ تصريف الغنيمة' : 'FENCING LOOT', 'gold');
         } else {
           sfx.lockClick();
@@ -851,10 +968,33 @@
     var gCanvas = sec.querySelector('#zig-getaway-canvas');
     if (gCanvas) {
       observeInteractiveCanvas(gCanvas);
-      var steerFromEvent = function (e) {
+      var interactFromEvent = function (e) {
         ensureAudio();
+        var mode = state.arcadeMode || 'getaway';
+        if (mode === 'heist') {
+          e.preventDefault();
+          triggerHeistStrike();
+          return;
+        }
+        if (mode === 'gym') {
+          e.preventDefault();
+          triggerGymStrike();
+          return;
+        }
+        if (mode === 'jet') {
+          if (state.jet.gameOver || !state.jet.running) {
+            startGetawayRun('jet');
+            return;
+          }
+          var jRect = gCanvas.getBoundingClientRect();
+          var clientY = e.touches && e.touches[0] ? e.touches[0].clientY : e.clientY;
+          var relY = (clientY - jRect.top) / Math.max(1, jRect.height);
+          state.jet.targetAlt = Math.max(0.14, Math.min(0.86, relY));
+          sfx.lockClick();
+          return;
+        }
         if (state.getaway.gameOver || !state.getaway.running) {
-          startGetawayRun();
+          startGetawayRun('getaway');
           return;
         }
         var rect = gCanvas.getBoundingClientRect();
@@ -867,12 +1007,12 @@
         state.getaway.targetLane = lane;
         sfx.lockClick();
       };
-      gCanvas.addEventListener('pointerdown', steerFromEvent);
+      gCanvas.addEventListener('pointerdown', interactFromEvent);
     }
 
     /* Render 1 crisp static atmospheric frame on all 4 cards at rest (0 continuous rAF loops!) */
     renderStaticHomePreviews();
-    if (state.getaway.open) renderGetawayGame(0, performance.now());
+    if (state.getaway.open) renderActiveArcadeStage(0, performance.now());
   }
 
   /* ---------------- 2. CRIMES: Safe-Crack Reflex Canvas ---------------- */
@@ -907,6 +1047,7 @@
       h.dir *= -1;
       h.targetCenter = Math.random() * Math.PI * 2;
       h.speed = Math.min(4.1, 2.4 + h.streak * 0.16);
+      notifySafehouseArcadeWin('heist', { streak: h.streak, perfect: perfect });
 
       /* Trigger real authoritative crime commit if ready */
       var selected = window.__zoneLastView && window.__zoneLastView.crimeDesk && window.__zoneLastView.crimeDesk.selected;
@@ -979,6 +1120,7 @@
     gm.bannerTone = overdrive ? 'gold' : 'good';
     gm.bannerUntil = performance.now() + 1600;
     sfx.punch(overdrive);
+    notifySafehouseArcadeWin('gym', { combo: gm.combo, overdrive: overdrive });
 
     gm.rings.push({ r: 14, alpha: 0.9, tone: overdrive ? 'gold' : 'good' });
     for (var i = 0; i < (overdrive ? 24 : 12); i++) {
@@ -1033,7 +1175,7 @@
     ensureLoopRunning();
   }
 
-  /* ---------------- 4. CASINO: Roulette Wheel + 3-Reel Jackpot Slots ---------------- */
+  /* ---------------- 4. CASINO: 3D Casino Royale Stage + Roulette Wheel + 3-Reel Jackpot Slots ---------------- */
   function startRouletteAnimation() {
     var rl = state.roulette;
     rl.spinning = true;
@@ -1041,6 +1183,10 @@
     rl.wheelSpeed = 2.6;
     rl.ballSpeed = -9.4;
     rl.ballRadiusFrac = 0.88;
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try { window.ZoneEcs3D.triggerStageAction('casino-royale', 'roulette-spin', {}); } catch (_) {}
+    }
+    notifySafehouseArcadeWin('roulette', {});
     ensureLoopRunning();
   }
 
@@ -1052,16 +1198,41 @@
     sl.speeds = [22, 25, 28];
     sl.leverPull = 1;
     sfx.lockClick();
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try { window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-spin', {}); } catch (_) {}
+    }
+    notifySafehouseArcadeWin('slots', {});
     ensureLoopRunning();
   }
 
   function mountCasinoGames() {
     ensureMotionStyles();
     var main = document.getElementById('zone-main');
-    if (!main || main.getAttribute('data-zone-screen') !== 'casino') return;
+    if (!main || main.getAttribute('data-zone-screen') !== 'casino') {
+      var stale3d = document.getElementById('zig-casino-3d-stage');
+      if (stale3d) stale3d.remove();
+      return;
+    }
     var ar = isAr();
     var rouletteLabel = ar ? 'عجلة الروليت الأوروبية' : 'European Roulette Wheel';
     var slotsLabel = ar ? 'ماكينة الجائزة الكبرى ثلاثية البكرات' : '3-Reel Jackpot Slot Machine';
+
+    /* Live 3D Casino Royale Interactive Stage */
+    var casinoPit = main.querySelector('[data-zone-casino-pit="1"]') || main.querySelector('[data-casino-table="roulette"]') || main.querySelector('.zone-content-split');
+    if (casinoPit && !document.getElementById('zig-casino-3d-stage')) {
+      var cStage = document.createElement('div');
+      cStage.id = 'zig-casino-3d-stage';
+      cStage.className = 'z3d-action-stage zig-casino-3d-stage';
+      cStage.setAttribute('data-z3d-stage', 'casino-royale');
+      if (casinoPit.hasAttribute && casinoPit.hasAttribute('data-zone-casino-pit')) {
+        casinoPit.insertBefore(cStage, casinoPit.firstChild);
+      } else {
+        casinoPit.insertAdjacentElement('beforebegin', cStage);
+      }
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+        try { window.ZoneEcs3D.scan(main); } catch (_) {}
+      }
+    }
 
     /* Roulette Wheel Canvas */
     var rTable = main.querySelector('[data-casino-table="roulette"]');
@@ -1230,16 +1401,33 @@
     var scr = main ? main.getAttribute('data-zone-screen') : '';
     var interactiveFocus = e.target && e.target.closest ? Boolean(e.target.closest('button, a, [role="button"]')) : false;
 
-    if (scr === 'casino' && state.getaway.open && state.getaway.running) {
-      if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+    if ((scr === 'home' || scr === 'casino') && state.getaway.open) {
+      var mode = state.arcadeMode || 'getaway';
+      if (mode === 'getaway' && state.getaway.running) {
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+          e.preventDefault();
+          state.getaway.targetLane = Math.max(0, Math.round(state.getaway.targetLane) - 1);
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+          e.preventDefault();
+          state.getaway.targetLane = Math.min(3, Math.round(state.getaway.targetLane) + 1);
+        } else if (e.key === ' ' && !interactiveFocus) {
+          e.preventDefault();
+          state.getaway.boosting = true;
+        }
+      } else if (mode === 'jet' && state.jet.running) {
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          state.jet.targetAlt = Math.max(0.14, state.jet.targetAlt - 0.18);
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          state.jet.targetAlt = Math.min(0.86, state.jet.targetAlt + 0.18);
+        }
+      } else if (mode === 'heist' && e.key === ' ' && !interactiveFocus) {
         e.preventDefault();
-        state.getaway.targetLane = Math.max(0, Math.round(state.getaway.targetLane) - 1);
-      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        triggerHeistStrike();
+      } else if (mode === 'gym' && e.key === ' ' && !interactiveFocus) {
         e.preventDefault();
-        state.getaway.targetLane = Math.min(3, Math.round(state.getaway.targetLane) + 1);
-      } else if (e.key === ' ' && !interactiveFocus) {
-        e.preventDefault();
-        state.getaway.boosting = true;
+        triggerGymStrike();
       }
     } else if (scr === 'crimes' && e.key === ' ' && !interactiveFocus) {
       if (document.getElementById('zig-heist-canvas')) {
@@ -1468,6 +1656,7 @@
             gw.combo = Math.min(8, gw.combo + 1);
             gw.score += 250 * gw.combo;
             sfx.pickup();
+            notifySafehouseArcadeWin('getaway', { bags: gw.bags, score: gw.score });
             for (var p = 0; p < 12; p++) {
               gw.particles.push({
                 x: ex, y: ent.y,
@@ -1807,8 +1996,195 @@
     ctx.restore();
   }
 
-  function renderCrimesGame(dt, now) {
-    var cv = document.getElementById('zig-heist-canvas');
+  function renderSmugglerJetGame(dt, now, cv) {
+    var targetCv = cv || document.getElementById('zig-getaway-canvas');
+    if (!targetCv) return;
+    var compact = isCompactMobile();
+    var s = syncCanvas(targetCv, compact ? 164 : 214);
+    if (!s) return;
+    var ctx = s.ctx, w = s.w, h = s.h;
+    var jt = state.jet;
+    var ar = isAr();
+    var pal = getSketchPalette();
+
+    if (jt.running && !jt.gameOver) {
+      jt.speed = Math.min(420, jt.speed + dt * 7);
+      jt.score += Math.round(dt * jt.speed * 0.22 * jt.combo);
+      jt.alt += (jt.targetAlt - jt.alt) * Math.min(1, dt * 11);
+      jt.spawnTimer -= dt;
+      if (jt.spawnTimer <= 0) {
+        jt.spawnTimer = Math.max(0.36, 0.78 - (jt.speed - 250) * 0.0012);
+        var isCrate = Math.random() < 0.42;
+        jt.entities.push({
+          x: w + 34,
+          yFrac: 0.18 + Math.random() * 0.64,
+          kind: isCrate ? 'crate' : 'radar',
+          spd: jt.speed * (isCrate ? 0.84 : 0.96)
+        });
+      }
+
+      var planeX = compact ? 64 : 88;
+      var planeY = jt.alt * h;
+      for (var i = jt.entities.length - 1; i >= 0; i--) {
+        var ent = jt.entities[i];
+        ent.x -= ent.spd * dt;
+        var ey = ent.yFrac * h;
+        if (Math.abs(ent.x - planeX) < 26 && Math.abs(ey - planeY) < 22) {
+          if (ent.kind === 'crate') {
+            jt.crates += 1;
+            jt.combo = Math.min(8, jt.combo + 1);
+            jt.score += 300 * jt.combo;
+            sfx.pickup();
+            notifySafehouseArcadeWin('jet', { crates: jt.crates, score: jt.score });
+            for (var p = 0; p < 12; p++) {
+              jt.particles.push({
+                x: ent.x, y: ey,
+                vx: (Math.random() - 0.5) * 150,
+                vy: (Math.random() - 0.5) * 150,
+                life: 0.45,
+                tone: 'gold'
+              });
+            }
+            jt.entities.splice(i, 1);
+            continue;
+          } else {
+            jt.gameOver = true;
+            jt.running = false;
+            sfx.crash();
+            for (var c = 0; c < 20; c++) {
+              jt.particles.push({
+                x: planeX, y: planeY,
+                vx: (Math.random() - 0.5) * 210,
+                vy: (Math.random() - 0.5) * 210,
+                life: 0.6,
+                tone: c % 2 ? 'bad' : 'gold'
+              });
+            }
+          }
+        }
+        if (ent.x < -44) jt.entities.splice(i, 1);
+      }
+    }
+
+    var sky = ctx.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, pal.shoulderTop);
+    sky.addColorStop(1, pal.paper);
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, w, h);
+
+    /* Radar Horizon Grid */
+    ctx.strokeStyle = pal.borderSub;
+    ctx.lineWidth = 1;
+    var scrollX = (now * 0.14) % 44;
+    for (var gx = -scrollX; gx < w; gx += 44) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 28; gy < h; gy += 36) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    jt.entities.forEach(function (ent) {
+      var ey = ent.yFrac * h;
+      if (ent.kind === 'crate') {
+        ctx.fillStyle = pal.goldFill;
+        ctx.strokeStyle = pal.cashStroke;
+        ctx.lineWidth = 1.6;
+        ctx.fillRect(ent.x - 11, ey - 10, 22, 20);
+        ctx.strokeRect(ent.x - 11, ey - 10, 22, 20);
+        ctx.fillStyle = '#1e1b18';
+        ctx.font = fontStack(900, 11);
+        ctx.textAlign = 'center';
+        ctx.fillText('★', ent.x, ey + 4);
+      } else {
+        var pulse = 13 + Math.sin(now * 0.014) * 3;
+        ctx.strokeStyle = pal.crimson;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath(); ctx.arc(ent.x, ey, pulse, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = pal.crimson;
+        ctx.beginPath(); ctx.arc(ent.x, ey, 4.5, 0, Math.PI * 2); ctx.fill();
+      }
+    });
+
+    /* Smuggler Jet Silhouette */
+    var jx = compact ? 64 : 88;
+    var jy = jt.alt * h;
+    var pitch = (jt.targetAlt - jt.alt) * 0.45;
+    ctx.save();
+    ctx.translate(jx, jy);
+    ctx.rotate(pitch);
+    ctx.fillStyle = pal.goldFill;
+    ctx.beginPath();
+    ctx.moveTo(-18, 0); ctx.lineTo(-28 - Math.sin(now * 0.04) * 5, -4); ctx.lineTo(-28 - Math.sin(now * 0.04) * 5, 4);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = pal.blue;
+    ctx.strokeStyle = '#23201c';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(20, 0); ctx.lineTo(-4, -13); ctx.lineTo(-15, -4); ctx.lineTo(-15, 4); ctx.lineTo(-4, 13);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+
+    for (var pi = jt.particles.length - 1; pi >= 0; pi--) {
+      var pt = jt.particles[pi];
+      pt.x += pt.vx * dt;
+      pt.y += pt.vy * dt;
+      pt.life -= dt;
+      if (pt.life <= 0) { jt.particles.splice(pi, 1); continue; }
+      ctx.fillStyle = toneColorFromPalette(pt.tone || 'gold', pal);
+      ctx.globalAlpha = Math.max(0, pt.life * 1.5);
+      ctx.fillRect(pt.x - 2, pt.y - 2, 4, 4);
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.fillStyle = pal.hudBg;
+    ctx.fillRect(10, 8, Math.min(240, w - 20), 28);
+    ctx.strokeStyle = pal.hudStroke;
+    ctx.lineWidth = 1.3;
+    ctx.strokeRect(10, 8, Math.min(240, w - 20), 28);
+    ctx.fillStyle = pal.gold;
+    ctx.font = fontStack(800, 11);
+    ctx.textAlign = 'left';
+    ctx.fillText((ar ? 'الشحنات: ' : 'AIR DROPS: ') + jt.crates + ' · ' + jt.score, 18, 26);
+
+    if (jt.gameOver || !jt.running) {
+      ctx.fillStyle = pal.overlayBg;
+      ctx.fillRect(0, 0, w, h);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = jt.gameOver ? pal.crimson : pal.gold;
+      ctx.font = fontStack(900, compact ? 16 : 18);
+      ctx.fillText(
+        jt.gameOver ? (ar ? 'كشفك الرادار الجوي!' : 'RADAR LOCK INTERCEPT!') : (ar ? 'طائرة التهريب الليلية' : 'SMUGGLER JET RADAR RUN'),
+        w * 0.5,
+        h * 0.46
+      );
+      ctx.fillStyle = pal.ink;
+      ctx.font = fontStack(700, 12);
+      ctx.fillText(
+        ar ? 'المس للتحليق مجدداً ومراوغة حلقات الرادار' : 'Tap altitude or press Up/Down Arrows to fly again',
+        w * 0.5,
+        h * 0.62
+      );
+    }
+  }
+
+  function renderActiveArcadeStage(dt, now) {
+    var gCv = document.getElementById('zig-getaway-canvas');
+    if (!gCv || !state.getaway.open) return;
+    var mode = state.arcadeMode || 'getaway';
+    if (mode === 'heist') {
+      renderCrimesGame(dt, now, gCv);
+    } else if (mode === 'gym') {
+      renderGymGame(dt, now, gCv);
+    } else if (mode === 'jet') {
+      renderSmugglerJetGame(dt, now, gCv);
+    } else {
+      renderGetawayGame(dt, now);
+    }
+  }
+
+  function renderCrimesGame(dt, now, cvOverride) {
+    var cv = cvOverride || document.getElementById('zig-heist-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
     var s = syncCanvas(cv, compact ? 150 : 212);
@@ -1973,8 +2349,8 @@
     }
   }
 
-  function renderGymGame(dt, now) {
-    var cv = document.getElementById('zig-gym-canvas');
+  function renderGymGame(dt, now, cvOverride) {
+    var cv = cvOverride || document.getElementById('zig-gym-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
     var s = syncCanvas(cv, compact ? 132 : 184);
@@ -2663,14 +3039,19 @@
     if (!main) return;
     var scr = main.getAttribute('data-zone-screen') || 'home';
     var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-    if (scr === 'crimes') {
+    if (scr === 'home') {
+      renderStaticHomePreviews();
+      if (state.getaway.open && document.getElementById('zig-getaway-canvas')) {
+        renderActiveArcadeStage(0, now);
+      }
+    } else if (scr === 'crimes') {
       if (document.getElementById('zig-heist-canvas')) renderCrimesGame(0, now);
     } else if (scr === 'gym') {
       if (document.getElementById('zig-gym-canvas')) renderGymGame(0, now);
     } else if (scr === 'casino') {
       renderStaticHomePreviews();
       if (state.getaway.open && document.getElementById('zig-getaway-canvas')) {
-        renderGetawayGame(0, now);
+        renderActiveArcadeStage(0, now);
       }
       if (document.getElementById('zig-roulette-canvas')) renderRouletteCanvas(0, now);
       if (document.getElementById('zig-slots-canvas')) renderSlotsCanvas(0, now);
@@ -2682,6 +3063,10 @@
     var main = document.getElementById('zone-main');
     if (!main) return false;
     var scr = main.getAttribute('data-zone-screen') || 'home';
+    if (scr === 'home') {
+      if (state.hoveredPreviewId) return true;
+      return Boolean(state.getaway.open && isCanvasVisible('zig-getaway-canvas'));
+    }
     if (scr === 'crimes') {
       return isCanvasVisible('zig-heist-canvas') || isCanvasVisible('zig-crimes-canvas');
     }
@@ -2710,13 +3095,16 @@
     var main = document.getElementById('zone-main');
     var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
 
-    if (scr === 'crimes') {
+    if (scr === 'home') {
+      if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now);
+    } else if (scr === 'crimes') {
       renderCrimesGame(dt, now);
     } else if (scr === 'gym') {
       renderGymGame(dt, now);
     } else if (scr === 'casino') {
       if (state.hoveredPreviewId) renderHoveredHomePreview(dt, now);
-      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderGetawayGame(dt, now);
+      if (state.getaway.open && isCanvasVisible('zig-getaway-canvas')) renderActiveArcadeStage(dt, now);
       if (isCanvasVisible('zig-roulette-canvas')) renderRouletteCanvas(dt, now);
       if (isCanvasVisible('zig-slots-canvas')) renderSlotsCanvas(dt, now);
     }

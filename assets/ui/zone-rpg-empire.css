@@ -154,7 +154,7 @@ html[data-zma-open="1"] body #zone-rpg-route-section,
 html body #dc-root #zone-main[data-zma-open="1"] #zone-rpg-route-section,
 body.zone-map-expanded #ztl-hud-story-slot,
 body.zone-map-expanded #zone-rpg-route-section,
-html body #zone-main:not([data-zone-screen="home"]) #zig-home-arcade {
+html body #zone-main:not([data-zone-screen="home"]):not([data-zone-screen="casino"]) #zig-home-arcade {
   display: none !important;
 }
 
@@ -1001,5 +1001,83 @@ html body #zone-rpg-route-section[data-zre-route="home"] {
   .zre-select,
   .zre-input-sm {
     width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 9. ZONE v152 — 100% 3D ITEM SHOWCASES, PAPERDOLL ARMORY & 3D ACTION STAGES
+ * -------------------------------------------------------------------------- */
+.zre-3d-stage,
+.zre-paperdoll-stage {
+  width: 100%;
+  height: 215px;
+  min-height: 195px;
+  border-radius: var(--zre-radius-sm);
+  border: 1.8px solid var(--zre-border-strong);
+  background: radial-gradient(circle at 50% 35%, #231e19, #12100e);
+  box-shadow: var(--zre-shadow-sub);
+  position: relative;
+  overflow: hidden;
+}
+
+.zre-item-3d-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 7px;
+  border-radius: 10px;
+  border: 1px dashed var(--zre-border);
+  background: var(--zre-surface);
+  min-height: 56px;
+}
+
+html body #zone-rpg-route-section .zre-item-3d-row .z3d-item-slot {
+  width: 58px;
+  height: 50px;
+  min-width: 58px;
+  min-height: 50px;
+  max-height: 50px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+
+.zre-3d-inspect-btn {
+  min-height: 28px !important;
+  height: 28px !important;
+  padding: 2px 9px !important;
+  font-size: 11.5px !important;
+  border-radius: 999px !important;
+  background: var(--zre-blue-wash) !important;
+  color: var(--zre-blue-ink) !important;
+  border-color: var(--zre-blue-border) !important;
+  flex: 0 0 auto;
+}
+
+.zre-player-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.zre-scope .zpa-inline-avatar {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .zre-3d-stage,
+  .zre-paperdoll-stage {
+    height: 185px;
+    min-height: 175px;
   }
 }

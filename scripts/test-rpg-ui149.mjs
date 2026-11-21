@@ -127,6 +127,7 @@ class MiniElement {
       disabled: Boolean(attrs.disabled),
       getAttribute: (k) => (k in attrs ? String(attrs[k]) : null),
       closest: (sel) => {
+        if (sel === '[data-z3d-inspect]' && 'data-z3d-inspect' in attrs) return target;
         if (sel === '[data-zre-act]' && 'data-zre-act' in attrs) return target;
         if (sel === '#zone-rpg-route-section') return this.id === 'zone-rpg-route-section' ? this : null;
         return null;
@@ -480,6 +481,15 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
   };
 
   const { ctx, win, doc, timers, storySlot, profileBody } = createRpgHarness(apiHandler, { screen: 'missions', lang: 'en' });
+  const z3dMock = {
+    scans: 0,
+    inspected: [],
+    triggered: [],
+    scan() { this.scans++; },
+    inspectItem(id, opts) { this.inspected.push({ id, ...(opts || {}) }); },
+    triggerStageAction(stage, action, payload) { this.triggered.push({ stage, action, payload }); }
+  };
+  win.ZoneEcs3D = z3dMock;
   runInContext(readUtf8('assets/ui/zone-rpg-empire.js'), ctx);
   await win.ZoneRpgEmpire.refreshAll();
 
@@ -504,10 +514,12 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
     assert.equal(doc.getElementById('zone-rpg-route-section'), null, `Zero RPG section on ${cleanScr}`);
   }
 
-  // 4) Route: missions -> Story Campaign & Mission Agents
+  // 4) Route: missions -> Story Campaign & Mission Agents + 3D Combat Arena Stage & 3D Armory Items
   win.ZoneRpgEmpire.navigateTo('missions');
   let sec = doc.getElementById('zone-rpg-route-section');
   assert.ok(sec && sec.getAttribute('data-zre-route') === 'missions');
+  assert.match(sec.innerHTML, /data-z3d-stage="combat-arena"/, 'Missions mounts live 3D combat-arena stage');
+  assert.match(sec.innerHTML, /data-zre-armory-item="xanax"[\s\S]*?data-z3d-item="xanax"/, 'Mission Armory Shop items render 3D item slots');
   assert.doesNotMatch(sec.innerHTML, /role="tablist"/, 'Zero 5-tab bar');
   assert.doesNotMatch(sec.innerHTML, /Sync RPG|Minimize/, 'Zero Sync/Minimize header buttons');
   sec.dispatchClick({ 'data-zre-act': 'story-choice', 'data-chapter': 'act1_ch1', 'data-choice': 'syndicate' });
@@ -537,19 +549,22 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
   sec.dispatchClick({ 'data-zre-act': 'work-train', 'data-stat': 'int' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 6) Route: casino -> 3 Spin Wheels & Street Racing
+  // 6) Route: casino -> 3 Spin Wheels & Street Racing + 3D Casino Royale Stage & 3D Race Cars
   win.ZoneRpgEmpire.navigateTo('casino');
   sec = doc.getElementById('zone-rpg-route-section');
   assert.match(sec.innerHTML, /Wheel of Awesome/);
+  assert.match(sec.innerHTML, /data-z3d-stage="casino-royale"/, 'Casino mounts 3D casino-royale stage');
+  assert.match(sec.innerHTML, /data-z3d-item="sports_car"/, 'Street Racing garage renders 3D sports_car meshes');
   sec.dispatchClick({ 'data-zre-act': 'wheel-spin', 'data-wheel': 'awesome' });
   await new Promise((r) => setTimeout(r, 10));
   sec.dispatchClick({ 'data-zre-act': 'race-track', 'data-track': 'zone_gp', 'data-car': 'civic_e' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 7) Route: city -> Dump, Loan Shark & Hunting
+  // 7) Route: city -> Dump, Loan Shark & Hunting + 3D City Wheels/Race Stage
   win.ZoneRpgEmpire.navigateTo('city');
   sec = doc.getElementById('zone-rpg-route-section');
   assert.match(sec.innerHTML, /Zone City Dump/);
+  assert.match(sec.innerHTML, /data-z3d-stage="city-wheels-race"/, 'City Underworld mounts 3D city-wheels-race stage');
   sec.dispatchClick({ 'data-zre-act': 'dump-search' });
   await new Promise((r) => setTimeout(r, 10));
   sec.dispatchClick({ 'data-zre-act': 'loan-borrow' });
@@ -557,9 +572,10 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
   sec.dispatchClick({ 'data-zre-act': 'hunt-go', 'data-mode': 'master' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 8) Route: market -> Safe Trades & 0%-Tax Bazaars
+  // 8) Route: market -> Safe Trades & 0%-Tax Bazaars with 3D Item Previews
   win.ZoneRpgEmpire.navigateTo('market');
   sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /data-zre-bazaar-item="xanax"[\s\S]*?data-z3d-item="xanax"/, 'Player Bazaar listing renders 3D item slot');
   sec.dispatchClick({ 'data-zre-act': 'trade-create' });
   await new Promise((r) => setTimeout(r, 10));
   sec.dispatchClick({ 'data-zre-act': 'trade-accept', 'data-trade': 'tr-101' });
@@ -579,15 +595,22 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
   sec.dispatchClick({ 'data-zre-act': 'marriage-propose' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 11) Route: items -> 9-Slot Loadout Paperdoll
+  // 11) Route: items -> 9-Slot Loadout Paperdoll + 3D Paperdoll Armory Centerpiece & 9 3D Slots
   win.ZoneRpgEmpire.navigateTo('items');
   sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /data-z3d-stage="paperdoll-armory"/, 'Items Paperdoll mounts 3D paperdoll-armory centerpiece');
+  assert.equal((sec.innerHTML.match(/data-loadout-slot="/g) || []).length, 9, 'All 9 tactical paperdoll slots rendered');
+  assert.ok((sec.innerHTML.match(/data-z3d-item="/g) || []).length >= 9, 'All 9 paperdoll slots include 3D item previews');
+  sec.dispatchClick({ 'data-z3d-inspect': 'ak', 'data-z3d-cat': 'weapon', 'data-z3d-title': 'Primary Rifle' });
+  assert.equal(z3dMock.inspected[0]?.id, 'ak', '3D inspect button dispatches ZoneEcs3D.inspectItem');
   sec.dispatchClick({ 'data-zre-act': 'loadout-equip', 'data-slot': 'primary' });
   await new Promise((r) => setTimeout(r, 10));
 
-  // 12) Route: faction -> Faction Empire, Respect Tree, Crew OC & Ranked Wars + 4000ms auto-dismiss check
+  // 12) Route: faction -> Faction Empire, Respect Tree, Crew OC & Ranked Wars + 3D Stage & Roster Avatars + 4000ms auto-dismiss check
   win.ZoneRpgEmpire.navigateTo('faction');
   sec = doc.getElementById('zone-rpg-route-section');
+  assert.match(sec.innerHTML, /data-z3d-stage="combat-arena"/, 'Faction mounts 3D combat-arena stage');
+  assert.match(sec.innerHTML, /data-zpa-avatar="p-2"/, 'Faction Roster renders inline player profile avatar badge');
   sec.dispatchClick({ 'data-zre-act': 'faction-create' });
   await new Promise((r) => setTimeout(r, 10));
   sec.dispatchClick({ 'data-zre-act': 'respect-upgrade', 'data-branch': 'criminality', 'data-node': 'crime_skill' });
@@ -619,6 +642,11 @@ test('ZoneRpgEmpire populates #ztl-hud-story-slot & native sidebar row, isolates
   ]) {
     assert.ok(postedActions.includes(expectedAction), `Dispatched ${expectedAction}`);
   }
+
+  assert.ok(z3dMock.scans > 0, 'ZoneEcs3D.scan invoked after route renders');
+  assert.ok(z3dMock.triggered.some((t) => t.stage === 'combat-arena'), 'ZoneEcs3D.triggerStageAction fired on combat-arena');
+  assert.ok(z3dMock.triggered.some((t) => t.stage === 'paperdoll-armory'), 'ZoneEcs3D.triggerStageAction fired on paperdoll-armory');
+  assert.ok(z3dMock.triggered.some((t) => t.stage === 'city-wheels-race'), 'ZoneEcs3D.triggerStageAction fired on city-wheels-race');
 
   // 13) Arabic RTL parity check
   doc.documentElement.lang = 'ar';
@@ -670,7 +698,10 @@ test('Playwright 4-way responsive & zero-overflow check across route-scoped RPG 
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
     '.webp': 'image/webp',
-    '.woff2': 'font/woff2'
+    '.woff2': 'font/woff2',
+    '.glb': 'model/gltf-binary',
+    '.obj': 'text/plain; charset=utf-8',
+    '.mtl': 'text/plain; charset=utf-8'
   };
 
   const nowMs = Date.now();

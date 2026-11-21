@@ -39,6 +39,13 @@
     { level: 25, en: 'Era VI: City Sovereign Compound', ar: 'العصر السادس: مجمع سيّد المدينة', route: 'home' }
   ];
 
+  var ORIGIN_3D_ITEMS = {
+    harbor_ghost: { item: 'knife', cat: 'melee', chipEn: '+8% Crime · Knife + $4k', chipAr: '+8% جرائم · سكين + $4k' },
+    cartel_bruiser: { item: 'bat', cat: 'melee', chipEn: '+10% Dmg · Bat + $3k', chipAr: '+10% ضرر · مضرب + $3k' },
+    disgraced_banker: { item: 'gold_bullion', cat: 'contraband', chipEn: '+8% APR · $12,000 Seed', chipAr: '+8% فائدة · $12,000' },
+    street_chemist: { item: 'xanax', cat: 'drug', chipEn: '-20% OD · +10E + Meds', chipAr: '-20% جرعة · +10 طاقة' }
+  };
+
   var DEFAULT_ORIGINS = [
     {
       id: 'harbor_ghost',
@@ -102,11 +109,13 @@
     lastFetchAt: 0,
     callsignDraft: '',
     modalOpen: false,
+    dossierOpen: false,
     feedback: null,
     feedbackTimer: null,
     baselineLevel: null,
     milestoneTimer: null,
-    gameHooked: false
+    gameHooked: false,
+    stageClickBound: false
   };
 
   function isAr() {
@@ -185,13 +194,13 @@
       if (custom) return String(custom);
     }
     try {
-      if (window.ZoneRpgEmpire && typeof window.ZoneRpgEmpire.getState === 'function') {
-        var rpgSt = window.ZoneRpgEmpire.getState();
+      if (window.ZoneRpgEmpire && typeof window.ZoneRpgEmpire.getStore === 'function') {
+        var rpgSt = window.ZoneRpgEmpire.getStore();
         var pr = rpgSt && rpgSt.playerRpg;
         if (pr) {
           var rt = pr.rankTitle || pr.rank;
-          if (rt && typeof rt === 'object' && (rt.en || rt.ar)) {
-            return String(ar ? (rt.ar || rt.en) : (rt.en || rt.ar));
+          if (rt && typeof rt === 'object' && (rt.en || rt.ar || rt.titleEn || rt.titleAr)) {
+            return String(ar ? (rt.ar || rt.titleAr || rt.en || rt.titleEn) : (rt.en || rt.titleEn || rt.ar || rt.titleAr));
           }
           var flat = ar ? (pr.rankTitleAr || pr.titleAr) : (pr.rankTitleEn || pr.titleEn);
           if (flat) return String(flat);
@@ -205,7 +214,7 @@
     return ar ? chosen.ar : chosen.en;
   }
 
-  /* ---------------- SVG Art: Luna Portrait, 4 Origins & 6 Safehouses ---------------- */
+  /* ---------------- Hand-Inked Watercolor SVG Art: Luna Portrait & Era Medallions ---------------- */
   function renderLunaPortraitSvg() {
     return (
       '<svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Luna">' +
@@ -217,68 +226,28 @@
           '</radialGradient>' +
         '</defs>' +
         '<circle cx="36" cy="36" r="34" fill="url(#zabLunaGlow)"/>' +
-        /* Dark brunette flowing waves (back) */
         '<path d="M14 36C14 18 23 10 36 10C49 10 58 18 58 36C58 50 53 61 48 66H24C19 61 14 50 14 36Z" fill="#2a1b15" stroke="#18110e" stroke-width="1.6"/>' +
-        /* Jacket & collar */
         '<path d="M16 67C18 56 26 52 36 52C46 52 54 56 56 67" fill="#2b213a" stroke="#18110e" stroke-width="1.6"/>' +
         '<path d="M30 52L36 61L42 52" stroke="#d9a441" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-        /* Neck & warm olive face */
         '<rect x="32" y="45" width="8" height="9" rx="3" fill="#cfa07a"/>' +
         '<path d="M24 31C24 22 29 17 36 17C43 17 48 22 48 31C48 40 42.5 47 36 47C29.5 47 24 40 24 31Z" fill="#d8ab84" stroke="#1e1714" stroke-width="1.5"/>' +
-        /* Warm watercolor cheek blush */
         '<ellipse cx="28.5" cy="36.5" rx="3.2" ry="1.8" fill="#c96f5b" fill-opacity="0.34"/>' +
         '<ellipse cx="43.5" cy="36.5" rx="3.2" ry="1.8" fill="#c96f5b" fill-opacity="0.34"/>' +
-        /*Sharp warm brown eyes & brows */
         '<path d="M27.5 28.2C29.3 27 31.6 27 33.2 28" stroke="#241712" stroke-width="1.5" stroke-linecap="round"/>' +
         '<path d="M38.8 28C40.4 27 42.7 27 44.5 28.2" stroke="#241712" stroke-width="1.5" stroke-linecap="round"/>' +
         '<ellipse cx="30.5" cy="31.2" rx="2.3" ry="1.8" fill="#3a2216"/>' +
         '<ellipse cx="41.5" cy="31.2" rx="2.3" ry="1.8" fill="#3a2216"/>' +
         '<circle cx="31.1" cy="30.7" r="0.7" fill="#fff8ec"/>' +
         '<circle cx="42.1" cy="30.7" r="0.7" fill="#fff8ec"/>' +
-        /* Subtle nose & knowing slight smile */
         '<path d="M36 31.8V36.2L34.7 37" stroke="#8c5f41" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '<path d="M32.2 40.5C34.4 42.2 38 42.1 40.2 40.1" stroke="#8f3b32" stroke-width="1.6" stroke-linecap="round"/>' +
-        /* Brunette front side-swept bangs & encrypted earpiece */
         '<path d="M23 30C24 21 31 16 39 17C44 17.5 48 21 49 28C45 23 40 21.5 34 22.5C29 23.2 25.5 26 23 30Z" fill="#332019" stroke="#18110e" stroke-width="1.3"/>' +
         '<circle cx="48.5" cy="34.5" r="2.3" fill="#8b5cf6" stroke="#18110e" stroke-width="1.1"/>' +
       '</svg>'
     );
   }
 
-  function renderOriginSvg(originId) {
-    if (originId === 'cartel_bruiser') {
-      return '<svg viewBox="0 0 36 36" fill="none"><path d="M8 28L27 9" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><circle cx="27.5" cy="8.5" r="3" fill="#c98f27" stroke="currentColor" stroke-width="1.5"/><path d="M6 26L10 30" stroke="#8f2318" stroke-width="2.4" stroke-linecap="round"/></svg>';
-    }
-    if (originId === 'disgraced_banker') {
-      return '<svg viewBox="0 0 36 36" fill="none"><rect x="6" y="10" width="24" height="17" rx="3" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18.5" r="4.2" stroke="#c98f27" stroke-width="2"/><path d="M13 10V7.5C13 6.7 13.7 6 14.5 6H21.5C22.3 6 23 6.7 23 7.5V10" stroke="currentColor" stroke-width="1.8"/></svg>';
-    }
-    if (originId === 'street_chemist') {
-      return '<svg viewBox="0 0 36 36" fill="none"><path d="M14 6H22M16 6V13L9 26C8.3 27.3 9.2 29 10.7 29H25.3C26.8 29 27.7 27.3 27 26L20 13V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 23H24.5" stroke="#3c7a33" stroke-width="2.4"/></svg>';
-    }
-    return '<svg viewBox="0 0 36 36" fill="none"><path d="M7 27L26 8L29 11L10 30H7V27Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M21 13L24 16" stroke="#c98f27" stroke-width="2" stroke-linecap="round"/></svg>';
-  }
-
-  function renderSafehouseSvg(eraIndex) {
-    var idx = Math.max(1, Math.min(6, Number(eraIndex) || 1));
-    if (idx === 1) {
-      return '<svg viewBox="0 0 48 48" fill="none"><rect x="6" y="18" width="36" height="20" rx="2" fill="#b87d4b" fill-opacity="0.28" stroke="currentColor" stroke-width="2"/><path d="M12 18V38M18 18V38M24 18V38M30 18V38M36 18V38" stroke="currentColor" stroke-width="1.4"/><path d="M4 39H44" stroke="#7a4f0d" stroke-width="2"/></svg>';
-    }
-    if (idx === 2) {
-      return '<svg viewBox="0 0 48 48" fill="none"><path d="M8 39V15L24 9L40 15V39H8Z" fill="#c98f27" fill-opacity="0.2" stroke="currentColor" stroke-width="2"/><rect x="19" y="25" width="10" height="14" stroke="currentColor" stroke-width="1.8"/><circle cx="24" cy="18" r="3" stroke="#8f2318" stroke-width="1.8"/></svg>';
-    }
-    if (idx === 3) {
-      return '<svg viewBox="0 0 48 48" fill="none"><rect x="9" y="11" width="30" height="28" rx="2" fill="#3c7a33" fill-opacity="0.18" stroke="currentColor" stroke-width="2"/><rect x="14" y="16" width="7" height="6" stroke="currentColor" stroke-width="1.6"/><rect x="27" y="16" width="7" height="6" stroke="currentColor" stroke-width="1.6"/><rect x="20" y="28" width="8" height="11" stroke="currentColor" stroke-width="1.8"/></svg>';
-    }
-    if (idx === 4) {
-      return '<svg viewBox="0 0 48 48" fill="none"><path d="M7 39V17L24 8L41 17V39H7Z" fill="#4d2775" fill-opacity="0.16" stroke="currentColor" stroke-width="2"/><path d="M15 39V21M24 39V21M33 39V21" stroke="currentColor" stroke-width="2"/><circle cx="24" cy="15" r="2.5" fill="#c98f27"/></svg>';
-    }
-    if (idx === 5) {
-      return '<svg viewBox="0 0 48 48" fill="none"><rect x="13" y="7" width="22" height="33" fill="#c98f27" fill-opacity="0.24" stroke="currentColor" stroke-width="2"/><path d="M8 40H40M17 13H31M17 19H31M17 25H31" stroke="currentColor" stroke-width="1.6"/><path d="M24 3V7" stroke="#c98f27" stroke-width="2"/></svg>';
-    }
-    return '<svg viewBox="0 0 48 48" fill="none"><path d="M5 37C12 33 36 33 43 37" stroke="#3c7a33" stroke-width="2.4" stroke-linecap="round"/><path d="M14 35V20L24 12L34 20V35" fill="#c98f27" fill-opacity="0.28" stroke="currentColor" stroke-width="2"/><path d="M24 6L26.5 11H21.5L24 6Z" fill="#c98f27"/></svg>';
-  }
-
-  /* ---------------- D. Universal 0ms Topbar & Sidebar Bar Sync ---------------- */
+  /* ---------------- Universal 0ms Topbar & Sidebar Bar Sync (Safe Against Partial Payloads) ---------------- */
   function syncSidebarLockBadges(level) {
     var lv = Math.max(1, Number(level) || 1);
     var ar = isAr();
@@ -369,8 +338,10 @@
   }
 
   function updateResourceBarDom(key, curVal, maxVal) {
+    var maxNum = Number(maxVal);
+    if (!(maxNum > 0)) return;
     var cur = Math.max(0, Math.round(Number(curVal) || 0));
-    var max = Math.max(1, Math.round(Number(maxVal) || 1));
+    var max = Math.max(1, Math.round(maxNum));
     var pct = Math.max(0, Math.min(100, Math.round((cur / max) * 100)));
     var txt = fmtInt(cur) + '/' + fmtInt(max);
 
@@ -386,9 +357,23 @@
   function syncHudBars(rawPayload) {
     var ar = isAr();
     var g = window.__zoneGame;
-    var pObj = rawPayload && rawPayload.player && typeof rawPayload.player === 'object'
+    var cand = rawPayload && rawPayload.player && typeof rawPayload.player === 'object'
       ? rawPayload.player
       : (rawPayload && typeof rawPayload === 'object' ? rawPayload : null);
+
+    var hasPositiveMaxEnergy = Boolean(
+      cand && (Number(cand.max_energy) > 0 || (cand.max && Number(cand.max.energy) > 0))
+    );
+    var isPlayerLike = Boolean(
+      cand && (
+        hasPositiveMaxEnergy ||
+        cand.cash !== undefined ||
+        cand.username !== undefined ||
+        (cand.level !== undefined && !cand.leveling)
+      )
+    );
+    var pObj = isPlayerLike ? cand : null;
+
     var stObj = rawPayload && rawPayload.state && typeof rawPayload.state === 'object'
       ? rawPayload.state
       : null;
@@ -408,30 +393,37 @@
         if (stObj.points !== undefined) gp.points = Math.max(0, Number(stObj.points) || 0);
       }
 
-      gp.max = gp.max || { energy: 100, nerve: 15, happy: 150, life: 100 };
-      gp.used = gp.used || { energy: 0, nerve: 0, happy: 0, life: 0 };
-      gp.regenAt = gp.regenAt || {};
-      var nowMs = Date.now();
+      /* NEVER overwrite resource bars with 0/150 when pObj lacks positive max_energy */
+      if (hasPositiveMaxEnergy) {
+        gp.max = gp.max || { energy: 100, nerve: 15, happy: 150, life: 100 };
+        gp.used = gp.used || { energy: 0, nerve: 0, happy: 0, life: 0 };
+        gp.regenAt = gp.regenAt || {};
+        var nowMs = Date.now();
 
-      if (pObj.max_energy !== undefined) gp.max.energy = Math.max(1, Number(pObj.max_energy) || 100);
-      if (pObj.energy !== undefined) {
-        gp.used.energy = Math.max(0, gp.max.energy - Number(pObj.energy));
-        gp.regenAt.energy = nowMs;
-      }
-      if (pObj.max_nerve !== undefined) gp.max.nerve = Math.max(1, Number(pObj.max_nerve) || 15);
-      if (pObj.nerve !== undefined) {
-        gp.used.nerve = Math.max(0, gp.max.nerve - Number(pObj.nerve));
-        gp.regenAt.nerve = nowMs;
-      }
-      if (pObj.max_happy !== undefined) gp.max.happy = Math.max(1, Number(pObj.max_happy) || 150);
-      if (pObj.happy !== undefined) {
-        gp.used.happy = Math.max(0, gp.max.happy - Number(pObj.happy));
-        gp.regenAt.happy = nowMs;
-      }
-      if (pObj.max_life !== undefined) gp.max.life = Math.max(1, Number(pObj.max_life) || 100);
-      if (pObj.life !== undefined) {
-        gp.used.life = Math.max(0, gp.max.life - Number(pObj.life));
-        gp.regenAt.life = nowMs;
+        if (Number(pObj.max_energy) > 0) gp.max.energy = Number(pObj.max_energy);
+        else if (pObj.max && Number(pObj.max.energy) > 0) gp.max.energy = Number(pObj.max.energy);
+        if (pObj.energy !== undefined) {
+          gp.used.energy = Math.max(0, gp.max.energy - Number(pObj.energy));
+          gp.regenAt.energy = nowMs;
+        }
+        if (Number(pObj.max_nerve) > 0) gp.max.nerve = Number(pObj.max_nerve);
+        else if (pObj.max && Number(pObj.max.nerve) > 0) gp.max.nerve = Number(pObj.max.nerve);
+        if (pObj.nerve !== undefined) {
+          gp.used.nerve = Math.max(0, gp.max.nerve - Number(pObj.nerve));
+          gp.regenAt.nerve = nowMs;
+        }
+        if (Number(pObj.max_happy) > 0) gp.max.happy = Number(pObj.max_happy);
+        else if (pObj.max && Number(pObj.max.happy) > 0) gp.max.happy = Number(pObj.max.happy);
+        if (pObj.happy !== undefined) {
+          gp.used.happy = Math.max(0, gp.max.happy - Number(pObj.happy));
+          gp.regenAt.happy = nowMs;
+        }
+        if (Number(pObj.max_life) > 0) gp.max.life = Number(pObj.max_life);
+        else if (pObj.max && Number(pObj.max.life) > 0) gp.max.life = Number(pObj.max.life);
+        if (pObj.life !== undefined) {
+          gp.used.life = Math.max(0, gp.max.life - Number(pObj.life));
+          gp.regenAt.life = nowMs;
+        }
       }
     }
 
@@ -447,22 +439,31 @@
       (sessionPlayer && sessionPlayer.id) ||
       (gp && gp.numericId && gp.numericId !== '1042' ? gp.numericId : '');
     var username = (pObj && pObj.username) ||
+      (state.snap && state.snap.player && state.snap.player.username) ||
+      (g && g.serverPlayer && g.serverPlayer.username) ||
+      (gp && gp.name) ||
       (sessionPlayer && sessionPlayer.username) ||
       (window.__zoneLastView && window.__zoneLastView.t && window.__zoneLastView.t.player) ||
       (ar ? 'العميل' : 'Operative');
     var shortId = computeShortOperativeId(rawId, username);
 
     if (gp) gp.numericId = shortId;
-    if (g && pObj && pObj.username) {
-      if (g.serverPlayer && typeof g.serverPlayer === 'object') {
+    if (pObj && pObj.username) {
+      if (sessionPlayer && typeof sessionPlayer === 'object') {
+        sessionPlayer.username = String(pObj.username);
+      }
+      if (g && g.serverPlayer && typeof g.serverPlayer === 'object') {
         g.serverPlayer.username = String(pObj.username);
       }
       if (gp) gp.name = String(pObj.username);
     }
-    var rankTitle = resolveUnifiedRankTitle(
-      pObj && pObj.level !== undefined ? Math.max(1, Number(pObj.level) || 1) : (gp ? Math.max(1, Number(gp.level) || 1) : 1),
-      ar
-    );
+
+    var rpgLv = cand && cand.leveling && Number(cand.leveling.level) > 0 ? Number(cand.leveling.level) : 0;
+    var level = pObj && pObj.level !== undefined
+      ? Math.max(1, Number(pObj.level) || 1)
+      : (rpgLv > 0 ? rpgLv : (gp ? Math.max(1, Number(gp.level) || 1) : 1));
+    var rankTitle = resolveUnifiedRankTitle(level, ar);
+
     if (window.__zoneLastView) {
       window.__zoneLastView.levelTitle = rankTitle;
       if (window.__zoneLastView.t && pObj && pObj.username) {
@@ -474,47 +475,69 @@
       }
     }
 
+    var hasCashField = Boolean((pObj && pObj.cash !== undefined) || gp);
     var cash = pObj && pObj.cash !== undefined ? Number(pObj.cash) : (gp ? Number(gp.cash || 0) : 0);
-    var level = pObj && pObj.level !== undefined ? Math.max(1, Number(pObj.level) || 1) : (gp ? Math.max(1, Number(gp.level) || 1) : 1);
     var xp = pObj && pObj.xp !== undefined ? Math.max(0, Number(pObj.xp) || 0) : (gp ? Math.max(0, Number(gp.xp) || 0) : 0);
     var merits = (pObj && pObj.merits !== undefined)
       ? Number(pObj.merits)
       : (stObj && stObj.merits !== undefined ? Number(stObj.merits) : (gp ? Number(gp.merits || 0) : 0));
 
-    var curE = pObj && pObj.energy !== undefined ? Number(pObj.energy) : (g && typeof g.cur === 'function' ? g.cur('energy') : 100);
-    var maxE = pObj && pObj.max_energy !== undefined ? Number(pObj.max_energy) : (pObj && pObj.max && pObj.max.energy ? Number(pObj.max.energy) : (g && typeof g.maxOf === 'function' ? g.maxOf('energy') : 100));
-    var curN = pObj && pObj.nerve !== undefined ? Number(pObj.nerve) : (g && typeof g.cur === 'function' ? g.cur('nerve') : 15);
-    var maxN = pObj && pObj.max_nerve !== undefined ? Number(pObj.max_nerve) : (pObj && pObj.max && pObj.max.nerve ? Number(pObj.max.nerve) : (g && typeof g.maxOf === 'function' ? g.maxOf('nerve') : 15));
-    var curH = pObj && pObj.happy !== undefined ? Number(pObj.happy) : (g && typeof g.cur === 'function' ? g.cur('happy') : 150);
-    var maxH = pObj && pObj.max_happy !== undefined ? Number(pObj.max_happy) : (pObj && pObj.max && pObj.max.happy ? Number(pObj.max.happy) : (g && typeof g.maxOf === 'function' ? g.maxOf('happy') : 150));
-    var curL = pObj && pObj.life !== undefined ? Number(pObj.life) : (g && typeof g.cur === 'function' ? g.cur('life') : 100);
-    var maxL = pObj && pObj.max_life !== undefined ? Number(pObj.max_life) : (pObj && pObj.max && pObj.max.life ? Number(pObj.max.life) : (g && typeof g.maxOf === 'function' ? g.maxOf('life') : 100));
-    var city = (pObj && pObj.city) || (gp && gp.city) || (ar ? 'مدينة زون' : 'Zone City');
-
-    /* 1. Topbar HUD (#zone-topbar-hud) — 0ms instant update */
-    var hud = document.getElementById('zone-topbar-hud');
-    if (hud && hud.querySelector) {
-      var hCash = hud.querySelector('.zaaa-hud-cash');
-      if (hCash) hCash.textContent = fmtMoney(cash);
-      var hE = hud.querySelector('.zaaa-hud-energy');
-      if (hE) hE.textContent = fmtInt(curE) + '/' + fmtInt(maxE);
-      var hN = hud.querySelector('.zaaa-hud-nerve');
-      if (hN) hN.textContent = fmtInt(curN) + '/' + fmtInt(maxN);
-      var hL = hud.querySelector('.zaaa-hud-life');
-      if (hL) hL.textContent = fmtInt(curL) + '/' + fmtInt(maxL);
-      var hCity = hud.querySelector('.zaaa-hud-city');
-      if (hCity) hCity.textContent = city;
+    var curE = 100, maxE = 100, curN = 15, maxN = 15, curH = 150, maxH = 150, curL = 100, maxL = 100;
+    if (hasPositiveMaxEnergy) {
+      maxE = Number(pObj.max_energy || (pObj.max && pObj.max.energy) || 100);
+      curE = pObj.energy !== undefined ? Number(pObj.energy) : maxE;
+      maxN = Number(pObj.max_nerve || (pObj.max && pObj.max.nerve) || 15);
+      curN = pObj.nerve !== undefined ? Number(pObj.nerve) : maxN;
+      maxH = Number(pObj.max_happy || (pObj.max && pObj.max.happy) || 150);
+      curH = pObj.happy !== undefined ? Number(pObj.happy) : maxH;
+      maxL = Number(pObj.max_life || (pObj.max && pObj.max.life) || 100);
+      curL = pObj.life !== undefined ? Number(pObj.life) : maxL;
+    } else if (g && typeof g.cur === 'function' && typeof g.maxOf === 'function') {
+      maxE = Number(g.maxOf('energy') || 100);
+      curE = Number(g.cur('energy') || 0);
+      maxN = Number(g.maxOf('nerve') || 15);
+      curN = Number(g.cur('nerve') || 0);
+      maxH = Number(g.maxOf('happy') || 150);
+      curH = Number(g.cur('happy') || 0);
+      maxL = Number(g.maxOf('life') || 100);
+      curL = Number(g.cur('life') || 0);
     }
 
-    /* 2. Sidebar Cash & 4 Resource Bars — 0ms instant update */
-    var sideCash = document.getElementById('zone-cash');
-    if (sideCash) sideCash.textContent = fmtMoney(cash);
-    updateResourceBarDom('energy', curE, maxE);
-    updateResourceBarDom('nerve', curN, maxN);
-    updateResourceBarDom('happy', curH, maxH);
-    updateResourceBarDom('life', curL, maxL);
+    var city = (pObj && pObj.city) || (gp && gp.city) || (ar ? 'مدينة زون' : 'Zone City');
 
-    /* 3. Sidebar Operative Crest (#zone-operative-crest) & Desktop Rows: Name + Short ID + Rank + Level + Merits */
+    /* 1. Topbar HUD & Sidebar Resource Bars — ONLY overwrite bars when pObj has positive max_energy */
+    var hud = document.getElementById('zone-topbar-hud');
+    if (hud && hud.querySelector) {
+      if (hasCashField) {
+        var hCash = hud.querySelector('.zaaa-hud-cash');
+        if (hCash) hCash.textContent = fmtMoney(cash);
+      }
+      if (hasPositiveMaxEnergy) {
+        var hE = hud.querySelector('.zaaa-hud-energy');
+        if (hE) hE.textContent = fmtInt(curE) + '/' + fmtInt(maxE);
+        var hN = hud.querySelector('.zaaa-hud-nerve');
+        if (hN) hN.textContent = fmtInt(curN) + '/' + fmtInt(maxN);
+        var hL = hud.querySelector('.zaaa-hud-life');
+        if (hL) hL.textContent = fmtInt(curL) + '/' + fmtInt(maxL);
+      }
+      if (pObj && pObj.city) {
+        var hCity = hud.querySelector('.zaaa-hud-city');
+        if (hCity) hCity.textContent = city;
+      }
+    }
+
+    if (hasCashField && pObj && pObj.cash !== undefined) {
+      var sideCash = document.getElementById('zone-cash');
+      if (sideCash) sideCash.textContent = fmtMoney(cash);
+    }
+    if (hasPositiveMaxEnergy) {
+      updateResourceBarDom('energy', curE, maxE);
+      updateResourceBarDom('nerve', curN, maxN);
+      updateResourceBarDom('happy', curH, maxH);
+      updateResourceBarDom('life', curL, maxL);
+    }
+
+    /* 2. Sidebar Operative Crest (#zone-operative-crest) & Desktop Rows */
     var crest = document.getElementById('zone-operative-crest');
     if (crest && crest.querySelector) {
       var opInfo = crest.querySelector('.zaaa-op-info');
@@ -531,12 +554,14 @@
       if (opRank) opRank.textContent = rankTitle;
       var opId = crest.querySelector('.zaaa-op-id');
       if (opId) opId.textContent = '#' + shortId;
-      var xpNeed = Math.max(100, level * 250);
-      var xpPct = Math.max(8, Math.min(100, Math.round(((xp % xpNeed) / xpNeed) * 100)));
-      var opXpVal = crest.querySelector('.zaaa-op-xp-val');
-      if (opXpVal) opXpVal.textContent = fmtInt(xp) + ' / ' + fmtInt(Math.max(xpNeed, xp));
-      if (crest.style && typeof crest.style.setProperty === 'function') {
-        crest.style.setProperty('--zaaa-xp-pct', xpPct + '%');
+      if (pObj && pObj.xp !== undefined) {
+        var xpNeed = Math.max(100, level * 250);
+        var xpPct = Math.max(8, Math.min(100, Math.round(((xp % xpNeed) / xpNeed) * 100)));
+        var opXpVal = crest.querySelector('.zaaa-op-xp-val');
+        if (opXpVal) opXpVal.textContent = fmtInt(xp) + ' / ' + fmtInt(Math.max(xpNeed, xp));
+        if (crest.style && typeof crest.style.setProperty === 'function') {
+          crest.style.setProperty('--zaaa-xp-pct', xpPct + '%');
+        }
       }
     }
 
@@ -544,11 +569,15 @@
     if (deskRows.length >= 3) {
       var lvBdi = deskRows[0].querySelector ? deskRows[0].querySelector('bdi') : null;
       if (lvBdi) lvBdi.innerHTML = fmtInt(level) + ' <span style="color:var(--mu);font-size:10px">' + esc(rankTitle) + '</span>';
-      var ptsVal = (pObj && pObj.points !== undefined) ? Number(pObj.points) : (stObj && stObj.points !== undefined ? Number(stObj.points) : (gp ? Number(gp.points || 0) : 0));
-      var ptsBdi = deskRows[1].querySelector ? deskRows[1].querySelector('bdi') : null;
-      if (ptsBdi) ptsBdi.textContent = fmtInt(ptsVal);
-      var merBdi = deskRows[2].querySelector ? deskRows[2].querySelector('bdi') : null;
-      if (merBdi) merBdi.textContent = fmtInt(merits);
+      if ((pObj && pObj.points !== undefined) || (stObj && stObj.points !== undefined)) {
+        var ptsVal = (pObj && pObj.points !== undefined) ? Number(pObj.points) : Number(stObj.points || 0);
+        var ptsBdi = deskRows[1].querySelector ? deskRows[1].querySelector('bdi') : null;
+        if (ptsBdi) ptsBdi.textContent = fmtInt(ptsVal);
+      }
+      if ((pObj && pObj.merits !== undefined) || (stObj && stObj.merits !== undefined)) {
+        var merBdi = deskRows[2].querySelector ? deskRows[2].querySelector('bdi') : null;
+        if (merBdi) merBdi.textContent = fmtInt(merits);
+      }
     }
 
     /* Replace any leftover #1042 badges in sidebar/header */
@@ -563,15 +592,8 @@
       }
     }
 
-    /* Update compact HUD story pill level/rank if mounted */
-    var storyPill = document.getElementById('zre-hud-story-pill');
-    if (storyPill && storyPill.querySelector) {
-      var merBadge = storyPill.querySelector('[data-zab-merits]');
-      if (merBadge) merBadge.textContent = fmtInt(merits);
-    }
-
     syncSidebarLockBadges(level);
-    checkLevelUpCelebration(level, Boolean(pObj));
+    checkLevelUpCelebration(level, Boolean(pObj && pObj.level !== undefined));
 
     return {
       shortId: shortId,
@@ -603,7 +625,7 @@
       var origApplyPlayer = g.applyServerPlayer;
       g.applyServerPlayer = function (sp) {
         var r = origApplyPlayer.apply(this, arguments);
-        try { syncHudBars(sp || this.p); } catch (_) {}
+        try { if (sp) syncHudBars(sp); } catch (_) {}
         return r;
       };
     }
@@ -611,22 +633,22 @@
       var origApplyGp = g.applyGameplay;
       g.applyGameplay = function (snap) {
         var r = origApplyGp.apply(this, arguments);
-        try { syncHudBars(snap || this.p); } catch (_) {}
+        try { if (snap) syncHudBars(snap); } catch (_) {}
         return r;
       };
     }
   }
 
-  /* ---------------- Snapshot Normalization & Resilient Offline Fallback ---------------- */
+  /* ---------------- Snapshot Normalization & Resilient Offline Fallback (eraProgressPct: 0) ---------------- */
   function buildFallbackSnapshot() {
     var g = window.__zoneGame;
     var gp = (g && g.p) ? g.p : {};
     var lv = Math.max(1, Number(gp.level) || 1);
-    var xp = Math.max(0, Number(gp.xp) || 0);
     var cash = Math.max(0, Number(gp.cash) || 2500);
     var eraIdx = lv >= 25 ? 6 : lv >= 15 ? 5 : lv >= 12 ? 4 : lv >= 7 ? 3 : lv >= 3 ? 2 : 1;
+    var eraProg = lv >= DEFAULT_ERAS[eraIdx - 1].breakthroughLevel ? 100 : 0;
     var currentEra = Object.assign({}, DEFAULT_ERAS[eraIdx - 1], {
-      progressPct: lv >= DEFAULT_ERAS[eraIdx - 1].breakthroughLevel ? 100 : 35,
+      progressPct: eraProg,
       claimable: false,
       claimed: false
     });
@@ -644,14 +666,14 @@
       originId: null,
       origins: DEFAULT_ORIGINS,
       eraIndex: eraIdx,
-      eraProgressPct: currentEra.progressPct,
+      eraProgressPct: eraProg,
       currentEra: currentEra,
       claimableEra: null,
       eras: DEFAULT_ERAS.map(function (e) {
         return Object.assign({}, e, {
           unlocked: lv >= e.minLevel,
           current: e.eraIndex === eraIdx,
-          progressPct: lv >= e.breakthroughLevel ? 100 : (e.eraIndex === eraIdx ? 35 : 0),
+          progressPct: lv >= e.breakthroughLevel ? 100 : 0,
           claimable: false,
           claimed: false
         });
@@ -660,7 +682,7 @@
         level: nextGate.level,
         currentLevel: lv,
         xpRemaining: Math.max(40, (nextGate.level - lv) * 150),
-        progressPct: 30,
+        progressPct: 0,
         featureEn: nextGate.en,
         featureAr: nextGate.ar,
         targetRoute: nextGate.route,
@@ -670,21 +692,21 @@
         persona: 'Luna · Syndicate Architect',
         personaAr: 'لونا · مهندسة النقابة المشفرة',
         channel: 'ENCRYPTED // PIER-4-OMEGA',
-        transmissionEn: "Rain on Pier 4, operative. I'm Luna — your encrypted Syndicate Architect. Choose your underworld origin below and I'll wire your starter kit and Directive #1 immediately.",
-        transmissionAr: 'المطر يغمر الرصيف الرابع أيها العميل. أنا لونا — مهندسة النقابة المشفرة الخاصة بك. اختر أصلك الإجرامي بالأسفل وسأحوّل عتادك الأول والتوجيه رقم #1 فوراً.'
+        transmissionEn: 'Rain on Pier 4, operative. Pick your 3D starter origin below — I will wire your loadout and Directive #1.',
+        transmissionAr: 'المطر يغمر الرصيف الرابع أيها العميل. اختر أصلك ثلاثي الأبعاد بالأسفل لاستلام عتادك والتوجيه #1 فوراً.'
       },
       activeDirective: {
         directiveIndex: 1,
         titleEn: 'Awaken Your Underworld Origin',
         titleAr: 'أيقظ أصلك في العالم السفلي',
-        descEn: 'Select one of the 4 Underworld Origins on Pier 4 to receive your starter kit and syndicate wiring.',
+        descEn: 'Select one of the 4 Underworld Origins on Pier 4 to receive your starter kit.',
         descAr: 'اختر أحد الأصول الإجرامية الأربعة على الرصيف الرابع لاستلام عتادك الأولي.',
         targetRoute: 'home',
         completed: false,
         claimable: false,
         progressPct: 0,
-        progressLabelEn: 'Select an origin on Home',
-        progressLabelAr: 'اختر أصلك في الرئيسية',
+        progressLabelEn: 'Select 3D Origin',
+        progressLabelAr: 'اختر أصلك',
         rewards: { cash: 1500, xp: 50, sp: 1, merits: 1 }
       },
       nemesis: {
@@ -852,12 +874,23 @@
       state.loading = false;
       renderHub();
       renderOriginModal();
+      if (state.snap && window.ZoneEcs3D && typeof window.ZoneEcs3D.updateStageState === 'function') {
+        try { window.ZoneEcs3D.updateStageState('safehouse-empire', state.snap); } catch (_) {}
+      }
     }
     return state.snap;
   }
 
-  async function dispatchAscensionAction(action, payload) {
-    if (state.busyAction) return null;
+  function normalizeAscensionActionName(rawAct) {
+    var a = String(rawAct || '').trim();
+    if (a === 'crew.collect') return 'crew.collectTribute';
+    if (a === 'era.claim') return 'era.claimBreakthrough';
+    return a;
+  }
+
+  async function dispatchAscensionAction(rawAction, payload) {
+    var action = normalizeAscensionActionName(rawAction);
+    if (!action || state.busyAction) return null;
     state.busyAction = action;
     renderHub();
     renderOriginModal();
@@ -883,12 +916,23 @@
       if (action === 'origin.select') {
         state.modalOpen = false;
       }
-      /* 0ms Instant HUD Sync! */
       syncHudBars(data);
 
       var r = (data && data.result) || {};
       var msg = buildActionSuccessCopy(action, r, ar);
       setFeedback(msg, false);
+
+      if (window.ZoneEcs3D) {
+        try {
+          if (typeof window.ZoneEcs3D.updateStageState === 'function') {
+            window.ZoneEcs3D.updateStageState('safehouse-empire', state.snap);
+          }
+          if (typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            window.ZoneEcs3D.triggerStageAction('safehouse-empire', action, r);
+          }
+        } catch (_) {}
+      }
+
       try {
         window.dispatchEvent(new CustomEvent('zone:ascension-updated', { detail: state.snap }));
       } catch (_) {}
@@ -973,53 +1017,85 @@
     if (btn && typeof btn.click === 'function') btn.click();
   }
 
-  /* ---------------- Renderers: Origin Card, 6-Era Spine, Luna, Nemesis, Crew ---------------- */
-  function buildOriginSelectionInnerHtml(snap, ar, isModal) {
+  function findNextCrewStep(crew, ar) {
+    var slots = (crew && Array.isArray(crew.slots)) ? crew.slots : DEFAULT_CREW;
+    for (var i = 0; i < slots.length; i++) {
+      var s = slots[i];
+      if (s && s.unlocked && Number(s.rank || 0) === 0) {
+        var sid = s.slotId || s.id;
+        var sName = ar ? (s.nameAr || s.nameEn) : (s.nameEn || s.nameAr);
+        var cost = Number(s.recruitCost || 1500);
+        return {
+          action: 'crew.recruit',
+          slotId: sid,
+          disabled: Boolean(state.busyAction),
+          label: ar ? ('تجنيد ' + sName + ' (' + fmtMoney(cost) + ')') : ('Recruit ' + sName + ' (' + fmtMoney(cost) + ')')
+        };
+      }
+    }
+    for (var j = 0; j < slots.length; j++) {
+      var u = slots[j];
+      var rk = Number(u && u.rank || 0);
+      var mx = Number(u && u.maxRank || 5);
+      if (u && u.unlocked && rk > 0 && rk < mx) {
+        var uid = u.slotId || u.id;
+        var uName = ar ? (u.nameAr || u.nameEn) : (u.nameEn || u.nameAr);
+        var uCost = Number(u.upgradeCost || u.nextCost || 3500);
+        return {
+          action: 'crew.upgrade',
+          slotId: uid,
+          disabled: Boolean(state.busyAction),
+          label: ar ? ('ترقية ' + uName + ' (' + fmtMoney(uCost) + ')') : ('Upgrade ' + uName + ' (' + fmtMoney(uCost) + ')')
+        };
+      }
+    }
+    var nextLocked = slots.find(function (x) { return x && !x.unlocked; });
+    return {
+      action: 'crew.recruit',
+      slotId: (nextLocked && (nextLocked.slotId || nextLocked.id)) || 'lookout',
+      disabled: true,
+      label: nextLocked
+        ? (ar ? ('الطاقم التالي م ' + nextLocked.unlockLevel) : ('Next Crew Lv ' + nextLocked.unlockLevel))
+        : (ar ? 'اكتمل الطاقم ★5' : 'All Crew Max ★5')
+    };
+  }
+
+  /* ---------------- Full Origin Dossier Modal (On-Demand Overlay) ---------------- */
+  function buildOriginModalHtml(snap, ar) {
     var origins = snap.origins || DEFAULT_ORIGINS;
-    var inputId = isModal ? 'zab-callsign-modal-input' : 'zab-callsign-input';
     return (
       '<div class="zab-origin-top">' +
         '<div class="zab-origin-luna-greet">' +
           '<div class="zab-luna-avatar">' + renderLunaPortraitSvg() + '</div>' +
           '<div style="min-width:0;flex:1">' +
             '<span class="zab-eyebrow">' + (ar ? 'اليقظة في الدقيقة صفر · الرصيف الرابع' : 'MINUTE-0 AWAKENING · PIER 4 DOCKS') + '</span>' +
-            '<h2 class="zab-title">' +
-              (ar ? 'اليقظة على الرصيف الرابع — اختر أصلك في العالم السفلي' : 'Awakening on Pier 4 — Choose Your Underworld Origin') +
-            '</h2>' +
-            '<p class="zab-sub">' +
-              esc(ar ? (snap.lunaOracle && snap.lunaOracle.transmissionAr) : (snap.lunaOracle && snap.lunaOracle.transmissionEn)) +
-            '</p>' +
+            '<h2 class="zab-title">' + (ar ? 'اختر أصلك ثلاثي الأبعاد في العالم السفلي' : 'Choose Your 3D Underworld Origin') + '</h2>' +
+            '<p class="zab-sub">' + esc(ar ? (snap.lunaOracle && snap.lunaOracle.transmissionAr) : (snap.lunaOracle && snap.lunaOracle.transmissionEn)) + '</p>' +
           '</div>' +
         '</div>' +
-        (isModal
-          ? '<button type="button" class="zab-btn" data-zab-close-modal="1">' + (ar ? 'إغلاق النافذة' : 'Close Dossier') + '</button>'
-          : '<button type="button" class="zab-btn zab-btn-ochre" data-zab-open-modal="1">' + (ar ? 'فتح ملف الأصول التفاعلي الكامل' : 'Expand Full Origin Dossier') + '</button>') +
+        '<button type="button" class="zab-btn" data-zab-close-modal="1">' + (ar ? 'إغلاق' : 'Close') + ' ✕</button>' +
       '</div>' +
       '<div class="zab-callsign-row">' +
-        '<label for="' + inputId + '">' + (ar ? 'الاسم الحركي (اختياري):' : 'Operative Callsign (Optional):') + '</label>' +
-        '<input id="' + inputId + '" type="text" maxlength="24" class="zab-callsign-input" data-zab-callsign="1" value="' + esc(state.callsignDraft) + '" placeholder="' + (ar ? 'مثال: GhostPier4' : 'e.g. GhostPier4') + '">' +
-        '<span class="zab-pill zab-pill-luna">' + (ar ? 'لونا · قناة مشفرة نشطة ❤️' : 'Luna · Encrypted Uplink Live ❤️') + '</span>' +
+        '<label for="zab-callsign-modal-input">' + (ar ? 'الاسم الحركي:' : 'Callsign:') + '</label>' +
+        '<input id="zab-callsign-modal-input" type="text" maxlength="24" class="zab-callsign-input" data-zab-callsign="1" value="' + esc(state.callsignDraft) + '" placeholder="' + (ar ? 'مثال: GhostPier4' : 'e.g. GhostPier4') + '">' +
+        '<span class="zab-pill zab-pill-luna">Luna ❤️</span>' +
       '</div>' +
-      '<div class="zab-origin-grid">' +
+      '<div class="zab-origin-modal-grid">' +
         origins.map(function (o) {
           var name = ar ? (o.nameAr || o.nameEn) : (o.nameEn || o.nameAr);
           var tagline = ar ? (o.taglineAr || o.taglineEn) : (o.taglineEn || o.taglineAr);
           var perksRaw = ar ? (o.perksSummaryAr || o.perksSummaryEn || '') : (o.perksSummaryEn || o.perksSummaryAr || '');
-          var perkParts = String(perksRaw).split('·').map(function (s) { return s.trim(); }).filter(Boolean);
+          var spec = ORIGIN_3D_ITEMS[o.id] || ORIGIN_3D_ITEMS.harbor_ghost;
           return (
             '<article class="zab-origin-card" data-zab-origin-card="' + esc(o.id) + '">' +
-              '<div>' +
-                '<div class="zab-origin-card-head">' +
-                  '<div class="zab-origin-illus">' + renderOriginSvg(o.id) + '</div>' +
-                  '<div style="min-width:0">' +
-                    '<div class="zab-origin-name">' + esc(name) + '</div>' +
-                  '</div>' +
+              '<div class="zab-origin-card-head">' +
+                '<div class="z3d-item-slot zab-origin-modal-3d" data-z3d-item="' + spec.item + '" data-z3d-cat="' + spec.cat + '"></div>' +
+                '<div style="min-width:0;flex:1">' +
+                  '<div class="zab-origin-name">' + esc(name) + '</div>' +
+                  '<p class="zab-sub" style="font-size:12px">' + esc(tagline) + '</p>' +
                 '</div>' +
-                '<p class="zab-sub" style="font-size:12.5px;margin-top:6px">' + esc(tagline) + '</p>' +
-                '<ul class="zab-origin-perks" style="margin-top:6px">' +
-                  perkParts.map(function (pk) { return '<li>' + esc(pk) + '</li>'; }).join('') +
-                '</ul>' +
               '</div>' +
+              '<div class="zab-pill zab-pill-ochre" style="white-space:normal">' + esc(perksRaw) + '</div>' +
               '<button type="button" class="zab-btn zab-btn-primary" data-zab-action="origin.select" data-zab-origin-id="' + esc(o.id) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
                 (ar ? ('اختر ' + esc(name)) : ('Awaken as ' + esc(name))) +
               '</button>' +
@@ -1048,42 +1124,40 @@
     existing.hidden = false;
     existing.innerHTML =
       '<div class="zab-origin-modal-sheet">' +
-        buildOriginSelectionInnerHtml(state.snap, isAr(), true) +
+        buildOriginModalHtml(state.snap, isAr()) +
       '</div>';
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(existing); } catch (_) {}
+    }
   }
 
+  /* ---------------- Sleek 2-Column Visual-Art + Live 3D Underworld Command Deck (~330px) ---------------- */
   function buildHubHtml(snap) {
     var ar = isAr();
     var eras = snap.eras || DEFAULT_ERAS;
     var curEra = snap.currentEra || eras[0];
     var claimableEra = snap.claimableEra;
-    var eraPct = Math.max(0, Math.min(100, Math.round(Number(snap.eraProgressPct || curEra.progressPct || 0))));
+    var eraIdx = Math.max(1, Math.min(6, Number(snap.eraIndex || 1)));
+    var eraPct = Math.max(0, Math.min(100, Math.round(Number(snap.eraProgressPct != null ? snap.eraProgressPct : (curEra.progressPct || 0)))));
+
     var nu = snap.nextUnlock || {};
     var nuPct = Math.max(0, Math.min(100, Math.round(Number(nu.progressPct || 0))));
     var nuCurLv = Math.max(1, Number(nu.currentLevel || (snap.player && snap.player.level) || 1));
     var nuTargetLv = Math.max(nuCurLv, Number(nu.level || nu.requiredLevel || 2));
     var nuFeature = ar ? (nu.featureAr || nu.featureEn || '') : (nu.featureEn || nu.featureAr || '');
-    var nuXpLeft = Math.max(0, Number(nu.xpRemaining != null ? nu.xpRemaining : (nu.xpNeeded || 0)));
 
     var luna = snap.lunaOracle || {};
     var dir = snap.activeDirective || {};
     var dirIdx = Number(dir.directiveIndex || dir.index || 1);
     var dirTitle = ar ? (dir.titleAr || dir.titleEn || '') : (dir.titleEn || dir.titleAr || '');
-    var dirDesc = ar ? (dir.descAr || dir.descEn || '') : (dir.descEn || dir.descAr || '');
-    var dirProgLbl = ar ? (dir.progressLabelAr || dir.progressLabelEn || '') : (dir.progressLabelEn || dir.progressLabelAr || '');
     var dirPct = Math.max(0, Math.min(100, Math.round(Number(dir.progressPct || 0))));
     var dirRewards = dir.rewards || {};
     var dirCash = Number(dirRewards.cash != null ? dirRewards.cash : (dir.cashReward || 0));
-    var dirXp = Number(dirRewards.xp != null ? dirRewards.xp : (dir.xpReward || 0));
 
     var nem = snap.nemesis || {};
     var nemName = ar ? (nem.nameAr || nem.nameEn || 'فيكتور كايل') : (nem.nameEn || nem.nameAr || 'Viktor Kael');
-    var nemTitle = ar ? (nem.titleAr || nem.titleEn || '') : (nem.titleEn || nem.titleAr || '');
-    var nemDistrict = ar ? (nem.districtAr || nem.district || nem.districtEn || '') : (nem.districtEn || nem.district || nem.districtAr || '');
-    var nemMemory = ar ? (nem.lastMemoryAr || nem.lastMemoryEn || '') : (nem.lastMemoryEn || nem.lastMemoryAr || '');
     var nemIntel = Math.max(0, Math.min(100, Math.round(Number(nem.intel || 0))));
     var nemTax = Math.max(0, Number(nem.heatTaxPct || 0));
-    var nemTier = Math.max(1, Number(nem.tier || 1));
     var intelCostE = Number(nem.gatherIntelEnergyCost || 5);
     var confrontCostE = Number(nem.confrontEnergyCost || 15);
 
@@ -1091,6 +1165,7 @@
     var crewSlots = Array.isArray(crew.slots) ? crew.slots : DEFAULT_CREW;
     var pendingTribute = Math.max(0, Number(crew.pendingTribute || 0));
     var hourlyRate = Math.max(0, Number(crew.totalHourlyRate || 0));
+    var nextCrew = findNextCrewStep(crew, ar);
 
     var feedbackHtml = '';
     if (state.feedback && state.feedback.text) {
@@ -1100,238 +1175,205 @@
         '</div>';
     }
 
-    var originBannerHtml = '';
+    /* Action Strip under Column 1's 3D Viewport */
+    var stageActionStripHtml = '';
     if (!snap.originChosen) {
-      originBannerHtml =
-        '<section class="zab-card zab-origin-hero" data-zab-section="origin-awakening">' +
-          buildOriginSelectionInnerHtml(snap, ar, false) +
-        '</section>';
-    }
-
-    var activeOriginPill = '';
-    if (snap.originChosen && snap.activeOrigin) {
-      var aoName = ar ? (snap.activeOrigin.nameAr || snap.activeOrigin.nameEn) : (snap.activeOrigin.nameEn || snap.activeOrigin.nameAr);
-      activeOriginPill = '<span class="zab-pill zab-pill-sage">' + (ar ? 'الأصل: ' : 'Origin: ') + esc(aoName) + '</span>';
-    }
-
-    /* 1. 6-Era Empire Ascension Spine */
-    var eraSectionHtml =
-      '<section class="zab-card" data-zab-section="era-spine">' +
-        '<div class="zab-era-header">' +
-          '<div>' +
-            '<span class="zab-eyebrow">' + (ar ? 'مسار الصعود الإمبراطوري · 6 عصور' : '6-ERA UNDERWORLD ASCENSION SPINE') + '</span>' +
-            '<h2 class="zab-title">' + esc(ar ? (curEra.titleAr || curEra.titleEn) : (curEra.titleEn || curEra.titleAr)) + '</h2>' +
+      var origins = snap.origins || DEFAULT_ORIGINS;
+      stageActionStripHtml =
+        '<div class="zab-action-strip" data-zab-section="origin-awakening">' +
+          '<div class="zab-origin-strip-head">' +
+            '<label class="zab-mini-lbl" for="zab-callsign-input">' + (ar ? 'الاسم الحركي:' : 'Callsign:') + '</label>' +
+            '<input id="zab-callsign-input" type="text" maxlength="24" class="zab-callsign-input zab-callsign-compact" data-zab-callsign="1" value="' + esc(state.callsignDraft) + '" placeholder="' + (ar ? 'GhostPier4' : 'GhostPier4') + '">' +
+            '<button type="button" class="zab-btn zab-btn-xs zab-btn-ochre" data-zab-open-modal="1">' + (ar ? 'التفاصيل' : 'Full Dossier') + '</button>' +
           '</div>' +
-          '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
-            activeOriginPill +
-            '<span class="zab-pill zab-pill-ochre">' + (ar ? ('تقدم العصر: ' + eraPct + '%') : ('Era Progress: ' + eraPct + '%')) + '</span>' +
-            (claimableEra
-              ? '<button type="button" class="zab-btn zab-btn-ochre" data-zab-action="era.claimBreakthrough" data-zab-era-index="' + Number(claimableEra.eraIndex || snap.eraIndex) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
-                  (ar ? ('استلم اختراق العصر (+' + fmtMoney(claimableEra.cashReward || (claimableEra.rewards && claimableEra.rewards.cash) || 5000) + ')') : ('Claim Era Breakthrough (+' + fmtMoney(claimableEra.cashReward || (claimableEra.rewards && claimableEra.rewards.cash) || 5000) + ')')) +
-                '</button>'
-              : '') +
+          '<div class="zab-origin-tiles-4">' +
+            origins.map(function (o) {
+              var name = ar ? (o.nameAr || o.nameEn) : (o.nameEn || o.nameAr);
+              var spec = ORIGIN_3D_ITEMS[o.id] || ORIGIN_3D_ITEMS.harbor_ghost;
+              var chipTxt = ar ? spec.chipAr : spec.chipEn;
+              return (
+                '<article class="zab-origin-tile" data-zab-origin-card="' + esc(o.id) + '">' +
+                  '<div class="zab-origin-tile-top">' +
+                    '<div class="z3d-item-slot zab-origin-3d-slot" data-z3d-item="' + spec.item + '" data-z3d-cat="' + spec.cat + '"></div>' +
+                    '<button type="button" class="zab-3d-inspect-mini" data-z3d-inspect="' + spec.item + '" data-z3d-title="' + esc(name) + '">3D</button>' +
+                  '</div>' +
+                  '<strong class="zab-origin-tile-name">' + esc(name) + '</strong>' +
+                  '<span class="zab-origin-tile-chip">' + esc(chipTxt) + '</span>' +
+                  '<button type="button" class="zab-btn zab-btn-xs zab-btn-primary" data-zab-action="origin.select" data-zab-origin-id="' + esc(o.id) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
+                    (ar ? 'تفعيل' : 'Awaken') +
+                  '</button>' +
+                '</article>'
+              );
+            }).join('') +
+          '</div>' +
+        '</div>';
+    } else {
+      stageActionStripHtml =
+        '<div class="zab-live-ops-bar">' +
+          '<div class="zab-hud-pill-box zab-hud-nemesis" data-zab-section="nemesis-rival">' +
+            '<div class="zab-hud-pill-top">' +
+              '<strong class="zab-hud-pill-title">' + esc(nemName) + '</strong>' +
+              (nem.heatCleared || nemTax <= 0
+                ? '<span class="zab-pill zab-pill-sage">' + (ar ? 'إتاوة 0%' : 'Tax 0%') + '</span>'
+                : '<span class="zab-pill zab-pill-crimson" data-zab-heat-tax="1">-' + nemTax + '%</span>') +
+              '<span class="zab-pill">' + (ar ? 'رصد ' : 'Intel ') + '<bdi data-zab-nemesis-intel="1">' + nemIntel + '%</bdi></span>' +
+            '</div>' +
+            '<div class="zab-bar-track zab-bar-xs"><div class="zab-bar-fill zab-bar-fill-crimson" style="width:' + nemIntel + '%"></div></div>' +
+            '<div class="zab-hud-pill-btns">' +
+              '<button type="button" class="zab-btn zab-btn-xs" data-zab-action="nemesis.gatherIntel"' + ((state.busyAction || nemIntel >= 100) ? ' disabled' : '') + '>' +
+                (ar ? ('تتبّع ' + intelCostE + 'ط') : ('Track ' + intelCostE + 'E')) +
+              '</button>' +
+              '<button type="button" class="zab-btn zab-btn-xs zab-btn-crimson" data-zab-action="nemesis.confront"' + ((state.busyAction || nemIntel < 100) ? ' disabled' : '') + '>' +
+                (ar ? ('غارة 3D ' + confrontCostE + 'ط') : ('3D Raid ' + confrontCostE + 'E')) +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="zab-hud-pill-box zab-hud-crew" data-zab-section="street-crew">' +
+            '<div class="zab-hud-pill-top">' +
+              '<strong class="zab-hud-pill-title">' + (ar ? 'طاقم الشارع' : 'Street Crew') + '</strong>' +
+              '<span class="zab-pill zab-pill-ochre"><bdi>+' + fmtMoney(hourlyRate) + '/hr</bdi></span>' +
+            '</div>' +
+            '<div class="zab-hud-pill-btns">' +
+              '<button type="button" class="zab-btn zab-btn-xs zab-btn-ochre" data-zab-action="crew.collect"' + ((state.busyAction || !crew.canCollectTribute || pendingTribute <= 0) ? ' disabled' : '') + '>' +
+                (ar ? ('تحصيل (' + fmtMoney(pendingTribute) + ')') : ('Collect (' + fmtMoney(pendingTribute) + ')')) +
+              '</button>' +
+              '<button type="button" class="zab-btn zab-btn-xs zab-btn-primary" data-zab-crew-quick="1" data-zab-action="' + nextCrew.action + '" data-zab-slot-id="' + esc(nextCrew.slotId) + '"' + (nextCrew.disabled ? ' disabled' : '') + '>' +
+                esc(nextCrew.label) +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    }
+
+    var shLabel = ar ? (curEra.safehouseAr || curEra.safehouseEn) : (curEra.safehouseEn || curEra.safehouseAr);
+
+    /* Column 1 (60%): Live 3D Underworld Safehouse Stage + Docked Interactive Strip */
+    var colStageHtml =
+      '<div class="zab-card zab-col-stage">' +
+        '<div class="zab-stage-frame" data-zab-safehouse="1">' +
+          '<div class="zab-3d-viewport z3d-action-stage" data-z3d-stage="safehouse-empire" data-z3d-era="' + eraIdx + '" data-z3d-origin="' + esc(snap.originId || 'none') + '" data-z3d-origin-chosen="' + (snap.originChosen ? '1' : '0') + '"></div>' +
+          '<div class="zab-stage-overlay-badges">' +
+            '<span class="zab-pill zab-pill-ochre">' + (ar ? ('العصر ' + (curEra.roman || eraIdx) + ' · ') : ('Era ' + (curEra.roman || eraIdx) + ' · ')) + esc(shLabel) + '</span>' +
+            '<span class="zab-pill">' + (ar ? 'تفاعل 3D مباشر' : 'Interactive 3D Stage') + '</span>' +
           '</div>' +
         '</div>' +
-        '<div class="zab-era-hero-row">' +
-          '<div class="zab-era-track">' +
+        stageActionStripHtml +
+      '</div>';
+
+    /* Column 2 (40%): Luna Holo-Card + 6-Era Medallion Bar + Collapsed Crew/Era Drawer */
+    var colHoloHtml =
+      '<div class="zab-card zab-card-luna zab-col-holo">' +
+        '<div class="zab-holo-luna-top" data-zab-section="luna-comms">' +
+          '<div class="zab-luna-avatar zab-luna-avatar-sm">' + renderLunaPortraitSvg() + '</div>' +
+          '<div style="min-width:0;flex:1">' +
+            '<div class="zab-luna-badge-row">' +
+              '<span class="zab-eyebrow" style="color:var(--zab-luna)">' +
+                esc(ar ? (luna.personaAr || 'لونا · مهندسة النقابة') : (luna.persona || 'Luna · Syndicate Architect')) + ' ❤️' +
+              '</span>' +
+              '<button type="button" class="zab-btn zab-btn-xs" data-zab-upload-avatar="1">' +
+                (ar ? '📷 صورة الملف' : '📷 Upload Avatar') +
+              '</button>' +
+            '</div>' +
+            '<p class="zab-luna-line" data-zab-luna-line="1">' +
+              esc(ar ? (luna.transmissionAr || luna.transmissionEn) : (luna.transmissionEn || luna.transmissionAr)) +
+            '</p>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="zab-directive-compact" data-zab-directive="' + dirIdx + '">' +
+          '<div class="zab-meter-top">' +
+            '<span class="zab-directive-title">' + (ar ? ('التوجيه #' + dirIdx + '/12: ') : ('Directive #' + dirIdx + '/12: ')) + esc(dirTitle) + '</span>' +
+            '<bdi class="zab-pill zab-pill-ochre">+' + fmtMoney(dirCash) + '</bdi>' +
+          '</div>' +
+          '<div class="zab-bar-track zab-bar-xs"><div class="zab-bar-fill" style="width:' + dirPct + '%"></div></div>' +
+          '<div class="zab-directive-btns">' +
+            (dir.claimable
+              ? '<button type="button" class="zab-btn zab-btn-xs zab-btn-ochre" data-zab-action="luna.claimDirective" data-zab-directive-index="' + dirIdx + '"' + (state.busyAction ? ' disabled' : '') + '>' +
+                  (ar ? 'استلم المكافأة' : 'Claim Reward') +
+                '</button>'
+              : '') +
+            '<button type="button" class="zab-btn zab-btn-xs zab-btn-primary" data-zab-go-route="' + esc(dir.targetRoute || 'crimes') + '">' +
+              '<span>' + (ar ? 'انطلق للتنفيذ' : 'Go Execute') + '</span>' +
+              '<span class="zab-rtl-flip">→</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="zab-era-medallion-box" data-zab-section="era-spine">' +
+          '<div class="zab-era-crest-bar">' +
             eras.map(function (e) {
               var idx = Number(e.eraIndex || 1);
-              var cls = 'zab-era-step' + (idx === snap.eraIndex ? ' is-current' : (e.unlocked ? ' is-reached' : ''));
+              var cls = 'zab-era-crest' + (idx === eraIdx ? ' is-current' : (e.unlocked ? ' is-reached' : ''));
               var eName = ar ? (e.nameAr || e.nameEn) : (e.nameEn || e.nameAr);
-              var lvlSpan = e.minLevel >= 25 ? 'Lv 25+' : ('Lv ' + e.minLevel + '-' + e.maxLevel);
               return (
-                '<div class="' + cls + '" data-zab-era-step="' + idx + '">' +
-                  '<span class="zab-era-roman">' + (ar ? ('العصر ' + e.roman) : ('Era ' + e.roman)) + (e.claimed ? ' ✓' : '') + '</span>' +
-                  '<strong class="zab-era-name">' + esc(eName) + '</strong>' +
-                  '<span class="zab-era-lvl"><bdi>' + esc(lvlSpan) + '</bdi></span>' +
+                '<div class="' + cls + '" data-zab-era-step="' + idx + '" title="' + esc(eName + ' (Lv ' + e.minLevel + '+)') + '">' +
+                  '<span class="zab-era-crest-roman">' + esc(e.roman || idx) + (e.claimed ? '✓' : '') + '</span>' +
+                  '<small class="zab-era-crest-lv">Lv' + e.minLevel + '</small>' +
                 '</div>'
               );
             }).join('') +
           '</div>' +
-          '<div class="zab-safehouse-box" data-zab-safehouse="1">' +
-            '<div class="zab-safehouse-art">' + renderSafehouseSvg(snap.eraIndex) + '</div>' +
-            '<div style="min-width:0">' +
-              '<span class="zab-eyebrow">' + (ar ? 'المقر الآمن المتطور' : 'EVOLVING SAFEHOUSE') + '</span>' +
-              '<div class="zab-origin-name">' + esc(ar ? (curEra.safehouseAr || curEra.safehouseEn) : (curEra.safehouseEn || curEra.safehouseAr)) + '</div>' +
-              '<div class="zab-sub" style="font-size:12px">' +
-                (ar ? ('المرحلة ' + snap.eraIndex + ' من 6') : ('Stage ' + snap.eraIndex + ' of 6 Compound')) +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        '<div class="zab-progress-stack">' +
-          '<div class="zab-meter-card">' +
-            '<div class="zab-meter-top">' +
-              '<span>' + (ar ? 'اكتمال العصر الحالي' : 'Current Era Mastery') + '</span>' +
-              '<bdi>' + eraPct + '%</bdi>' +
-            '</div>' +
-            '<div class="zab-bar-track"><div class="zab-bar-fill zab-bar-fill-ochre" style="width:' + eraPct + '%"></div></div>' +
-          '</div>' +
-          '<div class="zab-meter-card" data-zab-next-unlock="1">' +
-            '<div class="zab-meter-top">' +
+          '<div class="zab-next-unlock-mini" data-zab-next-unlock="1">' +
+            '<div class="zab-meter-top" style="font-size:11.5px">' +
               '<span>' +
                 (nu.allGatesUnlocked
-                  ? (ar ? 'جميع أبواب المدينة مفتوحة!' : 'All World Systems Unlocked!')
-                  : (ar
-                      ? ('المستوى ' + nuCurLv + ' ← ' + nuTargetLv + ': يفتح ' + esc(nuFeature))
-                      : ('Lv ' + nuCurLv + ' -> Lv ' + nuTargetLv + ': Unlocks ' + esc(nuFeature)))) +
+                  ? (ar ? 'جميع الأنظمة مفتوحة' : 'All Systems Unlocked')
+                  : (ar ? ('الفتح التالي م ' + nuTargetLv + ': ' + esc(nuFeature)) : ('Next Unlock Lv ' + nuTargetLv + ': ' + esc(nuFeature)))) +
               '</span>' +
-              '<bdi>' +
-                (nu.allGatesUnlocked
-                  ? '100%'
-                  : (ar ? ('متبقي ' + fmtInt(nuXpLeft) + ' XP') : (fmtInt(nuXpLeft) + ' XP remaining'))) +
-              '</bdi>' +
+              '<bdi>' + eraPct + '%</bdi>' +
             '</div>' +
-            '<div class="zab-bar-track"><div class="zab-bar-fill" style="width:' + nuPct + '%"></div></div>' +
+            '<div class="zab-bar-track zab-bar-xs"><div class="zab-bar-fill zab-bar-fill-ochre" style="width:' + Math.max(eraPct, nuPct) + '%"></div></div>' +
+            (claimableEra
+              ? '<button type="button" class="zab-btn zab-btn-xs zab-btn-ochre" style="margin-top:4px;width:100%" data-zab-action="era.claimBreakthrough" data-zab-era-index="' + Number(claimableEra.eraIndex || eraIdx) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
+                  (ar ? ('استلم اختراق العصر (+' + fmtMoney(claimableEra.cashReward || 5000) + ')') : ('Claim Era Breakthrough (+' + fmtMoney(claimableEra.cashReward || 5000) + ')')) +
+                '</button>'
+              : '') +
           '</div>' +
         '</div>' +
-      '</section>';
 
-    /* 2. Mid Grid: Luna Live Encrypted Comms & Directive + Living Nemesis Wanted Poster */
-    var midSectionHtml =
-      '<div class="zab-mid-grid">' +
-        '<section class="zab-card zab-card-luna" data-zab-section="luna-comms">' +
-          '<div class="zab-luna-comms">' +
-            '<div class="zab-luna-avatar">' + renderLunaPortraitSvg() + '</div>' +
-            '<div style="flex:1;min-width:0">' +
-              '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">' +
-                '<span class="zab-eyebrow" style="color:var(--zab-luna)">' +
-                  esc(ar ? (luna.personaAr || 'لونا · مهندسة النقابة المشفرة') : (luna.persona || 'Luna · Syndicate Architect')) + ' ❤️' +
-                '</span>' +
-                '<span class="zab-pill zab-pill-luna"><bdi>' + esc(luna.channel || 'ENCRYPTED // PIER-4') + '</bdi></span>' +
-              '</div>' +
-              '<blockquote class="zab-luna-quote" data-zab-luna-line="1">' +
-                esc(ar ? (luna.transmissionAr || luna.transmissionEn) : (luna.transmissionEn || luna.transmissionAr)) +
-              '</blockquote>' +
+        '<details class="zab-dossier-drawer"' + (state.dossierOpen ? ' open' : '') + '>' +
+          '<summary>' + (ar ? 'طاقم الشارع وسجل العصور الـ6 الكامل' : 'Crew Roster & Full 6-Era Dossier') + '</summary>' +
+          '<div class="zab-dossier-drawer-body">' +
+            '<div class="zab-drawer-crew-list">' +
+              crewSlots.map(function (slot) {
+                var sid = slot.slotId || slot.id;
+                var sName = ar ? (slot.nameAr || slot.nameEn) : (slot.nameEn || slot.nameAr);
+                var rank = Math.max(0, Number(slot.rank || 0));
+                var maxRank = Math.max(1, Number(slot.maxRank || 5));
+                var unlocked = Boolean(slot.unlocked);
+                var btnHtml = '';
+                if (!unlocked) {
+                  btnHtml = '<button type="button" class="zab-btn zab-btn-xs" disabled>' + (ar ? ('م ' + slot.unlockLevel) : ('Lv ' + slot.unlockLevel)) + '</button>';
+                } else if (rank === 0) {
+                  btnHtml = '<button type="button" class="zab-btn zab-btn-xs zab-btn-primary" data-zab-action="crew.recruit" data-zab-slot-id="' + esc(sid) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
+                    (ar ? ('تجنيد ' + fmtMoney(slot.recruitCost || 1500)) : ('Recruit ' + fmtMoney(slot.recruitCost || 1500))) +
+                  '</button>';
+                } else if (rank < maxRank) {
+                  btnHtml = '<button type="button" class="zab-btn zab-btn-xs" data-zab-action="crew.upgrade" data-zab-slot-id="' + esc(sid) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
+                    (ar ? ('ترقية ' + fmtMoney(slot.upgradeCost || 3500)) : ('Upgrade ' + fmtMoney(slot.upgradeCost || 3500))) +
+                  '</button>';
+                } else {
+                  btnHtml = '<button type="button" class="zab-btn zab-btn-xs" disabled>★5</button>';
+                }
+                return (
+                  '<div class="zab-drawer-crew-row" data-zab-crew-slot="' + esc(sid) + '">' +
+                    '<span><strong>' + esc(sName) + '</strong> <small>(R' + rank + '/' + maxRank + ')</small></span>' +
+                    btnHtml +
+                  '</div>'
+                );
+              }).join('') +
             '</div>' +
           '</div>' +
-          '<div class="zab-directive-box" data-zab-directive="' + dirIdx + '">' +
-            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">' +
-              '<strong style="font-size:14.5px;color:var(--zab-ink)">' +
-                (ar ? ('التوجيه النشط #' + dirIdx + '/12: ') : ('Directive #' + dirIdx + '/12: ')) + esc(dirTitle) +
-              '</strong>' +
-              '<span class="zab-pill zab-pill-sage"><bdi>' + esc(dirProgLbl) + '</bdi></span>' +
-            '</div>' +
-            '<div class="zab-sub" style="font-size:12.5px">' + esc(dirDesc) + '</div>' +
-            '<div class="zab-bar-track"><div class="zab-bar-fill" style="width:' + dirPct + '%"></div></div>' +
-            '<div class="zab-directive-actions">' +
-              '<span class="zab-pill zab-pill-ochre">' +
-                (ar ? 'المكافأة: ' : 'Reward: ') + '<bdi>+' + fmtMoney(dirCash) + ' · +' + fmtInt(dirXp) + ' XP</bdi>' +
-              '</span>' +
-              '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-                (dir.claimable
-                  ? '<button type="button" class="zab-btn zab-btn-ochre" data-zab-action="luna.claimDirective" data-zab-directive-index="' + dirIdx + '"' + (state.busyAction ? ' disabled' : '') + '>' +
-                      (ar ? 'استلم مكافأة التوجيه' : 'Claim Directive Reward') +
-                    '</button>'
-                  : '') +
-                '<button type="button" class="zab-btn zab-btn-primary" data-zab-go-route="' + esc(dir.targetRoute || 'crimes') + '">' +
-                  '<span>' + (ar ? 'انطلق للتنفيذ' : 'Go Execute') + '</span>' +
-                  '<span class="zab-rtl-flip">→</span>' +
-                '</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-
-        '<section class="zab-card zab-card-nemesis" data-zab-section="nemesis-rival">' +
-          '<div class="zab-nemesis-head">' +
-            '<div>' +
-              '<span class="zab-eyebrow" style="color:var(--zab-crimson)">' +
-                (ar ? ('مطلوب حي · العدو اللدود (الفئة ' + nemTier + ')') : ('LIVING NEMESIS WANTED · TIER ' + nemTier)) +
-              '</span>' +
-              '<h3 class="zab-title">' + esc(nemName) + '</h3>' +
-              '<div class="zab-sub" style="font-size:12.5px">' + esc(nemTitle) + ' · ' + esc(nemDistrict) + '</div>' +
-            '</div>' +
-            (nem.heatCleared || nemTax <= 0
-              ? '<span class="zab-pill zab-pill-sage">' + (ar ? 'الإتاوة ملغاة (12 ساعة)!' : 'Turf Tax Cleared (12h)!') + '</span>'
-              : '<span class="zab-pill zab-pill-crimson" data-zab-heat-tax="1">' +
-                  (ar ? ('إتاوة -' + nemTax + '% على جرائمك!') : ('Heat Tax -' + nemTax + '% skimming street crimes!')) +
-                '</span>') +
-          '</div>' +
-          '<div class="zab-nemesis-grudge">"' + esc(nemMemory) + '"</div>' +
-          '<div class="zab-meter-card">' +
-            '<div class="zab-meter-top">' +
-              '<span>' + (ar ? 'تتبّع مخبأ الخصم (المعلومات)' : 'Safehouse Exposure Intel') + '</span>' +
-              '<bdi data-zab-nemesis-intel="1">' + nemIntel + '%</bdi>' +
-            '</div>' +
-            '<div class="zab-bar-track"><div class="zab-bar-fill zab-bar-fill-crimson" style="width:' + nemIntel + '%"></div></div>' +
-          '</div>' +
-          '<div class="zab-nemesis-actions">' +
-            '<button type="button" class="zab-btn" data-zab-action="nemesis.gatherIntel"' + ((state.busyAction || nemIntel >= 100) ? ' disabled' : '') + '>' +
-              (ar ? ('تتبّع الأثر (' + intelCostE + ' طاقة)') : ('Track Intel (' + intelCostE + 'E)')) +
-            '</button>' +
-            '<button type="button" class="zab-btn zab-btn-crimson" data-zab-action="nemesis.confront"' + ((state.busyAction || nemIntel < 100) ? ' disabled' : '') + '>' +
-              (ar
-                ? ('مواجهة الخصم (' + confrontCostE + ' طاقة · +' + fmtMoney(nem.nextBountyCash || 8000) + ')')
-                : ('Confront Nemesis (' + confrontCostE + 'E · +' + fmtMoney(nem.nextBountyCash || 8000) + ')')) +
-            '</button>' +
-          '</div>' +
-        '</section>' +
+        '</details>' +
       '</div>';
 
-    /* 3. 5-Slot Evolving Street Crew Strip */
-    var crewSectionHtml =
-      '<section class="zab-card" data-zab-section="street-crew">' +
-        '<div class="zab-crew-header">' +
-          '<div>' +
-            '<span class="zab-eyebrow">' + (ar ? 'طاقم الشارع المتطور · 5 تخصصات' : '5-SLOT EVOLVING STREET CREW') + '</span>' +
-            '<h3 class="zab-title" style="font-size:18px">' +
-              (ar ? ('عائد السيطرة بالساعة: +' + fmtMoney(hourlyRate) + '/ساعة') : ('Syndicate Turf Cut: +' + fmtMoney(hourlyRate) + '/hr')) +
-            '</h3>' +
-          '</div>' +
-          '<button type="button" class="zab-btn zab-btn-ochre" data-zab-action="crew.collectTribute"' + ((state.busyAction || !crew.canCollectTribute || pendingTribute <= 0) ? ' disabled' : '') + '>' +
-            (ar
-              ? ('تحصيل إتاوة المنطقة (' + fmtMoney(pendingTribute) + ')')
-              : ('Collect Turf Tribute (' + fmtMoney(pendingTribute) + ')')) +
-          '</button>' +
-        '</div>' +
-        '<div class="zab-crew-grid">' +
-          crewSlots.map(function (slot) {
-            var sid = slot.slotId || slot.id;
-            var sName = ar ? (slot.nameAr || slot.nameEn) : (slot.nameEn || slot.nameAr);
-            var sPerk = ar ? (slot.perkAr || slot.perkEn) : (slot.perkEn || slot.perkAr);
-            var rank = Math.max(0, Number(slot.rank || 0));
-            var maxRank = Math.max(1, Number(slot.maxRank || 5));
-            var unlocked = Boolean(slot.unlocked);
-            var cls = 'zab-crew-slot' + (rank > 0 ? ' is-recruited' : (!unlocked ? ' is-locked' : ''));
-
-            var btnHtml = '';
-            if (!unlocked) {
-              btnHtml = '<button type="button" class="zab-btn" disabled>' +
-                (ar ? ('يفتح عند م ' + slot.unlockLevel) : ('Unlocks Lv ' + slot.unlockLevel)) +
-              '</button>';
-            } else if (rank === 0) {
-              var rCost = Number(slot.recruitCost || 1500);
-              btnHtml = '<button type="button" class="zab-btn zab-btn-primary" data-zab-action="crew.recruit" data-zab-slot-id="' + esc(sid) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
-                (ar ? ('تجنيد (' + fmtMoney(rCost) + ')') : ('Recruit (' + fmtMoney(rCost) + ')')) +
-              '</button>';
-            } else if (rank < maxRank) {
-              var uCost = Number(slot.upgradeCost || slot.nextCost || 3500);
-              btnHtml = '<button type="button" class="zab-btn" data-zab-action="crew.upgrade" data-zab-slot-id="' + esc(sid) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
-                (ar ? ('ترقية (' + fmtMoney(uCost) + ')') : ('Upgrade (' + fmtMoney(uCost) + ')')) +
-              '</button>';
-            } else {
-              btnHtml = '<button type="button" class="zab-btn" disabled>' + (ar ? 'الحد الأقصى ★5' : 'MAX RANK ★5') + '</button>';
-            }
-
-            return (
-              '<article class="' + cls + '" data-zab-crew-slot="' + esc(sid) + '">' +
-                '<div>' +
-                  '<div style="display:flex;align-items:center;justify-content:space-between;gap:4px">' +
-                    '<span class="zab-pill">' + (ar ? ('الرتبة ' + rank + '/' + maxRank) : ('Rank ' + rank + '/' + maxRank)) + '</span>' +
-                    '<small style="font-weight:700;color:var(--zab-ochre)"><bdi>+$' + fmtInt(slot.hourlyRate || slot.baseHourlyRate || 0) + '/h</bdi></small>' +
-                  '</div>' +
-                  '<div class="zab-crew-role" style="margin-top:5px">' + esc(sName) + '</div>' +
-                  '<div class="zab-crew-bonus" style="margin-top:3px">' + esc(sPerk) + '</div>' +
-                '</div>' +
-                btnHtml +
-              '</article>'
-            );
-          }).join('') +
-        '</div>' +
-      '</section>';
-
-    return feedbackHtml + originBannerHtml + eraSectionHtml + midSectionHtml + crewSectionHtml;
+    return (
+      feedbackHtml +
+      '<div class="zab-command-deck">' +
+        colStageHtml +
+        colHoloHtml +
+      '</div>'
+    );
   }
 
   function bindContainerDelegation(container) {
@@ -1345,9 +1387,36 @@
       }
     });
 
+    container.addEventListener('toggle', function (ev) {
+      var t = ev.target;
+      if (t && t.classList && t.classList.contains('zab-dossier-drawer')) {
+        state.dossierOpen = Boolean(t.open);
+      }
+    }, true);
+
     container.addEventListener('click', function (ev) {
       var t = ev.target;
       if (!t || !t.closest) return;
+
+      var inspectBtn = t.closest('[data-z3d-inspect]');
+      if (inspectBtn) {
+        ev.preventDefault();
+        var itemId = inspectBtn.getAttribute('data-z3d-inspect');
+        var title = inspectBtn.getAttribute('data-z3d-title') || itemId;
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+          window.ZoneEcs3D.inspectItem(itemId, { title: title });
+        }
+        return;
+      }
+
+      var avatarBtn = t.closest('[data-zab-upload-avatar="1"]');
+      if (avatarBtn) {
+        ev.preventDefault();
+        if (window.ZoneProfileAvatar && typeof window.ZoneProfileAvatar.openModal === 'function') {
+          window.ZoneProfileAvatar.openModal();
+        }
+        return;
+      }
 
       var openModalBtn = t.closest('[data-zab-open-modal="1"]');
       if (openModalBtn) {
@@ -1375,11 +1444,13 @@
         var action = actBtn.getAttribute('data-zab-action');
         if (action === 'origin.select') {
           var originId = actBtn.getAttribute('data-zab-origin-id') || 'harbor_ghost';
-          var cs = String(state.callsignDraft || '').trim();
+          var domCsEl = document.getElementById('zab-callsign-modal-input') || document.getElementById('zab-callsign-input');
+          var cs = String((domCsEl && domCsEl.value) || state.callsignDraft || '').trim();
+          state.callsignDraft = cs;
           var pl = { originId: originId };
           if (cs) pl.callsign = cs;
           dispatchAscensionAction('origin.select', pl);
-        } else if (action === 'era.claimBreakthrough') {
+        } else if (action === 'era.claimBreakthrough' || action === 'era.claim') {
           var eraIdx = Number(actBtn.getAttribute('data-zab-era-index') || (state.snap && state.snap.eraIndex) || 1);
           dispatchAscensionAction('era.claimBreakthrough', { eraIndex: eraIdx });
         } else if (action === 'luna.claimDirective') {
@@ -1388,8 +1459,52 @@
         } else if (action === 'crew.recruit' || action === 'crew.upgrade') {
           var slotId = actBtn.getAttribute('data-zab-slot-id') || 'lookout';
           dispatchAscensionAction(action, { slotId: slotId, crewId: slotId, id: slotId });
+        } else if (action === 'crew.collect' || action === 'crew.collectTribute') {
+          dispatchAscensionAction('crew.collectTribute', {});
         } else {
           dispatchAscensionAction(action, {});
+        }
+      }
+    });
+  }
+
+  function bind3DStageClickEvents() {
+    if (state.stageClickBound) return;
+    state.stageClickBound = true;
+    window.addEventListener('zone:3d-stage-click', function (ev) {
+      var d = (ev && ev.detail) || {};
+      if (d.stage && d.stage !== 'safehouse-empire') return;
+      var snap = state.snap || buildFallbackSnapshot();
+
+      if (d.action) {
+        dispatchAscensionAction(d.action, d.payload || (d.originId ? { originId: d.originId } : {}));
+        return;
+      }
+      var target = String(d.target || d.kind || '').toLowerCase();
+      if (target === 'origin' || (!snap.originChosen && d.originId)) {
+        var oid = d.originId || 'harbor_ghost';
+        var cs = String(state.callsignDraft || '').trim();
+        var pl = { originId: oid };
+        if (cs) pl.callsign = cs;
+        dispatchAscensionAction('origin.select', pl);
+      } else if (target === 'nemesis') {
+        var nem = snap.nemesis || {};
+        if (Number(nem.intel || 0) >= 100 || nem.canConfront) {
+          dispatchAscensionAction('nemesis.confront', {});
+        } else {
+          dispatchAscensionAction('nemesis.gatherIntel', {});
+        }
+      } else if (target === 'crew') {
+        var crew = snap.crew || {};
+        if (Number(crew.pendingTribute || 0) > 0 || crew.canCollectTribute) {
+          dispatchAscensionAction('crew.collectTribute', {});
+        } else {
+          var step = findNextCrewStep(crew, isAr());
+          if (!step.disabled) {
+            dispatchAscensionAction(step.action, { slotId: step.slotId, crewId: d.crewId || step.slotId, id: step.slotId });
+          } else {
+            dispatchAscensionAction('crew.collectTribute', {});
+          }
         }
       }
     });
@@ -1415,6 +1530,7 @@
   function renderHub() {
     if (document.querySelector && document.querySelector('x-dc')) return;
     hookCoreGameMethods();
+    bind3DStageClickEvents();
     var main = document.getElementById('zone-main');
     if (!main) return;
 
@@ -1431,14 +1547,28 @@
       state.snap = buildFallbackSnapshot();
     }
 
+    var arcadeEl = document.getElementById('zig-home-arcade');
+    var briefEl = main.querySelector ? main.querySelector('.zone-home-brief') : null;
+    var anchorAfter = (arcadeEl && arcadeEl.parentElement === main) ? arcadeEl : briefEl;
+
     if (!existing) {
       existing = document.createElement('section');
       existing.id = 'zone-ascension-hub';
       existing.setAttribute('data-zab-ready', '1');
-      main.appendChild(existing);
+      if (anchorAfter && typeof anchorAfter.insertAdjacentElement === 'function') {
+        anchorAfter.insertAdjacentElement('afterend', existing);
+      } else {
+        main.appendChild(existing);
+      }
       bindContainerDelegation(existing);
     } else if (existing.parentElement !== main) {
-      main.appendChild(existing);
+      if (anchorAfter && typeof anchorAfter.insertAdjacentElement === 'function') {
+        anchorAfter.insertAdjacentElement('afterend', existing);
+      } else {
+        main.appendChild(existing);
+      }
+    } else if (arcadeEl && arcadeEl.parentElement === main && arcadeEl.nextElementSibling !== existing && typeof arcadeEl.insertAdjacentElement === 'function') {
+      arcadeEl.insertAdjacentElement('afterend', existing);
     }
 
     var activeEl = document.activeElement;
@@ -1446,8 +1576,29 @@
       return;
     }
 
+    /* Preserve live WebGL stage node across DOM updates so 3D camera shake & animations never blink */
+    var prevViewport = existing.querySelector ? existing.querySelector('.zab-3d-viewport[data-z3d-stage="safehouse-empire"]') : null;
+    var keepLiveCanvas = Boolean(prevViewport && prevViewport.querySelector && prevViewport.querySelector('canvas'));
+
     existing.setAttribute('data-lang', isAr() ? 'ar' : 'en');
     existing.innerHTML = buildHubHtml(state.snap);
+
+    if (keepLiveCanvas && existing.querySelector) {
+      var nextViewport = existing.querySelector('.zab-3d-viewport[data-z3d-stage="safehouse-empire"]');
+      if (nextViewport && typeof nextViewport.replaceWith === 'function') {
+        prevViewport.setAttribute('data-z3d-era', nextViewport.getAttribute('data-z3d-era') || '1');
+        prevViewport.setAttribute('data-z3d-origin', nextViewport.getAttribute('data-z3d-origin') || 'none');
+        prevViewport.setAttribute('data-z3d-origin-chosen', nextViewport.getAttribute('data-z3d-origin-chosen') || '0');
+        nextViewport.replaceWith(prevViewport);
+      }
+    }
+
+    if (window.ZoneEcs3D) {
+      try {
+        if (typeof window.ZoneEcs3D.scan === 'function') window.ZoneEcs3D.scan(existing);
+        if (typeof window.ZoneEcs3D.updateStageState === 'function') window.ZoneEcs3D.updateStageState('safehouse-empire', state.snap);
+      } catch (_) {}
+    }
   }
 
   function onRouteOrDomSync() {
@@ -1464,6 +1615,7 @@
 
   function boot() {
     hookCoreGameMethods();
+    bind3DStageClickEvents();
     syncHudBars();
     renderHub();
     refreshAscension(true);

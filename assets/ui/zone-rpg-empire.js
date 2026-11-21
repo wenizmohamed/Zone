@@ -936,6 +936,26 @@
       }
 
       var r = (res && res.result) || res || {};
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+        try {
+          if (domain === 'story') {
+            window.ZoneEcs3D.triggerStageAction('combat-arena', action, r);
+          } else if (domain === 'activities') {
+            if (action === 'wheel.spin') {
+              window.ZoneEcs3D.triggerStageAction('casino-royale', action, r);
+              window.ZoneEcs3D.triggerStageAction('city-wheels-race', action, r);
+            } else if (/^race\.|^hunt\.|^dump\./.test(action)) {
+              window.ZoneEcs3D.triggerStageAction('city-wheels-race', action, r);
+            }
+          } else if (domain === 'empire') {
+            if (action === 'loadout.equipSlot') {
+              window.ZoneEcs3D.triggerStageAction('paperdoll-armory', action, r);
+            } else if (/^oc\.|^war\.|^faction\./.test(action)) {
+              window.ZoneEcs3D.triggerStageAction('combat-arena', action, r);
+            }
+          }
+        } catch (_) {}
+      }
       var rawMsg = isAr()
         ? (r.messageAr || r.summaryAr || r.message || r.summary || '')
         : (r.messageEn || r.message || r.summary || '');
@@ -1234,8 +1254,35 @@
   }
 
   /* ------------------------------------------------------------------------
-   * 8. ROUTE RENDERERS (STRICTLY 1 NATIVE SECTION PER ROUTE)
+   * 8. 3D ITEM SHOWCASES, AVATARS & ROUTE RENDERERS (1 SECTION PER ROUTE)
    * ------------------------------------------------------------------------ */
+  function inferZreItemCategory(itemId, fallbackCat) {
+    var k = String(itemId || '').toLowerCase();
+    if (/xanax|ecstasy|vicodin|cannabis|lsd|epinephrine/.test(k)) return 'drug';
+    if (/bloodbag|blood_bag|morphine|medkit|smallkit|small_medkit|first_aid/.test(k)) return 'medical';
+    if (/edvd|fhc|energy_drink|edrink|candy|skill_xp_book/.test(k)) return 'booster';
+    if (/kevlar|helmet|vest|armor|boots|gloves|greaves/.test(k)) return 'armor';
+    if (/ak|sniper|shotgun|bullpup|assaultrifle|smg|magnum|pistol|revolver|sawedoff|knife|bat|katana|flash_grenade|smoke_grenade|weapon_cache/.test(k)) return 'weapon';
+    if (/glasses|lawyer_card|cut_throat_razor|paint_mask|flashlight|duct_tape|high_speed_drive/.test(k)) return 'enhancer';
+    if (/plush|flower|orchid|gold_bullion|sports_car|civic|silvia|evo|gtr|gt3|valkyrie/.test(k)) return 'contraband';
+    return fallbackCat || 'weapon';
+  }
+
+  function render3dItemShowcase(itemId, cat, title) {
+    var idStr = String(itemId || 'ak');
+    var resolvedCat = inferZreItemCategory(idStr, cat);
+    var lbl = String(title || idStr);
+    return (
+      '<div class="zre-item-3d-row">' +
+        '<div class="z3d-item-slot" data-z3d-item="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '"></div>' +
+        '<button type="button" class="zre-btn zre-3d-inspect-btn" data-zre-act="inspect-3d" data-z3d-inspect="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '" data-z3d-title="' + esc(lbl) + '" aria-label="3D ' + esc(lbl) + '">3D</button>' +
+      '</div>'
+    );
+  }
+
+  function renderInlineAvatar(playerId) {
+    return '<span class="zpa-inline-avatar" data-zpa-avatar="' + esc(playerId || '') + '"></span>';
+  }
 
   /* Route: home -> Compact 1-Row Character Rank & Hold-Level Summary Strip */
   function renderHomeRoute() {
@@ -1417,12 +1464,14 @@
       var sh = shopItems[si];
       var sid = String(sh.id || sh.rewardId || sh.itemId);
       var scost = Number(sh.cost || sh.credits || 25);
+      var shTitle = ar ? (sh.ar || sh.nameAr || sh.nameEn || sh.en || sid) : (sh.en || sh.nameEn || sh.name || sid);
       shopHtml +=
-        '<div class="zre-card">' +
+        '<div class="zre-card" data-zre-armory-item="' + esc(sid) + '">' +
           '<div class="zre-card-top">' +
-            '<span class="zre-card-title">' + esc(ar ? (sh.ar || sh.nameAr || sh.nameEn || sh.en || sid) : (sh.en || sh.nameEn || sh.name || sid)) + '</span>' +
+            '<span class="zre-card-title">' + esc(shTitle) + '</span>' +
             '<bdi class="zre-chip" data-tone="plum">' + scost + ' Cr</bdi>' +
           '</div>' +
+          render3dItemShowcase(sid, null, shTitle) +
           '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="agent-buy" data-id="' + esc(sid) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.buyWithCredits) + ' (' + scost + ' Cr)</button>' +
         '</div>';
     }
@@ -1437,6 +1486,7 @@
           '</div>' +
           '<span class="zre-chip" data-tone="gold">' + esc(st.compactPill) + '</span>' +
         '</header>' +
+        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena"></div>' +
         '<section class="zre-section">' +
           actRibbon +
           chapStrip +
@@ -1646,6 +1696,7 @@
             '<span class="zre-card-title">' + esc(ar ? car.ar : car.en) + '</span>' +
             '<bdi class="zre-chip" data-tone="' + (hasCar ? 'sage' : 'gold') + '">' + (hasCar ? 'Owned ✓' : fmtMoney(car.price)) + '</bdi>' +
           '</div>' +
+          render3dItemShowcase('sports_car', 'contraband', ar ? car.ar : car.en) +
           '<div class="zre-row-actions">' +
             '<button type="button" class="zre-btn" data-variant="' + (hasCar ? '' : 'primary') + '" data-zre-act="race-buy-car" data-car="' + car.id + '" data-owned="' + (hasCar ? '1' : '0') + '"' + (store.busy ? ' disabled' : '') + '>' + esc(hasCar ? 'Select Car' : copy.buyCarBtn) + '</button>' +
           '</div>' +
@@ -1681,6 +1732,7 @@
           '</div>' +
           '<span class="zre-chip" data-tone="plum">RP: <bdi>' + fmtInt(racingPts) + '</bdi></span>' +
         '</header>' +
+        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="casino-royale"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.wheelsTitle) + '</h3></div>' +
           wheelsHtml +
@@ -1739,12 +1791,14 @@
           '</div>' +
           '<span class="zre-chip" data-tone="sage">3 Spots</span>' +
         '</header>' +
+        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="city-wheels-race"></div>' +
         '<div class="zre-grid-3">' +
           '<section class="zre-section">' +
             '<div class="zre-section-head">' +
               '<h3 class="zre-section-title">' + esc(copy.dumpTitle) + '</h3>' +
               '<bdi class="zre-chip" data-tone="gold">Pool: ' + dumpPoolCount + '</bdi>' +
             '</div>' +
+            render3dItemShowcase(store.drafts.dumpItemId || invKeys[0] || 'glasses', null, copy.dumpTitle) +
             '<div class="zre-row-actions">' +
               '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="dump-search"' + (store.busy ? ' disabled' : '') + '>🗑 ' + esc(copy.searchDumpBtn) + '</button>' +
             '</div>' +
@@ -1804,6 +1858,7 @@
             '<span class="zre-card-title">Escrow #' + esc(tid2.slice(0, 8)) + ' ↔ ' + esc(tr2.partnerId || tr2.partnerName || 'Operative') + '</span>' +
             '<span class="zre-chip" data-tone="sage">' + esc(tr2.status || 'open') + '</span>' +
           '</div>' +
+          render3dItemShowcase(store.drafts.tradeItemId || invKeys[0] || 'xanax', null, store.drafts.tradeItemId || invKeys[0] || 'xanax') +
           '<div class="zre-row-actions">' +
             '<input type="number" min="100" class="zre-input zre-input-sm" data-zre-draft="tradeCash" value="' + esc(store.drafts.tradeCash) + '">' +
             '<button type="button" class="zre-btn" data-zre-act="trade-add-cash" data-trade="' + esc(tid2) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.escrowCashBtn) + '</button>' +
@@ -1824,12 +1879,14 @@
     for (var li = 0; li < listings.length; li++) {
       var ls = listings[li];
       var lid = String(ls.id || ls.listingId || ('lst_' + li));
+      var lItemId = String(ls.itemId || ls.name || 'xanax');
       listHtml +=
-        '<div class="zre-card">' +
+        '<div class="zre-card" data-zre-bazaar-item="' + esc(lItemId) + '">' +
           '<div class="zre-card-top">' +
             '<span class="zre-card-title">' + esc(ls.itemId || ls.name || lid) + ' (x' + Number(ls.quantity || 1) + ')</span>' +
             '<bdi class="zre-chip" data-tone="gold">' + fmtMoney(ls.unitPrice || ls.price || 1000) + '</bdi>' +
           '</div>' +
+          render3dItemShowcase(lItemId, null, ls.name || lItemId) +
           '<div class="zre-row-actions">' +
             '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="bazaar-buy" data-listing="' + esc(lid) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.buyBazaarBtn) + '</button>' +
             '<button type="button" class="zre-btn" data-zre-act="bazaar-unlist" data-listing="' + esc(lid) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.unlistBtn) + '</button>' +
@@ -1837,6 +1894,8 @@
         '</div>';
     }
     listHtml += '</div>';
+
+    var draftBazItem = store.drafts.bazaarItemId || invKeys[0] || 'xanax';
 
     return (
       '<div class="zre-workspace" data-zre-feature="bazaars-trades">' +
@@ -1864,6 +1923,7 @@
             '<input type="text" class="zre-input" data-zre-draft="bazaarTagline" value="' + esc(store.drafts.bazaarTagline) + '">' +
             '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="bazaar-toggle" data-open="' + (bzOpen ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.toggleBazaarBtn) + '</button>' +
           '</div>' +
+          render3dItemShowcase(draftBazItem, null, draftBazItem) +
           '<div class="zre-row-actions">' +
             '<select class="zre-select" data-zre-draft="bazaarItemId">' + itemOpts + '</select>' +
             '<input type="number" min="1" class="zre-input zre-input-sm" data-zre-draft="bazaarQty" value="' + esc(store.drafts.bazaarQty) + '">' +
@@ -2018,6 +2078,7 @@
             '<span class="zre-card-title">' + esc(ar ? sl.ar : sl.en) + '</span>' +
             '<span class="zre-chip" data-tone="' + (equippedId ? 'sage' : 'gold') + '">' + esc(equippedId || 'Empty') + '</span>' +
           '</div>' +
+          render3dItemShowcase(chosenDraft, sl.group === 'armor' ? 'armor' : 'weapon', ar ? sl.ar : sl.en) +
           '<div class="zre-row-actions">' +
             '<select class="zre-select" data-zre-draft="slotItem" data-slot="' + sl.slot + '">' + selOpts + '</select>' +
             '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="loadout-equip" data-slot="' + sl.slot + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.equipSlotBtn) + '</button>' +
@@ -2037,6 +2098,7 @@
         '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.loadoutTitle) + '</h3></div>' +
+          '<div class="z3d-action-stage zre-paperdoll-stage" data-z3d-stage="paperdoll-armory"></div>' +
           paperdollHtml +
         '</section>' +
       '</div>'
@@ -2081,7 +2143,7 @@
         rosterHtml +=
           '<div class="zre-card">' +
             '<div class="zre-card-top">' +
-              '<strong>' + esc(mb.username || mid) + '</strong>' +
+              '<strong class="zre-player-inline">' + renderInlineAvatar(mid) + esc(mb.username || mid) + '</strong>' +
               '<span class="zre-chip" data-tone="blue">' + esc(mb.role || 'member') + '</span>' +
             '</div>' +
             '<div class="zre-row-actions">' +
@@ -2175,6 +2237,7 @@
           '</div>' +
           '<span class="zre-chip" data-tone="gold">Vault: <bdi>' + fmtMoney(vaultCash) + '</bdi> · Respect: <bdi>' + fmtInt(respectPool) + '</bdi></span>' +
         '</header>' +
+        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.factionFoundTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +
@@ -2211,6 +2274,7 @@
             '<span class="zre-chip" data-tone="crimson">Our Score: <bdi>' + ourScore + '</bdi> vs Rival: <bdi>' + theirScore + '</bdi></span>' +
           '</div>' +
           '<div class="zre-war-bar"><div class="zre-war-bar-our" style="width:' + ourPct + '%"></div></div>' +
+          render3dItemShowcase('weapon_cache', 'weapon', copy.claimCacheBtn) +
           '<div class="zre-row-actions">' +
             '<button type="button" class="zre-btn" data-zre-act="war-enlist"' + (store.busy ? ' disabled' : '') + '>🚩 ' + esc(copy.enlistWarBtn) + '</button>' +
             '<button type="button" class="zre-btn" data-variant="danger" data-zre-act="war-assault"' + (store.busy ? ' disabled' : '') + '>⚔ ' + esc(copy.assaultWarBtn) + '</button>' +
@@ -2300,7 +2364,24 @@
         '</div>'
       : '';
 
+    var prevStage = sec.querySelector ? sec.querySelector('.z3d-action-stage') : null;
+    var prevStageKind = prevStage && prevStage.getAttribute ? prevStage.getAttribute('data-z3d-stage') : '';
+    var keepLiveStage = Boolean(prevStage && prevStage.querySelector && prevStage.querySelector('canvas'));
+
     sec.innerHTML = fbHtml + renderer();
+
+    if (keepLiveStage && sec.querySelector) {
+      var nextStage = sec.querySelector('.z3d-action-stage[data-z3d-stage="' + prevStageKind + '"]');
+      if (nextStage && typeof nextStage.replaceWith === 'function') {
+        nextStage.replaceWith(prevStage);
+      }
+    }
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(sec); } catch (_) {}
+    }
+    if (window.ZoneProfileAvatar && typeof window.ZoneProfileAvatar.syncMounts === 'function') {
+      try { window.ZoneProfileAvatar.syncMounts(); } catch (_) {}
+    }
   }
 
   function handleDraftInput(ev) {
@@ -2310,7 +2391,27 @@
     if (!key) return;
     if (key === 'slotItem') {
       var slot = el.getAttribute('data-slot');
-      if (slot) store.drafts.slotItem[slot] = el.value;
+      if (slot) {
+        store.drafts.slotItem[slot] = el.value;
+        var slotCard = typeof el.closest === 'function' ? el.closest('[data-loadout-slot]') : null;
+        if (slotCard && slotCard.querySelector) {
+          var sSlot = slotCard.querySelector('.z3d-item-slot');
+          var sBtn = slotCard.querySelector('[data-z3d-inspect]');
+          var sCat = inferZreItemCategory(el.value, 'weapon');
+          if (sSlot) {
+            sSlot.setAttribute('data-z3d-item', el.value);
+            sSlot.setAttribute('data-z3d-cat', sCat);
+          }
+          if (sBtn) {
+            sBtn.setAttribute('data-z3d-inspect', el.value);
+            sBtn.setAttribute('data-z3d-cat', sCat);
+            sBtn.setAttribute('data-z3d-title', el.value);
+          }
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+            try { window.ZoneEcs3D.scan(slotCard); } catch (_) {}
+          }
+        }
+      }
     } else {
       store.drafts[key] = el.value;
     }
@@ -2337,6 +2438,20 @@
   }
 
   function handleActionClick(ev) {
+    var inspectBtn = ev.target && typeof ev.target.closest === 'function'
+      ? ev.target.closest('[data-z3d-inspect]')
+      : null;
+    if (inspectBtn) {
+      ev.preventDefault();
+      var inspId = inspectBtn.getAttribute('data-z3d-inspect');
+      var inspCat = inspectBtn.getAttribute('data-z3d-cat') || '';
+      var inspTitle = inspectBtn.getAttribute('data-z3d-title') || inspId;
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+        try { window.ZoneEcs3D.inspectItem(inspId, { category: inspCat, title: inspTitle }); } catch (_) {}
+      }
+      return;
+    }
+
     var target = ev.target && typeof ev.target.closest === 'function'
       ? ev.target.closest('[data-zre-act]')
       : null;
@@ -2344,6 +2459,14 @@
     ev.preventDefault();
 
     var act = target.getAttribute('data-zre-act');
+    if (act === 'inspect-3d') {
+      var iId = target.getAttribute('data-z3d-inspect') || target.getAttribute('data-id');
+      var iTitle = target.getAttribute('data-z3d-title') || iId;
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+        try { window.ZoneEcs3D.inspectItem(iId, { title: iTitle }); } catch (_) {}
+      }
+      return;
+    }
     if (act === 'go-route') {
       navigateToRoute(target.getAttribute('data-route') || 'missions');
     } else if (act === 'open-tab' || act === 'switch-tab') {

@@ -24,19 +24,28 @@ test('v151 Static & SHA-256 Gate: index.html <body> is 100% byte-identical, v151
 
   const head = rawHtml.subarray(0, bodyIdx).toString('utf8');
   assert.match(head, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'gym116.css?v=117 must remain untouched');
-  assert.match(head, /href="\.\/assets\/ui\/zone-ascension-breakthrough\.css\?v=151"/);
-  assert.match(head, /src="\.\/assets\/ui\/zone-ascension-breakthrough\.js\?v=151"/);
-  assert.doesNotMatch(head, /\?v=150\b/, 'All ?v=150 head references must be bumped to ?v=151');
+  const zabCssVer = Number(head.match(/href="\.\/assets\/ui\/zone-ascension-breakthrough\.css\?v=(\d+)"/)?.[1] || 0);
+  const zabJsVer = Number(head.match(/src="\.\/assets\/ui\/zone-ascension-breakthrough\.js\?v=(\d+)"/)?.[1] || 0);
+  assert.ok(zabCssVer >= 151, `zone-ascension-breakthrough.css v${zabCssVer} >= 151`);
+  assert.ok(zabJsVer >= 151, `zone-ascension-breakthrough.js v${zabJsVer} >= 151`);
+  assert.doesNotMatch(head, /\?v=150\b/, 'All ?v=150 head references must be bumped to >= 151');
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v151['"]/);
-  assert.match(swSrc, /zone-ascension-breakthrough\.css\?v=151/);
-  assert.match(swSrc, /zone-ascension-breakthrough\.js\?v=151/);
+  const swShellVer = Number(swSrc.match(/SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v(\d+)['"]/)?.[1] || 0);
+  assert.ok(swShellVer >= 151, `SHELL_CACHE_NAME zone-shell-v${swShellVer} >= 151`);
+  assert.ok(Number(swSrc.match(/zone-ascension-breakthrough\.css\?v=(\d+)/)?.[1] || 0) >= 151);
+  assert.ok(Number(swSrc.match(/zone-ascension-breakthrough\.js\?v=(\d+)/)?.[1] || 0) >= 151);
 
-  const css = readUtf8('assets/ui/zone-ascension-breakthrough.css');
-  const opens = (css.match(/\{/g) || []).length;
-  const closes = (css.match(/\}/g) || []).length;
-  assert.equal(opens, closes, 'zone-ascension-breakthrough.css braces must be balanced');
+  for (const cssRel of [
+    'assets/ui/zone-ascension-breakthrough.css',
+    'assets/ui/zone-torn-live.css',
+    'assets/ui/zone-rpg-empire.css'
+  ]) {
+    const css = readUtf8(cssRel);
+    const opens = (css.match(/\{/g) || []).length;
+    const closes = (css.match(/\}/g) || []).length;
+    assert.equal(opens, closes, `${cssRel} braces must be balanced`);
+  }
 
   for (const jsRel of [
     'assets/ui/zone-ascension-breakthrough.js',
@@ -86,7 +95,9 @@ test('v151 Breakthrough Progression UX Gate: Arcade->Casino, Origin Awakening, 6
     '.jpg': 'image/jpeg',
     '.webp': 'image/webp',
     '.woff2': 'font/woff2',
-    '.glb': 'model/gltf-binary'
+    '.glb': 'model/gltf-binary',
+    '.obj': 'text/plain; charset=utf-8',
+    '.mtl': 'text/plain; charset=utf-8'
   };
 
   const nowSec = Math.floor(Date.now() / 1000);
@@ -423,73 +434,100 @@ test('v151 Breakthrough Progression UX Gate: Arcade->Casino, Origin Awakening, 6
     page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
 
     await page.goto(`http://127.0.0.1:${port}/?screen=home&lang=en`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#zig-home-arcade', { timeout: 10000 });
+    await page.waitForSelector('#zone-ascension-hub [data-z3d-stage="safehouse-empire"]', { timeout: 10000 });
     await page.waitForSelector('#zone-ascension-hub [data-zab-section="origin-awakening"]', { timeout: 10000 });
     await page.waitForSelector('#zone-topbar-hud', { timeout: 10000 });
 
-    // Verify Arcade is NOT on Home, Sidebar lock pills exist for Lv 1, and #1042 is replaced with real short ID
+    // Verify Syndicate Arcade IS restored at the top of Home ABOVE compact 2-column 3D Command Deck
     const initialHome = await page.evaluate(() => {
+      const brief = document.querySelector('#zone-main .zone-home-brief');
       const arcade = document.getElementById('zig-home-arcade');
+      const hub = document.getElementById('zone-ascension-hub');
+      const arcadeRect = arcade ? arcade.getBoundingClientRect() : null;
+      const hubRect = hub ? hub.getBoundingClientRect() : null;
+      const briefRect = brief ? brief.getBoundingClientRect() : null;
       const lockPills = Array.from(document.querySelectorAll('#zone-area-navigation .zab-nav-lock-pill')).map((el) => el.textContent.trim());
       const opId = document.querySelector('#zone-operative-crest .zaaa-op-id')?.textContent.trim() || '';
       const topbar = document.querySelector('.zone-topbar').getBoundingClientRect();
       const strip = document.getElementById('zone-torn-hud-strip')?.getBoundingClientRect();
       const headerH = strip ? Math.max(topbar.bottom, strip.bottom) - Math.min(topbar.top, strip.top) : topbar.height;
+      const drawer = hub?.querySelector('details.zab-dossier-drawer');
       return {
-        arcadeOnHome: Boolean(arcade && getComputedStyle(arcade).display !== 'none'),
+        arcadeOnHome: Boolean(arcade && getComputedStyle(arcade).display !== 'none' && arcadeRect.height > 80),
+        arcadeGameCards: arcade ? arcade.querySelectorAll('[data-zig-launch]').length : 0,
+        arcadeTop: arcadeRect ? arcadeRect.top : 0,
+        hubTop: hubRect ? hubRect.top : 0,
+        hubHeight: hubRect ? hubRect.height : 0,
+        briefTop: briefRect ? briefRect.top : 0,
+        hasSafehouse3D: Boolean(hub?.querySelector('[data-z3d-stage="safehouse-empire"]')),
+        originCards: document.querySelectorAll('#zone-ascension-hub [data-zab-origin-card]').length,
+        origin3DSlots: document.querySelectorAll('#zone-ascension-hub [data-zab-origin-card] .z3d-item-slot[data-z3d-item]').length,
+        eraSteps: document.querySelectorAll('#zone-ascension-hub [data-zab-era-step]').length,
+        hasLunaComms: Boolean(document.querySelector('#zone-ascension-hub [data-zab-section="luna-comms"]')),
+        hasUploadAvatarBtn: Boolean(document.querySelector('#zone-ascension-hub [data-zab-upload-avatar="1"]')),
+        dossierClosedByDefault: Boolean(drawer && drawer.open === false),
+        crewSlots: document.querySelectorAll('#zone-ascension-hub [data-zab-crew-slot]').length,
         lockPills,
         opId,
         headerH,
-        originCards: document.querySelectorAll('[data-zab-origin-card]').length,
-        eraSteps: document.querySelectorAll('[data-zab-era-step]').length,
-        hasLunaComms: Boolean(document.querySelector('[data-zab-section="luna-comms"]')),
-        hasNemesis: Boolean(document.querySelector('[data-zab-section="nemesis-rival"]')),
-        crewSlots: document.querySelectorAll('[data-zab-crew-slot]').length,
         overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
       };
     });
 
-    assert.equal(initialHome.arcadeOnHome, false, 'Syndicate Arcade must NOT appear on Home');
+    assert.equal(initialHome.arcadeOnHome, true, 'Syndicate Arcade (#zig-home-arcade) MUST be restored and visible on Home');
+    assert.equal(initialHome.arcadeGameCards, 4, 'All 4 60fps instant arcade games rendered on Home');
+    assert.ok(initialHome.arcadeTop < initialHome.hubTop, `Syndicate Arcade (${initialHome.arcadeTop}px) sits ABOVE #zone-ascension-hub (${initialHome.hubTop}px)`);
+    assert.ok(initialHome.hubHeight <= 480, `Compact 2-column 3D Command Deck height (${initialHome.hubHeight.toFixed(1)}px) <= 480px (no 1,600px text wall!)`);
+    assert.equal(initialHome.hasSafehouse3D, true, 'Safehouse-empire 3D viewport mounted in Column 1');
     assert.ok(initialHome.headerH <= 96, `Desktop header height ${initialHome.headerH}px <= 96px`);
-    assert.equal(initialHome.originCards, 4, 'All 4 Underworld Origin cards rendered');
-    assert.equal(initialHome.eraSteps, 6, 'All 6 Ascension Era steps rendered');
-    assert.equal(initialHome.hasLunaComms, true, 'Luna Encrypted Comms card rendered');
-    assert.equal(initialHome.hasNemesis, true, 'Living Nemesis Wanted card rendered');
-    assert.equal(initialHome.crewSlots, 5, 'All 5 Street Crew specialist slots rendered');
+    assert.equal(initialHome.originCards, 4, 'All 4 Underworld Origin tiles rendered');
+    assert.equal(initialHome.origin3DSlots, 4, 'All 4 Origin tiles render 3D item meshes (knife, bat, gold_bullion, xanax)');
+    assert.equal(initialHome.eraSteps, 6, 'All 6 compact Era Crest Badges rendered');
+    assert.equal(initialHome.hasLunaComms, true, 'Luna · Syndicate Architect Holo-Card rendered');
+    assert.equal(initialHome.hasUploadAvatarBtn, true, '[Upload Avatar] quick-trigger rendered in Luna Holo-Card');
+    assert.equal(initialHome.dossierClosedByDefault, true, 'Full Crew Roster & 6-Era Dossier drawer is collapsed by default');
+    assert.equal(initialHome.crewSlots, 5, 'All 5 Street Crew specialist slots accessible inside dossier drawer');
     assert.ok(initialHome.lockPills.includes('Lv 3') && initialHome.lockPills.includes('Lv 5') && initialHome.lockPills.includes('Lv 10') && initialHome.lockPills.includes('Lv 15'), `Lv 1 sidebar lock pills rendered: ${initialHome.lockPills.join(', ')}`);
     assert.notEqual(initialHome.opId, '#1042', `Operative ID replaced #1042 with real short ID (${initialHome.opId})`);
     assert.equal(initialHome.overflowX, 0, 'Zero horizontal overflow on Home');
 
-    // Open interactive Origin Modal, fill Callsign, Awaken as Harbor Ghost -> verify 0ms Topbar Cash sync ($2,500 -> $6,500)
-    await page.click('[data-zab-open-modal="1"]');
-    await page.waitForSelector('#zone-origin-awakening-modal:not([hidden])');
-    await page.fill('#zab-callsign-modal-input', 'GhostWeni');
-    await page.click('#zone-origin-awakening-modal [data-zab-origin-id="harbor_ghost"]');
-    await page.waitForFunction(() => !document.querySelector('[data-zab-section="origin-awakening"]'), { timeout: 5000 });
+    // Fill inline Callsign & Awaken as Harbor Ghost directly from 3D Action Strip -> verify 0ms Topbar Cash sync ($2,500 -> $6,500)
+    await page.fill('#zab-callsign-input', 'GhostWeni');
+    await page.click('#zone-ascension-hub [data-zab-action="origin.select"][data-zab-origin-id="harbor_ghost"]');
+    await page.waitForFunction(() => Boolean(document.querySelector('#zone-ascension-hub [data-zab-section="nemesis-rival"]')), { timeout: 5000 });
 
     const afterOrigin = await page.evaluate(() => ({
       topbarCash: document.querySelector('#zone-topbar-hud .zaaa-hud-cash')?.textContent.trim(),
       sidebarCash: document.getElementById('zone-cash')?.textContent.trim(),
       opName: document.querySelector('#zone-operative-crest .zaaa-op-name')?.textContent.trim(),
-      claimBtn: Boolean(document.querySelector('[data-zab-action="luna.claimDirective"]'))
+      claimBtn: Boolean(document.querySelector('[data-zab-action="luna.claimDirective"]')),
+      hasNemesisPill: Boolean(document.querySelector('[data-zab-section="nemesis-rival"]')),
+      hasCrewCollectBtn: Boolean(document.querySelector('[data-zab-action="crew.collect"]'))
     }));
     assert.equal(afterOrigin.topbarCash, '$6,500', 'Topbar cash updated immediately to $6,500 after origin.select');
     assert.equal(afterOrigin.sidebarCash, '$6,500', 'Sidebar cash updated immediately to $6,500');
     assert.equal(afterOrigin.opName, 'GhostWeni', 'Callsign synced to operative crest');
     assert.equal(afterOrigin.claimBtn, true, 'Directive #1 Claim button unlocked');
+    assert.equal(afterOrigin.hasNemesisPill, true, '3D Nemesis HUD pill active after awakening');
+    assert.equal(afterOrigin.hasCrewCollectBtn, true, '3D Street Crew HUD pill [Collect] button mounted');
 
-    // Claim Luna Directive #1 -> Recruit Lookout -> Collect Turf Tribute -> Track Intel -> Confront Nemesis (Lv 1 -> Lv 3 Milestone Banner!)
+    // Claim Luna Directive #1 -> 1-Click Recruit Lookout -> Collect Turf Tribute -> 3D Stage Click Nemesis -> Confront Nemesis (Lv 1 -> Lv 3!)
     await page.click('[data-zab-action="luna.claimDirective"]');
     await page.waitForFunction(() => document.querySelector('#zone-topbar-hud .zaaa-hud-cash')?.textContent.trim() === '$8,000');
 
-    await page.click('[data-zab-action="crew.recruit"][data-zab-slot-id="lookout"]');
+    await page.click('[data-zab-crew-quick="1"]');
     await page.waitForFunction(() => document.querySelector('#zone-topbar-hud .zaaa-hud-cash')?.textContent.trim() === '$6,500');
-    await page.click('[data-zab-action="crew.collectTribute"]');
+    await page.click('[data-zab-action="crew.collect"]');
     await page.waitForFunction(() => document.querySelector('#zone-topbar-hud .zaaa-hud-cash')?.textContent.trim() === '$6,650');
 
-    await page.click('[data-zab-action="nemesis.gatherIntel"]');
+    // Verify clicking the 3D Nemesis inside Three.js stage (`zone:3d-stage-click`) dispatches real `nemesis.gatherIntel`
+    await page.evaluate(() => {
+      window.dispatchEvent(new CustomEvent('zone:3d-stage-click', { detail: { stage: 'safehouse-empire', target: 'nemesis' } }));
+    });
     await page.waitForFunction(() => document.querySelector('[data-zab-nemesis-intel="1"]')?.textContent.trim() === '100%');
     const energyAfterIntel = await page.evaluate(() => document.querySelector('#zone-topbar-hud .zaaa-hud-energy')?.textContent.trim());
-    assert.equal(energyAfterIntel, '95/100', 'Topbar Energy updated immediately after Track Intel (5E)');
+    assert.equal(energyAfterIntel, '95/100', 'Topbar Energy updated immediately after 3D Nemesis stage click (5E)');
 
     await page.click('[data-zab-action="nemesis.confront"]');
     await page.waitForSelector('#zone-levelup-milestone-banner:not([hidden])', { timeout: 5000 });
@@ -502,25 +540,34 @@ test('v151 Breakthrough Progression UX Gate: Arcade->Casino, Origin Awakening, 6
     assert.equal(afterLevelUp.topbarCash, '$14,650', 'Nemesis bounty cash synced to Topbar immediately');
     assert.equal(afterLevelUp.casinoLockGone, true, 'Lv 3 lock pill removed from Casino once player reaches Level 3');
 
-    // Click Luna Directive "Go Execute ->" to jump straight to Crimes & verify Unified Crimes screen + 0ms Nerve/Cash sync
-    sim.nemesisDefeated = false; // re-enable heat tax to verify warning banner on Crimes
+    // Click Luna Directive "Go Execute ->" to jump straight to Crimes & verify 3D Heist Stage + 3D Enhancers + Locked Crime Gates!
+    sim.nemesisDefeated = false;
     await page.evaluate(() => window.ZoneAscension.refresh(true));
     await page.waitForTimeout(100);
     await page.click('[data-zab-go-route="crimes"]');
     await page.waitForSelector('#zone-torn-route-section[data-ztl-route="crimes"]', { timeout: 5000 });
 
-    const crimesCheck = await page.evaluate(() => ({
-      shopliftBoxes: document.querySelectorAll('[data-ztl-act="shoplift"]').length,
-      searchSubBoxes: document.querySelectorAll('[data-ztl-act="search-cash"]').length,
-      legacyNavHidden: getComputedStyle(document.querySelector('.zone-crime-activity-nav')).display === 'none',
-      crimeCards: document.querySelectorAll('[data-ztl-crime-card]').length,
-      nemesisWarn: Boolean(document.querySelector('[data-zab-crimes-nemesis="1"]')),
-      overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
-    }));
-    assert.equal(crimesCheck.shopliftBoxes, 0, 'Redundant Shoplifting sub-boxes removed below Crimes 2.0');
-    assert.equal(crimesCheck.searchSubBoxes, 0, 'Redundant Search for Cash sub-boxes removed below Crimes 2.0');
-    assert.equal(crimesCheck.legacyNavHidden, true, 'Duplicate legacy crime picker collapsed cleanly');
+    const crimesCheck = await page.evaluate(() => {
+      const lockedCard13Btn = document.querySelector('[data-ztl-crime-card="13"] button[data-ztl-act="crime2"]');
+      return {
+        hasHeistStage: Boolean(document.querySelector('#zone-torn-route-section [data-z3d-stage="heist-breach"]')),
+        crimeCards: document.querySelectorAll('[data-ztl-crime-card]').length,
+        crime3DSlots: document.querySelectorAll('[data-ztl-crime-card] .z3d-item-slot[data-z3d-item]').length,
+        lockedBtnDisabled: Boolean(lockedCard13Btn && lockedCard13Btn.disabled),
+        lockedBtnLabel: lockedCard13Btn ? lockedCard13Btn.textContent.trim() : '',
+        lockedBtnNotPrimary: lockedCard13Btn ? lockedCard13Btn.getAttribute('data-variant') !== 'primary' : false,
+        legacyNavHidden: getComputedStyle(document.querySelector('.zone-crime-activity-nav')).display === 'none',
+        nemesisWarn: Boolean(document.querySelector('[data-zab-crimes-nemesis="1"]')),
+        overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+      };
+    });
+    assert.equal(crimesCheck.hasHeistStage, true, 'Crimes mounts live 3D heist-breach stage');
     assert.equal(crimesCheck.crimeCards, 13, 'Unified 13-Tier Crime Progression Ladder rendered');
+    assert.equal(crimesCheck.crime3DSlots, 13, 'All 13 Crime cards display 3D enhancer tool meshes');
+    assert.equal(crimesCheck.lockedBtnDisabled, true, 'Locked crime button (#13 at Lv 3) is disabled');
+    assert.match(crimesCheck.lockedBtnLabel, /Locked · Lv 14/, 'Locked crime button shows Locked · Lv 14 instead of Commit');
+    assert.equal(crimesCheck.lockedBtnNotPrimary, true, 'Locked crime button does NOT use bright green primary variant');
+    assert.equal(crimesCheck.legacyNavHidden, true, 'Duplicate legacy crime picker collapsed cleanly');
     assert.equal(crimesCheck.nemesisWarn, true, 'Nemesis Heat-Tax skim warning displayed on Crimes');
     assert.equal(crimesCheck.overflowX, 0, 'Zero horizontal overflow on Crimes');
 
@@ -529,7 +576,7 @@ test('v151 Breakthrough Progression UX Gate: Arcade->Casino, Origin Awakening, 6
     const cashAfterCrime = await page.evaluate(() => document.querySelector('#zone-topbar-hud .zaaa-hud-cash')?.textContent.trim());
     assert.equal(cashAfterCrime, '$15,300', 'Topbar Nerve (13/15) & Cash ($15,300) synced in 0ms after committing Crime');
 
-    // Navigate to Casino -> verify Syndicate Arcade IS mounted & visible on Casino!
+    // Navigate to Casino -> verify Syndicate Arcade IS ALSO mounted & visible on Casino + 3D Casino Royale stage!
     await page.evaluate(() => window.__zoneGame.go('casino'));
     await page.waitForSelector('#zone-main[data-zone-screen="casino"] #zig-home-arcade', { timeout: 5000 });
     const casinoCheck = await page.evaluate(() => {
@@ -537,11 +584,23 @@ test('v151 Breakthrough Progression UX Gate: Arcade->Casino, Origin Awakening, 6
       const r = arc ? arc.getBoundingClientRect() : { height: 0 };
       return {
         visible: Boolean(arc && getComputedStyle(arc).display !== 'none' && r.height > 80),
+        hasCasinoStage: Boolean(document.querySelector('#zone-main [data-z3d-stage="casino-royale"]')),
         overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
       };
     });
     assert.equal(casinoCheck.visible, true, 'Syndicate Arcade cleanly mounted and visible on Casino');
+    assert.equal(casinoCheck.hasCasinoStage, true, 'Casino mounts live 3D casino-royale stage');
     assert.equal(casinoCheck.overflowX, 0, 'Zero horizontal overflow on Casino');
+
+    // Navigate to Attack -> verify #ztl-attack-3d-stage (combat-arena) is mounted while #zone-torn-route-section remains null!
+    await page.evaluate(() => window.__zoneGame.go('attack'));
+    await page.waitForSelector('#zone-main[data-zone-screen="attack"] #ztl-attack-3d-stage[data-z3d-stage="combat-arena"]', { timeout: 5000 });
+    const attackCheck = await page.evaluate(() => ({
+      hasArenaStage: Boolean(document.querySelector('#ztl-attack-3d-stage[data-z3d-stage="combat-arena"]')),
+      noTornRouteSec: document.getElementById('zone-torn-route-section') === null
+    }));
+    assert.equal(attackCheck.hasArenaStage, true, 'Attack mounts live 3D combat-arena stage');
+    assert.equal(attackCheck.noTornRouteSec, true, 'Attack keeps #zone-torn-route-section null');
 
     // Navigate to Faction -> verify ZERO contradictory "fixed for this beta" text visible & unified HQ rendered
     await page.evaluate(() => window.__zoneGame.go('faction'));

@@ -628,6 +628,9 @@
         var exists = store.directory.some(function (p) { return String(p.id) === String(data.id); });
         if (!exists) store.directory = [data].concat(store.directory);
       }
+      if (window.ZoneProfileAvatar && typeof window.ZoneProfileAvatar.ingestDirectory === 'function') {
+        try { window.ZoneProfileAvatar.ingestDirectory(store.directory); } catch (_) {}
+      }
       return data;
     } catch (_) {
       return null;
@@ -939,6 +942,9 @@
         store.lastCrimeOutcome = { crimeId: String(id), tier: rawTier, text: summary, loot: loot, at: Date.now() };
         var tone = rawTier.indexOf('UNIQUE') >= 0 ? 'unique' : (rawTier.indexOf('CRITICAL') >= 0 ? 'bad' : (rawTier === 'FAIL' ? 'warn' : 'sage'));
         setFeedback(summary, tone);
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+          try { window.ZoneEcs3D.triggerStageAction('heist-breach', 'crime', res); } catch (_) {}
+        }
         if (window.ZoneAscension && typeof window.ZoneAscension.refresh === 'function') {
           try { window.ZoneAscension.refresh(false); } catch (_) {}
         }
@@ -1015,6 +1021,9 @@
       else await loadFactionChainState();
       await loadGameplayState();
       var r = (data && data.result) || {};
+      if ((payload.action === 'wall.join' || payload.action === 'wall.assault') && window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+        try { window.ZoneEcs3D.triggerStageAction('combat-arena', payload.action, r); } catch (_) {}
+      }
       var note = (data && data.message) ||
         (payload.action + (r.scoreDelta ? (' · +' + r.scoreDelta + ' Wall') : '') + (r.respectAwarded ? (' · +' + r.respectAwarded + ' Respect') : ''));
       setFeedback(note, 'sage');
@@ -1139,12 +1148,42 @@
       try { g.setCombatMode('players'); } catch (_) {}
     }
     navigateToScreen('attack');
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try { window.ZoneEcs3D.triggerStageAction('combat-arena', 'attack', { targetId: profile.id, targetName: profile.username }); } catch (_) {}
+    }
     setFeedback('Opened PvP Combat Arena targeting ' + (profile.username || profile.id) + '.', 'gold');
   }
 
   /* ------------------------------------------------------------------------
-   * 7. ROUTE-SCOPED NATIVE WATERCOLOR SECTION RENDERERS (9 ROUTES ONLY)
+   * 7. 3D ITEM SHOWCASE, AVATAR BADGES & ROUTE-SCOPED WATERCOLOR RENDERERS
    * ------------------------------------------------------------------------ */
+  function inferZtlItemCategory(itemId, fallbackCat) {
+    var k = String(itemId || '').toLowerCase();
+    if (/xanax|ecstasy|vicodin|cannabis|lsd|epinephrine/.test(k)) return 'drug';
+    if (/bloodbag|blood_bag|morphine|medkit|smallkit|small_medkit|first_aid/.test(k)) return 'medical';
+    if (/edvd|fhc|energy_drink|edrink|candy/.test(k)) return 'booster';
+    if (/kevlar|helmet|vest|armor|boots|gloves_tac|pants_tac/.test(k)) return 'armor';
+    if (/pistol|revolver|ak|sniper|shotgun|smg|rifle|flash_grenade|smoke_grenade|knife|bat|katana/.test(k)) return 'weapon';
+    if (/glasses|high_speed_drive|paint_mask|mountain_bike|cut_throat_razor|duct_tape|flashlight|megaphone|latex_gloves|office_chair|magnifying_glass|ergonomic_keyboard|windproof_lighter|lawyer_card/.test(k)) return 'enhancer';
+    if (/plush|flower|orchid|lotus|peony|cherry|violet|tribulus|gold_bullion|snow_globe/.test(k)) return 'contraband';
+    return fallbackCat || 'contraband';
+  }
+
+  function render3dItemShowcase(itemId, cat, title) {
+    var idStr = String(itemId || 'medkit');
+    var resolvedCat = inferZtlItemCategory(idStr, cat);
+    var lbl = String(title || idStr);
+    return (
+      '<div class="ztl-item-3d-row">' +
+        '<div class="z3d-item-slot" data-z3d-item="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '"></div>' +
+        '<button type="button" class="ztl-btn ztl-3d-inspect-btn" data-ztl-act="inspect-3d" data-z3d-inspect="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '" data-z3d-title="' + esc(lbl) + '" aria-label="3D ' + esc(lbl) + '">3D</button>' +
+      '</div>'
+    );
+  }
+
+  function renderInlineAvatar(playerId) {
+    return '<span class="zpa-inline-avatar" data-zpa-avatar="' + esc(playerId || '') + '"></span>';
+  }
   function renderFeedbackHtml() {
     if (!store.feedback) return '';
     return (
@@ -1246,12 +1285,25 @@
         ? (ar ? ('مفتوح · م ' + reqLv) : ('Tier Lv ' + reqLv))
         : (ar ? ('مقفل · م ' + reqLv) : ('Unlocks Lv ' + reqLv));
 
+      var commitBtnHtml = isTierOpen
+        ? (
+            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="crime2" data-id="' + c.id + '"' + (store.busy ? ' disabled' : '') + '>' +
+              esc(copy.commitCrime) + ' <bdi>(' + nerveCost + 'N)</bdi>' +
+            '</button>'
+          )
+        : (
+            '<button type="button" class="ztl-btn ztl-btn-locked" data-ztl-act="crime2" data-id="' + c.id + '" disabled aria-disabled="true">' +
+              esc(ar ? ('مقفل · م ' + reqLv) : ('Locked · Lv ' + reqLv)) +
+            '</button>'
+          );
+
       cardsHtml +=
         '<article class="ztl-card" data-ztl-crime-card="' + c.id + '" data-ztl-crime-unlocked="' + (isTierOpen ? '1' : '0') + '">' +
           '<div class="ztl-card-top">' +
             '<span class="ztl-card-title"><bdi>#' + c.id + '</bdi> ' + esc(title) + '</span>' +
             '<bdi class="ztl-chip" data-tone="crimson">' + nerveCost + 'N</bdi>' +
           '</div>' +
+          render3dItemShowcase(enhId, 'enhancer', enhLabel) +
           '<div class="ztl-row-actions">' +
             '<span class="ztl-chip" data-tone="' + (isTierOpen ? 'sage' : 'crimson') + '">' + esc(gateBadge) + '</span>' +
             '<span class="ztl-chip" data-tone="' + (hasEnh ? 'sage' : 'gold') + '">' +
@@ -1263,9 +1315,7 @@
             '<div class="ztl-meter-track"><div class="ztl-meter-fill" style="width:' + skillVal + '%"></div></div>' +
           '</div>' +
           '<div class="ztl-row-actions">' +
-            '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="crime2" data-id="' + c.id + '"' + (store.busy ? ' disabled' : '') + '>' +
-              esc(copy.commitCrime) + ' <bdi>(' + nerveCost + 'N)</bdi>' +
-            '</button>' +
+            commitBtnHtml +
             (!hasEnh
               ? '<button type="button" class="ztl-btn" data-ztl-act="buy-item" data-id="' + esc(enhId) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.buyEnh) + '</button>'
               : '') +
@@ -1276,6 +1326,7 @@
 
     return (
       '<div class="ztl-workspace" data-workspace="crimes">' +
+        '<div class="z3d-action-stage ztl-3d-stage" data-z3d-stage="heist-breach"></div>' +
         outcomeHtml +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.crimesTitle) + '</h3><span class="ztl-section-note">' + esc(copy.crimesNote) + '</span></div>' +
@@ -1308,6 +1359,7 @@
             '<span class="ztl-card-title">' + esc(ar ? it.ar : it.en) + '</span>' +
             '<bdi class="ztl-chip" data-tone="' + (owned > 0 ? 'sage' : 'gold') + '">' + esc(copy.ownedLbl) + ': ' + owned + '</bdi>' +
           '</div>' +
+          render3dItemShowcase(it.id, it.kind, ar ? it.ar : it.en) +
           '<div class="ztl-card-meta">' + esc(ar ? it.effAr : it.effEn) + ' · ' + esc(ar ? it.cdAr : it.cdEn) + (it.odPct !== '0%' ? (' · OD ' + it.odPct) : '') + '</div>' +
           '<div class="ztl-row-actions">' +
             '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="use-pharm" data-action="' + it.action + '" data-id="' + (it.actionArg || it.id) + '"' + ((owned <= 0 || cdBlocked || store.busy) ? ' disabled' : '') + '>' +
@@ -1565,6 +1617,7 @@
               '<span class="ztl-card-title">' + esc(itemName) + '</span>' +
               '<bdi class="ztl-chip" data-tone="' + (stockQty > 0 ? 'sage' : 'crimson') + '">' + esc(copy.stockLeft) + ': ' + stockQty + '</bdi>' +
             '</div>' +
+            render3dItemShowcase(itemId, 'contraband', itemName) +
             '<div class="ztl-card-meta"><bdi>' + fmtMoney(unitPrice) + '</bdi></div>' +
             '<div class="ztl-row-actions">' +
               '<input type="number" min="1" max="19" class="ztl-input ztl-stock-qty" data-ztl-draft="foreignQty" data-item="' + esc(itemId) + '" value="' + esc(fQty) + '" aria-label="Quantity">' +
@@ -1661,11 +1714,13 @@
           '<div class="ztl-grid-cards">' +
             '<div class="ztl-card">' +
               '<div class="ztl-card-top"><span class="ztl-card-title">' + esc(copy.plushieSetTitle) + '</span><bdi class="ztl-chip" data-tone="gold">' + plushCount + ' / 6</bdi></div>' +
+              render3dItemShowcase('plush_lion', 'contraband', copy.plushieSetTitle) +
               '<div class="ztl-row-actions">' + plushChips + '</div>' +
               '<button type="button" class="ztl-btn" data-variant="gold" data-ztl-act="museum-exchange" data-id="plushies"' + (!hasHist || plushCount < 6 || store.busy ? ' disabled' : '') + '>' + esc(copy.exchangePlushBtn) + '</button>' +
             '</div>' +
             '<div class="ztl-card">' +
               '<div class="ztl-card-top"><span class="ztl-card-title">' + esc(copy.flowerSetTitle) + '</span><bdi class="ztl-chip" data-tone="gold">' + flowerCount + ' / 6</bdi></div>' +
+              render3dItemShowcase('flower_orchid', 'contraband', copy.flowerSetTitle) +
               '<div class="ztl-row-actions">' + flowerChips + '</div>' +
               '<button type="button" class="ztl-btn" data-variant="gold" data-ztl-act="museum-exchange" data-id="flowers"' + (!hasHist || flowerCount < 6 || store.busy ? ' disabled' : '') + '>' + esc(copy.exchangeFlowerBtn) + '</button>' +
             '</div>' +
@@ -1699,7 +1754,7 @@
         var hp = realPatients[hi];
         patientsHtml +=
           '<div class="ztl-card" data-ztl-ward-patient="' + esc(hp.id) + '">' +
-            '<div class="ztl-card-title">' + esc(hp.username || hp.name || hp.id) + ' <bdi>Lv.' + (hp.level || hp.lvl || 1) + '</bdi></div>' +
+            '<div class="ztl-card-title">' + renderInlineAvatar(hp.id) + esc(hp.username || hp.name || hp.id) + ' <bdi>Lv.' + (hp.level || hp.lvl || 1) + '</bdi></div>' +
             '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="revive-player" data-id="' + esc(hp.id) + '"' + (store.busy ? ' disabled' : '') + '>' +
               esc(copy.reviveBtn) + ' <bdi>(' + revCost + 'E)</bdi>' +
             '</button>' +
@@ -1719,6 +1774,7 @@
             '<span class="ztl-card-title">' + esc(ar ? it.ar : it.en) + '</span>' +
             '<bdi class="ztl-chip" data-tone="' + (owned > 0 ? 'sage' : 'gold') + '">' + esc(copy.ownedLbl) + ': ' + owned + '</bdi>' +
           '</div>' +
+          render3dItemShowcase(it.id, 'medical', ar ? it.ar : it.en) +
           '<div class="ztl-card-meta">' + esc(ar ? it.effAr : it.effEn) + ' · ' + esc(ar ? it.cdAr : it.cdEn) + '</div>' +
           '<div class="ztl-row-actions">' +
             '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="use-pharm" data-action="' + it.action + '" data-id="' + (it.actionArg || it.id) + '"' + ((owned <= 0 || medBlocked || store.busy) ? ' disabled' : '') + '>' + esc(copy.useBtn) + '</button>' +
@@ -1774,6 +1830,7 @@
             '<h3 class="ztl-section-title">' + esc(copy.jailLegalTitle) + '</h3>' +
             '<bdi class="ztl-chip" data-tone="' + (owned > 0 ? 'sage' : 'gold') + '">' + esc(copy.ownedLbl) + ': ' + owned + '</bdi>' +
           '</div>' +
+          render3dItemShowcase(LAWYER_CARD_SPEC.id, 'enhancer', ar ? LAWYER_CARD_SPEC.ar : LAWYER_CARD_SPEC.en) +
           '<span class="ztl-section-note">' + esc(ar ? LAWYER_CARD_SPEC.effAr : LAWYER_CARD_SPEC.effEn) + '</span>' +
           '<div class="ztl-row-actions">' +
             '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="use-pharm" data-action="torn.lawyerCard" data-id="release"' + (owned <= 0 || store.busy ? ' disabled' : '') + '>' +
@@ -1828,6 +1885,7 @@
             '<span class="ztl-card-title">' + esc(ar ? ad.ar : ad.en) + '</span>' +
             '<bdi class="ztl-chip" data-tone="blue">Armory: ' + fStock + '</bdi>' +
           '</div>' +
+          render3dItemShowcase(ad.id, inferZtlItemCategory(ad.id, 'medical'), ar ? ad.ar : ad.en) +
           '<span class="ztl-card-meta">' + esc(copy.ownedLbl) + ': <bdi>' + pOwned + '</bdi></span>' +
           '<div class="ztl-row-actions">' +
             '<button type="button" class="ztl-btn" data-ztl-act="armory-deposit" data-id="' + ad.id + '"' + (pOwned < 1 || store.busy ? ' disabled' : '') + '>' + esc(copy.depositArmory) + '</button>' +
@@ -1896,7 +1954,7 @@
         var isSel = store.selectedProfile && String(store.selectedProfile.id) === String(p.id);
         dirRowsHtml +=
           '<button type="button" class="ztl-dir-item' + (isSel ? ' is-selected' : '') + '" data-ztl-act="select-profile" data-id="' + esc(p.id) + '">' +
-            '<span><strong>' + esc(p.username || p.name || p.id) + '</strong> <bdi>Lv.' + (p.level || 1) + '</bdi></span>' +
+            '<span class="ztl-player-inline">' + renderInlineAvatar(p.id) + '<strong>' + esc(p.username || p.name || p.id) + '</strong> <bdi>Lv.' + (p.level || 1) + '</bdi></span>' +
             '<span class="ztl-chip" data-tone="' + stTone + '">' + esc(st) + '</span>' +
           '</button>';
       }
@@ -1924,7 +1982,7 @@
       profHtml =
         '<div class="ztl-card" data-ztl-profile-card="' + esc(prof.id) + '">' +
           '<div class="ztl-card-top">' +
-            '<span class="ztl-card-title">' + esc(prof.username || prof.name || prof.id) + ' <bdi>[#' + esc(prof.numericId || prof.id) + ']</bdi></span>' +
+            '<span class="ztl-card-title ztl-player-inline">' + renderInlineAvatar(prof.id) + esc(prof.username || prof.name || prof.id) + ' <bdi>[#' + esc(prof.numericId || prof.id) + ']</bdi></span>' +
             '<span class="ztl-chip" data-tone="' + pTone + '">' + esc(pStatus) + '</span>' +
           '</div>' +
           '<div class="ztl-profile-kv">' +
@@ -1959,7 +2017,7 @@
         var hp = realPatients[hi];
         hospStrip +=
           '<div class="ztl-card">' +
-            '<div class="ztl-card-title">' + esc(hp.username || hp.name || hp.id) + ' <bdi>Lv.' + (hp.level || hp.lvl || 1) + '</bdi></div>' +
+            '<div class="ztl-card-title ztl-player-inline">' + renderInlineAvatar(hp.id) + esc(hp.username || hp.name || hp.id) + ' <bdi>Lv.' + (hp.level || hp.lvl || 1) + '</bdi></div>' +
             '<button type="button" class="ztl-btn" data-variant="primary" data-ztl-act="revive-player" data-id="' + esc(hp.id) + '"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.reviveBtn) + ' <bdi>(' + revCost + 'E)</bdi></button>' +
           '</div>';
       }
@@ -2182,7 +2240,72 @@
     else if (screen === 'jail') bodyHtml = renderJailLegalSection();
     else if (screen === 'faction') bodyHtml = renderFactionChainSection();
 
+    var prevStage = sec.querySelector ? sec.querySelector('.z3d-action-stage') : null;
+    var prevStageKind = prevStage && prevStage.getAttribute ? prevStage.getAttribute('data-z3d-stage') : '';
+    var keepLiveStage = Boolean(prevStage && prevStage.querySelector && prevStage.querySelector('canvas'));
+
     sec.innerHTML = renderFeedbackHtml() + bodyHtml;
+
+    if (keepLiveStage && sec.querySelector) {
+      var nextStage = sec.querySelector('.z3d-action-stage');
+      if (nextStage && nextStage.getAttribute('data-z3d-stage') === prevStageKind && typeof nextStage.replaceWith === 'function') {
+        nextStage.replaceWith(prevStage);
+      }
+    }
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(sec); } catch (_) {}
+    }
+  }
+
+  var attackCombatBound = null;
+  function syncAttackArenaStage() {
+    if (document.querySelector('x-dc')) return;
+    var main = document.getElementById('zone-main');
+    if (!main) return;
+    var screen = getActiveScreen();
+    var existing = document.getElementById('ztl-attack-3d-stage');
+
+    if (screen !== 'attack') {
+      if (existing && existing.parentElement) {
+        existing.parentElement.removeChild(existing);
+      }
+      return;
+    }
+
+    if (!existing) {
+      existing = document.createElement('div');
+      existing.id = 'ztl-attack-3d-stage';
+      existing.className = 'ztl-scope z3d-action-stage ztl-3d-stage ztl-attack-3d-stage';
+      existing.setAttribute('data-z3d-stage', 'combat-arena');
+      var anchor = document.getElementById('zig-brawl-hud') || document.getElementById('zone-combat-frame');
+      if (anchor && anchor.parentElement === main && typeof main.insertBefore === 'function') {
+        main.insertBefore(existing, anchor);
+      } else if (main.children && main.children.length > 1 && typeof main.insertBefore === 'function') {
+        main.insertBefore(existing, main.children[1]);
+      } else {
+        main.appendChild(existing);
+      }
+    }
+
+    if (main !== attackCombatBound && typeof main.addEventListener === 'function') {
+      attackCombatBound = main;
+      main.addEventListener('click', function (ev) {
+        if (getActiveScreen() !== 'attack') return;
+        var btn = ev.target && typeof ev.target.closest === 'function' ? ev.target.closest('button') : null;
+        if (!btn || btn.disabled) return;
+        var txt = String(btn.textContent || '').toLowerCase();
+        var act = btn.getAttribute('data-combat-act') || btn.getAttribute('data-zig-brawl') || '';
+        if (act || /attack|hit|strike|mug|hosp|leave|بادر|اضرب|هاجم|سرقة|مستشفى/.test(txt)) {
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            try { window.ZoneEcs3D.triggerStageAction('combat-arena', 'attack', { trigger: act || 'hit' }); } catch (_) {}
+          }
+        }
+      });
+    }
+
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(existing); } catch (_) {}
+    }
   }
 
   function renderFloatingToast() {
@@ -2261,6 +2384,9 @@
         renderFeedbackHtml() +
         renderDirectoryAndEventsHtml(true) +
       '</div>';
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(nodes.drawer); } catch (_) {}
+    }
   }
 
   /* ------------------------------------------------------------------------
@@ -2309,6 +2435,20 @@
   }
 
   function handleActionClick(ev) {
+    var inspectBtn = ev.target && typeof ev.target.closest === 'function'
+      ? ev.target.closest('[data-z3d-inspect]')
+      : null;
+    if (inspectBtn) {
+      ev.preventDefault();
+      var inspId = inspectBtn.getAttribute('data-z3d-inspect');
+      var inspCat = inspectBtn.getAttribute('data-z3d-cat') || '';
+      var inspTitle = inspectBtn.getAttribute('data-z3d-title') || inspId;
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+        try { window.ZoneEcs3D.inspectItem(inspId, { category: inspCat, title: inspTitle }); } catch (_) {}
+      }
+      return;
+    }
+
     var target = ev.target && typeof ev.target.closest === 'function'
       ? ev.target.closest('[data-ztl-act]')
       : null;
@@ -2316,6 +2456,14 @@
     ev.preventDefault();
 
     var act = target.getAttribute('data-ztl-act');
+    if (act === 'inspect-3d') {
+      var iId = target.getAttribute('data-z3d-inspect') || target.getAttribute('data-id');
+      var iTitle = target.getAttribute('data-z3d-title') || iId;
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+        try { window.ZoneEcs3D.inspectItem(iId, { title: iTitle }); } catch (_) {}
+      }
+      return;
+    }
     if (act === 'go-screen') {
       navigateToScreen(target.getAttribute('data-screen') || 'home');
     } else if (act === 'open-tab' || act === 'switch-tab') {
@@ -2470,8 +2618,12 @@
     try {
       renderHudStrip();
       renderRouteSection();
+      syncAttackArenaStage();
       renderDrawer();
       renderFloatingToast();
+      if (window.ZoneProfileAvatar && typeof window.ZoneProfileAvatar.syncMounts === 'function') {
+        window.ZoneProfileAvatar.syncMounts();
+      }
     } catch (_) {}
   }
 

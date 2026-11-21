@@ -31,6 +31,7 @@ use Zone\Engine\Core\Game\CityActivitiesService;
 use Zone\Engine\Core\Game\RankAndSkillTreeService;
 use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
+use Zone\Engine\Core\Game\PlayerAvatarService;
 use Zone\Engine\Core\Game\TornSystemsService;
 use Zone\Engine\Core\Game\TradeBazaarCompanyService;
 use Zone\Engine\Core\Game\TravelService;
@@ -1442,7 +1443,27 @@ final class GameEngine
 
     public function playerProfile(string $playerId = 'founder-player', ?string $targetId = null, ?string $query = null): array
     {
-        return (new SyndicateSocialService($this->database, $this->events))->playerProfile($playerId, $targetId, $query);
+        $payload = (new SyndicateSocialService($this->database, $this->events))->playerProfile($playerId, $targetId, $query);
+        return TornSystemsService::enrichPlayerProfilePayload($this->database, $this->events, $payload);
+    }
+
+    public function playerAvatar(): PlayerAvatarService
+    {
+        return new PlayerAvatarService($this->database, $this->events);
+    }
+
+    public function playerAvatarState(string $playerId = 'founder-player', ?string $targetId = null): array
+    {
+        $target = ($targetId !== null && trim($targetId) !== '') ? trim($targetId) : $playerId;
+        return $this->playerAvatar()->state($target);
+    }
+
+    public function playerAvatarAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        $this->database->playerTransaction($playerId, function () use ($playerId): void {
+            $this->rateLimiter->hit($playerId);
+        });
+        return $this->playerAvatar()->act($playerId, $action, $payload);
     }
 
     public function eventsFeed(string $playerId = 'founder-player', int $limit = 40): array

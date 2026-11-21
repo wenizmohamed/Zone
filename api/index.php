@@ -30,7 +30,7 @@ function zone_proxy_public_path(string $path): bool
         'player-combat', 'player-combat/opponents', 'player-combat/action', 'player-market', 'player-market/action',
         'family-activities', 'family-activities/action', 'crimes', 'achievements', 'city/map', 'factions/join', 'releases/active',
         'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
-        'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'events-feed',
+        'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'player-profile/avatar', 'events-feed',
         'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'ascension', 'ascension/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
         'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications'], true)
         || preg_match('~^(?:crimes/[a-z0-9-]+/attempt|territories/ZC-[0-9]{3}/action)$~D', $route) === 1;
@@ -119,7 +119,8 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     // Whole release manifests include the catalog; ordinary actions remain capped at 64 KB.
     $largeDraft = $method === 'PUT' && in_array($path, ['/api/v1/admin/draft', '/api/v1/admin/shop-catalog'], true);
     $assetChunk = $method === 'POST' && preg_match('~^/api/v1/admin/assets/uploads/[a-f0-9]{32}/chunks$~D', $path);
-    $requestLimit = $largeDraft || $assetChunk ? 1048576 : 65536;
+    $avatarUpload = $method === 'POST' && $path === '/api/v1/player-profile/avatar';
+    $requestLimit = $largeDraft || $assetChunk || $avatarUpload ? 1048576 : 65536;
     if ((int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $requestLimit) zone_proxy_error('Request body is too large.', 413);
     $body = file_get_contents('php://input', false, null, 0, $requestLimit + 1);
     if ($body === false || strlen($body) > $requestLimit) zone_proxy_error('Request body is too large.', 413);
@@ -200,16 +201,23 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     }
     http_response_code($status); header('Cache-Control: no-store'); header('X-Content-Type-Options: nosniff');
     $hasLedgerSetCookie = false;
+    $downstreamContentType = '';
+    $downstreamCacheControl = '';
     foreach ($responseHeaders as $line) {
         $parts = explode(':', $line, 2); if (count($parts) !== 2) continue;
         [$name, $value] = $parts; $name = strtolower(trim($name)); $value = trim($value);
         if (preg_match('/[\r\n\x00]/', $value)) continue;
+        if ($name === 'content-type') $downstreamContentType = strtolower($value);
+        elseif ($name === 'cache-control') $downstreamCacheControl = $value;
         if (in_array($name, ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy'], true)) header($name . ': ' . $value);
         elseif ($name === 'set-cookie' && (str_starts_with($value, 'zone_player_session=') || str_starts_with($value, 'zone_player_ledger=') || ($path === '/api/v1/admin/session' && str_starts_with($value, 'zone_admin_session=')))) {
             if (str_starts_with($value, 'zone_player_ledger=')) $hasLedgerSetCookie = true;
             $parts = array_filter(explode(';', $value), static fn ($part) => !preg_match('/^\s*(?:domain|secure|httponly|samesite)\b/i', $part));
             header('Set-Cookie: ' . implode(';', [...$parts, 'Secure', 'HttpOnly', 'SameSite=Strict']), false);
         } elseif ($name === 'location' && zone_proxy_public_path($value)) header('Location: ' . $value);
+    }
+    if ($path === '/api/v1/player-profile/avatar' && $status === 200 && str_starts_with($downstreamContentType, 'image/') && $downstreamCacheControl !== '') {
+        header('Cache-Control: ' . $downstreamCacheControl);
     }
     if (($healedStaleSession || ($path === '/api/v1/auth/logout' && $method === 'POST' && getenv('VERCEL') === '1' && $status === 200)) && !$hasLedgerSetCookie) {
         header('Set-Cookie: zone_player_ledger=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);

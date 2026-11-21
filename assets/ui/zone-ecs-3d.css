@@ -1,0 +1,376 @@
+/* ==========================================================================
+ * ZONE v152 - WATERCOLOR-SKETCHBOOK 3D VIEWPORT & ITEM SLOT STYLESHEET
+ * Exclusive Ownership: @ecs-3d-engine (assets/ui/zone-ecs-3d.css)
+ * Modes: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL + 390px
+ * ========================================================================== */
+
+:root {
+  --z3d-stage-bg: radial-gradient(circle at 50% 34%, #25201b 0%, #14120f 72%, #0d0b09 100%);
+  --z3d-slot-bg: radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.14) 0%, rgba(24, 21, 18, 0.92) 74%);
+  --z3d-frame-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.46));
+  --z3d-frame-shadow: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.56));
+  --z3d-chip-bg: rgba(20, 18, 16, 0.84);
+  --z3d-chip-ink: #f7f1e3;
+  --z3d-chip-border: rgba(244, 207, 120, 0.48);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  --z3d-stage-bg: radial-gradient(circle at 50% 34%, #2b2620 0%, #191613 76%, #12100e 100%);
+  --z3d-slot-bg: radial-gradient(circle at 50% 38%, rgba(50, 87, 30, 0.16) 0%, #221e1a 78%);
+  --z3d-frame-border: var(--zwc-border-strong, #23201c);
+  --z3d-frame-shadow: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.18));
+  --z3d-chip-bg: rgba(251, 247, 238, 0.92);
+  --z3d-chip-ink: #1e1b18;
+  --z3d-chip-border: #23201c;
+}
+
+/* --------------------------------------------------------------------------
+ * 1. 3D ITEM SLOTS (.z3d-item-slot & canvas.z3d-item-canvas)
+ * -------------------------------------------------------------------------- */
+.z3d-item-slot {
+  position: relative;
+  width: 100%;
+  height: 104px;
+  min-width: 56px;
+  border-radius: var(--zwc-radius-sketch-sm, 10px);
+  border: 1.5px solid var(--z3d-frame-border);
+  background: var(--z3d-slot-bg);
+  box-shadow: var(--z3d-frame-shadow), inset 0 0 0 1px rgba(255, 248, 230, 0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  user-select: none;
+  transition: transform 0.16s ease, border-color 0.16s ease;
+}
+
+.z3d-item-slot:hover {
+  transform: translateY(-1px);
+  border-color: var(--zwc-accent, #8ec364);
+}
+
+.z3d-item-slot--compact {
+  width: 64px;
+  height: 48px;
+  min-width: 64px;
+  flex: 0 0 64px;
+  border-radius: 8px;
+}
+
+.z3d-item-slot > canvas.z3d-item-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.z3d-item-slot > canvas.z3d-item-canvas:active {
+  cursor: grabbing;
+}
+
+/* Compact 3D Orbit Inspect Pill Button */
+.z3d-inspect-btn,
+button[data-z3d-inspect] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 26px;
+  padding: 2px 8px;
+  border-radius: var(--zwc-radius-pill, 999px);
+  border: 1.5px solid var(--z3d-frame-border);
+  background: var(--zwc-wash-gold, rgba(240, 196, 101, 0.2));
+  color: var(--zwc-gold-ink, #f4cf78);
+  font-family: var(--zwc-font-hand, "Rubik", system-ui, sans-serif);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.1;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--zwc-shadow-btn, 1.5px 2px 0 #090807);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.z3d-inspect-btn:hover,
+button[data-z3d-inspect]:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+/* Native Items Screen Row & Inspector Addons */
+.z3d-native-row-addon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  margin-inline-start: 4px;
+}
+
+.z3d-native-inspector-addon {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px dashed var(--zwc-border, rgba(242, 234, 217, 0.3));
+  background: var(--zwc-paper-subcard, rgba(25, 22, 19, 0.5));
+}
+
+/* --------------------------------------------------------------------------
+ * 2. LIVE INTERACTIVE 3D ACTION STAGES (.z3d-action-stage & .z3d-stage-hud)
+ * -------------------------------------------------------------------------- */
+.z3d-action-stage {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 235px;
+  border-radius: var(--zwc-radius-sketch, 14px);
+  border: 2px solid var(--z3d-frame-border);
+  background: var(--z3d-stage-bg);
+  box-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.62)), inset 0 0 0 1px rgba(255, 248, 232, 0.1);
+  overflow: hidden;
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+.z3d-action-stage canvas.z3d-stage-webgl-canvas,
+.z3d-action-stage canvas.z3d-stage-proxy-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+.z3d-action-stage canvas.z3d-stage-webgl-canvas:active {
+  cursor: grabbing;
+}
+
+.z3d-gym-stage-wrap {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.z3d-gym-stage {
+  height: 220px;
+}
+
+.z3d-stage-hud {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 10px;
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.z3d-stage-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--zwc-radius-pill, 999px);
+  border: 1.5px solid var(--z3d-chip-border);
+  background: var(--z3d-chip-bg);
+  color: var(--z3d-chip-ink);
+  font-family: var(--zwc-font-hand, "Rubik", system-ui, sans-serif);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.z3d-stage-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+/* --------------------------------------------------------------------------
+ * 3. FULLSCREEN 3D ORBIT INSPECTOR MODAL (.z3d-inspector-modal)
+ * -------------------------------------------------------------------------- */
+.z3d-inspector-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9980;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.z3d-inspector-modal.is-open {
+  display: flex;
+}
+
+.z3d-inspector-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 9, 8, 0.76);
+  backdrop-filter: blur(4px);
+}
+
+.z3d-inspector-card {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-width: 100%;
+  border-radius: var(--zwc-radius-sketch, 16px);
+  border: 2px solid var(--z3d-frame-border);
+  background: var(--zwc-card-bg, #1e1b18);
+  color: var(--zwc-ink, #f3ecdc);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.65), var(--zwc-shadow-card, 3px 4px 0 #090807);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.z3d-inspector-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.z3d-inspector-eyebrow {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--zwc-gold-ink, #f4cf78);
+  letter-spacing: 0.06em;
+}
+
+.z3d-inspector-title {
+  margin: 2px 0 0;
+  font-family: var(--zwc-font-hand, "Rubik", system-ui, sans-serif);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--zwc-title-ink, #faf4e6);
+}
+
+.z3d-inspector-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--z3d-frame-border);
+  background: var(--zwc-btn-bg, #2a251f);
+  color: var(--zwc-ink, #f3ecdc);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.z3d-inspector-viewport {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  border: 1.5px solid var(--z3d-frame-border);
+  background: var(--z3d-stage-bg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.z3d-inspector-viewport canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+.z3d-inspector-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.z3d-inspector-hint {
+  font-size: 11.5px;
+  color: var(--zwc-ink-muted, #b8ac95);
+}
+
+.z3d-inspector-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.z3d-inspector-btn {
+  min-height: 32px;
+  padding: 5px 12px;
+  border-radius: var(--zwc-radius-pill, 999px);
+  border: 1.5px solid var(--z3d-frame-border);
+  background: var(--zwc-btn-bg, #2a251f);
+  color: var(--zwc-ink, #f3ecdc);
+  font-family: var(--zwc-font-hand, "Rubik", system-ui, sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--zwc-shadow-btn, 1.5px 2px 0 #090807);
+}
+
+.z3d-inspector-btn:hover {
+  background: var(--zwc-btn-hover, #352f27);
+}
+
+/* --------------------------------------------------------------------------
+ * 4. RTL ARABIC TYPOGRAPHY & LOGICAL GEOMETRY
+ * -------------------------------------------------------------------------- */
+html[dir="rtl"] .z3d-stage-chip,
+html[dir="rtl"] .z3d-inspector-eyebrow,
+html[dir="rtl"] .z3d-inspect-btn,
+html:lang(ar) .z3d-stage-chip,
+html:lang(ar) .z3d-inspector-eyebrow,
+html:lang(ar) .z3d-inspect-btn {
+  letter-spacing: 0 !important;
+  font-family: var(--zwc-font-hand, "Cairo", "Noto Sans Arabic", sans-serif);
+}
+
+/* --------------------------------------------------------------------------
+ * 5. MOBILE 390px RESPONSIVE BREAKPOINTS (ZERO HORIZONTAL OVERFLOW)
+ * -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .z3d-action-stage {
+    height: 196px;
+  }
+
+  .z3d-item-slot {
+    height: 88px;
+  }
+
+  .z3d-item-slot--compact {
+    width: 52px;
+    height: 40px;
+    min-width: 52px;
+    flex: 0 0 52px;
+  }
+
+  .z3d-native-row-addon {
+    gap: 4px;
+  }
+
+  .z3d-inspector-card {
+    padding: 10px;
+  }
+
+  .z3d-inspector-viewport {
+    height: 240px;
+  }
+}

@@ -960,3 +960,98 @@ html body .ztl-drawer-body {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* --------------------------------------------------------------------------
+ * 8. ZONE v152 — 100% 3D ITEM SLOTS, 3D ACTION STAGES & LOCKED CRIME GATES
+ * -------------------------------------------------------------------------- */
+html body .ztl-3d-stage {
+  width: 100%;
+  height: 215px;
+  min-height: 195px;
+  border-radius: var(--ztl-radius-sm);
+  border: 1.8px solid var(--ztl-border-strong);
+  background: radial-gradient(circle at 50% 35%, #231e19, #12100e);
+  box-shadow: var(--ztl-shadow-card);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+html body #dc-root #zone-main[data-zone-screen="attack"] > #ztl-attack-3d-stage,
+html body #zone-main[data-zone-screen="attack"] > #ztl-attack-3d-stage {
+  order: -1 !important;
+  margin-bottom: 10px;
+}
+
+html body .ztl-item-3d-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 7px;
+  border-radius: 10px;
+  border: 1px dashed var(--ztl-border);
+  background: var(--ztl-surface-alt);
+  min-height: 58px;
+  box-sizing: border-box;
+}
+
+html body .ztl-item-3d-row .z3d-item-slot {
+  width: 58px;
+  height: 52px;
+  min-width: 58px;
+  min-height: 52px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+
+html body #dc-root #zone-main#zone-main #zone-torn-route-section#zone-torn-route-section .ztl-3d-inspect-btn,
+html body .ztl-3d-inspect-btn {
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 2px 9px !important;
+  font-size: 11.5px !important;
+  border-radius: 999px !important;
+  background: var(--ztl-blue-wash) !important;
+  color: var(--ztl-blue-ink) !important;
+  border-color: var(--ztl-blue-border) !important;
+  flex: 0 0 auto;
+}
+
+html body #dc-root #zone-main#zone-main #zone-torn-route-section#zone-torn-route-section .ztl-btn-locked,
+html body .ztl-btn-locked {
+  background: var(--ztl-surface-alt) !important;
+  background-image: none !important;
+  color: var(--ztl-ink-muted) !important;
+  border: 1.4px dashed var(--ztl-border) !important;
+  opacity: 0.72 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+html body .ztl-player-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+html body .ztl-scope .zpa-inline-avatar {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  html body .ztl-3d-stage {
+    height: 185px;
+    min-height: 175px;
+  }
+}
