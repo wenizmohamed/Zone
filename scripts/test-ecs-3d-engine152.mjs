@@ -58,7 +58,7 @@ test('v153 Static Gate: 3D ECS files exist, zero external CDN URLs, JS syntax cl
 
   const bridgeSrc = readUtf8('assets/ui/zone-ecs-3d-bridge.js');
   assert.ok(bridgeSrc.includes('window.ZoneEcs3D'), 'Bridge must synchronously expose window.ZoneEcs3D');
-  assert.ok(bridgeSrc.includes('zone-ecs-3d-engine.mjs?v=157'), 'Bridge must import zone-ecs-3d-engine.mjs?v=157');
+  assert.ok(bridgeSrc.includes('zone-ecs-3d-engine.mjs?v=158'), 'Bridge must import zone-ecs-3d-engine.mjs?v=158');
   assert.ok(bridgeSrc.includes('position:absolute;inset:0;width:100%;height:100%'), 'Bridge must overlay character-turntable absolutely at inset:0');
   assert.ok(bridgeSrc.includes('character-turntable'), 'Bridge must mount character-turntable fallback inside #zone-char-3d');
   assert.ok(bridgeSrc.includes('1600'), 'Bridge must arm 1600ms #zone-char-3d watchdog');

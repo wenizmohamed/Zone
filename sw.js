@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v157) */
-const SHELL_CACHE_NAME = 'zone-shell-v157';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v158) */
+const SHELL_CACHE_NAME = 'zone-shell-v158';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -10,36 +10,36 @@ const PRECACHE_URLS = [
   './assets/icons/icon-192.png',
   './assets/data/zone-batch-skill-pack.json',
   './assets/data/zone-300-skills-encyclopedia.json',
-  './assets/ui/zone-torn-live.css?v=157',
-  './assets/ui/zone-torn-live.js?v=157',
-  './assets/ui/zone-rpg-empire.css?v=157',
-  './assets/ui/zone-rpg-empire.js?v=157',
-  './assets/ui/zone-ascension-breakthrough.css?v=157',
-  './assets/ui/zone-ascension-breakthrough.js?v=157',
-  './assets/ui/zone-ecs-3d.css?v=157',
-  './assets/ui/zone-ecs-3d-bridge.js?v=157',
-  './assets/ui/zone-3d-rigged-operative.mjs?v=157',
-  './assets/ui/zone-3d-environments.mjs?v=157',
+  './assets/ui/zone-torn-live.css?v=158',
+  './assets/ui/zone-torn-live.js?v=158',
+  './assets/ui/zone-rpg-empire.css?v=158',
+  './assets/ui/zone-rpg-empire.js?v=158',
+  './assets/ui/zone-ascension-breakthrough.css?v=158',
+  './assets/ui/zone-ascension-breakthrough.js?v=158',
+  './assets/ui/zone-ecs-3d.css?v=158',
+  './assets/ui/zone-ecs-3d-bridge.js?v=158',
+  './assets/ui/zone-3d-rigged-operative.mjs?v=158',
+  './assets/ui/zone-3d-environments.mjs?v=158',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=157',
-  './assets/ui/zone-profile-avatar.css?v=157',
-  './assets/ui/zone-profile-avatar.js?v=157',
-  './assets/ui/zone-instant-games.js?v=157',
-  './assets/ui/zone-audio-haptics.js?v=157',
-  './assets/ui/zone-tactical-director.css?v=157',
-  './assets/ui/zone-tactical-director.js?v=157',
-  './assets/ui/zone-hud-accessibility.css?v=157',
-  './assets/ui/zone-hud-accessibility.js?v=157',
-  './assets/ui/zone-batch-liveops.js?v=157',
-  './assets/ui/zone-vehicle-garage.css?v=157',
-  './assets/ui/zone-vehicle-garage.js?v=157',
-  './assets/ui/zone-faction-warfare.css?v=157',
-  './assets/ui/zone-faction-warfare.js?v=157',
-  './assets/ui/zone-loadout-synergies.css?v=157',
-  './assets/ui/zone-loadout-synergies.js?v=157',
-  './assets/ui/zone-casino-tables.css?v=157',
-  './assets/ui/zone-casino-tables.js?v=157',
-  './assets/ui/zone-world-encounters.js?v=157'
+  './assets/ui/zone-ecs-3d-engine.mjs?v=158',
+  './assets/ui/zone-profile-avatar.css?v=158',
+  './assets/ui/zone-profile-avatar.js?v=158',
+  './assets/ui/zone-instant-games.js?v=158',
+  './assets/ui/zone-audio-haptics.js?v=158',
+  './assets/ui/zone-tactical-director.css?v=158',
+  './assets/ui/zone-tactical-director.js?v=158',
+  './assets/ui/zone-hud-accessibility.css?v=158',
+  './assets/ui/zone-hud-accessibility.js?v=158',
+  './assets/ui/zone-batch-liveops.js?v=158',
+  './assets/ui/zone-vehicle-garage.css?v=158',
+  './assets/ui/zone-vehicle-garage.js?v=158',
+  './assets/ui/zone-faction-warfare.css?v=158',
+  './assets/ui/zone-faction-warfare.js?v=158',
+  './assets/ui/zone-loadout-synergies.css?v=158',
+  './assets/ui/zone-loadout-synergies.js?v=158',
+  './assets/ui/zone-casino-tables.css?v=158',
+  './assets/ui/zone-casino-tables.js?v=158',
+  './assets/ui/zone-world-encounters.js?v=158'
 ];
 
 const IMMUTABLE_BINARY_RE = /\.(?:woff2|webp|png|jpe?g|glb)$/i;

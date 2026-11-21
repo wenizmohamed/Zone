@@ -596,7 +596,10 @@
   // Import articulated rigged operative & 3D architectural stage environments FIRST
   // so globalThis.__ZoneRiggedOperative and globalThis.__Zone3DEnvironments are live before stages build!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=157')
+    return import('./zone-3d-rigged-operative.mjs?v=158')
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs?v=157');
+      })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs?v=156');
       })
@@ -620,7 +623,10 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=157')
+    return import('./zone-3d-environments.mjs?v=158')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=157');
+      })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=156');
       })
@@ -641,7 +647,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=157')
+    return import('./zone-ecs-3d-engine.mjs?v=158')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=157');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=156');
       })

@@ -127,12 +127,12 @@
 
   /* ---------------- 6-District Zone City Smuggling Graph (A*) ---------------- */
   var DISTRICTS = [
-    { id: 'pier_4', en: 'Pier 4 Docks', ar: 'أرصفة الميناء ٤', x: 14, y: 78, checkpoints: 2, roughness: 0.65 },
-    { id: 'industrial_foundry', en: 'Industrial Foundry', ar: 'المسبك الصناعي', x: 38, y: 84, checkpoints: 1, roughness: 0.55 },
-    { id: 'neon_alley', en: 'Neon Alley', ar: 'زقاق النيون', x: 34, y: 46, checkpoints: 3, roughness: 0.30 },
-    { id: 'midtown_exchange', en: 'Midtown Exchange', ar: 'سوق وسط المدينة', x: 60, y: 52, checkpoints: 4, roughness: 0.20 },
-    { id: 'downtown_vaults', en: 'Downtown Vaults', ar: 'خزائن وسط المدينة', x: 86, y: 66, checkpoints: 5, roughness: 0.15 },
-    { id: 'north_airstrip', en: 'North Airstrip', ar: 'المدرج الشمالي', x: 82, y: 18, checkpoints: 2, roughness: 0.25 }
+    { id: 'pier_4', en: 'Pier 4 Docks', ar: 'أرصفة الميناء ٤', x: 14, y: 78, svgX: 38, svgY: 132, labelX: 16, labelY: 152, anchor: 'start', checkpoints: 2, roughness: 0.65 },
+    { id: 'industrial_foundry', en: 'Industrial Foundry', ar: 'المسبك الصناعي', x: 38, y: 84, svgX: 156, svgY: 146, labelX: 156, labelY: 168, anchor: 'middle', checkpoints: 1, roughness: 0.55 },
+    { id: 'neon_alley', en: 'Neon Alley', ar: 'زقاق النيون', x: 34, y: 46, svgX: 108, svgY: 64, labelX: 108, labelY: 46, anchor: 'middle', checkpoints: 3, roughness: 0.30 },
+    { id: 'midtown_exchange', en: 'Midtown Exchange', ar: 'سوق وسط المدينة', x: 60, y: 52, svgX: 222, svgY: 94, labelX: 222, labelY: 75, anchor: 'middle', checkpoints: 4, roughness: 0.20 },
+    { id: 'downtown_vaults', en: 'Downtown Vaults', ar: 'خزائن وسط المدينة', x: 86, y: 66, svgX: 324, svgY: 126, labelX: 344, labelY: 148, anchor: 'end', checkpoints: 5, roughness: 0.15 },
+    { id: 'north_airstrip', en: 'North Airstrip', ar: 'المدرج الشمالي', x: 82, y: 18, svgX: 310, svgY: 32, labelX: 344, labelY: 16, anchor: 'end', checkpoints: 2, roughness: 0.25 }
   ];
 
   var DISTRICT_MAP = {};
@@ -787,7 +787,7 @@
     var coords = [];
     for (var i = 0; i < pathIds.length; i++) {
       var d = DISTRICT_MAP[pathIds[i]];
-      if (d) coords.push(d.x + ',' + d.y);
+      if (d) coords.push((d.svgX || d.x) + ',' + (d.svgY || d.y));
     }
     return coords.join(' ');
   }
@@ -799,7 +799,7 @@
       var da = DISTRICT_MAP[e.from];
       var db = DISTRICT_MAP[e.to];
       if (!da || !db) continue;
-      edgesHtml += '<line class="zvg-edge-base" x1="' + da.x + '" y1="' + da.y + '" x2="' + db.x + '" y2="' + db.y + '"/>';
+      edgesHtml += '<line class="zvg-edge-base" x1="' + (da.svgX || da.x) + '" y1="' + (da.svgY || da.y) + '" x2="' + (db.svgX || db.x) + '" y2="' + (db.svgY || db.y) + '"/>';
     }
 
     var altPoly = route && route.alternateRoute && route.alternateRoute.path.length > 1
@@ -821,18 +821,21 @@
       var isOrigin = d.id === store.origin;
       var isDest = d.id === store.destination;
       var cls = 'zvg-node-circle' + (onPath[d.id] ? ' is-on-path' : '') + (isOrigin ? ' is-origin' : '') + (isDest ? ' is-dest' : '');
-      var labelY = d.y < 28 ? d.y + 11 : d.y - 8;
-      var anchor = d.x > 74 ? 'end' : (d.x < 24 ? 'start' : 'middle');
+      var cx = d.svgX || d.x;
+      var cy = d.svgY || d.y;
+      var labelX = d.labelX != null ? d.labelX : cx;
+      var labelY = d.labelY != null ? d.labelY : (cy < 45 ? cy + 16 : cy - 11);
+      var anchor = d.anchor || (cx > 260 ? 'end' : (cx < 80 ? 'start' : 'middle'));
       var lbl = ar ? d.ar : d.en;
       nodesHtml +=
         '<g data-zvg-node="' + esc(d.id) + '">' +
-          '<circle class="' + cls + '" cx="' + d.x + '" cy="' + d.y + '" r="' + (isOrigin || isDest ? 5.2 : 4.2) + '" data-zvg-act="pick-district" data-district="' + esc(d.id) + '"/>' +
-          '<text class="zvg-node-lbl" x="' + d.x + '" y="' + labelY + '" text-anchor="' + anchor + '">' + esc(lbl) + '</text>' +
+          '<circle class="' + cls + '" cx="' + cx + '" cy="' + cy + '" r="' + (isOrigin || isDest ? 6.8 : 5.6) + '" data-zvg-act="pick-district" data-district="' + esc(d.id) + '"/>' +
+          '<text class="zvg-node-lbl zvg-astar-label" font-size="9.5" x="' + labelX + '" y="' + labelY + '" text-anchor="' + anchor + '">' + esc(lbl) + '</text>' +
         '</g>';
     }
 
     return (
-      '<svg class="zvg-map-svg" viewBox="0 0 100 100" role="img" aria-label="' + esc(L().plannerTitle) + '">' +
+      '<svg class="zvg-map-svg" viewBox="0 0 360 180" role="img" aria-label="' + esc(L().plannerTitle) + '">' +
         edgesHtml +
         altPoly +
         activePoly +
