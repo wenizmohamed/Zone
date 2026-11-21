@@ -1,0 +1,554 @@
+/* ==========================================================================
+ * ZONE v159 - TRACK 14: DETERMINISTIC COMBAT & HEIST COMMAND-LOG RECORDER
+ *                       + INTERACTIVE 3D REPLAY VIEWER
+ * Exclusive Ownership: @replay-determinism (assets/ui/zone-replay-viewer.css)
+ * 4-Way Parity: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL
+ * Mobile Guarantee: 0px horizontal overflow at 390px viewport width
+ * ========================================================================== */
+
+:root {
+  --zrv-card-bg: var(--zwc-surface, #1e1b17);
+  --zrv-subcard-bg: var(--zwc-paper-subcard, #25211c);
+  --zrv-well-bg: var(--zwc-well-bg, #15120f);
+  --zrv-ink: var(--zwc-ink, #f3ecdc);
+  --zrv-ink-soft: var(--zwc-ink-soft, #d8ccb6);
+  --zrv-ink-muted: var(--zwc-ink-muted, #aca08a);
+  --zrv-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --zrv-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
+  --zrv-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
+  --zrv-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
+  --zrv-sage-bg: rgba(109, 153, 73, 0.22);
+  --zrv-sage-ink: #9ef08a;
+  --zrv-sage-fill: #5c8e3e;
+  --zrv-gold-bg: rgba(240, 196, 101, 0.2);
+  --zrv-gold-ink: #f4cf78;
+  --zrv-gold-fill: #d99a38;
+  --zrv-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zrv-crimson-ink: #ff9c8a;
+  --zrv-crimson-fill: #c44933;
+  --zrv-blue-bg: rgba(62, 111, 176, 0.22);
+  --zrv-blue-ink: #93c5fd;
+  --zrv-blue-fill: #3e6fb0;
+  --zrv-btn-bg: var(--zwc-btn-bg, #2b2620);
+  --zrv-btn-hover: var(--zwc-btn-hover, #363028);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root #zone-main {
+  --zrv-card-bg: var(--zwc-surface, #fbf7ee);
+  --zrv-subcard-bg: var(--zwc-paper-subcard, #f4ecdb);
+  --zrv-well-bg: var(--zwc-well-bg, rgba(232, 221, 198, 0.65));
+  --zrv-ink: var(--zwc-ink, #1e1b18);
+  --zrv-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zrv-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zrv-border: var(--zwc-border-strong, #23201c);
+  --zrv-border-sub: var(--zwc-border, rgba(34, 30, 25, 0.32));
+  --zrv-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zrv-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.14));
+  --zrv-sage-bg: rgba(109, 153, 73, 0.24);
+  --zrv-sage-ink: #1b4d23;
+  --zrv-sage-fill: #497230;
+  --zrv-gold-bg: rgba(218, 168, 59, 0.26);
+  --zrv-gold-ink: #5e3b06;
+  --zrv-gold-fill: #b87e1f;
+  --zrv-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zrv-crimson-ink: #781e0f;
+  --zrv-crimson-fill: #a93522;
+  --zrv-blue-bg: rgba(62, 111, 176, 0.2);
+  --zrv-blue-ink: #193b68;
+  --zrv-blue-fill: #2c5894;
+  --zrv-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zrv-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+}
+
+html[data-zone-contrast="high"] .zrv-scope {
+  --zrv-border: currentColor;
+}
+
+.zrv-scope,
+.zrv-scope * {
+  box-sizing: border-box;
+}
+
+.zrv-scope {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-block: 10px;
+  padding: 11px 13px;
+  border: 1.7px solid var(--zrv-border);
+  border-radius: var(--zwc-radius-sketch, 14px);
+  background: var(--zrv-card-bg);
+  color: var(--zrv-ink);
+  box-shadow: var(--zrv-shadow);
+  font-family: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  overflow: hidden;
+}
+
+html[dir="rtl"] .zrv-scope,
+html:lang(ar) .zrv-scope {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .zrv-scope *,
+html:lang(ar) .zrv-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Header Strip */
+.zrv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.zrv-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 190px;
+}
+
+.zrv-icon-badge {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--zrv-border);
+  border-radius: 9px;
+  background: var(--zrv-subcard-bg);
+  box-shadow: var(--zrv-shadow-sub);
+  font-size: 14px;
+}
+
+.zrv-title-col {
+  min-width: 0;
+}
+
+.zrv-title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zrv-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zrv-subtitle {
+  margin: 1px 0 0;
+  font-size: 11px;
+  color: var(--zrv-ink-soft);
+  line-height: 1.25;
+}
+
+.zrv-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.zrv-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1.4px solid var(--zrv-border);
+  background: var(--zrv-subcard-bg);
+  color: var(--zrv-ink);
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.zrv-pill[data-tone="sage"] {
+  background: var(--zrv-sage-bg);
+  color: var(--zrv-sage-ink);
+}
+
+.zrv-pill[data-tone="gold"] {
+  background: var(--zrv-gold-bg);
+  color: var(--zrv-gold-ink);
+}
+
+.zrv-pill[data-tone="crimson"] {
+  background: var(--zrv-crimson-bg);
+  color: var(--zrv-crimson-ink);
+}
+
+.zrv-pill[data-tone="blue"] {
+  background: var(--zrv-blue-bg);
+  color: var(--zrv-blue-ink);
+}
+
+.zrv-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 7px;
+}
+
+.zrv-drawer-btn {
+  padding: 3px 8px;
+  border-radius: 8px;
+  border: 1.4px solid var(--zrv-border);
+  background: var(--zrv-btn-bg);
+  color: var(--zrv-ink);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.zrv-drawer-btn:hover {
+  background: var(--zrv-btn-hover);
+}
+
+/* Body Drawer */
+.zrv-drawer {
+  margin-block-start: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.zrv-drawer[hidden] {
+  display: none !important;
+}
+
+/* Episode Selector Pills */
+.zrv-episodes-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zrv-ep-btn {
+  flex: 1 1 135px;
+  min-width: 0;
+  padding: 5px 8px;
+  border-radius: 9px;
+  border: 1.4px solid var(--zrv-border-sub);
+  background: var(--zrv-subcard-bg);
+  color: var(--zrv-ink-soft);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.zrv-ep-btn:hover {
+  background: var(--zrv-btn-hover);
+  color: var(--zrv-ink);
+}
+
+.zrv-ep-btn[aria-pressed="true"] {
+  border-color: var(--zrv-border);
+  background: var(--zrv-gold-bg);
+  color: var(--zrv-gold-ink);
+  box-shadow: var(--zrv-shadow-sub);
+}
+
+.zrv-ep-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.zrv-ep-meta {
+  font-size: 10px;
+  opacity: 0.85;
+  flex: 0 0 auto;
+}
+
+/* Transport Controls + Speed Bar */
+.zrv-transport-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1.4px solid var(--zrv-border-sub);
+  background: var(--zrv-well-bg);
+}
+
+.zrv-transport-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.zrv-ctrl-btn {
+  padding: 4px 9px;
+  border-radius: 8px;
+  border: 1.4px solid var(--zrv-border);
+  background: var(--zrv-btn-bg);
+  color: var(--zrv-ink);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.zrv-ctrl-btn:hover:not(:disabled) {
+  background: var(--zrv-btn-hover);
+}
+
+.zrv-ctrl-btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.zrv-ctrl-btn.is-primary {
+  background: var(--zrv-sage-bg);
+  color: var(--zrv-sage-ink);
+}
+
+.zrv-ctrl-btn.is-playing {
+  background: var(--zrv-gold-bg);
+  color: var(--zrv-gold-ink);
+}
+
+.zrv-speed-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1.3px solid var(--zrv-border-sub);
+  background: var(--zrv-subcard-bg);
+}
+
+.zrv-speed-btn {
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--zrv-ink-soft);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.zrv-speed-btn[aria-pressed="true"] {
+  background: var(--zrv-blue-bg);
+  color: var(--zrv-blue-ink);
+  border: 1px solid var(--zrv-border);
+}
+
+/* Timeline Scrubber + Command Keyframe Pips */
+.zrv-scrubber-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px 9px;
+  border-radius: 10px;
+  border: 1.4px solid var(--zrv-border-sub);
+  background: var(--zrv-subcard-bg);
+}
+
+.zrv-scrubber-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--zrv-ink-soft);
+}
+
+.zrv-scrubber {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--zrv-gold-fill);
+  cursor: pointer;
+}
+
+.zrv-pip-track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.2px solid var(--zrv-border-sub);
+  background: var(--zrv-well-bg);
+  overflow: hidden;
+}
+
+.zrv-pip-progress {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: var(--zrv-gold-bg);
+  pointer-events: none;
+}
+
+.zrv-cmd-pip {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 8px;
+  margin-left: -4px;
+  border-radius: 999px;
+  border: 1.2px solid var(--zrv-border);
+  background: var(--zrv-gold-fill);
+  cursor: pointer;
+  padding: 0;
+}
+
+.zrv-cmd-pip.is-active {
+  background: var(--zrv-sage-fill);
+  transform: scale(1.15);
+}
+
+/* Telemetry Snapshot Metrics + Command Feed */
+.zrv-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zrv-stat-box {
+  padding: 5px 7px;
+  border-radius: 8px;
+  border: 1.2px solid var(--zrv-border-sub);
+  background: var(--zrv-well-bg);
+  min-width: 0;
+}
+
+.zrv-stat-label {
+  display: block;
+  font-size: 10px;
+  color: var(--zrv-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zrv-stat-val {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--zrv-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Command Log Chips */
+.zrv-cmd-strip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.zrv-cmd-chip {
+  padding: 3px 7px;
+  border-radius: 7px;
+  border: 1.2px solid var(--zrv-border-sub);
+  background: var(--zrv-well-bg);
+  color: var(--zrv-ink-soft);
+  font-family: inherit;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zrv-cmd-chip.is-current {
+  border-color: var(--zrv-border);
+  background: var(--zrv-sage-bg);
+  color: var(--zrv-sage-ink);
+}
+
+/* Footer Actions & Export Share Box */
+.zrv-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zrv-footer-btns {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zrv-share-box {
+  margin-block-start: 4px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  border: 1.3px dashed var(--zrv-border);
+  background: var(--zrv-well-bg);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 10.5px;
+  color: var(--zrv-gold-ink);
+  word-break: break-all;
+  overflow-wrap: anywhere;
+}
+
+/* Responsive Mobile 390px Guarantee (0px horizontal overflow) */
+@media (max-width: 680px) {
+  .zrv-scope {
+    padding: 9px 10px;
+  }
+
+  .zrv-telemetry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .zrv-transport-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .zrv-transport-btns {
+    justify-content: space-between;
+  }
+
+  .zrv-speed-group {
+    justify-content: center;
+  }
+}
+
+html[data-zone-reduced-motion="true"] .zrv-scope * {
+  transition: none !important;
+  animation: none !important;
+}
