@@ -93,6 +93,236 @@ export const STAGE_KINDS = Object.freeze([
   'character-turntable',
 ]);
 
+/* --------------------------------------------------------------------------
+ * 0. GRAPHICS QUALITY PRESETS, DYNAMIC RESOLUTION SCALER & OBJECT POOL
+ *    (Wave-3 Track 17: dynamic-res-scaler, three-best-practices,
+ *     threejs-motion-performance, game-development-object-pool)
+ * -------------------------------------------------------------------------- */
+export const GRAPHICS_PRESETS = Object.freeze({
+  low: Object.freeze({
+    preset: 'low',
+    dprCap: 0.75,
+    particleScale: 0.25,
+    shadowsEnabled: false,
+    maxItemBlitsPerFrame: 2,
+  }),
+  medium: Object.freeze({
+    preset: 'medium',
+    dprCap: 1.0,
+    particleScale: 0.60,
+    shadowsEnabled: false,
+    maxItemBlitsPerFrame: 4,
+  }),
+  high: Object.freeze({
+    preset: 'high',
+    dprCap: 1.35,
+    particleScale: 1.0,
+    shadowsEnabled: true,
+    maxItemBlitsPerFrame: 6,
+  }),
+  ultra: Object.freeze({
+    preset: 'ultra',
+    dprCap: 1.5,
+    particleScale: 1.25,
+    shadowsEnabled: true,
+    maxItemBlitsPerFrame: 8,
+  }),
+});
+
+export class DynamicResScaler {
+  constructor(opts = {}) {
+    this.minDpr = typeof opts.minDpr === 'number' ? opts.minDpr : 0.60;
+    this.presetCap = typeof opts.presetCap === 'number'
+      ? opts.presetCap
+      : (typeof opts.maxDpr === 'number' ? opts.maxDpr : GRAPHICS_PRESETS.high.dprCap);
+    this.currentDpr = typeof opts.initialDpr === 'number'
+      ? Math.max(this.minDpr, Math.min(this.presetCap, opts.initialDpr))
+      : this.presetCap;
+    this.dynamicResAuto = opts.dynamicResAuto !== undefined ? Boolean(opts.dynamicResAuto) : true;
+    this.downThresholdMs = typeof opts.downThresholdMs === 'number' ? opts.downThresholdMs : 20.5;
+    this.upThresholdMs = typeof opts.upThresholdMs === 'number' ? opts.upThresholdMs : 14.5;
+    this.cooldownMs = typeof opts.cooldownMs === 'number' ? opts.cooldownMs : 500;
+    this.stepDown = typeof opts.stepDown === 'number' ? opts.stepDown : 0.15;
+    this.stepUp = typeof opts.stepUp === 'number' ? opts.stepUp : 0.15;
+    this.emaAlpha = typeof opts.emaAlpha === 'number' ? opts.emaAlpha : 0.55;
+    this.frameMsEma = typeof opts.initialFrameMs === 'number' ? opts.initialFrameMs : 16.67;
+    this.clockMs = 0;
+    this._lastChangeMs = -Infinity;
+    this.downscaleCount = 0;
+    this.upscaleCount = 0;
+  }
+
+  get fps() {
+    return Math.max(1, Math.min(240, Math.round(1000 / Math.max(1, this.frameMsEma))));
+  }
+
+  setPresetCap(nextCap, opts = {}) {
+    if (typeof nextCap === 'number' && Number.isFinite(nextCap) && nextCap > 0) {
+      this.presetCap = Math.max(this.minDpr, Number(nextCap.toFixed(2)));
+    }
+    if (opts.resetCurrent !== false || !this.dynamicResAuto) {
+      this.currentDpr = this.presetCap;
+    } else {
+      this.currentDpr = Math.max(this.minDpr, Math.min(this.presetCap, this.currentDpr));
+    }
+    if (opts.resetCooldown !== false) {
+      this._lastChangeMs = -Infinity;
+    }
+    return this.currentDpr;
+  }
+
+  sampleFrame(rawFrameTime, nowMs = undefined) {
+    let frameMs = 16.67;
+    if (typeof rawFrameTime === 'number' && Number.isFinite(rawFrameTime) && rawFrameTime > 0) {
+      frameMs = rawFrameTime <= 0.5 ? rawFrameTime * 1000 : rawFrameTime;
+    }
+    frameMs = Math.max(1.0, Math.min(250.0, frameMs));
+
+    if (typeof nowMs === 'number' && Number.isFinite(nowMs)) {
+      this.clockMs = nowMs;
+    } else {
+      this.clockMs += frameMs;
+    }
+
+    this.frameMsEma = this.frameMsEma * (1 - this.emaAlpha) + frameMs * this.emaAlpha;
+
+    let action = 'hold';
+    if (!this.dynamicResAuto) {
+      this.currentDpr = this.presetCap;
+      return {
+        currentDpr: this.currentDpr,
+        frameMsEma: this.frameMsEma,
+        fps: this.fps,
+        action,
+      };
+    }
+
+    const elapsedSinceChange = this.clockMs - this._lastChangeMs;
+    if (elapsedSinceChange >= this.cooldownMs) {
+      if (this.frameMsEma > this.downThresholdMs && this.currentDpr > this.minDpr + 1e-4) {
+        const nextDpr = Math.max(this.minDpr, Number((this.currentDpr - this.stepDown).toFixed(2)));
+        if (nextDpr < this.currentDpr) {
+          this.currentDpr = nextDpr;
+          this._lastChangeMs = this.clockMs;
+          this.downscaleCount++;
+          action = 'downscale';
+        }
+      } else if (this.frameMsEma < this.upThresholdMs && this.currentDpr < this.presetCap - 1e-4) {
+        const nextDpr = Math.min(this.presetCap, Number((this.currentDpr + this.stepUp).toFixed(2)));
+        if (nextDpr > this.currentDpr) {
+          this.currentDpr = nextDpr;
+          this._lastChangeMs = this.clockMs;
+          this.upscaleCount++;
+          action = 'upscale';
+        }
+      }
+    }
+
+    return {
+      currentDpr: this.currentDpr,
+      frameMsEma: this.frameMsEma,
+      fps: this.fps,
+      action,
+    };
+  }
+
+  update(rawFrameTime, nowMs = undefined) {
+    return this.sampleFrame(rawFrameTime, nowMs);
+  }
+}
+
+export class ZoneObjectPool {
+  constructor(opts = {}) {
+    this.createFn = typeof opts.create === 'function' ? opts.create : (() => ({}));
+    this.resetFn = typeof opts.reset === 'function' ? opts.reset : null;
+    this.onAcquireFn = typeof opts.onAcquire === 'function' ? opts.onAcquire : null;
+    this.onReleaseFn = typeof opts.onRelease === 'function' ? opts.onRelease : null;
+    this.maxCapacity = typeof opts.maxCapacity === 'number' && opts.maxCapacity > 0 ? opts.maxCapacity : 128;
+    this.exhaustionPolicy = opts.exhaustionPolicy || 'expand';
+    this._free = [];
+    this._inUse = new Set();
+    this._createdCount = 0;
+    this._acquireCount = 0;
+    this._releaseCount = 0;
+    this._doubleReleaseDrops = 0;
+    this._exhaustionCount = 0;
+    if (typeof opts.prewarm === 'number' && opts.prewarm > 0) {
+      this.prewarm(opts.prewarm);
+    }
+  }
+
+  prewarm(count = 0) {
+    const target = Math.min(this.maxCapacity, Math.max(0, count | 0));
+    while (this._free.length + this._inUse.size < target) {
+      const item = this.createFn();
+      if (this.resetFn) this.resetFn(item);
+      this._free.push(item);
+      this._createdCount++;
+    }
+    return this._free.length;
+  }
+
+  acquire() {
+    let item = null;
+    if (this._free.length > 0) {
+      item = this._free.pop();
+    } else if (this._createdCount < this.maxCapacity || this.exhaustionPolicy === 'expand') {
+      if (this._createdCount >= this.maxCapacity) this._exhaustionCount++;
+      item = this.createFn();
+      this._createdCount++;
+    } else if (this.exhaustionPolicy === 'fallback') {
+      this._exhaustionCount++;
+      item = this.createFn();
+    } else {
+      this._exhaustionCount++;
+      return null;
+    }
+
+    if (this.resetFn) this.resetFn(item);
+    if (this.onAcquireFn) this.onAcquireFn(item);
+    this._inUse.add(item);
+    this._acquireCount++;
+    return item;
+  }
+
+  get() {
+    return this.acquire();
+  }
+
+  release(item) {
+    if (!item || !this._inUse.has(item)) {
+      this._doubleReleaseDrops++;
+      return false;
+    }
+    this._inUse.delete(item);
+    if (this.onReleaseFn) this.onReleaseFn(item);
+    if (this.resetFn) this.resetFn(item);
+    if (this._free.length < this.maxCapacity) {
+      this._free.push(item);
+    }
+    this._releaseCount++;
+    return true;
+  }
+
+  clear() {
+    this._free.length = 0;
+    this._inUse.clear();
+  }
+
+  stats() {
+    return {
+      available: this._free.length,
+      inUse: this._inUse.size,
+      created: this._createdCount,
+      acquires: this._acquireCount,
+      releases: this._releaseCount,
+      doubleReleaseDrops: this._doubleReleaseDrops,
+      exhaustions: this._exhaustionCount,
+      maxCapacity: this.maxCapacity,
+    };
+  }
+}
+
 const ANIM_NONE = 0;
 const ANIM_LUNGE = 1;
 const ANIM_VAULT_OPEN = 2;
@@ -3416,6 +3646,14 @@ export class ZoneEcs3DRuntime {
     this.itemSlots = new Map();
     this.stageInstances = new Map();
     this.gpuGovernor = new ZoneGpuBudgetGovernor(opts.gpuBudget || {});
+    this._graphicsPreset = 'high';
+    this._shadowsEnabled = GRAPHICS_PRESETS.high.shadowsEnabled;
+    this._particleScaleOverride = null;
+    this.resScaler = new DynamicResScaler({
+      minDpr: 0.60,
+      presetCap: GRAPHICS_PRESETS.high.dprCap,
+      dynamicResAuto: opts.dynamicResAuto !== undefined ? Boolean(opts.dynamicResAuto) : true,
+    });
     this._roundRobinCursor = 0;
     this._drawCalls = 0;
     this._triangles = 0;
@@ -3423,6 +3661,21 @@ export class ZoneEcs3DRuntime {
     this._webglContextCount = 0;
     this._rafId = 0;
     this._running = false;
+    this._boundSettingsWin = null;
+    this._onSettingsChanged = (ev) => {
+      const detail = ev && ev.detail && typeof ev.detail === 'object' ? ev.detail : (ev || {});
+      this.setGraphicsConfig(detail);
+    };
+
+    if (opts.graphicsConfig) {
+      this.setGraphicsConfig(opts.graphicsConfig);
+    }
+    this._ensureSettingsListener(opts.window);
+
+    if (typeof globalThis !== 'undefined' && globalThis.window && globalThis.window.ZoneEcs3D) {
+      globalThis.window.ZoneEcs3D.setGraphicsConfig = (cfg) => this.setGraphicsConfig(cfg);
+      globalThis.window.ZoneEcs3D.getGraphicsConfig = () => this.getGraphicsConfig();
+    }
 
     this._unsubUpgrade = onWeaponAssetUpgraded((upgradedId) => {
       for (const rec of this.itemSlots.values()) {
@@ -3435,6 +3688,107 @@ export class ZoneEcs3DRuntime {
         this.world.refreshEntityRimCache(this.inspectorItemEid);
       }
     });
+  }
+
+  _ensureSettingsListener(winOverride = undefined) {
+    const win = winOverride || (typeof globalThis !== 'undefined' && globalThis.window ? globalThis.window : (typeof window !== 'undefined' ? window : null));
+    if (!win || typeof win.addEventListener !== 'function') return false;
+    if (this._boundSettingsWin === win) return true;
+    if (this._boundSettingsWin && typeof this._boundSettingsWin.removeEventListener === 'function') {
+      try {
+        this._boundSettingsWin.removeEventListener('zone:settings-changed', this._onSettingsChanged);
+      } catch (_) { /* ignore */ }
+    }
+    win.addEventListener('zone:settings-changed', this._onSettingsChanged);
+    this._boundSettingsWin = win;
+    return true;
+  }
+
+  setGraphicsConfig(rawConfig = {}) {
+    const cfg = typeof rawConfig === 'string'
+      ? { preset: rawConfig }
+      : (rawConfig && typeof rawConfig === 'object' ? rawConfig : {});
+    const sub = cfg.graphics && typeof cfg.graphics === 'object' ? cfg.graphics : {};
+
+    const rawPreset = cfg.preset ?? cfg.graphicsPreset ?? cfg.qualityPreset ?? cfg.graphicsQuality ?? sub.preset ?? sub.graphicsPreset;
+    const hasExplicitPreset = rawPreset !== undefined && rawPreset !== null && String(rawPreset).trim() !== '';
+    const presetKey = hasExplicitPreset
+      ? String(rawPreset).trim().toLowerCase()
+      : (this._graphicsPreset || 'high');
+    const presetDef = Object.hasOwn(GRAPHICS_PRESETS, presetKey)
+      ? GRAPHICS_PRESETS[presetKey]
+      : GRAPHICS_PRESETS.high;
+
+    this._graphicsPreset = presetDef.preset;
+
+    const rawAuto = cfg.dynamicResAuto ?? cfg.dynamicRes ?? cfg.autoDpr ?? cfg.dynamicResolution ?? sub.dynamicResAuto;
+    if (typeof rawAuto === 'boolean') {
+      this.resScaler.dynamicResAuto = rawAuto;
+    }
+
+    const nextDprCap = typeof cfg.dprCap === 'number' && Number.isFinite(cfg.dprCap)
+      ? cfg.dprCap
+      : (hasExplicitPreset ? presetDef.dprCap : this.resScaler.presetCap);
+    this.resScaler.setPresetCap(nextDprCap, { resetCurrent: true, resetCooldown: true });
+
+    let nextParticleScale;
+    if (typeof cfg.particleScale === 'number' && Number.isFinite(cfg.particleScale)) {
+      nextParticleScale = cfg.particleScale > 2 ? cfg.particleScale / 100 : Math.max(0, cfg.particleScale);
+    } else if (hasExplicitPreset) {
+      nextParticleScale = presetDef.particleScale;
+    } else if (typeof cfg.particleDensity === 'number' && Number.isFinite(cfg.particleDensity)) {
+      nextParticleScale = cfg.particleDensity > 2 ? cfg.particleDensity / 100 : Math.max(0, cfg.particleDensity);
+    } else {
+      nextParticleScale = this._particleScaleOverride !== null ? this._particleScaleOverride : presetDef.particleScale;
+    }
+    this._particleScaleOverride = Number(nextParticleScale.toFixed(2));
+
+    const rawShadows = cfg.shadowsEnabled ?? cfg.shadows ?? sub.shadowsEnabled;
+    if (typeof rawShadows === 'boolean') {
+      this._shadowsEnabled = rawShadows;
+    } else if (hasExplicitPreset) {
+      this._shadowsEnabled = presetDef.shadowsEnabled;
+    }
+
+    if (this.sharedRenderer && this.sharedRenderer.shadowMap) {
+      this.sharedRenderer.shadowMap.enabled = this._shadowsEnabled;
+      this.sharedRenderer.shadowMap.needsUpdate = true;
+    }
+
+    for (const ctrl of this.world.stageVfxControllers) {
+      if (ctrl && ctrl.pool) {
+        ctrl.pool.budgetThrottleScale = this._particleScaleOverride;
+      }
+    }
+
+    for (const sRec of this.stageInstances.values()) {
+      const lights = sRec.built && sRec.built.refs && sRec.built.refs.lights;
+      if (lights && lights.key) {
+        lights.key.castShadow = this._shadowsEnabled;
+        if (lights.key.shadow) {
+          lights.key.shadow.autoUpdate = this._shadowsEnabled;
+          lights.key.shadow.needsUpdate = true;
+        }
+      }
+    }
+
+    for (const rec of this.itemSlots.values()) {
+      rec.dirty = true;
+    }
+
+    return this.getGraphicsConfig();
+  }
+
+  getGraphicsConfig() {
+    return {
+      preset: this._graphicsPreset,
+      graphicsPreset: this._graphicsPreset,
+      dprCap: this.resScaler.presetCap,
+      currentDpr: this.resScaler.currentDpr,
+      dynamicResAuto: this.resScaler.dynamicResAuto,
+      particleScale: this._particleScaleOverride !== null ? this._particleScaleOverride : this.gpuGovernor.particleScale,
+      shadowsEnabled: this._shadowsEnabled,
+    };
   }
 
   _setupItemStudioLighting() {
@@ -3776,14 +4130,16 @@ export class ZoneEcs3DRuntime {
   _blitStageRecord(stageRec, realDt) {
     if (!stageRec) return { calls: 0, tris: 0 };
     const renderer = this._ensureSharedRenderer();
+    if (renderer.shadowMap) {
+      renderer.shadowMap.enabled = this._shadowsEnabled;
+    }
     let w = 560;
     let h = 235;
     if (typeof stageRec.el.getBoundingClientRect === 'function') {
       const rect = stageRec.el.getBoundingClientRect();
-      const maxDpr = this.gpuGovernor.maxPixelRatio;
-      const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, maxDpr) : 1;
-      w = Math.max(200, Math.min(960, Math.floor((rect.width || 560) * dpr)));
-      h = Math.max(150, Math.min(640, Math.floor((rect.height || 235) * dpr)));
+      const dpr = this.resScaler ? this.resScaler.currentDpr : this.gpuGovernor.maxPixelRatio;
+      w = Math.max(120, Math.min(1440, Math.floor((rect.width || 560) * dpr)));
+      h = Math.max(90, Math.min(960, Math.floor((rect.height || 235) * dpr)));
     }
     if (stageRec.canvas && (stageRec.canvas.width !== w || stageRec.canvas.height !== h)) {
       stageRec.canvas.width = w;
@@ -3809,6 +4165,11 @@ export class ZoneEcs3DRuntime {
   }
 
   _renderFrame(_scaledDt, realDt) {
+    this._ensureSettingsListener();
+    if (this.resScaler && typeof realDt === 'number' && realDt > 0) {
+      this.resScaler.sampleFrame(realDt * 1000);
+    }
+
     let frameDrawCalls = 0;
     let frameTriangles = 0;
 
@@ -3823,7 +4184,10 @@ export class ZoneEcs3DRuntime {
     }
 
     let blitsThisFrame = 0;
-    const MAX_ITEM_BLITS_PER_FRAME = this.gpuGovernor.maxItemBlitsPerFrame;
+    const presetBlits = GRAPHICS_PRESETS[this._graphicsPreset]
+      ? GRAPHICS_PRESETS[this._graphicsPreset].maxItemBlitsPerFrame
+      : this.gpuGovernor.maxItemBlitsPerFrame;
+    const MAX_ITEM_BLITS_PER_FRAME = Math.min(this.gpuGovernor.maxItemBlitsPerFrame, presetBlits);
 
     for (let i = 0; i < slotsArr.length; i++) {
       const rec = slotsArr[i];
@@ -3891,6 +4255,7 @@ export class ZoneEcs3DRuntime {
   }
 
   scan(root = undefined) {
+    this._ensureSettingsListener();
     const scope = root || (typeof document !== 'undefined' ? document : null);
     if (!scope || typeof scope.querySelectorAll !== 'function') return 0;
     let count = 0;
@@ -4118,6 +4483,9 @@ export class ZoneEcs3DRuntime {
     for (const ctrl of this.world.stageVfxControllers) {
       if (ctrl && ctrl.pool) vfxActiveParticles += ctrl.pool.activeCount;
     }
+    const effectiveParticleScale = this._particleScaleOverride !== null
+      ? this._particleScaleOverride
+      : this.gpuGovernor.particleScale;
     return {
       ready: true,
       ecsEntities: this.world.aliveCount,
@@ -4128,8 +4496,15 @@ export class ZoneEcs3DRuntime {
       triangles: this._triangles,
       contextLost: this._contextLost,
       vfxActiveParticles,
-      particleScale: this.gpuGovernor.particleScale,
+      particleScale: effectiveParticleScale,
       maxStageDrawCalls: this.gpuGovernor.maxStageDrawCalls,
+      fps: this.resScaler.fps,
+      frameMsEma: Number(this.resScaler.frameMsEma.toFixed(2)),
+      currentDpr: this.resScaler.currentDpr,
+      dprCap: this.resScaler.presetCap,
+      graphicsPreset: this._graphicsPreset,
+      dynamicResAuto: this.resScaler.dynamicResAuto,
+      shadowsEnabled: this._shadowsEnabled,
     };
   }
 }
