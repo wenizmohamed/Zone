@@ -216,27 +216,27 @@ test('v152 Static, SHA-256 Lock, Entrypoints, SW Precache & PostgreSQL 16 SQL La
 
   const headHtml = rawIndex.subarray(0, bodyIdx).toString('utf8');
   assert.match(headHtml, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'gym116.css?v=117 must stay untouched');
-  assert.match(headHtml, /href="\.\/assets\/ui\/zone-ecs-3d\.css\?v=154"/);
-  assert.match(headHtml, /href="\.\/assets\/ui\/zone-profile-avatar\.css\?v=154"/);
-  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-ecs-3d-bridge\.js\?v=154"><\/script>/);
-  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-profile-avatar\.js\?v=154"><\/script>/);
-  assert.doesNotMatch(headHtml, /\?v=15[123]\b/, 'All ?v=151/152/153 head references must be bumped to ?v=154');
+  assert.match(headHtml, /href="\.\/assets\/ui\/zone-ecs-3d\.css\?v=155"/);
+  assert.match(headHtml, /href="\.\/assets\/ui\/zone-profile-avatar\.css\?v=155"/);
+  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-ecs-3d-bridge\.js\?v=155"><\/script>/);
+  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-profile-avatar\.js\?v=155"><\/script>/);
+  assert.doesNotMatch(headHtml, /\?v=15[1234]\b/, 'All ?v=151/152/153/154 head references must be bumped to ?v=155');
 
   const accountHtml = readUtf8('account.html');
-  assert.match(accountHtml, /href="\/assets\/ui\/watercolor-sketchbook\.css\?v=154"/);
-  assert.match(accountHtml, /href="\/assets\/ui\/zone-app-shell\.css\?v=154"/);
-  assert.match(accountHtml, /href="\/assets\/ui\/zone-profile-avatar\.css\?v=154"/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/watercolor-sketchbook\.js\?v=154" defer><\/script>/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-app-shell\.js\?v=154" defer><\/script>/);
+  assert.match(accountHtml, /href="\/assets\/ui\/watercolor-sketchbook\.css\?v=155"/);
+  assert.match(accountHtml, /href="\/assets\/ui\/zone-app-shell\.css\?v=155"/);
+  assert.match(accountHtml, /href="\/assets\/ui\/zone-profile-avatar\.css\?v=155"/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/watercolor-sketchbook\.js\?v=155" defer><\/script>/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-app-shell\.js\?v=155" defer><\/script>/);
   assert.match(accountHtml, /<script src="\/account\.js\?v=73" defer><\/script>/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-profile-avatar\.js\?v=154" defer><\/script>/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-profile-avatar\.js\?v=155" defer><\/script>/);
   assert.match(accountHtml, /min-height:44px/);
   assert.match(accountHtml, /role="status"/);
   assert.doesNotMatch(accountHtml, /\?v=146\b/);
-  assert.doesNotMatch(accountHtml, /\?v=15[23]\b/);
+  assert.doesNotMatch(accountHtml, /\?v=15[234]\b/);
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v154['"]/);
+  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v155['"]/);
   for (const asset of [
     '/assets/ui/zone-ecs-3d.css',
     '/assets/ui/zone-ecs-3d-bridge.js',

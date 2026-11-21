@@ -28,10 +28,12 @@ use Zone\Engine\Core\Game\FactionEmpireService;
 use Zone\Engine\Core\Game\ForeignMarketService;
 use Zone\Engine\Core\Game\AscensionEngineService;
 use Zone\Engine\Core\Game\CityActivitiesService;
+use Zone\Engine\Core\Game\EconomyAntiCheatService;
 use Zone\Engine\Core\Game\RankAndSkillTreeService;
 use Zone\Engine\Core\Game\StoryCampaignService;
 use Zone\Engine\Core\Game\SyndicateSocialService;
 use Zone\Engine\Core\Game\PlayerAvatarService;
+use Zone\Engine\Core\Game\TacticalAiDirectorService;
 use Zone\Engine\Core\Game\TornSystemsService;
 use Zone\Engine\Core\Game\TradeBazaarCompanyService;
 use Zone\Engine\Core\Game\TravelService;
@@ -1541,11 +1543,53 @@ final class GameEngine
 
     public function ascensionAction(string $action, array $payload, string $playerId = 'founder-player'): array
     {
+        if (str_starts_with(strtolower(trim($action)), 'tactical.')) {
+            return $this->tacticalAction($action, $payload, $playerId);
+        }
         if (!class_exists(AscensionEngineService::class)) {
             throw new RuntimeException('AscensionEngineService is unavailable.');
         }
         $this->recordActionAttempt($playerId);
         return (new AscensionEngineService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function tactical(string $playerId = 'founder-player', string $district = 'pier_4'): array
+    {
+        if (!class_exists(TacticalAiDirectorService::class)) {
+            throw new RuntimeException('TacticalAiDirectorService is unavailable.');
+        }
+        return (new TacticalAiDirectorService($this->database, $this->events))->snapshot($playerId, $district);
+    }
+
+    public function tacticalAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(TacticalAiDirectorService::class)) {
+            throw new RuntimeException('TacticalAiDirectorService is unavailable.');
+        }
+        if (strtolower(trim($action)) !== 'tactical.state') {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new TacticalAiDirectorService($this->database, $this->events))->act($playerId, $action, $payload);
+    }
+
+    public function economySecurity(string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(EconomyAntiCheatService::class)) {
+            throw new RuntimeException('EconomyAntiCheatService is unavailable.');
+        }
+        return (new EconomyAntiCheatService($this->database, $this->ledger, $this->events))->getEconomyHudState($playerId);
+    }
+
+    public function economySecurityAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
+    {
+        if (!class_exists(EconomyAntiCheatService::class)) {
+            throw new RuntimeException('EconomyAntiCheatService is unavailable.');
+        }
+        $normalized = strtolower(trim($action));
+        if (!in_array($normalized, ['economy.hud_state', 'hud_state', 'snapshot'], true)) {
+            $this->recordActionAttempt($playerId);
+        }
+        return (new EconomyAntiCheatService($this->database, $this->ledger, $this->events))->act($playerId, $action, $payload);
     }
 
     public function cityActivities(string $playerId = 'founder-player'): array
@@ -1570,11 +1614,23 @@ final class GameEngine
         if (!class_exists(TradeBazaarCompanyService::class)) {
             throw new RuntimeException('TradeBazaarCompanyService is unavailable.');
         }
-        return (new TradeBazaarCompanyService($this->database, $this->events))->snapshot($playerId);
+        $snapshot = (new TradeBazaarCompanyService($this->database, $this->events))->snapshot($playerId);
+        if (class_exists(EconomyAntiCheatService::class)) {
+            $snapshot['equilibriumHud'] = (new EconomyAntiCheatService($this->database, $this->ledger, $this->events))->getEconomyHudState($playerId);
+        }
+        return $snapshot;
     }
 
     public function syndicateEconomyAction(string $action, array $payload, string $playerId = 'founder-player'): array
     {
+        $normalized = strtolower(trim($action));
+        if (
+            str_starts_with($normalized, 'economy.')
+            || str_starts_with($normalized, 'sink.')
+            || in_array($normalized, ['hud_state', 'validate_envelope', 'launder_heat', 'hone_weapon', 'bribe_wardens'], true)
+        ) {
+            return $this->economySecurityAction($action, $payload, $playerId);
+        }
         if (!class_exists(TradeBazaarCompanyService::class)) {
             throw new RuntimeException('TradeBazaarCompanyService is unavailable.');
         }

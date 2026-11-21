@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v154) */
-const SHELL_CACHE_NAME = 'zone-shell-v154';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v155) */
+const SHELL_CACHE_NAME = 'zone-shell-v155';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -8,17 +8,25 @@ const PRECACHE_URLS = [
   './offline.html',
   './manifest.webmanifest',
   './assets/icons/icon-192.png',
-  './assets/ui/zone-torn-live.css?v=154',
-  './assets/ui/zone-torn-live.js?v=154',
-  './assets/ui/zone-rpg-empire.css?v=154',
-  './assets/ui/zone-rpg-empire.js?v=154',
-  './assets/ui/zone-ascension-breakthrough.css?v=154',
-  './assets/ui/zone-ascension-breakthrough.js?v=154',
-  './assets/ui/zone-ecs-3d.css?v=154',
-  './assets/ui/zone-ecs-3d-bridge.js?v=154',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=154',
-  './assets/ui/zone-profile-avatar.css?v=154',
-  './assets/ui/zone-profile-avatar.js?v=154'
+  './assets/ui/zone-torn-live.css?v=155',
+  './assets/ui/zone-torn-live.js?v=155',
+  './assets/ui/zone-rpg-empire.css?v=155',
+  './assets/ui/zone-rpg-empire.js?v=155',
+  './assets/ui/zone-ascension-breakthrough.css?v=155',
+  './assets/ui/zone-ascension-breakthrough.js?v=155',
+  './assets/ui/zone-ecs-3d.css?v=155',
+  './assets/ui/zone-ecs-3d-bridge.js?v=155',
+  './assets/ui/zone-3d-rigged-operative.mjs?v=155',
+  './assets/ui/zone-vfx-particles.mjs',
+  './assets/ui/zone-ecs-3d-engine.mjs?v=155',
+  './assets/ui/zone-profile-avatar.css?v=155',
+  './assets/ui/zone-profile-avatar.js?v=155',
+  './assets/ui/zone-instant-games.js?v=155',
+  './assets/ui/zone-audio-haptics.js?v=155',
+  './assets/ui/zone-tactical-director.css?v=155',
+  './assets/ui/zone-tactical-director.js?v=155',
+  './assets/ui/zone-hud-accessibility.css?v=155',
+  './assets/ui/zone-hud-accessibility.js?v=155'
 ];
 
 const IMMUTABLE_BINARY_RE = /\.(?:woff2|webp|png|jpe?g|glb)$/i;

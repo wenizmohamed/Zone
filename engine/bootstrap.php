@@ -16,6 +16,7 @@ const ZONE_REPOSITORY_ROOT = __DIR__ . '/..';
 spl_autoload_register(static function (string $class): void {
     $prefixes = [
         'Zone\\Engine\\' => ZONE_ENGINE_ROOT . '/src/',
+        'Zone\\Core\\' => ZONE_ENGINE_ROOT . '/src/Core/',
         'Zone\\Modules\\' => ZONE_ENGINE_ROOT . '/modules/',
     ];
 

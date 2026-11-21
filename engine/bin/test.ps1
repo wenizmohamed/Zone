@@ -90,6 +90,10 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $php (Join-Path $repositoryRoot 'engine\tests\territory-http.php')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\TacticalAiDirectorTest.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $php (Join-Path $repositoryRoot 'engine\tests\EconomyAntiCheatTest.php')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($env:ZONE_POSTGRES_TEST_URL) {
     & $php -d extension=pdo_pgsql (Join-Path $repositoryRoot 'engine\tests\postgres-beta.php')
     exit $LASTEXITCODE
