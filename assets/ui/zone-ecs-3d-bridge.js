@@ -1,6 +1,6 @@
 /* ==========================================================================
- * ZONE v153 - SYNCHRONOUS 3D ECS BRIDGE, AUTO-SCANNER & #zone-char-3d GUARD
- * Exclusive Ownership: @ecs-3d-engine (assets/ui/zone-ecs-3d-bridge.js)
+ * ZONE v155 - SYNCHRONOUS 3D ECS BRIDGE, AUTO-SCANNER & ZERO-BLANK #zone-char-3d
+ * Exclusive Ownership: @char-3d-anim (assets/ui/zone-ecs-3d-bridge.js)
  * Exposes: window.ZoneEcs3D synchronously (1 Shared WebGL Context Runtime)
  * Fiber-safe: append-only DOM mounts; never mutates or removes <x-dc> nodes.
  * ========================================================================== */
@@ -16,7 +16,10 @@
   var scanScheduled = false;
   var readyResolvers = [];
   var charWatchTimer = 0;
+  var charWatchEl = null;
+  var charMountTimestamps = typeof WeakMap === 'function' ? new WeakMap() : null;
   var currentCharOutfit = 'street';
+  var CHAR_WATCHDOG_MS = 1600;
 
   function enqueue(method, args) {
     if (runtime && typeof runtime[method] === 'function') {
@@ -24,6 +27,26 @@
     }
     pendingCalls.push({ method: method, args: args });
     return false;
+  }
+
+  /**
+   * Anchors a non-resetting mount timestamp per `#zone-char-3d` element instance
+   * so rapid MutationObserver scans (<200ms) never reset or starve the 1600ms clock.
+   */
+  function getCharMountTimestamp(charEl) {
+    if (!charEl) return 0;
+    if (charMountTimestamps && charMountTimestamps.has(charEl)) {
+      return charMountTimestamps.get(charEl);
+    }
+    if (typeof charEl.__z3dMountTs === 'number' && charEl.__z3dMountTs > 0) {
+      return charEl.__z3dMountTs;
+    }
+    var now = Date.now();
+    if (charMountTimestamps) charMountTimestamps.set(charEl, now);
+    try {
+      charEl.__z3dMountTs = now;
+    } catch (_) { /* frozen mock safe */ }
+    return now;
   }
 
   function inferNativeItemSpec(nameText, metaText, thumbSrc) {
@@ -123,35 +146,48 @@
 
   /**
    * Inspects `#zone-char-3d` (both `<iframe>` and standalone container modes).
-   * If `.zone-preview-unavailable` / `#zone-media-error` appears OR no healthy
-   * WebGL canvas is ready after `1600ms`, hides the error message and mounts an
-   * interactive `character-turntable` 3D stage synced to `[data-outfit]` clicks!
+   * Mounts `[data-z3d-stage="character-turntable"]` immediately (`0ms`) as an
+   * instant 3D overlay whenever `#zone-char-3d` does not yet have a `ready`
+   * non-zero WebGL canvas (`hasHealthyCanvas === false`), so `Home` NEVER shows
+   * a blank silver-grey rectangle! If `dist/character3d.html` later reaches
+   * `ready` with a non-zero canvas, smoothly hides the fallback overlay.
    */
-  function evaluateChar3DFallback(allowTimeoutFallback) {
+  function evaluateChar3DFallback(allowInstantOverlay) {
     var charEl = document.getElementById('zone-char-3d');
     if (!charEl) return false;
 
+    var mountTs = getCharMountTimestamp(charEl);
     var hostEl = charEl.tagName === 'IFRAME' ? (charEl.parentElement || charEl) : charEl;
-    var existingFallback = hostEl.querySelector('[data-z3d-stage="character-turntable"]');
+    var existingFallback = hostEl && hostEl.querySelector
+      ? hostEl.querySelector('[data-z3d-stage="character-turntable"]')
+      : null;
 
     var explicitFail = false;
     var hasHealthyCanvas = false;
 
-    var outerUnavail = hostEl.querySelector('.zone-preview-unavailable, #zone-media-error');
+    var outerUnavail = hostEl && hostEl.querySelector
+      ? hostEl.querySelector('.zone-preview-unavailable, #zone-media-error')
+      : null;
     if (outerUnavail) explicitFail = true;
 
     if (charEl.tagName === 'IFRAME') {
+      if (!charEl.__z3dLoadBound && typeof charEl.addEventListener === 'function') {
+        charEl.__z3dLoadBound = true;
+        charEl.addEventListener('load', function () {
+          evaluateChar3DFallback(true);
+        });
+      }
       try {
         var doc = charEl.contentDocument;
         if (doc && doc.body) {
           var errEl = doc.getElementById('zone-media-error') || doc.querySelector('.zone-preview-unavailable');
-          if (errEl || doc.body.dataset.zoneMediaState === 'error') {
+          if (errEl || (doc.body.dataset && doc.body.dataset.zoneMediaState === 'error')) {
             explicitFail = true;
-            if (errEl) errEl.style.display = 'none';
+            if (errEl && errEl.style) errEl.style.display = 'none';
           } else {
             var stageRoot = doc.getElementById('stage');
             var c = doc.querySelector('canvas') || (stageRoot && stageRoot.shadowRoot && stageRoot.shadowRoot.querySelector('canvas'));
-            if (c && c.width > 0 && c.height > 0 && doc.body.dataset.zoneMediaState === 'ready') {
+            if (c && c.width > 0 && c.height > 0 && doc.body.dataset && doc.body.dataset.zoneMediaState === 'ready') {
               hasHealthyCanvas = true;
             }
           }
@@ -163,64 +199,110 @@
       if (/unavailable|غير متاحة/i.test(charEl.textContent || '')) {
         explicitFail = true;
       }
-      var nativeCanvas = charEl.querySelector('canvas:not(.z3d-stage-webgl-canvas)');
+      var nativeCanvas = charEl.querySelector ? charEl.querySelector('canvas:not(.z3d-stage-webgl-canvas)') : null;
       if (nativeCanvas && nativeCanvas.width > 0 && nativeCanvas.height > 0 && !explicitFail) {
         hasHealthyCanvas = true;
       }
     }
 
     if (hasHealthyCanvas && !explicitFail) {
-      if (existingFallback) existingFallback.style.display = 'none';
-      if (charEl.tagName === 'IFRAME') {
+      if (existingFallback && existingFallback.style) {
+        existingFallback.style.opacity = '0';
+        existingFallback.style.pointerEvents = 'none';
+        existingFallback.style.display = 'none';
+        existingFallback.setAttribute('data-z3d-fallback-hidden', '1');
+      }
+      if (charEl.tagName === 'IFRAME' && charEl.style) {
         charEl.style.opacity = '';
         charEl.style.pointerEvents = '';
       }
       return false;
     }
 
-    if (!explicitFail && !allowTimeoutFallback) return false;
+    // Default to instant 0ms overlay whenever healthy WebGL canvas is absent
+    var shouldMount = allowInstantOverlay !== false || explicitFail || (Date.now() - mountTs >= CHAR_WATCHDOG_MS);
+    if (!shouldMount) return false;
 
     // Hide any "3D preview is unavailable" message without removing Fiber-managed nodes
-    var unavailNodes = hostEl.querySelectorAll('.zone-preview-unavailable, #zone-media-error');
-    for (var u = 0; u < unavailNodes.length; u++) {
-      unavailNodes[u].style.display = 'none';
+    if (hostEl && hostEl.querySelectorAll) {
+      var unavailNodes = hostEl.querySelectorAll('.zone-preview-unavailable, #zone-media-error');
+      for (var u = 0; u < unavailNodes.length; u++) {
+        if (unavailNodes[u] && unavailNodes[u].style) {
+          unavailNodes[u].style.display = 'none';
+        }
+      }
     }
-    if (charEl.tagName === 'IFRAME') {
+    if (charEl.tagName === 'IFRAME' && charEl.style) {
       charEl.style.opacity = '0';
       charEl.style.pointerEvents = 'none';
     }
-    if (hostEl && hostEl.style) {
+    if (hostEl && hostEl.style && hostEl.tagName !== 'X-DC') {
       hostEl.style.position = 'relative';
       hostEl.style.overflow = 'hidden';
     }
 
     currentCharOutfit = detectActiveOutfit();
+    var overlayCss = 'position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:2;opacity:1;pointer-events:auto;transition:opacity 0.22s ease;';
     if (!existingFallback) {
       var stageDiv = document.createElement('div');
       stageDiv.className = 'z3d-action-stage z3d-char-turntable-stage';
-      stageDiv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:2;';
+      stageDiv.style.cssText = overlayCss;
       stageDiv.setAttribute('data-z3d-stage', 'character-turntable');
       stageDiv.setAttribute('data-z3d-outfit', currentCharOutfit);
+      stageDiv.setAttribute('data-z3d-mount-ts', String(mountTs));
       hostEl.appendChild(stageDiv);
       enqueue('scan', [hostEl]);
     } else {
-      existingFallback.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:2;';
-      existingFallback.setAttribute('data-z3d-outfit', currentCharOutfit);
-      enqueue('updateStageState', ['character-turntable', { outfit: currentCharOutfit }]);
+      var wasHidden = existingFallback.style.display === 'none' || existingFallback.getAttribute('data-z3d-fallback-hidden') === '1';
+      var prevOutfit = existingFallback.getAttribute('data-z3d-outfit');
+      if (wasHidden) {
+        existingFallback.style.cssText = overlayCss;
+        if (typeof existingFallback.removeAttribute === 'function') {
+          existingFallback.removeAttribute('data-z3d-fallback-hidden');
+        } else {
+          existingFallback.setAttribute('data-z3d-fallback-hidden', '0');
+        }
+      }
+      if (prevOutfit !== currentCharOutfit || wasHidden) {
+        existingFallback.setAttribute('data-z3d-outfit', currentCharOutfit);
+        enqueue('updateStageState', ['character-turntable', { outfit: currentCharOutfit }]);
+      }
     }
     return true;
   }
 
   function armChar3DWatchdog() {
     var charEl = document.getElementById('zone-char-3d');
-    if (!charEl) return;
-    // Immediate check if error state is already rendered
-    if (evaluateChar3DFallback(false)) return;
-    if (charWatchTimer) clearTimeout(charWatchTimer);
-    charWatchTimer = window.setTimeout(function () {
-      charWatchTimer = 0;
-      evaluateChar3DFallback(true);
-    }, 1600);
+    if (!charEl) {
+      if (charWatchTimer) {
+        clearTimeout(charWatchTimer);
+        charWatchTimer = 0;
+      }
+      charWatchEl = null;
+      return;
+    }
+
+    var mountTs = getCharMountTimestamp(charEl);
+    // Mount character-turntable immediately (0ms) when no healthy canvas is ready yet
+    evaluateChar3DFallback(true);
+
+    // Non-resetting watchdog: never clearTimeout an active timer for the same #zone-char-3d node!
+    if (charWatchEl !== charEl) {
+      if (charWatchTimer) {
+        clearTimeout(charWatchTimer);
+        charWatchTimer = 0;
+      }
+      charWatchEl = charEl;
+    }
+
+    var elapsed = Date.now() - mountTs;
+    if (!charWatchTimer && elapsed < CHAR_WATCHDOG_MS) {
+      var remaining = Math.max(16, CHAR_WATCHDOG_MS - elapsed);
+      charWatchTimer = window.setTimeout(function () {
+        charWatchTimer = 0;
+        evaluateChar3DFallback(true);
+      }, remaining);
+    }
   }
 
   function upgradeNativeScreens(rootEl) {
@@ -326,7 +408,7 @@
       }
     }
 
-    // Arm `#zone-char-3d` 1600ms watchdog whenever `#zone-char-3d` is in the DOM
+    // Mount instant `#zone-char-3d` 3D turntable & non-resetting watchdog whenever present
     if (document.getElementById('zone-char-3d')) {
       armChar3DWatchdog();
     }
@@ -371,7 +453,20 @@
       return enqueue('updateStageState', [stageKind, stateObj || {}]);
     },
     checkCharacterFallback: function (forceTimeout) {
-      return evaluateChar3DFallback(!!forceTimeout);
+      return evaluateChar3DFallback(forceTimeout === undefined ? true : !!forceTimeout);
+    },
+    getChar3DWatchState: function () {
+      var charEl = document.getElementById('zone-char-3d');
+      var hostEl = charEl && charEl.tagName === 'IFRAME' ? (charEl.parentElement || charEl) : charEl;
+      var fb = hostEl && hostEl.querySelector ? hostEl.querySelector('[data-z3d-stage="character-turntable"]') : null;
+      return {
+        hasCharEl: !!charEl,
+        mountTs: charEl ? getCharMountTimestamp(charEl) : 0,
+        watchdogTimerId: charWatchTimer,
+        fallbackMounted: !!fb,
+        fallbackVisible: !!(fb && fb.style.display !== 'none'),
+        outfit: currentCharOutfit,
+      };
     },
     diagnostics: function () {
       if (runtime) return runtime.diagnostics();
@@ -455,7 +550,8 @@
   });
 
   window.addEventListener('message', function (ev) {
-    if (ev && ev.data && ev.data.zoneCharacterRecover) {
+    if (!ev || !ev.data) return;
+    if (ev.data.zoneCharacterRecover || ev.data.zoneCharacterReady) {
       evaluateChar3DFallback(true);
     }
   });
@@ -497,15 +593,48 @@
     startObserver();
   }
 
-  import('./zone-ecs-3d-engine.mjs?v=154')
-    .catch(function () {
-      return import('./zone-ecs-3d-engine.mjs?v=153');
-    })
-    .catch(function () {
-      return import('./zone-ecs-3d-engine.mjs?v=152');
-    })
-    .catch(function () {
-      return import('./zone-ecs-3d-engine.mjs');
+  // Import articulated rigged operative module FIRST so globalThis.__ZoneRiggedOperative
+  // is registered synchronously before zone-ecs-3d-engine.mjs builds any stages!
+  function loadRiggedOperativeModule() {
+    return import('./zone-3d-rigged-operative.mjs?v=155')
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs?v=154');
+      })
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs');
+      })
+      .then(function (rigMod) {
+        if (rigMod && typeof rigMod.createRiggedOperative3D === 'function' && !globalThis.__ZoneRiggedOperative) {
+          globalThis.__ZoneRiggedOperative = {
+            createRiggedOperative3D: rigMod.createRiggedOperative3D,
+          };
+        }
+        return rigMod;
+      })
+      .catch(function () {
+        return null;
+      });
+  }
+
+  function loadEngineModule() {
+    return import('./zone-ecs-3d-engine.mjs?v=155')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=154');
+      })
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=153');
+      })
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=152');
+      })
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs');
+      });
+  }
+
+  loadRiggedOperativeModule()
+    .then(function () {
+      return loadEngineModule();
     })
     .then(function (mod) {
       if (!mod || typeof mod.createZoneEcs3DRuntime !== 'function') return;
