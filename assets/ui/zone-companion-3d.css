@@ -1,0 +1,484 @@
+/* ==========================================================================
+ * ZONE v159 - TRACK 16: 4-STAGE EVOLVING 3D SYNDICATE COMPANION SYSTEM CSS
+ * Exclusive Ownership: @companion-pet-3d (assets/ui/zone-companion-3d.css)
+ * 4-Way Parity: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL
+ * Mobile Guarantee: 0px horizontal overflow at 390px viewport width
+ * ========================================================================== */
+
+:root,
+html:not([data-theme="light"]),
+html:not([data-theme="light"]) body {
+  --zcp-card-bg: var(--zwc-surface, #1e1b17);
+  --zcp-subcard-bg: var(--zwc-paper-subcard, #25211c);
+  --zcp-well-bg: var(--zwc-well-bg, #161310);
+  --zcp-ink: var(--zwc-ink, #f3ecdc);
+  --zcp-ink-soft: var(--zwc-ink-soft, #d8ccb6);
+  --zcp-ink-muted: var(--zwc-ink-muted, #aca08a);
+  --zcp-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --zcp-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
+  --zcp-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
+  --zcp-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
+  --zcp-sage-bg: rgba(109, 153, 73, 0.22);
+  --zcp-sage-ink: #a6f292;
+  --zcp-sage-fill: #5c8e3e;
+  --zcp-gold-bg: rgba(240, 196, 101, 0.2);
+  --zcp-gold-ink: #f4cf78;
+  --zcp-gold-fill: #d99a38;
+  --zcp-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zcp-crimson-ink: #ff9c8a;
+  --zcp-crimson-fill: #c44933;
+  --zcp-blue-bg: rgba(62, 111, 176, 0.22);
+  --zcp-blue-ink: #93c5fd;
+  --zcp-blue-fill: #4f85c9;
+  --zcp-plum-bg: rgba(168, 85, 247, 0.2);
+  --zcp-plum-ink: #e4c4ff;
+  --zcp-btn-bg: var(--zwc-btn-bg, #2b2620);
+  --zcp-btn-hover: var(--zwc-btn-hover, #38322a);
+  --zcp-canvas-bg: radial-gradient(circle at 50% 42%, rgba(217, 154, 56, 0.16), rgba(16, 14, 12, 0.94));
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root #zone-main {
+  --zcp-card-bg: var(--zwc-surface, #fbf7ee);
+  --zcp-subcard-bg: var(--zwc-paper-subcard, #f4ecdb);
+  --zcp-well-bg: var(--zwc-well-bg, rgba(232, 221, 198, 0.62));
+  --zcp-ink: var(--zwc-ink, #1e1b18);
+  --zcp-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zcp-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zcp-border: var(--zwc-border-strong, #23201c);
+  --zcp-border-sub: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --zcp-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zcp-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.14));
+  --zcp-sage-bg: rgba(109, 153, 73, 0.24);
+  --zcp-sage-ink: #1b4d23;
+  --zcp-sage-fill: #497230;
+  --zcp-gold-bg: rgba(218, 168, 59, 0.26);
+  --zcp-gold-ink: #5e3b06;
+  --zcp-gold-fill: #b87e1f;
+  --zcp-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zcp-crimson-ink: #781e0f;
+  --zcp-crimson-fill: #a93522;
+  --zcp-blue-bg: rgba(62, 111, 176, 0.2);
+  --zcp-blue-ink: #193b68;
+  --zcp-blue-fill: #3766a3;
+  --zcp-plum-bg: rgba(147, 51, 234, 0.18);
+  --zcp-plum-ink: #4c1d95;
+  --zcp-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zcp-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+  --zcp-canvas-bg: radial-gradient(circle at 50% 42%, rgba(218, 168, 59, 0.24), rgba(239, 230, 210, 0.96));
+}
+
+html[data-zone-contrast="high"] .zcp-scope {
+  --zcp-border: currentColor;
+}
+
+.zcp-scope,
+.zcp-scope * {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.zcp-scope {
+  width: 100%;
+  max-width: 100%;
+  margin-block: 12px;
+  padding: 13px 14px;
+  border: 1.7px solid var(--zcp-border);
+  border-radius: var(--zwc-radius-sketch, 14px);
+  background: var(--zcp-card-bg);
+  color: var(--zcp-ink);
+  box-shadow: var(--zcp-shadow);
+  font-family: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+html[dir="rtl"] .zcp-scope,
+html:lang(ar) .zcp-scope {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .zcp-scope *,
+html:lang(ar) .zcp-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Header & Badges */
+.zcp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 10px;
+}
+
+.zcp-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1 1 210px;
+}
+
+.zcp-crest-badge {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--zcp-border);
+  border-radius: 10px;
+  background: var(--zcp-subcard-bg);
+  box-shadow: var(--zcp-shadow-sub);
+}
+
+.zcp-crest-badge svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.zcp-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zcp-ink);
+}
+
+.zcp-sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--zcp-ink-soft);
+}
+
+.zcp-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zcp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1.35px solid var(--zcp-border);
+  background: var(--zcp-subcard-bg);
+  color: var(--zcp-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+.zcp-pill[data-tone="sage"] { background: var(--zcp-sage-bg); color: var(--zcp-sage-ink); }
+.zcp-pill[data-tone="gold"] { background: var(--zcp-gold-bg); color: var(--zcp-gold-ink); }
+.zcp-pill[data-tone="crimson"] { background: var(--zcp-crimson-bg); color: var(--zcp-crimson-ink); }
+.zcp-pill[data-tone="blue"] { background: var(--zcp-blue-bg); color: var(--zcp-blue-ink); }
+.zcp-pill[data-tone="plum"] { background: var(--zcp-plum-bg); color: var(--zcp-plum-ink); }
+
+/* Unit Roster Grid (4 Syndicate Units) */
+.zcp-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-block-end: 10px;
+}
+
+.zcp-unit-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 9px;
+  border: 1.4px solid var(--zcp-border-sub);
+  border-radius: 10px;
+  background: var(--zcp-subcard-bg);
+  color: var(--zcp-ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.zcp-unit-tab:hover:not(:disabled) {
+  border-color: var(--zcp-border);
+  transform: translateY(-1px);
+}
+
+.zcp-unit-tab.is-active {
+  border-width: 1.8px;
+  border-color: var(--zcp-border);
+  box-shadow: var(--zcp-shadow-sub);
+}
+
+.zcp-unit-tab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.zcp-unit-name {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zcp-ink);
+}
+
+.zcp-unit-spec {
+  font-size: 10.3px;
+  line-height: 1.3;
+  color: var(--zcp-ink-soft);
+}
+
+/* Main Workbench: 3D Isometric Canvas Turntable + Companion Telemetry */
+.zcp-workbench {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 11px;
+  padding: 10px 11px;
+  border: 1.4px solid var(--zcp-border-sub);
+  border-radius: 12px;
+  background: var(--zcp-well-bg);
+}
+
+.zcp-turntable-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  padding: 8px;
+  border: 1.5px solid var(--zcp-border);
+  border-radius: 11px;
+  background: var(--zcp-canvas-bg);
+  box-shadow: var(--zcp-shadow-sub);
+  position: relative;
+}
+
+.zcp-canvas-wrap {
+  width: 100%;
+  aspect-ratio: 1 / 0.86;
+  max-height: 178px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.zcp-turntable-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: manipulation;
+}
+
+.zcp-turntable-canvas:active {
+  cursor: grabbing;
+}
+
+.zcp-turntable-caption {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--zcp-ink-soft);
+}
+
+/* Right Column: 4-Stage Evolution Pipeline + Bars + Actions */
+.zcp-telemetry-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.zcp-stages-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.zcp-stage-step {
+  padding: 5px 6px;
+  border-radius: 8px;
+  border: 1.2px solid var(--zcp-border-sub);
+  background: var(--zcp-subcard-bg);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--zcp-ink-muted);
+  text-align: center;
+}
+
+.zcp-stage-step.is-reached {
+  color: var(--zcp-ink-soft);
+  border-color: var(--zcp-border);
+}
+
+.zcp-stage-step.is-current {
+  background: var(--zcp-gold-bg);
+  color: var(--zcp-gold-ink);
+  border-color: var(--zcp-border);
+  font-weight: 800;
+}
+
+/* Bond / Readiness / Evolution Progress Bars */
+.zcp-bars-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.zcp-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.zcp-bar-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--zcp-ink);
+}
+
+.zcp-bar-track {
+  width: 100%;
+  height: 9px;
+  border-radius: 999px;
+  border: 1.2px solid var(--zcp-border);
+  background: rgba(128, 120, 108, 0.2);
+  overflow: hidden;
+}
+
+.zcp-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.22s ease;
+}
+
+.zcp-bar-fill[data-tone="sage"] { background: var(--zcp-sage-fill); }
+.zcp-bar-fill[data-tone="gold"] { background: var(--zcp-gold-fill); }
+.zcp-bar-fill[data-tone="crimson"] { background: var(--zcp-crimson-fill); }
+.zcp-bar-fill[data-tone="blue"] { background: var(--zcp-blue-fill); }
+
+/* Active Modifiers Strip */
+.zcp-mods-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Action Buttons Row */
+.zcp-actions-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.zcp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 9px;
+  border-radius: 9px;
+  border: 1.4px solid var(--zcp-border);
+  background: var(--zcp-btn-bg);
+  color: var(--zcp-ink);
+  font: inherit;
+  font-size: 11.2px;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  text-align: center;
+  max-width: 100%;
+}
+
+.zcp-btn:hover:not(:disabled) {
+  background: var(--zcp-btn-hover);
+}
+
+.zcp-btn[data-tone="sage"] {
+  background: var(--zcp-sage-bg);
+  color: var(--zcp-sage-ink);
+}
+
+.zcp-btn[data-tone="gold"] {
+  background: var(--zcp-gold-bg);
+  color: var(--zcp-gold-ink);
+}
+
+.zcp-btn[data-tone="blue"] {
+  background: var(--zcp-blue-bg);
+  color: var(--zcp-blue-ink);
+}
+
+.zcp-btn[data-tone="crimson"] {
+  background: var(--zcp-crimson-bg);
+  color: var(--zcp-crimson-ink);
+}
+
+.zcp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.zcp-feedback {
+  margin-block-start: 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1.3px solid var(--zcp-border);
+  background: var(--zcp-subcard-bg);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.zcp-feedback[data-tone="sage"] { background: var(--zcp-sage-bg); color: var(--zcp-sage-ink); }
+.zcp-feedback[data-tone="gold"] { background: var(--zcp-gold-bg); color: var(--zcp-gold-ink); }
+.zcp-feedback[data-tone="crimson"] { background: var(--zcp-crimson-bg); color: var(--zcp-crimson-ink); }
+
+@media (max-width: 760px) {
+  .zcp-roster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zcp-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .zcp-scope {
+    padding: 10px;
+  }
+  .zcp-stages-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zcp-actions-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zcp-unit-tab,
+  .zcp-bar-fill {
+    transition: none;
+  }
+}
