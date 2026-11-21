@@ -1,0 +1,573 @@
+/* ==========================================================================
+ * ZONE v159 — Wave-3 Track 15: Live MMO Syndicate Chat, Radio Channels & /roll
+ * Hand-Drawn Fountain-Pen Ink & Gouache Watercolor Sketchbook Edition
+ * 100% 4-Way Parity: Light+EN (#f2ebdc + #1e1b18), Dark+EN (#141210 + #f3ecdc),
+ *                    Light+AR (RTL), Dark+AR (RTL)
+ * Zero Horizontal Overflow at 390x844 Mobile & 1440x900 Desktop
+ * Zero Footprint on Home (#zig-home-arcade) — Inline HUD Pill in #ztl-hud-inner
+ * Exclusive Ownership: chat-comms-mmo (assets/ui/zone-chat-system.css)
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * 1. INLINE HUD TRIGGER PILL INSIDE #ztl-hud-inner (0px Impact on Content)
+ * -------------------------------------------------------------------------- */
+html body .zone-topbar #zone-torn-hud-strip #zcs-hud-chat-slot,
+html body #ztl-hud-inner #zcs-hud-chat-slot {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+html body .zone-topbar #zone-torn-hud-strip #zcs-hud-chat-btn,
+html body #ztl-hud-inner #zcs-hud-chat-btn,
+html body .zcs-hud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  padding: 1px 8px !important;
+  border-radius: 999px;
+  border: 1.2px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  background: var(--ztl-btn-bg, #2b2620);
+  color: var(--ztl-ink, #f3ecdc);
+  font-family: var(--ztl-font-ui, "Patrick Hand", "Rubik", system-ui, sans-serif);
+  font-size: 11.5px !important;
+  font-weight: 700;
+  line-height: 1 !important;
+  cursor: pointer;
+  white-space: nowrap !important;
+  flex: 0 0 auto !important;
+  box-shadow: 1px 1.5px 0 var(--ztl-shadow-solid, #090807);
+  box-sizing: border-box !important;
+  touch-action: manipulation;
+  transition: transform 0.1s ease, background-color 0.14s ease;
+}
+
+html body .zcs-hud-pill:hover {
+  background: var(--ztl-btn-hover, #38322a);
+}
+
+html body .zcs-hud-pill[data-open="1"] {
+  background: var(--ztl-sage-wash, rgba(124, 192, 82, 0.22));
+  color: var(--ztl-sage-ink, #ccf5ae);
+  border-color: var(--ztl-sage-border, rgba(124, 192, 82, 0.55));
+}
+
+html body .zcs-unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--ztl-danger-1, #b8422d), var(--ztl-danger-2, #872919));
+  color: var(--ztl-danger-ink, #fff8f6);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  border: 1px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+}
+
+html body .zcs-unread-badge[hidden] {
+  display: none !important;
+}
+
+/* Yield cleanly when Fullscreen 3D Map is active */
+body.zone-map-expanded #zone-chat-drawer,
+body.zone-map-expanded #zone-chat-drawer-backdrop {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. SLIDE-OVER 4-CHANNEL MMO CHAT DRAWER & BACKDROP
+ * -------------------------------------------------------------------------- */
+html body #zone-chat-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 9, 8, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 9982;
+}
+
+html body #zone-chat-drawer-backdrop[hidden],
+html body #zone-chat-drawer[hidden] {
+  display: none !important;
+}
+
+html body #zone-chat-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  inset-inline-end: 0;
+  width: min(430px, 100vw);
+  max-width: 100vw;
+  background: var(--ztl-paper, #141210);
+  color: var(--ztl-ink, #f3ecdc);
+  border-inline-start: 2px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  box-shadow: -4px 0 18px rgba(0, 0, 0, 0.55);
+  z-index: 9983;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--ztl-font-ui, "Patrick Hand", "Rubik", system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+html[dir="rtl"] body #zone-chat-drawer,
+html:lang(ar) body #zone-chat-drawer {
+  font-family: "Noto Sans Arabic", "Cairo", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+/* Drawer Header */
+html body .zcs-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--ztl-surface, #1e1b17);
+  border-bottom: 1.5px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  flex: 0 0 auto;
+}
+
+html body .zcs-drawer-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+html body .zcs-drawer-title {
+  margin: 0;
+  font-family: var(--ztl-font-brush, "Caveat Brush", "Patrick Hand", sans-serif);
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ztl-title-ink, #faf4e6);
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+html body .zcs-drawer-sub {
+  font-size: 11px;
+  color: var(--ztl-ink-muted, #bfb39c);
+  line-height: 1.2;
+}
+
+html body .zcs-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+html body .zcs-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1.3px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  background: var(--ztl-btn-bg, #2b2620);
+  color: var(--ztl-ink, #f3ecdc);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 1px 1.5px 0 var(--ztl-shadow-solid, #090807);
+}
+
+html body .zcs-icon-btn:hover {
+  background: var(--ztl-btn-hover, #38322a);
+}
+
+html body .zcs-icon-btn[data-active="1"] {
+  background: var(--ztl-gold-wash, rgba(240, 196, 101, 0.22));
+  color: var(--ztl-gold-ink, #fae09e);
+  border-color: var(--ztl-gold-border, rgba(240, 196, 101, 0.55));
+}
+
+/* --------------------------------------------------------------------------
+ * 3. 4-CHANNEL RADIO TABS (GLOBAL, DISTRICT, FACTION, TRADE)
+ * -------------------------------------------------------------------------- */
+html body .zcs-channel-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  padding: 8px 10px;
+  background: var(--ztl-surface-alt, #25211c);
+  border-bottom: 1.2px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+html body .zcs-channel-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 3px 6px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.3px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  background: var(--ztl-subcard, #28231d);
+  color: var(--ztl-ink-soft, #dfd4be);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+html body .zcs-channel-tab:hover {
+  background: var(--ztl-subcard-hover, #322c25);
+}
+
+html body .zcs-channel-tab.is-active {
+  background: var(--ztl-sage-wash, rgba(124, 192, 82, 0.22));
+  color: var(--ztl-sage-ink, #ccf5ae);
+  border-color: var(--ztl-sage-border, rgba(124, 192, 82, 0.6));
+  box-shadow: 1px 1.5px 0 var(--ztl-shadow-solid, #090807);
+}
+
+html body .zcs-tab-unread {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: var(--ztl-gold-cta-1, #c99227);
+  color: var(--ztl-gold-cta-ink, #fffaf0);
+  font-size: 9.5px;
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+ * 4. MUTE DRAWER SUB-PANEL & FEEDBACK BANNER
+ * -------------------------------------------------------------------------- */
+html body .zcs-mute-panel {
+  padding: 8px 10px;
+  background: var(--ztl-subcard, #28231d);
+  border-bottom: 1.2px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+html body .zcs-mute-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+
+html body .zcs-feedback-strip {
+  margin: 6px 10px 0;
+  padding: 6px 10px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.3px solid var(--ztl-sage-border, rgba(124, 192, 82, 0.55));
+  background: var(--ztl-sage-wash, rgba(124, 192, 82, 0.2));
+  color: var(--ztl-sage-ink, #ccf5ae);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+html body .zcs-feedback-strip[data-tone="warn"] {
+  background: var(--ztl-gold-wash, rgba(240, 196, 101, 0.2));
+  color: var(--ztl-gold-ink, #fae09e);
+  border-color: var(--ztl-gold-border, rgba(240, 196, 101, 0.55));
+}
+
+html body .zcs-feedback-strip[data-tone="bad"] {
+  background: var(--ztl-crimson-wash, rgba(239, 125, 104, 0.21));
+  color: var(--ztl-crimson-ink, #ffc2b6);
+  border-color: var(--ztl-crimson-border, rgba(239, 125, 104, 0.56));
+}
+
+/* --------------------------------------------------------------------------
+ * 5. MESSAGE FEED, /ROLL DICE BADGES & BILINGUAL GLOSS
+ * -------------------------------------------------------------------------- */
+html body .zcs-feed {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+html body .zcs-msg-card {
+  padding: 8px 10px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.3px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  background: var(--ztl-surface, #1e1b17);
+  box-shadow: var(--ztl-shadow-sub, 2px 2.5px 0 rgba(0, 0, 0, 0.5));
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  word-break: break-word;
+}
+
+html body .zcs-msg-card[data-msg-type="roll"] {
+  border-color: var(--ztl-gold-border, rgba(240, 196, 101, 0.55));
+  background: var(--ztl-subcard, #28231d);
+}
+
+html body .zcs-msg-card[data-msg-type="relay"],
+html body .zcs-msg-card[data-msg-type="system"] {
+  border-color: var(--ztl-blue-border, rgba(138, 184, 232, 0.52));
+}
+
+html body .zcs-msg-card[data-msg-type="emote"] {
+  font-style: italic;
+  background: var(--ztl-surface-alt, #25211c);
+}
+
+html body .zcs-msg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+html body .zcs-sender-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+html body .zcs-sender-name {
+  font-weight: 800;
+  font-size: 12.5px;
+  color: var(--ztl-title-ink, #faf4e6);
+}
+
+html body .zcs-faction-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  background: var(--ztl-subcard, #28231d);
+  color: var(--ztl-ink-soft, #dfd4be);
+}
+
+html body .zcs-msg-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+html body .zcs-msg-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  border: 1px solid var(--ztl-border, rgba(242, 234, 217, 0.32));
+  background: var(--ztl-btn-bg, #2b2620);
+  color: var(--ztl-ink-soft, #dfd4be);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+html body .zcs-msg-tool-btn:hover {
+  background: var(--ztl-btn-hover, #38322a);
+}
+
+html body .zcs-msg-body {
+  font-size: 13px;
+  line-height: 1.38;
+  color: var(--ztl-ink, #f3ecdc);
+}
+
+html body .zcs-msg-gloss {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border-inline-start: 2.5px solid var(--ztl-gold-border, rgba(240, 196, 101, 0.65));
+  background: var(--ztl-gold-wash, rgba(240, 196, 101, 0.14));
+  color: var(--ztl-gold-ink, #fae09e);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+html body .zcs-msg-gloss[hidden] {
+  display: none !important;
+}
+
+/* Server-Authoritative /roll Dice Badge */
+html body .zcs-dice-badge {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.4px solid var(--ztl-gold-border, rgba(240, 196, 101, 0.6));
+  background: var(--ztl-gold-wash, rgba(240, 196, 101, 0.18));
+  color: var(--ztl-gold-ink, #fae09e);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+html body .zcs-die-pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1.2px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  background: var(--ztl-surface, #1e1b17);
+  color: var(--ztl-ink, #f3ecdc);
+  font-size: 11.5px;
+  font-weight: 800;
+}
+
+html body .zcs-dice-total {
+  margin-inline-start: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--ztl-gold-cta-1, #c99227), var(--ztl-gold-cta-2, #966812));
+  color: var(--ztl-gold-cta-ink, #fffaf0);
+  font-size: 11.5px;
+  font-weight: 800;
+}
+
+/* --------------------------------------------------------------------------
+ * 6. QUICK SLASH-COMMAND CHIPS & COMPOSER FOOTER
+ * -------------------------------------------------------------------------- */
+html body .zcs-composer {
+  padding: 8px 10px 12px;
+  background: var(--ztl-surface, #1e1b17);
+  border-top: 1.5px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+html body .zcs-quick-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+html body .zcs-quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1.1px solid var(--ztl-border, rgba(242, 234, 217, 0.36));
+  background: var(--ztl-subcard, #28231d);
+  color: var(--ztl-ink-soft, #dfd4be);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+html body .zcs-quick-chip:hover {
+  background: var(--ztl-subcard-hover, #322c25);
+}
+
+html body .zcs-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+html body .zcs-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.4px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  background: var(--ztl-input-bg, #171411);
+  color: var(--ztl-ink, #f3ecdc);
+  font-family: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+html body .zcs-send-btn {
+  flex: 0 0 auto;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--ztl-radius-sm, 8px);
+  border: 1.4px solid var(--ztl-border-strong, rgba(242, 234, 217, 0.52));
+  background: linear-gradient(180deg, var(--ztl-cta-1, #4d8832), var(--ztl-cta-2, #33601f));
+  color: var(--ztl-cta-ink, #fcf9f2);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 1.5px 2px 0 var(--ztl-shadow-solid, #090807);
+}
+
+html body .zcs-send-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+html body .zcs-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--ztl-ink-muted, #bfb39c);
+}
+
+@media (max-width: 480px) {
+  html body #zone-chat-drawer {
+    width: 100vw;
+    max-width: 100vw;
+    border-inline-start: none;
+  }
+  html body .zcs-channel-tabs {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  html body .zcs-channel-tab {
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+}
