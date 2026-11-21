@@ -118,13 +118,15 @@ html[data-zone-contrast="high"] :focus-visible {
   --zhud-radius: 15px 10px 14px 11px / 11px 15px 10px 14px;
 
   position: fixed;
-  bottom: 20px;
-  inset-inline-end: 92px;
+  top: 88px;
+  bottom: auto;
+  inset-inline-end: 14px;
+  inset-inline-start: auto;
   z-index: 945;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 10px;
+  gap: 8px;
   pointer-events: none;
   box-sizing: border-box;
   font-family: var(--zwc-font-hand, "Rubik", "Noto Sans Arabic", system-ui, sans-serif);
@@ -164,33 +166,39 @@ html.zaaa-rail-open #zhud-root {
 }
 
 /* --------------------------------------------------------------------------
- * 3. SLEEK WATERCOLOR-INKED "RADAR & A11Y" TRIGGER PILL
+ * 3. SLEEK WATERCOLOR-INKED "RADAR & A11Y" TRIGGER PILL (INLINE TOP STATUS BAR)
  * -------------------------------------------------------------------------- */
 #zhud-trigger {
   pointer-events: auto;
+  position: static !important;
+  flex: 0 0 auto !important;
+  flex-shrink: 0 !important;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  min-height: 40px;
-  padding: 5px 12px 5px 10px;
-  background: var(--zhud-paper);
-  color: var(--zhud-ink);
-  border: 2px solid var(--zhud-border);
+  gap: 5px;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  padding: 1px 8px !important;
+  background: var(--ztl-btn-bg, var(--zhud-paper));
+  color: var(--ztl-ink, var(--zhud-ink));
+  border: 1.2px solid var(--ztl-border-strong, var(--zhud-border));
   border-radius: 999px;
-  box-shadow: 2.5px 3px 0 var(--zhud-border), 0 6px 16px var(--zhud-shadow);
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 800;
-  line-height: 1.1;
+  box-shadow: 1px 1.5px 0 var(--ztl-shadow-solid, var(--zhud-border));
+  font-family: var(--ztl-font-ui, var(--zwc-font-hand, "Rubik", "Noto Sans Arabic", system-ui, sans-serif));
+  font-size: 11.5px !important;
+  font-weight: 700;
+  line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
   white-space: nowrap;
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-sizing: border-box;
+  transition: transform 0.12s ease, background-color 0.12s ease;
 }
 
 #zhud-trigger:hover {
-  background: var(--zhud-paper-alt);
-  transform: translateY(-2px);
+  background: var(--ztl-btn-hover, var(--zhud-paper-alt));
+  transform: translateY(-1px);
 }
 
 #zhud-trigger[aria-expanded="true"] {
@@ -199,22 +207,22 @@ html.zaaa-rail-open #zhud-root {
 }
 
 #zhud-trigger:focus-visible {
-  outline: 2.5px solid var(--zhud-ochre);
+  outline: 2px solid var(--zhud-ochre);
   outline-offset: 2px;
 }
 
 .zhud-trig-ico {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .zhud-trig-ico svg {
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   display: block;
 }
 
@@ -741,23 +749,27 @@ html[dir="rtl"] .zhud-wp-kicker {
 }
 
 /* --------------------------------------------------------------------------
- * 8. MOBILE <= 900px & 390x844 ZERO-OVERFLOW ERGONOMICS (>= 44px Touch)
- *    Docks cleanly at bottom-inline-start opposite Mayor Tariq (#zmw-root)!
+ * 8. MOBILE <= 900px & 390x844 ZERO-OVERFLOW ERGONOMICS (>= 44px Popover Touch)
+ *    Trigger docks inline inside the top status strip; popover anchors below topbar!
  * -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
   #zhud-root {
-    bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+    top: 88px;
+    bottom: auto;
     inset-inline-start: 10px;
-    inset-inline-end: auto;
-    align-items: flex-start;
+    inset-inline-end: 10px;
+    align-items: flex-end;
     max-width: calc(100vw - 20px);
   }
 
   #zhud-trigger {
-    min-height: 44px;
-    min-width: 44px;
-    padding: 6px 11px;
-    font-size: 12px;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    padding: 1px 8px !important;
+    font-size: 11px !important;
   }
 
   .zhud-close-btn,
@@ -784,9 +796,5 @@ html[dir="rtl"] .zhud-wp-kicker {
 
   .zhud-district-list {
     width: 100%;
-  }
-
-  .zhud-trig-label-long {
-    display: none;
   }
 }

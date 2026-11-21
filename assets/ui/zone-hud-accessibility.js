@@ -603,20 +603,50 @@
   /* ------------------------------------------------------------------------
    * 6. RENDERING THE WATERCOLOR TACTICAL PILL & 3-TAB POPOVER
    * ------------------------------------------------------------------------ */
+  function setAttrIfChanged(el, name, val) {
+    if (!el) return;
+    var s = String(val);
+    if (el.getAttribute(name) !== s) {
+      el.setAttribute(name, s);
+    }
+  }
+
+  function dockTriggerInTopStatusStrip(root) {
+    if (!root) return;
+    var trigger = document.getElementById('zhud-trigger') || root.querySelector('#zhud-trigger');
+    if (!trigger) return;
+
+    var hudInner = document.getElementById('ztl-hud-inner');
+    if (hudInner) {
+      if (trigger.parentElement !== hudInner) {
+        hudInner.appendChild(trigger);
+      }
+      setAttrIfChanged(root, 'data-zhud-docked', 'topstrip');
+      setAttrIfChanged(trigger, 'data-zhud-docked', 'topstrip');
+      return;
+    }
+
+    if (root.hasAttribute('data-zhud-docked')) root.removeAttribute('data-zhud-docked');
+    if (trigger.hasAttribute('data-zhud-docked')) trigger.removeAttribute('data-zhud-docked');
+  }
+
   function ensureRoot() {
     if (!document.body) return null;
     ensureSvgColorblindFilters();
 
     var root = document.getElementById('zhud-root');
-    if (root) return root;
+    if (root) {
+      dockTriggerInTopStatusStrip(root);
+      return root;
+    }
 
     root = document.createElement('div');
     root.id = 'zhud-root';
     root.setAttribute('role', 'region');
     root.setAttribute('aria-label', 'Tactical Radar & Accessibility');
     root.innerHTML =
-      '<section id="zhud-popover" role="dialog" aria-modal="false" hidden></section>' +
-      '<button type="button" id="zhud-trigger" aria-expanded="false" aria-controls="zhud-popover"></button>';
+      '<button type="button" id="zhud-trigger" class="ztl-hud-pill zhud-topbar-pill" aria-expanded="false" aria-controls="zhud-popover"></button>' +
+      '<section id="zhud-popover" role="dialog" aria-modal="false" hidden></section>';
 
     document.body.appendChild(root);
 
@@ -631,6 +661,7 @@
     });
 
     root.addEventListener('click', handlePopoverClick);
+    dockTriggerInTopStatusStrip(root);
     return root;
   }
 
@@ -882,16 +913,23 @@
       if (model.districts[i].heat > maxHeat) maxHeat = model.districts[i].heat;
     }
 
-    root.setAttribute('aria-label', copy.drawerTitle);
+    setAttrIfChanged(root, 'aria-label', copy.drawerTitle);
+    dockTriggerInTopStatusStrip(root);
 
-    var trigger = root.querySelector('#zhud-trigger');
-    trigger.setAttribute('aria-expanded', state.open ? 'true' : 'false');
-    trigger.setAttribute('aria-label', copy.pillLong);
-    trigger.title = copy.pillLong;
-    trigger.innerHTML =
-      '<span class="zhud-trig-ico">' + SVG_RADAR_ICON + '</span>' +
-      '<span class="zhud-trig-label-long">' + esc(copy.pillLong) + '</span>' +
-      '<bdi class="zhud-trig-badge"' + (maxHeat >= 70 ? ' data-alert="high"' : '') + '>' + Math.round(maxHeat) + '%</bdi>';
+    var trigger = document.getElementById('zhud-trigger') || root.querySelector('#zhud-trigger');
+    if (trigger) {
+      setAttrIfChanged(trigger, 'aria-expanded', state.open ? 'true' : 'false');
+      setAttrIfChanged(trigger, 'aria-label', copy.pillLong);
+      if (trigger.title !== copy.pillLong) trigger.title = copy.pillLong;
+      var nextTrigHtml =
+        '<span class="zhud-trig-ico">' + SVG_RADAR_ICON + '</span>' +
+        '<span class="zhud-trig-label-long">' + esc(copy.pillLong) + '</span>' +
+        '<bdi class="zhud-trig-badge"' + (maxHeat >= 70 ? ' data-alert="high"' : '') + '>' + Math.round(maxHeat) + '%</bdi>';
+      if (trigger.__zhudLastHtml !== nextTrigHtml) {
+        trigger.__zhudLastHtml = nextTrigHtml;
+        trigger.innerHTML = nextTrigHtml;
+      }
+    }
 
     var popover = root.querySelector('#zhud-popover');
     if (!state.open) {
@@ -1054,6 +1092,20 @@
     render();
 
     window.addEventListener('keydown', onGlobalKeyDown);
+    window.addEventListener('zone:render', function () {
+      var r = document.getElementById('zhud-root');
+      if (r) dockTriggerInTopStatusStrip(r);
+    });
+
+    var dockTicks = 0;
+    var dockTimer = setInterval(function () {
+      dockTicks += 1;
+      var r = document.getElementById('zhud-root');
+      if (r) dockTriggerInTopStatusStrip(r);
+      if (document.getElementById('ztl-hud-inner') || dockTicks >= 30) {
+        clearInterval(dockTimer);
+      }
+    }, 150);
 
     // Observe <html lang/dir/data-theme> flips for instant EN <-> AR RTL & Light/Dark parity
     if (typeof MutationObserver === 'function' && document.documentElement) {

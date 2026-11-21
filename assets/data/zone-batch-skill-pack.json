@@ -1,0 +1,1314 @@
+{
+  "schemaVersion": "zone-batch-skill-pack.v156",
+  "generatedAtUtc": "2026-11-21T17:07:53Z",
+  "batchJobMeta": {
+    "jobName": "realtime-packed/337d8896f70d4f6a",
+    "batchApiAttempted": true,
+    "batchApiErrors": [
+      {
+        "source": "env:GEMINI_API_KEY",
+        "httpCode": 403,
+        "status": "PERMISSION_DENIED",
+        "summary": "403 PERMISSION_DENIED. {'error': {'code': 403, 'message': 'There are issues with your billing account, please resolve / pay your outstanding balance for project: projects/<redacted>', 'status': 'PERMI"
+      },
+      {
+        "source": "env:NANOBANANA_GEMINI_KEY",
+        "httpCode": 402,
+        "status": "RESOURCE_EXHAUSTED",
+        "summary": "402 RESOURCE_EXHAUSTED. {'error': {'code': 402, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at"
+      },
+      {
+        "source": "local:secrets.json#1",
+        "httpCode": 400,
+        "status": "FAILED_PRECONDITION",
+        "summary": "400 FAILED_PRECONDITION. {'error': {'code': 400, 'message': 'Precondition check failed.', 'status': 'FAILED_PRECONDITION'}}"
+      }
+    ],
+    "modelId": "gemini-3.5-flash",
+    "executedModel": "gemini-3.5-flash",
+    "state": "REALTIME_FALLBACK_SUCCEEDED",
+    "transportMode": "realtime-packed-free-tier (local:secrets.json#1)",
+    "requestCount": 10,
+    "skillsSynthesized": 40,
+    "skillsDigestedCount": 40,
+    "skillsDigested": [
+      "item-provenance",
+      "loot-audit",
+      "generate-loot",
+      "items-and-distribution",
+      "inventory-system",
+      "economy-balancing",
+      "game-economy-design",
+      "content-balance",
+      "rumor-weaver",
+      "newspaper",
+      "lore-link-audit",
+      "foreshadow-tracker",
+      "map-systems",
+      "wargame-map",
+      "world-data",
+      "localization",
+      "quest-hub-stitcher",
+      "dialogue-crafting",
+      "voice-bible",
+      "npc-voice",
+      "narrative-designer",
+      "npc-generator",
+      "npc-network",
+      "design-system-arc",
+      "progression-design",
+      "progression-systems",
+      "player-retention",
+      "liveops",
+      "combat-design",
+      "encounter-balance",
+      "game-feel",
+      "game-balance",
+      "game-hud",
+      "game-ui-ux",
+      "hud-system",
+      "accessibility-games",
+      "event-bus",
+      "state-machine",
+      "save-load",
+      "game-tuning"
+    ],
+    "effectiveDollarCostUsd": 0.0,
+    "costTelemetry": {
+      "model": "gemini-3.5-flash",
+      "pricingPer1MTokensUsd": {
+        "input": 0.4,
+        "output": 2.0
+      },
+      "discountPct": 50,
+      "promptTokens": 19389,
+      "outputTokens": 15961,
+      "totalTokens": 35350,
+      "standardCostUsd": 0.039678,
+      "batchCostUsd": 0.019839,
+      "savingsUsd": 0.019839
+    },
+    "groupDigests": [
+      {
+        "batchKey": "grp-01-item-provenance-weapons",
+        "domain": "itemProvenance",
+        "skills": [
+          "item-provenance",
+          "loot-audit",
+          "generate-loot",
+          "items-and-distribution"
+        ],
+        "skillDigests": {
+          "item-provenance": "d661a166d93e",
+          "loot-audit": "c778d991ff81",
+          "generate-loot": "46ef5892425d",
+          "items-and-distribution": "e87f12fe9697"
+        }
+      },
+      {
+        "batchKey": "grp-02-item-provenance-gear-consumables",
+        "domain": "itemProvenance",
+        "skills": [
+          "inventory-system",
+          "economy-balancing",
+          "game-economy-design",
+          "content-balance"
+        ],
+        "skillDigests": {
+          "inventory-system": "d025e3f89785",
+          "economy-balancing": "732495487fcd",
+          "game-economy-design": "9e27deeb6b9d",
+          "content-balance": "3c75ad690693"
+        }
+      },
+      {
+        "batchKey": "grp-03-rumor-wire-harbor-citadel",
+        "domain": "rumorWire",
+        "skills": [
+          "rumor-weaver",
+          "newspaper",
+          "lore-link-audit",
+          "foreshadow-tracker"
+        ],
+        "skillDigests": {
+          "rumor-weaver": "c4c18644807f",
+          "newspaper": "bbb6567801d1",
+          "lore-link-audit": "e037851cb56c",
+          "foreshadow-tracker": "6373010b9f85"
+        }
+      },
+      {
+        "batchKey": "grp-04-rumor-wire-foundry-neon-center",
+        "domain": "rumorWire",
+        "skills": [
+          "map-systems",
+          "wargame-map",
+          "world-data",
+          "localization"
+        ],
+        "skillDigests": {
+          "map-systems": "5f1f6ae093e0",
+          "wargame-map": "f1b3f5eb3eaa",
+          "world-data": "54874a0f1568",
+          "localization": "f5c0d934b3ff"
+        }
+      },
+      {
+        "batchKey": "grp-05-quest-hub-flash-contracts",
+        "domain": "questHub",
+        "skills": [
+          "quest-hub-stitcher",
+          "dialogue-crafting",
+          "voice-bible",
+          "npc-voice"
+        ],
+        "skillDigests": {
+          "quest-hub-stitcher": "536678943241",
+          "dialogue-crafting": "2fff69250240",
+          "voice-bible": "fcf88a44e9db",
+          "npc-voice": "1bca5ff3b413"
+        }
+      },
+      {
+        "batchKey": "grp-06-narrative-npc-comms",
+        "domain": "questHub",
+        "skills": [
+          "narrative-designer",
+          "npc-generator",
+          "npc-network",
+          "design-system-arc"
+        ],
+        "skillDigests": {
+          "narrative-designer": "7a5489c7b050",
+          "npc-generator": "daec9aadc655",
+          "npc-network": "869861c16483",
+          "design-system-arc": "751f91e2934e"
+        }
+      },
+      {
+        "batchKey": "grp-07-progression-liveops",
+        "domain": "liveOpsRules",
+        "skills": [
+          "progression-design",
+          "progression-systems",
+          "player-retention",
+          "liveops"
+        ],
+        "skillDigests": {
+          "progression-design": "66065b96f3d5",
+          "progression-systems": "42570badda2e",
+          "player-retention": "7ff4e71d2f31",
+          "liveops": "4bb40c27dc69"
+        }
+      },
+      {
+        "batchKey": "grp-08-combat-encounters-balance",
+        "domain": "liveOpsRules",
+        "skills": [
+          "combat-design",
+          "encounter-balance",
+          "game-feel",
+          "game-balance"
+        ],
+        "skillDigests": {
+          "combat-design": "36deff9271bd",
+          "encounter-balance": "8f1484be01ea",
+          "game-feel": "a3591662e732",
+          "game-balance": "fff1140db520"
+        }
+      },
+      {
+        "batchKey": "grp-09-hud-ux-accessibility",
+        "domain": "liveOpsRules",
+        "skills": [
+          "game-hud",
+          "game-ui-ux",
+          "hud-system",
+          "accessibility-games"
+        ],
+        "skillDigests": {
+          "game-hud": "a80219c9db48",
+          "game-ui-ux": "69140650cd9a",
+          "hud-system": "e8b34fbae317",
+          "accessibility-games": "7632bff0bd61"
+        }
+      },
+      {
+        "batchKey": "grp-10-systems-architecture-patterns",
+        "domain": "liveOpsRules",
+        "skills": [
+          "event-bus",
+          "state-machine",
+          "save-load",
+          "game-tuning"
+        ],
+        "skillDigests": {
+          "event-bus": "4554554ecf47",
+          "state-machine": "63206a79736a",
+          "save-load": "38a6ddeb881f",
+          "game-tuning": "96e63661a48c"
+        }
+      }
+    ]
+  },
+  "itemProvenance": {
+    "pistol": {
+      "originEn": "Standard-issue sidearm salvaged from corrupt North Harbor maritime security lockups.",
+      "originAr": "سلاح جانبي قياسي تم استرجاعه من مستودعات الأمن البحري الفاسدة في المرفأ الشمالي.",
+      "makerEn": "Pier 4 Scrap Forges",
+      "makerAr": "ورش الخردة في الرصيف ٤",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "مُصنع في الشارع",
+      "auditTag": "balanced-core",
+      "synergyEn": "Pairs well with quick tactical reloads during high-speed drive-by skirmishes.",
+      "synergyAr": "يتماشى بشكل جيد مع عمليات إعادة التعبئة التكتيكية السريعة أثناء المناوشات السريعة.",
+      "rumorHookEn": "Mayor Tariq's informants claim these pistols were smuggled by the containerload.",
+      "rumorHookAr": "يؤكد مخبرو العمدة طارق أن هذه المسدسات تم تهريبها بالحاويات."
+    },
+    "revolver": {
+      "originEn": "Heavy-framed iron piece favored by enforcers in the Financial Citadel underbelly.",
+      "originAr": "قطعة حديدية ثقيلة الإطار يفضلها المنفذون في أعماق القلعة المالية.",
+      "makerEn": "Citadel Vaultsmiths",
+      "makerAr": "صانعو خزائن القلعة",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "high-risk-sink",
+      "synergyEn": "High stopping power against armored syndicate guards at close quarters.",
+      "synergyAr": "قوة إيقاف عالية ضد حراس النقابة المدرعين في المسافات القريبة.",
+      "rumorHookEn": "Luna keeps an engraved one in her desk to remind debtors of deadlines.",
+      "rumorHookAr": "تُبقي لونا مسدساً منقوشاً على مكتبها لتذكرة المدينين بالمواعيد النهائية."
+    },
+    "smg": {
+      "originEn": "Rapid-fire submachine gun adapted for close-quarters turf wars in the Neon Casino Strip.",
+      "originAr": "رشاش خفيف سريع الإطلاق مُصمم لحرب العصابات في شارع النيون والكازينو.",
+      "makerEn": "Neon Alley Kinetics",
+      "makerAr": "مختبرات زقة النيون الحركية",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "مُصنع في الشارع",
+      "auditTag": "balanced-core",
+      "synergyEn": "Exceptional spray coverage for suppressing multiple targets in narrow alleyways.",
+      "synergyAr": "تغطية رذاذ استثنائية لقمع الأهداف المتعددة في الأزقة الضيقة."
+    },
+    "shotgun": {
+      "originEn": "Brutal breaching tool modified from industrial riot control gear in East Safehouse Quarter.",
+      "originAr": "أداة اقتحام وحشية مُعدلة من معدات مكافحة الشغب الصناعية في حي المخابئ الشرقي.",
+      "makerEn": "Safehouse Blacksmiths",
+      "makerAr": "حدادو المخابئ الآمنة",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "high-risk-sink",
+      "synergyEn": "Clears barricaded rooms instantly during syndicate compound raids.",
+      "synergyAr": "يزيل الغرف المحصنة فوراً أثناء غارات مجمعات النقابة."
+    },
+    "sawedoff": {
+      "originEn": "Compact devastation weapon trimmed down for concealment under syndicate trench coats.",
+      "originAr": "سلاح دمار مدمج تم تقصيره لسهولة إخفائه تحت معاطف النقابة.",
+      "makerEn": "Foundry Scrap Wreckers",
+      "makerAr": "مُحطمو خردة المسبك",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "مُصنع في الشارع",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Devastating point-blank ambush tool when cornered by rival gangs.",
+      "synergyAr": "أداة كمين مدمرة من مسافة الصفر عند محاصرتها من قبل عصابات منافسة."
+    },
+    "ak": {
+      "originEn": "Battle-tested assault rifle imported through North Harbor smuggling tunnels.",
+      "originAr": "بندقية هجومية مُختبرة في المعارك تم استيرادها عبر أنفاق تهريب المرفأ الشمالي.",
+      "makerEn": "Old-Block Armory",
+      "makerAr": "ترسانة الكتلة القديمة",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "balanced-core",
+      "synergyEn": "Unmatched reliability in dusty foundry environments and prolonged firefights.",
+      "synergyAr": "موثوقية لا تُضاهى في بيئات المسبك المليئة بالغبار والاشتباكات الطويلة."
+    },
+    "assaultrifle_1": {
+      "originEn": "Modified modular rifle outfitted with illegal tactical optics and suppressors.",
+      "originAr": "بندقية قياسية مُعدلة ومجهزة ببصريات تكتيكية غير قانونية وكاتم صوت.",
+      "makerEn": "Syndicate R&D Labs",
+      "makerAr": "مختبرات الأبحاث والتطوير التابعة للنقابة",
+      "craftTier": "Black-Vault",
+      "craftTierAr": "القبو الأسود",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Pinpoint accuracy for eliminating high-value targets across Central Syndicate Plaza.",
+      "synergyAr": "دقة متناهية للقضاء على الأهداف ذات القيمة العالية عبر ساحة النقابة المركزية."
+    },
+    "bullpup_2": {
+      "originEn": "High-tech compact bullpup configuration favored by corporate security deserters.",
+      "originAr": "تصميم بولبوب مدمج عالي التقنية يفضله الهاربون من الأمن الشركات.",
+      "makerEn": "Citadel Tech-Wrights",
+      "makerAr": "صانعو التكنولوجيا في القلعة",
+      "craftTier": "Sovereign-Prototype",
+      "craftTierAr": "نموذج سيادي أولي",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Superior maneuverability in tight corporate stairwells and elevators.",
+      "synergyAr": "قدرة مناورة فائقة في السلالم والمصاعد الشركاتية الضيقة."
+    },
+    "sniper": {
+      "originEn": "Long-range precision rifle calibrated for surveillance overwatching the Neon Casino Strip.",
+      "originAr": "بندقية دقة بعيدة المدى مُعايرة لمراقبة شارع النيون والكازينو.",
+      "makerEn": "Owl-Eye Workshop",
+      "makerAr": "ورشة عين البومة",
+      "craftTier": "Black-Vault",
+      "craftTierAr": "القبو الأسود",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Dominates rooftop sightlines to control district choke points.",
+      "synergyAr": "تسيطر على خطوط الرؤية من أسطح المنازل للتحكم في نقاط الاختناق في المقاطعة."
+    },
+    "knife": {
+      "originEn": "Carbon-steel utility blade forged in the glowing fires of the Crimson Foundry.",
+      "originAr": "نصل خدماتي من الفولاذ الكربوني مُصنع في نيران المسبك القرمزي المشتعلة.",
+      "makerEn": "Foundry Smelters",
+      "makerAr": "صاهرو المسبك",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "مُصنع في الشارع",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Silent elimination tool for stealth takedowns in dark safehouses.",
+      "synergyAr": "أداة القضاء الصامت للتخلص الخفي من الخصوم في المخابئ المظلمة."
+    },
+    "katana": {
+      "originEn": "Folded-steel blade traded through high-end black market auctions in the Financial Citadel.",
+      "originAr": "نصل من الفولاذ المطوي يتم تداوله عبر مزادات السوق السوداء الراقية في القلعة المالية.",
+      "makerEn": "Citadel Bladesmiths",
+      "makerAr": "صانعو الشفرات في القلعة",
+      "craftTier": "Sovereign-Prototype",
+      "craftTierAr": "نموذج سيادي أولي",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Lightning-fast melee ripostes against heavy brawlers.",
+      "synergyAr": "ردود فعل قتالية قريبة فائقة السرعة ضد المقاتلين الثقילים."
+    },
+    "bat": {
+      "originEn": "Reinforced aluminum slugger wrapped in barbed wire, popular among arena enforcers.",
+      "originAr": "مضرب ألومنيوم مُعزز ملفوف بسلك شائك، شائع بين منفذي الساحة.",
+      "makerEn": "Crimson Arena Props",
+      "makerAr": "معدات الساحة القرمزية",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "مُصنع في الشارع",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Stun-locks opponents when delivered with high-momentum swing combos.",
+      "synergyAr": "يُعطل حركة الخصوم مؤقتاً عند تنفيذه بمجموعات تأرجح عالية الزخم."
+    },
+    "kevlar": {
+      "originEn": "Smuggled out of North Harbor container yards under Luna shadow oversight for frontline enforcers.",
+      "originAr": "تم تهريبها من ساحات حاويات المرفأ الشمالي تحت إشراف لونا الخفي لصالح منفذي الخطوط الأمامية.",
+      "makerEn": "Pier 4 Forge Workshop",
+      "makerAr": "ورشة سباكة الرصيف ٤",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "balanced-core",
+      "synergyEn": "Pairs perfectly with heavy ballistic helmets to survive ambushes in the Crimson Foundry.",
+      "synergyAr": "يتكامل بشكل مثالي مع الخوذ الباليستية الثقيلة للبقاء على قيد الحياة أثناء الكمائن في المسبك القرمزي.",
+      "rumorHookEn": "Word is Mayor Tariq intercepted a military crate to supply his favorite enforcers.",
+      "rumorHookAr": "تقول الشائعات إن العمدة طارق اعترض شحنة عسكرية لتزويد رجاله المفضلين."
+    },
+    "helmet": {
+      "originEn": "Reinforced headgear engineered in the Crimson Foundry for high-impact arena skirmishes and raids.",
+      "originAr": "غطاء رأس مقوى تم تصميمه في المسبك القرمزي للاشتباكات والإغارات عالية التأثير في الساحة.",
+      "makerEn": "Red Zone Armorworks",
+      "makerAr": "مصنع دروع المنطقة الحمراء",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "balanced-core",
+      "synergyEn": "Essential protection when pushing through heavily fortified safehouse entryways.",
+      "synergyAr": "حماية أساسية عند اقتحام مداخل المخابئ المحصنة بشدة.",
+      "rumorHookEn": "Luna keeps a stash of customized helmets for syndicate operatives carrying out high-risk hits.",
+      "rumorHookAr": "تحتفظ لونا بمخزن من الخوذ المعدلة لعملاء النقابة الذين ينفذون عمليات اغتيال عالية المخاطر."
+    },
+    "xanax": {
+      "originEn": "Synthesized in hidden labs within the East Safehouse Quarter to rapidly reset combat fatigue.",
+      "originAr": "تم تركيبها في مختبرات سرية داخل حي المخابئ الشرقي لإعادة ضبط إجهاد القتال بسرعة.",
+      "makerEn": "Eastside Pharma Syndicate",
+      "makerAr": "نقابة صيدليات الجانب الشرقي",
+      "craftTier": "Black-Vault",
+      "craftTierAr": "الخزنة السوداء",
+      "auditTag": "high-risk-sink",
+      "synergyEn": "Massively boosts nerve recovery speed, allowing immediate back-to-back syndicate heists.",
+      "synergyAr": "يزيد بشكل هائل من سرعة استعادة الأعصاب، مما يتيح تنفيذ عمليات سطو متتالية فوراً.",
+      "rumorHookEn": "Underground dealers claim Tariq gets the pure strain directly from offshore traders.",
+      "rumorHookAr": "يدعي تجار السوق السوداء أن طارق يحصل على السلالة النقية مباشرة من تجار البحر."
+    },
+    "ecstasy": {
+      "originEn": "Distributed throughout West Neon Casino Strip to boost morale and energy during high-stakes gambits.",
+      "originAr": "تتوزع في جميع أنحاء شارع النيون والكازينو لرفع الروح المعنوية والطاقة أثناء المناورات عالية الرهانات.",
+      "makerEn": "Neon Chemical Collective",
+      "makerAr": "مجمع نيون الكيميائي",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "high-risk-sink",
+      "synergyEn": "Doubles happiness gains temporarily to maximize training yield in private syndicate gyms.",
+      "synergyAr": "يضاعف مكاسب السعادة مؤقتاً لزيادة عائد التدريب في صالات النقابة الخاصة.",
+      "rumorHookEn": "The Owl strictly controls supply to ensure high-end casino whales stay active all night.",
+      "rumorHookAr": "يتحكم البومة بالمعروض بصرامة لضمان بقاء كبار المراهنين في الكازينو نشطين طوال الليل."
+    },
+    "vicodin": {
+      "originEn": "Repurposed medical supply siphoned from North Harbor docks for low-tier street enforcement.",
+      "originAr": "إمدادات طبية معاد توجيهها من أرصفة المرفأ الشمالي للاستخدام في أعمال العنف بالشوارع.",
+      "makerEn": "Dockside Surplus Co.",
+      "makerAr": "شركة فائض الأرصفة",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Provides cheap life regeneration between low-level turf fights in outer districts.",
+      "synergyAr": "يوفر تجديداً رخيصاً للصحة بين صراعات النفوذ منخفضة المستوى في المناطق الخارجية.",
+      "rumorHookEn": "Luna views vicodin as a crude tool, but admits it keeps green recruits standing.",
+      "rumorHookAr": "تعتبر لونا الفيكودين أداة بدائية، لكنها تعترف بأنه يبقي المجندين الجدد على أقدامهم."
+    },
+    "bloodbag": {
+      "originEn": "Sterile emergency blood supply maintained by black market surgeons in Central Syndicate Plaza.",
+      "originAr": "إمدادات دم معقمة للطوارئ يحتفظ بها جراحو السوق السوداء في ساحة النقابة المركزية.",
+      "makerEn": "Plaza Underground Clinic",
+      "makerAr": "عيادة الساحة السفلية",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Instantly restores lost health mid-battle without triggering severe medical cooldown penalties.",
+      "synergyAr": "يستعيد الصحة المفقودة فوراً منتصف المعركة دون تفعيل عقوبات فترة التبريد الطبي الشديدة."
+    },
+    "morphine": {
+      "originEn": "High-grade anesthetic stockpiled in Financial Citadel vaults for elite operatives on brutal missions.",
+      "originAr": "مخدر عالي الجودة مخزن في خزائن القلعة المالية للعملاء النخبة في المهمات الشرسة.",
+      "makerEn": "Citadel Vault Medical",
+      "makerAr": "طبيات خزنة القلعة",
+      "craftTier": "Black-Vault",
+      "craftTierAr": "الخزنة السوداء",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Temporarily reduces damage taken during heavy sector pushes, ignoring minor injury debuffs.",
+      "synergyAr": "يقلل مؤقتاً من الأضرار المستلمة أثناء الاقتحامات الكبيرة للقطاعات، متجاهلاً الآثار السلبية للإصابات الخفيفة."
+    },
+    "medkit": {
+      "originEn": "Standardized field surgical kit issued across all six districts for comprehensive combat recovery.",
+      "originAr": "حقيبة جراحية ميدانية قياسية توزع عبر القطاعات الستة للتعافي الشامل أثناء القتال.",
+      "makerEn": "Zone Central Armaments",
+      "makerAr": "تسليح المنطقة المركزي",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "balanced-core",
+      "synergyEn": "Fully clears minor trauma status effects while restoring significant health pools.",
+      "synergyAr": "يزيل تماماً الآثار السلبية للصدمات الخفيفة مع استعادة جزء كبير من شريط الصحة."
+    },
+    "fhc": {
+      "originEn": "Feathery Flushed Chocolate smuggled exclusively through Mayor Tariq luxury trade routes for power brokers.",
+      "originAr": "شوكولاتة فاخرة مجهزة يتم تهريبها حصرياً عبر طرق التجارة الفارهة التابعة للعمدة طارق لأصحاب النفوذ.",
+      "makerEn": "The Owl Private Reserve",
+      "makerAr": "محمية البومة الخاصة",
+      "craftTier": "Sovereign-Prototype",
+      "craftTierAr": "نموذج سيادي",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Instantly refills energy reserves to maximum capacity for rapid skill leveling.",
+      "synergyAr": "يعيد تعبئة احتياطي الطاقة فوراً إلى حدها الأقصى لرفع مستوى المهارات بسرعة."
+    },
+    "edrink": {
+      "originEn": "High-caffeine stamina tonic mass-produced in the West Neon Casino Strip for endless nightlife grind.",
+      "originAr": "مشروب طاقة عالي الكافيين ينتج بكميات ضخمة في شارع النيون والكازينو للاستمرار في السهر والعمل.",
+      "makerEn": "Neon Surge Labs",
+      "makerAr": "مختبرات تدفق النيون",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "high-risk-sink",
+      "synergyEn": "Grants quick energy bursts to complete urgent courier runs across district borders.",
+      "synergyAr": "يمنح دفعات طاقة سريعة لإكمال مهمات التوصيل العاجلة عبر حدود القطاعات."
+    },
+    "crowbar": {
+      "originEn": "Heavy industrial tool forged from salvage metal in North Harbor Pier 4 shipyards.",
+      "originAr": "أداة صناعية ثقيلة مصنوعة من المعادن الخردة في ترسانات الرصيف ٤ بالمرفأ الشمالي.",
+      "makerEn": "Harbor Salvage Guild",
+      "makerAr": "نقابة خردة المرفأ",
+      "craftTier": "Street-Forged",
+      "craftTierAr": "صنع المصانع الشعبية",
+      "auditTag": "balanced-core",
+      "synergyEn": "Increases success rates when breaching outer safehouse doors and low-security crates.",
+      "synergyAr": "يرفع معدلات النجاح عند اقتحام أبواب المخابئ الخارجية والصناديق منخفضة الحماية."
+    },
+    "lockpick": {
+      "originEn": "Precision tension tools crafted by master burglars operating within the East Safehouse Quarter.",
+      "originAr": "أدوات شد دقيقة صنعها كبار اللصوص الناشطين داخل حي المخابئ الشرقي.",
+      "makerEn": "Eastside Shadow Guild",
+      "makerAr": "نقابة ظلال الجانب الشرقي",
+      "craftTier": "Syndicate-Spec",
+      "craftTierAr": "مواصفات النقابة",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Allows silent infiltration of rival territory without alerting local district guards.",
+      "synergyAr": "يتيح التسلل الصامت إلى أراضي المنافسين دون تنبيه حراس القطاع المحليين."
+    },
+    "hacking_rig": {
+      "originEn": "Custom-built cyberdeck loaded with breach software leaked from Financial Citadel corporate servers.",
+      "originAr": "جهاز اختراق إلكتروني معدل محمل ببرامج اختراق مسربة من سيرفرات شركات القلعة المالية.",
+      "makerEn": "Citadel Cyber Syndicate",
+      "makerAr": "نقابة القلعة الإلكترونية",
+      "craftTier": "Black-Vault",
+      "craftTierAr": "الخزنة السوداء",
+      "auditTag": "tactical-utility",
+      "synergyEn": "Bypasses electronic vault encryption during high-tier Syndicate Plaza heists.",
+      "synergyAr": "يتجاوز تشفير الخزائن الإلكترونية أثناء عمليات السطو الكبرى في ساحة النقابة."
+    },
+    "weapon_cache": {
+      "originEn": "Sealed military crate containing heavy armament setups authorized by Luna for full district wars.",
+      "originAr": "صندوق عسكري مصفح يحتوي على تجهيزات أسلحة ثقيلة معتمدة من لونا لحروب القطاعات الشاملة.",
+      "makerEn": "Central Syndicate Armory",
+      "makerAr": "ترسانة النقابة المركزية",
+      "craftTier": "Sovereign-Prototype",
+      "craftTierAr": "نموذج سيادي",
+      "auditTag": "prestige-edge",
+      "synergyEn": "Supplies entire war parties with high-grade weapons before entering contested territory.",
+      "synergyAr": "يزود مجموعات الحرب بالكامل بأسلحة عالية الجودة قبل دخول المناطق المتنازع عليها."
+    }
+  },
+  "rumorWire": [
+    {
+      "id": "north-dockside-smuggling-shift",
+      "district": "north",
+      "headlineEn": "Pier 4 Night Shift Interrupted by Unmarked Frigate",
+      "headlineAr": "تعطل نوبة الليل في الرصيف ٤ بسبب فرقاطة مجهولة",
+      "bodyEn": "Luna noticed heavy crates loaded with refined contraband passing through Pier 4 under Mayor Tariq's personal clearance code yesterday.",
+      "bodyAr": "لاحظت لونا شحنات من المهجنات المهربة تعبر الرصيف ٤ باستخدام رمز التخليص الشخصي التابع للعمدة طارق بالأمس.",
+      "heatWarningEn": "Harbor patrols deployed heavy drones near Pier 4.",
+      "heatWarningAr": "نشرت دوريات المرفأ طائرات مسيرة ثقيلة بالقرب من الرصيف ٤.",
+      "smugglingTipEn": "Dump illegal firearms at the docks before midnight.",
+      "smugglingTipAr": "بع الأسلحة النارية غير القانونية في الأرصفة قبل منتصف الليل.",
+      "biasTag": "Dockside-Whisper",
+      "linkedScreen": "items"
+    },
+    {
+      "id": "north-rust-casket-gambit",
+      "district": "north",
+      "headlineEn": "Rust Casket Storage Reopens Under New Syndicate Management",
+      "headlineAr": "إعادة فتح مخازن التابوت الصدئ تحت إدارة النقابة الجديدة",
+      "bodyEn": "Dockworkers report that smuggled heavy weapons are being stockpiled at North Harbor to launch contested territory attacks by dawn.",
+      "bodyAr": "أفاد عمال الأرصفة بأنه يتم تجميع الأسلحة الثقيلة المهربة في المرفأ الشمالي لشن هجمات على المناطق المتنازع عليها عند الفجر.",
+      "heatWarningEn": "Enforcers checking all incoming cargo vehicles.",
+      "heatWarningAr": "يقوم المنفذون بفحص جميع مركبات البضائع القادمة.",
+      "smugglingTipEn": "Buy tactical vests while cargo rates stay depressed.",
+      "smugglingTipAr": "اشترِ السترات التكتيكية طالما بقيت أسعار الشحن منخفضة.",
+      "biasTag": "Street-Alert",
+      "linkedScreen": "attack"
+    },
+    {
+      "id": "fin-citadel-vault-breach",
+      "district": "fin",
+      "headlineEn": "Financial Citadel Vault Alarm Triggers Syndicate Market Panic",
+      "headlineAr": "إنذار خزانة القلعة المالية يثير الذعر في سوق النقابة",
+      "bodyEn": "Mayor Tariq locked down the central vault after Luna intercepted encrypted ledger transactions routing corporate funds into black accounts.",
+      "bodyAr": "أغلق العمدة طارق الخزانة المركزية بعد أن اعترضت لونا معاملات مشفرة تحول أموال الشركات إلى حسابات سوداء.",
+      "heatWarningEn": "Citadel turrets set to lethal authorization state.",
+      "heatWarningAr": "تم ضبط أبراج القلعة على وضع التفويض القاتل.",
+      "smugglingTipEn": "Hold high-tier bonds until interest rates spike today.",
+      "smugglingTipAr": "احتفظ بالسندات عالية الفئة حتى ترتفع أسعار الفائدة اليوم.",
+      "biasTag": "Vault-Leak",
+      "linkedScreen": "bank"
+    },
+    {
+      "id": "fin-owl-shadow-audit",
+      "district": "fin",
+      "headlineEn": "The Owl Orders Instant Audit on Citadel Accounts",
+      "headlineAr": "البومة يأمر بتدقيق فوري على حسابات القلعة",
+      "bodyEn": "Brokers in the Financial Citadel are panic-selling laundering contracts as Mayor Tariq prepares to seize unverified syndicate shell companies.",
+      "bodyAr": "يسارع السماسرة في القلعة المالية لبيع عقود غسيل الأموال بينما يستعد العمدة طارق لمصادرة الشركات الصورية التابعة للنقابة.",
+      "heatWarningEn": "Financial auditors scanning all trade house transactions.",
+      "heatWarningAr": "يقوم مدققو الحسابات بفحص جميع معاملات الدور التجارية.",
+      "smugglingTipEn": "Transfer clean cash into offshore reserves immediately.",
+      "smugglingTipAr": "حول الأموال النظيفة إلى الاحتياطيات الخارجية فوراً.",
+      "biasTag": "Syndicate-Spin",
+      "linkedScreen": "market"
+    },
+    {
+      "id": "res-safehouse-tunnel-network",
+      "district": "res",
+      "headlineEn": "East Safehouse Quarter Uncovers Forgotten Syndicate Escape Tunnels",
+      "headlineAr": "حي المخابئ الشرقي يكشف عن أنفاق هروب مجهولة للنقابة",
+      "bodyEn": "Luna alerted local operatives that hidden supply caches inside the East Safehouse Quarter are stocked with medical gear and unregistered explosives.",
+      "bodyAr": "نبهت لونا العملاء المحليين إلى أن مخابئ الإمدادات الخفية داخل حي المخابئ الشرقي مليئة بالمعدات الطبية والمتفجرات غير المسجلة.",
+      "heatWarningEn": "District perimeter patrols doubled around safehouses.",
+      "heatWarningAr": "تمت مضاعفة دوريات محيط الحي حول المخابئ.",
+      "smugglingTipEn": "Stock up on medical kits before safehouses lock down.",
+      "smugglingTipAr": "تزود بالمعدات الطبية قبل إغلاق المخابئ.",
+      "biasTag": "Street-Alert",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "res-owl-bounty-bureau",
+      "district": "res",
+      "headlineEn": "Shadow Bounty Operations Move to East Safehouse Quarter",
+      "headlineAr": "عمليات مكافآت الظل تنتقل إلى حي المخابئ الشرقي",
+      "bodyEn": "Street fixers confirm Mayor Tariq 'The Owl' is paying premium rates for high-risk assassination contracts targeting rebellious syndicate enforcers.",
+      "bodyAr": "يؤكد وسطاء الشوارع أن العمدة طارق 'البومة' يدفع مبالغ ضخمة مقابل عقود الاغتيال عالية المخاطر التي تستهدف منفذي النقابة المتمردين.",
+      "heatWarningEn": "Undercover hit squads patrolling back alleys tonight.",
+      "heatWarningAr": "فرق الاغتيال المتخفية تجوب الأزقة الخلفية الليلة.",
+      "smugglingTipEn": "Accept high-reward hit missions before targets flee.",
+      "smugglingTipAr": "اقبل مهام الاغتيال ذات المكافآت العالية قبل فرار الأهداف.",
+      "biasTag": "Syndicate-Spin",
+      "linkedScreen": "missions"
+    },
+    {
+      "id": "rumor-red-slag-convoy",
+      "district": "red",
+      "headlineEn": "Crimson Foundry Slag Convoy Rolling Without Escort",
+      "headlineAr": "قافلة المسبك القرمزي تتحرك الليلة دون حراسة مشددة",
+      "bodyEn": "Foundry foremen diverted ballistic guards to the arena pits, leaving the east loading dock blind for twelve-minute windows.",
+      "bodyAr": "حوّل مشرفو المسبك الحراس المسلحين نحو حلبة القتال، مما ترك رصيف الشحن الشرقي مكشوفاً لنوافذ تمتد اثنتي عشرة دقيقة.",
+      "heatWarningEn": "Foundry patrol sweeps intensify after loud breaches; carry a lockpick or hacking rig.",
+      "heatWarningAr": "تزداد دوريات المسبك بعد الاقتحامات الصاخبة؛ احمل عدة أقفال أو جهاز اختراق.",
+      "smugglingTipEn": "Move heavy receivers through the Crimson Foundry rail spur before the shift siren.",
+      "smugglingTipAr": "مرّر قطع السلاح الثقيلة عبر سكة المسبك القرمزي قبل صافرة تبديل الوردية.",
+      "biasTag": "Street-Alert",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "rumor-red-arena-blood-odds",
+      "district": "red",
+      "headlineEn": "Underground Arena Bookies Doubling Counter-Parry Payouts",
+      "headlineAr": "مراهنو الساحة القتالية يضاعفون عوائد الصد التكتيكي المضاد",
+      "bodyEn": "Bruisers in the Crimson Arena are over-committing to berserk rushes; fighters who time a counter-parry are cleaning out side pots.",
+      "bodyAr": "يندفع مقاتلو الساحة القرمزية بهجمات متهورة، ومن يتقن توقيت الصد المضاد يحصد رهانات جانبية مضاعفة.",
+      "heatWarningEn": "Arena medics charge premium rates if your life bar drops below 25%.",
+      "heatWarningAr": "يرفع مسعفو الساحة تكلفة العلاج إذا هبطت صحتك دون ٢٥٪.",
+      "smugglingTipEn": "Stock first-aid kits before challenging high-heat Nemesis enforcers in the Foundry.",
+      "smugglingTipAr": "جهّز حقائب الإسعاف قبل مواجهة خصوم النيميسيس في المسبك القرمزي.",
+      "biasTag": "Syndicate-Spin",
+      "linkedScreen": "attack"
+    },
+    {
+      "id": "rumor-west-neon-whale-table",
+      "district": "west",
+      "headlineEn": "High-Roller Courier Liquidating Chips on West Neon Strip",
+      "headlineAr": "مندوب كبار المقامرين يسيّل فيشات ضخمة في شارع النيون الغربي",
+      "bodyEn": "A syndicate courier is washing offshore tournament winnings through the Velvet Roulette pit and buying clean bazaar stock.",
+      "bodyAr": "يقوم مندوب نقابي بتمرير أرباح البطولات عبر صالة الروليت المخملية وشراء بضائع نظيفة من البازار.",
+      "heatWarningEn": "West Strip surveillance cameras log rapid repeat bets; pace your table runs.",
+      "heatWarningAr": "كاميرات شارع النيون ترصد الرهانات المتلاحقة؛ وزّع جولاتك بحكمة.",
+      "smugglingTipEn": "Convert excess street cash into high-liquidity bazaar boosters before midnight sweeps.",
+      "smugglingTipAr": "حوّل السيولة النقدية الفائضة إلى معززات عالية الطلب في البازار قبل حملات منتصف الليل.",
+      "biasTag": "Vault-Leak",
+      "linkedScreen": "casino"
+    },
+    {
+      "id": "rumor-west-backalley-stims",
+      "district": "west",
+      "headlineEn": "Neon Back-Alley Chemists Releasing Pure Overdrive Batch",
+      "headlineAr": "كيميائيو أزقة النيون يطرحون دفعة نقية من معززات الطاقة",
+      "bodyEn": "Nightclub runners behind the West Casino Strip tapped an unflagged crate of high-purity energy boosters and combat stims.",
+      "bodyAr": "فتح مهربو النوادي خلف شارع الكازينو الغربي شحنة غير مسجلة من معززات الطاقة والمنشطات القتالية عالية النقاء.",
+      "heatWarningEn": "Watch your booster cooldown meter before stacking back-to-back synthetic doses.",
+      "heatWarningAr": "راقب مؤشر تهدئة المعززات قبل استهلاك جرعات متتالية.",
+      "smugglingTipEn": "Flip energy cans between West Strip and Central Plaza when gym grinders peak.",
+      "smugglingTipAr": "تاجر بعبوات الطاقة بين شارع النيون والساحة المركزية وقت ذروة تدريبات النادي.",
+      "biasTag": "Dockside-Whisper",
+      "linkedScreen": "items"
+    },
+    {
+      "id": "rumor-center-plaza-tribunal",
+      "district": "center",
+      "headlineEn": "Central Plaza Arbiters Auditing Unlaundered District Heat",
+      "headlineAr": "حكماء ساحة النقابة المركزية يراجعون مستويات الملاحقة في الأحياء",
+      "bodyEn": "Mayor Tariq's clerks opened a quiet window to launder district police heat at a discount before the council lockdown.",
+      "bodyAr": "فتح معاونو العمدة طارق نافذة هادئة لتبييض حرارة الملاحقة بتكلفة مخفضة قبل إغلاق المجلس.",
+      "heatWarningEn": "District heat above 70% triggers armored tactical checkpoints along Central Plaza.",
+      "heatWarningAr": "تجاوز الحرارة مستوى ٧٠٪ يفعّل حواجز تفتيش مدرعة حول الساحة المركزية.",
+      "smugglingTipEn": "Use the Radar & A11y drawer to bribe district heat before running tier-6 heists.",
+      "smugglingTipAr": "استخدم درج الرادار لتخفيض حرارة الحي قبل تنفيذ عمليات السطو الكبرى.",
+      "biasTag": "Syndicate-Spin",
+      "linkedScreen": "city"
+    },
+    {
+      "id": "rumor-center-exchange-spread",
+      "district": "center",
+      "headlineEn": "Syndicate Exchange Tightening Spreads on Honed Weapons",
+      "headlineAr": "بورصة النقابة المركزية ترفع قيمة الأسلحة المصقولة تكتيكياً",
+      "bodyEn": "Quartermasters at Central Syndicate Plaza are paying top respect for crews carrying honed precision rifles and kevlar plates.",
+      "bodyAr": "يمنح مسؤولو التسليح في ساحة النقابة المركزية أولوية وعقوداً خاصة للطواقم المجهزة بأسلحة مصقولة ودروع كيفلر.",
+      "heatWarningEn": "Unclaimed cash on hand attracts muggers near Central Bank steps.",
+      "heatWarningAr": "حمل مبالغ نقدية كبيرة دون إيداع يجذب اللصوص قرب درجات البنك المركزي.",
+      "smugglingTipEn": "Deposit heist payouts into the Syndicate Vault immediately after clearing Central Plaza.",
+      "smugglingTipAr": "أودع عوائد السطو في خزنة البنك فور خروجك من الساحة المركزية.",
+      "biasTag": "Vault-Leak",
+      "linkedScreen": "bank"
+    }
+  ],
+  "questHub": {
+    "flashContracts": [
+      {
+        "id": "contract-pier4-customs-blackout",
+        "speaker": "luna",
+        "district": "north",
+        "titleEn": "Pier 4 Customs Telemetry Blackout",
+        "titleAr": "تعمية رادارات الجمارك في الرصيف الرابع",
+        "briefingEn": "Harbor patrol sweeps cycle every 9.5 seconds on Pier 4. Hit the blind-spot window for a +25% ghost payout or gear up to force the manifest lock.",
+        "briefingAr": "تدور كشافات حرس المرفأ كل ٩.٥ ثوانٍ في الرصيف الرابع. استغل النقطة العمياء لمكافأة تخفٍ +٢٥٪ أو جهّز عتادك لكسر قفل الشحنة بالقوة.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Ghost Blind-Spot Breach",
+            "labelAr": "اختراق صامت في النقطة العمياء",
+            "hintEn": "Time the green Vision-Cone blind spot on Crimes for +15%..+35% clean-breach cash & XP.",
+            "hintAr": "ترقّب النقطة العمياء الخضراء في شاشة الجرائم لتحقيق +١٥٪ إلى +٣٥٪ نقداً وخبرة.",
+            "targetScreen": "crimes"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Armory Loadout Prep",
+            "labelAr": "تجهيز عتاد الاقتحام",
+            "hintEn": "Inspect and equip a high-accuracy rifle or lockpick enhancer in Items before breaching.",
+            "hintAr": "افحص وجهّز بندقية دقيقة أو أداة فتح أقفال من شاشة المعدات قبل التنفيذ.",
+            "targetScreen": "items"
+          }
+        ]
+      },
+      {
+        "id": "contract-citadel-ledger-siphon",
+        "speaker": "mayor_tariq",
+        "district": "fin",
+        "titleEn": "Financial Citadel Ledger Siphon",
+        "titleAr": "استنزاف دفاتر القلعة المالية",
+        "briefingEn": "The Owl keeps the Citadel auditors looking east while you move. Siphon the clearing house quietly or lock your liquid reserves in the vault.",
+        "briefingAr": "يبقي البومة مفتشي القلعة المالية منشغلين شرقاً بينما تتحرك. اسحب سيولة المقاصة بهدوء أو حصّن مدخراتك في الخزنة.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Crack Clearing Vault",
+            "labelAr": "اختراق خزنة المقاصة",
+            "hintEn": "Run high-tier card skimming or burglary in Crimes while acoustic noise is below 35 dB.",
+            "hintAr": "نفّذ جرائم نسخ البطاقات أو السطو بينما الضوضاء الصوتية أقل من ٣٥ ديسيبل.",
+            "targetScreen": "crimes"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Shield Liquid Capital",
+            "labelAr": "تحصين السيولة في البنك",
+            "hintEn": "Deposit exposed street cash into the Bank so rival muggers leave empty-handed.",
+            "hintAr": "أودع النقد المكشوف في البنك لحمايته من كمائن الخصوم.",
+            "targetScreen": "bank"
+          }
+        ]
+      },
+      {
+        "id": "contract-foundry-nemesis-ambush",
+        "speaker": "luna",
+        "district": "red",
+        "titleEn": "Crimson Foundry Nemesis Intercept",
+        "titleAr": "اعتراض خصم النيميسيس في المسبك القرمزي",
+        "briefingEn": "Utility AI telemetry shows your rival favoring Berserk Rush at full HP. Read their stance and counter-parry, or pump iron first to out-scale their armor.",
+        "briefingAr": "تشير قراءات الذكاء التكتيكي إلى ميل خصمك للهجوم المندفع عند اكتمال صحته. اقرأ نيته ونفّذ الصد المضاد أو ارفع قوتك في النادي أولاً.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Counter-Parry in Arena",
+            "labelAr": "مناورة الصد المضاد في الساحة",
+            "hintEn": "Open Attack and trigger Counter Parry against Berserk Rush or Armor Pierce against Ballistic Guard.",
+            "hintAr": "افتح شاشة الهجوم ونفّذ الصد المضاد ضد الاندفاع أو خرق الدروع ضد التحصن.",
+            "targetScreen": "attack"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Overdrive Gym Session",
+            "labelAr": "جلسة تدريب مكثفة في النادي",
+            "hintEn": "Burn energy in Gym to raise Strength and Speed before locking horns with your Nemesis.",
+            "hintAr": "استثمر طاقتك في النادي لرفع القوة والسرعة قبل حسم المواجهة.",
+            "targetScreen": "gym"
+          }
+        ]
+      },
+      {
+        "id": "contract-east-safehouse-courier-net",
+        "speaker": "mayor_tariq",
+        "district": "res",
+        "titleEn": "East Quarter Safehouse Courier Network",
+        "titleAr": "شبكة مراسلي المخابئ في الحي الشرقي",
+        "briefingEn": "Old-guard couriers in the East Safehouse Quarter need either a quiet roof-line escort or fresh contraband liquidity on the player market.",
+        "briefingAr": "يحتاج مراسلو الحرس القديم في حي المخابئ الشرقي إما إلى تأمين صامت عبر الأسطح أو ضخ بضائع سريعة في سوق اللاعبين.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Secure District Route",
+            "labelAr": "تأمين مسار الحي",
+            "hintEn": "Check City district control and travel routes to lock in territorial bonuses.",
+            "hintAr": "راجع خريطة المدينة ومسارات التنقل لتثبيت مكافآت السيطرة الميدانية.",
+            "targetScreen": "city"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Move Bazaar Contraband",
+            "labelAr": "تدوير بضائع البازار",
+            "hintEn": "Open Market to list or snap up underpriced syndicate gear and boosters.",
+            "hintAr": "افتح السوق لعرض أو اقتناص المعدات والمعززات ذات السعر المغري.",
+            "targetScreen": "market"
+          }
+        ]
+      },
+      {
+        "id": "contract-west-neon-highroller-extraction",
+        "speaker": "luna",
+        "district": "west",
+        "titleEn": "West Neon VIP Extraction & Audit",
+        "titleAr": "استخراج محاسب شارع النيون الغربي",
+        "briefingEn": "A rogue pit boss on the West Neon Strip is leaking family ledger hashes. Intercept his guard detail in combat or drain his high-stakes table.",
+        "briefingAr": "يقوم مدير صالة منشق في شارع النيون بتسريبشفرات دفاتر العائلة. اعترض حراسه في اشتباك مباشر أو استنزف طاولته في الكازينو.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Intercept Guard Detail",
+            "labelAr": "اعتراض طاقم الحراسة",
+            "hintEn": "Launch a tactical Attack encounter and use Suppress Fire when the target flanks.",
+            "hintAr": "ابدأ مواجهة في شاشة الهجوم واستخدم نيران التغطية عند محاولة الالتفاف.",
+            "targetScreen": "attack"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Raid Velvet Table",
+            "labelAr": "مناورة طاولة النيون",
+            "hintEn": "Visit City or Crimes to exploit the distractions along the West Neon Strip.",
+            "hintAr": "انتقل إلى المدينة أو الجرائم لاستغلال انشغال الدوريات في شارع النيون.",
+            "targetScreen": "crimes"
+          }
+        ]
+      },
+      {
+        "id": "contract-central-plaza-sovereign-pact",
+        "speaker": "mayor_tariq",
+        "district": "center",
+        "titleEn": "Central Plaza Sovereign Charter",
+        "titleAr": "ميثاق السيادة في الساحة المركزية",
+        "briefingEn": "Four families are vying for the Central Plaza clearing charter. Show overwhelming tactical readiness in your loadout or claim the street tribute first.",
+        "briefingAr": "تتنافس أربع عائلات على امتياز المقاصة في الساحة المركزية. أظهر جاهزية تسليحك الكاملة أو احسم عوائد الشارع قبلهم.",
+        "branches": [
+          {
+            "id": "stealth",
+            "labelEn": "Audit 3D Armory Loadout",
+            "labelAr": "فحص ترسانة السلاح ثلاثية الأبعاد",
+            "hintEn": "Open Items to inspect your weapon provenance and equip your highest-tier piece.",
+            "hintAr": "افتح المعدات لفحص أصل سلاحك وتجهيز أعلى قطعة رتبة لديك.",
+            "targetScreen": "items"
+          },
+          {
+            "id": "bold",
+            "labelEn": "Enforce Street Tribute",
+            "labelAr": "فرض هيبة النقابة ميدانياً",
+            "hintEn": "Execute a high-level crime or tactical breach to raise your Syndicate standing.",
+            "hintAr": "نفّذ عملية جريئة أو اختراقاً تكتيكياً لرفع مكانتك في النقابة.",
+            "targetScreen": "crimes"
+          }
+        ]
+      }
+    ],
+    "tacticalComms": [
+      {
+        "id": "comm-luna-cone-sync",
+        "speaker": "luna",
+        "mood": "scheming",
+        "kickerEn": "LUNA // VISION TELEMETRY",
+        "kickerAr": "لونا // قياس مخروط الرؤية",
+        "lineEn": "Guard sweep phase is locked to server clock. Wait for the green blind spot and your stealth multiplier jumps up to +35%.",
+        "lineAr": "زاوية مسح الحارس مربوطة بساعة الخادم؛ انتظر النقطة العمياء الخضراء لترتفع مكافأة التخفي حتى +٣٥٪."
+      },
+      {
+        "id": "comm-luna-utility-read",
+        "speaker": "luna",
+        "mood": "alert",
+        "kickerEn": "LUNA // UTILITY AI READOUT",
+        "kickerAr": "لونا // قراءة نية الخصم",
+        "lineEn": "When rival HP drops under 35%, their Utility AI spikes toward Emergency Stim Inject. Hold Rush Interrupt ready.",
+        "lineAr": "عندما تهبط صحة الخصم دون ٣٥٪ يرتفع احتمال حقن المنشط الإسعافي؛ أبقِ مناورة المقاطعة السريعة جاهزة."
+      },
+      {
+        "id": "comm-tariq-heat-ledger",
+        "speaker": "mayor_tariq",
+        "mood": "idle",
+        "kickerEn": "MAYOR TARIQ // CITY HALL",
+        "kickerAr": "العمدة طارق // ديوان المدينة",
+        "lineEn": "A wise operative watches the district radar as closely as his wallet. Launder your heat before the sirens learn your name.",
+        "lineAr": "العميل الحصيف يراقب رادار الأحياء كما يراقب خزنته؛ بيّض حرارة الملاحقة قبل أن تحفظ الدوريات اسمك."
+      },
+      {
+        "id": "comm-tariq-equilibrium",
+        "speaker": "mayor_tariq",
+        "mood": "scheming",
+        "kickerEn": "MAYOR TARIQ // SYNDICATE BALANCE",
+        "kickerAr": "العمدة طارق // توازن النقابة",
+        "lineEn": "Gold that sits idle rusts in the harbor mist. Hone your weapon edge or bribe the wardens while the city ledger favors bold hands.",
+        "lineAr": "الذهب الراكد يصدأ في ضباب المرفأ؛ اصقل سلاحك أو ارشِ الحراس بينما يميل ميزان المدينة لأصحاب المبادرة."
+      },
+      {
+        "id": "comm-luna-provenance-edge",
+        "speaker": "luna",
+        "mood": "idle",
+        "kickerEn": "LUNA // ARMORY PROVENANCE",
+        "kickerAr": "لونا // توثيق الترسانة",
+        "lineEn": "Every Black-Vault weapon carries its maker's ballistic signature. Tap any 3D item card to read its syndicate provenance and combat synergy.",
+        "lineAr": "كل سلاح من فئة الخزنة السوداء يحمل بصمة صانعه؛ اضغط على أي بطاقة ثلاثية الأبعاد لقراءة أصله وتناغمه القتالي."
+      },
+      {
+        "id": "comm-luna-batch-pipeline",
+        "speaker": "luna",
+        "mood": "scheming",
+        "kickerEn": "LUNA // LIVEOPS INTEL WIRE",
+        "kickerAr": "لونا // شبكة الاستخبارات الحية",
+        "lineEn": "I synthesized forty tactical handbooks into your live HUD: district rumors, provenance tags, and counter-stance readouts are all synced.",
+        "lineAr": "دمجتُ أربعين دليلاً تكتيكياً في واجهتك الحية: شائعات الأحياء وأصول العتاد وقراءات المناورات كلها متزامنة الآن."
+      },
+      {
+        "id": "comm-tariq-rumor-press",
+        "speaker": "mayor_tariq",
+        "mood": "alert",
+        "kickerEn": "MAYOR TARIQ // ZONE OBSERVER",
+        "kickerAr": "العمدة طارق // مرصد الزون",
+        "lineEn": "What the newspaper prints at dawn, the harbor whispers at midnight. Read the Underworld Rumor Wire before you move your crew.",
+        "lineAr": "ما تطبعه الصحيفة عند الفجر يهمس به المرفأ عند منتصف الليل؛ اقرأ شريط شائعات الأحياء قبل تحريك طاقمك."
+      },
+      {
+        "id": "comm-tariq-family-honor",
+        "speaker": "mayor_tariq",
+        "mood": "idle",
+        "kickerEn": "MAYOR TARIQ // OLD GUARD CODE",
+        "kickerAr": "العمدة طارق // ميثاق الحرس القديم",
+        "lineEn": "Force opens a door once; reputation keeps it open for a generation. Choose your contract branches with both eyes on the map.",
+        "lineAr": "القوة تفتح الباب مرة واحدة، أما السمعة فتبقي الأبواب مشرعة لجيل كامل؛ اختر مسار عقودك بعين خبيرة."
+      }
+    ]
+  },
+  "liveOpsDirectives": [
+    {
+      "id": "dir-cap-waste-discipline",
+      "category": "progression_retention_liveops",
+      "titleEn": "Zero Cap-Waste Resource Discipline",
+      "titleAr": "انضباط استثمار الطاقة والجرأة",
+      "guidanceEn": "Spend Energy in Gym or Attack and Nerve in Crimes before bars hit 100% so natural regeneration never stalls.",
+      "guidanceAr": "استثمر الطاقة في النادي أو الهجوم والجرأة في الجرائم قبل امتلاء المؤشرات حتى لا يتوقف التجدد التلقائي.",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "dir-streak-compounding",
+      "category": "progression_retention_liveops",
+      "titleEn": "7-Day Streak & Contract Compounding",
+      "titleAr": "مضاعفة سلسلة الدخول والعقد اليومي",
+      "guidanceEn": "Complete the daily objective alongside your login streak to stack bonus nerve refills and ledger-backed cash grants.",
+      "guidanceAr": "أنجز المهمة اليومية مع سلسلة الدخول المتتالية لجمع تعبئة الجرأة والمكافآت النقدية الموثقة.",
+      "linkedScreen": "missions"
+    },
+    {
+      "id": "dir-era-breakthrough-pacing",
+      "category": "progression_retention_liveops",
+      "titleEn": "6-Era Ascension Breakthrough Timing",
+      "titleAr": "توقيت اختراقات العصور الستة",
+      "guidanceEn": "Claim Era breakthroughs as soon as level and net-worth gates clear to unlock higher-yield syndicate operations.",
+      "guidanceAr": "استلم اختراقات العصور فور استيفاء شروط المستوى والثروة لفتح عمليات نقابية أعلى عائداً.",
+      "linkedScreen": "missions"
+    },
+    {
+      "id": "dir-rumor-driven-routing",
+      "category": "progression_retention_liveops",
+      "titleEn": "Rumor-Driven District Routing",
+      "titleAr": "توجيه العمليات حسب شائعات الأحياء",
+      "guidanceEn": "Check the Zone Observer rumor wire before committing nerve so your crimes align with active blind-spot advisories.",
+      "guidanceAr": "طالع شريط شائعات مرصد الزون قبل استهلاك الجرأة لتتوافق عملياتك مع نوافذ التخفي النشطة.",
+      "linkedScreen": "newspaper"
+    },
+    {
+      "id": "dir-stance-counter-matrix",
+      "category": "combat_balance_feel",
+      "titleEn": "Utility AI Stance Counter Matrix",
+      "titleAr": "مصفوفة الرد على وضعيات الخصم",
+      "guidanceEn": "Match Berserk Rush with Counter Parry, Ballistic Guard with Armor Pierce, Flank Ambush with Suppress Fire, and Stim Inject with Rush Interrupt.",
+      "guidanceAr": "واجه الاندفاع بالصد المضاد، والتحصن بخرق الدروع، والالتفاف بنيران التغطية، وحقن المنشط بالمقاطعة السريعة.",
+      "linkedScreen": "attack"
+    },
+    {
+      "id": "dir-weapon-honing-window",
+      "category": "combat_balance_feel",
+      "titleEn": "Precision Honing Before Boss Fights",
+      "titleAr": "صقل دقة السلاح قبل مواجهات الزعماء",
+      "guidanceEn": "Activate the Hone Weapon (+6% precision for 2h) syndicate sink before running faction wars or high-level Nemesis duels.",
+      "guidanceAr": "فعّل مصرف صقل السلاح (+٦٪ دقة لمدة ساعتين) قبل خوض حروب العائلات أو نزالات النيميسيس.",
+      "linkedScreen": "attack"
+    },
+    {
+      "id": "dir-loadout-armor-mitigation",
+      "category": "combat_balance_feel",
+      "titleEn": "Ballistic Armor & Loadout Synergy",
+      "titleAr": "تناغم الدروع والعتاد القتالي",
+      "guidanceEn": "Pair Kevlar body armor with a high-tier primary weapon in Items to reduce incoming glancing damage during multi-turn brawls.",
+      "guidanceAr": "اجمع بين درع الكيفلر وسلاح رئيسي متقدم في شاشة المعدات لتقليل الضرر المتلقى خلال الاشتباكات.",
+      "linkedScreen": "items"
+    },
+    {
+      "id": "dir-blindspot-streak-scaling",
+      "category": "combat_balance_feel",
+      "titleEn": "Clean-Breach Streak Multiplier",
+      "titleAr": "مضاعف سلسلة الاختراق النظيف",
+      "guidanceEn": "Chain consecutive stealth breaches inside the green vision-cone blind spot to scale your clean-breach payout up to +35%.",
+      "guidanceAr": "نفّذ اختراقات متتالية داخل النقطة العمياء الخضراء لرفع مكافأة التخفي النظيف حتى +٣٥٪.",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "dir-topstrip-radar-dock",
+      "category": "hud_ux_a11y_tuning",
+      "titleEn": "Top-Strip Tactical Radar & A11y Access",
+      "titleAr": "الوصول السريع للرادار من الشريط العلوي",
+      "guidanceEn": "Open Radar & A11y directly from the top status strip beside Players and Events to inspect 6-district heat and economy sinks.",
+      "guidanceAr": "افتح الرادار والوصول مباشرة من شريط الحالة العلوي بجانب اللاعبين والأحداث لفحص حرارة الأحياء والمصارف.",
+      "linkedScreen": "city"
+    },
+    {
+      "id": "dir-colorblind-high-contrast",
+      "category": "hud_ux_a11y_tuning",
+      "titleEn": "Colorblind & High-Contrast Ink Presets",
+      "titleAr": "أنماط عمى الألوان والتباين الحبري العالي",
+      "guidanceEn": "Switch between Standard, Deuteranopia, Protanopia, Tritanopia, and High-Contrast Ink in the A11y tab for maximum legibility.",
+      "guidanceAr": "بدّل بين النمط القياسي وفلاتر عمى الألوان والتباين الحبري العالي في تبويب الوصول لأعلى وضوح بصري.",
+      "linkedScreen": "items"
+    },
+    {
+      "id": "dir-reduced-motion-clamping",
+      "category": "hud_ux_a11y_tuning",
+      "titleEn": "Reduced-Motion Camera & VFX Clamp",
+      "titleAr": "تهدئة اهتزاز الكاميرا والمؤثرات",
+      "guidanceEn": "Enable Reduced Motion to clamp trauma camera shake, pause 3D idle bobbing, and suppress mobile vibration bursts.",
+      "guidanceAr": "فعّل خيار تقليل الحركة لإيقاف اهتزاز الكاميرا وتهدئة الحركة ثلاثية الأبعاد واهتزاز الهاتف.",
+      "linkedScreen": "attack"
+    },
+    {
+      "id": "dir-fast-hotkey-routing",
+      "category": "hud_ux_a11y_tuning",
+      "titleEn": "Remappable Alt+1..6 Tactical Hotkeys",
+      "titleAr": "اختصارات التنقل السريع القابلة للتخصيص",
+      "guidanceEn": "Use Alt+1..6 (or bare 1..6 when enabled) to jump instantly between Home, Items, City, Gym, Crimes, and Attack.",
+      "guidanceAr": "استخدم Alt+1..6 للتنقل الفوري بين الرئيسية والمعدات والمدينة والنادي والجرائم والهجوم.",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "dir-equilibrium-band-health",
+      "category": "events_fsm_persistence_tuning",
+      "titleEn": "1.08-1.15 Economy Equilibrium Band",
+      "titleAr": "نطاق التوازن الاقتصادي ١.٠٨-١.١٥",
+      "guidanceEn": "Track the 24h Faucet/Sink gauge in the Economy tab and use voluntary sinks to keep purchasing power rock-solid.",
+      "guidanceAr": "تابع مؤشر التوازن الاقتصادي في تبويب الاقتصاد واستخدم المصارف الاختيارية للحفاظ على قوة العملة.",
+      "linkedScreen": "city"
+    },
+    {
+      "id": "dir-fsm-threat-decay",
+      "category": "events_fsm_persistence_tuning",
+      "titleEn": "Stealth FSM Threat Decay Management",
+      "titleAr": "إدارة تلاشي التهديد في نظام التخفي",
+      "guidanceEn": "If acoustic noise pushes your state to HUNTED, launder district heat or switch districts while guard alert decays.",
+      "guidanceAr": "إذا رفعت الضوضاء حالتك إلى مطارد، بيّض حرارة الحي أو غيّر قطاعك ريثما يتلاشى استنفار الحراس.",
+      "linkedScreen": "crimes"
+    },
+    {
+      "id": "dir-3d-inspector-provenance-audit",
+      "category": "events_fsm_persistence_tuning",
+      "titleEn": "3D Inspector Provenance & Synergy Audit",
+      "titleAr": "فحص أصل العتاد في المعاين ثلاثي الأبعاد",
+      "guidanceEn": "Open any item's 3D Orbit Inspector to verify its craft tier, armorer provenance, and audit tag before trading.",
+      "guidanceAr": "افتح المعاين ثلاثي الأبعاد لأي قطعة للتحقق من فئة تصنيعها وورشة منشئها قبل التداول.",
+      "linkedScreen": "items"
+    },
+    {
+      "id": "dir-branching-contract-execution",
+      "category": "events_fsm_persistence_tuning",
+      "titleEn": "Multi-Branch Flash Contract Execution",
+      "titleAr": "تنفيذ العقود الخاطفة متعددة المسارات",
+      "guidanceEn": "Select Stealth or Bold branches in the Missions Quest Hub to jump straight to the target operation screen.",
+      "guidanceAr": "اختر المسار الصامت أو الجريء في مركز عقود المهام للانتقال المباشر إلى شاشة العملية المستهدفة.",
+      "linkedScreen": "missions"
+    }
+  ],
+  "skillPrinciples": [
+    {
+      "skill": "item-provenance",
+      "principleEn": "Every ZONE weapon carries a gritty underworld history and syndicate origin linked to Zone City districts.",
+      "principleAr": "كل سلاح في زون يحمل تاريخاً إجرامياً قاسياً ومنشأ نقابياً مرتبطاً بمقاطعات مدينة زون."
+    },
+    {
+      "skill": "loot-audit",
+      "principleEn": "Balance gear distribution and item values across all districts to prevent black market economic inflation.",
+      "principleAr": "موازنة توزيع المعدات وقيم العناصر عبر جميع المقاطعات لمنع التضخم الاقتصادي في السوق السوداء."
+    },
+    {
+      "skill": "generate-loot",
+      "principleEn": "Craft weapons and items using living economy rules that respond to player combat meta and district danger.",
+      "principleAr": "صنع الأسلحة والعناصر باستخدام قواعد الاقتصاد الحي التي تستجيب لأسلوب القتال وخطر المقاطعات."
+    },
+    {
+      "skill": "items-and-distribution",
+      "principleEn": "Deploy robust distribution patterns combining random district drops, unique syndicate relics, and trait fallbacks.",
+      "principleAr": "نشر أنماط توزيع قوية تجمع بين قطرات المقاطعات العشوائية، والآثار النقابية الفريدة، والبدائل."
+    },
+    {
+      "skill": "inventory-system",
+      "principleEn": "Resource-based inventory architecture ensures clean item stacking, slot limits, and strict server-side validation during transfers.",
+      "principleAr": "تضمن بنية المخزون القائمة على الموارد تجميع العناصر بشكل نظيف، والالتزام بحدود خانات التخزين، والتحقق الصارم من طرف الخادم أثناء عمليات النقل."
+    },
+    {
+      "skill": "economy-balancing",
+      "principleEn": "Sinks and faucets must be calibrated dynamically to prevent runaway inflation while preserving trade incentives.",
+      "principleAr": "يجب ضبط مصادر التدفق ومنافذ الاستهلاك بديناميكية لمنع التضخم المفرط مع الحفاظ على حوافز التجارة."
+    },
+    {
+      "skill": "game-economy-design",
+      "principleEn": "Isolating tradeable currency from non-tradeable tactical assets protects the core crime economy from real-money trading exploits.",
+      "principleAr": "عزل العملات القابلة للتداول عن الأصول التكتيكية غير القابلة للتداول يحمي اقتصاد الجريمة الأساسي من استغلال تجارة المال الحقيقي."
+    },
+    {
+      "skill": "content-balance",
+      "principleEn": "Consumables and gear progression must maintain strict risk-reward ratios without disrupting PvP sector competition.",
+      "principleAr": "يجب أن يحافظ تقدم التجهيزات والمستهلكات على نسب متوازنة بين المخاطر والمكافآت دون الإخلال بالمنافسة في قطاعات القتال."
+    },
+    {
+      "skill": "rumor-weaver",
+      "principleEn": "Weave actionable underworld rumors that link location lore to systemic game mechanics and street intel.",
+      "principleAr": "نسج شائعات العالم السفلي المباشرة التي تربط بين تاريخ المناطق وآليات اللعبة وشبكات المعلومات."
+    },
+    {
+      "skill": "newspaper",
+      "principleEn": "Format player narrative feeds using stylized Observer press releases and sensational broadside headers.",
+      "principleAr": "صياغة التغذية الإخبارية للاعبين باستخدام أسلوب صحيفة الملاحظ الإخبارية والعناوين العريضة المثيرة."
+    },
+    {
+      "skill": "lore-link-audit",
+      "principleEn": "Audit ambient text to maintain high cross-referencing density between inventory items, territories, and syndicate npcs.",
+      "principleAr": "تدقيق النصوص المحيطة لضمان كثافة الربط المتبادل بين عناصر الحقيبة، الأقاليم، وشخصيات النقابة."
+    },
+    {
+      "skill": "foreshadow-tracker",
+      "principleEn": "Plant subtle narrative seeds in low-level rumor wires to preview upcoming district shifts and mayor events.",
+      "principleAr": "غرس بذور سردية خفية في برقيات الشائعات للتمهيد للتحولات المستقبلية وأحداث العمدة."
+    },
+    {
+      "skill": "map-systems",
+      "principleEn": "Anchor every district rumor to a concrete landmark and adjacent transit corridor on the 3D tactical map.",
+      "principleAr": "اربط كل شائعة حي بمعلم واضح وممر تنقل مجاور على الخريطة التكتيكية ثلاثية الأبعاد."
+    },
+    {
+      "skill": "wargame-map",
+      "principleEn": "Expose frontline heat gradients and contested sector chokepoints before players commit nerve or energy.",
+      "principleAr": "اعرض تدرجات الحرارة الميدانية ونقاط الاختناق المتنازع عليها قبل أن يخاطر اللاعب بالجرأة أو الطاقة."
+    },
+    {
+      "skill": "world-data",
+      "principleEn": "Keep district world state deterministic across English and Arabic views so intel never diverges.",
+      "principleAr": "حافظ على ثبات حالة العالم والأحياء بين العرضين الإنجليزي والعربي دون أي تعارض في المعلومات."
+    },
+    {
+      "skill": "localization",
+      "principleEn": "Adapt street idioms natively in Arabic RTL while preserving exact numeric thresholds and route links.",
+      "principleAr": "صُغ مصطلحات الشارع بلغة عربية طبيعية من اليمين لليسار مع الحفاظ على الأرقام والروابط بدقة."
+    },
+    {
+      "skill": "quest-hub-stitcher",
+      "principleEn": "Bind every flash contract to two distinct gameplay routes so player choice immediately alters the target loop.",
+      "principleAr": "اربط كل عقد خاطف بمسارين مختلفين في اللعب بحيث يغيّر اختيار اللاعب خطته الميدانية فوراً."
+    },
+    {
+      "skill": "dialogue-crafting",
+      "principleEn": "Write compact subtext-rich briefings where every sentence conveys threat, reward, and tactical leverage.",
+      "principleAr": "اكتب إيجازات مكثفة تحمل في كل جملة مستوى التهديد والعائد ونقطة التفوق التكتيكي."
+    },
+    {
+      "skill": "voice-bible",
+      "principleEn": "Contrast Luna's razor-sharp analytical telemetry against Mayor Tariq's measured old-guard political proverbs.",
+      "principleAr": "أبرز التباين بين نبرة لونا التحليلية الحادة ونبرة العمدة طارق السياسية المتزنة."
+    },
+    {
+      "skill": "npc-voice",
+      "principleEn": "Keep speaker callsigns and cadence unmistakable in both English and Arabic RTL.",
+      "principleAr": "حافظ على بصمة المتحدث وإيقاعه المميز بوضوح تام في الإنجليزية والعربية."
+    },
+    {
+      "skill": "narrative-designer",
+      "principleEn": "Every contract consequence must echo across the player's Era ascension spine and district reputation.",
+      "principleAr": "كل نتيجة عقد يجب أن ينعكس أثرها على مسار ارتقاء العصور وسمعة اللاعب في الأحياء."
+    },
+    {
+      "skill": "npc-generator",
+      "principleEn": "Give syndicate fixers distinct regional motives tied to harbor logistics, high finance, or arena enforcement.",
+      "principleAr": "امنح وسطاء النقابة دوافع واضحة مرتبطة بلوجستيات المرفأ أو المال أو سطوة الساحة."
+    },
+    {
+      "skill": "npc-network",
+      "principleEn": "Cross-link Luna's technical intel with Mayor Tariq's political cover so contracts feel like one living syndicate web.",
+      "principleAr": "اربط معلومات لونا التقنية بالغطاء السياسي للعمدة طارق لتبدو العقود شبكة نقابية حية واحدة."
+    },
+    {
+      "skill": "design-system-arc",
+      "principleEn": "Evolve comms tone from street survival at Era 1 to sovereign syndicate command at Era 6.",
+      "principleAr": "طوّر نبرة الاتصالات تدريجياً من البقاء في الشارع في العصر الأول إلى قيادة النقابة العليا في العصر السادس."
+    },
+    {
+      "skill": "progression-design",
+      "principleEn": "Pace xp thresholds and level cap refills so every level-up unlocks tangible tactical options.",
+      "principleAr": "اضبط منحنى الخبرة وتعبئة الموارد عند كل مستوى ليفتح خيارات تكتيكية ملموسة."
+    },
+    {
+      "skill": "progression-systems",
+      "principleEn": "Layer horizontal equipment mastery and crew rank synergy atop vertical level progression.",
+      "principleAr": "اجمع بين إتقان المعدات وترقية الطاقم أفقياً وبين الارتقاء العمودي بالمستويات."
+    },
+    {
+      "skill": "player-retention",
+      "principleEn": "Reward daily login streaks, contract milestones, and zero cap-waste resource spending.",
+      "principleAr": "كافئ سلاسل الدخول اليومية وإنجاز العقود واستثمار الطاقة والجرأة قبل امتلاء المؤشرات."
+    },
+    {
+      "skill": "liveops",
+      "principleEn": "Rotate district rumor hooks and flash contracts cleanly without cluttering the Home arcade surface.",
+      "principleAr": "دوّر شائعات الأحياء والعقود الخاطفة بسلاسة دون إزاحة أركيد النقابة في الصفحة الرئيسية."
+    },
+    {
+      "skill": "combat-design",
+      "principleEn": "Make every combat turn a readable tactical triangle between aggression, armor penetration, and tempo interruption.",
+      "principleAr": "اجعل كل جولة قتالية مثلثاً تكتيكياً واضحاً بين الهجوم وخرق الدروع ومقاطعة إيقاع الخصم."
+    },
+    {
+      "skill": "encounter-balance",
+      "principleEn": "Scale rival Utility AI intent smoothly with HP ratios, remaining stims, and district police heat.",
+      "principleAr": "وازن قرارات الذكاء الاصطناعي للخصم وفق نسب الصحة والمنشطات المتبقية وحرارة الحي."
+    },
+    {
+      "skill": "game-feel",
+      "principleEn": "Pair every critical counter and vault crack with 3D rigged animation blending, procedural audio, and trauma-clamped feedback.",
+      "principleAr": "اربط كل ضربة حاسمة وكسر خزنة بحركة ثلاثية الأبعاد وصوت توليدي واهتزاز بصري متوازن."
+    },
+    {
+      "skill": "game-balance",
+      "principleEn": "Maintain strictly monotonic expected value per nerve across crime tiers while keeping sink costs proportional to Era.",
+      "principleAr": "حافظ على تصاعد العائد المتوقع لكل نقطة جرأة عبر رتب الجرائم مع مواءمة تكاليف المصارف لعصر اللاعب."
+    },
+    {
+      "skill": "game-hud",
+      "principleEn": "Dock tactical radar and accessibility triggers inline inside the secondary top status bar so zero floating pills overlap content cards.",
+      "principleAr": "ثبّت زر الرادار وإمكانية الوصول داخل شريط الحالة العلوي الثانوي لمنع أي تداخل مع البطاقات."
+    },
+    {
+      "skill": "game-ui-ux",
+      "principleEn": "Enforce one-route-one-purpose information architecture with #zig-home-arcade anchored #1 on Home.",
+      "principleAr": "التزم بهندسة معلومات واضحة لكل شاشة مع تثبيت أركيد النقابة في المرتبة الأولى بالرئيسية."
+    },
+    {
+      "skill": "hud-system",
+      "principleEn": "Synchronize topbar cooldowns, resource bars, and district heat badges with zero layout shift or horizontal overflow at 390px.",
+      "principleAr": "زامن مؤشرات التهدئة والموارد وحرارة الأحياء في الشريط العلوي دون أي إزاحة أو فيض أفقي عند ٣٩٠ بكسل."
+    },
+    {
+      "skill": "accessibility-games",
+      "principleEn": "Support Deuteranopia, Protanopia, Tritanopia, Reduced Motion, High-Contrast Ink, and remappable Alt+1..6 hotkeys.",
+      "principleAr": "ادعم فلاتر عمى الألوان وتقليل الحركة والتباين العالي واختصارات لوحة المفاتيح القابلة للتخصيص."
+    },
+    {
+      "skill": "event-bus",
+      "principleEn": "Decouple 3D stage actions, procedural WebAudio cues, and HUD telemetry via typed CustomEvents on window.",
+      "principleAr": "افصل بين أحداث المشاهد ثلاثية الأبعاد والصوت التوليدي والواجهة عبر أحداث مخصصة وموحدة."
+    },
+    {
+      "skill": "state-machine",
+      "principleEn": "Drive stealth threat (CLEAR/SUSPICIOUS/HUNTED) and rival combat transitions through deterministic server-validated FSM states.",
+      "principleAr": "أدر حالات التهديد في التخفي وتحولات القتال عبر آلة حالة حتمية موثقة من الخادم."
+    },
+    {
+      "skill": "save-load",
+      "principleEn": "Persist accessibility preferences, audio mute states, and session ledgers atomically across reloads.",
+      "principleAr": "احفظ تفضيلات الوصول وحالة الصوت وسجل الجلسة بشكل ذري وموثوق عبر مرات التحديث."
+    },
+    {
+      "skill": "game-tuning",
+      "principleEn": "Monitor rolling 24h faucet-to-sink ratios inside the 1.08-1.15 band to prevent MMO currency inflation.",
+      "principleAr": "راقب نسبة التدفقات إلى المصارف خلال ٢٤ ساعة داخل النطاق الصحي ١.٠٨-١.١٥ لمنع التضخم."
+    }
+  ]
+}

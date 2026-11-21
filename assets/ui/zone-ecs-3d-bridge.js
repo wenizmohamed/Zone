@@ -596,7 +596,10 @@
   // Import articulated rigged operative module FIRST so globalThis.__ZoneRiggedOperative
   // is registered synchronously before zone-ecs-3d-engine.mjs builds any stages!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=155')
+    return import('./zone-3d-rigged-operative.mjs?v=156')
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs?v=155');
+      })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs?v=154');
       })
@@ -617,7 +620,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=155')
+    return import('./zone-ecs-3d-engine.mjs?v=156')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=155');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=154');
       })

@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v155) */
-const SHELL_CACHE_NAME = 'zone-shell-v155';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v156) */
+const SHELL_CACHE_NAME = 'zone-shell-v156';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -8,25 +8,27 @@ const PRECACHE_URLS = [
   './offline.html',
   './manifest.webmanifest',
   './assets/icons/icon-192.png',
-  './assets/ui/zone-torn-live.css?v=155',
-  './assets/ui/zone-torn-live.js?v=155',
-  './assets/ui/zone-rpg-empire.css?v=155',
-  './assets/ui/zone-rpg-empire.js?v=155',
-  './assets/ui/zone-ascension-breakthrough.css?v=155',
-  './assets/ui/zone-ascension-breakthrough.js?v=155',
-  './assets/ui/zone-ecs-3d.css?v=155',
-  './assets/ui/zone-ecs-3d-bridge.js?v=155',
-  './assets/ui/zone-3d-rigged-operative.mjs?v=155',
+  './assets/data/zone-batch-skill-pack.json',
+  './assets/ui/zone-torn-live.css?v=156',
+  './assets/ui/zone-torn-live.js?v=156',
+  './assets/ui/zone-rpg-empire.css?v=156',
+  './assets/ui/zone-rpg-empire.js?v=156',
+  './assets/ui/zone-ascension-breakthrough.css?v=156',
+  './assets/ui/zone-ascension-breakthrough.js?v=156',
+  './assets/ui/zone-ecs-3d.css?v=156',
+  './assets/ui/zone-ecs-3d-bridge.js?v=156',
+  './assets/ui/zone-3d-rigged-operative.mjs?v=156',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=155',
-  './assets/ui/zone-profile-avatar.css?v=155',
-  './assets/ui/zone-profile-avatar.js?v=155',
-  './assets/ui/zone-instant-games.js?v=155',
-  './assets/ui/zone-audio-haptics.js?v=155',
-  './assets/ui/zone-tactical-director.css?v=155',
-  './assets/ui/zone-tactical-director.js?v=155',
-  './assets/ui/zone-hud-accessibility.css?v=155',
-  './assets/ui/zone-hud-accessibility.js?v=155'
+  './assets/ui/zone-ecs-3d-engine.mjs?v=156',
+  './assets/ui/zone-profile-avatar.css?v=156',
+  './assets/ui/zone-profile-avatar.js?v=156',
+  './assets/ui/zone-instant-games.js?v=156',
+  './assets/ui/zone-audio-haptics.js?v=156',
+  './assets/ui/zone-tactical-director.css?v=156',
+  './assets/ui/zone-tactical-director.js?v=156',
+  './assets/ui/zone-hud-accessibility.css?v=156',
+  './assets/ui/zone-hud-accessibility.js?v=156',
+  './assets/ui/zone-batch-liveops.js?v=156'
 ];
 
 const IMMUTABLE_BINARY_RE = /\.(?:woff2|webp|png|jpe?g|glb)$/i;
