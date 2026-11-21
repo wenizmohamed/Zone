@@ -1,0 +1,470 @@
+/* ==========================================================================
+ * ZONE v157 - TRACK 9: 6-DISTRICT TERRITORY WARGAME MAP, DELTA CHAIN & RAID LOBBY
+ * Exclusive Ownership: @faction-war-net (assets/ui/zone-faction-warfare.css)
+ * 4-Way Parity: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL
+ * Mobile Guarantee: 0px horizontal overflow at 390px viewport width
+ * ========================================================================== */
+
+:root {
+  --zfw-card-bg: var(--zwc-surface, #1e1b17);
+  --zfw-subcard-bg: var(--zwc-paper-subcard, #25211c);
+  --zfw-well-bg: var(--zwc-well-bg, #161310);
+  --zfw-ink: var(--zwc-ink, #f3ecdc);
+  --zfw-ink-soft: var(--zwc-ink-soft, #d8ccb6);
+  --zfw-ink-muted: var(--zwc-ink-muted, #aca08a);
+  --zfw-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --zfw-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
+  --zfw-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
+  --zfw-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
+  --zfw-sage-bg: rgba(120, 214, 40, 0.18);
+  --zfw-sage-ink: #a7f382;
+  --zfw-sage-fill: #69b830;
+  --zfw-gold-bg: rgba(217, 147, 50, 0.2);
+  --zfw-gold-ink: #f4cf78;
+  --zfw-gold-fill: #d99332;
+  --zfw-crimson-bg: rgba(198, 83, 58, 0.22);
+  --zfw-crimson-ink: #ff9c8a;
+  --zfw-crimson-fill: #c44933;
+  --zfw-blue-bg: rgba(61, 124, 201, 0.22);
+  --zfw-blue-ink: #93c5fd;
+  --zfw-blue-fill: #3d7cc9;
+  --zfw-btn-bg: var(--zwc-btn-bg, #2b2620);
+  --zfw-btn-hover: var(--zwc-btn-hover, #363028);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root #zone-main {
+  --zfw-card-bg: var(--zwc-surface, #fbf7ee);
+  --zfw-subcard-bg: var(--zwc-paper-subcard, #f4ecdb);
+  --zfw-well-bg: var(--zwc-well-bg, rgba(232, 221, 198, 0.65));
+  --zfw-ink: var(--zwc-ink, #1e1b18);
+  --zfw-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --zfw-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --zfw-border: var(--zwc-border-strong, #23201c);
+  --zfw-border-sub: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --zfw-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --zfw-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.14));
+  --zfw-sage-bg: rgba(109, 153, 73, 0.24);
+  --zfw-sage-ink: #1b4d23;
+  --zfw-sage-fill: #497230;
+  --zfw-gold-bg: rgba(218, 168, 59, 0.24);
+  --zfw-gold-ink: #5e3b06;
+  --zfw-gold-fill: #b87e1f;
+  --zfw-crimson-bg: rgba(198, 83, 58, 0.2);
+  --zfw-crimson-ink: #781e0f;
+  --zfw-crimson-fill: #a93522;
+  --zfw-blue-bg: rgba(61, 124, 201, 0.18);
+  --zfw-blue-ink: #193b68;
+  --zfw-blue-fill: #2f65a8;
+  --zfw-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --zfw-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+}
+
+.zfw-scope,
+.zfw-scope * {
+  box-sizing: border-box;
+}
+
+.zfw-scope {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-block: 12px;
+  padding: 13px 14px;
+  border: 1.7px solid var(--zfw-border);
+  border-radius: var(--zwc-radius-sketch, 14px);
+  background: var(--zfw-card-bg);
+  color: var(--zfw-ink);
+  box-shadow: var(--zfw-shadow);
+  font-family: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  overflow: hidden;
+}
+
+html[dir="rtl"] .zfw-scope,
+html:lang(ar) .zfw-scope {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .zfw-scope *,
+html:lang(ar) .zfw-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Header & Delta Sync Strip */
+.zfw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 10px;
+}
+
+.zfw-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  flex: 1 1 210px;
+}
+
+.zfw-crest {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--zfw-border);
+  border-radius: 9px;
+  background: var(--zfw-subcard-bg);
+  box-shadow: var(--zfw-shadow-sub);
+}
+
+.zfw-crest svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.zfw-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--zfw-ink);
+}
+
+.zfw-sub {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: var(--zfw-ink-soft);
+  line-height: 1.3;
+}
+
+.zfw-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.zfw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1.4px solid var(--zfw-border);
+  background: var(--zfw-subcard-bg);
+  color: var(--zfw-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.zfw-pill[data-tone="sage"] { background: var(--zfw-sage-bg); color: var(--zfw-sage-ink); }
+.zfw-pill[data-tone="gold"] { background: var(--zfw-gold-bg); color: var(--zfw-gold-ink); }
+.zfw-pill[data-tone="crimson"] { background: var(--zfw-crimson-bg); color: var(--zfw-crimson-ink); }
+.zfw-pill[data-tone="blue"] { background: var(--zfw-blue-bg); color: var(--zfw-blue-ink); }
+
+/* Live Delta-Synced Chain Bar */
+.zfw-chain-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px 11px;
+  border: 1.5px solid var(--zfw-border-sub);
+  border-radius: 11px;
+  background: var(--zfw-well-bg);
+  margin-block-end: 10px;
+}
+
+.zfw-chain-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.zfw-chain-track {
+  height: 10px;
+  width: 100%;
+  border-radius: 999px;
+  border: 1.3px solid var(--zfw-border);
+  background: var(--zfw-subcard-bg);
+  overflow: hidden;
+}
+
+.zfw-chain-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--zfw-gold-fill), var(--zfw-sage-fill));
+  transition: width 220ms ease;
+}
+
+/* Main Grid: 6-District Wargame Map + Tactical Inspector */
+.zfw-war-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 10px;
+  align-items: stretch;
+  margin-block-end: 10px;
+}
+
+.zfw-map-box,
+.zfw-inspector-box,
+.zfw-lobby-box {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1.5px solid var(--zfw-border);
+  border-radius: 12px;
+  background: var(--zfw-subcard-bg);
+  box-shadow: var(--zfw-shadow-sub);
+}
+
+.zfw-map-svg {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  display: block;
+  border-radius: 9px;
+  background: var(--zfw-well-bg);
+  border: 1.3px dashed var(--zfw-border-sub);
+}
+
+.zfw-hex-node {
+  cursor: pointer;
+  transition: transform 140ms ease, opacity 140ms ease;
+}
+
+.zfw-hex-node:focus-visible {
+  outline: 2px solid var(--zfw-gold-ink);
+  outline-offset: 2px;
+}
+
+.zfw-district-pills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-block-start: 8px;
+}
+
+.zfw-dist-tab {
+  min-width: 0;
+  padding: 5px 6px;
+  border: 1.3px solid var(--zfw-border);
+  border-radius: 8px;
+  background: var(--zfw-btn-bg);
+  color: var(--zfw-ink);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zfw-dist-tab[aria-pressed="true"] {
+  background: var(--zfw-gold-bg);
+  color: var(--zfw-gold-ink);
+  border-color: var(--zfw-gold-fill);
+}
+
+/* Inspector Bars & Controls */
+.zfw-insp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-block-end: 6px;
+}
+
+.zfw-insp-name {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 800;
+}
+
+.zfw-insp-perk {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  color: var(--zfw-ink-soft);
+}
+
+.zfw-ctrl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-block-end: 9px;
+}
+
+.zfw-ctrl-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.zfw-ctrl-track {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--zfw-well-bg);
+  border: 1px solid var(--zfw-border-sub);
+  overflow: hidden;
+  grid-column: 1 / -1;
+}
+
+.zfw-ctrl-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 220ms ease;
+}
+
+.zfw-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.zfw-btn {
+  min-width: 0;
+  flex: 1 1 120px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1.5px solid var(--zfw-border);
+  background: var(--zfw-btn-bg);
+  color: var(--zfw-ink);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: var(--zfw-shadow-sub);
+}
+
+.zfw-btn:hover:not(:disabled) {
+  background: var(--zfw-btn-hover);
+}
+
+.zfw-btn:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+}
+
+.zfw-btn[data-variant="danger"] {
+  background: var(--zfw-crimson-bg);
+  color: var(--zfw-crimson-ink);
+  border-color: var(--zfw-crimson-fill);
+}
+
+.zfw-btn[data-variant="sage"] {
+  background: var(--zfw-sage-bg);
+  color: var(--zfw-sage-ink);
+  border-color: var(--zfw-sage-fill);
+}
+
+.zfw-btn[data-variant="gold"] {
+  background: var(--zfw-gold-bg);
+  color: var(--zfw-gold-ink);
+  border-color: var(--zfw-gold-fill);
+}
+
+/* ELO Matchmaking & 3-Slot Raid Lobby */
+.zfw-lobby-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 8px;
+}
+
+.zfw-elo-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-block-end: 9px;
+}
+
+.zfw-elo-card {
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1.3px solid var(--zfw-border-sub);
+  border-radius: 9px;
+  background: var(--zfw-well-bg);
+  font-size: 11px;
+}
+
+.zfw-elo-card strong {
+  display: block;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zfw-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-block: 8px;
+}
+
+.zfw-slot-card {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1.4px dashed var(--zfw-border);
+  border-radius: 9px;
+  background: var(--zfw-well-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.zfw-slot-card.is-filled {
+  border-style: solid;
+  border-color: var(--zfw-sage-fill);
+  background: var(--zfw-sage-bg);
+}
+
+.zfw-feedback {
+  margin-block-start: 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1.4px solid var(--zfw-border);
+  background: var(--zfw-well-bg);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.zfw-feedback[data-tone="sage"] { background: var(--zfw-sage-bg); color: var(--zfw-sage-ink); }
+.zfw-feedback[data-tone="crimson"] { background: var(--zfw-crimson-bg); color: var(--zfw-crimson-ink); }
+.zfw-feedback[data-tone="gold"] { background: var(--zfw-gold-bg); color: var(--zfw-gold-ink); }
+
+@media (max-width: 680px) {
+  .zfw-war-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zfw-elo-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .zfw-slots-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .zfw-district-pills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
