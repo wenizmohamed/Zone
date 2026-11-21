@@ -158,20 +158,22 @@ button[data-z3d-inspect]:hover {
   height: 220px;
 }
 
-.z3d-char-turntable-stage {
-  width: 100%;
-  height: 100%;
-  min-height: 320px;
+.zone-character-stage {
+  position: relative !important;
+  overflow: hidden !important;
 }
 
-.zone-character-stage > .z3d-char-turntable-stage {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  z-index: 1;
+.zone-character-stage .z3d-char-turntable-stage,
+.z3d-char-turntable-stage {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  border: 0 !important;
+  border-radius: inherit;
+  box-shadow: none !important;
+  z-index: 2 !important;
 }
 
 .z3d-stage-hud {

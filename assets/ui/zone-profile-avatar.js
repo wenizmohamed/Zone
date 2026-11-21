@@ -91,13 +91,13 @@
   });
 
   var CAMERA_ICON_SVG =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>' +
     '<circle cx="12" cy="13" r="3.5"/>' +
     '</svg>';
 
   var DEFAULT_CREST_SVG =
-    '<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<rect width="64" height="64" rx="12" fill="#231f1b"/>' +
     '<circle cx="32" cy="24" r="10.5" fill="#f5b82e" stroke="#12100e" stroke-width="2.6"/>' +
     '<path d="M13 54C16 43 23 38 32 38C41 38 48 43 51 54H13Z" fill="#22b56b" stroke="#12100e" stroke-width="2.6" stroke-linejoin="round"/>' +

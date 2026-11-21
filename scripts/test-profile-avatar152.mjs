@@ -216,27 +216,27 @@ test('v152 Static, SHA-256 Lock, Entrypoints, SW Precache & PostgreSQL 16 SQL La
 
   const headHtml = rawIndex.subarray(0, bodyIdx).toString('utf8');
   assert.match(headHtml, /href="\.\/assets\/ui\/gym116\.css\?v=117"/, 'gym116.css?v=117 must stay untouched');
-  assert.match(headHtml, /href="\.\/assets\/ui\/zone-ecs-3d\.css\?v=153"/);
-  assert.match(headHtml, /href="\.\/assets\/ui\/zone-profile-avatar\.css\?v=153"/);
-  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-ecs-3d-bridge\.js\?v=153"><\/script>/);
-  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-profile-avatar\.js\?v=153"><\/script>/);
-  assert.doesNotMatch(headHtml, /\?v=15[12]\b/, 'All ?v=151/152 head references must be bumped to ?v=153');
+  assert.match(headHtml, /href="\.\/assets\/ui\/zone-ecs-3d\.css\?v=154"/);
+  assert.match(headHtml, /href="\.\/assets\/ui\/zone-profile-avatar\.css\?v=154"/);
+  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-ecs-3d-bridge\.js\?v=154"><\/script>/);
+  assert.match(headHtml, /<script defer src="\.\/assets\/ui\/zone-profile-avatar\.js\?v=154"><\/script>/);
+  assert.doesNotMatch(headHtml, /\?v=15[123]\b/, 'All ?v=151/152/153 head references must be bumped to ?v=154');
 
   const accountHtml = readUtf8('account.html');
-  assert.match(accountHtml, /href="\/assets\/ui\/watercolor-sketchbook\.css\?v=153"/);
-  assert.match(accountHtml, /href="\/assets\/ui\/zone-app-shell\.css\?v=153"/);
-  assert.match(accountHtml, /href="\/assets\/ui\/zone-profile-avatar\.css\?v=153"/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/watercolor-sketchbook\.js\?v=153" defer><\/script>/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-app-shell\.js\?v=153" defer><\/script>/);
+  assert.match(accountHtml, /href="\/assets\/ui\/watercolor-sketchbook\.css\?v=154"/);
+  assert.match(accountHtml, /href="\/assets\/ui\/zone-app-shell\.css\?v=154"/);
+  assert.match(accountHtml, /href="\/assets\/ui\/zone-profile-avatar\.css\?v=154"/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/watercolor-sketchbook\.js\?v=154" defer><\/script>/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-app-shell\.js\?v=154" defer><\/script>/);
   assert.match(accountHtml, /<script src="\/account\.js\?v=73" defer><\/script>/);
-  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-profile-avatar\.js\?v=153" defer><\/script>/);
+  assert.match(accountHtml, /<script src="\/assets\/ui\/zone-profile-avatar\.js\?v=154" defer><\/script>/);
   assert.match(accountHtml, /min-height:44px/);
   assert.match(accountHtml, /role="status"/);
   assert.doesNotMatch(accountHtml, /\?v=146\b/);
-  assert.doesNotMatch(accountHtml, /\?v=152\b/);
+  assert.doesNotMatch(accountHtml, /\?v=15[23]\b/);
 
   const swSrc = readUtf8('sw.js');
-  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v153['"]/);
+  assert.match(swSrc, /SHELL_CACHE_NAME\s*=\s*['"]zone-shell-v154['"]/);
   for (const asset of [
     '/assets/ui/zone-ecs-3d.css',
     '/assets/ui/zone-ecs-3d-bridge.js',
@@ -806,19 +806,24 @@ test('v152 Headless Browser UI Gate: Studio 256x256 Crop/Zoom + 8 Presets + 0ms 
       const avatarSec = document.getElementById('zone-account-avatar-section');
       const claimPanel = document.getElementById('claimPanel');
       const openBtn = document.getElementById('zpa-account-open-btn');
+      const openBtnSvg = openBtn ? openBtn.querySelector('svg') : null;
       const preview = document.getElementById('zpa-account-preview');
       const childrenArr = Array.from(main.children);
       return {
         insideMain: avatarSec && avatarSec.parentElement === main,
         beforeClaimPanel: childrenArr.indexOf(avatarSec) < childrenArr.indexOf(claimPanel),
         btnHeight: openBtn ? openBtn.getBoundingClientRect().height : 0,
+        svgWidth: openBtnSvg ? openBtnSvg.getBoundingClientRect().width : 0,
+        svgHeight: openBtnSvg ? openBtnSvg.getBoundingClientRect().height : 0,
         previewWidth: preview ? preview.getBoundingClientRect().width : 0,
         headingEn: document.getElementById('zpa-account-heading')?.textContent || '',
       };
     });
     assert.equal(acctLayout.insideMain, true, '#zone-account-avatar-section must be inside <main>');
     assert.equal(acctLayout.beforeClaimPanel, true, '#zone-account-avatar-section must appear above #claimPanel');
-    assert.ok(acctLayout.btnHeight >= 48, `Upload button min-height must be >= 48px, got ${acctLayout.btnHeight}`);
+    assert.ok(acctLayout.btnHeight >= 48 && acctLayout.btnHeight <= 68, `Upload button height must be 48..68px, got ${acctLayout.btnHeight}`);
+    assert.equal(acctLayout.svgWidth, 16, `Camera icon SVG width must be 16px, got ${acctLayout.svgWidth}`);
+    assert.equal(acctLayout.svgHeight, 16, `Camera icon SVG height must be 16px, got ${acctLayout.svgHeight}`);
     assert.ok(acctLayout.previewWidth >= 70, `Preview must be ~72x72, got ${acctLayout.previewWidth}`);
     assert.match(acctLayout.headingEn, /Profile Picture/i);
 

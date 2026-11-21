@@ -229,6 +229,21 @@ html body #zone-main#zone-main[data-zone-screen="casino"] #zig-home-arcade {
   z-index: 4;
 }
 
+html[data-theme="light"] #zone-ascension-hub .zab-stage-overlay-badges .zab-stage-pill,
+html[data-theme="dark"] #zone-ascension-hub .zab-stage-overlay-badges .zab-stage-pill,
+#zone-ascension-hub .zab-stage-overlay-badges .zab-stage-pill,
+html[data-theme="light"] #zone-ascension-hub .zab-stage-overlay-badges .zab-pill,
+html[data-theme="dark"] #zone-ascension-hub .zab-stage-overlay-badges .zab-pill,
+#zone-ascension-hub .zab-stage-overlay-badges .zab-pill,
+.zab-stage-overlay-badges .zab-stage-pill,
+.zab-stage-overlay-badges .zab-pill {
+  background: rgba(12, 14, 18, 0.88) !important;
+  color: #fde68a !important;
+  border: 1px solid rgba(251, 191, 36, 0.5) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+}
+
 /* Minute-0 3D Origin Tiles Strip */
 .zab-action-strip {
   display: flex;

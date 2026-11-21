@@ -189,17 +189,22 @@
       charEl.style.opacity = '0';
       charEl.style.pointerEvents = 'none';
     }
+    if (hostEl && hostEl.style) {
+      hostEl.style.position = 'relative';
+      hostEl.style.overflow = 'hidden';
+    }
 
     currentCharOutfit = detectActiveOutfit();
     if (!existingFallback) {
       var stageDiv = document.createElement('div');
       stageDiv.className = 'z3d-action-stage z3d-char-turntable-stage';
+      stageDiv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:2;';
       stageDiv.setAttribute('data-z3d-stage', 'character-turntable');
       stageDiv.setAttribute('data-z3d-outfit', currentCharOutfit);
       hostEl.appendChild(stageDiv);
       enqueue('scan', [hostEl]);
     } else {
-      existingFallback.style.display = '';
+      existingFallback.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;min-height:100%;z-index:2;';
       existingFallback.setAttribute('data-z3d-outfit', currentCharOutfit);
       enqueue('updateStageState', ['character-turntable', { outfit: currentCharOutfit }]);
     }
@@ -492,7 +497,10 @@
     startObserver();
   }
 
-  import('./zone-ecs-3d-engine.mjs?v=153')
+  import('./zone-ecs-3d-engine.mjs?v=154')
+    .catch(function () {
+      return import('./zone-ecs-3d-engine.mjs?v=153');
+    })
     .catch(function () {
       return import('./zone-ecs-3d-engine.mjs?v=152');
     })

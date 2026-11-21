@@ -370,6 +370,24 @@ button.zpa-dossier-upload-btn svg {
   cursor: pointer !important;
 }
 
+.zpa-account-card svg,
+.zpa-account-actions svg,
+.zpa-btn svg,
+#zone-account-avatar-card button svg,
+#zone-account-avatar-section button svg,
+#zpa-account-open-btn svg,
+#zpa-account-remove-btn svg,
+.zpa-dossier-upload-btn svg,
+.zpa-upload-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  max-height: 16px !important;
+  flex: 0 0 16px !important;
+  display: block !important;
+}
+
 /* --------------------------------------------------------------------------
  * 6. WATERCOLOR-SKETCHBOOK PROFILE PHOTO STUDIO MODAL
  * -------------------------------------------------------------------------- */
