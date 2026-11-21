@@ -1,0 +1,636 @@
+/* ==========================================================================
+ * ZONE v155 - TRACK 4: TACTICAL AI DIRECTOR & PERCEPTION STEALTH UI
+ * Exclusive Ownership: @ai-stealth-combat (assets/ui/zone-tactical-director.css)
+ * 4-Way Parity: Light Sketchbook + Dark Nocturnal Sketchbook + EN + AR RTL
+ * Mobile Guarantee: 0px horizontal overflow at 390px viewport width
+ * ========================================================================== */
+
+:root {
+  --ztd-card-bg: var(--zwc-surface, #1e1b17);
+  --ztd-subcard-bg: var(--zwc-paper-subcard, #25211c);
+  --ztd-well-bg: var(--zwc-well-bg, #161310);
+  --ztd-ink: var(--zwc-ink, #f3ecdc);
+  --ztd-ink-soft: var(--zwc-ink-soft, #d8ccb6);
+  --ztd-ink-muted: var(--zwc-ink-muted, #aca08a);
+  --ztd-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
+  --ztd-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
+  --ztd-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
+  --ztd-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
+  --ztd-sage-bg: rgba(109, 153, 73, 0.22);
+  --ztd-sage-ink: #9ef08a;
+  --ztd-sage-fill: #5c8e3e;
+  --ztd-gold-bg: rgba(240, 196, 101, 0.2);
+  --ztd-gold-ink: #f4cf78;
+  --ztd-gold-fill: #d99a38;
+  --ztd-crimson-bg: rgba(198, 83, 58, 0.22);
+  --ztd-crimson-ink: #ff9c8a;
+  --ztd-crimson-fill: #c44933;
+  --ztd-blue-bg: rgba(62, 111, 176, 0.22);
+  --ztd-blue-ink: #93c5fd;
+  --ztd-btn-bg: var(--zwc-btn-bg, #2b2620);
+  --ztd-btn-hover: var(--zwc-btn-hover, #363028);
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] body #dc-root #zone-main {
+  --ztd-card-bg: var(--zwc-surface, #fbf7ee);
+  --ztd-subcard-bg: var(--zwc-paper-subcard, #f4ecdb);
+  --ztd-well-bg: var(--zwc-well-bg, rgba(232, 221, 198, 0.62));
+  --ztd-ink: var(--zwc-ink, #1e1b18);
+  --ztd-ink-soft: var(--zwc-ink-soft, #3a342d);
+  --ztd-ink-muted: var(--zwc-ink-muted, #554b3f);
+  --ztd-border: var(--zwc-border-strong, #23201c);
+  --ztd-border-sub: var(--zwc-border, rgba(34, 30, 25, 0.34));
+  --ztd-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(36, 33, 29, 0.16));
+  --ztd-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.14));
+  --ztd-sage-bg: rgba(109, 153, 73, 0.24);
+  --ztd-sage-ink: #1b4d23;
+  --ztd-sage-fill: #497230;
+  --ztd-gold-bg: rgba(218, 168, 59, 0.26);
+  --ztd-gold-ink: #5e3b06;
+  --ztd-gold-fill: #b87e1f;
+  --ztd-crimson-bg: rgba(198, 83, 58, 0.22);
+  --ztd-crimson-ink: #781e0f;
+  --ztd-crimson-fill: #a93522;
+  --ztd-blue-bg: rgba(62, 111, 176, 0.2);
+  --ztd-blue-ink: #193b68;
+  --ztd-btn-bg: var(--zwc-btn-bg, #ede4cf);
+  --ztd-btn-hover: var(--zwc-btn-hover, #e3d7bd);
+}
+
+html[data-zone-contrast="high"] .ztd-scope {
+  --ztd-border: currentColor;
+}
+
+.ztd-scope,
+.ztd-scope * {
+  box-sizing: border-box;
+}
+
+.ztd-scope {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-block: 10px;
+  padding: 12px 14px;
+  border: 1.7px solid var(--ztd-border);
+  border-radius: var(--zwc-radius-sketch, 14px);
+  background: var(--ztd-card-bg);
+  color: var(--ztd-ink);
+  box-shadow: var(--ztd-shadow);
+  font-family: var(--zwc-font-hand, "Rubik", "Patrick Hand", system-ui, sans-serif);
+  overflow: hidden;
+}
+
+html[dir="rtl"] .ztd-scope,
+html:lang(ar) .ztd-scope {
+  font-family: "Cairo", "Noto Sans Arabic", "Rubik", system-ui, sans-serif;
+  letter-spacing: 0 !important;
+}
+
+html[dir="rtl"] .ztd-scope *,
+html:lang(ar) .ztd-scope * {
+  letter-spacing: 0 !important;
+}
+
+/* Header & Badges */
+.ztd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-end: 9px;
+}
+
+.ztd-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 200px;
+}
+
+.ztd-crest {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid var(--ztd-border);
+  border-radius: 9px;
+  background: var(--ztd-subcard-bg);
+  box-shadow: var(--ztd-shadow-sub);
+}
+
+.ztd-crest svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.ztd-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--ztd-ink);
+}
+
+.ztd-sub {
+  margin: 1px 0 0;
+  font-size: 11.5px;
+  color: var(--ztd-ink-soft);
+  line-height: 1.3;
+}
+
+.ztd-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.ztd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1.4px solid var(--ztd-border);
+  background: var(--ztd-subcard-bg);
+  color: var(--ztd-ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.ztd-pill[data-tone="sage"] {
+  background: var(--ztd-sage-bg);
+  color: var(--ztd-sage-ink);
+}
+
+.ztd-pill[data-tone="gold"] {
+  background: var(--ztd-gold-bg);
+  color: var(--ztd-gold-ink);
+}
+
+.ztd-pill[data-tone="crimson"] {
+  background: var(--ztd-crimson-bg);
+  color: var(--ztd-crimson-ink);
+}
+
+.ztd-pill[data-tone="blue"] {
+  background: var(--ztd-blue-bg);
+  color: var(--ztd-blue-ink);
+}
+
+.ztd-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 7px;
+}
+
+/* --------------------------------------------------------------------------
+ * 1. CRIMES SCREEN: PERCEPTION VISION-CONE & ACOUSTIC STEALTH BAR
+ * -------------------------------------------------------------------------- */
+.ztd-stealth-grid {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-block-end: 9px;
+}
+
+.ztd-cone-dial {
+  width: 88px;
+  height: 68px;
+  border: 1.5px solid var(--ztd-border);
+  border-radius: 10px;
+  background: var(--ztd-well-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.ztd-cone-svg {
+  width: 84px;
+  height: 64px;
+  display: block;
+}
+
+.ztd-stealth-meters {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ztd-sweep-track {
+  position: relative;
+  height: 20px;
+  border-radius: 999px;
+  border: 1.4px solid var(--ztd-border);
+  background: var(--ztd-well-bg);
+  overflow: hidden;
+}
+
+.ztd-blind-zone {
+  position: absolute;
+  inset-block: 0;
+  background: var(--ztd-sage-bg);
+  border-inline: 1.5px dashed var(--ztd-sage-fill);
+}
+
+.ztd-sweep-cursor {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 10px;
+  margin-left: -5px;
+  border-radius: 999px;
+  background: var(--ztd-gold-fill);
+  border: 1.5px solid var(--ztd-border);
+  box-shadow: 0 0 6px rgba(240, 196, 101, 0.65);
+  transition: background-color 0.12s ease;
+}
+
+.ztd-sweep-cursor.is-blindspot {
+  background: var(--ztd-sage-fill);
+  box-shadow: 0 0 8px rgba(109, 153, 73, 0.85);
+}
+
+.ztd-meter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ztd-ink-soft);
+  flex-wrap: wrap;
+}
+
+.ztd-noise-bar {
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--ztd-border-sub);
+  background: var(--ztd-well-bg);
+  overflow: hidden;
+}
+
+.ztd-noise-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #5c8e3e 0%, #d99a38 58%, #c44933 100%);
+  transition: width 0.22s ease;
+}
+
+.ztd-stealth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ztd-mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--ztd-well-bg);
+  padding: 3px;
+  border-radius: 10px;
+  border: 1.3px solid var(--ztd-border-sub);
+}
+
+.ztd-mode-btn {
+  min-height: 34px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ztd-ink-soft);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.ztd-mode-btn[aria-pressed="true"] {
+  background: var(--ztd-subcard-bg);
+  color: var(--ztd-ink);
+  border: 1.2px solid var(--ztd-border);
+  box-shadow: var(--ztd-shadow-sub);
+}
+
+.ztd-primary-btn {
+  min-height: 38px;
+  padding: 6px 14px;
+  border-radius: var(--zwc-radius-sketch-sm, 10px);
+  border: 1.6px solid var(--ztd-border);
+  background: linear-gradient(180deg, #689448 0%, #466c2d 100%);
+  color: #fcf9f2;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: var(--ztd-shadow-sub);
+  touch-action: manipulation;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  flex: 1 1 190px;
+  text-align: center;
+}
+
+.ztd-primary-btn[data-ready="blindspot"] {
+  background: linear-gradient(180deg, #5ea33a 0%, #386e1f 100%);
+}
+
+.ztd-primary-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+.ztd-primary-btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. ATTACK / PVP / BOSS SCREEN: UTILITY AI INTENT & COUNTER-MANEUVER DECK
+ * -------------------------------------------------------------------------- */
+.ztd-intent-callout {
+  padding: 9px 11px;
+  margin-block-end: 9px;
+  border: 1.5px solid var(--ztd-border);
+  border-radius: 10px;
+  background: var(--ztd-subcard-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ztd-intent-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ztd-intent-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ztd-ink);
+}
+
+.ztd-intent-telegraph {
+  font-size: 11.5px;
+  color: var(--ztd-ink-soft);
+  line-height: 1.35;
+}
+
+.ztd-hp-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ztd-hp-cell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ztd-hp-track {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ztd-well-bg);
+  border: 1px solid var(--ztd-border-sub);
+  overflow: hidden;
+}
+
+.ztd-hp-fill-you {
+  height: 100%;
+  background: linear-gradient(90deg, #3b6ea5, #5c8e3e);
+  transition: width 0.2s ease;
+}
+
+.ztd-hp-fill-rival {
+  height: 100%;
+  background: linear-gradient(90deg, #c44933, #d99a38);
+  transition: width 0.2s ease;
+}
+
+/* 4 Utility Curve Bars */
+.ztd-utility-bars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-block-end: 9px;
+}
+
+.ztd-u-item {
+  min-width: 0;
+  padding: 5px 7px;
+  border-radius: 8px;
+  border: 1.2px solid var(--ztd-border-sub);
+  background: var(--ztd-well-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ztd-u-item.is-selected {
+  border-color: var(--ztd-gold-fill);
+  background: var(--ztd-gold-bg);
+}
+
+.ztd-u-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.ztd-u-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ztd-u-track {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+}
+
+html[data-theme="light"] .ztd-u-track {
+  background: rgba(34, 30, 25, 0.14);
+}
+
+.ztd-u-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ztd-gold-fill);
+  transition: width 0.2s ease;
+}
+
+.ztd-u-item.is-selected .ztd-u-fill {
+  background: var(--ztd-crimson-fill);
+}
+
+/* 4 Counter-Maneuver Deck Buttons */
+.ztd-maneuver-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.ztd-maneuver-btn {
+  min-width: 0;
+  min-height: 46px;
+  padding: 7px 8px;
+  border-radius: var(--zwc-radius-sketch-sm, 10px);
+  border: 1.5px solid var(--ztd-border);
+  background: var(--ztd-btn-bg);
+  color: var(--ztd-ink);
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  text-align: start;
+  box-shadow: var(--ztd-shadow-sub);
+  touch-action: manipulation;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.ztd-maneuver-btn:hover:not(:disabled) {
+  background: var(--ztd-btn-hover);
+  transform: translateY(-1px);
+}
+
+.ztd-maneuver-btn.is-recommended {
+  border-color: var(--ztd-sage-fill);
+  background: var(--ztd-sage-bg);
+}
+
+.ztd-maneuver-btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.ztd-m-title {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.ztd-m-meta {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ztd-ink-soft);
+  line-height: 1.2;
+  width: 100%;
+}
+
+/* Live Feedback Banner */
+.ztd-feedback {
+  margin-block-start: 8px;
+  padding: 6px 10px;
+  border-radius: 9px;
+  border: 1.3px solid var(--ztd-border);
+  background: var(--ztd-subcard-bg);
+  font-size: 11.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ztd-feedback[data-tone="sage"] {
+  background: var(--ztd-sage-bg);
+  color: var(--ztd-sage-ink);
+}
+
+.ztd-feedback[data-tone="gold"] {
+  background: var(--ztd-gold-bg);
+  color: var(--ztd-gold-ink);
+}
+
+.ztd-feedback[data-tone="crimson"] {
+  background: var(--ztd-crimson-bg);
+  color: var(--ztd-crimson-ink);
+}
+
+/* Reduced Motion Accessibility Support */
+html[data-zone-reduced-motion="true"] .ztd-scope *,
+html[data-zone-reduced-motion="true"] .ztd-sweep-cursor,
+html[data-zone-reduced-motion="true"] .ztd-primary-btn,
+html[data-zone-reduced-motion="true"] .ztd-maneuver-btn {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* 390px Compact Mobile Breakpoint (Strict 0px Overflow) */
+@media (max-width: 680px) {
+  .ztd-scope {
+    padding: 10px 11px;
+  }
+
+  .ztd-stealth-grid {
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .ztd-cone-dial {
+    width: 74px;
+    height: 62px;
+  }
+
+  .ztd-cone-svg {
+    width: 70px;
+    height: 58px;
+  }
+
+  .ztd-utility-bars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ztd-maneuver-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ztd-mode-btn,
+  .ztd-primary-btn,
+  .ztd-maneuver-btn {
+    min-height: 44px;
+  }
+
+  .ztd-hp-strip {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+  }
+}
