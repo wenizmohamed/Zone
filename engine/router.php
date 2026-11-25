@@ -916,7 +916,12 @@ try {
         json_response($res);
     }
     if ($method === 'GET' && $path === '/api/v1/settings') {
-        json_response($engine->playerSettings(current_player_id()));
+        try {
+            $pid = current_player_id();
+        } catch (RuntimeException) {
+            json_response(['ok' => true, 'authenticated' => false, 'settings' => null]);
+        }
+        json_response($engine->playerSettings($pid));
     }
     if ($method === 'POST' && $path === '/api/v1/settings/action') {
         $body = request_json();

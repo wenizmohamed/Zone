@@ -576,21 +576,18 @@
 
     var copy = L();
     var img = avatarWrap.querySelector('img.zpa-crest-img');
-    if (!img) {
-      img = document.createElement('img');
-      img.className = 'zpa-crest-img';
-      img.alt = '';
-      img.hidden = true;
-      avatarWrap.appendChild(img);
-    }
-
     var src = activeSelfSrc();
     if (src) {
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'zpa-crest-img';
+        img.alt = '';
+        avatarWrap.appendChild(img);
+      }
       if (img.getAttribute('src') !== src) img.setAttribute('src', src);
       img.hidden = false;
-    } else {
-      img.hidden = true;
-      img.removeAttribute('src');
+    } else if (img) {
+      img.remove();
     }
 
     var camBtn = avatarWrap.querySelector('button.zpa-camera-badge');
