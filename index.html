@@ -2382,8 +2382,7 @@ class Component extends DCLogic {
   mapVisibility(visible) {
     if (!visible) this.setMapExpanded(false);
     const frame = document.getElementById('zone-city-map');
-    const preloadMap = visible || (typeof window !== 'undefined' && typeof WebGLRenderingContext !== 'undefined' && /Mozilla/i.test(window.navigator?.userAgent || ''));
-    if (preloadMap && frame?.getAttribute && !frame.getAttribute('src')) {
+    if (visible && frame?.getAttribute && !frame.getAttribute('src')) {
       const rawSrc = frame.getAttribute('data-map-src');
       frame.setAttribute('src', (typeof WebGLRenderingContext !== 'undefined' && rawSrc) ? (rawSrc + '&cb=v147') : rawSrc);
     }

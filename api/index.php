@@ -153,6 +153,11 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     }
     $cookieNames = $ownerMethods === [] ? ['zone_player_session', 'zone_player_ledger'] : ['zone_player_session', 'zone_player_ledger', 'zone_admin_session'];
     $cookies = array_filter(explode(';', (string) ($_SERVER['HTTP_COOKIE'] ?? '')), static fn ($part) => in_array(explode('=', trim($part), 2)[0], $cookieNames, true));
+    $hasPlayerAuth = (trim((string) ($_SERVER['HTTP_X_ZONE_PLAYER_TOKEN'] ?? '')) !== '')
+        || array_filter($cookies, static fn ($part) => explode('=', trim($part), 2)[0] === 'zone_player_session') !== [];
+    if ($path === '/api/v1/settings' && $method === 'GET' && !$hasPlayerAuth) {
+        zone_proxy_json(['ok' => true, 'authenticated' => false, 'settings' => null]);
+    }
     $query = http_build_query($_GET, '', '&', PHP_QUERY_RFC3986);
     $requestTarget = $path . ($query === '' ? '' : '?' . $query);
     if ($ownerMethods !== [] && $ownerAccess['authenticated']) {
@@ -188,6 +193,9 @@ if ($relayOrigin !== '' || $relayKey !== '') {
             continue;
         }
         break;
+    }
+    if ($path === '/api/v1/settings' && $method === 'GET' && $status === 401) {
+        zone_proxy_json(['ok' => true, 'authenticated' => false, 'settings' => null]);
     }
     if ($path === '/api/v1/auth/logout' && $method === 'POST' && $status === 401) {
         http_response_code(200);
