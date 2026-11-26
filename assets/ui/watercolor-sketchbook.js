@@ -80,7 +80,7 @@
     );
   }
 
-  /* Sovereign Architectural Metallic Vector Emblems (v168 - Zero Cartoon Crayon Blobs) */
+  /* Sovereign Architectural Metallic Vector Emblems (v169 - Global Defs + Zero Cartoon Crayon Blobs) */
   var ZWC_METALLIC_DEFS =
     '<defs>' +
       '<linearGradient id="zwm-gold" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
@@ -99,15 +99,26 @@
         '<stop offset="0%" stop-color="#f8fafc"/><stop offset="52%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#475569"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-plate" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#24211e"/><stop offset="100%" stop-color="#110f0d"/>' +
+        '<stop offset="0%" stop-color="#2a2520"/><stop offset="100%" stop-color="#110f0d"/>' +
       '</linearGradient>' +
     '</defs>';
 
+  function ensureGlobalMetallicDefs() {
+    if (!document.body || document.getElementById('zwc-global-metallic-defs')) return;
+    var wrap = document.createElement('div');
+    wrap.innerHTML =
+      '<svg id="zwc-global-metallic-defs" width="0" height="0" viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="position:fixed;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;pointer-events:none">' +
+        ZWC_METALLIC_DEFS +
+      '</svg>';
+    if (wrap.firstElementChild) {
+      document.body.appendChild(wrap.firstElementChild);
+    }
+  }
+
   function sovereignCrestSvg(gradUrl, fillOverlay, strokeMarkup) {
     return (
-      '<svg class="zwc-sketch-ico" data-zwc-color="v168" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-        ZWC_METALLIC_DEFS +
-        '<polygon points="12,1.6 21,6.4 21,17.6 12,22.4 3,17.6 3,6.4" fill="url(#zwm-plate)" stroke="' + gradUrl + '" stroke-width="1.2" stroke-opacity="0.82"/>' +
+      '<svg class="zwc-sketch-ico" data-zwc-color="v169" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        '<polygon points="12,1.6 21,6.4 21,17.6 12,22.4 3,17.6 3,6.4" fill="url(#zwm-plate)" stroke="' + gradUrl + '" stroke-width="1.35" stroke-opacity="0.92"/>' +
         fillOverlay +
         strokeMarkup +
       '</svg>'
@@ -522,8 +533,9 @@
     heading.insertAdjacentElement('afterend', card);
   }
 
-  /* 3. Sync Sidebar & Quick-Action Hand-Inked Watercolor Icons + Arcade Watercolor Art */
+  /* 3. Sync Sidebar & Quick-Action Sovereign Metallic Crests + Education/Jobs 3D Turntables */
   function syncSketchIconsAndArt() {
+    ensureGlobalMetallicDefs();
     /* Sidebar Areas (matches both zaaa-vivid-svg and zaaa-duotone-svg) */
     var navBtns = document.querySelectorAll('aside.zone-sidebar #zone-area-navigation button[data-zone-screen]');
     for (var i = 0; i < navBtns.length; i++) {
@@ -684,10 +696,12 @@
           rArt.appendChild(nextRecSvg);
         }
       }
-      /* Inject live 3D rotating discipline turntable inside every Education course row */
-      var courseRow = rArt.closest('#zone-main[data-zone-screen="education"] article.zone-course-row');
-      if (courseRow) {
-        var existingSlot = courseRow.querySelector('.zwc-edu-3d-wrap');
+      /* Inject live 3D rotating discipline/career turntable inside Education course rows & Jobs career rows */
+      var interactiveRow = rArt.closest(
+        '#zone-main[data-zone-screen="education"] article.zone-course-row, #zone-main[data-zone-screen="jobs"] article.zone-employment-row, #zone-main[data-zone-screen="job"] article.zone-employment-row'
+      );
+      if (interactiveRow) {
+        var existingSlot = interactiveRow.querySelector('.zwc-edu-3d-wrap');
         if (!existingSlot || existingSlot.getAttribute('data-edu-item') !== rSpec.item3d) {
           if (existingSlot) existingSlot.remove();
           var wrap3d = document.createElement('div');
@@ -696,11 +710,11 @@
           wrap3d.innerHTML =
             '<div class="z3d-item-slot zwc-edu-3d-slot" data-z3d-item="' + rSpec.item3d + '" data-z3d-cat="enhancer"></div>' +
             '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + rSpec.item3d + '" data-zwc-label="' + rTitleTxt.replace(/"/g, '') + '">3D</button>';
-          var actionCol = courseRow.querySelector('.zone-record-action');
+          var actionCol = interactiveRow.querySelector('.zone-record-action');
           if (actionCol) {
-            courseRow.insertBefore(wrap3d, actionCol);
+            interactiveRow.insertBefore(wrap3d, actionCol);
           } else {
-            courseRow.appendChild(wrap3d);
+            interactiveRow.appendChild(wrap3d);
           }
           mountedNewEduSlots = true;
         }

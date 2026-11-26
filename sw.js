@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v168) */
-const SHELL_CACHE_NAME = 'zone-shell-v168';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v169) */
+const SHELL_CACHE_NAME = 'zone-shell-v169';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -14,8 +14,8 @@ const PRECACHE_URLS = [
   './assets/ui/aaa-topbar-sidebar.css?v=168',
   './assets/ui/aaa-topbar-sidebar.js?v=168',
   './assets/ui/aaa-game-surfaces.css?v=168',
-  './assets/ui/watercolor-sketchbook.css?v=168',
-  './assets/ui/watercolor-sketchbook.js?v=168',
+  './assets/ui/watercolor-sketchbook.css?v=169',
+  './assets/ui/watercolor-sketchbook.js?v=169',
   './assets/ui/zone-app-shell.css?v=164',
   './assets/ui/zone-torn-live.css?v=168',
   './assets/ui/zone-torn-live.js?v=168',
