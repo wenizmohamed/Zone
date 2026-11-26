@@ -47,6 +47,7 @@ const AUTHORIZED_V150_FILES = new Set([
   'tests/test-vehicle-garage157.mjs',
   'tests/test-perf-scaler159.mjs',
   'assets/ui/aaa-game-surfaces.css',
+  'assets/ui/aaa-game-fx.js',
   'assets/ui/aaa-topbar-sidebar.js',
   'assets/ui/watercolor-sketchbook.css',
   'assets/ui/watercolor-sketchbook.js',
