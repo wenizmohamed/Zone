@@ -3533,11 +3533,18 @@ html body #zone-main[data-zone-screen="job"] article.zone-employment-row .zone-r
  * v172 WHOLE-GAME 3D PROPERTIES, ITEMS CATALOG, CRIMES, GYM, HOF, ELIMINATION & PRESS
  * ========================================================================== */
 
-/* Eliminate duplicate bottom 3D stage on Education & Crimes when primary top 3D stage is active */
+/* Eliminate duplicate bottom 3D stage on Education & Crimes + enforce strict route isolation */
+html body #zone-main:not([data-zone-screen="hof"]) #zwc-hof-3d-hero,
+html body #zone-main:not([data-zone-screen="newspaper"]) #zwc-press-3d-hero,
 html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section [data-z3d-stage="safehouse-empire"][data-z3d-submode="academy"],
 html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section .zre-3d-stage-wrap,
 html body #zone-main[data-zone-screen="crimes"]:has(.zone-crime-workspace [data-z3d-stage="heist-breach"]) #zone-torn-route-section [data-z3d-stage="heist-breach"] {
   display: none !important;
+}
+
+/* Restore #zone-char-3d 3D Character Turntable visibility over noir-game-hud.css .zone-character-stage > div { display:none!important } */
+html body #dc-root #zone-main#zone-main .zone-character-stage > .z3d-char-turntable-stage:not([data-z3d-fallback-hidden="1"]) {
+  display: block !important;
 }
 
 /* Properties: Live 3D Architectural Exterior Estate Turntable Overlay */
@@ -3648,23 +3655,24 @@ html[data-theme="light"] body #zone-main[data-zone-screen="items"] .zone-item-in
   color: #f3c969;
 }
 
-/* Crimes Dynamic 14-Category 3D Tool Showcase Inside .zone-crime-scene */
-html body #zone-main[data-zone-screen="crimes"] .zone-crime-scene {
+/* Crimes Dynamic 14-Category 3D Tool Showcase Inside .zone-crime-location */
+html body #zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location {
   position: relative !important;
-  min-height: 148px !important;
+  padding-inline-end: 162px !important;
+  min-height: 76px !important;
 }
 
 .zwc-crime-3d-showcase {
   position: absolute;
-  bottom: 8px;
+  top: 8px;
   inset-inline-end: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 5px 8px;
   border-radius: 8px;
-  background: rgba(15, 13, 11, 0.90);
-  border: 1px solid rgba(243, 201, 105, 0.45);
+  background: rgba(15, 13, 11, 0.92);
+  border: 1px solid rgba(243, 201, 105, 0.48);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.48);
   z-index: 3;
 }
@@ -3764,8 +3772,12 @@ html body #zone-main[data-zone-screen="newspaper"] .zone-stock-entry {
   .zwc-hof-showcase-roster > .zwc-hof-legend-row > :nth-child(6) {
     display: none;
   }
+  html body #zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location {
+    padding-inline-end: 12px !important;
+  }
   .zwc-crime-3d-showcase {
     position: relative;
+    top: auto;
     bottom: auto;
     inset-inline-end: auto;
     margin-top: 8px;

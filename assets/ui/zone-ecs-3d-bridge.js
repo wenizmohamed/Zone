@@ -589,7 +589,10 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=172')
+    return import('./zone-3d-environments.mjs?v=173')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=172');
+      })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=168');
       })
@@ -634,7 +637,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=172')
+    return import('./zone-ecs-3d-engine.mjs?v=173')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=172');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=168');
       })

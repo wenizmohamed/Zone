@@ -630,6 +630,16 @@
   /* 3. Sync Sidebar & Quick-Action Sovereign Metallic Crests + Education/Jobs 3D Turntables */
   function syncSketchIconsAndArt() {
     ensureGlobalMetallicDefs();
+    var mainElForCleanup = document.getElementById('zone-main');
+    var activeScrForCleanup = mainElForCleanup ? (mainElForCleanup.getAttribute('data-zone-screen') || '') : '';
+    if (activeScrForCleanup !== 'hof') {
+      var staleHof = document.getElementById('zwc-hof-3d-hero');
+      if (staleHof) staleHof.remove();
+    }
+    if (activeScrForCleanup !== 'newspaper') {
+      var stalePress = document.getElementById('zwc-press-3d-hero');
+      if (stalePress) stalePress.remove();
+    }
     /* Sidebar Areas (matches both zaaa-vivid-svg and zaaa-duotone-svg) */
     var navBtns = document.querySelectorAll('aside.zone-sidebar #zone-area-navigation button[data-zone-screen]');
     for (var i = 0; i < navBtns.length; i++) {
@@ -942,9 +952,9 @@
       }
     }
 
-    /* Crimes Screen: Live Dynamic 14-Category 3D Crime Tool Showcase Inside .zone-crime-scene */
-    var crimeScene = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-scene');
-    if (crimeScene) {
+    /* Crimes Screen: Live Dynamic 14-Category 3D Crime Tool Showcase Inside .zone-crime-location */
+    var crimeLoc = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location');
+    if (crimeLoc) {
       var activeCrimeBtn = document.querySelector('#zone-main[data-zone-screen="crimes"] [data-crime-category][aria-pressed="true"]');
       var crimeCat = activeCrimeBtn ? (activeCrimeBtn.getAttribute('data-crime-category') || 'search') : 'search';
       var crimeCatTitle = activeCrimeBtn && activeCrimeBtn.querySelector('span') ? activeCrimeBtn.querySelector('span').childNodes[0].textContent : crimeCat;
@@ -965,7 +975,7 @@
         arson: { id: 'windproof_lighter', cat: 'enhancer' }
       };
       var cTool = CRIME_TOOL_MAP[crimeCat] || CRIME_TOOL_MAP.search;
-      var cShowcase = crimeScene.querySelector('.zwc-crime-3d-showcase');
+      var cShowcase = crimeLoc.querySelector('.zwc-crime-3d-showcase');
       if (!cShowcase || cShowcase.getAttribute('data-crime-tool') !== cTool.id) {
         if (cShowcase) cShowcase.remove();
         cShowcase = document.createElement('div');
@@ -974,7 +984,7 @@
         cShowcase.innerHTML =
           '<div class="z3d-item-slot zwc-crime-3d-slot" data-z3d-item="' + cTool.id + '" data-z3d-cat="' + cTool.cat + '" data-z3d-rarity="epic"></div>' +
           '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + cTool.id + '" data-zwc-cat="' + cTool.cat + '" data-zwc-label="' + String(crimeCatTitle || cTool.id).replace(/"/g, '') + '">' + (isAr() ? 'أداة العملية 3D' : '360° Rig') + '</button>';
-        crimeScene.appendChild(cShowcase);
+        crimeLoc.appendChild(cShowcase);
         mountedScreen3d = true;
       }
     }
@@ -1617,7 +1627,7 @@
           var mObs = new MutationObserver(function () {
             scheduleSync();
           });
-          mObs.observe(main, { childList: true, attributes: true, attributeFilter: ['data-zone-screen'] });
+          mObs.observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen', 'aria-pressed'] });
         }
       };
       attachMain();

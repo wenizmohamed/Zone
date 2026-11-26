@@ -1795,7 +1795,11 @@
           charFrame.setAttribute('data-zfx-io', '1');
           try { state.iframeIo.observe(charFrame); } catch (_) {}
         }
-        var pauseChar = hiddenDoc || scr !== 'home' || state.iframeIntersecting.char3d === false;
+        var charBooted = false;
+        try {
+          charBooted = Boolean(charFrame.contentDocument && charFrame.contentDocument.body && charFrame.contentDocument.body.dataset && charFrame.contentDocument.body.dataset.zoneMediaState === 'ready');
+        } catch (_) {}
+        var pauseChar = hiddenDoc || scr !== 'home' || (charBooted && state.iframeIntersecting.char3d === false);
         setIframePauseState(charFrame, 'char3d', pauseChar);
       }
 

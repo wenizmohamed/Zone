@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=172';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=173';
 
 export {
   THREE,
@@ -3854,6 +3854,7 @@ export function createAcademyDiscipline3D(itemId) {
 
 function createPropertyEstate3D(itemId) {
   const g = new THREE.Group();
+  g.rotation.y = 0.52;
   const s = String(itemId || 'prop_shack').toLowerCase();
   const obsidian = makePbr(0x181a20, 0.24, 0.86, { color: 0xf3c969, power: 2.3, intensity: 0.45 }, { clearcoat: 0.9 });
   const brass = makePbr(0xf3c969, 0.18, 0.95, { color: 0xfef08a, power: 2.2, intensity: 0.65 });
@@ -4019,20 +4020,33 @@ function createPropertyEstate3D(itemId) {
     return g;
   }
 
-  // Default: prop_shack -> Harbor Pier Timber Shack + Slanted Corrugated Rust Roof + Lantern
-  const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.44, 0.58), wood);
-  cabin.position.y = -0.08;
-  const tinRoof = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.06, 0.68), rust);
-  tinRoof.position.y = 0.18;
+  // Default: prop_shack -> Harbor Pier Timber Shack + Porch Deck + Chimney + 4-Sided Lit Windows + Lantern
+  const pierDeck = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.06, 0.88), wood);
+  pierDeck.position.y = -0.26;
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.44, 0.56), wood);
+  cabin.position.set(-0.04, -0.02, -0.04);
+  const tinRoof = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.06, 0.72), rust);
+  tinRoof.position.set(-0.02, 0.23, -0.02);
   tinRoof.rotation.z = -0.14;
+  const porchAwning = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.035, 0.24), rust);
+  porchAwning.position.set(-0.12, 0.12, 0.34);
+  porchAwning.rotation.x = 0.22;
   const shackDoor = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.28, 0.60), obsidian);
-  shackDoor.position.set(-0.14, -0.14, 0);
-  const shackWin = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.14, 0.60), warmWin);
-  shackWin.position.set(0.18, -0.04, 0);
-  const stiltA = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.16, 8), wood);
-  stiltA.position.set(-0.30, -0.28, 0.22);
-  const stiltB = stiltA.clone(); stiltB.position.set(0.30, -0.28, 0.22);
-  g.add(cabin, tinRoof, shackDoor, shackWin, stiltA, stiltB);
+  shackDoor.position.set(-0.16, -0.08, -0.04);
+  const shackWinFB = new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.14, 0.60), warmWin);
+  shackWinFB.position.set(0.16, 0.02, -0.04);
+  const shackWinLR = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.13, 0.18), warmWin);
+  shackWinLR.position.set(-0.04, 0.02, -0.04);
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.28, 10), obsidian);
+  pipe.position.set(0.20, 0.34, -0.14);
+  const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 8), warmWin);
+  lantern.position.set(-0.30, 0.06, 0.28);
+  for (const [px, pz] of [[-0.44, 0.34], [0.44, 0.34], [-0.44, -0.34], [0.44, -0.34]]) {
+    const piling = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 0.16, 8), wood);
+    piling.position.set(px, -0.31, pz);
+    g.add(piling);
+  }
+  g.add(pierDeck, cabin, tinRoof, porchAwning, shackDoor, shackWinFB, shackWinLR, pipe, lantern);
   return g;
 }
 
