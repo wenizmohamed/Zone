@@ -943,11 +943,19 @@ aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zone-nav-icon
 }
 
 /* ==========================================================================
- * 7. NATIVE-FEEL MOBILE APP SHELL (<= 900px: 320px, 360px, 390px, 412px, 430px)
- *    - Single Compact Sticky Top App Bar (>=44x44px touch targets, 0 overflow)
- *    - Full-Width Game Viewport (100% width + bottom safe-area clearance)
- *    - Logical RTL/LTR Slide-Over Sketchbook Drawer + Scrim
- *    - 5-Tab Thumb-Zone Sketchbook Bottom Tab Bar (Home, City, Crimes, Gym, Menu)
+ * 7. PERSISTENT DOCKED MOBILE MENU SHELL (<= 900px: 320px, 360px, 390px, 412px, 430px, 768px)
+ *    - Single-Row Compact Sticky Top App Bar + Torn Status Strip (<= 82px total)
+ *    - Persistent "OPEN ALREADY" Side Menu:
+ *        * English (LTR): Docked on the LEFT side
+ *        * Arabic  (RTL): Docked on the RIGHT side
+ *    - Optimized Per Mobile Screen Tier:
+ *        * <= 359px  (SE / Compact)     : 72px stacked icon+label rail
+ *        * 360-399px (Standard Phone)   : 86px stacked icon+label rail
+ *        * 400-479px (Plus / Max Phone) : 96px stacked icon+label rail
+ *        * 480-639px (Phablet / Fold)   : 134px horizontal compact ledger
+ *        * 640-767px (Mini Tablet)      : 164px horizontal Torn ledger
+ *        * 768-900px (Tablet / Air)     : 186px horizontal Torn ledger
+ *    - Optional Full-Dossier Expand Overlay (`html.zaaa-rail-open`) via topbar button
  * ========================================================================== */
 /* Suppress fake initial boot hydration reward chips before gameplay hydration settles */
 html:not([data-zaaa-hydrated="1"]) body .zig-float-pop,
@@ -956,6 +964,55 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
 }
 
 @media (max-width: 900px) {
+  :root {
+    --zaaa-mob-rail-w: 86px;
+    --zaaa-mob-shell-gap: 6px;
+    --zaaa-mob-top-offset: 84px;
+  }
+
+  @media (max-width: 359px) {
+    :root {
+      --zaaa-mob-rail-w: 72px;
+      --zaaa-mob-shell-gap: 4px;
+    }
+  }
+
+  @media (min-width: 400px) and (max-width: 479px) {
+    :root {
+      --zaaa-mob-rail-w: 96px;
+      --zaaa-mob-shell-gap: 7px;
+    }
+  }
+
+  @media (min-width: 480px) and (max-width: 639px) {
+    :root {
+      --zaaa-mob-rail-w: 134px;
+      --zaaa-mob-shell-gap: 8px;
+    }
+  }
+
+  @media (min-width: 640px) and (max-width: 767px) {
+    :root {
+      --zaaa-mob-rail-w: 164px;
+      --zaaa-mob-shell-gap: 10px;
+    }
+  }
+
+  @media (min-width: 768px) and (max-width: 900px) {
+    :root {
+      --zaaa-mob-rail-w: 186px;
+      --zaaa-mob-shell-gap: 12px;
+    }
+  }
+
+  @media (max-height: 520px) and (min-width: 520px) {
+    :root {
+      --zaaa-mob-rail-w: 138px;
+      --zaaa-mob-shell-gap: 8px;
+      --zaaa-mob-top-offset: 74px;
+    }
+  }
+
   /* Prevent horizontal bleed on any mobile viewport */
   html,
   html body,
@@ -965,8 +1022,7 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     overflow-x: clip !important;
   }
 
-  /* Strip ALL ancestor transform/animation/filter/contain fixed-positioning traps on mobile
-     (defeats #zone-main 350ms `zin` & 180ms `zfxScreenReveal` so nav.zone-mobile-tabbar stays viewport-fixed!) */
+  /* Strip ALL ancestor transform/animation/filter/contain fixed-positioning traps on mobile */
   html,
   html body,
   html body #dc-root,
@@ -990,11 +1046,11 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     will-change: auto !important;
   }
 
-  /* Re-anchor .zig-float-pop under mobile HUD (since #zone-cash is in closed offscreen drawer) */
+  /* Re-anchor .zig-float-pop under mobile HUD */
   html body .zig-float-pop {
     left: 50% !important;
     right: auto !important;
-    top: calc(58px + env(safe-area-inset-top, 0px)) !important;
+    top: calc(56px + env(safe-area-inset-top, 0px)) !important;
     transform: translate(-50%, 0) !important;
     max-width: calc(100vw - 24px) !important;
     z-index: 1200 !important;
@@ -1004,7 +1060,7 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     max-width: calc(100vw - 24px) !important;
   }
 
-  /* 7A. Compact Sticky Mobile Top App Bar */
+  /* 7A. Single-Row Compact Sticky Mobile Top App Bar (<= 48px Row 1 + 32px Strip = 80px <= 96px Gate) */
   html body .zone-app .zone-topbar,
   html body #dc-root#dc-root .zone-app .zone-topbar {
     backdrop-filter: none !important;
@@ -1013,9 +1069,10 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
 
   html body .zone-topbar [data-zheaderbar],
   html body #dc-root#dc-root .zone-app .zone-topbar [data-zheaderbar="1"] {
-    min-height: 52px !important;
-    padding-block-start: max(4px, env(safe-area-inset-top, 0px)) !important;
-    padding-block-end: 4px !important;
+    min-height: 44px !important;
+    height: auto !important;
+    padding-block-start: max(3px, env(safe-area-inset-top, 0px)) !important;
+    padding-block-end: 3px !important;
     padding-inline: 5px !important;
     gap: 3px !important;
     flex-wrap: nowrap !important;
@@ -1036,15 +1093,15 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     display: none !important;
   }
 
-  /* Docked Drawer Menu Trigger (#zaaa-mobile-rail-toggle) inside Top App Bar */
+  /* Full-Dossier Expand Toggle (#zaaa-mobile-rail-toggle) inside Top App Bar */
   html body .zone-topbar #zaaa-mobile-rail-toggle,
   html body #dc-root#dc-root .zone-app .zone-topbar #zaaa-mobile-rail-toggle#zaaa-mobile-rail-toggle {
     order: 0 !important;
-    flex: 0 0 44px !important;
-    width: 44px !important;
-    min-width: 44px !important;
-    height: 44px !important;
-    min-height: 44px !important;
+    flex: 0 0 32px !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 36px !important;
+    min-height: 36px !important;
     padding: 0 !important;
     margin: 0 !important;
     position: static !important;
@@ -1055,7 +1112,7 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     background-image: none !important;
     border: 1.5px solid var(--zaaa-border-strong) !important;
     border-radius: var(--zaaa-radius-sm) !important;
-    box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
+    box-shadow: 1px 1.5px 0 var(--zaaa-shadow-solid) !important;
     color: var(--zaaa-text-1) !important;
     cursor: pointer !important;
     touch-action: manipulation !important;
@@ -1068,8 +1125,8 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
   }
 
   #zaaa-mobile-rail-toggle .zaaa-rail-toggle-ico {
-    width: 20px;
-    height: 20px;
+    width: 17px;
+    height: 17px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1095,15 +1152,15 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     display: none !important;
   }
 
-  /* Compact Mobile Brand Plaque (>= 44x44px touch target) */
+  /* Compact Mobile Brand Plaque */
   html body .zone-topbar .zone-brand,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand {
     order: 1 !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-    height: 44px !important;
+    min-width: 0 !important;
+    min-height: 36px !important;
+    height: 36px !important;
     padding-block: 0 !important;
-    padding-inline: 5px !important;
+    padding-inline: 6px !important;
     box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
   }
 
@@ -1111,20 +1168,20 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
   html body .zone-topbar .zone-brand > span:first-of-type,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span[data-zfig="1"],
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span:first-of-type {
-    font-size: 15.5px !important;
+    font-size: 14.5px !important;
     letter-spacing: 0.03em !important;
   }
 
-  /* Compact Essential Live Stats Capsule (Cash / Energy / Nerve, each >=44x44px, zero truncation at 390px) */
+  /* Compact Live Stats Capsule (Cash / Energy / Nerve - fits 1 row cleanly down to 360px) */
   html body .zone-topbar #zone-topbar-hud,
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud {
     order: 2 !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
     display: grid !important;
-    grid-template-columns: minmax(48px, 1fr) minmax(56px, 1.18fr) minmax(46px, 0.92fr) !important;
-    gap: 3px !important;
-    min-height: 44px !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr) minmax(0, 0.92fr) !important;
+    gap: 2px !important;
+    min-height: 36px !important;
     padding: 0 !important;
     background: transparent !important;
     border: 0 !important;
@@ -1141,7 +1198,7 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
   @media (min-width: 721px) and (max-width: 900px) {
     html body .zone-topbar #zone-topbar-hud,
     html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud {
-      grid-template-columns: repeat(4, minmax(44px, 1fr)) !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     }
 
     html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill.zaaa-hud-city,
@@ -1157,113 +1214,197 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
 
   html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill,
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud .zaaa-hud-pill {
-    min-width: 44px !important;
+    min-width: 0 !important;
     width: 100% !important;
-    min-height: 44px !important;
-    height: 44px !important;
-    padding-block: 2px 4px !important;
-    padding-inline: 1px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    padding-block: 1px 2px !important;
+    padding-inline: 3px !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 1px !important;
     background-color: var(--zaaa-bg-elevated) !important;
-    border: 1.4px solid var(--zaaa-border-strong) !important;
-    border-radius: 6px !important;
+    border: 1.3px solid var(--zaaa-border-strong) !important;
+    border-radius: 5px !important;
     box-shadow: 1px 1.5px 0 var(--zaaa-shadow-solid) !important;
     overflow: hidden !important;
   }
 
   html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill .zaaa-hud-ico,
   html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud .zaaa-hud-pill .zaaa-hud-ico {
-    width: 13px !important;
-    height: 13px !important;
-    flex: 0 0 13px !important;
+    width: 10px !important;
+    height: 10px !important;
+    flex: 0 0 10px !important;
   }
 
   html body .zone-topbar #zone-topbar-hud :is(bdi, span),
-  html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span) {
+  html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span),
+  html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud [data-hud] :is(bdi, span) {
     font-size: 10.5px !important;
     font-weight: 700 !important;
-    letter-spacing: -0.02em !important;
+    letter-spacing: -0.01em !important;
     line-height: 1.05 !important;
+    white-space: nowrap !important;
     max-width: 100% !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    text-overflow: clip !important;
   }
 
-  /* Mobile Topbar Theme & Language Toggles (>= 44x44px touch targets) */
+  @media (min-width: 480px) {
+    html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill,
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud .zaaa-hud-pill {
+      flex-direction: row !important;
+      gap: 4px !important;
+      padding-inline: 6px !important;
+    }
+
+    html body .zone-topbar #zone-topbar-hud :is(bdi, span),
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span),
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud [data-hud] :is(bdi, span) {
+      font-size: 12px !important;
+    }
+  }
+
+  /* Mobile Topbar Utility Buttons (Theme, Language - zero text clipping!) */
   html body .zone-topbar .zone-header-actions,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions {
     order: 3 !important;
-    gap: 4px !important;
+    gap: 3px !important;
     margin-inline-start: 0 !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* On <= 479px phones, Settings & Master Audio live inside the always-open docked side menu (#zps-sidebar-settings-btn),
+     freeing 68px in the topbar so $Cash, 100/100 Energy & 45/45 Nerve never clip even at 320px! */
+  @media (max-width: 479px) {
+    html body .zone-topbar .zone-header-actions #zps-global-mute-btn,
+    html body .zone-topbar .zone-header-actions #zps-topbar-settings-btn,
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zps-global-mute-btn,
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zps-topbar-settings-btn {
+      display: none !important;
+    }
   }
 
   html body .zone-topbar .zone-header-actions > button,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    height: 44px !important;
+    min-width: 32px !important;
+    min-height: 36px !important;
+    height: 36px !important;
     padding-block: 0 !important;
     padding-inline: 6px !important;
-    font-size: 12.5px !important;
-    box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
+    font-size: 11.5px !important;
+    box-shadow: 1px 1.5px 0 var(--zaaa-shadow-solid) !important;
   }
 
-  /* On phone widths <= 600px, make Theme toggle a crisp 44x44px icon button */
-  @media (max-width: 600px) {
-    html body .zone-topbar .zone-header-actions > button:first-of-type,
-    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type {
-      width: 44px !important;
-      padding-inline: 0 !important;
-      font-size: 0 !important;
-      gap: 0 !important;
-    }
-
-    html body .zone-topbar .zone-header-actions > button:first-of-type .zone-theme-indicator,
-    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type .zone-theme-indicator {
-      width: 20px !important;
-      height: 20px !important;
-      flex: 0 0 20px !important;
-    }
-
-    html body .zone-topbar .zone-header-actions > button:first-of-type .zaaa-theme-svg,
-    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type .zaaa-theme-svg {
-      width: 20px !important;
-      height: 20px !important;
-    }
+  /* Theme toggle = compact icon button; Language button = auto width so "العربية" & "English" NEVER clip! */
+  html body .zone-topbar .zone-header-actions > button:first-of-type,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type {
+    width: 32px !important;
+    min-width: 32px !important;
+    padding-inline: 0 !important;
+    font-size: 0 !important;
+    gap: 0 !important;
   }
 
-  /* Ultra-narrow <= 355px (e.g. 320px iPhone SE): clean 2-row wrap, zero overflow */
-  @media (max-width: 355px) {
-    html body .zone-topbar [data-zheaderbar],
-    html body #dc-root#dc-root .zone-app .zone-topbar [data-zheaderbar="1"] {
-      flex-wrap: wrap !important;
+  html body .zone-topbar .zone-header-actions > button:first-of-type .zone-theme-indicator,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type .zone-theme-indicator,
+  html body .zone-topbar .zone-header-actions > button:first-of-type .zaaa-theme-svg,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type .zaaa-theme-svg {
+    width: 17px !important;
+    height: 17px !important;
+    flex: 0 0 17px !important;
+  }
+
+  html body .zone-topbar .zone-header-actions > button:nth-of-type(2),
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:nth-of-type(2) {
+    width: auto !important;
+    min-width: 46px !important;
+    padding-inline: 6px !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Ultra-narrow <= 359px (e.g. 320px iPhone SE): keep sleek single-row header <= 80px total & 0% HUD clipping */
+  @media (max-width: 359px) {
+    html body .zone-topbar .zone-header-actions .zps-topbar-btn.zps-topbar-btn,
+    html:not([data-zaaa-never]) body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions .zps-topbar-btn.zps-topbar-btn {
+      display: none !important;
     }
 
-    html body .zone-topbar .zone-header-actions,
-    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions {
-      margin-inline-start: auto !important;
+    html body .zone-topbar #zaaa-mobile-rail-toggle,
+    html body #dc-root#dc-root .zone-app .zone-topbar #zaaa-mobile-rail-toggle#zaaa-mobile-rail-toggle {
+      flex: 0 0 28px !important;
+      width: 28px !important;
+      min-width: 28px !important;
+      height: 32px !important;
+      min-height: 32px !important;
+    }
+
+    html body .zone-topbar .zone-brand,
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand {
+      min-height: 32px !important;
+      height: 32px !important;
+      padding-inline: 5px !important;
+    }
+
+    html body .zone-topbar .zone-brand > span[data-zfig="1"],
+    html body .zone-topbar .zone-brand > span:first-of-type,
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span[data-zfig="1"],
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-brand > span:first-of-type {
+      font-size: 13px !important;
     }
 
     html body .zone-topbar #zone-topbar-hud,
     html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud {
-      order: 5 !important;
-      flex: 1 0 100% !important;
-      width: 100% !important;
+      min-height: 32px !important;
+      gap: 2px !important;
+    }
+
+    html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill,
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud .zaaa-hud-pill {
+      min-height: 32px !important;
+      height: 32px !important;
+      padding-inline: 2px !important;
+    }
+
+    html body .zone-topbar #zone-topbar-hud :is(bdi, span),
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud :is(bdi, span),
+    html body #dc-root#dc-root .zone-app .zone-topbar #zone-topbar-hud#zone-topbar-hud [data-hud] :is(bdi, span) {
+      font-size: 9px !important;
+    }
+
+    html body .zone-topbar .zone-header-actions > button:first-of-type,
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:first-of-type {
+      width: 28px !important;
+      min-width: 28px !important;
+      min-height: 32px !important;
+      height: 32px !important;
+    }
+
+    html body .zone-topbar .zone-header-actions > button:nth-of-type(2),
+    html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions > button:nth-of-type(2) {
+      min-width: 42px !important;
+      min-height: 32px !important;
+      height: 32px !important;
+      padding-inline: 4px !important;
+      font-size: 10.5px !important;
     }
   }
 
-  /* 7B. Full-Width Mobile Game Shell & Safe-Area Bottom Clearance */
+  /* 7B. 2-COLUMN MOBILE SHELL: DOCKED MENU (LEFT IN EN / RIGHT IN AR) + MAIN STAGE */
   html body [data-zshell],
   html body #dc-root#dc-root .zone-app [data-zshell="1"] {
-    display: block !important;
+    display: grid !important;
+    grid-template-columns: var(--zaaa-mob-rail-w, 86px) minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: var(--zaaa-mob-shell-gap, 6px) !important;
     width: 100% !important;
     max-width: 100% !important;
-    padding-block-start: 8px !important;
-    padding-block-end: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
-    padding-inline: 10px !important;
+    padding-block-start: 6px !important;
+    padding-block-end: calc(28px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-inline: max(5px, env(safe-area-inset-left, 0px)) max(5px, env(safe-area-inset-right, 0px)) !important;
     margin: 0 !important;
     box-sizing: border-box !important;
   }
@@ -1277,7 +1418,357 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     box-sizing: border-box !important;
   }
 
-  /* 7C. Logical RTL/LTR Slide-Over Sketchbook Navigation Drawer + Scrim */
+  /* 7C. PERSISTENT "OPEN ALREADY" SIDE MENU (LEFT IN EN LTR, RIGHT IN AR RTL) */
+  html:not(.zaaa-rail-open) body aside.zone-sidebar,
+  html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    position: sticky !important;
+    top: calc(var(--zaaa-mob-top-offset, 84px) + env(safe-area-inset-top, 0px)) !important;
+    width: var(--zaaa-mob-rail-w, 86px) !important;
+    min-width: var(--zaaa-mob-rail-w, 86px) !important;
+    max-width: var(--zaaa-mob-rail-w, 86px) !important;
+    max-height: calc(100dvh - var(--zaaa-mob-top-offset, 84px) - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 8px) !important;
+    margin: 0 !important;
+    padding: 3px !important;
+    gap: 4px !important;
+    background-color: var(--zaaa-bg-sidebar) !important;
+    border: 1.8px solid var(--zaaa-border-strong) !important;
+    border-radius: 6px !important;
+    box-shadow: var(--zaaa-shadow-card) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: thin !important;
+    box-sizing: border-box !important;
+    z-index: 40 !important;
+  }
+
+  html:not(.zaaa-rail-open) body aside.zone-sidebar::-webkit-scrollbar {
+    width: 3px !important;
+  }
+
+  html:not(.zaaa-rail-open) body aside.zone-sidebar::-webkit-scrollbar-thumb {
+    background: var(--zaaa-border-strong) !important;
+    border-radius: 3px !important;
+  }
+
+  /* Phone-Tier Docked Rail Anatomy (<= 479px): Stacked Icon + Full Readable Label + Corner Badge */
+  @media (max-width: 479px) {
+    html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-operative-crest .zaaa-op-info,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest .zaaa-op-info,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-identity > div:first-child,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-identity > div:first-child,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zma-merits-trigger="1"],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zma-merits-trigger="1"],
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-account,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-account,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zone-account-sync="1"],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zone-account-sync="1"],
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-desktop,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-desktop,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-mobile-details,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-mobile-details,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zre-sidebar-rank-row,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zre-sidebar-rank-row,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zma-crest-honor-bar,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zma-crest-honor-bar,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zaaa-sidebar-turf,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zaaa-sidebar-turf,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zturfcard="1"],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zturfcard="1"],
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-nav-section > .zone-panel-heading,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-nav-section > .zone-panel-heading {
+      display: none !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-body,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-body {
+      padding: 2px 2px 3px !important;
+      gap: 3px !important;
+    }
+
+    /* Compact Operative Portrait Crest at top of left/right rail */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-operative-crest,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest {
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      gap: 2px !important;
+      padding: 4px 2px 3px !important;
+      margin: 0 !important;
+      border-radius: 5px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest .zaaa-op-avatar {
+      width: 38px !important;
+      height: 38px !important;
+      flex: 0 0 38px !important;
+    }
+
+    /* Keep #zone-cash live & centered below avatar */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-identity,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-identity {
+      padding: 0 !important;
+      margin: 0 !important;
+      border: 0 !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-identity > div:last-child,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-identity > div:last-child {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-identity > div:last-child > span:first-child,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-identity > div:last-child > span:first-child {
+      display: none !important;
+    }
+
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-cash,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-cash {
+      font-size: 11px !important;
+      line-height: 1.15 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100% !important;
+    }
+
+    /* 4 Mini Vitals Micro-Bars (Energy, Nerve, Happy, Life) in 12px total height */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-bars,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-bars {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 3px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-resource,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource {
+      padding: 0 !important;
+      margin: 0 !important;
+      border: 0 !important;
+      gap: 1px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-resource > div:first-child,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-resource .zone-resource-timer,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource > div:first-child,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource .zone-resource-timer {
+      display: none !important;
+    }
+
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource-track,
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar .zone-resource-track {
+      height: 4px !important;
+      margin: 0 !important;
+    }
+
+    /* Compact Settings & Audio Quick Button in Docked Rail */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn.zps-sidebar-btn,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zps-sidebar-settings-btn.zps-sidebar-btn {
+      min-height: 28px !important;
+      padding: 2px 3px !important;
+      margin-top: 1px !important;
+      justify-content: center !important;
+      font-size: 9.8px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-main,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-main {
+      gap: 3px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-ico,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-ico svg {
+      width: 12px !important;
+      height: 12px !important;
+      flex: 0 0 12px !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-kbd {
+      display: none !important;
+    }
+
+    @media (max-width: 359px) {
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn.zps-sidebar-btn,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zps-sidebar-settings-btn.zps-sidebar-btn {
+        font-size: 8.8px !important;
+        padding: 2px 2px !important;
+      }
+    }
+
+    /* Section Dividers inside Docked Rail */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation .zone-nav-group,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation .zone-nav-group {
+      min-height: 17px !important;
+      padding: 2px 2px !important;
+      margin: 2px 0 1px !important;
+      justify-content: center !important;
+      text-align: center !important;
+      font-size: 8.8px !important;
+      line-height: 1.15 !important;
+    }
+
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation .zone-nav-group *,
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation .zone-nav-group * {
+      font-size: 8.8px !important;
+      text-align: center !important;
+    }
+
+    /* All 20 Game Area Tiles: Stacked Vivid Icon + Full Readable Label + Corner Badge */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen],
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn {
+      position: relative !important;
+      min-height: 44px !important;
+      padding: 4px 2px 4px !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 2px !important;
+      text-align: center !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] > span:not(.zone-nav-icon):not(.zab-nav-lock-pill),
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > span:not(.zone-nav-icon):not(.zab-nav-lock-pill),
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-lbl {
+      flex: 0 0 auto !important;
+      width: 100% !important;
+      font-size: 10.5px !important;
+      font-weight: 800 !important;
+      line-height: 1.12 !important;
+      text-align: center !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+    }
+
+    @media (max-width: 359px) {
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] > span:not(.zone-nav-icon):not(.zab-nav-lock-pill),
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] > span:not(.zone-nav-icon):not(.zab-nav-lock-pill),
+      html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-lbl {
+        font-size: 9.2px !important;
+      }
+    }
+
+    /* Corner Pill Badges (Counts & Lv Locks) - Zero Label Squeeze */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] > bdi,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen] .zab-nav-lock-pill,
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn .zma-nav-awards-badge {
+      position: absolute !important;
+      top: 2px !important;
+      inset-inline-end: 2px !important;
+      margin: 0 !important;
+      min-width: 0 !important;
+      padding: 0 3.5px !important;
+      font-size: 8.5px !important;
+      line-height: 1.3 !important;
+      border-radius: 999px !important;
+      z-index: 2 !important;
+    }
+  }
+
+  /* Phablet & Tablet Docked Rail (480px - 900px): Compact Horizontal Torn-Ledger Rows */
+  @media (min-width: 480px) {
+    html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zone-account-sync="1"],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zone-account-sync="1"],
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-mobile-details,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-mobile-details,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-identity > div:first-child,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-identity > div:first-child,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-nav-section > .zone-panel-heading,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-nav-section > .zone-panel-heading,
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-kbd,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zps-sidebar-settings-btn .zps-sidebar-btn-kbd {
+      display: none !important;
+    }
+
+    /* Single-column vitals bars on 480px-900px so "Energy 100/100" & "Nerve 45/45" never collide */
+    html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-bars,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-bars {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 4px !important;
+    }
+
+    /* Compact 480px-639px phablet rail (134px wide) so 8+ game areas sit above the fold cleanly */
+    @media (max-width: 639px) {
+      html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zplayercard="1"] > .zone-panel-heading,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-operative-crest .zaaa-op-info,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest .zaaa-op-info,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-desktop,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-desktop,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-profile-account,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-profile-account,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zma-merits-trigger="1"],
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zma-merits-trigger="1"],
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zre-sidebar-rank-row,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zre-sidebar-rank-row,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zaaa-sidebar-turf,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zaaa-sidebar-turf,
+      html:not(.zaaa-rail-open) body aside.zone-sidebar [data-zturfcard="1"],
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar [data-zturfcard="1"] {
+        display: none !important;
+      }
+
+      html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-operative-crest,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-operative-crest {
+        justify-content: center !important;
+        padding: 4px !important;
+      }
+
+      html:not(.zaaa-rail-open) body aside.zone-sidebar .zone-resource > div:first-child,
+      html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar .zone-resource > div:first-child {
+        font-size: 10.5px !important;
+      }
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zre-sidebar-rank-row,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zre-sidebar-rank-row {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      gap: 1px !important;
+      padding: 2px 0 !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zre-sidebar-rank-row > *,
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zre-sidebar-rank-row > * {
+      position: static !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+      white-space: normal !important;
+    }
+
+    html:not(.zaaa-rail-open) body aside.zone-sidebar #zone-area-navigation button[data-zone-screen],
+    html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen],
+    html:not(.zaaa-rail-open) body #dc-root aside.zone-sidebar #zone-area-navigation #zma-nav-awards-btn {
+      min-height: 38px !important;
+      padding-block: 5px !important;
+      padding-inline: 7px !important;
+      font-size: 13px !important;
+      gap: 7px !important;
+    }
+  }
+
+  /* Optional Full-Dossier Slide-Over Expanded State (`html.zaaa-rail-open` when topbar toggle tapped) */
   @keyframes zaaaDrawerEnter {
     from {
       transform: translate3d(var(--zaaa-drawer-from, -100%), 0, 0);
@@ -1287,13 +1778,6 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     }
   }
 
-  /* Closed state: display:none guarantees ZERO off-screen overflow in LTR & RTL */
-  html:not(.zaaa-rail-open) body aside.zone-sidebar,
-  html:not(.zaaa-rail-open) body #dc-root#dc-root .zone-app aside.zone-sidebar {
-    display: none !important;
-  }
-
-  /* Open state: crisp Sketchbook drawer anchored to logical inline-start */
   html.zaaa-rail-open body aside.zone-sidebar,
   html.zaaa-rail-open body #dc-root#dc-root .zone-app aside.zone-sidebar {
     display: flex !important;
@@ -1339,7 +1823,6 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     cursor: pointer !important;
   }
 
-  /* Mobile Drawer Top Bar (Title + Account/Admin Quick Actions + 44x44 Close) */
   html.zaaa-rail-open body aside.zone-sidebar #zaaa-drawer-header,
   html.zaaa-rail-open body #dc-root#dc-root .zone-app aside.zone-sidebar #zaaa-drawer-header {
     order: -30 !important;
@@ -1419,130 +1902,142 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     flex: 0 0 16px;
   }
 
-  /* Ensure #zone-area-navigation and all 19/20 district rows are visible & >=44px tall */
   html.zaaa-rail-open body aside.zone-sidebar #zone-area-navigation,
   html.zaaa-rail-open body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] {
     display: flex !important;
     flex-direction: column !important;
   }
 
-  html body aside.zone-sidebar #zone-area-navigation button[data-zone-screen],
-  html body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] {
+  html.zaaa-rail-open body aside.zone-sidebar #zone-area-navigation button[data-zone-screen],
+  html.zaaa-rail-open body #dc-root#dc-root .zone-app aside.zone-sidebar #zone-area-navigation[data-znav] button[data-zone-screen] {
     min-height: 44px !important;
     padding-block: 7px !important;
     padding-inline: 10px !important;
-    font-size: 16px !important;
+    font-size: 15.5px !important;
   }
 
-  /* 7D. 5-Tab Thumb-Zone Sketchbook Bottom Tab Bar (.zone-mobile-tabbar) */
+  /* 7D. Hide Redundant Bottom 5-Tab Bar (.zone-mobile-tabbar) - Whole Menu Is Already Open On Left(EN)/Right(AR)! */
   html body nav.zone-mobile-tabbar,
   html body #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"],
   html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] {
-    position: fixed !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    top: auto !important;
-    inset-inline-start: 0 !important;
-    inset-inline-end: 0 !important;
-    inset-block-end: 0 !important;
-    inset-block-start: auto !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    transform: none !important;
-    z-index: 960 !important;
-    display: grid !important;
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-    align-items: stretch !important;
-    gap: 4px !important;
-    min-height: 56px !important;
-    padding-block-start: 4px !important;
-    padding-block-end: max(8px, env(safe-area-inset-bottom, 0px)) !important;
-    padding-inline: max(6px, env(safe-area-inset-left, 0px)) max(6px, env(safe-area-inset-right, 0px)) !important;
-    margin: 0 !important;
-    background-color: var(--zaaa-bg-topbar) !important;
-    background-image: var(--zwc-pencil-shade, none) !important;
-    border: 0 !important;
-    border-block-start: 2px solid var(--zaaa-border-strong) !important;
-    border-radius: 0 !important;
-    box-shadow: 0 -2px 0 rgba(0, 0, 0, 0.12) !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    box-sizing: border-box !important;
-  }
-
-  /* Hide 6th "attack" tab via CSS only so React's <sc-for> fiber stays 100% intact */
-  html body nav.zone-mobile-tabbar button[data-zaaa-mob="attack"],
-  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] button[data-zaaa-mob="attack"] {
     display: none !important;
   }
 
-  html body nav.zone-mobile-tabbar > button,
-  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button {
-    position: relative !important;
-    min-width: 44px !important;
-    min-height: 46px !important;
-    padding-block: 3px !important;
-    padding-inline: 2px !important;
-    margin: 0 !important;
+  /* 7E. PER-MOBILE-SCREEN MAIN STAGE RESPONSIVE OPTIMIZATION ( alongside open side rail ) */
+  /* Keep Route Title + Tutorial/Action buttons on a single sleek horizontal row */
+  html body #dc-root #zone-main#zone-main .zone-page-heading,
+  html body #zone-main#zone-main .zone-page-heading {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
     align-items: center !important;
-    justify-content: center !important;
-    gap: 2px !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    border: 1.5px solid transparent !important;
-    border-radius: 8px !important;
-    box-shadow: none !important;
-    color: var(--zaaa-text-2) !important;
-    font-family: var(--zaaa-font-ui) !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: transparent !important;
+    justify-content: space-between !important;
+    gap: 6px 8px !important;
+    padding: 2px 0 4px !important;
   }
 
-  /* Hide raw Unicode symbol span once hand-inked .zaaa-mob-ico is mounted */
-  html body nav.zone-mobile-tabbar > button:has(.zaaa-mob-ico) > span:first-child:not(.zaaa-mob-ico),
-  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button:has(.zaaa-mob-ico) > span:first-child:not(.zaaa-mob-ico) {
-    display: none !important;
-  }
-
-  html body nav.zone-mobile-tabbar > button .zaaa-mob-ico,
-  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button .zaaa-mob-ico {
-    order: -1 !important;
-    width: 20px !important;
-    height: 20px !important;
-    flex: 0 0 20px !important;
+  html body #dc-root #zone-main#zone-main .zone-page-heading > div,
+  html body #zone-main#zone-main .zone-page-heading > div {
+    width: auto !important;
+    margin-inline-start: auto !important;
     display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: currentColor !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
   }
 
-  html body nav.zone-mobile-tabbar > button > span:nth-of-type(2),
-  html body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button > span:nth-of-type(2) {
-    font-family: var(--zaaa-font-ui) !important;
-    font-size: 11.5px !important;
-    font-weight: 700 !important;
-    line-height: 1.05 !important;
-    color: currentColor !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
+  html body #dc-root #zone-main#zone-main .zone-page-heading > div button,
+  html body #zone-main#zone-main .zone-page-heading > div button {
+    min-height: 34px !important;
+    padding: 3px 9px !important;
+    font-size: 12px !important;
   }
 
-  /* Active Sketchbook Ink-Pill Indicator on Current Tab or Open Menu Drawer */
-  html:not(.zaaa-rail-open) body nav.zone-mobile-tabbar > button[aria-current="page"],
-  html:not(.zaaa-rail-open) body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button[aria-current="page"],
-  html.zaaa-rail-open body nav.zone-mobile-tabbar > button[data-zaaa-mob="menu"],
-  html.zaaa-rail-open body #dc-root#dc-root #zone-main#zone-main nav.zone-mobile-tabbar[data-zone-mobile-tabbar="1"] > button[data-zaaa-mob="menu"] {
-    background-color: var(--zaaa-bg-elevated) !important;
-    background-image: var(--zaaa-bg-active) !important;
-    border-color: var(--zaaa-border-strong) !important;
-    box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
-    color: var(--zaaa-title-ink) !important;
+  @media (max-width: 639px) {
+    /* Compact Portrait Banner on Home alongside docked rail */
+    html body #zone-main .zpa-home-brief-widget {
+      padding: 7px 9px !important;
+      gap: 8px !important;
+    }
+
+    html body #zone-main .zpa-avatar-box {
+      width: 38px !important;
+      height: 38px !important;
+      flex: 0 0 38px !important;
+    }
+
+    html body #zone-main button.zpa-upload-btn {
+      width: 100% !important;
+      min-height: 36px !important;
+      font-size: 12px !important;
+    }
+
+    /* Syndicate Arcade Cards: sleek 72px thumb + roomy body inside 260-320px main stage */
+    html body #dc-root #zone-main#zone-main .zig-arcade-deck,
+    html body #zone-main#zone-main .zig-arcade-deck {
+      padding: 9px !important;
+      gap: 8px !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zig-game-card,
+    html body #zone-main#zone-main .zig-game-card {
+      grid-template-columns: 72px minmax(0, 1fr) !important;
+      min-height: 84px !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zig-card-media,
+    html body #zone-main#zone-main .zig-card-media {
+      width: 72px !important;
+      height: 84px !important;
+      min-height: 84px !important;
+      max-height: 84px !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zig-game-card-body,
+    html body #zone-main#zone-main .zig-game-card-body {
+      padding: 6px 8px !important;
+    }
+
+    /* 2x2 Combat Stats, Responsive Forms, Tables & Torn/RPG Grids */
+    html body #dc-root #zone-main#zone-main .zone-loadout-stats,
+    html body #zone-main .zone-loadout-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zone-inventory-search,
+    html body #dc-root #zone-main#zone-main .zone-market-form,
+    html body #dc-root #zone-main#zone-main .ztl-stock-row,
+    html body #dc-root #zone-main#zone-main .ztl-split-2,
+    html body #dc-root #zone-main#zone-main .zone-training-row,
+    html body #dc-root #zone-main#zone-main .zone-crime-row,
+    html body #zone-main .ztl-stock-row,
+    html body #zone-main .ztl-split-2 {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zone-training-columns,
+    html body #zone-main .zone-training-columns {
+      display: none !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .ztl-chain-milestones,
+    html body #zone-main .ztl-chain-milestones {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+
+    /* Crisp 3D City Map & Character Stage heights on phones alongside open menu */
+    html body #dc-root #zone-main#zone-main .zone-city-map-shell[data-zwc-view="3d"] > iframe#zone-city-map {
+      height: 320px !important;
+      min-height: 290px !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zone-city-map-shell #zwc-city-panorama-stage .zwc-panorama-viewport {
+      height: 300px !important;
+      min-height: 260px !important;
+    }
+
+    html body #dc-root #zone-main#zone-main .zone-character-stage {
+      height: 230px !important;
+    }
   }
 }
 

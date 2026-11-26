@@ -991,7 +991,9 @@
     var toggleBtn = document.getElementById('zaaa-mobile-rail-toggle');
     if (toggleBtn) {
       toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      var lblText = open ? (ar ? 'إغلاق القائمة' : 'Close Menu') : (ar ? 'القائمة' : 'Menu');
+      var lblText = open
+        ? (ar ? 'طي تفاصيل الملف' : 'Compact Side Menu')
+        : (ar ? 'توسيع ملف العميل' : 'Expand Full Dossier');
       setTextIfChanged(toggleBtn.querySelector('.zaaa-rail-toggle-lbl'), lblText);
       toggleBtn.setAttribute('aria-label', lblText);
       toggleBtn.title = lblText;
@@ -1314,6 +1316,27 @@
     } catch (_) {}
   }
 
+  var lastScrolledScreen = '';
+  function syncActiveSidebarScroll() {
+    if (!isMobileViewport()) return;
+    var activeScreen = getActiveScreen();
+    if (activeScreen === lastScrolledScreen) return;
+    lastScrolledScreen = activeScreen;
+    var sidebar = document.querySelector('aside.zone-sidebar');
+    if (!sidebar) return;
+    var activeBtn = sidebar.querySelector(
+      '#zone-area-navigation button[data-zone-screen="' + activeScreen + '"], #zone-area-navigation button[aria-current="page"]'
+    );
+    if (!activeBtn) return;
+    try {
+      var sRect = sidebar.getBoundingClientRect();
+      var bRect = activeBtn.getBoundingClientRect();
+      if (sRect.height > 0 && (bRect.top < sRect.top + 16 || bRect.bottom > sRect.bottom - 16)) {
+        sidebar.scrollTop += (bRect.top - sRect.top) - (sRect.height * 0.35);
+      }
+    } catch (_) {}
+  }
+
   function syncAll() {
     if (isSyncing) return;
     if (document.querySelector('x-dc')) return;
@@ -1329,6 +1352,7 @@
       syncMobileRailToggle();
       syncSidebarNavIcons();
       syncMobileTabbarIcons();
+      syncActiveSidebarScroll();
     } catch (_) {
       /* Never emit console errors */
     } finally {

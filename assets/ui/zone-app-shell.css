@@ -181,24 +181,26 @@ label {
     padding-right: max(10px, var(--zas-sar)) !important;
   }
 
-  /* Awards & Merits Hub bottom tabbar + home-indicator clearance */
+  /* Awards & Merits Hub safe-area clearance */
   html body #dc-root #zone-main#zone-main #zone-merits-hub,
   html body #zone-merits-hub {
-    padding-bottom: calc(92px + var(--zas-sab)) !important;
+    padding-bottom: calc(32px + var(--zas-sab)) !important;
     padding-inline-start: max(0px, var(--zas-sal)) !important;
     padding-inline-end: max(0px, var(--zas-sar)) !important;
   }
 
-  /* Mayor Tariq Widget (supports both #zone-mayor-widget and #zmw-root) */
+  /* Mayor Tariq Widget: anchored at inline-end opposite the docked left(EN)/right(AR) menu */
   #zone-mayor-widget,
   #zmw-root {
-    bottom: calc(74px + var(--zas-sab)) !important;
-    inset-inline-end: max(12px, var(--zas-sar)) !important;
+    bottom: max(12px, calc(10px + var(--zas-sab))) !important;
+    inset-inline-end: max(10px, var(--zas-sar)) !important;
+    inset-inline-start: auto !important;
   }
 
   html[dir="rtl"] #zone-mayor-widget,
   html[dir="rtl"] #zmw-root {
-    inset-inline-end: max(12px, var(--zas-sal)) !important;
+    inset-inline-end: max(10px, var(--zas-sal)) !important;
+    inset-inline-start: auto !important;
   }
 
   /* Keep Mayor bubble header flexible so 44px close buttons never overflow */
@@ -488,15 +490,15 @@ html[dir="rtl"] #zas-install-banner {
 
 @media (max-width: 900px) {
   #zas-install-banner {
-    bottom: calc(74px + var(--zas-sab));
-    inset-inline-start: max(10px, var(--zas-sal));
-    max-width: calc(100vw - 88px - var(--zas-sal) - var(--zas-sar));
+    bottom: max(12px, calc(10px + var(--zas-sab)));
+    inset-inline-start: calc(var(--zaaa-mob-rail-w, 86px) + 12px);
+    max-width: calc(100vw - var(--zaaa-mob-rail-w, 86px) - 82px - var(--zas-sal) - var(--zas-sar));
     gap: 6px;
     padding: 5px 6px;
   }
 
   html[dir="rtl"] #zas-install-banner {
-    inset-inline-start: max(10px, var(--zas-sar));
+    inset-inline-start: calc(var(--zaaa-mob-rail-w, 86px) + 12px);
   }
 
   #zas-install-banner .zas-install-ico {

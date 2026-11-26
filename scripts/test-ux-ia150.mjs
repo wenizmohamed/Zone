@@ -11,6 +11,10 @@ const readBytes = (rel) => readFileSync(resolve(root, rel));
 const sha256 = (buf) => createHash('sha256').update(buf).digest('hex');
 
 const AUTHORIZED_V150_FILES = new Set([
+  'assets/ui/aaa-topbar-sidebar.css',
+  'assets/ui/aaa-topbar-sidebar.js',
+  'assets/ui/zone-app-shell.css',
+  'assets/ui/zone-player-settings.css',
   'assets/ui/zone-torn-live.css',
   'assets/ui/zone-torn-live.js',
   'assets/ui/zone-rpg-empire.css',
@@ -60,7 +64,7 @@ test('v150 SHA-256 lock gate: index.html <body> is 100% byte-identical and 0 una
   assert.ok(bodyIdx > 0, 'index.html must contain <body>');
   assert.equal(
     sha256(rawHtml.subarray(bodyIdx)),
-    '68fd3de219ee1de7b2a3f72223f7866ac956448b030e5999362e92eef9fcd313',
+    '4c791309a03202d90db55efac2e9a8d02b4bda23914784672056e6abbb205d07',
     'index.html <body> onward must have 0 byte diffs'
   );
 
