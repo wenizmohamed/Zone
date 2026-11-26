@@ -11,7 +11,7 @@
 (function (root) {
   'use strict';
 
-  var CSS_HREF = './assets/ui/zone-casino-tables.css?v=163';
+  var CSS_HREF = './assets/ui/zone-casino-tables.css?v=167';
   var CONTAINER_ID = 'zct-casino-pit';
   var CRAPS_CANVAS_ID = 'zct-craps-canvas';
 
@@ -1310,7 +1310,7 @@
         }
       }
 
-      triggerCasino3D('spin', { submode: 'craps', source: 'craps', dice: [d1, d2], sum: res.sum, betId: c.betId });
+      triggerCasino3D('spin', { submode: 'craps', source: 'craps', dice: [d1, d2], sum: res.sum, point: c.point, betId: c.betId });
       triggerAudioCue('roulette_tick', { source: 'craps_shoot', sum: res.sum });
       if (res.outcome === 'win') {
         triggerAudioCue(res.bigWin ? 'jackpot_fanfare' : 'cash_payout', { source: 'craps', payout: res.payout });
@@ -1345,7 +1345,7 @@
       }
 
       var liveGame = (typeof window !== 'undefined' && window.__zoneGame && typeof window.fetch === 'function') ? window.__zoneGame : null;
-      if (!forcedDice && liveGame && Boolean(typeof document !== 'undefined' && document.querySelector && document.querySelector('x-dc'))) {
+      if (!forcedDice && liveGame && Boolean(typeof document !== 'undefined' && (document.getElementById('dc-root') || (document.querySelector && document.querySelector('x-dc'))))) {
         if (c.rolling) return { ok: false, error: 'busy' };
         c.rolling = true;
         renderActiveScreenMount();
@@ -1809,15 +1809,19 @@
       // --- LEFT: Interactive Street Craps & 3D Dice Physics ---
       html.push('  <section class="zct-table-card" id="zct-craps-card" data-zct-table="craps">');
       html.push('    <div class="zct-table-head">');
-      html.push('      <h4 class="zct-table-title">' + (ar ? 'كرابس الشوارع 3D (نرد فيزيائي)' : '3D Street Craps (Rigid-Body 2d6)') + '</h4>');
-      html.push('      <span class="zct-pill" data-tone="gold"><bdi>' + (ar ? 'نسبة الكازينو ' : 'House Edge ') + cOdds.houseEdgePct + '%</bdi></span>');
+      html.push('      <h4 class="zct-table-title">' + (ar ? 'كرابس الشوارع ومونت كارلو 3D (نرد ٢١ نقطة)' : 'Monte-Carlo 3D Street Craps (21-Pip Tumbling 2d6)') + '</h4>');
+      html.push('      <div style="display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap">');
+      html.push('        <span class="zct-pill" data-tone="gold"><bdi>' + (ar ? 'نسبة الكازينو ' : 'House Edge ') + cOdds.houseEdgePct + '%</bdi></span>');
+      html.push('        <button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="craps_dice" data-z3d-cat="casino" data-z3d-title="Monte-Carlo 21-Pip 3D Casino Dice">' + (ar ? 'فحص النرد ٣٦٠°' : '360° 3D Orbit Dice') + '</button>');
+      html.push('      </div>');
       html.push('    </div>');
 
       html.push('    <div class="zct-craps-stage">');
-      html.push('      <canvas id="' + CRAPS_CANVAS_ID + '" class="zct-craps-canvas" aria-label="' + (ar ? 'طاولة نرد كرابس ثلاثية الأبعاد' : '3D Street Craps Dice Table') + '"></canvas>');
+      html.push('      <div class="z3d-action-stage zct-craps-3d-viewport" data-z3d-stage="casino-royale" data-z3d-submode="craps" aria-label="' + (ar ? 'طاولة نرد كرابس ثلاثية الأبعاد' : '3D Monte-Carlo Craps Dice Tub') + '"></div>');
+      html.push('      <canvas id="' + CRAPS_CANVAS_ID + '" class="zct-craps-canvas zct-craps-canvas--telemetry" hidden aria-hidden="true"></canvas>');
       html.push('      <div class="zct-craps-hud">');
       html.push('        <span class="zct-puck ' + (c.point ? 'is-on' : '') + '"><bdi>' + (c.point ? (ar ? 'النقطة ON ' + c.point : 'POINT ON ' + c.point) : (ar ? 'الافتتاح OFF' : 'COME-OUT OFF')) + '</bdi></span>');
-      html.push('        <span><bdi>' + (ar ? 'آخر رمية: ' : 'Last Roll: ') + c.lastDice[0] + ' + ' + c.lastDice[1] + ' = ' + (c.lastDice[0] + c.lastDice[1]) + '</bdi></span>');
+      html.push('        <span><bdi>' + (ar ? 'آخر رمية: ' : 'Last Roll: ') + '🎲 ' + c.lastDice[0] + ' + ' + c.lastDice[1] + ' = ' + (c.lastDice[0] + c.lastDice[1]) + '</bdi></span>');
       html.push('      </div>');
       html.push('    </div>');
 
@@ -2087,6 +2091,12 @@
       if (typeof document === 'undefined' || typeof window === 'undefined') return;
       document.addEventListener('click', handleDomClick);
       window.addEventListener('zone:render', scheduleSync);
+      window.addEventListener('zone:3d-stage-click', function (ev) {
+        var d = ev && ev.detail ? ev.detail : {};
+        if ((d.target === 'craps' || d.submode === 'craps') && getActiveScreen() === 'casino' && !store.craps.rolling) {
+          shootCrapsDice();
+        }
+      });
 
       if (typeof MutationObserver === 'function' && document.documentElement) {
         var rootObs = new MutationObserver(scheduleSync);

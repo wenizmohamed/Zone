@@ -1193,6 +1193,10 @@
               var chipTxt = ar ? spec.chipAr : spec.chipEn;
               return (
                 '<article class="zab-origin-tile" data-zab-origin-card="' + esc(o.id) + '">' +
+                  '<div class="zab-origin-tile-top">' +
+                    '<div class="z3d-item-slot zab-origin-3d-slot" data-z3d-item="' + esc(spec.item) + '" data-z3d-cat="' + esc(spec.cat) + '"></div>' +
+                    '<button type="button" class="zab-3d-inspect-mini" data-z3d-inspect="' + esc(spec.item) + '" data-z3d-cat="' + esc(spec.cat) + '" data-z3d-title="' + esc(name) + '">3D</button>' +
+                  '</div>' +
                   '<strong class="zab-origin-tile-name">' + esc(name) + '</strong>' +
                   '<span class="zab-origin-tile-chip">' + esc(chipTxt) + '</span>' +
                   '<button type="button" class="zab-btn zab-btn-xs zab-btn-primary" data-zab-action="origin.select" data-zab-origin-id="' + esc(o.id) + '"' + (state.busyAction ? ' disabled' : '') + '>' +
@@ -1243,11 +1247,15 @@
 
     var shLabel = ar ? (curEra.safehouseAr || curEra.safehouseEn) : (curEra.safehouseEn || curEra.safehouseAr);
 
-    /* Column 1 (60%): Sketchbook Safehouse Header + Docked Interactive Strip */
+    /* Column 1 (60%): Live 3D Safehouse Empire Viewport + Docked Interactive Strip */
     var colStageHtml =
       '<div class="zab-card zab-col-stage">' +
-        '<div class="zab-safehouse-header" data-zab-safehouse="1" style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;margin-bottom:8px;border-bottom:1.5px dashed var(--zab-border,rgba(242,234,217,0.22))">' +
-          '<span class="zab-pill zab-pill-ochre">' + (ar ? ('العصر ' + (curEra.roman || eraIdx) + ' · ') : ('Era ' + (curEra.roman || eraIdx) + ' · ')) + esc(shLabel) + '</span>' +
+        '<div class="zab-stage-frame" data-zab-safehouse="1">' +
+          '<div class="zab-3d-viewport z3d-action-stage" data-z3d-stage="safehouse-empire" data-z3d-era="' + eraIdx + '" data-z3d-origin="' + esc(snap.originId || 'none') + '" data-z3d-origin-chosen="' + (snap.originChosen ? '1' : '0') + '" style="height:176px;min-height:176px;max-height:176px"></div>' +
+          '<div class="zab-stage-overlay-badges">' +
+            '<span class="zab-pill zab-stage-pill">' + (ar ? ('العصر ' + (curEra.roman || eraIdx) + ' · ') : ('Era ' + (curEra.roman || eraIdx) + ' · ')) + esc(shLabel) + '</span>' +
+            '<span class="zab-pill zab-stage-pill">' + (ar ? 'مقر ثلاثي الأبعاد · اسحب للدوران' : '3D Safehouse · Drag to Orbit') + '</span>' +
+          '</div>' +
         '</div>' +
         stageActionStripHtml +
       '</div>';
@@ -1613,6 +1621,8 @@
     refreshAscension(true);
 
     window.addEventListener('zone:render', onRouteOrDomSync);
+    window.setTimeout(onRouteOrDomSync, 280);
+    window.setTimeout(onRouteOrDomSync, 950);
 
     if (typeof MutationObserver === 'function') {
       var mainObs = null;

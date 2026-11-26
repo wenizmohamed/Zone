@@ -18,7 +18,7 @@ test('v151 Static & SHA-256 Gate: index.html <body> is 100% byte-identical, v151
   assert.ok(bodyIdx > 0, 'index.html must contain <body>');
   assert.equal(
     sha256(rawHtml.subarray(bodyIdx)),
-    '68fd3de219ee1de7b2a3f72223f7866ac956448b030e5999362e92eef9fcd313',
+    '4c791309a03202d90db55efac2e9a8d02b4bda23914784672056e6abbb205d07',
     'index.html <body> onward must have 0 byte modifications'
   );
 

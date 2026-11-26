@@ -1269,7 +1269,15 @@
   }
 
   function render3dItemShowcase(itemId, cat, title) {
-    return '';
+    var idStr = String(itemId || 'weapon_cache');
+    var resolvedCat = inferZreItemCategory(idStr, cat);
+    var lbl = String(title || idStr);
+    return (
+      '<div class="zre-item-3d-row">' +
+        '<div class="z3d-item-slot" data-z3d-item="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '"></div>' +
+        '<button type="button" class="zre-btn zre-3d-inspect-btn" data-zre-act="inspect-3d" data-z3d-inspect="' + esc(idStr) + '" data-z3d-cat="' + esc(resolvedCat) + '" data-z3d-title="' + esc(lbl) + '" aria-label="3D ' + esc(lbl) + '">3D</button>' +
+      '</div>'
+    );
   }
 
   function renderInlineAvatar(playerId) {
@@ -1481,6 +1489,7 @@
         '<section class="zre-section">' +
           actRibbon +
           chapStrip +
+          '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena" style="height:210px;margin-bottom:10px"></div>' +
           stageHtml +
         '</section>' +
         '<section class="zre-section">' +
@@ -1725,6 +1734,7 @@
         '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.wheelsTitle) + '</h3></div>' +
+          '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="' + (typeof document !== 'undefined' && document.getElementById('dc-root') ? 'city-wheels-race' : 'casino-royale') + '" style="height:200px;margin-bottom:10px"></div>' +
           wheelsHtml +
         '</section>' +
         '<section class="zre-section">' +
@@ -1781,6 +1791,7 @@
           '</div>' +
           '<span class="zre-chip" data-tone="sage">3 Spots</span>' +
         '</header>' +
+        '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="city-wheels-race" style="height:210px;margin-bottom:10px"></div>' +
         '<div class="zre-grid-3">' +
           '<section class="zre-section">' +
             '<div class="zre-section-head">' +
@@ -2087,6 +2098,7 @@
         '</header>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.loadoutTitle) + '</h3></div>' +
+          '<div class="z3d-action-stage zre-paperdoll-stage" data-z3d-stage="paperdoll-armory" style="height:220px;margin-bottom:10px"></div>' +
           paperdollHtml +
         '</section>' +
       '</div>'
@@ -2261,6 +2273,7 @@
             '<span class="zre-chip" data-tone="crimson">Our Score: <bdi>' + ourScore + '</bdi> vs Rival: <bdi>' + theirScore + '</bdi></span>' +
           '</div>' +
           '<div class="zre-war-bar"><div class="zre-war-bar-our" style="width:' + ourPct + '%"></div></div>' +
+          '<div class="z3d-action-stage zre-3d-stage" data-z3d-stage="combat-arena" style="height:210px;margin-bottom:10px"></div>' +
           render3dItemShowcase('weapon_cache', 'weapon', copy.claimCacheBtn) +
           '<div class="zre-row-actions">' +
             '<button type="button" class="zre-btn" data-zre-act="war-enlist"' + (store.busy ? ' disabled' : '') + '>🚩 ' + esc(copy.enlistWarBtn) + '</button>' +
@@ -2737,6 +2750,28 @@
         attributes: true,
         attributeFilter: ['lang', 'dir', 'data-theme', 'data-zma-open']
       });
+    } catch (_) {}
+
+    try {
+      var observedMain = null;
+      var mainObs = null;
+      var attachMainObs = function () {
+        var m = document.getElementById('zone-main');
+        if (!m || m === observedMain) return;
+        observedMain = m;
+        if (mainObs) {
+          try { mainObs.disconnect(); } catch (_) {}
+        }
+        mainObs = new MutationObserver(scheduleRender);
+        mainObs.observe(m, {
+          attributes: true,
+          attributeFilter: ['data-zone-screen']
+        });
+      };
+      attachMainObs();
+      window.addEventListener('zone:render', attachMainObs, { passive: true });
+      window.setTimeout(function () { attachMainObs(); scheduleRender(); }, 320);
+      window.setTimeout(function () { attachMainObs(); scheduleRender(); }, 1100);
     } catch (_) {}
 
     /* Re-populate #ztl-hud-story-slot whenever #zone-torn-hud-strip re-renders */

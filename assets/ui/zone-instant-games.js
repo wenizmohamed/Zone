@@ -623,6 +623,8 @@
         '@keyframes zigFloatUp{0%{opacity:0;transform:translate(-50%,6px) scale(0.94);}18%{opacity:1;transform:translate(-50%,-4px) scale(1);}100%{opacity:0;transform:translate(-50%,-34px) scale(0.98);}}',
         /* Fluid Canvas & 390px Ergonomic Touch Controls (touch-action: none on active game canvases!) */
         '.zig-gym-wrap,.zig-heist-wrap,.zig-casino-canvas-box,.zig-getaway-canvas-wrap{width:100% !important;max-width:100% !important;min-width:0 !important;overflow:hidden !important;box-sizing:border-box !important;background:var(--zwc-surface-alt,var(--zwc-paper-subcard,#fcf8ee));border:1.5px solid var(--zwc-border-strong,#23201c);border-radius:var(--zwc-sketch-radius-sm,10px);}',
+        '.zig-3d-stage-viewport{display:block;width:100%;height:208px;min-height:208px;border-bottom:1.5px solid var(--zwc-border-strong,#23201c);background:#12100e;overflow:hidden;cursor:pointer;position:relative;}',
+        '.zig-arcade-3d-stage{display:block;width:100%;height:176px;min-height:176px;border-radius:10px;border:1.5px solid var(--zwc-border-strong,#23201c);margin-block-end:8px;background:#12100e;overflow:hidden;position:relative;}',
         '#zig-gym-canvas,#zig-heist-canvas,#zig-getaway-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;touch-action:none !important;cursor:pointer;user-select:none;-webkit-user-select:none;}',
         '#zig-roulette-canvas,#zig-slots-canvas{display:block !important;width:100% !important;max-width:100% !important;box-sizing:border-box !important;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none;}',
         '.zig-touch-deck{display:none;flex-direction:column;gap:6px;margin-block-start:8px;width:100%;max-width:100%;box-sizing:border-box;touch-action:none;user-select:none;-webkit-user-select:none;}',
@@ -1407,6 +1409,17 @@
     if (stage) {
       stage.hidden = false;
       stage.setAttribute('data-arcade-mode', mode);
+      var arc3d = document.getElementById('zig-arcade-3d-stage');
+      if (arc3d) {
+        var nextStageKind = mode === 'heist' ? 'heist-breach' : (mode === 'gym' ? 'gym-ironpit' : 'city-wheels-race');
+        arc3d.setAttribute('data-z3d-stage', nextStageKind);
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+          try { window.ZoneEcs3D.scan(stage); } catch (_) {}
+        }
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+          try { window.ZoneEcs3D.triggerStageAction(nextStageKind, mode === 'heist' ? 'crack' : (mode === 'gym' ? 'punch' : 'spin'), { mode: mode }); } catch (_) {}
+        }
+      }
       if (typeof stage.scrollIntoView === 'function') {
         try { stage.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (_) {}
       }
@@ -1544,6 +1557,7 @@
             '<button type="button" class="zig-btn-secondary" id="zig-getaway-close">' + (ar ? 'إغلاق' : 'Close') + '</button>' +
           '</div>' +
         '</div>' +
+        '<div id="zig-arcade-3d-stage" class="z3d-action-stage zig-arcade-3d-stage" data-z3d-stage="' + (state.arcadeMode === 'heist' ? 'heist-breach' : (state.arcadeMode === 'gym' ? 'gym-ironpit' : 'city-wheels-race')) + '"></div>' +
         '<div class="zig-getaway-canvas-wrap"><canvas id="zig-getaway-canvas" aria-label="' + (ar ? 'منصة ألعاب أركيد النقابة التفاعلية' : 'Syndicate Arcade Interactive Stage') + '"></canvas></div>' +
         '<div class="zig-touch-deck" id="zig-touch-controls" data-arcade-mode="' + state.arcadeMode + '"' + (isCompactMobile() ? ' data-zig-force-touch="1"' : '') + ' role="group" aria-label="' + (ar ? 'أزرار التحكم باللمس' : 'Arcade Touch Controls') + '">' +
           '<div class="zig-touch-zones">' +
@@ -1932,6 +1946,9 @@
       h.speed = Math.min(4.2, 2.4 + h.streak * 0.16);
       state.coyote.clear('heist_arc');
       notifySafehouseArcadeWin('heist', { streak: h.streak, combo: h.streak, perfect: perfect, feverCode: fever.code });
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+        try { window.ZoneEcs3D.triggerStageAction('heist-breach', 'crack', { streak: h.streak, perfect: perfect }); } catch (_) {}
+      }
 
       /* Trigger real authoritative crime commit if ready */
       var selected = window.__zoneLastView && window.__zoneLastView.crimeDesk && window.__zoneLastView.crimeDesk.selected;
@@ -1984,8 +2001,19 @@
     }
     var wrap = document.createElement('div');
     wrap.className = 'zig-heist-wrap';
-    wrap.innerHTML = '<canvas id="zig-heist-canvas" aria-label="' + label + '"></canvas>';
+    wrap.innerHTML =
+      '<div class="z3d-action-stage zig-3d-stage-viewport" data-z3d-stage="heist-breach" data-zig-heist-3d="1" aria-label="' + (ar ? 'خزنة الاختراق ثلاثية الأبعاد' : '3D Planetary Vault Breach Stage') + '"></div>' +
+      '<canvas id="zig-heist-canvas" aria-label="' + label + '"></canvas>';
     scene.appendChild(wrap);
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(wrap); } catch (_) {}
+    }
+    var stageBox = wrap.querySelector('[data-zig-heist-3d="1"]');
+    if (stageBox) {
+      stageBox.addEventListener('click', function () {
+        requestHeistAction('pointer');
+      });
+    }
     var c = wrap.querySelector('canvas');
     observeInteractiveCanvas(c);
     c.addEventListener('pointerdown', function (e) {
@@ -2048,6 +2076,9 @@
     }
 
     notifySafehouseArcadeWin('gym', { combo: gm.combo, overdrive: overdrive, feverCode: fever.code });
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+      try { window.ZoneEcs3D.triggerStageAction('gym-ironpit', 'punch', { overdrive: overdrive, combo: gm.combo }); } catch (_) {}
+    }
 
     var ringLoops = overdrive ? Math.max(1, fever.rings) : 1;
     for (var rk = 0; rk < ringLoops; rk++) {
@@ -2101,11 +2132,22 @@
     var trainBtn = sessionBox.querySelector('button[data-gym-train]');
     var wrap = document.createElement('div');
     wrap.className = 'zig-gym-wrap';
-    wrap.innerHTML = '<canvas id="zig-gym-canvas" aria-label="' + label + '"></canvas>';
+    wrap.innerHTML =
+      '<div class="z3d-action-stage zig-3d-stage-viewport" data-z3d-stage="gym-ironpit" data-zig-gym-3d="1" aria-label="' + (ar ? 'صالة الحديد ثلاثية الأبعاد' : '3D Iron-Pit Gym Training Stage') + '"></div>' +
+      '<canvas id="zig-gym-canvas" aria-label="' + label + '"></canvas>';
     if (trainBtn) {
       trainBtn.insertAdjacentElement('beforebegin', wrap);
     } else {
       sessionBox.appendChild(wrap);
+    }
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      try { window.ZoneEcs3D.scan(wrap); } catch (_) {}
+    }
+    var gym3dBox = wrap.querySelector('[data-zig-gym-3d="1"]');
+    if (gym3dBox) {
+      gym3dBox.addEventListener('click', function () {
+        requestGymAction('pointer');
+      });
     }
     var c = wrap.querySelector('canvas');
     observeInteractiveCanvas(c);
@@ -3656,7 +3698,8 @@
     var cv = cvOverride || document.getElementById('zig-heist-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
-    var s = syncCanvas(cv, compact ? 150 : 212);
+    var isHudBar = !cvOverride;
+    var s = syncCanvas(cv, isHudBar ? (compact ? 84 : 92) : (compact ? 150 : 212));
     if (!s) return;
     var ctx = s.ctx, w = s.w, h = s.h;
     var hs = state.heist;
@@ -3841,7 +3884,8 @@
     var cv = cvOverride || document.getElementById('zig-gym-canvas');
     if (!cv) return;
     var compact = isCompactMobile();
-    var s = syncCanvas(cv, compact ? 132 : 184);
+    var isHudBar = !cvOverride;
+    var s = syncCanvas(cv, isHudBar ? (compact ? 72 : 78) : (compact ? 132 : 184));
     if (!s) return;
     var ctx = s.ctx, w = s.w, h = s.h;
     var gm = state.gym;
@@ -4803,6 +4847,8 @@
     bindDocAttrObserver();
     syncMounts();
     paintIdleVisibleCanvases();
+    setTimeout(function () { syncMounts(); paintIdleVisibleCanvases(); }, 260);
+    setTimeout(function () { syncMounts(); paintIdleVisibleCanvases(); }, 920);
     if (!bindScopedMainObserver() && document.body && typeof MutationObserver === 'function') {
       bootObserver = new MutationObserver(function () {
         if (bindScopedMainObserver()) {

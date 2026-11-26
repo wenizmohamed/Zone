@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=165';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=167';
 
 export {
   THREE,
@@ -106,6 +106,23 @@ const ROULETTE_RED_SET = new Set(ROULETTE_RED_NUMBERS);
 const ANIM_LEVER_PULL = 99;
 const ANIM_SLOT_REEL_TARGET = 100;
 const ANIM_ROULETTE_RIDE = 101;
+const ANIM_CRAPS_DIE = 102;
+
+// Exact Three.js XYZ Euler angles placing face 1..6 straight UP (+Y world normal)
+// Opposite faces sum to 7: (+Y=1, -Y=6), (+Z=2, -Z=5), (+X=3, -X=4)
+export const DIE_FACE_EULER = Object.freeze({
+  1: Object.freeze([0, 0, 0]),
+  2: Object.freeze([-Math.PI * 0.5, 0, 0]),
+  3: Object.freeze([0, 0, Math.PI * 0.5]),
+  4: Object.freeze([0, 0, -Math.PI * 0.5]),
+  5: Object.freeze([Math.PI * 0.5, 0, 0]),
+  6: Object.freeze([Math.PI, 0, 0]),
+});
+
+export function getDieFaceRotation(faceValue) {
+  const f = Math.max(1, Math.min(6, Math.round(Number(faceValue) || 1)));
+  return DIE_FACE_EULER[f] || DIE_FACE_EULER[1];
+}
 export const SLOT_REEL_SYMBOL_ORDER = Object.freeze([
   'DIAMOND',
   'SEVEN',
@@ -1137,6 +1154,59 @@ export class ZoneEcsWorld {
         if (u >= 1.0) {
           T[tOff + 3] = 0;
           K[kOff + 0] = ANIM_NONE;
+        }
+      } else if (kind === ANIM_CRAPS_DIE) {
+        const dieObj = this.object3d[eid];
+        const ud = (dieObj && dieObj.userData) || {};
+        const tgtEuler = ud.targetEuler || DIE_FACE_EULER[1];
+        const yawRest = typeof ud.targetYaw === 'number' ? ud.targetYaw : 0;
+        const sideSign = pB >= 0 ? 1 : -1;
+        // Parabolic throw from shooter end -> diamond backwall rebound at u=0.44 -> settle at (ox, oy, oz)
+        let dx = 0;
+        let dz = 0;
+        if (u < 0.44) {
+          const w0 = u / 0.44;
+          dx = -0.82 * (1 - w0) + 0.52 * w0;
+          dz = sideSign * 0.14 * Math.sin(w0 * Math.PI);
+        } else {
+          const w1 = (u - 0.44) / 0.56;
+          const easeOut = 1 - Math.pow(1 - w1, 2.4);
+          dx = 0.52 * (1 - easeOut);
+          dz = -sideSign * 0.08 * Math.sin(w1 * Math.PI) * (1 - w1);
+        }
+        const hop = Math.abs(Math.sin(u * Math.PI * 2.8)) * 0.34 * Math.pow(1 - u, 1.35);
+        T[tOff + 0] = ox + dx;
+        T[tOff + 1] = oy + hop;
+        T[tOff + 2] = oz + dz;
+
+        if (u < 0.72) {
+          T[tOff + 3] += pA * scaledDt;
+          T[tOff + 4] += pA * 0.82 * sideSign * scaledDt;
+          T[tOff + 5] -= pA * 0.91 * scaledDt;
+          ud._snapCaptured = false;
+        } else {
+          if (!ud._snapCaptured) {
+            ud._snapStart = [T[tOff + 3], T[tOff + 4], T[tOff + 5]];
+            ud._snapCaptured = true;
+          }
+          const st = ud._snapStart || [0, 0, 0];
+          const sLoc = Math.min(1, (u - 0.72) / 0.28);
+          const sEase = sLoc * sLoc * (3 - 2 * sLoc);
+          // For faces 1 and 6 (+Y/-Y), Y yaw can be preserved; for side faces (2..5) lock exact XYZ
+          const endY = (tgtEuler[0] === 0 && tgtEuler[2] === 0) || Math.abs(tgtEuler[0]) > 3.0 ? yawRest : tgtEuler[1];
+          T[tOff + 3] = st[0] + (tgtEuler[0] - (st[0] % (Math.PI * 2))) * sEase;
+          T[tOff + 4] = st[1] + (endY - (st[1] % (Math.PI * 2))) * sEase;
+          T[tOff + 5] = st[2] + (tgtEuler[2] - (st[2] % (Math.PI * 2))) * sEase;
+          if (u >= 1.0) {
+            T[tOff + 0] = ox;
+            T[tOff + 1] = oy;
+            T[tOff + 2] = oz;
+            T[tOff + 3] = tgtEuler[0];
+            T[tOff + 4] = endY;
+            T[tOff + 5] = tgtEuler[2];
+            ud._snapCaptured = false;
+            K[kOff + 0] = ANIM_NONE;
+          }
         }
       } else if (kind === ANIM_BAG_SWING) {
         const decay = Math.exp(-3.2 * u);
@@ -3264,6 +3334,88 @@ export function createSlotMachine3D(opts = {}) {
   return cabinet;
 }
 
+/**
+ * Precision Razor-Edge 21-Pip Monte-Carlo 3D Casino Die:
+ * - Translucent ruby-crimson acrylic cube + champagne-brass chamfer frame
+ * - All 21 recessed 3D ivory cylinder pips across 6 faces (opposite faces sum to 7):
+ *   +Y = 1, -Y = 6, +Z = 2, -Z = 5, +X = 3, -X = 4
+ */
+export function createCasinoDie3D(opts = {}) {
+  const size = opts.size || 0.24;
+  const half = size * 0.5;
+  const die = new THREE.Group();
+  die.name = 'z3d-casino-die';
+
+  const rubyAcrylic = makePbr(
+    opts.bodyHex || 0xb91c1c,
+    0.08,
+    0.18,
+    { color: 0xfef08a, power: 2.0, intensity: 0.72 },
+    { clearcoat: 1.0, clearcoatRoughness: 0.04, emissive: 0x7f1d1d, emissiveIntensity: 0.32 }
+  );
+  const brassTrim = makePbr(0xf3c969, 0.18, 0.95, { color: 0xfef08a, power: 2.2, intensity: 0.65 });
+  const pipIvory = makePbr(0xfefce8, 0.14, 0.10, false, { emissive: 0xfef3c7, emissiveIntensity: 0.38 });
+  const pipGold = makePbr(0xfacc15, 0.14, 0.85, false, { emissive: 0xf59e0b, emissiveIntensity: 0.55 });
+
+  const core = new THREE.Mesh(new THREE.BoxGeometry(size, size, size), rubyAcrylic);
+  const innerFrame = new THREE.Mesh(new THREE.BoxGeometry(size * 1.012, size * 0.86, size * 0.86), rubyAcrylic);
+  const edgeCapTop = new THREE.Mesh(new THREE.BoxGeometry(size * 0.94, size * 0.94, size * 0.94), brassTrim);
+  edgeCapTop.scale.setScalar(0.99);
+  die.add(edgeCapTop, innerFrame, core);
+
+  const off = size * 0.265;
+  const surf = half + 0.004;
+  const pipGeo = new THREE.CylinderGeometry(size * 0.088, size * 0.088, 0.012, 14);
+  const acePipGeo = new THREE.CylinderGeometry(size * 0.115, size * 0.115, 0.014, 16);
+
+  const addPip = (nx, ny, nz, u, v, isAce = false) => {
+    const p = new THREE.Mesh(isAce ? acePipGeo : pipGeo, isAce ? pipGold : pipIvory);
+    if (ny !== 0) {
+      p.position.set(u, ny * surf, v);
+    } else if (nz !== 0) {
+      p.rotation.x = Math.PI * 0.5;
+      p.position.set(u, v, nz * surf);
+    } else {
+      p.rotation.z = Math.PI * 0.5;
+      p.position.set(nx * surf, u, v);
+    }
+    die.add(p);
+  };
+
+  // +Y = 1 (Bullseye Gold Ace)
+  addPip(0, 1, 0, 0, 0, true);
+  // -Y = 6
+  for (const u of [-off, off]) {
+    for (const v of [-off, 0, off]) addPip(0, -1, 0, u, v);
+  }
+  // +Z = 2
+  addPip(0, 0, 1, -off, -off);
+  addPip(0, 0, 1, off, off);
+  // -Z = 5
+  addPip(0, 0, -1, 0, 0);
+  for (const u of [-off, off]) {
+    for (const v of [-off, off]) addPip(0, 0, -1, u, v);
+  }
+  // +X = 3
+  addPip(1, 0, 0, -off, -off);
+  addPip(1, 0, 0, 0, 0);
+  addPip(1, 0, 0, off, off);
+  // -X = 4
+  for (const u of [-off, off]) {
+    for (const v of [-off, off]) addPip(-1, 0, 0, u, v);
+  }
+
+  const initFace = opts.initialFace || 1;
+  const eul = getDieFaceRotation(initFace);
+  die.rotation.set(eul[0], eul[1], eul[2]);
+  die.userData = {
+    face: initFace,
+    targetEuler: eul,
+    targetYaw: opts.yaw || 0,
+  };
+  return die;
+}
+
 function buildCompanionProcedural(subtype, rimColor) {
   const g = new THREE.Group();
   const carbon = makePbr(0x1e2430, 0.32, 0.78, { color: rimColor, power: 2.3, intensity: 0.62 });
@@ -3376,7 +3528,17 @@ export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = 
   };
 
   let rawModel;
-  if (spec.category === 'casino') {
+  if (/craps|dice/i.test(String(itemId))) {
+    const pair = new THREE.Group();
+    const dA = createCasinoDie3D({ size: 0.46, initialFace: 5 });
+    dA.position.set(-0.34, 0, 0.08);
+    dA.rotation.set(0.28, -0.35, 0.18);
+    const dB = createCasinoDie3D({ size: 0.46, initialFace: 2 });
+    dB.position.set(0.34, 0.04, -0.08);
+    dB.rotation.set(-0.22, 0.42, -0.16);
+    pair.add(dA, dB);
+    rawModel = pair;
+  } else if (spec.category === 'casino') {
     rawModel = spec.subtype === 'slot_machine'
       ? createSlotMachine3D({ forInspector: true })
       : createRouletteWheel3D({ forInspector: true });
@@ -4492,7 +4654,82 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     }
     registerPickable(spawnTracked(slotCabinet), { stage: 'casino-royale', target: 'slots' });
 
-    // 5. Submode Camera Presets ('blackjack' close-up, 'roulette' close-up, 'slots' close-up, 'full' salon)
+    // 4.5 Monte-Carlo 3D Street Craps Mahogany Tub & 21-Pip Tumbling 2d6 Dice (submode === 'craps')
+    const crapsGroup = new THREE.Group();
+    crapsGroup.position.set(3.65, 0, 1.55);
+    const crapsPedestal = new THREE.Mesh(
+      new THREE.BoxGeometry(1.76, 0.42, 1.02),
+      makePbr(0x3b150e, 0.26, 0.36, { color: 0xf3c969, power: 2.4, intensity: 0.44 }, { clearcoat: 0.9 })
+    );
+    crapsPedestal.position.y = 0.21;
+    const crapsBed = new THREE.Mesh(
+      new THREE.BoxGeometry(1.98, 0.09, 1.18),
+      makePbr(0x065f46, 0.72, 0.08, { color: 0x34d399, power: 2.6, intensity: 0.38 })
+    );
+    crapsBed.position.y = 0.45;
+    const crapsRailMat = makePbr(0x4a1912, 0.20, 0.44, { color: 0xf3c969, power: 2.2, intensity: 0.58 }, { clearcoat: 0.95 });
+    const railBack = new THREE.Mesh(new THREE.BoxGeometry(2.08, 0.24, 0.09), crapsRailMat);
+    railBack.position.set(0, 0.56, -0.58);
+    const railFront = new THREE.Mesh(new THREE.BoxGeometry(2.08, 0.14, 0.08), crapsRailMat);
+    railFront.position.set(0, 0.51, 0.58);
+    const railLeft = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.22, 1.24), crapsRailMat);
+    railLeft.position.set(-1.01, 0.55, 0);
+    const railRight = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.24, 1.24), crapsRailMat);
+    railRight.position.set(1.01, 0.56, 0);
+    const passLineStrip = new THREE.Mesh(
+      new THREE.BoxGeometry(1.66, 0.012, 0.16),
+      makePbr(0xf3c969, 0.22, 0.88, false, { emissive: 0xd97706, emissiveIntensity: 0.28 })
+    );
+    passLineStrip.position.set(0, 0.502, 0.32);
+    crapsGroup.add(crapsPedestal, crapsBed, railBack, railFront, railLeft, railRight, passLineStrip);
+
+    // Diamond-pyramid rubber backwall bumpers on right & rear rails
+    const bumperMat = makePbr(0x064e3b, 0.38, 0.32, { color: 0xf3c969, power: 2.3, intensity: 0.52 });
+    for (let bi = -3; bi <= 3; bi++) {
+      const pyr = new THREE.Mesh(new THREE.OctahedronGeometry(0.042, 0), bumperMat);
+      pyr.position.set(bi * 0.24, 0.56, -0.52);
+      crapsGroup.add(pyr);
+    }
+    for (let rz = -2; rz <= 2; rz++) {
+      const pyrR = new THREE.Mesh(new THREE.OctahedronGeometry(0.042, 0), bumperMat);
+      pyrR.position.set(0.95, 0.56, rz * 0.20);
+      crapsGroup.add(pyrR);
+    }
+    const crapsPuck = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.11, 0.11, 0.036, 20),
+      makePbr(0xf8fafc, 0.18, 0.22, { color: 0xf3c969, power: 2.2, intensity: 0.65 })
+    );
+    crapsPuck.position.set(-0.68, 0.515, -0.28);
+    crapsGroup.add(crapsPuck);
+    refs.crapsPuck = crapsPuck;
+
+    for (let cs = 0; cs < 3; cs++) {
+      const cMat = makePbr(chipPalette[cs % chipPalette.length], 0.22, 0.65);
+      for (let k = 0; k < 4; k++) {
+        const ch = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.062, 0.022, 14), cMat);
+        ch.position.set(-0.68 + cs * 0.16, 0.506 + k * 0.023, 0.32);
+        crapsGroup.add(ch);
+      }
+    }
+    scene.add(crapsGroup);
+    refs.crapsGroup = crapsGroup;
+    registerPickable(spawnTracked(crapsGroup), { stage: 'casino-royale', target: 'craps' });
+
+    const crapsDie1 = createCasinoDie3D({ size: 0.23, initialFace: 5, yaw: 0.22 });
+    crapsDie1.position.set(3.46, 0.612, 1.44);
+    scene.add(crapsDie1);
+    refs.crapsDie1 = crapsDie1;
+    refs.crapsDie1Eid = spawnTracked(crapsDie1);
+    registerPickable(refs.crapsDie1Eid, { stage: 'casino-royale', target: 'craps' });
+
+    const crapsDie2 = createCasinoDie3D({ size: 0.23, initialFace: 2, yaw: -0.28 });
+    crapsDie2.position.set(3.84, 0.612, 1.63);
+    scene.add(crapsDie2);
+    refs.crapsDie2 = crapsDie2;
+    refs.crapsDie2Eid = spawnTracked(crapsDie2);
+    registerPickable(refs.crapsDie2Eid, { stage: 'casino-royale', target: 'craps' });
+
+    // 5. Submode Camera Presets ('blackjack' close-up, 'roulette' close-up, 'slots' close-up, 'craps' close-up, 'full' salon)
     const applyCasinoSubmode = (submodeRaw) => {
       const sm = String(submodeRaw || 'full').toLowerCase();
       let cx = 0;
@@ -4510,6 +4747,9 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       } else if (sm === 'slots') {
         cx = 1.54; cy = 1.30; cz = 2.08;
         tx = 1.62; ty = 1.12; tz = 0.16;
+      } else if (sm === 'craps') {
+        cx = 3.65; cy = 1.98; cz = 2.94;
+        tx = 3.65; ty = 0.56; tz = 1.50;
       }
       camera.position.set(cx, cy, cz);
       camera.lookAt(tx, ty, tz);
@@ -4673,7 +4913,8 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       }
       const isSlotsAction = targetSubmode === 'slots' || /slot|lever|reel/.test(act);
       const isBjAction = targetSubmode === 'blackjack' || /bj|blackjack|deal|hit|stand|double/.test(act);
-      const isRouletteAction = !isSlotsAction && !isBjAction;
+      const isCrapsAction = targetSubmode === 'craps' || /craps|dice/.test(act) || Array.isArray(payload && payload.dice);
+      const isRouletteAction = !isSlotsAction && !isBjAction && !isCrapsAction;
 
       if (isRouletteAction || stageSubmode === 'full') {
         if (refs.ball && refs.rouletteWheel && refs.rouletteWheel.userData && typeof refs.rouletteWheel.userData.getPocketAngle === 'function') {
@@ -4718,6 +4959,27 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
       if (isBjAction && refs.bjDealerEid !== undefined) {
         playEidRigState(refs.bjDealerEid, 'combat_stance');
+      }
+
+      if (isCrapsAction) {
+        const diceArr = Array.isArray(payload && payload.dice) && payload.dice.length >= 2
+          ? [Number(payload.dice[0]) || 5, Number(payload.dice[1]) || 2]
+          : [5, 2];
+        if (refs.crapsDie1 && refs.crapsDie1Eid !== undefined) {
+          refs.crapsDie1.userData.face = diceArr[0];
+          refs.crapsDie1.userData.targetEuler = getDieFaceRotation(diceArr[0]);
+          refs.crapsDie1.userData.targetYaw = 0.18;
+          world.setStageKinematics(refs.crapsDie1Eid, ANIM_CRAPS_DIE, 0.92, 17.5, -1);
+        }
+        if (refs.crapsDie2 && refs.crapsDie2Eid !== undefined) {
+          refs.crapsDie2.userData.face = diceArr[1];
+          refs.crapsDie2.userData.targetEuler = getDieFaceRotation(diceArr[1]);
+          refs.crapsDie2.userData.targetYaw = -0.24;
+          world.setStageKinematics(refs.crapsDie2Eid, ANIM_CRAPS_DIE, 1.06, -19.0, 1);
+        }
+        if (refs.crapsPuck && refs.crapsPuck.material && refs.crapsPuck.material.color) {
+          refs.crapsPuck.material.color.setHex(payload && payload.point ? 0xfef3c7 : 0x1e293b);
+        }
       }
     } else if (kind === 'paperdoll-armory' && refs.rigEid !== undefined) {
       if (world.isAlive(refs.rigEid)) world.stores.TurntableSpin[refs.rigEid * 4 + 1] += 0.9;

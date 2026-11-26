@@ -13,6 +13,8 @@ import {
   DynamicResScaler,
   createRouletteWheel3D,
   createSlotMachine3D,
+  createCasinoDie3D,
+  getDieFaceRotation,
   createItemMesh3D,
   countMeshStats3D,
   buildStageScene3D,
@@ -208,4 +210,40 @@ test('Tier 5 (Zero-GC _slotsScratch Reuse & Game-Tuning Refresh-3 / 1% Low FPS T
   assert.equal(diag.recommendedFpsCap, 117);
   assert.equal(typeof diag.onePercentLowFps, 'number');
   assert.equal(typeof diag.frameTimeVarianceMs, 'number');
+});
+
+test('Tier 6 (v167 3D Monte-Carlo Craps Pit & 21-Pip Tumbling 2d6 Dice Kinematics):', () => {
+  const die = createCasinoDie3D({ initialFace: 5 });
+  const stats = countMeshStats3D(die);
+  assert.equal(stats.meshCount, 24, '3D Casino Die must contain 3 body/chamfer meshes + all 21 recessed 3D cylinder pips');
+
+  // Verify opposite face normals rotate cleanly to +Y (0, 1, 0) for every face 1..6
+  const faceNormals = {
+    1: new THREE.Vector3(0, 1, 0),
+    2: new THREE.Vector3(0, 0, 1),
+    3: new THREE.Vector3(1, 0, 0),
+    4: new THREE.Vector3(-1, 0, 0),
+    5: new THREE.Vector3(0, 0, -1),
+    6: new THREE.Vector3(0, -1, 0),
+  };
+  for (let f = 1; f <= 6; f++) {
+    const [rx, ry, rz] = getDieFaceRotation(f);
+    const eul = new THREE.Euler(rx, ry, rz, 'XYZ');
+    const worldUp = faceNormals[f].clone().applyEuler(eul);
+    assert.ok(worldUp.y > 0.999, `Face ${f} Euler [${rx.toFixed(2)}, ${ry.toFixed(2)}, ${rz.toFixed(2)}] aligns normal straight UP (+Y=${worldUp.y.toFixed(4)})`);
+  }
+
+  // Verify submode="craps" camera framing and ANIM_CRAPS_DIE settling onto [6, 5] (Natural 11!)
+  const world = new ZoneEcsWorld();
+  const stage = buildStageScene3D('casino-royale', world, { submode: 'craps', headless: true });
+  assert.equal(stage.camera.userData.z3dSubmode, 'craps');
+  assert.ok(stage.refs.crapsDie1 && stage.refs.crapsDie2, 'Both 3D Craps dice spawned in casino-royale stage');
+
+  stage.triggerAction('craps-roll', { submode: 'craps', dice: [6, 5], point: 8 });
+  for (let i = 0; i < 90; i++) world.step(0.02);
+  const [e6x, , e6z] = getDieFaceRotation(6);
+  const [e5x, , e5z] = getDieFaceRotation(5);
+  assert.ok(Math.abs(stage.refs.crapsDie1.rotation.x - e6x) < 1e-3 && Math.abs(stage.refs.crapsDie1.rotation.z - e6z) < 1e-3, 'Die 1 settled flat on face 6');
+  assert.ok(Math.abs(stage.refs.crapsDie2.rotation.x - e5x) < 1e-3 && Math.abs(stage.refs.crapsDie2.rotation.z - e5z) < 1e-3, 'Die 2 settled flat on face 5');
+  stage.dispose();
 });

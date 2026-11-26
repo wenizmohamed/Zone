@@ -1330,6 +1330,7 @@
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.crimesTitle) + '</h3><span class="ztl-section-note">' + esc(copy.crimesNote) + '</span></div>' +
           nemesisBannerHtml +
+          '<div class="z3d-action-stage ztl-3d-stage" data-z3d-stage="heist-breach" style="height:210px;margin-bottom:10px"></div>' +
           cardsHtml +
         '</section>' +
       '</div>'
@@ -1563,6 +1564,7 @@
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.vaultTitle) + '</h3><bdi class="ztl-chip" data-tone="sage">' + fmtMoney(vaultBal) + ' / ' + fmtMoney(vaultCap) + '</bdi></div>' +
           '<span class="ztl-section-note">' + esc(copy.vaultNote) + '</span>' +
+          '<div class="z3d-action-stage ztl-3d-stage" data-z3d-stage="safehouse-empire" style="height:210px;margin-bottom:10px"></div>' +
           '<div class="ztl-meter-track"><div class="ztl-meter-fill" style="width:' + vaultPct + '%"></div></div>' +
           '<div class="ztl-row-actions">' +
             '<input type="number" min="100" step="1000" class="ztl-input" data-ztl-draft="vaultAmount" value="' + esc(store.drafts.vaultAmount) + '" aria-label="Vault amount">' +
@@ -2264,12 +2266,30 @@
     var screen = getActiveScreen();
     var existing = document.getElementById('ztl-attack-3d-stage');
 
-    if (existing && existing.parentElement) {
-      existing.parentElement.removeChild(existing);
+    if (screen !== 'attack') {
+      if (existing && existing.parentElement) {
+        existing.parentElement.removeChild(existing);
+      }
+      return;
     }
 
-    if (screen !== 'attack') {
-      return;
+    if (!existing) {
+      existing = document.createElement('div');
+      existing.id = 'ztl-attack-3d-stage';
+      existing.className = 'z3d-action-stage ztl-attack-3d-stage';
+      existing.setAttribute('data-z3d-stage', 'combat-arena');
+      existing.style.cssText = 'width:100%;height:220px;min-height:220px;margin-bottom:10px;border-radius:12px;overflow:hidden;';
+      var anchor = document.getElementById('zig-brawl-hud') || document.getElementById('zone-combat-frame') || main.querySelector('.zone-attack-layout');
+      if (anchor && anchor.parentElement) {
+        anchor.parentElement.insertBefore(existing, anchor);
+      } else {
+        var heading = main.querySelector('.zone-page-heading');
+        if (heading && heading.insertAdjacentElement) heading.insertAdjacentElement('afterend', existing);
+        else main.insertBefore(existing, main.firstChild);
+      }
+      if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+        try { window.ZoneEcs3D.scan(existing.parentElement || main); } catch (_) {}
+      }
     }
 
     if (main !== attackCombatBound && typeof main.addEventListener === 'function') {
