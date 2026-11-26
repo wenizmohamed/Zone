@@ -1,9 +1,14 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v176) */
-const SHELL_CACHE_NAME = 'zone-shell-v176';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v177) */
+const SHELL_CACHE_NAME = 'zone-shell-v177';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
-const CACHE_NAME = 'zone-app-v176';
+const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
 const NAV_TIMEOUT_MS = 3500;
+const INSTALL_CORE_URLS = [
+  './offline.html',
+  './manifest.webmanifest',
+  './assets/icons/icon-192.png'
+];
 const PRECACHE_URLS = [
   './offline.html',
   './manifest.webmanifest',
@@ -11,26 +16,26 @@ const PRECACHE_URLS = [
   './assets/data/zone-batch-skill-pack.json',
   './assets/data/zone-300-skills-encyclopedia.json',
   './assets/data/zone-config-skills-468.json',
-  './assets/ui/aaa-topbar-sidebar.css?v=176',
-  './assets/ui/aaa-topbar-sidebar.js?v=176',
-  './assets/ui/aaa-game-surfaces.css?v=176',
-  './assets/ui/aaa-game-fx.js?v=176',
-  './assets/ui/watercolor-sketchbook.css?v=174',
-  './assets/ui/watercolor-sketchbook.js?v=174',
+  './assets/ui/aaa-topbar-sidebar.css?v=177',
+  './assets/ui/aaa-topbar-sidebar.js?v=177',
+  './assets/ui/aaa-game-surfaces.css?v=177',
+  './assets/ui/aaa-game-fx.js?v=177',
+  './assets/ui/watercolor-sketchbook.css?v=177',
+  './assets/ui/watercolor-sketchbook.js?v=177',
   './assets/ui/zone-app-shell.css?v=164',
   './assets/ui/zone-torn-live.css?v=168',
-  './assets/ui/zone-torn-live.js?v=168',
+  './assets/ui/zone-torn-live.js?v=177',
   './assets/ui/zone-rpg-empire.css?v=168',
-  './assets/ui/zone-rpg-empire.js?v=168',
+  './assets/ui/zone-rpg-empire.js?v=177',
   './assets/ui/zone-ascension-breakthrough.css?v=167',
-  './assets/ui/zone-ascension-breakthrough.js?v=168',
+  './assets/ui/zone-ascension-breakthrough.js?v=177',
   './assets/ui/zone-ecs-3d.css?v=167',
   './assets/ui/zone-gamekit-bridge.js?v=167',
-  './assets/ui/zone-ecs-3d-bridge.js?v=174',
+  './assets/ui/zone-ecs-3d-bridge.js?v=177',
   './assets/ui/zone-3d-rigged-operative.mjs?v=165',
   './assets/ui/zone-3d-environments.mjs?v=174',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=174',
+  './assets/ui/zone-ecs-3d-engine.mjs?v=177',
   './assets/ui/zone-profile-avatar.css?v=161',
   './assets/ui/zone-profile-avatar.js?v=164',
   './assets/ui/zone-instant-games.js?v=167',
@@ -150,9 +155,11 @@ async function handleStaleWhileRevalidate(event, request) {
 }
 
 self.addEventListener('install', (event) => {
+  /* Precache only the 3 tiny offline-shell essentials (<20KB) during install so SW
+     never competes with first-boot HTML/API/fonts by downloading 53 assets (~6MB) at t=0! */
   event.waitUntil(
     caches.open(SHELL_CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then((cache) => cache.addAll(INSTALL_CORE_URLS))
       .catch(() => {})
       .then(() => self.skipWaiting())
   );

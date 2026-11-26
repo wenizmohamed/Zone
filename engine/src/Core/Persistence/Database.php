@@ -96,14 +96,27 @@ final class Database
     public function migrateAndSeed(): void
     {
         $schema = ZONE_ENGINE_ROOT . '/database/schema.' . ($this->driver === 'pgsql' ? 'postgresql' : 'sqlite') . '.sql';
+        $crimesFile = ZONE_ENGINE_ROOT . '/data/crimes.json';
+        $stampFile = null;
+        $statStamp = '';
+        if (getenv('VERCEL') === '1') {
+            $statStamp = $this->driver . ':' . (int) @filemtime($schema) . ':' . (int) @filesize($schema) . ':' . (int) @filemtime($crimesFile) . ':' . (int) @filesize($crimesFile);
+            $stampFile = rtrim(sys_get_temp_dir(), '/\\') . '/zone-mig-stamp-' . substr(hash('sha256', (string) getenv('ZONE_DATABASE_URL') . '|' . $statStamp), 0, 20) . '.txt';
+            if (is_file($stampFile) && (time() - (int) @filemtime($stampFile)) <= 120 && trim((string) @file_get_contents($stampFile)) === $statStamp) {
+                return;
+            }
+        }
         $sql = file_get_contents($schema);
         if ($sql === false) {
             throw new RuntimeException("Unable to read schema: {$schema}");
         }
-        $fingerprint = hash('sha256', $sql . (string) file_get_contents(ZONE_ENGINE_ROOT . '/data/crimes.json'));
+        $fingerprint = hash('sha256', $sql . (string) file_get_contents($crimesFile));
         try {
             $applied = $this->fetchOne("SELECT value FROM engine_metadata WHERE name = 'schema-fingerprint'");
-            if (($applied['value'] ?? null) === $fingerprint) return;
+            if (($applied['value'] ?? null) === $fingerprint) {
+                if ($stampFile !== null) @file_put_contents($stampFile, $statStamp);
+                return;
+            }
         } catch (\PDOException) {
             // First boot or an older engine database. Never replace its data.
         }
@@ -128,6 +141,7 @@ final class Database
             $this->seedFoundationContent();
             $this->execute("UPDATE engine_metadata SET value = :value WHERE name = 'schema-fingerprint'", ['value' => $fingerprint]);
         });
+        if ($stampFile !== null) @file_put_contents($stampFile, $statStamp);
     }
 
     public function seedEphemeralVercelWorld(): void

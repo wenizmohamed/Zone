@@ -2793,10 +2793,17 @@
         var tb = document.querySelector('.zone-topbar');
         if (!tb) return;
         topbarObsAttached = true;
-        var tbObs = new MutationObserver(function () {
-          var slot = document.getElementById('ztl-hud-story-slot');
-          if (!slot || !slot.getAttribute('data-zre-sig')) {
-            scheduleRender();
+        var tbObs = new MutationObserver(function (records) {
+          for (var r = 0; r < records.length; r++) {
+            var tgt = records[r].target;
+            if (tgt && (tgt.id === 'zfx-net-sync-pill' || (tgt.closest && tgt.closest('#zfx-net-sync-pill')))) {
+              continue;
+            }
+            var slot = document.getElementById('ztl-hud-story-slot');
+            if (!slot || !slot.getAttribute('data-zre-sig')) {
+              scheduleRender();
+            }
+            return;
           }
         });
         tbObs.observe(tb, { childList: true, subtree: true });
@@ -2809,7 +2816,7 @@
       if (document.visibilityState !== 'hidden' && !store.busy) {
         refreshBootDomains();
       }
-    }, 30000);
+    }, 60000);
 
     scheduleRender();
     window.setTimeout(refreshBootDomains, 220);

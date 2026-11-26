@@ -151,6 +151,28 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     if (in_array($path, ['/engine', '/engine/'], true) && $ownerAccess['configured'] && !$ownerAccess['authenticated']) {
         header('Cache-Control: no-store'); header('Location: /admin?lang=' . (($_GET['lang'] ?? '') === 'ar' ? 'ar' : 'en'), true, 302); exit;
     }
+    if (str_starts_with($path, '/api/v1/admin/') && $ownerAccess['configured'] && !$ownerAccess['authenticated']) {
+        zone_proxy_error('Admin authentication required.', 401);
+    }
+    $edgeCacheablePublicGet = $method === 'GET' && in_array($path, ['/api/v1/game/bootstrap', '/engine/theme.css'], true);
+    $edgeCacheFile = rtrim(sys_get_temp_dir(), '/\\') . '/zone-edge-pub-' . md5($host . ':' . $path) . '.json';
+    if (str_starts_with($path, '/api/v1/admin/') && in_array($method, ['POST', 'PUT', 'DELETE'], true)) {
+        foreach (['/api/v1/game/bootstrap', '/engine/theme.css'] as $invPath) {
+            @unlink(rtrim(sys_get_temp_dir(), '/\\') . '/zone-edge-pub-' . md5($host . ':' . $invPath) . '.json');
+        }
+    } elseif ($edgeCacheablePublicGet && is_file($edgeCacheFile) && (time() - (int) @filemtime($edgeCacheFile)) <= 30) {
+        $cachedPayload = @json_decode((string) @file_get_contents($edgeCacheFile), true);
+        if (is_array($cachedPayload) && isset($cachedPayload['body'], $cachedPayload['ct'])) {
+            http_response_code(200);
+            header('Content-Type: ' . $cachedPayload['ct']);
+            header('Cache-Control: no-store');
+            header('X-Content-Type-Options: nosniff');
+            header('X-Zone-Edge-Ms: ' . number_format(max(0.1, (microtime(true) - $zoneProxyStartedAt) * 1000.0), 1, '.', ''));
+            header('X-Zone-Sync-State: edge-cache');
+            echo $cachedPayload['body'];
+            exit;
+        }
+    }
     $baseHeaders = ['X-Zone-Relay-Key: ' . $relayKey, 'X-Zone-Client-Host: ' . $host, 'X-Zone-Client-Proto: https', 'X-Zone-Client-IP: ' . $ip];
     foreach (['HTTP_ACCEPT' => 'Accept', 'CONTENT_TYPE' => 'Content-Type', 'HTTP_ORIGIN' => 'Origin', 'HTTP_REFERER' => 'Referer', 'HTTP_USER_AGENT' => 'User-Agent', 'HTTP_X_ZONE_PLAYER_ID' => 'X-Zone-Player-ID', 'HTTP_X_ZONE_PLAYER_TOKEN' => 'X-Zone-Player-Token'] as $input => $name) {
         $value = $_SERVER[$input] ?? '';
@@ -234,6 +256,12 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     }
     if (($healedStaleSession || ($path === '/api/v1/auth/logout' && $method === 'POST' && getenv('VERCEL') === '1' && $status === 200)) && !$hasLedgerSetCookie) {
         header('Set-Cookie: zone_player_ledger=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);
+    }
+    if ($edgeCacheablePublicGet && $status === 200 && $raw !== '') {
+        @file_put_contents($edgeCacheFile, json_encode([
+            'ct' => $downstreamContentType !== '' ? $downstreamContentType : ($path === '/engine/theme.css' ? 'text/css; charset=utf-8' : 'application/json; charset=utf-8'),
+            'body' => $raw,
+        ]));
     }
     if (!headers_sent()) {
         header('X-Zone-Edge-Ms: ' . number_format(max(0.1, (microtime(true) - $zoneProxyStartedAt) * 1000.0), 1, '.', ''));

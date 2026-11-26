@@ -21,8 +21,32 @@ final class ModuleRegistry
     ) {
     }
 
+    private function bootCachePath(): string
+    {
+        return rtrim(sys_get_temp_dir(), '/\\') . '/zone-mod-boot-' . substr(hash('sha256', (string) getenv('ZONE_DATABASE_URL') . '|' . $this->modulesPath), 0, 20) . '.json';
+    }
+
     public function discoverAndBoot(): void
     {
+        $useFastBoot = getenv('VERCEL') === '1';
+        $cacheFile = $useFastBoot ? $this->bootCachePath() : '';
+        if ($useFastBoot && is_file($cacheFile) && (time() - (int) @filemtime($cacheFile)) <= 60) {
+            $cached = @json_decode((string) @file_get_contents($cacheFile), true);
+            if (is_array($cached) && is_array($cached['manifests'] ?? null) && is_array($cached['enabledIds'] ?? null)) {
+                $this->manifests = $cached['manifests'];
+                foreach ($cached['enabledIds'] as $enabledId) {
+                    $manifest = $this->manifests[$enabledId] ?? null;
+                    if (!is_array($manifest) || !isset($manifest['class'])) continue;
+                    $class = $manifest['class'];
+                    $module = new $class();
+                    if ($module instanceof GameModule) {
+                        $module->boot($this->events, $this->database);
+                    }
+                }
+                return;
+            }
+        }
+
         $existingRows = [];
         foreach ($this->database->fetchAll('SELECT id, version, manifest_json FROM modules') as $row) $existingRows[$row['id']] = $row;
         foreach (glob($this->modulesPath . '/*/module.json') ?: [] as $manifestPath) {
@@ -54,6 +78,7 @@ final class ModuleRegistry
         }
 
         $bootStates = (new \Zone\Engine\Core\Publishing\PublishedRules($this->database))->moduleStates();
+        $enabledIds = [];
         foreach ($this->database->fetchAll('SELECT id FROM modules ORDER BY id') as $row) {
             if (!($bootStates[$row['id']] ?? false)) {
                 continue;
@@ -68,6 +93,10 @@ final class ModuleRegistry
                 throw new RuntimeException("Module {$row['id']} must implement GameModule.");
             }
             $module->boot($this->events, $this->database);
+            $enabledIds[] = (string) $row['id'];
+        }
+        if ($useFastBoot && $cacheFile !== '') {
+            @file_put_contents($cacheFile, json_encode(['manifests' => $this->manifests, 'enabledIds' => $enabledIds]));
         }
     }
 
@@ -136,6 +165,7 @@ final class ModuleRegistry
             'UPDATE modules SET installed = :installed, enabled = :enabled WHERE id = :id',
             ['id' => $id, 'installed' => $values[0], 'enabled' => $values[1]],
         );
+        @unlink($this->bootCachePath());
         return array_values(array_filter($this->all(), static fn (array $module): bool => $module['id'] === $id))[0];
     }
 }

@@ -922,14 +922,18 @@
           }
           return;
         }
-        /* Auto-unlock Casino 3D pit when clicking Spin / Deal / Roll wager buttons! */
+        /* Auto-unlock only the clicked Casino card's 3D stage (not all 3 simultaneously!) */
         var casinoAct = ev.target && ev.target.closest ? ev.target.closest('[data-roulette-bet], [data-slots-spin], [data-casino-table] button, [data-zct-act]') : null;
         if (casinoAct) {
-          var casStages = document.querySelectorAll('#zone-main[data-zone-screen="casino"] .z3d-action-stage');
+          var cardHost = casinoAct.closest('.zct-table-card, .zct-roulette-salon, [data-casino-table], section, article') || document.getElementById('zone-main');
+          var casStages = cardHost ? cardHost.querySelectorAll('.z3d-action-stage') : [];
           for (var cs = 0; cs < casStages.length; cs++) {
             casStages[cs].setAttribute('data-zwc-3d-unlocked', '1');
             var cg = casStages[cs].querySelector('.zwc-handdrawn-3d-gate');
             if (cg) cg.remove();
+          }
+          if (casStages.length > 0 && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+            window.ZoneEcs3D.scan(cardHost);
           }
         }
         var btn = ev.target && ev.target.closest ? ev.target.closest('[data-zwc-inspect-3d]') : null;
@@ -1252,6 +1256,7 @@
 
   var lastObservedScreen = '';
   var rafScheduled = false;
+  var zwcSyncing = false;
   var userScrolledSinceRoute = false;
 
   function instantScrollTop() {
@@ -1278,8 +1283,10 @@
 
   function syncAll() {
     rafScheduled = false;
+    if (zwcSyncing) return;
     ensureStylesheetLast();
     if (document.querySelector('x-dc')) return;
+    zwcSyncing = true;
     try {
       syncThemePersistenceAndAuxToggle();
       var main = document.getElementById('zone-main');
@@ -1292,7 +1299,10 @@
       syncTutorialBanner();
       syncSketchIconsAndArt();
       syncCityPanoramaStage();
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      zwcSyncing = false;
+    }
   }
 
   function scheduleSync() {
@@ -1351,12 +1361,46 @@
         attributes: true,
         attributeFilter: ['lang', 'dir', 'data-theme']
       });
+      var isSelfOrOverlayNode = function (node) {
+        if (!node || node.nodeType !== 1) return false;
+        var id = node.id || '';
+        if (id === 'zwc-city-panorama-stage' || id === 'zone-torn-route-section' || id === 'zone-rpg-route-section' || id === 'zone-ascension-hub' || id === 'zone-casino-tables-pit') return true;
+        var cls = typeof node.className === 'string' ? node.className : '';
+        if (/\b(?:zwc-|zaaa-|zfx-|ztl-|zre-|zab-|zct-|z3d-)/.test(cls)) return true;
+        if (typeof node.closest === 'function' && node.closest('#zwc-city-panorama-stage, #zone-torn-route-section, #zone-rpg-route-section, #zone-ascension-hub, #zone-casino-tables-pit, .zwc-handdrawn-3d-gate')) return true;
+        return false;
+      };
       var attachMain = function () {
         var main = document.getElementById('zone-main');
         if (main && !main.__zwcObserved) {
           main.__zwcObserved = true;
-          var mObs = new MutationObserver(function () {
-            scheduleSync();
+          var mObs = new MutationObserver(function (records) {
+            if (zwcSyncing) return;
+            for (var i = 0; i < records.length; i++) {
+              var rec = records[i];
+              if (rec.type === 'attributes') {
+                if (rec.target === main || !isSelfOrOverlayNode(rec.target)) {
+                  scheduleSync();
+                  return;
+                }
+                continue;
+              }
+              if (rec.target && rec.target !== main && isSelfOrOverlayNode(rec.target)) continue;
+              var hasNativeChange = false;
+              for (var a = 0; a < rec.addedNodes.length; a++) {
+                if (rec.addedNodes[a].nodeType === 1 && !isSelfOrOverlayNode(rec.addedNodes[a])) {
+                  hasNativeChange = true;
+                  break;
+                }
+              }
+              if (!hasNativeChange && rec.target === main && rec.removedNodes && rec.removedNodes.length > 0) {
+                hasNativeChange = true;
+              }
+              if (hasNativeChange) {
+                scheduleSync();
+                return;
+              }
+            }
           });
           mObs.observe(main, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-zone-screen', 'aria-pressed'] });
         }

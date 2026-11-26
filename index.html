@@ -42,6 +42,187 @@
     else document.addEventListener('DOMContentLoaded', startObserver, { once: true });
   })();
 </script>
+<script>
+  (() => {
+    if (typeof window === 'undefined' || typeof window.fetch !== 'function' || window.__zoneFetchTurboInstalled) return;
+    window.__zoneFetchTurboInstalled = true;
+    const nativeFetch = window.fetch.bind(window);
+    const readCache = new Map();
+    const inFlight = new Map();
+    const bgQueue = [];
+    const MAX_BG = 3;
+    let activeBg = 0;
+    let cacheEpoch = 1;
+    let bootGateOpen = false;
+
+    const safeSessionHas = (k) => {
+      try { return Boolean(typeof sessionStorage !== 'undefined' && sessionStorage.getItem(k)); }
+      catch (_) { return false; }
+    };
+    const openBootGate = () => {
+      if (bootGateOpen) return;
+      bootGateOpen = true;
+      pumpBgQueue();
+    };
+    setTimeout(openBootGate, 220);
+
+    function pumpBgQueue() {
+      if (!bootGateOpen) return;
+      while (activeBg < MAX_BG && bgQueue.length > 0) {
+        const job = bgQueue.shift();
+        activeBg++;
+        job().finally(() => {
+          activeBg = Math.max(0, activeBg - 1);
+          pumpBgQueue();
+        });
+      }
+    }
+
+    function getReadTtlMs(pathname) {
+      if (/^\/api\/v1\/auth\/(?:session|login|logout|claim|recover)$/.test(pathname)) return 0;
+      if (/^\/api\/v1\/(?:assets\/|player-profile\/avatar)/.test(pathname)) return -1;
+      if (pathname === '/api/v1/gameplay' || pathname === '/api/v1/player' || pathname === '/api/v1/combat') return 4500;
+      if (/^\/api\/v1\/(?:game\/bootstrap|city\/map|cities|crimes|settings|admin\/session|admin\/playtest|auth\/account)$/.test(pathname)) return 30000;
+      if (pathname.startsWith('/api/v1/')) return 15000;
+      return -1;
+    }
+
+    function isCriticalGet(pathname) {
+      return (
+        pathname === '/api/v1/gameplay' ||
+        pathname === '/api/v1/player' ||
+        pathname === '/api/v1/game/bootstrap' ||
+        pathname === '/api/v1/auth/account' ||
+        pathname === '/api/v1/admin/session'
+      );
+    }
+
+    function mintResponse(rec, cacheState) {
+      const hdrs = new Headers(rec.headers || []);
+      hdrs.set('x-zone-client-cache', cacheState);
+      return new Response(rec.bodyText, { status: rec.status, statusText: rec.statusText || 'OK', headers: hdrs });
+    }
+
+    window.fetch = function (input, init) {
+      let rawUrl = '';
+      try { rawUrl = typeof input === 'string' ? input : (input && input.url ? String(input.url) : ''); }
+      catch (_) {}
+      if (!rawUrl || rawUrl.indexOf('/api/v1/') < 0) {
+        return nativeFetch(input, init);
+      }
+      if (
+        (window.zoneOwnerPlaytest && typeof window.zoneOwnerPlaytest.active === 'function' && window.zoneOwnerPlaytest.active()) ||
+        safeSessionHas('zone.ownerPlaytest.session')
+      ) {
+        return nativeFetch(input, init);
+      }
+
+      let method = 'GET';
+      try {
+        if (init && init.method) method = String(init.method).toUpperCase();
+        else if (input && typeof input === 'object' && input.method) method = String(input.method).toUpperCase();
+      } catch (_) {}
+
+      let parsed;
+      try { parsed = new URL(rawUrl, window.location.origin); }
+      catch (_) { return nativeFetch(input, init); }
+      if (parsed.origin !== window.location.origin) {
+        return nativeFetch(input, init);
+      }
+
+      const pathname = parsed.pathname;
+      const cacheKey = pathname + parsed.search;
+
+      if (method !== 'GET') {
+        const isChatOrBootAuth = pathname === '/api/v1/auth/session' || pathname.indexOf('/chat') >= 0;
+        if (!isChatOrBootAuth) {
+          cacheEpoch++;
+          readCache.clear();
+        }
+        return nativeFetch(input, init).then(
+          (res) => {
+            if (!isChatOrBootAuth) {
+              cacheEpoch++;
+              readCache.clear();
+            }
+            return res;
+          },
+          (err) => {
+            if (!isChatOrBootAuth) {
+              cacheEpoch++;
+              readCache.clear();
+            }
+            throw err;
+          }
+        );
+      }
+
+      const ttlMs = getReadTtlMs(pathname);
+      if (ttlMs < 0) {
+        return nativeFetch(input, init);
+      }
+
+      const now = Date.now();
+      if (ttlMs > 0) {
+        const hit = readCache.get(cacheKey);
+        if (hit && hit.epoch === cacheEpoch && now < hit.exp) {
+          return Promise.resolve(mintResponse(hit, 'hit'));
+        }
+      }
+
+      const existingFlight = inFlight.get(cacheKey);
+      if (existingFlight) {
+        return existingFlight.then((rec) => (rec.passthrough ? rec.passthrough.clone() : mintResponse(rec, 'coalesced')));
+      }
+
+      const reqEpoch = cacheEpoch;
+      const runNetwork = () =>
+        nativeFetch(input, init).then(async (res) => {
+          if (pathname === '/api/v1/gameplay') openBootGate();
+          const ct = (res && res.headers && typeof res.headers.get === 'function' ? (res.headers.get('content-type') || '') : '').toLowerCase();
+          if (!res || ct.indexOf('json') < 0) {
+            return { passthrough: res };
+          }
+          const bodyText = await res.text();
+          const headerPairs = [];
+          if (res.headers && typeof res.headers.forEach === 'function') {
+            res.headers.forEach((v, k) => headerPairs.push([k, v]));
+          }
+          const rec = {
+            status: res.status,
+            statusText: res.statusText || '',
+            headers: headerPairs,
+            bodyText,
+            epoch: reqEpoch,
+            exp: Date.now() + ttlMs
+          };
+          if (ttlMs > 0 && res.ok && reqEpoch === cacheEpoch) {
+            readCache.set(cacheKey, rec);
+          }
+          return rec;
+        });
+
+      const sharedPromise = (isCriticalGet(pathname)
+        ? runNetwork()
+        : new Promise((resolve, reject) => {
+            bgQueue.push(() => runNetwork().then(resolve, reject));
+            pumpBgQueue();
+          })
+      ).finally(() => {
+        inFlight.delete(cacheKey);
+        if (pathname === '/api/v1/gameplay') openBootGate();
+      });
+
+      inFlight.set(cacheKey, sharedPromise);
+      return sharedPromise.then((rec) => (rec.passthrough ? rec.passthrough : mintResponse(rec, 'miss')));
+    };
+
+    window.__zoneFetchTurbo = {
+      bust: () => { cacheEpoch++; readCache.clear(); },
+      stats: () => ({ cachedKeys: readCache.size, inFlight: inFlight.size, queuedBg: bgQueue.length, epoch: cacheEpoch })
+    };
+  })();
+</script>
 <script src="./assets/ui/canonical-entry.js?v=102"></script>
 <script src="./assets/ui/route-navigation.js?v=105"></script>
 <script src="./support.js"></script>
@@ -63,9 +244,9 @@
 <link rel="stylesheet" href="./assets/ui/safehouse-host108.css?v=113">
 <link rel="stylesheet" href="./assets/ui/gym116.css?v=117">
 <link rel="stylesheet" href="./assets/ui/noir-game-hud.css?v=130">
-<link rel="stylesheet" href="./assets/ui/aaa-topbar-sidebar.css?v=176">
-<link rel="stylesheet" href="./assets/ui/aaa-game-surfaces.css?v=176">
-<link rel="stylesheet" href="./assets/ui/watercolor-sketchbook.css?v=174">
+<link rel="stylesheet" href="./assets/ui/aaa-topbar-sidebar.css?v=177">
+<link rel="stylesheet" href="./assets/ui/aaa-game-surfaces.css?v=177">
+<link rel="stylesheet" href="./assets/ui/watercolor-sketchbook.css?v=177">
 <link rel="stylesheet" href="./assets/ui/zone-mayor-widget.css?v=161">
 <link rel="stylesheet" href="./assets/ui/zone-merits-awards.css?v=161">
 <link rel="stylesheet" href="./assets/ui/zone-app-shell.css?v=164">
@@ -86,19 +267,19 @@
 <link rel="stylesheet" href="./assets/ui/zone-companion-3d.css?v=167">
 <script defer src="./assets/ui/zone-player-settings.js?v=161"></script>
 <script defer src="./assets/ui/zone-gamekit-bridge.js?v=167"></script>
-<script defer src="./assets/ui/zone-ecs-3d-bridge.js?v=174"></script>
+<script defer src="./assets/ui/zone-ecs-3d-bridge.js?v=177"></script>
 <script defer src="./assets/ui/zone-profile-avatar.js?v=164"></script>
 <script defer src="./assets/ui/zone-instant-games.js?v=167"></script>
-<script defer src="./assets/ui/aaa-topbar-sidebar.js?v=176"></script>
-<script defer src="./assets/ui/aaa-game-fx.js?v=176"></script>
-<script defer src="./assets/ui/watercolor-sketchbook.js?v=174"></script>
+<script defer src="./assets/ui/aaa-topbar-sidebar.js?v=177"></script>
+<script defer src="./assets/ui/aaa-game-fx.js?v=177"></script>
+<script defer src="./assets/ui/watercolor-sketchbook.js?v=177"></script>
 <script defer src="./assets/ui/zone-mayor-widget.js?v=161"></script>
 <script defer src="./assets/ui/zone-merits-data.js?v=161"></script>
 <script defer src="./assets/ui/zone-merits-awards.js?v=161"></script>
 <script defer src="./assets/ui/zone-app-shell.js?v=161"></script>
-<script defer src="./assets/ui/zone-torn-live.js?v=168"></script>
-<script defer src="./assets/ui/zone-rpg-empire.js?v=168"></script>
-<script defer src="./assets/ui/zone-ascension-breakthrough.js?v=168"></script>
+<script defer src="./assets/ui/zone-torn-live.js?v=177"></script>
+<script defer src="./assets/ui/zone-rpg-empire.js?v=177"></script>
+<script defer src="./assets/ui/zone-ascension-breakthrough.js?v=177"></script>
 <script defer src="./assets/ui/zone-audio-haptics.js?v=161"></script>
 <script defer src="./assets/ui/zone-tactical-director.js?v=167"></script>
 <script defer src="./assets/ui/zone-hud-accessibility.js?v=161"></script>

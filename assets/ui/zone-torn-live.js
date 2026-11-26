@@ -2687,7 +2687,7 @@
       if (document.visibilityState !== 'hidden' && !store.busy) {
         refreshAll();
       }
-    }, 20000);
+    }, 45000);
 
     scheduleRender();
     window.setTimeout(function () {

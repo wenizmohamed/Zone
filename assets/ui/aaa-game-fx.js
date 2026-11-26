@@ -2516,8 +2516,17 @@
 
       return origFetch.apply(this, arguments).then(
         function (res) {
-          var rtt = Math.max(1, Math.round(performance.now() - t0));
-          netState.lastRttMs = rtt;
+          var clientCacheState = '';
+          try {
+            if (res && res.headers && typeof res.headers.get === 'function') {
+              clientCacheState = res.headers.get('x-zone-client-cache') || '';
+            }
+          } catch (_) {}
+          var isClientCacheHit = !isMutation && (clientCacheState === 'hit' || clientCacheState === 'coalesced');
+          if (!isClientCacheHit) {
+            var rtt = Math.max(1, Math.round(performance.now() - t0));
+            netState.lastRttMs = rtt;
+          }
           if (isMutation) {
             netState.inFlightMutations = Math.max(0, netState.inFlightMutations - 1);
             if (clearBtnPending) clearBtnPending();
@@ -2544,7 +2553,9 @@
               }
             }
           } catch (_) {}
-          syncNetTelemetryPill();
+          if (!isClientCacheHit) {
+            syncNetTelemetryPill();
+          }
           return res;
         },
         function (err) {
@@ -2597,6 +2608,7 @@
     } catch (_) {}
   }
 
+  installFetchTelemetryBridge();
   setupInputListeners();
 
   if (document.readyState === 'loading') {
@@ -2606,7 +2618,7 @@
   }
 
   window.ZoneGameFX = {
-    version: '175.0',
+    version: '177.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,

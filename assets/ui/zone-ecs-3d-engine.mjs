@@ -6687,6 +6687,9 @@ export class ZoneEcs3DRuntime {
 
     this.itemSlots.set(slotEl, rec);
     this._blitSingleItemSlot(rec);
+    if (!this._running && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      this.startLoop();
+    }
     return rec;
   }
 
@@ -6774,6 +6777,9 @@ export class ZoneEcs3DRuntime {
     }
     this.stageInstances.set(stageEl, rec);
     this._blitStageRecord(rec, 0.016);
+    if (!this._running && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      this.startLoop();
+    }
     return rec;
   }
 
@@ -6945,6 +6951,60 @@ export class ZoneEcs3DRuntime {
     }
   }
 
+  _shouldSkipHiddenSlot(el) {
+    if (!el || typeof window === 'undefined' || typeof window.getComputedStyle !== 'function') return false;
+    if (typeof document === 'undefined' || typeof document.querySelector !== 'function') return false;
+    if (!document.querySelector('link[href*="watercolor-sketchbook.css"]')) return false;
+    if (el.classList && typeof el.classList.contains === 'function' && el.classList.contains('zwc-inspector-3d-slot')) return false;
+    try {
+      const cs = window.getComputedStyle(el);
+      if (cs && cs.display === 'none') return true;
+    } catch (_) { /* ignore */ }
+    return false;
+  }
+
+  _shouldDeferCoveredStage(stageEl) {
+    if (!stageEl || typeof window === 'undefined' || typeof document === 'undefined') return false;
+    if (typeof document.querySelector !== 'function' || !document.querySelector('link[href*="watercolor-sketchbook.css"]')) return false;
+    if (stageEl.getAttribute && stageEl.getAttribute('data-zwc-3d-unlocked') === '1') return false;
+    const kind = stageEl.getAttribute ? (stageEl.getAttribute('data-z3d-stage') || '') : '';
+    if (kind === 'character-turntable') return false;
+    if (stageEl.classList && typeof stageEl.classList.contains === 'function' && stageEl.classList.contains('z3d-char-turntable-stage')) return false;
+    if (typeof stageEl.closest === 'function' && stageEl.closest('#zone-main')) return true;
+    if (typeof stageEl.querySelector === 'function' && stageEl.querySelector('.zwc-handdrawn-3d-gate')) return true;
+    return false;
+  }
+
+  _hasActiveRenderWork() {
+    if (typeof document !== 'undefined' && document.hidden) return false;
+    for (const el of this.itemSlots.keys()) {
+      if (el && el.isConnected === false) {
+        const rec = this.itemSlots.get(el);
+        if (rec) this.world.despawnImmediate(rec.eid);
+        this.itemSlots.delete(el);
+      }
+    }
+    for (const [el, sRec] of this.stageInstances.entries()) {
+      if (el && el.isConnected === false) {
+        if (sRec.controls) sRec.controls.dispose();
+        sRec.built.dispose();
+        this.stageInstances.delete(el);
+      }
+    }
+    return Boolean(this.inspectorOpen || this.stageInstances.size > 0 || this.itemSlots.size > 0);
+  }
+
+  _hasVisibleRenderWork() {
+    if (this.inspectorOpen) return true;
+    for (const el of this.stageInstances.keys()) {
+      if (this._isElementVisible(el)) return true;
+    }
+    for (const [el, rec] of this.itemSlots.entries()) {
+      if (rec.dirty || rec.dragging || rec.hovered || this._isElementVisible(el)) return true;
+    }
+    return false;
+  }
+
   scan(root = undefined) {
     this._ensureSettingsListener();
     const scope = root || (typeof document !== 'undefined' ? document : null);
@@ -6955,17 +7015,19 @@ export class ZoneEcs3DRuntime {
     for (let i = 0; i < slots.length; i++) {
       const el = slots[i];
       if (el.tagName === 'BUTTON' && el.hasAttribute('data-z3d-inspect')) continue;
+      if (this._shouldSkipHiddenSlot(el)) continue;
       this.mountItemSlot(el);
       count++;
     }
 
     const stages = scope.querySelectorAll('[data-z3d-stage]');
     for (let i = 0; i < stages.length; i++) {
+      if (this._shouldDeferCoveredStage(stages[i])) continue;
       this.mountStage(stages[i]);
       count++;
     }
 
-    if (!this._running && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+    if (!this._running && this._hasActiveRenderWork() && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
       this.startLoop();
     }
     return count;
@@ -7130,6 +7192,9 @@ export class ZoneEcs3DRuntime {
     this.inspectorModalEl.classList.add('is-open');
     this.inspectorOpen = true;
     this._renderFrame(0.016, 0.016);
+    if (!this._running && typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      this.startLoop();
+    }
     return true;
   }
 
@@ -7150,9 +7215,23 @@ export class ZoneEcs3DRuntime {
 
   startLoop() {
     if (this._running || typeof window === 'undefined' || typeof window.requestAnimationFrame !== 'function') return;
+    if (!this._hasActiveRenderWork()) return;
     this._running = true;
     const tick = () => {
       if (!this._running) return;
+      if (!this._hasActiveRenderWork()) {
+        this.stopLoop();
+        return;
+      }
+      if (!this._hasVisibleRenderWork()) {
+        this._idleWatchTimer = window.setTimeout(() => {
+          this._idleWatchTimer = 0;
+          if (this._running) {
+            this._rafId = window.requestAnimationFrame(tick);
+          }
+        }, 320);
+        return;
+      }
       this.world.step();
       this._rafId = window.requestAnimationFrame(tick);
     };
@@ -7161,6 +7240,10 @@ export class ZoneEcs3DRuntime {
 
   stopLoop() {
     this._running = false;
+    if (this._idleWatchTimer && typeof window !== 'undefined' && typeof window.clearTimeout === 'function') {
+      window.clearTimeout(this._idleWatchTimer);
+      this._idleWatchTimer = 0;
+    }
     if (this._rafId && typeof window !== 'undefined' && typeof window.cancelAnimationFrame === 'function') {
       window.cancelAnimationFrame(this._rafId);
       this._rafId = 0;

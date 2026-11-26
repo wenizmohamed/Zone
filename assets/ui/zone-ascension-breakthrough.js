@@ -1609,7 +1609,7 @@
     var main = document.getElementById('zone-main');
     var scr = main ? (main.getAttribute('data-zone-screen') || 'home') : 'home';
     renderHub();
-    if (scr === 'home' && (Date.now() - state.lastFetchAt) > 4500 && !state.loading) {
+    if (scr === 'home' && (Date.now() - state.lastFetchAt) > 15000 && !state.loading) {
       refreshAscension(false);
     }
   }

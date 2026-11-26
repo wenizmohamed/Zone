@@ -16,8 +16,22 @@ final class ThemeRegistry
     {
     }
 
+    private function themeCachePath(): string
+    {
+        return rtrim(sys_get_temp_dir(), '/\\') . '/zone-theme-boot-' . substr(hash('sha256', (string) getenv('ZONE_DATABASE_URL') . '|' . $this->themesPath), 0, 20) . '.json';
+    }
+
     public function discover(): void
     {
+        $useFastBoot = getenv('VERCEL') === '1';
+        $cacheFile = $useFastBoot ? $this->themeCachePath() : '';
+        if ($useFastBoot && is_file($cacheFile) && (time() - (int) @filemtime($cacheFile)) <= 60) {
+            $cached = @json_decode((string) @file_get_contents($cacheFile), true);
+            if (is_array($cached) && is_array($cached['manifests'] ?? null) && $cached['manifests'] !== []) {
+                $this->manifests = $cached['manifests'];
+                return;
+            }
+        }
         $existingRows = [];
         foreach ($this->database->fetchAll('SELECT id, manifest_json FROM themes') as $row) $existingRows[$row['id']] = $row;
         foreach (glob($this->themesPath . '/*/theme.json') ?: [] as $manifestPath) {
@@ -43,6 +57,9 @@ final class ThemeRegistry
         if ($active === null && $this->manifests !== []) {
             $first = array_key_first($this->manifests);
             $this->activate((string) $first);
+        }
+        if ($useFastBoot && $cacheFile !== '') {
+            @file_put_contents($cacheFile, json_encode(['manifests' => $this->manifests]));
         }
     }
 
@@ -73,6 +90,7 @@ final class ThemeRegistry
             $this->database->execute('UPDATE themes SET active = 0');
             $this->database->execute('UPDATE themes SET installed = 1, active = 1 WHERE id = :id', ['id' => $id]);
         });
+        @unlink($this->themeCachePath());
         return array_values(array_filter($this->all(), static fn (array $theme): bool => $theme['id'] === $id))[0];
     }
 

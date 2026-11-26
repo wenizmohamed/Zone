@@ -22,12 +22,35 @@
   var charMountTimestamps = typeof WeakMap === 'function' ? new WeakMap() : null;
   var currentCharOutfit = 'street';
   var CHAR_WATCHDOG_MS = 1600;
+  var engineBootPromise = null;
+
+  function hasImmediate3DWorkInDom(rootEl) {
+    var scope = rootEl && rootEl.querySelectorAll ? rootEl : document;
+    if (!scope || !scope.querySelectorAll) return false;
+    var hasSketchbook = Boolean(document.querySelector && document.querySelector('link[href*="watercolor-sketchbook.css"]'));
+    if (!hasSketchbook) {
+      return Boolean(scope.querySelector('[data-z3d-stage], [data-z3d-item]'));
+    }
+    if (scope.querySelector('[data-z3d-stage="character-turntable"], [data-z3d-stage][data-zwc-3d-unlocked="1"], .zwc-inspector-3d-slot[data-z3d-item]')) {
+      return true;
+    }
+    return false;
+  }
 
   function enqueue(method, args) {
     if (runtime && typeof runtime[method] === 'function') {
       return runtime[method].apply(runtime, args);
     }
+    if (method === 'scan' && !engineBootPromise && !hasImmediate3DWorkInDom(args && args[0])) {
+      return 0;
+    }
+    if (method === 'closeInspector' && !runtime) {
+      return false;
+    }
     pendingCalls.push({ method: method, args: args });
+    if (method === 'inspectItem' || method === 'scan') {
+      ensureEngineBootstrapped();
+    }
     return false;
   }
 
@@ -425,6 +448,7 @@
     },
     whenReady: function () {
       if (runtime) return Promise.resolve(runtime);
+      ensureEngineBootstrapped();
       return new Promise(function (resolve) {
         readyResolvers.push(resolve);
       });
@@ -436,6 +460,11 @@
   document.addEventListener('click', function (ev) {
     var target = ev.target;
     if (!target || typeof target.closest !== 'function') return;
+
+    var unlockBtn = target.closest('[data-zwc-unlock-stage], [data-zwc-inspect-3d]');
+    if (unlockBtn) {
+      ensureEngineBootstrapped();
+    }
 
     var inspectBtn = target.closest('[data-z3d-inspect]');
     if (inspectBtn) {
@@ -503,33 +532,38 @@
 
   function startObserver() {
     if (!document.body) return;
-    var observer = new MutationObserver(function (records) {
-      for (var i = 0; i < records.length; i++) {
-        var r = records[i];
-        if (r.type === 'attributes' || (r.addedNodes && r.addedNodes.length > 0)) {
-          scheduleDebouncedScan();
-          return;
-        }
+    var observedMain = null;
+    var mainObserver = null;
+    var attachMain = function () {
+      var m = document.getElementById('zone-main');
+      if (!m || m === observedMain) return;
+      observedMain = m;
+      if (mainObserver) {
+        try { mainObserver.disconnect(); } catch (_) {}
       }
+      mainObserver = new MutationObserver(function () {
+        scheduleDebouncedScan();
+      });
+      mainObserver.observe(m, {
+        childList: true,
+        subtree: false,
+        attributes: true,
+        attributeFilter: ['data-zone-screen'],
+      });
+    };
+    attachMain();
+    window.addEventListener('zone:render', function () {
+      attachMain();
+      scheduleDebouncedScan();
+    }, { passive: true });
+    var rootObserver = new MutationObserver(function () {
+      scheduleDebouncedScan();
     });
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true,
+    rootObserver.observe(document.documentElement, {
+      childList: false,
+      subtree: false,
       attributes: true,
-      attributeFilter: [
-        'data-zone-screen',
-        'data-z3d-item',
-        'data-z3d-stage',
-        'data-z3d-submode',
-        'data-z3d-companion',
-        'data-z3d-era',
-        'data-z3d-origin',
-        'data-z3d-origin-chosen',
-        'data-z3d-outfit',
-        'data-theme',
-        'dir',
-        'lang',
-      ],
+      attributeFilter: ['data-theme', 'dir', 'lang'],
     });
     scheduleDebouncedScan();
   }
@@ -633,7 +667,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=174')
+    return import('./zone-ecs-3d-engine.mjs?v=177')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=174');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=173');
       })
@@ -687,33 +724,52 @@
       });
   }
 
-  Promise.all([loadRiggedOperativeModule(), loadEnvironmentsModule()])
-    .then(function () {
-      return loadEngineModule();
-    })
-    .then(function (mod) {
-      if (!mod || typeof mod.createZoneEcs3DRuntime !== 'function') return;
-      runtime = mod.createZoneEcs3DRuntime();
-      var queued = pendingCalls.splice(0, pendingCalls.length);
-      for (var i = 0; i < queued.length; i++) {
-        var item = queued[i];
-        if (typeof runtime[item.method] === 'function') {
-          try {
-            runtime[item.method].apply(runtime, item.args);
-          } catch (_) { /* ignore */ }
+  function ensureEngineBootstrapped() {
+    if (runtime) return Promise.resolve(runtime);
+    if (engineBootPromise) return engineBootPromise;
+    engineBootPromise = Promise.all([loadRiggedOperativeModule(), loadEnvironmentsModule()])
+      .then(function () {
+        return loadEngineModule();
+      })
+      .then(function (mod) {
+        if (!mod || typeof mod.createZoneEcs3DRuntime !== 'function') return null;
+        runtime = mod.createZoneEcs3DRuntime();
+        var queued = pendingCalls.splice(0, pendingCalls.length);
+        for (var i = 0; i < queued.length; i++) {
+          var item = queued[i];
+          if (typeof runtime[item.method] === 'function') {
+            try {
+              runtime[item.method].apply(runtime, item.args);
+            } catch (_) { /* ignore */ }
+          }
         }
-      }
-      performScan(document);
-      runtime.startLoop();
-      for (var r = 0; r < readyResolvers.length; r++) {
-        try { readyResolvers[r](runtime); } catch (_) { /* ignore */ }
-      }
-      readyResolvers.length = 0;
-      window.dispatchEvent(new CustomEvent('zone:ecs-3d-ready', { detail: runtime.diagnostics() }));
-    })
-    .catch(function (err) {
-      if (typeof console !== 'undefined' && console.warn) {
-        console.warn('[ZoneEcs3D] Engine bootstrap warning:', err && err.message ? err.message : err);
-      }
-    });
+        performScan(document);
+        runtime.startLoop();
+        for (var r = 0; r < readyResolvers.length; r++) {
+          try { readyResolvers[r](runtime); } catch (_) { /* ignore */ }
+        }
+        readyResolvers.length = 0;
+        window.dispatchEvent(new CustomEvent('zone:ecs-3d-ready', { detail: runtime.diagnostics() }));
+        return runtime;
+      })
+      .catch(function (err) {
+        engineBootPromise = null;
+        if (typeof console !== 'undefined' && console.warn) {
+          console.warn('[ZoneEcs3D] Engine bootstrap warning:', err && err.message ? err.message : err);
+        }
+        return null;
+      });
+    return engineBootPromise;
+  }
+
+  /* Defer ~700KB Three.js + 3D ECS module parse off critical first-load & mobile boot path!
+     Loads in 0ms on any 3D click/inspect/unlock, or quietly during desktop idle after boot settles. */
+  if (hasImmediate3DWorkInDom(document)) {
+    ensureEngineBootstrapped();
+  } else if (typeof window.innerWidth === 'number' && window.innerWidth > 900 && !(typeof navigator !== 'undefined' && navigator.webdriver)) {
+    var warmIdle = typeof window.requestIdleCallback === 'function'
+      ? function (fn) { window.requestIdleCallback(fn, { timeout: 8000 }); }
+      : function (fn) { window.setTimeout(fn, 6500); };
+    window.setTimeout(function () { warmIdle(ensureEngineBootstrapped); }, 3800);
+  }
 })();
