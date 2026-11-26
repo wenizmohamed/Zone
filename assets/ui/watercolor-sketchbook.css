@@ -1721,34 +1721,19 @@ html body #dc-root #zone-main#zone-main .zone-item-stage .zwc-stage-emblem svg.z
   display: block !important;
 }
 
-html body #dc-root #zone-main#zone-main .zone-record-art,
-html body #dc-root #zone-main#zone-main .zone-record-art[data-zwc-enhanced="1"] {
-  width: 46px !important;
-  height: 46px !important;
-  min-width: 46px !important;
-  min-height: 46px !important;
-  flex: 0 0 46px !important;
-  background-image: none !important;
-  background: radial-gradient(circle at 30% 25%, #2d2720 0%, #12100d 100%) !important;
-  border: 1.4px solid rgba(243, 201, 105, 0.56) !important;
-  border-radius: 8px !important;
-  box-shadow: inset 0 1px 0 rgba(255, 248, 220, 0.18), 0 4px 10px rgba(0, 0, 0, 0.42) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  filter: none !important;
-  padding: 5px !important;
-  box-sizing: border-box !important;
-}
-
-html body #dc-root #zone-main#zone-main .zone-record-art > svg.zwc-sketch-ico,
-html body #dc-root #zone-main#zone-main .zone-record-art[data-zwc-enhanced="1"] > svg.zwc-sketch-ico {
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  min-height: 34px !important;
-  flex: 0 0 34px !important;
-  display: block !important;
+/* Restore original Hand-Painted Course & Career Art inside .zone-record-art (Zero flat SVG boxes overwriting art!) */
+html body #dc-root #zone-main#zone-main .zone-record-art {
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  min-height: 54px !important;
+  flex: 0 0 54px !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border: 1.8px solid var(--zwc-border-strong) !important;
+  border-radius: var(--zwc-sketch-radius-sm) !important;
+  box-shadow: var(--zwc-shadow-sub) !important;
 }
 
 html body #dc-root #zone-main#zone-main .zone-hideout-scene {
@@ -3321,167 +3306,123 @@ html[data-theme="light"] body:has(#studioWorkspace) .studio-search-button {
 }
 
 /* ==========================================================================
- * v168 SOVEREIGN NOIR-OBSIDIAN & BRUSHED-BRASS WHOLE-GAME VISUAL UPGRADE
- * Eliminates comic brush titles, wobbly crayon borders & flat kids icons;
- * upgrades Education into a 2-Column 3D Sovereign University Faculty Grid.
+ * v174 HAND-DRAWN MAFIA SKETCHBOOK OUTSIDE -> REALISTIC PBR 3D ON CLICK
+ * Preserves authentic CaveatBrush headings, organic hand-inked borders, and
+ * hand-painted estate/course artwork on browse views; unlocks realistic 3D
+ * stages and 360 Orbit Studio exclusively when the player clicks!
  * ========================================================================== */
-html body :is(h1, h2, h3, .zone-panel-heading, .zwc-tutorial-title, .zre-route-title, .zre-section-title, .ztl-section-title) {
-  font-family: var(--zwc-font-hand) !important;
-  -webkit-text-stroke: 0 !important;
-  letter-spacing: 0.015em !important;
+
+/* Restore #zone-char-3d fallback visibility only when explicitly activated; native character3d.html (Suit.glb) stays primary */
+html body #dc-root #zone-main#zone-main .zone-character-stage > .z3d-char-turntable-stage:not([data-z3d-fallback-hidden="1"]) {
+  display: block !important;
 }
 
-html:not([data-theme="light"]) body #dc-root :is(.zone-panel, .zre-card, .ztl-card, .ztl-section-box, .zre-section, .zwe-card) {
-  border-radius: 8px !important;
-  border: 1px solid rgba(243, 201, 105, 0.26) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 248, 225, 0.07), 0 8px 22px rgba(0, 0, 0, 0.46) !important;
+/* Hide tiny inline browse 3D thumbnails on cards while keeping DOM nodes intact & Inspector 3D full-size */
+html body #zone-main :is([data-zab-origin-card], [data-ztl-crime-card], .zre-card, .ztl-card) .z3d-item-slot {
+  display: none !important;
 }
 
-html[data-theme="light"] body #dc-root :is(.zone-panel, .zre-card, .ztl-card, .ztl-section-box, .zre-section, .zwe-card) {
-  border-radius: 8px !important;
-  border: 1px solid rgba(120, 82, 20, 0.32) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), 0 6px 16px rgba(30, 24, 16, 0.09) !important;
-}
-
-/* Sovereign Metallic Medallion Wells (Sidebar, Topbar, Education & Jobs) */
-html body .zone-record-art {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  border-radius: 8px !important;
-  background-image: none !important;
-  background: radial-gradient(circle at 30% 25%, #2a2520 0%, #12100d 100%) !important;
-  border: 1px solid rgba(243, 201, 105, 0.48) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 248, 220, 0.16), 0 4px 10px rgba(0, 0, 0, 0.42) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 4px !important;
-}
-
-html body .zone-record-art svg.zwc-sketch-ico {
-  width: 32px !important;
-  height: 32px !important;
-}
-
-/* Sovereign University 3D Sanctum Hero Banner & 2-Column Faculty Course Grid */
-.zwc-edu-3d-hero {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 14px;
-  margin: 4px 0 10px;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(26, 23, 19, 0.96) 0%, rgba(16, 14, 12, 0.98) 100%);
-  border: 1px solid rgba(243, 201, 105, 0.44);
-  box-shadow: inset 0 1px 0 rgba(254, 240, 138, 0.18), 0 10px 26px rgba(0, 0, 0, 0.5);
-  box-sizing: border-box;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-html[data-theme="light"] .zwc-edu-3d-hero {
-  background: linear-gradient(180deg, #faf5e8 0%, #efe6d0 100%);
-  border-color: rgba(140, 90, 11, 0.45);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 8px 20px rgba(34, 28, 18, 0.12);
-}
-
-.zwc-edu-hero-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.zwc-edu-hero-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.zwc-edu-hero-kicker {
-  font-size: 10.5px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #f3c969;
-}
-
-html[data-theme="light"] .zwc-edu-hero-kicker {
-  color: #7c4d08;
-}
-
-.zwc-edu-hero-title {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--zwc-ink, #f3ecdc);
-}
-
-.zwc-edu-hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.zwc-edu-hero-viewport {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid rgba(243, 201, 105, 0.32);
-  overflow: hidden;
-}
-
-.zwc-edu-3d-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  flex: 0 0 auto;
-}
-
-.zwc-edu-3d-slot {
-  width: 68px !important;
-  height: 54px !important;
-  min-width: 68px !important;
-  min-height: 54px !important;
-  border-radius: 7px !important;
-  background: radial-gradient(circle at 50% 35%, rgba(42, 37, 31, 0.95), rgba(14, 12, 10, 0.98)) !important;
-  border: 1px solid rgba(243, 201, 105, 0.38) !important;
+/* Hand-Drawn Mafia Scene Cover Over Inline .z3d-action-stage Banners (Click Unlocks Interactive 3D) */
+html body #zone-main .z3d-action-stage:not(.z3d-char-turntable-stage) {
+  position: relative !important;
   overflow: hidden !important;
 }
 
+.zwc-handdrawn-3d-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: inherit;
+  background: #14110e;
+}
+
+.zwc-handdrawn-3d-gate .zwc-gate-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  filter: contrast(1.06) saturate(0.88);
+  transition: transform 0.35s ease;
+}
+
+.zwc-handdrawn-3d-gate:hover .zwc-gate-art {
+  transform: scale(1.025);
+}
+
+.zwc-handdrawn-3d-gate .zwc-gate-scrim {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 50%, rgba(20, 16, 13, 0.34) 0%, rgba(12, 10, 8, 0.80) 100%);
+}
+
+.zwc-gate-open-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 20px;
+  font-family: var(--zwc-font-hand, "Patrick Hand", sans-serif);
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #fef3c7;
+  background: linear-gradient(180deg, rgba(36, 29, 22, 0.95) 0%, rgba(18, 15, 12, 0.98) 100%);
+  border: 1.5px solid rgba(212, 166, 86, 0.85);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: inset 0 1px 0 rgba(254, 243, 199, 0.22), 0 8px 22px rgba(0, 0, 0, 0.68);
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.zwc-gate-open-btn:hover {
+  transform: translateY(-1px);
+  border-color: #fde68a;
+  background: linear-gradient(180deg, rgba(52, 41, 29, 0.96) 0%, rgba(24, 19, 14, 0.99) 100%);
+}
+
+/* Education & Jobs: Hand-Painted .zone-record-art + Sketchbook Ledger Rows + Muted Antique-Brass Inspect 3D Trigger */
 .zwc-edu-3d-btn {
-  padding: 2px 8px !important;
-  min-height: 22px !important;
-  font-size: 10.5px !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.04em !important;
-  border-radius: 5px !important;
-  border: 1px solid rgba(243, 201, 105, 0.52) !important;
-  background: linear-gradient(180deg, rgba(243, 201, 105, 0.22), rgba(161, 98, 7, 0.28)) !important;
-  color: #fde68a !important;
+  padding: 3px 9px !important;
+  min-height: 24px !important;
+  font-family: var(--zwc-font-hand, "Patrick Hand", sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(212, 166, 86, 0.56) !important;
+  background: linear-gradient(180deg, rgba(44, 36, 27, 0.92), rgba(24, 20, 16, 0.96)) !important;
+  color: #f5deb3 !important;
   cursor: pointer !important;
 }
 
 html[data-theme="light"] .zwc-edu-3d-btn {
-  background: linear-gradient(180deg, #f6e7c1, #e6cf99) !important;
-  border-color: #8c5a0b !important;
-  color: #4a2d03 !important;
+  background: linear-gradient(180deg, #f7ecd2, #e8d5ac) !important;
+  border-color: rgba(120, 78, 18, 0.65) !important;
+  color: #3f2707 !important;
 }
 
 @media (min-width: 960px) {
   html body #zone-main[data-zone-screen="education"] .zone-course-schedule {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
+    gap: 12px !important;
     padding: 14px !important;
   }
 
-  html body #zone-main[data-zone-screen="education"] .zone-course-schedule > header.zone-record-heading,
-  html body #zone-main[data-zone-screen="education"] .zone-course-schedule > #zwc-edu-3d-hero {
+  html body #zone-main[data-zone-screen="education"] .zone-course-schedule > header.zone-record-heading {
     grid-column: 1 / -1 !important;
   }
 }
@@ -3491,20 +3432,10 @@ html body #zone-main[data-zone-screen="jobs"] article.zone-employment-row,
 html body #zone-main[data-zone-screen="job"] article.zone-employment-row {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 12px !important;
   padding: 11px 12px !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(243, 201, 105, 0.24) !important;
-  background: linear-gradient(180deg, rgba(32, 28, 24, 0.94) 0%, rgba(22, 19, 16, 0.96) 100%) !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
-}
-
-html[data-theme="light"] body #zone-main[data-zone-screen="education"] article.zone-course-row,
-html[data-theme="light"] body #zone-main[data-zone-screen="jobs"] article.zone-employment-row,
-html[data-theme="light"] body #zone-main[data-zone-screen="job"] article.zone-employment-row {
-  background: linear-gradient(180deg, #fcf8ef 0%, #f3ead7 100%) !important;
-  border-color: rgba(120, 82, 20, 0.30) !important;
 }
 
 html body #zone-main[data-zone-screen="education"] article.zone-course-row .zone-record-copy,
@@ -3514,78 +3445,24 @@ html body #zone-main[data-zone-screen="job"] article.zone-employment-row .zone-r
   min-width: 0 !important;
 }
 
+html body #zone-main[data-zone-screen="education"] article.zone-course-row .zone-record-action,
+html body #zone-main[data-zone-screen="jobs"] article.zone-employment-row .zone-record-action,
+html body #zone-main[data-zone-screen="job"] article.zone-employment-row .zone-record-action {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 6px !important;
+}
+
 @media (max-width: 640px) {
   html body #zone-main[data-zone-screen="education"] article.zone-course-row,
   html body #zone-main[data-zone-screen="jobs"] article.zone-employment-row,
   html body #zone-main[data-zone-screen="job"] article.zone-employment-row {
     flex-wrap: wrap !important;
   }
-
-  .zwc-edu-3d-slot {
-    width: 56px !important;
-    height: 46px !important;
-    min-width: 56px !important;
-    min-height: 46px !important;
-  }
 }
 
-/* ==========================================================================
- * v172 WHOLE-GAME 3D PROPERTIES, ITEMS CATALOG, CRIMES, GYM, HOF, ELIMINATION & PRESS
- * ========================================================================== */
-
-/* Eliminate duplicate bottom 3D stage on Education & Crimes + enforce strict route isolation */
-html body #zone-main:not([data-zone-screen="hof"]) #zwc-hof-3d-hero,
-html body #zone-main:not([data-zone-screen="newspaper"]) #zwc-press-3d-hero,
-html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section [data-z3d-stage="safehouse-empire"][data-z3d-submode="academy"],
-html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section .zre-3d-stage-wrap,
-html body #zone-main[data-zone-screen="crimes"]:has(.zone-crime-workspace [data-z3d-stage="heist-breach"]) #zone-torn-route-section [data-z3d-stage="heist-breach"] {
-  display: none !important;
-}
-
-/* Restore #zone-char-3d 3D Character Turntable visibility over noir-game-hud.css .zone-character-stage > div { display:none!important } */
-html body #dc-root #zone-main#zone-main .zone-character-stage > .z3d-char-turntable-stage:not([data-z3d-fallback-hidden="1"]) {
-  display: block !important;
-}
-
-/* Properties: Live 3D Architectural Exterior Estate Turntable Overlay */
-html body #zone-main[data-zone-screen="properties"] .zone-property-art {
-  position: relative !important;
-  min-height: 152px !important;
-  overflow: hidden !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(243, 201, 105, 0.34) !important;
-}
-
-.zwc-prop-3d-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 42%, rgba(22, 20, 17, 0.68) 0%, rgba(12, 11, 9, 0.90) 100%);
-  z-index: 2;
-  pointer-events: auto;
-}
-
-html[data-theme="light"] .zwc-prop-3d-overlay {
-  background: radial-gradient(circle at 50% 42%, rgba(34, 30, 24, 0.56) 0%, rgba(18, 16, 13, 0.84) 100%);
-}
-
-.zwc-prop-3d-slot {
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 136px !important;
-}
-
-.zwc-prop-3d-btn {
-  position: absolute !important;
-  top: 7px !important;
-  inset-inline-end: 7px !important;
-  z-index: 3 !important;
-}
-
-/* Items Catalog: Sovereign Row Medallions & Full-Size Non-Weapon 3D PBR Stage */
+/* Items Catalog: Hand-Inked Row Medallions & Click-Selected Interactive 3D PBR Stage */
 html body #zone-main[data-zone-screen="items"] .zone-item-thumbnail[data-zwc-enhanced="1"] > svg:not(.zwc-sketch-ico) {
   display: none !important;
 }
@@ -3595,8 +3472,8 @@ html body #zone-main[data-zone-screen="items"] .zone-item-thumbnail[data-zwc-enh
   height: 44px !important;
   min-width: 44px !important;
   border-radius: 8px !important;
-  background: radial-gradient(circle at 30% 25%, #2a2520 0%, #12100d 100%) !important;
-  border: 1px solid rgba(243, 201, 105, 0.44) !important;
+  background: radial-gradient(circle at 30% 25%, #2a241e 0%, #14110e 100%) !important;
+  border: 1px solid rgba(212, 166, 86, 0.44) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -3628,7 +3505,7 @@ html[data-theme="light"] body #zone-main[data-zone-screen="items"] .zone-item-in
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: radial-gradient(circle at 50% 44%, #25201a 0%, #110f0c 100%);
+  background: radial-gradient(circle at 50% 44%, #241f1a 0%, #100e0b 100%);
   z-index: 2;
 }
 
@@ -3644,103 +3521,15 @@ html[data-theme="light"] body #zone-main[data-zone-screen="items"] .zone-item-in
   justify-content: space-between;
   gap: 8px;
   padding: 6px 10px;
-  background: rgba(14, 12, 10, 0.88);
-  border-top: 1px solid rgba(243, 201, 105, 0.28);
+  background: rgba(14, 12, 10, 0.90);
+  border-top: 1px solid rgba(212, 166, 86, 0.28);
 }
 
 .zwc-inspector-3d-tag {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #f3c969;
-}
-
-/* Crimes Dynamic 14-Category 3D Tool Showcase Inside .zone-crime-location */
-html body #zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location {
-  position: relative !important;
-  padding-inline-end: 162px !important;
-  min-height: 76px !important;
-}
-
-.zwc-crime-3d-showcase {
-  position: absolute;
-  top: 8px;
-  inset-inline-end: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  border-radius: 8px;
-  background: rgba(15, 13, 11, 0.92);
-  border: 1px solid rgba(243, 201, 105, 0.48);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.48);
-  z-index: 3;
-}
-
-.zwc-crime-3d-slot {
-  width: 72px !important;
-  height: 56px !important;
-  min-width: 72px !important;
-  min-height: 56px !important;
-}
-
-/* Hall of Fame, Elimination, Newspaper & Missions Polish */
-.zwc-inline-crest {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  flex: 0 0 30px;
-}
-
-.zwc-inline-crest svg.zwc-sketch-ico {
-  width: 26px !important;
-  height: 26px !important;
-}
-
-.zwc-hof-player-cell {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  min-width: 0 !important;
-}
-
-.zwc-hof-rank-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  padding: 2px 6px;
-  border-radius: 5px;
-  background: rgba(243, 201, 105, 0.16);
-  border: 1px solid rgba(243, 201, 105, 0.45);
-  color: #fde68a;
-  font-weight: 800;
-}
-
-.zwc-hof-showcase-roster > .zwc-hof-legend-row {
-  display: grid;
-  grid-template-columns: 50px minmax(0, 2fr) 80px 120px 140px 120px;
-  gap: 8px;
-  align-items: center;
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(243, 201, 105, 0.14);
-}
-
-html body #zone-main[data-zone-screen="elimination"] .zone-competition-art {
-  position: relative !important;
-  min-height: 196px !important;
-  overflow: hidden !important;
-  border-radius: 8px !important;
-}
-
-.zwc-elim-3d-stage {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-height: 196px !important;
+  color: #d4a656;
 }
 
 .zwc-press-empty-crest {
@@ -3761,26 +3550,4 @@ html body #zone-main[data-zone-screen="newspaper"] .zone-stock-entry {
   align-items: center !important;
   justify-content: space-between !important;
   gap: 8px !important;
-}
-
-@media (max-width: 680px) {
-  .zwc-hof-showcase-roster > .zwc-hof-legend-row {
-    grid-template-columns: 44px minmax(0, 1.5fr) 54px minmax(0, 1fr);
-    font-size: 12px;
-  }
-  .zwc-hof-showcase-roster > .zwc-hof-legend-row > :nth-child(4),
-  .zwc-hof-showcase-roster > .zwc-hof-legend-row > :nth-child(6) {
-    display: none;
-  }
-  html body #zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location {
-    padding-inline-end: 12px !important;
-  }
-  .zwc-crime-3d-showcase {
-    position: relative;
-    top: auto;
-    bottom: auto;
-    inset-inline-end: auto;
-    margin-top: 8px;
-    justify-content: space-between;
-  }
 }

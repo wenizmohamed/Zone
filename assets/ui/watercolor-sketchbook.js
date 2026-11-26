@@ -84,19 +84,19 @@
   var ZWC_METALLIC_DEFS =
     '<defs>' +
       '<linearGradient id="zwm-gold" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#fef08a"/><stop offset="48%" stop-color="#f3c969"/><stop offset="100%" stop-color="#a16207"/>' +
+        '<stop offset="0%" stop-color="#fef3c7"/><stop offset="48%" stop-color="#d4a656"/><stop offset="100%" stop-color="#784808"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-emerald" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#6ee7b7"/><stop offset="50%" stop-color="#10b981"/><stop offset="100%" stop-color="#065f46"/>' +
+        '<stop offset="0%" stop-color="#a7f3d0"/><stop offset="50%" stop-color="#2f855a"/><stop offset="100%" stop-color="#143826"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-ruby" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#fda4af"/><stop offset="50%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#881337"/>' +
+        '<stop offset="0%" stop-color="#fecdd3"/><stop offset="50%" stop-color="#be123c"/><stop offset="100%" stop-color="#4c0519"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-cyan" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#a5f3fc"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0369a1"/>' +
+        '<stop offset="0%" stop-color="#e2e8f0"/><stop offset="50%" stop-color="#648ca3"/><stop offset="100%" stop-color="#1e3a4c"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-steel" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
-        '<stop offset="0%" stop-color="#f8fafc"/><stop offset="52%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#475569"/>' +
+        '<stop offset="0%" stop-color="#f1f5f9"/><stop offset="52%" stop-color="#94a3b8"/><stop offset="100%" stop-color="#334155"/>' +
       '</linearGradient>' +
       '<linearGradient id="zwm-plate" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
         '<stop offset="0%" stop-color="#2a2520"/><stop offset="100%" stop-color="#110f0d"/>' +
@@ -791,95 +791,37 @@
       }
     }
 
-    /* Education Sovereign 3D University Hero Stage + 18 Live 3D Discipline Turntables & Jobs Medallions */
-    var eduSchedule = document.querySelector('#zone-main[data-zone-screen="education"] .zone-course-schedule');
-    if (eduSchedule) {
-      var eduHero = document.getElementById('zwc-edu-3d-hero');
-      var eduLang = isAr() ? 'ar' : 'en';
-      if (!eduHero || eduHero.getAttribute('data-lang') !== eduLang) {
-        if (eduHero) eduHero.remove();
-        eduHero = document.createElement('div');
-        eduHero.id = 'zwc-edu-3d-hero';
-        eduHero.className = 'zwc-edu-3d-hero';
-        eduHero.setAttribute('data-lang', eduLang);
-        eduHero.innerHTML =
-          '<div class="zwc-edu-hero-bar">' +
-            '<div class="zwc-edu-hero-meta">' +
-              '<span class="zwc-edu-hero-kicker">' + (eduLang === 'ar' ? 'الأكاديمية السيادية · مختبر الأبحاث ثلاثي الأبعاد' : 'SOVEREIGN UNIVERSITY · 3D RESEARCH SANCTUM') + '</span>' +
-              '<strong class="zwc-edu-hero-title">' + (eduLang === 'ar' ? 'مدرّج العلوم الجنائية والتكتيك والمال' : 'Armillary Orrery, Cyber-Forensics & Syndicate Command Lab') + '</strong>' +
-            '</div>' +
-            '<div class="zwc-edu-hero-actions">' +
-              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_bio">' + (eduLang === 'ar' ? 'فحص 3D: الأحياء' : '360° Bio-Helix') + '</button>' +
-              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_cs">' + (eduLang === 'ar' ? 'فحص 3D: السيبراني' : '360° Cyber-Deck') + '</button>' +
-              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_command">' + (eduLang === 'ar' ? 'فحص 3D: القيادة' : '360° Command Crown') + '</button>' +
-            '</div>' +
-          '</div>' +
-          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="academy" data-z3d-interactive="1" style="min-height:224px;height:224px"></div>';
-        var recHead = eduSchedule.querySelector(':scope > header.zone-record-heading');
-        if (recHead) {
-          recHead.insertAdjacentElement('afterend', eduHero);
-        } else {
-          eduSchedule.insertBefore(eduHero, eduSchedule.firstChild);
-        }
-        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
-          window.ZoneEcs3D.scan(eduHero);
-        }
+    /* Education & Jobs: Preserve Original Hand-Painted Artwork in .zone-record-art + Clean Click-to-Inspect 3D Button */
+    var staleInlineHeroes = document.querySelectorAll('#zwc-edu-3d-hero, #zwc-hof-3d-hero, #zwc-press-3d-hero, .zwc-edu-3d-wrap, .zwc-prop-3d-overlay, .zwc-crime-3d-showcase, .zwc-elim-3d-stage');
+    for (var shIdx = 0; shIdx < staleInlineHeroes.length; shIdx++) {
+      staleInlineHeroes[shIdx].remove();
+    }
+
+    var eduOrJobRows = document.querySelectorAll(
+      '#zone-main[data-zone-screen="education"] article.zone-course-row, #zone-main[data-zone-screen="jobs"] article.zone-employment-row, #zone-main[data-zone-screen="job"] article.zone-employment-row'
+    );
+    for (var ri = 0; ri < eduOrJobRows.length; ri++) {
+      var interactiveRow = eduOrJobRows[ri];
+      var rTitleEl = interactiveRow.querySelector('h2, h3');
+      var rTitleTxt = rTitleEl ? rTitleEl.textContent : '';
+      var rSpec = resolveRecordSpec(rTitleTxt);
+      var actionCol = interactiveRow.querySelector('.zone-record-action');
+      if (actionCol && !actionCol.querySelector('.zwc-inspect-3d-trigger')) {
+        var trigBtn = document.createElement('button');
+        trigBtn.type = 'button';
+        trigBtn.className = 'zwc-edu-3d-btn zwc-inspect-3d-trigger';
+        trigBtn.setAttribute('data-zwc-inspect-3d', rSpec.item3d);
+        trigBtn.setAttribute('data-zwc-label', rTitleTxt.replace(/"/g, ''));
+        trigBtn.textContent = isAr() ? 'معاينة 3D' : 'Inspect 3D';
+        actionCol.appendChild(trigBtn);
       }
     }
 
-    var recordArts = document.querySelectorAll(
-      '#zone-main[data-zone-screen="education"] .zone-record-art, #zone-main[data-zone-screen="jobs"] .zone-record-art, #zone-main[data-zone-screen="job"] .zone-record-art'
-    );
-    var mountedNewEduSlots = false;
-    for (var ri = 0; ri < recordArts.length; ri++) {
-      var rArt = recordArts[ri];
-      var rRow = rArt.closest('article, .zone-current-record, header');
-      var rTitleEl = rRow ? rRow.querySelector('h2, h3') : null;
-      var rTitleTxt = rTitleEl ? rTitleEl.textContent : '';
-      var rSpec = resolveRecordSpec(rTitleTxt);
-      var rKey = rSpec.icon;
-      var rSvg = rArt.querySelector('svg.zwc-sketch-ico');
-      if (!rSvg || rSvg.getAttribute('data-zwc-rec-ico') !== rKey) {
-        if (rSvg) rSvg.remove();
-        var rTmp = document.createElement('div');
-        rTmp.innerHTML = SKETCH_ITEM_ICONS[rKey] || SKETCH_AREA_ICONS[rKey] || SKETCH_ITEM_ICONS.command;
-        var nextRecSvg = rTmp.firstElementChild;
-        if (nextRecSvg) {
-          nextRecSvg.setAttribute('data-zwc-rec-ico', rKey);
-          nextRecSvg.setAttribute('data-zwc-ink', rKey);
-          rArt.setAttribute('data-zwc-enhanced', '1');
-          rArt.appendChild(nextRecSvg);
-        }
-      }
-      /* Inject live 3D rotating discipline/career turntable inside Education course rows & Jobs career rows */
-      var interactiveRow = rArt.closest(
-        '#zone-main[data-zone-screen="education"] article.zone-course-row, #zone-main[data-zone-screen="jobs"] article.zone-employment-row, #zone-main[data-zone-screen="job"] article.zone-employment-row'
-      );
-      if (interactiveRow) {
-        var existingSlot = interactiveRow.querySelector('.zwc-edu-3d-wrap');
-        if (!existingSlot || existingSlot.getAttribute('data-edu-item') !== rSpec.item3d) {
-          if (existingSlot) existingSlot.remove();
-          var wrap3d = document.createElement('div');
-          wrap3d.className = 'zwc-edu-3d-wrap';
-          wrap3d.setAttribute('data-edu-item', rSpec.item3d);
-          wrap3d.innerHTML =
-            '<div class="z3d-item-slot zwc-edu-3d-slot" data-z3d-item="' + rSpec.item3d + '" data-z3d-cat="enhancer"></div>' +
-            '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + rSpec.item3d + '" data-zwc-label="' + rTitleTxt.replace(/"/g, '') + '">3D</button>';
-          var actionCol = interactiveRow.querySelector('.zone-record-action');
-          if (actionCol) {
-            interactiveRow.insertBefore(wrap3d, actionCol);
-          } else {
-            interactiveRow.appendChild(wrap3d);
-          }
-          mountedNewEduSlots = true;
-        }
-      }
-    }
-    if ((mountedNewEduSlots || mountedInspector3d) && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+    if (mountedInspector3d && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
       window.ZoneEcs3D.scan(document.getElementById('zone-main') || document);
     }
 
-    /* Properties Screen: Cold-Mount Safehouse Handshake Fix + 7 Live 3D Architectural Estate Models */
+    /* Properties Screen: Cold-Mount Safehouse Handshake Fix (Cards Keep Original Hand-Drawn Art; Click "Preview 3D house" Opens 3D!) */
     var shFrame = document.getElementById('zone-safehouse-frame');
     if (shFrame && !shFrame.__zwcSafehouseBound) {
       shFrame.__zwcSafehouseBound = true;
@@ -909,298 +851,87 @@
       });
     }
 
-    var mountedScreen3d = false;
-    var curPropSec = document.querySelector('#zone-main[data-zone-screen="properties"] .zone-current-property');
-    if (curPropSec) {
-      var curPropArt = curPropSec.querySelector('.zone-property-art');
-      var curPropName = curPropSec.querySelector('h2') ? curPropSec.querySelector('h2').textContent : '';
-      var curPropId3d = resolveProperty3DSpec(curPropName, 0);
-      if (curPropArt) {
-        var curOverlay = curPropArt.querySelector('.zwc-prop-3d-overlay');
-        if (!curOverlay || curOverlay.getAttribute('data-prop-3d') !== curPropId3d) {
-          if (curOverlay) curOverlay.remove();
-          curOverlay = document.createElement('div');
-          curOverlay.className = 'zwc-prop-3d-overlay';
-          curOverlay.setAttribute('data-prop-3d', curPropId3d);
-          curOverlay.innerHTML =
-            '<div class="z3d-item-slot zwc-prop-3d-slot" data-z3d-item="' + curPropId3d + '" data-z3d-cat="property" data-z3d-rarity="legendary"></div>' +
-            '<button type="button" class="zwc-edu-3d-btn zwc-prop-3d-btn" data-zwc-inspect-3d="' + curPropId3d + '" data-zwc-cat="property" data-zwc-label="' + curPropName.replace(/"/g, '') + '">' + (isAr() ? 'مجسّم 360°' : '360° Estate') + '</button>';
-          curPropArt.appendChild(curOverlay);
-          mountedScreen3d = true;
-        }
+    /* Hand-Drawn Ink & Watercolor Scene Cover Over Inline .z3d-action-stage Banners -> Click Opens 3D! */
+    var STAGE_COVERS = {
+      'safehouse-empire': { art: '/assets/ui/watercolor-art/city-panorama.webp', en: 'Enter 3D Syndicate Compound', ar: 'ادخل المجمع ثلاثي الأبعاد' },
+      'heist-breach': { art: '/assets/ui/watercolor-art/arcade-heist.webp', en: 'Open 3D Vault Breach View', ar: 'افتح مشهد اقتحام الخزنة 3D' },
+      'gym-ironpit': { art: '/assets/ui/watercolor-art/arcade-heavybag.webp', en: 'Open 3D Ironworks Pit', ar: 'افتح صالة الحديد 3D' },
+      'combat-arena': { art: '/assets/ui/motion-art/hero-syndicate-turf.webp', en: 'Open 3D Tactical Arena', ar: 'افتح ساحة القتال 3D' },
+      'city-wheels-race': { art: '/assets/ui/watercolor-art/arcade-getaway.webp', en: 'Open 3D Street Circuit', ar: 'افتح حلبة الشارع 3D' },
+      'casino-royale': { art: '/assets/ui/watercolor-art/arcade-casino.webp', en: 'Enter 3D Monte-Carlo Table', ar: 'ادخل طاولة الكازينو 3D' },
+      'paperdoll-armory': { art: '/assets/ui/watercolor-art/arcade-heist.webp', en: 'Open 3D Loadout Armory', ar: 'افتح خزانة العتاد 3D' }
+    };
+    var inlineStages = document.querySelectorAll('#zone-main .z3d-action-stage:not(.z3d-char-turntable-stage)');
+    var coverLang = isAr() ? 'ar' : 'en';
+    for (var isi = 0; isi < inlineStages.length; isi++) {
+      var stEl = inlineStages[isi];
+      if (stEl.getAttribute('data-zwc-3d-unlocked') === '1') continue;
+      var stKind = stEl.getAttribute('data-z3d-stage') || 'safehouse-empire';
+      var covSpec = STAGE_COVERS[stKind] || STAGE_COVERS['safehouse-empire'];
+      var existingCov = stEl.querySelector('.zwc-handdrawn-3d-gate');
+      if (!existingCov || existingCov.getAttribute('data-lang') !== coverLang) {
+        if (existingCov) existingCov.remove();
+        existingCov = document.createElement('div');
+        existingCov.className = 'zwc-handdrawn-3d-gate';
+        existingCov.setAttribute('data-lang', coverLang);
+        existingCov.innerHTML =
+          '<img class="zwc-gate-art" src="' + covSpec.art + '" alt="" loading="lazy" decoding="async">' +
+          '<div class="zwc-gate-scrim">' +
+            '<button type="button" class="zwc-gate-open-btn" data-zwc-unlock-stage="1">' +
+              '<span>' + (coverLang === 'ar' ? covSpec.ar : covSpec.en) + '</span>' +
+            '</button>' +
+          '</div>';
+        stEl.appendChild(existingCov);
       }
     }
 
-    var propCards = document.querySelectorAll('#zone-main[data-zone-screen="properties"] article.zone-property-dossier');
-    for (var pi = 0; pi < propCards.length; pi++) {
-      var pArt = propCards[pi].querySelector('.zone-property-art');
-      var pTitle = propCards[pi].querySelector('h3') ? propCards[pi].querySelector('h3').textContent : '';
-      var pId3d = resolveProperty3DSpec(pTitle, pi);
-      if (pArt) {
-        var pOverlay = pArt.querySelector('.zwc-prop-3d-overlay');
-        if (!pOverlay || pOverlay.getAttribute('data-prop-3d') !== pId3d) {
-          if (pOverlay) pOverlay.remove();
-          pOverlay = document.createElement('div');
-          pOverlay.className = 'zwc-prop-3d-overlay';
-          pOverlay.setAttribute('data-prop-3d', pId3d);
-          pOverlay.innerHTML =
-            '<div class="z3d-item-slot zwc-prop-3d-slot" data-z3d-item="' + pId3d + '" data-z3d-cat="property" data-z3d-rarity="legendary"></div>' +
-            '<button type="button" class="zwc-edu-3d-btn zwc-prop-3d-btn" data-zwc-inspect-3d="' + pId3d + '" data-zwc-cat="property" data-zwc-label="' + pTitle.replace(/"/g, '') + '">' + (isAr() ? 'مجسّم 360°' : '360° 3D') + '</button>';
-          pArt.appendChild(pOverlay);
-          mountedScreen3d = true;
-        }
-      }
+    /* Hall of Fame & Elimination Offline Showcase Rows (Pure Clean Table Rows, Zero Cartoon 3D Banners) */
+    var hofTablePanel = document.querySelector('#zone-main[data-zone-screen="hof"] .zone-panel[data-zscroll="1"]');
+    if (hofTablePanel) {
+      var realHofRows = hofTablePanel.querySelectorAll(':scope > .zone-table-row');
+      var fallbackRoster = hofTablePanel.querySelector('.zwc-hof-showcase-roster');
+      if (realHofRows.length > 0 && fallbackRoster) fallbackRoster.style.display = 'none';
     }
 
-    /* Crimes Screen: Live Dynamic 14-Category 3D Crime Tool Showcase Inside .zone-crime-location */
-    var crimeLoc = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-neighborhood > .zone-crime-location');
-    if (crimeLoc) {
-      var activeCrimeBtn = document.querySelector('#zone-main[data-zone-screen="crimes"] [data-crime-category][aria-pressed="true"]');
-      var crimeCat = activeCrimeBtn ? (activeCrimeBtn.getAttribute('data-crime-category') || 'search') : 'search';
-      var crimeCatTitle = activeCrimeBtn && activeCrimeBtn.querySelector('span') ? activeCrimeBtn.querySelector('span').childNodes[0].textContent : crimeCat;
-      var CRIME_TOOL_MAP = {
-        search: { id: 'glasses', cat: 'enhancer' },
-        boot: { id: 'high_speed_drive', cat: 'enhancer' },
-        graf: { id: 'paint_mask', cat: 'enhancer' },
-        shop: { id: 'mountain_bike', cat: 'vehicle' },
-        pick: { id: 'cut_throat_razor', cat: 'melee' },
-        skim: { id: 'skimmer', cat: 'enhancer' },
-        burg: { id: 'crowbar', cat: 'enhancer' },
-        hustle: { id: 'megaphone', cat: 'enhancer' },
-        disp: { id: 'latex_gloves', cat: 'enhancer' },
-        crack: { id: 'hacking_rig', cat: 'enhancer' },
-        forge: { id: 'magnifying_glass', cat: 'enhancer' },
-        scam: { id: 'ergonomic_keyboard', cat: 'enhancer' },
-        counter: { id: 'gold_bullion', cat: 'contraband' },
-        arson: { id: 'windproof_lighter', cat: 'enhancer' }
-      };
-      var cTool = CRIME_TOOL_MAP[crimeCat] || CRIME_TOOL_MAP.search;
-      var cShowcase = crimeLoc.querySelector('.zwc-crime-3d-showcase');
-      if (!cShowcase || cShowcase.getAttribute('data-crime-tool') !== cTool.id) {
-        if (cShowcase) cShowcase.remove();
-        cShowcase = document.createElement('div');
-        cShowcase.className = 'zwc-crime-3d-showcase';
-        cShowcase.setAttribute('data-crime-tool', cTool.id);
-        cShowcase.innerHTML =
-          '<div class="z3d-item-slot zwc-crime-3d-slot" data-z3d-item="' + cTool.id + '" data-z3d-cat="' + cTool.cat + '" data-z3d-rarity="epic"></div>' +
-          '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + cTool.id + '" data-zwc-cat="' + cTool.cat + '" data-zwc-label="' + String(crimeCatTitle || cTool.id).replace(/"/g, '') + '">' + (isAr() ? 'أداة العملية 3D' : '360° Rig') + '</button>';
-        crimeLoc.appendChild(cShowcase);
-        mountedScreen3d = true;
+    var flatNewsImg = document.querySelector('#zone-main[data-zone-screen="newspaper"] .zone-empty-state img[src*="newspaper.svg"]');
+    if (flatNewsImg) {
+      flatNewsImg.style.display = 'none';
+      if (!flatNewsImg.parentElement.querySelector('.zwc-press-empty-crest')) {
+        var pCrest = document.createElement('span');
+        pCrest.className = 'zwc-press-empty-crest';
+        pCrest.innerHTML = SKETCH_AREA_ICONS.newspaper;
+        flatNewsImg.parentElement.insertBefore(pCrest, flatNewsImg);
       }
-    }
-
-    /* Gym Screen: Sovereign Tier Medallions + 3D Gym Equipment Turntables on Membership Ladder */
-    var gymRows = document.querySelectorAll('#zone-main[data-zone-screen="gym"] .zone-membership-row');
-    var gym3dItems = ['knuckles', 'edu_sports', 'bat', 'edrink', 'hammer', 'kevlar', 'stun_baton', 'edu_combat'];
-    for (var gi = 0; gi < gymRows.length; gi++) {
-      var gRow = gymRows[gi];
-      if (!gRow.querySelector('.zwc-gym-tier-3d')) {
-        var gItem = gym3dItems[gi % gym3dItems.length];
-        var gName = gRow.querySelector('strong') ? gRow.querySelector('strong').textContent : 'Gym';
-        var gWrap = document.createElement('div');
-        gWrap.className = 'zwc-edu-3d-wrap zwc-gym-tier-3d';
-        gWrap.innerHTML =
-          '<div class="z3d-item-slot zwc-edu-3d-slot" data-z3d-item="' + gItem + '" data-z3d-cat="enhancer"></div>' +
-          '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + gItem + '" data-zwc-label="' + gName.replace(/"/g, '') + '">3D</button>';
-        gRow.insertBefore(gWrap, gRow.firstChild);
-        mountedScreen3d = true;
-      }
-    }
-
-    /* Hall of Fame Screen: 3D Champions Podium Stage + Gold/Platinum/Bronze Rank Medallions + Syndicate Legends Roster */
-    var hofMain = document.querySelector('#zone-main[data-zone-screen="hof"]');
-    if (hofMain) {
-      var hofLang = isAr() ? 'ar' : 'en';
-      var hofMedalsSec = hofMain.querySelector('[data-torn-honors-medals="1"]');
-      var hofHero = document.getElementById('zwc-hof-3d-hero');
-      if (hofMedalsSec && (!hofHero || hofHero.getAttribute('data-lang') !== hofLang)) {
-        if (hofHero) hofHero.remove();
-        hofHero = document.createElement('div');
-        hofHero.id = 'zwc-hof-3d-hero';
-        hofHero.className = 'zwc-edu-3d-hero zwc-hof-3d-hero';
-        hofHero.setAttribute('data-lang', hofLang);
-        hofHero.innerHTML =
-          '<div class="zwc-edu-hero-bar">' +
-            '<div class="zwc-edu-hero-meta">' +
-              '<span class="zwc-edu-hero-kicker">' + (hofLang === 'ar' ? 'قاعة المشاهير السيادية · منصة الأبطال ثلاثية الأبعاد' : 'SOVEREIGN HALL OF FAME · 3D CHAMPIONS ROTUNDA') + '</span>' +
-              '<strong class="zwc-edu-hero-title">' + (hofLang === 'ar' ? 'منصة التتويج بالذهب عيار 24 وكأس السيادة الدوّار' : '24K Gold Champions Podium & Rotating Sovereign Cup') + '</strong>' +
-            '</div>' +
-            '<div class="zwc-edu-hero-actions">' +
-              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_command">' + (hofLang === 'ar' ? 'تاج السيادة 3D' : '360° Sovereign Crown') + '</button>' +
-              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="gold_bullion" data-zwc-cat="contraband">' + (hofLang === 'ar' ? 'سبيكة الذهب 3D' : '360° Gold Reserve') + '</button>' +
-            '</div>' +
-          '</div>' +
-          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="hof" data-z3d-interactive="1" style="min-height:220px;height:220px"></div>';
-        hofMain.insertBefore(hofHero, hofMedalsSec);
-        mountedScreen3d = true;
-      }
-
-      var hofTablePanel = hofMain.querySelector('.zone-panel[data-zscroll="1"]');
-      if (hofTablePanel) {
-        var realHofRows = hofTablePanel.querySelectorAll(':scope > .zone-table-row');
-        var fallbackRoster = hofTablePanel.querySelector('.zwc-hof-showcase-roster');
-        if (realHofRows.length === 0) {
-          if (!fallbackRoster || fallbackRoster.getAttribute('data-lang') !== hofLang) {
-            if (fallbackRoster) fallbackRoster.remove();
-            fallbackRoster = document.createElement('div');
-            fallbackRoster.className = 'zwc-hof-showcase-roster';
-            fallbackRoster.setAttribute('data-lang', hofLang);
-            var LEGENDS = [
-              { r: '1', en: 'Don Tariq Al-Mansoor', ar: 'الدون طارق المنصور', lv: '100', st: '48,920,400', nw: '$4,820,000,000', fEn: 'Harbor Kings', fAr: 'ملوك المرفأ', ico: 'command' },
-              { r: '2', en: 'Viper Kael', ar: 'فايبر كايل', lv: '94', st: '36,410,850', nw: '$2,940,000,000', fEn: 'Night Market', fAr: 'السوق الليلي', ico: 'combat' },
-              { r: '3', en: 'Nadia Al-Harbi', ar: 'نادية الحربي', lv: '91', st: '31,880,200', nw: '$2,315,000,000', fEn: 'Old Guard', fAr: 'الحرس القديم', ico: 'army' },
-              { r: '4', en: 'Viktor Drago', ar: 'فيكتور دراغو', lv: '86', st: '24,605,110', nw: '$1,680,000,000', fEn: 'Sand Vipers', fAr: 'أفاعي الرمال', ico: 'melee' },
-              { r: '5', en: 'Layla Al-Noor', ar: 'ليلى النور', lv: '82', st: '19,420,900', nw: '$1,290,000,000', fEn: 'Harbor Kings', fAr: 'ملوك المرفأ', ico: 'pharma' },
-              { r: '6', en: 'Marcus Vance', ar: 'ماركوس فانس', lv: '78', st: '15,110,500', nw: '$940,000,000', fEn: 'Night Market', fAr: 'السوق الليلي', ico: 'business' }
-            ];
-            var rowsMarkup = '';
-            for (var li2 = 0; li2 < LEGENDS.length; li2++) {
-              var lg = LEGENDS[li2];
-              rowsMarkup +=
-                '<div class="zone-table-row zwc-hof-legend-row" data-rank="' + lg.r + '">' +
-                  '<bdi class="zwc-hof-rank-pill">#' + lg.r + '</bdi>' +
-                  '<span class="zwc-hof-player-cell"><span class="zwc-inline-crest">' + (SKETCH_ITEM_ICONS[lg.ico] || SKETCH_AREA_ICONS.hof) + '</span><strong>' + (hofLang === 'ar' ? lg.ar : lg.en) + '</strong></span>' +
-                  '<bdi>' + lg.lv + '</bdi>' +
-                  '<bdi>' + lg.st + '</bdi>' +
-                  '<bdi style="color:var(--money,#34d399)">' + lg.nw + '</bdi>' +
-                  '<span>' + (hofLang === 'ar' ? lg.fAr : lg.fEn) + '</span>' +
-                '</div>';
-            }
-            fallbackRoster.innerHTML = rowsMarkup;
-            hofTablePanel.appendChild(fallbackRoster);
-          }
-        } else if (fallbackRoster) {
-          fallbackRoster.style.display = 'none';
-        }
-      }
-    }
-
-    /* Elimination Screen: Live 3D 4-Crew Turf War Octagon Stage inside .zone-competition-art */
-    var elimArt = document.querySelector('#zone-main[data-zone-screen="elimination"] .zone-competition-art');
-    if (elimArt && !elimArt.querySelector('[data-z3d-stage="combat-arena"]')) {
-      var elimStage = document.createElement('div');
-      elimStage.className = 'z3d-action-stage zwc-elim-3d-stage';
-      elimStage.setAttribute('data-z3d-stage', 'combat-arena');
-      elimStage.setAttribute('data-z3d-submode', 'elimination');
-      elimStage.setAttribute('data-z3d-interactive', '1');
-      elimArt.appendChild(elimStage);
-      mountedScreen3d = true;
-    }
-    var elimTable = document.querySelector('#zone-main[data-zone-screen="elimination"] .zone-competition-table');
-    if (elimTable) {
-      var realElimRows = elimTable.querySelectorAll(':scope > .zone-competition-rank:not(.zone-table-heading)');
-      var elimFallback = elimTable.querySelector('.zwc-elim-showcase-roster');
-      var elimLang = isAr() ? 'ar' : 'en';
-      if (realElimRows.length === 0) {
-        if (!elimFallback || elimFallback.getAttribute('data-lang') !== elimLang) {
-          if (elimFallback) elimFallback.remove();
-          elimFallback = document.createElement('div');
-          elimFallback.className = 'zwc-elim-showcase-roster';
-          elimFallback.setAttribute('data-lang', elimLang);
-          var CREWS = [
-            { r: '1', en: 'Harbor Kings', ar: 'ملوك المرفأ', m: '48', sc: '1,420', ico: 'faction' },
-            { r: '2', en: 'Night Market', ar: 'السوق الليلي', m: '44', sc: '1,285', ico: 'city' },
-            { r: '3', en: 'Old Guard', ar: 'الحرس القديم', m: '39', sc: '1,110', ico: 'hof' },
-            { r: '4', en: 'Sand Vipers', ar: 'أفاعي الرمال', m: '41', sc: '980', ico: 'elimination' }
-          ];
-          var cHtml = '';
-          for (var ci2 = 0; ci2 < CREWS.length; ci2++) {
-            var cr = CREWS[ci2];
-            cHtml +=
-              '<div class="zone-competition-rank zwc-elim-crew-row">' +
-                '<bdi>#' + cr.r + '</bdi>' +
-                '<strong class="zwc-hof-player-cell"><span class="zwc-inline-crest">' + (SKETCH_AREA_ICONS[cr.ico] || SKETCH_AREA_ICONS.faction) + '</span><span>' + (elimLang === 'ar' ? cr.ar : cr.en) + '</span></strong>' +
-                '<bdi>' + cr.m + '</bdi>' +
-                '<bdi style="color:#f3c969">' + cr.sc + '</bdi>' +
-              '</div>';
-          }
-          elimFallback.innerHTML = cHtml;
-          elimTable.appendChild(elimFallback);
-        }
-      } else if (elimFallback) {
-        elimFallback.style.display = 'none';
-      }
-    }
-
-    /* Newspaper Screen: Sovereign Press Medallion + 3D Press/Bounty Stage + Stock Mover 3D Inspect */
-    var newsMain = document.querySelector('#zone-main[data-zone-screen="newspaper"]');
-    if (newsMain) {
-      var flatNewsImg = newsMain.querySelector('.zone-empty-state img[src*="newspaper.svg"]');
-      if (flatNewsImg) {
-        flatNewsImg.style.display = 'none';
-        if (!flatNewsImg.parentElement.querySelector('.zwc-press-empty-crest')) {
-          var pCrest = document.createElement('span');
-          pCrest.className = 'zwc-press-empty-crest';
-          pCrest.innerHTML = SKETCH_AREA_ICONS.newspaper;
-          flatNewsImg.parentElement.insertBefore(pCrest, flatNewsImg);
-        }
-      }
-      var stockEntries = newsMain.querySelectorAll('.zone-stock-entry');
-      for (var se = 0; se < stockEntries.length; se++) {
-        var seRow = stockEntries[se];
-        if (!seRow.querySelector('.zwc-stock-3d-btn')) {
-          var seName = seRow.querySelector('span') ? seRow.querySelector('span').textContent : '';
-          var seSpec = resolveCatalog3DSpec(seName, '');
-          var seBtn = document.createElement('button');
-          seBtn.type = 'button';
-          seBtn.className = 'zwc-edu-3d-btn zwc-stock-3d-btn';
-          seBtn.setAttribute('data-zwc-inspect-3d', seSpec.id);
-          seBtn.setAttribute('data-zwc-cat', seSpec.cat);
-          seBtn.setAttribute('data-zwc-label', seName.replace(/"/g, ''));
-          seBtn.textContent = '3D';
-          seRow.appendChild(seBtn);
-        }
-      }
-      var syndHub = newsMain.querySelector('[data-zone-syndicate-hub="1"]');
-      var pressHero = document.getElementById('zwc-press-3d-hero');
-      var pressLang = isAr() ? 'ar' : 'en';
-      if (syndHub && (!pressHero || pressHero.getAttribute('data-lang') !== pressLang)) {
-        if (pressHero) pressHero.remove();
-        pressHero = document.createElement('div');
-        pressHero.id = 'zwc-press-3d-hero';
-        pressHero.className = 'zwc-edu-3d-hero zwc-press-3d-hero';
-        pressHero.setAttribute('data-lang', pressLang);
-        pressHero.innerHTML =
-          '<div class="zwc-edu-hero-bar">' +
-            '<div class="zwc-edu-hero-meta">' +
-              '<span class="zwc-edu-hero-kicker">' + (pressLang === 'ar' ? 'صحيفة زون · مطبعة الشارع ولوحة المكافآت ثلاثية الأبعاد' : 'ZONE GAZETTE · 3D ROTARY PRESS & BOUNTY WIRE') + '</span>' +
-              '<strong class="zwc-edu-hero-title">' + (pressLang === 'ar' ? 'غرفة أخبار العائلات وبرقيات المطلوبين المباشرة' : 'Underworld Newsroom, Market Ticker & Wanted Dispatch') + '</strong>' +
-            '</div>' +
-          '</div>' +
-          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="press" data-z3d-interactive="1" style="min-height:196px;height:196px"></div>';
-        newsMain.insertBefore(pressHero, syndHub);
-        mountedScreen3d = true;
-      }
-    }
-
-    /* Missions Screen: Sovereign Contract Medallions + 3D Reward Preview Button */
-    var missionRows = document.querySelectorAll('#zone-main[data-zone-screen="missions"] .zone-mission-row');
-    var missionIcons = ['crimes', 'gym', 'jobs', 'attack', 'bank', 'faction'];
-    var mission3d = ['crowbar', 'edu_sports', 'gold_bullion', 'assaultrifle_1', 'weapon_cache'];
-    for (var mri = 0; mri < missionRows.length; mri++) {
-      var mRowEl = missionRows[mri];
-      if (!mRowEl.querySelector('.zwc-mission-crest')) {
-        var mCrest = document.createElement('span');
-        mCrest.className = 'zwc-inline-crest zwc-mission-crest';
-        mCrest.innerHTML = SKETCH_AREA_ICONS[missionIcons[mri % missionIcons.length]] || SKETCH_AREA_ICONS.missions;
-        mRowEl.insertBefore(mCrest, mRowEl.firstChild);
-        var m3dItem = mission3d[mri % mission3d.length];
-        var m3dBtn = document.createElement('button');
-        m3dBtn.type = 'button';
-        m3dBtn.className = 'zwc-edu-3d-btn';
-        m3dBtn.setAttribute('data-zwc-inspect-3d', m3dItem);
-        m3dBtn.textContent = '3D';
-        mRowEl.insertBefore(m3dBtn, mRowEl.lastElementChild);
-      }
-    }
-
-    if (mountedScreen3d && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
-      window.ZoneEcs3D.scan(document.getElementById('zone-main') || document);
     }
 
     if (!document.__zwcEdu3dClickBound) {
       document.__zwcEdu3dClickBound = true;
       document.addEventListener('click', function (ev) {
+        var gateBtn = ev.target && ev.target.closest ? ev.target.closest('[data-zwc-unlock-stage]') : null;
+        if (gateBtn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          var hostStage = gateBtn.closest('.z3d-action-stage');
+          if (hostStage) {
+            hostStage.setAttribute('data-zwc-3d-unlocked', '1');
+            var gate = hostStage.querySelector('.zwc-handdrawn-3d-gate');
+            if (gate) gate.remove();
+            if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+              window.ZoneEcs3D.scan(hostStage.parentElement || document);
+            }
+          }
+          return;
+        }
+        /* Auto-unlock Casino 3D pit when clicking Spin / Deal / Roll wager buttons! */
+        var casinoAct = ev.target && ev.target.closest ? ev.target.closest('[data-roulette-bet], [data-slots-spin], [data-casino-table] button, [data-zct-act]') : null;
+        if (casinoAct) {
+          var casStages = document.querySelectorAll('#zone-main[data-zone-screen="casino"] .z3d-action-stage');
+          for (var cs = 0; cs < casStages.length; cs++) {
+            casStages[cs].setAttribute('data-zwc-3d-unlocked', '1');
+            var cg = casStages[cs].querySelector('.zwc-handdrawn-3d-gate');
+            if (cg) cg.remove();
+          }
+        }
         var btn = ev.target && ev.target.closest ? ev.target.closest('[data-zwc-inspect-3d]') : null;
         if (!btn) return;
         ev.preventDefault();

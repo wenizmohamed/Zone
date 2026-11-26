@@ -27,7 +27,8 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=173';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=174';
+import { prepareCharacterArt } from '../../dist/character-presentation.js';
 
 export {
   THREE,
@@ -2662,23 +2663,110 @@ function buildArmorProcedural(subtype, rimColor) {
     return g;
   }
 
-  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.05, 0.38), tactical);
-  const chestPlate = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.52, 0.44), plate);
-  chestPlate.position.y = 0.16;
-  const strapL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.28, 0.4), tactical);
-  strapL.position.set(-0.28, 0.62, 0);
-  const strapR = strapL.clone();
-  strapR.position.x = 0.28;
-  const radio = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.12), gold);
-  radio.position.set(-0.30, 0.34, 0.24);
-  const radioAnt = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.015, 0.34, 8), plate);
-  radioAnt.position.set(-0.33, 0.58, 0.24);
-  for (let i = -1; i <= 1; i++) {
-    const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.28, 0.48), plate);
-    pouch.position.set(i * 0.25, -0.24, 0.02);
-    g.add(pouch);
+  // Sculpted Tactical SAPI Level-IV Ballistic Plate Carrier (Zero Flat Grey Bricks)
+  let corduraBump = null;
+  if (typeof document !== 'undefined' && typeof document.createElement === 'function') {
+    try {
+      const c = document.createElement('canvas'); c.width = 128; c.height = 128;
+      const ctx = c.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = '#808080'; ctx.fillRect(0, 0, 128, 128);
+        for (let y = 0; y < 128; y += 4) {
+          for (let x = 0; x < 128; x += 4) {
+            ctx.fillStyle = ((x + y) % 8 === 0) ? '#a6a6a6' : '#5c5c5c';
+            ctx.fillRect(x, y, 3, 2);
+          }
+        }
+        corduraBump = new THREE.CanvasTexture(c);
+        corduraBump.wrapS = THREE.RepeatWrapping; corduraBump.wrapT = THREE.RepeatWrapping;
+        corduraBump.repeat.set(6, 6);
+      }
+    } catch (_) { /* headless safe */ }
   }
-  g.add(torso, chestPlate, strapL, strapR, radio, radioAnt);
+  const corduraDark = makePbr(0x23292e, 0.72, 0.22, { color: rimColor, power: 2.5, intensity: 0.42 }, corduraBump ? { bumpMap: corduraBump, bumpScale: 0.018 } : {});
+  const rangerOlive = makePbr(0x363f33, 0.76, 0.18, { color: rimColor, power: 2.6, intensity: 0.38 }, corduraBump ? { bumpMap: corduraBump, bumpScale: 0.016 } : {});
+  const sapiArmor = makePbr(0x16191d, 0.38, 0.68, { color: rimColor, power: 2.3, intensity: 0.5 }, { clearcoat: 0.45 });
+  const kydexTan = makePbr(0x786246, 0.58, 0.25);
+  const crimsonMed = makePbr(0x991b1b, 0.45, 0.25);
+
+  // Swimmer-cut contoured SAPI octagonal plate bags (front & rear) + breathable inner mesh core
+  const innerCore = new THREE.Mesh(new THREE.CylinderGeometry(0.39, 0.36, 0.86, 16), corduraDark);
+  innerCore.scale.set(1.08, 1, 0.54);
+  innerCore.position.y = 0.02;
+  g.add(innerCore);
+
+  const sapiShape = new THREE.Shape();
+  sapiShape.moveTo(-0.34, -0.44);
+  sapiShape.lineTo(0.34, -0.44);
+  sapiShape.lineTo(0.36, 0.14);
+  sapiShape.lineTo(0.22, 0.44);
+  sapiShape.lineTo(-0.22, 0.44);
+  sapiShape.lineTo(-0.36, 0.14);
+  sapiShape.closePath();
+  const plateBagGeo = new THREE.ExtrudeGeometry(sapiShape, { depth: 0.075, bevelEnabled: true, bevelThickness: 0.024, bevelSize: 0.022, bevelSegments: 3 });
+
+  const frontBag = new THREE.Mesh(plateBagGeo, rangerOlive);
+  frontBag.position.set(0, 0.02, 0.155);
+  const rearBag = new THREE.Mesh(plateBagGeo, rangerOlive);
+  rearBag.position.set(0, 0.02, -0.235);
+  const chestTraumaPlate = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.035), sapiArmor);
+  chestTraumaPlate.position.set(0, 0.23, 0.255);
+  const brassBadge = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.075, 0.042), gold);
+  brassBadge.position.set(0.08, 0.23, 0.262);
+  g.add(frontBag, rearBag, chestTraumaPlate, brassBadge);
+
+  // 5 Horizontal PALS MOLLE Webbing Rows + Vertical Bartack Stitching
+  for (let row = 0; row < 5; row++) {
+    const wy = -0.32 + row * 0.105;
+    const wFront = new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.036, 0.022), corduraDark);
+    wFront.position.set(0, wy, 0.252);
+    const wRear = wFront.clone();
+    wRear.position.z = -0.252;
+    g.add(wFront, wRear);
+  }
+
+  // Ergonomic Curved Padded Shoulder Yokes + Quick-Release Polymer Buckles
+  for (const side of [-1, 1]) {
+    const yoke = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.068, 12, 22, Math.PI * 0.92), rangerOlive);
+    yoke.rotation.y = Math.PI / 2;
+    yoke.position.set(side * 0.22, 0.43, 0.0);
+    yoke.scale.set(1.0, 0.85, 0.85);
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.05, 0.28), sapiArmor);
+    pad.position.set(side * 0.22, 0.62, 0.0);
+    const qdBuckle = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.11, 0.045), gold);
+    qdBuckle.position.set(side * 0.23, 0.39, 0.22);
+    // Skeletal side cummerbund + side ballistic plate pocket
+    const cummerbund = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.32, 0.42), corduraDark);
+    cummerbund.position.set(side * 0.40, -0.10, 0.0);
+    const sidePlate = new THREE.Mesh(new THREE.BoxGeometry(0.095, 0.24, 0.24), rangerOlive);
+    sidePlate.position.set(side * 0.42, -0.10, 0.02);
+    g.add(yoke, pad, qdBuckle, cummerbund, sidePlate);
+  }
+
+  // Triple Kydex Kangaroo Mag Placard + 3 Curved 30-Round Rifle Magazines + Ranger Floorplates
+  for (let i = -1; i <= 1; i++) {
+    const mx = i * 0.205;
+    const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.175, 0.27, 0.095), kydexTan);
+    pouch.position.set(mx, -0.22, 0.295);
+    const magBody = new THREE.Mesh(new THREE.BoxGeometry(0.135, 0.24, 0.062), sapiArmor);
+    magBody.position.set(mx, -0.09, 0.298);
+    magBody.rotation.z = -0.06;
+    const pullLoop = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.011, 8, 16), gold);
+    pullLoop.position.set(mx, 0.04, 0.298);
+    g.add(pouch, magBody, pullLoop);
+  }
+
+  // Encrypted Tactical PRC Radio + Whip Antenna + Combat Tourniquet (CAT)
+  const radio = new THREE.Mesh(new THREE.BoxGeometry(0.125, 0.24, 0.085), sapiArmor);
+  radio.position.set(-0.29, 0.20, 0.255);
+  const knob1 = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.04, 10), gold);
+  knob1.position.set(-0.26, 0.33, 0.255);
+  const radioAnt = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.013, 0.46, 8), plate);
+  radioAnt.position.set(-0.325, 0.54, 0.255);
+  radioAnt.rotation.z = 0.08;
+  const ifak = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.20, 0.09), crimsonMed);
+  ifak.position.set(0.30, -0.20, -0.28);
+  g.add(radio, knob1, radioAnt, ifak);
   return g;
 }
 
@@ -4253,9 +4341,153 @@ export function countMeshStats3D(object3d) {
  *    Plug-and-Play support for globalThis.__ZoneRiggedOperative (@char-3d-anim)
  *    with seamless fallback to built-in articulated humanoid when absent.
  * -------------------------------------------------------------------------- */
+const _operativeGlbBufferCache = new Map();
+
+function fetchOperativeGlbBuffer(outfitKey) {
+  const fileMap = { suit: 'Suit', tactical: 'Swat', street: 'Casual_Hoodie' };
+  const file = fileMap[outfitKey] || 'Suit';
+  if (_operativeGlbBufferCache.has(file)) return _operativeGlbBufferCache.get(file);
+  const url = `/assets/character/quaternius/${file}.glb`;
+  const p = fetch(url)
+    .then((res) => {
+      if (!res.ok) throw new Error('GLB HTTP ' + res.status);
+      return res.arrayBuffer();
+    })
+    .catch((err) => {
+      _operativeGlbBufferCache.delete(file);
+      throw err;
+    });
+  _operativeGlbBufferCache.set(file, p);
+  return p;
+}
+
+function mapOperativeClipToGlbClip(clipName) {
+  const s = String(clipName || '').toLowerCase();
+  if (/ko|death|collapse/.test(s)) return 'Death';
+  if (/hit|hurt|damage/.test(s)) return 'HitRecieve';
+  if (/slash|melee|punch|hook|bag/.test(s)) return 'Sword_Slash';
+  if (/fire|shoot|recoil/.test(s)) return 'Gun_Shoot';
+  if (/stance|combat|crack|vault/.test(s)) return 'Idle_Sword';
+  return 'Idle';
+}
+
+function upgradeOperativeWithRealGlb(targetRoot, initialOutfit, opts = {}) {
+  if (opts.headless || typeof window === 'undefined' || typeof fetch !== 'function') return;
+  const rigApi = targetRoot.userData && targetRoot.userData.z3dRig;
+  let seq = 0;
+  let glbHolder = null;
+  let glbMixer = null;
+  let glbClips = {};
+  let activeGlbAction = null;
+  let disposed = false;
+
+  const playGlbClip = (logicalName) => {
+    if (!glbMixer || !glbClips) return;
+    const wanted = mapOperativeClipToGlbClip(logicalName);
+    const clip = glbClips[wanted] || glbClips.Idle || Object.values(glbClips)[0];
+    if (!clip) return;
+    const nextAct = glbMixer.clipAction(clip);
+    const loop = wanted === 'Idle' || wanted === 'Idle_Sword' || wanted === 'Walk';
+    nextAct.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, loop ? Infinity : 1);
+    nextAct.clampWhenFinished = wanted === 'Death';
+    if (activeGlbAction && activeGlbAction !== nextAct) {
+      nextAct.reset().play();
+      activeGlbAction.crossFadeTo(nextAct, 0.16, false);
+    } else {
+      nextAct.reset().play();
+    }
+    activeGlbAction = nextAct;
+  };
+
+  const mountOutfitGlb = (outfitName) => {
+    const norm = /suit/.test(outfitName) ? 'suit' : /tact|swat|armor/.test(outfitName) ? 'tactical' : 'street';
+    const token = ++seq;
+    fetchOperativeGlbBuffer(norm)
+      .then((buf) => new GLTFLoader().parseAsync(buf.slice(0), ''))
+      .then((gltf) => {
+        if (disposed || token !== seq || !gltf || !gltf.scene) return;
+        try { prepareCharacterArt(THREE, gltf.scene); } catch (_) { /* keep raw if non-standard */ }
+        gltf.scene.updateMatrixWorld(true);
+        const box = new THREE.Box3().setFromObject(gltf.scene);
+        const size = box.getSize(new THREE.Vector3());
+        const fitScale = 1.48 / Math.max(size.y, 0.01);
+        gltf.scene.scale.multiplyScalar(fitScale);
+        gltf.scene.position.set(0, -box.min.y * fitScale, 0);
+        gltf.scene.traverse((n) => {
+          if (n.isMesh) {
+            n.castShadow = true;
+            n.receiveShadow = true;
+            n.frustumCulled = false;
+            n.userData.z3dAuthoredGlbMesh = true;
+          }
+        });
+
+        // Hide procedural stick-figure meshes while keeping WeaponMount props visible
+        targetRoot.traverse((n) => {
+          if (!n.isMesh || n.userData.z3dAuthoredGlbMesh) return;
+          let p = n.parent;
+          let insideProp = false;
+          while (p && p !== targetRoot) {
+            if (p.name === 'WeaponMountR' || p.name === 'WeaponMountL' || p.name === 'z3d-item-body') {
+              insideProp = true;
+              break;
+            }
+            p = p.parent;
+          }
+          if (!insideProp) n.visible = false;
+        });
+
+        if (glbMixer && glbHolder) {
+          glbMixer.stopAllAction();
+          glbMixer.uncacheRoot(glbHolder);
+          targetRoot.remove(glbHolder);
+        }
+        glbHolder = gltf.scene;
+        targetRoot.add(glbHolder);
+        glbClips = Object.fromEntries((gltf.animations || []).map((c) => [c.name, c]));
+        glbMixer = new THREE.AnimationMixer(glbHolder);
+        playGlbClip(rigApi ? rigApi.currentClip : 'idle_breathe');
+        glbMixer.update(0.016);
+      })
+      .catch(() => { /* retain procedural rig cleanly on offline error */ });
+  };
+
+  if (rigApi) {
+    const origUpdate = rigApi.update.bind(rigApi);
+    rigApi.update = (dt = 0.016) => {
+      const res = origUpdate(dt);
+      if (glbMixer && dt > 0 && Number.isFinite(dt)) glbMixer.update(Math.min(dt, 0.25));
+      return res;
+    };
+    const origPlay = rigApi.playState.bind(rigApi);
+    rigApi.playState = (clipName, fadeSec = 0.18) => {
+      const res = origPlay(clipName, fadeSec);
+      playGlbClip(clipName);
+      return res;
+    };
+    const origSetOutfit = rigApi.setOutfit.bind(rigApi);
+    rigApi.setOutfit = (nextOutfit) => {
+      const updated = origSetOutfit(nextOutfit);
+      mountOutfitGlb(updated);
+      return updated;
+    };
+    const origDispose = rigApi.dispose.bind(rigApi);
+    rigApi.dispose = () => {
+      disposed = true;
+      if (glbMixer && glbHolder) {
+        glbMixer.stopAllAction();
+        glbMixer.uncacheRoot(glbHolder);
+      }
+      return origDispose();
+    };
+  }
+
+  mountOutfitGlb(initialOutfit);
+}
+
 export function createHumanoid3D(opts = {}) {
-  const outfit = String(opts.outfit || (opts.bossCrown ? 'tactical' : 'street')).toLowerCase();
-  const rimHex = opts.rimColor || 0x38bdf8;
+  const outfit = String(opts.outfit || (opts.bossCrown ? 'tactical' : 'suit')).toLowerCase();
+  const rimHex = opts.rimColor || 0xd4a656;
   const scale = opts.scale || 1.0;
 
   if (
@@ -4294,13 +4526,14 @@ export function createHumanoid3D(opts = {}) {
           for (let m = 0; m < mats.length; m++) {
             const mat = mats[m];
             if (mat && (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) && (!mat.userData || !mat.userData.z3dRimUniforms)) {
-              applyFresnelRimShader(mat, { color: rimHex, power: 2.4, intensity: opts.rimIntensity || 0.55, pulseHz: 0.8 });
+              applyFresnelRimShader(mat, { color: rimHex, power: 2.4, intensity: opts.rimIntensity || 0.42, pulseHz: 0.8 });
             }
           }
         });
         if (scale !== 1.0 && Math.abs(rigged.scale.x - 1.0) < 1e-4) {
           rigged.scale.setScalar(scale);
         }
+        upgradeOperativeWithRealGlb(rigged, outfit, opts);
         return rigged;
       }
     } catch (_) {

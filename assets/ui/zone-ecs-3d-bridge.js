@@ -232,8 +232,9 @@
       return false;
     }
 
-    // Default to instant 0ms overlay whenever healthy WebGL canvas is absent
-    var shouldMount = allowInstantOverlay !== false || explicitFail || (Date.now() - mountTs >= CHAR_WATCHDOG_MS);
+    // Default to non-intrusive mode: let the real GLB character3d.html render natively,
+    // and ONLY mount the fallback stage if WebGL explicitly errors or force-requested!
+    var shouldMount = allowInstantOverlay === true || explicitFail;
     if (!shouldMount) return false;
 
     // Hide any "3D preview is unavailable" message without removing Fiber-managed nodes
@@ -296,8 +297,8 @@
     }
 
     var mountTs = getCharMountTimestamp(charEl);
-    // Mount character-turntable immediately (0ms) when no healthy canvas is ready yet
-    evaluateChar3DFallback(true);
+    // Do NOT hide iframe#zone-char-3d at 0ms — let real Suit.glb / Casual_Hoodie.glb / Swat.glb load!
+    evaluateChar3DFallback(false);
 
     // Non-resetting watchdog: never clearTimeout an active timer for the same #zone-char-3d node!
     if (charWatchEl !== charEl) {
@@ -313,12 +314,11 @@
       var remaining = Math.max(16, CHAR_WATCHDOG_MS - elapsed);
       charWatchTimer = window.setTimeout(function () {
         charWatchTimer = 0;
-        evaluateChar3DFallback(true);
+        evaluateChar3DFallback(false);
       }, remaining);
     }
 
-    // Bounded poll (every 450ms up to 9s) so when character3d.html finishes unpacking
-    // its compressed GLB at ~1.7s-4s, #zone-char-3d smoothly un-hides right away!
+    // Bounded error check so if character3d.html genuinely fails WebGL, fallback still rescues it
     if (!charPollInterval) {
       charPollInterval = window.setInterval(function () {
         var liveEl = document.getElementById('zone-char-3d');
@@ -327,12 +327,8 @@
           charPollInterval = 0;
           return;
         }
-        var stillFallback = evaluateChar3DFallback(true);
-        if (!stillFallback) {
-          clearInterval(charPollInterval);
-          charPollInterval = 0;
-        }
-      }, 450);
+        evaluateChar3DFallback(false);
+      }, 600);
     }
   }
 
@@ -589,9 +585,9 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=173')
+    return import('./zone-3d-environments.mjs?v=174')
       .catch(function () {
-        return import('./zone-3d-environments.mjs?v=172');
+        return import('./zone-3d-environments.mjs?v=173');
       })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=168');
@@ -637,9 +633,9 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=173')
+    return import('./zone-ecs-3d-engine.mjs?v=174')
       .catch(function () {
-        return import('./zone-ecs-3d-engine.mjs?v=172');
+        return import('./zone-ecs-3d-engine.mjs?v=173');
       })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=168');
