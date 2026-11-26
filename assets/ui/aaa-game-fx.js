@@ -2251,38 +2251,18 @@
       var lastVCheck = Date.now();
       var vCheckInFlight = false;
       var autoReloadedOnce = false;
-      function extractHeadSignature(docOrHtml) {
-        var html = typeof docOrHtml === 'string' ? docOrHtml : (document.head ? document.head.innerHTML : '');
-        var matches = html.match(/[a-z0-9_-]+\.(?:js|css|mjs)\?v=\d+/gi);
-        return matches && matches.length ? matches.sort().join('|') : '';
-      }
-      var bootHeadSig = extractHeadSignature();
-      function triggerCleanReload() {
-        if (autoReloadedOnce) return;
-        autoReloadedOnce = true;
-        try {
-          if (window.caches && typeof window.caches.keys === 'function') {
-            window.caches.keys().then(function (keys) {
-              return Promise.all(keys.map(function (k) { return window.caches.delete(k); }));
-            }).finally(function () {
-              window.location.reload();
-            });
-            return;
-          }
-        } catch (_) {}
-        window.location.reload();
-      }
       function checkLiveBundleVersion(forceCheck) {
         try {
           if (typeof navigator !== 'undefined' && navigator.webdriver) return;
           if (document.hidden || vCheckInFlight || autoReloadedOnce) return;
           if (!location || (location.protocol !== 'https:' && location.protocol !== 'http:')) return;
           var now = Date.now();
-          if (!forceCheck && now - lastVCheck <= 15000) return;
+          if (!forceCheck && now - lastVCheck <= 45000) return;
           var curScript = document.querySelector('script[src*="aaa-game-fx.js?v="]');
           var curSrc = curScript ? curScript.getAttribute('src') || '' : '';
           var curMatch = curSrc.match(/aaa-game-fx\.js\?v=(\d+)/);
-          if (!curMatch) return;
+          var curVer = curMatch ? Number(curMatch[1]) : 0;
+          if (!curVer) return;
           lastVCheck = now;
           vCheckInFlight = true;
           fetch('/?__vc=' + now, { cache: 'no-store', credentials: 'same-origin' })
@@ -2293,9 +2273,16 @@
               vCheckInFlight = false;
               if (!html) return;
               var liveMatch = html.match(/aaa-game-fx\.js\?v=(\d+)/);
-              var liveSig = extractHeadSignature(html);
-              if ((liveMatch && liveMatch[1] && liveMatch[1] !== curMatch[1]) || (bootHeadSig && liveSig && liveSig !== bootHeadSig)) {
-                triggerCleanReload();
+              var liveVer = liveMatch ? Number(liveMatch[1]) : 0;
+              if (liveVer > curVer) {
+                try {
+                  if (typeof sessionStorage !== 'undefined') {
+                    if (sessionStorage.getItem('zaaa_reloaded_ver') === String(liveVer)) return;
+                    sessionStorage.setItem('zaaa_reloaded_ver', String(liveVer));
+                  }
+                } catch (_) {}
+                autoReloadedOnce = true;
+                window.location.reload();
               }
             })
             .catch(function () {
@@ -2310,23 +2297,9 @@
         syncHeroLoop();
         syncWebglIframeThrottle();
         if (!document.hidden) {
-          checkLiveBundleVersion(true);
+          checkLiveBundleVersion(false);
         }
       });
-
-      window.addEventListener('focus', function () {
-        checkLiveBundleVersion(false);
-      });
-
-      if (typeof navigator !== 'undefined' && navigator.serviceWorker && typeof navigator.serviceWorker.addEventListener === 'function') {
-        navigator.serviceWorker.addEventListener('controllerchange', function () {
-          checkLiveBundleVersion(true);
-        });
-      }
-
-      setTimeout(function () {
-        checkLiveBundleVersion(true);
-      }, 1500);
 
       window.addEventListener('pageshow', function (ev) {
         if (ev && ev.persisted) {

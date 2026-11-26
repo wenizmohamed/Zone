@@ -246,7 +246,8 @@
     if (navBtn) navBtn.click();
   }
 
-  /* 0. Keep watercolor-sketchbook.css after runtime-injected <style> tags */
+  /* 0. Keep watercolor-sketchbook.css after runtime-injected <style> tags (debounced, zero thrash) */
+  var headOrderRaf = false;
   function ensureStylesheetLast() {
     var head = document.head;
     if (!head) return;
@@ -254,11 +255,24 @@
     if (!link) return;
     var sibling = link.nextElementSibling;
     while (sibling) {
-      if (sibling.tagName === 'STYLE' || sibling.tagName === 'LINK') {
+      if (sibling.tagName === 'STYLE') {
         head.appendChild(link);
         break;
       }
       sibling = sibling.nextElementSibling;
+    }
+  }
+  function scheduleHeadOrder() {
+    if (headOrderRaf) return;
+    headOrderRaf = true;
+    var flush = function () {
+      headOrderRaf = false;
+      ensureStylesheetLast();
+    };
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(flush);
+    } else {
+      setTimeout(flush, 16);
     }
   }
 
@@ -1124,7 +1138,7 @@
     if (typeof MutationObserver === 'function') {
       if (document.head) {
         var headObs = new MutationObserver(function () {
-          ensureStylesheetLast();
+          scheduleHeadOrder();
         });
         headObs.observe(document.head, { childList: true });
       }
