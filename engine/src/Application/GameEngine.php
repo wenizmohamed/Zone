@@ -1794,12 +1794,143 @@ final class GameEngine
         return (new LoadoutSynergyService($this->database, $this->events))->act($playerId, $action, $payload);
     }
 
+    /** @var array<int, bool> */
+    private static array $uiUxSchemaEnsured = [];
+
+    private function ensureUiUxPreferencesSchema(): void
+    {
+        $dbKey = spl_object_id($this->database);
+        if (!empty(self::$uiUxSchemaEnsured[$dbKey])) {
+            return;
+        }
+        $this->database->execute(
+            "CREATE TABLE IF NOT EXISTS player_ui_ux_prefs (
+                player_id VARCHAR(64) PRIMARY KEY,
+                prefs_json TEXT NOT NULL,
+                updated_at VARCHAR(40) NOT NULL
+            )"
+        );
+        self::$uiUxSchemaEnsured[$dbKey] = true;
+    }
+
+    /** @return array<string, mixed> */
+    private function defaultUiUxPreferences(): array
+    {
+        return [
+            'pinnedRoutes' => ['home', 'crimes', 'gym', 'city', 'items', 'casino'],
+            'recentRoutes' => ['home'],
+            'quickAssistVisible' => true,
+            'hapticFeedback' => true,
+            'instantActionPulse' => true,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @param array<string, mixed>|null $base
+     * @return array<string, mixed>
+     */
+    private function sanitizeUiUxPreferences(array $input, ?array $base = null): array
+    {
+        $defaults = $this->defaultUiUxPreferences();
+        $out = is_array($base) ? array_merge($defaults, $base) : $defaults;
+        $validScreens = $this->releaseManagerSupportedScreenIds();
+
+        if (isset($input['pinnedRoutes']) && is_array($input['pinnedRoutes'])) {
+            $pins = [];
+            foreach ($input['pinnedRoutes'] as $scr) {
+                if (is_string($scr)) {
+                    $clean = strtolower(trim($scr));
+                    if (in_array($clean, $validScreens, true) && !in_array($clean, $pins, true)) {
+                        $pins[] = $clean;
+                    }
+                }
+                if (count($pins) >= 8) {
+                    break;
+                }
+            }
+            $out['pinnedRoutes'] = $pins !== [] ? $pins : $defaults['pinnedRoutes'];
+        }
+
+        if (isset($input['recentRoutes']) && is_array($input['recentRoutes'])) {
+            $recents = [];
+            foreach ($input['recentRoutes'] as $scr) {
+                if (is_string($scr)) {
+                    $clean = strtolower(trim($scr));
+                    if (in_array($clean, $validScreens, true) && !in_array($clean, $recents, true)) {
+                        $recents[] = $clean;
+                    }
+                }
+                if (count($recents) >= 6) {
+                    break;
+                }
+            }
+            if ($recents !== []) {
+                $out['recentRoutes'] = $recents;
+            }
+        }
+
+        foreach (['quickAssistVisible', 'hapticFeedback', 'instantActionPulse'] as $boolKey) {
+            if (array_key_exists($boolKey, $input)) {
+                $out[$boolKey] = (bool) $input[$boolKey];
+            }
+        }
+
+        return $out;
+    }
+
+    /** @return array<string, mixed> */
+    public function playerUiUxPreferences(string $playerId = 'founder-player'): array
+    {
+        $this->ensureUiUxPreferencesSchema();
+        $row = $this->database->fetchOne(
+            'SELECT prefs_json FROM player_ui_ux_prefs WHERE player_id = :pid',
+            ['pid' => $playerId]
+        );
+        if ($row === null || !is_string($row['prefs_json'] ?? null)) {
+            return $this->defaultUiUxPreferences();
+        }
+        $decoded = json_decode($row['prefs_json'], true);
+        return is_array($decoded) ? $this->sanitizeUiUxPreferences($decoded) : $this->defaultUiUxPreferences();
+    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @return array<string, mixed>
+     */
+    public function savePlayerUiUxPreferences(string $playerId, array $input): array
+    {
+        $this->ensureUiUxPreferencesSchema();
+        $current = $this->playerUiUxPreferences($playerId);
+        $sanitized = $this->sanitizeUiUxPreferences($input, $current);
+        $json = json_encode($sanitized, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $nowIso = gmdate('c');
+        $existing = $this->database->fetchOne(
+            'SELECT player_id FROM player_ui_ux_prefs WHERE player_id = :pid_chk',
+            ['pid_chk' => $playerId]
+        );
+        if ($existing === null) {
+            $this->database->execute(
+                'INSERT INTO player_ui_ux_prefs (player_id, prefs_json, updated_at) VALUES (:pid_ins, :pjson_ins, :pupd_ins)',
+                ['pid_ins' => $playerId, 'pjson_ins' => $json, 'pupd_ins' => $nowIso]
+            );
+        } else {
+            $this->database->execute(
+                'UPDATE player_ui_ux_prefs SET prefs_json = :pjson_upd, updated_at = :pupd_upd WHERE player_id = :pid_upd',
+                ['pjson_upd' => $json, 'pupd_upd' => $nowIso, 'pid_upd' => $playerId]
+            );
+        }
+        return $sanitized;
+    }
+
     public function playerSettings(string $playerId = 'founder-player'): array
     {
         if (!class_exists(PlayerSettingsService::class)) {
             throw new RuntimeException('PlayerSettingsService is unavailable.');
         }
-        return (new PlayerSettingsService($this->database, $this->events))->snapshot($playerId);
+        $snap = (new PlayerSettingsService($this->database, $this->events))->snapshot($playerId);
+        $snap['uiUx'] = $this->playerUiUxPreferences($playerId);
+        return $snap;
     }
 
     public function playerSettingsAction(string $action, array $payload = [], string $playerId = 'founder-player'): array
@@ -1808,10 +1939,24 @@ final class GameEngine
             throw new RuntimeException('PlayerSettingsService is unavailable.');
         }
         $normalized = strtolower(trim($action));
+        if (in_array($normalized, ['uiux.save', 'settings.save_uiux'], true)) {
+            $uiUxInput = isset($payload['uiUx']) && is_array($payload['uiUx']) ? $payload['uiUx'] : $payload;
+            $savedUiUx = $this->savePlayerUiUxPreferences($playerId, $uiUxInput);
+            $snap = (new PlayerSettingsService($this->database, $this->events))->snapshot($playerId);
+            $snap['uiUx'] = $savedUiUx;
+            return $snap;
+        }
+        if ($normalized === 'settings.reset') {
+            $this->savePlayerUiUxPreferences($playerId, $this->defaultUiUxPreferences());
+        } elseif (isset($payload['uiUx']) && is_array($payload['uiUx'])) {
+            $this->savePlayerUiUxPreferences($playerId, $payload['uiUx']);
+        }
         if (!in_array($normalized, ['settings.get', 'get', 'state', 'snapshot'], true)) {
             $this->recordActionAttempt($playerId);
         }
-        return (new PlayerSettingsService($this->database, $this->events))->act($playerId, $action, $payload);
+        $res = (new PlayerSettingsService($this->database, $this->events))->act($playerId, $action, $payload);
+        $res['uiUx'] = $this->playerUiUxPreferences($playerId);
+        return $res;
     }
 
     public function syndicateChat(string $playerId = 'founder-player', string $channel = 'global', ?int $sinceId = null, string $district = 'center'): array

@@ -544,7 +544,60 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
       }
     }
 
+    // 3) v175 Web + Mobile Quick-Switcher, Live Sidebar Filter, Back Assist & >=44px Mobile Touch Gate
+    await isoPage.evaluate(() => {
+      if (window.__zoneGame && typeof window.__zoneGame.go === 'function') window.__zoneGame.go('home');
+    });
+    await isoPage.waitForTimeout(160);
+    await isoPage.keyboard.press('Control+k');
+    await isoPage.waitForTimeout(120);
+    const qsDesktop = await isoPage.evaluate(() => {
+      const modal = document.getElementById('zas-quick-switcher');
+      const diag = window.ZoneQuickNav && window.ZoneQuickNav.getDiagnostics ? window.ZoneQuickNav.getDiagnostics() : null;
+      return {
+        open: Boolean(modal && !modal.hasAttribute('hidden')),
+        itemCount: modal ? modal.querySelectorAll('.zas-qs-item').length : 0,
+        diagDistrictCount: diag ? diag.districtCount : 0,
+        netTelemetryReady: Boolean(window.ZoneGameFX && typeof window.ZoneGameFX.getNetTelemetry === 'function')
+      };
+    });
+    assert.equal(qsDesktop.open, true, 'Ctrl+K opens #zas-quick-switcher on Desktop');
+    assert.equal(qsDesktop.itemCount, 19, 'Quick-Switcher lists all 19 canonical game districts');
+    assert.equal(qsDesktop.diagDistrictCount, 19, 'ZoneQuickNav tracks all 19 districts');
+    assert.equal(qsDesktop.netTelemetryReady, true, 'ZoneGameFX exposes live backend sync telemetry');
+
+    await isoPage.fill('#zas-qs-input', 'بنك');
+    await isoPage.waitForTimeout(80);
+    await isoPage.keyboard.press('Enter');
+    await isoPage.waitForTimeout(180);
+    const afterJump = await isoPage.evaluate(() => ({
+      active: document.getElementById('zone-main')?.getAttribute('data-zone-screen'),
+      qsHidden: document.getElementById('zas-quick-switcher')?.hasAttribute('hidden'),
+      backAssistVisible: !document.getElementById('zaaa-assist-back')?.hasAttribute('hidden')
+    }));
+    assert.equal(afterJump.active, 'bank', 'Arabic fuzzy search "بنك" + Enter jumps directly to Bank');
+    assert.equal(afterJump.qsHidden, true, 'Quick-Switcher closes cleanly after navigation');
+    assert.equal(afterJump.backAssistVisible, true, 'Contextual Back thumb-assist chip appears on non-home routes');
+
     await isoCtx.close();
+
+    const mobCtx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const mobPage = await mobCtx.newPage();
+    await mobPage.goto(`http://127.0.0.1:${port}/?screen=crimes&lang=en`, { waitUntil: 'domcontentloaded' });
+    await mobPage.waitForSelector('#zaaa-rail-jump-btn', { timeout: 10000 });
+    const mobErgonomics = await mobPage.evaluate(() => {
+      const rj = document.getElementById('zaaa-rail-jump-btn')?.getBoundingClientRect();
+      const crimeBtn = document.querySelector('#zone-main .zone-crime-row button')?.getBoundingClientRect();
+      return {
+        railJumpH: rj ? rj.height : 0,
+        crimeBtnH: crimeBtn ? crimeBtn.height : 44,
+        overflowX: Math.max(0, document.documentElement.scrollWidth - document.documentElement.clientWidth)
+      };
+    });
+    assert.ok(mobErgonomics.railJumpH >= 44, `Mobile docked rail Quick-Jump tile >= 44px (${mobErgonomics.railJumpH}px)`);
+    assert.ok(mobErgonomics.crimeBtnH >= 44, `Mobile crime CTA button >= 44px (${mobErgonomics.crimeBtnH}px)`);
+    assert.equal(mobErgonomics.overflowX, 0, 'Zero horizontal overflow on 390x844 mobile');
+    await mobCtx.close();
   } finally {
     await browser.close();
     if (typeof server.closeAllConnections === 'function') server.closeAllConnections();

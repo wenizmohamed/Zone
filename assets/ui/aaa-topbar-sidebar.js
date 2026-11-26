@@ -174,6 +174,26 @@
     chrono: {
       wash: PLATE_HEX,
       ink: '<circle cx="12" cy="12.4" r="5.4" stroke="url(#zsv-cyan)" stroke-width="1.4"/><path d="M12 9.4V12.4L14.2 13.8" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
+    },
+    search: {
+      wash: PLATE_HEX + '<circle cx="11" cy="11" r="4.3" fill="url(#zsv-gold)" fill-opacity="0.22"/>',
+      ink: '<circle cx="11" cy="11" r="4.3" stroke="url(#zsv-gold)" stroke-width="1.55"/><path d="M14.2 14.2L17.8 17.8" stroke="url(#zsv-cyan)" stroke-width="1.75"/>'
+    },
+    bolt: {
+      wash: PLATE_HEX + '<polygon points="13,5.2 7.6,12.6 11.6,12.6 10.8,18.8 16.4,11.4 12.4,11.4" fill="url(#zsv-gold)" fill-opacity="0.34"/>',
+      ink: '<polygon points="13,5.2 7.6,12.6 11.6,12.6 10.8,18.8 16.4,11.4 12.4,11.4" stroke="url(#zsv-gold)" stroke-width="1.4"/>'
+    },
+    star: {
+      wash: '',
+      ink: '<polygon points="12,3.4 14.6,8.8 20.5,9.6 16.2,13.8 17.3,19.7 12,16.9 6.7,19.7 7.8,13.8 3.5,9.6 9.4,8.8" fill="url(#zsv-gold)" fill-opacity="0.28" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
+    },
+    back: {
+      wash: '',
+      ink: '<path d="M15.2 6.2L9.2 12L15.2 17.8M9.6 12H18.4" stroke="url(#zsv-gold)" stroke-width="1.85"/>'
+    },
+    up: {
+      wash: '',
+      ink: '<path d="M6.4 14.2L12 8.4L17.6 14.2M12 8.8V18.2" stroke="url(#zsv-gold)" stroke-width="1.85"/>'
     }
   };
 
@@ -785,6 +805,34 @@
       adminWrap.innerHTML = renderSketchIcon('admin');
       adminLink.appendChild(adminWrap);
     }
+
+    var qjBtn = document.getElementById('zaaa-quick-jump-btn');
+    if (qjBtn && qjBtn.parentElement !== actions) {
+      if (qjBtn.parentElement) qjBtn.parentElement.removeChild(qjBtn);
+      qjBtn = null;
+    }
+    if (!qjBtn) {
+      qjBtn = document.createElement('button');
+      qjBtn.type = 'button';
+      qjBtn.id = 'zaaa-quick-jump-btn';
+      qjBtn.className = 'zaaa-quick-jump-btn';
+      qjBtn.innerHTML =
+        '<span class="zaaa-qj-ico" aria-hidden="true">' + renderSketchIcon('search') + '</span>' +
+        '<span class="zaaa-qj-lbl">Jump</span>' +
+        '<kbd class="zaaa-qj-kbd">Ctrl+K</kbd>';
+      qjBtn.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        openQuickSwitcher();
+      });
+      actions.appendChild(qjBtn);
+    }
+    var qjLabel = ar ? 'انتقال سريع' : 'Quick Jump';
+    var qjAria = ar ? 'البحث والانتقال السريع بين كل الأقسام (Ctrl+K)' : 'Quick Jump & Search all 19 areas (Ctrl+K)';
+    setTextIfChanged(qjBtn.querySelector('.zaaa-qj-lbl'), qjLabel);
+    if (qjBtn.getAttribute('aria-label') !== qjAria) {
+      qjBtn.setAttribute('aria-label', qjAria);
+      qjBtn.title = qjAria;
+    }
   }
 
   /* ------------------------------------------------------------------------
@@ -1237,6 +1285,751 @@
   }
 
   /* ------------------------------------------------------------------------
+   * 10. v175 EASY-ACCESS NAVIGATION SUITE (WEB + MOBILE + BACKEND UIUX SYNC)
+   *     - Universal 1-Tap Quick-Switcher & Bilingual Search (#zas-quick-switcher)
+   *     - Live 19-Area Sidebar/Drawer Filter + Docked Rail Quick-Jump Tile
+   *     - Pinned Favorites Synced with localStorage & PostgreSQL /api/v1/settings
+   *     - Contextual Thumb-Zone Back & Scroll-Top Assist (#zaaa-thumb-assist)
+   * ------------------------------------------------------------------------ */
+  var UIUX_STORAGE_KEY = 'zone.uiux.prefs.v175';
+  var DEFAULT_PINNED_ROUTES = ['home', 'crimes', 'gym', 'city', 'items', 'casino'];
+
+  var DISTRICT_DIRECTORY = [
+    { id: 'home', en: 'Home HQ', ar: 'المقر الرئيسي', subEn: 'Operative dossier & base', subAr: 'ملف العميل وقاعدة العمليات', kw: 'hq base character suit overview home المقر الرئيسية' },
+    { id: 'crimes', en: 'Crimes & Heists', ar: 'الجرائم والسطو', subEn: 'Spend Nerve for street cash & XP', subAr: 'استهلك الجرأة لكسب المال والخبرة', kw: 'crime heist steal nerve street جرائم سرقة سطو جرأة' },
+    { id: 'gym', en: 'Iron Pit Gym', ar: 'نادي الحديد', subEn: 'Train Str, Def, Spd & Dex', subAr: 'تدريب القوة والدفاع والسرعة والمهارة', kw: 'gym workout train stats energy نادي تدريب رياضة طاقة' },
+    { id: 'city', en: 'City Map & Travel', ar: 'خريطة المدينة والسفر', subEn: '3D district map, airport & turf', subAr: 'خريطة ثلاثية الأبعاد ومطار ومناطق', kw: 'city map travel airport world خريطة مدينة سفر مطار' },
+    { id: 'items', en: 'Items & Armory', ar: 'العتاد والمخزون', subEn: 'Weapons, Kevlar, meds & boosters', subAr: 'أسلحة ودروع وأدوية ومحفزات', kw: 'items inventory loadout weapon armor xanax مخزون عتاد سلاح درع' },
+    { id: 'properties', en: 'Properties & Safehouses', ar: 'العقارات والمخابئ', subEn: '7 safehouse tiers + 3D interiors', subAr: '٧ عقارات مع معاينة داخلية ثلاثية الأبعاد', kw: 'properties safehouse shack apartment villa island vault عقارات مخبأ فيلا شقة جزيرة خزنة' },
+    { id: 'casino', en: 'Velvet Casino', ar: 'كازينو المخمل', subEn: 'Blackjack, Roulette, Slots, Craps', subAr: 'بلاك جاك وروليت وسلوتس وكرابس', kw: 'casino gamble blackjack roulette slots wheel racing كازينو قمار روليت بلاك جاك عجلة' },
+    { id: 'education', en: 'Academy & Skill Tree', ar: 'الأكاديمية وشجرة المهارات', subEn: 'Courses & 4-branch passive perks', subAr: 'الدورات الأكاديمية وشجرة المهارات', kw: 'education school course degree skill tree تعليم اكاديمية دورات مهارات' },
+    { id: 'jobs', en: 'Jobs & Companies', ar: 'الوظائف والشركات', subEn: 'Work shifts & player companies', subAr: 'نوبات العمل وإدارة الشركات', kw: 'jobs work career salary company وظائف عمل شركات راتب' },
+    { id: 'missions', en: 'Missions & Story', ar: 'المهام والقصة', subEn: 'Contracts & Dockside campaign', subAr: 'عقود المهام وفصول القصة', kw: 'missions contracts duke story campaign مهام عقود قصة' },
+    { id: 'bank', en: 'Syndicate Bank', ar: 'بنك النقابة', subEn: 'Vault deposits & stock exchange', subAr: 'إيداع الأموال وسوق الأسهم', kw: 'bank deposit withdraw vault interest stocks بنك ايداع سحب اسهم' },
+    { id: 'market', en: 'Black Market & Bazaar', ar: 'السوق السوداء والبازار', subEn: 'Buy gear, bazaars & safe trades', subAr: 'شراء العتاد والبازار والتجارة الآمنة', kw: 'market shop buy sell bazaar trade سوق متجر شراء بيع تجارة' },
+    { id: 'hospital', en: 'Emergency Hospital', ar: 'مستشفى الطوارئ', subEn: 'Heal life & revive operatives', subAr: 'علاج الصحة وإنعاش العملاء', kw: 'hospital heal revive doctor medkit مستشفى علاج اسعاف صحة' },
+    { id: 'jail', en: 'Central Precinct Jail', ar: 'السجن المركزي', subEn: 'Bail out or bust syndicate crew', subAr: 'دفع الكفالة أو تهريب السجناء', kw: 'jail prison bail bust inmates سجن كفالة تهريب' },
+    { id: 'faction', en: 'Faction & Family HQ', ar: 'مقر العائلة والفصيل', subEn: 'Organized crimes, wars & respect', subAr: 'الجرائم المنظمة والحروب والاحترام', kw: 'faction family gang war respect chain فصيل عائلة عصابة حرب' },
+    { id: 'attack', en: 'Combat Arena', ar: 'ساحة القتال', subEn: 'PvP/NPC tactical street fights', subAr: 'قتال الشوارع والمواجهات المباشرة', kw: 'attack fight combat pvp mug arena قتال هجوم مواجهة' },
+    { id: 'newspaper', en: 'Street Chronicle', ar: 'صحيفة الشارع', subEn: 'Live underworld news & bounties', subAr: 'أخبار العالم السفلي والأحداث', kw: 'newspaper news chronicle bulletin صحيفة اخبار جريدة' },
+    { id: 'hof', en: 'Hall of Fame', ar: 'قاعة المشاهير', subEn: 'Top bosses, networth & rankings', subAr: 'ترتيب الزعماء والأغنى والأقوى', kw: 'hof hall of fame leaderboard rank top متصدرين مشاهير ترتيب' },
+    { id: 'elimination', en: 'Elimination War', ar: 'حرب الإقصاء', subEn: 'Syndicate seasonal elimination', subAr: 'بطولة الإقصاء الموسمية للنقابات', kw: 'elimination tournament war season اقصاء بطولة حرب' }
+  ];
+
+  var DISTRICT_BY_ID = {};
+  for (var dIdx = 0; dIdx < DISTRICT_DIRECTORY.length; dIdx++) {
+    DISTRICT_BY_ID[DISTRICT_DIRECTORY[dIdx].id] = DISTRICT_DIRECTORY[dIdx];
+  }
+
+  var uiUxState = {
+    pinnedRoutes: DEFAULT_PINNED_ROUTES.slice(),
+    recentRoutes: ['home'],
+    quickAssistVisible: true,
+    hydratedFromServer: false,
+    syncTimer: 0,
+    qsOpen: false,
+    qsQuery: '',
+    qsActiveIdx: 0,
+    filteredIds: [],
+    sidebarFilter: '',
+    lastTrackedScreen: ''
+  };
+
+  function loadLocalUiUxPrefs() {
+    try {
+      var raw = localStorage.getItem(UIUX_STORAGE_KEY);
+      if (!raw) return;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return;
+      if (Array.isArray(parsed.pinnedRoutes) && parsed.pinnedRoutes.length > 0) {
+        var validPins = [];
+        for (var i = 0; i < parsed.pinnedRoutes.length; i++) {
+          var id = String(parsed.pinnedRoutes[i] || '').toLowerCase();
+          if (DISTRICT_BY_ID[id] && validPins.indexOf(id) < 0) validPins.push(id);
+        }
+        if (validPins.length > 0) uiUxState.pinnedRoutes = validPins.slice(0, 8);
+      }
+      if (Array.isArray(parsed.recentRoutes) && parsed.recentRoutes.length > 0) {
+        var validRec = [];
+        for (var j = 0; j < parsed.recentRoutes.length; j++) {
+          var rid = String(parsed.recentRoutes[j] || '').toLowerCase();
+          if (DISTRICT_BY_ID[rid] && validRec.indexOf(rid) < 0) validRec.push(rid);
+        }
+        if (validRec.length > 0) uiUxState.recentRoutes = validRec.slice(0, 6);
+      }
+      if (typeof parsed.quickAssistVisible === 'boolean') {
+        uiUxState.quickAssistVisible = parsed.quickAssistVisible;
+      }
+    } catch (_) {}
+  }
+
+  function saveLocalUiUxPrefs() {
+    try {
+      localStorage.setItem(UIUX_STORAGE_KEY, JSON.stringify({
+        pinnedRoutes: uiUxState.pinnedRoutes,
+        recentRoutes: uiUxState.recentRoutes,
+        quickAssistVisible: uiUxState.quickAssistVisible
+      }));
+    } catch (_) {}
+  }
+
+  function scheduleServerUiUxSync() {
+    saveLocalUiUxPrefs();
+    if (uiUxState.syncTimer) window.clearTimeout(uiUxState.syncTimer);
+    uiUxState.syncTimer = window.setTimeout(function () {
+      uiUxState.syncTimer = 0;
+      try {
+        if (typeof window.fetch !== 'function') return;
+        window.fetch('/api/v1/settings/action', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            action: 'uiux.save',
+            uiUx: {
+              pinnedRoutes: uiUxState.pinnedRoutes,
+              recentRoutes: uiUxState.recentRoutes,
+              quickAssistVisible: uiUxState.quickAssistVisible
+            }
+          })
+        }).catch(function () {});
+      } catch (_) {}
+    }, 650);
+  }
+
+  function hydrateServerUiUxPrefsOnce() {
+    if (uiUxState.hydratedFromServer || typeof window.fetch !== 'function') return;
+    uiUxState.hydratedFromServer = true;
+    try {
+      window.fetch('/api/v1/settings', {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (r) { return r && r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data || !data.uiUx || typeof data.uiUx !== 'object') return;
+          var hasLocal = false;
+          try { hasLocal = Boolean(localStorage.getItem(UIUX_STORAGE_KEY)); } catch (_) {}
+          if (!hasLocal && Array.isArray(data.uiUx.pinnedRoutes) && data.uiUx.pinnedRoutes.length > 0) {
+            uiUxState.pinnedRoutes = data.uiUx.pinnedRoutes.filter(function (id) { return Boolean(DISTRICT_BY_ID[id]); }).slice(0, 8);
+            saveLocalUiUxPrefs();
+            if (uiUxState.qsOpen) renderQuickSwitcherBody();
+          }
+        })
+        .catch(function () {});
+    } catch (_) {}
+  }
+
+  function togglePinRoute(screenId) {
+    if (!DISTRICT_BY_ID[screenId]) return false;
+    var idx = uiUxState.pinnedRoutes.indexOf(screenId);
+    if (idx >= 0) {
+      if (uiUxState.pinnedRoutes.length > 1) {
+        uiUxState.pinnedRoutes.splice(idx, 1);
+      }
+    } else {
+      if (uiUxState.pinnedRoutes.length >= 8) uiUxState.pinnedRoutes.pop();
+      uiUxState.pinnedRoutes.push(screenId);
+    }
+    scheduleServerUiUxSync();
+    if (uiUxState.qsOpen) renderQuickSwitcherBody();
+    return uiUxState.pinnedRoutes.indexOf(screenId) >= 0;
+  }
+
+  function trackScreenVisit(screenId) {
+    if (!screenId || !DISTRICT_BY_ID[screenId] || screenId === uiUxState.lastTrackedScreen) return;
+    uiUxState.lastTrackedScreen = screenId;
+    var next = [screenId];
+    for (var i = 0; i < uiUxState.recentRoutes.length; i++) {
+      if (uiUxState.recentRoutes[i] !== screenId && DISTRICT_BY_ID[uiUxState.recentRoutes[i]]) {
+        next.push(uiUxState.recentRoutes[i]);
+      }
+      if (next.length >= 6) break;
+    }
+    uiUxState.recentRoutes = next;
+    saveLocalUiUxPrefs();
+    syncThumbAssist();
+  }
+
+  function getPreviousScreen() {
+    var active = getActiveScreen();
+    for (var i = 0; i < uiUxState.recentRoutes.length; i++) {
+      var cand = uiUxState.recentRoutes[i];
+      if (cand && cand !== active && DISTRICT_BY_ID[cand]) return cand;
+    }
+    return active === 'home' ? '' : 'home';
+  }
+
+  /* ---- Live Sidebar & Drawer Filter + Compact Rail Quick-Jump Tile ---- */
+  function applySidebarFilter(query) {
+    uiUxState.sidebarFilter = String(query || '');
+    var q = uiUxState.sidebarFilter.trim().toLowerCase();
+    var navArea = document.getElementById('zone-area-navigation');
+    if (!navArea) return;
+
+    var buttons = navArea.querySelectorAll('button[data-zone-screen]');
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      var sid = btn.getAttribute('data-zone-screen') || '';
+      var meta = DISTRICT_BY_ID[sid];
+      var hay = (sid + ' ' + (btn.textContent || '') + ' ' + (meta ? (meta.en + ' ' + meta.ar + ' ' + meta.kw) : '')).toLowerCase();
+      var match = !q || hay.indexOf(q) >= 0;
+      if (match) {
+        btn.removeAttribute('data-zaaa-filtered-out');
+      } else {
+        btn.setAttribute('data-zaaa-filtered-out', '1');
+      }
+    }
+
+    var groups = navArea.querySelectorAll('.zone-nav-group');
+    for (var g = 0; g < groups.length; g++) {
+      if (q) {
+        groups[g].setAttribute('data-zaaa-filtered-out', '1');
+      } else {
+        groups[g].removeAttribute('data-zaaa-filtered-out');
+      }
+    }
+
+    var clearBtn = document.getElementById('zaaa-sidebar-filter-clear');
+    if (clearBtn) {
+      if (q) clearBtn.removeAttribute('hidden');
+      else clearBtn.setAttribute('hidden', '');
+    }
+  }
+
+  function syncSidebarQuickbar() {
+    var navArea = document.getElementById('zone-area-navigation');
+    if (!navArea) return;
+
+    var bar = document.getElementById('zaaa-sidebar-quickbar');
+    if (bar && bar.parentElement !== navArea) {
+      if (bar.parentElement) bar.parentElement.removeChild(bar);
+      bar = null;
+    }
+
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'zaaa-sidebar-quickbar';
+      bar.className = 'zaaa-sidebar-quickbar';
+      bar.innerHTML =
+        '<button type="button" id="zaaa-rail-jump-btn" class="zaaa-rail-jump-btn">' +
+          '<span class="zaaa-rail-jump-ico" aria-hidden="true">' + renderSketchIcon('bolt') + '</span>' +
+          '<span class="zaaa-rail-jump-lbl">Quick Jump</span>' +
+        '</button>' +
+        '<div class="zaaa-sidebar-filter-box">' +
+          '<span class="zaaa-sf-ico" aria-hidden="true">' + renderSketchIcon('search') + '</span>' +
+          '<input type="search" id="zaaa-sidebar-filter-input" class="zaaa-sidebar-filter-input" autocomplete="off" spellcheck="false" />' +
+          '<button type="button" id="zaaa-sidebar-filter-clear" class="zaaa-sidebar-filter-clear" hidden aria-label="Clear">✕</button>' +
+        '</div>';
+
+      var rjBtn = bar.querySelector('#zaaa-rail-jump-btn');
+      if (rjBtn) {
+        rjBtn.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          openQuickSwitcher();
+        });
+      }
+
+      var inputEl = bar.querySelector('#zaaa-sidebar-filter-input');
+      var clearEl = bar.querySelector('#zaaa-sidebar-filter-clear');
+      if (inputEl) {
+        inputEl.addEventListener('input', function () {
+          applySidebarFilter(inputEl.value);
+        });
+        inputEl.addEventListener('keydown', function (ev) {
+          if (ev.key === 'Escape') {
+            inputEl.value = '';
+            applySidebarFilter('');
+            inputEl.blur();
+          } else if (ev.key === 'Enter') {
+            var firstVisible = navArea.querySelector('button[data-zone-screen]:not([data-zaaa-filtered-out="1"])');
+            if (firstVisible) {
+              var targetScr = firstVisible.getAttribute('data-zone-screen');
+              inputEl.value = '';
+              applySidebarFilter('');
+              if (targetScr) navigateToScreen(targetScr);
+            }
+          }
+        });
+      }
+      if (clearEl && inputEl) {
+        clearEl.addEventListener('click', function () {
+          inputEl.value = '';
+          applySidebarFilter('');
+          inputEl.focus();
+        });
+      }
+
+      navArea.appendChild(bar);
+    }
+
+    var ar = isArabic();
+    var rjLbl = bar.querySelector('.zaaa-rail-jump-lbl');
+    var rjBtnEl = bar.querySelector('#zaaa-rail-jump-btn');
+    setTextIfChanged(rjLbl, ar ? 'انتقال' : 'Jump');
+    if (rjBtnEl) {
+      var rjTitle = ar ? 'البحث والانتقال السريع بين الأقسام' : 'Quick Jump to any game area';
+      rjBtnEl.setAttribute('aria-label', rjTitle);
+      rjBtnEl.title = rjTitle;
+    }
+
+    var filterInp = bar.querySelector('#zaaa-sidebar-filter-input');
+    if (filterInp) {
+      var ph = ar ? 'تصفية ١٩ قسماً...' : 'Filter 19 areas...';
+      if (filterInp.getAttribute('placeholder') !== ph) {
+        filterInp.setAttribute('placeholder', ph);
+        filterInp.setAttribute('aria-label', ph);
+      }
+    }
+    if (uiUxState.sidebarFilter) {
+      applySidebarFilter(uiUxState.sidebarFilter);
+    }
+  }
+
+  /* ---- Smart Contextual Suggestions (Reads Live Vitals) ---- */
+  function buildContextualSuggestions(ar) {
+    var suggestions = [];
+    var energy = readBarFromCachedNodes('energy', 100, hudCache.energyTrackEl, hudCache.energyFigEl);
+    var nerve = readBarFromCachedNodes('nerve', 15, hudCache.nerveTrackEl, hudCache.nerveFigEl);
+    var life = readBarFromCachedNodes('life', 100, hudCache.lifeTrackEl, hudCache.lifeFigEl);
+    var cashNum = 0;
+    try {
+      if (window.__zoneGame && window.__zoneGame.p) cashNum = Number(window.__zoneGame.p.cash) || 0;
+      else if (hudCache.cashSrcEl) cashNum = Number(String(hudCache.cashSrcEl.textContent || '').replace(/[^0-9.-]/g, '')) || 0;
+    } catch (_) {}
+
+    if (life.cur < life.max) {
+      suggestions.push({
+        screen: 'hospital',
+        icon: 'hospital',
+        label: ar ? ('علاج الصحة (' + life.cur + '/' + life.max + ')') : ('Heal Life (' + life.cur + '/' + life.max + ')')
+      });
+    }
+    if (nerve.cur >= 2) {
+      suggestions.push({
+        screen: 'crimes',
+        icon: 'crimes',
+        label: ar ? ('تنفيذ جريمة (' + nerve.cur + ' جرأة)') : ('Run Street Crime (' + nerve.cur + ' Nerve)')
+      });
+    }
+    if (energy.cur >= 5) {
+      suggestions.push({
+        screen: 'gym',
+        icon: 'gym',
+        label: ar ? ('تدريب بالنادي (' + energy.cur + ' طاقة)') : ('Train at Gym (' + energy.cur + ' Energy)')
+      });
+    }
+    if (cashNum >= 10000) {
+      suggestions.push({
+        screen: 'bank',
+        icon: 'bank',
+        label: ar ? ('تأمين النقد بالبنك (' + formatMoney(cashNum, true) + ')') : ('Vault Cash in Bank (' + formatMoney(cashNum, true) + ')')
+      });
+    }
+    if (suggestions.length < 3) {
+      suggestions.push({
+        screen: 'properties',
+        icon: 'properties',
+        label: ar ? 'معاينة المخابئ 3D' : 'Inspect 3D Safehouses'
+      });
+    }
+    return suggestions.slice(0, 4);
+  }
+
+  /* ---- Universal 1-Tap Quick-Switcher Modal (#zas-quick-switcher) ---- */
+  function ensureQuickSwitcherDom() {
+    if (!document.body) return null;
+    var modal = document.getElementById('zas-quick-switcher');
+    if (modal) return modal;
+
+    modal = document.createElement('div');
+    modal.id = 'zas-quick-switcher';
+    modal.className = 'zas-quick-switcher';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'zas-qs-title');
+    modal.setAttribute('hidden', '');
+
+    modal.innerHTML =
+      '<div class="zas-qs-sheet" role="document">' +
+        '<div class="zas-qs-head">' +
+          '<div class="zas-qs-title-wrap">' +
+            '<span class="zas-qs-title-ico" aria-hidden="true">' + renderSketchIcon('bolt') + '</span>' +
+            '<h2 id="zas-qs-title" class="zas-qs-title">Syndicate Quick Jump</h2>' +
+          '</div>' +
+          '<button type="button" id="zas-qs-close" class="zas-qs-close" aria-label="Close">✕</button>' +
+        '</div>' +
+        '<div class="zas-qs-search-row">' +
+          '<span class="zas-qs-search-ico" aria-hidden="true">' + renderSketchIcon('search') + '</span>' +
+          '<input type="search" id="zas-qs-input" class="zas-qs-input" autocomplete="off" spellcheck="false" />' +
+        '</div>' +
+        '<div id="zas-qs-smart" class="zas-qs-smart"></div>' +
+        '<div id="zas-qs-pins" class="zas-qs-pins"></div>' +
+        '<div id="zas-qs-list" class="zas-qs-list" role="listbox"></div>' +
+        '<div id="zas-qs-foot" class="zas-qs-foot"></div>' +
+      '</div>';
+
+    modal.addEventListener('click', function (ev) {
+      if (ev.target === modal) {
+        closeQuickSwitcher();
+        return;
+      }
+      var t = ev.target;
+      if (!(t instanceof Element)) return;
+
+      var pinBtn = t.closest('[data-qs-pin]');
+      if (pinBtn) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        togglePinRoute(pinBtn.getAttribute('data-qs-pin') || '');
+        return;
+      }
+
+      var cmdBtn = t.closest('[data-qs-cmd]');
+      if (cmdBtn) {
+        ev.preventDefault();
+        var cmd = cmdBtn.getAttribute('data-qs-cmd');
+        closeQuickSwitcher();
+        if (cmd === 'settings' && window.ZonePlayerSettings && typeof window.ZonePlayerSettings.open === 'function') {
+          window.ZonePlayerSettings.open();
+        } else if (cmd === 'theme') {
+          var tbBtn = document.querySelector('.zone-topbar .zone-header-actions > button:first-of-type');
+          if (tbBtn) tbBtn.click();
+        } else if (cmd === 'lang') {
+          var lgBtn = document.querySelector('.zone-topbar .zone-header-actions > button:nth-of-type(2)');
+          if (lgBtn) lgBtn.click();
+        }
+        return;
+      }
+
+      var goBtn = t.closest('[data-qs-go]');
+      if (goBtn) {
+        ev.preventDefault();
+        var dest = goBtn.getAttribute('data-qs-go');
+        closeQuickSwitcher();
+        if (dest) navigateToScreen(dest);
+      }
+    });
+
+    var closeBtn = modal.querySelector('#zas-qs-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        closeQuickSwitcher();
+      });
+    }
+
+    var inp = modal.querySelector('#zas-qs-input');
+    if (inp) {
+      inp.addEventListener('input', function () {
+        uiUxState.qsQuery = inp.value || '';
+        uiUxState.qsActiveIdx = 0;
+        renderQuickSwitcherBody();
+      });
+      inp.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Escape') {
+          ev.preventDefault();
+          closeQuickSwitcher();
+        } else if (ev.key === 'ArrowDown') {
+          ev.preventDefault();
+          if (uiUxState.filteredIds.length > 0) {
+            uiUxState.qsActiveIdx = (uiUxState.qsActiveIdx + 1) % uiUxState.filteredIds.length;
+            highlightQuickSwitcherOption();
+          }
+        } else if (ev.key === 'ArrowUp') {
+          ev.preventDefault();
+          if (uiUxState.filteredIds.length > 0) {
+            uiUxState.qsActiveIdx = (uiUxState.qsActiveIdx - 1 + uiUxState.filteredIds.length) % uiUxState.filteredIds.length;
+            highlightQuickSwitcherOption();
+          }
+        } else if (ev.key === 'Enter') {
+          ev.preventDefault();
+          var chosen = uiUxState.filteredIds[uiUxState.qsActiveIdx] || uiUxState.filteredIds[0];
+          if (chosen) {
+            closeQuickSwitcher();
+            navigateToScreen(chosen);
+          }
+        }
+      });
+    }
+
+    document.body.appendChild(modal);
+    return modal;
+  }
+
+  function highlightQuickSwitcherOption() {
+    var listEl = document.getElementById('zas-qs-list');
+    if (!listEl) return;
+    var rows = listEl.querySelectorAll('.zas-qs-item');
+    for (var i = 0; i < rows.length; i++) {
+      if (i === uiUxState.qsActiveIdx) {
+        rows[i].setAttribute('data-qs-selected', '1');
+        try { rows[i].scrollIntoView({ block: 'nearest' }); } catch (_) {}
+      } else {
+        rows[i].removeAttribute('data-qs-selected');
+      }
+    }
+  }
+
+  function renderQuickSwitcherBody() {
+    var modal = ensureQuickSwitcherDom();
+    if (!modal) return;
+
+    var ar = isArabic();
+    var activeScr = getActiveScreen();
+    var q = String(uiUxState.qsQuery || '').trim().toLowerCase();
+
+    setTextIfChanged(modal.querySelector('#zas-qs-title'), ar ? 'الانتقال السريع والبحث الشامل' : 'Syndicate Quick Jump & Search');
+    var inp = modal.querySelector('#zas-qs-input');
+    if (inp) {
+      var ph = ar ? 'ابحث عن أي قسم أو ميزة (مثال: بنك، مستشفى، فيلا، كازينو)...' : 'Jump to any area or action (e.g. bank, heal, villa, casino)...';
+      if (inp.getAttribute('placeholder') !== ph) inp.setAttribute('placeholder', ph);
+    }
+
+    var smartEl = modal.querySelector('#zas-qs-smart');
+    if (smartEl) {
+      if (q) {
+        smartEl.setAttribute('hidden', '');
+      } else {
+        var smartList = buildContextualSuggestions(ar);
+        var smartHtml = '<span class="zas-qs-sec-lbl">' + (ar ? 'مقترح الآن:' : 'Suggested Now:') + '</span><div class="zas-qs-chip-row">';
+        for (var s = 0; s < smartList.length; s++) {
+          var sm = smartList[s];
+          smartHtml +=
+            '<button type="button" class="zas-qs-smart-chip" data-qs-go="' + sm.screen + '">' +
+              '<span class="zas-qs-chip-ico" aria-hidden="true">' + renderSketchIcon(sm.icon) + '</span>' +
+              '<span>' + sm.label + '</span>' +
+            '</button>';
+        }
+        smartHtml += '</div>';
+        smartEl.innerHTML = smartHtml;
+        smartEl.removeAttribute('hidden');
+      }
+    }
+
+    var pinsEl = modal.querySelector('#zas-qs-pins');
+    if (pinsEl) {
+      if (q) {
+        pinsEl.setAttribute('hidden', '');
+      } else {
+        var pinHtml = '<span class="zas-qs-sec-lbl">' + (ar ? 'المثبّتة:' : 'Pinned:') + '</span><div class="zas-qs-chip-row">';
+        for (var p = 0; p < uiUxState.pinnedRoutes.length; p++) {
+          var pid = uiUxState.pinnedRoutes[p];
+          var pMeta = DISTRICT_BY_ID[pid];
+          if (!pMeta) continue;
+          var isCurPin = pid === activeScr ? ' data-qs-current="1"' : '';
+          pinHtml +=
+            '<button type="button" class="zas-qs-pin-chip"' + isCurPin + ' data-qs-go="' + pid + '">' +
+              '<span class="zas-qs-chip-ico" aria-hidden="true">' + renderSketchIcon(resolveNavIconKey(pid)) + '</span>' +
+              '<span>' + (ar ? pMeta.ar : pMeta.en) + '</span>' +
+            '</button>';
+        }
+        pinHtml += '</div>';
+        pinsEl.innerHTML = pinHtml;
+        pinsEl.removeAttribute('hidden');
+      }
+    }
+
+    var matched = [];
+    for (var i = 0; i < DISTRICT_DIRECTORY.length; i++) {
+      var d = DISTRICT_DIRECTORY[i];
+      if (!q) {
+        matched.push(d);
+      } else {
+        var hay = (d.id + ' ' + d.en + ' ' + d.ar + ' ' + d.subEn + ' ' + d.subAr + ' ' + d.kw).toLowerCase();
+        if (hay.indexOf(q) >= 0) matched.push(d);
+      }
+    }
+
+    uiUxState.filteredIds = matched.map(function (m) { return m.id; });
+    if (uiUxState.qsActiveIdx >= uiUxState.filteredIds.length) uiUxState.qsActiveIdx = 0;
+
+    var listEl = modal.querySelector('#zas-qs-list');
+    if (listEl) {
+      if (matched.length === 0) {
+        listEl.innerHTML = '<div class="zas-qs-empty">' + (ar ? 'لا توجد نتائج مطابقة. جرّب كلمة أخرى.' : 'No matching district found. Try another keyword.') + '</div>';
+      } else {
+        var rowsHtml = '';
+        for (var r = 0; r < matched.length; r++) {
+          var item = matched[r];
+          var isPinned = uiUxState.pinnedRoutes.indexOf(item.id) >= 0;
+          var isCurrent = item.id === activeScr;
+          var selAttr = r === uiUxState.qsActiveIdx ? ' data-qs-selected="1"' : '';
+          var curBadge = isCurrent
+            ? '<span class="zas-qs-cur-badge">' + (ar ? 'الحالي' : 'Current') + '</span>'
+            : '';
+          rowsHtml +=
+            '<div class="zas-qs-item" role="option"' + selAttr + (isCurrent ? ' data-qs-active="1"' : '') + '>' +
+              '<button type="button" class="zas-qs-item-main" data-qs-go="' + item.id + '">' +
+                '<span class="zas-qs-item-ico" aria-hidden="true">' + renderSketchIcon(resolveNavIconKey(item.id)) + '</span>' +
+                '<span class="zas-qs-item-copy">' +
+                  '<span class="zas-qs-item-title">' + (ar ? item.ar : item.en) + curBadge + '</span>' +
+                  '<span class="zas-qs-item-sub">' + (ar ? item.subAr : item.subEn) + '</span>' +
+                '</span>' +
+              '</button>' +
+              '<button type="button" class="zas-qs-pin-toggle" data-qs-pin="' + item.id + '"' +
+                ' data-pinned="' + (isPinned ? '1' : '0') + '"' +
+                ' aria-label="' + (isPinned ? (ar ? 'إلغاء التثبيت' : 'Unpin area') : (ar ? 'تثبيت في المفضلة' : 'Pin area')) + '"' +
+                ' title="' + (isPinned ? (ar ? 'مثبّت' : 'Pinned') : (ar ? 'تثبيت' : 'Pin')) + '">' +
+                renderSketchIcon('star') +
+              '</button>' +
+            '</div>';
+        }
+        listEl.innerHTML = rowsHtml;
+      }
+    }
+
+    var footEl = modal.querySelector('#zas-qs-foot');
+    if (footEl) {
+      footEl.innerHTML =
+        '<div class="zas-qs-utils">' +
+          '<button type="button" class="zas-qs-util-btn" data-qs-cmd="settings">' + (ar ? '⚙ الإعدادات' : '⚙ Settings') + '</button>' +
+          '<button type="button" class="zas-qs-util-btn" data-qs-cmd="theme">' + (ar ? '◐ المظهر' : '◐ Theme') + '</button>' +
+          '<button type="button" class="zas-qs-util-btn" data-qs-cmd="lang">' + (ar ? 'EN اللغة' : 'عربي RTL') + '</button>' +
+        '</div>' +
+        '<span class="zas-qs-hint">' + (ar ? '↑↓ للتنقل · Enter للفتح · Esc للإغلاق' : '↑↓ Navigate · Enter Open · ★ Pin · Esc Close') + '</span>';
+    }
+  }
+
+  function openQuickSwitcher(initialQuery) {
+    hydrateServerUiUxPrefsOnce();
+    var modal = ensureQuickSwitcherDom();
+    if (!modal) return;
+    if (isDrawerOpen()) setMobileDrawerOpen(false);
+    uiUxState.qsOpen = true;
+    uiUxState.qsQuery = typeof initialQuery === 'string' ? initialQuery : '';
+    uiUxState.qsActiveIdx = 0;
+    modal.removeAttribute('hidden');
+    document.documentElement.setAttribute('data-zas-qs-open', '1');
+    renderQuickSwitcherBody();
+    var inp = modal.querySelector('#zas-qs-input');
+    if (inp) {
+      inp.value = uiUxState.qsQuery;
+      window.setTimeout(function () {
+        try { inp.focus({ preventScroll: true }); } catch (_) { try { inp.focus(); } catch (__) {} }
+      }, 20);
+    }
+  }
+
+  function closeQuickSwitcher() {
+    uiUxState.qsOpen = false;
+    document.documentElement.removeAttribute('data-zas-qs-open');
+    var modal = document.getElementById('zas-quick-switcher');
+    if (modal) modal.setAttribute('hidden', '');
+  }
+
+  /* ---- Floating Thumb-Zone Back & Scroll-Top Assist (#zaaa-thumb-assist) ---- */
+  function syncThumbAssist() {
+    if (!document.body || !uiUxState.quickAssistVisible) return;
+    var bar = document.getElementById('zaaa-thumb-assist');
+    if (!bar) {
+      bar = document.createElement('nav');
+      bar.id = 'zaaa-thumb-assist';
+      bar.className = 'zaaa-thumb-assist';
+      bar.setAttribute('aria-label', 'Quick Back and Top');
+      bar.setAttribute('hidden', '');
+      bar.innerHTML =
+        '<button type="button" id="zaaa-assist-back" class="zaaa-assist-btn zaaa-assist-back" hidden>' +
+          '<span class="zaaa-assist-ico" data-rtl-flip="1" aria-hidden="true">' + renderSketchIcon('back') + '</span>' +
+          '<span class="zaaa-assist-lbl">HQ</span>' +
+        '</button>' +
+        '<button type="button" id="zaaa-assist-top" class="zaaa-assist-btn zaaa-assist-top" hidden>' +
+          '<span class="zaaa-assist-ico" aria-hidden="true">' + renderSketchIcon('up') + '</span>' +
+          '<span class="zaaa-assist-top-lbl">Top</span>' +
+        '</button>';
+
+      var backBtn = bar.querySelector('#zaaa-assist-back');
+      var topBtn = bar.querySelector('#zaaa-assist-top');
+      if (backBtn) {
+        backBtn.addEventListener('click', function () {
+          var prev = getPreviousScreen() || 'home';
+          navigateToScreen(prev);
+        });
+      }
+      if (topBtn) {
+        topBtn.addEventListener('click', function () {
+          try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { window.scrollTo(0, 0); }
+        });
+      }
+      document.body.appendChild(bar);
+    }
+
+    var ar = isArabic();
+    var activeScr = getActiveScreen();
+    var prevScr = getPreviousScreen();
+    var scrollY = window.scrollY || window.pageYOffset || 0;
+    var showBack = Boolean(activeScr && activeScr !== 'home' && prevScr);
+    var showTop = scrollY > 260;
+
+    var backEl = bar.querySelector('#zaaa-assist-back');
+    var topEl = bar.querySelector('#zaaa-assist-top');
+
+    if (backEl) {
+      if (showBack) {
+        var prevMeta = DISTRICT_BY_ID[prevScr] || DISTRICT_BY_ID.home;
+        var shortName = ar ? prevMeta.ar : prevMeta.en.split('&')[0].trim();
+        setTextIfChanged(backEl.querySelector('.zaaa-assist-lbl'), shortName);
+        var backAria = (ar ? 'العودة إلى ' : 'Back to ') + (ar ? prevMeta.ar : prevMeta.en);
+        backEl.setAttribute('aria-label', backAria);
+        backEl.title = backAria;
+        backEl.removeAttribute('hidden');
+      } else {
+        backEl.setAttribute('hidden', '');
+      }
+    }
+
+    if (topEl) {
+      if (showTop) {
+        setTextIfChanged(topEl.querySelector('.zaaa-assist-top-lbl'), ar ? 'أعلى' : 'Top');
+        var topAria = ar ? 'العودة لأعلى الصفحة' : 'Scroll back to top';
+        topEl.setAttribute('aria-label', topAria);
+        topEl.title = topAria;
+        topEl.removeAttribute('hidden');
+      } else {
+        topEl.setAttribute('hidden', '');
+      }
+    }
+
+    if (showBack || showTop) {
+      bar.removeAttribute('hidden');
+    } else {
+      bar.setAttribute('hidden', '');
+    }
+  }
+
+  loadLocalUiUxPrefs();
+
+  window.ZoneQuickNav = {
+    version: '175.0',
+    open: openQuickSwitcher,
+    close: closeQuickSwitcher,
+    toggle: function () {
+      if (uiUxState.qsOpen) closeQuickSwitcher();
+      else openQuickSwitcher();
+    },
+    isOpen: function () { return Boolean(uiUxState.qsOpen); },
+    togglePin: togglePinRoute,
+    goBack: function () {
+      var prev = getPreviousScreen() || 'home';
+      navigateToScreen(prev);
+      return prev;
+    },
+    filterSidebar: applySidebarFilter,
+    getDiagnostics: function () {
+      return {
+        version: '175.0',
+        open: Boolean(uiUxState.qsOpen),
+        activeScreen: getActiveScreen(),
+        previousScreen: getPreviousScreen(),
+        pinnedRoutes: uiUxState.pinnedRoutes.slice(),
+        recentRoutes: uiUxState.recentRoutes.slice(),
+        districtCount: DISTRICT_DIRECTORY.length
+      };
+    }
+  };
+
+  /* ------------------------------------------------------------------------
    * MASTER SYNC ORCHESTRATION (rAF-Coalesced for 60fps Mobile Performance)
    * ------------------------------------------------------------------------ */
   /* Prevent Web Animations API (`el.animate` with `transform`) on `#zone-main` from
@@ -1304,9 +2097,12 @@
       syncOperativeCrest();
       syncSidebarVitals();
       syncMobileRailToggle();
+      syncSidebarQuickbar();
       syncSidebarNavIcons();
       syncMobileTabbarIcons();
       syncActiveSidebarScroll();
+      trackScreenVisit(getActiveScreen());
+      syncThumbAssist();
     } catch (_) {
       /* Never emit console errors */
     } finally {
@@ -1362,10 +2158,48 @@
     }, { passive: true });
 
     document.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Escape' && isDrawerOpen()) {
-        setMobileDrawerOpen(false);
+      if (ev.key === 'Escape') {
+        if (uiUxState.qsOpen) {
+          ev.preventDefault();
+          closeQuickSwitcher();
+          return;
+        }
+        if (isDrawerOpen()) {
+          setMobileDrawerOpen(false);
+        }
+        return;
+      }
+
+      if ((ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'k' || ev.key === 'K')) {
+        ev.preventDefault();
+        if (uiUxState.qsOpen) closeQuickSwitcher();
+        else openQuickSwitcher();
+        return;
+      }
+
+      if (ev.key === '/' && !ev.ctrlKey && !ev.metaKey && !ev.altKey && !uiUxState.qsOpen) {
+        var activeEl = document.activeElement;
+        var tag = activeEl && activeEl.tagName ? activeEl.tagName.toUpperCase() : '';
+        var isEditable = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || Boolean(activeEl && activeEl.isContentEditable);
+        if (!isEditable) {
+          ev.preventDefault();
+          openQuickSwitcher();
+        }
       }
     });
+
+    var scrollTick = false;
+    window.addEventListener('scroll', function () {
+      if (scrollTick) return;
+      scrollTick = true;
+      var runner = window.requestAnimationFrame || function (fn) { return window.setTimeout(fn, 32); };
+      runner(function () {
+        scrollTick = false;
+        syncThumbAssist();
+      });
+    }, { passive: true });
+
+    window.setTimeout(hydrateServerUiUxPrefsOnce, 900);
 
     try {
       var htmlObs = new MutationObserver(function () {

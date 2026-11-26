@@ -153,7 +153,7 @@ export function createRelay({ key, publicHosts, upstreamPort = 4301, timeoutMs =
         if (path === '/api/v1/player-profile/avatar' && incoming.statusCode === 200 && typeof incoming.headers['content-type'] === 'string' && incoming.headers['content-type'].toLowerCase().startsWith('image/') && typeof incoming.headers['cache-control'] === 'string') {
           exposed['cache-control'] = incoming.headers['cache-control'];
         }
-        for (const name of ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy']) if (incoming.headers[name] !== undefined) exposed[name] = incoming.headers[name];
+        for (const name of ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy', 'x-zone-server-ms', 'x-zone-sync-state']) if (incoming.headers[name] !== undefined) exposed[name] = incoming.headers[name];
         if (incoming.headers['set-cookie']) exposed['set-cookie'] = incoming.headers['set-cookie'].filter(value => value.startsWith('zone_player_session=') || (path === '/api/v1/admin/session' && value.startsWith('zone_admin_session='))).map(value => {
           // Authenticated public requests always set a host-only browser cookie.
           const parts = value.split(';').filter(part => !/^\s*(domain|secure|httponly|samesite)\b/i.test(part));

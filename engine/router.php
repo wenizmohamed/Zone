@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/bootstrap.php';
+$zoneRequestStartedAt = microtime(true);
 
 // Only an authenticated loopback relay can supply the public request context.
 $zoneGatewayRequest = false;
@@ -204,8 +205,15 @@ if (($path === '/engine' || $path === '/engine/') && $method === 'GET') {
 function json_response(mixed $payload, int $status = 200): never
 {
     http_response_code($status);
-    if (!empty($GLOBALS['__zone_ledger_cookie']) && !headers_sent()) {
-        zone_cookie('zone_player_ledger', (string) $GLOBALS['__zone_ledger_cookie'], time() + 60 * 60 * 24 * 30);
+    if (!headers_sent()) {
+        if (!empty($GLOBALS['__zone_ledger_cookie'])) {
+            zone_cookie('zone_player_ledger', (string) $GLOBALS['__zone_ledger_cookie'], time() + 60 * 60 * 24 * 30);
+        }
+        $elapsedMs = isset($GLOBALS['zoneRequestStartedAt'])
+            ? max(0.1, (microtime(true) - (float) $GLOBALS['zoneRequestStartedAt']) * 1000.0)
+            : 0.1;
+        header('X-Zone-Server-Ms: ' . number_format($elapsedMs, 1, '.', ''));
+        header('X-Zone-Sync-State: authoritative');
     }
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');

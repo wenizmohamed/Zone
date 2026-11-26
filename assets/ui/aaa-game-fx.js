@@ -2313,15 +2313,265 @@
     } catch (_) {}
   }
 
+  /* ---------------- v175 Backend Command Feel, Sync Telemetry & Cooldown Toast ---------------- */
+  var netState = {
+    inFlightMutations: 0,
+    totalApiCalls: 0,
+    lastRttMs: 0,
+    lastServerMs: 0,
+    syncMode: 'ready',
+    cooldownUntil: 0,
+    cooldownTotalMs: 0,
+    cooldownAction: '',
+    cooldownTimer: 0
+  };
+
+  var ACTION_COOLDOWN_LABELS = {
+    crime: { en: 'Street heat cooling down', ar: 'هدوء حرارة الشارع' },
+    gym: { en: 'Catching breath between sets', ar: 'استعادة الأنفاس بين التمارين' },
+    attack: { en: 'Reloading combat stance', ar: 'إعادة التمركز القتالي' },
+    job: { en: 'Shift paperwork clearing', ar: 'إنهاء إجراءات الوردية' },
+    casino: { en: 'Dealer shuffling table', ar: 'الموزع يجهز الطاولة' },
+    default: { en: 'Action cooldown active', ar: 'فترة تهدئة الإجراء' }
+  };
+
+  function isArabicDoc() {
+    var h = document.documentElement;
+    return Boolean(h && (h.lang === 'ar' || h.dir === 'rtl'));
+  }
+
+  function markButtonPending(btn) {
+    if (!btn || !(btn instanceof Element)) return function () {};
+    btn.setAttribute('data-zfx-pending', '1');
+    btn.setAttribute('aria-busy', 'true');
+    var cleared = false;
+    var clearFn = function () {
+      if (cleared) return;
+      cleared = true;
+      btn.removeAttribute('data-zfx-pending');
+      btn.removeAttribute('aria-busy');
+    };
+    setTimeout(clearFn, 1800);
+    return clearFn;
+  }
+
+  function syncNetTelemetryPill() {
+    var actions = document.querySelector('.zone-topbar .zone-header-actions');
+    if (!actions) return;
+    var pill = document.getElementById('zfx-net-sync-pill');
+    if (pill && pill.parentElement !== actions) {
+      if (pill.parentElement) pill.parentElement.removeChild(pill);
+      pill = null;
+    }
+    if (!pill) {
+      pill = document.createElement('span');
+      pill.id = 'zfx-net-sync-pill';
+      pill.className = 'zfx-net-sync-pill';
+      pill.setAttribute('role', 'status');
+      pill.setAttribute('aria-live', 'polite');
+      pill.innerHTML = '<span class="zfx-net-dot" aria-hidden="true"></span><bdi class="zfx-net-txt">Synced</bdi>';
+      actions.appendChild(pill);
+    }
+
+    var ar = isArabicDoc();
+    var offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    var mode = offline ? 'offline' : (netState.inFlightMutations > 0 ? 'saving' : 'synced');
+    pill.setAttribute('data-zfx-sync', mode);
+
+    var txtEl = pill.querySelector('.zfx-net-txt');
+    if (txtEl) {
+      var label = '';
+      if (mode === 'offline') {
+        label = ar ? 'غير متصل' : 'Offline';
+      } else if (mode === 'saving') {
+        label = ar ? 'يحفظ...' : 'Saving...';
+      } else if (netState.lastRttMs > 0) {
+        label = (ar ? 'مزامن · ' : 'Synced · ') + netState.lastRttMs + 'ms';
+      } else {
+        label = ar ? 'مزامن' : 'Synced';
+      }
+      if (txtEl.textContent !== label) txtEl.textContent = label;
+    }
+
+    var tip = netState.lastServerMs > 0
+      ? ('Server ' + netState.lastServerMs + 'ms / RTT ' + netState.lastRttMs + 'ms (' + netState.syncMode + ')')
+      : (ar ? 'المزامنة الفورية مع خادم اللعبة' : 'Authoritative server sync');
+    if (pill.getAttribute('title') !== tip) pill.setAttribute('title', tip);
+  }
+
+  function renderCooldownToast() {
+    if (!document.body) return;
+    var toast = document.getElementById('zfx-cooldown-toast');
+    var now = Date.now();
+    var remMs = Math.max(0, netState.cooldownUntil - now);
+
+    if (remMs <= 0) {
+      if (netState.cooldownTimer) {
+        clearInterval(netState.cooldownTimer);
+        netState.cooldownTimer = 0;
+      }
+      if (toast && !toast.hasAttribute('hidden')) {
+        var arDone = isArabicDoc();
+        toast.setAttribute('data-zfx-cd-ready', '1');
+        var lblDone = toast.querySelector('.zfx-cd-txt');
+        var barDone = toast.querySelector('.zfx-cd-fill');
+        if (lblDone) lblDone.textContent = arDone ? 'جاهز الآن - نفّذ!' : 'Ready now - Go!';
+        if (barDone) barDone.style.width = '100%';
+        setTimeout(function () {
+          if (Date.now() >= netState.cooldownUntil && toast) {
+            toast.setAttribute('hidden', '');
+            toast.removeAttribute('data-zfx-cd-ready');
+          }
+        }, 700);
+      }
+      return;
+    }
+
+    if (!toast) {
+      toast = document.createElement('aside');
+      toast.id = 'zfx-cooldown-toast';
+      toast.className = 'zfx-cooldown-toast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
+      toast.innerHTML =
+        '<div class="zfx-cd-row">' +
+          '<span class="zfx-cd-dot" aria-hidden="true"></span>' +
+          '<span class="zfx-cd-txt"></span>' +
+          '<bdi class="zfx-cd-sec"></bdi>' +
+        '</div>' +
+        '<div class="zfx-cd-track" aria-hidden="true"><div class="zfx-cd-fill"></div></div>';
+      document.body.appendChild(toast);
+    }
+
+    toast.removeAttribute('hidden');
+    toast.removeAttribute('data-zfx-cd-ready');
+    var ar = isArabicDoc();
+    var copyPair = ACTION_COOLDOWN_LABELS[netState.cooldownAction] || ACTION_COOLDOWN_LABELS.default;
+    var secs = (remMs / 1000).toFixed(1);
+    var pct = netState.cooldownTotalMs > 0
+      ? Math.max(0, Math.min(100, Math.round(((netState.cooldownTotalMs - remMs) / netState.cooldownTotalMs) * 100)))
+      : 50;
+
+    var txtNode = toast.querySelector('.zfx-cd-txt');
+    var secNode = toast.querySelector('.zfx-cd-sec');
+    var fillNode = toast.querySelector('.zfx-cd-fill');
+    if (txtNode) txtNode.textContent = ar ? copyPair.ar : copyPair.en;
+    if (secNode) secNode.textContent = ar ? (secs + ' ث') : (secs + 's');
+    if (fillNode) fillNode.style.width = pct + '%';
+  }
+
+  function triggerCooldownToast(retrySeconds, actionName) {
+    var sec = Math.max(1, Math.min(120, Number(retrySeconds) || 3));
+    netState.cooldownAction = String(actionName || 'default').toLowerCase();
+    netState.cooldownTotalMs = sec * 1000;
+    netState.cooldownUntil = Date.now() + netState.cooldownTotalMs;
+    renderCooldownToast();
+    if (!netState.cooldownTimer) {
+      netState.cooldownTimer = setInterval(renderCooldownToast, 100);
+    }
+  }
+
+  function installFetchTelemetryBridge() {
+    if (typeof window.fetch !== 'function' || window.fetch.__zfxWrapped) return;
+    var origFetch = window.fetch;
+    var wrappedFetch = function (input, init) {
+      var urlStr = '';
+      try {
+        urlStr = typeof input === 'string' ? input : (input && input.url ? String(input.url) : '');
+      } catch (_) {}
+
+      var isApi = urlStr.indexOf('/api/v1/') >= 0;
+      if (!isApi) {
+        return origFetch.apply(this, arguments);
+      }
+
+      var method = 'GET';
+      try {
+        if (init && init.method) method = String(init.method).toUpperCase();
+        else if (input && typeof input === 'object' && input.method) method = String(input.method).toUpperCase();
+      } catch (_) {}
+
+      var isMutation = (method === 'POST' || method === 'PUT' || method === 'DELETE') &&
+        urlStr.indexOf('/auth/session') < 0 &&
+        urlStr.indexOf('/chat') < 0 &&
+        urlStr.indexOf('/syndicate-chat') < 0;
+
+      var clearBtnPending = null;
+      if (isMutation) {
+        netState.inFlightMutations += 1;
+        if (
+          state.lastActionAnchor &&
+          state.lastActionAnchor.el &&
+          (performance.now() - state.lastActionAnchor.at) < 220 &&
+          state.lastActionAnchor.el.closest &&
+          state.lastActionAnchor.el.closest('#zone-main')
+        ) {
+          clearBtnPending = markButtonPending(state.lastActionAnchor.el);
+        }
+        syncNetTelemetryPill();
+      }
+
+      var t0 = performance.now();
+      netState.totalApiCalls += 1;
+
+      return origFetch.apply(this, arguments).then(
+        function (res) {
+          var rtt = Math.max(1, Math.round(performance.now() - t0));
+          netState.lastRttMs = rtt;
+          if (isMutation) {
+            netState.inFlightMutations = Math.max(0, netState.inFlightMutations - 1);
+            if (clearBtnPending) clearBtnPending();
+          }
+          try {
+            if (res && res.headers && typeof res.headers.get === 'function') {
+              var srvHdr = res.headers.get('x-zone-server-ms');
+              if (srvHdr) netState.lastServerMs = Math.max(0.1, Number(srvHdr) || 0);
+              var syncHdr = res.headers.get('x-zone-sync-state');
+              if (syncHdr) netState.syncMode = String(syncHdr);
+            }
+            if (res && res.status === 429) {
+              var retryHdr = (res.headers && typeof res.headers.get === 'function') ? Number(res.headers.get('retry-after')) : 0;
+              if (typeof res.clone === 'function') {
+                res.clone().json().then(function (body) {
+                  var waitSec = Number(body && body.retryAfter) || retryHdr || 3;
+                  var actKey = (body && body.action) || (urlStr.indexOf('/crimes/') >= 0 ? 'crime' : (urlStr.indexOf('/gym') >= 0 ? 'gym' : 'default'));
+                  triggerCooldownToast(waitSec, actKey);
+                }).catch(function () {
+                  if (retryHdr > 0) triggerCooldownToast(retryHdr, 'default');
+                });
+              } else if (retryHdr > 0) {
+                triggerCooldownToast(retryHdr, 'default');
+              }
+            }
+          } catch (_) {}
+          syncNetTelemetryPill();
+          return res;
+        },
+        function (err) {
+          if (isMutation) {
+            netState.inFlightMutations = Math.max(0, netState.inFlightMutations - 1);
+            if (clearBtnPending) clearBtnPending();
+          }
+          syncNetTelemetryPill();
+          throw err;
+        }
+      );
+    };
+    wrappedFetch.__zfxWrapped = true;
+    window.fetch = wrappedFetch;
+  }
+
   /* ---------------- Lifecycle & Boot (Zero setInterval Polling, Zero Idle rAF!) ---------------- */
   function boot() {
     try {
+      installFetchTelemetryBridge();
       ensureLayer();
       bindSessionAccessObserver();
       bindMainScreenObserver();
       bindHudObserver();
       runSurfacePolish();
       evaluateTelemetryDeltas();
+      syncNetTelemetryPill();
 
       window.addEventListener('zone:render', function () {
         bindMainScreenObserver();
@@ -2356,7 +2606,7 @@
   }
 
   window.ZoneGameFX = {
-    version: '130.0',
+    version: '175.0',
     isMuted: isMuted,
     setMuted: setMuted,
     spawnDelta: spawnDelta,
@@ -2365,6 +2615,17 @@
     runSurfacePolish: runSurfacePolish,
     syncWebglIframeThrottle: syncWebglIframeThrottle,
     healExpiredPlayerSession: healExpiredPlayerSession,
+    triggerCooldownToast: triggerCooldownToast,
+    getNetTelemetry: function () {
+      return {
+        lastRttMs: netState.lastRttMs,
+        lastServerMs: netState.lastServerMs,
+        syncMode: netState.syncMode,
+        inFlightMutations: netState.inFlightMutations,
+        totalApiCalls: netState.totalApiCalls,
+        cooldownActive: netState.cooldownUntil > Date.now()
+      };
+    },
     getPerfStats: function () {
       return {
         heroLoopRunning: Boolean(state.heroRaf),

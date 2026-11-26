@@ -3353,3 +3353,134 @@ html[dir="rtl"] body #zone-main .zig-game-card:hover .zig-game-card-cta svg {
 html[dir="rtl"] body #zone-main .zig-game-card-cta svg {
   transform: scaleX(-1);
 }
+
+/* ==========================================================================
+ * ZONE v175 - <16MS INSTANT ACTION PENDING SHIELD, TOPBAR SYNC TELEMETRY PILL
+ *             & BILINGUAL COOLDOWN COUNTDOWN TOAST (SKETCHBOOK NOIR)
+ * ========================================================================== */
+html body #zone-main button[data-zfx-pending="1"] {
+  pointer-events: none !important;
+  opacity: 0.88 !important;
+  transform: translateY(1px) scale(0.985) !important;
+  outline: 2px dashed var(--zwc-gold-ink, #f0c465) !important;
+  outline-offset: -2px !important;
+}
+
+#zfx-net-sync-pill {
+  order: -3 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--zwc-ink-rule, rgba(242, 234, 217, 0.22));
+  background-color: var(--zwc-surface-alt, rgba(37, 33, 28, 0.85));
+  color: var(--zwc-ink-soft, #d8ccb6);
+  font-family: var(--zwc-font-hand, "Patrick Hand", "Rubik", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Show live RTT pill on spacious desktop (>=1280px); never crowd compact mobile topbar! */
+@media (max-width: 1279px) {
+  #zfx-net-sync-pill {
+    display: none !important;
+  }
+}
+
+#zfx-net-sync-pill .zfx-net-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background-color: var(--zwc-green-ink, #92d17e);
+}
+
+#zfx-net-sync-pill[data-zfx-sync="saving"] .zfx-net-dot {
+  background-color: var(--zwc-gold-ink, #f0c465);
+}
+
+#zfx-net-sync-pill[data-zfx-sync="offline"] .zfx-net-dot {
+  background-color: var(--zwc-bad-ink, #ef7d68);
+}
+
+#zfx-cooldown-toast[hidden] {
+  display: none !important;
+}
+
+#zfx-cooldown-toast {
+  position: fixed;
+  inset-block-start: calc(90px + env(safe-area-inset-top, 0px));
+  inset-inline-end: 16px;
+  z-index: 1240;
+  min-width: 220px;
+  max-width: min(340px, calc(100vw - 24px));
+  padding: 9px 13px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: var(--zwc-surface, #1e1b17);
+  color: var(--zwc-ink, #f3ecdc);
+  border: 2px solid var(--zwc-border-strong, #23201c);
+  border-radius: var(--zwc-sketch-radius-sm, 12px 6px 12px 6px);
+  box-shadow: 3px 4px 0 var(--zwc-shadow-solid, #090807);
+  font-family: var(--zwc-font-hand, "Patrick Hand", "Rubik", sans-serif);
+  pointer-events: none;
+}
+
+#zfx-cooldown-toast .zfx-cd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+#zfx-cooldown-toast .zfx-cd-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background-color: var(--zwc-gold-ink, #f0c465);
+}
+
+#zfx-cooldown-toast[data-zfx-cd-ready="1"] .zfx-cd-dot {
+  background-color: var(--zwc-green-ink, #92d17e);
+}
+
+#zfx-cooldown-toast .zfx-cd-txt {
+  flex: 1 1 auto;
+}
+
+#zfx-cooldown-toast .zfx-cd-sec {
+  color: var(--zwc-gold-ink, #f0c465);
+  font-variant-numeric: tabular-nums;
+}
+
+#zfx-cooldown-toast[data-zfx-cd-ready="1"] .zfx-cd-sec {
+  display: none;
+}
+
+#zfx-cooldown-toast .zfx-cd-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background-color: rgba(128, 120, 108, 0.28);
+  overflow: hidden;
+}
+
+#zfx-cooldown-toast .zfx-cd-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background-color: var(--zwc-gold-ink, #f0c465);
+  transition: width 0.1s linear;
+}
+
+#zfx-cooldown-toast[data-zfx-cd-ready="1"] .zfx-cd-fill {
+  background-color: var(--zwc-green-ink, #92d17e);
+}

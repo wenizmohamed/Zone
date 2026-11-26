@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+$zoneProxyStartedAt = microtime(true);
 $rewrittenPath = $_GET['__zone_path'] ?? null;
 if (is_string($rewrittenPath) && str_starts_with($rewrittenPath, '/')) {
     $_SERVER['REQUEST_URI'] = $rewrittenPath;
@@ -217,7 +218,7 @@ if ($relayOrigin !== '' || $relayKey !== '') {
         if (preg_match('/[\r\n\x00]/', $value)) continue;
         if ($name === 'content-type') $downstreamContentType = strtolower($value);
         elseif ($name === 'cache-control') $downstreamCacheControl = $value;
-        if (in_array($name, ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy'], true)) header($name . ': ' . $value);
+        if (in_array($name, ['content-type', 'retry-after', 'content-security-policy', 'referrer-policy', 'permissions-policy', 'x-zone-server-ms', 'x-zone-sync-state'], true)) header($name . ': ' . $value);
         elseif ($name === 'set-cookie' && (str_starts_with($value, 'zone_player_session=') || str_starts_with($value, 'zone_player_ledger=') || ($path === '/api/v1/admin/session' && str_starts_with($value, 'zone_admin_session=')))) {
             if (str_starts_with($value, 'zone_player_ledger=')) $hasLedgerSetCookie = true;
             $parts = array_filter(explode(';', $value), static fn ($part) => !preg_match('/^\s*(?:domain|secure|httponly|samesite)\b/i', $part));
@@ -229,6 +230,9 @@ if ($relayOrigin !== '' || $relayKey !== '') {
     }
     if (($healedStaleSession || ($path === '/api/v1/auth/logout' && $method === 'POST' && getenv('VERCEL') === '1' && $status === 200)) && !$hasLedgerSetCookie) {
         header('Set-Cookie: zone_player_ledger=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; Secure; HttpOnly; SameSite=Strict', false);
+    }
+    if (!headers_sent()) {
+        header('X-Zone-Edge-Ms: ' . number_format(max(0.1, (microtime(true) - $zoneProxyStartedAt) * 1000.0), 1, '.', ''));
     }
     if ($method !== 'HEAD') echo $raw;
     exit;

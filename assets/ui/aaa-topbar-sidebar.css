@@ -2049,3 +2049,684 @@ html:not([data-zaaa-hydrated="1"]) body #zone-fx-layer .zfx-delta-chip {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ==========================================================================
+ * 8. ZONE v175 - SMOOTH EASY-ACCESS NAVIGATION, BILINGUAL QUICK-SWITCHER,
+ *    SIDEBAR LIVE FILTER, THUMB-ZONE ASSIST & >=44PX MOBILE TOUCH ERGONOMICS
+ *    Art Direction: 100% Noir-Mafia Hand-Drawn Sketchbook (Cold-Press Paper
+ *                   + Fountain Ink + Sovereign Metallic Crests)
+ * ========================================================================== */
+
+/* 8A. Topbar Quick-Jump Trigger (#zaaa-quick-jump-btn) */
+html body .zone-topbar .zone-header-actions #zaaa-quick-jump-btn,
+html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-quick-jump-btn {
+  order: -2 !important;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+}
+
+#zaaa-quick-jump-btn .zaaa-qj-ico {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#zaaa-quick-jump-btn .zaaa-qj-kbd {
+  font-family: var(--zaaa-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--zaaa-border-subtle);
+  background-color: var(--zaaa-bg-elevated);
+  color: var(--zaaa-text-2);
+}
+
+@media (max-width: 1180px) {
+  #zaaa-quick-jump-btn .zaaa-qj-kbd {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  html body .zone-topbar .zone-header-actions #zaaa-quick-jump-btn,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-quick-jump-btn {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding-inline: 0 !important;
+    gap: 0 !important;
+  }
+
+  #zaaa-quick-jump-btn .zaaa-qj-lbl,
+  #zaaa-quick-jump-btn .zaaa-qj-kbd {
+    display: none !important;
+  }
+
+  /* Invisible >=44x44px HIG/M3 Touch-Slop Halo on Compact Topbar Controls
+     (Keeps combined sticky header <= 84px while giving thumb taps full 44px hit box!) */
+  html body .zone-topbar #zaaa-mobile-rail-toggle,
+  html body .zone-topbar .zone-header-actions > button,
+  html body .zone-topbar #zone-topbar-hud .zaaa-hud-pill,
+  html body #zone-torn-hud-strip .zre-hud-pill {
+    position: relative !important;
+  }
+
+  html body .zone-topbar #zaaa-mobile-rail-toggle::before,
+  html body .zone-topbar .zone-header-actions > button::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: -5px -3px !important;
+    pointer-events: auto !important;
+  }
+}
+
+@media (max-width: 359px) {
+  html body .zone-topbar .zone-header-actions #zaaa-quick-jump-btn,
+  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-quick-jump-btn {
+    display: none !important;
+  }
+}
+
+/* 8B. Sidebar Live 19-Area Filter & Docked Mobile Quick-Jump Tile (#zaaa-sidebar-quickbar) */
+aside.zone-sidebar #zone-area-navigation {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+aside.zone-sidebar #zone-area-navigation #zaaa-sidebar-quickbar {
+  order: -10 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-block-end: 5px;
+}
+
+aside.zone-sidebar #zone-area-navigation [data-zaaa-filtered-out="1"] {
+  display: none !important;
+}
+
+/* Desktop & Expanded Drawer: Show live Filter Box, hide compact rail-only Jump tile */
+@media (min-width: 901px) {
+  #zaaa-sidebar-quickbar .zaaa-rail-jump-btn {
+    display: none !important;
+  }
+}
+
+html.zaaa-rail-open #zaaa-sidebar-quickbar .zaaa-rail-jump-btn {
+  display: none !important;
+}
+
+.zaaa-sidebar-filter-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 2px 8px;
+  background-color: var(--zaaa-bg-elevated);
+  border: 1.5px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid);
+}
+
+.zaaa-sidebar-filter-box .zaaa-sf-ico {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zaaa-sidebar-filter-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  outline: none !important;
+  background: transparent !important;
+  color: var(--zaaa-text-1) !important;
+  font-family: var(--zaaa-font-ui) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  padding: 4px 0 !important;
+}
+
+.zaaa-sidebar-filter-input::placeholder {
+  color: var(--zaaa-text-3);
+  opacity: 0.9;
+}
+
+.zaaa-sidebar-filter-clear {
+  appearance: none;
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--zaaa-border-subtle);
+  border-radius: 4px;
+  background-color: var(--zaaa-btn-bg);
+  color: var(--zaaa-text-1);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Compact Phone Docked Rail (<= 639px when drawer not expanded): 1-Tap 44px Quick-Jump Tile! */
+@media (max-width: 639px) {
+  html:not(.zaaa-rail-open) #zaaa-sidebar-quickbar .zaaa-sidebar-filter-box {
+    display: none !important;
+  }
+
+  html:not(.zaaa-rail-open) #zaaa-sidebar-quickbar .zaaa-rail-jump-btn {
+    min-height: 44px !important;
+    width: 100% !important;
+    padding: 4px 3px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    background-color: var(--zaaa-bg-elevated) !important;
+    border: 1.5px solid var(--zaaa-border-strong) !important;
+    border-radius: 5px !important;
+    box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid) !important;
+    color: var(--zaaa-title-ink) !important;
+    font-family: var(--zaaa-font-ui) !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+  }
+
+  html:not(.zaaa-rail-open) #zaaa-sidebar-quickbar .zaaa-rail-jump-ico {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 900px) {
+  html:not(.zaaa-rail-open) #zaaa-sidebar-quickbar .zaaa-rail-jump-btn {
+    display: none !important;
+  }
+  html:not(.zaaa-rail-open) .zaaa-sidebar-filter-box {
+    min-height: 38px;
+  }
+}
+
+html.zaaa-rail-open .zaaa-sidebar-filter-box {
+  min-height: 44px !important;
+}
+
+html.zaaa-rail-open .zaaa-sidebar-filter-input {
+  font-size: 16px !important;
+}
+
+/* 8C. Universal 1-Tap Quick-Switcher & Bilingual Search Modal (#zas-quick-switcher) */
+#zas-quick-switcher[hidden],
+#zaaa-thumb-assist[hidden],
+#zaaa-thumb-assist button[hidden],
+#zas-quick-switcher [hidden] {
+  display: none !important;
+}
+
+#zas-quick-switcher {
+  position: fixed;
+  inset: 0;
+  z-index: 1280;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: max(48px, env(safe-area-inset-top, 16px)) 14px max(16px, env(safe-area-inset-bottom, 16px));
+  background-color: var(--zaaa-scrim, rgba(12, 10, 8, 0.68));
+  box-sizing: border-box;
+}
+
+#zas-quick-switcher .zas-qs-sheet {
+  width: min(640px, 100%);
+  max-height: min(78dvh, 680px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 15px;
+  background-color: var(--zaaa-bg-card);
+  background-image: var(--zwc-pencil-shade, none);
+  color: var(--zaaa-text-1);
+  border: 2px solid var(--zaaa-border-strong);
+  border-radius: var(--zwc-sketch-radius, 18px 8px 16px 8px / 8px 16px 8px 18px);
+  box-shadow: 5px 6px 0 var(--zaaa-shadow-solid);
+  font-family: var(--zaaa-font-ui);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#zas-quick-switcher .zas-qs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+#zas-quick-switcher .zas-qs-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+#zas-quick-switcher .zas-qs-title-ico {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: inline-flex;
+}
+
+#zas-quick-switcher .zas-qs-title {
+  margin: 0;
+  font-family: var(--zaaa-font-display);
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--zaaa-title-ink);
+}
+
+#zas-quick-switcher .zas-qs-close {
+  appearance: none;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--zaaa-btn-bg);
+  color: var(--zaaa-text-1);
+  border: 1.5px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid);
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zas-quick-switcher .zas-qs-search-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 4px 12px;
+  background-color: var(--zaaa-bg-elevated);
+  border: 1.8px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.14);
+}
+
+#zas-quick-switcher .zas-qs-search-ico {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  display: inline-flex;
+}
+
+#zas-quick-switcher .zas-qs-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  border: 0 !important;
+  outline: none !important;
+  background: transparent !important;
+  color: var(--zaaa-text-1) !important;
+  font-family: var(--zaaa-font-ui) !important;
+  /* 16px prevents iOS Safari input auto-zoom! */
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+#zas-quick-switcher .zas-qs-input::placeholder {
+  color: var(--zaaa-text-3);
+}
+
+#zas-quick-switcher .zas-qs-smart,
+#zas-quick-switcher .zas-qs-pins {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#zas-quick-switcher .zas-qs-sec-lbl {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--zaaa-text-3);
+  letter-spacing: 0.02em;
+}
+
+#zas-quick-switcher .zas-qs-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#zas-quick-switcher .zas-qs-smart-chip,
+#zas-quick-switcher .zas-qs-pin-chip {
+  appearance: none;
+  min-height: 38px;
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--zaaa-btn-bg);
+  color: var(--zaaa-text-1);
+  border: 1.4px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid);
+  font-family: var(--zaaa-font-ui);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zas-quick-switcher .zas-qs-smart-chip {
+  border-color: var(--zaaa-accent);
+}
+
+#zas-quick-switcher .zas-qs-pin-chip[data-qs-current="1"] {
+  background-image: var(--zaaa-bg-active);
+  border-color: var(--zaaa-accent);
+}
+
+#zas-quick-switcher .zas-qs-chip-ico {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  display: inline-flex;
+}
+
+#zas-quick-switcher .zas-qs-list {
+  flex: 1 1 auto;
+  min-height: 140px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding-inline-end: 2px;
+}
+
+#zas-quick-switcher .zas-qs-item {
+  display: flex;
+  align-items: stretch;
+  background-color: var(--zaaa-bg-elevated);
+  border: 1.5px solid var(--zaaa-border-subtle);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid);
+  overflow: hidden;
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+
+#zas-quick-switcher .zas-qs-item[data-qs-selected="1"],
+#zas-quick-switcher .zas-qs-item:hover {
+  border-color: var(--zaaa-border-strong);
+  background-color: var(--zaaa-btn-bg);
+}
+
+#zas-quick-switcher .zas-qs-item[data-qs-active="1"] {
+  border-inline-start: 3.5px solid var(--zaaa-accent);
+}
+
+#zas-quick-switcher .zas-qs-item-main {
+  appearance: none;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 48px;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  color: var(--zaaa-text-1);
+  text-align: start;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zas-quick-switcher .zas-qs-item-ico {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  display: inline-flex;
+}
+
+#zas-quick-switcher .zas-qs-item-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+#zas-quick-switcher .zas-qs-item-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--zaaa-font-ui);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--zaaa-title-ink);
+  line-height: 1.15;
+}
+
+#zas-quick-switcher .zas-qs-cur-badge {
+  font-size: 10.5px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background-color: var(--zaaa-btn-bg);
+  border: 1px solid var(--zaaa-accent);
+  color: var(--zaaa-cash);
+}
+
+#zas-quick-switcher .zas-qs-item-sub {
+  font-size: 12px;
+  color: var(--zaaa-text-3);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#zas-quick-switcher .zas-qs-pin-toggle {
+  appearance: none;
+  width: 44px;
+  min-width: 44px;
+  min-height: 48px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-inline-start: 1px solid var(--zaaa-border-subtle);
+  color: var(--zaaa-text-3);
+  opacity: 0.48;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zas-quick-switcher .zas-qs-pin-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+#zas-quick-switcher .zas-qs-pin-toggle[data-pinned="1"] {
+  opacity: 1;
+  color: var(--zaaa-life);
+}
+
+#zas-quick-switcher .zas-qs-empty {
+  grid-column: 1 / -1;
+  padding: 20px 12px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--zaaa-text-2);
+}
+
+#zas-quick-switcher .zas-qs-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-block-start: 8px;
+  border-block-start: 1.5px solid var(--zaaa-border-subtle);
+}
+
+#zas-quick-switcher .zas-qs-utils {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#zas-quick-switcher .zas-qs-util-btn {
+  appearance: none;
+  min-height: 38px;
+  padding: 4px 10px;
+  background-color: var(--zaaa-btn-bg);
+  color: var(--zaaa-text-1);
+  border: 1.3px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  font-family: var(--zaaa-font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zas-quick-switcher .zas-qs-hint {
+  font-size: 12px;
+  color: var(--zaaa-text-3);
+}
+
+/* Mobile Bottom-Sheet Ergonomics for #zas-quick-switcher */
+@media (max-width: 720px) {
+  #zas-quick-switcher {
+    align-items: flex-end;
+    padding: 12px 6px max(8px, env(safe-area-inset-bottom, 8px));
+  }
+
+  #zas-quick-switcher .zas-qs-sheet {
+    max-height: 86dvh;
+    padding: 12px;
+    gap: 8px;
+  }
+
+  #zas-quick-switcher .zas-qs-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #zas-quick-switcher .zas-qs-smart-chip,
+  #zas-quick-switcher .zas-qs-pin-chip,
+  #zas-quick-switcher .zas-qs-util-btn {
+    min-height: 44px;
+  }
+
+  #zas-quick-switcher .zas-qs-hint {
+    display: none;
+  }
+}
+
+/* 8D. Contextual Thumb-Zone Back & Scroll-Top Assist (#zaaa-thumb-assist) */
+#zaaa-thumb-assist {
+  position: fixed;
+  inset-block-end: max(14px, env(safe-area-inset-bottom, 14px));
+  inset-inline-start: 16px;
+  z-index: 930;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  #zaaa-thumb-assist {
+    inset-inline-start: calc(var(--zaaa-mob-rail-w, 86px) + 10px);
+    inset-block-end: max(12px, env(safe-area-inset-bottom, 12px));
+  }
+}
+
+#zaaa-thumb-assist .zaaa-assist-btn {
+  pointer-events: auto;
+  appearance: none;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--zaaa-bg-card);
+  color: var(--zaaa-title-ink);
+  border: 1.8px solid var(--zaaa-border-strong);
+  border-radius: var(--zaaa-radius-sm);
+  box-shadow: 2px 3px 0 var(--zaaa-shadow-solid);
+  font-family: var(--zaaa-font-ui);
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#zaaa-thumb-assist .zaaa-assist-btn:hover {
+  background-color: var(--zaaa-btn-hover);
+}
+
+#zaaa-thumb-assist .zaaa-assist-ico {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  display: inline-flex;
+}
+
+html[dir="rtl"] #zaaa-thumb-assist .zaaa-assist-ico[data-rtl-flip="1"] {
+  transform: scaleX(-1);
+}
+
+/* 8E. Mobile >=44x44px Touch Target Guarantee Across All 19 Screens (<= 900px) */
+@media (max-width: 900px) {
+  html body #dc-root #zone-main#zone-main .zone-page-heading > div button,
+  html body #zone-main#zone-main .zone-page-heading > div button,
+  html body #zone-main button.zpa-upload-btn,
+  html body #zone-main .zone-panel-heading button,
+  html body #zone-main .zwc-3d-open-btn,
+  html body #zone-main .zone-crime-row button,
+  html body #zone-main .zone-training-row button,
+  html body #zone-main .ztl-btn,
+  html body #zone-main .zre-btn,
+  html body #zone-main .zab-btn,
+  html body #zone-main .zct-action-btn,
+  html body #zone-main .zct-bet-chip,
+  html body #zone-main .zvg-btn,
+  html body aside.zone-sidebar #zps-sidebar-settings-btn.zps-sidebar-btn {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    touch-action: manipulation !important;
+  }
+
+  html body #dc-root #zone-main#zone-main .zone-page-heading > div button,
+  html body #zone-main#zone-main .zone-page-heading > div button {
+    padding: 6px 11px !important;
+    font-size: 12.5px !important;
+  }
+}
