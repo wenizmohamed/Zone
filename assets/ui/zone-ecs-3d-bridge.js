@@ -520,7 +520,10 @@
   // Import articulated rigged operative & 3D architectural stage environments FIRST
   // so globalThis.__ZoneRiggedOperative and globalThis.__Zone3DEnvironments are live before stages build!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=163')
+    return import('./zone-3d-rigged-operative.mjs?v=164')
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs?v=163');
+      })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs?v=161');
       })
@@ -556,7 +559,10 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=163')
+    return import('./zone-3d-environments.mjs?v=164')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=163');
+      })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=161');
       })
@@ -589,7 +595,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=163')
+    return import('./zone-ecs-3d-engine.mjs?v=164')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=163');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=161');
       })
@@ -622,12 +631,11 @@
       });
   }
 
-  loadRiggedOperativeModule()
+  Promise.all([loadRiggedOperativeModule(), loadEnvironmentsModule()])
     .then(function () {
       return loadEngineModule();
     })
     .then(function (mod) {
-      loadEnvironmentsModule();
       if (!mod || typeof mod.createZoneEcs3DRuntime !== 'function') return;
       runtime = mod.createZoneEcs3DRuntime();
       var queued = pendingCalls.splice(0, pendingCalls.length);

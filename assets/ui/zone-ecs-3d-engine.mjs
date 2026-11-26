@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=164';
 
 export {
   THREE,
