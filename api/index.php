@@ -83,7 +83,11 @@ function zone_proxy_owner_access(): array
 }
 function zone_proxy_json(array $data): never
 {
+    global $zoneProxyStartedAt;
     header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); header('X-Content-Type-Options: nosniff');
+    $edgeMs = isset($zoneProxyStartedAt) ? max(0.1, (microtime(true) - (float) $zoneProxyStartedAt) * 1000.0) : 0.1;
+    header('X-Zone-Edge-Ms: ' . number_format($edgeMs, 1, '.', ''));
+    header('X-Zone-Sync-State: edge');
     echo json_encode($data, JSON_THROW_ON_ERROR); exit;
 }
 

@@ -573,7 +573,7 @@ test('v150 Clean Native Torn UI/UX & Information Architecture Gate (Desktop 1440
     const afterJump = await isoPage.evaluate(() => ({
       active: document.getElementById('zone-main')?.getAttribute('data-zone-screen'),
       qsHidden: document.getElementById('zas-quick-switcher')?.hasAttribute('hidden'),
-      backAssistVisible: !document.getElementById('zaaa-assist-back')?.hasAttribute('hidden')
+      backAssistVisible: !document.getElementById('zaaa-strip-back-btn')?.hasAttribute('hidden')
     }));
     assert.equal(afterJump.active, 'bank', 'Arabic fuzzy search "بنك" + Enter jumps directly to Bank');
     assert.equal(afterJump.qsHidden, true, 'Quick-Switcher closes cleanly after navigation');

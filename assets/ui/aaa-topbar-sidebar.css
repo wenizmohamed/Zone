@@ -2096,18 +2096,10 @@ html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-qui
 }
 
 @media (max-width: 900px) {
+  /* On <=900px mobile, Quick-Jump lives at the top of the always-open docked side rail (#zaaa-rail-jump-btn)
+     so .zone-topbar keeps 100% roomy width for Cash/Energy/Nerve and preserves :first-of-type theme selector! */
   html body .zone-topbar .zone-header-actions #zaaa-quick-jump-btn,
   html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-quick-jump-btn {
-    width: 32px !important;
-    min-width: 32px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-    padding-inline: 0 !important;
-    gap: 0 !important;
-  }
-
-  #zaaa-quick-jump-btn .zaaa-qj-lbl,
-  #zaaa-quick-jump-btn .zaaa-qj-kbd {
     display: none !important;
   }
 
@@ -2126,13 +2118,6 @@ html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-qui
     position: absolute !important;
     inset: -5px -3px !important;
     pointer-events: auto !important;
-  }
-}
-
-@media (max-width: 359px) {
-  html body .zone-topbar .zone-header-actions #zaaa-quick-jump-btn,
-  html body #dc-root#dc-root .zone-app .zone-topbar .zone-header-actions #zaaa-quick-jump-btn {
-    display: none !important;
   }
 }
 
@@ -2456,24 +2441,26 @@ html.zaaa-rail-open .zaaa-sidebar-filter-input {
 
 #zas-quick-switcher .zas-qs-list {
   flex: 1 1 auto;
-  min-height: 140px;
+  min-height: 180px;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 8px;
   padding-inline-end: 2px;
 }
 
 #zas-quick-switcher .zas-qs-item {
   display: flex;
   align-items: stretch;
+  min-height: 54px;
   background-color: var(--zaaa-bg-elevated);
   border: 1.5px solid var(--zaaa-border-subtle);
   border-radius: var(--zaaa-radius-sm);
   box-shadow: 1.5px 1.5px 0 var(--zaaa-shadow-solid);
-  overflow: hidden;
   transition: border-color 0.12s ease, background-color 0.12s ease;
 }
 
@@ -2491,11 +2478,11 @@ html.zaaa-rail-open .zaaa-sidebar-filter-input {
   appearance: none;
   flex: 1 1 auto;
   min-width: 0;
-  min-height: 48px;
-  padding: 7px 9px;
+  min-height: 54px;
+  padding: 8px 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   background: transparent;
   border: 0;
   color: var(--zaaa-text-1);
@@ -2623,21 +2610,40 @@ html.zaaa-rail-open .zaaa-sidebar-filter-input {
 @media (max-width: 720px) {
   #zas-quick-switcher {
     align-items: flex-end;
-    padding: 12px 6px max(8px, env(safe-area-inset-bottom, 8px));
+    padding: 10px 6px max(8px, env(safe-area-inset-bottom, 8px));
   }
 
   #zas-quick-switcher .zas-qs-sheet {
-    max-height: 86dvh;
+    max-height: 88dvh;
     padding: 12px;
     gap: 8px;
   }
 
-  #zas-quick-switcher .zas-qs-list {
-    grid-template-columns: minmax(0, 1fr);
+  #zas-quick-switcher .zas-qs-chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  #zas-quick-switcher .zas-qs-chip-row::-webkit-scrollbar {
+    display: none;
   }
 
   #zas-quick-switcher .zas-qs-smart-chip,
-  #zas-quick-switcher .zas-qs-pin-chip,
+  #zas-quick-switcher .zas-qs-pin-chip {
+    flex: 0 0 auto;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+
+  #zas-quick-switcher .zas-qs-list {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 240px;
+  }
+
   #zas-quick-switcher .zas-qs-util-btn {
     min-height: 44px;
   }
@@ -2647,11 +2653,60 @@ html.zaaa-rail-open .zaaa-sidebar-filter-input {
   }
 }
 
-/* 8D. Contextual Thumb-Zone Back & Scroll-Top Assist (#zaaa-thumb-assist) */
+/* 8D. Sticky HUD-Strip Back Pill (#zaaa-strip-back-btn) & Scroll-Top Pill (#zaaa-thumb-assist) */
+#zaaa-strip-back-btn[hidden] {
+  display: none !important;
+}
+
+html body #zone-torn-hud-strip #zaaa-strip-back-btn {
+  position: relative;
+  flex: 0 0 auto;
+  height: 24px;
+  min-height: 24px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background-color: var(--zaaa-btn-bg);
+  color: var(--zaaa-title-ink);
+  border: 1.4px solid var(--zaaa-border-strong);
+  border-radius: 999px;
+  font-family: var(--zaaa-font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+html body #zone-torn-hud-strip #zaaa-strip-back-btn::before {
+  content: "";
+  position: absolute;
+  inset: -8px -4px;
+}
+
+html body #zone-torn-hud-strip #zaaa-strip-back-btn:hover {
+  background-color: var(--zaaa-btn-hover);
+}
+
+#zaaa-strip-back-btn .zaaa-assist-ico {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+  display: inline-flex;
+}
+
+html[dir="rtl"] #zaaa-strip-back-btn .zaaa-assist-ico[data-rtl-flip="1"] {
+  transform: scaleX(-1);
+}
+
 #zaaa-thumb-assist {
   position: fixed;
   inset-block-end: max(14px, env(safe-area-inset-bottom, 14px));
-  inset-inline-start: 16px;
+  inset-inline-end: 74px;
+  inset-inline-start: auto;
   z-index: 930;
   display: inline-flex;
   align-items: center;
@@ -2661,7 +2716,8 @@ html.zaaa-rail-open .zaaa-sidebar-filter-input {
 
 @media (max-width: 900px) {
   #zaaa-thumb-assist {
-    inset-inline-start: calc(var(--zaaa-mob-rail-w, 86px) + 10px);
+    inset-inline-end: 68px;
+    inset-inline-start: auto;
     inset-block-end: max(12px, env(safe-area-inset-bottom, 12px));
   }
 }

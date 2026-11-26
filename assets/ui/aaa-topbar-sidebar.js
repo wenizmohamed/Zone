@@ -1519,7 +1519,7 @@
         '</button>' +
         '<div class="zaaa-sidebar-filter-box">' +
           '<span class="zaaa-sf-ico" aria-hidden="true">' + renderSketchIcon('search') + '</span>' +
-          '<input type="search" id="zaaa-sidebar-filter-input" class="zaaa-sidebar-filter-input" autocomplete="off" spellcheck="false" />' +
+          '<input type="text" id="zaaa-sidebar-filter-input" class="zaaa-sidebar-filter-input" autocomplete="off" spellcheck="false" />' +
           '<button type="button" id="zaaa-sidebar-filter-clear" class="zaaa-sidebar-filter-clear" hidden aria-label="Clear">✕</button>' +
         '</div>';
 
@@ -1663,7 +1663,7 @@
         '</div>' +
         '<div class="zas-qs-search-row">' +
           '<span class="zas-qs-search-ico" aria-hidden="true">' + renderSketchIcon('search') + '</span>' +
-          '<input type="search" id="zas-qs-input" class="zas-qs-input" autocomplete="off" spellcheck="false" />' +
+          '<input type="text" id="zas-qs-input" class="zas-qs-input" autocomplete="off" spellcheck="false" />' +
         '</div>' +
         '<div id="zas-qs-smart" class="zas-qs-smart"></div>' +
         '<div id="zas-qs-pins" class="zas-qs-pins"></div>' +
@@ -1919,34 +1919,67 @@
     if (modal) modal.setAttribute('hidden', '');
   }
 
-  /* ---- Floating Thumb-Zone Back & Scroll-Top Assist (#zaaa-thumb-assist) ---- */
+  /* ---- Sticky HUD-Strip Back Pill (#zaaa-strip-back-btn) + Scroll-Top Assist ---- */
   function syncThumbAssist() {
     if (!document.body || !uiUxState.quickAssistVisible) return;
+
+    var ar = isArabic();
+    var activeScr = getActiveScreen();
+    var prevScr = getPreviousScreen();
+    var showBack = Boolean(activeScr && activeScr !== 'home' && prevScr);
+
+    /* 1. Mount #zaaa-strip-back-btn inside #zone-torn-hud-strip (100% outside <x-dc> fiber, zero overlap!) */
+    var hudStrip = document.getElementById('zone-torn-hud-strip');
+    var backBtn = document.getElementById('zaaa-strip-back-btn');
+    if (hudStrip) {
+      if (backBtn && backBtn.parentElement !== hudStrip) {
+        if (backBtn.parentElement) backBtn.parentElement.removeChild(backBtn);
+        backBtn = null;
+      }
+      if (!backBtn) {
+        backBtn = document.createElement('button');
+        backBtn.type = 'button';
+        backBtn.id = 'zaaa-strip-back-btn';
+        backBtn.className = 'zaaa-strip-back-btn';
+        backBtn.setAttribute('hidden', '');
+        backBtn.innerHTML =
+          '<span class="zaaa-assist-ico" data-rtl-flip="1" aria-hidden="true">' + renderSketchIcon('back') + '</span>' +
+          '<span class="zaaa-assist-lbl">HQ</span>';
+        backBtn.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          var prev = getPreviousScreen() || 'home';
+          navigateToScreen(prev);
+        });
+        hudStrip.insertBefore(backBtn, hudStrip.firstChild);
+      }
+      if (showBack) {
+        var prevMeta = DISTRICT_BY_ID[prevScr] || DISTRICT_BY_ID.home;
+        var shortName = ar ? prevMeta.ar : prevMeta.en.split('&')[0].trim();
+        setTextIfChanged(backBtn.querySelector('.zaaa-assist-lbl'), shortName);
+        var backAria = (ar ? 'العودة إلى ' : 'Back to ') + (ar ? prevMeta.ar : prevMeta.en);
+        backBtn.setAttribute('aria-label', backAria);
+        backBtn.title = backAria;
+        backBtn.removeAttribute('hidden');
+      } else {
+        backBtn.setAttribute('hidden', '');
+      }
+    }
+
+    /* 2. Scroll-to-Top Floating Pill ONLY when scrolled > 360px (positioned clear of sidebar & Mayor Tariq) */
     var bar = document.getElementById('zaaa-thumb-assist');
     if (!bar) {
       bar = document.createElement('nav');
       bar.id = 'zaaa-thumb-assist';
       bar.className = 'zaaa-thumb-assist';
-      bar.setAttribute('aria-label', 'Quick Back and Top');
+      bar.setAttribute('aria-label', 'Scroll to Top');
       bar.setAttribute('hidden', '');
       bar.innerHTML =
-        '<button type="button" id="zaaa-assist-back" class="zaaa-assist-btn zaaa-assist-back" hidden>' +
-          '<span class="zaaa-assist-ico" data-rtl-flip="1" aria-hidden="true">' + renderSketchIcon('back') + '</span>' +
-          '<span class="zaaa-assist-lbl">HQ</span>' +
-        '</button>' +
-        '<button type="button" id="zaaa-assist-top" class="zaaa-assist-btn zaaa-assist-top" hidden>' +
+        '<button type="button" id="zaaa-assist-top" class="zaaa-assist-btn zaaa-assist-top">' +
           '<span class="zaaa-assist-ico" aria-hidden="true">' + renderSketchIcon('up') + '</span>' +
           '<span class="zaaa-assist-top-lbl">Top</span>' +
         '</button>';
 
-      var backBtn = bar.querySelector('#zaaa-assist-back');
       var topBtn = bar.querySelector('#zaaa-assist-top');
-      if (backBtn) {
-        backBtn.addEventListener('click', function () {
-          var prev = getPreviousScreen() || 'home';
-          navigateToScreen(prev);
-        });
-      }
       if (topBtn) {
         topBtn.addEventListener('click', function () {
           try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { window.scrollTo(0, 0); }
@@ -1955,43 +1988,17 @@
       document.body.appendChild(bar);
     }
 
-    var ar = isArabic();
-    var activeScr = getActiveScreen();
-    var prevScr = getPreviousScreen();
     var scrollY = window.scrollY || window.pageYOffset || 0;
-    var showBack = Boolean(activeScr && activeScr !== 'home' && prevScr);
-    var showTop = scrollY > 260;
-
-    var backEl = bar.querySelector('#zaaa-assist-back');
+    var showTop = scrollY > 360;
     var topEl = bar.querySelector('#zaaa-assist-top');
-
-    if (backEl) {
-      if (showBack) {
-        var prevMeta = DISTRICT_BY_ID[prevScr] || DISTRICT_BY_ID.home;
-        var shortName = ar ? prevMeta.ar : prevMeta.en.split('&')[0].trim();
-        setTextIfChanged(backEl.querySelector('.zaaa-assist-lbl'), shortName);
-        var backAria = (ar ? 'العودة إلى ' : 'Back to ') + (ar ? prevMeta.ar : prevMeta.en);
-        backEl.setAttribute('aria-label', backAria);
-        backEl.title = backAria;
-        backEl.removeAttribute('hidden');
-      } else {
-        backEl.setAttribute('hidden', '');
-      }
-    }
-
     if (topEl) {
-      if (showTop) {
-        setTextIfChanged(topEl.querySelector('.zaaa-assist-top-lbl'), ar ? 'أعلى' : 'Top');
-        var topAria = ar ? 'العودة لأعلى الصفحة' : 'Scroll back to top';
-        topEl.setAttribute('aria-label', topAria);
-        topEl.title = topAria;
-        topEl.removeAttribute('hidden');
-      } else {
-        topEl.setAttribute('hidden', '');
-      }
+      setTextIfChanged(topEl.querySelector('.zaaa-assist-top-lbl'), ar ? 'أعلى' : 'Top');
+      var topAria = ar ? 'العودة لأعلى الصفحة' : 'Scroll back to top';
+      topEl.setAttribute('aria-label', topAria);
+      topEl.title = topAria;
     }
 
-    if (showBack || showTop) {
+    if (showTop) {
       bar.removeAttribute('hidden');
     } else {
       bar.setAttribute('hidden', '');
