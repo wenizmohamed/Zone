@@ -176,14 +176,94 @@
 
   function resolveItemIconKey(nameText, typeText) {
     var s = String((nameText || '') + ' ' + (typeText || '')).toLowerCase();
-    if (/painkiller|first aid|med|blood|morphine|bandage|إسعاف|دواء|طبي|مسكن/.test(s)) return 'medical';
-    if (/armor|vest|kevlar|helmet|shield|درع|سترة|خوذة/.test(s)) return 'armor';
-    if (/booster|energy|candy|xanax|ecstasy|drink|serum|منشط|طاقة|مشروب/.test(s)) return 'booster';
-    if (/shotgun|pump|بندقية رش|شوزن/.test(s)) return 'shotgun';
-    if (/pistol|magnum|glock|revolver|handgun|مسدس|ماغنوم/.test(s)) return 'pistol';
-    if (/knife|blade|bat|crowbar|katana|melee|سكين|سيف|عصا|مضرب/.test(s)) return 'melee';
-    if (/ak|rifle|m4|g3|l85|sniper|smg|weapon|gun|سلاح|رشاش|بندقية/.test(s)) return 'rifle';
-    return 'armor';
+    if (/pharma|xanax|vicodin|ecstasy|ketamine|lsd|cannabis|opium|shroom|زاناكس|إكستاسي|فيكودين|قنب/.test(s)) return 'pharma';
+    if (/defib|trauma|revive|blood|دم|إنعاش|طوارئ/.test(s)) return 'emergency';
+    if (/painkiller|first aid|med|morphine|bandage|clinic|إسعاف|دواء|طبي|مسكن|مورفين|ضماد/.test(s)) return 'medical';
+    if (/armor|vest|kevlar|helmet|shield|plate|boots|gloves|درع|سترة|خوذة|حذاء/.test(s)) return 'armor';
+    if (/booster|energy|candy|drink|serum|fhc|feathery|edvd|alcohol|whisky|منشط|طاقة|مشروب|حلوى|فيذري/.test(s)) return 'booster';
+    if (/shotgun|pump|sawed|بندقية رش|شوزن|مقصوص/.test(s)) return 'shotgun';
+    if (/pistol|magnum|glock|revolver|handgun|مسدس|ماغنوم|دوار/.test(s)) return 'pistol';
+    if (/knife|blade|bat|crowbar|katana|razor|hammer|knuckle|baton|melee|سكين|سيف|عصا|مضرب|عتلة|شفرة|مطرقة|قبضة/.test(s)) return 'melee';
+    if (/ak|rifle|m4|g3|l85|sniper|smg|bullpup|weapon|gun|سلاح|رشاش|بندقية|قناص|كلاشنكوف/.test(s)) return 'rifle';
+    if (/cyber|hack|skimmer|drive|nvme|keyboard|circuit|اختراق|ناسخ|لوحة مفاتيح|محرك|دائرة/.test(s)) return 'tech';
+    if (/bike|car|sedan|van|motor|دراجة|سيارة|شاحنة/.test(s)) return 'motorsport';
+    if (/gold|bullion|cash|bond|ذهب|سبيكة/.test(s)) return 'business';
+    if (/orchid|flower|plush|relic|زهرة|دمية|أثر/.test(s)) return 'history';
+    if (/lockpick|drill|cutter|wire|copper|tape|lighter|flashlight|mask|loupe|magnifying|أقفال|مثقاب|قاطع|نحاس|سلك|شريط|قداحة|كشاف|قناع|عدسة/.test(s)) return 'combat';
+    return 'command';
+  }
+
+  function resolveCatalog3DSpec(nameText, typeText) {
+    var s = String((nameText || '') + ' ' + (typeText || '')).toLowerCase();
+    if (/cut.?throat|straight.?razor|شفرة/.test(s)) return { id: 'cut_throat_razor', cat: 'melee' };
+    if (/crowbar|pry|عتلة/.test(s)) return { id: 'crowbar', cat: 'enhancer' };
+    if (/paint.?mask|respirator|spray|قناع طلاء/.test(s)) return { id: 'paint_mask', cat: 'enhancer' };
+    if (/latex|nitrile|قفازات لاتكس/.test(s)) return { id: 'latex_gloves', cat: 'enhancer' };
+    if (/mountain.?bike|bicycle|\bbike\b|دراجة/.test(s)) return { id: 'mountain_bike', cat: 'vehicle' };
+    if (/high.?speed.?drive|nvme|duplicator|ssd|محرك نسخ/.test(s)) return { id: 'high_speed_drive', cat: 'enhancer' };
+    if (/skimmer|magstripe|ناسخ بطاقات/.test(s)) return { id: 'skimmer', cat: 'enhancer' };
+    if (/duct.?tape|\btape\b|شريط لاصق/.test(s)) return { id: 'duct_tape', cat: 'enhancer' };
+    if (/flashlight|torch|كشاف/.test(s)) return { id: 'flashlight', cat: 'enhancer' };
+    if (/megaphone|bullhorn|مكبر صوت/.test(s)) return { id: 'megaphone', cat: 'enhancer' };
+    if (/office.?chair|\bchair\b|كرسي/.test(s)) return { id: 'office_chair', cat: 'enhancer' };
+    if (/magnifying|loupe|عدسة/.test(s)) return { id: 'magnifying_glass', cat: 'enhancer' };
+    if (/keyboard|لوحة مفاتيح/.test(s)) return { id: 'ergonomic_keyboard', cat: 'enhancer' };
+    if (/cyberdeck|hacking|laptop|اختراق/.test(s)) return { id: 'hacking_rig', cat: 'enhancer' };
+    if (/lighter|zippo|blowtorch|قداحة/.test(s)) return { id: 'windproof_lighter', cat: 'enhancer' };
+    if (/lockpick|أقفال/.test(s)) return { id: 'lockpick', cat: 'enhancer' };
+    if (/drill|مثقاب/.test(s)) return { id: 'drill', cat: 'enhancer' };
+    if (/keycard|passcard|rfid|بطاقة دخول/.test(s)) return { id: 'keycard', cat: 'enhancer' };
+    if (/glasses|goggles|nvg|نظارات/.test(s)) return { id: 'glasses', cat: 'enhancer' };
+    if (/bolt.?cutter|cutter|plier|wrench|قاطع/.test(s)) return { id: 'mat_cutters', cat: 'material' };
+    if (/copper|wire|cable|coil|نحاس|سلك/.test(s)) return { id: 'mat_copper', cat: 'material' };
+    if (/chem|acid|solvent|reagent|powder|كيميائ|حمض|مذيب/.test(s)) return { id: 'mat_chem', cat: 'material' };
+    if (/plate|titanium|steel|scrap|صفيحة|تيتانيوم|فولاذ/.test(s)) return { id: 'mat_plate', cat: 'material' };
+    if (/helmet|خوذة/.test(s)) return { id: 'helmet', cat: 'armor' };
+    if (/boots|حذاء/.test(s)) return { id: 'boots', cat: 'armor' };
+    if (/gloves|قفازات تكتيكية/.test(s)) return { id: 'gloves', cat: 'armor' };
+    if (/kevlar|vest|armor|body|درع|سترة/.test(s)) return { id: 'kevlar', cat: 'armor' };
+    if (/xanax|زاناكس/.test(s)) return { id: 'xanax', cat: 'drug' };
+    if (/ecstasy|إكستاسي/.test(s)) return { id: 'ecstasy', cat: 'drug' };
+    if (/vicodin|painkiller|فيكودين|مسكن/.test(s)) return { id: 'vicodin', cat: 'drug' };
+    if (/cannabis|قنب/.test(s)) return { id: 'cannabis', cat: 'drug' };
+    if (/blood|دم/.test(s)) return { id: 'bloodbag', cat: 'medical' };
+    if (/morphine|syringe|مورفين|حقنة/.test(s)) return { id: 'morphine', cat: 'medical' };
+    if (/small|wrap|bandage|first.?aid|ضماد|صغيرة/.test(s)) return { id: 'small_medkit', cat: 'medical' };
+    if (/medkit|trauma|medical|heal|إسعاف|طب/.test(s)) return { id: 'medkit', cat: 'medical' };
+    if (/fhc|feathery|hotel|coupon|فيذري/.test(s)) return { id: 'fhc', cat: 'booster' };
+    if (/edvd|dvd|disc|قرص/.test(s)) return { id: 'edvd', cat: 'booster' };
+    if (/alcohol|whisky|beer|bourbon|كحول|ويسكي/.test(s)) return { id: 'alcohol', cat: 'booster' };
+    if (/candy|choc|حلوى/.test(s)) return { id: 'candy', cat: 'booster' };
+    if (/energy|drink|taurine|booster|طاقة|معزز|مشروب/.test(s)) return { id: 'edrink', cat: 'booster' };
+    if (/gold|bullion|ذهب|سبيكة/.test(s)) return { id: 'gold_bullion', cat: 'contraband' };
+    if (/orchid|flower|lotus|زهرة|أوركيد/.test(s)) return { id: 'orchid', cat: 'contraband' };
+    if (/plush|دمية/.test(s)) return { id: 'plushie', cat: 'contraband' };
+    if (/katana|sword|كاتانا|سيف/.test(s)) return { id: 'katana', cat: 'melee' };
+    if (/knuckle|قبضة|براجم/.test(s)) return { id: 'knuckles', cat: 'melee' };
+    if (/stun|baton|taser|صاعق/.test(s)) return { id: 'stun_baton', cat: 'melee' };
+    if (/hammer|مطرقة/.test(s)) return { id: 'hammer', cat: 'melee' };
+    if (/\bbat\b|club|مضرب/.test(s)) return { id: 'bat', cat: 'melee' };
+    if (/knife|blade|dagger|سكين/.test(s)) return { id: 'knife', cat: 'melee' };
+    if (/sniper|dragunov|mosin|قناص/.test(s)) return { id: 'sniper', cat: 'weapon' };
+    if (/shotgun|sawed|شوزن|خرطوش/.test(s)) return { id: 'shotgun', cat: 'weapon' };
+    if (/revolver|magnum|دوار|ماغنوم/.test(s)) return { id: 'revolver', cat: 'weapon' };
+    if (/pistol|glock|مسدس/.test(s)) return { id: 'pistol', cat: 'weapon' };
+    if (/smg|رشاش/.test(s)) return { id: 'smg', cat: 'weapon' };
+    if (/\bak\b|rifle|m4|g3|l85|بندقية|كلاشنكوف/.test(s)) return { id: 'ak', cat: 'weapon' };
+    return { id: 'mat_circuit', cat: 'material' };
+  }
+
+  function resolveProperty3DSpec(titleText, idxFallback) {
+    var s = String(titleText || '').toLowerCase();
+    if (/island|جزير/.test(s)) return 'prop_island';
+    if (/villa|فيلا|beach/.test(s)) return 'prop_villa';
+    if (/semi|duplex|نصف|مزدوج/.test(s)) return 'prop_semi';
+    if (/detached|\bhouse\b|manor|منزل مستقل/.test(s)) return 'prop_house';
+    if (/apart|\bapt\b|loft|شقة/.test(s)) return 'prop_apt';
+    if (/trailer|caravan|مقطور/.test(s)) return 'prop_trailer';
+    if (/shack|كوخ/.test(s)) return 'prop_shack';
+    var order = ['prop_shack', 'prop_trailer', 'prop_apt', 'prop_semi', 'prop_house', 'prop_villa', 'prop_island'];
+    return order[idxFallback % order.length] || 'prop_shack';
   }
 
   function resolveRecordSpec(titleText) {
@@ -600,7 +680,7 @@
       }
     }
 
-    /* Item Market Hand-Inked Gouache Item Icons (replaces tiny monochrome 1px outlines) */
+    /* Item Market Hand-Inked Gouache Item Icons + 3D Orbit Studio Buttons */
     var marketRows = document.querySelectorAll('#zone-main[data-zone-screen="market"] .zone-table-row');
     for (var mi = 0; mi < marketRows.length; mi++) {
       var mRow = marketRows[mi];
@@ -610,6 +690,7 @@
       var mName = mTextWrap && mTextWrap.children[0] ? mTextWrap.children[0].textContent : '';
       var mType = mTextWrap && mTextWrap.children[1] ? mTextWrap.children[1].textContent : '';
       var mKey = resolveItemIconKey(mName, mType);
+      var mSpec3d = resolveCatalog3DSpec(mName, mType);
       var mExisting = mIconSpan.querySelector('svg.zwc-sketch-ico');
       if (!mExisting || mExisting.getAttribute('data-zwc-market-ico') !== mKey) {
         if (mExisting) mExisting.remove();
@@ -623,30 +704,80 @@
           mIconSpan.appendChild(mSvg);
         }
       }
+      var mActCol = mRow.querySelector(':scope > div:last-child');
+      if (mActCol && !mActCol.querySelector('.zwc-market-3d-btn')) {
+        var mBtn3d = document.createElement('button');
+        mBtn3d.type = 'button';
+        mBtn3d.className = 'zwc-edu-3d-btn zwc-market-3d-btn';
+        mBtn3d.setAttribute('data-zwc-inspect-3d', mSpec3d.id);
+        mBtn3d.setAttribute('data-zwc-cat', mSpec3d.cat);
+        mBtn3d.setAttribute('data-zwc-label', mName.replace(/"/g, ''));
+        mBtn3d.textContent = isAr() ? 'فحص 3D' : '360° 3D';
+        mActCol.insertBefore(mBtn3d, mActCol.firstChild);
+      }
     }
 
-    /* Items Inspector Category Artwork Stage (replaces harsh solid-black pixel cross on Light paper) */
-    var stageImgs = document.querySelectorAll('#zone-main .zone-item-stage img[src*="assets/ui/icons/"]');
-    for (var st = 0; st < stageImgs.length; st++) {
-      var stImg = stageImgs[st];
-      var stHost = stImg.parentElement;
-      if (!stHost) continue;
-      var inspector = stHost.closest('.zone-item-inspector');
-      var selHeading = inspector ? inspector.querySelector('.zone-panel-heading') : null;
-      var stKey = resolveItemIconKey(
-        (selHeading ? selHeading.textContent : '') + ' ' + (stImg.getAttribute('src') || ''),
-        stImg.getAttribute('alt') || ''
-      );
-      stImg.style.display = 'none';
-      var emblem = stHost.querySelector('.zwc-stage-emblem');
-      if (!emblem || emblem.getAttribute('data-zwc-stage-ico') !== stKey) {
-        if (emblem) emblem.remove();
-        emblem = document.createElement('span');
-        emblem.className = 'zwc-stage-emblem';
-        emblem.setAttribute('data-zwc-stage-ico', stKey);
-        emblem.setAttribute('aria-hidden', 'true');
-        emblem.innerHTML = SKETCH_ITEM_ICONS[stKey] || SKETCH_ITEM_ICONS.medical;
-        stHost.insertBefore(emblem, stImg);
+    /* Items Catalog Rows (Non-Thumbnail Items Get Distinct Sovereign Metallic Medallions) */
+    var invRows = document.querySelectorAll('#zone-main[data-zone-screen="items"] .zone-inventory-row');
+    for (var ir = 0; ir < invRows.length; ir++) {
+      var invThumb = invRows[ir].querySelector('.zone-item-thumbnail');
+      if (!invThumb || invThumb.querySelector('img')) continue;
+      var invTextBox = invThumb.nextElementSibling;
+      var invName = invTextBox && invTextBox.children[0] ? invTextBox.children[0].textContent : '';
+      var invMeta = invTextBox && invTextBox.children[1] ? invTextBox.children[1].textContent : '';
+      var invIconKey = resolveItemIconKey(invName, invMeta);
+      var invCrest = invThumb.querySelector('svg.zwc-sketch-ico');
+      if (!invCrest || invCrest.getAttribute('data-zwc-inv-ico') !== invIconKey) {
+        if (invCrest) invCrest.remove();
+        var invTmp = document.createElement('div');
+        invTmp.innerHTML = SKETCH_ITEM_ICONS[invIconKey] || SKETCH_ITEM_ICONS.command;
+        var nextInvSvg = invTmp.firstElementChild;
+        if (nextInvSvg) {
+          nextInvSvg.setAttribute('data-zwc-inv-ico', invIconKey);
+          nextInvSvg.setAttribute('data-zwc-ink', invIconKey);
+          invThumb.setAttribute('data-zwc-enhanced', '1');
+          invThumb.appendChild(nextInvSvg);
+        }
+      }
+    }
+
+    /* Items Inspector Live Interactive 3D PBR Stage for ALL Non-Weapon Items (Zero "Category artwork" Fallbacks!) */
+    var itemInspector = document.querySelector('#zone-main[data-zone-screen="items"] .zone-item-inspector');
+    var mountedInspector3d = false;
+    if (itemInspector) {
+      var itemStage = itemInspector.querySelector('.zone-item-stage');
+      var hasWeaponIframe = Boolean(itemStage && itemStage.querySelector('iframe#zone-item-3d'));
+      var headingSpans = itemInspector.querySelectorAll('.zone-panel-heading span');
+      var selNameTxt = headingSpans[0] ? headingSpans[0].textContent : '';
+      var selTypeTxt = headingSpans[headingSpans.length - 1] ? headingSpans[headingSpans.length - 1].textContent : '';
+      var existingStage3d = itemStage ? itemStage.querySelector('.zwc-item-stage-3d') : null;
+
+      if (itemStage && !hasWeaponIframe) {
+        var cSpec = resolveCatalog3DSpec(selNameTxt, selTypeTxt);
+        itemInspector.setAttribute('data-zwc-has-3d-stage', '1');
+        var nativeFallbackDiv = itemStage.querySelector(':scope > div:not(.zwc-item-stage-3d)');
+        if (nativeFallbackDiv) nativeFallbackDiv.style.display = 'none';
+
+        var stageSig = cSpec.id + '|' + (isAr() ? 'ar' : 'en');
+        if (!existingStage3d || existingStage3d.getAttribute('data-sig') !== stageSig) {
+          if (existingStage3d) existingStage3d.remove();
+          existingStage3d = document.createElement('div');
+          existingStage3d.className = 'zwc-item-stage-3d';
+          existingStage3d.setAttribute('data-sig', stageSig);
+          existingStage3d.innerHTML =
+            '<div class="z3d-item-slot zwc-inspector-3d-slot" data-z3d-item="' + cSpec.id + '" data-z3d-cat="' + cSpec.cat + '" data-z3d-rarity="legendary"></div>' +
+            '<div class="zwc-inspector-3d-bar">' +
+              '<span class="zwc-inspector-3d-tag">' + (isAr() ? 'نموذج 3D تفاعلي · اسحب للدوران' : 'LIVE 3D PBR MODEL · DRAG TO ORBIT') + '</span>' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + cSpec.id + '" data-zwc-cat="' + cSpec.cat + '" data-zwc-label="' + selNameTxt.replace(/"/g, '') + '">' +
+                (isAr() ? 'استوديو 360°' : '360° Orbit Studio') +
+              '</button>' +
+            '</div>';
+          itemStage.appendChild(existingStage3d);
+          mountedInspector3d = true;
+        }
+      } else if (itemInspector) {
+        itemInspector.removeAttribute('data-zwc-has-3d-stage');
+        if (existingStage3d) existingStage3d.style.display = 'none';
       }
     }
 
@@ -734,7 +865,326 @@
         }
       }
     }
-    if (mountedNewEduSlots && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+    if ((mountedNewEduSlots || mountedInspector3d) && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      window.ZoneEcs3D.scan(document.getElementById('zone-main') || document);
+    }
+
+    /* Properties Screen: Cold-Mount Safehouse Handshake Fix + 7 Live 3D Architectural Estate Models */
+    var shFrame = document.getElementById('zone-safehouse-frame');
+    if (shFrame && !shFrame.__zwcSafehouseBound) {
+      shFrame.__zwcSafehouseBound = true;
+      var flushSafehousePacket = function () {
+        var g = window.__zoneGame;
+        if (g && typeof g.pushSafehouse === 'function') {
+          g._safehouseSig = '';
+          g.pushSafehouse();
+        }
+      };
+      shFrame.addEventListener('load', function () {
+        flushSafehousePacket();
+        setTimeout(flushSafehousePacket, 180);
+      });
+      setTimeout(flushSafehousePacket, 220);
+    }
+    if (!window.__zwcSafehouseMsgBound) {
+      window.__zwcSafehouseMsgBound = true;
+      window.addEventListener('message', function (ev) {
+        if (ev && ev.data && ev.data.type === 'zone:safehouse-ready') {
+          var g = window.__zoneGame;
+          if (g && typeof g.pushSafehouse === 'function') {
+            g._safehouseSig = '';
+            g.pushSafehouse();
+          }
+        }
+      });
+    }
+
+    var mountedScreen3d = false;
+    var curPropSec = document.querySelector('#zone-main[data-zone-screen="properties"] .zone-current-property');
+    if (curPropSec) {
+      var curPropArt = curPropSec.querySelector('.zone-property-art');
+      var curPropName = curPropSec.querySelector('h2') ? curPropSec.querySelector('h2').textContent : '';
+      var curPropId3d = resolveProperty3DSpec(curPropName, 0);
+      if (curPropArt) {
+        var curOverlay = curPropArt.querySelector('.zwc-prop-3d-overlay');
+        if (!curOverlay || curOverlay.getAttribute('data-prop-3d') !== curPropId3d) {
+          if (curOverlay) curOverlay.remove();
+          curOverlay = document.createElement('div');
+          curOverlay.className = 'zwc-prop-3d-overlay';
+          curOverlay.setAttribute('data-prop-3d', curPropId3d);
+          curOverlay.innerHTML =
+            '<div class="z3d-item-slot zwc-prop-3d-slot" data-z3d-item="' + curPropId3d + '" data-z3d-cat="property" data-z3d-rarity="legendary"></div>' +
+            '<button type="button" class="zwc-edu-3d-btn zwc-prop-3d-btn" data-zwc-inspect-3d="' + curPropId3d + '" data-zwc-cat="property" data-zwc-label="' + curPropName.replace(/"/g, '') + '">' + (isAr() ? 'مجسّم 360°' : '360° Estate') + '</button>';
+          curPropArt.appendChild(curOverlay);
+          mountedScreen3d = true;
+        }
+      }
+    }
+
+    var propCards = document.querySelectorAll('#zone-main[data-zone-screen="properties"] article.zone-property-dossier');
+    for (var pi = 0; pi < propCards.length; pi++) {
+      var pArt = propCards[pi].querySelector('.zone-property-art');
+      var pTitle = propCards[pi].querySelector('h3') ? propCards[pi].querySelector('h3').textContent : '';
+      var pId3d = resolveProperty3DSpec(pTitle, pi);
+      if (pArt) {
+        var pOverlay = pArt.querySelector('.zwc-prop-3d-overlay');
+        if (!pOverlay || pOverlay.getAttribute('data-prop-3d') !== pId3d) {
+          if (pOverlay) pOverlay.remove();
+          pOverlay = document.createElement('div');
+          pOverlay.className = 'zwc-prop-3d-overlay';
+          pOverlay.setAttribute('data-prop-3d', pId3d);
+          pOverlay.innerHTML =
+            '<div class="z3d-item-slot zwc-prop-3d-slot" data-z3d-item="' + pId3d + '" data-z3d-cat="property" data-z3d-rarity="legendary"></div>' +
+            '<button type="button" class="zwc-edu-3d-btn zwc-prop-3d-btn" data-zwc-inspect-3d="' + pId3d + '" data-zwc-cat="property" data-zwc-label="' + pTitle.replace(/"/g, '') + '">' + (isAr() ? 'مجسّم 360°' : '360° 3D') + '</button>';
+          pArt.appendChild(pOverlay);
+          mountedScreen3d = true;
+        }
+      }
+    }
+
+    /* Crimes Screen: Live Dynamic 14-Category 3D Crime Tool Showcase Inside .zone-crime-scene */
+    var crimeScene = document.querySelector('#zone-main[data-zone-screen="crimes"] .zone-crime-scene');
+    if (crimeScene) {
+      var activeCrimeBtn = document.querySelector('#zone-main[data-zone-screen="crimes"] [data-crime-category][aria-pressed="true"]');
+      var crimeCat = activeCrimeBtn ? (activeCrimeBtn.getAttribute('data-crime-category') || 'search') : 'search';
+      var crimeCatTitle = activeCrimeBtn && activeCrimeBtn.querySelector('span') ? activeCrimeBtn.querySelector('span').childNodes[0].textContent : crimeCat;
+      var CRIME_TOOL_MAP = {
+        search: { id: 'glasses', cat: 'enhancer' },
+        boot: { id: 'high_speed_drive', cat: 'enhancer' },
+        graf: { id: 'paint_mask', cat: 'enhancer' },
+        shop: { id: 'mountain_bike', cat: 'vehicle' },
+        pick: { id: 'cut_throat_razor', cat: 'melee' },
+        skim: { id: 'skimmer', cat: 'enhancer' },
+        burg: { id: 'crowbar', cat: 'enhancer' },
+        hustle: { id: 'megaphone', cat: 'enhancer' },
+        disp: { id: 'latex_gloves', cat: 'enhancer' },
+        crack: { id: 'hacking_rig', cat: 'enhancer' },
+        forge: { id: 'magnifying_glass', cat: 'enhancer' },
+        scam: { id: 'ergonomic_keyboard', cat: 'enhancer' },
+        counter: { id: 'gold_bullion', cat: 'contraband' },
+        arson: { id: 'windproof_lighter', cat: 'enhancer' }
+      };
+      var cTool = CRIME_TOOL_MAP[crimeCat] || CRIME_TOOL_MAP.search;
+      var cShowcase = crimeScene.querySelector('.zwc-crime-3d-showcase');
+      if (!cShowcase || cShowcase.getAttribute('data-crime-tool') !== cTool.id) {
+        if (cShowcase) cShowcase.remove();
+        cShowcase = document.createElement('div');
+        cShowcase.className = 'zwc-crime-3d-showcase';
+        cShowcase.setAttribute('data-crime-tool', cTool.id);
+        cShowcase.innerHTML =
+          '<div class="z3d-item-slot zwc-crime-3d-slot" data-z3d-item="' + cTool.id + '" data-z3d-cat="' + cTool.cat + '" data-z3d-rarity="epic"></div>' +
+          '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + cTool.id + '" data-zwc-cat="' + cTool.cat + '" data-zwc-label="' + String(crimeCatTitle || cTool.id).replace(/"/g, '') + '">' + (isAr() ? 'أداة العملية 3D' : '360° Rig') + '</button>';
+        crimeScene.appendChild(cShowcase);
+        mountedScreen3d = true;
+      }
+    }
+
+    /* Gym Screen: Sovereign Tier Medallions + 3D Gym Equipment Turntables on Membership Ladder */
+    var gymRows = document.querySelectorAll('#zone-main[data-zone-screen="gym"] .zone-membership-row');
+    var gym3dItems = ['knuckles', 'edu_sports', 'bat', 'edrink', 'hammer', 'kevlar', 'stun_baton', 'edu_combat'];
+    for (var gi = 0; gi < gymRows.length; gi++) {
+      var gRow = gymRows[gi];
+      if (!gRow.querySelector('.zwc-gym-tier-3d')) {
+        var gItem = gym3dItems[gi % gym3dItems.length];
+        var gName = gRow.querySelector('strong') ? gRow.querySelector('strong').textContent : 'Gym';
+        var gWrap = document.createElement('div');
+        gWrap.className = 'zwc-edu-3d-wrap zwc-gym-tier-3d';
+        gWrap.innerHTML =
+          '<div class="z3d-item-slot zwc-edu-3d-slot" data-z3d-item="' + gItem + '" data-z3d-cat="enhancer"></div>' +
+          '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + gItem + '" data-zwc-label="' + gName.replace(/"/g, '') + '">3D</button>';
+        gRow.insertBefore(gWrap, gRow.firstChild);
+        mountedScreen3d = true;
+      }
+    }
+
+    /* Hall of Fame Screen: 3D Champions Podium Stage + Gold/Platinum/Bronze Rank Medallions + Syndicate Legends Roster */
+    var hofMain = document.querySelector('#zone-main[data-zone-screen="hof"]');
+    if (hofMain) {
+      var hofLang = isAr() ? 'ar' : 'en';
+      var hofMedalsSec = hofMain.querySelector('[data-torn-honors-medals="1"]');
+      var hofHero = document.getElementById('zwc-hof-3d-hero');
+      if (hofMedalsSec && (!hofHero || hofHero.getAttribute('data-lang') !== hofLang)) {
+        if (hofHero) hofHero.remove();
+        hofHero = document.createElement('div');
+        hofHero.id = 'zwc-hof-3d-hero';
+        hofHero.className = 'zwc-edu-3d-hero zwc-hof-3d-hero';
+        hofHero.setAttribute('data-lang', hofLang);
+        hofHero.innerHTML =
+          '<div class="zwc-edu-hero-bar">' +
+            '<div class="zwc-edu-hero-meta">' +
+              '<span class="zwc-edu-hero-kicker">' + (hofLang === 'ar' ? 'قاعة المشاهير السيادية · منصة الأبطال ثلاثية الأبعاد' : 'SOVEREIGN HALL OF FAME · 3D CHAMPIONS ROTUNDA') + '</span>' +
+              '<strong class="zwc-edu-hero-title">' + (hofLang === 'ar' ? 'منصة التتويج بالذهب عيار 24 وكأس السيادة الدوّار' : '24K Gold Champions Podium & Rotating Sovereign Cup') + '</strong>' +
+            '</div>' +
+            '<div class="zwc-edu-hero-actions">' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_command">' + (hofLang === 'ar' ? 'تاج السيادة 3D' : '360° Sovereign Crown') + '</button>' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="gold_bullion" data-zwc-cat="contraband">' + (hofLang === 'ar' ? 'سبيكة الذهب 3D' : '360° Gold Reserve') + '</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="hof" data-z3d-interactive="1" style="min-height:220px;height:220px"></div>';
+        hofMain.insertBefore(hofHero, hofMedalsSec);
+        mountedScreen3d = true;
+      }
+
+      var hofTablePanel = hofMain.querySelector('.zone-panel[data-zscroll="1"]');
+      if (hofTablePanel) {
+        var realHofRows = hofTablePanel.querySelectorAll(':scope > .zone-table-row');
+        var fallbackRoster = hofTablePanel.querySelector('.zwc-hof-showcase-roster');
+        if (realHofRows.length === 0) {
+          if (!fallbackRoster || fallbackRoster.getAttribute('data-lang') !== hofLang) {
+            if (fallbackRoster) fallbackRoster.remove();
+            fallbackRoster = document.createElement('div');
+            fallbackRoster.className = 'zwc-hof-showcase-roster';
+            fallbackRoster.setAttribute('data-lang', hofLang);
+            var LEGENDS = [
+              { r: '1', en: 'Don Tariq Al-Mansoor', ar: 'الدون طارق المنصور', lv: '100', st: '48,920,400', nw: '$4,820,000,000', fEn: 'Harbor Kings', fAr: 'ملوك المرفأ', ico: 'command' },
+              { r: '2', en: 'Viper Kael', ar: 'فايبر كايل', lv: '94', st: '36,410,850', nw: '$2,940,000,000', fEn: 'Night Market', fAr: 'السوق الليلي', ico: 'combat' },
+              { r: '3', en: 'Nadia Al-Harbi', ar: 'نادية الحربي', lv: '91', st: '31,880,200', nw: '$2,315,000,000', fEn: 'Old Guard', fAr: 'الحرس القديم', ico: 'army' },
+              { r: '4', en: 'Viktor Drago', ar: 'فيكتور دراغو', lv: '86', st: '24,605,110', nw: '$1,680,000,000', fEn: 'Sand Vipers', fAr: 'أفاعي الرمال', ico: 'melee' },
+              { r: '5', en: 'Layla Al-Noor', ar: 'ليلى النور', lv: '82', st: '19,420,900', nw: '$1,290,000,000', fEn: 'Harbor Kings', fAr: 'ملوك المرفأ', ico: 'pharma' },
+              { r: '6', en: 'Marcus Vance', ar: 'ماركوس فانس', lv: '78', st: '15,110,500', nw: '$940,000,000', fEn: 'Night Market', fAr: 'السوق الليلي', ico: 'business' }
+            ];
+            var rowsMarkup = '';
+            for (var li2 = 0; li2 < LEGENDS.length; li2++) {
+              var lg = LEGENDS[li2];
+              rowsMarkup +=
+                '<div class="zone-table-row zwc-hof-legend-row" data-rank="' + lg.r + '">' +
+                  '<bdi class="zwc-hof-rank-pill">#' + lg.r + '</bdi>' +
+                  '<span class="zwc-hof-player-cell"><span class="zwc-inline-crest">' + (SKETCH_ITEM_ICONS[lg.ico] || SKETCH_AREA_ICONS.hof) + '</span><strong>' + (hofLang === 'ar' ? lg.ar : lg.en) + '</strong></span>' +
+                  '<bdi>' + lg.lv + '</bdi>' +
+                  '<bdi>' + lg.st + '</bdi>' +
+                  '<bdi style="color:var(--money,#34d399)">' + lg.nw + '</bdi>' +
+                  '<span>' + (hofLang === 'ar' ? lg.fAr : lg.fEn) + '</span>' +
+                '</div>';
+            }
+            fallbackRoster.innerHTML = rowsMarkup;
+            hofTablePanel.appendChild(fallbackRoster);
+          }
+        } else if (fallbackRoster) {
+          fallbackRoster.style.display = 'none';
+        }
+      }
+    }
+
+    /* Elimination Screen: Live 3D 4-Crew Turf War Octagon Stage inside .zone-competition-art */
+    var elimArt = document.querySelector('#zone-main[data-zone-screen="elimination"] .zone-competition-art');
+    if (elimArt && !elimArt.querySelector('[data-z3d-stage="combat-arena"]')) {
+      var elimStage = document.createElement('div');
+      elimStage.className = 'z3d-action-stage zwc-elim-3d-stage';
+      elimStage.setAttribute('data-z3d-stage', 'combat-arena');
+      elimStage.setAttribute('data-z3d-submode', 'elimination');
+      elimStage.setAttribute('data-z3d-interactive', '1');
+      elimArt.appendChild(elimStage);
+      mountedScreen3d = true;
+    }
+    var elimTable = document.querySelector('#zone-main[data-zone-screen="elimination"] .zone-competition-table');
+    if (elimTable) {
+      var realElimRows = elimTable.querySelectorAll(':scope > .zone-competition-rank:not(.zone-table-heading)');
+      var elimFallback = elimTable.querySelector('.zwc-elim-showcase-roster');
+      var elimLang = isAr() ? 'ar' : 'en';
+      if (realElimRows.length === 0) {
+        if (!elimFallback || elimFallback.getAttribute('data-lang') !== elimLang) {
+          if (elimFallback) elimFallback.remove();
+          elimFallback = document.createElement('div');
+          elimFallback.className = 'zwc-elim-showcase-roster';
+          elimFallback.setAttribute('data-lang', elimLang);
+          var CREWS = [
+            { r: '1', en: 'Harbor Kings', ar: 'ملوك المرفأ', m: '48', sc: '1,420', ico: 'faction' },
+            { r: '2', en: 'Night Market', ar: 'السوق الليلي', m: '44', sc: '1,285', ico: 'city' },
+            { r: '3', en: 'Old Guard', ar: 'الحرس القديم', m: '39', sc: '1,110', ico: 'hof' },
+            { r: '4', en: 'Sand Vipers', ar: 'أفاعي الرمال', m: '41', sc: '980', ico: 'elimination' }
+          ];
+          var cHtml = '';
+          for (var ci2 = 0; ci2 < CREWS.length; ci2++) {
+            var cr = CREWS[ci2];
+            cHtml +=
+              '<div class="zone-competition-rank zwc-elim-crew-row">' +
+                '<bdi>#' + cr.r + '</bdi>' +
+                '<strong class="zwc-hof-player-cell"><span class="zwc-inline-crest">' + (SKETCH_AREA_ICONS[cr.ico] || SKETCH_AREA_ICONS.faction) + '</span><span>' + (elimLang === 'ar' ? cr.ar : cr.en) + '</span></strong>' +
+                '<bdi>' + cr.m + '</bdi>' +
+                '<bdi style="color:#f3c969">' + cr.sc + '</bdi>' +
+              '</div>';
+          }
+          elimFallback.innerHTML = cHtml;
+          elimTable.appendChild(elimFallback);
+        }
+      } else if (elimFallback) {
+        elimFallback.style.display = 'none';
+      }
+    }
+
+    /* Newspaper Screen: Sovereign Press Medallion + 3D Press/Bounty Stage + Stock Mover 3D Inspect */
+    var newsMain = document.querySelector('#zone-main[data-zone-screen="newspaper"]');
+    if (newsMain) {
+      var flatNewsImg = newsMain.querySelector('.zone-empty-state img[src*="newspaper.svg"]');
+      if (flatNewsImg) {
+        flatNewsImg.style.display = 'none';
+        if (!flatNewsImg.parentElement.querySelector('.zwc-press-empty-crest')) {
+          var pCrest = document.createElement('span');
+          pCrest.className = 'zwc-press-empty-crest';
+          pCrest.innerHTML = SKETCH_AREA_ICONS.newspaper;
+          flatNewsImg.parentElement.insertBefore(pCrest, flatNewsImg);
+        }
+      }
+      var stockEntries = newsMain.querySelectorAll('.zone-stock-entry');
+      for (var se = 0; se < stockEntries.length; se++) {
+        var seRow = stockEntries[se];
+        if (!seRow.querySelector('.zwc-stock-3d-btn')) {
+          var seName = seRow.querySelector('span') ? seRow.querySelector('span').textContent : '';
+          var seSpec = resolveCatalog3DSpec(seName, '');
+          var seBtn = document.createElement('button');
+          seBtn.type = 'button';
+          seBtn.className = 'zwc-edu-3d-btn zwc-stock-3d-btn';
+          seBtn.setAttribute('data-zwc-inspect-3d', seSpec.id);
+          seBtn.setAttribute('data-zwc-cat', seSpec.cat);
+          seBtn.setAttribute('data-zwc-label', seName.replace(/"/g, ''));
+          seBtn.textContent = '3D';
+          seRow.appendChild(seBtn);
+        }
+      }
+      var syndHub = newsMain.querySelector('[data-zone-syndicate-hub="1"]');
+      var pressHero = document.getElementById('zwc-press-3d-hero');
+      var pressLang = isAr() ? 'ar' : 'en';
+      if (syndHub && (!pressHero || pressHero.getAttribute('data-lang') !== pressLang)) {
+        if (pressHero) pressHero.remove();
+        pressHero = document.createElement('div');
+        pressHero.id = 'zwc-press-3d-hero';
+        pressHero.className = 'zwc-edu-3d-hero zwc-press-3d-hero';
+        pressHero.setAttribute('data-lang', pressLang);
+        pressHero.innerHTML =
+          '<div class="zwc-edu-hero-bar">' +
+            '<div class="zwc-edu-hero-meta">' +
+              '<span class="zwc-edu-hero-kicker">' + (pressLang === 'ar' ? 'صحيفة زون · مطبعة الشارع ولوحة المكافآت ثلاثية الأبعاد' : 'ZONE GAZETTE · 3D ROTARY PRESS & BOUNTY WIRE') + '</span>' +
+              '<strong class="zwc-edu-hero-title">' + (pressLang === 'ar' ? 'غرفة أخبار العائلات وبرقيات المطلوبين المباشرة' : 'Underworld Newsroom, Market Ticker & Wanted Dispatch') + '</strong>' +
+            '</div>' +
+          '</div>' +
+          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="press" data-z3d-interactive="1" style="min-height:196px;height:196px"></div>';
+        newsMain.insertBefore(pressHero, syndHub);
+        mountedScreen3d = true;
+      }
+    }
+
+    /* Missions Screen: Sovereign Contract Medallions + 3D Reward Preview Button */
+    var missionRows = document.querySelectorAll('#zone-main[data-zone-screen="missions"] .zone-mission-row');
+    var missionIcons = ['crimes', 'gym', 'jobs', 'attack', 'bank', 'faction'];
+    var mission3d = ['crowbar', 'edu_sports', 'gold_bullion', 'assaultrifle_1', 'weapon_cache'];
+    for (var mri = 0; mri < missionRows.length; mri++) {
+      var mRowEl = missionRows[mri];
+      if (!mRowEl.querySelector('.zwc-mission-crest')) {
+        var mCrest = document.createElement('span');
+        mCrest.className = 'zwc-inline-crest zwc-mission-crest';
+        mCrest.innerHTML = SKETCH_AREA_ICONS[missionIcons[mri % missionIcons.length]] || SKETCH_AREA_ICONS.missions;
+        mRowEl.insertBefore(mCrest, mRowEl.firstChild);
+        var m3dItem = mission3d[mri % mission3d.length];
+        var m3dBtn = document.createElement('button');
+        m3dBtn.type = 'button';
+        m3dBtn.className = 'zwc-edu-3d-btn';
+        m3dBtn.setAttribute('data-zwc-inspect-3d', m3dItem);
+        m3dBtn.textContent = '3D';
+        mRowEl.insertBefore(m3dBtn, mRowEl.lastElementChild);
+      }
+    }
+
+    if (mountedScreen3d && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
       window.ZoneEcs3D.scan(document.getElementById('zone-main') || document);
     }
 
@@ -744,10 +1194,12 @@
         var btn = ev.target && ev.target.closest ? ev.target.closest('[data-zwc-inspect-3d]') : null;
         if (!btn) return;
         ev.preventDefault();
+        ev.stopPropagation();
         var itemId = btn.getAttribute('data-zwc-inspect-3d') || 'edu_command';
+        var itemCat = btn.getAttribute('data-zwc-cat') || (/^prop_/.test(itemId) ? 'property' : /^mat_/.test(itemId) ? 'material' : 'enhancer');
         var label = btn.getAttribute('data-zwc-label') || itemId;
         if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
-          window.ZoneEcs3D.inspectItem(itemId, { category: 'enhancer', rarity: 'legendary', title: label });
+          window.ZoneEcs3D.inspectItem(itemId, { category: itemCat, rarity: 'legendary', title: label });
         }
       });
     }

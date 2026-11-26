@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=168';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=172';
 
 export {
   THREE,
@@ -1437,6 +1437,34 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     const entry = WEAPON_ASSET_MAP[rawId];
     const isMelee = ['knife', 'bat', 'katana', 'hammer', 'knuckles'].includes(entry.family);
     return { id: rawId, category: isMelee ? 'melee' : 'weapon', subtype: entry.family, archetype: entry.family, asset: entry, rimColor };
+  }
+
+  // 7 Architectural 3D Property Estates (`prop_shack` .. `prop_island`)
+  if (/^prop_|property_/.test(rawId) || rawCat === 'property') {
+    let pSub = 'prop_shack';
+    if (/island/.test(rawId)) pSub = 'prop_island';
+    else if (/villa/.test(rawId)) pSub = 'prop_villa';
+    else if (/house|manor|detached/.test(rawId)) pSub = 'prop_house';
+    else if (/semi|duplex/.test(rawId)) pSub = 'prop_semi';
+    else if (/apt|apart|loft/.test(rawId)) pSub = 'prop_apt';
+    else if (/trailer|caravan/.test(rawId)) pSub = 'prop_trailer';
+    return { id: rawId, category: 'property', subtype: pSub, archetype: pSub, asset: null, rimColor: 0xf3c969 };
+  }
+
+  // Academy 3D Discipline Artifacts (`edu_*`)
+  if (/^edu_/.test(rawId)) {
+    return { id: rawId, category: 'academy', subtype: rawId, archetype: rawId, asset: null, rimColor: 0xf3c969 };
+  }
+
+  // Bespoke Syndicate Crafting & Industrial Materials (`mat_*`, copper wire, bolt cutters, kevlar weave, reagents)
+  if (/^mat_|copper_wire|bolt_cutter|circuit_board|kevlar_weave|titanium_plate|encrypted_ledger/.test(rawId) || rawCat === 'material') {
+    let mSub = 'mat_circuit';
+    if (/copper|wire|cable|coil/.test(rawId)) mSub = 'mat_copper';
+    else if (/bolt_cutter|cutter|plier|wrench|spanner/.test(rawId)) mSub = 'mat_cutters';
+    else if (/plate|titanium|steel|ingot|metal|scrap/.test(rawId)) mSub = 'mat_plate';
+    else if (/chem|acid|solvent|powder|reagent/.test(rawId)) mSub = 'mat_chem';
+    else if (/ledger|dossier|blueprint|passport|forge_paper/.test(rawId)) mSub = 'mat_ledger';
+    return { id: rawId, category: 'material', subtype: mSub, archetype: mSub, asset: null, rimColor };
   }
 
   // Specific Crime Enhancers & Syndicate Tools (#1-#13 + bespoke tools — checked BEFORE broad armor/melee rules so zero items collide!)
@@ -3824,6 +3852,280 @@ export function createAcademyDiscipline3D(itemId) {
   return g;
 }
 
+function createPropertyEstate3D(itemId) {
+  const g = new THREE.Group();
+  const s = String(itemId || 'prop_shack').toLowerCase();
+  const obsidian = makePbr(0x181a20, 0.24, 0.86, { color: 0xf3c969, power: 2.3, intensity: 0.45 }, { clearcoat: 0.9 });
+  const brass = makePbr(0xf3c969, 0.18, 0.95, { color: 0xfef08a, power: 2.2, intensity: 0.65 });
+  const wood = makePbr(0x6b4429, 0.62, 0.12, { color: 0xfbbf24, power: 2.8, intensity: 0.32 });
+  const rust = makePbr(0x7c3f2c, 0.55, 0.48);
+  const brick = makePbr(0x7f372b, 0.65, 0.12);
+  const stucco = makePbr(0xeae2d3, 0.36, 0.14, { color: 0xfef08a, power: 2.6, intensity: 0.35 });
+  const chrome = makePbr(0xdbe4ee, 0.16, 0.94, { color: 0x38bdf8, power: 2.3, intensity: 0.5 });
+  const cyanWin = makePbr(0x38bdf8, 0.1, 0.2, false, { emissive: 0x0284c7, emissiveIntensity: 0.9 });
+  const warmWin = makePbr(0xfef08a, 0.1, 0.2, false, { emissive: 0xd97706, emissiveIntensity: 0.95 });
+  const turf = makePbr(0x166534, 0.7, 0.12);
+
+  // Architectural Diorama Plinth
+  const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.10, 1.12), obsidian);
+  plinth.position.y = -0.36;
+  const trim = new THREE.Mesh(new THREE.BoxGeometry(1.40, 0.035, 1.16), brass);
+  trim.position.y = -0.40;
+  g.add(plinth, trim);
+
+  if (/island/.test(s)) {
+    // Sovereign Private Island: Ocean Basin + Sandy Atoll + Black/Gold Citadel + Helipad ('H') + Superyacht
+    const ocean = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.66, 0.09, 32), makePbr(0x0369a1, 0.14, 0.22, false, { emissive: 0x075985, emissiveIntensity: 0.65 }));
+    ocean.position.y = -0.28;
+    const islandRock = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.52, 0.16, 12), makePbr(0xd6c7a9, 0.65, 0.1));
+    islandRock.position.set(-0.06, -0.20, -0.02);
+    const citadelBase = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.34, 0.44), obsidian);
+    citadelBase.position.set(-0.08, 0.02, -0.04);
+    const citadelTower = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.52, 0.28), obsidian);
+    citadelTower.position.set(-0.12, 0.22, -0.06);
+    const crownBand = new THREE.Mesh(new THREE.BoxGeometry(0.33, 0.05, 0.31), brass);
+    crownBand.position.set(-0.12, 0.44, -0.06);
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.24, 8), brass);
+    spire.position.set(-0.12, 0.58, -0.06);
+    const winStrip1 = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.06, 0.46), warmWin);
+    winStrip1.position.set(-0.08, 0.06, -0.04);
+    const winStrip2 = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.06, 0.30), cyanWin);
+    winStrip2.position.set(-0.12, 0.30, -0.06);
+    const helipad = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.17, 0.05, 20), chrome);
+    helipad.position.set(0.24, -0.08, 0.14);
+    const heliRing = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.015, 8, 22), brass);
+    heliRing.rotation.x = Math.PI / 2;
+    heliRing.position.set(0.24, -0.05, 0.14);
+    const yacht = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.06, 0.10), stucco);
+    yacht.position.set(0.34, -0.22, -0.28);
+    yacht.rotation.y = 0.45;
+    g.add(ocean, islandRock, citadelBase, citadelTower, crownBand, spire, winStrip1, winStrip2, helipad, heliRing, yacht);
+    return g;
+  }
+
+  if (/villa/.test(s)) {
+    // Mediterranean Beachfront Villa: White Stucco Wings + Infinity Pool + Sunset Pergola + Palm Tree
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.06, 0.98), stucco);
+    deck.position.y = -0.28;
+    const pool = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.065, 0.34), cyanWin);
+    pool.position.set(0.22, -0.27, 0.24);
+    const mainWing = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.38, 0.42), stucco);
+    mainWing.position.set(-0.18, -0.06, -0.14);
+    const upperDeck = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.28, 0.36), stucco);
+    upperDeck.position.set(-0.24, 0.24, -0.16);
+    const roofTrim = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.04, 0.40), brass);
+    roofTrim.position.set(-0.24, 0.39, -0.16);
+    const glassWall = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.24, 0.44), cyanWin);
+    glassWall.position.set(-0.18, -0.06, -0.14);
+    const palmTrunk = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.56, 10), wood);
+    palmTrunk.position.set(0.44, 0.0, -0.18);
+    palmTrunk.rotation.z = -0.14;
+    const palmCrown = new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.14, 7), turf);
+    palmCrown.position.set(0.48, 0.28, -0.18);
+    g.add(deck, pool, mainWing, upperDeck, roofTrim, glassWall, palmTrunk, palmCrown);
+    return g;
+  }
+
+  if (/house|manor|detached/.test(s)) {
+    // Gated Executive Manor: Classical Portico Columns + Steep Slate Gable Roof + Twin Chimneys
+    const lawn = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.05, 0.98), turf);
+    lawn.position.y = -0.28;
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.48, 0.58), stucco);
+    body.position.set(0, -0.02, -0.04);
+    const roof = new THREE.Mesh(new THREE.ConeGeometry(0.66, 0.34, 4), obsidian);
+    roof.rotation.y = Math.PI / 4;
+    roof.position.set(0, 0.38, -0.04);
+    const portico = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.06, 0.22), brass);
+    portico.position.set(0, 0.12, 0.30);
+    for (const cx of [-0.11, 0.11]) {
+      const col = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.032, 0.36, 12), stucco);
+      col.position.set(cx, -0.08, 0.36);
+      g.add(col);
+    }
+    for (const wx of [-0.26, 0.26]) {
+      for (const wy of [-0.10, 0.10]) {
+        const w = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.11, 0.60), warmWin);
+        w.position.set(wx, wy, -0.04);
+        g.add(w);
+      }
+    }
+    const chimney = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.26, 0.10), brick);
+    chimney.position.set(0.30, 0.42, -0.12);
+    g.add(lawn, body, roof, portico, chimney);
+    return g;
+  }
+
+  if (/semi|duplex/.test(s)) {
+    // Brick Duplex Townhome: Twin Mirrored Brick Gables + Dual Stoop Stairs + Warm Windows
+    const base = new THREE.Mesh(new THREE.BoxGeometry(0.94, 0.46, 0.56), brick);
+    base.position.y = -0.06;
+    const divider = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.50, 0.60), stucco);
+    divider.position.y = -0.05;
+    for (const side of [-1, 1]) {
+      const gable = new THREE.Mesh(new THREE.ConeGeometry(0.38, 0.28, 4), obsidian);
+      gable.rotation.y = Math.PI / 4;
+      gable.position.set(side * 0.23, 0.31, 0);
+      const door = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.20, 0.58), brass);
+      door.position.set(side * 0.12, -0.18, 0);
+      const win = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.12, 0.58), warmWin);
+      win.position.set(side * 0.28, 0.04, 0);
+      g.add(gable, door, win);
+    }
+    g.add(base, divider);
+    return g;
+  }
+
+  if (/apt|apart|loft/.test(s)) {
+    // Urban High-Rise Loft Tower: 5-Story Brick & Steel Penthouse + Lit Balconies + Rooftop HVAC
+    const tower = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.86, 0.54), brick);
+    tower.position.y = 0.12;
+    const cornice = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.06, 0.60), brass);
+    cornice.position.y = 0.56;
+    const hvac = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.12, 0.22), chrome);
+    hvac.position.set(0.12, 0.64, -0.06);
+    for (let fl = 0; fl < 4; fl++) {
+      const y = -0.18 + fl * 0.19;
+      const winRow = new THREE.Mesh(new THREE.BoxGeometry(0.50, 0.08, 0.56), fl === 3 ? cyanWin : warmWin);
+      winRow.position.y = y;
+      const balc = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.03, 0.12), obsidian);
+      balc.position.set(0.10, y - 0.05, 0.30);
+      g.add(winRow, balc);
+    }
+    g.add(tower, cornice, hvac);
+    return g;
+  }
+
+  if (/trailer|caravan/.test(s)) {
+    // Brushed-Chrome Airstream Caravan + Hitch + Wheels + Neon Pink/Cyan Window Strip
+    const shell = new THREE.Mesh(new THREE.CapsuleGeometry(0.24, 0.64, 12, 20), chrome);
+    shell.rotation.z = Math.PI / 2;
+    shell.position.y = -0.02;
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.06, 0.49), cyanWin);
+    stripe.position.y = 0.02;
+    const door = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.28, 0.50), obsidian);
+    door.position.set(0.14, -0.04, 0);
+    const awning = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.03, 0.22), makePbr(0xe11d48, 0.35, 0.3));
+    awning.position.set(-0.08, 0.16, 0.30);
+    awning.rotation.x = 0.22;
+    for (const wx of [-0.14, 0.06]) {
+      const wh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.54, 16), obsidian);
+      wh.rotation.x = Math.PI / 2;
+      wh.position.set(wx, -0.24, 0);
+      g.add(wh);
+    }
+    const hitch = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, 0.14), brass);
+    hitch.position.set(-0.56, -0.18, 0);
+    g.add(shell, stripe, door, awning, hitch);
+    return g;
+  }
+
+  // Default: prop_shack -> Harbor Pier Timber Shack + Slanted Corrugated Rust Roof + Lantern
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.44, 0.58), wood);
+  cabin.position.y = -0.08;
+  const tinRoof = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.06, 0.68), rust);
+  tinRoof.position.y = 0.18;
+  tinRoof.rotation.z = -0.14;
+  const shackDoor = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.28, 0.60), obsidian);
+  shackDoor.position.set(-0.14, -0.14, 0);
+  const shackWin = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.14, 0.60), warmWin);
+  shackWin.position.set(0.18, -0.04, 0);
+  const stiltA = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.16, 8), wood);
+  stiltA.position.set(-0.30, -0.28, 0.22);
+  const stiltB = stiltA.clone(); stiltB.position.set(0.30, -0.28, 0.22);
+  g.add(cabin, tinRoof, shackDoor, shackWin, stiltA, stiltB);
+  return g;
+}
+
+function createSyndicateMaterial3D(itemId) {
+  const g = new THREE.Group();
+  const s = String(itemId || '').toLowerCase();
+  const copper = makePbr(0xd97706, 0.22, 0.92, { color: 0xfdba74, power: 2.2, intensity: 0.65 });
+  const steel = makePbr(0xcbd5e1, 0.18, 0.94, { color: 0x38bdf8, power: 2.3, intensity: 0.48 });
+  const obsidian = makePbr(0x181a20, 0.28, 0.85, { color: 0xf3c969, power: 2.4, intensity: 0.42 });
+  const crimson = makePbr(0xdc2626, 0.35, 0.35);
+  const emeraldGlow = makePbr(0x10b981, 0.12, 0.25, false, { emissive: 0x059669, emissiveIntensity: 0.88 });
+  const brass = makePbr(0xf3c969, 0.18, 0.95);
+
+  if (/copper|wire|cable|coil/.test(s)) {
+    // Heavy Wound Industrial Copper Spool + Stripped Conductors
+    const flangeT = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.05, 28), obsidian);
+    flangeT.position.y = 0.28;
+    const flangeB = flangeT.clone(); flangeB.position.y = -0.28;
+    const core = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.54, 24), obsidian);
+    g.add(flangeT, flangeB, core);
+    for (let i = 0; i < 7; i++) {
+      const coil = new THREE.Mesh(new THREE.TorusGeometry(0.31, 0.038, 12, 32), copper);
+      coil.rotation.x = Math.PI / 2;
+      coil.position.y = -0.21 + i * 0.07;
+      g.add(coil);
+    }
+    return g;
+  }
+
+  if (/cutter|plier|wrench|spanner/.test(s)) {
+    // Heavy Forged Bolt Cutters with Crimson Insulated Grips & Hardened Jaws
+    for (const side of [-1, 1]) {
+      const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.042, 0.96, 12), crimson);
+      handle.position.set(side * 0.14, -0.18, 0);
+      handle.rotation.z = side * 0.14;
+      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.38, 0.06), steel);
+      arm.position.set(side * 0.08, 0.36, 0);
+      arm.rotation.z = side * -0.18;
+      g.add(handle, arm);
+    }
+    const pivot = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.09, 16), brass);
+    pivot.rotation.x = Math.PI / 2;
+    pivot.position.y = 0.24;
+    const jaw = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.26, 4), obsidian);
+    jaw.rotation.y = Math.PI / 4;
+    jaw.position.y = 0.58;
+    g.add(pivot, jaw);
+    return g;
+  }
+
+  if (/chem|acid|solvent|powder|reagent/.test(s)) {
+    // Hazmat Industrial Reagent Drum + Glowing Emerald Sight Gauge
+    const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.78, 24), obsidian);
+    for (const ry of [-0.24, 0, 0.24]) {
+      const rib = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.024, 10, 28), brass);
+      rib.rotation.x = Math.PI / 2;
+      rib.position.y = ry;
+      g.add(rib);
+    }
+    const sight = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.48, 0.08), emeraldGlow);
+    sight.position.set(0, 0, 0.33);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.08, 16), crimson);
+    cap.position.set(0.14, 0.42, 0);
+    g.add(drum, sight, cap);
+    return g;
+  }
+
+  if (/plate|titanium|steel|ingot|metal|scrap/.test(s)) {
+    // Interlocking Brushed-Titanium Ballistic Armor Plates + Gold Rivets
+    for (let i = 0; i < 3; i++) {
+      const p = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.11, 0.46), i === 1 ? brass : steel);
+      p.position.set((i - 1) * 0.06, -0.16 + i * 0.14, (i - 1) * 0.04);
+      p.rotation.y = (i - 1) * 0.12;
+      g.add(p);
+    }
+    return g;
+  }
+
+  // Default: Encrypted Syndicate Micro-Circuit & Ledger Module
+  const board = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.08, 0.54), obsidian);
+  const chip = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.12, 0.28), brass);
+  chip.position.y = 0.06;
+  const coreLed = new THREE.Mesh(new THREE.OctahedronGeometry(0.10, 0), emeraldGlow);
+  coreLed.position.y = 0.18;
+  for (let p = -2; p <= 2; p++) {
+    const trace = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.095, 0.025), copper);
+    trace.position.set(0, 0.01, p * 0.09);
+    g.add(trace);
+  }
+  g.add(board, chip, coreLed);
+  return g;
+}
+
 export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = {}) {
   const spec = resolveItemSpec3D(itemId, category, rarity);
   const elongated = isElongatedItemCategory(spec);
@@ -3840,8 +4142,12 @@ export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = 
   };
 
   let rawModel;
-  if (/^edu_/i.test(String(itemId))) {
+  if (/^edu_/i.test(String(itemId)) || spec.category === 'academy') {
     rawModel = createAcademyDiscipline3D(itemId);
+  } else if (/^prop_/i.test(String(itemId)) || spec.category === 'property') {
+    rawModel = createPropertyEstate3D(itemId);
+  } else if (/^mat_/i.test(String(itemId)) || spec.category === 'material') {
+    rawModel = createSyndicateMaterial3D(itemId);
   } else if (/craps|dice/i.test(String(itemId))) {
     const pair = new THREE.Group();
     const dA = createCasinoDie3D({ size: 0.46, initialFace: 5 });
@@ -4492,6 +4798,102 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       surgeon.rotation.y = 0.52;
       scene.add(surgeon);
       refs.operativeEid = spawnTracked(surgeon);
+    } else if (shSubmode === 'hof') {
+      // SOVEREIGN HALL OF FAME CHAMPIONS ROTUNDA & 24K GOLD PODIUM (Hall of Fame Stage)
+      const lights = addStandardStageLighting(scene, 0x16130e, 0xfbbf24, 4.4);
+      refs.lights = lights;
+      camera.position.set(0, 2.22, 4.88);
+      camera.lookAt(0, 1.05, -0.1);
+      world.setTraumaCamera(camEid, { baseX: 0, baseY: 2.22, baseZ: 4.88 });
+
+      const goldMat = makePbr(0xfbbf24, 0.14, 0.96, { color: 0xfef08a, power: 2.0, intensity: 0.78 });
+      const silverMat = makePbr(0xe2e8f0, 0.16, 0.94, { color: 0x93c5fd, power: 2.2, intensity: 0.58 });
+      const bronzeMat = makePbr(0xd97706, 0.22, 0.90, { color: 0xfdba74, power: 2.3, intensity: 0.55 });
+      const obsidianMat = makePbr(0x14161c, 0.22, 0.88, { color: 0xfbbf24, power: 2.4, intensity: 0.45 }, { clearcoat: 0.95 });
+
+      const podiumSpecs = [
+        { x: 0, h: 0.68, mat: goldMat, outfit: 'suit', coat: 0x18181b, trim: 0xfbbf24, weapon: 'katana', crown: true, rank: 1 },
+        { x: -1.48, h: 0.46, mat: silverMat, outfit: 'tactical', coat: 0x1e293b, trim: 0x38bdf8, weapon: 'sniper', crown: false, rank: 2 },
+        { x: 1.48, h: 0.34, mat: bronzeMat, outfit: 'street', coat: 0x3f1d1d, trim: 0xf59e0b, weapon: 'ak', crown: false, rank: 3 },
+      ];
+      for (const pd of podiumSpecs) {
+        const step = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.68, pd.h, 28), obsidianMat);
+        step.position.set(pd.x, pd.h * 0.5, 0.15);
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(0.64, 0.03, 10, 32), pd.mat);
+        rim.rotation.x = Math.PI / 2;
+        rim.position.set(pd.x, pd.h, 0.15);
+        scene.add(step, rim);
+        const champ = createHumanoid3D({ role: pd.rank === 1 ? 'boss' : 'player', outfit: pd.outfit, coatColor: pd.coat, trimColor: pd.trim, rimColor: pd.rank === 1 ? 0xfbbf24 : 0x38bdf8, bossCrown: pd.crown, weaponId: pd.weapon, scale: pd.rank === 1 ? 1.06 : 0.96, headless });
+        champ.position.set(pd.x, pd.h, 0.15);
+        champ.rotation.y = -pd.x * 0.22;
+        scene.add(champ);
+        const ceid = spawnTracked(champ);
+        if (pd.rank === 1) refs.operativeEid = ceid;
+        registerPickable(ceid, { stage: 'safehouse-empire', target: 'hof-rank-' + pd.rank });
+      }
+
+      // Rotating 24K Gold Sovereign Syndicate Cup Trophy Behind #1 Podium
+      const trophy = new THREE.Group();
+      trophy.position.set(0, 1.55, -1.35);
+      const cupBase = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.42, 0.22, 24), obsidianMat);
+      const cupStem = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.16, 0.42, 18), goldMat);
+      cupStem.position.y = 0.28;
+      const cupBowl = new THREE.Mesh(new THREE.CylinderGeometry(0.44, 0.20, 0.56, 28), goldMat);
+      cupBowl.position.y = 0.72;
+      const halo = new THREE.Mesh(new THREE.TorusGeometry(0.68, 0.025, 12, 40), goldMat);
+      halo.position.y = 0.72;
+      trophy.add(cupBase, cupStem, cupBowl, halo);
+      scene.add(trophy);
+      const trEid = spawnTracked(trophy);
+      world.setTurntable(trEid, 0.85, 5.5);
+      registerPickable(trEid, { stage: 'safehouse-empire', target: 'hof-trophy' });
+    } else if (shSubmode === 'press') {
+      // ZONE CITY UNDERWORLD GAZETTE & LIVE BOUNTY WIRE STAGE (Newspaper Stage)
+      const lights = addStandardStageLighting(scene, 0x151412, 0xf3c969, 4.2);
+      refs.lights = lights;
+      camera.position.set(0, 2.08, 4.62);
+      camera.lookAt(0, 0.92, 0);
+      world.setTraumaCamera(camEid, { baseX: 0, baseY: 2.08, baseZ: 4.62 });
+
+      const brassMat = makePbr(0xf3c969, 0.18, 0.94);
+      const steelMat = makePbr(0x94a3b8, 0.22, 0.90);
+      const obsidianMat = makePbr(0x181b22, 0.26, 0.86);
+      const rubyGlow = makePbr(0xf43f5e, 0.1, 0.22, false, { emissive: 0xe11d48, emissiveIntensity: 0.95 });
+
+      // Rotary Syndicate Printing Press + Paper Roll
+      const pressGroup = new THREE.Group();
+      pressGroup.position.set(-1.18, 0, -0.25);
+      const frame = new THREE.Mesh(new THREE.BoxGeometry(1.36, 1.15, 0.78), obsidianMat);
+      frame.position.y = 0.58;
+      const paperRoll = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 1.12, 24), makePbr(0xf5efe2, 0.65, 0.08));
+      paperRoll.rotation.z = Math.PI / 2;
+      paperRoll.position.set(0, 1.25, 0);
+      const gear = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.045, 10, 24), brassMat);
+      gear.rotation.y = Math.PI / 2;
+      gear.position.set(0.72, 0.78, 0);
+      pressGroup.add(frame, paperRoll, gear);
+      scene.add(pressGroup);
+      registerPickable(spawnTracked(pressGroup), { stage: 'safehouse-empire', target: 'press-rotary' });
+
+      // Glowing Wanted Bounty Holo-Board
+      const board = new THREE.Group();
+      board.position.set(1.12, 0, -0.35);
+      const postL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 1.95, 12), steelMat);
+      postL.position.set(-0.68, 0.98, 0);
+      const postR = postL.clone(); postR.position.x = 0.68;
+      const screen = new THREE.Mesh(new THREE.BoxGeometry(1.28, 0.88, 0.08), obsidianMat);
+      screen.position.y = 1.28;
+      const reticle = new THREE.Mesh(new THREE.TorusGeometry(0.26, 0.025, 10, 28), rubyGlow);
+      reticle.position.set(0, 1.28, 0.06);
+      board.add(postL, postR, screen, reticle);
+      scene.add(board);
+      const retEid = spawnTracked(reticle);
+      world.setTurntable(retEid, 1.1, 4.5);
+
+      const editor = createHumanoid3D({ role: 'crew', outfit: 'suit', coatColor: 0x1e293b, trimColor: 0xf3c969, rimColor: 0xfbbf24, scale: 0.98, headless });
+      editor.position.set(0.05, 0, 0.45);
+      scene.add(editor);
+      refs.operativeEid = spawnTracked(editor);
     } else {
     const lights = addStandardStageLighting(scene, 0x1b1714, 0xf59e0b);
     refs.lights = lights;
@@ -4852,26 +5254,49 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     registerPickable(refs.dexEid, { stage: 'gym-ironpit', target: 'station', stationId: 'dex' });
   }
 
-  /* === STAGE 4: COMBAT-ARENA (Attack / Faction / Missions Boss) === */
+  /* === STAGE 4: COMBAT-ARENA (Attack / Faction / Missions Boss / Elimination Turf War) === */
   else if (kind === 'combat-arena') {
-    addStandardStageLighting(scene, 0x171418, 0xef4444);
+    const caSubmode = String(initialState.submode || '').toLowerCase();
+    addStandardStageLighting(scene, 0x171418, caSubmode === 'elimination' ? 0xf59e0b : 0xef4444);
 
-    // Noir Alley Streetlamp + Concrete Jersey Cover + Industrial Dumpster
-    const streetlamp = new THREE.Group();
-    const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.55, 12), makePbr(0x334155, 0.35, 0.85));
-    pole.position.y = 1.27;
-    const lampArm = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.06, 0.06), makePbr(0x334155, 0.35, 0.85));
-    lampArm.position.set(0.28, 2.52, 0);
-    const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12), makePbr(0xfef08a, 0.1, 0.2, false, { emissive: 0xf59e0b, emissiveIntensity: 1.1 }));
-    lantern.position.set(0.55, 2.42, 0);
-    streetlamp.add(pole, lampArm, lantern);
-    streetlamp.position.set(-0.35, 0, -1.65);
-    scene.add(streetlamp);
+    if (caSubmode === 'elimination') {
+      // 4-CREW ELIMINATION TURF WAR OCTAGON & TERRITORY BANNER PYLONS
+      const crewBanners = [
+        { x: -2.35, z: -1.15, hex: 0xfbbf24 }, // Harbor Kings
+        { x: -0.85, z: -1.65, hex: 0x38bdf8 }, // Night Market
+        { x: 0.85, z: -1.65, hex: 0x34d399 },  // Old Guard
+        { x: 2.35, z: -1.15, hex: 0xf43f5e },  // Sand Vipers
+      ];
+      for (const cb of crewBanners) {
+        const pylon = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.11, 2.25, 12), makePbr(0x1e293b, 0.3, 0.86));
+        pylon.position.set(cb.x, 1.12, cb.z);
+        const beacon = new THREE.Mesh(new THREE.OctahedronGeometry(0.18, 0), makePbr(cb.hex, 0.1, 0.25, false, { emissive: cb.hex, emissiveIntensity: 0.95 }));
+        beacon.position.set(cb.x, 2.38, cb.z);
+        scene.add(pylon, beacon);
+        world.setTurntable(spawnTracked(beacon), 1.25, 4.5);
+      }
+      const octRing = new THREE.Mesh(new THREE.TorusGeometry(2.35, 0.04, 8, 8), makePbr(0xfbbf24, 0.18, 0.92, false, { emissive: 0xd97706, emissiveIntensity: 0.55 }));
+      octRing.rotation.x = Math.PI / 2;
+      octRing.position.y = 0.06;
+      scene.add(octRing);
+    } else {
+      // Noir Alley Streetlamp + Concrete Jersey Cover + Industrial Dumpster
+      const streetlamp = new THREE.Group();
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 2.55, 12), makePbr(0x334155, 0.35, 0.85));
+      pole.position.y = 1.27;
+      const lampArm = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.06, 0.06), makePbr(0x334155, 0.35, 0.85));
+      lampArm.position.set(0.28, 2.52, 0);
+      const lantern = new THREE.Mesh(new THREE.SphereGeometry(0.14, 14, 12), makePbr(0xfef08a, 0.1, 0.2, false, { emissive: 0xf59e0b, emissiveIntensity: 1.1 }));
+      lantern.position.set(0.55, 2.42, 0);
+      streetlamp.add(pole, lampArm, lantern);
+      streetlamp.position.set(-0.35, 0, -1.65);
+      scene.add(streetlamp);
 
-    const dumpster = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.78, 0.72), makePbr(0x14532d, 0.55, 0.35));
-    dumpster.position.set(2.25, 0.39, -1.35);
-    dumpster.rotation.y = -0.35;
-    scene.add(dumpster);
+      const dumpster = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.78, 0.72), makePbr(0x14532d, 0.55, 0.35));
+      dumpster.position.set(2.25, 0.39, -1.35);
+      dumpster.rotation.y = -0.35;
+      scene.add(dumpster);
+    }
 
     for (let i = -1; i <= 1; i += 2) {
       const barrier = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.56, 0.3), makePbr(0x334155, 0.52, 0.45));
@@ -6432,8 +6857,8 @@ export class ZoneEcs3DRuntime {
     this.inspectorScene.add(plinthDisc, pedRing);
 
     this.inspectorCamera = new THREE.PerspectiveCamera(40, 560 / 340, 0.1, 30);
-    const camZ = (spec.category === 'casino' || spec.category === 'vehicle') ? 2.28 : 1.98;
-    const camY = spec.category === 'casino' ? 0.92 : 0.74;
+    const camZ = (spec.category === 'casino' || spec.category === 'vehicle' || spec.category === 'property') ? 2.28 : 1.98;
+    const camY = (spec.category === 'casino' || spec.category === 'property') ? 0.92 : 0.74;
     this.inspectorCamera.position.set(0, camY, camZ);
     this.inspectorCamera.lookAt(0, 0.38, 0);
 

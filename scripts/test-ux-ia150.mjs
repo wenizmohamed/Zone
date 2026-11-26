@@ -56,6 +56,7 @@ const AUTHORIZED_V150_FILES = new Set([
   'index.html',
   'account.html',
   'sw.js',
+  'dist/safehouse.mjs',
   'api/index.php',
   'engine/router.php',
   'engine/bin/relay.mjs',

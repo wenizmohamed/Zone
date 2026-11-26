@@ -1,7 +1,7 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v171) */
-const SHELL_CACHE_NAME = 'zone-shell-v171';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v172) */
+const SHELL_CACHE_NAME = 'zone-shell-v172';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
-const CACHE_NAME = 'zone-app-v171';
+const CACHE_NAME = 'zone-app-v172';
 const CACHE_PREFIX = 'zone-app-';
 const NAV_TIMEOUT_MS = 3500;
 const PRECACHE_URLS = [
@@ -14,9 +14,9 @@ const PRECACHE_URLS = [
   './assets/ui/aaa-topbar-sidebar.css?v=168',
   './assets/ui/aaa-topbar-sidebar.js?v=168',
   './assets/ui/aaa-game-surfaces.css?v=168',
-  './assets/ui/aaa-game-fx.js?v=171',
-  './assets/ui/watercolor-sketchbook.css?v=171',
-  './assets/ui/watercolor-sketchbook.js?v=171',
+  './assets/ui/aaa-game-fx.js?v=172',
+  './assets/ui/watercolor-sketchbook.css?v=172',
+  './assets/ui/watercolor-sketchbook.js?v=172',
   './assets/ui/zone-app-shell.css?v=164',
   './assets/ui/zone-torn-live.css?v=168',
   './assets/ui/zone-torn-live.js?v=168',
@@ -26,11 +26,11 @@ const PRECACHE_URLS = [
   './assets/ui/zone-ascension-breakthrough.js?v=168',
   './assets/ui/zone-ecs-3d.css?v=167',
   './assets/ui/zone-gamekit-bridge.js?v=167',
-  './assets/ui/zone-ecs-3d-bridge.js?v=168',
+  './assets/ui/zone-ecs-3d-bridge.js?v=172',
   './assets/ui/zone-3d-rigged-operative.mjs?v=165',
-  './assets/ui/zone-3d-environments.mjs?v=168',
+  './assets/ui/zone-3d-environments.mjs?v=172',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=168',
+  './assets/ui/zone-ecs-3d-engine.mjs?v=172',
   './assets/ui/zone-profile-avatar.css?v=161',
   './assets/ui/zone-profile-avatar.js?v=164',
   './assets/ui/zone-instant-games.js?v=167',

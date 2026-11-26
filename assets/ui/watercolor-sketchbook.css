@@ -3528,3 +3528,247 @@ html body #zone-main[data-zone-screen="job"] article.zone-employment-row .zone-r
     min-height: 46px !important;
   }
 }
+
+/* ==========================================================================
+ * v172 WHOLE-GAME 3D PROPERTIES, ITEMS CATALOG, CRIMES, GYM, HOF, ELIMINATION & PRESS
+ * ========================================================================== */
+
+/* Eliminate duplicate bottom 3D stage on Education & Crimes when primary top 3D stage is active */
+html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section [data-z3d-stage="safehouse-empire"][data-z3d-submode="academy"],
+html body #zone-main[data-zone-screen="education"]:has(#zwc-edu-3d-hero) #zone-rpg-route-section .zre-3d-stage-wrap,
+html body #zone-main[data-zone-screen="crimes"]:has(.zone-crime-workspace [data-z3d-stage="heist-breach"]) #zone-torn-route-section [data-z3d-stage="heist-breach"] {
+  display: none !important;
+}
+
+/* Properties: Live 3D Architectural Exterior Estate Turntable Overlay */
+html body #zone-main[data-zone-screen="properties"] .zone-property-art {
+  position: relative !important;
+  min-height: 152px !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(243, 201, 105, 0.34) !important;
+}
+
+.zwc-prop-3d-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 42%, rgba(22, 20, 17, 0.68) 0%, rgba(12, 11, 9, 0.90) 100%);
+  z-index: 2;
+  pointer-events: auto;
+}
+
+html[data-theme="light"] .zwc-prop-3d-overlay {
+  background: radial-gradient(circle at 50% 42%, rgba(34, 30, 24, 0.56) 0%, rgba(18, 16, 13, 0.84) 100%);
+}
+
+.zwc-prop-3d-slot {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 136px !important;
+}
+
+.zwc-prop-3d-btn {
+  position: absolute !important;
+  top: 7px !important;
+  inset-inline-end: 7px !important;
+  z-index: 3 !important;
+}
+
+/* Items Catalog: Sovereign Row Medallions & Full-Size Non-Weapon 3D PBR Stage */
+html body #zone-main[data-zone-screen="items"] .zone-item-thumbnail[data-zwc-enhanced="1"] > svg:not(.zwc-sketch-ico) {
+  display: none !important;
+}
+
+html body #zone-main[data-zone-screen="items"] .zone-item-thumbnail[data-zwc-enhanced="1"] {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 8px !important;
+  background: radial-gradient(circle at 30% 25%, #2a2520 0%, #12100d 100%) !important;
+  border: 1px solid rgba(243, 201, 105, 0.44) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+html body #zone-main[data-zone-screen="items"] .zone-item-inspector[data-zwc-has-3d-stage="1"] > div[style*="font-size:10px"] {
+  display: none !important;
+}
+
+html body #zone-main[data-zone-screen="items"] .zone-item-inspector[data-zwc-has-3d-stage="1"] .zone-viewer-badge {
+  font-size: 0 !important;
+}
+
+html body #zone-main[data-zone-screen="items"] .zone-item-inspector[data-zwc-has-3d-stage="1"] .zone-viewer-badge::after {
+  content: "3D PBR";
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #fde68a;
+}
+
+html[data-theme="light"] body #zone-main[data-zone-screen="items"] .zone-item-inspector[data-zwc-has-3d-stage="1"] .zone-viewer-badge::after {
+  color: #5c3904;
+}
+
+.zwc-item-stage-3d {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(circle at 50% 44%, #25201a 0%, #110f0c 100%);
+  z-index: 2;
+}
+
+.zwc-inspector-3d-slot {
+  width: 100% !important;
+  height: 204px !important;
+  min-height: 204px !important;
+}
+
+.zwc-inspector-3d-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(14, 12, 10, 0.88);
+  border-top: 1px solid rgba(243, 201, 105, 0.28);
+}
+
+.zwc-inspector-3d-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #f3c969;
+}
+
+/* Crimes Dynamic 14-Category 3D Tool Showcase Inside .zone-crime-scene */
+html body #zone-main[data-zone-screen="crimes"] .zone-crime-scene {
+  position: relative !important;
+  min-height: 148px !important;
+}
+
+.zwc-crime-3d-showcase {
+  position: absolute;
+  bottom: 8px;
+  inset-inline-end: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(15, 13, 11, 0.90);
+  border: 1px solid rgba(243, 201, 105, 0.45);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.48);
+  z-index: 3;
+}
+
+.zwc-crime-3d-slot {
+  width: 72px !important;
+  height: 56px !important;
+  min-width: 72px !important;
+  min-height: 56px !important;
+}
+
+/* Hall of Fame, Elimination, Newspaper & Missions Polish */
+.zwc-inline-crest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+}
+
+.zwc-inline-crest svg.zwc-sketch-ico {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.zwc-hof-player-cell {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.zwc-hof-rank-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(243, 201, 105, 0.16);
+  border: 1px solid rgba(243, 201, 105, 0.45);
+  color: #fde68a;
+  font-weight: 800;
+}
+
+.zwc-hof-showcase-roster > .zwc-hof-legend-row {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 2fr) 80px 120px 140px 120px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(243, 201, 105, 0.14);
+}
+
+html body #zone-main[data-zone-screen="elimination"] .zone-competition-art {
+  position: relative !important;
+  min-height: 196px !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+}
+
+.zwc-elim-3d-stage {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 196px !important;
+}
+
+.zwc-press-empty-crest {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+}
+
+.zwc-press-empty-crest svg {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+html body #zone-main[data-zone-screen="newspaper"] .zone-stock-entry {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+@media (max-width: 680px) {
+  .zwc-hof-showcase-roster > .zwc-hof-legend-row {
+    grid-template-columns: 44px minmax(0, 1.5fr) 54px minmax(0, 1fr);
+    font-size: 12px;
+  }
+  .zwc-hof-showcase-roster > .zwc-hof-legend-row > :nth-child(4),
+  .zwc-hof-showcase-roster > .zwc-hof-legend-row > :nth-child(6) {
+    display: none;
+  }
+  .zwc-crime-3d-showcase {
+    position: relative;
+    bottom: auto;
+    inset-inline-end: auto;
+    margin-top: 8px;
+    justify-content: space-between;
+  }
+}

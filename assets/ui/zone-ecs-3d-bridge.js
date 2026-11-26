@@ -16,7 +16,9 @@
   var scanScheduled = false;
   var readyResolvers = [];
   var charWatchTimer = 0;
+  var charPollInterval = 0;
   var charWatchEl = null;
+  var lastObservedModalScreen = '';
   var charMountTimestamps = typeof WeakMap === 'function' ? new WeakMap() : null;
   var currentCharOutfit = 'street';
   var CHAR_WATCHDOG_MS = 1600;
@@ -314,10 +316,35 @@
         evaluateChar3DFallback(true);
       }, remaining);
     }
+
+    // Bounded poll (every 450ms up to 9s) so when character3d.html finishes unpacking
+    // its compressed GLB at ~1.7s-4s, #zone-char-3d smoothly un-hides right away!
+    if (!charPollInterval) {
+      charPollInterval = window.setInterval(function () {
+        var liveEl = document.getElementById('zone-char-3d');
+        if (!liveEl || (Date.now() - getCharMountTimestamp(liveEl)) > 9000) {
+          clearInterval(charPollInterval);
+          charPollInterval = 0;
+          return;
+        }
+        var stillFallback = evaluateChar3DFallback(true);
+        if (!stillFallback) {
+          clearInterval(charPollInterval);
+          charPollInterval = 0;
+        }
+      }, 450);
+    }
   }
 
   function upgradeNativeScreens(rootEl) {
     var main = document.getElementById('zone-main');
+    if (main) {
+      var curScr = main.getAttribute('data-zone-screen') || '';
+      if (curScr && lastObservedModalScreen && curScr !== lastObservedModalScreen) {
+        enqueue('closeInspector', []);
+      }
+      if (curScr) lastObservedModalScreen = curScr;
+    }
     if (main && main.querySelectorAll) {
       var staleClutter = main.querySelectorAll('.z3d-native-row-addon, .z3d-native-inspector-addon, .z3d-gym-stage-wrap');
       for (var s = 0; s < staleClutter.length; s++) {
@@ -562,7 +589,13 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=165')
+    return import('./zone-3d-environments.mjs?v=172')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=168');
+      })
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=165');
+      })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=164');
       })
@@ -601,7 +634,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=168')
+    return import('./zone-ecs-3d-engine.mjs?v=172')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=168');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=167');
       })
