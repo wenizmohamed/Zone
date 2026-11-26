@@ -2117,6 +2117,326 @@
     ensureLoopRunning();
   }
 
+  var ROULETTE_REDS_MAP = {
+    1: 1, 3: 1, 5: 1, 7: 1, 9: 1, 12: 1, 14: 1, 16: 1, 18: 1,
+    19: 1, 21: 1, 23: 1, 25: 1, 27: 1, 30: 1, 32: 1, 34: 1, 36: 1
+  };
+  var activeFrenchBet = '';
+  var lastRouletteSelection = { betType: 'red', number: null };
+  var numberGridOpen = false;
+
+  function setViewportLivePill(id, text, tone) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.setAttribute('data-tone', tone || 'gold');
+  }
+
+  function ensureAffordableCasinoStakes() {
+    var g = window.__zoneGame;
+    if (!g || !g.p || !g.state) return;
+    var cash = Number(g.p.cash || 0);
+    var nextPatch = null;
+    if (!g.bjBusy && !(g.blackjackTable && g.blackjackTable.status === 'playing')) {
+      var bjS = Number(g.state.bjStake || 1000);
+      if (cash >= 1000 && bjS > cash) {
+        nextPatch = nextPatch || {};
+        nextPatch.bjStake = cash >= 5000 ? 5000 : 1000;
+      }
+    }
+    if (!g.rouletteBusy) {
+      var rlS = Number(g.state.rouletteStake || 1000);
+      if (cash >= 1000 && rlS > cash) {
+        nextPatch = nextPatch || {};
+        nextPatch.rouletteStake = cash >= 5000 ? 5000 : 1000;
+      }
+    }
+    if (!g.slotsBusy) {
+      var slS = Number(g.state.slotsStake || 1000);
+      if (cash >= 500 && slS > cash) {
+        nextPatch = nextPatch || {};
+        nextPatch.slotsStake = cash >= 5000 ? 5000 : (cash >= 1000 ? 1000 : 500);
+      }
+    }
+    if (nextPatch && typeof g.setState === 'function') {
+      g.setState(nextPatch);
+    }
+  }
+
+  function syncInlineBlackjackEvHud(bjTableEl) {
+    if (!bjTableEl) return;
+    var hud = bjTableEl.querySelector('#zct-inline-bj-ev');
+    if (!hud) {
+      hud = document.createElement('div');
+      hud.id = 'zct-inline-bj-ev';
+      hud.className = 'zct-inline-bj-ev';
+      var statusEl = bjTableEl.querySelector('[data-bj-status="1"]');
+      if (statusEl) statusEl.insertAdjacentElement('beforebegin', hud);
+      else bjTableEl.appendChild(hud);
+    }
+    var ar = isAr();
+    var g = window.__zoneGame;
+    var bj = g && g.blackjackTable ? g.blackjackTable : null;
+    var playing = Boolean(bj && bj.status === 'playing');
+    var pRaw = playing && bj.playerHand && Array.isArray(bj.playerHand.cards)
+      ? bj.playerHand.cards
+      : (playing && Array.isArray(bj.playerCards) ? bj.playerCards : null);
+    var dRaw = playing && bj.dealerHand && Array.isArray(bj.dealerHand.cards)
+      ? bj.dealerHand.cards
+      : (playing && Array.isArray(bj.dealerCards) ? bj.dealerCards : null);
+
+    var parseVal = function (c) {
+      if (typeof c === 'number') return c;
+      if (!c) return 10;
+      if (typeof c.value === 'number') return c.value;
+      if (typeof c.val === 'number') return c.val;
+      var rk = String(c.rank || c.label || c).replace(/[^0-9AJQK]/gi, '').toUpperCase();
+      if (rk === 'A') return 11;
+      if (rk === 'K' || rk === 'Q' || rk === 'J' || rk === '10') return 10;
+      var n = parseInt(rk, 10);
+      return (n >= 2 && n <= 9) ? n : 10;
+    };
+
+    var optAct = '';
+    if (playing && pRaw && pRaw.length >= 2 && window.ZoneCasinoTables && typeof window.ZoneCasinoTables.computeBlackjackEV === 'function') {
+      var pVals = pRaw.map(function (c) { return { val: parseVal(c) }; });
+      var dUpVal = dRaw && dRaw.length ? { val: parseVal(dRaw[0]) } : { val: 10 };
+      var ev = window.ZoneCasinoTables.computeBlackjackEV(pVals, dUpVal, Boolean(bj.canDouble));
+      optAct = ev.optimalAction || 'stand';
+      var bestPct = Math.round(Number(ev[optAct + 'EV'] || 0) * 1000) / 10;
+      var bestTxt = optAct === 'hit' ? (ar ? 'سحب (HIT)' : 'HIT') : (optAct === 'double' ? (ar ? 'مضاعفة (DOUBLE)' : 'DOUBLE') : (ar ? 'وقوف (STAND)' : 'STAND'));
+      hud.innerHTML =
+        '<div class="zct-inline-ev-row">' +
+          '<span class="zct-inline-ev-kicker">' + (ar ? '★ مستشار الاحتمالات الفوري:' : '★ Live Optimal EV:') + '</span>' +
+          '<strong class="zct-inline-ev-best"><bdi>' + bestTxt + ' (' + (bestPct >= 0 ? '+' : '') + bestPct.toFixed(1) + '%)</bdi></strong>' +
+        '</div>' +
+        '<div class="zct-inline-ev-sub"><bdi>' +
+          (ar ? 'خطر التجاوز عند السحب: ' : 'Bust on Hit: ') + ev.bustProbPct + '% · ' +
+          (ar ? 'تجاوز الموزع: ' : 'Dealer Bust: ') + ev.dealerBustPct + '%' +
+        '</bdi></div>';
+    } else {
+      hud.innerHTML =
+        '<div class="zct-inline-ev-row">' +
+          '<span class="zct-inline-ev-kicker">' + (ar ? '★ مستشار البلاك جاك ٣:٢' : '★ S17 Shoe Advisor') + '</span>' +
+          '<span class="zct-inline-ev-idle">' + (ar ? 'اضغط «توزيع» لتفعيل حساب EV الحي' : 'Press Deal for live Hit / Stand / Double EV') + '</span>' +
+        '</div>';
+    }
+
+    var bjBtns = bjTableEl.querySelectorAll('[data-bj-action]');
+    for (var i = 0; i < bjBtns.length; i++) {
+      var b = bjBtns[i];
+      var bAct = b.getAttribute('data-bj-action');
+      if (playing && bAct === optAct && !b.disabled) {
+        b.setAttribute('data-bj-optimal', 'true');
+      } else {
+        b.removeAttribute('data-bj-optimal');
+      }
+    }
+  }
+
+  function syncCasinoChipHighlights(mainEl) {
+    if (!mainEl) return;
+    var g = window.__zoneGame;
+    var tables = [
+      { sel: '[data-casino-table="blackjack"]', cur: Number(g && g.state && g.state.bjStake) || 1000 },
+      { sel: '[data-casino-table="roulette"]', cur: Number(g && g.state && g.state.rouletteStake) || 1000 },
+      { sel: '[data-casino-table="slots"]', cur: Number(g && g.state && g.state.slotsStake) || 1000 }
+    ];
+    for (var t = 0; t < tables.length; t++) {
+      var card = mainEl.querySelector(tables[t].sel);
+      if (!card) continue;
+      var btns = card.querySelectorAll('button');
+      for (var i = 0; i < btns.length; i++) {
+        var btn = btns[i];
+        if (btn.hasAttribute('data-bj-action') || btn.hasAttribute('data-roulette-bet') || btn.hasAttribute('data-slots-spin') || btn.hasAttribute('data-z3d-inspect') || btn.hasAttribute('data-zct-french') || btn.hasAttribute('data-zct-num') || btn.hasAttribute('data-zct-grid-toggle')) continue;
+        var digits = String(btn.textContent || '').replace(/[^0-9]/g, '');
+        var amt = digits ? parseInt(digits, 10) : 0;
+        if (amt === 500 || amt === 1000 || amt === 5000 || amt === 25000) {
+          btn.setAttribute('data-casino-chip', String(amt));
+          if (amt === tables[t].cur) btn.setAttribute('data-chip-selected', 'true');
+          else btn.removeAttribute('data-chip-selected');
+        }
+      }
+    }
+  }
+
+  function bindLiveCasinoGameHooks() {
+    var g = window.__zoneGame;
+    if (!g || g.__zigCasinoHooksV165) return;
+    g.__zigCasinoHooksV165 = true;
+
+    var origSpinRoulette = g.spinRoulette && g.spinRoulette.bind(g);
+    if (origSpinRoulette) {
+      g.spinRoulette = async function (betType, number) {
+        ensureAudio();
+        ensureAffordableCasinoStakes();
+        lastRouletteSelection = { betType: betType || 'red', number: (number !== undefined ? number : null) };
+        var ar = isAr();
+        setViewportLivePill('zct-roulette-live-pill', ar ? '● الكرة العاجية تدور على ٣٧ خانة...' : '● Ivory ball spinning across 37 pockets...', 'gold');
+        startRouletteAnimation();
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+          window.ZoneEcs3D.triggerStageAction('casino-royale', 'roulette-launch', { submode: 'roulette', betType: betType });
+        }
+        var tickTimers = [140, 320, 540, 800, 1080].map(function (ms) {
+          return setTimeout(function () { try { sfx.lockClick(); } catch (_) {} }, ms);
+        });
+        var prevCash = Number(g.p && g.p.cash || 0);
+        try {
+          await origSpinRoulette(betType, number);
+        } finally {
+          for (var ti = 0; ti < tickTimers.length; ti++) clearTimeout(tickTimers[ti]);
+        }
+        var rt = g.rouletteTable;
+        if (rt && rt.pocket !== undefined && rt.pocket !== null) {
+          var pNum = Number(rt.pocket);
+          var won = rt.result === 'win';
+          var pCol = pNum === 0 ? 'GREEN' : (ROULETTE_REDS_MAP[pNum] ? 'RED' : 'BLACK');
+          var sym = pNum === 0 ? '★' : (pCol === 'RED' ? '◆' : '♠');
+          var deltaAbs = Math.abs(Number(rt.delta || (Number(g.p && g.p.cash || 0) - prevCash)));
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            window.ZoneEcs3D.triggerStageAction('casino-royale', 'roulette-land', {
+              submode: 'roulette',
+              pocket: pNum,
+              color: pCol.toLowerCase(),
+              won: won,
+              durationSec: 1.45
+            });
+          }
+          setTimeout(function () {
+            var msg = ar
+              ? (sym + ' الخانة ' + pNum + ' · ' + (won ? ('ربحت +$' + deltaAbs.toLocaleString() + '!') : 'خارج الرهان'))
+              : (sym + ' POCKET ' + pNum + ' ' + pCol + ' · ' + (won ? ('WON +$' + deltaAbs.toLocaleString() + '!') : ('-$' + deltaAbs.toLocaleString())));
+            setViewportLivePill('zct-roulette-live-pill', msg, won ? 'sage' : 'crimson');
+            var numBtns = document.querySelectorAll('[data-zct-num]');
+            for (var nb = 0; nb < numBtns.length; nb++) {
+              if (Number(numBtns[nb].getAttribute('data-zct-num')) === pNum) numBtns[nb].setAttribute('data-hit-pocket', 'true');
+              else numBtns[nb].removeAttribute('data-hit-pocket');
+            }
+          }, 1250);
+          if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+            window.ZoneGameKit.recordEvent('roulette_spin', { stake: Number(rt.bet || 1000), pocket: pNum, netDelta: Number(rt.delta || 0), betType: betType });
+          }
+        }
+      };
+    }
+
+    var origSpinSlots = g.spinSlots && g.spinSlots.bind(g);
+    if (origSpinSlots) {
+      g.spinSlots = async function (overrideBet) {
+        ensureAudio();
+        if (!overrideBet) ensureAffordableCasinoStakes();
+        var ar = isAr();
+        setViewportLivePill('zct-slots-live-pill', ar ? '♦ البكرات الميكانيكية تدور...' : '♦ 3D Mechanical Drums Spinning...', 'gold');
+        startSlotsAnimation();
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+          window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-spin', { submode: 'slots' });
+        }
+        await origSpinSlots(overrideBet);
+        var st = g.slotsTable;
+        if (st && Array.isArray(st.reels) && st.reels.length === 3) {
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-land', {
+              submode: 'slots',
+              skipLever: true,
+              reels: st.reels
+            });
+          }
+          [700, 1080, 1460].forEach(function (ms, rIdx) {
+            setTimeout(function () {
+              try { sfx.lockClick(); } catch (_) {}
+              var reelCards = document.querySelectorAll('[data-casino-table="slots"] [data-slots-reel="1"]');
+              if (reelCards[rIdx]) {
+                reelCards[rIdx].setAttribute('data-reel-locked', st.result === 'win' ? 'win' : 'done');
+              }
+            }, ms);
+          });
+          setTimeout(function () {
+            var won = st.result === 'win';
+            var dAbs = Math.abs(Number(st.delta || 0));
+            setViewportLivePill(
+              'zct-slots-live-pill',
+              won
+                ? (ar ? ('★ خط فائز ×' + st.multiplier + ' · +$' + dAbs.toLocaleString() + '!') : ('★ ' + st.multiplier + 'x PAYLINE WIN · +$' + dAbs.toLocaleString() + '!'))
+                : (ar ? ('♦ ' + st.reels.join(' · ') + ' · الجائزة الكبرى ارتفعت') : ('♦ ' + st.reels.join(' · ') + ' · Pool +12%')),
+              won ? 'sage' : 'neutral'
+            );
+          }, 1480);
+          if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+            window.ZoneGameKit.recordEvent('slots_spin', { stake: Number(st.bet || 1000), netDelta: Number(st.delta || 0), multiplier: Number(st.multiplier || 0) });
+          }
+        }
+      };
+    }
+
+    var origBj = g.playBlackjackAction && g.playBlackjackAction.bind(g);
+    if (origBj) {
+      g.playBlackjackAction = async function (action) {
+        ensureAudio();
+        if (action === 'deal') ensureAffordableCasinoStakes();
+        try { sfx.lockClick(); } catch (_) {}
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+          window.ZoneEcs3D.triggerStageAction('casino-royale', 'bj-' + action, { submode: 'blackjack', action: action });
+        }
+        await origBj(action);
+        var bjData = g.blackjackTable;
+        if (bjData) {
+          var ar = isAr();
+          if (bjData.status === 'playing') {
+            var pTot = (bjData.playerHand && bjData.playerHand.total) || '-';
+            setViewportLivePill('zct-bj-live-pill', ar ? ('♠ مجموع يدك: ' + pTot + ' · اختر حركتك') : ('♠ Hand Total: ' + pTot + ' · Your Move'), 'gold');
+          } else if (bjData.status === 'settled') {
+            var won = bjData.result === 'win';
+            var push = bjData.result === 'push';
+            var dAbs = Math.abs(Number(bjData.delta || 0));
+            setViewportLivePill(
+              'zct-bj-live-pill',
+              push
+                ? (ar ? '● تعادل · أُعيد الرهان' : '● PUSH · Stake Returned')
+                : (won ? (ar ? ('★ فوز بلاك جاك +$' + dAbs.toLocaleString() + '!') : ('★ DEALER BEATEN · +$' + dAbs.toLocaleString() + '!')) : (ar ? ('♠ الموزع كسب اليد (-$' + dAbs.toLocaleString() + ')') : ('♠ Dealer Wins (-$' + dAbs.toLocaleString() + ')'))),
+              won ? 'sage' : (push ? 'gold' : 'crimson')
+            );
+            if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+              window.ZoneGameKit.recordEvent('blackjack_hand', { stake: Number(bjData.bet || 1000), netDelta: Number(bjData.delta || 0) });
+            }
+          }
+        }
+        var bjCardEl = document.querySelector('[data-casino-table="blackjack"]');
+        if (bjCardEl) syncInlineBlackjackEvHud(bjCardEl);
+      };
+    }
+
+    if (!window.__zigStageClickBoundV165) {
+      window.__zigStageClickBoundV165 = true;
+      window.addEventListener('zone:3d-stage-click', function (ev) {
+        var mainEl = document.getElementById('zone-main');
+        if (!mainEl || mainEl.getAttribute('data-zone-screen') !== 'casino') return;
+        var det = (ev && ev.detail) || {};
+        if (det.stage !== 'casino-royale') return;
+        var gm = window.__zoneGame;
+        if (!gm) return;
+        var tgt = String(det.target || det.submode || '');
+        if (tgt === 'slots') {
+          if (!gm.slotsBusy && typeof gm.spinSlots === 'function') gm.spinSlots();
+        } else if (tgt === 'blackjack') {
+          if (!gm.bjBusy && typeof gm.playBlackjackAction === 'function') {
+            var isLiveHand = gm.blackjackTable && gm.blackjackTable.status === 'playing';
+            if (!isLiveHand) {
+              gm.playBlackjackAction('deal');
+            } else {
+              var optBtn = document.querySelector('[data-casino-table="blackjack"] [data-bj-optimal="true"]');
+              var nextAct = optBtn ? optBtn.getAttribute('data-bj-action') : 'stand';
+              gm.playBlackjackAction(nextAct || 'stand');
+            }
+          }
+        } else if (tgt === 'roulette' || tgt === 'croupier') {
+          if (!gm.rouletteBusy && typeof gm.spinRoulette === 'function') {
+            gm.spinRoulette(lastRouletteSelection.betType || 'red', lastRouletteSelection.number);
+          }
+        }
+      });
+    }
+  }
+
   /* ---------------- 4. CASINO: 3D Casino Royale Stage + Roulette Wheel + 3-Reel Jackpot Slots ---------------- */
   function startRouletteAnimation() {
     var rl = state.roulette;
@@ -2125,9 +2445,6 @@
     rl.wheelSpeed = 2.6;
     rl.ballSpeed = -9.4;
     rl.ballRadiusFrac = 0.88;
-    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
-      try { window.ZoneEcs3D.triggerStageAction('casino-royale', 'roulette-spin', {}); } catch (_) {}
-    }
     notifySafehouseArcadeWin('roulette', {});
     ensureLoopRunning();
   }
@@ -2140,9 +2457,6 @@
     sl.speeds = [22, 25, 28];
     sl.leverPull = 1;
     sfx.lockClick();
-    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
-      try { window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-spin', {}); } catch (_) {}
-    }
     notifySafehouseArcadeWin('slots', {});
     ensureLoopRunning();
   }
@@ -2155,7 +2469,11 @@
       if (stale3d) stale3d.remove();
       return;
     }
+    bindLiveCasinoGameHooks();
+    ensureAffordableCasinoStakes();
+
     var ar = isAr();
+    var bjLabel = ar ? 'طاولة بلاك جاك مونت كارلو ثلاثية الأبعاد' : 'Monte-Carlo 3D Blackjack Shoe & Dealer';
     var rouletteLabel = ar ? 'عجلة الروليت الأوروبية' : 'European Roulette Wheel';
     var slotsLabel = ar ? 'ماكينة الجائزة الكبرى ثلاثية البكرات' : '3-Reel Jackpot Slot Machine';
 
@@ -2164,65 +2482,123 @@
       staleCasinoStage.parentElement.removeChild(staleCasinoStage);
     }
 
-    /* Monte-Carlo Noir 3D Casino Stages: Replace flat 2D Roulette & Slots canvases with LIVE Three.js WebGL 3D Viewports */
+    /* 1. 3D Blackjack Shoe & Croupier Stage + Live Tactical EV Advisor */
+    var bjTable = main.querySelector('[data-casino-table="blackjack"]');
+    if (bjTable) {
+      if (!bjTable.querySelector('[data-zig-bj-3d="1"]')) {
+        var bjHeader = bjTable.firstElementChild;
+        var bjBox = document.createElement('div');
+        bjBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
+        bjBox.setAttribute('data-zig-bj-3d', '1');
+        bjBox.innerHTML =
+          '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="blackjack" aria-label="' + bjLabel + '"></div>' +
+          '<div class="zct-viewport-live-pill" id="zct-bj-live-pill" data-tone="gold">' + (ar ? '♠ انقر الطاولة للتوزيع · اسحب للدوران ٣٦٠°' : '♠ Click 3D Felt to Deal · Drag to Orbit') + '</div>' +
+          '<div class="zct-inline-3d-bar">' +
+            '<span class="zct-inline-3d-badge">' + (ar ? '♠ طاولة حذاء ٥٢ ورقة ٣D' : '♠ 3D Monte-Carlo Card Shoe') + '</span>' +
+            '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="alcohol" data-z3d-cat="booster" data-z3d-title="' + bjLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
+          '</div>';
+        if (bjHeader) bjHeader.insertAdjacentElement('afterend', bjBox);
+        else bjTable.prepend(bjBox);
+      }
+      syncInlineBlackjackEvHud(bjTable);
+    }
+
+    /* 2. 37-Pocket 3D Monte-Carlo Roulette Stage + French Call Bets + Full 0-36 Interactive Felt Grid */
     var rTable = main.querySelector('[data-casino-table="roulette"]');
-    if (rTable && !rTable.querySelector('[data-zig-roulette-3d="1"]')) {
-      var rHeader = rTable.firstElementChild;
-      var rBox = document.createElement('div');
-      rBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
-      rBox.setAttribute('data-zig-roulette-3d', '1');
-      rBox.innerHTML =
-        '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="roulette" aria-label="' + rouletteLabel + '"></div>' +
-        '<div class="zct-inline-3d-bar">' +
-          '<span class="zct-inline-3d-badge">' + (ar ? '★ روليت مونت كارلو ٣D · ٣٧ خانة' : '★ 37-Pocket 3D Monte-Carlo Wheel') + '</span>' +
-          '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="roulette_wheel" data-z3d-cat="casino" data-z3d-title="' + rouletteLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
-        '</div>';
-      if (rHeader) rHeader.insertAdjacentElement('afterend', rBox);
-      else rTable.prepend(rBox);
+    if (rTable) {
+      if (!rTable.querySelector('[data-zig-roulette-3d="1"]')) {
+        var rHeader = rTable.firstElementChild;
+        var rBox = document.createElement('div');
+        rBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
+        rBox.setAttribute('data-zig-roulette-3d', '1');
+        rBox.innerHTML =
+          '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="roulette" aria-label="' + rouletteLabel + '"></div>' +
+          '<div class="zct-viewport-live-pill" id="zct-roulette-live-pill" data-tone="gold">' + (ar ? '★ انقر العجلة للتدوير · اسحب للدوران ٣٦٠°' : '★ Click 3D Wheel to Spin · Drag to Orbit') + '</div>' +
+          '<div class="zct-inline-3d-bar">' +
+            '<span class="zct-inline-3d-badge">' + (ar ? '★ روليت مونت كارلو ٣D · ٣٧ خانة' : '★ 37-Pocket 3D Monte-Carlo Wheel') + '</span>' +
+            '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="roulette_wheel" data-z3d-cat="casino" data-z3d-title="' + rouletteLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
+          '</div>';
+        if (rHeader) rHeader.insertAdjacentElement('afterend', rBox);
+        else rTable.prepend(rBox);
+      }
 
-      rTable.addEventListener('click', function (ev) {
-        var betBtn = ev.target && ev.target.closest ? ev.target.closest('[data-roulette-bet]') : null;
-        if (betBtn && !betBtn.disabled) {
-          ensureAudio();
-          startRouletteAnimation();
-          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
-            window.ZoneEcs3D.triggerStageAction('casino-royale', 'spin', { betType: betBtn.getAttribute('data-roulette-bet') || 'red' });
-          }
-          if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
-            window.ZoneGameKit.recordEvent('roulette_spin', { stake: 1000, betType: betBtn.getAttribute('data-roulette-bet') || 'red' });
-          }
+      if (!rTable.querySelector('[data-zct-french-bar="1"]')) {
+        var frenchWrap = document.createElement('div');
+        frenchWrap.className = 'zct-inline-french-wrap';
+        frenchWrap.setAttribute('data-zct-french-bar', '1');
+        var numButtonsHtml = '';
+        for (var n = 0; n <= 36; n++) {
+          var ncol = n === 0 ? 'green' : (ROULETTE_REDS_MAP[n] ? 'red' : 'black');
+          numButtonsHtml += '<button type="button" class="zct-felt-num" data-zct-num="' + n + '" data-pcol="' + ncol + '"><bdi>' + n + '</bdi></button>';
         }
-      });
+        frenchWrap.innerHTML =
+          '<div class="zct-french-head">' +
+            '<span>' + (ar ? 'الرهانات الفرنسية وخانات ٣٥:١' : 'French Racetrack & 0-36 Felt (2.70% Edge)') + '</span>' +
+            '<button type="button" class="zct-grid-toggle-btn" data-zct-grid-toggle="1">' + (ar ? 'اختر رقم 0-36 ▾' : 'Pick Any 0-36 (35:1) ▾') + '</button>' +
+          '</div>' +
+          '<div class="zct-french-pills">' +
+            '<button type="button" class="zct-french-pill" data-zct-french="voisins_du_zero">' + (ar ? 'جيران الصفر (17)' : 'Voisins (17)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="tiers_du_cylindre">' + (ar ? 'ثلث الأسطوانة (12)' : 'Tiers (12)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="orphelins">' + (ar ? 'الأيتام (8)' : 'Orphelins (8)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="jeu_zero">' + (ar ? 'لعبة الصفر (7)' : 'Jeu Zero (7)') + '</button>' +
+          '</div>' +
+          '<div class="zct-felt-numbers-drawer"' + (numberGridOpen ? '' : ' hidden') + ' data-zct-num-drawer="1">' +
+            numButtonsHtml +
+          '</div>';
+        var rStatus = rTable.querySelector('[data-roulette-status="1"]');
+        if (rStatus) rStatus.insertAdjacentElement('beforebegin', frenchWrap);
+        else rTable.appendChild(frenchWrap);
+
+        frenchWrap.addEventListener('click', function (ev) {
+          var toggleBtn = ev.target && ev.target.closest ? ev.target.closest('[data-zct-grid-toggle="1"]') : null;
+          if (toggleBtn) {
+            numberGridOpen = !numberGridOpen;
+            var dr = frenchWrap.querySelector('[data-zct-num-drawer="1"]');
+            if (dr) dr.hidden = !numberGridOpen;
+            return;
+          }
+          var frBtn = ev.target && ev.target.closest ? ev.target.closest('[data-zct-french]') : null;
+          if (frBtn && window.__zoneGame && !window.__zoneGame.rouletteBusy) {
+            var fType = frBtn.getAttribute('data-zct-french');
+            activeFrenchBet = fType;
+            var allFr = frenchWrap.querySelectorAll('[data-zct-french]');
+            for (var fi = 0; fi < allFr.length; fi++) allFr[fi].setAttribute('aria-pressed', allFr[fi] === frBtn ? 'true' : 'false');
+            window.__zoneGame.spinRoulette(fType, null);
+            return;
+          }
+          var nBtn = ev.target && ev.target.closest ? ev.target.closest('[data-zct-num]') : null;
+          if (nBtn && window.__zoneGame && !window.__zoneGame.rouletteBusy) {
+            var picked = parseInt(nBtn.getAttribute('data-zct-num'), 10);
+            if (!isNaN(picked)) {
+              window.__zoneGame.spinRoulette('straight', picked);
+            }
+          }
+        });
+      }
     }
 
-    /* 3D Mechanical Jackpot Slot Machine Stage */
+    /* 3. 3D Mechanical Jackpot Slot Machine Stage (with visible 3-Symbol Readout Strip!) */
     var sTable = main.querySelector('[data-casino-table="slots"]');
-    if (sTable && !sTable.querySelector('[data-zig-slots-3d="1"]')) {
-      sTable.classList.add('zig-slots-mounted');
-      var jackpotBanner = sTable.children[1] || sTable.firstElementChild;
-      var sBox = document.createElement('div');
-      sBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
-      sBox.setAttribute('data-zig-slots-3d', '1');
-      sBox.innerHTML =
-        '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="slots" aria-label="' + slotsLabel + '"></div>' +
-        '<div class="zct-inline-3d-bar">' +
-          '<span class="zct-inline-3d-badge">' + (ar ? '♦ ماكينة الجائزة الكبرى ٣D' : '♦ 3D Mechanical Jackpot Reels') + '</span>' +
-          '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="slot_machine" data-z3d-cat="casino" data-z3d-title="' + slotsLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
-        '</div>';
-      if (jackpotBanner) jackpotBanner.insertAdjacentElement('afterend', sBox);
-      else sTable.prepend(sBox);
-
-      sTable.addEventListener('click', function (ev) {
-        var btn = ev.target && ev.target.closest ? ev.target.closest('[data-slots-spin], button.zone-action-primary') : null;
-        if (btn && !btn.disabled) {
-          ensureAudio();
-          startSlotsAnimation();
-          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
-            window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-spin', {});
-          }
-        }
-      });
+    if (sTable) {
+      sTable.classList.remove('zig-slots-mounted');
+      if (!sTable.querySelector('[data-zig-slots-3d="1"]')) {
+        var jackpotBanner = sTable.children[1] || sTable.firstElementChild;
+        var sBox = document.createElement('div');
+        sBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
+        sBox.setAttribute('data-zig-slots-3d', '1');
+        sBox.innerHTML =
+          '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="slots" aria-label="' + slotsLabel + '"></div>' +
+          '<div class="zct-viewport-live-pill" id="zct-slots-live-pill" data-tone="gold">' + (ar ? '♦ انقر الذراع الياقوتي للسحب · اسحب للدوران' : '♦ Click Ruby Lever to Spin · Drag to Orbit') + '</div>' +
+          '<div class="zct-inline-3d-bar">' +
+            '<span class="zct-inline-3d-badge">' + (ar ? '♦ ماكينة الجائزة الكبرى ٣D' : '♦ 3D Mechanical Jackpot Reels') + '</span>' +
+            '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="slot_machine" data-z3d-cat="casino" data-z3d-title="' + slotsLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
+          '</div>';
+        if (jackpotBanner) jackpotBanner.insertAdjacentElement('afterend', sBox);
+        else sTable.prepend(sBox);
+      }
     }
+
+    syncCasinoChipHighlights(main);
     if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
       window.ZoneEcs3D.scan(main);
     }

@@ -32,7 +32,7 @@ function zone_proxy_public_path(string $path): bool
         'game/bootstrap', 'cities', 'gym/train', 'bank/deposit', 'bank/withdraw', 'hospital/heal', 'hospital/quote', 'hospital/patients', 'hospital/revive-player', 'travel',
         'foreign-market', 'foreign-market/action', 'faction-chain', 'faction-chain/action', 'player-profile', 'player-profile/avatar', 'events-feed',
         'story-campaign', 'story-campaign/action', 'player-rpg', 'player-rpg/action', 'ascension', 'ascension/action', 'tactical', 'tactical/action', 'economy-security', 'economy-security/action', 'faction-war', 'faction-war/action', 'synergies', 'synergies/action', 'settings', 'settings/action', 'syndicate-chat', 'syndicate-chat/action', 'chat', 'chat/action', 'companions', 'companions/action', 'city-activities', 'city-activities/action', 'syndicate-economy', 'syndicate-economy/action', 'faction-empire', 'faction-empire/action',
-        'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications'], true)
+        'casino/blackjack', 'casino/high-low', 'casino/roulette', 'casino/slots', 'casino/craps', 'social', 'social/action', 'jobs/work', 'attack', 'daily/login', 'daily/contract', 'daily/contract/claim', 'notifications'], true)
         || preg_match('~^(?:crimes/[a-z0-9-]+/attempt|territories/ZC-[0-9]{3}/action)$~D', $route) === 1;
 }
 

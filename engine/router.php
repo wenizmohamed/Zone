@@ -666,6 +666,23 @@ try {
         $engine->syncEphemeralLedger($pid);
         json_response($res);
     }
+    if ($method === 'POST' && $path === '/api/v1/casino/craps') {
+        $body = request_json();
+        $pid = current_player_id();
+        $crapsPoint = array_key_exists('point', $body) && $body['point'] !== null && $body['point'] !== ''
+            ? \Zone\Engine\Core\Security\RequestGuard::boundedInt($body, 'point', 4, 10, 0)
+            : null;
+        $res = $engine->playCraps(
+            \Zone\Engine\Core\Security\RequestGuard::positiveInt($body, 'bet'),
+            (string) ($body['betType'] ?? 'pass_line'),
+            \Zone\Engine\Core\Security\RequestGuard::boundedInt($body, 'hardTarget', 4, 10, 8),
+            $crapsPoint,
+            (bool) ($body['alreadyCommitted'] ?? false),
+            $pid,
+        );
+        $engine->syncEphemeralLedger($pid);
+        json_response($res);
+    }
     if ($method === 'GET' && $path === '/api/v1/social') {
         json_response($engine->socialSnapshot(current_player_id()));
     }

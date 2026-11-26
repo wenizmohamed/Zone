@@ -1254,29 +1254,10 @@
       }
     }
 
-    /* ---------------- Craps Shoot Action ---------------- */
-    function shootCrapsDice(forcedDice) {
-      syncLiveBankrollFromGame();
+    /* ---------------- Craps Shoot Action (Server-Authoritative when Live + Offline Unit Fallback) ---------------- */
+    function finalizeCrapsRoll(d1, d2, stake, alreadyCommitted, serverApplied) {
       var c = store.craps;
-      var stake = Math.max(500, Math.round(Number(c.stake) || 1000));
-      // Only deduct stake if starting a fresh bet (not mid-point line bet or working hardway already on felt)
-      var alreadyCommitted = Boolean(
-        (c.point && (c.betId === 'pass_line' || c.betId === 'dont_pass')) ||
-        (c.hardwaysActive && c.betId === 'hardways')
-      );
-      if (!alreadyCommitted && store.bankroll < stake) {
-        c.statusTone = 'crimson';
-        c.statusEn = 'Insufficient bankroll for ' + fmtMoney(stake) + ' wager.';
-        c.statusAr = 'الرصيد غير كافٍ للرهان بمبلغ ' + fmtMoney(stake) + '.';
-        renderActiveScreenMount();
-        return { ok: false, error: 'insufficient_funds' };
-      }
-
-      var rng = seededUint32('craps:' + store.bj.fair.clientSeed + ':' + Date.now() + ':' + c.rollCount);
-      var d1 = forcedDice && forcedDice[0] ? clamp(Math.round(forcedDice[0]), 1, 6) : (Math.floor(rng() * 6) + 1);
-      var d2 = forcedDice && forcedDice[1] ? clamp(Math.round(forcedDice[1]), 1, 6) : (Math.floor(rng() * 6) + 1);
-
-      if (!alreadyCommitted) {
+      if (!serverApplied && !alreadyCommitted) {
         applyBankrollDelta(-stake);
       }
 
@@ -1291,7 +1272,7 @@
         c.hardwaysActive = false;
       }
 
-      if (res.payout > 0) {
+      if (!serverApplied && res.payout > 0) {
         applyBankrollDelta(res.payout);
       }
       if (res.outcome === 'win' || res.outcome === 'lose' || res.outcome === 'push') {
@@ -1306,7 +1287,7 @@
       c.statusAr = res.reasonAr;
       c.statusTone = res.outcome === 'win' ? 'sage' : (res.outcome === 'lose' ? 'crimson' : (res.outcome === 'point_set' ? 'gold' : 'neutral'));
 
-      // Physics impulse + 3D Casino Royale stage sync + WebAudio haptics
+      var rng = seededUint32('craps-phys:' + d1 + ':' + d2 + ':' + c.rollCount);
       var cv = typeof document !== 'undefined' ? document.getElementById(CRAPS_CANVAS_ID) : null;
       var bounds = {
         width: cv ? (cv.clientWidth || cv.width || 320) : 320,
@@ -1329,7 +1310,7 @@
         }
       }
 
-      triggerCasino3D('spin', { source: 'craps', dice: [d1, d2], sum: res.sum, betId: c.betId });
+      triggerCasino3D('spin', { submode: 'craps', source: 'craps', dice: [d1, d2], sum: res.sum, betId: c.betId });
       triggerAudioCue('roulette_tick', { source: 'craps_shoot', sum: res.sum });
       if (res.outcome === 'win') {
         triggerAudioCue(res.bigWin ? 'jackpot_fanfare' : 'cash_payout', { source: 'craps', payout: res.payout });
@@ -1341,6 +1322,72 @@
       drawCrapsCanvas();
       renderActiveScreenMount();
       return { ok: true, result: res, dice: [d1, d2], bankroll: store.bankroll };
+    }
+
+    function shootCrapsDice(forcedDice) {
+      syncLiveBankrollFromGame();
+      var c = store.craps;
+      var stake = Math.max(500, Math.round(Number(c.stake) || 1000));
+      var alreadyCommitted = Boolean(
+        (c.point && (c.betId === 'pass_line' || c.betId === 'dont_pass')) ||
+        (c.hardwaysActive && c.betId === 'hardways')
+      );
+      if (!alreadyCommitted && store.bankroll < stake && stake > 500 && store.bankroll >= 500) {
+        stake = store.bankroll >= 1000 ? 1000 : 500;
+        c.stake = stake;
+      }
+      if (!alreadyCommitted && store.bankroll < stake) {
+        c.statusTone = 'crimson';
+        c.statusEn = 'Insufficient bankroll for ' + fmtMoney(stake) + ' wager.';
+        c.statusAr = 'الرصيد غير كافٍ للرهان بمبلغ ' + fmtMoney(stake) + '.';
+        renderActiveScreenMount();
+        return { ok: false, error: 'insufficient_funds' };
+      }
+
+      var liveGame = (typeof window !== 'undefined' && window.__zoneGame && typeof window.fetch === 'function') ? window.__zoneGame : null;
+      if (!forcedDice && liveGame && Boolean(typeof document !== 'undefined' && document.querySelector && document.querySelector('x-dc'))) {
+        if (c.rolling) return { ok: false, error: 'busy' };
+        c.rolling = true;
+        renderActiveScreenMount();
+        window.fetch('/api/v1/casino/craps', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            bet: stake,
+            betType: c.betId,
+            hardTarget: c.hardTarget,
+            point: c.point,
+            alreadyCommitted: alreadyCommitted
+          })
+        })
+          .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+          .then(function (resp) {
+            c.rolling = false;
+            if (resp.ok && resp.data && Array.isArray(resp.data.dice)) {
+              if (resp.data.player && typeof liveGame.applyServerPlayer === 'function') {
+                liveGame.applyServerPlayer(resp.data.player);
+                if (typeof liveGame.save === 'function') liveGame.save();
+                if (typeof liveGame.forceUpdate === 'function') liveGame.forceUpdate();
+              }
+              syncLiveBankrollFromGame();
+              finalizeCrapsRoll(resp.data.dice[0], resp.data.dice[1], stake, alreadyCommitted, true);
+            } else {
+              var rngFallback = seededUint32('craps:' + Date.now() + ':' + c.rollCount);
+              finalizeCrapsRoll(Math.floor(rngFallback() * 6) + 1, Math.floor(rngFallback() * 6) + 1, stake, alreadyCommitted, false);
+            }
+          })
+          .catch(function () {
+            c.rolling = false;
+            var rngErr = seededUint32('craps:' + Date.now() + ':' + c.rollCount);
+            finalizeCrapsRoll(Math.floor(rngErr() * 6) + 1, Math.floor(rngErr() * 6) + 1, stake, alreadyCommitted, false);
+          });
+        return { ok: true, pendingServer: true };
+      }
+
+      var rng = seededUint32('craps:' + store.bj.fair.clientSeed + ':' + Date.now() + ':' + c.rollCount);
+      var d1 = forcedDice && forcedDice[0] ? clamp(Math.round(forcedDice[0]), 1, 6) : (Math.floor(rng() * 6) + 1);
+      var d2 = forcedDice && forcedDice[1] ? clamp(Math.round(forcedDice[1]), 1, 6) : (Math.floor(rng() * 6) + 1);
+      return finalizeCrapsRoll(d1, d2, stake, alreadyCommitted, false);
     }
 
     /* ---------------- 37-Pocket 3D Monte-Carlo Roulette Spin ---------------- */
@@ -1695,9 +1742,13 @@
       }
 
       // 2.5 LUNA HOUSE OF OBSIDIAN & CHAMPAGNE GOLD: 37-POCKET 3D MONTE-CARLO ROULETTE SALON
+      // On live index.html (<x-dc>), Roulette + French Call Bets + Blackjack EV are integrated directly
+      // into the primary server-authoritative Velvet Noir Pit above — avoid rendering duplicate client-only copies!
+      var isLiveXdcHost = Boolean(typeof document !== 'undefined' && document.querySelector && document.querySelector('x-dc'));
       var rl = store.roulette;
       var rlCurve = computeRouletteCostCurve({ stake: rl.stake, spinsPerMin: 4 });
       var lastGlyph = getPocketGlyph(rl.lastPocket);
+      if (!isLiveXdcHost) {
       html.push('<section class="zct-roulette-salon" id="zct-roulette-card" data-zct-table="roulette-3d">');
       html.push('  <div class="zct-table-head">');
       html.push('    <h4 class="zct-table-title">' + (ar ? 'صالون روليت مونت كارلو ثلاثي الأبعاد (٣٧ خانة · الرهانات الفرنسية)' : 'Monte-Carlo Noir 37-Pocket 3D Roulette Salon & French Call Bets') + '</h4>');
@@ -1750,9 +1801,10 @@
       html.push('    </div>');
       html.push('  </div>');
       html.push('</section>');
+      }
 
-      // 3. Two-Column Tables Grid
-      html.push('<div class="zct-tables-grid">');
+      // 3. Tables Grid (Single Full-Width Server-Authoritative 3D Craps Lounge on Live <x-dc>; 2-Col in Standalone)
+      html.push('<div class="zct-tables-grid' + (isLiveXdcHost ? ' zct-tables-grid--single' : '') + '">');
 
       // --- LEFT: Interactive Street Craps & 3D Dice Physics ---
       html.push('  <section class="zct-table-card" id="zct-craps-card" data-zct-table="craps">');
@@ -1805,7 +1857,8 @@
       html.push('    <div class="zct-status-msg" data-tone="' + esc(c.statusTone) + '" data-zct-craps-status="1">' + esc(ar ? c.statusAr : c.statusEn) + '</div>');
       html.push('  </section>');
 
-      // --- RIGHT: Syndicate Blackjack & Provably-Fair Odds Inspector ---
+      // --- RIGHT: Syndicate Blackjack & Provably-Fair Odds Inspector (Standalone Only; Live <x-dc> embeds EV Advisor directly in primary Blackjack 21!) ---
+      if (!isLiveXdcHost) {
       html.push('  <section class="zct-table-card" id="zct-bj-card" data-zct-table="blackjack-ev">');
       html.push('    <div class="zct-table-head">');
       html.push('      <h4 class="zct-table-title">' + (ar ? 'بلاك جاك النقابة ومحلل الاحتمالات' : 'Syndicate Blackjack & Fair Odds Inspector') + '</h4>');
@@ -1891,6 +1944,7 @@
 
       html.push('    <div class="zct-status-msg" data-tone="' + esc(bj.statusTone) + '" data-zct-bj-status="1">' + esc(ar ? bj.statusAr : bj.statusEn) + '</div>');
       html.push('  </section>');
+      }
 
       html.push('</div>');
       return html.join('\n');

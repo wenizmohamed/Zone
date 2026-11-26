@@ -1180,12 +1180,16 @@ final class GameEngine
     {
         $this->requireModule('blackjack');
         $cleanType = strtolower(trim($betType));
-        $validTypes = ['red', 'black', 'even', 'odd', 'low', 'high', 'dozen1', 'dozen2', 'dozen3', 'straight'];
+        $validTypes = [
+            'red', 'black', 'even', 'odd', 'low', 'high',
+            'dozen1', 'dozen2', 'dozen3', 'straight',
+            'voisins_du_zero', 'tiers_du_cylindre', 'orphelins', 'jeu_zero', 'neighbors_5',
+        ];
         if ($bet < 100 || $bet > 10000000 || !in_array($cleanType, $validTypes, true)) {
             throw new \InvalidArgumentException('Choose a valid Roulette bet and wager between $100 and $10,000,000.');
         }
-        if ($cleanType === 'straight' && ($number === null || $number < 0 || $number > 36)) {
-            throw new \InvalidArgumentException('Straight-up Roulette bets require a pocket from 0 to 36.');
+        if (($cleanType === 'straight' || $cleanType === 'neighbors_5') && ($number === null || $number < 0 || $number > 36)) {
+            throw new \InvalidArgumentException('Target Roulette bets require a pocket from 0 to 36.');
         }
 
         $this->recordActionAttempt($playerId);
@@ -1197,25 +1201,51 @@ final class GameEngine
                 throw new RuntimeException('Not enough cash for that Roulette wager.');
             }
 
+            $wheelOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
             $pocket = random_int(0, 36);
             $reds = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
             $color = $pocket === 0 ? 'green' : (in_array($pocket, $reds, true) ? 'red' : 'black');
 
-            [$won, $profitMultiplier] = match ($cleanType) {
-                'red' => [$color === 'red', 1],
-                'black' => [$color === 'black', 1],
-                'even' => [$pocket > 0 && $pocket % 2 === 0, 1],
-                'odd' => [$pocket > 0 && $pocket % 2 === 1, 1],
-                'low' => [$pocket >= 1 && $pocket <= 18, 1],
-                'high' => [$pocket >= 19 && $pocket <= 36, 1],
-                'dozen1' => [$pocket >= 1 && $pocket <= 12, 2],
-                'dozen2' => [$pocket >= 13 && $pocket <= 24, 2],
-                'dozen3' => [$pocket >= 25 && $pocket <= 36, 2],
-                'straight' => [$pocket === $number, 35],
-            };
+            $frenchSectors = [
+                'voisins_du_zero' => [22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25],
+                'tiers_du_cylindre' => [27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33],
+                'orphelins' => [1, 20, 14, 31, 9, 17, 34, 6],
+                'jeu_zero' => [12, 35, 3, 26, 0, 32, 15],
+            ];
+            if ($cleanType === 'neighbors_5') {
+                $centerIdx = array_search((int) $number, $wheelOrder, true);
+                if ($centerIdx === false) {
+                    $centerIdx = 0;
+                }
+                $neighbors = [];
+                for ($off = -2; $off <= 2; $off++) {
+                    $neighbors[] = $wheelOrder[($centerIdx + $off + 37) % 37];
+                }
+                $frenchSectors['neighbors_5'] = $neighbors;
+            }
 
-            $delta = $won ? ($bet * $profitMultiplier) : -$bet;
-            $payout = $won ? ($bet + $bet * $profitMultiplier) : 0;
+            if (isset($frenchSectors[$cleanType])) {
+                $sector = $frenchSectors[$cleanType];
+                $won = in_array($pocket, $sector, true);
+                $payout = $won ? (int) round($bet * (36 / count($sector))) : 0;
+                $delta = $won ? ($payout - $bet) : -$bet;
+                $profitMultiplier = $won ? round(($payout - $bet) / max(1, $bet), 2) : 0;
+            } else {
+                [$won, $profitMultiplier] = match ($cleanType) {
+                    'red' => [$color === 'red', 1],
+                    'black' => [$color === 'black', 1],
+                    'even' => [$pocket > 0 && $pocket % 2 === 0, 1],
+                    'odd' => [$pocket > 0 && $pocket % 2 === 1, 1],
+                    'low' => [$pocket >= 1 && $pocket <= 18, 1],
+                    'high' => [$pocket >= 19 && $pocket <= 36, 1],
+                    'dozen1' => [$pocket >= 1 && $pocket <= 12, 2],
+                    'dozen2' => [$pocket >= 13 && $pocket <= 24, 2],
+                    'dozen3' => [$pocket >= 25 && $pocket <= 36, 2],
+                    'straight' => [$pocket === $number, 35],
+                };
+                $delta = $won ? ($bet * $profitMultiplier) : -$bet;
+                $payout = $won ? ($bet + $bet * $profitMultiplier) : 0;
+            }
             $newCash = (int) $player['cash'] + $delta;
             $correlationId = bin2hex(random_bytes(16));
 
@@ -1375,6 +1405,133 @@ final class GameEngine
                 'jackpotPool' => $jackpotPool,
                 'lastWinner' => $poolData['lastWinner'],
                 'serverProof' => ['eventId' => $event->id, 'correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
+                'player' => $this->resources->normalize($this->requirePlayer($playerId)),
+            ];
+        });
+    }
+
+    public function playCraps(
+        int $bet,
+        string $betType = 'pass_line',
+        int $hardTarget = 8,
+        ?int $point = null,
+        bool $alreadyCommitted = false,
+        string $playerId = 'founder-player',
+    ): array {
+        $this->requireModule('blackjack');
+        $cleanBet = strtolower(trim($betType));
+        if ($bet < 100 || $bet > 5000000 || !in_array($cleanBet, ['pass_line', 'dont_pass', 'field', 'hardways'], true)) {
+            throw new \InvalidArgumentException('Choose a valid Craps wager between $100 and $5,000,000.');
+        }
+        $cleanHard = in_array($hardTarget, [4, 6, 8, 10], true) ? $hardTarget : 8;
+        $activePoint = ($point !== null && in_array($point, [4, 5, 6, 8, 9, 10], true)) ? $point : null;
+
+        $this->recordActionAttempt($playerId);
+        return $this->database->playerTransaction($playerId, function () use ($bet, $cleanBet, $cleanHard, $activePoint, $alreadyCommitted, $playerId): array {
+            (new TravelService($this->database, $this->events))->assertAvailable($playerId);
+            (new ProgressionService($this->database, $this->events))->assertAvailable($playerId, 'blackjack');
+            $player = $this->requirePlayer($playerId);
+            if (!$alreadyCommitted && (int) $player['cash'] < $bet) {
+                throw new RuntimeException('Not enough cash for that Craps wager.');
+            }
+
+            $d1 = random_int(1, 6);
+            $d2 = random_int(1, 6);
+            $sum = $d1 + $d2;
+            $stakeDebit = $alreadyCommitted ? 0 : $bet;
+            $payout = 0;
+            $outcome = 'continue';
+            $nextPoint = $activePoint;
+
+            if ($cleanBet === 'field') {
+                $nextPoint = $activePoint;
+                if ($sum === 2) {
+                    $outcome = 'win';
+                    $payout = $bet * 3;
+                } elseif ($sum === 12) {
+                    $outcome = 'win';
+                    $payout = $bet * 4;
+                } elseif (in_array($sum, [3, 4, 9, 10, 11], true)) {
+                    $outcome = 'win';
+                    $payout = $bet * 2;
+                } else {
+                    $outcome = 'lose';
+                }
+            } elseif ($cleanBet === 'hardways') {
+                $mult = ($cleanHard === 4 || $cleanHard === 10) ? 7 : 9;
+                if ($sum === $cleanHard && $d1 === $d2) {
+                    $outcome = 'win';
+                    $payout = $bet + ($bet * $mult);
+                } elseif ($sum === 7 || ($sum === $cleanHard && $d1 !== $d2)) {
+                    $outcome = 'lose';
+                } else {
+                    $outcome = 'continue';
+                }
+            } elseif ($cleanBet === 'dont_pass') {
+                if ($activePoint === null) {
+                    if ($sum === 2 || $sum === 3) {
+                        $outcome = 'win';
+                        $payout = $bet * 2;
+                    } elseif ($sum === 12) {
+                        $outcome = 'push';
+                        $payout = $bet;
+                    } elseif ($sum === 7 || $sum === 11) {
+                        $outcome = 'lose';
+                    } else {
+                        $outcome = 'point_set';
+                        $nextPoint = $sum;
+                    }
+                } else {
+                    if ($sum === 7) {
+                        $outcome = 'win';
+                        $payout = $bet * 2;
+                        $nextPoint = null;
+                    } elseif ($sum === $activePoint) {
+                        $outcome = 'lose';
+                        $nextPoint = null;
+                    }
+                }
+            } else {
+                if ($activePoint === null) {
+                    if ($sum === 7 || $sum === 11) {
+                        $outcome = 'win';
+                        $payout = $bet * 2;
+                    } elseif (in_array($sum, [2, 3, 12], true)) {
+                        $outcome = 'lose';
+                    } else {
+                        $outcome = 'point_set';
+                        $nextPoint = $sum;
+                    }
+                } else {
+                    if ($sum === $activePoint) {
+                        $outcome = 'win';
+                        $payout = $bet * 2;
+                        $nextPoint = null;
+                    } elseif ($sum === 7) {
+                        $outcome = 'lose';
+                        $nextPoint = null;
+                    }
+                }
+            }
+
+            $delta = $payout - $stakeDebit;
+            $newCash = max(0, (int) $player['cash'] + $delta);
+            $correlationId = bin2hex(random_bytes(16));
+            if ($delta !== 0) {
+                $this->database->execute('UPDATE players SET cash = :cash WHERE id = :id', ['cash' => $newCash, 'id' => $playerId]);
+                $this->ledger->record($playerId, 'cash', $delta, $newCash, 'casino.craps', $correlationId);
+            }
+
+            return [
+                'dice' => [$d1, $d2],
+                'sum' => $sum,
+                'bet' => $bet,
+                'betType' => $cleanBet,
+                'outcome' => $outcome,
+                'nextPoint' => $nextPoint,
+                'payout' => $payout,
+                'delta' => $delta,
+                'serverProof' => ['correlationId' => $correlationId, 'calculatedBy' => 'PHP ' . PHP_VERSION],
                 'player' => $this->resources->normalize($this->requirePlayer($playerId)),
             ];
         });

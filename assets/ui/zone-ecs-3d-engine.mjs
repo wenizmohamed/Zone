@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=164';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=165';
 
 export {
   THREE,
@@ -104,6 +104,16 @@ export const ROULETTE_RED_NUMBERS = Object.freeze([
 
 const ROULETTE_RED_SET = new Set(ROULETTE_RED_NUMBERS);
 const ANIM_LEVER_PULL = 99;
+const ANIM_SLOT_REEL_TARGET = 100;
+const ANIM_ROULETTE_RIDE = 101;
+export const SLOT_REEL_SYMBOL_ORDER = Object.freeze([
+  'DIAMOND',
+  'SEVEN',
+  'GOLD_BAR',
+  'CROWN',
+  'CHIP',
+  'CHERRY',
+]);
 
 /* --------------------------------------------------------------------------
  * 0. GRAPHICS QUALITY PRESETS, DYNAMIC RESOLUTION SCALER & OBJECT POOL
@@ -1028,33 +1038,98 @@ export class ZoneEcsWorld {
         T[tOff + 4] = -ang + Math.PI * 0.5 + 0.18;
       } else if (kind === ANIM_ROULETTE_BALL) {
         const easeOut = 1 - Math.pow(1 - u, 3);
-        const hasTarget = Number.isFinite(pB) && pB >= -Math.PI * 4 && pB !== 0;
+        const ballObj = this.object3d[eid];
+        const rotorEid = ballObj && ballObj.userData ? ballObj.userData.rotorEid : undefined;
+        const rotorYaw = (rotorEid !== undefined && this.isAlive(rotorEid))
+          ? T[rotorEid * 10 + 4]
+          : 0;
+        const hasPocketLock = Boolean(ballObj && ballObj.userData && ballObj.userData.hasPocketTarget);
+        const pocketLocal = hasPocketLock ? ballObj.userData.pocketLocalAngle : pB;
+        const liveTargetAng = hasPocketLock ? (pocketLocal - rotorYaw) : pB;
+        const hasTarget = hasPocketLock || (Number.isFinite(pB) && pB >= -Math.PI * 4 && pB !== 0);
         let ang;
-        if (hasTarget && u >= 0.72) {
-          const blend = (u - 0.72) / 0.28;
-          const freeAng = K[kOff + 7] + pA * 0.18 * scaledDt;
-          K[kOff + 7] = freeAng;
-          ang = freeAng + (pB - freeAng) * (blend * blend * (3 - 2 * blend));
+        if (hasTarget && u >= 0.68) {
+          const blend = Math.min(1, (u - 0.68) / 0.32);
+          const sCurve = blend * blend * (3 - 2 * blend);
+          if (K[kOff + 6] !== 999) {
+            // Normalize freeAng within 1.5 revolutions ahead of liveTargetAng for natural forward capture
+            let startAng = K[kOff + 7];
+            while (startAng - liveTargetAng > Math.PI * 2.5) startAng -= Math.PI * 2;
+            while (liveTargetAng - startAng > Math.PI * 0.5) startAng += Math.PI * 2;
+            K[kOff + 7] = startAng;
+            K[kOff + 6] = 999;
+          }
+          ang = K[kOff + 7] + (liveTargetAng - K[kOff + 7]) * sCurve;
         } else {
-          const speed = pA * Math.max(0.18, 1 - easeOut * 0.82);
+          K[kOff + 6] = 0;
+          const speed = pA * Math.max(0.22, 1 - easeOut * 0.78);
           K[kOff + 7] += speed * scaledDt;
           ang = K[kOff + 7];
         }
-        const outerR = 0.88;
-        const pocketR = 0.60;
-        const radius = u < 0.45
-          ? outerR - 0.06 * (u / 0.45)
-          : outerR - 0.06 - (outerR - 0.06 - pocketR) * Math.min(1, (u - 0.45) / 0.55);
-        const trackLift = u < 0.45 ? 0.09 * (1 - (u / 0.45) * 0.25) : 0.068 * Math.max(0, 1 - (u - 0.45) / 0.45);
-        const deflectorHop = (u > 0.35 && u < 0.86) ? Math.abs(Math.sin(ang * 8.0)) * 0.055 * (1 - u) : 0;
+        const outerR = 0.88 * 0.76;
+        const pocketR = 0.60 * 0.76;
+        const radius = u < 0.42
+          ? outerR - 0.04 * (u / 0.42)
+          : outerR - 0.04 - (outerR - 0.04 - pocketR) * Math.min(1, (u - 0.42) / 0.58);
+        const trackLift = u < 0.42 ? 0.075 * (1 - (u / 0.42) * 0.25) : 0.056 * Math.max(0, 1 - (u - 0.42) / 0.46);
+        const deflectorHop = (u > 0.32 && u < 0.84) ? Math.abs(Math.sin(ang * 8.0)) * 0.042 * (1 - u) : 0;
         T[tOff + 0] = ox + Math.cos(ang) * radius;
         T[tOff + 1] = oy + trackLift + deflectorHop;
         T[tOff + 2] = oz + Math.sin(ang) * radius;
+        if (hasPocketLock && u >= 1.0) {
+          K[kOff + 0] = ANIM_ROULETTE_RIDE;
+          K[kOff + 1] = 0;
+          K[kOff + 2] = 9999;
+        }
+      } else if (kind === ANIM_ROULETTE_RIDE) {
+        const ballObj = this.object3d[eid];
+        const rotorEid = ballObj && ballObj.userData ? ballObj.userData.rotorEid : undefined;
+        const rotorYaw = (rotorEid !== undefined && this.isAlive(rotorEid))
+          ? T[rotorEid * 10 + 4]
+          : 0;
+        const pocketLocal = (ballObj && ballObj.userData && Number.isFinite(ballObj.userData.pocketLocalAngle))
+          ? ballObj.userData.pocketLocalAngle
+          : 0;
+        const ang = pocketLocal - rotorYaw;
+        const pocketR = 0.60 * 0.76;
+        T[tOff + 0] = ox + Math.cos(ang) * pocketR;
+        T[tOff + 1] = oy - 0.012;
+        T[tOff + 2] = oz + Math.sin(ang) * pocketR;
       } else if (kind === ANIM_SLOT_REEL) {
         const speed = pB > 0 ? pA * (1 - u * 0.9) : pA;
         T[tOff + 3] += speed * scaledDt;
         if (pB > 0 && u >= 1.0) {
           K[kOff + 0] = ANIM_NONE;
+        }
+      } else if (kind === ANIM_SLOT_REEL_TARGET) {
+        if (u < 0.74) {
+          T[tOff + 3] -= pA * (1 - (u / 0.74) * 0.35) * scaledDt;
+          K[kOff + 6] = 0;
+        } else {
+          if (K[kOff + 6] !== 888) {
+            let cur = T[tOff + 3];
+            const tgt = pB;
+            // Choose target revolution just ahead in negative-X spin direction
+            let alignedTgt = tgt - Math.ceil((tgt - cur) / (Math.PI * 2)) * Math.PI * 2 - Math.PI * 2;
+            K[kOff + 7] = cur;
+            const reelObj = this.object3d[eid];
+            if (reelObj && reelObj.userData) reelObj.userData.alignedTargetX = alignedTgt;
+            K[kOff + 6] = 888;
+          }
+          const reelObj = this.object3d[eid];
+          const alignedTgt = (reelObj && reelObj.userData && Number.isFinite(reelObj.userData.alignedTargetX))
+            ? reelObj.userData.alignedTargetX
+            : pB;
+          const tLocal = Math.min(1, (u - 0.74) / 0.26);
+          // Mechanical spring overshoot settle onto exact payline symbol
+          const easeSnap = tLocal < 0.82
+            ? (tLocal / 0.82) * 1.045
+            : 1.045 - ((tLocal - 0.82) / 0.18) * 0.045;
+          T[tOff + 3] = K[kOff + 7] + (alignedTgt - K[kOff + 7]) * easeSnap;
+          if (u >= 1.0) {
+            T[tOff + 3] = pB;
+            K[kOff + 0] = ANIM_NONE;
+          }
         }
       } else if (kind === ANIM_LEVER_PULL) {
         const pull = u < 0.35 ? (u / 0.35) : Math.max(0, 1 - (u - 0.35) / 0.65) * Math.cos((u - 0.35) * Math.PI * 2.2);
@@ -2885,42 +2960,61 @@ function getSlotReelTexture(reelIndex = 0) {
   if (_slotReelTexturesCache[reelIndex]) return _slotReelTexturesCache[reelIndex];
   try {
     const cv = document.createElement('canvas');
-    cv.width = 128;
-    cv.height = 512;
+    cv.width = 1200;
+    cv.height = 240;
     const ctx = cv.getContext('2d');
     if (!ctx) return null;
-    ctx.fillStyle = '#fbf6ea';
-    ctx.fillRect(0, 0, 128, 512);
+    ctx.fillStyle = '#fdf8ec';
+    ctx.fillRect(0, 0, cv.width, cv.height);
     const symbols = [
-      { txt: '7', fg: '#dc2626' },
-      { txt: 'BAR', fg: '#111114' },
-      { txt: '★', fg: '#d97706' },
-      { txt: '♦', fg: '#dc2626' },
-      { txt: '♛', fg: '#059669' },
-      { txt: '777', fg: '#b45309' },
+      { id: 'DIAMOND', glyph: '♦', sub: 'DIAMOND', bg: '#0f172a', fg: '#38bdf8', border: '#f3c969' },
+      { id: 'SEVEN', glyph: '777', sub: 'LUCKY 7', bg: '#fffbeb', fg: '#dc2626', border: '#d97706' },
+      { id: 'GOLD_BAR', glyph: 'BAR', sub: 'BULLION', bg: '#18181b', fg: '#facc15', border: '#f59e0b' },
+      { id: 'CROWN', glyph: '♛', sub: 'CROWN', bg: '#064e3b', fg: '#fde047', border: '#fbbf24' },
+      { id: 'CHIP', glyph: '★', sub: 'VIP CHIP', bg: '#7f1d1d', fg: '#fef08a', border: '#f3c969' },
+      { id: 'CHERRY', glyph: '🍒', sub: 'CHERRY', bg: '#fdf2f8', fg: '#be123c', border: '#e11d48' },
     ];
-    const step = 512 / symbols.length;
+    const stepX = cv.width / symbols.length;
     for (let i = 0; i < symbols.length; i++) {
-      const s = symbols[(i + reelIndex) % symbols.length];
-      const y = i * step;
-      ctx.strokeStyle = 'rgba(217,119,6,0.35)';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(6, y + 4, 116, step - 8);
+      const s = symbols[i];
+      const x0 = i * stepX;
+      ctx.save();
+      ctx.fillStyle = s.bg;
+      ctx.fillRect(x0 + 4, 8, stepX - 8, cv.height - 16);
+      ctx.strokeStyle = s.border;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(x0 + 8, 12, stepX - 16, cv.height - 24);
+      // Rotate -90 deg so when cylinder is rotated -90 deg on Z, symbols stand upright facing +Z!
+      ctx.translate(x0 + stepX * 0.5, cv.height * 0.5);
+      ctx.rotate(-Math.PI / 2);
       ctx.fillStyle = s.fg;
-      ctx.font = '900 34px system-ui, sans-serif';
+      ctx.font = '900 66px system-ui, "Segoe UI Symbol", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(s.txt, 64, y + step * 0.5);
+      ctx.fillText(s.glyph, 0, -18);
+      ctx.fillStyle = s.border;
+      ctx.font = '800 22px system-ui, sans-serif';
+      ctx.fillText(s.sub, 0, 38);
+      ctx.restore();
     }
     const tex = new THREE.CanvasTexture(cv);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.RepeatWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    tex.needsUpdate = true;
     _slotReelTexturesCache[reelIndex] = tex;
     return tex;
   } catch (_) {
     return null;
   }
+}
+
+export function getSlotSymbolTargetAngle(symbolName) {
+  const clean = String(symbolName || 'SEVEN').trim().toUpperCase();
+  const idx = SLOT_REEL_SYMBOL_ORDER.indexOf(clean);
+  const safeIdx = idx >= 0 ? idx : 1;
+  const uCenter = (safeIdx + 0.5) / SLOT_REEL_SYMBOL_ORDER.length;
+  return -(uCenter * Math.PI * 2);
 }
 
 /**
@@ -3088,42 +3182,64 @@ export function createSlotMachine3D(opts = {}) {
   crownArch.rotation.z = Math.PI / 2;
   crownArch.rotation.y = Math.PI / 2;
   crownArch.position.y = 1.78;
-  const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.58, 0.79), brass);
-  bezel.position.y = 1.12;
-  const glassWindow = new THREE.Mesh(
-    new THREE.BoxGeometry(0.98, 0.46, 0.81),
-    makePbr(0xe0f2fe, 0.05, 0.1, false, { transparent: true, opacity: 0.28, clearcoat: 1.0 })
+
+  // Open Sculpted Brass Window Frame (leaves all 3 symbol drums 100% unobstructed!)
+  const reelWell = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.56, 0.24), obsidian);
+  reelWell.position.set(0, 1.12, 0.16);
+  const frameTop = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.065, 0.22), brass);
+  frameTop.position.set(0, 1.41, 0.40);
+  const frameBot = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.065, 0.22), brass);
+  frameBot.position.set(0, 0.83, 0.40);
+  const frameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.64, 0.22), brass);
+  frameLeft.position.set(-0.53, 1.12, 0.40);
+  const frameRight = frameLeft.clone();
+  frameRight.position.x = 0.53;
+  // Illuminated Payline Wire + Twin Payline Pointers
+  const paylineWire = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.009, 0.009, 1.02, 10),
+    rubyKnobMat
   );
-  glassWindow.position.y = 1.12;
+  paylineWire.rotation.z = Math.PI / 2;
+  paylineWire.position.set(0, 1.12, 0.555);
+
   const coinTray = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.14, 0.24), chrome);
-  coinTray.position.set(0, 0.34, 0.42);
+  coinTray.position.set(0, 0.34, 0.44);
   const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.22, 18), neonGold);
   beacon.position.y = 2.02;
-  cabinet.add(plinth, body, crownArch, bezel, glassWindow, coinTray, beacon);
+  cabinet.add(plinth, body, crownArch, reelWell, frameTop, frameBot, frameLeft, frameRight, paylineWire, coinTray, beacon);
 
   for (let c = -2; c <= 2; c++) {
     const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.03, 12), brass);
-    coin.position.set(c * 0.14, 0.42, 0.42);
+    coin.position.set(c * 0.14, 0.42, 0.44);
     cabinet.add(coin);
   }
 
+  const defaultSyms = ['SEVEN', 'CROWN', 'DIAMOND'];
   const reels = [];
   for (let r = -1; r <= 1; r++) {
-    const tex = getSlotReelTexture(r + 1);
-    const reelMat = tex
-      ? new THREE.MeshStandardMaterial({ map: tex, roughness: 0.24, metalness: 0.18 })
+    const reelIdx = r + 1;
+    const tex = getSlotReelTexture(0);
+    const sideMat = tex
+      ? new THREE.MeshStandardMaterial({ map: tex, roughness: 0.22, metalness: 0.12 })
       : makePbr(0xfbf6ea, 0.22, 0.28, { color: 0xfbbf24, power: 2.5, intensity: 0.4 });
-    const reel = new THREE.Mesh(new THREE.CylinderGeometry(0.225, 0.225, 0.25, 24), reelMat);
-    reel.rotation.z = Math.PI / 2;
-    reel.position.set(r * 0.30, 1.12, 0.30);
-    const flangeL = new THREE.Mesh(new THREE.TorusGeometry(0.228, 0.014, 8, 24), brass);
+    const capMat = obsidian;
+    const reelPivot = new THREE.Group();
+    reelPivot.position.set(r * 0.31, 1.12, 0.30);
+    reelPivot.rotation.x = getSlotSymbolTargetAngle(defaultSyms[reelIdx]);
+
+    const reelDrum = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.235, 0.235, 0.26, 36),
+      [sideMat, capMat, capMat]
+    );
+    reelDrum.rotation.z = -Math.PI / 2;
+    const flangeL = new THREE.Mesh(new THREE.TorusGeometry(0.238, 0.013, 8, 28), brass);
     flangeL.rotation.y = Math.PI / 2;
-    flangeL.position.x = -0.125;
+    flangeL.position.x = -0.13;
     const flangeR = flangeL.clone();
-    flangeR.position.x = 0.125;
-    reel.add(flangeL, flangeR);
-    cabinet.add(reel);
-    reels.push(reel);
+    flangeR.position.x = 0.13;
+    reelPivot.add(reelDrum, flangeL, flangeR);
+    cabinet.add(reelPivot);
+    reels.push(reelPivot);
   }
 
   // Spring-Loaded Pull-Arm Lever on Right Side
@@ -4256,11 +4372,17 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     const ball = wheel3D.userData.ball;
     wheel3D.remove(ball);
-    ball.scale.setScalar(0.85);
-    ball.position.set(-1.32, 0.69, 0.18);
+    ball.scale.setScalar(0.95);
+    ball.position.set(-1.32, 0.65, 0.18);
+    ball.userData = Object.assign(ball.userData || {}, {
+      rotorEid: refs.rouletteRotorEid,
+      hasPocketTarget: true,
+      pocketLocalAngle: wheel3D.userData.getPocketAngle(0),
+    });
     scene.add(ball);
+    refs.ball = ball;
     refs.ballEid = spawnTracked(ball);
-    world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 4.8, -5.8, 0);
+    world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_RIDE, 9999, 0, 0);
 
     // 3. Croupier Suit Operative Behind the Roulette Pit
     const croupier = createHumanoid3D({
@@ -4278,17 +4400,91 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     refs.croupierEid = spawnTracked(croupier);
     registerPickable(refs.croupierEid, { stage: 'casino-royale', target: 'croupier' });
 
+    // 3.5 Monte-Carlo 3D Blackjack 52-Card Shoe Table & Dealer (submode === 'blackjack')
+    const bjGroup = new THREE.Group();
+    bjGroup.position.set(-3.85, 0, 0.14);
+    const bjBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.78, 0.92, 0.44, 24),
+      makePbr(0x3b150e, 0.26, 0.38, { color: 0xf3c969, power: 2.4, intensity: 0.42 }, { clearcoat: 0.9 })
+    );
+    bjBase.position.y = 0.22;
+    const bjRail = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.18, 1.18, 0.08, 32, 1, false, -Math.PI * 0.55, Math.PI * 1.1),
+      makePbr(0x4a1912, 0.22, 0.44, { color: 0xf3c969, power: 2.2, intensity: 0.58 }, { clearcoat: 0.95 })
+    );
+    bjRail.position.y = 0.45;
+    const bjFelt = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.10, 1.10, 0.09, 32),
+      makePbr(0x065f46, 0.72, 0.08, { color: 0x34d399, power: 2.6, intensity: 0.38 })
+    );
+    bjFelt.position.y = 0.45;
+    const bjBrassArc = new THREE.Mesh(
+      new THREE.TorusGeometry(0.84, 0.012, 8, 32, Math.PI),
+      makePbr(0xf3c969, 0.16, 0.96)
+    );
+    bjBrassArc.rotation.x = Math.PI / 2;
+    bjBrassArc.position.set(0, 0.50, -0.05);
+    // 6-Deck Acrylic & Brass Dealing Shoe + Dealt 3D Cards
+    const shoeBox = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.16, 0.42),
+      makePbr(0x1e293b, 0.14, 0.72, { color: 0xf3c969, power: 2.1, intensity: 0.65 }, { clearcoat: 1.0 })
+    );
+    shoeBox.position.set(0.62, 0.57, -0.22);
+    shoeBox.rotation.y = -0.42;
+    const cardMatWhite = makePbr(0xfefce8, 0.22, 0.08, { color: 0xfef08a, power: 2.5, intensity: 0.35 });
+    const cardMatBack = makePbr(0x991b1b, 0.28, 0.22, { color: 0xf3c969, power: 2.3, intensity: 0.45 });
+    const bjCardMeshes = [];
+    const cardPositions = [
+      [-0.22, 0.505, 0.36, 0.08, cardMatWhite],
+      [0.02, 0.508, 0.38, -0.09, cardMatWhite],
+      [-0.18, 0.505, -0.18, 0.04, cardMatWhite],
+      [0.06, 0.508, -0.18, -0.05, cardMatBack],
+    ];
+    for (let ci = 0; ci < cardPositions.length; ci++) {
+      const cp = cardPositions[ci];
+      const cMesh = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.008, 0.26), cp[4]);
+      cMesh.position.set(cp[0], cp[1], cp[2]);
+      cMesh.rotation.y = cp[3];
+      bjGroup.add(cMesh);
+      bjCardMeshes.push(cMesh);
+    }
+    for (let st = -1; st <= 1; st++) {
+      const chipMat = makePbr(chipPalette[(st + 1) % chipPalette.length], 0.22, 0.65);
+      for (let ch = 0; ch < 4; ch++) {
+        const chip = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.022, 14), chipMat);
+        chip.position.set(-0.56 + st * 0.16, 0.505 + ch * 0.023, 0.22);
+        bjGroup.add(chip);
+      }
+    }
+    bjGroup.add(bjBase, bjRail, bjFelt, bjBrassArc, shoeBox);
+    scene.add(bjGroup);
+    refs.bjGroup = bjGroup;
+    refs.bjCardMeshes = bjCardMeshes;
+    registerPickable(spawnTracked(bjGroup), { stage: 'casino-royale', target: 'blackjack' });
+
+    const bjDealer = createHumanoid3D({
+      role: 'crew',
+      outfit: 'suit',
+      coatColor: 0x141218,
+      trimColor: 0x34d399,
+      rimColor: 0xf3c969,
+      scale: 0.94,
+      headless,
+    });
+    bjDealer.position.set(-3.85, 0, -0.96);
+    scene.add(bjDealer);
+    refs.bjDealerEid = spawnTracked(bjDealer);
+
     // 4. Art-Deco 3D Mechanical Jackpot Slot Machine
     const slotCabinet = createSlotMachine3D();
-    slotCabinet.position.set(1.62, 0, -0.08);
-    slotCabinet.rotation.y = -0.38;
+    slotCabinet.position.set(1.62, 0, -0.02);
+    slotCabinet.rotation.y = -0.12;
     scene.add(slotCabinet);
     refs.slotCabinet = slotCabinet;
     refs.reelEids = [];
     const slotReels = slotCabinet.userData.reels || [];
     for (let r = 0; r < slotReels.length; r++) {
       const reid = spawnTracked(slotReels[r]);
-      world.setStageKinematics(reid, ANIM_SLOT_REEL, 2.4, 3.2 + r * 0.85, 0);
       refs.reelEids.push(reid);
     }
     if (slotCabinet.userData.leverPivot) {
@@ -4296,7 +4492,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     }
     registerPickable(spawnTracked(slotCabinet), { stage: 'casino-royale', target: 'slots' });
 
-    // 5. Submode Camera Presets ('roulette' close-up, 'slots' close-up, 'full' salon)
+    // 5. Submode Camera Presets ('blackjack' close-up, 'roulette' close-up, 'slots' close-up, 'full' salon)
     const applyCasinoSubmode = (submodeRaw) => {
       const sm = String(submodeRaw || 'full').toLowerCase();
       let cx = 0;
@@ -4305,12 +4501,15 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       let tx = -0.15;
       let ty = 0.78;
       let tz = 0.05;
-      if (sm === 'roulette') {
-        cx = -1.32; cy = 2.08; cz = 2.22;
-        tx = -1.16; ty = 0.62; tz = 0.18;
+      if (sm === 'blackjack') {
+        cx = -3.85; cy = 1.92; cz = 2.18;
+        tx = -3.85; ty = 0.62; tz = 0.06;
+      } else if (sm === 'roulette') {
+        cx = -1.32; cy = 1.98; cz = 2.02;
+        tx = -1.24; ty = 0.58; tz = 0.18;
       } else if (sm === 'slots') {
-        cx = 1.42; cy = 1.48; cz = 2.48;
-        tx = 1.56; ty = 1.06; tz = -0.05;
+        cx = 1.54; cy = 1.30; cz = 2.08;
+        tx = 1.62; ty = 1.12; tz = 0.16;
       }
       camera.position.set(cx, cy, cz);
       camera.lookAt(tx, ty, tz);
@@ -4467,28 +4666,58 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     } else if (kind === 'city-wheels-race') {
       if (refs.wheelEid !== undefined) world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 3.2, 9.5, 1);
     } else if (kind === 'casino-royale') {
-      let targetAng = 0;
-      if (payload && payload.pocket !== undefined && refs.rouletteWheel && refs.rouletteWheel.userData && typeof refs.rouletteWheel.userData.getPocketAngle === 'function') {
-        const rotorYaw = refs.rouletteRotorEid !== undefined && world.isAlive(refs.rouletteRotorEid)
-          ? world.stores.Transform3D[refs.rouletteRotorEid * 10 + 4]
-          : 0;
-        const baseAng = refs.rouletteWheel.userData.getPocketAngle(payload.pocket) - rotorYaw;
-        targetAng = baseAng === 0 ? 0.0001 : baseAng;
+      const stageSubmode = (camera.userData && camera.userData.z3dSubmode) || 'full';
+      const targetSubmode = payload && payload.submode ? String(payload.submode).toLowerCase() : '';
+      if (targetSubmode && stageSubmode !== 'full' && stageSubmode !== targetSubmode) {
+        return false;
       }
-      if (refs.ballEid !== undefined) world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 3.6, -12.4, targetAng);
-      if (refs.rouletteRotorEid !== undefined && world.isAlive(refs.rouletteRotorEid)) {
-        world.stores.TurntableSpin[refs.rouletteRotorEid * 4 + 0] = 3.2;
-      }
-      if (refs.slotLeverEid !== undefined) {
-        world.setStageKinematics(refs.slotLeverEid, ANIM_LEVER_PULL, 0.72, 1.05, 0);
-      }
-      if (refs.croupierEid !== undefined) {
-        playEidRigState(refs.croupierEid, 'combat_stance');
-      }
-      if (refs.reelEids) {
-        for (let i = 0; i < refs.reelEids.length; i++) {
-          world.setStageKinematics(refs.reelEids[i], ANIM_SLOT_REEL, 1.4 + i * 0.35, 16.0, 1);
+      const isSlotsAction = targetSubmode === 'slots' || /slot|lever|reel/.test(act);
+      const isBjAction = targetSubmode === 'blackjack' || /bj|blackjack|deal|hit|stand|double/.test(act);
+      const isRouletteAction = !isSlotsAction && !isBjAction;
+
+      if (isRouletteAction || stageSubmode === 'full') {
+        if (refs.ball && refs.rouletteWheel && refs.rouletteWheel.userData && typeof refs.rouletteWheel.userData.getPocketAngle === 'function') {
+          if (payload && payload.pocket !== undefined && payload.pocket !== null) {
+            refs.ball.userData.hasPocketTarget = true;
+            refs.ball.userData.pocketLocalAngle = refs.rouletteWheel.userData.getPocketAngle(payload.pocket);
+            const dur = payload.durationSec || 1.65;
+            if (refs.ballEid !== undefined) {
+              world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, dur, -13.5, refs.ball.userData.pocketLocalAngle);
+            }
+          } else {
+            refs.ball.userData.hasPocketTarget = false;
+            if (refs.ballEid !== undefined) {
+              world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 4.2, -14.0, 0);
+            }
+          }
         }
+        if (refs.rouletteRotorEid !== undefined && world.isAlive(refs.rouletteRotorEid)) {
+          world.stores.TurntableSpin[refs.rouletteRotorEid * 4 + 0] = 3.1;
+        }
+        if (refs.croupierEid !== undefined) {
+          playEidRigState(refs.croupierEid, 'combat_stance');
+        }
+      }
+
+      if (isSlotsAction || (stageSubmode === 'full' && act === 'spin' && !targetSubmode)) {
+        if (refs.slotLeverEid !== undefined && !payload?.skipLever) {
+          world.setStageKinematics(refs.slotLeverEid, ANIM_LEVER_PULL, 0.68, 1.12, 0);
+        }
+        if (refs.reelEids) {
+          const targetReels = Array.isArray(payload && payload.reels) && payload.reels.length === 3 ? payload.reels : null;
+          for (let i = 0; i < refs.reelEids.length; i++) {
+            if (targetReels) {
+              const symAng = getSlotSymbolTargetAngle(targetReels[i]);
+              world.setStageKinematics(refs.reelEids[i], ANIM_SLOT_REEL_TARGET, 0.72 + i * 0.38, 19.5, symAng);
+            } else {
+              world.setStageKinematics(refs.reelEids[i], ANIM_SLOT_REEL, 2.2 + i * 0.35, -18.5, 1);
+            }
+          }
+        }
+      }
+
+      if (isBjAction && refs.bjDealerEid !== undefined) {
+        playEidRigState(refs.bjDealerEid, 'combat_stance');
       }
     } else if (kind === 'paperdoll-armory' && refs.rigEid !== undefined) {
       if (world.isAlive(refs.rigEid)) world.stores.TurntableSpin[refs.rigEid * 4 + 1] += 0.9;
@@ -4959,6 +5188,9 @@ export class ZoneEcs3DRuntime {
           if (hitEid >= 0 && meta) {
             stageRec.built.triggerAction('click', meta);
             this._dispatchStageClick(stageRec.el, meta);
+          } else if (stageRec.kind === 'casino-royale') {
+            const sm = (stageRec.built.camera.userData && stageRec.built.camera.userData.z3dSubmode) || 'roulette';
+            this._dispatchStageClick(stageRec.el, { stage: 'casino-royale', target: sm, submode: sm });
           }
         },
       });
@@ -5111,7 +5343,7 @@ export class ZoneEcs3DRuntime {
         controls.enableDamping = true;
         controls.dampingFactor = 0.065;
         controls.enablePan = false;
-        controls.minDistance = kind === 'character-turntable' ? 1.8 : 2.4;
+        controls.minDistance = kind === 'character-turntable' ? 1.8 : (kind === 'casino-royale' ? 1.15 : 2.4);
         controls.maxDistance = 9.5;
         controls.minPolarAngle = 0.25;
         controls.maxPolarAngle = Math.PI * 0.48;

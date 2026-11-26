@@ -901,3 +901,214 @@ html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-casino-tabl
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ==========================================================================
+ * v165 FUNCTIONAL GAMEPLAY POLISH:
+ * - Un-hide 3-Symbol Slot Readouts ([data-slots-reel="1"])
+ * - Fix Disabled Button States (no more dark-highlighted disabled Hit!)
+ * - Clay Casino Stake Chip Active Ring ([data-chip-selected="true"])
+ * - Live 3D Viewport Result Pill, French Racetrack, 0-36 Grid & Inline BJ EV
+ * ========================================================================== */
+html body #zone-main [data-casino-table="slots"] [data-slots-reel="1"],
+html body #dc-root #zone-main#zone-main [data-casino-table="slots"] [data-slots-reel="1"] {
+  display: flex !important;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+html body #zone-main [data-casino-table="slots"] [data-slots-reel="1"][data-reel-locked="win"] {
+  border-color: #f3c969 !important;
+  box-shadow: 0 0 12px rgba(243, 201, 105, 0.55) !important;
+  transform: translateY(-2px) scale(1.03);
+}
+
+html body #zone-main [data-casino-table] button:disabled,
+html body #dc-root #zone-main#zone-main [data-casino-table] button:disabled {
+  opacity: 0.36 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.8) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html body #zone-main [data-casino-table] button[data-casino-chip],
+html body #dc-root #zone-main#zone-main [data-casino-table] button[data-casino-chip] {
+  border-radius: 999px !important;
+  min-width: 58px !important;
+  min-height: 30px !important;
+  padding: 4px 10px !important;
+  font-weight: 800 !important;
+  border: 1.8px dashed rgba(217, 154, 56, 0.55) !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease !important;
+}
+
+html body #zone-main [data-casino-table] button[data-casino-chip][data-chip-selected="true"],
+html body #dc-root #zone-main#zone-main [data-casino-table] button[data-casino-chip][data-chip-selected="true"] {
+  background: linear-gradient(180deg, #e7bd58 0%, #b8821d 100%) !important;
+  color: #16130f !important;
+  border: 2px solid #16130f !important;
+  box-shadow: 0 0 0 2px #f3c969, 0 3px 8px rgba(0, 0, 0, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+html body #zone-main [data-casino-table="blackjack"] button[data-bj-optimal="true"]:not(:disabled),
+html body #dc-root #zone-main#zone-main [data-casino-table="blackjack"] button[data-bj-optimal="true"]:not(:disabled) {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border-color: #064e3b !important;
+  box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.55) !important;
+}
+
+.zct-viewport-live-pill {
+  padding: 4px 9px;
+  font-size: 10.5px;
+  font-weight: 800;
+  background: rgba(10, 14, 12, 0.92);
+  color: #f3c969;
+  border-top: 1px solid rgba(243, 201, 105, 0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zct-viewport-live-pill[data-tone="sage"] {
+  background: rgba(6, 78, 59, 0.95);
+  color: #a7f3d0;
+}
+
+.zct-viewport-live-pill[data-tone="crimson"] {
+  background: rgba(127, 29, 29, 0.94);
+  color: #fecdd3;
+}
+
+.zct-inline-bj-ev {
+  padding: 7px 9px;
+  border-radius: 7px;
+  background: rgba(6, 78, 59, 0.14);
+  border: 1.2px solid rgba(16, 185, 129, 0.42);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10.5px;
+}
+
+.zct-inline-ev-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.zct-inline-ev-kicker {
+  font-weight: 800;
+  color: #059669;
+}
+
+html:not([data-theme="light"]) .zct-inline-ev-kicker {
+  color: #34d399;
+}
+
+.zct-inline-ev-best {
+  font-weight: 900;
+  color: #065f46;
+}
+
+html:not([data-theme="light"]) .zct-inline-ev-best {
+  color: #fef08a;
+}
+
+.zct-inline-ev-sub,
+.zct-inline-ev-idle {
+  font-size: 10px;
+  opacity: 0.86;
+}
+
+.zct-inline-french-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 7px 8px;
+  border-radius: 7px;
+  background: rgba(18, 16, 13, 0.08);
+  border: 1.2px solid rgba(217, 154, 56, 0.42);
+}
+
+html:not([data-theme="light"]) .zct-inline-french-wrap {
+  background: rgba(10, 12, 16, 0.72);
+}
+
+.zct-french-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.zct-grid-toggle-btn {
+  padding: 2px 8px !important;
+  min-height: 24px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+}
+
+.zct-french-pills {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.zct-french-pill {
+  padding: 4px 6px !important;
+  min-height: 28px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  border-radius: 5px !important;
+  cursor: pointer;
+}
+
+.zct-felt-numbers-drawer {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+  padding-top: 4px;
+}
+
+.zct-felt-numbers-drawer[hidden] {
+  display: none !important;
+}
+
+.zct-felt-num {
+  min-height: 26px !important;
+  padding: 2px 0 !important;
+  border-radius: 4px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  cursor: pointer;
+}
+
+.zct-felt-num[data-pcol="green"] {
+  background: #059669 !important;
+}
+
+.zct-felt-num[data-pcol="red"] {
+  background: #b91c1c !important;
+}
+
+.zct-felt-num[data-pcol="black"] {
+  background: #18181b !important;
+}
+
+.zct-felt-num[data-hit-pocket="true"] {
+  box-shadow: 0 0 0 2px #facc15 !important;
+  transform: scale(1.08);
+}
+
+.zct-tables-grid--single {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
