@@ -601,7 +601,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=165')
+    return import('./zone-ecs-3d-engine.mjs?v=166')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=165');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=164');
       })

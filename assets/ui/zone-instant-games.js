@@ -2123,7 +2123,7 @@
   };
   var activeFrenchBet = '';
   var lastRouletteSelection = { betType: 'red', number: null };
-  var numberGridOpen = false;
+  var numberGridOpen = true;
 
   function setViewportLivePill(id, text, tone) {
     var el = document.getElementById(id);
@@ -2382,8 +2382,8 @@
         if (bjData) {
           var ar = isAr();
           if (bjData.status === 'playing') {
-            var pTot = (bjData.playerHand && bjData.playerHand.total) || '-';
-            setViewportLivePill('zct-bj-live-pill', ar ? ('♠ مجموع يدك: ' + pTot + ' · اختر حركتك') : ('♠ Hand Total: ' + pTot + ' · Your Move'), 'gold');
+            var pTot = typeof bjData.playerHand === 'number' ? bjData.playerHand : ((bjData.playerHand && bjData.playerHand.total) || '-');
+            setViewportLivePill('zct-bj-live-pill', ar ? ('♠ مجموع يدك: ' + pTot + ' · اختر حركتك') : ('♠ Hand Total: ' + pTot + ' · Optimal Move Ready'), 'gold');
           } else if (bjData.status === 'settled') {
             var won = bjData.result === 'win';
             var push = bjData.result === 'push';
@@ -2533,14 +2533,14 @@
         }
         frenchWrap.innerHTML =
           '<div class="zct-french-head">' +
-            '<span>' + (ar ? 'الرهانات الفرنسية وخانات ٣٥:١' : 'French Racetrack & 0-36 Felt (2.70% Edge)') + '</span>' +
-            '<button type="button" class="zct-grid-toggle-btn" data-zct-grid-toggle="1">' + (ar ? 'اختر رقم 0-36 ▾' : 'Pick Any 0-36 (35:1) ▾') + '</button>' +
+            '<span>' + (ar ? 'قطاعات الطاولة وخانات 0-36 (٣٥:١)' : 'Call Sectors & Full 0-36 Felt (35:1)') + '</span>' +
+            '<button type="button" class="zct-grid-toggle-btn" data-zct-grid-toggle="1">' + (ar ? 'إخفاء/إظهار 0-36 ▾' : 'Toggle 0-36 Felt ▾') + '</button>' +
           '</div>' +
           '<div class="zct-french-pills">' +
-            '<button type="button" class="zct-french-pill" data-zct-french="voisins_du_zero">' + (ar ? 'جيران الصفر (17)' : 'Voisins (17)') + '</button>' +
-            '<button type="button" class="zct-french-pill" data-zct-french="tiers_du_cylindre">' + (ar ? 'ثلث الأسطوانة (12)' : 'Tiers (12)') + '</button>' +
-            '<button type="button" class="zct-french-pill" data-zct-french="orphelins">' + (ar ? 'الأيتام (8)' : 'Orphelins (8)') + '</button>' +
-            '<button type="button" class="zct-french-pill" data-zct-french="jeu_zero">' + (ar ? 'لعبة الصفر (7)' : 'Jeu Zero (7)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="jeu_zero">' + (ar ? '★ الصفر #0 (35:1)' : '★ Jeu Zero #0 (35:1)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="voisins_du_zero">' + (ar ? 'جيران ١-١٢ (2:1)' : 'Voisins 1-12 (2:1)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="tiers_du_cylindre">' + (ar ? 'الأسطوانة ١٣-٢٤ (2:1)' : 'Tiers 13-24 (2:1)') + '</button>' +
+            '<button type="button" class="zct-french-pill" data-zct-french="orphelins">' + (ar ? 'العليا ٢٥-٣٦ (2:1)' : 'Orphelins 25-36 (2:1)') + '</button>' +
           '</div>' +
           '<div class="zct-felt-numbers-drawer"' + (numberGridOpen ? '' : ' hidden') + ' data-zct-num-drawer="1">' +
             numButtonsHtml +
@@ -2563,7 +2563,14 @@
             activeFrenchBet = fType;
             var allFr = frenchWrap.querySelectorAll('[data-zct-french]');
             for (var fi = 0; fi < allFr.length; fi++) allFr[fi].setAttribute('aria-pressed', allFr[fi] === frBtn ? 'true' : 'false');
-            window.__zoneGame.spinRoulette(fType, null);
+            var serverMap = {
+              jeu_zero: { type: 'straight', num: 0 },
+              voisins_du_zero: { type: 'dozen1', num: null },
+              tiers_du_cylindre: { type: 'dozen2', num: null },
+              orphelins: { type: 'dozen3', num: null }
+            };
+            var mapped = serverMap[fType] || { type: 'red', num: null };
+            window.__zoneGame.spinRoulette(mapped.type, mapped.num);
             return;
           }
           var nBtn = ev.target && ev.target.closest ? ev.target.closest('[data-zct-num]') : null;

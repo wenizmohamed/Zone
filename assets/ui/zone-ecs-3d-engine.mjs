@@ -4402,7 +4402,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     // 3.5 Monte-Carlo 3D Blackjack 52-Card Shoe Table & Dealer (submode === 'blackjack')
     const bjGroup = new THREE.Group();
-    bjGroup.position.set(-3.85, 0, 0.14);
+    bjGroup.position.set(0.05, 0, 1.92);
     const bjBase = new THREE.Mesh(
       new THREE.CylinderGeometry(0.78, 0.92, 0.44, 24),
       makePbr(0x3b150e, 0.26, 0.38, { color: 0xf3c969, power: 2.4, intensity: 0.42 }, { clearcoat: 0.9 })
@@ -4471,7 +4471,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       scale: 0.94,
       headless,
     });
-    bjDealer.position.set(-3.85, 0, -0.96);
+    bjDealer.position.set(0.05, 0, 0.92);
     scene.add(bjDealer);
     refs.bjDealerEid = spawnTracked(bjDealer);
 
@@ -4502,8 +4502,8 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
       let ty = 0.78;
       let tz = 0.05;
       if (sm === 'blackjack') {
-        cx = -3.85; cy = 1.92; cz = 2.18;
-        tx = -3.85; ty = 0.62; tz = 0.06;
+        cx = 0.05; cy = 1.94; cz = 3.68;
+        tx = 0.05; ty = 0.58; tz = 1.84;
       } else if (sm === 'roulette') {
         cx = -1.32; cy = 1.98; cz = 2.02;
         tx = -1.24; ty = 0.58; tz = 0.18;

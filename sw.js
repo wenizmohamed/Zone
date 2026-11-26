@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v165) */
-const SHELL_CACHE_NAME = 'zone-shell-v165';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v166) */
+const SHELL_CACHE_NAME = 'zone-shell-v166';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -22,14 +22,14 @@ const PRECACHE_URLS = [
   './assets/ui/zone-ascension-breakthrough.js?v=161',
   './assets/ui/zone-ecs-3d.css?v=165',
   './assets/ui/zone-gamekit-bridge.js?v=165',
-  './assets/ui/zone-ecs-3d-bridge.js?v=165',
+  './assets/ui/zone-ecs-3d-bridge.js?v=166',
   './assets/ui/zone-3d-rigged-operative.mjs?v=165',
   './assets/ui/zone-3d-environments.mjs?v=165',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=165',
+  './assets/ui/zone-ecs-3d-engine.mjs?v=166',
   './assets/ui/zone-profile-avatar.css?v=161',
   './assets/ui/zone-profile-avatar.js?v=164',
-  './assets/ui/zone-instant-games.js?v=165',
+  './assets/ui/zone-instant-games.js?v=166',
   './assets/ui/zone-audio-haptics.js?v=161',
   './assets/ui/zone-tactical-director.css?v=161',
   './assets/ui/zone-tactical-director.js?v=161',
@@ -43,7 +43,7 @@ const PRECACHE_URLS = [
   './assets/ui/zone-loadout-synergies.css?v=161',
   './assets/ui/zone-loadout-synergies.js?v=161',
   './assets/ui/zone-casino-tables.css?v=165',
-  './assets/ui/zone-casino-tables.js?v=165',
+  './assets/ui/zone-casino-tables.js?v=166',
   './assets/ui/zone-world-encounters.js?v=161',
   './assets/ui/zone-player-settings.css?v=164',
   './assets/ui/zone-player-settings.js?v=161',

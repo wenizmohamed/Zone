@@ -1744,7 +1744,7 @@
       // 2.5 LUNA HOUSE OF OBSIDIAN & CHAMPAGNE GOLD: 37-POCKET 3D MONTE-CARLO ROULETTE SALON
       // On live index.html (<x-dc>), Roulette + French Call Bets + Blackjack EV are integrated directly
       // into the primary server-authoritative Velvet Noir Pit above — avoid rendering duplicate client-only copies!
-      var isLiveXdcHost = Boolean(typeof document !== 'undefined' && document.querySelector && document.querySelector('x-dc'));
+      var isLiveXdcHost = Boolean(typeof document !== 'undefined' && document.getElementById('dc-root'));
       var rl = store.roulette;
       var rlCurve = computeRouletteCostCurve({ stake: rl.stake, spinsPerMin: 4 });
       var lastGlyph = getPocketGlyph(rl.lastPocket);
