@@ -1271,7 +1271,8 @@
                 esc(ar ? (luna.personaAr || 'لونا · مهندسة النقابة') : (luna.persona || 'Luna · Syndicate Architect')) + ' ❤️' +
               '</span>' +
               '<button type="button" class="zab-btn zab-btn-xs" data-zab-upload-avatar="1">' +
-                (ar ? '📷 صورة الملف' : '📷 Upload Avatar') +
+                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-inline-end:4px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>' +
+                (ar ? 'صورة الملف' : 'Upload Avatar') +
               '</button>' +
             '</div>' +
             '<p class="zab-luna-line" data-zab-luna-line="1">' +

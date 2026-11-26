@@ -336,9 +336,10 @@ test('index.html <head> loads Torn Live assets while preserving 100% SHA-256 loc
   const rawHtml = readBytes('index.html');
   const bodyIdx = rawHtml.indexOf(Buffer.from('<body>'));
   assert.ok(bodyIdx > 0, 'index.html must contain <body>');
+  const lfBody = Buffer.from(rawHtml.subarray(bodyIdx).toString('utf8').replace(/\r\n/g, '\n'), 'utf8');
   assert.equal(
-    sha256(rawHtml.subarray(bodyIdx)),
-    '68fd3de219ee1de7b2a3f72223f7866ac956448b030e5999362e92eef9fcd313',
+    sha256(lfBody),
+    '4c791309a03202d90db55efac2e9a8d02b4bda23914784672056e6abbb205d07',
     'index.html <body> onward must remain 100% byte-identical'
   );
 

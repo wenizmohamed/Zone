@@ -185,6 +185,50 @@
       auditTag: '760hp-awd',
       synergyEn: 'Cuts district transit times while holding 0.9G lateral grip.',
       synergyAr: 'تقلص زمن العبور بين الأحياء مع ثبات جانبي فائق.'
+    },
+    edu_bio: {
+      originEn: 'Sovereign brass & sapphire compound microscope paired with an illuminated 8-rung DNA double-helix calibrator.',
+      originAr: 'مجهر مركب من النحاس والياقوت الأزرق مقترن بمعاير شريط الحمض النووي المزدوج.',
+      makerEn: 'Zone University · Bio-Lab',
+      makerAr: 'جامعة زون · مختبر الأحياء',
+      craftTier: 'Faculty-Masterpiece',
+      craftTierAr: 'تحفة أكاديمية',
+      auditTag: '+50-max-life-revive',
+      synergyEn: 'Unlocks hospital blood-bag synthesis and cuts player revive cost to 25E.',
+      synergyAr: 'يفتح تصنيع أكياس الدم ويخفض تكلفة إنعاش العملاء إلى ٢٥ طاقة.'
+    },
+    edu_cs: {
+      originEn: 'Obsidian 4-blade quantum cyber-deck mainframe projecting an encrypted floating holographic keyspace.',
+      originAr: 'منصة اختراق كمومية من الأوبسيديان بأربع شفرات تعرض مصفوفة تشفير ثلاثية الأبعاد.',
+      makerEn: 'Citadel Cyber-Forensics',
+      makerAr: 'مختبر الأدلة السيبرانية',
+      craftTier: 'Quantum-Spec',
+      craftTierAr: 'فئة كمومية',
+      auditTag: '+10%-skimming-cracking',
+      synergyEn: 'Boosts Card Skimming & Vault Cracking precision across Crimes 2.0.',
+      synergyAr: 'يرفع نسبة نجاح نسخ البطاقات وكسر الشفرات في الجرائم المتقدمة.'
+    },
+    edu_law: {
+      originEn: 'Hand-balanced 24K brass Scales of Justice paired with a clearcoat mahogany courtroom gavel.',
+      originAr: 'ميزان عدالة من النحاس الذهبي عيار ٢٤ مع مطرقة محكمة من الماهوغاني المصقول.',
+      makerEn: 'High Court Chambers',
+      makerAr: 'دائرة القضاء الجنائي',
+      craftTier: 'Juris-Sovereign',
+      craftTierAr: 'سيادة قانونية',
+      auditTag: '-15%-jail-duration',
+      synergyEn: 'Slashes sentence duration and boosts high-tier Crimes 2.0 unique loot.',
+      synergyAr: 'يقلص مدة الاحتجاز ويرفع فرص الغنائم النادرة في العمليات.'
+    },
+    edu_command: {
+      originEn: 'Obsidian & 24K gold Sovereign Chess King sculpted for Faction Warlords and Organized Crime masterminds.',
+      originAr: 'قطعة الملك السيادية من الأوبسيديان والذهب الخالص لقادة العائلات والعقول المدبرة.',
+      makerEn: 'Syndicate War College',
+      makerAr: 'كلية حرب النقابة',
+      craftTier: 'Apex-Command',
+      craftTierAr: 'قيادة عليا',
+      auditTag: '+oc-payout-respect',
+      synergyEn: 'Amplifies Organized Crime 2.0 payouts and Faction Respect yield.',
+      synergyAr: 'يضاعف عوائد الجرائم المنظمة ونقاط احترام العائلة.'
     }
   };
 

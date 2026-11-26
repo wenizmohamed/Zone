@@ -27,7 +27,7 @@ import {
   triggerScreenFx,
   clearScreenFx,
 } from './zone-vfx-particles.mjs';
-import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=167';
+import { dressStageEnvironment3D } from './zone-3d-environments.mjs?v=168';
 
 export {
   THREE,
@@ -3042,7 +3042,7 @@ function getSlotReelTexture(reelIndex = 0) {
       { id: 'GOLD_BAR', glyph: 'BAR', sub: 'BULLION', bg: '#18181b', fg: '#facc15', border: '#f59e0b' },
       { id: 'CROWN', glyph: '♛', sub: 'CROWN', bg: '#064e3b', fg: '#fde047', border: '#fbbf24' },
       { id: 'CHIP', glyph: '★', sub: 'VIP CHIP', bg: '#7f1d1d', fg: '#fef08a', border: '#f3c969' },
-      { id: 'CHERRY', glyph: '🍒', sub: 'CHERRY', bg: '#fdf2f8', fg: '#be123c', border: '#e11d48' },
+      { id: 'CHERRY', glyph: '✦', sub: 'RUBY', bg: '#4c0519', fg: '#fda4af', border: '#f3c969' },
     ];
     const stepX = cv.width / symbols.length;
     for (let i = 0; i < symbols.length; i++) {
@@ -3512,6 +3512,318 @@ function buildCompanionProcedural(subtype, rimColor) {
   }
   return g;
 }
+
+export function createAcademyDiscipline3D(itemId) {
+  const key = String(itemId || 'edu_command').toLowerCase();
+  const g = new THREE.Group();
+  const brass = makePbr(0xf3c969, 0.16, 0.96, { color: 0xfef08a, power: 2.0, intensity: 0.76 });
+  const obsidian = makePbr(0x16181d, 0.24, 0.86, { color: 0xf3c969, power: 2.4, intensity: 0.52 }, { clearcoat: 0.92 });
+  const chrome = makePbr(0xcbd5e1, 0.14, 0.96, { color: 0x38bdf8, power: 2.3, intensity: 0.58 });
+  const mahogany = makePbr(0x4a1d14, 0.28, 0.36, { color: 0xf3c969, power: 2.3, intensity: 0.45 }, { clearcoat: 0.88 });
+  const cyanGlow = makePbr(0x22d3ee, 0.08, 0.25, false, { emissive: 0x06b6d4, emissiveIntensity: 0.95 });
+  const emeraldGlow = makePbr(0x34d399, 0.10, 0.28, false, { emissive: 0x059669, emissiveIntensity: 0.92 });
+  const rubyGlow = makePbr(0xf43f5e, 0.10, 0.30, false, { emissive: 0xe11d48, emissiveIntensity: 0.92 });
+  const glass = makePbr(0xe0f2fe, 0.06, 0.10, { color: 0x38bdf8, power: 2.0, intensity: 0.72 }, {
+    transparent: true,
+    opacity: 0.46,
+    clearcoat: 1.0,
+  });
+
+  // Base Sovereign Plinth shared across academic artifacts
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.52, 0.11, 28), obsidian);
+  plinth.position.y = -0.52;
+  const plinthTrim = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.022, 10, 32), brass);
+  plinthTrim.rotation.x = Math.PI / 2;
+  plinthTrim.position.y = -0.47;
+  g.add(plinth, plinthTrim);
+
+  if (key === 'edu_bio') {
+    // Brass & Sapphire Compound Microscope + Illuminated 8-Rung DNA Helix
+    const arm = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.042, 12, 24, Math.PI * 0.95), brass);
+    arm.position.set(-0.12, -0.08, 0);
+    arm.rotation.z = Math.PI * 0.52;
+    const stagePlate = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.035, 0.32), obsidian);
+    stagePlate.position.set(0.06, -0.14, 0);
+    const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.072, 0.48, 18), chrome);
+    tube.position.set(0.06, 0.22, 0);
+    tube.rotation.z = -0.22;
+    const lensGlow = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.06, 16), emeraldGlow);
+    lensGlow.position.set(0.11, -0.02, 0);
+    g.add(arm, stagePlate, tube, lensGlow);
+    for (let i = 0; i < 8; i++) {
+      const t = i / 7;
+      const y = -0.34 + t * 0.78;
+      const ang = t * Math.PI * 2.2;
+      const x1 = 0.28 + Math.cos(ang) * 0.11;
+      const z1 = Math.sin(ang) * 0.11;
+      const x2 = 0.28 - Math.cos(ang) * 0.11;
+      const z2 = -Math.sin(ang) * 0.11;
+      const nA = new THREE.Mesh(new THREE.SphereGeometry(0.034, 10, 8), cyanGlow);
+      nA.position.set(x1, y, z1);
+      const nB = new THREE.Mesh(new THREE.SphereGeometry(0.034, 10, 8), brass);
+      nB.position.set(x2, y, z2);
+      const rung = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.22, 8), chrome);
+      rung.position.set(0.28, y, 0);
+      rung.rotation.z = Math.PI / 2;
+      rung.rotation.y = -ang;
+      g.add(nA, nB, rung);
+    }
+    return g;
+  }
+
+  if (key === 'edu_sports') {
+    // Chrome Olympic Biometric Barbell + Dual Gyroscopic Telemetry Rings
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.034, 1.16, 16), chrome);
+    bar.rotation.z = Math.PI / 2;
+    bar.rotation.y = 0.28;
+    const ringOuter = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.022, 12, 36), brass);
+    ringOuter.rotation.x = 0.48;
+    const ringInner = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.018, 10, 32), cyanGlow);
+    ringInner.rotation.y = 0.72;
+    g.add(bar, ringOuter, ringInner);
+    for (const side of [-1, 1]) {
+      const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.075, 22), obsidian);
+      p1.rotation.z = Math.PI / 2;
+      p1.position.set(side * 0.36, 0, side * -0.10);
+      const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.055, 20), brass);
+      p2.rotation.z = Math.PI / 2;
+      p2.position.set(side * 0.45, 0, side * -0.125);
+      g.add(p1, p2);
+    }
+    return g;
+  }
+
+  if (key === 'edu_law') {
+    // Sovereign Brass Scales of Justice + Mahogany Gavel
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.058, 0.88, 16), brass);
+    pillar.position.y = -0.04;
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.78, 14), brass);
+    beam.rotation.z = Math.PI / 2 + 0.08;
+    beam.position.y = 0.36;
+    const finial = new THREE.Mesh(new THREE.OctahedronGeometry(0.075, 0), cyanGlow);
+    finial.position.y = 0.46;
+    g.add(pillar, beam, finial);
+    for (const side of [-1, 1]) {
+      const panY = 0.04 + side * 0.03;
+      const pan = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.09, 0.05, 18), brass);
+      pan.position.set(side * 0.35, panY, 0);
+      const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.30, 8), chrome);
+      chain.position.set(side * 0.35, panY + 0.16, 0);
+      g.add(pan, chain);
+    }
+    const gavelHead = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, 0.24, 14), mahogany);
+    gavelHead.rotation.z = Math.PI / 2;
+    gavelHead.position.set(0.14, -0.38, 0.22);
+    const gavelHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.36, 10), brass);
+    gavelHandle.rotation.x = Math.PI / 2;
+    gavelHandle.rotation.z = -0.45;
+    gavelHandle.position.set(-0.02, -0.39, 0.26);
+    g.add(gavelHead, gavelHandle);
+    return g;
+  }
+
+  if (key === 'edu_biz') {
+    // Stacked 24K Gold Bullion Ingots + Ascending Emerald Ticker Spire
+    const ingotGeo = new THREE.BoxGeometry(0.32, 0.09, 0.16);
+    const coords = [[-0.18, -0.41, 0.12], [0.18, -0.41, 0.12], [0, -0.31, 0.12]];
+    for (const [ix, iy, iz] of coords) {
+      const bar = new THREE.Mesh(ingotGeo, brass);
+      bar.position.set(ix, iy, iz);
+      g.add(bar);
+    }
+    const heights = [0.28, 0.46, 0.66, 0.88];
+    for (let i = 0; i < heights.length; i++) {
+      const h = heights[i];
+      const col = new THREE.Mesh(new THREE.BoxGeometry(0.12, h, 0.12), i === 3 ? emeraldGlow : obsidian);
+      col.position.set(-0.27 + i * 0.18, -0.44 + h * 0.5, -0.10);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.03, 0.13), brass);
+      cap.position.set(-0.27 + i * 0.18, -0.44 + h + 0.015, -0.10);
+      g.add(col, cap);
+    }
+    return g;
+  }
+
+  if (key === 'edu_combat') {
+    // Ballistic Kevlar Aegis Shield + Crossed Carbon Tanto Blades
+    const shield = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.26, 0.08, 6), obsidian);
+    shield.rotation.x = Math.PI / 2;
+    shield.scale.set(0.95, 1.0, 1.28);
+    const shieldRim = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.026, 8, 6), brass);
+    shieldRim.position.z = 0.04;
+    const emblem = new THREE.Mesh(new THREE.OctahedronGeometry(0.11, 0), rubyGlow);
+    emblem.position.z = 0.06;
+    g.add(shield, shieldRim, emblem);
+    for (const side of [-1, 1]) {
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.96, 0.022), chrome);
+      blade.rotation.z = side * 0.56;
+      blade.position.z = -0.06;
+      const guard = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.035, 0.05), brass);
+      guard.rotation.z = side * 0.56;
+      guard.position.set(side * -0.16, -0.25, -0.06);
+      g.add(blade, guard);
+    }
+    return g;
+  }
+
+  if (key === 'edu_history') {
+    // Gilded Classical Relic Amphora + Fluted Column Pedestal
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.26, 0.26, 16), chrome);
+    col.position.y = -0.34;
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 16), brass);
+    body.scale.set(0.92, 1.28, 0.92);
+    body.position.y = 0.02;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 0.24, 16), obsidian);
+    neck.position.y = 0.34;
+    const lip = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.024, 10, 22), brass);
+    lip.rotation.x = Math.PI / 2;
+    lip.position.y = 0.46;
+    for (const side of [-1, 1]) {
+      const handle = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.022, 10, 18, Math.PI * 1.15), brass);
+      handle.position.set(side * 0.20, 0.22, 0);
+      handle.rotation.z = side < 0 ? Math.PI * 0.5 : -Math.PI * 0.5;
+      g.add(handle);
+    }
+    g.add(col, body, neck, lip);
+    return g;
+  }
+
+  if (key === 'edu_cs') {
+    // Obsidian Quantum Cyber-Deck Server Rack + Floating Cyan Hologram Cube
+    const chassis = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.72, 0.38), obsidian);
+    chassis.position.y = -0.10;
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.59, 0.75, 0.34), brass);
+    frame.position.y = -0.10;
+    g.add(frame, chassis);
+    for (let r = 0; r < 4; r++) {
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.06, 0.41), r % 2 === 0 ? cyanGlow : emeraldGlow);
+      blade.position.set(0, -0.32 + r * 0.15, 0);
+      g.add(blade);
+    }
+    const holoCube = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), cyanGlow);
+    holoCube.position.y = 0.44;
+    const holoRing = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.016, 10, 28), brass);
+    holoRing.rotation.x = 0.9;
+    holoRing.position.y = 0.44;
+    g.add(holoCube, holoRing);
+    return g;
+  }
+
+  if (key === 'edu_med') {
+    // Sovereign Trauma Defibrillator Paddles + Crimson Bio-Plasma Capsule
+    const unit = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.34, 0.34), obsidian);
+    unit.position.y = -0.26;
+    const screen = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.18, 0.36), emeraldGlow);
+    screen.position.y = -0.24;
+    const vialGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.52, 20), glass);
+    vialGlass.position.y = 0.18;
+    const plasmaCore = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 0.40, 16), rubyGlow);
+    plasmaCore.position.y = 0.18;
+    const topCap = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.15, 0.07, 20), brass);
+    topCap.position.y = 0.46;
+    for (const side of [-1, 1]) {
+      const paddle = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.08), chrome);
+      paddle.position.set(side * 0.35, -0.18, 0.08);
+      const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.14, 10), brass);
+      grip.position.set(side * 0.35, -0.06, 0.08);
+      g.add(paddle, grip);
+    }
+    g.add(unit, screen, vialGlass, plasmaCore, topCap);
+    return g;
+  }
+
+  if (key === 'edu_psych') {
+    // Gilded Neural Cortex Gyro-Sphere + Synaptic Sapphire Nodes
+    const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.20, 1), cyanGlow);
+    core.position.y = 0.05;
+    const r1 = new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.022, 12, 36), brass);
+    r1.position.y = 0.05;
+    const r2 = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.018, 12, 32), chrome);
+    r2.rotation.x = Math.PI / 3;
+    r2.position.y = 0.05;
+    const r3 = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.018, 12, 32), brass);
+    r3.rotation.y = Math.PI / 3;
+    r3.position.y = 0.05;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.07, 0.26, 14), obsidian);
+    stem.position.y = -0.36;
+    g.add(core, r1, r2, r3, stem);
+    return g;
+  }
+
+  if (key === 'edu_math') {
+    // Brass Ballistic Astrolabe Sextant + Parabolic Trajectory Laser Arc
+    const arc = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.028, 12, 32, Math.PI * 0.78), brass);
+    arc.rotation.z = Math.PI * 0.11;
+    arc.position.y = -0.05;
+    const scope = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.046, 0.74, 16), obsidian);
+    scope.rotation.z = -0.68;
+    scope.position.set(0.02, 0.06, 0.05);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.04, 14), rubyGlow);
+    lens.rotation.z = -0.68;
+    lens.position.set(0.30, 0.30, 0.05);
+    const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.08, 0.42, 14), chrome);
+    stand.position.y = -0.28;
+    g.add(arc, scope, lens, stand);
+    return g;
+  }
+
+  if (key === 'edu_pharma') {
+    // Glass Molecular Synthesis Condenser + Twin Emerald & Amber Reagent Flasks
+    const flaskL = new THREE.Mesh(new THREE.SphereGeometry(0.19, 18, 14), glass);
+    flaskL.position.set(-0.20, -0.26, 0);
+    const liqL = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 12), emeraldGlow);
+    liqL.position.set(-0.20, -0.28, 0);
+    const neckL = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.36, 14), glass);
+    neckL.position.set(-0.20, 0.02, 0);
+    const flaskR = new THREE.Mesh(new THREE.ConeGeometry(0.20, 0.42, 18), glass);
+    flaskR.position.set(0.22, -0.24, 0);
+    const liqR = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.28, 16), cyanGlow);
+    liqR.position.set(0.22, -0.30, 0);
+    const bridge = new THREE.Mesh(new THREE.TorusGeometry(0.21, 0.026, 10, 24, Math.PI), brass);
+    bridge.position.set(0.01, 0.18, 0);
+    g.add(flaskL, liqL, neckL, flaskR, liqR, bridge);
+    return g;
+  }
+
+  if (key === 'edu_motorsport') {
+    // Twin-Turbo Chrome V8 Engine Block + 24K Gold Intake Manifolds
+    const block = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.34, 0.56), obsidian);
+    block.position.y = -0.22;
+    for (const side of [-1, 1]) {
+      const bank = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 0.52), chrome);
+      bank.position.set(side * 0.22, -0.04, 0);
+      bank.rotation.z = side * -0.52;
+      const valveCover = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 0.50), brass);
+      valveCover.position.set(side * 0.30, 0.08, 0);
+      valveCover.rotation.z = side * -0.52;
+      const turbo = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.048, 12, 20), chrome);
+      turbo.position.set(side * 0.24, 0.16, 0.26);
+      const turbineGlow = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.05, 14), rubyGlow);
+      turbineGlow.rotation.x = Math.PI / 2;
+      turbineGlow.position.set(side * 0.24, 0.16, 0.28);
+      g.add(bank, valveCover, turbo, turbineGlow);
+    }
+    g.add(block);
+    return g;
+  }
+
+  // Default: edu_command -> Obsidian & 24K Gold Sovereign Syndicate Chess King
+  const base1 = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.32, 0.14, 24), obsidian);
+  base1.position.y = -0.38;
+  const bodyCol = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.23, 0.54, 22), obsidian);
+  bodyCol.position.y = -0.04;
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.032, 12, 26), brass);
+  collar.rotation.x = Math.PI / 2;
+  collar.position.y = 0.22;
+  const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.13, 0.18, 10), brass);
+  crown.position.y = 0.33;
+  const crossV = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.20, 0.055), brass);
+  crossV.position.y = 0.50;
+  const crossH = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.055, 0.055), brass);
+  crossH.position.y = 0.52;
+  g.add(base1, bodyCol, collar, crown, crossV, crossH);
+  return g;
+}
+
 export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = {}) {
   const spec = resolveItemSpec3D(itemId, category, rarity);
   const elongated = isElongatedItemCategory(spec);
@@ -3528,7 +3840,9 @@ export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = 
   };
 
   let rawModel;
-  if (/craps|dice/i.test(String(itemId))) {
+  if (/^edu_/i.test(String(itemId))) {
+    rawModel = createAcademyDiscipline3D(itemId);
+  } else if (/craps|dice/i.test(String(itemId))) {
     const pair = new THREE.Group();
     const dA = createCasinoDie3D({ size: 0.46, initialFace: 5 });
     dA.position.set(-0.34, 0, 0.08);
@@ -4024,8 +4338,161 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     return applied;
   };
 
-  /* === STAGE 1: SAFEHOUSE-EMPIRE (Home) === */
+  /* === STAGE 1: SAFEHOUSE-EMPIRE (Home / Academy Submode / Medbay Submode) === */
   if (kind === 'safehouse-empire') {
+    const shSubmode = String(initialState.submode || '').toLowerCase();
+
+    if (shSubmode === 'academy') {
+      // SOVEREIGN SYNDICATE UNIVERSITY & CYBER-FORENSICS AMPHITHEATER (Education Hero Stage)
+      const lights = addStandardStageLighting(scene, 0x151311, 0xf3c969, 4.35);
+      refs.lights = lights;
+      camera.position.set(0, 2.18, 4.78);
+      camera.lookAt(0, 0.96, -0.15);
+      world.setTraumaCamera(camEid, { baseX: 0, baseY: 2.18, baseZ: 4.78 });
+
+      const brassMat = makePbr(0xf3c969, 0.16, 0.96, { color: 0xfef08a, power: 2.1, intensity: 0.72 });
+      const obsidianMat = makePbr(0x16181e, 0.22, 0.88, { color: 0xf3c969, power: 2.4, intensity: 0.48 }, { clearcoat: 0.95 });
+      const cyanMat = makePbr(0x22d3ee, 0.08, 0.22, false, { emissive: 0x06b6d4, emissiveIntensity: 0.95 });
+      const emeraldMat = makePbr(0x34d399, 0.10, 0.25, false, { emissive: 0x059669, emissiveIntensity: 0.9 });
+
+      // Architectural Rotunda Columns & Sovereign Archway
+      for (let ci = -2; ci <= 2; ci++) {
+        const ang = (ci / 2.6) * Math.PI * 0.48;
+        const cx = Math.sin(ang) * 3.35;
+        const cz = -Math.cos(ang) * 2.55 - 0.35;
+        const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.42), brassMat);
+        plinth.position.set(cx, 0.11, cz);
+        const col = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.17, 2.15, 18), obsidianMat);
+        col.position.set(cx, 1.28, cz);
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.15, 0.16, 18), brassMat);
+        cap.position.set(cx, 2.42, cz);
+        scene.add(plinth, col, cap);
+      }
+
+      // Centerpiece Rotating 3D Brass Armillary Orrery + 12-Rung DNA Double-Helix
+      const orreryGroup = new THREE.Group();
+      const dais1 = new THREE.Mesh(new THREE.CylinderGeometry(1.12, 1.26, 0.16, 36), obsidianMat);
+      dais1.position.y = 0.08;
+      const daisRim = new THREE.Mesh(new THREE.TorusGeometry(1.16, 0.028, 12, 44), brassMat);
+      daisRim.rotation.x = Math.PI / 2;
+      daisRim.position.y = 0.16;
+      scene.add(dais1, daisRim);
+
+      const ring1 = new THREE.Mesh(new THREE.TorusGeometry(0.82, 0.032, 14, 48), brassMat);
+      ring1.position.y = 1.12;
+      const ring2 = new THREE.Mesh(new THREE.TorusGeometry(0.68, 0.024, 12, 42), cyanMat);
+      ring2.rotation.x = Math.PI * 0.34;
+      ring2.rotation.y = Math.PI * 0.25;
+      ring2.position.y = 1.12;
+      const ring3 = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.022, 12, 40), brassMat);
+      ring3.rotation.x = -Math.PI * 0.28;
+      ring3.position.y = 1.12;
+      orreryGroup.add(ring1, ring2, ring3);
+
+      for (let r = 0; r < 12; r++) {
+        const u = r / 11;
+        const hy = 0.42 + u * 1.38;
+        const ha = u * Math.PI * 3.0;
+        const hx = Math.cos(ha) * 0.24;
+        const hz = Math.sin(ha) * 0.24;
+        const nodeA = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 10), cyanMat);
+        nodeA.position.set(hx, hy, hz);
+        const nodeB = new THREE.Mesh(new THREE.SphereGeometry(0.048, 12, 10), emeraldMat);
+        nodeB.position.set(-hx, hy, -hz);
+        const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.48, 8), brassMat);
+        bar.position.set(0, hy, 0);
+        bar.rotation.z = Math.PI / 2;
+        bar.rotation.y = -ha;
+        orreryGroup.add(nodeA, nodeB, bar);
+      }
+      scene.add(orreryGroup);
+      const orreryEid = spawnTracked(orreryGroup);
+      world.setTurntable(orreryEid, 0.68, 5.5);
+      registerPickable(orreryEid, { stage: 'safehouse-empire', target: 'academy-orrery' });
+
+      // Left & Right Discipline Stations (Cyber-Forensics + Law & Ballistics + Command)
+      const stationSpecs = [
+        { id: 'edu_cs', x: -2.05, z: 0.52, rot: 0.42 },
+        { id: 'edu_bio', x: -1.35, z: 1.38, rot: 0.25 },
+        { id: 'edu_law', x: 1.35, z: 1.38, rot: -0.25 },
+        { id: 'edu_command', x: 2.05, z: 0.52, rot: -0.42 },
+      ];
+      for (let si = 0; si < stationSpecs.length; si++) {
+        const st = stationSpecs[si];
+        const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.44, 0.46, 22), obsidianMat);
+        ped.position.set(st.x, 0.23, st.z);
+        scene.add(ped);
+        const artifact = createItemMesh3D(st.id, 'enhancer', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+        artifact.scale.setScalar(0.54);
+        artifact.position.set(st.x, 0.86, st.z);
+        artifact.rotation.y = st.rot;
+        scene.add(artifact);
+        const aeid = spawnTracked(artifact);
+        world.setTurntable(aeid, (si % 2 === 0 ? 0.85 : -0.85), 5.0);
+        registerPickable(aeid, { stage: 'safehouse-empire', target: st.id });
+      }
+
+      const dean = createHumanoid3D({ role: 'crew', outfit: 'suit', coatColor: 0x171923, trimColor: 0xf3c969, rimColor: 0xfbbf24, scale: 0.98, headless });
+      dean.position.set(-1.12, 0, -0.42);
+      dean.rotation.y = 0.46;
+      scene.add(dean);
+      refs.operativeEid = spawnTracked(dean);
+
+      const scholar = createHumanoid3D({ role: 'player', outfit: 'tactical', coatColor: 0x0f172a, trimColor: 0x22d3ee, rimColor: 0x38bdf8, weaponId: 'pistol_2', scale: 0.98, headless });
+      scholar.position.set(1.12, 0, -0.42);
+      scholar.rotation.y = -0.46;
+      scene.add(scholar);
+      refs.nemesisEid = spawnTracked(scholar);
+    } else if (shSubmode === 'medbay') {
+      // SOVEREIGN CYBER-TRAUMA SURGICAL MEDBAY (Hospital Hero Stage)
+      const lights = addStandardStageLighting(scene, 0x121619, 0x34d399, 4.1);
+      refs.lights = lights;
+      camera.position.set(0, 2.08, 4.55);
+      camera.lookAt(0, 0.88, 0);
+      world.setTraumaCamera(camEid, { baseX: 0, baseY: 2.08, baseZ: 4.55 });
+
+      const obsidianMat = makePbr(0x161b22, 0.20, 0.88, { color: 0x34d399, power: 2.3, intensity: 0.55 }, { clearcoat: 0.95 });
+      const chromeMat = makePbr(0xe2e8f0, 0.14, 0.95, { color: 0x38bdf8, power: 2.2, intensity: 0.58 });
+      const emeraldGlow = makePbr(0x34d399, 0.08, 0.22, false, { emissive: 0x059669, emissiveIntensity: 0.95 });
+      const glassCanopy = makePbr(0xccfbf1, 0.06, 0.08, { color: 0x34d399, power: 2.0, intensity: 0.72 }, { transparent: true, opacity: 0.38, clearcoat: 1.0 });
+
+      const podGroup = new THREE.Group();
+      const podBase = new THREE.Mesh(new THREE.BoxGeometry(2.15, 0.42, 0.96), obsidianMat);
+      podBase.position.y = 0.21;
+      const mattress = new THREE.Mesh(new THREE.BoxGeometry(1.96, 0.10, 0.78), chromeMat);
+      mattress.position.y = 0.46;
+      const canopy = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.46, 1.92, 24, 1, false, 0, Math.PI), glassCanopy);
+      canopy.rotation.z = Math.PI / 2;
+      canopy.position.y = 0.52;
+      podGroup.add(podBase, mattress, canopy);
+      scene.add(podGroup);
+
+      const scanRing = new THREE.Mesh(new THREE.TorusGeometry(0.58, 0.028, 12, 36), emeraldGlow);
+      scanRing.rotation.y = Math.PI / 2;
+      scanRing.position.set(0, 0.62, 0);
+      scene.add(scanRing);
+      const scanEid = spawnTracked(scanRing);
+      world.setHoverFloat(scanEid, 0.62, 0.06, 1.8, 0);
+      registerPickable(scanEid, { stage: 'safehouse-empire', target: 'medbay-scanner' });
+
+      const defib = createItemMesh3D('edu_med', 'medical', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+      defib.scale.setScalar(0.62);
+      defib.position.set(-1.68, 0.68, 0.62);
+      scene.add(defib);
+      world.setTurntable(spawnTracked(defib), 0.75, 5.0);
+
+      const pharma = createItemMesh3D('edu_pharma', 'medical', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+      pharma.scale.setScalar(0.62);
+      pharma.position.set(1.68, 0.68, 0.62);
+      scene.add(pharma);
+      world.setTurntable(spawnTracked(pharma), -0.75, 5.0);
+
+      const surgeon = createHumanoid3D({ role: 'crew', outfit: 'suit', coatColor: 0x0f172a, trimColor: 0x34d399, rimColor: 0x34d399, scale: 0.98, headless });
+      surgeon.position.set(-1.25, 0, -0.58);
+      surgeon.rotation.y = 0.52;
+      scene.add(surgeon);
+      refs.operativeEid = spawnTracked(surgeon);
+    } else {
     const lights = addStandardStageLighting(scene, 0x1b1714, 0xf59e0b);
     refs.lights = lights;
 
@@ -4188,6 +4655,7 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     const originChosen = String(initialState.originChosen ?? '1') !== '0' && initialState.originChosen !== false;
     originGroup.visible = !originChosen;
+    }
   }
 
   /* === STAGE 2: HEIST-BREACH (Crimes) === */

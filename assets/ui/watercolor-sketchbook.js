@@ -80,55 +80,87 @@
     );
   }
 
-  /* Vibrant Multi-Color Hand-Inked Gouache Icons for Sidebar Areas & Surface Actions */
-  function sketchAreaSvg(washColor, washShape, inkPath) {
+  /* Sovereign Architectural Metallic Vector Emblems (v168 - Zero Cartoon Crayon Blobs) */
+  var ZWC_METALLIC_DEFS =
+    '<defs>' +
+      '<linearGradient id="zwm-gold" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#fef08a"/><stop offset="48%" stop-color="#f3c969"/><stop offset="100%" stop-color="#a16207"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zwm-emerald" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#6ee7b7"/><stop offset="50%" stop-color="#10b981"/><stop offset="100%" stop-color="#065f46"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zwm-ruby" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#fda4af"/><stop offset="50%" stop-color="#f43f5e"/><stop offset="100%" stop-color="#881337"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zwm-cyan" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#a5f3fc"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#0369a1"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zwm-steel" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#f8fafc"/><stop offset="52%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#475569"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zwm-plate" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#24211e"/><stop offset="100%" stop-color="#110f0d"/>' +
+      '</linearGradient>' +
+    '</defs>';
+
+  function sovereignCrestSvg(gradUrl, fillOverlay, strokeMarkup) {
     return (
-      '<svg class="zwc-sketch-ico" data-zwc-color="v140" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-        washShape.replace(/__WASH__/g, washColor) +
-        '<path class="zwc-ink-stroke" d="' + inkPath + '" fill="none" stroke="var(--zwc-svg-ink, #221e1a)" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<svg class="zwc-sketch-ico" data-zwc-color="v168" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        ZWC_METALLIC_DEFS +
+        '<polygon points="12,1.6 21,6.4 21,17.6 12,22.4 3,17.6 3,6.4" fill="url(#zwm-plate)" stroke="' + gradUrl + '" stroke-width="1.2" stroke-opacity="0.82"/>' +
+        fillOverlay +
+        strokeMarkup +
       '</svg>'
     );
   }
 
   var SKETCH_AREA_ICONS = {
-    home: sketchAreaSvg('#f5b82e', '<path class="zwc-wash-fill" d="M5.5 11.2L12 5L18.5 11.2V19.6H5.5V11.2Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M3.5 11.4L12 4L20.5 11.4H18.2L12 6L5.8 11.4H3.5Z" fill="#e63946"/><rect class="zwc-accent-fill" x="10" y="14.2" width="4" height="5.4" fill="#14b8a6"/>', 'M3.5 11.5L12 4L20.5 11.5M6 10.2V19.8H18V10.2M10 19.8V14.2H14V19.8'),
-    items: sketchAreaSvg('#ea7234', '<path class="zwc-wash-fill" d="M4.2 8.2L12 4.4L19.8 8.2V17.4L12 20.6L4.2 17.4V8.2Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M4.2 8.2L12 4.4L19.8 8.2L12 11.8L4.2 8.2Z" fill="#f5b82e"/>', 'M4.2 8.2L12 4.4L19.8 8.2V17.4L12 20.6L4.2 17.4V8.2ZM4.2 8.2L12 11.8L19.8 8.2M12 11.8V20.6'),
-    city: sketchAreaSvg('#2da4e8', '<path class="zwc-wash-fill" d="M12 20.6C12 20.6 18 14.3 18 9.8A6 6 0 1 0 6 9.8C6 14.3 12 20.6 12 20.6Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="9.8" r="2.6" fill="#f5b82e"/>', 'M12 21C12 21 18.2 14.4 18.2 9.8A6.2 6.2 0 1 0 5.8 9.8C5.8 14.4 12 21 12 21ZM12 12.2A2.4 2.4 0 1 0 12 7.4A2.4 2.4 0 0 0 12 12.2Z'),
-    jobs: sketchAreaSvg('#3b82f6', '<rect class="zwc-wash-fill" x="4" y="8" width="16" height="11.2" rx="1.8" fill="__WASH__"/><rect class="zwc-accent-fill" x="10.2" y="11" width="3.6" height="3.2" rx="0.7" fill="#f5b82e"/>', 'M9 7.8V5.6C9 4.8 9.7 4.2 10.5 4.2H13.5C14.3 4.2 15 4.8 15 5.6V7.8M4 8H20V19.2H4V8ZM4 12.8H20'),
-    bank: sketchAreaSvg('#22b56b', '<path class="zwc-wash-fill" d="M3.5 9.5L12 4L20.5 9.5H3.5Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="5.4" y="9.8" width="13.2" height="7.4" fill="#f5b82e"/><rect class="zwc-wash-fill" x="4" y="17.2" width="16" height="2.4" fill="__WASH__"/>', 'M3.5 9.5L12 4L20.5 9.5H3.5ZM4 19.5H20M6.8 9.5V17M10.4 9.5V17M13.8 9.5V17M17.2 9.5V17'),
-    gym: sketchAreaSvg('#ef4c4c', '<rect class="zwc-accent-fill" x="8" y="10.8" width="8" height="2.4" rx="0.8" fill="#2da4e8"/><circle class="zwc-wash-fill" cx="6.8" cy="12" r="3.4" fill="__WASH__"/><circle class="zwc-wash-fill" cx="17.2" cy="12" r="3.4" fill="__WASH__"/>', 'M2.8 12H21.2M5.5 7.8V16.2M8.2 9.2V14.8M15.8 9.2V14.8M18.5 7.8V16.2'),
-    properties: sketchAreaSvg('#14b8a6', '<circle class="zwc-wash-fill" cx="8.8" cy="9.6" r="4.3" fill="__WASH__"/><path class="zwc-accent-fill" d="M12.2 11.4L19.6 18.8L17.4 20.6L11 14.2Z" fill="#f5b82e"/>', 'M12.4 11.6L19.8 19M17 16.2L15 18.2M19.2 18.4L17.2 20.4M12.8 9.4A4.2 4.2 0 1 1 4.4 9.4A4.2 4.2 0 0 1 12.8 9.4Z'),
-    education: sketchAreaSvg('#5c7cfa', '<path class="zwc-wash-fill" d="M6.5 12V16.6C6.5 18.1 9 19.4 12 19.4C15 19.4 17.5 18.1 17.5 16.6V12H6.5Z" fill="#3b82f6"/><path class="zwc-wash-fill" d="M3.2 9.5L12 4.8L20.8 9.5L12 14.2L3.2 9.5Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="19.6" cy="14.2" r="1.5" fill="#f5b82e"/>', 'M2.8 9.5L12 4.8L21.2 9.5L12 14.2L2.8 9.5ZM6.5 12V16.6C6.5 18.1 9 19.4 12 19.4C15 19.4 17.5 18.1 17.5 16.6V12'),
-    crimes: sketchAreaSvg('#e63946', '<circle class="zwc-wash-fill" cx="12" cy="12" r="6.8" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="2.8" fill="#f5b82e"/>', 'M19 12A7 7 0 1 1 5 12A7 7 0 0 1 19 12ZM12 3V6.5M12 17.5V21M3 12H6.5M17.5 12H21M12 12H12.02'),
-    missions: sketchAreaSvg('#f59e0b', '<rect class="zwc-wash-fill" x="6" y="4.8" width="12" height="15" rx="1.8" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="11.2" r="3.4" fill="#22b56b"/>', 'M6 4.8H18V19.8H6V4.8ZM9 10.8L11.2 13L15.4 8.8M9 15.8H15'),
-    newspaper: sketchAreaSvg('#f5b82e', '<rect class="zwc-wash-fill" x="4.5" y="5" width="15.5" height="14.2" rx="1.5" fill="__WASH__"/><rect class="zwc-accent-fill" x="5" y="5.4" width="12.2" height="4" fill="#2da4e8"/>', 'M4.5 5H17.5V19.2H4.5V5ZM17.5 8.5H20V18C20 18.7 19.4 19.2 18.7 19.2H17.5M7.5 8.8H14.5M7.5 12.2H14.5M7.5 15.5H12.5'),
-    jail: sketchAreaSvg('#688cb8', '<rect class="zwc-wash-fill" x="4.5" y="4.5" width="15" height="15" rx="1.4" fill="__WASH__"/><rect class="zwc-accent-fill" x="9.6" y="9.8" width="4.8" height="4.4" rx="0.9" fill="#f59e0b"/>', 'M4.5 4.5H19.5V19.5H4.5V4.5ZM8.2 4.5V19.5M12 4.5V19.5M15.8 4.5V19.5M4.5 9.5H19.5M4.5 14.5H19.5'),
-    hospital: sketchAreaSvg('#2da4e8', '<rect class="zwc-wash-fill" x="5" y="4.8" width="14" height="14.4" rx="2" fill="__WASH__"/><path class="zwc-accent-fill" d="M10.4 7.6H13.6V10.4H16.4V13.6H13.6V16.4H10.4V13.6H7.6V10.4H10.4V7.6Z" fill="#e63946"/>', 'M12 7.2V16.8M7.2 12H16.8M5 4.8H19V19.2H5V4.8Z'),
-    casino: sketchAreaSvg('#a855f7', '<rect class="zwc-wash-fill" x="5" y="5" width="14" height="14" rx="2.6" fill="__WASH__"/><circle class="zwc-accent-fill" cx="8.8" cy="8.8" r="1.4" fill="#fde047"/><circle class="zwc-accent-fill" cx="15.2" cy="8.8" r="1.4" fill="#fde047"/><circle class="zwc-accent-fill" cx="12" cy="12" r="1.4" fill="#fde047"/><circle class="zwc-accent-fill" cx="8.8" cy="15.2" r="1.4" fill="#fde047"/><circle class="zwc-accent-fill" cx="15.2" cy="15.2" r="1.4" fill="#fde047"/>', 'M5 5H19V19H5V5Z'),
-    hof: sketchAreaSvg('#f5b82e', '<path class="zwc-wash-fill" d="M7.2 4.5H16.8V9.8C16.8 12.5 14.6 14.6 12 14.6C9.4 14.6 7.2 12.5 7.2 9.8V4.5Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="9.2" r="2.1" fill="#e63946"/>', 'M7.2 4.5H16.8V9.8C16.8 12.5 14.6 14.6 12 14.6C9.4 14.6 7.2 12.5 7.2 9.8V4.5ZM12 14.6V18.8M8.2 19.8H15.8M7.2 6.5H4.5V8.8C4.5 10.2 5.6 11.2 7.2 11.2M16.8 6.5H19.5V8.8C19.5 10.2 18.4 11.2 16.8 11.2'),
-    faction: sketchAreaSvg('#3b82f6', '<path class="zwc-wash-fill" d="M12 3.8L19 6.8V12.2C19 16.5 15.9 19.4 12 20.8C8.1 19.4 5 16.5 5 12.2V6.8L12 3.8Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M8.8 13.8L9.8 9.6L12 11.6L14.2 9.6L15.2 13.8H8.8Z" fill="#f5b82e"/>', 'M12 3.8L19 6.8V12.2C19 16.5 15.9 19.4 12 20.8C8.1 19.4 5 16.5 5 12.2V6.8L12 3.8Z'),
-    elimination: sketchAreaSvg('#ea7234', '<path class="zwc-wash-fill" d="M12 3.8L19 6.8V12.2C19 16.5 15.9 19.4 12 20.8C8.1 19.4 5 16.5 5 12.2V6.8L12 3.8Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12.2" r="3" fill="#e63946"/>', 'M12 3.8L19 6.8V12.2C19 16.5 15.9 19.4 12 20.8C8.1 19.4 5 16.5 5 12.2V6.8L12 3.8ZM9.2 9.6L14.8 15.2M14.8 9.6L9.2 15.2'),
-    attack: sketchAreaSvg('#f43f6e', '<circle class="zwc-wash-fill" cx="12" cy="12" r="6.8" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="2.8" fill="#f5b82e"/>', 'M5.2 18.8L18.8 5.2M14.2 5.2H18.8V9.8M5.2 14.2L9.8 18.8'),
-    market: sketchAreaSvg('#f5b82e', '<rect class="zwc-wash-fill" x="5.2" y="9.5" width="13.6" height="10" fill="__WASH__"/><path class="zwc-accent-fill" d="M4.2 9.5L6 4.8H18L19.8 9.5H4.2Z" fill="#e63946"/><rect class="zwc-accent-fill" x="9.8" y="14.5" width="4.4" height="5" fill="#22b56b"/>', 'M4.2 9.5L6 4.8H18L19.8 9.5M5.2 9.5V19.5H18.8V9.5M9.8 19.5V14.5H14.2V19.5'),
-    account: sketchAreaSvg('#2da4e8', '<circle class="zwc-wash-fill" cx="12" cy="8.6" r="3.6" fill="__WASH__"/><path class="zwc-accent-fill" d="M5.5 19.5C6.4 16.2 8.8 14.6 12 14.6C15.2 14.6 17.6 16.2 18.5 19.5H5.5Z" fill="#f59e0b"/>', 'M12 12.2A3.6 3.6 0 1 0 12 5A3.6 3.6 0 0 0 12 12.2ZM5.5 19.5C6.4 16.2 8.8 14.6 12 14.6C15.2 14.6 17.6 16.2 18.5 19.5')
+    home: sovereignCrestSvg('url(#zwm-gold)', '<path d="M6.4 11.2L12 6.2L17.6 11.2V17.4H6.4V11.2Z" fill="url(#zwm-gold)" fill-opacity="0.22"/>', '<path d="M5.4 11.4L12 5.6L18.6 11.4M6.8 10.6V17.4H17.2V10.6M10.4 17.4V13.4H13.6V17.4" stroke="url(#zwm-gold)" stroke-width="1.5"/>'),
+    items: sovereignCrestSvg('url(#zwm-gold)', '<polygon points="12,5.6 17.8,8.6 17.8,15.4 12,18.4 6.2,15.4 6.2,8.6" fill="url(#zwm-gold)" fill-opacity="0.22"/>', '<polygon points="12,5.6 17.8,8.6 17.8,15.4 12,18.4 6.2,15.4 6.2,8.6" stroke="url(#zwm-gold)" stroke-width="1.45"/><path d="M6.2,8.6L12,11.8L17.8,8.6M12,11.8V18.4" stroke="url(#zwm-steel)" stroke-width="1.35"/>'),
+    city: sovereignCrestSvg('url(#zwm-cyan)', '<path d="M6.4 17.2V9.6L10 7.8V17.2H6.4ZM10 17.2V6L14.4 7.6V17.2H10ZM14.4 17.2V10.8L17.6 12V17.2H14.4Z" fill="url(#zwm-cyan)" fill-opacity="0.25"/>', '<path d="M5.6 17.2H18.4M6.6 17.2V9.6L10 7.8V17.2M10 6L14.4 7.6V17.2M14.4 10.8L17.6 12V17.2" stroke="url(#zwm-cyan)" stroke-width="1.45"/>'),
+    jobs: sovereignCrestSvg('url(#zwm-gold)', '<rect x="6.2" y="8.4" width="11.6" height="8.6" rx="1.4" fill="url(#zwm-gold)" fill-opacity="0.22"/>', '<rect x="6.2" y="8.4" width="11.6" height="8.6" rx="1.4" stroke="url(#zwm-gold)" stroke-width="1.45"/><path d="M9.5 8.4V6.8C9.5 6.1 10 5.6 10.7 5.6H13.3C14 5.6 14.5 6.1 14.5 6.8V8.4M6.2 12.4H17.8" stroke="url(#zwm-steel)" stroke-width="1.35"/>'),
+    bank: sovereignCrestSvg('url(#zwm-emerald)', '<path d="M5.8 9.8L12 5.8L18.2 9.8H5.8Z" fill="url(#zwm-gold)" fill-opacity="0.32"/>', '<path d="M5.8 9.8L12 5.8L18.2 9.8H5.8ZM7.6 9.8V16.2M10.6 9.8V16.2M13.4 9.8V16.2M16.4 9.8V16.2M5.8 16.4H18.2" stroke="url(#zwm-emerald)" stroke-width="1.45"/>'),
+    gym: sovereignCrestSvg('url(#zwm-emerald)', '<rect x="6.2" y="8.2" width="2.5" height="7.6" rx="0.8" fill="url(#zwm-emerald)"/><rect x="15.3" y="8.2" width="2.5" height="7.6" rx="0.8" fill="url(#zwm-emerald)"/>', '<path d="M4.8 12H19.2M6.2 8.2H8.7V15.8H6.2V8.2ZM15.3 8.2H17.8V15.8H15.3V8.2Z" stroke="url(#zwm-emerald)" stroke-width="1.45"/>'),
+    properties: sovereignCrestSvg('url(#zwm-gold)', '<path d="M6.8 17.2V6.6L13.2 5V17.2H6.8ZM13.2 10.4L17.2 11.6V17.2H13.2V10.4Z" fill="url(#zwm-emerald)" fill-opacity="0.24"/>', '<path d="M5.8 17.2H18.2M6.8 17.2V6.6L13.2 5V17.2M13.2 10.4L17.2 11.6V17.2" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    education: sovereignCrestSvg('url(#zwm-cyan)', '<circle cx="12" cy="11.6" r="4.8" fill="url(#zwm-cyan)" fill-opacity="0.22"/>', '<circle cx="12" cy="11.6" r="4.8" stroke="url(#zwm-gold)" stroke-width="1.4"/><ellipse cx="12" cy="11.6" rx="2.1" ry="4.8" stroke="url(#zwm-cyan)" stroke-width="1.25"/><path d="M7.2 11.6H16.8M9.4 17.4H14.6" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    crimes: sovereignCrestSvg('url(#zwm-ruby)', '<circle cx="12" cy="12" r="5.2" fill="url(#zwm-ruby)" fill-opacity="0.24"/>', '<circle cx="12" cy="12" r="5.2" stroke="url(#zwm-ruby)" stroke-width="1.45"/><circle cx="12" cy="12" r="1.7" fill="url(#zwm-gold)"/><path d="M12 5V7.4M12 16.6V19M5 12H7.4M16.6 12H19" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    missions: sovereignCrestSvg('url(#zwm-gold)', '<rect x="7" y="6" width="10" height="12" rx="1.4" fill="url(#zwm-gold)" fill-opacity="0.22"/>', '<rect x="7" y="6" width="10" height="12" rx="1.4" stroke="url(#zwm-gold)" stroke-width="1.45"/><path d="M9.4 11.8L11.2 13.6L14.8 9.8M9.4 15.2H14.6" stroke="url(#zwm-emerald)" stroke-width="1.5"/>'),
+    newspaper: sovereignCrestSvg('url(#zwm-steel)', '<rect x="6.4" y="6.4" width="11.2" height="11.2" rx="1.3" fill="url(#zwm-steel)" fill-opacity="0.18"/>', '<rect x="6.4" y="6.4" width="11.2" height="11.2" rx="1.3" stroke="url(#zwm-gold)" stroke-width="1.4"/><path d="M8.8 9.4H15.2M8.8 12.2H15.2M8.8 14.8H12.4" stroke="url(#zwm-steel)" stroke-width="1.4"/>'),
+    jail: sovereignCrestSvg('url(#zwm-steel)', '<rect x="6.6" y="6.4" width="10.8" height="11.2" rx="1.2" fill="url(#zwm-steel)" fill-opacity="0.18"/>', '<rect x="6.6" y="6.4" width="10.8" height="11.2" rx="1.2" stroke="url(#zwm-steel)" stroke-width="1.4"/><path d="M9.6 6.4V17.6M12 6.4V17.6M14.4 6.4V17.6M6.6 11.8H17.4" stroke="url(#zwm-gold)" stroke-width="1.35"/>'),
+    hospital: sovereignCrestSvg('url(#zwm-ruby)', '<polygon points="12,5.6 17.4,8.2 17.4,13.6 12,18.2 6.6,13.6 6.6,8.2" fill="url(#zwm-ruby)" fill-opacity="0.24"/>', '<polygon points="12,5.6 17.4,8.2 17.4,13.6 12,18.2 6.6,13.6 6.6,8.2" stroke="url(#zwm-emerald)" stroke-width="1.4"/><path d="M12 9V14.8M9.1 11.9H14.9" stroke="url(#zwm-ruby)" stroke-width="1.85"/>'),
+    casino: sovereignCrestSvg('url(#zwm-gold)', '<circle cx="12" cy="12" r="5.4" fill="url(#zwm-ruby)" fill-opacity="0.28"/>', '<circle cx="12" cy="12" r="5.4" stroke="url(#zwm-gold)" stroke-width="1.45"/><polygon points="12,8.4 15,12 12,15.6 9,12" fill="url(#zwm-gold)"/>'),
+    hof: sovereignCrestSvg('url(#zwm-gold)', '<path d="M8.2 6.4H15.8V10.2C15.8 12.5 14.1 14.2 12 14.2C9.9 14.2 8.2 12.5 8.2 10.2V6.4Z" fill="url(#zwm-gold)" fill-opacity="0.32"/>', '<path d="M8.2 6.4H15.8V10.2C15.8 12.5 14.1 14.2 12 14.2C9.9 14.2 8.2 12.5 8.2 10.2V6.4ZM12 14.2V17.4M9.4 17.6H14.6" stroke="url(#zwm-gold)" stroke-width="1.5"/>'),
+    faction: sovereignCrestSvg('url(#zwm-gold)', '<path d="M12 5.4L17.4 7.8V12.2C17.4 15.5 15.1 17.8 12 19C8.9 17.8 6.6 15.5 6.6 12.2V7.8L12 5.4Z" fill="url(#zwm-gold)" fill-opacity="0.24"/>', '<path d="M12 5.4L17.4 7.8V12.2C17.4 15.5 15.1 17.8 12 19C8.9 17.8 6.6 15.5 6.6 12.2V7.8L12 5.4ZM9.4 13.4L10.2 10L12 11.8L13.8 10L14.6 13.4H9.4Z" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    elimination: sovereignCrestSvg('url(#zwm-ruby)', '<circle cx="12" cy="12" r="5.2" fill="url(#zwm-ruby)" fill-opacity="0.26"/>', '<circle cx="12" cy="12" r="5.2" stroke="url(#zwm-ruby)" stroke-width="1.45"/><path d="M9.4 9.4L14.6 14.6M14.6 9.4L9.4 14.6" stroke="url(#zwm-gold)" stroke-width="1.5"/>'),
+    attack: sovereignCrestSvg('url(#zwm-ruby)', '<polygon points="12,5.4 18.6,12 12,18.6 5.4,12" fill="url(#zwm-ruby)" fill-opacity="0.26"/>', '<path d="M7.4 16.6L16.6 7.4M13.6 7.4H16.6V10.4M16.6 16.6L7.4 7.4M10.4 7.4H7.4V10.4" stroke="url(#zwm-gold)" stroke-width="1.5"/>'),
+    market: sovereignCrestSvg('url(#zwm-gold)', '<path d="M6.6 9.6L8 6.4H16L17.4 9.6V17H6.6V9.6Z" fill="url(#zwm-gold)" fill-opacity="0.22"/>', '<path d="M6.6 9.6L8 6.4H16L17.4 9.6M7 9.6V17H17V9.6M10.4 17V13.4H13.6V17" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    account: sovereignCrestSvg('url(#zwm-gold)', '<circle cx="12" cy="9.2" r="2.8" fill="url(#zwm-gold)"/><path d="M7 17.2C8 14.4 9.7 13.2 12 13.2C14.3 13.2 16 14.4 17 17.2H7Z" fill="url(#zwm-steel)" fill-opacity="0.4"/>', '<circle cx="12" cy="9.2" r="2.8" stroke="url(#zwm-gold)" stroke-width="1.2"/><path d="M7 17.2C8 14.4 9.7 13.2 12 13.2C14.3 13.2 16 14.4 17 17.2" stroke="url(#zwm-gold)" stroke-width="1.35"/>')
   };
 
-  /* Vibrant Hand-Inked Gouache Icons for Market Items, Item Inspector Stage, Education & Jobs */
+  /* 18 Precision Sovereign Faculty, Item & Career Medallions (Every Single Course Unique!) */
   var SKETCH_ITEM_ICONS = {
-    rifle: sketchAreaSvg('#ea7234', '<path class="zwc-wash-fill" d="M3 10.5H15.5L17.5 13H13.5L12.5 16.5H10L10.5 13H6.5L4.5 16H2.5L3 10.5Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="15" y="10.2" width="6.2" height="2" rx="0.6" fill="#3b82f6"/><rect class="zwc-accent-fill" x="8" y="8" width="4.8" height="2" rx="0.6" fill="#f5b82e"/>', 'M2.8 10.6H21.2M15.4 10.6L17.2 13H13.4L12.4 17H9.8L10.4 13H6.4L4.4 16.2H2.5L3 10.6M8.2 8.2H12.8V10.6H8.2V8.2Z'),
-    shotgun: sketchAreaSvg('#b85233', '<path class="zwc-wash-fill" d="M2.6 11.4H16.4V13.8H11.2L9.2 16.4H5.2L6.8 13.8H2.6V11.4Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="15.8" y="10.4" width="5.6" height="2.2" rx="0.6" fill="#688cb8"/><rect class="zwc-accent-fill" x="10.2" y="13.4" width="5" height="1.8" rx="0.6" fill="#f5b82e"/>', 'M2.6 11.2H21.4M16 10.2H21.4V12.6H16M2.6 11.2V13.8H7L5 16.6H9.2L11.2 13.8H16.4V11.2M10.4 13.8H15.2'),
-    pistol: sketchAreaSvg('#3b82f6', '<path class="zwc-wash-fill" d="M4.2 8.4H19.4V12.4H11.6L10.2 18.2H6.4L8.2 12.4H4.2V8.4Z" fill="__WASH__"/><rect class="zwc-accent-fill" x="5.8" y="8.8" width="12.2" height="2.4" fill="#f5b82e"/>', 'M4.2 8.4H19.6V12.4H11.6L10.2 18.2H6.4L8.2 12.4H4.2V8.4ZM11.6 12.4C11.6 14.2 13.2 14.6 14 13.4'),
-    melee: sketchAreaSvg('#e63946', '<path class="zwc-wash-fill" d="M18.6 4.4L19.6 5.4L10.8 14.2L8.4 11.8L18.6 4.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M7.6 11.2L12.8 16.4L11.4 17.8L9.6 16L6.2 19.4L4.6 17.8L8 14.4L6.2 12.6L7.6 11.2Z" fill="#f5b82e"/>', 'M19.4 4.6L10.6 13.8M19.4 4.6L14.2 5.4L8.4 11.6M7.4 11L13 16.6M8.8 14.6L5 18.4L6.2 19.6L10 15.8'),
-    medical: sketchAreaSvg('#2da4e8', '<rect class="zwc-wash-fill" x="3.8" y="6.8" width="16.4" height="12.6" rx="2.4" fill="__WASH__"/><path class="zwc-accent-fill" d="M10.4 9.2H13.6V11.6H16V14.8H13.6V17.2H10.4V14.8H8V11.6H10.4V9.2Z" fill="#e63946"/>', 'M9 6.8V5C9 4.2 9.6 3.6 10.4 3.6H13.6C14.4 3.6 15 4.2 15 5V6.8M3.8 6.8H20.2V19.4H3.8V6.8ZM12 9.6V16.8M8.4 13.2H15.6'),
-    armor: sketchAreaSvg('#3b82f6', '<path class="zwc-wash-fill" d="M12 3.4L19.4 6.4V12C19.4 16.4 16.2 19.5 12 20.8C7.8 19.5 4.6 16.4 4.6 12V6.4L12 3.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M12 6.4L16.4 8.2V11.8C16.4 14.5 14.5 16.5 12 17.5C9.5 16.5 7.6 14.5 7.6 11.8V8.2L12 6.4Z" fill="#f5b82e"/>', 'M12 3.4L19.4 6.4V12C19.4 16.4 16.2 19.5 12 20.8C7.8 19.5 4.6 16.4 4.6 12V6.4L12 3.4ZM12 7.5V16.5M8.5 11.5H15.5'),
-    booster: sketchAreaSvg('#22b56b', '<path class="zwc-wash-fill" d="M9.4 4.4H14.6V8.4L18.2 15.6C18.8 17 17.8 19.4 16 19.4H8C6.2 19.4 5.2 17 5.8 15.6L9.4 8.4V4.4Z" fill="__WASH__"/><path class="zwc-accent-fill" d="M7.2 14.2H16.8L17.8 16.6C18 17.8 17.1 19 15.8 19H8.2C6.9 19 6 17.8 6.2 16.6L7.2 14.2Z" fill="#f5b82e"/>', 'M8.5 4.2H15.5M9.6 4.2V8.6L5.8 15.8C5.2 17.2 6.2 19.4 8 19.4H16C17.8 19.4 18.8 17.2 18.2 15.8L14.4 8.6V4.2M7.6 14H16.4'),
-    biology: sketchAreaSvg('#22b56b', '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.4" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="3" fill="#e63946"/>', 'M12 4.6A7.4 7.4 0 1 0 12 19.4A7.4 7.4 0 1 0 12 4.6ZM12 8.8A3.2 3.2 0 1 0 12 15.2A3.2 3.2 0 1 0 12 8.8ZM6.5 7.5L9.5 10M17.5 16.5L14.5 14M17.5 7.5L14.5 10M6.5 16.5L9.5 14'),
-    sports: sketchAreaSvg('#ef4c4c', '<rect class="zwc-accent-fill" x="7.8" y="10.8" width="8.4" height="2.4" rx="0.8" fill="#2da4e8"/><rect class="zwc-wash-fill" x="4.2" y="7.4" width="3.8" height="9.2" rx="1" fill="__WASH__"/><rect class="zwc-wash-fill" x="16" y="7.4" width="3.8" height="9.2" rx="1" fill="__WASH__"/>', 'M2.2 12H4.2M19.8 12H21.8M8 12H16M4.2 7.4H8V16.6H4.2V7.4ZM16 7.4H19.8V16.6H16V7.4Z'),
-    law: sketchAreaSvg('#f5b82e', '<rect class="zwc-wash-fill" x="9.6" y="4.2" width="7.2" height="4.4" rx="1" transform="rotate(35 13.2 6.4)" fill="__WASH__"/><rect class="zwc-accent-fill" x="4.2" y="17.2" width="11.6" height="2.8" rx="0.8" fill="#ea7234"/>', 'M10.4 4.2L17.4 9.2L15 12.6L8 7.6L10.4 4.2ZM11.8 10.6L6.4 17.2M4.2 17.4H16V20H4.2V17.4Z'),
-    business: sketchAreaSvg('#2da4e8', '<rect class="zwc-wash-fill" x="4.5" y="13" width="3.6" height="6.6" rx="0.7" fill="#22b56b"/><rect class="zwc-wash-fill" x="10.2" y="9.4" width="3.6" height="10.2" rx="0.7" fill="__WASH__"/><rect class="zwc-accent-fill" x="15.9" y="5.6" width="3.6" height="14" rx="0.7" fill="#f5b82e"/>', 'M3.2 19.6H20.8M4.5 13H8.1V19.6H4.5V13ZM10.2 9.4H13.8V19.6H10.2V9.4ZM15.9 5.6H19.5V19.6H15.9V5.6ZM4.8 10.2L10.4 6.6L16.2 4.2'),
-    tech: sketchAreaSvg('#5c7cfa', '<rect class="zwc-wash-fill" x="5.4" y="5.4" width="13.2" height="13.2" rx="2" fill="__WASH__"/><rect class="zwc-accent-fill" x="9" y="9" width="6" height="6" rx="1" fill="#f5b82e"/>', 'M5.4 5.4H18.6V18.6H5.4V5.4ZM9 9H15V15H9V9ZM9 2.6V5.4M15 2.6V5.4M9 18.6V21.4M15 18.6V21.4M2.6 9H5.4M2.6 15H5.4M18.6 9H21.4M18.6 15H21.4'),
-    grocer: sketchAreaSvg('#22b56b', '<rect class="zwc-wash-fill" x="4.6" y="10" width="14.8" height="9.6" rx="1.2" fill="#f5b82e"/><path class="zwc-accent-fill" d="M3.6 5H20.4L21.4 10H2.6L3.6 5Z" fill="#e63946"/><rect class="zwc-accent-fill" x="9.6" y="14" width="4.8" height="5.6" fill="__WASH__"/>', 'M3.6 5H20.4L21.4 10H2.6L3.6 5ZM4.6 10V19.6H19.4V10M9.6 19.6V14H14.4V19.6'),
-    army: sketchAreaSvg('#6c8c3c', '<path class="zwc-wash-fill" d="M12 3.8L14.4 8.8L19.8 9.6L15.8 13.4L16.8 18.8L12 16.2L7.2 18.8L8.2 13.4L4.2 9.6L9.6 8.8L12 3.8Z" fill="__WASH__"/><circle class="zwc-accent-fill" cx="12" cy="12" r="2.4" fill="#f5b82e"/>', 'M12 3.8L14.4 8.8L19.8 9.6L15.8 13.4L16.8 18.8L12 16.2L7.2 18.8L8.2 13.4L4.2 9.6L9.6 8.8L12 3.8Z')
+    rifle: sovereignCrestSvg('url(#zwm-gold)', '<path d="M5.4 11H16.2L17.6 13H13.4L12.6 16H10.4L11 13H7.4L5.8 15.4H4.6L5.4 11Z" fill="url(#zwm-gold)" fill-opacity="0.32"/>', '<path d="M4.8 11H19.2M15.4 11L17 13.2H13.4L12.6 16.4H10.4L11 13.2H7.2L5.6 15.6M9.2 9H13.4V11" stroke="url(#zwm-steel)" stroke-width="1.4"/>'),
+    shotgun: sovereignCrestSvg('url(#zwm-ruby)', '<rect x="5" y="10.8" width="13.6" height="2.4" rx="0.8" fill="url(#zwm-ruby)" fill-opacity="0.32"/>', '<path d="M4.6 11H19.4M14.8 10H19.2V12.2H14.8M5 11V13.4H8.2L6.6 16H9.8L11.4 13.4H15.6" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    pistol: sovereignCrestSvg('url(#zwm-steel)', '<path d="M6.2 9.2H17.8V12.2H12.2L11 16.8H8L9.4 12.2H6.2V9.2Z" fill="url(#zwm-steel)" fill-opacity="0.3"/>', '<path d="M6.2 9.2H17.8V12.2H12.2L11 16.8H8L9.4 12.2H6.2V9.2Z" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    melee: sovereignCrestSvg('url(#zwm-ruby)', '<polygon points="17.6,6.4 18.4,7.2 10.6,15 9.2,13.6" fill="url(#zwm-steel)"/>', '<path d="M18 6L10.2 13.8M8.6 12.2L12.8 16.4M9.6 14.4L6.6 17.4" stroke="url(#zwm-gold)" stroke-width="1.5"/>'),
+    medical: sovereignCrestSvg('url(#zwm-emerald)', '<rect x="6.4" y="7.6" width="11.2" height="9.6" rx="1.6" fill="url(#zwm-emerald)" fill-opacity="0.22"/>', '<rect x="6.4" y="7.6" width="11.2" height="9.6" rx="1.6" stroke="url(#zwm-emerald)" stroke-width="1.4"/><path d="M12 9.8V15M9.4 12.4H14.6" stroke="url(#zwm-ruby)" stroke-width="1.8"/>'),
+    armor: sovereignCrestSvg('url(#zwm-steel)', '<path d="M12 5.4L17.6 7.8V12.2C17.6 15.6 15.2 18 12 19.2C8.8 18 6.4 15.6 6.4 12.2V7.8L12 5.4Z" fill="url(#zwm-steel)" fill-opacity="0.28"/>', '<path d="M12 5.4L17.6 7.8V12.2C17.6 15.6 15.2 18 12 19.2C8.8 18 6.4 15.6 6.4 12.2V7.8L12 5.4ZM12 8.2V16.2" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    booster: sovereignCrestSvg('url(#zwm-emerald)', '<path d="M10 6.2H14V9.4L16.8 15.2C17.2 16.2 16.5 17.6 15.2 17.6H8.8C7.5 17.6 6.8 16.2 7.2 15.2L10 9.4V6.2Z" fill="url(#zwm-emerald)" fill-opacity="0.28"/>', '<path d="M9.4 6.2H14.6M10.2 6.2V9.4L7.2 15.2C6.8 16.2 7.5 17.6 8.8 17.6H15.2C16.5 17.6 17.2 16.2 16.8 15.2L13.8 9.4V6.2M8.4 14H15.6" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    biology: sovereignCrestSvg('url(#zwm-emerald)', '<path d="M9 6.2C9 9.8 15 9.8 15 13.4C15 15.8 12 17.6 9 17.6" fill="none"/>', '<path d="M8.8 6C8.8 10 15.2 10 15.2 14C15.2 16.4 13.2 18 10.6 18M15.2 6C15.2 10 8.8 10 8.8 14C8.8 16.4 10.8 18 13.4 18" stroke="url(#zwm-cyan)" stroke-width="1.5"/><path d="M9.4 8.2H14.6M9.6 12H14.4M9.4 15.8H14.6" stroke="url(#zwm-gold)" stroke-width="1.25"/>'),
+    sports: sovereignCrestSvg('url(#zwm-emerald)', '<circle cx="12" cy="12" r="5.2" fill="url(#zwm-emerald)" fill-opacity="0.18"/>', '<path d="M5.4 12H18.6M7.2 8.4V15.6M9.4 9.6V14.4M14.6 9.6V14.4M16.8 8.4V15.6" stroke="url(#zwm-emerald)" stroke-width="1.55"/><circle cx="12" cy="12" r="2.2" stroke="url(#zwm-gold)" stroke-width="1.25"/>'),
+    law: sovereignCrestSvg('url(#zwm-gold)', '<polygon points="12,5.6 17,8.4 7,8.4" fill="url(#zwm-gold)" fill-opacity="0.28"/>', '<path d="M12 5.8V17.4M7.2 8.6H16.8M9.2 17.4H14.8M7.4 8.6L5.8 12.6H9L7.4 8.6ZM16.6 8.6L15 12.6H18.2L16.6 8.6Z" stroke="url(#zwm-gold)" stroke-width="1.35"/>'),
+    business: sovereignCrestSvg('url(#zwm-gold)', '<rect x="6.8" y="12.6" width="2.6" height="4.8" fill="url(#zwm-emerald)"/><rect x="10.7" y="9.8" width="2.6" height="7.6" fill="url(#zwm-cyan)"/><rect x="14.6" y="6.8" width="2.6" height="10.6" fill="url(#zwm-gold)"/>', '<path d="M6 17.4H18M6.8 9.8L11.6 6.8L16.4 5.2M14.2 5.2H16.6V7.6" stroke="url(#zwm-gold)" stroke-width="1.35"/>'),
+    combat: sovereignCrestSvg('url(#zwm-ruby)', '<path d="M12 5.4L17.2 7.8V12.2C17.2 15.4 15 17.8 12 19C9 17.8 6.8 15.4 6.8 12.2V7.8L12 5.4Z" fill="url(#zwm-ruby)" fill-opacity="0.25"/>', '<path d="M12 5.4L17.2 7.8V12.2C17.2 15.4 15 17.8 12 19C9 17.8 6.8 15.4 6.8 12.2V7.8L12 5.4ZM8.6 15.2L15.4 8.4M15.4 15.2L8.6 8.4" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    history: sovereignCrestSvg('url(#zwm-gold)', '<path d="M8.8 10C8.8 8 10.2 6.8 12 6.8C13.8 6.8 15.2 8 15.2 10C15.2 12.6 14 15.2 12 16.4C10 15.2 8.8 12.6 8.8 10Z" fill="url(#zwm-gold)" fill-opacity="0.32"/>', '<path d="M9.8 6.2H14.2M8.8 10C8.8 8 10.2 6.8 12 6.8C13.8 6.8 15.2 8 15.2 10C15.2 12.6 14 15.2 12 16.4C10 15.2 8.8 12.6 8.8 10ZM8.4 17.4H15.6" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    tech: sovereignCrestSvg('url(#zwm-cyan)', '<rect x="7.4" y="7.4" width="9.2" height="9.2" rx="1.4" fill="url(#zwm-cyan)" fill-opacity="0.24"/>', '<rect x="7.4" y="7.4" width="9.2" height="9.2" rx="1.4" stroke="url(#zwm-cyan)" stroke-width="1.45"/><rect x="10" y="10" width="4" height="4" fill="url(#zwm-gold)"/><path d="M10 5.4V7.4M14 5.4V7.4M10 16.6V18.6M14 16.6V18.6M5.4 10H7.4M5.4 14H7.4M16.6 10H18.6M16.6 14H18.6" stroke="url(#zwm-gold)" stroke-width="1.3"/>'),
+    emergency: sovereignCrestSvg('url(#zwm-ruby)', '<circle cx="12" cy="12" r="5.4" fill="url(#zwm-ruby)" fill-opacity="0.24"/>', '<path d="M6.4 12.2H9.4L10.8 8.4L13 15.8L14.4 12.2H17.6" stroke="url(#zwm-emerald)" stroke-width="1.65"/><circle cx="12" cy="12" r="5.4" stroke="url(#zwm-ruby)" stroke-width="1.3"/>'),
+    psychology: sovereignCrestSvg('url(#zwm-cyan)', '<circle cx="12" cy="11.4" r="4.6" fill="url(#zwm-cyan)" fill-opacity="0.22"/>', '<circle cx="12" cy="11.4" r="4.6" stroke="url(#zwm-gold)" stroke-width="1.35"/><circle cx="12" cy="11.4" r="1.7" fill="url(#zwm-cyan)"/><path d="M12 6.8V9.7M12 13.1V16M7.4 11.4H10.3M13.7 11.4H16.6M9.5 17.6H14.5" stroke="url(#zwm-steel)" stroke-width="1.3"/>'),
+    math: sovereignCrestSvg('url(#zwm-gold)', '<path d="M7.2 16.4A6.8 6.8 0 0 1 16.8 9.2L7.2 16.4Z" fill="url(#zwm-gold)" fill-opacity="0.24"/>', '<path d="M6.8 16.8H17.2M6.8 16.8L15.8 7.2M14.8 16.8A6.4 6.4 0 0 0 11.4 10.6" stroke="url(#zwm-cyan)" stroke-width="1.5"/><circle cx="15.8" cy="7.2" r="1.4" fill="url(#zwm-gold)"/>'),
+    pharma: sovereignCrestSvg('url(#zwm-emerald)', '<path d="M9.6 6.4H14.4V9.6L16.8 15.4C17.2 16.4 16.4 17.6 15.2 17.6H8.8C7.6 17.6 6.8 16.4 7.2 15.4L9.6 9.6V6.4Z" fill="url(#zwm-emerald)" fill-opacity="0.28"/>', '<path d="M9.2 6.4H14.8M10 6.4V9.6L7.2 15.4C6.8 16.4 7.6 17.6 8.8 17.6H15.2C16.4 17.6 17.2 16.4 16.8 15.4L14 9.6V6.4M8.4 13.8H15.6" stroke="url(#zwm-cyan)" stroke-width="1.4"/><circle cx="11" cy="15.6" r="0.9" fill="url(#zwm-gold)"/><circle cx="13.4" cy="15" r="0.8" fill="url(#zwm-gold)"/>'),
+    motorsport: sovereignCrestSvg('url(#zwm-ruby)', '<circle cx="12" cy="12" r="5.4" fill="url(#zwm-ruby)" fill-opacity="0.22"/>', '<circle cx="12" cy="12" r="5.4" stroke="url(#zwm-steel)" stroke-width="1.45"/><circle cx="12" cy="12" r="1.8" fill="url(#zwm-gold)"/><path d="M12 12L15.6 8.8M8.2 15.4H15.8" stroke="url(#zwm-ruby)" stroke-width="1.55"/>'),
+    command: sovereignCrestSvg('url(#zwm-gold)', '<path d="M7.2 15.8L8.6 9.4L12 12.2L15.4 9.4L16.8 15.8H7.2Z" fill="url(#zwm-gold)" fill-opacity="0.34"/>', '<path d="M7.2 15.8L8.6 9.4L12 12.2L15.4 9.4L16.8 15.8H7.2ZM12 6.2V8.4M10.8 7.2H13.2M7.6 17.6H16.4" stroke="url(#zwm-gold)" stroke-width="1.45"/>'),
+    grocer: sovereignCrestSvg('url(#zwm-emerald)', '<path d="M6.8 10H17.2V17H6.8V10Z" fill="url(#zwm-emerald)" fill-opacity="0.22"/>', '<path d="M6.2 10L7.6 6.6H16.4L17.8 10H6.2ZM7 10V17.2H17V10M10.4 17.2V13.4H13.6V17.2" stroke="url(#zwm-gold)" stroke-width="1.4"/>'),
+    army: sovereignCrestSvg('url(#zwm-gold)', '<polygon points="12,5.6 14,9.8 18.4,10.4 15.2,13.6 16,18 12,15.8 8,18 8.8,13.6 5.6,10.4 10,9.8" fill="url(#zwm-gold)" fill-opacity="0.32"/>', '<polygon points="12,5.6 14,9.8 18.4,10.4 15.2,13.6 16,18 12,15.8 8,18 8.8,13.6 5.6,10.4 10,9.8" stroke="url(#zwm-gold)" stroke-width="1.35"/>')
   };
 
   function resolveItemIconKey(nameText, typeText) {
@@ -143,18 +175,30 @@
     return 'armor';
   }
 
-  function resolveRecordIconKey(titleText) {
+  function resolveRecordSpec(titleText) {
     var s = String(titleText || '').toLowerCase();
-    if (/bio|med|health|doctor|nurse|أحياء|طب|صح/.test(s)) return 'biology';
-    if (/sport|gym|fitness|combat|fight|رياض|لياق|قتال/.test(s)) return 'sports';
-    if (/law|legal|crim|judge|قانون|جنائ|محام/.test(s)) return 'law';
-    if (/busi|econ|finan|bank|market|تجار|أعمال|اقتصاد|مال/.test(s)) return 'business';
-    if (/comp|tech|cyber|hack|code|science|حاسوب|تقني|برمج/.test(s)) return 'tech';
-    if (/grocer|shop|store|clerk|بقال|متجر/.test(s)) return 'grocer';
-    if (/casino|dealer|card|كازينو|موزع/.test(s)) return 'casino';
-    if (/army|military|guard|secur|جيش|عسكر|أمن/.test(s)) return 'army';
-    if (/edu|teach|univ|school|تعليم|أكاديم/.test(s)) return 'education';
-    return 'jobs';
+    if (/pharma|drug|compound|صيدل|كيمي|دوائ/.test(s)) return { icon: 'pharma', item3d: 'edu_pharma' };
+    if (/emerg|trauma|revive|طوارئ|إسعاف|إنعاش/.test(s)) return { icon: 'emergency', item3d: 'edu_med' };
+    if (/bio|med|health|doctor|nurse|أحياء|طب|صح/.test(s)) return { icon: 'biology', item3d: 'edu_bio' };
+    if (/motor|race|engine|drive|محرك|سباق|سيار/.test(s)) return { icon: 'motorsport', item3d: 'edu_motorsport' };
+    if (/sport|gym|fitness|biomech|رياض|لياق/.test(s)) return { icon: 'sports', item3d: 'edu_sports' };
+    if (/psych|forensic|mental|نفس|جنائ.*نفس|سلوك/.test(s)) return { icon: 'psychology', item3d: 'edu_psych' };
+    if (/law|legal|crim|judge|قانون|جنائ|محام/.test(s)) return { icon: 'law', item3d: 'edu_law' };
+    if (/hist|museum|ancient|تاريخ|متحف|آثار/.test(s)) return { icon: 'history', item3d: 'edu_history' };
+    if (/defense|tactical|combat|fight|دفاع|تكتيك|قتال/.test(s)) return { icon: 'combat', item3d: 'edu_combat' };
+    if (/comp|tech|cyber|hack|code|حاسوب|تقني|برمج/.test(s)) return { icon: 'tech', item3d: 'edu_cs' };
+    if (/math|ballistic|general stud|رياضيات|دراسات|باليست/.test(s)) return { icon: 'math', item3d: 'edu_math' };
+    if (/command|syndicate|leader|قياد|نقاب|زعيم/.test(s)) return { icon: 'command', item3d: 'edu_command' };
+    if (/busi|econ|finan|bank|market|تجار|أعمال|اقتصاد|مال/.test(s)) return { icon: 'business', item3d: 'edu_biz' };
+    if (/grocer|shop|store|clerk|بقال|متجر/.test(s)) return { icon: 'grocer', item3d: 'edu_biz' };
+    if (/casino|dealer|card|كازينو|موزع/.test(s)) return { icon: 'casino', item3d: 'roulette_wheel' };
+    if (/army|military|guard|secur|جيش|عسكر|أمن/.test(s)) return { icon: 'army', item3d: 'edu_combat' };
+    if (/edu|teach|univ|school|تعليم|أكاديم/.test(s)) return { icon: 'education', item3d: 'edu_math' };
+    return { icon: 'command', item3d: 'edu_command' };
+  }
+
+  function resolveRecordIconKey(titleText) {
+    return resolveRecordSpec(titleText).icon;
   }
 
   function resolveScreenKey(raw) {
@@ -580,20 +624,58 @@
       }
     }
 
-    /* Education & Jobs Hand-Inked Medallions (replaces harsh dark-mode black squares on Light cream) */
+    /* Education Sovereign 3D University Hero Stage + 18 Live 3D Discipline Turntables & Jobs Medallions */
+    var eduSchedule = document.querySelector('#zone-main[data-zone-screen="education"] .zone-course-schedule');
+    if (eduSchedule) {
+      var eduHero = document.getElementById('zwc-edu-3d-hero');
+      var eduLang = isAr() ? 'ar' : 'en';
+      if (!eduHero || eduHero.getAttribute('data-lang') !== eduLang) {
+        if (eduHero) eduHero.remove();
+        eduHero = document.createElement('div');
+        eduHero.id = 'zwc-edu-3d-hero';
+        eduHero.className = 'zwc-edu-3d-hero';
+        eduHero.setAttribute('data-lang', eduLang);
+        eduHero.innerHTML =
+          '<div class="zwc-edu-hero-bar">' +
+            '<div class="zwc-edu-hero-meta">' +
+              '<span class="zwc-edu-hero-kicker">' + (eduLang === 'ar' ? 'الأكاديمية السيادية · مختبر الأبحاث ثلاثي الأبعاد' : 'SOVEREIGN UNIVERSITY · 3D RESEARCH SANCTUM') + '</span>' +
+              '<strong class="zwc-edu-hero-title">' + (eduLang === 'ar' ? 'مدرّج العلوم الجنائية والتكتيك والمال' : 'Armillary Orrery, Cyber-Forensics & Syndicate Command Lab') + '</strong>' +
+            '</div>' +
+            '<div class="zwc-edu-hero-actions">' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_bio">' + (eduLang === 'ar' ? 'فحص 3D: الأحياء' : '360° Bio-Helix') + '</button>' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_cs">' + (eduLang === 'ar' ? 'فحص 3D: السيبراني' : '360° Cyber-Deck') + '</button>' +
+              '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="edu_command">' + (eduLang === 'ar' ? 'فحص 3D: القيادة' : '360° Command Crown') + '</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="z3d-action-stage zwc-edu-hero-viewport" data-z3d-stage="safehouse-empire" data-z3d-submode="academy" data-z3d-interactive="1" style="min-height:224px;height:224px"></div>';
+        var recHead = eduSchedule.querySelector(':scope > header.zone-record-heading');
+        if (recHead) {
+          recHead.insertAdjacentElement('afterend', eduHero);
+        } else {
+          eduSchedule.insertBefore(eduHero, eduSchedule.firstChild);
+        }
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+          window.ZoneEcs3D.scan(eduHero);
+        }
+      }
+    }
+
     var recordArts = document.querySelectorAll(
       '#zone-main[data-zone-screen="education"] .zone-record-art, #zone-main[data-zone-screen="jobs"] .zone-record-art, #zone-main[data-zone-screen="job"] .zone-record-art'
     );
+    var mountedNewEduSlots = false;
     for (var ri = 0; ri < recordArts.length; ri++) {
       var rArt = recordArts[ri];
       var rRow = rArt.closest('article, .zone-current-record, header');
       var rTitleEl = rRow ? rRow.querySelector('h2, h3') : null;
-      var rKey = resolveRecordIconKey(rTitleEl ? rTitleEl.textContent : '');
+      var rTitleTxt = rTitleEl ? rTitleEl.textContent : '';
+      var rSpec = resolveRecordSpec(rTitleTxt);
+      var rKey = rSpec.icon;
       var rSvg = rArt.querySelector('svg.zwc-sketch-ico');
       if (!rSvg || rSvg.getAttribute('data-zwc-rec-ico') !== rKey) {
         if (rSvg) rSvg.remove();
         var rTmp = document.createElement('div');
-        rTmp.innerHTML = SKETCH_ITEM_ICONS[rKey] || SKETCH_AREA_ICONS[rKey] || SKETCH_AREA_ICONS.jobs;
+        rTmp.innerHTML = SKETCH_ITEM_ICONS[rKey] || SKETCH_AREA_ICONS[rKey] || SKETCH_ITEM_ICONS.command;
         var nextRecSvg = rTmp.firstElementChild;
         if (nextRecSvg) {
           nextRecSvg.setAttribute('data-zwc-rec-ico', rKey);
@@ -602,6 +684,44 @@
           rArt.appendChild(nextRecSvg);
         }
       }
+      /* Inject live 3D rotating discipline turntable inside every Education course row */
+      var courseRow = rArt.closest('#zone-main[data-zone-screen="education"] article.zone-course-row');
+      if (courseRow) {
+        var existingSlot = courseRow.querySelector('.zwc-edu-3d-wrap');
+        if (!existingSlot || existingSlot.getAttribute('data-edu-item') !== rSpec.item3d) {
+          if (existingSlot) existingSlot.remove();
+          var wrap3d = document.createElement('div');
+          wrap3d.className = 'zwc-edu-3d-wrap';
+          wrap3d.setAttribute('data-edu-item', rSpec.item3d);
+          wrap3d.innerHTML =
+            '<div class="z3d-item-slot zwc-edu-3d-slot" data-z3d-item="' + rSpec.item3d + '" data-z3d-cat="enhancer"></div>' +
+            '<button type="button" class="zwc-edu-3d-btn" data-zwc-inspect-3d="' + rSpec.item3d + '" data-zwc-label="' + rTitleTxt.replace(/"/g, '') + '">3D</button>';
+          var actionCol = courseRow.querySelector('.zone-record-action');
+          if (actionCol) {
+            courseRow.insertBefore(wrap3d, actionCol);
+          } else {
+            courseRow.appendChild(wrap3d);
+          }
+          mountedNewEduSlots = true;
+        }
+      }
+    }
+    if (mountedNewEduSlots && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      window.ZoneEcs3D.scan(document.getElementById('zone-main') || document);
+    }
+
+    if (!document.__zwcEdu3dClickBound) {
+      document.__zwcEdu3dClickBound = true;
+      document.addEventListener('click', function (ev) {
+        var btn = ev.target && ev.target.closest ? ev.target.closest('[data-zwc-inspect-3d]') : null;
+        if (!btn) return;
+        ev.preventDefault();
+        var itemId = btn.getAttribute('data-zwc-inspect-3d') || 'edu_command';
+        var label = btn.getAttribute('data-zwc-label') || itemId;
+        if (window.ZoneEcs3D && typeof window.ZoneEcs3D.inspectItem === 'function') {
+          window.ZoneEcs3D.inspectItem(itemId, { category: 'enhancer', rarity: 'legendary', title: label });
+        }
+      });
     }
 
     /* Swap Arcade Key-Art Images to Hand-Drawn Ink & Watercolor Illustrations */

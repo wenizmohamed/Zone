@@ -966,9 +966,9 @@
     return (
       '<div class="zrv-header">' +
         '<div class="zrv-brand">' +
-          '<span class="zrv-icon-badge" aria-hidden="true">🎬</span>' +
+          '<span class="zrv-icon-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/><line x1="21" y1="4" x2="21" y2="20"/></svg></span>' +
           '<div class="zrv-title-col">' +
-            '<h3 class="zrv-title">' + esc(ar ? '🎬 إعادة العرض التكتيكي ٣D ومسجل الأوامر الحتمي' : '🎬 Tactical 3D Replay & Deterministic Command Recorder') + '</h3>' +
+            '<h3 class="zrv-title">' + esc(ar ? 'إعادة العرض التكتيكي ٣D ومسجل الأوامر الحتمي' : 'Tactical 3D Replay & Deterministic Command Recorder') + '</h3>' +
             '<p class="zrv-subtitle">' +
               esc(ar ? 'خطوة منطقية ثابتة ' : 'Fixed Logical Step ') +
               '<bdi>100ms</bdi> · ' +
@@ -1049,7 +1049,7 @@
               esc(ar ? '✔ فحص التطابق الحتمي' : '✔ Re-Verify Seed Hash') +
             '</button>' +
             '<button type="button" class="zrv-ctrl-btn" data-zrv-act="export-seed">' +
-              esc(ar ? '📤 مشاركة / تصدير البذرة' : '📤 Export / Replay Seed Share') +
+              esc(ar ? '↗ مشاركة / تصدير البذرة' : '↗ Export / Replay Seed Share') +
             '</button>' +
           '</div>' +
           '<span class="zrv-subtitle">' +

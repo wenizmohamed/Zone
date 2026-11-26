@@ -1524,21 +1524,29 @@
         '<div class="zre-card" data-highlight="' + (unlocked ? 'sage' : '') + '">' +
           '<div class="zre-card-top">' +
             '<bdi class="zre-chip" data-tone="' + (unlocked ? 'sage' : 'gold') + '">Lv ' + rm.lv + '</bdi>' +
-            '<span>' + (unlocked ? '✓' : '🔒') + '</span>' +
+            '<span>' + (unlocked ? '✓' : '◈') + '</span>' +
           '</div>' +
           '<div class="zre-card-meta">' + esc(ar ? rm.ar : rm.en) + '</div>' +
         '</div>';
     }
     roadHtml += '</div>';
 
+    var branch3dMap = {
+      shadow_mastermind: 'edu_cs',
+      warlord_enforcer: 'edu_combat',
+      syndicate_mogul: 'edu_biz',
+      bio_alchemist: 'edu_pharma'
+    };
     var treeHtml = '<div class="zre-skill-branches">';
     for (var bi = 0; bi < SKILL_BRANCHES.length; bi++) {
       var br = SKILL_BRANCHES[bi];
+      var brItem3d = branch3dMap[br.id] || 'edu_command';
       treeHtml +=
         '<div class="zre-branch-col" data-branch="' + br.id + '">' +
           '<div class="zre-branch-head">' +
             '<span class="zre-chip" data-tone="' + br.tone + '">' + esc(ar ? br.ar : br.en) + '</span>' +
-          '</div>';
+          '</div>' +
+          render3dItemShowcase(brItem3d, 'enhancer', ar ? br.ar : br.en);
       for (var ni = 0; ni < br.nodes.length; ni++) {
         var nd = br.nodes[ni];
         var isUnlocked = Boolean(rpg.unlockedMap[nd.id]);
@@ -1604,6 +1612,7 @@
           '</div>' +
           '<span class="zre-chip" data-tone="plum"><bdi>' + rpg.availableSp + ' ' + esc(copy.spUnit) + '</bdi></span>' +
         '</header>' +
+        '<div class="z3d-action-stage" data-z3d-stage="safehouse-empire" data-z3d-submode="academy" data-z3d-interactive="1" style="min-height:208px;height:208px;margin-bottom:10px"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
             '<h3 class="zre-section-title">' + esc(copy.skillTreeTitle) + '</h3>' +
@@ -1617,7 +1626,7 @@
         '<section class="zre-section">' +
           '<div class="zre-section-head">' +
             '<h3 class="zre-section-title">' + esc(copy.rankMatrixTitle) + '</h3>' +
-            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="rank-claim"' + (store.busy ? ' disabled' : '') + '>🎖 ' + esc(copy.claimRankBtn) + '</button>' +
+            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="rank-claim"' + (store.busy ? ' disabled' : '') + '>★ ' + esc(copy.claimRankBtn) + '</button>' +
           '</div>' +
           '<div class="zre-card" data-highlight="gold">' +
             '<div class="zre-card-top">' +
@@ -1637,8 +1646,8 @@
             '<h3 class="zre-section-title">' + esc(copy.levelHoldTitle) + '</h3>' +
             '<div class="zre-row-actions">' +
               '<span class="zre-chip" data-tone="gold">Lv <bdi>' + rpg.level + '</bdi> (Banked: <bdi>+' + rpg.pendingLevels + '</bdi>)</span>' +
-              '<button type="button" class="zre-btn" data-variant="' + (rpg.holdLevel ? 'gold' : '') + '" data-zre-act="level-toggle-hold" data-enabled="' + (rpg.holdLevel ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>⏸ ' + esc(rpg.holdLevel ? copy.holdOn : copy.holdOff) + '</button>' +
-              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="level-promote"' + (rpg.pendingLevels <= 0 || store.busy ? ' disabled' : '') + '>⬆ ' + esc(copy.promoteBtn) + ' (+' + rpg.pendingLevels + ')</button>' +
+              '<button type="button" class="zre-btn" data-variant="' + (rpg.holdLevel ? 'gold' : '') + '" data-zre-act="level-toggle-hold" data-enabled="' + (rpg.holdLevel ? '0' : '1') + '"' + (store.busy ? ' disabled' : '') + '>◈ ' + esc(rpg.holdLevel ? copy.holdOn : copy.holdOff) + '</button>' +
+              '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="level-promote"' + (rpg.pendingLevels <= 0 || store.busy ? ' disabled' : '') + '>▲ ' + esc(copy.promoteBtn) + ' (+' + rpg.pendingLevels + ')</button>' +
             '</div>' +
           '</div>' +
           roadHtml +
@@ -1910,7 +1919,7 @@
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.tradesTitle) + '</h3></div>' +
           '<div class="zre-row-actions">' +
             '<input type="text" class="zre-input" placeholder="Partner ID or username" data-zre-draft="tradePartner" value="' + esc(store.drafts.tradePartner) + '">' +
-            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="trade-create"' + (store.busy ? ' disabled' : '') + '>🤝 ' + esc(copy.openTradeBtn) + '</button>' +
+            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="trade-create"' + (store.busy ? ' disabled' : '') + '>⇄ ' + esc(copy.openTradeBtn) + '</button>' +
           '</div>' +
           tradesListHtml +
         '</section>' +
@@ -1979,15 +1988,17 @@
             '<h2 class="zre-route-title">' + esc(copy.jobsHeading) + '</h2>' +
             '<p class="zre-route-sub">' + esc(copy.jobsSub) + '</p>' +
           '</div>' +
-          (comp ? '<span class="zre-chip" data-tone="gold">' + esc(comp.name || 'My Company') + ' · ' + Number(comp.stars || 1) + '★ · JP: ' + Number(comp.jobPts || se.jobPts || 0) + '</span>' : '<span class="zre-chip" data-tone="gold">1★–10★</span>') +
+          (comp ? '<span class="zre-chip" data-tone="gold">' + esc(comp.name || 'My Company') + ' · ' + Number(comp.stars || 1) + '★ · JP: ' + Number(comp.jobPts || se.jobPts || 0) + '</span>' : '<span class="zre-chip" data-tone="gold">1★-10★</span>') +
         '</header>' +
+        '<div class="z3d-action-stage" data-z3d-stage="safehouse-empire" data-z3d-interactive="1" style="min-height:198px;height:198px;margin-bottom:10px"></div>' +
         '<section class="zre-section">' +
           '<div class="zre-section-head"><h3 class="zre-section-title">' + esc(copy.companyTitle) + '</h3></div>' +
+          render3dItemShowcase('edu_biz', 'enhancer', copy.companyTitle) +
           '<div class="zre-row-actions">' +
             '<select class="zre-select" data-zre-draft="companyType">' + compTypeOpts + '</select>' +
             '<input type="text" class="zre-input" data-zre-draft="companyName" value="' + esc(store.drafts.companyName) + '">' +
-            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="company-found"' + (store.busy ? ' disabled' : '') + '>🏢 ' + esc(copy.foundCompBtn) + '</button>' +
-            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="company-work"' + (store.busy ? ' disabled' : '') + '>⚡ ' + esc(copy.workShiftBtn) + '</button>' +
+            '<button type="button" class="zre-btn" data-variant="gold" data-zre-act="company-found"' + (store.busy ? ' disabled' : '') + '>◆ ' + esc(copy.foundCompBtn) + '</button>' +
+            '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="company-work"' + (store.busy ? ' disabled' : '') + '>▸ ' + esc(copy.workShiftBtn) + '</button>' +
             (comp ? '<button type="button" class="zre-btn" data-zre-act="company-leave"' + (store.busy ? ' disabled' : '') + '>' + esc(copy.leaveCompBtn) + '</button>' : '') +
           '</div>' +
           '<div class="zre-row-actions">' +
@@ -2014,7 +2025,7 @@
       var pr = proposals[pri];
       var pid = String(pr.id || pr.proposalId || ('prop_' + pri));
       propHtml +=
-        '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="marriage-accept" data-proposal="' + esc(pid) + '"' + (store.busy ? ' disabled' : '') + '>💍 ' + esc(copy.acceptMarriageBtn) + ' (' + esc(pr.fromId || pr.proposerId || pid) + ')</button>';
+        '<button type="button" class="zre-btn" data-variant="primary" data-zre-act="marriage-accept" data-proposal="' + esc(pid) + '"' + (store.busy ? ' disabled' : '') + '>◆ ' + esc(copy.acceptMarriageBtn) + ' (' + esc(pr.fromId || pr.proposerId || pid) + ')</button>';
     }
 
     return (

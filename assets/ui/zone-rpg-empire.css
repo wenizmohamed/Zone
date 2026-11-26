@@ -70,10 +70,10 @@ html:not([data-theme="light"]) body {
   --zre-plum-wash: rgba(196, 144, 245, 0.19);
   --zre-plum-border: rgba(196, 144, 245, 0.52);
 
-  --zre-font-ui: "Patrick Hand", "Rubik", system-ui, sans-serif;
-  --zre-font-brush: "Caveat Brush", "Patrick Hand", "Rubik", sans-serif;
-  --zre-radius: 255px 12px 225px 12px / 10px 225px 10px 255px;
-  --zre-radius-sm: 185px 8px 165px 8px / 7px 165px 7px 185px;
+  --zre-font-ui: "Rubik", "Inter", system-ui, sans-serif, "Patrick Hand";
+  --zre-font-brush: "Rubik", "Oswald", system-ui, sans-serif, "Caveat Brush", "Patrick Hand";
+  --zre-radius: 8px;
+  --zre-radius-sm: 6px;
 }
 
 html[data-theme="light"],

@@ -22,204 +22,158 @@
   var lastObservedNavOpen = 'false';
 
   /* ------------------------------------------------------------------------
-   * 1. VIBRANT MULTI-COLOR HAND-INKED GOUACHE ICON CATALOG (LIGHT + DARK)
-   *    Every icon pairs crisp fountain-pen/chalk ink outlines (.zwc-ink-stroke)
-   *    with rich, unmistakable multi-color gouache fills (.zwc-wash-fill &
-   *    .zwc-accent-fill) that pop equally on cream paper and dark charcoal.
+   * 1. SOVEREIGN NOIR-GOLD & METALLIC ARCHITECTURAL EMBLEM CATALOG (v168)
+   *    Precision chamfered escutcheons, multi-stop 24K champagne-brass,
+   *    emerald-bullion, ruby-clearcoat & brushed-platinum vector crests.
+   *    Zero cartoon crayon blobs, zero stick-person icons.
    * ------------------------------------------------------------------------ */
-  var WASH = {
-    emerald: '#22b56b',
-    lime: '#65c438',
-    gold: '#f5b82e',
-    amber: '#f59e0b',
-    sienna: '#ea7234',
-    coral: '#ef4c4c',
-    crimson: '#e63946',
-    rose: '#f43f6e',
-    cerulean: '#2da4e8',
-    cobalt: '#3b82f6',
-    indigo: '#5c7cfa',
-    teal: '#14b8a6',
-    plum: '#a855f7',
-    slate: '#688cb8',
-    cream: '#fff6df'
-  };
+  var SOVEREIGN_GRADS =
+    '<defs>' +
+      '<linearGradient id="zsv-gold" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#fef08a"/>' +
+        '<stop offset="48%" stop-color="#f3c969"/>' +
+        '<stop offset="100%" stop-color="#a16207"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zsv-emerald" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#6ee7b7"/>' +
+        '<stop offset="50%" stop-color="#10b981"/>' +
+        '<stop offset="100%" stop-color="#065f46"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zsv-ruby" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#fda4af"/>' +
+        '<stop offset="50%" stop-color="#f43f5e"/>' +
+        '<stop offset="100%" stop-color="#881337"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zsv-cyan" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#a5f3fc"/>' +
+        '<stop offset="50%" stop-color="#38bdf8"/>' +
+        '<stop offset="100%" stop-color="#0369a1"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zsv-steel" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#f8fafc"/>' +
+        '<stop offset="52%" stop-color="#cbd5e1"/>' +
+        '<stop offset="100%" stop-color="#475569"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="zsv-plate" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">' +
+        '<stop offset="0%" stop-color="#262320"/>' +
+        '<stop offset="100%" stop-color="#12100e"/>' +
+      '</linearGradient>' +
+    '</defs>';
+
+  var PLATE_HEX = '<polygon points="12,1.8 20.8,6.6 20.8,17.4 12,22.2 3.2,17.4 3.2,6.6" fill="url(#zsv-plate)" stroke="url(#zsv-gold)" stroke-width="1.15" stroke-opacity="0.72"/>';
 
   var SKETCH_ICONS = {
     home: {
-      wash:
-        '<path class="zwc-wash-fill" d="M5.2 10.6L12 4.6L18.8 10.6V19.6H5.2V10.6Z" fill="' + WASH.gold + '"/>' +
-        '<path class="zwc-accent-fill" d="M3.4 11.4L12 3.8L20.6 11.4H18.4L12 5.8L5.6 11.4H3.4Z" fill="' + WASH.crimson + '"/>' +
-        '<rect class="zwc-accent-fill" x="9.8" y="13.8" width="4.4" height="5.8" rx="0.6" fill="' + WASH.teal + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M3.2 11.6L12 3.8L20.8 11.6M5.2 10.2V19.8H18.8V10.2M9.8 19.8V13.8H14.2V19.8"/>'
+      wash: PLATE_HEX + '<path d="M6.2 11.2L12 6.2L17.8 11.2V17.6H13.8V13.4H10.2V17.6H6.2V11.2Z" fill="url(#zsv-gold)" fill-opacity="0.26"/>',
+      ink: '<path d="M5.2 11.4L12 5.6L18.8 11.4M6.8 10.6V17.6H17.2V10.6M10.4 17.6V13.4H13.6V17.6" stroke="url(#zsv-gold)" stroke-width="1.55"/>'
     },
     items: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4" y="7.2" width="16" height="12.4" rx="2" fill="' + WASH.sienna + '"/>' +
-        '<rect class="zwc-accent-fill" x="4.4" y="7.6" width="15.2" height="4.4" rx="1.4" fill="' + WASH.gold + '"/>' +
-        '<rect class="zwc-accent-fill" x="10.4" y="10.6" width="3.2" height="3.2" rx="0.7" fill="' + WASH.cream + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4" y="7.2" width="16" height="12.4" rx="2"/><path class="zwc-ink-stroke" d="M9 7.2V5.2C9 4.4 9.6 3.8 10.4 3.8H13.6C14.4 3.8 15 4.4 15 5.2V7.2M4 12.2H20M12 10.8V13.8"/>'
+      wash: PLATE_HEX + '<polygon points="12,5.4 18,8.6 18,15.4 12,18.6 6,15.4 6,8.6" fill="url(#zsv-gold)" fill-opacity="0.24"/>',
+      ink: '<polygon points="12,5.4 18,8.6 18,15.4 12,18.6 6,15.4 6,8.6" stroke="url(#zsv-gold)" stroke-width="1.45"/><path d="M6,8.6L12,11.8L18,8.6M12,11.8V18.6" stroke="url(#zsv-steel)" stroke-width="1.35"/>'
     },
     city: {
-      wash:
-        '<path class="zwc-wash-fill" d="M4.5 19.6V8.5L9.5 6.5V19.6H4.5Z" fill="' + WASH.teal + '"/>' +
-        '<path class="zwc-wash-fill" d="M9.5 19.6V4.5L15 6.3V19.6H9.5Z" fill="' + WASH.cerulean + '"/>' +
-        '<path class="zwc-wash-fill" d="M15 19.6V10.2L19.5 11.6V19.6H15Z" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M3.2 19.8H20.8M4.5 19.8V8.4L9.5 6.4V19.8M9.5 4.4L15 6.2V19.8M15 10.2L19.5 11.6V19.8M7 10.5H7.2M12 9.2H12.2M12 12.8H12.2M17 14.2H17.2"/>'
+      wash: PLATE_HEX + '<path d="M6.2 17.4V9.6L10 7.8V17.4H6.2ZM10 17.4V5.8L14.4 7.4V17.4H10ZM14.4 17.4V10.8L17.8 12V17.4H14.4Z" fill="url(#zsv-cyan)" fill-opacity="0.28"/>',
+      ink: '<path d="M5.4 17.4H18.6M6.4 17.4V9.6L10 7.8V17.4M10 5.8L14.4 7.4V17.4M14.4 10.8L17.8 12V17.4M12 9.4H12.4M12 12.2H12.4" stroke="url(#zsv-cyan)" stroke-width="1.45"/>'
     },
     jobs: {
-      wash:
-        '<rect class="zwc-wash-fill" x="3.8" y="7.8" width="16.4" height="12" rx="2" fill="' + WASH.cobalt + '"/>' +
-        '<rect class="zwc-accent-fill" x="4.2" y="8.2" width="15.6" height="4.4" rx="1.4" fill="' + WASH.cerulean + '"/>' +
-        '<rect class="zwc-accent-fill" x="10.2" y="11" width="3.6" height="3.2" rx="0.8" fill="' + WASH.gold + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="3.8" y="7.8" width="16.4" height="12" rx="2"/><path class="zwc-ink-stroke" d="M8.8 7.8V5.6C8.8 4.7 9.5 4 10.4 4H13.6C14.5 4 15.2 4.7 15.2 5.6V7.8M3.8 12.6H20.2"/>'
+      wash: PLATE_HEX + '<rect x="6" y="8.4" width="12" height="8.8" rx="1.4" fill="url(#zsv-gold)" fill-opacity="0.22"/>',
+      ink: '<rect x="6" y="8.4" width="12" height="8.8" rx="1.4" stroke="url(#zsv-gold)" stroke-width="1.45"/><path d="M9.4 8.4V6.8C9.4 6.1 9.9 5.6 10.6 5.6H13.4C14.1 5.6 14.6 6.1 14.6 6.8V8.4M6 12.4H18M11.2 12.4H12.8" stroke="url(#zsv-steel)" stroke-width="1.35"/>'
     },
     gym: {
-      wash:
-        '<rect class="zwc-accent-fill" x="7.6" y="10.8" width="8.8" height="2.4" rx="0.8" fill="' + WASH.cerulean + '"/>' +
-        '<rect class="zwc-wash-fill" x="4.2" y="7.6" width="3.6" height="8.8" rx="1" fill="' + WASH.coral + '"/>' +
-        '<rect class="zwc-wash-fill" x="16.2" y="7.6" width="3.6" height="8.8" rx="1" fill="' + WASH.coral + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M2.2 12H4.2M19.8 12H21.8M7.8 12H16.2"/><rect class="zwc-ink-stroke" x="4.2" y="7.6" width="3.6" height="8.8" rx="1"/><rect class="zwc-ink-stroke" x="16.2" y="7.6" width="3.6" height="8.8" rx="1"/>'
+      wash: PLATE_HEX + '<rect x="6" y="8.2" width="2.6" height="7.6" rx="0.8" fill="url(#zsv-emerald)"/><rect x="15.4" y="8.2" width="2.6" height="7.6" rx="0.8" fill="url(#zsv-emerald)"/>',
+      ink: '<path d="M4.6 12H19.4M6.2 8.2H8.6V15.8H6.2V8.2ZM15.4 8.2H17.8V15.8H15.4V8.2Z" stroke="url(#zsv-emerald)" stroke-width="1.45"/>'
     },
     properties: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4.5" y="4.5" width="9.5" height="15.3" rx="1.2" fill="' + WASH.teal + '"/>' +
-        '<rect class="zwc-wash-fill" x="14" y="10" width="5.5" height="9.8" rx="1" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M3 19.8H21M4.5 19.8V4.4H14V19.8M14 10H19.5V19.8M7.5 8H11M7.5 11.5H11M7.5 15H11M16.2 13.5H17.5"/>'
+      wash: PLATE_HEX + '<path d="M6.6 17.4V6.4L13.2 4.8V17.4H6.6ZM13.2 10.2L17.4 11.4V17.4H13.2V10.2Z" fill="url(#zsv-emerald)" fill-opacity="0.25"/>',
+      ink: '<path d="M5.6 17.4H18.4M6.8 17.4V6.4L13.2 5V17.4M13.2 10.2L17.4 11.4V17.4M9.4 8.8H11M9.4 11.8H11M9.4 14.6H11" stroke="url(#zsv-gold)" stroke-width="1.45"/>'
     },
     education: {
-      wash:
-        '<path class="zwc-wash-fill" d="M6.5 11.6V16.4C6.5 18 9 19.4 12 19.4C15 19.4 17.5 18 17.5 16.4V11.6H6.5Z" fill="' + WASH.cobalt + '"/>' +
-        '<path class="zwc-wash-fill" d="M2.8 9.5L12 4.8L21.2 9.5L12 14.2L2.8 9.5Z" fill="' + WASH.indigo + '"/>' +
-        '<circle class="zwc-accent-fill" cx="20.2" cy="15.8" r="1.7" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M2.8 9.5L12 4.8L21.2 9.5L12 14.2L2.8 9.5ZM6.5 11.6V16.4C6.5 18 9 19.4 12 19.4C15 19.4 17.5 18 17.5 16.4V11.6M20.2 9.8V15.5"/>'
+      wash: PLATE_HEX + '<circle cx="12" cy="11.6" r="4.8" fill="url(#zsv-cyan)" fill-opacity="0.22"/>',
+      ink: '<circle cx="12" cy="11.6" r="4.8" stroke="url(#zsv-gold)" stroke-width="1.4"/><ellipse cx="12" cy="11.6" rx="2.2" ry="4.8" stroke="url(#zsv-cyan)" stroke-width="1.25"/><path d="M7.2 11.6H16.8M9.2 17.6H14.8M12 16.4V17.6" stroke="url(#zsv-gold)" stroke-width="1.4"/>'
     },
     crimes: {
-      wash:
-        '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.2" fill="' + WASH.crimson + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="3" fill="' + WASH.gold + '"/>',
-      ink: '<circle class="zwc-ink-stroke" cx="12" cy="12" r="7.2"/><path class="zwc-ink-stroke" d="M12 2.8V6.4M12 17.6V21.2M2.8 12H6.4M17.6 12H21.2M12 12H12.02"/>'
+      wash: PLATE_HEX + '<circle cx="12" cy="12" r="5.4" fill="url(#zsv-ruby)" fill-opacity="0.24"/>',
+      ink: '<circle cx="12" cy="12" r="5.4" stroke="url(#zsv-ruby)" stroke-width="1.45"/><circle cx="12" cy="12" r="1.8" fill="url(#zsv-gold)"/><path d="M12 4.8V7.4M12 16.6V19.2M4.8 12H7.4M16.6 12H19.2" stroke="url(#zsv-gold)" stroke-width="1.4"/>'
     },
     missions: {
-      wash:
-        '<rect class="zwc-wash-fill" x="5" y="4.6" width="14" height="15.4" rx="1.8" fill="' + WASH.amber + '"/>' +
-        '<rect class="zwc-accent-fill" x="9" y="3.4" width="6" height="2.8" rx="0.8" fill="' + WASH.sienna + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="3.4" fill="' + WASH.emerald + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="5" y="4.6" width="14" height="15.4" rx="1.8"/><path class="zwc-ink-stroke" d="M9 3.4H15V6H9V3.4ZM8.5 11.8L10.8 14L15.6 9.4M8.5 16.6H15.5"/>'
+      wash: PLATE_HEX + '<rect x="6.8" y="5.8" width="10.4" height="12.4" rx="1.4" fill="url(#zsv-gold)" fill-opacity="0.22"/>',
+      ink: '<rect x="6.8" y="5.8" width="10.4" height="12.4" rx="1.4" stroke="url(#zsv-gold)" stroke-width="1.45"/><path d="M9.4 11.8L11.2 13.6L14.8 9.8M9.4 15.4H14.6" stroke="url(#zsv-emerald)" stroke-width="1.5"/>'
     },
     newspaper: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4" y="4.8" width="16" height="14.8" rx="1.6" fill="' + WASH.gold + '"/>' +
-        '<rect class="zwc-accent-fill" x="4.4" y="5.2" width="15.2" height="4.2" rx="1" fill="' + WASH.cerulean + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4" y="4.8" width="16" height="14.8" rx="1.6"/><path class="zwc-ink-stroke" d="M7.2 8.4H16.8M7.2 12H12.2M7.2 15.4H16.8"/>'
+      wash: PLATE_HEX + '<rect x="6.2" y="6.2" width="11.6" height="11.6" rx="1.4" fill="url(#zsv-steel)" fill-opacity="0.2"/>',
+      ink: '<rect x="6.2" y="6.2" width="11.6" height="11.6" rx="1.4" stroke="url(#zsv-gold)" stroke-width="1.4"/><path d="M8.6 9.4H15.4M8.6 12.2H15.4M8.6 15H12.6" stroke="url(#zsv-steel)" stroke-width="1.4"/>'
     },
     jail: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4.2" y="4.2" width="15.6" height="15.6" rx="1.6" fill="' + WASH.slate + '"/>' +
-        '<rect class="zwc-accent-fill" x="9.6" y="9.8" width="4.8" height="4.4" rx="1" fill="' + WASH.amber + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4.2" y="4.2" width="15.6" height="15.6" rx="1.6"/><path class="zwc-ink-stroke" d="M8.5 4.2V19.8M12 4.2V19.8M15.5 4.2V19.8M4.2 11.5H19.8"/>'
+      wash: PLATE_HEX + '<rect x="6.4" y="6.2" width="11.2" height="11.6" rx="1.2" fill="url(#zsv-steel)" fill-opacity="0.18"/>',
+      ink: '<rect x="6.4" y="6.2" width="11.2" height="11.6" rx="1.2" stroke="url(#zsv-steel)" stroke-width="1.4"/><path d="M9.6 6.2V17.8M12 6.2V17.8M14.4 6.2V17.8M6.4 11.8H17.6" stroke="url(#zsv-gold)" stroke-width="1.35"/>'
     },
     hospital: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4.2" y="5.2" width="15.6" height="14.4" rx="2.2" fill="' + WASH.cerulean + '"/>' +
-        '<path class="zwc-accent-fill" d="M10.4 8.2H13.6V10.8H16.2V14H13.6V16.6H10.4V14H7.8V10.8H10.4V8.2Z" fill="' + WASH.crimson + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4.2" y="5.2" width="15.6" height="14.4" rx="2.2"/><path class="zwc-ink-stroke" d="M12 8.8V16M8.4 12.4H15.6"/>'
+      wash: PLATE_HEX + '<polygon points="12,5.4 17.6,8.2 17.6,13.6 12,18.4 6.4,13.6 6.4,8.2" fill="url(#zsv-ruby)" fill-opacity="0.24"/>',
+      ink: '<polygon points="12,5.4 17.6,8.2 17.6,13.6 12,18.4 6.4,13.6 6.4,8.2" stroke="url(#zsv-emerald)" stroke-width="1.4"/><path d="M12 8.8V14.8M9 11.8H15" stroke="url(#zsv-ruby)" stroke-width="1.85"/>'
     },
     casino: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4.5" y="4.5" width="15" height="15" rx="2.6" fill="' + WASH.plum + '"/>' +
-        '<circle class="zwc-accent-fill" cx="8.6" cy="8.6" r="1.4" fill="' + WASH.gold + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="1.4" fill="' + WASH.gold + '"/>' +
-        '<circle class="zwc-accent-fill" cx="15.4" cy="15.4" r="1.4" fill="' + WASH.gold + '"/>' +
-        '<circle class="zwc-accent-fill" cx="15.4" cy="8.6" r="1.4" fill="' + WASH.gold + '"/>' +
-        '<circle class="zwc-accent-fill" cx="8.6" cy="15.4" r="1.4" fill="' + WASH.gold + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4.5" y="4.5" width="15" height="15" rx="2.6"/>'
+      wash: PLATE_HEX + '<circle cx="12" cy="12" r="5.6" fill="url(#zsv-ruby)" fill-opacity="0.28"/>',
+      ink: '<circle cx="12" cy="12" r="5.6" stroke="url(#zsv-gold)" stroke-width="1.45"/><polygon points="12,8.4 15.2,12 12,15.6 8.8,12" fill="url(#zsv-gold)"/>'
     },
     hof: {
-      wash:
-        '<path class="zwc-wash-fill" d="M6.8 4.2H17.2V9.4C17.2 12.4 14.9 14.8 12 14.8C9.1 14.8 6.8 12.4 6.8 9.4V4.2Z" fill="' + WASH.gold + '"/>' +
-        '<rect class="zwc-accent-fill" x="8.2" y="17.8" width="7.6" height="2.2" rx="0.8" fill="' + WASH.sienna + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="9.2" r="2.1" fill="' + WASH.crimson + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M6.8 4.2H17.2V9.4C17.2 12.4 14.9 14.8 12 14.8C9.1 14.8 6.8 12.4 6.8 9.4V4.2ZM6.8 6.2H4.4C4.4 9 5.5 10.4 6.8 10.6M17.2 6.2H19.6C19.6 9 18.5 10.4 17.2 10.6M12 14.8V18.6M8.2 19.2H15.8"/>'
+      wash: PLATE_HEX + '<path d="M8 6.2H16V10.2C16 12.6 14.2 14.4 12 14.4C9.8 14.4 8 12.6 8 10.2V6.2Z" fill="url(#zsv-gold)" fill-opacity="0.32"/>',
+      ink: '<path d="M8 6.2H16V10.2C16 12.6 14.2 14.4 12 14.4C9.8 14.4 8 12.6 8 10.2V6.2ZM12 14.4V17.4M9.2 17.6H14.8" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
     },
     faction: {
-      wash:
-        '<path class="zwc-wash-fill" d="M12 3.2L19.5 6.2V11.8C19.5 16.4 16.2 19.5 12 21C7.8 19.5 4.5 16.4 4.5 11.8V6.2L12 3.2Z" fill="' + WASH.cobalt + '"/>' +
-        '<path class="zwc-accent-fill" d="M8.6 13.8L9.6 9.2L12 11.6L14.4 9.2L15.4 13.8H8.6Z" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M12 3.2L19.5 6.2V11.8C19.5 16.4 16.2 19.5 12 21C7.8 19.5 4.5 16.4 4.5 11.8V6.2L12 3.2ZM8.6 13.6L9.6 9.4L12 11.6L14.4 9.4L15.4 13.6H8.6Z"/>'
+      wash: PLATE_HEX + '<path d="M12 5.2L17.6 7.6V12.2C17.6 15.6 15.2 18 12 19.2C8.8 18 6.4 15.6 6.4 12.2V7.6L12 5.2Z" fill="url(#zsv-gold)" fill-opacity="0.24"/>',
+      ink: '<path d="M12 5.2L17.6 7.6V12.2C17.6 15.6 15.2 18 12 19.2C8.8 18 6.4 15.6 6.4 12.2V7.6L12 5.2ZM9.4 13.6L10.2 10L12 11.8L13.8 10L14.6 13.6H9.4Z" stroke="url(#zsv-gold)" stroke-width="1.45"/>'
     },
     elimination: {
-      wash:
-        '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.5" fill="' + WASH.sienna + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="3.4" fill="' + WASH.crimson + '"/>',
-      ink: '<circle class="zwc-ink-stroke" cx="12" cy="12" r="7.5"/><circle class="zwc-ink-stroke" cx="12" cy="12" r="3"/><path class="zwc-ink-stroke" d="M12 2.4V5.4M12 18.6V21.6M2.4 12H5.4M18.6 12H21.6"/>'
+      wash: PLATE_HEX + '<circle cx="12" cy="12" r="5.4" fill="url(#zsv-ruby)" fill-opacity="0.26"/>',
+      ink: '<circle cx="12" cy="12" r="5.4" stroke="url(#zsv-ruby)" stroke-width="1.45"/><path d="M9.2 9.2L14.8 14.8M14.8 9.2L9.2 14.8" stroke="url(#zsv-gold)" stroke-width="1.55"/>'
     },
     bank: {
-      wash:
-        '<path class="zwc-wash-fill" d="M3.4 9.6L12 3.8L20.6 9.6H3.4Z" fill="' + WASH.emerald + '"/>' +
-        '<rect class="zwc-accent-fill" x="5.4" y="9.8" width="13.2" height="7.4" fill="' + WASH.gold + '"/>' +
-        '<rect class="zwc-wash-fill" x="3.6" y="17.2" width="16.8" height="2.6" fill="' + WASH.emerald + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M3.4 9.6L12 3.8L20.6 9.6H3.4ZM6.5 9.6V17.2M10.2 9.6V17.2M13.8 9.6V17.2M17.5 9.6V17.2M3.6 17.2H20.4V19.8H3.6V17.2Z"/>'
+      wash: PLATE_HEX + '<path d="M5.6 9.8L12 5.8L18.4 9.8H5.6Z" fill="url(#zsv-gold)" fill-opacity="0.32"/>',
+      ink: '<path d="M5.6 9.8L12 5.8L18.4 9.8H5.6ZM7.6 9.8V16.2M10.6 9.8V16.2M13.4 9.8V16.2M16.4 9.8V16.2M5.8 16.4H18.2" stroke="url(#zsv-emerald)" stroke-width="1.45"/>'
     },
     market: {
-      wash:
-        '<rect class="zwc-wash-fill" x="5.2" y="10.4" width="13.6" height="9.2" fill="' + WASH.gold + '"/>' +
-        '<path class="zwc-accent-fill" d="M4.2 4.8H19.8L21.2 10.4H2.8L4.2 4.8Z" fill="' + WASH.crimson + '"/>' +
-        '<rect class="zwc-accent-fill" x="9.8" y="14" width="4.4" height="5.6" fill="' + WASH.emerald + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M4.2 4.8H19.8L21.2 10.4H2.8L4.2 4.8ZM5.2 10.4V19.6H18.8V10.4M9.8 19.6V14H14.2V19.6"/>'
+      wash: PLATE_HEX + '<path d="M6.4 9.6L7.8 6.2H16.2L17.6 9.6V17.2H6.4V9.6Z" fill="url(#zsv-gold)" fill-opacity="0.22"/>',
+      ink: '<path d="M6.4 9.6L7.8 6.2H16.2L17.6 9.6M6.8 9.6V17.2H17.2V9.6M10.4 17.2V13.4H13.6V17.2" stroke="url(#zsv-gold)" stroke-width="1.45"/>'
     },
     attack: {
-      wash:
-        '<circle class="zwc-wash-fill" cx="12" cy="12" r="7.2" fill="' + WASH.rose + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="3" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M4.8 19.2L18.8 5.2M14.5 4.8H19.2V9.5M19.2 19.2L5.2 5.2M9.5 4.8H4.8V9.5"/>'
+      wash: PLATE_HEX + '<polygon points="12,5.2 18.8,12 12,18.8 5.2,12" fill="url(#zsv-ruby)" fill-opacity="0.26"/>',
+      ink: '<path d="M7.2 16.8L16.8 7.2M13.6 7.2H16.8V10.4M16.8 16.8L7.2 7.2M10.4 7.2H7.2V10.4" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
     },
     cash: {
-      wash:
-        '<rect class="zwc-wash-fill" x="3" y="6.4" width="18" height="11.2" rx="2" fill="' + WASH.emerald + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="12" r="2.8" fill="' + WASH.gold + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="3" y="6.4" width="18" height="11.2" rx="2"/><circle class="zwc-ink-stroke" cx="12" cy="12" r="2.6"/><path class="zwc-ink-stroke" d="M6.2 9.5H6.4M17.6 14.5H17.8"/>'
+      wash: '<rect x="2.6" y="6" width="18.8" height="12" rx="2" fill="url(#zsv-plate)" stroke="url(#zsv-emerald)" stroke-width="1.35"/>',
+      ink: '<circle cx="12" cy="12" r="2.8" fill="url(#zsv-emerald)"/><path d="M5.8 9.2H6.4M17.6 14.8H18.2" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
     },
     energy: {
-      wash: '<path class="zwc-wash-fill" d="M13.2 3L5.6 13.2H11.5L10.5 21L18.4 10.6H12.5L13.2 3Z" fill="' + WASH.lime + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M13.2 3L5.6 13.2H11.5L10.5 21L18.4 10.6H12.5L13.2 3Z"/>'
+      wash: '<polygon points="13.2,2.6 5.8,12.8 11.4,12.8 10.6,21.4 18.2,11.2 12.6,11.2" fill="url(#zsv-emerald)"/>',
+      ink: '<polygon points="13.2,2.6 5.8,12.8 11.4,12.8 10.6,21.4 18.2,11.2 12.6,11.2" stroke="#ecfdf5" stroke-width="0.9"/>'
     },
     nerve: {
-      wash:
-        '<path class="zwc-wash-fill" d="M12 3.5C15.6 7.2 18.2 10.3 18.2 14C18.2 17.5 15.4 20.2 12 20.2C8.6 20.2 5.8 17.5 5.8 14C5.8 11 7.7 8.4 9.8 6.2L10.8 9.4L12 3.5Z" fill="' + WASH.crimson + '"/>' +
-        '<path class="zwc-accent-fill" d="M12 10.2C13.8 12.2 14.8 13.8 14.8 15.4C14.8 17 13.5 18.2 12 18.2C10.5 18.2 9.2 17 9.2 15.4C9.2 13.8 10.4 12.1 12 10.2Z" fill="' + WASH.gold + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M12 3.5C15.6 7.2 18.2 10.3 18.2 14C18.2 17.5 15.4 20.2 12 20.2C8.6 20.2 5.8 17.5 5.8 14C5.8 11 7.7 8.4 9.8 6.2L10.8 9.4L12 3.5Z"/>'
+      wash: '<path d="M12 3.2C15.6 6.8 18 9.8 18 13.6C18 17.2 15.3 20 12 20C8.7 20 6 17.2 6 13.6C6 10.6 7.8 8 9.8 5.8L10.8 9L12 3.2Z" fill="url(#zsv-ruby)"/>',
+      ink: '<circle cx="12" cy="14.6" r="2.1" fill="url(#zsv-gold)"/>'
     },
     life: {
-      wash: '<path class="zwc-wash-fill" d="M12 20C6.8 16.3 3.8 12.8 3.8 9.2C3.8 6.5 5.9 4.6 8.4 4.6C10 4.6 11.3 5.4 12 6.7C12.7 5.4 14 4.6 15.6 4.6C18.1 4.6 20.2 6.5 20.2 9.2C20.2 12.8 17.2 16.3 12 20Z" fill="' + WASH.rose + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M12 20C6.8 16.3 3.8 12.8 3.8 9.2C3.8 6.5 5.9 4.6 8.4 4.6C10 4.6 11.3 5.4 12 6.7C12.7 5.4 14 4.6 15.6 4.6C18.1 4.6 20.2 6.5 20.2 9.2C20.2 12.8 17.2 16.3 12 20ZM7.5 12H10L11.2 9.8L12.8 14.2L14 12H16.5"/>'
+      wash: '<path d="M12 19.6C7 16 4 12.6 4 9.2C4 6.6 6 4.8 8.4 4.8C10 4.8 11.3 5.6 12 6.8C12.7 5.6 14 4.8 15.6 4.8C18 4.8 20 6.6 20 9.2C20 12.6 17 16 12 19.6Z" fill="url(#zsv-ruby)"/>',
+      ink: '<path d="M8.2 11.8H10.4L11.4 9.8L12.6 13.8L13.6 11.8H15.8" stroke="#fff1f2" stroke-width="1.35"/>'
     },
     account: {
-      wash:
-        '<circle class="zwc-wash-fill" cx="12" cy="8.4" r="3.6" fill="' + WASH.cerulean + '"/>' +
-        '<path class="zwc-wash-fill" d="M5.2 19.6C6.4 15.6 8.9 14 12 14C15.1 14 17.6 15.6 18.8 19.6H5.2Z" fill="' + WASH.amber + '"/>',
-      ink: '<circle class="zwc-ink-stroke" cx="12" cy="8.4" r="3.6"/><path class="zwc-ink-stroke" d="M5.2 19.6C6.4 15.6 8.9 14 12 14C15.1 14 17.6 15.6 18.8 19.6"/>'
+      wash: PLATE_HEX + '<circle cx="12" cy="9.2" r="2.9" fill="url(#zsv-gold)"/><path d="M6.8 17.4C7.8 14.4 9.6 13.2 12 13.2C14.4 13.2 16.2 14.4 17.2 17.4H6.8Z" fill="url(#zsv-steel)" fill-opacity="0.45"/>',
+      ink: '<circle cx="12" cy="9.2" r="2.9" stroke="url(#zsv-gold)" stroke-width="1.2"/><path d="M6.8 17.4C7.8 14.4 9.6 13.2 12 13.2C14.4 13.2 16.2 14.4 17.2 17.4" stroke="url(#zsv-gold)" stroke-width="1.35"/>'
     },
     admin: {
-      wash:
-        '<rect class="zwc-wash-fill" x="4" y="4.8" width="16" height="14.4" rx="2.4" fill="' + WASH.plum + '"/>' +
-        '<circle class="zwc-accent-fill" cx="10.2" cy="9.4" r="1.9" fill="' + WASH.cerulean + '"/>' +
-        '<circle class="zwc-accent-fill" cx="14.2" cy="14.6" r="1.9" fill="' + WASH.emerald + '"/>',
-      ink: '<rect class="zwc-ink-stroke" x="4" y="4.8" width="16" height="14.4" rx="2.4"/><path class="zwc-ink-stroke" d="M7.2 9.4H16.8M7.2 14.6H16.8"/><circle class="zwc-ink-stroke" cx="10.2" cy="9.4" r="1.6"/><circle class="zwc-ink-stroke" cx="14.2" cy="14.6" r="1.6"/>'
+      wash: PLATE_HEX + '<rect x="6.4" y="6.8" width="11.2" height="10.4" rx="1.4" fill="url(#zsv-cyan)" fill-opacity="0.18"/>',
+      ink: '<path d="M7.6 9.8H16.4M7.6 14.2H16.4" stroke="url(#zsv-steel)" stroke-width="1.4"/><circle cx="10.2" cy="9.8" r="1.6" fill="url(#zsv-gold)"/><circle cx="13.8" cy="14.2" r="1.6" fill="url(#zsv-emerald)"/>'
     },
     menu: {
-      wash: '<rect class="zwc-wash-fill" x="4" y="5.5" width="16" height="13" rx="2" fill="' + WASH.amber + '"/>',
-      ink: '<path class="zwc-ink-stroke" d="M4.2 7.2H19.8M4.2 12H19.8M4.2 16.8H19.8"/>'
+      wash: PLATE_HEX,
+      ink: '<path d="M7.2 8.6H16.8M7.2 12H16.8M7.2 15.4H16.8" stroke="url(#zsv-gold)" stroke-width="1.6"/>'
     },
     close: {
       wash: '',
-      ink: '<path class="zwc-ink-stroke" d="M6 6L18 18M18 6L6 18"/>'
+      ink: '<path d="M6.5 6.5L17.5 17.5M17.5 6.5L6.5 17.5" stroke="url(#zsv-gold)" stroke-width="1.8"/>'
     },
     chrono: {
-      wash:
-        '<circle class="zwc-wash-fill" cx="12" cy="13" r="7.4" fill="' + WASH.cerulean + '"/>' +
-        '<circle class="zwc-accent-fill" cx="12" cy="13" r="2.2" fill="' + WASH.gold + '"/>',
-      ink: '<circle class="zwc-ink-stroke" cx="12" cy="13" r="7.6"/><path class="zwc-ink-stroke" d="M9.5 3.2H14.5M12 3.2V5.4M12 9.2V13.2L14.8 14.8"/>'
+      wash: PLATE_HEX,
+      ink: '<circle cx="12" cy="12.4" r="5.4" stroke="url(#zsv-cyan)" stroke-width="1.4"/><path d="M12 9.4V12.4L14.2 13.8" stroke="url(#zsv-gold)" stroke-width="1.5"/>'
     }
   };
 
@@ -228,36 +182,36 @@
     var spec = SKETCH_ICONS[key];
     var cls = 'zaaa-vivid-svg zaaa-duotone-svg zwc-sketch-ico' + (extraClass ? ' ' + extraClass : '');
     return (
-      '<svg class="' + cls + '" data-zwc-ink="' + key + '" data-zwc-color="v140" viewBox="0 0 24 24" fill="none" ' +
-      'stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" ' +
+      '<svg class="' + cls + '" data-zwc-ink="' + key + '" data-zwc-color="v168" viewBox="0 0 24 24" fill="none" ' +
+      'stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" ' +
       'xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+        SOVEREIGN_GRADS +
         (spec.wash || '') +
         spec.ink +
       '</svg>'
     );
   }
 
-  /* Hand-Inked Sun & Crescent Moon Theme Icons */
+  /* Precision Metallic Crescent & Solar Theme Icons */
   var THEME_SVGS =
-    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-moon-svg" data-zwc-color="v140" viewBox="0 0 24 24" fill="none" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<path class="zwc-wash-fill" d="M19.8 13.6A7.8 7.8 0 1 1 10.4 4.2A6.2 6.2 0 0 0 19.8 13.6Z" fill="' + WASH.gold + '"/>' +
-      '<circle class="zwc-accent-fill" cx="16.8" cy="6.6" r="1.4" fill="' + WASH.cerulean + '"/>' +
-      '<path class="zwc-ink-stroke" d="M19.8 13.6A7.8 7.8 0 1 1 10.4 4.2A6.2 6.2 0 0 0 19.8 13.6Z"/>' +
+    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-moon-svg" data-zwc-color="v168" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      SOVEREIGN_GRADS +
+      '<path d="M19.4 13.8A7.4 7.4 0 1 1 10.2 4.6A5.8 5.8 0 0 0 19.4 13.8Z" fill="url(#zsv-gold)" stroke="url(#zsv-gold)"/>' +
     '</svg>' +
-    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-sun-svg" data-zwc-color="v140" viewBox="0 0 24 24" fill="none" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<circle class="zwc-wash-fill" cx="12" cy="12" r="4.8" fill="' + WASH.amber + '"/>' +
-      '<circle class="zwc-ink-stroke" cx="12" cy="12" r="4.6"/>' +
-      '<path class="zwc-ink-stroke" d="M12 2.8V5M12 19V21.2M5.5 5.5L7.1 7.1M16.9 16.9L18.5 18.5M2.8 12H5M19 12H21.2M5.5 18.5L7.1 16.9M16.9 7.1L18.5 5.5"/>' +
+    '<svg class="zaaa-vivid-svg zwc-sketch-ico zaaa-sun-svg" data-zwc-color="v168" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      SOVEREIGN_GRADS +
+      '<circle cx="12" cy="12" r="4.4" fill="url(#zsv-gold)" stroke="url(#zsv-gold)"/>' +
+      '<path d="M12 3V5.2M12 18.8V21M5.6 5.6L7.2 7.2M16.8 16.8L18.4 18.4M3 12H5.2M18.8 12H21M5.6 18.4L7.2 16.8M16.8 7.2L18.4 5.6" stroke="url(#zsv-gold)"/>' +
     '</svg>';
 
-  /* Hand-Inked Operative Portrait Avatar (#zone-operative-crest) */
+  /* Sovereign Tactical Operative Crest (#zone-operative-crest) */
   var OPERATIVE_AVATAR_SVG =
-    '<svg class="zaaa-vivid-svg zaaa-duotone-svg zwc-sketch-ico" data-zwc-color="v140" viewBox="0 0 36 36" fill="none" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-      '<circle class="zwc-wash-fill" cx="18" cy="13.2" r="5.6" fill="' + WASH.gold + '"/>' +
-      '<path class="zwc-wash-fill" d="M7.8 30.2C9.4 24.4 13.1 21.8 18 21.8C22.9 21.8 26.6 24.4 28.2 30.2H7.8Z" fill="' + WASH.emerald + '"/>' +
-      '<path class="zwc-accent-fill" d="M15.4 22.2L18 26.8L20.6 22.2H15.4Z" fill="' + WASH.crimson + '"/>' +
-      '<circle class="zwc-ink-stroke" cx="18" cy="13.2" r="5.6"/>' +
-      '<path class="zwc-ink-stroke" d="M7.8 30.2C9.4 24.4 13.1 21.8 18 21.8C22.9 21.8 26.6 24.4 28.2 30.2"/>' +
+    '<svg class="zaaa-vivid-svg zaaa-duotone-svg zwc-sketch-ico" data-zwc-color="v168" viewBox="0 0 36 36" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+      SOVEREIGN_GRADS +
+      '<polygon points="18,2 32,9.5 32,26.5 18,34 4,26.5 4,9.5" fill="url(#zsv-plate)" stroke="url(#zsv-gold)" stroke-width="1.5"/>' +
+      '<path d="M18 7.6L23.2 11.4V16.8C23.2 19.8 20.9 22 18 22C15.1 22 12.8 19.8 12.8 16.8V11.4L18 7.6Z" fill="url(#zsv-steel)" fill-opacity="0.35" stroke="url(#zsv-gold)" stroke-width="1.35"/>' +
+      '<rect x="14.2" y="13.2" width="7.6" height="2.4" rx="1" fill="url(#zsv-cyan)"/>' +
+      '<path d="M8.6 28.4C10.2 24.2 13.6 22.4 18 22.4C22.4 22.4 25.8 24.2 27.4 28.4" fill="url(#zsv-gold)" fill-opacity="0.22" stroke="url(#zsv-gold)" stroke-width="1.45"/>' +
     '</svg>';
 
   var CITY_CATALOG = {

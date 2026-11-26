@@ -28,10 +28,10 @@
   var POLL_INTERVAL_MS = 12000;
 
   var CHANNELS = [
-    { id: 'global', icon: '🌐', en: 'Global', ar: 'العامة', subEn: 'City-Wide Radio', subAr: 'راديو المدينة العام' },
-    { id: 'district', icon: '📍', en: 'District', ar: 'الحي', subEn: 'Local Sector AoI', subAr: 'شبكة القطاع المحلي' },
-    { id: 'faction', icon: '🛡', en: 'Faction', ar: 'النقابة', subEn: 'Encrypted Family Relay', subAr: 'تردد العائلة المشفر' },
-    { id: 'trade', icon: '⚖', en: 'Trade', ar: 'التجارة', subEn: 'Bazaar & Contraband', subAr: 'سوق البازار والمهربات' }
+    { id: 'global', icon: '◈', en: 'Global', ar: 'العامة', subEn: 'City-Wide Radio', subAr: 'راديو المدينة العام' },
+    { id: 'district', icon: '⌖', en: 'District', ar: 'الحي', subEn: 'Local Sector AoI', subAr: 'شبكة القطاع المحلي' },
+    { id: 'faction', icon: '❖', en: 'Faction', ar: 'النقابة', subEn: 'Encrypted Family Relay', subAr: 'تردد العائلة المشفر' },
+    { id: 'trade', icon: '◆', en: 'Trade', ar: 'التجارة', subEn: 'Bazaar & Contraband', subAr: 'سوق البازار والمهربات' }
   ];
 
   var COPY = {
@@ -437,7 +437,7 @@
     var unread = getTotalUnread();
     slot.innerHTML =
       '<button type="button" id="zcs-hud-chat-btn" class="ztl-hud-pill zcs-hud-pill" data-open="' + (store.open ? '1' : '0') + '" aria-label="Syndicate Chat (Hotkey C)">' +
-        '<span>💬 ' + esc(copy.hudBtn) + '</span>' +
+        '<span style="display:inline-flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' + esc(copy.hudBtn) + '</span>' +
         '<bdi id="zcs-hud-unread-badge" class="ztl-bell-badge zcs-unread-badge"' + (unread > 0 ? '' : ' hidden') + '>' + unread + '</bdi>' +
       '</button>';
 

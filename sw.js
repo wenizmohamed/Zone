@@ -1,5 +1,5 @@
-/* ZONE Syndicate Crime MMO - Production Service Worker (v167) */
-const SHELL_CACHE_NAME = 'zone-shell-v167';
+/* ZONE Syndicate Crime MMO - Production Service Worker (v168) */
+const SHELL_CACHE_NAME = 'zone-shell-v168';
 const SHELL_CACHE_PREFIX = 'zone-shell-';
 const CACHE_NAME = 'zone-app-v146';
 const CACHE_PREFIX = 'zone-app-';
@@ -11,22 +11,25 @@ const PRECACHE_URLS = [
   './assets/data/zone-batch-skill-pack.json',
   './assets/data/zone-300-skills-encyclopedia.json',
   './assets/data/zone-config-skills-468.json',
-  './assets/ui/aaa-topbar-sidebar.css?v=164',
-  './assets/ui/aaa-topbar-sidebar.js?v=164',
+  './assets/ui/aaa-topbar-sidebar.css?v=168',
+  './assets/ui/aaa-topbar-sidebar.js?v=168',
+  './assets/ui/aaa-game-surfaces.css?v=168',
+  './assets/ui/watercolor-sketchbook.css?v=168',
+  './assets/ui/watercolor-sketchbook.js?v=168',
   './assets/ui/zone-app-shell.css?v=164',
-  './assets/ui/zone-torn-live.css?v=167',
-  './assets/ui/zone-torn-live.js?v=167',
-  './assets/ui/zone-rpg-empire.css?v=167',
-  './assets/ui/zone-rpg-empire.js?v=167',
+  './assets/ui/zone-torn-live.css?v=168',
+  './assets/ui/zone-torn-live.js?v=168',
+  './assets/ui/zone-rpg-empire.css?v=168',
+  './assets/ui/zone-rpg-empire.js?v=168',
   './assets/ui/zone-ascension-breakthrough.css?v=167',
-  './assets/ui/zone-ascension-breakthrough.js?v=167',
+  './assets/ui/zone-ascension-breakthrough.js?v=168',
   './assets/ui/zone-ecs-3d.css?v=167',
   './assets/ui/zone-gamekit-bridge.js?v=167',
-  './assets/ui/zone-ecs-3d-bridge.js?v=167',
+  './assets/ui/zone-ecs-3d-bridge.js?v=168',
   './assets/ui/zone-3d-rigged-operative.mjs?v=165',
-  './assets/ui/zone-3d-environments.mjs?v=167',
+  './assets/ui/zone-3d-environments.mjs?v=168',
   './assets/ui/zone-vfx-particles.mjs',
-  './assets/ui/zone-ecs-3d-engine.mjs?v=167',
+  './assets/ui/zone-ecs-3d-engine.mjs?v=168',
   './assets/ui/zone-profile-avatar.css?v=161',
   './assets/ui/zone-profile-avatar.js?v=164',
   './assets/ui/zone-instant-games.js?v=167',
@@ -35,7 +38,7 @@ const PRECACHE_URLS = [
   './assets/ui/zone-tactical-director.js?v=167',
   './assets/ui/zone-hud-accessibility.css?v=161',
   './assets/ui/zone-hud-accessibility.js?v=161',
-  './assets/ui/zone-batch-liveops.js?v=165',
+  './assets/ui/zone-batch-liveops.js?v=168',
   './assets/ui/zone-vehicle-garage.css?v=167',
   './assets/ui/zone-vehicle-garage.js?v=167',
   './assets/ui/zone-faction-warfare.css?v=161',
@@ -48,9 +51,9 @@ const PRECACHE_URLS = [
   './assets/ui/zone-player-settings.css?v=164',
   './assets/ui/zone-player-settings.js?v=161',
   './assets/ui/zone-replay-viewer.css?v=161',
-  './assets/ui/zone-replay-viewer.js?v=161',
+  './assets/ui/zone-replay-viewer.js?v=168',
   './assets/ui/zone-chat-system.css?v=161',
-  './assets/ui/zone-chat-system.js?v=161',
+  './assets/ui/zone-chat-system.js?v=168',
   './assets/ui/zone-companion-3d.css?v=167',
   './assets/ui/zone-companion-3d.js?v=167'
 ];

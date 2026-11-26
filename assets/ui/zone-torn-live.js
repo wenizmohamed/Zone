@@ -1479,8 +1479,10 @@
 
     return (
       '<div class="ztl-workspace" data-workspace="bank">' +
+        '<div class="z3d-action-stage" data-z3d-stage="heist-breach" data-z3d-interactive="1" style="min-height:204px;height:204px;margin-bottom:10px"></div>' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head"><h3 class="ztl-section-title">' + esc(copy.stocksTitle) + '</h3><span class="ztl-section-note">' + esc(copy.stocksNote) + '</span></div>' +
+          render3dItemShowcase('gold_bullion', 'contraband', copy.stocksTitle) +
           stockRowsHtml +
         '</section>' +
         '<section class="ztl-section-box">' +
@@ -1790,6 +1792,7 @@
 
     return (
       '<div class="ztl-workspace" data-workspace="hospital">' +
+        '<div class="z3d-action-stage" data-z3d-stage="safehouse-empire" data-z3d-submode="medbay" data-z3d-interactive="1" style="min-height:208px;height:208px;margin-bottom:10px"></div>' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head">' +
             '<h3 class="ztl-section-title">' + esc(copy.hospWardTitle) + '</h3>' +
@@ -1826,6 +1829,7 @@
 
     return (
       '<div class="ztl-workspace" data-workspace="jail">' +
+        '<div class="z3d-action-stage" data-z3d-stage="heist-breach" data-z3d-interactive="1" style="min-height:198px;height:198px;margin-bottom:10px"></div>' +
         '<section class="ztl-section-box">' +
           '<div class="ztl-section-head">' +
             '<h3 class="ztl-section-title">' + esc(copy.jailLegalTitle) + '</h3>' +

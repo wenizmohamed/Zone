@@ -65,10 +65,10 @@ html:not([data-theme="light"]) body {
   --ztl-blue-wash: rgba(138, 184, 232, 0.19);
   --ztl-blue-border: rgba(138, 184, 232, 0.52);
 
-  --ztl-font-ui: "Patrick Hand", "Rubik", system-ui, sans-serif;
-  --ztl-font-brush: "Caveat Brush", "Patrick Hand", "Rubik", sans-serif;
-  --ztl-radius: 255px 12px 225px 12px / 10px 225px 10px 255px;
-  --ztl-radius-sm: 185px 8px 165px 8px / 7px 165px 7px 185px;
+  --ztl-font-ui: "Rubik", "Inter", system-ui, sans-serif, "Patrick Hand";
+  --ztl-font-brush: "Rubik", "Oswald", system-ui, sans-serif, "Caveat Brush", "Patrick Hand";
+  --ztl-radius: 8px;
+  --ztl-radius-sm: 6px;
 }
 
 html[data-theme="light"],

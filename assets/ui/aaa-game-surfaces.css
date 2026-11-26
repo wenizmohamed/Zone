@@ -230,42 +230,42 @@ html body #zone-main button:not(.zone-crime-choice):not(.zone-gym-station):not(.
   box-shadow: var(--zwc-shadow-sub) !important;
 }
 
-/* SIGNATURE SKETCHBOOK SAGE GOUACHE PRIMARY CTA (.zone-action-primary) */
+/* SIGNATURE SOVEREIGN EMERALD-BULLION PRIMARY CTA (.zone-action-primary) */
 html body #zone-main button.zone-action-primary,
 html body #zone-main button[style*="accFill1"] {
-  background-color: #4f7736 !important;
-  background-image: linear-gradient(180deg, #689448 0%, #496f30 100%) !important;
-  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
-  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
-  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  background-color: #065f46 !important;
+  background-image: linear-gradient(180deg, #10b981 0%, #047857 100%) !important;
+  border: 1px solid rgba(110, 231, 183, 0.5) !important;
+  border-radius: 6px !important;
+  color: #fcf9f2 !important;
   font-weight: 700 !important;
-  letter-spacing: -0.005em !important;
+  letter-spacing: 0.01em !important;
   text-transform: none !important;
-  text-shadow: none !important;
-  box-shadow: var(--zwc-shadow-sub) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 4px 12px rgba(4, 120, 87, 0.28) !important;
 }
 
 html body #zone-main button.zone-action-primary:not(:disabled):hover,
 html body #zone-main button[style*="accFill1"]:not(:disabled):hover {
   transform: translateY(-1px) !important;
-  background-color: #5b873f !important;
-  background-image: linear-gradient(180deg, #74a253 0%, #527c37 100%) !important;
-  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  background-color: #059669 !important;
+  background-image: linear-gradient(180deg, #34d399 0%, #059669 100%) !important;
+  color: #ffffff !important;
 }
 
-/* SIGNATURE SKETCHBOOK BURNT-CRIMSON DANGER CTA (.zone-action-danger & attack red buttons) */
+/* SIGNATURE SOVEREIGN RUBY-CLEARCOAT DANGER CTA (.zone-action-danger & attack red buttons) */
 html body #zone-main button.zone-action-danger,
 html body #zone-main button[style*="#c74a3a"]:not([data-roulette-bet]) {
-  background-color: #a93522 !important;
-  background-image: linear-gradient(180deg, #c1432e 0%, #942b1a 100%) !important;
-  border: 1.5px solid var(--zwc-border-strong, #23201c) !important;
-  border-radius: var(--zwc-sketch-radius-sm, 10px) !important;
-  color: var(--zwc-cream-ink, #fcf9f2) !important;
+  background-color: #9f1239 !important;
+  background-image: linear-gradient(180deg, #e11d48 0%, #9f1239 100%) !important;
+  border: 1px solid rgba(253, 164, 175, 0.48) !important;
+  border-radius: 6px !important;
+  color: #fcf9f2 !important;
   font-weight: 700 !important;
-  letter-spacing: -0.005em !important;
+  letter-spacing: 0.01em !important;
   text-transform: none !important;
-  text-shadow: none !important;
-  box-shadow: var(--zwc-shadow-sub) !important;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(159, 18, 57, 0.3) !important;
 }
 
 html body #zone-main button.zone-action-danger:not(:disabled):hover,
