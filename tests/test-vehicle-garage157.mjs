@@ -406,7 +406,7 @@ test('v157 Gate 2: Vehicle Physics Workbench (4 Vehicles, Suspension, Gear Ratio
   assert.ok(maxNitro.topSpeedKmh > noNitro.topSpeedKmh, 'Nitro boost increases top speed');
   assert.ok(maxNitro.heatSignature > noNitro.heatSignature, 'Nitro boost raises heat signature');
   assert.equal(noNitro.item3d, 'mountain_bike', 'Stealth Enduro Bike maps to 3D mountain_bike');
-  assert.equal(tallGear.item3d, 'sports_car', 'Apex Interceptor maps to 3D sports_car');
+  assert.equal(tallGear.item3d, 'interceptor_sedan', 'Apex Interceptor maps to 3D interceptor_sedan');
 
   /* Frame-rate-independent exponential smoothing check (30fps vs 120fps) */
   let p30 = 0;

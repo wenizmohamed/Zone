@@ -93,6 +93,18 @@ export const STAGE_KINDS = Object.freeze([
   'character-turntable',
 ]);
 
+export const EUROPEAN_ROULETTE_ORDER = Object.freeze([
+  0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
+  5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26,
+]);
+
+export const ROULETTE_RED_NUMBERS = Object.freeze([
+  1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36,
+]);
+
+const ROULETTE_RED_SET = new Set(ROULETTE_RED_NUMBERS);
+const ANIM_LEVER_PULL = 99;
+
 /* --------------------------------------------------------------------------
  * 0. GRAPHICS QUALITY PRESETS, DYNAMIC RESOLUTION SCALER & OBJECT POOL
  *    (Wave-3 Track 17: dynamic-res-scaler, three-best-practices,
@@ -150,10 +162,43 @@ export class DynamicResScaler {
     this._lastChangeMs = -Infinity;
     this.downscaleCount = 0;
     this.upscaleCount = 0;
+    this.targetRefreshHz = typeof opts.targetRefreshHz === 'number' ? Math.max(0, opts.targetRefreshHz) : 0;
+    this._frameRing = new Float32Array(60);
+    this._frameRingIdx = 0;
+    this._frameRingCount = 0;
   }
 
   get fps() {
     return Math.max(1, Math.min(240, Math.round(1000 / Math.max(1, this.frameMsEma))));
+  }
+
+  get recommendedFpsCap() {
+    // Blur Busters G-Sync 101 rule (game-tuning): cap at refresh - 3 Hz on VRR displays
+    return this.targetRefreshHz > 60 ? Math.max(58, Math.round(this.targetRefreshHz - 3)) : 0;
+  }
+
+  get onePercentLowFps() {
+    const n = this._frameRingCount;
+    if (n === 0) return this.fps;
+    let worstMs = 0;
+    for (let i = 0; i < n; i++) {
+      if (this._frameRing[i] > worstMs) worstMs = this._frameRing[i];
+    }
+    return Math.max(1, Math.min(240, Math.round(1000 / Math.max(1, worstMs))));
+  }
+
+  get frameTimeVarianceMs() {
+    const n = this._frameRingCount;
+    if (n < 2) return 0;
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += this._frameRing[i];
+    const mean = sum / n;
+    let sq = 0;
+    for (let i = 0; i < n; i++) {
+      const d = this._frameRing[i] - mean;
+      sq += d * d;
+    }
+    return Number(Math.sqrt(sq / n).toFixed(2));
   }
 
   setPresetCap(nextCap, opts = {}) {
@@ -185,6 +230,9 @@ export class DynamicResScaler {
     }
 
     this.frameMsEma = this.frameMsEma * (1 - this.emaAlpha) + frameMs * this.emaAlpha;
+    this._frameRing[this._frameRingIdx] = frameMs;
+    this._frameRingIdx = (this._frameRingIdx + 1) % 60;
+    if (this._frameRingCount < 60) this._frameRingCount++;
 
     let action = 'hold';
     if (!this.dynamicResAuto) {
@@ -979,18 +1027,40 @@ export class ZoneEcsWorld {
         T[tOff + 2] = Math.sin(ang) * rz;
         T[tOff + 4] = -ang + Math.PI * 0.5 + 0.18;
       } else if (kind === ANIM_ROULETTE_BALL) {
-        const speed = pA * Math.max(0.25, 1 - u * 0.72);
-        K[kOff + 7] += speed * scaledDt;
-        const ang = K[kOff + 7];
-        const radius = 0.74 - 0.16 * Math.min(1, u);
-        const hop = u < 0.85 ? Math.abs(Math.sin(ang * 3.5)) * 0.06 * (1 - u) : 0;
+        const easeOut = 1 - Math.pow(1 - u, 3);
+        const hasTarget = Number.isFinite(pB) && pB >= -Math.PI * 4 && pB !== 0;
+        let ang;
+        if (hasTarget && u >= 0.72) {
+          const blend = (u - 0.72) / 0.28;
+          const freeAng = K[kOff + 7] + pA * 0.18 * scaledDt;
+          K[kOff + 7] = freeAng;
+          ang = freeAng + (pB - freeAng) * (blend * blend * (3 - 2 * blend));
+        } else {
+          const speed = pA * Math.max(0.18, 1 - easeOut * 0.82);
+          K[kOff + 7] += speed * scaledDt;
+          ang = K[kOff + 7];
+        }
+        const outerR = 0.88;
+        const pocketR = 0.60;
+        const radius = u < 0.45
+          ? outerR - 0.06 * (u / 0.45)
+          : outerR - 0.06 - (outerR - 0.06 - pocketR) * Math.min(1, (u - 0.45) / 0.55);
+        const trackLift = u < 0.45 ? 0.09 * (1 - (u / 0.45) * 0.25) : 0.068 * Math.max(0, 1 - (u - 0.45) / 0.45);
+        const deflectorHop = (u > 0.35 && u < 0.86) ? Math.abs(Math.sin(ang * 8.0)) * 0.055 * (1 - u) : 0;
         T[tOff + 0] = ox + Math.cos(ang) * radius;
-        T[tOff + 1] = oy + hop;
+        T[tOff + 1] = oy + trackLift + deflectorHop;
         T[tOff + 2] = oz + Math.sin(ang) * radius;
       } else if (kind === ANIM_SLOT_REEL) {
         const speed = pB > 0 ? pA * (1 - u * 0.9) : pA;
         T[tOff + 3] += speed * scaledDt;
         if (pB > 0 && u >= 1.0) {
+          K[kOff + 0] = ANIM_NONE;
+        }
+      } else if (kind === ANIM_LEVER_PULL) {
+        const pull = u < 0.35 ? (u / 0.35) : Math.max(0, 1 - (u - 0.35) / 0.65) * Math.cos((u - 0.35) * Math.PI * 2.2);
+        T[tOff + 3] = pA * pull;
+        if (u >= 1.0) {
+          T[tOff + 3] = 0;
           K[kOff + 0] = ANIM_NONE;
         }
       } else if (kind === ANIM_BAG_SWING) {
@@ -1287,9 +1357,9 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
   if (rawCat === 'melee' || /(knife|dagger|blade|katana|sword|bat|club|hammer|baton|knuckle|machete)/.test(rawId)) {
     let subtype = 'knife';
     if (/katana|sword|saber/.test(rawId)) subtype = 'katana';
-    else if (/bat|club/.test(rawId)) subtype = 'bat';
-    else if (/hammer|mace/.test(rawId)) subtype = 'hammer';
     else if (/baton|stun|taser/.test(rawId)) subtype = 'stun_baton';
+    else if (/\bbat\b|baseball|club/.test(rawId)) subtype = 'bat';
+    else if (/hammer|mace/.test(rawId)) subtype = 'hammer';
     else if (/knuckle/.test(rawId)) subtype = 'knuckles';
     return { id: rawId, category: 'melee', subtype, archetype: subtype, asset: WEAPON_ASSET_MAP[subtype] || null, rimColor };
   }
@@ -1330,6 +1400,30 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     return { id: rawId, category: 'booster', subtype, archetype: subtype, asset: null, rimColor };
   }
 
+  // Casino 3D Showpieces (37-Pocket Roulette Wheel & Mechanical Jackpot Slot Machine)
+  if (rawCat === 'casino' || /roulette_wheel|roulette|slot_machine|jackpot_slots/.test(rawId)) {
+    const subtype = /slot/.test(rawId) ? 'slot_machine' : 'roulette_wheel';
+    return { id: rawId, category: 'casino', subtype, archetype: subtype, asset: null, rimColor: 0xfbbf24 };
+  }
+
+  // 4 Evolving 3D Syndicate Companions (checked before armor so armored_k9 never collides with armor!)
+  if (rawCat === 'companion' || /recon_drone|armored_k9|smuggler_falcon|cyber_raven/.test(rawId)) {
+    let subtype = 'recon_drone';
+    if (/k9|hound|dog/.test(rawId)) subtype = 'armored_k9';
+    else if (/falcon|hawk/.test(rawId)) subtype = 'smuggler_falcon';
+    else if (/raven|crow/.test(rawId)) subtype = 'cyber_raven';
+    return { id: rawId, category: 'companion', subtype, archetype: subtype, asset: null, rimColor };
+  }
+
+  // Vehicles (4 Distinct Syndicate Fleet Archetypes — checked before armor so armored_van never collides with armor!)
+  if (rawCat === 'vehicle' || /(car|civic|evo|gtr|gt3|nightshade|van|armored_van|pier4|truck|interceptor|sedan|apex|racer)/.test(rawId)) {
+    let subtype = 'sports_car';
+    if (/armored_van|pier4|\bvan\b|truck|hauler/.test(rawId)) subtype = 'armored_van';
+    else if (/interceptor|sedan|apex|cruiser/.test(rawId)) subtype = 'interceptor_sedan';
+    else if (/bike|enduro/.test(rawId)) subtype = 'mountain_bike';
+    return { id: rawId, category: 'vehicle', subtype, archetype: subtype, asset: null, rimColor };
+  }
+
   // Armor & paperdoll
   if (rawCat === 'armor' || rawCat === 'paperdoll' || /(helmet|head|kevlar|vest|armor|body|chest|gloves|hands|gauntlet|boots|feet|pants|legs|greaves|amulet|ring|mask)/.test(rawId)) {
     let subtype = 'kevlar';
@@ -1339,11 +1433,6 @@ export function resolveItemSpec3D(itemId, category = '', rarity = 'rare') {
     else if (/pant|leg|greave/.test(rawId)) subtype = 'pants';
     else if (/amulet|ring|medal|crest/.test(rawId)) subtype = 'ring';
     return { id: rawId, category: 'armor', subtype, archetype: subtype, asset: null, rimColor };
-  }
-
-  // Vehicles
-  if (rawCat === 'vehicle' || /(car|civic|evo|gtr|gt3|van|truck|racer)/.test(rawId)) {
-    return { id: rawId, category: 'vehicle', subtype: 'sports_car', archetype: 'sports_car', asset: null, rimColor };
   }
 
   // Caches & Crates
@@ -1445,56 +1534,153 @@ function buildFirearmProcedural(subtype, rimColor) {
   }
 
   if (subtype === 'pistol' || subtype === 'revolver') {
-    const slide = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.22, 0.16), subtype === 'revolver' ? steel : gunmetal);
+    const slide = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.21, 0.15), subtype === 'revolver' ? steel : gunmetal);
     slide.position.set(0.1, 0.16, 0);
-    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, subtype === 'revolver' ? 0.68 : 0.36, 14), steel);
+    const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, subtype === 'revolver' ? 0.72 : 0.42, 16), steel);
     barrel.rotation.z = Math.PI / 2;
-    barrel.position.set(0.55, 0.17, 0);
-    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.52, 0.14), subtype === 'revolver' ? woodOrAccent : polymer);
+    barrel.position.set(0.56, 0.17, 0);
+    const grip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.54, 0.14), subtype === 'revolver' ? makePbr(0x7c2d12, 0.46, 0.1, { color: 0xfde68a, power: 2.6, intensity: 0.4 }) : polymer);
     grip.position.set(-0.24, -0.14, 0);
     grip.rotation.z = 0.28;
     const guard = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.022, 8, 16), gunmetal);
     guard.position.set(-0.02, -0.02, 0);
-    const laser = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.08, 0.1), opticLens);
+    const trigger = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.11, 0.03), steel);
+    trigger.position.set(0.0, -0.01, 0);
+    trigger.rotation.z = 0.32;
+    const laser = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.075, 0.095), opticLens);
     laser.position.set(0.32, 0.03, 0);
-    g.add(slide, barrel, grip, guard, laser);
+    g.add(slide, barrel, grip, guard, trigger, laser);
     if (subtype === 'revolver') {
-      const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.24, 12), steel);
+      const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.145, 0.145, 0.26, 18), steel);
       cyl.rotation.z = Math.PI / 2;
       cyl.position.set(0.02, 0.14, 0);
-      g.add(cyl);
+      const topRib = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.045, 0.06), gunmetal);
+      topRib.position.set(0.54, 0.23, 0);
+      const hammer = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.12, 0.04), steel);
+      hammer.position.set(-0.34, 0.26, 0);
+      hammer.rotation.z = -0.45;
+      const brassRimMat = makePbr(0xf59e0b, 0.2, 0.94);
+      for (let c = 0; c < 6; c++) {
+        const ang = (c / 6) * Math.PI * 2;
+        const rimShell = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.034, 0.27, 10), brassRimMat);
+        rimShell.rotation.z = Math.PI / 2;
+        rimShell.position.set(0.02, 0.14 + Math.cos(ang) * 0.088, Math.sin(ang) * 0.088);
+        g.add(rimShell);
+      }
+      g.add(cyl, topRib, hammer);
+    } else {
+      for (let s = -3; s <= 2; s++) {
+        const serr = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.16, 0.162), steel);
+        serr.position.set(-0.24 + s * 0.055, 0.16, 0);
+        g.add(serr);
+      }
+      const comp = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.21, 0.155), steel);
+      comp.position.set(0.66, 0.16, 0);
+      const rdsMount = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.11, 0.13), polymer);
+      rdsMount.position.set(-0.08, 0.30, 0);
+      const rdsLens = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.09, 0.11), opticLens);
+      rdsLens.position.set(0.0, 0.32, 0);
+      g.add(comp, rdsMount, rdsLens);
     }
     return g;
   }
 
   const isLong = subtype === 'sniper' || subtype === 'shotgun';
-  const recLen = subtype === 'smg' ? 0.68 : 0.96;
+  const recLen = subtype === 'smg' ? 0.68 : 0.98;
   const receiver = new THREE.Mesh(new THREE.BoxGeometry(recLen, 0.24, 0.16), gunmetal);
-  const barrelLen = isLong ? 1.05 : subtype === 'smg' ? 0.45 : 0.78;
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.052, barrelLen, 14), steel);
+  const barrelLen = subtype === 'sniper' ? 1.24 : isLong ? 1.04 : subtype === 'smg' ? 0.46 : 0.82;
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.054, barrelLen, 16), steel);
   barrel.rotation.z = Math.PI / 2;
   barrel.position.set(recLen * 0.5 + barrelLen * 0.45, 0.05, 0);
-  const handguard = new THREE.Mesh(new THREE.BoxGeometry(barrelLen * 0.58, 0.17, 0.15), woodOrAccent);
+  const handguard = new THREE.Mesh(new THREE.BoxGeometry(barrelLen * 0.58, 0.17, 0.155), woodOrAccent);
   handguard.position.set(recLen * 0.5 + barrelLen * 0.25, 0.02, 0);
-  const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.064, 0.18, 12), gunmetal);
+  const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.066, subtype === 'smg' ? 0.38 : 0.20, 14), subtype === 'smg' ? polymer : gunmetal);
   muzzle.rotation.z = Math.PI / 2;
-  muzzle.position.set(recLen * 0.5 + barrelLen * 0.9, 0.05, 0);
-  const stock = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.23, 0.13), subtype === 'ak' ? woodOrAccent : polymer);
-  stock.position.set(-recLen * 0.5 - 0.25, -0.03, 0);
-  const grip = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.4, 0.12), polymer);
+  muzzle.position.set(recLen * 0.5 + barrelLen * 0.92, 0.05, 0);
+  const stock = new THREE.Mesh(new THREE.BoxGeometry(0.60, 0.23, 0.13), subtype === 'ak' ? woodOrAccent : polymer);
+  stock.position.set(-recLen * 0.5 - 0.26, -0.03, 0);
+  const buttpad = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.26, 0.14), polymer);
+  buttpad.position.set(-recLen * 0.5 - 0.57, -0.04, 0);
+  const grip = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.40, 0.12), polymer);
   grip.position.set(-0.18, -0.26, 0);
   grip.rotation.z = 0.26;
-  const mag = new THREE.Mesh(new THREE.BoxGeometry(0.18, subtype === 'shotgun' ? 0.14 : 0.48, 0.11), subtype === 'ak' ? woodOrAccent : steel);
-  mag.position.set(0.16, -0.28, 0);
-  mag.rotation.z = -0.18;
-  const scopeTube = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.068, subtype === 'sniper' ? 0.58 : 0.32, 14), polymer);
-  scopeTube.rotation.z = Math.PI / 2;
-  scopeTube.position.set(0.02, 0.21, 0);
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.03, 14), opticLens);
-  lens.rotation.z = Math.PI / 2;
-  lens.position.set(subtype === 'sniper' ? 0.31 : 0.18, 0.21, 0);
+  const triggerGuard = new THREE.Mesh(new THREE.TorusGeometry(0.095, 0.018, 8, 14), gunmetal);
+  triggerGuard.position.set(-0.04, -0.15, 0);
+  g.add(receiver, barrel, handguard, muzzle, stock, buttpad, grip, triggerGuard);
 
-  g.add(receiver, barrel, handguard, muzzle, stock, grip, mag, scopeTube, lens);
+  if (subtype === 'ak') {
+    const bananaMag = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.068, 10, 20, Math.PI * 0.36), woodOrAccent);
+    bananaMag.position.set(0.48, -0.12, 0);
+    bananaMag.rotation.z = -Math.PI * 0.68;
+    const gasTube = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, barrelLen * 0.62, 12), gunmetal);
+    gasTube.rotation.z = Math.PI / 2;
+    gasTube.position.set(recLen * 0.5 + barrelLen * 0.28, 0.135, 0);
+    const frontSight = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.16, 0.05), gunmetal);
+    frontSight.position.set(recLen * 0.5 + barrelLen * 0.78, 0.14, 0);
+    const dustCover = new THREE.Mesh(new THREE.CylinderGeometry(0.082, 0.082, recLen * 0.88, 12, 1, false, 0, Math.PI), steel);
+    dustCover.rotation.z = Math.PI / 2;
+    dustCover.position.set(-0.02, 0.12, 0);
+    g.add(bananaMag, gasTube, frontSight, dustCover);
+  } else if (subtype === 'sniper') {
+    const mag = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.24, 0.11), steel);
+    mag.position.set(0.14, -0.20, 0);
+    const scopeTube = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.056, 0.68, 16), polymer);
+    scopeTube.rotation.z = Math.PI / 2;
+    scopeTube.position.set(0.04, 0.24, 0);
+    const objBell = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.058, 0.18, 16), gunmetal);
+    objBell.rotation.z = Math.PI / 2;
+    objBell.position.set(0.42, 0.24, 0);
+    const eyeBell = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.082, 0.14, 16), gunmetal);
+    eyeBell.rotation.z = Math.PI / 2;
+    eyeBell.position.set(-0.34, 0.24, 0);
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.086, 0.086, 0.025, 16), opticLens);
+    lens.rotation.z = Math.PI / 2;
+    lens.position.set(0.51, 0.24, 0);
+    const turretTop = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.08, 12), steel);
+    turretTop.position.set(0.04, 0.31, 0);
+    const cheekRest = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.08, 0.145), gunmetal);
+    cheekRest.position.set(-recLen * 0.5 - 0.22, 0.10, 0);
+    const bipodL = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.018, 0.44, 10), steel);
+    bipodL.position.set(recLen * 0.5 + barrelLen * 0.52, -0.18, 0.11);
+    bipodL.rotation.x = -0.32;
+    bipodL.rotation.z = -0.18;
+    const bipodR = bipodL.clone();
+    bipodR.position.z = -0.11;
+    bipodR.rotation.x = 0.32;
+    g.add(mag, scopeTube, objBell, eyeBell, lens, turretTop, cheekRest, bipodL, bipodR);
+  } else if (subtype === 'shotgun') {
+    const magTube = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, barrelLen * 0.86, 14), gunmetal);
+    magTube.rotation.z = Math.PI / 2;
+    magTube.position.set(recLen * 0.5 + barrelLen * 0.40, -0.04, 0);
+    const pumpForend = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.072, 0.42, 14), makePbr(0x7c2d12, 0.48, 0.1));
+    pumpForend.rotation.z = Math.PI / 2;
+    pumpForend.position.set(recLen * 0.5 + 0.34, -0.04, 0);
+    const ventRib = new THREE.Mesh(new THREE.BoxGeometry(barrelLen * 0.9, 0.03, 0.04), gunmetal);
+    ventRib.position.set(recLen * 0.5 + barrelLen * 0.44, 0.11, 0);
+    const shellHullMat = makePbr(0xdc2626, 0.3, 0.25);
+    const shellBrassMat = makePbr(0xf59e0b, 0.2, 0.94);
+    for (let sh = 0; sh < 5; sh++) {
+      const hull = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.11, 10), shellHullMat);
+      hull.position.set(-0.22 + sh * 0.075, 0.02, 0.095);
+      const brassBase = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.035, 10), shellBrassMat);
+      brassBase.position.set(-0.22 + sh * 0.075, 0.085, 0.095);
+      g.add(hull, brassBase);
+    }
+    g.add(magTube, pumpForend, ventRib);
+  } else {
+    const mag = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.48, 0.11), steel);
+    mag.position.set(0.16, -0.28, 0);
+    mag.rotation.z = -0.18;
+    const foregrip = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 0.26, 12), polymer);
+    foregrip.position.set(recLen * 0.5 + 0.22, -0.16, 0);
+    const holoHousing = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.14, 0.13), gunmetal);
+    holoHousing.position.set(0.04, 0.20, 0);
+    const lens = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.10, 0.10), opticLens);
+    lens.position.set(0.14, 0.21, 0);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(recLen * 0.9, 0.035, 0.09), steel);
+    rail.position.set(0, 0.135, 0);
+    g.add(mag, foregrip, holoHousing, lens, rail);
+  }
   return g;
 }
 
@@ -1502,10 +1688,9 @@ function buildMeleeProcedural(subtype, rimColor) {
   const g = new THREE.Group();
   const bladeMat = makePbr(0xdbe4ee, 0.14, 0.96, { color: rimColor, power: 2.2, intensity: 0.55 });
   const darkGrip = makePbr(0x1f242d, 0.62, 0.18, { color: rimColor, power: 3.0, intensity: 0.3 });
-  const brass = makePbr(0xd97706, 0.24, 0.90, { color: 0xfde68a, power: 2.5, intensity: 0.45 });
+  const brass = makePbr(0xd97706, 0.20, 0.94, { color: 0xfde68a, power: 2.3, intensity: 0.58 });
 
   if (subtype === 'cut_throat_razor') {
-    // Open folding straight razor at 130-degree V silhouette
     const scaleL = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.16, 0.03), makePbr(0xf8fafc, 0.2, 0.35, { color: rimColor, power: 2.4, intensity: 0.5 }));
     scaleL.position.set(-0.32, -0.14, 0.045);
     scaleL.rotation.z = 0.28;
@@ -1524,6 +1709,49 @@ function buildMeleeProcedural(subtype, rimColor) {
     return g;
   }
 
+  if (subtype === 'knuckles') {
+    // Authentic 4-Finger Brass Knuckle Duster + Palm Brace + 4 Diamond Strike Studs
+    const palmBar = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.96, 14), brass);
+    palmBar.rotation.z = Math.PI / 2;
+    palmBar.position.set(0, -0.22, 0);
+    const bridge = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.12, 0.14), brass);
+    bridge.position.set(0, 0.06, 0);
+    g.add(palmBar, bridge);
+    for (let i = 0; i < 4; i++) {
+      const x = -0.39 + i * 0.26;
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.125, 0.042, 12, 24), brass);
+      ring.position.set(x, 0.12, 0);
+      const stud = new THREE.Mesh(new THREE.OctahedronGeometry(0.062, 0), bladeMat);
+      stud.position.set(x, 0.29, 0);
+      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.22, 0.12), brass);
+      pillar.position.set(x, -0.08, 0);
+      g.add(ring, stud, pillar);
+    }
+    return g;
+  }
+
+  if (subtype === 'stun_baton') {
+    const plasmaMat = makePbr(0x38bdf8, 0.10, 0.4, { color: 0x67e8f9, power: 1.7, intensity: 1.0 }, { emissive: 0x0284c7, emissiveIntensity: 0.95 });
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.062, 1.32, 16), darkGrip);
+    const guard = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.026, 10, 20), brass);
+    guard.rotation.x = Math.PI / 2;
+    guard.position.y = -0.18;
+    for (let c = 0; c < 4; c++) {
+      const coil = new THREE.Mesh(new THREE.TorusGeometry(0.072, 0.016, 8, 18), plasmaMat);
+      coil.rotation.x = Math.PI / 2;
+      coil.position.y = 0.12 + c * 0.13;
+      g.add(coil);
+    }
+    const prongL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.24, 10), bladeMat);
+    prongL.position.set(-0.06, 0.74, 0);
+    const prongR = prongL.clone();
+    prongR.position.x = 0.06;
+    const arcSpark = new THREE.Mesh(new THREE.TorusGeometry(0.065, 0.018, 8, 16, Math.PI), plasmaMat);
+    arcSpark.position.set(0, 0.84, 0);
+    g.add(shaft, guard, prongL, prongR, arcSpark);
+    return g;
+  }
+
   if (subtype === 'bat') {
     const batBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.052, 1.65, 16), makePbr(0x9a5b2d, 0.48, 0.08, { color: rimColor, power: 2.8, intensity: 0.35 }));
     const gripTape = new THREE.Mesh(new THREE.CylinderGeometry(0.056, 0.054, 0.48, 14), darkGrip);
@@ -1539,33 +1767,68 @@ function buildMeleeProcedural(subtype, rimColor) {
     return g;
   }
 
-  if (subtype === 'hammer' || subtype === 'stun_baton' || subtype === 'knuckles') {
-    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.06, 1.45, 14), darkGrip);
-    const head = subtype === 'stun_baton'
-      ? new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.038, 10, 20), makePbr(0x38bdf8, 0.12, 0.5, { color: 0x38bdf8, power: 1.8, intensity: 1.0 }, { emissive: 0x0284c7, emissiveIntensity: 0.9 }))
-      : new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.26, 0.26), bladeMat);
-    head.position.y = 0.64;
+  if (subtype === 'hammer') {
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.06, 1.48, 14), makePbr(0x7c2d12, 0.5, 0.08));
+    const gripSleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.064, 0.066, 0.48, 14), darkGrip);
+    gripSleeve.position.y = -0.46;
+    const headCore = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.26, 0.26), bladeMat);
+    headCore.position.y = 0.64;
+    const strikeFaceL = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.13, 0.08, 8), brass);
+    strikeFaceL.rotation.z = Math.PI / 2;
+    strikeFaceL.position.set(-0.34, 0.64, 0);
+    const strikeFaceR = strikeFaceL.clone();
+    strikeFaceR.position.x = 0.34;
     const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.16, 14), brass);
     collar.position.y = 0.46;
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.072, 0.072, 0.1, 14), brass);
-    cap.position.y = -0.72;
-    g.add(shaft, head, collar, cap);
+    g.add(shaft, gripSleeve, headCore, strikeFaceL, strikeFaceR, collar);
     return g;
   }
 
-  const bladeLen = subtype === 'katana' ? 1.38 : 0.88;
-  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.14, bladeLen, 0.028), bladeMat);
-  blade.position.y = bladeLen * 0.5 + 0.05;
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.072, 0.22, 4), bladeMat);
+  if (subtype === 'katana') {
+    // Curved Sori Katana Blade + Ornate Circular Brass Tsuba + Diamond-Wrapped Tsuka
+    for (let seg = 0; seg < 5; seg++) {
+      const t = seg / 4;
+      const segMesh = new THREE.Mesh(new THREE.BoxGeometry(0.095 - t * 0.025, 0.32, 0.022), bladeMat);
+      segMesh.position.set(-Math.pow(t, 1.8) * 0.11, 0.20 + seg * 0.28, 0);
+      segMesh.rotation.z = t * 0.12;
+      g.add(segMesh);
+    }
+    const kissaki = new THREE.Mesh(new THREE.ConeGeometry(0.048, 0.18, 4), bladeMat);
+    kissaki.position.set(-0.145, 1.50, 0);
+    kissaki.rotation.set(0, Math.PI / 4, 0.15);
+    const tsuba = new THREE.Mesh(new THREE.CylinderGeometry(0.17, 0.17, 0.032, 24), brass);
+    tsuba.position.y = 0.03;
+    const habaki = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.07, 0.04), brass);
+    habaki.position.y = 0.07;
+    const tsuka = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.048, 0.48, 12), makePbr(0x7f1d1d, 0.52, 0.15));
+    tsuka.position.y = -0.22;
+    for (let w = 0; w < 5; w++) {
+      const wrap = new THREE.Mesh(new THREE.TorusGeometry(0.054, 0.011, 6, 14), darkGrip);
+      wrap.rotation.x = Math.PI / 2 + (w % 2 ? 0.3 : -0.3);
+      wrap.position.y = -0.06 - w * 0.08;
+      g.add(wrap);
+    }
+    const kashira = new THREE.Mesh(new THREE.CylinderGeometry(0.054, 0.05, 0.05, 12), brass);
+    kashira.position.y = -0.47;
+    g.add(kissaki, tsuba, habaki, tsuka, kashira);
+    return g;
+  }
+
+  // Tactical Combat Knife with Blood Fuller, Serrated Spine & Ring Pommel
+  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.88, 0.028), bladeMat);
+  blade.position.y = 0.49;
+  const fuller = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.64, 0.034), darkGrip);
+  fuller.position.set(0.02, 0.46, 0);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.078, 0.24, 4), bladeMat);
   tip.rotation.y = Math.PI / 4;
-  tip.position.y = bladeLen + 0.15;
-  const guard = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.06, 0.12), brass);
+  tip.position.y = 1.04;
+  const guard = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.065, 0.12), brass);
   guard.position.y = 0.03;
-  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.052, 0.42, 12), darkGrip);
+  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.054, 0.42, 14), darkGrip);
   handle.position.y = -0.21;
-  const pommel = new THREE.Mesh(new THREE.OctahedronGeometry(0.075, 0), brass);
-  pommel.position.y = -0.45;
-  g.add(blade, tip, guard, handle, pommel);
+  const pommelRing = new THREE.Mesh(new THREE.TorusGeometry(0.072, 0.02, 10, 20), brass);
+  pommelRing.position.y = -0.47;
+  g.add(blade, fuller, tip, guard, handle, pommelRing);
   return g;
 }
 
@@ -2048,6 +2311,51 @@ function buildBoosterProcedural(subtype) {
     return g;
   }
 
+  if (subtype === 'alcohol') {
+    // Faceted Crystal Reserve Bourbon Decanter + Amber Liquor Core + Cut-Crystal Stopper
+    const crystal = makePbr(0xe0f2fe, 0.04, 0.08, { color: 0xfde68a, power: 2.0, intensity: 0.72 }, { transparent: true, opacity: 0.46, clearcoat: 1.0 });
+    const bourbon = makePbr(0xb45309, 0.14, 0.18, { color: 0xfbbf24, power: 1.8, intensity: 0.92 }, { emissive: 0x78350f, emissiveIntensity: 0.55 });
+    const bottle = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.40, 0.78, 8), crystal);
+    bottle.position.y = -0.14;
+    const liquor = new THREE.Mesh(new THREE.CylinderGeometry(0.30, 0.34, 0.52, 8), bourbon);
+    liquor.position.y = -0.22;
+    const shoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.36, 0.22, 8), crystal);
+    shoulder.position.y = 0.36;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.14, 0.24, 12), crystal);
+    neck.position.y = 0.56;
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.145, 0.025, 10, 20), gold);
+    collar.rotation.x = Math.PI / 2;
+    collar.position.y = 0.52;
+    const stopper = new THREE.Mesh(new THREE.OctahedronGeometry(0.18, 0), crystal);
+    stopper.position.y = 0.80;
+    const plaque = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 0.04), gold);
+    plaque.position.set(0, -0.10, 0.38);
+    g.add(bottle, liquor, shoulder, neck, collar, stopper, plaque);
+    return g;
+  }
+
+  if (subtype === 'candy') {
+    // Luxury Champagne-Gold Foil Praline Box + Crimson Ribbon + 3 Sculpted Truffles
+    const crimson = makePbr(0xdc2626, 0.28, 0.35, { color: 0xfca5a5, power: 2.2, intensity: 0.7 });
+    const choc = makePbr(0x451a03, 0.38, 0.12, { color: 0xfde68a, power: 2.5, intensity: 0.45 });
+    const boxBase = new THREE.Mesh(new THREE.BoxGeometry(1.12, 0.26, 0.82), gold);
+    boxBase.position.y = -0.12;
+    const innerTray = new THREE.Mesh(new THREE.BoxGeometry(1.00, 0.08, 0.70), obsidian);
+    innerTray.position.y = 0.02;
+    const ribbonX = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.28, 0.12), crimson);
+    ribbonX.position.y = -0.12;
+    for (let t = -1; t <= 1; t++) {
+      const praline = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), choc);
+      praline.scale.set(1, 0.78, 1);
+      praline.position.set(t * 0.30, 0.11, 0);
+      const leaf = new THREE.Mesh(new THREE.OctahedronGeometry(0.045, 0), gold);
+      leaf.position.set(t * 0.30, 0.22, 0);
+      g.add(praline, leaf);
+    }
+    g.add(boxBase, innerTray, ribbonX);
+    return g;
+  }
+
   const can = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 1.12, 24), obsidian);
   const topRim = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.35, 0.09, 24), gold);
   topRim.position.y = 0.58;
@@ -2066,20 +2374,36 @@ function buildArmorProcedural(subtype, rimColor) {
   const tactical = makePbr(0x272d38, 0.42, 0.58, { color: rimColor, power: 2.5, intensity: 0.5 });
   const plate = makePbr(0x475569, 0.28, 0.84, { color: rimColor, power: 2.6, intensity: 0.45 });
   const visorMat = makePbr(0x0ea5e9, 0.08, 0.35, { color: 0x7dd3fc, power: 1.9, intensity: 0.88 }, { transparent: true, opacity: 0.78 });
+  const nvgGlow = makePbr(0x10b981, 0.08, 0.3, { color: 0x6ee7b7, power: 1.7, intensity: 1.0 }, { emissive: 0x059669, emissiveIntensity: 0.95 });
   const gold = makePbr(0xf59e0b, 0.2, 0.95, { color: 0xfef08a, power: 2.2, intensity: 0.72 });
 
   if (subtype === 'helmet') {
-    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.52, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.66), tactical);
-    dome.position.y = 0.08;
-    const visor = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.28, 20, 1, false, -Math.PI * 0.35, Math.PI * 0.7), visorMat);
-    visor.position.set(0, -0.02, 0.06);
-    const nvgMount = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.16, 0.14), plate);
-    nvgMount.position.set(0, 0.32, 0.44);
-    const railL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 0.46), plate);
+    // FAST Ballistic Helmet + Quad-Tube Panoramic GPNVG-18 Night-Vision Pods + ARC Rails
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.52, 24, 18, 0, Math.PI * 2, 0, Math.PI * 0.64), tactical);
+    dome.position.y = 0.06;
+    const visor = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.22, 20, 1, false, -Math.PI * 0.34, Math.PI * 0.68), visorMat);
+    visor.position.set(0, -0.04, 0.06);
+    const nvgMount = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18, 0.16), plate);
+    nvgMount.position.set(0, 0.28, 0.45);
+    const bridgeBar = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.06, 0.08), plate);
+    bridgeBar.position.set(0, 0.22, 0.56);
+    for (let p = 0; p < 4; p++) {
+      const px = -0.255 + p * 0.17;
+      const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.064, 0.26, 14), tactical);
+      tube.rotation.x = Math.PI / 2;
+      tube.position.set(px, 0.16, 0.64);
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.03, 14), nvgGlow);
+      lens.rotation.x = Math.PI / 2;
+      lens.position.set(px, 0.16, 0.77);
+      g.add(tube, lens);
+    }
+    const railL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 0.48), plate);
     railL.position.set(-0.48, 0.08, 0);
     const railR = railL.clone();
     railR.position.x = 0.48;
-    g.add(dome, visor, nvgMount, railL, railR);
+    const batteryPack = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.18, 0.12), plate);
+    batteryPack.position.set(0, 0.12, -0.50);
+    g.add(dome, visor, nvgMount, bridgeBar, railL, railR, batteryPack);
     return g;
   }
 
@@ -2093,20 +2417,75 @@ function buildArmorProcedural(subtype, rimColor) {
     return g;
   }
 
-  if (subtype === 'boots' || subtype === 'gloves' || subtype === 'pants') {
-    const left = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.82, 0.44), tactical);
-    left.position.x = -0.26;
-    const right = left.clone();
-    right.position.x = 0.26;
-    const guardL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.34, 0.48), plate);
-    guardL.position.set(-0.26, 0.12, 0.02);
-    const guardR = guardL.clone();
-    guardR.position.x = 0.26;
-    const soleL = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.14, 0.56), gold);
-    soleL.position.set(-0.26, -0.38, 0.05);
-    const soleR = soleL.clone();
-    soleR.position.x = 0.26;
-    g.add(left, right, guardL, guardR, soleL, soleR);
+  if (subtype === 'boots') {
+    // Pair of Steel-Toe Tactical Combat Boots with Treaded Lug Soles & Ankle Buckles
+    const buildBoot = (side) => {
+      const b = new THREE.Group();
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 0.62, 14), tactical);
+      shaft.position.set(0, 0.12, -0.08);
+      const foot = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.24, 0.68), tactical);
+      foot.position.set(0, -0.22, 0.08);
+      const toeCap = new THREE.Mesh(new THREE.SphereGeometry(0.175, 14, 12), plate);
+      toeCap.scale.set(0.98, 0.72, 1.05);
+      toeCap.position.set(0, -0.22, 0.34);
+      const sole = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.10, 0.74), gold);
+      sole.position.set(0, -0.36, 0.09);
+      const buckle = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.07, 0.38), plate);
+      buckle.position.set(0, 0.08, -0.08);
+      b.add(shaft, foot, toeCap, sole, buckle);
+      b.position.set(side * 0.30, 0, 0);
+      b.rotation.y = side * -0.14;
+      return b;
+    };
+    g.add(buildBoot(-1), buildBoot(1));
+    return g;
+  }
+
+  if (subtype === 'gloves') {
+    // Pair of Carbon-Knuckle Assault Gauntlets with Articulated Fingers & Wrist Straps
+    const buildGauntlet = (side) => {
+      const gl = new THREE.Group();
+      const palm = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.44, 0.13), tactical);
+      const knucklePlate = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.12, 0.16), gold);
+      knucklePlate.position.set(0, 0.16, 0.02);
+      const cuff = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.22, 0.22, 14), plate);
+      cuff.position.set(0, -0.30, 0);
+      gl.add(palm, knucklePlate, cuff);
+      for (let f = -1.5; f <= 1.5; f += 1) {
+        const finger = new THREE.Mesh(new THREE.CapsuleGeometry(0.04, 0.24, 6, 10), tactical);
+        finger.position.set(f * 0.09, 0.36, 0);
+        gl.add(finger);
+      }
+      const thumb = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.18, 6, 10), plate);
+      thumb.position.set(side < 0 ? 0.24 : -0.24, 0.05, 0.04);
+      thumb.rotation.z = side < 0 ? -0.58 : 0.58;
+      gl.add(thumb);
+      gl.position.set(side * 0.34, 0, 0);
+      gl.rotation.z = side * -0.12;
+      return gl;
+    };
+    g.add(buildGauntlet(-1), buildGauntlet(1));
+    return g;
+  }
+
+  if (subtype === 'pants') {
+    // Ballistic Ripstop Tactical Cargo Trousers + Dual Knee-Pad Shells + Riggers Belt
+    const waist = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.20, 0.40), tactical);
+    waist.position.y = 0.46;
+    const belt = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.08, 0.43), gold);
+    belt.position.y = 0.50;
+    g.add(waist, belt);
+    for (const side of [-1, 1]) {
+      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.16, 0.48, 14), tactical);
+      thigh.position.set(side * 0.22, 0.16, 0);
+      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.155, 0.14, 0.48, 14), tactical);
+      shin.position.set(side * 0.23, -0.30, 0);
+      const kneePad = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.22, 0.20), plate);
+      kneePad.position.set(side * 0.225, -0.06, 0.12);
+      const cargoPocket = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.24, 0.24), plate);
+      cargoPocket.position.set(side * 0.38, 0.14, 0);
+      g.add(thigh, shin, kneePad, cargoPocket);
+    }
     return g;
   }
 
@@ -2117,12 +2496,16 @@ function buildArmorProcedural(subtype, rimColor) {
   strapL.position.set(-0.28, 0.62, 0);
   const strapR = strapL.clone();
   strapR.position.x = 0.28;
+  const radio = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.24, 0.12), gold);
+  radio.position.set(-0.30, 0.34, 0.24);
+  const radioAnt = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.015, 0.34, 8), plate);
+  radioAnt.position.set(-0.33, 0.58, 0.24);
   for (let i = -1; i <= 1; i++) {
     const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.28, 0.48), plate);
     pouch.position.set(i * 0.25, -0.24, 0.02);
     g.add(pouch);
   }
-  g.add(torso, chestPlate, strapL, strapR);
+  g.add(torso, chestPlate, strapL, strapR, radio, radioAnt);
   return g;
 }
 
@@ -2134,48 +2517,150 @@ function buildContrabandVehicleCacheProcedural(category, subtype, rimColor) {
   const neon = makePbr(0x22d3ee, 0.12, 0.3, { color: 0x67e8f9, power: 1.8, intensity: 0.95 }, { emissive: 0x0891b2, emissiveIntensity: 0.8 });
 
   if (category === 'vehicle') {
+    const addDetailedWheelSet = (coords, tireR = 0.19, tireW = 0.12, hubMat = gold) => {
+      const tireGeo = new THREE.CylinderGeometry(tireR, tireR, tireW, 20);
+      const rimGeo = new THREE.CylinderGeometry(tireR * 0.62, tireR * 0.62, tireW + 0.015, 12);
+      for (let i = 0; i < coords.length; i++) {
+        const [wx, wy, wz] = coords[i];
+        const tire = new THREE.Mesh(tireGeo, dark);
+        tire.rotation.x = Math.PI / 2;
+        tire.position.set(wx, wy, wz);
+        const rim = new THREE.Mesh(rimGeo, hubMat);
+        rim.rotation.x = Math.PI / 2;
+        rim.position.set(wx, wy, wz);
+        g.add(tire, rim);
+      }
+    };
+
     if (subtype === 'mountain_bike') {
-      // Street Getaway Mountain Bike: 2 spoked wheels + diamond tubular frame + handlebars + saddle
+      // Street Getaway Stealth Enduro Bike: Spoked Wheels + Brake Rotors + Suspension Fork + Chainring
       const frameMat = makePbr(0x16a34a, 0.22, 0.72, { color: 0x86efac, power: 2.2, intensity: 0.65 });
-      const wheelF = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.055, 12, 26), dark);
+      const wheelF = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.055, 14, 28), dark);
       wheelF.position.set(0.54, -0.18, 0);
       const wheelR = wheelF.clone();
       wheelR.position.x = -0.54;
+      const rotorF = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.02, 16), steel);
+      rotorF.rotation.x = Math.PI / 2;
+      rotorF.position.set(0.54, -0.18, 0.03);
+      const rotorR = rotorF.clone();
+      rotorR.position.x = -0.54;
+      const chainring = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.03, 16), gold);
+      chainring.rotation.x = Math.PI / 2;
+      chainring.position.set(-0.08, -0.18, 0.04);
       const topTube = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.82, 10), frameMat);
       topTube.rotation.z = Math.PI / 2 - 0.1;
       topTube.position.set(0, 0.16, 0);
       const downTube = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 0.78, 10), frameMat);
       downTube.rotation.z = 0.88;
       downTube.position.set(0.14, -0.02, 0);
+      const chainStay = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.52, 10), frameMat);
+      chainStay.rotation.z = Math.PI / 2;
+      chainStay.position.set(-0.31, -0.18, 0);
       const seatPost = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.03, 0.62, 10), steel);
       seatPost.rotation.z = 0.22;
       seatPost.position.set(-0.28, 0.06, 0);
-      const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.06, 0.14), dark);
+      const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.15), dark);
       saddle.position.set(-0.34, 0.36, 0);
-      const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.68, 10), steel);
+      const fork = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.68, 10), gold);
       fork.rotation.z = 0.28;
       fork.position.set(0.44, 0.08, 0);
-      const bars = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.52, 10), steel);
+      const bars = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.56, 10), steel);
       bars.rotation.x = Math.PI / 2;
       bars.position.set(0.36, 0.39, 0);
-      g.add(wheelF, wheelR, topTube, downTube, seatPost, saddle, fork, bars);
+      const headlamp = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 10), neon);
+      headlamp.position.set(0.43, 0.36, 0);
+      g.add(wheelF, wheelR, rotorF, rotorR, chainring, topTube, downTube, chainStay, seatPost, saddle, fork, bars, headlamp);
       return g;
     }
 
-    const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.48, 0.28, 0.72), makePbr(0xdc2626, 0.18, 0.78, { color: 0xfca5a5, power: 2.2, intensity: 0.65 }, { clearcoat: 1.0 }));
-    const cabin = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.24, 0.6), neon);
-    cabin.position.set(-0.05, 0.24, 0);
-    const wing = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.18, 0.74), dark);
-    wing.position.set(-0.66, 0.24, 0);
-    const wheelGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.12, 16);
-    const positions = [[0.46, -0.14, 0.38], [0.46, -0.14, -0.38], [-0.46, -0.14, 0.38], [-0.46, -0.14, -0.38]];
-    for (let i = 0; i < positions.length; i++) {
-      const w = new THREE.Mesh(wheelGeo, dark);
-      w.rotation.x = Math.PI / 2;
-      w.position.set(positions[i][0], positions[i][1], positions[i][2]);
-      g.add(w);
+    if (subtype === 'armored_van') {
+      // Pier 4 Heavy Bullion Armored Van: Sloped Ballistic Cab + Grille + Mirrors + Roof Turret + Wheel Flares
+      const armorBodyMat = makePbr(0x334155, 0.30, 0.86, { color: 0xfbbf24, power: 2.2, intensity: 0.62 }, { clearcoat: 0.65 });
+      const trimGold = makePbr(0xf3c969, 0.18, 0.95, { color: 0xfef08a, power: 2.1, intensity: 0.72 });
+      const beaconAmber = makePbr(0xf59e0b, 0.10, 0.25, false, { emissive: 0xd97706, emissiveIntensity: 0.95 });
+      const cargoBox = new THREE.Mesh(new THREE.BoxGeometry(1.14, 0.62, 0.80), armorBodyMat);
+      cargoBox.position.set(-0.20, 0.16, 0);
+      const roofRib = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.05, 0.72), dark);
+      roofRib.position.set(-0.20, 0.49, 0);
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.48, 0.76), armorBodyMat);
+      cab.position.set(0.58, 0.09, 0);
+      const hood = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.28, 0.74), armorBodyMat);
+      hood.position.set(0.76, -0.01, 0);
+      const windshield = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.20, 0.66), neon);
+      windshield.position.set(0.74, 0.22, 0);
+      windshield.rotation.z = 0.32;
+      const grille = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.20, 0.46), dark);
+      grille.position.set(0.93, -0.01, 0);
+      const bullbar = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.24, 0.84), trimGold);
+      bullbar.position.set(0.96, -0.06, 0);
+      const roofHatch = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.19, 0.08, 18), steel);
+      roofHatch.position.set(-0.12, 0.53, 0);
+      const beaconL = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.08, 12), beaconAmber);
+      beaconL.position.set(0.46, 0.37, 0.24);
+      const beaconR = beaconL.clone();
+      beaconR.position.z = -0.24;
+      const sideTrimL = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.07, 0.84), trimGold);
+      sideTrimL.position.set(-0.20, 0.04, 0);
+      const viewportSlit = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.10, 0.83), neon);
+      viewportSlit.position.set(-0.22, 0.28, 0);
+      const mirrorL = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.11, 0.09), steel);
+      mirrorL.position.set(0.66, 0.20, 0.44);
+      const mirrorR = mirrorL.clone();
+      mirrorR.position.z = -0.44;
+      const lightL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.13), neon);
+      lightL.position.set(0.93, 0.03, 0.28);
+      const lightR = lightL.clone();
+      lightR.position.z = -0.28;
+      addDetailedWheelSet([[0.54, -0.18, 0.41], [0.54, -0.18, -0.41], [-0.52, -0.18, 0.41], [-0.52, -0.18, -0.41]], 0.20, 0.14, trimGold);
+      g.add(cargoBox, roofRib, cab, hood, windshield, grille, bullbar, roofHatch, beaconL, beaconR, sideTrimL, viewportSlit, mirrorL, mirrorR, lightL, lightR);
+      return g;
     }
-    g.add(chassis, cabin, wing);
+
+    if (subtype === 'interceptor_sedan') {
+      // Apex Interceptor AWD Pursuit Sedan: Midnight Blue Clearcoat + Hood Scoop + Stealth Lightbar + Diffuser
+      const midnight = makePbr(0x1e3a8a, 0.16, 0.84, { color: 0x38bdf8, power: 2.1, intensity: 0.72 }, { clearcoat: 1.0 });
+      const sirenRed = makePbr(0xef4444, 0.12, 0.3, false, { emissive: 0xdc2626, emissiveIntensity: 0.9 });
+      const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.56, 0.26, 0.76), midnight);
+      chassis.position.y = 0.02;
+      const fastback = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.24, 0.66), midnight);
+      fastback.position.set(-0.06, 0.24, 0);
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.18, 0.68), neon);
+      glass.position.set(-0.06, 0.23, 0);
+      const scoop = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.07, 0.30), dark);
+      scoop.position.set(0.46, 0.17, 0);
+      const lightbarL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.24), sirenRed);
+      lightbarL.position.set(0.02, 0.38, 0.13);
+      const lightbarR = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.24), neon);
+      lightbarR.position.set(0.02, 0.38, -0.13);
+      const diffuser = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.10, 0.72), dark);
+      diffuser.position.set(-0.78, -0.06, 0);
+      addDetailedWheelSet([[0.48, -0.14, 0.39], [0.48, -0.14, -0.39], [-0.48, -0.14, 0.39], [-0.48, -0.14, -0.39]], 0.185, 0.12, steel);
+      g.add(chassis, fastback, glass, scoop, lightbarL, lightbarR, diffuser);
+      return g;
+    }
+
+    // Nightshade GT Twin-Turbo Supercar: Sculpted Aero Splitter, Flared Arches, Panoramic Canopy & GT Wing
+    const crimsonCoat = makePbr(0xdc2626, 0.14, 0.82, { color: 0xfca5a5, power: 2.1, intensity: 0.7 }, { clearcoat: 1.0 });
+    const chassis = new THREE.Mesh(new THREE.BoxGeometry(1.54, 0.24, 0.78), crimsonCoat);
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, 0.74), crimsonCoat);
+    nose.position.set(0.76, -0.04, 0);
+    const splitter = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.04, 0.82), dark);
+    splitter.position.set(0.84, -0.12, 0);
+    const canopy = new THREE.Mesh(new THREE.SphereGeometry(0.42, 18, 12), neon);
+    canopy.scale.set(1.25, 0.52, 0.76);
+    canopy.position.set(-0.04, 0.18, 0);
+    const wingBlade = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.04, 0.84), dark);
+    wingBlade.position.set(-0.72, 0.30, 0);
+    const strutL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.18, 0.03), gold);
+    strutL.position.set(-0.70, 0.20, 0.26);
+    const strutR = strutL.clone();
+    strutR.position.z = -0.26;
+    const headL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.16), neon);
+    headL.position.set(0.86, 0.02, 0.25);
+    const headR = headL.clone();
+    headR.position.z = -0.25;
+    addDetailedWheelSet([[0.48, -0.13, 0.40], [0.48, -0.13, -0.40], [-0.48, -0.13, 0.40], [-0.48, -0.13, -0.40]], 0.185, 0.13, gold);
+    g.add(chassis, nose, splitter, canopy, wingBlade, strutL, strutR, headL, headR);
     return g;
   }
 
@@ -2345,6 +2830,420 @@ function loadRealWeaponTemplateAsync(assetSpec, rimColor) {
   return p;
 }
 
+let _rouletteRingTextureCache = null;
+function getRouletteNumberRingTexture() {
+  if (_rouletteRingTextureCache) return _rouletteRingTextureCache;
+  if (typeof document === 'undefined' || typeof document.createElement !== 'function') return null;
+  try {
+    const cv = document.createElement('canvas');
+    cv.width = 512;
+    cv.height = 512;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return null;
+    const cx = 256;
+    const cy = 256;
+    ctx.clearRect(0, 0, 512, 512);
+    const n = EUROPEAN_ROULETTE_ORDER.length;
+    for (let i = 0; i < n; i++) {
+      const pocket = EUROPEAN_ROULETTE_ORDER[i];
+      const a0 = ((i - 0.5) / n) * Math.PI * 2;
+      const a1 = ((i + 0.5) / n) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 246, a0, a1, false);
+      ctx.arc(cx, cy, 172, a1, a0, true);
+      ctx.closePath();
+      ctx.fillStyle = pocket === 0 ? '#059669' : (ROULETTE_RED_SET.has(pocket) ? '#b91c1c' : '#111114');
+      ctx.fill();
+      ctx.strokeStyle = '#f3c969';
+      ctx.lineWidth = 2.2;
+      ctx.stroke();
+
+      const mid = (i / n) * Math.PI * 2;
+      ctx.save();
+      ctx.translate(cx + Math.cos(mid) * 209, cy + Math.sin(mid) * 209);
+      ctx.rotate(mid + Math.PI * 0.5);
+      ctx.fillStyle = '#fbf6ea';
+      ctx.font = 'bold 20px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(pocket), 0, 0);
+      ctx.restore();
+    }
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    _rouletteRingTextureCache = tex;
+    return tex;
+  } catch (_) {
+    return null;
+  }
+}
+
+let _slotReelTexturesCache = null;
+function getSlotReelTexture(reelIndex = 0) {
+  if (typeof document === 'undefined' || typeof document.createElement !== 'function') return null;
+  if (!_slotReelTexturesCache) _slotReelTexturesCache = [];
+  if (_slotReelTexturesCache[reelIndex]) return _slotReelTexturesCache[reelIndex];
+  try {
+    const cv = document.createElement('canvas');
+    cv.width = 128;
+    cv.height = 512;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return null;
+    ctx.fillStyle = '#fbf6ea';
+    ctx.fillRect(0, 0, 128, 512);
+    const symbols = [
+      { txt: '7', fg: '#dc2626' },
+      { txt: 'BAR', fg: '#111114' },
+      { txt: '★', fg: '#d97706' },
+      { txt: '♦', fg: '#dc2626' },
+      { txt: '♛', fg: '#059669' },
+      { txt: '777', fg: '#b45309' },
+    ];
+    const step = 512 / symbols.length;
+    for (let i = 0; i < symbols.length; i++) {
+      const s = symbols[(i + reelIndex) % symbols.length];
+      const y = i * step;
+      ctx.strokeStyle = 'rgba(217,119,6,0.35)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(6, y + 4, 116, step - 8);
+      ctx.fillStyle = s.fg;
+      ctx.font = '900 34px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(s.txt, 64, y + step * 0.5);
+    }
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    _slotReelTexturesCache[reelIndex] = tex;
+    return tex;
+  } catch (_) {
+    return null;
+  }
+}
+
+/**
+ * Museum-Grade 37-Pocket Monte-Carlo 3D European Roulette Wheel:
+ * - Sculpted LatheGeometry obsidian-mahogany outer bowl + champagne-brass rim
+ * - Inclined ball track + 8 diamond-cut brass ball deflectors (canoes)
+ * - All 37 radial 3D pockets in authentic EUROPEAN_ROULETTE_ORDER + 37 brass frets
+ * - Procedural CanvasTexture 0..36 gold number ring + 4-spoke turned brass turret
+ * - Ivory clearcoat 3D ball with pocket-indexed angle resolver
+ */
+export function createRouletteWheel3D(opts = {}) {
+  const root = new THREE.Group();
+  root.name = 'z3d-monte-carlo-roulette';
+
+  const mahogany = makePbr(0x4a1912, 0.22, 0.28, { color: 0xfbbf24, power: 2.5, intensity: 0.45 }, { clearcoat: 1.0, clearcoatRoughness: 0.08 });
+  const obsidian = makePbr(0x131316, 0.24, 0.62, { color: 0xf3c969, power: 2.6, intensity: 0.42 }, { clearcoat: 0.85 });
+  const brass = makePbr(0xf3c969, 0.16, 0.96, { color: 0xfef08a, power: 2.1, intensity: 0.72 });
+  const emerald = makePbr(0x059669, 0.24, 0.36, { color: 0x6ee7b7, power: 2.2, intensity: 0.62 }, { emissive: 0x064e3b, emissiveIntensity: 0.35 });
+  const ruby = makePbr(0xdc2626, 0.24, 0.38, { color: 0xfca5a5, power: 2.2, intensity: 0.58 }, { emissive: 0x7f1d1d, emissiveIntensity: 0.28 });
+  const ivory = makePbr(0xfbf6ea, 0.06, 0.10, { color: 0xffffff, power: 2.0, intensity: 0.7 }, { clearcoat: 1.0, clearcoatRoughness: 0.04 });
+
+  // 1. Turned LatheGeometry Outer Mahogany Bowl + Stepped Brass Lip
+  const lathePts = [
+    new THREE.Vector2(0.0, 0.0),
+    new THREE.Vector2(1.06, 0.0),
+    new THREE.Vector2(1.24, 0.14),
+    new THREE.Vector2(1.28, 0.34),
+    new THREE.Vector2(1.18, 0.38),
+    new THREE.Vector2(1.06, 0.30),
+    new THREE.Vector2(0.84, 0.18),
+    new THREE.Vector2(0.0, 0.16),
+  ];
+  const bowl = new THREE.Mesh(new THREE.LatheGeometry(lathePts, 48), mahogany);
+  const outerRim = new THREE.Mesh(new THREE.TorusGeometry(1.23, 0.042, 14, 56), brass);
+  outerRim.rotation.x = Math.PI / 2;
+  outerRim.position.y = 0.365;
+  const trackRing = new THREE.Mesh(new THREE.RingGeometry(0.83, 1.09, 52), obsidian);
+  trackRing.rotation.x = -Math.PI / 2;
+  trackRing.position.y = 0.275;
+  root.add(bowl, outerRim, trackRing);
+
+  // 2. 8 Diamond-Cut Brass Ball Deflectors (Canoes) Alternating Horizontal/Vertical
+  for (let d = 0; d < 8; d++) {
+    const ang = (d / 8) * Math.PI * 2;
+    const canoe = new THREE.Mesh(new THREE.OctahedronGeometry(0.055, 0), brass);
+    const horizontal = d % 2 === 0;
+    canoe.scale.set(horizontal ? 1.8 : 0.75, 0.55, horizontal ? 0.75 : 1.8);
+    canoe.position.set(Math.cos(ang) * 0.95, 0.295, Math.sin(ang) * 0.95);
+    canoe.rotation.y = -ang;
+    root.add(canoe);
+  }
+
+  // 3. Spinning Inner Rotor: All 37 Pockets + 37 Brass Frets + Number Ring + 4-Spoke Turret
+  const rotor = new THREE.Group();
+  rotor.name = 'z3d-roulette-rotor';
+  rotor.position.y = 0.22;
+
+  const rotorPlatter = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.78, 0.06, 48), obsidian);
+  rotorPlatter.position.y = -0.02;
+  rotor.add(rotorPlatter);
+
+  const pocketCount = EUROPEAN_ROULETTE_ORDER.length; // 37
+  const pocketArcW = (2 * Math.PI * 0.60) / pocketCount * 0.88;
+  const pocketGeo = new THREE.BoxGeometry(0.18, 0.036, pocketArcW);
+  const fretGeo = new THREE.BoxGeometry(0.20, 0.054, 0.014);
+
+  for (let i = 0; i < pocketCount; i++) {
+    const num = EUROPEAN_ROULETTE_ORDER[i];
+    const ang = (i / pocketCount) * Math.PI * 2;
+    const pMat = num === 0 ? emerald : (ROULETTE_RED_SET.has(num) ? ruby : obsidian);
+    const pocketMesh = new THREE.Mesh(pocketGeo, pMat);
+    pocketMesh.position.set(Math.cos(ang) * 0.60, 0.015, Math.sin(ang) * 0.60);
+    pocketMesh.rotation.y = -ang;
+    pocketMesh.userData.pocketNumber = num;
+    rotor.add(pocketMesh);
+
+    const fretAng = ((i + 0.5) / pocketCount) * Math.PI * 2;
+    const fret = new THREE.Mesh(fretGeo, brass);
+    fret.position.set(Math.cos(fretAng) * 0.60, 0.028, Math.sin(fretAng) * 0.60);
+    fret.rotation.y = -fretAng;
+    rotor.add(fret);
+  }
+
+  const numTex = getRouletteNumberRingTexture();
+  const numRingMat = numTex
+    ? new THREE.MeshStandardMaterial({ map: numTex, roughness: 0.26, metalness: 0.35, transparent: true })
+    : makePbr(0x1f2937, 0.28, 0.55, { color: 0xf3c969, power: 2.3, intensity: 0.55 });
+  const numRing = new THREE.Mesh(new THREE.RingGeometry(0.69, 0.82, 56), numRingMat);
+  numRing.rotation.x = -Math.PI / 2;
+  numRing.position.y = 0.036;
+  const innerBrassTrim = new THREE.Mesh(new THREE.TorusGeometry(0.50, 0.022, 10, 44), brass);
+  innerBrassTrim.rotation.x = Math.PI / 2;
+  innerBrassTrim.position.y = 0.038;
+
+  // Rosewood Cone + Turned Brass Turret Spindle + 4 Cross Finial Arms + Ruby Crown
+  const innerCone = new THREE.Mesh(new THREE.ConeGeometry(0.50, 0.16, 40), mahogany);
+  innerCone.position.y = 0.09;
+  const turretStem = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.11, 0.28, 20), brass);
+  turretStem.position.y = 0.22;
+  const turretCrown = new THREE.Mesh(new THREE.SphereGeometry(0.068, 16, 12), ruby);
+  turretCrown.position.y = 0.38;
+  rotor.add(numRing, innerBrassTrim, innerCone, turretStem, turretCrown);
+
+  for (let s = 0; s < 4; s++) {
+    const sAng = (s / 4) * Math.PI * 2;
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, 0.28, 10), brass);
+    arm.rotation.z = Math.PI / 2;
+    arm.rotation.y = sAng;
+    arm.position.set(Math.cos(sAng) * 0.14, 0.29, -Math.sin(sAng) * 0.14);
+    const tipBall = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 10), brass);
+    tipBall.position.set(Math.cos(sAng) * 0.28, 0.29, -Math.sin(sAng) * 0.28);
+    rotor.add(arm, tipBall);
+  }
+
+  root.add(rotor);
+
+  // 4. Ivory 3D Roulette Ball
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(0.052, 18, 14), ivory);
+  ball.name = 'z3d-roulette-ball';
+  ball.position.set(0.60, 0.27, 0);
+  root.add(ball);
+
+  const getPocketAngle = (pocketNum) => {
+    const idx = EUROPEAN_ROULETTE_ORDER.indexOf(Number(pocketNum));
+    const safeIdx = idx >= 0 ? idx : 0;
+    return (safeIdx / pocketCount) * Math.PI * 2;
+  };
+
+  root.userData = {
+    pocketCount,
+    pocketOrder: EUROPEAN_ROULETTE_ORDER,
+    rotor,
+    ball,
+    getPocketAngle,
+  };
+
+  if (opts.forInspector) {
+    root.rotation.x = 0.38;
+  }
+  return root;
+}
+
+/**
+ * Art-Deco Monte-Carlo 3D Mechanical Jackpot Slot Machine:
+ * - Obsidian & Ruby lacquer cabinet + stepped chrome base + neon crown marquee
+ * - 3x 24-segment textured symbol reels + brass flange rings
+ * - Spring-loaded chrome pull-arm lever with ruby clearcoat knob
+ */
+export function createSlotMachine3D(opts = {}) {
+  const cabinet = new THREE.Group();
+  cabinet.name = 'z3d-monte-carlo-slots';
+
+  const obsidian = makePbr(0x141210, 0.24, 0.76, { color: 0xf3c969, power: 2.3, intensity: 0.58 }, { clearcoat: 0.9 });
+  const rubyBody = makePbr(0x881337, 0.22, 0.68, { color: 0xfbbf24, power: 2.3, intensity: 0.62 }, { clearcoat: 0.95 });
+  const brass = makePbr(0xf3c969, 0.16, 0.96, { color: 0xfef08a, power: 2.1, intensity: 0.72 });
+  const chrome = makePbr(0xe2e8f0, 0.12, 0.96, { color: 0x38bdf8, power: 2.4, intensity: 0.5 });
+  const neonGold = makePbr(0xfef08a, 0.10, 0.2, false, { emissive: 0xf59e0b, emissiveIntensity: 0.95 });
+  const rubyKnobMat = makePbr(0xe11d48, 0.08, 0.25, { color: 0xfda4af, power: 1.8, intensity: 0.95 }, { clearcoat: 1.0, emissive: 0x9f1239, emissiveIntensity: 0.45 });
+
+  const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.36, 0.16, 0.86), obsidian);
+  plinth.position.y = 0.08;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.24, 1.66, 0.74), rubyBody);
+  body.position.y = 0.96;
+  const crownArch = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.74, 28, 1, false, 0, Math.PI), brass);
+  crownArch.rotation.z = Math.PI / 2;
+  crownArch.rotation.y = Math.PI / 2;
+  crownArch.position.y = 1.78;
+  const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.58, 0.79), brass);
+  bezel.position.y = 1.12;
+  const glassWindow = new THREE.Mesh(
+    new THREE.BoxGeometry(0.98, 0.46, 0.81),
+    makePbr(0xe0f2fe, 0.05, 0.1, false, { transparent: true, opacity: 0.28, clearcoat: 1.0 })
+  );
+  glassWindow.position.y = 1.12;
+  const coinTray = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.14, 0.24), chrome);
+  coinTray.position.set(0, 0.34, 0.42);
+  const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.15, 0.22, 18), neonGold);
+  beacon.position.y = 2.02;
+  cabinet.add(plinth, body, crownArch, bezel, glassWindow, coinTray, beacon);
+
+  for (let c = -2; c <= 2; c++) {
+    const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.03, 12), brass);
+    coin.position.set(c * 0.14, 0.42, 0.42);
+    cabinet.add(coin);
+  }
+
+  const reels = [];
+  for (let r = -1; r <= 1; r++) {
+    const tex = getSlotReelTexture(r + 1);
+    const reelMat = tex
+      ? new THREE.MeshStandardMaterial({ map: tex, roughness: 0.24, metalness: 0.18 })
+      : makePbr(0xfbf6ea, 0.22, 0.28, { color: 0xfbbf24, power: 2.5, intensity: 0.4 });
+    const reel = new THREE.Mesh(new THREE.CylinderGeometry(0.225, 0.225, 0.25, 24), reelMat);
+    reel.rotation.z = Math.PI / 2;
+    reel.position.set(r * 0.30, 1.12, 0.30);
+    const flangeL = new THREE.Mesh(new THREE.TorusGeometry(0.228, 0.014, 8, 24), brass);
+    flangeL.rotation.y = Math.PI / 2;
+    flangeL.position.x = -0.125;
+    const flangeR = flangeL.clone();
+    flangeR.position.x = 0.125;
+    reel.add(flangeL, flangeR);
+    cabinet.add(reel);
+    reels.push(reel);
+  }
+
+  // Spring-Loaded Pull-Arm Lever on Right Side
+  const leverHub = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.12, 16), brass);
+  leverHub.rotation.z = Math.PI / 2;
+  leverHub.position.set(0.68, 0.96, 0.05);
+  cabinet.add(leverHub);
+
+  const leverPivot = new THREE.Group();
+  leverPivot.position.set(0.72, 0.96, 0.05);
+  const leverShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.036, 0.68, 12), chrome);
+  leverShaft.position.set(0, 0.32, 0);
+  const leverBall = new THREE.Mesh(new THREE.SphereGeometry(0.095, 16, 14), rubyKnobMat);
+  leverBall.position.set(0, 0.68, 0);
+  leverPivot.add(leverShaft, leverBall);
+  cabinet.add(leverPivot);
+
+  cabinet.userData = { reels, leverPivot, beacon };
+  if (opts.forInspector) {
+    cabinet.position.y = -0.95;
+  }
+  return cabinet;
+}
+
+function buildCompanionProcedural(subtype, rimColor) {
+  const g = new THREE.Group();
+  const carbon = makePbr(0x1e2430, 0.32, 0.78, { color: rimColor, power: 2.3, intensity: 0.62 });
+  const titanium = makePbr(0x94a3b8, 0.20, 0.94, { color: rimColor, power: 2.4, intensity: 0.52 });
+  const gold = makePbr(0xf3c969, 0.18, 0.95, { color: 0xfef08a, power: 2.1, intensity: 0.72 });
+  const cyanOptic = makePbr(0x22d3ee, 0.08, 0.3, false, { emissive: 0x06b6d4, emissiveIntensity: 0.95 });
+  const rubyOptic = makePbr(0xf43f5e, 0.08, 0.3, false, { emissive: 0xe11d48, emissiveIntensity: 0.95 });
+  const violetOptic = makePbr(0xc084fc, 0.08, 0.3, false, { emissive: 0x9333ea, emissiveIntensity: 0.95 });
+
+  if (subtype === 'armored_k9') {
+    // Cyber-Armored Syndicate K9 Hound: Torso Armor + Jaw + Optic Visor + 4 Legs + Tail
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.34, 0.32), carbon);
+    torso.position.set(0, 0.08, 0);
+    const saddleArmor = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.14, 0.36), gold);
+    saddleArmor.position.set(0.02, 0.22, 0);
+    const neck = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.28, 0.24), carbon);
+    neck.position.set(0.38, 0.24, 0);
+    neck.rotation.z = -0.35;
+    const skull = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.20, 0.24), titanium);
+    skull.position.set(0.54, 0.36, 0);
+    const snout = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.11, 0.16), carbon);
+    snout.position.set(0.72, 0.32, 0);
+    const visor = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.06, 0.25), rubyOptic);
+    visor.position.set(0.60, 0.39, 0);
+    const earL = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.16, 6), carbon);
+    earL.position.set(0.48, 0.50, 0.08);
+    const earR = earL.clone();
+    earR.position.z = -0.08;
+    for (const [lx, lz] of [[0.28, 0.12], [0.28, -0.12], [-0.28, 0.12], [-0.28, -0.12]]) {
+      const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.042, 0.42, 10), titanium);
+      leg.position.set(lx, -0.24, lz);
+      const paw = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.09), gold);
+      paw.position.set(lx + 0.03, -0.44, lz);
+      g.add(leg, paw);
+    }
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.04, 0.34, 8), carbon);
+    tail.position.set(-0.48, 0.22, 0);
+    tail.rotation.z = 0.65;
+    g.add(torso, saddleArmor, neck, skull, snout, visor, earL, earR, tail);
+    return g;
+  }
+
+  if (subtype === 'smuggler_falcon' || subtype === 'cyber_raven') {
+    const isRaven = subtype === 'cyber_raven';
+    const bodyMat = isRaven ? carbon : makePbr(0x78350f, 0.36, 0.52, { color: 0xfbbf24, power: 2.2, intensity: 0.68 });
+    const eyeMat = isRaven ? violetOptic : cyanOptic;
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 14), bodyMat);
+    body.scale.set(1.45, 0.85, 0.82);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 12), bodyMat);
+    head.position.set(0.32, 0.16, 0);
+    const beak = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.18, 6), gold);
+    beak.rotation.z = -Math.PI / 2 - 0.18;
+    beak.position.set(0.48, 0.14, 0);
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.035, 10, 8), eyeMat);
+    eyeL.position.set(0.38, 0.19, 0.11);
+    const eyeR = eyeL.clone();
+    eyeR.position.z = -0.11;
+    for (const side of [-1, 1]) {
+      const wingInner = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.04, 0.52), bodyMat);
+      wingInner.position.set(0.04, 0.08, side * 0.36);
+      wingInner.rotation.x = side * 0.28;
+      const wingOuter = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.03, 0.48), isRaven ? violetOptic : gold);
+      wingOuter.position.set(-0.08, 0.18, side * 0.76);
+      wingOuter.rotation.x = side * 0.42;
+      wingOuter.rotation.y = side * -0.22;
+      g.add(wingInner, wingOuter);
+    }
+    const tailFan = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.03, 0.28), titanium);
+    tailFan.position.set(-0.42, -0.02, 0);
+    tailFan.rotation.z = 0.16;
+    g.add(body, head, beak, eyeL, eyeR, tailFan);
+    return g;
+  }
+
+  // Default: Quad-Rotor Stealth Recon Drone + Gimbal Lidar Eye + 4 Ducted Shrouds
+  const hull = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 1), carbon);
+  hull.scale.set(1.35, 0.52, 1.15);
+  const topCap = new THREE.Mesh(new THREE.CylinderGeometry(0.20, 0.26, 0.08, 16), gold);
+  topCap.position.y = 0.14;
+  const lidarEye = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 12), cyanOptic);
+  lidarEye.position.set(0.28, -0.04, 0);
+  g.add(hull, topCap, lidarEye);
+  for (const [ax, az] of [[0.44, 0.44], [0.44, -0.44], [-0.44, 0.44], [-0.44, -0.44]]) {
+    const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.024, 0.024, 0.52, 8), titanium);
+    boom.rotation.z = Math.PI / 2;
+    boom.rotation.y = Math.atan2(-az, ax);
+    boom.position.set(ax * 0.5, 0.04, az * 0.5);
+    const shroud = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.024, 10, 22), gold);
+    shroud.rotation.x = Math.PI / 2;
+    shroud.position.set(ax, 0.06, az);
+    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.014, 0.04), cyanOptic);
+    blade.position.set(ax, 0.06, az);
+    g.add(boom, shroud, blade);
+  }
+  return g;
+}
 export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = {}) {
   const spec = resolveItemSpec3D(itemId, category, rarity);
   const elongated = isElongatedItemCategory(spec);
@@ -2361,7 +3260,12 @@ export function createItemMesh3D(itemId, category = '', rarity = 'rare', opts = 
   };
 
   let rawModel;
-  if (spec.category === 'weapon') rawModel = buildFirearmProcedural(spec.subtype, spec.rimColor);
+  if (spec.category === 'casino') {
+    rawModel = spec.subtype === 'slot_machine'
+      ? createSlotMachine3D({ forInspector: true })
+      : createRouletteWheel3D({ forInspector: true });
+  } else if (spec.category === 'companion') rawModel = buildCompanionProcedural(spec.subtype, spec.rimColor);
+  else if (spec.category === 'weapon') rawModel = buildFirearmProcedural(spec.subtype, spec.rimColor);
   else if (spec.category === 'melee') rawModel = buildMeleeProcedural(spec.subtype, spec.rimColor);
   else if (spec.category === 'enhancer') rawModel = buildEnhancerProcedural(spec.subtype, spec.rimColor);
   else if (spec.category === 'drug') rawModel = buildDrugVialProcedural(spec.subtype);
@@ -2917,6 +3821,26 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     scene.add(operative);
     refs.operativeEid = spawnTracked(operative);
 
+    // Mounted 3D Syndicate Companion in Safehouse Courtyard (swappable via companionId)
+    const companionGroup = new THREE.Group();
+    companionGroup.position.set(-0.52, 0.96, 0.92);
+    scene.add(companionGroup);
+    const rebuildCompanion = (compId = 'recon_drone') => {
+      while (companionGroup.children.length) companionGroup.remove(companionGroup.children[0]);
+      const cid = String(compId || 'recon_drone').toLowerCase();
+      const cMesh = createItemMesh3D(cid, 'companion', 'legendary', { withPedestalRing: false, disableAsyncUpgrade: true });
+      cMesh.scale.setScalar(/k9/.test(cid) ? 0.52 : 0.44);
+      companionGroup.position.y = /k9/.test(cid) ? 0.24 : 0.96;
+      companionGroup.add(cMesh);
+      companionGroup.userData.companionId = cid;
+    };
+    rebuildCompanion(initialState.companionId || 'recon_drone');
+    refs.companionGroup = companionGroup;
+    refs.rebuildCompanion = rebuildCompanion;
+    refs.companionEid = spawnTracked(companionGroup);
+    world.setHoverFloat(refs.companionEid, companionGroup.position.y, 0.055, 1.5, 0.4);
+    registerPickable(refs.companionEid, { stage: 'safehouse-empire', target: 'companion', companionId: companionGroup.userData.companionId });
+
     const nemesisWrap = new THREE.Group();
     const nemPodium = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.64, 0.16, 20), makePbr(0x450a0a, 0.3, 0.78, { color: 0xef4444, power: 2.0, intensity: 0.8 }));
     nemPodium.position.y = 0.08;
@@ -3003,12 +3927,23 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     const doorPivot = new THREE.Group();
     doorPivot.position.set(-0.72, 1.0, -1.14);
-    const vaultDoor = new THREE.Mesh(new THREE.CylinderGeometry(0.76, 0.76, 0.18, 28), makePbr(0x94a3b8, 0.2, 0.94, { color: 0xfbbf24, power: 2.4, intensity: 0.55 }));
+    const vaultDoor = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 0.20, 32), makePbr(0x94a3b8, 0.18, 0.95, { color: 0xfbbf24, power: 2.3, intensity: 0.58 }));
     vaultDoor.rotation.x = Math.PI / 2;
     vaultDoor.position.set(0.72, 0, 0);
-    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.04, 10, 20), makePbr(0xf59e0b, 0.2, 0.95));
-    wheel.position.set(0.72, 0, 0.12);
-    doorPivot.add(vaultDoor, wheel);
+    const gearRing = new THREE.Mesh(new THREE.TorusGeometry(0.56, 0.032, 10, 28), makePbr(0xf59e0b, 0.18, 0.95));
+    gearRing.position.set(0.72, 0, 0.11);
+    const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.04, 10, 24), makePbr(0xf59e0b, 0.18, 0.96));
+    wheel.position.set(0.72, 0, 0.14);
+    const hingePost = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 1.56, 14), makePbr(0x64748b, 0.24, 0.92));
+    hingePost.position.set(0, 0, 0.08);
+    doorPivot.add(vaultDoor, gearRing, wheel, hingePost);
+    for (let b = 0; b < 8; b++) {
+      const bAng = (b / 8) * Math.PI * 2;
+      const bolt = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.22, 10), makePbr(0xe2e8f0, 0.14, 0.96));
+      bolt.rotation.z = bAng + Math.PI / 2;
+      bolt.position.set(0.72 + Math.cos(bAng) * 0.68, Math.sin(bAng) * 0.68, 0.08);
+      doorPivot.add(bolt);
+    }
     scene.add(doorPivot);
     refs.vaultDoorEid = spawnTracked(doorPivot);
     registerPickable(refs.vaultDoorEid, { stage: 'heist-breach', target: 'vault' });
@@ -3220,39 +4155,45 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
 
     const stand = new THREE.Mesh(new THREE.BoxGeometry(0.32, 1.75, 0.28), makePbr(0xf59e0b, 0.22, 0.92));
     stand.position.set(0, 0.88, -0.85);
-    scene.add(stand);
+    const clapper = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 8), makePbr(0xef4444, 0.18, 0.4, false, { emissive: 0xdc2626, emissiveIntensity: 0.75 }));
+    clapper.rotation.x = Math.PI;
+    clapper.position.set(0, 2.38, -0.58);
+    scene.add(stand, clapper);
 
     const wheelGroup = new THREE.Group();
     wheelGroup.position.set(0, 1.38, -0.66);
-    const wheelRim = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.08, 12, 36), makePbr(0xfbbf24, 0.18, 0.94));
-    wheelGroup.add(wheelRim);
+    const wheelRim = new THREE.Mesh(new THREE.TorusGeometry(0.94, 0.08, 14, 44), makePbr(0xfbbf24, 0.18, 0.95));
+    const centerCap = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.20, 0.12, 20), makePbr(0xfbbf24, 0.16, 0.96));
+    centerCap.rotation.x = Math.PI / 2;
+    wheelGroup.add(wheelRim, centerCap);
     const segColors = [0xef4444, 0x38bdf8, 0x22c55e, 0xf59e0b, 0xa855f7, 0xec4899];
     for (let i = 0; i < 12; i++) {
       const ang = (i / 12) * Math.PI * 2;
-      const spoke = new THREE.Mesh(
-        new THREE.BoxGeometry(0.16, 0.82, 0.06),
-        makePbr(segColors[i % segColors.length], 0.25, 0.45, false, { emissive: segColors[i % segColors.length], emissiveIntensity: 0.35 })
+      const wedge = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.88, 0.88, 0.055, 8, 1, false, ang, (Math.PI * 2) / 12 * 0.92),
+        makePbr(segColors[i % segColors.length], 0.24, 0.42, false, { emissive: segColors[i % segColors.length], emissiveIntensity: 0.32 })
       );
-      spoke.position.set(Math.cos(ang) * 0.44, Math.sin(ang) * 0.44, 0);
-      spoke.rotation.z = ang - Math.PI / 2;
-      wheelGroup.add(spoke);
+      wedge.rotation.x = Math.PI / 2;
+      wheelGroup.add(wedge);
+    }
+    for (let p = 0; p < 24; p++) {
+      const pAng = (p / 24) * Math.PI * 2;
+      const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.12, 8), makePbr(0xfef08a, 0.15, 0.92));
+      peg.rotation.x = Math.PI / 2;
+      peg.position.set(Math.cos(pAng) * 0.92, Math.sin(pAng) * 0.92, 0.05);
+      wheelGroup.add(peg);
     }
     scene.add(wheelGroup);
     refs.wheelEid = spawnTracked(wheelGroup);
     world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 4.0, 1.25, 0);
     registerPickable(refs.wheelEid, { stage: 'city-wheels-race', target: 'wheel' });
 
-    const carColors = [0x22c55e, 0x38bdf8, 0xf43f5e];
+    const fleetSubtypes = ['sports_car', 'interceptor_sedan', 'armored_van'];
     refs.carEids = [];
     const driftCarObjects = [];
     for (let i = 0; i < 3; i++) {
-      const car = createItemMesh3D('sports_car', 'vehicle', 'legendary', { withPedestalRing: false, forHandHold: true, disableAsyncUpgrade: true });
-      car.scale.setScalar(0.55);
-      car.traverse((n) => {
-        if (n.isMesh && i > 0 && n.material && n.material.color && n.geometry.type === 'BoxGeometry') {
-          n.material = makePbr(carColors[i], 0.18, 0.8, { color: carColors[i], power: 2.2, intensity: 0.7 });
-        }
-      });
+      const car = createItemMesh3D(fleetSubtypes[i], 'vehicle', 'legendary', { withPedestalRing: false, forHandHold: true, disableAsyncUpgrade: true });
+      car.scale.setScalar(0.56);
       car.position.set(2.6, 0.16, 1.5);
       scene.add(car);
       const ceid = spawnTracked(car);
@@ -3264,61 +4205,129 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     stageVfx.attachDriftCars(driftCarObjects);
   }
 
-  /* === STAGE 6: CASINO-ROYALE (Casino) === */
+  /* === STAGE 6: CASINO-ROYALE (Monte-Carlo Noir 37-Pocket Roulette & Jackpot Salon) === */
   else if (kind === 'casino-royale') {
-    addStandardStageLighting(scene, 0x16241c, 0xfbbf24);
+    const lights = addStandardStageLighting(scene, 0x0b1d15, 0xf3c969);
+    refs.lights = lights;
 
-    const bowl = new THREE.Mesh(new THREE.CylinderGeometry(1.22, 1.08, 0.34, 36), makePbr(0x7c2d12, 0.26, 0.35));
-    bowl.position.set(-1.35, 0.18, 0.15);
-    scene.add(bowl);
+    // 1. Raised Monte-Carlo Emerald Baize Roulette Table + Brass Rail + 3D Chip Stacks
+    const rouletteTable = new THREE.Group();
+    rouletteTable.position.set(-1.18, 0, 0.18);
+    const pedestal = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.92, 1.08, 0.42, 32),
+      makePbr(0x3b150e, 0.28, 0.35, { color: 0xf3c969, power: 2.5, intensity: 0.42 }, { clearcoat: 0.9 })
+    );
+    pedestal.position.y = 0.21;
+    const tableTop = new THREE.Mesh(
+      new THREE.BoxGeometry(2.55, 0.10, 1.75),
+      makePbr(0x064e3b, 0.72, 0.08, { color: 0x34d399, power: 2.8, intensity: 0.35 })
+    );
+    tableTop.position.set(0.28, 0.44, 0);
+    const tableTrim = new THREE.Mesh(
+      new THREE.BoxGeometry(2.64, 0.08, 1.84),
+      makePbr(0x4a1912, 0.24, 0.42, { color: 0xf3c969, power: 2.3, intensity: 0.55 }, { clearcoat: 0.95 })
+    );
+    tableTrim.position.set(0.28, 0.43, 0);
+    rouletteTable.add(pedestal, tableTrim, tableTop);
 
-    const rotor = new THREE.Group();
-    rotor.position.set(-1.35, 0.36, 0.15);
-    const hub = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.36, 18), makePbr(0xfbbf24, 0.18, 0.96));
-    hub.position.y = 0.12;
-    rotor.add(hub);
-    for (let i = 0; i < 18; i++) {
-      const ang = (i / 18) * Math.PI * 2;
-      const pocketColor = i === 0 ? 0x16a34a : i % 2 === 0 ? 0xdc2626 : 0x18181b;
-      const pocket = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.34), makePbr(pocketColor, 0.3, 0.4));
-      pocket.position.set(Math.cos(ang) * 0.72, 0, Math.sin(ang) * 0.72);
-      pocket.rotation.y = -ang;
-      rotor.add(pocket);
+    const chipPalette = [0xf3c969, 0xdc2626, 0x10b981, 0x1e293b];
+    const stackCoords = [[0.92, 0.34], [1.14, -0.22], [0.74, -0.42], [1.26, 0.18]];
+    for (let st = 0; st < stackCoords.length; st++) {
+      const chipMat = makePbr(chipPalette[st % chipPalette.length], 0.22, 0.65, { color: 0xfef08a, power: 2.2, intensity: 0.55 });
+      for (let c = 0; c < 5; c++) {
+        const chip = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.024, 16), chipMat);
+        chip.position.set(stackCoords[st][0], 0.505 + c * 0.025, stackCoords[st][1]);
+        rouletteTable.add(chip);
+      }
     }
-    scene.add(rotor);
+    scene.add(rouletteTable);
+
+    // 2. Museum-Grade 37-Pocket Monte-Carlo 3D European Roulette Wheel
+    const wheel3D = createRouletteWheel3D();
+    wheel3D.scale.setScalar(0.76);
+    wheel3D.position.set(-1.32, 0.49, 0.18);
+    scene.add(wheel3D);
+    refs.rouletteWheel = wheel3D;
+
+    const rotor = wheel3D.userData.rotor;
     refs.rouletteRotorEid = spawnTracked(rotor);
-    world.setTurntable(refs.rouletteRotorEid, 1.65, 4.0);
+    world.setTurntable(refs.rouletteRotorEid, 1.45, 4.0);
     registerPickable(refs.rouletteRotorEid, { stage: 'casino-royale', target: 'roulette' });
 
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.065, 14, 12), makePbr(0xf8fafc, 0.08, 0.15));
-    ball.position.set(-1.35, 0.44, 0.15);
+    const ball = wheel3D.userData.ball;
+    wheel3D.remove(ball);
+    ball.scale.setScalar(0.85);
+    ball.position.set(-1.32, 0.69, 0.18);
     scene.add(ball);
     refs.ballEid = spawnTracked(ball);
-    world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 4.5, -5.2, 0);
+    world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 4.8, -5.8, 0);
 
-    const cabinet = new THREE.Group();
-    cabinet.position.set(1.45, 0, -0.1);
-    cabinet.rotation.y = -0.35;
-    const body = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.78, 0.74), makePbr(0x991b1b, 0.25, 0.72, { color: 0xfbbf24, power: 2.4, intensity: 0.6 }));
-    body.position.y = 0.89;
-    const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.06, 0.56, 0.78), makePbr(0xfbbf24, 0.18, 0.94));
-    bezel.position.y = 1.08;
-    const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.22, 16), makePbr(0xfef08a, 0.1, 0.2, false, { emissive: 0xf59e0b, emissiveIntensity: 0.95 }));
-    beacon.position.y = 1.88;
-    cabinet.add(body, bezel, beacon);
+    // 3. Croupier Suit Operative Behind the Roulette Pit
+    const croupier = createHumanoid3D({
+      role: 'crew',
+      outfit: 'suit',
+      coatColor: 0x111115,
+      trimColor: 0xf3c969,
+      rimColor: 0xfbbf24,
+      scale: 0.96,
+      headless,
+    });
+    croupier.position.set(-0.88, 0, -1.02);
+    croupier.rotation.y = 0.18;
+    scene.add(croupier);
+    refs.croupierEid = spawnTracked(croupier);
+    registerPickable(refs.croupierEid, { stage: 'casino-royale', target: 'croupier' });
 
+    // 4. Art-Deco 3D Mechanical Jackpot Slot Machine
+    const slotCabinet = createSlotMachine3D();
+    slotCabinet.position.set(1.62, 0, -0.08);
+    slotCabinet.rotation.y = -0.38;
+    scene.add(slotCabinet);
+    refs.slotCabinet = slotCabinet;
     refs.reelEids = [];
-    for (let r = -1; r <= 1; r++) {
-      const reel = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.26, 8), makePbr(0xf8fafc, 0.22, 0.35, { color: 0xfbbf24, power: 2.5, intensity: 0.4 }));
-      reel.rotation.z = Math.PI / 2;
-      reel.position.set(r * 0.3, 1.08, 0.28);
-      cabinet.add(reel);
-      const reid = spawnTracked(reel);
-      world.setStageKinematics(reid, ANIM_SLOT_REEL, 2.4, 3.2 + (r + 1) * 0.8, 0);
+    const slotReels = slotCabinet.userData.reels || [];
+    for (let r = 0; r < slotReels.length; r++) {
+      const reid = spawnTracked(slotReels[r]);
+      world.setStageKinematics(reid, ANIM_SLOT_REEL, 2.4, 3.2 + r * 0.85, 0);
       refs.reelEids.push(reid);
     }
-    scene.add(cabinet);
-    registerPickable(spawnTracked(cabinet), { stage: 'casino-royale', target: 'slots' });
+    if (slotCabinet.userData.leverPivot) {
+      refs.slotLeverEid = spawnTracked(slotCabinet.userData.leverPivot);
+    }
+    registerPickable(spawnTracked(slotCabinet), { stage: 'casino-royale', target: 'slots' });
+
+    // 5. Submode Camera Presets ('roulette' close-up, 'slots' close-up, 'full' salon)
+    const applyCasinoSubmode = (submodeRaw) => {
+      const sm = String(submodeRaw || 'full').toLowerCase();
+      let cx = 0;
+      let cy = 2.38;
+      let cz = 4.85;
+      let tx = -0.15;
+      let ty = 0.78;
+      let tz = 0.05;
+      if (sm === 'roulette') {
+        cx = -1.32; cy = 2.08; cz = 2.22;
+        tx = -1.16; ty = 0.62; tz = 0.18;
+      } else if (sm === 'slots') {
+        cx = 1.42; cy = 1.48; cz = 2.48;
+        tx = 1.56; ty = 1.06; tz = -0.05;
+      }
+      camera.position.set(cx, cy, cz);
+      camera.lookAt(tx, ty, tz);
+      camera.userData.z3dLookTarget = { x: tx, y: ty, z: tz };
+      camera.userData.z3dSubmode = sm;
+      world.setTraumaCamera(camEid, {
+        baseX: cx,
+        baseY: cy,
+        baseZ: cz,
+        decay: 1.4,
+        maxOffsetX: 0.28,
+        maxOffsetY: 0.18,
+        maxRoll: 0.035,
+      });
+    };
+    applyCasinoSubmode(initialState.submode || 'full');
+    refs.applyCasinoSubmode = applyCasinoSubmode;
   }
 
   /* === STAGE 7: PAPERDOLL-ARMORY (Dossier / Items) === */
@@ -3458,7 +4467,24 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
     } else if (kind === 'city-wheels-race') {
       if (refs.wheelEid !== undefined) world.setStageKinematics(refs.wheelEid, ANIM_WHEEL_SPIN, 3.2, 9.5, 1);
     } else if (kind === 'casino-royale') {
-      if (refs.ballEid !== undefined) world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 3.6, -11.5, 0);
+      let targetAng = 0;
+      if (payload && payload.pocket !== undefined && refs.rouletteWheel && refs.rouletteWheel.userData && typeof refs.rouletteWheel.userData.getPocketAngle === 'function') {
+        const rotorYaw = refs.rouletteRotorEid !== undefined && world.isAlive(refs.rouletteRotorEid)
+          ? world.stores.Transform3D[refs.rouletteRotorEid * 10 + 4]
+          : 0;
+        const baseAng = refs.rouletteWheel.userData.getPocketAngle(payload.pocket) - rotorYaw;
+        targetAng = baseAng === 0 ? 0.0001 : baseAng;
+      }
+      if (refs.ballEid !== undefined) world.setStageKinematics(refs.ballEid, ANIM_ROULETTE_BALL, 3.6, -12.4, targetAng);
+      if (refs.rouletteRotorEid !== undefined && world.isAlive(refs.rouletteRotorEid)) {
+        world.stores.TurntableSpin[refs.rouletteRotorEid * 4 + 0] = 3.2;
+      }
+      if (refs.slotLeverEid !== undefined) {
+        world.setStageKinematics(refs.slotLeverEid, ANIM_LEVER_PULL, 0.72, 1.05, 0);
+      }
+      if (refs.croupierEid !== undefined) {
+        playEidRigState(refs.croupierEid, 'combat_stance');
+      }
       if (refs.reelEids) {
         for (let i = 0; i < refs.reelEids.length; i++) {
           world.setStageKinematics(refs.reelEids[i], ANIM_SLOT_REEL, 1.4 + i * 0.35, 16.0, 1);
@@ -3517,6 +4543,13 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
         stageVfx.triggerAction('era_breakthrough', { era: nextEra });
         emitGlobal3DActionEvent(kind, 'era_breakthrough', { era: nextEra });
       }
+      if (stateObj.companionId && refs.rebuildCompanion) {
+        const prevComp = refs.companionGroup && refs.companionGroup.userData ? refs.companionGroup.userData.companionId : '';
+        if (String(stateObj.companionId).toLowerCase() !== prevComp) {
+          refs.rebuildCompanion(stateObj.companionId);
+          if (refs.companionEid !== undefined) world.refreshEntityRimCache(refs.companionEid);
+        }
+      }
       if (stateObj.outfit && refs.operativeEid !== undefined) {
         setEidRigOutfit(refs.operativeEid, stateObj.outfit);
         emitGlobal3DActionEvent(kind, 'outfit', { outfit: stateObj.outfit });
@@ -3548,6 +4581,13 @@ export function buildStageScene3D(stageKind, world, initialState = {}) {
         lastStation = st;
         if (refs.athleteEid !== undefined) playEidRigState(refs.athleteEid, 'heavy_bag_hook');
         emitGlobal3DActionEvent(kind, st, { stat: st });
+      }
+    } else if (kind === 'casino-royale') {
+      if (stateObj.submode && refs.applyCasinoSubmode) {
+        refs.applyCasinoSubmode(stateObj.submode);
+      }
+      if (stateObj.pocket !== undefined && refs.ballEid !== undefined) {
+        triggerAction('spin', { pocket: stateObj.pocket });
       }
     } else if (kind === 'character-turntable' && stateObj.outfit && refs.rebuildOutfit) {
       const prevOutfit = refs.charHolder && refs.charHolder.userData ? refs.charHolder.userData.outfit : '';
@@ -3646,6 +4686,7 @@ export class ZoneEcs3DRuntime {
 
     this.itemSlots = new Map();
     this.stageInstances = new Map();
+    this._slotsScratch = [];
     this.gpuGovernor = new ZoneGpuBudgetGovernor(opts.gpuBudget || {});
     this._graphicsPreset = 'high';
     this._shadowsEnabled = GRAPHICS_PRESETS.high.shadowsEnabled;
@@ -3743,6 +4784,10 @@ export class ZoneEcs3DRuntime {
       nextParticleScale = this._particleScaleOverride !== null ? this._particleScaleOverride : presetDef.particleScale;
     }
     this._particleScaleOverride = Number(nextParticleScale.toFixed(2));
+
+    if (typeof cfg.targetRefreshHz === 'number' && Number.isFinite(cfg.targetRefreshHz)) {
+      this.resScaler.targetRefreshHz = Math.max(0, cfg.targetRefreshHz);
+    }
 
     const rawShadows = cfg.shadowsEnabled ?? cfg.shadows ?? sub.shadowsEnabled;
     if (typeof rawShadows === 'boolean') {
@@ -4018,10 +5063,16 @@ export class ZoneEcs3DRuntime {
     const originChosen = stageEl.getAttribute('data-z3d-origin-chosen') ?? '1';
     const origin = stageEl.getAttribute('data-z3d-origin') || '';
     const outfit = stageEl.getAttribute('data-z3d-outfit') || 'street';
+    const submode = stageEl.getAttribute('data-z3d-submode') || '';
+    const companionId = stageEl.getAttribute('data-z3d-companion') || '';
 
     const existing = this.stageInstances.get(stageEl);
     if (existing && existing.kind === kind) {
-      existing.built.updateState({ era, originChosen, origin, outfit });
+      existing.built.updateState({ era, originChosen, origin, outfit, submode: submode || undefined, companionId: companionId || undefined });
+      if (existing.controls && existing.built.camera.userData && existing.built.camera.userData.z3dLookTarget) {
+        const lt = existing.built.camera.userData.z3dLookTarget;
+        existing.controls.target.set(lt.x, lt.y, lt.z);
+      }
       return existing;
     }
     if (existing) {
@@ -4031,7 +5082,7 @@ export class ZoneEcs3DRuntime {
     }
 
     this._ensureSharedRenderer();
-    const built = buildStageScene3D(kind, this.world, { era, originChosen, origin, outfit });
+    const built = buildStageScene3D(kind, this.world, { era, originChosen, origin, outfit, submode: submode || 'full', companionId: companionId || undefined });
     this._applyIBL(built.scene);
 
     let stageCanvas = stageEl.querySelector ? stageEl.querySelector('canvas.z3d-stage-webgl-canvas') : null;
@@ -4064,7 +5115,12 @@ export class ZoneEcs3DRuntime {
         controls.maxDistance = 9.5;
         controls.minPolarAngle = 0.25;
         controls.maxPolarAngle = Math.PI * 0.48;
-        controls.target.set(0, kind === 'character-turntable' ? 0.92 : 0.82, 0);
+        if (built.camera.userData && built.camera.userData.z3dLookTarget) {
+          const lt = built.camera.userData.z3dLookTarget;
+          controls.target.set(lt.x, lt.y, lt.z);
+        } else {
+          controls.target.set(0, kind === 'character-turntable' ? 0.92 : 0.82, 0);
+        }
         built.camera.userData.z3dOrbitActive = true;
       } catch (_) {
         controls = null;
@@ -4173,7 +5229,8 @@ export class ZoneEcs3DRuntime {
     let frameDrawCalls = 0;
     let frameTriangles = 0;
 
-    const slotsArr = [];
+    const slotsArr = this._slotsScratch;
+    slotsArr.length = 0;
     for (const [el, rec] of this.itemSlots.entries()) {
       if (el.isConnected === false) {
         this.world.despawnImmediate(rec.eid);
@@ -4413,7 +5470,9 @@ export class ZoneEcs3DRuntime {
     this.inspectorScene.add(plinthDisc, pedRing);
 
     this.inspectorCamera = new THREE.PerspectiveCamera(40, 560 / 340, 0.1, 30);
-    this.inspectorCamera.position.set(0, 0.72, 1.95);
+    const camZ = (spec.category === 'casino' || spec.category === 'vehicle') ? 2.28 : 1.98;
+    const camY = spec.category === 'casino' ? 0.92 : 0.74;
+    this.inspectorCamera.position.set(0, camY, camZ);
     this.inspectorCamera.lookAt(0, 0.38, 0);
 
     const mesh = createItemMesh3D(itemId, opts.category || spec.category, opts.rarity || 'legendary', { withPedestalRing: false });
@@ -4499,6 +5558,9 @@ export class ZoneEcs3DRuntime {
       particleScale: effectiveParticleScale,
       maxStageDrawCalls: this.gpuGovernor.maxStageDrawCalls,
       fps: this.resScaler.fps,
+      onePercentLowFps: this.resScaler.onePercentLowFps,
+      frameTimeVarianceMs: this.resScaler.frameTimeVarianceMs,
+      recommendedFpsCap: this.resScaler.recommendedFpsCap,
       frameMsEma: Number(this.resScaler.frameMsEma.toFixed(2)),
       currentDpr: this.resScaler.currentDpr,
       dprCap: this.resScaler.presetCap,

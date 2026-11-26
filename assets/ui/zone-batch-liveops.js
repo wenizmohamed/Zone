@@ -141,12 +141,64 @@
     return false;
   }
 
+  var BESPOKE_PROVENANCE_V163 = {
+    roulette_wheel: {
+      originEn: 'Hand-turned mahogany & champagne-brass 37-pocket European cylinder commissioned by Luna for the House of Obsidian VIP Salon.',
+      originAr: 'أسطوانة روليت أوروبية ذات ٣٧ خانة من الماهوغاني والنحاس الذهبي صممتها لونا لصالون الأوبسيديان.',
+      makerEn: 'Atelier Monte-Carlo · Pier 4',
+      makerAr: 'مشغل مونت كارلو · الرصيف ٤',
+      craftTier: 'Sovereign-Salon',
+      craftTierAr: 'صالون سيادي',
+      auditTag: '2.70%-uniform-edge',
+      synergyEn: 'Supports Voisins du Zero, Tiers du Cylindre, Orphelins, Jeu Zero & 35:1 Straight-Up.',
+      synergyAr: 'يدعم جيران الصفر وثلث الأسطوانة والأيتام والرقم المباشر ٣٥:١.'
+    },
+    slot_machine: {
+      originEn: 'Art-Deco mechanical 3-drum jackpot cabinet with ruby clearcoat pull-arm lever and progressive pool sync.',
+      originAr: 'ماكينة الجائزة الكبرى الميكانيكية ثلاثية البكرات بذراع ياقوتي متصلة بالوعاء التراكمي.',
+      makerEn: 'Obsidian Mint Works',
+      makerAr: 'دار سك الأوبسيديان',
+      craftTier: 'Sovereign-Salon',
+      craftTierAr: 'صالون سيادي',
+      auditTag: 'progressive-pool',
+      synergyEn: 'Feeds 12% of every spin into the city-wide progressive jackpot.',
+      synergyAr: 'تغذي الجائزة الكبرى التراكمية للمدينة مع كل دورة.'
+    },
+    armored_van: {
+      originEn: 'Up-armored Pier 4 bullion carrier with ballistic cab plates, twin roof beacons, and reinforced ram bar.',
+      originAr: 'ناقلة سبائك مدرعة من الرصيف ٤ بدروع باليستية ومنارات سقفية ومصد اقتحام ذهبي.',
+      makerEn: 'Pier 4 Heavy Forge',
+      makerAr: 'مسبك الرصيف ٤ الثقيل',
+      craftTier: 'Armored-Fleet',
+      craftTierAr: 'أسطول مصفح',
+      auditTag: '94-armor-rating',
+      synergyEn: 'Maximizes bullion cargo survival through high-heat police corridors.',
+      synergyAr: 'أعلى تدريع لنقل الغنائم عبر الممرات عالية المراقبة.'
+    },
+    interceptor_sedan: {
+      originEn: 'Twin-turbo AWD midnight pursuit sedan tuned for stealth corridor runs and high-speed intercept.',
+      originAr: 'سيدان مطاردة دفع كلي مزدوجة التيربو مضبوطة للاختراق الليلي السريع.',
+      makerEn: 'Apex Skunkworks',
+      makerAr: 'مختبرات أبيكس',
+      craftTier: 'Pursuit-Spec',
+      craftTierAr: 'فئة مطاردة',
+      auditTag: '760hp-awd',
+      synergyEn: 'Cuts district transit times while holding 0.9G lateral grip.',
+      synergyAr: 'تقلص زمن العبور بين الأحياء مع ثبات جانبي فائق.'
+    }
+  };
+
   function inferItemId(rawName, rawMeta) {
     var direct = String(rawName || '').trim().toLowerCase().replace(/[^a-z0-9_]+/g, '_').replace(/^_|_$/g, '');
+    if (BESPOKE_PROVENANCE_V163[direct]) return direct;
     if (state.pack && state.pack.itemProvenance && state.pack.itemProvenance[direct]) {
       return direct;
     }
     var hay = (String(rawName || '') + ' ' + String(rawMeta || '')).toLowerCase();
+    if (/roulette|روليت/.test(hay)) return 'roulette_wheel';
+    if (/slot|jackpot|ماكينة/.test(hay)) return 'slot_machine';
+    if (/armored van|bullion.*van|فان الميناء/.test(hay)) return 'armored_van';
+    if (/interceptor|أبيكس/.test(hay)) return 'interceptor_sedan';
     if (/شفرة|razor/.test(hay)) return 'cut_throat_razor';
     if (/عتلة|crowbar|pry/.test(hay)) return 'crowbar';
     if (/أقفال|lockpick/.test(hay)) return 'lockpick';
@@ -188,9 +240,12 @@
   }
 
   function getItemProvenance(itemIdOrName, metaText) {
+    var key = inferItemId(itemIdOrName, metaText);
+    if (BESPOKE_PROVENANCE_V163[key]) {
+      return { id: key, data: BESPOKE_PROVENANCE_V163[key] };
+    }
     if (!state.pack || !state.pack.itemProvenance) return null;
     var map = state.pack.itemProvenance;
-    var key = inferItemId(itemIdOrName, metaText);
     var entry = map[key] || map.weapon_cache || null;
     if (!entry) {
       var keys = Object.keys(map);

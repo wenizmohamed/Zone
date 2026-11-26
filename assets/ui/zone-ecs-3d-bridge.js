@@ -95,12 +95,18 @@
     if (/دوّار|دوار|revolver|magnum/.test(hay)) return { id: 'revolver', cat: 'weapon' };
     if (/مسدس|pistol/.test(hay)) return { id: 'pistol', cat: 'weapon' };
     if (/بندقية|rifle/.test(hay)) return { id: 'assaultrifle_1', cat: 'weapon' };
+    if (/قبضة|براجم|knuckle/.test(hay)) return { id: 'knuckles', cat: 'melee' };
+    if (/صاعق|stun.*baton|taser/.test(hay)) return { id: 'stun_baton', cat: 'melee' };
+    if (/مطرقة|hammer|sledge/.test(hay)) return { id: 'hammer', cat: 'melee' };
     if (/سكين|knife|blade|dagger/.test(hay)) return { id: 'knife', cat: 'melee' };
     if (/كاتانا|سيف|katana|sword/.test(hay)) return { id: 'katana', cat: 'melee' };
     if (/مضرب|هراوة|bat|club/.test(hay)) return { id: 'bat', cat: 'melee' };
 
-    // Armor, Drugs, Medical, Boosters, Contraband
+    // Armor, Drugs, Medical, Boosters, Contraband, Casino & Companions
     if (/خوذة|helmet/.test(hay)) return { id: 'helmet', cat: 'armor' };
+    if (/حذاء|أحذية|boots/.test(hay)) return { id: 'boots', cat: 'armor' };
+    if (/قفاز|قفازات تكتيكية|gloves/.test(hay)) return { id: 'gloves', cat: 'armor' };
+    if (/بنطال|سروال|pants|trousers/.test(hay)) return { id: 'pants', cat: 'armor' };
     if (/درع|سترة|kevlar|vest|armor/.test(hay)) return { id: 'kevlar', cat: 'armor' };
     if (/زاناكس|xanax/.test(hay)) return { id: 'xanax', cat: 'drug' };
     if (/إكستاسي|ecstasy/.test(hay)) return { id: 'ecstasy', cat: 'drug' };
@@ -113,11 +119,16 @@
     if (/إسعاف|طب|medkit|medical|heal/.test(hay)) return { id: 'medkit', cat: 'medical' };
     if (/فيذري|feathery|fhc|hotel/.test(hay)) return { id: 'fhc', cat: 'booster' };
     if (/قرص|dvd|edvd/.test(hay)) return { id: 'edvd', cat: 'booster' };
+    if (/كحول|ويسكي|نبيد|alcohol|whisky|champagne|bourbon/.test(hay)) return { id: 'alcohol', cat: 'booster' };
     if (/حلوى|candy|choc/.test(hay)) return { id: 'candy', cat: 'booster' };
     if (/طاقة|معزز|energy|drink|can|booster/.test(hay)) return { id: 'edrink', cat: 'booster' };
     if (/ذهب|سبيكة|gold|bullion/.test(hay)) return { id: 'gold_bullion', cat: 'contraband' };
     if (/زهرة|أوركيد|flower|orchid/.test(hay)) return { id: 'orchid', cat: 'contraband' };
     if (/دمية|تميمة|plush/.test(hay)) return { id: 'plushie', cat: 'contraband' };
+    if (/روليت|roulette/.test(hay)) return { id: 'roulette_wheel', cat: 'casino' };
+    if (/سلوت|ماكينة|slot/.test(hay)) return { id: 'slot_machine', cat: 'casino' };
+    if (/مدرعة|شاحنة|van|armored/.test(hay)) return { id: 'armored_van', cat: 'vehicle' };
+    if (/اعتراض|سيدان|interceptor|sedan/.test(hay)) return { id: 'interceptor_sedan', cat: 'vehicle' };
     if (/سيارة|car|racer/.test(hay)) return { id: 'sports_car', cat: 'vehicle' };
     return { id: 'weapon_cache', cat: 'cache' };
   }
@@ -411,6 +422,9 @@
       var cat = inspectBtn.getAttribute('data-z3d-cat') || '';
       var title = inspectBtn.getAttribute('data-z3d-title') || '';
       api.inspectItem(itemId, { category: cat, title: title });
+      if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+        window.ZoneGameKit.recordEvent('inspect_3d', { itemId: itemId, category: cat });
+      }
       return;
     }
 
@@ -483,6 +497,8 @@
         'data-zone-screen',
         'data-z3d-item',
         'data-z3d-stage',
+        'data-z3d-submode',
+        'data-z3d-companion',
         'data-z3d-era',
         'data-z3d-origin',
         'data-z3d-origin-chosen',
@@ -504,7 +520,10 @@
   // Import articulated rigged operative & 3D architectural stage environments FIRST
   // so globalThis.__ZoneRiggedOperative and globalThis.__Zone3DEnvironments are live before stages build!
   function loadRiggedOperativeModule() {
-    return import('./zone-3d-rigged-operative.mjs?v=161')
+    return import('./zone-3d-rigged-operative.mjs?v=163')
+      .catch(function () {
+        return import('./zone-3d-rigged-operative.mjs?v=161');
+      })
       .catch(function () {
         return import('./zone-3d-rigged-operative.mjs?v=160');
       })
@@ -537,7 +556,10 @@
   }
 
   function loadEnvironmentsModule() {
-    return import('./zone-3d-environments.mjs?v=161')
+    return import('./zone-3d-environments.mjs?v=163')
+      .catch(function () {
+        return import('./zone-3d-environments.mjs?v=161');
+      })
       .catch(function () {
         return import('./zone-3d-environments.mjs?v=160');
       })
@@ -567,7 +589,10 @@
   }
 
   function loadEngineModule() {
-    return import('./zone-ecs-3d-engine.mjs?v=161')
+    return import('./zone-ecs-3d-engine.mjs?v=163')
+      .catch(function () {
+        return import('./zone-ecs-3d-engine.mjs?v=161');
+      })
       .catch(function () {
         return import('./zone-ecs-3d-engine.mjs?v=160');
       })

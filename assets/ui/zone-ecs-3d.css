@@ -6,21 +6,29 @@
 
 :root {
   --z3d-stage-bg: radial-gradient(circle at 50% 34%, #25201b 0%, #14120f 72%, #0d0b09 100%);
+  --z3d-casino-stage-bg: radial-gradient(circle at 50% 30%, #1c2820 0%, #14120f 68%, #0a0908 100%);
   --z3d-slot-bg: radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.14) 0%, rgba(24, 21, 18, 0.92) 74%);
   --z3d-frame-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.46));
   --z3d-frame-shadow: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.56));
-  --z3d-chip-bg: rgba(20, 18, 16, 0.84);
+  --z3d-gold-bevel: rgba(251, 191, 36, 0.34);
+  --z3d-gold-glow: rgba(245, 158, 11, 0.22);
+  --z3d-focus-ring: #fbbf24;
+  --z3d-chip-bg: rgba(20, 18, 16, 0.88);
   --z3d-chip-ink: #f7f1e3;
-  --z3d-chip-border: rgba(244, 207, 120, 0.48);
+  --z3d-chip-border: rgba(244, 207, 120, 0.58);
 }
 
 html[data-theme="light"],
 html[data-theme="light"] body {
   --z3d-stage-bg: radial-gradient(circle at 50% 34%, #2b2620 0%, #191613 76%, #12100e 100%);
+  --z3d-casino-stage-bg: radial-gradient(circle at 50% 30%, #213027 0%, #181512 72%, #100e0c 100%);
   --z3d-slot-bg: radial-gradient(circle at 50% 38%, rgba(50, 87, 30, 0.16) 0%, #221e1a 78%);
   --z3d-frame-border: var(--zwc-border-strong, #23201c);
   --z3d-frame-shadow: var(--zwc-shadow-sub, 2px 3px 0 rgba(36, 33, 29, 0.18));
-  --z3d-chip-bg: rgba(251, 247, 238, 0.92);
+  --z3d-gold-bevel: rgba(180, 125, 24, 0.42);
+  --z3d-gold-glow: rgba(217, 119, 6, 0.18);
+  --z3d-focus-ring: #d97706;
+  --z3d-chip-bg: rgba(251, 247, 238, 0.94);
   --z3d-chip-ink: #1e1b18;
   --z3d-chip-border: #23201c;
 }
@@ -527,4 +535,61 @@ html[data-zone-reduced-motion="true"] .z3d-inspect-btn,
 html[data-zone-reduced-motion="true"] button[data-z3d-inspect] {
   transition: none !important;
   transform: none !important;
+}
+
+.z3d-action-stage[data-z3d-stage="casino-royale"] {
+  border-color: rgba(243, 201, 105, 0.62);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), inset 0 0 28px rgba(243, 201, 105, 0.12);
+}
+
+.z3d-inspect-btn:focus-visible,
+button[data-z3d-inspect]:focus-visible,
+.z3d-inspector-btn:focus-visible,
+.z3d-inspector-close:focus-visible {
+  outline: 2px solid #f3c969;
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. MONTE-CARLO LUXURY GOLD/OBSIDIAN STAGE ACCENTS & :FOCUS-VISIBLE RINGS
+ * -------------------------------------------------------------------------- */
+.z3d-action-stage[data-z3d-stage="casino-royale"] {
+  background: var(--z3d-casino-stage-bg);
+  border-color: rgba(244, 207, 120, 0.62);
+  box-shadow:
+    var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.68)),
+    inset 0 0 0 1px var(--z3d-gold-bevel),
+    inset 0 12px 28px var(--z3d-gold-glow);
+}
+
+.z3d-action-stage[data-z3d-stage="casino-royale"]::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: calc(var(--zwc-radius-sketch, 14px) - 4px);
+  border: 1px solid rgba(251, 191, 36, 0.18);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.z3d-item-slot[data-z3d-cat="casino"],
+.z3d-item-slot[data-z3d-cat="companion"] {
+  border-color: rgba(244, 207, 120, 0.56);
+  box-shadow: var(--z3d-frame-shadow), inset 0 0 0 1px var(--z3d-gold-bevel);
+}
+
+.z3d-inspect-btn:focus-visible,
+button[data-z3d-inspect]:focus-visible,
+.z3d-inspector-close:focus-visible,
+.z3d-inspector-btn:focus-visible,
+.z3d-action-stage canvas:focus-visible,
+.z3d-item-slot > canvas.z3d-item-canvas:focus-visible {
+  outline: 2px solid var(--z3d-focus-ring, #fbbf24);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.24);
+}
+
+.z3d-item-slot:focus-within {
+  border-color: var(--z3d-focus-ring, #fbbf24);
+  box-shadow: var(--z3d-frame-shadow), 0 0 0 2px rgba(251, 191, 36, 0.28);
 }

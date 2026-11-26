@@ -6,33 +6,34 @@
  * ========================================================================== */
 
 :root {
-  --zct-card-bg: var(--zwc-surface, #1e1b17);
-  --zct-subcard-bg: var(--zwc-paper-subcard, #25211c);
-  --zct-well-bg: var(--zwc-well-bg, #161310);
-  --zct-ink: var(--zwc-ink, #f3ecdc);
-  --zct-ink-soft: var(--zwc-ink-soft, #d8ccb6);
-  --zct-ink-muted: var(--zwc-ink-muted, #aca08a);
-  --zct-border: var(--zwc-border-strong, rgba(242, 234, 217, 0.44));
-  --zct-border-sub: var(--zwc-border, rgba(242, 234, 217, 0.24));
-  --zct-shadow: var(--zwc-shadow-card, 3px 4px 0 rgba(0, 0, 0, 0.52));
-  --zct-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.42));
-  --zct-felt-bg: linear-gradient(155deg, #163326 0%, #0f241b 60%, #0b1913 100%);
-  --zct-felt-border: rgba(214, 167, 86, 0.55);
-  --zct-sage-bg: rgba(109, 153, 73, 0.22);
-  --zct-sage-ink: #9ef08a;
-  --zct-sage-fill: #5c8e3e;
-  --zct-gold-bg: rgba(240, 196, 101, 0.2);
-  --zct-gold-ink: #f4cf78;
+  --zct-card-bg: var(--zwc-surface, #110f0d);
+  --zct-obsidian-bg: linear-gradient(165deg, #161310 0%, #0f0d0b 62%, #0a0908 100%);
+  --zct-subcard-bg: var(--zwc-paper-subcard, #1b1713);
+  --zct-well-bg: var(--zwc-well-bg, #0d0b09);
+  --zct-ink: var(--zwc-ink, #fbf6ea);
+  --zct-ink-soft: var(--zwc-ink-soft, #e5dac5);
+  --zct-ink-muted: var(--zwc-ink-muted, #b8ab93);
+  --zct-border: var(--zwc-border-strong, rgba(243, 201, 105, 0.52));
+  --zct-border-sub: var(--zwc-border, rgba(243, 201, 105, 0.26));
+  --zct-shadow: var(--zwc-shadow-card, 0 10px 28px rgba(0, 0, 0, 0.62));
+  --zct-shadow-sub: var(--zwc-shadow-sub, 2px 3px 0 rgba(0, 0, 0, 0.48));
+  --zct-felt-bg: linear-gradient(155deg, #0d3b29 0%, #08271b 60%, #051810 100%);
+  --zct-felt-border: rgba(243, 201, 105, 0.68);
+  --zct-sage-bg: rgba(16, 185, 129, 0.20);
+  --zct-sage-ink: #6ee7b7;
+  --zct-sage-fill: #059669;
+  --zct-gold-bg: rgba(243, 201, 105, 0.20);
+  --zct-gold-ink: #f3c969;
   --zct-gold-fill: #d99a38;
-  --zct-crimson-bg: rgba(198, 83, 58, 0.22);
-  --zct-crimson-ink: #ff9c8a;
-  --zct-crimson-fill: #c44933;
-  --zct-blue-bg: rgba(62, 111, 176, 0.22);
+  --zct-crimson-bg: rgba(224, 72, 56, 0.22);
+  --zct-crimson-ink: #fca5a5;
+  --zct-crimson-fill: #dc2626;
+  --zct-blue-bg: rgba(56, 189, 248, 0.20);
   --zct-blue-ink: #93c5fd;
-  --zct-btn-bg: var(--zwc-btn-bg, #2b2620);
-  --zct-btn-hover: var(--zwc-btn-hover, #363028);
-  --zct-card-paper: #fbf7ee;
-  --zct-card-ink: #1e1b18;
+  --zct-btn-bg: var(--zwc-btn-bg, #241f19);
+  --zct-btn-hover: var(--zwc-btn-hover, #332b22);
+  --zct-card-paper: #fbf6ea;
+  --zct-card-ink: #171411;
 }
 
 html[data-theme="light"],
@@ -696,5 +697,207 @@ html[data-zone-reduced-motion="true"] .zct-scope * {
   .zct-action-btn,
   .zct-guard-btn {
     min-height: 44px;
+  }
+}
+
+/* ==========================================================================
+ * LUNA SIGNATURE STYLE: HOUSE OF OBSIDIAN & CHAMPAGNE GOLD — MONTE-CARLO NOIR
+ * Restyles Native [data-zone-casino-pit="1"] + Inline 3D Roulette/Slots + Salon
+ * ========================================================================== */
+#zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"],
+#zone-main[data-zone-screen="casino"] [data-torn-casino-games="1"] {
+  background: var(--zct-obsidian-bg, var(--zct-card-bg)) !important;
+  border: 1.6px solid var(--zct-felt-border) !important;
+  border-top: 3px solid #f3c969 !important;
+  border-radius: 12px !important;
+  box-shadow: var(--zct-shadow) !important;
+}
+
+html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-zone-casino-pit="1"],
+html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-torn-casino-games="1"] {
+  background: var(--zct-card-bg) !important;
+  border-color: #23201c !important;
+}
+
+#zone-main[data-zone-screen="casino"] [data-casino-table] {
+  background: linear-gradient(165deg, rgba(22, 18, 15, 0.96) 0%, rgba(12, 10, 8, 0.98) 100%) !important;
+  border: 1.4px solid rgba(243, 201, 105, 0.38) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 rgba(243, 201, 105, 0.16) !important;
+}
+
+html[data-theme="light"] #zone-main[data-zone-screen="casino"] [data-casino-table] {
+  background: var(--zct-subcard-bg) !important;
+  border-color: #23201c !important;
+}
+
+.zct-live-3d-wrap {
+  position: relative;
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(243, 201, 105, 0.58) !important;
+  background: radial-gradient(circle at 50% 35%, #123828 0%, #091b13 68%, #060e0a 100%) !important;
+  overflow: hidden;
+}
+
+.zct-inline-3d-stage {
+  width: 100%;
+  height: 196px;
+  min-height: 196px;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+.zct-inline-3d-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 9px;
+  background: rgba(14, 12, 10, 0.92);
+  border-top: 1px solid rgba(243, 201, 105, 0.34);
+  font-size: 10.5px;
+  color: #f3c969;
+  font-weight: 800;
+}
+
+.zct-inline-3d-inspect {
+  background: linear-gradient(180deg, rgba(243, 201, 105, 0.24), rgba(180, 125, 32, 0.22));
+  color: #fbf6ea;
+  border: 1px solid #f3c969;
+  border-radius: 6px;
+  padding: 3px 9px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Monte-Carlo 37-Pocket 3D Roulette Salon Card inside #zct-casino-pit */
+.zct-roulette-salon {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.6px solid var(--zct-felt-border);
+  background: var(--zct-felt-bg);
+  color: #fbf6ea;
+  box-shadow: var(--zct-shadow-sub);
+}
+
+.zct-roulette-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.zct-roulette-viewport-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.zct-roulette-viewport {
+  width: 100%;
+  height: 236px;
+  min-height: 236px;
+  border-radius: 10px;
+  border: 1.6px solid rgba(243, 201, 105, 0.65);
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 35%, #164430 0%, #091d14 72%, #050c09 100%);
+}
+
+.zct-roulette-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.zct-call-bets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.zct-roulette-history {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.zct-pocket-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 800;
+  border: 1px solid rgba(243, 201, 105, 0.52);
+  color: #fbf6ea;
+}
+
+.zct-pocket-chip[data-color="zero"] {
+  background: #059669;
+}
+
+.zct-pocket-chip[data-color="red"] {
+  background: #b91c1c;
+}
+
+.zct-pocket-chip[data-color="black"] {
+  background: #141418;
+}
+
+.zct-number-select-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.zct-number-select {
+  min-height: 32px;
+  padding: 3px 8px;
+  border-radius: 7px;
+  border: 1.3px solid #f3c969;
+  background: #141210;
+  color: #fbf6ea;
+  font: inherit;
+  font-weight: 800;
+}
+
+.zct-scope button:focus-visible,
+.zct-scope select:focus-visible,
+.zct-inline-3d-inspect:focus-visible {
+  outline: 2px solid #f3c969;
+  outline-offset: 2px;
+}
+
+@media (max-width: 780px) {
+  .zct-roulette-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .zct-roulette-viewport {
+    height: 196px;
+    min-height: 196px;
+  }
+
+  .zct-inline-3d-stage {
+    height: 176px;
+    min-height: 176px;
+  }
+
+  .zct-call-bets-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

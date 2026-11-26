@@ -764,7 +764,7 @@ function buildGymIronpit(T, ctx) {
 }
 
 /* --------------------------------------------------------------------------
- * STAGE 5: CASINO-ROYALE (Velvet VIP Rail, Brass Columns, Chandelier, Chips)
+ * STAGE 5: CASINO-ROYALE (Monte-Carlo Arched VIP Backwall, Neon Crown, Columns, Rail, Chandelier, Chips)
  * -------------------------------------------------------------------------- */
 function buildCasinoRoyale(T, ctx) {
   const { group, isMobile, era, registerEraMat, registerUpdater } = ctx;
@@ -777,7 +777,75 @@ function buildCasinoRoyale(T, ctx) {
   feltInlay.position.y = 0.005;
   group.add(feltInlay);
 
-  // 2. Art-Deco Brass Columns (4 fluted/stepped pillars)
+  // 2. Sculpted Monte-Carlo Arched VIP Salon Backwall (Obsidian-Mahogany Wainscoting + Grand Arch Alcove)
+  const wallSpecs = [
+    // Main curved/stepped VIP backwall plinth & wainscot dado
+    { geo: new T.BoxGeometry(6.8, 0.58, 0.34), x: 0, y: 0.29, z: -2.95 },
+    { geo: new T.BoxGeometry(6.95, 0.12, 0.42), x: 0, y: 0.62, z: -2.95 },
+    // Left & Right VIP salon pilasters flanking the grand central arch
+    { geo: new T.BoxGeometry(1.65, 2.35, 0.32), x: -2.42, y: 1.82, z: -2.92, ry: 0.14 },
+    { geo: new T.BoxGeometry(1.65, 2.35, 0.32), x: 2.42, y: 1.82, z: -2.92, ry: -0.14 },
+    // Recessed crimson-obsidian central VIP niche backdrop
+    { geo: new T.BoxGeometry(3.35, 2.55, 0.18), x: 0, y: 1.92, z: -3.08 },
+    // Stepped Art-Deco cornice entablature crowning the backwall
+    { geo: new T.BoxGeometry(6.9, 0.24, 0.44), x: 0, y: 3.12, z: -2.92 },
+    { geo: new T.BoxGeometry(4.2, 0.28, 0.48), x: 0, y: 3.36, z: -2.88 },
+  ];
+  if (!isMobile) {
+    // Flanking curved wing alcoves on desktop
+    wallSpecs.push({ geo: new T.BoxGeometry(1.25, 2.15, 0.28), x: -3.55, y: 1.72, z: -2.25, ry: 0.52 });
+    wallSpecs.push({ geo: new T.BoxGeometry(1.25, 2.15, 0.28), x: 3.55, y: 1.72, z: -2.25, ry: -0.52 });
+  }
+  const vipBackwall = new T.Mesh(mergeGeometrySpecs(T, wallSpecs), makeEnvMat(T, 0x1c1210, 0.38, 0.52));
+  vipBackwall.castShadow = true;
+  vipBackwall.receiveShadow = true;
+  group.add(vipBackwall);
+
+  // 3. Champagne-Brass Art-Deco Arch Moldings & Sunburst Rays (1 merged draw call)
+  const archTrimSpecs = [
+    { geo: new T.TorusGeometry(1.42, 0.055, 8, isMobile ? 16 : 28, Math.PI), x: 0, y: 1.72, z: -2.86 },
+    { geo: new T.BoxGeometry(0.12, 1.15, 0.12), x: -1.42, y: 1.15, z: -2.86 },
+    { geo: new T.BoxGeometry(0.12, 1.15, 0.12), x: 1.42, y: 1.15, z: -2.86 },
+    { geo: new T.BoxGeometry(6.85, 0.07, 0.48), x: 0, y: 3.01, z: -2.90 },
+  ];
+  const rayCount = isMobile ? 5 : 9;
+  for (let r = 0; r < rayCount; r++) {
+    const ang = (r / (rayCount - 1)) * Math.PI;
+    archTrimSpecs.push({
+      geo: new T.BoxGeometry(0.035, 0.72, 0.04),
+      x: Math.cos(ang) * 0.82,
+      y: 1.74 + Math.sin(ang) * 0.82,
+      z: -2.96,
+      rz: ang - Math.PI / 2,
+    });
+  }
+  if (!isMobile) {
+    archTrimSpecs.push({ geo: new T.TorusGeometry(0.52, 0.035, 6, 16, Math.PI), x: -2.42, y: 2.05, z: -2.74, ry: 0.14 });
+    archTrimSpecs.push({ geo: new T.TorusGeometry(0.52, 0.035, 6, 16, Math.PI), x: 2.42, y: 2.05, z: -2.74, ry: -0.14 });
+  }
+  group.add(new T.Mesh(mergeGeometrySpecs(T, archTrimSpecs), makeEnvMat(T, 0xfbbf24, 0.18, 0.94)));
+
+  // 4. Monte-Carlo Neon Crown Crest & Luminous VIP Arch Tubing (Era-reactive emissive)
+  const neonCrownMat = makeEnvMat(T, accent, 0.12, 0.25, {
+    emissive: 0xfbbf24,
+    emissiveIntensity: 1.25,
+  });
+  registerEraMat(neonCrownMat, 'accent', 0.45);
+  const crownSpecs = [
+    // Luminous inner arch neon tube
+    { geo: new T.TorusGeometry(1.32, 0.028, 6, isMobile ? 16 : 28, Math.PI), x: 0, y: 1.72, z: -2.84 },
+    // Royal Monte-Carlo 5-spire crown base band & spires
+    { geo: new T.BoxGeometry(0.86, 0.08, 0.08), x: 0, y: 3.36, z: -2.62 },
+    { geo: new T.ConeGeometry(0.075, 0.34, 4), x: 0, y: 3.58, z: -2.62 },
+    { geo: new T.ConeGeometry(0.062, 0.26, 4), x: -0.21, y: 3.53, z: -2.62, rz: 0.16 },
+    { geo: new T.ConeGeometry(0.062, 0.26, 4), x: 0.21, y: 3.53, z: -2.62, rz: -0.16 },
+    { geo: new T.ConeGeometry(0.052, 0.20, 4), x: -0.39, y: 3.48, z: -2.62, rz: 0.30 },
+    { geo: new T.ConeGeometry(0.052, 0.20, 4), x: 0.39, y: 3.48, z: -2.62, rz: -0.30 },
+    { geo: new T.OctahedronGeometry(0.06, 0), x: 0, y: 3.78, z: -2.62 },
+  ];
+  group.add(new T.Mesh(mergeGeometrySpecs(T, crownSpecs), neonCrownMat));
+
+  // 5. Art-Deco Brass Columns (4 fluted/stepped pillars)
   const colSpecs = [];
   const colPositions = [
     [-3.25, -1.85],
@@ -796,7 +864,19 @@ function buildCasinoRoyale(T, ctx) {
   columns.castShadow = true;
   group.add(columns);
 
-  // 3. Velvet VIP Pit Rail (Instanced brass stanchions + draped crimson velvet ropes)
+  if (!isMobile) {
+    // Desktop-only warm Art-Deco column wall sconces (simplifies draw calls on <= 640px mobile LOD)
+    const sconceGeo = new T.OctahedronGeometry(0.09, 0);
+    const sconceTransforms = colPositions.map(([cx, cz]) => ({
+      x: cx * 0.93,
+      y: 2.18,
+      z: cz + 0.16,
+      sy: 1.45,
+    }));
+    group.add(buildInstancedTransforms(T, sconceGeo, neonCrownMat, sconceTransforms));
+  }
+
+  // 6. Velvet VIP Pit Rail (Instanced brass stanchions + draped crimson velvet ropes)
   const stanchionGeo = mergeGeometrySpecs(T, [
     { geo: new T.CylinderGeometry(0.12, 0.14, 0.05, 10), x: 0, y: 0.025, z: 0 },
     { geo: new T.CylinderGeometry(0.032, 0.036, 0.78, 8), x: 0, y: 0.44, z: 0 },
@@ -838,7 +918,7 @@ function buildCasinoRoyale(T, ctx) {
   }
   group.add(new T.Mesh(mergeGeometrySpecs(T, velvetSpecs), makeEnvMat(T, 0x991b1b, 0.78, 0.08)));
 
-  // 4. Warm Chandelier Glow Halo (Overhead tiered brass ring + luminous halo)
+  // 7. Warm Chandelier Glow Halo (Overhead tiered brass ring + luminous halo)
   const chandelierGroup = new T.Group();
   chandelierGroup.position.set(0, 3.08, -0.55);
   const chanFrame = new T.Mesh(
@@ -864,7 +944,7 @@ function buildCasinoRoyale(T, ctx) {
   chandelierGroup.add(haloRing);
   group.add(chandelierGroup);
 
-  // 5. Stacked Chip Towers (InstancedMesh near foreground corners)
+  // 8. Stacked Chip Towers (InstancedMesh near foreground corners)
   const chipGeo = new T.CylinderGeometry(0.085, 0.085, 0.028, isMobile ? 8 : 14);
   const chipMat = makeEnvMat(T, 0xffffff, 0.32, 0.35);
   const chipTransforms = [];
@@ -888,6 +968,7 @@ function buildCasinoRoyale(T, ctx) {
   registerUpdater((elapsed) => {
     chandelierGroup.rotation.y = elapsed * 0.22;
     haloMat.emissiveIntensity = 0.95 + 0.25 * Math.sin(elapsed * 2.5);
+    neonCrownMat.emissiveIntensity = 1.05 + 0.32 * Math.sin(elapsed * 3.1);
   });
 }
 

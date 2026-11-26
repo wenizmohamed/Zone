@@ -11,9 +11,167 @@
 (function (root) {
   'use strict';
 
-  var CSS_HREF = './assets/ui/zone-casino-tables.css?v=157';
+  var CSS_HREF = './assets/ui/zone-casino-tables.css?v=163';
   var CONTAINER_ID = 'zct-casino-pit';
   var CRAPS_CANVAS_ID = 'zct-craps-canvas';
+
+  var EUROPEAN_ROULETTE_ORDER = [
+    0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10,
+    5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26
+  ];
+  var ROULETTE_RED_NUMBERS = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+
+  function isRedPocket(n) {
+    return ROULETTE_RED_NUMBERS.indexOf(Number(n)) !== -1;
+  }
+
+  function getPocketGlyph(n) {
+    var num = Number(n);
+    if (num === 0) return { symbol: '★', color: 'zero' };
+    if (isRedPocket(num)) return { symbol: '◆', color: 'red' };
+    return { symbol: '♠', color: 'black' };
+  }
+
+  function getNeighborSectorPockets(centerPocket, radius) {
+    var r = Math.max(1, Math.min(8, Number(radius) || 2));
+    var idx = EUROPEAN_ROULETTE_ORDER.indexOf(Number(centerPocket));
+    if (idx < 0) idx = 0;
+    var out = [];
+    var len = EUROPEAN_ROULETTE_ORDER.length;
+    for (var offset = -r; offset <= r; offset++) {
+      out.push(EUROPEAN_ROULETTE_ORDER[(idx + offset + len) % len]);
+    }
+    return out;
+  }
+
+  var ROULETTE_CALL_BETS = {
+    voisins_du_zero: {
+      id: 'voisins_du_zero',
+      en: 'Voisins du Zero (17)',
+      ar: 'جيران الصفر (١٧ خانة)',
+      pockets: [22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25],
+      houseEdgePct: 2.70
+    },
+    tiers_du_cylindre: {
+      id: 'tiers_du_cylindre',
+      en: 'Tiers du Cylindre (12)',
+      ar: 'ثلث الأسطوانة (١٢ خانة)',
+      pockets: [27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33],
+      houseEdgePct: 2.70
+    },
+    orphelins: {
+      id: 'orphelins',
+      en: 'Orphelins (8)',
+      ar: 'الأيتام (٨ خانات)',
+      pockets: [1, 20, 14, 31, 9, 17, 34, 6],
+      houseEdgePct: 2.70
+    },
+    jeu_zero: {
+      id: 'jeu_zero',
+      en: 'Jeu Zero (7)',
+      ar: 'لعبة الصفر (٧ خانات)',
+      pockets: [12, 35, 3, 26, 0, 32, 15],
+      houseEdgePct: 2.70
+    },
+    neighbors_5: {
+      id: 'neighbors_5',
+      en: '5-Pocket Neighbors',
+      ar: 'قطاع ٥ خانات متجاورة',
+      pockets: null, // dynamic around targetPocket
+      houseEdgePct: 2.70
+    },
+    straight: {
+      id: 'straight',
+      en: 'Straight-Up (35:1)',
+      ar: 'رقم مفرد مباشر (٣٥:١)',
+      pockets: null, // [targetPocket]
+      houseEdgePct: 2.70
+    },
+    red: {
+      id: 'red',
+      en: '◆ Ruby Red (1:1)',
+      ar: '◆ أحمر ياقوتي (١:١)',
+      pockets: ROULETTE_RED_NUMBERS.slice(),
+      houseEdgePct: 2.70
+    },
+    black: {
+      id: 'black',
+      en: '♠ Obsidian Black (1:1)',
+      ar: '♠ أسود أوبسيديان (١:١)',
+      pockets: [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35],
+      houseEdgePct: 2.70
+    }
+  };
+
+  /**
+   * Evaluates any European Roulette bet with exact uniform 36/k gross return
+   * so EV = (k/37) * (36/k) * stake - stake = -1/37 * stake (-2.7027% house edge).
+   */
+  function evaluateRouletteSpin(betId, pocket, stake, targetPocket) {
+    var bKey = ROULETTE_CALL_BETS[betId] ? betId : 'voisins_du_zero';
+    var p = Math.max(0, Math.min(36, Math.round(Number(pocket) || 0)));
+    var w = Math.max(1, Math.round(Number(stake) || 1000));
+    var tgt = Math.max(0, Math.min(36, Math.round(Number(targetPocket !== undefined ? targetPocket : 17))));
+
+    var covered;
+    if (bKey === 'straight') {
+      covered = [tgt];
+    } else if (bKey === 'neighbors_5') {
+      covered = getNeighborSectorPockets(tgt, 2);
+    } else {
+      covered = ROULETTE_CALL_BETS[bKey].pockets;
+    }
+
+    var k = covered.length;
+    var hit = covered.indexOf(p) !== -1;
+    var grossReturnMult = 36 / k; // Exact uniform 36/k multiplier -> 2.7027% house edge
+    var grossPayout = hit ? Math.round(w * grossReturnMult) : 0;
+    var netDelta = grossPayout - w;
+    var glyph = getPocketGlyph(p);
+
+    return {
+      betId: bKey,
+      pocket: p,
+      pocketColor: glyph.color,
+      pocketGlyph: glyph.symbol,
+      coveredCount: k,
+      coveredPockets: covered.slice(),
+      hit: hit,
+      stake: w,
+      grossMultiplier: Number(grossReturnMult.toFixed(4)),
+      payout: grossPayout,
+      netDelta: netDelta,
+      houseEdgePct: Number(((1 / 37) * 100).toFixed(4)),
+      bigWin: hit && k <= 7
+    };
+  }
+
+  function computeRouletteCostCurve(opts) {
+    var o = opts || {};
+    var stake = Math.max(100, Number(o.stake) || 1000);
+    var spinsPerMin = Math.max(1, Number(o.spinsPerMin) || 4);
+    var edge = 1 / 37; // 0.027027027...
+    var checkpoints = [5, 15, 30, 60].map(function (mins) {
+      var spins = mins * spinsPerMin;
+      var handle = spins * stake;
+      var expectedSink = Math.round(handle * edge);
+      return {
+        minutes: mins,
+        spins: spins,
+        totalHandle: handle,
+        expectedHouseSink: expectedSink
+      };
+    });
+    return {
+      pocketCount: 37,
+      houseEdgeDecimal: Number(edge.toFixed(6)),
+      houseEdgePct: 2.7027,
+      expectedReturnPct: 97.2973,
+      stake: stake,
+      spinsPerMin: spinsPerMin,
+      checkpoints: checkpoints
+    };
+  }
 
   var STANDARD_STAKES = [500, 1000, 5000, 25000];
   var VIP_STAKES = [5000, 25000, 50000, 100000];
@@ -820,6 +978,17 @@
         triggered: false,
         cooldownActive: false
       },
+      roulette: {
+        betId: 'voisins_du_zero',
+        targetPocket: 17,
+        stake: 1000,
+        lastPocket: 17,
+        spinCount: 0,
+        history: [17, 0, 32, 26, 7, 23],
+        statusTone: 'gold',
+        statusEn: 'Monte-Carlo Noir 3D Wheel ready · 37 pockets · 2.70% uniform European house edge.',
+        statusAr: 'عجلة مونت كارلو ثلاثية الأبعاد جاهزة · ٣٧ خانة · هامش أوروبي موحّد 2.70%.'
+      },
       craps: {
         betId: 'pass_line',
         hardTarget: 6,
@@ -908,6 +1077,7 @@
       store.streakGuard.cooldownActive = true;
       store.craps.stake = 500;
       store.bj.stake = 500;
+      store.roulette.stake = 500;
       triggerAudioCue('ui_nav', { source: 'streak_guard_reset' });
       renderActiveScreenMount();
     }
@@ -1164,10 +1334,69 @@
       if (res.outcome === 'win') {
         triggerAudioCue(res.bigWin ? 'jackpot_fanfare' : 'cash_payout', { source: 'craps', payout: res.payout });
       }
+      if (typeof window !== 'undefined' && window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+        window.ZoneGameKit.recordEvent('craps_roll', { stake: stake, betId: c.betId, netDelta: res.payout - stake });
+      }
 
       drawCrapsCanvas();
       renderActiveScreenMount();
       return { ok: true, result: res, dice: [d1, d2], bankroll: store.bankroll };
+    }
+
+    /* ---------------- 37-Pocket 3D Monte-Carlo Roulette Spin ---------------- */
+    function spinRouletteWheel(forcedPocket) {
+      syncLiveBankrollFromGame();
+      var rl = store.roulette;
+      var stake = Math.max(500, Math.round(Number(rl.stake) || 1000));
+      if (store.bankroll < stake) {
+        rl.statusTone = 'crimson';
+        rl.statusEn = 'Insufficient bankroll for ' + fmtMoney(stake) + ' roulette wager.';
+        rl.statusAr = 'الرصيد غير كافٍ لرهان الروليت بقيمة ' + fmtMoney(stake) + '.';
+        renderActiveScreenMount();
+        return { ok: false, error: 'insufficient_funds' };
+      }
+
+      var rng = seededUint32('roulette:' + store.bj.fair.clientSeed + ':' + Date.now() + ':' + rl.spinCount);
+      var pocket = forcedPocket !== undefined && forcedPocket !== null
+        ? Math.max(0, Math.min(36, Math.round(Number(forcedPocket))))
+        : EUROPEAN_ROULETTE_ORDER[Math.floor(rng() * EUROPEAN_ROULETTE_ORDER.length)];
+
+      applyBankrollDelta(-stake);
+      rl.spinCount += 1;
+      rl.lastPocket = pocket;
+      rl.history.unshift(pocket);
+      if (rl.history.length > 8) rl.history.length = 8;
+
+      var evalRes = evaluateRouletteSpin(rl.betId, pocket, stake, rl.targetPocket);
+      if (evalRes.payout > 0) {
+        applyBankrollDelta(evalRes.payout);
+      }
+      recordEconomyAndStreak(stake, evalRes.payout);
+
+      var betMeta = ROULETTE_CALL_BETS[rl.betId] || ROULETTE_CALL_BETS.voisins_du_zero;
+      if (evalRes.hit) {
+        rl.statusTone = evalRes.bigWin ? 'gold' : 'sage';
+        rl.statusEn = evalRes.pocketGlyph + ' Pocket ' + pocket + ' HIT on ' + betMeta.en + '! Returned ' + fmtMoney(evalRes.payout) + ' (Net +' + fmtMoney(evalRes.netDelta) + ').';
+        rl.statusAr = evalRes.pocketGlyph + ' أصابت الخانة ' + pocket + ' في «' + betMeta.ar + '»! العائد ' + fmtMoney(evalRes.payout) + ' (صافي +' + fmtMoney(evalRes.netDelta) + ').';
+      } else {
+        rl.statusTone = 'crimson';
+        rl.statusEn = evalRes.pocketGlyph + ' Ball settled in Pocket ' + pocket + ' — missed ' + betMeta.en + '.';
+        rl.statusAr = evalRes.pocketGlyph + ' استقرت الكرة في الخانة ' + pocket + ' - خارج «' + betMeta.ar + '».';
+      }
+
+      if (typeof window !== 'undefined' && window.ZoneEcs3D) {
+        if (typeof window.ZoneEcs3D.updateStageState === 'function') {
+          window.ZoneEcs3D.updateStageState('casino-royale', { pocket: pocket });
+        }
+      }
+      triggerCasino3D('spin', { source: 'roulette', pocket: pocket, betType: rl.betId, bigWin: evalRes.bigWin });
+      triggerAudioCue(evalRes.hit ? (evalRes.bigWin ? 'jackpot_fanfare' : 'cash_payout') : 'roulette_tick', { source: 'roulette_3d', pocket: pocket });
+      if (typeof window !== 'undefined' && window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+        window.ZoneGameKit.recordEvent('roulette_spin', { stake: stake, pocket: pocket, netDelta: evalRes.netDelta, betType: rl.betId });
+      }
+
+      renderActiveScreenMount();
+      return { ok: true, pocket: pocket, result: evalRes, bankroll: store.bankroll };
     }
 
     /* ---------------- Blackjack Shoe Actions ---------------- */
@@ -1196,6 +1425,13 @@
 
       if (outcome === 'win') {
         triggerAudioCue(isBig ? 'jackpot_fanfare' : 'cash_payout', { source: 'blackjack', payout: returned });
+      }
+      if (typeof window !== 'undefined' && window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+        window.ZoneGameKit.recordEvent('blackjack_hand', {
+          stake: bj.bet,
+          netDelta: returned - bj.bet,
+          followedOptimal: Boolean(bj.lastFollowedOptimal)
+        });
       }
     }
 
@@ -1458,6 +1694,63 @@
         html.push('</div>');
       }
 
+      // 2.5 LUNA HOUSE OF OBSIDIAN & CHAMPAGNE GOLD: 37-POCKET 3D MONTE-CARLO ROULETTE SALON
+      var rl = store.roulette;
+      var rlCurve = computeRouletteCostCurve({ stake: rl.stake, spinsPerMin: 4 });
+      var lastGlyph = getPocketGlyph(rl.lastPocket);
+      html.push('<section class="zct-roulette-salon" id="zct-roulette-card" data-zct-table="roulette-3d">');
+      html.push('  <div class="zct-table-head">');
+      html.push('    <h4 class="zct-table-title">' + (ar ? 'صالون روليت مونت كارلو ثلاثي الأبعاد (٣٧ خانة · الرهانات الفرنسية)' : 'Monte-Carlo Noir 37-Pocket 3D Roulette Salon & French Call Bets') + '</h4>');
+      html.push('    <div style="display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap">');
+      html.push('      <span class="zct-pill" data-tone="gold"><bdi>' + (ar ? 'هامش موحّد ' : 'Uniform Edge ') + '2.70%</bdi></span>');
+      html.push('      <button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="roulette_wheel" data-z3d-cat="casino" data-z3d-title="Monte-Carlo 37-Pocket 3D Roulette Wheel">' + (ar ? 'فحص العجلة ٣٦٠°' : '360° 3D Orbit Wheel') + '</button>');
+      html.push('    </div>');
+      html.push('  </div>');
+      html.push('  <div class="zct-roulette-grid">');
+      html.push('    <div class="zct-roulette-viewport-wrap">');
+      html.push('      <div class="z3d-action-stage zct-roulette-viewport" data-z3d-stage="casino-royale" data-z3d-submode="roulette" aria-label="' + (ar ? 'عجلة الروليت ثلاثية الأبعاد' : '3D European Roulette Wheel') + '"></div>');
+      html.push('      <div class="zct-roulette-history" data-zct-roulette-hud="1">');
+      html.push('        <span class="zct-pocket-chip" data-color="' + lastGlyph.color + '"><bdi>' + lastGlyph.symbol + ' ' + rl.lastPocket + '</bdi></span>');
+      for (var rhi = 0; rhi < rl.history.length; rhi++) {
+        var hp = rl.history[rhi];
+        var hg = getPocketGlyph(hp);
+        html.push('        <span class="zct-pocket-chip" data-color="' + hg.color + '"><bdi>' + hg.symbol + ' ' + hp + '</bdi></span>');
+      }
+      html.push('      </div>');
+      html.push('    </div>');
+      html.push('    <div class="zct-roulette-controls">');
+      html.push('      <div class="zct-chip-row" role="group" aria-label="' + (ar ? 'قيمة رهان الروليت' : 'Roulette Stake') + '">');
+      for (var rsi = 0; rsi < stakes.length; rsi++) {
+        var rAmt = stakes[rsi];
+        html.push('        <button type="button" class="zct-chip-btn" data-zct-act="roulette-stake" data-stake="' + rAmt + '" aria-pressed="' + (rl.stake === rAmt ? 'true' : 'false') + '"><bdi>' + fmtMoney(rAmt) + '</bdi></button>');
+      }
+      html.push('      </div>');
+      html.push('      <div class="zct-call-bets-grid">');
+      var callKeys = ['voisins_du_zero', 'tiers_du_cylindre', 'orphelins', 'jeu_zero', 'neighbors_5', 'straight', 'red', 'black'];
+      for (var cki = 0; cki < callKeys.length; cki++) {
+        var cb = ROULETTE_CALL_BETS[callKeys[cki]];
+        var cbActive = rl.betId === cb.id;
+        html.push('        <button type="button" class="zct-bet-btn" data-zct-act="roulette-bet" data-bet="' + cb.id + '" aria-pressed="' + (cbActive ? 'true' : 'false') + '">');
+        html.push('          <span class="zct-bet-name">' + esc(ar ? cb.ar : cb.en) + '</span>');
+        html.push('          <span class="zct-bet-meta"><bdi>EV -2.70% · RTP ' + rlCurve.expectedReturnPct.toFixed(1) + '%</bdi></span>');
+        html.push('        </button>');
+      }
+      html.push('      </div>');
+      html.push('      <div class="zct-number-select-row">');
+      html.push('        <span>' + (ar ? 'الخانة المستهدفة (0-36):' : 'Target Pocket (0-36):') + '</span>');
+      var quickPockets = [0, 7, 17, 23, 32, 36];
+      for (var qpi = 0; qpi < quickPockets.length; qpi++) {
+        var qp = quickPockets[qpi];
+        var qg = getPocketGlyph(qp);
+        html.push('        <button type="button" class="zct-chip-btn" data-zct-act="roulette-pocket" data-pocket="' + qp + '" aria-pressed="' + (rl.targetPocket === qp ? 'true' : 'false') + '"><bdi>' + qg.symbol + ' ' + qp + '</bdi></button>');
+      }
+      html.push('      </div>');
+      html.push('      <button type="button" class="zct-primary-btn" data-zct-act="roulette-spin">' + (ar ? 'أدر عجلة الروليت ٣D · ' + fmtMoney(rl.stake) : 'Spin 37-Pocket 3D Wheel · ' + fmtMoney(rl.stake)) + '</button>');
+      html.push('      <div class="zct-status-msg" data-tone="' + esc(rl.statusTone) + '" data-zct-roulette-status="1">' + esc(ar ? rl.statusAr : rl.statusEn) + '</div>');
+      html.push('    </div>');
+      html.push('  </div>');
+      html.push('</section>');
+
       // 3. Two-Column Tables Grid
       html.push('<div class="zct-tables-grid">');
 
@@ -1605,7 +1898,6 @@
 
     function renderActiveScreenMount() {
       if (typeof document === 'undefined') return false;
-      if (document.querySelector && document.querySelector('x-dc')) return false;
       var main = document.getElementById('zone-main');
       if (!main) return false;
 
@@ -1626,12 +1918,13 @@
         host.setAttribute('data-zct-mounted', 'casino');
       }
 
+      var hasXdc = Boolean(document.querySelector && document.querySelector('x-dc'));
       var casinoPit = main.querySelector('[data-zone-casino-pit="1"]');
-      if (casinoPit && casinoPit.parentElement) {
+      if (!hasXdc && casinoPit && casinoPit.parentElement) {
         if (casinoPit.nextElementSibling !== host) {
           casinoPit.insertAdjacentElement('afterend', host);
         }
-      } else if (!host.parentElement) {
+      } else if (host.parentElement !== main) {
         main.appendChild(host);
       }
 
@@ -1639,6 +1932,9 @@
       if (host.__zctLastHtml !== nextHtml) {
         host.__zctLastHtml = nextHtml;
         host.innerHTML = nextHtml;
+        if (typeof window !== 'undefined' && window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+          window.ZoneEcs3D.scan(host);
+        }
       }
       store.mounted = true;
       drawCrapsCanvas();
@@ -1660,10 +1956,28 @@
         store.vipMode = !store.vipMode;
         store.craps.stake = store.vipMode ? 5000 : 1000;
         store.bj.stake = store.vipMode ? 5000 : 1000;
+        store.roulette.stake = store.vipMode ? 5000 : 1000;
         triggerAudioCue('ui_nav', { source: 'vip_toggle' });
         renderActiveScreenMount();
       } else if (act === 'reset-guard') {
         resetStreakGuard();
+      } else if (act === 'roulette-stake') {
+        store.roulette.stake = Math.max(500, Number(target.getAttribute('data-stake')) || 1000);
+        triggerAudioCue('ui_nav', { source: 'roulette_stake' });
+        renderActiveScreenMount();
+      } else if (act === 'roulette-bet') {
+        var rbId = target.getAttribute('data-bet');
+        if (ROULETTE_CALL_BETS[rbId]) {
+          store.roulette.betId = rbId;
+          triggerAudioCue('ui_nav', { source: 'roulette_bet' });
+          renderActiveScreenMount();
+        }
+      } else if (act === 'roulette-pocket') {
+        store.roulette.targetPocket = Math.max(0, Math.min(36, Number(target.getAttribute('data-pocket')) || 0));
+        triggerAudioCue('ui_nav', { source: 'roulette_pocket' });
+        renderActiveScreenMount();
+      } else if (act === 'roulette-spin') {
+        spinRouletteWheel();
       } else if (act === 'craps-stake') {
         store.craps.stake = Math.max(500, Number(target.getAttribute('data-stake')) || 1000);
         triggerAudioCue('ui_nav', { source: 'craps_stake' });
@@ -1767,8 +2081,13 @@
     }
 
     return {
+      EUROPEAN_ROULETTE_ORDER: EUROPEAN_ROULETTE_ORDER,
+      ROULETTE_CALL_BETS: ROULETTE_CALL_BETS,
       boot: boot,
       render: renderActiveScreenMount,
+      spinRouletteWheel: spinRouletteWheel,
+      evaluateRouletteSpin: evaluateRouletteSpin,
+      computeRouletteCostCurve: computeRouletteCostCurve,
       shootCrapsDice: shootCrapsDice,
       blackjackAction: blackjackAction,
       resetStreakGuard: resetStreakGuard,
@@ -1781,6 +2100,11 @@
       applyDiceThrowImpulse: applyDiceThrowImpulse,
       getEquilibriumSummary: getEquilibriumSummary,
       getActiveBlackjackInspection: getActiveBlackjackInspection,
+      setRouletteBet: function (betId, targetPocket) {
+        if (ROULETTE_CALL_BETS[betId]) store.roulette.betId = betId;
+        if (targetPocket !== undefined) store.roulette.targetPocket = Math.max(0, Math.min(36, Math.round(Number(targetPocket) || 0)));
+        renderActiveScreenMount();
+      },
       setCrapsBet: function (betId, hardTarget) {
         if (CRAPS_BETS[betId]) store.craps.betId = betId;
         if (HARDWAY_TARGETS[Number(hardTarget)]) store.craps.hardTarget = Number(hardTarget);
@@ -1790,6 +2114,7 @@
         var val = Math.max(500, Math.round(Number(amount) || 1000));
         if (game === 'craps') store.craps.stake = val;
         if (game === 'bj') store.bj.stake = val;
+        if (game === 'roulette') store.roulette.stake = val;
         renderActiveScreenMount();
       },
       getState: function () {
@@ -1828,7 +2153,11 @@
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
+      EUROPEAN_ROULETTE_ORDER: EUROPEAN_ROULETTE_ORDER,
+      ROULETTE_CALL_BETS: ROULETTE_CALL_BETS,
       createZoneCasinoTablesRuntime: createZoneCasinoTablesRuntime,
+      evaluateRouletteSpin: evaluateRouletteSpin,
+      computeRouletteCostCurve: computeRouletteCostCurve,
       computeCrapsOdds: computeCrapsOdds,
       evaluateCrapsRoll: evaluateCrapsRoll,
       computeBlackjackEV: computeBlackjackEV,

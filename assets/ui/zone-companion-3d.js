@@ -936,6 +936,9 @@
           '</div>' +
           '<div class="zcp-turntable-caption">' +
             '<span><bdi>' + esc(activeState.callsign) + '</bdi></span>' +
+            '<button type="button" class="zcp-btn" data-tone="gold" data-z3d-inspect="' + esc(activeSpec.id) + '" data-z3d-cat="companion" data-z3d-title="' + esc(ar ? activeSpec.nameAr : activeSpec.nameEn) + '" style="margin-inline-start:8px;padding:3px 8px;font-size:10px">' +
+              esc(ar ? 'معاينة 3D بزاوية ٣٦٠°' : '360° 3D Orbit') +
+            '</button>' +
           '</div>' +
         '</div>' +
         '<div class="zcp-telemetry-col">' +
@@ -1017,6 +1020,14 @@
     if (panel.__zcpLastHtml !== html) {
       panel.__zcpLastHtml = html;
       panel.innerHTML = html;
+    }
+
+    if (root && root.ZoneEcs3D && typeof root.ZoneEcs3D.updateStageState === 'function') {
+      var activeUnit = store.units[store.activeUnitId] || store.units.recon_drone;
+      root.ZoneEcs3D.updateStageState('safehouse-empire', {
+        companionId: store.activeUnitId,
+        companionStage: resolveStageForXp(activeUnit.evolutionXp).stage
+      });
     }
 
     ensureTurntableLoop();

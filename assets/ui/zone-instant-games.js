@@ -2164,85 +2164,67 @@
       staleCasinoStage.parentElement.removeChild(staleCasinoStage);
     }
 
-    /* Roulette Wheel Canvas */
+    /* Monte-Carlo Noir 3D Casino Stages: Replace flat 2D Roulette & Slots canvases with LIVE Three.js WebGL 3D Viewports */
     var rTable = main.querySelector('[data-casino-table="roulette"]');
-    if (rTable && !rTable.querySelector('#zig-roulette-canvas')) {
+    if (rTable && !rTable.querySelector('[data-zig-roulette-3d="1"]')) {
       var rHeader = rTable.firstElementChild;
       var rBox = document.createElement('div');
-      rBox.className = 'zig-casino-canvas-box';
-      rBox.innerHTML = '<canvas id="zig-roulette-canvas" aria-label="' + rouletteLabel + '"></canvas>';
+      rBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
+      rBox.setAttribute('data-zig-roulette-3d', '1');
+      rBox.innerHTML =
+        '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="roulette" aria-label="' + rouletteLabel + '"></div>' +
+        '<div class="zct-inline-3d-bar">' +
+          '<span class="zct-inline-3d-badge">' + (ar ? '★ روليت مونت كارلو ٣D · ٣٧ خانة' : '★ 37-Pocket 3D Monte-Carlo Wheel') + '</span>' +
+          '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="roulette_wheel" data-z3d-cat="casino" data-z3d-title="' + rouletteLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
+        '</div>';
       if (rHeader) rHeader.insertAdjacentElement('afterend', rBox);
       else rTable.prepend(rBox);
-
-      var rCv = rBox.querySelector('canvas');
-      observeInteractiveCanvas(rCv);
-      rCv.addEventListener('pointerdown', function () {
-        ensureAudio();
-        var betBtn = rTable.querySelector('[data-roulette-bet="red"]:not([disabled])') || rTable.querySelector('[data-roulette-bet]:not([disabled])');
-        if (!betBtn) return;
-        startRouletteAnimation();
-        betBtn.click();
-      });
 
       rTable.addEventListener('click', function (ev) {
         var betBtn = ev.target && ev.target.closest ? ev.target.closest('[data-roulette-bet]') : null;
         if (betBtn && !betBtn.disabled) {
           ensureAudio();
           startRouletteAnimation();
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            window.ZoneEcs3D.triggerStageAction('casino-royale', 'spin', { betType: betBtn.getAttribute('data-roulette-bet') || 'red' });
+          }
+          if (window.ZoneGameKit && typeof window.ZoneGameKit.recordEvent === 'function') {
+            window.ZoneGameKit.recordEvent('roulette_spin', { stake: 1000, betType: betBtn.getAttribute('data-roulette-bet') || 'red' });
+          }
         }
       });
-      renderRouletteCanvas(0, performance.now());
-    } else if (rTable) {
-      var existRCv = rTable.querySelector('#zig-roulette-canvas');
-      if (existRCv) {
-        existRCv.setAttribute('aria-label', rouletteLabel);
-        observeInteractiveCanvas(existRCv);
-      }
     }
 
-    /* 3-Reel Jackpot Slots Canvas */
+    /* 3D Mechanical Jackpot Slot Machine Stage */
     var sTable = main.querySelector('[data-casino-table="slots"]');
-    if (sTable && !sTable.querySelector('#zig-slots-canvas')) {
+    if (sTable && !sTable.querySelector('[data-zig-slots-3d="1"]')) {
       sTable.classList.add('zig-slots-mounted');
       var jackpotBanner = sTable.children[1] || sTable.firstElementChild;
       var sBox = document.createElement('div');
-      sBox.className = 'zig-casino-canvas-box';
-      sBox.innerHTML = '<canvas id="zig-slots-canvas" aria-label="' + slotsLabel + '"></canvas>';
+      sBox.className = 'zig-casino-canvas-box zct-live-3d-wrap';
+      sBox.setAttribute('data-zig-slots-3d', '1');
+      sBox.innerHTML =
+        '<div class="z3d-action-stage zct-inline-3d-stage" data-z3d-stage="casino-royale" data-z3d-submode="slots" aria-label="' + slotsLabel + '"></div>' +
+        '<div class="zct-inline-3d-bar">' +
+          '<span class="zct-inline-3d-badge">' + (ar ? '♦ ماكينة الجائزة الكبرى ٣D' : '♦ 3D Mechanical Jackpot Reels') + '</span>' +
+          '<button type="button" class="zct-inline-3d-inspect" data-z3d-inspect="slot_machine" data-z3d-cat="casino" data-z3d-title="' + slotsLabel + '">' + (ar ? 'فحص ٣٦٠°' : '360° 3D Orbit') + '</button>' +
+        '</div>';
       if (jackpotBanner) jackpotBanner.insertAdjacentElement('afterend', sBox);
       else sTable.prepend(sBox);
 
-      var triggerSpin = function () {
-        ensureAudio();
-        var spinBtn = sTable.querySelector('[data-slots-spin]:not([disabled])');
-        if (spinBtn) {
-          startSlotsAnimation();
-          spinBtn.click();
-          return;
-        }
-        var g = window.__zoneGame;
-        if (g && typeof g.spinSlots === 'function' && !g.slotsBusy && !(typeof g.gameplayDisabled === 'function' && g.gameplayDisabled())) {
-          startSlotsAnimation();
-          g.spinSlots();
-        }
-      };
-
-      var sCv = sBox.querySelector('canvas');
-      observeInteractiveCanvas(sCv);
-      sCv.addEventListener('pointerdown', triggerSpin);
       sTable.addEventListener('click', function (ev) {
-        var btn = ev.target && ev.target.closest ? ev.target.closest('button') : null;
-        if (btn && btn.classList.contains('zone-action-primary') && !btn.disabled) {
+        var btn = ev.target && ev.target.closest ? ev.target.closest('[data-slots-spin], button.zone-action-primary') : null;
+        if (btn && !btn.disabled) {
           ensureAudio();
           startSlotsAnimation();
+          if (window.ZoneEcs3D && typeof window.ZoneEcs3D.triggerStageAction === 'function') {
+            window.ZoneEcs3D.triggerStageAction('casino-royale', 'slots-spin', {});
+          }
         }
       });
-      renderSlotsCanvas(0, performance.now());
-    } else if (sTable) {
-      var existSCv = sTable.querySelector('#zig-slots-canvas');
-      if (existSCv) {
-        existSCv.setAttribute('aria-label', slotsLabel);
-        observeInteractiveCanvas(existSCv);
-      }
+    }
+    if (window.ZoneEcs3D && typeof window.ZoneEcs3D.scan === 'function') {
+      window.ZoneEcs3D.scan(main);
     }
     ensureLoopRunning();
   }
